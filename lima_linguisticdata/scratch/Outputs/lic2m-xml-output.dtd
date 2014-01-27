@@ -1,0 +1,97 @@
+
+<!ELEMENT lic2m_analysis_dump ( sentence* )>
+
+<!ELEMENT sentence ( morph-graph,compounds?,namedentities )>
+
+<!ELEMENT morph-graph              ( (vertex|edge)* ) >
+
+<!ELEMENT dep-graph              (#PCDATA) >
+
+<!ELEMENT compounds              (#PCDATA) >
+
+<!ELEMENT namedentities              (#PCDATA) >
+
+<!ELEMENT vertex           ((dependents?,dw,ref,full_token?,dependents_inv?)?) >
+<!ATTLIST vertex
+     id                    ID              #REQUIRED
+     chains                CDATA              #IMPLIED >
+
+<!ELEMENT edge     EMPTY>
+<!ATTLIST edge
+     src        CDATA                #REQUIRED
+     targ       CDATA                #REQUIRED>
+
+<!ELEMENT dependents     (dep*) >
+<!ELEMENT dependents_inv     (dep_inv*) >
+
+<!ELEMENT dw (norm,properties?) >
+
+
+<!ELEMENT ref            (#PCDATA) >
+
+<!ELEMENT full_token          (position,length,token,orthographic_alternatives?,t_status?)? >
+<!ATTLIST full_token
+     id                    CDATA              #REQUIRED >
+
+<!ELEMENT dep     EMPTY >
+<!ATTLIST dep
+     v        IDREF                #REQUIRED
+     c        CDATA                #REQUIRED
+     t        CDATA                #REQUIRED>
+
+<!ELEMENT dep_inv     EMPTY >
+<!ATTLIST dep
+     ref        IDREF                #REQUIRED
+     role        CDATA                #REQUIRED>
+
+<!ELEMENT norm               (#PCDATA) >
+
+<!ELEMENT properties                  ((prop)*)>
+
+<!ELEMENT position          (#PCDATA) >
+
+<!ELEMENT length          (#PCDATA) >
+
+<!ELEMENT token          (infl,size,form*,prop*) >
+
+<!ELEMENT orthographic_alternatives (token*) >
+
+<!ELEMENT t_status              ((t_alpha|t_other|t_numeric),t_default) >
+
+<!ELEMENT prop               ((item)+) >
+
+<!ELEMENT infl                  (#PCDATA) >
+
+<!ELEMENT size               (#PCDATA) >
+
+<!ELEMENT form                 (properties) >
+<!ATTLIST form
+     l        CDATA      #REQUIRED
+     n        CDATA      #REQUIRED>
+
+
+<!ELEMENT t_alpha                   (t_alpha_capital,t_alpha_roman,t_alpha_hyphen,t_alpha_possessive,t_alpha_concat_abbrev) >
+
+<!ELEMENT t_other                    (#PCDATA) >
+
+<!ELEMENT t_numeric                    (#PCDATA) >
+
+<!ELEMENT t_default                  (#PCDATA) >
+     
+<!ELEMENT t_alpha_capital            (#PCDATA) >
+     
+<!ELEMENT t_alpha_roman              (#PCDATA) >
+     
+<!ELEMENT t_alpha_hyphen             (#PCDATA) >
+     
+<!ELEMENT t_alpha_possessive         (#PCDATA) >
+     
+<!ELEMENT t_alpha_concat_abbrev      (#PCDATA) >
+     
+<!ELEMENT item            EMPTY >
+<!ATTLIST item
+     cat        CDATA      #REQUIRED
+     val        CDATA      #REQUIRED>
+
+
+

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+ "/usr/share/sgml/docbook/xml-dtd-4.1.2/docbookx.dtd" [
+]>
+<article lang="fr">
+  <articleinfo>
+    <copyright>
+      <year>2005</year> 
+      <holder>Romaric Besançon - CEA-LIST</holder>
+    </copyright>
+    <authorgroup>
+      <author>
+        <firstname>Romaric</firstname>
+        <surname>Besancon</surname>
+        <affiliation>
+          <address>
+            CEA-LIST
+            <email>romaric.besancon@cea.fr</email>
+          </address>
+        </affiliation>
+      </author>
+    </authorgroup>
+    <title>Comment compiler un fichier d'expressions idiomatiques</title>
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+        <date>5 juillet 2005</date>
+        <authorinitials>RB</authorinitials>
+      </revision>
+    </revhistory>
+  </articleinfo>
+
+  <section>
+    <title>Introduction</title>
+    <para>L'objectif de ce document est de donner les instructions
+    pour compiler un fichier d'expressions idiomatiques
+    utilisateur. Nous expliquons d'abord les différents formats
+    sources possible des expressions idiomatiques et les mécanismes
+    nécessaires pour compiler le fichier selon le format source
+    choisi. La dernière section décrit la commande de
+    compilation.</para>
+  </section>
+
+  <section>
+    <title>Format des expressions idiomatiques</title>
+
+    <section>
+      <title>Règles de reconnaissance</title>
+      
+    <para>Les expressions idiomatiques sont représentées, avant
+    compilation, par un ensemble de règles spécifiant un déclencheur
+    et des contextes gauche et droit de ce déclencheur. Ces règles
+    seront transformées en automates après compilation. Le format de
+    ces règles n'est pas détaillé dans ce document, il est décrit de
+    façon complète dans le document "<ulink
+    url="spec_regles.html"><citetitle>Spécifications du
+    format des règles pour la construction d'automates de
+    reconnaissance d'expressions</citetitle></ulink>".
+    </para>
+
+    <para>La compilation de ces règles se fait avec le programme
+    <emphasis>compile-rules</emphasis>, fourni dans le module
+    d'analyse linguistique <emphasis>s2lp</emphasis>.
+    </para>
+
+    <para>Les règles des expressions idiomatiques doivent spécifier la
+    catégorie de l'expression reconnue. Avec le fonctionnement actuel
+    des catégories, les catégories doivent être encodées avant la
+    compilation des règles. Cela implique au moins une opération
+    d'encodage des catégories avant la compilation des règles.
+    </para>
+
+    <para>Cet encodage se fait à l'aide d'un script Perl
+    (<emphasis>transcodeIdiomatic.pl</emphasis>) qui transforme les
+    catégories exprimées par un code symbolique (à la Grace) en
+    catégories numériques et qui utilise deux fichiers de
+    correspondance pour cela: un fichier indiquant la correspondance
+    entre le code symbolique et le découpage en propriétés
+    linguistiques (ce fichier est nommé
+    <emphasis>symbolicCode-xxx.xml</emphasis>, où
+    <emphasis>xxx</emphasis> est le trigramme de la langue), et un
+    fichier indiquant le codage numérique des différentes propriétés
+    linguistiques (ce fichier est nommé
+    <emphasis>code-xxx.xml</emphasis>, où <emphasis>xxx</emphasis> est
+    le trigramme de la langue).
+    </para>
+
+    <para><emphasis>Exemple</emphasis>: l'expression "<emphasis>avoir
+    tendance</emphasis>" est reconnue par la règle suivante:
+
+    <programlisting>tendance:&amp;avoir$V [$ADV?]::ABS_IDIOM$V---i---:avoir tendance</programlisting> 
+
+    où <emphasis>V---i---</emphasis> est la catégorie symbolique
+    indiquant un verbe intransitif.
+    </para>
+
+    <para>Cette règle sera transformée par ce script en 
+
+    <programlisting>tendance:&amp;avoir$V [$ADV?]::ABS_IDIOM$49280:avoir tendance</programlisting>
+    
+    où la catégorie <emphasis>V---i---</emphasis> a été remplacée par
+    son code numérique (49280).
+    </para>      
+
+    </section>
+    <section>
+      <title>Format simplifié</title>
+
+      <para>Pour garder la compatibilité avec un format précédent, un
+      format simplifié d'écriture des expressions idiomatiques est
+      possible. Ce format est le suivant:
+      <programlisting>&lt;champ1&gt;;&lt;champ2&gt;;&lt;abs&gt;;&lt;déclencheur&gt;;&lt;expression&gt;;&lt;catégorie&gt;;&lt;forme normalisée&gt;</programlisting>
+      où
+      <simplelist>
+        <member><computeroutput>&lt;champ1&gt;</computeroutput> est un
+        champ utilisé pour la gestion de la liste, il est ignoré à la
+        compilation</member>
+        <member><computeroutput>&lt;champ2&gt;</computeroutput> est un
+        champ de utilisé pour la gestion de la liste, il est ignoré à
+        la compilation</member>
+        <member><computeroutput>&lt;abs&gt;</computeroutput> est un
+        champ qui indique si l'expression est absolue (dans ce cas, ce
+        champ vaut "<computeroutput>A</computeroutput>") ou
+        contextuelle (dans ce cas, ce champ n'est pas rempli).
+        </member>
+        <member><computeroutput>&lt;déclencheur&gt;</computeroutput>
+        est le déclencheur de l'expression</member>
+        <member><computeroutput>&lt;expression&gt;</computeroutput>
+        est l'expression complète</member>
+        <member><computeroutput>&lt;catégorie&gt;</computeroutput> est
+        la catégorie linguistique de l'expression</member>
+        <member><computeroutput>&lt;forme
+        normalisée&gt;</computeroutput> est la forme normalisée de
+        l'expression</member>
+      </simplelist>
+      
+      De plus, dans le déclencheur et l'expression, les éléments
+      suivants peuvent être précisés:
+      <itemizedlist>
+        <listitem><para><emphasis>tête</emphasis>: si le mot est tête
+        de l'expression, il est précédé par "&amp;"</para>
+        </listitem>
+        <listitem><para><emphasis>lemme</emphasis>: si le mot est un
+        lemme, il est précédé de sa catégorie entre crochets</para>
+        </listitem>
+        <listitem><para><emphasis>mots en incise</emphasis>: si un mot
+        peut s'insérer dans l'expression mais ne fait pas partie de
+        l'expression, on indique la présence éventuelle de ce mot par
+        sa catégorie entre parenthèses.</para>
+        </listitem>
+      </itemizedlist>
+      
+      Pour exprimer des conditions plus complexes, il est conseillé
+      d'utiliser plutôt le format des règles de reconnaissance
+      d'expressions.
+
+      </para>
+
+      <para>Dans ce format, la règle de reconnaissance de l'expression
+      "<emphasis>avoir tendance</emphasis>" sera écrite (en autorisant
+      l'insertion d'un adverbe entre "<emphasis>avoir</emphasis>" et
+      "<emphasis>tendance</emphasis>"):
+
+      <programlisting>D;;A;tendance;[V]&amp;avoir (D) tendance;verbe intransitif;avoir tendance</programlisting>
+      </para>
+
+      <para>
+        Le format des catégories peut être le format symbolique, ou un
+        format texte plus explicite (ici, "<emphasis>verbe
+        intransitif</emphasis>" au lieu de
+        "<emphasis>V---i---</emphasis>"). Si le format est un format
+        texte explicite, un fichier de correspondance supplémentaire
+        est nécessaire pour établir la correspondance entre ce format
+        texte et la catégorie symbolique correspondante).
+      </para>
+
+      <para>
+        La transcription de ce format dans le format de règle se fait
+        par un script Perl (<emphasis>reformat_idioms.pl</emphasis>),
+        dont le rôle est essentiellement de retrouver le déclencheur
+        dans l'expression pour déterminer les parties gauche et
+        droite, faire éventuellement le changement de catégorie (en
+        lui indiquant quel fichier de correspondance de catégories
+        utiliser), et changer la syntaxe des lemmes et mots en incise.
+      </para>
+    </section>
+
+  </section>
+
+  <section>
+    <title>Dans la pratique</title>
+    
+    <para>Le script <emphasis>compile-user-idiom.sh</emphasis>
+    encapsule les différentes instructions pour compiler les fichiers
+    d'expressions idiomatiques. A l'aide de quelques tests simples, il
+    essaye de deviner le format du fichier source et applique les
+    filtres nécessaires (si besoin est) pour créer un fichier de
+    règles puis le compile.
+    </para>
+
+    <para>L'application de ce script nécessite que l'environnement S2
+    soit disponible (en particulier que le programme
+    <emphasis>compile-rules</emphasis> soit accessible), et que
+    l'environnement de compilation des ressources soit également
+    disponibles (scripts de compilation et ressources spécifiques des
+    langues). Cet environnement est mis en oeuvre par le fichier
+    <emphasis>resources.env</emphasis> fourni avec les resources.
+    </para>
+
+    <para>Soit un fichier <emphasis>idiom-example-1.txt</emphasis>
+    contenant les règles suivantes de reconnaissance d'expressions
+    idiomatiques (pour reconnaître les expressions "appuyer sur le
+    champignon", "tomber dans les pommes", se creuser la tête"):
+    <programlisting>
+set entityTypes=IdiomaticExpressions
+set encoding=utf8
+
+@AuxiliaireEtre=(être$L_V-L_VERBE_AUXILIAIRE_INDICATIF,
+être$L_V-L_VERBE_AUXILIAIRE_SUBJONCTIF,
+être$L_V-L_VERBE_AUXILIAIRE_INFINITIF)
+
+champignon:&amp;appuyer$L_V sur le::ABS_IDIOM$V---i---:appuyer sur le champignon
+pommes:&amp;tomber$L_V dans les::ABS_IDIOM$V---i---:tomber dans les pommes
+
+&amp;creuser$L_V:$L_PRON-L_PRON_REFLEXIF [(@AuxiliaireEtre)] [($L_ADV{0-2})?]:[($L_ADV?)] la tête
+:ABS_IDIOM$V---p---:se creuser la tête
++AgreementConstraint(left.1,left.2,"NUMBER")
++AgreementConstraint(left.1,left.2,"PERSON")
+
+&amp;creuser$L_V:$L_PRON-L_PRON_REFLEXIF:[($L_ADV?)] la tête:ABS_IDIOM$V---p---:se creuser la tête
++AgreementConstraint(left.1,trigger,"NUMBER")
++AgreementConstraint(left.1,trigger,"PERSON")</programlisting>
+
+    Il sera compilé à l'aide de la commande
+
+    <programlisting>compile-user-idiom.sh idiom-example-1.txt</programlisting>    
+
+    qui créera le fichier de règles compilé
+    <emphasis>idiom-example-1.bin</emphasis>
+    </para>
+
+    <para>Si on prend un fichier
+    <emphasis>idiom-example-2.txt</emphasis> contenant les règles
+    au format simplifié suivantes:
+    <programlisting>
+;;A;champignon;[V]&amp;appuyer sur le champignon;verbe intransitif;appuyer sur le champignon
+;;A;pommes;[V]&amp;tomber dans les pommes;verbe intransitif;tomber dans les pommes
+;;A;[V]&amp;creuser;se (pp) [V]&amp;creuser la tête;verbe pronominal;se creuser la tête</programlisting>
+    Il sera compilé à l'aide de la même commande
+
+    <programlisting>compile-user-idiom.sh idiom-example-2.txt</programlisting>    
+
+    qui créera le fichier de règles compilé
+    <emphasis>idiom-example-2.bin</emphasis>
+    </para>
+
+    <para>Ces fichiers pourront alors être utilisés comme resources
+    dans l'analyse en modifiant le fichier de configuration de
+    l'analyse (<emphasis>S2-lp-xxx.xml</emphasis>).
+    </para>
+  </section>
+</article>

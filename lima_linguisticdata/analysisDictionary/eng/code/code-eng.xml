@@ -1,0 +1,156 @@
+<Linguistic_codes>
+  <property name="GENDER">
+    <value name="MASC"/>
+    <value name="FEM"/>
+    <value name="NEUTRE"/>
+  </property>
+  <property name="NUMBER">
+    <value name="SING"/>
+    <value name="PLUR"/>
+  </property>
+  <property name="PERSON">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="SYNTAX">
+  </property>
+  <property name="TIME">
+  </property>
+  <property name="MACRO">
+    <value name="NC"/>
+    <value name="NP"/>
+    <value name="DET"/>
+    <value name="PRON"/>
+    <value name="ADJ"/>
+    <value name="V"/>
+    <value name="ADV"/>
+    <value name="PREP"/>
+    <value name="CONJ"/>
+    <value name="PONCTU"/>
+    <value name="INTERJ"/>
+    <value name="NOMBRE"/>
+    <value name="DIVERS"/>
+  </property>
+  <!--
+  Penn TreeBank tags from http://bulba.sdsu.edu/jeanette/thesis/PennTags.html
+  
+  CC - Coordinating conjunction
+  CD - Cardinal number
+  DT - Determiner
+  EX - Existential there
+  FW - Foreign word
+  IN - Preposition or subordinating conjunction
+  JJ - Adjective
+  JJR - Adjective, comparative
+  JJS - Adjective, superlative
+  LS - List item marker
+  MD - Modal
+  NN - Noun, singular or mass
+  NNS - Noun, plural
+  NNP - Proper noun, singular
+  NNPS - Proper noun, plural
+  PDT - Predeterminer
+  POS - Possessive ending
+  PRP - Personal pronoun
+  PRP$ - Possessive pronoun (prolog version PRP-S)
+  RB - Adverb
+  RBR - Adverb, comparative
+  RBS - Adverb, superlative
+  RP - Particle
+  SYM - Symbol
+  TO - to
+  UH - Interjection
+  VB - Verb, base form
+  VBD - Verb, past tense
+  VBG - Verb, gerund or present participle
+  VBN - Verb, past participle
+  VBP - Verb, non-3rd person singular present
+  VBZ - Verb, 3rd person singular present
+  WDT - Wh-determiner
+  WP - Wh-pronoun
+  WP$ - Possessive wh-pronoun (prolog version WP-S)
+  WRB - Wh-adverb
+    -->
+  <subproperty name="MICRO" parent="MACRO">
+    <subvalues value="ADJ">
+      <value name="JJ"/>
+      <value name="JJR"/>
+      <value name="JJS"/>
+    </subvalues>
+    <subvalues value="ADV">
+			<value name="RB"/>
+			<value name="ABOUTRB"/>
+			<value name="THATRB"/>
+			<value name="THERERB"/>
+			<value name="RBR"/>
+      <value name="RBS"/>
+      <value name="WRB"/>
+			<value name="NOT"/>
+		</subvalues>
+    <subvalues value="CONJ">
+      <value name="CC"/>
+    </subvalues>
+    <subvalues value="DET">
+      <value name="DT"/>
+      <value name="THATDT"/>
+      <value name="PDT"/>
+      <value name="THATWDT"/>
+      <value name="WDT"/>
+    </subvalues>
+    <subvalues value="DIVERS">
+      <!--value name="POS"/-->
+      <value name="FW"/>
+      <value name="SYM"/>
+      <value name="UNK"/>
+    </subvalues>
+    <subvalues value="INTERJ">
+      <value name="UH"/>
+    </subvalues>
+    <subvalues value="NC">
+      <value name="NN"/>
+      <value name="NNS"/>
+    </subvalues>
+    <subvalues value="NOMBRE">
+      <value name="CD"/>
+    </subvalues>
+    <subvalues value="NP">
+      <value name="NNP"/>
+      <value name="NNPS"/>
+    </subvalues>
+    <subvalues value="PONCTU">
+      <value name="OQU"/>
+      <value name="COMMA"/>
+      <value name="COLON"/>
+      <value name="SENT"/>
+      <value name="QUOT"/>
+      <value name="OPAR"/>
+      <value name="CPAR"/>
+      <value name="CUR"/>
+    </subvalues>
+    <subvalues value="PREP">
+      <value name="IN"/>
+			<value name="THATIN"/>
+			<value name="ABOUTIN"/>
+			<value name="TO"/>
+      <!--value name="RP"/-->
+    </subvalues>
+    <subvalues value="PRON">
+      <value name="EX"/>
+      <value name="PRP"/>
+      <value name="THATPRP"/>
+      <value name="PRP$"/>
+      <value name="WP"/>
+      <value name="WP$"/>
+    </subvalues>
+    <subvalues value="V">
+      <value name="MD"/>
+      <value name="VB"/>
+      <value name="VBD"/>
+      <value name="VBG"/>
+      <value name="VBN"/>
+      <value name="VBP"/>
+      <value name="VBZ"/>
+    </subvalues>
+  </subproperty>
+</Linguistic_codes>

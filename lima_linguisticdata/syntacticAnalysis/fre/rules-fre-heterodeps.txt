@@ -1,0 +1,1839 @@
+######################################################################
+#                                                                    #
+# rules for the recognition of french heterosyntagmatic relations    #
+# this file uses the syntax for the declarations of automatons by    #
+# Romaric Besancon (Cf. his 2003/03/11 document)                     #
+# Created on Mon oct 4 2004                                          #
+# by Romaric Besancon                                                #
+#                                                                    #
+######################################################################
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-fre.txt
+
+######################################################################
+# sous-automates
+# adverb group
+define subautomaton AdvGroup {
+  pattern=$ADV{0-3}
+}
+
+# adverb adjective group
+define subautomaton AdvAdjGroup {
+  pattern=$ADV{0-3} $ADJ
+}
+
+# common noun group size=3
+define subautomaton EndOfNounGroupAfterNoun {
+  pattern=$DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et)?){0-n}
+}
+
+# common noun group size=6
+define subautomaton NounGroup {
+  pattern=$DET? (%AdvAdjGroup (,|et)?){0-n} ($NC|$NP) $DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et)?){0-n}
+}
+
+# incise size=1
+define subautomaton InciseGroup {
+  pattern=((, (^,){0-n} ,)|(- (^-){0-n} -)|(\( (^$PONCTU-PONCT){0-n} \))){0-n}
+}
+
+
+# test des sous-automates
+# @VerbePrincipal::$DET? %NounGroup:SYNTACTIC_RELATION:
+# +!GovernorOf(right.2.1.3,"COD_V")
+# +CreateRelationBetween(right.2.1.3,trigger.1,"COD_V")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+######################################################################
+# relations prioritaires
+
+@QueNeg=(que$ADV-ADV,qu'$ADV-ADV)
+@QueNeg:@TensedVerbObj:@DetAvantCOD? %AdvAdjGroup{0-2} ($NC|$NP) %AdvAdjGroup{0-2}:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COD_V")
++CreateRelationBetween(right.3,left.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@QueNeg:@TensedVerbObj:$PREP $DET? %AdvAdjGroup{0-2} ($NC|$NP) %AdvAdjGroup{0-2}:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"CPL_V")
++CreateRelationBetween(right.4,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation sujet/verbe
+# SUJ_V
+
+@PronPrev=($PRON-CLS,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLS,
+$PRON-CLO,
+$PRON-CLO)
+
+@PronInsideCompTense=($PRON-CLS)
+
+# !!! Attention à l'ordre des règles: les règles sont réordonnées en fonction
+# !!! des triggers communs *ET* les triggers sont comparés en tenant compte
+# !!! de leurs contraintes => triggers égaux si contraintes égales
+
+
+@PronSujNonConjoint=($PRON-CLS,
+$PRON-PRO, $PRON-PRO)
+
+
+# relatives
+
+# si après conjonction ou virgule, le précédent ne doit pas être complément de nom
+# (ou alors, on remonte les liens)
+# centrée sur le pronom
+$PRON-PROREL:($NC|$NP|@PronSujNonConjoint) ($ADV? $ADJ)? %InciseGroup (@SeparateurAppos|@SeparateurAppos? $CONJ-CC):(@PronPrev){0-2} @TensedVerbSuj (@DetAvantCOD ((@AdvModifieurAdj){0-n} @AdjPren){0-n})? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(right.4,"ANY")
++!GovernorOf(left.2,"MOD_N")
++!GovernorOf(right.4,"COD_V")
++SecondUngovernedBy(trigger.1,right.2,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,right.2,"SUJ_V_REL")
++CreateRelationBetween(left.2,left.1,"MOD_N")
++CreateRelationBetween(right.4,right.2,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# si après conjonction ou virgule, le précédent ne doit pas être complément de nom
+# (ou alors, on remonte les liens)
+@TensedVerbSuj:($NC|$NP|@PronSujNonConjoint) ($ADV? $ADJ)? %InciseGroup (@SeparateurAppos|@SeparateurAppos? $CONJ-CC) $PRON-PROREL (@PronPrev){0-2}:(@DetAvantCOD ((@AdvModifieurAdj){0-n} @AdjPren){0-n})? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(right.2,"ANY")
++SecondUngovernedBy(left.5,trigger.1,"SUJ_V_REL")
++!GovernorOf(trigger.1,"MOD_N")
++!GovernorOf(right.2,"COD_V")
++CreateRelationBetween(left.5,trigger.1,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(right.2,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# ajout de la ligne: +SecondUngovernedBy(trigger.1,left.1,"MOD_N") /Anna
+@TensedVerbSuj:($NC|$NP|@PronSujNonConjoint) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? %InciseGroup (@SeparateurAppos|@SeparateurAppos? $CONJ-CC) $PRON-PROREL (@PronPrev){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(left.7,trigger.1,"SUJ_V_REL")
++SecondUngovernedBy(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(left.7,trigger.1,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@Guillemets=($PONCTU-PONCT)
+
+# ajout: +SecondUngovernedBy(trigger.1,left.1,"MOD_N") /Anna
+# sans coordination
+@TensedVerbSuj:($NC|$NP|@PronSujNonConjoint) (@Guillemets? ($ADV? $ADJ)? @Guillemets?) %InciseGroup @SeparateurAppos? $PRON-PROREL %InciseGroup (@PronPrev){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(left.5,trigger.1,"SUJ_V_REL")
++SecondUngovernedBy(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(left.5,trigger.1,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# ajout: +SecondUngovernedBy(trigger.1,left.1,"MOD_N") /Anna
+@TensedVerbSuj:($NC|$NP|@PronSujNonConjoint) (@Guillemets? (@NounGroupElt){0-n} @Guillemets?) ($NC|$NP) (@Guillemets? $ADV? $ADJ @Guillemets?)? %InciseGroup @SeparateurAppos? $PRON-PROREL %InciseGroup (@PronPrev){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(left.7,trigger.1,"SUJ_V_REL")
++SecondUngovernedBy(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(left.7,trigger.1,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# ajout: +SecondUngovernedBy(trigger.1,left.1,"MOD_N") /Anna
+@TensedVerbSuj:($NC|$NP|@PronSujNonConjoint) (@Guillemets? (@NounGroupElt){0-n} @Guillemets?) ($NC|$NP) (@Guillemets? @NounGroupElt @Guillemets?){0-n} ($NC|$NP) (@Guillemets? $ADV? $ADJ @Guillemets?)? %InciseGroup (,|,? $CONJ-CC) $PRON-PROREL (@PronPrev){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(left.9,trigger.1,"SUJ_V_REL")
++SecondUngovernedBy(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(left.9,trigger.1,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# ajout: +SecondUngovernedBy(trigger.1,left.1,"MOD_N") /Anna
+@TensedVerbSuj:($NC|$NP|@PronSujNonConjoint) (@Guillemets? $ADV? $ADJ @Guillemets?)? %InciseGroup $PRON-PROREL %InciseGroup (@PronPrev){0-2}::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.4,trigger.1,"SUJ_V_REL")
++SecondUngovernedBy(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(left.4,trigger.1,"SUJ_V_REL")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# forme particuliere "c'est ce que GV GN" => sujet inversé
+# on met "ce" comme COD (?)
+# on met "est" comme MOD_V (?)
+@TensedVerbSuj:c\' est ce que:%NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.1.3,"SUBSUBJUX")
++SecondUngovernedBy(right.1.3,trigger.1,"SUJ_V")
++SecondUngovernedBy(left.3,trigger.1,"COD_V")
++SecondUngovernedBy(left.2,trigger.1,"MOD_V")
++CreateRelationBetween(right.1.3,trigger.1,"SUJ_V")
++CreateRelationBetween(left.3,trigger.1,"COD_V")
++CreateRelationBetween(left.2,trigger.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# @TensedVerbSuj:$PRON-PROREL::SYNTACTIC_RELATION:
+# +SecondUngovernedBy(left.1,trigger.1,"SUJ_V_REL")
+# +CreateRelationBetween(left.1,trigger.1,"SUJ_V_REL")
+# =>AddRelationInGraph()
+
+@NeitherNounNorPonctu=($V,$PRON,$DET,
+$ADJ,$ADV,$PREP,
+$INTERJ,$DIVERS,$CONJ)
+
+@NeitherNounNorConj=($V,$PRON,$DET,
+$ADJ,$ADV,$PREP,
+$INTERJ,$DIVERS)
+
+#sujet est démonstratif
+@TensedVerbSuj:$PRON-PRO::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"SUJ_V")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# pronoms sujets non conjoints (ne font pas partie de la chaine verbale)
+# @PronSujNonConjoint=($PRON-CLS,
+# $PRON-PROWH,
+# $PRON-PRO,
+# $PRON-PRO)
+
+@PronRefl=($PRON-CLR)
+
+@TensedVerbSuj:@PronSujNonConjoint (@PronPrev){0-2} (@PronRefl)?::SYNTACTIC_RELATION:
++NumberAgreement(trigger.1,left.1)
++!GovernorOf(left.1,"SUJ_V")
++!GovernorOf(left.1,"PronSujVerbe")
++CreateRelationBetween(left.1,trigger.1,"PronSujVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Verbe est participe present
+#cas d'un sujet comprenant 1 substantif/nom propre dans son syntagme nominal
+@PPresent:($NC|$NP) %AdvAdjGroup{0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(left.1,"COD_V")
++!GovernorOf(left.1,"CPL_V")
++!GovernorOf(left.1,"SUJ_V")
++!GovernorOf(left.1,"PronSujVerbe")
++!GovernorOf(left.1,"COORD2")
++!GovernorOf(left.1,"COMPADJ")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#cas d'un sujet comprenant 1 substantif/nom propre dans son syntagme nominal
+@TensedVerbSuj:($NC|$NP) [(@NounGroupElt){0-n}] $PONCTU-PONCT? %InciseGroup %AdvGroup (@PronRefl)? (@PronPrev)?::SYNTACTIC_RELATION:
++NumberAgreement(trigger.1,left.1)
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernedBy(left.1,"PREPSUB")
++!GovernorOf(left.1,"COD_V")
++!GovernorOf(left.1,"CPL_V")
++!GovernorOf(left.1,"SUJ_V")
++!GovernorOf(left.1,"PronSujVerbe")
++!GovernorOf(left.1,"COORD2")
++!GovernorOf(left.1,"COMPADJ")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#cas d'un sujet comprenant 2 substantifs/noms propres dans son syntagme nominal
+@TensedVerbSuj:($NC|$NP|$PRON-PRO) (@NounGroupElt){0-n} ($NC|$NP) (@NounGroupElt){0-n} $PONCTU-PONCT? %InciseGroup %AdvGroup (@PronRefl)? (@PronPrev)?::SYNTACTIC_RELATION:
++NumberAgreement(trigger.1,left.1)
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernedBy(left.1,"PREPSUB")
++!GovernorOf(left.1,"COD_V")
++!GovernorOf(left.1,"CPL_V")
++!GovernorOf(left.1,"SUJ_V")
++!GovernorOf(left.1,"PronSujVerbe")
++!GovernorOf(left.1,"COORD2")
++!GovernorOf(left.1,"COMPADJ")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# GC20100803 Suppression pour essai de coord geree par simplification
+##cas d'un sujet comprenant n substantifs/noms propres dans son syntagme nominal
+#@TensedVerbSuj:($NC|$NP|$PRON-PRO) (((@SujVOther){0-n} ($NC|$NP)){1-2} [@NounGroupElt{0-n}]){0-n} $PONCTU-PONCT? %InciseGroup %AdvGroup (@PronRefl)? (@PronPrev)?::SYNTACTIC_RELATION:
+#+NumberAgreement(trigger.1,left.1)
+#+!GovernorOf(left.1,"COMPDUNOM")
+#+!GovernorOf(left.1,"SUBSUBJUX")
+#+!GovernedBy(left.1,"PREPSUB")
+#+!GovernorOf(left.1,"COD_V")
+#+!GovernorOf(left.1,"SUJ_V")
+#+!GovernorOf(left.1,"PronSujVerbe")
+#+!GovernorOf(left.1,"COORD2")
+#+!GovernorOf(left.1,"COMPADJ")
+#+CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+#beaucoup de neige est tombée.
+#peu de poissons ont survécu.
+@TensedVerbSuj:$ADV de $PONCTU-PONCT? (((@SujVOther){0-n} ($NC|$NP)){1-2} ([@NounGroupElt{0-n}] ($NC|$NP)){0-2} [@NounGroupElt{0-n}]){0-n} $PONCTU-PONCT? %InciseGroup %AdvGroup (@PronRefl)? (@PronPrev)?::SYNTACTIC_RELATION:
++NumberAgreement(trigger.1,left.1)
++GovernedBy(left.1,"COMPADV")
++!GovernorOf(left.1,"COMPADJ")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# ex : Je le lui ai rendu.
+@TensedVerbSuj:($NC|$NP|@PronPersSuj) [(@NounGroupElt){0-n}] %InciseGroup @PronRefl? @PronPersCodPrev? @PronPersCoiPrev? ::SYNTACTIC_RELATION:
++NumberAgreement(trigger.1,left.1)
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernedBy(left.1,"PREPSUB")
++!GovernorOf(left.1,"COD_V")
++!GovernorOf(left.1,"CPL_V")
++!GovernorOf(left.1,"SUJ_V")
++!GovernorOf(left.1,"PronSujVerbe")
++!GovernorOf(left.1,"COMPADJ")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas des relatives
+# Paul, qui est gentil, parle
+@NotVerbPrincipalNorConj=($NC,$NP,$PRON,$DET,
+$ADJ,$ADV,$PREP,$PONCTU,
+$INTERJ,$DIVERS,
+$V-V,
+$V-VS)
+
+@TensedVerbSuj:@PronRel (@PronPrev){0-2} @TensedVerbSuj (@NotVerbPrincipalNorConj){0-n} (@PronRefl)?::SYNTACTIC_RELATION:
++!GovernedBy(trigger.1,"SUJ_V")
++CreateRelationReverseWithRelated(trigger.1,left.3,"MOD_N,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# sujet est nom propre => verbe 3eme pers du sing
+@TensedVerbSuj:$NP [(@NeitherNounNorPonctu){0-n}]::SYNTACTIC_RELATION:
++LinguisticPropertyIs(trigger.1,"PERSON,3,fre")
++LinguisticPropertyIs(trigger.1,"NUMBER,SING,fre")
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.1,"COD_V")
++!GovernorOf(left.1,"CPL_V")
++!GovernorOf(left.1,"SUJ_V")
++!GovernorOf(left.1,"PronSujVerbe")
++!GovernorOf(left.1,"COMPADJ")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# sujet de deux verbes: 1 modal + 1 normal suivi de infinitif "cette décision pourrait faire capoter..."; décision sujet de pourrait et faire
+@VerbeInf:%NounGroup @TensedVerbSuj %AdvGroup?:%AdvGroup? @VerbeInf:SYNTACTIC_RELATION:
++GovernorOf(left.1.1.3,"SUJ_V")
++SecondUngovernedBy(left.1.1.3,trigger.1,"ANY")
++CreateRelationBetween(left.1.1.3,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+######################################################################
+# relation attribut du sujet
+# ATB_S
+
+# cas temps composé
+@AttributSuj:@TensedVerbSuj @PronInsideCompTense? %AdvGroup $V-VPP %AdvGroup::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++!GovernorOf(trigger.1,"CPL_V")
++CreateRelationBetween(trigger.1,left.4,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas simple
+@AttributSuj:(@VerbeCopule|@VerbePrincipal) %AdvGroup::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++!GovernorOf(trigger.1,"CPL_V")
++CreateRelationBetween(trigger.1,left.1,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas simple
+## matche "La plus belle de la collection est la verte."
+@AttributSuj:(@VerbeCopule|@VerbePrincipal) @Determinant::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++!GovernorOf(trigger.1,"CPL_V")
++CreateRelationBetween(trigger.1,left.1,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps composé
+## matche "La plus belle de la collection a été la verte."
+@AttributSuj:@TensedVerbSuj @PronInsideCompTense? %AdvGroup $V-VPP @Determinant::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++!GovernorOf(trigger.1,"CPL_V")
++CreateRelationBetween(trigger.1,left.4,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# on ajoute epithete detachee pour trouver la relation meme
+# si le postagging est faux => mais seulement avec verbes copule
+
+@AttributSujCandidates=($ADJ-ADJ)
+
+@AttributSujCandidates:(@VerbeCopule|être$V) (($ADV){0-2}|$DET?)::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++CreateRelationBetween(trigger.1,left.1,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# les participes passés après un verbe copule (même être)
+# sont considérés attributs du sujet
+# (il est mort, il est obligé)
+
+$V-VPP:@VerbeCopule %AdvGroup::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++CreateRelationBetween(trigger.1,left.1,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas de l'attribut du sujet avec participe passé avec incise modifieuse
+# "la solution est celle proposée par jean"
+$PRON-PRO:(@VerbeCopule|@VerbePrincipal) %AdvGroup:$V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ATB_S")
++!GovernorOf(trigger.1,"COD_V")
++CreateRelationBetween(right.1,trigger.1,"MOD_N")
++CreateRelationBetween(trigger.1,left.1,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# verbes infinitifs comme attributs du sujet
+# elle paraît avoir renoncé
+
+# liste des verbes copule pouvant être suivi d'un infinitif
+# (sous-liste des verbes copule du dictionnaire)
+
+@VerbeCopulePlusInfinitif=(affirmer$V,
+apparaître$V,
+avérer$V,
+paraître$V,
+sembler$V)
+
+@VerbeCopulePlusInfinitif::%AdvGroup $V-VINF $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"ATB_S")
++!GovernorOf(right.3,"COD_V")
++CreateRelationBetween(right.3,trigger.1,"ATB_S")
++CreateRelationReverseWithRelated(right.2,trigger.1,"SUJ_V|PronSujVerbe,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# l'auxiliaire a été changé pour former un temps composé
+@VerbeCopulePlusInfinitif::%AdvGroup $V-VINF $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"ATB_S")
++!GovernorOf(right.3,"COD_V")
++CreateRelationBetween(right.3,trigger.1,"ATB_S")
++CreateRelationReverseWithRelated(right.2,trigger.1,"SUJ_V|PronSujVerbe,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@VerbeCopulePlusInfinitif::%AdvGroup @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ATB_S")
++!GovernorOf(right.2,"COD_V")
++CreateRelationBetween(right.2,trigger.1,"ATB_S")
++CreateRelationReverseWithRelated(right.2,trigger.1,"SUJ_V|PronSujVerbe,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Cas d'ellipse du verbe copule
+# ex : Le pouvoir est si faible, l'administration si désabusée...
+
+$ADJ-ADJ:@VerbeCopule (^$PONCTU-PONCT){0-n} $PONCTU-PONCT (@SujVOther){0-n} ($NC|$NP|$PRON) (@SujVOther){0-n}::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,left.5,"ATB_S")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# participiale present dont le sujet est déjà sujet de la principale après simplification
+# " les coteaux environnant la ville sont ... "
+@ParticipePresent:@Substantif (^$V){0-n}:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation verbe/objet
+# COD_V
+
+# cas du sujet inversé (avec adverbe : Où a-t-il <vraiment> construit sa maison)
+@TensedVerbObj::@PronPersSujInverse %AdvGroup @DetAvantCOD %AdvAdjGroup{0-2} $NC:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"COMPDUNOM")
++!GovernorOf(right.5,"SujInv")
++GovernorOf(right.1,"SujInv")
++!GovernorOf(right.5,"SUBSUBJUX")
++!GovernorOf(right.5,"COD_V")
++CreateRelationBetween(right.5,trigger.1,"COD_V")
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS|PRONOMINAL,fre")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# il ne mange avec plaisir que des gateaux
+@TensedVerbObj:ne:%AdvGroup $PREP %NounGroup que %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.5.1.3,"COMPDUNOM")
++!GovernorOf(right.5.1.3,"SUBSUBJUX")
++!GovernorOf(right.5.1.3,"SujInv")
++!GovernorOf(right.5.1.3,"COD_V")
++!GovernorOf(right.3.1.3,"COMPDUNOM")
++!GovernorOf(right.3.1.3,"CPL_V")
++!GovernorOf(right.4,"MOD_V")
++CreateRelationBetween(right.3.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.4,trigger.1,"MOD_V")
++CreateRelationBetween(right.5.1.3,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# il ne mange que des gateaux
+@TensedVerbObj:ne:%AdvGroup que %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.3.1.3,"COMPDUNOM")
++!GovernorOf(right.3.1.3,"SujInv")
++!GovernorOf(right.3.1.3,"SUBSUBJUX")
++!GovernorOf(right.3.1.3,"COD_V")
++CreateRelationBetween(right.2,trigger.1,"MOD_V")
++CreateRelationBetween(right.3.1.3,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# problème de "du/des" : il n'a que la catégorie DET_ARTICLE_CONTRACTE
+# (je bois du champagne -> COD)
+# (je tombe du train -> COI)
+# on teste la transitivité du verbe
+
+@TensedVerbObj::$DET-DET %AdvAdjGroup{0-2} $NC:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"CPL_V")
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"SujInv")
++!GovernorOf(right.3,"SUBSUBJUX")
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# avec MOD_V en plus
+@TensedVerbObj::(@PronPersSujInverse)? $DET-DET %AdvAdjGroup{0-2} $NC @PrepCirconstantielle %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"COMPDUNOM")
++!GovernorOf(right.4,"SujInv")
++!GovernorOf(right.4,"SUBSUBJUX")
++!GovernorOf(right.4,"CPL_V")
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.4,trigger.1,"CPL_V")
++CreateRelationBetween(right.6.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# COD cas simple
+@TensedVerbObj::%AdvGroup %InciseGroup @DetAvantCOD{0-2} %AdvAdjGroup{0-2} ($NC|$NP|@PronSujNonConjoint):SYNTACTIC_RELATION:
++!GovernorOf(right.5,"COMPDUNOM")
++!GovernorOf(right.5,"SujInv")
++!GovernorOf(right.5,"COD_V")
++!GovernorOf(right.5,"SUBSUBJUX")
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.5,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# COD cas simple + MOD_V
+#@TensedVerbObj::%AdvGroup $DET? %AdvAdjGroup{0-2} ($NC|$NP|@PronSujNonConjoint) (^$V){0-n} @PrepCirconstantielle $DET? %AdvAdjGroup{0-2} ($NC|$V):SYNTACTIC_RELATION:
+#+!GovernorOf(right.3,"SujInv")
+#+!GovernorOf(right.4,"COMPDUNOM")
+#+!GovernorOf(right.9,"COMPDUNOM")
+#+!GovernorOf(right.4,"SujInv")
+#+!GovernorOf(right.4,"SUBSUBJUX")
+#+SecondUngovernedBy(right.4,trigger.1,"COD_V")
+#+SecondUngovernedBy(right.9,trigger.1,"MOD_V")
+#+CreateRelationBetween(right.4,trigger.1,"COD_V")
+#+CreateRelationBetween(right.9,trigger.1,"MOD_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+# cas simple: le COD est un nom propre
+@TensedVerbObj::%AdvGroup %InciseGroup @DetAvantCOD %AdvAdjGroup{0-2} $NP:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"COMPDUNOM")
++!GovernorOf(right.5,"SujInv")
++!GovernorOf(right.5,"SUBSUBJUX")
++!GovernorOf(right.5,"COD_V")
++CreateRelationBetween(right.5,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas si le COD est composé d'un $PREP-P ex: "il mange trop de sel")
+@TensedVerbObj::$ADV{1-2} %InciseGroup $PREP-P %AdvAdjGroup{0-2} ($NC|$NP|@PronSujNonConjoint):SYNTACTIC_RELATION:
++!GovernorOf(right.5,"COMPDUNOM")
++!GovernorOf(right.5,"SujInv")
++!GovernorOf(right.5,"COD_V")
++!GovernorOf(right.5,"SUBSUBJUX")
++!GovernorOf(right.1,"MOD_N")
++!GovernorOf(right.1,"NePas2")
++CreateRelationBetween(right.5,trigger.1,"COD_V")
++CreateRelationBetween(right.1,right.3,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Même cas mais sans le MOD_N dans le cas où l'adverbe est "pas", cas NePas2 ("il ne mange pas de sel")
+@TensedVerbObj::$ADV{1-2} %InciseGroup $PREP-P %AdvAdjGroup{0-2} ($NC|$NP|@PronSujNonConjoint):SYNTACTIC_RELATION:
++GovernorOf(right.1,"NePas2")
++!GovernorOf(right.5,"COMPDUNOM")
++!GovernorOf(right.5,"SujInv")
++!GovernorOf(right.5,"COD_V")
++!GovernorOf(right.5,"SUBSUBJUX")
++CreateRelationBetween(right.5,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@TensedVerbObj::%AdvGroup %InciseGroup $NP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"SujInv")
++!GovernorOf(right.3,"SUBSUBJUX")
++!GovernorOf(right.3,"COD_V")
++CreateRelationBetween(right.3,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# l'infinitif qui suit le verbe est COD si le verbe n'a pas
+# déjà un COD et si l'infinitif n'est pas déjà attribut
+#+!GovernedBy(trigger.1,"COD_V")
+# contrainte retirée pour la phrase exemple :
+# Ils imaginent pouvoir y parvenir.
+
+@TensedVerbObj::%AdvGroup ($PRON)? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"TEMPCOMP")
++!GovernorOf(right.3,"CPLV_V")
++!GovernorOf(right.3,"COD_V")
++!GovernorOf(right.3,"SujInv")
++!GovernorOf(right.3,"SUBSUBJUX")
++SecondUngovernedBy(right.3,trigger.1,"ATB_S")
++CreateRelationBetween(right.3,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# complement en incise (vraisemblablement circonstantiel) +
+# COD
+# @TensedVerbObj::, ($PREP|$DET-DET) %NounGroup , %NounGroup:SYNTACTIC_RELATION:
+# +!GovernorOf(right.5.1.3,"COMPDUNOM")
+# +!GovernorOf(right.3.1.3,"ANY")
+# +!GovernorOf(right.5.1.3,"CPL_V")
+# +!GovernorOf(right.5.1.3,"SujInv")
+# +!GovernorOf(right.5.1.3,"SUBSUBJUX")
+# +CreateRelationBetween(right.3.1.3,trigger.1,"MOD_V")
+# +CreateRelationBetween(right.5.1.3,trigger.1,"CPL_V")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# complement en incise (vraisemblablement circonstantiel) +
+# COD
+@TensedVerbObj::, ($PREP|$DET-DET) %NounGroup , %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.5.1.3,"COMPDUNOM")
++!GovernorOf(right.3.1.3,"ANY")
++!GovernorOf(right.5.1.3,"CPL_V")
++!GovernorOf(right.5.1.3,"SujInv")
++!GovernorOf(right.5.1.3,"SUBSUBJUX")
++CreateRelationBetween(right.3.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.5.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+## Anna : crée le 23/06 à  libérer après
+# @TensedVerbObj::, ($PREP|$DET-DET) %NounGroup , @Adverbe? @DetAvantCOD @Adverbe? @Substantif:SYNTACTIC_RELATION:
+# +!GovernorOf(right.8,"COMPDUNOM")
+# +!GovernorOf(right.8,"COD_V")
+# +!GovernorOf(right.8,"CPL_V")
+# +!GovernorOf(right.8,"SujInv")
+# +!GovernorOf(right.8,"SUBSUBJUX")
+# +CreateRelationBetween(right.8,trigger.1,"COD_V")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# adverbe en incise +COD
+#
+@TensedVerbObj::, %AdvGroup $ADV , %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"MOD_V")
++!GovernorOf(right.5.1.3,"COD_V")
++!GovernorOf(right.3,"ADVADV")
++!GovernorOf(right.5.1.3,"SujInv")
++!GovernorOf(right.5.1.3,"SUBSUBJUX")
++CreateRelationBetween(right.3,trigger.1,"MOD_V")
++CreateRelationBetween(right.5.1.3,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# adverbe en incise +COI
+#
+@TensedVerbObj::%AdvGroup , %AdvGroup $ADV , $PREP %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"ADVADV")
++!GovernorOf(right.4,"MOD_V")
++!GovernorOf(right.7.1.3,"CPL_V")
++CreateRelationBetween(right.4,trigger.1,"MOD_V")
++CreateRelationBetween(right.7.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# complement COI suivi d'un COD
+# il donne a Pierre un livre
+
+@TensedVerbObj::($PREP|$DET-DET) $DET? %AdvAdjGroup{0-2} ($NC|$NP|$PRON-CLO) (, ($ADV){0-2} ,){0-2} @DetAvantCOD? %AdvAdjGroup{0-2} ($NC|$NP):SYNTACTIC_RELATION:
++!GovernorOf(right.4,"CPL_V")
++!GovernorOf(right.4,"COMPDUNOM")
++!GovernorOf(right.8,"COMPDUNOM")
++!GovernorOf(right.8,"COD_V")
++!GovernorOf(right.8,"SujInv")
++!GovernorOf(right.8,"SUBSUBJUX")
++CreateRelationBetween(right.4,trigger.1,"CPL_V")
++CreateRelationBetween(right.8,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# avec guillemets
+# à voir - Anna
+@NeitherVerbNorPonct=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV)
+@TensedVerbObj::%AdvGroup $DET? $PONCTU-PONCT %AdvAdjGroup{0-2} ($NC|$NP) @NeitherVerbNorPonct{0-n} $PONCTU-PONCT:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"COD_V")
++CreateRelationBetween(right.5,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas impératifs avec pronoms "dis le moi", "dis moi", "dis le"
+
+$V-VIMP::$PRON-CLO:SYNTACTIC_RELATION:
++!GovernorOf(right.1,"COD_V")
++CreateRelationBetween(right.1,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$V-VIMP::$PRON-CLO? $PRON-CLO:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"CPL_V")
++CreateRelationBetween(right.2,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas interrogatifs avec démonstratif "Comprend-on cela ?"
+
+$V-V::$PRON-CLS? $PRON-PRO:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"COD_V")
++CreateRelationBetween(right.2,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas interrogatifs avec copule et sujet interrogatif "Quel est la capitale de la France ?"
+
+$PRON-PROWH::$V-V %NounGroup:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ATB_S")
++SecondUngovernedBy(right.2.1.3,right.1,"SUJ_V")
++CreateRelationBetween(trigger.1,right.1,"ATB_S")
++CreateRelationBetween(right.2.1.3,right.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation verbe/complement (COI+circonstantielles)
+# CPL_V
+
+# groupe prépositionnel infinitif après le verbe
+# (je viens de finir)
+# => relation particuliere CPLV_V
+
+@PronPrevObj=($PRON-CLR,
+$PRON-CLO,
+$PRON-CLO)
+
+# avec CPL_V en incise
+# avec sujet attribué au déclencheur
+
+@TensedVerbObj::$PRON-CLS? $ADV? $PONCTU-PONCT? $PREP %NounGroup $PONCTU-PONCT? $PREP $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.5.1.3,"ANY")
++!GovernorOf(right.10,"ANY")
++CreateRelationBetween(right.5.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.10,trigger.1,"CPLV_V")
++CreateRelationReverseWithRelated(right.10,trigger.1,"SUJ_V|PronSujVerbe|SujInv,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# avec CPL_V en incise
+# sans sujet attribué au déclencheur
+
+@TensedVerbObj::$PRON-CLS? $ADV? $PONCTU-PONCT? $PREP %NounGroup $PONCTU-PONCT? $PREP $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.5.1.3,"ANY")
++!GovernorOf(right.10,"ANY")
++CreateRelationBetween(right.5.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.10,trigger.1,"CPLV_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# sans CPL_V en incise
+# avec sujet attribué au déclencheur
+
+@TensedVerbObj::$PRON-CLS? $ADV? $PREP $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.6,"ANY")
++!GovernedBy(trigger.1,"SUJ_V")
++!GovernedBy(trigger.1,"PronSujVerbe")
++CreateRelationBetween(right.6,trigger.1,"CPLV_V")
++CreateRelationReverseWithRelated(right.6,trigger.1,"SUJ_V|PronSujVerbe|SujInv,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+#+CreateRelationReverseWithRelated(right.5,trigger.1,"SUJ_V,SUJ_V")
+
+# sans CPL_V en incise
+# sans sujet attribué au déclencheur
+#@InfinitiveVerb:@NonInfinitiveTensedVerbObj $ADV? $PREP $ADV?::SYNTACTIC_RELATION:
+#+!GovernedBy(left.1,"COD_V")
+#+CreateRelationBetween(trigger.1,left.1,"COD_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+@InfinitiveVerb:@TensedVerbObj $PRON-CLS? $ADV? $PREP $ADV? @PronPrevObj?::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"CPLV_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# si pas de sujet pour le verbe, on garde quand meme la relation CPLV_V et CPL_V
+@TensedVerbObj::$PRON-CLS? $ADV? $PONCTU-PONCT $PREP %NounGroup $PONCTU-PONCT $PREP $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.5.1.3,"ANY")
++!GovernorOf(right.10,"ANY")
++CreateRelationBetween(right.5.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.10,trigger.1,"CPLV_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# si pas de sujet pour le verbe, on garde quand meme la relation CPLV_V
+@TensedVerbObj::$PRON-CLS? $ADV? $PREP $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.6,"ANY")
++CreateRelationBetween(right.6,trigger.1,"CPLV_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# même si pas de preposition (il vient finir le travail)
+@TensedVerbObj::$PRON-CLS? $ADV? $PREP? $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.6,"CPLV_V")
++!GovernorOf(right.6,"COD_V")
++CreateRelationBetween(right.6,trigger.1,"CPLV_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# groupe prépositionnel infinitif après le verbe suivi d'un COI
+# ("elle permet à l'industrie de se developper")
+# -> toujours avec à
+
+@TensedVerbObj::%AdvGroup à %NounGroup $PREP $ADV? @PronPrevObj? @InfinitiveVerb:SYNTACTIC_RELATION:
++!GovernorOf(right.3.1.3,"CPL_V")
++!GovernorOf(right.3.1.3,"SUJ_V")
++CreateRelationBetween(right.3.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.7,trigger.1,"CPLV_V")
++CreateRelationBetween(right.3.1.3,right.7,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# groupes prépositionnelles dont la préposition introduit clairement une
+# circonstantielles -> modifieur
+# @TensedVerbObj::(^$V){0-n} @PrepCirconstantielle %NounGroup:SYNTACTIC_RELATION:
+# +CreateRelationBetween(right.3.1.3,trigger.1,"MOD_V")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# simple COI
+# avant modification par Claire
+@TensedVerbObj::%AdvGroup $PREP %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.3.1.3,"CPL_V")
++!GovernorOf(right.3.1.3,"MOD_V")
++CreateRelationBetween(right.3.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@TensedVerbObj::%AdvGroup $PREP @Determinant @PronIndef:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"CPL_V")
++CreateRelationBetween(right.4,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# simple COI
+@TensedVerbObj::($DET? $PONCTU-PONCT? %AdvAdjGroup{0-2} ($NC|$NP){1-2} [(@NounGroupElt|$PONCTU-PONCT){0-n}]){0-n} %InciseGroup $PONCTU-PONCT? %AdvGroup $PONCTU-PONCT? $PREP $PONCTU-PONCT? $DET? $PONCTU-PONCT? %AdvAdjGroup{0-2} $NC:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.11,trigger.1,"CPL_V")
++!GovernorOf(right.11,"COMPDUNOM")
++!GovernorOf(right.11,"CPL_V")
++CreateRelationBetween(right.11,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# simple COI avec pronom
+@PronPostV=($PRON-CLS,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLS,
+$PRON-CLO,
+$PRON-CLO
+)
+
+@TensedVerbObj::%AdvGroup $PREP @PronPostV:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"CPL_V")
++CreateRelationBetween(right.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# problème de "du/des" : il n'a que la catégorie DET_ARTICLE_CONTRACTE ou
+# (je bois du champagne -> COD)
+# (je tombe du train -> COI)
+# on teste la transitivité du verbe
+
+@TensedVerbObj::$DET-DET %AdvAdjGroup{0-2} $NC:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"COD_V")
++!GovernorOf(right.3,"CPL_V")
++CreateRelationBetween(right.3,trigger.1,"CPL_V")
++LinguisticPropertyIs(trigger.1,"SYNTAX,INTRANS,fre")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# problème de "chez/à" : peut-être suivi d'un pronom
+# (je bois du champagne -> COD)
+# (je tombe du train -> COI)
+# on teste la transitivité du verbe
+
+
+# groupe prépositionnel non rattaché à un nom ou un verbe => rattaché
+# au premier verbe qui suit
+#en general si infinitif alors verbe est plutôt MOD_N
+#ex: Aux méthodes classiques pour accroître la productivité, ils en avaient redécouvert une quatrième.
+
+@PrepEtContracte=($PREP,$DET-DET)
+
+# cas temps composé
+@PrepEtContracte::%NounGroup (@NotTensedVerbSuj){0-n} @TensedVerbSujSansPPresent @PronInsideCompTense? %AdvGroup @TensedVerbSuj:SYNTACTIC_RELATION:
++!SecondUngovernedBy(right.3,right.6,"TEMPCOMP")
++!GovernorOf(right.1.1.3,"COMPDUNOM")
++!GovernorOf(right.1.1.3,"CPL_V")
++!GovernorOf(right.1.1.3,"SUJ_V")
++CreateRelationBetween(right.1.1.3,right.6,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps simple
+@PrepEtContracte::%NounGroup (@NotTensedVerbSuj){0-n} @TensedVerbSujSansPPresent:SYNTACTIC_RELATION:
++!GovernorOf(right.1.1.3,"COMPDUNOM")
++!GovernorOf(right.1.1.3,"CPL_V")
++!GovernorOf(right.1.1.3,"ANY")
++!GovernorOf(right.1.1.3,"SUJ_V")
++CreateRelationBetween(right.1.1.3,right.3,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# group adverbial non rattaché à un nom ou un verbe => rattaché
+# au premier verbe qui suit
+
+# cas temps composé
+$ADV:$DET? %AdvAdjGroup{0-2} ($NC|$PRON-PRO):$PONCTU-PONCT? (@NotVerbPrincipal){0-n} @TensedVerbSuj @PronInsideCompTense %AdvGroup @TensedVerbObj:SYNTACTIC_RELATION:
++!SecondUngovernedBy(right.2,right.5,"TEMPCOMP")
++!GovernorOf(left.3,"COMPDUNOM")
++!GovernorOf(left.3,"CPL_V")
++CreateRelationBetween(trigger.1,right.6,"MOD_V")
++CreateRelationBetween(left.3,trigger.1,"COMPADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps simple
+$ADV:$DET? %AdvAdjGroup{0-2} ($NC|$PRON-PRO):$PONCTU-PONCT (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
++!GovernorOf(left.3,"COMPDUNOM")
++!GovernorOf(left.3,"CPL_V")
++!GovernorOf(left.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"MOD_V")
++CreateRelationBetween(left.3,trigger.1,"COMPADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# group prépositionnel avec pronom relatif
+# (l'homme à qui je parle)
+@PronRelAfterPrep=($PRON-PROREL,
+$PRON-PROREL,
+$PRON-PROREL)
+
+# cas coordonné
+# (l'homme à qui je parle et dont je sais peu de choses)
+@TensedVerbObj:$NC $NC? %AdvAdjGroup? ($PREP? %NounGroup){0-n} ,? $PREP? @PronRelAfterPrep %NounGroup{0-n} (@PronPrev){0-2} @TensedVerbObj ($PREP? %NounGroup){0-n} $CONJ-CC $PREP? @PronRelAfterPrep %NounGroup{0-n} (@PronPrev){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.7,"CPL_V")
++!GovernorOf(left.14,"CPL_V")
++CreateRelationBetween(left.7,left.10,"CPL_V")
++CreateRelationBetween(left.10,left.1,"MOD_N")
++CreateRelationBetween(left.14,trigger.1,"CPL_V")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas simple
+# (l'homme à qui je parle)
+
+@TensedVerbObj:$NC $NC? %AdvAdjGroup? ($PREP? %NounGroup){0-n} ,? $PREP? @PronRelAfterPrep %NounGroup{0-n} (@PronPrev){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(left.7,"CPL_V")
++CreateRelationBetween(left.7,trigger.1,"CPL_V")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@TensedVerbObj:@PronRelCa %AdvAdjGroup? @PronIndef::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+######################################################################
+# relation complementeur
+# COMPL
+
+# pour pouvoir distinguer:
+# Je mange parce que j'ai faim. MOD_V
+# de
+# Je pense que j'ai faim. COD_V
+
+
+# Easy : on ajoute "parce_que"
+# @ConjSubMod_V=(parce,bien,parce que,bien que)
+@ConjSubMod_V=(parce,bien,parce que,parce_que,bien que)
+
+
+
+# avec incise d'un groupe nominal (temps compose)
+@ConjSubMod_V:@TensedVerbObj ($ADV){0-n} , $PREP? %NounGroup $PONCTU-PONCT?:que? (^$V){0-n} @TensedVerbSuj $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"COMPDUNOM")
++!GovernorOf(right.4,"MOD_V")
++!GovernorOf(right.4,"MOD_N")
++!GovernedBy(right.3,"COMPL")
++!GovernorOf(left.5.1.3,"COMPDUNOM")
++!GovernorOf(left.5.1.3,"COD_V")
++!GovernorOf(left.5.1.3,"CPL_V")
++!SecondUngovernedBy(right.3,right.4,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.3,"COMPL")
++CreateRelationBetween(right.4,left.1,"MOD_V")
++CreateRelationBetween(left.5.1.3,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# # idem temps simple
+@ConjSubMod_V:@TensedVerbObj (^$V){0-n}:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"COMPDUNOM")
++!GovernorOf(right.2,"MOD_V")
++!GovernorOf(right.2,"MOD_N")
++!GovernedBy(right.2,"COMPL")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.2,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$V-VINF::@PonctuFaible $ADV @PonctuFaible:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"COMPDUNOM")
++!GovernorOf(trigger.1,"MOD_V")
++!GovernorOf(trigger.1,"MOD_N")
++CreateRelationBetween(right.2,trigger.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# groupe introduit par une conjonction de subordination
+# non rattaché à un element precedent => rattache
+# le premier verbe qui suit au premier verbe suivant
+
+# cas SUJ_V
+# cas de coordination dans la subordonnée
+
+
+# cas temps compose
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbSuj @PronInsideCompTense? %AdvGroup @TensedVerbObj (^$CONJ-CC){O-n} $CONJ-CC @TensedVerbSuj? @PronInsideCompTense? %AdvGroup @TensedVerbObj %AdvGroup %NounGroup? %AdvAdjGroup{0-2} @TensedVerbSuj:SYNTACTIC_RELATION:
++NumberAgreement(right.7,right.2)
++NumberAgreement(right.10,right.5)
++!GovernorOf(right.5,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(right.15,"SUJ_V")
++!GovernedBy(right.15,"PronSujVerbe")
++!GovernedBy(right.15,"SUJ_V_REL")
++!GovernorOf(right.15,"COD_V")
++!GovernorOf(right.15,"CPLV_V")
++!SecondUngovernedBy(right.13.1.3,right.11,"ANY")
++CreateRelationBetween(right.5,right.15,"SUJ_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.7,right.5,"COORD1")
++CreateRelationBetween(right.11,right.7,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps simple
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbObj (^$CONJ-CC){O-n} $CONJ-CC @TensedVerbObj %AdvGroup %NounGroup? %AdvAdjGroup{0-2} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(right.9,"SUJ_V")
++!GovernedBy(right.9,"PronSujVerbe")
++!GovernedBy(right.9,"SUJ_V_REL")
++!GovernorOf(right.9,"COD_V")
++!GovernorOf(right.9,"CPLV_V")
++!SecondUngovernedBy(right.7.1.3,right.5,"ANY")
++CreateRelationBetween(right.2,right.9,"SUJ_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.4,right.2,"COORD1")
++CreateRelationBetween(right.5,right.4,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#pas de coordination dans la subordonnée
+
+# cas temps compose
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbSuj @PronInsideCompTense? %AdvGroup @TensedVerbObj %AdvGroup %NounGroup? %AdvAdjGroup{0-2} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(right.9,"SUJ_V")
++!GovernedBy(right.9,"PronSujVerbe")
++!GovernedBy(right.9,"SUJ_V_REL")
++!GovernorOf(right.9,"COD_V")
++!GovernorOf(right.9,"CPLV_V")
++!SecondUngovernedBy(right.7.1.3,right.5,"ANY")
++CreateRelationBetween(right.5,right.9,"SUJ_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps simple
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbObj %AdvGroup %NounGroup? %AdvAdjGroup{0-2} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(right.6,"SUJ_V")
++!GovernedBy(right.6,"PronSujVerbe")
++!GovernedBy(right.6,"SUJ_V_REL")
++!GovernorOf(right.6,"COD_V")
++!GovernorOf(right.6,"CPLV_V")
++!SecondUngovernedBy(right.4.1.3,right.2,"ANY")
++CreateRelationBetween(right.2,right.6,"SUJ_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# cas MOD_V
+# cas de coordination dans la subordonnée
+
+
+# cas temps compose
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbSuj @PronInsideCompTense? %AdvGroup @TensedVerbObj (^$CONJ-CC){O-n} $CONJ-CC @TensedVerbSuj? @PronInsideCompTense? %AdvGroup @TensedVerbObj (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
++NumberAgreement(right.7,right.2)
++NumberAgreement(right.10,right.5)
++!GovernorOf(right.5,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernorOf(right.13,"COD_V")
++!GovernorOf(right.13,"CPLV_V")
++CreateRelationBetween(right.5,right.13,"MOD_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.7,right.5,"COORD1")
++CreateRelationBetween(right.11,right.7,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps simple
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbObj (^$CONJ-CC){O-n} $CONJ-CC @TensedVerbObj (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernorOf(right.7,"COD_V")
++!GovernorOf(right.7,"CPLV_V")
++CreateRelationBetween(right.2,right.7,"MOD_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.4,right.2,"COORD1")
++CreateRelationBetween(right.5,right.4,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#pas de coordination dans la subordonnée
+
+# cas temps compose
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbSuj @PronInsideCompTense? %AdvGroup @TensedVerbObj (%AdvGroup $DET? (%AdvGroup ($ADJ|$V-VPP)){0-2} $NC? %AdvAdjGroup{0-2})? %InciseGroup ,? (%AdvGroup %NounGroup? %AdvAdjGroup{0-2})? %InciseGroup @TensedVerbObj:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernorOf(right.11,"ANY")
++!GovernedBy(right.11,"ANY")
++!GovernorOf(right.11,"COD_V")
++!GovernorOf(right.11,"CPLV_V")
++CreateRelationBetween(right.5,right.11,"MOD_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas temps simple
+$CONJ-CS::(@NotVerbPrincipal){0-n} @TensedVerbObj (%AdvGroup $DET? (%AdvGroup ($ADJ|$V-VPP)){0-2} $NC? %AdvAdjGroup{0-2})? %InciseGroup ,? (%AdvGroup %NounGroup? %AdvAdjGroup{0-2})? %InciseGroup @TensedVerbObj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++!GovernorOf(trigger.1,"ANY")
++!GovernorOf(right.8,"ANY")
++!GovernedBy(right.8,"ANY")
++!GovernorOf(right.8,"COD_V")
++!GovernorOf(right.8,"CPLV_V")
++CreateRelationBetween(right.2,right.8,"MOD_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Anna : Vppp (= la phrase subordonnée) devient un COD.
+# avec incise d'un groupe prepositionnel (temps compose)
+$CONJ-CS:@TensedVerbObj %AdvGroup , $PREP %NounGroup ,:(^$V){0-n} @TensedVerbSuj $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"COD_V")
++!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.3,left.1,"COD_V")
++CreateRelationBetween(left.5.1.3,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:@TensedVerbObj ($ADV){0-n} , $PREP %NounGroup ,:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"COMPDUNOM")
++!GovernorOf(right.2,"COD_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.2,left.1,"COD_V")
++CreateRelationBetween(left.5.1.3,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# subordonnee completive COD "je pense qu'il viendra" (temps compose) avec subordonnée dans la subordonnée
+# Ex: J'estime que le fait qu'il vienne est impensable...
+$CONJ-CS:@TensedVerbObj ($ADV){0-n}:($DET? (%AdvGroup $ADJ{0-2})?) ($NC|$NP) ((%AdvGroup $ADJ{0-2})? (@PronRel|$CONJ-CS) (^$V){0-n} @TensedVerbSuj $ADV? ($V-VPP|$V-VPP)?) (^$V){0-n} @TensedVerbSuj ($V-VPP|$V-VPP):SYNTACTIC_RELATION:
++!GovernorOf(right.6,"COMPDUNOM")
++!GovernorOf(right.6,"MOD_N")
++!GovernorOf(right.6,"COD_V")
++!SecondUngovernedBy(right.5,right.6,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.5,"COMPL")
++CreateRelationBetween(right.6,left.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:@TensedVerbObj ($ADV){0-n}:($DET? (%AdvGroup $ADJ{0-2})?) ($NC|$NP) ((%AdvGroup $ADJ{0-2})? (@PronRel|$CONJ-CS) (^$V){0-n} @TensedVerbSuj $ADV? ($V-VPP|$V-VPP)?) (^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"COMPDUNOM")
++!GovernorOf(right.5,"MOD_N")
++!GovernorOf(right.5,"COD_V")
++CreateRelationBetween(trigger.1,right.5,"COMPL")
++CreateRelationBetween(right.5,left.1,"COD_V")
++CreateRelationBetween(right.2,right.5,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# subordonnee completive COD "je pense qu'il viendra" (temps compose) sans subordonnée dans la subordonnée
+$CONJ-CS:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSuj $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"MOD_N")
++!GovernorOf(right.3,"COD_V")
++!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.3,left.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"COMPDUNOM")
++!GovernorOf(right.2,"MOD_N")
++!GovernorOf(right.2,"MOD_V")
++!GovernorOf(right.2,"COD_V")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.2,left.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#subordonnée coordonnée
+$CONJ-CS:@TensedVerbSuj (^$CONJ-CC){0-n} $CONJ-CC:(^$V){0-n} @TensedVerbSuj $V-VPP:SYNTACTIC_RELATION:
++!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
++SecondUngovernedBy(left.3,left.1,"COORD1")
++SecondUngovernedBy(right.2,left.3,"COORD2")
++!GovernorOf(trigger.1,"COMPL")
++GovernedBy(left.1,"COMPL")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(left.3,left.1,"COORD1")
++CreateRelationBetween(right.2,left.3,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:@TensedVerbSuj (^$CONJ-CC){0-n} $CONJ-CC:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.3,left.1,"COORD1")
++SecondUngovernedBy(right.2,left.3,"COORD2")
++!GovernorOf(trigger.1,"COMPL")
++GovernedBy(left.1,"COMPL")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(left.3,left.1,"COORD1")
++CreateRelationBetween(right.2,left.3,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# subordonnee completive sans subordonnée dans la subordonnée
+$CONJ-CS:@TensedVerbObj ($ADV){0-n} ($DET? (%AdvGroup $ADJ{0-2}) ($NC|$NP) (%AdvGroup $ADJ{0-2})){0-2} $PONCTU-PONCT? :$PONCTU-PONCT? (^$V){0-n} @TensedVerbSuj $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"COMPDUNOM")
++!GovernorOf(right.4,"MOD_N")
++!GovernorOf(right.4,"MOD_V")
++!GovernorOf(right.4,"COD_V")
++!SecondUngovernedBy(right.2,right.4,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.4,"COMPL")
++CreateRelationBetween(right.4,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:@TensedVerbObj ($ADV){0-n} ($DET? (%AdvGroup $ADJ{0-2}) ($NC|$NP) (%AdvGroup $ADJ{0-2})){0-2} $PONCTU-PONCT?:$PONCTU-PONCT? (^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"MOD_N")
++!GovernorOf(right.3,"MOD_V")
++!GovernorOf(right.3,"COD_V")
++CreateRelationBetween(trigger.1,right.3,"COMPL")
++CreateRelationBetween(right.3,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+######################################################################
+# relation modifieur verbe (propositions temporelles/causales)
+# les autres modifieurs --adverbes-- sont dans les chaines
+# MOD_V
+
+# verbe intransitif avec un groupe nominal derrière
+# Jean dort profondément la nuit
+@TensedVerbObj::%AdvGroup %NounGroup:SYNTACTIC_RELATION:
++LinguisticPropertyIs(trigger.1,"SYNTAX,INTRANS,fre")
++!GovernorOf(right.2.1.2,"COMPDUNOM")
++!GovernorOf(right.2.1.2,"MOD_V")
++!GovernorOf(right.2.1.2,"MOD_N")
++!GovernorOf(right.2.1.2,"CPL_V")
++!GovernorOf(right.2.1.2,"SujInv")
++!GovernorOf(right.2.1.2,"COD_V")
++CreateRelationBetween(right.2.1.2,trigger.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@TensedVerbObj::parce que (^$V){0-n} $V:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"MOD_N")
++!GovernorOf(right.4,"MOD_V")
++CreateRelationBetween(right.4,trigger.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# pour EASY: parce que est un seul token
+@TensedVerbObj::parce_que (^$V){0-n} $V:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"MOD_N")
++!GovernorOf(right.3,"MOD_V")
++CreateRelationBetween(right.3,trigger.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Adverbe modifieur de verbe "il exploite au mieux..."
+@AdvModifieurVerbePostv:@TensedVerbSuj::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Adverbe modifieur de verbe infinitif "...asphyxier économiquement..."
+@AdvModifieurVerbePostv:@VerbeInf::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# subordonnee conjonctive : "deviendra plus démocratique à condition que  le Parlement  européen  exploite"
+@ConjSubord:@TensedVerbSuj %AdvAdjGroup (%InciseGroup){0-2}:%NounGroup @TensedVerbSuj:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++SecondUngovernedBy(right.2,left.1,"ANY")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.2,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+######################################################################
+# relation attribut de l'objet
+# ATB_O
+
+@AttributCOD=($NC-NC,
+$ADJ-ADJ,
+$ADJ-ADJ,
+$ADJ-ADJ,
+$ADJ-ADJ,
+$ADJ-ADJ
+)
+
+@AttributCOD:$NC::SYNTACTIC_RELATION:
++GovernorOf(left.1,"COD_V")
++CreateRelationBetween(trigger.1,left.1,"ATB_O")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation modifieur nom : complément qui
+# est une chaine verbale ("envie de changer")
+# les autre modifieurs de noms --adjectifs,compléments de nom-- sont
+# dans les chaines
+# les relatives sont traitées avec les sujets
+# MOD_N
+
+$NC::%AdvAdjGroup{0-2} $PREP $V-VINF:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"CPLV_V")
++CreateRelationBetween(right.3,trigger.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation modifieur nom "à Gbamba où l'on estime" MOD_N(estime,Gbamba)
+# MOD_N
+
+#@TensedVerbSuj:%NounGroup @PonctuFaible? @PronRelCa (@PronPersSuj|@PronIndef)::SYNTACTIC_RELATION:
+$V-V:$NP-NPP $PONCTU-PONCT $PRON-PROREL $PRON-PRO::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation modifieur adjectif (fière qu'il ait réussi)
+# MOD_A -> traité avec les COMPL
+
+######################################################################
+# relation de coordination
+# COORD1 et COORD2 -> les deux éléments de la coordination,
+# chacun en relation avec le coordinant
+
+# Ajout "mais" et "ni" pour easy
+# @Coord=(et,ou)
+@Coord=(et,ou,mais,ni)
+@CoordLarge=(et,ou,ni,\,,;)
+
+@PronNotRel=(
+$PRON-CLS,
+$PRON-CLS,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLS,
+$PRON-CLS,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLS,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLR,
+$PRON-PROWH,
+$PRON-PROWH,
+$PRON-PROWH,
+$PRON-PROWH,
+$PRON-PROWH,
+$PRON-PROWH,
+$PRON-PRO,
+$PRON-PRO,
+$PRON-PRO,
+$PRON-PRO)
+
+# coordination de noms
+
+# EASY : cas de coordination de plus de deux groupes nominaux, avec virgule
+# GC20091015: try to avoid repeated COORD1
+@CoordLarge:@Substantif %EndOfNounGroupAfterNoun:@Substantif %EndOfNounGroupAfterNoun (@CoordLarge %NounGroup){0-n} ,? @Coord %NounGroup:SYNTACTIC_RELATION:
++!GovernedBy(trigger.1,"COORD2")
++!GovernedBy(left.1,"COORD1")
++!GovernorOf(left.1,"ANY")
++!GovernorOf(trigger.1,"COORD1")
++!GovernorOf(right.1,"COORD2")
++SecondUngovernedBy(left.1,right.1,"APPOS")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.1,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# sans prep pour le coord 2
+@NeitherVerbNorAdv=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$PONCTU)
+
+@Coord:($NC|@PronNotRel|$NP) $PONCTU-PONCT? %AdvAdjGroup{0-2} $PONCTU-PONCT? $PONCTU-PONCT?:$DET? $PONCTU-PONCT? %AdvAdjGroup{0-2} $PONCTU-PONCT? ($NC|@PronNotRel|$NP) $PONCTU-PONCT? @NeitherVerbNorAdv:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"ANY")
++!GovernorOf(right.5,"SUJ_V")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.5,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas géré par relation APPOS
+#$PONCTU-PONCT:(@NeitherNounNorConj){0-n} ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2}:(@NeitherNounNorConj){0-n} ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2} ($PONCTU-PONCT|@Coord) $DET? ($ADV|$ADJ){0-2} ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2}:SYNTACTIC_RELATION:
+#+CreateRelationBetween(trigger.1,left.2,"COORD1")
+#+CreateRelationBetween(right.2,trigger.1,"COORD2")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+# avec prep pour le coord 2
+@Coord:$PREP $DET? ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2} $PONCTU-PONCT?:$PREP $DET? ($ADV|$ADJ){0-2} ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2}:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"ANY")
++CreateRelationBetween(trigger.1,left.3,"COORD1")
++CreateRelationBetween(right.4,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas géré par relation APPOS
+#@Coord:$PREP $DET? ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2} $PONCTU-PONCT $PREP $DET? ($ADV|$ADJ){0-2} ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2} $PONCTU-PONCT?::SYNTACTIC_RELATION:
+#+!GovernorOf(left.9,"ANY")
+#+CreateRelationBetween(left.5,left.3,"COORD1")
+#+CreateRelationBetween(left.9,left.5,"COORD2")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+# sans article
+# exemple : Unité et diversité ne sont pas contradictoires.
+# EASY : déjà matché plus bas
+# @Coord:($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2} $PONCTU-PONCT?:($ADV|$ADJ){0-2} ($NC|@PronNotRel|$NP) ($ADV|$ADJ){0-2}:SYNTACTIC_RELATION:
+# +!GovernorOf(right.2,"ANY")
+# +CreateRelationBetween(trigger.1,left.1,"COORD1")
+# +CreateRelationBetween(right.2,trigger.1,"COORD2")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# sujet et plusieurs noms propres ou communs coordonnés => verbe 3eme pers du pluriel
+
+# GC20100803 Suppression pour essai de coord geree par simplification
+#@Coord:(@NeitherNounNorConj){0-n} ($NP|$NC) (@NeitherNounNorConj){0-n} ((@SeparateurAppos|$CONJ-CC)? (@NeitherNounNorConj){0-n} ($NP|$NC) (@NeitherNounNorConj){0-n}){0-n} $PONCTU-PONCT?:(@NeitherNounNorConj){0-n} ($NP|$NC) (@NeitherNounNorConj){0-n} %InciseGroup @TensedVerbSuj:SYNTACTIC_RELATION:
+#+LinguisticPropertyIs(left.4,"PERSON,3,fre")
+#+LinguisticPropertyIs(left.4,"NUMBER,PLUR,fre")
+#+!GovernorOf(left.2,"COMPDUNOM")
+#+!GovernorOf(left.2,"COD_V")
+#+!GovernorOf(left.2,"CPL_V")
+#+!GovernorOf(left.2,"SUJ_V")
+#+!GovernorOf(left.2,"PronSujVerbe")
+#+!GovernorOf(left.2,"COORD2")
+#+!GovernorOf(left.2,"COMPADJ")
+#+!GovernorOf(left.2,"COMPADV")
+#+CreateRelationBetween(left.2,right.5,"SUJ_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+# coordination d'adjectifs
+@Coord:$ADJ $PONCTU-PONCT?:%AdvGroup $ADJ:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"COORD1")
++!GovernorOf(right.2,"COORD2")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.2,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# coordination d'adverbes
+@Coord:$ADV:$ADV? $ADV $PONCTU-PONCT?:SYNTACTIC_RELATION:
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.2,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# coordination de verbes => plus difficile
+
+#verbe direct apres le et
+$CONJ-CC:@TensedVerbObj (@NotVerbPrincipal){0-n}:@PronRefl? @PronPersCodPrev? @PronPersCoiPrev? @TensedVerbObj:SYNTACTIC_RELATION:
++NumberAgreement(left.1,right.4)
++SecondUngovernedBy(trigger.1,left.1,"COORD1")
++SecondUngovernedBy(right.4,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.4,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$PONCTU-PONCT:@TensedVerbObj (@NotVerbPrincipal){0-n}:@PronRefl? @PronPersCodPrev? @PronPersCoiPrev? @TensedVerbObj (@NotVerbPrincipal){0-n} @Coord:SYNTACTIC_RELATION:
++NumberAgreement(left.1,right.4)
++SecondUngovernedBy(trigger.1,left.1,"COORD1")
++SecondUngovernedBy(right.4,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.4,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#verbes avec preposition
+@Coord:$PREP @TensedVerbObj (@NotVerbPrincipal){0-n}:$PREP @TensedVerbObj:SYNTACTIC_RELATION:
++NumberAgreement(left.2,right.2)
++SecondUngovernedBy(trigger.1,left.2,"COORD1")
++SecondUngovernedBy(right.2,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.2,"COORD1")
++CreateRelationBetween(right.2,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$PONCTU-PONCT:$PREP @TensedVerbObj (@NotVerbPrincipal){0-n}:$PREP @TensedVerbObj (@NotVerbPrincipal){0-n} @Coord:SYNTACTIC_RELATION:
++NumberAgreement(left.2,right.2)
++SecondUngovernedBy(trigger.1,left.2,"COORD1")
++SecondUngovernedBy(right.2,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.2,"COORD1")
++CreateRelationBetween(right.2,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#verbes avec subordonnée
+@Coord:$CONJ-CS (@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n}:$CONJ-CS? (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
++NumberAgreement(left.3,right.3)
++SecondUngovernedBy(trigger.1,left.3,"COORD1")
++SecondUngovernedBy(right.3,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.3,"COORD1")
++CreateRelationBetween(right.3,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$PONCTU-PONCT:$CONJ-CS (@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n}:$CONJ-CS? (@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n} @Coord:SYNTACTIC_RELATION:
++NumberAgreement(left.3,right.3)
++SecondUngovernedBy(trigger.1,left.3,"COORD1")
++SecondUngovernedBy(right.3,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.3,"COORD1")
++CreateRelationBetween(right.3,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#verbes avec subordonnée relative
+
+@Coord:@PronRel (@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n}:@PronRel? (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.3,"COORD1")
++SecondUngovernedBy(right.3,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.3,"COORD1")
++CreateRelationBetween(right.3,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$PONCTU-PONCT:@PronRel (@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n}:@PronRel? (@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n} @Coord:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.3,"COORD1")
++SecondUngovernedBy(right.3,trigger.1,"COORD2")
++CreateRelationBetween(trigger.1,left.3,"COORD1")
++CreateRelationBetween(right.3,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+######################################################################
+# relation d'apposition
+# APP
+
+# @SeparateurAppos:$DET{0-2} $PONCTU-PONCT? (@SujVOther){0-n} $PONCTU-PONCT? ($NC|@PronNotRel|$NP) $PONCTU-PONCT? %AdvAdjGroup{0-2} ($PREP? $DET{0-2} $PONCTU-PONCT? %AdvAdjGroup{0-2} ($NC|$NP|@PronNotRel)? $PONCTU-PONCT? %AdvAdjGroup{0-2})? $PONCTU-PONCT?:$PREP? $DET{0-2} $PONCTU-PONCT? %AdvAdjGroup{0-2} $PONCTU-PONCT? ($NC|@PronNotRel|$NP) $PONCTU-PONCT? %AdvAdjGroup{0-2} $PONCTU-PONCT? (($PREP)? ($DET){0-2} $PONCTU-PONCT? %AdvAdjGroup{0-2} $PONCTU-PONCT? ($NC|$NP|@PronNotRel) $PONCTU-PONCT? %AdvAdjGroup{0-2}){0-n} $PONCTU-PONCT? (@SeparateurAppos|@Coord):SYNTACTIC_RELATION:
+# +!GovernorOf(left.5,"SUBSUBJUX")
+# +!GovernorOf(left.5,"COMPDUNOM")
+# +!GovernorOf(right.6,"APPOS")
+# +!GovernedBy(left.5,"COORD1")
+# +CreateRelationBetween(right.6,left.5,"APPOS")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# @SeparateurAppos:$DET @AdjPren @Substantif{0-2} @AdjPost? (@PrepCompDuNom $DET @AdjPren? @Substantif{0-2} @AdjPost?)?:(@Substantif|@PronNotRel|@Adjectif) @Adverbe{0-2} @Ponctu:SYNTACTIC_RELATION:
+# +!GovernorOf(left.3,"SUBSUBJUX")
+# +!GovernorOf(left.3,"COMPDUNOM")
+# +CreateRelationBetween(right.1,left.3,"APPOS")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# apposition : améliore relation SUJ_V; aucun résultat pour l'apposition!
+@NomCommun:@Determinant?:$NC-NC? @NomPropre{1-3} @PronPersCodPrev? @PronPersCoiPrev? @VerbePrincipal:SYNTACTIC_RELATION:
++NumberAgreement(right.1,trigger.1)
++GenderAgreement(right.1,trigger.1)
++!GovernorOf(trigger.1,"SUBSUBJUX")
++!GovernorOf(trigger.1,"COMPDUNOM")
++!GovernorOf(right.2,"APPOS")
++!GovernedBy(trigger.1,"COORD1")
++CreateRelationBetween(right.1,trigger.1,"APPOS")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# APPOS
+@PonctuFaible:@Substantif:$NC-NC? (@NomPropre){1-3}:SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(right.2,"APPOS")
++CreateRelationBetween(right.2,left.1,"APPOS")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# @PronPersSuj:@Substantif:@Adverbe? $V:SYNTACTIC_RELATION:
+# +!GovernorOf(left.1,"SUBSUBJUX")
+# +!GovernorOf(left.1,"COMPDUNOM")
+# +!GovernorOf(left.1,"APPOS")
+# +!GovernorOf(trigger.1,"SUJ_V")
+# +NumberAgreement(left.1,trigger.1)
+# +GenderAgreement(left.1,trigger.1)
+# +CreateRelationBetween(left.1,trigger.1,"APPOS")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+######################################################################
+# relation de juxtaposition
+# JUXT
+@PonctuFaible:@Substantif:(@Substantif){0-2} @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++!GovernorOf(left.1,"COMPDUNOM")
++!GovernorOf(right.2,"ANY")
++!GovernedBy(left.1,"APPOS")
++!GovernedBy(left.1,"MOD_N")
++CreateRelationBetween(right.2,left.1,"JUXT")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+######################################################################
+# participiale en début de phrase, sujet déjà trouvé grâce à la
+# simplification
+# CPL_V
+,:@ParticipePasse:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++GovernorOf(left.1,"SUBADJPOST")
++CreateRelationBetween(right.2,left.1,"JUXT")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+,:@ParticipePresent (^,){0-5}:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
++CreateRelationBetween(right.2,left.1,"JUXT")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+######################################################################
+# sujet inversé
+# force le sujet inverse à être suivi d'au moins un noeud pour eviter que la règle
+# ne s'applique à une participiale durant la simplification
+@TensedVerbSuj::$DET? %AdvAdjGroup? ($PRON|$NC|$NP) *:SYNTACTIC_RELATION:
++NumberAgreement(right.3,trigger.1)
++!GovernorOf(right.3,"ANY")
++!GovernedBy(trigger.1,"ANY")
++CreateRelationBetween(right.3,trigger.1,"SujInv")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# coordination 23/06
+$CONJ-CC:$V (^$V){0-n}:(%NounGroup|$PRON-CLS)? $V:SYNTACTIC_RELATION:
++!GovernorOf(left.1,"COORD1")
++!GovernorOf(right.2,"COORD2")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
++CreateRelationBetween(right.2,trigger.1,"COORD2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#######################################################################
+# Compléments circonstantiels de temps (MOD_V) 
+
+@ModTemps=(moment,nuit,matin,matinée,midi,après-midi,soir,soirée,nuit,jour,journée,weekend,semaine,mois,an,année)
+
+@ModTemps:@TensedVerbSuj $PONCTU-PONCT? $PREP? $DET? $ADJ?::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"SUJ_V")
++CreateRelationBetween(trigger.1,left.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+@ModTemps::$PONCTU-PONCT? (^$V){0-5} $V:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"SUJ_V")
++CreateRelationBetween(right.3,trigger.1,"MOD_V")
++GovernedBy(right.3,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+@ModTemps:$DET $ADJ?:$ADJ? $PONCTU-PONCT? (@Substantif|@PronPersSuj){1-3} @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"SUJ_V")
++GovernedBy(right.4,"SUJ_V")
++CreateRelationBetween(right.4,trigger.1,"MOD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+########################################################################
+# transitivité/intransitivité 
+
+@TensedVerbObj::$DET-DET %AdvAdjGroup{0-2} $NC:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"CPL_V")
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"SujInv")
++!GovernorOf(right.3,"SUBSUBJUX")
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.3,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@TensedVerbObj::$DET-DET %AdvAdjGroup{0-2} $NC:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"CPL_V")
++!GovernorOf(right.3,"COMPDUNOM")
++!GovernorOf(right.3,"SujInv")
++!GovernorOf(right.3,"SUBSUBJUX")
++LinguisticPropertyIs(trigger.1,"SYNTAX,INTRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# avec CPL_V en plus
+@TensedVerbObj::(@PronPersSujInverse)? $DET-DET %AdvAdjGroup{0-2} $NC @PrepCirconstantielle %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"COMPDUNOM")
++!GovernorOf(right.4,"SujInv")
++!GovernorOf(right.4,"SUBSUBJUX")
++!GovernorOf(right.4,"COD_V")
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.4,trigger.1,"COD_V")
++CreateRelationBetween(right.6.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# avec CPL_V en plus
+@TensedVerbObj::(@PronPersSujInverse)? $DET-DET %AdvAdjGroup{0-2} $NC @PrepCirconstantielle %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"COMPDUNOM")
++!GovernorOf(right.4,"SujInv")
++!GovernorOf(right.4,"SUBSUBJUX")
++!GovernorOf(right.4,"CPL_V")
++LinguisticPropertyIs(trigger.1,"SYNTAX,INTRANS|PRONOMINAL,fre")
++CreateRelationBetween(right.4,trigger.1,"CPL_V")
++CreateRelationBetween(right.6.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre substantif et réfléchi: APPOS
+#----------------------------------------------------------------------
+$PRON-CLR:@SubsNonNum ($ADV{0-2} $ADJ){0-2}::SYNTACTIC_RELATION:
++!GovernedBy(left.1,"SUBSUBJUX")
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"APPOS")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# CPL_V ambigu avec COMPDUNOM
+#----------------------------------------------------------------------
+@TensedVerbObj::%NounGroup @PrepCompDuNom %NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(right.3.1.3,"CPL_V")
++!SecondUngovernedBy(right.3.1.3,right.1.1.3,"COMPDUNOM")
++StoreForDisambiguation(right.3.1.3,right.1.1.3,"COMPDUNOM")
++DisambiguateWith(right.3.1.3,trigger.1,"CPL_V")
++CreateRelationBetween(right.3.1.3,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()

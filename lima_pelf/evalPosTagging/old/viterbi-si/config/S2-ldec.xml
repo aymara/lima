@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="ldec-coreclient">
+	<group name="Paths">
+		<param key="dedalDir" value="IdL/dedal" />
+	</group>
+	<group name="languageIdentification">
+		<param key="encodingCorrection" value="false"/>
+		<param key="ngramseuil" value="0"/>
+		<param key="scoreponder" value="1.05"/>
+		<param key="premsc" value="1"/>
+		<param key="maxCharsToUse" value="30000"/>
+	</group>
+	<group name="Languages">
+		<list name="entryLangs">
+		<item value="arabic-windows1256 ara windows1256" />
+		<item value="arabic-iso8859_6 ara iso8859-6" />
+		<item value="arabic-utf8 ara utf-8" />
+		<item value="chinese-big5 chi big5" />
+		<item value="chinese-gb2312 chi gb2312" />
+		<item value="chinese-utf8 chi utf-8" />
+		<item value="chinese2-utf8 chi utf-8" />
+		<item value="chinese3-utf8 chi utf-8" />
+		<item value="chinese4-utf8 chi utf-8" />
+		<item value="engMajU8 eng utf-8"/>
+		<item value="engIso eng iso8859-1" />
+		<item value="english-utf8 eng utf-8" />
+		<item value="french fre iso8859-1" />
+		<item value="french-u8 fre utf-8" />
+		<item value="freMajAccIso fre iso8859-1"/>
+		<item value="freMajAccU8 fre utf-8"/>
+		<item value="freMajDeAccU8 fre utf-8"/>
+		<item value="german ger iso8859-1" />
+		<item value="german-utf8 ger utf-8" />
+		<item value="spanish spa iso8859-1" />
+		<item value="spanish-utf8 spa utf-8" />
+		<item value="afrikaans afr" />
+		<item value="albanian alb" />
+		<item value="amharic-utf amh utf-8" />
+		<item value="armenian arm" />
+		<item value="basque baq" />
+		<item value="belarus-windows1251 bel windows1251" />
+		<item value="bosnian bos" />
+		<item value="breton bre" />
+		<item value="bulgarian-iso8859_5 bul iso8859-5" />
+		<item value="catalan cat" />
+		<item value="croatian-ascii scr ascii" />
+		<item value="czech-iso8859_2 cze iso8859-2" />
+		<item value="danish dan" />
+		<item value="dutch dut" />
+		<item value="esperanto epo" />
+		<item value="estonian est" />
+		<item value="finnish fin" />
+		<item value="frisian fry" />
+		<item value="georgian geo" />
+		<item value="greek-iso8859-7 gre iso8859-7" />
+		<item value="hawaian haw" />
+		<item value="hebrew-iso8859_8 heb iso8859-8" />
+		<item value="hindi hin" />
+		<item value="hungarian hun" />
+		<item value="icelandic ice" />
+		<item value="indonesian ind" />
+		<item value="irish gle" />
+		<item value="italian ita" />
+		<item value="japanese-euc_jp jpn euc-jp" />
+		<item value="japanese-shift_jis jpn shift-jis" />
+		<item value="korean kor" />
+		<item value="latin lat" />
+		<item value="latvian lav" />
+		<item value="lithuanian lit" />
+		<item value="malay may" />
+		<item value="manx glv" />
+		<item value="marathi mar" />
+		<item value="nepali nep" />
+		<item value="norwegian nor" />
+		<item value="persian per" />
+		<item value="polish pol" />
+		<item value="portuguese por" />
+		<item value="quechua que" />
+		<item value="romanian rum" />
+		<item value="russian-iso8859_5 rus iso8859-5" />
+		<item value="russian-koi8_r rus koi8" />
+		<item value="russian-windows1251 rus windows1251" />
+		<item value="sanskrit san" />
+		<item value="scots sco" />
+		<item value="scots_gaelic gla" />
+		<item value="serbian-ascii scc ascii" />
+		<item value="slovak-ascii slo ascii" />
+		<item value="slovak-windows1250 slo windows1250" />
+		<item value="slovenian-ascii slv ascii" />
+		<item value="slovenian-iso8859_2 slv iso8859-2" />
+		<item value="swahili swa" />
+		<item value="swedish swe" />
+		<item value="tagalog tgl" />
+		<item value="tamil tam" />
+		<item value="thai tha" />
+		<item value="turkish tur" />
+		<item value="ukrainian-koi8_r ukr koi8" />
+		<item value="vietnamese vie" />
+		<item value="welsh wel" />
+		<item value="yiddish-utf yid utf-8" />
+		</list>
+	</group>
+  </module>
+</modulesConfig> 

@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.default.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le marsupilami est un animal mythique. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>un mot inconnu marsupilami de type mot minuscule</expl>
+  <test id="fre.default.1.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer, vérifier que marsupilami est qualifié en t_small"
+    left="XPATH#//data_structure/vertex/token[position=4]/t_status/t_default"
+    operator="="
+    right="t_small"/>
+  <test id="fre.default.1.2" trace=".default.xml"
+    comment="le token marsupilami (4-11) doit avoir nc dans la liste des catégories"
+    left="XPATH#//data_structure/vertex[token/position=4]/data/unknown_word//p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC"/>
+</testcase>
+<testcase id="fre.default.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Mopti est une très belle ville. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre inconnu en tête de phrase</expl>
+  <test id="fre.default.2.1" trace=".default.xml"
+    comment="Mopti a NP parmis ses categories par defaut"
+    left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word//p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NP"/>
+  <test id="fre.default.2.2" trace=".default.xml"
+    comment="Mopti est normalisée en 'mopti'"
+    left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@norm"
+    operator="="
+    right="mopti"/>    
+</testcase>
+<testcase id="fre.default.3" type="informatif">
+  <call-parameters>
+      <param key="text" value="Nous irons cette année visiter mopti. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre inconnu sans majuscule, a une categorie NC</expl>
+  <test id="fre.default.3.1" trace=".default.xml"
+    comment="mopti a nc parmis ses categories par defaut"
+    left="XPATH#//data_structure/vertex[token/position=32]/data/unknown_word//p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC"/>
+</testcase>
+<testcase id="fre.default.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Nous avons payé 24,99 euros."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> 24,99 reçoit la categorie num card</expl>
+  <test id="fre.default.4.1" trace=".default.xml"
+    comment="24,99 a la categorie num card"
+    left="XPATH#//data_structure/vertex[token[position=17][length=5]]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_DET_NUMERAL_CARD"/>
+</testcase>
+<testcase id="fre.default.5" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le projet EURITRACK."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> EURITRACK est un mot inconnu, doit être normalisé 'euritrack'</expl>
+  <test id="fre.default.5.1" trace=".default.xml"
+    comment="normalisation de EURITRACK"
+    left="XPATH#//data_structure/vertex[token/position=11]/data/unknown_word/form/@norm"
+    operator="="
+    right="euritrack"/>
+</testcase>
+<testcase id="fre.default.6" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le projet E.U.R.I.T.R.A.C.K."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> EURITRACK est un mot inconnu, doit être normalisé 'euritrack'</expl>
+  <test id="fre.default.6.1" trace=".default.xml"
+    comment="normalisation de EURITRACK"
+    left="XPATH#//data_structure/vertex[token/position=11]/data/unknown_word/form/@norm"
+    operator="="
+    right="euritrack"/>
+</testcase>
+<testcase id="fre.default.7" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Nous avons payé 24.99 euros."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> 24.99 reçoit la categorie num card</expl>
+  <test id="fre.default.7.1" trace=".default.xml"
+    comment="24.99 a la categorie num card"
+    left="XPATH#//data_structure/vertex[token[position=17][length=5]]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_DET_NUMERAL_CARD"/>
+</testcase>
+<testcase id="fre.default.8" type="bloquant">
+  <call-parameters>
+      <param key="text" value="J'en ai mangé les 2/3."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> proprietes par defaut de 2/3</expl>
+  <test id="fre.default.8.1" trace=".default.xml"
+    comment="2/3 a la categorie nc num card"
+    left="XPATH#//data_structure/vertex[token[position=19][length=3]]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_NC_NUM_CARD"/>
+</testcase>
+<testcase id="fre.default.9" type="informatif">
+  <call-parameters>
+      <param key="text" value="Durée de l'exécution : 2h34m45"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>contexte similaire au test avec date</expl>
+  <test id="fre.default.9.1" trace=".default.xml"
+    comment="token 2h34m45 (alphanumeric) doit avoir 'np' dans catégories par défaut"
+    left="XPATH#//data_structure/vertex[token[position=24][length=7]]//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NP"/>
+</testcase>
+<testcase id="fre.default.10" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le XVème arrondissement est un quartier sympathique. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nombre romain ordinal</expl>
+  <test id="fre.default.10.1" trace=".default.xml"
+    comment="le token XVème doit avoir 'adj num ord epithete prenn' dans catégories par défaut"
+    left="XPATH#//data_structure/vertex[token/position=4]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_ADJ_NUM_ORD_EPITHETE_PRENN"/>
+</testcase>
+<testcase id="fre.default.11" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le chapitre III est très intéressant. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nombre romain cardinal</expl>
+  <test id="fre.default.11.1" trace=".default.xml"
+    comment="le token III doit avoir 'adj num ord epithete postn' dans catégories par défaut"
+    left="XPATH#//data_structure/vertex[token/position=13]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_ADJ_NUM_CARD_EPITHETE_POSTN"/>
+</testcase>
+</testcases>

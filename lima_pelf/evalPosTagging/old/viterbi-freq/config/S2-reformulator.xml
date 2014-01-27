@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="reformulator-coreclient">
+    <group name="monolingualDictionaries">
+        <!-- Mettre dans la liste "available" les cl�des dictionnaires �charger.
+              Pour d�activer un dictionnaire, il suffit de supprimer sa cl�de la liste.
+        -->
+        <list name="available">
+            <!--item value="eng"/-->
+            <!--item value="fre"/-->
+            <!--item value="spa"/-->
+        </list>
+        <!-- Liste des dictionnaires monolinguaes existants -->
+        <list name="fre">
+            <item value="/Reformulation/MonoFrench/DicoFreSyns-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+    </group>
+    <group name="bilingualDictionaries">
+        <!-- Mettre dans la liste "available" les cl�des dictionnaires �charger.
+            Pour d�activer un dictionnaire, il suffit de supprimer sa cl�de la liste.
+            -->
+        <list name="available">
+            <!--item value="chi-eng"/-->
+            <!--item value="eng-ara"/-->
+            <!--item value="fre-ara"/-->
+            <item value="fre-eng"/>
+            <!--item value="fre-ger"/-->
+            <!--item value="fre-spa"/-->
+            <!--item value="ger-eng"/-->
+            <!--item value="spa-eng"/-->
+        </list>
+        <!-- Listes des dictionnaires bilingues existants. Pour chaque
+              liste, le premier element est le dictionnaire global, le second
+              est le dictionnaire corporate et le troisieme est le
+              dictionnaire utilisateur. Chaque element peut etre vide si le
+              dictionnaire correspondant n'est pas utilise. -->
+        <list name="chi-eng">
+            <item value="/Reformulation/DicoChiEng-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+        <list name="eng-ara">
+            <item value="/Reformulation/DicoEngAra-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+        <list name="fre-ara">
+            <item value="/Reformulation/DicoFreAra-global.dic"/>
+            <item value=""/>
+            <!--item value="/Reformulation/DicoFreAra-user.dic"/-->
+        </list>
+        <list name="fre-eng">
+            <item value="/Reformulation/DicoFreEng-global.dic"/>
+            <item value=""/>
+            <item value="/Reformulation/DicoFreEng-user.dic"/>
+        </list>
+        <list name="fre-ger">
+            <item value="/Reformulation/DicoFreGer-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+        <list name="fre-spa">
+            <item value="/Reformulation/DicoFreSpa-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+        <list name="ger-eng">
+            <item value="/Reformulation/DicoGerEng-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+        <list name="spa-eng">
+            <item value="/Reformulation/DicoSpaEng-global.dic"/>
+            <item value=""/>
+            <item value=""/>
+        </list>
+    </group>
+    <group name="macroCategoriesMapping">
+      <map name="chi-eng">
+        <entry key="L_NC" value="L_NC"/>
+        <entry key="L_NP" value="L_NP"/>
+      </map>
+      <map name="fre-eng">
+        <entry key="L_NC" value="L_NC"/>
+        <entry key="L_NP" value="L_NP"/>
+        <entry key="L_V" value="L_V"/>
+        <entry key="L_ADJ" value="L_ADJ"/>
+      </map>
+    </group>
+  </module>
+</modulesConfig>

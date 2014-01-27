@@ -1,0 +1,1596 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.disamb.1" type="obsolete">
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>deux substantifs contigus = configuration interdite dans la matrice.</expl>
+  <test id="fre.disamb.1.1" trace=".default.xml"
+    comment="Après analyse morphologique, vérifier que le mot type a la propriété NC "
+    left="XPATH#//data_structure/vertex[token/position=16]//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC" />
+  <test id="fre.disamb.1.2" trace=".default.xml"
+    comment="Après analyse morphologique, vérifier que le mot passereaux a la propriété NC "
+    left="XPATH#//data_structure/vertex[token/position=21]//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC" />
+  <test id="fre.disamb.1.3" trace=".disambiguated.xml"
+    comment="Après le PosTagger, vérifier qu'il n'y a aucune succession nc nc"
+    left="XPATH#//vertices/vertex[macro='L_NC']/pred/@id"
+    operator="distinct"
+    right="XPATH#//vertices/vertex[macro='L_NC']/@id" />
+</testcase>
+<testcase id="fre.disamb.2" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Nous ferons nos paris demain. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom commun ambigu avec nom propre connu</expl>
+  <test id="fre.disamb.2.1" trace=".default.xml"
+    comment="paris a une possibilité nom commun"
+    left="XPATH#//data_structure/vertex[token/position=17]//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC"/>
+  <test id="fre.disamb.2.2" trace=".disambiguated.xml"
+    comment="paris est étiqueté nom commun"
+    left="XPATH#//vertices/vertex[@position=17]/macro"
+    operator="="
+    right="L_NC"/>
+</testcase>
+<testcase id="fre.disamb.3" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Nous irons à Paris demain."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre connu commun avec nom commun</expl>
+  <test id="fre.disamb.3.1" trace=".default.xml"
+    comment="paris a une possibilité nom propre"
+    left="XPATH#//data_structure/vertex[token/position=14]//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NP"/>
+  <test id="fre.disamb.3.2" trace=".disambiguated.xml"
+    comment="paris est étiqueté nom propre"
+    left="XPATH#//vertices/vertex[@position=14]/macro"
+    operator="="
+    right="L_NP"/>
+</testcase>
+<testcase id="fre.disamb.4" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Paris est la ville lumière. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre connu en tête de phrase</expl>
+  <test id="fre.disamb.4.1" trace=".default.xml"
+    comment="paris a une possibilité nom propre"
+    left="XPATH#//data_structure/vertex[token/position=1]//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NP"/>
+  <test id="fre.disamb.4.2" trace=".disambiguated.xml"
+    comment="paris est étiqueté nom propre"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="L_NP"/>
+</testcase>
+<testcase id="fre.disamb.5" type="informatif">
+  <call-parameters>
+      <param key="text" value="Les hommes de l'ombre sont très discrets. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>de en tant que préposition</expl>
+  <test id="fre.disamb.5.1" trace=".simpleword.xml"
+    comment="de a la categorie prep general dans le dictionaire"
+    left="XPATH#//data_structure/vertex[token/position=12]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_PREP_GENERAL"/>
+  <test id="fre.disamb.5.2" trace=".disambiguated.xml"
+    comment="de ne possede que la micro categorie prep general  après desambiguisation"
+    left="XPATH#//vertices/vertex[@position=12]/micro"
+    operator="="
+    right="L_PREP_GENERAL"/>
+</testcase>
+<testcase id="fre.disamb.6" type="informatif">
+  <call-parameters>
+      <param key="text" value="L'état de droit est garanti en France. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>de en tant que préposition article</expl>
+  <test id="fre.disamb.6.1" trace=".simpleword.xml"
+    comment="de a la categorie det article contracte dans le dictionaire"
+    left="XPATH#//data_structure/vertex[token/position=8]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_PREP_SUIVIE_DE_SUBS"/>
+  <test id="fre.disamb.6.2" trace=".disambiguated.xml"
+    comment="de ne possède que la micro det article contracte  après desambiguisation"
+    left="XPATH#//vertices/vertex[@position=8]/micro"
+    operator="contains"
+    right="L_PREP_SUIVIE_DE_SUBS"/>
+</testcase>
+<testcase id="fre.disamb.7" type="informatif">
+  <call-parameters>
+      <param key="text" value="Les fraises des bois sont plus agréables. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>des comme préposition article</expl>
+  <test id="fre.disamb.7.1" trace=".simpleword.xml"
+    comment="de a la categorie det article contracte dans le dictionaire"
+    left="XPATH#//data_structure/vertex[token/position=13]//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_DET_ARTICLE_CONTRACTE"/>
+  <test id="fre.disamb.7.2" trace=".disambiguated.xml"
+    comment="de ne possède que la micro det article contracte après desambiguisation"
+    left="XPATH#//vertices/vertex[@position=13]/micro"
+    operator="contains"
+    right="L_DET_ARTICLE_CONTRACTE"/>
+</testcase>
+<testcase id="disamb.8" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Candidat</expl>
+  <test id="disamb.8.1" trace=".disambiguated.xml"
+    comment="Candidat : lemme candidat"
+    left="XPATH#//vertices/vertex[@position=1]/lemma"
+    operator="="
+    right="candidat" />
+  <test id="disamb.8.2" trace=".disambiguated.xml"
+    comment="Candidat : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.9" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>l'</expl>
+  <test id="disamb.9.1" trace=".disambiguated.xml"
+    comment="' : n'existe pas"
+    left="XPATH#//vertices/vertex[@position=14]/lemme"
+    operator="!="
+    right="'" />
+  <test id="disamb.9.2" trace=".disambiguated.xml"
+    comment="l' : lemme le"
+    left="XPATH#//vertices/vertex[@position=13]/lemma"
+    operator="="
+    right="le" />
+  <test id="disamb.9.3" trace=".disambiguated.xml"
+    comment="l' : macro-vg : det"
+    left="XPATH#//vertices/vertex[@position=13]/macro"
+    operator="="
+    right="L_DET" />
+</testcase>
+<testcase id="disamb.10.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ukrainienne</expl>
+  <test id="disamb.10.1" trace=".disambiguated.xml"
+    comment="ukrainienne : lemme ukrainien"
+    left="XPATH#//vertices/vertex[@position=26]/lemma"
+    operator="="
+    right="ukrainien" />
+</testcase>
+<testcase id="disamb.10.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ukrainienne</expl>
+  <test id="disamb.10.2" trace=".disambiguated.xml"
+    comment="ukrainien : micro-vg : adj qualificatif epithete postn"
+    left="XPATH#//vertices/vertex[@position=26]/micro"
+    operator="contains"
+    right="L_ADJ_QUALIFICATIF_EPITHETE_POSTN" />
+</testcase>
+<testcase id="disamb.11.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>second</expl>
+  <test id="disamb.11.1" trace=".disambiguated.xml"
+    comment="second : lemme second"
+    left="XPATH#//vertices/vertex[@position=41]/lemma"
+    operator="="
+    right="second tour de leélection présidentiel" />
+  <test id="disamb.11.2" trace=".disambiguated.xml"
+    comment="entité nommée de type EVENT: ncg"
+    left="XPATH#//vertices/vertex[@position=41]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.11.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>second</expl>
+  <test id="disamb.11.3" trace=".disambiguated.xml"
+        comment="entité nommée de type EVENT: ncg"
+    left="XPATH#//vertices/vertex[@position=41]/micro"
+    operator="="
+    right="L_NC_GEN" />
+</testcase>
+<testcase id="disamb.12.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>dimanche</expl>
+  <test id="disamb.12.1" trace=".disambiguated.xml"
+    comment="dimanche 21 novembre: entité nommée"
+    left="XPATH#//vertices/vertex[@position=85]/lemma"
+    operator="="
+    right="dimanche 21 novembre" />
+  <test id="disamb.12.2" trace=".disambiguated.xml"
+    comment="dimanche 21 novembre: micro-vg : date"
+    left="XPATH#//vertices/vertex[@position=85]/micro"
+    operator="="
+    right="L_DIVERS_DATE" />
+</testcase>
+<testcase id="disamb.12.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>dimanche</expl>
+  <test id="disamb.12.3" trace=".disambiguated.xml"
+    comment="dimanche 21 novembre: micro-vg : date"
+    left="XPATH#//vertices/vertex[@position=85]/micro"
+    operator="="
+    right="L_DIVERS_DATE" />
+</testcase>
+<testcase id="disamb.13" type="obsolete">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>21 n'est plus un token indépendant, c'est un morceau de l'entité nommée 'dimanche 21 novembre'</expl>
+  <test id="disamb.13.1" trace=".disambiguated.xml"
+    comment="21 : lemme 21 ??? "
+    left="XPATH#//vertices/vertex[@position=94]/lemma"
+    operator="="
+    right="21" />
+  <test id="disamb.13.2" trace=".disambiguated.xml"
+    comment="21 : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=94]/macro"
+    operator="="
+    right="L_ADJ" />
+</testcase>
+<testcase id="disamb.14.a" type="obsolete">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>novembre n'est plus un token indépendant, c'est un morceau de l'entité nommée 'dimanche 21 novembre'</expl>
+  <test id="disamb.14.1" trace=".disambiguated.xml"
+    comment="novembre : lemme novembre "
+    left="XPATH#//vertices/vertex[@position=97]/lemma"
+    operator="="
+    right="novembre" />
+  <test id="disamb.14.2" trace=".disambiguated.xml"
+    comment="novembre : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=97]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.14.b" type="obsolete">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>novembrepertinent</expl>
+  <test id="disamb.14.3" trace=".disambiguated.xml"
+    comment="novembre : micro-vg : Nc mois"
+    left="XPATH#//vertices/vertex[@position=97]/micro"
+    operator="="
+    right="L_NC_MOIS" />
+</testcase>
+<testcase id="disamb.15.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>été</expl>
+  <test id="disamb.15.1" trace=".disambiguated.xml"
+    comment="été : lemme être ..."
+    left="XPATH#//vertices/vertex[@position=157]/lemma"
+    operator="="
+    right="être" />
+  <test id="disamb.15.2" trace=".disambiguated.xml"
+    comment="être : macro-vg : verbe"
+    left="XPATH#//vertices/vertex[@position=157]/macro"
+    operator="="
+    right="L_V" />
+</testcase>
+<testcase id="disamb.15.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>été</expl>
+  <test id="disamb.15.3" trace=".disambiguated.xml"
+    comment="être : micro-vg : verbe copule participe passe"
+    left="XPATH#//vertices/vertex[@position=157]/micro"
+    operator="contains"
+    right="L_VERBE_COPULE_PARTICIPE_PASSE" />
+</testcase>
+<testcase id="disamb.16" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>volée</expl>
+  <test id="disamb.16.1" trace=".disambiguated.xml"
+    comment="volée : lemme volé ..."
+    left="XPATH#//vertices/vertex[@position=161]/lemma"
+    operator="contains"
+    right="volé" />
+  <test id="disamb.16.2" trace=".disambiguated.xml"
+    comment="volée : macro-vg : ???"
+    left="XPATH#//vertices/vertex[@position=161]/macro"
+    operator="contains"
+    right="L_ADJ" />
+</testcase>
+<testcase id="disamb.17" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pouvoir</expl>
+  <test id="disamb.17.1" trace=".disambiguated.xml"
+    comment="pouvoir : lemme pouvoir..."
+    left="XPATH#//vertices/vertex[@position=178]/lemma"
+    operator="="
+    right="pouvoir" />
+  <test id="disamb.17.2" trace=".disambiguated.xml"
+    comment="volée : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=178]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.18" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>au bord de</expl>
+  <test id="disamb.18.1" trace=".disambiguated.xml"
+    comment="au bord de : lemme au bord de..."
+    left="XPATH#//vertices/vertex[@position=207]/lemma"
+    operator="="
+    right="au bord de" />
+  <test id="disamb.18.2" trace=".disambiguated.xml"
+    comment="au bord de : macro-vg : prep"
+    left="XPATH#//vertices/vertex[@position=207]/macro"
+    operator="="
+    right="L_PREP" />
+</testcase>
+<testcase id="disamb.19" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>donnant</expl>
+  <test id="disamb.19.1" trace=".disambiguated.xml"
+    comment="donnant : lemme donner..."
+    left="XPATH#//vertices/vertex[@position=238]/lemma"
+    operator="="
+    right="donner" />
+  <test id="disamb.19.2" trace=".disambiguated.xml"
+    comment="donnant : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=238]/macro"
+    operator="="
+    right="L_V" />
+</testcase>
+<testcase id="disamb.20.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>premier</expl>
+  <test id="disamb.20.1" trace=".disambiguated.xml"
+    comment="premier ministre: lemme premier ministre..."
+    left="XPATH#//vertices/vertex[@position=261]/lemma"
+    operator="="
+    right="premier ministre" />
+</testcase>
+<testcase id="disamb.20.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>premier</expl>
+  <test id="disamb.20.b" trace=".disambiguated.xml"
+    comment="premier ministre: micro-vg : nc gen"
+    left="XPATH#//vertices/vertex[@position=261]/micro"
+    operator="="
+    right="L_NC_GEN" />
+</testcase>
+<testcase id="disamb.21.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" Le président ukrainien sortant Leonid Koutchma a appelé ses homologues polonais et lituanien Aleksander Kwasniewski et Valdas Adamkus à servir de médiateurs dans le conflit qui a éclaté en Ukraine après l'élection présidentielle, a annoncé jeudi la présidence lituanienne."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>sortant</expl>
+  <test id="disamb.21.1" trace=".disambiguated.xml"
+    comment="sortant : lemme sortant..."
+    left="XPATH#//vertices/vertex[@position=25]/lemma"
+    operator="="
+    right="sortant" />
+  <test id="disamb.21.2" trace=".disambiguated.xml"
+    comment="sortant : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=25]/macro"
+    operator="="
+    right="L_ADJ" />
+</testcase>
+<testcase id="disamb.21.b" type="informatif">
+  <call-parameters>
+      <param key="text" value=" Le président ukrainien sortant Leonid Koutchma a appelé ses homologues polonais et lituanien Aleksander Kwasniewski et Valdas Adamkus à servir de médiateurs dans le conflit qui a éclaté en Ukraine après l'élection présidentielle, a annoncé jeudi la présidence lituanienne."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>sortant</expl>
+  <test id="disamb.21.3" trace=".disambiguated.xml"
+    comment="sortant : micro-vg : adj num ord epithete prenn"
+    left="XPATH#//vertices/vertex[@position=25]/micro"
+    operator="="
+    right="L_ADJ_QUALIFICATIF_EPITHETE_POSTN" />
+</testcase>
+<testcase id="disamb.22.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" Le président ukrainien sortant Leonid Koutchma a appelé ses homologues polonais et lituanien Aleksander Kwasniewski et Valdas Adamkus à servir de médiateurs dans le conflit qui a éclaté en Ukraine après l'élection présidentielle, a annoncé jeudi la présidence lituanienne."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>jeudi</expl>
+  <test id="disamb.22.1" trace=".disambiguated.xml"
+    comment="jeudi : lemme jeudi..."
+    left="XPATH#//vertices/vertex[@position=242]/lemma"
+    operator="="
+    right="jeudi" />
+  <test id="disamb.22.2" trace=".disambiguated.xml"
+    comment="jeudi : macro-vg : date"
+    left="XPATH#//vertices/vertex[@position=242]/macro"
+    operator="="
+    right="L_DIVERS" />
+</testcase>
+<testcase id="disamb.22.b" type="informatif">
+  <call-parameters>
+      <param key="text" value=" Le président ukrainien sortant Leonid Koutchma a appelé ses homologues polonais et lituanien Aleksander Kwasniewski et Valdas Adamkus à servir de médiateurs dans le conflit qui a éclaté en Ukraine après l'élection présidentielle, a annoncé jeudi la présidence lituanienne."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>jeudi</expl>
+  <test id="disamb.22.3" trace=".disambiguated.xml"
+    comment="jeudi : micro-vg : date"
+    left="XPATH#//vertices/vertex[@position=242]/micro"
+    operator="="
+    right="L_DIVERS_DATE" />
+</testcase>
+<testcase id="disamb.23.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" Pour que le conflit en Ukraine soit réglé par des moyens politiques, il nous faut un médiateur international important."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+  <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>soit</expl>
+  <test id="disamb.23.1" trace=".disambiguated.xml"
+    comment="soit : lemme être..."
+    left="XPATH#//vertices/vertex[@position=33]/lemma"
+    operator="contains"
+    right="être" />
+  <test id="disamb.23.2" trace=".disambiguated.xml"
+    comment="soit : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=33]/macro"
+    operator="contains"
+    right="L_V" />
+</testcase>
+<testcase id="disamb.23.b" type="informatif">
+  <call-parameters>
+      <param key="text" value=" Pour que le conflit en Ukraine soit réglé par des moyens politiques, il nous faut un médiateur international important."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>soit</expl>
+  <test id="disamb.23.3" trace=".disambiguated.xml"
+    comment="soit : micro-vg : verbe copule subjonctif"
+    left="XPATH#//vertices/vertex[@position=33]/micro"
+    operator="contains"
+    right="L_VERBE_AUXILIAIRE_SUBJONCTIF" />
+</testcase>
+<testcase id="disamb.24.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ne</expl>
+  <test id="disamb.24.1" trace=".disambiguated.xml"
+    comment="ne : lemme ne..."
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="ne" />
+  <test id="disamb.24.2" trace=".disambiguated.xml"
+    comment="ne : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=4]/macro"
+    operator="="
+    right="L_ADV" />
+</testcase>
+<testcase id="disamb.24.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ne</expl>
+  <test id="disamb.24.3" trace=".disambiguated.xml"
+    comment="ne : micro-vg : adv premier elem neg"
+    left="XPATH#//vertices/vertex[@position=4]/micro"
+    operator="="
+    right="L_ADV_PREMIER_ELEM_NEG" />
+</testcase>
+<testcase id="disamb.24.c" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.24.4" trace=".disambiguated.xml"
+    comment="pas : lemme pas..."
+    left="XPATH#//vertices/vertex[@position=12]/lemma"
+    operator="="
+    right="pas" />
+  <test id="disamb.24.5" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=12]/macro"
+    operator="="
+    right="L_ADV" />
+</testcase>
+<testcase id="disamb.24.d" type="informatif">
+  <call-parameters>
+      <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.24.6" trace=".disambiguated.xml"
+    comment="pas: micro-vg : adv deuxieme elem neg"
+    left="XPATH#//vertices/vertex[@position=12]/micro"
+    operator="="
+    right="L_ADV_DEUXIEME_ELEM_NEG" />
+</testcase>
+<testcase id="disamb.25.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'indépendance à Kiev."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>indépendance</expl>
+  <test id="disamb.25.1" trace=".disambiguated.xml"
+    comment="inpéndance : lemme inpéndance..."
+    left="XPATH#//vertices/vertex[@position=133]/lemma"
+    operator="="
+    right="indépendance" />
+  <test id="disamb.25.2" trace=".disambiguated.xml"
+    comment="inpéndance : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=133]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.25.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>inpéndance</expl>
+  <test id="disamb.25.3" trace=".disambiguated.xml"
+    comment="inpéndance: micro-vg : Mot inconnu"
+    left="XPATH#//vertices/vertex[@position=133]/micro"
+    operator="="
+    right="L_NC_INCONNU" />
+</testcase>
+<testcase id="disamb.26.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="L'opposition ukrainienne a par ailleurs saisi jeudi la Cour suprême pour contester le résultat de l'élection présidentielle de dimanche, remportée par le candidat pro-russe du pouvoir, Viktor Ianoukovitch, et affichait toujours une détermination intacte après quatre jours de protestations."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>saisi</expl>
+  <test id="disamb.26.1" trace=".disambiguated.xml"
+    comment="saisi : lemme saisir..."
+    left="XPATH#//vertices/vertex[@position=41]/lemma"
+    operator="contains"
+    right="saisir" />
+  <test id="disamb.26.2" trace=".disambiguated.xml"
+    comment="saisi : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=41]/macro"
+    operator="="
+    right="L_V" />
+</testcase>
+<testcase id="disamb.26.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="L'opposition ukrainienne a par ailleurs saisi jeudi la Cour suprême pour contester le résultat de l'élection présidentielle de dimanche, remportée par le candidat pro-russe du pouvoir, Viktor Ianoukovitch, et affichait toujours une détermination intacte après quatre jours de protestations."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>saisi</expl>
+  <test id="disamb.26.3" trace=".disambiguated.xml"
+    comment="saisi: micro-vg : verbe principal participe"
+    left="XPATH#//vertices/vertex[@position=41]/micro"
+    operator="="
+    right="L_VERBE_PRINCIPAL_PARTICIPE_PASSE" />
+</testcase>
+<testcase id="disamb.27.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>premiers</expl>
+  <test id="disamb.27.1" trace=".disambiguated.xml"
+    comment="premiers : lemme premier..."
+    left="XPATH#//vertices/vertex[@position=111]/lemma"
+    operator="="
+    right="premier" />
+  <test id="disamb.27.2" trace=".disambiguated.xml"
+    comment="premiers : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=111]/macro"
+    operator="="
+    right="L_ADJ" />
+</testcase>
+<testcase id="disamb.27.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>premiers</expl>
+  <test id="disamb.27.3" trace=".disambiguated.xml"
+    comment="premiers: micro-vg : adj num ord epithete prenn"
+    left="XPATH#//vertices/vertex[@position=111]/micro"
+    operator="="
+    right="L_ADJ_NUM_ORD_EPITHETE_PRENN" />
+</testcase>
+<testcase id="disamb.28.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>signes</expl>
+  <test id="disamb.28.1" trace=".disambiguated.xml"
+    comment="signes : lemme signe..."
+    left="XPATH#//vertices/vertex[@position=120]/lemma"
+    operator="="
+    right="signe" />
+  <test id="disamb.28.2" trace=".disambiguated.xml"
+    comment="signes : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=120]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.28.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>signes</expl>
+  <test id="disamb.28.3" trace=".disambiguated.xml"
+    comment="signes: micro-vg :Nc gen"
+    left="XPATH#//vertices/vertex[@position=120]/micro"
+    operator="="
+    right="L_NC_GEN" />
+</testcase>
+<testcase id="disamb.29.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>concrets</expl>
+  <test id="disamb.29.1" trace=".disambiguated.xml"
+    comment="concrets : lemme concret..."
+    left="XPATH#//vertices/vertex[@position=127]/lemma"
+    operator="="
+    right="concret" />
+  <test id="disamb.29.2" trace=".disambiguated.xml"
+    comment="concrets : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=127]/macro"
+    operator="="
+    right="L_ADJ" />
+</testcase>
+<testcase id="disamb.29.a" type="informatif">
+  <call-parameters>
+      <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>concrets</expl>
+  <test id="disamb.29.3" trace=".disambiguated.xml"
+    comment="concrets: micro-vg :adj qualificatif epithete postn "
+    left="XPATH#//vertices/vertex[@position=127]/micro"
+    operator="="
+    right="L_ADJ_QUALIFICATIF_EPITHETE_POSTN" />
+</testcase>
+<testcase id="disamb.30.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>opposant</expl>
+  <test id="disamb.30.1" trace=".disambiguated.xml"
+    comment="opposant : lemme opposant..."
+    left="XPATH#//vertices/vertex[@position=96]/lemma"
+    operator="="
+    right="opposant" />
+  <test id="disamb.30.2" trace=".disambiguated.xml"
+    comment="opposant : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=96]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.30.b" type="informatif">
+  <call-parameters>
+      <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>opposant</expl>
+  <test id="opposant.30.3" trace=".disambiguated.xml"
+    comment="opposant : micro-vg :Nc gen"
+    left="XPATH#//vertices/vertex[@position=96]/micro"
+    operator="="
+    right="L_NC_GEN" />
+</testcase>
+<testcase id="disamb.31.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pro</expl>
+  <test id="disamb.31.1" trace=".disambiguated.xml"
+    comment="pro : lemme pro..."
+    left="XPATH#//vertices/vertex[@position=105]/lemma"
+    operator="="
+    right="pro-occidental" />
+  <test id="disamb.31.2" trace=".disambiguated.xml"
+    comment="pro : macro-vg : ???"
+    left="XPATH#//vertices/vertex[@position=105]/macro"
+    operator="distinct"
+    right="L_ADJ" />
+</testcase>
+<testcase id="disamb.31.b" type="informatif">
+  <call-parameters>
+      <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pro</expl>
+  <test id="disamb.31.3" trace=".disambiguated.xml"
+    comment="signes: micro-vg :???"
+    left="XPATH#//vertices/vertex[@position=105]/micro"
+    operator="="
+    right="L_ADJ_QUALIFICATIF_EPITHETE_POSTN" />
+</testcase>
+<!--testcase id="disamb.32.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>occidental</expl>
+  <test id="disamb.32.1" trace=".disambiguated.xml"
+    comment="occidental : lemme occidental..."
+    left="XPATH#//vertices/vertex[@position=109]/lemma"
+    operator="="
+    right="occidental" />
+  <test id="disamb.32.2" trace=".disambiguated.xml"
+    comment="occidental : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=109]/macro"
+    operator="contains"
+    right="L_ADJ" />
+</testcase-->
+<!--testcase id="disamb.32.b" type="informatif">
+  <call-parameters>
+      <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>occidental</expl>
+  <test id="disamb.32.3" trace=".disambiguated.xml"
+    comment="occidental : micro-vg :adj qualificatif epithete postn"
+    left="XPATH#//vertices/vertex[@position=109]/micro"
+    operator="contains"
+    right="L_ADJ_QUALIFICATIF_EPITHETE_POSTN" />
+</testcase-->
+<testcase id="disamb.33" type="pertinent">
+  <call-parameters>
+      <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.33.1" trace=".disambiguated.xml"
+    comment="pas : lemme pas..."
+    left="XPATH#//vertices/vertex[@position=21]/lemma"
+    operator="="
+    right="pas" />
+  <test id="disamb.33.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=21]/macro"
+    operator="="
+    right="L_ADV" />
+</testcase>
+<testcase id="disamb.34.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>place</expl>
+  <test id="disamb.34.1" trace=".disambiguated.xml"
+    comment="place : lemme place..."
+    left="XPATH#//vertices/vertex[@position=28]/lemma"
+    operator="="
+    right="place" />
+  <test id="disamb.34.2" trace=".disambiguated.xml"
+    comment="place : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=28]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.34.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>place</expl>
+  <test id="disamb.34.3" trace=".disambiguated.xml"
+    comment="place: micro-vg : Nc gen"
+    left="XPATH#//vertices/vertex[@position=28]/micro"
+    operator="="
+    right="L_NC_GEN" />
+</testcase>
+<testcase id="disamb.35.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>lancé</expl>
+  <test id="disamb.35.1" trace=".disambiguated.xml"
+    comment="lancé : lemme lancer..."
+    left="XPATH#//vertices/vertex[@position=67]/lemma"
+    operator="="
+    right="lancer" />
+  <test id="disamb.35.2" trace=".disambiguated.xml"
+    comment="lancé : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=67]/macro"
+    operator="="
+    right="L_V" />
+</testcase>
+<testcase id="disamb.35.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>lancé</expl>
+  <test id="disamb.35.3" trace=".disambiguated.xml"
+    comment="lancé: micro-vg : verbe principal participe"
+    left="XPATH#//vertices/vertex[@position=67]/micro"
+    operator="="
+    right="L_VERBE_PRINCIPAL_PARTICIPE_PASSE" />
+</testcase>
+<testcase id="disamb.36.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Le</expl>
+  <test id="disamb.36.1" trace=".disambiguated.xml"
+    comment="Le : lemme le..."
+    left="XPATH#//vertices/vertex[@position=1]/lemma"
+    operator="="
+    right="le" />
+  <test id="disamb.36.2" trace=".disambiguated.xml"
+    comment="Le : macro-vg : DET"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="L_DET" />
+</testcase>
+<testcase id="disamb.36.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Le</expl>
+  <test id="disamb.36.3" trace=".disambiguated.xml"
+    comment="lancé: micro-vg : det article def"
+    left="XPATH#//vertices/vertex[@position=1]/micro"
+    operator="="
+    right="L_DET_ARTICLE_DEF" />
+</testcase>
+<testcase id="disamb.37.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pouvoir</expl>
+  <test id="disamb.37.1" trace=".disambiguated.xml"
+    comment="pouvoir : lemme pouvoir..."
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="pouvoir" />
+  <test id="disamb.37.2" trace=".disambiguated.xml"
+    comment="pouvoir : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=4]/macro"
+    operator="="
+    right="L_NC" />
+</testcase>
+<testcase id="disamb.37.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pouvoir</expl>
+  <test id="disamb.37.3" trace=".disambiguated.xml"
+    comment="pouvoir: micro-vg : verbe copule indicatif"
+    left="XPATH#//vertices/vertex[@position=4]/micro"
+    operator="="
+    right="L_NC_GEN" />
+</testcase>
+<testcase id="disamb.38.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>est</expl>
+  <test id="disamb.38.1" trace=".disambiguated.xml"
+    comment="est : lemme être..."
+    left="XPATH#//vertices/vertex[@position=12]/lemma"
+    operator="="
+    right="être" />
+  <test id="disamb.38.2" trace=".disambiguated.xml"
+    comment="est : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=12]/macro"
+    operator="="
+    right="L_V" />
+</testcase>
+<testcase id="disamb.38.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>est</expl>
+  <test id="disamb.38.3" trace=".disambiguated.xml"
+    comment="lancé: micro-vg : verbe copule indicatif"
+    left="XPATH#//vertices/vertex[@position=12]/micro"
+    operator="contains"
+    right="L_VERBE_COPULE_INDICATIF" />
+</testcase>
+<testcase id="disamb.39" type="pertinent">
+  <call-parameters>
+      <param key="text" value="LECH WALESA EN UKRAINE"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>LECH</expl>
+  <test id="disamb.39.1" trace=".disambiguated.xml"
+    comment="LECH : lemme LECH..."
+    left="XPATH#//vertices/vertex[@position=1]/lemma"
+    operator="="
+    right="lech" />
+  <test id="disamb.39.2" trace=".disambiguated.xml"
+    comment="est : macro-vg : np"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="L_NP" />
+</testcase>
+<testcase id="disamb.40" type="pertinent">
+  <call-parameters>
+      <param key="text" value="LECH WALESA EN UKRAINE"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>WALESA</expl>
+  <test id="disamb.40.1" trace=".disambiguated.xml"
+    comment="WALESA : lemme WALESA..."
+    left="XPATH#//vertices/vertex[@position=6]/lemma"
+    operator="="
+    right="walesa" />
+  <test id="disamb.40.2" trace=".disambiguated.xml"
+    comment="WALESA : macro-vg : np"
+    left="XPATH#//vertices/vertex[@position=6]/macro"
+    operator="="
+    right="L_NP" />
+</testcase>
+<testcase id="disamb.41.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.41.1" trace=".disambiguated.xml"
+    comment="pas : lemme pas..."
+    left="XPATH#//vertices/vertex[@position=61]/lemma"
+    operator="="
+    right="pas" />
+  <test id="disamb.41.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=61]/macro"
+    operator="="
+    right="L_ADV" />
+</testcase>
+<testcase id="disamb.41.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.41.3" trace=".disambiguated.xml"
+    comment="pas: micro-vg : adv deuxieme elem neg"
+    left="XPATH#//vertices/vertex[@position=61]/micro"
+    operator="contains"
+    right="L_ADV_DEUXIEME_ELEM_NEG" />
+ </testcase>
+ <testcase id="disamb.42.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.42.1" trace=".disambiguated.xml"
+    comment="pas : lemme pas..."
+    left="XPATH#//vertices/vertex[@position=144]/lemma"
+    operator="="
+    right="pas" />
+  <test id="disamb.42.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=144]/macro"
+    operator="="
+    right="L_ADV" />
+ </testcase>
+ <testcase id="disamb.42.b" type="informatif">
+  <call-parameters>
+      <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.42.3" trace=".disambiguated.xml"
+    comment="pas: micro-vg : adv deuxieme elem neg"
+    left="XPATH#//vertices/vertex[@position=144]/micro"
+    operator="="
+    right="L_ADV_DEUXIEME_ELEM_NEG" />
+ </testcase>
+ <testcase id="disamb.43" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>demande</expl>
+  <test id="disamb.43.1" trace=".disambiguated.xml"
+    comment="demande : lemme demander..."
+    left="XPATH#//vertices/vertex[@position=236]/lemma"
+    operator="contains"
+    right="demander" />
+  <test id="disamb.43.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=236]/macro"
+    operator="contains"
+    right="L_V" />
+ </testcase> 
+ <testcase id="disamb.44" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Lech Walesa, aux côtés de l'opposant Viktor Iouchtchenko, a pris la parole devant plus de 100 000 partisans de l'opposition rassemblés sur la place de l'Indépendance."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>plus</expl>
+  <test id="disamb.44.1" trace=".disambiguated.xml"
+    comment="plus : lemme plus..."
+    left="XPATH#//vertices/vertex[@position=83]/lemma"
+    operator="contains"
+    right="plus" />
+  <test id="disamb.44.2" trace=".disambiguated.xml"
+    comment="plus : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=83]/macro"
+    operator="contains"
+    right="L_ADV" />
+ </testcase>
+ <testcase id="disamb.45" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Les Etats-Unis ont fait savoir mercredi qu'ils ne reconnaissaient pas la légitimité du scrutin, tout en estimant qu'il n'est &quot;pas trop tard pour que les autorités trouvent une solution qui respecte la volonté du peuple ukrainien&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.45.1" trace=".disambiguated.xml"
+    comment="pas : lemme plus..."
+    left="XPATH#//vertices/vertex[@position=67]/lemma"
+    operator="="
+    right="pas" />
+  <test id="disamb.45.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=67]/macro"
+    operator="="
+    right="L_ADV" />
+ </testcase>
+ <testcase id="disamb.46" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Les Etats-Unis ont fait savoir mercredi qu'ils ne reconnaissaient pas la légitimité du scrutin, tout en estimant qu'il n'est &quot;pas trop tard pour que les autorités trouvent une solution qui respecte la volonté du peuple ukrainien&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pas</expl>
+  <test id="disamb.46.1" trace=".disambiguated.xml"
+    comment="pas : lemme plus..."
+    left="XPATH#//vertices/vertex[@position=127]/lemma"
+    operator="contains"
+    right="pas" />
+  <test id="disamb.46.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=127]/macro"
+    operator="contains"
+    right="L_ADV" />
+ </testcase>
+ <testcase id="disamb.47" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Nous ne pouvons pas accepter comme légitime ce résultat, parce qu'il ne correspond pas à des normes internationales et parce qu'il n'y a pas eu d'enquête sur les informations nombreuses et crédibles faisant état de fraudes&quot;, a déclaré le secrétaire d'Etat, Colin Powell, mettant en garde les dirigeants ukrainiens sur les &quot;conséquences&quot; que leurs actes pourront avoir sur les relations entre les deux pays."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>légitime</expl>
+  <test id="disamb.47.1" trace=".disambiguated.xml"
+    comment="légitime : lemme légitime..."
+    left="XPATH#//vertices/vertex[@position=36]/lemma"
+    operator="contains"
+    right="légitime" />
+  <test id="disamb.47.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=36]/macro"
+    operator="contains"
+    right="L_ADJ" />
+ </testcase>
+  <testcase id="disamb.48" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Nous ne pouvons pas accepter comme légitime ce résultat, parce qu'il ne correspond pas à des normes internationales et parce qu'il n'y a pas eu d'enquête sur les informations nombreuses et crédibles faisant état de fraudes&quot;, a déclaré le secrétaire d'Etat, Colin Powell, mettant en garde les dirigeants ukrainiens sur les &quot;conséquences&quot; que leurs actes pourront avoir sur les relations entre les deux pays."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>dirigeants</expl>
+  <test id="disamb.48.1" trace=".disambiguated.xml"
+    comment="dirigeants : lemme dirigeants..."
+    left="XPATH#//vertices/vertex[@position=293]/lemma"
+    operator="="
+    right="dirigeant" />
+  <test id="disamb.48.2" trace=".disambiguated.xml"
+    comment="dirigeants : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=293]/macro"
+    operator="="
+    right="L_NC" />
+ </testcase>
+ <testcase id="disamb.49" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Nous ne pouvons pas accepter comme légitime ce résultat, parce qu'il ne correspond pas à des normes internationales et parce qu'il n'y a pas eu d'enquête sur les informations nombreuses et crédibles faisant état de fraudes&quot;, a déclaré le secrétaire d'Etat, Colin Powell, mettant en garde les dirigeants ukrainiens sur les &quot;conséquences&quot; que leurs actes pourront avoir sur les relations entre les deux pays."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ukrainiens</expl>
+  <test id="disamb.49.1" trace=".disambiguated.xml"
+    comment="ukrainiens : lemme ukrainiens..."
+    left="XPATH#//vertices/vertex[@position=304]/lemma"
+    operator="="
+    right="ukrainien" />
+  <test id="disamb.49.2" trace=".disambiguated.xml"
+    comment="dirigeants : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=304]/macro"
+    operator="="
+    right="L_ADJ" />
+ </testcase>
+ <testcase id="disamb.50" type="pertinent">
+  <call-parameters>
+      <param key="text" value="&quot;Tout le peuple est uni. Nous avons compris que nous représentons une force, et les gens qui sont ici, ce sont les vrais Ukrainiens&quot;, dit-elle."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>dit</expl>
+  <test id="disamb.50.1" trace=".disambiguated.xml"
+    comment="dit : lemme dire..."
+    left="XPATH#//vertices/vertex[@position=135]/lemma"
+    operator="="
+    right="dire" />
+  <test id="disamb.50.2" trace=".disambiguated.xml"
+    comment="dit : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=135]/macro"
+    operator="="
+    right="L_V" />
+ </testcase>
+  <testcase id="disamb.51" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Contraste saisissant avec la mobilisation massive en faveur de l'opposition, environ 200 autres Ukrainiens, pro-russes, majoritairement âgés, se sont réunis jeudi matin dans le parc Marinski, en face du Parlement et du siège du gouvernement, pour exprimer leur solidarité, eux aussi, à &quot;leur président&quot;, M. Ianoukovitch."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>environ</expl>
+  <test id="disamb.51.1" trace=".disambiguated.xml"
+    comment="environ : lemme environ..."
+    left="XPATH#//vertices/vertex[@position=78]/lemma"
+    operator="="
+    right="environ" />
+  <test id="disamb.51.2" trace=".disambiguated.xml"
+    comment="environ : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=78]/macro"
+    operator="="
+    right="L_ADV" />
+ </testcase>
+  <testcase id="disamb.52" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Un mineur venu de Donetsk, dans l'est du pays, traditionnellement pro-russe, Ihor Iankovski, racontait qu'il &quot;a été envoyé par le syndicat de sa mine&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mineur</expl>
+  <test id="disamb.52.1" trace=".disambiguated.xml"
+    comment="mineur : lemme mineur..."
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="mineur" />
+  <test id="disamb.52.2" trace=".disambiguated.xml"
+    comment="mineur : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=4]/macro"
+    operator="="
+    right="L_NC" />
+ </testcase>
+  <testcase id="disamb.53" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Un mineur venu de Donetsk, dans l'est du pays, traditionnellement pro-russe, Ihor Iankovski, racontait qu'il &quot;a été envoyé par le syndicat de sa mine&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>venu</expl>
+  <!--<test id="disamb.53.1" trace=".disambiguated.xml"
+    comment="venu : lemme venu..."
+    left="XPATH#//vertices/vertex[@position=11]/lemma"
+    operator="="
+    right="" /> -->
+  <test id="disamb.53.2" trace=".disambiguated.xml"
+    comment="venu : macro-vg : !=nc"
+    left="XPATH#//vertices/vertex[@position=11]/macro"
+    operator="="
+    right="L_ADJ" />
+ </testcase>
+  <testcase id="disamb.54" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Le petit tout petit chat est espiègle."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>venu</expl>
+  <test id="disamb.54.1" trace=".disambiguated.xml"
+    comment="petit : lemme petit..."
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="petit" />
+  <test id="disamb.54.2" trace=".disambiguated.xml"
+    comment="venu : macro-vg : !=nc"
+    left="XPATH#//vertices/vertex[@position=4]/macro"
+    operator="="
+    right="L_ADJ" />
+ </testcase>
+  <testcase id="disamb.55" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Le petit vraiment très petit chat est espiègle."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>venu</expl>
+  <test id="disamb.55.1" trace=".disambiguated.xml"
+    comment="petit : lemme petit..."
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="petit" />
+  <test id="disamb.55.2" trace=".disambiguated.xml"
+    comment="venu : macro-vg : !=nc"
+    left="XPATH#//vertices/vertex[@position=4]/macro"
+    operator="="
+    right="L_ADJ" />
+ </testcase>
+ </testcases>

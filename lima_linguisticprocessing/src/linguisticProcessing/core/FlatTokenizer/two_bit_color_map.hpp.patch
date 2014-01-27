@@ -1,0 +1,27 @@
+Index: boost/graph/two_bit_color_map.hpp
+===================================================================
+--- boost/graph/two_bit_color_map.hpp	(revision 60155)
++++ boost/graph/two_bit_color_map.hpp	(working copy)
+@@ -39,7 +39,7 @@
+ };
+ 
+ 
+-template<typename IndexMap = identity_property_map>
++template<typename IndexMap = identity_property_map, typename T=void>
+ struct two_bit_color_map 
+ {
+   std::size_t n;
+@@ -61,10 +61,10 @@
+   }
+ };
+ 
+-template<typename IndexMap>
++template<typename IndexMap, typename T>
+ inline two_bit_color_type
+-get(const two_bit_color_map<IndexMap>& pm, 
+-    typename two_bit_color_map<IndexMap>::key_type key) 
++get(const two_bit_color_map<IndexMap, T>& pm, 
++    typename two_bit_color_map<IndexMap, T>::key_type key) 
+ {
+   BOOST_STATIC_CONSTANT(int, elements_per_char = two_bit_color_map<IndexMap>::elements_per_char);
+   typename property_traits<IndexMap>::value_type i = get(pm.index, key);

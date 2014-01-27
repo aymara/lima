@@ -1,0 +1,60 @@
+#
+# rules for names of french political organizations
+#
+
+Parti::des Travailleurs:ORGANIZATION:
+Union::Communiste:ORGANIZATION:Lutte Ouvrière
+Lutte::Ouvrière:ORGANIZATION:
+L.O.:::ORGANIZATION:Lutte Ouvrière
+Communiste:Ligue:révolutionnaire:ORGANIZATION:
+L.C.R.:::ORGANIZATION:Ligue Communiste Révolutionnaire
+Socialisme::International:ORGANIZATION:
+Alternative::Rouge et Verte:ORGANIZATION:
+Convention::pour une Alternative Progressiste:ORGANIZATION:
+Initiative::Républicaine:ORGANIZATION:
+Parti::Communiste Français:ORGANIZATION:
+P.C.F.:::ORGANIZATION:Parti Communiste Français
+Verts:(Les|les)::ORGANIZATION:
+Convergence::Écologie Solidarité:ORGANIZATION:
+Parti::Socialiste:ORGANIZATION:
+P.S.:::ORGANIZATION:Parti Socialiste
+Parti::Radical de Gauche:ORGANIZATION:
+PRG:::ORGANIZATION:Parti Radical de Gauche
+MRG:::ORGANIZATION:Parti Radical de Gauche
+Mouvement::Des Citoyens:ORGANIZATION:
+M.D.C.:::ORGANIZATION:Mouvement Des Citoyens
+Mouvement::des Écologistes Indépendants:ORGANIZATION:
+M.E.I.:::ORGANIZATION:Mouvement des Écologistes Indépendants
+Génération::Ecologie:ORGANIZATION:
+Union:(nouvelle)?:pour la Démocratie Française:ORGANIZATION:
+U.D.F.:::ORGANIZATION:Union pour la Démocratie Française
+Force::Démocrate:ORGANIZATION:
+Démocratie::Libérale:ORGANIZATION:
+Rassemblement::Social et Libéral:ORGANIZATION:
+Union::pour la majorité présidentielle:ORGANIZATION:
+U.M.P.:::ORGANIZATION:Union pour la majorité présidentielle
+Rassemblement::pour la République:ORGANIZATION:
+R.P.R.:::ORGANIZATION:Rassemblement pour la République
+Chasse::Pêche , Nature et Tradition:ORGANIZATION:
+Centre::National des Indépendants et Paysans:ORGANIZATION:
+Droite::Libérale-Chrétienne:ORGANIZATION:
+Mouvement::pour la France:ORGANIZATION:
+Rassemblement::pour la France:ORGANIZATION:
+Front::National:ORGANIZATION:
+F.N.:::ORGANIZATION:Front National
+Mouvement::National Républicain:ORGANIZATION:
+M.N.R.:::ORGANIZATION:
+Solidarité::et Progrès:ORGANIZATION:
+Parti::Communautaire National-européen:ORGANIZATION:
+Parti::Nationaliste Français et Européen:ORGANIZATION:
+Parti::Humaniste:ORGANIZATION:
+Parti::de la Loi Naturelle:ORGANIZATION:
+Restauration::nationale:ORGANIZATION:
+Action::Française:ORGANIZATION:
+Alliance::Royale:ORGANIZATION:
+Action:Nouvelle:Royaliste:ORGANIZATION:
+Fédération::Anarchiste:ORGANIZATION:
+Alternative::Libertaire:ORGANIZATION:
+
+# syndicats
+Force::ouvrière:ORGANIZATION:

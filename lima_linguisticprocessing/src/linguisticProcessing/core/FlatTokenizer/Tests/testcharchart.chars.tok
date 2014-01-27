@@ -1,0 +1,23 @@
+classes {
+c_all : All characters ;
+c_del < c_all : Delimitor ;
+c_dot < c_del : Sentence delimitor, acronym, abbreviation, dot numbers ;
+c_Mm < c_all : Letter ;
+c_M < c_Mm : Upper case letter ;
+c_A < c_M : Other upper case letter ;
+c_m < c_Mm : Lower case letter ;
+c_o < c_m : Lower case letter and ordinal letter ;
+c_a < c_m : Other lower case letter ;
+m_parag : Paragraph empty markup ;
+unknwn : All characters not in the following table
+}
+chars {
+0000, NULL, m_parag ;
+002E, FULL STOP, c_dot ;
+0041, LATIN CAPITAL LETTER A, c_A, m0061 ;
+0045, LATIN CAPITAL LETTER E, c_A, m0065 ;
+0061, LATIN SMALL LETTER A, c_a, M0041 ;
+0065, LATIN SMALL LETTER E, c_o, M0045 ;
+00C9, LATIN CAPITAL LETTER E WITH ACUTE, c_A, m00E9, u0065 ;
+00E9, LATIN SMALL LETTER E WITH ACUTE, c_a, M00C9, u0065 
+}

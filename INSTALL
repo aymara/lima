@@ -1,0 +1,32 @@
+LIMA - Libre Multilingual Analyzer
+
+The various modules (lima_*) have different purposes:
+
+ * lima_common
+    contains tools shared by all modules (eg. factories)
+ * lima_linguisticprocessing
+    LIMA linguistic analyser
+ * lima_linguisticData
+    linguistic ressources used in LIMA
+
+== Install ==
+
+You first need to set up a few environment variables. For this purpose, you can 
+run the setenv-lima.sh script from the root of the repository or define them 
+manually:
+
+LIMA_DIST      binaries and libraries
+LIMA_EXTERNALS dependencies
+LIMA_RESOURCES any kind of ressources (including training data)
+LIMA_CONF      configuration folder
+
+Once they have been defined, for each module, let's do:
+ $ cd module
+ $ ../gbuild.sh
+
+The order is important:
+
+1. lima_common
+2. lima_linguisticprocessing
+3. lima_linguisticData
+

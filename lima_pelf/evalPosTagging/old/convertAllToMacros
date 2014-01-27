@@ -1,0 +1,8 @@
+./convertToMacros.pl categs-fre-convert.txt nopostagger/fre/*.log
+./convertToMacros.pl categs-fre-convert.txt viterbi-freq/fre/*.log
+./convertToMacros.pl categs-fre-convert.txt viterbi-si/fre/*.log
+
+
+#./convertToMacros.pl categs-ger-convert.txt nopostagger/ger/*.log
+#./convertToMacros.pl categs-ger-convert.txt viterbi-freq/ger/*.log
+#./convertToMacros.pl categs-ger-convert.txt viterbi-si/ger/*.log

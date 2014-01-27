@@ -1,0 +1,1493 @@
+D;;;[V]&abaisser;s' (pp) [V]&abaisser;verbe pronominal;s'abaisser
+D;;;[V]&abandonner;s' (pp) [V]&abandonner;verbe pronominal;s'abandonner
+D;;;[V]&abonner;s' (pp) [V]&abonner;verbe pronominal;s'abonner
+D;;;[V]&abreuver;s' (pp) [V]&abreuver;verbe pronominal;s'abreuver
+D;;;[V]&abriter;s' (pp) [V]&abriter;verbe pronominal;s'abriter
+D;;;[V]&abrutir;s' (pp) [V]&abrutir;verbe pronominal;s'abrutir
+I;;;[V]&absenter;s' (pp) [V]&absenter;verbe pronominal;s'absenter
+ID;;;[V]&abstenir;s' (pp) [V]&abstenir;verbe pronominal;s'abstenir
+D;;;[V]&abstraire;s' (pp) [V]&abstraire;verbe pronominal;s'abstraire
+D;;;[V]&abuser;s' (pp) [V]&abuser;verbe pronominal;s'abuser
+D;;;[V]&abâtardir;s' (pp) [V]&abâtardir;verbe pronominal;s'abâtardir
+D;;;[V]&abêtir;s' (pp) [V]&abêtir;verbe pronominal;s'abêtir
+D;;;[V]&accentuer;s' (pp) [V]&accentuer;verbe pronominal;s'accentuer
+D;;;[V]&accepter;s' (pp) [V]&accepter;verbe pronominal;s'accepter
+D;;;[V]&acclimater;s' (pp) [V]&acclimater;verbe pronominal;s'acclimater
+I;;;[V]&accointer;s' (pp) [V]&accointer;verbe pronominal;s'accointer
+D;;;[V]&accomplir;s' (pp) [V]&accomplir;verbe pronominal;s'accomplir
+D;;;[V]&accorder;s' (pp) [V]&accorder;verbe pronominal;s'accorder
+I;;;[V]&accouder;s' (pp) [V]&accouder;verbe pronominal;s'accouder
+D;;;[V]&accoupler;s' (pp) [V]&accoupler;verbe pronominal;s'accoupler
+I;;;[V]&accroupir;s' (pp) [V]&accroupir;verbe pronominal;s'accroupir
+D;;;[V]&accroître;s' (pp) [V]&accroître;verbe pronominal;s'accroître
+D;;;[V]&accumuler;s' (pp) [V]&accumuler;verbe pronominal;s'accumuler
+D;;;[V]&accélérer;s' (pp) [V]&accélérer;verbe pronominal;s'accélérer
+I;;;[V]&acharner;s' (pp) [V]&acharner;verbe pronominal;s'acharner
+D;;;[V]&acheminer;s' (pp) [V]&acheminer;verbe pronominal;s'acheminer
+D;;;[V]&achever;s' (pp) [V]&achever;verbe pronominal;s'achever
+I;;;[V]&achopper;s' (pp) [V]&achopper;verbe pronominal;s'achopper
+I;;;[V]&acoquiner;s' (pp) [V]&acoquiner;verbe pronominal;s'acoquiner
+D;;;[V]&acquitter;s' (pp) [V]&acquitter;verbe pronominal;s'acquitter
+D;;;[V]&activer;s' (pp) [V]&activer;verbe pronominal;s'activer
+D;;;[V]&adapter;s' (pp) [V]&adapter;verbe pronominal;s'adapter
+D;;;[V]&additionner;s' (pp) [V]&additionner;verbe pronominal;s'additionner
+D;;;[V]&adjoindre;s' (pp) [V]&adjoindre;verbe pronominal;s'adjoindre
+I;;;[V]&adjuger;s' (pp) [V]&adjuger;verbe pronominal;s'adjuger
+I;;;[V]&adorer;s' (pp) [V]&adorer;verbe pronominal;s'adorer
+D;;;[V]&adoucir;s' (pp) [V]&adoucir;verbe pronominal;s'adoucir
+I;;;[V]&adresser;s' (pp) [V]&adresser;verbe pronominal;s'adresser
+D;;;[V]&affadir;s' (pp) [V]&affadir;verbe pronominal;s'affadir
+D;;;[V]&affaiblir;s' (pp) [V]&affaiblir;verbe pronominal;s'affaiblir
+I;;;[V]&affairer;s' (pp) [V]&affairer;verbe pronominal;s'affairer
+D;;;[V]&affermir;s' (pp) [V]&affermir;verbe pronominal;s'affermir
+I;;;[V]&afficher;s' (pp) [V]&afficher;verbe pronominal;s'afficher
+D;;;[V]&affilier;s' (pp) [V]&affilier;verbe pronominal;s'affilier
+D;;;[V]&affiner;s' (pp) [V]&affiner;verbe pronominal;s'affiner
+D;;;[V]&affirmer;s' (pp) [V]&affirmer;verbe pronominal;s'affirmer
+D;;;[V]&affliger;s' (pp) [V]&affliger;verbe pronominal;s'affliger
+D;;;[V]&affoler;s' (pp) [V]&affoler;verbe pronominal;s'affoler
+I;;;[V]&affourcher;s' (pp) [V]&affourcher;verbe pronominal;s'affourcher
+D;;;[V]&affranchir;s' (pp) [V]&affranchir;verbe pronominal;s'affranchir
+D;;;[V]&affronter;s' (pp) [V]&affronter;verbe pronominal;s'affronter
+D;;;[V]&agacer;s' (pp) [V]&agacer;verbe pronominal;s'agacer
+I;;;[V]&agenouiller;s' (pp) [V]&agenouiller;verbe pronominal;s'agenouiller
+I;;;[V]&agglomérer;s' (pp) [V]&agglomérer;verbe pronominal;s'agglomérer
+D;;;[V]&agglutiner;s' (pp) [V]&agglutiner;verbe pronominal;s'agglutiner
+D;;;[V]&aggraver;s' (pp) [V]&aggraver;verbe pronominal;s'aggraver
+D;;;[V]&agiter;s' (pp) [V]&agiter;verbe pronominal;s'agiter
+D;;;[V]&agrandir;s' (pp) [V]&agrandir;verbe pronominal;s'agrandir
+I;;;[V]&agriffer;s' (pp) [V]&agriffer;verbe pronominal;s'agriffer
+D;;;[V]&agripper;s' (pp) [V]&agripper;verbe pronominal;s'agripper
+D;;;[V]&aguerrir;s' (pp) [V]&aguerrir;verbe pronominal;s'aguerrir
+I;;;[V]&aiguiller;s' (pp) [V]&aiguiller;verbe pronominal;s'aiguiller
+D;;;[V]&aimer;s' (pp) [V]&aimer;verbe pronominal;s'aimer
+I;;;[V]&ajouter;s' (pp) [V]&ajouter;verbe pronominal;s'ajouter
+D;;;[V]&ajuster;s' (pp) [V]&ajuster;verbe pronominal;s'ajuster
+D;;;[V]&alanguir;s' (pp) [V]&alanguir;verbe pronominal;s'alanguir
+D;;;[V]&alarmer;s' (pp) [V]&alarmer;verbe pronominal;s'alarmer
+D;;;[V]&aligner;s' (pp) [V]&aligner;verbe pronominal;s'aligner
+I;;;[V]&alimenter;s' (pp) [V]&alimenter;verbe pronominal;s'alimenter
+D;;;[V]&aliter;s' (pp) [V]&aliter;verbe pronominal;s'aliter
+D;;;[V]&allier;s' (pp) [V]&allier;verbe pronominal;s'allier
+D;;;[V]&allonger;s' (pp) [V]&allonger;verbe pronominal;s'allonger
+D;;;[V]&allumer;s' (pp) [V]&allumer;verbe pronominal;s'allumer
+I;;;[V]&alourdir;s' (pp) [V]&alourdir;verbe pronominal;s'alourdir
+D;;;[V]&altérer;s' (pp) [V]&altérer;verbe pronominal;s'altérer
+I;;;[V]&amaigrir;s' (pp) [V]&amaigrir;verbe pronominal;s'amaigrir
+D;;;[V]&amarrer;s' (pp) [V]&amarrer;verbe pronominal;s'amarrer
+D;;;[V]&amasser;s' (pp) [V]&amasser;verbe pronominal;s'amasser
+D;;;[V]&amender;s' (pp) [V]&amender;verbe pronominal;s'amender
+D;;;[V]&amenuiser;s' (pp) [V]&amenuiser;verbe pronominal;s'amenuiser
+D;;;[V]&amincir;s' (pp) [V]&amincir;verbe pronominal;s'amincir
+D;;;[V]&amoindrir;s' (pp) [V]&amoindrir;verbe pronominal;s'amoindrir
+D;;;[V]&amollir;s' (pp) [V]&amollir;verbe pronominal;s'amollir
+D;;;[V]&amonceler;s' (pp) [V]&amonceler;verbe pronominal;s'amonceler
+D;;;[V]&amorcer;s' (pp) [V]&amorcer;verbe pronominal;s'amorcer
+I;;;[V]&amouracher;s' (pp) [V]&amouracher;verbe pronominal;s'amouracher
+D;;;[V]&amplifier;s' (pp) [V]&amplifier;verbe pronominal;s'amplifier
+D;;;[V]&amuser;s' (pp) [V]&amuser;verbe pronominal;s'amuser
+I;;;[V]&amuïr;s' (pp) [V]&amuïr;verbe pronominal;s'amuïr
+D;;;[V]&améliorer;s' (pp) [V]&améliorer;verbe pronominal;s'améliorer
+D;;;[V]&américaniser;s' (pp) [V]&américaniser;verbe pronominal;s'américaniser
+D;;;[V]&analyser;s' (pp) [V]&analyser;verbe pronominal;s'analyser
+D;;;[V]&ancrer;s' (pp) [V]&ancrer;verbe pronominal;s'ancrer
+D;;;[V]&angoisser;s' (pp) [V]&angoisser;verbe pronominal;s'angoisser
+D;;;[V]&animer;s' (pp) [V]&animer;verbe pronominal;s'animer
+D;;;[V]&ankyloser;s' (pp) [V]&ankyloser;verbe pronominal;s'ankyloser
+D;;;[V]&annuler;s' (pp) [V]&annuler;verbe pronominal;s'annuler
+I;;;[V]&anuiter;s' (pp) [V]&anuiter;verbe pronominal;s'anuiter
+D;;;[V]&anéantir;s' (pp) [V]&anéantir;verbe pronominal;s'anéantir
+I;;;[V]&apaiser;s' (pp) [V]&apaiser;verbe pronominal;s'apaiser
+D;;;[V]&aplanir;s' (pp) [V]&aplanir;verbe pronominal;s'aplanir
+D;;;[V]&aplatir;s' (pp) [V]&aplatir;verbe pronominal;s'aplatir
+D;;;[V]&appauvrir;s' (pp) [V]&appauvrir;verbe pronominal;s'appauvrir
+D;;;[V]&appeler;s' (pp) [V]&appeler;verbe pronominal;s'appeler
+D;;;[V]&apprivoiser;s' (pp) [V]&apprivoiser;verbe pronominal;s'apprivoiser
+I;;;[V]&approprier;s' (pp) [V]&approprier;verbe pronominal;s'approprier
+I;;;[V]&approvisionner;s' (pp) [V]&approvisionner;verbe pronominal;s'approvisionner
+I;;;[V]&arc-bouter;s' (pp) [V]&arc-bouter;verbe pronominal;s'arc-bouter
+D;;;[V]&armer;s' (pp) [V]&armer;verbe pronominal;s'armer
+I;;;[V]&arranger;s' (pp) [V]&arranger;verbe pronominal;s'arranger
+ID;;;[V]&arroger;s' (pp) [V]&arroger;verbe pronominal;s'arroger
+D;;;[V]&arrondir;s' (pp) [V]&arrondir;verbe pronominal;s'arrondir
+D;;;[V]&arrêter;s' (pp) [V]&arrêter;verbe pronominal;s'arrêter
+D;;;[V]&articuler;s' (pp) [V]&articuler;verbe pronominal;s'articuler
+D;;;[V]&assagir;s' (pp) [V]&assagir;verbe pronominal;s'assagir
+D;;;[V]&assembler;s' (pp) [V]&assembler;verbe pronominal;s'assembler
+D;;;[V]&asseoir;s' (pp) [V]&asseoir;verbe pronominal;s'asseoir
+D;;;[V]&assimiler;s' (pp) [V]&assimiler;verbe pronominal;s'assimiler
+D;;;[V]&assombrir;s' (pp) [V]&assombrir;verbe pronominal;s'assombrir
+D;;;[V]&assoupir;s' (pp) [V]&assoupir;verbe pronominal;s'assoupir
+D;;;[V]&assouplir;s' (pp) [V]&assouplir;verbe pronominal;s'assouplir
+D;;;[V]&assourdir;s' (pp) [V]&assourdir;verbe pronominal;s'assourdir
+D;;;[V]&assujettir;s' (pp) [V]&assujettir;verbe pronominal;s'assujettir
+D;;;[V]&assumer;s' (pp) [V]&assumer;verbe pronominal;s'assumer
+I;;;[V]&assurer;s' (pp) [V]&assurer;verbe pronominal;s'assurer
+D;;;[V]&assécher;s' (pp) [V]&assécher;verbe pronominal;s'assécher
+D;;;[V]&astreindre;s' (pp) [V]&astreindre;verbe pronominal;s'astreindre
+I;;;[V]&atrophier;s' (pp) [V]&atrophier;verbe pronominal;s'atrophier
+D;;;[V]&attarder;s' (pp) [V]&attarder;verbe pronominal;s'attarder
+D;;;[V]&atteler;s' (pp) [V]&atteler;verbe pronominal;s'atteler
+D;;;[V]&attendrir;s' (pp) [V]&attendrir;verbe pronominal;s'attendrir
+D;;;[V]&attraper;s' (pp) [V]&attraper;verbe pronominal;s'attraper
+D;;;[V]&attribuer;s' (pp) [V]&attribuer;verbe pronominal;s'attribuer
+D;;;[V]&attrister;s' (pp) [V]&attrister;verbe pronominal;s'attrister
+I;;;[V]&attrouper;s' (pp) [V]&attrouper;verbe pronominal;s'attrouper
+I;;;[V]&atténuer;s' (pp) [V]&atténuer;verbe pronominal;s'atténuer
+I;;;[V]&autoaccuser;s' (pp) [V]&autoaccuser;verbe pronominal;s'autoaccuser
+I;;;[V]&autocensurer;s' (pp) [V]&autocensurer;verbe pronominal;s'autocensurer
+I;;;[V]&autocritiquer;s' (pp) [V]&autocritiquer;verbe pronominal;s'autocritiquer
+I;;;[V]&autodéterminer;s' (pp) [V]&autodéterminer;verbe pronominal;s'autodéterminer
+I;;;[V]&autodétruire;s' (pp) [V]&autodétruire;verbe pronominal;s'autodétruire
+ID;;;[V]&autofinancer;s' (pp) [V]&autofinancer;verbe pronominal;s'autofinancer
+I;;;[V]&autoféconder;s' (pp) [V]&autoféconder;verbe pronominal;s'autoféconder
+D;;;[V]&autogérer;s' (pp) [V]&autogérer;verbe pronominal;s'autogérer
+I;;;[V]&autolyser;s' (pp) [V]&autolyser;verbe pronominal;s'autolyser
+I;;;[V]&automutiler;s' (pp) [V]&automutiler;verbe pronominal;s'automutiler
+I;;;[V]&autoriser;s' (pp) [V]&autoriser;verbe pronominal;s'autoriser
+I;;;[V]&autotomiser;s' (pp) [V]&autotomiser;verbe pronominal;s'autotomiser
+I;;;[V]&avancer;s' (pp) [V]&avancer;verbe pronominal;s'avancer
+I;;;[V]&aventurer;s' (pp) [V]&aventurer;verbe pronominal;s'aventurer
+D;;;[V]&avilir;s' (pp) [V]&avilir;verbe pronominal;s'avilir
+I;;;[V]&avouer;s' (pp) [V]&avouer;verbe pronominal;s'avouer
+D;;;[V]&avérer;s' (pp) [V]&avérer;verbe pronominal;s'avérer
+D;;;[V]&aérer;s' (pp) [V]&aérer;verbe pronominal;s'aérer
+I;;;[V]&eczématiser;s' (pp) [V]&eczématiser;verbe pronominal;s'eczématiser
+D;;;[V]&effacer;s' (pp) [V]&effacer;verbe pronominal;s'effacer
+ID;;;[V]&effaroucher;s' (pp) [V]&effaroucher;verbe pronominal;s'effaroucher
+D;;;[V]&effectuer;s' (pp) [V]&effectuer;verbe pronominal;s'effectuer
+D;;;[V]&effeuiller;s' (pp) [V]&effeuiller;verbe pronominal;s'effeuiller
+D;;;[V]&effiler;s' (pp) [V]&effiler;verbe pronominal;s'effiler
+D;;;[V]&effilocher;s' (pp) [V]&effilocher;verbe pronominal;s'effilocher
+D;;;[V]&effondrer;s' (pp) [V]&effondrer;verbe pronominal;s'effondrer
+ID;;;[V]&efforcer;s' (pp) [V]&efforcer;verbe pronominal;s'efforcer
+D;;;[V]&effranger;s' (pp) [V]&effranger;verbe pronominal;s'effranger
+D;;;[V]&effrayer;s' (pp) [V]&effrayer;verbe pronominal;s'effrayer
+I;;;[V]&effriter;s' (pp) [V]&effriter;verbe pronominal;s'effriter
+D;;;[V]&emballer;s' (pp) [V]&emballer;verbe pronominal;s'emballer
+D;;;[V]&embarquer;s' (pp) [V]&embarquer;verbe pronominal;s'embarquer
+D;;;[V]&embarrasser;s' (pp) [V]&embarrasser;verbe pronominal;s'embarrasser
+D;;;[V]&emberlificoter;s' (pp) [V]&emberlificoter;verbe pronominal;s'emberlificoter
+D;;;[V]&embourber;s' (pp) [V]&embourber;verbe pronominal;s'embourber
+D;;;[V]&emboutir;s' (pp) [V]&emboutir;verbe pronominal;s'emboutir
+D;;;[V]&emboîter;s' (pp) [V]&emboîter;verbe pronominal;s'emboîter
+D;;;[V]&embrancher;s' (pp) [V]&embrancher;verbe pronominal;s'embrancher
+D;;;[V]&embraser;s' (pp) [V]&embraser;verbe pronominal;s'embraser
+D;;;[V]&embrasser;s' (pp) [V]&embrasser;verbe pronominal;s'embrasser
+D;;;[V]&embrouiller;s' (pp) [V]&embrouiller;verbe pronominal;s'embrouiller
+D;;;[V]&embrumer;s' (pp) [V]&embrumer;verbe pronominal;s'embrumer
+D;;;[V]&embuer;s' (pp) [V]&embuer;verbe pronominal;s'embuer
+D;;;[V]&embusquer;s' (pp) [V]&embusquer;verbe pronominal;s'embusquer
+I;;;[V]&embêter;s' (pp) [V]&embêter;verbe pronominal;s'embêter
+I;;;[V]&emmailler;s' (pp) [V]&emmailler;verbe pronominal;s'emmailler
+D;;;[V]&emmerder;s' (pp) [V]&emmerder;verbe pronominal;s'emmerder
+I;;;[V]&emmitoufler;s' (pp) [V]&emmitoufler;verbe pronominal;s'emmitoufler
+M;;;pinceaux;s' (pp) [V]&emmêler (D) les pinceaux;verbe pronominal;s'emmêler les pinceaux
+D;;;[V]&empaler;s' (pp) [V]&empaler;verbe pronominal;s'empaler
+I;;;[V]&emparer;s' (pp) [V]&emparer;verbe pronominal;s'emparer
+I;;;[V]&empiffrer;s' (pp) [V]&empiffrer;verbe pronominal;s'empiffrer
+D;;;[V]&empiler;s' (pp) [V]&empiler;verbe pronominal;s'empiler
+D;;;[V]&employer;s' (pp) [V]&employer;verbe pronominal;s'employer
+D;;;[V]&empoigner;s' (pp) [V]&empoigner;verbe pronominal;s'empoigner
+D;;;[V]&empoisonner;s' (pp) [V]&empoisonner;verbe pronominal;s'empoisonner
+D;;;[V]&emporter;s' (pp) [V]&emporter;verbe pronominal;s'emporter
+D;;;[V]&empourprer;s' (pp) [V]&empourprer;verbe pronominal;s'empourprer
+D;;;[V]&empreindre;s' (pp) [V]&empreindre;verbe pronominal;s'empreindre
+I;;;[V]&empresser;s' (pp) [V]&empresser;verbe pronominal;s'empresser
+D;;;[V]&empâter;s' (pp) [V]&empâter;verbe pronominal;s'empâter
+D;;;[V]&empêtrer;s' (pp) [V]&empêtrer;verbe pronominal;s'empêtrer
+I;;;[V]&enamourer;s' (pp) [V]&enamourer;verbe pronominal;s'enamourer
+D;;;[V]&encadrer;s' (pp) [V]&encadrer;verbe pronominal;s'encadrer
+D;;;[V]&encaisser;s' (pp) [V]&encaisser;verbe pronominal;s'encaisser
+I;;;[V]&encanailler;s' (pp) [V]&encanailler;verbe pronominal;s'encanailler
+I;;;[V]&encasteler;s' (pp) [V]&encasteler;verbe pronominal;s'encasteler
+D;;;[V]&encastrer;s' (pp) [V]&encastrer;verbe pronominal;s'encastrer
+D;;;[V]&enchaîner;s' (pp) [V]&enchaîner;verbe pronominal;s'enchaîner
+D;;;[V]&enchevêtrer;s' (pp) [V]&enchevêtrer;verbe pronominal;s'enchevêtrer
+D;;;[V]&enclencher;s' (pp) [V]&enclencher;verbe pronominal;s'enclencher
+D;;;[V]&encombrer;s' (pp) [V]&encombrer;verbe pronominal;s'encombrer
+I;;;[V]&encorder;s' (pp) [V]&encorder;verbe pronominal;s'encorder
+I;;;[V]&encoubler;s' (pp) [V]&encoubler;verbe pronominal;s'encoubler
+I;;;[V]&encourir;s' (pp) [V]&encourir;verbe pronominal;s'encourir
+D;;;[V]&encrasser;s' (pp) [V]&encrasser;verbe pronominal;s'encrasser
+D;;;[V]&encroûter;s' (pp) [V]&encroûter;verbe pronominal;s'encroûter
+I;;;[V]&endimancher;s' (pp) [V]&endimancher;verbe pronominal;s'endimancher
+D;;;[V]&endormir;s' (pp) [V]&endormir;verbe pronominal;s'endormir
+I;;;[V]&endurcir;s' (pp) [V]&endurcir;verbe pronominal;s'endurcir
+D;;;[V]&enfermer;s' (pp) [V]&enfermer;verbe pronominal;s'enfermer
+D;;;[V]&enfiler;s' (pp) [V]&enfiler;verbe pronominal;s'enfiler
+D;;;[V]&enflammer;s' (pp) [V]&enflammer;verbe pronominal;s'enflammer
+ID;;;[V]&enfler;s' (pp) [V]&enfler;verbe pronominal;s'enfler
+ID;;;[V]&enfuir;s' (pp) [V]&enfuir;verbe pronominal;s'enfuir
+D;;;[V]&engager;s' (pp) [V]&engager;verbe pronominal;s'engager
+D;;;[V]&engorger;s' (pp) [V]&engorger;verbe pronominal;s'engorger
+I;;;[V]&engouer;s' (pp) [V]&engouer;verbe pronominal;s'engouer
+D;;;[V]&engouffrer;s' (pp) [V]&engouffrer;verbe pronominal;s'engouffrer
+D;;;[V]&engourdir;s' (pp) [V]&engourdir;verbe pronominal;s'engourdir
+ID;;;[V]&engraisser;s' (pp) [V]&engraisser;verbe pronominal;s'engraisser
+D;;;[V]&engrener;s' (pp) [V]&engrener;verbe pronominal;s'engrener
+D;;;[V]&engueuler;s' (pp) [V]&engueuler;verbe pronominal;s'engueuler
+D;;;[V]&enhardir;s' (pp) [V]&enhardir;verbe pronominal;s'enhardir
+I;;;[V]&enkyster;s' (pp) [V]&enkyster;verbe pronominal;s'enkyster
+D;;;[V]&enlacer;s' (pp) [V]&enlacer;verbe pronominal;s'enlacer
+D;;;[V]&enlever;s' (pp) [V]&enlever;verbe pronominal;s'enlever
+D;;;[V]&enliser;s' (pp) [V]&enliser;verbe pronominal;s'enliser
+D;;;[V]&ennuager;s' (pp) [V]&ennuager;verbe pronominal;s'ennuager
+I;;;[V]&ennuyer;s' (pp) [V]&ennuyer;verbe pronominal;s'ennuyer
+D;;;[V]&enorgueillir;s' (pp) [V]&enorgueillir;verbe pronominal;s'enorgueillir
+ID;;;[V]&enquérir;s' (pp) [V]&enquérir;verbe pronominal;s'enquérir
+D;;;[V]&enraciner;s' (pp) [V]&enraciner;verbe pronominal;s'enraciner
+D;;;[V]&enrayer;s' (pp) [V]&enrayer;verbe pronominal;s'enrayer
+D;;;[V]&enrhumer;s' (pp) [V]&enrhumer;verbe pronominal;s'enrhumer
+D;;;[V]&enrichir;s' (pp) [V]&enrichir;verbe pronominal;s'enrichir
+D;;;[V]&enrouler;s' (pp) [V]&enrouler;verbe pronominal;s'enrouler
+D;;;[V]&enrôler;s' (pp) [V]&enrôler;verbe pronominal;s'enrôler
+D;;;[V]&ensabler;s' (pp) [V]&ensabler;verbe pronominal;s'ensabler
+I;;;[V]&ensevelir;s' (pp) [V]&ensevelir;verbe pronominal;s'ensevelir
+ID;;;[V]&ensuivre;s' (pp) [V]&ensuivre;verbe impersonnel;s'ensuivre
+I;;;[V]&ensuivre;s' (pp) [V]&ensuivre;verbe impersonnel;s'ensuivre
+D;;;[V]&entartrer;s' (pp) [V]&entartrer;verbe pronominal;s'entartrer
+D;;;[V]&entasser;s' (pp) [V]&entasser;verbe pronominal;s'entasser
+D;;;[V]&entendre;s' (pp) [V]&entendre;verbe pronominal;s'entendre
+D;;;[V]&enterrer;s' (pp) [V]&enterrer;verbe pronominal;s'enterrer
+D;;;[V]&enthousiasmer;s' (pp) [V]&enthousiasmer;verbe pronominal;s'enthousiasmer
+D;;;[V]&entortiller;s' (pp) [V]&entortiller;verbe pronominal;s'entortiller
+I;;;[V]&entourer;s' (pp) [V]&entourer;verbe pronominal;s'entourer
+D;;;[V]&entourer;s' (pp) [V]&entourer de;verbe pronominal;s'entourer de
+I;;;[V]&aimer;s' (pp) entr' [V]&aimer;verbe pronominal;s'entr'aimer
+I;;;[V]&égorger;s' (pp) entr' [V]&égorger;verbe pronominal;s'entr'égorger
+I;;;[V]&entraccuser;s' (pp) [V]&entraccuser;verbe pronominal;s'entraccuser
+I;;;[V]&entradmirer;s' (pp) [V]&entradmirer;verbe pronominal;s'entradmirer
+I;;;[V]&entraider;s' (pp) [V]&entraider;verbe pronominal;s'entraider
+D;;;[V]&entraîner;s' (pp) [V]&entraîner;verbe pronominal;s'entraîner
+I;;;[V]&déchirer;s' (pp) entre [V]&déchirer;verbe pronominal;s'entre-déchirer
+I;;;[V]&détruire;s' (pp) entre [V]&détruire;verbe pronominal;s'entre-détruire
+I;;;[V]&dévorer;s' (pp) entre [V]&dévorer;verbe pronominal;s'entre-dévorer
+I;;;[V]&haïr;s' (pp) entre [V]&haïr;verbe pronominal;s'entre-haïr
+I;;;[V]&heurter;s' (pp) entre [V]&heurter;verbe pronominal;s'entre-heurter
+I;;;[V]&louer;s' (pp) entre [V]&louer;verbe pronominal;s'entre-louer
+I;;;[V]&manger;s' (pp) entre [V]&manger;verbe pronominal;s'entre-manger
+I;;;[V]&nuire;s' (pp) entre [V]&nuire;verbe pronominal;s'entre-nuire
+I;;;[V]&regarder;s' (pp) entre [V]&regarder;verbe pronominal;s'entre-regarder
+D;;;[V]&entrechoquer;s' (pp) [V]&entrechoquer;verbe pronominal;s'entrechoquer
+D;;;[V]&entrecroiser;s' (pp) [V]&entrecroiser;verbe pronominal;s'entrecroiser
+D;;;[V]&entrelacer;s' (pp) [V]&entrelacer;verbe pronominal;s'entrelacer
+I;;;[V]&entremettre;s' (pp) [V]&entremettre;verbe pronominal;s'entremettre
+I;;;[V]&entretailler;s' (pp) [V]&entretailler;verbe pronominal;s'entretailler
+D;;;[V]&entretenir;s' (pp) [V]&entretenir;verbe pronominal;s'entretenir
+I;;;[V]&entretuer;s' (pp) [V]&entretuer;verbe pronominal;s'entretuer
+I;;;[V]&entrobliger;s' (pp) [V]&entrobliger;verbe pronominal;s'entrobliger
+D;;;[V]&entrouvrir;s' (pp) [V]&entrouvrir;verbe pronominal;s'entrouvrir
+D;;;[V]&envaser;s' (pp) [V]&envaser;verbe pronominal;s'envaser
+D;;;[V]&envenimer;s' (pp) [V]&envenimer;verbe pronominal;s'envenimer
+I;;;[V]&envieillir;s' (pp) [V]&envieillir;verbe pronominal;s'envieillir
+I;;;[V]&envoiler;s' (pp) [V]&envoiler;verbe pronominal;s'envoiler
+ID;;;[V]&envoler;s' (pp) [V]&envoler;verbe pronominal;s'envoler
+D;;;[V]&envoyer;s' (pp) [V]&envoyer;verbe pronominal;s'envoyer
+T;;;[V]&esbaudir;s' (pp) [V]&esbaudir;verbe pronominal;s'esbaudir
+I;;;[V]&esbigner;s' (pp) [V]&esbigner;verbe pronominal;s'esbigner
+I;;;[V]&esclaffer;s' (pp) [V]&esclaffer;verbe pronominal;s'esclaffer
+I;;;[V]&escrimer;s' (pp) [V]&escrimer;verbe pronominal;s'escrimer
+D;;;[V]&espacer;s' (pp) [V]&espacer;verbe pronominal;s'espacer
+D;;;[V]&esquisser;s' (pp) [V]&esquisser;verbe pronominal;s'esquisser
+D;;;[V]&esquiver;s' (pp) [V]&esquiver;verbe pronominal;s'esquiver
+D;;;[V]&essouffler;s' (pp) [V]&essouffler;verbe pronominal;s'essouffler
+D;;;[V]&essuyer;s' (pp) [V]&essuyer;verbe pronominal;s'essuyer
+D;;;[V]&estomper;s' (pp) [V]&estomper;verbe pronominal;s'estomper
+D;;;[V]&estropier;s' (pp) [V]&estropier;verbe pronominal;s'estropier
+D;;;[V]&européaniser;s' (pp) [V]&européaniser;verbe pronominal;s'européaniser
+D;;;[V]&exacerber;s' (pp) [V]&exacerber;verbe pronominal;s'exacerber
+D;;;[V]&exalter;s' (pp) [V]&exalter;verbe pronominal;s'exalter
+D;;;[V]&exaspérer;s' (pp) [V]&exaspérer;verbe pronominal;s'exaspérer
+D;;;[V]&exciter;s' (pp) [V]&exciter;verbe pronominal;s'exciter
+I;;;[V]&exclamer;s' (pp) [V]&exclamer;verbe pronominal;s'exclamer
+ID;;;[V]&excuser;s' (pp) [V]&excuser;verbe pronominal;s'excuser
+D;;;[V]&exempter;s' (pp) [V]&exempter;verbe pronominal;s'exempter
+D;;;[V]&exercer;s' (pp) [V]&exercer;verbe pronominal;s'exercer
+D;;;[V]&exhaler;s' (pp) [V]&exhaler;verbe pronominal;s'exhaler
+D;;;[V]&exhiber;s' (pp) [V]&exhiber;verbe pronominal;s'exhiber
+I;;;[V]&exiler;s' (pp) [V]&exiler;verbe pronominal;s'exiler
+I;;;[V]&exonder;s' (pp) [V]&exonder;verbe pronominal;s'exonder
+I;;;[V]&exposer;s' (pp) [V]&exposer;verbe pronominal;s'exposer
+I;;;[V]&extasier;s' (pp) [V]&extasier;verbe pronominal;s'extasier
+I;;;[V]&extraire;s' (pp) [V]&extraire;verbe pronominal;s'extraire
+I;;;[V]&exténuer;s' (pp) [V]&exténuer;verbe pronominal;s'exténuer
+I;;;[V]&exécuter;s' (pp) [V]&exécuter;verbe pronominal;s'exécuter
+D;;;[V]&habiller;s' (pp) [V]&habiller;verbe pronominal;s'habiller
+I;;;[V]&habituer;s' (pp) [V]&habituer;verbe pronominal;s'habituer
+D;;;[V]&harmoniser;s' (pp) [V]&harmoniser;verbe pronominal;s'harmoniser
+D;;;[V]&honorer;s' (pp) [V]&honorer;verbe pronominal;s'honorer
+D;;;[V]&humaniser;s' (pp) [V]&humaniser;verbe pronominal;s'humaniser
+D;;;[V]&humilier;s' (pp) [V]&humilier;verbe pronominal;s'humilier
+D;;;[V]&hydrater;s' (pp) [V]&hydrater;verbe pronominal;s'hydrater
+D;;;[V]&hypertrophier;s' (pp) [V]&hypertrophier;verbe pronominal;s'hypertrophier
+D;;;[V]&hypnotiser;s' (pp) [V]&hypnotiser;verbe pronominal;s'hypnotiser
+I;;;[V]&hébéter;s' (pp) [V]&hébéter;verbe pronominal;s'hébéter
+D;;;[V]&illuminer;s' (pp) [V]&illuminer;verbe pronominal;s'illuminer
+I;;;[V]&imaginer;s' (pp) [V]&imaginer;verbe pronominal;s'imaginer
+D;;;[V]&imbiber;s' (pp) [V]&imbiber;verbe pronominal;s'imbiber
+D;;;[V]&immiscer;s' (pp) [V]&immiscer;verbe pronominal;s'immiscer
+D;;;[V]&immobiliser;s' (pp) [V]&immobiliser;verbe pronominal;s'immobiliser
+D;;;[V]&immortaliser;s' (pp) [V]&immortaliser;verbe pronominal;s'immortaliser
+D;;;[V]&impatienter;s' (pp) [V]&impatienter;verbe pronominal;s'impatienter
+D;;;[V]&implanter;s' (pp) [V]&implanter;verbe pronominal;s'implanter
+D;;;[V]&improviser;s' (pp) [V]&improviser;verbe pronominal;s'improviser
+D;;;[V]&imprégner;s' (pp) [V]&imprégner;verbe pronominal;s'imprégner
+D;;;[V]&incarner;s' (pp) [V]&incarner;verbe pronominal;s'incarner
+D;;;[V]&incliner;s' (pp) [V]&incliner;verbe pronominal;s'incliner
+D;;;[V]&incruster;s' (pp) [V]&incruster;verbe pronominal;s'incruster
+I;;;[V]&incurver;s' (pp) [V]&incurver;verbe pronominal;s'incurver
+D;;;[V]&indigner;s' (pp) [V]&indigner;verbe pronominal;s'indigner
+D;;;[V]&industrialiser;s' (pp) [V]&industrialiser;verbe pronominal;s'industrialiser
+I;;;[V]&infatuer;s' (pp) [V]&infatuer;verbe pronominal;s'infatuer
+D;;;[V]&infecter;s' (pp) [V]&infecter;verbe pronominal;s'infecter
+I;;;[V]&infiltrer;s' (pp) [V]&infiltrer;verbe pronominal;s'infiltrer
+D;;;[V]&infléchir;s' (pp) [V]&infléchir;verbe pronominal;s'infléchir
+D;;;[V]&informer;s' (pp) [V]&informer;verbe pronominal;s'informer
+D;;;[V]&inféoder;s' (pp) [V]&inféoder;verbe pronominal;s'inféoder
+I;;;[V]&ingénier;s' (pp) [V]&ingénier;verbe pronominal;s'ingénier
+D;;;[V]&ingérer;s' (pp) [V]&ingérer;verbe pronominal;s'ingérer
+D;;;[V]&initier;s' (pp) [V]&initier;verbe pronominal;s'initier
+D;;;[V]&injurier;s' (pp) [V]&injurier;verbe pronominal;s'injurier
+D;;;[V]&innocenter;s' (pp) [V]&innocenter;verbe pronominal;s'innocenter
+D;;;[V]&inonder;s' (pp) [V]&inonder;verbe pronominal;s'inonder
+D;;;[V]&inquiéter;s' (pp) [V]&inquiéter;verbe pronominal;s'inquiéter
+D;;;[V]&inscrire;s' (pp) [V]&inscrire;verbe pronominal;s'inscrire
+D;;;[V]&insinuer;s' (pp) [V]&insinuer;verbe pronominal;s'insinuer
+D;;;[V]&installer;s' (pp) [V]&installer;verbe pronominal;s'installer
+D;;;[V]&institutionnaliser;s' (pp) [V]&institutionnaliser;verbe pronominal;s'institutionnaliser
+D;;;[V]&instruire;s' (pp) [V]&instruire;verbe pronominal;s'instruire
+D;;;[V]&insulter;s' (pp) [V]&insulter;verbe pronominal;s'insulter
+D;;;[V]&insurger;s' (pp) [V]&insurger;verbe pronominal;s'insurger
+I;;;[V]&insérer;s' (pp) [V]&insérer;verbe pronominal;s'insérer
+I;;;[V]&intensifier;s' (pp) [V]&intensifier;verbe pronominal;s'intensifier
+I;;;[V]&intercaler;s' (pp) [V]&intercaler;verbe pronominal;s'intercaler
+D;;;[V]&interposer;s' (pp) [V]&interposer;verbe pronominal;s'interposer
+IT;;;[V]&interpénétrer;s' (pp) [V]&interpénétrer;verbe pronominal;s'interpénétrer
+I;;;[V]&interroger;s' (pp) [V]&interroger;verbe pronominal;s'interroger
+D;;;[V]&interrompre;s' (pp) [V]&interrompre;verbe pronominal;s'interrompre
+D;;;[V]&intituler;s' (pp) [V]&intituler;verbe pronominal;s'intituler
+I;;;[V]&intoxiquer;s' (pp) [V]&intoxiquer;verbe pronominal;s'intoxiquer
+I;;;[V]&introduire;s' (pp) [V]&introduire;verbe pronominal;s'introduire
+D;;;[V]&intégrer;s' (pp) [V]&intégrer;verbe pronominal;s'intégrer
+I;;;[V]&intéresser;s' (pp) [V]&intéresser;verbe pronominal;s'intéresser
+IT;;;[V]&invétérer;s' (pp) [V]&invétérer;verbe pronominal;s'invétérer
+I;;;[V]&iriser;s' (pp) [V]&iriser;verbe pronominal;s'iriser
+I;;;[V]&irradier;s' (pp) [V]&irradier;verbe pronominal;s'irradier
+I;;;[V]&irriter;s' (pp) [V]&irriter;verbe pronominal;s'irriter
+I;;;[V]&isoler;s' (pp) [V]&isoler;verbe pronominal;s'isoler
+D;;;[V]&obliger;s' (pp) [V]&obliger;verbe pronominal;s'obliger
+D;;;[V]&obscurcir;s' (pp) [V]&obscurcir;verbe pronominal;s'obscurcir
+D;;;[V]&observer;s' (pp) [V]&observer;verbe pronominal;s'observer
+IT;;;[V]&obstiner;s' (pp) [V]&obstiner;verbe pronominal;s'obstiner
+I;;;[V]&obstruer;s' (pp) [V]&obstruer;verbe pronominal;s'obstruer
+D;;;[V]&obtenir;s' (pp) [V]&obtenir;verbe pronominal;s'obtenir
+I;;;[V]&occidentaliser;s' (pp) [V]&occidentaliser;verbe pronominal;s'occidentaliser
+I;;;[V]&octroyer;s' (pp) [V]&octroyer;verbe pronominal;s'octroyer
+I;;;[V]&offenser;s' (pp) [V]&offenser;verbe pronominal;s'offenser
+I;;;[V]&offusquer;s' (pp) [V]&offusquer;verbe pronominal;s'offusquer
+I;;;[V]&opacifier;s' (pp) [V]&opacifier;verbe pronominal;s'opacifier
+I;;;[V]&opposer;s' (pp) [V]&opposer;verbe pronominal;s'opposer
+D;;;[V]&opérer;s' (pp) [V]&opérer;verbe pronominal;s'opérer
+D;;;[V]&organiser;s' (pp) [V]&organiser;verbe pronominal;s'organiser
+I;;;[V]&orientaliser;s' (pp) [V]&orientaliser;verbe pronominal;s'orientaliser
+I;;;[V]&orienter;s' (pp) [V]&orienter;verbe pronominal;s'orienter
+D;;;[V]&orthographier;s' (pp) [V]&orthographier;verbe pronominal;s'orthographier
+I;;;[V]&outiller;s' (pp) [V]&outiller;verbe pronominal;s'outiller
+I;;;[V]&ouvrir;s' (pp) [V]&ouvrir;verbe pronominal;s'ouvrir
+I;;;[V]&oxyder;s' (pp) [V]&oxyder;verbe pronominal;s'oxyder
+D;;;[V]&ulcérer;s' (pp) [V]&ulcérer;verbe pronominal;s'ulcérer
+I;;;[V]&unifier;s' (pp) [V]&unifier;verbe pronominal;s'unifier
+D;;;[V]&unir;s' (pp) [V]&unir;verbe pronominal;s'unir
+D;;;[V]&user;s' (pp) [V]&user;verbe pronominal;s'user
+ID;;;[V]&ébattre;s' (pp) [V]&ébattre;verbe pronominal;s'ébattre
+I;;;[V]&ébaubir;s' (pp) [V]&ébaubir;verbe pronominal;s'ébaubir
+D;;;[V]&ébaucher;s' (pp) [V]&ébaucher;verbe pronominal;s'ébaucher
+D;;;[V]&éborgner;s' (pp) [V]&éborgner;verbe pronominal;s'éborgner
+D;;;[V]&ébouillanter;s' (pp) [V]&ébouillanter;verbe pronominal;s'ébouillanter
+I;;;[V]&ébouler;s' (pp) [V]&ébouler;verbe pronominal;s'ébouler
+D;;;[V]&ébranler;s' (pp) [V]&ébranler;verbe pronominal;s'ébranler
+ID;;;[V]&ébrouer;s' (pp) [V]&ébrouer;verbe pronominal;s'ébrouer
+D;;;[V]&ébruiter;s' (pp) [V]&ébruiter;verbe pronominal;s'ébruiter
+D;;;[V]&ébrécher;s' (pp) [V]&ébrécher;verbe pronominal;s'ébrécher
+D;;;[V]&écailler;s' (pp) [V]&écailler;verbe pronominal;s'écailler
+D;;;[V]&écarter;s' (pp) [V]&écarter;verbe pronominal;s'écarter
+D;;;[V]&échapper;s' (pp) [V]&échapper;verbe pronominal;s'échapper
+D;;;[V]&échauffer;s' (pp) [V]&échauffer;verbe pronominal;s'échauffer
+D;;;[V]&échelonner;s' (pp) [V]&échelonner;verbe pronominal;s'échelonner
+D;;;[V]&éclabousser;s' (pp) [V]&éclabousser;verbe pronominal;s'éclabousser
+D;;;[V]&éclaircir;s' (pp) [V]&éclaircir;verbe pronominal;s'éclaircir
+D;;;[V]&éclairer;s' (pp) [V]&éclairer;verbe pronominal;s'éclairer
+D;;;[V]&éclipser;s' (pp) [V]&éclipser;verbe pronominal;s'éclipser
+D;;;[V]&écorcher;s' (pp) [V]&écorcher;verbe pronominal;s'écorcher
+D;;;[V]&écouler;s' (pp) [V]&écouler;verbe pronominal;s'écouler
+I;;;[V]&écouter;s' (pp) [V]&écouter;verbe pronominal;s'écouter
+D;;;[V]&écraser;s' (pp) [V]&écraser;verbe pronominal;s'écraser
+I;;;[V]&écrier;s' (pp) [V]&écrier;verbe pronominal;s'écrier
+D;;;[V]&écrire;s' (pp) [V]&écrire;verbe pronominal;s'écrire
+ID;;;[V]&écrouler;s' (pp) [V]&écrouler;verbe pronominal;s'écrouler
+I;;;[V]&égailler;s' (pp) [V]&égailler;verbe pronominal;s'égailler
+D;;;[V]&égarer;s' (pp) [V]&égarer;verbe pronominal;s'égarer
+D;;;[V]&égayer;s' (pp) [V]&égayer;verbe pronominal;s'égayer
+I;;;[V]&égosiller;s' (pp) [V]&égosiller;verbe pronominal;s'égosiller
+ID;;;[V]&égoutter;s' (pp) [V]&égoutter;verbe pronominal;s'égoutter
+D;;;[V]&égratigner;s' (pp) [V]&égratigner;verbe pronominal;s'égratigner
+D;;;[V]&égrener;s' (pp) [V]&égrener;verbe pronominal;s'égrener
+D;;;[V]&éjecter;s' (pp) [V]&éjecter;verbe pronominal;s'éjecter
+D;;;[V]&élaborer;s' (pp) [V]&élaborer;verbe pronominal;s'élaborer
+D;;;[V]&élancer;s' (pp) [V]&élancer;verbe pronominal;s'élancer
+D;;;[V]&élargir;s' (pp) [V]&élargir;verbe pronominal;s'élargir
+D;;;[V]&électriser;s' (pp) [V]&électriser;verbe pronominal;s'électriser
+D;;;[V]&électrocuter;s' (pp) [V]&électrocuter;verbe pronominal;s'électrocuter
+D;;;[V]&élever;s' (pp) [V]&élever;verbe pronominal;s'élever
+D;;;[V]&éloigner;s' (pp) [V]&éloigner;verbe pronominal;s'éloigner
+D;;;[V]&émanciper;s' (pp) [V]&émanciper;verbe pronominal;s'émanciper
+D;;;[V]&émerveiller;s' (pp) [V]&émerveiller;verbe pronominal;s'émerveiller
+D;;;[V]&émietter;s' (pp) [V]&émietter;verbe pronominal;s'émietter
+D;;;[V]&émousser;s' (pp) [V]&émousser;verbe pronominal;s'émousser
+D;;;[V]&émouvoir;s' (pp) [V]&émouvoir;verbe pronominal;s'émouvoir
+D;;;[V]&énerver;s' (pp) [V]&énerver;verbe pronominal;s'énerver
+I;;;[V]&énuquer;s' (pp) [V]&énuquer;verbe pronominal;s'énuquer
+D;;;[V]&épaissir;s' (pp) [V]&épaissir;verbe pronominal;s'épaissir
+I;;;[V]&épancher;s' (pp) [V]&épancher;verbe pronominal;s'épancher
+D;;;[V]&épanouir;s' (pp) [V]&épanouir;verbe pronominal;s'épanouir
+D;;;[V]&éparpiller;s' (pp) [V]&éparpiller;verbe pronominal;s'éparpiller
+I;;;[V]&épaufrer;s' (pp) [V]&épaufrer;verbe pronominal;s'épaufrer
+D;;;[V]&éponger;s' (pp) [V]&éponger;verbe pronominal;s'éponger
+D;;;[V]&épouiller;s' (pp) [V]&épouiller;verbe pronominal;s'épouiller
+I;;;[V]&époumoner;s' (pp) [V]&époumoner;verbe pronominal;s'époumoner
+I;;;[V]&éprendre;s' (pp) [V]&éprendre;verbe pronominal;s'éprendre
+D;;;[V]&épuiser;s' (pp) [V]&épuiser;verbe pronominal;s'épuiser
+D;;;[V]&équilibrer;s' (pp) [V]&équilibrer;verbe pronominal;s'équilibrer
+D;;;[V]&équiper;s' (pp) [V]&équiper;verbe pronominal;s'équiper
+D;;;[V]&équivaloir;s' (pp) [V]&équivaloir;verbe pronominal;s'équivaloir
+D;;;[V]&érafler;s' (pp) [V]&érafler;verbe pronominal;s'érafler
+D;;;[V]&éreinter;s' (pp) [V]&éreinter;verbe pronominal;s'éreinter
+D;;;en;s' (pp) [V]&ériger en;verbe pronominal;s'ériger en
+D;;;[V]&établir;s' (pp) [V]&établir;verbe pronominal;s'établir
+D;;;[V]&étager;s' (pp) [V]&étager;verbe pronominal;s'étager
+D;;;[V]&éteindre;s' (pp) [V]&éteindre;verbe pronominal;s'éteindre
+D;;;[V]&étendre;s' (pp) [V]&étendre;verbe pronominal;s'étendre
+D;;;[V]&éterniser;s' (pp) [V]&éterniser;verbe pronominal;s'éterniser
+I;;;[V]&étiaffer;s' (pp) [V]&étiaffer;verbe pronominal;s'étiaffer
+D;;;[V]&étioler;s' (pp) [V]&étioler;verbe pronominal;s'étioler
+D;;;[V]&étirer;s' (pp) [V]&étirer;verbe pronominal;s'étirer
+D;;;[V]&étoffer;s' (pp) [V]&étoffer;verbe pronominal;s'étoffer
+D;;;[V]&étoiler;s' (pp) [V]&étoiler;verbe pronominal;s'étoiler
+D;;;[V]&étonner;s' (pp) [V]&étonner;verbe pronominal;s'étonner
+D;;;[V]&étouffer;s' (pp) [V]&étouffer;verbe pronominal;s'étouffer
+D;;;[V]&étourdir;s' (pp) [V]&étourdir;verbe pronominal;s'étourdir
+D;;;[V]&étrangler;s' (pp) [V]&étrangler;verbe pronominal;s'étrangler
+D;;;[V]&étreindre;s' (pp) [V]&étreindre;verbe pronominal;s'étreindre
+D;;;[V]&étudier;s' (pp) [V]&étudier;verbe pronominal;s'étudier
+D;;;[V]&évader;s' (pp) [V]&évader;verbe pronominal;s'évader
+ID;;;[V]&évanouir;s' (pp) [V]&évanouir;verbe pronominal;s'évanouir
+D;;;[V]&évaporer;s' (pp) [V]&évaporer;verbe pronominal;s'évaporer
+D;;;[V]&évaser;s' (pp) [V]&évaser;verbe pronominal;s'évaser
+D;;;[V]&éveiller;s' (pp) [V]&éveiller;verbe pronominal;s'éveiller
+D;;;[V]&éventer;s' (pp) [V]&éventer;verbe pronominal;s'éventer
+D;;A;[V]&éventrer;s' (pp) [V]&éventrer;verbe pronominal;s'éventrer
+I;;A;[V]&évertuer;s' (pp) [V]&évertuer;verbe pronominal;s'évertuer
+D;;A;[V]&éviter;s' (pp) [V]&éviter;verbe pronominal;s'éviter
+D;;A;[V]&aller;s' (pp) en [V]&aller;verbe pronominal;s'en aller
+I;;A;[V]&contrebalancer;s' (pp) en [V]&contrebalancer;verbe pronominal;s'en contrebalancer
+D;;A;[V]&pourlécher;s' (pp) en [V]&pourlécher;verbe pronominal;s'en pourlécher
+D;;A;[V]&revenir;s' (pp) en [V]&revenir;verbe pronominal;s'en revenir
+ID;;;[V]&bagarrer;se (pp) [V]&bagarrer;verbe pronominal;se bagarrer
+I;;;[V]&baguenauder;se (pp) [V]&baguenauder;verbe pronominal;se baguenauder
+ID;;;[V]&baigner;se (pp) [V]&baigner;verbe pronominal;se baigner
+D;;;[V]&baisser;se (pp) [V]&baisser;verbe pronominal;se baisser
+D;;;[V]&balader;se (pp) [V]&balader;verbe pronominal;se balader
+D;;;[V]&balancer;se (pp) [V]&balancer;verbe pronominal;se balancer
+D;;;[V]&banaliser;se (pp) [V]&banaliser;verbe pronominal;se banaliser
+I;;;[V]&bander;se (pp) [V]&bander;verbe pronominal;se bander
+I;;;[V]&barber;se (pp) [V]&barber;verbe pronominal;se barber
+I;;;[V]&barbouiller;se (pp) [V]&barbouiller;verbe pronominal;se barbouiller
+I;;;[V]&barrer;se (pp) [V]&barrer;verbe pronominal;se barrer
+D;;;[V]&barricader;se (pp) [V]&barricader;verbe pronominal;se barricader
+D;;;[V]&baser;se (pp) [V]&baser;verbe pronominal;se baser
+I;;;[V]&bastonner;se (pp) [V]&bastonner;verbe pronominal;se bastonner
+D;;;[V]&battre;se (pp) [V]&battre;verbe pronominal;se battre
+D;;;[V]&bercer;se (pp) [V]&bercer;verbe pronominal;se bercer
+D;;;[V]&bichonner;se (pp) [V]&bichonner;verbe pronominal;se bichonner
+I;;;[V]&bidonner;se (pp) [V]&bidonner;verbe pronominal;se bidonner
+I;;;[V]&biler;se (pp) [V]&biler;verbe pronominal;se biler
+I;;;[V]&biturer;se (pp) [V]&biturer;verbe pronominal;se biturer
+D;;;[V]&blesser;se (pp) [V]&blesser;verbe pronominal;se blesser
+D;;;[V]&bloquer;se (pp) [V]&bloquer;verbe pronominal;se bloquer
+I;;;[V]&blottir;se (pp) [V]&blottir;verbe pronominal;se blottir
+D;;;[V]&boire;se (pp) [V]&boire;verbe pronominal;se boire
+D;;;[V]&bonifier;se (pp) [V]&bonifier;verbe pronominal;se bonifier
+D;;;[V]&borner;se (pp) [V]&borner;verbe pronominal;se borner
+D;;;nez;se (pp) [V]&bouffer le nez;verbe pronominal;se bouffer le nez
+I;;;[V]&bouger;se (pp) [V]&bouger;verbe pronominal;se bouger
+D;;;[V]&bourrer;se (pp) [V]&bourrer;verbe pronominal;se bourrer
+D;;;[V]&bousculer;se (pp) [V]&bousculer;verbe pronominal;se bousculer
+D;;;[V]&boutonner;se (pp) [V]&boutonner;verbe pronominal;se boutonner
+I;;;[V]&boyauter;se (pp) [V]&boyauter;verbe pronominal;se boyauter
+I;;;[V]&brancher;se (pp) [V]&brancher;verbe pronominal;se brancher
+D;;;[V]&branler;se (pp) [V]&branler;verbe pronominal;se branler
+D;;;[V]&braquer;se (pp) [V]&braquer;verbe pronominal;se braquer
+I;;;[V]&bringuer;se (pp) [V]&bringuer;verbe pronominal;se bringuer
+D;;;[V]&briser;se (pp) [V]&briser;verbe pronominal;se briser
+I;;;[V]&bronzer;se (pp) [V]&bronzer;verbe pronominal;se bronzer
+D;;;[V]&brosser;se (pp) [V]&brosser;verbe pronominal;se brosser
+I;;;[V]&brésiller;se (pp) [V]&brésiller;verbe pronominal;se brésiller
+D;;;[V]&brûler;se (pp) [V]&brûler;verbe pronominal;se brûler
+I;;;[V]&bâtir;se (pp) [V]&bâtir;verbe pronominal;se bâtir
+D;;;[V]&cabrer;se (pp) [V]&cabrer;verbe pronominal;se cabrer
+D;;;[V]&cacher;se (pp) [V]&cacher;verbe pronominal;se cacher
+D;;;[V]&caler;se (pp) [V]&caler;verbe pronominal;se caler
+D;;;[V]&calmer;se (pp) [V]&calmer;verbe pronominal;se calmer
+D;;;[V]&cambrer;se (pp) [V]&cambrer;verbe pronominal;se cambrer
+D;;;[V]&camoufler;se (pp) [V]&camoufler;verbe pronominal;se camoufler
+D;;;[V]&camper;se (pp) [V]&camper;verbe pronominal;se camper
+D;;;[V]&cantonner;se (pp) [V]&cantonner;verbe pronominal;se cantonner
+D;;;[V]&caractériser;se (pp) [V]&caractériser;verbe pronominal;se caractériser
+D;;;[V]&caramboler;se (pp) [V]&caramboler;verbe pronominal;se caramboler
+D;;;[V]&carier;se (pp) [V]&carier;verbe pronominal;se carier
+D;;;[V]&cavaler;se (pp) [V]&cavaler;verbe pronominal;se cavaler
+I;;;[V]&chamailler;se (pp) [V]&chamailler;verbe pronominal;se chamailler
+I;;;[V]&chancir;se (pp) [V]&chancir;verbe pronominal;se chancir
+D;;;[V]&chauffer;se (pp) [V]&chauffer;verbe pronominal;se chauffer
+D;;;[V]&chercher;se (pp) [V]&chercher;verbe pronominal;se chercher
+D;;;[V]&chevaucher;se (pp) [V]&chevaucher;verbe pronominal;se chevaucher
+D;;;[V]&chicaner;se (pp) [V]&chicaner;verbe pronominal;se chicaner
+D;;;[V]&chiffonner;se (pp) [V]&chiffonner;verbe pronominal;se chiffonner
+D;;;[V]&chiffrer;se (pp) [V]&chiffrer;verbe pronominal;se chiffrer
+D;;;[V]&choisir;se (pp) [V]&choisir;verbe pronominal;se choisir
+I;;;[V]&choquer;se (pp) [V]&choquer;verbe pronominal;se choquer
+I;;;[V]&chroniciser;se (pp) [V]&chroniciser;verbe pronominal;se chroniciser
+D;;;[V]&civiliser;se (pp) [V]&civiliser;verbe pronominal;se civiliser
+I;;;[V]&clapir;se (pp) [V]&clapir;verbe pronominal;se clapir
+D;;;[V]&cloîtrer;se (pp) [V]&cloîtrer;verbe pronominal;se cloîtrer
+D;;;[V]&coaliser;se (pp) [V]&coaliser;verbe pronominal;se coaliser
+D;;;[V]&coiffer;se (pp) [V]&coiffer;verbe pronominal;se coiffer
+D;;;[V]&colleter;se (pp) [V]&colleter;verbe pronominal;se colleter
+D;;;[V]&colorer;se (pp) [V]&colorer;verbe pronominal;se colorer
+D;;;[V]&combattre;se (pp) [V]&combattre;verbe pronominal;se combattre
+D;;;[V]&combiner;se (pp) [V]&combiner;verbe pronominal;se combiner
+I;;;[V]&commettre;se (pp) [V]&commettre;verbe pronominal;se commettre
+I;;;[V]&commettre;se (pp) [V]&commettre;verbe impersonnel;se commettre
+D;;;[V]&compenser;se (pp) [V]&compenser;verbe pronominal;se compenser
+D;;;[V]&complaire;se (pp) [V]&complaire;verbe pronominal;se complaire
+D;;;[V]&compléter;se (pp) [V]&compléter;verbe pronominal;se compléter
+D;;;[V]&comporter;se (pp) [V]&comporter;verbe pronominal;se comporter
+I;;;[V]&comprendre;se (pp) [V]&comprendre;verbe pronominal;se comprendre
+D;;;[V]&comprimer;se (pp) [V]&comprimer;verbe pronominal;se comprimer
+D;;;[V]&compromettre;se (pp) [V]&compromettre;verbe pronominal;se compromettre
+D;;;[V]&compter;se (pp) [V]&compter;verbe pronominal;se compter
+D;;;[V]&concentrer;se (pp) [V]&concentrer;verbe pronominal;se concentrer
+D;;;[V]&concerter;se (pp) [V]&concerter;verbe pronominal;se concerter
+D;;;[V]&concrétiser;se (pp) [V]&concrétiser;verbe pronominal;se concrétiser
+D;;;[V]&condenser;se (pp) [V]&condenser;verbe pronominal;se condenser
+D;;;[V]&conduire;se (pp) [V]&conduire;verbe pronominal;se conduire
+D;;;[V]&confiner;se (pp) [V]&confiner;verbe pronominal;se confiner
+D;;;[V]&confirmer;se (pp) [V]&confirmer;verbe pronominal;se confirmer
+D;;;[V]&confondre;se (pp) [V]&confondre;verbe pronominal;se confondre
+D;;;[V]&conformer;se (pp) [V]&conformer;verbe pronominal;se conformer
+D;;;[V]&congeler;se (pp) [V]&congeler;verbe pronominal;se congeler
+D;;;[V]&congratuler;se (pp) [V]&congratuler;verbe pronominal;se congratuler
+D;;;[V]&conjuguer;se (pp) [V]&conjuguer;verbe pronominal;se conjuguer
+D;;;[V]&conjurer;se (pp) [V]&conjurer;verbe pronominal;se conjurer
+D;;;[V]&connaître;se (pp) [V]&connaître;verbe pronominal;se connaître
+D;;;[V]&conserver;se (pp) [V]&conserver;verbe pronominal;se conserver
+D;;;[V]&considérer;se (pp) [V]&considérer;verbe pronominal;se considérer
+D;;;[V]&consoler;se (pp) [V]&consoler;verbe pronominal;se consoler
+D;;;[V]&consulter;se (pp) [V]&consulter;verbe pronominal;se consulter
+D;;;[V]&consumer;se (pp) [V]&consumer;verbe pronominal;se consumer
+D;;;[V]&contenir;se (pp) [V]&contenir;verbe pronominal;se contenir
+D;;;[V]&contenter;se (pp) [V]&contenter;verbe pronominal;se contenter
+I;;;[V]&contorsionner;se (pp) [V]&contorsionner;verbe pronominal;se contorsionner
+D;;;[V]&contracter;se (pp) [V]&contracter;verbe pronominal;se contracter
+D;;;[V]&contraindre;se (pp) [V]&contraindre;verbe pronominal;se contraindre
+D;;;[V]&contredire;se (pp) [V]&contredire;verbe pronominal;se contredire
+I;;;[V]&contreficher;se (pp) [V]&contreficher;verbe pronominal;se contreficher
+I;;;[V]&contrefoutre;se (pp) [V]&contrefoutre;verbe pronominal;se contrefoutre
+D;;;[V]&contrôler;se (pp) [V]&contrôler;verbe pronominal;se contrôler
+D;;;[V]&convertir;se (pp) [V]&convertir;verbe pronominal;se convertir
+D;;;[V]&corriger;se (pp) [V]&corriger;verbe pronominal;se corriger
+D;;;[V]&corser;se (pp) [V]&corser;verbe pronominal;se corser
+D;;;[V]&cotiser;se (pp) [V]&cotiser;verbe pronominal;se cotiser
+I;;;[V]&cotonner;se (pp) [V]&cotonner;verbe pronominal;se cotonner
+D;;;[V]&coucher;se (pp) [V]&coucher;verbe pronominal;se coucher
+D;;;[V]&couper;se (pp) [V]&couper;verbe pronominal;se couper
+D;;;[V]&courber;se (pp) [V]&courber;verbe pronominal;se courber
+D;;;[V]&couvrir;se (pp) [V]&couvrir;verbe pronominal;se couvrir
+I;;;[V]&crasher;se (pp) [V]&crasher;verbe pronominal;se crasher
+I;;;[V]&cravater;se (pp) [V]&cravater;verbe pronominal;se cravater
+D;;;[V]&creuser;se (pp) [V]&creuser;verbe pronominal;se creuser
+D;;;[V]&crevasser;se (pp) [V]&crevasser;verbe pronominal;se crevasser
+D;;;[V]&crisper;se (pp) [V]&crisper;verbe pronominal;se crisper
+D;;;[V]&croire;se (pp) [V]&croire;verbe pronominal;se croire
+I;;;[V]&crotter;se (pp) [V]&crotter;verbe pronominal;se crotter
+I;;;[V]&créoliser;se (pp) [V]&créoliser;verbe pronominal;se créoliser
+D;;;[V]&cuirasser;se (pp) [V]&cuirasser;verbe pronominal;se cuirasser
+I;;;[V]&cuire;se (pp) [V]&cuire;verbe pronominal;se cuire
+I;;;[V]&cuiter;se (pp) [V]&cuiter;verbe pronominal;se cuiter
+D;;;[V]&cultiver;se (pp) [V]&cultiver;verbe pronominal;se cultiver
+I;;;[V]&culturaliser;se (pp) [V]&culturaliser;verbe pronominal;se culturaliser
+D;;;[V]&curer;se (pp) [V]&curer;verbe pronominal;se curer
+D;;;[V]&damner;se (pp) [V]&damner;verbe pronominal;se damner
+D;;;[V]&demander;se (pp) [V]&demander;verbe pronominal;se demander
+D;;;[V]&desceller;se (pp) [V]&desceller;verbe pronominal;se desceller
+D;;;[V]&dessaisir;se (pp) [V]&dessaisir;verbe pronominal;se dessaisir
+D;;;[V]&dessaler;se (pp) [V]&dessaler;verbe pronominal;se dessaler
+D;;;[V]&desserrer;se (pp) [V]&desserrer;verbe pronominal;se desserrer
+D;;;[V]&dessiner;se (pp) [V]&dessiner;verbe pronominal;se dessiner
+D;;;[V]&dessouder;se (pp) [V]&dessouder;verbe pronominal;se dessouder
+I;;;[V]&dessoûler;se (pp) [V]&dessoûler;verbe pronominal;se dessoûler
+D;;;[V]&dessécher;se (pp) [V]&dessécher;verbe pronominal;se dessécher
+I;;;[V]&destiner;se (pp) [V]&destiner;verbe pronominal;se destiner
+I;;;[V]&diffracter;se (pp) [V]&diffracter;verbe pronominal;se diffracter
+D;;;[V]&diffuser;se (pp) [V]&diffuser;verbe pronominal;se diffuser
+D;;;[V]&différencier;se (pp) [V]&différencier;verbe pronominal;se différencier
+D;;;[V]&dilater;se (pp) [V]&dilater;verbe pronominal;se dilater
+I;;;[V]&dire;se (pp) [V]&dire;verbe pronominal;se dire
+D;;;[V]&discréditer;se (pp) [V]&discréditer;verbe pronominal;se discréditer
+D;;;[V]&disculper;se (pp) [V]&disculper;verbe pronominal;se disculper
+D;;;[V]&discuter;se (pp) [V]&discuter;verbe pronominal;se discuter
+D;;;[V]&disjoindre;se (pp) [V]&disjoindre;verbe pronominal;se disjoindre
+D;;;[V]&disloquer;se (pp) [V]&disloquer;verbe pronominal;se disloquer
+D;;;[V]&dispenser;se (pp) [V]&dispenser;verbe pronominal;se dispenser
+D;;;[V]&disperser;se (pp) [V]&disperser;verbe pronominal;se disperser
+D;;;[V]&disposer;se (pp) [V]&disposer;verbe pronominal;se disposer
+T;;;[V]&disputailler;se (pp) [V]&disputailler;verbe pronominal;se disputailler
+D;;;[V]&disqualifier;se (pp) [V]&disqualifier;verbe pronominal;se disqualifier
+D;;;[V]&dissiper;se (pp) [V]&dissiper;verbe pronominal;se dissiper
+D;;;[V]&dissocier;se (pp) [V]&dissocier;verbe pronominal;se dissocier
+D;;;[V]&dissoudre;se (pp) [V]&dissoudre;verbe pronominal;se dissoudre
+D;;;[V]&disséminer;se (pp) [V]&disséminer;verbe pronominal;se disséminer
+I;;;[V]&distancier;se (pp) [V]&distancier;verbe pronominal;se distancier
+D;;;[V]&distendre;se (pp) [V]&distendre;verbe pronominal;se distendre
+D;;;[V]&distraire;se (pp) [V]&distraire;verbe pronominal;se distraire
+D;;;[V]&diversifier;se (pp) [V]&diversifier;verbe pronominal;se diversifier
+I;;;[V]&divertir;se (pp) [V]&divertir;verbe pronominal;se divertir
+D;;;[V]&documenter;se (pp) [V]&documenter;verbe pronominal;se documenter
+D;;;[V]&dominer;se (pp) [V]&dominer;verbe pronominal;se dominer
+I;;;[V]&donner;se (pp) [V]&donner;verbe pronominal;se donner
+D;;;[V]&doper;se (pp) [V]&doper;verbe pronominal;se doper
+D;;;[V]&dorer;se (pp) [V]&dorer;verbe pronominal;se dorer
+D;;;[V]&dorloter;se (pp) [V]&dorloter;verbe pronominal;se dorloter
+D;;;[V]&doubler;se (pp) [V]&doubler;verbe pronominal;se doubler
+D;;;[V]&doucher;se (pp) [V]&doucher;verbe pronominal;se doucher
+I;;;[V]&douter;se (pp) [V]&douter;verbe pronominal;se douter
+D;;;[V]&draper;se (pp) [V]&draper;verbe pronominal;se draper
+D;;;[V]&dresser;se (pp) [V]&dresser;verbe pronominal;se dresser
+D;;;[V]&droguer;se (pp) [V]&droguer;verbe pronominal;se droguer
+I;;;[V]&durcir;se (pp) [V]&durcir;verbe pronominal;se durcir
+ID;;;[V]&duveter;se (pp) [V]&duveter;verbe pronominal;se duveter
+I;;;[V]&déballonner;se (pp) [V]&déballonner;verbe pronominal;se déballonner
+ID;;;[V]&débander;se (pp) [V]&débander;verbe pronominal;se débander
+D;;;[V]&débarbouiller;se (pp) [V]&débarbouiller;verbe pronominal;se débarbouiller
+D;;;[V]&débattre;se (pp) [V]&débattre;verbe pronominal;se débattre
+ID;;;[V]&débiner;se (pp) [V]&débiner;verbe pronominal;se débiner
+D;;;[V]&déborder;se (pp) [V]&déborder;verbe pronominal;se déborder
+D;;;[V]&débotter;se (pp) [V]&débotter;verbe pronominal;se débotter
+D;;;[V]&déboutonner;se (pp) [V]&déboutonner;verbe pronominal;se déboutonner
+I;;;[V]&débrailler;se (pp) [V]&débrailler;verbe pronominal;se débrailler
+D;;;[V]&débrouiller;se (pp) [V]&débrouiller;verbe pronominal;se débrouiller
+D;;;[V]&décalcifier;se (pp) [V]&décalcifier;verbe pronominal;se décalcifier
+D;;;[V]&décanter;se (pp) [V]&décanter;verbe pronominal;se décanter
+I;;;[V]&décarcasser;se (pp) [V]&décarcasser;verbe pronominal;se décarcasser
+D;;;[V]&décatir;se (pp) [V]&décatir;verbe pronominal;se décatir
+I;;;[V]&décaver;se (pp) [V]&décaver;verbe pronominal;se décaver
+I;;;[V]&décharger;se (pp) [V]&décharger;verbe pronominal;se décharger
+D;;;[V]&déchausser;se (pp) [V]&déchausser;verbe pronominal;se déchausser
+D;;;[V]&déchaîner;se (pp) [V]&déchaîner;verbe pronominal;se déchaîner
+D;;;[V]&décider;se (pp) [V]&décider;verbe pronominal;se décider
+D;;;[V]&déclarer;se (pp) [V]&déclarer;verbe pronominal;se déclarer
+D;;;[V]&déclencher;se (pp) [V]&déclencher;verbe pronominal;se déclencher
+D;;;[V]&décoller;se (pp) [V]&décoller;verbe pronominal;se décoller
+D;;;[V]&décommander;se (pp) [V]&décommander;verbe pronominal;se décommander
+D;;;[V]&décomposer;se (pp) [V]&décomposer;verbe pronominal;se décomposer
+D;;;[V]&déconsidérer;se (pp) [V]&déconsidérer;verbe pronominal;se déconsidérer
+D;;;[V]&décontenancer;se (pp) [V]&décontenancer;verbe pronominal;se décontenancer
+D;;;[V]&découdre;se (pp) [V]&découdre;verbe pronominal;se découdre
+D;;;[V]&découper;se (pp) [V]&découper;verbe pronominal;se découper
+D;;;[V]&décourager;se (pp) [V]&décourager;verbe pronominal;se décourager
+D;;;[V]&découvrir;se (pp) [V]&découvrir;verbe pronominal;se découvrir
+I;;;[V]&décrapouiller;se (pp) [V]&décrapouiller;verbe pronominal;se décrapouiller
+I;;;[V]&dédifférencier;se (pp) [V]&dédifférencier;verbe pronominal;se dédifférencier
+ID;;;[V]&dédire;se (pp) [V]&dédire;verbe pronominal;se dédire
+D;;;[V]&dédommager;se (pp) [V]&dédommager;verbe pronominal;se dédommager
+D;;;[V]&déduire;se (pp) [V]&déduire;verbe pronominal;se déduire
+D;;;[V]&défaire;se (pp) [V]&défaire;verbe pronominal;se défaire
+I;;;[V]&défarguer;se (pp) [V]&défarguer;verbe pronominal;se défarguer
+I;;;[V]&défausser;se (pp) [V]&défausser;verbe pronominal;se défausser
+D;;;[V]&défendre;se (pp) [V]&défendre;verbe pronominal;se défendre
+I;;;[V]&défier;se (pp) [V]&défier;verbe pronominal;se défier
+D;;;[V]&défiler;se (pp) [V]&défiler;verbe pronominal;se défiler
+D;;;[V]&défoncer;se (pp) [V]&défoncer;verbe pronominal;se défoncer
+D;;;[V]&déformer;se (pp) [V]&déformer;verbe pronominal;se déformer
+ID;;;[V]&défouler;se (pp) [V]&défouler;verbe pronominal;se défouler
+I;;;[V]&défroquer;se (pp) [V]&défroquer;verbe pronominal;se défroquer
+I;;;[V]&défâcher;se (pp) [V]&défâcher;verbe pronominal;se défâcher
+D;;;[V]&dégager;se (pp) [V]&dégager;verbe pronominal;se dégager
+D;;;[V]&dégeler;se (pp) [V]&dégeler;verbe pronominal;se dégeler
+D;;;[V]&déglinguer;se (pp) [V]&déglinguer;verbe pronominal;se déglinguer
+D;;;[V]&dégonfler;se (pp) [V]&dégonfler;verbe pronominal;se dégonfler
+I;;;[V]&dégoûter;se (pp) [V]&dégoûter;verbe pronominal;se dégoûter
+D;;;[V]&dégrader;se (pp) [V]&dégrader;verbe pronominal;se dégrader
+D;;;[V]&dégrossir;se (pp) [V]&dégrossir;verbe pronominal;se dégrossir
+I;;;[V]&dégrouiller;se (pp) [V]&dégrouiller;verbe pronominal;se dégrouiller
+D;;;[V]&déguiser;se (pp) [V]&déguiser;verbe pronominal;se déguiser
+I;;;[V]&déhancher;se (pp) [V]&déhancher;verbe pronominal;se déhancher
+ID;;;[V]&déjuger;se (pp) [V]&déjuger;verbe pronominal;se déjuger
+D;;;[V]&délabrer;se (pp) [V]&délabrer;verbe pronominal;se délabrer
+D;;;[V]&délasser;se (pp) [V]&délasser;verbe pronominal;se délasser
+I;;;[V]&délicatiser;se (pp) [V]&délicatiser;verbe pronominal;se délicatiser
+D;;;[V]&démancher;se (pp) [V]&démancher;verbe pronominal;se démancher
+D;;;[V]&démantibuler;se (pp) [V]&démantibuler;verbe pronominal;se démantibuler
+D;;;[V]&démaquiller;se (pp) [V]&démaquiller;verbe pronominal;se démaquiller
+D;;;[V]&démarquer;se (pp) [V]&démarquer;verbe pronominal;se démarquer
+D;;;[V]&démasquer;se (pp) [V]&démasquer;verbe pronominal;se démasquer
+I;;;[V]&dématiner;se (pp) [V]&dématiner;verbe pronominal;se dématiner
+ID;;;[V]&démener;se (pp) [V]&démener;verbe pronominal;se démener
+ID;;;[V]&démerder;se (pp) [V]&démerder;verbe pronominal;se démerder
+I;;;[V]&démerdouiller;se (pp) [V]&démerdouiller;verbe pronominal;se démerdouiller
+D;;;[V]&démocratiser;se (pp) [V]&démocratiser;verbe pronominal;se démocratiser
+D;;;[V]&démonter;se (pp) [V]&démonter;verbe pronominal;se démonter
+D;;;[V]&démoraliser;se (pp) [V]&démoraliser;verbe pronominal;se démoraliser
+D;;;[V]&démunir;se (pp) [V]&démunir;verbe pronominal;se démunir
+D;;;[V]&dénouer;se (pp) [V]&dénouer;verbe pronominal;se dénouer
+I;;;[V]&dénuer;se (pp) [V]&dénuer;verbe pronominal;se dénuer
+D;;;[V]&départir;se (pp) [V]&départir;verbe pronominal;se départir
+I;;;[V]&dépatouiller;se (pp) [V]&dépatouiller;verbe pronominal;se dépatouiller
+I;;;[V]&dépenser;se (pp) [V]&dépenser;verbe pronominal;se dépenser
+D;;;[V]&dépersonnaliser;se (pp) [V]&dépersonnaliser;verbe pronominal;se dépersonnaliser
+D;;;[V]&dépeupler;se (pp) [V]&dépeupler;verbe pronominal;se dépeupler
+D;;;[V]&déplacer;se (pp) [V]&déplacer;verbe pronominal;se déplacer
+D;;;[V]&déplaire;se (pp) [V]&déplaire;verbe pronominal;se déplaire
+D;;;[V]&déplier;se (pp) [V]&déplier;verbe pronominal;se déplier
+D;;;[V]&déplisser;se (pp) [V]&déplisser;verbe pronominal;se déplisser
+D;;;[V]&déployer;se (pp) [V]&déployer;verbe pronominal;se déployer
+D;;;[V]&déplumer;se (pp) [V]&déplumer;verbe pronominal;se déplumer
+ID;;;[V]&déporter;se (pp) [V]&déporter;verbe pronominal;se déporter
+D;;;[V]&déposer;se (pp) [V]&déposer;verbe pronominal;se déposer
+I;;;[V]&déprendre;se (pp) [V]&déprendre;verbe pronominal;se déprendre
+D;;;[V]&déprécier;se (pp) [V]&déprécier;verbe pronominal;se déprécier
+D;;;[V]&dépêcher;se (pp) [V]&dépêcher;verbe pronominal;se dépêcher
+D;;;[V]&dépêtrer;se (pp) [V]&dépêtrer;verbe pronominal;se dépêtrer
+D;;;[V]&déranger;se (pp) [V]&déranger;verbe pronominal;se déranger
+D;;;[V]&dérider;se (pp) [V]&dérider;verbe pronominal;se dérider
+I;;;[V]&dérocher;se (pp) [V]&dérocher;verbe pronominal;se dérocher
+D;;;[V]&dérouiller;se (pp) [V]&dérouiller;verbe pronominal;se dérouiller
+D;;;[V]&dérouler;se (pp) [V]&dérouler;verbe pronominal;se dérouler
+D;;;[V]&dérégler;se (pp) [V]&dérégler;verbe pronominal;se dérégler
+D;;;[V]&désabonner;se (pp) [V]&désabonner;verbe pronominal;se désabonner
+I;;;[V]&désaffectionner;se (pp) [V]&désaffectionner;verbe pronominal;se désaffectionner
+D;;;[V]&désagréger;se (pp) [V]&désagréger;verbe pronominal;se désagréger
+D;;;[V]&désaltérer;se (pp) [V]&désaltérer;verbe pronominal;se désaltérer
+D;;;[V]&désarticuler;se (pp) [V]&désarticuler;verbe pronominal;se désarticuler
+I;;;[V]&désembourgeoiser;se (pp) [V]&désembourgeoiser;verbe pronominal;se désembourgeoiser
+I;;;[V]&désenchanter;se (pp) [V]&désenchanter;verbe pronominal;se désenchanter
+I;;;[V]&désendetter;se (pp) [V]&désendetter;verbe pronominal;se désendetter
+D;;;[V]&désengager;se (pp) [V]&désengager;verbe pronominal;se désengager
+D;;;[V]&désennuyer;se (pp) [V]&désennuyer;verbe pronominal;se désennuyer
+D;;;[V]&désespérer;se (pp) [V]&désespérer;verbe pronominal;se désespérer
+D;;;[V]&déshabiller;se (pp) [V]&déshabiller;verbe pronominal;se déshabiller
+D;;;[V]&déshabituer;se (pp) [V]&déshabituer;verbe pronominal;se déshabituer
+D;;;[V]&déshonorer;se (pp) [V]&déshonorer;verbe pronominal;se déshonorer
+D;;;[V]&déshydrater;se (pp) [V]&déshydrater;verbe pronominal;se déshydrater
+D;;;[V]&désintégrer;se (pp) [V]&désintégrer;verbe pronominal;se désintégrer
+I;;;[V]&désintéresser;se (pp) [V]&désintéresser;verbe pronominal;se désintéresser
+I;;;[V]&désister;se (pp) [V]&désister;verbe pronominal;se désister
+I;;;[V]&désoler;se (pp) [V]&désoler;verbe pronominal;se désoler
+D;;;[V]&désorganiser;se (pp) [V]&désorganiser;verbe pronominal;se désorganiser
+D;;;[V]&détendre;se (pp) [V]&détendre;verbe pronominal;se détendre
+D;;;[V]&détourner;se (pp) [V]&détourner;verbe pronominal;se détourner
+D;;;[V]&détraquer;se (pp) [V]&détraquer;verbe pronominal;se détraquer
+I;;;[V]&détroncher;se (pp) [V]&détroncher;verbe pronominal;se détroncher
+D;;;[V]&détruire;se (pp) [V]&détruire;verbe pronominal;se détruire
+D;;;[V]&détériorer;se (pp) [V]&détériorer;verbe pronominal;se détériorer
+D;;;[V]&dévaloriser;se (pp) [V]&dévaloriser;verbe pronominal;se dévaloriser
+D;;;[V]&développer;se (pp) [V]&développer;verbe pronominal;se développer
+I;;;[V]&dévergonder;se (pp) [V]&dévergonder;verbe pronominal;se dévergonder
+D;;;[V]&déverser;se (pp) [V]&déverser;verbe pronominal;se déverser
+I;;;[V]&déviriliser;se (pp) [V]&déviriliser;verbe pronominal;se déviriliser
+D;;;[V]&dévoiler;se (pp) [V]&dévoiler;verbe pronominal;se dévoiler
+ID;;;[V]&dévouer;se (pp) [V]&dévouer;verbe pronominal;se dévouer
+I;;;[V]&dévoyer;se (pp) [V]&dévoyer;verbe pronominal;se dévoyer
+D;;;[V]&dévêtir;se (pp) [V]&dévêtir;verbe pronominal;se dévêtir
+I;;;[V]&failler;se (pp) [V]&failler;verbe pronominal;se failler
+ID;;;[V]&faire;se (pp) [V]&faire;verbe pronominal;se faire
+I;;;[V]&familiariser;se (pp) [V]&familiariser;verbe pronominal;se familiariser
+D;;;[V]&faner;se (pp) [V]&faner;verbe pronominal;se faner
+D;;;[V]&farder;se (pp) [V]&farder;verbe pronominal;se farder
+D;;;[V]&fatiguer;se (pp) [V]&fatiguer;verbe pronominal;se fatiguer
+D;;;[V]&faufiler;se (pp) [V]&faufiler;verbe pronominal;se faufiler
+D;;;[V]&fendiller;se (pp) [V]&fendiller;verbe pronominal;se fendiller
+D;;;[V]&fendre;se (pp) [V]&fendre;verbe pronominal;se fendre
+D;;;[V]&fermer;se (pp) [V]&fermer;verbe pronominal;se fermer
+D;;;[V]&fiancer;se (pp) [V]&fiancer;verbe pronominal;se fiancer
+I;;;[V]&fier;se (pp) [V]&fier;verbe pronominal;se fier
+D;;;[V]&figer;se (pp) [V]&figer;verbe pronominal;se figer
+D;;;[V]&figurer;se (pp) [V]&figurer;verbe pronominal;se figurer
+D;;;[V]&fissurer;se (pp) [V]&fissurer;verbe pronominal;se fissurer
+D;;;[V]&flanquer;se (pp) [V]&flanquer;verbe pronominal;se flanquer
+D;;;[V]&flatter;se (pp) [V]&flatter de;verbe pronominal;se flatter de
+D;;;[V]&flinguer;se (pp) [V]&flinguer;verbe pronominal;se flinguer
+D;;;[V]&flétrir;se (pp) [V]&flétrir;verbe pronominal;se flétrir
+D;;;[V]&fonctionnariser;se (pp) [V]&fonctionnariser;verbe pronominal;se fonctionnariser
+D;;;[V]&fonder;se (pp) [V]&fonder;verbe pronominal;se fonder
+D;;;[V]&fondre;se (pp) [V]&fondre;verbe pronominal;se fondre
+D;;;[V]&forcer;se (pp) [V]&forcer;verbe pronominal;se forcer
+ID;;;[V]&formaliser;se (pp) [V]&formaliser;verbe pronominal;se formaliser
+D;;;[V]&former;se (pp) [V]&former;verbe pronominal;se former
+D;;;[V]&fortifier;se (pp) [V]&fortifier;verbe pronominal;se fortifier
+ITD;;;[V]&fossiliser;se (pp) [V]&fossiliser;verbe pronominal;se fossiliser
+D;;;[V]&fournir;se (pp) [V]&fournir;verbe pronominal;se fournir
+D;;;[V]&fourvoyer;se (pp) [V]&fourvoyer;verbe pronominal;se fourvoyer
+D;;;[V]&fracasser;se (pp) [V]&fracasser;verbe pronominal;se fracasser
+D;;;[V]&fractionner;se (pp) [V]&fractionner;verbe pronominal;se fractionner
+D;;;[V]&fracturer;se (pp) [V]&fracturer;verbe pronominal;se fracturer
+I;;;[V]&frapper;se (pp) [V]&frapper;verbe pronominal;se frapper
+D;;;[V]&fringuer;se (pp) [V]&fringuer;verbe pronominal;se fringuer
+D;;;[V]&froisser;se (pp) [V]&froisser;verbe pronominal;se froisser
+ID;;;[V]&fréquenter;se (pp) [V]&fréquenter;verbe pronominal;se fréquenter
+D;;;rouge;se (pp) [V]&fâcher tout rouge;verbe pronominal;se fâcher tout rouge
+D;;;[V]&fédérer;se (pp) [V]&fédérer;verbe pronominal;se fédérer
+D;;;[V]&féliciter;se (pp) [V]&féliciter;verbe pronominal;se féliciter
+D;;;[V]&féminiser;se (pp) [V]&féminiser;verbe pronominal;se féminiser
+D;;;[V]&fêler;se (pp) [V]&fêler;verbe pronominal;se fêler
+D;;;[V]&gangrener;se (pp) [V]&gangrener;verbe pronominal;se gangrener
+I;;;[V]&gargariser;se (pp) [V]&gargariser;verbe pronominal;se gargariser
+I;;;[V]&gausser;se (pp) [V]&gausser;verbe pronominal;se gausser
+D;;;[V]&gaver;se (pp) [V]&gaver;verbe pronominal;se gaver
+I;;;[V]&gendarmer;se (pp) [V]&gendarmer;verbe pronominal;se gendarmer
+I;;;[V]&gileter;se (pp) [V]&gileter;verbe pronominal;se gileter
+D;;;[V]&glacer;se (pp) [V]&glacer;verbe pronominal;se glacer
+D;;;[V]&glisser;se (pp) [V]&glisser;verbe pronominal;se glisser
+D;;;[V]&glorifier;se (pp) [V]&glorifier;verbe pronominal;se glorifier
+ID;;;[V]&goberger;se (pp) [V]&goberger;verbe pronominal;se goberger
+I;;;[V]&goinfrer;se (pp) [V]&goinfrer;verbe pronominal;se goinfrer
+I;;;[V]&gominer;se (pp) [V]&gominer;verbe pronominal;se gominer
+D;;;[V]&gonfler;se (pp) [V]&gonfler;verbe pronominal;se gonfler
+I;;;[V]&gourer;se (pp) [V]&gourer;verbe pronominal;se gourer
+D;;;[V]&grandir;se (pp) [V]&grandir;verbe pronominal;se grandir
+D;;;[V]&greffer;se (pp) [V]&greffer;verbe pronominal;se greffer
+I;;;[V]&grimer;se (pp) [V]&grimer;verbe pronominal;se grimer
+D;;;[V]&griser;se (pp) [V]&griser;verbe pronominal;se griser
+I;;;[V]&grouiller;se (pp) [V]&grouiller;verbe pronominal;se grouiller
+D;;;[V]&grouper;se (pp) [V]&grouper;verbe pronominal;se grouper
+D;;;[V]&guider;se (pp) [V]&guider;verbe pronominal;se guider
+I;;;[V]&guêtrer;se (pp) [V]&guêtrer;verbe pronominal;se guêtrer
+D;;;[V]&gâter;se (pp) [V]&gâter;verbe pronominal;se gâter
+D;;;[V]&gélifier;se (pp) [V]&gélifier;verbe pronominal;se gélifier
+D;;;[V]&généraliser;se (pp) [V]&généraliser;verbe pronominal;se généraliser
+D;;;[V]&hasarder;se (pp) [V]&hasarder;verbe pronominal;se hasarder
+D;;;[V]&hausser;se (pp) [V]&hausser;verbe pronominal;se hausser
+D;;;[V]&haïr;se (pp) [V]&haïr;verbe pronominal;se haïr
+D;;;[V]&heurter;se (pp) [V]&heurter;verbe pronominal;se heurter
+D;;;[V]&hisser;se (pp) [V]&hisser;verbe pronominal;se hisser
+I;;;[V]&huiler;se (pp) [V]&huiler;verbe pronominal;se huiler
+D;;;[V]&hâter;se (pp) [V]&hâter;verbe pronominal;se hâter
+D;;;[V]&hérisser;se (pp) [V]&hérisser;verbe pronominal;se hérisser
+D;;;[V]&jalouser;se (pp) [V]&jalouser;verbe pronominal;se jalouser
+I;;;[V]&joindre;se (pp) [V]&joindre;verbe pronominal;se joindre
+D;;;[V]&jucher;se (pp) [V]&jucher;verbe pronominal;se jucher
+D;;;[V]&justifier;se (pp) [V]&justifier;verbe pronominal;se justifier
+D;;;[V]&laisser;se (pp) [V]&laisser aller;verbe pronominal;se laisser aller
+I;;;[V]&lamenter;se (pp) [V]&lamenter;verbe pronominal;se lamenter
+D;;;[V]&languir;se (pp) [V]&languir;verbe pronominal;se languir
+I;;;[V]&lapidifier;se (pp) [V]&lapidifier;verbe pronominal;se lapidifier
+I;;;[V]&lasser;se (pp) [V]&lasser;verbe pronominal;se lasser
+D;;;[V]&laver;se (pp) [V]&laver;verbe pronominal;se laver
+I;;;[V]&leurrer;se (pp) [V]&leurrer;verbe pronominal;se leurrer
+D;;;[V]&lever;se (pp) [V]&lever;verbe pronominal;se lever
+I;;;[V]&libéraliser;se (pp) [V]&libéraliser;verbe pronominal;se libéraliser
+D;;;[V]&libérer;se (pp) [V]&libérer;verbe pronominal;se libérer
+I;;;[V]&lier;se (pp) [V]&lier;verbe pronominal;se lier
+I;;;[V]&lignifier;se (pp) [V]&lignifier;verbe pronominal;se lignifier
+D;;;[V]&liguer;se (pp) [V]&liguer;verbe pronominal;se liguer
+I;;;[V]&limiter;se (pp) [V]&limiter;verbe pronominal;se limiter
+D;;;[V]&liquéfier;se (pp) [V]&liquéfier;verbe pronominal;se liquéfier
+D;;;[V]&lire;se (pp) [V]&lire;verbe pronominal;se lire
+D;;;[V]&localiser;se (pp) [V]&localiser;verbe pronominal;se localiser
+I;;;[V]&loger;se (pp) [V]&loger;verbe pronominal;se loger
+I;;;[V]&louer;se (pp) [V]&louer;verbe pronominal;se louer
+D;;;[V]&lover;se (pp) [V]&lover;verbe pronominal;se lover
+I;;;[V]&luxer;se (pp) [V]&luxer;verbe pronominal;se luxer
+D;;;[V]&lécher;se (pp) [V]&lécher;verbe pronominal;se lécher
+D;;;[V]&lézarder;se (pp) [V]&lézarder;verbe pronominal;se lézarder
+I;;;[V]&madériser;se (pp) [V]&madériser;verbe pronominal;se madériser
+T;;;[V]&magner;se (pp) [V]&magner;verbe pronominal;se magner
+I;;;[V]&maintenir;se (pp) [V]&maintenir;verbe pronominal;se maintenir
+I;;;[V]&manifester;se (pp) [V]&manifester;verbe pronominal;se manifester
+D;;;[V]&maquer;se (pp) [V]&maquer;verbe pronominal;se maquer
+D;;;[V]&maquiller;se (pp) [V]&maquiller;verbe pronominal;se maquiller
+I;;;[V]&marier;se (pp) [V]&marier;verbe pronominal;se marier
+T;;;[V]&marrer;se (pp) [V]&marrer;verbe pronominal;se marrer
+D;;;[V]&masser;se (pp) [V]&masser;verbe pronominal;se masser
+D;;;[V]&masturber;se (pp) [V]&masturber;verbe pronominal;se masturber
+D;;;[V]&matérialiser;se (pp) [V]&matérialiser;verbe pronominal;se matérialiser
+D;;;[V]&maîtriser;se (pp) [V]&maîtriser;verbe pronominal;se maîtriser
+D;;;[V]&mentir;se (pp) [V]&mentir;verbe pronominal;se mentir
+I;;;[V]&mesurer;se (pp) [V]&mesurer;verbe pronominal;se mesurer
+D;;;[V]&mettre;se (pp) [V]&mettre;verbe pronominal;se mettre
+I;;;[V]&meubler;se (pp) [V]&meubler;verbe pronominal;se meubler
+I;;;[V]&minéraliser;se (pp) [V]&minéraliser;verbe pronominal;se minéraliser
+D;;;[V]&mirer;se (pp) [V]&mirer;verbe pronominal;se mirer
+I;;;[V]&miter;se (pp) [V]&miter;verbe pronominal;se miter
+D;;;[V]&mobiliser;se (pp) [V]&mobiliser;verbe pronominal;se mobiliser
+D;;;[V]&moderniser;se (pp) [V]&moderniser;verbe pronominal;se moderniser
+D;;;[V]&modifier;se (pp) [V]&modifier;verbe pronominal;se modifier
+D;;;[V]&modérer;se (pp) [V]&modérer;verbe pronominal;se modérer
+I;;;[V]&moinifier;se (pp) [V]&moinifier;verbe pronominal;se moinifier
+D;;;[V]&montrer;se (pp) [V]&montrer;verbe pronominal;se montrer
+IT;;;[V]&moquer;se (pp) [V]&moquer;verbe pronominal;se moquer
+I;;;[V]&morfaler;se (pp) [V]&morfaler;verbe pronominal;se morfaler
+ID;;;[V]&morfondre;se (pp) [V]&morfondre;verbe pronominal;se morfondre
+D;;;[V]&mortifier;se (pp) [V]&mortifier;verbe pronominal;se mortifier
+I;;;[V]&motter;se (pp) [V]&motter;verbe pronominal;se motter
+D;;;[V]&moucher;se (pp) [V]&moucher;verbe pronominal;se moucher
+D;;;[V]&mouiller;se (pp) [V]&mouiller;verbe pronominal;se mouiller
+D;;;[V]&mourir;se (pp) [V]&mourir;verbe pronominal;se mourir
+D;;;[V]&mouvoir;se (pp) [V]&mouvoir;verbe pronominal;se mouvoir
+D;;;en;se (pp) [V]&muer en;verbe pronominal;se muer en
+D;;;[V]&multiplier;se (pp) [V]&multiplier;verbe pronominal;se multiplier
+D;;;[V]&munir;se (pp) [V]&munir;verbe pronominal;se munir
+D;;;[V]&murer;se (pp) [V]&murer;verbe pronominal;se murer
+D;;;[V]&mutiler;se (pp) [V]&mutiler;verbe pronominal;se mutiler
+I;;;[V]&mutiner;se (pp) [V]&mutiner;verbe pronominal;se mutiner
+I;;;[V]&méconduire;se (pp) [V]&méconduire;verbe pronominal;se méconduire
+ID;;;[V]&méfier;se (pp) [V]&méfier;verbe pronominal;se méfier
+I;;;[V]&ménager;se (pp) [V]&ménager;verbe pronominal;se ménager
+ID;;;[V]&méprendre;se (pp) [V]&méprendre;verbe pronominal;se méprendre
+I;;;[V]&mésallier;se (pp) [V]&mésallier;verbe pronominal;se mésallier
+D;;;[V]&métamorphoser;se (pp) [V]&métamorphoser;verbe pronominal;se métamorphoser
+I;;;[V]&métamériser;se (pp) [V]&métamériser;verbe pronominal;se métamériser
+D;;;[V]&mêler;se (pp) [V]&mêler;verbe pronominal;se mêler
+D;;;[V]&neutraliser;se (pp) [V]&neutraliser;verbe pronominal;se neutraliser
+D;;;[V]&nipper;se (pp) [V]&nipper;verbe pronominal;se nipper
+I;;;[V]&nommer;se (pp) [V]&nommer;verbe pronominal;se nommer
+D;;;[V]&nouer;se (pp) [V]&nouer;verbe pronominal;se nouer
+D;;;[V]&négliger;se (pp) [V]&négliger;verbe pronominal;se négliger
+I;;;[V]&organiciser;se (pp) [V]&organiciser;verbe pronominal;se organiciser
+I;;;[V]&paddocker;se (pp) [V]&paddocker;verbe pronominal;se paddocker
+ID;;;[V]&pageoter;se (pp) [V]&pageoter;verbe pronominal;se pageoter
+D;;;[V]&paniquer;se (pp) [V]&paniquer;verbe pronominal;se paniquer
+I;;;[V]&papilloter;se (pp) [V]&papilloter;verbe pronominal;se papilloter
+D;;;[V]&parer;se (pp) [V]&parer;verbe pronominal;se parer
+D;;;[V]&parfumer;se (pp) [V]&parfumer;verbe pronominal;se parfumer
+I;;;[V]&parjurer;se (pp) [V]&parjurer;verbe pronominal;se parjurer
+I;;;[V]&parquer;se (pp) [V]&parquer;verbe pronominal;se parquer
+D;;;[V]&passer;se (pp) [V]&passer;verbe pronominal;se passer
+D;;;[V]&passionner;se (pp) [V]&passionner;verbe pronominal;se passionner
+D;;;[V]&patiner;se (pp) [V]&patiner;verbe pronominal;se patiner
+I;;;[V]&paumer;se (pp) [V]&paumer;verbe pronominal;se paumer
+I;;;[V]&pavaner;se (pp) [V]&pavaner;verbe pronominal;se pavaner
+D;;;[V]&peigner;se (pp) [V]&peigner;verbe pronominal;se peigner
+D;;;[V]&peler;se (pp) [V]&peler;verbe pronominal;se peler
+D;;;[V]&pelotonner;se (pp) [V]&pelotonner;verbe pronominal;se pelotonner
+D;;;[V]&perdre;se (pp) [V]&perdre;verbe pronominal;se perdre
+D;;;[V]&perfectionner;se (pp) [V]&perfectionner;verbe pronominal;se perfectionner
+D;;;[V]&perpétuer;se (pp) [V]&perpétuer;verbe pronominal;se perpétuer
+D;;;[V]&peser;se (pp) [V]&peser;verbe pronominal;se peser
+I;;;[V]&peupler;se (pp) [V]&peupler;verbe pronominal;se peupler
+D;;;[V]&pinter;se (pp) [V]&pinter;verbe pronominal;se pinter
+D;;;[V]&piquer;se (pp) [V]&piquer;verbe pronominal;se piquer
+I;;;[V]&plaire;se (pp) [V]&plaire;verbe impersonnel;se plaire
+I;;;[V]&planquer;se (pp) [V]&planquer;verbe pronominal;se planquer
+I;;;[V]&planter;se (pp) [V]&planter;verbe pronominal;se planter
+D;;;[V]&plier;se (pp) [V]&plier à;verbe pronominal;se plier à
+I;;;[V]&poiler;se (pp) [V]&poiler;verbe pronominal;se poiler
+I;;;[V]&polir;se (pp) [V]&polir;verbe pronominal;se polir
+I;;;[V]&polymériser;se (pp) [V]&polymériser;verbe pronominal;se polymériser
+I;;;[V]&pommader;se (pp) [V]&pommader;verbe pronominal;se pommader
+I;;;[V]&pommeler;se (pp) [V]&pommeler;verbe pronominal;se pommeler
+I;;;[V]&porter;se (pp) [V]&porter;verbe pronominal;se porter
+D;;;[V]&poster;se (pp) [V]&poster;verbe pronominal;se poster
+I;;;[V]&poudrer;se (pp) [V]&poudrer;verbe pronominal;se poudrer
+I;;;[V]&pourlécher;se (pp) [V]&pourlécher;verbe pronominal;se pourlécher
+D;;;[V]&pourvoir;se (pp) [V]&pourvoir;verbe pronominal;se pourvoir
+I;;;[V]&pousser;se (pp) [V]&pousser;verbe pronominal;se pousser
+D;;;[V]&pouvoir;se (pp) [V]&pouvoir;verbe impersonnel;se pouvoir
+D;;;[V]&pratiquer;se (pp) [V]&pratiquer;verbe pronominal;se pratiquer
+D;;;[V]&prescrire;se (pp) [V]&prescrire;verbe pronominal;se prescrire
+I;;;[V]&priver;se (pp) [V]&priver;verbe pronominal;se priver
+I;;;[V]&procurer;se (pp) [V]&procurer;verbe pronominal;se procurer
+D;;;[V]&produire;se (pp) [V]&produire;verbe pronominal;se produire
+D;;;[V]&profiler;se (pp) [V]&profiler sur;verbe pronominal;se profiler sur
+I;;;[V]&projeter;se (pp) [V]&projeter;verbe pronominal;se projeter
+D;;;[V]&prolonger;se (pp) [V]&prolonger;verbe pronominal;se prolonger
+D;;;[V]&prolétariser;se (pp) [V]&prolétariser;verbe pronominal;se prolétariser
+I;;;[V]&promettre;se (pp) [V]&promettre;verbe pronominal;se promettre
+I;;;[V]&prononcer;se (pp) [V]&prononcer;verbe pronominal;se prononcer
+D;;;[V]&propager;se (pp) [V]&propager;verbe pronominal;se propager
+I;;;[V]&proposer;se (pp) [V]&proposer;verbe pronominal;se proposer
+I;;;[V]&propulser;se (pp) [V]&propulser;verbe pronominal;se propulser
+IT;;;[V]&prosterner;se (pp) [V]&prosterner;verbe pronominal;se prosterner
+D;;;[V]&prostituer;se (pp) [V]&prostituer;verbe pronominal;se prostituer
+D;;;[V]&protéger;se (pp) [V]&protéger;verbe pronominal;se protéger
+D;;;[V]&provoquer;se (pp) [V]&provoquer;verbe pronominal;se provoquer
+I;;;[V]&précautionner;se (pp) [V]&précautionner;verbe pronominal;se précautionner
+I;;;[V]&précipiter;se (pp) [V]&précipiter;verbe pronominal;se précipiter
+ID;;;[V]&prélasser;se (pp) [V]&prélasser;verbe pronominal;se prélasser
+D;;;[V]&prémunir;se (pp) [V]&prémunir;verbe pronominal;se prémunir
+D;;;[V]&prénommer;se (pp) [V]&prénommer;verbe pronominal;se prénommer
+I;;;[V]&préoccuper;se (pp) [V]&préoccuper;verbe pronominal;se préoccuper
+I;;;[V]&préparer;se (pp) [V]&préparer;verbe pronominal;se préparer
+I;;;[V]&préserver;se (pp) [V]&préserver;verbe pronominal;se préserver
+I;;;[V]&prétendre;se (pp) [V]&prétendre;verbe pronominal;se prétendre
+D;;;[V]&prévaloir;se (pp) [V]&prévaloir;verbe pronominal;se prévaloir
+D;;;[V]&purger;se (pp) [V]&purger;verbe pronominal;se purger
+D;;;[V]&putréfier;se (pp) [V]&putréfier;verbe pronominal;se putréfier
+I;;;[V]&pâmer;se (pp) [V]&pâmer;verbe pronominal;se pâmer
+D;;;[V]&pénétrer;se (pp) [V]&pénétrer;verbe pronominal;se pénétrer
+D;;;[V]&pétrifier;se (pp) [V]&pétrifier;verbe pronominal;se pétrifier
+I;;;[V]&qualifier;se (pp) [V]&qualifier;verbe pronominal;se qualifier
+D;;;[V]&quereller;se (pp) [V]&quereller;verbe pronominal;se quereller
+D;;;[V]&quitter;se (pp) [V]&quitter;verbe pronominal;se quitter
+D;;;[V]&rabaisser;se (pp) [V]&rabaisser;verbe pronominal;se rabaisser
+I;;;[V]&rabattre;se (pp) [V]&rabattre;verbe pronominal;se rabattre
+D;;;[V]&rabibocher;se (pp) [V]&rabibocher;verbe pronominal;se rabibocher
+ID;;;[V]&rabougrir;se (pp) [V]&rabougrir;verbe pronominal;se rabougrir
+D;;;[V]&raccorder;se (pp) [V]&raccorder;verbe pronominal;se raccorder
+D;;;[V]&raccrocher;se (pp) [V]&raccrocher;verbe pronominal;se raccrocher
+D;;;[V]&racheter;se (pp) [V]&racheter;verbe pronominal;se racheter
+D;;;[V]&racler;se (pp) [V]&racler;verbe pronominal;se racler
+D;;;[V]&racornir;se (pp) [V]&racornir;verbe pronominal;se racornir
+ID;;;[V]&radicaliser;se (pp) [V]&radicaliser;verbe pronominal;se radicaliser
+D;;;[V]&radoucir;se (pp) [V]&radoucir;verbe pronominal;se radoucir
+D;;;[V]&raffermir;se (pp) [V]&raffermir;verbe pronominal;se raffermir
+D;;;[V]&rafraîchir;se (pp) [V]&rafraîchir;verbe pronominal;se rafraîchir
+D;;;[V]&raidir;se (pp) [V]&raidir;verbe pronominal;se raidir
+D;;;[V]&rajeunir;se (pp) [V]&rajeunir;verbe pronominal;se rajeunir
+D;;;[V]&rajuster;se (pp) [V]&rajuster;verbe pronominal;se rajuster
+D;;;[V]&ralentir;se (pp) [V]&ralentir;verbe pronominal;se ralentir
+D;;;[V]&rallier;se (pp) [V]&rallier;verbe pronominal;se rallier
+D;;;[V]&rallumer;se (pp) [V]&rallumer;verbe pronominal;se rallumer
+D;;;[V]&ramasser;se (pp) [V]&ramasser;verbe pronominal;se ramasser
+ID;;;[V]&ramifier;se (pp) [V]&ramifier;verbe pronominal;se ramifier
+I;;;[V]&ramollir;se (pp) [V]&ramollir;verbe pronominal;se ramollir
+D;;;[V]&ranger;se (pp) [V]&ranger;verbe pronominal;se ranger
+D;;;[V]&ranimer;se (pp) [V]&ranimer;verbe pronominal;se ranimer
+I;;;[V]&rappliquer;se (pp) [V]&rappliquer;verbe pronominal;se rappliquer
+D;;;[V]&rapprocher;se (pp) [V]&rapprocher;verbe pronominal;se rapprocher
+D;;;[V]&raréfier;se (pp) [V]&raréfier;verbe pronominal;se raréfier
+D;;;[V]&raser;se (pp) [V]&raser;verbe pronominal;se raser
+D;;;[V]&rassasier;se (pp) [V]&rassasier;verbe pronominal;se rassasier
+D;;;[V]&rassembler;se (pp) [V]&rassembler;verbe pronominal;se rassembler
+D;;;[V]&rasseoir;se (pp) [V]&rasseoir;verbe pronominal;se rasseoir
+I;;;[V]&rassir;se (pp) [V]&rassir;verbe pronominal;se rassir
+D;;;[V]&rassurer;se (pp) [V]&rassurer;verbe pronominal;se rassurer
+D;;;[V]&rasséréner;se (pp) [V]&rasséréner;verbe pronominal;se rasséréner
+D;;;[V]&ratatiner;se (pp) [V]&ratatiner;verbe pronominal;se ratatiner
+D;;;[V]&rater;se (pp) [V]&rater;verbe pronominal;se rater
+D;;;[V]&rationner;se (pp) [V]&rationner;verbe pronominal;se rationner
+D;;;[V]&rattacher;se (pp) [V]&rattacher;verbe pronominal;se rattacher
+D;;;[V]&rattraper;se (pp) [V]&rattraper;verbe pronominal;se rattraper
+D;;;[V]&ravaler;se (pp) [V]&ravaler;verbe pronominal;se ravaler
+I;;;[V]&raviser;se (pp) [V]&raviser;verbe pronominal;se raviser
+D;;;[V]&ravitailler;se (pp) [V]&ravitailler;verbe pronominal;se ravitailler
+D;;;[V]&raviver;se (pp) [V]&raviver;verbe pronominal;se raviver
+ID;;;[V]&rebeller;se (pp) [V]&rebeller;verbe pronominal;se rebeller
+ID;;;[V]&rebiffer;se (pp) [V]&rebiffer;verbe pronominal;se rebiffer
+D;;;[V]&reboucher;se (pp) [V]&reboucher;verbe pronominal;se reboucher
+D;;;[V]&reboutonner;se (pp) [V]&reboutonner;verbe pronominal;se reboutonner
+I;;;[V]&rebéquer;se (pp) [V]&rebéquer;verbe pronominal;se rebéquer
+D;;;[V]&recaser;se (pp) [V]&recaser;verbe pronominal;se recaser
+D;;;[V]&recevoir;se (pp) [V]&recevoir;verbe pronominal;se recevoir
+D;;;[V]&rechausser;se (pp) [V]&rechausser;verbe pronominal;se rechausser
+D;;;[V]&recoiffer;se (pp) [V]&recoiffer;verbe pronominal;se recoiffer
+D;;;[V]&reconnaître;se (pp) [V]&reconnaître;verbe pronominal;se reconnaître
+D;;;[V]&reconstituer;se (pp) [V]&reconstituer;verbe pronominal;se reconstituer
+D;;;[V]&reconvertir;se (pp) [V]&reconvertir;verbe pronominal;se reconvertir
+D;;;[V]&recoucher;se (pp) [V]&recoucher;verbe pronominal;se recoucher
+D;;;[V]&recouper;se (pp) [V]&recouper;verbe pronominal;se recouper
+D;;;[V]&recourber;se (pp) [V]&recourber;verbe pronominal;se recourber
+I;;;[V]&recroqueviller;se (pp) [V]&recroqueviller;verbe pronominal;se recroqueviller
+D;;;[V]&recruter;se (pp) [V]&recruter;verbe pronominal;se recruter
+D;;;[V]&recueillir;se (pp) [V]&recueillir;verbe pronominal;se recueillir
+D;;;[V]&reculer;se (pp) [V]&reculer;verbe pronominal;se reculer
+D;;;[V]&recycler;se (pp) [V]&recycler;verbe pronominal;se recycler
+D;;;[V]&redresser;se (pp) [V]&redresser;verbe pronominal;se redresser
+D;;;[V]&refermer;se (pp) [V]&refermer;verbe pronominal;se refermer
+D;;;[V]&refléter;se (pp) [V]&refléter;verbe pronominal;se refléter
+I;;;[V]&reformer;se (pp) [V]&reformer;verbe pronominal;se reformer
+D;;;[V]&refroidir;se (pp) [V]&refroidir;verbe pronominal;se refroidir
+I;;;[V]&refuser;se (pp) [V]&refuser;verbe pronominal;se refuser
+D;;;[V]&regrouper;se (pp) [V]&regrouper;verbe pronominal;se regrouper
+D;;;[V]&rejeter;se (pp) [V]&rejeter;verbe pronominal;se rejeter
+D;;;[V]&rejoindre;se (pp) [V]&rejoindre;verbe pronominal;se rejoindre
+I;;;[V]&relaisser;se (pp) [V]&relaisser;verbe pronominal;se relaisser
+D;;;[V]&relaxer;se (pp) [V]&relaxer;verbe pronominal;se relaxer
+D;;;[V]&relayer;se (pp) [V]&relayer;verbe pronominal;se relayer
+D;;;[V]&relever;se (pp) [V]&relever;verbe pronominal;se relever
+D;;;[V]&relire;se (pp) [V]&relire;verbe pronominal;se relire
+D;;;[V]&relâcher;se (pp) [V]&relâcher;verbe pronominal;se relâcher
+I;;;[V]&remarier;se (pp) [V]&remarier;verbe pronominal;se remarier
+D;;;[V]&remarquer;se (pp) [V]&remarquer;verbe pronominal;se remarquer
+I;;;[V]&rembrunir;se (pp) [V]&rembrunir;verbe pronominal;se rembrunir
+D;;;[V]&remettre;se (pp) [V]&remettre;verbe pronominal;se remettre
+T;;;[V]&remoucher;se (pp) [V]&remoucher;verbe pronominal;se remoucher
+D;;;[V]&remplir;se (pp) [V]&remplir;verbe pronominal;se remplir
+I;;;[V]&remplumer;se (pp) [V]&remplumer;verbe pronominal;se remplumer
+D;;;[V]&remuer;se (pp) [V]&remuer;verbe pronominal;se remuer
+I;;;[V]&remémorer;se (pp) [V]&remémorer;verbe pronominal;se remémorer
+D;;;[V]&rencontrer;se (pp) [V]&rencontrer;verbe pronominal;se rencontrer
+D;;;[V]&rendormir;se (pp) [V]&rendormir;verbe pronominal;se rendormir
+D;;;[V]&rendre;se (pp) [V]&rendre;verbe pronominal;se rendre
+D;;;[V]&renfermer;se (pp) [V]&renfermer;verbe pronominal;se renfermer
+D;;;[V]&renfler;se (pp) [V]&renfler;verbe pronominal;se renfler
+I;;;[V]&renfrogner;se (pp) [V]&renfrogner;verbe pronominal;se renfrogner
+ID;;;[V]&rengorger;se (pp) [V]&rengorger;verbe pronominal;se rengorger
+D;;;[V]&renier;se (pp) [V]&renier;verbe pronominal;se renier
+D;;;[V]&renouveler;se (pp) [V]&renouveler;verbe pronominal;se renouveler
+D;;;[V]&renseigner;se (pp) [V]&renseigner;verbe pronominal;se renseigner
+D;;;[V]&renverser;se (pp) [V]&renverser;verbe pronominal;se renverser
+D;;;[V]&renvoyer;se (pp) [V]&renvoyer;verbe pronominal;se renvoyer
+D;;;[V]&reparler;se (pp) [V]&reparler;verbe pronominal;se reparler
+D;;;[V]&repasser;se (pp) [V]&repasser;verbe pronominal;se repasser
+I;;;[V]&repaître;se (pp) [V]&repaître;verbe pronominal;se repaître
+I;;;[V]&repentir;se (pp) [V]&repentir;verbe pronominal;se repentir
+I;;;[V]&repeupler;se (pp) [V]&repeupler;verbe pronominal;se repeupler
+D;;;[V]&replier;se (pp) [V]&replier;verbe pronominal;se replier
+I;;;[V]&reporter;se (pp) [V]&reporter;verbe pronominal;se reporter
+I;;;[V]&repoudrer;se (pp) [V]&repoudrer;verbe pronominal;se repoudrer
+I;;;[V]&reprocher;se (pp) [V]&reprocher;verbe pronominal;se reprocher
+D;;;[V]&reproduire;se (pp) [V]&reproduire;verbe pronominal;se reproduire
+D;;;[V]&repérer;se (pp) [V]&repérer;verbe pronominal;se repérer
+D;;;[V]&requinquer;se (pp) [V]&requinquer;verbe pronominal;se requinquer
+IT;;;[V]&ressembler;se (pp) [V]&ressembler;verbe pronominal;se ressembler
+D;;;[V]&ressemer;se (pp) [V]&ressemer;verbe pronominal;se ressemer
+D;;;[V]&resserrer;se (pp) [V]&resserrer;verbe pronominal;se resserrer
+D;;;[V]&ressouder;se (pp) [V]&ressouder;verbe pronominal;se ressouder
+I;;;[V]&ressourcer;se (pp) [V]&ressourcer;verbe pronominal;se ressourcer
+D;;;[V]&ressouvenir;se (pp) [V]&ressouvenir;verbe pronominal;se ressouvenir
+ID;;;[V]&restaurer;se (pp) [V]&restaurer;verbe pronominal;se restaurer
+D;;;[V]&restreindre;se (pp) [V]&restreindre;verbe pronominal;se restreindre
+I;;;[V]&restructurer;se (pp) [V]&restructurer;verbe pronominal;se restructurer
+ID;;;[V]&retenir;se (pp) [V]&retenir;verbe pronominal;se retenir
+ID;;;[V]&retirer;se (pp) [V]&retirer;verbe pronominal;se retirer
+D;;;[V]&retrousser;se (pp) [V]&retrousser;verbe pronominal;se retrousser
+D;;;[V]&retrouver;se (pp) [V]&retrouver;verbe pronominal;se retrouver
+I;;;[V]&revoir;se (pp) [V]&revoir;verbe pronominal;se revoir
+D;;;[V]&rider;se (pp) [V]&rider;verbe pronominal;se rider
+I;;;[V]&ridiculiser;se (pp) [V]&ridiculiser;verbe pronominal;se ridiculiser
+D;;;[V]&rincer;se (pp) [V]&rincer;verbe pronominal;se rincer
+I;;;[V]&rire;se (pp) [V]&rire;verbe pronominal;se rire
+D;;;[V]&risquer;se (pp) [V]&risquer;verbe pronominal;se risquer
+D;;;[V]&rompre;se (pp) [V]&rompre;verbe pronominal;se rompre
+D;;;[V]&rouiller;se (pp) [V]&rouiller;verbe pronominal;se rouiller
+D;;;[V]&rouler;se (pp) [V]&rouler;verbe pronominal;se rouler
+D;;;[V]&rouvrir;se (pp) [V]&rouvrir;verbe pronominal;se rouvrir
+D;;;[V]&ruer;se (pp) [V]&ruer;verbe pronominal;se ruer
+D;;;[V]&ruiner;se (pp) [V]&ruiner;verbe pronominal;se ruiner
+D;;;[V]&réadapter;se (pp) [V]&réadapter;verbe pronominal;se réadapter
+D;;;[V]&réaliser;se (pp) [V]&réaliser;verbe pronominal;se réaliser
+D;;;[V]&réassortir;se (pp) [V]&réassortir;verbe pronominal;se réassortir
+I;;;[V]&réassurer;se (pp) [V]&réassurer;verbe pronominal;se réassurer
+ID;;;[V]&réchauffer;se (pp) [V]&réchauffer;verbe pronominal;se réchauffer
+D;;;[V]&réconcilier;se (pp) [V]&réconcilier;verbe pronominal;se réconcilier
+D;;;[V]&réconforter;se (pp) [V]&réconforter;verbe pronominal;se réconforter
+I;;;[V]&récrier;se (pp) [V]&récrier;verbe pronominal;se récrier
+D;;;[V]&récuser;se (pp) [V]&récuser;verbe pronominal;se récuser
+I;;;[V]&réduire;se (pp) [V]&réduire;verbe pronominal;se réduire
+I;;;[V]&réentraîner;se (pp) [V]&réentraîner;verbe pronominal;se réentraîner
+I;;;[V]&réenvoler;se (pp) [V]&réenvoler;verbe pronominal;se réenvoler
+D;;;[V]&réfléchir;se (pp) [V]&réfléchir;verbe pronominal;se réfléchir
+I;;;[V]&réfugier;se (pp) [V]&réfugier;verbe pronominal;se réfugier
+D;;;[V]&référer;se (pp) [V]&référer;verbe pronominal;se référer
+D;;;[V]&régaler;se (pp) [V]&régaler;verbe pronominal;se régaler
+D;;;[V]&réhabiliter;se (pp) [V]&réhabiliter;verbe pronominal;se réhabiliter
+I;;;[V]&réincarner;se (pp) [V]&réincarner;verbe pronominal;se réincarner
+D;;;[V]&réjouir;se (pp) [V]&réjouir;verbe pronominal;se réjouir
+D;;;[V]&répandre;se (pp) [V]&répandre;verbe pronominal;se répandre
+D;;;[V]&répondre;se (pp) [V]&répondre;verbe pronominal;se répondre
+I;;;[V]&républicaniser;se (pp) [V]&républicaniser;verbe pronominal;se républicaniser
+D;;;[V]&répéter;se (pp) [V]&répéter;verbe pronominal;se répéter
+I;;;[V]&résigner;se (pp) [V]&résigner;verbe pronominal;se résigner
+D;;;[V]&résorber;se (pp) [V]&résorber;verbe pronominal;se résorber
+D;;;[V]&résoudre;se (pp) [V]&résoudre;verbe pronominal;se résoudre
+D;;;[V]&résumer;se (pp) [V]&résumer;verbe pronominal;se résumer
+D;;;[V]&rétablir;se (pp) [V]&rétablir;verbe pronominal;se rétablir
+D;;;[V]&rétamer;se (pp) [V]&rétamer;verbe pronominal;se rétamer
+D;;;[V]&rétracter;se (pp) [V]&rétracter;verbe pronominal;se rétracter
+D;;;[V]&rétrécir;se (pp) [V]&rétrécir;verbe pronominal;se rétrécir
+D;;;[V]&réunir;se (pp) [V]&réunir;verbe pronominal;se réunir
+D;;;[V]&réveiller;se (pp) [V]&réveiller;verbe pronominal;se réveiller
+D;;;[V]&révolter;se (pp) [V]&révolter;verbe pronominal;se révolter
+D;;;[V]&révéler;se (pp) [V]&révéler;verbe pronominal;se révéler
+I;;;[V]&rôtir;se (pp) [V]&rôtir;verbe pronominal;se rôtir
+D;;;[V]&saborder;se (pp) [V]&saborder;verbe pronominal;se saborder
+D;;;[V]&sacrifier;se (pp) [V]&sacrifier;verbe pronominal;se sacrifier
+D;;;veines;se (pp) [V]&saigner aux quatre veines;verbe pronominal;se saigner aux quatre veines
+D;;;[V]&saisir;se (pp) [V]&saisir;verbe pronominal;se saisir
+D;;;[V]&saluer;se (pp) [V]&saluer;verbe pronominal;se saluer
+I;;;[V]&saper;se (pp) [V]&saper;verbe pronominal;se saper
+D;;;[V]&sauver;se (pp) [V]&sauver;verbe pronominal;se sauver
+D;;;[V]&savoir;se (pp) [V]&savoir;verbe pronominal;se savoir
+D;;;[V]&savonner;se (pp) [V]&savonner;verbe pronominal;se savonner
+I;;;[V]&scandaliser;se (pp) [V]&scandaliser;verbe pronominal;se scandaliser
+I;;;[V]&scléroser;se (pp) [V]&scléroser;verbe pronominal;se scléroser
+I;;;[V]&sensibiliser;se (pp) [V]&sensibiliser;verbe pronominal;se sensibiliser
+I;;;[V]&sentir;se (pp) [V]&sentir;verbe pronominal;se sentir
+I;;;[V]&serrer;se (pp) [V]&serrer;verbe pronominal;se serrer
+I;;;[V]&servir;se (pp) [V]&servir;verbe pronominal;se servir
+ID;;;[V]&shooter;se (pp) [V]&shooter;verbe pronominal;se shooter
+D;;;[V]&signaler;se (pp) [V]&signaler;verbe pronominal;se signaler
+I;;;[V]&signer;se (pp) [V]&signer;verbe pronominal;se signer
+D;;;[V]&simplifier;se (pp) [V]&simplifier;verbe pronominal;se simplifier
+D;;;[V]&singulariser;se (pp) [V]&singulariser;verbe pronominal;se singulariser
+D;;;[V]&situer;se (pp) [V]&situer;verbe pronominal;se situer
+D;;;[V]&soigner;se (pp) [V]&soigner;verbe pronominal;se soigner
+I;;;[V]&solder;se (pp) [V]&solder;verbe pronominal;se solder
+D;;;[V]&solidifier;se (pp) [V]&solidifier;verbe pronominal;se solidifier
+D;;;[V]&sonoriser;se (pp) [V]&sonoriser;verbe pronominal;se sonoriser
+D;;;[V]&sortir;se (pp) [V]&sortir;verbe pronominal;se sortir
+I;;;[V]&soucier;se (pp) [V]&soucier;verbe pronominal;se soucier
+D;;;[V]&souder;se (pp) [V]&souder;verbe pronominal;se souder
+D;;;[V]&souhaiter;se (pp) [V]&souhaiter;verbe pronominal;se souhaiter
+D;;;[V]&soulever;se (pp) [V]&soulever;verbe pronominal;se soulever
+D;;;[V]&soumettre;se (pp) [V]&soumettre;verbe pronominal;se soumettre
+D;;;[V]&soustraire;se (pp) [V]&soustraire;verbe pronominal;se soustraire
+IT;;;[V]&souvenir;se (pp) [V]&souvenir;verbe pronominal;se souvenir
+D;;;[V]&soûler;se (pp) [V]&soûler;verbe pronominal;se soûler
+D;;;[V]&stabiliser;se (pp) [V]&stabiliser;verbe pronominal;se stabiliser
+D;;;[V]&subdiviser;se (pp) [V]&subdiviser;verbe pronominal;se subdiviser
+D;;;[V]&substituer;se (pp) [V]&substituer;verbe pronominal;se substituer
+D;;;[V]&succéder;se (pp) [V]&succéder;verbe pronominal;se succéder
+D;;;[V]&sucer;se (pp) [V]&sucer;verbe pronominal;se sucer
+D;;;[V]&sucrer;se (pp) [V]&sucrer;verbe pronominal;se sucrer
+D;;;[V]&suffire;se (pp) [V]&suffire;verbe pronominal;se suffire
+I;;;[V]&suicider;se (pp) [V]&suicider;verbe pronominal;se suicider
+I;;;[V]&superposer;se (pp) [V]&superposer;verbe pronominal;se superposer
+D;;;[V]&supporter;se (pp) [V]&supporter;verbe pronominal;se supporter
+D;;;[V]&supprimer;se (pp) [V]&supprimer;verbe pronominal;se supprimer
+D;;;[V]&surmener;se (pp) [V]&surmener;verbe pronominal;se surmener
+D;;;[V]&surmonter;se (pp) [V]&surmonter;verbe pronominal;se surmonter
+D;;;[V]&surpasser;se (pp) [V]&surpasser;verbe pronominal;se surpasser
+D;;;[V]&surprendre;se (pp) [V]&surprendre;verbe pronominal;se surprendre
+D;;;[V]&surveiller;se (pp) [V]&surveiller;verbe pronominal;se surveiller
+D;;;[V]&survivre;se (pp) [V]&survivre;verbe pronominal;se survivre
+D;;;[V]&syndiquer;se (pp) [V]&syndiquer;verbe pronominal;se syndiquer
+I;;;[V]&sécher;se (pp) [V]&sécher;verbe pronominal;se sécher
+I;;;[V]&séparer;se (pp) [V]&séparer;verbe pronominal;se séparer
+D;;;[V]&tabasser;se (pp) [V]&tabasser;verbe pronominal;se tabasser
+I;;;[V]&tacher;se (pp) [V]&tacher;verbe pronominal;se tacher
+I;;;[V]&taillader;se (pp) [V]&taillader;verbe pronominal;se taillader
+I;;;[V]&tailler;se (pp) [V]&tailler;verbe pronominal;se tailler
+D;;;[V]&taire;se (pp) [V]&taire;verbe pronominal;se taire
+I;;;[V]&taper;se (pp) [V]&taper;verbe pronominal;se taper
+I;;;[V]&tapir;se (pp) [V]&tapir;verbe pronominal;se tapir
+D;;;[V]&taquiner;se (pp) [V]&taquiner;verbe pronominal;se taquiner
+I;;;[V]&targuer;se (pp) [V]&targuer;verbe pronominal;se targuer
+D;;;[V]&tarir;se (pp) [V]&tarir;verbe pronominal;se tarir
+D;;;[V]&tasser;se (pp) [V]&tasser;verbe pronominal;se tasser
+I;;;[V]&tendre;se (pp) [V]&tendre;verbe pronominal;se tendre
+D;;;[V]&tenir;se (pp) [V]&tenir;verbe pronominal;se tenir
+I;;;coi;se (pp) [V]&tenir coi;verbe pronominal;se tenir coi
+I;;;[V]&terminer;se (pp) [V]&terminer;verbe pronominal;se terminer
+D;;;[V]&ternir;se (pp) [V]&ternir;verbe pronominal;se ternir
+I;;;[V]&toiser;se (pp) [V]&toiser;verbe pronominal;se toiser
+I;;;[V]&tordre;se (pp) [V]&tordre;verbe pronominal;se tordre
+D;;;[V]&tortiller;se (pp) [V]&tortiller;verbe pronominal;se tortiller
+I;;;[V]&torturer;se (pp) [V]&torturer;verbe pronominal;se torturer
+D;;;[V]&toucher;se (pp) [V]&toucher;verbe pronominal;se toucher
+D;;;[V]&tourmenter;se (pp) [V]&tourmenter;verbe pronominal;se tourmenter
+D;;;[V]&tracasser;se (pp) [V]&tracasser;verbe pronominal;se tracasser
+D;;;[V]&traduire;se (pp) [V]&traduire;verbe pronominal;se traduire
+D;;;[V]&trahir;se (pp) [V]&trahir;verbe pronominal;se trahir
+I;;;[V]&tramer;se (pp) [V]&tramer;verbe pronominal;se tramer
+D;;;[V]&tranquilliser;se (pp) [V]&tranquilliser;verbe pronominal;se tranquilliser
+D;;;[V]&transbahuter;se (pp) [V]&transbahuter;verbe pronominal;se transbahuter
+D;;;[V]&transformer;se (pp) [V]&transformer;verbe pronominal;se transformer
+D;;;[V]&transmettre;se (pp) [V]&transmettre;verbe pronominal;se transmettre
+D;;;[V]&transmuer;se (pp) [V]&transmuer;verbe pronominal;se transmuer
+D;;;[V]&transplanter;se (pp) [V]&transplanter;verbe pronominal;se transplanter
+D;;;[V]&transporter;se (pp) [V]&transporter;verbe pronominal;se transporter
+D;;;[V]&travestir;se (pp) [V]&travestir;verbe pronominal;se travestir
+D;;;[V]&traîner;se (pp) [V]&traîner;verbe pronominal;se traîner
+D;;;[V]&tremper;se (pp) [V]&tremper;verbe pronominal;se tremper
+D;;;[V]&tromper;se (pp) [V]&tromper;verbe pronominal;se tromper
+D;;;[V]&troubler;se (pp) [V]&troubler;verbe pronominal;se troubler
+D;;;[V]&trouer;se (pp) [V]&trouer;verbe pronominal;se trouer
+D;;;[V]&trouver;se (pp) [V]&trouver;verbe pronominal;se trouver
+I;;;[V]&trémousser;se (pp) [V]&trémousser;verbe pronominal;se trémousser
+I;;;[V]&tuberculiser;se (pp) [V]&tuberculiser;verbe pronominal;se tuberculiser
+D;;;[V]&tuer;se (pp) [V]&tuer;verbe pronominal;se tuer
+D;;;[V]&tuméfier;se (pp) [V]&tuméfier;verbe pronominal;se tuméfier
+D;;;[V]&tutoyer;se (pp) [V]&tutoyer;verbe pronominal;se tutoyer
+D;;;[V]&tâter;se (pp) [V]&tâter;verbe pronominal;se tâter
+D;;;[V]&télescoper;se (pp) [V]&télescoper;verbe pronominal;se télescoper
+D;;;[V]&téléphoner;se (pp) [V]&téléphoner;verbe pronominal;se téléphoner
+D;;;[V]&valoir;se (pp) [V]&valoir;verbe pronominal;se valoir
+D;;;[V]&vanter;se (pp) [V]&vanter;verbe pronominal;se vanter
+D;;;[V]&vaporiser;se (pp) [V]&vaporiser;verbe pronominal;se vaporiser
+ID;;;[V]&vautrer;se (pp) [V]&vautrer;verbe pronominal;se vautrer
+D;;;[V]&vendre;se (pp) [V]&vendre;verbe pronominal;se vendre
+I;;;[V]&venger;se (pp) [V]&venger;verbe pronominal;se venger
+I;;;[V]&vermouler;se (pp) [V]&vermouler;verbe pronominal;se vermouler
+D;;;[V]&verrouiller;se (pp) [V]&verrouiller;verbe pronominal;se verrouiller
+I;;;[V]&vexer;se (pp) [V]&vexer;verbe pronominal;se vexer
+I;;;[V]&viander;se (pp) [V]&viander;verbe pronominal;se viander
+D;;;[V]&vider;se (pp) [V]&vider;verbe pronominal;se vider
+D;;;[V]&vieillir;se (pp) [V]&vieillir;verbe pronominal;se vieillir
+D;;;[V]&vitrifier;se (pp) [V]&vitrifier;verbe pronominal;se vitrifier
+D;;;[V]&voiler;se (pp) [V]&voiler;verbe pronominal;se voiler
+D;;;[V]&voir;se (pp) [V]&voir;verbe pronominal;se voir
+D;;;[V]&volatiliser;se (pp) [V]&volatiliser;verbe pronominal;se volatiliser
+D;;;[V]&vouvoyer;se (pp) [V]&vouvoyer;verbe pronominal;se vouvoyer
+I;;;[V]&vriller;se (pp) [V]&vriller;verbe pronominal;se vriller
+D;;;[V]&vérifier;se (pp) [V]&vérifier;verbe pronominal;se vérifier
+D;;;[V]&vêtir;se (pp) [V]&vêtir;verbe pronominal;se vêtir
+T;;A;[V]&acagnarder;s' (pp) [V]&acagnarder;verbe pronominal;
+ITD;;A;[V]&administrer;s' (pp) [V]&administrer;verbe pronominal;
+IT;V;A;[V]&affubler;s' (pp) [V]&affubler;verbe pronominal;
+F;;A;[V]&agir;s' (pp) [V]&agir;verbe impersonnel;s'agir
+F;;A;[V]&attendre;s' (pp) [V]&attendre;verbe pronominal;s'attendre
+F;;A;[V]&accommoder;s' (pp) [V]&accommoder;verbe pronominal;s'accommoder
+V;;A;[V]&investir;s' (pp) [V]&investir;verbe pronominal;
+F;;A;[V]&exprimer;s' (pp) [V]&exprimer;verbe pronominal;s'exprimer
+F;;A;[V]&présenter;se (pp) [V]&présenter;verbe pronominal;
+CM;;;[V]&appuyer;s' (pp) [V]&appuyer;verbe pronominal;s'appuyer
+CM;;;[V]&concilier;se (pp) [V]&concilier;verbe pronominal;se concilier
+CM;;;[V]&consacrer;se (pp) [V]&consacrer;verbe pronominal;se consacrer
+CM;;;[V]&constituer;se (pp) [V]&constituer;verbe pronominal;se constituer
+CM;;;[V]&définir;se (pp) [V]&définir;verbe pronominal;se définir
+CM;;;[V]&désolidariser;se (pp) [V]&désolidariser;verbe pronominal;se désolidariser
+CM;;;[V]&détacher;se (pp) [V]&détacher;verbe pronominal;se détacher
+CM;;;[V]&diviser;se (pp) [V]&diviser;verbe pronominal;se diviser
+GC;;;[V]&identifier;s' (pp) [V]&identifier;verbe pronominal;s'identifier
+B;;;[V]&inspirer;s' (pp) [V]&inspirer;verbe pronominal;s'inspirer
+CM;;;[V]&lancer;se (pp) [V]&lancer;verbe pronominal;se lancer
+CM;;;[V]&occuper;s' (pp) [V]&occuper;verbe pronominal;s'occuper
+CM;;;[V]&placer;se (pp) [V]&placer;verbe pronominal;se placer
+CM;;;[V]&plaindre;se (pp) [V]&plaindre;verbe pronominal;se plaindre
+GC;;;[V]&prêter;se (pp) [V]&prêter;verbe pronominal;se prêter
+CM;;;[V]&proclamer;se (pp) [V]&proclamer;verbe pronominal;se proclamer
+GC;;;[V]&photographier;se (pp) [V]&photographier;verbe pronominal;se photographier
+GC;;;[V]&garder;se (pp) [V]&garder;verbe pronominal;se garder
+CM;;;[V]&pencher;se (pp) [V]&pencher;verbe pronominal;se pencher
+GC;;;[V]&plier;se (pp) [V]&plier;verbe pronominal;se plier
+CM;;;[V]&plonger;se (pp) [V]&plonger;verbe pronominal;se plonger
+GC;;;[V]&poser;se (pp) [V]&poser;verbe pronominal;se poser
+CM;;;[V]&rappeler;se (pp) [V]&rappeler;verbe pronominal;se rappeler
+CM;;;[V]&rapporter;se (pp) [V]&rapporter;verbe pronominal;se rapporter
+GC;;;[V]&refondre;se (pp) [V]&refondre;verbe pronominal;se refondre
+CM;;;[V]&réinsérer;se (pp) [V]&réinsérer;verbe pronominal;se réinsérer
+CM;;;[V]&renforcer;se (pp) [V]&renforcer;verbe pronominal;se renforcer
+GC;;;[V]&répartir;se (pp) [V]&répartir;verbe pronominal;se répartir
+CM;;;[V]&retourner;se (pp) [V]&retourner;verbe pronominal;se retourner
+GC;;;[V]&satisfaire;se (pp) [V]&satisfaire;verbe pronominal;se satisfaire
+CM;;;[V]&scinder;se (pp) [V]&scinder;verbe pronominal;se scinder
+GC;;;[V]&garder;se (pp) [V]&garder;verbe pronominal;se garder
+GC;;;[V]&poser;se (pp) [V]&poser;verbe pronominal;se poser
+GC;;;[V]&livrer;se (pp) [V]&livrer;verbe pronominal;se livrer
+GC;;;[V]&permettre;se (pp) [V]&permettre;verbe pronominal;se permettre
+GC;;;[V]&accuser;s' (pp) [V]&accuser;verbe pronominal;s'accuser
+GC;;;[V]&livrer;se (pp) [V]&livrer;verbe pronominal;se livrer
+GC;;;[V]&permettre;se (pp) [V]&permettre;verbe pronominal;se permettre
+GC;;;[V]&jurer;se (pp) [V]&jurer fidélité;verbe pronominal;se jurer fidélité
+GC;;;[V]&promener;se (pp) [V]&promener;verbe pronominal;se promener
+GC;;;[V]&préciser;se (pp) [V]&préciser;verbe pronominal;se préciser
+GC;;;[V]&fâcher;se (pp) [V]&fâcher;verbe pronominal;se fâcher
+GC;;;[V]&dissimuler;se (pp) [V]&dissimuler;verbe pronominal;se dissimuler
+GC;;;[V]&reprendre;se (pp) [V]&reprendre;verbe pronominal;se reprendre
+GC;;;[V]&imposer;s' (pp) [V]&imposer;verbe pronominal;s'imposer
+GC;;;[V]&emplir;s' (pp) [V]&emplir;verbe pronominal;s'emplir
+GC;;;[V]&étaler;s' (pp) [V]&étaler;verbe pronominal;s'étaler
+GC;;;[V]&expatrier;s' (pp) [V]&expatrier;verbe pronominal;s'expatrier
+GC;;;[V]&associer;s' (pp) [V]&associer;verbe pronominal;s'associer
+GC;;;[V]&accrocher;s' (pp) [V]&accrocher;verbe pronominal;s'accrocher
+GC;;;[V]&vouloir;se (pp) [V]&vouloir;verbe pronominal;se vouloir
+GC;;;[V]&attacher;s' (pp) [V]&attacher;verbe pronominal;s'attacher
+GC;;;[V]&prendre;se (pp) [V]&prendre;verbe pronominal;se prendre
+GC;;;[V]&identifier;s' (pp) [V]&identifier;verbe pronominal;s'identifier
+GC;;;[V]&accompagner;s' (pp) [V]&accompagner;verbe pronominal;s'accompagner
+GC;;;[V]&expliquer;s' (pp) [V]&expliquer;verbe pronominal;s'expliquer
+GC;;;[V]&distinguer;se (pp) [V]&distinguer;verbe pronominal;se distinguer
+GC;;;[V]&appliquer;s' (pp) [V]&appliquer;verbe pronominal;s'appliquer
+GC;;;[V]&annoncer;s' (pp) [V]&annoncer;verbe pronominal;s'annoncer
+GC;;;[V]&imposer;s' (pp) [V]&imposer;verbe pronominal;s'imposer
+CM;;;[V]&partager;se (pp) [V]&partager;verbe pronominal;se partager
+GC;;A;tard;trop tard;adverbe;trop tard
+GC;;A;verse;[V]&pleuvoir (D) à verse;verbe intransitif;pleuvoir à verse
+GC;;A;armes;[V]&rendre (D) les armes;verbe intransitif;rendre les armes
+GC;;A;objet;[V]&être (D) l' objet de;verbe transitif;être l'objet de
+GC;;A;objet;[V]&être (D) l' objet d';verbe transitif;être l'objet de
+GC;;A;attention;à l' attention d';préposition;à l'attention de
+GC;;A;attention;à l' attention de;préposition;à l'attention de
+GC;;A;attention;à l' attention des;préposition article pluriel;à l'attention de
+GC;;A;attention;à l' attention du;préposition article;à l'attention de
+GC;;A;bord;à bord d';préposition;à bord de
+GC;;A;bord;à bord de;préposition;à bord de
+GC;;A;bord;à bord des;préposition article pluriel;à bord de
+GC;;A;bord;à bord du;préposition article;à bord de
+GC;;A;mieux;au mieux;adverbe;au mieux
+GC;;A;mieux;tant mieux;adverbe;tant mieux
+GC;;A;garde;[V]&mettre (D) en garde;verbe transitif;mettre en garde
+GC;;A;garde;mise en garde;nom masculin;mise en garde
+GC;;A;âge;âge d' or;nom masculin;âge d'or
+GC;;A;mâché;papier mâché;nom masculin;papier mâché
+GC;;A;ondulée;tôle ondulée;nom féminin;tôle ondulée
+GC;;A;dire;c' est à dire;conjonction de coordination;c'est à dire
+GC;;A;bouc;bouc émissaire;nom masculin;bouc émissaire
+GC;;A;directeur;directeur adjoint;nom masculin;directeur adjoint
+GC;;A;directrice;directrice adjointe;nom féminin;directrice adjointe
+GC;;A;secrétaire;secrétaire fédéral;nom masculin;secrétaire fédéral
+GC;;A;secrétaire;secrétaire fédérale;nom féminin;secrétaire fédérale
+GC;;A;ministre;premier ministre;nom masculin;premier ministre
+GC;;A;chrétienne;démocratie chrétienne;nom féminin;démocratie chrétienne
+GC;;A;banque;banque centrale;nom féminin;banque centrale
+GC;;A;dès;dès avant;adverbe;
+GC;;A;dès;dès après;adverbe;
+GC;;A;jour;au jour le jour;adjectif;au jour le jour
+GC;;A;commission;commission européenne;nom propre féminin;Commission européenne
+GC;;A;union;union européenne;nom propre féminin;Union européenne
+GC;;A;côté;du côté d';préposition;du côté de
+GC;;A;côté;du côté de;préposition;du côté de
+GC;;A;côté;du côté des;préposition article pluriel;du côté de
+GC;;A;côté;du côté du;préposition article;du côté de
+GC;;A;tel;à tel point que;conjonction de subordination;à tel point que
+GC;;A;tel;À tel point que;conjonction de subordination;à tel point que
+GC;;A;tel;A tel point que;conjonction de subordination;à tel point que
+GC;;A;obstruction;[V]&faire (D) obstruction;verbe intransitif;faire obstruction
+GC;;A;main;main dans la main;adverbe;main dans la main
+GC;;A;état;chef de l' état;nom masculin;chef de l'état
+GC;;A;État;chef de l' État;nom masculin;chef de l'état
+GC;;A;Etat;chef de l' Etat;nom masculin;chef de l'état
+GC;;A;connaissance;[V]&prendre (D) connaissance;verbe intransitif;prendre connaissance
+GC;;A;long;tout au long d';préposition;tout au long de
+GC;;A;long;tout au long de;préposition;tout au long de
+GC;;A;long;tout au long des;préposition article pluriel;tout au long de
+GC;;A;long;tout au long du;préposition article;tout au long de
+GC;;D;autant;autant de;préposition;autant de
+GC;;D;autant;autant d';préposition;autant de
+GC;;D;autant;autant du;préposition article;autant de
+GC;;D;autant;autant des;préposition article pluriel;autant de
+GC;;A;fin;[V]&mettre (D) fin;verbe intransitif;mettre fin
+GC;;A;écho;[V]&faire (D) écho;verbe intransitif;faire écho
+GC;;A;pression;[V]&faire (D) pression;verbe intransitif;faire pression
+GC;;A;montre;[V]&faire (D) montre;verbe intransitif;faire montre
+GC;;A;MM;MM .;nom masculin pluriel;MM.
+GC;;A;mi;mi séance;nom féminin;mi-séance
+GC;;A;clé;problème clé;nom masculin;problème-clé
+GC;;A;tout;tout autre;adjectif;
+GC;;A;boyaux;tord boyaux;nom masculin;tord-boyaux
+GC;;A;allocations;allocations chômage;nom masculin;allocations chômage
+GC;;A;décision;décision surprise;nom masculin;décision surprise
+GC;;A;valeur;valeur vedette;nom féminin;valeur vedette
+GC;;A;valeurs;valeurs vedettes;nom féminin pluriel;valeur vedette
+GC;;A;rock;rock star;nom masculin;rock star
+GC;;A;suspect;suspect n° 1;nom masculin;suspect n°1
+GC;;A;femme;femme policier;nom féminin;femme policier
+GC;;A;candidat;pays candidat;nom masculin;pays candidat
+GC;;A;candidats;pays candidats;nom masculin pluriel;pays candidat
+DL;;A;abri;sans abri;nom masculin;sans-abri
+DL;;A;foyer;sans foyer;nom masculin;sans-foyer
+GC;;A;dégât;dégât matériel;nom masculin;dégât matériel
+GC;;A;dégâts;dégâts matériels;nom masculin pluriel;dégât matériel
+CM;;;mieux;[V]&valoir (D) mieux;verbe intransitif;valoir mieux
+CM;;A;intention;[V]&avoir (D) intention;verbe intransitif;avoir intention
+CM;;A;[V]&rester;en [V]&rester (D) là;verbe intransitif;en rester là
+CM;;A;moment;au moment où;conjonction de subordination;au moment où
+CM;;A;moment;du moment que;conjonction de subordination;du moment que
+CM;;D;double;double page;nom féminin;double page
+;;A;mi;mi libéral;adjectif qualificatif;mi-libéral
+;;;autrement;autrement dit;conjonction de coordination;autrement dit
+;;;partie;[V]&faire (D) partie;verbe transitif;faire partie
+;;A;tenir;[V]&tenir (D) au courant;verbe transitif;tenir au courant

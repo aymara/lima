@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2002-2013 CEA LIST
+
+This file is part of LIMA.
+
+LIMA is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+LIMA is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+  along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+  -->
+<ui version="4.0">
+ <class>BenchmarkingToolWindow</class>
+ <widget class="QMainWindow" name="BenchmarkingToolWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>857</width>
+    <height>694</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Benchmarking Tool - Pelf</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="pipelineSplitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QSplitter" name="pipeGraphsSplitter">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="Lima::Pelf::PipelineWidget" name="pipelineView">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="dragEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SingleSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectItems</enum>
+        </property>
+        <property name="movement">
+         <enum>QListView::Snap</enum>
+        </property>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QDockWidget" name="fmeasureGraphView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="floating">
+            <bool>false</bool>
+           </property>
+           <property name="features">
+            <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+           </property>
+           <property name="windowTitle">
+            <string>F Measure</string>
+           </property>
+           <widget class="QWidget" name="dockWidgetContents">
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0">
+              <widget class="QwtPlot" name="fmeasureQwtPlot"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDockWidget" name="precisionGraphView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="features">
+            <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+           </property>
+           <property name="windowTitle">
+            <string>Precision</string>
+           </property>
+           <widget class="QWidget" name="dockWidgetContents_2">
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QwtPlot" name="precisionQwtPlot"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDockWidget" name="recallGraphView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="features">
+            <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+           </property>
+           <property name="windowTitle">
+            <string>Recall</string>
+           </property>
+           <widget class="QWidget" name="dockWidgetContents_3">
+            <layout class="QGridLayout" name="gridLayout">
+             <item row="0" column="0">
+              <widget class="QwtPlot" name="recallQwtPlot"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QSplitter" name="outputSplitter">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QWidget" name="layoutWidget">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QScrollArea" name="scrollArea">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="dimensionsConstsWidget">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>561</width>
+                <height>60</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QScrollArea" name="scrollArea_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>2</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="dimensionsRelsWidget">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>561</width>
+                <height>60</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTabWidget" name="tabWidget">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <widget class="QWidget" name="measuresTab">
+            <attribute name="title">
+             <string>Measures</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="1" column="0">
+              <widget class="QSplitter" name="measuresSplitter">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QWidget" name="layoutWidget">
+                <layout class="QVBoxLayout" name="verticalLayout">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout">
+                   <item>
+                    <widget class="QComboBox" name="pipelineUnitDisplayCb">
+                     <item>
+                      <property name="text">
+                       <string>All pipeline units</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="measureDisplayCb">
+                     <item>
+                      <property name="text">
+                       <string>F-Measure</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Precision</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Recall</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Global error rate</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Precision error rate</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Recall error rate</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Number correct</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Number found</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Number correct found</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Number correct not found</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Number incorrect found</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="Lima::Pelf::ResultsWidget" name="resultsView">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>1</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::SingleSelection</enum>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="errorsTab">
+            <attribute name="title">
+             <string>Errors</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_9">
+             <item row="0" column="0">
+              <widget class="QSplitter" name="errorsSplitter">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QTreeWidget" name="statementsTree">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::ExtendedSelection</enum>
+                </property>
+                <property name="autoExpandDelay">
+                 <number>0</number>
+                </property>
+                <property name="indentation">
+                 <number>10</number>
+                </property>
+                <property name="itemsExpandable">
+                 <bool>true</bool>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="animated">
+                 <bool>true</bool>
+                </property>
+                <property name="columnCount">
+                 <number>3</number>
+                </property>
+                <column>
+                 <property name="text">
+                  <string notr="true">File</string>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>ID</string>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Text</string>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                </column>
+               </widget>
+               <widget class="QTableWidget" name="errorsTable">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectColumns</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="columnCount">
+                 <number>3</number>
+                </property>
+                <column>
+                 <property name="text">
+                  <string>Type</string>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Dimension</string>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Name</string>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="foreground">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                   </color>
+                  </brush>
+                 </property>
+                </column>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="oneShotTab">
+            <attribute name="title">
+             <string>One Shot</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="0" column="0">
+              <widget class="QSplitter" name="textFilesSplitter">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QWidget" name="layoutWidget">
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QPushButton" name="newFileButton">
+                     <property name="text">
+                      <string>New</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/document-new.png</normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/document-new.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="choseFileButton">
+                     <property name="text">
+                      <string>Open...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/document-open.png</normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/document-open.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="saveFileButton">
+                     <property name="text">
+                      <string>Save...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/document-save.png</normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/document-save.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="removeFileButton">
+                     <property name="text">
+                      <string>Remove</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/dialog-close.png</normaloff>../../../../../../../usr/share/icons/default.kde4/32x32/actions/dialog-close.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="recentFilesList"/>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QTextEdit" name="textToAnalyze"/>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QCommandLinkButton" name="launchAnalysisButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Launch analysis</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QTextBrowser" name="logTextBrowser">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>857</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOpen_Pipeline">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="actionClose"/>
+   </widget>
+   <widget class="QMenu" name="menuPipeline">
+    <property name="title">
+     <string>Pipeline</string>
+    </property>
+    <addaction name="actionAdd_file"/>
+    <addaction name="actionClear_files"/>
+    <addaction name="separator"/>
+    <addaction name="actionConfigure_pipeline"/>
+    <addaction name="separator"/>
+    <addaction name="actionStart_restart_benchmarking"/>
+    <addaction name="actionPause_benchmarking"/>
+    <addaction name="actionResume_benchmarking"/>
+    <addaction name="actionReset_benchmarking"/>
+   </widget>
+   <addaction name="menuOpen_Pipeline"/>
+   <addaction name="menuPipeline"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save as...</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionAdd_file">
+   <property name="text">
+    <string>Add file...</string>
+   </property>
+  </action>
+  <action name="actionAdd_set_of_files">
+   <property name="text">
+    <string>Add set of files...</string>
+   </property>
+  </action>
+  <action name="actionStart_restart_benchmarking">
+   <property name="text">
+    <string>Start / restart benchmarking</string>
+   </property>
+  </action>
+  <action name="actionPause_benchmarking">
+   <property name="text">
+    <string>Pause benchmarking</string>
+   </property>
+  </action>
+  <action name="actionResume_benchmarking">
+   <property name="text">
+    <string>Resume benchmarking</string>
+   </property>
+  </action>
+  <action name="actionReset_benchmarking">
+   <property name="text">
+    <string>Reset benchmarking</string>
+   </property>
+  </action>
+  <action name="actionClear_files">
+   <property name="text">
+    <string>Clear files</string>
+   </property>
+  </action>
+  <action name="actionConfigure_pipeline">
+   <property name="text">
+    <string>Configure pipeline...</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QwtPlot</class>
+   <extends>QFrame</extends>
+   <header>qwt/qwt_plot.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Lima::Pelf::PipelineWidget</class>
+   <extends>QListView</extends>
+   <header>PipelineWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Lima::Pelf::ResultsWidget</class>
+   <extends>QTableView</extends>
+   <header>ResultsWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="leffe-bt-resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionClose</sender>
+   <signal>triggered()</signal>
+   <receiver>BenchmarkingToolWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>542</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

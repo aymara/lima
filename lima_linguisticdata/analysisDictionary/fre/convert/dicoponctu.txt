@@ -1,0 +1,30 @@
+!	!	Ff	
+"	"	Fd	
+"	"	Fe			
+"	seconde	Ncufp-				
+"	seconde	Ncufs-			
+%	%	Ncump-			
+%	%	Ncums-			
+&	&	Fa	
+'	'	Fd			
+'	'	Fe				
+'	minute	Ncufp-			
+'	minute	Ncufs-		
+''	seconde	Ncufp-		
+''	seconde	Ncufs-		
+(	(	Fp	
+)	)	Fp	
+,	,	Fa	
+-	-	Fa			
+-	-	Fd		
+-	-	Fp	
+.	.	Ff	
+:	:	Ff	
+;	;	Ff	
+<		Fa	
+>		Fa	
+?	?	Ff			
+[	[	Fp	
+]	]	Fp	
+«	«	Fe			
+»	»	Fe			

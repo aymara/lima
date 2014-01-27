@@ -1,0 +1,1142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+ "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<article>
+  <articleinfo>
+    <author>
+      <firstname>Romaric</firstname>
+      <surname>Besancon</surname>
+      <affiliation>
+        <address> CEA-LIST <email>romaric.besancon@cea.fr</email></address>
+      </affiliation>
+    </author>
+    <copyright>
+      <year>2005</year>
+      <holder>Romaric Besançon - CEA-LIST</holder>
+    </copyright>
+    <title>Spécifications du format des règles pour la construction d&apos;automates de reconnaissance d&apos;expressions</title>
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+        <date>7 fév 2005</date>
+        <authorinitials>RB</authorinitials>
+        <revremark>reprise du document de spécification préliminaire (en LaTeX)</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+  <section role="section">
+    <title>Objectif</title>
+    <para>
+      L&apos;objet de ce document est la définition du format déclaratif de
+      règles permettant de reconnaître des expressions dans un texte
+      analysé (en cours d&apos;analyse). Cette reconnaissance s&apos;appuie sur
+      un format d&apos;expressions régulières qui permet la construction
+      d&apos;automates pour la reconnaissance d&apos;expressions particulière.
+
+      Ces automates sont utilisées lors du traitement linguistique
+      pour 
+      <itemizedlist>
+        <listitem>
+          <para>la reconnaissance des expressions idiomatiques</para>
+        </listitem>
+        <listitem>
+          <para>la reconnaissance d&apos;entités spécifiques comme les nombres,
+          les dates et les entités nommées</para>
+        </listitem>
+        <listitem>
+          <para>l&apos;extraction de relations de dépendance pour l&apos;analyse
+          syntaxique</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+    </para>
+  </section>
+<!--end section-->  <section role="section">
+    <title>Spécifications des règles</title>
+    <para>
+    </para>
+    <section role="subsection">
+      <title>Besoin d&apos;expressivité des règles</title>
+      <para>
+        Les éléments nécessaires à la définition des règles pour la
+        reconnaissance d&apos;expressions particulères spécifiques sont :
+      </para>
+      <para>
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Un <emphasis>élément déclencheur</emphasis> : c&apos;est
+            l&apos;élément qui lancera le processus de reconnaissance
+            lorsqu&apos;il apparaît dans un texte ; il sera choisi comme
+            l&apos;élément le moins fréquent ou le plus caractéristique de
+            l&apos;expression considérée, pour éviter de trop nombreux
+            déclenchements qui n&apos;aboutissent pas. Le déclencheur ne doit
+            pas forcément être au début de l&apos;expression.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Les <emphasis>contextes gauche et droit</emphasis> qui
+            définissent l&apos;expression autour du déclencheur (on utilise
+            les termes &quot;gauche&quot; et &quot;droit&quot; pour désigner les contextes
+            &quot;précécent&quot; et &quot;suivant&quot;: c&apos;est aussi comme cela que ces
+            termes doivent être compris dans une langue comme l&apos;arabe)
+            : ces contextes seront définis en utilisant un formalisme
+            proche des expressions régulières. Les éléments dont on a
+            besoin pour définir ces contextes sont les suivants :
+          </para>
+          <itemizedlist>
+            <listitem>
+              <para>
+                Des unités de reconnaissance : elles peuvent être
+                virtuellement n&apos;importe quelle propriété (ou
+                combinaison de propriétés) associée à un élément
+                unitaire de la phrase en sortie de l&apos;analyse
+                morphologique ou après désambiguïsation (un
+                <emphasis>FullToken</emphasis> ou un
+                <emphasis>DicoWord</emphasis>). En pratique, les
+                propriétés qui nous semblent a priori intéressantes
+                pour la définition des règles sont les suivantes :
+              </para>
+              <itemizedlist>
+                <listitem>
+                  <para>
+                    Des mots simples : la reconnaissance se fait alors
+                    sur la simple forme de surface (la forme directe
+                    du mot dans le texte ou l&apos;une de ses variantes
+                    orthographiques obtenue lors de l&apos;analyse
+                    morphologique) ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    Des catégories grammaticales seules : par exemple
+                    pour prendre en compte l&apos;insertion d&apos;un ou
+                    plusieurs adjectifs ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    Des formes normalisées de mots : la correspondance
+                    se fera alors avec toutes les formes fléchies du
+                    mot (la catégorie grammaticale du mot doit alors
+                    être obligatoirement spécifiée : par exemple
+                    &quot;porte&quot; n&apos;acceptera pas les mêmes flexions s&apos;il
+                    est nom ou verbe) ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    Des classes, qui regroupent un certain nombre de
+                    mots ou d&apos;éléments particuliers (définis dans une
+                    liste) qui partagent une propriété qui n&apos;est pas
+                    identifiée dans le dictionnaire (ce peut être le
+                    cas pour des annonceurs de noms propres, par
+                    exemple) ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    d&apos;autres propriétés peuvent également être
+                    envisagées, comme des traits sémantiques ou
+                    morphologiques (initiale en majuscule, par exemple),
+                    ou des contraintes sur des valeurs numériques ;
+                  </para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+            <listitem>
+              <para>
+                Des opérations sur ces unités (opérations classiques
+                des expressions régulières) :
+              </para>
+              <itemizedlist>
+                <listitem>
+                  <para>
+                    Des groupements de mots : par exemple &quot;de la&quot; peut
+                    être considérée comme un groupe à manipuler comme une
+                    unité ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    Des alternatives d&apos;unités ou de groupes : &quot;M.&quot; ou
+                    &quot;Monsieur&quot; ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    Des cardinalités sur l&apos;occurrence d&apos;une unité ou
+                    d&apos;un groupe : on peut introduire un ou deux
+                    adverbes dans une forme verbale composée, mais pas
+                    plus de trois. On peut également avoir besoin de
+                    spécifier une cardinalité non limitée (la limite
+                    pourra alors être la limite de la phrase ou du
+                    texte, selon l&apos;usage).
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    Des unités ou groupes optionnels : cette propriété
+                    est un cas particulier de cardinalité (au moins 0, au
+                    plus 1 occurrence), mais on peut la garder pour
+                    faciliter l&apos;écriture ;
+                  </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    la négation d&apos;une unité ou d&apos;un groupe : on peut
+                    vouloir exprimer qu&apos;une unité est reconnue si elle
+                    n&apos;a pas une certaine propriété (par exemple,
+                    n&apos;importe quel mot sauf un point).
+                  </para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+        <listitem>
+          <para>
+            Le <emphasis>type</emphasis> de l&apos;expression reconnue ;
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            La <emphasis>forme normalisée</emphasis> de l&apos;expression
+            (pour certaines entités dont la forme normalisée doit être
+            calculée, comme les nombres ou les dates, un code
+            permettant d&apos;indiquer le type de normalisation peut
+            également être envisagé) ;
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Les <emphasis>bornes de l&apos;expression</emphasis> reconnue
+            ou l&apos;indication de quels mots parmi ceux reconnus ne font
+            pas partie de l&apos;expression reconnue : les déclencheurs et
+            le contexte peuvent en effet permettre de reconnaître ou
+            de caractériser une entité, sans faire partie de cette
+            entité ;
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Des <emphasis>contraintes</emphasis> supplémentaires sur
+            certains éléments reconnus ou entre certains éléments de
+            la règle doivent également pouvoir être spécifiés (par
+            exemple des contraintes d&apos;accord en genre, en nombre, en
+            personne etc.)
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            l&apos;indication possible du <emphasis>mot principal</emphasis> de l&apos;entité reconnue (tête de
+            l&apos;expression). Cette indication est particulièrement utile
+            pour les expressions idiomatiques. Une expression
+            idiomatique peut en effet être fléchie, et les propriétés
+            linguistiques associées à l&apos;expression dans son ensemble
+            seront alors celles de la tête de l&apos;expression (par
+            exemple, la forme pronominale &quot;se trompait&quot; devra être
+            reconnue comme une forme verbale à l&apos;imparfait de
+            l&apos;indicatif, propriétés linguistiques du mot &quot;trompait&quot;,
+            tête de l&apos;expression).
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            l&apos;indication de la <emphasis>relativité d&apos;application</emphasis> de la règle : également utile
+            pour les expressions idiomatiques, cette indication doit
+            permettre d&apos;indiquer si la reconnaissance de la règle est
+            absolue (par exemple &quot;au fur et à mesure&quot; est
+            <emphasis>toujours</emphasis> une expression idiomatique)
+            ou est une possibilité à désambiguïser dans une phase
+            ultérieure du traitement (&quot;rendez-vous&quot; peut être un mot
+            composé ou un verbe suivi d&apos;un pronom).
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            la possibilité d&apos;indiquer la négation d&apos;un type: si la
+            règle s&apos;applique, alors aucune autre règle du type indiqué
+            ne devra être appliquée (permet de mieux structurer les
+            règles et de contourner ou rattraper facilement certains
+            problèmes).
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+      </para>
+    </section>
+<!--end subsection-->  </section>
+<!--end section-->  <section role="section">
+    <title>Format des Règles</title>
+    <para>
+      Pour répondre aux besoins d&apos;expressivité des règles spécifiés
+      dans la section précédente, le formalisme de règles utilisé
+      actuellement est le suivant :
+    </para>
+    <para>
+      Le séparateur principal de la règle est le signe
+      &quot;<emphasis>:</emphasis>&quot; Une règle est définie par une
+      expression du type :
+    </para>
+    <para>
+      <emphasis>&lt;déclencheur&gt;<emphasis>:</emphasis>&lt;contexte gauche&gt;<emphasis>:</emphasis>&lt;contexte droit&gt;<emphasis>:</emphasis>&lt;type d&apos;expression&gt;<emphasis>:</emphasis>&lt;forme normalisée&gt;</emphasis>
+    </para>
+    <para>
+      Les <emphasis>&lt;contexte gauche&gt;</emphasis> et
+      <emphasis>&lt;contexte droit&gt;</emphasis> utilisent le
+      formalisme définis dans la section suivante.
+    </para>
+    <para>
+      Les contraintes sont ajoutées à la suite de ces règles.
+    </para>
+    <section role="subsection">
+      <title>formalisme des automates décrivant le contexte</title>
+      <para>
+      </para>
+      <section role="subsubsection">
+        <title>Unités simples</title>
+        <informaltable>
+          <tgroup cols="2">
+            <thead>
+              <row>
+                <entry>Unités</entry>
+                <entry>azer</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>Mots simples</entry>
+                <entry>mot</entry>
+              </row>
+              <row>
+                <entry>Catégories grammaticales seules</entry>
+                <entry>$CG</entry>
+              </row>
+              <row>
+                <entry>Formes normalisées de mots</entry>
+                <entry>lemme$CG</entry>
+              </row>
+              <row>
+                <entry>Propriétés morphologiques</entry>
+                <entry>t_xx ou T_xx</entry>
+              </row>
+              <row>
+                <entry>Classes</entry>
+                <entry>@classe</entry>
+              </row>
+              <row>
+                <entry>N&apos;importe quel mot</entry>
+                <entry>*</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <section role="paragraph">
+          <title>Catégories grammaticales</title>
+          <para>
+            les catégories grammaticales sont définies en utilisant
+            les codes symboliques internes au système (type
+            L_NOM_COMMUN). La catégorie peut spécifier seulement une
+            macro-catégorie ou une paire
+            macro-catégorie/micro-catégorie séparées par un tiret.
+
+            exemples: $L_NC, $L_NC-L_NC-GEN sont des spécifications
+            correctes de catégories.
+          </para>
+        </section>
+        <section role="paragraph">
+          <title>Classes</title>
+          <para>
+            Les classes sont définies explicitement dans le fichier
+            des règles ou un fichier externe, par une liste des
+            éléments de la classe. La syntaxe de la définition d&apos;une
+            classe de mots est simplement
+
+            <emphasis>@<emphasis>classe</emphasis>=(<emphasis>unit1</emphasis>,<emphasis>unit2</emphasis>,<emphasis>unit3</emphasis>,...)</emphasis>
+
+            Les éléments peuvent être n&apos;importe quelle unité définie
+            dans la section précédente. La virgule est le séparateur
+            entre les éléments, il n&apos;y a pas d&apos;espace après la
+            virgule, par contre, des retours à la ligne sont
+            autorisés.
+            
+            Pour l&apos;analyse syntaxique, la définition de classes de
+            catégories grammaticale est possible. 
+          </para>
+        </section>
+<!--end paragraph-->        <section role="paragraph">
+          <title>Propriétés morphologiques</title>
+          <para>
+            Les propriétés morphologiques sont identifiés par les
+            types donnés aux unités linguistiques par le tokeniseur
+            (si les types donnés en sortie du tokeniseur changent, ces
+            formalismes des propriétés morphologiques devront être
+            modifiés en conséquence).
+          </para>
+          <para>
+            Les noms des types sont préfixés (par convention, dans le
+            tokeniseur) par &quot;t_&quot; : ce préfixe est utilisé comme pour
+            reconnaître directement les noms des types dans les
+            règles. Ces types correspondent aux entrées
+            &quot;&lt;default&gt;&quot; possibles dans l&apos;automate du tokeniseur.
+          </para>
+          <para>
+            A titre d&apos;exemple, les types définis par le tokeniseur du
+            français sont les suivants :
+            <informaltable>
+              <tgroup cols="4">
+                <tbody>
+                  <row>
+                    <entry>t_acronym</entry>
+                    <entry>t_alphanumeric</entry>
+                    <entry>t_capital</entry>
+                    <entry>t_capital_1st</entry>
+                  </row>
+                  <row>
+                    <entry>t_capital_small</entry>
+                    <entry>t_cardinal_roman</entry>
+                    <entry>t_comma_number</entry>
+                    <entry>t_dot_number</entry>
+                  </row>
+                  <row>
+                    <entry>t_fraction</entry>
+                    <entry>t_integer</entry>
+                    <entry>t_ordinal_integer</entry>
+                    <entry>t_ordinal_roman</entry>
+                  </row>
+                  <row>
+                    <entry>t_pattern</entry>
+                    <entry>t_sentence_brk</entry>
+                    <entry>t_small</entry>
+                    <entry>t_word_brk</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </informaltable>
+          </para>
+          <para>
+            Les types définis par les tokeniseur des autres langues
+            sont également utilisables de manière transparente avec
+            cette notation.
+          </para>
+          <para>Une notation structurée des types du tokeniseur est
+          également possible (cette notation est considérée obsolète
+          parce qu&apos;elle ne permet pas de prendre en compte certains
+          types introduits par les nouvelles langues comme l&apos;arabe et
+          le chinois, mais elle est encore fonctionnelle et est encore
+          utilisée dans les fichiers de règles, c&apos;est pourquoi sa
+          spécification est conservée ici).</para>
+          <informaltable>
+            <tgroup cols="4">
+              <tbody>
+                <row>
+                  <entry>T_A-</entry>
+                  <entry>alphabétique</entry>
+                  <entry>T_N-</entry>
+                  <entry>numérique</entry>
+                </row>
+                <row>
+                  <entry>T_Ac-</entry>
+                  <entry>alphabétique majuscules</entry>
+                  <entry>T_Ni</entry>
+                  <entry>numérique entier</entry>
+                </row>
+                <row>
+                  <entry>T_As-</entry>
+                  <entry>alphabétique minuscules</entry>
+                  <entry>T_Nc</entry>
+                  <entry>numérique avec virgule</entry>
+                </row>
+                <row>
+                  <entry>T_A1-</entry>
+                  <entry>alphabétique première lettre majuscule</entry>
+                  <entry>T_Nd</entry>
+                  <entry>numérique avec point</entry>
+                </row>
+                <row>
+                  <entry>T_Aa-</entry>
+                  <entry>alphabétique acronyme</entry>
+                  <entry>T_Nf</entry>
+                  <entry>numérique fraction</entry>
+                </row>
+                <row>
+                  <entry>&gt;T_Am-</entry>
+                  <entry>alphabétique majuscules et minuscules</entry>
+                  <entry>T_No</entry>
+                  <entry>numérique ordinal</entry>
+                </row>
+                <row>
+                  <entry>T_A-c</entry>
+                  <entry>alphabétique chiffres romains cardinal</entry>
+                  <entry>T_U</entry>
+                  <entry>alphanumérique</entry>
+                </row>
+                <row>
+                  <entry>T_A-o</entry>
+                  <entry>alphabétique chiffres romains ordinal</entry>
+                  <entry>T_P</entry>
+                  <entry>pattern</entry>
+                </row>
+                <row>
+                  <entry>T_A-n</entry>
+                  <entry>alphabétique non chiffres romains</entry>
+                  <entry>T_W</entry>
+                  <entry>word break</entry>
+                </row>
+                <row>
+                  <entry/>
+                  <entry/>
+                  <entry>T_S</entry>
+                  <entry>sentence break</entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </informaltable>
+        </section>
+<!--end paragraph-->        <section role="paragraph">
+          <title>Indication de la tête d&apos;une expression</title>
+          <para>
+            La tête d&apos;un expression sera indiquée par le caractère
+            <emphasis>&gt;&amp;</emphasis>
+            précédant l&apos;unité identifiée comme la tête.
+          </para>
+          <para>
+            <emphasis>Exemple:</emphasis>
+          </para>
+          <programlisting>
+abondance:&amp;corne$L_NC d&apos;::IDIOM$Ncfs:corne d&apos;abondance
+          </programlisting>
+        </section>
+<!--end paragraph-->        <section role="paragraph">
+          <title>Contraintes sur les valeurs numériques</title>
+          <para>
+            de telles contraintes sont en particulier utiles pour la
+            reconnaissance des dates. Elles portent sur les formes
+            numériques des nombres et permettent d&apos;indiquer la valeur
+            précise souhaitée ou l&apos;intervalle de valeurs souhaité
+            (entre <emphasis>m</emphasis> et <emphasis>n</emphasis>),
+            avec la notation suivante : <emphasis>T_Ni=n</emphasis> ou
+            <emphasis>T_Ni&gt;m&lt;n</emphasis>.
+          </para>
+          <para>
+            Note: Ces contraintes devraient être traitées comme des
+            contraintes supplémentaires sur une unité (elles
+            permettraient de porter sur des unités d&apos;un type autre que
+            numérique).
+          </para>
+        </section>
+<!--end paragraph-->      </section>
+<!--end subsubsection-->      <section role="subsubsection">
+        <title>Opérations sur les unités simples </title>
+        <para>
+          Dans le tableau suivant donnant les opérations possibles,
+          les éléments indiqués &quot;elt&quot; sont soit des mots, soit des
+          groupes (séquences ou alternatives).
+        </para>
+        <informaltable>
+          <tgroup cols="2">
+            <thead>
+              <row>
+                <entry>
+                  <emphasis>Opérations</emphasis>
+                </entry>
+                <entry/>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>séquence (l&apos;un après l&apos;autre)</entry>
+                <entry>(elt1 elt2 ...)</entry>
+              </row>
+              <row>
+                <entry>alternative (l&apos;un ou l&apos;autre)</entry>
+                <entry>(elt1|elt2|...)</entry>
+              </row>
+              <row>
+                <entry>élément optionnel</entry>
+                <entry>elt?</entry>
+              </row>
+              <row>
+                <entry>
+                  <para>cardinalités sur l&apos;occurrence d&apos;un élément : entre
+            <emphasis>i</emphasis> et <emphasis>j</emphasis> fois
+            </para>
+                </entry>
+                <entry>elt{i-j}</entry>
+              </row>
+              <row>
+                <entry>
+                  <para>cardinalités sur l&apos;occurrence d&apos;un élément : entre
+            <emphasis>i</emphasis> et un nombre infini de fois
+            </para>
+                </entry>
+                <entry>unité{i-n} ou (...){i-n}</entry>
+              </row>
+              <row>
+                <entry>négation d&apos;une unité (la négation d&apos;un groupe n&apos;étant pas traitée, elle est à éviter)</entry>
+                <entry>^unité</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+        </para>
+      </section>
+<!--end subsubsection-->      <section role="subsubsection">
+        <title>Bornes de l&apos;expression</title>
+        <para>
+          L&apos;indication de quelles portions d&apos;expression ne font pas
+          partie de l&apos;expression reconnue est donnée en encadrant ces
+          portions d&apos;expressions par des crochets <emphasis>[...]</emphasis>. Ces crochets doivent être placés autour
+          des unités ou groupes complets (en particulier, ils
+          englobent aussi les modifieurs de groupes indiquant
+          l&apos;optionalité d&apos;un groupe).
+        </para>
+        <para>
+          Le déclencheur peut ne pas faire partie de l&apos;expression
+          reconnue (on placera de la même façon des crochets autour du
+          déclencheur).
+        </para>
+      </section>
+<!--end subsubsection-->      <section role="subsubsection">
+        <title>Type de l&apos;expression</title>
+        <para>
+          La liste des types possibles sont définis dans un fichier
+          externe. Actuellement, les types d&apos;expressions reconnues
+          sont tous mis dans le même fichier, qu&apos;elles soient entités
+          nommées, expressions idiomatiques, relations de
+          dépendance...
+        </para>
+        <para>
+          Le champ du type de l&apos;expression peut également contenir des
+          informations supplémentaires:
+          <itemizedlist>
+            <listitem>
+              <para>
+                des propriétés linguistiques associées à l&apos;expression
+                reconnue: ces propriétés sont utiles lorsque la
+                reconnaissance de l&apos;expression doit permettre la
+                création d&apos;un nouveau token (c&apos;est le cas pour les
+                expressions idiomatiques). L&apos;association de propriétés
+                linguistiques se fait en ajoutant le symbole &quot;$&quot; après
+                le type de l&apos;expression, suivi du code des propriétés
+                linguistiques (ce code doit être le code numérique,
+                mais des scripts de compilation permettent de prendre
+                en compte le code symbolique à la Grace, comme
+                IDIOM$Ncms).
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                la relativité d&apos;application de la règle (également
+                utile pour les expressions idiomatiques) : l&apos;ajout de
+                <emphasis>ABS_</emphasis> devant le type de
+                l&apos;expression indique que cette expression est absolue
+                (elle est toujours vraie quelle que soit le contexte).
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                la négation du type: l&apos;ajout de
+                <emphasis>NOT_</emphasis> devant le type de
+                l&apos;expression permet d&apos;indiquer que si la règle
+                s&apos;applique, aucune autre règle du type indiqué de
+                devra être appliquée avec ce déclencheur.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </para>
+        <para>
+          Les types d&apos;expressions définis pour les entités nommées
+          sont les suivants :
+        </para>
+        <para>
+        </para>
+        <informaltable>
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>NUMEX</entry>
+                <entry>pour les nombres et les mesures</entry>
+              </row>
+              <row>
+                <entry>TIMEX</entry>
+                <entry>pour les dates</entry>
+              </row>
+              <row>
+                <entry>PERSON</entry>
+                <entry>pour les noms de personnes</entry>
+              </row>
+              <row>
+                <entry>LOCATION</entry>
+                <entry>pour les noms de lieux</entry>
+              </row>
+              <row>
+                <entry>ORGANIZATION</entry>
+                <entry>pour les noms d&apos;organisations</entry>
+              </row>
+              <row>
+                <entry>PRODUCT</entry>
+                <entry>pour les noms de produits</entry>
+              </row>
+              <row>
+                <entry>EVENT</entry>
+                <entry>pour les événements</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          Pour les expressions idiomatiques, un seul type est défini:
+          le type IDIOM.
+        </para>
+        <para>
+          Pour l&apos;analyse syntaxiques, les types définis correspondent
+          aux différents types de relations de dépendance
+          considérés. Voici une liste non exhaustive de ces relations
+          :
+        </para>
+        <informaltable>
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>DETSUB</entry>
+                <entry>Relation entre déterminant et substantif (le -&gt; chat)</entry>
+              </row>
+              <row>
+                <entry>ADJPRENSUB</entry>
+                <entry>Relation entre adjectif prénominal et substantif (beau-&gt;chat)</entry>
+              </row>
+              <row>
+                <entry>COMPADJ</entry>
+                <entry>Complément d&apos;adjectif</entry>
+              </row>
+              <row>
+                <entry>COMPADV</entry>
+                <entry>Complément d&apos;adverbe</entry>
+              </row>
+              <row>
+                <entry>ADVADJ</entry>
+                <entry>Relation entre adverbe et adjectif</entry>
+              </row>
+              <row>
+                <entry>ADVADV</entry>
+                <entry>Relation entre deux adverbes</entry>
+              </row>
+              <row>
+                <entry>SUBADJPOST</entry>
+                <entry>Relation entre un substantif et un adjectif postnominal (chat &lt;- noir)</entry>
+              </row>
+              <row>
+                <entry>COMPDUNOM</entry>
+                <entry>Relation de complément du nom (chat &lt;- Pierre, dans &quot;chat de Pierre&quot;)</entry>
+              </row>
+              <row>
+                <entry>SUBSUBJUX</entry>
+                <entry>Deux substantifs juxtaposés en français</entry>
+              </row>
+              <row>
+                <entry>TEMPCOMP</entry>
+                <entry>Temps composé</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+        </para>
+      </section>
+<!--end subsubsection-->      <section role="subsubsection">
+        <title>Forme normalisée de l&apos;entité</title>
+        <para>
+          La forme normalisée de l&apos;expression est simplement donnée
+          comme une chaîne de caractères. Pour les types dont la forme
+          normalisée doit être calculée, un code peut être donné,
+          indiquant la façon de dont cette normalisation doit être
+          faite. Les codes actuellement définis sont les suivants :
+        </para>
+        <para>
+        </para>
+        <informaltable>
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>N_DATE</entry>
+                <entry>normalisation des dates en jour, mois, année</entry>
+              </row>
+              <row>
+                <entry>N_NUMBER</entry>
+                <entry>normalisation des nombres (calcul de la valeur de nombres en toutes lettres)</entry>
+              </row>
+              <row>
+                <entry>N_PERSON</entry>
+                <entry>normalisation des noms de personnes en nom, prénom, titre</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          Dans une version ultérieure des règles, ces normalisations
+          devraient utiliser les actions.
+        </para>
+        <section role="paragraph">
+          <title>Contraintes et actions</title>
+          <para>
+            Des contraintes ou des actions peuvent être attachées aux
+            règles de reconnaissance d&apos;expressions.  
+            
+            Les contraintes peuvent porter sur un ou deux éléments de
+            la règle: elles correspondent à une fonction qui sera
+            appelée avec en argument le ou les deux noeuds des
+            éléments correspondant et qui renvoie un booléen.
+
+            Les actions sont des fonctions appelées à la fin de
+            l&apos;application de la règle, en fonction du succès de la
+            règle (est-ce que l&apos;expression a été reconnue ou non).
+            Elles n&apos;utilisent pas les éléments de la règle. Elles
+            peuvent éventuellement utiliser le résultat produit par la
+            règle (ceci est décidé à l&apos;écriture de la fonction, et
+            n&apos;est pas indiqué directement dans la règle).
+          </para>
+          <para>
+            Par souci de lisibilité des règles, les contraintes entre
+            des éléments d&apos;une règle et les actions sont exprimées à
+            l&apos;extérieur de la définition des règles.
+          </para>
+          <para> 
+            A la suite des règles (ou dans les lignes suivantes), les
+            contraintes commencent par un <emphasis>+</emphasis>, et
+            s&apos;ecrivent :
+          </para>
+          <para>
+            +constraintName(elt1,elt2,&quot;complement&quot;)
+          </para>
+          <para>ou</para>
+          <para>
+            +constraintName(elt,&quot;complement&quot;)
+          </para>
+          <para>
+            Dans le premier cas, les <emphasis>elt1</emphasis> et
+            <emphasis>elt2</emphasis> sont les éléments sur lesquels
+            portent la contrainte, le complément (entre guillemets),
+            est optionnel et peut être utilisé pour passer une
+            information supplémentaire à la fonction.
+          </para>
+          <para>
+            Dans le second cas, <emphasis>elt</emphasis> est le seul
+            élément sur lesquel porte la contrainte.
+          </para>
+          <para>
+            Les éléments sont repérés par leur position dans la règle,
+            en deux temps : d&apos;abord, le contexte, qui peut être
+            <emphasis>right</emphasis> (contexte droit),
+            <emphasis>left</emphasis> (contexte gauche) ou
+            <emphasis>trigger</emphasis> (déclencheur), puis la
+            position du mot dans le contexte (l&apos;indication des
+            positions des mots est pour le moment très limitée: on
+            peut seulement accéder à des éléments simples dans le
+            contexte: les groupes de mots sont comptés comme un
+            élément)
+          </para>
+          <para>
+            Exemple:
+
+            pour le cas des verbes pronominaux, si l&apos;on veux faire la
+            distinction entre &quot;je m&apos;arrête&quot;, &quot;je t&apos;arrête&quot;, &quot;tu
+            m&apos;arrêtes&quot;, &quot;tu t&apos;arrêtes&quot;) : on peut alors utiliser une
+            règle intégrant des contraintes d&apos;accord :
+          </para>
+          <programlisting>
+arrêter$L_V:$L_PRON-L_PRON_REFLEXIF @PronPrev[$?]::IDIOM$V:s&apos;arrêter
++AgreementConstraint(trigger.1,left.1,&quot;PERSON&quot;)
++AgreementConstraint(trigger.1,left.1,&quot;NUMBER&quot;)
+          </programlisting>
+          <para>
+            où <emphasis>@PronPrev</emphasis> est la classe des
+            catégories des pronoms personnels préverbaux.
+          </para>
+          <para>
+            Les actions sont définies à la suite des règles (ou dans
+            les lignes suivantes), par un <emphasis>=</emphasis>,
+            suivi d&apos;un signe &gt; ou &lt; et du nom de la fonction.
+            <itemizedlist>
+              <listitem>
+                <para> =&gt;faitQuelqueChose() indique que
+              l&apos;action <emphasis>faitQuelqueChose</emphasis> sera
+              effectuée en cas de succès d&apos;application de la règle;
+              </para>
+              </listitem>
+              <listitem>
+                <para> =&lt;faitAutreChose() indique que
+              l&apos;action <emphasis>faitAutreChose</emphasis> sera
+              effectuée en cas d&apos;échec d&apos;application de la règle;
+              </para>
+              </listitem>
+            </itemizedlist>
+            Comme pour les contraintes, des compléments peuvent être
+            passés à la fonction.
+          </para>
+        </section>
+<!--end paragraph-->      </section>
+<!--end subsubsection-->      <section role="subsubsection">
+        <title>Compléments de syntaxe des fichier de règles</title>
+        <para>
+          L&apos;utilisation d&apos;un caractère d&apos;échappement (\) permet
+          d&apos;introduire dans la définition des unités les caractères de
+          la syntaxe &quot; :()[]{}^|@$&amp;&quot;, sans qu&apos;ils soient
+          interprétés.
+        </para>
+        <para>
+          D&apos;autre part, pour permettre de rendre les fichiers de
+          règles plus structurés et plus lisibles, les éléments de
+          syntaxe suivants ont également été définis :
+        </para>
+        <para>
+        </para>
+        <itemizedlist>
+          <listitem>
+            <para>
+              les lignes commençant par &quot; <emphasis>#</emphasis> &quot;sont
+              des commentaires (un &quot; <emphasis>#</emphasis> &quot;qui n&apos;est
+              pas en début de ligne n&apos;est pas interpété comme un
+              commentaire) ;
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              la primitive &quot;<emphasis>include</emphasis>&quot; suivie d&apos;un
+              nom de fichier (ou de plusieurs noms de fichiers séparés
+              par des virgules) permet d&apos;inclure des fichiers de
+              règles externe (ces fichiers sont interprétés de façon
+              complètement indépendante: par exemple, les classes
+              définies dans les fichiers inclus ne sont pas accessibles
+              dans le fichier incluant, ni le contraire);
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              la primitive &quot;<emphasis>use</emphasis>&quot; suivie d&apos;un nom
+              de fichier (ou de plusieurs noms de fichiers séparés par
+              des virgules) permet d&apos;inclure des définitions de
+              classes de mots externes: les classes
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              une indication de l&apos;encodage du fichier peut être faite
+              au début du fichier, par la primitive &quot;<emphasis>define encoding=</emphasis>&quot;. Les seuls codages possibles sont
+              pour l&apos;instant &quot;latin1&quot; et &quot;utf8&quot;. Le codage par défaut
+              est &quot;latin1&quot; (l&apos;indication doit être placée avant la
+              première ligne qui pourrait être mal codée).
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              dans le but de rendre plus générique l&apos;application des
+              règles, il est possible d&apos;associer une action par défaut
+              à toutes les règles d&apos;un fichier. Cela se fait avec la
+              primitive &quot;<emphasis>set defaultAction=</emphasis>&quot;
+              suivie d&apos;un nom d&apos;action.
+            </para>
+          </listitem>
+        </itemizedlist>
+        <para>
+        </para>
+      </section>
+<!--end subsubsection-->    </section>
+<!--end subsection-->    <section role="subsection">
+      <title>Spécification formelle des règles</title>
+      <para>
+        La grammaire EBNF décrivant la définition des règles est
+        présentée dans cette section.
+      </para>
+      <programlisting>
+        <![CDATA[
+<définition>      ::= { <règle> }
+<règle>           ::= <déclencheur> ":" <contexteGauche> ":"
+                      <contexteDroit> ":" <type> ":" <formeNormalisée> 
+                      [<contrainte>*] [<action>*]
+<déclencheur>     ::= ["["] <unitéSimple> ["]"]
+<contexteGauche>  ::= { <élément> }
+<contexteDroit>   ::= { <élément> }
+<type>            ::= <Chaîne> [<catégorie>]
+<formeNormalisée> ::= <Chaîne>
+<contrainte>      ::= "+" <nomFonction> "(" <eltIndex> [, <eltIndex>] 
+                      [, "\"" <Chaîne> "\""] ")"
+<action>          ::= "=" <actionAppl> <nomFonction> 
+                      "(" ["\"" <Chaîne> "\""] " )"
+<nomFonction>     ::= <Chaîne>
+<actionAppl>      ::= ">" | "<"
+<eltIndex>        ::= <part> "." <index>
+<part>            ::= "trigger" | "left" | "right"
+<index>           ::= <Entier>
+<élément>         ::= ["["] [<modifieurPre>] <unitéComplexe> 
+                      [<modifieurPost>] ["]"]
+<unitéComplexe>   ::=  <unitéSimple> | <groupe> | <alternative>
+<groupe>          ::= "(" <unitéComplexe>* ")"
+<alternative>     ::= "(" <unitéComplexe> ("|" <unitéComplexe>)+ ")"
+<unitéSimple>     ::= ["&"] <motGénéralisé>
+<motGénéralisé>   ::= <motSimple> [ <catégorie> ] | <catégorie> | 
+                      <classe> | <Tstatus>
+<modifieurPre>    ::= "^"
+<modifieurPost>   ::= "?" | "{" <cardinalité> "-" <cardinalité> "}"
+<cardinalité>     ::= <Entier> | 'n' | 'N'
+<motSimple>       ::= <ChaîneSansBlanc> | "*"
+<catégorie>       ::= "$" <Chaîne>
+<classe>          ::= "@" <Chaîne>
+<Tstatus>         ::= ""t_" <Chaîne> | T_" <propriétéMorphologique> 
+<propriétéMorphologique> ::= 'A' <MorphoAlphaCap> <MorphoAlphaRoman> | 
+                             'N' <MorphoNumeric> | 'U' | 'P' | 'W' | 'S'
+<MorphoAlphaCap>         ::= 'c' | 's' | '1' | 'a' | 'm'
+<MorphoAlphaRoman>       ::= 'c' | 'o' | 'n'
+<MorphoNumeric>          ::= 'i' | 'c' | 'd' | 'f' | 'o'
+        ]]>
+      </programlisting>
+    </section>
+<!--end subsection-->    <section role="subsection">
+      <title>Limites</title>
+      <para>
+      </para>
+      <section role="subsubsection">
+        <title>Limites d&apos;expressivité des règles</title>
+        <para>
+          Le formalisme défini ici ne permet pas d&apos;exprimer  :
+        </para>
+        <itemizedlist>
+          <listitem>
+            <para>
+              le groupement de plusieurs propriétés pour une seule
+              unité : le formalisme actuel ne permet pas de spécifier
+              qu&apos;une unité doit être de plusieurs types à la fois (on
+              ne peut pas exprimer par exemple qu&apos;une unité doit être
+              un mot commençant par une majuscule et un nom propre).
+              On peut seulement ajouter ça dans des contraintes
+              extérieures.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              la négation d&apos;un groupe de mots : la négation d&apos;un
+              groupe complexe de mots (succession ou alternative)
+              introduit des problèmes supplémentaires car elle ne se
+              traduit pas simplement par un distribution de la
+              propriété de négation sur chacun des éléments (ce que
+              fait l&apos;implémentation actuelle) :
+            </para>
+            <itemizedlist>
+              <listitem>
+                <para>
+                  pour les alternatives : l&apos;expression
+                  <emphasis>not(a|b)</emphasis> est interprétée comme
+                  <emphasis>(not(a)|not(b))</emphasis>, ce qui est
+                  faux.  L&apos;implémentation de cette fonction demande
+                  donc également la conjonction de propriétés au
+                  niveau d&apos;une unité ;
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  pour les groupes : l&apos;expression <emphasis>not(a b)</emphasis> est interpétée comme <emphasis>(not(a) not(b))</emphasis> alors qu&apos;elle devrait être
+                  interprétée comme <emphasis>(not(a b)|a not(b))</emphasis>.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+          <listitem>
+            <para>
+              La définition de sous-automates serait un outil utile
+              pour le développement des règles, mais n&apos;est pas
+              implémentée.
+            </para>
+          </listitem>
+        </itemizedlist>
+      </section>
+<!--end subsubsection-->    </section>
+<!--end subsection-->    <section role="subsection">
+      <title>Exemples de règles</title>
+      <para>
+      </para>
+      <section role="subsubsection">
+        <title>Règles de reconnaissance des entités nommées</title>
+        <para>
+          Voici un exemple de quelques règles simples pour la
+          reconnaissance des noms de journaux français :
+        </para>
+        <programlisting>
+Libération:::ORGANIZATION:
+Monde:Le:Diplomatique:ORGANIZATION:
+Monde:Le:de l&apos;Education:ORGANIZATION:
+Monde:Le::ORGANIZATION:
+Courrier::International:ORGANIZATION:
+Canard::Enchaîné:ORGANIZATION:
+        </programlisting>
+        <para>
+          Un autre exemple de règles, plus complexes, pour la reconnaissance des noms de personnes  :
+        </para>
+        <programlisting>
+@Firstname:[(@Title|@FunctionTitle)?]:((de|da|le)? T_A1){1-2}:PERSON:N_PERSON
+T_A1:[(@Title|@FunctionTitle)]:T_A1{0-2}:PERSON:N_PERSON
+T_A1:(T_A1|T_Amh){0-2}:, @FunctionTitle:PERSON:N_PERSON
+        </programlisting>
+        <para>
+          La première de ces règles se déclenche sur un prénom
+          (la liste des prénoms est explicitement définie dans
+          le fichier des règles), le contexte gauche contient,
+          de façon optionnel, un titre (M., Mme, Dr, ...) ou
+          une fonction (président, député,...), qui n&apos;est pas
+          gardé dans la règle finale ; le contexte doit est
+          composé d&apos;un ou deux mots commençant par une
+          majuscule, éventuellement précédé de &quot; de &quot;, &quot; da
+          &quot;ou &quot; le &quot;.
+        </para>
+        <para>
+          La seconde reconnaît les noms de personnes
+          introduits par des titres ou des noms de fonctions,
+          mais sans indication de prénom.
+        </para>
+        <para>
+          La troisième reconnaît des noms de personnes dont la
+          fonction est mise en apposition postérieure (par
+          exemple, &quot; Sanjiv Sidhu, président d&apos; i2
+          Technologies &quot;).
+        </para>
+        <para>
+          Voici un autre exemple de règles, pour la
+          reconnaissance de dates, déclenchées sur les noms de
+          jours ou de mois :
+        </para>
+        <programlisting>
+# lundi 22 mai 1968
+$L_NC-L_NC_JOUR::T_Ni&gt;1&lt;31 $L_NC-L_NC_MOIS (T_Ni&gt;1000&lt;3000|T_Ni&gt;1&lt;99)?:TIMEX:N_DATE
+# 22 mai 1968
+# 18 juin 40
+# 31 octobre prochain
+$L_NC-L_NC_MOIS:(T_Ni&gt;1&lt;31)?:(prochain|dernier|suivant|(T_Ni&gt;1000&lt;3000|T_Ni&gt;1&lt;99))?:TIMEX:N_DATE
+        </programlisting>
+        <para>
+        </para>
+      </section>
+<!--end subsubsection-->      <section role="subsubsection">
+        <title>règles de reconnaissance des expressions idiomatiques</title>
+        <para>
+          Voici des exemples de règles pour la reconnaissance
+          des expressions idiomatiques du français :
+        </para>
+        <programlisting>
+&amp;arrêter$L_V:$L_PRON-L_PRON_REFLEXIF @PronPrev[$?]::IDIOM$V:s&apos;arrêter
++AgreementConstraint(trigger.1,left.1,&quot;PERSON&quot;)
++AgreementConstraint(trigger.1,left.1,&quot;NUMBER&quot;)
+fur:au:et à mesure (de|d&apos;):IDIOM$Sg:au fur et à mesure de
+fer:&amp;rideau de::IDIOM$Nc:
+        </programlisting>
+        <para>
+          où <emphasis>$Sg</emphasis> indique une préposition
+          générale.
+        </para>
+      </section>
+<!--end subsubsection-->    </section>
+<!--end subsection-->  </section>
+<!--end section--></article>

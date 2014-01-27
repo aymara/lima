@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<specific_entities>
+  <specific_entity>
+    <string>F-200iB</string>
+    <position>52</position>
+    <length>7</length>
+    <type>ROBOTIC_ROBOT</type>
+</specific_entity>
+  <specific_entity>
+    <string>F-200iB, the Solution for:     ■   Sub-compact robot welding     ■    Pedestal welding     ■    Part loading/positioning     ■    Nut running     ■   Vehicle lift and locate     ■    Flexible/convertible fixturing     ■    Material Removal     ■    Dispense     Benefits </string>
+    <position>352</position>
+    <length>271</length>
+    <type>PRODUCT</type>
+</specific_entity>
+  <specific_entity>
+    <string>loading/positioning</string>
+    <position>454</position>
+    <length>19</length>
+    <type>PRODUCT</type>
+</specific_entity>
+  <specific_entity>
+    <string>six &amp; degrees of</string>
+    <position>65</position>
+    <length>16</length>
+    <type>ROBOTIC_MANUFACTURER</type>
+</specific_entity>
+  <specific_entity>
+    <string>ees of freedom servo-drive</string>
+    <position>75</position>
+    <length>26</length>
+    <type>ROBOTIC_PAYLOAD</type>
+</specific_entity>
+  <specific_entity>
+    <string> degrees of free</string>
+    <position>70</position>
+    <length>16</length>
+    <type>ROBOTIC_SIXAXIS</type>
+</specific_entity>
+</specific_entities>

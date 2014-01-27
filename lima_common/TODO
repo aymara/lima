@@ -1,0 +1,8 @@
+
+FsaAccess: fix bug for Chinese
+==============================
+ fix bug in findOffset() and findEdge() when character needs more than one 16bit word
+    offset = min + range/2;
+    offset must be even !!
+    U16_NEXT(text, offset, textLength, edgeLabel);
+

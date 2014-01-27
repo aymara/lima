@@ -1,0 +1,7 @@
+
+listPosTaggers='references full greedy nopostagger mincost-si mincost-ti-10 mincost-ti-20 mincost-ti-25 mincost-ti mincost-ti-40 mincost-freq'
+
+for pt in $listPosTaggers;
+do ./convertToMacrosPleines2.pl categs-fre-convert.txt $pt/fre/*.log;
+done;
+

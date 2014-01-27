@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="common">
+    <group name="mediaDeclaration">
+      <list name="available">
+        <item value="eng" />
+        <item value="fre" />
+      </list>
+    </group>
+    <group name="mediasIds">
+      <param key="fre" value="5"/>
+      <param key="eng" value="6"/>
+
+    </group>
+    <group name="mediaDefinitionFiles">
+      <param key="eng" value="lima-common-eng.xml" />
+      <param key="fre" value="lima-common-fre.xml" />
+    </group>
+
+    <group name="stringPool">
+      <param key="release" value="false"/>
+    </group>
+    <group name="CommonEntityTypes">
+      <list name="SpecificEntities">
+        <item value="TIMEX"/>
+        <item value="NUMEX"/>
+        <item value="PERSON"/>
+        <item value="LOCATION"/>
+        <item value="ORGANIZATION"/>
+        <item value="EVENT"/>
+        <item value="PRODUCT"/>
+      </list>
+    </group>
+    <group name="semanticRelations">
+      <map name="declaration">
+        <entry key="synonym" value="1"/>
+        <entry key="S" value="1"/>
+        <entry key="antonym" value="2"/>
+        <entry key="meronym" value="3"/>
+        <entry key="hyponym" value="4"/>
+        <entry key="hyperonym" value="5"/>
+        <entry key="seealso" value="6"/>
+        <entry key="V-S" value="7"/>
+        <entry key="M-F" value="8"/>
+        <entry key="V-J" value="9"/>
+        <entry key="J-D" value="10"/>
+        <entry key="V-A" value="11"/>
+      </map>
+    </group>
+  </module>
+</modulesConfig>

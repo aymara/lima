@@ -1,0 +1,15 @@
+#! /usr/bin/perl -s
+
+open(SOURCE,"$ARGV[0]") || die ("Impossible d'ouvrir le fichier $ARGV[0]");
+open(CIBLE,">$ARGV[1]") || die ("Impossible d'ouvrir le fichier $ARGV[1]");
+
+$ligne = <SOURCE>;
+
+while ($ligne ne "") {
+
+    $ligne=~ s/;/\t/g;
+    print CIBLE ($ligne);
+
+    $ligne=<SOURCE>;
+
+} 

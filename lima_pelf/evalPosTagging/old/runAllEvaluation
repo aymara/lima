@@ -1,0 +1,35 @@
+more result.header
+./eval.pl nopostagger fre $1
+#./eval.pl mincost-freq fre $1
+#./eval.pl mincost-si fre $1
+./eval.pl viterbi-freq fre $1
+./eval.pl viterbi-si fre $1
+#./eval.pl test fre $1
+
+#./eval.pl nopostagger.detect ger $1
+#./eval.pl mincost-freq.detect ger $1
+#./eval.pl mincost-si.detect ger $1
+
+#./eval.pl nopostagger eng $1
+#./eval.pl mincost-freq eng $1
+#./eval.pl mincost-si eng $1
+#./eval.pl viterbi-freq eng $1
+#./eval.pl viterbi-si eng $1
+
+#./eval.pl nopostagger spa $1
+#./eval.pl mincost-freq spa $1
+#./eval.pl mincost-si spa $1
+#./eval.pl viterbi-freq spa $1
+#./eval.pl viterbi-si spa $1
+
+#./eval.pl nopostagger chi $1
+#./eval.pl nopostagger-tol1 chi $1
+#./eval.pl nopostagger-tol2 chi $1
+#./eval.pl chineseAnalyzer chi $1
+#./eval.pl full chi $1
+#./eval.pl mincost-si chi $1
+#./eval.pl mincost-si-tol1 chi $1
+#./eval.pl mincost-ti-10 chi $1
+#./eval.pl mincost-ti-20 chi $1
+#./eval.pl mincost-ti chi $1
+#./eval.pl mincost-freq chi $1

@@ -1,0 +1,3413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE DOCUMENT SYSTEM "easy.dtd">
+<DOCUMENT fichier="/data/groups/passage/workshop/alignment/sandbox/easy_pap_rover/rover_exp/PASSAGE_EASY_CLASS+NEW/REFERENCE/oral_delic_5.xml" id="reference" date="23/09/2008" xmlns:xlink="http://www.w3.org/1999/xlink">
+<E id="E1">
+ <Groupe type="NV" id="E1G1">
+<F id="E1F1">il</F>
+<F id="E1F2">me</F>
+ </Groupe>
+ <Groupe type="NV" id="E1G2">
+<F id="E1F3">je</F>
+<F id="E1F4">me</F>
+<F id="E1F5">rappelle</F>
+ </Groupe>
+<F id="E1F6">qu'</F>
+ <Groupe type="NV" id="E1G3">
+<F id="E1F7">il</F>
+<F id="E1F8">posa</F>
+ </Groupe>
+ <Groupe type="GN" id="E1G4">
+<F id="E1F9">une</F>
+<F id="E1F10">question</F>
+ </Groupe>
+ <Groupe type="GP" id="E1G5">
+<F id="E1F11">à</F>
+<F id="E1F12">laquelle</F>
+ </Groupe>
+<F id="E1F13">j</F>
+ <Groupe type="NV" id="E1G6">
+<F id="E1F14">j'</F>
+<F id="E1F15">ai</F>
+ </Groupe>
+ <Groupe type="NV" id="E1G7">
+<F id="E1F16">eu</F>
+ </Groupe>
+ <Groupe type="GN" id="E1G8">
+<F id="E1F17">des</F>
+<F id="E1F18">difficultés</F>
+ </Groupe>
+ <Groupe type="PV" id="E1G9">
+<F id="E1F19">à</F>
+<F id="E1F20">répondre</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E1R1">
+<auxiliaire  xlink:type="locator" xlink:href="E1G6"/>
+<verbe  xlink:type="locator" xlink:href="E1G7"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E1R2">
+<cod  xlink:type="locator" xlink:href="E1G8"/>
+<verbe  xlink:type="locator" xlink:href="E1G7"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E1R3">
+<cod  xlink:type="locator" xlink:href="E1G3"/>
+<verbe  xlink:type="locator" xlink:href="E1G2"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E1R4">
+<cod  xlink:type="locator" xlink:href="E1G4"/>
+<verbe  xlink:type="locator" xlink:href="E1G3"/>
+</relation>
+<relation xlink:type="extended" type="COMP" id="E1R5">
+<complementeur  xlink:type="locator" xlink:href="E1F6"/>
+<verbe  xlink:type="locator" xlink:href="E1G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E1R6">
+<complement  xlink:type="locator" xlink:href="E1F4"/>
+<verbe  xlink:type="locator" xlink:href="E1F5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E1R7">
+<complement  xlink:type="locator" xlink:href="E1G5"/>
+<verbe  xlink:type="locator" xlink:href="E1G9"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E1R8">
+<modifieur  xlink:type="locator" xlink:href="E1G7"/>
+<nom  xlink:type="locator" xlink:href="E1G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E1R9">
+<modifieur  xlink:type="locator" xlink:href="E1G9"/>
+<nom  xlink:type="locator" xlink:href="E1G8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E1R10">
+<sujet  xlink:type="locator" xlink:href="E1F3"/>
+<verbe  xlink:type="locator" xlink:href="E1F5"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E1R11">
+<sujet  xlink:type="locator" xlink:href="E1F7"/>
+<verbe  xlink:type="locator" xlink:href="E1F8"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E1R12">
+<sujet  xlink:type="locator" xlink:href="E1F14"/>
+<verbe  xlink:type="locator" xlink:href="E1F15"/>
+</relation>
+</relations>
+</E>
+<E id="E2">
+<F id="E2F1">mais</F>
+ <Groupe type="GN" id="E2G1">
+<F id="E2F2">mes</F>
+<F id="E2F3">élèves</F>
+ </Groupe>
+ <Groupe type="NV" id="E2G2">
+<F id="E2F4">m'</F>
+<F id="E2F5">ont</F>
+ </Groupe>
+ <Groupe type="NV" id="E2G3">
+<F id="E2F6">sauvé</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E2R1">
+<auxiliaire  xlink:type="locator" xlink:href="E2G2"/>
+<verbe  xlink:type="locator" xlink:href="E2G3"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E2R2">
+<cod  xlink:type="locator" xlink:href="E2G2"/>
+<verbe  xlink:type="locator" xlink:href="E2G3"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E2R3">
+<coordonnant  xlink:type="locator" xlink:href="E2F1"/>
+<coord-g  xlink:type="locator" xlink:href="E2F0"/>
+<coord-d  xlink:type="locator" xlink:href="E2G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E2R4">
+<sujet  xlink:type="locator" xlink:href="E2G1"/>
+<verbe  xlink:type="locator" xlink:href="E2G2"/>
+</relation>
+</relations>
+</E>
+<E id="E3">
+ <Groupe type="NV" id="E3G1">
+<F id="E3F1">il</F>
+<F id="E3F2">demandait</F>
+ </Groupe>
+ <Groupe type="GR" id="E3G2">
+<F id="E3F3">comment</F>
+ </Groupe>
+ <Groupe type="NV" id="E3G3">
+<F id="E3F4">on</F>
+<F id="E3F5">traduisait</F>
+ </Groupe>
+ <Groupe type="GN" id="E3G4">
+<F id="E3F6">une</F>
+<F id="E3F7">bouteille</F>
+ </Groupe>
+ <Groupe type="GP" id="E3G5">
+<F id="E3F8">de</F>
+<F id="E3F9">vin</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E3R1">
+<cod  xlink:type="locator" xlink:href="E3G3"/>
+<verbe  xlink:type="locator" xlink:href="E3G1"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E3R2">
+<cod  xlink:type="locator" xlink:href="E3G4"/>
+<verbe  xlink:type="locator" xlink:href="E3G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E3R3">
+<modifieur  xlink:type="locator" xlink:href="E3G5"/>
+<nom  xlink:type="locator" xlink:href="E3G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E3R4">
+<modifieur  xlink:type="locator" xlink:href="E3G2"/>
+<verbe  xlink:type="locator" xlink:href="E3G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E3R5">
+<sujet  xlink:type="locator" xlink:href="E3F1"/>
+<verbe  xlink:type="locator" xlink:href="E3F2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E3R6">
+<sujet  xlink:type="locator" xlink:href="E3F4"/>
+<verbe  xlink:type="locator" xlink:href="E3F5"/>
+</relation>
+</relations>
+</E>
+<E id="E4">
+<F id="E4F1">et</F>
+ <Groupe type="GN" id="E4G1">
+<F id="E4F2">mes</F>
+<F id="E4F3">élèves</F>
+ </Groupe>
+ <Groupe type="NV" id="E4G2">
+<F id="E4F4">se</F>
+<F id="E4F5">sont</F>
+ </Groupe>
+ <Groupe type="NV" id="E4G3">
+<F id="E4F6">rappelés</F>
+ </Groupe>
+<F id="E4F7">que</F>
+ <Groupe type="GP" id="E4G4">
+<F id="E4F8">lors</F>
+<F id="E4F9">d'</F>
+<F id="E4F10">une</F>
+<F id="E4F11">version</F>
+ </Groupe>
+ <Groupe type="GN" id="E4G5">
+<F id="E4F12">que</F>
+ </Groupe>
+ <Groupe type="NV" id="E4G6">
+<F id="E4F13">nous</F>
+<F id="E4F14">avions</F>
+ </Groupe>
+ <Groupe type="NV" id="E4G7">
+<F id="E4F15">corrigée</F>
+ </Groupe>
+ <Groupe type="GN" id="E4G8">
+<F id="E4F16">peu_de</F>
+<F id="E4F17">temps</F>
+ </Groupe>
+ <Groupe type="GR" id="E4G9">
+<F id="E4F18">auparavant</F>
+ </Groupe>
+ <Groupe type="NV" id="E4G10">
+<F id="E4F19">il</F>
+<F id="E4F20">était</F>
+ </Groupe>
+ <Groupe type="GN" id="E4G11">
+<F id="E4F21">question</F>
+ </Groupe>
+ <Groupe type="GP" id="E4G12">
+<F id="E4F22">de</F>
+<F id="E4F23">tribus</F>
+<F id="E4F24">laguinculis</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E4R1">
+<attribut  xlink:type="locator" xlink:href="E4G11"/>
+<verbe  xlink:type="locator" xlink:href="E4G10"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E4R2">
+<auxiliaire  xlink:type="locator" xlink:href="E4G2"/>
+<verbe  xlink:type="locator" xlink:href="E4G3"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E4R3">
+<auxiliaire  xlink:type="locator" xlink:href="E4G6"/>
+<verbe  xlink:type="locator" xlink:href="E4G7"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E4R4">
+<cod  xlink:type="locator" xlink:href="E4G10"/>
+<verbe  xlink:type="locator" xlink:href="E4G3"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E4R5">
+<cod  xlink:type="locator" xlink:href="E4G5"/>
+<verbe  xlink:type="locator" xlink:href="E4G7"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E4R6">
+<coordonnant  xlink:type="locator" xlink:href="E4F1"/>
+<coord-g  xlink:type="locator" xlink:href="E4F0"/>
+<coord-d  xlink:type="locator" xlink:href="E4G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E4R7">
+<complement  xlink:type="locator" xlink:href="E4G4"/>
+<verbe  xlink:type="locator" xlink:href="E4G10"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E4R8">
+<modifieur  xlink:type="locator" xlink:href="E4G12"/>
+<nom  xlink:type="locator" xlink:href="E4G11"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E4R9">
+<modifieur  xlink:type="locator" xlink:href="E4G7"/>
+<nom  xlink:type="locator" xlink:href="E4G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E4R10">
+<modifieur  xlink:type="locator" xlink:href="E4F16"/>
+<nom  xlink:type="locator" xlink:href="E4F17"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E4R11">
+<modifieur  xlink:type="locator" xlink:href="E4G9"/>
+<verbe  xlink:type="locator" xlink:href="E4G7"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E4R12">
+<sujet  xlink:type="locator" xlink:href="E4F19"/>
+<verbe  xlink:type="locator" xlink:href="E4F20"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E4R13">
+<sujet  xlink:type="locator" xlink:href="E4G1"/>
+<verbe  xlink:type="locator" xlink:href="E4G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E4R14">
+<sujet  xlink:type="locator" xlink:href="E4F13"/>
+<verbe  xlink:type="locator" xlink:href="E4F14"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E4R15">
+<modifieur  xlink:type="locator" xlink:href="E4G8"/>
+<adverbe  xlink:type="locator" xlink:href="E4G9"/>
+</relation>
+</relations>
+</E>
+<E id="E5">
+<F id="E5F1">mais</F>
+ <Groupe type="GR" id="E5G1">
+<F id="E5F2">oui</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COORD" id="E5R1">
+<coordonnant  xlink:type="locator" xlink:href="E5F1"/>
+<coord-g  xlink:type="locator" xlink:href="E5F0"/>
+<coord-d  xlink:type="locator" xlink:href="E5G1"/>
+</relation>
+</relations>
+</E>
+<E id="E6">
+<F id="E6F1">mais</F>
+ <Groupe type="GR" id="E6G1">
+<F id="E6F2">oui</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COORD" id="E6R1">
+<coordonnant  xlink:type="locator" xlink:href="E6F1"/>
+<coord-g  xlink:type="locator" xlink:href="E6F0"/>
+<coord-d  xlink:type="locator" xlink:href="E6G1"/>
+</relation>
+</relations>
+</E>
+<E id="E7">
+<F id="E7F1">c</F>
+<F id="E7F2">mais</F>
+ <Groupe type="NV" id="E7G1">
+<F id="E7F3">c'</F>
+<F id="E7F4">est</F>
+ </Groupe>
+ <Groupe type="GR" id="E7G2">
+<F id="E7F5">très</F>
+ </Groupe>
+ <Groupe type="GR" id="E7G3">
+<F id="E7F6">bien</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E7R1">
+<attribut  xlink:type="locator" xlink:href="E7G3"/>
+<verbe  xlink:type="locator" xlink:href="E7G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E7R2">
+<coordonnant  xlink:type="locator" xlink:href="E7F2"/>
+<coord-g  xlink:type="locator" xlink:href="E7F0"/>
+<coord-d  xlink:type="locator" xlink:href="E7G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E7R3">
+<modifieur  xlink:type="locator" xlink:href="E7G2"/>
+<adverbe  xlink:type="locator" xlink:href="E7G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E7R4">
+<sujet  xlink:type="locator" xlink:href="E7F3"/>
+<verbe  xlink:type="locator" xlink:href="E7F4"/>
+</relation>
+</relations>
+</E>
+<E id="E8">
+<F id="E8F1">mais</F>
+ <Groupe type="NV" id="E8G1">
+<F id="E8F2">c'</F>
+<F id="E8F3">est</F>
+ </Groupe>
+ <Groupe type="GR" id="E8G2">
+<F id="E8F4">là</F>
+ </Groupe>
+ <Groupe type="GN" id="E8G3">
+<F id="E8F5">des</F>
+<F id="E8F6">petites</F>
+<F id="E8F7">bouteilles</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E8R1">
+<attribut  xlink:type="locator" xlink:href="E8G3"/>
+<verbe  xlink:type="locator" xlink:href="E8G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E8R2">
+<coordonnant  xlink:type="locator" xlink:href="E8F1"/>
+<coord-g  xlink:type="locator" xlink:href="E8F0"/>
+<coord-d  xlink:type="locator" xlink:href="E8G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E8R3">
+<modifieur  xlink:type="locator" xlink:href="E8F6"/>
+<nom  xlink:type="locator" xlink:href="E8F7"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E8R4">
+<modifieur  xlink:type="locator" xlink:href="E8G2"/>
+<verbe  xlink:type="locator" xlink:href="E8G1"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E8R5">
+<sujet  xlink:type="locator" xlink:href="E8F2"/>
+<verbe  xlink:type="locator" xlink:href="E8F3"/>
+</relation>
+</relations>
+</E>
+<E id="E9">
+ <Groupe type="GN" id="E9G1">
+<F id="E9F1">une</F>
+<F id="E9F2">vraie</F>
+<F id="E9F3">bouteille</F>
+ </Groupe>
+ <Groupe type="NV" id="E9G2">
+<F id="E9F4">ça</F>
+<F id="E9F5">se</F>
+<F id="E9F6">dit</F>
+ </Groupe>
+ <Groupe type="GN" id="E9G3">
+<F id="E9F7">lagena</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E9R1">
+<cod  xlink:type="locator" xlink:href="E9G3"/>
+<verbe  xlink:type="locator" xlink:href="E9G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E9R2">
+<modifieur  xlink:type="locator" xlink:href="E9F2"/>
+<nom  xlink:type="locator" xlink:href="E9F3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E9R3">
+<sujet  xlink:type="locator" xlink:href="E9G1"/>
+<verbe  xlink:type="locator" xlink:href="E9G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E9R4">
+<sujet  xlink:type="locator" xlink:href="E9F4"/>
+<verbe  xlink:type="locator" xlink:href="E9F6"/>
+</relation>
+</relations>
+</E>
+<E id="E10">
+ <Groupe type="GN" id="E10G1">
+<F id="E10F1">mon</F>
+<F id="E10F2">sang</F>
+ </Groupe>
+ <Groupe type="NV" id="E10G2">
+<F id="E10F3">n'</F>
+<F id="E10F4">avait</F>
+ </Groupe>
+ <Groupe type="NV" id="E10G3">
+<F id="E10F5">fait</F>
+ </Groupe>
+ <Groupe type="GR" id="E10G4">
+<F id="E10F6">qu'</F>
+ </Groupe>
+ <Groupe type="GN" id="E10G5">
+<F id="E10F7">un</F>
+<F id="E10F8">tour</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E10R1">
+<auxiliaire  xlink:type="locator" xlink:href="E10G2"/>
+<verbe  xlink:type="locator" xlink:href="E10G3"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E10R2">
+<cod  xlink:type="locator" xlink:href="E10G5"/>
+<verbe  xlink:type="locator" xlink:href="E10G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E10R3">
+<modifieur  xlink:type="locator" xlink:href="E10G4"/>
+<verbe  xlink:type="locator" xlink:href="E10G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E10R4">
+<sujet  xlink:type="locator" xlink:href="E10G1"/>
+<verbe  xlink:type="locator" xlink:href="E10G2"/>
+</relation>
+</relations>
+</E>
+<E id="E11">
+<F id="E11F1">mais</F>
+ <Groupe type="NV" id="E11G1">
+<F id="E11F2">je</F>
+<F id="E11F3">n'</F>
+<F id="E11F4">ai</F>
+ </Groupe>
+ <Groupe type="GR" id="E11G2">
+<F id="E11F5">jamais</F>
+ </Groupe>
+ <Groupe type="NV" id="E11G3">
+<F id="E11F6">oublié</F>
+ </Groupe>
+<F id="E11F7">s</F>
+ <Groupe type="GN" id="E11G4">
+<F id="E11F8">cette</F>
+<F id="E11F9">intervention</F>
+ </Groupe>
+ <Groupe type="GP" id="E11G5">
+<F id="E11F10">de</F>
+<F id="E11F11">mes</F>
+<F id="E11F12">élèves</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E11R1">
+<auxiliaire  xlink:type="locator" xlink:href="E11G1"/>
+<verbe  xlink:type="locator" xlink:href="E11G3"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E11R2">
+<cod  xlink:type="locator" xlink:href="E11G4"/>
+<verbe  xlink:type="locator" xlink:href="E11G3"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E11R3">
+<coordonnant  xlink:type="locator" xlink:href="E11F1"/>
+<coord-g  xlink:type="locator" xlink:href="E11F0"/>
+<coord-d  xlink:type="locator" xlink:href="E11G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E11R4">
+<modifieur  xlink:type="locator" xlink:href="E11G5"/>
+<nom  xlink:type="locator" xlink:href="E11G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E11R5">
+<modifieur  xlink:type="locator" xlink:href="E11G2"/>
+<verbe  xlink:type="locator" xlink:href="E11G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E11R6">
+<sujet  xlink:type="locator" xlink:href="E11F2"/>
+<verbe  xlink:type="locator" xlink:href="E11F4"/>
+</relation>
+</relations>
+</E>
+<E id="E12">
+ <Groupe type="GP" id="E12G1">
+<F id="E12F1">au</F>
+<F id="E12F2">cours</F>
+<F id="E12F3">de</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G2">
+<F id="E12F4">du</F>
+<F id="E12F5">bavardage</F>
+ </Groupe>
+ <Groupe type="GN" id="E12G3">
+<F id="E12F6">que</F>
+ </Groupe>
+ <Groupe type="NV" id="E12G4">
+<F id="E12F7">j'</F>
+<F id="E12F8">ai</F>
+ </Groupe>
+ <Groupe type="NV" id="E12G5">
+<F id="E12F9">eu</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G6">
+<F id="E12F10">avec</F>
+<F id="E12F11">cet</F>
+<F id="E12F12">inspecteur</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G7">
+<F id="E12F13">à</F>
+<F id="E12F14">la</F>
+<F id="E12F15">fin</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G8">
+<F id="E12F16">de</F>
+<F id="E12F17">la</F>
+<F id="E12F18">classe</F>
+ </Groupe>
+ <Groupe type="NV" id="E12G9">
+<F id="E12F19">il</F>
+<F id="E12F20">me</F>
+<F id="E12F21">félicita</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G10">
+<F id="E12F22">du</F>
+<F id="E12F23">comportement</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G11">
+<F id="E12F24">de</F>
+<F id="E12F25">mes</F>
+<F id="E12F26">élèves</F>
+ </Groupe>
+ <Groupe type="GP" id="E12G12">
+<F id="E12F27">de</F>
+<F id="E12F28">mon</F>
+<F id="E12F29">savoir-faire</F>
+ </Groupe>
+<F id="E12F30">et</F>
+ <Groupe type="NV" id="E12G13">
+<F id="E12F31">me</F>
+<F id="E12F32">demanda</F>
+ </Groupe>
+ <Groupe type="GN" id="E12G14">
+<F id="E12F33">ce</F>
+<F id="E12F34">que</F>
+ </Groupe>
+ <Groupe type="NV" id="E12G15">
+<F id="E12F35">je</F>
+<F id="E12F36">désirais</F>
+ </Groupe>
+ <Groupe type="NV" id="E12G16">
+<F id="E12F37">faire</F>
+ </Groupe>
+ <Groupe type="GN" id="E12G17">
+<F id="E12F38">l'</F>
+<F id="E12F39">année</F>
+ </Groupe>
+ <Groupe type="GA" id="E12G18">
+<F id="E12F40">suivante</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E12R1">
+<auxiliaire  xlink:type="locator" xlink:href="E12G4"/>
+<verbe  xlink:type="locator" xlink:href="E12G5"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E12R2">
+<cod  xlink:type="locator" xlink:href="E12F20"/>
+<verbe  xlink:type="locator" xlink:href="E12F21"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E12R3">
+<cod  xlink:type="locator" xlink:href="E12G14"/>
+<verbe  xlink:type="locator" xlink:href="E12G16"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E12R4">
+<cod  xlink:type="locator" xlink:href="E12G15"/>
+<verbe  xlink:type="locator" xlink:href="E12G13"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E12R5">
+<cod  xlink:type="locator" xlink:href="E12G3"/>
+<verbe  xlink:type="locator" xlink:href="E12G5"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E12R6">
+<cod  xlink:type="locator" xlink:href="E12G16"/>
+<verbe  xlink:type="locator" xlink:href="E12G15"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E12R7">
+<coordonnant  xlink:type="locator" xlink:href="E12F30"/>
+<coord-g  xlink:type="locator" xlink:href="E12G9"/>
+<coord-d  xlink:type="locator" xlink:href="E12G13"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E12R8">
+<complement  xlink:type="locator" xlink:href="E12G2"/>
+<verbe  xlink:type="locator" xlink:href="E12G9"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E12R9">
+<complement  xlink:type="locator" xlink:href="E12G10"/>
+<verbe  xlink:type="locator" xlink:href="E12G9"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E12R10">
+<complement  xlink:type="locator" xlink:href="E12F31"/>
+<verbe  xlink:type="locator" xlink:href="E12F32"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E12R11">
+<complement  xlink:type="locator" xlink:href="E12G6"/>
+<verbe  xlink:type="locator" xlink:href="E12G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E12R12">
+<complement  xlink:type="locator" xlink:href="E12G7"/>
+<verbe  xlink:type="locator" xlink:href="E12G5"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E12R13">
+<premier  xlink:type="locator" xlink:href="E12G10"/>
+<suivant  xlink:type="locator" xlink:href="E12G12"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E12R14">
+<modifieur  xlink:type="locator" xlink:href="E12G11"/>
+<nom  xlink:type="locator" xlink:href="E12G10"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E12R15">
+<modifieur  xlink:type="locator" xlink:href="E12G18"/>
+<nom  xlink:type="locator" xlink:href="E12G17"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E12R16">
+<modifieur  xlink:type="locator" xlink:href="E12G5"/>
+<nom  xlink:type="locator" xlink:href="E12G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E12R17">
+<modifieur  xlink:type="locator" xlink:href="E12G8"/>
+<nom  xlink:type="locator" xlink:href="E12G7"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E12R18">
+<modifieur  xlink:type="locator" xlink:href="E12G17"/>
+<verbe  xlink:type="locator" xlink:href="E12G16"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E12R19">
+<sujet  xlink:type="locator" xlink:href="E12F30"/>
+<verbe  xlink:type="locator" xlink:href="E12G13"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E12R20">
+<sujet  xlink:type="locator" xlink:href="E12F35"/>
+<verbe  xlink:type="locator" xlink:href="E12F36"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E12R21">
+<sujet  xlink:type="locator" xlink:href="E12F7"/>
+<verbe  xlink:type="locator" xlink:href="E12F8"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E12R22">
+<sujet  xlink:type="locator" xlink:href="E12F19"/>
+<verbe  xlink:type="locator" xlink:href="E12F21"/>
+</relation>
+</relations>
+</E>
+<E id="E13">
+ <Groupe type="NV" id="E13G1">
+<F id="E13F1">je</F>
+<F id="E13F2">lui</F>
+<F id="E13F3">dis</F>
+ </Groupe>
+ <Groupe type="NV" id="E13G2">
+<F id="E13F4">je</F>
+<F id="E13F5">veux</F>
+ </Groupe>
+ <Groupe type="NV" id="E13G3">
+<F id="E13F6">préparer</F>
+ </Groupe>
+ <Groupe type="GN" id="E13G4">
+<F id="E13F7">l'</F>
+<F id="E13F8">agrégation</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E13R1">
+<cod  xlink:type="locator" xlink:href="E13G2"/>
+<verbe  xlink:type="locator" xlink:href="E13G1"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E13R2">
+<cod  xlink:type="locator" xlink:href="E13G3"/>
+<verbe  xlink:type="locator" xlink:href="E13G2"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E13R3">
+<cod  xlink:type="locator" xlink:href="E13G4"/>
+<verbe  xlink:type="locator" xlink:href="E13G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E13R4">
+<complement  xlink:type="locator" xlink:href="E13F2"/>
+<verbe  xlink:type="locator" xlink:href="E13F3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E13R5">
+<sujet  xlink:type="locator" xlink:href="E13F1"/>
+<verbe  xlink:type="locator" xlink:href="E13F3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E13R6">
+<sujet  xlink:type="locator" xlink:href="E13F4"/>
+<verbe  xlink:type="locator" xlink:href="E13F5"/>
+</relation>
+</relations>
+</E>
+<E id="E14">
+ <Groupe type="GP" id="E14G1">
+<F id="E14F1">au</F>
+<F id="E14F2">cours</F>
+<F id="E14F3">de</F>
+<F id="E14F4">l'</F>
+<F id="E14F5">année</F>
+ </Groupe>
+ <Groupe type="NV" id="E14G2">
+<F id="E14F6">j'</F>
+<F id="E14F7">avais</F>
+ </Groupe>
+ <Groupe type="NV" id="E14G3">
+<F id="E14F8">soutenu</F>
+ </Groupe>
+ <Groupe type="GN" id="E14G4">
+<F id="E14F9">mon</F>
+<F id="E14F10">diplôme</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G5">
+<F id="E14F11">d'</F>
+<F id="E14F12">études</F>
+ </Groupe>
+ <Groupe type="GA" id="E14G6">
+<F id="E14F13">supérieures</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G7">
+<F id="E14F14">avec</F>
+<F id="E14F15">des</F>
+<F id="E14F16">remplaçants</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G8">
+<F id="E14F17">de</F>
+<F id="E14F18">monsieur</F>
+<F id="E14F19">Lhermet</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G9">
+<F id="E14F20">avec</F>
+<F id="E14F21">euh</F>
+<F id="E14F22">un</F>
+<F id="E14F23">monsieur</F>
+ </Groupe>
+ <Groupe type="GN" id="E14G10">
+<F id="E14F24">Flandin</F>
+ </Groupe>
+ <Groupe type="GN" id="E14G11">
+<F id="E14F25">qui</F>
+ </Groupe>
+ <Groupe type="NV" id="E14G12">
+<F id="E14F26">me</F>
+<F id="E14F27">convoquait</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G13">
+<F id="E14F28">au</F>
+<F id="E14F29">cours</F>
+<F id="E14F30">des</F>
+<F id="E14F31">vacances</F>
+ </Groupe>
+ <Groupe type="GA" id="E14G14">
+<F id="E14F32">scolaires</F>
+ </Groupe>
+ <Groupe type="PV" id="E14G15">
+<F id="E14F33">pour</F>
+<F id="E14F34">préparer</F>
+ </Groupe>
+ <Groupe type="GN" id="E14G16">
+<F id="E14F35">des</F>
+<F id="E14F36">candidats</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G17">
+<F id="E14F37">au</F>
+<F id="E14F38">baccalauréat</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G18">
+<F id="E14F39">à</F>
+<F id="E14F40">la</F>
+<F id="E14F41">deuxième</F>
+<F id="E14F42">session</F>
+ </Groupe>
+ <Groupe type="GN" id="E14G19">
+<F id="E14F43">la</F>
+<F id="E14F44">session</F>
+ </Groupe>
+ <Groupe type="GP" id="E14G20">
+<F id="E14F45">d'</F>
+<F id="E14F46">octobre</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="APPOS" id="E14R1">
+<premier  xlink:type="locator" xlink:href="E14G19"/>
+<appose  xlink:type="locator" xlink:href="E14G18"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E14R2">
+<auxiliaire  xlink:type="locator" xlink:href="E14G2"/>
+<verbe  xlink:type="locator" xlink:href="E14G3"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E14R3">
+<cod  xlink:type="locator" xlink:href="E14F26"/>
+<verbe  xlink:type="locator" xlink:href="E14F27"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E14R4">
+<cod  xlink:type="locator" xlink:href="E14G16"/>
+<verbe  xlink:type="locator" xlink:href="E14G15"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E14R5">
+<cod  xlink:type="locator" xlink:href="E14G4"/>
+<verbe  xlink:type="locator" xlink:href="E14G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E14R6">
+<complement  xlink:type="locator" xlink:href="E14G1"/>
+<verbe  xlink:type="locator" xlink:href="E14G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E14R7">
+<complement  xlink:type="locator" xlink:href="E14G13"/>
+<verbe  xlink:type="locator" xlink:href="E14G12"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E14R8">
+<complement  xlink:type="locator" xlink:href="E14G15"/>
+<verbe  xlink:type="locator" xlink:href="E14G12"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E14R9">
+<complement  xlink:type="locator" xlink:href="E14G18"/>
+<verbe  xlink:type="locator" xlink:href="E14G15"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E14R10">
+<complement  xlink:type="locator" xlink:href="E14G7"/>
+<verbe  xlink:type="locator" xlink:href="E14G3"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E14R11">
+<premier  xlink:type="locator" xlink:href="E14G7"/>
+<suivant  xlink:type="locator" xlink:href="E14G9"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R12">
+<modifieur  xlink:type="locator" xlink:href="E14G10"/>
+<nom  xlink:type="locator" xlink:href="E14G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R13">
+<modifieur  xlink:type="locator" xlink:href="E14G12"/>
+<nom  xlink:type="locator" xlink:href="E14G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R14">
+<modifieur  xlink:type="locator" xlink:href="E14G14"/>
+<nom  xlink:type="locator" xlink:href="E14G13"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R15">
+<modifieur  xlink:type="locator" xlink:href="E14G17"/>
+<nom  xlink:type="locator" xlink:href="E14G16"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R16">
+<modifieur  xlink:type="locator" xlink:href="E14F41"/>
+<nom  xlink:type="locator" xlink:href="E14F42"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R17">
+<modifieur  xlink:type="locator" xlink:href="E14G20"/>
+<nom  xlink:type="locator" xlink:href="E14G19"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R18">
+<modifieur  xlink:type="locator" xlink:href="E14G5"/>
+<nom  xlink:type="locator" xlink:href="E14G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R19">
+<modifieur  xlink:type="locator" xlink:href="E14G6"/>
+<nom  xlink:type="locator" xlink:href="E14G5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E14R20">
+<modifieur  xlink:type="locator" xlink:href="E14G8"/>
+<nom  xlink:type="locator" xlink:href="E14G7"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E14R21">
+<sujet  xlink:type="locator" xlink:href="E14G11"/>
+<verbe  xlink:type="locator" xlink:href="E14G12"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E14R22">
+<sujet  xlink:type="locator" xlink:href="E14F6"/>
+<verbe  xlink:type="locator" xlink:href="E14F7"/>
+</relation>
+</relations>
+</E>
+<E id="E15">
+ <Groupe type="NV" id="E15G1">
+<F id="E15F1">il</F>
+<F id="E15F2">venait</F>
+ </Groupe>
+ <Groupe type="NV" id="E15G2">
+<F id="E15F3">me</F>
+<F id="E15F4">chercher</F>
+ </Groupe>
+ <Groupe type="GP" id="E15G3">
+<F id="E15F5">à</F>
+<F id="E15F6">Nohanent</F>
+ </Groupe>
+ <Groupe type="GP" id="E15G4">
+<F id="E15F7">en</F>
+<F id="E15F8">voiture</F>
+ </Groupe>
+<F id="E15F9">et</F>
+ <Groupe type="NV" id="E15G5">
+<F id="E15F10">me</F>
+<F id="E15F11">ramenait</F>
+ </Groupe>
+ <Groupe type="GP" id="E15G6">
+<F id="E15F12">à</F>
+<F id="E15F13">Nohanent</F>
+ </Groupe>
+ <Groupe type="GP" id="E15G7">
+<F id="E15F14">en</F>
+<F id="E15F15">voiture</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E15R1">
+<cod  xlink:type="locator" xlink:href="E15F3"/>
+<verbe  xlink:type="locator" xlink:href="E15F4"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E15R2">
+<cod  xlink:type="locator" xlink:href="E15F10"/>
+<verbe  xlink:type="locator" xlink:href="E15F11"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E15R3">
+<coordonnant  xlink:type="locator" xlink:href="E15F9"/>
+<coord-g  xlink:type="locator" xlink:href="E15G1"/>
+<coord-d  xlink:type="locator" xlink:href="E15G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E15R4">
+<complement  xlink:type="locator" xlink:href="E15G7"/>
+<verbe  xlink:type="locator" xlink:href="E15G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E15R5">
+<complement  xlink:type="locator" xlink:href="E15G2"/>
+<verbe  xlink:type="locator" xlink:href="E15G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E15R6">
+<complement  xlink:type="locator" xlink:href="E15G3"/>
+<verbe  xlink:type="locator" xlink:href="E15G2"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E15R7">
+<complement  xlink:type="locator" xlink:href="E15G4"/>
+<verbe  xlink:type="locator" xlink:href="E15G2"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E15R8">
+<complement  xlink:type="locator" xlink:href="E15G6"/>
+<verbe  xlink:type="locator" xlink:href="E15G5"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E15R9">
+<sujet  xlink:type="locator" xlink:href="E15F1"/>
+<verbe  xlink:type="locator" xlink:href="E15F2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E15R10">
+<sujet  xlink:type="locator" xlink:href="E15F9"/>
+<verbe  xlink:type="locator" xlink:href="E15G5"/>
+</relation>
+</relations>
+</E>
+<E id="E16">
+ <Groupe type="GN" id="E16G1">
+<F id="E16F1">le</F>
+<F id="E16F2">second</F>
+ </Groupe>
+ <Groupe type="NV" id="E16G2">
+<F id="E16F3">c'</F>
+<F id="E16F4">était</F>
+ </Groupe>
+ <Groupe type="GN" id="E16G3">
+<F id="E16F5">un</F>
+<F id="E16F6">monsieur</F>
+ </Groupe>
+ <Groupe type="GN" id="E16G4">
+<F id="E16F7">Lavarenne</F>
+ </Groupe>
+ <Groupe type="GN" id="E16G5">
+<F id="E16F8">nouveau</F>
+<F id="E16F9">promu</F>
+ </Groupe>
+ <Groupe type="GP" id="E16G6">
+<F id="E16F10">à</F>
+<F id="E16F11">la</F>
+<F id="E16F12">faculté</F>
+ </Groupe>
+ <Groupe type="GP" id="E16G7">
+<F id="E16F13">des</F>
+<F id="E16F14">Lettres</F>
+ </Groupe>
+ <Groupe type="GP" id="E16G8">
+<F id="E16F15">de</F>
+<F id="E16F16">Clermont</F>
+ </Groupe>
+ <Groupe type="GN" id="E16G9">
+<F id="E16F17">que</F>
+ </Groupe>
+ <Groupe type="NV" id="E16G10">
+<F id="E16F18">j'</F>
+<F id="E16F19">ai</F>
+ </Groupe>
+ <Groupe type="NV" id="E16G11">
+<F id="E16F20">eu</F>
+ </Groupe>
+ <Groupe type="GN" id="E16G12">
+<F id="E16F21">la</F>
+<F id="E16F22">chance</F>
+ </Groupe>
+ <Groupe type="PV" id="E16G13">
+<F id="E16F23">de</F>
+<F id="E16F24">rencontrer</F>
+ </Groupe>
+ <Groupe type="GN" id="E16G14">
+<F id="E16F25">plusieurs</F>
+<F id="E16F26">fois</F>
+ </Groupe>
+<F id="E16F27">lorsque</F>
+ <Groupe type="NV" id="E16G15">
+<F id="E16F28">je</F>
+<F id="E16F29">revenais</F>
+ </Groupe>
+ <Groupe type="GP" id="E16G16">
+<F id="E16F30">à</F>
+<F id="E16F31">Clermont</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="APPOS" id="E16R1">
+<premier  xlink:type="locator" xlink:href="E16G5"/>
+<appose  xlink:type="locator" xlink:href="E16G3"/>
+</relation>
+<relation xlink:type="extended" type="ATB-SO" id="E16R2">
+<attribut  xlink:type="locator" xlink:href="E16G3"/>
+<verbe  xlink:type="locator" xlink:href="E16G2"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E16R3">
+<auxiliaire  xlink:type="locator" xlink:href="E16G10"/>
+<verbe  xlink:type="locator" xlink:href="E16G11"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E16R4">
+<cod  xlink:type="locator" xlink:href="E16G9"/>
+<verbe  xlink:type="locator" xlink:href="E16G13"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E16R5">
+<cod  xlink:type="locator" xlink:href="E16G12"/>
+<verbe  xlink:type="locator" xlink:href="E16G11"/>
+</relation>
+<relation xlink:type="extended" type="COMP" id="E16R6">
+<complementeur  xlink:type="locator" xlink:href="E16F27"/>
+<verbe  xlink:type="locator" xlink:href="E16G15"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E16R7">
+<complement  xlink:type="locator" xlink:href="E16G16"/>
+<verbe  xlink:type="locator" xlink:href="E16G15"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E16R8">
+<complement  xlink:type="locator" xlink:href="E16G6"/>
+<verbe  xlink:type="locator" xlink:href="E16G5"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E16R9">
+<modifieur  xlink:type="locator" xlink:href="E16G11"/>
+<nom  xlink:type="locator" xlink:href="E16G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E16R10">
+<modifieur  xlink:type="locator" xlink:href="E16G13"/>
+<nom  xlink:type="locator" xlink:href="E16G12"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E16R11">
+<modifieur  xlink:type="locator" xlink:href="E16G4"/>
+<nom  xlink:type="locator" xlink:href="E16G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E16R12">
+<modifieur  xlink:type="locator" xlink:href="E16F8"/>
+<nom  xlink:type="locator" xlink:href="E16F9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E16R13">
+<modifieur  xlink:type="locator" xlink:href="E16G7"/>
+<nom  xlink:type="locator" xlink:href="E16G6"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E16R14">
+<modifieur  xlink:type="locator" xlink:href="E16G8"/>
+<nom  xlink:type="locator" xlink:href="E16G6"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E16R15">
+<modifieur  xlink:type="locator" xlink:href="E16G14"/>
+<verbe  xlink:type="locator" xlink:href="E16G13"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E16R16">
+<modifieur  xlink:type="locator" xlink:href="E16G15"/>
+<verbe  xlink:type="locator" xlink:href="E16G13"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E16R17">
+<sujet  xlink:type="locator" xlink:href="E16G1"/>
+<verbe  xlink:type="locator" xlink:href="E16G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E16R18">
+<sujet  xlink:type="locator" xlink:href="E16F18"/>
+<verbe  xlink:type="locator" xlink:href="E16F19"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E16R19">
+<sujet  xlink:type="locator" xlink:href="E16F28"/>
+<verbe  xlink:type="locator" xlink:href="E16F29"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E16R20">
+<sujet  xlink:type="locator" xlink:href="E16F3"/>
+<verbe  xlink:type="locator" xlink:href="E16F4"/>
+</relation>
+</relations>
+</E>
+<E id="E17">
+<F id="E17F1">donc</F>
+ <Groupe type="NV" id="E17G1">
+<F id="E17F2">je</F>
+<F id="E17F3">reçus</F>
+ </Groupe>
+ <Groupe type="GN" id="E17G2">
+<F id="E17F4">une</F>
+<F id="E17F5">bourse</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E17R1">
+<cod  xlink:type="locator" xlink:href="E17G2"/>
+<verbe  xlink:type="locator" xlink:href="E17G1"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E17R2">
+<coordonnant  xlink:type="locator" xlink:href="E17F1"/>
+<coord-g  xlink:type="locator" xlink:href="E17F0"/>
+<coord-d  xlink:type="locator" xlink:href="E17G1"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E17R3">
+<sujet  xlink:type="locator" xlink:href="E17F2"/>
+<verbe  xlink:type="locator" xlink:href="E17F3"/>
+</relation>
+</relations>
+</E>
+<E id="E18">
+ <Groupe type="NV" id="E18G1">
+<F id="E18F1">c'</F>
+<F id="E18F2">est</F>
+ </Groupe>
+ <Groupe type="GN" id="E18G2">
+<F id="E18F3">ce</F>
+<F id="E18F4">qu'</F>
+ </Groupe>
+ <Groupe type="NV" id="E18G3">
+<F id="E18F5">il</F>
+<F id="E18F6">me</F>
+<F id="E18F7">promit</F>
+ </Groupe>
+ <Groupe type="GN" id="E18G4">
+<F id="E18F8">une</F>
+<F id="E18F9">bourse</F>
+ </Groupe>
+ <Groupe type="GP" id="E18G5">
+<F id="E18F10">d'</F>
+<F id="E18F11">agrégation</F>
+ </Groupe>
+ <Groupe type="GP" id="E18G6">
+<F id="E18F12">pour</F>
+<F id="E18F13">la</F>
+<F id="E18F14">faculté</F>
+ </Groupe>
+ <Groupe type="GP" id="E18G7">
+<F id="E18F15">de</F>
+<F id="E18F16">Lyon</F>
+ </Groupe>
+ <Groupe type="NV" id="E18G8">
+<F id="E18F17">on</F>
+<F id="E18F18">ne</F>
+<F id="E18F19">préparait</F>
+ </Groupe>
+ <Groupe type="GR" id="E18G9">
+<F id="E18F20">pas</F>
+ </Groupe>
+ <Groupe type="GN" id="E18G10">
+<F id="E18F21">l'</F>
+<F id="E18F22">agrégation</F>
+ </Groupe>
+ <Groupe type="GP" id="E18G11">
+<F id="E18F23">à</F>
+<F id="E18F24">Clermont-Ferrand</F>
+ </Groupe>
+ <Groupe type="GP" id="E18G12">
+<F id="E18F25">à</F>
+<F id="E18F26">cette</F>
+<F id="E18F27">époque</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E18R1">
+<attribut  xlink:type="locator" xlink:href="E18G3"/>
+<verbe  xlink:type="locator" xlink:href="E18G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E18R2">
+<cod  xlink:type="locator" xlink:href="E18G10"/>
+<verbe  xlink:type="locator" xlink:href="E18G8"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E18R3">
+<cod  xlink:type="locator" xlink:href="E18G2"/>
+<verbe  xlink:type="locator" xlink:href="E18G3"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E18R4">
+<cod  xlink:type="locator" xlink:href="E18G4"/>
+<verbe  xlink:type="locator" xlink:href="E18G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E18R5">
+<complement  xlink:type="locator" xlink:href="E18G11"/>
+<verbe  xlink:type="locator" xlink:href="E18G8"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E18R6">
+<complement  xlink:type="locator" xlink:href="E18G12"/>
+<verbe  xlink:type="locator" xlink:href="E18G8"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E18R7">
+<complement  xlink:type="locator" xlink:href="E18F6"/>
+<verbe  xlink:type="locator" xlink:href="E18F7"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E18R8">
+<complement  xlink:type="locator" xlink:href="E18G6"/>
+<verbe  xlink:type="locator" xlink:href="E18G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E18R9">
+<modifieur  xlink:type="locator" xlink:href="E18G5"/>
+<nom  xlink:type="locator" xlink:href="E18G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E18R10">
+<modifieur  xlink:type="locator" xlink:href="E18G7"/>
+<nom  xlink:type="locator" xlink:href="E18G6"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E18R11">
+<modifieur  xlink:type="locator" xlink:href="E18G9"/>
+<verbe  xlink:type="locator" xlink:href="E18G8"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E18R12">
+<sujet  xlink:type="locator" xlink:href="E18F1"/>
+<verbe  xlink:type="locator" xlink:href="E18F2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E18R13">
+<sujet  xlink:type="locator" xlink:href="E18F17"/>
+<verbe  xlink:type="locator" xlink:href="E18F19"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E18R14">
+<sujet  xlink:type="locator" xlink:href="E18F5"/>
+<verbe  xlink:type="locator" xlink:href="E18F7"/>
+</relation>
+</relations>
+</E>
+<E id="E19">
+ <Groupe type="GP" id="E19G1">
+<F id="E19F1">à</F>
+<F id="E19F2">Lyon</F>
+ </Groupe>
+ <Groupe type="NV" id="E19G2">
+<F id="E19F3">je</F>
+<F id="E19F4">croyais</F>
+ </Groupe>
+ <Groupe type="NV" id="E19G3">
+<F id="E19F5">être</F>
+ </Groupe>
+ <Groupe type="GN" id="E19G4">
+<F id="E19F6">un</F>
+<F id="E19F7">brillant</F>
+<F id="E19F8">sujet</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E19R1">
+<attribut  xlink:type="locator" xlink:href="E19G4"/>
+<verbe  xlink:type="locator" xlink:href="E19G3"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E19R2">
+<cod  xlink:type="locator" xlink:href="E19G3"/>
+<verbe  xlink:type="locator" xlink:href="E19G2"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E19R3">
+<complement  xlink:type="locator" xlink:href="E19G1"/>
+<verbe  xlink:type="locator" xlink:href="E19G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E19R4">
+<modifieur  xlink:type="locator" xlink:href="E19F7"/>
+<nom  xlink:type="locator" xlink:href="E19F8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E19R5">
+<sujet  xlink:type="locator" xlink:href="E19F3"/>
+<verbe  xlink:type="locator" xlink:href="E19F4"/>
+</relation>
+</relations>
+</E>
+<E id="E20">
+<F id="E20F1">mais</F>
+ <Groupe type="GP" id="E20G1">
+<F id="E20F2">dès</F>
+<F id="E20F3">mon</F>
+<F id="E20F4">premier</F>
+<F id="E20F5">thème</F>
+ </Groupe>
+ <Groupe type="GA" id="E20G2">
+<F id="E20F6">latin</F>
+ </Groupe>
+ <Groupe type="NV" id="E20G3">
+<F id="E20F7">je</F>
+<F id="E20F8">m'</F>
+<F id="E20F9">aperçus</F>
+ </Groupe>
+<F id="E20F10">que</F>
+ <Groupe type="GP" id="E20G4">
+<F id="E20F11">après</F>
+<F id="E20F12">des</F>
+<F id="E20F13">heures</F>
+ </Groupe>
+ <Groupe type="GP" id="E20G5">
+<F id="E20F14">d'</F>
+<F id="E20F15">efforts</F>
+ </Groupe>
+ <Groupe type="NV" id="E20G6">
+<F id="E20F16">je</F>
+<F id="E20F17">n'</F>
+<F id="E20F18">avais</F>
+ </Groupe>
+ <Groupe type="NV" id="E20G7">
+<F id="E20F19">obtenu</F>
+ </Groupe>
+ <Groupe type="GR" id="E20G8">
+<F id="E20F20">que</F>
+ </Groupe>
+ <Groupe type="GN" id="E20G9">
+<F id="E20F21">quatre</F>
+ </Groupe>
+ <Groupe type="GP" id="E20G10">
+<F id="E20F22">sur</F>
+<F id="E20F23">dix</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E20R1">
+<auxiliaire  xlink:type="locator" xlink:href="E20G6"/>
+<verbe  xlink:type="locator" xlink:href="E20G7"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E20R2">
+<cod  xlink:type="locator" xlink:href="E20G9"/>
+<verbe  xlink:type="locator" xlink:href="E20G7"/>
+</relation>
+<relation xlink:type="extended" type="COMP" id="E20R3">
+<complementeur  xlink:type="locator" xlink:href="E20F10"/>
+<verbe  xlink:type="locator" xlink:href="E20G7"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E20R4">
+<coordonnant  xlink:type="locator" xlink:href="E20F1"/>
+<coord-g  xlink:type="locator" xlink:href="E20F0"/>
+<coord-d  xlink:type="locator" xlink:href="E20G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E20R5">
+<complement  xlink:type="locator" xlink:href="E20G7"/>
+<verbe  xlink:type="locator" xlink:href="E20G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E20R6">
+<complement  xlink:type="locator" xlink:href="E20G1"/>
+<verbe  xlink:type="locator" xlink:href="E20G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E20R7">
+<complement  xlink:type="locator" xlink:href="E20G4"/>
+<verbe  xlink:type="locator" xlink:href="E20G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E20R8">
+<modifieur  xlink:type="locator" xlink:href="E20G10"/>
+<nom  xlink:type="locator" xlink:href="E20G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E20R9">
+<modifieur  xlink:type="locator" xlink:href="E20F4"/>
+<nom  xlink:type="locator" xlink:href="E20F5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E20R10">
+<modifieur  xlink:type="locator" xlink:href="E20G2"/>
+<nom  xlink:type="locator" xlink:href="E20G1"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E20R11">
+<modifieur  xlink:type="locator" xlink:href="E20G5"/>
+<nom  xlink:type="locator" xlink:href="E20G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E20R12">
+<modifieur  xlink:type="locator" xlink:href="E20G8"/>
+<verbe  xlink:type="locator" xlink:href="E20G7"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E20R13">
+<sujet  xlink:type="locator" xlink:href="E20F7"/>
+<verbe  xlink:type="locator" xlink:href="E20F9"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E20R14">
+<sujet  xlink:type="locator" xlink:href="E20F16"/>
+<verbe  xlink:type="locator" xlink:href="E20F18"/>
+</relation>
+</relations>
+</E>
+<E id="E21">
+<F id="E21F1">mais</F>
+ <Groupe type="GP" id="E21G1">
+<F id="E21F2">à</F>
+<F id="E21F3">la</F>
+<F id="E21F4">fin</F>
+ </Groupe>
+ <Groupe type="GP" id="E21G2">
+<F id="E21F5">de</F>
+<F id="E21F6">l'</F>
+<F id="E21F7">année</F>
+ </Groupe>
+ <Groupe type="NV" id="E21G3">
+<F id="E21F8">j'</F>
+<F id="E21F9">avais</F>
+ </Groupe>
+ <Groupe type="GR" id="E21G4">
+<F id="E21F10">régulièrement</F>
+ </Groupe>
+ <Groupe type="GN" id="E21G5">
+<F id="E21F11">six</F>
+ </Groupe>
+<F id="E21F12">ou</F>
+ <Groupe type="GN" id="E21G6">
+<F id="E21F13">sept</F>
+ </Groupe>
+ <Groupe type="GP" id="E21G7">
+<F id="E21F14">sur</F>
+<F id="E21F15">dix</F>
+ </Groupe>
+ <Groupe type="GP" id="E21G8">
+<F id="E21F16">à</F>
+<F id="E21F17">mon</F>
+<F id="E21F18">thème</F>
+ </Groupe>
+ <Groupe type="GA" id="E21G9">
+<F id="E21F19">latin</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E21R1">
+<cod  xlink:type="locator" xlink:href="E21F12"/>
+<verbe  xlink:type="locator" xlink:href="E21G3"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E21R2">
+<coordonnant  xlink:type="locator" xlink:href="E21F1"/>
+<coord-g  xlink:type="locator" xlink:href="E21F0"/>
+<coord-d  xlink:type="locator" xlink:href="E21G3"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E21R3">
+<coordonnant  xlink:type="locator" xlink:href="E21F12"/>
+<coord-g  xlink:type="locator" xlink:href="E21G5"/>
+<coord-d  xlink:type="locator" xlink:href="E21G6"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E21R4">
+<complement  xlink:type="locator" xlink:href="E21G1"/>
+<verbe  xlink:type="locator" xlink:href="E21G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E21R5">
+<complement  xlink:type="locator" xlink:href="E21G8"/>
+<verbe  xlink:type="locator" xlink:href="E21G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E21R6">
+<modifieur  xlink:type="locator" xlink:href="E21G9"/>
+<nom  xlink:type="locator" xlink:href="E21G8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E21R7">
+<modifieur  xlink:type="locator" xlink:href="E21G2"/>
+<nom  xlink:type="locator" xlink:href="E21G1"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E21R8">
+<modifieur  xlink:type="locator" xlink:href="E21G7"/>
+<nom  xlink:type="locator" xlink:href="E21F12"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E21R9">
+<modifieur  xlink:type="locator" xlink:href="E21G4"/>
+<verbe  xlink:type="locator" xlink:href="E21G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E21R10">
+<sujet  xlink:type="locator" xlink:href="E21F8"/>
+<verbe  xlink:type="locator" xlink:href="E21F9"/>
+</relation>
+</relations>
+</E>
+<E id="E22">
+ <Groupe type="GP" id="E22G1">
+<F id="E22F1">quant_à</F>
+<F id="E22F2">la</F>
+<F id="E22F3">grammaire</F>
+ </Groupe>
+ <Groupe type="GN" id="E22G2">
+<F id="E22F4">mon</F>
+<F id="E22F5">monsieur</F>
+ </Groupe>
+ <Groupe type="GN" id="E22G3">
+<F id="E22F6">Lhermet</F>
+ </Groupe>
+ <Groupe type="NV" id="E22G4">
+<F id="E22F7">m'</F>
+<F id="E22F8">avait</F>
+ </Groupe>
+ <Groupe type="NV" id="E22G5">
+<F id="E22F9">dit</F>
+ </Groupe>
+ <Groupe type="NV" id="E22G6">
+<F id="E22F10">t'</F>
+<F id="E22F11">inquiète</F>
+ </Groupe>
+ <Groupe type="GR" id="E22G7">
+<F id="E22F12">pas</F>
+ </Groupe>
+ <Groupe type="GP" id="E22G8">
+<F id="E22F13">en</F>
+<F id="E22F14">grammaire</F>
+ </Groupe>
+ <Groupe type="NV" id="E22G9">
+<F id="E22F15">tu</F>
+<F id="E22F16">es</F>
+ </Groupe>
+ <Groupe type="GA" id="E22G10">
+<F id="E22F17">prêt</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E22R1">
+<attribut  xlink:type="locator" xlink:href="E22G10"/>
+<verbe  xlink:type="locator" xlink:href="E22G9"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E22R2">
+<auxiliaire  xlink:type="locator" xlink:href="E22G4"/>
+<verbe  xlink:type="locator" xlink:href="E22G5"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E22R3">
+<cod  xlink:type="locator" xlink:href="E22F10"/>
+<verbe  xlink:type="locator" xlink:href="E22F11"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E22R4">
+<cod  xlink:type="locator" xlink:href="E22G6"/>
+<verbe  xlink:type="locator" xlink:href="E22G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E22R5">
+<complement  xlink:type="locator" xlink:href="E22G1"/>
+<verbe  xlink:type="locator" xlink:href="E22G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E22R6">
+<complement  xlink:type="locator" xlink:href="E22G4"/>
+<verbe  xlink:type="locator" xlink:href="E22G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E22R7">
+<complement  xlink:type="locator" xlink:href="E22G8"/>
+<verbe  xlink:type="locator" xlink:href="E22G9"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E22R8">
+<modifieur  xlink:type="locator" xlink:href="E22G3"/>
+<nom  xlink:type="locator" xlink:href="E22G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E22R9">
+<modifieur  xlink:type="locator" xlink:href="E22G7"/>
+<verbe  xlink:type="locator" xlink:href="E22G6"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E22R10">
+<sujet  xlink:type="locator" xlink:href="E22F15"/>
+<verbe  xlink:type="locator" xlink:href="E22F16"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E22R11">
+<sujet  xlink:type="locator" xlink:href="E22G2"/>
+<verbe  xlink:type="locator" xlink:href="E22G4"/>
+</relation>
+</relations>
+</E>
+<E id="E23">
+ <Groupe type="GR" id="E23G1">
+<F id="E23F1">effectivement</F>
+ </Groupe>
+ <Groupe type="NV" id="E23G2">
+<F id="E23F2">je</F>
+<F id="E23F3">fus</F>
+ </Groupe>
+ <Groupe type="NV" id="E23G3">
+<F id="E23F4">reçu</F>
+ </Groupe>
+ <Groupe type="GP" id="E23G4">
+<F id="E23F5">dès</F>
+<F id="E23F6">la</F>
+<F id="E23F7">première</F>
+<F id="E23F8">fois</F>
+ </Groupe>
+ <Groupe type="GP" id="E23G5">
+<F id="E23F9">au</F>
+<F id="E23F10">concours</F>
+ </Groupe>
+ <Groupe type="GP" id="E23G6">
+<F id="E23F11">de</F>
+<F id="E23F12">l'</F>
+<F id="E23F13">agrégation</F>
+ </Groupe>
+ <Groupe type="GP" id="E23G7">
+<F id="E23F14">en</F>
+<F id="E23F15">dix-neuf</F>
+<F id="E23F16">cent</F>
+<F id="E23F17">trente-neuf</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E23R1">
+<auxiliaire  xlink:type="locator" xlink:href="E23G2"/>
+<verbe  xlink:type="locator" xlink:href="E23G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E23R2">
+<complement  xlink:type="locator" xlink:href="E23G4"/>
+<verbe  xlink:type="locator" xlink:href="E23G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E23R3">
+<complement  xlink:type="locator" xlink:href="E23G5"/>
+<verbe  xlink:type="locator" xlink:href="E23G3"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E23R4">
+<complement  xlink:type="locator" xlink:href="E23G7"/>
+<verbe  xlink:type="locator" xlink:href="E23G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E23R5">
+<modifieur  xlink:type="locator" xlink:href="E23F7"/>
+<nom  xlink:type="locator" xlink:href="E23F8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E23R6">
+<modifieur  xlink:type="locator" xlink:href="E23G6"/>
+<nom  xlink:type="locator" xlink:href="E23G5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E23R7">
+<modifieur  xlink:type="locator" xlink:href="E23G1"/>
+<verbe  xlink:type="locator" xlink:href="E23G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E23R8">
+<sujet  xlink:type="locator" xlink:href="E23F2"/>
+<verbe  xlink:type="locator" xlink:href="E23F3"/>
+</relation>
+</relations>
+</E>
+<E id="E24">
+ <Groupe type="GR" id="E24G1">
+<F id="E24F1">hélas</F>
+ </Groupe>
+<relations>
+</relations>
+</E>
+<E id="E25">
+ <Groupe type="NV" id="E25G1">
+<F id="E25F1">je</F>
+<F id="E25F2">ne</F>
+<F id="E25F3">fus</F>
+ </Groupe>
+ <Groupe type="GR" id="E25G2">
+<F id="E25F4">pas</F>
+ </Groupe>
+ <Groupe type="NV" id="E25G3">
+<F id="E25F5">nommé</F>
+ </Groupe>
+ <Groupe type="GN" id="E25G4">
+<F id="E25F6">professeur</F>
+ </Groupe>
+ <Groupe type="GR" id="E25G5">
+<F id="E25F7">tout_de_suite</F>
+ </Groupe>
+<F id="E25F8">car</F>
+ <Groupe type="NV" id="E25G6">
+<F id="E25F9">je</F>
+<F id="E25F10">fus</F>
+ </Groupe>
+ <Groupe type="NV" id="E25G7">
+<F id="E25F11">appelé</F>
+ </Groupe>
+ <Groupe type="GP" id="E25G8">
+<F id="E25F12">sous</F>
+<F id="E25F13">les</F>
+<F id="E25F14">drapeaux</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E25R1">
+<auxiliaire  xlink:type="locator" xlink:href="E25G1"/>
+<verbe  xlink:type="locator" xlink:href="E25G3"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E25R2">
+<auxiliaire  xlink:type="locator" xlink:href="E25G6"/>
+<verbe  xlink:type="locator" xlink:href="E25G7"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E25R3">
+<cod  xlink:type="locator" xlink:href="E25G4"/>
+<verbe  xlink:type="locator" xlink:href="E25G3"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E25R4">
+<coordonnant  xlink:type="locator" xlink:href="E25F8"/>
+<coord-g  xlink:type="locator" xlink:href="E25G3"/>
+<coord-d  xlink:type="locator" xlink:href="E25G7"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E25R5">
+<complement  xlink:type="locator" xlink:href="E25G8"/>
+<verbe  xlink:type="locator" xlink:href="E25G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E25R6">
+<modifieur  xlink:type="locator" xlink:href="E25G2"/>
+<verbe  xlink:type="locator" xlink:href="E25G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E25R7">
+<modifieur  xlink:type="locator" xlink:href="E25G5"/>
+<verbe  xlink:type="locator" xlink:href="E25G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E25R8">
+<sujet  xlink:type="locator" xlink:href="E25F1"/>
+<verbe  xlink:type="locator" xlink:href="E25F3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E25R9">
+<sujet  xlink:type="locator" xlink:href="E25F9"/>
+<verbe  xlink:type="locator" xlink:href="E25F10"/>
+</relation>
+</relations>
+</E>
+<E id="E26">
+<F id="E26F1">et</F>
+ <Groupe type="NV" id="E26G1">
+<F id="E26F2">je</F>
+<F id="E26F3">ne</F>
+<F id="E26F4">revins</F>
+ </Groupe>
+ <Groupe type="GP" id="E26G2">
+<F id="E26F5">à</F>
+<F id="E26F6">la</F>
+<F id="E26F7">vie</F>
+ </Groupe>
+ <Groupe type="GA" id="E26G3">
+<F id="E26F8">scolaire</F>
+ </Groupe>
+ <Groupe type="GR" id="E26G4">
+<F id="E26F9">qu'</F>
+ </Groupe>
+ <Groupe type="GP" id="E26G5">
+<F id="E26F10">en</F>
+<F id="E26F11">décembre</F>
+ </Groupe>
+ <Groupe type="GN" id="E26G6">
+<F id="E26F12">dix-neuf</F>
+<F id="E26F13">cent</F>
+<F id="E26F14">quarante</F>
+ </Groupe>
+ <Groupe type="PV" id="E26G7">
+<F id="E26F15">après</F>
+<F id="E26F16">avoir</F>
+ </Groupe>
+ <Groupe type="GR" id="E26G8">
+<F id="E26F17">longtemps</F>
+ </Groupe>
+ <Groupe type="NV" id="E26G9">
+<F id="E26F18">bataillé</F>
+ </Groupe>
+ <Groupe type="PV" id="E26G10">
+<F id="E26F19">pour</F>
+<F id="E26F20">obtenir</F>
+ </Groupe>
+ <Groupe type="GN" id="E26G11">
+<F id="E26F21">un</F>
+<F id="E26F22">poste</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E26R1">
+<auxiliaire  xlink:type="locator" xlink:href="E26G7"/>
+<verbe  xlink:type="locator" xlink:href="E26G9"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E26R2">
+<cod  xlink:type="locator" xlink:href="E26G11"/>
+<verbe  xlink:type="locator" xlink:href="E26G10"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E26R3">
+<coordonnant  xlink:type="locator" xlink:href="E26F1"/>
+<coord-g  xlink:type="locator" xlink:href="E26F0"/>
+<coord-d  xlink:type="locator" xlink:href="E26G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E26R4">
+<complement  xlink:type="locator" xlink:href="E26G10"/>
+<verbe  xlink:type="locator" xlink:href="E26G9"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E26R5">
+<complement  xlink:type="locator" xlink:href="E26G2"/>
+<verbe  xlink:type="locator" xlink:href="E26G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E26R6">
+<complement  xlink:type="locator" xlink:href="E26G5"/>
+<verbe  xlink:type="locator" xlink:href="E26G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E26R7">
+<complement  xlink:type="locator" xlink:href="E26G7"/>
+<verbe  xlink:type="locator" xlink:href="E26G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E26R8">
+<modifieur  xlink:type="locator" xlink:href="E26G3"/>
+<nom  xlink:type="locator" xlink:href="E26G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E26R9">
+<modifieur  xlink:type="locator" xlink:href="E26G6"/>
+<nom  xlink:type="locator" xlink:href="E26G5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E26R10">
+<modifieur  xlink:type="locator" xlink:href="E26G4"/>
+<verbe  xlink:type="locator" xlink:href="E26G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E26R11">
+<modifieur  xlink:type="locator" xlink:href="E26G8"/>
+<verbe  xlink:type="locator" xlink:href="E26G7"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E26R12">
+<sujet  xlink:type="locator" xlink:href="E26F2"/>
+<verbe  xlink:type="locator" xlink:href="E26F4"/>
+</relation>
+</relations>
+</E>
+<E id="E27">
+ <Groupe type="GN" id="E27G1">
+<F id="E27F1">ceux</F>
+ </Groupe>
+ <Groupe type="GN" id="E27G2">
+<F id="E27F2">qui</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G3">
+<F id="E27F3">n'</F>
+<F id="E27F4">avaient</F>
+ </Groupe>
+ <Groupe type="GR" id="E27G4">
+<F id="E27F5">pas</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G5">
+<F id="E27F6">été</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G6">
+<F id="E27F7">mobilisés</F>
+ </Groupe>
+ <Groupe type="GN" id="E27G7">
+<F id="E27F8">qui</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G8">
+<F id="E27F9">ne</F>
+<F id="E27F10">s'</F>
+<F id="E27F11">étaient</F>
+ </Groupe>
+ <Groupe type="GR" id="E27G9">
+<F id="E27F12">même</F>
+ </Groupe>
+ <Groupe type="GR" id="E27G10">
+<F id="E27F13">pas</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G11">
+<F id="E27F14">présentés</F>
+ </Groupe>
+ <Groupe type="GP" id="E27G12">
+<F id="E27F15">au</F>
+<F id="E27F16">concours</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G13">
+<F id="E27F17">avaient</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G14">
+<F id="E27F18">occupé</F>
+ </Groupe>
+ <Groupe type="GN" id="E27G15">
+<F id="E27F19">tous</F>
+<F id="E27F20">les</F>
+<F id="E27F21">postes</F>
+ </Groupe>
+ <Groupe type="GP" id="E27G16">
+<F id="E27F22">des</F>
+<F id="E27F23">professeurs</F>
+ </Groupe>
+ <Groupe type="GN" id="E27G17">
+<F id="E27F24">qui</F>
+ </Groupe>
+ <Groupe type="GN" id="E27G18">
+<F id="E27F25">eux</F>
+ </Groupe>
+ <Groupe type="NV" id="E27G19">
+<F id="E27F26">étaient</F>
+ </Groupe>
+ <Groupe type="GN" id="E27G20">
+<F id="E27F27">prisonniers</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E27R1">
+<attribut  xlink:type="locator" xlink:href="E27G20"/>
+<verbe  xlink:type="locator" xlink:href="E27G19"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E27R2">
+<auxiliaire  xlink:type="locator" xlink:href="E27G13"/>
+<verbe  xlink:type="locator" xlink:href="E27G14"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E27R3">
+<auxiliaire  xlink:type="locator" xlink:href="E27G3"/>
+<verbe  xlink:type="locator" xlink:href="E27G5"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E27R4">
+<auxiliaire  xlink:type="locator" xlink:href="E27G5"/>
+<verbe  xlink:type="locator" xlink:href="E27G6"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E27R5">
+<auxiliaire  xlink:type="locator" xlink:href="E27G8"/>
+<verbe  xlink:type="locator" xlink:href="E27G11"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E27R6">
+<cod  xlink:type="locator" xlink:href="E27G15"/>
+<verbe  xlink:type="locator" xlink:href="E27G14"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E27R7">
+<complement  xlink:type="locator" xlink:href="E27G12"/>
+<verbe  xlink:type="locator" xlink:href="E27G11"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E27R8">
+<premier  xlink:type="locator" xlink:href="E27G6"/>
+<suivant  xlink:type="locator" xlink:href="E27G11"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E27R9">
+<modifieur  xlink:type="locator" xlink:href="E27G16"/>
+<nom  xlink:type="locator" xlink:href="E27G15"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E27R10">
+<modifieur  xlink:type="locator" xlink:href="E27G19"/>
+<nom  xlink:type="locator" xlink:href="E27G16"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E27R11">
+<modifieur  xlink:type="locator" xlink:href="E27G6"/>
+<nom  xlink:type="locator" xlink:href="E27G1"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E27R12">
+<modifieur  xlink:type="locator" xlink:href="E27G9"/>
+<adverbe  xlink:type="locator" xlink:href="E27G10"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E27R13">
+<modifieur  xlink:type="locator" xlink:href="E27G10"/>
+<verbe  xlink:type="locator" xlink:href="E27G8"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E27R14">
+<modifieur  xlink:type="locator" xlink:href="E27G4"/>
+<verbe  xlink:type="locator" xlink:href="E27G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E27R15">
+<sujet  xlink:type="locator" xlink:href="E27G1"/>
+<verbe  xlink:type="locator" xlink:href="E27G13"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E27R16">
+<sujet  xlink:type="locator" xlink:href="E27G17"/>
+<verbe  xlink:type="locator" xlink:href="E27G19"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E27R17">
+<sujet  xlink:type="locator" xlink:href="E27G18"/>
+<verbe  xlink:type="locator" xlink:href="E27G19"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E27R18">
+<sujet  xlink:type="locator" xlink:href="E27G2"/>
+<verbe  xlink:type="locator" xlink:href="E27G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E27R19">
+<sujet  xlink:type="locator" xlink:href="E27G7"/>
+<verbe  xlink:type="locator" xlink:href="E27G8"/>
+</relation>
+</relations>
+</E>
+<E id="E28">
+ <Groupe type="GR" id="E28G1">
+<F id="E28F1">enfin</F>
+ </Groupe>
+ <Groupe type="GP" id="E28G2">
+<F id="E28F2">en</F>
+<F id="E28F3">décembre</F>
+ </Groupe>
+ <Groupe type="GN" id="E28G3">
+<F id="E28F4">quarante</F>
+ </Groupe>
+ <Groupe type="NV" id="E28G4">
+<F id="E28F5">je</F>
+<F id="E28F6">fus</F>
+ </Groupe>
+ <Groupe type="NV" id="E28G5">
+<F id="E28F7">nommé</F>
+ </Groupe>
+ <Groupe type="GP" id="E28G6">
+<F id="E28F8">au</F>
+<F id="E28F9">lycée</F>
+ </Groupe>
+ <Groupe type="GP" id="E28G7">
+<F id="E28F10">de</F>
+<F id="E28F11">Montluçon</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E28R1">
+<auxiliaire  xlink:type="locator" xlink:href="E28G4"/>
+<verbe  xlink:type="locator" xlink:href="E28G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E28R2">
+<complement  xlink:type="locator" xlink:href="E28G2"/>
+<verbe  xlink:type="locator" xlink:href="E28G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E28R3">
+<complement  xlink:type="locator" xlink:href="E28G6"/>
+<verbe  xlink:type="locator" xlink:href="E28G5"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E28R4">
+<modifieur  xlink:type="locator" xlink:href="E28G3"/>
+<nom  xlink:type="locator" xlink:href="E28G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E28R5">
+<modifieur  xlink:type="locator" xlink:href="E28G7"/>
+<nom  xlink:type="locator" xlink:href="E28G6"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E28R6">
+<modifieur  xlink:type="locator" xlink:href="E28G1"/>
+<verbe  xlink:type="locator" xlink:href="E28G4"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E28R7">
+<sujet  xlink:type="locator" xlink:href="E28F5"/>
+<verbe  xlink:type="locator" xlink:href="E28F6"/>
+</relation>
+</relations>
+</E>
+<E id="E29">
+ <Groupe type="NV" id="E29G1">
+<F id="E29F1">c'</F>
+<F id="E29F2">était</F>
+ </Groupe>
+ <Groupe type="GR" id="E29G2">
+<F id="E29F3">pas</F>
+ </Groupe>
+ <Groupe type="GR" id="E29G3">
+<F id="E29F4">trop</F>
+ </Groupe>
+ <Groupe type="GR" id="E29G4">
+<F id="E29F5">loin</F>
+ </Groupe>
+ <Groupe type="GP" id="E29G5">
+<F id="E29F6">de</F>
+<F id="E29F7">Clermont</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E29R1">
+<attribut  xlink:type="locator" xlink:href="E29G4"/>
+<verbe  xlink:type="locator" xlink:href="E29G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E29R2">
+<modifieur  xlink:type="locator" xlink:href="E29G3"/>
+<adverbe  xlink:type="locator" xlink:href="E29G4"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E29R3">
+<modifieur  xlink:type="locator" xlink:href="E29G5"/>
+<adverbe  xlink:type="locator" xlink:href="E29G4"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E29R4">
+<modifieur  xlink:type="locator" xlink:href="E29G2"/>
+<verbe  xlink:type="locator" xlink:href="E29G1"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E29R5">
+<sujet  xlink:type="locator" xlink:href="E29F1"/>
+<verbe  xlink:type="locator" xlink:href="E29F2"/>
+</relation>
+</relations>
+</E>
+<E id="E30">
+<F id="E30F1">mais</F>
+ <Groupe type="GR" id="E30G1">
+<F id="E30F2">enfin</F>
+ </Groupe>
+ <Groupe type="NV" id="E30G2">
+<F id="E30F3">c'</F>
+<F id="E30F4">était</F>
+ </Groupe>
+ <Groupe type="GP" id="E30G3">
+<F id="E30F5">à</F>
+<F id="E30F6">une</F>
+<F id="E30F7">époque</F>
+ </Groupe>
+ <Groupe type="GP" id="E30G4">
+<F id="E30F8">où</F>
+ </Groupe>
+ <Groupe type="NV" id="E30G5">
+<F id="E30F9">il</F>
+<F id="E30F10">y</F>
+<F id="E30F11">avait</F>
+ </Groupe>
+ <Groupe type="GN" id="E30G6">
+<F id="E30F12">des</F>
+<F id="E30F13">restrictions</F>
+ </Groupe>
+ <Groupe type="GA" id="E30G7">
+<F id="E30F14">alimentaires</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E30R1">
+<attribut  xlink:type="locator" xlink:href="E30G3"/>
+<verbe  xlink:type="locator" xlink:href="E30G2"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E30R2">
+<cod  xlink:type="locator" xlink:href="E30G6"/>
+<verbe  xlink:type="locator" xlink:href="E30G5"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E30R3">
+<coordonnant  xlink:type="locator" xlink:href="E30F1"/>
+<coord-g  xlink:type="locator" xlink:href="E30F0"/>
+<coord-d  xlink:type="locator" xlink:href="E30G2"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E30R4">
+<complement  xlink:type="locator" xlink:href="E30G4"/>
+<verbe  xlink:type="locator" xlink:href="E30G5"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E30R5">
+<complement  xlink:type="locator" xlink:href="E30F10"/>
+<verbe  xlink:type="locator" xlink:href="E30F11"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E30R6">
+<modifieur  xlink:type="locator" xlink:href="E30G7"/>
+<nom  xlink:type="locator" xlink:href="E30G6"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E30R7">
+<modifieur  xlink:type="locator" xlink:href="E30G5"/>
+<nom  xlink:type="locator" xlink:href="E30G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E30R8">
+<modifieur  xlink:type="locator" xlink:href="E30G1"/>
+<verbe  xlink:type="locator" xlink:href="E30G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E30R9">
+<sujet  xlink:type="locator" xlink:href="E30F3"/>
+<verbe  xlink:type="locator" xlink:href="E30F4"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E30R10">
+<sujet  xlink:type="locator" xlink:href="E30F9"/>
+<verbe  xlink:type="locator" xlink:href="E30F11"/>
+</relation>
+</relations>
+</E>
+<E id="E31">
+<F id="E31F1">et</F>
+ <Groupe type="NV" id="E31G1">
+<F id="E31F2">j'</F>
+<F id="E31F3">avais</F>
+ </Groupe>
+ <Groupe type="GN" id="E31G2">
+<F id="E31F4">la</F>
+<F id="E31F5">chance</F>
+ </Groupe>
+ <Groupe type="PV" id="E31G3">
+<F id="E31F6">de</F>
+<F id="E31F7">pouvoir</F>
+ </Groupe>
+ <Groupe type="NV" id="E31G4">
+<F id="E31F8">revenir</F>
+ </Groupe>
+ <Groupe type="GP" id="E31G5">
+<F id="E31F9">de</F>
+<F id="E31F10">temps</F>
+ </Groupe>
+ <Groupe type="GP" id="E31G6">
+<F id="E31F11">en</F>
+<F id="E31F12">temps</F>
+ </Groupe>
+ <Groupe type="GP" id="E31G7">
+<F id="E31F13">à</F>
+<F id="E31F14">Nohanent</F>
+ </Groupe>
+ <Groupe type="PV" id="E31G8">
+<F id="E31F15">pour</F>
+<F id="E31F16">manger</F>
+ </Groupe>
+ <Groupe type="GR" id="E31G9">
+<F id="E31F17">au_moins</F>
+ </Groupe>
+ <Groupe type="GN" id="E31G10">
+<F id="E31F18">une</F>
+<F id="E31F19">ration</F>
+ </Groupe>
+ <Groupe type="GP" id="E31G11">
+<F id="E31F20">de</F>
+<F id="E31F21">pommes</F>
+ </Groupe>
+ <Groupe type="GP" id="E31G12">
+<F id="E31F22">de</F>
+<F id="E31F23">terre</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E31R1">
+<cod  xlink:type="locator" xlink:href="E31G10"/>
+<verbe  xlink:type="locator" xlink:href="E31G8"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E31R2">
+<cod  xlink:type="locator" xlink:href="E31G2"/>
+<verbe  xlink:type="locator" xlink:href="E31G1"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E31R3">
+<cod  xlink:type="locator" xlink:href="E31G4"/>
+<verbe  xlink:type="locator" xlink:href="E31G3"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E31R4">
+<coordonnant  xlink:type="locator" xlink:href="E31F1"/>
+<coord-g  xlink:type="locator" xlink:href="E31F0"/>
+<coord-d  xlink:type="locator" xlink:href="E31G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E31R5">
+<complement  xlink:type="locator" xlink:href="E31G5"/>
+<verbe  xlink:type="locator" xlink:href="E31G4"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E31R6">
+<complement  xlink:type="locator" xlink:href="E31G7"/>
+<verbe  xlink:type="locator" xlink:href="E31G4"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E31R7">
+<complement  xlink:type="locator" xlink:href="E31G8"/>
+<verbe  xlink:type="locator" xlink:href="E31G4"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E31R8">
+<modifieur  xlink:type="locator" xlink:href="E31G11"/>
+<nom  xlink:type="locator" xlink:href="E31G10"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E31R9">
+<modifieur  xlink:type="locator" xlink:href="E31G12"/>
+<nom  xlink:type="locator" xlink:href="E31G11"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E31R10">
+<modifieur  xlink:type="locator" xlink:href="E31G3"/>
+<nom  xlink:type="locator" xlink:href="E31G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E31R11">
+<modifieur  xlink:type="locator" xlink:href="E31G6"/>
+<nom  xlink:type="locator" xlink:href="E31G5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E31R12">
+<modifieur  xlink:type="locator" xlink:href="E31G9"/>
+<verbe  xlink:type="locator" xlink:href="E31G8"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E31R13">
+<sujet  xlink:type="locator" xlink:href="E31F2"/>
+<verbe  xlink:type="locator" xlink:href="E31F3"/>
+</relation>
+</relations>
+</E>
+<E id="E32">
+ <Groupe type="NV" id="E32G1">
+<F id="E32F1">j'</F>
+<F id="E32F2">étais</F>
+ </Groupe>
+ <Groupe type="GN" id="E32G2">
+<F id="E32F3">professeur</F>
+ </Groupe>
+ <Groupe type="GP" id="E32G3">
+<F id="E32F4">de</F>
+<F id="E32F5">troisième</F>
+ </Groupe>
+ <Groupe type="GN" id="E32G4">
+<F id="E32F6">troisième</F>
+<F id="E32F7">A</F>
+ </Groupe>
+ <Groupe type="GN" id="E32G5">
+<F id="E32F8">latin</F>
+ </Groupe>
+ <Groupe type="GN" id="E32G6">
+<F id="E32F9">français</F>
+ </Groupe>
+ <Groupe type="GN" id="E32G7">
+<F id="E32F10">grec</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="APPOS" id="E32R1">
+<premier  xlink:type="locator" xlink:href="E32G4"/>
+<appose  xlink:type="locator" xlink:href="E32G3"/>
+</relation>
+<relation xlink:type="extended" type="ATB-SO" id="E32R2">
+<attribut  xlink:type="locator" xlink:href="E32G2"/>
+<verbe  xlink:type="locator" xlink:href="E32G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E32R3">
+<premier  xlink:type="locator" xlink:href="E32G3"/>
+<suivant  xlink:type="locator" xlink:href="E32G4"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E32R4">
+<premier  xlink:type="locator" xlink:href="E32G4"/>
+<suivant  xlink:type="locator" xlink:href="E32G5"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E32R5">
+<premier  xlink:type="locator" xlink:href="E32G5"/>
+<suivant  xlink:type="locator" xlink:href="E32G6"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E32R6">
+<premier  xlink:type="locator" xlink:href="E32G6"/>
+<suivant  xlink:type="locator" xlink:href="E32G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E32R7">
+<modifieur  xlink:type="locator" xlink:href="E32G3"/>
+<nom  xlink:type="locator" xlink:href="E32G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E32R8">
+<sujet  xlink:type="locator" xlink:href="E32F1"/>
+<verbe  xlink:type="locator" xlink:href="E32F2"/>
+</relation>
+</relations>
+</E>
+<E id="E33">
+<F id="E33F1">et</F>
+ <Groupe type="NV" id="E33G1">
+<F id="E33F2">j'</F>
+<F id="E33F3">avais</F>
+ </Groupe>
+ <Groupe type="GP" id="E33G2">
+<F id="E33F4">comme</F>
+<F id="E33F5">complément</F>
+ </Groupe>
+ <Groupe type="GN" id="E33G3">
+<F id="E33F6">les</F>
+<F id="E33F7">études</F>
+ </Groupe>
+ <Groupe type="GA" id="E33G4">
+<F id="E33F8">littéraires</F>
+ </Groupe>
+ <Groupe type="GP" id="E33G5">
+<F id="E33F9">en</F>
+<F id="E33F10">classe</F>
+ </Groupe>
+ <Groupe type="GP" id="E33G6">
+<F id="E33F11">de</F>
+<F id="E33F12">philosophie</F>
+ </Groupe>
+ <Groupe type="GR" id="E33G7">
+<F id="E33F13">là</F>
+ </Groupe>
+ <Groupe type="GR" id="E33G8">
+<F id="E33F14">où</F>
+ </Groupe>
+ <Groupe type="NV" id="E33G9">
+<F id="E33F15">il</F>
+<F id="E33F16">y</F>
+<F id="E33F17">avait</F>
+ </Groupe>
+ <Groupe type="GN" id="E33G10">
+<F id="E33F18">des</F>
+<F id="E33F19">filles</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E33R1">
+<cod  xlink:type="locator" xlink:href="E33G10"/>
+<verbe  xlink:type="locator" xlink:href="E33G9"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E33R2">
+<cod  xlink:type="locator" xlink:href="E33G3"/>
+<verbe  xlink:type="locator" xlink:href="E33G1"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E33R3">
+<coordonnant  xlink:type="locator" xlink:href="E33F1"/>
+<coord-g  xlink:type="locator" xlink:href="E33F0"/>
+<coord-d  xlink:type="locator" xlink:href="E33G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E33R4">
+<complement  xlink:type="locator" xlink:href="E33F16"/>
+<verbe  xlink:type="locator" xlink:href="E33F17"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E33R5">
+<complement  xlink:type="locator" xlink:href="E33G2"/>
+<verbe  xlink:type="locator" xlink:href="E33G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E33R6">
+<complement  xlink:type="locator" xlink:href="E33G5"/>
+<verbe  xlink:type="locator" xlink:href="E33G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E33R7">
+<modifieur  xlink:type="locator" xlink:href="E33G4"/>
+<nom  xlink:type="locator" xlink:href="E33G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E33R8">
+<modifieur  xlink:type="locator" xlink:href="E33G6"/>
+<nom  xlink:type="locator" xlink:href="E33G5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E33R9">
+<modifieur  xlink:type="locator" xlink:href="E33G9"/>
+<adverbe  xlink:type="locator" xlink:href="E33G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E33R10">
+<modifieur  xlink:type="locator" xlink:href="E33G7"/>
+<verbe  xlink:type="locator" xlink:href="E33G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E33R11">
+<modifieur  xlink:type="locator" xlink:href="E33G8"/>
+<verbe  xlink:type="locator" xlink:href="E33G9"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E33R12">
+<sujet  xlink:type="locator" xlink:href="E33F15"/>
+<verbe  xlink:type="locator" xlink:href="E33F17"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E33R13">
+<sujet  xlink:type="locator" xlink:href="E33F2"/>
+<verbe  xlink:type="locator" xlink:href="E33F3"/>
+</relation>
+</relations>
+</E>
+<E id="E34">
+<F id="E34F1">car</F>
+ <Groupe type="GN" id="E34G1">
+<F id="E34F2">les</F>
+ </Groupe>
+<F id="E34F3">euh</F>
+<F id="E34F4">la</F>
+ <Groupe type="GN" id="E34G2">
+<F id="E34F5">la</F>
+<F id="E34F6">scolarité</F>
+ </Groupe>
+ <Groupe type="NV" id="E34G3">
+<F id="E34F7">n'</F>
+<F id="E34F8">était</F>
+ </Groupe>
+ <Groupe type="GR" id="E34G4">
+<F id="E34F9">pas</F>
+ </Groupe>
+ <Groupe type="GA" id="E34G5">
+<F id="E34F10">mixte</F>
+ </Groupe>
+ <Groupe type="GP" id="E34G6">
+<F id="E34F11">à</F>
+<F id="E34F12">l'</F>
+<F id="E34F13">époque</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E34R1">
+<attribut  xlink:type="locator" xlink:href="E34G5"/>
+<verbe  xlink:type="locator" xlink:href="E34G3"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E34R2">
+<complement  xlink:type="locator" xlink:href="E34G6"/>
+<verbe  xlink:type="locator" xlink:href="E34G3"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E34R3">
+<modifieur  xlink:type="locator" xlink:href="E34G4"/>
+<verbe  xlink:type="locator" xlink:href="E34G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E34R4">
+<sujet  xlink:type="locator" xlink:href="E34G2"/>
+<verbe  xlink:type="locator" xlink:href="E34G3"/>
+</relation>
+</relations>
+</E>
+<E id="E35">
+ <Groupe type="NV" id="E35G1">
+<F id="E35F1">il</F>
+<F id="E35F2">y</F>
+<F id="E35F3">avait</F>
+ </Groupe>
+ <Groupe type="GN" id="E35G2">
+<F id="E35F4">des</F>
+<F id="E35F5">filles</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COD-V" id="E35R1">
+<cod  xlink:type="locator" xlink:href="E35G2"/>
+<verbe  xlink:type="locator" xlink:href="E35G1"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E35R2">
+<complement  xlink:type="locator" xlink:href="E35F2"/>
+<verbe  xlink:type="locator" xlink:href="E35F3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E35R3">
+<sujet  xlink:type="locator" xlink:href="E35F1"/>
+<verbe  xlink:type="locator" xlink:href="E35F3"/>
+</relation>
+</relations>
+</E>
+<E id="E36">
+<F id="E36F1">et</F>
+ <Groupe type="NV" id="E36G1">
+<F id="E36F2">j'</F>
+<F id="E36F3">étais</F>
+ </Groupe>
+ <Groupe type="GA" id="E36G2">
+<F id="E36F4">jeune</F>
+ </Groupe>
+<F id="E36F5">et</F>
+ <Groupe type="GA" id="E36G3">
+<F id="E36F6">célibataire</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E36R1">
+<attribut  xlink:type="locator" xlink:href="E36F5"/>
+<verbe  xlink:type="locator" xlink:href="E36G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E36R2">
+<coordonnant  xlink:type="locator" xlink:href="E36F1"/>
+<coord-g  xlink:type="locator" xlink:href="E36F0"/>
+<coord-d  xlink:type="locator" xlink:href="E36G1"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E36R3">
+<coordonnant  xlink:type="locator" xlink:href="E36F5"/>
+<coord-g  xlink:type="locator" xlink:href="E36G2"/>
+<coord-d  xlink:type="locator" xlink:href="E36G3"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E36R4">
+<sujet  xlink:type="locator" xlink:href="E36F2"/>
+<verbe  xlink:type="locator" xlink:href="E36F3"/>
+</relation>
+</relations>
+</E>
+<E id="E37">
+ <Groupe type="GN" id="E37G1">
+<F id="E37F1">mon</F>
+ </Groupe>
+ <Groupe type="GN" id="E37G2">
+<F id="E37F2">un</F>
+<F id="E37F3">vieux</F>
+<F id="E37F4">collègue</F>
+ </Groupe>
+ <Groupe type="GP" id="E37G3">
+<F id="E37F5">de</F>
+<F id="E37F6">sciences</F>
+ </Groupe>
+ <Groupe type="GA" id="E37G4">
+<F id="E37F7">naturelles</F>
+ </Groupe>
+ <Groupe type="NV" id="E37G5">
+<F id="E37F8">m'</F>
+<F id="E37F9">avait</F>
+ </Groupe>
+ <Groupe type="NV" id="E37G6">
+<F id="E37F10">dit</F>
+ </Groupe>
+ <Groupe type="GR" id="E37G7">
+<F id="E37F11">surtout</F>
+ </Groupe>
+ <Groupe type="GR" id="E37G8">
+<F id="E37F12">pas</F>
+ </Groupe>
+ <Groupe type="GP" id="E37G9">
+<F id="E37F13">d'</F>
+<F id="E37F14">histoire</F>
+ </Groupe>
+ <Groupe type="GP" id="E37G10">
+<F id="E37F15">avec</F>
+<F id="E37F16">les</F>
+<F id="E37F17">filles</F>
+ </Groupe>
+<F id="E37F18">hein</F>
+ <Groupe type="GR" id="E37G11">
+<F id="E37F19">pas</F>
+ </Groupe>
+ <Groupe type="GP" id="E37G12">
+<F id="E37F20">d'</F>
+<F id="E37F21">histoire</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E37R1">
+<auxiliaire  xlink:type="locator" xlink:href="E37G5"/>
+<verbe  xlink:type="locator" xlink:href="E37G6"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E37R2">
+<cod  xlink:type="locator" xlink:href="E37G9"/>
+<verbe  xlink:type="locator" xlink:href="E37G6"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E37R3">
+<complement  xlink:type="locator" xlink:href="E37G5"/>
+<verbe  xlink:type="locator" xlink:href="E37G6"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E37R4">
+<premier  xlink:type="locator" xlink:href="E37G9"/>
+<suivant  xlink:type="locator" xlink:href="E37G12"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R5">
+<modifieur  xlink:type="locator" xlink:href="E37F3"/>
+<nom  xlink:type="locator" xlink:href="E37F4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R6">
+<modifieur  xlink:type="locator" xlink:href="E37G10"/>
+<nom  xlink:type="locator" xlink:href="E37G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R7">
+<modifieur  xlink:type="locator" xlink:href="E37G11"/>
+<nom  xlink:type="locator" xlink:href="E37G12"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R8">
+<modifieur  xlink:type="locator" xlink:href="E37G3"/>
+<nom  xlink:type="locator" xlink:href="E37G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R9">
+<modifieur  xlink:type="locator" xlink:href="E37G4"/>
+<nom  xlink:type="locator" xlink:href="E37G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R10">
+<modifieur  xlink:type="locator" xlink:href="E37G7"/>
+<nom  xlink:type="locator" xlink:href="E37G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E37R11">
+<modifieur  xlink:type="locator" xlink:href="E37G8"/>
+<nom  xlink:type="locator" xlink:href="E37G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E37R12">
+<sujet  xlink:type="locator" xlink:href="E37G2"/>
+<verbe  xlink:type="locator" xlink:href="E37G5"/>
+</relation>
+</relations>
+</E>
+<E id="E38">
+ <Groupe type="GR" id="E38G1">
+<F id="E38F1">sinon</F>
+ </Groupe>
+<F id="E38F2">ça</F>
+<F id="E38F3">serait</F>
+ <Groupe type="NV" id="E38G2">
+<F id="E38F4">ça</F>
+<F id="E38F5">serait</F>
+ </Groupe>
+ <Groupe type="GA" id="E38G3">
+<F id="E38F6">néfaste</F>
+ </Groupe>
+ <Groupe type="GP" id="E38G4">
+<F id="E38F7">pour</F>
+<F id="E38F8">toi</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E38R1">
+<attribut  xlink:type="locator" xlink:href="E38G3"/>
+<verbe  xlink:type="locator" xlink:href="E38G2"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E38R2">
+<modifieur  xlink:type="locator" xlink:href="E38G4"/>
+<nom  xlink:type="locator" xlink:href="E38G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E38R3">
+<modifieur  xlink:type="locator" xlink:href="E38G1"/>
+<verbe  xlink:type="locator" xlink:href="E38G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E38R4">
+<sujet  xlink:type="locator" xlink:href="E38F4"/>
+<verbe  xlink:type="locator" xlink:href="E38F5"/>
+</relation>
+</relations>
+</E>
+<E id="E39">
+ <Groupe type="GR" id="E39G1">
+<F id="E39F1">là</F>
+ </Groupe>
+<F id="E39F2">à</F>
+<F id="E39F3">ce</F>
+<F id="E39F4">beh</F>
+ <Groupe type="GP" id="E39G2">
+<F id="E39F5">à</F>
+<F id="E39F6">ce</F>
+<F id="E39F7">lycée</F>
+ </Groupe>
+ <Groupe type="NV" id="E39G3">
+<F id="E39F8">j'</F>
+<F id="E39F9">ai</F>
+ </Groupe>
+ <Groupe type="NV" id="E39G4">
+<F id="E39F10">eu</F>
+ </Groupe>
+ <Groupe type="GN" id="E39G5">
+<F id="E39F11">des</F>
+<F id="E39F12">élèves</F>
+ </Groupe>
+ <Groupe type="GR" id="E39G6">
+<F id="E39F13">absolument</F>
+ </Groupe>
+ <Groupe type="GA" id="E39G7">
+<F id="E39F14">remarquables</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E39R1">
+<auxiliaire  xlink:type="locator" xlink:href="E39G3"/>
+<verbe  xlink:type="locator" xlink:href="E39G4"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E39R2">
+<cod  xlink:type="locator" xlink:href="E39G5"/>
+<verbe  xlink:type="locator" xlink:href="E39G4"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E39R3">
+<complement  xlink:type="locator" xlink:href="E39G2"/>
+<verbe  xlink:type="locator" xlink:href="E39G4"/>
+</relation>
+<relation xlink:type="extended" type="MOD-A" id="E39R4">
+<modifieur  xlink:type="locator" xlink:href="E39G6"/>
+<adjectif  xlink:type="locator" xlink:href="E39G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E39R5">
+<modifieur  xlink:type="locator" xlink:href="E39G7"/>
+<nom  xlink:type="locator" xlink:href="E39G5"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E39R6">
+<modifieur  xlink:type="locator" xlink:href="E39G1"/>
+<verbe  xlink:type="locator" xlink:href="E39G4"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E39R7">
+<sujet  xlink:type="locator" xlink:href="E39F8"/>
+<verbe  xlink:type="locator" xlink:href="E39F9"/>
+</relation>
+</relations>
+</E>
+<E id="E40">
+ <Groupe type="GN" id="E40G1">
+<F id="E40F1">ces</F>
+<F id="E40F2">élèves</F>
+ </Groupe>
+ <Groupe type="GN" id="E40G2">
+<F id="E40F3">qui</F>
+ </Groupe>
+ <Groupe type="GN" id="E40G3">
+<F id="E40F4">cinquante</F>
+<F id="E40F5">ans</F>
+ </Groupe>
+ <Groupe type="GR" id="E40G4">
+<F id="E40F6">plus</F>
+<F id="E40F7">tard</F>
+ </Groupe>
+ <Groupe type="NV" id="E40G5">
+<F id="E40F8">ne</F>
+<F id="E40F9">m'</F>
+<F id="E40F10">ont</F>
+ </Groupe>
+ <Groupe type="GR" id="E40G6">
+<F id="E40F11">pas</F>
+ </Groupe>
+ <Groupe type="NV" id="E40G7">
+<F id="E40F12">oublié</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="AUX-V" id="E40R1">
+<auxiliaire  xlink:type="locator" xlink:href="E40G5"/>
+<verbe  xlink:type="locator" xlink:href="E40G7"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E40R2">
+<cod  xlink:type="locator" xlink:href="E40G5"/>
+<verbe  xlink:type="locator" xlink:href="E40G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E40R3">
+<modifieur  xlink:type="locator" xlink:href="E40G4"/>
+<nom  xlink:type="locator" xlink:href="E40G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E40R4">
+<modifieur  xlink:type="locator" xlink:href="E40G7"/>
+<nom  xlink:type="locator" xlink:href="E40G1"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-R" id="E40R5">
+<modifieur  xlink:type="locator" xlink:href="E40F6"/>
+<adverbe  xlink:type="locator" xlink:href="E40F7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E40R6">
+<modifieur  xlink:type="locator" xlink:href="E40G3"/>
+<verbe  xlink:type="locator" xlink:href="E40G7"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E40R7">
+<modifieur  xlink:type="locator" xlink:href="E40G6"/>
+<verbe  xlink:type="locator" xlink:href="E40G7"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E40R8">
+<sujet  xlink:type="locator" xlink:href="E40G2"/>
+<verbe  xlink:type="locator" xlink:href="E40G5"/>
+</relation>
+</relations>
+</E>
+<E id="E41">
+ <Groupe type="NV" id="E41G1">
+<F id="E41F1">j'</F>
+<F id="E41F2">ai</F>
+ </Groupe>
+ <Groupe type="NV" id="E41G2">
+<F id="E41F3">eu</F>
+ </Groupe>
+ <Groupe type="GN" id="E41G3">
+<F id="E41F4">la</F>
+<F id="E41F5">chance</F>
+ </Groupe>
+ <Groupe type="GN" id="E41G4">
+<F id="E41F6">l'</F>
+<F id="E41F7">an</F>
+ </Groupe>
+ <Groupe type="GA" id="E41G5">
+<F id="E41F8">dernier</F>
+ </Groupe>
+ <Groupe type="PV" id="E41G6">
+<F id="E41F9">de</F>
+<F id="E41F10">retourner</F>
+ </Groupe>
+ <Groupe type="GP" id="E41G7">
+<F id="E41F11">à</F>
+<F id="E41F12">Montluçon</F>
+ </Groupe>
+ <Groupe type="NV" id="E41G8">
+<F id="E41F13">reçu</F>
+ </Groupe>
+ <Groupe type="GP" id="E41G9">
+<F id="E41F14">par</F>
+<F id="E41F15">un</F>
+ </Groupe>
+ <Groupe type="GP" id="E41G10">
+<F id="E41F16">de</F>
+<F id="E41F17">mes</F>
+<F id="E41F18">anciens</F>
+<F id="E41F19">élèves</F>
+ </Groupe>
+ <Groupe type="GP" id="E41G11">
+<F id="E41F20">à</F>
+<F id="E41F21">sa</F>
+<F id="E41F22">table</F>
+ </Groupe>
+<F id="E41F23">et</F>
+ <Groupe type="GN" id="E41G12">
+<F id="E41F24">qui</F>
+ </Groupe>
+ <Groupe type="NV" id="E41G13">
+<F id="E41F25">m'</F>
+<F id="E41F26">a</F>
+ </Groupe>
+ <Groupe type="NV" id="E41G14">
+<F id="E41F27">rappelé</F>
+ </Groupe>
+ <Groupe type="GN" id="E41G15">
+<F id="E41F28">des</F>
+<F id="E41F29">souvenirs</F>
+ </Groupe>
+ <Groupe type="GN" id="E41G16">
+<F id="E41F30">que</F>
+ </Groupe>
+ <Groupe type="NV" id="E41G17">
+<F id="E41F31">j'</F>
+<F id="E41F32">avais</F>
+ </Groupe>
+ <Groupe type="GR" id="E41G18">
+<F id="E41F33">quelque_peu</F>
+ </Groupe>
+ <Groupe type="NV" id="E41G19">
+<F id="E41F34">oubliés</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="APPOS" id="E41R1">
+<premier  xlink:type="locator" xlink:href="E41F23"/>
+<appose  xlink:type="locator" xlink:href="E41G6"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E41R2">
+<auxiliaire  xlink:type="locator" xlink:href="E41G13"/>
+<verbe  xlink:type="locator" xlink:href="E41G14"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E41R3">
+<auxiliaire  xlink:type="locator" xlink:href="E41G1"/>
+<verbe  xlink:type="locator" xlink:href="E41G2"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E41R4">
+<auxiliaire  xlink:type="locator" xlink:href="E41G17"/>
+<verbe  xlink:type="locator" xlink:href="E41G19"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E41R5">
+<cod  xlink:type="locator" xlink:href="E41G15"/>
+<verbe  xlink:type="locator" xlink:href="E41G14"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E41R6">
+<cod  xlink:type="locator" xlink:href="E41G16"/>
+<verbe  xlink:type="locator" xlink:href="E41G19"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E41R7">
+<cod  xlink:type="locator" xlink:href="E41G3"/>
+<verbe  xlink:type="locator" xlink:href="E41G2"/>
+</relation>
+<relation xlink:type="extended" type="COORD" id="E41R8">
+<coordonnant  xlink:type="locator" xlink:href="E41F23"/>
+<coord-g  xlink:type="locator" xlink:href="E41G8"/>
+<coord-d  xlink:type="locator" xlink:href="E41G14"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E41R9">
+<complement  xlink:type="locator" xlink:href="E41G11"/>
+<verbe  xlink:type="locator" xlink:href="E41G8"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E41R10">
+<complement  xlink:type="locator" xlink:href="E41G13"/>
+<verbe  xlink:type="locator" xlink:href="E41G14"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E41R11">
+<complement  xlink:type="locator" xlink:href="E41G7"/>
+<verbe  xlink:type="locator" xlink:href="E41G6"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E41R12">
+<complement  xlink:type="locator" xlink:href="E41G9"/>
+<verbe  xlink:type="locator" xlink:href="E41G8"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E41R13">
+<modifieur  xlink:type="locator" xlink:href="E41G10"/>
+<nom  xlink:type="locator" xlink:href="E41G9"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E41R14">
+<modifieur  xlink:type="locator" xlink:href="E41G19"/>
+<nom  xlink:type="locator" xlink:href="E41G15"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E41R15">
+<modifieur  xlink:type="locator" xlink:href="E41G5"/>
+<nom  xlink:type="locator" xlink:href="E41G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E41R16">
+<modifieur  xlink:type="locator" xlink:href="E41G6"/>
+<nom  xlink:type="locator" xlink:href="E41G3"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E41R17">
+<modifieur  xlink:type="locator" xlink:href="E41F18"/>
+<nom  xlink:type="locator" xlink:href="E41F19"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E41R18">
+<modifieur  xlink:type="locator" xlink:href="E41G18"/>
+<verbe  xlink:type="locator" xlink:href="E41G19"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E41R19">
+<modifieur  xlink:type="locator" xlink:href="E41G4"/>
+<verbe  xlink:type="locator" xlink:href="E41G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E41R20">
+<sujet  xlink:type="locator" xlink:href="E41F1"/>
+<verbe  xlink:type="locator" xlink:href="E41F2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E41R21">
+<sujet  xlink:type="locator" xlink:href="E41G12"/>
+<verbe  xlink:type="locator" xlink:href="E41G13"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E41R22">
+<sujet  xlink:type="locator" xlink:href="E41F31"/>
+<verbe  xlink:type="locator" xlink:href="E41F32"/>
+</relation>
+</relations>
+</E>
+<E id="E42">
+ <Groupe type="NV" id="E42G1">
+<F id="E42F1">il</F>
+<F id="E42F2">avait</F>
+ </Groupe>
+ <Groupe type="NV" id="E42G2">
+<F id="E42F3">été</F>
+ </Groupe>
+ <Groupe type="GN" id="E42G3">
+<F id="E42F4">lui</F>
+ </Groupe>
+ <Groupe type="GN" id="E42G4">
+<F id="E42F5">un</F>
+<F id="E42F6">bon</F>
+<F id="E42F7">élève</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E42R1">
+<attribut  xlink:type="locator" xlink:href="E42G4"/>
+<verbe  xlink:type="locator" xlink:href="E42G2"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E42R2">
+<auxiliaire  xlink:type="locator" xlink:href="E42G1"/>
+<verbe  xlink:type="locator" xlink:href="E42G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E42R3">
+<modifieur  xlink:type="locator" xlink:href="E42F6"/>
+<nom  xlink:type="locator" xlink:href="E42F7"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E42R4">
+<sujet  xlink:type="locator" xlink:href="E42F1"/>
+<verbe  xlink:type="locator" xlink:href="E42F2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E42R5">
+<sujet  xlink:type="locator" xlink:href="E42G3"/>
+<verbe  xlink:type="locator" xlink:href="E42G1"/>
+</relation>
+</relations>
+</E>
+<E id="E43">
+ <Groupe type="NV" id="E43G1">
+<F id="E43F1">il</F>
+<F id="E43F2">était</F>
+ </Groupe>
+ <Groupe type="GN" id="E43G2">
+<F id="E43F3">médecin</F>
+ </Groupe>
+ <Groupe type="GP" id="E43G3">
+<F id="E43F4">à</F>
+<F id="E43F5">la</F>
+<F id="E43F6">retraite</F>
+ </Groupe>
+ <Groupe type="GP" id="E43G4">
+<F id="E43F7">à</F>
+<F id="E43F8">l'</F>
+<F id="E43F9">époque</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="ATB-SO" id="E43R1">
+<attribut  xlink:type="locator" xlink:href="E43G2"/>
+<verbe  xlink:type="locator" xlink:href="E43G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E43R2">
+<complement  xlink:type="locator" xlink:href="E43G4"/>
+<verbe  xlink:type="locator" xlink:href="E43G1"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E43R3">
+<modifieur  xlink:type="locator" xlink:href="E43G3"/>
+<nom  xlink:type="locator" xlink:href="E43G2"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E43R4">
+<sujet  xlink:type="locator" xlink:href="E43F1"/>
+<verbe  xlink:type="locator" xlink:href="E43F2"/>
+</relation>
+</relations>
+</E>
+<E id="E44">
+ <Groupe type="NV" id="E44G1">
+<F id="E44F1">il</F>
+<F id="E44F2">était</F>
+ </Groupe>
+ <Groupe type="GN" id="E44G2">
+<F id="E44F3">grand-père</F>
+ </Groupe>
+ <Groupe type="GR" id="E44G3">
+<F id="E44F4">bien_sûr</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="SUJ-V" id="E44R1">
+<sujet  xlink:type="locator" xlink:href="E44F1"/>
+<verbe  xlink:type="locator" xlink:href="E44F2"/>
+</relation>
+<relation xlink:type="extended" type="ATB-SO" id="E44R2">
+<attribut  xlink:type="locator" xlink:href="E44G2"/>
+<verbe  xlink:type="locator" xlink:href="E44G1"/>
+<s-o valeur="sujet"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E44R3">
+<modifieur  xlink:type="locator" xlink:href="E44G3"/>
+<verbe  xlink:type="locator" xlink:href="E44G1"/>
+</relation>
+</relations>
+</E>
+<E id="E45">
+<F id="E45F1">eh bien</F>
+ <Groupe type="NV" id="E45G1">
+<F id="E45F2">j'</F>
+<F id="E45F3">ai</F>
+ </Groupe>
+ <Groupe type="NV" id="E45G2">
+<F id="E45F4">eu</F>
+ </Groupe>
+ <Groupe type="NV" id="E45G3">
+<F id="E45F5">disons</F>
+ </Groupe>
+ <Groupe type="GN" id="E45G4">
+<F id="E45F6">le</F>
+<F id="E45F7">plaisir</F>
+ </Groupe>
+ <Groupe type="PV" id="E45G5">
+<F id="E45F8">de</F>
+<F id="E45F9">recevoir</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G6">
+<F id="E45F10">après</F>
+<F id="E45F11">cette</F>
+<F id="E45F12">visite</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G7">
+<F id="E45F13">à</F>
+<F id="E45F14">Montluçon</F>
+ </Groupe>
+ <Groupe type="GN" id="E45G8">
+<F id="E45F15">l'</F>
+<F id="E45F16">an</F>
+ </Groupe>
+ <Groupe type="GA" id="E45G9">
+<F id="E45F17">dernier</F>
+ </Groupe>
+ <Groupe type="GN" id="E45G10">
+<F id="E45F18">le</F>
+<F id="E45F19">discours</F>
+ </Groupe>
+ <Groupe type="NV" id="E45G11">
+<F id="E45F20">reproduit</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G12">
+<F id="E45F21">dans</F>
+<F id="E45F22">le</F>
+<F id="E45F23">bulletin</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G13">
+<F id="E45F24">des</F>
+<F id="E45F25">anciens</F>
+<F id="E45F26">élèves</F>
+ </Groupe>
+ <Groupe type="GN" id="E45G14">
+<F id="E45F27">le</F>
+<F id="E45F28">discours</F>
+ </Groupe>
+ <Groupe type="GN" id="E45G15">
+<F id="E45F29">que</F>
+ </Groupe>
+ <Groupe type="NV" id="E45G16">
+<F id="E45F30">j'</F>
+<F id="E45F31">avais</F>
+ </Groupe>
+ <Groupe type="NV" id="E45G17">
+<F id="E45F32">prononcé</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G18">
+<F id="E45F33">à</F>
+<F id="E45F34">la</F>
+<F id="E45F35">distribution</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G19">
+<F id="E45F36">des</F>
+<F id="E45F37">prix</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G20">
+<F id="E45F38">avant</F>
+<F id="E45F39">mon</F>
+<F id="E45F40">départ</F>
+ </Groupe>
+ <Groupe type="GP" id="E45G21">
+<F id="E45F41">pour</F>
+<F id="E45F42">un</F>
+<F id="E45F43">autre</F>
+<F id="E45F44">lycée</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="SUJ-V" id="E45R1">
+<sujet  xlink:type="locator" xlink:href="E45F2"/>
+<verbe  xlink:type="locator" xlink:href="E45F3"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E45R2">
+<auxiliaire  xlink:type="locator" xlink:href="E45G1"/>
+<verbe  xlink:type="locator" xlink:href="E45G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R3">
+<modifieur  xlink:type="locator" xlink:href="E45G3"/>
+<nom  xlink:type="locator" xlink:href="E45G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E45R4">
+<cod  xlink:type="locator" xlink:href="E45G4"/>
+<verbe  xlink:type="locator" xlink:href="E45G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R5">
+<modifieur  xlink:type="locator" xlink:href="E45G5"/>
+<nom  xlink:type="locator" xlink:href="E45G4"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E45R6">
+<complement  xlink:type="locator" xlink:href="E45G6"/>
+<verbe  xlink:type="locator" xlink:href="E45G5"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R7">
+<modifieur  xlink:type="locator" xlink:href="E45G7"/>
+<nom  xlink:type="locator" xlink:href="E45G6"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E45R8">
+<modifieur  xlink:type="locator" xlink:href="E45G8"/>
+<verbe  xlink:type="locator" xlink:href="E45G5"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R9">
+<modifieur  xlink:type="locator" xlink:href="E45G9"/>
+<nom  xlink:type="locator" xlink:href="E45G8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E45R10">
+<cod  xlink:type="locator" xlink:href="E45G10"/>
+<verbe  xlink:type="locator" xlink:href="E45G5"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R11">
+<modifieur  xlink:type="locator" xlink:href="E45G11"/>
+<nom  xlink:type="locator" xlink:href="E45G10"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E45R12">
+<complement  xlink:type="locator" xlink:href="E45G12"/>
+<verbe  xlink:type="locator" xlink:href="E45G11"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R13">
+<modifieur  xlink:type="locator" xlink:href="E45F25"/>
+<nom  xlink:type="locator" xlink:href="E45F26"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R14">
+<modifieur  xlink:type="locator" xlink:href="E45G13"/>
+<nom  xlink:type="locator" xlink:href="E45G12"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="JUXT" id="E45R15">
+<premier  xlink:type="locator" xlink:href="E45G10"/>
+<suivant  xlink:type="locator" xlink:href="E45G14"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E45R16">
+<cod  xlink:type="locator" xlink:href="E45G15"/>
+<verbe  xlink:type="locator" xlink:href="E45G17"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E45R17">
+<sujet  xlink:type="locator" xlink:href="E45F30"/>
+<verbe  xlink:type="locator" xlink:href="E45F31"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E45R18">
+<auxiliaire  xlink:type="locator" xlink:href="E45G16"/>
+<verbe  xlink:type="locator" xlink:href="E45G17"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R19">
+<modifieur  xlink:type="locator" xlink:href="E45G17"/>
+<nom  xlink:type="locator" xlink:href="E45G14"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E45R20">
+<complement  xlink:type="locator" xlink:href="E45G18"/>
+<verbe  xlink:type="locator" xlink:href="E45G17"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R21">
+<modifieur  xlink:type="locator" xlink:href="E45G19"/>
+<nom  xlink:type="locator" xlink:href="E45G18"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E45R22">
+<complement  xlink:type="locator" xlink:href="E45G20"/>
+<verbe  xlink:type="locator" xlink:href="E45G17"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R23">
+<modifieur  xlink:type="locator" xlink:href="E45F43"/>
+<nom  xlink:type="locator" xlink:href="E45F44"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E45R24">
+<modifieur  xlink:type="locator" xlink:href="E45G21"/>
+<nom  xlink:type="locator" xlink:href="E45G20"/>
+<a-propager booleen="faux"/>
+</relation>
+</relations>
+</E>
+<E id="E46">
+<F id="E46F1">donc</F>
+ <Groupe type="NV" id="E46G1">
+<F id="E46F2">j'</F>
+<F id="E46F3">avais</F>
+ </Groupe>
+ <Groupe type="NV" id="E46G2">
+<F id="E46F4">laissé</F>
+ </Groupe>
+ <Groupe type="GR" id="E46G3">
+<F id="E46F5">tout de même</F>
+ </Groupe>
+ <Groupe type="GN" id="E46G4">
+<F id="E46F6">un</F>
+<F id="E46F7">bon</F>
+<F id="E46F8">souvenir</F>
+ </Groupe>
+ <Groupe type="GP" id="E46G5">
+<F id="E46F9">à</F>
+<F id="E46F10">mes</F>
+<F id="E46F11">élèves</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="COORD" id="E46R1">
+<coordonnant  xlink:type="locator" xlink:href="E46F1"/>
+<coord-g  xlink:type="locator" xlink:href="E46F0"/>
+<coord-d  xlink:type="locator" xlink:href="E46G2"/>
+</relation>
+<relation xlink:type="extended" type="SUJ-V" id="E46R2">
+<sujet  xlink:type="locator" xlink:href="E46F2"/>
+<verbe  xlink:type="locator" xlink:href="E46F3"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E46R3">
+<auxiliaire  xlink:type="locator" xlink:href="E46G1"/>
+<verbe  xlink:type="locator" xlink:href="E46G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E46R4">
+<modifieur  xlink:type="locator" xlink:href="E46G3"/>
+<verbe  xlink:type="locator" xlink:href="E46G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E46R5">
+<modifieur  xlink:type="locator" xlink:href="E46F7"/>
+<nom  xlink:type="locator" xlink:href="E46F8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E46R6">
+<cod  xlink:type="locator" xlink:href="E46G4"/>
+<verbe  xlink:type="locator" xlink:href="E46G2"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E46R7">
+<complement  xlink:type="locator" xlink:href="E46G5"/>
+<verbe  xlink:type="locator" xlink:href="E46G2"/>
+</relation>
+</relations>
+</E>
+<E id="E47">
+ <Groupe type="GR" id="E47G6">
+<F id="E47F1">donc</F>
+ </Groupe>
+ <Groupe type="NV" id="E47G1">
+<F id="E47F2">j'</F>
+<F id="E47F3">avais</F>
+ </Groupe>
+ <Groupe type="NV" id="E47G2">
+<F id="E47F4">laissé</F>
+ </Groupe>
+ <Groupe type="GR" id="E47G3">
+<F id="E47F5">tout de même</F>
+ </Groupe>
+ <Groupe type="GN" id="E47G4">
+<F id="E47F6">un</F>
+<F id="E47F7">bon</F>
+<F id="E47F8">souvenir</F>
+ </Groupe>
+ <Groupe type="GP" id="E47G5">
+<F id="E47F9">à</F>
+<F id="E47F10">mes</F>
+<F id="E47F11">élèves</F>
+ </Groupe>
+<relations>
+<relation xlink:type="extended" type="SUJ-V" id="E47R2">
+<sujet  xlink:type="locator" xlink:href="E47F2"/>
+<verbe  xlink:type="locator" xlink:href="E47F3"/>
+</relation>
+<relation xlink:type="extended" type="AUX-V" id="E47R3">
+<auxiliaire  xlink:type="locator" xlink:href="E47G1"/>
+<verbe  xlink:type="locator" xlink:href="E47G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E47R4">
+<modifieur  xlink:type="locator" xlink:href="E47G3"/>
+<verbe  xlink:type="locator" xlink:href="E47G2"/>
+</relation>
+<relation xlink:type="extended" type="COD-V" id="E47R5">
+<cod  xlink:type="locator" xlink:href="E47G4"/>
+<verbe  xlink:type="locator" xlink:href="E47G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-N" id="E47R6">
+<modifieur  xlink:type="locator" xlink:href="E47F7"/>
+<nom  xlink:type="locator" xlink:href="E47F8"/>
+<a-propager booleen="faux"/>
+</relation>
+<relation xlink:type="extended" type="CPL-V" id="E47R7">
+<complement  xlink:type="locator" xlink:href="E47G5"/>
+<verbe  xlink:type="locator" xlink:href="E47G2"/>
+</relation>
+<relation xlink:type="extended" type="MOD-V" id="E47R1">
+<modifieur  xlink:type="locator" xlink:href="E47G6"/>
+<verbe  xlink:type="locator" xlink:href="E47G2"/>
+</relation>
+</relations>
+</E>
+</DOCUMENT>

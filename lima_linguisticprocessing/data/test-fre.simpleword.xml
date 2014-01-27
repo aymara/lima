@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+  <testcase id="fre.sw.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="La plate-forme de recherche pétrolière va à la dérive. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>test recherche de mot dans le dico.</expl>
+    <test id="fre.sw.1.1" trace=".simpleword.xml" comment="on vérifie la présence du mot plate-forme" left="XPATH#//data_structure/vertex[token[position=4][length=11]]/data/simple_word" operator="exists" right=""/>
+    <test id="fre.sw.1.2" trace=".simpleword.xml" comment="on vérifie la présence du mot recherche" left="XPATH#//data_structure/vertex[token[position=19][length=9]]/data/simple_word" operator="exists" right=""/>
+    <test id="fre.sw.1.3" trace=".simpleword.xml" comment="on vérifie la présence du mot pétrolière" left="XPATH#//data_structure/vertex[token[position=29][length=10]]/data/simple_word" operator="exists" right=""/>
+    <test id="fre.sw.1.4" trace=".simpleword.xml" comment="on vérifie la présence du mot va" left="XPATH#//data_structure/vertex[token[position=40][length=2]]/data/simple_word" operator="exists" right=""/>
+    <test id="fre.sw.1.5" trace=".simpleword.xml" comment="on vérifie la présence du mot à" left="XPATH#//data_structure/vertex[token[position=43][length=1]]/data/simple_word" operator="exists" right=""/>
+    <test id="fre.sw.1.6" trace=".simpleword.xml" comment="on vérifie la présence du mot '.' avec la categ ponctu forte" left="XPATH#//data_structure/vertex[token[position=54][length=1]]/data/simple_word//property/p[@prop='MICRO']/@val" operator="=" right="PONCTU_FORTE"/>
+  </testcase>
+  <testcase id="fre.sw.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Les images satellites montrent l'existence de nappes irisées qui prouvent que certains 'profitent de la pollution liée au Prestige pour dégazer', selon l'état-major."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>test recherche de mot dans le dico : vérification présence nappes, fn : nappe.</expl>
+    <test id="fre.sw.2.1" trace=".simpleword.xml" comment="Vérification présence nappes --&gt; nappe" left="XPATH#//data_structure/vertex[token[position=47][length=6]]/data/simple_word/form/@norm" operator="contains" right="nappe"/>
+  </testcase>
+  <testcase id="fre.sw.3" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Les images satellites montrent l'existence de nappes irisées qui prouvent que certains 'profitent de la pollution liée au Prestige pour dégazer', selon l'état-major."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>test recherche de mot dans le dico : vérification présence nappes, fn : napper.</expl>
+    <test id="fre.sw.3.1" trace=".simpleword.xml" comment="Vérification présence nappes --&gt; napper" left="XPATH#//data_structure/vertex[token[position=47][length=6]]/data/simple_word/form/@norm" operator="contains" right="napper"/>
+  </testcase>
+<testcase id="fre.sw.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème eleve."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>eleve</expl>
+  <test id="fre.sw.4.1" trace=".simpleword.xml"
+    comment="forme initiale : eleve, aucun accent; existence de l'alternative élève"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élève"/>
+  <test id="fre.sw.4.2" trace=".simpleword.xml"
+    comment="forme initiale : eleve, aucun accent; existence de l'alternative élevé"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élevé"/>
+</testcase>
+<testcase id="fre.sw.5" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème éleve."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>éleve</expl>
+  <test id="fre.sw.5.1" trace=".simpleword.xml"
+    comment="forme initiale : éleve, 1 accent OK, 1 manquant; existence de l'alternative élève"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élève"/>
+  <test id="fre.sw.5.2" trace=".simpleword.xml"
+    comment="forme initiale : éleve, 1 accent OK, 1 manquant; existence de l'alternative élevé"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élevé"/>
+</testcase>
+<testcase id="fre.sw.6" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème elève."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>elève</expl>
+  <test id="fre.sw.6.1" trace=".simpleword.xml"
+    comment="forme initiale : elève, 1 accent manquant, 1 OK; existence de l'alternative élève"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élève"/>
+  <test id="fre.sw.6.2" trace=".simpleword.xml"
+    comment="forme initiale : elève, 1 accent manquant, 1 OK; existence de l'alternative élevé"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élevé"/>
+</testcase>
+<testcase id="fre.sw.7" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème éléve."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>éléve</expl>
+  <test id="fre.sw.7.1" trace=".simpleword.xml"
+    comment="forme initiale : éléve, 1 accent OK, 1 PAS OK,; existence de l'alternative élève"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élève"/>
+  <test id="fre.sw.7.2" trace=".simpleword.xml"
+    comment="forme initiale : éléve, 1 accent OK, 1 PAS OK; existence de l'alternative élevé"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//form/@infl"
+    operator="contains"
+    right="élevé"/>
+</testcase>
+<testcase id="fre.sw.8" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème élève."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Frère</expl>
+  <test id="fre.sw.8.1" trace=".simpleword.xml"
+    comment="forme initiale : Frère, mot inconnu, mot connu : frère; existence de l'alternative frère"
+    left="XPATH#//data_structure/vertex[token/position=13]/data//form/@infl"
+    operator="contains"
+    right="frère"/>
+ </testcase>
+<testcase id="fre.sw.9" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frere Amédée, directeur, inscrivit le 300ème élève."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Frere</expl>
+  <test id="fre.sw.9.1" trace=".simpleword.xml"
+    comment="forme initiale : Frere, mot connu : frère; existence de l'alternative frère"
+    left="XPATH#//data_structure/vertex[token/position=13]/data//form/@infl"
+    operator="contains"
+    right="frère"/>
+ </testcase>
+<testcase id="fre.sw.10" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En 1941, le Frère Amedée, directeur, inscrivit le 300ème élève."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Amedée</expl>
+  <test id="fre.sw.10.1" trace=".simpleword.xml"
+    comment="forme initiale : Amedée, mot connu : Amédée; existence de l'alternative Amédée"
+    left="XPATH#//data_structure/vertex[token/position=19]/data//form/@infl"
+    operator="contains"
+    right="Amédée"/>
+ </testcase>
+ <testcase id="fre.sw.11" type="informatif">
+  <call-parameters>
+      <param key="text" value="Ils ont marche jusqu'au marche de cannes pour acheter des cannes de marches."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>marche</expl>
+  <test id="fre.sw.11.1" trace=".simpleword.xml"
+    comment="forme initiale : marche mot connu du dictionnaire."
+    left="XPATH#//data_structure/vertex[token/position=9]/data//form/@infl"
+    operator="contains"
+    right="marché"/>
+ </testcase>
+ <testcase id="fre.sw.12" type="pertinent">
+  <call-parameters>
+      <param key="text" value="L'evenement : le createur de cette oeuvre est anonyme."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>evenement</expl>
+  <test id="fre.sw.12.1" trace=".simpleword.xml"
+  comment="forme initiale : evenement, normalisation voulue : évènement (Rectifications orthographiques du français en 1990). Une autre est possible : événement"
+    left="XPATH#//data_structure/vertex[token/position=3]/data//form/@infl"
+    operator="contains"
+    right="évènement"/>
+</testcase>
+ <testcase id="fre.sw.13" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'evenement : le createur de cette oeuvre est anonyme."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>createur</expl>
+  <test id="fre.sw.13.1" trace=".simpleword.xml"
+    comment="forme initiale : createur, mots connus : créateur, Créateur; existence de l'alternative créateur"
+    left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
+    operator="contains"
+    right="créateur"/>
+  <test id="fre.sw.13.2" trace=".simpleword.xml"
+    comment="forme initiale : createur, mots connus : créateur, Créateur; existence de l'alternative Créateur"
+    left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
+    operator="contains"
+    right="Créateur"/>
+</testcase>
+  <testcase id="fre.sw.14" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'evenement : le Createur de cette oeuvre est anonyme."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Createur</expl>
+  <test id="fre.sw.14.1" trace=".simpleword.xml"
+    comment="forme initiale : Createur; existence de l'alternative Créateur"
+    left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
+    operator="contains"
+    right="Créateur"/>
+  <test id="fre.sw.14.2" trace=".simpleword.xml"
+    comment="forme initiale : Createur; existence de l'alternative créateur"
+    left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
+    operator="contains"
+    right="créateur"/>
+  </testcase>
+  <testcase id="fre.sw.15" type="pertinent">
+  <call-parameters>
+      <param key="text" value="L'evenement : le createur de cette œuvre est anonyme."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>oeuvre</expl>
+  <test id="fre.sw.15.1" trace=".simpleword.xml"
+    comment="forme initiale : oeuvre; existence de l'alternative oeuvre"
+    left="XPATH#//data_structure/vertex[token/position=36]/data//form/@infl"
+    operator="contains"
+    right="oeuvre"/>
+    <test id="fre.sw.15.2" trace=".simpleword.xml"
+    comment="forme initiale : oeuvre; la forme normalisée n'est pas œuvre"
+    left="XPATH#//data_structure/vertex[token/position=36]/data//token/normalized"
+    operator="distinct"
+    right="œuvre"/>
+  </testcase>
+  <testcase id="fre.sw.16" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La cogema et spirit : toute une histoire."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>cogema</expl>
+  <test id="fre.sw.16.1" trace=".simpleword.xml"
+    comment="forme initiale : cogema, mot connu : C.O.G.E.M.A.; existence de l'alternative C.O.G.E.M.A."
+    left="XPATH#//data_structure/vertex[token/position=4]/data//form/@infl"
+    operator="contains"
+    right="C.O.G.E.M.A."/>
+  </testcase>
+  <testcase id="fre.sw.17" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La COGEMA et spirit : toute une histoire."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>COGEMA</expl>
+  <test id="fre.sw.17.1" trace=".simpleword.xml"
+    comment="forme initiale : COGEMA, mot connu : C.O.G.E.M.A.; existence de l'alternative C.O.G.E.M.A."
+    left="XPATH#//data_structure/vertex[token/position=4]/data//form/@infl"
+    operator="contains"
+    right="C.O.G.E.M.A."/>
+  </testcase>
+ <testcase id="fre.sw.18" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le département de Bouches-du-Rhone est situé dans le sud de la France."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>marche</expl>
+  <test id="fre.sw.18.1" trace=".simpleword.xml"
+    comment="forme initiale : Bouches-du-Rhone, mot connu : Bouches-du-Rhône; existence de l'alternative Bouches-du-Rhône"
+    left="XPATH#//data_structure/vertex[token/position=19]/data//form/@infl"
+    operator="="
+    right="Bouches-du-Rhône"/>
+  </testcase>
+<testcase id="fre.sw.19" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Dans un livre, l'a-propos est généralement intéressant."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>a-propos</expl>
+  <test id="fre.sw.19.1" trace=".simpleword.xml"
+    comment="forme initiale : a-propos; existence de l'alternative à-propos"
+    left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
+    operator="="
+    right="à-propos"/>
+  </testcase>
+    <testcase id="fre.sw.20" type="informatif">
+  <call-parameters>
+      <param key="text" value="Dans un livre, l'à propos est généralement intéressant."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>à propos</expl>
+  <test id="fre.sw.20.1" trace=".simpleword.xml"
+    comment="forme initiale : à propos; existence de l'alternative à-propos"
+    left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
+    operator="="
+    right="à-propos"/>
+  </testcase>
+<testcase id="fre.sw.21" type="bloquant">
+  <call-parameters>
+    <param key="text" value="Après"/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  <test id="fre.sw.21.1" trace=".simpleword.xml"
+    comment="la démajusculisation doit produire l'alternative 'après' et uniquement celle-ci. Pas 'apres'"
+    left="XPATH#//data_structure/vertex/token[position=1]/alternatives/string"
+    operator="="
+    right="après"/>
+  <test id="fre.sw.21.2" trace=".simpleword.xml"
+    comment="la démajusculisation doit produire l'alternative 'après' et uniquement celle-ci. Pas 'apres'"
+    left="XPATH#//data_structure/vertex[token/position=1]/data//form/@infl"
+    operator="="
+    right="après"/>
+  </call-parameters>
+</testcase>
+</testcases>

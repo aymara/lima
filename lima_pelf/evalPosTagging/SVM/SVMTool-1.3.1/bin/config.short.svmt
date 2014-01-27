@@ -1,0 +1,11 @@
+# -------------------------------------------------------------
+# SVMT configuration file
+# ------------- location of the training set-------------------
+TRAINSET = /home/anoka/Logiciels/SVMTool-1.3.1/bin/corpusSVMTool.test.out
+# ------------- location of the Joachims svmlight software ----
+SVMDIR = /home/anoka/Logiciels/svm_light
+# ------------- name of the model to create -------------------
+NAME = TEST.SVMT
+# ------- action items ----------------------------------------
+do M0 LRL
+# -------------------------------------------------------------

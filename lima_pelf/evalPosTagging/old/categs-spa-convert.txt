@@ -1,0 +1,100 @@
+nom commun|nc|X
+nom numeral|nc|X
+nom location|nc|X
+nom organisation|nc|X
+nom temps|nc|X
+nom commun annonceur np|nc|X
+nom commun unite de mesure|nc|X
+nom propre anthroponyme|np|X
+nom propre toponyme ou organisation|np|X
+det article def|det|
+det article indef|det|
+det article contracte a el|det|
+det article contracte de el|det|
+cardinal avec tirets|det|X
+cardinal neutre|det|X
+det demonstratif|det|
+det interrogatif|det|
+quantificateur distributif|det|
+quantificateur multiple|det|
+quantificateur non pronominal|det|
+quantificateur pronominal ou non|det|
+cardinal pronominal|pron|X
+pron demonstratif|pron|
+pron interrogatif|pron|
+pron num ord|pron|X
+adjectif general|adj|X
+adjectif comparatif|adj|X
+adjectif superlatif|adj|X
+adjectif num ord|adj|X
+pron / adj num ord|adj|X
+pron personnel clitique|pron|
+pron personnel clitique COD|pron|
+pron personnel sujet|pron|
+pron personnel prepositif|pron|
+pron personnel sujet ou prepositif|pron|
+pron personnel sujet ou prepositif forme polie|pron|
+pron possessif|pron|
+pron possessif pren|pron|
+quantificateur pronominal|pron|
+pron relatif|pron|
+pron relatif possessif|pron|
+pron / det relatif|pron|
+particule se|pron|
+verbe estar indicatif|v|
+verbe estar subjonctif|v|
+verbe estar gerondif|v|
+verbe estar infinitif|v|
+verbe estar participe|v|
+verbe estar imperatif|v|
+verbe haber indicatif|v|
+verbe haber subjonctif|v|
+verbe haber gerondif|v|
+verbe haber infinitif|v|
+verbe haber participe|v|
+verbe haber imperatif|v|
+verbe general indicatif|v|X
+verbe general subjonctif|v|X
+verbe general gerondif|v|X
+verbe general infinitif|v|X
+verbe general participe|v|X
+verbe general imperatif|v|X
+verbe de modalite indicatif|v|
+verbe de modalite subjonctif|v|
+verbe de modalite gerondif|v|
+verbe de modalite infinitif|v|
+verbe de modalite participe|v|
+verbe de modalite imperatif|v|
+verbe ser indicatif|v|
+verbe ser subjonctif|v|
+verbe ser gerondif|v|
+verbe ser infinitif|v|
+verbe ser participe|v|
+verbe ser imperatif|v|
+adverbe gradation|adv|
+adverbe gradation comparatif|adv|
+adverbe gradation superlatif|adv|
+adverbe interrogatif|adv|
+adverbe lieu|adv|
+adverbe maniere|adv|
+adverbe de maniere concretude modif adv|adv|
+adverbe modif subst ou pron|adv|
+adverbe temps|adv|
+adverbe transconstructionnel|adv|
+adverbe neg|adv|
+prep|prep|
+conj coord|conj|
+conj coord adversative|conj|
+conj que|conj|
+conj subord|conj|
+ponctu forte ouvrante|ponctu|
+ponctu forte fermante|ponctu|
+ponctu faible|ponctu|
+ponctu dialogue|ponctu|
+ponctu parenthese|ponctu|
+interjection|interj|
+divers lettre alphabet|divers|X
+divers formule|divers|X
+divers fraction|divers|X
+divers mot etranger|divers|X
+divers autre|divers|X

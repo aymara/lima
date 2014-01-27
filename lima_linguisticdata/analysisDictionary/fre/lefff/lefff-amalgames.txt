@@ -1,0 +1,4 @@
+#du	de+le	detart[@ms]
+#des	de+les	detart[@mp]
+au	à+le	detart[@ms]
+aux	au+les	detart[@mp]

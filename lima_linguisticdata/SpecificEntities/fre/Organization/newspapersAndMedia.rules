@@ -1,0 +1,70 @@
+#
+# rules for french newspaper names
+#
+
+Libération:::ORGANIZATION:
+Monde:Le:Diplomatique:ORGANIZATION:
+Monde:Le:de l'Education:ORGANIZATION:
+Monde:Le::ORGANIZATION:
+Parisien:Le::ORGANIZATION:
+Tribune:La::ORGANIZATION:
+Echos:Les::ORGANIZATION:
+Figaro:Le::ORGANIZATION:
+Humanité:L'::ORGANIZATION:
+Courrier::International:ORGANIZATION:
+Canard::Enchaîné:ORGANIZATION:
+
+# too common
+#Elle:::ORGANIZATION:
+
+Européen:L'::ORGANIZATION:
+Express:L'::ORGANIZATION:
+Nouvel:Le:Observateur:ORGANIZATION:
+Point:Le::ORGANIZATION:
+Sciences::et Avenir:ORGANIZATION:
+Dauphiné:Le:libéré:ORGANIZATION:
+Progrès:Le:de Lyon:ORGANIZATION:
+Ouest-France:::ORGANIZATION:
+Télégramme:Le:de Brest:ORGANIZATION:
+Paris-Normandie:::ORGANIZATION:
+Nice-matin:::ORGANIZATION:
+Var-matin:::ORGANIZATION:
+Corse-Matin:::ORGANIZATION:
+Yonne:L':républicaine:ORGANIZATION:
+Voix:La:du Nord:ORGANIZATION:
+Provence:La::ORGANIZATION:
+Nouvelles:Dernières:d'Alsace:ORGANIZATION:
+Républicain:Le:Lorrain:ORGANIZATION:
+Equipe:L'::ORGANIZATION:
+Midi-Olympique:::ORGANIZATION:
+
+Paris::Match:ORGANIZATION:
+
+Destination::Santé:ORGANIZATION:
+
+Associated::Press:ORGANIZATION:
+
+# chaînes de télé
+TF1:::ORGANIZATION:
+France::(2|3|5):ORGANIZATION:
+Arte:::ORGANIZATION:
+M6:::ORGANIZATION:
+Canal::(\+|Plus):ORGANIZATION:Canal Plus
+Canal\+:::ORGANIZATION:Canal Plus
+Canal::Satellite:ORGANIZATION:
+
+# radios
+France-Inter:::ORGANIZATION:
+France-Culture:::ORGANIZATION:
+France-Info:::ORGANIZATION:
+Radio-France:::ORGANIZATION:
+Europe1:::ORGANIZATION:
+Europe::1:ORGANIZATION:Europe1
+France::2:ORGANIZATION:France 2
+France::3:ORGANIZATION:France 3
+France::4:ORGANIZATION:France 4
+France::5:ORGANIZATION:France 5
+France::6:ORGANIZATION:France 6
+France::7:ORGANIZATION:France 7
+France::Ô:ORGANIZATION:France Ô
+R.T.L.:::ORGANIZATION:

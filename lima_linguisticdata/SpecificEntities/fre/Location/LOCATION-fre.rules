@@ -1,0 +1,86 @@
+set encoding=utf8
+using modex Location-modex.xml
+using groups Location
+set defaultAction=>CreateSpecificEntity()
+
+use regionsAndCountries.lst
+use cities.lst
+use riversAndSeas.lst
+use miscLocations.lst
+use highways.lst
+use annonceurLieu.lst
+use greeklocations.lst
+
+@PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
+
+@locationVerbs=(
+ressentir$V,
+ressenti$ADJ,
+secouer$V,
+produire$V,
+trembler$V,
+survenir$V,
+frapper$V,
+enregistrer$V,	
+avoir\ lieu$V,	
+trouver$V,	
+toucher$V,	
+situer$V,	
+localiser$V,	
+ébranler$V,	
+détecter$V)
+
+@AnnonceurLieu::(t_alphanumeric):NOT_LOCATION: 
+
+Tizi::Ouzou:LOCATION:
+Hong::Kong:LOCATION:
+Sumatra:::LOCATION:
+Alpes::de Haute Provence:LOCATION:
+Aix::en Provence:LOCATION:
+Lambesc:::LOCATION:
+Sisteron:::LOCATION:
+Trévaresse:::LOCATION:
+Meyargues:::LOCATION:
+Salon:::LOCATION:
+Cavaillon:::LOCATION:
+Penmarc'h:::LOCATION:Penmarc'h
+Penmarc'::h:LOCATION:Penmarc'h
+Charente::Maritime:LOCATION:Charente Maritime
+Loire::Atlantique:LOCATION:Loire-atlantique
+Plaine:La:St Denis:LOCATION:
+
+Rhénanie-Westphalie:::LOCATION:
+Rhénanie::Westphalie:LOCATION:
+Rhénanie::du Nord:LOCATION:
+Cap::Canaveral:LOCATION:
+
+PORTO::TORRES:LOCATION:PORTO TORRES
+#Porto::Torres:LOCATION:PORTO TORRES
+
+@RegionsAndCountries::(((du|de l\') @PrecisionGeographique)|central|centrale)?:LOCATION:
+
+@PrecisionGeographique:(NUMBER (km|kms|kilometre|kilometres|kilomètre|kilomètres) (au)?)?:(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@RegionsAndCountries|@Cities|$NP|t_capital_1st):LOCATION:
+
+@AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? ($NP|t_capital_1st):LOCATION: 
+
+@Cities:::LOCATION:
+
+@Greeklocations:::LOCATION:
+
+[ville$NC]::[($ADJ)?] [(de|du|d'|de $DET)] $NP:LOCATION:
+
+##Ajout le 25/07
+#[@locationVerbs]::[(à|au|le|l'|la|en|dans|entre)?] (t_capital_1st) (et?) (en?) (t_capital_1st)?:LOCATION: 
+[@locationVerbs]::[(à|au|en|dans)] (t_capital_1st):LOCATION: 
+
+#[@locationVerbs]::[(à|au|le|l'|en)?] $NP:LOCATION:
+
+
+# le Nord
+# (je ne peux pas me permettre d\'étiqueter "est" tout seul)
+# + la plupart des occurrences de Nord, Sud-Est etc ne sont pas étiquetées
+#@PrecisionGeographique::(du pays)?:LOCATION:
+
+36-15::$NC:LOCATION:
+
+t_url:::URL:

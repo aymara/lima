@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. --><!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.1.2/docbookx.dtd" []>
+<article>
+  <title>LIMA User Manual</title>
+  <articleinfo>
+    <author>
+      <firstname>Gaël</firstname>
+      <surname>de Chalendar</surname>
+    </author>
+    <releaseinfo>Version 0.1</releaseinfo>
+    <copyright>
+      <year>2011</year>
+      <holder>CEA LIST</holder>
+    </copyright>
+  </articleinfo>
+  <abstract>
+    <title>Abstract</title>
+    <para>This documents explains how to install, run, configure and integrate into applications LIMA, the CEA LIST Multilingual Analyzer.</para>
+  </abstract>
+  <sect1>
+    <title>Installation</title>
+    <sect2>
+      <title>Debian Lenny deb packages</title>
+      <para>Install the following packages using dpkg: </para>
+      <itemizedlist>
+        <listitem>
+          <para>svmtool++-1.1.6-Linux.deb</para>
+        </listitem>
+        <listitem>
+          <para>mmcommon-1.0.0-Linux.deb</para>
+        </listitem>
+        <listitem>
+          <para>mmlinguisticprocessing-1.0.0-Linux.deb</para>
+        </listitem>
+        <listitem>
+          <para>mmlinguisticdata-prereq-1.0.0-Linux.deb</para>
+        </listitem>
+        <listitem>
+          <para>mmlinguisticdata-1.0.0-Linux.deb</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2>
+      <title>Mandriva 10.2 RPM packages</title>
+      <para>Install the following packages using urpmi: </para>
+      <itemizedlist>
+        <listitem><para>svmtool++-1.1.6-Linux.rpm</para></listitem>
+        <listitem><para>mmcommon-1.0.0-Linux.rpm</para></listitem>
+        <listitem><para>mmlinguisticprocessing-1.0.0-Linux.rpm</para></listitem>
+        <listitem><para>mmlinguisticdata-prereq-1.0.0-Linux.rpm</para></listitem>
+        <listitem><para>mmlinguisticdata-1.0.0-Linux.rpm</para></listitem>
+      </itemizedlist>
+      <para>If not already installed, the following dependencies will be automatically downloaded and installed: </para>
+      <itemizedlist>
+        <listitem><para>libstdc++</para></listitem>
+        <listitem><para>stdc++-devel</para></listitem>
+        <listitem><para>boost_date_time</para></listitem>
+        <listitem><para>...</para></listitem>
+      </itemizedlist>
+      <para>If the simple urpmi command fail because of possible errors in dependencies from package libicu or another one, you could have to use options <emphasis>--force</emphasis> and <emphasis>--nodeps</emphasis> like:
+        <programlisting>
+sudo rpm -i --nodeps --force mmcommon-1.0.0-Linux.rpm         
+        </programlisting>
+      </para>
+      <para>To know where all the files are installed (include, libraries, configuration...), you can run the following command:
+        <programlisting>
+rpm -ql mmcommon-1.0.0
+        </programlisting>
+        This will be usefull to edit configuration files and resources in order to customize your installation.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Sources compilation</title>
+      <para>TO BE WRITTEN</para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Running LIMA for the first time</title>
+    <para>In this section, we suppose that LIMA has been installed using binary packages (RPM or DEB depending on your distribution).</para>
+    <para>Choose UTF-8 encoded text files in one language supported by your LIMA version (English in this example) and run the following commands:</para>
+    <para><command>cd /path/to/your/text/files/folder</command></para>
+    <para><command>analyzeText -l fre file.txt</command><footnote>
+        <para>If you have several files to analyze and a multprocessor system, you can replace &quot;analyzeText&quot; by &quot;threadedAnalyzeText -t n&quot; where n is the number of threads you want to run.</para>
+      </footnote></para>
+    <para>This will produce a file named <command>file.txt.bin</command> containing a &quot;bag of words&quot; (BoW) binary representation of the file. You can view the content of this file using the <command>readBowFile</command>  command:</para>
+    <para><command>readBowFile file.txt.bin</command></para>
+    <para>This kind of file contains lemmas of simple terms (nouns, adjectives and verbs), representation of complex terms and named entities found in the text. Suppose that the content of the text file was &quot;On 4th April 2011, Bill Williams looked at Paris from his home window.&quot;. Then, the output of the <command>readBowFile</command> command will be:</para>
+    <para><programlisting>(4th_April_2011-8192-4)-&gt;[*(4th-8192-4)(April-16384-8)(2011-8192-14)]:DateTime.DATE:date=2011-04-04;value=4th April 2011
+(Bill_Williams-16384-20)-&gt;[*(Bill-16384-20)(Williams-16384-25)]:Person.PERSON:firstname=Bill;lastname=Williams;value=Bill Williams
+(look-49152-34)
+(Paris-16384-44)-&gt;[*(Paris-16384-44)]:Location.LOCATION:value=Paris
+(home-8192-59)
+(window_home-8192-59)-&gt;[*(window-8192-64)/-3/-2/(home-8192-59)]</programlisting>As you can see, dates, person names and locations are recognized as such. Also, each line describes a recognized term, either simple (the verb &quot;to look&quot;) complex. Complex terms can be nominal compounds (&quot;home window&quot;) or named entities (&quot;Paris&quot;, &quot;Bill Williams&quot;, &quot;4th April 2011&quot;). Each term is described by its normalized form, the numerical value of its category (more on this later) and its position in the text. This is followed by the details of its structure.</para>
+    <para>This text representation of BoW is not designed to be used later by other programs. It&apos;s just to get an idea of its content. A dedicated C++ API allows to manipulate bags of words.</para>
+  </sect1>
+  <sect1>
+    <title>Configuring LIMA</title>
+    <para>If you want to configure LIMA for your own needs, you will have to make a copy of the configuration directory and define the environment variable <computeroutput>LIMA_CONF</computeroutput> to point to this copy:</para>
+    <programlisting>mkdir ~/MyLima
+cp -R /usr/share/config/lima ~/MyLima/conf
+setenv LIMA_CONF=/~/MyLima/conf</programlisting>
+    <para>Later versions of this manual will describe in details the various configuration possibilities, but suppose for now that you don&apos;t need the complex terms extracted by LIMA. Then, you only have to disable syntactic analysis and complex term computing. To do that for English, edit the file <computeroutput>$LIMA_CONF/lima-lp-eng.xml</computeroutput> and comment out the following lines in the <computeroutput>main</computeroutput> group of the <computeroutput>Processors</computeroutput> module:</para>
+    <programlisting>&lt;item value=&quot;syntacticAnalyzerChains&quot;/&gt;
+&lt;item value=&quot;syntacticAnalyzerDeps&quot;/&gt;
+&lt;item value=&quot;syntacticAnalyzerDepsHetero&quot;/&gt;
+&lt;item value=&quot;dotDepGraphWriter&quot;/&gt;
+&lt;item value=&quot;syntacticAnalysisXmlLogger&quot;/&gt;
+&lt;item value=&quot;compoundBuilderFromSyntacticData&quot;/&gt;</programlisting>
+  </sect1>
+  <sect1>
+    <title>Creating a Modex: extracting new kind of entities</title>
+    <sect2>
+      <title>Introduction</title>
+      <para>A Modex (&quot;Module d&apos;Extraction&quot;) is a set of compiled regular expression-like rules with their accompanying configuration file. It is the base tool in Lima for various things, including idiomatic expression recognizing and named entities extraction but also syntactic analysis. You can create you own Modexes to extract entities specific to your application. For example, Twitter ids and Twitter hash tags are not natively supported by Lima. So, if your application is targeted at analyzing Tweets, then you will have to write your  own Modex to extract them.</para>
+    </sect2>
+    <sect2>
+      <title>Preparing resources folder</title>
+      <para>In the current version, all Lima resources, including Modex binary rules files, must be under the same parent directory. So, to use you own Modex, you will have either to copy your files under the installation resource directory, as root if you use RPM or DEB packages, or to copy all the resources in a directory of your own and define the <computeroutput>LIMA_RESOURCES</computeroutput> environment variable to point to this one. In this user manual , we will use this second solution:</para>
+      <programlisting>cp -R /usr/share/apps/lima/resources ~/MyLima/resources
+setenv LIMA_RESOURCES=~/MyLima/resources</programlisting>
+    </sect2>
+    <sect2>
+      <title>TwitterModex</title>
+      <sect3>
+        <title>The configuration file</title>
+        <para>There is only one configuration file for all languages supported by the Modex (e.g.: <filename>Twitter-modex.xml</filename>). It must be installed in the <computeroutput>LIMA_CONF</computeroutput> folder.  It contains:</para>
+        <itemizedlist>
+          <listitem>
+            <para>a groups and entity types definition module;</para>
+          </listitem>
+          <listitem>
+            <para>a processing units (processUnit) definition module;</para>
+          </listitem>
+          <listitem>
+            <para>for each language, a resources to use definition module;</para>
+          </listitem>
+        </itemizedlist>
+        <sect4>
+          <title>Groups and Types</title>
+          <para>This first module, named entities contains a group for each entities group and, in this group, the list (named entityList) of the entity types. For example:
+
+  </para>
+          <programlisting>&lt;module name=&quot;entities&quot;&gt;
+    &lt;group name=&quot;Twitter&quot;&gt;
+      &lt;list name=&quot;entityList&quot;&gt;
+        &lt;item value=&quot;TWITTERID&quot;/&gt;
+        &lt;item value=&quot;TWITTERHASH&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;
+  &lt;/module&gt;</programlisting>
+        </sect4>
+        <sect4>
+          <title>Process units</title>
+          <para>This module, named Processors, defines the processing units groups available for this Modex. These processing units can be pipelines (class ProcessUnitPipeline), which allows to define a global process unit for the Modex chaining up several rules application.
+
+  <programlisting>&lt;module name=&quot;Processors&quot;&gt;
+    &lt;group name=&quot;TwitterModex&quot; class=&quot;ProcessUnitPipeline&quot; &gt;
+      &lt;list name=&quot;processUnitSequence&quot;&gt;
+        &lt;item value=&quot;TwitterRecognition&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;</programlisting>As in the analysis configuration file, each process unit is defined in its own group with its parameters. For an ApplyRecognizer process unit, these parameters are:
+
+</para>
+          <itemizedlist>
+            <listitem>
+              <para>automaton: the name of a resource defined later in the resources specific to each language (Cf. next section);</para>
+            </listitem>
+            <listitem>
+              <para>applyOnGraph: declare the name of the analysis graph on which to apply the rules (AnalysisGraph if before part-of-speech tagging or PosGraph
+after);</para>
+            </listitem>
+            <listitem>
+              <para>useSentenceBounds: (yes or no) defines if the automaton will be applied bbetween each sentence limits or on the whole graph.
+    Use &quot;no&quot; if this Modex will be used before the &quot;sentenceBoundariesFinder&quot; process unit.</para>
+            </listitem>
+          </itemizedlist>
+          <para><programlisting>&lt;group name=&quot;TwitterRecognition&quot; class=&quot;ApplyRecognizer&quot;&gt;
+      &lt;param key=&quot;automaton&quot; value=&quot;TwitterRules&quot;/&gt;
+      &lt;param key=&quot;applyOnGraph&quot; value=&quot;AnalysisGraph&quot;/&gt;
+      &lt;param key=&quot;useSentenceBounds&quot; value=&quot;no&quot;/&gt;
+&lt;/group&gt;</programlisting></para>
+        </sect4>
+        <sect4>
+          <title>Resources</title>
+          <para>The resources definition modules for each language are called resources-xyz, with xyz the language trigram:
+
+<computeroutput>&lt;module name=“resources-xyz”&gt;</computeroutput>. They contain a group for each automaton defined above. This group, of the class AutomatonRecognizer defines the extractor parameters and particularly the path to the compiled rules file (relative to the global Lima resources directory):
+
+    <programlisting>&lt;group name=&quot;TwitterRules&quot; class=&quot;AutomatonRecognizer&quot;&gt;
+      &lt;param key=&quot;rules&quot; value=&quot;Twitter/Twitter-eng.bin&quot;/&gt;
+&lt;/group&gt;</programlisting>
+Next, the module contains groups to define the microcategories<footnote>
+              <para>this will be defined in a later version of this document. Currently, you can use the values L_NOM_PROPRE for English and L_NC_GEN for French.</para>
+            </footnote> that will be affected to the token that will replace each recognized entity. The name of each of these groups must be the one of the corresponding group in the entities module concatenated to the string &quot;Micros&quot;. It contains a list of microcategories for each entity. This list is named by the fully qualified name of the entity (&lt;Group name&gt;.&lt;Entity name&gt;):
+    <programlisting>&lt;group name=&quot;TwitterMicros&quot; class=&quot;SpecificEntitiesMicros&quot;&gt;
+      &lt;list name=&quot;Twitter.TWITTERID&quot;&gt;
+        &lt;item value=&quot;L_NOM_PROPRE&quot;/&gt;
+      &lt;/list&gt;
+&lt;/group&gt;</programlisting></para>
+        </sect4>
+        <sect4>
+          <title>A complete configuration file</title>
+          <para><programlisting>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;
+&lt;modulesConfig&gt;
+  &lt;module name=&quot;entities&quot;&gt;
+    &lt;group name=&quot;Twitter&quot;&gt;
+      &lt;list name=&quot;entityList&quot;&gt;
+        &lt;item value=&quot;TWITTERID&quot;/&gt;
+        &lt;item value=&quot;TWITTERHASH&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;
+  &lt;/module&gt;
+  &lt;module name=&quot;Processors&quot;&gt;
+    &lt;group name=&quot;TwitterModex&quot; class=&quot;ProcessUnitPipeline&quot; &gt;
+      &lt;list name=&quot;processUnitSequence&quot;&gt;
+        &lt;item value=&quot;TwitterRecognition&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;
+    &lt;group name=&quot;TwitterRecognition&quot; class=&quot;ApplyRecognizer&quot;&gt;
+      &lt;param key=&quot;automaton&quot; value=&quot;TwitterRules&quot;/&gt;
+      &lt;param key=&quot;applyOnGraph&quot; value=&quot;AnalysisGraph&quot;/&gt;
+      &lt;param key=&quot;useSentenceBounds&quot; value=&quot;no&quot;/&gt;
+    &lt;/group&gt;
+  &lt;/module&gt;
+  &lt;module name=&quot;resources-eng&quot;&gt;
+    &lt;group name=&quot;TwitterRules&quot; class=&quot;AutomatonRecognizer&quot;&gt;
+      &lt;param key=&quot;rules&quot; value=&quot;Twitter/Twitter-eng.bin&quot;/&gt;
+    &lt;/group&gt;
+    &lt;group name=&quot;TwitterMicros&quot; class=&quot;SpecificEntitiesMicros&quot;&gt;
+      &lt;list name=&quot;Twitter.TWITTERID&quot;&gt;
+        &lt;item value=&quot;L_NOM_PROPRE&quot;/&gt;
+      &lt;/list&gt;
+      &lt;list name=&quot;Twitter.TWITTERHASH&quot;&gt;
+        &lt;item value=&quot;L_NOM_PROPRE&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;
+  &lt;/module&gt;
+&lt;/modulesConfig&gt;</programlisting></para>
+        </sect4>
+      </sect3>
+      <sect3>
+        <title>The rules files</title>
+        <para>The full syntax of rules files is described in the document lima-modex-rules-format.pdf. Here, we just describe the following example:</para>
+        <programlisting>set encoding=utf8
+using modex Twitter-modex.xml
+using groups Twitter
+set defaultAction=&gt;CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of Twitter ids
+#----------------------------------------------------------------------
+
+@arobase=(\@)
+
+@arobase::*:TWITTERID:
+
+\#::*:TWITTERHASH:</programlisting>
+        <para>The first four lines are metadata stating that the file is encoded in UTF-8, that it is a rules file for the Twitter Modex, that the entities created by rules will belong to the Twitter group and finally that by default, the action associated to the rules will be to create a specific entity.</para>
+        <para>Next comes a line describing a class of tokens, here just the tokens composed of the arobase character. After this line, there is two rules, one triggered by the encountering of an arobase and matching any token after it. If matching, a TWITTERID entity is created. The second one has the same format but triggered by a hash character token and creating a TWITTERHASH entity.</para>
+        <para>Please refer to the full syntax description for details, but let&apos;s say here that rules are defined by a triggering token, followed by a regular expression describing the left context of the triggering token and a second one describing its right context, followed by the type of the expression and possibly constraint functions.</para>
+        <para>When the rules file is ready, you have to compile it with the following command (don&apos;t forget to install the configuration file beforehand):</para>
+        <para><command>compile-rules --language=eng --modex=Twitter-modex.xml -oTwitter-eng.bin Twitter-eng.rules </command></para>
+        <para>Then copy the binary file to the <computeroutput>LIMA_RESOURCES/Twitter</computeroutput> folder (as stated in the configuration file).</para>
+      </sect3>
+      <sect3>
+        <title>Using your new Modex</title>
+        <para>In the analysis configuration file (<filename>lima-lp-xyz.xml</filename>), a Modex is included by including explicitly its processings and its resources :
+
+  <programlisting>&lt;module name=&quot;Processors&quot;&gt;
+    &lt;group name=&quot;include&quot;&gt;
+      &lt;list name=&quot;includeList&quot;&gt;
+        &lt;item value=&quot;Twitter-modex.xml/Processors&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;
+  ...
+  &lt;/module&gt;
+   &lt;module name=&quot;Resources&quot;&gt;
+    &lt;group name=&quot;include&quot;&gt;
+      &lt;list name=&quot;includeList&quot;&gt;
+        &lt;item value=&quot;Twitter-modex.xml/resources-xyz&quot;/&gt;
+      &lt;/list&gt;
+    &lt;/group&gt;
+    ...
+ &lt;/module&gt;</programlisting></para>
+        <para>The Modex process unit(s) can then be called in the various pipelines.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Integrating LIMA</title>
+    <para>There is several ways to integrate LIMA in your application. In this early version of this user manual, we will suppose that you just need to get the following information about the tokens present in the analyzed text: lemma, morphosyntactic category, position and entity type in case of specific entities. We also suppose that you want to directly invoke LIMA from your C++ code and support multithreading the calls to the analyzer.</para>
+    <para>The code accompanying this user manual     implements this. The dowork function initializes the analyzer, prepares the list of files to be analyzed, this list being protected by a mutex, and creates the specified number of threads, binding them to the analyze_thread function. This latter one repeatedly peeks a file to analyze, prepare the handler that will allow to access the analysis result (here a BoWText), call the analysis client and then dumps the output using the BoW API.</para>
+  </sect1>
+</article>

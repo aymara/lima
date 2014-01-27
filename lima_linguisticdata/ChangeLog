@@ -1,0 +1,9 @@
+[2004/08/10 - gael]
+- tous les fichiers de configuration sont maintenant en UTF-8 (et non plus en UTF-16) ;
+- tous les fichiers de listes de codes sont désormais générés automatiquement lors de la compilation des dicos ;
+- tous les fichiers de conf sont désormais nommés de façon uniforme avec en particulier la langue exprimée par son trigramme ISO. Cela permet entre autres de développer des scipts génériques paramétrés par la langue ;
+- les répertoires sous LinguisticProcessing portent désormais comme nom le trigramme de leur langue (French renommé en fre). Mêmes avantages que ci-dessus ;
+- les fichiers des matrices de desambiguisation contiennent maintenant les codes symboliques des catégories plutôt que les codes numériques (les deux possibilités sont acceptées à la lecture, et même un mélange des deux) ;
+- la production des matrices de désambiguisation est en configuration. Elle utilise les résultats de la production des dictionnaires.
+- automatisation la production des fichiers de règles pour les expressions idiomatiques ;
+- script general permettant la construction et la deploiement de toutes les ressources pour une ou plusieurs langues.

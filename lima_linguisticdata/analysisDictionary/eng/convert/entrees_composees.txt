@@ -1,0 +1,735 @@
+<entry k="i'm">
+  <concat>
+    <c form="i">
+      <i>
+        <p v="PPIS1"/>
+      </i>
+    </c>
+    <c form="'m">
+      <i l="be">
+        <p v="VB0"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="i'd">
+  <concat>
+    <c form="i">
+      <i>
+        <p v="PPIS1"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="have">
+        <p v="VM"/>
+      </i>
+      <i l="would">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="you're">
+  <concat>
+    <c form="you">
+      <i>
+        <p v="PPY"/>
+      </i>
+    </c>
+    <c form="'re">
+      <i l="be">
+        <p v="VBR"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="he's">
+  <concat>
+    <c form="he">
+      <i>
+        <p v="PPHS1"/>
+      </i>
+    </c>
+    <c form="'s">
+      <i l="be">
+        <p v="VBZ"/>
+      </i>
+      <i l="have">
+        <p v="VHZ"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="she's">
+  <concat>
+    <c form="she">
+      <i>
+        <p v="PPHS1"/>
+      </i>
+    </c>
+    <c form="'s">
+      <i l="be">
+        <p v="VBZ"/>
+      </i>
+      <i l="have">
+        <p v="VHZ"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="it's">
+  <concat>
+    <c form="it">
+      <i>
+        <p v="PPH1"/>
+      </i>
+    </c>
+    <c form="'s">
+      <i l="be">
+        <p v="VBZ"/>
+      </i>
+      <i l="have">
+        <p v="VHZ"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="we're">
+  <concat>
+    <c form="we">
+      <i>
+        <p v="PPIS2"/>
+      </i>
+    </c>
+    <c form="'re">
+      <i l="be">
+        <p v="VBR"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="isn't">
+  <concat>
+    <c form="is">
+      <i l="be">
+        <p v="VBZ"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="wasn't">
+  <concat>
+    <c form="was">
+      <i l="was" n="be">
+        <p v="VBDZ"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="weren't">
+  <concat>
+    <c form="were">
+      <i l="were" n="be">
+        <p v="VBDR"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="aren't">
+  <concat>
+    <c form="are">
+      <i l="be">
+        <p v="VBR"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="I've">
+  <concat>
+    <c form="I">
+      <i>
+        <p v="PPIS1"/>
+      </i>
+    </c>
+    <c form="'ve">
+      <i l="have">
+        <p v="VH0"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="we've">
+  <concat>
+    <c form="we">
+      <i>
+        <p v="PPIS2"/>
+      </i>
+    </c>
+    <c form="'ve">
+      <i l="have">
+        <p v="VH0"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="you've">
+  <concat>
+    <c form="you">
+      <i>
+        <p v="PPY"/>
+      </i>
+    </c>
+    <c form="'ve">
+      <i l="have">
+        <p v="VH0"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="they've">
+  <concat>
+    <c form="they">
+      <i>
+        <p v="PPHS2"/>
+      </i>
+    </c>
+    <c form="'ve">
+      <i l="have">
+        <p v="VH0"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="haven't">
+  <concat>
+    <c form="have">
+      <i>
+        <p v="VH0"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="hasn't">
+  <concat>
+    <c form="has">
+      <i l="have">
+        <p v="VHZ"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="hadn't">
+  <concat>
+    <c form="had">
+      <i l="had" n="have">
+        <p v="VHD"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="don't">
+  <concat>
+    <c form="do">
+      <i>
+        <p v="VD0"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="doesn't">
+  <concat>
+    <c form="does">
+      <i l="does" n="do">
+        <p v="VDZ"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="didn't">
+  <concat>
+    <c form="did">
+      <i l="did" n="do">
+        <p v="VDD"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="can't">
+  <concat>
+    <c form="ca">
+      <i l="can">
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="cannot">
+  <concat>
+    <c form="can">
+      <i l="can">
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="not">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="couldn't">
+  <concat>
+    <c form="could">
+      <i l="could">
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="mightn't">
+  <concat>
+    <c form="might">
+      <i>
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="mustn't">
+  <concat>
+    <c form="must">
+      <i>
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="needn't">
+  <concat>
+    <c form="need">
+      <i>
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="oughtn't">
+  <concat>
+    <c form="ought">
+      <i>
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="shan't">
+  <concat>
+    <c form="sha">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="shouldn't">
+  <concat>
+    <c form="should">
+      <i>
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="won't">
+  <concat>
+    <c form="wo">
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="wouldn't">
+  <concat>
+    <c form="would">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+    </c>
+    <c form="n't">
+      <i l="not">
+        <p v="XX"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="i'll">
+  <concat>
+    <c form="i">
+      <i>
+        <p v="PPIS1"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="you'll">
+  <concat>
+    <c form="you">
+      <i>
+        <p v="PPY"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="he'll">
+  <concat>
+    <c form="he">
+      <i>
+        <p v="PPHS1"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="she'll">
+  <concat>
+    <c form="she">
+      <i>
+        <p v="PPHS1"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="it'll">
+  <concat>
+    <c form="it">
+      <i>
+        <p v="PPH1"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="we'll">
+  <concat>
+    <c form="we">
+      <i>
+        <p v="PPIS2"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="they'll">
+  <concat>
+    <c form="they">
+      <i l="they">
+        <p v="PPHS2"/>
+      </i>
+    </c>
+    <c form="'ll">
+      <i l="shall">
+        <p v="VM"/>
+      </i>
+      <i l="will">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="they're">
+  <concat>
+    <c form="they">
+      <i l="they">
+        <p v="PPHS2"/>
+      </i>
+    </c>
+    <c form="'re">
+      <i l="be">
+        <p v="VBR"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="I'd">
+  <concat>
+    <c form="I">
+      <i>
+        <p v="PPIS1"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="you'd">
+  <concat>
+    <c form="you">
+      <i>
+        <p v="PPY"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+      <i l="have">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="he'd">
+  <concat>
+    <c form="he">
+      <i>
+        <p v="PPHS1"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+      <i l="have">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="she'd">
+  <concat>
+    <c form="she">
+      <i>
+        <p v="PPHS1"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+      <i l="have">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="it'd">
+  <concat>
+    <c form="it">
+      <i>
+        <p v="PPH1"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="we'd">
+  <concat>
+    <c form="we">
+      <i>
+        <p v="PPIS2"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+      <i l="have">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="they'd">
+  <concat>
+    <c form="they">
+      <i l="they">
+        <p v="PPHS2"/>
+      </i>
+    </c>
+    <c form="'d">
+      <i l="would">
+        <p v="VM"/>
+      </i>
+      <i l="have">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="that's">
+  <concat>
+    <c form="that">
+      <i l="that">
+        <p v="CST"/>
+        <p v="DD1"/>
+      </i>
+    </c>
+    <c form="'s">
+      <i l="be">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+<entry k="there's">
+  <concat>
+    <c form="there">
+      <i>
+        <p v="EX"/>
+      </i>
+    </c>
+    <c form="'s">
+      <i l="be">
+        <p v="VM"/>
+      </i>
+    </c>
+  </concat>
+</entry>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+  <testcase id="fre.ml.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="musique"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>Test de l'enrichissement d'une entrée globale par le dictionnaire corporate</expl>
+    <test id="fre.ml.1.1" trace=".simpleword.xml" comment="ajout d'une propriété sur lemme existant" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musique']/property/p[@prop='GENDER']/@val" operator="contains" right="L_MASC"/>
+    <test id="fre.ml.1.2" trace=".simpleword.xml" comment="ajout d'un nouveau lemme" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musik']" operator="exists" right=""/>
+    <test id="fre.ml.1.3" trace=".simpleword.xml" comment="ajout d'une nouvelle normalisation" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musique'][@norm='musik']" operator="exists" right=""/>
+  </testcase>
+  <testcase id="fre.ml.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Goban"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>Test de l'ajout d'une nouvelle entrée dans dictionnaire corporate</expl>
+    <test id="fre.ml.2.1" trace=".simpleword.xml" comment="la nouvelle entrée existe" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='Goban']" operator="exists" right=""/>
+  </testcase>
+  <testcase id="fre.ml.3" type="bloquant">
+    <call-parameters>
+      <param key="text" value="goban"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>Test de suppression d'une désaccentuation</expl>
+    <test id="fre.ml.3.1" trace=".simpleword.xml" comment="l'entrée n'existe pas" left="XPATH#//data_structure/vertex/data//form[@infl='Goban']" operator="notexists" right=""/>
+  </testcase>
+  <testcase id="fre.ml.4" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Est"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>Test de suppression d'une désaccentuation</expl>
+    <test id="fre.ml.4.1" trace=".simpleword.xml" comment="l'entrée n'existe pas" left="XPATH#//data_structure/vertex/data//form[@infl='Est']" operator="notexists" right=""/>
+  </testcase>
+  <testcase id="fre.ml.5" type="bloquant">
+    <call-parameters>
+      <param key="text" value="élève"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>présence des infos de chaque dictionnaire</expl>
+    <test id="fre.ml.5.1" trace=".simpleword.xml" comment="lemme du dico principal" left="XPATH#//data_structure/vertex/data//form[@lemma='élever']" operator="exists" right=""/>
+    <test id="fre.ml.5.2" trace=".simpleword.xml" comment="lemme élève remplacé dans dico corporate" left="XPATH#//data_structure/vertex/data//form[@lemma='élève']/property/p[@prop='NUMBER']/@val" operator="=" right="L_PLUR"/>
+    <test id="fre.ml.5.3" trace=".simpleword.xml" comment="lemme Eleve présent dans dico user2" left="XPATH#//data_structure/vertex/data//form[@lemma='Eleve']" operator="exists" right=""/>
+  </testcase>
+  <testcase id="fre.ml.6" type="bloquant">
+    <call-parameters>
+      <param key="text" value="eleve"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>réaccentuation partielle : le dico corporate annule la réaccentuation eleve -> élève</expl>
+    <test id="fre.ml.6.1" trace=".simpleword.xml" comment="lemme du dico principal non présent par réaccentuation" left="XPATH#//data_structure/vertex/data//form[@infl='élève'][@lemma='élever']" operator="notexists" right=""/>
+    <test id="fre.ml.6.2" trace=".simpleword.xml" comment="lemme élève du dico corporate non présent par réaccentuation" left="XPATH#//data_structure/vertex/data//form[@infl='élève'][@lemma='élève']/@val" operator="notexists" right=""/>
+    <test id="fre.ml.6.3" trace=".simpleword.xml" comment="lemme Eleve présent dans dico user2 par réaccentuation" left="XPATH#//data_structure/vertex/data//form[@infl='élève'][@lemma='Eleve']" operator="exists" right=""/>
+  </testcase>
+  <testcase id="fre.ml.7" type="bloquant">
+    <call-parameters>
+      <param key="text" value="nouveau-phoenix"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>Lecture d'une entrée composée enrichie à plusieurs niveaux</expl>
+    <test id="fre.ml.7.1" trace=".simpleword.xml" comment="présence du composant 'nouveau'" left="XPATH#//data_structure/vertex/data//form[@lemma='nouveau']" operator="exists" right=""/>
+    <test id="fre.ml.7.2" trace=".simpleword.xml" comment="présence du composant 'phenix'" left="XPATH#//data_structure/vertex/data//form[@lemma='phenix']" operator="exists" right=""/>
+    <test id="fre.ml.7.3" trace=".simpleword.xml" comment="présence du composant 'phoenix'" left="XPATH#//data_structure/vertex/data//form[@lemma='phoenix']" operator="exists" right=""/>
+    <test id="fre.ml.7.4" trace=".simpleword.xml" comment="présence du composant 'fée'" left="XPATH#//data_structure/vertex/data//form[@lemma='fée']" operator="exists" right=""/>
+    <test id="fre.ml.7.5" trace=".simpleword.xml" comment="présence du composant 'nicky'" left="XPATH#//data_structure/vertex/data//form[@lemma='nicky']" operator="exists" right=""/>
+    <test id="fre.ml.7.6" trace=".simpleword.xml" comment="les lemmes 'phenix' et 'phoenix' sont sur le même vertex" left="XPATH#//data_structure/vertex[data//form/@lemma='phoenix']/@id" operator="=" right="XPATH#//data_structure/vertex[data//form/@lemma='phenix']/@id"/>
+  </testcase>
+  <testcase id="fre.ml.8" type="bloquant">
+    <call-parameters>
+      <param key="text" value="nouveauphoenix"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="fakeMultiLevel"/>
+      </list>
+    </call-parameters>
+    <expl>Réaccentuation partielle d'une entrée composée </expl>
+    <test id="fre.ml.8.1" trace=".simpleword.xml" comment="le lemme 'phoenix' ne doit pas être présent" left="XPATH#//data_structure/vertex/data//form[@lemma='phoenix']" operator="notexists" right=""/>
+    <test id="fre.ml.8.2" trace=".simpleword.xml" comment="présence du composant 'nouveau'" left="XPATH#//data_structure/vertex/data//form[@lemma='nouveau']" operator="exists" right=""/>
+    <test id="fre.ml.8.3" trace=".simpleword.xml" comment="présence du composant 'phenix'" left="XPATH#//data_structure/vertex/data//form[@lemma='phenix']" operator="exists" right=""/>
+  </testcase>
+</testcases>

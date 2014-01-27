@@ -1,0 +1,39 @@
+#
+# rules for french newspaper names
+#
+
+Libération:::ORGANIZATION:
+Monde:Le:Diplomatique:ORGANIZATION:
+Monde:Le:de l'Education:ORGANIZATION:
+Monde:Le::ORGANIZATION:
+Parisien:Le::ORGANIZATION:
+Tribune:La::ORGANIZATION:
+Echos:Les::ORGANIZATION:
+Figaro:Le::ORGANIZATION:
+Humanité:L'::ORGANIZATION:
+Courrier::International:ORGANIZATION:
+Canard::Enchaîné:ORGANIZATION:
+
+# too common
+#Elle:::ORGANIZATION:
+
+Européen:L'::ORGANIZATION:
+Express:L'::ORGANIZATION:
+Nouvel:Le:Observateur:ORGANIZATION:
+Point:Le::ORGANIZATION:
+Sciences::et Avenir:ORGANIZATION:
+Dauphiné:Le:libéré:ORGANIZATION:
+Progrès:Le:de Lyon:ORGANIZATION:
+Ouest-France:::ORGANIZATION:
+Télégramme:Le:de Brest:ORGANIZATION:
+Paris-Normandie:::ORGANIZATION:
+Nice-matin:::ORGANIZATION:
+Var-matin:::ORGANIZATION:
+Corse-Matin:::ORGANIZATION:
+Yonne:L':républicaine:ORGANIZATION:
+Voix:La:du Nord:ORGANIZATION:
+Provence:La::ORGANIZATION:
+Nouvelles:Dernières:d'Alsace:ORGANIZATION:
+Républicain:Le:Lorrain:ORGANIZATION:
+Equipe:L'::ORGANIZATION:
+Midi-Olympique:::ORGANIZATION:

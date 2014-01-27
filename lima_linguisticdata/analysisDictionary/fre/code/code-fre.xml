@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Linguistic_codes>
+  <property name="GENDER">
+    <value name="MASC"/>
+    <value name="FEM"/>
+    <value name="GEN_NEUTRE"/>
+  </property>
+  <property name="NUMBER">
+    <value name="SING"/>
+    <value name="PLUR"/>
+    <value name="NUM_NEUTRE"/>
+  </property>
+  <property name="PERSON">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="SYNTAX">
+    <value name="TRANS"/>
+    <value name="INTRANS"/>
+    <value name="PRONOMINAL"/>
+    <value name="IMPERS"/>
+  </property>
+  <property name="TIME">
+    <value name="PRES"/>
+    <value name="IMPFT"/>
+    <value name="PASS"/>
+    <value name="FUTUR"/>
+    <value name="COND_PRES"/>
+    <value name="PC"/>
+    <value name="PQPFT"/>
+    <value name="PASS_ANT"/>
+    <value name="FUTUR_ANT"/>
+    <value name="COND_PASS"/>
+  </property>
+  <property name="MACRO">
+    <value name="ADJ"/>
+    <value name="ADV"/>
+    <value name="CONJ"/>
+    <value name="DET"/>
+    <value name="DIVERS"/>
+    <value name="INTERJ"/>
+    <value name="NC"/>
+    <value name="NP"/>
+    <value name="PONCTU"/>
+    <value name="PREP"/>
+    <value name="PRON"/>
+    <value name="V"/>
+  </property>
+  <subproperty name="MICRO" parent="MACRO">
+    <subvalues value="ADJ">
+      <value name="ADJ"/>
+			<value name="ADJWH"/>
+			<value name="ADJNUM"/>
+		</subvalues>
+    <subvalues value="ADV">
+      <value name="ADV"/>
+      <value name="ADVWH"/>
+    </subvalues>
+    <subvalues value="CONJ">
+      <value name="CC"/>
+      <value name="CS"/>
+    </subvalues>
+    <subvalues value="DET">
+      <value name="DET"/>
+      <value name="DETDE"/>
+      <value name="DETDES"/>
+      <value name="DETDU"/>
+			<value name="DETWH"/>
+			<value name="DETNUM"/>
+		</subvalues>
+    <subvalues value="DIVERS">
+      <value name="U"/>
+      <value name="ET"/>
+      <value name="PREF"/>
+    </subvalues>
+    <subvalues value="INTERJ">
+      <value name="I"/>
+    </subvalues>
+    <subvalues value="NC">
+      <value name="NC"/>
+    </subvalues>
+    <subvalues value="NP">
+      <value name="NPP"/>
+    </subvalues>
+    <subvalues value="PONCTU">
+      <value name="PONCT"/>
+      <value name="PONCTU_FORTE"/>
+    </subvalues>
+    <subvalues value="PREP">
+      <value name="P"/>
+      <value name="P+D"/>
+    </subvalues>
+    <subvalues value="PRON">
+      <value name="PRO"/>
+      <value name="PROREL"/>
+      <value name="PROWH"/>
+      <value name="CL"/>
+      <value name="CLO"/>
+      <value name="CLR"/>
+      <value name="CLS"/>
+    </subvalues>
+    <subvalues value="V">
+      <value name="V"/>
+      <value name="VIMP"/>
+      <value name="VINF"/>
+      <value name="VPP"/>
+      <value name="VPR"/>
+      <value name="VS"/>
+    </subvalues>
+  </subproperty>
+</Linguistic_codes>

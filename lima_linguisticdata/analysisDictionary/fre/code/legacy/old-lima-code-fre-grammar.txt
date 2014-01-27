@@ -1,0 +1,133 @@
+A------;adjectif
+-f;qualificatif
+-i;indefini
+--b;attribut du sujet
+--d;epithete_detachee
+--h;epithete
+---a;prenominal
+---p;postnominal
+--z;attribut du cod
+-----nn;neutre
+-k;numeral cardinal
+--ba;attribut du sujet
+-o;numeral ordinal
+-s**p/s;possessif
+-t;intensifieur
+C;conjonction
+-c;de coordination
+-s;de subordination
+D;determinant
+-a;article
+-d;demonstratif
+-e;exclamatif
+-i;indefini
+-k;numeral cardinal
+-n;indefini sens neg
+-r;relatif
+-s;possessif
+-t;interrogatif
+--c;contracte
+------c
+--d;defini
+------d
+--i;indefini
+------i
+--p;partitif
+------p
+--1;personne
+---p;nombre
+----m;genre
+-----p;nombre
+E;divers
+-a;autre
+-e;etranger
+-p;prefixe
+F;ponctu
+-a;faible
+-d;dialogue
+-e;mise en evidence
+-f;forte
+-p;parenthese
+-r;paragraphe
+-t;tableau
+I;interjection
+N;nom
+-c;commun
+--a;annonceur
+--f/m;feminin/masculin
+---s/p;singulier/pluriel
+-----n;nom
+-----e;evenement
+-----
+--g;general
+--i;inconnu
+--o;numeral ordinal
+--u;unite de mesure
+-p;propre
+--p;prenom
+P;pronom
+-d;demonstratif
+-i;indefini
+-k;numeral cardinal
+-n;indefini val neg
+-p;personnel
+-r;relatif
+-s;possessif
+-t;interrogatif
+-x;reflexif
+--p;pospose
+--c;conjoint
+--d;disjoint
+---b;attribut du sujet
+---d;cod
+---i;coi
+---n;complement de nom
+---r;complement d'adjectif
+---s;sujet
+----a;preverbal
+----p;postverbal
+-----1;personne
+R-;adverbe
+-a;preverbal
+-c;comparatif
+-d;deuxieme element negation
+-e;apres preposition
+-g;general
+-i;interrogatif
+-m;modif adv ou adj
+-n;val neg
+-p;postverbal
+-r;premier element negation
+-s;post participe passe
+-t;entre auxiliaire et participe passe
+S;preposition
+-g;general
+-n;avec groupe verbal a l'infinitif
+-p;avec participe present
+-r;regime implicite
+-s;suivie de substantif
+V;verbe
+-a;auxiliaire
+-c;copule
+-m;modalite
+-p;principal
+--i;indicatif
+--m;imperatif
+--n;infinitif
+--p;participe
+--s;subjonctif
+---a;passe compose
+---c;conditionel present
+---e;attribut
+---f;futur
+---i;imparfait
+---o;conditionel passe
+---l;plus que parfait
+---n;passe anterieur
+---p;present
+---s;passe
+---u;futur anterieur
+----i;intransitif
+----m;impersonnel
+----t;transitif
+----p;pronominal

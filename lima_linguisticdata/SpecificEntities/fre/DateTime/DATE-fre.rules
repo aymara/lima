@@ -1,0 +1,210 @@
+set encoding=utf8
+using modex DateTime-modex.xml,Numex-modex.xml
+using groups DateTime,Numex
+set defaultAction=>CreateSpecificEntity()
+
+
+@day=(lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche)
+
+@month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
+
+@numday=(
+t_integer>1<31,
+premier,
+1er,
+deux,
+trois,
+quatre,
+cinq,
+six,
+sept,
+huit,
+neuf,
+dix,
+onze,
+douze,
+treize,
+quatorze,
+quinze,
+seize,
+dix-sept,
+dix-huit,
+dix-neuf,
+vingt,
+vingts,
+vingt-deux,
+vingt-trois,
+vingt-quatre,
+vingt-cinq,
+vingt-six,
+vingt-sept,
+vingt-huit,
+vingt-neuf,
+trente,
+trente\ et\ un
+)
+
+@nummonth=(t_integer>1<12)
+
+@numyear=(t_integer>1700<2050,t_integer>1<99)
+@numyear4=(t_integer>1700<2050)
+
+# lundi 22 mai 1968
+@day::@numday @month @numyear?:DATE:
+=>NormalizeDate()
+
+# jours simples
+@daytime=(matin,midi,après-midi,soir)
+
+@day::[t_integer] [(\:|H|h)] [t_integer]:DATE:
+=>NormalizeRelativeDate()
+
+@day:ce::DATE:
+=>NormalizeRelativeDate()
+
+@day::prochain:DATE:
+=>NormalizeRelativeDate("next_day")
+
+@day::(dernier|@daytime|@numday)?:DATE:
+=>NormalizeRelativeDate()
+
+#------------------------------
+@modifierDate=(début,mi,fin);
+
+#------------------------------
+# annonceur mois pour période
+
+@month:(de|d\') (@modifierDate)?:(@numyear)? à (@modifierDate)? @month (@numyear)?:DATE:
+=>NormalizeDate("isInterval")
+
+<NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
+=>NormalizeDate()
+
+@month:[du] [(@numday|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|<NUMBER>):(@numyear)?:DATE:
+=>NormalizeDate()
+
+#------------------------------
+
+# fin juin
+@month:@modifierDate::DATE:
+=>NormalizeRelativeDate()
+
+# 22 mai 1968
+# 22 mai
+# mai 1968
+# mai
+# 18 juin 40
+# 31 octobre prochain
+
+@month:@numday?:@numyear:DATE:
+=>NormalizeDate()
+
+@month:@numday?:(dernier|suivant)?:DATE:
+=>NormalizeRelativeDate()
+
+@month::prochain:DATE:
+=>NormalizeRelativeDate("next_month")
+
+# fin 2003
+
+@numyear4:@modifierDate::DATE:
+=>NormalizeRelativeDate()
+
+@annee=(année$NC,an$NC)
+
+@annee:(début|milieu|fin) (de|(de l\')|d\'):t_integer?:DATE:
+année::(dernière|passée|prochaine):DATE:
+an::(dernier|passé|prochain):DATE:
+mois::(dernier|passé|prochain):DATE:
+
+# remove this one : dans les annees 90: not easy to normalize, and
+# not specially useful to date seismic event
+#[@annee]::(t_integer|((<NUMBER>){1-3})):DATE:
+#=>NormalizeDate()
+
+#partial periods of years
+
+semestre:(premier|second):((de (l\'année)?)? @numyear4)?:DATE:
+trimestre:(premier|deuxième|troisième|quatrième):((de (l\'année)?)? @numyear4)?:DATE:
+rentrée:[la]:(de (l\'année)?)? @numyear4:DATE:
+
+@saison=(printemps$NC,été$NC,automne$NC,hiver$NC)
+@saison:((début|milieu|fin) (de|(de l\')|d\'|du)?)?:(de (l\'année)?)? @numyear:DATE:
+
+
+# centuries
+
+siècle$NC:(t_ordinal_roman|t_cardinal_roman)::DATE:
+=>NormalizeRelativeDate()
+
+
+siècle$NC:<NUMBER>::DATE:
+=>NormalizeRelativeDate()
+
+# 1984
+# en 1979
+# en Décembre
+
+@in=(en,depuis)
+
+@month:[(@in|au? mois de)?]::DATE:
+=>NormalizeRelativeDate()
+
+#------------------------------
+# informal dates (to normalize, indicate the difference from the reference)
+#aujourd\'::hui:DATE:
+#=>NormalizeRelativeDate("diff_0")
+
+#GC20130730: aujourd\'hui as dates are given category NC while they should remain adverbs.
+# Should find a solution: specific EN type,  ? 
+
+#aujourd\'hui:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_0d")
+
+## ce matin, ce soir etc.
+#@daytime:(ce|cet)::DATE:
+#=>NormalizeRelativeDate("date_document,diff_0d")
+
+#hier:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_-1d")
+
+#demain:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_1d")
+
+#après-demain:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_2d")
+
+#------------------------------
+# numeric forms (should be recognized by tokenizer in the future)
+
+# 22-05-68 
+# integer - integer - integer
+
+@numday::- t_integer - t_integer:DATE:
+=>NormalizeDate()
+
+@numyear4::- t_integer - t_integer:DATE:
+=>NormalizeDate()
+
+# 22/05/68 
+# fraction / integer or integer / integer / integer
+
+@numday::/ t_integer / t_integer:DATE:
+=>NormalizeDate()
+
+# Ne fonctionne pas remplace par @numyear4:T_Nf /::DATE:
+#T_Nf::/ t_integer:DATE:
+#=>NormalizeDate()
+
+
+# numbers between 1700 and 2050 are dates 
+# unless followed by a unit
+
+@numyear4::(de|d\')? $NC:NOT_DATE:
+
+@numyear4:t_fraction /::DATE:
+=>NormalizeDate()
+
+
+@numyear4:::DATE:
+=>NormalizeDate()

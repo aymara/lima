@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="Processors">
+<!-- ******************************************
+  Definition of pipelines
+*********************************************** -->
+    <group name="main" class="ProcessUnitPipeline">
+      <list key="processUnitSequence">
+        <!--item value="beginStatusLogger"/-->
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyperWordStemmer"/>
+        <item value="defaultProperties"/>
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="greedyPosTagger"/-->
+        <item value="viterbiPostagger-int"/>
+        <!--item value="viterbiPostagger"/-->
+        <!--item value="dummyPosTagger"/-->
+        <!--item value="dotGraphWriter"/-->
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <!--item value="debugSyntacticAnalysisLogger-chains"/-->
+        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <item value="syntacticAnalyzerDisamb"/>
+        <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
+        <!--item value="dotGraphWriterAfterSA"/-->
+      	<item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="query" class="ProcessUnitPipeline">
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyperWordStemmer"/>
+        <item value="defaultProperties"/>
+        <item value="viterbiPostagger-int"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+      	<item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="indexer" class="ProcessUnitPipeline">
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyperWordStemmer"/>
+        <item value="defaultProperties"/>
+        <item value="viterbiPostagger-freq"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="syntacticAnalyzerDisamb"/>
+      	<item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="normalization" class="ProcessUnitPipeline">
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyperWordStemmer"/>
+        <item value="defaultProperties"/>
+        <item value="viterbiPostagger-int"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+<!-- ******************************************
+  Definition of process units
+*********************************************** -->
+    <group name="tokenizer" class="Tokenizer">
+      <param key="automatonFile" value="LinguisticProcessings/ara/tokenizerAutomaton-ara.xml"/>
+      <param key="charChart" value="charchart"/>
+    </group>
+    <group name="simpleWord" class="SimpleWord">
+        <param key="dictionary" value="mainDictionary"/>
+    </group>
+    <group name="orthographicAlternatives" class="OrthographicAlternatives">
+        <param key="dictionary" value="mainDictionary"/>
+        <param key="confidentMode" value="true"/>
+        <param key="charChart" value="charchart"/>
+    </group>
+    <group name="hyperWordStemmer" class="HyperWordStemmer">
+        <param key="dictionary" value="mainDictionary"/>
+        <param key="procliticDictionary" value="procliticDictionary"/>
+        <param key="encliticDictionary" value="encliticDictionary"/>
+        <param key="charChart" value="charchart"/>
+        <list name="statusToStem">
+          <item value="t_arabic"/>
+          <item value="t_art_def"/>
+        </list>
+    </group>
+    <group name="defaultProperties" class="DefaultProperties">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="charChart" value="charchart"/>
+    </group>
+    <group name="viterbiPostagger-freq" class="MinCostPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-ara.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-ara.dat"/>
+      <param key="costFunction" value="ViterbiFrequencyCost" />
+      <param key="defaultCategory" value="L_PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="viterbiPostagger-int" class="MinCostPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-ara.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-ara.dat"/>
+      <param key="costFunction" value="ViterbiIntegerCost" />
+      <param key="defaultCategory" value="L_PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="mincostPostagger-freq" class="MinCostPosTagger">
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <param key="costFunction" value="FrequencyCost" />
+      <param key="defaultCategory" value="L_PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="mincostPostagger-int" class="MinCostPosTagger">
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <param key="costFunction" value="SimpleIntegerCost" />
+      <param key="defaultCategory" value="L_PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="dummyPosTagger" class="DummyPosTagger">
+    </group>
+    <group name="greedyPosTagger" class="GreedyPosTagger">
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <param key="ponctuforte" value="L_PONCTU_FORTE"/>
+    </group>
+    <group name="sentenceBoundsFinder" class="SentenceBoundsFinder">
+    </group>
+    <group name="specificEntitiesRecognizer" class="SpecificEntitiesRecognizer">
+      <param key="automaton" value="specificEntitiesRecognizer"/>
+    </group>
+    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+      <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
+    </group>
+    <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
+    </group>
+    <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+          <item value="setr2l"/>
+          <item value="r2lHomoSyntagmaticRelationRules"/>
+          <item value="setl2r"/>
+          <item value="l2rHomoSyntagmaticRelationRules"/>
+      </list>
+      <param key="disambiguated" value="true"/>
+    </group>
+<!-- ******************************************
+  Definition of loggers
+*********************************************** -->
+    <group name="beginStatusLogger" class="StatusLogger">
+      <param key="outputFile" value="beginStatus.log"/>
+      <list key="toLog">
+        <item value="VmSize"/>
+        <item value="VmData"/>
+      </list>
+    </group>
+    <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".toks.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerDefaultProperties" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".default.xml"/>
+    </group>
+    <group name="disambiguatedGraphXmlLogger" class="DisambiguatedGraphXmlLogger">
+      <param key="outputSuffix" value=".disambiguated.xml"/>
+      <param key="dictionaryCode" value="dictionaryCode"/>
+    </group>
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+    </group>
+    <group name="debugSyntacticAnalysisLogger-chains" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.chains.txt"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-disamb" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.disamb.txt"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-deps" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.deps.txt"/>
+    </group>
+    <group name="dotGraphWriterAfterSA" class="DotGraphWriter">
+      <param key="outputSuffix" value=".sa.dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list key="vertexDisplay">
+        <!--item value="lemme"/-->
+        <item value="position"/>
+        <item value="length"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+        <item value="numbers"/-->
+      </list>
+    </group>
+    <group name="dotGraphWriter" class="DotGraphWriter">
+      <param key="outputSuffix" value=".dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list key="vertexDisplay">
+        <!--item value="lemme"/-->
+        <item value="position"/>
+        <item value="length"/>
+        <item value="symbolicmacrocategory"/>
+        <item value="symbolicmicrocategory"/>
+        <!--item value="numericmicrocategory"/-->
+      </list>
+    </group>
+  </module>
+<!-- ******************************************
+  Definition of dumpers
+*********************************************** -->
+  <module name="AnalysisDumpers">
+    <group name="bowDumper" class="BowDumper">
+      <param key="stopList" value=""/>
+      <param key="useStopList" value="false"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="TIMEX" value="L_NC"/>
+        <entry key="NUMEX" value="L_NC"/>
+        <entry key="ORGANIZATION" value="L_NP"/>
+        <entry key="LOCATION" value="L_NP"/>
+        <entry key="PERSON" value="L_NP"/>
+        <entry key="PRODUCT" value="L_NP"/>
+        <entry key="EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+    </group>
+    <group name="compactFullDumper" class="CompactFullDumper">
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="TIMEX" value="L_NC"/>
+        <entry key="NUMEX" value="L_NC"/>
+        <entry key="ORGANIZATION" value="L_NP"/>
+        <entry key="LOCATION" value="L_NP"/>
+        <entry key="PERSON" value="L_NP"/>
+        <entry key="PRODUCT" value="L_NP"/>
+        <entry key="EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+    </group>
+    <group name="fullXmlDumper" class="FullXmlDumper">
+    </group>
+    <group name="textDumper" class="TextDumper">
+    </group>
+  </module>
+<!-- ******************************************
+  Definition of ressources
+*********************************************** -->
+  <module name="Resources">
+    <group name="charchart" class="CharChart">
+      <param key="charFile" value="LinguisticProcessings/ara/tokenizerAutomaton-ara.xml"/>
+    </group>
+    <group name="mainDictionary" class="ComposedDict">
+      <param key="dictionaryCode" value="dictionaryCode"/>
+      <param key="nbBytes" value="2"/>
+      <list key="dictionaryKeys">
+        <item value="LinguisticProcessings/ara/dicoKey-ara.dat"/>
+      </list>	
+      <list key="dictionaryValues">
+        <item value="LinguisticProcessings/ara/dicoDat-ara.dat"/>
+      </list>
+    </group>
+    <group name="procliticDictionary" class="ComposedDict">
+      <param key="dictionaryCode" value="dictionaryCode"/>
+      <param key="nbBytes" value="2"/>
+      <list key="dictionaryKeys">
+        <item value="LinguisticProcessings/ara/DicoProcliticsArabicKey.dat"/>
+      </list>	
+      <list key="dictionaryValues">
+        <item value="LinguisticProcessings/ara/DicoProcliticsArabicDat.dat"/>
+      </list>
+    </group>
+    <group name="encliticDictionary" class="ComposedDict">
+      <param key="dictionaryCode" value="dictionaryCode"/>
+      <param key="nbBytes" value="2"/>
+      <list key="dictionaryKeys">
+        <item value="LinguisticProcessings/ara/DicoEncliticsArabicKey.dat"/>
+      </list>	
+      <list key="dictionaryValues">
+        <item value="LinguisticProcessings/ara/DicoEncliticsArabicDat.dat"/>
+      </list>
+    </group>
+    <group name="dictionaryCode" class="DictionaryCode">
+      <param key="codeFile" value="LinguisticProcessings/ara/code-ara.dat"/>
+      <param key="codeListFile" value="LinguisticProcessings/ara/codesList-ara.dat"/>
+      <param key="categoriesNamesFile" value="LinguisticProcessings/ara/categoriesNames-ara.dat"/>
+    </group>
+    <group name="trigramMatrix" class="TrigramMatrix">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-ara.dat"/>
+    </group>
+    <group name="bigramMatrix" class="BigramMatrix">
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-ara.dat"/>
+    </group>
+    <group name="specificEntitiesRecognizer" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/specificEntitiesRules-ara.bin"/>
+    </group>
+    <group name="chainMatrix" class="SyntagmDefinitionStructure">
+      <param key="file" value="SyntacticAnalysis/chainsMatrix-ara.bin"/>
+    </group>
+    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/l2rHomoSyntagamaticRelationsRules-ara.bin"/>
+    </group>
+    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/r2lHomoSyntagamaticRelationsRules-ara.bin"/>
+    </group>
+    <group name="automatonCompiler" class="AutomatonRecognizer">
+      <param key="rules" value=""/>
+    </group>
+  </module>
+</modulesConfig>

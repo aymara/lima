@@ -1,0 +1,705 @@
+############
+# Dictionary
+
+# Code compilation
+macro (CODES _lang)
+  set(CODES_FILES)
+  foreach(CODE_FILE ${ARGN})
+    set(CODES_FILES ${CODES_FILES} ${CODE_FILE})
+  endforeach(CODE_FILE ${ARGN})
+
+
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
+    COMMAND convertSymbolicCodes  --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
+    COMMAND parseXMLPropertyFile --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
+    DEPENDS code-${_lang}.xml ${ARGN}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "COMMAND convertSymbolicCodes  --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
+    VERBATIM
+  )
+
+  add_custom_target(
+    code${_lang}
+    ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt code-${_lang}.xml ${ARGN}
+  )
+
+#   add_custom_target(
+#     pre_install_code${_lang}
+#     ALL
+#     "${CMAKE_COMMAND}"
+#     -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+#   )
+
+  install(FILES code-${_lang}.xml COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
+
+endmacro (CODES _lang)
+
+# Flexion
+macro (FLEXION _lang)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/formes-${_lang}.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/flex.pl def.txt  mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt exclude.txt
+    DEPENDS def.txt  mots-simples.txt exclude.txt
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    VERBATIM
+  )
+
+  add_custom_target(
+    flex${_lang}
+    ALL
+    DEPENDS formes-${_lang}.txt
+  )
+  add_dependencies(flex${_lang} code${_lang})
+
+endmacro (FLEXION _lang)
+
+# Convert
+macro(CONVERT _lang)
+
+  add_custom_command(
+    OUTPUT dicotabs.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt
+    COMMENT "COMMAND ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs formes-${_lang}.txt dicotabs.txt"
+    VERBATIM
+  )
+  add_custom_target(
+    dicotabs${_lang}
+    ALL
+    DEPENDS dicotabs.txt
+  )
+  add_dependencies(dicotabs${_lang} flex${_lang})
+
+  add_custom_command(
+    OUTPUT dicostd.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
+    DEPENDS dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt
+    COMMENT "${PROJECT_SOURCE_DIR}/scripts/convertstd dicotabs.txt dicostd.txt"
+    VERBATIM
+  )
+  add_custom_target(
+    dicostd${_lang}
+    ALL
+    DEPENDS dicostd.txt
+  )
+  add_dependencies(dicostd${_lang} dicotabs${_lang})
+
+  set (ADDED_LIST_FILES_RESULT)
+  foreach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
+    add_custom_command(
+      OUTPUT ${ADDED_LIST_FILE}.add
+      COMMAND ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
+      DEPENDS dicostd.txt ${ADDED_LIST_FILE}
+      COMMENT "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
+    )
+    set (ADDED_LIST_FILES_RESULT ${ADDED_LIST_FILES_RESULT} ${ADDED_LIST_FILE}.add)
+  endforeach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
+  add_custom_target(
+    dicoadd${_lang}
+    ALL
+    DEPENDS ${ADDED_LIST_FILES_RESULT}
+  )
+  add_dependencies(dicoadd${_lang} dicostd${_lang})
+
+  set(ENV{LC_ALL} "C")
+
+if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT dicocompletstd.txt
+    COMMAND LC_ALL="C" sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
+    DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
+    COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
+    VERBATIM
+  )
+else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT dicocompletstd.txt
+    COMMAND sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
+    DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
+    COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
+    VERBATIM
+  )
+endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_target(
+    dicocomplet${_lang}
+    ALL
+    DEPENDS dicocompletstd.txt
+  )
+  add_dependencies(dicocomplet${_lang} dicoadd${_lang})
+
+if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT dico.xml
+    COMMAND echo "<dictionary>" > dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+    COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+    COMMAND echo "</dictionary>" >> dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+    COMMAND mv dico.xml.tmp dico.xml
+    DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
+    COMMENT "produce XML dico"
+    VERBATIM
+  )
+else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT dico.xml
+    COMMAND c:\\cygwin\\bin\\echo "<dictionary>" > dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+    COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+    COMMAND c:\\cygwin\\bin\\echo "</dictionary>" >> dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+    COMMAND mv dico.xml.tmp dico.xml
+    DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
+    COMMENT "produce XML dico"
+    VERBATIM
+  )
+endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+
+  add_custom_target(
+    dicoxml${_lang}
+    ALL
+    DEPENDS dico.xml
+  )
+  add_dependencies(dicoxml${_lang} dicocomplet${_lang})
+
+  add_custom_target(
+    convert${_lang}
+    ALL
+  )
+  add_dependencies(convert${_lang} dicoxml${_lang} ${ARGN} )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-${_lang}.dat COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
+
+
+endmacro(CONVERT _lang)
+
+# Compile XML dictionary
+macro(COMPILEXMLDIC _lang _dico _subdir)
+#   string(REPLACE "/" "" _dicostr ${_dico})
+  get_filename_component(_dicostr ${_dico} NAME_WE)
+#  set (CHARCHART "${CMAKE_INSTALL_PREFIX}/share/apps/lima/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok")
+  set (CHARCHART "${PROJECT_SOURCE_DIR}/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok")
+  get_filename_component(DICOFILENAME ${_dico} NAME_WE)
+
+if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
+    COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND LC_ALL="C" sort -T . -u keys > keys.sorted
+    COMMAND testDict16 --charSize=2 --listOfWords=keys.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output
+#    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output
+    COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART}
+    COMMENT "compile-dictionary"
+    VERBATIM
+  )
+else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
+    COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND sort -T . -u keys > keys.sorted
+    COMMAND dos2unix keys.sorted
+    COMMAND testDict16 --charSize=2 --listOfWords=keys.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output
+#    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output
+    COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART}
+    COMMENT "compile-dictionary"
+    VERBATIM
+  )
+endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+
+  add_custom_target(
+    compilexmldic${_lang}${_dicostr}
+    ALL
+    DEPENDS ${DICOFILENAME}Dat-${_lang}.dat
+  )
+  add_dependencies(compilexmldic${_lang}${_dicostr} convert${_lang})
+
+  install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/${DICOFILENAME}Key-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/${DICOFILENAME}Dat-${_lang}.dat
+    COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang}/${_subdir})
+
+endmacro(COMPILEXMLDIC _lang)
+
+###############
+# Generate disambiguation matrices
+
+macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tableconvert)
+
+if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT trigramMatrix-${_lang}.dat
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND cat ${_succession_categs} | sort | uniq -c | awk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
+    COMMAND ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
+    COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+
+    DEPENDS ${_codesymbol} ${_succession_categs}
+    COMMENT "compile ${_lang} trigram matrix"
+    VERBATIM
+  )
+else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  add_custom_command(
+    OUTPUT trigramMatrix-${_lang}.dat
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
+    COMMAND dos2unix unigramMatrix-${_lang}.dat
+    COMMAND ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
+    COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+
+    DEPENDS ${_codesymbol} ${_succession_categs}
+    COMMENT "compile ${_lang} trigram matrix"
+    VERBATIM
+  )
+endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+
+  add_custom_target(
+    trigrammatrix-${_lang}
+    ALL
+    DEPENDS trigramMatrix-${_lang}.dat
+  )
+
+  install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/unigramMatrix-${_lang}.dat
+        ${CMAKE_CURRENT_BINARY_DIR}/priorUnigramMatrix-${_lang}.dat
+        ${CMAKE_CURRENT_BINARY_DIR}/bigramMatrix-${_lang}.dat
+        ${CMAKE_CURRENT_BINARY_DIR}/trigramMatrix-${_lang}.dat
+      COMPONENT ${_lang} DESTINATION share/apps/lima/resources/Disambiguation)
+
+endmacro(DISAMBMATRICES _lang)
+
+###############
+# Compile rules
+
+macro (COMPILE_RULES _lang)
+  set (COMPILE_RULES_DEBUG_MODE)
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set (COMPILE_RULES_DEBUG_MODE "--debug")
+  endif (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+  foreach(_current ${ARGN})
+    add_custom_command(
+      OUTPUT ${_current}.bin
+      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
+      DEPENDS ${_current}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endforeach(_current ${ARGN})
+endmacro (COMPILE_RULES)
+
+###############
+# Idiomatic entities rules
+
+# Idiomatic entities Exec Environment
+
+macro (IDIOMATICENTITIES _lang)
+  add_custom_command(
+    OUTPUT idiomaticExpressions-${_lang}.bin
+    COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --language=${_lang} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules
+    #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    VERBATIM
+  )
+
+  add_custom_target(
+    rules-idiom-${_lang}
+    ALL
+    DEPENDS idiomaticExpressions-${_lang}.bin )
+  add_dependencies(rules-idiom-${_lang} rules-${_lang}-execEnv)
+  # add the link between the current target and its execution environment dependencies
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.bin COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
+endmacro (IDIOMATICENTITIES _lang)
+
+####################
+# Specific Entities Exec Environment
+
+macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
+
+  # Permet de créer un lien build/execEnv/config/<group>-modex.xml
+  # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/<group>-modex.xml
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
+    COMMENT "create config env for specific entities rules (SpecificEntities-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/AuthorPosition-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/AuthorPosition-modex.xml
+    COMMENT "create config env for specific entities rules (AuthorPosition-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/DateTime-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/DateTime-modex.xml
+    COMMENT "create config env for specific entities rules (DateTime-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Event-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Event-modex.xml
+    COMMENT "create config env for specific entities rules (Event-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Location-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Location-modex.xml
+    COMMENT "create config env for specific entities rules (Location-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Numex-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Numex-modex.xml
+    COMMENT "create config env for specific entities rules (Numex-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Organization-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Organization-modex.xml
+    COMMENT "create config env for specific entities rules (Organization-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Person-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Person-modex.xml
+    COMMENT "create config env for specific entities rules (Person-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Product-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Product-modex.xml
+    COMMENT "create config env for specific entities rules (Product-modex.xml)"
+    VERBATIM
+  )
+
+  # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
+  # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
+  add_custom_target(
+    rules-configEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+  )
+endmacro (SPECIFICENTITIES_GENERIC_CONFIGENV)
+
+macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
+  # TODO: some tools like compile-rule need access to a set of very 
+  # complete configuration files (lima-lp-<lang>.xml, <group>-modex.xml...)
+  # Many macro could be simplified if the dependencies of these tools 
+  # could be reduced to really usefull ones.
+  # 
+  # Permet de créer un lien build/execEnv/config/_group-modex.xml
+  # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/_group-modex.xml
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/${_group}-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/${_group}-modex.xml
+    COMMENT "create config env for specific entities rules (${_group}-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
+    COMMENT "create config env for specific entities rules (SpecificEntities-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+    COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+    COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
+    COMMENT "create config env for specific entities rules (lima-analysis.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
+    COMMENT "create config env for specific entities rules (lima-common.xml)"
+    VERBATIM
+  )
+
+  # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
+  # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
+  add_custom_target(
+    rules-${_lang}-${_group}-configEnv-${_subtarget}
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+  )
+endmacro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
+
+macro (SPECIFICENTITIESEXECENV _lang)
+
+  # Permet de créer un lien build/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+  # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+     ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+    COMMENT "create exec env for ${_lang} specific entities rules (tz-db-${_lang}.dat)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
+     ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
+    COMMENT "create exec env for ${_lang} specific entities rules (monthsdays-${_lang}.dat)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
+    COMMAND ${CMAKE_COMMAND} -E copy 
+      ${CMAKE_SOURCE_DIR}/analysisDictionary/${_lang}/code/code-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/analysisDictionary/${_lang}/code/code-${_lang}.xml
+    COMMENT "create exec env for ${_lang} specific entities rules (code)"
+    VERBATIM
+  )
+
+  # defini l'ensemble des dépendances (ce qui doit exister dans l'environnement d'execution)
+  # de la cible rules-DateTime-${_lang}main
+  add_custom_target(
+    rules-${_lang}-execEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+  )
+endmacro (SPECIFICENTITIESEXECENV _lang)
+
+
+####################
+# Specific Entities
+macro (SPECIFICENTITIES _subtarget _lang _group)
+  set (BINFILENAMES)
+  foreach(_current ${ARGN})
+    get_filename_component(BINFILENAME ${_current} NAME_WE)
+    set(BINFILENAME ${CMAKE_CURRENT_BINARY_DIR}/${BINFILENAME}.bin)
+    set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
+    add_custom_command(
+      OUTPUT ${BINFILENAME}
+      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config --debug --language=${_lang} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
+      DEPENDS ${_current} ${DEPENDENCIES}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      VERBATIM
+    )
+  endforeach(_current ${ARGN})
+
+  add_custom_target(
+    rules-${_group}-${_lang}-${_subtarget}
+    ALL
+    DEPENDS ${BINFILENAMES}
+  )
+
+  install(FILES ${BINFILENAMES} COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SpecificEntities)
+
+  # add the link between the current target and its execution environment dependencies
+  add_dependencies(rules-${_group}-${_lang}-${_subtarget} rules-${_lang}-${_group}-configEnv-${_subtarget} rules-${_lang}-execEnv)
+
+endmacro (SPECIFICENTITIES _lang _group)
+
+
+####################
+# Syntactic analysis
+macro (COMPILE_SA_RULES_CONFIGENV _subtarget _lang _group)
+
+  # Permet de créer un lien build/execEnv/config/_group-modex.xml
+  # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/_group-modex.xml
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy 
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+    COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+    COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
+    COMMENT "create config env for specific entities rules (lima-analysis.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
+    COMMENT "create config env for specific entities rules (lima-common.xml)"
+    VERBATIM
+  )
+
+  # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
+  # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
+  add_custom_target(
+    rules-${_lang}-${_group}-configEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+  )
+endmacro (COMPILE_SA_RULES_CONFIGENV _subtarget _lang _group)
+
+macro (COMPILE_SA_RULES_WRAPPER _lang)
+  set(${_lang}_BIN_RULES_FILES)
+  foreach(RULES_FILE ${ARGN})
+    set (${_lang}_BIN_RULES_FILES ${RULES_FILE}.bin ${${_lang}_BIN_RULES_FILES})
+  endforeach(RULES_FILE ${ARGN})
+
+  COMPILE_RULES(${_lang} ${ARGN})
+
+  add_custom_target(
+    syntanalrules-${_lang}
+    ALL
+    DEPENDS categoriesClassesDeclaration-${_lang}.txt ${${_lang}_BIN_RULES_FILES}
+  )
+
+  foreach (file ${${_lang}_BIN_RULES_FILES})
+    install(FILES
+        chainsMatrix-${_lang}.bin
+        categoriesClassesDeclaration-${_lang}.txt
+        compoundTenses-${_lang}.bin
+        ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SyntacticAnalysis)
+  endforeach (file ${${_lang}_BIN_RULES_FILES})
+endmacro (COMPILE_SA_RULES_WRAPPER  _lang)
+
+############
+#

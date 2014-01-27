@@ -1,0 +1,911 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.sa.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le petit chat est noir."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADJPRENSUB</expl>
+ <test id="fre.sa.1.1" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt, AdjPrenSub : la chaine nominale 'petit chat' doit exister."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='petit']/dependents/dep[@t='ADJPRENSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le petit absolument petit chat est noir."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADJPRENSUB</expl>
+<test id="fre.sa.2.1" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt, AdjPrenSub : la chaine nominale 'petit absolument petit chat' doit exister."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='petit']/dependents/dep[@t='ADJPRENSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.3" type="bloquant">
+  <call-parameters>
+      <param key="text" value=" L'acteur Jean  fut le compagnon du poète et metteur en scène Jean Cocteau qui le dirigea dans plusieurs films. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>SUBSUBJUX</expl>
+<test id="fre.sa.3.1" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt, La relation SUBSUBJUX doit exister entre 'Jean' et 'acteur' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Jean']/dependents/dep[@t='SUBSUBJUX']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value=" L'acteur Jean Nompropre fut le compagnon du poète et metteur en scène Jean Cocteau qui le dirigea dans plusieurs films. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>SUBSUBJUX</expl>
+<test id="fre.sa.4.1" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt, La relation SUBSUBJUX ne doit pas exister entre 'Nompropre' et 'Jean'. C'est une entite nommee formant un seul noeud."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Nompropre']/dependents/dep[@t='SUBSUBJUX']"
+    operator="notexists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.5" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La maison est jolie. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>DETSUB</expl>
+<test id="fre.sa.5.1" trace=".sa.xml"
+    comment=" rules-l2r-fre-homodeps.txt. La relation DETSUB doit exister entre 'La' et 'maison' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='La']/dependents/dep[@t='DETSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.6" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La très jolie petite maison. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>DETSUB</expl>
+<test id="fre.sa.6.1" trace=".sa.xml"
+    comment=" rules-l2r-fre-homodeps.txt. La relation DETSUB doit exister entre 'La' et 'maison' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='La']/dependents/dep[@t='DETSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+
+<testcase id="fre.sa.7" type="bloquant">
+  <comment> - contenu test modifié : l'ambiguite NC/Adj de petite fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
+  <call-parameters>
+      <param key="text" value="La très jolie sombre maison. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>DETSUB</expl>
+  <test id="fre.sa.7.1" trace=".sa.xml"
+    comment=" rules-l2r-fre-homodeps.txt. La relation DETSUB doit exister entre 'La' et 'maison'. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='La']/dependents/dep[@t='DETSUB']"
+    operator="exists"
+    right="" />
+  <test id="fre.sa.7.2" trace=".sa.xml"
+    comment=" rules-l2r-fre-homodeps.txt. La relation ADJPRENSUB doit exister entre les adjectifs et 'maison'. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='jolie']/dependents/dep[@t='ADJPRENSUB']"
+    operator="exists"
+    right="" />
+  <test id="fre.sa.7.3" trace=".sa.xml"
+    comment=" rules-l2r-fre-homodeps.txt. La relation DETSUB doit exister entre adjectifs et 'maison'. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='jolie']/dependents/dep[@t='ADJPRENSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+
+<testcase id="fre.sa.8" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cette maison est la plus belle du quartier. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>COMPADJ</expl>
+<test id="fre.sa.8.1" trace=".sa.xml"
+    comment=" rules-l2r-fre-homodeps.txt. La relation COMPADJ doit exister entre 'la' et 'quartier' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='quartier']/dependents/dep[@t='COMPADJ']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.9" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cette maison est la plus belle de la rue. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>COMPADJ</expl>
+<test id="fre.sa.9.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation COMPADJ doit exister entre 'la' et 'rue' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='rue']/dependents/dep[@t='COMPADJ']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.10" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'analyse linguistique automatique, ce n'est pas vraiment de la rigolade. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>COMPADJ</expl>
+<test id="fre.sa.10.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation COMPADV doit exister entre 'vraiment ' et 'rigolade' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='rigolade']/dependents/dep[@t='COMPADV']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.11" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cette maison est la plus belle de la rue. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADVADJ</expl>
+<test id="fre.sa.11.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation ADVADJ doit exister entre 'plus ' et 'belle' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='plus']/dependents/dep[@t='ADVADJ']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.12" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cette maison est vraiment très belle. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADVADJ</expl>
+<test id="fre.sa.12.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation ADVADJ doit exister entre 'très ' et 'belle' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très']/dependents/dep[@t='ADVADJ']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.13" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cette maison est vraiment très belle. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADVADV</expl>
+<test id="fre.sa.13.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation ADVADV doit exister entre 'vraiment ' et 'très' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='vraiment']/dependents/dep[@t='ADVADV']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.14.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En quelle année Jean Nompropre est-il décédé ? "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>DetIntSub</expl>
+<test id="fre.sa.14.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation DetIntSub doit exister entre 'quelle' et 'année' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='quelle']/dependents/dep[@t='DetIntSub']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.14.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="A quelle date Jean Nompropre est-il décédé ? "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>DetIntSub</expl>
+<test id="fre.sa.14.2" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation DetIntSub doit exister entre 'quelle' et 'année' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='quelle']/dependents/dep[@t='DetIntSub']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.15.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="En quelle année Jean Nompropre est-il décédé ? "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PrepDetInt</expl>
+<test id="fre.sa.15.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation PrepDetInt doit exister entre 'en' et 'quelle' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='En']/dependents/dep[@t='PrepDetInt']"
+    operator="exists"
+    right="" />
+</testcase>
+<!-- 15.b n'est plus valide car 'A quelle' est desormais reconnu comme Expr Idiom -->
+<!--testcase id="fre.sa.15.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="A quelle date Jean Nompropre est-il décédé ? "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PrepDetInt</expl>
+<test id="fre.sa.15.2" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation PrepDetInt doit exister entre 'à' et 'quelle' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='A']/dependents/dep[@t='PrepDetInt']"
+    operator="exists"
+    right="" />
+</testcase-->
+<testcase id="fre.sa.16" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cet été il a visité Lisbonne."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>TEMPCOMP</expl>
+<test id="fre.sa.16.1" trace=".sa.xml"
+      comment=" rules-l2r-fre-homodeps.txt. Le token a_visité doit être présent avec passé composé (L_PC) comme attribut TIME"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='a_visité']/data/simple_word/form/property/p[@prop='TIME'][@val='L_PC']"
+    operator="exists"
+    right="" />
+<!--/data/dictionary/property/p  -->
+</testcase>
+<testcase id="fre.sa.17" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cet été il a longuement visité Lisbonne."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>TEMPCOMP</expl>
+<test id="fre.sa.17.1" trace=".sa.xml"
+      comment=" rules-l2r-fre-homodeps.txt. Le token a_visité doit être présent avec passé composé (L_PC) comme attribut TIME"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='a_visité']/data/simple_word/form/property/p[@prop='TIME'][@val='L_PC']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.18" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Accepte-t-il cette décision ?"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>SujInv</expl>
+<test id="fre.sa.18.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation SujInv doit exister entre 'il' et 'accepte' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='-t-il']/dependents/dep[@t='SujInv']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.19" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il les voit."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>CodPrev</expl>
+<test id="fre.sa.19.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation CodPrev doit exister entre 'les' et 'voit' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='les']/dependents/dep[@t='CodPrev']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.20" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il les a vus."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>CodPrev</expl>
+<test id="fre.sa.20.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation CodPrev doit exister entre 'les' et 'a_voir' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='les']/dependents/dep[@t='CodPrev']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.21" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Un ordre : ne pas appeler."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>NePas</expl>
+<test id="fre.sa.21.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation NePas doit exister entre 'ne' et 'pas' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='ne']/dependents/dep[@t='NePas']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.22" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il m'a proposé de passer manger à la Tour d'Argent."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PrepInf</expl>
+<test id="fre.sa.22.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation PrepInf doit exister entre 'de' et 'passer' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='de']/dependents/dep[@t='PrepInf']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.23" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il m'a proposé de s'arrêter manger à la Tour d'Argent."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PrepInf</expl>
+<test id="fre.sa.23.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation PrepInf doit exister entre 'de' et 's'arrêter' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='de']/dependents/dep[@t='PrepInf']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.24" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Je propose de nous arrêter manger à la Tour d'Argent."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PronSujVerbe</expl>
+<test id="fre.sa.24.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation PronSujVerbe doit exister entre 'je' et 'propose' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Je']/dependents/dep[@t='PronSujVerbe']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.25" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il propose de s'arrêter manger à la Tour d'Argent."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PronSujVerbe</expl>
+<test id="fre.sa.25.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt. La relation PronSujVerbe doit exister entre 'il' et 'propose' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Il']/dependents/dep[@t='PronSujVerbe']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.26" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'analyse linguistique automatique, ce n'est pas vraiment de la rigolade."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>SUBADJPOST</expl>
+<test id="fre.sa.26.1" trace=".sa.xml"
+     comment=" rules-r2l-fre-homodeps.txt. La relation SUBADJPOST doit exister entre 'analyse' et 'automatique' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='automatique']/dependents/dep[@t='SUBADJPOST']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.27" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'analyse linguistique automatique, ce n'est pas vraiment de la rigolade."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>SUBADJPOST</expl>
+<test id="fre.sa.27.1" trace=".sa.xml"
+     comment=" rules-r2l-fre-homodeps.txt. La relation SUBADJPOST doit exister entre 'analyse' et 'linguistique' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='linguistique']/dependents/dep[@t='SUBADJPOST']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.28" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les champs à travers lesquels les chasseurs poursuivent la proie, sont d'une étendue incroyable."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>A TRAVERS : a supprimer !</expl>
+<test id="fre.sa.28.1" trace=".sa.xml"
+     comment=" rules-r2l-fre-homodeps.txt. La relation PREPSUB doit exister entre 'à travers' et 'lesquels' "
+  left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='à']/dependents/dep[@t='PREPSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.29" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Nous possédons une photographie de Jean Nompropre à la maison."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PREPSUB</expl>
+  <!--test id="fre.sa.29.1" trace=".sa.xml"
+        comment=" rules-r2l-fre-homodeps.txt. La relation PREPSUB ne doit pas exister entre 'Nompropre' et 'maison' "
+        left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='à']/dependents/dep[@t='PREPSUB']"
+        operator="exists"
+        right="" /-->
+  <test id="fre.sa.29.1" trace=".sa.xml"
+        comment=" rules-r2l-fre-homodeps.txt. 'maison' doit être complément du nom ambigu de 'Jean Nompropre' et de 'photographie' "
+        left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='maison']/dependents/dep[@t='COMPDUNOM']"
+        operator="exists"
+        right="" />
+  <test id="fre.sa.29.2" trace=".sa.xml"
+        comment="  rules-r2l-fre-homodeps.txt. 'maison' doit être complément du nom ambigu de 'Jean Nompropre' et de 'photographie' "
+        left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='maison']/dependents/dep[@t='COMPDUNOM']/@v"
+        operator="intersect"
+        right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Jean Nompropre']/@id" />
+  <test id="fre.sa.29.3" trace=".sa.xml"
+        comment="  rules-r2l-fre-homodeps.txt. 'maison' doit être complément du nom ambigu de 'Jean Nompropre' et de 'photographie' "
+        left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='maison']/dependents/dep[@t='COMPDUNOM']/@v"
+        operator="intersect"
+        right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='photographie']/@id" />
+</testcase>
+<testcase id="fre.sa.30" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le chat de la voisine est gourmand."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>PREPSUB</expl>
+<test id="fre.sa.30.1" trace=".sa.xml"
+     comment=" rules-r2l-fre-homodeps.txt. La relation PREPSUB doit exister entre 'chat' et 'voisine' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='de']/dependents/dep[@t='PREPSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.31" type="bloquant">
+  <call-parameters>
+      <param key="text" value="C'est un chat très très enjoué. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> un chat très très enjoué : MEME CHAINE NOMINALE. </expl>
+<test id="fre.sa.31.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='un']/chains/chain[@type='N']/@id"
+    operator="="
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chat']/chains/chain[@type='N']/@id"  />
+<test id="fre.sa.31.2" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chat']/chains/chain[@type='N']/@id"
+    operator="="
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=15]/chains/chain[@type='N']/@id"  />
+<test id="fre.sa.31.3" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=15]/chains/chain[@type='N']/@id"
+    operator="="
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=20]/chains/chain[@type='N']/@id"  />
+<test id="fre.sa.31.4" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=20]/chains/chain[@type='N']/@id"
+    operator="="
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='enjoué']/chains/chain[@type='N']/@id"  />
+</testcase>
+<testcase id="fre.sa.32" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le chat est très très enjoué. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> est très très enjoué : MEME CHAINE VERBALE... (chaine adjectivale...)</expl>
+<test id="fre.sa.32.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  est très très enjoué : MEME CHAINE VERBALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='est']/chains/chain[@type='V']/@id"
+    operator="contains"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=13]/chains/chain[@type='V']/@id"  />
+<test id="fre.sa.32.2" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  est très très enjoué : MEME CHAINE VERBALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=13]/chains/chain[@type='V']/@id"
+    operator="contains"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=18]/chains/chain[@type='V']/@id"  />
+<test id="fre.sa.32.3" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  est très très enjoué : MEME CHAINE VERBALE. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=18]/chains/chain[@type='V']/@id"
+    operator="contains"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='enjoué']/chains/chain[@type='V']/@id"  />
+</testcase>
+<testcase id="fre.sa.33" type="bloquant">
+  <call-parameters>
+      <param key="text" value=" L'acteur Jean Nompropre fut le compagnon du poète et metteur en scène Jean Cocteau qui le dirigea dans plusieurs films. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>SUBSUBJUX</expl>
+<test id="fre.sa.33.1" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  L, acteur, 'Jean Nompropre', même syntagme "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form=&quot;L&apos;&quot;]/chains/chain[@type='N']/@id"
+    operator="="
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='acteur']/chains/chain[@type='N']/@id"  />
+<test id="fre.sa.33.2" trace=".sa.xml"
+     comment=" rules-l2r-fre-homodeps.txt.  L, acteur, 'Jean Nompropre', même syntagme "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='acteur']/chains/chain[@type='N']/@id"
+    operator="="
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Jean Nompropre'][@pos=11]/chains/chain[@type='N']/@id"  />
+</testcase>
+<testcase id="fre.sa.34" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La très jolie petite maison est à vendre."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADJPRENSUB</expl>
+<test id="fre.sa.34.1" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt. est, à, vendre, même syntagme."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='est']/chains/chain[@type='V']/@id"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='à'][@pos=33]/chains/chain[@type='V']/@id"  />
+<test id="fre.sa.34.2" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt.  est, à, vendre, même syntagme."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='à']/chains/chain[@type='V']/@id"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='vendre'][@pos=35]/chains/chain[@type='V']/@id"  />
+</testcase>
+<testcase id="fre.sa.35.a" type="bloquant">
+  <comment> - contenu test modifié : l'ambiguite NC/Adj de petite fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
+  <call-parameters>
+      <param key="text" value="La très jolie sombre maison est à vendre."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADJPRENSUB</expl>
+<test id="fre.sa.35.1" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt, AdjPrenSub : la chaine nominale 'sombre maison' doit exister."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='sombre']/dependents/dep[@t='ADJPRENSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.35.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La très jolie petite maison est à vendre."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>ADJPRENSUB</expl>
+<test id="fre.sa.35.2" trace=".sa.xml"
+    comment=" rules-r2l-pass1-fre-homodeps.txt, AdjPrenSub : la chaine nominale 'jolie maison' doit exister."
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='jolie']/dependents/dep[@t='ADJPRENSUB']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.36" type="bloquant">
+  <comment>La notion de chaine nominale/verbale n'est plus utilisée</comment>
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>deux substantifs contigus = configuration interdite dans la matrice de
+        desambiguisation morphosyntaxique.</expl>
+  <test id="fre.sa.36.1" trace=".sa.xml"
+    comment="La chaine nominale 'Les oiseaux... passereaux' doit exister"
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Les']/chains/chain[@type='N']/@id"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='passereaux']/chains/chain[@type='N']/@id" />
+  <test id="fre.sa.36.2" trace=".sa.xml"
+    comment="La chaine nominale 'Les oiseaux... passereaux' doit exister"
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Les']/chains/chain[@type='N']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.37" type="bloquant">
+  <comment>La notion de chaine nominale/verbale n'est plus utilisée</comment>
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>La chaine verbale inclut l'adjectif qui le suit.</expl>
+  <test id="fre.sa.37.1" trace=".sa.xml"
+    comment="La chaine verbale 'sont tres petits' doit exister"
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='sont']/chains/chain[@type='V']/@id"
+    operator="contains"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='petits']/chains/chain[@type='V']/@id" />
+  <test id="fre.sa.37.2" trace=".sa.xml"
+    comment="La chaine verbale 'sont tres petits' doit exister"
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='sont']/chains/chain[@type='V']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="fre.sa.38" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>article et substantis forment une relation DETSUB.</expl>
+  <test id="fre.sa.38.1" trace=".sa.xml"
+    comment="La relation DETSUB doit exister entre 'Les' et 'oiseaux' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Les']/dependents/dep[@t='DETSUB']"
+    operator="exists"
+    right="" />
+  <test id="fre.sa.38.2" trace=".sa.xml"
+    comment="La relation DETSUB doit exister entre 'Les' et 'oiseaux' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Les']/dependents/dep[@t='DETSUB']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='oiseaux']/@id" />
+</testcase>
+<testcase id="fre.sa.39" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Deux noms sucessifs sont relies par une relation de type SUBSUBJUX.</expl>
+  <test id="fre.sa.39.1" trace=".sa.xml"
+    comment="La relation SUBSUBJUX doit exister entre 'passereaux' et 'type' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='passereaux']/dependents/dep[@t='SUBSUBJUX']"
+    operator="exists"
+    right="" />
+  <test id="fre.sa.39.2" trace=".sa.xml"
+    comment="La relation SUBSUBJUX doit exister entre 'passereaux' et 'type' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='passereaux']/dependents/dep[@t='SUBSUBJUX']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='type']/@id" />
+</testcase>
+<testcase id="fre.sa.40" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Une relation de complementation doit exister entre oiseaux et type.</expl>
+  <test id="fre.sa.40.1" trace=".sa.xml"
+    comment="La relation type -COMPDUNOM-> 'oiseaux' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='type']/dependents/dep[@t='COMPDUNOM']"
+    operator="exists"
+    right="" />
+  <test id="fre.sa.40.2" trace=".sa.xml"
+    comment="La relation 'type' -COMPDUNOM-> 'oiseaux' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='type']/dependents/dep[@t='COMPDUNOM']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='oiseaux']/@id" />
+</testcase>
+<testcase id="fre.sa.41" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>'tres' modifie 'petits'.</expl>
+  <test id="fre.sa.41.1" trace=".sa.xml"
+    comment="La relation 'très' -ADVADJ-> 'petits' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très']/dependents/dep[@t='ADVADJ']"
+    operator="exists"
+    right="" />
+  <test id="fre.sa.41.2" trace=".sa.xml"
+    comment="La relation 'très' -ADVADJ-> 'petits' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très']/dependents/dep[@t='ADVADJ']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='petits']/@id" />
+</testcase>
+<testcase id="fre.sa.42" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La création du parti démocratique"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Ambiguité de rattachement de l'adjectif post nominal.</expl>
+  <test id="fre.sa.42.1" trace=".sa.xml"
+    comment="La relation 'démocratique' -SUBADJPOST-> 'parti' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='démocratique']/dependents/dep[@t='SUBADJPOST']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='création']/@id" />
+  <test id="fre.sa.42.2" trace=".sa.xml"
+    comment="La relation 'démocratique' -SUBADJPOST-> 'création' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='démocratique']/dependents/dep[@t='SUBADJPOST']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='parti']/@id" />
+</testcase>
+<testcase id="fre.sa.43" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les chefs d'état moustachus"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Pas d'ambiguité de rattachement de l'adjectif post nominal, car il est accordé avec chefs.</expl>
+  <test id="fre.sa.43.1" trace=".sa.xml"
+    comment="La relation 'moustachus' -SUBADJPOST-> 'état' ne doit pas exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='moustachus']/dependents/dep[@t='SUBADJPOST']/@v"
+    operator="distinct"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='état']/@id" />
+  <test id="fre.sa.43.2" trace=".sa.xml"
+    comment="La relation 'moustachus' -SUBADJPOST-> 'chef' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='moustachus']/dependents/dep[@t='SUBADJPOST']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chefs']/@id" />
+</testcase>
+<testcase id="fre.sa.44" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le chef d'état français."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Ambiguité de rattachement de l'adjectif post nominal.</expl>
+  <test id="fre.sa.44.1" trace=".sa.xml"
+    comment="La relation 'français' -SUBADJPOST-> 'chef' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='français']/dependents/dep[@t='SUBADJPOST']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chef']/@id" />
+  <test id="fre.sa.44.2" trace=".sa.xml"
+    comment="La relation 'français' -SUBADJPOST-> 'état' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='français']/dependents/dep[@t='SUBADJPOST']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='état']/@id" />
+</testcase>
+<testcase id="fre.sa.45" type="bloquant">
+  <call-parameters>
+      <param key="text" value="le chien de race de mon frère"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Ici, frère se rattache à chien, mais le système ne peut pas décider..</expl>
+  <test id="fre.sa.45.1" trace=".sa.xml"
+    comment="La relation 'frère' -COMPDUNOM-> 'race' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='frère']/dependents/dep[@t='COMPDUNOM']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='race']/@id" />
+  <test id="fre.sa.45.2" trace=".sa.xml"
+    comment="La relation 'frère' -COMPDUNOM-> 'chien' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='frère']/dependents/dep[@t='COMPDUNOM']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chien']/@id" />
+</testcase>
+<testcase id="fre.sa.46" type="bloquant">
+  <call-parameters>
+      <param key="text" value="La conclusion d'un accord de paix"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Ici, paix se rattache à accord, mais le système ne peut pas décider.</expl>
+  <test id="fre.sa.46.1" trace=".sa.xml"
+    comment="La relation 'paix' -COMPDUNOM-> 'conclusion' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='paix']/dependents/dep[@t='COMPDUNOM']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='conclusion']/@id" />
+  <test id="fre.sa.46.2" trace=".sa.xml"
+    comment="La relation 'paix' -COMPDUNOM-> 'accord' doit exister "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='paix']/dependents/dep[@t='COMPDUNOM']/@v"
+    operator="intersect"
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='accord']/@id" />
+</testcase>
+</testcases>

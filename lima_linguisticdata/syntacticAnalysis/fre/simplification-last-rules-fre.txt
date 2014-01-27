@@ -1,0 +1,32 @@
+###########################################################
+#
+# rules for the recognition of french subsentences
+# this file uses the syntax for the declarations of automatons by Romaric
+# Besancon (Cf. his 2003/03/11 document)
+#
+# Created on Tue Mar 15 2005
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)
+#
+# $Id$
+#
+###########################################################
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-fre.txt
+
+
+#----------------------------------------------------------------------
+# Supprime les virgules restant après toutes les autres suppressions
+# Désactivé après tests Easy benchmarking
+#----------------------------------------------------------------------
+# ,:::SYNTACTIC_RELATION:
+# +SubsentenceBounds(trigger.1,"VirguleSeule")
+# =>Simplify()
+# =<ClearStoredSubsentences()
+

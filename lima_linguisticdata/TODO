@@ -1,0 +1,34 @@
+- construction integree des dictionnaires de reformulation ;
+- [PARTLY DONE] faciliter les differences de traitement entre les langues sans avoir a modifier un grand nombre de scripts ;
+- [PARTLY DONE] gestion des erreurs : arret de la construction ou log ;
+- [DONE] with rightly written cmake files. supprimer du repository CVS les fichiers generes lors de la compilation dans analysisDictionary/$lang/convert ;
+- [DONE] matrices de desambiguisation : convertir automatiquement les codes grace en code symboliques ; utiliser pour ce faire le script transcode.pl dans scripts ;
+
+- Ensure that named entities below are found:
+
+1. PLC, S & P
+
+2. U.S. States names abbreviations
+	N.C., Fla., Mass., Tenn., Conn., Del., Cal., Va.
+
+3. '...QUOT s...SYM
+'...QUOT m...SYM
+
+4. Nov. 14
+
+5. Surnames
+	Frank, Wilbur, Ross
+	Jr.
+
+6. Constitution, President, Secretary of State, Treasury
+
+7. Organizations
+	Japan Federation of...
+	National ... Group
+	Bank of Tokyo Ltd. ( ou Inc., Corp., Co., PLC,...)
+	College of Medecine
+	State University of...
+	National Association of...
+	Mara Institute of ... and ...
+	Cray Computer
+

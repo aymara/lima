@@ -1,0 +1,1019 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<article>
+  <title>Le traitement linguistique (de LIMA) expliqué aux débutants</title>
+  <section>
+    <title>Introduction</title>
+    <para>LIMA signifie LIc2m Multilingual Analyzer. C&apos;est donc --- faut-il
+    l&apos;expliciter ? --- l&apos;analyseur linguistique multilingue du CEA-LIST LIC2M.
+    Attention, LIMA n&apos;est pas le moteur de recherche du laboratoire. Celui-ci,
+    pour des raisons historiques porte actuellement le superbe nom de S2. Ce
+    devrait un jour être modifié. Les modules logiciels qui composent LIMA
+    sont appelés s2common et s2lp car il s&apos;agissait initialement des modules
+    commun et d&apos;analyse linguistique (linguistic processing, d&apos;où lp dans
+    s2lp) du moteur de recherche. Ces deux modules sont maintenant largement
+    indépendants du moteur (qui continue à les utiliser) mais ont conservé
+    leurs dénominations malgré tout.</para>
+    <para>Ce document présente les différentes étapes du traitement
+    linguistique. Pour chaque étape on essaira de mettre en évidence les
+    mécanismes de traitement ainsi que les ressources utilisées. Nous
+    commencerons par examiner les traitements utilisés pour l&apos;analyse du
+    Français, ce qui permettra d&apos;appréhender le système dans son ensemble.
+    Ensuite, nous étudierons les traitements spécifiques à d&apos;autres langues,
+    et enfin nous dresserons un inventaire des ressources
+    linguistiques.</para>
+    <para>Nous décrirons au fur et à mesure les structures de données
+    manipulées.</para>
+  </section>
+  <section>
+    <title>Traitement linguistique du Français</title>
+    <para>L&apos;analyse d&apos;une langue est composée de 3 grandes étapes :</para>
+    <orderedlist>
+      <listitem>
+        <para>Tokenization : découpage du texte en tokens, utilise uniquement
+        les caractères.</para>
+      </listitem>
+      <listitem>
+        <para>Analyse Morphologique : assignation des catégories grammaticales
+        possibles, quelques redécoupages locaux (par exemple lors du
+        traitement des expressions idiomatiques), utilise uniquement les
+        informations morphologiques</para>
+      </listitem>
+      <listitem>
+        <para role="">Part of Speech (PoS) Tagging et Analyse syntaxique :
+        extrait la catégorie grammaticale pertinente pour chaque token et
+        utilise ces catégories pour construire les dépendances syntaxiques. Ce
+        niveau d&apos;analyse utilise le contexte des mots.</para>
+      </listitem>
+    </orderedlist>
+    <para>Chacune de ces grandes étapes est elle-même découpée en étapes
+    élémentaires. De plus, des étapes de production de traces de l&apos;analyse ou
+    de résultats intermédiaires peuvent être insérées entre ces étapes
+    d&apos;analyse. Toutes ces étapes sont des unités de traitement ou ProcessUnit.
+    Ensembles, ces ProcessUnit représentent une séquence nommée pipeline. Une
+    structure de données nommée AnalysisContent est transmise de ProcessUnit
+    en ProcessUnit. Elle contient un ensemble de données d&apos;analyse
+    (AnalysisData) nommées.<figure>
+        <title>Vue simplifiée des classes utilisées par l&apos;analyse</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/PipelineClasses.jpeg" contentdepth="100%" scalefit="1" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </figure></para>
+    <para>Chaque ProcessUnit est initialisé à l&apos;aide d&apos;un élément
+    &lt;group&gt; issu d&apos;un fichier de configuration XML.</para>
+    <para>Les sections ci-dessous présentent une vue simplifiée des différents
+    ProcessUnit.</para>
+    <section>
+      <title>Tokenization</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Table de caractères et automate de découpage (fichier
+            tokenizerAutomaton-fre.xml)</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Il s&apos;agit de découper le texte initial en tokens et de les
+            relier entre eux selon leur enchaînement dans le texte. Cette
+            étape crée un graphe contenant un noeud pour chaque token trouvé
+            et un arc entre chaque paire de tokens adjacents. Ce graphe est
+            appelé <emphasis>graphe d&apos;analyse</emphasis>
+            (<code>AnalysisGraph</code>) pour le différencier d&apos;autres graphes
+            utilisés dans la suite de l&apos;analyse. Les noeuds de l&apos;AnalysisGraph
+            sont numérotés à partir de 0. En plus des noeuds correspondant aux
+            tokens, l&apos;AnalysisGraph comprend deux noeuds &quot;vides&quot; (sans aucune
+            information attachée), les noeuds 0 et 1.</para>
+            <para>En français le tokenizer découpe selon les espaces et les
+            points, en traitant de manière intelligente les points qui
+            signalent une abbréviation. (ex.&nbsp;: dans <emphasis>C. Fluhr</emphasis>, le point après C n&apos;est pas un point de fin de
+            phrase). Le tokenizer assigne à chaque token un <emphasis>statut de tokenization</emphasis> en fonction des caractères qu&apos;il
+            contient.</para>
+            <blockquote>
+              <para>ex: Il a vu 27 fois Titanic à l&apos;U.G.C. de CLERMONT.</para>
+            </blockquote>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <table>
+        <title>Les tokens de la phrase exemple et leur statut de tokenisation</title>
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">token</entry>
+              <entry align="center">statut</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>Il</entry>
+              <entry>t_capital_1st</entry>
+            </row>
+            <row>
+              <entry>a</entry>
+              <entry>t_small</entry>
+            </row>
+            <row>
+              <entry>vu</entry>
+              <entry>t_small</entry>
+            </row>
+            <row>
+              <entry>27</entry>
+              <entry>t_integer</entry>
+            </row>
+            <row>
+              <entry>fois</entry>
+              <entry>t_small</entry>
+            </row>
+            <row>
+              <entry>Titanic</entry>
+              <entry>t_capital_1st</entry>
+            </row>
+            <row>
+              <entry>à</entry>
+              <entry>t_small</entry>
+            </row>
+            <row>
+              <entry>l&apos;</entry>
+              <entry>t_small</entry>
+            </row>
+            <row>
+              <entry>U.G.C.</entry>
+              <entry>t_acronym</entry>
+            </row>
+            <row>
+              <entry>de</entry>
+              <entry>t_small</entry>
+            </row>
+            <row>
+              <entry>CLERMONT</entry>
+              <entry>t_capital</entry>
+            </row>
+            <row>
+              <entry>.</entry>
+              <entry>t_sentence_brk</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+      <figure>
+        <title>Un extrait du graphe AnalysisGraph après tokenisation</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/test1.tok.png" scalefit="1" width="100%" format="PNG" contentdepth="100%"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>SimpleWord : consultation du dictionnaire de langue</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Dictionnaire de langue, table de caractères.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description</term>
+          <listitem>
+            <para>Il s&apos;agit, pour chaque token, d&apos;interroger le dictionnaire
+            de langue afin d&apos;y récupérer la liste des catégories grammaticales
+            possibles à affecter au token. Dans le cas où le token n&apos;existe
+            pas, on interroge le dictionnaire avec sa forme désaccentuée. Le
+            dictionnaire possède un lien vers les entrées réaccentuées, ce qui
+            permet de retrouver le mot d&apos;origine.</para>
+            <blockquote>
+              <para>ex : &quot;fois&quot; donne les informations<footnote>
+                  <para>Tous les exemples d&apos;accès au dictionnaire de langue
+                  sont réalisés à l&apos;aide du programme
+                  <code>composedDict</code>, par exemple avec la commande
+                  &quot;<code>composedDict --language=fre --dicoId=mainDictionary --key=fois</code>&quot;</para>
+                </footnote> :</para>
+              <programlisting>DictionaryEntry : form=&quot;fois&quot;  final=&quot;false&quot;
+- has linguistic infos :
+foundLingInfos : l=&quot;fois&quot; n=&quot;fois&quot;
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_GEN, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_GEN, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ATT_COD, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ATT_COD, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_U_MESURE, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_U_MESURE, NUMBER=L_PLUR,
+endLingInfos
+- has no concatenated infos
+- has no accented forms</programlisting>
+              <para>&quot;légéreté&quot; n&apos;existe pas dans le dictionnaire. En revanche,
+              sa désaccentuation &quot;legerete&quot; va donner les informations
+              suivantes :</para>
+              <programlisting>DictionaryEntry : form=&quot;legerete&quot;  final=&quot;false&quot;
+- has no linguistic infos
+- has no concatenated infos
+- has accented forms :
+foundAccentedForm : form=&quot;légèreté&quot;
+foundLingInfos : l=&quot;légèreté&quot; n=&quot;légèreté&quot;
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_GEN, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ATT_COD, NUMBER=L_SING,
+endLingInfos
+endAccentedForm
+</programlisting>
+            </blockquote>
+            <para>Le dictionnaire peut également contenir des entrées
+            concaténées, comme &quot;It&apos;s =&gt; It + is&quot; en anglais. Dans ce cas,
+            le token est remplacé par 2 tokens, un pour chaque composant de
+            l&apos;entrée concaténée.</para>
+            <para>La figure <xref linkend="figgraphsw"/> montre un extrait du
+            graphe après accès au dictionnaire. Pour chaque noeud, on voit son
+            numéro, sa forme de surface (tel qu&apos;il apparaît dans le texte),
+            son lemme (forme du dictionnaire), la liste de ses catégories
+            possibles (ici les microcatégories, c&apos;est à dire des catégories
+            plus fines nom ou verbe et qui donnent des informations sur la
+            position du token dans le texte, comme pré ou post-verbal, par
+            exemple) et les valeurs numériques des propréités linguistiques du
+            token. Ces valeurs numériques sont une représentation codée sur un
+            entier (donc compacte et rapide à manipuler) de l&apos;ensemble des
+            informations morphologiques du token (macro et micro-catégorie,
+            temps, genre, nombre, etc.). Une API spéciale permet de manipuler
+            ces codes, accéder aux valeurs internes, etc.</para>
+            <para>Tous les tokens qui n&apos;ont pas été trouvés dans le
+            dictionnaire, ni sous leur forme de surface ni dans leur forme
+            désaccentuée restent inchangés, c&apos;est à dire sans informations
+            linguistiques.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <figure id="figgraphsw">
+        <title>Un extrait du graphe AnalysisGraph après accès au dictionnaire</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/test1.sw.png" contentdepth="100%" scalefit="1" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>HyphenWord : découpage des mots à tirets</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Dictionnaire de langue, table des caractères</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Il s&apos;agit, pour tous les mots à tirets (i.e. comportant un
+            &apos;-&apos;) sans informations linguistiques, de les découper et chercher
+            chaque partie dans le dictionnaire. Attention, il est possible
+            qu&apos;un mot à tiret existe dans le dictionnaire, par exemple
+            &quot;plate-forme&quot;. Dans ce cas il est traité à l&apos;étape précédente. Ici
+            ne sont traité que les mots qui n&apos;ont pas déjà d&apos;informations
+            linguistiques.</para>
+            <blockquote>
+              <para>ex: &quot;israelo-palestinien&quot; n&apos;existe pas dans le
+              dictionnaire. Donc il sera découpé en &quot;israelo&quot; et &quot;palestinien&quot;
+              qui existent dans le dictionnaire.</para>
+            </blockquote>
+            <para>Le traitement vérifie également si le premier mot n&apos;est
+            pas un préfixe connu. Les préfixes sont suivis d&apos;un &apos;-&apos; dans le
+            dictionnaires. Par exemple, il existe une entrée &quot;franco-&quot; dans le
+            dictionnaire qui attribut des catégories différentes de &quot;franco&quot;
+            (sans &apos;-&apos; le mot pourrait être une réaccentuation vers un nom
+            propre alors que dans un mot à tiret c&apos;est impossible, il est donc
+            important d&apos;en tenir compte).</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <figure>
+        <title>Exemple de graphe après traitement des mots à tirets</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/test2.hyphen.png" contentdepth="100%" width="100%" scalefit="1"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>Reconnaissance d&apos;expression idiomatiques</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Règles d&apos;expressions idiomatiques</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Cette tâche consiste à détecter plusieurs tokens qui
+            constituent une expression idiomatique et à les rassembler dans un
+            seul token.</para>
+            <blockquote>
+              <para>ex: Il a démarré sur les chapeaux de roues.</para>
+              <para>&quot;sur les chapeaux de roues&quot; est une expression
+              idiomatiques, les 5 tokens seront donc remplacé par 1 seul qui
+              recevra la catégorie adverbe.</para>
+            </blockquote>
+            <para/>
+            <para>L&apos;exemple de la figure ci-dessus montre que les noeuds
+            d&apos;origine sont conservés. Nous verrons plus loin que le lien entre
+            le nouveau noeud et ceux-ci est stocké dans un autre graphe,
+            appelé graphe d&apos;annotation.</para>
+            <para>Une expression idiomatique peut être reconnues sur des
+            formes de surface contigues, comme l&apos;exemple précédent, mais
+            également sur des lemmes, et pour des expressions non contigues.
+            C&apos;est le cas de beaucoup d&apos;expressions et aussi des verbes
+            pronominaux.</para>
+            <blockquote>
+              <para>ex: Il s&apos;est trompé.</para>
+              <para>ici le verbe pronominal &quot;se tromper&quot; est une expression
+              idiomatique</para>
+            </blockquote>
+            <para>Une expression idiomatique peut être absolue ou non. Une
+            expression absolue, quand elle sera reconnue, sera remplacée par
+            un token, alors que si elle n&apos;est pas absolue, on ajoutera une
+            alternative dans le graphe sans supprimer les noeuds de départ.
+            Certaines expressions idiomatiques ne sont pas absolues</para>
+            <blockquote>
+              <para>ex : Nous nous trompons, nous trompons nos maris, il n&apos;y a
+              pas de raison.</para>
+              <para>&quot;nous trompons&quot; est une expression idiomatique qui
+              reconnait un verbe pronominal. Cette expression n&apos;est pas
+              absolue. Dans le début de l&apos;exemple il s&apos;agit bien du verbe
+              pronominal, dans le deuxième cas non.</para>
+            </blockquote>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <figure>
+        <title>Exemple de graphe après traitement des expressions idiomatiques</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/test3.ie.png" contentdepth="100%" width="100%" scalefit="1"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>Traitement des mots inconnus</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Liste des catégories par défaut (default-fre.txt)</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Ce traitement consiste à assigner à chaque token restant
+            sans aucune information linguistique des catégories par défaut en
+            fonction de son statut de tokenization. C&apos;est à ce niveau que sont
+            traités les nombres en chiffres arabes et romain, mais également
+            les acronymes et tous les mots qui ne sont pas dans le
+            dictionnaire. Ainsi les mots commençant par une majuscule seront
+            étiquetés nom propre, ainsi que les acronymes. Les nombres
+            pourront recevoir les catégories déterminant numéral cardinal,
+            pronom numéral cardinal, etc.</para>
+            <para>L&apos;association entre les statuts de tokenisation et les
+            catégories est effectuée au niveau des sources du dictionnaire
+            d&apos;analyse.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+    <section>
+      <title>Reconnaissance d&apos;entités nommées</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Règles d&apos;entitées nommées.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>La reconnaissance des entitées nommées consiste à identifier
+            les dates, lieu, heures, expressions numériques, produits,
+            évènements, organisations, présentes sur un ou plusieurs tokens,
+            et à les remplacer par un seul token. Contrairement au traitement
+            des expressions idiomatiques, le traitement des entitées nommées
+            conserve les anciens tokens. Cette reconnaissance se base sur un
+            ensemble de listes et de règles. On utilise des listes de lieu, de
+            prénoms, l&apos;organisation, etc. Les règles permettent d&apos;utiliser
+            cetains déclencheurs (comme &quot;Monsieur ...&quot;, ou &quot;la société ...&quot;.
+            La syntaxe complète de ces règles est décrite dans le document
+            <ulink url="specif_regles.html">Spécifications du format des règles pour la construction d&apos;automates de reconnaissance d&apos;expressions</ulink>. Il faut noter que le même moteur de règles
+            est utilisé aussi bien pour la reconnaissance des expressions
+            idiomatiques, l&apos;analyse syntaxique en dépendances ou encore le
+            peuplement d&apos;ontologies.</para>
+            <para>Dans le cas de l&apos;analyse du Français, le traitement des
+            entitées nommées se trouve avant la désambiguisation, ce qui n&apos;est
+            pas le cas dans toutes les autres langues.</para>
+            <blockquote>
+              <para>ex : Samedi 1er Avril, le président J. Chirac a reçu la
+              visite du chef d&apos;état du Togo</para>
+              <para>Les entités nommées présentes dans cette phrase sont
+              :</para>
+              <itemizedlist>
+                <listitem>
+                  <para>Samedi 1er Avril : DATE</para>
+                </listitem>
+                <listitem>
+                  <para>J. Chirac : PERSON</para>
+                </listitem>
+                <listitem>
+                  <para>Togo : LIEU</para>
+                </listitem>
+              </itemizedlist>
+            </blockquote>
+            <para>Il faut aussi noter que on peut étendre la notion au-delà
+            des pures entitées &quot;nommées&quot;. On peut repérer de la meme manière
+            les entités spécifiques à un domaine&nbsp;; on parle alors
+            d&apos;Entités Spécifiques. Par exemple, dans le domaine aéronautique,
+            on aura des types d&apos;entités comme &quot;compagnie aérienne&quot;,
+            &quot;constructeur aéronautique&quot;, &quot;modèle d&apos;avion&quot;, etc. Cette
+            acception n&apos;est pas généralement répandue dans le domaine. En cas
+            de communication avec l&apos;extérieur, il faut donc
+            l&apos;expliciter.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <para>La description des entités nommées est l&apos;occasion d&apos;introduire une
+      structure de données utilisée en divers endroits de l&apos;analyse, le graphe
+      d&apos;annotation ou AnnotationGraph. Il s&apos;agit d&apos;un graphe dont les noeuds
+      et les arcs portent des annotations nommées, chaque annotation contenant
+      un objet quelconque grâce à l&apos;utilisation de la bibliothèque
+      <code>boost</code><footnote>
+          <para>boost est une collection de bibliothèques C++ développées dans
+          l&apos;optique d&apos;être intégrées à une future version de la bibliothèque
+          standards du C++. Les outils qu&apos;elle contient comportent entre
+          autres une bibliothèque de reconnaissance d&apos;expressions régulières,
+          une bibliothèque de gestion des dates et heures ou encore une
+          bibliothèque de gestion de graphes. C&apos;est d&apos;ailleurs cette Boost
+          Graph Library (BGL) qui est utilisée dans LIMA pour stocker tous les
+          graphes manipulés.</para>
+        </footnote> <code>boost::any</code>.</para>
+      <para><figure id="figannotgraph">
+          <title>Un exemple de graphe d&apos;annotation</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="resources/test1.ag.png" contentdepth="100%" width="100%" scalefit="1"/>
+            </imageobject>
+          </mediaobject>
+        </figure>L&apos;AnnotationGraph est un outil générique. Dans le cadre de
+      LIMA, nous avons décidé d&apos;insérer un noeud pour chaque noeud des graphes
+      AnalysisGraph et PosGraph. Chacun de ces noeuds portent une annotation
+      indiquant le graphe et le noeud auquel il correspond. Dans la figure
+      <xref linkend="figannotgraph"/>, on voit que le noeud 24 correspond au
+      noeud 7 du PosGraph.</para>
+      <para><figure>
+          <title>Extraits de graphes en rapport avec la reconnaissance d&apos;entités nommées</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="resources/test5.ne.png" contentdepth="100%" width="100%" scalefit="1"/>
+            </imageobject>
+          </mediaobject>
+        </figure>La figure montre en haut un extrait de l&apos;AnalysisGraph avant
+      reconnaissance des entités nommées, en bas à droite le même graphe après
+      et à gauche l&apos;extrait de graphe d&apos;annotation correspondant. On peut y
+      voir que les noeuds 2, 3 et 4 de l&apos;AnalysisGraph ont été remplacés par
+      le noeud 9. Cette information se retrouve dans l&apos;annotation nommée
+      SpecificEntity du graphe d&apos;annotation, dans son attribut vertices. De
+      même, les noeuds du graphe d&apos;annotation correspondant aux noeuds 2, 3 et
+      4 du graphe d&apos;analyse (ici 2, 3 et 4 aussi) sont reliés par un arc
+      annoté &quot;belongstose&quot; au noeud correspondant à celui de l&apos;entité
+      nommée.</para>
+    </section>
+    <section>
+      <title>Désambiguisation (PoS Tagging)</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Matrices de désambiguisations : trigrammes et
+            bigrammes</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Cette tâche consiste à sélectionner la (ou les) catégorie(s)
+            valide(s) parmis toutes les catégories grammaticales issues de
+            l&apos;analyse morphologique. Pour celà on utilise une matrice de
+            trigrammes et de bigrammes, pondérés par leur fréquence. Ces
+            matrices sont issues d&apos;un texte annoté. Le programme permet de ne
+            garder que les catégories possibles, voire uniquement la catégorie
+            la plus probable.</para>
+            <blockquote>
+              <para>ex: &quot;La belle porte le voile.&quot;</para>
+              <programlisting>1 | La | le#DET
+4 | belle | belle#NC
+10 | porte | porter#V
+16 | le | le#DET
+19 | voile | voile#NC
+24 | . | .#PONCTU_FORTE
+</programlisting>
+              <para>Cet exemple est intéressant car il est très ambigu.
+              &apos;belle&apos; peut être ADJ ou NC, &apos;porte&apos; peut être NC ou V, &apos;voile&apos;
+              peut être NC ou V. L&apos;ambiguité ne peut pas être levée
+              entièrement par la syntaxe, car il existe 2 interprétations
+              possibles toutes deux valides grammaticalement : une belle femme
+              portant le voile, ou une belle porte, en bois massif avec des
+              sculptures qui voilerait quelquechose. Cette interprétation est
+              plus difficile mais la structure de phrase est tout à fait
+              correcte.</para>
+              <para>Ici on a configuré le POS Tagger de façon à ce qu&apos;il ne
+              garde que la possibilité la plus fréquente.</para>
+              <para>Regardons maintenant : &quot;La belle porte le retient.&quot; Ici
+              retient ne peut plus être NC mais seulement verbe.</para>
+              <programlisting>1 | La | le#DET
+4 | belle | bel#ADJ
+10 | porte | porte#NC
+16 | le | le#PRON
+19 | retient | retenir#V
+26 | . | .#PONCTU_FORTE</programlisting>
+              <para>L&apos;exemple montre que la tâche de désambiguisation est
+              globale. &apos;retient&apos; ne peut plus être que Verbe, &apos;porte&apos; devient
+              donc NC et &apos;belle&apos; ADJ.</para>
+            </blockquote>
+            <para>En cas d&apos;erreur de désambiguïsation, un des premiers
+            réflexes à avoir est de s&apos;assurer que les bigrammes et trigrammes
+            prévus sont bien présents dans la matrice de désambiguisation. Si
+            ce n&apos;est pas le cas, il faut enrichir le corpus d&apos;apprentissage
+            avec de nouvelles phrases contenant ces n-grammes. Cf. plus loin
+            la section <xref lang="" linkend="secdisambmatrices"/>.</para>
+            <para>Du point de vue des structures de données manipulées, cette
+            étape génère un nouveau graphe, du même format que l&apos;AnalysisGraph
+            mais dont chaque noeud a une et une seule microcatégorie. Notons
+            que les noeuds peuvent malgré tout avoir plusieurs codes car cette
+            étape ne désambiguise que la microcatégorie et non les autres
+            attributs comme le genre, le temps ou le nombre. Le nouveau graphe
+            s&apos;appelle le PosGraph.</para>
+            <para>C&apos;est à ce niveau que les nombres qui apparaissent sur les
+            arcs des graphes prennent leur sens&nbsp;: il s&apos;agit des
+            trigrammes et bigrammes de micro-catégories (dans leur forme
+            codée) qui ne sont pas présents dans les matrices. Ainsi, cette
+            information peut permettre de comprendre pourquoi une
+            interprétation est choisie plutôt qu&apos;une autre et de compléter
+            éventuellement le corpus d&apos;apprentissage avec un morceau de texte
+            permettant de compléter les matrices.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <figure>
+        <title>Exemple de graphe après désambiguisation (PosGraph)</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/test4.pos.png" contentdepth="100%" width="100%" scalefit="1"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>Reconnaissance des chaînes nominales et verbales</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Matrice de chaînes nominales et verbales.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Il s&apos;agit d&apos;identifier les groupes nominaux et groupes
+            verbaux. En fait, les groupes dont il s&apos;agit ici vont au delà de
+            l&apos;acception habituelle puisque les chaînes relient tous les noeuds
+            en relation plus ou moins lointaine avec un nom pour une chaîne
+            nominale ou avec un verbe pour une chaîne verbale. Ces chaînes
+            sont utilisés lors de la construction des mots composés pour
+            éviter de construire des termes contenant des mots issus de
+            chaînes différentes.</para>
+            <para>Les chaînes sont définies par un ensemble de catégories
+            pouvant les débuter (la catégorie article défini est dans cet
+            ensemble pour les chaînes nominales en français, par exemple), un
+            ensemble de catégories pouvant les terminer (nom commun, par
+            exemple) et u ensemble de transitions possible entre catégories
+            (la transition article défini -&gt; nom commun est possible en
+            français). L&apos;algorithme utilisé est assez complexe puisqu&apos;il doit
+            trouver tous les chemins de chaînes possibles dans le graphe en
+            évitant les chaînes trop courtes ou inclues les unes dans les
+            autres.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <para>Ce module est hérité des versions précédentes de l&apos;analyseur. Il
+      pourrait probablement être supprimé au prix d&apos;un certain
+      refactoring.</para>
+    </section>
+    <section>
+      <title>Analyse des dépendances syntaxiques</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Règles d&apos;analyse syntaxique</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>L&apos;analyse des dépendances syntaxiques s&apos;appuie sur des
+            règles qui permettent la reconnaissance des dépendances
+            syntaxiques en fonctions des catégories grammaticales des termes.
+            Ces règles sont encore une fois décrites à l&apos;aide de la syntaxe
+            décrite dans le document <ulink url="specif_regles.html">Spécifications du format des règles pour la construction d&apos;automates de reconnaissance d&apos;expressions</ulink>. On y utilise particulièrement le mécanisme
+            d&apos;expression de contraintes, pour vérifier des choses comme la non
+            préexistance d&apos;une relation de dépendance entre les noeuds
+            concernés (pour éviter des bouclages infinis), les accords en
+            nombre et en genre entre éléments, etc.</para>
+            <para>Les relations de dépendances sont stockées dans une
+            structure de données dédiée (nommée DepGraph dans l&apos;AnalysisData)
+            qui est un graphe Boost contenant un noeud pour chaque noeud du
+            graphe PosGraph et un arc pour chaque relation de dépendance
+            trouvée. Les arcs ont pour unique propriété le nom de la relation
+            de dépendance qu&apos;ils portent.</para>
+            <para><programlisting>@PrepComp:(@NomCommun|@Inc) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum|@PrepComp|@NomPropre){0-3} 
+   (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} 
+   ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$L_ADJ-L_ADJ_QUALIFICATIF_EPITHETE_DETACHEE)
+  :COMPDUNOM:
++!GovernorOf(left.1,&quot;SUBSUBJUX&quot;)
++SecondUngovernedBy(right.4,left.1,&quot;ANY&quot;)
++SecondUngovernedBy(trigger.1,right.4,&quot;ANY&quot;)
++CreateRelationBetween(right.4,left.1,&quot;COMPDUNOM&quot;)
++CreateRelationBetween(trigger.1,right.4,&quot;PREPSUB&quot;)
+=&gt;AddRelationInGraph()
+=&lt;ClearStoredRelations()</programlisting>Le listing ci-dessus montre une
+            règle utilisée pour repérer les compléments du nom, comme dans
+            <code>chat vraiment bête de la très gentille voisine</code>. Dans
+            ce cas, cette règle permettra de créer la relation COMPDUNOM de
+            voisine vers chat comme on peut le voir sur la <xref linkend="figdepgraph"/>.</para>
+            <para>On remarquera l&apos;utilisation de la contraine
+            <code>!GovernorOf</code> qui vérifie que le nom qui sera la cible
+            de la relation n&apos;est pas source d&apos;une relation entre noms
+            juxtaposés (car dans ce cas c&apos;est le nom cible de cette dernière
+            qui doit être cible de la complémetation). On voit aussi
+            l&apos;utilisation de deux fois la contrainte
+            <code>CreateRelationBetween</code>. Celle-ci crée la relation
+            indiquée dès que les deux noeuds concernés sont trouvés durant la
+            recherche et la stocke dans une structure temporaire. Si la règle
+            est finalement validée, les relations stockées sont finalement
+            ajoutées au graphe (action de succès
+            <code>AddRelationInGraph</code>); sinon, elles sont oubliées
+            (action d&apos;échec <code>ClearStoredRelations</code>).</para>
+            <para>Les règles d&apos;analyse syntaxique ne sont pas toutes dans un
+            seul fichier de règles. En fait, elles ne sont même pas toutes
+            dans un unique ProcessUnit (élément du pipeline). Les règles sont
+            réparties en plusieurs ProcessUnit et plusieurs actions dans
+            chacun d&apos;eux pour des raisons de clarté ou parce que certaines
+            dépendances doivent obligatoirement être trouvées avant d&apos;autre
+            pour servir de support à l&apos;analyse.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <figure id="figdepgraph">
+        <title>Exemple de graphe de dépendances</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="resources/test6.sa.png" contentdepth="100%" width="100%" scalefit="1"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>Extraction de mots composés</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Les relations de dépendance trouvées par l&apos;analyse
+            syntaxique à exploiter.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Il s&apos;agit d&apos;extraire les termes complexes présents dans les
+            textes, en général des noms composés, comme <emphasis>ressources en eau</emphasis> ou <emphasis>la table des caractères de la langue en UTF8</emphasis>. Cette extraction dépend des relations
+            de dépendance entre les termes. Une liste de type de relations à
+            utiliser est fixée. Il s&apos;agit des relations liant les mots dits
+            pleins<footnote>
+                <para>Un mot plein est un mot qui porte une information
+                sémantique en lui-même. On classe en général comme mots pleins
+                le noms, les verbes et les adjectifs. Par contraste, les mots
+                vides sont ceux qui ne réfèrent pas directement un concept,
+                comme les articles ou les prépositions, par exemple.</para>
+              </footnote> dans les syntagmes nominaux. Les éléments trouvés
+            aux extrémités de ces relations sont notés comme des parties du
+            mot composé. Le résultat de l&apos;extraction est stocké dans le graphe
+            d&apos;annotation. La figure <xref linkend="figannotgraph"/> plus haut
+            montre un extrait de graphe d&apos;annotation représentant un mot
+            composé (ou <foreignphrase>compound</foreignphrase>).</para>
+            <para>Lors d&apos;une analyse avec production des données pour
+            l&apos;indexation (réglage par défaut des outils analyzeText et
+            analyzeXmlDoxument), ces mots composés sont convertis en BoWTerms
+            récursif ayant, à chaque niveau, pour tête la cible des relations
+            de ce niveau et pour extensions les sources de ces relations,
+            sources qui peuvent elles-même être têtes de termes complexes si
+            elles sont cibles de relations dans le graphe. Avec l&apos;exemple
+            ci-dessus, on obtient le BoWTerm suivant (les étoiles représentent
+            les têtes)&nbsp;: <code>(table* (caractère* langue UTF8) )</code>,
+            en supposant que <emphasis>langue</emphasis> et
+            <emphasis>UTF8</emphasis> sont compléments de
+            <emphasis>caractère</emphasis> et <emphasis>caractère</emphasis>
+            complément de <emphasis>table</emphasis>.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+  </section>
+  <section>
+    <title>Autres traitements linguistiques</title>
+    <section>
+      <title>Desagglutination (allemand)</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <itemizedlist>
+              <listitem>
+                <para><foreignphrase>desagglutination categories</foreignphrase> : liste des correspondances de
+                catégories pour la désagglutination</para>
+              </listitem>
+              <listitem>
+                <para><foreignphrase>desagglutination delimiters</foreignphrase> : liste des délimiteurs possibles
+                entres les agglutinations</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Ce traitement consiste à chercher si un token est une
+            agglutination de plusieurs tokens, éventuellement séparés par un
+            délimiteur. Les tokens sont cherchés dans le dictionnaire de
+            langue, les délimiteurs possibles sont spécifiés dans une
+            ressource. Les mots agglutinés sont des mots pleins. Concrètement,
+            le mot global prend les catégories possibles du dernier composant
+            agglutiné. Ces catégories sont exploitées par le désambiguiseur,
+            puis un second traitement (DesagglutionExpander) permet de séparer
+            les composant afin d&apos;extraire les parties.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <blockquote>
+        <para>ex : Vorlesungsbetrieb =&gt; Vorlesung + (s) + betrieb</para>
+        <para>&apos;Vorlesung&apos; et &apos;betrieb&apos; sont 2 mots pleins du dictionnaire.
+        &apos;betrieb&apos; peut être V ou NC, le mot agglutiné prend les catégories
+        possible du dernier composant, donc V ou NC.</para>
+      </blockquote>
+    </section>
+    <section>
+      <title>HyperwordStemmer (arabe)</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Dictionnaires de proclitiques, d&apos;enclitiques et de radicaux
+            (dictionnaire de langue).</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Ce traitement est utilisé pour décomposer les mots formés
+            avec un proclitique, un enclitique et un radical. Les proclitiques
+            et enclitiques sont extraits de dictionnaires spécifiques.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+    <section>
+      <title>ChineseSegmenter (chinois)</title>
+      <variablelist>
+        <varlistentry>
+          <term>Ressources utilisées</term>
+          <listitem>
+            <para>Dictionnaire de langue</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Description de la tâche</term>
+          <listitem>
+            <para>Ce traitement est utilisé pour proposer des découpages des
+            phrases en chinois. Le principe est de découper la phrase au fur
+            et à mesure avec des mots trouvés dans le dictionnaire. On ne
+            retient que les découpages contenant un nombre minimal de mots,
+            avec une tolérance paramétrable (par exemple pour une tolérance de
+            1 si le chemin minimal contient 5 mots, on retient les chemins de
+            longueur 5 et 6). Les segmentations extraires sont ensuite
+            filtrées par la désambiguisation. Une variante est utilisée pour
+            le japonais.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+  </section>
+  <section>
+    <title>Les Ressources</title>
+    <section>
+      <title>Table de caractères et automate de découpage</title>
+      <para>Il s&apos;agit du fichier &apos;tokenizerAutomaton-fre.xml&apos;. Ce fichier
+      contient la table des caractères de la langue en UTF8, et pour chaque
+      caractère sa désaccentuation.</para>
+      <para>On y trouve également la définition de l&apos;automate de découpage, au
+      format XML. Sa structure est assez complexe. Un refactoring est
+      prévu.</para>
+    </section>
+    <section>
+      <title>Dictionnaire de langue</title>
+      <para>Le dictionnaire de langue contient pour chaque mot de la langue,
+      l&apos;ensemble des informations linguistiques possible pour ce mot. Les
+      informations linguistiques peuvent être :</para>
+      <itemizedlist>
+        <listitem>
+          <para>lemme, forme normalisée, propriétés linguistiques (genre,
+          nombre, catégories grammaticales)</para>
+          <programlisting>intérogation du dictionnaire pour le mot : &quot;cours&quot; :
+
+foundLingInfos : l=&quot;cour&quot; n=&quot;cour&quot;
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_GEN, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ATT_COD, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_SOCIETE, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_NOM, NUMBER=L_PLUR,
+endLingInfos
+foundLingInfos : l=&quot;courir&quot; n=&quot;courir&quot;
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_IMPERATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_IMPERATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_INTRANS, TIME=L_PRES,
+endLingInfos
+foundLingInfos : l=&quot;cours&quot; n=&quot;cours&quot;
+foundProperties : GENDER=L_MASC, MACRO=L_NC, MICRO=L_NC_GEN, NUMBER=L_SING,
+foundProperties : GENDER=L_MASC, MACRO=L_NC, MICRO=L_NC_GEN, NUMBER=L_PLUR,
+foundProperties : GENDER=L_MASC, MACRO=L_NC, MICRO=L_NC_ATT_COD, NUMBER=L_SING,
+foundProperties : GENDER=L_MASC, MACRO=L_NC, MICRO=L_NC_ATT_COD, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_LIEU, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_SOCIETE, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_SOCIETE, NUMBER=L_PLUR,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_NOM, NUMBER=L_SING,
+foundProperties : GENDER=L_FEM, MACRO=L_NC, MICRO=L_NC_ANNONCEUR_NOM, NUMBER=L_PLUR,
+endLingInfos
+</programlisting>
+        </listitem>
+        <listitem>
+          <para>forme concaténée, dans ce cas chaque composant est
+          décrit</para>
+          <programlisting>foundConcatenated
+foundComponent : form=&quot;it&quot; pos=&quot;0&quot; len=&quot;2&quot;
+foundLingInfos : l=&quot;it&quot; n=&quot;it&quot;
+foundProperties : MACRO=L_PRON, MICRO=L_PRONOM_PERSONNEL_IT,
+endLingInfos
+endComponent
+foundComponent : form=&quot;&apos;s&quot; pos=&quot;2&quot; len=&quot;2&quot;
+foundLingInfos : l=&quot;be&quot; n=&quot;be&quot;
+foundProperties : MACRO=L_V, MICRO=L_IS,
+endLingInfos
+foundLingInfos : l=&quot;have&quot; n=&quot;have&quot;
+foundProperties : MACRO=L_V, MICRO=L_HAS,
+endLingInfos
+endComponent
+endConcatenated
+</programlisting>
+        </listitem>
+        <listitem>
+          <para>lien vers une forme réaccentuée du mot.</para>
+          <programlisting>foundAccentedForm : form=&quot;évite&quot;
+foundLingInfos : l=&quot;éviter&quot; n=&quot;éviter&quot;
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_3, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_3, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_PRONOMINAL, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_INDICATIF, NUMBER=L_SING, PERSON=L_3, SYNTAX=L_PRONOMINAL, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_SUBJONCTIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_SUBJONCTIF, NUMBER=L_SING, PERSON=L_3, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_SUBJONCTIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_SUBJONCTIF, NUMBER=L_SING, PERSON=L_3, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_SUBJONCTIF, NUMBER=L_SING, PERSON=L_1, SYNTAX=L_PRONOMINAL, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_SUBJONCTIF, NUMBER=L_SING, PERSON=L_3, SYNTAX=L_PRONOMINAL, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_IMPERATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_TRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_IMPERATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_INTRANS, TIME=L_PRES,
+foundProperties : MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_IMPERATIF, NUMBER=L_SING, PERSON=L_2, SYNTAX=L_PRONOMINAL, TIME=L_PRES,
+endLingInfos
+endAccentedForm
+foundAccentedForm : form=&quot;évité&quot;
+foundLingInfos : l=&quot;éviter&quot; n=&quot;éviter&quot;
+foundProperties : GENDER=L_MASC, MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_PARTICIPE_PASSE, NUMBER=L_SING, SYNTAX=L_TRANS, TIME=L_PASS,
+foundProperties : GENDER=L_MASC, MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_PARTICIPE_PASSE, NUMBER=L_SING, SYNTAX=L_INTRANS, TIME=L_PASS,
+foundProperties : GENDER=L_MASC, MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_PARTICIPE_PASSE, NUMBER=L_SING, SYNTAX=L_PRONOMINAL, TIME=L_PASS,
+foundProperties : GENDER=L_MASC, MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_PARTICIPE_ATTRIBUT, NUMBER=L_SING, SYNTAX=L_TRANS, TIME=L_PASS,
+foundProperties : GENDER=L_MASC, MACRO=L_V, MICRO=L_VERBE_PRINCIPAL_PARTICIPE_ATTRIBUT, NUMBER=L_SING, SYNTAX=L_PRONOMINAL, TIME=L_PASS,
+endLingInfos
+foundLingInfos : l=&quot;évité&quot; n=&quot;évité&quot;
+foundProperties : GENDER=L_MASC, MACRO=L_ADJ, MICRO=L_ADJ_QUALIFICATIF_EPITHETE_POSTN, NUMBER=L_SING,
+foundProperties : GENDER=L_MASC, MACRO=L_ADJ, MICRO=L_ADJ_QUALIFICATIF_EPITHETE_DETACHEE, NUMBER=L_SING,
+foundProperties : GENDER=L_MASC, MACRO=L_ADJ, MICRO=L_ADJ_QUALIFICATIF_ATT_DU_S, NUMBER=L_SING,
+foundProperties : GENDER=L_MASC, MACRO=L_ADJ, MICRO=L_ADJ_QUALIFICATIF_ATT_DU_COD, NUMBER=L_SING,
+endLingInfos
+endAccentedForm</programlisting>
+        </listitem>
+      </itemizedlist>
+      <para>Le dictionnaire binaire utilisé pendant l&apos;analyse est généré à
+      partir d&apos;une liste de mots simples qui sont fléchis de façon à produire
+      l&apos;ensemble des formes possibles de la langue. Cette liste de forme est
+      ensuite enrichie de diverses informations puis compilée. L&apos;ensemble de
+      cette procédure fera l&apos;objet d&apos;un document séparé, encore à
+      écrire...</para>
+    </section>
+    <section>
+      <title>Expressions idiomatiques</title>
+      <para>Les expressions idiomatiques sont des automates, au même titre que
+      les règles de reconnaissance des entitées nommées et de l&apos;analyse
+      syntaxique ci-après. Seulement, nous disposons d&apos;un format d&apos;entrée
+      simplifié :</para>
+      <programlisting>D;;A;Porto;Porto Rico;nom propre féminin;
+D;;A;[S]&amp;Ministre;[J]Premier [S]&amp;Ministre;nom masculin;Premier Ministre
+D;;;beau;[V]&amp;avoir (D) beau faire;verbe intransitif;avoir beau faire
+</programlisting>
+      <para>Dans ce format, on trouve plusieurs champs séparés par des
+      &apos;;&apos;.</para>
+      <itemizedlist>
+        <listitem>
+          <para>1er champ&nbsp;: un identifiant indiquant la
+          provenance&nbsp;;</para>
+        </listitem>
+        <listitem>
+          <para>2ème champ&nbsp;: non utilisé&nbsp;;</para>
+        </listitem>
+        <listitem>
+          <para>3ème champ&nbsp;: A indique une expression idiomatique
+          absolue&nbsp;;</para>
+        </listitem>
+        <listitem>
+          <para>4ème champ&nbsp;: le déclencheur : token de l&apos;expression
+          déclencheur de la règle&nbsp;;</para>
+        </listitem>
+        <listitem>
+          <para>5ème champ&nbsp;: l&apos;expression idiomatique&nbsp;;</para>
+        </listitem>
+        <listitem>
+          <para>6ème champ&nbsp;: la catégorie grammaticale&nbsp;;</para>
+        </listitem>
+        <listitem>
+          <para>7ème champ&nbsp;: la normalisation.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+    <section id="secdisambmatrices">
+      <title>Matrices de désambiguisation</title>
+      <para>Les matrices de désambiguisation sont un ensemble de trigrammes
+      (ou de bigrammes) accompagnés de leur fréquence. Un trigramme est une
+      succession possible de 3 catégories grammaticales. Pour construire ces
+      ressources linguistiques nous utilisont des corpus annotés et
+      désambiguisés, c&apos;est à dire où pour chaque token on précise la bonne
+      catégorie grammaticale.</para>
+      <para>Exemple : extrait de corpus annoté</para>
+      <programlisting>le      Dad
+plan    Ncg
+de      Ss
+fermeture       Ncg
+de      Sg
+l&apos;      Dad
+usine   Ncg
+</programlisting>
+      <para>De ce texte annoté sont extraits les successions de catégories,
+      qui seront ensuite regroupées et comptabilisés dans les matrices de
+      trigrammes et bigrammes. La correspondance entre les noms de catégories
+      utilisés dans ces corpus et les noms de catégories internes sont
+      indiquées dans un fichier nommé <code>code_symbolic2lic2m.txt</code>
+      présent dans le même répertoire que le fichier du corpus.</para>
+    </section>
+    <section>
+      <title>Règles pour entités nommées et dépendances syntaxiques</title>
+      <para>La reconnaissance des entitées nommées et des dépendances
+      syntaxiques s&apos;appuie sur des règles d&apos;automates. Dans le cas des
+      entitées nommées, les règles sont construites à partir de listes de mots
+      (prénoms, villes, pays ...) ainsi que de règle de structures utilisant
+      éventuellement des déclencheurs (Monsieur, société, ...). Les règles
+      concernant les dépendances syntaxiques sont essentielles basées sur la
+      structure syntaxique de la phrase et s&apos;appuient sur les catégories
+      grammaticales reconnues par le système. La syntaxe des règles est
+      décrite ici: <ulink url="specif_regles.html">Spécifications du format des règles pour la construction d&apos;automates de reconnaissance d&apos;expressions</ulink>.</para>
+      <para>Le programme pour compiler un fichier de règles est compile-rules.
+      Il s&apos;utilise ainsi&nbsp;:</para>
+      <synopsis>compile-rules --language=&lt;lang&gt; --output=&lt;binary output file&gt; &lt;rules input file&gt;</synopsis>
+      <para/>
+    </section>
+  </section>
+</article>

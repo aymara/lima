@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="LinguisticData">
+    <group name="Categories">
+        <param key = "MacroCodesList" value = "LinguisticProcessings/ita/macroCodesList-ita.dat" />
+        <param key = "MicroCodesList" value = "LinguisticProcessings/ita/codesList-ita.dat" />
+        <list name="sentenceBreakMicros">
+          <item value="L_PONCTU_FORTE"/>
+        </list>
+        <list name="emptyMacro">
+            <item value="L_NONE_1" />
+            <item value="L_DET" />
+            <item value="L_PRON" />
+            <item value="L_ADV" />
+            <item value="L_PREP" />
+            <item value="L_CONJ" />
+            <item value="L_PONCTU" />
+            <item value="L_INTERJ" />
+            <item value="L_DIVERS" />
+        </list>
+        <list name="emptyMicro">
+            <item value="L_DET_ARTICLE_DEF" />
+            <item value="L_DET_ARTICLE_INDEF" />
+            <item value="L_DET_ARTICLE_CONTRACTE" />
+            <item value="L_DET_ARTICLE_PARTITIF" />
+            <item value="L_DET_POSSESSIF" />
+            <item value="L_DET_DEMONSTRATIF" />
+            <item value="L_DET_INDEFINI" />
+            <item value="L_DET_INDEFINI_SENS_NEG" />
+            <item value="L_DET_INTERROGATIF" />
+            <item value="L_DET_EXCLAMATIF" />
+            <item value="L_DET_RELATIF" />
+            <item value="L_PRON_PERS_CONJ_S_PREV" />
+            <item value="L_PRON_PERS_CONJ_S_POSTV" />
+            <item value="L_PRON_PERS_CONJ_COD_PREV" />
+            <item value="L_PRON_PERS_CONJ_COD_POSTV" />
+            <item value="L_PRON_PERS_CONJ_COI_PREV" />
+            <item value="L_PRON_PERS_CONJ_COI_POSTV" />
+            <item value="L_PRON_PERS_DISJ_S_PREV" />
+            <item value="L_PRON_PERS_DISJ_S_POSTV" />
+            <item value="L_PRON_PERS_DISJ_COD_PREV" />
+            <item value="L_PRON_PERS_DISJ_COD_POSTV" />
+            <item value="L_PRON_PERS_DISJ_COI_PREV" />
+            <item value="L_PRON_PERS_DISJ_COI_POSTV" />
+            <item value="L_PRON_POSSESSIF_SUJET" />
+            <item value="L_PRON_POSSESSIF_COD" />
+            <item value="L_PRON_POSSESSIF_COI" />
+            <item value="L_PRON_REFLEXIF" />
+            <item value="L_PRON_INTERRO_SUJET" />
+            <item value="L_PRON_INTERRO_COD" />
+            <item value="L_PRON_INTERRO_COI" />
+            <item value="L_PRON_INTERRO_CN" />
+            <item value="L_PRON_INTERRO_ATT_S" />
+            <item value="L_PRON_INTERRO_CA" />
+            <item value="L_PRON_REL_S" />
+            <item value="L_PRON_REL_COD" />
+            <item value="L_PRON_REL_COI" />
+            <item value="L_PRON_REL_CN" />
+            <item value="L_PRON_REL_ATT_DU_S" />
+            <item value="L_PRON_REL_CA" />
+            <item value="L_PRON_DEMONSTRATIF" />
+            <item value="L_PRON_INDEFINI" />
+            <item value="L_PRON_INDEFINI_VAL_NEG" />
+            <item value="L_ADJ_INDEFINI_EPITHETE_PRENN" />
+            <item value="L_ADJ_INDEFINI_EPITHETE_POSTN" />
+            <item value="L_ADJ_INDEFINI_EPITHETE_DETACHEE" />
+            <item value="L_ADJ_INDEFINI_ATT_DU_S" />
+            <item value="L_ADJ_INDEFINI_ATT_DU_COD" />
+            <item value="L_ADJ_POSSESSIF_EPITHETE_PRENN" />
+            <item value="L_ADJ_POSSESSIF_EPITHETE_POSTN" />
+            <item value="L_ADJ_POSSESSIF_EPITHETE_DETACHEE" />
+            <item value="L_ADJ_POSSESSIF_ATT_DU_S" />
+            <item value="L_ADJ_POSSESSIF_ATT_DU_COD" />
+            <item value="L_VERBE_AUXILIAIRE_INDICATIF" />
+            <item value="L_VERBE_AUXILIAIRE_SUBJONCTIF" />
+            <item value="L_VERBE_AUXILIAIRE_IMPERATIF" />
+            <item value="L_VERBE_AUXILIAIRE_INFINITIF" />
+            <item value="L_VERBE_AUXILIAIRE_PARTICIPE" />
+            <item value="L_VERBE_MODALITE_INDICATIF" />
+            <item value="L_VERBE_MODALITE_SUBJONCTIF" />
+            <item value="L_VERBE_MODALITE_IMPERATIF" />
+            <item value="L_VERBE_MODALITE_INFINITIF" />
+            <item value="L_VERBE_MODALITE_PARTICIPE" />
+            <item value="L_VERBE_COPULE_INDICATIF" />
+            <item value="L_VERBE_COPULE_SUBJONCTIF" />
+            <item value="L_VERBE_COPULE_IMPERATIF" />
+            <item value="L_VERBE_COPULE_INFINITIF" />
+            <item value="L_VERBE_COPULE_PARTICIPE" />
+            <item value="L_ADV_POST_PART_PASSE" />
+            <item value="L_ADV_VAL_NEG" />
+            <item value="L_ADV_MODIF_ADV_OU_ADJ" />
+            <item value="L_ADV_PREV" />
+            <item value="L_ADV_POSTV" />
+            <item value="L_ADV_APRES_PREP" />
+            <item value="L_ADV_ENTRE_AUX_ET_PART_PASSE" />
+            <item value="L_ADV_PREMIER_ELEM_NEG" />
+            <item value="L_ADV_DEUXIEME_ELEM_NEG" />
+            <item value="L_ADV_INTERRO" />
+            <item value="L_PREP_GENERAL" />
+            <item value="L_PREP_AVEC_GV_INFINITIF" />
+            <item value="L_PREP_REGIME_IMPLICITE" />
+            <item value="L_PREP_AVEC_PART_PRESENT" />
+            <item value="L_CONJ_COORD" />
+            <item value="L_CONJ_SUBORD" />
+            <item value="L_PONCTU_FORTE" />
+            <item value="L_PONCTU_FAIBLE" />
+            <item value="L_PONCTU_PARENTHESE" />
+            <item value="L_PONCTU_DIALOGUE" />
+            <item value="L_PONCTU_MISE_EN_EVIDENCE" />
+            <item value="L_PONCTU_PARAGRAPHE" />
+            <item value="L_PONCTU_TABLEAUX" />
+            <item value="L_INTERJECTION" />
+            <item value="L_DIVERS_EUPHONISME" />
+            <item value="L_DIVERS_AUTRE" />
+        </list>
+    </group>
+    <group name="NamedEntityNormalization">
+      <!-- normalization of numbers -->
+      <list name="NumberMicros">
+        <item value="L_NC_NUM_CARD"/>
+        <item value="L_DET_NUMERAL_CARD"/>
+        <item value="L_PRON_NUM_CARD"/>
+        <item value="L_ADJ_NUM_CARD_EPITHETE_PRENN"/>
+        <item value="L_ADJ_NUM_CARD_EPITHETE_POSTN"/>
+        <item value="L_ADJ_NUM_CARD_EPITHETE_DETACHEE"/>
+        <item value="L_ADJ_NUM_CARD_ATT_DU_S"/>
+        <item value="L_ADJ_NUM_CARD_ATT_DU_COD"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="L_NC_U_MESURE"/>
+      </list>
+      <!-- possible conjunction in numbers (vingt ET un)-->
+      <list name="ConjCoordMicros"> 
+        <item value="L_CONJ_COORD"/>
+      </list>
+      <!-- normalization of person names -->
+      <list name="FirstnameMicros">
+        <item value="L_NP_PRENOM"/>
+      </list>
+      <!-- normalization of dates -->
+      <list name="MonthMicros">
+        <item value="L_NC_MOIS"/>
+      </list>
+      <list name="DayMicros">
+        <item value="L_NC_JOUR"/>
+      </list>
+    </group>
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-ita.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+        <item value="DETSUB"/>
+        <item value="ADJPRENSUB"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="SUBSUBJUX"/>
+      </list>
+      <list name="VerbalHomoSyntagmaticRelations">
+      </list>
+      <list name="CompoundsRels">
+        <item value="COMPADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="SUBSUBJUX"/>
+      </list>
+    </group>    
+  </module>
+</modulesConfig>

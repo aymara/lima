@@ -1,0 +1,1989 @@
+1 | 上海 | Np lieu
+3 | 浦东 | Np lieu
+5 | 开发 | Nc général
+7 | 与 | conj coordination lier que d'expressions
+8 | 法制 | Nc général
+10 | 建设 | Nc général
+12 | 同步 | verbe principal
+14 | 新华社 | Np organisation
+17 | 上海 | Np lieu
+19 | 二月 | Nc mois
+21 | 十日 | Nc jour
+23 | 电 | Nc général
+24 | （ | ponctuation parenthèses
+25 | 记者 | Nc général
+27 | 谢金虎 | Np noms
+30 | 、 | ponctuation faible
+31 | 张持坚 | Np noms
+34 | ） | ponctuation parenthèses
+35 | 上海 | Np lieu
+37 | 浦东 | Np lieu
+39 | 近年来 | divers expression habituelle
+42 | 颁布 | verbe principal
+44 | 实行 | verbe principal
+46 | 了 | particule temps action finie
+47 | 涉及 | verbe principal
+49 | 经济 | Nc général
+51 | 、 | ponctuation faible
+52 | 贸易 | Nc général
+54 | 、 | ponctuation faible
+55 | 建设 | Nc général
+57 | 、 | ponctuation faible
+58 | 规划 | Nc général
+60 | 、 | ponctuation faible
+61 | 科技 | Nc général
+63 | 、 | ponctuation faible
+64 | 文教 | Nc général
+66 | 等 | particule structure particule deng
+67 | 领域 | Nc général
+69 | 的 | particule structure dans la structure de
+70 | 七十一 | num cardinale
+73 | 件 | spécificatif
+74 | 法规 | Nc général
+76 | 性 | Nc morphème
+77 | 文件 | Nc général
+79 | ， | ponctuation faible
+80 | 确保 | verbe principal
+82 | 了 | particule temps action finie
+83 | 浦东 | Np lieu
+85 | 开发 | Nc général
+87 | 的 | particule structure dans la structure de
+88 | 有序 | adj qualificatif général attribut du sujet
+90 | 进行 | Nc général
+92 | 。 | ponctuation forte
+93 | 浦东 | Np lieu
+95 | 开发 | Nc général
+97 | 开放 | Nc général
+99 | 是 | verbe copule
+100 | 一 | num cardinale
+101 | 项 | spécificatif
+102 | 振兴 | verbe principal
+104 | 上海 | Np lieu
+106 | ， | ponctuation faible
+107 | 建设 | verbe principal
+109 | 现代化 | Nc général
+112 | 经济 | Nc général
+114 | 、 | ponctuation faible
+115 | 贸易 | Nc général
+117 | 、 | ponctuation faible
+118 | 金融 | Nc général
+120 | 中心 | Nc général
+122 | 的 | particule structure dans la structure de
+123 | 跨世纪 | adj qualificatif général attribut du sujet
+126 | 工程 | Nc général
+128 | ， | ponctuation faible
+129 | 因此 | conj subordination lier que de phrase
+131 | 大量 | adv général
+133 | 出现 | verbe principal
+135 | 的 | particule structure dans la structure de
+136 | 是 | verbe copule
+137 | 以前 | Nc notion de temps saison et Jie Qi
+139 | 不 | adv à valeur négative
+140 | 曾 | adv général
+141 | 遇到 | verbe principal
+143 | 过 | particule temps action finie
+144 | 的 | particule structure dans la structure de
+145 | 新 | adj qualificatif général attribut du sujet
+146 | 情况 | Nc général
+148 | 、 | ponctuation faible
+149 | 新 | adj qualificatif général attribut du sujet
+150 | 问题 | Nc général
+152 | 。 | ponctuation forte
+153 | 对 | prep général
+154 | 此 | pron indéfini
+155 | ， | ponctuation faible
+156 | 浦东 | Np lieu
+158 | 不 | adv à valeur négative
+159 | 是 | verbe copule
+160 | 简单 | adj qualificatif général épithète
+162 | 的 | particule structure particule di4
+163 | 采取 | verbe principal
+165 | “ | ponctuation mise en évidence
+166 | 干 | verbe principal
+167 | 一 | num cardinale
+168 | 段 | spécificatif
+169 | 时间 | Nc général
+171 | ， | ponctuation faible
+172 | 等 | prep général
+173 | 积累 | verbe principal
+175 | 了 | particule temps action finie
+176 | 经验 | Nc général
+178 | 以后 | Nc notion de temps saison et Jie Qi
+180 | 再 | adv général
+181 | 制定 | verbe principal
+183 | 法规 | Nc général
+185 | 条例 | Nc général
+187 | ” | ponctuation mise en évidence
+188 | 的 | particule structure dans la structure de
+189 | 做法 | Nc général
+191 | ， | ponctuation faible
+192 | 而是 | conj coordination lier tout
+194 | 借鉴 | verbe principal
+196 | 发达 | adj qualificatif général attribut du sujet
+198 | 国家 | Nc général
+200 | 和 | conj coordination lier que d'expressions
+201 | 深圳 | Np lieu
+203 | 等 | particule structure particule deng
+204 | 特区 | Nc général
+206 | 的 | particule structure dans la structure de
+207 | 经验 | Nc général
+209 | 教训 | Nc général
+211 | ， | ponctuation faible
+212 | 聘请 | verbe principal
+214 | 国内外 | Nc général
+217 | 有关 | adj qualificatif général attribut du sujet
+219 | 专家 | Nc général
+221 | 学者 | Nc général
+223 | ， | ponctuation faible
+224 | 积极 | adv général
+226 | 、 | ponctuation faible
+227 | 及时 | adv général
+229 | 地 | particule structure particule di4
+230 | 制定 | verbe principal
+232 | 和 | conj coordination lier que d'expressions
+233 | 推出 | verbe principal
+235 | 法规 | Nc général
+237 | 性 | Nc morphème
+238 | 文件 | Nc général
+240 | ， | ponctuation faible
+241 | 使 | verbe principal
+242 | 这些 | det démonstratif
+244 | 经济 | Nc général
+246 | 活动 | Nc général
+248 | 一 | adv général
+249 | 出现 | verbe principal
+251 | 就 | adv général
+252 | 被 | particule structure particule bei
+253 | 纳入 | verbe principal
+255 | 法制 | Nc général
+257 | 轨道 | Nc général
+259 | 。 | ponctuation forte
+260 | 去年 | Nc notion de temps saison et Jie Qi
+262 | 初 | Nc morphème
+263 | 浦东 | Np lieu
+265 | 新区 | Nc général
+267 | 诞生 | verbe principal
+269 | 的 | particule structure dans la structure de
+270 | 中国 | Np lieu
+272 | 第一 | num ordinale
+274 | 家 | spécificatif
+275 | 医疗 | Nc général
+277 | 机构 | Nc général
+279 | 药品 | Nc général
+281 | 采购 | Nc général
+283 | 服务 | Nc général
+285 | 中心 | Nc général
+287 | ， | ponctuation faible
+288 | 正 | adv général
+289 | 因为 | prep général
+291 | 一 | adv général
+292 | 开始 | verbe principal
+294 | 就 | adv général
+295 | 比较 | adv général
+297 | 规范 | adj qualificatif général épithète
+299 | ， | ponctuation faible
+300 | 运转 | verbe principal
+302 | 至今 | adv général
+304 | ， | ponctuation faible
+305 | 成交 | verbe principal
+307 | 药品 | Nc général
+309 | 一亿 | num cardinale
+311 | 多 | num environs
+312 | 元 | spécificatif
+313 | ， | ponctuation faible
+314 | 没有 | adv à valeur négative
+316 | 发现 | verbe principal
+318 | 一 | num cardinale
+319 | 例 | spécificatif
+320 | 回扣 | Nc général
+322 | 。 | ponctuation forte
+323 | 建筑 | Nc général
+325 | 是 | verbe copule
+326 | 开发 | verbe principal
+328 | 浦东 | Np lieu
+330 | 的 | particule structure dans la structure de
+331 | 一 | num cardinale
+332 | 项 | spécificatif
+333 | 主要 | adj qualificatif général attribut du sujet
+335 | 经济 | Nc général
+337 | 活动 | Nc général
+339 | ， | ponctuation faible
+340 | 这些 | det démonstratif
+342 | 年 | spécificatif
+343 | 有 | verbe auxiliaire
+344 | 数 | adj indéfini
+345 | 百 | num cardinale
+346 | 家 | spécificatif
+347 | 建筑 | Nc général
+349 | 公司 | Nc général
+351 | 、 | ponctuation faible
+352 | 四千 | num cardinale
+354 | 余 | num environs
+355 | 个 | spécificatif
+356 | 建筑 | Nc général
+358 | 工地 | Nc général
+360 | 遍布 | verbe principal
+362 | 在 | prep général
+363 | 这 | det démonstratif
+364 | 片 | spécificatif
+365 | 热土 | Nc général
+367 | 上 | Nc notion de direction
+368 | 。 | ponctuation forte
+369 | 为 | prep général
+370 | 规范 | verbe principal
+372 | 建筑 | Nc général
+374 | 行为 | Nc général
+376 | ， | ponctuation faible
+377 | 防止 | verbe principal
+379 | 出现 | verbe principal
+381 | 无序 | adj qualificatif général attribut du sujet
+383 | 现象 | Nc général
+385 | ， | ponctuation faible
+386 | 新区 | Nc général
+388 | 管委会 | Nc général
+391 | 根据 | prep général
+393 | 国家 | Nc général
+395 | 和 | conj coordination lier que d'expressions
+396 | 上海市 | Np lieu
+399 | 的 | particule structure dans la structure de
+400 | 有关 | adj qualificatif général attribut du sujet
+402 | 规定 | Nc général
+404 | ， | ponctuation faible
+405 | 结合 | verbe principal
+407 | 浦东 | Np lieu
+409 | 开发 | Nc général
+411 | 实际 | Nc général
+413 | ， | ponctuation faible
+414 | 及时 | adv général
+416 | 出台 | verbe principal
+418 | 了 | particule temps action finie
+419 | 一 | num cardinale
+420 | 系列 | spécificatif
+422 | 规范 | verbe principal
+424 | 建设 | Nc général
+426 | 市场 | Nc général
+428 | 的 | particule structure dans la structure de
+429 | 文件 | Nc général
+431 | ， | ponctuation faible
+432 | 其中 | pron démonstratif
+434 | 包括 | verbe principal
+436 | 工程 | Nc général
+438 | 施工 | Nc général
+440 | 招投标 | Nc général
+443 | 管理 | Nc général
+445 | 办法 | Nc général
+447 | 、 | ponctuation faible
+448 | 拆迁 | Nc général
+450 | 工作 | Nc général
+452 | 若干 | adj indéfini
+454 | 规定 | Nc général
+456 | 、 | ponctuation faible
+457 | 整治 | verbe principal
+459 | 违章 | adj qualificatif général attribut du sujet
+461 | 建筑 | Nc général
+463 | 实施 | Nc général
+465 | 办法 | Nc général
+467 | 、 | ponctuation faible
+468 | 通信 | Nc général
+470 | 设施 | Nc général
+472 | 及 | conj coordination lier que d'expressions
+473 | 管线 | Nc général
+475 | 配套 | Nc général
+477 | 建设 | Nc général
+479 | 意见 | Nc général
+481 | 、 | ponctuation faible
+482 | 建设 | Nc général
+484 | 工地 | Nc général
+486 | 施工 | Nc général
+488 | 环境 | Nc général
+490 | 管理 | Nc général
+492 | 暂行 | adj qualificatif général attribut du sujet
+494 | 办法 | Nc général
+496 | 等 | particule structure particule deng
+497 | ， | ponctuation faible
+498 | 基本 | adv général
+500 | 做到 | verbe principal
+502 | 了 | particule temps action finie
+503 | 每 | det indéfini
+504 | 个 | spécificatif
+505 | 环节 | Nc général
+507 | 都 | adv général
+508 | 有 | verbe principal
+509 | 明确 | adj qualificatif général épithète
+511 | 而 | conj coordination lier tout
+512 | 又 | adv général
+513 | 具体 | adj qualificatif général épithète
+515 | 的 | particule structure dans la structure de
+516 | 规定 | Nc général
+518 | 。 | ponctuation forte
+519 | 建筑 | Nc général
+521 | 公司 | Nc général
+523 | 进 | verbe principal
+524 | 区 | Nc général
+525 | ， | ponctuation faible
+526 | 有关 | adj qualificatif général attribut du sujet
+528 | 部门 | Nc général
+530 | 先 | adv général
+531 | 送上 | verbe principal
+533 | 这些 | det démonstratif
+535 | 法规 | Nc général
+537 | 性 | Nc morphème
+538 | 文件 | Nc général
+540 | ， | ponctuation faible
+541 | 然后 | adv général
+543 | 有 | verbe principal
+544 | 专门 | adj qualificatif général attribut du sujet
+546 | 队伍 | Nc général
+548 | 进行 | verbe principal
+550 | 监督 | Nc général
+552 | 检查 | Nc général
+554 | 。 | ponctuation forte
+555 | 尽管 | conj subordination lier que de phrase
+557 | 浦东 | Np lieu
+559 | 新区 | Nc général
+561 | 制定 | verbe principal
+563 | 的 | particule structure dans la structure de
+564 | 法规 | Nc général
+566 | 性 | Nc morphème
+567 | 文件 | Nc général
+569 | 有些 | pron indéfini
+571 | 比较 | adv général
+573 | “ | ponctuation mise en évidence
+574 | 粗 | adj qualificatif général épithète
+575 | ” | ponctuation mise en évidence
+576 | ， | ponctuation faible
+577 | 有些 | pron indéfini
+579 | 还 | adv général
+580 | 只 | adv général
+581 | 是 | verbe copule
+582 | 暂行 | adj qualificatif général attribut du sujet
+584 | 规定 | Nc général
+586 | ， | ponctuation faible
+587 | 有待 | verbe principal
+589 | 在 | prep général
+590 | 实践 | Nc général
+592 | 中 | Nc notion de direction
+593 | 逐步 | adv général
+595 | 完善 | verbe principal
+597 | ， | ponctuation faible
+598 | 但 | conj subordination lier que de phrase
+599 | 这 | det démonstratif
+600 | 种 | spécificatif
+601 | 法制 | Nc général
+603 | 紧跟 | verbe principal
+605 | 经济 | Nc général
+607 | 和 | conj coordination lier que d'expressions
+608 | 社会 | Nc général
+610 | 活动 | Nc général
+612 | 的 | particule structure dans la structure de
+613 | 做法 | Nc général
+615 | ， | ponctuation faible
+616 | 受到 | verbe principal
+618 | 了 | particule temps action finie
+619 | 国内外 | Nc général
+622 | 投资者 | Nc général
+625 | 的 | particule structure dans la structure de
+626 | 好评 | Nc général
+628 | ， | ponctuation faible
+629 | 他们 | pron personnel
+631 | 认为 | verbe principal
+633 | ， | ponctuation faible
+634 | 到 | prep général
+635 | 浦东 | Np lieu
+637 | 新区 | Nc général
+639 | 投资 | Nc général
+641 | 办事 | Nc général
+643 | 有 | verbe principal
+644 | 章法 | Nc général
+646 | ， | ponctuation faible
+647 | 讲 | verbe principal
+648 | 规矩 | Nc général
+650 | ， | ponctuation faible
+651 | 利益 | Nc général
+653 | 能 | verbe principal
+654 | 得到 | verbe principal
+656 | 保障 | Nc général
+658 | 。 | ponctuation forte
+659 | （ | ponctuation parenthèses
+660 | 完 | verbe principal
+661 | ） | ponctuation parenthèses
+662 | 外商 | Nc général
+664 | 投资 | Nc général
+666 | 企业 | Nc général
+668 | 成为 | verbe principal
+670 | 中国 | Np lieu
+672 | 外贸 | Nc général
+674 | 重要 | adj qualificatif général attribut du sujet
+676 | 增长点 | Nc général
+679 | 新华社 | Nc général
+682 | 北京 | Np lieu
+684 | 二月 | Nc mois
+686 | 十一日 | Nc jour
+689 | 电 | Nc général
+690 | （ | ponctuation parenthèses
+691 | 记者 | Nc général
+693 | 唐虹 | Np noms
+695 | ） | ponctuation parenthèses
+696 | 海关 | Nc général
+698 | 统计 | Nc général
+700 | 表明 | verbe principal
+702 | ， | ponctuation faible
+703 | “ | ponctuation mise en évidence
+704 | 八五 | Nc notion de temps saison et Jie Qi
+706 | ” | ponctuation mise en évidence
+707 | 期间 | Nc général
+709 | （ | ponctuation parenthèses
+710 | 一九九０年 | Nc années
+715 | — | ponctuation parenthèses
+716 | 一九九五年 | Nc années
+721 | ） | ponctuation parenthèses
+722 | ， | ponctuation faible
+723 | 中国 | Np lieu
+725 | 外商 | Nc général
+727 | 投资 | Nc général
+729 | 企业 | Nc général
+731 | 的 | particule structure dans la structure de
+732 | 进出口 | Nc général
+735 | 呈 | verbe principal
+736 | 直线 | adv général
+738 | 上升 | verbe principal
+740 | 之 | particule structure dans la structure de
+741 | 势 | Nc général
+742 | ， | ponctuation faible
+743 | 出口 | Nc général
+745 | 年均 | adv général
+747 | 增长 | verbe principal
+749 | 百分之四十三点二 | num cardinale
+757 | ， | ponctuation faible
+758 | 进口 | Nc général
+760 | 年均 | adv général
+762 | 增长 | verbe principal
+764 | 百分之三十八点六 | num cardinale
+772 | 。 | ponctuation forte
+773 | 去年 | Nc notion de temps saison et Jie Qi
+775 | 实现 | verbe principal
+777 | 进出口 | Nc général
+780 | 总值 | Nc général
+782 | 达 | verbe principal
+783 | 一千零九十八点二亿 | num cardinale
+792 | 美元 | spécificatif
+794 | ， | ponctuation faible
+795 | 占 | verbe principal
+796 | 全 | det indéfini
+797 | 国 | Nc général
+798 | 进出口 | Nc général
+801 | 总值 | Nc général
+803 | 的 | particule structure dans la structure de
+804 | 比重 | Nc général
+806 | 由 | prep général
+807 | 上 | det démonstratif
+808 | 年 | spécificatif
+809 | 的 | particule structure dans la structure de
+810 | 百分之三十七 | num cardinale
+816 | 提高 | verbe principal
+818 | 到 | verbe principal
+819 | 百分之三十九 | num cardinale
+825 | 。 | ponctuation forte
+826 | 外商 | Nc général
+828 | 投资 | Nc général
+830 | 企业 | Nc général
+832 | 在 | prep général
+833 | 改善 | verbe principal
+835 | 中国 | Np lieu
+837 | 出口 | Nc général
+839 | 商品 | Nc général
+841 | 结构 | Nc général
+843 | 中 | Nc notion de direction
+844 | 发挥 | verbe principal
+846 | 了 | particule temps action finie
+847 | 显著 | adj qualificatif général attribut du sujet
+849 | 作用 | Nc général
+851 | 。 | ponctuation forte
+852 | 去年 | Nc notion de temps saison et Jie Qi
+854 | 外商 | Nc général
+856 | 投资 | Nc général
+858 | 企业 | Nc général
+860 | 出口 | Nc général
+862 | 商品 | Nc général
+864 | 中 | Nc notion de direction
+865 | ， | ponctuation faible
+866 | 工业 | Nc général
+868 | 制成品 | Nc général
+871 | 占 | verbe principal
+872 | 九 | num cardinale
+873 | 成 | spécificatif
+874 | 以上 | Nc notion de direction
+876 | ， | ponctuation faible
+877 | 达 | verbe principal
+878 | 四百三十八点八亿 | num cardinale
+886 | 美元 | spécificatif
+888 | ， | ponctuation faible
+889 | 比 | prep général
+890 | 上 | det démonstratif
+891 | 年 | spécificatif
+892 | 增长 | verbe principal
+894 | 了 | particule temps action finie
+895 | 百分之三十六点七 | num cardinale
+903 | ， | ponctuation faible
+904 | 明显 | adv général
+906 | 高于 | verbe principal
+908 | 全 | det indéfini
+909 | 国 | Nc général
+910 | 平均 | adj qualificatif général attribut du sujet
+912 | 水平 | Nc général
+914 | 。 | ponctuation forte
+915 | 外商 | Nc général
+917 | 投资 | Nc général
+919 | 企业 | Nc général
+921 | 的 | particule structure dans la structure de
+922 | 出口 | Nc général
+924 | 商品 | Nc général
+926 | 仍 | adv général
+927 | 以 | prep général
+928 | 轻纺 | Nc général
+930 | 产品 | Nc général
+932 | 为主 | verbe principal
+934 | ， | ponctuation faible
+935 | 其中 | pron démonstratif
+937 | ， | ponctuation faible
+938 | 出口额 | Nc général
+941 | 最 | adv général
+942 | 大 | adj qualificatif général épithète
+943 | 的 | particule structure dans la structure de
+944 | 商品 | Nc général
+946 | 是 | verbe copule
+947 | 服装 | Nc général
+949 | ， | ponctuation faible
+950 | 去年 | Nc notion de temps saison et Jie Qi
+952 | 为 | verbe copule
+953 | 七十六点八亿 | num cardinale
+959 | 美元 | spécificatif
+961 | 。 | ponctuation forte
+962 | 而 | conj coordination lier tout
+963 | 进口 | Nc général
+965 | 商品 | Nc général
+967 | 则 | adv général
+968 | 以 | prep général
+969 | 机械 | Nc général
+971 | 设备 | Nc général
+973 | 和 | conj coordination lier que d'expressions
+974 | 工业 | Nc général
+976 | 原材料 | Nc général
+979 | 为主 | verbe principal
+981 | 。 | ponctuation forte
+982 | （ | ponctuation parenthèses
+983 | 完 | verbe principal
+984 | ） | ponctuation parenthèses
+985 | 中国 | Np lieu
+987 | 十四 | num cardinale
+989 | 个 | spécificatif
+990 | 边境 | Nc général
+992 | 开放 | Nc général
+994 | 城市 | Nc général
+996 | 经济 | Nc général
+998 | 建设 | Nc général
+1000 | 成就 | Nc général
+1002 | 显著 | adj qualificatif général épithète
+1004 | 新华社 | Nc général
+1007 | 北京 | Np lieu
+1009 | 二月 | Nc mois
+1011 | 十二日 | Nc jour
+1014 | 电 | Nc général
+1015 | 中国 | Np lieu
+1017 | 十四 | num cardinale
+1019 | 个 | spécificatif
+1020 | 边境 | Nc général
+1022 | 对外 | adv général
+1024 | 开放 | Nc général
+1026 | 城市 | Nc général
+1028 | 一九九五年 | Nc années
+1033 | 经济 | Nc général
+1035 | 建设 | Nc général
+1037 | 取得 | verbe principal
+1039 | 可喜 | adj qualificatif général attribut du sujet
+1041 | 成果 | Nc général
+1043 | 。 | ponctuation forte
+1044 | 据 | prep général
+1045 | 统计 | Nc général
+1047 | ， | ponctuation faible
+1048 | 这些 | det démonstratif
+1050 | 城市 | Nc général
+1052 | 去年 | Nc notion de temps saison et Jie Qi
+1054 | 完成 | verbe principal
+1056 | 国内 | Nc général
+1058 | 生产 | Nc général
+1060 | 总值 | Nc général
+1062 | 一百九十多亿 | num cardinale
+1068 | 元 | spécificatif
+1069 | ， | ponctuation faible
+1070 | 比 | prep général
+1071 | 开放 | Nc général
+1073 | 前 | Nc notion de direction
+1074 | 的 | particule structure dans la structure de
+1075 | 一九九一年 | Nc années
+1080 | 增长 | verbe principal
+1082 | 九 | num cardinale
+1083 | 成 | spécificatif
+1084 | 多 | num environs
+1085 | 。 | ponctuation forte
+1086 | 国务院 | Nc général
+1089 | 于 | prep général
+1090 | 一九九二年 | Nc années
+1095 | 先后 | adv général
+1097 | 批准 | verbe principal
+1099 | 了 | particule temps action finie
+1100 | 黑河 | Np lieu
+1102 | 、 | ponctuation faible
+1103 | 凭祥 | Np lieu
+1105 | 、 | ponctuation faible
+1106 | 珲春 | Np lieu
+1108 | 、 | ponctuation faible
+1109 | 伊宁 | Np lieu
+1111 | 、 | ponctuation faible
+1112 | 瑞丽 | Np lieu
+1114 | 等 | particule structure particule deng
+1115 | 十四 | num cardinale
+1117 | 个 | spécificatif
+1118 | 边境 | Nc général
+1120 | 城市 | Nc général
+1122 | 为 | verbe copule
+1123 | 对外 | adv général
+1125 | 开放 | verbe principal
+1127 | 城市 | Nc général
+1129 | ， | ponctuation faible
+1130 | 同时 | adv général
+1132 | 还 | adv général
+1133 | 批准 | verbe principal
+1135 | 这些 | det démonstratif
+1137 | 城市 | Nc général
+1139 | 设立 | verbe principal
+1141 | 十四 | num cardinale
+1143 | 个 | spécificatif
+1144 | 边境 | Nc général
+1146 | 经济 | Nc général
+1148 | 合作区 | Nc général
+1151 | 。 | ponctuation forte
+1152 | 三 | num cardinale
+1153 | 年 | spécificatif
+1154 | 多 | num environs
+1155 | 来 | Nc notion de direction
+1156 | ， | ponctuation faible
+1157 | 这些 | det démonstratif
+1159 | 城市 | Nc général
+1161 | 社会 | Nc général
+1163 | 经济 | Nc général
+1165 | 发展 | Nc général
+1167 | 迅速 | Nc général
+1169 | ， | ponctuation faible
+1170 | 地方 | Nc général
+1172 | 经济 | Nc général
+1174 | 实力 | Nc général
+1176 | 明显 | adv général
+1178 | 增强 | verbe principal
+1180 | ； | ponctuation forte
+1181 | 经济 | Nc général
+1183 | 年平均 | adv général
+1186 | 增长 | verbe principal
+1188 | 百分之十七 | num cardinale
+1193 | ， | ponctuation faible
+1194 | 高于 | verbe principal
+1196 | 全 | det indéfini
+1197 | 国 | Nc général
+1198 | 年平均 | adv général
+1201 | 增长 | Nc général
+1203 | 速度 | Nc général
+1205 | 。 | ponctuation forte
+1206 | 据 | prep général
+1207 | 介绍 | Nc général
+1209 | ， | ponctuation faible
+1210 | 这 | det démonstratif
+1211 | 十四 | num cardinale
+1213 | 个 | spécificatif
+1214 | 城市 | Nc général
+1216 | 的 | particule structure dans la structure de
+1217 | 城市 | Nc général
+1219 | 建设 | Nc général
+1221 | 和 | conj coordination lier que d'expressions
+1222 | 合作区 | Nc général
+1225 | 开发 | Nc général
+1227 | 建设 | Nc général
+1229 | 步伐 | Nc général
+1231 | 加快 | verbe principal
+1233 | 。 | ponctuation forte
+1234 | 三 | num cardinale
+1235 | 年 | spécificatif
+1236 | 来 | Nc notion de direction
+1237 | ， | ponctuation faible
+1238 | 这些 | det démonstratif
+1240 | 城市 | Nc général
+1242 | 累计 | adv général
+1244 | 完成 | verbe principal
+1246 | 固定 | adj qualificatif général attribut du sujet
+1248 | 资产 | Nc général
+1250 | 投资 | Nc général
+1252 | 一百二十亿 | num cardinale
+1257 | 元 | spécificatif
+1258 | ， | ponctuation faible
+1259 | 昔日 | Nc notion de temps saison et Jie Qi
+1261 | 边境 | Nc général
+1263 | 城市 | Nc général
+1265 | 的 | particule structure dans la structure de
+1266 | “ | ponctuation mise en évidence
+1267 | 楼 | Nc général
+1268 | 不 | adv à valeur négative
+1269 | 高 | adj qualificatif général épithète
+1270 | ， | ponctuation faible
+1271 | 路 | Nc général
+1272 | 不 | adv à valeur négative
+1273 | 平 | adj qualificatif général épithète
+1274 | 、 | ponctuation faible
+1275 | 灯 | Nc général
+1276 | 不 | adv à valeur négative
+1277 | 明 | adj qualificatif général épithète
+1278 | 、 | ponctuation faible
+1279 | 水 | Nc général
+1280 | 不 | adv à valeur négative
+1281 | 清 | adj qualificatif général épithète
+1282 | 、 | ponctuation faible
+1283 | 通讯 | Nc général
+1285 | 不 | adv à valeur négative
+1286 | 畅 | adj qualificatif général épithète
+1287 | ” | ponctuation mise en évidence
+1288 | 的 | particule structure dans la structure de
+1289 | 状况 | Nc général
+1291 | 已 | adv général
+1292 | 得到 | verbe principal
+1294 | 了 | particule temps action finie
+1295 | 改变 | Nc général
+1297 | 。 | ponctuation forte
+1298 | 经济 | Nc général
+1300 | 合作区 | Nc général
+1303 | 内 | Nc notion de direction
+1304 | 已 | adv général
+1305 | 开发 | verbe principal
+1307 | 二十二点六 | num cardinale
+1312 | 平方公里 | spécificatif
+1316 | ， | ponctuation faible
+1317 | 引进 | verbe principal
+1319 | “ | ponctuation mise en évidence
+1320 | 三资 | Nc abbreviation
+1322 | ” | ponctuation mise en évidence
+1323 | 企业 | Nc général
+1325 | 二百八十七 | num cardinale
+1330 | 家 | spécificatif
+1331 | ， | ponctuation faible
+1332 | 实际 | adv général
+1334 | 利用 | verbe principal
+1336 | 外资 | Nc général
+1338 | 八点九亿 | num cardinale
+1342 | 美元 | spécificatif
+1344 | 。 | ponctuation forte
+1345 | 此外 | adv général
+1347 | ， | ponctuation faible
+1348 | 还 | adv général
+1349 | 有 | verbe auxiliaire
+1350 | 内联 | adj qualificatif général attribut du sujet
+1352 | 企业 | Nc général
+1354 | 五千一百 | num cardinale
+1358 | 家 | spécificatif
+1359 | ， | ponctuation faible
+1360 | 已 | adv général
+1361 | 投产 | verbe principal
+1363 | 工业 | Nc général
+1365 | 项目 | Nc général
+1367 | 一百七十五 | num cardinale
+1372 | 个 | spécificatif
+1373 | 。 | ponctuation forte
+1374 | （ | ponctuation parenthèses
+1375 | 完 | verbe principal
+1376 | ） | ponctuation parenthèses
+1377 | 中国 | Np lieu
+1379 | 建筑业 | Nc général
+1382 | 对外 | adv général
+1384 | 开放 | verbe principal
+1386 | 呈现 | verbe principal
+1388 | 新 | adj qualificatif général attribut du sujet
+1389 | 格局 | Nc général
+1391 | 新华社 | Nc général
+1394 | 北京 | Np lieu
+1396 | 二月 | Nc mois
+1398 | 十三日 | Nc jour
+1401 | 电 | Nc général
+1402 | 中国 | Np lieu
+1404 | 建筑 | Nc général
+1406 | 市场 | Nc général
+1408 | 近年 | Nc notion de temps saison et Jie Qi
+1410 | 来 | Nc notion de direction
+1411 | 对外 | adv général
+1413 | 开放 | Nc général
+1415 | 步伐 | Nc général
+1417 | 进一步 | adv général
+1420 | 加快 | verbe principal
+1422 | 。 | ponctuation forte
+1423 | 据 | prep général
+1424 | 初步 | adj qualificatif général attribut du sujet
+1426 | 统计 | Nc général
+1428 | ， | ponctuation faible
+1429 | 目前 | Nc notion de temps saison et Jie Qi
+1431 | 在 | prep général
+1432 | 中国 | Np lieu
+1434 | 境内 | Nc général
+1436 | 承包 | verbe principal
+1438 | 工程 | Nc général
+1440 | 的 | particule structure dans la structure de
+1441 | 国外 | Nc général
+1443 | 承包商 | Nc général
+1446 | 已 | adv général
+1447 | 有 | verbe auxiliaire
+1448 | 一百三十七 | num cardinale
+1453 | 家 | spécificatif
+1454 | ， | ponctuation faible
+1455 | 承包 | verbe principal
+1457 | 的 | particule structure dans la structure de
+1458 | 工程 | Nc général
+1460 | 达 | verbe principal
+1461 | 一百四十一 | num cardinale
+1466 | 项 | spécificatif
+1467 | ， | ponctuation faible
+1468 | 其中 | pron démonstratif
+1470 | 最大 | adj qualificatif général attribut du sujet
+1472 | 规模 | Nc général
+1474 | 的 | particule structure dans la structure de
+1475 | 项目 | Nc général
+1477 | 达 | verbe principal
+1478 | 二十七点七亿 | num cardinale
+1484 | 元 | spécificatif
+1485 | ； | ponctuation forte
+1486 | 中外 | Nc général
+1488 | 合资 | Nc général
+1490 | 合作 | Nc général
+1492 | 的 | particule structure dans la structure de
+1493 | 建筑 | Nc général
+1495 | 企业 | Nc général
+1497 | 近 | adv général
+1498 | 二千 | num cardinale
+1500 | 家 | spécificatif
+1501 | 。 | ponctuation forte
+1502 | 中国 | Np lieu
+1504 | 建筑业 | Nc général
+1507 | 对外 | adj qualificatif général attribut du sujet
+1509 | 开放 | Nc général
+1511 | 始于 | verbe principal
+1513 | 八十年代 | Nc notion de temps saison et Jie Qi
+1517 | 。 | ponctuation forte
+1518 | 十 | num cardinale
+1519 | 几 | num environs
+1520 | 年 | spécificatif
+1521 | 来 | Nc notion de direction
+1522 | ， | ponctuation faible
+1523 | 已 | adv général
+1524 | 有 | verbe auxiliaire
+1525 | 美国 | Np lieu
+1527 | 、 | ponctuation faible
+1528 | 日本 | Np lieu
+1530 | 、 | ponctuation faible
+1531 | 法国 | Np lieu
+1533 | 、 | ponctuation faible
+1534 | 英国 | Np lieu
+1536 | 、 | ponctuation faible
+1537 | 德国 | Np lieu
+1539 | 、 | ponctuation faible
+1540 | 芬兰 | Np lieu
+1542 | 、 | ponctuation faible
+1543 | 意大利 | Np lieu
+1546 | 、 | ponctuation faible
+1547 | 新加坡 | Np lieu
+1550 | 、 | ponctuation faible
+1551 | 香港 | Np lieu
+1553 | 、 | ponctuation faible
+1554 | 台湾 | Np lieu
+1556 | 等 | particule structure particule deng
+1557 | 十 | num cardinale
+1558 | 几 | num environs
+1559 | 个 | spécificatif
+1560 | 国家 | Nc général
+1562 | 和 | conj coordination lier que d'expressions
+1563 | 地区 | Nc général
+1565 | 的 | particule structure dans la structure de
+1566 | 境外 | Nc général
+1568 | 企业 | Nc général
+1570 | 进入 | verbe principal
+1572 | 中国 | Np lieu
+1574 | 进行 | verbe principal
+1576 | 工程 | Nc général
+1578 | 总 | adj qualificatif général attribut du sujet
+1579 | 承包 | Nc général
+1581 | 或 | conj coordination lier tout
+1582 | 工程 | Nc général
+1584 | 分包 | Nc général
+1586 | 。 | ponctuation forte
+1587 | 世界 | Nc général
+1589 | 上 | Nc notion de direction
+1590 | 最 | adv général
+1591 | 大 | adj qualificatif général épithète
+1592 | 的 | particule structure dans la structure de
+1593 | 二百二十五 | num cardinale
+1598 | 家 | spécificatif
+1599 | 国际 | Nc général
+1601 | 承包商 | Nc général
+1604 | 中 | Nc notion de direction
+1605 | ， | ponctuation faible
+1606 | 有 | verbe principal
+1607 | 十 | num cardinale
+1608 | 几 | num environs
+1609 | 家 | spécificatif
+1610 | 已 | adv général
+1611 | 进入 | verbe principal
+1613 | 中国 | Np lieu
+1615 | ， | ponctuation faible
+1616 | 其中 | pron démonstratif
+1618 | 不少 | det indéfini
+1620 | 公司 | Nc général
+1622 | 与 | prep général
+1623 | 中国 | Np lieu
+1625 | 公司 | Nc général
+1627 | 合资 | verbe principal
+1629 | 合作 | verbe principal
+1631 | 进行 | verbe principal
+1633 | 建设 | Nc général
+1635 | 。 | ponctuation forte
+1636 | 根据 | prep général
+1638 | 建设部 | Nc général
+1641 | 的 | particule structure dans la structure de
+1642 | 规定 | Nc général
+1644 | ， | ponctuation faible
+1645 | 凡 | adv général
+1646 | 属于 | prep général
+1648 | 国际 | Nc général
+1650 | 金融 | Nc général
+1652 | 组织 | Nc général
+1654 | 贷款 | verbe principal
+1656 | 并 | conj coordination lier tout
+1657 | 由 | prep général
+1658 | 国际 | Nc général
+1660 | 公开 | adv général
+1662 | 招标 | verbe principal
+1664 | 的 | particule structure dans la structure de
+1665 | 工程 | Nc général
+1667 | 全部 | adv général
+1669 | 由 | prep général
+1670 | 外国 | Nc général
+1672 | 投资 | verbe principal
+1674 | 或 | conj coordination lier tout
+1675 | 赠款 | verbe principal
+1677 | 建设 | verbe principal
+1679 | 的 | particule structure dans la structure de
+1680 | 工程 | Nc général
+1682 | ， | ponctuation faible
+1683 | 以及 | conj coordination lier que d'expressions
+1685 | 国内 | Nc général
+1687 | 企业 | Nc général
+1689 | 在 | prep général
+1690 | 技术 | Nc général
+1692 | 上 | Nc notion de direction
+1693 | 难以 | adv général
+1695 | 单独 | adv général
+1697 | 承包 | verbe principal
+1699 | 的 | particule structure dans la structure de
+1700 | 中外 | Nc général
+1702 | 合资 | Nc général
+1704 | 建设 | Nc général
+1706 | 工程 | Nc général
+1708 | ， | ponctuation faible
+1709 | 境外 | Nc général
+1711 | 建筑 | Nc général
+1713 | 企业 | Nc général
+1715 | 在 | prep général
+1716 | 取得 | verbe principal
+1718 | 中国 | Np organisation
+1720 | 审批 | verbe principal
+1722 | 的 | particule structure dans la structure de
+1723 | 外国 | Nc général
+1725 | 企业 | Nc général
+1727 | 承包 | verbe principal
+1729 | 工程 | Nc général
+1731 | 资质证 | Nc général
+1734 | 后 | Nc notion de direction
+1735 | ， | ponctuation faible
+1736 | 皆 | adv général
+1737 | 可 | verbe principal
+1738 | 进入 | verbe principal
+1740 | 中国 | Np lieu
+1742 | 境内 | Nc général
+1744 | 承包 | verbe principal
+1746 | 建设 | Nc général
+1748 | 项目 | Nc général
+1750 | 。 | ponctuation forte
+1751 | 一九九五年 | Nc années
+1756 | 九月 | Nc mois
+1758 | 建设部 | Nc général
+1761 | 和 | conj coordination lier que d'expressions
+1762 | 外经贸部 | Nc général
+1766 | 联合 | adv général
+1768 | 发布 | verbe principal
+1770 | 的 | particule structure dans la structure de
+1771 | 《 | ponctuation parenthèses
+1772 | 关于 | prep général
+1774 | 设立 | verbe principal
+1776 | 外商 | Nc général
+1778 | 投资 | verbe principal
+1780 | 建筑业 | Nc général
+1783 | 企业 | Nc général
+1785 | 的 | particule structure dans la structure de
+1786 | 若干 | det indéfini
+1788 | 规定 | Nc général
+1790 | 》 | ponctuation parenthèses
+1791 | ， | ponctuation faible
+1792 | 使 | verbe principal
+1793 | 中国 | Np lieu
+1795 | 的 | particule structure dans la structure de
+1796 | 建筑 | Nc général
+1798 | 市场 | Nc général
+1800 | 从 | prep général
+1801 | 允许 | verbe principal
+1803 | 境外 | Nc général
+1805 | 企业 | Nc général
+1807 | 到 | verbe principal
+1808 | 中国 | Np lieu
+1810 | 承包 | verbe principal
+1812 | 工程 | Nc général
+1814 | 进入 | verbe principal
+1816 | 到 | prep général
+1817 | 允许 | verbe principal
+1819 | 境外 | Nc général
+1821 | 企业 | Nc général
+1823 | 到 | verbe principal
+1824 | 中国 | Np lieu
+1826 | 办 | verbe principal
+1827 | 合资 | adj qualificatif général attribut du sujet
+1829 | 建筑 | Nc général
+1831 | 企业 | Nc général
+1833 | 。 | ponctuation forte
+1834 | （ | ponctuation parenthèses
+1835 | 完 | verbe principal
+1836 | ） | ponctuation parenthèses
+1837 | 西藏 | Np lieu
+1839 | 金融 | Nc général
+1841 | 工作 | Nc général
+1843 | 取得 | verbe principal
+1845 | 显著 | adj qualificatif général attribut du sujet
+1847 | 成绩 | Nc général
+1849 | 新华社 | Nc général
+1852 | 拉萨 | Np lieu
+1854 | 二月 | Nc mois
+1856 | 二日 | Nc jour
+1858 | 电 | Nc général
+1859 | （ | ponctuation parenthèses
+1860 | 记者 | Nc général
+1862 | 央珍 | Np noms
+1864 | ） | ponctuation parenthèses
+1865 | “ | ponctuation mise en évidence
+1866 | 八五 | Nc notion de temps saison et Jie Qi
+1868 | ” | ponctuation mise en évidence
+1869 | （ | ponctuation parenthèses
+1870 | 一九九一 | Nc années
+1874 | 至 | prep général
+1875 | 一九九五年 | Nc années
+1880 | ） | ponctuation parenthèses
+1881 | 期间 | Nc général
+1883 | ， | ponctuation faible
+1884 | 西藏 | Np lieu
+1886 | 金融 | Nc général
+1888 | 体制 | Nc général
+1890 | 改革 | Nc général
+1892 | 坚持 | verbe principal
+1894 | 与 | prep général
+1895 | 全 | det indéfini
+1896 | 国 | Nc général
+1897 | 框架 | Nc général
+1899 | 一致 | adj qualificatif général épithète
+1901 | 、 | ponctuation faible
+1902 | 体制 | Nc général
+1904 | 衔接 | verbe principal
+1906 | 的 | particule structure dans la structure de
+1907 | 方针 | Nc général
+1909 | ， | ponctuation faible
+1910 | 顺利 | adv général
+1912 | 完成 | verbe principal
+1914 | 了 | particule temps action finie
+1915 | 西藏 | Np lieu
+1917 | 各 | det indéfini
+1918 | 级 | spécificatif
+1919 | 人民银行 | Nc général
+1923 | 的 | particule structure dans la structure de
+1924 | 分设 | verbe principal
+1926 | 工作 | Nc général
+1928 | ， | ponctuation faible
+1929 | 实现 | verbe principal
+1931 | 信贷 | Nc général
+1933 | 资金 | Nc général
+1935 | 使用 | Nc général
+1937 | 从 | prep général
+1938 | 粗放型 | Nc général
+1941 | 经营 | Nc général
+1943 | 方式 | Nc général
+1945 | 向 | prep général
+1946 | 集约型 | Nc général
+1949 | 经营 | Nc général
+1951 | 方式 | Nc général
+1953 | 转变 | verbe principal
+1955 | 。 | ponctuation forte
+1956 | 去年 | Nc notion de temps saison et Jie Qi
+1958 | ， | ponctuation faible
+1959 | 全 | det indéfini
+1960 | 区 | Nc général
+1961 | 各 | det indéfini
+1962 | 项 | spécificatif
+1963 | 存款 | Nc général
+1965 | 首次 | adv général
+1967 | 突破 | verbe principal
+1969 | 了 | particule temps action finie
+1970 | 年 | adv général
+1971 | 净 | adv général
+1972 | 增 | verbe principal
+1973 | 二十亿 | num cardinale
+1976 | 元 | spécificatif
+1977 | 大关 | Nc général
+1979 | 。 | ponctuation forte
+1980 | 据 | prep général
+1981 | 中国人民银行 | Np organisation
+1987 | 西藏 | Np lieu
+1989 | 自治区 | Nc général
+1992 | 分行 | Nc général
+1994 | 行长 | Nc général
+1996 | 索朗达吉 | Np noms
+2000 | 介绍 | verbe principal
+2002 | ， | ponctuation faible
+2003 | “ | ponctuation mise en évidence
+2004 | 八五 | Nc notion de temps saison et Jie Qi
+2006 | ” | ponctuation mise en évidence
+2007 | 期间 | Nc général
+2009 | ， | ponctuation faible
+2010 | 西藏 | Np lieu
+2012 | 自治区 | Nc général
+2015 | 分行 | Nc général
+2017 | 在 | prep général
+2018 | 全 | det indéfini
+2019 | 国 | Nc général
+2020 | 率先 | adv général
+2022 | 撤销 | verbe principal
+2024 | 了 | particule temps action finie
+2025 | 人民银行 | Nc général
+2029 | 县支行 | Nc général
+2032 | ， | ponctuation faible
+2033 | 中国农业银行 | Np organisation
+2039 | 西藏 | Np lieu
+2041 | 自治区 | Nc général
+2044 | 分行 | Nc général
+2046 | 于 | prep général
+2047 | 去年 | Nc notion de temps saison et Jie Qi
+2049 | 七月 | Nc mois
+2051 | 一日 | Nc jour
+2053 | 正式 | adv général
+2055 | 对外 | adv général
+2057 | 挂牌 | verbe principal
+2059 | 营业 | verbe principal
+2061 | ， | ponctuation faible
+2062 | 实现 | verbe principal
+2064 | 了 | particule temps action finie
+2065 | 金融 | Nc général
+2067 | 体制 | Nc général
+2069 | 在 | prep général
+2070 | 框架 | Nc général
+2072 | 上 | Nc notion de direction
+2073 | 与 | prep général
+2074 | 全 | det indéfini
+2075 | 国 | Nc général
+2076 | 一致 | adj qualificatif général épithète
+2078 | 。 | ponctuation forte
+2079 | 外汇 | Nc général
+2081 | 体制 | Nc général
+2083 | 改革 | Nc général
+2085 | 实现 | verbe principal
+2087 | 了 | particule temps action finie
+2088 | 与 | prep général
+2089 | 全 | det indéfini
+2090 | 国 | Nc général
+2091 | 接轨 | verbe principal
+2093 | ， | ponctuation faible
+2094 | 结售 | Nc général
+2096 | 制度 | Nc général
+2098 | 和 | conj coordination lier que d'expressions
+2099 | 新 | adj qualificatif général épithète
+2100 | 的 | particule structure dans la structure de
+2101 | 核销 | Nc général
+2103 | 制度 | Nc général
+2105 | 在 | prep général
+2106 | 西藏 | Np lieu
+2108 | 全面 | adv général
+2110 | 实施 | verbe principal
+2112 | ， | ponctuation faible
+2113 | 有效 | adj qualificatif général épithète
+2115 | 地 | particule structure particule di4
+2116 | 防止 | verbe principal
+2118 | 了 | particule temps action finie
+2119 | 外汇 | Nc général
+2121 | 流失 | Nc général
+2123 | 。 | ponctuation forte
+2124 | 去年 | Nc notion de temps saison et Jie Qi
+2126 | 全 | det indéfini
+2127 | 区 | Nc général
+2128 | 各 | det indéfini
+2129 | 项 | spécificatif
+2130 | 存款 | Nc général
+2132 | 和 | conj coordination lier que d'expressions
+2133 | 贷款 | Nc général
+2135 | 的 | particule structure dans la structure de
+2136 | 增幅 | Nc général
+2138 | 远远 | adv général
+2140 | 高于 | verbe principal
+2142 | 经济 | Nc général
+2144 | 发展 | Nc général
+2146 | 速度 | Nc général
+2148 | ， | ponctuation faible
+2149 | 实现 | verbe principal
+2151 | 了 | particule temps action finie
+2152 | 年初 | Nc notion de temps saison et Jie Qi
+2154 | 金融 | Nc général
+2156 | 工作 | Nc général
+2158 | 会议 | Nc général
+2160 | 提出 | verbe principal
+2162 | 的 | particule structure dans la structure de
+2163 | 要求 | Nc général
+2165 | 。 | ponctuation forte
+2166 | 西藏 | Np lieu
+2168 | 银行 | Nc général
+2170 | 部门 | Nc général
+2172 | 积极 | adv général
+2174 | 调整 | verbe principal
+2176 | 信贷 | Nc général
+2178 | 结构 | Nc général
+2180 | ， | ponctuation faible
+2181 | 以 | prep général
+2182 | 确保 | verbe principal
+2184 | 农牧业 | Nc général
+2187 | 生产 | Nc général
+2189 | 等 | particule structure particule deng
+2190 | 重点 | Nc général
+2192 | 产业 | Nc général
+2194 | 的 | particule structure dans la structure de
+2195 | 投入 | Nc général
+2197 | ， | ponctuation faible
+2198 | 加大 | verbe principal
+2200 | 对 | prep général
+2201 | 工业 | Nc général
+2203 | 、 | ponctuation faible
+2204 | 能源 | Nc général
+2206 | 、 | ponctuation faible
+2207 | 交通 | Nc général
+2209 | 、 | ponctuation faible
+2210 | 通信 | Nc général
+2212 | 等 | particule structure particule deng
+2213 | 建设 | Nc général
+2215 | 的 | particule structure dans la structure de
+2216 | 正常 | adj qualificatif général attribut du sujet
+2218 | 资金 | Nc général
+2220 | 供应量 | Nc général
+2223 | 。 | ponctuation forte
+2224 | 去年 | Nc notion de temps saison et Jie Qi
+2226 | 新增 | verbe principal
+2228 | 贷款 | Nc général
+2230 | 十四点四一亿 | num cardinale
+2236 | 元 | spécificatif
+2237 | ， | ponctuation faible
+2238 | 比 | prep général
+2239 | 上 | det démonstratif
+2240 | 年 | spécificatif
+2241 | 增加 | verbe principal
+2243 | 八亿 | num cardinale
+2245 | 多 | num environs
+2246 | 元 | spécificatif
+2247 | 。 | ponctuation forte
+2248 | 农牧业 | Nc général
+2251 | 生产 | Nc général
+2253 | 贷款 | Nc général
+2255 | （ | ponctuation parenthèses
+2256 | 包括 | verbe principal
+2258 | 扶贫 | Nc général
+2260 | 贷款 | Nc général
+2262 | ） | ponctuation parenthèses
+2263 | 比 | prep général
+2264 | 上 | det démonstratif
+2265 | 年 | spécificatif
+2266 | 新增 | verbe principal
+2268 | 四点三八亿 | num cardinale
+2273 | 元 | spécificatif
+2274 | ； | ponctuation forte
+2275 | 乡镇 | Nc général
+2277 | 企业 | Nc général
+2279 | 贷款 | Nc général
+2281 | 增幅 | Nc général
+2283 | 为 | verbe copule
+2284 | 百分之六十一点八三 | num cardinale
+2293 | 。 | ponctuation forte
+2294 | 到 | prep général
+2295 | 去年 | Nc notion de temps saison et Jie Qi
+2297 | 底 | Nc notion de direction
+2298 | ， | ponctuation faible
+2299 | 全 | det indéfini
+2300 | 区 | Nc général
+2301 | 各 | det indéfini
+2302 | 项 | spécificatif
+2303 | 存款 | Nc général
+2305 | 余额 | Nc général
+2307 | 达 | verbe principal
+2308 | 七十一点六三亿 | num cardinale
+2315 | 元 | spécificatif
+2316 | ， | ponctuation faible
+2317 | 比 | prep général
+2318 | 上年 | Nc notion de temps saison et Jie Qi
+2320 | 同期 | Nc général
+2322 | 增长 | verbe principal
+2324 | 百分之四十一点七八 | num cardinale
+2333 | ， | ponctuation faible
+2334 | 其中 | pron démonstratif
+2336 | ， | ponctuation faible
+2337 | 城乡 | Nc général
+2339 | 居民 | Nc général
+2341 | 储蓄 | Nc général
+2343 | 存款 | Nc général
+2345 | 为 | verbe copule
+2346 | 十九点三七亿 | num cardinale
+2352 | 元 | spécificatif
+2353 | ， | ponctuation faible
+2354 | 比 | prep général
+2355 | 上年 | Nc notion de temps saison et Jie Qi
+2357 | 同期 | Nc général
+2359 | 增长 | verbe principal
+2361 | 百分之四十八点二 | num cardinale
+2369 | 。 | ponctuation forte
+2370 | “ | ponctuation mise en évidence
+2371 | 八五 | Nc notion de temps saison et Jie Qi
+2373 | ” | ponctuation mise en évidence
+2374 | 期间 | Nc général
+2376 | 各 | det indéfini
+2377 | 项 | spécificatif
+2378 | 存款 | Nc général
+2380 | 比 | prep général
+2381 | “ | ponctuation mise en évidence
+2382 | 七五 | Nc notion de temps saison et Jie Qi
+2384 | ” | ponctuation mise en évidence
+2385 | （ | ponctuation parenthèses
+2386 | 一九八六 | num cardinale
+2390 | 至 | prep général
+2391 | 一九九０年 | Nc années
+2396 | ） | ponctuation parenthèses
+2397 | 末 | Nc notion de direction
+2398 | 净增 | verbe principal
+2400 | 五十亿 | num cardinale
+2403 | 元 | spécificatif
+2404 | ， | ponctuation faible
+2405 | 年 | spécificatif
+2406 | 平均 | adv général
+2408 | 增长 | verbe principal
+2410 | 百分之二十七点四九 | num cardinale
+2419 | 。 | ponctuation forte
+2420 | 在 | prep général
+2421 | 新增 | verbe principal
+2423 | 的 | particule structure dans la structure de
+2424 | 储蓄 | Nc général
+2426 | 存款 | Nc général
+2428 | 中 | Nc notion de direction
+2429 | ， | ponctuation faible
+2430 | 定期 | adj qualificatif général attribut du sujet
+2432 | 存款 | Nc général
+2434 | 占 | verbe principal
+2435 | 百分之七十二点一五 | num cardinale
+2444 | 。 | ponctuation forte
+2445 | 货币 | Nc général
+2447 | 回笼 | Nc général
+2449 | 的 | particule structure dans la structure de
+2450 | 增加 | Nc général
+2452 | ， | ponctuation faible
+2453 | 为 | prep général
+2454 | 平抑 | verbe principal
+2456 | 全 | det indéfini
+2457 | 区 | Nc général
+2458 | 物价 | Nc général
+2460 | 发挥 | verbe principal
+2462 | 了 | particule temps action finie
+2463 | 作用 | Nc général
+2465 | 。 | ponctuation forte
+2466 | （ | ponctuation parenthèses
+2467 | 完 | verbe principal
+2468 | ） | ponctuation parenthèses
+2469 | 中国 | Np lieu
+2471 | 三资 | Nc général
+2473 | 企业 | Nc général
+2475 | 人民币 | Nc général
+2478 | 贷款 | Nc général
+2480 | 余额 | Nc général
+2482 | 近 | adv général
+2483 | 一千亿 | num cardinale
+2486 | 元 | spécificatif
+2487 | 新华社 | Nc général
+2490 | 北京 | Np lieu
+2492 | 二月 | Nc mois
+2494 | 十三日 | Nc jour
+2497 | 电 | Nc général
+2498 | 据 | prep général
+2499 | 中国人民银行 | Np organisation
+2505 | 统计 | verbe principal
+2507 | ， | ponctuation faible
+2508 | 截至 | prep général
+2510 | 去年 | Nc notion de temps saison et Jie Qi
+2512 | 底 | Nc notion de direction
+2513 | ， | ponctuation faible
+2514 | 中国 | Np lieu
+2516 | 金融 | Nc général
+2518 | 机构 | Nc général
+2520 | 对 | prep général
+2521 | 三资 | Nc général
+2523 | 企业 | Nc général
+2525 | 的 | particule structure dans la structure de
+2526 | 人民币 | Nc général
+2529 | 贷款 | Nc général
+2531 | 余额 | Nc général
+2533 | 已 | adv général
+2534 | 达 | verbe principal
+2535 | 九百九十五点六亿 | num cardinale
+2543 | 元 | spécificatif
+2544 | ， | ponctuation faible
+2545 | 这 | det démonstratif
+2546 | 一 | num cardinale
+2547 | 数字 | Nc général
+2549 | 比 | prep général
+2550 | 上年 | Nc notion de temps saison et Jie Qi
+2552 | 末 | Nc notion de direction
+2553 | 增加 | verbe principal
+2555 | 二百零三点三亿 | num cardinale
+2562 | 元 | spécificatif
+2563 | ， | ponctuation faible
+2564 | 增长 | verbe principal
+2566 | 百分之二十七点六 | num cardinale
+2574 | 。 | ponctuation forte
+2575 | 据 | prep général
+2576 | 了解 | verbe principal
+2578 | ， | ponctuation faible
+2579 | 近 | adv général
+2580 | 几 | det indéfini
+2581 | 年 | spécificatif
+2582 | ， | ponctuation faible
+2583 | 随着 | prep général
+2585 | 中国 | Np lieu
+2587 | 经济 | Nc général
+2589 | 的 | particule structure dans la structure de
+2590 | 不断 | adj qualificatif général attribut du sujet
+2592 | 发展 | Nc général
+2594 | 和 | conj coordination lier que d'expressions
+2595 | 对外 | adj qualificatif général attribut du sujet
+2597 | 开放 | Nc général
+2599 | 的 | particule structure dans la structure de
+2600 | 不断 | adj qualificatif général attribut du sujet
+2602 | 深入 | Nc général
+2604 | ， | ponctuation faible
+2605 | 外商 | Nc général
+2607 | 来 | verbe principal
+2608 | 华 | Np abbreviation
+2609 | 投资 | verbe principal
+2611 | 热情 | Nc général
+2613 | 很 | adv général
+2614 | 高 | adj qualificatif général épithète
+2615 | ， | ponctuation faible
+2616 | 投资 | Nc général
+2618 | 项目 | Nc général
+2620 | 和 | conj coordination lier que d'expressions
+2621 | 金额 | Nc général
+2623 | 增长 | Nc général
+2625 | 十分 | adv général
+2627 | 迅速 | adj qualificatif général épithète
+2629 | 。 | ponctuation forte
+2630 | 据 | prep général
+2631 | 统计 | verbe principal
+2633 | ， | ponctuation faible
+2634 | 迄今 | adv général
+2636 | 中国 | Np organisation
+2638 | 已 | adv général
+2639 | 累计 | adv général
+2641 | 批准 | verbe principal
+2643 | 外商 | Nc général
+2645 | 投资 | Nc général
+2647 | 项目 | Nc général
+2649 | 近 | adj indéfini
+2650 | 二十五点九万 | num cardinale
+2656 | 个 | spécificatif
+2657 | ， | ponctuation faible
+2658 | 实际 | adv général
+2660 | 使用 | verbe principal
+2662 | 外资 | Nc général
+2664 | 金额 | Nc général
+2666 | 一千三百五十四亿 | num cardinale
+2674 | 美元 | spécificatif
+2676 | 。 | ponctuation forte
+2677 | 目前 | Nc notion de temps saison et Jie Qi
+2679 | ， | ponctuation faible
+2680 | 已 | adv général
+2681 | 有 | verbe principal
+2682 | 十二万 | num cardinale
+2685 | 多 | num environs
+2686 | 家 | spécificatif
+2687 | 外商 | Nc général
+2689 | 投资 | Nc général
+2691 | 企业 | Nc général
+2693 | 在 | prep général
+2694 | 中国 | Np lieu
+2696 | 开业 | verbe principal
+2698 | ， | ponctuation faible
+2699 | 而且 | conj coordination lier tout
+2701 | 这些 | pron démonstratif
+2703 | 已 | adv général
+2704 | 开业 | verbe principal
+2706 | 的 | particule structure dans la structure de
+2707 | 外商 | Nc général
+2709 | 投资 | Nc général
+2711 | 企业 | Nc général
+2713 | 绝大部分 | Nc général
+2717 | 生产 | Nc général
+2719 | 经营 | Nc général
+2721 | 状况 | Nc général
+2723 | 较 | adv général
+2724 | 好 | adj qualificatif général épithète
+2725 | 。 | ponctuation forte
+2726 | 据 | prep général
+2727 | 国家 | Nc général
+2729 | 税务 | Nc général
+2731 | 总局 | Nc général
+2733 | 统计 | verbe principal
+2735 | ， | ponctuation faible
+2736 | 去年 | Nc notion de temps saison et Jie Qi
+2738 | 全 | det indéfini
+2739 | 国 | Nc général
+2740 | 外商 | Nc général
+2742 | 投资 | Nc général
+2744 | 企业 | Nc général
+2746 | 和 | conj coordination lier que d'expressions
+2747 | 外国 | Nc général
+2749 | 企业 | Nc général
+2751 | 缴纳 | verbe principal
+2753 | 的 | particule structure dans la structure de
+2754 | 所得税 | Nc général
+2757 | 达 | verbe principal
+2758 | 七十五点六七亿 | num cardinale
+2765 | 元 | spécificatif
+2766 | ， | ponctuation faible
+2767 | 比 | prep général
+2768 | 上年 | Nc notion de temps saison et Jie Qi
+2770 | 增长 | verbe principal
+2772 | 百分之五十七点一 | num cardinale
+2780 | 。 | ponctuation forte
+2781 | 据 | prep général
+2782 | 了解 | verbe principal
+2784 | ， | ponctuation faible
+2785 | 目前 | Nc notion de temps saison et Jie Qi
+2787 | ， | ponctuation faible
+2788 | 在 | prep général
+2789 | 外商 | Nc général
+2791 | 投资 | Nc général
+2793 | 企业 | Nc général
+2795 | 获得 | verbe principal
+2797 | 的 | particule structure dans la structure de
+2798 | 人民币 | Nc général
+2801 | 贷款 | Nc général
+2803 | 中 | Nc notion de direction
+2804 | ， | ponctuation faible
+2805 | 有 | verbe principal
+2806 | 近 | adj indéfini
+2807 | 一半 | num cardinale
+2809 | 是 | verbe copule
+2810 | 中国银行 | Np organisation
+2814 | 提供 | verbe principal
+2816 | 的 | particule structure dans la structure de
+2817 | 。 | ponctuation forte
+2818 | 仅 | adv général
+2819 | 去年 | Nc notion de temps saison et Jie Qi
+2821 | 中国银行 | Np organisation
+2825 | 就 | adv général
+2826 | 累计 | adv général
+2828 | 向 | prep général
+2829 | 外商 | Nc général
+2831 | 投资 | Nc général
+2833 | 企业 | Nc général
+2835 | 提供 | verbe principal
+2837 | 了 | particule temps action finie
+2838 | 六百九十多亿 | num cardinale
+2844 | 元 | spécificatif
+2845 | 的 | particule structure dans la structure de
+2846 | 人民币 | Nc général
+2849 | 贷款 | Nc général
+2851 | ， | ponctuation faible
+2852 | 另外 | adv général
+2854 | 还 | adv général
+2855 | 向 | prep général
+2856 | 外商 | Nc général
+2858 | 投资 | Nc général
+2860 | 企业 | Nc général
+2862 | 发放 | verbe principal
+2864 | 外汇 | Nc général
+2866 | 现汇 | Nc général
+2868 | 贷款 | Nc général
+2870 | 四十多亿 | num cardinale
+2874 | 美元 | spécificatif
+2876 | ， | ponctuation faible
+2877 | 这些 | det démonstratif
+2879 | 贷款 | Nc général
+2881 | 重点 | adv général
+2883 | 支持 | verbe principal
+2885 | 基础 | Nc général
+2887 | 原材料 | Nc général
+2890 | 、 | ponctuation faible
+2891 | 化工 | Nc général
+2893 | 、 | ponctuation faible
+2894 | 机械 | Nc général
+2896 | 等 | particule structure particule deng
+2897 | 行业 | Nc général
+2899 | 。 | ponctuation forte
+2900 | 据 | prep général
+2901 | 统计 | verbe principal
+2903 | ， | ponctuation faible
+2904 | 到 | prep général
+2905 | 去年 | Nc notion de temps saison et Jie Qi
+2907 | 底 | Nc notion de direction
+2908 | ， | ponctuation faible
+2909 | 中国银行 | Np organisation
+2913 | 向 | prep général
+2914 | 外商 | Nc général
+2916 | 投资 | Nc général
+2918 | 企业 | Nc général
+2920 | 累计 | adv général
+2922 | 发放 | verbe principal
+2924 | 的 | particule structure dans la structure de
+2925 | 外汇 | Nc général
+2927 | 现汇 | Nc général
+2929 | 贷款 | Nc général
+2931 | 和 | conj coordination lier que d'expressions
+2932 | 人民币 | Nc général
+2935 | 贷款 | Nc général
+2937 | 达到 | verbe principal
+2939 | 二百一十亿 | num cardinale
+2944 | 美元 | spécificatif
+2946 | 和 | conj coordination lier que d'expressions
+2947 | 二千五百九十三亿 | num cardinale
+2955 | 元 | spécificatif
+2956 | ， | ponctuation faible
+2957 | 人民币 | Nc général
+2960 | 贷款 | Nc général
+2962 | 余额 | Nc général
+2964 | 已 | adv général
+2965 | 近 | verbe principal
+2966 | 四百五十四亿 | num cardinale
+2972 | 元 | spécificatif
+2973 | 。 | ponctuation forte
+2974 | 目前 | Nc notion de temps saison et Jie Qi
+2976 | ， | ponctuation faible
+2977 | 约 | adv général
+2978 | 有 | verbe principal
+2979 | 十五万 | num cardinale
+2982 | 家 | spécificatif
+2983 | 外商 | Nc général
+2985 | 投资 | Nc général
+2987 | 企业 | Nc général
+2989 | 在 | prep général
+2990 | 中国银行 | Np organisation
+2994 | 开立 | verbe principal
+2996 | 帐户 | Nc général
+2998 | ， | ponctuation faible
+2999 | 其中 | pron démonstratif
+3001 | 二万 | num cardinale
+3003 | 多 | num environs
+3004 | 家 | spécificatif
+3005 | 获得 | verbe principal
+3007 | 中国银行 | Np organisation
+3011 | 的 | particule structure dans la structure de
+3012 | 贷款 | Nc général
+3014 | 支持 | Nc général
+3016 | 。 | ponctuation forte
+3017 | 据 | prep général
+3018 | 中国银行 | Np organisation
+3022 | 有关 | adj qualificatif général attribut du sujet
+3024 | 负责人 | Nc général
+3027 | 透露 | verbe principal
+3029 | ， | ponctuation faible
+3030 | 今年 | Nc notion de temps saison et Jie Qi
+3032 | 中国银行 | Np organisation
+3036 | 仍 | adv général
+3037 | 将 | adv général
+3038 | 继续 | verbe principal
+3040 | 发挥 | verbe principal
+3042 | 其 | pron démonstratif
+3043 | 在 | prep général
+3044 | 支持 | verbe principal
+3046 | 外商 | Nc général
+3048 | 投资 | Nc général
+3050 | 企业 | Nc général
+3052 | 方面 | Nc général
+3054 | 的 | particule structure dans la structure de
+3055 | 主渠道 | Nc général
+3058 | 作用 | Nc général
+3060 | , | ponctuation faible
+3061 | 对 | prep général
+3062 | 投资 | Nc général
+3064 | 企业 | Nc général
+3066 | 的 | particule structure dans la structure de
+3067 | 贷款 | Nc général
+3069 | 规模 | Nc général
+3071 | 将 | adv général
+3072 | 保持 | verbe principal
+3074 | 适度 | adv général
+3076 | 增长 | verbe principal
+3078 | 。 | ponctuation forte
+3079 | 贷款 | Nc général
+3081 | 将 | adv général
+3082 | 向 | prep général
+3083 | 能源 | Nc général
+3085 | 、 | ponctuation faible
+3086 | 交通 | Nc général
+3088 | 、 | ponctuation faible
+3089 | 电力 | Nc général
+3091 | 等 | particule structure particule deng
+3092 | 基础 | Nc général
+3094 | 设施 | Nc général
+3096 | 产业 | Nc général
+3098 | 倾斜 | verbe principal
+3100 | ， | ponctuation faible
+3101 | 尤其 | adv général
+3103 | 以 | prep général
+3104 | 国外 | Nc général
+3106 | 大 | adj qualificatif général attribut du sujet
+3107 | 公司 | Nc général
+3109 | 在 | prep général
+3110 | 华 | Np abbreviation
+3111 | 设立 | verbe principal
+3113 | 的 | particule structure dans la structure de
+3114 | 大中型 | adj qualificatif général attribut du sujet
+3117 | 企业 | Nc général
+3119 | 为 | verbe principal
+3120 | 重点 | Nc général
+3122 | ； | ponctuation forte
+3123 | 此外 | adv général
+3125 | ， | ponctuation faible
+3126 | 高 | adj qualificatif général attribut du sujet
+3127 | 技术 | Nc général
+3129 | 、 | ponctuation faible
+3130 | 高 | adj qualificatif général attribut du sujet
+3131 | 科技 | Nc général
+3133 | 、 | ponctuation faible
+3134 | 高 | adj qualificatif général attribut du sujet
+3135 | 出口 | Nc général
+3137 | 、 | ponctuation faible
+3138 | 高 | adj qualificatif général attribut du sujet
+3139 | 利税 | Nc général
+3141 | 的 | particule structure dans la structure de
+3142 | 企业 | Nc général
+3144 | 也 | adv général
+3145 | 将 | adv général
+3146 | 获得 | verbe principal
+3148 | 中国银行 | Np organisation
+3152 | 的 | particule structure dans la structure de
+3153 | 贷款 | Nc général
+3155 | 支持 | Nc général
+3157 | 。 | ponctuation forte
+3158 | （ | ponctuation parenthèses
+3159 | 完 | verbe principal
+3160 | ） | ponctuation parenthèses
+3161 | 上海 | Np lieu
+3163 | 海关 | Nc général
+3165 | 崇明 | Np lieu
+3167 | 办事处 | Nc général
+3170 | 成立 | verbe principal
+3172 | 新华社 | Nc général
+3175 | 上海 | Np lieu
+3177 | 二月 | Nc mois
+3179 | 十三日 | Nc jour
+3182 | 电 | Nc général
+3183 | （ | ponctuation parenthèses
+3184 | 通讯员 | Nc général
+3187 | 孔良 | Np noms
+3189 | 、 | ponctuation faible
+3190 | 记者 | Nc général
+3192 | 夏儒阁 | Np noms
+3195 | ） | ponctuation parenthèses
+3196 | 经 | prep général
+3197 | 中国 | Np lieu
+3199 | 海关 | Nc général
+3201 | 总署 | Nc général
+3203 | 批准 | verbe principal
+3205 | 设立 | verbe principal
+3207 | 的 | particule structure dans la structure de
+3208 | 上海 | Np lieu
+3210 | 海关 | Nc général
+3212 | 驻 | verbe principal
+3213 | 崇明 | Np lieu
+3215 | 办事处 | Nc général
+3218 | 于 | prep général
+3219 | 日前 | Nc notion de temps saison et Jie Qi
+3221 | 成立 | verbe principal
+3223 | ， | ponctuation faible
+3224 | 并 | conj coordination lier tout
+3225 | 正式 | adv général
+3227 | 对外 | adv général
+3229 | 办理 | verbe principal
+3231 | 业务 | Nc général
+3233 | 。 | ponctuation forte
+3234 | 这 | pron démonstratif
+3235 | 是 | verbe copule
+3236 | 上海 | Np lieu
+3238 | 海关 | Nc général
+3240 | 为 | prep général
+3241 | 进一步 | adv général
+3244 | 推进 | verbe principal
+3246 | 市郊 | Nc général
+3248 | 外向 | adj qualificatif général attribut du sujet
+3250 | 经济 | Nc général
+3252 | 的 | particule structure dans la structure de
+3253 | 发展 | Nc général
+3255 | ， | ponctuation faible
+3256 | 继 | prep général
+3257 | 奉贤 | Np lieu
+3259 | 、 | ponctuation faible
+3260 | 莘庄 | Np lieu
+3262 | 、 | ponctuation faible
+3263 | 嘉定 | Np lieu
+3265 | 、 | ponctuation faible
+3266 | 松江 | Np lieu
+3268 | 、 | ponctuation faible
+3269 | 青浦 | Np lieu
+3271 | 、 | ponctuation faible
+3272 | 金山 | Np lieu
+3274 | 之后 | Nc notion de direction
+3276 | 设立 | verbe principal
+3278 | 的 | particule structure dans la structure de
+3279 | 第七 | num ordinale
+3281 | 个 | spécificatif
+3282 | 海关 | Nc général
+3284 | 机构 | Nc général
+3286 | 。 | ponctuation forte
+3287 | 崇明 | Np lieu
+3289 | 是 | verbe copule
+3290 | 中国 | Np lieu
+3292 | 第三 | num ordinale
+3294 | 大 | adj qualificatif général attribut du sujet
+3295 | 岛 | Nc général
+3296 | ， | ponctuation faible
+3297 | 具有 | verbe principal
+3299 | 优越 | adj qualificatif général épithète
+3301 | 的 | particule structure dans la structure de
+3302 | 地理 | Nc général
+3304 | 条件 | Nc général
+3306 | 和 | conj coordination lier que d'expressions
+3307 | 悠久 | adj qualificatif général épithète
+3309 | 的 | particule structure dans la structure de
+3310 | 历史 | Nc général
+3312 | ， | ponctuation faible
+3313 | 改革 | Nc général
+3315 | 开放 | Nc général
+3317 | 以来 | Nc notion de direction
+3319 | ， | ponctuation faible
+3320 | 崇明县 | Np lieu
+3323 | 的 | particule structure dans la structure de
+3324 | 经济 | Nc général
+3326 | 建设 | Nc général
+3328 | 和 | conj coordination lier que d'expressions
+3329 | 对外 | adj qualificatif général attribut du sujet
+3331 | 开放 | Nc général
+3333 | 发展 | verbe principal
+3335 | 迅猛 | adj qualificatif général attribut du sujet
+3337 | ， | ponctuation faible
+3338 | 外商 | Nc général
+3340 | 投资 | Nc général
+3342 | 企业 | Nc général
+3344 | 不断 | adv général
+3346 | 增多 | verbe principal
+3348 | ， | ponctuation faible
+3349 | 进出口 | Nc général
+3352 | 货物 | Nc général
+3354 | 大量 | adv général
+3356 | 增加 | verbe principal
+3358 | ， | ponctuation faible
+3359 | 是 | verbe copule
+3360 | 中国 | Np lieu
+3362 | 综合 | adj qualificatif général attribut du sujet
+3364 | 实力 | Nc général
+3366 | 百 | num cardinale
+3367 | 强 | adj qualificatif général attribut du sujet
+3368 | 县 | Nc général
+3369 | 之一 | pron indéfini
+3371 | 。 | ponctuation forte
+3372 | 随着 | prep général
+3374 | 崇明 | Np lieu
+3376 | 海关 | Nc général
+3378 | 办事处 | Nc général
+3381 | 的 | particule structure dans la structure de
+3382 | 设立 | Nc général
+3384 | ， | ponctuation faible
+3385 | 崇明县 | Np lieu
+3388 | 内 | Nc notion de direction
+3389 | 的 | particule structure dans la structure de
+3390 | 单位 | Nc général
+3392 | 足 | Nc général
+3393 | 不 | adv à valeur négative
+3394 | 出 | verbe principal
+3395 | 岛 | Nc général
+3396 | 就 | adv général
+3397 | 可以 | verbe principal
+3399 | 办理 | verbe principal
+3401 | 一切 | det indéfini
+3403 | 海关 | Nc général
+3405 | 手续 | Nc général
+3407 | ， | ponctuation faible
+3408 | 这 | pron démonstratif
+3409 | 对 | prep général
+3410 | 进一步 | adv général
+3413 | 改善 | verbe principal
+3415 | 崇明县 | Np lieu
+3418 | 的 | particule structure dans la structure de
+3419 | 投资 | Nc général
+3421 | 环境 | Nc général
+3423 | ， | ponctuation faible
+3424 | 加快 | verbe principal
+3426 | 吸引 | verbe principal
+3428 | 外资 | Nc général
+3430 | ， | ponctuation faible
+3431 | 方便 | adj qualificatif général épithète
+3433 | 快捷 | adj qualificatif général épithète
+3435 | 地 | particule structure particule di4
+3436 | 办理 | verbe principal
+3438 | 海关 | Nc général
+3440 | 手续 | Nc général
+3442 | ， | ponctuation faible
+3443 | 把 | particule structure particule ba
+3444 | 崇明 | Np lieu
+3446 | 建设 | verbe principal
+3448 | 成 | verbe principal
+3449 | 对外 | adv général
+3451 | 高度 | adv général
+3453 | 开放 | verbe principal
+3455 | 的 | particule structure dans la structure de
+3456 | 大型 | adj qualificatif général attribut du sujet
+3458 | 贸易 | Nc général
+3460 | 港口 | Nc général
+3462 | ， | ponctuation faible
+3463 | 带动 | verbe principal
+3465 | 出口 | Nc général
+3467 | 加工 | Nc général
+3469 | 、 | ponctuation faible
+3470 | 航运 | Nc général
+3472 | 中转 | Nc général
+3474 | 等 | particule structure particule deng
+3475 | 外向型 | adj qualificatif général attribut du sujet
+3478 | 经济 | Nc général
+3480 | 的 | particule structure dans la structure de
+3481 | 发展 | Nc général
+3483 | ， | ponctuation faible
+3484 | 将 | adv général
+3485 | 起到 | verbe principal
+3487 | 积极 | adj qualificatif général épithète
+3489 | 的 | particule structure dans la structure de
+3490 | 作用 | Nc général
+3492 | 。 | ponctuation forte
+3493 | （ | ponctuation parenthèses
+3494 | 完 | verbe principal

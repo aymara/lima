@@ -1,0 +1,27 @@
+Aignan:::PERSON:=>NormalizePersonName(",Agnan")
+Gaulle:de::PERSON:=>NormalizePersonName(",de Gaulle")
+Don::Juan:PERSON:Don Juan
+Giscard:::PERSON:=>NormalizePersonName(",Giscard d'Estaing")
+Jésus:::PERSON:Jésus-Christ
+Malin:::PERSON:Diable
+Manès:::PERSON:Mani
+Mickey::Mouse:PERSON:Mickey Mouse
+Otton:::PERSON:Othon
+Père::Noël:PERSON:Père Noël
+Ponce::Pilate:PERSON:Ponce Pilate
+Robin::des Bois:PERSON:Robin des Bois
+Robinson::Crusoé:PERSON:=>NormalizePersonName("Robinson,Crusoé")
+Röntgen:::PERSON:Roentgen
+Saint-Père:::PERSON:Pape
+Satan:::PERSON:Diable
+Siva:::PERSON:Shiva
+Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
+Bush:("Georges W.?")?::PERSON:=>NormalizePersonName("Georges,Bush")
+Blair:Tony?::PERSON:=>NormalizePersonName("Tony,Blair")
+Raffarin:::PERSON:=>NormalizePersonName("Jean-Pierre,Raffarin")
+Messier:::PERSON:=>NormalizePersonName("Jean-Marie,Messier")
+Arafat:::PERSON:=>NormalizePersonName("Yasser,Arafat")
+Powell:::PERSON:=>NormalizePersonName("Colin,Powell")
+Yitzhak::Rabin:PERSON:=>NormalizePersonName("Yitzhak,Rabin")
+Isaac::Rabin:PERSON:=>NormalizePersonName("Yitzhak,Rabin")
+Vierge::Marie?:PERSON:

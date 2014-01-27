@@ -1,0 +1,13 @@
+
+./runPosTagger nopostagger fre
+./runPosTagger viterbi-freq fre
+./runPosTagger viterbi-si fre
+
+#./runPosTagger nopostagger eng
+#./runPosTagger viterbi-freq eng
+#./runPosTagger viterbi-si eng
+
+#./runPosTagger nopostagger spa
+#./runPosTagger viterbi-freq spa
+#./runPosTagger viterbi-si spa
+

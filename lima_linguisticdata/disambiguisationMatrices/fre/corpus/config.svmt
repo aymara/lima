@@ -1,0 +1,41 @@
+#SVMT configuration file
+TRAINSET = /mnt/hda4/pfc/in/WSJTP.TRAIN.912k
+#LEX = /home/usuais/jgimenez/CORPORA/WSJTP/WSJTP.TRAIN.DICT
+#BLEX = /home/usuaris/jgimenez/CORPORA/WSJTP/backuplex.DICT
+SVMDIR = /mnt/hda4/pfc/svm_light_linux
+NAME = /home/knoppix/pfc/model/cpp/CPP
+R = /mnt/hda4/pfc/models/WSJ.200
+W = 7 3
+Dratio = 0.2
+F = 2 10000
+CK = 0.1086
+CU = 0.07975
+X = 3
+AP = '' CC CD DT EX FW IN JJ JJR JJS LS MD NN NNS NNP NNPS PDT POS PRP PRP$ RB RBR RBS RP SYM UH VB VBD VBG VBN VBP VBZ WDT WP WRB
+UP = FW JJ JJR JJS NN NNS NNP NNPS RB RBR RBS VB VBD VBG VBN VBP VBZ
+Kfilter = 0
+Ufilter = 0
+do M0 LRL
+#do M1 LRL
+#do M2 LRL
+#do M3 LRL
+#do M4 LRL
+# -----------------------------------------------------------------------------------
+#ambiguous-right [default]
+A0 = w(-3) w(-2) w(-1) w(0) w(1) w(2) w(3) w(-2,-1) w(-1,0) w(0,1) w(-1,1) w(1,2) w(-2,-1,0) w(-2,-1,1) w(-1,0,1) w(-1,1,2) w(0,1,2) p(-3) p(-2) p(-1) p(-2,-1) p(-1,1) p(1,2) p(-2,-1,1) p(-1,1,2) a(0) a(1) a(2) a(3) m(0) m(1) m(2) m(3)
+A0unk = w(-3) w(-2) w(-1) w(0) w(1) w(2) w(3) w(-2,-1) w(-1,0) w(0,1) w(-1,1) w(1,2) w(-2,-1,0) w(-2,-1,1) w(-1,0,1) w(-1,1,2) w(0,1,2) p(-3) p(-2) p(-1) p(-2,-1) p(-1,1) p(1,2) p(-2,-1,1) p(-1,1,2) k(0) k(1) k(2) k(3) m(0) m(1) m(2) m(3) a(2) a(3) a(4) z(2) z(3) z(4) ca(1) cz(1) L SA AA SN CA CAA CP CC CN MW
+# -----------------------------------------------------------------------------------
+#unambiguous-right
+A1 = w(-2) w(-1) w(0) w(1) w(2) w(-2,-1) w(-1,0) w(0,1) w(-1,1) w(1,2) w(-2,-1,0) w(-2,-1,1) w(-1,0,1) w(-1,1,2) w(0,1,2) p(-2) p(-1) p(1) p(2) p(-2,-1) p(-1,0) p(-1,1) p(0,1) p(1,2) p(-2,-1,0) p(-2,-1,1) p(-1,0,1) p(-1,1,2) a(0) a(1) a(2) m(0) m(1) m(2)
+# -----------------------------------------------------------------------------------
+#no-right
+A2 = w(-2) w(-1) w(0) w(1) w(2) w(-2,-1) w(-1,0) w(0,1) w(-1,1) w(1,2) w(-2,-1,0) w(-2,-1,1) w(-1,0,1) w(-1,1,2) w(0,1,2) p(-2) p(-1) p(-2,-1) a(0) m(0)
+# -----------------------------------------------------------------------------------
+#unsupervised-learning
+A3 = w(-2) w(-1) w(0) w(1) w(2) w(-2,-1) w(-1,0) w(0,1) w(-1,1) w(1,2) w(-2,-1,0) w(-2,-1,1) w(-1,0,1) w(-1,1,2) w(0,1,2)
+#p(-2) p(-1) p(-2,-1) p(-1,1) p(1,2) p(-2,-1,1) p(-1,1,2) a(0) a(1) a(2) m(0) m(1) m(2)
+# -----------------------------------------------------------------------------------
+#ambiguous-right ++ unknown words on training
+A4 = w(-2) w(-1) w(0) w(1) w(2) w(-2,-1) w(-1,0) w(0,1) w(-1,1) w(1,2) w(-2,-1,0) w(-2,-1,1) w(-1,0,1) w(-1,1,2) w(0,1,2) p(-2) p(-1) p(-2,-1) p(-1,1) p(1,2) p(-2,-1,1) p(-1,1,2) a(0) a(1) a(2) m(0) m(1) m(2)
+# -----------------------------------------------------------------------------------
+REMOVE_FILES = 1

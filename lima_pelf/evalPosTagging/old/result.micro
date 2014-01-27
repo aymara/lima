@@ -1,0 +1,4 @@
+PosTagger Langue nbEntrees nbEntreesNonAmbigues nbEntreesNonAmbiguesCorrectes nbEntreesAmbigues nbEntreesAmbiguesCorrectes nbCategoriesEntreesAmbigues nbEntreesMalDecoupees nbEntreesManquantes
+nopostagger fre 3475 799 765 2501 2461 9681 175 87
+viterbi-freq fre 3338 3213 2731 3 1 8 122 171
+viterbi-si fre 3345 2896 2589 324 283 712 125 167

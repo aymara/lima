@@ -1,0 +1,47 @@
+<dictionary>
+<entry k="élève">
+  <i l="Eleve">
+    <p v="Npgms-"/>
+  </i>
+</entry>
+<entry k="nouveau-phoenix">
+  <concat>
+    <c form="nouveau">
+      <i l="nouveau">
+        <p v="Afb--fs"/>
+        <p v="Afd--fs"/>
+        <p v="Afha-fs"/>
+        <p v="Afhp-fs"/>
+        <p v="Afz--fs"/>
+      </i>
+    </c>
+    <c form="phoenix">
+      <i l="phenix">
+        <p v="Vpipi3-s"/>
+      </i>
+    </c>
+  </concat>
+  <concat>
+    <c form="nouveau">
+      <i l="nouveau">
+        <p v="Afb--fs"/>
+        <p v="Afd--fs"/>
+        <p v="Afha-fs"/>
+        <p v="Afhp-fs"/>
+        <p v="Afz--fs"/>
+      </i>
+    </c>
+    <c form="phoe">
+      <i l="fée">
+        <p v="Afhp-fs"/>
+        <p v="Vpipi3-s"/>
+      </i>
+    </c>
+    <c form="nix">
+      <i l="nicky">
+        <p v="Npgfs-"/>
+      </i>
+    </c>
+  </concat>
+</entry>
+</dictionary>

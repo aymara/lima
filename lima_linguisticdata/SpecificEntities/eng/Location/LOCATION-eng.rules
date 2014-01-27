@@ -1,0 +1,247 @@
+set encoding=utf8
+using modex Location-modex.xml
+using modex DateTime-modex.xml
+using modex Person-modex.xml
+using groups Location
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of web adresses
+#----------------------------------------------------------------------
+
+@WebAddressesEndings=(com,org,net,fr,ch,co,uk,edu)
+
+@fileExtension=(html,htm,jpg)
+
+http::\: / / (* .){1-4} @WebAddressesEndings (/ ~? *){0-n} (/|/ * . @fileExtension)?:LOCATION:
+
+http::\: / / (* .){1-4} * (/ ~? *){0-n} (/|/ * . @fileExtension)?:LOCATION:
+
+www::. (* .){1-4} @WebAddressesEndings (/ ~? *){0-4} (/|/ * . @fileExtension)?:LOCATION:
+
+Palm:West:Beach:LOCATION:West Palm Beach
+
+Palm::Beach:LOCATION:Palm Beach
+Wall::Street:NOT_LOCATION:
+#----------------------------------------------------------------------
+# recognition of location names
+#----------------------------------------------------------------------
+
+use cities.lst,states.lst,countriesAndRegions.lst
+use greeklocations.lst
+# contextual rules
+use locationKey.lst,locationPre.lst,streetKey.lst,stateAbbrev.lst
+
+# precise direction
+# 12400 SW 152nd St.
+# 3245 College Ave
+# ( the T_Ni>1 trigger is a trick :
+#   all T_Ni triggers must have less priority than T_Ni>1000<3000 triggers
+#   (more specific) => must be placed after, or be a different trigger,
+#   as specific )
+
+@orientation=(N,S,E,W,NE,NW,SE,SW,N . E,N . W,S . E,S . W)
+
+T_Ni>1::(@orientation .?)? *{1-2} @streetKey:LOCATION:
+
+T_Ni>1::(@StateAbbrev|US|U.S.) -? T_Ni<999:LOCATION:
+
+# zip codes : five digits
+# FL 33301
+@StateAbbrev::T_Ni>9999<99999:LOCATION:
+
+# P.O. Box
+Box:(PO|P.O.)?:T_Ni:LOCATION:
+
+# BOX:(PO)
+# Mile Markers
+Mile::Marker (T_Ni|T_Nd):LOCATION:
+
+# highway names
+
+Interstate::T_Ni<99:LOCATION:
+
+I::- T_Ni<99:LOCATION:
+
+@StateAbbrev::-? T_Ni<999:LOCATION:
+
+@StateAbbrev:[,]:.?:LOCATION:
+
+US::-? T_Ni<999:LOCATION:
+
+U.S.::-? T_Ni<999:LOCATION:
+
+# general contextual location rule
+
+# $NP:@locationPre?:(@locationKey|@streetKey):LOCATION:
+# @Capitalized=(t_capital_1st,T_Amh,$NP)
+@Capitalized=(t_capital_1st,t_capital)
+
+@Capitalized:@locationPre? (@Capitalized){0-2}:(@locationKey|@streetKey):LOCATION:
+
+# @locationKey:@locationPre? @Capitalized{1-2}::LOCATION:
+# @streetKey:@locationPre? @Capitalized{1-2}::LOCATION:
+
+Park:@Capitalized{1-3}::LOCATION:
+Church:@Capitalized{2-5}::LOCATION:
+Place:@Capitalized?:@Capitalized?:LOCATION:
+@locationKey:[@locationPre?] @Capitalized{1-3}::LOCATION:
+@Capitalized::[,] [@StateAbbrev]:LOCATION:
+Republic::of @Capitalized:LOCATION:
+
+@locationPre::(@City|@State|@CountryOrRegion):LOCATION:
+
+@CityInd=(
+village,
+city,
+town,
+district,
+municipality,
+capital,
+prefect,
+province,
+port,
+island,
+settlement,
+state,
+streets,
+suburb,
+track,
+diocese,
+residents,
+palace,
+republic,
+resort,
+region,
+well,
+north,
+east,
+south,
+west,
+in)
+
+@CityIndPlur=(
+villages,
+cities,
+towns,
+municipalities,
+capitals,
+prefects,
+provinces,
+ports,
+republics,
+islands,
+settlements,
+states,
+streets,
+suburbs,
+dioceses,
+district)
+
+@Months=(
+January,
+February,
+March,
+April,
+May,
+June,
+July,
+August,
+September,
+November,
+October,
+December
+)
+
+[@CityInd]::[of] t_capital_1st{1-3}:LOCATION:
+[@CityIndPlur]::[of] t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
+
+include ../Person/firstname.lst
+
+[in]::@Months:NOT_LOCATION:
+[in]::<DateTime.DATE>:NOT_LOCATION:
+
+# 20120716, GC:
+# hack to avoid references to people's work as location like in " in Yaffa Ganz' story ".
+# Here, the possessive marker, which is not included in the token is used to avoid the
+# location interpretation
+[in]::(@Capitalized){1-3} ':NOT_LOCATION:
+
+[in]::t_capital_1st{1-3}:LOCATION:
+
+# a list of known locations
+include location.rules
+
+# to bypass errors in analysis
+U.S::.:LOCATION:U.S.
+
+@nearKey=(
+in,
+by,
+close\ to,
+)
+
+[near]::@Capitalized [@nearKey] @Capitalized:LOCATION:
+[near]::@Capitalized{1-3}:LOCATION:
+# redundancies
+# Arkansas state
+# Exeter city
+@State::(state|State):LOCATION:
+
+@State:(State|STATE) of::LOCATION:
+
+@City::city:LOCATION:
+
+@Greeklocations:::LOCATION:
+
+# southern Afghanistan
+
+@GeographicalPrecision=(
+South,West,East,
+Southern,Western,Northern,Eastern,
+Southwest, Northwest, Southeast, Northeast,
+Southwestern, Northwestern, Southeastern, Northeastern
+)
+
+Ruth::[and] Ruff:LOCATION:
+
+#------------------------------
+# telephone numbers are locations
+
+T_Ni<999:\(:\) T_Ni<999 - T_Ni<9999:LOCATION:
+
+T_Ni<999::- T_Ni<999 - T_Ni<9999:LOCATION:
+
+1::- T_Ni<999 - T_Ni<999 - T_Ni<9999:LOCATION:
+
+#------------------------------
+# a list of known locations
+
+use miscLocations.lst
+
+@City:::LOCATION:
+
+@State:::LOCATION:
+
+
+@CountryOrRegion:::LOCATION:
+
+@miscLocation:::LOCATION:
+
+@locationVerbs=(
+come,
+came,
+travel,
+travelling,
+traveling,
+go,
+went,
+emigrate,
+emigrates,
+landed,
+trip
+)
+
+[@locationVerbs]::[(to|in)] @Capitalized{1-3}:LOCATION:
+Cap::(de @Capitalized|d\'):LOCATION:
+

@@ -1,0 +1,16 @@
+académie	académie	Ncafss
+association	association	Ncafss
+auberge	auberge	Ncafss
+centre	centre	Ncamss
+cirque	cirque	Ncamss
+compagnie	compagnie	Ncafss
+coopérative	coopérative	Ncafss
+édition	édition	Ncafss	Ncamss
+établissement	établissement	Ncamss
+hôtel	hôtel	Ncamss
+institut	institut	Ncamss
+musée	musée	Ncamss
+radio	radio	Ncafss
+société	société	Ncafss
+syndicat	syndicat	Ncamss
+théâtre	théâtre	Ncamss

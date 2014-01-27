@@ -1,0 +1,70 @@
+set encoding=utf8
+using modex Person-modex.xml
+using groups Person
+set defaultAction=>CreateSpecificEntity()
+
+use firstname.lst,prefirstname.lst
+use title.lst,function_title.lst
+use person.lst
+
+@particule=(de,da,le,van,von,el,al,Al,del,Del,De,La)
+
+#----------------------------------------------------------------------
+# contextual rules for person recognition
+#----------------------------------------------------------------------
+
+#------------------------------
+# pape Jean-Paul II
+# (T_Acc|T_Aco|T_Asc|T_Aso) = alpha capital/small roman ordinal/cardinal: too noisy, use a simple dynasty order numbers list
+@DynastyOrder=(I,II,III,IV,V,VI,VII,VIII,IX,X,XI,XII,XIII,XIV,XV,XVI,XVII,XVIII,XIX,XX)
+@Firstname:[(@PreFirstname)?]:$NP? @DynastyOrder:PERSON:=>NormalizePersonName()
+
+#------------------------------
+#@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
+
+# hack to take initials into account -> should be in tokenizer
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
+
+@PersonNamePart=(t_capital_1st,t_capital,$NP)
+
+#[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+
+#[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+
+#[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+
+
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:=>NormalizePersonName()
+
+@PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+
+@PersonNamePart:[$PREP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+
+@PersonNamePart:(@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+
+@Firstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+
+
+# !! cannot find two different entities with same rule !!
+#t_capital_1st:[@TitlePlural]:(t_capital_1st|$NP){0-2} [et] (t_capital_1st|$NP){1-3}:PERSON:
+#$NP:[@TitlePlural]:(t_capital_1st|$NP){0-2} [et] (t_capital_1st|$NP){1-3}:PERSON:
+# => one rule for each part
+@PersonNamePart:[@TitlePlural]:(@PersonNamePart){0-2} [et]:PERSON:
+@PersonNamePart:[(@TitlePlural (@PersonNamePart){0-2} et)]:(@PersonNamePart){0-2}:PERSON:
+
+# @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? (t_capital_1st|t_capital)){1-2}:PERSON:=>NormalizePersonName()
+# t_capital_1st:[(@Title|@FunctionTitle)]:(t_capital_1st|t_capital){0-2}:PERSON:=>NormalizePersonName()
+
+# t_capital_1st:(t_capital_1st|t_capital){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+
+
+#------------------------------
+# a list of known persons (single entities)
+
+@person:::PERSON:=>NormalizePersonName()
+
+#------------------------------
+# firstname without name ?
+#@Firstname:::PERSON:=>NormalizePersonName()

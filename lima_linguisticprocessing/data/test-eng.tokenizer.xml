@@ -1,0 +1,760 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+<testcase id="eng.tok.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The marsupilami is a mythical animal.  "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>un mot inconnu marsupilami de type mot minuscule</expl>
+  <test id="eng.tok.1.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer, vérifier que marsupilami est qualifié en t_small"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_small"/>
+</testcase>
+<testcase id="eng.tok.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The 200 deaths resulting from the accident were mourned by all. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type nombre entier</expl>
+  <test id="eng.tok.2.1" trace=".tokenizer.xml"
+    comment="Après le Tokenizer, le token 200 est qualifié en t_integer.t_numeric"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_integer" />
+</testcase>
+<testcase id="eng.tok.3" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The share price was off 1.5 points. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type réel</expl>
+  <test id="eng.tok.3.1" trace=".tokenizer.xml"
+    comment="Apres tokenizer, vérifier que 1.5 est qualifié en t_number"
+    left="XPATH#//data_structure/vertex/token[position=25]/t_status/t_default"
+    operator="="
+    right="t_dot_number"/>
+</testcase>
+<testcase id="eng.tok.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The Systex company went bankrupt this year."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type première lettre majuscule, reste minuscule</expl>
+  <test id="eng.tok.4.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token Systex doit être de type t_capital_1st"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_capital_1st"/>
+</testcase>
+<testcase id="eng.tok.5" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The NMPP distributes newsprint. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type tout en majuscule</expl>
+  <test id="eng.tok.5.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token NMPP doit être de type t_capital"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_capital"/>
+</testcase>
+<testcase id="eng.tok.6" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The N.M.P.P. distributes newsprint. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type sigle</expl>
+  <test id="eng.tok.6.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token N.M.P.P. doit être de type t_acronym"
+    left="XPATH#//data_structure/vertex/token[position=5][length=8]/t_status/t_default"
+    operator="="
+    right="t_acronym"/>
+</testcase>
+<testcase id="eng.tok.7" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The XVth arrondissement is a great area of Paris to visit. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nombre romain ordinal</expl>
+  <test id="eng.tok.7.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token XVth doit être de type t_ordinal_roman"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_ordinal_roman"/>
+</testcase>
+<testcase id="eng.tok.8" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Chapter III is very interesting. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nombre romain cardinal</expl>
+  <test id="eng.tok.8.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token III doit être de type t_cardinal_roman"
+    left="XPATH#//data_structure/vertex/token[position=9]/t_status/t_default"
+    operator="="
+    right="t_cardinal_roman"/>
+</testcase>
+<testcase id="eng.tok.9" type="bloquant">
+  <call-parameters>
+      <param key="text" value="About 1/3 of the inhabitants are poor. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>fraction</expl>
+  <test id="eng.tok.9.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token 1/3 doit être de type t_fraction"
+    left="XPATH#//data_structure/vertex/token[position=7]/t_status/t_default"
+    operator="="
+    right="t_fraction"/>
+</testcase>
+
+<testcase id="eng.tok.11" type="pertinent">
+  <call-parameters>
+      <param key="text" value="You can find dogs, cat, monkeys, ... "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>traitement du point de suspension</expl>
+  <test id="eng.tok.11.1" trace=".tokenizer.xml"
+    comment="on doit trouver un token ..."
+    left="XPATH#//data_structure/vertex/token[position=34][length=3]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.12" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The author's name is C.Fluhr. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>traitement de nom d'auteurs où l'initiale du prénom est collée au nom</expl>
+  <test id="eng.tok.12.1" trace=".tokenizer.xml"
+    comment="on doit trouver un token C."
+    left="XPATH#//data_structure/vertex/token[position=22][length=2]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.12.2" trace=".tokenizer.xml"
+    comment="on doit trouver un token Fluhr"
+    left="XPATH#//data_structure/vertex/token[position=24][length=5]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.13" type="bloquant">
+  <call-parameters>
+      <param key="text" value="And the author's name is C. Fluhr."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>traitement de noms de personne avec prénom en initiale</expl>
+  <test id="eng.tok.13.1" trace=".tokenizer.xml"
+    comment="on doit trouver un token C."
+    left="XPATH#//data_structure/vertex/token[position=26][length=2]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.13.2" trace=".tokenizer.xml"
+    comment="on doit trouver un token Fluhr"
+    left="XPATH#//data_structure/vertex/token[position=29][length=5]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.14" type="bloquant">
+  <call-parameters>
+      <param key="text" value="He saw a France-England match last night. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres</expl>
+  <test id="eng.tok.14.1" trace=".tokenizer.xml"
+    comment="le tokenizer découpe en France-England"
+    left="XPATH#//data_structure/vertex/token[position=10][length=14]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.15" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Robert D. Pierson"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Initiale personne qui est aussi un chiffre romain</expl>
+  <test id="eng.tok.15.1" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token D."
+    left="XPATH#//data_structure/vertex/token[position=8][length=2]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.15.2" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token D."
+    left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
+    operator="="
+    right="t_capital_1st"/>
+</testcase>
+<testcase id="eng.tok.16" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Robert A. Pierson"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Initiale personne qui n'est pas un chiffre romain</expl>
+  <test id="eng.tok.16.1" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token A."
+    left="XPATH#//data_structure/vertex/token[position=8][length=2]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.16.2" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token D."
+    left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
+    operator="="
+    right="t_capital_1st"/>
+</testcase>
+<testcase id="eng.tok.17" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Robert A.Pierson"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Initiale personne qui n'est pas un chiffre romain</expl>
+  <test id="eng.tok.17.1" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token A."
+    left="XPATH#//data_structure/vertex/token[position=8][length=2]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.17.2" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token A."
+    left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
+    operator="="
+    right="t_capital_1st"/>
+</testcase>
+<testcase id="eng.tok.18" type="bloquant">
+  <call-parameters>
+      <param key="text" value="He said that she should have been reading Zend-Avesta."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Zend-Avesta : t_capital_small.</expl>
+  <test id="eng.tok.18.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer Zend-Avesta : t_capital_small"
+    left="XPATH#//data_structure/vertex/token[position=43][length=11]/t_status/t_default"
+    operator="="
+    right="t_capital_small"/>
+</testcase>
+<testcase id="eng.tok.19" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The C.E.A should be an acronym even without a final point. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>acronyme : C.E.A sans le dernier point t_acronym </expl>
+  <test id="eng.tok.19.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer - POINT seulement après les 2 premières lettres : C.E.A : t_acronym"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_acronym"/>
+</testcase>
+<testcase id="eng.tok.20" type="pertinent">
+  <call-parameters>
+      <param key="text" value="MONKEY.This mammal is a cousin to man."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot point Majuscule minuscule : . : t_sentence_brk.</expl>
+  <test id="eng.tok.20.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer ponctuation POINT : t_sentence_brk"
+    left="XPATH#//data_structure/vertex/token[position=7]/t_status/t_default"
+    operator="="
+    right="t_sentence_brk"/>
+</testcase>
+<testcase id="eng.tok.21" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The spring robin is very pretty… Of course !"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Ponctuation POINT : points de suspension (unicode U2026) : un token </expl>
+  <test id="eng.tok.21.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - points de suspension (unicode U2026) : un token"
+    left="XPATH#//data_structure/vertex/token[position=32][length=1]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.22" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The XVIIIth century was full of discoveries."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>XVIIIth century  :  XVIIIth : t_ordinal_roman</expl>
+  <test id="eng.tok.22.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - XVIIIth century :  XVIIIth : t_ordinal_roman"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_ordinal_roman"/>
+</testcase>
+<testcase id="eng.tok.23" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The XVIIITH Century was full of discoveries."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>XVIIITH Century:  XVIIITH : t_ordinal_roman</expl>
+  <test id="eng.tok.23.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - XVIIITH Century :  XVIIITH : t_ordinal_roman"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_cardinal_roman"/>
+</testcase>
+<testcase id="eng.tok.24" type="informatif">
+  <call-parameters>
+      <param key="text" value="The architect of the J.M.Tjibaou center is R.Piano."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>POINT J.M.Tjibaou : token J.M.</expl>
+  <test id="eng.tok.24.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - POINT J.M.Tjibaou : token J.M."
+    left="XPATH#//data_structure/vertex/token[position=22][length=4]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.25" type="informatif">
+  <call-parameters>
+      <param key="text" value="The architect of the J.M. Tjibaou center is R.Piano."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>POINT J.M.Tjibaou : token J.M.</expl>
+  <test id="eng.tok.25.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - POINT J.M. Tjibaou : token J.M."
+    left="XPATH#//data_structure/vertex/token[position=22][length=4]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.26" type="informatif">
+  <call-parameters>
+      <param key="text" value="The architect of the JM. Tjibaou center is R.Piano."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>POINT : seule dernière initiale du prénom pointée : !!! t_sentence_brk</expl>
+  <test id="eng.tok.26.1" trace=".tokenizer.xml"
+    comment="seule dernière initiale du prénom pointée : !!! t_sentence_brk"
+    left="XPATH#//data_structure/vertex/token[position=22][length=3]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.27" type="bloquant">
+  <call-parameters>
+      <param key="text" value="After three min. he left the building..."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>POINT suivi d'un _blanc suivi d'une minuscule : point appartient au token précédent</expl>
+  <test id="eng.tok.27.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - POINT suivi d'un _blanc suivi d'une minuscule : token ap."
+    left="XPATH#//data_structure/vertex/token[position=13][length=4]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.28" type="informatif">
+  <call-parameters>
+      <param key="text" value="After three min. John left the building..."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>POINT suivi d'un _blanc suivi d'une Majuscule : point de fin de phrase ; !!!</expl>
+  <test id="eng.tok.28.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  -POINT suivi d'un _blanc suivi d'une Majuscule : !!! t_sentence_brk"
+    left="XPATH#//data_structure/vertex/token[position=13][length=3]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.29" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Overall performance : 1.5 times quicker than baseline"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Chiffre POINT chiffre</expl>
+  <test id="eng.tok.29.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - Chiffre POINT chiffre : 1.5  : t_dot_number"
+    left="XPATH#//data_structure/vertex/token[position=23]/t_status/t_default"
+    operator="="
+    right="t_dot_number"/>
+</testcase>
+<testcase id="eng.tok.30" type="pertinent">
+  <call-parameters>
+      <param key="text" value="On 04/05/1989 J.M. Tjibaou was assassinated."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Slash / contexte de chiffres : token (date ?) cf. voir entités nommées</expl>
+  <test id="eng.tok.30.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - Slash / contexte de chiffres : token "
+    left="XPATH#//data_structure/vertex/token[position=4][length=10]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.31" type="pertinent">
+  <call-parameters>
+      <param key="text" value="On 04.05.1989 J.M. Tjibaou was assassinated."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>point contexte de chiffres : token (date ?) cf. voir entités nommées</expl>
+  <test id="eng.tok.31.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - 04.05.1989 : token "
+    left="XPATH#//data_structure/vertex/token[position=4][length=10]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.32" type="informatif">
+  <call-parameters>
+      <param key="text" value="A+ is part of the SMS vocabulary."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Séparateur + est un token</expl>
+  <test id="eng.tok.32.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - Séparateur + est un token"
+    left="XPATH#//data_structure/vertex/token[position=2][length=1]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.33" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The part SPI/2004/05 can be found in the rear drawer."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Slash / contexte de chiffres et lettres : non tokenisé </expl>
+  <test id="eng.tok.33.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - Slash / contexte de chiffres et lettres : non tokenisé"
+    left="XPATH#//data_structure/vertex/token[position=10][length=11]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.33.2" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - Slash / contexte de chiffres et lettres : non tokenisé"
+    left="XPATH#//data_structure/vertex/token[position=10][length=11]/t_status/t_default"
+    operator="="
+    right="t_alphanumeric"/>
+</testcase>
+<testcase id="eng.tok.34" type="pertinent">
+  <call-parameters>
+      <param key="text" value="At 2:34:45 the comet passed closest to the Earth."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>contexte similaire au test avec date</expl>
+  <test id="eng.tok.34.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - token 2h34m45 alphanumeric"
+    left="XPATH#//data_structure/vertex/token[position=4][length=7]/t_status/t_default"
+    operator="="
+    right="t_alphanumeric"/>
+</testcase>
+<testcase id="eng.tok.35" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The book 'Running on Empty' was sold out."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>apostrophe citation</expl>
+  <test id="eng.tok.35.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer - apostrophe à la place de guillemet : token"
+    left="XPATH#//data_structure/vertex/token[position=10][length=1]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.35.2" trace=".tokenizer.xml"
+    comment="Après Tokenizer - apostrophe à la place de guillemet : token"
+    left="XPATH#//data_structure/vertex/token[position=27][length=1]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.36" type="bloquant">
+ <call-parameters>
+      <param key="text" value="-Hard to see this dash as part of a compound word!"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret sous forme de liste : logique si token</expl>
+  <test id="eng.tok.36.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer -tiret sous forme de liste : logique si token"
+    left="XPATH#//data_structure/vertex/token[position=1][length=1]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.36.2" trace=".tokenizer.xml"
+    comment="Après Tokenizer -tiret sous forme de liste : logique si token"
+    left="XPATH#//data_structure/vertex/token[position=1]/t_status/t_default"
+    operator="="
+    right="t_word_brk"/>
+</testcase>
+<testcase id="eng.tok.37" type="pertinent" >
+  <call-parameters>
+      <param key="text" value="------- CUT HERE --------"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot comprenant un tiret : succession : 1 seul token.</expl>
+  <test id="eng.tok.37.1" trace=".tokenizer.xml"
+    comment="succession : 1 seul token"
+    left="XPATH#//data_structure/vertex/token[position=1][length=7]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.38" type="informatif">
+  <call-parameters>
+      <param key="text" value="ƒ ‘¤’   ‘¨’  ‘ª’   ‘¬’   ‘-’   ‘¯’   km² ‘²’   ‘³’   ‘´’   ‘¶’   ‘·’   ‘¸’   ‘¹’   ‘º’ "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mots non ignorés, prennent la valeur du token précédent</expl>
+  <test id="eng.tok.38.1" trace=".tokenizer.xml"
+    comment="Test toujours juste..."
+    left="XPATH#//data_structure/vertex/token[position=1]/t_status/t_default"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.38.2" trace=".tokenizer.xml"
+    comment="Test toujours juste..."
+    left="XPATH#//data_structure/vertex/token[position=4]/t_status/t_default"
+    operator="exists"
+    right=""/>
+</testcase>
+
+<testcase id="eng.tok.41" type="informatif">
+  <call-parameters>
+      <param key="text" value="Marathon : world record at 2:04'55'', Paul Tergat."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Détection ' vedette du dico</expl>
+  <test id="eng.tok.41.1" trace=".tokenizer.xml"
+    comment="Détection format heure avec ' "
+    left="XPATH#//data_structure/vertex/token[position=28][length=9]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.42" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The 300th round was shot at 9 o'clock."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Détection t_ordinal integer</expl>
+  <test id="eng.tok.42.1" trace=".tokenizer.xml"
+    comment="Détection t_ordinal integer"
+    left="XPATH#//data_structure/vertex/token[position=5][length=5]/t_status/t_default"
+    operator="="
+    right="t_ordinal_integer"/>
+</testcase>
+<testcase id="eng.tok.43" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The 300TH Round was shot at 9 o'clock."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Détection t_ordinal_integer</expl>
+  <test id="eng.tok.43.1" trace=".tokenizer.xml"
+    comment="Détection t_ordinal integer majuscules"
+    left="XPATH#//data_structure/vertex/token[position=5][length=5]/t_status/t_default"
+    operator="="
+    right="t_ordinal_integer"/>
+</testcase>
+<testcase id="eng.tok.44" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Vivendi cancels the OPA. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>traitement du point après un sigle</expl>
+  <test id="44.1" trace=".tokenizer.xml"
+    comment="on doit trouver un token OPA"
+    left="XPATH#//data_structure/vertex/token[position=21][length=3]"
+    operator="exists"
+    right=""/>
+  <test id="44.2" trace=".tokenizer.xml"
+    comment="on doit trouver un point de fin de phrase"
+    left="XPATH#//data_structure/vertex/token[position=24][length=1]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.45" type="informatif">
+  <call-parameters>
+    <param key="text" value="Vivendi cancels the O.P.A. "/>
+    <param key="language" value="eng"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <expl>traitement du point après un sigle</expl>
+  <test id="45.1" trace=".tokenizer.xml"
+    comment="on doit trouver un token O.P.A"
+    left="XPATH#//data_structure/vertex/token[position=21][length=5]"
+    operator="exists"
+    right=""/>
+  <test id="45.2" trace=".tokenizer.xml"
+    comment="on doit trouver un point de fin de phrase"
+    left="XPATH#//data_structure/vertex/token[position=26][length=1]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.46" type="bloquant">
+  <call-parameters>
+    <param key="text" value="&quot;Because of the rumors, we can't sell anything,&quot; said Yamauchi. &quot;I'm happy people are buying this stuff.&quot;"/>
+    <param key="language" value="eng"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <expl>handling abbreviations</expl>
+  <test id="46.1" trace=".tokenizer.xml"
+    comment="Must find the a token with 't attached"
+    left="XPATH#//data_structure/vertex/token[position=28][length=5]"
+    operator="exists"
+    right=""/>
+  <test id="46.2" trace=".tokenizer.xml"
+    comment="Must find the a token with 'm attached"
+    left="XPATH#//data_structure/vertex/token[position=66][length=3]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.tok.47" type="bloquant">
+  <call-parameters>
+    <param key="text" value="The author's name is C.Fluhr. "/>
+    <param key="language" value="eng"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <expl>Possessive handling not handled at tokenization time.</expl>
+  <test id="eng.tok.47.1" trace=".tokenizer.xml"
+    comment="Must find a token for author's"
+    left="XPATH#//data_structure/vertex/token[position=5][length=8]"
+    operator="exists"
+    right=""/>
+  </testcase>
+  <testcase id="eng.tok.48" type="bloquant">
+    <call-parameters>
+      <param key="text" value="He's cute. Yes, he's cute. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>Abbreviated is (not possessive) not handled at tokenization time</expl>
+    <test id="eng.tok.48.1" trace=".tokenizer.xml"
+    comment="Must find a token for first He's"
+    left="XPATH#//data_structure/vertex/token[position=1][length=4]"
+    operator="exists"
+    right=""/>
+    <test id="eng.tok.48.2" trace=".tokenizer.xml"
+    comment="Must find a token for second he's also"
+    left="XPATH#//data_structure/vertex/token[position=17][length=4]"
+    operator="exists"
+    right=""/>
+  </testcase>
+  <testcase id="eng.tok.49" type="bloquant">
+    <call-parameters>
+      <param key="text" value="The blue-ribbon campaign ended in disgrace. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>must not cut on hyphen.</expl>
+    <test id="eng.tok.49.1" trace=".tokenizer.xml"
+      comment="Check the presence of the blue-ribbon token"
+      left="XPATH#//data_structure/vertex/token[position=5][length=11]/string"
+      operator="="
+      right="blue-ribbon"/>
+  </testcase>
+</testcases>

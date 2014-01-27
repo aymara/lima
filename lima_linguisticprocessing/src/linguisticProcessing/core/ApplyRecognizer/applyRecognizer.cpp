@@ -1,0 +1,367 @@
+/*
+    Copyright 2002-2013 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
+/************************************************************************
+ *
+ * @file       applyRecognizer.cpp
+ * @author     besancon (besanconr@zoe.cea.fr)
+ * @date       Fri Jan 14 2005
+ * @version    $Id$
+ * copyright   Copyright (C) 2005-2012 by CEA LIST
+ *
+ ***********************************************************************/
+
+#include "applyRecognizer.h"
+#include "linguisticProcessing/core/Automaton/recognizerData.h"
+
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
+#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/time/timeUtilsController.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
+#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
+#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
+
+using namespace Lima::Common::AnnotationGraphs;
+using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+using namespace Lima::LinguisticProcessing::Automaton;
+using namespace std;
+
+namespace Lima {
+namespace LinguisticProcessing {
+namespace ApplyRecognizer {
+
+SimpleFactory<MediaProcessUnit,ApplyRecognizer> ApplyRecognizer(APPLYRECOGNIZER_CLASSID);
+
+ApplyRecognizer::ApplyRecognizer():
+MediaProcessUnit(),
+m_recognizers(0),
+m_useSentenceBounds(false),
+m_updateGraph(false),
+m_resolveOverlappingEntities(false),
+m_overlappingEntitiesStrategy(IGNORE_SMALLEST),
+m_testAllVertices(false),
+m_stopAtFirstSuccess(true),
+m_onlyOneSuccessPerType(false),
+m_graphId("PosGraph"),
+m_dataForStorage()
+{
+}
+
+ApplyRecognizer::~ApplyRecognizer()
+{
+}
+
+void ApplyRecognizer::init(
+  Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+  Manager* manager)
+
+{
+  APPRLOGINIT;
+  MediaId language=manager->getInitializationParameters().media;
+  try {
+    // try to get a single automaton
+    string automaton=unitConfiguration.getParamsValueAtKey("automaton");
+    AbstractResource* res=LinguisticResources::single().getResource(language,automaton);
+    m_recognizers.push_back(static_cast<Recognizer*>(res));
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    try {
+    // try to get a list of automatons
+      const deque<string>& automatonList=unitConfiguration.getListsValueAtKey("automatonList");
+      for (deque<string>::const_iterator it=automatonList.begin(),
+             it_end=automatonList.end(); it!=it_end; it++) {
+        AbstractResource* res=LinguisticResources::single().getResource(language,*it);
+        m_recognizers.push_back(static_cast<Recognizer*>(res));
+      }
+    }
+    catch (Common::XMLConfigurationFiles::NoSuchList& ) {
+      LERROR << "No 'automaton' or 'automatonList' in ApplyRecognizer group for language "
+             << (int)language << " !" << LENDL;
+      throw InvalidConfiguration();
+    }
+  }
+
+  try {
+    m_useSentenceBounds=
+      getBooleanParameter(unitConfiguration,"useSentenceBounds");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_updateGraph=
+      getBooleanParameter(unitConfiguration,"updateGraph");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_resolveOverlappingEntities=
+      getBooleanParameter(unitConfiguration,"resolveOverlappingEntities");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    string overlappingEntitiesStrategy=
+      unitConfiguration.getParamsValueAtKey("overlappingEntitiesStrategy");
+    if (overlappingEntitiesStrategy=="IgnoreSmallest") {
+      m_overlappingEntitiesStrategy=IGNORE_SMALLEST;
+    }
+    else if (overlappingEntitiesStrategy=="IgnoreFirst") {
+      m_overlappingEntitiesStrategy=IGNORE_FIRST;
+    }
+    else if (overlappingEntitiesStrategy=="IgnoreSecond") {
+      m_overlappingEntitiesStrategy=IGNORE_SECOND;
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_testAllVertices=
+      getBooleanParameter(unitConfiguration,"testAllVertices");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_stopAtFirstSuccess=
+      getBooleanParameter(unitConfiguration,"stopAtFirstSuccess");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+
+  try {
+    m_onlyOneSuccessPerType=
+      getBooleanParameter(unitConfiguration,"onlyOneSuccessPerType");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try
+  {
+    m_graphId=unitConfiguration.getParamsValueAtKey("applyOnGraph");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_dataForStorage=unitConfiguration.getParamsValueAtKey("storeInData");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+}
+
+bool ApplyRecognizer::
+getBooleanParameter(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+                    const std::string& param) const {
+  string value=unitConfiguration.getParamsValueAtKey(param);
+  if (value == "yes" ||
+      value == "true" ||
+      value == "1") {
+    return true;
+  }
+  return false;
+}
+
+LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
+{
+  Lima::TimeUtilsController timer("ApplyRecognizer");
+  if (m_recognizers.empty()) {
+    APPRLOGINIT;
+    LDEBUG << "ApplyRecognizer: No recognizer to apply" << LENDL;
+    return MISSING_DATA;
+  }
+  APPRLOGINIT;
+  LINFO << "start process" << LENDL;
+  LDEBUG << "  parameters are:" << LENDL;
+  LDEBUG << "    - useSentenceBounds           :" << m_useSentenceBounds << LENDL;
+  LDEBUG << "    - updateGraph                 :" << m_updateGraph << LENDL;
+  LDEBUG << "    - resolveOverlappingEntities  :" << m_resolveOverlappingEntities << LENDL;
+  LDEBUG << "    - overlappingEntitiesStrategy :" << m_overlappingEntitiesStrategy << LENDL;
+  LDEBUG << "    - testAllVertices             :" << m_testAllVertices << LENDL;
+  LDEBUG << "    - stopAtFirstSuccess          :" << m_stopAtFirstSuccess << LENDL;
+  LDEBUG << "    - onlyOneSuccessPerType       :" << m_onlyOneSuccessPerType << LENDL;
+  LDEBUG << "    - graphId                     :" << m_graphId << LENDL;
+  LDEBUG << "    - dataForStorage              :" << m_dataForStorage << LENDL;
+  
+  LimaStatusCode returnCode(SUCCESS_ID);
+
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData == 0)
+  {
+    recoData = new RecognizerData();
+    analysis.setData("RecognizerData", recoData);
+  }
+
+  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  if (annotationData==0)
+  {
+    annotationData=new AnnotationData();
+    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    {
+      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+    }
+    analysis.setData("AnnotationData",annotationData);
+  }
+
+  // data to possibly store the result (according to the actions)
+  // assume all recognizers use the same entity type group (gloups)
+  RecognizerResultData* resultData=
+    new RecognizerResultData(m_graphId);
+  recoData->setResultData(resultData);
+
+  if (m_useSentenceBounds) {
+    for (vector<Recognizer*>::const_iterator reco=m_recognizers.begin(),
+           reco_end=m_recognizers.end();reco!=reco_end; reco++) {
+      returnCode=processOnEachSentence(analysis,*reco,recoData);
+    }
+  }
+  else {
+    for (vector<Recognizer*>::const_iterator reco=m_recognizers.begin(),
+           reco_end=m_recognizers.end();reco!=reco_end; reco++) {
+      returnCode=processOnWholeText(analysis,*reco,recoData);
+    }
+  }
+
+  if (m_updateGraph) {
+//     LDEBUG << "" << LENDL;
+    recoData->removeVertices(analysis);
+    recoData->clearVerticesToRemove();
+    recoData->removeEdges(analysis);
+    recoData->clearEdgesToRemove();
+  }
+
+  if (! m_dataForStorage.empty()) {
+    analysis.setData(m_dataForStorage,resultData);
+  }
+  else {
+    // result data stored in recoData and resultData are same pointer
+    recoData->deleteResultData();
+    resultData=0;
+  }
+  
+  // remove recognizer data (used only internally to this process unit)
+  analysis.removeData("RecognizerData");
+
+  return returnCode;
+}
+
+LimaStatusCode ApplyRecognizer::
+processOnEachSentence(AnalysisContent& analysis,
+                      Recognizer* reco,
+                      RecognizerData* recoData) const
+{
+  APPRLOGINIT;
+
+  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
+  if (anagraph == 0) {
+    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available" << LENDL;
+    return MISSING_DATA;
+  }
+
+//   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+
+
+  // get sentence bounds
+  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  if (sb==0)
+  {
+    LERROR << "no sentence bounds defined ! abort" << LENDL;
+    return MISSING_DATA;
+  }
+
+  std::vector<RecognizerMatch> seRecognizerResult;
+  // SegmentationData::const_iterator boundItr=sb->begin();
+  std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
+  // ??OME2 while (boundItr!=sb->end())
+  while (boundItr!=(sb->getSegments()).end())
+  {
+    LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
+    LinguisticGraphVertex endSentence=boundItr->getLastVertex();
+//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << LENDL;
+
+    seRecognizerResult.clear();
+    reco->apply(*anagraph,beginSentence,
+                        endSentence,analysis,seRecognizerResult);
+
+    //remove overlapping entities
+    if (m_resolveOverlappingEntities) {
+      reco->resolveOverlappingEntities(seRecognizerResult,
+                                       m_overlappingEntitiesStrategy);
+    }
+
+    boundItr++;
+    recoData->nextSentence();
+  }
+
+  return SUCCESS_ID;
+}
+
+LimaStatusCode ApplyRecognizer::
+processOnWholeText(AnalysisContent& analysis,
+                   Recognizer* reco,
+                   RecognizerData* recoData ) const
+{
+//   APPRLOGINIT;
+//   LDEBUG << "apply recognizer on whole text" << LENDL;
+
+  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
+  if (anagraph == 0) {
+    APPRLOGINIT;
+    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available" << LENDL;
+    return MISSING_DATA;
+  }
+
+//   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+
+  std::vector<RecognizerMatch> seRecognizerResult;
+
+  reco->apply(*anagraph,
+              anagraph->firstVertex(),
+              anagraph->lastVertex(),
+              analysis,seRecognizerResult,
+              m_testAllVertices,m_stopAtFirstSuccess,m_onlyOneSuccessPerType);
+  
+  //remove overlapping entities
+  if (m_resolveOverlappingEntities) {
+    reco->resolveOverlappingEntities(seRecognizerResult,
+                                             m_overlappingEntitiesStrategy);
+  }
+
+  return SUCCESS_ID;
+}
+
+} // end namespace
+} // end namespace
+} // end namespace

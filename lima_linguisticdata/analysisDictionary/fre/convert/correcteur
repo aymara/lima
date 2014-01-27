@@ -1,0 +1,38 @@
+#! /usr/bin/perl
+
+open(SOURCE,"$ARGV[0]") || die ("Impossible d ouvrir le fichier $ARGV[0]");
+open(CIBLE,">$ARGV[1]") || die ("impossible d ouvrir le fichier $ARGV[1]");
+
+$ligne=<SOURCE>;
+$compteur = 0;
+
+while ($ligne ne "") {
+	
+	$compteur++;
+	print("Lignes traitées : $compteur\r");
+	
+	@data = split (";",$ligne);
+	$token = $data[0];
+	$info1 = $data[1];
+	$info2 = $data[2];
+	$info3 = $data[3];
+	$lemme = $data[4];
+	$reste1 = $data[5];
+	$reste2 = $data[6];
+
+	if (($token=~ /-/) && (($info1 == "nom masculin") || ($info1 == "nom féminin"))) {
+		$info3 = "singulier";
+		print CIBLE ("$token;$info1;$info2;$info3;$lemme;$reste1;$reste2");
+	} 
+	else {
+		print CIBLE ($ligne);
+	}
+	
+	
+	$ligne=<SOURCE>;
+	
+}
+
+
+
+

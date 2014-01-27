@@ -1,0 +1,265 @@
+   F-2
+
+   II
+
+   TM
+
+   Basic Description
+
+   The F-200iB is a six & degrees of freedom servo-driven parallel link robot
+   designed for use in a variety of manufacturing and automotive assembly
+   processes. The F-200iB is < engineered for applications requiring extreme
+   rigidity and exceptional repeatability in a compact, powerful package.
+
+   F-200iB, the Solution for:
+
+   ■   Sub-compact robot welding
+
+   ■    Pedestal welding
+
+   ■    Part loading/positioning
+
+   ■    Nut running
+
+   ■   Vehicle lift and locate
+
+   ■    Flexible/convertible fixturing
+
+   ■    Material Removal
+
+   ■    Dispense
+
+   Benefits
+
+   ■   Provides flexibility and convertability - the ability to reprogram the
+   F-200iB facilitates rapid and cost-effective model changeovers.
+
+   ■    Reduces capital expense -F-200iB process solutions take less time and
+   money to process and design. They also reduce tooling and build costs.
+
+   ■    Lowers operating expense -using the F-200iB reduces tooling complexity,
+   resulting in less maintenance and down time.
+
+   ■    Optimizes use of floorspace -the sub-compact F-200iB can fit in spaces
+   too cramped for serial link robots.
+
+   ■    Makes it feasible to perform more welds per station, thus reducing the
+   number of stations per system.
+
+   ■    New process possibilities -the F-200iB opens the door to new process
+   solutions not available with current tools.
+
+   ■    Provides additional options for line balancing.
+
+   ■    Easy and quick to set up, tune-in and debug - F-200iB uses the same
+   software as other FANUC robots.
+
+   ■    No special electrical or mechanical training needed -basics are the
+   same as any other robot.
+
+   ■    Standardized system requires less retraining at changeover.
+
+   ■    Compact size adds application versatility.
+
+   Features
+
+   Mechanical:
+
+   ■    Six degrees of freedom
+
+   ■    Simple, robust, low-maintenance design
+
+   ■    Electric AC servo motors
+
+   ■    Precision gear drives
+
+   ■    Fail-safe brake on each leg
+
+   ■    Components protected from weld flash, grease, chemicals and water
+
+   ■      Spare part requirements minimized by commonality of design; six
+   identical actuators
+
+   ■    ISO faceplate
+
+   ■   31,000 hour life at 100% duty cycle
+
+   Control:
+
+   ■    R-J3iB Controller
+
+   ■    Common controller components with other FANUC robot controllers
+
+   ■    Easy connection to built-in digital I/O
+
+   Software:
+
+   ■   F-200iB is supported on the following "Tool" packages
+
+   - SpotTool Plus
+
+   - DispenseTool
+
+   - HandlingTool
+
+   - PaintTool
+
+   Options
+
+   ■   Harsh environment skirting
+
+   ■    Insulated Faceplate
+     _________________________________________________________________
+
+   F-200iB Dimensions
+
+   Top
+
+   Side
+
+   Front
+
+   TO BATTERY UNIT
+
+   510.93 332.72 —
+
+   1237.27 1024.57
+
+   Faceplate (ISO Flange)
+
+   M10X20.0DP.TYP. (6) EQUALLY SPACED ON 125 0 DIA. B.C.
+
+   10.000 DIA. DWLX
+
+   20 DP. TYP. (2) EQUALLY SPACED ON 125 DIA. B.C.
+
+   Baseplate
+
+   F-200iB Specifications
+
+   Items
+
+   Degrees of freedom
+
+   Six
+
+   Payload (kg)
+
+   100 (Higher payloads permissible with FANUC approval)
+
+   Allowable load moment at faceplate (kgf•m)
+
+   60
+
+   Allowable load inertia at faceplate (kgf•cm•s2)
+
+   367
+
+   Motion range (degrees)
+
+   As  noted (pitch, yaw and roll vary depending upon the position of the
+   faceplate within the envelope)
+
+   Motion speed (mm/s)
+
+   300
+
+   Vertical (Z)
+
+   Horizontal (X & Y)
+
+   1500
+
+   Repeatability (mm)
+
+   ±0.1
+
+   Mounting method
+
+   Floor and inverted. Wall mount permissible with FANUC approval.
+
+   Installation environment
+
+   0to45
+
+   Ambient temperature °C
+
+   Humidity
+
+   Normally:  75%  or  less  Short term (within a month): 95% or less. No
+   condensation
+
+   Vibration (m/s2)
+
+   0.5G or less
+
+   Mechanical brakes
+
+   All actuator legs
+
+   Mechanical weight (kg)
+
+   190
+
+   Controller
+
+   R-J3iB
+
+   Level of protection:
+
+   IP54
+
+   Mechanical
+
+   Electrical
+
+   IP54
+
+   Controller
+
+   IP54
+
+   Note: Dimensions are shown in millimeters. Detailed CAD data are available
+   upon request.
+
+   18 DIA. THRU&
+
+   28 DIA. C'BORE 7 DP.
+
+   (9) MOUNTING HOLES
+
+   FORM16X35MINLG
+
+   SOCHDCAPSCR
+
+   FANUC  Robotics  America, Inc. 3900 W. Hamlin Road Rochester Hills, MI
+   48309-3253 (248) 377-7000 Fax (248) 276-4133
+
+   For sales or technical information, call: 1-800-47-ROBOT
+
+   Charlotte, NC (704)596-5121
+
+   Chicago, IL (847) 898-6000
+
+   Cincinnati, OH (513) 754-2400
+
+   FANUC
+
+   Robotics
+
+   Toronto, Canada (905) 812-2300
+
+   Montréal, Canada (450) 492-9001
+
+   Los Angeles, CA (949) 595-2700
+
+   Aguascalientes, Mexico 52 (449) 922-8000
+
+   Sao Paulo, Brazil (55) (11) 3619-0599
+
+   marketing@fanucrobotics.com www.fanucrobotics.com
+
+   Toledo, OH (419) 866-0788
+
+   ©2005 FANUC Robotics America, Inc. All rights reserved. FANUC ROBOTICS LITHO
+   IN U.S.A. FRA-6/05 

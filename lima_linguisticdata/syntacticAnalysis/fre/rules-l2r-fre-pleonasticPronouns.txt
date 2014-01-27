@@ -1,0 +1,368 @@
+################################################################################
+#                                                                              #
+# rules for the recognition of french pleonastic pronouns                      #
+# this file uses the syntax for the declarations of automatons by Romaric      #
+# Besancon (Cf. his 2003/03/11 document)                                       #
+#                                                                              #
+# Created on Thu nov 13 2003                                                   #
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)                              #
+# modified by Claire Mouton     2007                                           #
+#					                                       #
+# $Id$#
+#                                                                              #
+################################################################################
+# expression des positions dans les contraintes: first current next last
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-fre.txt
+
+@VerbeModal=(devoir$V,pouvoir$V,aller$V,$V-V,$V-VINF,$V-VIMP,$V-VS)
+
+@VerbeDEtat=(être$V,apparaître$V,paraître$V,sembler$V,rester$V,demeurer$V,passer$V pour,être,est)
+
+@AdjectifModal=(nécessaire,inutile,possible,impossible,certain,incertain,probable,improbable,important,bien,mal,bon,mauvais,utile,conseillé,déconseillé,pratique,suffisant,insuffisant,économique,facile,difficile,désirable,indésirable,légal,illégal,vrai,faux,évident,patent,clair,commode,aisé,simple,habituel,inhabituel,intéressant,inadmissible,indispensable,convenable,inconvenable,vain,vraissemblable,vraisemblable,raisonnable,compliqué,conseillable,rentable)
+
+@VerbeCognitif=(recommandé,pensé,cru,su,anticipé,supposé,assumé,prévu,prouvé,dit,écrit,attendu)
+
+@VerbeLogique=(sembler$V,apparaitre$V,importer$V,s'ensuivre$V,empêcher$V,se trouver$V,arriver$V)
+
+@VerbeImpersonnel=(falloir$V,faudrait,faudra,s'agir$V,pleuvoir$V,neiger$V,geler$V,venter$V,durer$V)
+
+@PleoPron=(il,on,$PRON-PRO)
+
+@Que=(que$CONJ,qu'$CONJ)
+
+@De=(de,d')
+
+@Negation=(ne,n')
+
+@VerbeRegimeDe=(importer$V,s'agir$V)
+
+@VerbeRegimePron=(trouver$V,rencontrer$V,passer$V,falloir$V)
+
+@VerbeExpressionSEn=(aller$V,faire$V,fouttre$V)
+
+@VerbeExpressionEn=(appeler$V,finir$V,rester$V,réduire$V,arriver$V,maintenir$V)
+@VerbeExpressionEnA=(arriver$V,venir$V)
+
+@Reflexif=(me$PRON,te$PRON,se$PRON,nous$PRON,vous$PRON)
+
+@VerbeInfinitif=($V-VINF,$V-VINF,$V-VINF)
+
+@VerbeExistence=(exister$V,être$V,rester$V)
+
+@Arriver=(arriver$V,advenir$V)
+@A=(A,à,À,au$DET-DET,aux$DET-DET)
+
+@PronPersPrev=($PRON-CLS,
+$PRON-CLO,
+$PRON-CLO,
+$PRON-CLS,
+$PRON-CLO,
+$PRON-CLO)
+
+#il est nécessaire que tu y ailles
+@AdjectifModal:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? @VerbeDEtat (@Adverbe){0-n}:@Que:SYNTACTIC_RELATION:
++GovernorOf(right.1,"COMPL")
++SecondUngovernedBy(left.1,left.4,"Pleon")
++CreateRelationBetween(left.1,left.4,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il est important pour elle d'y aller/que tu y ailles
+@AdjectifModal:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? @VerbeDEtat (@Adverbe){0-n}:((pour|à) (^de){0-n})? (@De|@Que):SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.4,"Pleon")
++CreateRelationBetween(left.1,left.4,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il est important, dans ces circonstances,...
+@AdjectifModal:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? @VerbeDEtat (@Adverbe){0-n}:,:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.4,"Pleon")
++CreateRelationBetween(left.1,left.4,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il est dit que...
+@VerbeCognitif:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? $PRON? (être$V|être|est) (@Adverbe){0-n}:(@Adverbe){0-n} @Que:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.5,"Pleon")
++CreateRelationBetween(left.1,left.5,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il est prévu de lancer l'opération
+@VerbeCognitif:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? être$V (@Adverbe){0-n}:(@Adverbe){0-n} de:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.4,"Pleon")
++CreateRelationBetween(left.1,left.4,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#il s'ensuit que...
+@VerbeLogique:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})?:$ADV{0-n} $ADJ{0-n} @Que:SYNTACTIC_RELATION:
++GovernorOf(right.3,"COMPL")
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#il importe de trouver un remplaçant rapidement
+@VerbeRegimeDe:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})?:$ADV{0-n} @De @VerbeInfinitif:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#c'est grâce à...
+grâce:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? être$V (@Adverbe){0-n}:à:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.4,"Pleon")
++CreateRelationBetween(left.1,left.4,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+#il est temps de partir
+être$V:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? (@Adverbe){0-n}:(@Adverbe){0-n} grand? temps de:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#c'est parce que...
+parce:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? être$V (@Adverbe){0-n}:@Que:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.4,"Pleon")
++CreateRelationBetween(left.1,left.4,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il y a...
+y:il (@Negation)? (@VerbeModal (@Adverbe){0-2})?:en? avoir$V:SYNTACTIC_RELATION:
++LinguisticPropertyIs(right.2,"SYNTAX,TRANS,fre")
++SecondUngovernedBy(trigger.1,right.2,"Pleon")
++SecondUngovernedBy(left.1,right.2,"Pleon")
++CreateRelationBetween(trigger.1,right.2,"Pleon")
++CreateRelationBetween(left.1,right.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il est des heures où la lune brille
+#il était une fois
+@VerbeExistence:il (@Negation)? (@VerbeModal (@Adverbe){0-2})? @PronPersPrev{0-2}::SYNTACTIC_RELATION:
++LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS,fre")
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#la nuit, il s'y rencontre des chiens et des loups
+# marche pas
+@VerbeRegimePron:il @Negation? (@VerbeModal (@Adverbe){0-2})? (s'y|se):$ADV{0-n} $DET ($ADV{0-2} $ADJ{0-2})? $NC:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#de l'argent, il s'en jette par la fenêtre tous les jours
+jeter$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? (s'en|se):$ADV{0-n} $DET ($ADV{0-2} $ADJ{0-2})? $NC:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il lui fut prouvé que...
+#être$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? $PRON?:$ADV{0-n} @VPPVerbeCognition $ADV{0-n} @Que:SYNTACTIC_RELATION:
+#+GovernorOf(right.4,"COMPL")
+#+SecondUngovernedBy(left.1,trigger.1,"Pleon")
+#+CreateRelationBetween(left.1,trigger.1,"Pleon")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+
+
+#il arrive à ma mère de prendre de mes nouvelles
+@Arriver:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? $PRON?:$ADV{0-2} (à (^de){0-n})? (^de){0-n} de @VerbeInfinitif:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il arrive qu'elle soit fatiguée
+@Arriver:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})?:($ADV){0-n} @Que:SYNTACTIC_RELATION:
++GovernorOf(right.2,"COMPL")
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il ne lui arrivera rien
+@Arriver:@PleoPron @Negation? $PRON? (@VerbeModal (@Adverbe){0-2})?::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#mettre$V:il::SYNTACTIC_RELATION:
+#+SecondUngovernedBy(left.1,trigger.1,"Pleon")
+#+CreateRelationBetween(left.1,trigger.1,"Pleon")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+@IdiomPassif=(prendre_acte$V,mettre_fin$V,mettre fin,mis fin)
+#La Russie a menacé à plusieurs reprises Tallinn de sanctions économiques s'il n'était pas mis fin à ce que Moscou appelle "une violation des droits de l' homme".
+@IdiomPassif:il @Negation? (@VerbeModal (@Adverbe){0-2})? être$V? (@Adverbe){0-2}::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+mettre$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? être$V? (@Adverbe){0-2}:fin:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#il convient de...
+convenir$V:il @Negation? (@VerbeModal (@Adverbe){0-2})?:(@Adverbe){0-2} de:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# en
+
+#il s'en alla
+en:@Reflexif:@VerbeExpressionSEn:SYNTACTIC_RELATION:
++LinguisticPropertyIs(right.1,"SYNTAX,INTRANS,fre")
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#s'en prendre à qqn ->pleonastique
+# <> s'en prendre une dans la tête -> non pleonastique
+en:@Reflexif:prendre$V (^PONCTU-PONCT){0-n} (à|aux):SYNTACTIC_RELATION:
++LinguisticPropertyIs(right.1,"SYNTAX,INTRANS,fre")
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#il en finit avec ses doutes
+en::@VerbeExpressionEn:SYNTACTIC_RELATION:
++LinguisticPropertyIs(right.1,"SYNTAX,INTRANS,fre")
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# il en est venu aux mains.
+# <> La gare ? il en est venu à pied
+# quelle distinction faire ?
+# -> cette règle marche le plus souvent mais elle n'est pas 100% correcte
+@A=(à,au,aux)
+en::@VerbeExpressionEnA @A:SYNTACTIC_RELATION:
++LinguisticPropertyIs(right.1,"SYNTAX,INTRANS,fre")
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+#Des abricots, il en reste sur l'arbre.
+rester$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? en?::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+#il ne faut pas que
+#il lui en faut 4
+# contrainte retirée car données d'entrée non sûres:
+#+LinguisticPropertyIs(trigger.1,"SYNTAX,IMPERS,fre")
+
+@VerbeImpersonnel:@PleoPron @Negation? (@VerbeModal (@Adverbe){0-2})? $PRON{0-2}::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#il vaut mieux qu'il soit prévenu
+valoir_mieux$V:@PleoPron (@VerbeModal (@Adverbe){0-2})? @Negation?:$ADV{0-2} (pour (^de){0-n})? (^de){0-n} @Que:SYNTACTIC_RELATION:
++GovernorOf(right.4,"COMPL")
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#il est 5 heures.
+être$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? $PRON?:$ADV{0-n} $DET:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#il est question de
+être$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? $PRON?:$ADV{0-n} question @De:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# un article à en faire palir d'envie les journalistes de toute la région.
+en:@A:$V-VINF:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# interrogatif...
+
+# que se passera-t-il ?
+# et autres verbes à régimes pronominaux
+# marche pas
+-t-il:se_passera::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"Pleon")
++CreateRelationBetween(trigger.1,left.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Y a-t-il quelque chose de plus insignifiant que la vérité ? Oui : être obligé de la raconter
+@Y=(Y,y)
+@Y::avoir$V -t-il:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++SecondUngovernedBy(right.2,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
++CreateRelationBetween(right.2,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@VerbeImpersonnel::(-t-il|il):SYNTACTIC_RELATION:
++SecondUngovernedBy(right.1,trigger.1,"Pleon")
++CreateRelationBetween(right.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+sembler$V:,:-t-il ,:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.1,trigger.1,"Pleon")
++CreateRelationBetween(right.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()

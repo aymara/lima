@@ -1,0 +1,38 @@
+<!--This file is an example of Pelf Resource Tool configuration-->
+<configuration>
+ <linguisticDataRoot path="" />
+ <!--If empty, must be defined as $LINGUISTIC_DATA_ROOT environment variable-->
+ <commandsRoot path="/usr/share/apps/pelf/commands/" />
+ <!--If empty, must be defined as $PELF_COMMANDS_ROOT environment variable-->
+ <resources>
+  <dictionnary>
+   <resourceFile pathSuffix="analysisDictionary/fre/flex/mots-simples.txt" />
+   <installCommandFile pathSuffix="dictionnary/install.sh" />
+  </dictionnary>
+  <ngrams>
+   <resourceFile pathSuffix="build/disambiguisationMatrices/fre/bigramMatrix-fre.dat" />
+   <resourceFile pathSuffix="build/disambiguisationMatrices/fre/trigramMatrix-fre.dat" />
+   <installCommandFile pathSuffix="ngrams/install.sh" />
+   <symbolicCodeFile pathSuffix="disambiguisationMatrices/fre/code_symbolic2lima.txt" />
+   <corpusFile pathSuffix="disambiguisationMatrices/fre/corpus/corpus_fr_merge.lvic.svmt.txt" />
+  </ngrams>
+  <syntacticRules>
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-l2r-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-r2l-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-heterodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-r2l-pass1-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/simplification-first-rules-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/simplification-rules-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/simplification-last-rules-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-l2r-fre-pleonasticPronouns.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/categoriesClassesDeclaration-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-heterodeps-specializer.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-l2r-fre-dummy.txt" />
+   <installCommandFile pathSuffix="synrules/install.sh" />
+  </syntacticRules>
+  <idiomaticExpressions>
+   <resourceFile pathSuffix="rules-idiom/fre/src/idioms-fre.txt" />
+   <installCommandFile pathSuffix="idioms/install.sh" />
+  </idiomaticExpressions>
+ </resources>
+</configuration>

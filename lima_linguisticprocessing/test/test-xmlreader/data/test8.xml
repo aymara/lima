@@ -1,0 +1,13 @@
+<DOCSET>
+<DOC>
+<DOCNO>test8</DOCNO>
+<X>
+du texte ignoré &lt; avec entité.
+</X>
+<TEXT>
+<X>
+des mots à indexer entre deux étiquettes ignorées.
+</X>
+</TEXT>
+</DOC>
+</DOCSET>

@@ -1,0 +1,24 @@
+
+#run postagger for language eng
+./runPosTagger nopostagger eng
+./runPosTagger viterbi-freq eng
+./runPosTagger viterbi-si eng
+
+#generate macro from micro categories
+./convertToMacros.pl categs-eng-convert.txt nopostagger/eng/*.log
+./convertToMacros.pl categs-eng-convert.txt viterbi-freq/eng/*.log
+./convertToMacros.pl categs-eng-convert.txt viterbi-si/eng/*.log
+
+#eval micro
+cat result.header > result.micro
+./eval.pl nopostagger eng log >> result.micro
+./eval.pl viterbi-freq eng log >> result.micro
+./eval.pl viterbi-si eng log >> result.micro
+./analyzeResult.pl result.micro > analysis.micro
+
+#eval macro
+cat result.header > result.macro
+./eval.pl nopostagger eng macro >> result.macro
+./eval.pl viterbi-freq eng macro >> result.macro
+./eval.pl viterbi-si eng macro >> result.macro
+./analyzeResult.pl result.macro > analysis.macro

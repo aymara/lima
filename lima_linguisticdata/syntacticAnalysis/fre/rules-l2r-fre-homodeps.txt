@@ -1,0 +1,630 @@
+##############################################################################
+#                                                                            #
+# rules for the recognition of french left to right homosyntagmatic relations#
+# this file uses the syntax for the declarations of automatons by Romaric    #
+# Besancon (Cf. his 2003/03/11 document)
+#                                                                            #
+# Created on Thu nov 13 2003                                                 #
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)                            #
+#                                                                            #
+# $Id$                  #
+#                                                                            #
+##############################################################################
+# expression des positions dans les contraintes: first current next last
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-fre.txt
+
+######################################################################
+# sous-automates
+# adverb group
+define subautomaton AdvGroup {
+  pattern=$ADV{0-3}
+}
+
+# adverb adjective group
+define subautomaton AdvAdjGroup {
+  pattern=$ADV{0-3} $ADJ
+}
+
+# common noun group size=3
+define subautomaton EndOfNounGroupAfterNoun {
+  pattern=$DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et)?){0-n}
+}
+
+# common noun group size=6
+define subautomaton NounGroup {
+  pattern=$DET? (%AdvAdjGroup (,|et|ou)?){0-n} ($NC|$NP) $DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et|ou)?){0-n}
+}
+
+# incise size=1
+define subautomaton InciseGroup {
+  pattern=((, (^,){0-n} ,)|(- (^-){0-n} -)|(\( (^$PONCTU-PONCT){0-n} \))){0-n}
+}
+
+#----------------------------------------------------------------------
+# Relation entre determinant interrogatif et nom: DetIntSub
+# "En quelle->annee"
+#----------------------------------------------------------------------
+@DetInt::(@AdjPren){0-1} (@Substantif):SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++GenderAgreement(trigger.1,right.2)
++NumberAgreement(trigger.1,right.2)
++CreateRelationBetween(trigger.1,right.2,"DetIntSub")
++EnforcePropertiesConstraints(trigger.1,right.2,"GENDER,NUMBER")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre determinant et substantif: DetSub
+# (A6.3 - 4.2.1.7)
+#----------------------------------------------------------------------
+#@DetNum:@PrepComp:@PrepComp @DetNum @Substantif:DetSub3:
+#+SameNominalChain(trigger.1,left.1)
+#+SameNominalChain(trigger.1,right.1)
+#+SameNominalChain(trigger.1,right.2)
+#+SameNominalChain(trigger.1,right.3)
+#+SecondUngovernedBy(right.2,trigger.1,"CompDet")
+#+CreateRelationBetween(right.2,right.3,"DetSub")
+#+CreateRelationBetween(trigger.1,right.3,"DetSub")
+#+CreateRelationBetween(right.1,right.2,"PrepDet")
+#+CreateRelationBetween(right.2,trigger.1,"CompDet")
+
+# Cas du déterminant numéral : mod_n "Trois filles sont entrées"
+# Activé 25/05/09 Anna essai
+# $DET-DET::(((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? (@Prenom)? @Substantif:SYNTACTIC_RELATION:
+# +SecondUngovernedBy(trigger.1,right.3,"ANY")
+# +GenderAgreement(trigger.1,right.3)
+# +NumberAgreement(trigger.1,right.3)
+# +CreateRelationBetween(trigger.1,right.3,"MOD_N")
+# +CreateRelationBetween(trigger.1,right.3,"DETSUB")
+# +EnforcePropertiesConstraints(trigger.1,right.3,"GENDER,NUMBER")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+@PronIndef:$PREP-P @Determinant::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++SecondUngovernedBy(left.2,trigger.1,"ANY")
++GenderAgreement(left.2,trigger.1)
++NumberAgreement(left.2,trigger.1)
++CreateRelationBetween(left.1,trigger.1,"PREPSUB")
++CreateRelationBetween(left.2,trigger.1,"DETSUB")
++EnforcePropertiesConstraints(left.2,trigger.1,"GENDER,NUMBER")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@Determinant::(((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? (@Prenom|@AdverbePositifDansChaineNominale)? (@Prefixe|$PONCTU-PONCT)? @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.4,"ANY")
++GenderAgreement(trigger.1,right.4)
++NumberAgreement(trigger.1,right.4)
++CreateRelationBetween(trigger.1,right.4,"DETSUB")
++EnforcePropertiesConstraints(trigger.1,right.4,"GENDER,NUMBER")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@Determinant::$PONCTU-PONCT (@Prefixe|$PONCTU-PONCT)? @Substantif $PONCTU-PONCT:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"DETSUB")
++SecondUngovernedBy(right.1,right.3,"ANY")
++CreateRelationBetween(right.1,right.3,"Dummy")
++SecondUngovernedBy(right.4,right.3,"ANY")
++CreateRelationBetween(right.4,right.3,"Dummy")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# HERE remove agreement constraints for general_elda E167
+@DetIndef::@Determinant (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? (@Prefixe|$PONCTU-PONCT)? @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.4,"ANY")
++GenderAgreement(trigger.1,right.4)
++NumberAgreement(trigger.1,right.4)
++CreateRelationBetween(trigger.1,right.4,"DETSUB")
++EnforcePropertiesConstraints(trigger.1,right.4,"GENDER,NUMBER")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# cas avec un partitif : "de la farine" "de beaux enfants" (DET)
+# pas d'accord de nombre
+# $DET-DET::@Determinant? (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? (@Prenom)? @Substantif:SYNTACTIC_RELATION:
+# +GenderAgreement(trigger.1,right.3)
+# +CreateRelationBetween(trigger.1,right.3,"DETSUB")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre determinant article et pronom indefini: DetPron
+# "D' autres ..."
+#----------------------------------------------------------------------
+@DetArt::(@NegSecond)? @PronIndef:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"DetPron")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# "tous ceux"
+@DetIndef::@PronDem:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"DetPron")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$PREP-P::@DetArt (@NegSecond)? @PronIndef:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++SecondUngovernedBy(right.1,right.3,"ANY")
++CreateRelationBetween(right.1,right.3,"DetPron")
++CreateRelationBetween(trigger.1,right.3,"DETSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation entre determinant et adjectif en position de nom: DetAdj
+# "... est la verte."
+#----------------------------------------------------------------------
+
+@Determinant::(@AdvPos){0-3} (@AdjPren){0-2} @Adjectif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++GenderAgreement(trigger.1,right.3)
++NumberAgreement(trigger.1,right.3)
++CreateRelationBetween(trigger.1,right.3,"DetAdj")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+#+EnforcePropertiesConstraints(trigger.1,right.3,"GENDER,NUMBER")
+
+
+#----------------------------------------------------------------------
+# Relation entre adjectif et son complement substantif: CompAdj
+# (A6.5 - 4.2.1.5)
+#----------------------------------------------------------------------
+
+@PronSujNonConjoint=($PRON-CLS,
+$PRON-PRO, $PRON-PRO)
+
+
+@PrepComp:@AdjAvecSubCompDeAdj:@Determinant (@AdvPos|@AdjPren){0-n} (PRON-CLO|PRON-CLO|@Substantif|@PronSujNonConjoint):SYNTACTIC_RELATION:
++SecondUngovernedBy(right.3,left.1,"ANY")
++GenderAgreement(right.1,right.3)
++NumberAgreement(right.1,right.3)
++CreateRelationBetween(right.3,left.1,"COMPADJ")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PrepComp:@AdjAvecSubCompDeAdj:(@AdvPos|@AdjPren){0-n} (PRON-CLO|PRON-CLO|@Substantif|@PronSujNonConjoint):SYNTACTIC_RELATION:
++SecondUngovernedBy(right.2,left.1,"ANY")
++CreateRelationBetween(right.2,left.1,"COMPADJ")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# same with DET_ARTICLE_CONTRACTE
+$DET-DET:@AdjAvecSubCompDeAdj:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} (PRON-CLO|PRON-CLO|@Substantif):SYNTACTIC_RELATION:
++SecondUngovernedBy(right.2,left.1,"ANY")
++GenderAgreement(trigger.1,right.2)
++NumberAgreement(trigger.1,right.2)
++CreateRelationBetween(right.2,left.1,"COMPADJ")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+
+#----------------------------------------------------------------------
+# Relation entre adverbe et substantif: CompAdv
+# (A6.6 - 4.2.1.6)
+#----------------------------------------------------------------------
+@PrepComp:$ADV-ADV:@Determinant (@AdvPos|@AdjPren){0-n} @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1,"COMPADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre adverbe et substantif: CompAdv
+# (A6.6 - 4.2.1.6)
+#----------------------------------------------------------------------
+@PronRelCa::(@AdvPos|@AdjPren){0-n} @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1,"COMPADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+#----------------------------------------------------------------------
+# Relation entre adverbe et adjectif: AdvAdj
+# (A6.7 - 4.2.1.8)
+#----------------------------------------------------------------------
+@AdvModifieurAdj::@Adjectif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"ADVADJ")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre substantif et adverbe dans : "pomme de trop"
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@Substantif::(@Prep|@Adverbe) @Adverbe:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1,"AdvSub")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre substantif et adverbe dans : "plus_de monnaie" "comme chef"
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@Adverbe::(@Adjectif)? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"AdvSub")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre determinant interrogatif et nom: PrepDetInt
+# "En->quelle annee"
+#----------------------------------------------------------------------
+@DetInt:@Prep::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"PrepDetInt")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre verbe et sujet pronominal inverse
+#----------------------------------------------------------------------
+@PronPersSujInverse:@VerbeDansQuestion::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"SujInv")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre verbe et COD pronominal inverse
+#----------------------------------------------------------------------
+@PronPersCodPrev::@Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"CodPrev")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@TensedVerbSuj=($V-V,
+$V-VS,
+$V-VPR,
+$V-V,
+$V-VS,
+$V-VPR,
+$V-V,
+$V-VS,
+$V-VPR,
+$V-V,
+$V-VS,
+$V-VPR)
+
+# relatif COD
+@Verbe:$NC ($ADV? $ADJ)? ,? $PRON-PROREL (^@Verbe){0-2}:@NonVerbe{0-n} @TensedVerbSuj?:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"MOD_V")
++!GovernorOf(trigger.1,"MOD_N")
++CreateRelationBetween(left.4,trigger.1,"CodPrev")
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(left.1,right.2,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre verbe et COI pronominal inverse
+#----------------------------------------------------------------------
+@PronPersCoiPrev:@PronPersCodPrev:@Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,right.1,"ANY")
++CreateRelationBetween(left.1,right.1,"CodPrev")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"CoiPrev")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PronPersCoiPrev::@Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"CoiPrev")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre "ne" et son verbe
+#----------------------------------------------------------------------
+@NegPrem::@PronRefl @Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"Neg")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre "ne" et son verbe
+#----------------------------------------------------------------------
+@NegPrem::(@Adverbe){0-3} (@NegSecond)? (@PronRefl)? (@PronPersCodPrev|@PronPersCoiPrev)? @Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(trigger.1,right.5,"Neg")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre "ne" et "pas" quand accoles et suivis d'un infinitif
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@NegPrem::(@Adverbe){0-3} @NegSecond @VerbeInf:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"NePas")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre verbe et "pas" cas general
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@NegSecond:@Verbe (@Adverbe){0-3} (@Prep @Substantif)?::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"NePas2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre préposition et verbe à l'infinitif
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@PrepGVInf::(@NegPrem)? (@Adverbe){0-3} (@NegSecond)? (@PronRefl|@PronPersCodPrev)? @VerbeInf:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(trigger.1,right.5,"PrepInf")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre préposition et pronom relatif: "à quoi"
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@Prep::(@PronRelCoi|@PronRelS):SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"PrepPronRel")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre adverbe et verbe à l'infinitif
+# "Il va vraiment manger ça!"
+#----------------------------------------------------------------------
+@AdvModifieurVerbePrev::(@NegSecond)? @VerbeInf:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# "Plus personne ne sait manger proprement"
+@VerbeInf:@VerbeInd (@NegSecond)?:@AdvModifieurVerbePostv:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.1,trigger.1,"ANY")
++CreateRelationBetween(right.1,trigger.1,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre adverbe préverbal et verbe à un temps composé
+# "Il n'a pas vraiment attrapé le chat"
+#----------------------------------------------------------------------
+@AdvModifieurVerbePrev::(@NegSecond)? @Participe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre adverbe postverbal et verbe à un temps composé
+# "Il m'a reçue très gentiment"
+#----------------------------------------------------------------------
+@Participe::@AdvModifieurAdv? @AdvModifieurVerbePostv:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre adverbe et verbe à un temps simple
+# "Il n'attrape pas vraiment le chat"
+#----------------------------------------------------------------------
+@VerbeInd::(@NegSecond)? @AdvModifieurVerbePostv:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre pronom personnel sujet et verbe
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@PronPersSuj::(@NegPrem)? (@PronPersCodPrev|@PronPersCoiPrev|@PronRefl){0-2} @Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++NumberAgreement(trigger.1,right.3)
++EnforcePropertiesConstraints(trigger.1,right.3,"NUMBER,PERSON")
++CreateRelationBetween(trigger.1,right.3,"PronSujVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PronIndef::(@NegPrem)? (@PronPersCodPrev|@PronPersCoiPrev|@PronRefl){0-2} @Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"PronSujVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre preposition et pronom personnel relatif CA
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@Prep::@PronRelCa:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"PrepPronRelCa")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre pronom reflexif et verbe: "... se sont ..."
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@PronRefl::(@PronPersCoiPrev)? @Verbe:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.2,"PronReflVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre determinant seul et verbe: "le veut"
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@DetDef::@Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"CodAnaph")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation entre preposition et conj de sub consideree comme un pronom
+# clive, comme dans: C'est <à> X <que> je parle
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@PrepComp::(@Pron|@Substantif) @ConjSubord:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"PrepPronCliv")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre preposition et adverbe : "de trop"
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@Prep::@Adverbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"PrepAdv")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+@PronPersSujInverse::@PronPersSujInverse:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"TIl")
+
+#----------------------------------------------------------------------
+# Relation entre préfixe et substantif :
+# 'multi-éléments'
+#----------------------------------------------------------------------
+
+@Prefixe::@Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"Prefixe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+########################################
+# Regles adaptees pour les mots inconnus
+########################################
+
+@Determinant::((@AdvPos){0-3} @AdjPren){0-3} (@Prefixe|$PONCTU-PONCT)? @Inc:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"DETSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PrepComp:@AdjAvecSubCompDeAdj:(@Determinant)? (@AdvPos|@AdjPren){0-n} @Inc:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1,"COMPADJ")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PrepComp:$ADV-ADV:@Determinant (@AdvPos|@AdjPren){0-n} @Inc:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1,"COMPADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+######################################################################
+# relation complementeur
+# COMPL
+
+# subordonnee complément de nom "l'idée qu'il soit arrivé en retard" (temps compose)
+$CONJ-CS:(idée|fait):(^$V){0-n} $V $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"MOD_V")
++!GovernorOf(right.3,"MOD_N")
++!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.3,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:(idée|fait):(^$V){0-n} $V:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"MOD_V")
++!GovernorOf(right.2,"MOD_N")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.2,left.1,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# subordonnee complément d'adjectif "elle est fière qu'il ait réussi" (temps compose)
+$CONJ-CS:$ADJ:(^$V){0-n} $V $V-VPP:SYNTACTIC_RELATION:
++!GovernorOf(right.3,"MOD_A")
++!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.3,left.1,"MOD_A")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# idem temps simple
+$CONJ-CS:$ADJ:(^$V){0-n} $V:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"MOD_A")
++CreateRelationBetween(trigger.1,right.2,"COMPL")
++CreateRelationBetween(right.2,left.1,"MOD_A")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# c'est [ce que revele] un rapport
+ce:$V-V:que $V:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++SecondUngovernedBy(right.1,right.2,"ANY")
++CreateRelationBetween(right.2,trigger.1,"MOD_N")
++CreateRelationBetween(right.1,right.2,"COMPL")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation de juxtaposition "Bonjour Paul"
+# ---------------------------------------------------------------------
+bonjour::@Determinant? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.2,"JUXT")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+bonsoir::@Determinant? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.2,"JUXT")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre determinant et adverbe modifieur de participe passe adjectival
+# "les plus utilises"
+#----------------------------------------------------------------------
+$ADV-ADV:@DetDef:$V-VPP:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++!GovernorOf(left.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"DetAdv")
+=>AddRelationInGraph()
+=<ClearStoredRelations()

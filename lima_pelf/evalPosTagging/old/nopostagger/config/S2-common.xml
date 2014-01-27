@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+    <module name="common">
+        <group name="languageDeclaration">
+            <list name="available">
+                <!--item value="ara" /-->
+                <!--item value="chi" /-->
+                <item value="eng" />
+                <item value="fre" />
+                <item value="ger" />
+                <item value="spa" />
+                <!--item value="ita" /-->
+            </list>
+        </group>
+        <group name="languagesIds">
+            <param key="fre" value="0"/>
+            <param key="eng" value="1"/>
+            <param key="spa" value="2"/>
+            <param key="ger" value="3"/>
+            <param key="chi" value="4"/>
+            <param key="ara" value="5"/>
+            <param key="ita" value="6"/>
+        </group>
+        <group name="languageDefinitionFiles">
+            <param key="fre" value="S2-common-fre.xml" />
+            <param key="eng" value="S2-common-eng.xml" />
+            <param key="spa" value="S2-common-spa.xml" />
+            <param key="ger" value="S2-common-ger.xml" />
+            <param key="chi" value="S2-common-chi.xml" />
+            <param key="ara" value="S2-common-ara.xml" />
+            <param key="ita" value="S2-common-ita.xml" />
+        </group>
+        <group name="stringPool">
+          <param key="release" value="false"/>
+        </group>
+        <group name="categories">
+          <param key = "categoriesNames" value = "LinguisticProcessings/categoriesNames.dat" />
+        </group>
+        <group name="entities">
+            <param key="types" value="LinguisticProcessings/entityTypes.dat" />
+        </group>
+        <group name="semanticRelations">
+          <map name="declaration">
+            <entry key="synonym" value="1"/>
+            <entry key="S" value="1"/>
+            <entry key="antonym" value="2"/>
+            <entry key="meronym" value="3"/>
+            <entry key="hyponym" value="4"/>
+            <entry key="hyperonym" value="5"/>
+            <entry key="seealso" value="6"/>
+            <entry key="V-S" value="7"/>
+            <entry key="M-F" value="8"/>
+            <entry key="V-J" value="9"/>
+            <entry key="J-D" value="10"/>
+            <entry key="V-A" value="11"/>
+          </map>
+        </group>
+    </module>
+</modulesConfig>

@@ -1,0 +1,12 @@
+# -------------------------------------------------------------
+# SVMT configuration file
+#
+# ------------- location of the training set-------------------
+TRAINSET =  /home/gael/Projets/Amose/Sources/lima_linguisticData/disambiguisationMatrices/eng/corpus/ptb.pos
+# ------------- location of the Joachims svmlight software ----
+SVMDIR = /home/gael/Projets/evalPosTagging/SVM/svm_light
+# ------------- name of the model to create -------------------
+NAME = lima
+# ------- action items ----------------------------------------
+do M0 LR
+# -------------------------------------------------------------

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.idiom.1" type="pertinent">
+  <call-parameters>
+      <param key="text" value="il appuie sur le champignon. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>appuyer sur le champignon</expl>
+  <test id="fre.idiom.1.1" trace=".idiom.xml"
+    comment="l'expression est reconnue"
+    left="XPATH#data_structure/vertex/token[position=4][length=24]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.1.2" trace=".idiom.xml"
+    comment="l'expression a la bonne valeur"
+    left="XPATH#data_structure/vertex[token/position=4]/data//form/@lemma"
+    operator="="
+    right="appuyer sur le champignon"/>
+</testcase>
+<testcase id="fre.idiom.2" type="pertinent">
+  <call-parameters>
+      <param key="text" value="il est tombé dans les pommes en sortant de la piscine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tomber dans les pommes</expl>
+  <test id="fre.idiom.2.1" trace=".idiom.xml"
+    comment="l'expression est reconnue"
+    left="XPATH#data_structure/vertex/token[position=8][length=21]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.2.2" trace=".idiom.xml"
+    comment="l'expression a la bonne valeur"
+    left="XPATH#data_structure/vertex[token/position=8]/data//form/@lemma"
+    operator="="
+    right="tomber dans les pommes"/>
+</testcase>
+<testcase id="fre.idiom.3" type="pertinent">
+  <call-parameters>
+      <param key="text" value="il se creuse la tête pour trouver des exemples."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>se creuser la tête</expl>
+  <test id="fre.idiom.3.1" trace=".idiom.xml"
+    comment="l'expression est reconnue"
+    left="XPATH#data_structure/vertex/token[position=4][length=17]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.3.2" trace=".idiom.xml"
+    comment="l'expression a la bonne valeur"
+    left="XPATH#data_structure/vertex[token/position=4]/data//form/@lemma"
+    operator="="
+    right="se creuser la tête"/>
+</testcase>
+<testcase id="fre.idiom.4" type="pertinent">
+  <call-parameters>
+      <param key="text" value="je me suis vraiment creusé la tête pour trouver ça."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>se creuser la tête (avec incise)</expl>
+  <test id="fre.idiom.4.1" trace=".idiom.xml"
+    comment="l'expression est reconnue"
+    left="XPATH#data_structure/vertex/token[position=4][length=31]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.4.2" trace=".idiom.xml"
+    comment="l'expression a la bonne valeur"
+    left="XPATH#data_structure/vertex[token/position=4]/data//form/@lemma"
+    operator="="
+    right="se creuser la tête"/>
+</testcase>
+</testcases>

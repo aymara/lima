@@ -1,0 +1,324 @@
+<codes>
+	<code key="Ai---nn">
+		<field key="MICRO" value="ADJ"/>
+		<field key="GENDER" value="GEN_NEUTRE"/>
+		<field key="NUMBER" value="NUM_NEUTRE"/>
+		<field key="PERSON" value=""/>
+		<field key="TIME" value=""/>
+		<field key="SYNTAX" value=""/>
+	</code>
+	<code key="As---nn">
+		<field key="MICRO" value="ADJ"/>
+		<field key="GENDER" value="GEN_NEUTRE"/>
+		<field key="NUMBER" value="NUM_NEUTRE"/>
+		<field key="PERSON" value=""/>
+		<field key="TIME" value=""/>
+		<field key="SYNTAX" value=""/>
+	</code>
+	<code key="At---nn">
+		<field key="MICRO" value="ADJ"/>
+		<field key="GENDER" value="GEN_NEUTRE"/>
+		<field key="NUMBER" value="NUM_NEUTRE"/>
+		<field key="PERSON" value=""/>
+		<field key="TIME" value=""/>
+		<field key="SYNTAX" value=""/>
+        </code>
+	
+ <code key="Afha---">
+  <field key="MICRO" value="ADJ"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Afhp---">
+	<field key="MICRO" value="ADJ"/>
+	<field key="GENDER" value=""/>
+	<field key="NUMBER" value=""/>
+	<field key="PERSON" value=""/>
+	<field key="TIME" value=""/>
+	<field key="SYNTAX" value=""/>
+</code>
+<code key="Afd----">
+	<field key="MICRO" value="ADJ"/>
+	<field key="GENDER" value=""/>
+	<field key="NUMBER" value=""/>
+	<field key="PERSON" value=""/>
+	<field key="TIME" value=""/>
+	<field key="SYNTAX" value=""/>
+</code>
+<code key="Afb----">
+	<field key="MICRO" value="ADJ"/>
+	<field key="GENDER" value=""/>
+	<field key="NUMBER" value=""/>
+	<field key="PERSON" value=""/>
+	<field key="TIME" value=""/>
+	<field key="SYNTAX" value=""/>
+</code>
+<code key="Afz----">
+	<field key="MICRO" value="ADJ"/>
+	<field key="GENDER" value=""/>
+	<field key="NUMBER" value=""/>
+	<field key="PERSON" value=""/>
+	<field key="TIME" value=""/>
+	<field key="SYNTAX" value=""/>
+</code>
+<code key="Ncaf-n">
+  <field key="MICRO" value="NC"/>
+  <field key="GENDER" value="FEM"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ncam-n">
+  <field key="MICRO" value="NC"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Da----d">
+  <field key="MICRO" value="DET"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Da----c">
+  <field key="MICRO" value="P+D"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Da---pc">
+  <field key="MICRO" value="P+D"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value="PLUR"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Dk-----">
+  <field key="MICRO" value="DET"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ncgf--">
+  <field key="MICRO" value="NC"/>
+  <field key="GENDER" value="FEM"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ncgm--">
+  <field key="MICRO" value="NC"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Npgf--">
+  <field key="MICRO" value="NPP"/>
+  <field key="GENDER" value="FEM"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Npgm--">
+  <field key="MICRO" value="NPP"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+
+<code key="Npg-s-">
+	<field key="MICRO" value="NPP"/>
+	<field key="GENDER" value=""/>
+	<field key="NUMBER" value="SING"/>
+	<field key="PERSON" value=""/>
+	<field key="TIME" value=""/>
+	<field key="SYNTAX" value=""/>
+</code>
+<code key="Npg-p-">
+	<field key="MICRO" value="NPP"/>
+	<field key="GENDER" value=""/>
+	<field key="NUMBER" value="PLUR"/>
+	<field key="PERSON" value=""/>
+	<field key="TIME" value=""/>
+	<field key="SYNTAX" value=""/>
+</code>
+
+
+<code key="Ppcsa----">
+  <field key="MICRO" value="CLS"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ppcsa3--s">
+  <field key="MICRO" value="CLS"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value="3"/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ppcsa--ms">
+  <field key="MICRO" value="CLS"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ppcsa--fs">
+  <field key="MICRO" value="CLS"/>
+  <field key="GENDER" value="FEM"/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Pi-------">
+  <field key="MICRO" value="PRO"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Pi------s">
+  <field key="MICRO" value="PRO"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Pn-------">
+  <field key="MICRO" value="PRO"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ncuf--">
+  <field key="MICRO" value="NC"/>
+  <field key="GENDER" value="FEM"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Ncum--">
+  <field key="MICRO" value="NC"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Vpi-i---">
+  <field key="MICRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="INTRANS"/>
+</code>
+<code key="Vpi-p---">
+  <field key="MICRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="PRONOMINAL"/>
+</code>
+<code key="Vpi-m---">
+  <field key="MICRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="IMPERS"/>
+</code>
+<code key="Vpi-t---">
+  <field key="MICRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="TRANS"/>
+</code>
+<code key="V---i---">
+  <field key="MACRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="INTRANS"/>
+</code>
+<code key="V---p---">
+  <field key="MACRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="PRONOMINAL"/>
+</code>
+<code key="V---m---">
+  <field key="MACRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="IMPERS"/>
+</code>
+<code key="V---t---">
+  <field key="MACRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value="TRANS"/>
+ 
+  
+  <code key="Pd-----nn">
+	  <field key="MICRO" value="PRO"/>
+	  <field key="GENDER" value="GEN_NEUTRE"/>
+	  <field key="NUMBER" value="NUM_NEUTRE"/>
+	  <field key="PERSON" value=""/>
+	  <field key="TIME" value=""/>
+	  <field key="SYNTAX" value=""/>
+  </code>
+  
+  
+  <code key="Pdp----nn">
+	  <field key="MICRO" value="PRO_POSTPOSE"/>
+	  <field key="GENDER" value="GEN_NEUTRE"/>
+	  <field key="NUMBER" value="NUM_NEUTRE"/>
+	  <field key="PERSON" value=""/>
+	  <field key="TIME" value=""/>
+	  <field key="SYNTAX" value=""/>
+  </code>
+  
+  
+</code>
+</codes>

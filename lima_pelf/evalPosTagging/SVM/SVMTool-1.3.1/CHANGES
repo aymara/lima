@@ -1,0 +1,9 @@
+CHANGES
+-------
+
+  This version incorporates:
+
+  - several bug fixes so SVMTool works fine with Perl v.5.10.0
+  - modification in "-EOS" option so '<s>' sentence boundary marks are preserved in the tagger output
+
+

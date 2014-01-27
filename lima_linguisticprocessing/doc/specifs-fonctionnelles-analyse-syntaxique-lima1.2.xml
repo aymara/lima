@@ -1,0 +1,1881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+ "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article class="techreport" lang="fr" revision="1.2" revisionflag="changed">
+  <title>Documentation fonctionnelle de l'analyse syntaxique Lima 1.2</title>
+
+  <para>Note: ce document est en cours de conversion à partir de la version
+  produite pour Lima 1.1. Des révisions sont encore nécessaires.</para>
+
+  <section>
+    <title>Présentation</title>
+
+    <para>Le but de l'analyse syntaxique est de trouver les relations de
+    dépendance entre les éléments de la phrase. Ces relations sont autant des
+    relations entre mots outils et mots pleins (comme la relation entre
+    l'article et le nom qu'il dirige) que des relations fonctionnelles entres
+    constituants tels que décrits en grammaire classique, comme la relation
+    sujet ou la relation complément d'objet direct.</para>
+
+    <para>Dans notre approche, qui s'apparente aux grammaires de dépendances,
+    toutes les relations se font entre deux mots (tokens) et la notion de
+    groupe syntaxique n'est pas explicite&nbsp;: les groupes sont déductibles
+    de la structure arborescente des relations.</para>
+
+    <para>L'analyse syntaxique est séparée en quatre étapes&nbsp;:</para>
+
+    <para><orderedlist>
+        <listitem>
+          <para>recherche des chaînes nominales et verbales. Même si nous ne
+          définissons pas des syntagmes classiques, nous utilisons la notion
+          de chaînes nominales et verbales qui représentent la plus longue
+          suite possible de tokens liés au nom d'une part et au verbe d'autre
+          part&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>recherche des relations de dépendance homosyntagmatiques,
+          c'est-à-dire au sein des chaînes nominales et verbales&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>désambiguisation (optionnelle) des chemins dans le
+          graphe&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>simplification: les éléments de phrase complexe sont
+          recherchés et sortis du graphe, de façon à simplifier la recherche
+          des dépendances hétérosyntagmatiques qui suit&nbsp;,</para>
+        </listitem>
+
+        <listitem>
+          <para>recherche des relations de dépendance hétérosyntagmatiques
+          (entre tokens situés dans deux chaînes différentes ou bien hors
+          chaînes) et rattachement des éléments de phrase complexe détachés à
+          l'étape précédente, avec ajout des relations de dépendance qui les
+          relient au reste de la phrase.</para>
+        </listitem>
+      </orderedlist>Dans le cadre de l'indexation et de la recherche, les
+    étapes 3 à 5 sont optionnelles. En effet, l'étape 3 peut supprimer
+    certaines hypothèses de relations (et donc de mots composés, cf. la
+    documentation des mots composés) et les étapes 4 et 5 ne créent pas de
+    relations utilisées pour les mots composés. Par conséquent, la présente
+    version de cette documentation présentera principalement les deux
+    premières étapes.</para>
+  </section>
+
+  <section>
+    <title>Recherche des chaînes nominales et verbales</title>
+
+    <para>La recherche des chaînes nominales et verbales repose sur la
+    définition de successions de classes de micro-catégories (ou de formes de
+    mots) autorisées ainsi que sur la définition d'un ensemble de
+    micro-catégories initiales et finales possibles. Le tout est exprimé sous
+    la forme d'un fichier XML dont voici la DTD&nbsp;:</para>
+
+    <para><programlisting>&lt;!ELEMENT matrice_precedence (chaine+, matrice+)&gt;
+
+&lt;!ELEMENT chaine  (filtre+) &gt;
+&lt;!ATTLIST chaine type (nominale | verbale) #REQUIRED&gt;
+
+&lt;!ELEMENT filtre ( nom, categorie+, attribut*)&gt;
+&lt;!ATTLIST filtre ID ID #REQUIRED&gt;
+
+&lt;!ELEMENT nom (#PCDATA ) &gt;
+&lt;!ELEMENT attribut (#PCDATA ) &gt;
+&lt;!ELEMENT categorie (#PCDATA ) &gt;
+
+&lt;!ELEMENT matrice (ligne+, debuts+, fins+)&gt;
+&lt;!ATTLIST matrice type (nominale | verbale) #REQUIRED&gt;
+
+&lt;!ELEMENT ligne (succ*)&gt;
+&lt;!ATTLIST ligne REF IDREF #IMPLIED&gt;
+
+&lt;!ELEMENT succ EMPTY&gt;
+&lt;!ATTLIST succ REF IDREFS #IMPLIED&gt;
+
+&lt;!ELEMENT debuts EMPTY&gt;
+&lt;!ATTLIST debuts REF IDREFS #IMPLIED&gt;
+
+&lt;!ELEMENT fins EMPTY&gt;
+&lt;!ATTLIST fins REF IDREFS #IMPLIED&gt;
+</programlisting>Une matrice_precedence est séparée en deux parties. D'une
+    part les définitions des classes de microcatégories (ou formes de mots),
+    nommées<emphasis> filtres</emphasis> et d'autre part les matrices
+    elles-mêmes. Un filtre a un attribut ID unique permettant de le réfrencer
+    depuis les matrices. Il porte un nom et est défini par un ensemble de
+    catégories et d'attributs (formes de mots). Une matrice est composée de
+    trois éléments&nbsp;: les lignes de la matrice, les débuts et les fins.
+    Chaque ligne donne, pour un filtre, les filtres qui peuvent le suivre. Les
+    débuts sont les filtres pouvant débuter une chaîne du type en cours et les
+    fins sont ceux pouvant terminer une chaîne du même type. <note>
+        <para>Les filtres pour les chaînes nominales et verbales peuvent
+        référencer les mêmes catégories (par exemple, certains adjectifs
+        peuvent être aussi bien dans des chaînes nominales que verbales). Par
+        contre, par convention, les filtres de débuts de chaîne doivent être
+        différents&nbsp;: une catégorie autorisée en début de chaîne nominale
+        ne peut aussi être autorisée en début de chaîne verbale.</para>
+      </note></para>
+
+    <para>Ci-dessous, on montre un extrait de fichier de définition de chaînes
+    qui exprime le fait qu'une chaine nominale peut commencer par un article,
+    se poursuivre par un nom et se terminer là.</para>
+
+    <programlisting>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE matrice_precedence SYSTEM "recochaines.dtd"&gt;
+&lt;matrice_precedence&gt; 
+  &lt;chaine type="nominale"&gt;
+...
+    &lt;filtre ID="FN2"&gt;
+      &lt;nom&gt;DETERMINANT&lt;/nom&gt;
+      &lt;categorie&gt;L_DET_ARTICLE_DEF&lt;/categorie&gt;
+      &lt;categorie&gt;L_DET_ARTICLE_INDEF&lt;/categorie&gt;
+...
+    &lt;/filtre&gt;
+...
+    &lt;filtre ID="FN13"&gt;
+      &lt;nom&gt;NOM-COM&lt;/nom&gt;
+      &lt;categorie&gt;L_NC_GEN&lt;/categorie&gt;
+...
+    &lt;/filtre&gt;
+  &lt;/chaine&gt;
+  &lt;chaine type="verbale"&gt;
+...
+  &lt;/chaine&gt;
+  &lt;matrice type="nominale"&gt;
+...
+    &lt;ligne REF="FN2"&gt;
+      &lt;succ REF="... FN13 "/&gt;
+    &lt;/ligne&gt;
+...
+    &lt;debuts REF="... FN2  ..."/&gt;
+    &lt;fins REF="... FN13 ..."/&gt;
+  &lt;/matrice&gt;
+  &lt;matrice type="verbale"&gt;
+...
+  &lt;/matrice&gt;
+&lt;/matrice_precedence&gt;
+
+</programlisting>
+
+    <para>Dans Lima, les fichiers XML de définition des matrices sont définis
+    dans les fichiers de configuration de l'analyse linguistique de chaque
+    langue (<computeroutput>$S2_CONF/S2-lp-XXX.xml</computeroutput>), dans le
+    module <computeroutput>Resources</computeroutput>, le groupe
+    <computeroutput>chainMatrix</computeroutput> et le paramètre
+    <computeroutput>file</computeroutput> (cf. documentation de la
+    configuration de l'analyse linguistique).</para>
+  </section>
+
+  <section>
+    <title>Recherche des relations de dépendance homosyntagmatiques</title>
+
+    <para>Pour la recherche des relations de dépendance homosyntagmatiques, on
+    utilise des automates dans le même format que ceux utilisés pour
+    l'identification des entités nommées. Chaque règle des automates
+    représente une microgrammaire dédiée à la détection d'un phénomène
+    particulier. Certaines doivent être exécutées avant certaines autres. De
+    même, pour certaines règles, le texte doit être considéré dans le sens de
+    la lecture (de gauche à droite pour les langues latines, de droite à
+    gauche pour l'arabe, ...), tandis que pour d'autres il l'est dans le sens
+    inverse. Par conséquent, pour une langue donnée, un nombre arbitraire de
+    phases d'analyse peut être déclaré, avec des fichiers de règles
+    différents. Tout cela est défini dans le document décrivant la
+    configuration de l'analyse linguistique. Ici, nous allons décrire
+    succintement l'algorithme de la recherche, le format des règles et les
+    principales règles pour l'analyse du français.</para>
+
+    <section>
+      <title>Algorithme de recherche</title>
+
+      <para>Lors de chaque phase de recherche, un certain fichier de règles
+      est utilié. Pour chaque phrase, lmoteur d'automates est appelé pour
+      s'exécuter entre les token de début et de fin de la phrase, avec les
+      paramètres suivants:</para>
+
+      <para><itemizedlist>
+          <listitem>
+            <para>test sur tous les tokens&nbsp;;</para>
+          </listitem>
+
+          <listitem>
+            <para>chercher si d'autres règles s'appliquent à partir du même
+            token après un succès&nbsp;;</para>
+          </listitem>
+
+          <listitem>
+            <para>autoriser plusieurs succès par type de
+            relation&nbsp;;</para>
+          </listitem>
+
+          <listitem>
+            <para>continuer la recherche sur les tokens suivants après chaque
+            succès ;</para>
+          </listitem>
+
+          <listitem>
+            <para>réappliquer la même règle tant qu'elle réussit&nbsp;:
+            dépends de la configuration, faux par défaut.</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>Si une règle est trouvée, ses actions (création d'une relation de
+      dépendance, ...) sont effectuées Si le dernier paramètre est fixé à
+      vrai, il est important de s'assurer qu'une même règle ne pourra pas
+      s'appliquer deux fois dans les mêmes conditions, sous peine de
+      l'apparition d'une boucle infinie.</para>
+    </section>
+
+    <section>
+      <title>Format des règles</title>
+
+      <para>Les règles sont constituées de deux parties&nbsp;: d'une part une
+      définition de la structure morphosyntaxique du texte sur lequel la règle
+      peut s'appliquer, et d'autre part, une liste de contraintes sur les
+      noeuds qu'il faut respecter pour pouvoir appliquer la règle. Les
+      contraintes sont elles-mêmes de deux types&nbsp;: tests de conditions et
+      actions.<note>
+          <para>Les contraintes utilisées dans les règles correspondent à des
+          classes C++ définies dans le code de l'analyseur. Ainsi, l'ajout
+          d'une contrainte nouvelle nécessite la modification du code. Par
+          contre, ces contraintes peuvent éventuellement être définies dans
+          des bibliothèques dynamiques indépendantes du code principal.</para>
+        </note></para>
+
+      <section>
+        <title>Format de la définition de la structure morphosyntaxique de la
+        règle</title>
+
+        <para>Les règles ont le format suivant&nbsp;:
+        <computeroutput>&lt;déclencheur&gt;:&lt;contexte
+        gauche&gt;:&lt;contexte droit&gt;:&lt;nom de la
+        règle&gt;</computeroutput><phrase>. Le déclencheur, ou trigger, est
+        une classe de macrocatégories, microcatégories ou formes de mots. Les
+        contextes gauche et droit (comprendre précédent et suivant par rapport
+        au sens de lecture du texte) représentent le contexte dans lequel doit
+        se trouver le trigger pour que la règle s'applique. Ils sont définis
+        par des expressions régulières sur des classes du même type que celles
+        des triggers. Ainsi, pour exprimer qu'un article est relié au nom
+        qu'il détermine par une relation
+        <computeroutput>DetSub</computeroutput> et qu'ils peuvent être séparés
+        par une certaine structure d'adverbes et d'adjectifs (comme dans "le
+        très petit chat"), on écrira (version
+        simplifiée)&nbsp;:</phrase><programlisting>@Determinant::((@Adverbe){0-3} @AdjectifPrenominal){0-3} @Substantif:DETSUB:</programlisting></para>
+      </section>
+
+      <section>
+        <title>Contraintes sur les règles</title>
+
+        <para>Les contraintes peuvent être unaires ou binaires. Les
+        contraintes unaires expriment une propriété attendue d'un noeud et les
+        contraintes binaires expriment la propriété d'une relation entre deux
+        noeuds. Elles ont le format suivant&nbsp;:</para>
+
+        <programlisting>+&lt;nom de la contrainte unaire&gt;(&lt;pointeur sur un noeud&gt;,&lt;argument optionnel&gt;)
++&lt;nom de la contrainte binaire&gt;(&lt;pointeur sur la 1er noeud&gt;,&lt;pointeur sur la 2ème noeud&gt;,&lt;argument optionnel&gt;)</programlisting>
+
+        <para>Le nom de la contrainte est égal nom de la classe C++ qui
+        l'implémente. Les pointeurs sur les noeuds s'écrivent
+        ainsi&nbsp;:</para>
+
+        <programlisting>(trigger|left|right).n1...nk</programlisting>
+
+        <para>avec trigger, left et right qui désignent respectivement le
+        déclencheur, le contexte gauche et le contexte droit de la règle. Les
+        séries d'indices permettent de désigner précisément un noeud dans le
+        texte. Ainsi, dans l'exemple du paragraphe précédent, right.2 désigne
+        le substantif (right.1 est l'ensemble des adverbes et adjectifs qui
+        précède) et right.1.2 désigne les adjectifs.</para>
+
+        <para>Les contraintes qui existent pour la version 1.1 de Lima sont
+        les suivantes&nbsp;:</para>
+
+        <table>
+          <title>Contraintes homosyntagmatiques dans Lima 1.1</title>
+
+          <tgroup cols="4">
+            <thead>
+              <row>
+                <entry>Nom</entry>
+
+                <entry>Arité</entry>
+
+                <entry>Argument</entry>
+
+                <entry>Rôle</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry>SecondUngovernedBy</entry>
+
+                <entry>2</entry>
+
+                <entry>ANY ou nom de relation</entry>
+
+                <entry>Vérifie que le deuxième noeud y n'est pas gouverné par
+                le premier x par une relation donnée en argument (toutes si
+                ANY), autrement dit, qu'il n'y a pas de relation de x vers y
+                (x-&gt;y n'existe pas)</entry>
+              </row>
+
+              <row>
+                <entry>GenderAgreement</entry>
+
+                <entry>2</entry>
+
+                <entry>-</entry>
+
+                <entry>Vérifie l'accord en genre entre les deux noeuds</entry>
+              </row>
+
+              <row>
+                <entry>NumberAgreement</entry>
+
+                <entry>2</entry>
+
+                <entry>-</entry>
+
+                <entry>Vérifie l'accord en nombre entre les deux
+                noeuds</entry>
+              </row>
+
+              <row>
+                <entry>NotGovernorOf</entry>
+
+                <entry>1</entry>
+
+                <entry>ANY ou nom de relation</entry>
+
+                <entry>Vérifie que le noeud n'en gouverne pas un autre par la
+                relation donnée en argument (toutes si ANY)</entry>
+              </row>
+
+              <row>
+                <entry>EnforcePropertiesConstraints</entry>
+
+                <entry>2</entry>
+
+                <entry>Liste de noms de prorpiétés
+                (GENDER,NUMBER,...)</entry>
+
+                <entry>Force les propriétés fournies en argument à être
+                compatibles pour les deux noeus. Par exemple, si un nom peut
+                être masculin ou féminin et que un article n'est que féminin,
+                on pourra supprimer l'hypothèse masculine pour le nom</entry>
+              </row>
+
+              <row>
+                <entry>CreateRelationBetween</entry>
+
+                <entry>2</entry>
+
+                <entry>- ou nom de relation</entry>
+
+                <entry>Crée la relation de dépendance, entre les deux noeuds,
+                dont le nom est celui de la règle ou l'argument si celui-ci
+                n'est pas vide. Permet de créer plusieurs règles pour un même
+                relation</entry>
+              </row>
+
+              <row>
+                <entry>CreateCompoundTense</entry>
+
+                <entry>2</entry>
+
+                <entry>N/A</entry>
+
+                <entry>N/A (Inutile pour les nom composés. Sera décrite plus
+                tard)</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <note>
+          <para>Il est important de noter que la contrainte
+          CreateRelationBetween ne devra jamais être utilisée sans une
+          contrainte SecondUngovernedBy correspondante au risque de créer une
+          boucle infinie. De même, pour les mêmes raisons, toute règle doit
+          comporter une action qui modifie le graphe et la rend inaplicable à
+          l'itération suivante.</para>
+        </note>
+      </section>
+    </section>
+
+    <section>
+      <title>Règles pour le français</title>
+
+      <para>Dans ce paragraphe, nous donnons la liste des règles existant pour
+      le français dans la version 1.1, en précisant la phase dans laquelle
+      elles sont utilisées. Bien sur, les ressources linguistiques étant en
+      cours d'amélioration, le contenu de ce document n'est qu'une photo à un
+      instant <emphasis>t</emphasis> des ressources pour l'analyse syntaxique.
+      On se référera donc aux fichiers source en cas de besoin. Pour chaque
+      règle, listée dans son ordre d'apparition dans le fichier de règles,
+      nous donnons son but, un exemple dans lequel elle s'applique, un
+      éventuel commentaire et son code. S'il y a plusieurs règles pour un type
+      de relation dans un fichier, une seule est donnée ici. On se référera au
+      fichier source en cas de besoin. Tout d'abord, voici la liste des
+      règles&nbsp;:</para>
+
+      <table>
+        <title>Liste des règles homosyntagmatiques françaises dans Lima 1.1
+        (mise à jour à faire pour Lima 1.2)</title>
+
+        <tgroup cols="1">
+          <tbody>
+            <row>
+              <entry align="center">De droite à gauche - 1ère passe</entry>
+            </row>
+
+            <row>
+              <entry>ADJPRENSUB</entry>
+            </row>
+
+            <row>
+              <entry>COMPDUNOM</entry>
+            </row>
+
+            <row>
+              <entry>SUBSUBJUX</entry>
+            </row>
+
+            <row>
+              <entry align="center">De gauche à droite</entry>
+            </row>
+
+            <row>
+              <entry>DETSUB</entry>
+            </row>
+
+            <row>
+              <entry>DetAdj</entry>
+            </row>
+
+            <row>
+              <entry>COMPADJ</entry>
+            </row>
+
+            <row>
+              <entry>COMPADV</entry>
+            </row>
+
+            <row>
+              <entry>ADVADJ</entry>
+            </row>
+
+            <row>
+              <entry>ADVADV</entry>
+            </row>
+
+            <row>
+              <entry>DetIntSub</entry>
+            </row>
+
+            <row>
+              <entry>PrepDetInt</entry>
+            </row>
+
+            <row>
+              <entry>TEMPCOMP</entry>
+            </row>
+
+            <row>
+              <entry>SujInv</entry>
+            </row>
+
+            <row>
+              <entry>CodPrev</entry>
+            </row>
+
+            <row>
+              <entry>CoiPrev</entry>
+            </row>
+
+            <row>
+              <entry>Neg</entry>
+            </row>
+
+            <row>
+              <entry>NePas</entry>
+            </row>
+
+            <row>
+              <entry>PrepInf</entry>
+            </row>
+
+            <row>
+              <entry>PrepPronRel</entry>
+            </row>
+
+            <row>
+              <entry>AdvVerbe</entry>
+            </row>
+
+            <row>
+              <entry>PronSujVerbe</entry>
+            </row>
+
+            <row>
+              <entry>PrepPronRelCa</entry>
+            </row>
+
+            <row>
+              <entry>PronReflVerbe</entry>
+            </row>
+
+            <row>
+              <entry>CodAnaph</entry>
+            </row>
+
+            <row>
+              <entry>PrepPronCliv</entry>
+            </row>
+
+            <row>
+              <entry>PrepAdv</entry>
+            </row>
+
+            <row>
+              <entry>AdvSub</entry>
+            </row>
+
+            <row>
+              <entry align="center">De droite à gauche - seconde passe</entry>
+            </row>
+
+            <row>
+              <entry>SUBADJPOST</entry>
+            </row>
+
+            <row>
+              <entry>COMPDUNOM</entry>
+            </row>
+
+            <row>
+              <entry>PREPSUB</entry>
+            </row>
+
+            <row>
+              <entry>PrepPron</entry>
+            </row>
+
+            <row>
+              <entry>DetSubNum</entry>
+            </row>
+
+            <row>
+              <entry></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <note>
+        <para>La convention de nommage des relations a changé en cours de
+        développement. A l'origine tout en majuscules, les noms mélangent
+        maintenant majuscules et minuscules, chaque sous-mot commençant par
+        une majuscule.</para>
+      </note>
+
+      <section>
+        <title>ADJPRENSUB</title>
+
+        <para>Relation entre un adjectif prénominal et un substantif.</para>
+
+        <para>ex.: le <emphasis>petit</emphasis> , vraiment petit et très
+        mignon <emphasis>chat</emphasis></para>
+
+        <programlisting>@AdjPren::((@Virg)? (@AdverbePositifDansChaineNominale){0-3} @AdjPren){0-2} (@ConjCoord (@AdverbePositifDansChaineNominale){0-3} @AdjPren)? @Substantif:ADJPRENSUB:
++GenderAgreement(trigger.1,right.3)
++NumberAgreement(trigger.1,right.3)
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3)</programlisting>
+      </section>
+
+      <section>
+        <title>SUBSUBJUX</title>
+
+        <para>Relation entre un deux substantifs juxtaposés.</para>
+
+        <para>ex.: <emphasis>monsieur Nada</emphasis></para>
+
+        <programlisting>@NomPropre:@SubsNonNum::SUBSUBJUX:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>DETSUB</title>
+
+        <para>Relation entre un déterminant et le substantif qu'il
+        détermine.</para>
+
+        <para>ex.: <emphasis>le</emphasis> , petit vraiment petit et très
+        mignon <emphasis>chat</emphasis></para>
+
+        <programlisting>@Determinant::((@AdvPos){0-3} @AdjPren (((@Virg (@AdvPos){0-3} @AdjPren){0-2})? @ConjCoord (@AdvPos){0-3} @AdjPren)?)? @Substantif:DETSUB:
++GenderAgreement(trigger.1,right.2)
++NumberAgreement(trigger.1,right.2)
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)
++EnforcePropertiesConstraints(trigger.1,right.2,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>DETADJ</title>
+
+        <para>Relation entre un déterminant et un adjectif.</para>
+
+        <para>ex.: ... est <emphasis>la</emphasis> plus
+        <emphasis>verte</emphasis></para>
+
+        <programlisting>@Determinant::(@AdvPos){0-3} (@AdjPren){0-2} @Adjectif:DetAdj:
++NotGovernorOf(trigger.1,"ANY")
++GenderAgreement(trigger.1,right.3)
++NumberAgreement(trigger.1,right.3)
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3)
++EnforcePropertiesConstraints(trigger.1,right.3,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>COMPADJ</title>
+
+        <para>Relation entre un substantif qui complémente un adjectif et
+        celui-ci.</para>
+
+        <para>ex.: la plus <emphasis>verte</emphasis> du
+        <emphasis>lot</emphasis></para>
+
+        <programlisting>@PrepComp:@AdjAvecSubCompDeAdj:(@Determinant)? (@AdvPos|@AdjPren){0-n} (L_PRON-L_PRON_PERS_DISJ_COI_PREV|L_PRON-L_PRON_PERS_DISJ_COI_POSTV|@Substantif):COMPADJ:
++GenderAgreement(right.1,right.3)
++NumberAgreement(right.1,right.3)
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>COMPADV</title>
+
+        <para>Relation entre un substantif qui complémente un adverbe et
+        celui-ci.</para>
+
+        <para>ex.: c'est <emphasis>vraiment</emphasis> , de la
+        <emphasis>rigolade</emphasis></para>
+
+        <programlisting>@PrepComp:$L_ADV-L_ADV_GENERAL:@Determinant (@AdvPos|@AdjPren){0-n} @Substantif:COMPADV:
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>ADVADJ</title>
+
+        <para>Relation entre un adverbe et un adjectif.</para>
+
+        <para>ex.: elle est <emphasis>vraiment belle</emphasis></para>
+
+        <programlisting>@AdvModifieurAdj::@Adjectif:ADVADJ:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>ADVADV</title>
+
+        <para>Relation entre deux adverbes.</para>
+
+        <para>ex.: elle est <emphasis>vraiment très </emphasis>belle</para>
+
+        <programlisting>@AdvModifieurAdv::@AdvModifieParAdv:ADVADV:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>DetIntSub</title>
+
+        <para>Relation entre un déterminant intérogatif et un
+        substantif.</para>
+
+        <para>ex.: En <emphasis>quelle année</emphasis> ...</para>
+
+        <programlisting>@DetInt::(@AdjPren){0-1} @Substantif:DetIntSub:
++GenderAgreement(trigger.1,right.2)
++NumberAgreement(trigger.1,right.2)
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)
++EnforcePropertiesConstraints(trigger.1,right.2,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>PrepDetInt</title>
+
+        <para>Relation entre une préposition et un déterminant
+        interrogatif.</para>
+
+        <para>ex.: <emphasis>En quelle</emphasis> année...</para>
+
+        <programlisting>DetInt:@Prep::PrepDetInt:
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)</programlisting>
+      </section>
+
+      <section>
+        <title>TEMPCOMP</title>
+
+        <para>Relation entre un verbe auxiliaire et un participe passé.</para>
+
+        <para>ex.: Il <emphasis>a</emphasis> eu été vraiment
+        <emphasis>mangé</emphasis></para>
+
+        <programlisting>@Participe:@AuxInd @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::TEMPCOMP:
++CreateCompoundTense(trigger.1,left.1,"L_V;L_VERBE_PRINCIPAL_INDICATIF;L_PRES")
+</programlisting>
+      </section>
+
+      <section>
+        <title>SujInv</title>
+
+        <para>Relation entre un verbe et son sujet pronominal inverse.</para>
+
+        <para>ex.: Quand <emphasis>mange</emphasis> <emphasis>-t-il</emphasis>
+        ?</para>
+
+        <programlisting>@PronPersSujInverse:@VerbeDansQuestion::SujInv:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>CodPrev</title>
+
+        <para>Relation entre verbe et COD pronominal inverse</para>
+
+        <para>ex.: Vas-tu <emphasis>le faire</emphasis> ?</para>
+
+        <programlisting>@PronPersCodPrev::@Verbe:CodPrev:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>CoiPrev</title>
+
+        <para>Relation entre verbe et COI pronominal inverse.</para>
+
+        <para>ex.:</para>
+
+        <programlisting>@PronPersCoiPrev::@Verbe:CoiPrev:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>Neg</title>
+
+        <para>Relation entre "ne" et son verbe.</para>
+
+        <para>ex.: Il <emphasis>ne</emphasis> <emphasis>mange</emphasis>
+        pas</para>
+
+        <programlisting>@NegPrem::@PronRefl @Verbe:Neg2:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"Neg")</programlisting>
+      </section>
+
+      <section>
+        <title>NePas</title>
+
+        <para>Relation entre "ne" et "pas" quand accoles et suivis d'un
+        infinitif</para>
+
+        <para>ex.: <emphasis>Ne pas</emphasis> manger les animaux.</para>
+
+        <programlisting>@NegPrem::(@Adverbe){0-3} @NegSecond @VerbeInf:NePas:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepInf</title>
+
+        <para>Relation entre préposition et verbe à l'infinitif.</para>
+
+        <para>ex.: Il m'a proposé <emphasis>de passer</emphasis>.</para>
+
+        <programlisting>@PrepGVInf::(@NegPrem)? (@Adverbe){0-3} (@NegSecond)? (@PronRefl|@PronPersCodPrev)? @VerbeInf:PrepInf:
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(trigger.1,right.5)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepPronRel</title>
+
+        <para>Relation entre préposition et pronom relatif.</para>
+
+        <para>ex.: <emphasis>A quoi</emphasis> pensez-vous donc ?</para>
+
+        <programlisting>@Prep::(@PronRelCoi|@PronRelS):PrepPronRel:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>AdvVerbe</title>
+
+        <para>Relation entre adverbe et verbe à l'infinitif.</para>
+
+        <para>ex.: Nous allons <emphasis>vraiment manger</emphasis> tout
+        ça.</para>
+
+        <programlisting>@AdvModifieurVerbePrev::(@NegSecond)? @VerbeInf:AdvVerbe:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+
+      <section>
+        <title>PronSujVerbe</title>
+
+        <para>Relation entre pronom personnel sujet et verbe.</para>
+
+        <para>ex.: <emphasis>Il</emphasis> ne le <emphasis>mange</emphasis>
+        pas</para>
+
+        <programlisting>@PronPersSuj::(@NegPrem)? (@PronPersCodPrev|@PronPersCoiPrev|@PronRefl)? @Verbe:PronSujVerbe:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepPronRelCa</title>
+
+        <para>Relation entre preposition et pronom personnel relatif
+        CA.</para>
+
+        <para>ex.:</para>
+
+        <programlisting>
+@Prep::@PronRelCa:PrepPronRelCa:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>PronReflVerbe</title>
+
+        <para>Relation entre pronom reflexif et verbe: "... se sont
+        ...".</para>
+
+        <para>ex.: Ils <emphasis>se sont </emphasis>vraiment bien
+        entendus.</para>
+
+        <programlisting>@PronRefl::@Verbe:PronReflVerbe:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>CodAnaph</title>
+
+        <para>Relation entre determinant seul et verbe.</para>
+
+        <para>ex.: Il <emphasis>le veut</emphasis> pour lui tout seul.</para>
+
+        <programlisting>@DetDef::@Verbe:CodAnaph:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepPronCliv</title>
+
+        <para>Relation entre préposition et conjonction de subordination
+        considérée comme un pronom clivé.</para>
+
+        <para>ex.: C'est <emphasis>à</emphasis> Jean <emphasis>que</emphasis>
+        je parle !</para>
+
+        <programlisting>@PrepComp::(@Pron|@Substantif) @ConjSubord:PrepPronCliv:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepAdv</title>
+
+        <para>Relation entre préposition et adverbe.</para>
+
+        <para>ex.: Cette pomme est <emphasis>de trop</emphasis></para>
+
+        <programlisting>@Prep::@Adverbe:PrepAdv:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>AdvSub</title>
+
+        <para>Relation entre substantif et adverbe.</para>
+
+        <para>ex.: Il y a une <emphasis>pomme</emphasis> de
+        <emphasis>trop.</emphasis></para>
+
+        <programlisting>@Substantif::(@Prep|@Adverbe) @Adverbe:AdvSub:
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1)</programlisting>
+      </section>
+
+      <section>
+        <title>SUBADJPOST</title>
+
+        <para>Relation entre un adjectif prénominal et un substantif.</para>
+
+        <para>ex.: le <emphasis>petit</emphasis> , vraiment petit et très
+        mignon <emphasis>chat</emphasis></para>
+
+        <programlisting>@AdjPren::((@Virg)? (@AdverbePositifDansChaineNominale){0-3} @AdjPren){0-2} (@ConjCoord (@AdverbePositifDansChaineNominale){0-3} @AdjPren)? @Substantif:ADJPRENSUB:
++GenderAgreement(trigger.1,right.3)
++NumberAgreement(trigger.1,right.3)
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3)</programlisting>
+      </section>
+
+      <section>
+        <title>COMPDUNOM</title>
+
+        <para>Relation de complémentation du nom.</para>
+
+        <para>ex.: Le <emphasis>chien</emphasis> de la
+        <emphasis>voisine</emphasis></para>
+
+        <programlisting>@PrepComp:(@Substantif|@Inc) (@AdverbePositifDansChaineNominale|@AdjPost|){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren){0-n} (@Substantif|@Inc):COMPDUNOM:
++NotGovernorOf(left.1,"SUBSUBJUX")
++NotGovernorOf(right.3,"ANY")
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1)
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"PREPSUB")</programlisting>
+      </section>
+
+      <section>
+        <title>PREPSUB</title>
+
+        <para>Relation entre préposition et substantif.</para>
+
+        <para>ex.: Le chien <emphasis>de</emphasis> la
+        <emphasis>voisine</emphasis></para>
+
+        <programlisting>@PrepComp::((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren){0-n} (@Substantif|@Inc):PREPSUB:
++NotGovernorOf(trigger.1,"PREPSUB")
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"PREPSUB")</programlisting>
+      </section>
+
+      <section>
+        <title>PrepPron</title>
+
+        <para>Relation entre préposition et pronom personnel.</para>
+
+        <para>ex.: Je suis <emphasis>chez moi</emphasis>.</para>
+
+        <programlisting>@PrepComp::@PronPers:PrepPron:
++NotGovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"PrepPron")
+</programlisting>
+      </section>
+
+      <section>
+        <title>DetSubNum</title>
+
+        <para>Relation entre déterminant numérique et substantif.</para>
+
+        <para>ex.: <emphasis>trois chats</emphasis>.</para>
+
+        <programlisting>@DetNum:@Substantif::DetSubNum:
++NotGovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,left.1)
+</programlisting>
+      </section>
+    </section>
+
+    <section>
+      <title>Règles pour l'anglais</title>
+
+      <para>Dans ce paragraphe, nous donnons la liste des règles existant pour
+      l'anglais dans la version 1.1, en précisant la phase dans laquelle elles
+      sont utilisées. Bien sur, les ressources linguistiques étant en cours
+      d'amélioration, le contenu de ce document n'est qu'une photo à un
+      instant <emphasis>t</emphasis> des ressources pour l'analyse syntaxique.
+      On se référera donc aux fichiers source en cas de besoin. Pour chaque
+      règle, listée dans son ordre d'apparition dans le fichier de règles,
+      nous donnons son but, un exemple dans lequel elle s'applique, un
+      éventuel commentaire et son code. S'il y a plusieurs règles pour un type
+      de relation dans un fichier, une seule est donnée ici. On se référera au
+      fichier source en cas de besoin. Tout d'abord, voici la liste des
+      règles&nbsp;:</para>
+
+      <table>
+        <title>Liste des règles homosyntagmatiques anglaises dans Lima
+        1.1</title>
+
+        <tgroup cols="1">
+          <tbody>
+            <row>
+              <entry align="center">De droite à gauche</entry>
+            </row>
+
+            <row>
+              <entry>ADJPRENSUB</entry>
+            </row>
+
+            <row>
+              <entry>SUBSUBJUX</entry>
+            </row>
+
+            <row>
+              <entry align="center">De gauche à droite</entry>
+            </row>
+
+            <row>
+              <entry>COMPDUNOM</entry>
+            </row>
+
+            <row>
+              <entry>ADVADJ</entry>
+            </row>
+
+            <row>
+              <entry>TEMPCOMP</entry>
+            </row>
+
+            <row>
+              <entry>DETSUB</entry>
+            </row>
+
+            <row>
+              <entry>PREPSUB</entry>
+            </row>
+
+            <row>
+              <entry>DetAdj</entry>
+            </row>
+
+            <row>
+              <entry>ADVADV</entry>
+            </row>
+
+            <row>
+              <entry>DetIntSub</entry>
+            </row>
+
+            <row>
+              <entry>PrepDetInt</entry>
+            </row>
+
+            <row>
+              <entry>SujInv</entry>
+            </row>
+
+            <row>
+              <entry>NePas2</entry>
+            </row>
+
+            <row>
+              <entry>PrepInf</entry>
+            </row>
+
+            <row>
+              <entry>PrepPronRel</entry>
+            </row>
+
+            <row>
+              <entry>AdvVerbe</entry>
+            </row>
+
+            <row>
+              <entry>PronSujVerbe</entry>
+            </row>
+
+            <row>
+              <entry>PrepPronCliv</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <note>
+        <para>La convention de nommage des relations a changé en cours de
+        développement. A l'origine tout en majuscules, les noms mélangent
+        maintenant majuscules et minuscules, chaque sous-mot commençant par
+        une majuscule.</para>
+      </note>
+
+      <section>
+        <title>ADJPRENSUB</title>
+
+        <para>Relation entre un adjectif prénominal et un substantif.</para>
+
+        <para>ex.: the<emphasis> little cat</emphasis></para>
+
+        <programlisting>$L_NC::(@Substantif|@AdjPren){1-n} @Substantif:ADJPRENSUB:
++NotGovernorOf(trigger.1,"ADJPRENSUB")
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
+</programlisting>
+      </section>
+
+      <section>
+        <title>SUBSUBJUX</title>
+
+        <para>Relation entre un deux noms propres juxtaposés.</para>
+
+        <para>ex.: <emphasis>Martin Luther-King</emphasis></para>
+
+        <programlisting>@NomPropre::(((@NomPropre){1-n})?) @NomPropre:SUBSUBJUX:
++NotGovernorOf(trigger.1,"SUBSUBJUX")
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+
+      <section>
+        <title>COMPDUNOM</title>
+
+        <para>Relation de complémentation du nom.</para>
+
+        <para>ex.: on <emphasis>top</emphasis> of the
+        <emphasis>hill</emphasis></para>
+
+        <programlisting>@CompDuNomTrig:@Substantif:(@Determinant){0-n} ((@Adjectif){0-n}|(@AdvModifieurAdj){0-n} (@Adjectif){1-n}|@MarqueGenitif|(@Substantif){1-n})? (@Substantif|@NomPropre):COMPDUNOM:
++NotGovernorOf(right.3,"COMPDUNOM")
++NotGovernorOf(right.3,"SUBSUBJUX")
++NotGovernorOf(right.3,"ADJPRENSUB")
++SecondUngovernedBy(left.1,right.3,"ANY")
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>ADVADJ</title>
+
+        <para>Relation entre un adverbe et un adjectif.</para>
+
+        <para>ex.: The <emphasis>uniquely</emphasis>
+        <emphasis>innocent</emphasis> response</para>
+
+        <programlisting>@AdvModifieurAdj::@Adjectif:ADVADJ:
++NotGovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>TEMPCOMP</title>
+
+        <para>Relation entre un verbe auxiliaire et un participe passé.</para>
+
+        <para>ex.: it <emphasis>is appearing</emphasis> to become
+        difficult...</para>
+
+        <programlisting>@Ing:@Is (@AdvTempComp)?::TEMPCOMP:
++CreateCompoundTense(trigger.1,left.1,"L_V;L_VERBE_GENERAL_BASE;L_PRES")
+</programlisting>
+      </section>
+
+      <section>
+        <title>DETSUB</title>
+
+        <para>Relation entre un déterminant et le substantif qu'il
+        détermine.</para>
+
+        <para>ex.: <emphasis>The</emphasis> red fire engine
+        <emphasis>motor</emphasis> was broken</para>
+
+        <programlisting>@DetIndef::@Determinant (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:DETSUB2:
++NotGovernorOf(trigger.1,"DETSUB")
++SecondUngovernedBy(trigger.1,right.4,"ANY")
++GenderAgreement(trigger.1,right.4)
++NumberAgreement(trigger.1,right.4)
++CreateRelationBetween(trigger.1,right.4,"DETSUB")
++EnforcePropertiesConstraints(trigger.1,right.4,"GENDER,NUMBER")@DetIndef::@Determinant (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:DETSUB2:
++NotGovernorOf(trigger.1,"DETSUB")
++SecondUngovernedBy(trigger.1,right.4,"ANY")
++GenderAgreement(trigger.1,right.4)
++NumberAgreement(trigger.1,right.4)
++CreateRelationBetween(trigger.1,right.4,"DETSUB")
++EnforcePropertiesConstraints(trigger.1,right.4,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>PREPSUB</title>
+
+        <para>Relation entre préposition et substantif.</para>
+
+        <para>ex.: the cat <emphasis>of</emphasis> the
+        <emphasis>street</emphasis></para>
+
+        <programlisting>@PrepComp::(@Determinant|@DetIndef)? (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:PREPSUB:
++NotGovernorOf(trigger.1,"PREPSUB")
++SecondUngovernedBy(trigger.1,right.4,"ANY")
++GenderAgreement(trigger.1,right.4)
++NumberAgreement(trigger.1,right.4)
++CreateRelationBetween(trigger.1,right.4,"PREPSUB")
++EnforcePropertiesConstraints(trigger.1,right.4,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>DETADJ</title>
+
+        <para>Relation entre un déterminant et un adjectif.</para>
+
+        <para>ex.: <emphasis>The green </emphasis>was fine with me</para>
+
+        <programlisting>@Determinant::(@AdvPos){0-3} (@AdjPren){0-2} @Adjectif:DetAdj:
++NotGovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++GenderAgreement(trigger.1,right.3)
++NumberAgreement(trigger.1,right.3)
++CreateRelationBetween(trigger.1,right.3)
+#+EnforcePropertiesConstraints(trigger.1,right.3,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>ADVADV</title>
+
+        <para>Relation entre deux adverbes.</para>
+
+        <para>ex.: The <emphasis>simply uniquely</emphasis> green toad</para>
+
+        <programlisting>@AdvModifieurAdv::@AdvModifieParAdv:ADVADV:
++NotGovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>DetIntSub</title>
+
+        <para>Relation entre un déterminant intérogatif et un
+        substantif.</para>
+
+        <para>ex.: <emphasis>Which man </emphasis>is coming?</para>
+
+        <programlisting>@DetInt::(@AdjPren){0-1} @Substantif:DetIntSub:
++SecondUngovernedBy(trigger.1,right.2,"DetIntSub")
++GenderAgreement(trigger.1,right.2)
++NumberAgreement(trigger.1,right.2)
++CreateRelationBetween(trigger.1,right.2)
++EnforcePropertiesConstraints(trigger.1,right.2,"GENDER,NUMBER")</programlisting>
+      </section>
+
+      <section>
+        <title>PrepDetInt</title>
+
+        <para>Relation entre une préposition et un déterminant
+        interrogatif.</para>
+
+        <para>ex.: <emphasis>In what</emphasis> year will the comet hit</para>
+
+        <programlisting>@DetInt:@Prep::PrepDetInt:
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)</programlisting>
+      </section>
+
+      <section>
+        <title>SujInv</title>
+
+        <para>Relation entre un verbe et son sujet pronominal inverse.</para>
+
+        <para>ex.: <emphasis>Has he</emphasis> been good?</para>
+
+        <programlisting>@PronPersSujInverse:@VerbeDansQuestion::SujInv:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>NePas2</title>
+
+        <para>Relation entre "not" et son verbe</para>
+
+        <para>ex.: The swan <emphasis>has not</emphasis> swum today</para>
+
+        <programlisting>@NegSecond:@Verbe (@Adverbe){0-3}::NePas2:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepInf</title>
+
+        <para>Relation entre préposition et verbe à l'infinitif.</para>
+
+        <para>ex.: He was easy <emphasis>to see</emphasis></para>
+
+        <programlisting>@PrepGVInf::(@NegPrem)? (@Adverbe){0-3} (@NegSecond)? (@PronRefl|@PronPersCodPrev)? @VerbeInf:PrepInf:
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(trigger.1,right.5)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepPronRel</title>
+
+        <para>Relation entre préposition et pronom relatif.</para>
+
+        <para>ex.: He spoke to himself often</para>
+
+        <programlisting>@Prep::(@PronRelCoi|@PronRelS):PrepPronRel:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1)</programlisting>
+      </section>
+
+      <section>
+        <title>AdvVerbe</title>
+
+        <para>Relation entre adverbe et verbe à l'infinitif.</para>
+
+        <para>ex.: He wanted to <emphasis>quickly sell</emphasis> his
+        apartment but could not find a taker</para>
+
+        <programlisting>@AdvModifieurVerbePrev::(@NegSecond)? @VerbeInf:AdvVerbe:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+
+      <section>
+        <title>PronSujVerbe</title>
+
+        <para>Relation entre pronom personnel sujet et verbe.</para>
+
+        <para>ex.: <emphasis>He was</emphasis> sure that she would be
+        there</para>
+
+        <programlisting>@PronPersSuj::(@NegPrem)? (@PronPersCodPrev|@PronPersCoiPrev|@PronRefl)? @Verbe:PronSujVerbe:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3)</programlisting>
+      </section>
+
+      <section>
+        <title>PrepPronCliv</title>
+
+        <para>Relation entre préposition et conjonction de subordination
+        considérée comme un pronom clivé.</para>
+
+        <para>ex.: It's <emphasis>to</emphasis> him <emphasis>that</emphasis>
+        I am speaking</para>
+
+        <programlisting>@PrepComp::(@Pron|@Substantif) @ConjSubord:PrepPronCliv:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+    </section>
+
+    <section>
+      <title>Règles pour l'Espagnol</title>
+
+      <para></para>
+
+      <table>
+        <title>Liste des règles homosyntagmatiques espagnoles dans Lima
+        1.1</title>
+
+        <tgroup cols="1">
+          <tbody>
+            <row>
+              <entry align="center">De gauche à droite</entry>
+            </row>
+
+            <row>
+              <entry>ADJPRENSUB</entry>
+            </row>
+
+            <row>
+              <entry>SUBADJPOST</entry>
+            </row>
+
+            <row>
+              <entry>DETSUB</entry>
+            </row>
+
+            <row>
+              <entry>COMPDUNOM</entry>
+            </row>
+
+            <row>
+              <entry>COMPADJ</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <section>
+        <title>ADJPRENSUB</title>
+
+        <para>Relation entre un adjectif prénominal et un substantif</para>
+
+        <para>ex.: En los <emphasis>últimos meses</emphasis> han aparecido
+        <emphasis>varios miembros</emphasis> de una familia de virus
+        informáticos.</para>
+
+        <programlisting>@Adj::(@Adj){0-n} @Nom:ADJPRENSUB:
++SameNominalChain(trigger.1,right.2)
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+
+      <section>
+        <title>SUBADJPOST</title>
+
+        <para>Relation entre substantif et adjectif postnominal</para>
+
+        <para>ex.: En los últimos meses han aparecido varios miembros de una
+        familia de <emphasis>virus informáticos</emphasis>.</para>
+
+        <programlisting>@Adj:@Nom (@Adj){0-n}::SUBADJPOST:
++SameNominalChain(trigger.1,left.1)
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>DETSUB</title>
+
+        <para>Relation entre déterminant et substantif</para>
+
+        <para>ex.: En <emphasis>los</emphasis> últimos
+        <emphasis>meses</emphasis> han aparecido varios miembros de
+        <emphasis>una familia</emphasis> de virus informáticos.</para>
+
+        <programlisting>@Det::((@Adj){0-n}|(@Adj){1-n} (@Adj){1-n}) @Nom:DETSUB:
++SameNominalChain(trigger.1,right.2)
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2)</programlisting>
+      </section>
+
+      <section>
+        <title>COMPDUNOM</title>
+
+        <para>Relation entre nom et complément du nom</para>
+
+        <para>ex.: En los últimos meses han aparecido varios
+        <emphasis>miembros</emphasis> de una <emphasis>familia</emphasis> de
+        <emphasis>virus</emphasis> informáticos.</para>
+
+        <programlisting>@PrepComp:@Nom:(@Det){0-n} ((@Adj){0-n}|(@Adj){1-n} (@Adj){1-n}) @Nom:COMPDUNOM:
++SameNominalChain(left.1,right.3)
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1)</programlisting>
+      </section>
+
+      <section>
+        <title>COMPADJ</title>
+
+        <para>Relation entre adjectif et complément de l'adjectif.</para>
+
+        <para>ex.: Esa persona <emphasis>aficionada</emphasis> a los
+        <emphasis>toros</emphasis> se llama Pepe.</para>
+
+        <programlisting>@PrepComp:@Adj:@Det ((@Adj){0-n}|(@Adj){1-n} (@Adj){1-n}) @Nom:COMPADJ:
++SameNominalChain(left.1,right.3)
++SecondUngovernedBy(right.3,left.1,"ANY")
++CreateRelationBetween(right.3,left.1)</programlisting>
+      </section>
+    </section>
+
+    <section>
+      <title>Règles pour l'Allemand</title>
+
+      <para></para>
+
+      <table>
+        <title>Liste des règles homosyntagmatiques allemandes dans Lima
+        1.1</title>
+
+        <tgroup cols="1">
+          <tbody>
+            <row>
+              <entry align="center">De gauche à droite</entry>
+            </row>
+
+            <row>
+              <entry>COMP_N-N</entry>
+            </row>
+
+            <row>
+              <entry>COMP_AJ-N</entry>
+            </row>
+
+            <row>
+              <entry>COMP_V-N</entry>
+            </row>
+
+            <row>
+              <entry>COMP_AV-N</entry>
+            </row>
+
+            <row>
+              <entry>COMP_N-ADJ</entry>
+            </row>
+
+            <row>
+              <entry>COMP_AJ-ADJ</entry>
+            </row>
+
+            <row>
+              <entry>COMP_V-ADJ</entry>
+            </row>
+
+            <row>
+              <entry>COMP_AV-ADL</entry>
+            </row>
+
+            <row>
+              <entry>COMP_N-V</entry>
+            </row>
+
+            <row>
+              <entry>COMP_Aj-V</entry>
+            </row>
+
+            <row>
+              <entry>COMP_V-V</entry>
+            </row>
+
+            <row>
+              <entry>COMP_AV-V</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <section>
+        <title>COMP_N-N</title>
+
+        <para>Relation nom suivi de nom dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>Tischdecke</emphasis></para>
+
+        <programlisting>@nom_compFinal:@nom_compNotFinal (@tout_intermediaire){0-n}::COMP_N-N:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_AJ-N</title>
+
+        <para>Adjectif suivi de Nom dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>Grünspecht</emphasis></para>
+
+        <programlisting>@nom_compFinal:@adj_compNotFinal (@tout_intermediaire){0-n}::COMP_AJ-N:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_V-N</title>
+
+        <para>Verbe suivi de Nom dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>Uberholspur</emphasis></para>
+
+        <programlisting>@nom_compFinal:@verb_compNotFinal (@tout_intermediaire){0-n}::COMP_V-N:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_AV-N</title>
+
+        <para>Adverbe suivi de Nom dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>Aufwätstrend</emphasis></para>
+
+        <programlisting>@nom_compFinal:@adv_compNotFinal (@tout_intermediaire){0-n}::COMP_AV-N:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_N-ADJ</title>
+
+        <para>Nom suivi d'Adjectif dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>wasserdicht</emphasis></para>
+
+        <programlisting>@adj_compFinal:@nom_compNotFinal (@tout_intermediaire){0-n}::COMP_N-ADJ:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_AJ-ADJ</title>
+
+        <para>Adjectif suivi d'Adjectif dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>frühreif</emphasis></para>
+
+        <programlisting>@adj_compFinal:@adj_compNotFinal (@tout_intermediaire){0-n}::COMP_AJ-ADJ:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_V-ADJ</title>
+
+        <para>Verbe suivi d'Adjectif dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>fahrbereit</emphasis></para>
+
+        <programlisting>@adj_compFinal:@verb_compNotFinal (@tout_intermediaire){0-n}::COMP_V-ADJ:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_AV-ADJ</title>
+
+        <para>Adverbe suivi d'Adjectif dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>andersfarbig</emphasis></para>
+
+        <programlisting>@adj_compFinal:@adv_compNotFinal (@tout_intermediaire){0-n}::COMP_AV-ADJ:
++SameNominalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_N-V</title>
+
+        <para>Nom suivi de Verbe dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>teilnehmen</emphasis></para>
+
+        <programlisting>@verb_compFinal:@nom_compNotFinal (@tout_intermediaire){0-n}::COMP_N-V:
++SameVerbalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_AJ-V</title>
+
+        <para>Adjectif suivi de Verbe dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>trockenlegen</emphasis></para>
+
+        <programlisting>@verb_compFinal:@adj_compNotFinal (@tout_intermediaire){0-n}::COMP_AJ-V:
++SameVerbalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_V-V</title>
+
+        <para>Verbe suivi de verbe dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>gefriertrocknen</emphasis></para>
+
+        <programlisting>@verb_compFinal:@verb_compNotFinal (@tout_intermediaire){0-n}::COMP_V-V:
++SameVerbalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+
+      <section>
+        <title>COMP_AV-V</title>
+
+        <para>Adverbe suivi de Verbe dans un mot agglutiné</para>
+
+        <para>ex.: <emphasis>herunterschauen</emphasis></para>
+
+        <programlisting>@verb_compFinal:@adv_compNotFinal (@tout_intermediaire){0-n}::COMP_AV-V:
++SameVerbalChain(left.1,trigger.1)
++SecondUngovernedBy(left.1,trigger.1,"ANY")
++CreateRelationBetween(left.1,trigger.1)
+</programlisting>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Simplification syntaxique</title>
+
+    <para>Il 'agit à cette étape de récursivement retirer du graphe
+    (temporairement) des segments qui compliquent l'analyse mais dont le
+    retrait n'impacte pas la grammaticalité de la phrase. Par exemple, on
+    cherchera à enlever les incises, les relatives, les compléments de nom,
+    etc. Ainsi, après simplification, la phrase obtenue est une phrase simple
+    dont l'analyse est aisée.</para>
+
+    <para>Pour ce faire, on définit plusieurs phases de simplification. Dans
+    chacune d'elle, un automate du même type que ceux utilisés précédemment
+    est utilisé avec un fichier de règles dont les actions causent la
+    simplification. L'automate est paramétré pour arrêter la recherche dès
+    qu'une règle s'applique. Par contre, il est réexécuté tant qu'une
+    simplification a été effectuée.</para>
+
+    <para>Les segments "supprimès" sont en fait juste détachés du graphe
+    principal. Les informations permettant de les rattacher par la suite sont
+    étiquetées en fonction du type de segment et empilées dans une structure
+    dédiée.</para>
+  </section>
+
+  <section>
+    <title>Recherche des relations de dépendance hétérosyntagmatiques et
+    rattachement des éléments simplifiés</title>
+
+    <para>Pour chaque phrase (simplifiée ou non), les relations de dépendances
+    hétérosyntagmatiques sont recherchées à l'aide d'un automate et d'un
+    fichier de règles dédié, puis les éléments simplifiés à l'étape précédente
+    sont rattachés à la phrase principale avec à nouveau un automate et un
+    fichier de règles dépendant du type de simplification effectué.</para>
+
+    <para>Note&nbsp;: l'analyse hétérosyntagmatique reste partielle pour le
+    moment. Un travail important reste nécessaire sur toutes les langues pour
+    pouvoir assurer une bonne précision et un bon rappel.</para>
+
+    <section>
+      <title>Règles pour le français</title>
+
+      <para>Les règles hétérosyntagmatiques ont été directement inspirées par
+      celles retenues lors de la campagne d'évaluation Easy. Nous avons donc
+      repris ci-dessous les descriptifs des types de relations à partir du
+      site web de Easy: <ulink
+      url="???">http://www.limsi.fr/Recherche/CORVAL/easy/PEAS_reference_annotations_v1.6.html</ulink><phrase>.
+      </phrase></para>
+
+      <section>
+        <title>SUJ_V</title>
+
+        <para>La relation sujet - verbe se note entre le (ou les ) groupe(s)
+        sujet et le verbe correspondant. Dans le cas de temps composés, le
+        sujet est rattaché à l'auxiliaire. La relation sujet - verbe se note
+        également entre le participe passé ou présent d'une participiale et
+        son sujet. Dans les autres cas, la relation sera notée commme un
+        modifieur de nom.</para>
+      </section>
+
+      <section>
+        <title>COD_V</title>
+
+        <para>La relation objet direct - verbe se note entre les groupes objet
+        direct et le verbe correspondant. Dans le cas de temps composés, les
+        relations objet direct- verbe, complément - verbe et modifieur-verbe
+        se notent avec le verbe principal.</para>
+      </section>
+
+      <section>
+        <title>CPL_V</title>
+
+        <para>Cette relation concerne les autre compléments du verbe exprimés
+        sous forme de groupe prépositionnel ou de groupe verbal introduit par
+        une préposition.</para>
+      </section>
+
+      <section>
+        <title>MOD_V</title>
+
+        <para>Cette relation concerne tous les constituants dont on peut
+        affirmer qu'ils sont modifieurs et non compléments du verbe. Il s'agit
+        plus précisément des groupes adverbiaux et des propositions qui sont
+        de façon évidente des circonstants (comme les temporelles ou les
+        causales par exemple). On y retrouve aussi tous les groupes nominaux
+        qui ne sont pas objet direct du verbe. En revanche, pour les groupes
+        prépositionnels ou les groupes verbaux introduits par une préposition
+        qui sont trop souvent ambigus face à cette catégorisation, ils ne
+        seront pas étiquetés par cette relation mais comme CPL_V.</para>
+      </section>
+
+      <section>
+        <title>COMPL</title>
+
+        <para>La relation complémenteur est utilisée principalement pour les
+        subordonnées conjonctives. Elle comprend alors deux arguments : le
+        complémenteur et le noyau verbal de la "proposition subordonnée". La
+        relation avec l'élément qui les introduit est exprimée par ailleurs:
+        il s'agit souvent d'un verbe dont "que Phrase" est soit objet direct
+        (Je pense qu'il viendra), soit un autre complément (comme une
+        circonstancielle du type Quand il pleut, je reste chez moi), mais il
+        peut aussi s'agir d'un nom, "que Phrase" est alors complément du nom
+        (L'idée qu'il arrive en retard), ou d'un adjectif (Il est fier qu'elle
+        réussisse).</para>
+      </section>
+
+      <section>
+        <title>ATB_S/ATB_O</title>
+
+        <para>La relation attribut se note entre l'attribut et le verbe
+        permettant cette construction.</para>
+      </section>
+
+      <section>
+        <title>COORD1</title>
+
+        <para>Relation entre le coordonnant et le premier élément
+        coordonné.</para>
+      </section>
+
+      <section>
+        <title>COORD2</title>
+
+        <para>Relation entre le second élément coordonné et le
+        coordonnant.</para>
+      </section>
+
+      <section>
+        <title>APPOS</title>
+
+        <para>La relation d'apposition est une relation à 2 groupes nominaux :
+        l'élément apposé (le deuxième) et celui auquel il s'appose (le
+        premier). Elle marque l'identité entre les référents de ces deux GN.
+        </para>
+      </section>
+
+      <section>
+        <title>JUXT</title>
+
+        <para>La relation de juxtaposition est utilisée pour les constituants
+        qui ne sont ni subordonnés ni coordonnés ni apposés, comme dans les
+        cas d'énumération par exemple. Elle relie deux éléments. Dans les cas
+        d'énumération plus longue, les juxtapositions seront notées de proche
+        en proche. Lorsque ce sont des constituants ou des formes qui sont
+        juxtaposées son fonctionnement est trivial ; mais lorsque ce sont des
+        constructions complexes, par exemple des propositions, alors ce sont
+        les premiers noyaux verbaux de chaque proposition qui portent la
+        relation. Lorsqu'ils existent, les marqueurs de juxtaposition, comme
+        par exemple les virgules ou les tirets, sont ignorés</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Règles pour l'anglais</title>
+
+      <para>Les types de règles pour l'anglais sont pour le moment les mêmes
+      que pour le français. </para>
+    </section>
+  </section>
+</article>

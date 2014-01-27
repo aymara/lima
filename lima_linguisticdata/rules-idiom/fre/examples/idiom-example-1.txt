@@ -1,0 +1,17 @@
+set entityTypes=IdiomaticExpressions
+set encoding=utf8
+
+@AuxiliaireEtre=(être$V-V,
+être$V-VS,
+être$V-VINF)
+
+champignon:&appuyer$V sur le::ABS_IDIOM$V---i---:appuyer sur le champignon
+pommes:&tomber$V dans les::ABS_IDIOM$V---i---:tomber dans les pommes
+
+&creuser$V:$PRON-CLR [(@AuxiliaireEtre)] [($ADV{0-2})?]:[($ADV?)] la tête:ABS_IDIOM$V---p---:se creuser la tête
++AgreementConstraint(left.1,left.2,"NUMBER")
++AgreementConstraint(left.1,left.2,"PERSON")
+
+&creuser$V:$PRON-CLR:[($ADV?)] la tête:ABS_IDIOM$V---p---:se creuser la tête
++AgreementConstraint(left.1,trigger,"NUMBER")
++AgreementConstraint(left.1,trigger,"PERSON")

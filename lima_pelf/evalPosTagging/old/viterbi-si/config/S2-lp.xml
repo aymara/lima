@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <!-- Configuration du client coeur -->
+  <module name="lp-coreclient">
+    <group name="languageProcessingDefinitionFiles">
+      <list name="available">
+        <item value="fre"/>
+        <item value="eng"/>
+        <item value="spa"/>
+        <item value="ger"/>
+        <item value="ara"/>
+        <item value="chi"/>
+      </list>
+      <param key="fre" value="S2-lp-fre.xml" />
+      <param key="eng" value="S2-lp-eng.xml" />
+      <param key="spa" value="S2-lp-spa.xml" />
+      <param key="ger" value="S2-lp-ger.xml" />
+      <param key="chi" value="S2-lp-chi.xml" />
+      <param key="ara" value="S2-lp-ara.xml" />
+    </group>
+    <group name="pipelines">
+      <!-- chaque map represente 1 pipeline, qui est decline selon les langues. -->
+      <!-- chaque langue doit definir le pipeline correspondant dans son fichier de configuration -->
+      <!-- l'attribut 'name' de la map est l'identifiant du pipeline. C'est cet identifiant qu'il faut
+            donner au client pour utiliser ce pipeline -->
+      <map name="main">
+        <entry key="fre" value="main"/>
+        <entry key="eng" value="main"/>
+        <entry key="spa" value="main"/>
+        <entry key="ger" value="main"/>
+        <entry key="ara" value="main"/>
+        <entry key="chi" value="main"/>
+      </map>
+      <map name="query">
+        <entry key="fre" value="query"/>
+        <entry key="eng" value="query"/>
+        <entry key="spa" value="query"/>
+        <entry key="ger" value="query"/>
+        <entry key="ara" value="query"/>
+        <!--entry key="chi" value="query"/-->
+      </map>
+      <map name="indexer">
+        <entry key="fre" value="indexer"/>
+        <entry key="eng" value="indexer"/>
+        <entry key="spa" value="indexer"/>
+        <entry key="ger" value="indexer"/>
+        <entry key="ara" value="indexer"/>
+        <!--entry key="chi" value="indexer"/-->
+      </map>
+      <map name="normalization">
+        <entry key="fre" value="normalization"/>
+        <entry key="eng" value="normalization"/>
+        <entry key="spa" value="normalization"/>
+        <entry key="ger" value="normalization"/>
+        <entry key="ara" value="normalization"/>
+        <!--entry key="chi" value="normalization"/-->
+      </map>
+    </group>
+    <group name="analysisDumpers">
+      <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->
+      <!-- chaque langue doit definir le dumper correspondant dans son fichier de configuration -->
+      <!-- l'attribut 'name' de la map est l'identifiant du dumper. C'est cet identifiant qu'il faut
+            donner au client pour utiliser ce dumper -->
+      <map name="bowDumper">
+        <entry key="fre" value="bowDumper"/>
+        <entry key="eng" value="bowDumper"/>
+        <entry key="spa" value="bowDumper"/>
+        <entry key="ger" value="bowDumper"/>
+        <entry key="ara" value="bowDumper"/>
+        <entry key="chi" value="bowDumper"/>
+      </map>
+      <map name="compactFullDumper">
+        <entry key="fre" value="compactFullDumper"/>
+        <!--entry key="eng" value="compactFullDumper"/-->
+        <!--entry key="spa" value="compactFullDumper"/-->
+        <!--entry key="ger" value="compactFullDumper"/-->
+      </map>
+      <map name="fullXmlDumper">
+        <entry key="fre" value="fullXmlDumper"/>
+        <entry key="eng" value="fullXmlDumper"/>
+        <entry key="spa" value="fullXmlDumper"/>
+        <entry key="ger" value="fullXmlDumper"/>
+        <entry key="ara" value="fullXmlDumper"/>
+        <entry key="chi" value="fullXmlDumper"/>
+      </map>
+      <map name="textDumper">
+        <entry key="fre" value="textDumper"/>
+        <entry key="eng" value="textDumper"/>
+        <entry key="spa" value="textDumper"/>
+        <entry key="ger" value="textDumper"/>
+        <entry key="ara" value="textDumper"/>
+        <entry key="chi" value="textDumper"/>
+      </map>
+    </group>
+  </module>
+  <!-- configuration du xmlreader client -->
+  <module name="lp-xmlreaderclient">
+    <group name="config">
+      <param key="delegateClient" value="lp-coreclient"/>
+      <param key="textSplitting" value="n"/>
+    </group>
+    <group name="XMLEntities">
+      <map name="specialCharacterSize">
+        <!--entry key="&lt;" value="4"/>
+        <entry key="&gt;" value="4"/>
+        <entry key="&amp;" value="5"/-->
+      </map>
+    </group>
+    <group name="tagSemantic">
+      <list name="rootFields">
+        <item value="DOCSET" />
+        <item value="topics" />
+      </list>
+      <list name="documentFields">
+        <item value="XML" />
+        <item value="DOC" />
+        <item value="top" />
+        <item value="document" />
+        <item value="Trans" /> <!--hub4-->
+      </list>
+      <list name="contentFields">
+        <item value="BODY" />
+        <item value="content" />
+        <item value="TEXT" />
+        <item value="TX" />
+        <item value="TITLE" />
+        <item value="TI" />
+        <item value="LD" />
+        <item value="CHA1" />
+        <item value="SOT1" />
+        <item value="title" />
+        <item value="desc" />
+        <item value="narr" />
+        <item value="Turn" /> <!--hub4-->
+      </list>
+      <list name="titleFields">
+        <item value="title"/>
+        <item value="TI"/>
+        <item value="TITLE"/>
+        <item value="HEADLINE"/>
+      </list>
+      <list name="identifierFields">
+        <item value="DOCNO" />
+        <item value="num" />
+        <item value="document id=" />
+      </list>
+      <list name="languageFields">
+        <item value="language id=" />
+      </list>
+      <list name="dateFields">
+        <item value="date" />
+      </list>
+      <list name="typeFields">
+        <item value="type id=" />
+      </list>
+      <list name="sourceFields">
+        <item value="source" />
+      </list>
+      <list name="ignorableFields"><!--tags that are ignored-->
+        <item value="P" />
+        <item value="Sync" /><!--hub4-->
+      </list>
+    </group>
+  </module>
+</modulesConfig>

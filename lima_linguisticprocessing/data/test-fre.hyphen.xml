@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.hyphen.1.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : le tokenizer découpe en France-Angleterre.</expl>
+  <test id="fre.hyphen.1.1" trace=".tokenizer.xml"
+    comment="le tokenizer découpe en France-Angleterre"
+    left="XPATH#//data_structure/vertex[token[position=10][length=17]]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.1.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : on trouve France avec une macro categorie NP.</expl>
+  <test id="fre.hyphen.1.2" trace=".hyphen.xml"
+    comment="on trouve France avec une macro categorie NP"
+    left="XPATH#//data_structure/vertex[token[position=10][length=6]]//property/p[@prop='MACRO'][@val='L_NP']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.1.3"  type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : on trouve Angleterre avec une macro categorie NP.</expl>
+  <test id="fre.hyphen.1.3" trace=".hyphen.xml"
+    comment="on trouve Angleterre avec une macro categorie NP"
+    left="XPATH#//data_structure/vertex[token[position=17][length=10]]//property/p[@prop='MACRO'][@val='L_NP']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.1.4" type="informatif">
+  <call-parameters>
+      <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : Le tiret n'est pas modifié.</expl>
+  <test id="fre.hyphen.1.4" trace=".hyphen.xml"
+    comment="Le tiret n'est pas modifié"
+    left="XPATH#//data_structure/vertex[token[position=16][length=1]]/string"
+    operator="="
+    right="-"/>
+</testcase>
+<testcase id="fre.hyphen.2.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : le tokenizer découpe en france-angleterre.</expl>
+  <test id="fre.hyphen.2.1" trace=".tokenizer.xml"
+    comment="le tokenizer découpe en france-angleterre"
+    left="XPATH#//data_structure/vertex[token[position=10][length=17]]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.2.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : france transformé en France avec une macro categorie NP.</expl>
+  <test id="2.2.a" trace=".hyphen.xml"
+    comment="france transformé en France"
+    left="XPATH#//data_structure/vertex[token[position=10][length=6]]//form/@lemma"
+    operator="="
+    right="France"/>
+  <test id="2.2.b" trace=".hyphen.xml"
+    comment="france a comme macro categorie NP"
+    left="XPATH#//data_structure/vertex[token[position=10][length=6]]//property/p[@prop='MACRO']/@val"
+    operator="="
+    right="L_NP"/>
+</testcase>
+<testcase id="fre.hyphen.2.3" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : angleterre transformé en Angleterre avec une macro categorie NP.</expl>
+  <test id="2.3.a" trace=".hyphen.xml"
+    comment="angleterre transformé en Angleterre"
+    left="XPATH#//data_structure/vertex[token[position=17][length=10]]//form/@lemma"
+    operator="="
+    right="Angleterre"/>
+  <test id="2.3.b" trace=".hyphen.xml"
+    comment="angleterre a comme macro categorie NP"
+    left="XPATH#//data_structure/vertex[token[position=17][length=10]]//property/p[@prop='MACRO']/@val"
+    operator="="
+    right="L_NP"/>
+</testcase>
+<testcase id="fre.hyphen.3.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match franco-anglais a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur entre deux noms propres : le tokenizer découpe en franco-anglais.</expl>
+  <test id="fre.hyphen.3.1" trace=".tokenizer.xml"
+    comment="le tokenizer découpe en franco-anglais"
+    left="XPATH#//data_structure/vertex[token[position=10][length=14]]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.3.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match franco-espagnol a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur : présence de franco.</expl>
+  <test id="fre.hyphen.3.2" trace=".hyphen.xml"
+    comment="franco"
+    left="XPATH#//data_structure/vertex[token[position=10][length=6]][data/hyphen_alternative/form/@norm='franco-']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.3.3" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le match franco-espagnol a été marqué par de nombreux incidents. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tiret séparateur : présence de espagnol.</expl>
+  <test id="fre.hyphen.3.3" trace=".hyphen.xml"
+    comment="anglais"
+    left="XPATH#//data_structure/vertex[token[position=17][length=8]][data/hyphen_alternative/form/@norm='espagnol']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.hyphen.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Un gouvernement pro-américain a été mis en place. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>pro est reconnu comme préfixe et non comme 'professionel'</expl>
+  <test id="fre.hyphen.4.1" trace=".hyphen.xml"
+    comment="reconnaissance pro- "
+    left="XPATH#//data_structure/vertex[token[position=17][length=3]][data/hyphen_alternative/form/@norm='pro-']"
+    operator="exists"
+    right=""/>
+  <test id="fre.hyphen.4.2" trace=".hyphen.xml"
+    comment="non reconnaissance de professionel"
+    left="XPATH#//data_structure/vertex[token[position=17][length=3]][data/hyphen_alternative/form/@norm='professionnel']"
+    operator="notexists"
+    right=""/>
+</testcase>
+</testcases>

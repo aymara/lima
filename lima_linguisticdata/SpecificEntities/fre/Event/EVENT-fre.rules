@@ -1,0 +1,61 @@
+set encoding=utf8
+using modex Event-modex.xml,Location-modex.xml
+using groups Event
+set defaultAction=>CreateSpecificEntity()
+
+@eventAnnouncer=(festival,célébration,colloque,concert,
+congrès,démonstration,exhibition,festivité,fête,foire,gala,
+journées,kermesse,manifestation,organisation,présentation,récital,
+représentation,réunion,salon,séminaire,symposium,opération)
+
+@month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
+
+# named event with quotes
+[@eventAnnouncer]::[\"] *{1-3} [\"]:EVENT:
+
+#guerres
+guerre::du Golfe:EVENT:
+guerre$NC:première$ADJ:mondiale$ADJ:EVENT:
+Guerre:Première:Mondiale:EVENT:première guerre mondiale
+guerre$NC:(seconde$ADJ|deuxième$ADJ):mondiale$ADJ:EVENT:seconde guerre mondiale
+Guerre:(Seconde|Deuxième):Mondiale:EVENT:seconde guerre mondiale
+Guerre:(Seconde|Deuxième):mondiale:EVENT:seconde guerre mondiale
+
+# événements dates
+attentats::du 11 septembre:EVENT:
+fête::(nationale)? du t_integer @month:EVENT:
+
+#festivals
+festival::(de|d\') <Location.LOCATION>:EVENT:
+festival::de la Rochelle:EVENT:
+Eurockéennes:::EVENT:
+Francofolies:::EVENT:
+Gay::Pride:EVENT:
+Solidays:::EVENT:
+Golden::Globes:EVENT:Gloden Globes
+Academy::Awards:EVENT:Academy Awards
+cérémonie::des (oscars|Oscars):EVENT:Academy Awards
+
+#événements sportifs
+Coupe::du monde (de football)? t_integer>1000<3000?:EVENT:Mondial
+Mondial:[(le|du|au|ce)]:(de football)?:EVENT:Mondial
+Tour::de France t_integer>1000<3000?:EVENT:
+jeu$NC::olympique$ADJ d' été?:EVENT:Jeux Olympiques d'Été
+jeu$NC::olympique$ADJ d' hiver?:EVENT:Jeux Olympiques d'Hiver
+jeu$NC::olympique$ADJ:EVENT:Jeux Olympiques
+jeu$NC::paralympique$ADJ d' été?:EVENT:Jeux Paralympiques d'Été
+jeu$NC::paralympique$ADJ d' hiver?:EVENT:Jeux Paralympiques d'Hiver
+jeu$NC::paralympique$ADJ:EVENT:Jeux Paralympiques
+
+
+# événements politiques
+législatives:((premier|second|deuxième) tour des)? élections::EVENT:
+législatives:((premier|second|deuxième) tour des)::EVENT:
+présidentielle:(premier|second) tour de (l\' élection|la)::EVENT:
+présidentielles:(premier|second) tour des (élections)?::EVENT:
+présidentielle:élection::EVENT:
+présidentielles:élections::EVENT:
+campagne::(présidentielle|éléctorale):EVENT:
+
+# événements liés à des villes
+sommet::($ADJ)? de <Location.LOCATION>:EVENT:

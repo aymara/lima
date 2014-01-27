@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+ "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article>
+  <title>Documentation technique du composant LinguisticProcessing</title>
+
+  <abstract>
+    <para>Ce document présente la conception du composant
+    LinguisticProcessing. En particulier, il décrit les différents concepts de
+    programmation (patterns) utilisés et les classes qui en découlent. Il
+    explique le fonctionnement des divers types d'analyseurs&nbsp;: locaux
+    pour fichiers simples ou XML, distribués par CORBA, etc.</para>
+  </abstract>
+
+  <sect1>
+    <title>Interface, API publique</title>
+
+    <figure>
+      <title>API Publique du composant LinguisticProcessing</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="lpclient.gif" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <sect2>
+      <title>AbstractLinguisticProcessingClient</title>
+
+      <para>C'est cette class virtuelle qui détermine les services offerts par
+      le composant LinguisticProcessing (S2-LP dans la suite). La méthode
+      'analyze' lance l'analyse d'un texte. Les paramètres sont les suivants
+      :</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>LimaString text : Contenu à analyser. Peut être différent
+          selon les clients. Le client core prends un contenu uniquement
+          textuel. Le client xmlreader prendra un flux xml qu'il découpera et
+          dont il passera les parties textuelles au client core.</para>
+        </listitem>
+
+        <listitem>
+          <para>map&lt;string,string&gt; metaData : méta données associés au
+          contenu, comme nom de fichier, id de document, langue ou
+          autre</para>
+        </listitem>
+
+        <listitem>
+          <para>string pipeline : id du pipeline à utiliser pour l'analyse. Un
+          pipeline est une chaine de traitements. (Voir plus loin pour plus
+          d'infos)</para>
+        </listitem>
+
+        <listitem>
+          <para>string dumper : id du dumper à utiliser pour le retour de
+          résultat. Chaque dumper est susceptible de retourner un type de
+          données différente, il faut donc que le dumper demandé retourne le
+          type de données attendus.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Le résultat de l'analyse se récupère par call-back via un objet
+      AbstractAnalysisHandler. La méthode 'setAnalysisHandler' permet de
+      donner au client le handler qui va récupérer les call-back de l'analyse.
+      Des handlers sont prédéfinit (BowDocumentHandler, BowDocumentWriter
+      ...).</para>
+
+      <para>Autrement dit, le dumper utilisé construit son résultat, le
+      sérialise, écrit la sérialisation sur un flux initialisé avec comme
+      contenant le handler. Le handler peut alors traiter le contenu qui lui a
+      été transmis. Un handler très simple peut juste écrire le contenu tel
+      qu'il le reçoit sur un fichier. Un handler plus complexe peut recréer
+      une structure de données à partir de la sérialisation qu'il
+      reçoit.</para>
+    </sect2>
+
+    <sect2>
+      <title>LinguisticProcessingClientFactory</title>
+
+      <para>Il s'agit de la frabrique<footnote>
+          <para>Rappel&nbsp;: une fabrique (ou Factory en anglais) est une
+          classe qui permet de générer des instances d'une autre classe (en
+          général, on nomme MyClassFactory une factory qui produit des objets
+          de la classe MyClass) en fonction d'un ensemble de paramètres qui
+          lui sont passé lors de son initialisation et lors de son appel. Cela
+          permet de centraliser la configuration mais aussi et surtout de
+          générer des objets de diverse classes en fonction des paramètres
+          d'appel.</para>
+        </footnote> principale de clients pour S2-LP. C'est un singleton,
+      auquel on accède via les méthode single() et changeable(). 2 méthodes
+      importantes pour cette fabrique :</para>
+
+      <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>configureClientFactory(string
+            clientId,XMLConfigurationFileParser parser,deque&lt;string&gt;
+            langs)</title>
+
+            <para>Cette méthode initialise la fabrique de client de type
+            'clientId'. Il est indispensable d'appeler cette méthode avant
+            toute création de client de type 'clientId'. Il est possible
+            d'initialiser plusieurs type de client.</para>
+          </formalpara>
+        </listitem>
+
+        <listitem>
+          <formalpara>
+            <title>createClient(string clientId)</title>
+
+            <para>Crée un client du type 'clientId'. La fabrique correspondant
+            doit avoir été initialisée au préalable.</para>
+          </formalpara>
+        </listitem>
+      </itemizedlist>
+
+      <para>Pour que le client soit trouvé à l'exécution, il faut que la
+      bibliothèque dynamique le contenant soit liée (linked) à l'exécutable.
+      En ce qui concerne le client 'core' (Cf. ci-dessous), il s'agit de la
+      bibliothèque linguisticprocessing-core.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Concepts Principaux</title>
+
+    <para>Cette section a pour but de présenter les concepts principaux du
+    coeur de S2-LP.</para>
+
+    <sect2>
+      <title>class AnalysisContent</title>
+
+      <para>Un objet de la classe 'AnalysisContent' du projet
+      'core/LinguisticProcessors' transporte TOUTES les données concernant
+      l'analyse en cours. On y trouve les méta-données, l'offset de début de
+      texte, et un ensemble d'objets de type AnalysisData qui sont les
+      structures comportant les résultats d'analyse. Les sous-classes de
+      AnalysisData existantes sont :</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>LimaStringText&nbsp;: texte à analyser&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>SentenceBounds&nbsp;: contient une liste de fin de
+          phrase&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>SyntacticData&nbsp;: contient les infos d'analysis
+          syntaxique&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>CompoundsData : contient les mots composés&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>RecognizerResultData&nbsp;: stocke les résultats d'application
+          des automates de reconnaissance d'entités&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>AnalysisGraph&nbsp;: deux instances de cette classes, nommées
+          AnalysisGraph et PosGraph, contiennent respectivement les graphes
+          d'analyse avant et après désambiguisation
+          morphosyntaxique&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>AnalysisHandlerContainer&nbsp;:stocke le handler chargé de
+          recevoir la sérialisation produite par le dumper après
+          analyse&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>LinguisticMetaData&nbsp;: les métadonnées associées à
+          l'analyse&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>SimplificationData&nbsp; les données liées à l'étape de
+          simplification syntaxique, nécessaires pour reconstituer la phrase à
+          la fin:&nbsp;;</para>
+        </listitem>
+
+        <listitem>
+          <para>AnnotationData&nbsp;: le graphe d'annotation qui stocke un
+          grand nombre d'informations sur l'analyse.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Il est bien sûr possible d'étendre cette liste. Chaque type de
+      structure possède un identifiant qui pour l'instant est le nom de la
+      classe (sauf pour les deux AnalysisGraph&nbsp;; le second s'appelle
+      PosGraph), mais on peut très bien envisager d'avoir dans l'analyse
+      plusieurs instance d'un même type de données. La spécification des
+      identifiants reste à améliorer.</para>
+
+      <warning>
+        <para>Tous les objets héritant de AnalysisData doivent avoir un
+        destructeur qui libère en totalité la mémoire utilisée par l'objet. Ce
+        destructeur sera appellé lors de la destruction de l'objet
+        AnalysisContent qui les contient.</para>
+      </warning>
+    </sect2>
+
+    <sect2>
+      <title>ResourcesLinguistiques : AbstractResource</title>
+
+      <para>Chaque ressource linguistique hérite de la classe
+      'AbstractResource'. La seule méthode de cette classe est la méthode
+      init() qui doit permettre l'initialisation de la ressource à partir
+      d'une balise 'group' du fichier de configuration. Cette méthode est
+      appellée par la SimpleFactory utilisée pour enregister cette ressource
+      dans la liste des ressources.</para>
+
+      <para>Les resources ne sont chargées que lorsqu'un traitement en exprime
+      le besoin, c'est à dire que lors de l'initialisation d'un ProcessUnit,
+      ce dernier demande une ressource qui alors sera chargée si elle ne l'est
+      pas déjà (voir plus loin). La création des ressources utilise le pattern
+      AbstractFactoryPattern.</para>
+
+      <para>Un fois récupérée par un traitement, la resource peut être
+      "castée" (transtypée) via static_cast afin de pouvoir être
+      utilisée.</para>
+
+      <warning>
+        <para>Une ressource est susceptible d'être utilisée de manière
+        concurrente, il faut donc veiller à ce que sont implémentation soit
+        thread safe. <warning>
+            <para>Pour le moment (20070719), cette condition n'est pas remplie
+            !!!</para>
+          </warning></para>
+      </warning>
+    </sect2>
+
+    <sect2>
+      <title>Traitements Elementaires : AbstractProcessUnit</title>
+
+      <para>Chaque traitement élémentaire hérite de la classe
+      'AbstractProcessUnit'. Cette classe définit 2 méthodes : une méthode
+      d'initialisation qui a le même rôle que pour les resources, et une
+      méthode process qui a pour seul paramètre l'objet AnalysisContent. Cette
+      dernière méthode est 'const' car le traitement ne doit pas se modifier
+      lorsqu'il effectue son traitement. Tout le traitement doit se faire à
+      partir des données de AnalysisContent et tous les résultats doivent
+      également être incorporés dans cet objet.</para>
+
+      <warning>
+        <para>Un même objet de type AbstractProcessUnit est susceptible d'être
+        utilisé de manière concurrente, il faut donc veiller à ce que son
+        implémentation soit threadSafe<warning>
+            <para>Pour le moment (20070719), cette condition n'est pas remplie
+            !!!</para>
+          </warning></para>
+      </warning>
+
+      <para>Lors de sont initialisation, un AbstractProcessUnit doit récupérer
+      les ressources dont il a besoin, qui seront chargées si elles ne le sont
+      pas déjà. Ainsi, seule les ressources nécessaires sont chargées.</para>
+    </sect2>
+
+    <sect2>
+      <title>Pipelines : ProcessUnitPipeline</title>
+
+      <para>Un ProcessUnitPipeline, qui hérite de AbstractProcessUnit, est une
+      séquence de AbstractProcessUnit (pattern Composite). Sa création et son
+      initialisation fonctionnent exactement comme celle d'un
+      AbstractProcessUnit. Son traitement consiste à executer la séquence de
+      traitements définie via les paramètres.</para>
+
+      <warning>
+        <para>L'objet ProcessUnitPipeline est un pipeline au niveau d'une
+        langue. On pourrait l'appeler LanguagePipeline. Il s'agit d'une chaîne
+        de traitements pour une langue spécifique. Dans le fichier de
+        configuration de S2-LP il est défini des pipelines, qui se déclinent
+        en différents LanguagePipeline selon la langue. Lorsque le client
+        demande un 'pipeline' c'est l'id du fichier S2-lp.xml qu'il doit
+        donner. Ensuite, selon la langue du document, le composant utilisera
+        le LanguagePipeline adequat.</para>
+      </warning>
+
+      <para>Lors de l'initialisation d'un ProcessUnitPipeline, ce dernier
+      récupère tous les AbstractProcessUnit dont il a besoin, ces derniers
+      sont donc chargés si il ne le sont pas déjà. Lors de l'initialisation du
+      client 'core' de S2-LP, la configuration des pipelines entraine
+      l'initialisation de tous les 'LanguagePipeline' nécessaires (suivant les
+      langues actives).</para>
+    </sect2>
+
+    <sect2>
+      <title>Dumper : AbstractAnalysisDumper</title>
+
+      <para>Le rôle du dumper est de reporter le résultat de l'analyse à un
+      handler via les call-back de ce dernier. Il est prévu de pouvoir
+      retourner des type d'infos différentes (BowDocument, XML, fichier
+      tabulé). Un dumper va donc extraire de l'objet AnalysisContent les
+      informations qu'il désire et les transférer au handler. Attention, le
+      handler doit être compatible avec le dumper, ie il doit s'attendre à
+      recevoir le type d'information envoyé.</para>
+
+      <warning>
+        <para>De la même manière que pour les pipeline, le Dumper dépend de la
+        langue. Ainsi il ne faut pas confondre les 'LanguageDumper' définis
+        pour une langue et les 'AnalysisDumper' définis dans S2-lp.xml,
+        utilisés par le client, et qui se déclinent en différents
+        'LanguageDumper' selon les langues.</para>
+      </warning>
+
+      <para>Lors de l'initialisation du client 'core' de S2-LP, tous les
+      'LanguageDumper' référencés dans le fichier de configuration S2-lp.xml
+      sont initialisés.</para>
+    </sect2>
+
+    <sect2>
+      <title>client 'core' : CoreLinguisticProcessingClient</title>
+
+      <para>Le rôle du client 'core' est d'effectuer l'analyse. Concrètement,
+      il ne fait que :</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Récupérer le pipeline spécifié par id</para>
+        </listitem>
+
+        <listitem>
+          <para>Récupérer le dumper spécifié par id</para>
+        </listitem>
+
+        <listitem>
+          <para>Créer l'objet AnalysisContent de départ à partir de la requête
+          (texte + métadonnées)</para>
+        </listitem>
+
+        <listitem>
+          <para>Faire passer l'objet AnalysisContent par le pipeline</para>
+        </listitem>
+
+        <listitem>
+          <para>Donner l'objet AnalysisContent résultat d'analyse au dumper
+          pour qu'il le dump vers le handler (préalable donné au
+          client)</para>
+        </listitem>
+      </orderedlist>
+
+      <para>Si une de ces opérations échoue, une exception de type
+      LinguisticProcessingException sera levée.</para>
+    </sect2>
+
+    <sect2>
+      <title>client 'corba' : CorbaLinguisticProcessingClient</title>
+
+      <para>(non encore disponible)</para>
+
+      <para>Le rôle de ce client est de transmettre la requête à un server qui
+      lui transmettra la requête à un client délégué (par exemple le client
+      'core').</para>
+    </sect2>
+
+    <sect2>
+      <title>client 'xmlreader' : XmlReaderLinguisticProcessingClient</title>
+
+      <para>(non encore disponible)</para>
+
+      <para>Le rôle de ce client est de prendre en entrée un contenu XML et
+      non pas un contenu texte. Ce contenu XML peut être multidocument. Via le
+      documentsReader il va découper ce contenu XML en document, avec des méta
+      données pour chaque document, et appeler un client délégué (par exemple
+      le client 'core').</para>
+    </sect2>
+  </sect1>
+</article>

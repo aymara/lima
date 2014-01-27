@@ -1,0 +1,322 @@
+##############################################################################
+#                                                                            #
+# rules for the recognition of french right to left homosyntagmatic relations#
+# this file uses the syntax for the declarations of automatons by Romaric    #
+# Besancon (Cf. his 2003/03/11 document)
+#                                                                            #
+# Created on Thu nov 13 2003                                                 #
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)                            #
+#                                                                            #
+# $Id$                  #
+#                                                                            #
+##############################################################################
+# expression des positions dans les contraintes: first current next last
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-fre.txt
+
+
+
+
+
+######################################################################
+# complément de verbe, participe passé en forme adjectivale
+# "La solution, [proposée par Jean], est bonne."
+######################################################################
+
+@PPAA=($V-VPP,$V-VPP)
+
+@PPAA:(@Substantif|@PronDem){0-3} (@Ponctu)?:(@Ponctu)? @PrepComp (@Determinant)? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(right.4,"CPL_V")
++!GovernorOf(trigger.1,"ANY")
++GenderAgreement(trigger.1,left.1)
++NumberAgreement(trigger.1,left.1)
++CreateRelationBetween(trigger.1,left.1,"MOD_N")
++CreateRelationBetween(right.4,trigger.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PrepComp:($V-VPP|$V-VPP):(@Determinant)? @Substantif:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"CPL_V")
++!GovernorOf(left.1,"SUBADJPOST")
++CreateRelationBetween(right.2,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
++!GovernorOf(right.1,"CPL_V")
++!GovernorOf(left.1,"SUBADJPOST")
++CreateRelationBetween(right.1,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre un prénom  et un nom propre  juxtaposés : SubSubJux
+# ex: "général Pierre Jean de la Fayette": Pierre -> Lafayette
+#----------------------------------------------------------------------
+#@Prenom::((@Prenom){1-n} (de (la)?)?)? @NpGen:SYNTACTIC_RELATION:
+#+!GovernorOf(trigger.1,"ANY")
+#+SecondUngovernedBy(trigger.1,right.2,"ANY")
+#+CreateRelationBetween(trigger.1,right.2,"SUBSUBJUX")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+@Prenom::((@Prenom){1-n} (de (la)?)?)? @NpGen:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre un substantif et un nom propre  juxtaposés : SubSubJux
+# ex: "général Pierre Jean de la Fayette": général -> Lafayette
+# NOTE: contrainte '+!GovernorOf(trigger.1,"ANY")' supprimée pour tenir
+#       compte des graphes ambigus après désambiguisation
+#----------------------------------------------------------------------
+@NpGen:@SubsNonNum ((@Prenom){1-n} (de (la)?)?)::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++!GovernedBy(left.1,"ANY")
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# NOTE: '+!GovernorOf(trigger.1,"ANY")' même chose que ci-dessus
+@NomPropre:@SubsNonNum ((@Prenom){1-n} (de (la)?)?)?::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation entre deux noms communs juxtaposés : SubSubJux
+# ex: de type <- passereaux
+# NOTE: contrainte '+!GovernorOf(right.1,"ANY")' supprimée pour tenir
+#       compte des graphes ambigus après désambiguisation
+#+!GovernedBy(right.1,"ANY")
+#----------------------------------------------------------------------
+@SubsNonNum::@SubsNonNum:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"SUBSUBJUX")
++SecondUngovernedBy(right.1,trigger.1,"ANY")
++CreateRelationBetween(right.1,trigger.1,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation entre un nom commun et un nom propre juxtaposé : SubSubJux
+# ex: le drone futuriste Mars HAGV
+#----------------------------------------------------------------------
+@SubsNonNum::(@AdjPost){0-n} @NpGen:SYNTACTIC_RELATION:
++!GovernedBy(trigger.1,"SUBSUBJUX")
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre deux noms propres juxtaposés : SubSubJux
+# ex: le drone futuriste Mars HAGV
+#----------------------------------------------------------------------
+@NpGen::@NpGen:SYNTACTIC_RELATION:
++!GovernedBy(trigger.1,"SUBSUBJUX")
++SecondUngovernedBy(right.1,trigger.1,"ANY")
++CreateRelationBetween(right.1,trigger.1,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre deux NP juxtaposés : SubSubJux
+# ex: trois fois la vitesse du son
+#----------------------------------------------------------------------
+
+@NonContractedDet=($DET-DET,$DET-DET,$DET-DET,$DET-DET,$DET-DET,$DET-DETWH,$DET-DET,$DET-DET)
+
+#@SubsNonNum::@NonContractedDet? ($ADV{0-2} $ADJ){0-2} @SubsNonNum ($ADV{0-2} $ADJ){0-2}:SYNTACTIC_RELATION:
+#+!GovernedBy(trigger.1,"SUBSUBJUX")
+#+SecondUngovernedBy(right.3,trigger.1,"ANY")
+#+CreateRelationBetween(right.3,trigger.1,"SUBSUBJUX")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+# cas géré par relation APPOS
+#@SubsNonNum::($ADV{0-2} $ADJ){0-2} $PONCTU @NonContractedDet? ($ADV{0-2} $ADJ){0-2} @SubsNonNum ($ADV{0-2} $ADJ){0-2} $PONCTU:SYNTACTIC_RELATION:
+#+!GovernedBy(trigger.1,"SUBSUBJUX")
+#+SecondUngovernedBy(right.5,trigger.1,"ANY")
+#+CreateRelationBetween(right.5,trigger.1,"SUBSUBJUX")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+
+# créer une règle APPOS pour $PRON-CLS
+
+#----------------------------------------------------------------------
+# Relation entre adjectif prénominal et substantif : AdjPrenSub
+# (A6.1 - 4.2.1.1)
+# contrainte supprimée pour autoriser un adjectif à être ADJPRENSUB de
+# plusieurs noms sur des branches différentes:
+#           +!GovernorOf(trigger.1,"ADJPRENSUB")
+#----------------------------------------------------------------------
+
+@AdjPren::(((@Virg)? (@AdverbePositifDansChaineNominale){0-3} @AdjPren){0-2} (@ConjCoord (@AdverbePositifDansChaineNominale){0-3} @AdjPren)?)? ((@Prenom){1-n} (de (la)?)?)? (@NomCommun|@NomPropre):SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++GenderAgreement(trigger.1,right.3)
++NumberAgreement(trigger.1,right.3)
++CreateRelationBetween(trigger.1,right.3,"ADJPRENSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre substantif et substantif  : CompDuNom
+# (A6.4 - 4.2.1.3)
+# NOTE: contrainte '+!GovernorOf(right.4,"ANY")' supprimée pour tenir
+#       compte des graphes ambigus après désambiguisation
+#----------------------------------------------------------------------
+#+!GovernedBy(left.1,"COMPDUNOM")
+
+@PrepComp:(@NomCommun|@Inc) (@NomCommun|@Inc){1-n} (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++GovernorOf(left.2,"SUBSUBJUX")
++SecondUngovernedBy(right.5,left.1,"ANY")
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
++CreateRelationBetween(trigger.1,right.5,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# NOTE: contrainte '+!GovernorOf(right.4,"ANY")' supprimée pour tenir
+#       compte des graphes ambigus après désambiguisation
+# +!GovernedBy(left.1,"COMPDUNOM")
+
+
+@PrepComp:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){1-n} (de (la)?)?) (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(right.5,left.1,"ANY")
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
++CreateRelationBetween(trigger.1,right.5,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+# NOTE: contrainte '+!GovernorOf(right.4,"ANY")' supprimée pour tenir
+#       compte des graphes ambigus après désambiguisation
+# contrainte +!GovernorOf(left.1,"SUBSUBJUX") supprimée
+# +!GovernedBy(left.1,"COMPDUNOM")
+
+@PrepComp:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum|@PrepCompDuNom|@NomPropre){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++SecondUngovernedBy(right.5,left.1,"ANY")
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
++CreateRelationBetween(trigger.1,right.5,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# Contrainte supprimée pour générer + d'ambiguités
+# +!GovernorOf(right.4,"ANY")
+# +!GovernedBy(left.1,"COMPDUNOM")
+
+@PrepComp:@NomPropre:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(right.5,left.1,"ANY")
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
++CreateRelationBetween(trigger.1,right.5,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#+!GovernedBy(left.1,"COMPDUNOM")
+@PrepComp:@NomPropre:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(right.4,left.1,"ANY")
++CreateRelationBetween(right.4,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#+!GovernedBy(left.1,"COMPDUNOM")
+@PrepComp:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(right.5,left.1,"ANY")
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
++CreateRelationBetween(trigger.1,right.5,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# +!GovernedBy(left.1,"COMPDUNOM")
+@PrepComp:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(right.4,left.1,"ANY")
++CreateRelationBetween(right.4,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# +!GovernedBy(left.1,"COMPDUNOM")
+@PrepComp:(@PronIndef|@PronDem) (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++SecondUngovernedBy(right.5,left.1,"ANY")
++SecondUngovernedBy(trigger.1,right.5,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
++CreateRelationBetween(trigger.1,right.5,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+$NP-NPP:$DET?:$NC-NC:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++!GovernorOf(left.1,"ANY")
++!GovernedBy(right.1,"DETSUB")
++CreateRelationBetween(trigger.1,right.1,"SUBSUBJUX")
++CreateRelationBetween(left.1,right.1,"DETSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation entre adverbe et adverbe: AdvAdv
+# GC20091019: moved to r2l-pass1 from l2r to find them before AdvVerbe with verb to the left
+# (A6.8 - 4.2.1.9)
+#----------------------------------------------------------------------
+@AdvModifieurAdv::@AdvModifieParAdv:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"ADVADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# introduced same rule triggered by general adverb
+# (for EASY evaluation)
+$ADV-ADV::@AdvModifieParAdv:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"ADVADV")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+########################################
+# Regles adaptees pour les mots inconnus
+########################################
+
+@AdjPren::((@AdverbePositifDansChaineNominale){0-3} @AdjPren){0-2} @Inc:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#@IncNomPropre:@IncNomPropre::SYNTACTIC_RELATION:
+#+SecondUngovernedBy(trigger.1,left.1,"ANY")
+#+CreateRelationBetween(trigger.1,left.1,"SUBSUBJUX")
+

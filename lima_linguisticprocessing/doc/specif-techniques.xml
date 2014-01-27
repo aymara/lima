@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+ "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article>
+  <title>Spécifications techniques S2 - NewPhenix</title>
+
+  <articleinfo>
+    <date>05/05/2004</date>
+
+    <author>
+      <lineage>Benoit Mathieu &lt;mathieub@zoe.cea.fr&gt;</lineage>
+    </author>
+  </articleinfo>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para>Le LIC2M doit réorganiser et réarchitecturer ses développement afin
+    de répondre aux besoins de commercialisation de NewPhenix (NP dans la
+    suite de ce document) et à ses besoins internes de modularité et de test.
+    Les spécifications techniques exposées dans ce documents sont la
+    conséquence des spécifications fonctionnelles élaborées avec NP.</para>
+
+    <para>Les composants linguistiques identifiés lors des spécifications
+    fonctionnelles sont les suivant :</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Detection des Langues et Formatage (DLF)</para>
+      </listitem>
+
+      <listitem>
+        <para>Traitement Linguistique (TL)</para>
+      </listitem>
+
+      <listitem>
+        <para>Indexation</para>
+      </listitem>
+
+      <listitem>
+        <para>Reformulation</para>
+      </listitem>
+
+      <listitem>
+        <para>Recherche</para>
+      </listitem>
+
+      <listitem>
+        <para>Filtrage</para>
+      </listitem>
+
+      <listitem>
+        <para>Classification</para>
+      </listitem>
+    </itemizedlist>
+
+    <formalpara>
+      <title>Contraintes sur les composants</title>
+
+      <para>Chaque composant doit pouvoir être lancé indépendant, et ne peut
+      solliciter un autre composant que via son API cliente publique. </para>
+    </formalpara>
+  </sect1>
+
+  <sect1>
+    <title>Organisation en projets KDevelop</title>
+
+    <para>Chaque composant sera développé sous forme d'un projet KDevelop. Un
+    projet KDevelop supplémentaire concentrera les fonctionnalités
+    communes.</para>
+
+    <sect2>
+      <title>Projet S2-commons</title>
+
+      <para>Le projet S2-commons rassemblera toutes les briques de base
+      communes à la majorité des composants. Ces briques sont présentées dans
+      les sous parties suivante.</para>
+
+      <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>LimaString et outils de conversion</title>
+
+            <para>actuelle librarie misc.</para>
+          </formalpara>
+        </listitem>
+
+        <listitem>
+          <formalpara>
+            <title>XMLConfigurationFiles</title>
+
+            <para>actuelle libraries XMLConfigurationFiles utilisée pour la
+            lecture des fichiers de configuration XML.</para>
+          </formalpara>
+        </listitem>
+
+        <listitem>
+          <formalpara>
+            <title>Informations Linguistiques</title>
+
+            <para>Il s'agit des informations linguistiques que l'on utilise
+            dans tous les modules : définition des catégories, définition des
+            relations, etc. On ne comprends pas ici les ressources
+            (dictionnaires ou autres ...). Ces ressources sont utilisées dans
+            un seul composant. Les informations linguistiques d'une langues
+            pourront être chargées à partir d'un fichier de conf.</para>
+          </formalpara>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-DLF</title>
+
+      <para>Il s'agit du module de detection de la langue. Il comprendra les
+      libraries Dedal.</para>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-TL</title>
+
+      <para>Le projet S2-TL contituera le composant de traitement
+      linguistique. Ce composant aura un fichier de configuration qui définira
+      les paramètre globaux commes les langues à charger, où se trouve les
+      fichiers de configuration d'une langue, et un fichier de configuration
+      par langue, définissant les chaînes de traitements 'pipeline' pour cette
+      langue, les ressources à utiliser etc.</para>
+
+      <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>Ressources Linguistiques</title>
+
+            <para>Toutes les ressources linguistiques qui servent au
+            traitement linguistique. C'est à dire tout sauf dictionnaires de
+            reformulation et dictionnaires de fréquence</para>
+          </formalpara>
+        </listitem>
+
+        <listitem>
+          <formalpara>
+            <title>Traitements linguistiques</title>
+
+            <para>Tous les traitements linguistiques : tokenization, analyse
+            morphosyntaxique, reconnaissance d'entitées nommées, analyse
+            syntaxtique</para>
+          </formalpara>
+        </listitem>
+
+        <listitem>
+          <formalpara>
+            <title>AnalysisHandler</title>
+
+            <para>Différents format de sortie pour le résultat de l'analyse :
+            graph,xml,bow, etc...</para>
+          </formalpara>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-Indexation</title>
+
+      <para>Le projet S2-index rassemblera les fonctionnalités nécessaires à
+      l'indexation.</para>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-Reformulation</title>
+
+      <para>Le projet S2-Refo sera le composant server de reformulation. Ce
+      projet rassemblera les libraries suivantes :</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Dictionaires de reformulation</para>
+        </listitem>
+
+        <listitem>
+          <para>reformulator</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-Recherche</title>
+
+      <para>Le projet S2-Rech sera le composant moteur de recherche.</para>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-Filtrage</title>
+
+      <para>Le projet S2-Filtrage sera le composant de filtrage.</para>
+    </sect2>
+
+    <sect2>
+      <title>Projet S2-Classification</title>
+
+      <para>Le projet S2-Classification sera le composant de
+      classification.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Spécifications S2-commons</title>
+
+    <para>Le projet S2-commons rassemble les briques de bases communes à
+    toutes les applications. C'est le seul projets parmis ceux cité ci-dessus
+    qui ne constitue pas un composant.</para>
+
+    <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>LimaString</title>
+
+          <para>On reprend ce qui existe actuellement</para>
+        </formalpara>
+      </listitem>
+
+      <listitem>
+        <formalpara>
+          <title>XMLConfigurationFiles</title>
+
+          <para>On reprend ce qui existe actuellement</para>
+        </formalpara>
+      </listitem>
+
+      <listitem>
+        <formalpara>
+          <title>LinguisticData</title>
+
+          <para>Un singleton rassemblera les informations linguistiques des
+          langues. Ces informations pourront être chargé à partir d'un fichier
+          de configuration. Chaque composant utilisant ces informations sera
+          responsable du chargement de celles-ci. (format de conf à
+          spécifier)</para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+
+  <sect1>
+    <title>Spécification S2-TL</title>
+
+    <sect2>
+      <title>Architecture</title>
+
+      <sect3>
+        <title>AnalysisContent</title>
+
+        <para>Le système comportera une structure nommée AnalysisContent qui
+        contiendra TOUT les résultats de l'analyse. Ainsi, tous les
+        traitements (analyse morphologique, reconnaissance d'entitées nommées,
+        analyse syntaxtique) utiliseront et modiferont cette structure et
+        uniquement cette structure. Celà permettra de définir une abstraction
+        d'un traitement et d'obtenir une configuration modulaire.</para>
+      </sect3>
+
+      <sect3>
+        <title>Pipelines</title>
+
+        <para>Suite aux discussions LIC2M - NP une architecture basées sur des
+        pipelines (ou chaîne de traitement) à été retenue. Dans chaque langue,
+        un fichier de configuration définira des processUnit (traitement
+        élémentaires) et pipeline, successions de ces traitements
+        élémentaires. Chaque pipeline aura un identifiant qui sera utilisé
+        pour le désigner lors d'une requête client.</para>
+      </sect3>
+
+      <sect3>
+        <title>AnalysisHandler</title>
+
+        <para>LIC2M et NP ont identifié le besoin de type de résultats
+        différent (xml,bow,graph, ou autre). Nous avons donc besoin de
+        récupérer en sortie de l'analyse des structures différentes. Afin de
+        pouvoir renvoyer de manière générique le résultat de sortie, nous
+        avons opté pour passage de résultat par un AnalysisHandler qui
+        retournera des callback (comme un parser XML).</para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>Configuration</title>
+
+      <para>Le composant S2-TL utilisera un fichier de configuration global
+      ainsi qu'un fichier de configuration par langue, qui contiendra la
+      définition des traitements, des resources, des pipelines et des
+      informations linguistiques relatives à la langue (cf S2-commons).</para>
+
+      <para>Chaque traitement linguistique pourra être instancié plusieurs
+      fois, ceci permettra notament d'utiliser le MAXmlLogger à plusieurs
+      niveau du traitement.</para>
+
+      <para>Le chargement d'un pipeline entraine le chargement de toutes les
+      ressources nécessaires. Si une ressource n'est pas disponible, on
+      considère que la configuration est erronée et le pipeline ne sera pas
+      chargé. Il est possible de décharger un pipeline (sans décharger les
+      ressources ? car pouvant être utilisées par d'autres pipeline), ou de
+      charger un nouveau pipeline "à chaud".</para>
+    </sect2>
+
+    <sect2>
+      <title>Abstraction des ressources</title>
+
+      <para>On définira une abstraction des ressources, qui permettra de
+      supprimer les dépendences inutiles. Actuellement, la pincipale cause de
+      dépendance non-souhaité était du au fait qu'il nous faillait "connaitre"
+      la ressource pour la charger. En mettant en place une abstraction de
+      ressource avec une methode de chargement générique, nous éliminerons
+      toutes ces dépendences.</para>
+
+      <para>Deplus, l'abstraction des ressources aura d'autres avantages :
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>On pourra définir plusieurs instances d'une ressource. C'est
+          déjà le cas pour Automaton::Recognizer, mais le code pour le
+          chargement est dupliqué.</para>
+        </listitem>
+
+        <listitem>
+          <para>On pourra plus facilement développer d'autres type de
+          ressources. Par exemple il sera plus facile switcher entre des
+          dictionaires arborescant ou par automate, de tester d'autres
+          structures pour les matrices de trigrams.</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Abstraction des traitements linguistiques</title>
+
+      <para>Actuellement, seuls les traitements d'analyse morphologique sont
+      génériques. Nous allons étendre celà à tous les traitements exceptés le
+      Tokenizer (à discuter ?). Le tokenizer occupe en effet un place
+      particulière qui est celle de construire la première mouture du résultat
+      de l'analyse.</para>
+
+      <para>La définition d'une structure unique AnalysisContent pour stocker
+      l'état de l'analyse, permet d'abtraire la reconnaissance d'entitée
+      nommée et l'analyse syntaxique. Les avantages sont multiques, celà
+      homogénise les traitements, et celà permettra de remplacer la
+      reconnaissance d'entitée nommée et l'analyse syntaxique pour tester des
+      stratégies différentes.</para>
+    </sect2>
+  </sect1>
+</article>

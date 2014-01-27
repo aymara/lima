@@ -1,0 +1,57 @@
+OQU - opening quote
+COMMA - ',' or other marker of soft separator inside a sentence
+COLON - ':' or other marker of strong separator inside a sentence
+SENT - sentence break
+QUOT - simple or double quote
+OPAR - opening parenthesis
+CPAR - closing parenthesis
+CUR - currency symbol
+CC - Coordinating conjunction
+CD - Cardinal number
+DT - Determiner
+EX - Existential there
+FW - Foreign word
+IN - Preposition or subordinating conjunction
+JJ - Adjective
+JJR - Adjective, comparative
+JJS - Adjective, superlative
+#LS - List item marker
+MD - Modal
+NN - Noun, singular or mass
+NNS - Noun, plural
+NNP - Proper noun, singular
+NNPS - Proper noun, plural
+PDT - Predeterminer
+#POS - Possessive ending ; removed. Handled through tokenizer and other properties associated to tokens
+PRP - Personal pronoun
+PRP$ - Possessive pronoun
+RB - Adverb
+RBR - Adverb, comparative
+RBS - Adverb, superlative
+RP - Particle
+SYM - Symbol. Should be used for mathematical, scientific or technical symbols. Extended in LIMA to tokens reduced to one latin letter and greek letters.
+TO - to
+UH - Interjection
+VB - Verb, base form
+VBD - Verb, past tense
+VBG - Verb, gerund or present participle
+VBN - Verb, past participle
+VBP - Verb, non-3rd person singular present
+VBZ - Verb, 3rd person singular present
+WDT - Wh-determiner e.g. which, and that when it is used as a relative pronoun
+WP - Wh-pronoun
+WP$ - Possessive wh-pronoun (prolog version WP-S)
+WRB - Wh-adverb
+
+NOT
+
+ABOUTIN
+ABOUTRB
+THATDT
+THATIN
+THATPRP
+THATRB
+THATWDT
+THERERB
+
+UNK

@@ -1,0 +1,8 @@
+ FsaAccess: 
+===========
+15-09-2005 add FsaAccessBuilderRandom16 class
+Implement an operation to add a word to an already built automatum.
+Make some reeengineering (add class FsaAccesReader16, FsaAccessIOHandler, 
+PrefixIterator) to manage code which is common to FsaAccessBuilder16,
+FsaAccessSpare and FsaAccessBuilderRandom16.
+

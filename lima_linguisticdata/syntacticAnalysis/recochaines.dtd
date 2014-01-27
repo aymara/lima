@@ -1,0 +1,26 @@
+<!ELEMENT matrice_precedence (chaine+, matrice+)>
+
+<!ELEMENT chaine  (filtre+) >
+<!ATTLIST chaine type (nominale | verbale) #REQUIRED>
+
+<!ELEMENT filtre ( nom, categorie+, attribut*)>
+<!ATTLIST filtre ID ID #REQUIRED>
+
+<!ELEMENT nom (#PCDATA ) >
+<!ELEMENT attribut (#PCDATA ) >
+<!ELEMENT categorie (#PCDATA ) >
+
+<!ELEMENT matrice (ligne+, debuts+, fins+)>
+<!ATTLIST matrice type (nominale | verbale) #REQUIRED>
+
+<!ELEMENT ligne (succ*)>
+<!ATTLIST ligne REF IDREF #IMPLIED>
+
+<!ELEMENT succ EMPTY>
+<!ATTLIST succ REF IDREFS #IMPLIED>
+
+<!ELEMENT debuts EMPTY>
+<!ATTLIST debuts REF IDREFS #IMPLIED>
+
+<!ELEMENT fins EMPTY>
+<!ATTLIST fins REF IDREFS #IMPLIED>

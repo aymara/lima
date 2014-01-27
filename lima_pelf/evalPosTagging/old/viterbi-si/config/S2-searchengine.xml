@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <!-- Configuration du client coeur -->
+  <module name="searchengine-coreclient">
+    <group name="languages">
+      <list name="indexLanguages">
+        <item value="fre"/>
+        <item value="eng"/>
+        <item value="spa"/>
+      </list>
+      <list name="queryLanguages">
+        <item value="fre"/>
+      </list>
+    </group>
+    <group name="index">
+      <param key="indexDir" value="/home/besancon/Projets/S2/test/test-searchengine/index"/>
+      <param key="indexName" value="index-test.gdb"/>
+      <map name="indexes">
+        <entry key="fre" value="1"/>
+        <entry key="eng" value="2"/>
+        <entry key="spa" value="3"/>
+      </map>
+    </group>
+    <group name="reformulation">
+      <param key="dir" value="Reformulation/SyntacticRules"/>
+      <map name="SyntacticTransformation">
+<!--         <entry key="fre-eng" value="refo-fre-eng.rules"/> -->
+      </map>
+    </group>
+    <group name="queryAnalysis">
+      <param key="pipelineForQueryAnalysis" value="main"/>
+    </group>
+    <group name="searchengineConfig">
+      <param key="pathToSourceFiles" value="/path/to/source/files"/>
+      <param key="indexModel" value="DocumentDAOCogema"/>
+      <param key="useQueryWeights" value="yes"/>
+      <param key="useWeightVectors" value="yes"/>
+      <param key="weightModel" value="default"/>
+      <param key="resultType" value="class"/>
+      <param key="RelevantPartWidth" value="200"/>
+      <param key="useOnlyLemma" value="no"/>
+      <param key="useBestSegmentOnly" value="no"/>
+      <param key="normalizeClassWeights" value="yes"/>
+      <param key="adjustPartsToSentences" value="no"/>
+      <param key="monoRefoBeforeTranslation" value="no"/>
+      <param key="monoRefoAfterTranslation" value="no"/>
+      <param key="monoRefoAfterTranslation" value="no"/>
+      <param key="nbDocsBuffer" value="0"/>
+      <map name="NEWeights">
+        <entry key="PERSON" value="1.0"/>
+        <entry key="LOCATION" value="1.0"/>
+        <entry key="ORGANIZATION" value="1.0"/>
+        <entry key="PRODUCT" value="1.0"/>
+        <entry key="EVENT" value="1.0"/>
+      </map>
+      <!-- relevance feedback parameters (not used for the moment) -->
+      <param key="useRelevanceFeedback" value="no"/>
+      <param key="RF-nbdocs" value="5"/>
+      <param key="RF-nbterms" value="20"/>
+      <param key="RF-termWeight" value="1.0"/>
+    </group>
+  </module>
+</modulesConfig>

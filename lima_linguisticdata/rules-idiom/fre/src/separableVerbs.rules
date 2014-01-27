@@ -1,0 +1,37 @@
+
+
+use separableVerbs.lst
+
+@AuxiliaireEtre=(
+être$V-V,
+être$V-VS,
+être$V-VINF
+)
+
+# rules for reflexive verbs
+&@ReflexiveVerbs:$PRON-CLR [$PRON?] [(@AuxiliaireEtre $ADV{0-2})?]::IDIOM$V---p---:
++AgreementConstraint(trigger.1,left.1,"NUMBER")
++AgreementConstraint(trigger.1,left.1,"PERSON")
+
+&@AbsReflexiveVerbs:$PRON-CLR [$PRON?] [(@AuxiliaireEtre $ADV{0-2})?]::ABS_IDIOM$V---p---:
++AgreementConstraint(trigger.1,left.1,"NUMBER")
++AgreementConstraint(trigger.1,left.1,"PERSON")
+
+# rules for special cases reflexive verbs
+
+# the verb "se suivre" cannot be used at the singular first person; furthermore, it clashes with
+# the compound tense forms of other reflexive verbs
+
+# this rule allows all forms of plural for "se suivre"
+&suivre$V:$PRON-CLR [$PRON?] [(@AuxiliaireEtre $ADV{0-2})?]::IDIOM$V---p---:
++AgreementConstraint(trigger.1,left.1,"NUMBER")
++AgreementConstraint(trigger.1,left.1,"PERSON")
++LinguisticPropertyIs(left.1,"NUMBER,PLUR,fre")
+
+# this rule allows both second and third singular forms for "se suivre" even if only "on se suit"
+# is semanticaly correct, because language usage is creative
+&suivre$V:$PRON-CLR [$PRON?] [(@AuxiliaireEtre $ADV{0-2})?]::IDIOM$V---p---:
++AgreementConstraint(trigger.1,left.1,"NUMBER")
++AgreementConstraint(trigger.1,left.1,"PERSON")
++LinguisticPropertyIs(left.1,"NUMBER,SING,fre")
++LinguisticPropertyIs(left.1,"PERSON,2|3,fre")

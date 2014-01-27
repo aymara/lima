@@ -1,0 +1,8 @@
+1 - Gérer les signes '&' qui pour le moment génèrernt une erreur:
+ 1249056835 ERROR XML::XmlReaderClient : Error: Xerces Exception: Expected entity name for reference
+ terminate called after throwing an instance of 'FrCeaLic2m::XmlReader::XmlReaderException'
+   what():
+   --> il faut que le programme appelant recupere (catch) l'exception
+
+2 - dynamically compile and use new modexes
+

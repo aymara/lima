@@ -1,0 +1,12 @@
+Avec HEAD
+   PosTagger    Langue Precision Decision Score PrecisionSup PrecisionInf AmbiguiteMoyenne entreeManquantes entreesSuperflues
+    nopostagger    fre     96.45    24.74 60.60        97.82        23.86             3.16             2.51              5.11
+   viterbi-freq    fre     87.56    99.78 93.67        87.59        87.37             1.01             5.11              3.54
+     viterbi-si    fre     93.66    86.82 90.24        93.82        81.32             1.17             4.99              3.54
+
+
+Avec pp_add_and_external_lists_remove
+   PosTagger    Langue Precision Decision Score PrecisionSup PrecisionInf AmbiguiteMoyenne entreeManquantes entreesSuperflues
+    nopostagger    fre     95.49    24.21 59.85        97.39        23.12             3.18             2.57              5.04
+   viterbi-freq    fre     88.39    99.88 94.13        88.34        88.28             1.00             5.05              3.65
+     viterbi-si    fre     92.75    89.91 91.33        92.52        83.39             1.12             4.93              3.71

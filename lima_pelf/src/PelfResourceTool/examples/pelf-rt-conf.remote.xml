@@ -1,0 +1,38 @@
+<!--This file is an example of Pelf Resource Tool configuration-->
+<configuration>
+ <linguisticDataRoot path="" />
+ <!--If empty, must be defined as $LINGUISTIC_DATA_ROOT environment variable-->
+ <commandsRoot path="" />
+ <!--If empty, must be defined as $PELF_COMMANDS_ROOT environment variable-->
+ <resources>
+  <dictionnary>
+   <resourceFile pathSuffix="analysisDictionary/fre/flex/mots-simples.txt" />
+   <installCommandFile pathSuffix="dictionnary/install-remote.sh" />
+  </dictionnary>
+  <ngrams>
+   <resourceFile pathSuffix="disambiguisationMatrices/fre/bigramsend_modif.txt" />
+   <resourceFile pathSuffix="disambiguisationMatrices/fre/trigramsend_modif.txt" />
+   <installCommandFile pathSuffix="ngrams/install-remote.sh" />
+   <symbolicCodeFile pathSuffix="disambiguisationMatrices/fre/code_symbolic2lima.txt" />
+   <corpusFile pathSuffix="disambiguisationMatrices/fre/corpus/corpus_fr_merge.txt" />
+  </ngrams>
+  <syntacticRules>
+   <resourceFile pathSuffix="syntacticAnalysis/rules-l2r-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/rules-r2l-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/rules-fre-heterodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/rules-r2l-pass1-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/simplification-first-rules-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/simplification-rules-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/simplification-last-rules-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/rules-l2r-fre-pleonasticPronouns.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/categoriesClassesDeclaration-fre.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/rules-fre-heterodeps-specializer.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/rules-l2r-fre-dummy.txt" />
+   <installCommandFile pathSuffix="synrules/install-remote.sh" />
+  </syntacticRules>
+  <idiomaticExpressions>
+   <resourceFile pathSuffix="rules-idiom/fre/src/idioms-fre.txt" />
+   <installCommandFile pathSuffix="idioms/install-remote.sh" />
+  </idiomaticExpressions>
+ </resources>
+</configuration>

@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="clustering-coreclient">
+    <group name="configuration">
+      <list name="pipeline">
+        <!--item value="absoluteSharedNeighborsLinkTagger"/-->
+        <item value="linearSharedNeighborsLinkTagger"/>
+        <item value="linkWeightsLogger"/>
+        <item value="strongLinkRateSelector"/>
+        <item value="strongLinkLogger"/>
+        <item value="absoluteConnectivityTagger"/>
+        <item value="connectivityLogger"/>
+        <item value="connectivityRateTagger"/>
+        <!--item value="localLeaderTopicNoiseTagger"/-->
+        <item value="topicNoiseLogger"/>
+        <!--item value="dotGraphWriter"/-->
+        <item value="nearestTopicClusterBuilder"/>
+        <!--item value="mergingDistanceClusterBuilder"/-->
+      </list>
+    </group>
+    <group name="absoluteSharedNeighborsLinkTagger" class="AbsoluteSharedNeighborsLinkTagger">
+      <param key="size" value="70"/>
+    </group>
+    <group name="linearSharedNeighborsLinkTagger" class="LinearSharedNeighborsLinkTagger">
+      <param key="size" value="15"/>
+    </group>
+    <group name="strongLinkRateSelector" class="StrongLinkRateSelector">
+      <param key="StrongLinkRate" value="0.5"/>
+    </group>
+    <group name="absoluteConnectivityTagger" class="AbsoluteConnectivityTagger">
+    </group>
+    <group name="connectivityRateTagger" class="ConnectivityRateTagger">
+      <param key="ConnectivityTopicRate" value="0.06"/>
+      <param key="ConnectivityNoiseRate" value="0.0"/>
+    </group>
+    <group name="localLeaderTopicNoiseTagger" class="LocalLeaderTopicNoiseTagger">
+      <param key="TopicLeaderFactor" value="2"/>
+      <param key="NoiseLeaderFactor" value="0"/>
+    </group>
+    <group name="mergingDistanceClusterBuilder" class="MergingDistanceClusterBuilder">
+      <param key="TopicMergingDistance" value="1"/>
+      <param key="AggregateMergingDistance" value="1"/>
+    </group>
+    <group name="nearestTopicClusterBuilder" class="NearestTopicClusterBuilder">
+      <param key="TopicMergingDistance" value="1"/>
+    </group>
+    <group name="linkWeightsLogger" class="LinkWeightsLogger">
+      <param key="outputFile" value="linkWeights.log"/>
+    </group>
+    <group name="strongLinkLogger" class="StrongLinkLogger">
+      <param key="outputFile" value="strongLinks.log"/>
+    </group>
+    <group name="connectivityLogger" class="ConnectivityLogger">
+      <param key="outputFile" value="connectivity.log"/>
+    </group>
+    <group name="topicNoiseLogger" class="TopicNoiseLogger">
+      <param key="outputFile" value="topicNoise.log"/>
+    </group>
+    <group name="dotGraphWriter" class="DotGraphWriter">
+      <param key="outputFile" value="snn.dot"/>
+    </group>
+  </module>
+</modulesConfig> 

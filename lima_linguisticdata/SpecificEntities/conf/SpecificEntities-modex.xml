@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="Processors">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/Processors"/>
+        <item value="DateTime-modex.xml/Processors"/>
+        <item value="Organization-modex.xml/Processors"/>
+        <item value="Location-modex.xml/Processors"/>
+        <item value="Person-modex.xml/Processors"/>
+        <item value="Event-modex.xml/Processors"/>
+        <item value="Product-modex.xml/Processors"/>
+      </list>
+    </group>
+    <group name="SpecificEntitiesModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognition"/>
+        <item value="UnitRecognition"/>
+        <item value="DateTimeModex"/>
+        <item value="NumexRecognition"/>
+        <item value="OrganizationModex"/>
+        <item value="LocationModex"/>
+        <item value="PersonModex"/>
+        <item value="EventModex"/>
+        <item value="ProductModex"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-fre"/>
+        <item value="DateTime-modex.xml/resources-fre"/>
+        <item value="Organization-modex.xml/resources-fre"/>
+        <item value="Location-modex.xml/resources-fre"/>
+        <item value="Person-modex.xml/resources-fre"/>
+        <item value="Event-modex.xml/resources-fre"/>
+        <item value="Product-modex.xml/resources-fre"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-eng"/>
+        <item value="DateTime-modex.xml/resources-eng"/>
+        <item value="Organization-modex.xml/resources-eng"/>
+        <item value="Location-modex.xml/resources-eng"/>
+        <item value="Person-modex.xml/resources-eng"/>
+        <item value="Event-modex.xml/resources-eng"/>
+        <item value="Product-modex.xml/resources-eng"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

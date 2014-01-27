@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<specific-entities>
+<entities docid="" offsetNode="0">
+  <entity><pos>51</pos><len>7</len><type>ROBOTIC_ROBOT</type><string>F-200iB</string></entity>
+  <entity><pos>64</pos><len>22</len><type>ROBOTIC_SIXAXIS</type><string>six degrees of freedom</string></entity>
+</entities>
+</specific-entities>

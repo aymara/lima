@@ -1,0 +1,943 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.idiom.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il fait beau aujourd'hui. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>expression idiomatique (aujourd' + hui) à recomposer après découpage</expl>
+  <test id="fre.idiom.1.1" trace=".tokenizer.xml"
+    comment="aujourd' est découpé"
+    left="XPATH#//data_structure/vertex/token[position=14][length=8]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.1.2" trace=".tokenizer.xml"
+    comment="hui est découpé"
+    left="XPATH#//data_structure/vertex/token[position=22][length=3]"
+    operator="exists"
+    right="" />
+  <test id="fre.idiom.1.3" trace=".idiom.xml"
+    comment="aujourd'hui doit être recomposé comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=14][length=11]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.1.4" trace=".idiom.xml"
+    comment="aujourd' doit être supprimé du graphe"
+    left="XPATH#//data_structure/vertex/token[position=14][length=8]"
+    operator="notexists"
+    right=""/>
+  <test id="fre.idiom.1.5" trace=".idiom.xml"
+    comment="hui doit être supprimé du graphe"
+    left="XPATH#//data_structure/vertex/token[position=22][length=3]"
+    operator="notexists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Nous discutions ferme."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>expression idiomatique déclenché sur lemme</expl>
+  <test id="fre.idiom.2.1" trace=".simpleword.xml"
+    comment="discutions est le verbe discuter"
+    left="XPATH#//data_structure/vertex[token[position=6][length=10]]/data//form[@lemma='discuter']/property/p[@prop='MACRO'][@val='L_V']"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.2.2" trace=".idiom.xml"
+    comment="discuter ferme est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=6][length=16]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.3" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il fera l'affaire. "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>expression idiomatique déclenché sur lemme</expl>
+  <test id="fre.idiom.3.1" trace=".simpleword.xml"
+    comment="fera est le verbe faire"
+    left="XPATH#//data_structure/vertex[token[position=4][length=4]]/data//form[@lemma='faire'][property/p[@prop='MACRO'][@val='L_V']]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.3.2" trace=".idiom.xml"
+    comment="faire l'affaire est reconnu comme expression idiomatique, ne possedant qu'une categorie verbe."
+    left="XPATH#//data_structure/vertex[token[position=4][length=14]]/data//property/p[@prop='MACRO']/@val"
+    operator="="
+    right="L_V"/>
+</testcase>
+<testcase id="fre.idiom.4.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'Afrique du Sud a une superficie de 1.233.404 km2."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Afrique du Sud (s majuscule)</expl>
+  <test id="fre.idiom.4.1" trace=".idiom.xml"
+    comment="CONDITION : Afrique du Sud est reconnu comme expression idiomatique."
+    left="XPATH#//data_structure/vertex/token[position=3][length=14]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.4.2" trace=".idiom.xml"
+    comment="Afrique du sud est reconnu comme expression idiomatique, ne possede qu'une categorie np."
+    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='L_NP']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.4.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="L'Afrique du sud a une superficie de 1.233.404 km2."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Afrique du sud (s minuscule)</expl>
+  <test id="fre.idiom.4.3" trace=".idiom.xml"
+    comment="CONDITION : Afrique du sud est reconnu comme expression idiomatique."
+    left="XPATH#//data_structure/vertex/token[position=3][length=14]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.4.4" trace=".idiom.xml"
+    comment="Afrique du sud est reconnu comme expression idiomatique, ne possede qu'une categorie np."
+    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='L_NP']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.5" type="pertinent">
+  <call-parameters>
+      <param key="text" value="L'Afrique du Sud a une superficie de 1.233.404 km2."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Afrique du Sud (S majuscule)</expl>
+  <test id="fre.idiom.5.1" trace=".idiom.xml"
+    comment="CONDITION : Afrique du sud est reconnu comme expression idiomatique."
+    left="XPATH#//data_structure/vertex/token[position=3][length=14]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.5.2" trace=".idiom.xml"
+    comment="Afrique du sud est reconnu comme expression idiomatique et est np"
+    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='L_NP']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.6.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il a beau faire, il n'y arrivera pas."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>avoir beau faire</expl>
+  <test id="fre.idiom.6.1" trace=".simpleword.xml"
+    comment="'a' est le verbe avoir"
+    left="XPATH#//data_structure/vertex[token[position=4][length=1]]/data//form[@lemma='avoir'][property/p[@prop='MACRO'][@val='L_V']]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.6.2" trace=".idiom.xml"
+    comment="avoir beau faire est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=12]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.6.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il a beau faire, il n'y arrivera pas."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>avoir beau faire</expl>
+  <test id="fre.idiom.6.3" trace=".idiom.xml"
+    comment="CONDITION : avoir beau faire est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=12]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.6.4" trace=".idiom.xml"
+    comment="avoir beau faire est reconnu comme expression idiomatique et est v"
+    left="XPATH#//data_structure/vertex[token[position=4][length=12]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.6.c" type="bloquant">
+  <call-parameters>
+      <param key="text" value="avoir beau faire"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>avoir beau faire: avoir à l'infinitif</expl>
+  <test id="fre.idiom.6.5" trace=".idiom.xml"
+    comment="CONDITION : avoir beau faire est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=1][length=16]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.6.6" trace=".idiom.xml"
+    comment="l'expression avoir beau faire est verbe"
+    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.6.7" trace=".idiom.xml"
+    comment="l'expression avoir beau faire est verbe intransitif (avoir est verbe transitif)"
+    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='SYNTAX'][@val='L_INTRANS']"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.6.8" trace=".idiom.xml"
+    comment="l'expression avoir beau faire n'est pas nom (avoir peut l'être)"
+    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='MACRO'][@val='L_NC']"
+    operator="notexists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.7" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le Berger allemand est un chien."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>berger allemand</expl>
+  <test id="fre.idiom.7.1" trace=".idiom.xml"
+    comment="Berger allemand est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=15]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.7.2" trace=".idiom.xml"
+    comment="Berger allemand est reconnu comme expression idiomatique et est nc"
+    left="XPATH#//data_structure/vertex[token[position=4][length=15]]/data//property/p[@prop='MACRO'][@val='L_NC']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.8.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="C'est vraiment pas marrant une chaise électrique."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>déclenchement sur le lemme 'électrique' qui n'est pas la tête de l'expression</expl>
+  <test id="fre.idiom.8.1" trace=".simpleword.xml"
+    comment="électrique est un adjectif"
+    left="XPATH#//data_structure/vertex[token[position=39][length=10]]/data//form[@lemma='électrique'][property/p[@prop='MACRO'][@val='L_ADJ']]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.8.2" trace=".idiom.xml"
+    comment="'chaise électrique' est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=32][length=17]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.8.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="C'est vraiment pas marrant une chaise électrique."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>chaise électrique</expl>
+  <test id="fre.idiom.8.3" trace=".idiom.xml"
+    comment="CONDITION : chaise électrique est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=32][length=17]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.8.4" trace=".idiom.xml"
+    comment="chaise électrique est reconnu comme expression idiomatique et est nc"
+    left="XPATH#//data_structure/vertex[token[position=32][length=17]]/data//property/p[@prop='MACRO'][@val='L_NC']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.9.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il s'absente toute la semaine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>s'absenter</expl>
+  <test id="fre.idiom.9.1" trace=".idiom.xml"
+    comment="s'absenter est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=9]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.9.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il s'absente toute la semaine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>s'absenter</expl>
+  <test id="fre.idiom.9.3" trace=".idiom.xml"
+    comment="CONDITION : s'absenter est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=9]"
+    operator="exists"
+    right=""
+    conditionnal="yes"/>
+  <test id="fre.idiom.9.4" trace=".idiom.xml"
+    comment="s'absenter est reconnu comme expression idiomatique et est v"
+    left="XPATH#//data_structure/vertex[token[position=4][length=9]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.10" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il s'est absenté toute la semaine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>s'absenter. expression disjointe.</expl>
+  <test id="fre.idiom.10.1" trace=".idiom.xml"
+    comment="s'absenter est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=13]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.10.2" trace=".idiom.xml"
+    comment="s'absenter est reconnu comme expression idiomatique et est v"
+    left="XPATH#//data_structure/vertex[token[position=4][length=13]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.11.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au fur et à mesure de leurs voyages."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>au fur et à mesure de</expl>
+  <test id="fre.idiom.11.1" trace=".idiom.xml"
+    comment="au fur et à mesure de est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=64][length=21]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.11.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au fur et à mesure de leurs voyages."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>au fur et à mesure de</expl>
+  <test id="fre.idiom.11.3" trace=".idiom.xml"
+    comment="CONDITION : au fur et à mesure de est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=64][length=21]"
+    operator="exists"
+    right=""
+    conditional="yes"/>
+  <test id="fre.idiom.11.4" trace=".idiom.xml"
+    comment="au fur et à mesure de est reconnu comme expression idiomatique et est prep"
+    left="XPATH#//data_structure/vertex[token[position=64][length=21]]/data//property/p[@prop='MACRO'][@val='L_PREP']"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.12.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cet arbitre est au dessus de tout soupçon."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>au-dessus de</expl>
+  <test id="fre.idiom.12.1" trace=".idiom.xml"
+    comment="au dessus de est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=17][length=12]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.12.b" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Cet arbitre est au dessus de tout soupçon."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>au-dessus de</expl>
+  <test id="fre.idiom.12.3" trace=".idiom.xml"
+    comment="CONDITION : au dessus de est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=17][length=12]"
+    operator="exists"
+    right=""
+    conditional="yes"/>
+  <test id="fre.idiom.12.4" trace=".idiom.xml"
+    comment="au dessus de est prep"
+    left="XPATH#//data_structure/vertex[token[position=17][length=12]]/data//property/p[@prop='MACRO'][@val='L_PREP']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.13.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Les chaises longues sont sous le palmier."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>déclenchement sur le lemme 'longue' en tant qu'adjectif.</expl>
+  <test id="fre.idiom.13.1" trace=".simpleword.xml"
+    comment="déclenchement sur 'long'"
+    left="XPATH#//data_structure/vertex[token[position=13][length=7]]/data//form[@lemma='long'][property/p[@prop='MACRO'][@val='L_ADJ']]"
+    operator="exists"
+    right=""/>
+  <test id="fre.idiom.13.2" trace=".idiom.xml"
+    comment="chaises longues est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=5][length=15]"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="fre.idiom.14" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au fur et à Mesure de leurs voyages."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>au fur et a mesure de (a est sans accent)</expl>
+  <test id="fre.idiom.14.1" trace=".idiom.xml"
+    comment="au fur et à mesure de est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=64][length=21]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.15" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au Fur et à mesure de leurs voyages."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>au Fur et a mesure de (le déclencheur Fur a une majuscule)</expl>
+  <test id="fre.idiom.15.1" trace=".idiom.xml"
+    comment="au fur et à mesure de est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=64][length=21]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.16" type="pertinent">
+  <call-parameters>
+      <param key="text" value="à propos"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>recomposition de mots à tirets du dictionaires</expl>
+  <test id="fre.idiom.16.1" trace=".idiom.xml"
+    comment="à propos est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=1][length=8]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.16.2" trace=".idiom.xml"
+    comment="à propos est normalisé comme dans le dictionnaire"
+    left="XPATH#//data_structure/vertex[token[position=1][length=8]]/data//form/@lemma"
+    operator="="
+    right="à propos"/> 
+</testcase>
+<testcase id="fre.idiom.17" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Etats Unis"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance de Etats Unis</expl>
+  <test id="fre.idiom.17.1" trace=".idiom.xml"
+    comment="états unis est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=1][length=10]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.17.2" trace=".idiom.xml"
+    comment="à propos est normalisé comme dans le dictionnaire"
+    left="XPATH#//data_structure/vertex[token[position=1][length=10]]/data//form/@lemma"
+    operator="="
+    right="U.S.A."/>
+</testcase>
+<testcase id="fre.idiom.18" type="pertinent">
+  <call-parameters>
+      <param key="text" value="tord boyaux"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>recomposition de mots à tirets du dictionaires</expl>
+  <test id="fre.idiom.18.1" trace=".idiom.xml"
+    comment="position et longueur de 'tord-boyaux' sont 1 et 11"
+    left="XPATH#//data_structure/vertex/token[position=1][length=11]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.18.2" trace=".idiom.xml"
+    comment="l'expression idiomatique doit être normalisée avec le tiret"
+    left="XPATH#//data_structure/vertex[token[position=1][length=11]]/data//form/@lemma"
+    operator="="
+    right="tord-boyaux"/> 
+</testcase>
+<testcase id="fre.idiom.19" type="bloquant">
+  <call-parameters>
+      <param key="text" value="chemin de fer"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression du CdC S2</expl>
+  <test id="fre.idiom.19.1" trace=".idiom.xml"
+    comment="chemin de fer est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=1][length=13]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.20" type="bloquant">
+  <call-parameters>
+      <param key="text" value="les chemins de fer"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression du CdC S2</expl>
+  <test id="fre.idiom.20.1" trace=".idiom.xml"
+    comment="chemins de fer est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=5][length=14]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.21" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il est venu grâce à Tom."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression du CdC S2</expl>
+  <test id="fre.idiom.21.1" trace=".idiom.xml"
+    comment="grâce à est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=13][length=7]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.22" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il est arrivé très tôt, si bien qu'il a pu choisir
+> la meilleure place pour admirer Vanessa Paradis"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression du CdC S2</expl>
+  <test id="fre.idiom.22.1" trace=".idiom.xml"
+    comment="si bien que est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=25][length=11]"
+    operator="exists"
+    right=""/>
+</testcase>
+
+<testcase id="fre.idiom.23" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il prends naturellement part à la fête"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe</expl>
+  <test id="fre.idiom.23.1" trace=".idiom.xml"
+    comment="prendre part est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=25]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.23.1" trace=".idiom.xml"
+    comment="prendre part est découpé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=25]/string"
+    operator="="
+    right="prends part"/> 
+</testcase>
+<testcase id="fre.idiom.24" type="bloquant">
+  <call-parameters>
+      <param key="text" value="On mettra tout en oeuvre pour y arriver."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe avec désaccentuation</expl>
+  <test id="fre.idiom.24.1" trace=".idiom.xml"
+    comment="prendre part est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=21]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.24.1" trace=".idiom.xml"
+    comment="prendre part est découpé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=21]/string"
+    operator="="
+    right="mettra en oeuvre"/> 
+</testcase>
+<testcase id="fre.idiom.25" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Il s'en est inspiré."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe : verbe pronominal avec prep et au passif</expl>
+  <test id="fre.idiom.25.1" trace=".idiom.xml"
+    comment="prendre part est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=16]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.25.1" trace=".idiom.xml"
+    comment="prendre part est découpé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=16]/string"
+    operator="="
+    right="s&apos; inspiré"/> 
+</testcase>
+<testcase id="fre.idiom.26" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Il s'emmêle encore les pinceaux."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe</expl>
+  <test id="fre.idiom.26.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=28]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.26.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est découpé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=28]/string"
+    operator="="
+    right="s'emmêle les pinceaux"/> 
+</testcase>
+<testcase id="fre.idiom.27" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Il s'y emmêle encore les pinceaux."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe</expl>
+  <test id="fre.idiom.27.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=30]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.27.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est découpé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=30]/string"
+    operator="="
+    right="s&apos; emmêle les pinceaux"/> 
+</testcase>
+<testcase id="fre.idiom.28" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Il s'est emmêlé les pinceaux."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe</expl>
+  <test id="fre.idiom.28.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=25]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.28.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est découpé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=25]/string"
+    operator="="
+    right="s&apos; emmêlé les pinceaux"/> 
+</testcase>
+<testcase id="fre.idiom.29" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Il s'est encore emmêlé les pinceaux."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance expression non conjointe</expl>
+  <test id="fre.idiom.29.1" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est reconnu comme expression idiomatique"
+    left="XPATH#//data_structure/vertex/token[position=4][length=32]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.29.2" trace=".idiom.xml"
+    comment="s'emmêler les pinceaux est trouvé correctement"
+    left="XPATH#//data_structure/vertex/token[position=4][length=32]/string"
+    operator="="
+    right="s&apos; emmêlé les pinceaux"/> 
+  <test id="fre.idiom.29.3" trace=".idiom.xml"
+    comment="les tokens intermédiaires sont gardés (est)"
+    left="XPATH#//data_structure/vertex/token[position=6][length=3][string='est']"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.29.4" trace=".idiom.xml"
+    comment="les tokens intermédiaires sont gardés (encore)"
+    left="XPATH#//data_structure/vertex/token[position=10][length=6][string='encore']"
+    operator="exists"
+    right=""/> 
+</testcase>
+
+<!-- ajoute des cas pour vérifier la récupération 
+     des propriétés de la tête -->
+<testcase id="fre.idiom.30" type="pertinent">
+  <call-parameters>
+      <param key="text" value="les bases de données"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>récupération des propriétés de la tête (nom)</expl>
+  <test id="fre.idiom.30.1" trace=".idiom.xml"
+    comment="l'expression idiomatique est bien reconnue"
+    left="XPATH#//data_structure/vertex/token[position=5][length=16]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.30.2" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés"
+    left="XPATH#//data_structure/vertex[token[position=5][length=16]]/data//property/p[@prop='NUMBER']/@val"
+    operator="="
+    right="L_PLUR"/> 
+</testcase>
+
+<testcase id="fre.idiom.31" type="pertinent">
+  <call-parameters>
+      <param key="text" value="ils s'étiolaient"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>récupération des propriétés de la tête (verbe)</expl>
+  <test id="fre.idiom.31.1" trace=".idiom.xml"
+    comment="l'expression idiomatique est bien reconnue"
+    left="XPATH#//data_structure/vertex/token[position=5][length=12]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.31.2" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (nombre)"
+    left="XPATH#//data_structure/vertex[token[position=5][length=12]]/data//property/p[@prop='NUMBER']/@val"
+    operator="="
+    right="L_PLUR"/> 
+  <test id="fre.idiom.31.3" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (personne)"
+    left="XPATH#//data_structure/vertex[token[position=5][length=12]]/data//property/p[@prop='PERSON']/@val"
+    operator="="
+    right="L_3"/> 
+  <test id="fre.idiom.31.4" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (temps)"
+    left="XPATH#//data_structure/vertex[token[position=5][length=12]]/data//property/p[@prop='TIME']/@val"
+    operator="="
+    right="L_IMPFT"/> 
+</testcase>
+
+<testcase id="fre.idiom.32" type="pertinent">
+  <call-parameters>
+      <param key="text" value="il faut que nous fassions le point"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>récupération des propriétés de la tête (verbe subjonctif)</expl>
+  <test id="fre.idiom.32.1" trace=".idiom.xml"
+    comment="l'expression idiomatique est bien reconnue"
+    left="XPATH#//data_structure/vertex/token[position=18][length=17]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.32.2" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (nombre)"
+    left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='NUMBER']/@val"
+    operator="="
+    right="L_PLUR"/> 
+  <test id="fre.idiom.32.3" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (personne)"
+    left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='PERSON']/@val"
+    operator="="
+    right="L_1"/> 
+  <test id="fre.idiom.32.4" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (temps)"
+    left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='TIME']/@val"
+    operator="="
+    right="L_PRES"/> 
+  <test id="fre.idiom.32.5" trace=".idiom.xml"
+    comment="le token résultant a les bonnes propriétés (mode: change la micro)"
+    left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='MICRO']/@val"
+    operator="="
+    right="L_VERBE_PRINCIPAL_SUBJONCTIF"/> 
+</testcase>
+
+<testcase id="fre.idiom.33" type="pertinent">
+  <call-parameters>
+      <param key="text" value="je t'arrête. tu t'arrêtes"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>vérification de l'accord du pronom réflexif</expl>
+  <test id="fre.idiom.33.1" trace=".idiom.xml"
+    comment="tu t'arrêtes est une flexion de l'expression s'arrêter"
+    left="XPATH#//data_structure/vertex/token[position=17][length=9]"
+    operator="exists"
+    right=""/> 
+  <test id="fre.idiom.33.2" trace=".idiom.xml"
+    comment="je t'arrête N'est PAS une flexion de l'expression s'arrêter"
+    left="XPATH#//data_structure/vertex/token[position=4][length=8]"
+    operator="notexists"
+    right=""/> 
+</testcase>
+
+<testcase id="fre.idiom.34" type="bloquant">
+  <call-parameters>
+      <param key="text" value="le maître d'œuvre est kurde."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance d'expression idiom avec e dans o</expl>
+  <test id="fre.idiom.34.1" trace=".idiom.xml"
+    comment="l'expression idiomatique est bien reconnue"
+    left="XPATH#//data_structure/vertex/token[position=4][length=14]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.35" type="bloquant">
+  <call-parameters>
+      <param key="text" value="le maître d'oeuvre est kurde."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance d'expression idiom avec oe</expl>
+  <test id="fre.idiom.35.1" trace=".idiom.xml"
+    comment="l'expression idiomatique est bien reconnue"
+    left="XPATH#//data_structure/vertex/token[position=4][length=15]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.36" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Il a tout mis en œuvre pour y parvenir."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>reconnaissance d'expression idiom avec oe</expl>
+  <test id="fre.idiom.36.1" trace=".idiom.xml"
+    comment="l'expression idiomatique est bien reconnue"
+    left="XPATH#//data_structure/vertex/token[position=11][length=12]"
+    operator="exists"
+    right=""/> 
+</testcase>
+<testcase id="fre.idiom.37" type="bloquant">
+  <call-parameters>
+    <param key="text" value="Il a tout mis en oeuvre pour y parvenir."/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <expl>reconnaissance d'expression idiom avec oe</expl>
+  <test id="fre.idiom.37.1" trace=".idiom.xml"
+        comment="l'expression idiomatique est bien reconnue"
+        left="XPATH#//data_structure/vertex/token[position=11][length=13]"
+        operator="exists"
+        right=""/> 
+</testcase>
+<testcase id="fre.idiom.38" type="bloquant">
+  <call-parameters>
+    <param key="text" value="La loi fait de plus en plus place à l'arbitraire."/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+      <item value="query"/>
+    </list>
+  </call-parameters>
+  <expl>reconnaissance d'expression idiom entrelacées</expl>
+  <test id="fre.idiom.38.1" trace=".idiom.xml"
+        comment="l'expression idiomatique 'fait place' est bien reconnue"
+        left="XPATH#//data_structure/vertex/token[string='fait place'][position=8][length=26]"
+        operator="exists"
+        right=""/> 
+  <test id="fre.idiom.38.2" trace=".idiom.xml"
+        comment="l'expression idiomatique 'de plus en plus' est bien reconnue"
+        left="XPATH#//data_structure/vertex/token[string='de plus en plus'][position=13][length=15]"
+        operator="exists"
+        right=""/> 
+</testcase>
+</testcases>

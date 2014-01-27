@@ -1,0 +1,48 @@
+set encoding=utf8
+using modex Numex-modex.xml
+using groups Numex
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of numbers
+#----------------------------------------------------------------------
+# one is indeed numex
+# one:::NOT_NUMEX:
+
+use ../DateTime/months.lst
+
+I:::NOT_NUMEX:
+# integer followed by a month is not numex
+t_integer::@month:NOT_NUMEX:
+
+# 401(k) and 403(b) are special US account names
+401::\( k \):NOT_NUMEX:
+403::\( b \):NOT_NUMEX:
+
+@Number=($NOMBRE)
+
+#@Number::((and @Number)|@Number|billion){0-n}:NUMBER:=>NormalizeNumber()
+
+# Numeric forms : integer, comma number of dot number
+
+@Number::(@Number|million|billion){0-n}:NUMBER:=>NormalizeNumber()
+
+t_integer::(@Number|million|billion){0-n}:NUMBER:=>NormalizeNumber()
+
+t_dot_number::(@Number|million|billion){0-n}:NUMBER:=>NormalizeNumber()
+
+t_comma_number::(, t_integer<999){0-2} (@Number){0-n}:NUMBER:=>NormalizeNumber()
+
+# signs +- only before % (otherwise, generate noise -> 21-4-2)
+
+t_integer:(\+|-)?:(\%|percent|per cent):NUMBER:=>NormalizeNumber()
+
+t_dot_number:(\+|-)?:(\%|percent|per cent):NUMBER:=>NormalizeNumber()
+
+t_comma_number:(\+|-)?:(\%|percent|per cent):NUMBER:=>NormalizeNumber()
+
+# 1 1/2 tablespoon
+t_integer::t_fraction:NUMBER:=>NormalizeNumber()
+
+
+t_comma_number::(, T_Ni<999){0-2} @Number?:NUMBER:=>NormalizeNumber()

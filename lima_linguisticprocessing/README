@@ -1,0 +1,25 @@
+commonmisc (FsaStringsPool)
+commondata 
+FsaAccess
+mediaticdata (MediaticData)
+mmcommontime
+xmlConfigurationFiles
+processunitframework (AnalysisContent AnalysisData)
+mediaprocessors (MediaProcessUnitPipeline DumperStream)
+linguisticProcessors (LinguisticMetaData)
+linguisticResources (LinguisticResources)
+bagofwords
+
+commonmisc commondata FsaAccess mediaticdata mmcommontime xmlConfigurationFiles processunitframework mediaprocessors linguisticProcessors linguisticResources common-annotationGraph bagofwords 
+
+${XERCESC_LIBRARY}
+
+compounds
+lp-core-analysisDict 
+lp-core-linguisticAnalysisStructure
+flattokenizer
+applyRecognizer
+syntacticAnalysis
+automaton
+lp-segm
+posTagger

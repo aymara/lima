@@ -1,0 +1,29 @@
+Ce répertoire contient des fichiers d'exemples pour l'ajout
+d'expressions idiomatiques utilisateur, à différents formats. Les
+trois fichiers suivants contiennent chacun les mêmes trois expressions
+idiomatiques, qui ne sont pas déjà dans la liste des expressions
+idiomatiques fournies par ailleurs:
+
+idiom-example-1.txt contient des expressions idiomatiques au format 
+des règles de reconnaissance d'entités.
+ 
+idiom-example-2.txt contient des expressions idiomatiques au format 
+simplifié, avec des catégories explicite en texte (ce fichier
+nécessite la table de conversion categories_convert).
+
+idiom-example-3.txt contient des expressions idiomatiques au format 
+simplifié, avec des catégories symboliques.
+
+
+idiom-example-fre-test.xml contient des tests TVA permettant de
+valider la compilation de ces fichiers d'exemples. Les trois premiers
+tests doivent passer avec les trois fichiers d'expressions. Le
+quatrième ne passe qu'avec idiom-example-1.txt (le format de règle est
+plus riche et permet d'écrire des règles plus complexes poru avoir une
+meilleure couverture de la règle).
+
+le script test-example.sh lance le test tva, avec une configuration
+contrôlée, sur les fichiers d'exemple. Ce script prend en argument le
+ou les numéro(s) d'exemple (1, 2 ou 3). La compilation des fichiers de
+règles doit déjà avoir eu lieu avant de lancer ce script (avec
+compile-user-idiom.sh)

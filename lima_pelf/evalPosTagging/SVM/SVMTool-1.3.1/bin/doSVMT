@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+# Author      : Jesus Gimenez
+# Date        : August 7, 2006
+# Description : SVMTool embeddes usage - example.
+#
+# Usage: doSVMT
+#
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+
+#Copyright (C) 2004-2006 Jesus Gimenez and Lluis Marquez
+
+#This library is free software; you can redistribute it and/or
+#modify it under the terms of the GNU Lesser General Public
+#License as published by the Free Software Foundation; either
+#version 2.1 of the License, or (at your option) any later version.
+
+#This library is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#Lesser General Public License for more details.
+
+#You should have received a copy of the GNU Lesser General Public
+#License along with this library; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# ------------------------------------------------------------------------
+
+
+use strict;
+use SVMTool::SVMTAGGER;
+
+print STDERR "----------------------------------------------------------------------------------------\n$COMMON::appname v$COMMON::appversion\n(C) $COMMON::appyear TALP RESEARCH CENTER.\nWritten by Jesus Gimenez and Lluis Marquez.\n----------------------------------------------------------------------------------------\n";
+
+my $jgim = "/home/jgimenez";
+my $svmtpath = "$jgim/research/SVMT/EXP/ENG/S/912k/WSJTP.912k";
+
+my $strategy = 0;
+my $nbeams = -1;
+my $bratio = 0;
+my $softmax = 0;
+my $direction = "LR";
+my $blexicon = "";
+my $verbose = 2;
+
+my @tokens = ('The B-NP', 'SVMTool I-NP', 'allows B-VP', 'free B-NP', 'embedded I-NP', 'usage I-NP', 'to B-PP', 'anyone B-NP', '. O');
+
+# =============== LOAD MODELS [do this only once] ================================================
+
+#SVMT models are loaded
+#params --> [model path, strategy, direction, Kfilter, Ufilter, backup_lexicon, verbosity]
+my $SVMT = SVMTAGGER::SVMT_load("$svmtpath", $strategy, $direction, 0, 0, $blexicon, $verbose);
+
+# =============== TAG INPUT ======================================================================
+
+#input (given as a reference to a list of tokens) is prepared
+my $in = SVMTAGGER::SVMT_prepare_input(\@tokens);
+
+#prepared input is tagged
+my ($res, $time) = SVMTAGGER::SVMT_tag($strategy, $nbeams, $bratio, $softmax, $direction, $in, $SVMT, $verbose);
+
+# =============== COLLECT RESULTS ================================================================
+
+my $i = 0;
+while ($i < scalar(@{$in})) {
+    my $word =  $in->[$i]->get_word;
+    my $pos = $res->[$i]->get_pos;
+    print "$word $pos\n";
+    $i++;
+}
+
+

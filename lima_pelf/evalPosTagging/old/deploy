@@ -1,0 +1,6 @@
+cp result.micro $1
+cp result.macro $1
+cp result.macropleine $1
+cp analysis.micro $1
+cp analysis.macro $1
+cp analysis.macropleine $1

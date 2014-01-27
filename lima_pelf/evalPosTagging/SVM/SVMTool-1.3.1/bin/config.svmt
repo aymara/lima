@@ -1,0 +1,69 @@
+# -------------------------------------------------------------
+# SVMT configuration file
+# -------------- location of the training set -----------------
+TRAINSET = /home/users/dummy/corpora/wsj/wsj.TRAIN
+# -------------- location of the validation set ---------------
+VALSET = /home/users/dummy/corpora/wsj/wsj.VAL
+# -------------- location of the test set ---------------------
+TESTSET = /home/users/dummy/corpora/wsj/wsj.TEST
+# -------------- location of the Joachims svmlight software ---
+SVMDIR = /home/users/dummy/SVMT/soft/
+# -------------- name of the model to create ------------------
+NAME = wsj
+# --------------- dictionary repairing list -------------------
+R = /home/users/dummy/corpora/wsj/wsj.repair.list
+# --------------- window definition (lenght, core_position) ---
+W = 5 2
+# --------------- feature filtering (count_cut_off, max_mapping_size)
+F = 2 100000
+# --------------- default C Parameter values ------------------
+CK = 0.1086
+CU = 0.07975
+# --------------- % of unknown words expected  (3 by default) -
+X = 3
+# --------------- weight filtering for known words ------------
+Kfilter = 0
+# --------------- weight filtering for unknown words ----------
+Ufilter = 0
+# --------------- remove intermediate files -------------------
+REMOVE_FILES = 1
+# --------------- remake cross-validation folders -------------
+REMAKE_FOLDERS = 1
+# --------------- action items --------------------------------
+# *** train model 0, LR and RL, C Parameter Tuning, cross-validation 10 folders
+do M0 LRL CK:0.01:1:3:10:log CU:0.01:1:3:10:log T:10
+# *** train model 1, RL, C Parameter Tuning, no cross-validation, test
+do M1 RL CK:0.01:1:3:10:log CU:0.01:1:3:10:log T
+# *** train model 2, LR and RL, no C Parameter Tuning, no cross-validation, test
+do M2 LRL CK:0.1 CU:0.08 T
+# *** M3 is currently unavailable
+# *** train model 4, LR, C Parameter Tuning, no cross-validation, no test
+do M4 LR CK:0.1 CU:0.01
+# -----------------------------------------------------------------------------------
+#list of classes (automatically determined by default)
+# -----------------------------------------------------------------------------------
+#list of parts-of-speech presenting ambiguity
+#AP = '' CC CD DT EX FW IN JJ JJR JJS LS MD NN NNS NNP NNPS PDT POS PRP PRP$ RB RBR RBS RP SYM UH VB VBD VBG VBN VBP VBZ WDT WP WRB
+#list of open-classes
+#UP = FW JJ JJR JJS NN NNS NNP NNPS RB RBR RBS VB VBD VBG VBN VBP VBZ
+# -----------------------------------------------------------------------------------
+#ambiguous-right [default]
+A0k = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) C(1;-1,1) C(1;1,2) C(1;-2,-1,1) C(1;-1,1,2) k(0) k(1) k(2) m(0) m(1) m(2)
+A0u = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) C(1;-1,1) C(1;1,2) C(1;-2,-1,1) C(1;-1,1,2) k(0) k(1) k(2) m(0) m(1) m(2) a(2) a(3) a(4) z(2) z(3) z(4) ca(1) cz(1) L SA AA SN CA CAA CP CC CN MW
+# -----------------------------------------------------------------------------------
+#unambiguous-right
+A1k = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;1) C(1;2) C(1;-2,-1) C(1;-1,0) C(1;-1,1) C(1;0,1) C(1;1,2) C(1;-2,-1,0) C(1;-2,-1,1) C(1;-1,0,1) C(1;-1,1,2) k(0) k(1) k(2) m(0) m(1) m(2)
+A1u = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;1) C(1;2) C(1;-2,-1) C(1;-1,0) C(1;-1,1) C(1;0,1) C(1;1,2) C(1;-2,-1,0) C(1;-2,-1,1) C(1;-1,0,1) C(1;-1,1,2) k(0) k(1) k(2) m(0) m(1) m(2) a(1) a(2) a(3) a(4) z(1) z(2) z(3) z(4) L SA AA SN CA CAA CP CC CN MW
+# -----------------------------------------------------------------------------------
+#no-right
+A2k = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) k(0) m(0)
+A2u = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) k(0) m(0) a(1) a(2) a(3) a(4) z(1) z(2) z(3) z(4) L SA AA SN CA CAA CP CC CN MW
+# -----------------------------------------------------------------------------------
+#unsupervised-learning
+A3k = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) C(1;-1,1) C(1;1,2) C(1;-2,-1,1) C(1;-1,1,2) k(-2) k(-1) k(1) k(2) m(-2) m(-1) m(1) m(2)
+A3u = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) C(1;-1,1) C(1;1,2) C(1;-2,-1,1) C(1;-1,1,2) k(-2) k(-1) k(1) k(2) m(-2) m(-1) m(1) m(2) a(1) a(2) a(3) a(4) z(1) z(2) z(3) z(4) L SA AA SN CA CAA CP CC CN MW
+# -----------------------------------------------------------------------------------
+#ambiguous-right ++ unknown words on training
+A4k = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) C(1;-1,1) C(1;1,2) C(1;-2,-1,1) C(1;-1,1,2) k(0) k(1) k(2) m(0) m(1) m(2)
+A4u = C(0;-2) C(0;-1) C(0;0) C(0;1) C(0;2) C(0;-2,-1) C(0;-1,0) C(0;0,1) C(0;-1,1) C(0;1,2) C(0;-2,-1,0) C(0;-2,-1,1) C(0;-1,0,1) C(0;-1,1,2) C(0;0,1,2) C(1;-2) C(1;-1) C(1;-2,-1) C(1;-1,1) C(1;1,2) C(1;-2,-1,1) C(1;-1,1,2) k(0) k(1) k(2) m(0) m(1) m(2) a(1) a(2) a(3) a(4) z(1) z(2) z(3) z(4) L SA AA SN CA CAA CP CC CN MW
+# -----------------------------------------------------------------------------------

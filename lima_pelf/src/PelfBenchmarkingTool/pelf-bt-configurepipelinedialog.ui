@@ -1,0 +1,206 @@
+<!--
+Copyright 2002-2013 CEA LIST
+
+This file is part of LIMA.
+
+LIMA is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+LIMA is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+  along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+  -->
+    <ui version="4.0" >
+ <class>PipelineConfigureDialog</class>
+ <widget class="QDialog" name="PipelineConfigureDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>235</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Configure pipeline</string>
+  </property>
+  <property name="modal" >
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QLabel" name="label_5" >
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>65</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>In commands, please include text and reference file parameters as they should appear, using $TEXT_PATH for path to text file and $REFERENCE_PATH for path to reference path.</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout" >
+     <property name="fieldGrowthPolicy" >
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Working directory</string>
+       </property>
+       <property name="buddy" >
+        <cstring>workingDirPathInp</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+       <item>
+        <widget class="QLineEdit" name="workingDirPathInp" />
+       </item>
+       <item>
+        <widget class="QPushButton" name="workingDirBrowseBtn" >
+         <property name="text" >
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Analyzer command</string>
+       </property>
+       <property name="buddy" >
+        <cstring>analyzerCmdPathInp</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <layout class="QHBoxLayout" name="horizontalLayout_3" >
+       <item>
+        <widget class="QLineEdit" name="analyzerCmdPathInp" />
+       </item>
+       <item>
+        <widget class="QPushButton" name="analyzerCmdBrowseBtn" >
+         <property name="text" >
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label_4" >
+       <property name="text" >
+        <string>Evaluator command</string>
+       </property>
+       <property name="buddy" >
+        <cstring>evaluatorCmdPathInp</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <layout class="QHBoxLayout" name="horizontalLayout_5" >
+       <item>
+        <widget class="QLineEdit" name="evaluatorCmdPathInp" />
+       </item>
+       <item>
+        <widget class="QPushButton" name="evaluatorCmdBrowseBtn" >
+         <property name="text" >
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>Concurrent processes</string>
+       </property>
+       <property name="buddy" >
+        <cstring>concurrentProcesses</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="QSpinBox" name="concurrentProcesses" >
+       <property name="minimum" >
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>workingDirPathInp</tabstop>
+  <tabstop>workingDirBrowseBtn</tabstop>
+  <tabstop>analyzerCmdPathInp</tabstop>
+  <tabstop>analyzerCmdBrowseBtn</tabstop>
+  <tabstop>evaluatorCmdPathInp</tabstop>
+  <tabstop>evaluatorCmdBrowseBtn</tabstop>
+  <tabstop>concurrentProcesses</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PipelineConfigureDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PipelineConfigureDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

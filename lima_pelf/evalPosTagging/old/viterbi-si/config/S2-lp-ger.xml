@@ -1,0 +1,342 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="Processors">
+<!-- ******************************************
+  Definition of pipelines
+*********************************************** -->    
+    <group name="main" class="ProcessUnitPipeline" >
+      <list key="processUnitSequence">
+        <item value="beginStatusLogger"/>
+        <item value="tokenizer"/>
+        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <item value="simpleWord"/>
+        <!--item value="fullTokenXmlLoggerSimpleWord"/-->
+        <item value="orthographicAlternatives"/>
+        <!--item value="fullTokenXmlLoggerOrthographic"/-->
+        <item value="hyphenWordAlternatives"/>
+        <!--item value="fullTokenXmlLoggerHyphen"/-->
+        <item value="desagglutinator"/>
+        <!--item value="fullTokenXmlLoggerAgglutinated"/-->
+        <item value="defaultProperties"/>
+        <!--item value="simpleDefaultProperties"/-->
+        <!--item value="mincostPostagger"/-->
+        <item value="viterbiPostagger-freq"/>
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="dotGraphWriter"/-->
+        <item value="agglutinatedWordExpander"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <!--item value="debugSyntacticAnalysisLogger-chains"/-->
+        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <item value="syntacticAnalyzerDisamb"/>
+        <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
+        <!--item value="dotGraphWriterAfterSA"/-->
+        <item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="query" class="ProcessUnitPipeline" >
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="desagglutinator"/>
+        <item value="defaultProperties"/>
+        <item value="viterbiPostagger-int"/>
+        <item value="agglutinatedWordExpander"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="indexer" class="ProcessUnitPipeline" >
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="desagglutinator"/>
+        <item value="defaultProperties"/>
+        <item value="viterbiPostagger-freq"/>
+        <item value="agglutinatedWordExpander"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="normalization" class="ProcessUnitPipeline" >
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="fullTokenXmlLoggerOrthographic"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="desagglutinator"/>
+        <item value="defaultProperties"/>
+        <item value="viterbiPostagger-int"/>
+        <item value="agglutinatedWordExpander"/>
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+<!-- ******************************************
+  Definition of process units
+*********************************************** -->    
+    <group name="tokenizer" class="Tokenizer">
+      <param key="automatonFile" value="LinguisticProcessings/ger/tokenizerAutomaton-ger.xml"/>
+      <param key="charChart" value="charchart"/>
+    </group>
+    <group name="simpleWord" class="SimpleWord">
+        <param key="dictionary" value="mainDictionary"/>
+    </group>
+    <group name="orthographicAlternatives" class="OrthographicAlternatives">
+        <param key="dictionary" value="mainDictionary"/>
+        <param key="charChart" value="charchart"/>
+        <param key="confidentMode" value="true"/>
+    </group>
+    <group name="hyphenWordAlternatives" class="HyphenWordAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="charChart" value="charchart"/>
+      <param key="tokenizer" value="tokenizer"/>
+    </group>
+    <group name="defaultProperties" class="DefaultProperties">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="charChart" value="charchart"/>
+    </group>
+    <group name="desagglutinator" class="Desagglutinator">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="desagglutinationResources" value="desagglutinationResources"/>
+    </group>
+    <group name="agglutinatedWordExpander" class="AgglutinatedWordExpander">
+      <param key="desagglutinationResources" value="desagglutinationResources"/>
+    </group>
+    <group name="mincostPostagger" class="MinCostPosTagger">
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <param key="costFunction" value="FrequencyCost"/>
+      <param key="trigramThreshold" value="0.1" />
+      <param key="goodTrigramCost" value="0" />
+      <param key="badTrigramCost" value="1" />
+      <param key="bigramCost" value="4" />
+      <param key="unigramCost" value="10" />
+      <param key="defaultCategory" value="L_GE_PONCTUATION_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_GE_PONCTUATION_FORTE" />
+      </list>
+    </group>
+    <group name="viterbiPostagger-freq" class="MinCostPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-ger.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-ger.dat"/>
+      <param key="costFunction" value="ViterbiFrequencyCost"/>
+      <param key="defaultCategory" value="L_GE_PONCTUATION_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_GE_PONCTUATION_FORTE" />
+      </list>
+    </group>
+    <group name="viterbiPostagger-int" class="MinCostPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-ger.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-ger.dat"/>
+      <param key="costFunction" value="ViterbiIntegerCost"/>
+      <param key="defaultCategory" value="L_GE_PONCTUATION_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_GE_PONCTUATION_FORTE" />
+      </list>
+    </group>
+    <group name="sentenceBoundsFinder" class="SentenceBoundsFinder">
+    </group>
+    <group name="specificEntitiesRecognizer" class="SpecificEntitiesRecognizer">
+      <param key="automaton" value="specificEntitiesAutomaton"/>
+    </group>
+    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+      <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
+    </group>
+    <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
+    </group>
+    <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+          <item value="setl2r"/>
+          <item value="l2rHomoSyntagmaticRelationRules"/>
+          <item value="setr2l"/>
+          <item value="r2lHomoSyntagmaticRelationRules"/>
+      </list>
+      <param key="disambiguated" value="true"/>
+    </group>
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+    </group>
+<!-- ******************************************
+  Definition of loggers
+*********************************************** -->    
+    <group name="beginStatusLogger" class="StatusLogger">
+      <param key="outputFile" value="beginStatus.log"/>
+      <list key="toLog">
+        <item value="VmSize"/>
+        <item value="VmData"/>
+      </list>
+    </group>
+    <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".tokenizer.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerSimpleWord" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".simpleword.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerOrthographic" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".ortho.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerHyphen" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".hyphen.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerIdiomatic" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".idiom.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerAgglutinated" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".agglutinated.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerDefaultProperties" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".default.xml"/>
+    </group>
+    <group name="disambiguatedGraphXmlLogger" class="DisambiguatedGraphXmlLogger">
+      <param key="outputSuffix" value=".disambiguated.xml"/>
+      <param key="dictionaryCode" value="dictionaryCode"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-chains" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.chains.txt"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-disamb" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.disamb.txt"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-deps" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.deps.txt"/>
+    </group>
+    <group name="dotGraphWriter" class="DotGraphWriter">
+      <param key="outputSuffix" value=".dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list key="vertexDisplay">
+        <item value="inflectedform"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+        <item value="numbers"/-->
+      </list>
+    </group>
+    <group name="dotGraphWriterAfterSA" class="DotGraphWriter">
+      <param key="outputSuffix" value=".sa.dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list key="vertexDisplay">
+        <item value="lemme"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+        <item value="numbers"/-->
+      </list>
+    </group>
+  </module>
+<!-- ******************************************
+  Definition of dumpers
+*********************************************** -->    
+  <module name="AnalysisDumpers">
+    <group name="bowDumper" class="BowDumper">
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="TIMEX" value="L_NC"/>
+        <entry key="NUMEX" value="L_NC"/>
+        <entry key="ORGANIZATION" value="L_NP"/>
+        <entry key="LOCATION" value="L_NP"/>
+        <entry key="PERSON" value="L_NP"/>
+        <entry key="PRODUCT" value="L_NP"/>
+        <entry key="EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+    </group>
+    <group name="compactFullDumper" class="CompactFullDumper">
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="TIMEX" value="L_NC"/>
+        <entry key="NUMEX" value="L_NC"/>
+        <entry key="ORGANIZATION" value="L_NP"/>
+        <entry key="LOCATION" value="L_NP"/>
+        <entry key="PERSON" value="L_NP"/>
+        <entry key="PRODUCT" value="L_NP"/>
+        <entry key="EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+    </group>
+    <group name="fullXmlDumper" class="FullXmlDumper">
+    </group>
+    <group name="textDumper" class="TextDumper">
+    </group>
+  </module>
+<!-- ******************************************
+  Definition of resources
+*********************************************** -->    
+  <module name="Resources">
+    <group name="charchart" class="CharChart">
+      <param key="charFile" value="LinguisticProcessings/ger/tokenizerAutomaton-ger.xml"/>
+    </group>
+    <group name="mainDictionary" class="ComposedDict">
+      <param key="dictionaryCode" value="dictionaryCode"/>
+      <param key="nbBytes" value="2"/>
+      <list key="dictionaryKeys">
+        <item value="LinguisticProcessings/ger/dicoKey-ger.dat"/>
+      </list>	
+      <list key="dictionaryValues">
+        <item value="LinguisticProcessings/ger/dicoDat-ger.dat"/>
+      </list>
+    </group>
+    <group name="dictionaryCode" class="DictionaryCode">
+      <param key="codeFile" value="LinguisticProcessings/ger/code-ger.dat"/>
+      <param key="codeListFile" value="LinguisticProcessings/ger/codesList-ger.dat"/>
+    </group>
+    <group name="desagglutinationResources" class="DesagglutinationResources">
+      <param key="categoriesMappingFile" value="LinguisticProcessings/ger/desagglutination_microcategories.dat"/>
+      <param key="delimiterFile" value="LinguisticProcessings/ger/desagglutination_delimiters.dat"/>
+    </group>
+    <group name="trigramMatrix" class="TrigramMatrix">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-ger.dat"/>
+    </group>
+    <group name="bigramMatrix" class="BigramMatrix">
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-ger.dat"/>
+    </group>
+    <group name="stopList" class="StopList">
+      <param key="file" value="LinguisticProcessings/StopLists/stopList-ger.dat"/>
+    </group>
+    <group name="frequencyDictionary" class="CompactDict16">
+      <param key="dictionaryKey" value="Reformulation/frequency-dico-ger-keys.dat"/>
+      <param key="dictionaryValues" value="Reformulation/frequency-dico-ger-val.dat"/>
+    </group>
+    <group name="specificEntitiesAutomaton" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/specificEntitiesRules-ger.bin"/>
+    </group>
+    <group name="chainMatrix" class="SyntagmDefinitionStructure">
+      <param key="file" value="SyntacticAnalysis/chainsMatrix-ger.bin"/>
+    </group>
+    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/l2rHomoSyntagamaticRelationsRules-ger.bin"/>
+    </group>
+    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/r2lHomoSyntagamaticRelationsRules-ger.bin"/>
+    </group>
+    <group name="automatonCompiler" class="AutomatonRecognizer">
+      <param key="rules" value=""/>
+    </group>
+  </module>
+</modulesConfig>

@@ -1,0 +1,3 @@
+;;A;champignon;[V]&appuyer sur le champignon;verbe intransitif;appuyer sur le champignon
+;;A;pommes;[V]&tomber dans les pommes;verbe intransitif;tomber dans les pommes
+;;A;[V]&creuser;se (pp) [V]&creuser la tête;verbe pronominal;se creuser la tête

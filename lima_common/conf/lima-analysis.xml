@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <!-- Configuration du client coeur -->
+  <module name="lima-coreclient">
+    <!-- Liste des types de media pouvant etre analysés -->
+    <!-- (commenter les media non disponibles) -->
+    <!-- Chaque media a lui-même un fichier de configuration -->
+    <group name="mediaProcessingDefinitionFiles">
+      <list name="available">
+        <item value="eng" />
+        <item value="fre" />
+      </list>
+      <param key="eng" value="lima-lp-eng.xml" />
+      <param key="fre" value="lima-lp-fre.xml" />
+    </group>
+    <group name="pipelines">
+      <!-- chaque map represente 1 pipeline "general", qui est decline selon les media. -->
+      <!-- chaque media doit definir le pipeline correspondant (i.e avec le nom qui est indiqué ici) dans son fichier de configuration -->
+      <!-- l'attribut 'name' de la map est l'identifiant du pipeline. C'est cet identifiant qu'il faut
+           donner au client d'analyse pour utiliser ce pipeline -->
+
+      <!-- The main pipeline is a pipeline used for experimentations. For a stabilized process,
+      please use one of the others below -->
+      <map name="main">
+        <entry key="eng" value="main"/>
+        <entry key="fre" value="main"/>
+      </map>
+      <!-- The indexer pipeline is used in order to add media content into the dedicated indexes.
+      The text ones use a bowDumperXml to handle XML input. -->
+      <map name="indexer">
+        <entry key="eng" value="indexer"/>
+        <entry key="fre" value="indexer"/>
+      </map>
+      <!-- The query pipeline is used in order to analyze search engine multimedia queries. -->
+          <map name="query">
+        <entry key="eng" value="query"/>
+        <entry key="fre" value="query"/>
+      </map>
+      <!-- The normalization pipeline is used in order to obtain a normalized representation of the inpu medias. -->
+      <map name="normalization">
+        <entry key="eng" value="normalization"/>
+        <entry key="fre" value="normalization"/>
+      </map>
+      <!-- The easy pipeline is used in order to produce a result in the Easy campaign format. -->
+      <map name="easy">
+        <entry key="eng" value="easy"/>
+        <entry key="fre" value="easy"/>
+      </map>
+      <!-- The none pipeline is an empty one allowing to not do anything. For tests mainly. -->
+      <map name="none">
+        <entry key="eng" value="none"/>
+        <entry key="fre" value="none"/>
+      </map>
+    </group>
+    <group name="analysisDumpers">
+      <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->
+      <!-- chaque langue doit definir le dumper correspondant dans son fichier de configuration -->
+      <!-- l'attribut 'name' de la map est l'identifiant du dumper. C'est cet identifiant qu'il faut
+           donner au client pour utiliser ce dumper -->
+      <map name="bowDumper">
+        <entry key="eng" value="bowDumper"/>
+        <entry key="fre" value="bowDumper"/>
+      </map>
+    </group>
+  </module>
+  <!-- entity types used internally in linguistic analysis -->
+  <module name="entities">
+    <group name="LinguisticProcessing">
+      <list name="entityList">
+        <item value="IDIOM"/>
+        <item value="SYNTACTIC_RELATION"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig> 

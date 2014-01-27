@@ -1,0 +1,6 @@
+./runAllPosTagger
+./convertAllToMacros
+./runAllEvaluation log > result.micro
+./runAllEvaluation macro > result.macro
+./analyzeResult.pl result.micro > analysis.micro
+./analyzeResult.pl result.macro > analysis.macro

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="module1">
+    <group name="group1">
+      <map name="map1">
+        <entry key="k1" value="v1"/>
+        <entry key="k2" value="v2"/>
+      </map>
+      <param key="p1" value="v1"/>
+    </group>
+    <group name="group2">
+      <list name="list1">
+        <item value="v1" />
+        <item value="v2" />
+      </list>
+      <param key="p1" value="v1"/>
+      <param key="p2" value="v2"/>
+    </group>
+  </module>
+</modulesConfig>

@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="LinguisticData">
+    <group name="Categories">
+        <param key = "MacroCodesList" value = "LinguisticProcessings/ger/macroCodesList-ger.dat" />
+        <param key = "MicroCodesList" value = "LinguisticProcessings/ger/codesList-ger.dat" />
+        <list name="sentenceBreakMicros">
+          <item value="L_GE_PONCTUATION_FORTE"/>
+        </list>
+        <list name="emptyMacro">
+          <item value="L_NONE_1"/>
+          <item value="L_CONJ" />
+          <item value="L_DET" />
+          <item value="L_DIVERS_PARTICULE" />
+          <item value="L_INTERJ" />
+          <item value="L_PONCTU" />
+          <item value="L_PREP" />
+          <item value="L_PRON" />
+        </list>
+        <list name="emptyMicro">
+          <item value="L_GE_DETERMINANT_AVANT_GN_NOMINATIF" />
+          <item value="L_GE_DETERMINANT_AVANT_GN_GENITIF" />
+          <item value="L_GE_DETERMINANT_AVANT_GN_DATIF" />
+          <item value="L_GE_DETERMINANT_AVANT_GN_ACCUSATIF" />
+          <item value="L_GE_DETERMINANT_INTRO_SUB_NOMINATIF" />
+          <item value="L_GE_DETERMINANT_INTRO_SUB_GENITIF" />
+          <item value="L_GE_DETERMINANT_INTRO_SUB_DATIF" />
+          <item value="L_GE_DETERMINANT_INTRO_SUB_ACCUSATIF" />
+          <item value="L_GE_PRONOM_ADVERBIAL" />
+          <item value="L_GE_PRONOM_DEPENDANT_NOMINATIF" />
+          <item value="L_GE_PRONOM_DEPENDANT_GENITIF" />
+          <item value="L_GE_PRONOM_DEPENDANT_DATIF" />
+          <item value="L_GE_PRONOM_DEPENDANT_ACCUSATIF" />
+          <item value="L_GE_PRONOM_PLUS_PREPOSITION" />
+          <item value="L_GE_PRONOM_REFLECHI/RECIPROQUE_DATIF" />
+          <item value="L_GE_PRONOM_REFLECHI/RECIPROQUE_ACCUSATIF" />
+          <item value="L_GE_PRONOM_IMPERSONNEL_NOMINATIF" />
+          <item value="L_GE_PRONOM_IMPERSONNEL_SUJET_ZERO_NOMINATIF" />
+          <item value="L_GE_PRONOM_PERSONNEL/DEMONSTRATIF/POSSESSIF/INDEFINI/NEGATIF_NOMINATIF" />
+          <item value="L_GE_PRONOM_PERSONNEL/DEMONSTRATIF/POSSESSIF/INDEFINI/NEGATIF_GENITIF" />
+          <item value="L_GE_PRONOM_PERSONNEL/DEMONSTRATIF/POSSESSIF/INDEFINI/NEGATIF_DATIF" />
+          <item value="L_GE_PRONOM_PERSONNEL/DEMONSTRATIF/POSSESSIF/INDEFINI/NEGATIF_ACCUSATIF" />
+          <item value="L_GE_PRONOM_QUANTIFICATEUR" />
+          <item value="L_GE_PRONOM_QUANTIFICATEUR_NOMINATIF" />
+          <item value="L_GE_PRONOM_QUANTIFICATEUR_GENITIF" />
+          <item value="L_GE_PRONOM_QUANTIFICATEUR_DATIF" />
+          <item value="L_GE_PRONOM_QUANTIFICATEUR_ACCUSATIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_ADVERBIAL" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_NOMINATIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_GENITIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_DATIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_ACCUSATIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_ADVERBIAL" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_NOMINATIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_GENITIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_DATIF" />
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_ACCUSATIF" />
+          <item value="L_GE_CIRCUMPOSITION_AVEC_GENITIF_1E_PARTIE" />
+          <item value="L_GE_CIRCUMPOSITION_AVEC_GENITIF_2E_PARTIE" />
+          <item value="L_GE_CIRCUMPOSITION_AVEC_DATIF_1E_PARTIE" />
+          <item value="L_GE_CIRCUMPOSITION_AVEC_DATIF_2E_PARTIE" />
+          <item value="L_GE_CIRCUMPOSITION_AVEC_ACCUSATIF_1E_PARTIE" />
+          <item value="L_GE_CIRCUMPOSITION_AVEC_ACCUSATIF_2E_PARTIE" />
+          <item value="L_GE_PREPOSITION_PLUS_DETERMINANT_AVEC_DATIF" />
+          <item value="L_GE_PREPOSITION_PLUS_DETERMINANT_AVEC_ACCUSATIF" />
+          <item value="L_GE_PREPOSITION_DEVANT_EXPR_ADV" />
+          <item value="L_GE_PREPOSITION_AVEC_GENITIF_DEVANT_DET_GN" />
+          <item value="L_GE_PREPOSITION_AVEC_GENITIF_DEVANT_GN_SANS_DET" />
+          <item value="L_GE_PREPOSITION_AVEC_DATIF_DEVANT_DET_GN" />
+          <item value="L_GE_PREPOSITION_AVEC_DATIF_DEVANT_GN_SANS_DET" />
+          <item value="L_GE_PREPOSITION_AVEC_ACCUSATIF_DEVANT_DET_GN" />
+          <item value="L_GE_PREPOSITION_AVEC_ACCUSATIF_DEVANT_GN_SANS_DET" />
+          <item value="L_GE_PREPOSITION_TRADUISANT_GENITIF_DE_BASE" />
+          <item value="L_GE_POSTPOSITION_AVEC_GENITIF" />
+          <item value="L_GE_POSTPOSITION_AVEC_DATIF" />
+          <item value="L_GE_POSTPOSITION_AVEC_ACCUSATIF" />
+          <item value="L_GE_PREPOSITION_AGENT_PASSIF" />
+          <item value="L_GE_PREPOSITION_PARTIE_D'UN_NP" />
+          <item value="L_GE_PREPOSITION_DEVANT_GROUPE_ADV_SUPERLATIF" />
+          <item value="L_GE_PREPOSITION_DANS_EXPR_TEMP" />
+          <item value="L_GE_CONJONCTION_COORD_PHRASES" />
+          <item value="L_GE_CONJONCTION_COORD_GROUPES" />
+          <item value="L_GE_CONJONCTION_DEVANT_INFIN_AVEC_ZU" />
+          <item value="L_GE_CONJONCTION_SUBORD" />
+          <item value="L_GE_PONCTUATION_FAIBLE" />
+          <item value="L_GE_PONCTUATION_MISE_EN_EVIDENCE" />
+          <item value="L_GE_PONCTUATION_MORPHOLOGIQUE" />
+          <item value="L_GE_PONCTUATION_PARENTHESE" />
+          <item value="L_GE_PONCTUATION_FORTE" />
+          <item value="L_GE_INTERJECTION" />
+          <item value="L_GE_DIVERS" />
+          <item value="L_GE_DIVERS_PARTICULE_GENERALE" />
+          <item value="L_GE_DIVERS_PARTICULE_DE_NEGATION" />
+          <item value="L_GE_DIVERS_PARTICULE_VERBALE_SEPAREE" />
+        </list>
+        <list name="conjugatedVerbs" >
+          <item value="L_GE_VERBE_PRINCIPAL_IMPERATIF_2E_PERSONNE_SG/PL"/>
+          <item value="L_GE_VERBE_PRINCIPAL_IMPERATIF_1E/3E_PERSONNE_PL"/>
+          <item value="L_GE_VERBE_PRINCIPAL_PHR_PRINCIPALE_INDICATIF/KONJUNKTIF"/>
+          <item value="L_GE_VERBE_PRINCIPAL_PHR_SUBORDONNEE_INDICATIF/KONJUNKTIF"/>
+          <item value="L_GE_VERBE_PRINCIPAL_PHR_INTERROG_TOTALE_INDICATIF/KONJUNKTIF"/>
+          <item value="L_GE_VERBE_PRINCIPAL_PHR_INTERROG_WH_INDICATIF/KONJUNKTIF"/>
+        </list>
+        <list name="propositionIntroductors" >
+          <item value="L_GE_CONJONCTION_COORD_PHRASES"/>
+          <item value="L_GE_CONJONCTION_COORD_GROUPES"/>
+          <item value="L_GE_CONJONCTION_SUBORD"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_ADVERBIAL"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_NOMINATIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_GENITIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_DATIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_INTERROGATION_DIRECTE_ACCUSATIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_ADVERBIAL"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_NOMINATIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_GENITIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_DATIF"/>
+          <item value="L_GE_PRONOM_RELATIF/INTERROGATIF_INTRO_SUB_ACCUSATIF"/>
+        </list>
+    </group>
+    <group name="NamedEntityNormalization">
+      <!-- normalization of numbers -->
+      <list name="NumberMicros">
+        <item value="L_GE_ADJECTIF_CARDINAL_DETACHE"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_DETACHE_NOMINATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_DETACHE_GENITIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_DETACHE_DATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_DETACHE_ACCUSATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_ELLIPSE_VERBALE"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_ELLIPSE_VERBALE_NOMINATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_ELLIPSE_VERBALE_GENITIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_ELLIPSE_VERBALE_DATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_ELLIPSE_VERBALE_ACCUSATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_APPOSITION_A_GN"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_APPOSITION_A_GN_NOMINATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_APPOSITION_A_GN_GENITIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_APPOSITION_A_GN_DATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_APPOSITION_A_GN_ACCUSATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_NOMINATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_GENITIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_DATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_ACCUSATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_NOMINATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_GENITIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_DATIF"/>
+        <item value="L_GE_ADJECTIF_CARDINAL_PREDICATIF_ACCUSATIF"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="L_GE_NOM_COMMUN_UNITE_DE_MESURE_NOMINATIF"/>
+        <item value="L_GE_NOM_COMMUN_UNITE_DE_MESURE_GENITIF"/>
+        <item value="L_GE_NOM_COMMUN_UNITE_DE_MESURE_DATIF"/>
+        <item value="L_GE_NOM_COMMUN_UNITE_DE_MESURE_ACCUSATIF"/>
+      </list>
+      <!-- possible conjunction in numbers (vingt ET un)-->
+      <list name="ConjCoordMicros"> 
+        <item value="L_GE_CONJONCTION_COORD_GROUPES"/>
+      </list>
+      <!-- normalization of person names -->
+      <list name="FirstnameMicros">
+        <item value="L_GE_NOM_PROPRE_NOMINATIF"/>
+      </list>
+      <!-- normalization of dates -->
+      <list name="MonthMicros">
+        <item value="L_GE_NOM_COMMUN_MOIS_NOMINATIF"/>
+        <item value="L_GE_NOM_COMMUN_MOIS_GENITIF"/>
+        <item value="L_GE_NOM_COMMUN_MOIS_DATIF"/>
+        <item value="L_GE_NOM_COMMUN_MOIS_ACCUSATIF"/>
+      </list>
+      <list name="DayMicros">
+        <item value="L_GE_NOM_COMMUN_JOUR_NOMINATIF"/>
+        <item value="L_GE_NOM_COMMUN_JOUR_GENITIF"/>
+        <item value="L_GE_NOM_COMMUN_JOUR_DATIF"/>
+        <item value="L_GE_NOM_COMMUN_JOUR_ACCUSATIF"/>
+      </list>
+    </group>
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-ger.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+        <item value="COMP_N-N"/>
+        <item value="COMP_AJ-N"/>
+        <item value="COMP_V-N"/>
+        <item value="COMP_AV-N"/>
+        <item value="COMP_N-ADJ"/>
+        <item value="COMP_AJ-ADJ"/>
+        <item value="COMP_V-ADJ"/>
+        <item value="COMP_AV-ADJ"/>
+      </list>
+      <list name="VerbalHomoSyntagmaticRelations">
+        <item value="COMP_N-V"/>
+        <item value="COMP_AJ-V"/>
+        <item value="COMP_V-V"/>
+        <item value="COMP_AV-V"/>
+      </list>
+      <list name="CompoundsRels">
+        <item value="COMP_N-N"/>
+        <item value="COMP_AJ-N"/>
+        <item value="COMP_V-N"/>
+        <item value="COMP_AV-N"/>
+        <item value="COMP_N-ADJ"/>
+        <item value="COMP_AJ-ADJ"/>
+        <item value="COMP_V-ADJ"/>
+        <item value="COMP_AV-ADJ"/>
+      </list>
+      <list name="NounPhraseHeadCategs">
+      </list>
+      <list name="DefiniteCategs">
+      </list>
+    </group>    
+  </module>
+</modulesConfig>

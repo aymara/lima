@@ -1,0 +1,17 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+      <file>editcopy.xpm</file>
+      <file>editcut.xpm</file>
+      <file>filenew.xpm</file>
+      <file>fileopen.xpm</file>
+      <file>editpaste.xpm</file>
+      <file>filesave.xpm</file>
+      <file>item.xpm</file>
+      <file>40.colors</file>
+      <file>Oxygen.colors</file>
+      <file>Rainbow.colors</file>
+      <file>Royal.colors</file>
+      <file>Web.colors</file>
+      <file>rgb.txt</file>
+      </qresource>
+</RCC>

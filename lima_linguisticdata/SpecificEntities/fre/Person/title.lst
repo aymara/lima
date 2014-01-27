@@ -1,0 +1,19 @@
+@Title=(
+M .,monsieur,
+Mme,madame,
+Mmes,mesdames,
+Mlle,mademoiselle,
+Me,maître,
+Dr,docteur,
+Pr,professeur,
+S.M.,Sa Majesté,
+S.E.,Son Excellence
+)
+
+@TitlePlural=(
+MM,MM.,MM .,messieurs,
+Mlles,mesdemoiselles,
+Mes,maîtres,
+Drs,docteurs,
+Prs,professeurs
+)

@@ -1,0 +1,14 @@
+Code review:
+  * read and respect the coding style
+  * NEVER do "use namespace std;" in a header
+  * in a Qt app, replace stdlib classes by Qt classes
+  * OFTEN define members as private (or protected). Define and use read/write accessors
+
+
+Bugs:
+  * when deleting the last evaluation, can no more access to errors of the new last evaluation.
+    should reinit the pipeline->startTime
+  * should display the errors of the currently selected evaluation and not always the last one
+  * correct the statements name display in order to chose the right one to show details of
+  * save to settings the list of recent text files
+  

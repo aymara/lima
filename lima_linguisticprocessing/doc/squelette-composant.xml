@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+ "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article>
+  <title>Squelette de composant LIC2M</title>
+
+  <articleinfo>
+    <date>08/06/2004</date>
+
+    <author>
+      <lineage>Benoit Mathieu &lt;mathieub@zoe.cea.fr&gt;</lineage>
+    </author>
+  </articleinfo>
+
+  <sect1>
+    <title>Introduction et objectifs</title>
+
+    <para>Ce document a pour but de décrire le squelette de composant LIC2M,
+    et de proposer des règles d'organisation d'un composant afin d'avoir une
+    homogénéité des composants LIC2M. Les composant prévus sont :</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Detection de la language</para>
+      </listitem>
+
+      <listitem>
+        <para>Traitement linguistiques</para>
+      </listitem>
+
+      <listitem>
+        <para>indexation texte</para>
+      </listitem>
+
+      <listitem>
+        <para>recherche texte</para>
+      </listitem>
+
+      <listitem>
+        <para>filtrage</para>
+      </listitem>
+
+      <listitem>
+        <para>classification</para>
+      </listitem>
+
+      <listitem>
+        <para>recherche image</para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+
+  <sect1>
+    <title>Règles</title>
+
+    <sect2>
+      <title>Indépendance</title>
+
+      <para>Les composants doivent être indépendant. C'est à dire qu'ils
+      peuvent n'utiliser que les librairies disponibles dans un projets
+      commun, et les API publique d'un autre composant. L'API publique d'un
+      composant doit être clairement identifiée, et doit être indépendante du
+      reste du code du composant (ceci est possible grâce au pattern
+      AbstractFactory)</para>
+
+      <para>Chaque composant fera l'objet d'un projet séparé. Les librairies
+      communes sont regroupées dans le projet s2-common.</para>
+    </sect2>
+
+    <sect2>
+      <title>Découplage CORBA / coeur du composant</title>
+
+      <para>Le composant doit pouvoir, à la demande de l'utilisateur,
+      s'executer en utilisant un serveur CORBA, ou sans utiliser CORBA. Le
+      coeur du composant doit être complètement indépendant de CORBA, c'est à
+      dire qu'il est possible de compiler un composant sans utiliser CORBA
+      (cad sans linker avec les librairies CORBA)</para>
+    </sect2>
+
+    <sect2>
+      <title>Configuration</title>
+
+      <para>Chaque composant s'initialise à partir d'un fichier de
+      configuration (qui peut offrir des références vers d'autres fichiers),
+      ce fichier de configuration est au format XML Lima
+      (module/group/param/list/map). La librairie XMLConfigurationFile du
+      projet S2-common offre tous les outils pour lire ce type de fichiers,
+      cette librairies peut être enrichie.</para>
+    </sect2>
+
+    <sect2>
+      <title>Initialisation</title>
+
+      <para>Chaque composant offre un point d'entrée permettant son
+      initialisation. L'initialisation est à la responsabilité du programme
+      appelant, un composant ne doit jamais s'initialiser tout seul. De même,
+      un composant ne doit jamais initialiser un autre composant.</para>
+    </sect2>
+
+    <sect2>
+      <title>API publique</title>
+
+      <para>L'API publique d'un composant sera placée dans un sous-projet
+      particulier. Cette API doit au minimum contenir la classe abstraite
+      définissant le client du composant, et la fabrique principale permettant
+      de configurer le composant et de créer des clients. Il peut aussi y
+      avoir d'autres objets, nécessaire pour l'interaction avec le composant,
+      ou des structure de résultat. La partie publique d'un composant ne doit
+      avoir AUCUNE DEPENDANCE avec le coeur du composant.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Squelette de composant LIC2M</title>
+
+    <sect2>
+      <title>Organisation des sous-projets</title>
+
+      <para>Dans cette partie : 'component' designe le nom du composant LIC2M
+      (par exemple : linguisticProcessing ou reformulation).</para>
+
+      <programlisting>src/component : un sous projet portant le nom du composant
+src/component/client : API publique
+src/component/client/AbstractComponentClient.h : définition de l'interface du client
+src/component/client/ComponentClientFactory.h : fabrique principale
+src/component/core : definition du client coeur du composant
+src/component/corba : definition du client corba
+test/ : programmes de tests</programlisting>
+
+      <para>Toute la partie publique du composant se trouve sous
+      src/component/client. Chaque type de client se trouve dans un
+      sous-projet séparé, src/component/core pour le client coeur. Il est
+      possible de créer au de type de client qu'on le souhaite.</para>
+    </sect2>
+
+    <sect2>
+      <title>ClientFactory</title>
+
+      <para>Dans le projets s2-common : common/clientFactory/clientFactory.h
+      est définit un template de fabrique de client. Ce template permet
+      d'éviter de réécrire dans chaque composant la fabrique de
+      composant.</para>
+
+      <para>Ce template contient 2 classes : ClientFactory (frabrique
+      abstraite pour un client) et MainClientFactory (frabrique
+      principale).</para>
+
+      <sect3>
+        <title>ClientFactory&lt;ComponentClient&gt;</title>
+
+        <para>Cette classe représente une fabrique abstraite d'objet Client.
+        Pour chaque type de client (core,corba) il faut définir une frabrique
+        héritant de ClientFactory&lt;ComponentClient&gt;, réalisant 2
+        opérations : initialisation et création du client. L'initialisation
+        est appellé une fois avant toute création d'un client.
+        L'initialisation doit effectuer toutes les opérations nécessaire à la
+        création de clients. La création d'un client peut être appellé autant
+        de fois que nécessaire, et doit créer un nouveau client du type
+        désiré.</para>
+
+        <para>Chaque fabrique doit être un singleton, et s'enregistrer auprès
+        de MainClientFactory correspondante.</para>
+      </sect3>
+
+      <sect3>
+        <title>MainClientFactory&lt;ComponentClient&gt;</title>
+
+        <para>Cette classe est en fait la fabrique principale du client du
+        composant. Elle permet d'initialiser un composant pour créer un type
+        de client particulier, et de créer des clients. (en pratique elle
+        délège ces appels à la ClientFactory&lt;ComponentClient&gt;
+        correspondant).</para>
+      </sect3>
+
+      <sect3>
+        <title>Avantages des clients abstraits</title>
+
+        <para>Une architecture avec des clients abstraits présente l'avantage
+        d'être modulaire et flexible. Le client core réalise les traitements
+        demandés. On peut ensuite créer un client corba, dont le rôle ne sera
+        que faire passer l'appel à un serveur, qui lui executera l'appel à
+        l'aide d'un client core. Ensuite, le jour où l'on souhaite utiliser
+        plusieurs serveur, il est possible d'écrire un troisième client,
+        envoyant l'appel à tous les servers et fusionant les résultats (ceci
+        est particulièrement utile pour la recherche texte ou image avec des
+        bases distributés, ou pour le traitement linguistique lorsque les
+        traitements des langues sont répartis).</para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>Namespaces</title>
+
+      <para>Un composant doit être intégralement inclu dans le namespace
+      Lima::Component.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exceptions</title>
+
+      <para>Dans le projet s2-common, le header common/S2Common.h définit
+      l'exception LimaException qui doit être la racine de toutes les
+      exceptions des composants. Une exception InvalidConfiguration (héritant
+      de LimaException) est également définit dans ce header.</para>
+
+      <para>Il est souhaitable que chaque composant définisse une exception
+      ComponentException héritant de LimaException, et que toutes les
+      exceptions levées héritent de LimaException. Toutes les méthodes levant
+      explicitement des exceptions doivent les déclarer ( clause throw de la
+      signature de la fonction).</para>
+
+      <para>Déclarer les exceptions levées permet un développement mieux
+      organisé. Hériter toutes les exceptions de LimaException facilite le
+      debugging.</para>
+    </sect2>
+
+    <sect2>
+      <title>Test</title>
+
+      <para>Chaque composant doit être accompagné au minimun d'un programme de
+      test, permettant un test unitaire du composant. Les programmes de tests
+      sont placés dans le sous-projet 'test/'</para>
+
+      <para>Le fait de placer les programmes de test dans un sous-projet
+      différent, oblige le programme à adopter un point de vue extérieur, et
+      de réellement tester le composant en tant que client (au moins pour le
+      test unitaire du composant).</para>
+    </sect2>
+  </sect1>
+</article>

@@ -1,0 +1,321 @@
+##############################################################################
+#                                                                            #
+# rules for the recognition of french right to left homosyntagmatic relations#
+# this file uses the syntax for the declarations of automatons by Romaric    #
+# Besancon (Cf. his 2003/03/11 document)
+#                                                                            #
+# Created on Thu nov 13 2003                                                 #
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)                            #
+#                                                                            #
+# $Id$                  #
+#                                                                            #
+##############################################################################
+# expression des positions dans les contraintes: first current next last
+
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-fre.txt
+
+######################################################################
+# sous-automates
+# adverb group
+define subautomaton AdvGroup {
+  pattern=$ADV{0-3}
+}
+
+# adverb adjective group
+define subautomaton AdvAdjGroup {
+  pattern=$ADV{0-3} $ADJ
+}
+
+# common noun group size=3
+define subautomaton EndOfNounGroupAfterNoun {
+  pattern=$DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et)?){0-n}
+}
+
+# common noun group size=6
+define subautomaton NounGroup {
+  pattern=$DET? (%AdvAdjGroup (,|et|ou)?){0-n} ($NC|$NP) $DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et|ou)?){0-n}
+}
+
+# incise size=1
+define subautomaton InciseGroup {
+  pattern=((, (^,){0-n} ,)|(- (^-){0-n} -)|(\( (^$PONCTU-PONCT){0-n} \))){0-n}
+}
+
+#----------------------------------------------------------------------
+# Relation entre adjectif substantif post-nominal : SubAdjPost
+# (A6.1 - 4.2.1.1)
+#----------------------------------------------------------------------
+
+@AdjPost:@Substantif ((@PrepComp|@AdjPost|@AdvModifieurAdj){0-2} ((@Virg)? (@AdvModifieurAdj){0-3} @AdjPren){0-2} (@ConjCoord (@AdvModifieurAdj){0-3})?)?::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++GenderAgreement(trigger.1,left.1)
++NumberAgreement(trigger.1,left.1)
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@AdjPost:@Substantif @Virg *{1-7} @Virg::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++GenderAgreement(trigger.1,left.1)
++NumberAgreement(trigger.1,left.1)
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# "Hamburger 99"
+@AdjPostNum:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+$V-VPP:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#################################################################################################
+# # # on attache preferentiellement au nom le plus proche avec les regles precedentes mais si
+# # # ca n'a pas ete possible pour cause d'accord par exemple, on cherche un nom dont le nom
+# # # juste avant l'adjectif est complement du nom
+# # ex: quantites d'eau supplementaires
+# @AdjPost:@Substantif (@PrepComp @Substantif){1-n} (@ConjCoord @PrepComp @Substantif (@AdjPost)?)? ((@PrepComp|@AdjPost|@AdvModifieurAdj){0-2} ((@Virg)? (@AdvModifieurAdj){0-3} @AdjPren){0-2} (@ConjCoord (@AdvModifieurAdj){0-3})?)?::SYNTACTIC_RELATION:
+# +!GovernorOf(trigger.1,"ANY")
+# +SecondUngovernedBy(trigger.1,left.1,"ANY")
+# +GenderAgreement(trigger.1,left.1)
+# +NumberAgreement(trigger.1,left.1)
+# +CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# essai: attachement ambigu
+# ex: quantites d'eau supplementaires
+#+!GovernorOf(trigger.1,"SUBADJPOST")
+@AdjPost:@Substantif (@PrepComp (@Determinant)?){1-1} @Substantif ((@PrepComp|@AdjPost|@AdvModifieurAdj){0-2} ((@Virg)? (@AdvModifieurAdj){0-3} @AdjPren){0-2} (@ConjCoord (@AdvModifieurAdj){0-3})?)?::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ADJPRENSUB")
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++GenderAgreement(trigger.1,left.1)
++NumberAgreement(trigger.1,left.1)
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Regle temporaire pour pouvoir traiter "à travers lesquels" en attendant que
+# "à travers" soit une expr idiom préposition.
+#
+#----------------------------------------------------------------------
+#@PrepComp:(@Substantif|@Inc) (@AdverbePositifDansChaineNominale|@AdjPost|){0-3} (@NomPropre)?:@Substantif  @PronRelCa:SYNTACTIC_RELATION:
+#+!GovernorOf(left.1,"SUBSUBJUX")
+#+!GovernorOf(right.2,"ANY")
+#+SecondUngovernedBy(right.2,left.1,"ANY")
+#+SecondUngovernedBy(trigger.1,right.2,"ANY")
+#+CreateRelationBetween(right.2,left.1,"COMPDUNOM")
+#+CreateRelationBetween(trigger.1,right.2,"PREPSUB")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre preposition et substantif : PREPSUB
+# Ajout des pronoms disjoints (chez moi, de lui...)
+# (A6.4 - 4.2.1.3)
+#----------------------------------------------------------------------
+@PronDisjPostV=($PRON-CLS,
+$PRON-CLO,
+$PRON-CLO
+)
+
+define subautomaton NounGroup {
+  pattern=$DET? (%AdvAdjGroup (,|et|ou)?){0-n} ($NC|$NP) $DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et|ou)?){0-n}
+}
+@PrepComp::%NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.1.3,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+@PrepComp::((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@NomPropre){0-n} (@Prefixe|$PONCTU-PONCT)? (@Substantif|@Inc|@PronDisjPostV):SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"PREPSUB")
++SecondUngovernedBy(trigger.1,right.4,"ANY")
++CreateRelationBetween(trigger.1,right.4,"PREPSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre preposition et pronom personnel : PrepPron
+# "chez moi"
+#----------------------------------------------------------------------
+@PrepComp::@PronPers:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"PrepPron")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre preposition et participe présent : PrepPartPres
+# "en imposant"
+#----------------------------------------------------------------------
+$PREP-P::@ParticipePresent:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"PrepPartPres")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre determinant numeral cardinal et substantif : DetSubNum
+# "chez moi"
+#----------------------------------------------------------------------
+@DetNum:@Substantif::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"DetSubNum")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
+# Relation entre preposition et det numeral : PrepDetNum
+# "...sur cinq est..."
+#----------------------------------------------------------------------
+@DetNum:$PREP-P::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"PrepDetNum")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre unite de mesure et mesure (entite numerique) : SUBSUBJUX
+# "...annee 1992..."
+#----------------------------------------------------------------------
+$NC-NC::$NC-NC:SYNTACTIC_RELATION:
++!GovernorOf(right.1,"ANY")
++CreateRelationBetween(right.1,trigger.1,"SUBSUBJUX")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation de complement du nom
+# "...rapports entre les deux camps..."
+#----------------------------------------------------------------------
+$NC::@PrepComp $DET? $ADV{0-3} $ADJ? ($NC|$NP) @TensedVerbSuj:SYNTACTIC_RELATION:
++!GovernorOf(right.5,"ANY")
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(right.5,trigger.1,"MOD_N")
++CreateRelationBetween(trigger.1,right.6,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+######################################################################
+# relation modifieur nom "à Gbamba où l'on estime" MOD_N(estime,Gbamba)
+# MOD_N
+# TODO devrait etre dans hetero mais gene par simplification
+
+@TensedVerbSuj:%NounGroup @PonctuFaible? @PronRelCa %AdvGroup? (@PronPersSuj|@PronIndef)::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1.1.3,"ANY")
++CreateRelationBetween(trigger.1,left.1.1.3,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#################################
+# for ambiguous COMPDUNOM: the one creating
+# the PREPSUB has already been found
+#################################
+
+# in case of already found ambiguous COMPDUNOM thus with PREPSUB
+@PrepCompDuNom:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){1-n} (de (la)?)?) (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++GovernorOf(trigger.1,"PREPSUB")
++GovernorOf(right.5,"COMPDUNOM")
++SecondUngovernedBy(right.5,left.1,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# in case of already found ambiguous COMPDUNOM thus with PREPSUB
+@PrepCompDuNom:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum|@PrepCompDuNom|@NomPropre){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++GovernorOf(trigger.1,"PREPSUB")
++GovernorOf(right.5,"COMPDUNOM")
++SecondUngovernedBy(right.5,left.1,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# in case of already found ambiguous COMPDUNOM thus with PREPSUB
+@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++GovernorOf(trigger.1,"PREPSUB")
++GovernorOf(right.5,"COMPDUNOM")
++SecondUngovernedBy(right.5,left.1,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# in case of already found ambiguous COMPDUNOM thus with PREPSUB
+@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++GovernorOf(trigger.1,"PREPSUB")
++GovernorOf(right.5,"COMPDUNOM")
++SecondUngovernedBy(right.5,left.1,"ANY")
++CreateRelationBetween(right.5,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+# in case of already found ambiguous COMPDUNOM thus with PREPSUB
+@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++GovernorOf(trigger.1,"PREPSUB")
++GovernorOf(right.4,"COMPDUNOM")
++SecondUngovernedBy(right.4,left.1,"ANY")
++CreateRelationBetween(right.4,left.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+
+########################################
+# Regles adaptees pour les mots inconnus
+########################################
+
+@AdjPost:@Inc (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# @PrepComp:(@Substantif|@Inc) (@AdverbePositifDansChaineNominale|@AdjPost){0-3} (@NomPropre)?:(@Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren){0-n} (@Substantif|@Inc):SYNTACTIC_RELATION:
+# +SameNominalChain(left.1,right.3)
+# +!GovernorOf(left.1,"SUBSUBJUX")
+# +!GovernorOf(right.3,"ANY")
+# +SecondUngovernedBy(right.3,left.1,"ANY")
+# +CreateRelationBetween(right.3,left.1,"COMPDUNOM")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+# @IncNomPropre:(@IncNomPropre|@Substantif)::SYNTACTIC_RELATION:
+# +SecondUngovernedBy(trigger.1,left.1,"ANY")
+# +CreateRelationBetween(trigger.1,left.1,"SUBSUBJUX")
+# =>AddRelationInGraph()
+# =<ClearStoredRelations()
+
+@Inc::@Inc:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"IncInc")
+=>AddRelationInGraph()
+=<ClearStoredRelations()

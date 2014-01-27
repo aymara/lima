@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="entities">
+    <group name="Organization">
+      <list name="entityList">
+        <item value="ORGANIZATION"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="OrganizationModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="OrganizationRecognition"/>
+      </list>
+    </group>
+    <group name="OrganizationRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="OrganizationRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-eng.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="NNP"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-fre.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="NPP"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

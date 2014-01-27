@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cd $1;
+echo "process test for postagger '$1' in language '$2'";
+rm -rf $2;
+cp -r ../textes/$2 .
+analyzeText --language=$2 --config-dir=$PWD/config $2/*.txt > analysis.$2.log 2>&1;
+echo "completed.";
+cd ..;
+

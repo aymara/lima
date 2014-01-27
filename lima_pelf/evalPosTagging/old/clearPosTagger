@@ -1,0 +1,7 @@
+for pos in $*; 
+do pushd $pos
+echo "clearing $pos"
+rm -rf eng fre spa ger chi
+rm -f analysis.* begin*
+popd
+done;

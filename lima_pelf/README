@@ -1,0 +1,60 @@
+-----------------------------------------------
+Pelf, the Performance Evaluation of LIMA Framework
+-----------------------------------------------
+This package was initialy called
+"Leffe, the Lima Evaluation Framework for End-users"
+It has been renamed to Pelf to remove the name collision with the Lefff, a 
+French machine readable dictionary by Benoit Sagot and colleagues.
+-----------------------------------------------
+Initial Author: Damien Nouvel
+Date: 2008-11-04
+-----------------------------------------------
+    Copyright 2002-2013 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
+-----------------------------------------------
+
+This README file explains you basic things for starting with
+this application template.
+
+-----------------------------------------------
+* REQUIREMENTS *
+- Qt version might be 4 or higher
+- cmake (http://www.cmake.org/) version 2.1 or 2.2 in your PATH
+- uuidgen
+-----------------------------------------------
+
+-----------------------------------------------
+* Building and running *
+- cmake will run after the template is loaded provided cmake is in your PATH. If not, you will see an error message in the terminal and you will need to install cmake in your PATH.
+- In the Build menu in KDevelop, click on Build Project (or use the F8 shortcut) in order to build your project.
+- Run your project using the Build menu -> Execute Program. Note that default makes your program run in KDevelop integrated terminal. You can run your program in an external terminal by changing the project options (Project -> Project Options -> Run options and check at the bottom "Start in external terminal")
+-----------------------------------------------
+
+-----------------------------------------------
+* Useful link *
+
+CMake Documentation: http://www.cmake.org/HTML/Documentation.html
+
+-----------------------------------------------
+* Building easy steps (where $SRC_PATH is the path where source files have been downloaded) *
+- create a path for binary files and go there with command shell
+- run cmake $SRC_PATH -DCMAKE_INSTALL_PREFIX=./ && make && make install
+- configure command scripts in subdir commands/*  as needed
+- if you need pelf-rt, copy $SRC_PATH/src/PelfResourceTool/examples/pelf-rt-conf.[local|remote].xml as pelf-rt-conf.xml variable (or make a symbolic link), configure this XML file as needed and define the $PELF_CONF as the variable poiting to the containing directory
+- if you need pelf-bt and an example file for bootstraping, copy the $SRC_PATH/src/PelfResourceTool/examples/* (contains lbp typical files and easy specific documents and reference files)
+- go to bin subdirectory and run pelf-bt or pelf-rt

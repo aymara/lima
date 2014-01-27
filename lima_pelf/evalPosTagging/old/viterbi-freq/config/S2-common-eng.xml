@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="LinguisticData">
+    <group name="Categories">
+      <param key = "MacroCodesList" value = "LinguisticProcessings/eng/macroCodesList-eng.dat" />
+      <param key = "MicroCodesList" value = "LinguisticProcessings/eng/codesList-eng.dat" />
+      <list name="sentenceBreakMicros">
+        <item value="L_PONCTU_FORTE"/>
+      </list>
+      <list name="emptyMacro">
+        <item value="L_NONE_1" />
+        <item value="L_DET" />
+        <item value="L_PRON" />
+        <item value="L_ADV" />
+        <item value="L_PREP" />
+        <item value="L_CONJ" />
+        <item value="L_PONCTU" />
+        <item value="L_INTERJ" />
+        <item value="L_DETERMINEUR" />
+      </list>
+      <list name="emptyMicro">
+        <item value="L_DET_COORDONNE" />
+        <item value="L_PRONOM_PERSONNEL_I" />
+        <item value="L_PRONOM_PERSONNEL_YOU" />
+        <item value="L_PRONOM_PERSONNEL_HE_SHE" />
+        <item value="L_PRONOM_PERSONNEL_IT" />
+        <item value="L_PRONOM_PERSONNEL_WE" />
+        <item value="L_PRONOM_PERSONNEL_THEY" />
+        <item value="L_PRONOM_PERSONNEL_ME" />
+        <item value="L_PRONOM_PERSONNEL_US" />
+        <item value="L_PRONOM_PERSONNEL_HIM_HER" />
+        <item value="L_PRONOM_PERSONNEL_THEM" />
+        <item value="L_PRONOM_PERSONNEL_REFLECHI" />
+        <item value="L_PRONOM_POSSESSIF" />
+        <item value="L_PRON_POSS_PREN" />
+        <item value="L_PRONOM_WHOM" />
+        <item value="L_PRONOM_WHO" />
+        <item value="L_PRONOM_WHOEVER" />
+        <item value="L_PRONOM_INDEFINI" />
+        <item value="L_PRONOM_REFLEXIF_INDEFINI" />
+        <item value="L_BE" />
+        <item value="L_WHERE" />
+        <item value="L_WAS" />
+        <item value="L_BEING" />
+        <item value="L_AM" />
+        <item value="L_BEEN" />
+        <item value="L_ARE" />
+        <item value="L_IS" />
+        <item value="L_DO" />
+        <item value="L_DID" />
+        <item value="L_DOING" />
+        <item value="L_DONE" />
+        <item value="L_DOES" />
+        <item value="L_HAVE" />
+        <item value="L_HAD_PASSE" />
+        <item value="L_HAVING" />
+        <item value="L_HAD_PARTICIPE_PASSE" />
+        <item value="L_HAS" />
+        <item value="L_AUXILIAIRE_MODAL" />
+        <item value="L_AUXILIAIRE_MODAL_DANS_EXPRESSION" />
+        <item value="L_ADVERBE_GENERAL_WH" />
+        <item value="L_ADVERBE_GENERAL_WH_EVER" />
+        <item value="L_ADVERBE_DE_DEGRE" />
+        <item value="L_ADVERBE_DE_DEGRE_WH" />
+        <item value="L_ADVERBE_DE_DEGRE_WH_EVER" />
+        <item value="L_ADVERBE_DE_DEGRE_COMPARATIF" />
+        <item value="L_ADVERBE_DE_DEGRE_SUPERLATIF" />
+        <item value="L_ADVERBE_NEGATIF" />
+        <item value="L_ADVERBE_SUIVANT_LA_TETE_NOMINALE" />
+        <item value="L_ADVERBE_THERE_EXISTENTIEL" />
+        <item value="L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE" />
+        <item value="L_PREP_GENERAL" />
+        <item value="L_PREP_FOR" />
+        <item value="L_PREP_OF" />
+        <item value="L_PREP_WITH_OUT" />
+        <item value="L_PREP_ADVERBE_PARTICULE" />
+        <item value="L_PREP_ADVERBE_DANS_EXPRESSION" />
+        <item value="L_CONJ_COORD" />
+        <item value="L_CONJ_COORD_ADVERSATIVE" />
+        <item value="L_CONJ_SUBORD" />
+        <item value="L_CONJ_BEFORE_CLAUSE_MARKER" />
+        <item value="L_CONJ_AS" />
+        <item value="L_CONJ_THAN" />
+        <item value="L_CONJ_THAT" />
+        <item value="L_CONJ_WHETHER" />
+        <item value="L_PONCTU_FORTE" />
+        <item value="L_PONCTU_FAIBLE" />
+        <item value="L_PONCTU_PARENTHESE" />
+        <item value="L_PONCTU_DIALOGUE" />
+        <item value="L_PONCTU_TIRET" />
+        <item value="L_PONCTU_DIVERS" />
+        <item value="L_INTERJECTION" />
+        <item value="L_DETERMINEUR_GENERAL" />
+        <item value="L_DETERMINEUR_POSTN" />
+        <item value="L_DETERMINEUR_PREN" />
+        <item value="L_DETERMINEUR_COMPARATIF" />
+        <item value="L_DETERMINEUR_SUPERLATIF" />
+        <item value="L_DETERMINEUR_WH" />
+        <item value="L_DETERMINEUR_WH_GENITIF" />
+        <item value="L_DETERMINEUR_WH_EVER" />
+        <item value="L_DIVERS_MARQUEUR_GENITIF" />
+        <item value="L_DIVERS_MARQUEUR_INFINITIF" />
+      </list>
+        <list name="conjugatedVerbs" >
+            <item value="L_VERBE_GENERAL_BASE" />
+            <item value="L_VERBE_GENERAL_PASSE" />
+            <item value="L_VERBE_GENERAL_ING" />
+            <item value="L_VERBE_GENERAL_PARTICIPE_PASSE" />
+            <item value="L_VERBE_GENERAL_S" />
+            <item value="L_VERBE_GENERAL_ING_DANS_EXPRESSION" />
+        </list>
+        <list name="propositionIntroductors" >
+            <item value="L_CONJ_COORD" />
+            <item value="L_CONJ_COORD_ADVERSATIVE" />
+            <item value="L_CONJ_SUBORD" />
+            <item value="L_CONJ_BEFORE_CLAUSE_MARKER" />
+            <item value="L_CONJ_AS" />
+            <item value="L_CONJ_THAN" />
+            <item value="L_CONJ_THAT" />
+            <item value="L_CONJ_WHETHER" />
+            <item value="L_PRONOM_WHOM" />
+            <item value="L_PRONOM_WHO" />
+            <item value="L_PRONOM_WHOEVER" />
+            <item value="L_PRONOM_REFLEXIF_INDEFINI" />
+        </list>
+    </group>
+    <group name="NamedEntityNormalization">
+      <!-- normalization of numbers -->
+      <list name="NumberMicros">
+        <item value="L_NOMBRE_CARDINAL"/>
+        <item value="L_NOMBRE_CARDINAL_GENITIF"/>
+        <item value="L_NOMBRE_PERIODE"/>
+        <item value="L_NOMBRE_ORDINAL"/>
+        <item value="L_NOMBRE_FRACTION"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="L_NOM_COMMUN_UNITE_DE_MESURE"/>
+      </list>
+      <!-- possible conjunction in numbers (vingt ET un)-->
+      <list name="ConjCoordMicros"> 
+        <item value="L_CONJ_COORD"/>
+        <item value="L_CONJ_COORD_ADVERSATIVE"/>
+      </list>
+      <!-- normalization of person names -->
+      <list name="FirstnameMicros">
+        <!--item value="L_NP_PRENOM"/-->
+      </list>
+      <!-- normalization of dates -->
+      <list name="MonthMicros">
+        <item value="L_NOM_MOIS"/>
+      </list>
+      <list name="DayMicros">
+        <item value="L_NOM_JOUR"/>
+      </list>
+    </group>
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-eng.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+        <item value="DETSUB"/>
+        <item value="ADJPRENSUB"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+      </list>
+      <list name="VerbalHomoSyntagmaticRelations">
+      </list>
+      <list name="CompoundsRels">
+        <item value="COMPADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+      </list>
+      <list name="NounPhraseHeadCategs">
+      </list>
+      <list name="DefiniteCategs">
+      </list>
+    </group>    
+  </module>
+</modulesConfig>

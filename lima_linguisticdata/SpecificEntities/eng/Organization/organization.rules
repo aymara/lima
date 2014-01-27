@@ -1,0 +1,181 @@
+#############################################################################
+# rules for the recognition of known organization names in english          #
+#############################################################################
+
+# other organizations (composed names or different normalizations)
+
+Advanced::Research Projects Agency:ORGANIZATION:Advanced Research Projects Agency
+Aeronautica::Civil:ORGANIZATION:Aeronautica Civil
+Agricultural::Ministry:ORGANIZATION:Agricultural Ministry
+Food::and Drug Administration:ORGANIZATION:FDA
+Force:Air::ORGANIZATION:Air Force
+FORCE:AIR::ORGANIZATION:AIR FORCE
+Army::Corps:ORGANIZATION:Army Corps
+Army::Corps of Engineers:ORGANIZATION:Army Corps of Engineers
+Association::of South East Asian Nations:ORGANIZATION:Association of South East Asian Nations
+Tropical:Bureau of Hygiene and:Medicine:ORGANIZATION:Bureau of Hygiene and Tropical Medicine
+Canada::Post:ORGANIZATION:Canada Post
+Canadian::Space Agency:ORGANIZATION:Canadian Space Agency
+C::B I:ORGANIZATION:C B I
+C:C E::ORGANIZATION:C E C
+C::E E:ORGANIZATION:C E E
+Commerce:Chamber of::ORGANIZATION:Chamber of Commerce
+Commerce:Chamber of:and Industry:ORGANIZATION:Chamber of Commerce and Industry
+England:Church of::ORGANIZATION:Church of England
+Scotland:Church of::ORGANIZATION:Church of Scotland
+Catholic::Church:ORGANIZATION:Catholic Church
+Circuit::Court of Appeals:ORGANIZATION:Circuit Court of Appeals
+Coast::Guard:ORGANIZATION:Coast Guard
+Congressional::Black Caucus:ORGANIZATION:Congressional Black Caucus
+Conservative::Party:ORGANIZATION:Conservative Party
+Appeals:Court of::ORGANIZATION:Court of Appeals
+CAPTURE:DATA:AGENCY:ORGANIZATION:DATA CAPTURE AGENCY
+Advanced:Defense:Research Projects Agency:ORGANIZATION:Defense Advanced Research Projects Agency
+Organization:Electronics Research and Service::ORGANIZATION:Electronics Research and Service Organization
+Organization:Electronics Research & Service::ORGANIZATION:Electronics Research & Service Organization
+Communities:European::ORGANIZATION:UE
+Community:European::ORGANIZATION:UE
+European::Union:ORGANIZATION:UE
+European::Commission:ORGANIZATION:European Commission
+EU:::ORGANIZATION:UE
+Glasgow::Rangers:ORGANIZATION:Glasgow Rangers
+Administration:Federal Aviation::ORGANIZATION:Federal Aviation Administration
+Investigation:Federal Bureau of::ORGANIZATION:FBI
+Communications:Federal:Commission:ORGANIZATION:Federal Communications Commission
+Management:Federal Emergency:Agency:ORGANIZATION:Federal Emergency Management Agency
+Regulatory:Federal Energy:Commission:ORGANIZATION:Federal Energy Regulatory Commission
+Conciliation:Federal Mediation and:Service:ORGANIZATION:Federal Mediation and Conciliation Service
+Federal::Reserve:ORGANIZATION:Federal Reserve
+Federal::Reserve Bank:ORGANIZATION:Federal Reserve Bank
+Accounting:Financial:Standards Board:ORGANIZATION:Financial Accounting Standards Board
+Foreign::Office:ORGANIZATION:Foreign Office
+Flamurtari::Vlore:ORGANIZATION:Flamurtari Vlore
+Chemlon::Humenne:ORGANIZATION:Chemlon Humenne
+Kareda::Siauliai:ORGANIZATION:Kareda Siauliai
+Agreement:General:on Tariffs and Trade:ORGANIZATION:General Agreement on Tariffs and Trade
+Goddard::Space Flight Center:ORGANIZATION:Goddard Space Flight Center
+Office:Home::ORGANIZATION:Home Office
+Development:Housing and Urban::ORGANIZATION:Housing and Urban Development
+Revenue:Inland::ORGANIZATION:Inland Revenue
+Internal::Revenue Service:ORGANIZATION:Internal Revenue Service
+Italian::Space Agency:ORGANIZATION:Italian Space Agency
+Organization:Japan Industrial Development::ORGANIZATION:Japan Industrial Development Organization
+International:Japan:Development Organization:ORGANIZATION:Japan International Development Organization
+Laboratories:Jet Propulsion::ORGANIZATION:Jet Propulsion Laboratories
+Propulsion:Jet:Laboratory:ORGANIZATION:Jet Propulsion Laboratory
+Propulsion:Jet:Labs:ORGANIZATION:Jet Propulsion Labs
+Government:Labour::ORGANIZATION:Labour Government
+Labour::Party:ORGANIZATION:Labour Party
+Democrat:Liberal:Party:ORGANIZATION:Liberal Democrat Party
+Democrats:Liberal::ORGANIZATION:Liberal Democrats
+Mujahideen::Khalq:ORGANIZATION:Mujahideen Khalq
+Administration:National Aeronautics and Space::ORGANIZATION:National Aeronautics and Space Administration
+National::Bureau of Economic Research:ORGANIZATION:National Bureau of Economic Research
+Legislators:National Conference of State::ORGANIZATION:National Conference of State Legislators
+Legislatures:National Conference of State::ORGANIZATION:National Conference of State Legislatures
+National::Guard:ORGANIZATION:National Guard
+Relations:National Labor:Board:ORGANIZATION:National Labor Relations Board
+Mediation:National:Board:ORGANIZATION:National Mediation Board
+Mediation:National:Service:ORGANIZATION:National Mediation Service
+National::Ocean Service:ORGANIZATION:National Ocean Service
+Development:National Space:Agency of Japan:ORGANIZATION:National Space Development Agency of Japan
+Development:National Space:Agency Of Japan:ORGANIZATION:National Space Development Agency Of Japan
+Transportation:National:Safety Board:ORGANIZATION:National Transportation Safety Board
+National::Weather Service:ORGANIZATION:National Weather Service
+Academy:Naval::ORGANIZATION:Naval Academy
+Operations:Naval::ORGANIZATION:Naval Operations
+Research:Naval:Lab:ORGANIZATION:Naval Research Lab
+Laboratories:Naval Research::ORGANIZATION:Naval Research Laboratories
+Laboratory:Naval Research::ORGANIZATION:Naval Research Laboratory
+Research:Naval:Labs:ORGANIZATION:Naval Research Labs
+Organization:North Atlantic Treaty::ORGANIZATION:OTAN
+Organization::for Economic Cooperation and Development:ORGANIZATION:OCDE
+Organization::of Petroleum Exporting Countries:ORGANIZATION:OPEP
+Service:Postal::ORGANIZATION:Postal Service
+Laboratories:Sandia National::ORGANIZATION:Sandia National Laboratories
+Laboratory:Sandia National::ORGANIZATION:Sandia National Laboratory
+National:Sandia:Labs:ORGANIZATION:Sandia National Labs
+S::D P:ORGANIZATION:S D P
+S::E C:ORGANIZATION:S E C
+Service:Secret::ORGANIZATION:Secret Service
+Nyva::Vinnytsya:ORGANIZATION:Nyva Vinnytsya
+Securities::and Exchange Commission:ORGANIZATION:Securities and Exchange Commission
+Administration:Small Business::ORGANIZATION:Small Business Administration
+Restoration:State Law and Order:Council:ORGANIZATION:State Law and Order Restoration Council
+Fed:(the|The)::ORGANIZATION:the Fed
+House:the::ORGANIZATION:the House
+Police:the::ORGANIZATION:the Police
+Government:Tory::ORGANIZATION:Tory Government
+Party:Tory::ORGANIZATION:Tory Party
+Congress:Trade Union::ORGANIZATION:Trade Union Congress
+Authority:UK Atomic Energy::ORGANIZATION:UK Atomic Energy Authority
+Nations:United:Organization?:ORGANIZATION:UNO
+United\ Nations:::ORGANIZATION:UNO
+UNO$NP:::ORGANIZATION:UNO
+U.N.O.:::ORGANIZATION:UNO
+Academy:U.S. Naval::ORGANIZATION:U.S. Naval Academy
+White::House:ORGANIZATION:White House
+Organisation:World Health::ORGANIZATION:OMS
+Organization:World Health::ORGANIZATION:OMS
+NATO:::ORGANIZATION:OTAN
+
+Amnesty::International:ORGANIZATION:Amnesty International
+
+Justice::Department:ORGANIZATION:
+Supreme::Court:ORGANIZATION:
+Security::Council:ORGANIZATION:
+
+U.S.::(senate|parliament|supreme court|department of justice):ORGANIZATION:
+U.S::. (Senate|Parliament|Supreme Court|Department of Justice):ORGANIZATION:
+
+Qaeda:(al|Al)::ORGANIZATION:Al Qaeda
+Qaida:(al|Al)::ORGANIZATION:Al Qaeda
+Jazeera:(al|Al)::ORGANIZATION:Al Jazeera
+Jihad:Islamic::ORGANIZATION:
+Jiad:Islamic::ORGANIZATION:Islamic Jihad
+Fatah:::ORGANIZATION:
+Hezbollah:::ORGANIZATION:
+Hizbullah:::ORGANIZATION:Hezbollah
+
+S::\& P 500:ORGANIZATION:S&P 500
+S::and P 500:ORGANIZATION:S&P 500
+S::\& P:ORGANIZATION:S&P
+S::and P:ORGANIZATION:S&P
+Standard::\& Poor:ORGANIZATION:S&P
+Federal::Republic of Germany:ORGANIZATION:
+Wall::Street:ORGANIZATION:
+Western::Union:ORGANIZATION:
+First::of America:ORGANIZATION:
+Cray::Computer:ORGANIZATION:
+Johnson::\& Johnson:ORGANIZATION:
+Voice:(The)?:of America:ORGANIZATION:
+Crum::\& Forster:ORGANIZATION:
+Chicago::Board of Trade:ORGANIZATION:
+Young::\& Rubicam:ORGANIZATION:
+Valley::Federal Savings \& Loan:ORGANIZATION:
+Savings::\& Loan:ORGANIZATION:
+Prudential::Bache Securities:ORGANIZATION:
+NL::Industries:ORGANIZATION:
+Neuberger::\& Berman:ORGANIZATION:
+National::Institutes of Health:ORGANIZATION:
+Life::of Georgia:ORGANIZATION:
+Goldman::Sachs:ORGANIZATION:
+Friends::for Education:ORGANIZATION:
+Dow::Jones Capital Markets Report:ORGANIZATION:
+Merrill::Lynch Capital Markets:ORGANIZATION:
+Department::of Health and Human Services:ORGANIZATION:
+Writers::Guild:ORGANIZATION:
+Writers::Guild of America East:ORGANIZATION:
+Waertsilae::Marine Industries Oy:ORGANIZATION:
+Waertsilae::Marine Industries:ORGANIZATION:
+U.S.::Army_Corps of Engineers:ORGANIZATION:
+Trans::World Airlines:ORGANIZATION:
+Commerce::Department:ORGANIZATION:
+Transportation::Department:ORGANIZATION:
+Southern::Optical:ORGANIZATION:
+Society::for Savings Bancorp:ORGANIZATION:
+Prudential::Bache Securities:ORGANIZATION:
+Prudential::Bache:ORGANIZATION:
+Venture::Economics:ORGANIZATION:
+Macmillan::\/ McGraw:ORGANIZATION:
+Fannie::Mae:ORGANIZATION:

@@ -1,0 +1,32 @@
+<!--This file has been saved using Leffe Benchmarking Tool-->
+<!--Paths $LBP_PATH and $LEFFE_BT_COMMANDS_ROOT have to be set accordingly-->
+<benchmarking>
+ <pipeline>
+  <unit processingStatus="0" textPath="$LBP_PATH/text/general_elda.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/general_elda.xml" id="1" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/general_lemonde.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/general_lemonde.xml" id="2" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/general_mlcc.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/general_mlcc.xml" id="3" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/general_senat.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/general_senat.xml" id="4" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/litteraire_2.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/litteraire_2.xml" id="5" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/litteraire_3.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/litteraire_3.xml" id="6" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/litteraire_4.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/litteraire_4.xml" id="7" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/mail_10.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/mail_10.xml" id="8" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/mail_9.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/mail_9.xml" id="9" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_1.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_1.xml" id="10" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_2.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_2.xml" id="11" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_3.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_3.xml" id="12" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_4.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_4.xml" id="13" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_5.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_5.xml" id="14" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_6.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_6.xml" id="15" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_7.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_7.xml" id="16" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_8.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_8.xml" id="17" />
+  <unit processingStatus="0" textPath="$LBP_PATH/text/oral_delic_9.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/oral_delic_9.xml" id="18" />
+ </pipeline>
+ <evaluations/>
+ <workingDir path="$LBP_PATH" />
+ <commands>
+  <analyzer commandLine="$LEFFE_BT_COMMANDS_ROOT/analyzer/analyzer-easy.sh $TEXT_PATH" />
+  <evaluator commandLine="$LEFFE_BT_COMMANDS_ROOT/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <viewer commandLine="$LEFFE_BT_COMMANDS_ROOT/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+ </commands>
+ <concurrentProcesses max="2" />
+</benchmarking>

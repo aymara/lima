@@ -1,0 +1,10 @@
+classes {
+all : All characters ;
+c_arabic < all : Arabic letter ;
+m_parag : Paragraph empty markup ;
+unknwn : All characters not in the following table
+}
+chars {
+0000, NULL, m_parag ;
+0646, ARABIC LETTER NOON, c_arabic, u0646
+}

@@ -1,0 +1,6 @@
+*.kdev4
+build/
+obuild/
+*~
+results.???.*
+ExploitResults/data

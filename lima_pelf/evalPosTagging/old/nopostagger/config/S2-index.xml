@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+<!-- Configuration du client coeur -->
+    <module name="index-coreclient">
+        <!-- Parametrage de gestion de la connexion à la base de données -->
+        <group name="dbConnexion">
+           <param key="serverName" value="localhost" />
+           <param key="userName" value="dbindex" />
+           <param key="password" value="dbindex" />
+        </group>
+    </module>
+    <module name="indexreader-coreclient">
+    </module>
+    <module name="indexer-coreclient">
+        <!-- Parametrage -->
+        <group name="general">
+        <!-- maximum size of the spelling of terms (VARCHAR(80)) -->
+           <param key="maxTermSize" value="80" />
+           <param key="maxLocalIndexSize" value="200000" />
+        </group>
+        <!-- Parametrage de gestion des cache des index globaux de termes
+             Chaque terme recemment indexé a potentiellement un index en cache dans le système -->
+        <group name="cacheManaging">
+           <!-- Fréquence d'inspection des caches
+           // Nombre de documents indexés entre deux inspection des caches
+           // Une valeur très grande minimise le temps passé à l'inspection des caches
+           // une valeur petite permet d'avoir une base synchronisée + frequemment donc plus fraîche -->
+           <param key="synchroFrequency" value="5000" />
+           <!-- Cycle de vie de chaque cache
+           // Nombre maximum de documents dernièrement indexés sans le terme de l'index
+           // avant de décider de le synchroniser avec la base puis de le supprimer de la mémoire
+           // Une valeur petite minimise la taille des caches: optimisation taille, on
+           // supprime du cache les index des termes rares donc peu actifs
+           // Une valeur très grande repousse la synchronisation des cache à la destruction de l'index:
+           // on fait peu d'entrée sortie et de compression/decompression: optimisation en vitesse. -->
+           <param key="maxNbDocWithoutTerm" value="1000" />
+           <!-- Cycle de vie de chaque cache
+           // Taille maximale d'une cache (en nombre de de documents référencés) avant de décider
+           // de le synchroniser avec la base
+           // Une valeur petite minimise la taille des caches: optimisation taille. On vide frequemment
+           // les caches
+           // Une valeur très grande repousse la synchronisation des cache à la destruction de l'index:
+           // on fait peu d'entrée sortie et de compression/decompression: optimisation en vitesse. -->
+           <param key="maxSizeOfFreshData" value="1000" />
+        </group>
+    </module>
+</modulesConfig>
+
+
+

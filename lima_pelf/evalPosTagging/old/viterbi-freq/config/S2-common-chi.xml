@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="LinguisticData">
+    <group name="Categories">
+        <param key = "MacroCodesList" value = "LinguisticProcessings/chi/macroCodesList-chi.dat" />
+        <param key = "MicroCodesList" value = "LinguisticProcessings/chi/codesList-chi.dat" />
+        <list name="sentenceBreakMicros">
+          <item value="L_CN_PONCTUATION_FORTE"/>
+        </list>
+      <list name="emptyMacro">
+        <item value="L_NONE_1" />
+        <item value="L_PARTICULE" />
+        <item value="L_PONCTU" />
+        <item value="L_PREP" />
+        <item value="L_PRON" />
+        <item value="L_DET" />
+        <item value="L_INTERJ" />
+        <item value="L_CONJ" />
+        <item value="L_DIVERS" />
+      </list>
+      <list name="emptyMicro">
+        <item value="L_CN_PARTICULE_STRUCTURE_DANS_LA_STRUCTURE_DE" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_DE2" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_DI4" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_VIDE_DE_SENS" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_BA" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_BEI" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_FIN_D'UNE_PHRASE" />
+        <item value="L_CN_PARTICULE_STRUCTURE_PARTICULE_SUO" />
+        <item value="L_CN_PARTICULE_TEMPS_ACTION_FINIE" />
+        <item value="L_CN_PARTICULE_TEMPS_ACTION_EN_COURT" />
+        <item value="L_CN_PARTICULE_MODE_MODE_INTERROGATIF" />
+        <item value="L_CN_PARTICULE_MODE_MODE_EXCLAMATIF" />
+        <item value="L_CN_PARTICULE_AUTRES" />
+        <item value="L_CN_PONCTUATION_FORTE" />
+        <item value="L_CN_PONCTUATION_FAIBLE" />
+        <item value="L_CN_PONCTUATION_PARENTHESES" />
+        <item value="L_CN_PONCTUATION_DIALOGUE" />
+        <item value="L_CN_PONCTUATION_MISE_EN_EVIDENCE" />
+        <item value="L_CN_PONCTUATION_PARAGRAPHE" />
+        <item value="L_CN_PONCTUATION_TABLEAUX" />
+        <item value="L_CN_PREP_GENERAL" />
+        <item value="L_CN_PREP_DERIVE_D'UN_VERBE" />
+        <item value="L_CN_PRON_PERSONNEL" />
+        <item value="L_CN_PRON_DEMONSTRATIF" />
+        <item value="L_CN_PRON_INDEFINI" />
+        <item value="L_CN_PRON_POSSESSIF" />
+        <item value="L_CN_PRON_INDEFINI_A_VALEUR_NEGATIVE" />
+        <item value="L_CN_PRON_INTERROGATIF" />
+        <item value="L_CN_DET_POSSESSIF" />
+        <item value="L_CN_DET_DEMONSTRATIF" />
+        <item value="L_CN_DET_INDEFINI" />
+        <item value="L_CN_DET_INDEFINI_A_SENS_NEGATIF" />
+        <item value="L_CN_INTERJECTION_GENERAL" />
+        <item value="L_CN_CONJ_COORDINATION_LIER_QUE_D'EXPRESSIONS" />
+        <item value="L_CN_CONJ_COORDINATION_LIER_QUE_DE_PHRASE" />
+        <item value="L_CN_CONJ_COORDINATION_LIER_TOUT" />
+        <item value="L_CN_CONJ_SUBORDINATION_LIER_QUE_D'EXPRESSIONS" />
+        <item value="L_CN_CONJ_SUBORDINATION_LIER_QUE_DE_PHRASE" />
+        <item value="L_CN_CONJ_SUBORDINATION_LIER_TOUT" />
+        <item value="L_CN_DIVERS_ONOMATOPEE" />
+        <item value="L_CN_DIVERS_MOT_ETRANGER" />
+        <item value="L_CN_DIVERS_DATE" />
+        <item value="L_CN_DIVERS_OPERATEUR_MATHEMATIQUE_" />
+        <item value="L_CN_DIVERS_EUPHONISME" />
+      </list>
+        <list name="conjugatedVerbs" >
+          <item value="L_CN_VERBE_PRINCIPAL"/>
+          <item value="L_CN_VERBE_AUXILIAIRE"/>
+          <item value="L_CN_VERBE_VERBE_DE_MODALITE"/>
+          <item value="L_CN_VERBE_COPULE"/>
+        </list>
+        <list name="propositionIntroductors" >
+          <item value="L_CN_CONJ_COORDINATION_LIER_QUE_D'EXPRESSIONS"/>
+          <item value="L_CN_CONJ_COORDINATION_LIER_QUE_DE_PHRASE"/>
+          <item value="L_CN_CONJ_COORDINATION_LIER_TOUT"/>
+          <item value="L_CN_CONJ_SUBORDINATION_LIER_QUE_D'EXPRESSIONS"/>
+          <item value="L_CN_CONJ_SUBORDINATION_LIER_QUE_DE_PHRASE"/>
+          <item value="L_CN_CONJ_SUBORDINATION_LIER_TOUT"/>
+        </list>
+    </group>
+    <group name="NamedEntityNormalization">
+      <!-- normalization of numbers -->
+      <list name="NumberMicros">
+      </list>
+      <list name="UnitMicros">
+      </list>
+      <!-- possible conjunction in numbers (vingt ET un)-->
+      <list name="ConjCoordMicros">
+      </list>
+      <!-- normalization of person names -->
+      <list name="FirstnameMicros">
+      </list>
+      <!-- normalization of dates -->
+      <list name="MonthMicros">
+      </list>
+      <list name="DayMicros">
+      </list>
+    </group>
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-chi.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+        <item value="DETSUB"/>
+        <item value="ADJSUB"/>
+        <item value="COMPADJ"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="COMPDUNOM"/>
+      </list>
+      <list name="VerbalHomoSyntagmaticRelations">
+      </list>
+      <list name="CompoundsRels">
+        <item value="ADJSUB"/>
+        <item value="COMPDUNOM"/>
+      </list>
+      <list name="NounPhraseHeadCategs">
+      </list>
+      <list name="DefiniteCategs">
+      </list>
+    </group>
+  </module>
+</modulesConfig>

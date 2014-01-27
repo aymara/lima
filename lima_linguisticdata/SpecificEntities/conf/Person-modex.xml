@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="entities">
+    <group name="Person">
+      <list name="entityList">
+        <item value="PERSON"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="PersonModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PersonRecognition"/>
+      </list>
+    </group>
+    <group name="PersonRecognition" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="PersonRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-eng.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="NNP"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="NNP"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-fre.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="NPP"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="NPP"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

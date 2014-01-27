@@ -1,0 +1,29 @@
+
+######################################################################
+# sous-automates
+
+# adverb group
+define subautomaton AdvGroup {
+  pattern=$ADV{0-3}
+}
+
+# adverb adjective group
+define subautomaton AdvAdjGroup {
+  pattern=$ADV{0-3} $ADJ
+}
+
+# common noun group size=3
+define subautomaton EndOfNounGroupAfterNoun {
+  pattern=$DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et)?){0-n}
+}
+
+# common noun group size=6
+define subautomaton NounGroup {
+  pattern=$DET? (%AdvAdjGroup (,|et)?){0-n} ($NC|$NP) $DET? ($NC?|$NP{0-n}) (%AdvAdjGroup (,|et)?){0-n}
+}
+
+# incise size=1
+define subautomaton InciseGroup {
+  pattern=((, (^,){0-n} ,)|(- (^-){0-n} -)|(\( (^$PONCTU-PONCTU_PARENTHESE){0-n} \))){0-n}
+}
+

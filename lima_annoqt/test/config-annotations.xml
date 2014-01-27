@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<annotationConfiguration>
+  <entities>
+    <entity name="LOCATION" color="#bb00cc"/>
+    <entity name="PRODUCT" color="#990000" recursive="true"/>
+    <entity name="NUMEX" color="#3366ff"/>
+    <entity name="ORGANIZATION" color="#330066"/>
+    <entity name="ROBOTIC_MANUFACTURER" color="#66ff00"/>
+    <entity name="ROBOTIC_ROBOT" color="#ff0000"/>
+    <entity name="ROBOTIC_PRODUCTION" color="#71ff73" recursive="true"/>
+    <entity name="ROBOTIC_PAYLOAD" color="#eecc00"/>
+    <entity name="ROBOTIC_REACH" color="#0000ff"/>
+    <entity name="ROBOTIC_DOMAIN" color="#00cc00"/>
+    <entity name="ROBOTIC_SIXAXIS" color="#00cccc"/>
+    <entity name="New Type" color="#57ffd5"/>
+  </entities>
+  <templates>
+  </templates>
+</annotationConfiguration>

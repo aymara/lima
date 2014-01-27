@@ -1,0 +1,7 @@
+#!/bin/bash
+#transformation de la liste des cles en automate
+
+time testDict16 --charSize=2 --listOfWords=$1 --output=$2 > output
+# hash
+time testDict16 --charSize=2 --input=$2 --spare --output=$2 >> output
+

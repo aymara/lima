@@ -1,0 +1,85 @@
+######################################################################
+#                                                                    #
+# rules for the recognition of french heterosyntagmatic relations    #
+# this file uses the syntax for the declarations of automatons by    #
+# Romaric Besancon (Cf. his 2003/03/11 document)                     #
+# Created on Mon oct 4 2004                                          #
+# by Romaric Besancon                                                #
+#                                                                    #
+######################################################################
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+using modex DateTime-modex.xml
+using groups DateTime
+using modex Location-modex.xml
+using groups Location
+
+
+*:::SYNTACTIC_RELATION:
++isASpecificEntity(trigger.1,"DateTime.TIME")
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+*:::SYNTACTIC_RELATION:
++isASpecificEntity(trigger.1,"Location.LOCATION")
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_LIEU")
+=<ClearStoredRelations()
+
+temps:$PREP-P $DET? $ADJ?::SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+fin:$PREP $DET-DET::SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+début:$PREP $DET-DET::SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+début:$DET-DET:(de|du|d'):SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+pour::$VERBE-VINF:SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_BUT")
+=<ClearStoredRelations()
+
+lors$PREP::(de|du|d'):SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+lorsque$CONJ:::SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_TEMPS")
+=<ClearStoredRelations()
+
+but:$PREP $DET?:(de|d'):SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_BUT")
+=<ClearStoredRelations()
+
+selon$PREP:::SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_MANIERE")
+=<ClearStoredRelations()
+
+malgré$PREP:::SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_MANIERE")
+=<ClearStoredRelations()
+
+grâce::(à|au|aux):SYNTACTIC_RELATION:
++FindRelationFrom(trigger.1,"CPL_V")
+=>ModifyRelationInGraph("CC_MOYEN")
+=<ClearStoredRelations()

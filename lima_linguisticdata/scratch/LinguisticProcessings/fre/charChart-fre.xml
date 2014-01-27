@@ -1,0 +1,1399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Automaton.xslt"?>
+<language_definition id="FRE_DEF" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="language.xsd">
+  <!-- Caution :
+1) Actions can't be added without modifying C++ code.
+2) Status Settings can't be added without modifying C++ code
+3) Automatons which set status can't be renamed or added without modifying C++ code-->
+  <char_class id="c_all">
+    <name>All characters</name>
+  </char_class>
+  <char_class id="c_del">
+    <name>Delimitor</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="c_b">
+    <name>Blank delimitor</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_par">
+    <name>Paragraph delimitor</name>
+    <class>c_b</class>
+  </char_class>
+  <char_class id="c_dot">
+    <name>Sentence delimitor, acronym, abbreviation, dot numbers</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_comma">
+    <name>Word delimitor, decimal number</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_slash">
+    <name>Word delimitor, fraction sign</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_hyphen">
+    <name>Word delimitor, hyphen word</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_lowline">
+    <name>Word delimitor, hyphen word</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_quote">
+    <name>Word delimitor, possessive</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_fraction">
+    <name>Fraction sign</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_percent">
+    <name>Percent sign</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_del1">
+    <name>Word delimitor, word itself</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_plus">
+          <name>plus sign</name>
+          <class>c_del1</class>
+  </char_class>
+  <char_class id="c_del2">
+    <name>Sentence delimitor, word itself</name>
+    <class>c_del</class>
+  </char_class>
+  <char_class id="c_Mm">
+    <name>Letter</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="c_degree">
+    <name>Degree sign</name>
+    <class>c_del1</class>
+  </char_class>
+  <char_class id="c_M">
+    <name>Upper case letter</name>
+    <class>c_Mm</class>
+  </char_class>
+  <char_class id="c_A">
+    <name>Other upper case letter</name>
+    <class>c_M</class>
+  </char_class>
+  <char_class id="c_O">
+    <name>Upper case letter and ordinal letter</name>
+    <class>c_M</class>
+  </char_class>
+  <char_class id="c_S">
+    <name>Upper case letter S</name>
+    <class>c_A</class>
+  </char_class>
+  <char_class id="c_N">
+    <name>Upper case letter N</name>
+    <class>c_A</class>
+  </char_class>
+  <char_class id="c_V">
+    <name>Upper case letter and Roman sign</name>
+    <class>c_M</class>
+  </char_class>
+  <char_class id="c_m">
+    <name>Lower case letter</name>
+    <class>c_Mm</class>
+  </char_class>
+  <char_class id="c_o">
+    <name>Lower case letter and ordinal letter</name>
+    <class>c_m</class>
+  </char_class>
+  <char_class id="c_l_o">
+    <name>Lower case letter o</name>
+    <class>c_o</class>
+  </char_class>
+  <char_class id="c_a">
+    <name>Other lower case letter</name>
+    <class>c_m</class>
+  </char_class>
+  <char_class id="c_s">
+    <name>Lower case letter s</name>
+    <class>c_a</class>
+  </char_class>
+  <char_class id="c_n">
+    <name>Lower case letter n</name>
+    <class>c_o</class>
+  </char_class>
+  <char_class id="c_a_t">
+    <name>Lower case letter T</name>
+    <class>c_a</class>
+  </char_class>
+  <char_class id="c_5">
+    <name>Digit</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="c_other">
+    <name>Unrecognized sign</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="m_pattern">
+    <name>Pattern start markup</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="m_end_pattern">
+    <name>Pattern end markup</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="m_line">
+    <name>Line empty markup</name>
+    <class>c_all</class>
+  </char_class>
+  <char_class id="m_parag">
+    <name>Paragraph empty markup</name>
+  </char_class>
+  <char_class id="unknwn">
+    <name>All characters not in the following table</name>
+  </char_class>
+  <char>
+    <code>0000</code>
+    <name>NULL</name>
+    <class>m_parag</class>
+  </char>
+  <char>
+          <code>0009</code>
+          <name>CHARACTER TABULATION</name>
+          <class>c_b</class>
+  </char>
+  <char>
+          <code>000A</code>
+          <name>LINE FEED (LF)</name>
+          <class>c_par</class>
+  </char>
+  <char>
+    <code>000D</code>
+    <name>CARRIAGE RETURN (CR)</name>
+    <class>c_par</class>
+  </char>
+  <char>
+    <code>0020</code>
+    <name>SPACE</name>
+    <class>c_b</class>
+  </char>
+  <char>
+    <code>0021</code>
+    <name>EXCLAMATION MARK</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>0022</code>
+    <name>QUOTATION MARK</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0023</code>
+    <name>NUMBER SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0024</code>
+    <name>DOLLAR SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0025</code>
+    <name>PERCENT SIGN</name>
+    <class>c_percent</class>
+  </char>
+  <char>
+    <code>0026</code>
+    <name>AMPERSAND</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0027</code>
+    <name>APOSTROPHE</name>
+    <class>c_quote</class>
+  </char>
+  <char>
+    <code>0028</code>
+    <name>LEFT PARENTHESIS</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0029</code>
+    <name>RIGHT PARENTHESIS</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>002A</code>
+    <name>ASTERISK</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>002B</code>
+    <name>PLUS SIGN</name>
+    <class>c_plus</class>
+  </char>
+  <char>
+    <code>002C</code>
+    <name>COMMA</name>
+    <class>c_comma</class>
+  </char>
+  <char>
+    <code>002D</code>
+    <name>HYPHEN-MINUS</name>
+    <class>c_hyphen</class>
+  </char>
+  <char>
+    <code>002E</code>
+    <name>FULL STOP</name>
+    <class>c_dot</class>
+  </char>
+  <char>
+    <code>002F</code>
+    <name>SOLIDUS</name>
+    <class>c_slash</class>
+  </char>
+  <char>
+    <code>0030</code>
+    <name>DIGIT ZERO</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0031</code>
+    <name>DIGIT ONE</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0032</code>
+    <name>DIGIT TWO</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0033</code>
+    <name>DIGIT THREE</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0034</code>
+    <name>DIGIT FOUR</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0035</code>
+    <name>DIGIT FIVE</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0036</code>
+    <name>DIGIT SIX</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0037</code>
+    <name>DIGIT SEVEN</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0038</code>
+    <name>DIGIT EIGHT</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>0039</code>
+    <name>DIGIT NINE</name>
+    <class>c_5</class>
+  </char>
+  <char>
+    <code>003A</code>
+    <name>COLON</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>003B</code>
+    <name>SEMICOLON</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>003C</code>
+    <name>LESS-THAN SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>003D</code>
+    <name>EQUALS SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>003E</code>
+    <name>GREATER-THAN SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>003F</code>
+    <name>QUESTION MARK</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>0040</code>
+    <name>COMMERCIAL AT</name>
+    <class>c_a</class>
+  </char>
+  <char>
+    <code>0041</code>
+    <name>LATIN CAPITAL LETTER A</name>
+    <class>c_A</class>
+    <min>0061</min>
+  </char>
+  <char>
+    <code>0042</code>
+    <name>LATIN CAPITAL LETTER B</name>
+    <class>c_A</class>
+    <min>0062</min>
+  </char>
+  <char>
+    <code>0043</code>
+    <name>LATIN CAPITAL LETTER C</name>
+    <class>c_V</class>
+    <min>0063</min>
+  </char>
+  <char>
+    <code>0044</code>
+    <name>LATIN CAPITAL LETTER D</name>
+    <class>c_V</class>
+    <min>0064</min>
+  </char>
+  <char>
+    <code>0045</code>
+    <name>LATIN CAPITAL LETTER E</name>
+    <class>c_A</class>
+    <min>0065</min>
+  </char>
+  <char>
+    <code>0046</code>
+    <name>LATIN CAPITAL LETTER F</name>
+    <class>c_A</class>
+    <min>0066</min>
+  </char>
+  <char>
+    <code>0047</code>
+    <name>LATIN CAPITAL LETTER G</name>
+    <class>c_A</class>
+    <min>0067</min>
+  </char>
+  <char>
+    <code>0048</code>
+    <name>LATIN CAPITAL LETTER H</name>
+    <class>c_A</class>
+    <min>0068</min>
+  </char>
+  <char>
+    <code>0049</code>
+    <name>LATIN CAPITAL LETTER I</name>
+    <class>c_V</class>
+    <min>0069</min>
+  </char>
+  <char>
+    <code>004A</code>
+    <name>LATIN CAPITAL LETTER J</name>
+    <class>c_A</class>
+    <min>006A</min>
+  </char>
+  <char>
+    <code>004B</code>
+    <name>LATIN CAPITAL LETTER K</name>
+    <class>c_A</class>
+    <min>006B</min>
+  </char>
+  <char>
+    <code>004C</code>
+    <name>LATIN CAPITAL LETTER L</name>
+    <class>c_V</class>
+    <min>006C</min>
+  </char>
+  <char>
+    <code>004D</code>
+    <name>LATIN CAPITAL LETTER M</name>
+    <class>c_V</class>
+    <min>006D</min>
+  </char>
+  <char>
+    <code>004E</code>
+    <name>LATIN CAPITAL LETTER N</name>
+    <class>c_N</class>
+    <min>006E</min>
+  </char>
+  <char>
+    <code>004F</code>
+    <name>LATIN CAPITAL LETTER O</name>
+    <class>c_O</class>
+    <min>006F</min>
+  </char>
+  <char>
+    <code>0050</code>
+    <name>LATIN CAPITAL LETTER P</name>
+    <class>c_A</class>
+    <min>0070</min>
+  </char>
+  <char>
+    <code>0051</code>
+    <name>LATIN CAPITAL LETTER Q</name>
+    <class>c_A</class>
+    <min>0071</min>
+  </char>
+  <char>
+    <code>0052</code>
+    <name>LATIN CAPITAL LETTER R</name>
+    <class>c_A</class>
+    <min>0072</min>
+  </char>
+  <char>
+    <code>0053</code>
+    <name>LATIN CAPITAL LETTER S</name>
+    <class>c_S</class>
+    <min>0073</min>
+  </char>
+  <char>
+    <code>0054</code>
+    <name>LATIN CAPITAL LETTER T</name>
+    <class>c_A</class>
+    <min>0074</min>
+  </char>
+  <char>
+    <code>0055</code>
+    <name>LATIN CAPITAL LETTER U</name>
+    <class>c_A</class>
+    <min>0075</min>
+  </char>
+  <char>
+    <code>0056</code>
+    <name>LATIN CAPITAL LETTER V</name>
+    <class>c_V</class>
+    <min>0076</min>
+  </char>
+  <char>
+    <code>0057</code>
+    <name>LATIN CAPITAL LETTER W</name>
+    <class>c_A</class>
+    <min>0077</min>
+  </char>
+  <char>
+    <code>0058</code>
+    <name>LATIN CAPITAL LETTER X</name>
+    <class>c_V</class>
+    <min>0078</min>
+  </char>
+  <char>
+    <code>0059</code>
+    <name>LATIN CAPITAL LETTER Y</name>
+    <class>c_A</class>
+    <min>0079</min>
+  </char>
+  <char>
+    <code>005A</code>
+    <name>LATIN CAPITAL LETTER Z</name>
+    <class>c_A</class>
+    <min>007A</min>
+  </char>
+  <char>
+    <code>005B</code>
+    <name>LEFT SQUARE BRACKET</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>005C</code>
+    <name>REVERSE SOLIDUS</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>005D</code>
+    <name>RIGHT SQUARE BRACKET</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>005E</code>
+    <name>CIRCUMFLEX ACCENT</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>005F</code>
+    <name>LOW LINE</name>
+    <class>c_lowline</class>
+  </char>
+  <char>
+    <code>0060</code>
+    <name>GRAVE ACCENT</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0061</code>
+    <name>LATIN SMALL LETTER A</name>
+    <class>c_a</class>
+    <maj>0041</maj>
+  </char>
+  <char>
+    <code>0062</code>
+    <name>LATIN SMALL LETTER B</name>
+    <class>c_a</class>
+    <maj>0042</maj>
+  </char>
+  <char>
+    <code>0063</code>
+    <name>LATIN SMALL LETTER C</name>
+    <class>c_a</class>
+    <maj>0043</maj>
+  </char>
+  <char>
+    <code>0064</code>
+    <name>LATIN SMALL LETTER D</name>
+    <class>c_o</class>
+    <maj>0044</maj>
+  </char>
+  <char>
+    <code>0065</code>
+    <name>LATIN SMALL LETTER E</name>
+    <class>c_o</class>
+    <maj>0045</maj>
+  </char>
+  <char>
+    <code>0066</code>
+    <name>LATIN SMALL LETTER F</name>
+    <class>c_a</class>
+    <maj>0046</maj>
+  </char>
+  <char>
+    <code>0067</code>
+    <name>LATIN SMALL LETTER G</name>
+    <class>c_a</class>
+    <maj>0047</maj>
+  </char>
+  <char>
+    <code>0068</code>
+    <name>LATIN SMALL LETTER H</name>
+    <class>c_a</class>
+    <maj>0048</maj>
+  </char>
+  <char>
+    <code>0069</code>
+    <name>LATIN SMALL LETTER I</name>
+    <class>c_a</class>
+    <maj>0049</maj>
+  </char>
+  <char>
+    <code>006A</code>
+    <name>LATIN SMALL LETTER J</name>
+    <class>c_a</class>
+    <maj>004A</maj>
+  </char>
+  <char>
+    <code>006B</code>
+    <name>LATIN SMALL LETTER K</name>
+    <class>c_a</class>
+    <maj>004B</maj>
+  </char>
+  <char>
+    <code>006C</code>
+    <name>LATIN SMALL LETTER L</name>
+    <class>c_a</class>
+    <maj>004C</maj>
+  </char>
+  <char>
+    <code>006D</code>
+    <name>LATIN SMALL LETTER M</name>
+    <class>c_o</class>
+    <maj>004D</maj>
+  </char>
+  <char>
+    <code>006E</code>
+    <name>LATIN SMALL LETTER N</name>
+    <class>c_n</class>
+    <maj>004E</maj>
+  </char>
+  <char>
+    <code>006F</code>
+    <name>LATIN SMALL LETTER O</name>
+    <class>c_l_o</class>
+    <maj>004F</maj>
+  </char>
+  <char>
+    <code>0070</code>
+    <name>LATIN SMALL LETTER P</name>
+    <class>c_a</class>
+    <maj>0050</maj>
+  </char>
+  <char>
+    <code>0071</code>
+    <name>LATIN SMALL LETTER Q</name>
+    <class>c_a</class>
+    <maj>0051</maj>
+  </char>
+  <char>
+    <code>0072</code>
+    <name>LATIN SMALL LETTER R</name>
+    <class>c_o</class>
+    <maj>0052</maj>
+  </char>
+  <char>
+    <code>0073</code>
+    <name>LATIN SMALL LETTER S</name>
+    <class>c_s</class>
+    <maj>0053</maj>
+  </char>
+  <char>
+    <code>0074</code>
+    <name>LATIN SMALL LETTER T</name>
+    <class>c_a_t</class>
+    <maj>0054</maj>
+  </char>
+  <char>
+    <code>0075</code>
+    <name>LATIN SMALL LETTER U</name>
+    <class>c_a</class>
+    <maj>0055</maj>
+  </char>
+  <char>
+    <code>0076</code>
+    <name>LATIN SMALL LETTER V</name>
+    <class>c_a</class>
+    <maj>0056</maj>
+  </char>
+  <char>
+    <code>0077</code>
+    <name>LATIN SMALL LETTER W</name>
+    <class>c_a</class>
+    <maj>0057</maj>
+  </char>
+  <char>
+    <code>0078</code>
+    <name>LATIN SMALL LETTER X</name>
+    <class>c_a</class>
+    <maj>0058</maj>
+  </char>
+  <char>
+    <code>0079</code>
+    <name>LATIN SMALL LETTER Y</name>
+    <class>c_a</class>
+    <maj>0059</maj>
+  </char>
+  <char>
+    <code>007A</code>
+    <name>LATIN SMALL LETTER Z</name>
+    <class>c_a</class>
+    <maj>005A</maj>
+  </char>
+  <char>
+    <code>007B</code>
+    <name>LEFT CURLY BRACKET</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>007C</code>
+    <name>VERTICAL LINE</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>007D</code>
+    <name>RIGHT CURLY BRACKET</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>007E</code>
+    <name>TILDE</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>0080</code>
+    <name>stand here for c_all UNKNOWN CHAR (NOT UNICODE standard)</name>
+    <class>unknwn</class>
+  </char>
+  <char>
+    <code>00A0</code>
+    <name>NO-BREAK SPACE</name>
+    <class>c_b</class>
+  </char>
+  <char>
+    <code>00A1</code>
+    <name>INVERTED EXCLAMATION MARK</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>00A2</code>
+    <name>CENT SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00A3</code>
+    <name>POUND SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00A4</code>
+    <name>CURRENCY SIGN</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00A5</code>
+    <name>YEN SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00A6</code>
+    <name>BROKEN BAR</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00A7</code>
+    <name>SECTION SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00A8</code>
+    <name>DIAERESIS</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00A9</code>
+    <name>COPYRIGHT SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00AA</code>
+    <name>FEMININE ORDINAL INDICATOR</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00AB</code>
+    <name>LEFT-POINTING DOUBLE ANGLE QUOTATION MARK</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00AC</code>
+    <name>NOT SIGN</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00AD</code>
+    <name>SOFT HYPHEN</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00AE</code>
+    <name>REGISTERED SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00AF</code>
+    <name>MACRON</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00B0</code>
+    <name>DEGREE SIGN</name>
+    <class>c_degree</class>
+  </char>
+  <char>
+    <code>00B1</code>
+    <name>PLUS-MINUS SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00B2</code>
+    <name>SUPERSCRIPT TWO</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00B3</code>
+    <name>SUPERSCRIPT THREE</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00B4</code>
+    <name>ACUTE ACCENT</name>
+    <class>c_quote</class>
+  </char>
+  <char>
+    <code>00B5</code>
+    <name>MICRO SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00B6</code>
+    <name>PILCROW SIGN</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00B7</code>
+    <name>MIDDLE DOT</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00B8</code>
+    <name>CEDILLA</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00B9</code>
+    <name>SUPERSCRIPT ONE</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00BA</code>
+    <name>MASCULINE ORDINAL INDICATOR</name>
+    <class>c_other</class>
+  </char>
+  <char>
+    <code>00BB</code>
+    <name>RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00BC</code>
+    <name>VULGAR FRACTION ONE QUARTER</name>
+    <class>c_fraction</class>
+  </char>
+  <char>
+    <code>00BD</code>
+    <name>VULGAR FRACTION ONE HALF</name>
+    <class>c_fraction</class>
+  </char>
+  <char>
+    <code>00BE</code>
+    <name>VULGAR FRACTION THREE QUARTERS</name>
+    <class>c_fraction</class>
+  </char>
+  <char>
+    <code>00BF</code>
+    <name>INVERTED QUESTION MARK</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>00C0</code>
+    <name>LATIN CAPITAL LETTER A WITH GRAVE</name>
+    <class>c_A</class>
+    <min>00E0</min>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00C1</code>
+    <name>LATIN CAPITAL LETTER A WITH ACUTE</name>
+    <class>c_A</class>
+    <min>00E1</min>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00C2</code>
+    <name>LATIN CAPITAL LETTER A WITH CIRCUMFLEX</name>
+    <class>c_A</class>
+    <min>00E2</min>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00C3</code>
+    <name>LATIN CAPITAL LETTER A WITH TILDE</name>
+    <class>c_A</class>
+    <min>00E3</min>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00C4</code>
+    <name>LATIN CAPITAL LETTER A WITH DIAERESIS</name>
+    <class>c_A</class>
+    <min>00E4</min>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00C5</code>
+    <name>LATIN CAPITAL LETTER A WITH RING ABOVE</name>
+    <class>c_A</class>
+    <min>00E5</min>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00C6</code>
+    <name>LATIN CAPITAL LETTER AE</name>
+    <class>c_A</class>
+    <min>00E6</min>
+    <unmark>0061</unmark>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00C7</code>
+    <name>LATIN CAPITAL LETTER C WITH CEDILLA</name>
+    <class>c_A</class>
+    <min>00E7</min>
+    <unmark>0063</unmark>
+  </char>
+  <char>
+    <code>00C8</code>
+    <name>LATIN CAPITAL LETTER E WITH GRAVE</name>
+    <class>c_A</class>
+    <min>00E8</min>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00C9</code>
+    <name>LATIN CAPITAL LETTER E WITH ACUTE</name>
+    <class>c_A</class>
+    <min>00E9</min>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00CA</code>
+    <name>LATIN CAPITAL LETTER E WITH CIRCUMFLEX</name>
+    <class>c_A</class>
+    <min>00EA</min>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00CB</code>
+    <name>LATIN CAPITAL LETTER E WITH DIAERESIS</name>
+    <class>c_A</class>
+    <min>00EB</min>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00CC</code>
+    <name>LATIN CAPITAL LETTER I WITH GRAVE</name>
+    <class>c_A</class>
+    <min>00EC</min>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00CD</code>
+    <name>LATIN CAPITAL LETTER I WITH ACUTE</name>
+    <class>c_A</class>
+    <min>00ED</min>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00CE</code>
+    <name>LATIN CAPITAL LETTER I WITH CIRCUMFLEX</name>
+    <class>c_A</class>
+    <min>00EE</min>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00CF</code>
+    <name>LATIN CAPITAL LETTER I WITH DIAERESIS</name>
+    <class>c_A</class>
+    <min>00EF</min>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00D0</code>
+    <name>LATIN CAPITAL LETTER ETH</name>
+    <class>c_A</class>
+    <min>00F0</min>
+  </char>
+  <char>
+    <code>00D1</code>
+    <name>LATIN CAPITAL LETTER N WITH TILDE</name>
+    <class>c_A</class>
+    <min>00F1</min>
+    <unmark>006E</unmark>
+  </char>
+  <char>
+    <code>00D2</code>
+    <name>LATIN CAPITAL LETTER O WITH GRAVE</name>
+    <class>c_A</class>
+    <min>00F2</min>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00D3</code>
+    <name>LATIN CAPITAL LETTER O WITH ACUTE</name>
+    <class>c_A</class>
+    <min>00F3</min>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00D4</code>
+    <name>LATIN CAPITAL LETTER O WITH CIRCUMFLEX</name>
+    <class>c_A</class>
+    <min>00F4</min>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00D5</code>
+    <name>LATIN CAPITAL LETTER O WITH TILDE</name>
+    <class>c_A</class>
+    <min>00F5</min>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00D6</code>
+    <name>LATIN CAPITAL LETTER O WITH DIAERESIS</name>
+    <class>c_A</class>
+    <min>00F6</min>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00D7</code>
+    <name>MULTIPLICATION SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00D8</code>
+    <name>LATIN CAPITAL LETTER O WITH STROKE</name>
+    <class>c_A</class>
+    <min>00F8</min>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00D9</code>
+    <name>LATIN CAPITAL LETTER U WITH GRAVE</name>
+    <class>c_A</class>
+    <min>00F9</min>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00DA</code>
+    <name>LATIN CAPITAL LETTER U WITH ACUTE</name>
+    <class>c_A</class>
+    <min>00FA</min>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00DB</code>
+    <name>LATIN CAPITAL LETTER U WITH CIRCUMFLEX</name>
+    <class>c_A</class>
+    <min>00FB</min>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00DC</code>
+    <name>LATIN CAPITAL LETTER U WITH DIAERESIS</name>
+    <class>c_A</class>
+    <min>00FC</min>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00DD</code>
+    <name>LATIN CAPITAL LETTER Y WITH ACUTE</name>
+    <class>c_A</class>
+    <min>00FD</min>
+    <unmark>0079</unmark>
+  </char>
+  <char>
+    <code>00DE</code>
+    <name>LATIN CAPITAL LETTER THORN</name>
+    <class>c_A</class>
+    <min>00FE</min>
+  </char>
+  <char>
+    <code>00DF</code>
+    <name>LATIN SMALL LETTER SHARP S</name>
+    <class>c_a</class>
+    <unmark>0073</unmark>
+    <unmark>0073</unmark>
+  </char>
+  <char>
+    <code>00E0</code>
+    <name>LATIN SMALL LETTER A WITH GRAVE</name>
+    <class>c_a</class>
+    <maj>00C0</maj>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00E1</code>
+    <name>LATIN SMALL LETTER A WITH ACUTE</name>
+    <class>c_a</class>
+    <maj>00C1</maj>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00E2</code>
+    <name>LATIN SMALL LETTER A WITH CIRCUMFLEX</name>
+    <class>c_a</class>
+    <maj>00C2</maj>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00E3</code>
+    <name>LATIN SMALL LETTER A WITH TILDE</name>
+    <class>c_a</class>
+    <maj>00C3</maj>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00E4</code>
+    <name>LATIN SMALL LETTER A WITH DIAERESIS</name>
+    <class>c_a</class>
+    <maj>00C4</maj>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00E5</code>
+    <name>LATIN SMALL LETTER A WITH RING ABOVE</name>
+    <class>c_a</class>
+    <maj>00C5</maj>
+    <unmark>0061</unmark>
+  </char>
+  <char>
+    <code>00E6</code>
+    <name>LATIN SMALL LETTER AE</name>
+    <class>c_a</class>
+    <maj>00C6</maj>
+    <unmark>0061</unmark>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00E7</code>
+    <name>LATIN SMALL LETTER C WITH CEDILLA</name>
+    <class>c_a</class>
+    <maj>00C7</maj>
+    <unmark>0063</unmark>
+  </char>
+  <char>
+    <code>00E8</code>
+    <name>LATIN SMALL LETTER E WITH GRAVE</name>
+    <class>c_o</class>
+    <maj>00C8</maj>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00E9</code>
+    <name>LATIN SMALL LETTER E WITH ACUTE</name>
+    <class>c_a</class>
+    <maj>00C9</maj>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00EA</code>
+    <name>LATIN SMALL LETTER E WITH CIRCUMFLEX</name>
+    <class>c_a</class>
+    <maj>00CA</maj>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00EB</code>
+    <name>LATIN SMALL LETTER E WITH DIAERESIS</name>
+    <class>c_a</class>
+    <maj>00CB</maj>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>00EC</code>
+    <name>LATIN SMALL LETTER I WITH GRAVE</name>
+    <class>c_a</class>
+    <maj>00CC</maj>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00ED</code>
+    <name>LATIN SMALL LETTER I WITH ACUTE</name>
+    <class>c_a</class>
+    <maj>00CD</maj>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00EE</code>
+    <name>LATIN SMALL LETTER I WITH CIRCUMFLEX</name>
+    <class>c_a</class>
+    <maj>00CE</maj>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00EF</code>
+    <name>LATIN SMALL LETTER I WITH DIAERESIS</name>
+    <class>c_a</class>
+    <maj>00CF</maj>
+    <unmark>0069</unmark>
+  </char>
+  <char>
+    <code>00F0</code>
+    <name>LATIN SMALL LETTER ETH</name>
+    <class>c_a</class>
+    <maj>00D0</maj>
+  </char>
+  <char>
+    <code>00F1</code>
+    <name>LATIN SMALL LETTER N WITH TILDE</name>
+    <class>c_a</class>
+    <maj>00D1</maj>
+    <unmark>006E</unmark>
+  </char>
+  <char>
+    <code>00F2</code>
+    <name>LATIN SMALL LETTER O WITH GRAVE</name>
+    <class>c_a</class>
+    <maj>00D2</maj>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00F3</code>
+    <name>LATIN SMALL LETTER O WITH ACUTE</name>
+    <class>c_a</class>
+    <maj>00D3</maj>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00F4</code>
+    <name>LATIN SMALL LETTER O WITH CIRCUMFLEX</name>
+    <class>c_a</class>
+    <maj>00D4</maj>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00F5</code>
+    <name>LATIN SMALL LETTER O WITH TILDE</name>
+    <class>c_a</class>
+    <maj>00D5</maj>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00F6</code>
+    <name>LATIN SMALL LETTER O WITH DIAERESIS</name>
+    <class>c_a</class>
+    <maj>00D6</maj>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00F7</code>
+    <name>DIVISION SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>00F8</code>
+    <name>LATIN SMALL LETTER O WITH STROKE</name>
+    <class>c_a</class>
+    <maj>00D8</maj>
+    <unmark>006F</unmark>
+  </char>
+  <char>
+    <code>00F9</code>
+    <name>LATIN SMALL LETTER U WITH GRAVE</name>
+    <class>c_a</class>
+    <maj>00D9</maj>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00FA</code>
+    <name>LATIN SMALL LETTER U WITH ACUTE</name>
+    <class>c_a</class>
+    <maj>00DA</maj>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00FB</code>
+    <name>LATIN SMALL LETTER U WITH CIRCUMFLEX</name>
+    <class>c_a</class>
+    <maj>00DB</maj>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00FC</code>
+    <name>LATIN SMALL LETTER U WITH DIAERESIS</name>
+    <class>c_a</class>
+    <maj>00DC</maj>
+    <unmark>0075</unmark>
+  </char>
+  <char>
+    <code>00FD</code>
+    <name>LATIN SMALL LETTER Y WITH ACUTE</name>
+    <class>c_a</class>
+    <maj>00DD</maj>
+    <unmark>0079</unmark>
+  </char>
+  <char>
+    <code>00FE</code>
+    <name>LATIN SMALL LETTER THORN</name>
+    <class>c_a</class>
+    <maj>00DE</maj>
+  </char>
+  <char>
+    <code>00FF</code>
+    <name>LATIN SMALL LETTER Y WITH DIAERESIS</name>
+    <class>c_a</class>
+    <maj>009F</maj>
+    <unmark>0079</unmark>
+  </char>
+  <char>
+    <code>0152</code>
+    <name>LATIN CAPITAL LIGATURE OE</name>
+    <class>c_A</class>
+    <min>0153</min>
+    <unmark>006F</unmark>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>0153</code>
+    <name>LATIN SMALL LIGATURE OE</name>
+    <class>c_a</class>
+    <maj>0152</maj>
+    <unmark>006F</unmark>
+    <unmark>0065</unmark>
+  </char>
+  <char>
+    <code>0160</code>
+    <name>LATIN CAPITAL LETTER S WITH CARON</name>
+    <class>c_A</class>
+    <min>0161</min>
+    <unmark>0073</unmark>
+  </char>
+  <char>
+    <code>0161</code>
+    <name>LATIN SMALL LETTER S WITH CARON</name>
+    <class>c_a</class>
+    <maj>0160</maj>
+    <unmark>0073</unmark>
+  </char>
+  <char>
+    <code>0178</code>
+    <name>LATIN CAPITAL LETTER Y WITH DIAERESIS</name>
+    <class>c_A</class>
+    <min>00FF</min>
+    <unmark>0079</unmark>
+  </char>
+  <char>
+    <code>017D</code>
+    <name>LATIN CAPITAL LETTER Z WITH CARON</name>
+    <class>c_A</class>
+    <min>017E</min>
+    <unmark>007A</unmark>
+  </char>
+  <char>
+    <code>017E</code>
+    <name>LATIN SMALL LETTER Z WITH CARON</name>
+    <class>c_a</class>
+    <maj>017D</maj>
+    <unmark>007A</unmark>
+  </char>
+  <char>
+    <code>2013</code>
+    <name>EN DASH</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>2019</code>
+    <name>RIGHT SINGLE QUOTATION MARK</name>
+    <class>c_quote</class>
+    <unmark>0027</unmark>
+  </char>
+  <char>
+    <code>2026</code>
+    <name>HORIZONTAL ELLIPSIS</name>
+    <class>c_del2</class>
+  </char>
+  <char>
+    <code>2030</code>
+    <name>PER MILLE SIGN</name>
+    <class>c_percent</class>
+  </char>
+  <char>
+    <code>2039</code>
+    <name>SINGLE LEFT-POINTING ANGLE QUOTATION MARK</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>203A</code>
+    <name>SINGLE RIGHT-POINTING ANGLE QUOTATION MARK</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>20AC</code>
+    <name>EURO SIGN</name>
+    <class>c_del1</class>
+  </char>
+  <char>
+    <code>2122</code>
+    <name>TRADE MARK SIGN</name>
+    <class>c_del1</class>
+  </char>
+</language_definition>

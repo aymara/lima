@@ -1,0 +1,453 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
+  <!ENTITY annoqt '<application>Annoqt</application>'>
+  <!ENTITY annoqtconfeditor '<application>Annoqt Configuration Editor</application>'>
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+<title>The &annoqt; Handbook</title>
+
+<authorgroup>
+<author>
+<firstname>Gael</firstname>
+<surname>de Chalendar</surname>
+<affiliation>
+<address><email>Gael.de-Chalendar@cea.fr</email></address>
+</affiliation>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+
+<copyright>
+<year>2008</year>
+<holder>CEA LIST</holder>
+</copyright>
+
+
+<!-- Date and version information of the documentation
+Don't forget to include this last date and this last revision number, we
+need them for translation coordination !
+Please respect the format of the date (DD/MM/YYYY) and of the version
+(V.MM.LL), it could be used by automation scripts.
+Do NOT change these in the translation. -->
+
+<date>28/07/2008</date>
+<releaseinfo>1.00.00</releaseinfo>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para>
+&annoqt; is a set of tools to annotate text files.
+</para>
+<para>
+This documentation gives the major information you need to start using the tools.
+</para>
+</abstract>
+
+<!-- This is a set of Keywords for indexing by search engines.
+Please at least include KDE, the KDE package it is in, the name
+ of your application, and a few relevant keywords. -->
+
+<keywordset>
+<keyword>Qt</keyword>
+<keyword>NLP</keyword>
+<keyword>natural language</keyword>
+<keyword>annotation</keyword>
+<keyword>CEA LIST</keyword>
+<keyword>commercial</keyword>
+</keywordset>
+
+</bookinfo>
+
+<!-- The contents of the documentation begin here.  Label
+each chapter so with the id attribute. This is necessary for two reasons: it
+allows you to easily reference the chapter from other chapters of your
+document, and if there is no ID, the name of the generated HTML files will vary
+from time to time making it hard to manage for maintainers and for the CVS
+system. Any chapter labelled (OPTIONAL) may be left out at the author's
+discretion. Other chapters should not be left out in order to maintain a
+consistent documentation style across all KDE apps. -->
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<!-- The introduction chapter contains a brief introduction for the
+application that explains what it does and where to report
+problems. Basically a long version of the abstract.  Don't include a
+revision history. (see installation appendix comment) -->
+<para>
+&annoqt; is a set of tools to annotate text files.
+</para>
+<para>
+<screenshot>
+  <screeninfo>Here's a screenshot of &annoqt;</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="annoqt-screenshot.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Screenshot</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>
+In the current version, &annoqt; allows to annotate segments of text with colors associated to entities names. An external tool allows to create the association between colors and entities names.
+</para>
+<para>
+The next chapter presents the use of the &annoqtconfeditor; tool and the following describes the annotation tool itself.
+</para>
+</chapter>
+
+<chapter id="annoqtconfeditor-userguide">
+<title>&annoqtconfeditor; User Guide</title>
+<para>
+This chapter explains how to use the configuration tool. It is used to associate colors to the various entities types that have to be annotated.
+</para>
+<sect1 id="using-annoqtconfeditor">
+<title>Using &annoqtconfeditor;</title>
+<para>
+The screenshot below shows the interface of the configuration editor.
+<screenshot>
+  <screeninfo>The &annoqtconfeditor;</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="annoqtconfeditor-snapshot.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>The &annoqtconfeditor;</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>
+After starting the application, you can create a new annotation configuration or load an existing one. Note that on further starts, the last used configuration is automaticaly loaded.
+</para>
+<para>
+The list on the left shows the existing entities and the color selection tool on the right is used to associate a color to an entity. To create a color association, just select an existing entity and the click on a color. You can select colors by various means: click on the main colors square (you can change the saturation of the color by moving the slider along the white-black scale on the right), choose a color in one of the palettes that you can select using the drop-down menu on the top-right corner, enter the RGB or HSV values or enter an hexadecimal RGD value in the bottom-right corner.
+</para>
+<para>
+To add a new entity type, select the "Edit->New entity type" menu entry or click on its icon in the toolbar. An new entity named "New Type" is added at the bottom of the left list. Double-click on it to change its name and validate by typing "Enter".
+</para>
+<para>
+Note that it is currently not possible to change the order of the list.
+</para>
+<para>
+You can also remove an entity by selecting it and then choosing the "Edit->Cut" menu entry or its icon in the toolbar.
+</para>
+<para>
+There is currently not Undo/Redo feature.
+</para>
+<para>
+When you are done editing, save you work with the "File->Save" menu entry or the corresponding toolbar button.
+</para>
+</sect1>
+<!--sect1 id="annoqtconfeditor-menus">
+<title>&annoqtconfeditor; menus</title>
+<sect2 id="annoqtconfeditor-filemenu" >
+<title>The File menu</title>
+<para>
+</para>
+</sect2>
+</sect1-->
+</chapter>
+
+<chapter id="annoqt-userguide">
+<title>&annoqt; User Guide</title>
+
+<!-- This chapter should tell the user how to use your app. You should use as
+many sections (Chapter, Sect1, Sect3, etc...) as is necessary to fully document
+your application. -->
+
+<sect1 id="using-annoqt">
+<title>Using &annoqt;</title>
+<para>
+If you hit New, you will be presented with the file open dialog where you will be able to choose the file containing the annotation configuration associating colors to entities. The &annoqtconfeditor; tool allows to create such a configuration file through a graphical interface (see previous chapter).
+</para>
+<para>
+To annotate a file using the currently loaded configuration, hit Open... and choose the text file. The corresponding standoff annotations file (ending in .se.xml) will be loaded if it exists. Otherwise, you will be prompted so open an entities file. Click cancel to not open an entities file. The following scrennshot shows the state of &annoqt; after loading a text with some annotations.
+<screenshot>
+  <screeninfo>&annoqt; after loading a file</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="annoqt-screenshot.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>&annoqt; after loading a file</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>
+The base activity is to select a span of text with the mouse and then to click on an entity name in the list on the left side of the window to say&nbsp;: "this is (e.g.) an ORGANIZATION".
+</para>
+<para>
+But often, entities are overlapping in the text, either because there is ambiguities of, for example, because a number entity can be a part of a larger entity like a date. &annoqt; supports all kind of overlapping entities&nbsp;: exact like when "2006" alone must be annotated by number AND date or partial like when "2006" is a number and part of the date "Nov, 11 2006" (see the screenshot below). 
+<screenshot>
+  <screeninfo>Overlapping entities</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="overlapping.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Overlapping entities</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>
+As you can see on the screenshot, overlapping entites are identified by two features. First of all, there is a gradient of the different entities colors on the overlapping part and secondly, they are underscored. The latter allows to see where two entities of the same part overlap.
+</para>
+<para>
+To select an overlapping entity, just left-click on the overlapping span and select the correct entity in the contextual menu that appears, like on the screenshot below. If you just want to start selecting text to create a new entity in the middle of an already overlapping entity, press the &lt;Ctrl&gt; key before clicking.
+<screenshot>
+  <screeninfo>Selecting overlapping entities</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="selecting-overlapping.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Selecting overlapping entities</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>
+To create an overlapping entity, you can do, depending of the previously existing entities&nbsp;:
+<itemizedlist>
+<listitem>
+  <para>
+  Click on an existing non-overlapping entity to select it and then click on its new type on the left list.
+	</para>
+</listitem>
+<listitem>
+  <para>
+  Click on an overlapping entity and select the entity to which you want to add a new type in the contextual menu and then click on its new type on the left list.
+	</para>
+</listitem>
+<listitem>
+  <para>
+  Click on a free text where you want to start your new entity and drag up to its other bound, including existing entity(ies) and then click on its new type on the left list.
+	</para>
+</listitem>
+<listitem>
+  <para>
+  If you want uour new entity to start on the middle of an existing entity, press the &lt;Ctrl&gt; key and click where you want your entity to start. then drag up to its other bound, possibly including existing entity(ies) and then click on its type on the left list.
+	</para>
+</listitem>
+</itemizedlist>
+</para>
+<para>
+To remove an entity, select it and then choose the Edit->Cut menu entry or its icon in the toolbar.
+</para>
+<para>
+You can annotate an entity with the previously used type by choosing the Edit->Paste menu entry or clicking its icon in the toolbal.
+</para>
+<para>
+To annotate all the occurences of a string with the same type, annotate one occurence with this type and then choose the Edit->Repeat menu entry or choose Repeat in the toolbar.
+</para>
+<para>
+Choose the "Go to" toolbar button to move to a specified position in the file. This is not very useful except for debugging purpose.
+</para>
+<para>
+&annoqt; is equipped with a very basic search facility. Choose the Edit->Search menu entry or hit &lt;Ctrl&gt;+F to start a search. This search can only start at the beginning of the file. To search the next occurrences, hit F3. Note that you cannot search backward.
+</para>
+<para>
+Finally, when you are done annotating the file, choose the File->Save (or Save as...) menu entry or click on its icon in the toolbar to save your work. If you had no entities file opened, choosing Save will anyway open the file choosing dialog allowing you to create a new file or replacing an existing one.
+</para>
+</sect1>
+<!--sect1 id="annoqt-menus">
+<title>&annoqt; Menus</title>
+<sect2 id="filemenu" >
+<title>The File menu</title>
+<para>
+
+<variablelist>
+<varlistentry>
+<term>
+  <menuchoice>
+    <guimenu>New</guimenu>
+  </menuchoice>
+</term>
+<listitem>
+  <para>
+  <action>Allows to load a configuration</action>
+  </para>
+</listitem>
+</varlistentry>
+<varlistentry>
+  <term>
+    <menuchoice>
+      <guimenu>Open</guimenu>
+    </menuchoice>
+  </term>
+  <listitem>
+    <para>
+      <action>Opens a text file to annotate. The corresponding standoff annotations file ending in .se.xml is opened at the same time</action>
+    </para>
+  </listitem>
+</varlistentry>
+<varlistentry>
+  <term>
+    <menuchoice>
+      <guimenu>Save</guimenu>
+    </menuchoice>
+  </term>
+  <listitem>
+    <para>
+      <action>Saves the annotations of the current file</action>
+    </para>
+  </listitem>
+</varlistentry>
+<varlistentry>
+  <term>
+    <menuchoice>
+      <guimenu>Save as...</guimenu>
+    </menuchoice>
+  </term>
+  <listitem>
+    <para>
+      <action>Saves the annotations of the current file to a new name</action>
+    </para>
+  </listitem>
+</varlistentry>
+<varlistentry>
+  <term>
+    <menuchoice>
+      <guimenu>Quit</guimenu>
+    </menuchoice>
+  </term>
+  <listitem>
+    <para>
+      <action>Quits the application</action>
+    </para>
+  </listitem>
+</varlistentry>
+</variablelist>
+</para>
+</sect2>
+</sect1>
+<sect1>
+<title>The toolbar</title>
+<para>
+<variablelist>
+<varlistentry>
+<term>
+  <menuchoice>
+    <guimenu>
+      <inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="quit.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <phrase>Quit Game</phrase>
+        </textobject>
+      </inlinemediaobject> : Quit Game
+    </guimenu>
+  </menuchoice>
+</term>
+<listitem><para><action>
+Causes the program to quit.
+</action></para></listitem>
+</varlistentry>
+<varlistentry>
+<term>
+  <menuchoice>
+    <guimenu>
+      <inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="new.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <phrase>New</phrase>
+        </textobject>
+      </inlinemediaobject> : Load a new configuration
+    </guimenu>
+  </menuchoice>
+</term>
+<listitem><para><action>Load a new configuration</action></para></listitem>
+</varlistentry>
+</variablelist>
+</para>
+
+</sect1-->
+</chapter>
+
+<chapter id="faq">
+<title>Questions and Answers</title>
+
+<qandaset id="faqlist">
+<qandaentry>
+<question>
+<para>What will be the first question concerning &annoqt;?</para>
+</question>
+<answer>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter>
+
+<chapter id="credits">
+
+<!-- Include credits for the programmers, documentation writers, and
+contributors here. The license for your software should then be included below
+the credits with a reference to the appropriate license file included in the KDE
+distribution. -->
+
+<title>Credits and License</title>
+
+<para>
+&annoqt;
+</para>
+<para>
+Program Copyright 2007-2008 CEA LIST <email>Gael.de-Chalendar@cea.fr</email>
+</para>
+<para>
+</para>
+
+<para>
+Documentation copyright 2008 CEA LIST <email>Gael.de-Chalendar@cea.fr</email>
+</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+<para>
+This documentation is released under the terms of the agreement that must link you with the CEA
+</para>
+
+<para>
+This software is released under the terms of the agreement that must link you with the CEA           
+</para>
+
+</chapter>
+
+<appendix id="installation">
+<title>Installation</title>
+
+<sect1 id="getting-kapp">
+<title>How to obtain &annoqt;</title>
+</sect1>
+
+<sect1 id="compilation">
+<title>Compilation and Installation</title>
+</sect1>
+
+</appendix>
+
+&documentation.index;
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+-->

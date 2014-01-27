@@ -1,0 +1,1047 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+  <!--==================== tests LOCATION ====================-->
+  <testcase id="fre.se.36" type="pertinent">
+    <call-parameters>
+      <param key="text" value="au Quai d'Orsay"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>LOCATION : (au) Quai d'Orsay</expl>
+    <test id="fre.se.36.1" trace=".se.xml"
+          comment="lieu avec annonceur"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=12]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
+  <testcase id="fre.se.37" type="bloquant">
+    <call-parameters>
+      <param key="text" value="le tunnel du Mont-Blanc"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>LOCATION : (du) Mont-Blanc</expl>
+    <test id="fre.se.37.1" trace=".se.xml"
+          comment="lieu avec annonceur"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=20]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
+  <testcase id="fre.se.38" type="pertinent">
+    <call-parameters>
+      <param key="text" value="la porte de la Chapelle"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>LOCATION : (de) la Chapelle</expl>
+    <test id="fre.se.38.1" trace=".se.xml"
+          comment="lieu avec annonceur"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=20]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
+  <testcase id="fre.se.39" type="bloquant">
+    <call-parameters>
+      <param key="text" value="au cours d'un entretien"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ABSENCE de LOCATION : au cours d'un entretien</expl>
+    <test id="fre.se.39.1" trace=".se.xml"
+          comment="fausse alarme annnonceur lieu"
+          left="XPATH#//specific_entities/specific_entity[position=4][type=LOCATION]"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="fre.se.40" type="pertinent">
+    <call-parameters>
+      <param key="text" value="la mise en place d'un dispositif"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ABSENCE de LOCATION.</expl>
+    <test id="fre.se.40.1" trace=".se.xml"
+          comment="fausse alarme annnonceur lieu"
+          left="XPATH#//specific_entities/specific_entity[position=12][type=LOCATION]"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="fre.se.41" type="pertinent">
+    <call-parameters>
+      <param key="text" value="un cours de 12 euros"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ABSENCE de LOCATION.</expl>
+    <test id="fre.se.41.1" trace=".se.xml"
+          comment="fausse alarme annnonceur lieu"
+          left="XPATH#//specific_entities/specific_entity[position=4][type=LOCATION]"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="fre.se.42" type="pertinent">
+    <call-parameters>
+      <param key="text" value="un cours de 18,97 euros"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ABSENCE de LOCATION.</expl>
+    <test id="fre.se.42.1" trace=".se.xml"
+          comment="fausse alarme annnonceur lieu"
+          left="XPATH#//specific_entities/specific_entity[position=4][type=LOCATION]"
+          operator="notexists"
+          right=""/>
+  </testcase>
+
+  <!--==================== tests PERSON ====================-->
+  <testcase id="fre.se.43" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Jacques Chirac va à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Jacques Chirac</expl>
+    <test id="fre.se.43.1" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//specific_entities/specific_entity[position=1][length=14]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.44" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Jacques Bsdufof va à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Jacques Bsdufof</expl>
+    <test id="fre.se.44.1" trace=".se.xml"
+          comment="personne avec prénom"
+          left="XPATH#//specific_entities/specific_entity[position=1][length=15]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.45" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Jacques Porte va à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Jacques Porte</expl>
+    <test id="fre.se.45.1" trace=".se.xml"
+          comment="personne avec prénom et nom qui est un mot du dictionnaire"
+          left="XPATH#//specific_entities/specific_entity[position=1][length=13]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.46" type="pertinent">
+    <call-parameters>
+      <param key="text" value="MM. Sfar et Blain vont à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : MM. Sfar et Blain</expl>
+    <test id="fre.se.46.1" trace=".se.xml"
+          comment="annonceur multiple (Sfar)"
+          left="XPATH#//specific_entities/specific_entity[position=5][length=4]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="fre.se.46.2" trace=".se.xml"
+          comment="annonceur multiple (Blain)"
+          left="XPATH#//specific_entities/specific_entity[position=13][length=5]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.47" type="pertinent">
+    <call-parameters>
+      <param key="text" value="&quot;ah bon&quot;, déclare Sanjiv Sidhu, président d' i2 Technologies."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Sanjiv Sidhu</expl>
+    <test id="fre.se.47.1" trace=".se.xml"
+          comment="annonceur postérieur au nom (prénom inconnu)"
+          left="XPATH#//specific_entities/specific_entity[position=19][length=12]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <!--==================== tests ORGANIZATION ====================-->
+  <testcase id="fre.se.48" type="pertinent">
+    <call-parameters>
+      <param key="text" value="le groupe DFDHK est une filiale de Stromtap"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ORGANIZATION : DFDHK ... Stromtap</expl>
+    <test id="fre.se.48.1" trace=".se.xml"
+          comment="annonceur d'organisation"
+          left="XPATH#//specific_entities/specific_entity[position=11]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+    <test id="fre.se.48.2" trace=".se.xml"
+          comment="annonceur d'organisation"
+          left="XPATH#//specific_entities/specific_entity[position=36]/type"
+          operator="="
+            right="Organization.ORGANIZATION"/>
+  </testcase>
+
+  <!--==================== tests PRODUCT ====================-->
+  <!--==================== tests EVENT ====================-->
+  
+  <!--==================== tests de règles ====================-->
+    <testcase id="fre.se.49" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Paris se trouve au nord de Marseille."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>LOCATION : @PrecisionGeographique</expl>
+    <test id="fre.se.49.1" trace=".se.xml"
+          comment="Location.LOCATION."
+          left="XPATH#//specific_entities/specific_entity[position=1][length=5]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="fre.se.49.2" trace=".se.xml"
+          comment="Location.LOCATION : @PrecisionGeographique"
+          left="XPATH#//specific_entities/specific_entity[position=20][length=17]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
+     <testcase id="fre.se.50" type="bloquant">
+    <call-parameters>
+      <param key="text" value="&quot;Shirley et Dino&quot; jouent actuellement au théâtre Marigny."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>LOCATION</expl>
+    <test id="fre.se.50.1" trace=".se.xml"
+          comment="Location.LOCATION."
+          left="XPATH#//specific_entities/specific_entity[position=42][length=15]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
+     <testcase id="fre.se.51" type="informatif">
+    <call-parameters>
+      <param key="text" value="Le théâtre Marigny accueille en ce moment &quot;Shirley et Dino&quot;."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ORGANIZATION</expl>
+    <test id="fre.se.51.1" trace=".se.xml"
+          comment="Organization.ORGANIZATION."
+          left="XPATH#//specific_entities/specific_entity[position=4][length=15]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+  <testcase id="fre.se.52" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Jean Pierre Gaillard à la Bourse de Paris."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>ORGANIZATION : Bourse de Paris</expl>
+    <test id="fre.se.52.1" trace=".se.xml"
+          comment="Organization.ORGANIZATION."
+          left="XPATH#//specific_entities/specific_entity[position=27][length=15]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+  <testcase id="fre.se.53" type="informatif">
+    <call-parameters>
+      <param key="text" value="Alexandre Théodore Brongniart se verra confier la construction de la future Bourse de Paris par Napoléon en 1807."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>LOCATION : Bourse de Paris n'est pas une organisation dans ce contexte.</expl>
+    <test id="fre.se.53.1" trace=".se.xml"
+          comment="Location.LOCATION."
+          left="XPATH#//specific_entities/specific_entity[position=78][length=15]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
+   <testcase id="fre.se.54" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Le système d'exploitation actuellement le plus vendu est WINDOWS XP."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>WINDOWS XP est un produit de la liste des produits</expl>
+    <test id="fre.se.54.1" trace=".se.xml"
+          comment="Product.PRODUCT"
+          left="XPATH#//specific_entities/specific_entity[position=58][length=10]/type"
+          operator="="
+          right="Product.PRODUCT"/>
+  </testcase>
+   <testcase id="fre.se.55" type="bloquant">
+    <call-parameters>
+      <param key="text" value="A l'attention du Dr Watson"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.55.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=21][length=6]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.56" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme Bernadette Chirac."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.56.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=61][length=17]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>  
+ <testcase id="fre.se.57" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme Bernadette Chirac."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>EVENT : événement après annonceur, entre guillemets</expl>
+    <test id="fre.se.57.1" trace=".se.xml"
+          comment="Event.EVENT."
+          left="XPATH#//specific_entities/specific_entity[position=38][length=13]/type"
+          operator="="
+          right="Event.EVENT"/>
+  </testcase>  
+  <testcase id="fre.se.58" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Histoire de la seconde guerre mondiale."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.58.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=16][length=23]/type"
+          operator="="
+          right="Event.EVENT"/>
+  </testcase>  
+ <testcase id="fre.se.61" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme B. Youza."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre avec initiale.</expl>
+    <test id="fre.se.61.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=61][length=8]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>  
+ <testcase id="fre.se.62" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est B. Youza."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.62.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=57][length=8]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>  
+<!--==================== tests TIMEX ====================-->
+<testcase id="fre.sebp.1" type="pertinent">
+<call-parameters>
+<param key="text" value="on est le 11/09/2001"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 11/09/2001</expl>
+<test id="fre.sebp.1.1" trace=".se.xml"
+comment="format numérique avec /"
+left="XPATH#//specific_entities/specific_entity[position=11][length=10]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.2" type="pertinent">
+<call-parameters>
+<param key="text" value="on est le 11-09-2001"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 11-09-2001</expl>
+<test id="fre.sebp.2.1" trace=".se.xml"
+comment="format numérique avec -"
+left="XPATH#//specific_entities/specific_entity[position=11][length=10]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.3" type="pertinent">
+<call-parameters>
+<param key="text" value="on est le 11/09/01"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 11/09/01</expl>
+<test id="fre.sebp.3.1" trace=".se.xml"
+comment="format numérique avec / et année sur deux chiffres"
+left="XPATH#//specific_entities/specific_entity[position=11][length=8]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.4" type="pertinent">
+<call-parameters>
+<param key="text" value="on est le 11-09-01"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 11-09-01</expl>
+<test id="fre.sebp.4.1" trace=".se.xml"
+comment="format numérique avec - et année sur deux chiffres"
+left="XPATH#//specific_entities/specific_entity[position=11][length=8]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.5" type="pertinent">
+<call-parameters>
+<param key="text" value="on est le onze septembre 2001"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : onze septembre 2001</expl>
+<test id="fre.sebp.5.1" trace=".se.xml"
+comment="format texte complet"
+left="XPATH#//specific_entities/specific_entity[position=11][length=19]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.6" type="bloquant">
+<call-parameters>
+<param key="text" value="on est le 14 septembre 2001"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 14 septembre 2001</expl>
+<test id="fre.sebp.6.1" trace=".se.xml"
+comment="format texte avec date en chiffres"
+left="XPATH#//specific_entities/specific_entity[position=11][length=17]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.7" type="bloquant">
+<call-parameters>
+<param key="text" value="on est le mardi 18 juin 2002"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : mardi 18 juin 2002</expl>
+<test id="fre.sebp.7.1" trace=".se.xml"
+comment="format texte avec jour"
+left="XPATH#//specific_entities/specific_entity[position=11][length=18]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.8" type="informatif">
+<call-parameters>
+<param key="text" value="en ce quatrième jour de septembre de l'an de grâce deux mille deux"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : quatrième jour de septembre de l'an de grâce deux mille deux</expl>
+<test id="fre.sebp.8.1" trace=".se.xml"
+comment="format texte étendu"
+left="XPATH#//specific_entities/specific_entity[position=7][length=60]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.9" type="informatif">
+<call-parameters>
+<param key="text" value="on est le dernier jour de septembre"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : dernier jour de septembre</expl>
+<test id="fre.sebp.9.1" trace=".se.xml"
+comment="date relative"
+left="XPATH#//specific_entities/specific_entity[position=11][length=25]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.10" type="informatif">
+<call-parameters>
+<param key="text" value="on est le dernier jour de l'année"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : dernier jour de l'année</expl>
+<test id="fre.sebp.10.1" trace=".se.xml"
+comment="date relative"
+left="XPATH#//specific_entities/specific_entity[position=11][length=23]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.11" type="bloquant">
+<call-parameters>
+<param key="text" value="on est le vendredi 14 septembre"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : vendredi 14 septembre</expl>
+<test id="fre.sebp.11.1" trace=".se.xml"
+comment="date sans année avec nom de jour"
+left="XPATH#//specific_entities/specific_entity[position=11][length=21]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.12" type="informatif">
+<call-parameters>
+<param key="text" value="on est vers le 7 décembre"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : vers le 7 décembre</expl>
+<test id="fre.sebp.12.1" trace=".se.xml"
+comment="date sans année approximative"
+left="XPATH#//specific_entities/specific_entity[position=8][length=18]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.13" type="bloquant">
+<call-parameters>
+<param key="text" value="on est le 11 septembre"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 11 septembre</expl>
+<test id="fre.sebp.13.1" trace=".se.xml"
+comment="date sans année jour numérique"
+left="XPATH#//specific_entities/specific_entity[position=11][length=12]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.14" type="informatif">
+<call-parameters>
+<param key="text" value="on avait rendez-vous le 11 septembre dernier"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 11 septembre dernier</expl>
+<test id="fre.sebp.14.1" trace=".se.xml"
+comment="date avec qualificatif relatif"
+left="XPATH#//specific_entities/specific_entity[position=25][length=20]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.15" type="bloquant">
+<call-parameters>
+<param key="text" value="c'était en novembre 1959"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : novembre 1959</expl>
+<test id="fre.sebp.15.1" trace=".se.xml"
+comment="date mois/année"
+left="XPATH#//specific_entities/specific_entity[position=12][length=13]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.16" type="bloquant">
+<call-parameters>
+<param key="text" value="c'était pendant le mois de février 1954"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : février 1954</expl>
+<test id="fre.sebp.16.1" trace=".se.xml"
+comment="date mois/année avec (le mois)"
+left="XPATH#//specific_entities/specific_entity[position=28][length=12]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<!--<testcase id="fre.sebp.17" type="informatif">
+<call-parameters>
+<param key="text" value="on est le 25"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 25</expl>
+<test id="fre.sebp.17.1" trace=".se.xml"
+comment="date jour"
+left="XPATH#//specific_entities/specific_entity[position=11]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>-->
+<testcase id="fre.sebp.18" type="bloquant">
+<call-parameters>
+<param key="text" value="on est le mercredi 26"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : mercredi 26</expl>
+<test id="fre.sebp.18.1" trace=".se.xml"
+comment="date jour avec numéro de mois"
+left="XPATH#//specific_entities/specific_entity[position=11][length=11]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.19" type="pertinent">
+<call-parameters>
+<param key="text" value="c'était en mai"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : mai (date mois)</expl>
+<test id="fre.sebp.19.1" trace=".se.xml"
+comment="date mois"
+left="XPATH#//specific_entities/specific_entity[position=12][length=3]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.20" type="pertinent">
+<call-parameters>
+<param key="text" value="c'était pendant le mois de mai"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : mai (date mois avec 'le mois')</expl>
+<test id="fre.sebp.20.1" trace=".se.xml"
+comment="date mois avec (le mois)"
+left="XPATH#//specific_entities/specific_entity[position=28][length=3]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.21" type="pertinent">
+<call-parameters>
+<param key="text" value="on est en 2004"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 2004</expl>
+<test id="fre.sebp.21.1" trace=".se.xml"
+comment="date année"
+left="XPATH#//specific_entities/specific_entity[position=11][length=4]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.22" type="pertinent">
+<call-parameters>
+<param key="text" value="c'était l'an deux mille"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : deux mille</expl>
+<test id="fre.sebp.22.1" trace=".se.xml"
+comment="date année en lettres"
+left="XPATH#//specific_entities/specific_entity[position=14][length=10]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.23" type="pertinent">
+<call-parameters>
+<param key="text" value="c'est fermé du 24 au 28 septembre"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 24 au 28 septembre</expl>
+<test id="fre.sebp.23.1" trace=".se.xml"
+comment="periode en jours"
+left="XPATH#//specific_entities/specific_entity[position=16][length=18]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.24" type="pertinent">
+<call-parameters>
+<param key="text" value="c'est fermé du 1er au 25 mai"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 1er au 25 mai</expl>
+<test id="fre.sebp.24.1" trace=".se.xml"
+comment="période en jours"
+left="XPATH#//specific_entities/specific_entity[position=16][length=13]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.25" type="pertinent">
+<call-parameters>
+<param key="text" value="de septembre à décembre 2002"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : septembre à décembre 2002</expl>
+<test id="fre.sebp.25.1" trace=".se.xml"
+comment="période en mois"
+left="XPATH#//specific_entities/specific_entity[position=4][length=25]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.26" type="pertinent">
+<call-parameters>
+<param key="text" value="en juillet et août"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : juillet et août</expl>
+<test id="fre.sebp.26.1" trace=".se.xml"
+comment="période en mois"
+left="XPATH#//specific_entities/specific_entity[position=4][length=7]/type"
+operator="="
+right="DateTime.DATE"/>
+<test id="fre.sebp.26.2" trace=".se.xml"
+comment="période en mois"
+left="XPATH#//specific_entities/specific_entity[position=15][length=4]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.27" type="pertinent">
+<call-parameters>
+<param key="text" value="en juillet et en août 2002"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : juillet et ... août</expl>
+<test id="fre.sebp.27.1" trace=".se.xml"
+comment="période en mois"
+left="XPATH#//specific_entities/specific_entity[position=4][length=7]/type"
+operator="="
+right="DateTime.DATE"/>
+<test id="fre.sebp.27.2" trace=".se.xml"
+comment="période en mois"
+left="XPATH#//specific_entities/specific_entity[position=18][length=9]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.28" type="pertinent">
+<call-parameters>
+<param key="text" value="depuis 1996"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : (depuis) 1996</expl>
+<test id="fre.sebp.28.1" trace=".se.xml"
+comment="période en années"
+left="XPATH#//specific_entities/specific_entity[position=8][length=4]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.29" type="pertinent">
+<call-parameters>
+<param key="text" value="entre 1982 et 1990"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : (entre) 1982 (et) 1990</expl>
+<test id="fre.sebp.29.1" trace=".se.xml"
+comment="période en années"
+left="XPATH#//specific_entities/specific_entity[position=7][length=4]/type"
+operator="="
+right="DateTime.DATE"/>
+<test id="fre.sebp.29.2" trace=".se.xml"
+comment="période en années"
+left="XPATH#//specific_entities/specific_entity[position=15][length=4]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.30" type="pertinent">
+<call-parameters>
+<param key="text" value="le 21ème siècle"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : 21ème siècle</expl>
+<test id="fre.sebp.30.1" trace=".se.xml"
+comment="période en années - siècle"
+left="XPATH#//specific_entities/specific_entity[position=4][length=12]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.31" type="pertinent">
+<call-parameters>
+<param key="text" value="à la fin de l'année 2000"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : fin de l'année 2000</expl>
+<test id="fre.sebp.31.1" trace=".se.xml"
+comment="date approximative année"
+left="XPATH#//specific_entities/specific_entity[position=6][length=19]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.32" type="pertinent">
+<call-parameters>
+<param key="text" value="à la rentrée 2001"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>TIMEX : rentrée 2001</expl>
+<test id="fre.sebp.32.1" trace=".se.xml"
+comment="date approximative année"
+left="XPATH#//specific_entities/specific_entity[position=6][length=12]/type"
+operator="="
+right="DateTime.DATE"/>
+</testcase>
+<!--==================== tests NUMEX ====================-->
+<testcase id="fre.sebp.33" type="pertinent">
+<call-parameters>
+<param key="text" value="cent sept mille trois cent quarante-deux"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>NUMEX : cent sept mille trois cent quarante-deux</expl>
+<test id="fre.sebp.33.1" trace=".se.xml"
+comment="nombre en toutes lettres"
+left="XPATH#//specific_entities/specific_entity[position=1][length=40]/type"
+operator="="
+right="Numex.NUMEX"/>
+</testcase>
+<testcase id="fre.sebp.34" type="pertinent">
+<call-parameters>
+<param key="text" value="27 millions de dollars"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>NUMEX : 27 millions de dollars</expl>
+<test id="fre.sebp.34.1" trace=".se.xml"
+comment="nombre mixte chiffres/lettres avec unité"
+left="XPATH#//specific_entities/specific_entity[position=1][length=22]/type"
+operator="="
+right="Numex.NUMEX"/>
+</testcase>
+<testcase id="fre.sebp.35" type="pertinent">
+<call-parameters>
+<param key="text" value="Le chiffre d'affaires a augmenté de 41 % à 233,28 millions"/>
+<param key="language" value="fre"/>
+<list key="pipelines">
+<item value="query"/>
+<item value="indexer"/>
+</list>
+</call-parameters>
+<expl>NUMEX : (de) 41 % (à) 233,28 millions</expl>
+<test id="fre.sebp.35.1" trace=".se.xml"
+comment="pourcentage"
+left="XPATH#//specific_entities/specific_entity[position=37][length=4]/type"
+operator="="
+right="Numex.NUMEX"/>
+<test id="fre.sebp.35.2" trace=".se.xml"
+comment="nombre mixte chiffres avec virgule/lettres"
+left="XPATH#//specific_entities/specific_entity[position=44][length=15]/type"
+operator="="
+right="Numex.NUMEX"/>
+</testcase>
+
+<!--==================== tests PRODUCT ====================-->
+<!--==================== tests EVENT ====================-->
+
+<!--==================== tests de règles ====================-->
+<testcase id="fre.sebp.59" type="bloquant">
+<call-parameters>
+  <param key="text" value="Le week end commence le vendredi soir."/>
+  <param key="language" value="fre"/>
+  <list key="pipelines">
+    <item value="query"/>
+    <item value="indexer"/>
+  </list>
+</call-parameters>
+<expl>TIMEX : vendredi soir</expl>
+<test id="fre.sebp.59.1" trace=".se.xml"
+comment="format texte avec date en chiffres"
+left="XPATH#//specific_entities/specific_entity[position=25][length=13]/type"
+operator="="
+  right="DateTime.DATE"/>
+</testcase>
+<testcase id="fre.sebp.60" type="bloquant">
+  <call-parameters>
+    <param key="text" value="Le prochain tirage d'Euro-Millions est de 26 millions d'euros."/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="query"/>
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <expl>TIMEX : vendredi soir</expl>
+<test id="fre.sebp.60.1" trace=".se.xml" comment="format texte avec date en chiffres"
+  left="XPATH#//specific_entities/specific_entity[position=43][length=19]/type"
+  operator="="
+    right="Numex.NUMEX"/>
+  </testcase>
+</testcases>
+

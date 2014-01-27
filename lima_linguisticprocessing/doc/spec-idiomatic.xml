@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+ "/usr/share/sgml/docbook/xml-dtd-4.1.2/docbookx.dtd" [
+]>
+<article lang="fr">
+  <articleinfo>
+    <copyright>
+      <year>2005</year> 
+      <holder>Romaric Besançon - CEA-LIST</holder>
+    </copyright>
+    <authorgroup>
+      <author>
+        <firstname>Romaric</firstname>
+        <surname>Besancon</surname>
+        <affiliation>
+          <address>
+            CEA-LIST
+            <email>romaric.besancon@cea.fr</email>
+          </address>
+        </affiliation>
+      </author>
+    </authorgroup>
+    <title>Spécifications de la reconnaissance des expressions
+    idiomatiques</title>
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+        <date>28 juin 2005</date>
+        <authorinitials>RB</authorinitials>
+      </revision>
+    </revhistory>
+  </articleinfo>
+
+  <section>
+    <title>Introduction</title>
+    <para>L'objectif de ce document est de spécifier précisément le
+    fonctionnement de la reconnaissance des expressions idiomatiques
+    et les conséquences des expressions idiomatiques dans le reste des
+    traitements.</para>
+  </section>
+
+  <section>
+    <title>Reconnaissance des expressions idiomatiques</title>
+
+    <para>On utilise le terme "<emphasis>expressions
+    idiomatiques</emphasis>" pour désigner des expressions figées
+    propre à une langue, dont le sens global n'est en général pas
+    directement déductible du sens de ses parties.
+    </para>
+
+    <para>Les expressions idiomatiques sont reconnues par un
+    traitement spécifique dans la phase de l'analyse morphologique,
+    qui précède la désambiguïsation morphosyntaxique (pos-tagging). Ce
+    traitement doit nécessairement être appliqué après la tokenisation
+    (c'est la seule contrainte en théorie): en pratique, on l'applique
+    juste avant l'attribution des propriétés par défaut des mots
+    inconnus, pour pouvoir utiliser le maximum d'information
+    disponible pour la reconnaissance des expressions idiomatiques.
+    </para>
+
+    <para>La reconnaissance d'expressions idiomatiques se fait à
+    l'aide d'un fichier de règles (le format de ces règles est décrit
+    dans le document "<ulink
+    url="spec_regles.html"><citetitle>Spécifications du
+    format des règles pour la construction d'automates de
+    reconnaissance d'expressions</citetitle></ulink>"). On a en
+    général une règle par expression, mais on peut aussi regrouper les
+    expressions qui partagent leur contexte de reconnaissance (par
+    exemple, une seule règle peut couvrir tous les verbes
+    pronominaux). Les données des expressions idiomatiques peuvent
+    également être fournies dans un format plus simple, qui sera
+    transformé automatiquement en règles (voir aussi le document
+    "<ulink url="compile-idiomatic.html"><citetitle>Comment compiler
+    des expressions idiomatiques</citetitle></ulink>").</para>
+  </section>
+
+  <section>
+    <title>Les déclencheurs des règles de reconnaissance des
+    expressions idiomatiques</title>
+
+    <para>Les règles de reconnaissance des expressions idiomatiques
+    sont déclenchées par un mot spécifique de l'expression, le
+    <emphasis>déclencheur</emphasis>, que l'on choisit en général
+    comme le plus spécifique et le moins fréquent pour éviter trop de
+    tests infructueux de chaque règle. Plusieurs stratégies de gestion
+    des déclencheurs sont possibles:
+    <itemizedlist>
+      <listitem>
+        <para>Les déclencheurs sont stockés dans le dictionnaire: pour
+        chaque déclencheur, on stocke dans le dictionnaire
+        l'information de la liste des règles qu'il déclenche (cette
+        information est simplement un identifiant numérique disponible
+        après compilation des règles). L'avantage est qu'à
+        l'exécution, on sait immédiatement si un mot est déclencheur
+        d'expressions idiomatiques. Les inconvénients: les
+        déclencheurs doivent forcément être des mots du dictionnaire;
+        les expressions idiomatiques doivent être compilées avant le
+        dictionnaire et tout changement dans la liste des expressions
+        idiomatiques implique la recompilation du dictionnaire.
+        </para>
+      </listitem>
+      <listitem>
+        <para>Les déclencheurs ne sont pas stockés dans le
+        dictionnaire: à chaque mot, on recherche dans la liste des
+        déclencheurs s'il y en a qui lui correspondent et on applique
+        alors les règles. L'avantage est la flexibilité: les
+        déclencheurs ne sont pas obligatoirement dans le dictionnaire
+        et on peut changer les expressions idiomatiques sans
+        recompiler le dictionnaire. L'inconvénient est que le temps du
+        traitement est augmenté: on estime que le temps de
+        reconnaissance des expressions idiomatiques est a peu près
+        doublé avec cette méthode, mais même avec cette augmentation,
+        ce traitement ne représente que 3% du traitement total -- donc
+        l'utilisation de cette méthode ne crée une augmentation que de
+        1.5% du temps de traitement linguistique.
+        </para>
+      </listitem>
+    </itemizedlist>
+    </para>
+
+    <para>Le choix de la stratégie utilisée est spécifié à
+    l'utilisation dans le fichier de configuration
+    <emphasis>S2-lp-xxx.xml</emphasis> (où <emphasis>xxx</emphasis>
+    est le nom de la langue), par l'indication d'un paramètre
+    "<emphasis>useTriggerInfoFromDictionary</emphasis>" dans la
+    définition du traitement des expressions idiomatiques: si ce
+    paramètre est mis à "<emphasis>true</emphasis>", le traitement
+    considérera que les déclencheurs des expressions idiomatiques sont
+    dans le dictionnaire ("<emphasis>false</emphasis>" est la valeur
+    par défaut du paramètre).
+    </para>
+    
+    <para>Plusieurs traitements de reconnaissance des expressions
+    idiomatiques peuvent aussi être enchaînés, utilisant des
+    déclencheurs du dictionnaire ou non, ce qui permet de gérer des
+    expressions idiomatiques utilisateur. Il n'est par contre pas
+    possible d'invalider des expressions idiomatiques (on ne peut pas
+    indiquer dans un fichier d'expressions idiomatiques utilisateur
+    qu'on veut supprimer une expression idiomatique existant dans un
+    fichier précédent).
+    </para>
+  </section>
+  
+  <section>
+    <title>Propriétés particulières des expressions
+    idiomatiques</title>
+
+    <section>
+      <title>Expressions idiomatiques absolues ou
+      contextuelles</title>
+      <para>
+        Les expressions idiomatiques peuvent être
+        <emphasis>absolues</emphasis> ou
+        <emphasis>contextuelles</emphasis>:
+        <itemizedlist>
+          <listitem>
+            <para>Les expressions absolues sont celles qu'on considère
+            toujours vraies: quel que soit le contexte, la suite des
+            mots considérés forme toujours une expression idiomatique.
+            Par exemple, "<emphasis>au fur et à
+            mesure</emphasis>","<emphasis>au dessus de</emphasis>",
+            "<emphasis>état providence</emphasis>" sont des expressions
+            absolues.
+            </para>
+          </listitem>
+          <listitem>
+            <para>Les expressions contextuelles sont celles qui
+            dépendent du contexte: en fonction du contexte, elles seront
+            reconnues comme expressions idiomatiques ou non: par
+            exemple, "<emphasis>bien que</emphasis>" est une expression
+            idiomatique dans "<emphasis>bien qu'il soit
+            tard,...</emphasis>" mais pas dans "<emphasis>tout le bien
+            qu'on m'a fait</emphasis>".
+            </para>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    <section>
+      <title>Expressions idiomatiques contiguës ou
+      non-contiguës</title>
+      <para>
+        Les expressions idiomatiques peuvent être
+        <emphasis>contiguës</emphasis> ou
+        <emphasis>non-contiguës</emphasis> (on peut dire aussi
+        <emphasis>conjointes</emphasis> ou
+        <emphasis>disjointes</emphasis>):
+        <itemizedlist>
+          <listitem>
+            <para>Les expressions contiguës sont celles dont les mots
+            qui la forment sont toujours adjacents (aucun mot ne peut se
+            glisser entre les mots de l'expression). Par exemple,
+            "<emphasis>chef d'oeuvre</emphasis>" est une unité, on ne
+            peut pas dire "<emphasis>chef vraiment d'oeuvre</emphasis>"
+            ou "<emphasis>chef possible d'oeuvre</emphasis>".
+            </para>
+          </listitem>
+          <listitem>
+            <para>Les expressions non-contiguës sont celles pour
+            lesquelles certains mots (en général, adverbes ou
+            auxiliaires) peuvent se glisser à l'intérieur de
+            l'expression, par exemple "<emphasis>prendre
+            part</emphasis>" dans "<emphasis>il prend vraiment part
+            à...</emphasis>" ou "<emphasis>s'emmêler les
+            pinceaux</emphasis>" dans "<emphasis>il se sont encore
+            emmêlé les pinceaux</emphasis>".
+            </para>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    <section>
+      <title>Tête d'une expression idiomatique</title>
+      <para>Une expression idiomatique peut avoir une
+      <emphasis>tête</emphasis>, qui est le mot principal de
+      l'expression (ce n'est pas obligatoire): Dans "<emphasis>au dessus
+      de</emphasis>", il n'y a pas de tête, dans "<emphasis>chaise
+      longue</emphasis>", "<emphasis>chaise</emphasis>" est la tête. En
+      général, la tête de l'expression idiomatique est le mot de même
+      catégorie principale que l'expression qui peut porter la flexion
+      de l'expression: si on a "<emphasis>amuse gueule</emphasis>" (sans
+      tiret) comme expression idiomatique, "<emphasis>amuse</emphasis>"
+      n'est pas la tête car c'est "<emphasis>gueule</emphasis>" qui
+      porte la flexion: "<emphasis>des amuse gueules</emphasis>" (de
+      plus, "<emphasis>amuse</emphasis>" est une forme verbale alors que
+      l'expression est un nom).
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>Effet de la reconnaissance d'une expression
+    idiomatique</title>
+
+    <itemizedlist>
+      <listitem><para>
+      Si l'expression idiomatique est contiguë et absolue, les tokens
+      qui la forment sont remplacés par un seul token qui contient
+      l'expression idiomatique.
+      </para>
+      <table frame="none">
+        <title>Expression contiguë et absolue "<emphasis>base de
+        données</emphasis>"</title>
+        <tgroup cols="3">
+          <tbody>
+            <row><entry>
+            <graphic fileref="exp-conj-abs.txt.beforeIdiom.png"/>
+            </entry><entry>
+            <graphic width="100" fileref="longarrow.png"/>
+            </entry><entry>
+            <graphic fileref="exp-conj-abs.txt.afterIdiom.png"/>
+          </entry></row></tbody>
+        </tgroup>
+      </table>
+      </listitem>
+
+      <listitem><para>
+      Si l'expression idiomatique est contiguë et contextuelle, un
+      chemin alternatif est proposé aux tokens qui la forment, formé
+      d'un seul token qui contient l'expression idiomatique.
+      </para>
+      <table frame="none">
+        <title>Expression contiguë et contextuelle "<emphasis>bien
+        que</emphasis>"</title>
+        <tgroup cols="3">
+          <tbody>
+            <row><entry>
+            <graphic fileref="exp-conj-cont.txt.beforeIdiom.png"/>
+            </entry><entry>
+            <graphic width="100" fileref="longarrow.png"/>
+            </entry><entry>
+            <graphic fileref="exp-conj-cont.txt.afterIdiom.png"/>
+          </entry></row></tbody>
+        </tgroup>
+      </table>
+      </listitem>
+      
+      <listitem><para>
+      Si l'expression idiomatique est non-contiguë et absolue, le
+      token tête de l'expression est remplacé par un token qui
+      contient l'expression idiomatique. Les autres tokens qui
+      forment l'expressions sont supprimés. Les tokens inclus qui ne
+      font pas partie de l'expression sont conservés.
+      </para>
+      <table frame="none">
+        <title>Expression non-contiguë et absolue "<emphasis>s'emmêler
+        les pinceaux</emphasis>"</title>
+        <tgroup cols="3">
+          <tbody>
+            <row><entry>
+            <graphic fileref="exp-disj-abs.txt.beforeIdiom.png"/>
+            </entry><entry>
+            <graphic width="100" fileref="longarrow.png"/>
+            </entry><entry>
+            <graphic fileref="exp-disj-abs.txt.afterIdiom.png"/>
+          </entry></row></tbody>
+        </tgroup>
+      </table>
+      </listitem>
+
+      <listitem><para>
+      Si l'expression idiomatique est non-contiguë et contextuelle,
+      un chemin alternatif est proposé aux tokens qui forment
+      l'expression. Sur ce chemin, le token tête de l'expression est
+      remplacé par un token qui contient l'expression idiomatique,
+      les tokens qui inclus qui ne font pas partie de l'expression
+      sont dupliqués sur ce chemin.
+      </para>
+      <table frame="none">
+        <title>title>Expression non-contiguë et contextuelle
+        "<emphasis>passer à l'acte</emphasis>"</title>
+        <tgroup cols="3">
+          <tbody>
+            <row><entry>
+            <graphic fileref="exp-disj-cont.txt.beforeIdiom.png"/>
+            </entry><entry>
+            <graphic width="100" fileref="longarrow.png"/>
+            </entry><entry>
+            <graphic fileref="exp-disj-cont.txt.afterIdiom.png"/>
+          </entry></row></tbody>
+        </tgroup>
+      </table>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Propriétés linguistiques attachées à une expression
+    idiomatique</title>
+    <para>
+      Dans les règles des expressions idiomatiques, une catégorie
+      linguistique est attachée à l'expression reconnue. Cette
+      catégorie linguistique peut être complète ou incomplète:
+      "<emphasis>Nations Unies</emphasis>" est un nom commun féminin
+      pluriel (catégorie complète), mais "<emphasis>base de
+      données</emphasis>" est un nom commun féminin, sans
+      spécification de son nombre (on peut avoir "<emphasis>des bases
+      de données</emphasis>"), "<emphasis>avoir beau faire</emphasis>"
+      est un verbe instransitif, sans spécification de ses mode,
+      temps, personne etc.
+    </para>
+    <para>
+      Si la catégorie linguistique est complète, le token de
+      l'expression aura seulement les propriétés attachées à cette
+      catégorie.
+    </para>
+    <para>
+      Si la catégorie linguistique est incomplète, les informations
+      complémentaires sont cherchées sur la tête de l'expression
+      idiomatique si celle-ci est spécifiée. Si la tête n'est pas
+      spécifiée, les propriétés linguistiques attachées au token de
+      l'expression idiomatique restent incomplètes.
+    </para>
+    <para>
+      Lorsque la tête est spécifiée, on complète la catégorie de
+      l'expression reconnue avec toutes les propriétés linguistiques
+      des catégories de la tête compatibles avec celle de l'expression.
+    </para>
+    <section>
+      <title>Notion de compatibilité de la catégorie de l'expression
+      idiomatique et des catégories de sa tête</title>
+
+      <para>Cette section précise les choix faits pour la récupération
+      des propriétés linguistiques de la tête. La description est un
+      peu technique et suppose que le lecteur a une connaissance de la
+      représentation des propriétés linguistiques attachées aux mots
+      dans le système LIMA.
+      </para>
+      <para>
+        Dans "<emphasis>avoir beau faire</emphasis>",
+        "<emphasis>avoir</emphasis>" a les catégories
+        <simplelist>
+          <member>MACRO=nom commun,MICRO=nom commun
+          général,GENDER=masc,NUMBER=singulier</member>
+          <member>MACRO=nom commun,MICRO=nom commun attribut du
+          COD,GENDER=masc,NUMBER=singulier</member>
+          <member>MACRO=verbe,MICRO=verbe auxiliaire infinitif</member>
+          <member>MACRO=verbe,MICRO=verbe principal
+          infinitif,SYNTAX=transitif</member>
+        </simplelist>
+        L'expression a, dans la règle, la catégorie incomplète
+        "MACRO=verbe,SYNTAX=instransitif".
+      </para>
+      <para>On est confronté aux problèmes suivants:
+      <itemizedlist>
+        <listitem>
+          <para>Toutes les propriétés linguistiques de la tête ne
+          peuvent pas être compatibles: "<emphasis>avoir</emphasis>"
+          peut être un nom masculin singulier: on ne veut pas que les
+          propriétés "masculin" "singulier" soit adoptées par
+          l'expression (qui est un verbe).
+          </para>
+        </listitem>
+        <listitem>
+          <para>La compatibilité ne peut pas se faire sur la totalité
+          des propriétés linguistiques de l'expression:
+          "<emphasis>avoir</emphasis>" en tant que verbe principal est
+          transitif alors que "<emphasis>avoir beau faire</emphasis>"
+          est intransitif.
+          </para>
+        </listitem>
+        <listitem>
+          <para>Les propriétés linguistiques de l'expression ne
+          peuvent pas fixer la micro-catégorie de l'expression
+          reconnue: dans le codage actuel, la micro-catégorie des
+          verbes contient le mode du verbe, qui doit être fixé en
+          contexte (dans "<emphasis>qu'il ait beau faire</emphasis>",
+          l'expression est au subjonctif). Cette contrainte pourrait
+          être levée si le codage des catégories est modifié, ou si
+          plusieurs catégories pouvaient être associées à une règle.
+          </para>
+        </listitem>
+      </itemizedlist>
+      </para>
+      
+      <para>Au vu de ces contraintes, on choisit de ne tester la
+      compatibilité que sur la macro-catégorie: c'est la solution qui
+      filtre le mieux les propriétés de la tête incompatibles avec
+      celles de l'expression. Dans l'exemple précédent,
+      "<emphasis>avoir beau faire</emphasis>" en tant qu'expression
+      aura les catégories
+      <simplelist>
+        <member>MACRO=verbe,MICRO=verbe auxiliaire
+        infinitif,SYNTAX=intransitif</member>
+        <member>MACRO=verbe,MICRO=verbe principal
+        infinitif,SYNTAX=intransitif</member>
+      </simplelist>
+      La catégorie "auxiliaire" est fausse pour cette expression, mais
+      elle sera (normalement) filtrée par la désambiguïsation
+      morphosyntaxique: on ne peut pas faire mieux dans l'état actuel
+      du codage des catégories et des propriétés des règles.
+      </para>
+
+      <para>Ce choix implique aussi que la tête de l'expression doit
+      avoir la même macro-catégorie que l'expression elle-même.
+      <emphasis>Cela peut également poser problème</emphasis>: si la
+      tête de l'expression n'est pas de même macro-catégorie que
+      l'expression, cette récupération des propriétés linguistiques de
+      la tête n'aura pas lieu. Ce cas peut arriver: par exemple,
+      l'expression "<emphasis>des laissés pour compte</emphasis>" est
+      un nom, mais la tête de l'expression
+      ("<emphasis>laissés</emphasis>", qui porte la flexion) est une
+      forme verbale (participe passé) ou un adjectif. On considère que
+      ces cas sont peu nombreux et que ce problème reste marginal.
+      </para>
+      
+    </section>
+  </section>
+  <section>
+    <title>Après la reconnaissance des expressions idiomatiques</title>
+    <para>Après la reconnaissance des expressions idiomatiques, les
+    traitements s'appliquent de façon transparente, en utilisant
+    l'expression idiomatique reconnue comme une unité simple. Si
+    l'expression est contextuelle, une ambiguïté de découpage est
+    ajoutée, qui peut être levée (ou non) lors de la désambiguïsation
+    morphosyntaxique, ou éventuellement lors de la désambiguïsation
+    syntaxique.
+    </para>
+
+    <para>La chose importante à noter est que si l'expression
+    idiomatique reconnue est conservée (toujours si elle est absolue),
+    <emphasis>on ne garde pas l'information de ses
+    parties</emphasis>. En particulier, les mots composant une
+    expression idiomatique ne sont pas utilisés pour n'analyse
+    syntaxique, pour la reconnaissance des entités nommées et
+    <emphasis>ne sont pas indexés</emphasis>. Cela veut dire que si on
+    met par exemple "<emphasis>base de données</emphasis>" dans les
+    expressions idiomatiques, une recherche sur
+    "<emphasis>bases</emphasis>" ou sur "<emphasis>données</emphasis>"
+    (voire sur "<emphasis>bases, données</emphasis>") ne pourra pas
+    renvoyer des documents qui contiennent "<emphasis>bases de
+    données</emphasis>" (cela correspond à l'idée que l'expression
+    idiomatique est une expression dont le sens dépasse le sens de ses
+    parties): cette propriété doit guider le choix des expressions à
+    mettre dans la liste des expressions idiomatiques.
+    </para>
+  </section>
+</article>

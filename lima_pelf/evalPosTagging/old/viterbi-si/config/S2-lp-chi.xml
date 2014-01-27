@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="Processors">
+    <group name="main" class="ProcessUnitPipeline" >
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <!--item value="chineseAnalysis"/-->
+        <item value="chineseSegmenter"/>
+        <!--item value="idiomaticAlternatives"/-->
+        <item value="defaultProperties"/>
+        <!--item value="simpleDefaultProperties"/-->
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="minCostPosTagger"/-->
+        <item value="viterbiPosTagger-freq"/>
+        <!--item value="dotGraphWriter"/-->
+        <!--item value="chineseAnalysisLogger"/-->
+        <!--item value="disambiguationLogger"/-->
+        <item value="sentenceBoundsFinder"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="syntacticAnalyzerChains"/>
+        <!--item value="debugSyntacticAnalysisLogger-chains"/-->
+        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <!--item value="syntacticAnalyzerDisamb"/-->
+        <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
+        <!--item value="dotDepGraphWriter"/-->
+        <item value="compoundBuilderFromSyntacticData"/>
+      </list>
+    </group>
+    <group name="query" class="ProcessUnitPipeline" >
+      <list key="processUnitSequence">
+        <item value="tokenizer"/>
+        <item value="simpleWord"/>
+        <item value="orthographicAlternatives"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="dummyPostagger"/>
+        <item value="specificEntitiesRecognizer"/>
+        <item value="simpleCompoundExtractor"/>
+      </list>
+    </group>
+    <group name="tokenizer" class="Tokenizer">
+      <param key="automatonFile" value="LinguisticProcessings/chi/tokenizerAutomaton-chi.xml"/>
+      <param key="charChart" value="charchart"/>
+    </group>
+    <group name="idiomaticAlternatives" class="IdiomaticAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="recognizer" value="idiomaticExpressionsRecognizer"/>
+    </group>
+    <group name="defaultProperties" class="DefaultProperties">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="charChart" value="charchart"/>
+    </group>
+    <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
+      <list name="defaultCategories">
+        <item value="L_NP"/>
+      </list>
+    </group>
+    <group name="chineseAnalysisLogger" class="ChineseAnalysisLogger">
+      <param key="outputSuffix" value=".analysis.txt"/>
+      <param key="segSuffix" value=".seg.txt"/>
+    </group>
+    <group name="chineseAnalysis" class="ChineseAnalysis">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list key="StatusToKeep">
+        <item value="t_chinese_dot_number"/>
+        <item value="t_chinese_fraction"/>
+        <item value="t_chinese_integer"/>
+        <item value="t_chinese_year"/>
+        <item value="t_chinese_month"/>
+        <item value="t_chinese_day"/>
+        <item value="t_comma_number"/>
+        <item value="t_dot_number"/>
+        <item value="t_fraction"/>
+        <item value="t_integer"/>
+        <item value="t_alphanumeric"/>
+        <item value="t_capital"/>
+        <item value="t_capital_1st"/>
+        <item value="t_capital_small"/>
+        <item value="t_cardinal_roman"/>
+        <item value="t_chinese_year_nonian"/>
+      </list>
+    </group>
+    <group name="disambiguationLogger" class="DisambiguationLogger">
+	  <param key="outputSuffix" value=".disambiguation.log"/>
+	  <param key="logAll" value="false"/>
+	</group>
+    <group name="chineseSegmenter" class="ChineseSegmenter">
+      <param key="dictionary" value="mainDictionary"/>
+	  <param key="ShortestPathTolerance" value="0"/>
+      <list key="StatusToKeep">
+		<item value="t_chinese_dot_number"/>
+		<item value="t_chinese_fraction"/>
+		<item value="t_chinese_integer"/>
+        <item value="t_chinese_year"/>
+        <item value="t_chinese_month"/>
+        <item value="t_chinese_day"/>
+        <item value="t_comma_number"/>
+        <item value="t_dot_number"/>
+        <item value="t_fraction"/>
+        <item value="t_integer"/>
+		<item value="t_alphanumeric"/>
+        <item value="t_capital"/>
+        <item value="t_capital_1st"/>
+        <item value="t_capital_small"/>
+        <item value="t_cardinal_roman"/>
+        <item value="t_chinese_year_nonian"/>      </list>
+    </group>
+    <group name="minCostPosTagger" class="MinCostPosTagger">
+        <!-- costFunction can be "SimpleIntegerCost" (default), "ThresholdIntegerCost" or "FrequencyCost" -->
+        <param key="trigramMatrix" value="trigramMatrix"/>
+        <param key="bigramMatrix" value="bigramMatrix"/>
+        <param key="costFunction" value="SimpleIntegerCost" />
+        <param key="defaultCategory" value="L_CN_PONCTUATION_FORTE"/>
+        <list name="stopCategories">
+            <item value="L_CN_PONCTUATION_FORTE" />
+        </list>
+    </group>
+    <group name="viterbiPosTagger-int" class="MinCostPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-chi.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-chi.dat"/>
+      <param key="costFunction" value="ViterbiIntegerCost"/>
+      <param key="defaultCategory" value="L_CN_PONCTUATION_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_CN_PONCTUATION_FORTE" />
+      </list>
+    </group>
+    <group name="viterbiPosTagger-freq" class="MinCostPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-chi.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-chi.dat"/>
+      <param key="costFunction" value="ViterbiFrequencyCost"/>
+      <param key="defaultCategory" value="L_CN_PONCTUATION_FORTE"/>
+      <list name="stopCategories">
+        <item value="L_CN_PONCTUATION_FORTE" />
+      </list>
+    </group>
+    <group name="sentenceBoundsFinder" class="SentenceBoundsFinder">
+      <list name="stopCategories">
+        <item value="L_CN_PONCTUATION_FORTE"/>
+      </list>
+    </group>
+    <group name="specificEntitiesRecognizer" class="SpecificEntitiesRecognizer">
+      <param key="automaton" value="specificEntitiesAutomaton"/>
+    </group>
+    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+      <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
+    </group>
+    <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
+    </group>
+    <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+          <item value="setl2r"/>
+          <item value="l2rHomoSyntagmaticRelationRules"/>
+          <item value="setr2l"/>
+          <item value="r2lHomoSyntagmaticRelationRules"/>
+      </list>
+      <param key="disambiguated" value="true"/>
+    </group>
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+    </group>
+    <group name="mAxmlLogger" class="MAxmlLogger">
+      <param key="outputSuffix" value="_tokenizer.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".tokenizer.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerSimpleWord" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".simpleword.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerOrthographic" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".ortho.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerHyphen" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".hyphen.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerIdiomatic" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".idiom.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerDefaultProperties" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".default.xml"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.txt"/>
+    </group>
+    <group name="dotGraphWriter" class="DotGraphWriter">
+      <param key="outputSuffix" value=".dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>  
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list key="vertexDisplay">
+        <!--item value="inflectedform"/-->
+        <item value="position"/>
+        <item value="length"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+        <item value="numbers"/-->
+      </list>
+    </group>
+  </module>
+  <module name="AnalysisDumpers">
+    <group name="bowDumper" class="BowDumper">
+      <param key="stopList" value=""/>
+      <param key="useStopList" value="false"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="TIMEX" value="L_NC"/>
+        <entry key="NUMEX" value="L_NC"/>
+        <entry key="ORGANIZATION" value="L_NP"/>
+        <entry key="LOCATION" value="L_NP"/>
+        <entry key="PERSON" value="L_NP"/>
+        <entry key="PRODUCT" value="L_NP"/>
+        <entry key="EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+    </group>
+    <group name="compactFullDumper" class="CompactFullDumper">
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="TIMEX" value="L_NC"/>
+        <entry key="NUMEX" value="L_NC"/>
+        <entry key="ORGANIZATION" value="L_NP"/>
+        <entry key="LOCATION" value="L_NP"/>
+        <entry key="PERSON" value="L_NP"/>
+        <entry key="PRODUCT" value="L_NP"/>
+        <entry key="EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+    </group>
+    <group name="fullXmlDumper" class="FullXmlDumper">
+    </group>
+    <group name="textDumper" class="TextDumper">
+    </group>
+  </module>
+  <module name="Resources">
+    <group name="charchart" class="CharChart">
+	<param key="charFile" value="LinguisticProcessings/chi/tokenizerAutomaton-chi.xml"/>
+    </group>
+    <group name="mainDictionary" class="ComposedDict">
+      <param key="dictionaryCode" value="dictionaryCode"/>
+      <param key="nbBytes" value="2"/>
+      <list key="dictionaryKeys">
+        <item value="LinguisticProcessings/chi/dicoKey-chi.dat"/>
+      </list>	
+      <list key="dictionaryValues">
+        <item value="LinguisticProcessings/chi/dicoDat-chi.dat"/>
+      </list>
+    </group>
+    <group name="dictionaryCode" class="DictionaryCode">
+      <param key="codeFile" value="LinguisticProcessings/chi/code-chi.dat"/>
+      <param key="codeListFile" value="LinguisticProcessings/chi/codesList-chi.dat"/>
+    </group>
+    <group name="idiomaticExpressionsRecognizer" class="AutomatonRecognizer">
+      <param key="rules" value="LinguisticProcessings/chi/idiomaticExpressions-chi.rules"/>
+    </group>
+    <group name="trigramMatrix" class="TrigramMatrix">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-chi.dat"/>
+    </group>
+    <group name="bigramMatrix" class="BigramMatrix">
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-chi.dat"/>
+    </group>
+    <group name="stopList" class="StopList">
+      <param key="file" value="LinguisticProcessings/StopLists/stopList-chi.dat"/>
+    </group>
+    <group name="frequencyDictionary" class="CompactDict16">
+      <param key="dictionaryKey" value="Reformulation/frequency-dico-chi-keys.dat"/>
+      <param key="dictionaryValues" value="Reformulation/frequency-dico-chi-val.dat"/>
+    </group>
+    <group name="specificEntitiesAutomaton" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/specificEntitiesRules-chi.bin"/>
+    </group>
+    <group name="chainMatrix" class="SyntagmDefinitionStructure">
+      <param key="file" value="SyntacticAnalysis/chainsMatrix-chi.bin"/>
+    </group>
+    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/l2rHomoSyntagamaticRelationsRules-chi.bin"/>
+    </group>
+    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/r2lHomoSyntagamaticRelationsRules-chi.bin"/>
+    </group>
+    <group name="automatonCompiler" class="AutomatonRecognizer">
+      <param key="rules" value=""/>
+    </group>
+  </module>
+</modulesConfig>

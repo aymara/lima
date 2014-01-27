@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+<testcase id="eng.default.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The marsupilami is a mythical animal. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>un mot inconnu marsupilami de type mot minuscule</expl>
+  <test id="eng.default.1.1" trace=".tokenizer.xml"
+    comment="Après Tokenizer, vérifier que marsupilami est qualifié en t_small"
+    left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
+    operator="="
+    right="t_small"/>
+  <test id="eng.default.1.2" trace=".default.xml"
+    comment="le token marsupilami (5-11) doit avoir nc dans la liste des catégories"
+    left="XPATH#//data_structure/vertex[token/position=5]/data/unknown_word//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC"/>
+</testcase>
+<testcase id="eng.default.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Mopti is a lovely city.  "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre inconnu en tête de phrase</expl>
+  <test id="eng.default.2.1" trace=".default.xml"
+    comment="Mopti a NP parmis ses categories par defaut"
+    left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NP"/>
+  <test id="eng.default.2.2" trace=".default.xml"
+    comment="Mopti is normalized in itself"
+    left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@lemma"
+    operator="contains"
+    right="Mopti"/>
+</testcase>
+<testcase id="eng.default.3" type="pertinent">
+  <call-parameters>
+      <param key="text" value="We will visit mopti. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre inconnu sans majuscule</expl>
+  <test id="eng.default.3.1" trace=".default.xml"
+    comment="mopti a NC parmis ses categories par defaut"
+    left="XPATH#//data_structure/vertex[token/position=15]/data/unknown_word//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_NC"/>
+</testcase>
+<testcase id="eng.default.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="We paid 24.99 euros."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> 24.99 reçoit la categorie num card</expl>
+  <test id="eng.default.4.1" trace=".default.xml"
+    comment="24,99 a la categorie num card"
+    left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_NOMBRE_CARDINAL"/>
+</testcase>
+<testcase id="eng.default.5" type="bloquant">
+  <call-parameters>
+      <param key="text" value="He's working for EURITRACK."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> EURITRACK est un mot inconnu, doit être normalisé 'euritrack'</expl>
+  <test id="eng.default.5.1" trace=".default.xml"
+    comment="normalisation de EURITRACK"
+    left="XPATH#//data_structure/vertex[token/position=18]/data/unknown_word/form/@lemma"
+    operator="contains"
+    right="euritrack"/>
+</testcase>
+<testcase id="eng.default.6" type="bloquant">
+  <call-parameters>
+      <param key="text" value="He's working for E.U.R.I.T.R.A.C.K."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> EURITRACK est un mot inconnu, doit être normalisé 'euritrack'</expl>
+  <test id="eng.default.6.1" trace=".default.xml"
+    comment="normalisation de EURITRACK"
+    left="XPATH#//data_structure/vertex[token/position=18]/data/unknown_word/form/@lemma"
+    operator="="
+    right="euritrack"/>
+</testcase>
+<testcase id="eng.default.7" type="bloquant">
+  <call-parameters>
+      <param key="text" value="We paid 24.99 euros."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> 24.99 reçoit la categorie num card</expl>
+  <test id="eng.default.7.1" trace=".default.xml"
+    comment="24.99 a la categorie num card"
+    left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_NOMBRE_CARDINAL"/>
+</testcase>
+<testcase id="eng.default.8" type="bloquant">
+  <call-parameters>
+      <param key="text" value="I ate at least 2/3."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> proprietes par defaut de 2/3</expl>
+  <test id="eng.default.8.1" trace=".default.xml"
+    comment="2/3 a la categorie nc num card"
+    left="XPATH#//data_structure/vertex[token[position=16][length=3]]/data//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_NOMBRE_FRACTION"/>
+</testcase>
+<testcase id="eng.default.9" type="informatif">
+  <call-parameters>
+      <param key="text" value="Execution time: 2:34:45"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>contexte similaire au test avec date</expl>
+  <test id="eng.default.9.1" trace=".default.xml"
+    comment="token 2h34m45 (alphanumeric) doit avoir "
+    left="XPATH#//data_structure/vertex[token[position=17][length=7]]/data//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="L_DIVERS_DATE"/>
+</testcase>
+<testcase id="eng.default.10" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The XVth arrondissement is my favorite. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nombre romain ordinal</expl>
+  <test id="eng.default.10.1" trace=".default.xml"
+    comment="le token XVème doit être de type t_ordinal_roman"
+    left="XPATH#//data_structure/vertex[token/position=5]/data//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_NOMBRE_ORDINAL"/>
+</testcase>
+<testcase id="eng.default.11" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Chapter XIII is very interesting. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>nombre romain cardinal</expl>
+  <test id="eng.default.11.1" trace=".default.xml"
+    comment="le token XIII doit être de type t_cardinal_roman"
+    left="XPATH#//data_structure/vertex[token/position=9]/data//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="L_NOMBRE_CARDINAL"/>
+</testcase>
+</testcases>

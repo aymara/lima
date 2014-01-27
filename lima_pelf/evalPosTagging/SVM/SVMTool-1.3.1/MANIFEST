@@ -1,0 +1,16 @@
+MANIFEST
+Makefile.PL
+lib/SVMTool/ATTGEN.pm
+lib/SVMTool/COMMON.pm
+lib/SVMTool/DICTIONARY.pm
+lib/SVMTool/ENTRY.pm
+lib/SVMTool/LEMMATIZER.pm
+lib/SVMTool/MAPPING.pm
+lib/SVMTool/STATS.pm
+lib/SVMTool/SVM.pm
+lib/SVMTool/SVMTAGGER.pm
+lib/SVMTool/SWINDOW.pm
+bin/SVMTagger
+bin/SVMTlearn
+bin/SVMTeval
+bin/doSVMT
