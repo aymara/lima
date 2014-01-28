@@ -32,7 +32,7 @@ LIMA is composed of the following modules:
 
 
 ## INSTALLATION
-To install LIMA under GNU/Linux, please refer to the INSTALL file. In short, some environement variables must be defined and the script gbuild.sh located at the root of the repository must be run from each module directory in turn (like lima_common $ ../gbuild.sh).
+To install LIMA under GNU/Linux, please refer to the INSTALL file. In short, some environement variables must be defined and the script gbuild.sh located at the root of the repository must be run from each module directory in turn (like lima_common $ ../gbuild.sh). LIMA depends on some linguistic data available in the NLTK project. See the INSTALL file for details.
 
 LIMA can also be built and installed from MS Windows but it is somewhat complicated and not tested a lot currently.
 

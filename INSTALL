@@ -1,12 +1,17 @@
 LIMA - Libre Multilingual Analyzer
 
+LIMA is mutliplatform. It has been developed under GNU/Linux and recently 
+compiled and run under MS Windows. Its installation procedure under Linux
+is described bellow. Installation instructions under Windows are still to be 
+written.
+
 The various modules (lima_*) have different purposes:
 
  * lima_common
     contains tools shared by all modules (eg. factories)
  * lima_linguisticprocessing
     LIMA linguistic analyser
- * lima_linguisticData
+ * lima_linguisticdata
     linguistic ressources used in LIMA
 
 == Install ==
@@ -15,12 +20,27 @@ You first need to set up a few environment variables. For this purpose, you can
 run the setenv-lima.sh script from the root of the repository or define them 
 manually:
 
-LIMA_DIST      binaries and libraries
-LIMA_EXTERNALS dependencies
-LIMA_RESOURCES any kind of ressources (including training data)
-LIMA_CONF      configuration folder
+LIMA_DIST             binaries and libraries
+LIMA_EXTERNALS        dependencies
+LIMA_RESOURCES        any kind of ressources (including training data)
+LIMA_CONF             configuration folder
+LINGUISTIC_DATA_ROOT  path to the lima_linguisticdata project root
+NLTK_PTB_DP_FILE      path to the Penn treebank extract from NLTK (see below)
 
-Once they have been defined, for each module, let's do:
+Then set PATH and LD_LIBRARY_PATH:
+export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$PATH
+export LD_LIBRARY_PATH=$LIMA_EXTERNALS/lib:$LIMA_DIST/lib
+
+As we were not able to find a Free part of speech tagged English corpus, LIMA 
+depends for analyzing English on freely available but not free data that you 
+will have to download and prepare yourself. This data is an extract of the Peen 
+treebank corpus available for fair use in the NLTK data. To install, please 
+refer to http://nltk.org/data.html. Then prepare the data for use with LIMA by 
+running the following commands:
+$ cd <path/to/nltk_data>/corpora/dependency_treebank
+$ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
+
+Then, for each module, let's do:
  $ cd module
  $ ../gbuild.sh
 
