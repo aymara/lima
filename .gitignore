@@ -11,3 +11,11 @@
 *.lai
 *.la
 *.a
+*.kdev4
+build/
+obuild/
+release/
+*~
+*.kate-swp
+*-build/
+CMakeLists.txt.user
