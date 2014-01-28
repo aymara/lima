@@ -1,5 +1,5 @@
 --- PennTreeBankExtract.pos	2014-01-28 07:50:00.190040640 +0100
-+++ /home/gael/PennTreeBankExtractForLima.pos	2014-01-27 16:59:21.353894753 +0100
++++ PennTreeBankExtractForLima.pos	2014-01-27 16:59:21.353894753 +0100
 @@ -1,10 +1,7 @@
 -Pierre	NNP
 -Vinken	NNP
