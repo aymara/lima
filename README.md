@@ -1,11 +1,11 @@
 LIMA - Libre Multilingual Analyzer
 ====================
 
-LIMA is a multilingual linguistic analyzer developed by the CEA LIST [1], LVIC laboratory [2] (Vision and Content Engineering Laboratory). LIMA is available under a dual licensing model. 
+LIMA is a multilingual linguistic analyzer developed by the [CEA LIST](http://www-list.cea.fr/en), [LVIC laboratory](http://www.kalisteo.fr/en/index.htm) (Vision and Content Engineering Laboratory). LIMA is available under a dual licensing model. 
 
 The Free/Libre Open Source (FLOSS) version available under the Affero General Public License (AGPL) is fully functional with modules and resources to analyse English and French texts. You can thus use LIMA for all purposes as soon as the software linked to it or running it through Web services is Free software too.
 
-The commercial version is completed on a one hand with modules useful only for some CEA LIST industrial partners and on the other hand with modules and resources necessary to analyze the other supported languages (Arabic, Chinese, German, Spanish, etc.). The commercial version is available directly from CEA LIST through R&D partnerships or through our partner ANT'inno [3] with offers including support and adaptation to one's needs.
+The commercial version is completed on a one hand with modules useful only for some CEA LIST industrial partners and on the other hand with modules and resources necessary to analyze the other supported languages (Arabic, Chinese, German, Spanish, etc.). The commercial version is available directly from CEA LIST through R&D partnerships or through our partner [ANT'inno](http://www.antinno.fr/) with offers including support and adaptation to one's needs.
 
 LIMA is composed of the following modules:
 - lima_common: common usage libraries;
@@ -21,7 +21,7 @@ LIMA is composed of the following modules:
   - hyphen-words splitting;
   - concatenated words splitting (we're,...);
   - idiomatic expression recognizing;
-  - part of speech tagging (two taggers are available. The LIMA legacy one, which is a little bit less performant but very useful for resources development, and a SVMTool++-based one [4]);
+  - part of speech tagging (two taggers are available. The LIMA legacy one, which is a little bit less performant but very useful for resources development, and a [SVMTool++](http://www.lsi.upc.edu/~nlp/SVMTool/)-based one);
 - rules-based named entities recognition;
 - coreference resolution;
 - syntactic analysis (surface rule-based dependency parsing);
@@ -47,8 +47,4 @@ LIMA uses several open source libraries and linguistic resources. See the COPYIN
 ## LICENCE
 The Free/Libre Open Source (FLOSS) version of LIMA is available under the Affero General Public License (AGPL). A commercial version exists too.
 
-## REFERENCES
-[1] http://www-list.cea.fr/en
-[2] http://www.kalisteo.fr/en/index.htm
-[3] http://www.antinno.fr/
-[4] http://www.lsi.upc.edu/~nlp/SVMTool/
+
