@@ -8,3 +8,4 @@ set(QT_USE_QTXML 1)
 
 # Go to subdirectories
 add_subdirectory(src)
+add_subdirectory(evalPosTagging)

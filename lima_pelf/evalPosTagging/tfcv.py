@@ -20,8 +20,9 @@ from re import search
 #SVMT         = "/home/anoka/soft/SVMTool-1.3.1/bin/"
 #CORPUS_PATH  = "../../orig_corpus_tabbed"
 #ELSEVAL_PATH = "/home/anoka/Logiciels/else-0.33/code/bin"
-SCRIPTS_PATH = environ.get("LIMA_ROOT")+"/Sources/lima_linguisticdata/scripts/"
+SCRIPTS_PATH = "@SCRIPTS_PATH@"
 MATRIX_PATH  = environ.get("LIMA_RESOURCES")+"/Disambiguation/"
+PELF_BIN_PATH = environ.get("LIMA_DIST")+"/share/apps/lima/scripts/"
 
 # svn blame material:
 # let's use global variables for those infos because:
@@ -87,8 +88,8 @@ def Tagged2raw():
     """
     print "*** Production de l'equivalent brut des partitions de test..."
     for i in range(1,numfold+1):
-        system("./reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
-            % {"lang" : lang, "results": results, "i": i})
+        system("%(path)s/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
+            % {"path" : PELF_BIN_PATH, "lang" : lang, "results": results, "i": i})
 
 def Disamb_matrices(scripts_path):
     """
@@ -104,12 +105,12 @@ def Disamb_matrices(scripts_path):
         except OSError: 
             pass 
         system("gawk -F'\t' '{ print $2 }' 90pc.tfcv >  succession_categs_retag.txt")
-        system(scripts_path+"disamb_matrices_extract.pl succession_categs_retag.txt")
+        system(scripts_path+"/disamb_matrices_extract.pl succession_categs_retag.txt")
         system("sort succession_categs_retag.txt|uniq -c|awk -F' ' '{print $2\"\t\"$1}' > matrices/unigramMatrix-%s.dat"%lang)
-        system(scripts_path+"disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-%s.dat"%lang)
+        system(scripts_path+"/disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-%s.dat"%lang)
         system("mv bigramsend.txt matrices/bigramMatrix-%s.dat"%lang)
         system("gawk -F'\t' '{ print $1\"\t\"$2 }' 90pc.tfcv > priorcorpus.txt")
-        system(scripts_path+"disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-%s.dat U,ET,PREF,NPP,PONCT,CC,CS"%lang)
+        system(scripts_path+"/disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-%s.dat U,ET,PREF,NPP,PONCT,CC,CS"%lang)
         chdir("../..")
 
 
@@ -195,7 +196,7 @@ def Aligner():
     for i in range(1,numfold+1): 
         chdir(results + "/" + str(i))
         print "\n\n ALIGNEMENT PARTITION "+str(i) + " - " + getcwd()
-        system("../../aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log")
+        system("%(path)s//aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log" % { "path" : PELF_BIN_PATH } )
         chdir("../..")
 
 def checkConfig(conf):
