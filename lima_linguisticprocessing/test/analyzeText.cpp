@@ -72,12 +72,10 @@ int dowork(int argc,char* argv[]);
 
 int main(int argc,char* argv[])
 {
-  std::cerr << "analyzeText: entering main" << std::endl;
   QCoreApplication a(argc, argv);
 #ifdef WIN32
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
-  std::cerr << "Amose plugins initialized" << std::endl;
 #endif
 
     bool docatch = false;
@@ -94,7 +92,6 @@ int main(int argc,char* argv[])
     {
         try
         {
-            std::cerr << "Doing work in try block." << std::endl;
             return dowork(argc, argv);
         }
         catch (const std::exception& e)
@@ -139,8 +136,6 @@ void closeHandlerOutputFile(std::ofstream* ofs)
 
 int dowork(int argc,char* argv[])
 {
-  std::cerr << "Entering dowork" << std::endl;
-
     std::string resourcesPath;
     std::string configDir;
     std::string lpConfigFile;
@@ -277,9 +272,6 @@ int dowork(int argc,char* argv[])
     timeval beginTime=TimeUtils::getCurrentTime();
 
     AbstractLinguisticProcessingClient* client(0);
-    std::cerr << "Options handled" << std::endl;
-
-    std::cerr << "Initializing mediatic data" << std::endl;
 //     try
 //     {
 
@@ -290,7 +282,6 @@ int dowork(int argc,char* argv[])
             commonConfigFile,
             langs);
 
-        std::cerr << "Initializing linguistic processing factory" << std::endl;
         // initialize linguistic processing
         Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
         LinguisticProcessingClientFactory::changeable().configureClientFactory(
@@ -299,7 +290,6 @@ int dowork(int argc,char* argv[])
             langs,
             pipelines);
 
-        std::cerr << "Creating client" << std::endl;
         client=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
       // Set the handlers
@@ -345,16 +335,15 @@ int dowork(int argc,char* argv[])
             metaData[(*it).first]=(*it).second;
         }
 
-        std::cout << std::endl;
         uint64_t i=1;
         for (std::vector<std::string>::iterator fileItr=files.begin();
                 fileItr!=files.end();
                 fileItr++, i++)
         {
             // display the progress of the analysis
-          std::cout << "\nAnalyzing "<< i << "/" << files.size()
-                      << "("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
-                      << *fileItr << "'" << std::endl << std::flush;
+          std::cout << "\rAnalyzing "<< i << "/" << files.size()
+                      << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
+                      << *fileItr << "'" << std::flush;
 
             // set the output files (to 0 if not in list)
             // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile
@@ -403,6 +392,7 @@ int dowork(int argc,char* argv[])
         throw;
       }
     */
+    std::cout << std::endl;
     delete client;
     delete bowTextWriter;
     delete simpleStreamHandler;
