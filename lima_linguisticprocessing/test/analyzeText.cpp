@@ -65,8 +65,6 @@ using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
 using namespace Lima;
 
-#define STRING_SIZE_TYPE_MAX_VALUE numeric_limits<std::string::size_type>::max()
-
 void listunits();
 int dowork(int argc,char* argv[]);
 
