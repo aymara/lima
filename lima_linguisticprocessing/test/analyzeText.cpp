@@ -17,10 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- *   Analyse de fichiers textes "bruts"                                    *
- *      Sortie : fichier *.bin                                             *
+ *   Copyright (C) 2004-2014 by CEA LIST
+ *
+ *   Main LIMA executable
+ *
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
@@ -216,7 +216,7 @@ int dowork(int argc,char* argv[])
     std::set<std::string> dumpers;
     if (dumpersv.empty())
     {
-      dumpers.insert("bow");
+      dumpers.insert("text");
     }
     else
     {

@@ -57,11 +57,11 @@
         <!--item value="geoDumper"/-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
-        <item value="bowDumper"/>
+        <!--item value="bowDumper"/-->
         <!--item value="posGraphXmlDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="simpleXmlDumper"/-->
-        <!--item value="textDumper"/-->
+        <item value="textDumper"/>
         <!--item value="NullDumper"/-->
       </list>
     </group>
