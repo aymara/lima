@@ -76,33 +76,7 @@ int main(int argc,char* argv[])
   Lima::AmosePluginsManager::single();
 #endif
 
-    bool docatch = false;
-    if (argc>1)
-    {
-        for (int i = 1 ; i < argc; i++)
-        {
-            std::string arg(argv[i]);
-            if (arg== "--catch")
-                docatch = true;
-        }
-    }
-    if (docatch)
-    {
-        try
-        {
-            return dowork(argc, argv);
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Catched an exception: " << e.what() << std::endl;
-        }
-        catch (...)
-        {
-            std::cerr << "Catched an unknown exception " << std::endl;
-        }
-    }
-    else
-        return dowork(argc,argv);
+  return dowork(argc,argv);
 }
 
 std::ofstream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId)
