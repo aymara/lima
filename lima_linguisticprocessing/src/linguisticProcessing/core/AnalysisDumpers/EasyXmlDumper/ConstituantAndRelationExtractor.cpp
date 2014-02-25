@@ -476,16 +476,16 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       std::set<std::string> relationsToFollow2;
       relationsToFollow2.insert("SECOMPOUND");
       // verbe non pointe par une relation SujInv
-      if ( (forme->macro == "L_V") && !(forme->hasInRelation("SujInv") )  && !(forme->hasOutRelation("SUBADJPOST") ) )
+      if ( (forme->macro == "V") && !(forme->hasInRelation("SujInv") )  && !(forme->hasOutRelation("SUBADJPOST") ) )
       {
         LDEBUG << "ConstituantAndRelationExtractor:: verbe non pointe par une relation SujInv" << LENDL;
         createGroupe(forme, relationsToFollow, "NV", true);
       }
-      else if ( forme->micro == "L_ADV_DEUXIEME_ELEM_NEG" || forme->micro == "L_ADV_POSTV" )
+      else if ( forme->micro == "ADV" )
       {
         createGroupe(forme, relationsToFollow, "GR", true);
       }
-      else if (forme->micro == "L_PRON_PERS_CONJ_S_POSTV")
+      else if (forme->micro == "CLS")
       {
         relationsToFollow.insert("SujInv");
         relationsToFollow.insert("TIl");
@@ -496,13 +496,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
           newGrp = createGroupe(forme, relationsToFollow, "GN", true);
         }
       }
-      else if (forme->micro == "L_DET_ARTICLE_DEF"  || forme->micro == "L_DET_NUMERAL_CARD"
-              || (forme->micro == "L_DET_ARTICLE_CONTRACTE" && forme->forme == "des" )
-              || forme->micro == "L_DET_ARTICLE_INDEF" || forme->micro == "L_DET_ARTICLE_PARTITIF"
-              || forme->micro == "L_DET_POSSESSIF"  || forme->micro == "L_DET_DEMONSTRATIF"
-              || forme->micro == "L_DET_INDEFINI"  || forme->micro == "L_DET_EXCLAMATIF"
-              || forme->micro == "L_DET_RELATIF" || forme->micro == "L_ADJ_QUALIFICATIF_EPITHETE_PRENN"
-              || forme->micro == "L_ADJ_NUM_CARD_EPITHETE_PRENN" )
+      else if (forme->macro == "DET"  || forme->macro == "ADJ" )
       {
         relationsToFollow.insert("CodAnaph"); // "le veut" dans "a qui le veut."
         LDEBUG << "ConstituantAndRelationExtractor:: construction de groupe déterminant" << LENDL;
@@ -518,8 +512,8 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
           relationsToFollow.insert("ADVADJ");
           relationsToFollow.insert("ADVADV");
           relationsToFollow.insert("PrepPronRelCa");
-          relationsToFollow.insert("SUBSUBJUX;L_NP_GEN;L_NP_GEN");
-          relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;L_NC_GEN");
+          relationsToFollow.insert("SUBSUBJUX;NPP;NPP");
+//           relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;NC");
           LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GP group" << LENDL;
           newGrp = createGroupe(forme, relationsToFollow, "GP");
 
@@ -530,8 +524,8 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
             relationsToFollow2.insert("ADJPRENSUB");
             relationsToFollow2.insert("ADVADJ");
             relationsToFollow2.insert("ADVADV");
-            relationsToFollow2.insert("COORD1;L_CONJ_COORD;L_ADJ");
-            relationsToFollow2.insert("COORD2;L_CONJ_COORD;L_ADJ");
+            relationsToFollow2.insert("COORD1;CC;ADJ");
+            relationsToFollow2.insert("COORD2;CC;ADJ");
             LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GN group" << LENDL;
             createGroupe(forme, relationsToFollow2, "GN");
           }
@@ -539,7 +533,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         }
       }
 /*
-      else if ( forme->micro == "L_ADV_GENERAL" && forme->hasOutRelation("AdvSub") )
+      else if ( forme->micro == "ADV" && forme->hasOutRelation("AdvSub") )
       {
         relationsToFollow.insert("AdvSub");
         // relationsToFollow.insert("TEMPCOMP");
@@ -551,50 +545,45 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         }
       }
 */
-      else if ( forme->micro == "L_ADV_GENERAL" || forme->micro == "L_ADV_VAL_NEG"
-                || forme->micro == "L_ADV_PREV" || forme->micro == "L_ADV_MODIF_ADV_OU_ADJ"
-                || forme->micro == "L_ADV_ENTRE_AUX_ET_PART_PASSE")
+      else if ( forme->micro == "ADV" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "GR", true);
       }
-      else if ( forme->macro == "L_NP" )
+      else if ( forme->macro == "NP" )
       {
-        relationsToFollow.insert("SUBSUBJUX;L_NP;L_NP");
+        relationsToFollow.insert("SUBSUBJUX;NP;NP");
         relationsToFollow.insert("SUBADJPOST");
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
-      else if ( forme->micro == "L_DET_INTERROGATIF" )
+      else if ( forme->micro == "DETWH" )
       {
         relationsToFollow.insert("DETSUB");
         relationsToFollow.insert("DetIntSub");
         relationsToFollow.insert("ADJPRENSUB");
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
-      else if ( forme->micro == "L_NC_ANNONCEUR_NOM" && forme->hasInRelation("SUBSUBJUX") )
+      else if ( forme->micro == "NC" && forme->hasInRelation("SUBSUBJUX") )
       {
         relationsToFollow.insert("SUBSUBJUX");
         // relationsToFollow.insert("TEMPCOMP");
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
-      else if ( forme->micro == "L_PRON_REL_CA" )
+      else if ( forme->micro == "PROREL" )
       {
         relationsToFollow.insert("COMPADV");
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
-      else if ( forme->micro == "L_PRON_REL_S"
-                || forme->micro == "L_NC_ANNONCEUR_NOM" || forme->micro == "L_PRON_PERS_DISJ_S_PREV"
-                || forme->micro == "L_PRON_PERS_DISJ_S_POSTV" || forme->micro == "L_NC_U_MESURE"
-                || forme->micro == "L_PRON_DEMONSTRATIF" )
+      else if ( forme->micro == "PROREL"
+                || forme->micro == "NC" || forme->micro == "CLS" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
-      else if ( forme->micro == "L_PREP_GENERAL" && forme->hasOutRelation("PrepPronCliv")
+      else if ( forme->micro == "P" && forme->hasOutRelation("PrepPronCliv")
                 && !forme->hasOutRelation("PREPSUB") )
       {
         newGrp = createGroupe(forme, relationsToFollow, "NV", true);
       }
-      else if (forme->macro == "L_PREP" || forme->micro == "L_DET_ARTICLE_CONTRACTE"
-              || forme->micro == "L_DET_ARTICLE_INDEF" )
+      else if (forme->macro == "PREP" || forme->macro == "DET" )
       {
         relationsToFollow.insert("PREPSUB");
         relationsToFollow.insert("PrepPron");
@@ -609,8 +598,8 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         relationsToFollow.insert("PrepAdv");
         relationsToFollow.insert("COORD1");
         relationsToFollow.insert("COORD2");
-        relationsToFollow.insert("SUBSUBJUX;L_NP_GEN;L_NP_GEN");
-        relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;L_NC_INCONNU");
+        relationsToFollow.insert("SUBSUBJUX;NPP;NPP");
+//         relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;L_NC_INCONNU");
         newGrp = createGroupe(forme, relationsToFollow, "GP");
 
         if(newGrp == 0)
@@ -627,8 +616,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         }
 
       }
-      else if (forme->micro == "L_ADV_PREMIER_ELEM_NEG" || forme->micro == "L_PRON_PERS_CONJ_S_PREV"
-              || forme->micro == "L_PRON_PERS_CONJ_COI_PREV" || forme->micro == "L_PRON_PERS_CONJ_COD_PREV")
+      else if (forme->micro == "ADV" || forme->micro == "CLS" || forme->micro == "CLO" )
       {
         relationsToFollow.insert("Neg");
         relationsToFollow.insert("NePas");
@@ -639,43 +627,40 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         relationsToFollow.insert("AuxCplPrev");
         newGrp = createGroupe(forme, relationsToFollow, "NV");
       }
-      else if ( forme->micro == "L_NC_GEN" )
+      else if ( forme->micro == "NC" )
       {
         relationsToFollow.insert("SUBSUBJUX");
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
-      else if (forme->micro == "L_VERBE_PRINCIPAL_PARTICIPE_PASSE"
-              || forme->micro == "L_VERBE_AUXILIAIRE_PARTICIPE_PASSE"
-              || forme->micro == "L_VERBE_MODALITE_PARTICIPE_PASSE"
-              || forme->micro == "L_VERBE_COPULE_PARTICIPE_PASSE" )
+      else if (forme->micro == "VPP" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "NV", true);
       }
-      else if ( forme->macro == "L_ADJ" )
+      else if ( forme->macro == "ADJ" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "GA", true);
       }
-      else if (forme->micro == "L_PRON_REFLEXIF")
+      else if (forme->micro == "CLR")
       {
         relationsToFollow.insert("PronReflVerbe");
         relationsToFollow.insert("AuxCplPrev");
         // relationsToFollow.insert("TEMPCOMP");
         newGrp = createGroupe(forme, relationsToFollow, "NV");
       }
-      else if ( forme->micro == "L_PRON_REL_CN" )
+      else if ( forme->micro == "PROREL" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "GP", true);
       }
-      else if ( forme->micro == "L_CONJ_SUBORD" && forme->hasInRelation("PrepPronCliv") )
+      else if ( forme->micro == "CS" && forme->hasInRelation("PrepPronCliv") )
       {
         newGrp = createGroupe(forme, relationsToFollow, "GP", true);
       }
-      else if ( forme->micro == "L_PRON_INDEFINI" || forme->micro == "L_PRON_INTERRO_SUJET" )
+      else if ( forme->micro == "PRO" || forme->micro == "PROWH" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
 /*
-      else if ( forme->macro == "L_V" )
+      else if ( forme->macro == "V" )
       {
         newGrp = createGroupe(forme, relationsToFollow, "NV", true);
       }
