@@ -37,8 +37,15 @@ will have to download and prepare yourself. This data is an extract of the Peen
 treebank corpus available for fair use in the NLTK data. To install, please 
 refer to http://nltk.org/data.html. Then prepare the data for use with LIMA by 
 running the following commands:
+
 $ cd <path/to/nltk_data>/corpora/dependency_treebank
 $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
+
+Note, that this way a lot of changes fail to apply. Thus the corpus on which 
+the learning is based is wrong. Thus, the automatic evaluation using 
+evalPosTagging in lima-pelf gives results largely lower than what was obtained 
+with the right corpus. This will have to be corrected.
+
 
 Then, for each module, let's do:
  $ cd module
