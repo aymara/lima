@@ -1,17 +1,1 @@
-Prerequisites
-===========
-
-The following libraries are necessary for the installation :
-Boost (1.46)
-Qt (4.8)
-
-Environnement
-=============
-
-The following environment variables are necessary :
-LIMA_CONF : the folder containing the configuration files
-LIMA_RESOURCES : the folder contening linguistic resources
-
-Installation
-============
-Edit et execute  script cbuild.sh
+See the INSTALL file at the LIMA root directory.
