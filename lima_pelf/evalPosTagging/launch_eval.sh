@@ -7,9 +7,7 @@ fi
 nbParts=10
 
 # Position of this script on the computer
-# (to be set up before launching the evaluation)
 EVAL_PATH=`dirname $0`
-# EVAL_PATH=$PWD 
 
 # svm_light location:
 svm_light="$EVAL_PATH/SVM/svm_light";

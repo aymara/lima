@@ -29,5 +29,12 @@ install(FILES
     reBuildRawCorpus.sh
     words.sh
     ${CMAKE_CURRENT_BINARY_DIR}/tfcv.py
+    ExploitResults/detailed-res.sh
+    ExploitResults/src/confusionMatrix.sh
+    ExploitResults/src/erreursFrequentes.pl
+    ExploitResults/src/matriceConfusion.pl
+    ExploitResults/src/MyImagePlot.r
+    ExploitResults/src/synthese.tex
+    ExploitResults/src/toPDF.sh
   PERMISSIONS OWNER_READ  OWNER_WRITE   OWNER_EXECUTE   GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   DESTINATION share/apps/lima/scripts)

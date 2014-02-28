@@ -17,8 +17,9 @@ my $tmpfile="/tmp/aligner.tmp";
 die "need two args (see -help)" unless @ARGV>=2;
 my ($refFile,$testFile)=@ARGV;
 
-system("../../words.sh $refFile > $tmpfile.ref.words");
-system("../../words.sh $testFile > $tmpfile.test.words");
+my $PELF_BIN_PATH = "$ENV{'LIMA_DIST'}/share/apps/lima/scripts/";
+system("$PELF_BIN_PATH/words.sh $refFile > $tmpfile.ref.words");
+system("$PELF_BIN_PATH/words.sh $testFile > $tmpfile.test.words");
 
 my (@IgnoredRefPos,@IgnoredTestPos);
 open(FDIFF,"diff $tmpfile.ref.words $tmpfile.test.words |");
