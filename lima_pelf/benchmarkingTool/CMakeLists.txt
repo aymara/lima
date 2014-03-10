@@ -31,12 +31,6 @@ set(pelf-bench_UIS
 )
 SET(pelf-bt_RCCS pelf-bt-resources.qrc)
 
-# Find required packages
-include(FindQwt.cmake)
-if(QWT_FOUND)
-    include_directories(QWT_INCLUDE_DIR)
-endif(QWT_FOUND)
-include(${QT_USE_FILE})
 
 # Wrap Qt UIs
 qt4_wrap_ui(pelf-bench_UIS_H ${pelf-bench_UIS})
