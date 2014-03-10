@@ -10,9 +10,9 @@ nbParts=10
 EVAL_PATH=`dirname $0`
 
 # svm_light location:
-svm_light="$EVAL_PATH/SVM/svm_light";
+svm_light="/usr/local/bin";
 # svm_learn location (perl version):
-svm_learn="$EVAL_PATH/SVM/SVMTool-1.3.1/bin/SVMTlearn"
+svm_learn="SVMTlearn"
 # svm_learn parameters:
 # sed -i "s/use lib \".*\/lib/\";/use lib \"$EVAL_PATH\/SVM\/SVMTool-1.3.1\/lib\/\";/g" SVM/SVMTool-1.3.1/bin/SVMTlearn
 # make sure training-sets exists
@@ -38,8 +38,8 @@ function readMethod() {
 for lang in $*; do
     addOption=""
     case $lang in
-        fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale.SVMT ;;
-        eng) addOption="-s . -n $nbParts"; corpus=$LIMA_RESOURCES/Disambiguation/corpus_eng_merge.txt conf=config-minimale.SVMT;;
+        fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale-fre.SVMT ;;
+        eng) addOption="-s . -n $nbParts"; corpus=$LIMA_RESOURCES/Disambiguation/corpus_eng_merge.txt conf=config-minimale-fre.SVMT;;
     esac
     method=$(readMethod $lang)
     echo "treating $lang.$method... (see ${lang}.${method}.log)"
@@ -47,7 +47,7 @@ for lang in $*; do
     rm -Rf results.$lang.$method
 
 
-    $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus conf/$lang/$conf $svm_light $svm_learn
+    $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn
     if  [[ $? -ne 0 ]]; then
       echo "tfcv error, exiting"
       exit
@@ -60,9 +60,7 @@ for lang in $*; do
     echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned 2>&1 | grep "^all.precision"` 
     echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"` 
 
-    mkdir -p ExploitResults/data
+    mkdir -p results.$lang.$method/data
     $EVAL_PATH/problemesAlignement.sh $lang $method
-    pushd ExploitResults
     $EVAL_PATH/detailed-res.sh $nbParts $lang >& /dev/null
-    popd
 done
