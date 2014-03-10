@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!-- XML Document Type Definition
+     Authors: 
+       Gil Francopoulo <gil.francopoulo@tagmatica.com>
+       Eric de la Clergerie <Eric.De_La_Clergerie@inria.fr>
+
+     Description:
+       French PASSAGE Format for the representation of syntactic
+       annotations. This format is the successor of the EASy format
+       and was specified byGil Francopoulo in the context of the
+       French ANR Passage action.
+
+     Version: 1.1
+
+     Typical usage:
+
+       <!DOCTYPE passage
+          PUBLIC "-//INRIA/DTD PASSAGE 1.1//EN"
+	  "http://atoll.inria.fr/passage/passage.dtd"
+       >
+       <Document file="...">
+       </Document>
+
+-->
+
+
+<!ELEMENT Document (MSTAG*, Sentence*)>
+<!ATTLIST Document	dtdVersion	CDATA #FIXED "1.1"
+			file		CDATA #IMPLIED>
+						
+<!-- ==============================-->
+<!ELEMENT MSTAG (fs)>
+<!ATTLIST MSTAG	id		ID #REQUIRED>
+<!ELEMENT fs (f+)>
+<!ELEMENT f (symbol | vAlt)+>
+<!ATTLIST f		name		CDATA #REQUIRED>
+<!ELEMENT symbol EMPTY>
+<!ATTLIST symbol	value		CDATA #REQUIRED>
+<!ELEMENT vAlt (symbol+)>
+<!-- ==============================-->
+<!ELEMENT Sentence ( (T|G|W)+, R*, M* ,NE*)>
+<!ATTLIST Sentence	trust		CDATA #IMPLIED
+			id		ID #IMPLIED>
+<!-- ==============================-->
+<!ELEMENT T (#PCDATA)>
+<!ATTLIST T		id		ID #REQUIRED
+	                start           CDATA #REQUIRED
+	                end             CDATA #REQUIRED
+>
+
+<!-- ==============================-->
+<!ELEMENT G (W+)>
+<!ATTLIST G		id		ID #REQUIRED
+			type		(NV|GN|GP|GA|GR|PV)  #REQUIRED
+			mstag		IDREFS #IMPLIED>
+<!-- ==============================-->
+<!ELEMENT W EMPTY>
+<!ATTLIST W		id		ID #REQUIRED
+			tokens		IDREFS #REQUIRED
+			pos		(adverb | commonNoun | 
+   	  coordinatingConjunction | definiteArticle | 
+	  demonstrativeDeterminer |exclamativeDeterminer | 
+	  foreignText | indefiniteDeterminer|interjection | 
+	  letter | mainPunctuation | 
+	  negativeParticle|numeral | ordinalAdjective | 
+	  personnalPronoun | possessiveDeterminer | 
+	  possessivePronoun | preposition|properNoun | 
+	  qualifierAdjective | relativePronoun | residual | 
+	  secondaryPunctuation | subordinatingConjunction | 
+	  verb)                               #IMPLIED
+			lemma		CDATA #IMPLIED
+			form		CDATA #IMPLIED
+			mstag		CDATA #IMPLIED
+                        head            (true | false) #IMPLIED>
+<!-- ==============================-->
+<!ELEMENT R (adjectif | adverbe | appose | attribut | auxiliaire | cod | complement | complementeur |coord-d | coord-g | coordonnant | modifieur | nom | premier | preposition | s-o | suivant | sujet | verbe )+ >
+<!ATTLIST R		id		ID #REQUIRED
+			type		(APPOS|ATB-SO|AUX-V|COMP|COD-V|COORD|
+CPL-V|JUXT|MOD-A|MOD-N|MOD-P|MOD-R|MOD-V|SUJ-V) #REQUIRED >
+
+<!ELEMENT adjectif EMPTY >
+<!ATTLIST adjectif	ref 		IDREF #REQUIRED>
+
+<!ELEMENT adverbe EMPTY >
+<!ATTLIST adverbe	ref		IDREF #REQUIRED>
+
+<!ELEMENT appose EMPTY >
+<!ATTLIST appose	ref		IDREF #REQUIRED>
+
+<!ELEMENT attribut EMPTY >
+<!ATTLIST attribut 	ref		IDREF #REQUIRED>
+
+<!ELEMENT auxiliaire EMPTY >
+<!ATTLIST auxiliaire 	ref		IDREF #REQUIRED>
+
+<!ELEMENT cod EMPTY >
+<!ATTLIST cod 		ref		IDREF #REQUIRED>
+
+<!ELEMENT complement EMPTY >
+<!ATTLIST complement 	ref		IDREF #REQUIRED>
+
+<!ELEMENT complementeur EMPTY >
+<!ATTLIST complementeur	ref	IDREF #REQUIRED>
+
+<!ELEMENT coord-d EMPTY >
+<!ATTLIST coord-d	ref		IDREF #REQUIRED>
+
+<!ELEMENT coord-g EMPTY >
+<!ATTLIST coord-g 	ref		IDREF #IMPLIED>
+
+<!ELEMENT coordonnant EMPTY >
+<!ATTLIST  coordonnant 	ref		IDREF #REQUIRED>
+
+<!ELEMENT modifieur EMPTY >
+<!ATTLIST  modifieur 	ref		IDREF #REQUIRED>
+
+<!ELEMENT nom EMPTY >
+<!ATTLIST nom 		ref		IDREF #REQUIRED>
+
+<!ELEMENT premier EMPTY >
+<!ATTLIST premier 	ref		IDREF #REQUIRED>
+
+<!ELEMENT preposition EMPTY >
+<!ATTLIST preposition	ref		IDREF #REQUIRED>
+
+<!ELEMENT s-o EMPTY >
+<!ATTLIST s-o	valeur ( sujet | objet | ind ) #REQUIRED >
+
+<!ELEMENT suivant EMPTY >
+<!ATTLIST suivant 	ref		IDREF #REQUIRED>
+
+<!ELEMENT sujet EMPTY >
+<!ATTLIST sujet 		ref		IDREF #REQUIRED>
+
+<!ELEMENT verbe EMPTY >
+<!ATTLIST verbe 	ref		IDREF #REQUIRED>
+
+<!-- ==============================-->
+<!ELEMENT M (#PCDATA)>
+<!ATTLIST M		id		ID #REQUIRED
+			start		CDATA #IMPLIED
+			end		CDATA #IMPLIED
+			objs		IDREFS #IMPLIED>
+<!-- ==============================-->
+<!ELEMENT NE EMPTY>
+<!ATTLIST NE		id		ID #REQUIRED
+			type		(individual | organization | location | dateTime |
+					URLetc | measure | mark) #REQUIRED
+			subType		CDATA #IMPLIED
+			lst		IDREFS #REQUIRED
+			mstag		IDREFS #IMPLIED>
