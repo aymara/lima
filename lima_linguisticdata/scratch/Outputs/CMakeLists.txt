@@ -17,5 +17,5 @@
 ########### install files ###############
 install(FILES
   easy-xml-dumper-compound-forms.txt  
-  lic2m-xml-output.dtd
+  lima-xml-output.dtd
 COMPONENT common DESTINATION share/apps/lima/resources/Outputs)

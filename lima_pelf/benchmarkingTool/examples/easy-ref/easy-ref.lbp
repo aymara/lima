@@ -1,5 +1,5 @@
 <!--This file has been saved using Leffe Benchmarking Tool-->
-<!--Paths $LBP_PATH and $LEFFE_BT_COMMANDS_ROOT have to be set accordingly-->
+<!--Paths $LBP_PATH and $PELF_BT_COMMANDS_ROOT have to be set accordingly-->
 <benchmarking>
  <pipeline>
   <unit processingStatus="0" textPath="$LBP_PATH/text/general_elda.lic2m.xml" fileType="Easy" referencePath="$LBP_PATH/ref/general_elda.xml" id="1" />
@@ -24,9 +24,9 @@
  <evaluations/>
  <workingDir path="$LBP_PATH" />
  <commands>
-  <analyzer commandLine="$LEFFE_BT_COMMANDS_ROOT/analyzer/analyzer-easy.sh $TEXT_PATH" />
-  <evaluator commandLine="$LEFFE_BT_COMMANDS_ROOT/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
-  <viewer commandLine="$LEFFE_BT_COMMANDS_ROOT/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <analyzer commandLine="$PELF_BT_COMMANDS_ROOT/analyzer/analyzer-easy.sh $TEXT_PATH" />
+  <evaluator commandLine="$PELF_BT_COMMANDS_ROOT/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <viewer commandLine="$PELF_BT_COMMANDS_ROOT/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
  </commands>
  <concurrentProcesses max="2" />
 </benchmarking>

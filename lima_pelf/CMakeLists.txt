@@ -2,6 +2,8 @@
 project(pelf)
 cmake_minimum_required(VERSION 2.8)
 
+cmake_policy(SET CMP0017 NEW)
+
 SET(optionalLibs)
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -111,7 +113,16 @@ set(LIMA_PELF_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
 
 # Go to subdirectories
 add_subdirectory(easyprocessor)
-add_subdirectory(benchmarkingTool)
+if (DEFINED ENV{PELF_EVALUATOR} AND DEFINED ENV{PELF_ALIGNER})
+  set(PELF_EVALUATOR $ENV{PELF_EVALUATOR})
+  set(PELF_ALIGNER $ENV{PELF_ALIGNER})
+  add_subdirectory(benchmarkingTool)
+else ()
+  message("Environment variable PELF_ALIGNER and PELF_EVALUATORshould be set to build the benchmarking tool")
+endif()
+
+
+
 add_subdirectory(resourceTool)
 add_subdirectory(evalPosTagging)
 add_subdirectory(commands)

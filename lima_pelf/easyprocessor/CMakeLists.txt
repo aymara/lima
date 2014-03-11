@@ -84,4 +84,4 @@ install(FILES
 install(FILES 
     easy.dtd
     passage.dtd
-  DESTINATION share/apps/pelf/examples/easy-guide/text)
+  DESTINATION share/apps/pelf/resources)

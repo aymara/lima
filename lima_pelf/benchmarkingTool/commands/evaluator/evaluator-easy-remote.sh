@@ -19,7 +19,7 @@ fi
 OUTPUT_DIR_REMOTE=/home/leffe/Passage/LeffeTmps/$USER
 
 # ssh and rsync configuration
-source $LEFFE_COMMANDS_ROOT/sshcommands.sh
+source $PELF_COMMANDS_ROOT/sshcommands.sh
 
 # Preparing
 TEXT_FILE_DIR=`dirname $TEXT_FILE`
@@ -59,7 +59,7 @@ rsyncexec leffe@calamondin:$OUTPUT_DIR_REMOTE/output/$START_TIME/$TEXT_FILE_BASE
 # sshexec leffe@calamondin rm -Rf $OUTPUT_DIR_REMOTE
 
 echo "Evaluation results"
-grep "EVAL SUBCORPUS_LEFFE" $EVAL_FILE;
+grep "EVAL SUBCORPUS_PELF" $EVAL_FILE;
 
 echo "Errors list"
 grep "^[FAT][|]" $EVAL_FILE;

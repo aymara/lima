@@ -1,29 +1,29 @@
 <!--This file has been saved using Leffe Benchmarking Tool-->
-<!--Paths $LBP_PATH and $LEFFE_BT_COMMANDS_ROOT have to be set accordingly-->
+<!--Paths @LBP_PATH@ and @PELF_BT_COMMANDS_ROOT@ have to be set accordingly-->
 <benchmarking>
  <pipeline>
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.1" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.1.easyref.xml" id="1" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.2" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.2.easyref.xml" id="2" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.3" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.3.easyref.xml" id="3" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.4" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.4.easyref.xml" id="4" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.5" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.5.easyref.xml" id="5" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.6" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.6.easyref.xml" id="6" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.7" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.7.easyref.xml" id="7" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.8" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.8.easyref.xml" id="8" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.9" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.9.easyref.xml" id="9" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.10" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.10.easyref.xml" id="10" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.11" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.11.easyref.xml" id="11" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.12" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.12.easyref.xml" id="12" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.13" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.13.easyref.xml" id="13" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.14" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.14.easyref.xml" id="14" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.15" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.15.easyref.xml" id="15" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.1" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.1.easyref.xml" id="1" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.2" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.2.easyref.xml" id="2" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.3" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.3.easyref.xml" id="3" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.4" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.4.easyref.xml" id="4" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.5" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.5.easyref.xml" id="5" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.6" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.6.easyref.xml" id="6" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.7" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.7.easyref.xml" id="7" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.8" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.8.easyref.xml" id="8" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.9" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.9.easyref.xml" id="9" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.10" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.10.easyref.xml" id="10" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.11" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.11.easyref.xml" id="11" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.12" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.12.easyref.xml" id="12" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.13" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.13.easyref.xml" id="13" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.14" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.14.easyref.xml" id="14" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.15" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.15.easyref.xml" id="15" />
  </pipeline>
  <evaluations/>
- <workingDir path="$LBP_PATH" />
+ <workingDir path="@LBP_PATH@" />
  <commands>
-  <analyzer commandLine="$LEFFE_BT_COMMANDS_ROOT/analyzer/analyzer-easy.sh $TEXT_PATH" />
-  <evaluator commandLine="$LEFFE_BT_COMMANDS_ROOT/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
-  <viewer commandLine="$LEFFE_BT_COMMANDS_ROOT/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <analyzer commandLine="@PELF_BT_COMMANDS_ROOT@/analyzer/analyzer-easy.sh $TEXT_PATH" />
+  <evaluator commandLine="@PELF_BT_COMMANDS_ROOT@/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <viewer commandLine="@PELF_BT_COMMANDS_ROOT@/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
  </commands>
  <concurrentProcesses max="2" />
 </benchmarking>

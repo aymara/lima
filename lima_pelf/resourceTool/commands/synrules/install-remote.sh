@@ -1,7 +1,7 @@
 ##!bin/sh
 
 # ssh and rsync configuration
-source $LEFFE_COMMANDS_ROOT/sshcommands.sh
+source $PELF_COMMANDS_ROOT/sshcommands.sh
 
 # command configuration
 RESOURCE_PATH=$LINGUISTIC_DATA_ROOT

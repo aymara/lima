@@ -340,9 +340,19 @@ void Pipeline::unitsUpdate ()
 void Pipeline::unitResultsChanged (PipelineUnit* pu, EvaluationResultSet* ers)
 {
     if(startTime.isNull())
+    {
+        qDebug() << "Pipeline::unitResultsChanged startTime is null. abort";
         return;
+    }
     if(results.find(startTime) != results.end())
+    {
+//       qDebug() << "Pipeline::unitResultsChanged"<<startTime<<" one element:" << (*(*ers->begin())).fc;
       results[startTime]->resultUnits[pu] = ers;
+    }
+    else
+    {
+      qDebug() << "Pipeline::unitResultsChanged startTime"<<startTime<<" not found";
+    }
     pipelineView->reset();
     emit resultsChanged();
     if(processing)

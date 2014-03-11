@@ -1,5 +1,5 @@
 ##!bin/sh
-# The script needs variables to be defined : LEFFE_RESOURCES
+# The script needs variables to be defined : PELF_RESOURCES
 
 # command line parameters
 if [ $1 ]; then
@@ -14,7 +14,7 @@ readlink -f $1
 echo $? $TEXT_FILE
 
 # command configuration
-LIC2M_OUTPUT_DTD=$LEFFE_RESOURCES/lic2m-xml-output.dtd
+LIMA_OUTPUT_DTD=$PELF_RESOURCES/lima-xml-output.dtd
 
 # creates output dir if not exists
 TEXT_FILE_DIR=`dirname $TEXT_FILE`
@@ -30,17 +30,14 @@ echo "---------"
 
 echo "Analyzing $TEXT_FILE"
 
-# Analysis with Lima EasyXmlDumper
-analyzeXmlDocuments --language=fre --pipeline=easy $TEXT_FILE
-
 # Analysis with easyprocessor
-# ANALYSIS_DIR=`dirname $TEXT_FILE`
-# pushd $ANALYSIS_DIR
-# cp $LIC2M_OUTPUT_DTD .
-# easyprocessor -p easy $TEXT_FILE
-# LIC2M_OUTPUT_DTD_BASENAME=`basename LIC2M_OUTPUT_DTD`
-# rm -f $LIC2M_OUTPUT_DTD_BASENAME beginStatus-fre.log
-# popd
+ANALYSIS_DIR=`dirname $TEXT_FILE`
+pushd $ANALYSIS_DIR
+cp $LIMA_OUTPUT_DTD .
+easyprocessor $TEXT_FILE
+LIMA_OUTPUT_DTD_BASENAME=`basename LIMA_OUTPUT_DTD`
+rm -f $LIMA_OUTPUT_DTD_BASENAME beginStatus-fre.log
+popd
 
 mv $TEXT_FILE.easy.xml $OUTPUT_FILE
 echo "Done, output should be in $OUTPUT_FILE"

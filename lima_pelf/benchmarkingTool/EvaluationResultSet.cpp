@@ -17,16 +17,22 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 #include "EvaluationResultSet.h"
+#include <boost/concept_check.hpp>
 using namespace Lima::Pelf;
 
 void EvaluationResultSet::replaceResult (EvaluationResult::DIMENSION_ID dimensionId, EvaluationResult* result)
 {
-    if(result != 0)
-        (*this)[dimensionId] = result;
+  if (result != 0)
+  {
+//     qDebug() << "EvaluationResultSet::replaceResult  Set new result for" << dimensionId;
+    if (contains(dimensionId)) delete (*this)[dimensionId];
+    (*this)[dimensionId] = result;
+  }
 }
 
 void EvaluationResultSet::findEvaluationResults(QString cmdOutput)
 {
+//   qDebug() << "EvaluationResultSet::findEvaluationResults" << cmdOutput;
     QMap<EvaluationResult::DIMENSION_ID, EvaluationResultDimension*>& dimensions = EvaluationResult::getDimensions();
     Q_FOREACH(EvaluationResult::DIMENSION_ID dimensionId, dimensions.keys())
     {
@@ -38,35 +44,23 @@ void EvaluationResultSet::findEvaluationResults(QString cmdOutput)
 
 EvaluationResult* EvaluationResultSet::findResultsType(QString cmdOutput, QString typeKey, QString typeName)
 {
-    qDebug() << "EvaluationResultSet::findResultsType  typeKey=" << typeKey.split(" ").back();
+//     qDebug() << "EvaluationResultSet::findResultsType  typeKey=" << typeKey << "typeName=" << typeName;
     QString resultsRegexpOld = "\\s+p=((0|1)?\\.?\\d+)\\s+r=((0|1)?\\.?\\d+)\\s+f=((0|1)?\\.?\\d+)";
     QString resultsRegexp = "\\s+fc=(\\d+)\\s+fp=(\\d+)\\s+cr=(\\d+)";
     QRegExp allRelationsRegexp(typeKey+resultsRegexpOld+resultsRegexp);
-    int allRelationsMatchIndex = 0;
+//     qDebug() << "EvaluationResultSet::findResultsType regexp=" << allRelationsRegexp.pattern();
+    int allRelationsMatchIndex = allRelationsRegexp.indexIn(cmdOutput);
     EvaluationResult* result = 0;
-    while((allRelationsMatchIndex = allRelationsRegexp.indexIn(cmdOutput, allRelationsMatchIndex)) != -1)
+//     qDebug() << "EvaluationResultSet::findResultsType allRelationsMatchIndex=" << allRelationsMatchIndex;
+    if (allRelationsMatchIndex != -1)
     {
         QStringList allRelationsResults = allRelationsRegexp.capturedTexts();
-        QStringList::iterator allRelationsResultsIt = allRelationsResults.begin();
-        int resultCount = 0;
+//         qDebug() << "EvaluationResultSet::findResultsType allRelationsResults size=" << allRelationsResults.size();
         double fc = -1, fp = -1, cr = -1;
-        while(allRelationsResultsIt != allRelationsResults.end())
-        {
-            switch(resultCount)
-            {
-                case 7:
-                    fc = (*allRelationsResultsIt).toDouble();
-                    break;
-                case 8:
-                    fp = (*allRelationsResultsIt).toDouble();
-                    break;
-                case 9:
-                    cr = (*allRelationsResultsIt).toDouble();
-                    break;
-            }
-            ++allRelationsResultsIt;
-            ++resultCount;
-        }
+        if (allRelationsResults.size()>=10) cr = allRelationsResults[9].toDouble();
+        if (allRelationsResults.size()>=9) fp = allRelationsResults[8].toDouble();
+        if (allRelationsResults.size()>=8) fc = allRelationsResults[7].toDouble();
+//         qDebug() << "EvaluationResultSet::findResultsType" << typeKey << "fc=" << fc << "fp=" << fp << "cr=" << cr;
         if(fc != -1 && fp != -1 && cr!= -1)
         {
 ///@TODO Possible memory leak:  ensure that this object will be deleted
@@ -97,8 +91,5 @@ EvaluationResult* EvaluationResultSet::findResultsType(QString cmdOutput, QStrin
         }
         allRelationsMatchIndex += allRelationsRegexp.matchedLength();
     }
-
-
-
     return result;
 }

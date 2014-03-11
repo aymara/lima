@@ -14,7 +14,7 @@ fi
 OUTPUT_DIR_REMOTE=/home/leffe/Passage/LeffeTmps/$USER
 
 # ssh and rsync configuration
-source $LEFFE_COMMANDS_ROOT/sshcommands.sh
+source $PELF_COMMANDS_ROOT/sshcommands.sh
 
 # Preparing
 TEXT_FILE_DIR=`dirname $TEXT_FILE`

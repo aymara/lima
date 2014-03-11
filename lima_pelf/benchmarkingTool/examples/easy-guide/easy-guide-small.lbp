@@ -1,13 +1,13 @@
 <!--This file has been saved using Leffe Benchmarking Tool-->
-<!--Paths $LBP_PATH and $LEFFE_BT_COMMANDS_ROOT have to be set accordingly-->
+<!--Paths @LBP_PATH@ and @PELF_BT_COMMANDS_ROOT@ have to be set accordingly-->
 <!--Some initial evaluation are provided as example : data should be removed-->
 <benchmarking>
  <pipeline>
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.1" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.1.easyref.xml" id="1" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.2" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.2.easyref.xml" id="2" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.3" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.3.easyref.xml" id="3" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.4" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.4.easyref.xml" id="4" />
-  <unit processingStatus="0" textPath="$LBP_PATH/text/Guide.5" fileType="Easy" referencePath="$LBP_PATH/ref/Guide.5.easyref.xml" id="5" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.1" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.1.easyref.xml" id="1" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.2" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.2.easyref.xml" id="2" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.3" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.3.easyref.xml" id="3" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.4" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.4.easyref.xml" id="4" />
+  <unit processingStatus="0" textPath="@LBP_PATH@/text/Guide.5" fileType="Easy" referencePath="@LBP_PATH@/ref/Guide.5.easyref.xml" id="5" />
  </pipeline>
  <evaluations>
   <pipelineEvaluation comments="Initial evaluation (as example)" time="1232378593" >
@@ -333,11 +333,11 @@
    </unitEvaluation>
   </pipelineEvaluation>
  </evaluations>
- <workingDir path="$LBP_PATH" />
+ <workingDir path="@LBP_PATH@" />
  <commands>
-  <analyzer commandLine="$LEFFE_BT_COMMANDS_ROOT/analyzer/analyzer-easy.sh $TEXT_PATH" />
-  <evaluator commandLine="$LEFFE_BT_COMMANDS_ROOT/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
-  <viewer commandLine="$LEFFE_BT_COMMANDS_ROOT/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <analyzer commandLine="@PELF_BT_COMMANDS_ROOT@/analyzer/analyzer-easy.sh $TEXT_PATH" />
+  <evaluator commandLine="@PELF_BT_COMMANDS_ROOT@/evaluator/evaluator-easy.sh $TEXT_PATH $REFERENCE_PATH" />
+  <viewer commandLine="@PELF_BT_COMMANDS_ROOT@/viewer/viewer-easy.sh $TEXT_PATH $REFERENCE_PATH" />
  </commands>
  <concurrentProcesses max="2" />
 </benchmarking>
