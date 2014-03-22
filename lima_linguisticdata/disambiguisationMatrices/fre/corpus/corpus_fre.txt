@@ -2551,7 +2551,7 @@ connu	VPP
 la	DET
 disparition	NC
 de	P
-deux	NC
+deux	DET
 de	P
 ses	DET
 dirigents	NC
@@ -5247,7 +5247,7 @@ le	DET
 prétexte	NC
 à	P
 ce	PRO
-que	CS
+que	PROREL
 l'on	PRO
 peut	V
 appeler	VINF
@@ -5729,7 +5729,7 @@ nouveaux	ADJ
 appartements	NC
 papaux	ADJ
 aujourd'hui	ADV
--	ADJ
+-	PONCT
 lesquels	PROREL
 étaient	V
 fermés	VPP
@@ -9237,9 +9237,9 @@ la	DET
 législature	NC
 ,	PONCT
 soit	CC
--	ADJ
+-	PONCT
 au plus tard	ADV
--	ADJ
+-	PONCT
 jusqu'en	P
 novembre 2006	NC
 ,	PONCT
@@ -10471,13 +10471,13 @@ gouvernementale	ADJ
 (	PONCT
 101	DET
 sièges	NC
--	ADJ
+-	PONCT
 dont	PROREL
 70	ADJ
 pour	P
 le	DET
 ČSSD	NPP
--	ADJ
+-	PONCT
 sur	P
 200	DET
 à	P
@@ -11847,8 +11847,8 @@ Cumhuriyetçi	NPP
 Türk	NPP
 Partisi	NPP
 ,	PONCT
-te	CLO
-tendance	V
+de	P
+tendance	NC
 centre	NC
 -	PONCT
 gauche	NC
@@ -12319,7 +12319,7 @@ publique	ADJ
 ,	PONCT
 la	DET
 nomination	NC
--	ADJ
+-	PONCT
 qui	PROREL
 était	V
 une	DET
@@ -12884,7 +12884,8 @@ de	P
 leur	DET
 pays	NC
 .	PONCTU_FORTE
-Nous rejoindrons	V
+Nous	CLS
+rejoindrons	V
 l'	DET
 Union européenne	NPP
 le	DET
@@ -14320,11 +14321,8 @@ Contact	NPP
 Medias	NPP
 -	PONCT
 Roumanie	NPP
-et	CC
-ce	PRO
-en	P
-qualité	NC
-d'	P
+et ce	CC
+en qualité d'	ADV
 opératrice	NC
 ,	PONCT
 chargée	VPP
@@ -14351,8 +14349,7 @@ retour	NC
 ,	PONCT
 par	P
 écrit	NC
-et	CC
-ce	PRO
+et ce	CC
 quant à	P
 votre	DET
 intérêt	NC
@@ -16264,7 +16261,7 @@ Likoud	NPP
 sur	P
 l'	DET
 interprétation	NC
--	ADJ
+-	PONCT
 à	P
 ses	DET
 yeux	NC
@@ -18742,8 +18739,8 @@ Togo	NPP
 le	DET
 seuil	NC
 des	DETDES
-cent	NC
-morts	ADJ
+cent	DETNUM
+morts	NC
 dans	P
 les	DET
 affrontements	NC
@@ -19201,7 +19198,7 @@ sa	DET
 mère	NC
 ,	PONCT
 l'	DET
-ex	NC
+ex	PREF
 -	PONCT
 reine	NC
 Juliana	NPP
@@ -19806,7 +19803,7 @@ l'	DET
 environnement	NC
 .	PONCTU_FORTE
 Le	DET
-non	NC
+non	ADV
 -	PONCT
 recours	NC
 à	P
@@ -20526,7 +20523,7 @@ divers	DET
 documents	NC
 et	CC
 vêtements	NC
--	ADJ
+-	PONCT
 auraient été	V
 trouvés	VPP
 dans	P
@@ -22713,7 +22710,7 @@ occupants	NC
 de	P
 l'	DET
 appareil	NC
--	ADJ
+-	PONCT
 M.	NC
 Maduro	NPP
 ,	PONCT
@@ -22722,7 +22719,7 @@ fille	NC
 et	CC
 le	DET
 pilote	NC
--	ADJ
+-	PONCT
 ont été	V
 rapidement	ADV
 secourus	VPP
@@ -22817,7 +22814,7 @@ de	P
 cette	DET
 formation	NC
 .	PONCTU_FORTE
-Nepal	ET
+Nepal	NPP
 et	CC
 Bohara	NPP
 avaient été	V
@@ -22850,7 +22847,7 @@ sa	DET
 libération	NC
 ,	PONCT
 M.	NC
-Nepal	ET
+Nepal	NPP
 a	V
 lancé	VPP
 un	DET
@@ -23367,8 +23364,7 @@ Firefox	NPP
 ,	PONCT
 navigateur	NC
 Web	NPP
-open	ET
-source	ET
+open source	ADJ
 sous	P
 licence	NC
 MPL	NPP
@@ -23446,7 +23442,7 @@ soit	CC
 ou	CC
 18:58	NC
 CEST	NC
--	ADJ
+-	PONCT
 19:58	NC
 en	P
 heure d'été	NC
@@ -24771,7 +24767,7 @@ Allemagne	NPP
 et	CC
 des	DETDES
 tensions	NC
-euro	ET
+euro	PREF
 -	PONCT
 iraniennes	ADJ
 .	PONCTU_FORTE
@@ -25439,36 +25435,35 @@ puisse	VS
 en	CLO
 faire partie	VINF
 (	PONCT
-Since	NPP
+Since	ET
 the	ET
 only	ET
-justification	NC
+justification	ET
 for	ET
 the	ET
-existence	NC
+existence	ET
 of	ET
 the	ET
 government	ET
 in	ET
 its	ET
-current	V
-composition	NC
-is	ADJ
+current	ET
+composition	ET
+is	ET
 to	ET
 carry	ET
 out	ET
 the	ET
 disengagement	ET
-plan	NC
+plan	ET
 ,	PONCT
-I	ADJ
-don'	NC
-t	ADJ
-think	ADJ
-i	NC
-can	ADJ
-be	ADJ
-part	NC
+I	ET
+don't	ET
+think	ET
+I	ET
+can	ET
+be	ET
+part	ET
 of	ET
 it	ET
 .	PONCTU_FORTE
@@ -25568,7 +25563,7 @@ puisse	VS
 en	CLO
 faire partie	VINF
 (	PONCT
-Since	NPP
+Since	ET
 the	ET
 only	ET
 justification	NC
@@ -25581,23 +25576,22 @@ government	ET
 in	ET
 its	ET
 current	V
-composition	NC
-is	ADJ
+composition	ET
+is	ET
 to	ET
 carry	ET
 out	ET
 the	ET
 disengagement	ET
-plan	NC
+plan	ET
 ,	PONCT
-I	ADJ
-don'	NC
-t	ADJ
-think	ADJ
-i	NC
-can	ADJ
-be	ADJ
-part	NC
+I	ET
+don't	ET
+think	ET
+I	ET
+can	ET
+be	ET
+part	ET
 of	ET
 it	ET
 .	PONCTU_FORTE
@@ -26602,7 +26596,7 @@ ils	CLS
 n'	ADV
 ont lieu	V
 pas	ADV
--	ADJ
+-	PONCT
 et	CC
 ne	ADV
 le	CLO
@@ -26869,7 +26863,7 @@ d'	P
 enfants	NC
 en	P
 Afrique	NPP
--	ADJ
+-	PONCT
 trois fois	NC
 plus	ADV
 que	CS
@@ -26899,13 +26893,13 @@ than	ET
 any	ET
 other	ET
 -	PONCT
-three	NC
-times	ADJ
-as	V
-many	CLO
-as	V
-HIV	NPP
-infection	NC
+three	ET
+times	ET
+as	ET
+many	ET
+as	ET
+HIV	ET
+infection	ET
 .	PONCTU_FORTE
 )	PONCT
 et	CC
@@ -26994,7 +26988,7 @@ d'	P
 enfants	NC
 en	P
 Afrique	NPP
--	ADJ
+-	PONCT
 trois fois	NC
 plus	ADV
 que	CS
@@ -27024,12 +27018,12 @@ than	ET
 any	ET
 other	ET
 -	PONCT
-three	NC
-times	ADJ
-as	V
-many	CLO
-as	V
-HIV	NPP
+three	ET
+times	ET
+as	ET
+many	ET
+as	ET
+HIV	ET
 infection	NC
 .	PONCTU_FORTE
 )	PONCT
@@ -27277,7 +27271,7 @@ la	DET
 haute	ADJ
 bourgeoisie	NC
 parisienne	ADJ
--	ADJ
+-	PONCT
 son	DET
 père	NC
 était	V
@@ -27449,8 +27443,7 @@ peut	V
 citer	VINF
 Sonia	NPP
 dans	P
-Oncle	NC
-Vania	ET
+Oncle Vania	NPP
 (	PONCT
 d'	P
 Anton Tchekhov	NPP
@@ -27999,8 +27992,7 @@ comme	P
 chroniqueur	NC
 au	P+D
 quotidien	NC
-Vancouver	ET
-Sun	ET
+Vancouve Sun	NPP
 ,	PONCT
 depuis	P
 1968	NC
@@ -28039,9 +28031,7 @@ par	P
 dérision	NC
 ,	PONCT
 The	ET
-Don	NC
-'	ADJ
-t	ADJ
+Don't	ET
 make	NC
 a	V
 Wave	ET
@@ -28172,7 +28162,7 @@ influencés	ADJ
 à	P
 l'	DET
 époque	NC
--	ADJ
+-	PONCT
 par	P
 la	DET
 culture	NC
@@ -28957,8 +28947,7 @@ déjà	ADV
 débuté	VPP
 .	PONCTU_FORTE
 Selon	P
-Big	ET
-Blue	ET
+Big Blue	NPP
 ,	PONCT
 «	PONCT
 une	DET
@@ -29645,7 +29634,7 @@ pacte	NC
 national	ADJ
 de	P
 1943	NC
--	ADJ
+-	PONCT
 qui	PROREL
 réserve	V
 la	DET
@@ -30017,18 +30006,18 @@ ainsi	ADV
 to	ET
 undermine	ET
 sisterly	ET
-relations	NC
-between	ADJ
+relations	ET
+between	ET
 Lebanon	ET
 and	ET
 Syria	ET
 and	ET
-expose	V
+expose	ET
 the	ET
 country	ET
 to	ET
 the	ET
-danger	NC
+danger	ET
 of	ET
 hostilities	ET
 )	PONCT
@@ -30139,8 +30128,8 @@ il	CLS
 était	V
 inquiété	VPP
 (	PONCT
-I	ADJ
-am	NC
+I	ET
+am	ET
 proud	ET
 of	ET
 my	ET
@@ -30149,12 +30138,12 @@ in	ET
 front	NC
 of	ET
 the	ET
-Congress	NPP
+Congress	ET
 for	ET
 which	ET
-I	ADJ
-was	NC
-charged	NC
+I	ET
+was	ET
+charged	ET
 )	PONCT
 .	PONCTU_FORTE
 Par ailleurs	ADV
@@ -30184,7 +30173,7 @@ charges	NC
 à	P
 son	DET
 encontre	NC
--	ADJ
+-	PONCT
 ,	PONCT
 avait	V
 fait	VPP
@@ -30535,11 +30524,11 @@ Lahya	NPP
 .	PONCTU_FORTE
 2 519	DET
 candidats	NC
--	ADJ
+-	PONCT
 dont	PROREL
 399	DET
 femmes	NC
--	ADJ
+-	PONCT
 concourrent	V
 dans	P
 ce	DET
@@ -31047,8 +31036,7 @@ mercredi 4 mai 2005	NC
 dans	P
 le	DET
 quotidien	NC
-Los	ET
-Angeles Times	NPP
+Los Angeles Times	NPP
 .	PONCTU_FORTE
 Selon	P
 les	DET
@@ -31228,15 +31216,14 @@ ils	CLS
 peuvent	V
 servir	VINF
 (	PONCT
-I	ADJ
-don'	NC
-t	ET
+I	ET
+don't	ET
 know	ET
 what	ET
 it	ET
 looks	ET
 like	ET
-or	CC
+or	ET
 what	ET
 it	ET
 does	ET
@@ -31308,8 +31295,7 @@ de	P
 M.	NC
 Nichols	NPP
 ,	PONCT
-The	ET
-Guardian	NC
+The Guardian	NPP
 semble	V
 penser	VINF
 que	CS
@@ -31413,7 +31399,7 @@ accréditer	VINF
 sans	P
 preuve	NC
 jusqu'ici	ADV
--	ADJ
+-	PONCT
 l'	DET
 idée	NC
 d'	P
@@ -32900,7 +32886,8 @@ a été	V
 signalée	VPP
 .	PONCTU_FORTE
 «	PONCT
-Nous savons	V
+Nous	CLS
+savons	V
 que	CS
 les	DET
 journalistes	NC
@@ -33131,7 +33118,7 @@ participer	VINF
 en fonction de	P
 ses	DET
 convictions	NC
--	ADJ
+-	PONCT
 le	DET
 «	PONCT
 oui	ADV
@@ -33301,7 +33288,7 @@ la	DET
 date	NC
 du	DETDU
 scrutin	NC
--	ADJ
+-	PONCT
 donc	ADV
 après	P
 son	DET
@@ -33309,7 +33296,7 @@ retour	NC
 au sein de	P
 l'	DET
 institution	NC
--	ADJ
+-	PONCT
 ,	PONCT
 elle	CLS
 ne	ADV
@@ -34326,12 +34313,12 @@ first	ET
 ever	ET
 visit	ET
 by	ET
-a	V
-leader	NC
+a	ET
+leader	ET
 of	ET
-a	V
-unified	VPP
-Vietnam	NPP
+a	ET
+unified	ET
+Vietnam	ET
 to	ET
 the	ET
 United	ET
@@ -34517,7 +34504,7 @@ plane	ET
 in	ET
 a	ET
 new	ET
-situation	NC
+situation	ET
 )	PONCT
 .	PONCTU_FORTE
 L'	DET
@@ -34966,7 +34953,7 @@ d'	P
 Edison	NPP
 ,	PONCT
 numéro	NC
-deux	NC
+deux	ADJNUM
 de	P
 l'	DET
 électricité	NC
@@ -35585,7 +35572,7 @@ disastrous	ET
 political	ET
 and	ET
 environmental	ET
-consequences	NC
+consequences	ET
 )	PONCT
 .	PONCTU_FORTE
 M.	NC
@@ -35634,7 +35621,7 @@ la	DET
 région	NC
 »	PONCT
 (	PONCT
-I	ADJ
+I	ET
 think	ET
 there	ET
 will	ET
@@ -35651,15 +35638,15 @@ of	ET
 the	ET
 world	ET
 .	PONCTU_FORTE
-I	ADJ
+I	ET
 think	ET
 there	ET
 could	ET
 be	ET
-a	V
-major	NC
-environmental	ADJ
-fallout	V
+a	ET
+major	ET
+environmental	ET
+fallout	ET
 which	ET
 again	ET
 could	ET
@@ -35796,25 +35783,25 @@ nucléaire	ADJ
 (	PONCT
 Now	ET
 the	ET
-time	NPP
+time	ET
 has	ET
 come	ET
 after	ET
-12	ADJ
-years	NC
-since	ADJ
-we	ADJ
-reported	NC
-North	NC
+12	ET
+years	ET
+since	ET
+we	ET
+reported	ET
+North	ET
 Korea	ET
 in	ET
 non	ET
 -	PONCT
-compliance	NC
+compliance	ET
 to	ET
 the	ET
 (	PONCT
-UN	NPP
+UN	ET
 )	PONCT
 Security	ET
 Council	ET
@@ -35824,7 +35811,7 @@ for	ET
 all	ET
 the	ET
 concerned	ET
-parties	NC
+parties	ET
 )	PONCT
 urgently	NC
 to	ET
@@ -35833,15 +35820,15 @@ the	ET
 bullet	ET
 and	ET
 find	ET
-a	V
-comprehensive	ADJ
-solution	NC
+a	ET
+comprehensive	ET
+solution	ET
 and	ET
 avoid	ET
 this	ET
 escalating	ET
 nuclear	ET
-danger	NC
+danger	ET
 )	PONCT
 .	PONCTU_FORTE
 À	P
@@ -37765,8 +37752,7 @@ dans	P
 la	DET
 région	NC
 de	P
-Los	ET
-Angeles	ET
+Los Angeles	NPP
 ,	PONCT
 où	PROREL
 il	CLS
@@ -37813,13 +37799,7 @@ FBI	NPP
 de	P
 la	DET
 «	PONCT
-MS	NPP
--	PONCT
-13	NC
-National	ADJ
-Gang	ET
-Task	ET
-Force	ET
+MS-13 National Gang Task Force	NPP
 »	PONCT
 .	PONCTU_FORTE
 Trois	DET
@@ -37841,7 +37821,7 @@ Union	NC
 du	DETDU
 Myanmar	NPP
 (	PONCT
-ex	NC
+ex	PREF
 -	PONCT
 Birmanie	NPP
 )	PONCT
@@ -38333,7 +38313,7 @@ la	DET
 paix	NC
 en	P
 1998	NC
--	ADJ
+-	PONCT
 avec	P
 le	DET
 catholique	NC
@@ -38751,13 +38731,13 @@ et	CC
 une	DET
 vitre	NC
 pare-balles	ADJ
--	ADJ
+-	PONCT
 en raison des	P+D
 menaces	NC
 potentielles	ADJ
 d'	P
 attentat	NC
--	ADJ
+-	PONCT
 il	CLS
 a	V
 prononcé	VPP
@@ -39796,13 +39776,13 @@ visite	NC
 Tokyo	NPP
 (	PONCT
 «	PONCT
-China	V
+China	ET
 has	ET
 done	ET
-a	V
-very	ADV
-good	ADJ
-job	NC
+a	ET
+very	ET
+good	ET
+job	ET
 .	PONCTU_FORTE
 But	ET
 China	ET
@@ -40222,12 +40202,12 @@ chrétiens	NC
 (	PONCT
 UDC	NPP
 ,	PONCT
-Unione	NPP
-dei	V
-Democratici	NPP
-Cristiani	NPP
-e	V
-Democratici	NPP
+Unione	ET
+dei	ET
+Democratici	ET
+Cristiani	ET
+e	ET
+Democratici	ET
 di	ET
 Centro	ET
 )	PONCT
@@ -40293,8 +40273,8 @@ prochaines	ADJ
 générales	ADJ
 .	PONCTU_FORTE
 «	PONCT
-Unis	NC
-nous	CLO
+Unis	ADJ
+nous	CLS
 vaincrons	V
 »	PONCT
 ,	PONCT
@@ -40430,7 +40410,7 @@ Sénat	NPP
 ,	PONCT
 en	P
 2004	NC
--	ADJ
+-	PONCT
 et	CC
 ,	PONCT
 à ce titre	ADV
@@ -41636,7 +41616,7 @@ President	ET
 of	ET
 the	ET
 Council	ET
-de	ET
+de	P
 2001	ADJ
 jusqu'à	P
 sa	DET
@@ -41796,9 +41776,9 @@ avant	NC
 »	PONCT
 (	PONCT
 The	ET
-question	NC
-Tony	NPP
-Blair	NPP
+question	ET
+Tony	ET
+Blair	ET
 should	ET
 be	ET
 reflecting	ET
@@ -41831,14 +41811,14 @@ whether	ET
 now	ET
 might	ET
 be	ET
-a	V
-better	VINF
-time	NPP
+a	ET
+better	ET
+time	ET
 to	ET
 let	ET
 a	ET
 new	ET
-leader	NC
+leader	ET
 in	ET
 who	ET
 could	ET
@@ -41853,15 +41833,15 @@ we	ET
 are	ET
 going	ET
 to	ET
-go	NC
-forward	ADJ
+go	ET
+forward	ET
 .	PONCTU_FORTE
 )	PONCT
 »	PONCT
 (	PONCT
 The	ET
-question	NC
-Tony Blair	NPP
+question	ET
+Tony Blair	ET
 should	ET
 be	ET
 reflecting	ET
@@ -41894,14 +41874,14 @@ whether	ET
 now	ET
 might	ET
 be	ET
-a	V
-better	VINF
-time	NPP
+a	ET
+better	ET
+time	ET
 to	ET
 let	ET
 a	ET
 new	ET
-leader	NC
+leader	ET
 in	ET
 who	ET
 could	ET
@@ -41916,13 +41896,12 @@ we	ET
 are	ET
 going	ET
 to	ET
-go	NC
-forward	ADJ
+go	ET
+forward	ET
 .	PONCTU_FORTE
 Par ailleurs	ADV
 ,	PONCT
-The	ET
-Observer	ET
+The Observer	NPP
 rapporte	V
 ,	PONCT
 dans	P
@@ -41961,8 +41940,8 @@ Brown	NPP
 (	PONCT
 it	ET
 depends	ET
-on	CLS
-Gordon	NPP
+on	ET
+Gordon	ET
 )	PONCT
 ,	PONCT
 sous-entendant	VPR
@@ -42216,22 +42195,22 @@ ou	CC
 cinq ans	NC
 »	PONCT
 (	PONCT
-I	ADJ
-think	NC
-he	ADJ
+I	ET
+think	ET
+he	ET
 will	ET
 stay	ET
 until	ET
 the	ET
-appropriate	ADJ
-moment	NC
+appropriate	ET
+moment	ET
 for	ET
 the	ET
 election	ET
 of	ET
 a	ET
 new	ET
-leader	NC
+leader	ET
 and	ET
 the	ET
 run	ET
@@ -42241,11 +42220,11 @@ the	ET
 general	ET
 election	ET
 in	ET
-four	NC
-or	NC
-five	ADJ
-years	ADJ
-time	NPP
+four	ET
+or	ET
+five	ET
+years	ET
+time	ET
 )	PONCT
 .	PONCTU_FORTE
 En outre	ADV
@@ -42346,8 +42325,8 @@ Blair	NPP
 »	PONCT
 (	PONCT
 The	ET
-Blair	NPP
-factor	NC
+Blair	ET
+factor	ET
 )	PONCT
 se poserait	V
 déjà	ADV
@@ -42428,10 +42407,7 @@ lors d'	P
 un	DET
 sommet	NC
 à	P
-Charm	NPP
-el	ET
--	PONCT
-Cheikh	NPP
+Charm el-Cheikh	NPP
 (	PONCT
 Égypte	NPP
 )	PONCT
@@ -42502,10 +42478,7 @@ les	DET
 engagements	NC
 pris	VPP
 à	P
-Charm	NPP
-el	ET
--	PONCT
-Cheikh	NPP
+Charm el-Cheikh	NPP
 ,	PONCT
 nous	CLO
 ferons	V
@@ -42694,7 +42667,7 @@ libération	NC
 de	P
 900	DET
 prisonniers	NC
--	ADJ
+-	PONCT
 dont	PROREL
 500	PRO
 ont été	V
@@ -42797,10 +42770,7 @@ implicite	ADJ
 des	DETDES
 accords	NC
 de	P
-Charm	NPP
-el	ET
--	PONCT
-Cheikh	NPP
+Charm el-Cheikh	NPP
 a été	V
 critiqué	VPP
 ,	PONCT
@@ -42987,10 +42957,7 @@ les	DET
 arrangements	NC
 convenus	VPP
 à	P
-Charm	NPP
-el	ET
--	PONCT
-Cheikh	NPP
+Charm el-Cheikh	NPP
 »	PONCT
 et	CC
 a	V
@@ -43026,7 +42993,7 @@ Un million et demi	PRO
 d'	P
 électeurs	NC
 centrafricains	ADJ
--	ADJ
+-	PONCT
 sur	P
 une	DET
 population	NC
@@ -43034,7 +43001,7 @@ de	P
 3,5 millions	DET
 de	P
 personnes	NC
--	ADJ
+-	PONCT
 étaient	V
 appelés	VPP
 à	P
@@ -43612,8 +43579,7 @@ selon	P
 le	DET
 journal	NC
 britannique	ADJ
-The	ET
-Guardian	NC
+The Guardian	NPP
 .	PONCTU_FORTE
 La	DET
 fuite	NC
@@ -45174,7 +45140,7 @@ un	DET
 droit	NC
 de	P
 veto	NC
--	ADJ
+-	PONCT
 ne	ADV
 paraissant	VPR
 enclines	ADJ
@@ -45270,8 +45236,7 @@ un	DET
 entretien	NC
 avec	P
 le	DET
-Tehran	ET
-Times	ET
+Tehran Times	NPP
 ,	PONCT
 que	CS
 «	PONCT
@@ -45301,7 +45266,7 @@ voie	NC
 actuelle	ADJ
 »	PONCT
 (	PONCT
-MPs	NPP
+MPs	ET
 will	ET
 not	ET
 approve	ET
@@ -45311,15 +45276,13 @@ protocol	ET
 to	ET
 the	ET
 nuclear	ET
-Non-Proliferation	NC
-Treaty	NPP
-if	ADJ
-Iran	NPP
-'	ET
-s	ET
+Non-Proliferation	ET
+Treaty	ET
+if	ET
+Iran's	ET
 nuclear	ET
-dossier	NC
-continues	ADJ
+dossier	ET
+continues	ET
 with	ET
 the	ET
 current	ET
@@ -45402,7 +45365,7 @@ de	P
 l'	DET
 Iran	NPP
 (	PONCT
-MPs	NPP
+MPs	ET
 will	ET
 never	ET
 approve	ET
@@ -45503,11 +45466,11 @@ publique	ADJ
 du	DETDU
 Latium	NPP
 (	PONCT
-Agenzia	NPP
+Agenzia	ET
 di	ET
 Sanità	ET
 Pubblica	ET
-del Lazio	NPP
+del Lazio	ET
 )	PONCT
 qui	PROREL
 avait	V
@@ -45695,7 +45658,7 @@ de	P
 cassation	NC
 italienne	ADJ
 (	PONCT
-Corte	NPP
+Corte	ET
 di	ET
 Cassazione	ET
 )	PONCT
@@ -46280,7 +46243,7 @@ Le	DET
 commissaire	NC
 du	DETDU
 gouvernement	NC
--	ADJ
+-	PONCT
 magistrat	NC
 indépendant	ADJ
 ,	PONCT
@@ -46294,7 +46257,7 @@ d'	P
 les	DET
 juges	NC
 administratifs	ADJ
--	ADJ
+-	PONCT
 a	V
 pour sa part	ADV
 préconisé	VPP
@@ -46508,13 +46471,13 @@ France	NPP
 ,	PONCT
 la	DET
 campagne	NC
--	ADJ
+-	PONCT
 volontairement	ADV
 médiatisée	VPP
 par	P
 ses	DET
 initiateurs	NC
--	ADJ
+-	PONCT
 des	DETDES
 «	PONCT
 faucheurs	ADJ
@@ -46690,7 +46653,7 @@ souverain	ADJ
 »	PONCT
 (	PONCT
 «	PONCT
-sovereign	ADJ
+sovereign	ET
 state	ET
 »	PONCT
 )	PONCT
@@ -48531,9 +48494,7 @@ de	P
 type	NC
 tabloid	NC
 ,	PONCT
-Die	ET
-Kronen	ET
-Zeitung	ET
+Die Kronen Zeitung	NPP
 titrait	V
 mercredi	NC
 "	PONCT
@@ -48640,9 +48601,7 @@ des	DETDES
 citoyens	NC
 »	PONCT
 .	PONCTU_FORTE
-Alexander Van	NPP
-der	ET
-Bellen	ET
+Alexander Van der Bellen	NPP
 ,	PONCT
 leader	NC
 des	DETDES
@@ -48868,7 +48827,7 @@ affiche	NC
 du	DETDU
 film	NC
 Ave	ET
-Maria	NPP
+Maria	ET
 ,	PONCT
 décision	NC
 qui	PROREL
@@ -49016,8 +48975,7 @@ Selon	P
 le	DET
 quotidien	NC
 autrichien	ADJ
-Der	ET
-Standard	ET
+Der Standard	NPP
 ,	PONCT
 le	DET
 premier ministre	NC
@@ -49577,9 +49535,8 @@ elle	CLS
 procure	V
 ,	PONCT
 évite	V
-d	NC
+d'	NC
 »	PONCT
-'	ADJ
 avoir	VINF
 à	P
 envoyer	VINF
@@ -49602,9 +49559,8 @@ et	CC
 permet	V
 de	P
 bénéficier	VINF
-d	NC
+d'	NC
 »	PONCT
-'	ADJ
 une	DET
 remise	NC
 de	P
@@ -49721,9 +49677,8 @@ a	V
 ajouté	VPP
 :	PONCT
 «	PONCT
-c	NC
+c'	NC
 »	PONCT
-'	ADJ
 est	V
 un	DET
 succès	NC
@@ -49749,9 +49704,8 @@ désormais	ADV
 pour	P
 2006	PRO
 est	V
-d	NC
+d'	NC
 »	PONCT
-'	ADJ
 accroître	VINF
 la	DET
 capacité	NC
@@ -49764,9 +49718,8 @@ d	NC
 '	PONCT
 «	PONCT
 accueillir	VINF
-jusqu	P
+jusqu'	P
 »	PONCT
-'	ADJ
 à	P
 10 millions	DET
 de	P
@@ -49974,9 +49927,8 @@ télédéclarer	VINF
 leurs	DET
 revenus	NC
 en raison de	P
-l	DET
+l'	DET
 »	PONCT
-'	ADJ
 encombrement	NC
 du	DETDU
 site	NC
@@ -50082,9 +50034,8 @@ Budget	NC
 Mais	CC
 pas	ADV
 question	NC
-d	NC
+d'	NC
 »	PONCT
-'	ADJ
 un	DET
 troisième	ADJ
 report	NC
@@ -50361,7 +50312,7 @@ d'	P
 un	DET
 autre	ADJ
 lieutenant	NC
--	ADJ
+-	PONCT
 aujourd	ADV
 (	PONCT
 hui	ADV
@@ -51140,7 +51091,7 @@ Siméon de Saxe-Cobourg	NPP
 -	PONCT
 Gotha	NPP
 (	PONCT
-ex	NC
+ex	PREF
 -	PONCT
 tsar	NC
 des	DETDES
@@ -51171,7 +51122,7 @@ bulgare	ADJ
 (	PONCT
 PSB	NPP
 ,	PONCT
-ex	NC
+ex	PREF
 -	PONCT
 communiste	ADJ
 )	PONCT
@@ -51240,7 +51191,7 @@ Géorgie	NPP
 ,	PONCT
 petite	ADJ
 république	NC
-ex	NC
+ex	PREF
 -	PONCT
 soviétique	ADJ
 située	VPP
@@ -51378,14 +51329,14 @@ paiements	NC
 de	P
 contreparties	NC
 financières	ADJ
--	ADJ
+-	PONCT
 de	P
 l'	DET
 ordre	NC
 de	P
 plusieurs centaines de millions de dollars	NC
 américains	ADJ
--	ADJ
+-	PONCT
 pour	P
 les	DET
 dommages	NC
@@ -51604,7 +51555,7 @@ chantage	NC
 et	CC
 nous	CLS
 ne	ADV
-nous	CLO
+nous	CLR
 inclinerons	V
 pas	ADV
 devant	P
@@ -51751,8 +51702,8 @@ KMT	NPP
 et	CC
 le	DET
 People	NPP
-First	ET
-Party	ET
+First	NPP
+Party	NPP
 (	PONCT
 PFP	NPP
 ou	CC
@@ -52062,8 +52013,7 @@ de	P
 l'	DET
 archevêché	NC
 de	P
-Los	ET
-Angeles	ET
+Los Angeles	NPP
 avant de	P
 poursuivre	VINF
 sa	DET
@@ -52120,8 +52070,7 @@ de	P
 l'	DET
 archevêché	NC
 de	P
-Los	ET
-Angeles	ET
+Los Angeles	NPP
 .	PONCTU_FORTE
 De	P
 1976	NC
@@ -52179,8 +52128,7 @@ et	CC
 évêque	NC
 auxiliaire	ADJ
 de	P
-Los	ET
-Angeles	ET
+Los Angeles	NPP
 ,	PONCT
 et	CC
 est	V
@@ -52281,7 +52229,7 @@ foi	NC
 Membre	NC
 de	P
 l'	DET
-ex	NC
+ex	PREF
 -	PONCT
 Saint-Office	NPP
 depuis	P
@@ -52646,9 +52594,9 @@ often	ET
 spoken	ET
 of	ET
 the	ET
-respect	NC
+respect	ET
 ,	PONCT
-compassion	NC
+compassion	ET
 and	ET
 sensitivity	ET
 demanded	ET
@@ -52657,7 +52605,7 @@ our	ET
 interactions	ET
 with	ET
 and	ET
-attitudes	NC
+attitudes	ET
 toward	ET
 homosexual	ET
 people	ET
@@ -52761,7 +52709,7 @@ intransigeant	ADJ
 du	DETDU
 dogme	NC
 »	PONCT
--	ADJ
+-	PONCT
 ,	PONCT
 et	CC
 qu'	CS
@@ -52891,7 +52839,7 @@ tchèque	ADJ
 (	PONCT
 ČSSD	NPP
 ,	PONCT
-Česká	NPP
+Česká	ET
 strana	ET
 sociálně	ET
 demokratická	ET
@@ -52941,11 +52889,11 @@ mener	VINF
 jusqu'à	P
 son	DET
 terme	NC
--	ADJ
+-	PONCT
 sauf	P
 accident	NC
 imprévu	ADJ
--	ADJ
+-	PONCT
 l'	DET
 actuelle	ADJ
 législature	NC
@@ -55634,8 +55582,7 @@ faire appel	VINF
 Le	DET
 tabloïd	NC
 britannique	ADJ
-The	ET
-Sun	ET
+The Sun	NPP
 ,	PONCT
 appartenant	VPR
 à	P
@@ -55700,10 +55647,7 @@ par	P
 le	DET
 quotidien	NC
 américain	ADJ
-The	ET
-New	NPP
-York	NPP
-Post	NPP
+The New York Post	NPP
 ,	PONCT
 qui	PROREL
 appartient	V
@@ -55777,10 +55721,7 @@ des	DETDES
 temps	NC
 modernes	ADJ
 .	PONCTU_FORTE
-S'	CS
-il	CLS
-vous	CLO
-plaît	V
+S'il vous plaît	I
 ,	PONCT
 ne	ADV
 me	CLO
@@ -55794,30 +55735,29 @@ lui	PRO
 .	PONCTU_FORTE
 »	PONCT
 (	PONCT
-This	NPP
-is	NPP
-a	V
-man	NPP
+This	ET
+is	ET
+a	ET
+man	ET
 who	ET
 has	ET
 murdered	ET
-a	V
-minimum	ADJ
+a	ET
+minimum	ET
 of	ET
 300,000	ET
 people	ET
 and	ET
-we'	NC
-re	ET
+we	ET
+'re	ET
 supposed	ET
 to	ET
 feel	ET
 sorry	ET
 for	ET
 him	ET
-because	P
-someone'	NC
-s	ET
+because	ET
+someone's	ET
 taken	ET
 his	ET
 picture	ET
@@ -55827,12 +55767,11 @@ is	ET
 the	ET
 modern	ET
 -	PONCT
-day	NC
-Adolf Hitler	NPP
+day	ET
+Adolf Hitler	ET
 .	PONCTU_FORTE
-Please	NPP
-don'	NC
-t	ET
+Please	ET
+don't	ET
 ask	ET
 us	ET
 to	ET
@@ -55882,8 +55821,8 @@ leur	DET
 publication	NC
 »	PONCT
 (	PONCT
-someone	NC
-responsible	ADJ
+someone	ET
+responsible	ET
 for	ET
 the	ET
 security	ET
@@ -55893,13 +55832,13 @@ welfare	ET
 and	ET
 detention	ET
 of	ET
-Saddam	NPP
+Saddam	ET
 would	ET
 take	ET
 and	ET
-provide	V
-these	ADJ
-photos	NC
+provide	ET
+these	ET
+photos	ET
 for	NC
 public	NC
 release	NC
@@ -55947,8 +55886,8 @@ guerre	NC
 and	ET
 possibly	ET
 Geneva	ET
-Convention	NC
-guidelines	ADJ
+Convention	ET
+guidelines	ET
 for	ET
 the	ET
 humane	ET
@@ -56127,32 +56066,31 @@ penser	VINF
 .	PONCTU_FORTE
 »	PONCT
 (	PONCT
-I	ADJ
-don'	NC
-t	ADJ
-think	NC
-a	V
-photo	NC
-inspires	ADJ
-murderers	ADJ
+I	ET
+don't	ET
+think	ET
+a	ET
+photo	ET
+inspires	ET
+murderers	ET
 .	PONCTU_FORTE
-I	ADJ
-think	NC
-they'	NC
-re	ET
+I	ET
+think	ET
+they	ET
+'re	ET
 inspired	ET
 by	ET
 an	ET
 ideology	ET
-that'	NC
-s	ET
+that	NC
+'s	ET
 so	ET
 barbaric	ET
 and	ET
 backwards	ET
 that	ET
-it'	NC
-s	ET
+it	ET
+'s	ET
 hard	ET
 for	ET
 many	ET
@@ -56320,7 +56258,7 @@ irakien	ADJ
 la	DET
 direction	NC
 du	DETDU
-Sun	ET
+Sun	NPP
 a	V
 indiqué	VPP
 vouloir	VINF
@@ -56462,8 +56400,7 @@ de	P
 son	DET
 inauguration	NC
 ,	PONCT
-vélo'	NC
-v	ET
+vélo'v	NPP
 ,	PONCT
 le	DET
 système	NC
@@ -56589,8 +56526,7 @@ du	DETDU
 système	NC
 »	PONCT
 .	PONCTU_FORTE
-Vélo'	NC
-v	ET
+Vélo'v	NPP
 ,	PONCT
 qui	PROREL
 ambitionne	V
@@ -56929,7 +56865,7 @@ publique	ADJ
 de	P
 télévision	NC
 néerlandaise	ADJ
-Nova	ET
+Nova	NPP
 .	PONCTU_FORTE
 Selon	P
 les	DET
@@ -57150,15 +57086,11 @@ possible	ADJ
 .	PONCTU_FORTE
 Le	DET
 gynécologue	NC
-Shin	NPP
-Yong	NPP
-Moon	ADJ
+Shin Yong Moon	NPP
 et	CC
 le	DET
 vétérinaire	NC
-Woo	ET
-Suk	ET
-Hwang	ET
+Woo Suk Hwang	NPP
 ,	PONCT
 connu	VPP
 pour	P
@@ -57317,7 +57249,7 @@ find	ET
 a	ET
 way	ET
 to	ET
-cure	NC
+cure	ET
 devastating	ET
 diseases	ET
 ,	PONCT
@@ -57326,21 +57258,21 @@ one	ET
 of	ET
 the	ET
 big	ET
-points	NC
+points	ET
 of	ET
 our	ET
 research	ET
 is	ET
-patients	NC
-now	NC
-have	ADJ
-immune	NC
+patients	ET
+now	ET
+have	ET
+immune	ET
 -	PONCT
-matched	NC
+matched	ET
 ,	PONCT
-cloned	NC
+cloned	ET
 ,	PONCT
-embryonic	NC
+embryonic	ET
 stem	ET
 cells	ET
 »	PONCT
@@ -57522,7 +57454,7 @@ attentat	NC
 de	P
 Luis Posada Carriles	NPP
 ,	PONCT
-ex	NC
+ex	PREF
 -	PONCT
 agent	NC
 de	P
@@ -57881,8 +57813,7 @@ Zone	ET
 de	P
 son	DET
 compatriote	NC
-Amos	NPP
-Gitaï	NPP
+Amos Gitaï	NPP
 .	PONCTU_FORTE
 Elle	CLS
 a	V
@@ -57973,7 +57904,7 @@ autres	ADJ
 »	PONCT
 (	PONCT
 «	PONCT
-Me	NC
+Me	ET
 and	ET
 You	ET
 and	ET
@@ -58479,14 +58410,14 @@ est	V
 visible	ADJ
 ici	ADV
 (	PONCT
-Courtesy	NPP
-Will	NPP
-Noel	NPP
+Courtesy	ET
+Will	ET
+Noel	ET
 ,	PONCT
 The	ET
-Walters	NPP
-Art	NC
-Museum	NPP
+Walters	ET
+Art	ET
+Museum	ET
 )	PONCT
 .	PONCTU_FORTE
 Les	DET
@@ -58586,12 +58517,12 @@ qui	PROREL
 détenait	V
 la	DET
 majorité	NC
--	ADJ
+-	PONCT
 seul	ADJ
 ou	CC
 en	P
 coalition	NC
--	ADJ
+-	PONCT
 depuis	P
 1966	NC
 ,	PONCT
@@ -58640,7 +58571,7 @@ victoire	NC
 revient	V
 à	P
 la	DET
-Christlich	NPP
+Christlich	ET
 Demokratische	ET
 Union	ET
 Deutschlands	ET
@@ -58987,7 +58918,7 @@ mongol	NC
 Хувьсгалт	NPP
 Нам	NPP
 ,	PONCT
-ex	NC
+ex	PREF
 -	PONCT
 communiste	ADJ
 )	PONCT
@@ -59089,7 +59020,7 @@ l'	DET
 image	NC
 de	P
 l'	DET
-ex	NC
+ex	PREF
 -	PONCT
 parti	NC
 communiste	ADJ
@@ -60091,7 +60022,7 @@ to	ET
 choose	ET
 their	ET
 own	ET
-leaders	ADJ
+leaders	ET
 .	PONCTU_FORTE
 La	DET
 disqualification	NC
@@ -60369,7 +60300,7 @@ traité	NC
 .	PONCTU_FORTE
 Le	DET
 sondage	NC
-Ifop	ET
+Ifop	NPP
 http://www.ifop.com/europe/sondages/opinionf/referendumeurope240505.asp	NC
 pour	P
 Paris Match	NPP
@@ -61358,22 +61289,22 @@ habe	ET
 immer	ET
 erklärt	ET
 ,	PONCT
-meine	V
-formelle	ADJ
-Mitgliedschaft	NPP
+meine	ET
+formelle	ET
+Mitgliedschaft	ET
 ist	ET
 beendet	ET
 ,	PONCT
 wenn	ET
 die	ET
-SPD	NPP
-mit	V
+SPD	ET
+mit	ET
 der	ET
-Agenda	V
-2010	NC
-und	NPP
-Hartz	NPP
-IV	ADJ
+Agenda	ET
+2010	ET
+und	ET
+Hartz	ET
+IV	ET
 in	ET
 die	ET
 Bundestagswahl	ET
@@ -61537,7 +61468,7 @@ pars	NC
 enfin	ADV
 !	PONCTU_FORTE
 »	PONCT
-„Oskar	NPP
+„Oskar	ET
 ,	PONCT
 sei	ET
 ehrlich	ET
@@ -61798,7 +61729,7 @@ numéro	NC
 un	DET
 ,	PONCT
 numéro	NC
-deux	NC
+deux	ADJNUM
 et	CC
 numéro	NC
 trois	ADJNUM
@@ -63478,7 +63409,7 @@ de	P
 présidente	NC
 de	P
 la	DET
-Christlich	NPP
+Christlich	ET
 Demokratische	ET
 Union	ET
 Deutschlands	ET
@@ -63761,16 +63692,16 @@ entiers	ADJ
 au sein des	P
 deux	ADJNUM
 partis	NC
-das	ADJ
-volle	ADJ
+das	ET
+volle	ET
 Vertrauen	ET
 und	ET
 die	ET
 Unterstützung	ET
 von	ET
-CDU	NPP
-und	NPP
-CSU	NPP
+CDU	ET
+und	ET
+CSU	ET
 .	PONCTU_FORTE
 Reprenant	VPR
 dans	P
@@ -64070,11 +64001,11 @@ urnes	NC
 en	P
 1998	NC
 »	PONCT
-Merkel	NPP
+Merkel	ET
 als	ET
 Bundesministerin	ET
 sieben	ET
-„wirtschaftspolitisch	NC
+„wirtschaftspolitisch	ET
 verfehlte	ET
 “	ET
 Jahre	ET
@@ -64083,15 +64014,15 @@ sechzehn	ET
 Jahren	ET
 in	ET
 der	ET
-Kohl	NPP
+Kohl	ET
 -	PONCT
-Regierung	NPP
+Regierung	ET
 gewesen	ET
 sei	ET
 .	PONCTU_FORTE
-Deshalb	NPP
-trage	V
-sie	PRO
+Deshalb	ET
+trage	ET
+sie	ET
 Mitverantwortung	ET
 für	ET
 den	ET
@@ -64100,10 +64031,10 @@ in	ET
 Deutschland	ET
 und	ET
 wurde	ET
-1998	NC
-schließlich	ADJ
-mit	V
-abgewählt	ADJ
+1998	ET
+schließlich	ET
+mit	ET
+abgewählt	ET
 http://www.spd.de/servlet/PB/menu/1009368/1049894.htm	NC
 .	PONCTU_FORTE
 Le	DET
@@ -64348,7 +64279,7 @@ neutre	ADJ
 (	PONCT
 eh oui	I
 !	PONCTU_FORTE
-!)	PONCT
+)	PONCT
 et	CC
 concise	V
 :	PONCT
@@ -64539,15 +64470,15 @@ la	DET
 question	NC
 :	PONCT
 «	PONCT
-Bent	NPP
-U	NC
+Bent	ET
+U	ET
 voor	ET
 of	ET
 tegen	ET
 instemming	ET
 door	ET
 Nederland	ET
-met	V
+met	ET
 het	ET
 verdrag	ET
 tot	ET
@@ -65126,8 +65057,8 @@ Throat	ET
 .	PONCTU_FORTE
 »	PONCT
 (	PONCT
-I'	NC
-m	NC
+I	ET
+'m	ET
 the	ET
 guy	ET
 they	ET
@@ -65312,8 +65243,8 @@ Washington	NPP
 Post	NPP
 »	PONCT
 (	PONCT
-W.	NC
-Mark Felt	NPP
+W.	ET
+Mark Felt	ET
 was	ET
 '	ET
 Deep	ET
@@ -65328,16 +65259,16 @@ our	ET
 Watergate	ET
 coverage	ET
 .	PONCTU_FORTE
-However	NPP
+However	ET
 ,	PONCT
-as	V
+as	ET
 the	ET
-record	NC
-shows	ADJ
+record	ET
+shows	ET
 ,	PONCT
-many	ADJ
-other	VINF
-sources	NC
+many	ET
+other	ET
+sources	ET
 and	ET
 officials	ET
 assisted	ET
@@ -65354,9 +65285,9 @@ that	ET
 were	ET
 written	ET
 in	ET
-The Washington Post	NPP
-about	V
-Watergate	NPP
+The Washington Post	ET
+about	ET
+Watergate	ET
 )	PONCT
 .	PONCTU_FORTE
 Interrogé	VPP
@@ -65411,7 +65342,7 @@ les	DET
 médias	NC
 (	PONCT
 All	ET
-I	ADJ
+I	ET
 can	ET
 tell	ET
 you	ET
@@ -65419,17 +65350,17 @@ is	ET
 that	ET
 it	ET
 was	ET
-a	V
-revelation	NC
+a	ET
+revelation	ET
 that	ET
 caught	ET
-me	CLO
+me	ET
 by	ET
-surprise	NC
+surprise	ET
 .	PONCTU_FORTE
-And	NPP
-I'	NC
-m	NC
+And	ET
+I	ET
+'m	ET
 looking	ET
 forward	ET
 to	ET
@@ -65471,15 +65402,11 @@ un	PRO
 des	DETDES
 porte-parole	NC
 (	PONCT
-White	ET
-House	ET
-Press	ET
-Secretary	ET
+White House Press Secretary	NPP
 )	PONCT
 de	P
 la	DET
-maison	NC
-Blanche	ADJ
+Maison Blanche	NPP
 ,	PONCT
 Scott McClellan	NPP
 ,	PONCT
@@ -65550,31 +65477,30 @@ aux	P+D
 médias	NC
 »	PONCT
 (	PONCT
-I	ADJ
+I	ET
 think	ET
 what	ET
 -	ET
 in	ET
 the	ET
-President'	V
-s	ET
+President's	ET
 views	ET
 ,	PONCT
-it'	NC
-s	ET
+it	ET
+'s	ET
 not	ET
 his	ET
-place	NC
+place	ET
 to	ET
 judge	ET
 ,	PONCT
-as	V
+as	ET
 he	ET
 said	ET
 ,	PONCT
 and	ET
-we'	NC
-ll	ET
+we	ET
+'ll	ET
 leave	ET
 the	ET
 analysis	ET
@@ -65877,8 +65803,8 @@ M.	NC
 Felt	NPP
 ,	PONCT
 The	ET
-FBI	NPP
-Pyramid	NPP
+FBI	ET
+Pyramid	ET
 ,	PONCT
 From	ET
 the	ET
@@ -66152,7 +66078,7 @@ posée	VPP
 en	P
 trois	DETNUM
 langues	NC
--	ADJ
+-	PONCT
 français	ADJ
 ,	PONCT
 luxembourgeois	ADJ
@@ -66186,26 +66112,26 @@ le	DET
 29 octobre 2004	NC
 ?	PONCTU_FORTE
 «	PONCT
-Sidd	NPP
-Dir	NPP
-fir	V
-den	ADJ
-Traité	NC
-iwwert	ADJ
+Sidd	ET
+Dir	ET
+fir	ET
+den	ET
+Traité	ET
+iwwert	ET
 eng	ET
 Konstitutioun	ET
 fir	ET
 Europa	ET
 ,	PONCT
-ënnerschriwwen	ADJ
-zu	NC
-Roum	NPP
+ënnerschriwwen	ET
+zu	ET
+Roum	ET
 ,	PONCT
-den	NC
-29	ADJ
+den	ET
+29	ET
 .	PONCTU_FORTE
 «	PONCT
-Sind	NPP
+Sind	ET
 Sie	ET
 für	ET
 den	ET
@@ -66220,8 +66146,8 @@ unterzeichnet	ET
 in	ET
 Rom	ET
 ,	PONCT
-am	NC
-29	ADJ
+am	ET
+29	ET
 .	PONCTU_FORTE
 Le	DET
 sondage	NC
@@ -67407,28 +67333,28 @@ sentido	ET
 que	CS
 sólo	ET
 tiene	ET
-un	DET
-destino	NC
+un	ET
+destino	ET
 ,	PONCT
-la	DET
-desaparición	NC
-total	ADJ
-de	P
-quienes	NC
+la	ET
+desaparición	ET
+total	ET
+de	ET
+quienes	ET
 sólo	ET
 entienden	ET
 el	ET
 lenguaje	ET
-de	P
-las	ADJ
-armas	NC
-como	V
-vienen	ADJ
-demostrando	ADV
-en	P
-los	NC
-últimos	ADJ
-años	ADJ
+de	ET
+las	ET
+armas	ET
+como	ET
+vienen	ET
+demostrando	ET
+en	ET
+los	ET
+últimos	ET
+años	ET
 .	PONCTU_FORTE
 Il	CLS
 a	V
@@ -67453,21 +67379,21 @@ l'	DET
 de	P
 Droit	NC
 »	PONCT
-hay	NC
-que	CS
-seguir	VINF
-luchando	ADV
-contra	V
-ETA	NPP
-con	NC
-toda	V
-la	DET
+hay	ET
+que	ET
+seguir	ET
+luchando	ET
+contra	ET
+ETA	ET
+con	ET
+toda	ET
+la	ET
 fuerza	ET
-del Estado	NPP
-de	P
-Derecho	NPP
-y	CLO
-democrático	V
+del Estado	ET
+de	ET
+Derecho	ET
+y	ET
+democrático	ET
 .	PONCTU_FORTE
 Ce	DET
 nouvel	ADJ
@@ -67702,7 +67628,7 @@ have	ET
 agreed	ET
 to	ET
 100	DET
-percent	NC
+percent	ET
 debt	ET
 cancellation	ET
 for	ET
@@ -67821,7 +67747,7 @@ des	DETDES
 bases	NC
 solides	ADJ
 »	PONCT
-es	NC
+es	ET
 war	ET
 ganz	ET
 entscheidend	ET
@@ -67830,9 +67756,9 @@ dass	ET
 er	ET
 der	ET
 Beschluss	ET
-solide	ADJ
-finanziert	NC
-ist	ADJ
+solide	ET
+finanziert	ET
+ist	ET
 .	PONCTU_FORTE
 Il	CLS
 se réjouit	V
@@ -67977,7 +67903,7 @@ a	V
 indiqué	VPP
 que	CS
 l'	DET
-ex	NC
+ex	PREF
 -	PONCT
 otage	NC
 était	V
@@ -67998,7 +67924,7 @@ aux	P+D
 proches	NC
 de	P
 l'	DET
-ex	NC
+ex	PREF
 -	PONCT
 otage	NC
 samedi après-midi	NC
@@ -69162,7 +69088,8 @@ a	V
 ajouté	VPP
 :	PONCT
 «	PONCT
-Nous demandons	V
+Nous	CLS
+demandons	V
 au	P+D
 gouvernement	NC
 Burundais	NPP
@@ -69561,7 +69488,8 @@ a	V
 ajouté	VPP
 :	PONCT
 «	PONCT
-Nous demandons	V
+Nous	CLS
+demandons	V
 au	P+D
 gouvernement	NC
 burundais	ADJ
@@ -70156,16 +70084,16 @@ ait	VS
 jamais	ADV
 connue	VPP
 »	PONCT
-eine	NC
+eine	ET
 der	ET
 tiefsten	ET
 Krisen	ET
 ,	PONCT
 die	ET
 Europa	ET
-je	CLS
-erlebt	V
-hat	NC
+je	ET
+erlebt	ET
+hat	ET
 .	PONCTU_FORTE
 Il	CLS
 s' indigné	VPP
@@ -70347,11 +70275,11 @@ auquels	ADJ
 «	PONCT
 croient	V
 les	DET
-'	NC
+'	PONCT
 nouveaux	ADJ
-'	ADJ
+'	PONCT
 »	PONCT
-beschämend	ADJ
+beschämend	ET
 ,	PONCT
 daß	ET
 die	ET
@@ -70373,7 +70301,7 @@ Die	ET
 neuen	ET
 Länder	ET
 glaubten	ET
-„an	NC
+„an	ET
 die	ET
 Union	ET
 ,	PONCT
@@ -70850,15 +70778,15 @@ Europe	NPP
 »	PONCT
 dass	ET
 die	ET
-Chance	NC
+Chance	ET
 ,	PONCT
 in	ET
 einer	ET
 schwierigen	ET
-Situation	NC
-ein	ADJ
-positives	ADJ
-Signal	NPP
+Situation	ET
+ein	ET
+positives	ET
+Signal	ET
 für	ET
 Europa	ET
 zu	ET
@@ -72092,7 +72020,7 @@ pays	NC
 .	PONCTU_FORTE
 »	PONCT
 Mit	ET
-Orhan Pamuk	NPP
+Orhan Pamuk	ET
 wird	ET
 ein	ET
 Schriftsteller	ET
@@ -72136,7 +72064,7 @@ dem	ET
 anderen	ET
 gründet	ET
 .	PONCTU_FORTE
-Orhan Pamuk	NPP
+Orhan Pamuk	ET
 hat	ET
 ein	ET
 Werk	ET
@@ -72160,8 +72088,8 @@ weiße	ET
 Festung	ET
 ”	ET
 ,	PONCT
-“	NC
-Rot	NPP
+“	ET
+Rot	ET
 ist	ET
 mein	ET
 Name	ET
@@ -72174,7 +72102,7 @@ verbindet	ET
 er	ET
 orientalische	ET
 Erzähltraditionen	ET
-mit	V
+mit	ET
 den	ET
 Stilelementen	ET
 der	ET
@@ -72188,7 +72116,7 @@ Begriffe	ET
 ,	PONCT
 die	ET
 unsere	ET
-Gesellschaft	NPP
+Gesellschaft	ET
 in	ET
 einem	ET
 nicht	ET
@@ -72203,8 +72131,8 @@ eigenwillig	ET
 das	ET
 einzigartige	ET
 Gedächtnis	ET
-des	DETDES
-Autors	NPP
+des	ET
+Autors	ET
 in	ET
 die	ET
 große	ET
@@ -72238,7 +72166,7 @@ den	ET
 politischen	ET
 Problemen	ET
 seines	ET
-Landes	NPP
+Landes	ET
 L'	DET
 écrivain	NC
 turc	ADJ
@@ -72291,9 +72219,7 @@ récompensé	VPP
 par	P
 le	DET
 prestigieux	ADJ
-New	NPP
-York	ET
-Times	ET
+New York Times	NPP
 en	P
 2004	NC
 comme	P
@@ -72421,7 +72347,7 @@ les	DET
 tensions	NC
 commencées	VPP
 à	P
-Van	ET
+Van	NPP
 continuent	V
 .	PONCTU_FORTE
 Après	P
@@ -72445,7 +72371,7 @@ heurts	NC
 avaient	V
 éclaté	VPP
 à	P
-Van	ET
+Van	NPP
 ,	PONCT
 causant	VPR
 la	DET
@@ -72635,56 +72561,57 @@ a	V
 également	ADV
 déclaré	VPP
 :	PONCT
-Nous faisons	V
+Nous	CLS
+faisons	V
 des	DETDES
 choses	NC
 en	P
 lesquelles	PROREL
 nous	CLS
 croyons	V
-South	NPP
-Africa	NPP
-refuses	NC
+South	ET
+Africa	ET
+refuses	ET
 to	ET
 accept	ET
 the	ET
-notion	NC
-that	ADJ
-because	P
+notion	ET
+that	ET
+because	ET
 suddenly	ET
-we'	NC
-re	ET
+we	ET
+'re	ET
 going	ET
 to	ET
-a	V
-G8	DET
-summit	NC
+a	ET
+G8	ET
+summit	ET
 ,	PONCT
-we	ADJ
-must	NC
-be	ADJ
-reminded	V
-that	ADV
-we	ADJ
-must	NC
-look	NC
+we	ET
+must	ET
+be	ET
+reminded	ET
+that	ET
+we	ET
+must	ET
+look	ET
 good	ET
 and	ET
 appease	ET
 the	ET
 G8	ET
-leaders	ADJ
+leaders	ET
 .	PONCTU_FORTE
 We	ET
 will	ET
 do	ET
 things	ET
-because	P
-we	NC
-believe	ADJ
-they	NC
-are	ADJ
-correct	ADJ
+because	ET
+we	ET
+believe	ET
+they	ET
+are	ET
+correct	ET
 and	ET
 right	ET
 .	PONCTU_FORTE
@@ -72766,8 +72693,7 @@ situation	NC
 Deux cents	DET
 ONG	NPP
 tel	ADJ
-Amnesty	ET
-international	ET
+Amnesty International	NPP
 http://web.amnesty.org	NC
 /	PONCT
 library	NPP
@@ -72914,11 +72840,10 @@ restoring	ET
 order	ET
 by	ET
 their	ET
-actions	NC
+actions	ET
 ,	PONCT
-I	ADJ
-don'	NC
-t	ET
+I	ET
+don't	ET
 think	ET
 it	ET
 would	ET
@@ -72927,7 +72852,7 @@ proper	ET
 for	ET
 us	ET
 to	ET
-go	NC
+go	ET
 interfering	ET
 in	ET
 their	ET
@@ -73090,19 +73015,13 @@ Les	DET
 jeunes	ADJ
 groupes	NC
 irlandais	ADJ
-Snow	NPP
-Patrol	NPP
+Snow Patrol	NPP
 ,	PONCT
-The	ET
-Thrills	ET
+The Thrills	NPP
 ,	PONCT
-Paddy	NPP
-Casey	NPP
+Paddy Casey	NPP
 ,	PONCT
-Ash	NPP
-et	CC
-The	ET
-Bravery	ET
+Ash et The Bravery	NPP
 enflammeront	V
 le	DET
 stade	NC
@@ -73155,8 +73074,7 @@ plus	ADV
 grand	ADJ
 que	CS
 le	DET
-Millenium	NPP
-Stadium	ET
+Millenium Stadium	NPP
 à	P
 Cardiff	NPP
 et	CC
@@ -73994,7 +73912,7 @@ citoyens	NC
 -	PONCT
 reporters	NC
 citizen	ET
-reporters	NC
+reporters	ET
 venant	VPR
 des	DETDES
 quatre	ADJNUM
@@ -74020,12 +73938,8 @@ temps	NC
 d'	P
 un	DET
 meeting	NC
-OhmyNews	ET
-International	ET
-Citizen	ET
-Reporters	NC
-'	PONCT
-Forumdu	NPP
+OhmyNews International Citizen Reporters' Forum	NPP
+du	DETDU
 23	ADJ
 au	P+D
 26 juin	NC
@@ -74179,9 +74093,7 @@ du	DETDU
 service	NC
 information	NC
 à	P
-Japan'	NPP
-s	ET
-Livedoor	ET
+Japan's Livedoor	NPP
 ,	PONCT
 le	DET
 professeur	NC
@@ -74196,10 +74108,7 @@ Neil Thurman	NPP
 de	P
 l'	DET
 université de Londres	NPP
-City	NPP
-University	ET
-of	ET
-London	ET
+City University of London	NPP
 ,	PONCT
 Jeremy Iggers	NPP
 de	P
@@ -74390,15 +74299,9 @@ du	DETDU
 centre	NC
 de	P
 conférence	NC
-COEX	NPP
-Convention	NC
-and	ET
-Exhibition	ET
-Center	NPP
+COEX Convention and Exhibition Center	NPP
 .	PONCTU_FORTE
-Oh	NPP
-Yeon	NPP
-Ho	NPP
+Oh Yeon Ho	NPP
 fit	V
 un	DET
 discours	NC
@@ -74450,13 +74353,13 @@ many	ET
 of	ET
 us	ET
 have	ET
-a	V
-different	V
-skin	ADJ
-colour	NC
+a	ET
+different	ET
+skin	ET
+colour	ET
 ,	PONCT
-but	NC
-we	ADJ
+but	ET
+we	ET
 share	ET
 one	ET
 struggle	ET
@@ -74464,8 +74367,8 @@ struggle	ET
 Every	ET
 citizen	ET
 is	ET
-a	V
-journalist	VPP
+a	ET
+journalist	ET
 .	PONCTU_FORTE
 .	PONCTU_FORTE
 Il	CLS
@@ -74492,8 +74395,8 @@ de	P
 financement	NC
 durables	ADJ
 sustainable	ET
-business	NC
-models	ADJ
+business	ET
+models	ET
 pour	P
 survivre	VINF
 .	PONCTU_FORTE
@@ -74601,24 +74504,12 @@ des	DETDES
 différents	ADJ
 pays	NC
 .	PONCTU_FORTE
-Image	NC
-:	PONCT
-Seoul	NPP
--	PONCT
-Lee Myung Bak	NPP
-and	ET
-Kai	ET
-Jorgensen	ET
-.	PONCTU_FORTE
-jpg	ET
-|	PONCT
 Lee Myung Bak	NPP
 serre	V
 la	DET
 main	NC
 à	P
-Kai	NPP
-Jorgenson	NPP
+Kai Jorgenson	NPP
 le	DET
 plus	ADV
 jeune	ADJ
@@ -74761,18 +74652,7 @@ le	DET
 passage	NC
 en	P
 caisse	NC
-Image	NC
-:	PONCT
-Seoul	NPP
--	PONCT
-Oh	NPP
-Yeon	NPP
-Ho	ET
-and	ET
-Lee Myung Bak	NPP
 .	PONCTU_FORTE
-jpg	NC
-|	PONCT
 Le	DET
 maire	NC
 de	P
@@ -74820,7 +74700,7 @@ d'	P
 un	DET
 logiciel	NC
 de	P
-peer	VINF
+peer	ET
 to	ET
 peer	ET
 (	PONCT
@@ -75470,7 +75350,7 @@ préfectures	NC
 de	P
 Şanlıurfa	NPP
 ,	PONCT
-Van	ET
+Van	NPP
 et	CC
 Şırnak	NPP
 .	PONCTU_FORTE
@@ -76602,15 +76482,15 @@ les	DET
 Canadiens	NC
 avec	P
 équité	NC
-Rights	NPP
-are	V
-rights	ADJ
+Rights	ET
+are	ET
+rights	ET
 .	PONCTU_FORTE
 None	ET
 of	ET
 us	ET
 can	ET
-or	CC
+or	ET
 should	ET
 pick	ET
 and	ET
@@ -76625,12 +76505,12 @@ whose	ET
 rights	ET
 we	ET
 will	ET
-ignore	V
+ignore	ET
 ;	PONCT
 the	ET
 government	ET
-must	NC
-represent	V
+must	ET
+represent	ET
 the	ET
 rights	ET
 of	ET
@@ -76738,10 +76618,10 @@ no	ET
 synagogue	ET
 ,	PONCT
 no	ET
-mosque	ADJ
+mosque	ET
 ,	PONCT
-no	NC
-temple	NC
+no	ET
+temple	ET
 ,	PONCT
 no	ET
 religious	ET
@@ -76761,12 +76641,12 @@ to	ET
 perform	ET
 them	ET
 .	PONCTU_FORTE
-This	NPP
-legislation	NC
-is	ADJ
-about	V
-civil	ADJ
-marriage	NC
+This	ET
+legislation	ET
+is	ET
+about	ET
+civil	ET
+marriage	ET
 ,	PONCT
 not	ET
 religious	ET
@@ -77613,9 +77493,7 @@ télécom	NPP
 promet	V
 une	DET
 offe	NC
-I	ADJ
--	PONCT
-mode	NC
+I-mode	NC
 haut	ADJ
 débit	NC
 avec	P
@@ -77882,7 +77760,7 @@ en	P
 Iran	NPP
 .	PONCTU_FORTE
 Quatre	DET
-ex	NC
+ex	PREF
 -	PONCT
 otages	NC
 ,	PONCT
@@ -78007,7 +77885,7 @@ le	DET
 témoignage	NC
 de	P
 certains	DET
-ex	NC
+ex	PREF
 -	PONCT
 otages	NC
 ,	PONCT
@@ -78037,7 +77915,7 @@ l'	DET
 De	DET
 nombreux	ADJ
 autres	ADJ
-ex	NC
+ex	PREF
 -	PONCT
 otages	NC
 ont	V
@@ -78181,8 +78059,9 @@ sur	P
 son	DET
 passé	NC
 .	PONCTU_FORTE
-Nous prenons	V
+Nous	CLS
 les	CLO
+prenons	V
 très	ADV
 au	P+D
 sérieux	NC
@@ -78251,9 +78130,9 @@ diplomates	NC
 retenus	VPP
 pendant	P
 444 jours	NC
-We	NPP
+We	ET
 ,	PONCT
-as	V
+as	ET
 a	ET
 government	ET
 ,	PONCT
@@ -78267,8 +78146,8 @@ surrounding	ET
 this	ET
 story	ET
 .	PONCTU_FORTE
-But	NC
-I	ADJ
+But	ET
+I	ET
 do	ET
 want	ET
 to	ET
@@ -78321,9 +78200,7 @@ L'	DET
 agence	NC
 de	P
 presse	NC
-Itar	NPP
--	PONCT
-Tass	NPP
+Itar-Tass	NPP
 a	V
 rapporté	VPP
 qu'	ADV
@@ -79270,8 +79147,7 @@ se retrouvés	VPP
 sont	V
 bloqués	VPP
 dans	P
-Hannover	ET
-Road	ET
+Hannover Road	NPP
 peu	ADV
 après	P
 18:00	NC
@@ -79591,9 +79467,7 @@ et	CC
 le	DET
 nombre	NC
 de	P
-laissez	V
--	PONCT
-passez	VIMP
+laissez-passer	NC
 consulaires	ADJ
 nécessaires	ADJ
 aux	P+D
@@ -80402,7 +80276,8 @@ il	CLS
 souhaite	V
 que	CS
 nous	CLS
-nous efforcions	V
+nous	CLR
+efforcions	V
 ,	PONCT
 avec	P
 les	DET
@@ -80747,13 +80622,7 @@ que	CS
 l'	DET
 EICTA	NPP
 ,	PONCT
-European	NPP
-Information	NPP
-&	NPP
-Communications	NPP
-Technology	NPP
-Industry	ET
-Association	ET
+European Information & Communications Technology Industry Association	NPP
 qui	PROREL
 rassemble	V
 plusieurs	DET
@@ -80924,7 +80793,7 @@ il	CLS
 provoquait	V
 .	PONCTU_FORTE
 L'	DET
-ex	NC
+ex	PREF
 -	PONCT
 dictateur	NC
 chilien	ADJ
@@ -81110,8 +80979,7 @@ Le	DET
 dernier	ADJ
 bilan	NC
 de	P
-Scotland	ET
-Yard	ET
+Scotland Yard	NPP
 fait état	VPP
 de	P
 49	DET
@@ -81176,15 +81044,11 @@ concernées	VPP
 sont	V
 Aldgate	NPP
 ,	PONCT
-Edgware	NPP
-Road	NPP
+Edgware Road	NPP
 ,	PONCT
-King'	NPP
-s	ET
-Cross	ET
+King's Cross	NPP
 ,	PONCT
-Old	ET
-Street	ET
+Old Street	NPP
 ,	PONCT
 et	CC
 Russell Square	NPP
@@ -81220,8 +81084,7 @@ terroriste	ADJ
 est	V
 privilégiée	VPP
 .	PONCTU_FORTE
-Scotland	ET
-Yard	ET
+Scotland Yard	NPP
 a	V
 confirmé	VPP
 trois	DETNUM
@@ -81290,9 +81153,7 @@ les	DET
 locaux	NC
 de	P
 la	DET
-British	ET
-Medical	ET
-Association	ET
+British Medical Association	NPP
 .	PONCTU_FORTE
 La	DET
 police	NC
@@ -81487,8 +81348,7 @@ Street	NPP
 ,	PONCT
 Russell Square	NPP
 ,	PONCT
-Aldgate	ET
-East	ET
+Aldgate East	NPP
 et	CC
 Moorgate	NPP
 .	PONCTU_FORTE
@@ -81496,8 +81356,9 @@ Moorgate	NPP
 11 heures 30	NC
 ,	PONCT
 l'	DET
-hôpital de St	NPP
-Mary	NPP
+hôpital	NC
+de	DETDE
+St Mary	NPP
 a	V
 émis	VPP
 une	DET
@@ -81546,7 +81407,7 @@ la	DET
 tête	NC
 et	CC
 problèmes	NC
-cardio	ET
+cardio	PREF
 -	PONCT
 respiratoires	ADJ
 .	PONCTU_FORTE
@@ -81611,9 +81472,7 @@ seule	ADJ
 station	NC
 de	P
 métro	NC
-King'	NPP
-s	ET
-Cross	ET
+King's Cross	NPP
 ,	PONCT
 dans	P
 le	DET
@@ -81824,13 +81683,9 @@ urgence	NC
 sont	V
 présents	ADJ
 à	P
-King'	NPP
-s	ET
-Cross	ET
+King's Cross	NPP
 et	CC
-Liverpool	NPP
-Street	NPP
-Station	NC
+Liverpool Street Station	NPP
 .	PONCTU_FORTE
 L'	DET
 ensemble	NC
@@ -81891,9 +81746,7 @@ bouclé	VPP
 les	DET
 rues	NC
 autour de	P
-Upper	NPP
-Woburn	ET
-Place	V
+Upper Woburn Place	NPP
 ,	PONCT
 à la suite d'	P
 une	DET
@@ -82988,8 +82841,7 @@ pas	ADV
 une	DET
 fin	NC
 It	ET
-isn'	NC
-t	ET
+isn't	ET
 the	ET
 end	ET
 of	ET
@@ -83009,8 +82861,7 @@ be	ET
 ended	ET
 .	PONCTU_FORTE
 It	ET
-isn'	NC
-t	ET
+isn't	ET
 all	ET
 everyone	ET
 wanted	ET
@@ -83028,17 +82879,17 @@ progress	ET
 It	ET
 is	ET
 the	ET
-definitive	ADJ
-expression	NC
+definitive	ET
+expression	ET
 of	ET
 our	ET
 collective	ADJ
-will	NC
+will	ET
 to	ET
 act	ET
 in	ET
 the	ET
-face	NC
+face	ET
 of	ET
 death	ET
 and	ET
@@ -83306,7 +83157,8 @@ effet	NC
 de	P
 serre	NC
 .	PONCTU_FORTE
-Nous savons	V
+Nous	CLS
+savons	V
 que	CS
 l'	DET
 augmentation	NC
@@ -84458,7 +84310,7 @@ un	DET
 référendum	NC
 après	P
 les	DET
-non	NC
+non	ADV
 français	ADJ
 et	CC
 néerlandais	ADJ
@@ -85395,8 +85247,7 @@ dix ans	NC
 plus	ADV
 tôt	ADV
 ,	PONCT
-et	CC
-ce	PRO
+et ce	CC
 malgré	P
 le	DET
 large	ADJ
@@ -85653,7 +85504,8 @@ encore	ADV
 accrue	VPP
 :	PONCT
 nous	CLS
-nous attendons	V
+nous	CLR
+attendons	V
 à	P
 voir	VINF
 plus	ADV
@@ -85701,14 +85553,14 @@ reduced	ET
 the	ET
 debris	ET
 ,	PONCT
-but	NC
-we	ADJ
+but	ET
+we	ET
 will	ET
 see	ET
 more	ET
-because	P
-our	NC
-detection	NC
+because	ET
+our	ET
+detection	ET
 methods	ET
 have	ET
 so	ET
@@ -86145,8 +85997,7 @@ sa	DET
 famille	NC
 pour	P
 une	DET
-garden	ET
-party	ET
+garden party	NC
 rassemblant	VPR
 toutes	ADJ
 les	DET
@@ -87084,11 +86935,7 @@ père	NC
 ,	PONCT
 Zakariya Hindi	NPP
 ,	PONCT
-de	P
-manière	NC
-à	P
-ce	PRO
-que	CS
+de manière à ce que	CS
 l'on	PRO
 ne	ADV
 puisse	VS
@@ -87394,10 +87241,7 @@ dans	P
 la	DET
 revue	NC
 médicale	ADJ
-European	NPP
-Journal	NC
-of	ET
-Oncology	ET
+European Journal of Oncology	NPP
 .	PONCTU_FORTE
 L'	DET
 AFSSA	NPP
@@ -88026,10 +87870,7 @@ du	DETDU
 1er	ADJ
 bataillion	NC
 ,	PONCT
-Queen'	NPP
-s	ET
-Lancashire	ET
-Regiment	ET
+Queen's Lancashire Regiment	NPP
 (	PONCT
 QLR	NPP
 )	PONCT
@@ -88424,11 +88265,7 @@ de	P
 Bassorah	NPP
 .	PONCTU_FORTE
 Le	DET
-Chief	ET
-of	ET
-the	ET
-General	ET
-Staff	ET
+Chief of the General Staff	NPP
 ,	PONCT
 Sir	NC
 Mike Jackson	NPP
@@ -88543,8 +88380,7 @@ dans	P
 le	DET
 quotidien	NC
 britannique	ADJ
-The	ET
-Observer	ET
+The Observer	NPP
 qu'	CS
 il	CLS
 savait	V
@@ -88591,16 +88427,16 @@ went	ET
 to	ET
 jail	ET
 and	ET
-I	ADJ
-did	NC
+I	ET
+did	ET
 ,	PONCT
-some	NC
-other	ADJ
-people	V
-would	DET
-go	NC
-with	ADJ
-me	CLO
+some	ET
+other	ET
+people	ET
+would	ET
+go	ET
+with	ET
+me	ET
 .	PONCTU_FORTE
 Si	CS
 après	P
@@ -88689,8 +88525,8 @@ majeurs	ADJ
 the	ET
 end	ET
 of	ET
-major	NC
-combat	NC
+major	ET
+combat	ET
 »	PONCT
 )	PONCT
 au	P+D
@@ -88955,7 +88791,7 @@ produits	NC
 laitiers	ADJ
 et	CC
 numéro	NC
-deux	NC
+deux	ADJNUM
 des	DETDES
 eaux	NC
 et	CC
@@ -89046,7 +88882,8 @@ le	DET
 6 juillet	NC
 :	PONCT
 Nous	CLS
-nous tenons	V
+nous	CLR
+tenons	V
 en	CLO
 à	P
 notre	DET
@@ -89203,8 +89040,7 @@ L'	DET
 commandée	VPP
 par	P
 le	DET
-The	ET
-Lancet	NPP
+The Lancet	NPP
 et	CC
 publiée	VPP
 le	DET
@@ -89275,7 +89111,7 @@ de	P
 non	ADV
 -	PONCT
 prieurs	NC
-non	ADV
+non	ET
 -	PONCT
 prayer	ET
 group	ET
@@ -89505,7 +89341,7 @@ The	ET
 mechanisms	ET
 through	ET
 which	ET
-distant	ADJ
+distant	ET
 intercessory	ET
 prayer	ET
 might	ET
@@ -89528,9 +89364,9 @@ effets	NC
 sont	V
 des	DETDES
 "	PONCT
-non	NC
+non	ET
 -	PONCT
-local	ADJ
+local	ET
 features	ET
 of	ET
 consciousness	ET
@@ -89563,18 +89399,11 @@ Duke	NPP
 DCRI	NPP
 )	PONCT
 ,	PONCT
-Duke	ET
-University	ET
-Medical	ET
-Center	NPP
+Duke University Medical Center	NPP
 ,	PONCT
 de	P
 la	DET
-Durham	NPP
-Veterans	NPP
-Affairs	NPP
-Medical	NPP
-Center	NPP
+Durham Veterans Affairs Medical Center	NPP
 (	PONCT
 VAMC	NPP
 )	PONCT
@@ -89622,9 +89451,7 @@ sont	V
 :	PONCT
 Warren Street	NPP
 ,	PONCT
-Shepherd'	NPP
-s	ET
-Bush	NPP
+Shepherd's Bush	NPP
 et	CC
 Oval	NPP
 et	CC
@@ -89704,8 +89531,7 @@ des	DETDES
 explosions	NC
 du	DETDU
 21 juillet	NC
-Scotland	ET
-Yard	ET
+Scotland Yard	NPP
 ,	PONCT
 la	DET
 police	NC
@@ -90390,10 +90216,7 @@ station	NC
 balnéaire	ADJ
 égyptienne	ADJ
 de	P
-Charm	NPP
-el	ET
--	PONCT
-Cheikh	NPP
+Charm el-Cheikh	NPP
 ,	PONCT
 faisant	VPR
 au moins	ADV
@@ -92104,8 +91927,7 @@ le	DET
 le	DET
 porte-parole	NC
 de	P
-Scotland	ET
-Yard	ET
+Scotland Yard	NPP
 ,	PONCT
 en	CLO
 ajoute	V
@@ -92850,8 +92672,7 @@ envoi	NC
 d'	P
 agents	NC
 de	P
-Scotland	ET
-Yard	ET
+Scotland Yard	NPP
 en	P
 formation	NC
 en	P
@@ -93047,7 +92868,7 @@ et	CC
 gouvernements	NC
 pour	P
 son	DET
-non	NC
+non	ADV
 respect	NC
 des	DETDES
 Droits	NC
@@ -94477,7 +94298,7 @@ Retour	NC
 en	P
 vol	NC
 (	PONCT
-Return	NPP
+Return	ET
 to	ET
 flight	ET
 )	PONCT
@@ -95174,8 +94995,7 @@ occupations	NC
 quotidiennes	ADJ
 »	PONCT
 .	PONCTU_FORTE
-Amnesty	ET
-international	ET
+Amnesty international	NPP
 souligne	V
 aussi	ADV
 le	DET
@@ -95500,8 +95320,7 @@ enormorous	ADJ
 optimism	NC
 reignerait	V
 à	P
-Scotland	ET
-Yard	ET
+Scotland Yard	NPP
 après	P
 la	DET
 descente	NC
@@ -96748,7 +96567,7 @@ l'	DET
 homme	NC
 .	PONCTU_FORTE
 Cette	DET
-non	NC
+non	ADV
 reconnaissance	NC
 a	V
 permis	VPP
@@ -97594,10 +97413,10 @@ la	DET
 décision	NC
 comme	P
 courageuse	ADJ
-courageous	NC
+courageous	ET
 and	ET
-confident	NC
-initiative	NC
+confident	ET
+initiative	ET
 .	PONCTU_FORTE
 Les	DET
 gouvernements	NC
@@ -97622,7 +97441,7 @@ inattendue	ADJ
 step	ET
 of	ET
 unparalled	ET
-magnitude	NC
+magnitude	ET
 .	PONCTU_FORTE
 Après	P
 l'	DET
@@ -98182,7 +98001,7 @@ présence	NC
 militaire	ADJ
 puisque	CS
 ,	PONCT
-selo	ET
+selon	P
 eux	PRO
 ,	PONCT
 la	DET
@@ -98295,10 +98114,7 @@ qui	PROREL
 travaille	V
 au	P+D
 "	PONCT
-California	ET
-Institute	ET
-of	ET
-Technology	ET
+California Institute of Technology	NPP
 "	PONCT
 (	PONCT
 Caltech	NPP
@@ -98398,11 +98214,11 @@ Pluton	NPP
 repéré	VPP
 au-delà de	P
 Neptune	NC
-We	NPP
-are	V
-100	DET
-percent	ADJ
-confident	NC
+We	ET
+are	ET
+100	ET
+percent	ET
+confident	ET
 that	ET
 this	ET
 is	ET
@@ -98555,9 +98371,9 @@ même	ADJ
 catégorie	NC
 que	CS
 Pluton	NPP
-This	NPP
-object	V
-is	ADJ
+This	ET
+object	ET
+is	ET
 in	ET
 a	ET
 class	ET
@@ -98619,7 +98435,7 @@ toujours	ADV
 voulu	VPP
 appeler	VINF
 quelque chose	PRO
-Xena	ET
+Xena	NPP
 we	ET
 always	ET
 wanted	ET
@@ -98799,17 +98615,10 @@ sénégalais	ADJ
 Abdoulaye Wade	NPP
 ,	PONCT
 syrien	ADJ
-Bachar	ET
-el	ET
--	PONCT
-Assad	NPP
+Bachar el-Assad	NPP
 ,	PONCT
 tunisien	ADJ
-Zine	NPP
-el	ET
--	PONCT
-Abidine	NPP
-Ben Ali	NPP
+Zine el-Abidine Ben Ali	NPP
 ,	PONCT
 yéménite	V
 Ali Abdallah Saleh	NPP
@@ -98856,8 +98665,7 @@ ainsi que	CC
 le	DET
 vice-président	NC
 américain	ADJ
-Dick	ET
-Cheney	ET
+Dick Cheney	NPP
 ,	PONCT
 le	DET
 premier ministre	NC
@@ -99212,7 +99020,8 @@ plus	ADV
 longtemps	ADV
 du fait que	CS
 nous	CLS
-nous trouvons	V
+nous	CLR
+trouvons	V
 en	P
 temps	NC
 de	P
@@ -99992,9 +99801,3 @@ août	NC
 et	CC
 septembre 2004	NC
 .	PONCTU_FORTE
-Selon	P
-la	DET
-chaine	NC
-canadienne	ADJ
-Radio	NC
--	PONCT

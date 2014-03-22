@@ -2414,8 +2414,6 @@ F;;A;issue;à l' issue d';préposition;à l' issue de
 F;;A;issue;à l' issue du;préposition;à l' issue de
 F;;A;jour;à ce jour;adverbe;
 F;;A;lieu;[V]&donner (D) lieu;verbe intransitif;donner lieu
-F;;A;lors;lors d';conjonction de subordination;
-F;;A;lors;lors de;conjonction de subordination;
 F;;A;lors;lors de;préposition;
 F;;A;lors;lors d';préposition;lors de
 F;;A;mesure;dans la mesure où;pronom relatif;
@@ -2846,6 +2844,7 @@ I;;A;apparaître;entr' apparaître;verbe intransitif;entr'apparaître
 I;;A;approche;à l' approche de;préposition;à l'approche de
 I;;A;bene;nota bene;nom masculin;
 I;;A;bien;eh bien;interjection;
+I;;A;oui;eh oui;interjection;
 I;;A;bille;[S]&crayon à bille;nom masculin;stylo à bille
 I;;A;bloc;à bloc;adverbe;
 I;;A;bon;bon ap;interjection;
@@ -3765,3 +3764,12 @@ GC;;A;suites;des suites des;préposition article pluriel;des suites de
 GC;;A;suites;des suites d';préposition;des suites de
 GC;;A;suites;des suites du;préposition article;des suites de
 GC;;A;…;( … );ponctuation faible;
+GC;;A;plaît;s'il vous plaît;interjection;
+GC;;A;plaît;s'il te plaît;interjection;s'il vous plaît
+GC;;A;open;open source;adjectif;
+GC;;A;garden;garden party;nom féminin;
+GC;;A;manière;de manière à ce que;conjonction de subordination;
+GC;;;ce;et ce;préposition;
+GC;;;ce;et ce;conjonction de coordination;
+GC;;;qualité;en qualité de;adverbe;
+GC;;;qualité;en qualité d';adverbe;
