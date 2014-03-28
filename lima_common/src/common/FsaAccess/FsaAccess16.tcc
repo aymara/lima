@@ -145,8 +145,9 @@ void FsaAccess16<graphType>::readBody(
   #endif
   for( uint32_t nv = 1 ; nv < nbVert ; nv++ ) {
     #ifdef DEBUG_CD
-    if (nv % 1000 == 0)
+    if (nv % 1000 == 0) {
       LDEBUG <<  "FsaAccess16::readBody vertex num = " << nv;
+    }
     #endif
     dicoVertexType newV = add_vertex(m_graph);
     VERTEX_PROPERTY_16 propVal;
@@ -163,8 +164,9 @@ void FsaAccess16<graphType>::readBody(
   #endif
   for( uint32_t ne = 0 ; ne < nbEdges ; ne++ ) {
     #ifdef DEBUG_CD
-    if (ne % 1000 == 0)
+    if (ne % 1000 == 0) {
       LDEBUG <<  "FsaAccess16::readBody edge num = " << ne;
+    }
     #endif
     dicoVertexType source, target;
     Lima::LimaString epropVal;
