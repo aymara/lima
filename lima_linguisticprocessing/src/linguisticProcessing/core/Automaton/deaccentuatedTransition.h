@@ -35,7 +35,15 @@
 
 #include "AutomatonExport.h"
 #include "transitionUnit.h"
-#include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
+//#include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
+
+namespace Lima {
+namespace LinguisticProcessing {
+namespace FlatTokenizer {
+class  CharChart;
+}
+}
+}
 
 namespace Lima {
 namespace LinguisticProcessing {
