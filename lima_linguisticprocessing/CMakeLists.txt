@@ -17,6 +17,8 @@
 project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 2.8)
 
+cmake_policy(SET CMP0017 NEW)
+
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP" )
@@ -95,6 +97,14 @@ IF(SVMTOOL++_FOUND)
         include_directories($ENV{LIMA_EXTERNALS}/include)
         link_directories($ENV{LIMA_EXTERNALS}/lib)
 ENDIF(SVMTOOL++_FOUND)
+
+find_package (Enchant) 
+if (ENCHANT_FOUND)
+  set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
+  include_directories(${ENCHANT_INCLUDE_DIRS})
+else (ENCHANT_FOUND)
+  message("Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
+endif (ENCHANT_FOUND)
 
 find_package(Qt4 REQUIRED QtCore QtXml QtXmlPatterns)
 include(${QT_USE_FILE})
