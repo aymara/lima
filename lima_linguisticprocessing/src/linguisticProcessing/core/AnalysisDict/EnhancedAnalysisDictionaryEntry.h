@@ -134,7 +134,8 @@ inline void NotMainKeysDictionaryEntryHandler::setDelegate(AbstractDictionaryEnt
 
 inline void NotMainKeysDictionaryEntryHandler::startEntry(StringsPoolIndex form)
 {
-  m_delegate->startEntry((*m_sp)[m_access->getSpelling(form)]);
+//  m_delegate->startEntry((*m_sp)[m_access->getSpelling(form)]);
+  m_delegate->startEntry(form);
 }
 
 inline void NotMainKeysDictionaryEntryHandler::endEntry()
@@ -160,7 +161,8 @@ inline void NotMainKeysDictionaryEntryHandler::deleteConcatenated()
 
 inline void NotMainKeysDictionaryEntryHandler::foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form)
 {
-  m_delegate->foundComponent(position,length,(*m_sp)[m_access->getSpelling(form)]);
+//  m_delegate->foundComponent(position,length,(*m_sp)[m_access->getSpelling(form)]);
+  m_delegate->foundComponent(position,length,form);
 }
 
 inline void NotMainKeysDictionaryEntryHandler::endComponent()
@@ -175,12 +177,14 @@ inline void NotMainKeysDictionaryEntryHandler::endConcatenated()
 
 inline void NotMainKeysDictionaryEntryHandler::foundAccentedForm(StringsPoolIndex form)
 {
-  m_delegate->foundAccentedForm((*m_sp)[m_access->getSpelling(form)]);
+//  m_delegate->foundAccentedForm((*m_sp)[m_access->getSpelling(form)]);
+  m_delegate->foundAccentedForm(form);
 }
 
 inline void NotMainKeysDictionaryEntryHandler::deleteAccentedForm(StringsPoolIndex form)
 {
-  m_delegate->deleteAccentedForm((*m_sp)[m_access->getSpelling(form)]);
+//  m_delegate->deleteAccentedForm((*m_sp)[m_access->getSpelling(form)]);
+  m_delegate->deleteAccentedForm(form);
 }
 
 inline void NotMainKeysDictionaryEntryHandler::endAccentedForm()
