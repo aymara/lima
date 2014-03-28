@@ -73,7 +73,9 @@ target_link_libraries(limacharchartparser ${Boost_LIBRARIES})
 install(TARGETS limacharchartparser DESTINATION bin)
 
 ########### install files ###############
-
+install(FILES
+  CharChart.h FlatTokenizerExport.h
+DESTINATION include/linguisticProcessing/core/FlatTokenizer)
 
 
 add_subdirectory(Tests)

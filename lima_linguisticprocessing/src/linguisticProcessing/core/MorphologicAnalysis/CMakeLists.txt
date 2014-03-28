@@ -64,4 +64,15 @@ set_target_properties(lima-lp-morphologicanalysis PROPERTIES VERSION ${LIMA_LP_L
 
 install(TARGETS lima-lp-morphologicanalysis DESTINATION lib)
 
+install(FILES
+  MorphologicAnalysisExport.h
+  MorphoSyntacticDataHandler.h
+  AlternativesReader.h
+  DesagglutinationResources.h
+  ConcatenatedDataHandler.h
+  SequenceEntryHandler.h
+  AccentedConcatenatedDataHandler.h
+DESTINATION include/linguisticProcessing/core/MorphologicAnalysis)
+
+
 ########### install files ###############

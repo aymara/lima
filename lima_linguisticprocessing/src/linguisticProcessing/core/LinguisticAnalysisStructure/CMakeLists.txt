@@ -53,4 +53,5 @@ install(FILES
   FullTokenXmlLogger.h 
   MorphoSyntacticDataUtils.h 
   ChainIdStruct.h 
+  AgglutinatedToken.h
   DESTINATION include/linguisticProcessing/core/LinguisticAnalysisStructure)
