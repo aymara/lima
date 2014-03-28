@@ -211,6 +211,7 @@ LinguisticPropertyIs(MediaId language,
       else if (mtype == "DESAGGLUTINATED_WORD") { value.second=DESAGGLUTINATED_WORD; }
       else if (mtype == "CHINESE_SEGMENTER") { value.second=CHINESE_SEGMENTER; }
       else if (mtype == "SPECIFIC_ENTITY") { value.second=SPECIFIC_ENTITY; }
+      else if (mtype == "SPELLING_ALTERNATIVE") { value.second=SPELLING_ALTERNATIVE; }
       else
       {
         AULOGINIT;
