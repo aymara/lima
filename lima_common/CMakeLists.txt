@@ -93,7 +93,7 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-find_package(Boost 1.53 REQUIRED COMPONENTS unit_test_framework system)
+find_package(Boost 1.48 REQUIRED COMPONENTS unit_test_framework system)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 

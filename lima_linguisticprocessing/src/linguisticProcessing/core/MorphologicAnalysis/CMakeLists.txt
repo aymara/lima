@@ -36,6 +36,13 @@ SET(lima-lp-morphologicanalysis_LIB_SRCS
    AccentedConcatenatedDataHandler.cpp
 )
 
+if (ENCHANT_FOUND)
+SET(lima-lp-morphologicanalysis_LIB_SRCS
+  ${lima-lp-morphologicanalysis_LIB_SRCS}
+  EnchantSpellingAlternatives.cpp
+)
+endif (ENCHANT_FOUND)
+
 DECLARE_LIMA_PLUGIN(lima-lp-morphologicanalysis)
 
 target_link_libraries(lima-lp-morphologicanalysis
