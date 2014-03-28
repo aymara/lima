@@ -170,8 +170,11 @@ void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::Proper
             currentType = "hyphen_alternative";
             break;
             case CONCATENATED_ALTERNATIVE :
-            currentType = "concatenated_alternative";
-            break;
+              currentType = "concatenated_alternative";
+              break;
+            case SPELLING_ALTERNATIVE :
+              currentType = "spelling_alternative";
+              break;
             case CAPITALFIRST_WORD :
             currentType = "capitalfirst_word";
             break;
