@@ -42,3 +42,8 @@ add_custom_target(
 DISAMBMATRICES(eng succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl DIVERS_*,NOM_PROPRE*,CONJ_*,NOMBRE*)
 
 add_dependencies(trigrammatrix-eng categs-eng)
+
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/corpus_eng_merge.txt
+  DESTINATION share/apps/lima/resources/Disambiguation
+)

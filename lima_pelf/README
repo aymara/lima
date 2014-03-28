@@ -40,9 +40,7 @@ this application template.
 
 -----------------------------------------------
 * Building and running *
-- cmake will run after the template is loaded provided cmake is in your PATH. If not, you will see an error message in the terminal and you will need to install cmake in your PATH.
-- In the Build menu in KDevelop, click on Build Project (or use the F8 shortcut) in order to build your project.
-- Run your project using the Build menu -> Execute Program. Note that default makes your program run in KDevelop integrated terminal. You can run your program in an external terminal by changing the project options (Project -> Project Options -> Run options and check at the bottom "Start in external terminal")
+- Build pelf using cmake
 -----------------------------------------------
 
 -----------------------------------------------
@@ -53,8 +51,8 @@ CMake Documentation: http://www.cmake.org/HTML/Documentation.html
 -----------------------------------------------
 * Building easy steps (where $SRC_PATH is the path where source files have been downloaded) *
 - create a path for binary files and go there with command shell
-- run cmake $SRC_PATH -DCMAKE_INSTALL_PREFIX=./ && make && make install
+- run cmake $SRC_PATH -DCMAKE_INSTALL_PREFIX=$LIMA_DIST && make && make install
 - configure command scripts in subdir commands/*  as needed
-- if you need pelf-rt, copy $SRC_PATH/src/PelfResourceTool/examples/pelf-rt-conf.[local|remote].xml as pelf-rt-conf.xml variable (or make a symbolic link), configure this XML file as needed and define the $PELF_CONF as the variable poiting to the containing directory
-- if you need pelf-bt and an example file for bootstraping, copy the $SRC_PATH/src/PelfResourceTool/examples/* (contains lbp typical files and easy specific documents and reference files)
-- go to bin subdirectory and run pelf-bt or pelf-rt
+- if you need pelf-resedit, copy $SRC_PATH/src/PelfResourceTool/examples/pelf-rt-conf.[local|remote].xml as pelf-rt-conf.xml variable (or make a symbolic link), configure this XML file as needed and define the $PELF_CONF as the variable poiting to the containing directory
+- if you need pelf-bench and an example file for bootstraping, copy the $SRC_PATH/src/PelfResourceTool/examples/* (contains lbp typical files and easy specific documents and reference files)
+- go to bin subdirectory and run pelf-bench or pelf-resedit

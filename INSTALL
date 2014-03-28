@@ -37,8 +37,10 @@ will have to download and prepare yourself. This data is an extract of the Peen
 treebank corpus available for fair use in the NLTK data. To install, please 
 refer to http://nltk.org/data.html. Then prepare the data for use with LIMA by 
 running the following commands:
+
 $ cd <path/to/nltk_data>/corpora/dependency_treebank
 $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
+
 
 Then, for each module, let's do:
  $ cd module
@@ -48,5 +50,5 @@ The order is important:
 
 1. lima_common
 2. lima_linguisticprocessing
-3. lima_linguisticData
+3. lima_linguisticdata
 

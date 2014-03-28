@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='iso8859-1'?>
+<modulesConfig>
+  <module name="easyprocessor">
+    <group name="groupes">
+      <map name="typeMapping">
+        <entry key="N" value="GN"/>
+        <entry key="V" value="NV"/>
+      </map>
+    </group>
+    <group name="relations">
+      <map name="typeMapping">
+        <entry key="COMPDUNOM" value="MOD-N"/>
+        <entry key="ADJPRENSUB" value="MOD-N"/>
+        <entry key="SUBADJPOST" value="MOD-N"/>
+        <entry key="SUBSUBJUX" value="MOD-N"/>
+        <entry key="TEMPCOMP" value="AUX-V"/>
+        <entry key="SujInv" value="SUJ-V"/>
+        <entry key="CodPrev" value="COD-V"/>
+        <entry key="CoiPrev" value="CPL-V"/>
+        <entry key="PronSujVerbe" value="SUJ-V"/>
+        <entry key="ADVADV" value="MOD-R"/>
+        <entry key="ADVADJ" value="MOD-A"/>
+        <entry key="NePas2" value="MOD-V"/>
+        <entry key="AdvVerbe" value="MOD-V"/>
+        <entry key="COMPADJ" value="MOD-A"/>
+        <!--entry key="Neg" value="MOD-V"/-->
+        <!--change '_' to '-' -->
+        <entry key="SUJ_V" value="SUJ-V"/>
+        <entry key="SUJ_V_REL" value="SUJ-V"/>
+        <entry key="COD_V" value="COD-V"/>
+        <entry key="CPL_V" value="CPL-V"/>
+        <entry key="CPLV_V" value="CPL-V"/>
+        <entry key="MOD_V" value="MOD-V"/>
+        <entry key="MOD_N" value="MOD-N"/>
+        <entry key="MOD_A" value="MOD-A"/>
+        <entry key="ATB_S" value="ATB-SO,s-o valeur=sujet"/>
+        <entry key="ATB_O" value="ATB-SO,s-o valeur=objet"/>
+        <entry key="COORD1" value="COORD"/>
+        <entry key="COORD2" value="COORD"/>
+        <entry key="COMPL" value="COMP"/>
+        <entry key="JUXT" value="JUXT"/>
+      </map>
+      <map name="srcTag">
+        <entry key="MOD-N" value="modifieur"/>
+        <entry key="MOD-V" value="modifieur"/>
+        <entry key="SUJ-V" value="sujet"/>
+        <entry key="AUX-V" value="auxiliaire"/>
+        <entry key="COD-V" value="cod"/>
+        <entry key="CPL-V" value="complement"/>
+        <entry key="MOD-R" value="modifieur"/>
+        <entry key="APPOS" value="premier"/>
+        <entry key="JUXT" value="suivant"/>
+        <entry key="ATB-SO" value="attribut"/>
+        <entry key="MOD-A" value="modifieur"/>
+        <entry key="COMP" value="complementeur"/>
+        <entry key="COORD" value="coordonnant"/>
+      </map>
+      <map name="tgtTag">
+        <entry key="MOD-N" value="nom"/>
+        <entry key="MOD-V" value="verbe"/>
+        <entry key="SUJ-V" value="verbe"/>
+        <entry key="AUX-V" value="verbe"/>
+        <entry key="COD-V" value="verbe"/>
+        <entry key="CPL-V" value="verbe"/>
+        <entry key="MOD-R" value="adverbe"/>
+        <entry key="APPOS" value="appose"/>
+        <entry key="JUXT" value="premier"/>
+        <entry key="ATB-SO" value="verbe"/>
+        <entry key="MOD-A" value="adjectif"/>
+        <entry key="COMP" value="verbe"/>
+        <entry key="COORD" value="coord-g"/>
+      </map>
+    </group>
+  </module>
+</modulesConfig>

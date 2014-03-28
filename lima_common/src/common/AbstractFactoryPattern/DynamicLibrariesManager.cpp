@@ -61,9 +61,9 @@ loadLibrary(const std::string& libName)
   std::map<std::string,QLibrary*>::const_iterator
     it=m_handles.find(libName);
   if (it!=m_handles.end()) {
-#ifdef DEBUG_CD
-    std::cerr << "DEBUG_CD: trying to reload dynamic library " << libName.c_str() << std::endl;
-#endif
+// #ifdef DEBUG_CD
+//     std::cerr << "DEBUG_CD: trying to reload dynamic library " << libName.c_str() << std::endl;
+// #endif
   }
 
   QLibrary* libhandle = 0;

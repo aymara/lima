@@ -47,8 +47,8 @@
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
         <!--item value="conllDumper"/-->
-        <item value="bowDumper"/>
-        <!--item value="textDumper"/-->
+        <!--item value="bowDumper"/-->
+        <item value="textDumper"/>
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
       </list>

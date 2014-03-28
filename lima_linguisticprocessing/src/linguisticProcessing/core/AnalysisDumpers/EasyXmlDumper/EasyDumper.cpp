@@ -102,8 +102,6 @@ void EasyDumper::dump(std::ostream& out)
 
 void EasyDumper::dumpConstituants(std::ostream& out)
 {
-//   std::ostringstream ossConstituants;
-//   ossConstituants << "<liste_constituants>" << std::endl;
   std::map< uint64_t, uint64_t >::const_iterator posIt, posIt_end;
   posIt = m_positionsFormsIds.begin();
   posIt_end = m_positionsFormsIds.end();
@@ -139,7 +137,6 @@ void EasyDumper::dumpConstituants(std::ostream& out)
       std::ostringstream oss;
       oss << m_enonceId  << "F"<< formId;
       out << "  <F id=\"" << oss.str() << "\">" << sforme << "</F>" << std::endl;
-//      ossConstituants << oss.str() << " ";
       LDEBUG << "EasyDumper:: adding to m_formesIds1: "<<m_formesIndex[forme]->forme<<" -> " << oss.str() << LENDL;
       m_formesIds.insert(std::make_pair(forme, oss.str()));
       alreadyDumpedForms.insert((m_formesIndex[forme])->poslong.position);
@@ -153,16 +150,13 @@ void EasyDumper::dumpConstituants(std::ostream& out)
         continue;
       }
       Groupe& groupe = m_groupes[position];
-//       bool toDump = true;
       Groupe::const_iterator groupeIt, groupeIt_end;
       groupeIt = groupe.begin(); groupeIt_end = groupe.end();
       // compute the chaine id here
       std::ostringstream oss;
-//       ossConstituants << groupe.type() << groupId << " ";
       oss << m_enonceId << "G" << groupId;
       groupe.id(groupId);
       sout << "  <Groupe type=\"" << groupe.type() << "\" id=\"" << oss.str() << "\">" << std::endl;
-//       out << "  <Groupe type=\"" << groupe.type() << "\" id=\"" << oss.str() << "\">" << std::endl;
       m_groupeIdGroupStr[groupe.id()] = oss.str();
 
       groupeIt = groupe.begin(); groupeIt_end = groupe.end();
@@ -191,14 +185,11 @@ void EasyDumper::dumpConstituants(std::ostream& out)
         formId++;
       }
       sout << "  </Groupe>" << std::endl;
-//       out << "  </Groupe>" << std::endl;
       out << sout.str();
       LDEBUG << "EasyDumper:: " << sout.str();
       groupId++;
     }
   }
-//   ossConstituants << std::endl << "</liste_constituants>" << std::endl;
-//  out << ossConstituants.str();
 }
 
 
@@ -211,7 +202,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
   {
     return;
   }
-  out << "  <relations xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
+  out << "  <relations>" << std::endl;
   // to handle three-value relations (COORD)
   bool notClosed(false);
   std::string previousRelType(""), previousSrcId("");

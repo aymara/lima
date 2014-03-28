@@ -5,7 +5,7 @@
 # ----------------------------------------------------------------------
 # Fichier : tfcv.py
 # Type    : Python
-# Contient: Un petit outil pour mener une validation croisee sur le POS-tagger
+# Contient: A tool for PoS-tagger cross-validation
 # Usage   : ./tfcv.py [-c] [-n] corpus
 # ----------------------------------------------------------------------
 
@@ -16,12 +16,10 @@ from os.path import getsize, exists
 from shutil import copy, rmtree
 from re import search
 
-# Definitions variables
-#SVMT         = "/home/anoka/soft/SVMTool-1.3.1/bin/"
-#CORPUS_PATH  = "../../orig_corpus_tabbed"
-#ELSEVAL_PATH = "/home/anoka/Logiciels/else-0.33/code/bin"
-SCRIPTS_PATH = environ.get("LIMA_ROOT")+"/Sources/lima_linguisticdata/scripts/"
+# Variables definition
+SCRIPTS_PATH = "@SCRIPTS_PATH@"
 MATRIX_PATH  = environ.get("LIMA_RESOURCES")+"/Disambiguation/"
+PELF_BIN_PATH = environ.get("LIMA_DIST")+"/share/apps/lima/scripts/"
 
 # svn blame material:
 # let's use global variables for those infos because:
@@ -31,22 +29,23 @@ MATRIX_PATH  = environ.get("LIMA_RESOURCES")+"/Disambiguation/"
 lang = 'none'
 results = 'results.none.none'
 numfold=10
-# Definitions Fonctions
+
+# Functions definitions
 
 def TenPcSample(path,sep):
     """
-    Partitonne un corpus etiquette en portions de 10% « contigues » (pas de découpage
-    au milieu d'une phrase, basé sur le nombre de mots et un separateur de phrases
-    (PONCTU_FORTE par defaut)).
-    Organise les echantillons dans des dossiers numerotes de /results
-    Au lieu d'essayer d'avoir des portions d'environ 10%, on s'assure que la portion
-    numéro i s'arrête environ à i*10%. Ceci évite d'avoir une portion finale toute petite.
+    Split a tagged corpus in "contiguous" 10% portions de 10% (no splitting in
+    the middle of a sentence, based on the number of words and a sentence 
+    separator (PONCTU_FORTE by default)).
+    Organises samples in numbered folders inside results.<lang>.<tagger>
+    Instead of trying to have samples of about 10%, ensures that the number i 
+    sample stops at about 10% i *. This avoids having a small last sample.
     """
     with open(path,'r') as c:
         lines = 0
         for line in c.xreadlines(  ): lines += 1
         partition_size = (lines/numfold)
-    print "*** Partition "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") en cours ..."
+    print "*** Sample "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") ongoing ..."
     num = range(1,numfold+1)
     with open(path,'r') as corpus:
         cnt = 1
@@ -66,10 +65,10 @@ def SVMFormat():
 
 def NinetyPcSample():
     """
-    Construit le complement des partitions de 10% produites par TenPcSample(path).
-    Organise les echantillons dans des dossiers numerotes de /results
+    Build the complement of the 10% partitions produced by TenPcSample(path). 
+    Organizes samples in numbered folders in results.<lang>.<tagger>
     """
-    print "*** Partition "+str(100-100/numfold)+"% en cours ..."
+    print "*** Sample "+str(100-100/numfold)+"% ongoing ..."
     for i in range(1,numfold+1):
         for j in range(1,numfold+1):
             if j!=i:
@@ -82,21 +81,21 @@ def NinetyPcSample():
     
 def Tagged2raw():
     """
-    Produit l'equivalent brut de toutes les partitions de 10% produites par TenPcSample(path)
-    Organise les echantillons dans des dossiers numerotes de /results
+    Product raw equivalent () text ready to be analyzed) of all 10% samples 
+    produced by TenPcSample(path).
+    Organizes samples in numbered folders in results.<lang>.<tagger>
     """
-    print "*** Production de l'equivalent brut des partitions de test..."
+    print "*** Producing raw equivalent of test partitions ..."
     for i in range(1,numfold+1):
-        system("./reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
-            % {"lang" : lang, "results": results, "i": i})
+        system("%(path)s/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
+            % {"path" : PELF_BIN_PATH, "lang" : lang, "results": results, "i": i})
 
 def Disamb_matrices(scripts_path):
     """
-    Calcule les nouvelles matrices de desambiguisation pour chaque 
-    echantillon de 90% du corpus gold 
-    Organise les resultats dans des dossiers numerotes de /results
+    Computes the new disambiguation matrices for each 90% sample of the gold corpus.
+    Organizes results in numbered folders in results.<lang>.<tagger>
     """
-    print "*** Calcul des matrices..."
+    print "*** Computing matrices..."
     for i in range(1,numfold+1):
         chdir(results + "/" + str(i))
         try:
@@ -104,23 +103,23 @@ def Disamb_matrices(scripts_path):
         except OSError: 
             pass 
         system("gawk -F'\t' '{ print $2 }' 90pc.tfcv >  succession_categs_retag.txt")
-        system(scripts_path+"disamb_matrices_extract.pl succession_categs_retag.txt")
+        system(scripts_path+"/disamb_matrices_extract.pl succession_categs_retag.txt")
         system("sort succession_categs_retag.txt|uniq -c|awk -F' ' '{print $2\"\t\"$1}' > matrices/unigramMatrix-%s.dat"%lang)
-        system(scripts_path+"disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-%s.dat"%lang)
+        system(scripts_path+"/disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-%s.dat"%lang)
         system("mv bigramsend.txt matrices/bigramMatrix-%s.dat"%lang)
         system("gawk -F'\t' '{ print $1\"\t\"$2 }' 90pc.tfcv > priorcorpus.txt")
-        system(scripts_path+"disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-%s.dat U,ET,PREF,NPP,PONCT,CC,CS"%lang)
+        system(scripts_path+"/disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-%s.dat U,ET,PREF,NPP,PONCT,CC,CS"%lang)
         chdir("../..")
 
 
 def AnalyzeTextAll(matrix_path):
-    # TO DO : fusionner avec Disamb_matrices ?
+    # TODO : merge with Disamb_matrices ?
     """
-    Taggue le corpus test (10%) avec le POS-tagger entraine avec
-    les matrices calculees a partir du complement (90%) de test.
+    Tag the test  corpus (10%) with the POS-tagger trained with 
+    the matrices computed from the test complement (90%).
     """
     for i in range(1,numfold+1):
-        print "    ==== ANALYSE POUR L'ECHANTILLON "+str(i)
+        print "    ==== ANALYSING SAMPLE %d"%i
         chdir(results + "/" + str(i))
         copy("matrices/bigramMatrix-%s.dat"%lang, matrix_path)
         copy("matrices/trigramMatrix-%s.dat"%lang, matrix_path)
@@ -134,7 +133,7 @@ def AnalyzeTextAll(matrix_path):
 
 def TrainSVMT(conf, svmli, svmle):
     """
-    Produit les modèles pour chaque échantillon.
+    Produces models for each sample.
     """
     for i in range(1,numfold+1):
         wd=getcwd()+"/"+results+"/" + str(i)
@@ -144,15 +143,17 @@ def TrainSVMT(conf, svmli, svmle):
         system("sed -e 's/%SAMPLE-PATH%/"+str_wd+"/g' -e 's/%SVM-DIR%/"+str_svmli+"/g' "+conf+" > "+wd+"/config.svmt")
         print "\t**Learning model..."
         chdir(results + "/" + str(i))
-        ret = system(svmle+" config.svmt")
+        svmlestring = "%s %s/config.svmt"%(svmle,wd) 
+        print svmlestring
+        ret = system(svmlestring)
         if ret is not 0: raise Exception('svmtrain', 'svmle did not return 0')
         chdir("../..")
 
 
 def AnalyzeTextAllSVMT(init_conf, conf_path):
     """
-    Taggue le corpus test (10%) avec les modèles obtenus suite à l'application
-    de SVMTlearn à la partition de corpus complémentaire (90%).
+    Tag the test corpus (10%) with the models obtained after applying SVMTlearn 
+    to the complementary partition (90%).
     """
     try:
       system("ln -sf %s $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL" % (getcwd()))
@@ -163,15 +164,15 @@ def AnalyzeTextAllSVMT(init_conf, conf_path):
     try: 
       for i in range(1,numfold+1):
         wd  = getcwd() + "/" + results + "/" + str(i)
-        print "    ==== ANALYSE SVMT POUR L'ECHANTILLON "+str(i)
+        print "    ==== SVMTool analysis for sample %i"%i
         system("sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path)
-        print "sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path
+        #print "sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path
         print wd
         chdir(wd)
         system("analyzeText -l %s 10pc.brut"%lang)
         print "analyzeText -l %s 10pc.brut"%lang
         system("sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path)
-        print "sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path
+        #print "sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path
         chdir("../..")
     except:
       system("rm -rf $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL/" + results)
@@ -180,8 +181,8 @@ def AnalyzeTextAllSVMT(init_conf, conf_path):
 
 def FormaterPourAlignement(sep):
     """
-    Met les deux portions de corpus annote (gold et test) a un format directement comprehensible
-    par l'aligneur.
+    Put the two portions of annotated corpus (gold and test) into a format 
+    directly understandable by the aligner.
     """
     for i in range(1,numfold+1):
         chdir(results + "/" + str(i))
@@ -195,7 +196,7 @@ def Aligner():
     for i in range(1,numfold+1): 
         chdir(results + "/" + str(i))
         print "\n\n ALIGNEMENT PARTITION "+str(i) + " - " + getcwd()
-        system("../../aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log")
+        system("%(path)s//aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log" % { "path" : PELF_BIN_PATH } )
         chdir("../..")
 
 def checkConfig(conf):
@@ -211,7 +212,7 @@ def checkConfig(conf):
       elif line.strip() == '<item value="DynamicSvmToolPosTagger"/>': method = 'dynsvmtool'
 
   if not foundDumper:
-    sys.exit(" ******* TextDumper ne semble pas être activé ! Arrêt... *******")
+    sys.exit(" ******* TextDumper seems to not being activated! Stop... *******")
   elif method == 'none':
     raise Exception('No method found, was expecting Viterbi of SvmTool')
   else: return method
@@ -250,17 +251,16 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
             pass
 
     if forceTrain or not trained(lang, tagger):
-        print "ENTRAINEMENT !"
+        print "TRAINING !"
         try: rmtree(results)
         except: pass
         print """ \n
         ==================================================
-        ====         Evaluation du POS-tagger         ====
+        ====         PoS-tagger Evaluation         ====
         ==================================================
         
-Les donnees produites au cours de l'evaluation sont
-conservees sous results.%s      
-        """%lang
+Data produced are available in results.%s.%s      
+        """%(lang,tagger)
         print " ******* CORPUS USED: "+corpus+" *******  \n"
         print " ******* SEPARATOR: "+sep+" *******  \n"
         makeTree()
