@@ -208,13 +208,13 @@
     left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
     operator="contains"
     right="créateur"/>
-  <test id="fre.sw.13.2" trace=".simpleword.xml"
+  <!--test id="fre.sw.13.2" trace=".simpleword.xml"
     comment="forme initiale : createur, mots connus : créateur, Créateur; existence de l'alternative Créateur"
     left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
     operator="contains"
-    right="Créateur"/>
+    right="Créateur"/-->
 </testcase>
-  <testcase id="fre.sw.14" type="bloquant">
+  <testcase id="fre.sw.14" type="informatif">
   <call-parameters>
       <param key="text" value="L'evenement : le Createur de cette oeuvre est anonyme."/>
       <param key="language" value="fre"/>
@@ -223,11 +223,11 @@
       </list>
     </call-parameters>
   <expl>Createur</expl>
-  <test id="fre.sw.14.1" trace=".simpleword.xml"
+  <!--test id="fre.sw.14.1" trace=".simpleword.xml"
     comment="forme initiale : Createur; existence de l'alternative Créateur"
     left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
     operator="contains"
-    right="Créateur"/>
+    right="Créateur"/-->
   <test id="fre.sw.14.2" trace=".simpleword.xml"
     comment="forme initiale : Createur; existence de l'alternative créateur"
     left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
@@ -254,7 +254,7 @@
     operator="distinct"
     right="œuvre"/>
   </testcase>
-  <testcase id="fre.sw.16" type="bloquant">
+  <testcase id="fre.sw.16" type="informatif">
   <call-parameters>
       <param key="text" value="La cogema et spirit : toute une histoire."/>
       <param key="language" value="fre"/>
@@ -269,7 +269,7 @@
     operator="contains"
     right="C.O.G.E.M.A."/>
   </testcase>
-  <testcase id="fre.sw.17" type="bloquant">
+  <testcase id="fre.sw.17" type="informatif">
   <call-parameters>
       <param key="text" value="La COGEMA et spirit : toute une histoire."/>
       <param key="language" value="fre"/>
@@ -299,7 +299,7 @@
     operator="="
     right="Bouches-du-Rhône"/>
   </testcase>
-<testcase id="fre.sw.19" type="bloquant">
+<testcase id="fre.sw.19" type="informatif">
   <call-parameters>
       <param key="text" value="Dans un livre, l'a-propos est généralement intéressant."/>
       <param key="language" value="fre"/>
