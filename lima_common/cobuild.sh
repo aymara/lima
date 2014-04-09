@@ -19,6 +19,6 @@
 install -d obuild
 pushd obuild
 cmake -DCMAKE_INSTALL_PREFIX=$AMOSE_DIST -DCMAKE_BUILD_TYPE=Release ..
-make -j4 && \
+make -j2 && \
 make install 
 popd
