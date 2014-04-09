@@ -26,7 +26,7 @@
   <expl>tiret séparateur entre deux noms propres : on trouve France avec une macro categorie NP.</expl>
   <test id="eng.hyphen.1.2" trace=".hyphen.xml"
     comment="on trouve France avec une macro categorie NP"
-    left="XPATH#//data_structure/vertex[token[position=5][length=6]][data//property/p[@prop='MACRO'][@val='L_NP']]"
+    left="XPATH#//data_structure/vertex[token[position=5][length=6]][data//property/p[@prop='MACRO'][@val='NP']]"
     operator="exists"
     right=""/>
 </testcase>
@@ -41,7 +41,7 @@
   <expl>tiret séparateur entre deux noms propres : on trouve Angleterre avec une macro categorie NP.</expl>
   <test id="eng.hyphen.1.3" trace=".hyphen.xml"
     comment="on trouve England avec une macro categorie NP"
-    left="XPATH#//data_structure/vertex[token[position=12][length=7]][data//property/p[@prop='MACRO'][@val='L_NP']]"
+    left="XPATH#//data_structure/vertex[token[position=12][length=7]][data//property/p[@prop='MACRO'][@val='NP']]"
     operator="exists"
     right=""/>
 </testcase>
@@ -93,7 +93,7 @@
     comment="france transformé en France avec une macro categorie NP"
     left="XPATH#//data_structure/vertex[token[position=5][length=6]]/data//property/p[@prop='MACRO']/@val"
     operator="="
-    right="L_NP"/>
+    right="NP"/>
 </testcase>
 <testcase id="eng.hyphen.2.3" type="bloquant">
   <call-parameters>
@@ -113,7 +113,7 @@
     comment="angleterre transformé en Angleterre avec une macro categorie NP"
     left="XPATH#//data_structure/vertex[token[position=12][length=7]]/data//property/p[@prop='MACRO']/@val"
     operator="="
-    right="L_NP"/>
+    right="NP"/>
 </testcase>
 <testcase id="eng.hyphen.3.1" type="bloquant">
   <call-parameters>
