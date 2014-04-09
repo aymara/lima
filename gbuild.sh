@@ -27,7 +27,7 @@ if [[ $1 == "release" ]]; then
     install -d $build_prefix/release
     pushd $build_prefix/release
     cmake -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Release $source_dir
-    make -j4 && make install
+    make -j2 && make install
     result=$?
     popd
 else
@@ -35,7 +35,7 @@ else
     install -d $build_prefix/debug
     pushd $build_prefix/debug
     cmake -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Debug $source_dir
-    make -j4 && make install
+    make -j2 && make install
     result=$?
     popd
 fi
