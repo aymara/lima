@@ -99,7 +99,7 @@ void ExternalProcessUnit::init(
     m_dumper=manager->getObject(dumperName);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LERROR << "Missing 'dumper' parameter in ExternalProcessUnit group for language "
+    LERROR << "MisCommon::sing 'dumper' parameter in ExternalProcessUnit group for language "
            << (int)language << " !" << LENDL;
     throw InvalidConfiguration();
   }
@@ -108,6 +108,9 @@ void ExternalProcessUnit::init(
     string loaderName=unitConfiguration.getParamsValueAtKey("loader");
     // create the loader
     m_loader=manager->getObject(loaderName);
+  }
+  catch (InvalidConfiguration& ) {
+    m_loader = 0;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LERROR << "Missing 'loader' parameter in ExternalProcessUnit group for language "
@@ -166,12 +169,17 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
   LDEBUG << "ExternalProcessUnit: apply external program" << LENDL;
   QProcess::execute(m_commandLine.c_str());
 
-  // load results from the external program with the given loader
-  LDEBUG << "ExternalProcessUnit: read results" << LENDL;
-  returnCode=m_loader->process(analysis);
-  if (returnCode!=SUCCESS_ID) {
-    LERROR << "ExternalProcessUnit: failed to load data from temporary file" << LENDL;
-    return returnCode;
+  if (m_loader != 0) {
+    // load results from the external program with the given loader
+    LDEBUG << "ExternalProcessUnit: read results" << LENDL;
+    returnCode=m_loader->process(analysis);
+    if (returnCode!=SUCCESS_ID) {
+      LERROR << "ExternalProcessUnit: failed to load data from temporary file" << LENDL;
+      return returnCode;
+    }
+  }
+  else {
+    LWARN << "ExternalProcessUnit: no loader defined for the current external process unit";
   }
   
   TimeUtils::logElapsedTime("ExternalProcessUnit");
