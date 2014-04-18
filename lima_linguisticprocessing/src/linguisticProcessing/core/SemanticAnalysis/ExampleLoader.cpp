@@ -95,16 +95,17 @@ LimaStatusCode ExampleLoader::process(AnalysisContent& analysis) const
       LinguisticGraph::vertex_iterator vxItr,vxItrEnd;
       boost::tie(vxItr,vxItrEnd) = boost::vertices(*lingGraph);
       for (;vxItr!=vxItrEnd;vxItr++){
-        MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, vxItr);
+       //MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, vxItr);
         Token* ft=get(vertex_token,*lingGraph,*vxItr);
         if( ft!=0){
-        Q_FOREACH(uint64_t i, handler.m_tagIndex.keys()) {
-          const QString tag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(handler.m_tagIndex[i]));
+        //Q_FOREACH(uint64_t i, handler.m_tagIndex.keys()) {
+          const QString tag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(handler.m_tagIndex[ft->position()]));
           //si différence entre valeur de la map et noeud du graphe à la position n, remplacer la valeur du noeud //par la valeur de la map
-          if((ft->position()==i)&&(tag!=ft->stringForm())){
+          if(tag!=ft->stringForm()){
               cout << "le token a la position " << ft->position() << "passe de " << ft->stringForm() << "a " << tag << endl;
+              //morphoData
             }
-          }
+          //}
         }
       }
     }
@@ -173,8 +174,8 @@ bool ExampleLoader::XMLHandler::startElement(const QString & namespaceURI, const
   LIMA_UNUSED(qName);
   //PROCESSORSLOGINIT;
   //LDEBUG << "ExampleLoader::XMLHandler start element "  << eltName;
-  
-  if (eltName=="w") 
+
+  if (eltName=="w")
   {
     LinguisticCode posInt=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(attributes.value("pos").toStdString());
     m_tagIndex[attributes.value("p").toInt()] = posInt;
