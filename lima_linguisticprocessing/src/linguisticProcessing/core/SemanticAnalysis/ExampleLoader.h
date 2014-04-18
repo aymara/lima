@@ -24,7 +24,7 @@
  * copyright   Copyright (C) 2014 by CEA LIST
  * Project     mm_linguisticprocessing
  *
- * @brief      an example Loader class 
+ * @brief      an example Loader class
  *
  *
  ***********************************************************************/
@@ -49,19 +49,19 @@ namespace Example {
 class ExampleLoader : public AnalysisLoader
 {
  public:
-  ExampleLoader(); 
+  ExampleLoader();
   virtual ~ExampleLoader();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
             Manager* manager);
 
   LimaStatusCode process(AnalysisContent& analysis) const;
-  
+
  private:
   MediaId m_language;
   std::string m_graph;
   QXmlSimpleReader* m_parser;   /*< XML parser for the loader*/
-  
+
   // XML handler
   class XMLHandler : public QXmlDefaultHandler
   {
@@ -70,20 +70,19 @@ class ExampleLoader : public AnalysisLoader
 
     XMLHandler(MediaId language, AnalysisContent& analysis, LinguisticAnalysisStructure::AnalysisGraph* graph);
     virtual ~XMLHandler();
-    
+
     // -----------------------------------------------------------------------
     //  Implementations of the SAX DocumentHandler interface
     // -----------------------------------------------------------------------
     bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
-    
+
     // -----------------------------------------------------------------------
     //  Implementations of the SAX ErrorHandler interface
     // -----------------------------------------------------------------------
     bool warning(const QXmlParseException & exception);
     bool error(const QXmlParseException & exception);
     bool fatalError(const QXmlParseException & exception);
-    
-    
+
   private:
     MediaId m_language;
     AnalysisContent& m_analysis;
@@ -95,7 +94,7 @@ class ExampleLoader : public AnalysisLoader
     std::string m_currentElement;
 
   };
-  
+
 };
 
 } // end namespace
