@@ -95,17 +95,16 @@ LimaStatusCode ExampleLoader::process(AnalysisContent& analysis) const
       LinguisticGraph::vertex_iterator vxItr,vxItrEnd;
       boost::tie(vxItr,vxItrEnd) = boost::vertices(*lingGraph);
       for (;vxItr!=vxItrEnd;vxItr++){
-       //MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, vxItr);
+       MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, vxItr);
         Token* ft=get(vertex_token,*lingGraph,*vxItr);
         if( ft!=0){
-        //Q_FOREACH(uint64_t i, handler.m_tagIndex.keys()) {
           const QString tag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(handler.m_tagIndex[ft->position()]));
           //si différence entre valeur de la map et noeud du graphe à la position n, remplacer la valeur du noeud //par la valeur de la map
           if(tag!=ft->stringForm()){
               cout << "le token a la position " << ft->position() << "passe de " << ft->stringForm() << "a " << tag << endl;
+              cout << " il y a " << morphoData->size() << " catégories dans le graphe " << endl; 
               //morphoData
             }
-          //}
         }
       }
     }
@@ -116,34 +115,6 @@ LimaStatusCode ExampleLoader::process(AnalysisContent& analysis) const
      return SUCCESS_ID;
   }
 }
-
-//   try
-//   {
-//     ExampleLoader::XMLHandler handler(m_language,analysis,anaGraph);
-//     m_parser->setContentHandler(&handler);
-//     m_parser->setErrorHandler(&handler);
-//     QFile file("/tmp/mm-lp.morphoSyntacticalAnalysis_modif.tmp");
-//     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-//       throw XMLException();
-//     if (!m_parser->parse( QXmlInputSource(&file)))
-//     {
-//       throw XMLException();
-//     }
-//     Q_FOREACH(int i, handler.m_tagIndex.keys()) {
-//       cout << i << ": " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(handler.m_tagIndex[i]) << endl;
-//     }
-//
-//     PROCESSORSLOGINIT;
-//     LERROR << "Adress of tag index is " << handler.m_tagIndex;
-//
-//   }
-//   catch (const XMLException& )
-//   {
-//     PROCESSORSLOGINIT;
-//     LERROR << "Error: failed to parse XML input file";
-//   }
-//
-//
 
 
 //***********************************************************************
