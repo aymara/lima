@@ -54,7 +54,7 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
 # hack to take initials into account -> should be in tokenizer
 
-@Initial=(A.,B.,C.,D.,E.,F.,G.,H.,I.,J.,K.,L.,M.,N.,O.,P.,Q.,R.,S.,T.,U.,N.,W.,X.,Y.,Z.)
+@Initial=(A.,B.,C.,D.,E.,F.,G.,H.,I.,J.,K.,L.,M.,N.,O.,P.,Q.,R.,S.,T.,U.,V.,W.,X.,Y.,Z.)
 
 @Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 
