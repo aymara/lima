@@ -85,7 +85,7 @@ LimaStatusCode ExampleLoader::process(AnalysisContent& analysis) const
       ExampleLoader::XMLHandler handler(m_language,analysis,anaGraph);
       m_parser->setContentHandler(&handler);
       m_parser->setErrorHandler(&handler);
-      QFile file("/tmp/mm-lp.morphoSyntacticalAnalysis_modif.tmp");
+      QFile file("/tmp/mm-lp.morphoSyntacticalAnalysis-changed.tmp");
       if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         throw XMLException();
       if (!m_parser->parse( QXmlInputSource(&file)))
@@ -95,16 +95,34 @@ LimaStatusCode ExampleLoader::process(AnalysisContent& analysis) const
       LinguisticGraph::vertex_iterator vxItr,vxItrEnd;
       boost::tie(vxItr,vxItrEnd) = boost::vertices(*lingGraph);
       for (;vxItr!=vxItrEnd;vxItr++){
-       MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, vxItr);
+       MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, *vxItr);
         Token* ft=get(vertex_token,*lingGraph,*vxItr);
         if( ft!=0){
           const QString tag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(handler.m_tagIndex[ft->position()]));
+
+          const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+          const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
+
+          const QString graphTag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(m_propertyAccessor)));
+
+          cout << " la premiere categorie de  " << ft->stringForm() << " est " << graphTag << endl;
           //si différence entre valeur de la map et noeud du graphe à la position n, remplacer la valeur du noeud //par la valeur de la map
-          if(tag!=ft->stringForm()){
-              cout << "le token a la position " << ft->position() << "passe de " << ft->stringForm() << "a " << tag << endl;
-              cout << " il y a " << morphoData->size() << " catégories dans le graphe " << endl; 
-              //morphoData
-            }
+          if(tag!=graphTag){
+            const QString tagBefore=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->at(0).properties));
+            
+            cout << "le token a la position " << ft->position() << " passe de " << morphoData->at(0).properties  << endl;
+            morphoData->at(0).properties=handler.m_tagIndex[ft->position()];
+            cout << " a la position " << morphoData->at(0).properties << endl;
+            
+            const QString tagAfter=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->at(0).properties));
+            
+            cout << "Et la chaîne passe de " << tagBefore << " à " << tagAfter << endl;
+           
+           //LinguisticCode lc = morphoData->at(0).properties;
+           
+           put(vertex_data, *lingGraph, *vxItr, morphoData);
+           cout << " a la position " << morphoData->at(0).properties << endl;
+           }
         }
       }
     }

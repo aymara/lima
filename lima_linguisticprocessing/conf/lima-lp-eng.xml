@@ -47,11 +47,13 @@
         <!--item value="tagFusion"/-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
-        <!--item value="conllDumper"/-->
+        <item value="conllDumper"/>
         <!--item value="bowDumper"/-->
-        <item value="textDumper"/>
+        <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
+        <!--item value="temporalXmlDumper"/-->
+        <item value="afterFusionXmlDumper"/>
       </list>
     </group>
     <group name="query" class="ProcessUnitPipeline">
@@ -380,10 +382,10 @@
       </map>
     </group>
     <group name="tagFusion" class="ExternalProcessUnit">
-      <param key="loader" value="tagFusionLoader"/>
       <param key="dumper" value="temporalXmlDumper"/>
       <param key="tmpFileName" value="/tmp/mm-lp.morphoSyntacticalAnalysis.tmp"/>
       <param key="command" value="python /home/clemence/conversion_tag.py"/>
+      <param key="loader" value="tagFusionLoader"/>
     </group>
     <group name="tagFusionLoader" class="ExampleLoader">
       <param key="inputFile" value="..."/>
@@ -563,7 +565,7 @@
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="conllDumper" class="ConllDumper">
-      <param key="handler" value="simpleStreamHandler"/>
+      <param key="outputSuffix" value=".conll"/>
       <param key="stopList" value="stopList"/>
       <param key="useStopList" value="true"/>
       <param key="useEmptyMacro" value="true"/>
@@ -771,6 +773,9 @@
     </group>
     <group name="temporalXmlDumper" class="SimpleXmlDumper">
      <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis.tmp"/>
+    </group>
+    <group name="afterFusionXmlDumper" class="SimpleXmlDumper">
+     <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis-changed.tmp"/>
     </group>
   </module>
 <!-- ******************************************

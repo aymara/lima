@@ -225,19 +225,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       }
     }
   }
-  else { // output all vertices
-    LinguisticGraphVertexIt vxItr,vxItrEnd;
-    boost::tie(vxItr,vxItrEnd) = vertices(*graph);
-    for (;vxItr!=vxItrEnd;vxItr++)
-      {
-        Token* ft=get(vertex_token,*graph,*vxItr);
-        if( ft!=0)
-          {
-            categoriesMapping[ft].push_back(get(vertex_data,*graph,*vxItr));
-            nodesMapping[ft]  = *vxItr;
-          }
-      }
-  }
 
   std::string previousNE = "";
   for (std::map<Token*,std::vector<MorphoSyntacticData*>,lTokenPosition >::const_iterator ftItr=categoriesMapping.begin();
