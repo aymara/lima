@@ -49,7 +49,7 @@
   <expl>expression idiomatique déclenché sur lemme</expl>
   <test id="fre.idiom.2.1" trace=".simpleword.xml"
     comment="discutions est le verbe discuter"
-    left="XPATH#//data_structure/vertex[token[position=6][length=10]]/data//form[@lemma='discuter']/property/p[@prop='MACRO'][@val='L_V']"
+    left="XPATH#//data_structure/vertex[token[position=6][length=10]]/data//form[@lemma='discuter']/property/p[@prop='MACRO'][@val='V']"
     operator="exists"
     right=""/>
   <test id="fre.idiom.2.2" trace=".idiom.xml"
@@ -70,14 +70,14 @@
   <expl>expression idiomatique déclenché sur lemme</expl>
   <test id="fre.idiom.3.1" trace=".simpleword.xml"
     comment="fera est le verbe faire"
-    left="XPATH#//data_structure/vertex[token[position=4][length=4]]/data//form[@lemma='faire'][property/p[@prop='MACRO'][@val='L_V']]"
+    left="XPATH#//data_structure/vertex[token[position=4][length=4]]/data//form[@lemma='faire'][property/p[@prop='MACRO'][@val='V']]"
     operator="exists"
     right=""/>
   <test id="fre.idiom.3.2" trace=".idiom.xml"
     comment="faire l'affaire est reconnu comme expression idiomatique, ne possedant qu'une categorie verbe."
     left="XPATH#//data_structure/vertex[token[position=4][length=14]]/data//property/p[@prop='MACRO']/@val"
     operator="="
-    right="L_V"/>
+    right="V"/>
 </testcase>
 <testcase id="fre.idiom.4.a" type="bloquant">
   <call-parameters>
@@ -97,7 +97,7 @@
     conditionnal="yes"/>
   <test id="fre.idiom.4.2" trace=".idiom.xml"
     comment="Afrique du sud est reconnu comme expression idiomatique, ne possede qu'une categorie np."
-    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='L_NP']"
+    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='NP']"
     operator="exists"
     right=""/>
 </testcase>
@@ -119,7 +119,7 @@
     conditionnal="yes"/>
   <test id="fre.idiom.4.4" trace=".idiom.xml"
     comment="Afrique du sud est reconnu comme expression idiomatique, ne possede qu'une categorie np."
-    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='L_NP']"
+    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='NP']"
     operator="exists"
     right=""/>
 </testcase>
@@ -141,7 +141,7 @@
     conditionnal="yes"/>
   <test id="fre.idiom.5.2" trace=".idiom.xml"
     comment="Afrique du sud est reconnu comme expression idiomatique et est np"
-    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='L_NP']"
+    left="XPATH#//data_structure/vertex[token[position=3][length=14]]/data//property/p[@prop='MACRO'][@val='NP']"
     operator="exists"
     right=""/>
 </testcase>
@@ -157,7 +157,7 @@
   <expl>avoir beau faire</expl>
   <test id="fre.idiom.6.1" trace=".simpleword.xml"
     comment="'a' est le verbe avoir"
-    left="XPATH#//data_structure/vertex[token[position=4][length=1]]/data//form[@lemma='avoir'][property/p[@prop='MACRO'][@val='L_V']]"
+    left="XPATH#//data_structure/vertex[token[position=4][length=1]]/data//form[@lemma='avoir'][property/p[@prop='MACRO'][@val='V']]"
     operator="exists"
     right=""/>
   <test id="fre.idiom.6.2" trace=".idiom.xml"
@@ -184,7 +184,7 @@
     conditionnal="yes"/>
   <test id="fre.idiom.6.4" trace=".idiom.xml"
     comment="avoir beau faire est reconnu comme expression idiomatique et est v"
-    left="XPATH#//data_structure/vertex[token[position=4][length=12]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    left="XPATH#//data_structure/vertex[token[position=4][length=12]]/data//property/p[@prop='MACRO'][@val='V']"
     operator="exists"
     right=""/>
 </testcase>
@@ -206,17 +206,17 @@
     conditionnal="yes"/>
   <test id="fre.idiom.6.6" trace=".idiom.xml"
     comment="l'expression avoir beau faire est verbe"
-    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='MACRO'][@val='V']"
     operator="exists"
     right=""/>
   <test id="fre.idiom.6.7" trace=".idiom.xml"
     comment="l'expression avoir beau faire est verbe intransitif (avoir est verbe transitif)"
-    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='SYNTAX'][@val='L_INTRANS']"
+    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='SYNTAX'][@val='INTRANS']"
     operator="exists"
     right=""/>
   <test id="fre.idiom.6.8" trace=".idiom.xml"
     comment="l'expression avoir beau faire n'est pas nom (avoir peut l'être)"
-    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='MACRO'][@val='L_NC']"
+    left="XPATH#//data_structure/vertex[token[position=1][length=16]]/data//property/p[@prop='MACRO'][@val='NC']"
     operator="notexists"
     right=""/>
 </testcase>
@@ -237,7 +237,7 @@
     right=""/>
   <test id="fre.idiom.7.2" trace=".idiom.xml"
     comment="Berger allemand est reconnu comme expression idiomatique et est nc"
-    left="XPATH#//data_structure/vertex[token[position=4][length=15]]/data//property/p[@prop='MACRO'][@val='L_NC']"
+    left="XPATH#//data_structure/vertex[token[position=4][length=15]]/data//property/p[@prop='MACRO'][@val='NC']"
     operator="exists"
     right=""/>
 </testcase>
@@ -253,7 +253,7 @@
   <expl>déclenchement sur le lemme 'électrique' qui n'est pas la tête de l'expression</expl>
   <test id="fre.idiom.8.1" trace=".simpleword.xml"
     comment="électrique est un adjectif"
-    left="XPATH#//data_structure/vertex[token[position=39][length=10]]/data//form[@lemma='électrique'][property/p[@prop='MACRO'][@val='L_ADJ']]"
+    left="XPATH#//data_structure/vertex[token[position=39][length=10]]/data//form[@lemma='électrique'][property/p[@prop='MACRO'][@val='ADJ']]"
     operator="exists"
     right=""/>
   <test id="fre.idiom.8.2" trace=".idiom.xml"
@@ -280,7 +280,7 @@
     conditionnal="yes"/>
   <test id="fre.idiom.8.4" trace=".idiom.xml"
     comment="chaise électrique est reconnu comme expression idiomatique et est nc"
-    left="XPATH#//data_structure/vertex[token[position=32][length=17]]/data//property/p[@prop='MACRO'][@val='L_NC']"
+    left="XPATH#//data_structure/vertex[token[position=32][length=17]]/data//property/p[@prop='MACRO'][@val='NC']"
     operator="exists"
     right=""/>
 </testcase>
@@ -318,7 +318,7 @@
     conditionnal="yes"/>
   <test id="fre.idiom.9.4" trace=".idiom.xml"
     comment="s'absenter est reconnu comme expression idiomatique et est v"
-    left="XPATH#//data_structure/vertex[token[position=4][length=9]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    left="XPATH#//data_structure/vertex[token[position=4][length=9]]/data//property/p[@prop='MACRO'][@val='V']"
     operator="exists"
     right=""/>
 </testcase>
@@ -339,7 +339,7 @@
     right=""/>
   <test id="fre.idiom.10.2" trace=".idiom.xml"
     comment="s'absenter est reconnu comme expression idiomatique et est v"
-    left="XPATH#//data_structure/vertex[token[position=4][length=13]]/data//property/p[@prop='MACRO'][@val='L_V']"
+    left="XPATH#//data_structure/vertex[token[position=4][length=13]]/data//property/p[@prop='MACRO'][@val='V']"
     operator="exists"
     right=""/>
 </testcase>
@@ -377,7 +377,7 @@
     conditional="yes"/>
   <test id="fre.idiom.11.4" trace=".idiom.xml"
     comment="au fur et à mesure de est reconnu comme expression idiomatique et est prep"
-    left="XPATH#//data_structure/vertex[token[position=64][length=21]]/data//property/p[@prop='MACRO'][@val='L_PREP']"
+    left="XPATH#//data_structure/vertex[token[position=64][length=21]]/data//property/p[@prop='MACRO'][@val='PREP']"
     operator="exists"
     right=""/> 
 </testcase>
@@ -415,7 +415,7 @@
     conditional="yes"/>
   <test id="fre.idiom.12.4" trace=".idiom.xml"
     comment="au dessus de est prep"
-    left="XPATH#//data_structure/vertex[token[position=17][length=12]]/data//property/p[@prop='MACRO'][@val='L_PREP']"
+    left="XPATH#//data_structure/vertex[token[position=17][length=12]]/data//property/p[@prop='MACRO'][@val='PREP']"
     operator="exists"
     right=""/>
 </testcase>
@@ -431,7 +431,7 @@
   <expl>déclenchement sur le lemme 'longue' en tant qu'adjectif.</expl>
   <test id="fre.idiom.13.1" trace=".simpleword.xml"
     comment="déclenchement sur 'long'"
-    left="XPATH#//data_structure/vertex[token[position=13][length=7]]/data//form[@lemma='long'][property/p[@prop='MACRO'][@val='L_ADJ']]"
+    left="XPATH#//data_structure/vertex[token[position=13][length=7]]/data//form[@lemma='long'][property/p[@prop='MACRO'][@val='ADJ']]"
     operator="exists"
     right=""/>
   <test id="fre.idiom.13.2" trace=".idiom.xml"
@@ -768,7 +768,7 @@
     comment="le token résultant a les bonnes propriétés"
     left="XPATH#//data_structure/vertex[token[position=5][length=16]]/data//property/p[@prop='NUMBER']/@val"
     operator="="
-    right="L_PLUR"/> 
+    right="PLUR"/> 
 </testcase>
 
 <testcase id="fre.idiom.31" type="pertinent">
@@ -789,17 +789,17 @@
     comment="le token résultant a les bonnes propriétés (nombre)"
     left="XPATH#//data_structure/vertex[token[position=5][length=12]]/data//property/p[@prop='NUMBER']/@val"
     operator="="
-    right="L_PLUR"/> 
+    right="PLUR"/> 
   <test id="fre.idiom.31.3" trace=".idiom.xml"
     comment="le token résultant a les bonnes propriétés (personne)"
     left="XPATH#//data_structure/vertex[token[position=5][length=12]]/data//property/p[@prop='PERSON']/@val"
     operator="="
-    right="L_3"/> 
+    right="3"/> 
   <test id="fre.idiom.31.4" trace=".idiom.xml"
     comment="le token résultant a les bonnes propriétés (temps)"
     left="XPATH#//data_structure/vertex[token[position=5][length=12]]/data//property/p[@prop='TIME']/@val"
     operator="="
-    right="L_IMPFT"/> 
+    right="IMPFT"/> 
 </testcase>
 
 <testcase id="fre.idiom.32" type="pertinent">
@@ -820,22 +820,22 @@
     comment="le token résultant a les bonnes propriétés (nombre)"
     left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='NUMBER']/@val"
     operator="="
-    right="L_PLUR"/> 
+    right="PLUR"/> 
   <test id="fre.idiom.32.3" trace=".idiom.xml"
     comment="le token résultant a les bonnes propriétés (personne)"
     left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='PERSON']/@val"
     operator="="
-    right="L_1"/> 
+    right="1"/> 
   <test id="fre.idiom.32.4" trace=".idiom.xml"
     comment="le token résultant a les bonnes propriétés (temps)"
     left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='TIME']/@val"
     operator="="
-    right="L_PRES"/> 
+    right="PRES"/> 
   <test id="fre.idiom.32.5" trace=".idiom.xml"
     comment="le token résultant a les bonnes propriétés (mode: change la micro)"
     left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='MICRO']/@val"
     operator="="
-    right="L_VERBE_PRINCIPAL_SUBJONCTIF"/> 
+    right="VERBE_PRINCIPAL_SUBJONCTIF"/> 
 </testcase>
 
 <testcase id="fre.idiom.33" type="pertinent">

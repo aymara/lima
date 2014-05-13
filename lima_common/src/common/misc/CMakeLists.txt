@@ -23,6 +23,7 @@ SET(lima-common-misc_LIB_SRCS
    AbstractAccessIterators.cpp
    fsaStringsPool.cpp
    stringspool.cpp
+   linenoise.c
    )
 
 add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS})
@@ -50,4 +51,5 @@ install(FILES
     XSLExceptionnowarn.hpp
     NodeRefListnowarn.hpp
     XalanOutputStreamPrintWriternowarn.hpp
+    linenoise.h
   DESTINATION include/common/misc)

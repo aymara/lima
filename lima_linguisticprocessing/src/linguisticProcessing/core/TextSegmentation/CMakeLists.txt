@@ -55,4 +55,5 @@ install(FILES
   SentenceBoundariesXmlLogger.h
   TemporalSegmentationFeatures.h
   CRFSegmentLoader.h
+  TextSegmentationExport.h
   DESTINATION include/linguisticProcessing/core/TextSegmentation)

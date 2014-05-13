@@ -157,6 +157,7 @@ typedef struct ParamStruct {
   bool runIndex;
   bool addWord;
   bool runSpelling;
+  uint64_t termId;
   bool composed;
   bool withAssert;
   std::string inputDicoComp;
@@ -363,10 +364,19 @@ template <typename dictType>
                       typename std::vector<Lima::LimaString >::const_iterator end,
                       const std::vector<int>& indexes )
 //void DictTester<dictType>::testSpelling( int *indexVal, int nbIndex )
-  {
-    LIMA_UNUSED(end);
+{
+  LIMA_UNUSED(end);
   typename std::vector<Lima::LimaString >::const_iterator lemma = begin;
   
+  // if size of indexes = 1, we just display the string return by getSpelling()
+  std::cout <<  "testSpelling: getSpelling: indexes.size()=" << indexes.size() << std::endl;
+  if( indexes.size() == 1 ) {
+    Lima::LimaString spelling;
+    spelling = m_dico.getSpelling(indexes[0]);
+    std::cout <<  "testSpelling: getSpelling(" << indexes[0]
+                << ")=" << Lima::Common::Misc::limastring2utf8stdstring(spelling) << std::endl;
+  }
+  // for each id, compare result of getSpelling with element in vector of string [begin,end]
   for( uint32_t i = 0 ; i < indexes.size() ; i++ ) {
     Lima::LimaString spelling;
     try{
@@ -516,6 +526,7 @@ int main(int argc, char *argv[])
     false,    // runIndex
     false,    // addWord
     false,    // runSpelling
+    -1,       // termId (-1 means no termId specified by user)
     false,    // composed
     false,    // withAssert
     std::string()    // inputDico
@@ -540,6 +551,7 @@ int main(int argc, char *argv[])
                 << " [--runIndex]"
                 << " [--addWord]"
                 << " [--runSpelling]"
+                << " [--termId=nn"
                 << " [--composed=<filename>]"
                 << " [--charSize=<1|2|4>]"
                 << " [--withoutTemplate"
@@ -605,6 +617,9 @@ int main(int argc, char *argv[])
     }
     else if ( arg == "--runSpelling" ){
       param.runSpelling = true;
+    }
+    else if ( (pos = arg.indexOf("--termId=")) != -1 ){
+      param.termId = (arg.mid(pos+9)).toInt();
     }
     else if ( arg == "--reverse" ){
       param.trieDirectionForward = false;
@@ -800,15 +815,22 @@ int main(int argc, char *argv[])
       std::vector<Lima::LimaString > listOfWords;
       std::vector<int> indexes;
 
-      if( param.listOfWords.size() > 0 ) {
+      // case 1: ask for spelling of a word given a termId
+      if( param.termId > 0 ) {
+        indexes.push_back(param.termId);
+	std::cerr << "testSpelling with unique termId " << indexes[0] << std::endl;
+      }
+      // case 2: check if getSpelling is ok for every id 
+      // (listOfWords is supposed to contain the complete ordered list of terms
+      else if( param.listOfWords.size() > 0 ) {
         readListOfWords(param.listOfWords, listOfWords );
+	int index = 1;
+	for( std::vector<Lima::LimaString >::const_iterator it = listOfWords.begin() ;
+	  it != listOfWords.end() ; it++ ) {
+	  indexes.push_back(index++);
+	  std::cerr << "testSpelling with list of " << indexes.size() << " words" << std::endl;
+	}
       }
-      int index = 1;
-      for( std::vector<Lima::LimaString >::const_iterator it = listOfWords.begin() ;
-        it != listOfWords.end() ; it++ ) {
-        indexes.push_back(index++);
-      }
-      std::cerr << "testSpelling" << std::endl;
       wspareTester16->testSpelling(listOfWords.begin(), listOfWords.end(), indexes );
     }
     if( param.superWord) {

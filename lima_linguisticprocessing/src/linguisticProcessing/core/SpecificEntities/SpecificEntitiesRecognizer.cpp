@@ -272,7 +272,7 @@ processOnEachSentence(AnalysisContent& analysis) const
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (anagraph==0) {
     SELOGINIT;
-    LERROR << "no graph '" << m_graph << "' available !!" << LENDL;
+    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no graph '" << m_graph << "' available !!" << LENDL;
     return MISSING_DATA;
   }
 
@@ -281,12 +281,12 @@ processOnEachSentence(AnalysisContent& analysis) const
   if (sb==0)
   {
     SELOGINIT;
-    LERROR << "no sentence bounds defined ! abort" << LENDL;
+    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no sentence bounds defined ! abort" << LENDL;
     return MISSING_DATA;
   }
   if (sb->graphId() != m_graph) {
     SELOGINIT;
-    LERROR << "SentenceBounds are computed on graph '" << sb->graphId() << "'" << LENDL;
+    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: SentenceBounds are computed on graph '" << sb->graphId() << "'" << LENDL;
     LERROR << "can't compute specificEntities on graph '" << m_graph << "' !" << LENDL;
     return INVALID_CONFIGURATION;
   }

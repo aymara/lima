@@ -36,6 +36,13 @@ SET(lima-lp-morphologicanalysis_LIB_SRCS
    AccentedConcatenatedDataHandler.cpp
 )
 
+if (ENCHANT_FOUND)
+SET(lima-lp-morphologicanalysis_LIB_SRCS
+  ${lima-lp-morphologicanalysis_LIB_SRCS}
+  EnchantSpellingAlternatives.cpp
+)
+endif (ENCHANT_FOUND)
+
 DECLARE_LIMA_PLUGIN(lima-lp-morphologicanalysis)
 
 target_link_libraries(lima-lp-morphologicanalysis
@@ -63,5 +70,16 @@ target_link_libraries(lima-lp-morphologicanalysis
 set_target_properties(lima-lp-morphologicanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-lp-morphologicanalysis DESTINATION lib)
+
+install(FILES
+  MorphologicAnalysisExport.h
+  MorphoSyntacticDataHandler.h
+  AlternativesReader.h
+  DesagglutinationResources.h
+  ConcatenatedDataHandler.h
+  SequenceEntryHandler.h
+  AccentedConcatenatedDataHandler.h
+DESTINATION include/linguisticProcessing/core/MorphologicAnalysis)
+
 
 ########### install files ###############

@@ -33,9 +33,9 @@
 #include "common/QsLog/QsLogDest.h"
 #include "common/QsLog/QsLogCategories.h"
 #include "common/QsLog/QsDebugOutput.h"
-#ifdef WIN32
+// #ifdef WIN32
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-#endif
+// #endif
 
 #include "linguisticProcessing/common/linguisticData/languageData.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
@@ -72,10 +72,10 @@ void closeHandlerOutputFile(std::ofstream* ofs);
 int main(int argc,char* argv[])
 {
   QCoreApplication a(argc, argv);
-#ifdef WIN32
+// #ifdef WIN32
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
-#endif
+// #endif
 
   std::string resourcesPath;
   std::string configDir;

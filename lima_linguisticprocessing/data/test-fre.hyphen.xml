@@ -27,7 +27,7 @@
   <expl>tiret séparateur entre deux noms propres : on trouve France avec une macro categorie NP.</expl>
   <test id="fre.hyphen.1.2" trace=".hyphen.xml"
     comment="on trouve France avec une macro categorie NP"
-    left="XPATH#//data_structure/vertex[token[position=10][length=6]]//property/p[@prop='MACRO'][@val='L_NP']"
+    left="XPATH#//data_structure/vertex[token[position=10][length=6]]//property/p[@prop='MACRO'][@val='NP']"
     operator="exists"
     right=""/>
 </testcase>
@@ -42,7 +42,7 @@
   <expl>tiret séparateur entre deux noms propres : on trouve Angleterre avec une macro categorie NP.</expl>
   <test id="fre.hyphen.1.3" trace=".hyphen.xml"
     comment="on trouve Angleterre avec une macro categorie NP"
-    left="XPATH#//data_structure/vertex[token[position=17][length=10]]//property/p[@prop='MACRO'][@val='L_NP']"
+    left="XPATH#//data_structure/vertex[token[position=17][length=10]]//property/p[@prop='MACRO'][@val='NP']"
     operator="exists"
     right=""/>
 </testcase>
@@ -76,7 +76,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.2.2" type="bloquant">
+<testcase id="fre.hyphen.2.2" type="informatif">
   <call-parameters>
       <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -85,18 +85,19 @@
       </list>
     </call-parameters>
   <expl>tiret séparateur entre deux noms propres : france transformé en France avec une macro categorie NP.</expl>
-  <test id="2.2.a" trace=".hyphen.xml"
+  <expl>Les noms propres comme France et Angleterre n'existent plus dans le dictionnaire (Lefff)</expl>
+  <!--test id="2.2.a" trace=".hyphen.xml"
     comment="france transformé en France"
     left="XPATH#//data_structure/vertex[token[position=10][length=6]]//form/@lemma"
     operator="="
-    right="France"/>
+    right="France"/-->
   <test id="2.2.b" trace=".hyphen.xml"
     comment="france a comme macro categorie NP"
     left="XPATH#//data_structure/vertex[token[position=10][length=6]]//property/p[@prop='MACRO']/@val"
     operator="="
-    right="L_NP"/>
+    right="NP"/>
 </testcase>
-<testcase id="fre.hyphen.2.3" type="bloquant">
+<testcase id="fre.hyphen.2.3" type="informatif">
   <call-parameters>
       <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -105,6 +106,7 @@
       </list>
     </call-parameters>
   <expl>tiret séparateur entre deux noms propres : angleterre transformé en Angleterre avec une macro categorie NP.</expl>
+  <expl>Les noms propres comme France et Angleterre n'existent plus dans le dictionnaire (Lefff): le test eszt passé de bloquant à informatif</expl>
   <test id="2.3.a" trace=".hyphen.xml"
     comment="angleterre transformé en Angleterre"
     left="XPATH#//data_structure/vertex[token[position=17][length=10]]//form/@lemma"
@@ -114,7 +116,7 @@
     comment="angleterre a comme macro categorie NP"
     left="XPATH#//data_structure/vertex[token[position=17][length=10]]//property/p[@prop='MACRO']/@val"
     operator="="
-    right="L_NP"/>
+    right="NP"/>
 </testcase>
 <testcase id="fre.hyphen.3.1" type="bloquant">
   <call-parameters>

@@ -249,4 +249,17 @@ target_link_libraries(testReadLexicon lima-common-factory lima-common-misc
 
 install(TARGETS testReadLexicon DESTINATION bin)
 
+########### next target ###############
+
+SET(testPropManager_SRCS
+   testPropManager.cpp
+)
+
+add_executable(testPropManager ${testPropManager_SRCS})
+
+target_link_libraries(testPropManager lima-common-factory lima-common-misc lima-common-mediaticdata lima-lp-linguisticdata
+  lima-common-data lima-common-fsaaccess ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
+
+install(TARGETS testPropManager DESTINATION bin)
+
 ########### install files ###############

@@ -41,6 +41,9 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtXml/QXmlSimpleReader>
+// #ifdef WIN32
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+// #endif
 
 using namespace Lima::Common::TGV;
 using namespace Lima::AnalysisValidation;
@@ -55,6 +58,10 @@ int main(int argc,char* argv[])
 {
   QCoreApplication a(argc, argv);
   QsLogging::initQsLog();
+// #ifdef WIN32
+  // Necessary to initialize factories under Windows
+  Lima::AmosePluginsManager::single();
+// #endif
   std::string resourcesPath=std::string(getenv("LIMA_RESOURCES"));
   std::string configDir=std::string(getenv("LIMA_CONF"));
   std::string lpConfigFile=std::string("lima-lp-tva.xml");

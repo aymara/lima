@@ -120,6 +120,8 @@ class LanguageDataPrivate
 
   std::map< std::string, SyntacticRelationId > m_syntacticRelations;
 
+public:
+    QDebug single(MediaId m_language);
 }
 ; // end class
 

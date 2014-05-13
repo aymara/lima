@@ -114,7 +114,7 @@ LimaStatusCode StatusLogger::process(
   }
   catch (LinguisticProcessingException& ) {}
 
-  ifstream statusIn(m_statusFile.c_str(), std::ifstream::in | std::ifstream::binary);
+  ifstream statusIn(m_statusFile.c_str(),ios::in | std::ifstream::binary);
   string line;
   while (!statusIn.eof())
   {

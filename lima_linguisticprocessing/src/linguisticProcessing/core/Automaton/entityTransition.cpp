@@ -102,7 +102,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (matches.empty())
   {
     AULOGINIT;
-    LERROR << "No annotation ("<<graph.getGraphId()<<", "<<v<<", \"annot\") available";
+    LERROR << "EntityTransition::compare: No annotation ("<<graph.getGraphId()<<", "<<v<<", \"annot\") available";
     return false;
   }
   AnnotationGraphVertex annotVertex = *(matches.begin());
