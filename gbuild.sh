@@ -35,7 +35,7 @@ else
     install -d $build_prefix/debug
     pushd $build_prefix/debug
     cmake -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Debug $source_dir
-    make -j2 && make install
+    make -j`grep -c ^processor /proc/cpuinfo` && make install
     result=$?
     popd
 fi
