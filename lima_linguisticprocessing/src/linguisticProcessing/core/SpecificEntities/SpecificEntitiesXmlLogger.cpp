@@ -303,8 +303,11 @@ outputEntity(std::ostream& out,
         featureItr=features.begin(),features_end=features.end();
       featureItr!=features_end; featureItr++)
       {
-        out << "<" << featureItr->getName() << ">"
-        << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
+        out << "<" << featureItr->getName();
+        out << " pos=\"" << featureItr->getPosition() << "\"";
+        out << " len=\"" << featureItr->getLength() << "\"";
+        out << ">";
+        out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
         << "</" << featureItr->getName() << ">";
       }
       out << "</norm>"
