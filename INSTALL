@@ -52,3 +52,10 @@ The order is important:
 2. lima_linguisticprocessing
 3. lima_linguisticdata
 
+== Build troubleshoutings
+
+* If you use your own compiled boost libraries alongside system boost libraries 
+AND cmake fails on lima_linguisticprocessings indicating it found your boost 
+version headers but it uses the system libraries, add the following definition 
+at the beginning of the root CMakeLists.txt of each subproject : 
+set(Boost_NO_SYSTEM_PATHS ON)
