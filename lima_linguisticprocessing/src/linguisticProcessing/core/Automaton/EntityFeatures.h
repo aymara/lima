@@ -74,10 +74,11 @@ public:
   const boost::any& getValue() const { return m_value; }
   boost::any getValue() { return m_value; }
 
-  void setPosition(const uint64_t& pos) { m_pos=pos; }
+  void setPosition(const uint64_t& pos) { m_pos=pos; m_hasPos=true; }
   void setLength(const uint64_t& val) { m_length=val; }
   uint64_t getPosition() const { return m_pos; }
   uint64_t getLength() const { return m_length; }
+  uint64_t hasPos() const { return m_hasPos; }
 
   // these functions test value type using RTTI: this is not really
   // efficient and should be avoided unless necessary (i.e. if the
@@ -88,6 +89,7 @@ public:
 private:
   std::string m_name;
   boost::any m_value;
+  bool m_hasPos;
   uint64_t m_pos;
   uint64_t m_length;
 };
