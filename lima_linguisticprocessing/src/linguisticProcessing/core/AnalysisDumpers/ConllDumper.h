@@ -80,10 +80,8 @@ private:
   const Common::PropertyCode::PropertyAccessor* m_timeAccessor; //Ajout
 
   std::string m_graph;
-  std::string m_NEgraph;
   std::string m_sep;
   std::string m_sepPOS;
-  bool m_followGraph;
   std::string m_verbTenseFlag; //Ajout
 
   // private member functions
@@ -93,7 +91,6 @@ private:
                     const FsaStringsPool& sp,
                     LinguisticGraphVertex v, 
                     const Common::AnnotationGraphs::AnnotationData* annotationData,
-                    LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                     uint64_t offset,
                     const std::string& previousNE,
                     const std::map<int, std::string>& positions) const;
@@ -103,7 +100,6 @@ private:
   std::string outputSpecificEntity(std::ostream& out,
                             const SpecificEntities::SpecificEntityAnnotation* se,
                             const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,
-                            const LinguisticGraph* graph,
                             const FsaStringsPool& sp,
                             const uint64_t offset,
                             const std::string& previousNE,
