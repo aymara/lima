@@ -1221,6 +1221,26 @@
     comment="small : macro-vg : !=nc"
     left="XPATH#//vertices/vertex[@position=5]/macro"
     operator="contains"
-    right="L_ADJ" />
+    right="ADJ" />
  </testcase>
+<testcase id="eng.disamb.56" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The Airbus A380 is the largest airplane in the world."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>A380 is a symbol</expl>
+  <test id="eng.disamb.56.1" trace=".disambiguated.xml"
+    comment="A380 : lemma a380"
+    left="XPATH#//vertices/vertex[@position=12]/lemma"
+    operator="="
+    right="a380" />
+  <test id="eng.disamb.14.2" trace=".disambiguated.xml"
+    comment="A380 : micro : SYM"
+    left="XPATH#//vertices/vertex[@position=12]/micro"
+    operator="="
+    right="SYM" />
+</testcase>
  </testcases>
