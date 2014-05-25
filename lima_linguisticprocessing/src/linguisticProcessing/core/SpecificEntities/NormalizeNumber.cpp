@@ -129,8 +129,7 @@ getNumberValue(Token* t,MorphoSyntacticData* data) const
     if (testMicroCategory(m_microsForNumber,m_microAccessor,(*it).properties)) {
       const LimaString& str=
         Common::MediaticData::MediaticData::single().stringsPool(m_language)[(*it).normalizedForm];
-      string stdstr=Common::Misc::limastring2utf8stdstring(str);
-      return atof(stdstr.c_str());
+      return str.toDouble();
     }
   }
   return 0;
