@@ -227,8 +227,8 @@ LimaString CharChart::unmark(const LimaString& str) const
         LimaString s = unmarkByString(str.at(i));
         if (!s.isEmpty())
           desaccented.append(s);
-//         else
-//           desaccented.push_back(str.at(i));
+        else
+          desaccented.push_back(str.at(i));
       }
     }
     // silently discard invalid character
