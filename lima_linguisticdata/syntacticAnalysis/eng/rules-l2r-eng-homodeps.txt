@@ -1,6 +1,6 @@
 ###############################################################################
 # 
-# rules for the recognition of english left to right homosyntagmatic relations#
+# rules for the recognition of english left to right homosyntagmatic relations
 # this file uses the syntax for the declarations of automatons by Romaric 
 # Besancon (Cf. his 2003/03/11 document)
 # 
@@ -36,7 +36,7 @@ use categoriesClassesDeclaration-eng.txt
 # ADVADV :        really -> very
 #----------------------------------------------------------------------
 
-@Copule::@AdvModifieurAdv @AdvModifieParAdv @Adjectif:SYNTACTIC_RELATION:
+@Copule::@Adverb @Adverb @Adjectif:SYNTACTIC_RELATION:
 +!GovernorOf(right.1,"ANY")
 +SecondUngovernedBy(right.1,right.2,"ANY")
 +CreateRelationBetween(right.1,right.2,"ADVADV")
@@ -44,12 +44,12 @@ use categoriesClassesDeclaration-eng.txt
 =<ClearStoredRelations()
 
 #----------------------------------------------------------------------
-# Relation between adverb and adjective: AdvAdj
+# Relation between adverb and adjective: AdvAdjectif
 # when the adverb modifies an adjective which itself is a subject attribute
 # "The birds are very small."
 # ADVADJ :        very   -> small
 #----------------------------------------------------------------------
-@Copule::@AdvModifieurAdj @Adjectif:SYNTACTIC_RELATION:
+@Copule::@Adverb @Adjectif:SYNTACTIC_RELATION:
 +!GovernorOf(right.1,"ANY")
 +SecondUngovernedBy(right.1,right.2,"ANY")
 +CreateRelationBetween(right.1,right.2,"ADVADJ")
@@ -62,7 +62,7 @@ use categoriesClassesDeclaration-eng.txt
 # "the X performs well."
 #----------------------------------------------------------------------
 
-@Verbe::@AdvModifieurAdj:SYNTACTIC_RELATION:
+@Verbe::@Adverb:SYNTACTIC_RELATION:
 +!GovernorOf(right.1,"ANY")
 +SecondUngovernedBy(right.1,trigger.1,"ANY")
 +CreateRelationBetween(right.1,trigger.1,"MOD_V")
@@ -100,7 +100,7 @@ use categoriesClassesDeclaration-eng.txt
 # Relation entre adjectif et substantif modifie: ADJPRENSUB
 # "the little cat"
 #----------------------------------------------------------------------
-@Adjectif::(((@Virg)? (@AdvModifieurAdj){0-3} (@Adjectif)){0-2} (@ConjCoord (@AdvModifieurAdj){0-3} (@Adjectif))?)? (@Substantif){1-n} @Substantif:SYNTACTIC_RELATION:
+@Adjectif::(((@Virg)? (@Adverb){0-3} (@Adjectif)){0-2} (@ConjCoord (@Adverb){0-3} (@Adjectif))?)? (@Substantif){1-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +!GovernorOf(right.3,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
@@ -110,7 +110,7 @@ use categoriesClassesDeclaration-eng.txt
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Adjectif::(((@Virg)? (@AdvModifieurAdj){0-3} (@Adjectif)){0-2} (@ConjCoord (@AdvModifieurAdj){0-3} (@Adjectif))?)? (@Substantif){0-n} @Substantif:SYNTACTIC_RELATION:
+@Adjectif::(((@Virg)? (@Adverb){0-3} (@Adjectif)){0-2} (@ConjCoord (@Adverb){0-3} (@Adjectif))?)? (@Substantif){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +!GovernorOf(right.3,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
@@ -121,7 +121,7 @@ use categoriesClassesDeclaration-eng.txt
 =<ClearStoredRelations()
 
 # cas ou le nom est une nominalisation en -ing
-@Adjectif::(((@Virg)? (@AdvModifieurAdj){0-3} (@Adjectif)){0-2} (@ConjCoord (@AdvModifieurAdj){0-3} (@Adjectif))?)? (@Substantif){0-n} @Ing:SYNTACTIC_RELATION:
+@Adjectif::(((@Virg)? (@Adverb){0-3} (@Adjectif)){0-2} (@ConjCoord (@Adverb){0-3} (@Adjectif))?)? (@Substantif){0-n} @Ing:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +!GovernorOf(right.3,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
@@ -137,7 +137,7 @@ use categoriesClassesDeclaration-eng.txt
 # Which man is coming?
 # (GG 17/1/05 changing value of Which from JJ to DDQ in dictionary)
 #----------------------------------------------------------------------
-@DetInt::(@AdjPren){0-1} @Substantif:SYNTACTIC_RELATION:
+@DetInt::(@Adjectif){0-1} @Substantif:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.2,"DetIntSub")
 +GenderAgreement(trigger.1,right.2)
 +NumberAgreement(trigger.1,right.2)
@@ -171,11 +171,11 @@ use categoriesClassesDeclaration-eng.txt
 
 
 #----------------------------------------------------------------------
-# 2. Relation entre adjectif postnominal et substantif : SubAdjPost
+# 2. Relation entre adjectif postnominal et substantif : SubAdjectifPost
 #
 #----------------------------------------------------------------------
 
-@Adjectif:@Substantif (@Adjectif|@AdvModifieurAdj){0-n}::SYNTACTIC_RELATION:
+@Adjectif:@Substantif (@Adjectif|@Adverb){0-n}::SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,left.1,"ANY")
 +CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
@@ -185,12 +185,12 @@ use categoriesClassesDeclaration-eng.txt
 
 #----------------------------------------------------------------------
 
-#-$NC::(@Substantif|@AdjPren){1-n} @Substantif:SYNTACTIC_RELATION:
+#-$NC::(@Substantif|@Adjectif){1-n} @Substantif:SYNTACTIC_RELATION:
 #-+!GovernorOf(trigger.1,"COMPDUNOM")
 #-+SecondUngovernedBy(trigger.1,right.2,"ANY")
 #-+CreateRelationBetween(trigger.1,right.2,"COMPDUNOM")
 
-#-$NC::(@Substantif|@AdjPren){0-n} @Substantif:SYNTACTIC_RELATION:
+#-$NC::(@Substantif|@Adjectif){0-n} @Substantif:SYNTACTIC_RELATION:
 #-+!GovernorOf(trigger.1,"COMPDUNOM")
 #-+SecondUngovernedBy(trigger.1,right.2,"ANY")
 #-+CreateRelationBetween(trigger.1,right.2,"COMPDUNOM")
@@ -229,7 +229,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@CompDuNomTrig:@Substantif:(@Determinant){0-n} ((@AdvModifieurAdj){0-n} @Adjectif|@Substantif){0-n} (@Substantif|@NomPropre):SYNTACTIC_RELATION:
+@CompDuNomTrig:@Substantif:(@Determinant){0-n} ((@Adverb){0-n} @Adjectif|@Substantif){0-n} (@Substantif|@NomPropre):SYNTACTIC_RELATION:
 +!GovernorOf(right.3,"COMPDUNOM")
 +!GovernorOf(right.3,"SUBSUBJUX")
 +!GovernorOf(right.3,"ADJPRENSUB")
@@ -245,7 +245,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #+CreateRelationBetween(right.1,left.1,"COMPDUNOM")
 
 #----------------------------------------------------------------------
-# 5. Relation de complï¿½ent de l'adjectif : CompAdj
+# 5. adjective complementer relation: CompAdjectif
 #
 # Relation :
 #  @Adjectif @Prep-comp @Determinant* @Adjectif* @Substantif
@@ -264,14 +264,14 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 
 
 #----------------------------------------------------------------------
-# 6. Relation d'adverbe modificateur d'un adjectif : AdvAdj
+# 6. Relation d'adverbe modificateur d'un adjectif : AdvAdjectif
 # Relation : @Adv-modif-adj @Adjectif
 #
 # "The uniquely innocent response..."
 # ADVADJ :        uniquely[7|7]{29/102}   -> innocent[6|6]{27/70}
 #----------------------------------------------------------------------
 #
-#@AdvModifieurAdj::@Adjectif:SYNTACTIC_RELATION:
+#@Adverb::@Adjectif:SYNTACTIC_RELATION:
 #+SecondUngovernedBy(trigger.1,right.1,"ANY")
 #+CreateRelationBetween(trigger.1,right.1,"ADVADJ")
 
@@ -314,7 +314,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 
 # bogue signalee -- pour le moment ((@Substantif){1-n})? est different de (@Substantif){0-n}
 
-@Determinant::(((@AdvPos){0-3} (@AdjPren){1-n}){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
+@Determinant::(((@Adverb){0-3} (@Adjectif){1-n}){1-n} (((@Virg (@Adverb){0-3} (@Adjectif){1-n}){0-2})? @ConjCoord (@Adverb){0-3} (@Adjectif){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"DETSUB")
 +!GovernorOf(right.3,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
@@ -325,7 +325,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@DetIndef::@Determinant (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
+@DetIndef::@Determinant (((@Adverb){0-3} @Adjectif){1-n} (((@Virg (@Adverb){0-3} (@Adjectif){1-n}){0-2})? @ConjCoord (@Adverb){0-3} (@Adjectif){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"DETSUB")
 +SecondUngovernedBy(trigger.1,right.4,"ANY")
 +GenderAgreement(trigger.1,right.4)
@@ -340,7 +340,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre preposition et substantif : PREPSUB
 # (A6.4 - 4.2.1.3)
 #----------------------------------------------------------------------
-@PrepComp::(@Determinant|@DetIndef)? (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n}) @Substantif:SYNTACTIC_RELATION:
+@PrepComp::(@Determinant|@DetIndef)? (((@Adverb){0-3} @Adjectif){1-n} (((@Virg (@Adverb){0-3} (@Adjectif){1-n}){0-2})? @ConjCoord (@Adverb){0-3} (@Adjectif){1-n})?)? ((@Substantif){1-n}) @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"PREPSUB")
 +!GovernorOf(right.4,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.4,"ANY")
@@ -352,7 +352,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 
-@PrepComp::(@Determinant|@DetIndef)? (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
+@PrepComp::(@Determinant|@DetIndef)? (((@Adverb){0-3} @Adjectif){1-n} (((@Virg (@Adverb){0-3} (@Adjectif){1-n}){0-2})? @ConjCoord (@Adverb){0-3} (@Adjectif){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"PREPSUB")
 +!GovernorOf(right.4,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.4,"ANY")
@@ -371,7 +371,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # DetIntSub :     The[16|16]{25/50}       -> green[15|15]{23/37}
 #----------------------------------------------------------------------
 
-@Determinant::(@AdvPos){0-3} (@AdjPren){0-2} @Adjectif:SYNTACTIC_RELATION:
+@Determinant::(@Adverb){0-3} (@Adjectif){0-2} @Adjectif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
 +GenderAgreement(trigger.1,right.3)
@@ -384,12 +384,12 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 
 
 #----------------------------------------------------------------------
-# Relation entre adjectif et son complement substantif: CompAdj
+# Relation entre adjectif et son complement substantif: CompAdjectif
 # (A6.5 - 4.2.1.5)
 # The smartest of the dogs were despondent.
 # COMPADJ :       dogs[5|5]{23/37}        -> smartest[8|8]{27/72}
 #----------------------------------------------------------------------
-#@PrepComp:@AdjAvecSubCompDeAdj:(@Determinant)? (((@AdvPos){0-3} @AdjPren){1-n} (((@Virg (@AdvPos){0-3} (@AdjPren){1-n}){0-2})? @ConjCoord (@AdvPos){0-3} (@AdjPren){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
+#@PrepComp:@Adjectif:(@Determinant)? (((@Adverb){0-3} @Adjectif){1-n} (((@Virg (@Adverb){0-3} (@Adjectif){1-n}){0-2})? @ConjCoord (@Adverb){0-3} (@Adjectif){1-n})?)? ((@Substantif){1-n})? @Substantif:SYNTACTIC_RELATION:
 #+!GovernorOf(trigger.1,"ANY")
 #+SecondUngovernedBy(right.4,left.1,"ANY")
 #+GenderAgreement(right.1,right.4)
@@ -397,7 +397,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #+CreateRelationBetween(right.4,left.1,"COMPADJ")
 
 # same with DET_ARTICLE_CONTRACTE
-# $DET-DET_ARTICLE_CONTRACTE:@AdjAvecSubCompDeAdj:(@AdvPos|@AdjPren){0-n} (PRON-PRON_PERS_DISJ_COI_PREV|PRON-PRON_PERS_DISJ_COI_POSTV|@Substantif):SYNTACTIC_RELATION:
+# $DET-DET_ARTICLE_CONTRACTE:@Adjectif:(@Adverb|@Adjectif){0-n} (PRON-PRON_PERS_DISJ_COI_PREV|PRON-PRON_PERS_DISJ_COI_POSTV|@Substantif):SYNTACTIC_RELATION:
 # +SecondUngovernedBy(right.2,left.1,"ANY")
 # +GenderAgreement(trigger.1,right.2)
 # +NumberAgreement(trigger.1,right.2)
@@ -410,7 +410,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # ???? Quickly on the road ????
 # 
 #----------------------------------------------------------------------
-# @PrepComp:$ADV-RB:@Determinant (@AdvPos|@AdjPren){0-n} @Substantif:SYNTACTIC_RELATION:
+# @PrepComp:$ADV-RB:@Determinant (@Adverb|@Adjectif){0-n} @Substantif:SYNTACTIC_RELATION:
 # +SecondUngovernedBy(right.3,left.1,"ANY")
 # +CreateRelationBetween(right.3,left.1)
 
@@ -419,18 +419,18 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # (A6.6 - 4.2.1.6)
 # ???? 
 ##----------------------------------------------------------------------
-##@PronRelCa::(@AdvPos|@AdjPren){0-n} @Substantif:SYNTACTIC_RELATION:
+##@PronRelCa::(@Adverb|@Adjectif){0-n} @Substantif:SYNTACTIC_RELATION:
 ##+SecondUngovernedBy(right.2,trigger.1,"ANY")
 ##+CreateRelationBetween(right.2,trigger.1,"COMPADV")
 
 
 #----------------------------------------------------------------------
-# Relation entre adverbe et adjectif: AdvAdj
+# Relation entre adverbe et adjectif: AdvAdjectif
 # (A6.7 - 4.2.1.8)
 # "The uniquely innocent response..."
 # ADVADJ :        uniquely[7|7]{29/102}   -> innocent[6|6]{27/70}
 #----------------------------------------------------------------------
-@AdvModifieurAdj::@Adjectif:SYNTACTIC_RELATION:
+@Adverb::@Adjectif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"ADVADJ")
@@ -444,7 +444,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # The simply uniquely green toad
 # ADVADV :        simply[9|9]{29/102}     -> uniquely[8|8]{29/102}
 #----------------------------------------------------------------------
-@AdvModifieurAdv::@AdvModifieParAdv:SYNTACTIC_RELATION:
+@Adverb::@Adverb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"ADVADV")
@@ -453,7 +453,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 
 # introduced same rule triggered by general adverb
 # (for EASY evaluation)
-# i$ADV-RB::@AdvModifieParAdv:SYNTACTIC_RELATION:
+# i$ADV-RB::@Adverb:SYNTACTIC_RELATION:
 # i+!GovernorOf(trigger.1,"ANY")
 # i+SecondUngovernedBy(trigger.1,right.1,"ANY")
 # i+CreateRelationBetween(trigger.1,right.1,"ADVADV")
@@ -527,7 +527,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation entre "ne" et son verbe
 #----------------------------------------------------------------------
-#-@Neg::(@Adverbe){0-3} (@Neg)? (@PronPersCodPrev|@PronPersCoiPrev)? @Verbe:SYNTACTIC_RELATION:
+#-@Neg::(@Adverb){0-3} (@Neg)? (@PronPersCodPrev|@PronPersCoiPrev)? @Verbe:SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,right.4,"ANY")
 #-+CreateRelationBetween(trigger.1,right.4,"Neg")
 
@@ -535,7 +535,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre "ne" et "pas" quand accoles et suivis d'un infinitif
 # Specifique pour Easy    -- French
 #----------------------------------------------------------------------
-#--@Neg::(@Adverbe){0-3} @Neg @InfinitiveVerb:SYNTACTIC_RELATION:
+#--@Neg::(@Adverb){0-3} @Neg @InfinitiveVerb:SYNTACTIC_RELATION:
 #--+SecondUngovernedBy(trigger.1,right.2,"ANY")
 #--+CreateRelationBetween(trigger.1,right.2,"NePas")
 
@@ -545,7 +545,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # The swan has not swum today
 # NePas2 :        not[11|11]{29/112}      -> has[12|12]{28/91}
 #----------------------------------------------------------------------
-@Neg:@Verbe (@Adverbe){0-3}::SYNTACTIC_RELATION:
+@Neg:@Verbe (@Adverb){0-3}::SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,left.1,"ANY")
 +CreateRelationBetween(trigger.1,left.1,"NePas2")
 =>AddRelationInGraph()
@@ -557,7 +557,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # He was easy to see
 # PrepInf :      to[4|4]{36/153} -> see[3|3]{28/101}
 #----------------------------------------------------------------------
-@PrepGVInf::(@Neg)? (@Adverbe){0-3} (@Neg)? (@PronRefl)? @InfinitiveVerb:SYNTACTIC_RELATION:
+@PrepGVInf::(@Neg)? (@Adverb){0-3} (@Neg)? (@PronRefl)? @InfinitiveVerb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
 +CreateRelationBetween(trigger.1,right.5,"PrepInf")
 =>AddRelationInGraph()
@@ -580,7 +580,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # He wanted to quickly sell his apartment but could not find a taker
 # AdvVerbe :      quickly[11|11]{29/102}  -> sell[10|10]{28/101}
 #----------------------------------------------------------------------
-@AdvModifieurVerbePrev::(@Neg)? @InfinitiveVerb:SYNTACTIC_RELATION:
+@Adverb::(@Neg)? @InfinitiveVerb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"AdvVerbe")
 =>AddRelationInGraph()
@@ -642,7 +642,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre preposition et adverbe : "de trop"
 # Specifique pour Easy  __French
 #----------------------------------------------------------------------
-# @Prep::@Adverbe:SYNTACTIC_RELATION:
+# @Prep::@Adverb:SYNTACTIC_RELATION:
 # +SecondUngovernedBy(trigger.1,right.1,"ANY")
 # +CreateRelationBetween(trigger.1,right.1,"PrepAdv")
 
@@ -650,7 +650,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre substantif et adverbe dans : "pomme de trop"
 # Specifique pour Easy --French 
 #----------------------------------------------------------------------
-# @Substantif::(@Prep|@Adverbe) @Adverbe:SYNTACTIC_RELATION:
+# @Substantif::(@Prep|@Adverb) @Adverb:SYNTACTIC_RELATION:
 # +!GovernorOf(right.2,"ANY")
 # +SecondUngovernedBy(right.2,trigger.1,"ANY")
 # +CreateRelationBetween(right.2,trigger.1,"AdvSub")
@@ -659,7 +659,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre substantif et adverbe dans : "plus_de monnaie"
 # Specifique pour Easy --French 
 #----------------------------------------------------------------------
-#-@Adverbe::(@Adjectif)? @Substantif:SYNTACTIC_RELATION:
+#-@Adverb::(@Adjectif)? @Substantif:SYNTACTIC_RELATION:
 #-+!GovernorOf(trigger.1,"ANY")
 #-+SecondUngovernedBy(trigger.1,right.2,"ANY")
 #-+CreateRelationBetween(trigger.1,right.2,"AdvSub")
@@ -669,7 +669,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre substantif et adverbe dans : "comme chef"
 # Specifique pour Easy : groupe prepositionnel !
 #----------------------------------------------------------------------
-# @Adverbe::@Substantif:SYNTACTIC_RELATION:
+# @Adverb::@Substantif:SYNTACTIC_RELATION:
 # +!GovernorOf(trigger.1,"ANY")
 # +SecondUngovernedBy(trigger.1,right.1,"ANY")
 # +CreateRelationBetween(trigger.1,right.1,"AdvSub")
@@ -678,20 +678,20 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Regles adaptees pour les mots inconnus
 ########################################
 
-@Determinant::((@AdvPos){0-3} @AdjPren){0-3} @Inc:SYNTACTIC_RELATION:
+@Determinant::((@Adverb){0-3} @Adjectif){0-3} @Inc:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"DETSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"DETSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@PrepComp:@AdjAvecSubCompDeAdj:(@Determinant)? (@AdvPos|@AdjPren){0-n} @Inc:SYNTACTIC_RELATION:
+@PrepComp:@Adjectif:(@Determinant)? (@Adverb|@Adjectif){0-n} @Inc:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.3,left.1,"ANY")
 +CreateRelationBetween(right.3,left.1,"COMPADJ")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@PrepComp:$ADV-RB:@Determinant (@AdvPos|@AdjPren){0-n} @Inc:SYNTACTIC_RELATION:
+@PrepComp:$ADV-RB:@Determinant (@Adverb|@Adjectif){0-n} @Inc:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.3,left.1,"ANY")
 +CreateRelationBetween(right.3,left.1,"COMPADV")
 =>AddRelationInGraph()

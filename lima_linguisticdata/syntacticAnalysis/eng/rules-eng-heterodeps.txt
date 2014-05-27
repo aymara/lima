@@ -189,7 +189,7 @@ $INTERJ,$CONJ)
 # cas ou le superlatif est utilisé comme un nom
 # "The oldest of my cousins is at home this week."
 #----------------------------------------------------------------------
-$ADJ:The (@Adverbe){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif @Verbe:SYNTACTIC_RELATION:
+$ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif @Verbe:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
 +CreateRelationBetween(trigger.1,right.5,"SUJ_V")
 =>AddRelationInGraph()
