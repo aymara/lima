@@ -71,7 +71,7 @@ void GreedyPosTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No param 'trigramMatrix' in GreedyPosTagger group for language " << (int)m_language << LENDL;
+    LERROR << "No param 'trigramMatrix' in GreedyPosTagger group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
@@ -83,7 +83,7 @@ void GreedyPosTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No param 'bigramMatrix' in GreedyPosTagger group for language " << (int)m_language << LENDL;
+    LWARN << "No param 'bigramMatrix' in GreedyPosTagger group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
@@ -94,7 +94,7 @@ void GreedyPosTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No ponctuforte microcateg category for GreedyPosTagger ! use category PONCTU_FORTE" << LENDL;
+    LWARN << "No ponctuforte microcateg category for GreedyPosTagger ! use category PONCTU_FORTE";
     m_microCatPonctuForte=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue("PONCTU_FORTE");
   }
 
@@ -107,7 +107,7 @@ LimaStatusCode GreedyPosTagger::process(
   // start postagging here !
   TimeUtils::updateCurrentTime();
   PTLOGINIT;
-  LINFO << "start greedy posTagging" << LENDL;
+  LINFO << "start greedy posTagging";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   
@@ -210,11 +210,11 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
   Token* token=get(vertex_token,*graph,vx);
   if (data==0)
   {
-    LERROR << "MorphoSyntacticData of vertex " << vx << " is NULL !" << LENDL;
+    LERROR << "MorphoSyntacticData of vertex " << vx << " is NULL !";
     return;
   }
   LDEBUG << "process vertex : " << vx << " : " 
-    << Common::Misc::limastring2utf8stdstring(token->stringForm()) << LENDL;
+    << Common::Misc::limastring2utf8stdstring(token->stringForm());
 
   MorphoSyntacticData* posdata=new MorphoSyntacticData(*data);
   put(vertex_data,*graph,vx,posdata);
@@ -227,14 +227,14 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
   {
     LWARN << "Token " 
       << Common::Misc::limastring2utf8stdstring(token->stringForm()) 
-      << " has no possible dicowords ! build a DicoWord with category 0" << LENDL;
+      << " has no possible dicowords ! build a DicoWord with category 0";
     selectedMicro=0;
   }
   else if (micros.size()==1)
   {
     // no choice, put this category
     selectedMicro=*(micros.begin());
-    LDEBUG << "GreedyPosTagging : only one choice : " << selectedMicro << LENDL;
+    LDEBUG << "GreedyPosTagging : only one choice : " << selectedMicro;
   }
   else
   {
@@ -306,20 +306,20 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
     if (maxTri!=0)
     {
       // choose best trigram
-      LDEBUG << "found trigram : choose " << *dwMaxTri << " (p=" << maxTri << ")" << LENDL;
+      LDEBUG << "found trigram : choose " << *dwMaxTri << " (p=" << maxTri << ")";
       selectedMicro=*dwMaxTri;
     }
     else if (maxBi!=0)
     {
       // choose best bigram
-      LDEBUG << "found bigram : choose " << *dwMaxBi << " (p=" << maxBi << ")" << LENDL;
+      LDEBUG << "found bigram : choose " << *dwMaxBi << " (p=" << maxBi << ")";
       selectedMicro=*dwMaxBi;
     }
     else
     {
       // no trigram nor bigram has been found
       // choose better probability as source in bigram then as target in bigram
-      LWARN << "Found no trigram nor bigram (" << cat1 << "," << cat2 << ") ! try heuristics to find a microcategory" << LENDL;
+      LWARN << "Found no trigram nor bigram (" << cat1 << "," << cat2 << ") ! try heuristics to find a microcategory";
       for (dwItr=micros.begin();dwItr!=micros.end();dwItr++)
       {
         float p=m_bigramMatrix->freq(m_microCatPonctuForte,*dwItr);
@@ -331,13 +331,13 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
       }
       if (maxBi!=0)
       {
-        LDEBUG << "found bigram with ponctu forte : choose " << *dwMaxBi <<  " (p=" << maxBi << ")" << LENDL;
+        LDEBUG << "found bigram with ponctu forte : choose " << *dwMaxBi <<  " (p=" << maxBi << ")";
         selectedMicro=*dwMaxBi;
       }
       else
       {
         selectedMicro=*(micros.begin());
-        LDEBUG << "choose first : " << selectedMicro << LENDL;
+        LDEBUG << "choose first : " << selectedMicro;
       }
     }
   }

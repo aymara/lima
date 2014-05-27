@@ -79,18 +79,18 @@ void CorefSolver::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No 'scope' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No 'scope' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_scope = 3;
-    LERROR << "Scope is set to 3 by default." << LENDL;
+    LERROR << "Scope is set to 3 by default.";
   }
   try {
     m_threshold=atoi(unitConfiguration.getParamsValueAtKey("threshold").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No 'threshold' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No 'threshold' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_threshold = 70;
-    LERROR << "Threshold is set to 130 by default." << LENDL;
+    LERROR << "Threshold is set to 130 by default.";
   }
   try {
     m_resolveDefinites=atoi(unitConfiguration.getParamsValueAtKey("Resolve Definites").c_str());
@@ -98,11 +98,11 @@ void CorefSolver::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "Please define 'Resolve Definites' and 'Resolve non third person pronouns' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "Please define 'Resolve Definites' and 'Resolve non third person pronouns' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_resolveDefinites = 1;
     m_resolveN3PPronouns = 0;
-    LERROR << "Resolve Definites is set to true (1) by default." << LENDL;
-    LERROR << "Resolve non third person pronouns is set to false (0) by default." << LENDL;
+    LERROR << "Resolve Definites is set to true (1) by default.";
+    LERROR << "Resolve non third person pronouns is set to false (0) by default.";
   }
   cerr << m_language << endl;
   const Common::PropertyCode::PropertyManager& macroManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO");
@@ -142,9 +142,9 @@ void CorefSolver::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& )
   {
-    LERROR << "One of the tags list is not defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
-    LERROR << "Please check all of the following categories:" << LENDL;
-    LERROR << "'LexicalAnaphora', 'Undefinite Pronouns'." << LENDL;
+    LERROR << "One of the tags list is not defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LERROR << "Please check all of the following categories:";
+    LERROR << "'LexicalAnaphora', 'Undefinite Pronouns'.";
   }
 
   try {
@@ -161,9 +161,9 @@ void CorefSolver::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& )
   {
-    LERROR << "One of the macro relation is not defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
-    LERROR << "Please check all of the following relations:" << LENDL;
-    LERROR << "'PrepRelation', 'PleonasticRelation', 'DefiniteRelation', 'SubjectRelation', 'AttributeRelation', 'CODRelation', 'COIRelation', 'AdjunctRelation', 'AgentRelation', 'NPDeterminerRelation'." << LENDL;
+    LERROR << "One of the macro relation is not defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LERROR << "Please check all of the following relations:";
+    LERROR << "'PrepRelation', 'PleonasticRelation', 'DefiniteRelation', 'SubjectRelation', 'AttributeRelation', 'CODRelation', 'COIRelation', 'AdjunctRelation', 'AgentRelation', 'NPDeterminerRelation'.";
   }
 
 
@@ -180,7 +180,7 @@ void CorefSolver::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchMap& )
  {
-    LERROR << "No map 'SalienceFactors' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No map 'SalienceFactors' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
 //     throw InvalidConfiguration();
   }
 
@@ -197,7 +197,7 @@ void CorefSolver::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchMap& )
  {
-    LERROR << "No map 'SlotValues' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No map 'SlotValues' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
 //     throw InvalidConfiguration();
   }
 
@@ -213,29 +213,29 @@ LimaStatusCode CorefSolver::process(
 {
   COREFSOLVERLOGINIT;
   TimeUtils::updateCurrentTime();
-  LINFO << "start CorefSolver" << LENDL;
+  LINFO << "start CorefSolver";
   // create syntacticData  
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "no PosGraph ! abort" << LENDL;
+    LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds ! abort" << LENDL;
+    LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
   if (sb->getGraphId() != "PosGraph") {
     LERROR << "SentenceBounds computed on graph '" << sb->getGraphId() << "'. CorefSolver needs " <<
-    "sentence bounds on PosGraph" << LENDL;
+    "sentence bounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (sb==0)
   {
-    LERROR << "no syntactic data ! abort" << LENDL;
+    LERROR << "no syntactic data ! abort";
     return MISSING_DATA;
   }
 
@@ -353,7 +353,7 @@ LimaStatusCode CorefSolver::process(
     //LinguisticGraphVertex endSentence=*boundItr;
 
 
-    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << LENDL;
+    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 
 
     // for each word in the sentence
@@ -380,7 +380,7 @@ LimaStatusCode CorefSolver::process(
 TimeUtils::logElapsedTime("retrieve nps");
 TimeUtils::updateCurrentTime();*/
 
-    LDEBUG << "classify NPs and calculate salience weights" << LENDL;
+    LDEBUG << "classify NPs and calculate salience weights";
     for(vector<CoreferentAnnotation>::iterator itca = (*npVertices.begin()).begin();
         itca!=(*npVertices.begin()).end();
         itca++)
@@ -402,14 +402,14 @@ TimeUtils::updateCurrentTime();*/
 // TimeUtils::logElapsedTime("classify");
 // TimeUtils::updateCurrentTime();
 
-    LDEBUG<< "Anaphora:" << LENDL;
+    LDEBUG<< "Anaphora:";
     for (Vertices::iterator anaphItr=npAnaphora->begin();
          anaphItr!=npAnaphora->end();
          anaphItr++)
       LDEBUG<<(*anaphItr)->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm()) <<(*anaphItr)->newerRef()->morphVertex()<<LENDL;
-    LDEBUG<< " - " << LENDL;
+    LDEBUG<< " - ";
 
-    LDEBUG<< "Candidates:" << LENDL;
+    LDEBUG<< "Candidates:";
     for (std::deque<Vertices>::iterator itm = npCandidates->begin( );
          itm != npCandidates->end( ); 
          itm++ )
@@ -417,15 +417,15 @@ TimeUtils::updateCurrentTime();*/
            itc != (*itm).end( ); 
            itc++ )
         LDEBUG<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*itc)->morphVertex())->stringForm()) << ":" << (*itc)->salience();
-    LDEBUG<< " - " << LENDL;
+    LDEBUG<< " - ";
 
-    LDEBUG << "initialize syntactic filter" << LENDL;
+    LDEBUG << "initialize syntactic filter";
     initSyntacticFilter(analysis, posgraph, syntacticData, npAnaphora, npCandidates, roBinding);
     
 // TimeUtils::logElapsedTime("initialize syntactic filter");
 // TimeUtils::updateCurrentTime();
 
-    LDEBUG<< "RuledOutBinding:" << LENDL;
+    LDEBUG<< "RuledOutBinding:";
     for (VerticesRelation::iterator itro = roBinding->begin( );
          itro != roBinding->end( ); 
          itro++ )
@@ -434,17 +434,17 @@ TimeUtils::updateCurrentTime();*/
       for (std::set<CoreferentAnnotation*>::iterator its = (*itro).second.begin( );
            its != (*itro).second.end( ); 
            its++ )
-        LDEBUG << " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its)->morphVertex())->stringForm()) << " - " << LENDL;
+        LDEBUG << " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its)->morphVertex())->stringForm()) << " - ";
     }
     LDEBUG<< LENDL;
 
-    LDEBUG << "initialize lexical anaphora binding" << LENDL;
+    LDEBUG << "initialize lexical anaphora binding";
     bindingLexicalAnaphora(analysis,posgraph, syntacticData, npAnaphora, npCandidates, lexAnaBinding);
 
 // TimeUtils::logElapsedTime("initialize lex ana binding");
 // TimeUtils::updateCurrentTime();
 
-    LDEBUG<< "Lexical Anaphora Binding:" << LENDL;
+    LDEBUG<< "Lexical Anaphora Binding:";
     for (WeightedVerticesRelation::iterator itp = lexAnaBinding->begin( );
          itp != lexAnaBinding->end( ); 
          itp++ )
@@ -453,23 +453,23 @@ TimeUtils::updateCurrentTime();*/
       for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
            its != (*itp).second.end( ); 
            its++ )  
-        LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second << LENDL;
+        LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second;
     }
 
-    LDEBUG << "resolve lexical anaphora" << LENDL;
+    LDEBUG << "resolve lexical anaphora";
     getBest(syntacticData, posgraph, lexAnaBinding, /*results,*/ npCandidates, annotationData);
 
 
 // TimeUtils::logElapsedTime("resolve lexical anaphora");
 // TimeUtils::updateCurrentTime();
 
-    LDEBUG << "initialize potential binding" << LENDL;
+    LDEBUG << "initialize potential binding";
     bindingPotentialCandidates(posgraph, npAnaphora, npCandidates, pBinding);
 
-    LDEBUG << "adjust local saliences" << LENDL;
+    LDEBUG << "adjust local saliences";
     adjustSaliences(syntacticData,npCandidates,pBinding, endSentence,posgraph,analysis);
 
-    LDEBUG<< "Potential Binding:" << LENDL;
+    LDEBUG<< "Potential Binding:";
     for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
          itp != pBinding->end( ); 
          itp++ )
@@ -479,25 +479,25 @@ TimeUtils::updateCurrentTime();*/
            its != (*itp).second.end( ); 
            its++ ) 
       { 
-        LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second << LENDL;
+        LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second;
       }
     }
     LDEBUG<< LENDL;
 
 
 
-    LDEBUG << "apply threshold filter" << LENDL;
+    LDEBUG << "apply threshold filter";
     applyThresholdFilter(pBinding);
     
-    LDEBUG << "apply circular filter" << LENDL;
+    LDEBUG << "apply circular filter";
     applyCircularFilter(pBinding);
     
-    LDEBUG << "apply morphosyntactic filter" << LENDL;
+    LDEBUG << "apply morphosyntactic filter";
     applyMorphoSyntacticFilter(pBinding,roBinding);
 
 /*TimeUtils::logElapsedTime("apply filters");
 TimeUtils::updateCurrentTime();*/
-    LDEBUG << "resolve binding" << LENDL;
+    LDEBUG << "resolve binding";
     getBest(syntacticData,posgraph,pBinding,/*results,*/npCandidates,annotationData);
 
 /*TimeUtils::logElapsedTime("resolve binding");
@@ -508,7 +508,7 @@ TimeUtils::updateCurrentTime();*/
     delete lexAnaBinding;
   }
 
-  LDEBUG << "write coreferent annotations on graph" << LENDL;
+  LDEBUG << "write coreferent annotations on graph";
 
   delete npCandidates;
 //   delete results;
@@ -701,13 +701,13 @@ void CorefSolver::getBest(
  Common::AnnotationGraphs::AnnotationData* ad) const
 {
   COREFSOLVERLOGINIT;
-  LDEBUG << "CorefSolver::getBest binding size = " << binding->size() << LENDL;
+  LDEBUG << "CorefSolver::getBest binding size = " << binding->size();
   const LinguisticGraph* graph = anagraph->getGraph();
   for (WeightedVerticesRelation::iterator itp = binding->begin( );
          itp != binding->end( ); 
          itp++ )
   {
-    LDEBUG << "  outer for loop on " << (*itp).first->morphVertex() << LENDL;
+    LDEBUG << "  outer for loop on " << (*itp).first->morphVertex();
     bool result = false; 
     bool erase = false;
     CoreferentAnnotation* ca2erase = 0;
@@ -716,7 +716,7 @@ void CorefSolver::getBest(
          its != (*itp).second.end( ); 
          its++ )  
     {
-      LDEBUG << "  looking at " << (*itp).first->morphVertex() << " ("<<(*itp).first->bindingSalience()<<") -> " << (*its).first->morphVertex() << " ("<<(*its).second<<")" << LENDL;
+      LDEBUG << "  looking at " << (*itp).first->morphVertex() << " ("<<(*itp).first->bindingSalience()<<") -> " << (*its).first->morphVertex() << " ("<<(*its).second<<")";
       if ((*its).second>=(*itp).first->bindingSalience())
       {
         (*itp).first->bindingSalience((*its).second);
@@ -758,7 +758,7 @@ void CorefSolver::getBest(
             itp2 != binding->end( ); 
             itp2++ )
         {
-          LDEBUG << "  erasing " << (*itp2).first->morphVertex() << " -> " << ca2erase->morphVertex() << LENDL;
+          LDEBUG << "  erasing " << (*itp2).first->morphVertex() << " -> " << ca2erase->morphVertex();
           (*itp2).second.erase(ca2erase);
         }
       }
@@ -884,7 +884,7 @@ void CorefSolver::adjustSaliences(
 void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRelation* pBinding) const
 {
   COREFSOLVERLOGINIT;
-  LDEBUG << "CorefSolver::applyCircularFilter binding size = " << pBinding->size() << LENDL;
+  LDEBUG << "CorefSolver::applyCircularFilter binding size = " << pBinding->size();
   bool crossReferenceFound = false;
   do
   {
@@ -900,7 +900,7 @@ void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRela
         // current target of current source points also to references
         if (source != target && pBinding->find(target) != pBinding->end())
         {
-          LDEBUG << "Check cross reference between " << source->morphVertex() <<" and " << target->morphVertex() << LENDL;
+          LDEBUG << "Check cross reference between " << source->morphVertex() <<" and " << target->morphVertex();
           WeightedVerticesRelation::iterator targetIt = pBinding->find(target);
           // current source and target are effectively cross-referencing each other
           if ( (*targetIt).second.find(source) != (*targetIt).second.end() )
@@ -908,17 +908,17 @@ void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRela
             crossReferenceFound = true;
             float sourceToTargetWeight = (*its).second;
             float targetToSourceWeight = (*(*targetIt).second.find(source)).second;
-            LDEBUG << "Cross reference found between " << source->morphVertex() << " ("<<sourceToTargetWeight<<") and " << target->morphVertex() << " ("<<targetToSourceWeight<<")" << LENDL;
+            LDEBUG << "Cross reference found between " << source->morphVertex() << " ("<<sourceToTargetWeight<<") and " << target->morphVertex() << " ("<<targetToSourceWeight<<")";
             // source to target is better
             if (sourceToTargetWeight >= targetToSourceWeight)
             {
-              LDEBUG << "  erasing " << (*targetIt).first->morphVertex() << " -> " << (*(*targetIt).second.find(source)).first->morphVertex() << LENDL;
+              LDEBUG << "  erasing " << (*targetIt).first->morphVertex() << " -> " << (*(*targetIt).second.find(source)).first->morphVertex();
               (*targetIt).second.erase( (*targetIt).second.find(source) ) ;
             }
             // target to source is better
             else
             {
-              LDEBUG << "  erasing " << (*itp).first->morphVertex() << " -> " << (*its).first->morphVertex() << LENDL;
+              LDEBUG << "  erasing " << (*itp).first->morphVertex() << " -> " << (*its).first->morphVertex();
               (*itp).second.erase(its);
             }
             break;
@@ -929,13 +929,13 @@ void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRela
       if (crossReferenceFound) break;
     }
   } while (crossReferenceFound);
-  LDEBUG << "No more cross references" << LENDL;
+  LDEBUG << "No more cross references";
 }
 
   void CorefSolver::applyThresholdFilter(CoreferentAnnotation::WeightedVerticesRelation* pBinding) const
 {
   COREFSOLVERLOGINIT;
-  LDEBUG << "CorefSolver::applyThresholdFilter " << m_threshold << LENDL;
+  LDEBUG << "CorefSolver::applyThresholdFilter " << m_threshold;
   for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
          itp != pBinding->end( ); 
          itp++ )
@@ -944,10 +944,10 @@ void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRela
            its != (*itp).second.end( ); 
            its++ )
       {
-        LDEBUG << "  threshold bewteen " << (*itp).first->morphVertex() << " and " << (*its).first->morphVertex() << " ; value: " << (*its).second << LENDL;
+        LDEBUG << "  threshold bewteen " << (*itp).first->morphVertex() << " and " << (*its).first->morphVertex() << " ; value: " << (*its).second;
         if ((*its).second<m_threshold)
         {
-          LDEBUG << "  REMOVING " << LENDL;
+          LDEBUG << "  REMOVING ";
           (*itp).second.erase(its);
           // its is invalidated; reinitialize it
           its = (*itp).second.begin( );
@@ -961,7 +961,7 @@ void CorefSolver::applyMorphoSyntacticFilter(
   CoreferentAnnotation::VerticesRelation* roBinding) const
 {
   COREFSOLVERLOGINIT;
-  LDEBUG << "CorefSolver::applyMorphoSyntacticFilter binding size = " << pBinding->size() << LENDL;
+  LDEBUG << "CorefSolver::applyMorphoSyntacticFilter binding size = " << pBinding->size();
   for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
          itp != pBinding->end( ); 
          itp++ )
@@ -971,7 +971,7 @@ void CorefSolver::applyMorphoSyntacticFilter(
          itro != roSet.end( ); 
          itro++ )
       {
-        LDEBUG << "  erasing " << (*itp).first->morphVertex() << " -> " << (*itro)->morphVertex() << LENDL;
+        LDEBUG << "  erasing " << (*itp).first->morphVertex() << " -> " << (*itro)->morphVertex();
         (*itp).second.erase(*itro);
       }
     }

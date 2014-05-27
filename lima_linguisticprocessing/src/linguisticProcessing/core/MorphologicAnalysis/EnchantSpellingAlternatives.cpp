@@ -70,7 +70,7 @@ void EnchantSpellingAlternatives::init(
   }
   catch (enchant::Exception& e)
   {
-    LERROR << "Cannot get Enchant dictionary for language" << Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language) << LENDL;
+    LERROR << "Cannot get Enchant dictionary for language" << Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language);
     throw LimaException();
   }
   try
@@ -81,7 +81,7 @@ void EnchantSpellingAlternatives::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'dictionary' in EnchantSpellingAlternatives group for language " << (int) m_d->m_language << LENDL;
+    LERROR << "no param 'dictionary' in EnchantSpellingAlternatives group for language " << (int) m_d->m_language;
     throw InvalidConfiguration();
   }
 }
@@ -91,7 +91,7 @@ LimaStatusCode EnchantSpellingAlternatives::process(AnalysisContent& analysis) c
 {
   TimeUtils::updateCurrentTime();
   MORPHOLOGINIT;
-  LINFO << "MorphologicalAnalysis: starting process EnchantSpellingAlternatives" << LENDL;
+  LINFO << "MorphologicalAnalysis: starting process EnchantSpellingAlternatives";
   
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -101,7 +101,7 @@ LimaStatusCode EnchantSpellingAlternatives::process(AnalysisContent& analysis) c
   LinguisticGraphVertexIt it,itEnd;
   for (boost::tie(it,itEnd)=vertices(*g) ; it != itEnd ; it++)
   {
-    LDEBUG << "EnchantSpellingAlternatives::process processing vertex " << *it << LENDL;
+    LDEBUG << "EnchantSpellingAlternatives::process processing vertex " << *it;
     Token* currentToken=tokenMap[*it];
     MorphoSyntacticData* msd=dataMap[*it];
     
@@ -116,7 +116,7 @@ LimaStatusCode EnchantSpellingAlternatives::process(AnalysisContent& analysis) c
       }
     }
   }
-  LINFO << "MorphologicalAnalysis: ending process EnchantSpellingAlternatives" << LENDL;
+  LINFO << "MorphologicalAnalysis: ending process EnchantSpellingAlternatives";
   return SUCCESS_ID;
 }
 
@@ -152,7 +152,7 @@ void EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives(
       
       if (!entry->isEmpty())
       {
-        LINFO << "EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives correcting" << tokenStr << "into" << correction << LENDL;
+        LINFO << "EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives correcting" << tokenStr << "into" << correction;
         // add orthographic alternative to Token;
         StringsPoolIndex idx=sp[correction];
         token->addOrthographicAlternatives(idx);

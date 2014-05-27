@@ -90,7 +90,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
   if (metadata == 0)
   {
     PTLOGINIT;
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
@@ -98,7 +98,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
   if (!openLogFile(out,metadata->getMetaData("FileName")))
   {
     PTLOGINIT;
-    LERROR << "Can't open log file " << LENDL;
+    LERROR << "Can't open log file ";
     return CANNOT_OPEN_FILE_ERROR;
   }
 

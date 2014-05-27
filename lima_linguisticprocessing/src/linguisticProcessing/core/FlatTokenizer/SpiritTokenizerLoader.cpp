@@ -56,14 +56,14 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
 
   if (r && iter == end)
   {
-    LDEBUG << "Parsing " << fileName << " succeeded: "<<tokenizer_automaton.size()<<" states" << LENDL;
+    LDEBUG << "Parsing " << fileName << " succeeded: "<<tokenizer_automaton.size()<<" states";
     std::vector<tokenizer_state>::const_iterator it, itBegin, itEnd;
     itBegin = tokenizer_automaton.begin();
     it = tokenizer_automaton.begin(); itEnd = tokenizer_automaton.end();
     for (; it != itEnd; it++)
     {
       const tokenizer_state& state = *it;
-      LDEBUG << "Loading state " << state.id << LENDL;
+      LDEBUG << "Loading state " << state.id;
       State* newState = stateNamed(Common::Misc::utf8stdstring2limastring(state.id));
       std::vector<tokenizer_transition>::const_iterator tit, titEnd;
       tit = state.transitions.begin(); titEnd = state.transitions.end();
@@ -71,9 +71,9 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
       {
         // create transition
         const tokenizer_transition& transition = *tit;
-        LDEBUG << "  Loading transition to " << transition.target << " (" << stateNamed(Common::Misc::utf8stdstring2limastring(transition.target)) << ") type=" << transition.transition << LENDL;
+        LDEBUG << "  Loading transition to " << transition.target << " (" << stateNamed(Common::Misc::utf8stdstring2limastring(transition.target)) << ") type=" << transition.transition;
         Transition* newTransition = new Transition(newState);
-        LDEBUG << "          transition is " << newTransition << LENDL;
+        LDEBUG << "          transition is " << newTransition;
         // setting target set
         newTransition->setToState(stateNamed(Common::Misc::utf8stdstring2limastring(transition.target)));
         // setting events
@@ -81,7 +81,7 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
         eventIt = transition.event.begin(); eventItEnd = transition.event.end();
         for (; eventIt!= eventItEnd; eventIt++)
         {
-          LDEBUG << "    Adding event " << *eventIt << LENDL;
+          LDEBUG << "    Adding event " << *eventIt;
           newTransition->events().push_back(m_automaton.charChart()->classNamed(Common::Misc::utf8stdstring2limastring(*eventIt)));
         }
         // setting preconditions
@@ -89,14 +89,14 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
         preconditionsIt = transition.preconditions.begin(); preconditionsItEnd = transition.preconditions.end();
         for (; preconditionsIt != preconditionsItEnd; preconditionsIt++)
         {
-          LDEBUG << "    Adding precondition" << LENDL;
+          LDEBUG << "    Adding precondition";
           newTransition->conditions().before().push_back(Events(m_automaton.charChart()));
           const tokenizer_precondition& precondition = *preconditionsIt;
           tokenizer_precondition::const_iterator preIt, preItEnd;
           preIt = precondition.begin(); preItEnd = precondition.end();
           for (; preIt != preItEnd; preIt++)
           {
-            LDEBUG << "      " << *preIt << LENDL;
+            LDEBUG << "      " << *preIt;
             newTransition->conditions().before().back().addEventNamed(Common::Misc::utf8stdstring2limastring(*preIt));
           }
         }
@@ -105,20 +105,20 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
         postconditionsIt = transition.postconditions.begin(); postconditionsItEnd = transition.postconditions.end();
         for (; postconditionsIt != postconditionsItEnd; postconditionsIt++)
         {
-          LDEBUG << "    Adding postcondition" << LENDL;
+          LDEBUG << "    Adding postcondition";
           newTransition->conditions().after().push_back(Events(m_automaton.charChart()));
           const tokenizer_postcondition& postcondition = *postconditionsIt;
           tokenizer_postcondition::const_iterator postIt, postItEnd;
           postIt = postcondition.begin(); postItEnd = postcondition.end();
           for (; postIt != postItEnd; postIt++)
           {
-            LDEBUG << "      " << *postIt << " ; postconditions size: " << newTransition->conditions().after().size() << LENDL;
+            LDEBUG << "      " << *postIt << " ; postconditions size: " << newTransition->conditions().after().size();
             newTransition->conditions().after().back().addEventNamed(Common::Misc::utf8stdstring2limastring(*postIt));
           }
         }
         // setting parameters
         newTransition->setFlush(transition.transition == FLUSH);
-        LDEBUG << "      setTokenize: " << (transition.transition == TOKEN) << LENDL;
+        LDEBUG << "      setTokenize: " << (transition.transition == TOKEN);
         newTransition->setTokenize(transition.transition == TOKEN);
         // setting statuses
         std::vector<std::string>::const_iterator statusesIt, statusesItEnd;
@@ -127,7 +127,7 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
         {
           if (!newTransition->setSetting(Common::Misc::utf8stdstring2limastring(*statusesIt)))
           {
-            LERROR << "Unknown status setting: " << *statusesIt << LENDL;
+            LERROR << "Unknown status setting: " << *statusesIt;
           }
         }
         // store transition
@@ -141,7 +141,7 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
   }
   else
   {
-    LERROR << "Parsing of tokenizer file failed: " << fileName << LENDL;
+    LERROR << "Parsing of tokenizer file failed: " << fileName;
   }
 }
 

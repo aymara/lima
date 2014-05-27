@@ -54,7 +54,7 @@ std::string BowDocumentHandler::getSBoWContent() const
 void BowDocumentHandler::startDocument(const Common::Misc::GenericDocumentProperties& props)
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::startDocument()" << LENDL;
+  LDEBUG << "BowDocumentHandler::startDocument()";
   
   m_bowstream=new ostringstream();
   m_writer=new SBowDocumentWriter();
@@ -65,7 +65,7 @@ void BowDocumentHandler::startDocument(const Common::Misc::GenericDocumentProper
 void BowDocumentHandler::endDocument()
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::endDocument()" << LENDL;
+  LDEBUG << "BowDocumentHandler::endDocument()";
   m_writer->endDocument();
 
   // build bow documents from the XML-structured BoWDocument stream:
@@ -95,7 +95,7 @@ void BowDocumentHandler::endDocument()
 void BowDocumentHandler::startNode( const std::string& elementName, bool forIndexing )
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::startNode()" << LENDL;
+  LDEBUG << "BowDocumentHandler::startNode()";
 
   m_writer->startNode(elementName, forIndexing );
 }
@@ -103,28 +103,28 @@ void BowDocumentHandler::startNode( const std::string& elementName, bool forInde
 void BowDocumentHandler::endNode(const Common::Misc::GenericDocumentProperties& props)
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::endNode()" << LENDL;
+  LDEBUG << "BowDocumentHandler::endNode()";
   m_writer->endNode(props);
 }
 
 void BowDocumentHandler::startAnalysis() 
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::startAnalysis()" << LENDL;
+  LDEBUG << "BowDocumentHandler::startAnalysis()";
   m_writer->startAnalysis();
 }
 
 void BowDocumentHandler::endAnalysis()
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::endAnalysis()" << LENDL;
+  LDEBUG << "BowDocumentHandler::endAnalysis()";
   m_writer->endAnalysis();
 }
   
 void BowDocumentHandler::handle(const char* buf,int length) 
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "BowDocumentHandler::handleText()" << LENDL;
+  LDEBUG << "BowDocumentHandler::handleText()";
   m_writer->handle(buf,length);
 }
 

@@ -151,14 +151,14 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
   std::ofstream ofs;
   if (!openLogFile(ofs,metadata->getMetaData("FileName"))) {
       SALOGINIT;
-      LERROR << "DebugSyntacticAnalysisLogger::Cannot open log file" << LENDL;
+      LERROR << "DebugSyntacticAnalysisLogger::Cannot open log file";
       return CANNOT_OPEN_FILE_ERROR;
   }
 
@@ -167,22 +167,22 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
   //cout << endl;
   if (m_displayChains) {
-    LDEBUG << "call of displayChains" << LENDL;
+    LDEBUG << "call of displayChains";
     SyntacticAnalysisTools::displayChains(tokenList, ofs);
   }
   if (m_displayDependencies) {
-    LDEBUG << "call of displayDependancies" << LENDL;
+    LDEBUG << "call of displayDependancies";
     SyntacticAnalysisTools::displayDependancies(*syntacticData,
                                                 m_language,ofs,m_displayLemmas);
   }
   if (m_displayRelationsOrderOfArguments) {
-    LDEBUG << "call of displayRelationsOrderOfArguments" << LENDL;
+    LDEBUG << "call of displayRelationsOrderOfArguments";
     SyntacticAnalysisTools::displayRelationsOrderOfArguments(*syntacticData,
                                                              m_language,
                                                              ofs);
   }
   if (m_displayRelationsDistanceOfArguments) {
-    LDEBUG << "call of displayRelationsDistanceOfArguments" << LENDL;
+    LDEBUG << "call of displayRelationsDistanceOfArguments";
     SyntacticAnalysisTools::displayRelationsDistanceOfArguments(*syntacticData,
                                                                 m_language,
                                                                 ofs);

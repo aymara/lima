@@ -42,7 +42,7 @@ public:
     }*/
     LinguisticAnalysisStructure::MorphoSyntacticData* data=get(vertex_data,*m_graph,v);
 
-     out << "[label=\"" << v << "\l";
+     out << "[label=\"" << v << "\\l";
      if (data == 0)
      {
       out << "no FullToken";
@@ -61,7 +61,7 @@ public:
           {
             if (it!=m_display.begin())
             {
-              out << "\l";
+              out << "\\l";
             }
             if ( *it == "position" )
             {
@@ -236,7 +236,7 @@ public:
               }
             }
           }
-          out << "\l";
+          out << "\\l";
        }
      }
      out << "\",fontname=\"Monospace\",fontsize=\"9\"];\n";
@@ -316,7 +316,7 @@ template <typename Graph, typename Edge> class PosTaggingEdgeWriter {
        it++)
        {
      copy(it->begin(),it->end(),std::ostream_iterator<uint64_t>(out,","));
-     out << "\l";
+     out << "\\l";
        }
   out << "\",style=";
   if (hasNonValidBigram)

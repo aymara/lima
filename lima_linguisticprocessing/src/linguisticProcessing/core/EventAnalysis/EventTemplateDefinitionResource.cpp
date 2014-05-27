@@ -70,7 +70,7 @@ init(GroupConfigurationStructure& unitConfiguration,
     structure.setName(name);
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language << LENDL;
+    LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
@@ -83,7 +83,7 @@ init(GroupConfigurationStructure& unitConfiguration,
     }
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language << LENDL;
+    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
@@ -97,13 +97,13 @@ init(GroupConfigurationStructure& unitConfiguration,
       boost::char_separator<char> sep(",; ");
       boost::tokenizer<boost::char_separator<char> > tok(elements,sep);
       for(boost::tokenizer<boost::char_separator<char> >::iterator e=tok.begin(),e_end=tok.end(); e!=e_end;e++) {
-        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e << LENDL;
+        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e;
         m_elementMapping[(*it).first].insert(*e);
       }
     }
   }
   catch (NoSuchParam& ) {
-    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language << LENDL;
+    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language;
   }
   
   m_templates.push_back(structure);
@@ -129,7 +129,7 @@ existsMapping(const std::string& eltName1, const std::string& eltName2) const
     }
   }
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res << LENDL;
+  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res;
   return res;
 }
 

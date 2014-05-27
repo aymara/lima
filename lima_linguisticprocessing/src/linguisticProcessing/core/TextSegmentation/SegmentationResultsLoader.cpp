@@ -83,7 +83,7 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
   if (graph==0)
   {
     LOGINIT("LP::AnalysisLoader");
-    LERROR << "no graph '" << m_graph << "' available !" << LENDL;
+    LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
   }
 
@@ -98,7 +98,7 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
     segmData = static_cast<SegmentationData*>(data);
     if (segmData==0) {
       LOGINIT("LP::AnalysisLoader");
-      LERROR << "data "<< data <<" is not an object of class SegmentationData" << LENDL;
+      LERROR << "data "<< data <<" is not an object of class SegmentationData";
       return MISSING_DATA;
     }
   }
@@ -120,7 +120,7 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
   catch (const XMLException& )
   {
     LOGINIT("LP::AnalysisLoader");
-    LERROR << "Error: failed to parse XML input file" << LENDL;
+    LERROR << "Error: failed to parse XML input file";
     return UNKNOWN_ERROR;
   }
 
@@ -150,7 +150,7 @@ bool SegmentationResultsLoader::XMLHandler::endElement(const QString & namespace
   string name=toString(eltName);
   if (name=="segment") {
     LOGINIT("LP::AnalysisLoader");
-    LDEBUG << "SegmentationResultsLoader::XMLHandler add data "  << m_type << "," << m_position << "," << m_length << "," << m_graph << LENDL;
+    LDEBUG << "SegmentationResultsLoader::XMLHandler add data "  << m_type << "," << m_position << "," << m_length << "," << m_graph;
     Segment s(m_type);
     s.setVerticesFromPositions(m_position,m_length,m_graph);
     m_data->add(s);
@@ -161,7 +161,7 @@ bool SegmentationResultsLoader::XMLHandler::endElement(const QString & namespace
 bool SegmentationResultsLoader::XMLHandler::characters(const QString& chars)
 {
   LOGINIT("LP::AnalysisLoader");
-  LDEBUG << "SegmentationResultsLoader::XMLHandler characters in "  << m_currentElement << LENDL;
+  LDEBUG << "SegmentationResultsLoader::XMLHandler characters in "  << m_currentElement;
   if (m_currentElement=="position") {
     std::string pos=toString(chars);
     m_position=atoi(pos.c_str());
@@ -183,7 +183,7 @@ startElement(const QString & namespaceURI, const QString & eltName, const QStrin
   LIMA_UNUSED(qName);
   LIMA_UNUSED(attributes);
   LOGINIT("LP::AnalysisLoader");
-  LDEBUG << "SegmentationResultsLoader::XMLHandler start element "  << toString(eltName) << LENDL;
+  LDEBUG << "SegmentationResultsLoader::XMLHandler start element "  << toString(eltName);
   m_currentElement=toString(eltName);
   return true;
 }
@@ -193,8 +193,8 @@ bool SegmentationResultsLoader::XMLHandler::warning(const QXmlParseException & e
   LOGINIT("LP::AnalysisLoader");
   LERROR << "Error at file " << toString(e.systemId())
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << toString(e.message()) << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << toString(e.message());
          return true;
 }
 bool SegmentationResultsLoader::XMLHandler::error(const QXmlParseException & e)
@@ -202,8 +202,8 @@ bool SegmentationResultsLoader::XMLHandler::error(const QXmlParseException & e)
   LOGINIT("LP::AnalysisLoader");
   LERROR << "Fatal error at file " << toString(e.systemId())
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << toString(e.message()) << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << toString(e.message());
          return false;
 }
 bool SegmentationResultsLoader::XMLHandler::fatalError(const QXmlParseException & e)
@@ -211,8 +211,8 @@ bool SegmentationResultsLoader::XMLHandler::fatalError(const QXmlParseException 
   LOGINIT("LP::AnalysisLoader");
   LWARN << "Warning at file " << toString(e.systemId())
         << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber() << LENDL
-        << "  Message: " << toString(e.message()) << LENDL;
+        << ", char " << e.columnNumber()
+        << "  Message: " << toString(e.message());
         return false;
 }
 

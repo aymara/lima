@@ -92,7 +92,7 @@ void WordFeatures::initialize(const deque<std::string>& featureNames)
       featureName=string(featureName,0,i);
     }
     DUMPERLOGINIT;
-    LDEBUG << "WordFeatures: initialize feature" << featureName << LENDL;
+    LDEBUG << "WordFeatures: initialize feature" << featureName;
     push_back(FeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
     back()->setName(featureName);
   }

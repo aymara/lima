@@ -87,7 +87,7 @@ LimaStatusCode SyntacticRelationsLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
@@ -96,14 +96,14 @@ LimaStatusCode SyntacticRelationsLogger::process(
   /*std::ofstream ofs;
   if (!openLogFile(ofs,metadata->getMetaData("FileName"))) {
       SALOGINIT;
-      LERROR << "SyntacticRelationsLogger::Cannot open log file" << LENDL;
+      LERROR << "SyntacticRelationsLogger::Cannot open log file";
       return CANNOT_OPEN_FILE_ERROR;
   }*/
 
 //   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   //ofs << endl << "Printing syntactic analysis result :" << endl;
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
-  LDEBUG << "call of displayRelationsXMLFormat" << LENDL;
+  LDEBUG << "call of displayRelationsXMLFormat";
   SyntacticAnalysisTools::displayRelationsXMLFormat(*syntacticData,m_language,outputStream);
   delete dstream;
   TimeUtils::logElapsedTime("SyntacticRelationsLogger");

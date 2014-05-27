@@ -269,7 +269,7 @@ void BoWDocumentST::writeSTData(std::ostream& file) const
         oss << ***itTopSht << " "; itTopSht++;
       } while (itTopSht != m_topicShifts.end());
       LERROR << "Write BoWDocumentST: missing topic shifts on tokens " 
-             << oss.str() << LENDL;
+             << oss.str();
     }
     if (itSentBrk != m_sentenceBreaks.end()) {
       BOWLOGINIT;
@@ -278,7 +278,7 @@ void BoWDocumentST::writeSTData(std::ostream& file) const
         oss << ***itSentBrk << " "; itSentBrk++;
       } while (itSentBrk != m_sentenceBreaks.end());
       LERROR << "Write BoWDocumentST: missing sentence breaks on tokens " 
-             << oss.str() << LENDL;
+             << oss.str();
     }
 
       // write sentence breaks and topic shifts

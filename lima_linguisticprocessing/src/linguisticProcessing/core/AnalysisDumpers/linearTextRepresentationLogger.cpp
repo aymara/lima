@@ -84,8 +84,8 @@ void LinearTextRepresentationLogger::init(
     }
     catch (NoSuchParam& ) {
         LWARN << "No param 'useStopList' in ltrDumper configuration group for language "
-              << m_language << LENDL;
-        LWARN << "use default value: false" << LENDL;
+              << m_language;
+        LWARN << "use default value: false";
     }
     // output suffix
     try {
@@ -101,7 +101,7 @@ void LinearTextRepresentationLogger::init(
             m_stopList = static_cast<StopList*>(LinguisticResources::single().getResource(m_language, stoplist));
         }
         catch (NoSuchParam& ) {
-            LERROR << "No param 'stopList' in LinearTextRepresentationLogger configuration group for language " << m_language << LENDL;
+            LERROR << "No param 'stopList' in LinearTextRepresentationLogger configuration group for language " << m_language;
             throw InvalidConfiguration();
         }
     }
@@ -117,19 +117,19 @@ LimaStatusCode LinearTextRepresentationLogger::process(
     // get metadata
     LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
-        LERROR << "no LinguisticMetaData ! abort" << LENDL;
+        LERROR << "no LinguisticMetaData ! abort";
         return MISSING_DATA;
     }
     // get the analysis graph
     AnalysisGraph* anaGraph = dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
     if (anaGraph == 0) {
-        LERROR << "no AnalysisGraph ! abort" << LENDL;
+        LERROR << "no AnalysisGraph ! abort";
         return MISSING_DATA;
     }
     // get sentence boundaries
     SegmentationData* sb = dynamic_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
     if (sb == 0) {
-        LERROR << "no SentenceBounds ! abort" << LENDL;
+        LERROR << "no SentenceBounds ! abort";
         return MISSING_DATA;
     }
     // build LTRText

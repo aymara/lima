@@ -61,7 +61,7 @@ void SelectionalPreferences::init(
 
 {
   SALOGINIT;
-  LDEBUG << "Creating a SelectionalPreferences (loads file)" << LENDL;
+  LDEBUG << "Creating a SelectionalPreferences (loads file)";
   m_language=manager->getInitializationParameters().language;
   
   try {
@@ -71,7 +71,7 @@ void SelectionalPreferences::init(
   
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'file' in SelectionalPreferences group for language " << (int) m_language << " !" << LENDL;
+    LERROR << "no parameter 'file' in SelectionalPreferences group for language " << (int) m_language << " !";
     throw InvalidConfiguration();
   }
 
@@ -82,14 +82,14 @@ void SelectionalPreferences::init(
 void SelectionalPreferences::loadFromFile(const std::string& fileName)
 {
   SALOGINIT;
-  LDEBUG << "Loading selectional preferences from " << fileName << LENDL;
+  LDEBUG << "Loading selectional preferences from " << fileName;
   std::ifstream ifl(fileName.c_str(), std::ifstream::binary);
   size_t linesCounter = 0;
   
   const PropertyManager& macroManager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO");
   if (!ifl)
   {
-    LWARN << "Selectional preferences definition file not found: " << fileName << LENDL;
+    LWARN << "Selectional preferences definition file not found: " << fileName;
     return;
   }
   
@@ -101,14 +101,14 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
   {
     if ( (line != "") && (line[0] != '#') )
     {
-      LDEBUG << "read line : " << line << LENDL;
+      LDEBUG << "read line : " << line;
       
       size_t index = 0;
       
       size_t next = line.find_first_of(";", index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find first delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find first delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       std::string target = line.substr(0, next);
@@ -117,7 +117,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
       next=line.find_first_of(";",index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find second delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find second delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       LinguisticCode targetMacro = macroManager.getPropertyValue(line.substr(index, next-index));
@@ -126,7 +126,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
       next=line.find_first_of(";",index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find third delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find third delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       std::string dependency = line.substr(index, next-index);
@@ -135,7 +135,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
       next=line.find_first_of(";",index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find fourth delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find fourth delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       std::string source = line.substr(index, next-index);
@@ -144,7 +144,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
       next=line.find_first_of(";",index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find fifth delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find fifth delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       LinguisticCode soureceMacro = macroManager.getPropertyValue(line.substr(index, next-index));
@@ -173,7 +173,7 @@ double SelectionalPreferences::dependencyProbability(std::string target, Linguis
   {
     return 0.0;
   }
-  LDEBUG << "Probability of (" << target << ", " << targetCode << ", " << dependency << ", " << source << ", " << sourceCode << ") is " << (*preferencesIt).second << LENDL;
+  LDEBUG << "Probability of (" << target << ", " << targetCode << ", " << dependency << ", " << source << ", " << sourceCode << ") is " << (*preferencesIt).second;
   return (*preferencesIt).second;
 }
 

@@ -120,8 +120,8 @@ uint64_t RecognizerMatch::length() const {
 uint64_t RecognizerMatch::numberOfElements() const {
   uint64_t n(0);
 //   AULOGINIT;
-//   LDEBUG << "RecognizerMatch:numberOfElements" << LENDL;
-//   LDEBUG << "RecognizerMatch:this=" << *this << LENDL;
+//   LDEBUG << "RecognizerMatch:numberOfElements";
+//   LDEBUG << "RecognizerMatch:this=" << *this;
   for (RecognizerMatch::const_iterator it=begin(),it_end=end();
        it!=it_end; it++) {
     if ((*it).isKept()) {

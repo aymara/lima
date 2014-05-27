@@ -86,14 +86,14 @@ LimaStatusCode ParagraphBoundariesFinder::process(
 {
   TimeUtils::updateCurrentTime();
   SENTBOUNDLOGINIT;
-  LINFO << "start finding paragraph founds" << LENDL;
+  LINFO << "start finding paragraph founds";
   
   // find paragraphs in text (positions of double carriage returns),
   // then find corresponding vertices in graph
 
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (graph==0) {
-    LERROR << "no graph '" << m_graph << "' available !" << LENDL;
+    LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
   }
   SegmentationData* boundaries=new SegmentationData(m_graph);
@@ -112,7 +112,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   }
 
   if (paragraphPositions.empty()) {
-    LWARN << "no paragraph found" << LENDL;
+    LWARN << "no paragraph found";
     return SUCCESS_ID;
   }
 

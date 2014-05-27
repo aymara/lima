@@ -56,7 +56,7 @@ void Events::addEventNamed(const LimaString& eventName)
 bool Events::isRecognized(const LimaChar event) const
 {
   TOKENIZERLOGINIT;
-//   LDEBUG << "Events("<<i<<","<<event<<") ; size=" << size() << LENDL;
+//   LDEBUG << "Events("<<i<<","<<event<<") ; size=" << size();
   for (uint64_t i = 0; i < size(); i++)
   {
     const CharClass* eventClass = m_chart->charClass(event);

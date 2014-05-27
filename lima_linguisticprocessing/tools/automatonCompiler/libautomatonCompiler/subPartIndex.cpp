@@ -69,7 +69,7 @@ m_subPartIndex(0) {
 void SubPartIndex::init(const LimaString& str,
                         const std::vector<SubAutomaton>& subAutomatons) {
   AUCLOGINIT;
-  LDEBUG << "initialization SubPartIndex from " << Common::Misc::limastring2utf8stdstring(str) << LENDL;
+  LDEBUG << "initialization SubPartIndex from " << Common::Misc::limastring2utf8stdstring(str);
 
   m_partIndex=make_pair(SUB_NONE,0);
   m_subPartIndex=0;
@@ -116,7 +116,7 @@ void SubPartIndex::init(const LimaString& str,
       if (sub == sub_end) {
         AUCLOGINIT;
       LERROR << "Error: cannot parse subindex " << Common::Misc::limastring2utf8stdstring(index)
-          << " in " << Common::Misc::limastring2utf8stdstring(str) << LENDL;
+          << " in " << Common::Misc::limastring2utf8stdstring(str);
       }
     }
   }
@@ -125,7 +125,7 @@ void SubPartIndex::init(const LimaString& str,
     m_subPartIndex=new SubPartIndex(subIndex,subAutomatons);
   }
 
-  LDEBUG << "=>" << *this << LENDL;
+  LDEBUG << "=>" << *this;
 }
 
 
@@ -163,7 +163,7 @@ bool SubPartIndex::isBefore(const SubPartIndex& i) {
 
   AUCLOGINIT;
   LDEBUG << "comparing part indexes "
-         << *this << " and " << i << LENDL;
+         << *this << " and " << i;
 
   bool isBefore(false);
   bool isEqual(false);

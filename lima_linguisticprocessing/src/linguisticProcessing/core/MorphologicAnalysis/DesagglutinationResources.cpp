@@ -66,7 +66,7 @@ void DesagglutinationResources::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'categoriesMappingFile' in DesagglutinationResources group for language " << (int)m_language << LENDL;
+    LERROR << "no param 'categoriesMappingFile' in DesagglutinationResources group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   try
@@ -76,7 +76,7 @@ void DesagglutinationResources::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'delimiterFile' in DesagglutinationResources group for language " << (int)m_language << LENDL;
+    LERROR << "no param 'delimiterFile' in DesagglutinationResources group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 }
@@ -86,14 +86,14 @@ void DesagglutinationResources::loadMicroCategoriesMappingFromFile(const std::st
 {
   DESAGGLOGINIT;
 
-  LINFO << "load micro categories mapping from file " << microcategoriesMappingFile << LENDL;
+  LINFO << "load micro categories mapping from file " << microcategoriesMappingFile;
   const Common::PropertyCode::PropertyManager& microManager=
     static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO");
 
   std::ifstream fin(microcategoriesMappingFile.data(), std::ifstream::binary);
   if (!fin)
   {
-    LERROR << "can't open file : " << microcategoriesMappingFile << LENDL;
+    LERROR << "can't open file : " << microcategoriesMappingFile;
     throw std::runtime_error("can't open file for desagglutinator microcategories");
   }
   while (!fin.eof())
@@ -106,7 +106,7 @@ void DesagglutinationResources::loadMicroCategoriesMappingFromFile(const std::st
       nextStop=line.find(" ");
       if (nextStop==std::string::npos)
       {
-        LERROR << "invalid desagglutinator microcategories file" << LENDL;
+        LERROR << "invalid desagglutinator microcategories file";
         throw std::runtime_error("invalid desagglutinator microcategories file");
       }
       uint64_t cat= microManager.getPropertyValue(line.substr(0,nextStop));
@@ -115,7 +115,7 @@ void DesagglutinationResources::loadMicroCategoriesMappingFromFile(const std::st
       nextStop=line.find(" ",currentIndex);
       if (nextStop==std::string::npos)
       {
-        LERROR << "invalid desagglutinator microcategories file" << LENDL;
+        LERROR << "invalid desagglutinator microcategories file";
         throw std::runtime_error("invalid desagglutinator microcategories file");
       }
       compoundCats.begin=microManager.getPropertyValue(line.substr(currentIndex,nextStop-currentIndex));
@@ -123,28 +123,28 @@ void DesagglutinationResources::loadMicroCategoriesMappingFromFile(const std::st
       nextStop=line.find(" ",currentIndex);
       if (nextStop==std::string::npos)
       {
-        LERROR << "invalid desagglutinator microcategories file" << LENDL;
+        LERROR << "invalid desagglutinator microcategories file";
         throw std::runtime_error("invalid desagglutinator microcategories file");
       }
       compoundCats.part=microManager.getPropertyValue(line.substr(currentIndex,nextStop-currentIndex));
       currentIndex=nextStop+1;
       compoundCats.end=microManager.getPropertyValue(line.substr(currentIndex,line.size()-currentIndex).data());
 
-      LDEBUG << "read CategorieMapping : " << cat << " => " << compoundCats.begin << " - " << compoundCats.part << " - " << compoundCats.end << LENDL;
+      LDEBUG << "read CategorieMapping : " << cat << " => " << compoundCats.begin << " - " << compoundCats.part << " - " << compoundCats.end;
       m_categoriesMapping.insert(std::make_pair(LinguisticCode(cat),compoundCats));
     }
   }
 
   fin.close();
 
-  LINFO << "loaded " << m_categoriesMapping.size() << " microcategory mappings" << LENDL;
+  LINFO << "loaded " << m_categoriesMapping.size() << " microcategory mappings";
 }
 
 void DesagglutinationResources::loadDelimitersFromFile(const std::string& delimitersFile)
 {
 
   DESAGGLOGINIT;
-  LINFO << "load delimiters from file : " << delimitersFile << LENDL;
+  LINFO << "load delimiters from file : " << delimitersFile;
 
   std::ifstream ifs (delimitersFile.c_str(), std::ifstream::binary);
 
@@ -152,7 +152,7 @@ void DesagglutinationResources::loadDelimitersFromFile(const std::string& delimi
   {
     Lima::LimaString del = Common::Misc::utf8stdstring2limastring(Lima::Common::Misc::readLine(ifs));
     m_delimiters.insert(del);
-    LINFO << "read delimiter >" << Common::Misc::limastring2utf8stdstring(del) << "<" << LENDL;
+    LINFO << "read delimiter >" << Common::Misc::limastring2utf8stdstring(del) << "<";
   }
 
   ifs.close();

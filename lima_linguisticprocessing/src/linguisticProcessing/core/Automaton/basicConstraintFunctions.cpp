@@ -161,7 +161,7 @@ LinguisticPropertyIs(MediaId language,
   //complement contains the name of the property, the value
   //to test and the language, separated by a comma
   std::string str=Common::Misc::limastring2utf8stdstring(complement);
-  //LDEBUG << "init constraint LinguisticPropertyIs with complement " << str << LENDL;
+  //LDEBUG << "init constraint LinguisticPropertyIs with complement " << str;
 
   //uint64_t i(0),j(0),k(0); portage 32 64
   std::string::size_type i(0),j(0),k(0);
@@ -175,7 +175,7 @@ LinguisticPropertyIs(MediaId language,
   {
     AULOGINIT;
     LERROR << "Constraint LinguisticPropertyIs : invalid complement \""
-    << str << "\": three arguments needed" << LENDL;
+    << str << "\": three arguments needed";
     throw LimaException();
   }
 
@@ -196,7 +196,7 @@ LinguisticPropertyIs(MediaId language,
     k=valueString.find("#",i);
     if (k!=string::npos && k<j)
     {
-      //LDEBUG << "found # : " << valueString.substr(i,k-i) << " # " << valueString.substr(k+1,j-k-1) << LENDL;
+      //LDEBUG << "found # : " << valueString.substr(i,k-i) << " # " << valueString.substr(k+1,j-k-1);
       value.first=manager.getPropertyValue(valueString.substr(i,k-i));
       string mtype=valueString.substr(k+1,j-k-1);
       if (mtype == "SIMPLE_WORD") { value.second=SIMPLE_WORD; }
@@ -216,14 +216,14 @@ LinguisticPropertyIs(MediaId language,
       {
         AULOGINIT;
         LERROR << "Constraint LinguisticPropertyIs : invalid morphosyntactic type  \""
-        << mtype << "\" !" << LENDL;
+        << mtype << "\" !";
         throw LimaException();
       }
     } else {
       value.first=manager.getPropertyValue(valueString.substr(i,j-i));
       value.second=NO_MORPHOSYNTACTICTYPE;
     }
-    //LDEBUG << "add value pair (linguisticCode=" << value.first << ",type=" << value.second << ")" << LENDL;
+    //LDEBUG << "add value pair (linguisticCode=" << value.first << ",type=" << value.second << ")";
     m_values.push_back(value);
     i=j+1;
     j=valueString.find("|",i);
@@ -292,7 +292,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (token == 0)
   {
     AULOGINIT;
-    LERROR << "Null token on vertex " << v << LENDL;
+    LERROR << "Null token on vertex " << v;
     return false;
   }
 
@@ -301,7 +301,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   //   AULOGINIT;
   //   LDEBUG << "testing length of token " << *token
   //          << "(" <<  length << ") with interval ["
-  //          << min << "-" << max << "]" << LENDL;
+  //          << min << "-" << max << "]";
 
   return (length >= m_min && length <= m_max);
 }
@@ -351,7 +351,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (token == 0)
   {
     AULOGINIT;
-    LERROR << "Null token on vertex " << v << LENDL;
+    LERROR << "Null token on vertex " << v;
     return false;
   }
 

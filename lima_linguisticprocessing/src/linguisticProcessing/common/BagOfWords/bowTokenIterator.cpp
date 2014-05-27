@@ -268,7 +268,7 @@ bool BoWTokenIteratorPrivate::addInPartQueue(const BoWToken* token,
 {
   if (m_partQueue.size() >= m_maxSizeQueue) {
     BOWLOGINIT;
-    LWARN << "size of queue exceeded" << LENDL; 
+    LWARN << "size of queue exceeded"; 
     return false;
   }
   // avoid call to copy constructor (ensure pointer copy)
@@ -282,7 +282,7 @@ bool BoWTokenIteratorPrivate::addInPartQueue(const BoWToken* token,
   LDEBUG << "add in part queue " << *token 
          << "; isCreated=" << isCreated 
          << "size of queue=" << m_partQueue.size() 
-         << LENDL;
+        ;
   return true;
 }
 
@@ -291,7 +291,7 @@ void BoWTokenIteratorPrivate::storePartsInQueue(const BoWToken* token) {
   if (!addPartElementsInQueue(token,partTokens)) {
     BOWLOGINIT;
     LWARN << "Token contain too many subparts (some are ignored): " 
-      << Common::Misc::limastring2utf8stdstring(token->getLemma()) << LENDL;
+      << Common::Misc::limastring2utf8stdstring(token->getLemma());
   }
 }
 
@@ -299,7 +299,7 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
                        vector<PartTokens>& partTokens) {
 
   BOWLOGINIT;
-  LDEBUG << "getPartElements on " << *token << LENDL;
+  LDEBUG << "getPartElements on " << *token;
 
   // push token itself
   if (! addInPartQueue(token,false)) {
@@ -338,11 +338,11 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     partTokens.push_back(vector<const BoWToken*>());
 
     // push token itself and head
-    LDEBUG << "storing token " << *token << LENDL;
+    LDEBUG << "storing token " << *token;
     partTokens.back().push_back(token);
     const BoWComplexToken::Part& headPart=complexToken->getParts()[complexToken->getHead()];
     if (!headPart.isInList()) {
-      LDEBUG << "storing head token " << *(headPart.getBoWToken()) << LENDL;
+      LDEBUG << "storing head token " << *(headPart.getBoWToken());
       partTokens.back().push_back(headPart.getBoWToken());
     }
     
@@ -443,7 +443,7 @@ bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const std::vector<PartToke
 BoWComplexToken* BoWTokenIteratorPrivate::createComplexToken(const vector<const BoWToken*>& parts) {
 
 //   BOWLOGINIT;
-//   LDEBUG << "create complex token" << LENDL;
+//   LDEBUG << "create complex token";
 
   BoWTerm* partialComplexToken=new BoWTerm;
 

@@ -91,14 +91,14 @@ LimaStatusCode CompoundsXmlLogger::process(
   if (metadata == 0)
   {
     COMPOUNDSLOGINIT;
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
   std::ofstream outputStream;
   if (!openLogFile(outputStream,metadata->getMetaData("FileName"))) {
     SALOGINIT;
-    LERROR << "Error: cannot open log file" << LENDL;
+    LERROR << "Error: cannot open log file";
     return CANNOT_OPEN_FILE_ERROR;
   }
   SALOGINIT;
@@ -106,32 +106,32 @@ LimaStatusCode CompoundsXmlLogger::process(
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    LERROR << "no SyntacticData ! abort" << LENDL;
+    LERROR << "no SyntacticData ! abort";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "no PosGraph ! abort" << LENDL;
+    LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no SentenceBounds ! abort" << LENDL;
+    LERROR << "no SentenceBounds ! abort";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
 
@@ -228,7 +228,7 @@ void CompoundsXmlLogger::dumpLimaData(
     {
       /// @todo replace v in LDEBUGs below by matching annotation vertices
 //     LDEBUG << "hasAnnotation("<<v<<", CompoundTokenAnnotation): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation"));
       //std::set< uint64_t > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead"); portage 32 64
       std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       if (!cpdsHeads.empty())
@@ -248,7 +248,7 @@ void CompoundsXmlLogger::dumpLimaData(
             std::string elem = (*bowItr).second->getIdUTF8String();
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
-              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
               delete (*bowItr).first;
               delete (*bowItr).second;
             }
@@ -284,7 +284,7 @@ void CompoundsXmlLogger::outputCompound(
   const uint64_t offsetBegin) const
 {
   COMPOUNDSLOGINIT;
-  LDEBUG << "Outputing compound: " << compound << LENDL;
+  LDEBUG << "Outputing compound: " << compound;
   uint64_t pos = getPosition(compound->getPosition(),offsetBegin);
   LimaString form = compound->getLemma();
   std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(compound->getCategory());
@@ -308,7 +308,7 @@ void CompoundsXmlLogger::outputCompound(
       }
       else
       {
-        LDEBUG << "    part: " << partTok << LENDL;
+        LDEBUG << "    part: " << partTok;
         uint64_t partPos = getPosition(partTok->getPosition(),offsetBegin);
         LimaString partForm = partTok->getLemma();
         std::string partCat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(partTok->getCategory()) ;

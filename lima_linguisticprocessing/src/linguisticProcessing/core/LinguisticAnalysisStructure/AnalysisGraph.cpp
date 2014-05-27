@@ -146,7 +146,7 @@ void AnalysisGraph::deleteGraph()
 {
 
   LASLOGINIT;
-  LDEBUG << "deleteGraph" << LENDL;
+  LDEBUG << "deleteGraph";
 
   if (m_graph == 0) return;
   
@@ -249,7 +249,7 @@ LinguisticGraphVertex AnalysisGraph::nextMainPathVertex(
     if (outItr==outItrEnd)
     {
       LASLOGINIT;
-      LERROR << "no next vertex in graph whereas current vertex is not last vertex !!" << LENDL;
+      LERROR << "no next vertex in graph whereas current vertex is not last vertex !!";
       throw std::runtime_error("no next vertex in graph whereas current vertex is not last vertex !!");
     }
     for (;outItr!=outItrEnd;outItr++)
@@ -322,10 +322,10 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
     {
       if (next != nextSentenceBreak)
       {
-        LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak << LENDL;
-        LERROR << "   returning graph's last vertex " << next << LENDL;
+        LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak;
+        LERROR << "   returning graph's last vertex " << next;
       }
-      LDEBUG << "Next chains break is: " << next << LENDL;
+      LDEBUG << "Next chains break is: " << next;
       return next;
     }
     accumulator-=in_degree(next,*m_graph);
@@ -374,7 +374,7 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
     accumulator+=out_degree(next,*m_graph);
     if (next == current)
     {
-      LERROR << "In nextChainsBreakFrom: cannot go beyond " << current << LENDL;
+      LERROR << "In nextChainsBreakFrom: cannot go beyond " << current;
       return m_lastVertex;
     }
     current = next;

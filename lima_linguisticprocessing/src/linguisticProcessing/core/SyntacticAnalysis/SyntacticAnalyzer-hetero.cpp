@@ -108,7 +108,7 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
   {
     SAHLOGINIT;
     LERROR << "no parameter 'rules' in SyntacticAnalyzerDepsHetero group for language "
-           << (int) m_language << LENDL;
+           << (int) m_language;
   }
   try {
     std::map<std::string,std::string>&  rulesMap=unitConfiguration.getMapAtKey("subSentencesRules");
@@ -117,7 +117,7 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
     for (; itm != itm_end; itm++)
     {
       SAHLOGINIT;
-      LINFO << "Loading subsentences recognizer " << (*itm).second << " for type " << (*itm).first << LENDL;
+      LINFO << "Loading subsentences recognizer " << (*itm).second << " for type " << (*itm).first;
       m_subSentRecognizers.insert(std::make_pair(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationId((*itm).first), static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,(*itm).second))));
     }
   }
@@ -125,7 +125,7 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
   {
     SAHLOGINIT;
     LERROR << "no parameters map 'subSentencesRules' in SyntacticAnalyzerDepsHetero group for language "
-      << (int) m_language << LENDL;
+      << (int) m_language;
   }
 
   try
@@ -138,7 +138,7 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
   {
     SAHLOGINIT;
     LINFO << "no parameter 'unfold' in SyntacticAnalyzerDepsHetero group for language "
-      << (int) m_language << " ; using default : true" << LENDL;
+      << (int) m_language << " ; using default : true";
   }
   if (m_unfold)
   {
@@ -151,7 +151,7 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
     {
       SAHLOGINIT;
       LINFO << "no parameter 'linkSubSentences' in SyntacticAnalyzerDepsHetero group for language "
-        << (int) m_language << " ; using default : true" << LENDL;
+        << (int) m_language << " ; using default : true";
     }
   }
 
@@ -174,13 +174,13 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
 {
   Lima::TimeUtilsController timer("SyntacticAnalysis");
   SAHLOGINIT;
-  LINFO << "start heterosyntagmatic dependence relations search" << LENDL;
+  LINFO << "start heterosyntagmatic dependence relations search";
 
   AnalysisGraph* anagraph=
     static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   LinguisticGraph* graph = anagraph->getGraph();
@@ -189,12 +189,12 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
     static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds ! abort" << LENDL;
+    LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
   if (sb->getGraphId() != "PosGraph") {
-    LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !" << LENDL;
-    LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph" << LENDL;
+    LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !";
+    LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
 
@@ -216,7 +216,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
     LDEBUG << "analyze sentence from vertex " << beginSentence
-           << " to vertex " << endSentence << LENDL;
+           << " to vertex " << endSentence;
 
     std::vector<Automaton::RecognizerMatch> result;
     m_recognizer->apply(*anagraph,
@@ -249,7 +249,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
       Common::MediaticData::SyntacticRelationId subSentType;
       boost::tie(first, last, subSentType) = *subSentRIt;
       std::vector<Automaton::RecognizerMatch> subSentResult;
-      LDEBUG << "Hetero rules on a subsentence: " << boost::target(first,*graph) << " / " << boost::source(last,*graph) << LENDL;
+      LDEBUG << "Hetero rules on a subsentence: " << boost::target(first,*graph) << " / " << boost::source(last,*graph);
 
       m_recognizer->apply(*anagraph,
                           boost::target(first,*graph),
@@ -264,8 +264,8 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                           );
       if (m_unfold)
       {
-        LDEBUG << "Unfolding" << LENDL;
-        LDEBUG << "Remove edge " << boost::source(first,*graph) << " -> " << boost::target(last,*graph) << LENDL;
+        LDEBUG << "Unfolding";
+        LDEBUG << "Remove edge " << boost::source(first,*graph) << " -> " << boost::target(last,*graph);
         boost::remove_edge(boost::source(first,*graph),
                           boost::target(last,*graph),
                           *graph);
@@ -273,7 +273,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                         boost::target(first,*graph),
                         *graph).second)
         {
-          LDEBUG << "Add edge " << boost::source(first,*graph) << " -> " << boost::target(first,*graph) << LENDL;
+          LDEBUG << "Add edge " << boost::source(first,*graph) << " -> " << boost::target(first,*graph);
           boost::add_edge(boost::source(first,*graph),
                       boost::target(first,*graph),
                       *graph);
@@ -282,7 +282,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                         boost::target(last,*graph),
                         *graph).second)
         {
-          LDEBUG << "Add edge " << boost::source(last,*graph) << " -> " << boost::target(last,*graph) << LENDL;
+          LDEBUG << "Add edge " << boost::source(last,*graph) << " -> " << boost::target(last,*graph);
           boost::add_edge(boost::source(last,*graph),
                       boost::target(last,*graph),
                       *graph);
@@ -291,13 +291,13 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
         {
           if (m_subSentRecognizers.find(subSentType) == m_subSentRecognizers.end())
           {
-            LWARN << "No recognizer for subsentence type " << subSentType << LENDL;
+            LWARN << "No recognizer for subsentence type " << subSentType;
           }
           else
           {
             LDEBUG << "Link subsentence to main one " << boost::target(first,*graph) << "/"
                 << boost::source(last,*graph) << "/" << beginSentence << "/"
-                << endSentence << LENDL;
+                << endSentence;
             Automaton::Recognizer* subSentRecognizer = (*(m_subSentRecognizers.find(subSentType))).second;
             subSentRecognizer->apply(*anagraph,
                                      boost::target(first,*graph),
@@ -326,20 +326,20 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
 LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisContent& analysis) const
 {
   SAHLOGINIT;
-  LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings" << LENDL;
+  LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings";
 
   // Initialisation
   SyntacticData* syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    LERROR << "no syntacticData ! abort" << LENDL;
+    LERROR << "no syntacticData ! abort";
     return MISSING_DATA;
   }
   
   SimplificationData* simplificationData = static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
-    LERROR << "no simplificationData ! abort" << LENDL;
+    LERROR << "no simplificationData ! abort";
     return MISSING_DATA;
   }
 
@@ -352,12 +352,12 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
     if (simplificationData->coordStrings().find((*dit).first) == simplificationData->coordStrings().end())
     {
       // no same string for definition
-      LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings no same string for definition " << (*dit).first << LENDL;
+      LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings no same string for definition " << (*dit).first;
       continue;
     }
     const std::vector< LinguisticGraphVertex >& stringDef = (*dit).second;
     const std::vector< std::vector< LinguisticGraphVertex > >& sameStrings = (*simplificationData->coordStrings().find((*dit).first)).second;
-    LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings there is " << sameStrings.size() << " same strings for " << (*dit).first << LENDL;
+    LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings there is " << sameStrings.size() << " same strings for " << (*dit).first;
     // for each same string s of d
     for (std::vector< std::vector< LinguisticGraphVertex > >::const_iterator ssit = sameStrings.begin(); ssit != sameStrings.end(); ssit++)
     {
@@ -385,7 +385,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
           std::pair< LinguisticGraphEdge, bool > sameStringEdge = boost::edge(depSameStringVx, depTargV, *depGraph);
           if (!sameStringEdge.second)
           {
-            LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings create edge " << depSameStringVx << " -("<<relationName<<")-> " << depTargV << LENDL;
+            LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings create edge " << depSameStringVx << " -("<<relationName<<")-> " << depTargV;
             std::pair<DependencyGraphEdge,bool> newSameStringEdge = boost::add_edge(depSameStringVx, depTargV, *depGraph);
             if (newSameStringEdge.second)
             {
@@ -408,7 +408,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
             std::pair<DependencyGraphEdge,bool> newSameStringEdge = boost::add_edge(depSameStringVx, depSrcV, *depGraph);
             if (newSameStringEdge.second)
             {
-              LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings create edge " << depSameStringVx << " <-("<<relationName<<")- " << depSrcV << LENDL;
+              LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings create edge " << depSameStringVx << " <-("<<relationName<<")- " << depSrcV;
               relTypeMap[newSameStringEdge.first] = relTypeMap[*depInIt];
             }
           }

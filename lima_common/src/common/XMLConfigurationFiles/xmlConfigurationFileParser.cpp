@@ -83,7 +83,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     m_parser(0), m_configurationFileName(configurationFileName)
 {
     XMLCFGLOGINIT;
-    LDEBUG << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str() << LENDL;
+    LDEBUG << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str();
 
     m_parser = new QXmlSimpleReader();
 
@@ -164,20 +164,20 @@ string& XMLConfigurationFileParser::getModuleGroupParamValue(const string& modul
     catch(NoSuchModule& nsm)
     {
       std::cerr << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str() << LENDL;
+      LWARN << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str();
         //not LERROR because user may want the module to be optional -> no error
         throw;
     }
     catch(NoSuchGroup& nsg)
     {
       std::cerr << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str() << LENDL;
+      LWARN << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str();
         throw;
     }
     catch(NoSuchParam& nsp)
     {
       std::cerr << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str() << LENDL;
+      LWARN << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str();
         throw;
     }
     catch(...)

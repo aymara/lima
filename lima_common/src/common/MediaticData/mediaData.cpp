@@ -84,7 +84,7 @@ void MediaData::init (
   LIMA_UNUSED(unitConfiguration);
   LIMA_UNUSED(manager);
     MDATALOGINIT;
-    LDEBUG << "MediaData:init" << LENDL;
+    LDEBUG << "MediaData:init" ;
 }
 
 SimpleFactory<MediaData,MediaData> mediaDataFactory ( MEDIADATA_CLASSID );

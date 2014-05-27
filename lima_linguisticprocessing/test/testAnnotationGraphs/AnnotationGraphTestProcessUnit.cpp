@@ -74,11 +74,11 @@ LimaStatusCode AnnotationGraphTestProcessUnit::process(
 {
   TimeUtils::updateCurrentTime();
   SALOGINIT;
-  LINFO << "start AnnotationGraphTestProcessUnit" << LENDL;
+  LINFO << "start AnnotationGraphTestProcessUnit";
   // create syntacticData
   if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   
@@ -147,7 +147,7 @@ int DumpPoint::dump(std::ostream& os, GenericAnnotation& ga) const
   }
   catch (const boost::bad_any_cast& e)
   {
-    LERROR << "This annotation is not a Point ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a Point ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

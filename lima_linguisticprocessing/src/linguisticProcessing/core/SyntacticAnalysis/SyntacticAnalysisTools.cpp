@@ -64,7 +64,7 @@ void SyntacticAnalysisTools::displayChains(const AnalysisGraph* anagraph,std::os
       }
       alreadyVisited.insert(current);
       SALOGINIT;
-      LDEBUG << "looking at " << current << LENDL;
+      LDEBUG << "looking at " << current;
       set< ChainIdStruct > chains=get(vertex_chain_id, *graph, current);
       for (set<ChainIdStruct>::iterator chainItr=chains.begin();
               chainItr!=chains.end();
@@ -315,7 +315,7 @@ displayRelationsOrderOfArguments(const SyntacticData& data,
     }
     catch (LimaException& e) {
       CORECLIENTLOGINIT;
-      LERROR << e.what() << LENDL;
+      LERROR << e.what();
       continue;
     }
 
@@ -369,7 +369,7 @@ displayRelationsDistanceOfArguments(const SyntacticData& data,
     }
     catch (LimaException& e) {
       CORECLIENTLOGINIT;
-      LERROR << e.what() << LENDL;
+      LERROR << e.what();
       continue;
     }
 
@@ -441,7 +441,7 @@ void SyntacticAnalysisTools::displayRelationsXMLFormat(const SyntacticData& data
     }
     catch (LimaException& e) {
       CORECLIENTLOGINIT;
-      LERROR << e.what() << LENDL;
+      LERROR << e.what();
       continue;
     }
     

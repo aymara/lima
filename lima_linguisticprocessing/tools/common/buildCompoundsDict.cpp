@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG << argv[0] <<  " begin..." << LENDL;
+  LDEBUG << argv[0] <<  " begin...";
 #endif
 
   // options reading

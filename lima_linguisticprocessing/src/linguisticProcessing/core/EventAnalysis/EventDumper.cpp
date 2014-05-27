@@ -82,7 +82,7 @@ void EventDumper::init(
   {
     DUMPERLOGINIT;
     LWARN << "No 'traceFile' parameter in unit configuration '"
-        << unitConfiguration.getName() << "' ; using tmpFile" << LENDL;
+        << unitConfiguration.getName() << "' ; using tmpFile";
   }
   try
   {
@@ -91,7 +91,7 @@ void EventDumper::init(
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "EventDumper::init:  Missing parameter handler in EventDumper configuration" << LENDL;
+    LERROR << "EventDumper::init:  Missing parameter handler in EventDumper configuration";
     throw InvalidConfiguration();
   }
   
@@ -103,61 +103,61 @@ LimaStatusCode EventDumper::process(
   TimeUtils::updateCurrentTime();
   DUMPERLOGINIT;
   
-  LDEBUG << "EventDumper::process()... " << LENDL;
+  LDEBUG << "EventDumper::process()... ";
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "EventDumper::process: no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "EventDumper::process: no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "EventDumper::process: no graph 'AnaGraph' available !" << LENDL;
+    LERROR << "EventDumper::process: no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "EventDumper::process: no graph 'PosGraph' available !" << LENDL;
+    LERROR << "EventDumper::process: no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
   
-  LDEBUG << "EventDumper::process(): handler will be: " << m_handler << LENDL;
+  LDEBUG << "EventDumper::process(): handler will be: " << m_handler;
 //  MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 //  AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(LinguisticResources::single().getResource(langid, m_handler));
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
-  LDEBUG << "EventDumper::process(): handler= " << handler << LENDL;
+  LDEBUG << "EventDumper::process(): handler= " << handler;
   if (handler==0)
   {
-    LERROR << "EventDumper::process(): handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "EventDumper::process(): handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
 
   HandlerStreamBuf hsb(handler);
   std::ostream out(&hsb);
-  LDEBUG << "EventDumper::process(): handler->startAnalysis()..." << LENDL;
+  LDEBUG << "EventDumper::process(): handler->startAnalysis()...";
   handler->startAnalysis();
 
-  LDEBUG << "EventDumper::process() get EventData..." << LENDL;
+  LDEBUG << "EventDumper::process() get EventData...";
   Events* events=static_cast<Events*>(analysis.getData("EventData"));
   if (events==0)
   {
-    LWARN << "EventDumper::process(): no Events !" << LENDL;
+    LWARN << "EventDumper::process(): no Events !";
     events=new Events();
   }
   
   std::string stringEvents = events->toString("P_URI");
-  LDEBUG << "EventDumper::process(): stringEvents =" << stringEvents << LENDL;
+  LDEBUG << "EventDumper::process(): stringEvents =" << stringEvents;
 
   LDEBUG << "EventDumper::process() events->size()=" << events->size()<< LENDL;
-  LDEBUG << "EventDumper::process(): events->write()..." << LENDL;
+  LDEBUG << "EventDumper::process(): events->write()...";
   events->write(out);
   out.flush();
-  LDEBUG << "EventDumper::process(): handler->endAnalysis()..." << LENDL;
+  LDEBUG << "EventDumper::process(): handler->endAnalysis()...";
   handler->endAnalysis();
   TimeUtils::logElapsedTime("EventDumper");
   return SUCCESS_ID;

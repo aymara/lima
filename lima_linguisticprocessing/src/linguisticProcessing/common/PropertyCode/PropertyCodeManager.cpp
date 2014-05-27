@@ -60,13 +60,13 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   {
     ifstream fin(filename.c_str(), std::ifstream::binary);
     if (!fin.good()) {
-      LERROR << "invalid XMLPropertyCode file " << filename << LENDL;
+      LERROR << "invalid XMLPropertyCode file " << filename;
       throw InvalidConfiguration();
     }
     fin.close();
   }
   
-  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser" << LENDL;
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";
   QXmlSimpleReader* parser = new QXmlSimpleReader();
 //   parser->setValidationScheme(SAXParser::Val_Auto);
 //   parser->setDoNamespaces(false);
@@ -79,7 +79,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   //  that propogate out
   //
   XMLPropertyHandler handler;
-  LDEBUG << "PropertyCodeManager::readFromXmlFile before parsing" << LENDL;
+  LDEBUG << "PropertyCodeManager::readFromXmlFile before parsing";
   parser->setContentHandler(&handler);
   parser->setErrorHandler(&handler);
   QFile file(filename.c_str());
@@ -93,25 +93,25 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     LERROR << "An error occurred  Error: " << parser->errorHandler()->errorString() <<  LENDL;
     return;
   }
-  LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser" << LENDL;
+  LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser";
   delete parser;
   // Compute coding properties
   uint64_t usedBits=0;
 
   // compute data for properties
   const std::vector<XMLPropertyHandler::PropertyDescription>& properties=handler.getProperties();
-  LINFO << properties.size() << " properties read from xmlfile " << LENDL;
+  LINFO << properties.size() << " properties read from xmlfile ";
   for (std::vector<XMLPropertyHandler::PropertyDescription>::const_iterator desc=properties.begin();
        desc!=properties.end();
        desc++)
   {
     // compute mask
-    LINFO << "compute data for property " << desc->name << LENDL;
+    LINFO << "compute data for property " << desc->name;
 	std::vector<std::string>::size_type nbvalues=desc->values.size() + 1;
     uint64_t nbBits=computeNbBitsNeeded(nbvalues);
-    LDEBUG << nbvalues << " values so use " << nbBits << " bits" << LENDL;
+    LDEBUG << nbvalues << " values so use " << nbBits << " bits";
     uint64_t mask=computeMask(usedBits,nbBits);
-    LDEBUG << "mask is " << hexString(mask) << LENDL;
+    LDEBUG << "mask is " << hexString(mask);
     
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
@@ -122,7 +122,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
          valItr++)
     {
       symbol2code.insert(std::make_pair(*valItr, LinguisticCode(i << usedBits)));
-      LDEBUG << *valItr << " => " << hexString(i << usedBits) << LENDL;
+      LDEBUG << *valItr << " => " << hexString(i << usedBits);
       i++;
     }
     usedBits+=nbBits;
@@ -130,12 +130,12 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   }
 
   const std::vector<XMLPropertyHandler::SubPropertyDescription>& subproperties=handler.getSubProperties();
-  LINFO << subproperties.size() << " subproperties read from file" << LENDL;
+  LINFO << subproperties.size() << " subproperties read from file";
   for (std::vector<XMLPropertyHandler::SubPropertyDescription>::const_iterator desc=subproperties.begin();
        desc!=subproperties.end();
        desc++)
   {
-    LINFO << "compute data for subproperty " << desc->name << LENDL;
+    LINFO << "compute data for subproperty " << desc->name;
     const PropertyManager& parentProp=getPropertyManager(desc->parentName);
     uint64_t parentmask=parentProp.getMask();
 
@@ -151,11 +151,11 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
       if (it->second.size()+1>maxsubvalues) { maxsubvalues=it->second.size()+1; }
     }
     uint64_t nbBits=computeNbBitsNeeded(maxsubvalues);
-    LDEBUG << "maximum subvalues is " << maxsubvalues << " so use " << nbBits << " bits" << LENDL;
+    LDEBUG << "maximum subvalues is " << maxsubvalues << " so use " << nbBits << " bits";
     uint64_t emptynessmask=computeMask(usedBits,nbBits);
     uint64_t mask=emptynessmask + parentmask;
-    LDEBUG << "mask = " << hexString(mask) << LENDL;
-    LDEBUG << "emptyness mask = " << hexString(emptynessmask) << LENDL;
+    LDEBUG << "mask = " << hexString(mask);
+    LDEBUG << "emptyness mask = " << hexString(emptynessmask);
 
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
@@ -167,9 +167,9 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
       uint64_t parentValue=parentProp.getPropertyValue(subItr->first);
       if (parentValue == 0)
       {
-        LERROR << "parent value " << subItr->first << " of subproperty " << desc->name << " is unknown !" << LENDL;
+        LERROR << "parent value " << subItr->first << " of subproperty " << desc->name << " is unknown !";
       }
-      LDEBUG << "compute subvalues of " << subItr->first << " (" << hexString(parentValue) << ")" << LENDL;
+      LDEBUG << "compute subvalues of " << subItr->first << " (" << hexString(parentValue) << ")";
       symbol2code.insert(std::make_pair(string(subItr->first)+"-NONE",LinguisticCode(parentValue)));
       uint64_t i=1;
       for (std::vector<std::string>::const_iterator valItr=subItr->second.begin();
@@ -177,7 +177,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
            valItr++)
       {
         symbol2code.insert(std::make_pair(*valItr,LinguisticCode((i << usedBits) + parentValue)));
-        LDEBUG << *valItr << " => " << hexString(symbol2code[*valItr]) << LENDL;
+        LDEBUG << *valItr << " => " << hexString(symbol2code[*valItr]);
         i++;
       }
     }
@@ -186,10 +186,10 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 
   }
 
-  LINFO << "have used " << usedBits << " bits to code all properties" << LENDL;
+  LINFO << "have used " << usedBits << " bits to code all properties";
   if (usedBits > 32)
   {
-    LERROR << "needs " << usedBits << " bits to code all properties !! Encoding may be Invalid !!" << LENDL;
+    LERROR << "needs " << usedBits << " bits to code all properties !! Encoding may be Invalid !!";
   }
 
 }
@@ -200,7 +200,7 @@ const PropertyManager& PropertyCodeManager::getPropertyManager(const std::string
   if (it == m_propertyManagers.end())
   {
     PROPERTYCODELOGINIT;
-    LERROR << "Ask for unknown property accessor : " << propertyName << LENDL;
+    LERROR << "Ask for unknown property accessor : " << propertyName;
     throw InvalidConfiguration();
   }
   return it->second;
@@ -211,7 +211,7 @@ const PropertyAccessor* PropertyCodeManager::getPropertySetAccessor(const std::s
   ostringstream os;
   copy(propertyNames.begin(),propertyNames.end(),ostream_iterator<string>(os,":"));
   PROPERTYCODELOGINIT;
-  LDEBUG << "create propertysetAccessor for " << os.str() << LENDL;
+  LDEBUG << "create propertysetAccessor for " << os.str();
   LinguisticCode propertySetMask(0);
   LinguisticCode propertySetEmptyNessMask(0);
   for (set<string>::const_iterator propItr=propertyNames.begin();
@@ -222,8 +222,8 @@ const PropertyAccessor* PropertyCodeManager::getPropertySetAccessor(const std::s
     propertySetMask |= man.getMask();
     propertySetEmptyNessMask |= man.getEmptyNessMask();
   }
-  LDEBUG << "propertysetMask is " << hexString(propertySetMask) << LENDL;
-  LDEBUG << "propertysetEmptyNessMask is " << hexString(propertySetEmptyNessMask) << LENDL;
+  LDEBUG << "propertysetMask is " << hexString(propertySetMask);
+  LDEBUG << "propertysetEmptyNessMask is " << hexString(propertySetEmptyNessMask);
   return new PropertyAccessor(os.str(),propertySetMask,propertySetEmptyNessMask);
 }
 
@@ -255,14 +255,14 @@ LinguisticCode PropertyCodeManager::encode(const std::map<std::string,std::strin
 {
   PROPERTYCODELOGINIT;
   LinguisticCode coded(0);
-  LDEBUG << "encode" << LENDL;
+  LDEBUG << "encode";
   for (map<string,string>::const_iterator it=propValues.begin();
        it!=propValues.end();
        it++)
   {
     const PropertyManager& man=getPropertyManager(it->first);
     man.getPropertyAccessor().writeValue(man.getPropertyValue(it->second),coded);
-    LDEBUG << it->first << " : " << it->second << " coded = " << hexString(coded) << LENDL;
+    LDEBUG << it->first << " : " << it->second << " coded = " << hexString(coded);
   }
   return coded;
 }
@@ -270,7 +270,7 @@ LinguisticCode PropertyCodeManager::encode(const std::map<std::string,std::strin
 void PropertyCodeManager::convertSymbolicCodes(const std::string& symbolicCodeFile,std::map<std::string,LinguisticCode>& conversionTable) const
 {
   PROPERTYCODELOGINIT;
-  LINFO << "convert Symbolic Code file " << symbolicCodeFile << LENDL;
+  LINFO << "convert Symbolic Code file " << symbolicCodeFile;
 
   QXmlSimpleReader* parser = new QXmlSimpleReader();
 //   parser->setValidationScheme(SAXParser::Val_Auto);

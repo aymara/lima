@@ -67,7 +67,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
   
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventDataDumper::init" << LENDL;
+  LDEBUG << "EventDataDumper::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
@@ -75,14 +75,14 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     m_eventData=unitConfiguration.getParamsValueAtKey("eventData");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LDEBUG << "EventDataDumper: no parameter 'eventData', use default ('"<<m_eventData << "')" << LENDL;
+    LDEBUG << "EventDataDumper: no parameter 'eventData', use default ('"<<m_eventData << "')";
     // not an error, keep default
   }
   try {
     m_segmentationData=unitConfiguration.getParamsValueAtKey("segmentationData");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LDEBUG << "EventDataDumper: no parameter 'segmentationData', use default ('"<<m_segmentationData << "')" << LENDL;
+    LDEBUG << "EventDataDumper: no parameter 'segmentationData', use default ('"<<m_segmentationData << "')";
     // not an error, keep default
   }
 }
@@ -90,7 +90,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
 LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventDataDumper::process" << LENDL;
+  LDEBUG << "EventDataDumper::process";
   TimeUtils::updateCurrentTime();
 
   // initialize output
@@ -105,46 +105,46 @@ LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
 
       if (eventData!=0) {
         LOGINIT("LP::EventAnalysis");
-        LDEBUG << "EventDataDumper::process: data '" << m_eventData << "' is of type EventData" << LENDL;
+        LDEBUG << "EventDataDumper::process: data '" << m_eventData << "' is of type EventData";
         // get segmentation
         const AnalysisData* data2 =analysis.getData(m_segmentationData);
         const Lima::LinguisticProcessing::SegmentationData* segmData=0;
         if(data2==0) {
-    LERROR << "EventDataDumper::process: error: no SegmentationData!!" << LENDL;
+    LERROR << "EventDataDumper::process: error: no SegmentationData!!";
     return MISSING_DATA;
   }
         segmData = dynamic_cast<const Lima::LinguisticProcessing::SegmentationData*>(data2);
   if (segmData==0) {
-    LERROR << "EventDataDumper::process: data "<< data2 <<" is not an object of class SegmentationData" << LENDL;
+    LERROR << "EventDataDumper::process: data "<< data2 <<" is not an object of class SegmentationData";
     return MISSING_DATA;
   }
   eventData->convertToEvents(segmData);
   Events *events=eventData->convertToEvents(segmData);
-  LDEBUG << "EventDataDumper::process: events->write(out)..." << LENDL;
+  LDEBUG << "EventDataDumper::process: events->write(out)...";
   events->write(out);
       }
       else {
         // see if the data is of type Events
         const Events* events=dynamic_cast<const Events*>(data);
         if (events!=0) {
-          LDEBUG << "data '" << m_eventData << "' is of type Events" << LENDL;
+          LDEBUG << "data '" << m_eventData << "' is of type Events";
           events->write(out);
         }
         else {
-          LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events" << LENDL;
+          LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
           return MISSING_DATA;
         }
       }
     }
     else {
       LOGINIT("LP::EventAnalysis");
-      LERROR << "no data of name " << m_eventData << LENDL;
+      LERROR << "no data of name " << m_eventData;
       return MISSING_DATA;
     }
   }
   else {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "no key to access eventData or segmentationData! " << LENDL;
+    LERROR << "no key to access eventData or segmentationData! ";
     return MISSING_DATA;
   }
   

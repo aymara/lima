@@ -67,7 +67,7 @@ void SyntacticAnalyzerDisamb::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "no parameter 'depGraphMaxBranchingFactor' in syntacticAnalyzerDisamb group for language " << (int) m_language << " ! Using default value << " << DEFAULT_DEPGRAPHMAXBRANCHINGFACTOR << "." << LENDL;
+    LWARN << "no parameter 'depGraphMaxBranchingFactor' in syntacticAnalyzerDisamb group for language " << (int) m_language << " ! Using default value << " << DEFAULT_DEPGRAPHMAXBRANCHINGFACTOR << ".";
   }
 }
 
@@ -76,23 +76,23 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
 {
   Lima::TimeUtilsController timer("SyntacticAnalysis");
   SADLOGINIT;
-  LINFO << "start syntactic analysis - disambiguation" << LENDL;
+  LINFO << "start syntactic analysis - disambiguation";
   // create syntacticData
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds ! abort" << LENDL;
+    LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
   if (sb->getGraphId() != "PosGraph") {
-    LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !" << LENDL;
-    LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph" << LENDL;
+    LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !";
+    LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
   
@@ -113,7 +113,7 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << LENDL;
+    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
     ChainsDisambiguator cd(dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData")), 
         beginSentence, endSentence, m_language, m_depGraphMaxBranchingFactor);
     cd.initPaths();
@@ -124,7 +124,7 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
     while (next != endSentence)
     {
       next = nextChainsDisambBreakFrom(current, *anagraph, endSentence);
-      LDEBUG << "Disambiguate chains between " << current << " and " << next << LENDL;
+      LDEBUG << "Disambiguate chains between " << current << " and " << next;
       ChainsDisambiguator cd(dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData")), 
           current, next);
       cd.initPaths();
@@ -134,7 +134,7 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
     }*/
   }
   
-  LINFO << "end syntactic analysis - disambiguation" << LENDL;
+  LINFO << "end syntactic analysis - disambiguation";
   return SUCCESS_ID;
 }
 
@@ -167,11 +167,11 @@ LinguisticGraphVertex SyntacticAnalyzerDisamb::nextChainsDisambBreakFrom(
   LinguisticGraphVertex current = v;
   while (boost::out_degree(current, graph) == 1)
   {
-//     LDEBUG << "On " << current << LENDL; 
+//     LDEBUG << "On " << current; 
     if (current == anagraph.lastVertex() || current == nextSentenceBreak) return current;
     current = boost::target(*(boost::out_edges(current, graph).first), graph);
   }
-//   LDEBUG << "Entering loop on " << current << LENDL;
+//   LDEBUG << "Entering loop on " << current;
   while(true)
   {
     std::list< LinguisticGraphVertex > fifo;
@@ -189,7 +189,7 @@ LinguisticGraphVertex SyntacticAnalyzerDisamb::nextChainsDisambBreakFrom(
     {
       current = fifo.front();
       fifo.pop_front();
-//       LDEBUG << "On " << current << LENDL; 
+//       LDEBUG << "On " << current; 
       bool curfinished = true;
       if (finished.find(current) == finished.end())
       {
@@ -224,14 +224,14 @@ LinguisticGraphVertex SyntacticAnalyzerDisamb::nextChainsDisambBreakFrom(
         if (current != nextSentenceBreak)
         {
           SADLOGINIT;
-          LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak << LENDL;
-          LERROR << "   returning graph's last vertex " << current << LENDL;
+          LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak;
+          LERROR << "   returning graph's last vertex " << current;
         }
-//         LDEBUG << "Next chains break is: " << current << LENDL;
+//         LDEBUG << "Next chains break is: " << current;
         return current;
       }
     }
-//     LDEBUG << "Testing end only on " << current << LENDL;
+//     LDEBUG << "Testing end only on " << current;
     CVertexChainIdPropertyMap chainsMap = boost::get( vertex_chain_id, graph );
     const std::set< Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct >& chains = chainsMap[current];
     if (chains.empty())

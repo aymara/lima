@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
   std::cerr << "testLexicon begin..." << std::endl;
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG <<  "testLexicon begin..." << LENDL;
+  LDEBUG <<  "testLexicon begin..." ;
 #endif
 
   // options reading

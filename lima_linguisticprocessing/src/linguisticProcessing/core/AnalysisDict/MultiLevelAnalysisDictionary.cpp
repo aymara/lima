@@ -61,7 +61,7 @@ void MultiLevelAnalysisDictionary::init(
   Manager* manager)
 {
   ANALYSISDICTLOGINIT;
-  LINFO << "init MultiLevelAnalysisDictionary" << LENDL;
+  LINFO << "init MultiLevelAnalysisDictionary";
   MediaId language=manager->getInitializationParameters().language;
   m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
   m_mainKeySize=0;
@@ -73,7 +73,7 @@ void MultiLevelAnalysisDictionary::init(
     bool hasMainKeys=false;
     for (;keyIt!=accesses.end() && dataIt!=data.end();)
     {
-      LINFO << "load LevelDictionary : key=" << *keyIt << " data=" << *dataIt << LENDL;
+      LINFO << "load LevelDictionary : key=" << *keyIt << " data=" << *dataIt;
       const AbstractResource* res=LinguisticResources::single().getResource(language,*keyIt);
       const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
       LevelDico ldico;
@@ -94,18 +94,18 @@ void MultiLevelAnalysisDictionary::init(
     }
     if ((keyIt!=accesses.end()) || (dataIt!=data.end()))
     {
-      LERROR << "missing keys or data in configuration for MultiLevelAnalysisDictionary ! for language " << (int) language << LENDL;
+      LERROR << "missing keys or data in configuration for MultiLevelAnalysisDictionary ! for language " << (int) language;
       throw InvalidConfiguration();
     }
     if (!hasMainKeys)
     {
-      LERROR << "no accessKeys are main keys (stringspool keys) in MultiLevelAnalysisDictionary  for language " << (int) language << LENDL;
+      LERROR << "no accessKeys are main keys (stringspool keys) in MultiLevelAnalysisDictionary  for language " << (int) language;
       throw InvalidConfiguration();
     }
   }
   catch (NoSuchList& )
   {
-    LERROR << "no param 'accessKeys' in MultiLevelAnalysisDictionary group for language " << (int) language << LENDL;
+    LERROR << "no param 'accessKeys' in MultiLevelAnalysisDictionary group for language " << (int) language;
     throw InvalidConfiguration();
   }
 
@@ -193,7 +193,7 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const std::vector<uint64_
 DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex form,const std::vector<uint64_t>& indexes) const
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "getEntry" << LENDL;
+  LDEBUG << "getEntry";
 
   vector<MultiLevelAnalysisDictionaryEntry::LevelData> entryData;
 
@@ -208,25 +208,25 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex fo
   MultiLevelAnalysisDictionaryEntry::LevelData data;
   for (;indexIt!=indexes.end() && dicoIt!=m_dicos.end() && !final;indexIt++,dicoIt++)
   {
-    LDEBUG << "read level " << dicoIt->id << " : entry index = " << *indexIt << LENDL;
+    LDEBUG << "read level " << dicoIt->id << " : entry index = " << *indexIt;
     unsigned char* p=dicoIt->data->getEntryAddr(*indexIt);
     uint64_t read=DictionaryData::readCodedInt(p);
-    LDEBUG << "read " << read << LENDL;
+    LDEBUG << "read " << read;
     if (read == 1)
     {
-      LDEBUG << "final = true" << LENDL;
+      LDEBUG << "final = true";
       final=true;
       read=DictionaryData::readCodedInt(p);
     }
     if (read == 0)
     {
       // this entry is empty, skip it
-      LDEBUG << "entry is empty" << LENDL;
+      LDEBUG << "entry is empty";
       continue;
     }
     // if here, then entry is not empty
     empty=false;
-    LDEBUG << "entry has length " << read << LENDL;
+    LDEBUG << "entry has length " << read;
     data.startEntryData=p;
     data.endEntryData=p+read;
     read=DictionaryData::readCodedInt(p);
@@ -234,12 +234,12 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex fo
     {
       hasLing=true;
     }
-    LDEBUG << "info length = " << read << LENDL;
+    LDEBUG << "info length = " << read;
     p+=read;
     if (p!=data.endEntryData)
     {
       read=DictionaryData::readCodedInt(p);
-      LDEBUG << "accented length = " << read << LENDL;
+      LDEBUG << "accented length = " << read;
       if (read!=0)
       {
         hasAccented=true;
@@ -248,7 +248,7 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex fo
       if (p!=data.endEntryData)
       {
         read=DictionaryData::readCodedInt(p);
-        LDEBUG << "concat length = " << read << LENDL;
+        LDEBUG << "concat length = " << read;
         if (read != 0)
         {
           hasConcat=true;

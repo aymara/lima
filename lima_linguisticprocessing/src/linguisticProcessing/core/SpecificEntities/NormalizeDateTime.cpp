@@ -128,23 +128,23 @@ getReferenceDate(const AnalysisContent& analysis,
   const AnalysisData* data=analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
-    LERROR << "missing data 'LinguisticMetaData'" << LENDL;
+    LERROR << "missing data 'LinguisticMetaData'";
     return false;
   }
   const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
 
   date=metadata->getDate(m_dateRefName);
   SELOGINIT;
-  LDEBUG << "m_dateRefName =" << m_dateRefName <<" , date = " << date.toString() << LENDL;
+  LDEBUG << "m_dateRefName =" << m_dateRefName <<" , date = " << date.toString();
   if (!date.isValid()) {
     //try backoff on document date
     SELOGINIT;
-    LWARN << "no reference date '"<< m_dateRefName << "'" << LENDL;
+    LWARN << "no reference date '"<< m_dateRefName << "'";
     
     date=metadata->getDate("document");
     if (!date.isValid()) {
       SELOGINIT;
-      LWARN << "no reference date 'document'" << LENDL;
+      LWARN << "no reference date 'document'";
       return false;
     }
     return true;
@@ -160,7 +160,7 @@ getReferenceTime(const AnalysisContent& analysis,
   const AnalysisData* data=analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
-    LERROR << "missing data 'LinguisticMetaData'" << LENDL;
+    LERROR << "missing data 'LinguisticMetaData'";
     return false;
   }
   const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
@@ -177,7 +177,7 @@ getReferenceLocation(const AnalysisContent& analysis,
   const AnalysisData* data=analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
-    LERROR << "missing data 'LinguisticMetaData'" << LENDL;
+    LERROR << "missing data 'LinguisticMetaData'";
     return false;
   }
   const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
@@ -212,8 +212,8 @@ m_isInterval(false)
     }
     catch (std::exception& e) {
       SELOGINIT;
-      LWARN << "Exception caught: " << e.what() << LENDL;
-      LWARN << "-> micros for person name normalization are not initialized" << LENDL;
+      LWARN << "Exception caught: " << e.what();
+      LWARN << "-> micros for person name normalization are not initialized";
     }
   }
 
@@ -222,7 +222,7 @@ m_isInterval(false)
       getResource(language,"DateTimeNormalization");
     if (res==0) {
       SELOGINIT;
-      LWARN << "no resource 'DateTimeNormalization'" << LENDL;
+      LWARN << "no resource 'DateTimeNormalization'";
     }
     else {
       m_resources=static_cast<const NormalizeDateTimeResources*>(res);
@@ -231,7 +231,7 @@ m_isInterval(false)
   catch (std::exception& e) {
     // resources are not loaded when compiling the rules
       SELOGINIT;
-      LWARN << "Exception caught: " << e.what() << LENDL;
+      LWARN << "Exception caught: " << e.what();
   }
 
   static const LimaString intervalString=Common::Misc::utf8stdstring2limastring("isInterval");
@@ -248,7 +248,7 @@ updateCurrentDate(AnalysisContent& analysis,
   AnalysisData* data=analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
-    LERROR << "missing data 'LinguisticMetaData'" << LENDL;
+    LERROR << "missing data 'LinguisticMetaData'";
     return;
   }
   LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(data);
@@ -286,7 +286,7 @@ operator()(RecognizerMatch& m,
         if (monthNum==NormalizeDateTimeResources::no_month) {
           // failed to recognize month => no normalization
           LDEBUG << "NormalizeDate: '" << Common::Misc::limastring2utf8stdstring(t->stringForm())
-          << "' not recognized as month\n" << LENDL;
+          << "' not recognized as month\n";
           m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
         }
         else {
@@ -377,7 +377,7 @@ operator()(RecognizerMatch& m,
       //const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
       LDEBUG << "NormalizeDate: no day, month or year identified in " 
              << Common::Misc::limastring2utf8stdstring(m.getString())
-             << LENDL;
+            ;
       m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
     }
     else {
@@ -418,7 +418,7 @@ operator()(RecognizerMatch& m,
             // day and year => should not happen: failed to normalize: set only string
             LDEBUG << "NormalizeDate: only day and year in " 
                    << Common::Misc::limastring2utf8stdstring(m.getString())
-                   << LENDL;
+                  ;
             m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
           }
         }
@@ -461,7 +461,7 @@ operator()(RecognizerMatch& m,
     LWARN << "Error trying to normalize date " 
           << Common::Misc::limastring2utf8stdstring(m.getString())
           << ":" << e.what()
-          << LENDL;
+         ;
     m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
@@ -509,7 +509,7 @@ operator()(RecognizerMatch& m,
     // no resources: cannot normalize date
     SELOGINIT;
     LDEBUG << "NormalizeRelativeDate: no resources" 
-           << LENDL;
+          ;
     m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
@@ -626,7 +626,7 @@ m_referenceData()
       getResource(language,"DateTimeNormalization");
     if (res==0) {
       SELOGINIT;
-      LWARN << "no resource 'DateTimeNormalization'" << LENDL;
+      LWARN << "no resource 'DateTimeNormalization'";
     }
     else {
       m_resources=static_cast<const NormalizeDateTimeResources*>(res);
@@ -655,7 +655,7 @@ getTimeDuration(const RecognizerMatch& m) const
       }
       catch (std::exception& e) {
         LWARN << "Error getting time duration from string '"
-               << timeString << "'" << LENDL;
+               << timeString << "'";
         return timeDuration;
       }
     }
@@ -763,7 +763,7 @@ operator()(RecognizerMatch& m,
   if (! getReferenceData().getReferenceLocation(analysis,referenceLocation)) {
     SELOGINIT;
     LWARN << "no reference location '"<< getReferenceData().getLocRefName()
-           << "' found" << LENDL;
+           << "' found";
     hasReferenceLocation=false;
   }                                                               
 
@@ -789,7 +789,7 @@ operator()(RecognizerMatch& m,
                                        getResources()->getTimezoneDatabase()*/);
       if (!utc.isValid()) {
         SELOGINIT;
-        LWARN << "failed to normalize time: " << LENDL;
+        LWARN << "failed to normalize time: ";
         m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
       }
       else {
@@ -801,7 +801,7 @@ operator()(RecognizerMatch& m,
     SELOGINIT;
     LWARN << "exception caught in time normalization of '"
           << Common::Misc::limastring2utf8stdstring(m.getString()) 
-          << "': " << e.what() << LENDL;
+          << "': " << e.what();
     m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
   }
   return true;
@@ -833,7 +833,7 @@ operator()(RecognizerMatch& m,
     SELOGINIT;
     LWARN << "cannot compute time duration for '"
           << Common::Misc::limastring2utf8stdstring(m.getString())
-          << "'" << LENDL;
+          << "'";
     m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
   }
@@ -846,7 +846,7 @@ operator()(RecognizerMatch& m,
     SELOGINIT;
     LWARN << "exception caught in time normalization of '"
           << Common::Misc::limastring2utf8stdstring(m.getString())
-          << "': " << e.what() << LENDL;
+          << "': " << e.what();
     m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
   }
   

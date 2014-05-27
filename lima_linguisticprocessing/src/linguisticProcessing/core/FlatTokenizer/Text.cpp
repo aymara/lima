@@ -97,13 +97,13 @@ void Text::setGraph(LinguisticGraphVertex position,LinguisticGraph* graph)
   if (adjItr==adjItrEnd)
   {
     TOKENIZERLOGINIT;
-    LERROR << "Tokenizer Text : no token forward !" << LENDL;
+    LERROR << "Tokenizer Text : no token forward !";
     throw LinguisticProcessingException();
   }
   _lastVx=*adjItr;
   if (++adjItr!=adjItrEnd) {
     TOKENIZERLOGINIT;
-    LERROR << "Tokenizer Text : more than one next token !" << LENDL;
+    LERROR << "Tokenizer Text : more than one next token !";
     throw LinguisticProcessingException();
   }
   //remove_edge(_currentVx,_lastVx,*_tTokenGraph);
@@ -121,7 +121,7 @@ Lima::LimaChar Text::advance()
   TOKENIZERLOGINIT;
   if (_curPtr+1 >= static_cast<uint64_t>(m_text.size()))
   {
-    LDEBUG << "Trying to move after text end." << LENDL;
+    LDEBUG << "Trying to move after text end.";
     _curPtr++;
     return 0;
   }
@@ -130,14 +130,14 @@ Lima::LimaChar Text::advance()
     _curPtr++;
   }
   _curPtr++;
-  LDEBUG << "Text::advance : new current=" << _curPtr << " from='" << Common::Misc::limastring2utf8stdstring(LimaString()+m_text[_curPtr-1]) << "' to='" << Common::Misc::limastring2utf8stdstring(LimaString()+m_text[_curPtr]) << "'" << LENDL;
+  LDEBUG << "Text::advance : new current=" << _curPtr << " from='" << Common::Misc::limastring2utf8stdstring(LimaString()+m_text[_curPtr-1]) << "' to='" << Common::Misc::limastring2utf8stdstring(LimaString()+m_text[_curPtr]) << "'";
   return m_text[_curPtr];
 }
 
 const CharClass* Text::currentClass() const
 {
 //   TOKENIZERLOGINIT;
-//   LDEBUG << "currentClass() at " << _curPtr << ", for " << m_text[_curPtr] << LENDL;
+//   LDEBUG << "currentClass() at " << _curPtr << ", for " << m_text[_curPtr];
   if (_curPtr+1 >= static_cast<uint64_t>(m_text.size()))
   {
     return m_charChart->charClass(0);
@@ -172,7 +172,7 @@ LimaString Text::token()
   }
   if (_debPtr >= static_cast<uint64_t>(m_text.size()))
   {
-    LERROR << "Empty token !" << LENDL;
+    LERROR << "Empty token !";
     _debPtr = delta;
     _curSettings.reset();
     return utf8stdstring2limastring("");
@@ -185,8 +185,8 @@ LimaString Text::token()
   // @todo: set default status here, according to structured status (alpha,numeric etc...)
   // instead of setting it at each change of status (setAlphaCapital, setNumeric etc...)
   tToken->setStatus(_curSettings);
-//   LDEBUG << "      _curSettings is " << _curSettings.toString() << LENDL;
-  LDEBUG << "      status is " << tToken->status().toString() << LENDL;
+//   LDEBUG << "      _curSettings is " << _curSettings.toString();
+  LDEBUG << "      status is " << tToken->status().toString();
   // Adds on the path
   LinguisticGraphVertex newVx=add_vertex(*_tTokenGraph);
   put(vertex_token,*_tTokenGraph,newVx,tToken);
@@ -211,7 +211,7 @@ LimaChar Text::operator[] (int i) const {
 void Text::setAlphaCapital(const LinguisticAnalysisStructure::AlphaCapitalType alphaCapital) 
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setAlphaCapital " << alphaCapital << LENDL;
+  LDEBUG << "Text::setAlphaCapital " << alphaCapital;
   _curSettings.setAlphaCapital(alphaCapital);
   switch (alphaCapital)  
   {
@@ -238,7 +238,7 @@ void Text::setAlphaCapital(const LinguisticAnalysisStructure::AlphaCapitalType a
 void Text::setAlphaRoman(const LinguisticAnalysisStructure::AlphaRomanType alphaRoman)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setAlphaRoman " << alphaRoman << LENDL;
+  LDEBUG << "Text::setAlphaRoman " << alphaRoman;
   _curSettings.setAlphaRoman(alphaRoman);
   switch (alphaRoman)
   {
@@ -258,14 +258,14 @@ void Text::setAlphaRoman(const LinguisticAnalysisStructure::AlphaRomanType alpha
 void Text::setAlphaHyphen(const unsigned char isAlphaHyphen)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setAlphaHyphen " << isAlphaHyphen << LENDL;
+  LDEBUG << "Text::setAlphaHyphen " << isAlphaHyphen;
   _curSettings.setAlphaHyphen(isAlphaHyphen);
 }
 
 void Text::setAlphaPossessive(const unsigned char isAlphaPossessive)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setAlphaPossessive " << isAlphaPossessive << LENDL;
+  LDEBUG << "Text::setAlphaPossessive " << isAlphaPossessive;
   _curSettings.setAlphaPossessive(isAlphaPossessive);
 /*  if (isAlphaPossessive > 0)
     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_alpha_possessive"));*/
@@ -274,7 +274,7 @@ void Text::setAlphaPossessive(const unsigned char isAlphaPossessive)
 void Text::setAlphaConcatAbbrev(const unsigned char isConcatAbbreviation)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setAlphaConcatAbbrev " << isConcatAbbreviation << LENDL;
+  LDEBUG << "Text::setAlphaConcatAbbrev " << isConcatAbbreviation;
   _curSettings.setAlphaConcatAbbrev(isConcatAbbreviation);
   if (isConcatAbbreviation> 0)
     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_alpha_concat_abbrev"));
@@ -283,7 +283,7 @@ void Text::setAlphaConcatAbbrev(const unsigned char isConcatAbbreviation)
 void Text::setTwitter(const unsigned char isTwitter)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setTwitter " << isTwitter << LENDL;
+  LDEBUG << "Text::setTwitter " << isTwitter;
   _curSettings.setTwitter(isTwitter);
   if (isTwitter> 0)
     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_twitter"));
@@ -292,7 +292,7 @@ void Text::setTwitter(const unsigned char isTwitter)
 void Text::setNumeric(const LinguisticAnalysisStructure::NumericType numeric)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setNumeric " << numeric << LENDL;
+  LDEBUG << "Text::setNumeric " << numeric;
   _curSettings.setNumeric(numeric);
   switch (numeric)
   {
@@ -318,7 +318,7 @@ void Text::setNumeric(const LinguisticAnalysisStructure::NumericType numeric)
 void Text::setStatus(const LinguisticAnalysisStructure::StatusType status)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setStatus " << status << LENDL;
+  LDEBUG << "Text::setStatus " << status;
   LinguisticAnalysisStructure::StatusType previousStatus = _curSettings.getStatus();
   _curSettings.setStatus(status);
   switch (status)
@@ -353,7 +353,7 @@ void Text::setStatus(const LinguisticAnalysisStructure::StatusType status)
 void Text::setDefaultKey(const Lima::LimaString& defaultKey) 
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::setDefaultKey " << Common::Misc::limastring2utf8stdstring(defaultKey) << LENDL;
+  LDEBUG << "Text::setDefaultKey " << Common::Misc::limastring2utf8stdstring(defaultKey);
   _curSettings.setDefaultKey(defaultKey);
 }
 
@@ -405,7 +405,7 @@ void Text::computeDefaultStatus()
     default: defaultKey = "t_fallback";
   }
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::computeDefaultKey " << defaultKey << LENDL;
+  LDEBUG << "Text::computeDefaultKey " << defaultKey;
   _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring(defaultKey));
 }
 

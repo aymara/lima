@@ -439,16 +439,16 @@ template <typename dictType>
       std::pair<AccessSubWordIterator,AccessSubWordIterator> entries = m_dico.getSubWords(*offsetIt,word);
       FSAALOGINIT;
       LDEBUG <<  "test getSubWords("
-             << ", " << word << ")" << LENDL;
+             << ", " << word << ")" ;
       for( AccessSubWordIterator entry = entries.first ; entry != entries.second ; entry++ ) {
         LINFO << "string(" << *offsetIt << "," << (*entry).first << "),  ";
       }
-      LINFO << LENDL;
+      LINFO ;
       for( AccessSubWordIterator entry = entries.first  ; entry != entries.second ; entry++ ) {
         Lima::LimaString subWord = word.mid(*offsetIt, (*entry).first - *offsetIt);
         LINFO << subWord << ", ";
       }
-      LINFO << LENDL;
+      LINFO ;
       if( withAssert ) {
         // r�up�ation des r�onses attendues pour v�ifications
         assert( answersIt != subwords.end() );
@@ -505,7 +505,7 @@ int main(int argc, char *argv[])
   setlocale(LC_ALL, "");
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG << argv[0] <<  " begin..." << LENDL;
+  LDEBUG << argv[0] <<  " begin..." ;
 #endif
 
   // options reading

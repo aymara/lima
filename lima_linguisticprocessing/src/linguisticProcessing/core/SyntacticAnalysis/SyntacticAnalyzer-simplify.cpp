@@ -76,18 +76,18 @@ LimaStatusCode SyntacticAnalyzerSimplify::process(
 {
   Lima::TimeUtilsController timer("SyntacticAnalysis");
   SASLOGINIT;
-  LINFO << "start syntactic analysis - subsentences simplification" << LENDL;
+  LINFO << "start syntactic analysis - subsentences simplification";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds ! abort" << LENDL;
+    LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
 
@@ -115,11 +115,11 @@ LimaStatusCode SyntacticAnalyzerSimplify::process(
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
     LDEBUG << "simplify sentence from vertex " << beginSentence 
-           << " to vertex " << endSentence << LENDL;
+           << " to vertex " << endSentence;
 
     do 
     {
-      LDEBUG << "Applying automaton on sentence from " << beginSentence << " to " << endSentence << LENDL;
+      LDEBUG << "Applying automaton on sentence from " << beginSentence << " to " << endSentence;
       simplificationData->simplificationDone(false);
       simplificationData->sentence(beginSentence);
       std::vector<Automaton::RecognizerMatch> result;
@@ -137,7 +137,7 @@ LimaStatusCode SyntacticAnalyzerSimplify::process(
 
   }
 
-  LINFO << "end syntactic analysis - subsentences simplification" << LENDL;
+  LINFO << "end syntactic analysis - subsentences simplification";
   return SUCCESS_ID;
 }
 

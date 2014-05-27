@@ -91,7 +91,7 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
   if (metadata == 0)
   {
     SENTBOUNDLOGINIT;
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
@@ -99,7 +99,7 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
   AnalysisData* data=analysis.getData(m_boundaries);
   if (data == 0) {
     SENTBOUNDLOGINIT;
-    LERROR << "no SentenceBoundaries data" << LENDL;
+    LERROR << "no SentenceBoundaries data";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(data);

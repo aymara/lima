@@ -76,14 +76,14 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     // may need to initialize a modex, to know about the entities in external file
     deque<string> modex=unitConfiguration.getListsValueAtKey("modex");
     for (deque<string>::const_iterator it=modex.begin(),it_end=modex.end();it!=it_end;it++) {
-      LDEBUG << "loader: initialize modex " << *it << LENDL;
+      LDEBUG << "loader: initialize modex " << *it;
       string filename=Common::MediaticData::MediaticData::single().getConfigPath()+"/"+*it;
       Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename);
       Common::MediaticData::MediaticData::changeable().initEntityTypes(parser);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {
-    LWARN << "loader: no modex specified in parameter: types in file loaded may not be known" << LENDL;
+    LWARN << "loader: no modex specified in parameter: types in file loaded may not be known";
   }
 
   //  Create a SAX parser object. 
@@ -98,7 +98,7 @@ process(AnalysisContent& analysis) const
   if (graph==0)
   {
     LOGINIT("LP::SpecificEntities");
-    LERROR << "no graph '" << m_graph << "' available !" << LENDL;
+    LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
   }
 
@@ -125,7 +125,7 @@ process(AnalysisContent& analysis) const
   catch (const XMLException& )
   {
     LOGINIT("LP::SpecificEntities");
-    LERROR << "Error: failed to parse XML input file" << LENDL;
+    LERROR << "Error: failed to parse XML input file";
   }
 
   // remove recognizer data (used only internally to this process unit)
@@ -146,7 +146,7 @@ addSpecificEntity(AnalysisContent& analysis,
                   uint64_t length)
 {
   LOGINIT("LP::SpecificEntities");
-  LDEBUG << "loader: add entity " << str << "," << type << ",[" << position << "," << length << "]" << LENDL;
+  LDEBUG << "loader: add entity " << str << "," << type << ",[" << position << "," << length << "]";
   // create RecognizerMatch
   Automaton::RecognizerMatch match(anagraph);
 
@@ -207,7 +207,7 @@ addSpecificEntity(AnalysisContent& analysis,
   }
 
   if (match.size()==0) {
-    LWARN << "Warning: no matching vertices for given position/length" << LENDL;
+    LWARN << "Warning: no matching vertices for given position/length";
   }
 
   // set entity properties
@@ -233,7 +233,7 @@ m_string(),
 m_currentElement()
 {
   LOGINIT("LP::SpecificEntities");
-  LDEBUG << "SpecificEntitiesLoader::XMLHandler constructor" << LENDL;
+  LDEBUG << "SpecificEntitiesLoader::XMLHandler constructor";
 }
 
 SpecificEntitiesLoader::XMLHandler::~XMLHandler()
@@ -245,11 +245,11 @@ bool SpecificEntitiesLoader::XMLHandler::endElement(const QString & namespaceURI
   LIMA_UNUSED(namespaceURI);
   LIMA_UNUSED(qName);
   //LOGINIT("LP::SpecificEntities");
-  //LDEBUG << "SpecificEntitiesLoader::XMLHandler end element "  << toString(eltName) << LENDL;
+  //LDEBUG << "SpecificEntitiesLoader::XMLHandler end element "  << toString(eltName);
   string name=toString(eltName);
   if (name=="specific_entity") {
     LOGINIT("LP::SpecificEntities");
-    LDEBUG << "SpecificEntitiesLoader::XMLHandler add SE "  << m_type << "," << m_position << "," << m_length << "," << m_graph << LENDL;
+    LDEBUG << "SpecificEntitiesLoader::XMLHandler add SE "  << m_type << "," << m_position << "," << m_length << "," << m_graph;
     addSpecificEntity(m_analysis, m_graph, m_string, m_type, m_position, m_length);
   }
   // no more current element
@@ -260,7 +260,7 @@ bool SpecificEntitiesLoader::XMLHandler::endElement(const QString & namespaceURI
 bool SpecificEntitiesLoader::XMLHandler::characters(const QString& chars)
 {
   //LOGINIT("LP::SpecificEntities");
-  //LDEBUG << "SpecificEntitiesLoader::XMLHandler characters in "  << m_currentElement << LENDL;
+  //LDEBUG << "SpecificEntitiesLoader::XMLHandler characters in "  << m_currentElement;
   if (m_currentElement=="position") {
     std::string pos=toString(chars);
     m_position=atoi(pos.c_str());
@@ -285,7 +285,7 @@ startElement(const QString & namespaceURI, const QString & eltName, const QStrin
   LIMA_UNUSED(qName);
   LIMA_UNUSED(attributes);
   //LOGINIT("LP::SpecificEntities");
-  //LDEBUG << "SpecificEntitiesLoader::XMLHandler start element "  << toString(eltName) << LENDL;
+  //LDEBUG << "SpecificEntitiesLoader::XMLHandler start element "  << toString(eltName);
   m_currentElement=toString(eltName);
 
   if (m_currentElement=="specific_entity") { // clear stored values
@@ -302,8 +302,8 @@ bool SpecificEntitiesLoader::XMLHandler::warning(const QXmlParseException& e)
   LOGINIT("LP::SpecificEntities");
   LERROR << "Error at file " << toString(e.systemId())
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << toString(e.message()) << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << toString(e.message());
          return true;
 }
 bool SpecificEntitiesLoader::XMLHandler::error(const QXmlParseException& e)
@@ -311,8 +311,8 @@ bool SpecificEntitiesLoader::XMLHandler::error(const QXmlParseException& e)
   LOGINIT("LP::SpecificEntities");
   LERROR << "Fatal error at file " << toString(e.systemId())
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << toString(e.message()) << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << toString(e.message());
          return false;
 }
 bool SpecificEntitiesLoader::XMLHandler::fatalError(const QXmlParseException& e)
@@ -320,8 +320,8 @@ bool SpecificEntitiesLoader::XMLHandler::fatalError(const QXmlParseException& e)
   LOGINIT("LP::SpecificEntities");
   LWARN << "Warning at file " << toString(e.systemId())
         << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber() << LENDL
-        << "  Message: " << toString(e.message()) << LENDL;
+        << ", char " << e.columnNumber()
+        << "  Message: " << toString(e.message());
         return false;
 }
 

@@ -95,7 +95,7 @@ readRecognizer(const std::string& filename,
     ostringstream oss;
     oss << "Cannot open [" << filename 
            << "] ; it is a directory";
-    LERROR << oss.str() << LENDL;
+    LERROR << oss.str();
     throw OpenFileException(oss.str());
   }
   ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
@@ -103,7 +103,7 @@ readRecognizer(const std::string& filename,
     AULOGINIT;
     ostringstream oss;
     oss << "Cannot open file [" << filename << "]";
-    LERROR << oss.str() << LENDL;
+    LERROR << oss.str();
     throw OpenFileException(oss.str());
   }
   try {
@@ -111,7 +111,7 @@ readRecognizer(const std::string& filename,
   }
   catch (std::exception& ) {
     AULOGINIT;
-    LERROR << "failed reading file: " << filename << LENDL;
+    LERROR << "failed reading file: " << filename;
     throw;
   }
   file.close();
@@ -175,7 +175,7 @@ readHeader(std::ifstream& file)
     oss << "incompatible version of binary rules format: " 
            << version << ", current version is " 
            << RECOGNIZER_VERSION;
-    LERROR << oss.str() << LENDL;
+    LERROR << oss.str();
     throw runtime_error(oss.str());
   }
 
@@ -195,7 +195,7 @@ readHeader(std::ifstream& file)
       ostringstream oss;
       oss << "language " << language 
           << " is not initialized";
-      LERROR << oss.str() << LENDL;
+      LERROR << oss.str();
       throw runtime_error(oss.str());
     }
     lang=Common::MediaticData::MediaticData::single().media(language);
@@ -435,7 +435,7 @@ readTransitionUnit(std::ifstream& file,MediaId language)
   }
   default: {
     AULOGINIT;
-    LERROR << "Undefined type of transition: " << codeTrans << LENDL;
+    LERROR << "Undefined type of transition: " << codeTrans;
   }
   }
   // read properties
@@ -478,7 +478,7 @@ writeRecognizer(const Recognizer& reco,
     AULOGINIT;
     ostringstream oss;
     oss << "Cannot open file [" << filename << "]";
-    LERROR << oss.str() << LENDL;
+    LERROR << oss.str();
     throw OpenFileException(oss.str());
   }
   writeRecognizer(file,reco,language,debug);
@@ -716,7 +716,7 @@ writeTransitionUnit(std::ofstream& file,
     break;
   default: {
     AULOGINIT;
-    LERROR << "Undefined type of transition: " << type << LENDL;
+    LERROR << "Undefined type of transition: " << type;
   }
   }
 

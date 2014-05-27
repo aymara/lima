@@ -53,7 +53,7 @@ SyntacticData::SyntacticData(
     m_relationStoredForSelectionalConstraint(0,0,0)
 {
 //     SALOGINIT;
-//     LDEBUG << "######## new SyntacticData !!!!" << LENDL;
+//     LDEBUG << "######## new SyntacticData !!!!";
 }
 
 SyntacticData::~SyntacticData()
@@ -87,7 +87,7 @@ SyntacticData::~SyntacticData()
 void SyntacticData::setupDependencyGraph()
 {
 //     SALOGINIT;
-//     LDEBUG << "Calling setupDependencyGraph" << LENDL;
+//     LDEBUG << "Calling setupDependencyGraph";
     if (m_depGraph != 0)
         delete m_depGraph;
     m_depGraph = new DependencyGraph(num_vertices(*(m_anagraph->getGraph())));
@@ -119,7 +119,7 @@ void SyntacticData::setupDependencyGraph()
 std::pair<LinguisticGraphVertex, DependencyGraphVertex> SyntacticData::addVertex()
 {
 //     SALOGINIT;
-//     LDEBUG << "Calling SyntacticData::addVertex" << LENDL;
+//     LDEBUG << "Calling SyntacticData::addVertex";
 
     LinguisticGraphVertex morph = add_vertex(*m_graph);
     DependencyGraphVertex synt = add_vertex(*m_depGraph);
@@ -144,7 +144,7 @@ LinguisticGraphVertex SyntacticData::tokenVertexForDepVertex(const DependencyGra
 {
   //SALOGINIT;
   //LDEBUG << this << " SyntacticData::m_mapping " << &m_mapping << " sizes : (" << m_mapping.first.size() << ","
-  //          << m_mapping.second.size() << ")" << LENDL;
+  //          << m_mapping.second.size() << ")";
     if (m_mapping.second.find(v) == m_mapping.second.end())
         throw LimaException("SyntacticData::tokenVertexForDepVertex: searched morphosyntactic vertex not found");
     return (*(m_mapping.second.find(v))).second;
@@ -246,7 +246,7 @@ void SyntacticData::addRelationNoChain(const Common::MediaticData::SyntacticRela
                    const LinguisticGraphVertex& dest) {
   SALOGINIT;
   LDEBUG << "Adding relation " << relType << " between "
-         << src << " and " << dest << " for no chain" << LENDL;
+         << src << " and " << dest << " for no chain";
 
   ChainIdStruct noChain;
 
@@ -259,13 +259,13 @@ void SyntacticData::addRelationNoChain(const Common::MediaticData::SyntacticRela
   {
 //     put(edge_depchain_id, *m_depGraph, edge, noChain);
     SALOGINIT;
-    LDEBUG << "Storing relation "<<v1<<","<<v2<<"," << relType << LENDL;
+    LDEBUG << "Storing relation "<<v1<<","<<v2<<"," << relType;
     put(edge_deprel_type, *m_depGraph, edge, relType);
   }
   else {
     SALOGINIT;
     LERROR << "Was not able to add relation (" << relType << ") between "
-           << src << " and " << dest << " for no chain" << LENDL;
+           << src << " and " << dest << " for no chain";
     throw std::runtime_error("Was not able to add relation");
   }
 }
@@ -277,7 +277,7 @@ void SyntacticData::modifyRelationNoChain(const Common::MediaticData::SyntacticR
                    const Common::MediaticData::SyntacticRelationId& newType) {
 //   SALOGINIT;
 //   LDEBUG << "modify relation " << relType << " between "
-//          << src << " and " << dest << " for no chain" << LENDL;
+//          << src << " and " << dest << " for no chain";
 
   ChainIdStruct noChain;
   DependencyGraphVertex v1 = depVertexForTokenVertex(src);
@@ -298,7 +298,7 @@ void SyntacticData::modifyRelationNoChain(const Common::MediaticData::SyntacticR
 
   SALOGINIT;
   LERROR << "Was not able to modify relation (" << relType << ") between "
-         << src << " and " << dest << " to " << newType << LENDL;
+         << src << " and " << dest << " to " << newType;
   throw std::runtime_error("Was not able to modify relation");
 }
 
@@ -308,24 +308,24 @@ bool SyntacticData::removeDependency(const LinguisticGraphVertex& v1,
     const Common::MediaticData::SyntacticRelationId relationType)
 {
   SALOGINIT;
-  LDEBUG << "SyntacticData::removeDependency " << v1 << ", " << v2 << ", " << relationType << LENDL;
+  LDEBUG << "SyntacticData::removeDependency " << v1 << ", " << v2 << ", " << relationType;
   EdgeDepRelTypePropertyMap relTypeMap = get(edge_deprel_type, *m_depGraph);
   
   DependencyGraphVertex dv1 = depVertexForTokenVertex(v1);
   DependencyGraphVertex dv2 = depVertexForTokenVertex(v2);
-  LDEBUG << "SyntacticData::removeDependency dep vertices are " << dv1 << ", " << dv2 << LENDL;
+  LDEBUG << "SyntacticData::removeDependency dep vertices are " << dv1 << ", " << dv2;
   DependencyGraphOutEdgeIt outIt, outIt_end;
   boost::tie (outIt, outIt_end) = boost::out_edges(dv1, *m_depGraph);
   for (; outIt != outIt_end; outIt++)
   {
     if (target(*outIt, *m_depGraph) == dv2 && relTypeMap[*outIt] == relationType)
     {
-      LDEBUG << "SyntacticData::removeDependency dependency found. Removing it." << LENDL;
+      LDEBUG << "SyntacticData::removeDependency dependency found. Removing it.";
       boost::remove_edge(*outIt, *m_depGraph);
       return true;
     }
   }
-  LDEBUG << "SyntacticData::removeDependency dependency NOT found." << LENDL;
+  LDEBUG << "SyntacticData::removeDependency dependency NOT found.";
   return false;
 }
 

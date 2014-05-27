@@ -91,24 +91,24 @@ bool SubsentenceBounds::operator()(const Lima::LinguisticProcessing::LinguisticA
 {
   SASLOGINIT;
   LDEBUG << "testing SubsentenceBounds for " << v1 << " and " << v2 << " with relation: " /*<< (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).
-    getEntityNames("SyntacticSimplification")[m_relation])*/ << LENDL;
+    getEntityNames("SyntacticSimplification")[m_relation])*/;
   
   SimplificationData* simplificationData =
       static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
     SASLOGINIT;
-    LERROR << "No simplificationData in SubsentenceBounds constraint" << LENDL;
+    LERROR << "No simplificationData in SubsentenceBounds constraint";
     return false;
   }
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
       v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
-  LDEBUG << "SubsentenceBounds: false" << LENDL;
+  LDEBUG << "SubsentenceBounds: false";
     return false;
   }
   simplificationData->subSentBounds(boost::make_tuple(v1,v2, m_relation));
-  LDEBUG << "SubsentenceBounds: true" << LENDL;
+  LDEBUG << "SubsentenceBounds: true";
   return true;
 }
 
@@ -126,7 +126,7 @@ bool Simplify::operator()(RecognizerMatch& /*unused*/,
 {
 
   SASLOGINIT;
-  LDEBUG << "Doing simplification" << LENDL;
+  LDEBUG << "Doing simplification";
 
   SyntacticData* syntacticData =
     static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -136,7 +136,7 @@ bool Simplify::operator()(RecognizerMatch& /*unused*/,
   if (simplificationData==0)
   {
     SASLOGINIT;
-    LERROR << "No simplificationData in SubsentenceBounds constraint" << LENDL;
+    LERROR << "No simplificationData in SubsentenceBounds constraint";
     return false;
   }
   std::list< boost::tuple< LinguisticGraphVertex, LinguisticGraphVertex, SyntacticRelationId > >::const_iterator simplificationsIt, simplificationsIt_end;
@@ -154,31 +154,31 @@ bool Simplify::operator()(RecognizerMatch& /*unused*/,
           getEntityNames("SyntacticSimplification")[type])*/
       /*<< " was: " << result*/ << " with bounds "
         << first << " / "
-        << last << LENDL;
+        << last;
 
     if (boost::in_degree(first, *graph)==0 || boost::out_degree(last, *graph)==0)
     {
       return false;
     }
-    LDEBUG << "first ("<<first<<") has " << boost::in_degree(first, *graph) << " in edges" << LENDL;
+    LDEBUG << "first ("<<first<<") has " << boost::in_degree(first, *graph) << " in edges";
     LinguisticGraphEdge inEdge = *(boost::in_edges(first, *graph).first);
     boost::remove_edge(inEdge, *graph);
 
-    LDEBUG << "last ("<<last<<") has " << boost::out_degree(last, *graph) << " out edges" << LENDL;
+    LDEBUG << "last ("<<last<<") has " << boost::out_degree(last, *graph) << " out edges";
     LinguisticGraphEdge outEdge = *(boost::out_edges(last, *graph).first);
     boost::remove_edge(outEdge, *graph);
   
     LDEBUG << "Old edges are "
     << inEdge.m_source << " -> " << inEdge.m_target << " / "
-    << outEdge.m_source << " -> " << outEdge.m_target << LENDL;
+    << outEdge.m_source << " -> " << outEdge.m_target;
     LDEBUG << "New edge is "
       << source(inEdge,*graph) << " -> "
-      << target(outEdge,*graph) << LENDL;
+      << target(outEdge,*graph);
     std::pair<LinguisticGraphEdge, bool> addingResult = boost::add_edge(source(inEdge,*graph), target(outEdge,*graph), *graph);
     if (addingResult.second == false)
     {
       SASLOGINIT;
-      LERROR << "Was not able to add a simplification edge." << LENDL;
+      LERROR << "Was not able to add a simplification edge.";
       simplificationData->clearBounds();
       return false;
     }
@@ -201,7 +201,7 @@ bool ClearStoredSubsentences::operator()(AnalysisContent& analysis) const
 {
   
   SASLOGINIT;
-  LDEBUG << "clearing stored subsentences" << LENDL;
+  LDEBUG << "clearing stored subsentences";
   
   SimplificationData* simplificationData =
     static_cast<SimplificationData*>(analysis.getData("SimplificationData"));

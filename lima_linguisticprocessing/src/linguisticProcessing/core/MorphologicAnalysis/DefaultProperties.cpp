@@ -78,7 +78,7 @@ void DefaultProperties::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'defaultPropertyFile' in DefaultProperties group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'defaultPropertyFile' in DefaultProperties group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -89,7 +89,7 @@ void DefaultProperties::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'charChart' in DefaultProperties group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'charChart' in DefaultProperties group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   
@@ -165,7 +165,7 @@ LimaStatusCode DefaultProperties::process(
         } else {
           LWARN << "No default property for " 
             << Common::Misc::limastring2utf8stdstring(currentToken->stringForm()) << ". Status : "
-            << Common::Misc::limastring2utf8stdstring(currentToken->status().defaultKey()) << LENDL;
+            << Common::Misc::limastring2utf8stdstring(currentToken->status().defaultKey());
         }
       }
     }
@@ -173,7 +173,7 @@ LimaStatusCode DefaultProperties::process(
   catch (std::exception &exc)
   {
     MORPHOLOGINIT;
-    LWARN << "Exception in Default Properties :  " << exc.what() << LENDL;
+    LWARN << "Exception in Default Properties :  " << exc.what();
     return UNKNOWN_ERROR;
   }
 
@@ -183,7 +183,7 @@ LimaStatusCode DefaultProperties::process(
 void DefaultProperties::readDefaultsFromFile(const std::string& filename)
 {
   MORPHOLOGINIT;
-  LINFO << "read default properties from file : " << filename << LENDL;
+  LINFO << "read default properties from file : " << filename;
   ifstream fin(filename.c_str(), std::ifstream::binary);
   string line;
   string type;
@@ -194,7 +194,7 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
       istringstream is(line);
       is >> type;
       is >> props;
-      LDEBUG << "read default " << type << " => " << props << LENDL;
+      LDEBUG << "read default " << type << " => " << props;
       m_defaults[Common::Misc::utf8stdstring2limastring(type)].push_back(props);
     }
   }

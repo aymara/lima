@@ -167,7 +167,7 @@ void BoWDocument::readPart(std::istream& file, AbstractBoWXMLWriter& writer, boo
   
   BOWLOGINIT;
   LDEBUG << "BoWDocument::readPart: read " 
-             << (int)blocType << LENDL;
+             << (int)blocType;
   
   // new format
   switch( blocType )

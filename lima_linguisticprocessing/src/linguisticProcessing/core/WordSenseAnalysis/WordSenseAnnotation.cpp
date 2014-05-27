@@ -62,7 +62,7 @@ int DumpWordSense::dump(ostream& os, Common::AnnotationGraphs::GenericAnnotation
   }
   catch (const boost::bad_any_cast& e)
   {
-    LERROR << "This annotation is not a WordSenseAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a WordSenseAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

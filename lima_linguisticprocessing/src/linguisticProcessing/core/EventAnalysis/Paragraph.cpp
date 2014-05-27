@@ -64,7 +64,7 @@ Paragraph::~Paragraph()
 std::pair<Common::MediaticData::EntityType,std::deque<LinguisticGraphVertex> > Paragraph::extractEventEntitiesBeforeVertex(LinguisticGraphVertex v,LinguisticGraph* graph)
 {
   EVENTANALYZERLOGINIT;
-  LDEBUG << "Paragraph::extractEventEntitiesBeforeVertex m_evententities.first " <<  m_evententities.first << LENDL;
+  LDEBUG << "Paragraph::extractEventEntitiesBeforeVertex m_evententities.first " <<  m_evententities.first;
   std::deque<LinguisticGraphVertex>  evententities;
   Token *token=get(vertex_token,*graph,v);
   

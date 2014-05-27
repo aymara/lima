@@ -128,7 +128,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   if (stringName == string("module"))
   {
     m_moduleName = attributes.value("name").toUtf8().constData();
-    LTRACE << "XMLConfigurationFileHandler::startElement module name is " << m_moduleName << LENDL;
+    LTRACE << "XMLConfigurationFileHandler::startElement module name is " << m_moduleName;
     if ((m_configuration. find(m_moduleName)) == (m_configuration. end()))
     {
       m_configuration.insert(make_pair(m_moduleName, ModuleConfigurationStructure(m_moduleName)));

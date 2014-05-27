@@ -157,7 +157,7 @@ void Recognizer::init(
     {
       m_filename=rulesFile;
       rulesFile = resourcesPath + "/" + rulesFile;
-//       LDEBUG << "read recognizer from file : " << rulesFile << LENDL;
+//       LDEBUG << "read recognizer from file : " << rulesFile;
       //readFromFile(rulesFile);
       AutomatonReader reader;
       reader.readRecognizer(rulesFile,*this);
@@ -165,7 +165,7 @@ void Recognizer::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     AULOGINIT;
-    LERROR << "No param 'rules' in recognizer group for language " << (int)m_language << LENDL;
+    LERROR << "No param 'rules' in recognizer group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
@@ -175,7 +175,7 @@ void Recognizer::init(
     uint64_t val=atol(str.c_str());
     if (val==0) {
       AULOGINIT;
-      LWARN << "maxDepthStack is 0: keep default value" << LENDL;
+      LWARN << "maxDepthStack is 0: keep default value";
     }
     else {
       m_automatonControlParams.setMaxDepthStack(val);
@@ -191,7 +191,7 @@ void Recognizer::init(
     uint64_t val=atol(str.c_str());
     if (val==0) {
       AULOGINIT;
-    LWARN << "maxTransitionsExplored is 0: keep default value" << LENDL;
+    LWARN << "maxTransitionsExplored is 0: keep default value";
     }
     else {
       m_automatonControlParams.setMaxTransitionsExplored(val);
@@ -207,7 +207,7 @@ void Recognizer::init(
     uint64_t val=atol(str.c_str());
     if (val==0) {
       AULOGINIT;
-    LWARN << "maxNbResults is 0: keep default value" << LENDL;
+    LWARN << "maxNbResults is 0: keep default value";
     }
     else {
       m_automatonControlParams.setMaxNbResults(val);
@@ -223,7 +223,7 @@ void Recognizer::init(
     uint64_t val=atol(str.c_str());
     if (val==0) {
       AULOGINIT;
-      LWARN << "maxResultSize is 0: keep default value" << LENDL;
+      LWARN << "maxResultSize is 0: keep default value";
     }
     else {
       m_automatonControlParams.setMaxResultSize(val);
@@ -338,7 +338,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   if (onlyOneSuccessPerType && forbiddenTypes==0) {
     AULOGINIT;
     LERROR << "cannot use onlyOneSuccessPerType "
-           << "when forbidden types are not allowed" << LENDL;
+           << "when forbidden types are not allowed";
     onlyOneSuccessPerType=false;
   }
 
@@ -352,14 +352,14 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   //LinguisticGraphVertex right=position.forward();
 
   AULOGINIT;
-  //LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position << LENDL;
-  //   LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType << LENDL;
+  //LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
+  //   LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
   // if (logger.isDebugEnabled()) {
   //  std::ostringstream oss;
   //  for (SetOfRules::const_iterator it=rules.begin(),it_end=rules.end();it!=it_end;it++) {
   //    oss << " - " << (*it)->getWeight();
   //  }
-  //  LDEBUG << "Rule weights" << oss.str() << LENDL;
+  //  LDEBUG << "Rule weights" << oss.str();
   //}
   
   bool reapplySameRule(false);
@@ -373,7 +373,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     // if (logger.isDebugEnabled()) {
     //   LDEBUG << "testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
     //          << currentRule->getType() << ",reapply="
-    //          << reapplySameRule << " from " << position << LENDL;
+    //          << reapplySameRule << " from " << position;
     // }
 
     if (forbiddenTypes &&
@@ -381,7 +381,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         != forbiddenTypes->end()) {
       // type previously forbidden by a negative rule
 /*      LDEBUG << "type " << currentRule->getType()
-             << " is forbidden: continue" << LENDL;*/
+             << " is forbidden: continue";*/
       continue;
     }
 
@@ -393,12 +393,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     // treat the constraints for the trigger with the constraint
     // checklist corresponding to this rule
     //Token* token=get(vertex_token,*(graph.getGraph()),position);
-//     LDEBUG << "Recognizer: checking trigger constraints: " << LENDL;
+//     LDEBUG << "Recognizer: checking trigger constraints: ";
 
     if (!trigger.checkConstraints(graph,position,analysis,
                                   constraintCheckList)) {
       // one unary constraint was not verified
-//       LDEBUG << "one unary constraint on trigger not verified" << LENDL;
+//       LDEBUG << "one unary constraint on trigger not verified";
 
     // apply actions (for actions triggered by failure)
       if (!currentRule->negative()) {
@@ -406,7 +406,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                     constraintCheckList,
                                     false,
                                     0); // match is not used
-//     LDEBUG << "actionSuccess=" << actionSuccess << LENDL;
+//     LDEBUG << "actionSuccess=" << actionSuccess;
       }
       continue;
     }
@@ -420,7 +420,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                      leftmatch, rightmatch,
                                      constraintCheckList,forward,backward,
                                      m_automatonControlParams);
-    //LDEBUG << "success=" << success << LENDL;
+    //LDEBUG << "success=" << success;
 
     RecognizerMatch* match=0;
 
@@ -445,14 +445,14 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     // execute possible actions associated to the rule iff current rule is
     // positive
-    //LDEBUG << "Recognizer: executing actions: " << LENDL;
+    //LDEBUG << "Recognizer: executing actions: ";
     bool actionSuccess = true;
     if (!currentRule->negative()) {
       actionSuccess = currentRule->executeActions(graph, analysis,
                                                   constraintCheckList,
                                                   success,
                                                   match);
-      //LDEBUG << "actionSuccess=" << actionSuccess << LENDL;
+      //LDEBUG << "actionSuccess=" << actionSuccess;
     }
 
     if (logger.isDebugEnabled()) {
@@ -465,8 +465,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       if (success) {
         LDEBUG << "trigger " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success=" << success 
-               << ",actionSuccess=" << actionSuccess << LENDL;
-        LDEBUG << "        matched: '" << Lima::Common::Misc::limastring2utf8stdstring(match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language))) << "'" << LENDL;
+               << ",actionSuccess=" << actionSuccess;
+        LDEBUG << "        matched: '" << Lima::Common::Misc::limastring2utf8stdstring(match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language))) << "'";
       }
       else {
         LDEBUG << "vertex " << v << "[" << str << "]:rule " 
@@ -492,7 +492,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
           LDEBUG << "Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty (" 
             << (recoData->getNextVertices().empty()) 
-            << ")" << LENDL;
+            << ")";
         }*/
         return 1;
       }
@@ -503,14 +503,14 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
               AULOGINIT;
               LWARN << "Reapplication of same rule gives same result: "
                     << "abort to avoid inifinite loop: "
-                    << *match << ";" << matches.back() << LENDL;
+                    << *match << ";" << matches.back();
               delete match; // a copy has been made
               match=0;
               reapplySameRule=false;
               continue;
             }
 /*            else {
-              LDEBUG << "Reapplication of same rule gives new result" << LENDL;
+              LDEBUG << "Reapplication of same rule gives new result";
             }*/
           }
           // reapply same rule
@@ -518,21 +518,21 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
           reapplySameRule=true;
         }
 
-//         LDEBUG << "add match to results " << *match << LENDL;
+//         LDEBUG << "add match to results " << *match;
         matches.push_back(*match);
         delete match; // a copy has been made
         match=0;
 
         if (onlyOneSuccessPerType) {
 /*          LDEBUG << "add " << currentRule->getType()
-                 << " in forbiddenTypes" << LENDL;*/
+                 << " in forbiddenTypes";*/
           forbiddenTypes->insert(currentRule->getType());
         }
         nbSuccess++;
       }
     }
     else {
-//      LDEBUG << "-> no success" << LENDL;
+//      LDEBUG << "-> no success";
       reapplySameRule=false;
     }
 
@@ -617,10 +617,10 @@ uint64_t Recognizer::
 
   AULOGINIT;
   LDEBUG << "apply recognizer " << m_filename << " from vertex "
-         << begin << " to vertex " << end << LENDL;
-  LDEBUG << "  up bound: " << upstreamBound << "; down bound: " << downstreamBound << "; testAllVertices: " << testAllVertices << LENDL;
-  LDEBUG << "  stopAtFirstSuccess: " << stopAtFirstSuccess << "; onlyOneSuccessPerType: " << onlyOneSuccessPerType << LENDL;
-  LDEBUG << "  returnAtFirstSuccess: " << returnAtFirstSuccess << "; applySameRuleWhileSuccess: " << applySameRuleWhileSuccess << LENDL;
+         << begin << " to vertex " << end;
+  LDEBUG << "  up bound: " << upstreamBound << "; down bound: " << downstreamBound << "; testAllVertices: " << testAllVertices;
+  LDEBUG << "  stopAtFirstSuccess: " << stopAtFirstSuccess << "; onlyOneSuccessPerType: " << onlyOneSuccessPerType;
+  LDEBUG << "  returnAtFirstSuccess: " << returnAtFirstSuccess << "; applySameRuleWhileSuccess: " << applySameRuleWhileSuccess;
 
   uint64_t numberOfRecognized(0);
   bool success(false);
@@ -645,11 +645,11 @@ uint64_t Recognizer::
     }
 
     visited.insert(currentVertex);
-    LDEBUG << "to visit size=" << toVisit.size() << " ; currentVertex=" << currentVertex << LENDL;
+    LDEBUG << "to visit size=" << toVisit.size() << " ; currentVertex=" << currentVertex;
 
     if (lastReached ||                // limit given by argument
         currentVertex == graph.lastVertex()) { // end of the graph
-      // LDEBUG << "vertex " << currentVertex << " is last vertex" << LENDL;
+      // LDEBUG << "vertex " << currentVertex << " is last vertex";
       continue;  // may be other nodes to test in queue
     }
     if (currentVertex == end ) {                // limit given by argument
@@ -657,7 +657,7 @@ uint64_t Recognizer::
     }
 
     if (currentVertex != graph.firstVertex()) {
-      LDEBUG << "Recognizer: test on vertex " << currentVertex << LENDL;
+      LDEBUG << "Recognizer: test on vertex " << currentVertex;
       success = testOnVertex(graph,currentVertex,
                              upstreamBound,downstreamBound,
                              analysis,result,
@@ -670,7 +670,7 @@ uint64_t Recognizer::
           return numberOfRecognized;
         if (! testAllVertices) { // restart from end of recognized expression
           LDEBUG << "success: continue from vertex "
-                 << currentVertex << LENDL;
+                 << currentVertex;
           // GC on 20110803: the clearing below was problematic in case of rules like that:
           // [<Location.LOCATION>]:(t_capital_1st|t_capital){1-3} [,]::LOCATION:N_LOCATION
           // which matches text before (left) the trigger which is not included in the match.
@@ -693,7 +693,7 @@ uint64_t Recognizer::
     for (; outEdge!=outEdge_end; outEdge++) {
       LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
       if (visited.find(next)==visited.end()) {
-        LDEBUG << "Recognizer: adding out edge target vertex to the 'to visit' list: " << next << LENDL;
+        LDEBUG << "Recognizer: adding out edge target vertex to the 'to visit' list: " << next;
         toVisit.push_back(next);
         // do not put in visited unless it is really visited
         // (otherwise, may be suppressed when testAllVertices is false
@@ -701,25 +701,25 @@ uint64_t Recognizer::
         //visited.insert(next);
       }
       else {
-        LDEBUG << "Recognizer: already visited: " << next << LENDL;
+        LDEBUG << "Recognizer: already visited: " << next;
       }
     }
     RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
     std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
     if (recoData != 0 && !nextVertices.empty() )
     {
-      LDEBUG << "Recognizer: adding next vertices to the 'to visit' list" << LENDL;
+      LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
       std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
       nvit = nextVertices.begin();
       nvit_end = nextVertices.end();
       for (; nvit != nvit_end; nvit++)
       {
-        LDEBUG << "           - " << *nvit << LENDL;
+        LDEBUG << "           - " << *nvit;
         toVisit.push_front(*nvit);
       }
       nextVertices.clear();
     }
-    LDEBUG << "Recognizer: 'to visit' list size is now: " << toVisit.size() << LENDL;
+    LDEBUG << "Recognizer: 'to visit' list size is now: " << toVisit.size();
   }
   return numberOfRecognized;
 }
@@ -745,13 +745,13 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
   if (token==0) {
     AULOGINIT;
-    LERROR << "no token for vertex " << current << LENDL;
+    LERROR << "no token for vertex " << current;
     return 0;
   }
 
   if (data==0) {
     AULOGINIT;
-    LERROR << "no data for vertex " << current << LENDL;
+    LERROR << "no data for vertex " << current;
     return 0;
   }
 
@@ -799,7 +799,7 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   forbiddenTypes.clear();
 
-  // LDEBUG << "testOnVertex nb successes: " << nbSuccess << LENDL;
+  // LDEBUG << "testOnVertex nb successes: " << nbSuccess;
   return nbSuccess;
 }
 

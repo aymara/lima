@@ -65,7 +65,7 @@ void FsaAccessBuilderRandom16::write( const std::string & filename  ){
     std::string mess = "FsaAccessBuilderRandom16::write: Can't open file " + filename;
 #ifdef DEBUG_CD
     FSAAIOLOGINIT;
-    LERROR << LENDL;
+    LERROR;
 #endif
     throw( FsaNotSaved( mess ) );
   }
@@ -79,7 +79,7 @@ void FsaAccessBuilderRandom16::write( const std::string & filename  ){
 void FsaAccessBuilderRandom16::write ( std::ostream &os ){
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "FsaAccessBuilderRandom16::write(std::ostream)" << LENDL;
+  LDEBUG <<  "FsaAccessBuilderRandom16::write(std::ostream)";
 #endif
   
   FsaAccessOStreamWrapper ow(os);
@@ -91,7 +91,7 @@ void FsaAccessBuilderRandom16::write ( std::ostream &os ){
 void FsaAccessBuilderRandom16::write ( FsaAccessDataOutputHandler& oh ){
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "FsaAccessBuilderRandom16::write(std::ostream)" << LENDL;
+  LDEBUG <<  "FsaAccessBuilderRandom16::write(std::ostream)";
 #endif
   
   FsaAccessOutputHandlerWrapper ow(oh);
@@ -103,7 +103,7 @@ void FsaAccessBuilderRandom16::write ( FsaAccessDataOutputHandler& oh ){
 void FsaAccessBuilderRandom16::write( AbstractFsaAccessOStreamWrapper &ow ){
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "FsaAccessBuilderRandom16::write()" << LENDL;
+  LDEBUG <<  "FsaAccessBuilderRandom16::write()";
 #endif
 
   FsaAccessHeader::setPackingStatus(m_packingStatus);
@@ -125,12 +125,12 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
   FSAALOGINIT;
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord("
-            << newWord << ")" << LENDL;
+            << newWord << ")";
   std::ostringstream stro1(std::ios::in | std::ios::out);
   stro1 << Lima::Common::Misc::limastring2utf8stdstring(LimaString(newWord.data()))
         << "), m_rootVertex=" << m_rootVertex;
   LWARN << "FsaAccessBuilderRandom16::addRandomWord("
-        << stro1.str().c_str() << LENDL;
+        << stro1.str().c_str();
 
 #endif
 
@@ -149,13 +149,13 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
     if( superwords.first == superwords.second ) {
       LWARN <<  "FsaAccessBuilderRandom16::addRandomWord: "
             << newWord
-            << " already in dictionary!!" << LENDL;
+            << " already in dictionary!!";
       return;
     }
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: "
            << newWord
-           << " as prefix of existing word" << LENDL;
+           << " as prefix of existing word";
 #endif
     Lima::LimaString superword =
       *(superwords.first);
@@ -170,7 +170,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
     }
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: superWord = "
-          << superword << LENDL;
+          << superword;
 #endif
 
     PrefixIterator* prefixItSuperWord = getPrefixIterator(superword);
@@ -186,7 +186,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
 #endif
     put(vname_map, root, get(vname_map, root)|FINAL_16);
 #ifdef DEBUG_CD
-    LWARN << std::hex << get(vname_map, root) << ")" << std::dec << LENDL;
+    LWARN << std::hex << get(vname_map, root) << ")" << std::dec;
 #endif
 #ifdef DEBUG_CD
     LWARN <<  "FsaAccessBuilderRandom16::addRandomWord: put(vname_map,"
@@ -195,7 +195,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
 #endif
     put(vname_map, prefix_leaf, get(vname_map, prefix_leaf)|FINAL_16);
 #ifdef DEBUG_CD
-    LWARN << std::hex << get(vname_map, prefix_leaf) << ")" << std::dec << LENDL;
+    LWARN << std::hex << get(vname_map, prefix_leaf) << ")" << std::dec;
 #endif
 
     prefixItSuperWord = getPrefixIterator(superword);
@@ -207,7 +207,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
     stro << m_rootVertex << "," << *prefixItWord;
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: updateHash("
-          << stro.str().c_str() << ")" << LENDL;
+          << stro.str().c_str() << ")";
 #endif
     updateHash( m_rootVertex, prefixItWord );
     delete prefixItWord;
@@ -218,7 +218,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
 
   if( prefixIt->getWordPos() == 0 ) {
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: add complete word to root " << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: add complete word to root ";
 #endif
     prefix_leaf = m_rootVertex;
   }
@@ -226,14 +226,14 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
     const LimaString prefix = prefixIt->getPastPrefix();
     PrefixIterator* prefixItClone = getPrefixIterator(prefix);
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord:  m_rootVertex=" << m_rootVertex << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord:  m_rootVertex=" << m_rootVertex;
 #endif
     /*bool hasFirstState =*/ scanAndCloneConfluentStates( m_rootVertex, prefixItClone, prefix_leaf );
 //    checkIntegrity( prefix_leaf );
 
 #ifdef DEBUG_CD
-//    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: addSuffix " << prefix->getCurrentPrefix() << " to " << prefix_leaf << LENDL;
-    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: addSuffix to " << prefix_leaf << LENDL;
+//    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: addSuffix " << prefix->getCurrentPrefix() << " to " << prefix_leaf;
+    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: addSuffix to " << prefix_leaf;
 #endif
   }
   if( prefixIt->hasNextLetter() ) {
@@ -246,7 +246,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
 
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: add first letter of suffix "
-           << std::hex << currentChar << std::dec << LENDL;
+           << std::hex << currentChar << std::dec;
 #endif
 //    checkIntegrity( prefix_leaf );
     addEdge( prefix_leaf, newState, currentChar, prefixIt->getCurrentContent(), wordOffset );
@@ -260,7 +260,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
 #ifdef DEBUG_CD
 //    LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: add end of suffix " << trail
     LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: add end of suffix "
-         << " to " << newState << LENDL;
+         << " to " << newState;
 #endif
       addSuffix( newState, prefixItAdd);
     }
@@ -300,7 +300,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates("
-                 << from << "," << prefixIt->getCurrentPrefix() << ")" << LENDL;
+                 << from << "," << prefixIt->getCurrentPrefix() << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -315,7 +315,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
     char32_t currentChar = prefixIt->getNextLetter(wordOffset);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: currentChar="
-                 << std::hex << currentChar << std::dec << ")" << LENDL;
+                 << std::hex << currentChar << std::dec << ")";
 #endif
 /* TODO: replace FsaAccess16<graphType>::findEdge() by ForwardPrefixIterator::findEdge()
 
@@ -330,7 +330,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
     Lima::LimaString& text = get(vtext_map,from);
 #ifdef DEBUG_CD
     std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(LimaString(text.data()));
-    LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: text = " << text8.c_str() << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: text = " << text8.c_str();
 #endif
     int32_t highCharTextPos = get(vname_map,from)&TEXT_POS_16;
     if( wordOffset == 1 ) {
@@ -355,7 +355,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 
       boost::graph_traits<graphType>::vertex_descriptor to = target(edge, m_graph);
 #ifdef DEBUG_CD
-      LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: match " << edgeOffset << LENDL;
+      LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: match " << edgeOffset;
 #endif
       graphType::degree_size_type ind = boost::in_degree(to, m_graph);
       if( ind > 1 ) {
@@ -364,7 +364,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
         std::ostringstream oss;
         oss << "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: supressEdge("
                << edge << "," << std::hex << currentChar << std::dec << ")";
-        LDEBUG <<  oss.str().c_str() << LENDL;
+        LDEBUG <<  oss.str().c_str();
 #endif
         // remove element from vector counts
         // tableau des coefficients
@@ -381,17 +381,17 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: before remove_edge("
-               << from << "," << to << "), outd=" << outd0 << LENDL;
+               << from << "," << to << "), outd=" << outd0;
         std::ostringstream oss2;
         oss2 << "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: remove_edge("
                << edge << "," << std::hex << currentChar << std::dec << ")";
-        LDEBUG <<  oss2.str().c_str() << LENDL;
+        LDEBUG <<  oss2.str().c_str();
 #endif
         remove_edge(edge, m_graph);
         graphType::degree_size_type outd = boost::out_degree(from, m_graph);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: after remove_edge, outd="
-               << outd << LENDL;
+               << outd;
 #endif
         assert( (outd+1) == outd0);
         if( outd > 1 )
@@ -401,18 +401,18 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: before erase text[to] ="
-        << LimaString(text.data()) << LENDL;
+        << LimaString(text.data());
 #endif
         text.remove(textOffset, wordOffset);
         assert( static_cast<graphType::degree_size_type>(text.size()) == outd);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: after erase text[to] ="
-        << LimaString(text.data()) << LENDL;
+        << LimaString(text.data());
 #endif
         VERTEX_PROPERTY_16 vval = get(vname_map, from);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: read val[to] ="
-               << std::hex << vval << std::dec << LENDL;
+               << std::hex << vval << std::dec;
 #endif
         VERTEX_PROPERTY_16 qualif = vval & QUALITY_16;
         VERTEX_PROPERTY_16 hicharOff = vval & TEXT_POS_16;
@@ -421,7 +421,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
         assert( hicharOff == outd);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: set val[to] :="
-               << std::hex << ( (qualif&(~HEAD_OF_CLASS_16)) | hicharOff) << std::dec << LENDL;
+               << std::hex << ( (qualif&(~HEAD_OF_CLASS_16)) | hicharOff) << std::dec;
 #endif
         put(vname_map, from,  (qualif&(~HEAD_OF_CLASS_16)) | hicharOff);
 
@@ -431,7 +431,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 
 #ifdef DEBUG_CD
        LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: duplicate out edges of "
-              << to << " into " << newState << LENDL;
+              << to << " into " << newState;
 #endif
         lastState = newState;
         break;
@@ -444,7 +444,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
     }
     else {
 #ifdef DEBUG_CD
-      LWARN <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: no match for " << LENDL;
+      LWARN <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: no match for ";
 #endif
       return false;
     }
@@ -484,7 +484,7 @@ bool FsaAccessBuilderRandom16::cloneConfluentStates(
   LDEBUG <<  "FsaAccessBuilderRandom16::cloneConfluentStates("
          << toOldPath << "," << prefixIt->getCurrentPrefix()
          << "," << wordOffset
-         << "," << fromNewPath << ")" << LENDL;
+         << "," << fromNewPath << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -494,7 +494,7 @@ bool FsaAccessBuilderRandom16::cloneConfluentStates(
 #ifdef DEBUG_CD
   graphType::degree_size_type out_size = boost::out_degree(fromNewPath, m_graph);
   LDEBUG <<  "FsaAccessBuilderRandom16::cloneConfluentStates: degree_size_type("
-                 << fromNewPath << ")=" << out_size << ")" << LENDL;
+                 << fromNewPath << ")=" << out_size << ")";
 #endif
   // Create a new state
   toNewPath = add_vertex(m_graph);
@@ -535,7 +535,7 @@ bool FsaAccessBuilderRandom16::cloneConfluentStates(
     dicoEdgeType edge = *(ei+edgeOffset);
 
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessBuilderRandom16::cloneConfluentStates: match " << edgeOffset << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::cloneConfluentStates: match " << edgeOffset;
 #endif
     dicoVertex oldTarget = target(edge, m_graph);
 
@@ -549,7 +549,7 @@ bool FsaAccessBuilderRandom16::cloneConfluentStates(
   else {
 #ifdef DEBUG_CD
     LERROR << "FsaAccessBuilderRandom16::cloneConfluentStates: no match for"
-           << currentChar << LENDL;
+           << currentChar;
 #endif
     return false;
   }
@@ -563,7 +563,7 @@ void FsaAccessBuilderRandom16::cloneVertex(
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::cloneVertex("
-         << oldTo << ", " << newTo << ")" << LENDL;
+         << oldTo << ", " << newTo << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -581,7 +581,7 @@ void FsaAccessBuilderRandom16::cloneVertex(
     dicoVertex currentTarget = target(*ei,m_graph);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::cloneVertex: add_edge("
-           << newTo << "," << currentTarget << ")" << LENDL;
+           << newTo << "," << currentTarget << ")";
 #endif
     add_edge(newTo, currentTarget, m_graph );
   }
@@ -624,7 +624,7 @@ void FsaAccessBuilderRandom16::addEdge(
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge("
          << from << ", " << to << ", " << currentChar << ","
-         << std::hex << LimaString(*word_content) << std::dec << ", " << wordOffset << ")" << LENDL;
+         << std::hex << LimaString(*word_content) << std::dec << ", " << wordOffset << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -640,7 +640,7 @@ void FsaAccessBuilderRandom16::addEdge(
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: vval="
          << std::hex << vval
-         << ", highCharTextPos=" << highCharTextPos << std::dec << LENDL;
+         << ", highCharTextPos=" << highCharTextPos << std::dec;
 #endif
 
   // tableau des coefficients
@@ -668,7 +668,7 @@ void FsaAccessBuilderRandom16::addEdge(
         break;
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: newOrderedTargetList.push_back("
-//              << (*ei) << ") (1)" << LENDL;
+//              << (*ei) << ") (1)";
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
       textOffset++;
@@ -680,14 +680,14 @@ void FsaAccessBuilderRandom16::addEdge(
     for( ; ei != edge_end ; ei++ ) {
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: newOrderedTargetList.push_back("
-//              << (*ei) << ") (2)" << LENDL;
+//              << (*ei) << ") (2)";
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
     }
     // remove all out_edges
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: clear_edge("
-         << from << ")" << "(" << newOrderedTargetList.size() << ")" << LENDL;
+         << from << ")" << "(" << newOrderedTargetList.size() << ")";
 #endif
     clear_out_edges(from, m_graph);
     assert(boost::out_degree(from, m_graph) == 0);
@@ -696,7 +696,7 @@ void FsaAccessBuilderRandom16::addEdge(
       vIt != newOrderedTargetList.end() ; vIt++ ) {
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: add_edge("
-         << from << "," << *vIt << "" << LENDL;
+         << from << "," << *vIt << "";
 #endif
         add_edge(from, *vIt, m_graph );
     }
@@ -707,7 +707,7 @@ void FsaAccessBuilderRandom16::addEdge(
     // value will be set later within updateHash() function
     if (outd > 1 ) {
 #ifdef DEBUG_CD
-      LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: counts.push_back(0)" << LENDL;
+      LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: counts.push_back(0)";
 #endif
       counts.push_back(0);
     }
@@ -715,7 +715,7 @@ void FsaAccessBuilderRandom16::addEdge(
     highCharTextPos++;
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: outd=" << outd
-           << ", highCharTextPos = " << highCharTextPos << LENDL;
+           << ", highCharTextPos = " << highCharTextPos;
 #endif
     assert(outd == highCharTextPos );
     // from has been modified
@@ -724,17 +724,17 @@ void FsaAccessBuilderRandom16::addEdge(
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: put(vname_map,"
          << from << "," << std::hex << qualif
-         << " | " << highCharTextPos << "" << std::dec << LENDL;
+         << " | " << highCharTextPos << "" << std::dec;
 #endif
     put(vname_map, from, qualif | highCharTextPos);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: text("
            << from << ")="
            << LimaString(get(vtext_map,from).data())
-           << LENDL;
+          ;
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: text="
            << LimaString(text.data())
-           << LENDL;
+          ;
     Lima::LimaString textpart = LimaString(word_content).left(wordOffset);
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: text.insert("
            << textOffset0 << ","
@@ -745,9 +745,9 @@ void FsaAccessBuilderRandom16::addEdge(
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: text("
            << from << ")="
            << LimaString(get(vtext_map,from).data())
-           << LENDL;
+          ;
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: text="
-           << LimaString(text.data()) << LENDL;
+           << LimaString(text.data());
 #endif
   }
   else {
@@ -755,7 +755,7 @@ void FsaAccessBuilderRandom16::addEdge(
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: findOffsetToInsertBefore("
            << currentChar << ","
            << LimaString(text.data())
-           << ")" << LENDL;
+           << ")";
 #endif
     textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
     assert(false);
@@ -789,7 +789,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge("
          << from << ", " << to << ", " << currentChar << ","
-         << ", " << wordOffset << ")" << LENDL;
+         << ", " << wordOffset << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -814,7 +814,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
 
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: textOffset0="
-           << textOffset0 << LENDL;
+           << textOffset0;
 #endif
 
     // Memorisation des transitions au dela de textOffset
@@ -833,7 +833,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
       }
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: newOrderedTargetList.push_back("
-//              << (*ei).c_str() << ") (1)" << LENDL;
+//              << (*ei).c_str() << ") (1)";
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
       textOffset++;
@@ -845,7 +845,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
     for( ; ei != edge_end ; ei++ ) {
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: newOrderedTargetList.push_back("
-//              << *ei << ") (2)" << LENDL;
+//              << *ei << ") (2)";
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
     }
@@ -853,7 +853,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
     // remove all out_edges
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: clear_edge("
-         << from << ")" << LENDL;
+         << from << ")";
 #endif
     clear_out_edges(from, m_graph);
     assert(boost::out_degree(from, m_graph) == 0);
@@ -862,7 +862,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
       vIt != newOrderedTargetList.end() ; vIt++ ) {
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: add_edge("
-         << from << "," << *vIt << "" << LENDL;
+         << from << "," << *vIt << "";
 #endif
         add_edge(from, *vIt, m_graph );
     }
@@ -872,15 +872,15 @@ void FsaAccessBuilderRandom16::replaceEdge(
     qualif = qualif & (~HEAD_OF_CLASS_16);
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: put(vname_map,"
-         << from << "," << std::hex << qualif << " | " << highCharTextPos << std::dec << "" << LENDL;
+         << from << "," << std::hex << qualif << " | " << highCharTextPos << std::dec << "";
 #endif
     put(vname_map, from, qualif | highCharTextPos);
   }
   else {
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: findOffsetToInsertBefore("
-//           << currentChar << "," << text << ")" << LENDL;
-           << currentChar << "," << ")" << LENDL;
+//           << currentChar << "," << text << ")";
+           << currentChar << "," << ")";
 #endif
     textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
     // TODO:
@@ -911,7 +911,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge("
          << from << ", " << to << ", " << currentChar << ","
-         << std::hex << LimaString(*word_content) << std::dec << ", " << wordOffset << ")" << LENDL;
+         << std::hex << LimaString(*word_content) << std::dec << ", " << wordOffset << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -957,7 +957,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
         break;
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: newOrderedTargetList.push_back("
-//              << *ei << ") (1)" << LENDL;
+//              << *ei << ") (1)";
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
       textOffset++;
@@ -974,14 +974,14 @@ void FsaAccessBuilderRandom16::suppressEdge(
     for( ; ei != edge_end ; ei++ ) {
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: newOrderedTargetList.push_back("
-//              << *ei << ") (2)" << LENDL;
+//              << *ei << ") (2)";
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
     }
     // remove all out_edges
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: clear_edge("
-         << from << ")" << LENDL;
+         << from << ")";
 #endif
     clear_out_edges(from, m_graph);
     assert(boost::out_degree(from, m_graph) == 0);
@@ -990,7 +990,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
       vIt != newOrderedTargetList.end() ; vIt++ ) {
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: add_edge("
-         << from << "," << *vIt << "" << LENDL;
+         << from << "," << *vIt << "";
 #endif
         add_edge(from, *vIt, m_graph );
     }
@@ -999,16 +999,16 @@ void FsaAccessBuilderRandom16::suppressEdge(
     qualif = qualif & (~HEAD_OF_CLASS_16);
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: put(vname_map,"
-         << from << "," << std::hex << qualif << " | " << highCharTextPos << std::dec << "" << LENDL;
+         << from << "," << std::hex << qualif << " | " << highCharTextPos << std::dec << "";
 #endif
     put(vname_map, from, qualif | highCharTextPos);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text("
-//           << from << ")=" << get(vtext_map,from) << LENDL;
-           << from << ")=" << LENDL;
+//           << from << ")=" << get(vtext_map,from);
+           << from << ")=";
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text="
-//           << text << LENDL;
-           << LENDL;
+//           << text;
+          ;
     Lima::LimaString textpart = LimaString(word_content).left(wordOffset);
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text.erase("
 //           << textOffset0 << "," << textpart << ")"<< LENDL;
@@ -1017,18 +1017,18 @@ void FsaAccessBuilderRandom16::suppressEdge(
     text.remove(textOffset0, wordOffset);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text("
-//           << from << ")=" << get(vtext_map,from) << LENDL;
-           << from << ")=" << LENDL;
+//           << from << ")=" << get(vtext_map,from);
+           << from << ")=";
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text="
-//           << text << LENDL;
-           << LENDL;
+//           << text;
+          ;
 #endif
   }
   else {
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: findOffsetToInsertBefore("
-//           << currentChar << "," << text << ")" << LENDL;
-           << currentChar << "," << ")" << LENDL;
+//           << currentChar << "," << text << ")";
+           << currentChar << "," << ")";
 #endif
     textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
     // TODO:
@@ -1053,7 +1053,7 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
 //  const LimaChar* word_content, int word_length, int32_t wordPos ) throw( AccessByStringNotInitialized ) {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: (" << candidateState << ")" << LENDL;
+  LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: (" << candidateState << ")";
 #endif
 
   // check if leaf
@@ -1062,7 +1062,7 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
   dico_degree_size nbChild = boost::out_degree(candidateState, m_graph);
   if( nbChild == 0 ) {
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: out_degree = 0" << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: out_degree = 0";
 #endif
     return;
   }
@@ -1074,7 +1074,7 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
 
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: currentChar="
-         << std::hex << currentChar << std::dec << ")" << LENDL;
+         << std::hex << currentChar << std::dec << ")";
 #endif
 
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
@@ -1087,7 +1087,7 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
   Lima::LimaString& text = get(vtext_map,candidateState);
 #ifdef DEBUG_CD
   std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(LimaString(text.data()));
-  LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: text = " << text8.c_str() << LENDL;
+  LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: text = " << text8.c_str();
 #endif
   int32_t highCharTextPos = get(vname_map,candidateState)&TEXT_POS_16;
   if( wordOffset == 1 ) {
@@ -1117,7 +1117,7 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
     else {
 #ifdef DEBUG_CD
       LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: m_register.push_back("
-             << lastChild << ")" << LENDL;
+             << lastChild << ")";
 #endif
       dicoGraph_traits16<graphType>::nconst_vname_map_type vname_map =
         boost::get(boost::vertex_name,m_graph);
@@ -1127,7 +1127,7 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
   else {
     std::string mess("FsaAccessBuilderRandom16::replaceOrRegister: no path to reach 0degreeVertex!!");
 #ifdef DEBUG_CD
-    LERROR <<  mess.c_str() << LENDL ;
+    LERROR <<  mess.c_str() ;
 #endif
     throw( AccessByStringNotInitialized( mess ) );
   }
@@ -1141,7 +1141,7 @@ void FsaAccessBuilderRandom16::merge( dicoVertex inRegister,
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::merge( " << inRegister << ", "
                                           << tempState << ", "
-                                          << parentState << ")" << LENDL;
+                                          << parentState << ")";
 #endif
   // find in transition parentState -> tempstate
   std::pair<dicoEdgeType, bool> trans = edge(parentState, tempState, m_graph);
@@ -1151,7 +1151,7 @@ void FsaAccessBuilderRandom16::merge( dicoVertex inRegister,
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::merge: replaceEdge(" << parentState << ", "
                                          << inRegister << ", "
-                                         << ")" << LENDL;
+                                         << ")";
 #endif
 
     int32_t wordOffset;
@@ -1177,7 +1177,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
   std::ostringstream stro1(std::ios::in | std::ios::out);
   stro1 << from << "(nbChild=" << boost::out_degree(from, m_graph) << "), " << *prefixIt;
   LDEBUG << "FsaAccessBuilderRandom16::updateHash("
-        << stro1.str().c_str() << ")" << LENDL;
+        << stro1.str().c_str() << ")";
 #endif
 
   dicoGraph_traits16<graphType>::nconst_vname_map_type vname_map =
@@ -1199,12 +1199,12 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
   dico_degree_size nbChild = boost::out_degree(from, m_graph);
   if( nbChild == 0 ) {
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: out_degree = 0" << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: out_degree = 0";
 #endif
     // On ajoute le noeud courant s'il est final
     if( (val & FINAL_16) == FINAL_16 ) {
 #ifdef DEBUG_CD
-      LDEBUG << "FsaAccessBuilderRandom16::updateHash: FINAL node, increment " << total << LENDL ;
+      LDEBUG << "FsaAccessBuilderRandom16::updateHash: FINAL node, increment " << total ;
 #endif
       total++;
     }
@@ -1226,13 +1226,13 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     char32_t currentChar = prefixIt->getNextLetter((int32_t&)wordOffset);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: currentChar="
-           << std::hex << currentChar << std::dec << ")" << LENDL;
+           << std::hex << currentChar << std::dec << ")";
 #endif
 
     Lima::LimaString& text = get(vtext_map,from);
 #ifdef DEBUG_CD
     std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(LimaString(text.data()));
-    LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: text = " << text8.c_str() << LENDL;
+    LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: text = " << text8.c_str();
 #endif
     int32_t highCharTextPos = val&TEXT_POS_16;
     if( wordOffset == 1 ) {
@@ -1264,7 +1264,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     std::vector<int>::iterator cIt = counts.begin();
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: counts.size()="
-           << counts.size() << LENDL;
+           << counts.size();
 #endif
     int32_t i = 0;
     for( ; (i+1 < static_cast<int32_t>(outd)) && (i<edgeOffset) ; ei++ , i++, cIt++ ) {
@@ -1276,7 +1276,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     if( i+1 < static_cast<int32_t>(outd) ){
 #ifdef DEBUG_CD
       LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: i="
-             << i << ",total=" << total << ", subtotal=" << subtotal << LENDL;
+             << i << ",total=" << total << ", subtotal=" << subtotal;
 #endif
       delta = (total + subtotal) - *cIt;
       *cIt = total + subtotal;
@@ -1288,7 +1288,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     for( ; i+1 < static_cast<int32_t>(outd)  ; ei++ , i++, cIt++ ) {
 #ifdef DEBUG_CD
       LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: i="
-             << i << ",*cIt=" << *cIt << ", delta=" << delta << LENDL;
+             << i << ",*cIt=" << *cIt << ", delta=" << delta;
 #endif
       assert(ei != edge_end);
       total = *cIt + delta;
@@ -1299,7 +1299,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     if( ei != edge_end ) {
 #ifdef DEBUG_CD
 //       LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: call computeHash("
-//              << target(*ei,m_graph) << ")" << LENDL;
+//              << target(*ei,m_graph) << ")";
 #endif
       int subtotal = computeHash( target(*ei,m_graph) );
       total = total + subtotal;
@@ -1308,19 +1308,19 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     // On ajoute le noeud courant s'il est final
     if( (val & FINAL_16) == FINAL_16 ) {
 #ifdef DEBUG_CD
-      LDEBUG << "FsaAccessBuilderRandom16::updateHash: FINAL node, increment " << total << LENDL ;
+      LDEBUG << "FsaAccessBuilderRandom16::updateHash: FINAL node, increment " << total ;
 #endif
       total++;
     }
 #ifdef DEBUG_CD
-    LDEBUG << "FsaAccessBuilderRandom16::updateHash: return " << total << LENDL ;
+    LDEBUG << "FsaAccessBuilderRandom16::updateHash: return " << total ;
 #endif
     return total;
   }
   else {
     std::string mess("FsaAccessBuilderRandom16::updateHash: no path to reach 0degreeVertex!!");
 #ifdef DEBUG_CD
-    LERROR <<  mess.c_str() << LENDL ;
+    LERROR <<  mess.c_str() ;
 #endif
     throw( AccessByStringNotInitialized( mess ) );
   }
@@ -1331,7 +1331,7 @@ void FsaAccessBuilderRandom16::addSuffix( dicoVertex from, PrefixIterator* prefi
   FSAALOGINIT;
   Lima::LimaString s = prefixIt->getCurrentPrefix();
   LDEBUG <<  "FsaAccessBuilderRandom16::addSuffix: (" << from
-            << ", " << s << ")" << LENDL;
+            << ", " << s << ")";
 #endif
 
   dicoGraph_traits16<graphType>::nconst_vname_map_type vname_map =
@@ -1348,12 +1348,12 @@ void FsaAccessBuilderRandom16::addSuffix( dicoVertex from, PrefixIterator* prefi
 #ifdef DEBUG_CD
     char buff[256];
     sprintf(buff, "letter = %04x, suffixPos=%d\n", letter, prefixIt->getExternalWordPos() );
-    LDEBUG << buff << LENDL;
+    LDEBUG << buff;
 #endif
     
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addSuffix: add_edge(" << from
-              << ", " << to << ")" << LENDL;
+              << ", " << to << ")";
 #endif
 
     addEdge( from, to, letter, prefixIt->getCurrentContent(), prefixOffset );
@@ -1361,7 +1361,7 @@ void FsaAccessBuilderRandom16::addSuffix( dicoVertex from, PrefixIterator* prefi
   }
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addSuffix: put(vname_map, to="
-         << to << ", " <<  FINAL_16 << ")" << LENDL;
+         << to << ", " <<  FINAL_16 << ")";
 #endif
   put(vname_map, to, FINAL_16);
 }

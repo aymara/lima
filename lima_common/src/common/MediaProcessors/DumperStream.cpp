@@ -41,7 +41,7 @@ m_buffer(0),
 m_out(0)
 {
 //  DUMPERLOGINIT;
-//  LDEBUG << "DumperStream constructor: initialize buffer" << LENDL;
+//  LDEBUG << "DumperStream constructor: initialize buffer" ;
   // initialize handler stream buffer
   m_buffer=new HandlerStreamBuf(m_handler);
   m_out=new ostream(m_buffer);

@@ -60,7 +60,7 @@ int DumpCoreferent::dump(std::ostream& os, Common::AnnotationGraphs::GenericAnno
   }
   catch (const boost::bad_any_cast& )
   {
-    LERROR << "This annotation is not a CoreferentAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a CoreferentAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }
@@ -511,7 +511,7 @@ bool CoreferentAnnotation::isAgreementCompatibleWith(
 //     COREFSOLVERLOGINIT; 
 //  TimeUtils::logElapsedTime("init Ac");
 //  TimeUtils::updateCurrentTime();
-    //   LDEBUG << "isArgumentCompatibleWith" << LENDL;
+    //   LDEBUG << "isArgumentCompatibleWith";
     MorphoSyntacticData* data1 = get(vertex_data, *anagraph->getGraph(), m_morphVertex);
     if (data1 ==0 || data1->empty()) { return false; };
     bool isPlural = false;
@@ -574,8 +574,8 @@ bool CoreferentAnnotation::isInTheArgumentDomainOf(
 {
 //   COREFSOLVERLOGINIT; 
   alreadyProcessed->insert(m_morphVertex);
-//   LDEBUG << "isInTheArgumentDomainOf"  << LENDL;
-//   LDEBUG << "check: " << m_morphVertex << "for: " << ca.m_morphVertex << LENDL;
+//   LDEBUG << "isInTheArgumentDomainOf" ;
+//   LDEBUG << "check: " << m_morphVertex << "for: " << ca.m_morphVertex;
   DependencyGraphOutEdgeIt it, it_end;
   boost::tie(it, it_end) = boost::out_edges(sd->depVertexForTokenVertex(m_morphVertex), *(sd->dependencyGraph()));
 
@@ -660,8 +660,8 @@ bool CoreferentAnnotation::isInTheArgumentDomainOf2(
 //   COREFSOLVERLOGINIT; 
 // cerr << "trace" <<endl;
   alreadyProcessed->insert(m_morphVertex);
-//   LDEBUG << "isInTheArgumentDomainOf"  << LENDL;
-//   LDEBUG << "check: " << m_morphVertex << "for: " << ca.m_morphVertex << LENDL;
+//   LDEBUG << "isInTheArgumentDomainOf" ;
+//   LDEBUG << "check: " << m_morphVertex << "for: " << ca.m_morphVertex;
   DependencyGraphOutEdgeIt it, it_end;
   boost::tie(it, it_end) = boost::out_edges(sd->depVertexForTokenVertex(m_morphVertex), *(sd->dependencyGraph()));
   if (it == it_end)
@@ -718,7 +718,7 @@ bool CoreferentAnnotation::isInTheAdjunctDomainOf(
                                                   MediaId language) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "isInTheAdjunctDomainOf"  << LENDL;
+//   LDEBUG << "isInTheAdjunctDomainOf" ;
   // for each HEAD of candidate
   DependencyGraphOutEdgeIt it, it_end;
   DependencyGraphVertex headNode = sd->depVertexForTokenVertex(ca.m_morphVertex);
@@ -752,7 +752,7 @@ bool CoreferentAnnotation::isInThePrepAdjunctNP(
                                                 MediaId language) const
 {
 //   COREFSOLVERLOGINIT; 
-//  LDEBUG << "isInThePrepAdjunctOf" << LENDL;
+//  LDEBUG << "isInThePrepAdjunctOf";
     MorphoSyntacticData* data = get(vertex_data, *graph, qv);
     if (data ==0 || data->empty()) { return false; };
     LinguisticCode L_VERB = (*tagLocalDef.find("VerbMacroCategory")).second;
@@ -834,7 +834,7 @@ bool CoreferentAnnotation::isInTheNpDomainOf(
   ) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "isInTheNpDomainOf" << LENDL;
+//   LDEBUG << "isInTheNpDomainOf";
 //   DependencyGraphVertex* qv = new DependencyGraphVertex();
 //   if (ca.isDeterminer(qv,sd, relLocalDef, language, anagraph, ac))
 //   {  
@@ -865,7 +865,7 @@ bool CoreferentAnnotation::isContainedIn(
   AnalysisContent& ac) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "isContainedIn" << LENDL;
+//   LDEBUG << "isContainedIn";
   return (!SecondUngovernedBy(language,
                       LimaString())(*anagraph, dv, m_morphVertex ,ac));
 }
@@ -881,7 +881,7 @@ bool CoreferentAnnotation::isDeterminer(
   AnalysisContent& ac) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "isDeterminer" << LENDL;
+//   LDEBUG << "isDeterminer";
   std::deque<std::string> detRels = (*relLocalDef.find("NPDeterminerRelation")).second;
   for (std::deque<std::string>::iterator itDet= detRels.begin(); itDet != detRels.end(); itDet++)
   {
@@ -909,7 +909,7 @@ bool CoreferentAnnotation::sf6(
   AnalysisContent& ac) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "sf6" << LENDL;
+//   LDEBUG << "sf6";
   DependencyGraphVertex* qv = new DependencyGraphVertex();
 // if (this->isDeterminer(qv,sd, relLocalDef, language, anagraph, ac))
 //  if (ca.isContainedIn(*qv, language, anagraph, ac))
@@ -1109,7 +1109,7 @@ bool CoreferentAnnotation::aba5(
   const LinguisticCode& conjCoord) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "aba5" << LENDL;
+//   LDEBUG << "aba5";
   LinguisticGraph* graph = anagraph->getGraph();
   LinguisticCode L_NC = (*tagLocalDef.find("NomCommunMacroCategory")).second;
   LinguisticCode L_NP = (*tagLocalDef.find("NomPropreMacroCategory")).second;
@@ -1259,7 +1259,7 @@ AnnotationGraphVertex CoreferentAnnotation::writeAnnotation(
   CoreferentAnnotation& antecedent) const
 {
   COREFSOLVERLOGINIT;
-  LDEBUG << "CoreferentAnnotation::writeAnnotation " << m_morphVertex << " refering to " << antecedent.m_morphVertex << LENDL;
+  LDEBUG << "CoreferentAnnotation::writeAnnotation " << m_morphVertex << " refering to " << antecedent.m_morphVertex;
 
   std::set< AnnotationGraphVertex > matches = ad->matches("PosGraph",m_morphVertex,"annot");
   if (matches.empty())

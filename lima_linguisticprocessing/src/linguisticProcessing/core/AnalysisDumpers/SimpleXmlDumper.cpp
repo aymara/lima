@@ -124,31 +124,31 @@ process(AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
   DUMPERLOGINIT;
-  LDEBUG << "SimpleXmlDumper::process" << LENDL;
+  LDEBUG << "SimpleXmlDumper::process";
   
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "no graph 'AnaGraph' available !" << LENDL;
+    LERROR << "no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "no graph 'PosGraph' available !" << LENDL;
+    LERROR << "no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
 
@@ -179,7 +179,7 @@ xmlOutput(std::ostream& out,
 
   if (sb==0)
   {
-    LWARN << "no SentenceBoundaries" << LENDL;
+    LWARN << "no SentenceBoundaries";
   }
 
   if (sb==0)
@@ -200,7 +200,7 @@ xmlOutput(std::ostream& out,
   {
     // ??OME2 uint64_t nbSentences(sb->size());
     uint64_t nbSentences((sb->getSegments()).size());
-    LDEBUG << "SimpleXmlDumper: "<< nbSentences << " sentences found" << LENDL;
+    LDEBUG << "SimpleXmlDumper: "<< nbSentences << " sentences found";
     for (uint64_t i=0; i<nbSentences; i++)
     {
       // ??OME2 LinguisticGraphVertex sentenceBegin=(*sb)[i].getFirstVertex();
@@ -212,8 +212,8 @@ xmlOutput(std::ostream& out,
       //   continue;
       // }
       
-      LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd << LENDL;
-      LDEBUG << "dump simple terms for this sentence" << LENDL;
+      LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd;
+      LDEBUG << "dump simple terms for this sentence";
       
       ostringstream oss;
       xmlOutputVertices(oss,
@@ -226,7 +226,7 @@ xmlOutput(std::ostream& out,
                         metadata->getStartOffset());
       string str=oss.str();
       if (str.empty()) {
-        LDEBUG << "nothing to dump in this sentence" << LENDL;
+        LDEBUG << "nothing to dump in this sentence";
       }
       else {
         out << "<s id=\"" << i << "\">" << endl
@@ -250,8 +250,8 @@ xmlOutputVertices(std::ostream& out,
 {
 
   DUMPERLOGINIT;
-  LDEBUG << "SimpleXmlDumper: ========================================" << LENDL;
-  LDEBUG << "SimpleXmlDumper: outputXml from vertex "  << begin << " to vertex " << end << LENDL;
+  LDEBUG << "SimpleXmlDumper: ========================================";
+  LDEBUG << "SimpleXmlDumper: outputXml from vertex "  << begin << " to vertex " << end;
 
   LinguisticGraph* graph=posgraph->getGraph();
   LinguisticGraphVertex lastVertex=posgraph->lastVertex();
@@ -356,7 +356,7 @@ xmlOutputVertex(std::ostream& out,
         }
         else {
           DUMPERLOGINIT;
-          LERROR << "failed to output specific entity for vertex " << v << LENDL;
+          LERROR << "failed to output specific entity for vertex " << v;
         }
       }
     }
@@ -380,7 +380,7 @@ xmlOutputVertex(std::ostream& out,
       }
       else {
         DUMPERLOGINIT;
-        LERROR << "failed to output specific entity for vertex " << v << LENDL;
+        LERROR << "failed to output specific entity for vertex " << v;
       }
     }
   }  
@@ -462,7 +462,7 @@ outputSpecificEntity(std::ostream& out,
 {
   if (se == 0) {
     DUMPERLOGINIT;
-    LERROR << "missing specific entity annotation" << LENDL;
+    LERROR << "missing specific entity annotation";
     return false;
   }
   
@@ -474,7 +474,7 @@ outputSpecificEntity(std::ostream& out,
   }
   catch (std::exception& ) {
     DUMPERLOGINIT;
-    LERROR << "Undefined entity type " << se->getType() << LENDL;
+    LERROR << "Undefined entity type " << se->getType();
     return false;
   }
   out 
@@ -486,7 +486,7 @@ outputSpecificEntity(std::ostream& out,
   // take as category for parts the category for the named entity
   LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
   DUMPERLOGINIT;
-  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName << LENDL;
+  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
   
   // get the parts of the named entity match
   // use the category of the named entity for all elements

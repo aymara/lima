@@ -69,7 +69,7 @@ void Modex::init(GroupConfigurationStructure& unitConfiguration,
     initModex(configFile,m_language);
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'modexConfig' in Modex definition group" << LENDL;
+    LERROR << "No param 'modexConfig' in Modex definition group";
     throw InvalidConfiguration();
   }
 }
@@ -80,7 +80,7 @@ initModex(const std::string& configFile,
 {
   TimeUtils::updateCurrentTime();
   MODEXLOGINIT;
-  LINFO << "InformationExtraction resources initialization" << LENDL;
+  LINFO << "InformationExtraction resources initialization";
 
   XMLConfigurationFileParser configParser(configFile);
 
@@ -97,7 +97,7 @@ initModex(const std::string& configFile,
     if (it == resourcesByLanguage.end()) {
       LERROR << "no resources for language '"
              << LinguisticData::single().getMediaId(m_language) 
-             << "' in Resources for Modex" << LENDL;
+             << "' in Resources for Modex";
       throw InvalidConfiguration();
     }
 
@@ -106,15 +106,15 @@ initModex(const std::string& configFile,
     addConfiguration(modexResources,resources);
   }
   catch (NoSuchGroup& e) {
-    LERROR << "missing param 'resourceList' in Resources for Modex in " << configFile << LENDL;
+    LERROR << "missing param 'resourceList' in Resources for Modex in " << configFile;
     throw InvalidConfiguration();
   }
   catch (NoSuchParam& ) {
-    LERROR << "missing param 'resourcesByLanguage' in Resources for Modex in " << configFile << LENDL;
+    LERROR << "missing param 'resourcesByLanguage' in Resources for Modex in " << configFile;
     throw InvalidConfiguration();
   }
   catch (NoSuchModule &) {
-    LDEBUG << "no module 'Resources' for Modex in " << configFile << LENDL;
+    LDEBUG << "no module 'Resources' for Modex in " << configFile;
     // not mandatory
   }
 
@@ -124,14 +124,14 @@ initModex(const std::string& configFile,
     addConfiguration(modexProcessors,processors);
   }
   catch (NoSuchModule &) {
-    LERROR << "no module 'Processors' for Modex in " << configFile << LENDL;
+    LERROR << "no module 'Processors' for Modex in " << configFile;
     throw InvalidConfiguration();
   }
 
   // init modex
   initModexConfig(configParser);
 
-  LINFO << "Modex initialization finished" << LENDL;
+  LINFO << "Modex initialization finished";
   TimeUtils::logElapsedTime("ModexInit");
 }
 
@@ -145,7 +145,7 @@ addConfiguration(ModuleConfigurationStructure& modexConfig,
     // check if exists (safe add)
     if (commonConfig.find((*it).first)!=commonConfig.end()) {
       MODEXLOGINIT;
-      LERROR << "cannot add modex configuration '"<<(*it).first<<"' : already exists" << LENDL;
+      LERROR << "cannot add modex configuration '"<<(*it).first<<"' : already exists";
     }
     else {
       commonConfig.insert(make_pair((*it).first,(*it).second));
@@ -164,7 +164,7 @@ void Modex::
 initEntities(XMLConfigurationFileParser& configParser)
 {
   MODEXLOGINIT;
-  LINFO << "intialize entities" << LENDL;
+  LINFO << "intialize entities";
 
   ModuleConfigurationStructure& moduleConf=configParser.getModuleConfiguration("entities");
   
@@ -188,12 +188,12 @@ initEntities(XMLConfigurationFileParser& configParser)
   }
   catch(NoSuchModule &) {
     MODEXLOGINIT;
-    LERROR << "missing module 'entities' in modex configuration file" << LENDL;
+    LERROR << "missing module 'entities' in modex configuration file";
     throw InvalidConfiguration();
   }
   catch(NoSuchList& ) {
     MODEXLOGINIT;
-    LERROR << "missing list 'entityList' in modex configuration file" << LENDL;
+    LERROR << "missing list 'entityList' in modex configuration file";
     throw InvalidConfiguration();
   }
 }
@@ -203,7 +203,7 @@ initModexConfig(XMLConfigurationFileParser& configParser)
 {
 
   MODEXLOGINIT;
-  LINFO << "intialize Modex" << LENDL;
+  LINFO << "intialize Modex";
   
   try {
     
@@ -244,15 +244,15 @@ initModexConfig(XMLConfigurationFileParser& configParser)
     }
   } 
   catch (NoSuchModule &) {
-    LERROR << "missing module 'modex' in modex configuration file" << LENDL;
+    LERROR << "missing module 'modex' in modex configuration file";
     throw InvalidConfiguration();
   } 
   catch (NoSuchGroup& e) {
-    LERROR << "missing group 'modexDefinitions' in modex configuration file" << LENDL;
+    LERROR << "missing group 'modexDefinitions' in modex configuration file";
     throw InvalidConfiguration();
   } 
   catch (NoSuchList& ) {
-    LERROR << "missing list 'modexList' in modex configuration file" << LENDL;
+    LERROR << "missing list 'modexList' in modex configuration file";
     throw InvalidConfiguration();
   }
 }

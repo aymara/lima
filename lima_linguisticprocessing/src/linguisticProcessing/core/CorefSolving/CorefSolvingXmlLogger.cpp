@@ -100,7 +100,7 @@ LimaStatusCode CorefSolvingXmlLogger::process(
   if (metadata == 0)
   {
     COREFSOLVERLOGINIT;
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
@@ -117,7 +117,7 @@ LimaStatusCode CorefSolvingXmlLogger::process(
     if (anagraph==0)
     {
         COREFSOLVERLOGINIT;
-        LERROR << "no PosGraph ! abort" << LENDL;
+        LERROR << "no PosGraph ! abort";
         return MISSING_DATA;
     }
   

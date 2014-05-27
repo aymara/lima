@@ -77,8 +77,8 @@ m_microAccessor(0)
     }
     catch (exception& e) {
       SELOGINIT;
-      LWARN << "Exception caught: " << e.what() << LENDL;
-      LWARN << "-> micros for number normalization are not initialized" << LENDL;
+      LWARN << "Exception caught: " << e.what();
+      LWARN << "-> micros for number normalization are not initialized";
     }
   }
 }
@@ -143,7 +143,7 @@ operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const 
 {
   SELOGINIT;
-  LDEBUG << "NormalizeNumber " << m << LENDL;
+  LDEBUG << "NormalizeNumber " << m;
 
   // annotation data is used to get numeric value of already recognized number entities
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -167,17 +167,17 @@ operator()(RecognizerMatch& m,
     for (std::set< AnnotationGraphVertex >::const_iterator annot = matches.begin(),
            annot_end=matches.end(); annot != annot_end; annot++) {
       if (annotationData->hasAnnotation(*annot, Common::Misc::utf8stdstring2limastring("SpecificEntity"))) {
-        LDEBUG << "NormalizeNumber: vertex " << (*it).m_elem.first << " has specific entity annotation" << LENDL;
+        LDEBUG << "NormalizeNumber: vertex " << (*it).m_elem.first << " has specific entity annotation";
         const SpecificEntityAnnotation* se =
           annotationData->annotation(*annot, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
           pointerValue<SpecificEntityAnnotation>();
         const EntityFeatures& features=se->getFeatures();
         for (EntityFeatures::const_iterator f=features.begin(),f_end=features.end();
              f!=f_end; f++) {
-          LDEBUG << "NormalizeNumber: looking at feature " << (*f).getName() << LENDL;
+          LDEBUG << "NormalizeNumber: looking at feature " << (*f).getName();
           if ((*f).getName()==NUMVALUE_FEATURE_NAME) {
             double value=boost::any_cast<double>((*f).getValue());
-            LDEBUG << "NormalizeNumber: add value " << value << LENDL;
+            LDEBUG << "NormalizeNumber: add value " << value;
             values.push_back(value);
             hasNumericValue=true;
           }
@@ -199,7 +199,7 @@ operator()(RecognizerMatch& m,
       values.push_back(0.0);
     }
     else if (testMicroCategory(m_microsForUnit,m_microAccessor,data)) {
-      LDEBUG << "NormalizeNumber: add feature UNIT " << Common::Misc::limastring2utf8stdstring(t->stringForm()) << LENDL;
+      LDEBUG << "NormalizeNumber: add feature UNIT " << Common::Misc::limastring2utf8stdstring(t->stringForm());
       m.features().addFeature(UNIT_FEATURE_NAME,t->stringForm());
     }
     // ignore other non numbers (can be % or "de"...)
@@ -209,7 +209,7 @@ operator()(RecognizerMatch& m,
     SELOGINIT;
     LWARN << "Warning: cannot normalize number \"" 
           <<  Common::Misc::limastring2utf8stdstring(m.getString())
-          << "\": no numeric information available for components" << LENDL;
+          << "\": no numeric information available for components";
     m.features().addFeature(NUMVALUE_FEATURE_NAME,(double)0.0);
     // return true even if value could not be computed: a value has been set in
     // features
@@ -218,7 +218,7 @@ operator()(RecognizerMatch& m,
   
   // then compute the number
   double number=computeNumberValue(values,values.begin(),values.end());
-  LDEBUG << "NormalizeNumber: add feature VALUE " << number << LENDL;
+  LDEBUG << "NormalizeNumber: add feature VALUE " << number;
   m.features().addFeature(NUMVALUE_FEATURE_NAME,number);
   m.features().addFeature(DEFAULT_ATTRIBUTE,m.getString());
   return true;

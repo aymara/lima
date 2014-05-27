@@ -159,7 +159,7 @@ void LTRTextBuilder::addTokensToLTRTextFrom(
         }
         if (! m_verticesToExplore.empty()) {
             LWARN << "all vertices not explored between " << firstVertex << " and "
-                  << lastVertex << LENDL;
+                  << lastVertex;
         }
     }
 }

@@ -351,7 +351,7 @@ int dowork(int argc,char* argv[])
   }
   delete client;
   TIMELOGINIT;
-  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms" << LENDL;
+  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
   
   return SUCCESS_ID;
 }

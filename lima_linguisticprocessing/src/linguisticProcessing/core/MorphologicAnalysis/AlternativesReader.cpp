@@ -136,7 +136,7 @@ void AlternativesReader::readAlternatives(
       LDEBUG << "add word " 
              << "<marked>" << Common::Misc::limastring2utf8stdstring(str) << "</marked>" 
              << "<unmarked>" << Common::Misc::limastring2utf8stdstring(unmarked) << "</unmarked>"
-             << " to stringpool " << m_sp << LENDL;
+             << " to stringpool " << m_sp;
       StringsPoolIndex idx=(*m_sp)[unmarked];
       LDEBUG << "-> StringPool returned index " << idx;
       token.addOrthographicAlternatives(idx);

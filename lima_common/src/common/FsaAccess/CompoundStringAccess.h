@@ -107,7 +107,7 @@ CompoundStringAccess<SimpleAccessByString>::CompoundStringAccess( bool trie_dire
 {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::CompoundStringAccess()" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::CompoundStringAccess()";
 #endif
 }
 
@@ -116,7 +116,7 @@ CompoundStringAccess<SimpleAccessByString>::~CompoundStringAccess()
 {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::~CompoundStringAccess()" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::~CompoundStringAccess()";
 #endif
 }
     
@@ -142,7 +142,7 @@ int64_t CompoundStringAccess<SimpleAccessByString>::getIndex (
     std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(*forwardCompoundsIt);
     LDEBUG << text8;
   }
-  LDEBUG << ")" << LENDL;
+  LDEBUG << ")";
 #endif
   // Iterateur pour parcourir du dernier au premier les composants
   std::vector<Lima::LimaString >::const_reverse_iterator compoundsIt =
@@ -153,20 +153,20 @@ int64_t CompoundStringAccess<SimpleAccessByString>::getIndex (
   // index du premier composant;
   int64_t tId2 = m_simpleAccessByString.getIndex( *compoundsIt );
 #ifdef DEBUG_CD
-  LDEBUG << "CompoundStringAccess::getIndex: m_simple.getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt) << ")= tId2 =" << tId2 << LENDL;
+  LDEBUG << "CompoundStringAccess::getIndex: m_simple.getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt) << ")= tId2 =" << tId2;
 #endif
   compoundsIt++;
   for( ; compoundsIt != compounds.rend(); compoundsIt++ ) {
     uint64_t tId1 = m_simpleAccessByString.getIndex( *compoundsIt );
 #ifdef DEBUG_CD
-  LDEBUG << "CompoundStringAccess::getIndex: m_simple.getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt) << ")= tId1 =" << tId1 << LENDL;
+  LDEBUG << "CompoundStringAccess::getIndex: m_simple.getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt) << ")= tId1 =" << tId1;
 #endif
 #ifdef DEBUG_CD
   LDEBUG << "CompoundStringAccess::getIndex: findId3(" << tId1 << "," << tId2 << ")= tId2 =";
 #endif
     tId2 = findId3(tId1,tId2);
 #ifdef DEBUG_CD
-  LDEBUG << tId2 << LENDL;
+  LDEBUG << tId2;
 #endif
     if( tId2 == -1 )
       return -1;
@@ -200,7 +200,7 @@ void CompoundStringAccess<SimpleAccessByString>::addWord (
     std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(*forwardCompoundsIt);
     LDEBUG << text8;
   }
-  LDEBUG << ")" << LENDL;
+  LDEBUG << ")";
 #endif
   
   // Iterateur pour parcourir du dernier au premier les composants
@@ -214,7 +214,7 @@ void CompoundStringAccess<SimpleAccessByString>::addWord (
     std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt);
 #ifdef DEBUG_CD
     LERROR << "CompoundStringAccess::addWord: " << text8
-           << " is not in m_simpleAccessByString!" << LENDL;
+           << " is not in m_simpleAccessByString!";
 #endif
   }
   compoundsIt++;
@@ -222,7 +222,7 @@ void CompoundStringAccess<SimpleAccessByString>::addWord (
     uint64_t tId1 = m_simpleAccessByString.getIndex( *compoundsIt );
     if( tId1 == 0 ) {
       std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt);
-      LERROR << text8 << LENDL;
+      LERROR << text8;
       return;
     }
 //    const CompoundsComposition& composition = insertComposition( tId1, tId2 );
@@ -236,7 +236,7 @@ void CompoundStringAccess<SimpleAccessByString>::addWord (
       tId3 = m_nextTid++;
 #ifdef DEBUG_CD
       LDEBUG << "CompoundStringAccess::addWord: insert( (" << tId1
-             << "," <<  tId2 << ") , " << tId3 << ")" << LENDL;
+             << "," <<  tId2 << ") , " << tId3 << ")";
 #endif
 //      m_builderCompoundsSet.insert(make_pair(make_pair(tId1, tId2), tId3) );
       m_builderCompoundsSet.insert( std::make_pair ( std::make_pair(tId1, tId2), tId3 ) );
@@ -260,14 +260,14 @@ const CompoundsComposition& CompoundStringAccess<SimpleAccessByString>::insertCo
   uint64_t tId1, uint64_t tId2 ) {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::insertComposition(" << tId1 << "," << tId2 << ")" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::insertComposition(" << tId1 << "," << tId2 << ")";
 #endif
   
   uint64_t pos;
   uint64_t tId3 = findPos( tId1, tId2, pos );
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::insertComposition: tId3=" << tId3
-         << ", pos = " << pos << ")" << LENDL;
+         << ", pos = " << pos << ")";
 #endif
   
   m_compoundsDecomposition.size();
@@ -288,7 +288,7 @@ int64_t CompoundStringAccess<SimpleAccessByString>::findPos(
     uint64_t tId1, uint64_t tId2, uint64_t& pos ) const {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::findPos(" << tId1 << "," << tId2 << ")" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::findPos(" << tId1 << "," << tId2 << ")";
 #endif
   
   uint64_t min = 0;
@@ -300,35 +300,35 @@ int64_t CompoundStringAccess<SimpleAccessByString>::findPos(
     if( composition.cmp1Id < tId1 ) {
 #ifdef DEBUG_CD
       LDEBUG <<  "CompoundStringAccess::findPos: comp.cmp1Id < tId1, range = " << range
-             << "," << composition.cmp1Id << "<" << tId1 << ": min <- min + range" << LENDL;
+             << "," << composition.cmp1Id << "<" << tId1 << ": min <- min + range";
 #endif
       min = min + range;
     }
     else if( composition.cmp1Id > tId1 ) {
 #ifdef DEBUG_CD
       LDEBUG <<  "CompoundStringAccess::findPos: compcmp1Id > tId1, range = " << range
-             << "," << composition.cmp1Id << ">" << tId1 << ": max <- min + range" << LENDL;
+             << "," << composition.cmp1Id << ">" << tId1 << ": max <- min + range";
 #endif
       max = min + range;
     }
     else if( composition.cmp2Id < tId2 ) {
 #ifdef DEBUG_CD
       LDEBUG <<  "CompoundStringAccess::findPos: comp.cmp2Id < tId2 , range = " << range
-             << "," << composition.cmp2Id << "<" << tId2 << ": min <- min + range" << LENDL;
+             << "," << composition.cmp2Id << "<" << tId2 << ": min <- min + range";
 #endif
       min = min + range;
     }
     else if( composition.cmp2Id > tId2 ) {
 #ifdef DEBUG_CD
       LDEBUG <<  "CompoundStringAccess::findPos: comp.cmp2Id > tId2 , range = " << range
-             << "," << composition.cmp2Id << ">" << tId2 << ": max <- min + range" << LENDL;
+             << "," << composition.cmp2Id << ">" << tId2 << ": max <- min + range";
 #endif
       max = min + range;
     }
     else {
 #ifdef DEBUG_CD
       LDEBUG <<  "CompoundStringAccess::findPos: else , range = " << range
-             << "," << "return: tId3 = " << composition.tId3 << LENDL;
+             << "," << "return: tId3 = " << composition.tId3;
 #endif
       pos = min+range;
       return composition.tId3;
@@ -343,7 +343,7 @@ int64_t CompoundStringAccess<SimpleAccessByString>::findPos(
     if( composition.cmp2Id == tId2 ) {
 #ifdef DEBUG_CD
       LDEBUG << "CompoundStringAccess::findPos: comp.cmp1Id == tId1, comp.cmp2Id == tId2"
-             << ", return: tId3 = " << composition.tId3 << LENDL;
+             << ", return: tId3 = " << composition.tId3;
 #endif
       pos = min;
       return composition.tId3;
@@ -363,7 +363,7 @@ int64_t CompoundStringAccess<SimpleAccessByString>::findPos(
   }
 #ifdef DEBUG_CD
   LDEBUG << "CompoundStringAccess::findPos: comp.cmp1Id != tId1  || comp.cmp2Id != tId2"
-         << ", return: -1!" << LENDL;
+         << ", return: -1!";
 #endif
   return -1;
 }
@@ -373,7 +373,7 @@ template <typename SimpleAccessByString>
     std::vector<Lima::LimaString > & compound ) const {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::getSpelling(" << index << ")" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::getSpelling(" << index << ")";
 #endif
   while( index >= MAX_SIMPLE_TID ) {
     if( (index - MAX_SIMPLE_TID) >= m_compoundsDecomposition.size() ) {
@@ -386,13 +386,13 @@ template <typename SimpleAccessByString>
 
     uint64_t offset = m_compoundsDecomposition[index - MAX_SIMPLE_TID];
 #ifdef DEBUG_CD
-  LDEBUG <<  "CompoundStringAccess::getSpelling: offset=" << offset << LENDL;
+  LDEBUG <<  "CompoundStringAccess::getSpelling: offset=" << offset;
 #endif
     const CompoundsComposition& composition = m_readerCompoundsSet[offset];
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::getSpelling: Composition={("
          << composition.tId3 << ") -> "
-         << composition.cmp1Id << "," << composition.cmp2Id << LENDL;
+         << composition.cmp1Id << "," << composition.cmp2Id;
 #endif
     assert(composition.tId3 == index);
     index = composition.cmp2Id;
@@ -413,7 +413,7 @@ void CompoundStringAccess<SimpleAccessByString>::readSimple (
 {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::readSimple(" << filename << ")" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::readSimple(" << filename << ")";
 #endif
   m_simpleAccessByString.read(filename);
   
@@ -425,13 +425,13 @@ void CompoundStringAccess<SimpleAccessByString>::read (
 {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::read(" << filename << ")" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::read(" << filename << ")";
 #endif
   std::ifstream is(filename.c_str(), std::ios::binary );
   if( is.bad() ) {
     std::string mess = "CompoundStringAccess::read: Can't open file " + filename;
 #ifdef DEBUG_CD
-    LERROR << mess << LENDL;
+    LERROR << mess;
 #endif
     throw( AccessByStringNotInitialized( mess ) );
   }
@@ -445,7 +445,7 @@ void CompoundStringAccess<SimpleAccessByString>::read (
 {
 #ifdef DEBUG_CD
   COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::read()" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::read()";
 #endif
   
   m_simpleAccessByString.read( is );
@@ -461,7 +461,7 @@ void CompoundStringAccess<SimpleAccessByString>::readCompoundBody(
 /*  uint64_t compoundsDataStreampos = m_simpleAccessByString.FsaAccessHeader::getStreamPos();
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody(" << filename << "):"
-         <<  " compoundsDataStreampos=" << compoundsDataStreampos << LENDL;
+         <<  " compoundsDataStreampos=" << compoundsDataStreampos;
 #endif
 */  
   // offset pour atteindre les mots compos
@@ -475,14 +475,14 @@ void CompoundStringAccess<SimpleAccessByString>::readCompoundBody(
   std::ifstream is(filename.c_str(), std::ios::binary );
   if( is.bad() ) {
     std::string mess = "CompoundStringAccess::readCompoundBody: Can't open file " + filename;
-    LERROR << mess << LENDL;
+    LERROR << mess;
     throw( AccessByStringNotInitialized( mess ) );
   }
   
   // positionnement du fichier sur la zone de donnees des mots composes 
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody: seek to "
-         << compoundsDataStreampos << LENDL;
+         << compoundsDataStreampos;
 #endif
   is.seekg(compoundsDataStreampos,std::ios::beg) ;
 */
@@ -492,18 +492,18 @@ void CompoundStringAccess<SimpleAccessByString>::readCompoundBody(
   is.read( (char *)(&(nbCompounds )), sizeof(nbCompounds ) );
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody: nbCompounds="
-         << nbCompounds << LENDL;
+         << nbCompounds;
 #endif
     
   // reservation memoire
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody: reserve memory for m_readerCompoundsSet "
-         << LENDL;
+        ;
 #endif
   m_readerCompoundsSet.reserve(nbCompounds);
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody: resize m_compoundsDecomposition to "
-         << nbCompounds << LENDL;
+         << nbCompounds;
 #endif
   m_compoundsDecomposition.resize(nbCompounds);
   
@@ -516,14 +516,14 @@ void CompoundStringAccess<SimpleAccessByString>::readCompoundBody(
     is.read( (char *)(&(newElement.tId3)), sizeof(newElement.tId3) );
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody: Composition= {"
-         << newElement.cmp1Id << "," << newElement.cmp2Id << "," << newElement.tId3<< "}" << LENDL;
+         << newElement.cmp1Id << "," << newElement.cmp2Id << "," << newElement.tId3<< "}";
 #endif
     m_readerCompoundsSet.push_back(newElement);
 //    assert(newElement.tId3 - m_maxSimpleId < nbCompounds);
 #ifdef DEBUG_CD
   LDEBUG <<  "CompoundStringAccess::readCompoundBody: m_compoundsDecomposition["
          << newElement.tId3-MAX_SIMPLE_TID << "]="
-         << n << LENDL;
+         << n;
 #endif
     m_compoundsDecomposition[newElement.tId3-MAX_SIMPLE_TID] = n;
   }  
@@ -539,7 +539,7 @@ void CompoundStringAccess<SimpleAccessByString>::write( const std::string & file
     std::string mess = "CompoundStringAccess::write: Can't open file " + filename;
 #ifdef DEBUG_CD
     FSAAIOLOGINIT;
-    LERROR << LENDL;
+    LERROR;
 #endif
     throw( FsaNotSaved( mess ) );
   }
@@ -561,12 +561,12 @@ void CompoundStringAccess<SimpleAccessByString>::writeCompoundBody(
   
   COMPSTRACCESSLOGINIT;
 #ifdef DEBUG_CD
-  LDEBUG <<  "CompoundStringAccess::writeCompoundBody()" << LENDL;
+  LDEBUG <<  "CompoundStringAccess::writeCompoundBody()";
 #endif
   
   uint64_t nbCompounds = m_builderCompoundsSet.size();
 #ifdef DEBUG_CD
-  LDEBUG <<  "CompoundStringAccess::writeCompoundBody: write nbCompounds = " << nbCompounds << LENDL;
+  LDEBUG <<  "CompoundStringAccess::writeCompoundBody: write nbCompounds = " << nbCompounds;
 #endif
   os.write( (const char*)(&nbCompounds), sizeof(nbCompounds) );
   
@@ -580,7 +580,7 @@ void CompoundStringAccess<SimpleAccessByString>::writeCompoundBody(
   LDEBUG <<  "CompoundStringAccess::writeCompoundBody: write cmp1Id = " << cmp1Id
          <<  ", cmp2Id = " << cmp2Id
          <<  ", tId3 = " << tId3
-         << LENDL;
+        ;
 #endif
     os.write( (const char*)(&cmp1Id), sizeof(cmp1Id) );
     os.write( (const char*)(&cmp2Id), sizeof(cmp2Id) );

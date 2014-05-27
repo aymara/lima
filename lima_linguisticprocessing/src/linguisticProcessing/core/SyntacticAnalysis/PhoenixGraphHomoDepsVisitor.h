@@ -112,7 +112,7 @@ template < typename Graph >
 void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Graph& g)
 {
 //   SAPLOGINIT;
-//   LDEBUG << "PhoenixGraphHomoDepsVisitor::examine_edge " << e << " (stop vertex is: " << m_homoDepsStopVertex << ")" << LENDL;
+//   LDEBUG << "PhoenixGraphHomoDepsVisitor::examine_edge " << e << " (stop vertex is: " << m_homoDepsStopVertex << ")";
 
   VertexColorLinguisticGraphPropertyMap c_map = get(boost::vertex_color, const_cast< Graph& >(g));
 
@@ -122,12 +122,12 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
 
   LinguisticGraphVertex v = target(e,g);
 
-//   LDEBUG << "dest/stop is: " << v << "/" << m_homoDepsStopVertex << LENDL;
+//   LDEBUG << "dest/stop is: " << v << "/" << m_homoDepsStopVertex;
   if (v == m_homoDepsStopVertex)
   {
-//     LDEBUG << "Vertex " << v << " color was: " << c_map[v] << LENDL;
+//     LDEBUG << "Vertex " << v << " color was: " << c_map[v];
     c_map[v] = Color::black();
-//     LDEBUG << "Vertex " << v << " new color is: " << c_map[v] << LENDL;
+//     LDEBUG << "Vertex " << v << " new color is: " << c_map[v];
   }
 
   if ( v == analysisGraph->firstVertex() || v == analysisGraph->lastVertex()) return;
@@ -137,24 +137,24 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
   // faire un test d'automates avec l'ensemble de r�les ad�uat
   std::vector< Lima::LinguisticProcessing::Automaton::RecognizerMatch > recognizerResult;
 
-//   LDEBUG << "Searching a relation from " << v << LENDL;
+//   LDEBUG << "Searching a relation from " << v;
   m_data->clearStoredRelations();
   LinguisticGraphVertex v_copy = v;
   bool relationFound = false;
-//   LDEBUG << "Calling testOnVertex " << v_copy << LENDL;
+//   LDEBUG << "Calling testOnVertex " << v_copy;
   relationFound = m_homoDepRecognizer->
                   testOnVertex(*analysisGraph, v_copy,
                                m_homoDepsStartVertex, m_homoDepsStopVertex, *m_analysis,recognizerResult);
   std::set< std::string > alreadyCreatedRelations;
   while (relationFound)
   {
-//     LDEBUG << "Automaton results found: " << recognizerResult.size() << LENDL;
+//     LDEBUG << "Automaton results found: " << recognizerResult.size();
     LinguisticGraphVertex src, dest;
     std::string relation;
     boost::tie(src,dest,relation) = m_data->relation();
     std::ostringstream oss; oss << src << "/" << dest << "/" << relation;
     std::string foundRel = oss.str();
-//     LDEBUG << "Working on relation found " << foundRel << LENDL;
+//     LDEBUG << "Working on relation found " << foundRel;
     while (!((src == m_data->iterator()->firstVertex()) &&
              (dest == m_data->iterator()->lastVertex()) ))
     {
@@ -171,7 +171,7 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
       }
       if (alreadyCreatedRelations.find(foundRel) != alreadyCreatedRelations.end())
       {
-//         LDEBUG << foundRel << " already found. Getting next" << LENDL;
+//         LDEBUG << foundRel << " already found. Getting next";
         boost::tie(src,dest,relation) = m_data->relation();
         if (relation != "")
         {
@@ -184,23 +184,23 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
         }
         std::ostringstream noss ; noss << src << "/" << dest << "/" << relation;
         foundRel = noss.str();
-//         LDEBUG << "Next is " << foundRel << LENDL;
+//         LDEBUG << "Next is " << foundRel;
         if (src == 0 && dest == 1)
         {
-//           LDEBUG << "There is no more relation found from " << v << "; breaking" << LENDL;
+//           LDEBUG << "There is no more relation found from " << v << "; breaking";
           m_data->clearStoredRelations();
-//           LDEBUG << "Leaving PhoenixGraphHomoDepsVisitor::examine_edge(" << e << ")" << LENDL;
+//           LDEBUG << "Leaving PhoenixGraphHomoDepsVisitor::examine_edge(" << e << ")";
           return;
         }
         else
         {
-//           LDEBUG << "There is more ; continuing" << LENDL;
+//           LDEBUG << "There is more ; continuing";
           continue;
         }
       }
       else
       {
-//         LDEBUG << foundRel << " not already found. Using it" << LENDL;
+//         LDEBUG << foundRel << " not already found. Using it";
         alreadyCreatedRelations.insert(foundRel);
       }
       std::set< Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct > intersection;
@@ -212,13 +212,13 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
         );
 
       bool created = false;
-//       LDEBUG << "Intersection size: " << intersection.size() << LENDL;
+//       LDEBUG << "Intersection size: " << intersection.size();
       if (intersection.empty())
       {
         SAPLOGINIT;
         LWARN << "In homosyntagmatic dependence relations extraction: ends ("
         <<src<<" and "<<dest<<") seems to not belong to the same syntagmatic chain ;";
-        //        LWARN << "aborting this dependence relation" << LENDL;
+        //        LWARN << "aborting this dependence relation";
         //        break;
         Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct cis;
         addRelationBetweenForChain(relType,src, dest, cis);
@@ -233,14 +233,14 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
         //      bool created = false;
         for (;intersectionIt != intersectionIt_end; intersectionIt++)
         {
-//           LDEBUG << "Intersection= " << (*intersectionIt).chainId() << " ; "<< relType << LENDL;
+//           LDEBUG << "Intersection= " << (*intersectionIt).chainId() << " ; "<< relType;
           if ( //((*intersectionIt).chainId() != 0) &&
             ( static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).isTypeARelationForChain(
                 (*intersectionIt).chainType(), relType) ) )
           {
-//             LDEBUG << LENDL;
-//             LDEBUG << "Creating relation: " << relType << " " << src << " / " << dest << LENDL;
-//             LDEBUG << LENDL;
+//             LDEBUG;
+//             LDEBUG << "Creating relation: " << relType << " " << src << " / " << dest;
+//             LDEBUG;
             created = true;
             try
             {
@@ -254,10 +254,10 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
           else
           {
             SAPLOGINIT;
-            LINFO << "Relation type " << relType << " is not defined as a relation for chain type " << (*intersectionIt).chainType() << LENDL;
-            LINFO << "Cannot search other relations from " << v << " or will loop." << LENDL;
-//             LDEBUG << "No more relation found from " << v << LENDL;
-//             LDEBUG << "Leaving PhoenixGraphHomoDepsVisitor::examine_edge(" << e << ")" << LENDL;
+            LINFO << "Relation type " << relType << " is not defined as a relation for chain type " << (*intersectionIt).chainType();
+            LINFO << "Cannot search other relations from " << v << " or will loop.";
+//             LDEBUG << "No more relation found from " << v;
+//             LDEBUG << "Leaving PhoenixGraphHomoDepsVisitor::examine_edge(" << e << ")";
             m_data->clearStoredRelations();
             return;
           }
@@ -265,22 +265,22 @@ void PhoenixGraphHomoDepsVisitor::examine_edge(LinguisticGraphEdge e, const Grap
       }
 //       if (!created)
 //       {
-//         LDEBUG << "Creation of relation: " << relType << " " << src << " / " << dest << " aborted." << LENDL;
+//         LDEBUG << "Creation of relation: " << relType << " " << src << " / " << dest << " aborted.";
 //       }
       boost::tie(src,dest,relation) = m_data->relation();
     }
     recognizerResult.clear();
-//     LDEBUG << "Searching another relation from " << v << LENDL;
+//     LDEBUG << "Searching another relation from " << v;
     v_copy = v;
-//     LDEBUG << "Calling testOnVertex " << v_copy << LENDL;
+//     LDEBUG << "Calling testOnVertex " << v_copy;
     relationFound = m_homoDepRecognizer->
                     testOnVertex(*analysisGraph, v_copy,
                                  m_homoDepsStartVertex, m_homoDepsStopVertex, *m_analysis, recognizerResult);
   }
   m_data->clearStoredRelations();
 
-//   LDEBUG << "No more relation found from " << v << LENDL;
-//   LDEBUG << "Leaving PhoenixGraphHomoDepsVisitor::examine_edge(" << e << ")" << LENDL;
+//   LDEBUG << "No more relation found from " << v;
+//   LDEBUG << "Leaving PhoenixGraphHomoDepsVisitor::examine_edge(" << e << ")";
 }
 
 bool PhoenixGraphHomoDepsVisitor::enforcePropertiesConstraints(
@@ -345,7 +345,7 @@ void PhoenixGraphHomoDepsVisitor::addRelationBetweenForChain(
   const LinguisticAnalysisStructure::ChainIdStruct& chain)
 {
 //   SAPLOGINIT;
-//   LDEBUG << "Adding relation " << type << " between " << src << " and " << dest << " for chain: " << chain << LENDL;
+//   LDEBUG << "Adding relation " << type << " between " << src << " and " << dest << " for chain: " << chain;
   /*
     if (enforcePropertiesConstraints(type,src,dest))
     {
@@ -363,14 +363,14 @@ void PhoenixGraphHomoDepsVisitor::addRelationBetweenForChain(
   else
   {
     SAPLOGINIT;
-    LERROR << "Was not able to add relation (" << type << ") between " << src << " and " << dest << " for chain: " << chain << LENDL;
+    LERROR << "Was not able to add relation (" << type << ") between " << src << " and " << dest << " for chain: " << chain;
     throw std::runtime_error("Was not able to add relation");
   }
   /*
     }
     else
     {
-      LWARN << "Was not able to enforce properties constraints when adding relation (" << type << ") between " << src << " and " << dest << " for chain: " << chain << ". Adding aborted." << LENDL;
+      LWARN << "Was not able to enforce properties constraints when adding relation (" << type << ") between " << src << " and " << dest << " for chain: " << chain << ". Adding aborted.";
       throw std::runtime_error("Was not able to enforce properties constraints when adding relation");
     }
   */
@@ -381,17 +381,17 @@ template < typename Graph >
 void PhoenixGraphHomoDepsVisitor::discover_vertex(LinguisticGraphVertex v, const Graph& g)
 {
 //   SAPLOGINIT;
-//   LDEBUG << "PhoenixGraphHomoDepsVisitor::discover_vertex " << v << " (stop vertex is: " << m_homoDepsStopVertex << ") for g: " << &g << LENDL;
+//   LDEBUG << "PhoenixGraphHomoDepsVisitor::discover_vertex " << v << " (stop vertex is: " << m_homoDepsStopVertex << ") for g: " << &g;
 }
 
 template < typename Graph >
 void PhoenixGraphHomoDepsVisitor::finish_vertex(LinguisticGraphVertex v, const Graph& g)
 {
 //   SAPLOGINIT;
-//   LDEBUG << "PhoenixGraphHomoDepsVisitor::finish_vertex " << v << " for g: " << &g << LENDL;
+//   LDEBUG << "PhoenixGraphHomoDepsVisitor::finish_vertex " << v << " for g: " << &g;
   if (v == m_homoDepsStartVertex)
   {
-//     LDEBUG << "START finished. raising StartFinishedException" << v << LENDL;
+//     LDEBUG << "START finished. raising StartFinishedException" << v;
     throw StartFinishedException();
   }
 }

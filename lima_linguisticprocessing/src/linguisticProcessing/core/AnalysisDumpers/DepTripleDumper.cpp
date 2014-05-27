@@ -111,7 +111,7 @@ void DepTripleDumper::init(
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "DepTripleDumper::init: Missing parameter handler in DepTripleDumper configuration" << LENDL;
+    LERROR << "DepTripleDumper::init: Missing parameter handler in DepTripleDumper configuration";
     throw InvalidConfiguration();
   }
   
@@ -130,36 +130,36 @@ LimaStatusCode DepTripleDumper::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "DepTripleDumper::process no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "DepTripleDumper::process no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
-  LDEBUG << "handler will be: " << m_handler << LENDL;
+  LDEBUG << "handler will be: " << m_handler;
 //   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "DepTripleDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "DepTripleDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
   
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "DepTripleDumper::process: hno AnalysisGraph ! abort" << LENDL;
+    LERROR << "DepTripleDumper::process: hno AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "DepTripleDumper::process: hno PosGraph ! abort" << LENDL;
+    LERROR << "DepTripleDumper::process: hno PosGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "DepTripleDumper::process: no SentenceBounds ! abort" << LENDL;
+    LERROR << "DepTripleDumper::process: no SentenceBounds ! abort";
     return MISSING_DATA;
   }
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -172,7 +172,7 @@ LimaStatusCode DepTripleDumper::process(
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "DepTripleDumper::process: no annotation graph available !" << LENDL;
+    LERROR << "DepTripleDumper::process: no annotation graph available !";
     return MISSING_DATA;
   }
 
@@ -185,8 +185,8 @@ LimaStatusCode DepTripleDumper::process(
     *(posgraph->getGraph()));
   if (sb->getGraphId() != "PosGraph")
   {
-    LERROR << "DepTripleDumper::process: SentenceBounds have been computed on " << sb->getGraphId() << " !" << LENDL;
-    LERROR << "DepTripleDumper::process: DotDependencyGraphWriter needs SentenceBounds on PosGraph" << LENDL;
+    LERROR << "DepTripleDumper::process: SentenceBounds have been computed on " << sb->getGraphId() << " !";
+    LERROR << "DepTripleDumper::process: DotDependencyGraphWriter needs SentenceBounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
     
@@ -228,9 +228,9 @@ void DepTripleDumper::dumpDependencyRelations(std::ostream& outputStream,
                         const VxToTermsMap& compoundsHeads) const
 {
   DUMPERLOGINIT;
-  LDEBUG << "Address of syntactic data used to dump: " << syntData << LENDL;
+  LDEBUG << "Address of syntactic data used to dump: " << syntData;
   const DependencyGraph* depGraph = syntData-> dependencyGraph();
-  LDEBUG << "Address of dependency graph used to dump: " << depGraph << LENDL;
+  LDEBUG << "Address of dependency graph used to dump: " << depGraph;
 
   const LinguisticGraph* graph = syntData->graph();
   CVertexDataPropertyMap dataMap = get(vertex_data, *graph);
@@ -268,24 +268,24 @@ void DepTripleDumper::dumpDependencyRelations(std::ostream& outputStream,
   it = edges.begin(); it_end = edges.end();
   for (; it != it_end; it++)
   {
-    LDEBUG << "Dumping dependency edge " << (*it).m_source << " -> " << (*it).m_target << LENDL;
+    LDEBUG << "Dumping dependency edge " << (*it).m_source << " -> " << (*it).m_target;
     try
     {
-      LDEBUG << "DepTripleDumper::dumpDependencyRelations" << LENDL;
+      LDEBUG << "DepTripleDumper::dumpDependencyRelations";
       CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *depGraph);
       SyntacticRelationId type = typeMap[*it];
       LDEBUG << "DepTripleDumper::dumpDependencyRelations relation = "
-             << type << LENDL;
+             << type;
       std::set<std::string>::const_iterator relationPos =
         m_relation_names.find(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type));
       if( relationPos != m_relation_names.end() )
       {
         LDEBUG << "Src  : Dep vertex= " << source(*it, *depGraph);
         LinguisticGraphVertex src = syntData->tokenVertexForDepVertex(source(*it, *depGraph));
-        LDEBUG << "Src  : Morph vertex= " << src << LENDL;
+        LDEBUG << "Src  : Morph vertex= " << src;
         LDEBUG << "Targ : Dep vertex= " << target(*it, *depGraph) ;
         LinguisticGraphVertex dest = syntData->tokenVertexForDepVertex(target(*it, *depGraph));
-        LDEBUG << "Targ : Morph vertex= " << dest << LENDL;
+        LDEBUG << "Targ : Morph vertex= " << dest;
 
         std::set<StringsPoolIndex> srcLemmas=dataMap[src]->allLemma();
         std::set<StringsPoolIndex> destLemmas=dataMap[dest]->allLemma();
@@ -307,7 +307,7 @@ void DepTripleDumper::dumpDependencyRelations(std::ostream& outputStream,
       }
       else
       {
-        LDEBUG << "DepTripleDumper::dumpDependencyRelations: dump nothing.." << LENDL;
+        LDEBUG << "DepTripleDumper::dumpDependencyRelations: dump nothing..";
       }
     }
     catch (const std::range_error& )
@@ -315,7 +315,7 @@ void DepTripleDumper::dumpDependencyRelations(std::ostream& outputStream,
     }
     catch (...)
     {
-      LDEBUG << "DepTripleDumper::dumpDependencyRelations: catch others....." << LENDL;
+      LDEBUG << "DepTripleDumper::dumpDependencyRelations: catch others.....";
       throw;
     }
   }
@@ -435,8 +435,8 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
 {
   LIMA_UNUSED(analysis);
   DUMPERLOGINIT;
-  LDEBUG << "DepTripleDumper: ========================================" << LENDL;
-  LDEBUG << "DepTripleDumper: getting compounds heads" << LENDL;
+  LDEBUG << "DepTripleDumper: ========================================";
+  LDEBUG << "DepTripleDumper: getting compounds heads";
   const LinguisticGraphVertex begin = posAgraph->firstVertex();
   const LinguisticGraphVertex end = posAgraph->lastVertex();
 
@@ -478,9 +478,9 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
     {
       /// @todo replace v in LDEBUGs below by matching annotation vertices
 //     LDEBUG << "hasAnnotation("<<v<<", CompoundTokenAnnotation): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation"));
 //       LDEBUG << "hasAnnotation("<<v<<", SpecificEntity): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity"));
       //std::set< uint64_t > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       if (!cpdsHeads.empty())
@@ -500,7 +500,7 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
             std::string elem = (*bowItr).second->getIdUTF8String();
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
-              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
               delete (*bowItr).first;
               delete (*bowItr).second;
             }
@@ -527,7 +527,7 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
           std::string elem = (*bowItr).second->getIdUTF8String();
           if (alreadyStored.find(elem) != alreadyStored.end())
           { // already stored
-            //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+            //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
             delete (*bowItr).first;
             delete (*bowItr).second;
           }

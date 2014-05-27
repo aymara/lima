@@ -93,7 +93,7 @@ void ApplyRecognizer::init(
     }
     catch (Common::XMLConfigurationFiles::NoSuchList& ) {
       LERROR << "No 'automaton' or 'automatonList' in ApplyRecognizer group for language "
-             << (int)language << " !" << LENDL;
+             << (int)language << " !";
       throw InvalidConfiguration();
     }
   }
@@ -199,21 +199,21 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   Lima::TimeUtilsController timer("ApplyRecognizer");
   if (m_recognizers.empty()) {
     APPRLOGINIT;
-    LDEBUG << "ApplyRecognizer: No recognizer to apply" << LENDL;
+    LDEBUG << "ApplyRecognizer: No recognizer to apply";
     return MISSING_DATA;
   }
   APPRLOGINIT;
-  LINFO << "start process" << LENDL;
-  LDEBUG << "  parameters are:" << LENDL;
-  LDEBUG << "    - useSentenceBounds           :" << m_useSentenceBounds << LENDL;
-  LDEBUG << "    - updateGraph                 :" << m_updateGraph << LENDL;
-  LDEBUG << "    - resolveOverlappingEntities  :" << m_resolveOverlappingEntities << LENDL;
-  LDEBUG << "    - overlappingEntitiesStrategy :" << m_overlappingEntitiesStrategy << LENDL;
-  LDEBUG << "    - testAllVertices             :" << m_testAllVertices << LENDL;
-  LDEBUG << "    - stopAtFirstSuccess          :" << m_stopAtFirstSuccess << LENDL;
-  LDEBUG << "    - onlyOneSuccessPerType       :" << m_onlyOneSuccessPerType << LENDL;
-  LDEBUG << "    - graphId                     :" << m_graphId << LENDL;
-  LDEBUG << "    - dataForStorage              :" << m_dataForStorage << LENDL;
+  LINFO << "start process";
+  LDEBUG << "  parameters are:";
+  LDEBUG << "    - useSentenceBounds           :" << m_useSentenceBounds;
+  LDEBUG << "    - updateGraph                 :" << m_updateGraph;
+  LDEBUG << "    - resolveOverlappingEntities  :" << m_resolveOverlappingEntities;
+  LDEBUG << "    - overlappingEntitiesStrategy :" << m_overlappingEntitiesStrategy;
+  LDEBUG << "    - testAllVertices             :" << m_testAllVertices;
+  LDEBUG << "    - stopAtFirstSuccess          :" << m_stopAtFirstSuccess;
+  LDEBUG << "    - onlyOneSuccessPerType       :" << m_onlyOneSuccessPerType;
+  LDEBUG << "    - graphId                     :" << m_graphId;
+  LDEBUG << "    - dataForStorage              :" << m_dataForStorage;
   
   LimaStatusCode returnCode(SUCCESS_ID);
 
@@ -255,7 +255,7 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   }
 
   if (m_updateGraph) {
-//     LDEBUG << "" << LENDL;
+//     LDEBUG << "";
     recoData->removeVertices(analysis);
     recoData->clearVerticesToRemove();
     recoData->removeEdges(analysis);
@@ -286,7 +286,7 @@ processOnEachSentence(AnalysisContent& analysis,
 
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
   if (anagraph == 0) {
-    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available" << LENDL;
+    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
     return MISSING_DATA;
   }
 
@@ -297,7 +297,7 @@ processOnEachSentence(AnalysisContent& analysis,
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds defined ! abort" << LENDL;
+    LERROR << "no sentence bounds defined ! abort";
     return MISSING_DATA;
   }
 
@@ -309,7 +309,7 @@ processOnEachSentence(AnalysisContent& analysis,
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << LENDL;
+//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 
     seRecognizerResult.clear();
     reco->apply(*anagraph,beginSentence,
@@ -334,12 +334,12 @@ processOnWholeText(AnalysisContent& analysis,
                    RecognizerData* recoData ) const
 {
 //   APPRLOGINIT;
-//   LDEBUG << "apply recognizer on whole text" << LENDL;
+//   LDEBUG << "apply recognizer on whole text";
 
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
   if (anagraph == 0) {
     APPRLOGINIT;
-    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available" << LENDL;
+    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
     return MISSING_DATA;
   }
 

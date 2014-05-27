@@ -141,7 +141,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   if (m_outputMode == FullGraph)
@@ -211,12 +211,12 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
     SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
     if (sb==0)
     {
-      LERROR << "no sentence bounds ! abort" << LENDL;
+      LERROR << "no sentence bounds ! abort";
       return MISSING_DATA;
     }
     if (sb->getGraphId() != "PosGraph") {
-      LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !" << LENDL;
-      LERROR << "DotDependencyGraphWriter needs SentenceBounds on PosGraph" << LENDL;
+      LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !";
+      LERROR << "DotDependencyGraphWriter needs SentenceBounds on PosGraph";
       return INVALID_CONFIGURATION;
     }
 
@@ -288,7 +288,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
   }
   else // output mode
   {
-    LERROR << "Unknown output mode" << LENDL;
+    LERROR << "Unknown output mode";
     return UNKNOWN_ERROR;
   }
   return SUCCESS_ID;
@@ -311,7 +311,7 @@ void DotDependencyGraphWriter::write_graphviz(
   LIMA_UNUSED(anagraph);
   LIMA_UNUSED(annotationData);
   SALOGINIT;
-  LDEBUG << "DotDependencyGraphWriter::write_graphviz  begin="<<begin<<" ; end=" << end << LENDL;
+  LDEBUG << "DotDependencyGraphWriter::write_graphviz  begin="<<begin<<" ; end=" << end;
 //   CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *syntacticData->dependencyGraph());
   
   const LinguisticGraph& lposgraph=*(posgraph->getGraph());
@@ -345,12 +345,12 @@ void DotDependencyGraphWriter::write_graphviz(
         }
         else
         {
-          LDEBUG << "PosTaggingDepGraphEdgeWriter reached end" << LENDL;
+          LDEBUG << "PosTaggingDepGraphEdgeWriter reached end";
         }
       }
       
       os << v << " -> " << next << " ";
-      LDEBUG << "PosTaggingDepGraphEdgeWriter for "<<v<<" -> " << next << LENDL;
+      LDEBUG << "PosTaggingDepGraphEdgeWriter for "<<v<<" -> " << next;
       PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>(&lposgraph,m_language,depGraph,syntacticData)(os,*outItr);
           
     }

@@ -79,7 +79,7 @@ void SentenceBoundariesFinder::init(
     for (deque<string>::const_iterator it=boundariesRestrictions.begin(),it_end=boundariesRestrictions.end();
     it!=it_end; it++) 
     {
-      LDEBUG << "init(): add filter for value " << *it << LENDL;
+      LDEBUG << "init(): add filter for value " << *it;
       m_boundaryValues.insert(Common::Misc::utf8stdstring2limastring(*it));
     }
   }
@@ -95,16 +95,16 @@ void SentenceBoundariesFinder::init(
     {
       LinguisticCode micro=microManager.getPropertyValue(*it);
       if (micro == 0) {
-        LERROR << "init(): cannot find linguistic code for micro " << *it << LENDL;
+        LERROR << "init(): cannot find linguistic code for micro " << *it;
       }
       else {
-        LDEBUG << "init(): add filter for micro " << micro << LENDL;
+        LDEBUG << "init(): add filter for micro " << micro;
         m_boundaryMicros.push_back(micro);
       }
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {
-    LERROR << "Warning: No boundaries categories defined for language " << language << LENDL;
+    LERROR << "Warning: No boundaries categories defined for language " << language;
     //throw InvalidConfiguration();
   } 
 }
@@ -117,16 +117,16 @@ LimaStatusCode SentenceBoundariesFinder::process(
   Lima::TimeUtilsController timer("SentenceBoundariesFinder");
   
   SENTBOUNDLOGINIT;
-  LINFO << "start finding sentence bounds" << LENDL;
+  LINFO << "start finding sentence bounds";
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (anagraph==0) {
-    LERROR << "no graph '" << m_graph << "' available !" << LENDL;
+    LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
   }
 
   LinguisticGraphVertex lastVx=anagraph->lastVertex();
   LinguisticGraphVertex beginSentence=anagraph->firstVertex();
-  LDEBUG << "found beginSentence at " << beginSentence << LENDL;
+  LDEBUG << "found beginSentence at " << beginSentence;
 
   SegmentationData* sb=new SegmentationData(m_graph);
   analysis.setData("SentenceBoundaries",sb);
@@ -135,7 +135,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
     while (beginSentence!=lastVx)
     {
       LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
-      LDEBUG << "found endSentence at " << endSentence << LENDL;
+      LDEBUG << "found endSentence at " << endSentence;
       sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
       beginSentence=endSentence;
     }
@@ -149,17 +149,17 @@ LimaStatusCode SentenceBoundariesFinder::process(
       Token* t=get(vertex_token,*(anagraph->getGraph()),endSentence);
       if (t!=0) {
         LDEBUG << "found endSentence at " << endSentence  << "(" 
-               << Common::Misc::limastring2utf8stdstring(t->stringForm()) << ")" << LENDL;
+               << Common::Misc::limastring2utf8stdstring(t->stringForm()) << ")";
       }
       else {
-        LDEBUG << "found endSentence at " << endSentence << LENDL;
+        LDEBUG << "found endSentence at " << endSentence;
       }
       if (t==0 || m_boundaryValues.find(t->stringForm())!=m_boundaryValues.end()) {
         sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
         beginSentence=endSentence;
       }
       else {
-        LDEBUG << " -> not kept (not in restricted values)" << LENDL;
+        LDEBUG << " -> not kept (not in restricted values)";
       }
       endSentence=anagraph->nextMainPathVertex(endSentence,*m_microAccessor,m_boundaryMicros,lastVx);
     }

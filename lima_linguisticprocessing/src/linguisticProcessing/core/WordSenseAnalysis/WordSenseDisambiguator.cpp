@@ -110,9 +110,9 @@ void WordSenseDisambiguator::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No 'mode' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No 'mode' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_mode = S_UNKNOWN;
-    LERROR << "Mode is set to UNKNOWN by default." << LENDL;
+    LERROR << "Mode is set to UNKNOWN by default.";
   }
   LDEBUG << "Mode is "<< m_mode << " - "  << mode();
   try 
@@ -137,15 +137,15 @@ void WordSenseDisambiguator::init(
       }
       catch (Common::XMLConfigurationFiles::NoSuchParam& )
       {
-  LERROR << "No 'mappingFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;  
-  LERROR << "Mapping will not be performed." << LENDL;
+  LERROR << "No 'mappingFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;  
+  LERROR << "Mapping will not be performed.";
       } 
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No 'mapping' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No 'mapping' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_mappingMode = M_UNKNOWN;
-    LERROR << "Scope is set to UNKNOWN by default." << LENDL;
+    LERROR << "Scope is set to UNKNOWN by default.";
   }
   
   string dictionaryPath = "";
@@ -154,9 +154,9 @@ void WordSenseDisambiguator::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No 'dictionaryFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No 'dictionaryFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     dictionaryPath = "words.ids";
-    LERROR << "DictionaryFile is set to 'words.ids' by default." << LENDL;    
+    LERROR << "DictionaryFile is set to 'words.ids' by default.";    
   }
   initDictionaries(dictionaryPath);
   
@@ -167,9 +167,9 @@ void WordSenseDisambiguator::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No 'sensesPath' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+    LERROR << "No 'sensesPath' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_sensesPath = "clusterDir";
-    LERROR << "SensesPath is set to 'clusterDir' by default." << LENDL;    
+    LERROR << "SensesPath is set to 'clusterDir' by default.";    
   }
   
   LDEBUG << "SensesPath config ok " ;
@@ -186,7 +186,7 @@ void WordSenseDisambiguator::init(
     }
     catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {  
-      LWARN << "No 'NounContextList' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;        
+      LWARN << "No 'NounContextList' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;        
       LWARN << "Default list for NounContext is set to : SUJ_V, COD_V, COMPDUNOM, COMPDUNOM.reverse, ADJPRENSUB.reverse, SUBADJPOST.rverse, window5" ; 
     }
   
@@ -198,9 +198,9 @@ void WordSenseDisambiguator::init(
     }
     catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {
-      LERROR << "No 'knnDir' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;
+      LERROR << "No 'knnDir' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_knnDir = "knnall";
-      LERROR << "KnnDir is set to 'knnall' by default." << LENDL;    
+      LERROR << "KnnDir is set to 'knnall' by default.";    
     }
   
     LDEBUG << "KnnDir config ok " ;
@@ -212,7 +212,7 @@ void WordSenseDisambiguator::init(
     }
     catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {
-      LERROR << "No 'knnsearchConfig' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language << LENDL;   
+      LERROR << "No 'knnsearchConfig' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;   
     }
   
     LDEBUG << "KnnSearchConfig config ok " ; 
@@ -234,7 +234,7 @@ void WordSenseDisambiguator::init(
 void WordSenseDisambiguator::initDictionaries(const string& dictionaryPath) 
 {
   LOGINIT("WordSenseDisambiguator");
-  LINFO << "Loading dictionaries from " << dictionaryPath << "." << LENDL;
+  LINFO << "Loading dictionaries from " << dictionaryPath << ".";
   
   ifstream is(dictionaryPath.c_str(), std::ifstream::binary);
   if ( !is.good() ) {
@@ -248,7 +248,7 @@ void WordSenseDisambiguator::initDictionaries(const string& dictionaryPath)
       } else {
   LERROR << "(reason unknown)" ; 
       }
-      LERROR << ". " << LENDL;
+      LERROR << ". ";
       return;
   }
   string s;
@@ -263,7 +263,7 @@ void WordSenseDisambiguator::initDictionaries(const string& dictionaryPath)
     m_index2Lemma[id] = strs.at(0);    
   }
   is.close();
-  LINFO << "Dictionaries loaded from " << dictionaryPath << "." << LENDL;
+  LINFO << "Dictionaries loaded from " << dictionaryPath << ".";
   
 }
 
@@ -284,7 +284,7 @@ void WordSenseDisambiguator::loadMapping(const string& mappingPath)
       } else {
   LERROR << "(reason unknown)" ; 
       }
-      LERROR << ". " << LENDL;
+      LERROR << ". ";
       return; 
   }
   string s;
@@ -292,7 +292,7 @@ void WordSenseDisambiguator::loadMapping(const string& mappingPath)
     
   }
   is.close();
-  LINFO << "Mapping loaded from " << mappingPath << "." << LENDL;
+  LINFO << "Mapping loaded from " << mappingPath << ".";
   
 }
 
@@ -306,7 +306,7 @@ LimaStatusCode WordSenseDisambiguator::process(
 {
   LOGINIT("WordSenseDisambiguator");
   TimeUtils::updateCurrentTime();
-  LINFO << "start WordSenseDisambiguator" << LENDL;
+  LINFO << "start WordSenseDisambiguator";
   
   
   
@@ -315,24 +315,24 @@ LimaStatusCode WordSenseDisambiguator::process(
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds ! abort" << LENDL;
+    LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
   if (sb->getGraphId() != "PosGraph") {
     LERROR << "SentenceBounds computed on graph '" << sb->getGraphId() << "'. WordSenseDisambiguator needs " <<
-    "sentence bounds on PosGraph" << LENDL;
+    "sentence bounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
   //SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (sb==0)
   {
-    LERROR << "no syntactic data ! abort" << LENDL;
+    LERROR << "no syntactic data ! abort";
     return MISSING_DATA;
   }
 
@@ -389,7 +389,7 @@ LimaStatusCode WordSenseDisambiguator::process(
   {    
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    LINFO << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << LENDL;
+    LINFO << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 
     // Parse Sentence
     // for each word in the sentence
@@ -475,7 +475,7 @@ LimaStatusCode WordSenseDisambiguator::process(
       
       // Get syntactic contexts
       //int nbContxts = getContext(syntacticData, v, graph, stringspool, context);      
-      //LDEBUG << "Nb contexts : " << nbContxts << " vs. " << context.size() << LENDL;
+      //LDEBUG << "Nb contexts : " << nbContxts << " vs. " << context.size();
       
       // Add prestored preview window context
       addPreviewWindowContext(lemmasBuffer, context);   
@@ -587,17 +587,17 @@ LimaStatusCode WordSenseDisambiguator::process(
     }
     if (disambOk)
     { 
-      LINFO << "write word sense annotations for "<< *itLemmas <<" on graph" << LENDL;
+      LINFO << "write word sense annotations for "<< *itLemmas <<" on graph";
       wsa.writeAnnotation(annotationData);
     }
     else
     {
-      LWARN << *itLemmas << " was not disambiguated (still ambiguous)." << LENDL;  
+      LWARN << *itLemmas << " was not disambiguated (still ambiguous).";  
     }
   }
   else
   {
-    LWARN << *itLemmas << " was not disambiguated (no referenceWord)." << LENDL;  
+    LWARN << *itLemmas << " was not disambiguated (no referenceWord).";  
   }
       } // end ambiguous lemmas
     } // end ambiguous words 
