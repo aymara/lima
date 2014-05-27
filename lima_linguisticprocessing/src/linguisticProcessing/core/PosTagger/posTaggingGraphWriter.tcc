@@ -239,7 +239,7 @@ public:
           out << "\\l";
        }
      }
-     out << "\",fontname=\"Monospace\",fontsize=\"9\"];\n";
+     out << "\",fontname=\"Monospace\",fontsize=\"9\"]";
   }
   private:
   const Graph* m_graph;
