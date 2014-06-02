@@ -298,7 +298,7 @@ BoWToken* BoWBinaryReaderPrivate::readBoWToken(std::istream& file,
   default:
     LERROR << "Read error: unknown token type.";
   }
-  if (token != 0) LDEBUG << "BoWToken: token=" << *token;
+  if (token != 0) {LDEBUG << "BoWToken: token=" << *token;}
   return token;
 }
 
