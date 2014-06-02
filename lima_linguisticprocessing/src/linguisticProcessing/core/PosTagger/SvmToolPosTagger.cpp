@@ -299,7 +299,6 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
       if (endStep.m_microCatsData.size()!=1) {
         LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!";
       }
-      MicroCatDataMapItr microItr=endStep.m_microCatsData.begin();
 
       // put linguistic data to end vertex
       LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,endStep.m_srcVertex);
