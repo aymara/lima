@@ -277,7 +277,7 @@ bool IndexElement::hasNearlySamePosition(const IndexElement& other) const
   else if (!isSimpleTerm() && !other.isSimpleTerm()) {
     Lima::Common::Misc::PositionLengthList::const_iterator pplIt = getPositionLengthList().begin();
     Lima::Common::Misc::Position posMin = pplIt->first;
-    int64_t posMax = posMin + pplIt->second - 1;
+    uint64_t posMax = posMin + pplIt->second - 1;
     for( ; pplIt != getPositionLengthList().end() ; pplIt++ ) {
       if( pplIt->first < posMin ) {
         posMin = pplIt->first; 
@@ -288,7 +288,7 @@ bool IndexElement::hasNearlySamePosition(const IndexElement& other) const
     }
     Lima::Common::Misc::PositionLengthList::const_iterator otherPplIt = other.getPositionLengthList().begin();
     Lima::Common::Misc::Position otherPosMin = other.getPositionLengthList().back().first;
-    int64_t otherPosMax = otherPosMin + getPositionLengthList().back().second - 1;
+    uint64_t otherPosMax = otherPosMin + getPositionLengthList().back().second - 1;
     for( ; otherPplIt != other.getPositionLengthList().end() ; otherPplIt++ ) {
       if( otherPplIt->first < otherPosMin ) {
         otherPosMin = otherPplIt->first; 
