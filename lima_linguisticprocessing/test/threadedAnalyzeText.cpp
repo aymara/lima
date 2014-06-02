@@ -89,7 +89,7 @@ public:
   }
 
 private:
-  ProtectedFileList(const ProtectedFileList& pfl) {}
+  ProtectedFileList(const ProtectedFileList& pfl);
   
   boost::mutex m_mutex;
   std::list<std::string> m_list;
