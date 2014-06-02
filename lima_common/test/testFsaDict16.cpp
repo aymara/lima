@@ -157,7 +157,7 @@ typedef struct ParamStruct {
   bool runIndex;
   bool addWord;
   bool runSpelling;
-  uint64_t termId;
+  int64_t termId;
   bool composed;
   bool withAssert;
   std::string inputDicoComp;
@@ -428,7 +428,6 @@ template <typename dictType>
   std::vector<Lima::LimaString > & hyperwords,
   std::vector<int> & offsets,
   std::vector<std::vector<Lima::LimaString > >& subwords, bool withAssert ) {
-  typedef typename Lima::Common::FsaAccess::FsaAccessSpare16::subword_iterator sub_it;
 
   typename std::vector<Lima::LimaString >::iterator wordIt;
   std::vector<int>::iterator offsetIt = offsets.begin();
