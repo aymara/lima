@@ -1352,11 +1352,12 @@ D;i;D;part;d' une part;adverbe;d'une part
 D;i;D;partie;en partie;adverbe;
 D;i;D;partie;en partie;adverbe postv;
 D;i;D;partir;à partir d';préposition;à partir de
-D;i;D;partir;à partir du;préposition;à partir de
-D;i;D;partir;à partir du;préposition article;à partir de
+D;i;A;partir;à partir de;préposition;à partir de
+D;i;A;partir;à partir du;préposition article;à partir de
 D;i;D;passant;en passant;adverbe;
 D;i;D;plein;plein d';article de quantité;plein de
 D;i;D;plein;plein de;article de quantité;plein de
+F;;A;plus;de plus en plus;adverbe;
 D;i;D;plus;[P]de plus;adverbe;
 D;i;D;point;sur ce point;adverbe;
 D;i;D;point;sur le point de;préposition verbale;sur le point de
@@ -2454,7 +2455,6 @@ F;;A;place;[V]&faire (D) place nette;verbe intransitif;faire place nette
 F;;A;place;[V]&faire (D) place;verbe intransitif;faire place
 F;;A;place;[V]&laisser (D) place;verbe intransitif;laisser place
 F;;A;place;[V]&mettre (D) en place;verbe transitif;mettre en place
-F;;A;plus;de plus en plus;adverbe;
 F;;A;plus;plus que jamais;adverbe;
 F;;A;point;[V]&faire le point;verbe intransitif;faire le point
 F;;A;politesse;[V]&griller la politesse;verbe intransitif;griller la politesse

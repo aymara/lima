@@ -48,7 +48,8 @@ add_custom_target(
   ALL
   DEPENDS dico.xml
 )
-add_dependencies(dicoxmlfre leffffre )
+# add_dependencies(dicoxmlfre leffffre )
+add_dependencies(dicoxmlfre codefre )
 
 add_custom_target(
   convertfre

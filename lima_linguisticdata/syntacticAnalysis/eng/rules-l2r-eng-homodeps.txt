@@ -465,32 +465,25 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Relation entre auxiliaire et participe passe
 #----------------------------------------------------------------------
 #@Participe:@Aux (@AuxParticipe){0-2} (@AdvTempComp)?::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VERBE_PRINCIPAINDICATIF;PRES")
+#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
 
 @Participe:@AuxInd @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-+CreateCompoundTense(trigger.1,left.1,"V;VERBE_GENERAPASSE;PASS")
++CreateCompoundTense(trigger.1,left.1,"V;VBD;PASS")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-
-
 #@Participe:@AuxInf @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VERBE_PRINCIPAINFINITIF;PASS")
+#+CreateCompoundTense(trigger.1,left.1,"V;VB;PASS")
 
 #@Participe:@AuxImp @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VERBE_PRINCIPAIMPERATIF;PRES")
+#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
 
 #@Participe:@AuxSubj @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VERBE_PRINCIPASUBJONCTIF;PRES")
+#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
 
 
 # @Participe:@Aux (@AdvTempComp)?::SYNTACTIC_RELATION:
-# +CreateCompoundTense(trigger.1,left.1,"V;VERBE_PRINCIPAINDICATIF;PRES")
-
-@Participe:@AuxInd @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-+CreateCompoundTense(trigger.1,left.1,"V;VERBE_GENERAPASSE;PASS")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+# +CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
 
 #----------------------------------------------------------------------
 # Relation entre verbe et sujet pronominal inverse

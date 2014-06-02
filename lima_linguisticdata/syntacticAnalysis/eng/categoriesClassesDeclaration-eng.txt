@@ -64,7 +64,7 @@ set entityTypes=SyntacticRelations
 
 # pas infinitif, ni impératif (pas de sujet)
 # ni participe (sujet attaché à l'auxiliaire)
-@TensedVerbSuj=($V-VBD,
+@TensedVerbSubj=($V-VBD,
 $V-VBP,
 $V-VBZ)
 
