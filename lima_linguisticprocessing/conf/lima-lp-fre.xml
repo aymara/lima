@@ -354,6 +354,10 @@
     </group>
     <group name="SvmToolPosTagger" class="SvmToolPosTagger">
       <param key="model" value="Disambiguation/SVMToolModel-fre/lima"/>
+      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
     </group>
     <group name="DynamicSvmToolPosTagger" class="DynamicSvmToolPosTagger">
       <param key="model" value="Disambiguation/SVMToolModel-fre/lima"/>
