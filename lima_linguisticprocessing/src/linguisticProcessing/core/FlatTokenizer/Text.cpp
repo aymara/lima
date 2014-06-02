@@ -83,7 +83,7 @@ void Text::setText(const Lima::LimaString& text)
 // Clear the entirely class and structure to accept new text
 void Text::clear()
 {
-  //    _tTokenList = NULL; Not destroyed here
+  //    _tTokenList = 0; Not destroyed here
   _thereIsUnknown = false;
 }
 
@@ -119,7 +119,7 @@ void Text::finalizeAndUnsetGraph()
 Lima::LimaChar Text::advance()
 {
   TOKENIZERLOGINIT;
-  if (_curPtr+1 >= static_cast<uint64_t>(m_text.size()))
+  if (_curPtr+1 >= m_text.size())
   {
     LDEBUG << "Trying to move after text end.";
     _curPtr++;
@@ -138,7 +138,7 @@ const CharClass* Text::currentClass() const
 {
 //   TOKENIZERLOGINIT;
 //   LDEBUG << "currentClass() at " << _curPtr << ", for " << m_text[_curPtr];
-  if (_curPtr+1 >= static_cast<uint64_t>(m_text.size()))
+  if (_curPtr+1 >= m_text.size())
   {
     return m_charChart->charClass(0);
   }
@@ -170,7 +170,7 @@ LimaString Text::token()
   {
     delta++;
   }
-  if (_debPtr >= static_cast<uint64_t>(m_text.size()))
+  if (_debPtr >= m_text.size())
   {
     LERROR << "Empty token !";
     _debPtr = delta;
@@ -181,7 +181,7 @@ LimaString Text::token()
   LDEBUG << "      Adding token '" << str << "'";
   StringsPoolIndex form=(*_stringsPool)[str];
   Token *tToken = new Token(form,str,_debPtr+1,(delta-_debPtr));
-  if (tToken == NULL) throw MemoryErrorException();
+  if (tToken == 0) throw MemoryErrorException();
   // @todo: set default status here, according to structured status (alpha,numeric etc...)
   // instead of setting it at each change of status (setAlphaCapital, setNumeric etc...)
   tToken->setStatus(_curSettings);
