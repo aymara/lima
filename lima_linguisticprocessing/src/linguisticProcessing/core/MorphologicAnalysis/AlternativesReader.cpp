@@ -168,8 +168,14 @@ void AlternativesReader::readAlternatives(
         }
       }
     }
+    if (token.status().getAlphaCapital()==LinguisticAnalysisStructure::T_ACRONYM)
+    {
+      StringsPoolIndex idx=(*m_sp)[unmarked];
+      token = Token(idx, unmarked, token.position(), token.length(),token.status());
+      LDEBUG << "AlternativesReader::readAlternatives is  an acronym; using simpler form" << unmarked;
+    }
   }
-  LDEBUG << "AlternativesReader::readAlternatives no alternative found";
+  LDEBUG << "AlternativesReader::readAlternatives no alternative found;";
 }
 
 }
