@@ -166,6 +166,7 @@ LimaChar CharChart::min (LimaChar c) const
 // character. If specified character was not defined,
 // InvalidCharException is raised.
 LimaChar CharChart::unmark (LimaChar c) const {
+  TOKENIZERLOGINIT;
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
   if (m_chars[c.unicode()] == 0)
@@ -187,22 +188,26 @@ LimaChar CharChart::unmark (LimaChar c) const {
 // Null string, one, two and more characters string can be returned.
 LimaString CharChart::unmarkByString (LimaChar c) const
 {
+  TOKENIZERLOGINIT;
+	LDEBUG << "CharChart::unmarkByString" << c;
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
   if (m_chars[c.unicode()] == 0)
-    {
-      LimaString result;
-      result.push_back(c);
-      return result;
-    }
-    if (!m_chars[c.unicode()]->charClass())
-        throw InvalidCharException();
+  {
+    LimaString result;
+    result.push_back(c);
+    LDEBUG << "CharChart::unmarkByString" << result;
+    return result;
+  }
+  if (!m_chars[c.unicode()]->charClass())
+      throw InvalidCharException();
 
     LimaString result;
   if (m_chars[c.unicode()]->unmark() != 0 && m_chars[c.unicode()]->unmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->unmark()->code());
   if (m_chars[c.unicode()]->longUnmark() != 0 && m_chars[c.unicode()]->longUnmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->longUnmark()->code());
+  LDEBUG << "CharChart::unmarkByString" << result;
   return result;
 }
 
@@ -227,8 +232,8 @@ LimaString CharChart::unmark(const LimaString& str) const
         LimaString s = unmarkByString(str.at(i));
         if (!s.isEmpty())
           desaccented.append(s);
-        else
-          desaccented.push_back(str.at(i));
+//         else
+//           desaccented.push_back(str.at(i));
       }
     }
     // silently discard invalid character
