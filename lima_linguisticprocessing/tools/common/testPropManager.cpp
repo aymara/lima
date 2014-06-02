@@ -64,9 +64,6 @@ int main(int argc,char* argv[])
   const Lima::Common::MediaticData::LanguageData& languageData = static_cast<const Lima::Common::MediaticData::LanguageData&>(Lima::Common::MediaticData::MediaticData::single().mediaData(m_language));
 
   Lima::Common::PropertyCode::PropertyCodeManager propertyManager = languageData.getPropertyCodeManager();
-  
-  const Lima::Common::PropertyCode::PropertyManager& macroManager = propertyManager.getPropertyManager("L_MACRO");
-  
 }
 
 void usage(int argc, char *argv[])
