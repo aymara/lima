@@ -138,18 +138,18 @@
       <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
       <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.dat"/>
       <param key="costFunction" value="FrequencyCost" />
-      <param key="defaultCategory" value="L_PONCTU_FORTE"/>
+      <param key="defaultCategory" value="SENT"/>
       <list name="stopCategories">
-        <item value="L_PONCTU_FORTE" />
+        <item value="SENT" />
       </list>
     </group>
     <group name="viterbiPostagger-int" class="ViterbiPosTagger">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
       <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.dat"/>
       <param key="costFunction" value="IntegerCost" />
-      <param key="defaultCategory" value="L_PONCTU_FORTE"/>
+      <param key="defaultCategory" value="SENT"/>
       <list name="stopCategories">
-        <item value="L_PONCTU_FORTE" />
+        <item value="SENT" />
       </list>
     </group>
     <group name="viterbiPostagger-int-none" class="ViterbiPosTagger">
@@ -158,13 +158,13 @@
       <param key="costFunction" value="IntegerCost" />
       <param key="defaultCategory" value="NONE_1"/>
       <list name="stopCategories">
-        <item value="L_PONCTU_FORTE" />
+        <item value="SENT" />
       </list>
     </group>
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
       <list name="micros">
-        <item value="L_PONCTU_FORTE"/>
+        <item value="SENT"/>
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
