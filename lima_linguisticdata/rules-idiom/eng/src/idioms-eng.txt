@@ -1216,7 +1216,6 @@ R;;A;Equatorial;Equatorial Guinea;proper noun;Equatorial Guinea;
 C;;A;Falkland;Falkland Islander;noun;Falkland Islander;
 R;;A;Fanny;Fanny Adams;proper noun;Fanny Adams;
 R;;A;Father;Father Frost;proper noun;Father Frost;
-C;;A;Federal;Federal Bureau of Investigation;proper noun;FBI;
 C;;A;Federal;Federal Republic of Germany;proper noun;Federal Republic of Germany;
 R;;A;Fernando;Fernando Po;proper noun;Fernando Po;
 R;;A;Fernando;Fernando Poo;proper noun;Fernando Poo;
