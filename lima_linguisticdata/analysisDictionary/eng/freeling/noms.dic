@@ -4423,7 +4423,7 @@ briars	briar		NNS
 bribe	bribe		NN
 bribery	bribery		NN
 bribes	bribe		NNS
-bric-a-brac	bric-à-brac		NN
+#bric-a-brac	bric-à-brac		NN
 bric-à-brac	bric-à-brac		NN
 brick	brick		NN
 bricklayer	bricklayer		NN

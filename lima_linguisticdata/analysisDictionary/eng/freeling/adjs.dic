@@ -900,7 +900,7 @@ briny	briny		JJ
 brisk	brisk		JJ
 bristly	bristly		JJ
 britannic	britannic		JJ
-british	british		JJ
+#british	british		JJ # the right form is 'British'
 brittle	brittle		JJ
 broad	broad		JJ
 broadband	broadband		JJ
