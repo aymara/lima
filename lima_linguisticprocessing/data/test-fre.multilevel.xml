@@ -10,7 +10,7 @@
       </list>
     </call-parameters>
     <expl>Test de l'enrichissement d'une entrée globale par le dictionnaire corporate</expl>
-    <test id="fre.ml.1.1" trace=".simpleword.xml" comment="ajout d'une propriété sur lemme existant" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musique']/property/p[@prop='GENDER']/@val" operator="contains" right="L_MASC"/>
+    <test id="fre.ml.1.1" trace=".simpleword.xml" comment="ajout d'une propriété sur lemme existant" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musique']/property/p[@prop='GENDER']/@val" operator="contains" right="MASC"/>
     <test id="fre.ml.1.2" trace=".simpleword.xml" comment="ajout d'un nouveau lemme" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musik']" operator="exists" right=""/>
     <test id="fre.ml.1.3" trace=".simpleword.xml" comment="ajout d'une nouvelle normalisation" left="XPATH#//data_structure/vertex/data/simple_word/form[@lemma='musique'][@norm='musik']" operator="exists" right=""/>
   </testcase>
@@ -57,7 +57,7 @@
     </call-parameters>
     <expl>présence des infos de chaque dictionnaire</expl>
     <test id="fre.ml.5.1" trace=".simpleword.xml" comment="lemme du dico principal" left="XPATH#//data_structure/vertex/data//form[@lemma='élever']" operator="exists" right=""/>
-    <test id="fre.ml.5.2" trace=".simpleword.xml" comment="lemme élève remplacé dans dico corporate" left="XPATH#//data_structure/vertex/data//form[@lemma='élève']/property/p[@prop='NUMBER']/@val" operator="=" right="L_PLUR"/>
+    <test id="fre.ml.5.2" trace=".simpleword.xml" comment="lemme élève remplacé dans dico corporate" left="XPATH#//data_structure/vertex/data//form[@lemma='élève']/property/p[@prop='NUMBER']/@val" operator="=" right="PLUR"/>
     <test id="fre.ml.5.3" trace=".simpleword.xml" comment="lemme Eleve présent dans dico user2" left="XPATH#//data_structure/vertex/data//form[@lemma='Eleve']" operator="exists" right=""/>
   </testcase>
   <testcase id="fre.ml.6" type="bloquant">
