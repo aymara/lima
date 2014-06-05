@@ -50,7 +50,7 @@
 </testcase>
 <testcase id="eng.sa.6" type="bloquant">
   <call-parameters>
-      <param key="text" value="The very beautiful little house. "/>
+      <param key="text" value="The very beautiful tall house. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -447,7 +447,7 @@
 </testcase>
 <testcase id="eng.sa.35.b" type="bloquant">
   <call-parameters>
-      <param key="text" value="The very beautiful little house is for sale."/>
+      <param key="text" value="The very beautiful tall house is for sale."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -535,12 +535,12 @@
     </call-parameters>
   <expl>'very' modifie 'small'.</expl>
   <test id="eng.sa.41.1" trace=".sa.xml"
-    comment="La relation 'very' -ADVADJ-> 'little' doit exister "
+    comment="La relation 'very' -ADVADJ-> 'small' doit exister "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='very']/dependents/dep[@t='ADVADJ']"
     operator="exists"
     right="" />
   <test id="eng.sa.41.2" trace=".sa.xml"
-    comment="La relation 'very' -ADVADJ-> 'little' doit exister "
+    comment="La relation 'very' -ADVADJ-> 'small' doit exister "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='small']/@id"
     operator="contains"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='very']/dependents/dep[@t='ADVADJ']/@v" />
