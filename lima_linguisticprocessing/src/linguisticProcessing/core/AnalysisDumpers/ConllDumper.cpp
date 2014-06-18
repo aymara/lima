@@ -173,77 +173,180 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));//est de type PosGraph et non pas AnalysisGraph
   if (tokenList==0) {
     LERROR << "graph " << m_graph << " has not been produced: check pipeline" << LENDL;
     return MISSING_DATA;
   }
   LinguisticGraph* graph=tokenList->getGraph();
+
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
-    {
+  {
     syntacticData=new SyntacticData(tokenList,0);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
+  }
+  const DependencyGraph* depGraph = syntacticData-> dependencyGraph();
+  std::map<LinguisticGraphVertex, pair<LinguisticGraphVertex, string>>vertexDependencyInformations;
+
+  SegmentationData* sd=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
+  uint64_t nbSentences((sd->getSegments()).size());
+  cerr<< "\n il y a "<< nbSentences << " phrases"<< endl;
+  //LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
+
+
+  while (sbItr!=(sd->getSegments().end()))//tant qu'il y a des phrases
+  {
+    LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
+    LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
+    map<LinguisticGraphVertex,int>segmentationMapping;//segmentation du graphe global et segmentation conll
+    map<int,LinguisticGraphVertex>segmentationReverseMapping;
+
+    std::cerr << "begin - end: " << sentenceBegin << " - " << sentenceEnd << std::endl;
+    LinguisticGraphOutEdgeIt outItr,outItrEnd;
+    std::queue<LinguisticGraphVertex> toVisit;
+    std::set<LinguisticGraphVertex> visited;
+    toVisit.push(sentenceBegin);
+    int tokenId = 0;
+    while (!toVisit.empty()) {
+      LinguisticGraphVertex v=toVisit.front();
+      toVisit.pop();
+      visited.insert(v);
+      segmentationMapping.insert(make_pair(v,tokenId));
+      segmentationReverseMapping.insert(make_pair(tokenId,v));
+
+      LinguisticGraphOutEdgeIt outItr,outItrEnd;
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
+      {
+        LinguisticGraphVertex next=target(*outItr,*graph);
+        if (visited.find(next)==visited.end() && next != tokenList->lastVertex())
+        {
+          toVisit.push(next);
+        }
+      }
+      DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
+      DependencyGraphOutEdgeIt dit, dit_end;
+      std::vector<DependencyGraphEdge> edges;
+    
+      boost::tie(dit,dit_end)=out_edges(dcurrent,*depGraph);
+      for (; dit != dit_end; dit++)
+      {
+        edges.push_back(*dit);
+      }
+      
+      // Token* ft=get(vertex_token,*graph,v);
+      std::vector<DependencyGraphEdge>::const_iterator it, it_end;
+      it = edges.begin(); it_end = edges.end();
+      std::set<std::string> m_relation_names;
+      for (; it != it_end; it++)
+      {
+        //cerr << "Dumping dependency edge " << (*it).m_source << " -> " << (*it).m_target << endl;
+        try
+        {
+          LDEBUG << "DepTripleDumper::dumpDependencyRelations" << LENDL;
+          CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *depGraph);
+          SyntacticRelationId type = typeMap[*it];
+          string SyntRelName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type);
+          //cerr << "DepTripleDumper::dumpDependencyRelations relation = " << SyntRelName <<endl;
+          std::set<std::string>::const_iterator relationPos =
+          m_relation_names.find(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type));
+  //      if( relationPos != m_relation_names.end() )
+  //      {
+          LDEBUG << "Src  : Dep vertex= " << source(*it, *depGraph);
+          LinguisticGraphVertex src = syntacticData->tokenVertexForDepVertex(source(*it, *depGraph));
+          LDEBUG << "Src  : Morph vertex= " << src << LENDL;
+          LDEBUG << "Targ : Dep vertex= " << target(*it, *depGraph) << endl;
+          LinguisticGraphVertex dest = syntacticData->tokenVertexForDepVertex(target(*it, *depGraph));
+          //cerr << "Targ : Morph vertex= " << dest << "\n" << endl;
+          
+          vertexDependencyInformations.insert(make_pair(v,make_pair(dest,SyntRelName)));
+          //std::set<StringsPoolIndex> srcLemmas=dataMap[src]->allLemma();
+          //std::set<StringsPoolIndex> destLemmas=dataMap[dest]->allLemma();
+  //       }
+  //       else
+  //       {
+  //         LDEBUG << "DepTripleDumper::dumpDependencyRelations: dump nothing.." << LENDL;
+  //       }DependencyGraphVertex
+        }
+        catch (const std::range_error& )
+        {
+        }
+        catch (...)
+        {
+          LDEBUG << "DepTripleDumper::dumpDependencyRelations: catch others....." << LENDL;
+        throw;
+        }
+      }
+      ++tokenId;
     }
+  
 
   // instead of looking to all vertices, follow the graph (in
   // morphological graph, some vertices are not related to main graph:
   // idiomatic expressions parts and named entity parts)
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-  std::vector<Segment>::iterator sbItr=(sb->getSegments().begin());
-  uint64_t nbSentences((sb->getSegments()).size());
-  cerr<< "\n il y a "<< nbSentences << " phrases"<< endl;
 
-  while (sbItr!=(sb->getSegments().end()))//a chaque phrase
-    {
-    LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
-    LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
 
-    LinguisticGraphOutEdgeIt outItr,outItrEnd;
-    std::queue<LinguisticGraphVertex> toVisit;
-    std::set<LinguisticGraphVertex> visited;
-    std::map<LinguisticGraphVertex, int>vertexIdMapping;
+  // std::map<LinguisticGraphVertex, list<int, Token*, SyntacticData, QString>>vertexIdMapping2;
+
+    if(toVisit.empty()){
+      cerr<<"la liste est reinitialisee"<<endl;
+    }
+    sentenceBegin=sbItr->getFirstVertex();
+    sentenceEnd=sbItr->getLastVertex();
+    std::cerr << "begin - end: " << sentenceBegin << " - " << sentenceEnd << std::endl;
     toVisit.push(sentenceBegin);
-    int tokenId = 1;
-    while (!toVisit.empty()) {
+
+    //std::cerr << "begin - end: " << sentenceBegin << " - " << sentenceEnd << std::endl;
+
+    while (!toVisit.empty()) {//tant qu'il y a des noeuds dans le segment
+      cerr<< "deuxieme parcours des phrases" << endl;
       LinguisticGraphVertex v=toVisit.front();
       toVisit.pop();
+      visited.insert(v);
       //if (v == tokenList->lastVertex())
+      LinguisticGraphVertex source=vertexDependencyInformations.find(v)->first;
+      LinguisticGraphVertex sourceConllId=segmentationMapping[source];
+      //string relName=vertexDependencyInformations.find(v)->second.second;
+      Token* ft=get(vertex_token,*graph,v);
+      MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
+      cerr<< "le numero de token dans le graphe est "<< v <<endl;
+      //if( morphoData!=0 && v != sentenceBegin) {
+      if( morphoData!=0) {
+        cerr<< "token" << endl;
+        const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+        const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
+
+        const QString graphTag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(m_propertyAccessor)));
+
+        cerr << tokenId << "\t"<< ft->stringForm().toStdString() << "\t" << sp[(*morphoData)[0].lemma].toUtf8().data() << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << sourceConllId << endl;
+      }
+
       if (v == sentenceEnd)
       {
         continue;
       }
-
-    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
-    {
-      LinguisticGraphVertex next=target(*outItr,*graph);
-      if (visited.find(next)==visited.end())
+      cerr<<v <<" est different de "<< sentenceEnd<<endl;
+      LinguisticGraphOutEdgeIt outItr,outItrEnd;
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
       {
+        LinguisticGraphVertex next=target(*outItr,*graph);
+        if (visited.find(next)==visited.end())
+        {
         visited.insert(next);
-       toVisit.push(next);
-      }
-    }
-    Token* ft=get(vertex_token,*graph,v);
-    MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
-
-
-    if( morphoData!=0) {
-      const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-      const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
-
-      const QString graphTag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(m_propertyAccessor)));
-      vertexIdMapping[v]=tokenId;
-
-      cerr << tokenId << "\t"<< ft->stringForm().toStdString() << "\t" << sp[(*morphoData)[0].lemma].toUtf8().data() << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << endl;
+        toVisit.push(next);
         }
+      }
       ++tokenId;
-      }      
-      cerr<<"\n";
+    }
+    cerr << "\n";
     sbItr++;
-    }  
-  return SUCCESS_ID;
+  }
+ 
+return SUCCESS_ID;
+
 }
 
 
