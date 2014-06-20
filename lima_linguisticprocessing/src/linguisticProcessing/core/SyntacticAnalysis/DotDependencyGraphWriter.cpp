@@ -283,7 +283,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
                        syntacticData,
                        annotationData);
       }      
-      ofs << "};"<<std::endl;
+      ofs << "}"<<std::endl;
     }
   }
   else // output mode
