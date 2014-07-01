@@ -111,8 +111,8 @@ void SyntacticAnalyzerChains::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No ponctu macrocategory defined ! use category L_PONCTU";
-    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue("L_PONCTU");
+    LWARN << "No ponctu macrocategory defined ! use category PONCTU";
+    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue("PONCTU");
   }
 
 }

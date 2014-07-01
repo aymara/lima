@@ -262,7 +262,7 @@ void TextDumper::outputVertex(std::ostream& out,
     if(m_verbTenseFlag ==  "True"){
       std::ostringstream os4;
       bool wordIsVerb = false;
-      std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("L_VERBE");
+      std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("V");
       if (subStrPos != std::string::npos){
         wordIsVerb = true;
       }

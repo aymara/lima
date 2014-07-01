@@ -354,7 +354,7 @@ std::string ConllDumper::outputVertex(std::ostream& out,
           {
             std::ostringstream os4;
             bool wordIsVerb = false;
-            std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("L_VERBE");
+            std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("V");
             if (subStrPos != std::string::npos){
               wordIsVerb = true;
             }

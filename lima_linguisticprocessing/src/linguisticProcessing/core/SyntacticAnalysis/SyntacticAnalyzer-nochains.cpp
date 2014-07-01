@@ -51,8 +51,8 @@ void SyntacticAnalyzerNoChains::init(
 {
   SACLOGINIT;
   m_language=manager->getInitializationParameters().media;
-  m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("L_MACRO"));
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("L_MACRO_MICRO"));
+  m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
+  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
   {
     std::string chainMatrixId=unitConfiguration.getParamsValueAtKey("chainMatrix");
@@ -88,12 +88,12 @@ void SyntacticAnalyzerNoChains::init(
   try
   {
     std::string id=unitConfiguration.getParamsValueAtKey("ponctuCategory");
-    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("L_MACRO").getPropertyValue(id);
+    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue(id);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No ponctu macrocategory defined ! use category L_PONCTU";
-    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("L_MACRO").getPropertyValue("L_PONCTU");
+    LWARN << "No ponctu macrocategory defined ! use category PONCTU";
+    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue("PONCTU");
   }
 
 }
@@ -170,7 +170,7 @@ void SyntacticAnalyzerNoChains::identifyChains(SyntacticData* data,
   std::set< std::string > alreadyReported;
   LinguisticGraphVertex first = data->iterator()-> firstVertex();
   LinguisticGraphVertex last = data->iterator()-> lastVertex();
-  VertexDataPropertyMap dataMap = get(vertex_data, (*data->iterator()->getGraph() ) );
+//   VertexDataPropertyMap dataMap = get(vertex_data, (*data->iterator()->getGraph() ) );
 //   VertexTokenPropertyMap tokenMap =get(vertex_token, (*data->iterator()->getGraph() ) );
 
   std::vector< ChainStackTuple > pile;

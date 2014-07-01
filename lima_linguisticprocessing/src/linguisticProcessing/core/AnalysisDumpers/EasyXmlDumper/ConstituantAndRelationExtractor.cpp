@@ -513,7 +513,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
           relationsToFollow.insert("ADVADV");
           relationsToFollow.insert("PrepPronRelCa");
           relationsToFollow.insert("SUBSUBJUX;NPP;NPP");
-//           relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;NC");
+//           relationsToFollow.insert("SUBSUBJUX;U;NC");
           LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GP group";
           newGrp = createGroupe(forme, relationsToFollow, "GP");
 
@@ -599,7 +599,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         relationsToFollow.insert("COORD1");
         relationsToFollow.insert("COORD2");
         relationsToFollow.insert("SUBSUBJUX;NPP;NPP");
-//         relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;L_NC_INCONNU");
+//         relationsToFollow.insert("SUBSUBJUX;U;U");
         newGrp = createGroupe(forme, relationsToFollow, "GP");
 
         if(newGrp == 0)

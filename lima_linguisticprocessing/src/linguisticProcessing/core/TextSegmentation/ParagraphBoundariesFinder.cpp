@@ -101,11 +101,11 @@ LimaStatusCode ParagraphBoundariesFinder::process(
 
   LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
   
-  vector<int> paragraphPositions;
+  std::vector<uint64_t> paragraphPositions;
   int currentPos=0;
   int i=text->indexOf(m_paragraphSeparator,currentPos);
   while (i!=-1) {
-    paragraphPositions.push_back(i);
+    paragraphPositions.push_back((uint64_t)i);
     // goto next char that is not a carriage return
     currentPos=text->indexOf(QRegExp(QString("[^")+ m_paragraphSeparator+"]"),i+1);
     i=text->indexOf(m_paragraphSeparator,currentPos);

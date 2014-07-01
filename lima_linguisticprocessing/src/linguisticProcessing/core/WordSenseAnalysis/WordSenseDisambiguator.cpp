@@ -180,7 +180,7 @@ void WordSenseDisambiguator::init(
       deque<string> tmpDeque = unitConfiguration.getListsValueAtKey("NounContextList");
       for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++) 
       {
-  m_contextList["L_N"].insert(tmpDeque.begin(), tmpDeque.end());
+        m_contextList["L_N"].insert(tmpDeque.begin(), tmpDeque.end());
       }
       tmpDeque.clear();
     }
@@ -223,11 +223,11 @@ void WordSenseDisambiguator::init(
 
   m_macroAccessor=&macroManager.getPropertyAccessor();
   
-  m_L_NC = macroManager.getPropertyValue("L_NC");
-  m_L_NP = macroManager.getPropertyValue("L_NP");
-  m_L_V = macroManager.getPropertyValue("L_V");
-  m_L_ADJ = macroManager.getPropertyValue("L_ADJ");
-  m_L_ADV = macroManager.getPropertyValue("L_ADV");
+  m_L_NC = macroManager.getPropertyValue("NC");
+  m_L_NP = macroManager.getPropertyValue("NP");
+  m_L_V = macroManager.getPropertyValue("V");
+  m_L_ADJ = macroManager.getPropertyValue("ADJ");
+  m_L_ADV = macroManager.getPropertyValue("ADV");
 }
 
 

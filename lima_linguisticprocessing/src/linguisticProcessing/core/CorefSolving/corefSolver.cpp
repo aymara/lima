@@ -138,7 +138,7 @@ void CorefSolver::init(
     {
       m_undefPronouns.insert(microManager.getPropertyValue((*it)));
     }
-    m_conjCoord = microManager.getPropertyValue("L_CONJ_COORD");
+    m_conjCoord = microManager.getPropertyValue("CC");
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& )
   {
@@ -340,18 +340,6 @@ LimaStatusCode CorefSolver::process(
         (*candidateItr)->salience((*candidateItr)->salience()/2);
       }
     }
-
-    // ces lignes servaient en fait avant que je change le code sur la césure des phrases
-    // ie : avant L_PONCTU-L_PONCTU_MISE_EN_EVIDENCE était un token troncateur de phrase mais il ne l'est plus.
-//     LinguisticAnalysisStructure::Token* token=get(vertex_token, *anagraph->getGraph(), *boundItr);
-//     while (token != 0 && (limastring2utf8stdstring(token->stringForm()) == "\"" || limastring2utf8stdstring(token->stringForm()) == "'"))
-//     {
-//       boundItr++;
-//       token=get(vertex_token, *anagraph->getGraph(), *boundItr);
-//     } 
-    //////////
-    //LinguisticGraphVertex endSentence=*boundItr;
-
 
     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 
