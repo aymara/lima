@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
-current_branch=`git rev-parse --abbrev-ref HEAD`
+#current_branch=`git rev-parse --abbrev-ref HEAD`
 current_project=`basename $PWD`
 build_prefix=$LIMA_BUILD_DIR/$current_branch/$current_project
 source_dir=$PWD
