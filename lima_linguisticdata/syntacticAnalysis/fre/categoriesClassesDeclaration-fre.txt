@@ -5,6 +5,7 @@
 set encoding=utf8
 set entityTypes=SyntacticRelations
 
+
 #----------------------------------------------------------------------
 # microcategories classes
 #----------------------------------------------------------------------
@@ -13,7 +14,7 @@ set entityTypes=SyntacticRelations
 
 @NomPropre=($NP)
 
-@Adjectif=($ADJ,$V-VPP)
+@Adjectif=($ADJ,$V-VPP) 
 
 @Prep=($PREP)
 
@@ -68,36 +69,17 @@ $DET-DETWH,
 $DET-DET,
 $DET-DET)
 
-@AdjPren=($ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ)
+@AdjPren=($ADJ)
 
-@AdjPost=($ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
+@AdjPost=($ADJ,
 $V-VPP)
 
-@AdjPostNum=($ADJ-ADJ,
-$ADJ-ADJ)
+@AdjPostNum=($ADJ)
 
 
 # suppression des Adj PostN: $ADJ-ADJ,$ADJ-ADJ
 # suppression de $V-VPP
-@AdjAvecSubCompDeAdj=($ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ
-)
+@AdjAvecSubCompDeAdj=($ADJ)
 
 
 @PrepCompDuNom=(d',de,du,des,à,au,aux,en,ès,sur)
@@ -106,89 +88,56 @@ $ADJ-ADJ
 
 @PrepComp=(
 $PREP-P,
-$PREP-P,
-$DET-DET)
+$DET-DETDU)
 
 @PrepGVInf=($PREP-P)
+
+@PrepEtContracte=($PREP,du,des)
 
 @AdvPos=($ADV-ADV,
 $ADV-ADV,
 $ADV-ADV,
 $ADV-ADV)
 
-@AdvModifieurAdj=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdvModifieurAdj=($ADV)
 
-@AdvModifieurVerbePrev=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdvModifieurVerbePrev=($ADV)
 
-@AdvModifieurVerbePostv=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdvModifieurVerbePostv=($ADV)
 
 
-@AdvModifieurAdv=($ADV-ADV)
+@AdvModifieurAdv=($ADV)
 
-@AdvModifieParAdv=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdvModifieParAdv=($ADV)
 
-@AdverbePositifDansChaineNominale=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdverbePositifDansChaineNominale=($ADV)
 
 @Aux=($V-V,
 $V-VINF,
 $V-VIMP,
 $V-VS)
 
-@AuxParticipe=($V-VPP,$V-VPP)
+@AuxParticipe=($V-VPP)
 
-@Participe=($V-VPP,$V-VPP,$V-VPP)
+@Participe=($V-VPP,$V-VPR)
 
-@ParticipePasse=($V-VPP,$V-VPP,$V-VPP)
+@ParticipePasse=($V-VPP)
 
 @ParticipePresent=($V-VPR)
 
-@AdvTempComp=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdvTempComp=($ADV-ADV)
 
 @Inc=($NC-NC)
 
-@IncNomPropre=($NP-NPP,
-$NP-NPP,
-$NC-NC)
-
+@IncNomPropre=($NP-NPP, $NC-NC)
 
 @DetInt=($DET-DETWH)
 
 @DetDemons=($DET-DET)
 
-@VerbeDansQuestion=($V-V,
-$V-V)
+@VerbeDansQuestion=($V-V)
 
-@VerbeInf=($V-VINF,
-$V-VINF,
-$V-VINF,
-$V-VINF)
+@VerbeInf=($V-VINF)
 
 @PronIndef=($PRON-PRO)
 
@@ -196,8 +145,9 @@ $V-VINF)
 
 @PronPersSujInverse=($PRON-CLS)
 
-@PronPersSuj=($PRON-CLS,  
-$PRON-CLS)
+@PronPersSuj=($PRON-CLS)
+
+@PronSujNonConjoint=($PRON-CLS, $PRON-PRO)
 
 @PronPersCodPrev=($PRON-CLO)
 
@@ -213,10 +163,9 @@ $PRON-CLS)
 
 @PronRelS=($PRON-PROREL)
 
-@NegPrem=($ADV-ADV)
+@NegPrem=(ne,n')
 
-@NegSecond=($ADV-ADV,
-$ADV-ADV)
+@NegSecond=(pas)
 
 @Virg=(\,)
 
