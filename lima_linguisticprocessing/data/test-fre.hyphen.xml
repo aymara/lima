@@ -144,7 +144,7 @@
   <expl>tiret séparateur : présence de franco.</expl>
   <test id="fre.hyphen.3.2" trace=".hyphen.xml"
     comment="franco"
-    left="XPATH#//data_structure/vertex[token[position=10][length=6]][data/hyphen_alternative/form/@norm='franco-']"
+    left="XPATH#//data_structure/vertex[token[position=10][length=6]][data/hyphen_alternative/form/@norm='franco']"
     operator="exists"
     right=""/>
 </testcase>
@@ -174,7 +174,7 @@
   <expl>pro est reconnu comme préfixe et non comme 'professionel'</expl>
   <test id="fre.hyphen.4.1" trace=".hyphen.xml"
     comment="reconnaissance pro- "
-    left="XPATH#//data_structure/vertex[token[position=17][length=3]][data/hyphen_alternative/form/@norm='pro-']"
+    left="XPATH#//data_structure/vertex[token[position=17][length=3]][data/hyphen_alternative/form/@norm='pro']"
     operator="exists"
     right=""/>
   <test id="fre.hyphen.4.2" trace=".hyphen.xml"

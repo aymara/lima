@@ -627,12 +627,12 @@
     </call-parameters>
   <expl>reconnaissance expression non conjointe avec désaccentuation</expl>
   <test id="fre.idiom.24.1" trace=".idiom.xml"
-    comment="prendre part est reconnu comme expression idiomatique"
+    comment="mettre en oeuvre est reconnu comme expression idiomatique"
     left="XPATH#//data_structure/vertex/token[position=4][length=21]"
     operator="exists"
     right=""/> 
   <test id="fre.idiom.24.1" trace=".idiom.xml"
-    comment="prendre part est découpé correctement"
+    comment="mettre en oeuvre est découpé correctement"
     left="XPATH#//data_structure/vertex/token[position=4][length=21]/string"
     operator="="
     right="mettra en oeuvre"/> 
@@ -835,7 +835,7 @@
     comment="le token résultant a les bonnes propriétés (mode: change la micro)"
     left="XPATH#//data_structure/vertex[token[position=18][length=17]]/data//property/p[@prop='MICRO']/@val"
     operator="="
-    right="VERBE_PRINCIPAL_SUBJONCTIF"/> 
+    right="VS"/> 
 </testcase>
 
 <testcase id="fre.idiom.33" type="pertinent">
