@@ -110,7 +110,7 @@
         <param key="dictionary" value="fakeDictionary"/>
         <param key="confidentMode" value="true"/>
         <param key="charChart" value="flatcharchart"/>
-        <param key="parseConcatenated" value="true"/>
+        <param key="parseConcatenated" value="false"/>
     </group>
     <group name="hyphenWordAlternatives" class="HyphenWordAlternatives">
       <param key="dictionary" value="mainDictionary"/>
@@ -162,7 +162,6 @@
        <param key="graph" value="PosGraph"/>
       <list name="micros">
         <item value="PONCTU_FORTE" />  
-        <item value="L_PONCTU_PARAGRAPHE" />
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
