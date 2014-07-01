@@ -14,6 +14,13 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
+ADD_SA_RULES_DEPENDS(fre
+        chainsMatrix-fre.bin
+        categoriesClassesDeclaration-fre.txt
+        compoundTenses-fre.bin
+)
+
 set(FRE_RULES_FILES
   rules-l2r-fre-homodeps.txt
   rules-fre-heterodeps.txt
@@ -29,9 +36,10 @@ set(FRE_RULES_FILES
   simplification-rules-fre.txt
   rules-l2r-fre-dummy.txt
   rules-compoundTense.txt
-  rules-fre-coord.txt
+  rules-fre-coord.txt 
 )
 COMPILE_SA_RULES_WRAPPER (fre ${FRE_RULES_FILES})
+
 
 # install(
 #   FILES
