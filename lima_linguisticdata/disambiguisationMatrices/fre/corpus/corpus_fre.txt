@@ -8055,7 +8055,7 @@ un	DET
 des	DETDES
 plus	ADV
 importants	ADJ
-contingents	ADJ
+contingents	NC
 en	P
 Irak	NPP
 .	PONCTU_FORTE
