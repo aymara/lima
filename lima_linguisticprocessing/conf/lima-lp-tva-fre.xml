@@ -166,7 +166,6 @@
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
       <param key="chainMatrix" value="chainMatrix"/>
-      <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>
       <param key="maxChainLength" value="12"/>
     </group>
@@ -179,7 +178,6 @@
           <item value="r2lHomoSyntagmaticRelationRules"/>
           <item value="compoundTensesRules"/>
         </list>
-        <param key="disambiguated" value="true"/>
         <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
     <group name="syntacticAnalyzerDepsHetero" class="SyntacticAnalyzerDepsHetero">
