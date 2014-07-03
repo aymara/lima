@@ -24,8 +24,6 @@ set entityTypes=SyntacticRelations
 
 @Adverbe=($ADV)
 
-@Determinant=($DET)
-
 @NonVerbe=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV)
 
 @Tout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$PONCTU)
@@ -42,37 +40,27 @@ set entityTypes=SyntacticRelations
 
 @NounGroupElt=($ADV,$ADJ,$PREP,$DET,$V-VPP,$V-VPP)
 
-# do not include NC to avoid SubSubJux in "en quelle année Jean..."
-@SubsNonNum=($NC-NC,
-$NC-NC,
-$NC-NC,
-$NC-NC)
+@SubsNonNum=($NC-NC)
 
+@Determinant=($DET)
 
-@DetArt=($DET-DET,$DET-DET)
+@DetInt=($DET-DETWH)
+
+@DetDemons=($DET-DET)
+
+@DetArt=(le,la,les)
 
 @DetDef=($DET-DET)
 
-@DetIndef=($DET-DET,$DET-DET)
+@DetIndef=($DET-DET)
 
-@DetNum=($DET-DET,
-$NC-NC)
+@DetNum=($DET-DETNUM,$NC-NC)
 
-@DetAvantCOD=($DET-DET,
-$DET-DET,
-$DET-DET,
-$DET-DET,
-$DET-DET,
-$DET-DET,
-$DET-DET,
-$DET-DETWH,
-$DET-DET,
-$DET-DET)
+@DetAvantCOD=($DET-DET,$DET-DETWH)
 
 @AdjPren=($ADJ)
 
-@AdjPost=($ADJ,
-$V-VPP)
+@AdjPost=($ADJ,$V-VPP)
 
 @AdjPostNum=($ADJ)
 
@@ -86,25 +74,19 @@ $V-VPP)
 #pour peut servir pour complement du nom ou pour complément circonstanciel...
 
 
-@PrepComp=(
-$PREP-P,
-$DET-DETDU)
+@PrepComp=($PREP-P,$DET-DETDU)
 
 @PrepGVInf=($PREP-P)
 
 @PrepEtContracte=($PREP,du,des)
 
-@AdvPos=($ADV-ADV,
-$ADV-ADV,
-$ADV-ADV,
-$ADV-ADV)
+@AdvPos=($ADV-ADV)
 
 @AdvModifieurAdj=($ADV)
 
 @AdvModifieurVerbePrev=($ADV)
 
 @AdvModifieurVerbePostv=($ADV)
-
 
 @AdvModifieurAdv=($ADV)
 
@@ -127,13 +109,9 @@ $V-VS)
 
 @AdvTempComp=($ADV-ADV)
 
-@Inc=($NC-NC)
+@Inc=($DIVERS-U)
 
-@IncNomPropre=($NP-NPP, $NC-NC)
-
-@DetInt=($DET-DETWH)
-
-@DetDemons=($DET-DET)
+@IncNomPropre=($NP-NPP, $DIVERS-U)
 
 @VerbeDansQuestion=($V-V)
 
