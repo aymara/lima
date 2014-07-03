@@ -72,11 +72,13 @@ define subautomaton InciseGroup {
 =<ClearStoredRelations()
 
 # "Hamburger 99"
-@AdjPostNum:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
-+SecondUngovernedBy(trigger.1,left.1,"ANY")
-+CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+# This rule has to be rewritten with the AdjPostNum (does not exist  in Lima 
+# Libre) trigger replaced by a number specific entity
+#@AdjPostNum:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
+#+SecondUngovernedBy(trigger.1,left.1,"ANY")
+#+CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
 $V-VPP:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,left.1,"ANY")
@@ -89,14 +91,15 @@ $V-VPP:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::
 # # # ca n'a pas ete possible pour cause d'accord par exemple, on cherche un nom dont le nom
 # # # juste avant l'adjectif est complement du nom
 # # ex: quantites d'eau supplementaires
-# @AdjPost:@Substantif (@PrepComp @Substantif){1-n} (@ConjCoord @PrepComp @Substantif (@AdjPost)?)? ((@PrepComp|@AdjPost|@AdvModifieurAdj){0-2} ((@Virg)? (@AdvModifieurAdj){0-3} @AdjPren){0-2} (@ConjCoord (@AdvModifieurAdj){0-3})?)?::SYNTACTIC_RELATION:
 # +!GovernorOf(trigger.1,"ANY")
-# +SecondUngovernedBy(trigger.1,left.1,"ANY")
-# +GenderAgreement(trigger.1,left.1)
-# +NumberAgreement(trigger.1,left.1)
-# +CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
-# =>AddRelationInGraph()
-# =<ClearStoredRelations()
+
+@AdjPost:@Substantif (@PrepComp @Substantif){1-n} (@ConjCoord @PrepComp @Substantif (@AdjPost)?)? ((@PrepComp|@AdjPost|@AdvModifieurAdj){0-2} ((@Virg)? (@AdvModifieurAdj){0-3} @AdjPren){0-2} (@ConjCoord (@AdvModifieurAdj){0-3})?)?::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++GenderAgreement(trigger.1,left.1)
++NumberAgreement(trigger.1,left.1)
++CreateRelationBetween(trigger.1,left.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
 
 # essai: attachement ambigu
 # ex: quantites d'eau supplementaires
@@ -264,30 +267,6 @@ $NC::@PrepComp $DET? $ADV{0-3} $ADJ? ($NC|$NP) @TensedVerbSuj:SYNTACTIC_RELATION
 +CreateRelationBetween(right.5,left.1,"COMPDUNOM")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
-
-# in case of already found ambiguous COMPDUNOM thus with PREPSUB
-@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
-+!GovernorOf(left.1,"SUBSUBJUX")
-+GovernorOf(trigger.1,"PREPSUB")
-+GovernorOf(right.5,"COMPDUNOM")
-+SecondUngovernedBy(right.5,left.1,"ANY")
-+CreateRelationBetween(right.5,left.1,"COMPDUNOM")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-
-# in case of already found ambiguous COMPDUNOM thus with PREPSUB
-@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
-+!GovernorOf(left.1,"SUBSUBJUX")
-+GovernorOf(trigger.1,"PREPSUB")
-+GovernorOf(right.4,"COMPDUNOM")
-+SecondUngovernedBy(right.4,left.1,"ANY")
-+CreateRelationBetween(right.4,left.1,"COMPDUNOM")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-
-
 
 ########################################
 # Regles adaptees pour les mots inconnus
