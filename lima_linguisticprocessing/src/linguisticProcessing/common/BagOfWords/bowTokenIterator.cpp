@@ -291,7 +291,7 @@ void BoWTokenIteratorPrivate::storePartsInQueue(const BoWToken* token) {
   if (!addPartElementsInQueue(token,partTokens)) {
     BOWLOGINIT;
     LWARN << "Token contain too many subparts (some are ignored): " 
-      << Common::Misc::limastring2utf8stdstring(token->getLemma());
+      << token->getLemma();
   }
 }
 

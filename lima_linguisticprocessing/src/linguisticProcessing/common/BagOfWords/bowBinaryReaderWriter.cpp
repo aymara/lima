@@ -570,12 +570,10 @@ void BoWBinaryWriterPrivate::writeComplexTokenParts(std::ostream& file,
             std::map<BoWToken*,uint64_t>::const_iterator
             ref=refMap.find(parts[i].getBoWToken());
             if (ref == refMap.end()) {
-                std::ostringstream oss;
-                oss << "write():undefined pointer in complex token ("<< parts[i].getBoWToken()
-                <<"/"<< Misc::limastring2utf8stdstring(parts[i].getBoWToken()->getLemma())
-                <<"): maybe forward reference";
                 BOWLOGINIT;
-                LERROR << oss.str();
+                LERROR << "write():undefined pointer in complex token ("<< parts[i].getBoWToken()
+                <<"/"<< parts[i].getBoWToken()->getLemma()
+                <<"): maybe forward reference";
                 throw LimaException();
             }
             uint64_t refnum=(*ref).second;

@@ -352,15 +352,15 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   //LinguisticGraphVertex right=position.forward();
 
   AULOGINIT;
-  //LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
-  //   LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
-  // if (logger.isDebugEnabled()) {
-  //  std::ostringstream oss;
-  //  for (SetOfRules::const_iterator it=rules.begin(),it_end=rules.end();it!=it_end;it++) {
-  //    oss << " - " << (*it)->getWeight();
-  //  }
-  //  LDEBUG << "Rule weights" << oss.str();
-  //}
+  LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
+    LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
+  if (logger.isDebugEnabled()) {
+   std::ostringstream oss;
+   for (SetOfRules::const_iterator it=rules.begin(),it_end=rules.end();it!=it_end;it++) {
+     oss << " - " << (*it)->getWeight();
+   }
+   LDEBUG << "Rule weights" << oss.str();
+  }
   
   bool reapplySameRule(false);
 
@@ -370,11 +370,11 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   for (; rule!=rule_end; rule++) {
     Rule* currentRule=*rule;
 
-    // if (logger.isDebugEnabled()) {
-    //   LDEBUG << "testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
-    //          << currentRule->getType() << ",reapply="
-    //          << reapplySameRule << " from " << position;
-    // }
+    if (logger.isDebugEnabled()) {
+      LDEBUG << "testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
+             << currentRule->getType() << ",reapply="
+             << reapplySameRule << " from " << position;
+    }
 
     if (forbiddenTypes &&
         forbiddenTypes->find(currentRule->getType())
@@ -457,16 +457,16 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     if (logger.isDebugEnabled()) {
       LinguisticGraphVertex v=position;
-      std::string str("");
+      LimaString str("");
       Token* token=get(vertex_token,*(graph.getGraph()),position);
       if (token!=0) {
-        str = Common::Misc::limastring2utf8stdstring(token->stringForm());
+        str = token->stringForm();
       }
       if (success) {
         LDEBUG << "trigger " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success=" << success 
                << ",actionSuccess=" << actionSuccess;
-        LDEBUG << "        matched: '" << Lima::Common::Misc::limastring2utf8stdstring(match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language))) << "'";
+        LDEBUG << "        matched: '" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language)) << "'";
       }
       else {
         LDEBUG << "vertex " << v << "[" << str << "]:rule " 
@@ -488,12 +488,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         matches.push_back(*match);
         delete match; // a copy has been made
         match=0;
-/*        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
           LDEBUG << "Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty (" 
             << (recoData->getNextVertices().empty()) 
             << ")";
-        }*/
+        }
         return 1;
       }
       else {

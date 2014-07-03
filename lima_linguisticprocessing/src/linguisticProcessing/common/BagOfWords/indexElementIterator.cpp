@@ -253,7 +253,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const uint64_t id,
   m_partQueue.push_back(IndexElement(id,word,cat,position,length,neType,reType));
 //   BOWLOGINIT;
 //   LDEBUG << "add in part queue " << id << ":" 
-//          << Common::Misc::limastring2utf8stdstring(word)
+//          << word
 //          << ";size of queue=" << m_partQueue.size()
 //         ;
   return true;
@@ -314,7 +314,7 @@ void IndexElementIteratorPrivate::storePartsInQueue(const BoWToken* token,const 
   if (!addPartElementsInQueue(token,tokenIds,rel)) {
     BOWLOGINIT;
     LWARN << "Token contain too many subparts (some are ignored): " 
-      << Common::Misc::limastring2utf8stdstring(token->getLemma());
+      << token->getLemma();
   }
 }
 
@@ -323,7 +323,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
                        uint64_t rel) 
 {
 //   BOWLOGINIT;
-//    LDEBUG << "addPartElementsInQueue:" << Common::Misc::limastring2utf8stdstring(token->getLemma()) << ", rel=" << rel;
+//    LDEBUG << "addPartElementsInQueue:" << token->getLemma() << ", rel=" << rel;
 
   Common::MediaticData::EntityType neType;
   

@@ -307,7 +307,7 @@ operator()(RecognizerMatch& result,
       // ignore current idiomatic expression, continue
       APPRLOGINIT;
       LWARN << "recognized entity ignored: " 
-        << Common::Misc::limastring2utf8stdstring(result.concatString())
+        << result.concatString()
             << ": overlapping with a previous one";
       return false;
     }
@@ -343,7 +343,7 @@ operator()(RecognizerMatch& result,
       // ignore current expression, continue
       APPRLOGINIT;
     LWARN << "alternative expression ignored: " 
-        << Common::Misc::limastring2utf8stdstring(result.concatString())
+        << result.concatString()
             << ": overlapping with a previous one";
       return false;
     }

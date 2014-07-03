@@ -275,7 +275,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
     return 0;
   if(checkFullTokens){
     LDEBUG << "ConstituantAndRelationExtractor:: check token " << v  << "(" 
-           << Common::Misc::limastring2utf8stdstring(token->stringForm()) << ")";
+           << token->stringForm() << ")";
     std::map< LinguisticAnalysisStructure::Token*, uint64_t >::const_iterator tokenIter;
     tokenIter = fullTokens.find(token);
     if(tokenIter != fullTokens.end())
@@ -288,7 +288,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
   }
 
   LDEBUG << "ConstituantAndRelationExtractor:: extract vertex " << v << "(" 
-         << Common::Misc::limastring2utf8stdstring(token->stringForm()) << ")";
+         << token->stringForm() << ")";
   Forme* forme = new Forme();
   forme->id = v;
   forme->forme = Common::Misc::limastring2utf8stdstring(token->stringForm());

@@ -124,7 +124,7 @@ void BowGenerator::init(
       m_stopList=static_cast<StopList*>(LinguisticResources::single().getResource(m_language,stoplist));
       LDEBUG << "BowGenerator.init(): STOPLIST:";
       for( StopList::const_iterator wordIt = m_stopList->begin() ; wordIt != m_stopList->end() ; wordIt++ ) {
-        LDEBUG << "BowGenerator.init(): " << Common::Misc::limastring2utf8stdstring(*wordIt);
+        LDEBUG << "BowGenerator.init(): " << *wordIt;
       }
     }
     catch (NoSuchParam& )
@@ -647,7 +647,7 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
   if (m_useEmptyMacro && ldata.isAnEmptyMacroCategory(m_macroAccessor->readValue(elem.properties)))
   {
     LDEBUG << "BowGenerator: token ("
-      << Common::Misc::limastring2utf8stdstring(sp[elem.lemma]) << "|"
+      << sp[elem.lemma] << "|"
       << elem.properties << ") not kept : macro category is empty ";
     return false;
   }
@@ -656,26 +656,26 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
   if (m_useEmptyMicro && ldata.isAnEmptyMicroCategory(m_microAccessor->readValue(elem.properties)))
   {
     LDEBUG << "BowGenerator: token ("
-      << Common::Misc::limastring2utf8stdstring(sp[elem.lemma]) << "|"
+      << sp[elem.lemma] << "|"
       << elem.properties << ") not kept : micro category is empty ";
     return false;
   }
  
-   LDEBUG << "BowGenerator: check token (" << Common::Misc::limastring2utf8stdstring(sp[elem.normalizedForm]) << ")";
+   LDEBUG << "BowGenerator: check token (" << sp[elem.normalizedForm] << ")";
    if (m_useStopList && m_stopList!=0 && (m_stopList->find(sp[elem.normalizedForm]) != m_stopList->end()))
    {
      LDEBUG << "BowGenerator: token (" 
-       << Common::Misc::limastring2utf8stdstring(sp[elem.lemma]) << "|" 
+       << sp[elem.lemma] << "|" 
        << elem.properties << ") not kept : normalization " 
-       << Common::Misc::limastring2utf8stdstring(sp[elem.normalizedForm]) 
+       << sp[elem.normalizedForm] 
        << " is in stoplist";
      return false;
    }
  
    LDEBUG << "BowGenerator: token (" 
-     << Common::Misc::limastring2utf8stdstring(sp[elem.lemma]) << "|" 
+     << sp[elem.lemma] << "|" 
      << elem.properties << "), normalization " 
-     << Common::Misc::limastring2utf8stdstring(sp[elem.normalizedForm]) << " kept";
+     << sp[elem.normalizedForm] << " kept";
 
   return true;
 }
@@ -895,10 +895,9 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
   std::set< std::string > alreadyStored;
 
   // build BoWNamedEntity
-  std::string typeName("");
+  LimaString typeName("");
   try {
-    LimaString str= MediaticData::single().getEntityName(se->getType());
-    typeName=Common::Misc::limastring2utf8stdstring(str);
+    typeName = MediaticData::single().getEntityName(se->getType());
   }
   catch (std::exception& e) {
     LERROR << "Undefined entity type " << se->getType();
@@ -948,7 +947,7 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
                                       offset+(*p).position,
                                       (*p).length);
       bowToken->setInflectedForm((*p).inflectedForm);
-      LDEBUG << "BowGenerator: specific entity part infl " << Common::Misc::limastring2utf8stdstring((*p).inflectedForm);
+      LDEBUG << "BowGenerator: specific entity part infl " << (*p).inflectedForm;
     
       bowNE->addPart(bowToken,false);
 
@@ -1137,8 +1136,7 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
         if (! m_keepAllNamedEntityParts &&
               ! shouldBeKept(elem))
         {
-          LDEBUG << "BowGenerator: part of named entity not kept: " 
-            << Common::Misc::limastring2utf8stdstring(token->stringForm());
+          LDEBUG << "BowGenerator: part of named entity not kept: " << token->stringForm();
           continue;
         }
 

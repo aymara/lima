@@ -347,7 +347,7 @@ QDebug& operator<<(QDebug& os, const IndexElement& elt) {
     return os;
   }
   if (elt.isSimpleTerm()) {
-  os << ":" << Common::Misc::limastring2utf8stdstring(elt.m_d->m_word);
+    os << ":" << elt.m_d->m_word;
     if (elt.m_d->m_category != 0) {
       os << "/" << elt.m_d->m_category;
     }

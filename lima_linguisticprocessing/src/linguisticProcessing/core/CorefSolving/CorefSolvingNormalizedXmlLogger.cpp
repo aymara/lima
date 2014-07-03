@@ -119,7 +119,7 @@ namespace Lima
               LERROR << "One annotation on vertex " << *itv << " you are trying to cast is not a Coreference; Coreference not logged";
               for (int i = 0; i < 19 ; i++)
               {
-                LERROR << "annot "<< i << " : " << limastring2utf8stdstring(annotationData->annotationName(i)) ;
+                LERROR << "annot "<< i << " : " << annotationData->annotationName(i);
               }
               continue;
             }

@@ -359,7 +359,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
   const TStatus& status=token->status();
   if (status.getNumeric() == T_INTEGER) {
-    numValue=atoi(Common::Misc::limastring2utf8stdstring(token->stringForm()).c_str());
+    numValue=token->stringForm().toULong();
   }
   else {
     // get the normalized form : contains the numeric form
@@ -367,8 +367,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     MorphoSyntacticData* data = get(vertex_data,*(graph.getGraph()),v);
     for (MorphoSyntacticData::const_iterator  it=data->begin(),
            it_end=data->end(); it!=it_end; it++) {
-      string str=Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().stringsPool(m_language)[(*it).normalizedForm]);
-      numValue=atoi(str.c_str());
+      numValue=Common::MediaticData::MediaticData::single().stringsPool(m_language)[(*it).normalizedForm].toULong();
       if (numValue!=0) {
         break;
       }

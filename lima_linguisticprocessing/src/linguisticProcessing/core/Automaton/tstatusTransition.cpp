@@ -152,8 +152,8 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
 bool TStatusTransition::compareTStatus(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::TStatus& t) const {
     AULOGINIT;
     LDEBUG << "TStatusTransition::compareTStatus";
-    LDEBUG << "   rule  status: " << m_status.getStatus() << " ; " << Lima::Common::Misc::limastring2utf8stdstring(m_status.defaultKey());
-    LDEBUG << "   token status: " << t.getStatus() << " ; " << Lima::Common::Misc::limastring2utf8stdstring(t.defaultKey());
+    LDEBUG << "   rule  status: " << m_status.getStatus() << " ; " << m_status.defaultKey();
+    LDEBUG << "   token status: " << t.getStatus() << " ; " << t.defaultKey();
 
 //   if (t == 0) { LDEBUG << "   FALSE"; return false; }
   if (t == TStatus()) {
