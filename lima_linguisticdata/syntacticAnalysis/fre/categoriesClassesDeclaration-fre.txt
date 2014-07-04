@@ -65,7 +65,7 @@ set entityTypes=SyntacticRelations
 @AdjPostNum=($ADJ)
 
 
-# suppression des Adj PostN: $ADJ-ADJ,$ADJ-ADJ
+# suppression des Adj PostN: $ADJ-ADJ
 # suppression de $V-VPP
 @AdjAvecSubCompDeAdj=($ADJ)
 
@@ -282,9 +282,6 @@ $V-VINF)
 @PrepCirconstantielle=(dans$PREP,pour$PREP)
 
 @AttributSuj=($NC-NC,
-$ADJ-ADJ,
-$ADJ-ADJ,
-$ADJ-ADJ,
 $ADJ-ADJ,
 $V-VPP,
 $PRON-PRO,

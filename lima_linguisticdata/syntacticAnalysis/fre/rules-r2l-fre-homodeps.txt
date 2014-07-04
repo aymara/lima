@@ -259,7 +259,21 @@ $NC::@PrepComp $DET? $ADV{0-3} $ADJ? ($NC|$NP) @TensedVerbSuj:SYNTACTIC_RELATION
 =<ClearStoredRelations()
 
 # in case of already found ambiguous COMPDUNOM thus with PREPSUB
-@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+# "chien de race de mon frère" with frère -COMPDUNOM-> chien already found
+# trigger is the second preposition
+@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n} @PrepCompDuNom ((@DetIndef)? @Determinant)? @Substantif:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@Substantif|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
++!GovernorOf(left.1,"SUBSUBJUX")
++GovernorOf(trigger.1,"PREPSUB")
++GovernorOf(right.5,"COMPDUNOM")
++SecondUngovernedBy(right.5,left.5,"ANY")
++CreateRelationBetween(right.5,left.5,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# in case of already found ambiguous COMPDUNOM thus with PREPSUB
+# "conclusion d'un accord de paix" with paix -COMPDUNOM-> accord already found
+# trigger is the second preposition
+@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n} @PrepCompDuNom ((@DetIndef)? @Determinant)? @Substantif:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@Substantif|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +GovernorOf(trigger.1,"PREPSUB")
 +GovernorOf(right.5,"COMPDUNOM")
