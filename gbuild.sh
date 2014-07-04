@@ -75,7 +75,7 @@ current_branch=`git rev-parse --abbrev-ref HEAD`
 current_revision=`git rev-parse --short HEAD`
 current_timestamp=`git show -s --format=%ct HEAD`
 current_project=`basename $PWD`
-build_prefix=$AMOSE_BUILD_DIR/$current_branch
+build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
 if [[ $version = "rev" ]]; then
@@ -96,7 +96,7 @@ if [[ $mode == "release" ]]; then
 echo "version='$version'"
     install -d $build_prefix/release/$current_project
     pushd $build_prefix/release/$current_project
-    cmake -DAMOSE_RESOURCES="$resources" -DAMOSE_BUILD_TYPE="$buildtype" -DAMOSE_VERSION_RELEASE="$release" -DCMAKE_INSTALL_PREFIX=$AMOSE_DIST -DCMAKE_BUILD_TYPE=Release $source_dir
+    cmake -DLIMA_RESOURCES="$resources" -DLIMA_BUILD_TYPE="$buildtype" -DLIMA_VERSION_RELEASE="$release" -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Release $source_dir
     make -j$j && make test && make install && make package
     result=$?
     popd
@@ -104,7 +104,7 @@ else
     # default is : compile in debug mode in debug/ directory
     install -d $build_prefix/debug/$current_project
     pushd $build_prefix/debug/$current_project
-    cmake -DAMOSE_RESOURCES="$resources" -DAMOSE_BUILD_TYPE="$buildtype" -DAMOSE_VERSION_RELEASE=$release -DCMAKE_INSTALL_PREFIX=$AMOSE_DIST -DCMAKE_BUILD_TYPE=Debug $source_dir
+    cmake -DLIMA_RESOURCES="$resources" -DLIMA_BUILD_TYPE="$buildtype" -DLIMA_VERSION_RELEASE=$release -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Debug $source_dir
     make -j$j && make test && make install
     result=$?
     popd
