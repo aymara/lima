@@ -2,6 +2,8 @@
 project(pelf)
 cmake_minimum_required(VERSION 2.8)
 
+enable_testing()
+
 cmake_policy(SET CMP0017 NEW)
 
 SET(optionalLibs)
