@@ -28,21 +28,21 @@ Options default values are in parentheses.
                 some machines.
   -r resources  <precompiled|(build)> build the linguistic resources or use the
                 precompiled ones
-  -t buildtype  <text|textse|(all)> either build only linguistic analysis modules
-                (text), text only search engine (textse) or all amose (all)
   -v version    <(val)|rev> version number is set either to the value set by  
                 config files or to the short git sha1
 EOF
 exit 1
 }
 
+[ -z "$LIMA_BUILD_DIR" ] && echo "Need to set LIMA_BUILD_DIR" && exit 1;
+[ -z "$LIMA_DIST" ] && echo "Need to set LIMA_DIST" && exit 1;
+
 mode="debug"
 version="val"
-buildtype="all"
 resources="build"
 parallel="true"
 
-while getopts ":m:p:r:t:v:" o; do
+while getopts ":m:p:r:v:" o; do
     case "${o}" in
         m)
             mode=${OPTARG}
@@ -55,10 +55,6 @@ while getopts ":m:p:r:t:v:" o; do
         r)
             resources=${OPTARG}
             [[ "$resources" == "precompiled" || "$resources" == "build" ]] || usage
-            ;;
-        t)
-            buildtype=${OPTARG}
-            [[ "$buildtype" == "text" || "$buildtype" == "textse" || "$buildtype" == "all" ]] || usage
             ;;
         v)
             version=$OPTARG
@@ -92,22 +88,20 @@ echo "Linear build"
 j="1"
 fi
 
+# export VERBOSE=1
 if [[ $mode == "release" ]]; then
-echo "version='$version'"
-    install -d $build_prefix/release/$current_project
-    pushd $build_prefix/release/$current_project
-    cmake -DLIMA_RESOURCES="$resources" -DLIMA_BUILD_TYPE="$buildtype" -DLIMA_VERSION_RELEASE="$release" -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Release $source_dir
-    make -j$j && make test && make install && make package
-    result=$?
-    popd
+cmake_mode="Release"
 else
-    # default is : compile in debug mode in debug/ directory
-    install -d $build_prefix/debug/$current_project
-    pushd $build_prefix/debug/$current_project
-    cmake -DLIMA_RESOURCES="$resources" -DLIMA_BUILD_TYPE="$buildtype" -DLIMA_VERSION_RELEASE=$release -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Debug $source_dir
-    make -j$j && make test && make install
-    result=$?
-    popd
+cmake_mode="Debug"
 fi
+
+echo "version='$version'"
+install -d $build_prefix/$mode/$current_project
+pushd $build_prefix/$mode/$current_project
+cmake -DLIMA_RESOURCES="$resources" -DLIMA_VERSION_RELEASE="$release" -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=$cmake_mode $source_dir
+
+make -j$j && [ $current_project != "lima" ] && make test && make install
+result=$?
+popd
 
 exit $result

@@ -21,6 +21,13 @@ macro (CompileLimaSubproject _project _dependsOn)
     add_dependencies(${_project} ${_dependsOn})
   endif()
 
+  ExternalProject_Add_Step(${_project} packaging
+   COMMAND make package
+   COMMENT "Packaging ${_project}"
+   WORKING_DIRECTORY <BINARY_DIR>
+   DEPENDEES install
+) 
+  
 endmacro ()
 
 CompileLimaSubproject(lima_common "")
