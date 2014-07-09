@@ -84,6 +84,7 @@ private:
   std::string m_sepPOS;
   std::string m_verbTenseFlag; //Ajout
   std::map<std::string, std::string> m_conllLimaDepMapping;
+  std::string m_suffix;
 
   // private member functions
   std::string outputVertex(std::ostream& out,

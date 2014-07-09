@@ -86,25 +86,23 @@ m_propertyManager(0),
 m_graph("PosGraph"),
 m_sep(" "),
 m_sepPOS("#"),
-m_conllLimaDepMapping()
+m_conllLimaDepMapping(),
+m_suffix(".conll")
 {DUMPERLOGINIT;
-  std::string mappingFile="lima_linguisticprocessing/data/mapping_conll_Lima.txt";
+  std::string mappingFile="mapping_conll_Lima.txt";
   std::ifstream ifs(mappingFile, std::ifstream::binary);
   if (!ifs.good())
   {
-    std::cerr << "ERROR: cannot open"+ mappingFile << std::endl;
+    LERROR << "ERROR: cannot open"+ mappingFile << LENDL;
   }
   while (ifs.good() && !ifs.eof())
   {
     std::vector<std::string> strs;
     string line;
-    while(getline(ifs, line))  // tant que l'on peut mettre la ligne dans line
+    while(getline(ifs, line))  // as long as we can put the line on "line"
     {
-      LDEBUG <<"<" << line << ">" <<endl;  // on l'affiche
       boost::split(strs, line, boost::is_any_of("\t"));
-      LDEBUG << "* size of the vector: " << strs.size() << endl;
       m_conllLimaDepMapping.insert(make_pair(strs[0],strs[1]));
-      LDEBUG <<"<" <<strs[0] << " " << strs[1] << ">" <<endl;  // on l'affiche
     }
   }
 }
@@ -151,7 +149,11 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     m_property=unitConfiguration.getParamsValueAtKey("property"); 
   }
   catch (NoSuchParam& ) {} // keep default value
-
+  try
+  {
+    m_suffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
+  }
+  catch (NoSuchParam& ) {} // keep default value
   const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
@@ -176,6 +178,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   {
     std::cerr << "ERROR: cannot open " + metadata->getMetaData("FileName") + ".positions.txt" << std::endl;
   }
+  std::ofstream ofs(("/tmp/"+metadata->getMetaData("FileName")+m_suffix), std::ofstream::binary);
+
   while (ifs.good() && !ifs.eof())
   {
     std::string line = Lima::Common::Misc::readLine(ifs);
@@ -216,17 +220,19 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   uint64_t nbSentences((sd->getSegments()).size());
   LDEBUG << "\n There are "<< nbSentences << " sentences"<< LENDL;
   LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
+  LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
+
+
   map<std::string, std::string>::const_iterator im;
   for (im=m_conllLimaDepMapping.begin();im!=m_conllLimaDepMapping.end();im++){
     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
   }
 
-  while (sbItr!=(sd->getSegments().end()))//tant qu'il y a des phrases
+  while (sbItr!=(sd->getSegments().end()))//for each sentence
   {
-    LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
-    LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
-    map<LinguisticGraphVertex,int>segmentationMapping;//mapping entre deux types de segmentation (graphe global et segmentation conll)
-    map<int,LinguisticGraphVertex>segmentationReverseMapping;
+    sentenceBegin=sbItr->getFirstVertex();
+    sentenceEnd=sbItr->getLastVertex();
+    map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (global graphe and Conll segmentation)
 
     LDEBUG << "begin - end: " << sentenceBegin << " - " << sentenceEnd << LENDL;
     //LinguisticGraphOutEdgeIt outItr,outItrEnd;
@@ -239,7 +245,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       LDEBUG << "Vertex index : " << v;
       visited.insert(v);
       segmentationMapping.insert(make_pair(v,tokenId));
-      segmentationReverseMapping.insert(make_pair(tokenId,v));
       DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
       std::vector<DependencyGraphEdge> edges;
@@ -275,11 +280,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           if (SyntRelName!=""){
             vertexDependencyInformations.insert(make_pair(v,make_pair(dest,SyntRelName)));
           }
-//           else{
-//             LinguisticGraphVertex emptyVertex=0;
-//             vertexDependencyInformations.insert(make_pair(v,make_pair(emptyVertex,"-")));
-//           }
-
           LDEBUG << "target saved for " << v << " is " << dest;
         }
         catch (const std::range_error& )
@@ -317,35 +317,19 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
     toVisit.push(sentenceBegin);
-    //std::string conllRelName;
     tokenId=0;
-    for (LinguisticGraphVertex v=toVisit.front();!toVisit.empty() && v!=sentenceEnd;v=toVisit.front()) {//tant qu'il y a des noeuds dans le segment
+    for (LinguisticGraphVertex v=toVisit.front();!toVisit.empty() && v!=sentenceEnd;v=toVisit.front()) {//as long as there are vertices in the sentence
       toVisit.pop();
-
-//       std::string relName=vertexDependencyInformations[v].second;
-//       try{
-//         std::string relName=vertexDependencyInformations.find(v)->second.second;
-//         throw source;
-//       }
-//       catch(string src){
-//         cout << "no relation name for" << src << endl;
-//       }
-//       std::string conllRelName=m_conllLimaDepMapping.find(relName)->second;
-//       try{
-//         cout << m_conllLimaDepMapping.find("ADVADJ")->second<<endl;
-//         throw relName;
-//       }
-//       catch(string rN){
-//         cout << "an error occurred for the " << rN << " tag" << endl;
-//       }
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
+      LDEBUG << v << "th token in the global graph" <<endl;
       if( morphoData!=0 && v != sentenceBegin) {
-        //cerr<< "token" << endl;
         const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
         const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
 
         const QString graphTag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(m_propertyAccessor)));
+
+
         std::string unLemmatizedToken=ft->stringForm().toStdString();//in case we need this information
         std::string lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().data();
 
@@ -354,13 +338,22 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           LinguisticGraphVertex sourceConllId=segmentationMapping.find(source)->second;
           LDEBUG << "source saved for " << tokenId << " is " << sourceConllId<<endl; 
           std::string relName=vertexDependencyInformations.find(v)->second.second;
-          std::string conllRelName=m_conllLimaDepMapping.find(relName)->second;
+          std::map< std::string, std::string >::const_iterator m_conllLimaDepMappingIt = m_conllLimaDepMapping.find(relName);
+          std::string conllRelName = "-";
+          if (m_conllLimaDepMappingIt != m_conllLimaDepMapping.end())
+          {
+            conllRelName=m_conllLimaDepMappingIt->second;
+          }
+          else
+          {
+            LERROR << relName << "not found in mapping";
+          }
 
-          cerr << tokenId << "\t"<< lemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << sourceConllId << "\t" << conllRelName << endl;
+          ofs << tokenId << "\t"<< lemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << sourceConllId << "\t" << conllRelName << endl;
           LDEBUG << "the lima dependency tag for " << ft->stringForm().toStdString() << " is " << relName<< endl;
         }
         else{
-          cerr << tokenId << "\t"<< lemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << "-" << "\t" << "-" << endl;
+          ofs << tokenId << "\t"<< lemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << "-" << "\t" << "-" << endl;
         }
       }
 
@@ -380,11 +373,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       }
     ++tokenId;
     }
-    cerr << "\n";
+    ofs << std::endl;
     sbItr++;
   }
- 
-return SUCCESS_ID;
+
+  return SUCCESS_ID;
 
 }
 
