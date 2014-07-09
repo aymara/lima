@@ -178,7 +178,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   {
     std::cerr << "ERROR: cannot open " + metadata->getMetaData("FileName") + ".positions.txt" << std::endl;
   }
-  std::ofstream ofs(("/tmp/"+metadata->getMetaData("FileName")+m_suffix), std::ofstream::binary);
+  std::ofstream ofs((metadata->getMetaData("FileName")+m_suffix), std::ofstream::binary);
 
   while (ifs.good() && !ifs.eof())
   {
@@ -330,7 +330,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         const QString graphTag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(m_propertyAccessor)));
 
 
-        std::string unLemmatizedToken=ft->stringForm().toStdString();//in case we need this information
+        std::string unLemmatizedToken=ft->stringForm().toStdString();
         std::string lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().data();
 
         if (vertexDependencyInformations.count(v)!=0){
@@ -349,11 +349,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             LERROR << relName << "not found in mapping";
           }
 
-          ofs << tokenId << "\t"<< lemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << sourceConllId << "\t" << conllRelName << endl;
+          ofs << tokenId << "\t"<< unLemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << sourceConllId << "\t" << conllRelName << "\t-\t-" << endl;
           LDEBUG << "the lima dependency tag for " << ft->stringForm().toStdString() << " is " << relName<< endl;
         }
         else{
-          ofs << tokenId << "\t"<< lemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << "-" << "\t" << "-" << endl;
+          ofs << tokenId << "\t"<< unLemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t-\t-\t-\t-\t-" << endl;
         }
       }
 
