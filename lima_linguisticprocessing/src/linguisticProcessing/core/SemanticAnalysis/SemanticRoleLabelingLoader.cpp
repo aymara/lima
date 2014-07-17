@@ -80,7 +80,7 @@ void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfig
 
   
   LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) const{
-    QFile file("/home/clemence/textes/test/jamaica_out.conll");
+    QFile file("/home/clemence/textes_test/jamaica_out.conll");
   }
 
 
