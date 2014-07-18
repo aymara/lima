@@ -22,6 +22,7 @@
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QNetworkInterface>
+#include <QTimer>
 
 #include "common/QsLog/QsLogCategories.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
@@ -57,6 +58,8 @@ int main(int argc, char **argv)
   // list of inacive units in pipelines
   std::vector<std::string> vinactiveUnits;
   int optional_port;
+  // time before service stop
+  int service_life;
   
   // Declare the supported options.
   po::options_description desc("Usage");
@@ -71,7 +74,9 @@ int main(int argc, char **argv)
   ("inactive-units", po::value< std::vector<std::string> >(&vinactiveUnits),
    "Inactive some process units of the used pipeline")
   ("port", po::value< int >(&optional_port),
-   "set the listening port");
+   "set the listening port")
+  ("service-life,t", po::value< int >(&service_life),
+   "set the service life (nb seconds)");
   
   po::positional_options_description p;
   p.add("input-file", -1);
@@ -192,7 +197,20 @@ int main(int argc, char **argv)
     std::cout << "main: after, pipes = " << oss.str() << std::endl;
   }
 
+  QTimer t;
   // Create instance of server
-  LimaServer server( configDir, langs, vinactiveUnits, pipes, port);
-  return app.exec();
+  LimaServer server( configDir, langs, vinactiveUnits, pipes, port, &app, &t);
+
+  if (varMap.count("service-life")) {
+    // Stop server and app after service-life seconds
+    //note that we need to use t.connect, as main is not a QObject
+    t.connect (&t, SIGNAL(timeout()), &server, SLOT(quit()));
+    int time_out = service_life*1000;
+    t.start(time_out);
+  }
+
+  //return app.exec();
+  int ret = app.exec();
+  std::cout << "main: return " << ret;
+  return ret;
 }

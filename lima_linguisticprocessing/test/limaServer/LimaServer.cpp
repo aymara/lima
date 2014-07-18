@@ -65,6 +65,7 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QStringList>
+#include <QCoreApplication>
 
 #include <stdlib.h>
 #include <boost/graph/buffer_concepts.hpp>
@@ -81,11 +82,12 @@ LimaServer::LimaServer( const std::string& configDir,
 		   const std::vector<std::string>& vinactiveUnits,
 		   const std::deque<std::string>& pipelines,
 		   int port,
-		   QObject *parent)
-     : QObject(parent), m_langs(langs.begin(),langs.end())
+		   QObject *parent,
+		   QTimer* t)
+     : QObject(parent), m_langs(langs.begin(),langs.end()), m_timer(t)
 {
   CORECLIENTLOGINIT;
-  qDebug() << "::LimaServer::LimaServer()...";
+  LDEBUG << "::LimaServer::LimaServer()...";
   
   // initialize common
   std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
@@ -96,7 +98,7 @@ LimaServer::LimaServer( const std::string& configDir,
   std::ostringstream oss;
   std::ostream_iterator<std::string> out_it (oss,", ");
   std::copy ( langs.begin(), langs.end(), out_it );
-  qDebug() << "LimaServer::LimaServer: init MediaticData("
+  LDEBUG << "LimaServer::LimaServer: init MediaticData("
            << "resourcesPath=" << resourcesPath
            << "configDir=" << configDir
            << "commonConfigFile=" << commonConfigFile
@@ -112,37 +114,59 @@ LimaServer::LimaServer( const std::string& configDir,
   std::string lpConfigFile("lima-analysis.xml");
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
 
-  qDebug() << "LimaServer::LimaServer: configureClientFactory...";
+  LDEBUG << "LimaServer::LimaServer: configureClientFactory...";
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
     clientId,
     lpconfig,
     langs,
     pipelines);
   
-  qDebug() << "LimaServer::LimaServer: createClient...";
+  LDEBUG << "LimaServer::LimaServer: createClient...";
   m_analyzer=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   
-  qDebug() << "LimaServer::LimaServer: create QHttpServer...";
-  QHttpServer *server = new QHttpServer(this);
-  qDebug() << "LimaServer::LimaServer: connect...";
-  connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
+  LDEBUG << "LimaServer::LimaServer: create QHttpServer...";
+  m_server = new QHttpServer(this);
+  LDEBUG << "LimaServer::LimaServer: connect...";
+  connect(m_server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
           this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
 
-  qDebug() << "LimaServer::LimaServer: server listen...";
-  server->listen(QHostAddress::Any, port);
-  qDebug() << "Server listening";
+  LINFO << "LimaServer::LimaServer: server listen...";
+  m_server->listen(QHostAddress::Any, port);
+  LINFO << "Server listening";
  }
 
 LimaServer::~LimaServer()
 {
-  qDebug() << "LimaServer::~LimaServer";
+  CORECLIENTLOGINIT;
+  LINFO << "LimaServer::~LimaServer";
+  // free client
+  LINFO << "LimaServer::~LimaServer: httpserver deleted!";
+  delete m_analyzer;
+  LINFO << "LimaServer::~LimaServer: m_analyzer deleted";
+  // free MediaticData ???
+  delete Common::MediaticData::MediaticData::pchangeable();
+  LINFO << "LimaServer::~LimaServer: mediaticData deleted";
+  // free linguistic processing ressources
+  delete LinguisticProcessingClientFactory::pchangeable();
+}
+
+void LimaServer::quit() {
+  // free httpserver ?
+  CORECLIENTLOGINIT;
+  LINFO << "LimaServer::quit()...";
+  m_timer->stop();
+  m_server->close();
+  LINFO << "LimaServer::quit(): ask close to tcpServer";
+  QCoreApplication *app = (QCoreApplication *)parent();
+  app->quit();
 }
 
 void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
+  CORECLIENTLOGINIT;
   req->storeBody();
-  qDebug() << "LimaServer::handleRequest: create AnalysisThread...";
+  LDEBUG << "LimaServer::handleRequest: create AnalysisThread...";
   AnalysisThread *thread = new AnalysisThread(m_analyzer, req, resp, m_langs, this );
   connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));

@@ -42,6 +42,7 @@
  #define AMOSESERVER_H
 
 #include <QtNetwork/QTcpServer>
+#include <QTimer>
 #include "qhttpserver.h"
 
 #include <deque>
@@ -70,15 +71,21 @@ public:
 		       const std::vector<std::string>& vinactiveUnits,
 		       const std::deque<std::string>& pipelines,
 		       int port,
-		       QObject *parent=0);
+		       QObject *parent,
+		       QTimer* t);
     virtual ~LimaServer();
 
+private Q_SLOTS:
+    void quit();
 private Q_SLOTS:
     void handleRequest(QHttpRequest* req, QHttpResponse* resp);
 //     void incomingConnection(int socketDescriptor);
 
 private:
   const std::set<std::string> m_langs;
+  QHttpServer *m_server;
+  QTimer* m_timer;
+  
 
   Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
 };
