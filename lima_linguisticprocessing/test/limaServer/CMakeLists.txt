@@ -66,7 +66,6 @@ target_link_libraries(limaserver
 # lima-common-time
 
 ${QHTTPSERVER_NAMES}
-${qjson_LIBRARIES} ${QJSON_LIBRARIES}
 ${OpenCV_LIBS} ${QT_LIBRARIES} ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
 
 install(TARGETS limaserver DESTINATION bin)

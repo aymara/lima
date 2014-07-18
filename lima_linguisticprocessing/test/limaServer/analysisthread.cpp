@@ -75,28 +75,28 @@ AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticPr
     m_langs(langs)
 {
   CORECLIENTLOGINIT;
-  qDebug() << "AnalysisThread::AnalysisThread()...";
+  LDEBUG << "AnalysisThread::AnalysisThread()...";
   connect(this,SIGNAL(started()),this,SLOT(slotStarted()),Qt::QueuedConnection);
 }
 
 AnalysisThread::~AnalysisThread()
 {
   CORECLIENTLOGINIT;
-  qDebug() << "AnalysisThread::~AnalysisThread";
+  LDEBUG << "AnalysisThread::~AnalysisThread";
   delete m_d;
 }
 
 void AnalysisThread::slotStarted()
 {
   CORECLIENTLOGINIT;
-  qDebug() << "AnalysisThread::slotStarted";
+  LDEBUG << "AnalysisThread::slotStarted";
 
 }
 
 void AnalysisThread::startAnalysis()
 {
   CORECLIENTLOGINIT;
-  qDebug() << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
+  LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
   if (m_d->m_request->methodString() == "HTTP_GET" && m_d->m_request->url().path() == "/extractEN")
   {
     QString language, pipeline, text;
@@ -104,7 +104,7 @@ void AnalysisThread::startAnalysis()
     std::map<std::string,std::string> metaData;
     std::set<std::string> inactiveUnits;
     
-    qDebug() << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_GET)";
+    LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_GET)";
     
     std::map<std::string, AbstractAnalysisHandler*> handlers;
     LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
@@ -122,17 +122,17 @@ void AnalysisThread::startAnalysis()
       {
 	language = item.second;
 	metaData["Lang"]=language.toUtf8().data();
-	qDebug() << "AnalysisThread::startAnalysis: " << "language=" << language;
+	LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
       }
       if (item.first == "pipeline")
       {
 	pipeline = item.second;
-	qDebug() << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+	LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
       }
       if (item.first == "text")
       {
 	text = item.second;
-	qDebug() << "AnalysisThread::startAnalysis: " << "text='" << text << "'";
+	LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << text << "'";
       }
     }
     if( m_langs.find(metaData["Lang"]) == m_langs.end() )
@@ -144,7 +144,7 @@ void AnalysisThread::startAnalysis()
     }
     else if( !language.isEmpty() && !text.isEmpty() )
     {
-      qDebug() << "Analyzing" << language << text;
+      LDEBUG << "Analyzing" << language << text;
       std::ostringstream ots;
       std::string pipe = pipeline.toUtf8().data();
       pipe = "limaserver";
@@ -152,7 +152,7 @@ void AnalysisThread::startAnalysis()
 
       std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
       resultString.append(oss->str());
-      qDebug() << "AnalysisThread::startAnalysis: seLogger output is " << resultString;
+      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << resultString;
 
       m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
       m_d->m_response->writeHead(200);
@@ -168,14 +168,14 @@ void AnalysisThread::startAnalysis()
         m_d->m_response->writeHead(400);
         m_d->m_response->end(QByteArray("Empty language or text"));
     }
-    qDebug() << "AnalysisThread::startAnalysis: delete oss... ";
+    LDEBUG << "AnalysisThread::startAnalysis: delete oss... ";
     delete seLogWriter;
     delete oss; oss = 0;
   }
   // commande HTTP_POST
   else if (m_d->m_request->methodString() == "HTTP_POST" && m_d->m_request->url().path() == "/extractEN")
   {
-    qDebug() << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
+    LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
 
     std::string fileName("testLimaserver.out");
     QString language, pipeline, text;
@@ -188,12 +188,12 @@ void AnalysisThread::startAnalysis()
       {
 	language = item.second;
 	metaData["Lang"]=language.toUtf8().data();
-	qDebug() << "AnalysisThread::startAnalysis: " << "language=" << language;
+	LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
       }
       if (item.first == "pipeline")
       {
 	pipeline = item.second;
-	qDebug() << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+	LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
       }
     }
 
@@ -231,7 +231,7 @@ void AnalysisThread::startAnalysis()
 
       std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
       resultString.append(oss->str());
-      qDebug() << "AnalysisThread::startAnalysis: seLogger output is " << resultString;
+      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << resultString;
 
       m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
       m_d->m_response->writeHead(200);
@@ -244,6 +244,8 @@ void AnalysisThread::startAnalysis()
       m_d->m_response->end(QByteArray("Empty language or text"));
       return;
     }
+    delete seLogWriter;
+    delete oss; oss = 0;
   }
   else
   {

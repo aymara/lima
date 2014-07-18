@@ -307,8 +307,17 @@ int main(int argc,char* argv[])
   }
   std::cout << std::endl;
   delete client;
-  delete bowTextWriter;
-  delete simpleStreamHandler;
+  // free handlers
+  if (eventHandler != 0)
+    delete eventHandler;
+  if (bowTextWriter!= 0)
+    delete bowTextWriter;
+  if (bowTextHandler!= 0)
+    delete bowTextHandler;
+  if (simpleStreamHandler!= 0)
+    delete simpleStreamHandler;
+  if (fullXmlSimpleStreamHandler!= 0)
+    delete fullXmlSimpleStreamHandler;
   delete Common::MediaticData::MediaticData::pchangeable();
   delete LinguisticProcessingClientFactory::pchangeable();
   TIMELOGINIT;
