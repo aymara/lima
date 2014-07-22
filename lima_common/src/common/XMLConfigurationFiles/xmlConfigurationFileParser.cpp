@@ -83,7 +83,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     m_parser(0), m_configurationFileName(configurationFileName)
 {
     XMLCFGLOGINIT;
-    LDEBUG << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str();
+    LINFO << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str();
 
     m_parser = new QXmlSimpleReader();
 
