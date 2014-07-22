@@ -118,24 +118,20 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  try
+  XMLSyntagmaticMatrixFileHandler handler(*this,m_language);
+  parser.setContentHandler(&handler);
+  parser.setErrorHandler(&handler);
+  QFile file(fileName.c_str());
+  if (!file.open(QFile::ReadOnly))
   {
-    XMLSyntagmaticMatrixFileHandler handler(*this,m_language);
-    parser.setContentHandler(&handler);
-    parser.setErrorHandler(&handler);
-    QFile file(fileName.c_str());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException();
-    if (!parser.parse( QXmlInputSource(&file)))
-    {
-      throw XMLException();
-    }
+    XMLCFGLOGINIT;
+    LERROR << "Error opening " << fileName.c_str();
+    throw XMLException(std::string("SyntagmDefStruct::loadFromFile Unable to open ") + fileName);
   }
-
-  catch (const XMLException& toCatch)
+  if (!parser.parse( QXmlInputSource(&file)))
   {
-    LERROR << "An error occurred  Error: " << toCatch.getMessage() <<  LENDL;
-    throw;
+    LERROR << "Error parsing " << fileName.c_str();
+    throw XMLException(std::string("SyntagmDefStruct::loadFromFile Unable to parse ") + fileName + " : " + parser.errorHandler()->errorString().toUtf8().constData());
   }
 }
 

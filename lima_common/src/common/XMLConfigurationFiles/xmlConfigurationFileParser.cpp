@@ -72,10 +72,16 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLCo
     m_parser->setErrorHandler(&handler);
     QFile file(m_configurationFileName.c_str());
     if (!file.open(QIODevice::ReadOnly))
-      throw XMLException();
+    {
+      XMLCFGLOGINIT;
+      LERROR << "XMLConfigurationFileParser unable to open" << QString::fromUtf8(m_configurationFileName.c_str());
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.c_str());
+    }
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      throw XMLException();
+      XMLCFGLOGINIT;
+      LERROR << "XMLConfigurationFileParser unable to parse" << QString::fromUtf8(m_configurationFileName.c_str()) << ":" << m_parser->errorHandler()->errorString();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
     }
 }
 
@@ -98,13 +104,14 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     QFile file(m_configurationFileName.c_str());
     if (!file.open(QFile::ReadOnly))
     {
-      std::cerr << "Error opening " << m_configurationFileName.c_str() << std::endl;
-      throw XMLException();
+      XMLCFGLOGINIT;
+      LERROR << "Error opening " << m_configurationFileName.c_str();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName);
     }
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      std::cerr << "Error parsing " << m_configurationFileName.c_str() << std::endl;
-      throw XMLException();
+      LERROR << "Error parsing " << m_configurationFileName.c_str();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
     }
 }
 
