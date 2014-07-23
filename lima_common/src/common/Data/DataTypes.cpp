@@ -20,6 +20,7 @@
 #include "DataTypes.h"
 #include "common/LimaCommon.h"
 #include <iostream>
+#include <limits>
 
 using namespace std;
 using namespace Lima;
@@ -283,7 +284,7 @@ public:
     STRUCT_ID m_structId;
 };
 
-StructurePrivate::StructurePrivate() {}
+StructurePrivate::StructurePrivate() : m_structId(std::numeric_limits< STRUCT_ID >::max()) {}
 
 StructurePrivate::StructurePrivate(const StructurePrivate& sp) :
 m_nodes(sp.m_nodes), m_structId(sp.m_structId)
