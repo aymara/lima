@@ -26,6 +26,7 @@
  ***********************************************************************/
 
 #include "DynamicLibrariesManager.h"
+#include "common/LimaCommon.h"
 
 #include <iostream>
 
@@ -58,12 +59,15 @@ isLoaded(const std::string& libName)
 bool DynamicLibrariesManager::
 loadLibrary(const std::string& libName)
 {
+#ifdef DEBUG_CD
+  ABSTRACTFACTORYPATTERNLOGINIT;
+#endif
   std::map<std::string,QLibrary*>::const_iterator
     it=m_handles.find(libName);
   if (it!=m_handles.end()) {
-// #ifdef DEBUG_CD
-//     std::cerr << "DEBUG_CD: trying to reload dynamic library " << libName.c_str() << std::endl;
-// #endif
+#ifdef DEBUG_CD
+    LWARN << "DEBUG_CD: trying to reload dynamic library " << libName.c_str();
+#endif
   }
 
   QLibrary* libhandle = 0;
@@ -71,7 +75,7 @@ loadLibrary(const std::string& libName)
   for (std::vector<std::string>::const_iterator it = m_supplementarySearchPath.begin(); it != m_supplementarySearchPath.end(); it++)
   {
 #ifdef DEBUG_FACTORIES
-    std::cerr << "Trying supplementary " << ((*it)+"/"+libName).c_str() << std::endl;
+    LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
 #endif
     libhandle = new QLibrary( ((*it)+"/"+libName).c_str() );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
@@ -83,7 +87,8 @@ loadLibrary(const std::string& libName)
     else
     {
 //      if ( QLibrary::isLibrary(((*it)+"/"+libName).c_str()) )
-        std::cerr << "Failed to open lib " << libhandle->errorString().toUtf8().data() << std::endl;
+      ABSTRACTFACTORYPATTERNLOGINIT;
+      LERROR << "Failed to open lib " << libhandle->errorString().toUtf8().data();
       delete libhandle;
       libhandle = 0;
     }
@@ -92,7 +97,7 @@ loadLibrary(const std::string& libName)
   if (libhandle == 0)
   {
 #ifdef DEBUG_FACTORIES
-    std::cerr << "Trying " << libName.c_str() << std::endl;
+    LINFO << "Trying " << libName.c_str();
 #endif
     libhandle = new QLibrary( libName.c_str() );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
@@ -103,7 +108,8 @@ loadLibrary(const std::string& libName)
     }
     else
     {
-      std::cerr << "Failed to open lib " << libhandle->errorString().toUtf8().data() << std::endl;
+      ABSTRACTFACTORYPATTERNLOGINIT;
+      LERROR << "Failed to open lib " << libhandle->errorString().toUtf8().data();
       delete libhandle;
       libhandle = 0;
       return false;
@@ -111,7 +117,7 @@ loadLibrary(const std::string& libName)
   }
   else {
 #ifdef DEBUG_CD
-    std::cerr << "the library " << libName.c_str() << " was loaded" << std::endl;
+    LDEBUG << "the library " << libName.c_str() << " was loaded";
 #endif
     m_handles[libName]=libhandle;
     return true;
@@ -122,7 +128,8 @@ void DynamicLibrariesManager::
 addSearchPath(const std::string& searchPath)
 {
 #ifdef DEBUG_CD
-  std::cerr << "adding search path '"<<searchPath.c_str()<<"'" << std::endl;
+  ABSTRACTFACTORYPATTERNLOGINIT;
+  LINFO << "adding search path '"<<searchPath.c_str()<<"'";
 #endif
   m_supplementarySearchPath.push_back(searchPath);
 }
