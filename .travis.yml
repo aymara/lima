@@ -20,7 +20,7 @@ deploy:
   api_key:
     secure: r5vz34x1/+dQAd9towBYsRJum1OyLQDdCXcL19ldSG2qzo09BCU6m0a/Si1+CPSjWxClWzz4P13yBMFI6oZvvG2krH0c9vFOhCAdRV+M6fxa2u1RMAWlLItP5Yvvb5VFb1mZGhJrp0puJ6s1wR3DmJLSkYgEqlZtr8etYMYBApU=
   release-number: 1.0.0
-  file: build/lima_linguisticdata-prefix/src/lima_linguisticdata-build/limadata.deb
+  file: "build/lima_linguisticdata-prefix/src/lima_linguisticdata-build/limadata.deb"
 #   file: /home/travis/build/aymara/lima/build/lima_annoqt-prefix/src/lima_annoqt-build/limaannoqt-1.0.0-Linux.deb
 #   file: /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-1.0.0-Linux.deb
 #   file: /home/travis/build/aymara/lima/build/lima_linguisticprocessing-prefix/src/lima_linguisticprocessing-build/limalinguisticprocessing-1.0.0-Linux.deb
