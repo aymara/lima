@@ -1,13 +1,32 @@
 language: cpp
 compiler: gcc
-env: NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIMA_DIST=$PWD/dist LIMA_CONF=$LIMA_DIST/share/config/lima LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib
+env: NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIMA_DIST=$PWD/dist
+  LIMA_CONF=$LIMA_DIST/share/config/lima LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources
+  PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib
 install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y libboost1.48-all-dev  libenchant-dev python-nltk gawk
-  - python -m nltk.downloader -d nltk_data dependency_treebank
-  - cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
-script: mkdir dist && mkdir build && cd build && cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=Release .. && make -j4 && make package
+- sudo apt-get update -qq
+- sudo apt-get install -y libboost1.48-all-dev  libenchant-dev python-nltk gawk
+- python -m nltk.downloader -d nltk_data dependency_treebank
+- cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+script: mkdir dist && mkdir build && cd build && cmake -DLIMA_RESOURCES:STRING=build
+  -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=Release ..
+  && make -j4 && make package
 after_success:
-  - pushd $LIMA_DIST/share/apps/lima/tests
-  - tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
-  - tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
+- pushd $LIMA_DIST/share/apps/lima/tests
+- tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
+- tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml
+  test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
+  2>&1 | tee tva-fre.log
+deploy:
+  provider: releases
+  api_key:
+    secure: r5vz34x1/+dQAd9towBYsRJum1OyLQDdCXcL19ldSG2qzo09BCU6m0a/Si1+CPSjWxClWzz4P13yBMFI6oZvvG2krH0c9vFOhCAdRV+M6fxa2u1RMAWlLItP5Yvvb5VFb1mZGhJrp0puJ6s1wR3DmJLSkYgEqlZtr8etYMYBApU=
+  file: 
+  - /home/travis/build/aymara/lima/build/lima_linguisticdata-prefix/src/lima_linguisticdata-build/limadata.deb
+  - /home/travis/build/aymara/lima/build/lima_annoqt-prefix/src/lima_annoqt-build/limaannoqt-1.0.0-Linux.deb
+  - /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-1.0.0-Linux.deb
+  - /home/travis/build/aymara/lima/build/lima_linguisticprocessing-prefix/src/lima_linguisticprocessing-build/limalinguisticprocessing-1.0.0-Linux.deb
+  - tva-eng.log
+  - tva-fre.log
+  on:
+    repo: aymara/lima
