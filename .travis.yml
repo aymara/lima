@@ -1,8 +1,6 @@
 language: cpp
-compiler:
-  - gcc
+compiler: gcc
 env: NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIMA_DIST=$PWD/dist LIMA_CONF=$LIMA_DIST/share/config/lima LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib
-cmake 
 install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libboost1.48-all-dev  libenchant-dev python-nltk gawk
