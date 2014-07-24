@@ -192,6 +192,7 @@ IndexElement IndexElementIterator::getElement()
                             (*m_d->m_iterator)->getLength());
       }
       case BOW_TERM:
+      case BOW_PREDICATE:
       case BOW_NAMEDENTITY:
         // element itself will be stored in queue as part
         m_d->storePartsInQueue(*m_d->m_iterator,0);
@@ -352,9 +353,9 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     neType=static_cast<const BoWNamedEntity*>(token)->getNamedEntityType();
     break;
   case BOW_TERM:
-    break;
+  case BOW_PREDICATE:
   case BOW_NOTYPE:
-    break;
+  default:;
   }
 
   // is a complex token
