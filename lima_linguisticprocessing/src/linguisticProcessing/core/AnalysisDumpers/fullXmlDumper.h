@@ -41,6 +41,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
+#include "linguisticProcessing/core/AnalysisDumpers/AnnotationGraphXmlDumper.h"
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/properties.hpp>
@@ -79,6 +80,8 @@ public:
 
 
 protected:
+    AnnotationGraphXmlDumper* m_annotXmlDumperPtr;
+
     void dumpLimaData(std::ostream& os,
                     const LinguisticGraphVertex begin,
                     const LinguisticGraphVertex end,
