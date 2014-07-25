@@ -30,6 +30,9 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "linguisticProcessing/common/BagOfWords/bowToken.h"
+#include "linguisticProcessing/common/BagOfWords/bowTerm.h"
+#include "linguisticProcessing/common/BagOfWords/bowTokenIterator.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
@@ -50,6 +53,7 @@ using namespace boost::tuples;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::AnnotationGraphs;
+using namespace Lima::Common::BagOfWords;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
@@ -64,10 +68,22 @@ GenericXmlDumper::GenericXmlDumper():
 AbstractTextualAnalysisDumper(),
 m_graph("PosGraph"),
 m_features(),
-m_featuresMap(),
+m_bowFeatures(),
+m_featureNames(),
+m_featureTags(),
 m_defaultFeatures(),
-m_outputSentenceBoundaries(true),
-m_outputSpecificEntities(true)
+m_outputWords(true),
+m_outputSentenceBoundaries(false),
+m_outputSpecificEntities(false),
+m_outputSpecificEntityParts(false),
+m_outputCompounds(false),
+m_outputCompoundParts(false),
+m_outputAllCompounds(false),
+m_wordTag("w"),
+m_sentenceBoundaryTag("s"),
+m_specificEntityTag("e"),
+m_compoundTag("c"),
+m_bowGenerator(0)
 {
   // default features
   m_defaultFeatures["p"]="position";
@@ -81,6 +97,10 @@ m_outputSpecificEntities(true)
 GenericXmlDumper::~GenericXmlDumper()
 {
   clearFeatures();
+  if (m_bowGenerator!=0) {
+    delete m_bowGenerator;
+    m_bowGenerator=0;
+  }
 }
 
 void GenericXmlDumper::clearFeatures() {
@@ -90,7 +110,8 @@ void GenericXmlDumper::clearFeatures() {
     }
   }
   m_features.clear();
-  m_featuresMap.clear();
+  m_bowFeatures.clear();
+  m_featureTags.clear();
 }
 
 void GenericXmlDumper::init(
@@ -98,6 +119,7 @@ void GenericXmlDumper::init(
   Manager* manager)
 
 {
+  DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
   try
@@ -107,6 +129,7 @@ void GenericXmlDumper::init(
   catch (NoSuchParam& ) {} // keep default value
 
   m_features.setLanguage(m_language);
+  m_bowFeatures.setLanguage(m_language);
   try { 
     // if some features are specified, all must be specified: do not keep any default ones
     map<string,string> featuresMap=unitConfiguration.getMapAtKey("features"); 
@@ -124,6 +147,79 @@ void GenericXmlDumper::init(
     initializeFeatures(m_defaultFeatures);
   }
 
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("words");
+    if (str=="no" || str=="false" || str=="") {
+      m_outputWords=false;
+    }
+    else {
+      m_outputWords=true;
+      m_wordTag=str;
+      LDEBUG << "GenericXmlDumper: outputSpecificEntities set to true (tag is " << str << ")" << LENDL;
+    }
+  }
+  catch (NoSuchParam& ) {// optional : do not output entities if param not specified
+  } 
+
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("specificEntities");
+    if (str!="no" && str!="false" && str!="") {
+      m_outputSpecificEntities=true;
+      m_specificEntityTag=str;
+      LDEBUG << "GenericXmlDumper: outputSpecificEntities set to true (tag is " << str << ")" << LENDL;
+    }
+  }
+  catch (NoSuchParam& ) {// optional : do not output entities if param not specified
+  } 
+
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("specificEntityParts");
+    if (str!="no" && str!="false" && str!="") {
+      m_outputSpecificEntityParts=true;
+    }
+  }
+  catch (NoSuchParam& ) { }// optional : do not output entities if param not specified
+  
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("sentenceBoundaries");
+    if (str!="no" && str!="false" && str!="") {
+      m_outputSentenceBoundaries=true;
+      m_sentenceBoundaryTag=str;
+      LDEBUG << "GenericXmlDumper: outputSentenceBoundaries set to true (tag is " << str << ")" << LENDL;
+    }
+  }
+  catch (NoSuchParam& ) {} // optional : do not output entities if param not specified
+
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("compounds");
+    if (str!="no" && str!="false" && str!="") {
+      m_outputCompounds=true;
+      m_compoundTag=str;
+      // initialize compound creator
+      m_bowGenerator=new Compounds::BowGenerator();
+      m_bowGenerator->init(unitConfiguration, m_language);
+      LDEBUG << "GenericXmlDumper: outputCompounds set to true (tag is " << str << ")" << LENDL;
+    }
+  }
+  catch (NoSuchParam& ) {} // optional : do not output entities if param not specified
+
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("compoundParts");
+    if (str!="no" && str!="false" && str!="") {
+      m_outputCompoundParts=true;
+    }
+  }
+  catch (NoSuchParam& ) { }// optional : do not output entities if param not specified
+
+  try {
+    string str=unitConfiguration.getParamsValueAtKey("allCompounds");
+    if (str!="no" && str!="false" && str!="") {
+      m_outputAllCompounds=true;
+    }
+  }
+  catch (NoSuchParam& ) { }// optional : do not output entities if param not specified
+
+  
 /*  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
@@ -152,27 +248,26 @@ void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap,
                                           const std::deque<std::string>& featureOrder) 
 {
   clearFeatures();
-  deque<string> features,featureTags;
   bool useMapOrder(false);
   if (! featureOrder.empty()) {
     // use specified order 
     DUMPERLOGINIT;
     LDEBUG << "GenericXmlDumper: initialize features: use order";
-    featureTags=featureOrder;
     for (deque<string>::const_iterator it=featureOrder.begin(),it_end=featureOrder.end();it!=it_end;it++) {
       LDEBUG << "GenericXmlDumper: --"<< (*it);
       const std::string& featureTag=(*it);
+      m_featureTags.push_back(featureTag);
       map<string,string>::const_iterator f=featuresMap.find(featureTag);
       if (f==featuresMap.end()) {
         DUMPERLOGINIT;
         LWARN << "GenericXmlDumper: 'featureOrder' parameter mentions a feature '" << featureTag
               << "' not in feature map parameter: order ignored";
         useMapOrder=true;
-        features.clear();
-        featureTags.clear();
+        m_featureNames.clear();
+        m_featureTags.clear();
         break;
       }
-      features.push_back((*f).second);
+      m_featureNames.push_back((*f).second);
     }
   }
   else {
@@ -183,18 +278,16 @@ void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap,
     for (map<string,string>::const_iterator it=featuresMap.begin(),it_end=featuresMap.end();it!=it_end; it++) {
       const std::string& featureName=(*it).second;
       const std::string& featureTag=(*it).first;
-      features.push_back(featureName);
-      featureTags.push_back(featureTag);
+      m_featureNames.push_back(featureName);
+      m_featureTags.push_back(featureTag);
     }
   }
-  m_features.initialize(features);
-  if (m_features.size()!=featureTags.size()) {
+  m_features.initialize(m_featureNames);
+  m_bowFeatures.initialize(m_featureNames);
+  if (m_features.size()!=m_featureTags.size() || m_bowFeatures.size()!=m_featureTags.size()) {
     DUMPERLOGINIT;
     LERROR << "GenericXmlDumper: error: failed to initialize all features";
     throw InvalidConfiguration();
-  }
-  for (unsigned int i=0,end=m_features.size();i!=end;i++) {
-      m_featuresMap[m_features[i]]=featureTags[i];
   }
 }
 
@@ -231,8 +324,17 @@ process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
+  SyntacticData* syntacticData = 0;
+  if(m_outputCompounds) {
+    syntacticData=static_cast< SyntacticData* >(analysis.getData("SyntacticData"));
+    if (annotationData==0)
+    {
+      LWARN << "compounds are supposed to be printed in output but no syntactic data available !" << LENDL;
+    }
+  }
+
   DumperStream* dstream=initialize(analysis);
-  xmlOutput(dstream->out(), analysis, anagraph, posgraph, annotationData);
+  xmlOutput(dstream->out(), analysis, anagraph, posgraph, annotationData,syntacticData);
   delete dstream;
 
   TimeUtils::logElapsedTime("GenericXmlDumper");
@@ -244,7 +346,8 @@ xmlOutput(std::ostream& out,
           AnalysisContent& analysis,
           AnalysisGraph* anagraph,
           AnalysisGraph* posgraph,
-          const Common::AnnotationGraphs::AnnotationData* annotationData) const
+          const Common::AnnotationGraphs::AnnotationData* annotationData,
+          const SyntacticAnalysis::SyntacticData* syntacticData) const
 {
   DUMPERLOGINIT;
 
@@ -256,9 +359,9 @@ xmlOutput(std::ostream& out,
 
   SegmentationData* sb(0);
   if (m_outputSentenceBoundaries) {
-    SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-     if (sb==0) {
-      LWARN << "no SentenceBoundaries";
+    sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+    if (sb==0) {
+      LWARN << "GenericXmlDumper:: no SentenceBoundaries";
     }
   }
 
@@ -269,6 +372,7 @@ xmlOutput(std::ostream& out,
                       anagraph,
                       posgraph,
                       annotationData,
+                      syntacticData,
                       anagraph->firstVertex(),
                       anagraph->lastVertex(),
                       sp,
@@ -298,6 +402,7 @@ xmlOutput(std::ostream& out,
                         anagraph,
                         posgraph,
                         annotationData,
+                        syntacticData,
                         sentenceBegin,
                         sentenceEnd,
                         sp,
@@ -307,9 +412,9 @@ xmlOutput(std::ostream& out,
         LDEBUG << "nothing to dump in this sentence";
       }
       else {
-        out << "<s id=\"" << i << "\">" << endl
+        out << "<" << m_sentenceBoundaryTag << " id=\"" << i << "\">" << endl
             << str
-            << "</s>" << endl;
+            << "</"<< m_sentenceBoundaryTag << ">" << endl;
       }
     }
   }
@@ -321,6 +426,7 @@ xmlOutputVertices(std::ostream& out,
                   AnalysisGraph* anagraph,
                   AnalysisGraph* posgraph,
                   const Common::AnnotationGraphs::AnnotationData* annotationData,
+                  const SyntacticAnalysis::SyntacticData* syntacticData,
                   const LinguisticGraphVertex begin,
                   const LinguisticGraphVertex end,
                   const FsaStringsPool& sp,
@@ -378,25 +484,43 @@ xmlOutputVertices(std::ostream& out,
     }
   }
   
+  // for compounds
+  std::set<LinguisticGraphVertex> alreadyStoredVertices;
+  
+  // store outputs, sorting them by their positions (useful for compounds)
+  map<uint64_t,vector<string> > xmlOutputs;
+  
   for (map< Token*,vector<LinguisticGraphVertex>,lTokenPosition >::const_iterator
          it=sortedTokens.begin(),it_end=sortedTokens.end(); it!=it_end; it++)
   {
-    if ((*it).second.size()==0) {
+    const vector<LinguisticGraphVertex>& vertices=(*it).second;
+    if (vertices.size()==0) {
+      DUMPERLOGINIT;
+      LERROR << "GenericXmlDumper: no vertices for token " << (*it).first->stringForm();
       continue;
     }
     
-    // if several interpretation of the token (i.e several LinguisticGraphVertex associated),
-    // it is not a specific entity, => then just print all interpretations
-    else if ((*it).second.size()>1) {
-      for (vector<LinguisticGraphVertex>::const_iterator  d=(*it).second.begin(),
-             d_end=(*it).second.end(); d!=d_end; d++) {
-        xmlOutputVertexInfos(out,*d,posgraph,offset);
-      }
-    }
-    else {
-      xmlOutputVertex(out,(*it).second[0],anagraph,posgraph,annotationData,sp,offset);
+    for (vector<LinguisticGraphVertex>::const_iterator d=vertices.begin(),
+      d_end=vertices.end(); d!=d_end; d++) {
+      
+      /*if (alreadyStoredVertices.find(*d)!=alreadyStoredVertices.end()) {
+        // if already printed as a compound part
+        continue;
+      }*/
+      ostringstream oss;
+      xmlOutputVertex(oss,(*d),anagraph,posgraph,annotationData,syntacticData,
+                      sp,offset,visited,alreadyStoredVertices);
+      uint64_t pos=(*it).first->position();
+      xmlOutputs[pos].push_back(oss.str());
     }
   }
+
+  for (map<uint64_t,vector<string> >::const_iterator it=xmlOutputs.begin(),it_end=xmlOutputs.end();it!=it_end;it++) {
+    for (vector<string>::const_iterator s=(*it).second.begin(),s_end=(*it).second.end();s!=s_end;s++) {
+      out << *s;
+    }
+  }
+  
 }
 
 void GenericXmlDumper::
@@ -405,8 +529,63 @@ xmlOutputVertex(std::ostream& out,
                 AnalysisGraph* anagraph,
                 AnalysisGraph* posgraph,
                 const Common::AnnotationGraphs::AnnotationData* annotationData,
+                const SyntacticAnalysis::SyntacticData* syntacticData,
                 const FsaStringsPool& sp,
-                uint64_t offset) const
+                uint64_t offset,
+                set<LinguisticGraphVertex>& visited,
+                std::set<LinguisticGraphVertex>& alreadyStoredVertices) const
+{
+  DUMPERLOGINIT;
+  LDEBUG << "GenericXmlDumper: output vertex " << v;
+
+  // check if specific entity, event if m_outputSpecificEntities is false, to access parts
+  // and print them as simple words
+  std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>
+  se=checkSpecificEntity(v,anagraph,posgraph,annotationData);
+  if (se.first!=0) {
+    LDEBUG << "GenericXmlDumper: -- is a specific entity ";
+    if (xmlOutputSpecificEntity(out,se.first,se.second,sp,offset)) {
+      return;
+    }
+    else {
+      DUMPERLOGINIT;
+      LERROR << "failed to output specific entity for vertex " << v << LENDL;
+    }
+  }
+
+  if (m_outputCompounds) {
+    // check if the word is head of a compound
+    std::vector<BoWToken*> compoundTokens=
+    checkCompound(v, anagraph, posgraph, annotationData, syntacticData, offset, visited);
+    if (compoundTokens.size()!=0) {
+      for (std::vector<BoWToken*>::const_iterator it=compoundTokens.begin(),
+        it_end=compoundTokens.end();it!=it_end;it++) {
+        
+        xmlOutputCompound(out,(*it),anagraph,posgraph,annotationData,sp,offset);
+        std::set<uint64_t> bowTokenVertices = (*it)->getVertices();
+        alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
+      }
+    }
+    // clean
+    for (std::vector<BoWToken*>::iterator it=compoundTokens.begin(),
+        it_end=compoundTokens.end();it!=it_end;it++) {
+      delete (*it);
+      (*it)=0;
+    }
+  }
+
+  LDEBUG << "GenericXmlDumper: -- is simple word ";
+  // if not a specific entity nor a compound, output simple word infos
+  if (m_outputWords) {
+    xmlOutputVertexInfos(out, v, posgraph, offset);
+  }
+}
+
+std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>
+GenericXmlDumper::checkSpecificEntity(LinguisticGraphVertex v,
+                                      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                                      AnalysisGraph* posgraph,
+                                      const Common::AnnotationGraphs::AnnotationData* annotationData) const
 {
   // first, check if vertex corresponds to a specific entity found before pos tagging (i.e. in analysis graph)
   std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
@@ -424,13 +603,7 @@ xmlOutputVertex(std::ostream& out,
         const SpecificEntityAnnotation* se =
           annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
           pointerValue<SpecificEntityAnnotation>();
-        if (xmlOutputSpecificEntity(out,se,anagraph,sp,offset)) {
-          return;
-        }
-        else {
-          DUMPERLOGINIT;
-          LERROR << "failed to output specific entity for vertex " << v;
-        }
+          return make_pair(se,anagraph);
       }
     }
   }
@@ -447,19 +620,212 @@ xmlOutputVertex(std::ostream& out,
       const SpecificEntityAnnotation* se =
         annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
         pointerValue<SpecificEntityAnnotation>();
-      
-      if (xmlOutputSpecificEntity(out,se,posgraph,sp,offset)) {
-        return;
-      }
-      else {
-        DUMPERLOGINIT;
-        LERROR << "failed to output specific entity for vertex " << v;
-      }
+      return make_pair(se,posgraph);
     }
   }  
+  return std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>((const SpecificEntityAnnotation*)0,(AnalysisGraph*)0);
+}
 
-  // if not a specific entity at all, output simple word infos
-  xmlOutputVertexInfos(out, v, posgraph, offset);
+bool GenericXmlDumper::
+xmlOutputSpecificEntity(std::ostream& out,
+                        const SpecificEntities::SpecificEntityAnnotation* se,
+                        LinguisticAnalysisStructure::AnalysisGraph* graph,
+                        const FsaStringsPool& sp,
+                        uint64_t offset) const
+{
+  if (se == 0) {
+    DUMPERLOGINIT;
+    LERROR << "missing specific entity annotation";
+    return false;
+  }
+  
+  // output enclosing tag for entity with associated information
+  if (m_outputSpecificEntities) {
+    out << "<" << m_specificEntityTag;
+    for (unsigned int i=0,size=m_featureNames.size();i<size;i++) {
+      // try to get value directly from specific entity (defined for some features)
+      string value=xmlString(specificEntityFeature(se,m_featureNames[i],sp,offset));
+      if (value.empty()) {
+        // otherwise, get features from head
+        value=xmlString(m_features[i]->getValue(graph,se->getHead()));
+      }
+      out << " " << m_featureTags[i] << "=\"" << value << "\"";
+    }
+    //<< " inf=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[se->getString()])) << "\""
+
+    if (m_outputSpecificEntityParts) {
+      // output tag as enclosing tag, with parts enclosed
+      out << ">" << endl;
+      for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
+           m != se->m_vertices.end(); m++)
+      {
+        xmlOutputVertexInfos(out,(*m),graph,offset);
+      }
+      out << "</" << m_specificEntityTag << ">" << endl;
+    }
+    else {
+      // output only the named entity tag
+      out << "/>" << endl;
+    }
+  }
+  else {
+    // output parts as simple words
+    for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
+         m != se->m_vertices.end(); m++)
+    {
+      xmlOutputVertexInfos(out,(*m),graph,offset);
+    }
+  }
+  
+  // take as category for parts the category for the named entity
+  /*LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
+  DUMPERLOGINIT;
+  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
+  */
+
+  return true;
+
+}
+
+std::vector<BoWToken*> GenericXmlDumper::
+checkCompound(LinguisticGraphVertex v,
+              AnalysisGraph* anagraph,
+              AnalysisGraph* posgraph,
+              const Common::AnnotationGraphs::AnnotationData* annotationData,
+              const SyntacticAnalysis::SyntacticData* syntacticData,
+              uint64_t offset,
+              set<LinguisticGraphVertex>& visited) const
+{
+  DUMPERLOGINIT;
+  LDEBUG << "GenericXmlDumper: check if compound for vertex " << v; 
+  
+  std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
+  if (cpdsHeads.empty())
+  {
+    // not a compound
+    return std::vector<BoWToken*>();
+  }
+  
+  LDEBUG << "GenericXmlDumper: -- is head of a compound ";
+  std::vector<BoWToken*> tokens;
+  std::set< std::string > alreadyStored;
+  for (std::set< AnnotationGraphVertex >::const_iterator it=cpdsHeads.begin(), it_end=cpdsHeads.end(); 
+       it!=it_end; it++)
+  {
+    const AnnotationGraphVertex& agv=*it;
+
+    // create compound using BoWGeneration : store in BoW
+    std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens = 
+    m_bowGenerator->buildTermFor(agv, agv, *(anagraph->getGraph()), *(posgraph->getGraph()), offset, 
+                                 syntacticData, annotationData, visited);
+    for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
+         bowItr!=bowTokens.end(); bowItr++)
+    {
+      std::string elem = (*bowItr).second->getIdUTF8String();
+      if (alreadyStored.find(elem) != alreadyStored.end())
+      {  
+        // already stored
+        //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+        delete (*bowItr).first;
+        delete (*bowItr).second;
+      }
+      else {
+        tokens.push_back((*bowItr).second);
+        alreadyStored.insert(elem);
+      }
+    }
+  }
+  return tokens;
+}
+
+void GenericXmlDumper::
+xmlOutputCompound(std::ostream& out, 
+                  Common::BagOfWords::BoWToken* token,
+                  LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                  LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                  const AnnotationData* annotationData,
+                  const FsaStringsPool& sp,
+                  uint64_t offset) const
+{
+  DUMPERLOGINIT;
+  LDEBUG << "GenericXmlDumper: output BoWToken [" << token->getOutputUTF8String() << "]";
+  switch (token->getType()) {
+    case BOW_TERM: {
+      LDEBUG << "GenericXmlDumper: output BoWTerm";
+      // compound informations
+      out << "<" << m_compoundTag;
+      xmlOutputBoWInfos(out,token,offset);
+      
+      if (m_outputCompoundParts) {
+        // close opening tag, then parts, then closing tag
+        out << ">" << endl;
+      }
+      else {
+        //single tag
+        out << "/>" << endl;
+      }
+      
+      // go through parts in any case, at least to get enclosed compounds
+      if (m_outputAllCompounds) {
+        // use iterator to create all partial compounds
+        BoWText t;
+        t.push_back(token);
+        BoWTokenIterator bit(t);
+        if (! bit.isAtEnd()) {
+          LDEBUG << "first token=" << bit.getElement()->getOutputUTF8String();
+          bit++; // first one is same BoWTerm
+        }
+        while (! bit.isAtEnd()) {
+          BoWToken* tok=const_cast<BoWToken*>(bit.getElement());
+          LDEBUG << "next token=" << tok->getOutputUTF8String();
+          xmlOutputCompound(out,tok,anagraph,posgraph,annotationData,sp,offset);
+          bit++;
+        }
+      }
+      else {
+        // output only enclosed compounds
+        BoWTerm* term=static_cast<BoWTerm*>(token);
+        const std::deque< BoWComplexToken::Part >& parts=term->getParts();
+        for (std::deque<BoWComplexToken::Part>::const_iterator p=parts.begin(),p_end=parts.end();p!=p_end;p++) {
+          xmlOutputCompound(out,(*p).getBoWToken(),anagraph,posgraph,annotationData,sp,offset);
+        }
+      }
+
+      if (m_outputCompoundParts) {
+        out << "</" << m_compoundTag << ">" << endl;
+      }
+      break;
+    }
+    case BOW_NAMEDENTITY: {
+      if (m_outputCompoundParts) {
+        LinguisticGraphVertex v=token->getVertex();
+        LDEBUG << "GenericXmlDumper: output BoWNamedEntity of vertex " << v;
+        std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>
+        se=checkSpecificEntity(v,anagraph,posgraph,annotationData);
+        if (se.first==0) {
+        DUMPERLOGINIT;
+        LERROR << "GenericXmlDumper: for vertex " << v << ": specific entity not found" << LENDL;
+        }
+        else {
+          xmlOutputSpecificEntity(out,se.first,se.second,sp,offset);
+        }
+      }
+      break;
+    }
+    case BOW_TOKEN: {
+      if  (m_outputCompoundParts) {
+        LinguisticGraphVertex v=token->getVertex();
+        LDEBUG << "GenericXmlDumper: output BoWToken of vertex " << v;
+        xmlOutputVertexInfos(out,v,posgraph,offset);
+      }
+      break;
+    }
+    default: {
+      DUMPERLOGINIT;
+      LERROR << "GenericXmlDumper: Error: BowToken has type BOW_NOTYPE";
+      
+    }
+  }
 }
 
 void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out, 
@@ -467,194 +833,84 @@ void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out,
                                            LinguisticAnalysisStructure::AnalysisGraph* graph,
                                            uint64_t offset) const
 {
-  out << "<w";
-  for (vector<AbstractFeatureExtractor*>::const_iterator it=m_features.begin(),
-       it_end=m_features.end(); it!=it_end; it++) {
+  out << "<" << m_wordTag;
+  for (unsigned int i=0,size=m_features.size();i<size;i++) {
     std::string value;
     // for position, correct with offset : hard coded name
-    if ((*it)->getName()=="position") {
-      unsigned int pos=atoi((*it)->getValue(graph,v).c_str());
+    if (m_features[i]->getName()=="position") {
+      unsigned int pos=atoi(m_features[i]->getValue(graph,v).c_str());
       pos+=offset;
       ostringstream oss;
       oss << pos;
       value=oss.str();
     }
     else {
-      value=xmlString((*it)->getValue(graph,v));
+      value=xmlString(m_features[i]->getValue(graph,v));
     }
-    out << " " << (*(m_featuresMap.find(*it))).second << "=\"" << value << "\"";
+    out << " " << m_featureTags[i] << "=\"" << value << "\"";
   }
   out << "/>" << endl;
 }                          
 
-bool GenericXmlDumper::xmlOutputSpecificEntity(std::ostream& out, 
-                                              const SpecificEntities::SpecificEntityAnnotation* se,
-                                              LinguisticAnalysisStructure::AnalysisGraph* graph,
-                                              const FsaStringsPool& sp,
-                                              uint64_t offset) const
+void GenericXmlDumper::xmlOutputBoWInfos(std::ostream& out, 
+                                         BoWToken* token,
+                                         uint64_t offset) const
 {
-  if (se == 0) {
-    DUMPERLOGINIT;
-    LERROR << "missing specific entity annotation";
-    return false;
-  }
-  
-  std::string typeName("");
-  std::string norm("");
-  try {
-    LimaString str= MediaticData::single().getEntityName(se->getType());
-    typeName=Common::Misc::limastring2utf8stdstring(str);
-  }
-  catch (std::exception& ) {
-    DUMPERLOGINIT;
-    LERROR << "Undefined entity type " << se->getType();
-    return false;
-  }
-  out << "<e type=\"" << typeName << "\""
-      << " inf=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[se->getString()])) << "\""
-      << " norm=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[se->getNormalizedForm()])) << "\""
-      << ">" << endl;
-
-  // take as category for parts the category for the named entity
-  /*LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
-  DUMPERLOGINIT;
-  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
-  */
-  // get the parts of the named entity match
-  // use the category of the named entity for all elements
-  for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
-       m != se->m_vertices.end(); m++)
-  {
-    xmlOutputVertexInfos(out,(*m),graph,offset);
-  }
-  out << "</e>" << endl;
-  return true;
-
-}
-
-/*
-void GenericXmlDumper::
-xmlOutputVertexInfos(std::ostream& out, 
-                     const Token* ft,
-                     const vector<MorphoSyntacticData*>& data,
-                     const FsaStringsPool& sp,
-                     uint64_t offset,
-                     LinguisticCode category) const
-{
-  out << "<w";
-  for (map<string,AbstractFeatureExtractor*>::const_iterator it=m_featuresMap.begin(),
-       it_end=m_featuresMap.end(); it!=it_end; it++) {
-    out << " " << (*it).first << "=\"" << (*it).second->getValue(graph,v) << "\"";
-  }
-  out << "/>" << endl;
-
-  ltNormProperty sorter(m_propertyAccessor);
-  uint64_t position=ft->position() + offset;
-
-  bool output(false);
-
-  for (vector<MorphoSyntacticData*>::const_iterator dataItr=data.begin(),
-         dataItr_end=data.end(); dataItr!=dataItr_end; dataItr++)
-  {
-    MorphoSyntacticData* data=*dataItr;
-    sort(data->begin(),data->end(),sorter);
-    StringsPoolIndex norm(0),curNorm(0);
-    LinguisticCode micro(0),curMicro(0);
-    for (MorphoSyntacticData::const_iterator elemItr=data->begin();
-         elemItr!=data->end();
-         elemItr++)
-    {
-      curNorm=elemItr->normalizedForm;
-      curMicro=m_propertyAccessor->readValue(elemItr->properties);
-      if ((curNorm != norm) || (curMicro != micro)) {
-        norm=curNorm;
-        micro=curMicro;
-        
-        // if category is specified, output first data (lemma) compatible with this category
-        if (category == LinguisticCode(0) || category==curMicro) {
-          out << "<w p=\"" << position <<  "\""
-              << " inf=\"" << xmlString(Common::Misc::limastring2utf8stdstring(ft->stringForm())) << "\"" 
-              << " pos=\"" << m_propertyManager->getPropertySymbolicValue(curMicro) << "\""
-              << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[norm])) << "\"";
-          if (m_outputTStatus) {
-            out << " tok=\"" << ft->status().defaultKey() << "\"";
-          }
-          if (m_outputVerbTense) {
-            LinguisticCode tense=m_tenseAccessor->readValue(elemItr->properties);
-            if (tense!=NONE_1) {
-              out << " tense=\"" << m_tenseManager->getPropertySymbolicValue(tense) << "\"";
-            }
-          }
-          out << "/>" << endl;
-          output=true;
-        }
-      }
+  for (unsigned int i=0,size=m_bowFeatures.size();i<size;i++) {
+    std::string value;
+    // for position, correct with offset : hard coded name
+    if (m_bowFeatures[i]->getName()=="position") {
+      unsigned int pos=atoi(m_bowFeatures[i]->getValue(token).c_str());
+      pos+=offset;
+      ostringstream oss;
+      oss << pos;
+      value=oss.str();
     }
-  }
-  
-  // if category is specified and no matching data is found for this category: use first data
-  if (category != LinguisticCode(0) && ! output) {
-    StringsPoolIndex norm=data.front()->begin()->normalizedForm;
-    out << "<w p=\"" << position <<  "\""
-        << " inf=\"" << xmlString(Common::Misc::limastring2utf8stdstring(ft->stringForm())) << "\"" 
-        << " pos=\"" << m_propertyManager->getPropertySymbolicValue(category) << "\""
-        << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[norm])) << "\""
-        << "/>" << endl;
-  }
-}
-
-bool GenericXmlDumper::
-outputSpecificEntity(std::ostream& out, 
-                     const SpecificEntityAnnotation* se,
-                     MorphoSyntacticData* data,
-                     const LinguisticGraph* graph,
-                     const FsaStringsPool& sp,
-                     const uint64_t offset) const
-{
-  if (se == 0) {
-    DUMPERLOGINIT;
-    LERROR << "missing specific entity annotation";
-    return false;
-  }
-  
-  std::string typeName("");
-  std::string norm("");
-  try {
-    LimaString str= MediaticData::single().getEntityName(se->getType());
-    typeName=Common::Misc::limastring2utf8stdstring(str);
-  }
-  catch (std::exception& ) {
-    DUMPERLOGINIT;
-    LERROR << "Undefined entity type " << se->getType();
-    return false;
-  }
-  out 
-    << "<e type=\"" << typeName << "\""
-    << " inf=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[se->getString()])) << "\""
-    << " norm=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[se->getNormalizedForm()])) << "\""
-    << ">" << endl;
-
-  // take as category for parts the category for the named entity
-  LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
-  DUMPERLOGINIT;
-  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
-  
-  // get the parts of the named entity match
-  // use the category of the named entity for all elements
-  for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
-       m != se->m_vertices.end(); m++)
-  {
-    const Token* token = get(vertex_token, *graph, *m);
-    if (token != 0) {
-      MorphoSyntacticData* vertexData = get(vertex_data, *graph, *m);
-      xmlOutputVertexInfos(out,token,vector<MorphoSyntacticData*>(1,vertexData),sp,offset,category);
+    else {
+      value=xmlString(m_bowFeatures[i]->getValue(token));
     }
+    out << " " << m_featureTags[i] << "=\"" << value << "\"";
   }
-  out << "</e>" << endl;
-  return true;
 }
-*/
 
+std::string GenericXmlDumper::
+specificEntityFeature(const SpecificEntities::SpecificEntityAnnotation* se,
+                      const std::string& featureName,
+                      const FsaStringsPool& sp,
+                      uint64_t offset) const
+{
+  // all hard-coded feature names : not really clean, but a clean definition of all features for 
+  // a specialized class such as SpecificEntityAnnotation seems a bit too much...
+  if (featureName=="position") { 
+    uint64_t pos=se->getPosition();
+    pos+=offset;
+    ostringstream oss;
+    oss << pos;
+    return oss.str();
+  }
+  if (featureName.find("property:MACRO")==0) { // put entity type in category
+    std::string typeName("");
+    try {
+      LimaString str= MediaticData::single().getEntityName(se->getType());
+      typeName=Common::Misc::limastring2utf8stdstring(str);
+    }
+    catch (std::exception& ) {
+      DUMPERLOGINIT;
+    LERROR << "Undefined entity type " << se->getType();
+      return "";
+    }
+    return typeName;
+  }
+  else if (featureName=="lemma") {
+    return Common::Misc::limastring2utf8stdstring(sp[se->getNormalizedForm()]);
+  }
+  else if (featureName=="word") {
+    return Common::Misc::limastring2utf8stdstring(sp[se->getString()]);
+  }
+  return "";
+}
+
+//--------------------------------------------------------------------------------------
 // string manipulation functions to protect XML entities
 std::string GenericXmlDumper::xmlString(const std::string& inputStr) const
 {
@@ -664,7 +920,7 @@ std::string GenericXmlDumper::xmlString(const std::string& inputStr) const
   replace(str,"<", "&lt;");
   replace(str,">", "&gt;");
   replace(str,"\"", "&quot;");
-  replace(str,"\n", "\n");
+  replace(str,"\n", "\\n");
   return str;
 }
 
