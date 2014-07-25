@@ -270,7 +270,7 @@ int main(int argc,char* argv[])
     // display the progress of the analysis
     std::cout << "\rAnalyzing "<< i << "/" << files.size()
     << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
-    << *fileItr << "'" << std::flush;
+    << *fileItr << "'" << std::endl << std::flush;
     
     // set the output files (to 0 if not in list)
     // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile
@@ -307,8 +307,17 @@ int main(int argc,char* argv[])
   }
   std::cout << std::endl;
   delete client;
-  delete bowTextWriter;
-  delete simpleStreamHandler;
+  // free handlers
+  if (eventHandler != 0)
+    delete eventHandler;
+  if (bowTextWriter!= 0)
+    delete bowTextWriter;
+  if (bowTextHandler!= 0)
+    delete bowTextHandler;
+  if (simpleStreamHandler!= 0)
+    delete simpleStreamHandler;
+  if (fullXmlSimpleStreamHandler!= 0)
+    delete fullXmlSimpleStreamHandler;
   delete Common::MediaticData::MediaticData::pchangeable();
   delete LinguisticProcessingClientFactory::pchangeable();
   TIMELOGINIT;

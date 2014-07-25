@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="http-server">
+    <group name="analyzer">
+      <list name="languages">
+	<item value="fre"/>
+	<item value="eng"/>
+	<!--item value="spa"/-->
+	<!--item value="ger"/-->
+	<item value="ara"/>
+      </list>
+      <list name="pipelines">
+	<item value="limaserver"/>
+      </list>
+    </group>
+    <group name="address">
+      <param key="port" value="8080"/>
+    </group>
+  </module>
+</modulesConfig>
