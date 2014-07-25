@@ -1,4 +1,3 @@
-#    
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
