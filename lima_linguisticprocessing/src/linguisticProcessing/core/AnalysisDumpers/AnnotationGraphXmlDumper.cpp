@@ -66,10 +66,13 @@ namespace AnalysisDumpers {
 SimpleFactory<MediaProcessUnit,AnnotationGraphXmlDumper> annotationGraphXmlDumperFactory(ANNOTATIONGRAPHXMLDUMPER_CLASSID);
 
 AnnotationGraphXmlDumper::AnnotationGraphXmlDumper()
-: MediaProcessUnit(),
-m_handler()
+: MediaProcessUnit(), m_handler()
 {
 }
+
+AnnotationGraphXmlDumper::AnnotationGraphXmlDumper( const MediaId& language, const std::string& handler )
+    : m_language(language), m_handler( handler)
+    {}
 
 AnnotationGraphXmlDumper::~AnnotationGraphXmlDumper()
 {
@@ -105,6 +108,13 @@ void AnnotationGraphXmlDumper::init(
 LimaStatusCode AnnotationGraphXmlDumper::process(
   AnalysisContent& analysis) const
 {
+  std::string prologue("<?xml version='1.0' encoding='UTF-8'?>");
+  return dump( analysis, prologue );
+}
+
+LimaStatusCode AnnotationGraphXmlDumper::dump(
+  AnalysisContent& analysis, const std::string& prologue ) const
+{
   TimeUtilsController timer("AnnotationGraphXmlDumper");
   DUMPERLOGINIT;
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
@@ -125,7 +135,8 @@ LimaStatusCode AnnotationGraphXmlDumper::process(
   HandlerStreamBuf hsb(handler);
   std::ostream outputStream(&hsb);
 
-  outputStream << "<?xml version='1.0' encoding='UTF-8'?>" << std::endl;
+  if( !prologue.empty() )
+    outputStream << prologue << std::endl;
 //  outputStream << "<!DOCTYPE lima_analysis_dump SYSTEM \"lima-xml-output.dtd\">" << std::endl;
   outputStream << "<lima_annotation_graph_dump>" << std::endl;
   
@@ -245,7 +256,7 @@ void AnnotationGraphXmlDumper::outputEdge(const AnnotationGraphEdge e,
                               std::ostream& xmlStream) const
 {
   xmlStream << "<edge src=\"" << source(e, graph) 
-          << "\" targ=\"" << target(e, graph) << "\" />" << std::endl;  
+          << "\" targ=\"" << target(e, graph) << "\">" << std::endl;  
   outputEdgeIAnnotations(e, graph, annotData, xmlStream);
   outputEdgeSAnnotations(e, graph, annotData, xmlStream);
   outputEdgeGAnnotations(e, graph, annotData, xmlStream);

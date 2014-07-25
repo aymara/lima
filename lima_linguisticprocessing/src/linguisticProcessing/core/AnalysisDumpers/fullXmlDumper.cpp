@@ -47,7 +47,7 @@
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
 // #include "linguisticProcessing/common/BagOfWords/bowFileHeader.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "linguisticProcessing/common/annotationGraph/AnnotationGraphXmlDumper.h"
+//#include "linguisticProcessing/common/annotationGraph/AnnotationGraphXmlDumper.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
@@ -86,7 +86,8 @@ SimpleFactory<MediaProcessUnit,FullXmlDumper> fullXmlDumperFactory(FULLXMLDUMPER
 FullXmlDumper::FullXmlDumper()
 : MediaProcessUnit(),
       m_dumpFullTokens(true),
-      m_handler()
+      m_handler(),
+      m_annotXmlDumperPtr(0)
 {
 }
 
@@ -130,6 +131,7 @@ void FullXmlDumper::init(
     LERROR << "FullXmlDumper::init: Missing parameter handler in FullXmlDumper configuration" << LENDL;
     throw InvalidConfiguration();
   }
+  m_annotXmlDumperPtr = new AnnotationGraphXmlDumper(m_language,m_handler);
   
 }
 
@@ -302,8 +304,9 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
 
 
   // dump annotation graph
-  AnnotationGraphXmlDumper annotXmlDumper;
-  annotXmlDumper.dump(outputStream, &(annotationData->getGraph()), *annotationData);
+  m_annotXmlDumperPtr->dump( analysis );
+
+  // annotXmlDumper.dump(outputStream, &(annotationData->getGraph()), *annotationData);
 
   outputStream << "</lima_analysis_dump>" << std::endl;
   handler->endAnalysis();
