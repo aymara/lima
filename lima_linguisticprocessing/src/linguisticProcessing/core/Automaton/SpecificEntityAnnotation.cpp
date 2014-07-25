@@ -81,7 +81,7 @@ SpecificEntityAnnotation::~SpecificEntityAnnotation()
 
 void SpecificEntityAnnotation::dump(std::ostream& os) const
 {
-  os << "<se h=\"" << m_head << "\" t=\"" << m_type << "\" vertices=\"";
+  os << "head:" << m_head << " type:" << m_type << " vertices=";
   if (m_vertices.size() != 0)
   {
     os << m_vertices[0];
@@ -90,7 +90,16 @@ void SpecificEntityAnnotation::dump(std::ostream& os) const
       os << "," << m_vertices[i];
     }
   }
-  os << "\" />" << std::endl;
+// OME   os << "<se h=\"" << m_head << "\" t=\"" << m_type << "\" vertices=\"";
+// OME   if (m_vertices.size() != 0)
+// OME   {
+// OME     os << m_vertices[0];
+// OME     for (uint64_t i = 1; i < m_vertices.size(); i++)
+// OME     {
+// OME       os << "," << m_vertices[i];
+// OME     }
+// OME   }
+// OME   os << "\" />" << std::endl;
 }
 
 
