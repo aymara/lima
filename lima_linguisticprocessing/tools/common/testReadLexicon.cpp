@@ -47,8 +47,8 @@ Param;
 
 void testAccessMethod(const Param& param )
 {
-  string resourcesPath=string(getenv("LIMA_RESOURCES"));
-  string commonConfigFile=string("lima-common.xml");
+  string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  string commonConfigFile=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string("lima-common.xml");
   string configDir=string(getenv("LIMA_CONF"));
 
   // Load lexicon

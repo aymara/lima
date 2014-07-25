@@ -155,8 +155,8 @@ int main(int argc, char *argv[])
   }
 
 
-  std::string resourcesPath=string(getenv("LIMA_RESOURCES"));
-  std::string configDir=string(getenv("LIMA_CONF"));
+  std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  std::string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
   std::string commonConfigFile="/lima-common.xml";
   deque<string> langs;
   langs.push_back(param.language);
