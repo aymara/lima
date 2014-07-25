@@ -152,13 +152,14 @@ void AnalysisThread::startAnalysis()
 
       std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
       resultString.append(oss->str());
-      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << resultString;
+      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
 
       m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
       m_d->m_response->writeHead(200);
 
-      QString body = QString::fromUtf8(resultString.c_str());
-      m_d->m_response->end(body.toUtf8());
+//      QString body = QString::fromUtf8(resultString.c_str());
+//      m_d->m_response->end(body.toUtf8());
+      m_d->m_response->end(QByteArray(resultString.c_str()));
       m_d->m_request->deleteLater();
       deleteLater();
       quit();
@@ -178,7 +179,8 @@ void AnalysisThread::startAnalysis()
     LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
 
     std::string fileName("testLimaserver.out");
-    QString language, pipeline, text;
+    QString language, pipeline, text_QS;
+    std::string text_s;
     QPair<QString, QString> item;
     std::map<std::string,std::string> metaData;
     Q_FOREACH( item, m_d->m_request->url().queryItems())
@@ -198,7 +200,8 @@ void AnalysisThread::startAnalysis()
     }
 
     std::set<std::string> inactiveUnits;
-    QString body = m_d->m_request->body();
+    const QByteArray& body = m_d->m_request->body();
+    text_s = std::string(body.data());
 
     std::map<std::string, AbstractAnalysisHandler*> handlers;
     LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
@@ -206,8 +209,6 @@ void AnalysisThread::startAnalysis()
     std::ostringstream* oss = new std::ostringstream();
     seLogWriter->setOut(oss);
    
-    text = body;
-
     if( language.isEmpty() )
     {
       m_d->m_response->writeHead(400);
@@ -222,21 +223,24 @@ void AnalysisThread::startAnalysis()
 //	errorMessage << "language " << language " is no initialized"));
         m_d->m_response->end(errorMessage.toUtf8());
     }
-    else if( !language.isEmpty() && !text.isEmpty() )
+    else if( !language.isEmpty() && !text_s.empty() )
     {
       metaData["Lang"]=language.toUtf8().data();
       metaData["FileName"]=fileName.c_str();
       std::string pipe = pipeline.toUtf8().data();
-      m_d->m_analyzer->analyze(text,metaData, pipe, handlers, inactiveUnits);
+      text_QS = Misc::utf8stdstring2limastring(text_s);
+
+      m_d->m_analyzer->analyze(text_QS,metaData, pipe, handlers, inactiveUnits);
 
       std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
       resultString.append(oss->str());
-      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << resultString;
+      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
 
       m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
       m_d->m_response->writeHead(200);
-      QString body = QString::fromUtf8(resultString.c_str());
-      m_d->m_response->end(body.toUtf8());
+//      QString body = QString::fromUtf8(resultString.c_str());
+//      m_d->m_response->end(body.toUtf8());
+      m_d->m_response->end(QByteArray(resultString.c_str()));
     }
     else
     {
