@@ -214,7 +214,12 @@ uint64_t IndexElement::getId() const { return m_d->m_id; }
 
 bool IndexElement::isSimpleTerm() const { return m_d->m_structure.empty(); }
 
-bool IndexElement::isComposedTerm() const { return ! m_d->m_structure.empty(); }
+// FIXME IndexElement should be changed to contain a real BoWType
+// this would allow to deduce the return value of this function and others 
+// from it instead of from the term structure or the presence of a '_'
+// currently the test of the presence of a '_' is necessary as a complex term 
+// obtained from a reformulation dictionary will have an empty structure
+bool IndexElement::isComposedTerm() const { return ! m_d->m_structure.empty() || m_d->m_word.contains('_'); }
 
 const LimaString& IndexElement::getSimpleTerm() const { return m_d->m_word; }
 

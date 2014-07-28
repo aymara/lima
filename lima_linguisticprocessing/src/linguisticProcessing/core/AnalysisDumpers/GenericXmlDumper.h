@@ -26,6 +26,7 @@
 #include "AnalysisDumpersExport.h"
 
 #include "WordFeatureExtractor.h"
+#include "BoWFeatureExtractor.h" // for compounds (stored in BoWTerms)
 
 #include "common/MediaProcessors/MediaProcessUnit.h"
 
@@ -37,6 +38,7 @@
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
+#include "BowGeneration.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -65,10 +67,22 @@ public:
 protected:
   std::string m_graph;
   WordFeatures m_features; //!< use dedicated class for feature storage (easy initialization functions)
-  std::map<AbstractFeatureExtractor*,std::string> m_featuresMap; //!< use additional map to associate features with XML tags (only pointers)
+  BoWFeatures m_bowFeatures; //!< use dedicated class for feature storage (easy initialization functions)
+  std::deque<std::string> m_featureNames; //!< use additional vector (aligned) to store feature names
+  std::vector<std::string> m_featureTags; //!< use additional vector (aligned) to store associated XML tags 
   std::map<std::string,std::string> m_defaultFeatures;
-  bool m_outputSentenceBoundaries;
-  bool m_outputSpecificEntities;
+  bool m_outputWords;              //!< output simple words
+  bool m_outputSentenceBoundaries; //!< output sentence boundaries (enclosing sentence tags)
+  bool m_outputSpecificEntities;   //!< output specific entities
+  bool m_outputSpecificEntityParts; //!< output parts of specific entities
+  bool m_outputCompounds;     //!< output compounds
+  bool m_outputCompoundParts; //!< output also compound parts
+  bool m_outputAllCompounds;  //!< output all partial compounds (created using BoWToken iterator)
+  std::string m_wordTag;
+  std::string m_sentenceBoundaryTag;
+  std::string m_specificEntityTag;
+  std::string m_compoundTag;
+  Compounds::BowGenerator* m_bowGenerator;
 
   //   std::string m_property;
 //   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
@@ -89,12 +103,14 @@ protected:
                  AnalysisContent& analysis,
                  LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                  LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-                 const Common::AnnotationGraphs::AnnotationData* annotationData) const;
+                 const Common::AnnotationGraphs::AnnotationData* annotationData,
+                 const SyntacticAnalysis::SyntacticData* syntacticData) const;
   
   void xmlOutputVertices(std::ostream& out,
                          LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                          LinguisticAnalysisStructure::AnalysisGraph* posgraph,
                          const Common::AnnotationGraphs::AnnotationData* annotationData,
+                         const SyntacticAnalysis::SyntacticData* syntacticData,
                          const LinguisticGraphVertex begin,
                          const LinguisticGraphVertex end,
                          const FsaStringsPool& sp,
@@ -105,20 +121,63 @@ protected:
                        LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                        LinguisticAnalysisStructure::AnalysisGraph* posgraph,
                        const Common::AnnotationGraphs::AnnotationData* annotationData,
+                       const SyntacticAnalysis::SyntacticData* syntacticData,
                        const FsaStringsPool& sp,
-                       uint64_t offset) const;
+                       uint64_t offset,
+                       std::set<LinguisticGraphVertex>& visited,
+                       std::set<LinguisticGraphVertex>& alreadyStoredVertices) const;
 
   void xmlOutputVertexInfos(std::ostream& out, 
                             LinguisticGraphVertex v,
                             LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                             uint64_t offset) const;
 
+  void xmlOutputBoWInfos(std::ostream& out, 
+                         Common::BagOfWords::BoWToken* token,
+                         uint64_t offset) const;
+                          
+  /**
+   * check if a vertex is a specific entity: returns the specific entity annotation 
+   * if it is the case, along with the graph in which this entity has been found 
+   * (can be analysis graph or pos graph). 
+   * Returns (0,0) if not a specific entity
+   */
+  std::pair<const SpecificEntities::SpecificEntityAnnotation*,LinguisticAnalysisStructure::AnalysisGraph*>
+  checkSpecificEntity(LinguisticGraphVertex v,
+                      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                      LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                      const Common::AnnotationGraphs::AnnotationData* annotationData) const;
+                            
   bool xmlOutputSpecificEntity(std::ostream& out, 
                                const SpecificEntities::SpecificEntityAnnotation* se,
                                LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                                const FsaStringsPool& sp,
                                uint64_t offset) const;
+                               
+  // hack to get compatible features between specific entities and words
+  // without having to define abstract Feature Extractors for SpecificEntityAnnotation
+  std::string specificEntityFeature(const SpecificEntities::SpecificEntityAnnotation* se,
+                                    const std::string& featureName,
+                                    const FsaStringsPool& sp,
+                                    uint64_t offset) const;
+                               
+  std::vector<Common::BagOfWords::BoWToken*>
+  checkCompound(LinguisticGraphVertex v,
+                LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                const Common::AnnotationGraphs::AnnotationData* annotationData,
+                const SyntacticAnalysis::SyntacticData* syntacticData,
+                uint64_t offset,
+                std::set<LinguisticGraphVertex>& visited) const;
 
+  void xmlOutputCompound(std::ostream& out, 
+                         Common::BagOfWords::BoWToken* token,
+                         LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                         LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                         const Common::AnnotationGraphs::AnnotationData* annotationData,
+                         const FsaStringsPool& sp,
+                         uint64_t offset) const;
+                               
   /*void xmlOutputVertexInfos(std::ostream& out, 
                             const LinguisticAnalysisStructure::Token* ft,
                             const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,

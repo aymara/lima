@@ -17,8 +17,10 @@
 project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 2.8)
 
+if(POLICY CMP0017)
 cmake_policy(SET CMP0017 NEW)
 
+endif()
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP" )
@@ -189,6 +191,7 @@ SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 SET(CPACK_STRIP_FILES "bin/analyzeText;bin/readBowFile")
 SET(CPACK_SOURCE_STRIP_FILES "")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
 IF (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
   set(CPACK_RPM_PACKAGE_REQUIRES "qt4-common >= 4.7, limacommon >= 1.0.0")

@@ -42,3 +42,7 @@ install(FILES
     AnnotationGraph.h
     AnnotationGraphWriter.h
   DESTINATION include/linguisticProcessing/common/annotationGraph/)
+
+
+
+add_subdirectory(tests)

@@ -29,6 +29,7 @@
 #include "bowTerm.h"
 #include "bowNamedEntity.h"
 #include "bowDocumentST.h"
+#include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 
@@ -189,6 +190,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     }
     if (isIndexingNode) {
       m_outputStream << INDEXING_BLOC;
+      m_currentBoWText=new BoWText();
     }
     else {
       m_outputStream << HIERARCHY_BLOC;
@@ -310,7 +312,12 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   }
   else if (stringName == "hierarchy") {
     m_outputStream << END_BLOC;
-  }
+    if (m_currentBoWText !=0) {
+      BoWBinaryWriter writer;
+      writer.writeBoWText(m_outputStream,*m_currentBoWText);
+      delete m_currentBoWText;
+      m_currentBoWText=0;
+    }
   else if (stringName == "bowDocument") {
     //@todo
     // m_currentBoWDocument.write(m_outputStream);

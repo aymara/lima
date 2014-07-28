@@ -83,6 +83,9 @@ protected:
     void initRelations(
         XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
 
+    void initConceptTypes(
+        XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
+
     std::deque< std::string > m_medias;
 
 private:
@@ -113,6 +116,8 @@ private:
 
     static const std::string s_nocateg;
 
+    std::map< std::string, ConceptType > m_conceptTypes;
+    std::map< ConceptType, std::string > m_conceptNames;
 };
   
 const LimaString MediaticDataPrivate::s_entityTypeNameSeparator=Common::Misc::utf8stdstring2limastring(".");
@@ -209,6 +214,8 @@ void MediaticData::init(
   initEntityTypes(configuration);
 
   m_d->initRelations(configuration);
+  
+  m_d->initConceptTypes(configuration);
   
   /**
     * initialize active medias
@@ -427,6 +434,63 @@ void MediaticDataPrivate::initRelations(
     throw InvalidConfiguration();
   }
 }
+
+void MediaticDataPrivate::initConceptTypes(
+    XMLConfigurationFiles::XMLConfigurationFileParser& configParser) 
+{
+  MDATALOGINIT;
+  //LINFO << "intialize Concepts Types";
+  
+  try {
+    const map<string,string>& mapping=configParser.getModuleConfiguration("common").getGroupNamed("SemanticData").getMapAtKey("conceptTypes");
+    for (map<string,string>::const_iterator it=mapping.begin();
+         it!=mapping.end();
+         it++)
+    {
+      ConceptType type = static_cast<ConceptType>(atoi(it->second.c_str()));
+      LDEBUG << "read concept type " << it->first.c_str() << " -> " << type;
+      m_conceptTypes[it->first] = type;
+      m_conceptNames[type] = it->first;
+    }
+  
+  } catch (NoSuchGroup& ) {
+    LERROR << "No group 'SemanticData' in 'common' module of S2-common configuration file";
+    throw InvalidConfiguration();
+  } catch (NoSuchMap& ) {
+    LERROR << "No map 'conceptTypes' in 'SemanticData' group of S2-common configuration file";
+    throw InvalidConfiguration();
+  }
+}
+
+ConceptType MediaticData::getConceptType(const std::string& typeName) const
+{
+  if (m_d->m_conceptTypes.find(typeName)==m_d->m_conceptTypes.end())
+  {
+    MDATALOGINIT;
+    LERROR << "Concept type name " << typeName.c_str() << " not found. Returning value for LatticeDown (should be '0').";
+        return (*(m_d->m_conceptTypes.find("LatticeDown"))).second;
+  }
+  else
+  {
+    return (*(m_d->m_conceptTypes.find(typeName))).second;
+  }
+}
+
+
+const std::string& MediaticData::getConceptName(const ConceptType& type) const
+{
+  if (m_d->m_conceptNames.find(type)==m_d->m_conceptNames.end())
+  {
+    MDATALOGINIT;
+    LERROR << "Concept type " << type << " not found. Returning for 0 (should be 'LatticeDown').";
+    return (*(m_d->m_conceptNames.find(static_cast<ConceptType>(0)))).second;
+  }
+  else
+  {
+    return (*(m_d->m_conceptNames.find(type))).second;
+  }
+}
+
 
 void MediaticDataPrivate::initReleaseStringsPool(
   XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
@@ -782,7 +846,9 @@ MediaticDataPrivate::MediaticDataPrivate() :
     m_stringsPool(),
     m_releaseStringsPool(false),
     m_resourcesPath(),
-    m_configPath()
+    m_configPath(),
+    m_conceptTypes(),
+    m_conceptNames()
 {
   // null first element
   m_entityTypes.push_back( static_cast<EntityTypeMap*>(0));

@@ -231,9 +231,9 @@ const Lima::LimaString& word) const{
 
 
 void testAnalysisDico(const Param& param ) {
-  string resourcesPath=string(getenv("LIMA_RESOURCES"));
+  string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
   string commonConfigFile=string("lima-common.xml");
-  string configDir=string(getenv("LIMA_CONF"));
+  string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
 
   MyAnalysisDico* dico = new MyAnalysisDico(analysisDataElement(0));
   dico->parseAccessMethod(param.keyFileName);
