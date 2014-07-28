@@ -427,10 +427,10 @@ void MediaticDataPrivate::initRelations(
          }
   
   } catch (NoSuchGroup& ) {
-    LERROR << "No group 'semanticRelations' in 'common' module of S2-common configuration file";
+    LERROR << "No group 'semanticRelations' in 'common' module of lima-common configuration file";
     throw InvalidConfiguration();
   } catch (NoSuchMap& ) {
-    LERROR << "No map 'declaration' in 'semanticRelations' group of S2-common configuration file";
+    LERROR << "No map 'declaration' in 'semanticRelations' group of lima-common configuration file";
     throw InvalidConfiguration();
   }
 }
@@ -454,10 +454,10 @@ void MediaticDataPrivate::initConceptTypes(
     }
   
   } catch (NoSuchGroup& ) {
-    LERROR << "No group 'SemanticData' in 'common' module of S2-common configuration file";
+    LERROR << "No group 'SemanticData' in 'common' module of lima-common configuration file";
     throw InvalidConfiguration();
   } catch (NoSuchMap& ) {
-    LERROR << "No map 'conceptTypes' in 'SemanticData' group of S2-common configuration file";
+    LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file";
     throw InvalidConfiguration();
   }
 }

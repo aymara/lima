@@ -62,7 +62,7 @@ int main(int argc,char* argv[])
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
 // #endif
-  std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":std::string(getenv("LIMA_RESOURCES"));
   std::string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":std::string(getenv("LIMA_CONF"));
   std::string lpConfigFile=std::string("lima-lp-tva.xml");
   std::string commonConfigFile=std::string("lima-common.xml");

@@ -318,6 +318,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
       delete m_currentBoWText;
       m_currentBoWText=0;
     }
+  }
   else if (stringName == "bowDocument") {
     //@todo
     // m_currentBoWDocument.write(m_outputStream);
