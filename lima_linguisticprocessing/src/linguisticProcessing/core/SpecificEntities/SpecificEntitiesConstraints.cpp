@@ -60,6 +60,14 @@ ConstraintFunctionFactory<isInSameSpecificEntity>
 ConstraintFunctionFactory<CreateSpecificEntity>
   CreateSpecificEntityFactory(CreateSpecificEntityId);
 
+ConstraintFunctionFactory<AddEntityFeature>
+  AddEntityFeatureFactory(AddEntityFeatureId);
+
+ConstraintFunctionFactory<ClearEntityFeatures>
+  ClearEntityFeaturesFactory(ClearEntityFeaturesId);
+
+ConstraintFunctionFactory<NormalizeEntity>
+  NormalizeEntityFactory(NormalizeEntityId);
 
 
 isASpecificEntity::
@@ -769,10 +777,108 @@ bool CreateSpecificEntity::shouldRemoveFinal(
 }
 
 
+//----------------------------------------------------------------------------------------
+// AddEntityFeature : add a given feature to the recognized entity
+// we do not have direct access to the RecognizerMatch of the entity when calling this function 
+// (called during the matching process) => hence, store features in an AnalysisData and use 
+// this Data in normalization functions or CreateSpecificEntity function to get the features.
+// Use already existing RecognizerData (no need for another Data).
+// CAREFUL: the features must be cleaned after use: explicit call to clearFeatures in case of 
+// matching failure must be added in the rule.
 
+AddEntityFeature::AddEntityFeature(MediaId language,
+                                   const LimaString& complement):
+ConstraintFunction(language,complement),
+m_featureName("")
+{
+  if (complement.size()) {
+    m_featureName=Common::Misc::limastring2utf8stdstring(complement);
+  }
+}
+
+bool AddEntityFeature::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+           const LinguisticGraphVertex& vertex,
+           AnalysisContent& analysis) const
+{
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "AddEntityFeature:: Error: missing RecognizerData";
+    return false;
+  }
+  
+  // get string from the vertex and associate it to the feature
+  
+  // get string from the vertex : 
+  // @todo: if named entity, take normalized string, otherwise take lemma
+  LimaString featureValue;
+  Token* token=get(vertex_token,*(graph.getGraph()),vertex);
+  if (token!=0) {
+    featureValue=token->stringForm();
+  }
+ 
+  // add string as a feature
+  // @todo: handle other types of features
+  recoData->addEntityFeature(m_featureName,featureValue);  
+  
+  return true;
+}
+
+bool AddEntityFeature::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+           const LinguisticGraphVertex& v1,
+           const LinguisticGraphVertex& v2,
+           AnalysisContent& analysis) const
+{
+  return true;
+}
+
+// clear stored entity features, added by the AddEntityFeature function
+ClearEntityFeatures::ClearEntityFeatures(MediaId language,
+                                   const LimaString& complement):
+ConstraintFunction(language,complement)
+{
+}
+
+bool ClearEntityFeatures::
+operator()(AnalysisContent& analysis) const
+{
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData!=0) {
+    recoData->clearEntityFeatures();
+  }
+  return true;
+}
+
+//----------------------------------------------------
+// Normalize entity using stored features
+NormalizeEntity::NormalizeEntity(MediaId language,
+                                 const LimaString& complement):
+ConstraintFunction(language,complement)
+{
+}
+
+bool NormalizeEntity::
+operator()(Automaton::RecognizerMatch& match,
+           AnalysisContent& analysis) const
+{
+  // get stored features in recognizerData
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "AddEntityFeature:: Error: missing RecognizerData";
+    return false;
+  }
+  // assign stored features to RecognizerMatch features
+  match.features()=recoData->getEntityFeatures();
+  // must clear the stored features, once they are used (otherwise, will be kept for next entity)
+  recoData->clearEntityFeatures();
+  return true;
+}
 
 } // SpecificEntities
-
 } // LinguisticProcessing
-
 } // Lima
