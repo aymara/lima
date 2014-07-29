@@ -26,7 +26,15 @@ macro (CompileLimaSubproject _project _dependsOn)
    COMMENT "Packaging ${_project}"
    WORKING_DIRECTORY <BINARY_DIR>
    DEPENDEES install
-) 
+  )
+  ## Force rebuilding of the main subproject every time building from super structure
+  ExternalProject_Add_Step(${_project} forcebuild
+    COMMAND ${CMAKE_COMMAND} -E remove
+    ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
+    DEPENDEES configure
+    DEPENDERS build
+    ALWAYS 1
+  )
   
 endmacro ()
 
