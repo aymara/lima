@@ -38,6 +38,7 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
    posGraphXmlDumper.cpp
    SimpleXmlDumper.cpp
    WordFeatureExtractor.cpp
+   BoWFeatureExtractor.cpp
    TextFeaturesDumper.cpp
    DepTripletLogger.cpp
    GenericXmlDumper.cpp
@@ -76,6 +77,7 @@ install(FILES
     linearTextRepresentationDumper.h
     SimpleXmlDumper.h
     WordFeatureExtractor.h
+    BoWFeatureExtractor.h
     TextFeaturesDumper.h
     DepTripletLogger.h
     BowGeneration.h

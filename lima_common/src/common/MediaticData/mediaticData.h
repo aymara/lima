@@ -137,6 +137,9 @@ public:
     uint8_t getRelation(const std::string& relation) const ;
     const std::string& getRelation(uint8_t relation) const ;
 
+    ConceptType getConceptType(const std::string& typeName) const;
+    const std::string& getConceptName(const ConceptType& typeName) const;
+
     /*********************************************************************
       * Configuration functions
       ********************************************************************/

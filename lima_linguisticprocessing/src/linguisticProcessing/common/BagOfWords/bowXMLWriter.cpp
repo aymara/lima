@@ -191,7 +191,10 @@ void BoWXMLWriter::writeBoWText(
   m_d->decIndent();
   m_d->m_outputStream <<"</bowText>" << std::endl;
 }
-
+void BoWXMLWriter::writeBoWToken(const BoWToken* token)
+{
+   m_d->writeBoWToken(token);
+}
 // definition of template can be in .cpp because all needed 
 // instanciations are in this definition file
 template<typename PropertyType>

@@ -78,7 +78,9 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
     "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
     "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-    "share/apps/lima/cmake/Modules" # for those available on the system
+    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
+    "/usr/share/apps/lima/cmake/Modules" # for those available on the system
+    "/usr/share/cmake/Modules" # for those available on the system
 )
 
 # find_path and find_library will search in these dirs too
@@ -147,6 +149,7 @@ SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
 SET(CPACK_SOURCE_STRIP_FILES "")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
 IF (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
   set(CPACK_RPM_PACKAGE_REQUIRES "qt4 >= 4.7")

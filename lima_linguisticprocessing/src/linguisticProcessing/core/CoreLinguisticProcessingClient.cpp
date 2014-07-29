@@ -171,6 +171,7 @@ void CoreLinguisticProcessingClient::analyze(
   LINFO  << "analyze pipeline is '" << pipelineId << "'";
   LINFO  << "analyze language is '" << lang << "'";
   LDEBUG << "texte : " << texte;
+  //LDEBUG << "texte : " << Common::Misc::limastring2utf8stdstring(texte);
 
   MediaId langId=MediaticData::single().getMediaId(lang);
 

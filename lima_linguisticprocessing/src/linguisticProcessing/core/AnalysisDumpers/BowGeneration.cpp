@@ -42,6 +42,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
+#include "linguisticProcessing/core/Compounds/CompoundTokenAnnotation.h"
 
 #include <boost/graph/properties.hpp>
 
@@ -466,7 +467,19 @@ BoWRelation* BowGenerator::createBoWRelationFor(
           Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) )
   {
     LDEBUG << "BowGenerator:     working on relation";
-    relation = new BoWRelation();
+    const CompoundTokenAnnotation* annot = annotationData->annotation(vx,tgt, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")).pointerValue<CompoundTokenAnnotation>();
+    if (annot != 0 && !annot->empty())
+    {
+      const ConceptModifier& modifier = (*annot)[0];
+      StringsPoolIndex realizationIdx = modifier.getRealization();
+      LimaString realization = Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[realizationIdx];
+      int type = modifier.getConceptType();
+      relation = new BoWRelation(realization, type);
+    }
+    else
+    {
+      relation = new BoWRelation();
+    }
     LinguisticGraphVertex vxTokVertex = *(annotationData->matches("cpd", vx, "PosGraph").begin());
     LinguisticGraphVertex tgtTokVertex = *(annotationData->matches("cpd", tgt, "PosGraph").begin());
     LDEBUG << "BowGenerator:     working vx  " << vxTokVertex;

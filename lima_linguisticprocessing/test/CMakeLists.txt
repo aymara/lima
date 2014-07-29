@@ -15,8 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
+include_directories($ENV{LIMA_EXTERNALS}}/include)
 add_subdirectory(testAnnotationGraphs)
 add_subdirectory(perlTCPClientServer)
+if (QHTTPSERVER_FOUND)
+add_subdirectory(limaServer)
+endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 

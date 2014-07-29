@@ -79,8 +79,8 @@ int main(int argc,char* argv[])
   QsLogging::initQsLog();
 
   Param param = {
-    std::string(getenv("LIMA_RESOURCES")),
-    std::string(getenv("LIMA_CONF")),
+    std::string(getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":getenv("LIMA_RESOURCES")),
+    std::string(getenv("LIMA_CONF")==0?"/usr/share/config/lima":getenv("LIMA_CONF")),
     std::string("lima-common.xml"),
     std::string("XXX-coreclient"),
     std::string("."),
