@@ -100,11 +100,11 @@ bool StoreForDisambiguation::operator()(
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
     v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
-    //     LDEBUG << "SecondUngovernedBy: false" << LENDL;
+    //     LDEBUG << "SecondUngovernedBy: false";
     return false;
   }
   SAPLOGINIT;
-  LDEBUG << "StoreForDisambiguation " << v1 << ", " << v2 << ", " << m_relation << LENDL;
+  LDEBUG << "StoreForDisambiguation " << v1 << ", " << v2 << ", " << m_relation;
   syntacticData->storeRelationForSelectionalConstraint(v1, v2, m_relation);
   return true;
 }
@@ -121,7 +121,7 @@ DisambiguateWith::DisambiguateWith(MediaId language,
     if (res==0)
     {
       SELOGINIT;
-      LWARN << "no resource 'selectionalPreferences'" << LENDL;
+      LWARN << "no resource 'selectionalPreferences'";
     }
     else {
       m_preferences=static_cast<SelectionalPreferences*>(res);
@@ -130,7 +130,7 @@ DisambiguateWith::DisambiguateWith(MediaId language,
   catch (std::exception& e) {
     // resources are not loaded when compiling the rules
     SELOGINIT;
-    LWARN << "Exception caught: " << e.what() << LENDL;
+    LWARN << "Exception caught: " << e.what();
   }
   
 }
@@ -144,7 +144,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   Critical function : comment logging messages
 */
   SAPLOGINIT;
-  LDEBUG << "DisambiguateWith " << v1 << ", " << v2 << LENDL;
+  LDEBUG << "DisambiguateWith " << v1 << ", " << v2;
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   SyntacticData::Relation oldRelation = syntacticData->relationStoredForSelectionalConstraint();
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
@@ -153,7 +153,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
     v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
-    //     LDEBUG << "SecondUngovernedBy: false" << LENDL;
+    //     LDEBUG << "SecondUngovernedBy: false";
     return false;
   }
   // collect all data necessary
@@ -163,11 +163,11 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "no graph 'PosGraph' available !" << LENDL;
+    LERROR << "no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(posgraph->getGraph());
-  //   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2 << LENDL;
+  //   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
 //   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
   VertexDataPropertyMap dataMap = get(vertex_data, *lingGraph);
 //   Token* v1Token = tokenMap[v1];
@@ -192,7 +192,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   
   LDEBUG << "DisambiguateWith " << Common::Misc::limastring2utf8stdstring(sp[*(v2Data->allLemma().begin())])
       << ", " << Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())])
-      << ", " << Common::Misc::limastring2utf8stdstring(sp[*(v1Data->allLemma().begin())]) << LENDL;
+      << ", " << Common::Misc::limastring2utf8stdstring(sp[*(v1Data->allLemma().begin())]);
   std::string oldRelationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(oldRelation.get<2>());
   double oldProba = m_preferences->dependencyProbability(Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())]),
                                                          *(ov2Data->allValues(macroAccessor).begin()),
@@ -209,7 +209,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
     && (Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())]) == "bonbon")
     && (Common::Misc::limastring2utf8stdstring(sp[*(v1Data->allLemma().begin())]) == "fraise")
     ) )*/
-  LDEBUG << "Old proba=" << oldProba << "; new proba=" << newProba << LENDL;
+  LDEBUG << "Old proba=" << oldProba << "; new proba=" << newProba;
   preference = newProba - oldProba;
   
   // if old one: don't do anything

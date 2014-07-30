@@ -114,14 +114,14 @@ void RecognizerData::storeVerticesToRemove(const RecognizerMatch& result,
     LinguisticGraph* graph)
 {
   //   APPRLOGINIT;
-  //   LDEBUG << "RecognizerData: storing vertices to remove" << LENDL;
+  //   LDEBUG << "RecognizerData: storing vertices to remove";
 
   for (RecognizerMatch::const_iterator match(result.begin());
        match!=result.end(); match++)
   {
     if ((*match).isKept())
     {
-      //       LDEBUG << "  storing "<< (*match).getVertex() << " to be removed" << LENDL;
+      //       LDEBUG << "  storing "<< (*match).getVertex() << " to be removed";
       // store this vertex to remove
       m_verticesToRemove.insert((*match).getVertex());
 
@@ -137,7 +137,7 @@ void RecognizerData::storeVerticesToRemove(const RecognizerMatch& result,
         for (LinguisticGraphInEdgeIt it(it_begin); it!=it_end; it++)
         {
           LinguisticGraphVertex previousVertex=source(*it,*graph);
-          //           LDEBUG << "  checking if "<< previousVertex << " should be removed also" << LENDL;
+          //           LDEBUG << "  checking if "<< previousVertex << " should be removed also";
           bool vertexToRemove(false);
           if (out_degree(previousVertex,*graph)==1)
           {
@@ -163,13 +163,13 @@ void RecognizerData::storeVerticesToRemove(const RecognizerMatch& result,
               m_verticesToRemove.find(previousVertex)==
               m_verticesToRemove.end())
           {
-            //             LDEBUG << "    yes" << LENDL;
+            //             LDEBUG << "    yes";
             m_verticesToRemove.insert(previousVertex);
             verticesToCheck.push(previousVertex);
           }
           //           else
           //           {
-          //             LDEBUG << "    no" << LENDL;
+          //             LDEBUG << "    no";
           //           }
         }
         verticesToCheck.pop();
@@ -228,18 +228,18 @@ void RecognizerData::removeVertices(AnalysisContent& analysis) const
   // it does not affect the reordering of vertex numbers in
   // the graph
   APPRLOGINIT;
-  LDEBUG << "RecognizerData: removing vertices" << LENDL;
+  LDEBUG << "RecognizerData: removing vertices";
   LinguisticGraph& g=*(anagraph->getGraph());
   for (set<LinguisticGraphVertex>::const_reverse_iterator
        it=m_verticesToRemove.rbegin();
        it!=m_verticesToRemove.rend(); it++)
   {
-    LDEBUG << "  clearing vertex " << *it << LENDL;
+    LDEBUG << "  clearing vertex " << *it;
     clear_vertex(*it,g);
     // remove FullToken;
     //Data::FullToken* token=get(vertex_ling,g,*it);
     //     LDEBUG << "Idiomatic alternatives: removing vertex " << *it
-    //            << "(" << *token << ")" << LENDL;
+    //            << "(" << *token << ")";
     //delete token;
   }
 
@@ -249,7 +249,7 @@ void RecognizerData::addResult(const Automaton::RecognizerMatch& result)
 {
   if (m_resultData==0) {
   APPRLOGINIT;
-  LERROR << "RecognizerData: cannot add result: missing data" << LENDL;
+  LERROR << "RecognizerData: cannot add result: missing data";
     return;
   }
   m_resultData->insert(result,m_currentSentence);
@@ -258,7 +258,7 @@ void RecognizerData::addResult(const Automaton::RecognizerMatch& result)
 void RecognizerData::removeEdges(AnalysisContent& analysis)
 {
   APPRLOGINIT;
-  LDEBUG << "RecognizerData: removing edges to remove" << LENDL;
+  LDEBUG << "RecognizerData: removing edges to remove";
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
     static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
   LinguisticGraph& g=*(anagraph->getGraph());
@@ -266,7 +266,7 @@ void RecognizerData::removeEdges(AnalysisContent& analysis)
   it = m_edgesToRemove.begin(); it_end = m_edgesToRemove.end();
   for (; it != it_end; it++)
   {
-    LDEBUG << "RecognizerData::removeEdges removing edge " << (*it).first << " - " << (*it).second << LENDL;
+    LDEBUG << "RecognizerData::removeEdges removing edge " << (*it).first << " - " << (*it).second;
     boost::remove_edge((*it).first,(*it).second, g);
     clearUnreachableVertices(analysis, (*it).first);
     clearUnreachableVertices(analysis, (*it).second);
@@ -277,7 +277,7 @@ void RecognizerData::removeEdges(AnalysisContent& analysis)
 void RecognizerData::setEdgeToBeRemoved(AnalysisContent& analysis, LinguisticGraphEdge e)
 {
   //   APPRLOGINIT;
-  //   LDEBUG << "RecognizerData: setting edge "<<e<<" to be removed" << LENDL;
+  //   LDEBUG << "RecognizerData: setting edge "<<e<<" to be removed";
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
     static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
   LinguisticGraph& g=*(anagraph->getGraph());
@@ -299,7 +299,7 @@ void RecognizerData::clearUnreachableVertices(
   std::set< std::pair<LinguisticGraphVertex, LinguisticGraphVertex > >& storedEdges)
 {
   APPRLOGINIT;
-  LDEBUG << "RecognizerData: clearing unreachable vertices from " << from << " and to " << to << LENDL;
+  LDEBUG << "RecognizerData: clearing unreachable vertices from " << from << " and to " << to;
   std::deque< std::deque< LinguisticGraphVertex > > paths;
   std::deque< LinguisticGraphVertex > current;
   std::set< std::pair<LinguisticGraphVertex, LinguisticGraphVertex > > validated;
@@ -330,7 +330,7 @@ void RecognizerData::clearUnreachableVertices(
         std::pair< LinguisticGraphVertex, LinguisticGraphVertex > p = std::make_pair(src,tgt);
         if (storedEdges.find(p) == storedEdges.end())
         {
-          LDEBUG << "RecognizerData::clearUnreachableVertices removing edge " << src << " -> " << tgt << LENDL;
+          LDEBUG << "RecognizerData::clearUnreachableVertices removing edge " << src << " -> " << tgt;
           remove_edge(edge(src,tgt,g).first,g);
         }
         tgt = src;
@@ -372,7 +372,7 @@ void RecognizerData::clearUnreachableVertices(
   LinguisticGraphVertex from)
 {
   APPRLOGINIT;
-  LDEBUG << "RecognizerData: clearing unreachable vertices from " << from << LENDL;
+  LDEBUG << "RecognizerData: clearing unreachable vertices from " << from;
 
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
     static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
@@ -386,7 +386,7 @@ void RecognizerData::clearUnreachableVertices(
     LinguisticGraphVertex v = verticesToCheck.front();
     verticesToCheck.pop();
     bool toClear = false;
-    LDEBUG << "  out degree of " << v << " is " << out_degree(v, g) << LENDL;
+    LDEBUG << "  out degree of " << v << " is " << out_degree(v, g);
     if (out_degree(v, g) == 0 && v != anagraph->lastVertex())
     {
       toClear = true;
@@ -397,7 +397,7 @@ void RecognizerData::clearUnreachableVertices(
           verticesToCheck.push(source(*it,g));
       }
     }
-    LDEBUG << "  in degree of " << v << " is " << in_degree(v, g) << LENDL;
+    LDEBUG << "  in degree of " << v << " is " << in_degree(v, g);
     if (in_degree(v, g) == 0 && v != anagraph->firstVertex())
     {
       toClear = true;
@@ -410,7 +410,7 @@ void RecognizerData::clearUnreachableVertices(
     }
     if (toClear)
     {
-      LDEBUG << "  clearing vertex " << v << LENDL;
+      LDEBUG << "  clearing vertex " << v;
       clear_vertex(v,g);
     }
   }
@@ -472,7 +472,7 @@ insert(const RecognizerMatch& m,
 {
   if (sentenceId>= size()) {
     APPRLOGINIT;
-    LERROR << "RecognizerResultData: try to access data oustide of vector (sentenceId=" << sentenceId << ",size=" << size() << ")" << LENDL;
+    LERROR << "RecognizerResultData: try to access data oustide of vector (sentenceId=" << sentenceId << ",size=" << size() << ")";
     return;
   }
   (*this)[sentenceId].push_back(m);

@@ -88,7 +88,7 @@ std::string TestCase::getParam( const std::string& key ) const
     // not ERROR: parameter may be optional
     LDEBUG << "TestCaseProcessor::getParam: no '"
            << key << "' attribute in call parameter of testCase "
-           << id << LENDL;
+           << id;
     return "";
   }
   string paramVal = (*paramIt).second;
@@ -104,7 +104,7 @@ void TestCase::getList( const std::string& key, std::list<std::string >& list ) 
     TGVLOGINIT;
     LWARN << "TestCaseProcessor::getList: no '"
                 << key << "' attribute in call parameter of testCase "
-                << id << LENDL;
+                << id;
     return;
   }
   list = (*paramIt).second;
@@ -118,7 +118,7 @@ void TestCase::getMap( const std::string& key, std::map<std::string,std::string 
     TGVLOGINIT;
     LWARN << "TestCaseProcessor::getMap: no '"
                 << key << "' attribute in call parameter of testCase "
-                << id << LENDL;
+                << id;
     return;
   }
   map = (*paramIt).second;

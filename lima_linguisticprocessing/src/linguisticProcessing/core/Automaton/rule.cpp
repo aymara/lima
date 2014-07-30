@@ -190,7 +190,7 @@ bool Rule::test(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                               constraintCheckList,
                               BACKWARDSEARCH, controlParams)) {
 /*      AULOGINIT;
-      LDEBUG << "no match found on the left part" << LENDL;*/
+      LDEBUG << "no match found on the left part";*/
       return false;
     }
     if (! m_right.getBestMatch(graph, rightContext, rightLimit,
@@ -198,7 +198,7 @@ bool Rule::test(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                                constraintCheckList,
                                FORWARDSEARCH, controlParams)) {
 /*      AULOGINIT;
-      LDEBUG << "no match found on the right part" << LENDL;*/
+      LDEBUG << "no match found on the right part";*/
       return false;
     }
 
@@ -214,12 +214,12 @@ bool Rule::test(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                              constraintCheckList,forward,backward,
                              BACKWARDSEARCH, controlParams)) {
 /*    AULOGINIT;
-    LDEBUG << "no match found on the left part" << LENDL;*/
+    LDEBUG << "no match found on the left part";*/
     return false;
   }
 //   AULOGINIT;
 //   LDEBUG << "Rule: found " << leftMatches.size()
-//          << " matches for left part" << LENDL;
+//          << " matches for left part";
 
   Automaton::AutomatonMatchSet::const_iterator
     currentLeftMatch=leftMatches.begin(),
@@ -233,7 +233,7 @@ bool Rule::test(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
 //     LDEBUG << "Rule: looking at right part with left="
 //            << (*currentLeftMatch).first << ",checklist="
-//            << (*currentLeftMatch).second << LENDL;
+//            << (*currentLeftMatch).second;
 
     if (leftCheckLists.find((*currentLeftMatch).second)!=
         leftCheckLists.end()) {
@@ -272,13 +272,13 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
   // even if rule failed (actions are internally conditionned by success)
   for (std::vector<Constraint>::const_iterator action=m_actions.begin();
        action!=m_actions.end(); action++) {
-//    LDEBUG << "Applying action " << action->functionName() << LENDL;
+//    LDEBUG << "Applying action " << action->functionName();
     if (! (*action).apply(graph,analysis,
                           constraintCheckList,
                           success,
                           result)) {
 //       LDEBUG << "a match was found but an action has not succeeded"
-//              << " -> returned false" << LENDL;
+//              << " -> returned false";
       return false;
     }
   }

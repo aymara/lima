@@ -217,7 +217,7 @@ outputString(const ResultType& result,
     type=entityNames.find(result.getType());
   if (type==entityNames.end()) {
     AULOGINIT;
-    LERROR << "undefined type " << result.getType() << LENDL;
+    LERROR << "undefined type " << result.getType();
     openingTag="UNDEFINED_TYPE";
     closingTag="/UNDEFINED_TYPE";
   }

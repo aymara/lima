@@ -77,7 +77,7 @@ void FsaAccessResource::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language << LENDL;
+    LERROR << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration();
   }
   catch (AccessByStringNotInitialized& )
@@ -87,7 +87,7 @@ void FsaAccessResource::init(
            << "/"
            << unitConfiguration.getParamsValueAtKey("keyFile")
            << " no found for language " 
-           << (int)  manager->getInitializationParameters().language << LENDL;
+           << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration();
   }
 }

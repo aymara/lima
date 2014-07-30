@@ -61,7 +61,7 @@ getConstraintFunction(const std::string& id,
                       const LimaString& complement) {
 //   AULOGINIT;
 //   LDEBUG << "getConstraintFunction: "<< id
-//          << "," << complement << LENDL;
+//          << "," << complement;
   
   std::multimap<std::string,ConstraintFunction*>::const_iterator
     it,it_end;
@@ -71,7 +71,7 @@ getConstraintFunction(const std::string& id,
   (*it).second->getLanguage() == language) {
 //       LDEBUG << "getConstraintFunction: function exist: " 
 //              << (*it).first << "," << (*it).second->getComplementString() 
-//              << "->" << (*it).second << LENDL;
+//              << "->" << (*it).second;
       return (*it).second;
     }
   }
@@ -111,7 +111,7 @@ createConstraintFunction(const std::string& id,
 //   AULOGINIT;
 //   LDEBUG << "createConstraintFunction: "<< id
 //          << "," << complement << "->" << newConstraint
-//          << LENDL;
+//         ;
 
   return newConstraint;
 }

@@ -13,9 +13,7 @@ set entityTypes=SyntacticRelations
 
 @NomPropre=($NP-NNP,$NP-NNPS)
 
-@Adjectif=($ADJ-JJ,
-$ADJ-JJR,
-$ADJ-JJS)
+@Adjectif=($ADJ)
 
 @Prep=($PREP-IN)
 
@@ -23,13 +21,9 @@ $ADJ-JJS)
 
 @Verbe=($V)
 
-@Adverbe=($ADV)
+@Adverb=($ADV)
 
 @Substantif=($NC,$NP)
-
-@SubsNonNum=($NP,
-$NC-NN,
-$NC-NNS)
 
 @Determinant=($DET-DT,$DET-THATDT)
 
@@ -41,23 +35,9 @@ $NC-NNS)
 
 @DetNum=($NOMBRE-CD)
 
-@AdjPren=($ADJ)
-
-@AdjAvecSubCompDeAdj=($ADJ)
-
 @PrepComp=($PREP-IN,$PREP-THATIN)
 
 @PrepGVInf=($PREP-TO)
-
-@AdvPos=($ADV)
-
-@AdvModifieurAdj=($ADV)
-
-@AdvModifieurAdv=($ADV)
-
-@AdvModifieurVerbePrev=($ADV)
-
-@AdvModifieParAdv=($ADV)
 
 @CompDuNomTrig=($PREP)
 
@@ -70,7 +50,7 @@ $NC-NNS)
 @Was=($V)
 
 
-@Ing=($V)
+@Ing=($V-VBG)
 
 @AuxParticipe=($V-VBN)
 
@@ -84,7 +64,7 @@ $NC-NNS)
 
 # pas infinitif, ni impératif (pas de sujet)
 # ni participe (sujet attaché à l'auxiliaire)
-@TensedVerbSuj=($V-VBD,
+@TensedVerbSubj=($V-VBD,
 $V-VBP,
 $V-VBZ)
 

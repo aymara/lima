@@ -57,7 +57,7 @@ void SegmentationDataXmlLogger::init(
 
 {
   LOGINIT("LP::Segmentation");
-  LDEBUG << "SegmentationDataXmlLogger::init" << LENDL;
+  LDEBUG << "SegmentationDataXmlLogger::init";
 
   AbstractLinguisticLogger::init(unitConfiguration,manager);
 
@@ -71,13 +71,13 @@ LimaStatusCode SegmentationDataXmlLogger::process(
   AnalysisContent& analysis) const
 {
   LOGINIT("LP::Segmentation");
-  LDEBUG << "SegmentationDataXmlLogger::process" << LENDL;
+  LDEBUG << "SegmentationDataXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LOGINIT("LP::Segmentation");
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
@@ -85,7 +85,7 @@ LimaStatusCode SegmentationDataXmlLogger::process(
   ofstream out;
   if (!openLogFile(out,metadata->getMetaData("FileName"))) {
     LOGINIT("LP::Segmentation");
-    LERROR << "Can't open log file '" << metadata->getMetaData("FileName") << "'" << LENDL;
+    LERROR << "Can't open log file '" << metadata->getMetaData("FileName") << "'";
     return UNKNOWN_ERROR;
   }
 
@@ -120,7 +120,7 @@ LimaStatusCode SegmentationDataXmlLogger::process(
   }
   else {
     LOGINIT("LP::Segmentation");
-    LDEBUG << "no SegmentationData of name " << m_data << LENDL;
+    LDEBUG << "no SegmentationData of name " << m_data;
   }
   
   out << "</segmentation>" << endl;

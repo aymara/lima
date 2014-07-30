@@ -100,7 +100,7 @@ void EventAnalyzer::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-    LERROR << "No DateEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No DateEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
   try
   {
@@ -109,7 +109,7 @@ void EventAnalyzer::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-     LERROR << "No EventEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+     LERROR << "No EventEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
     try
   {
@@ -121,12 +121,12 @@ void EventAnalyzer::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-     LERROR << "No OtherEntities defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+     LERROR << "No OtherEntities defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
    try
   {
     std::map<std::string,std::string>& weights=unitConfiguration.getMapAtKey("EntitiesWeights");
-    LDEBUG << "Weights map size =" << weights.size() << LENDL;
+    LDEBUG << "Weights map size =" << weights.size();
     for (std::map<std::string,std::string>::const_iterator it=weights.begin();
          it!=weights.end();
          it++)
@@ -135,13 +135,13 @@ void EventAnalyzer::init(
              << it->first << ", "
              << "entityType=" << Common::MediaticData::MediaticData::single().
                      getEntityType(Common::Misc::utf8stdstring2limastring(it->first))
-             << " , weight " << atoi((it->second).c_str()) << LENDL;
+             << " , weight " << atoi((it->second).c_str());
        m_entitiesWeights[Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(it->first))]=atoi((it->second).c_str());
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchMap& )
  {
-    LERROR << "No map 'EntitiesWeigths' in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No map 'EntitiesWeigths' in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
 
   }
   
@@ -157,31 +157,31 @@ LimaStatusCode EventAnalyzer::process(
 {
   EVENTANALYZERLOGINIT;
   TimeUtils::updateCurrentTime();
-  LDEBUG << "start EventAnalyzer" << LENDL;
+  LDEBUG << "start EventAnalyzer";
   
   // ici normalement on peut prendre soit analysis graph soit le Posgraph, cela doit être paramétré
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
   if (anagraph==0)
   {
-    LERROR << "no "<< m_graphId << " ! abort" << LENDL;
+    LERROR << "no "<< m_graphId << " ! abort";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no AnnotationData ! abort" << LENDL;
+    LERROR << "no AnnotationData ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no SentenceBoundaries ! abort" << LENDL;
+    LERROR << "no SentenceBoundaries ! abort";
     return MISSING_DATA;
   }
   SegmentationData* pb=static_cast<SegmentationData*>(analysis.getData("ParagraphBoundaries"));
   if (pb==0)
   {
-    LERROR << "no ParagraphBoundaries ! abort" << LENDL;
+    LERROR << "no ParagraphBoundaries ! abort";
     return MISSING_DATA;
   }
   std::vector<Paragraph*> v_paragraph;
@@ -206,14 +206,14 @@ LimaStatusCode EventAnalyzer::process(
     
     eventData->push_back((*iT).second);
   }
-  LDEBUG << "Le nombre d'évènements différents est égal à = " << map_event.size() << LENDL;
+  LDEBUG << "Le nombre d'évènements différents est égal à = " << map_event.size();
   
-  LDEBUG << "set new data 'EventData' of type Events" << LENDL;
+  LDEBUG << "set new data 'EventData' of type Events";
   analysis.setData("EventData",eventData);
   
   if (main_event!=0)
   {
-    LDEBUG << "Le meilleur poids est égal à = " << max_weight << LENDL;
+    LDEBUG << "Le meilleur poids est égal à = " << max_weight;
     main_event->setMain();
     main_event->compute_main_entities();
   }
@@ -222,19 +222,19 @@ LimaStatusCode EventAnalyzer::process(
   for (std::vector<Event*>::const_iterator iT= eventData->begin(); iT!= eventData->end();iT++)
   {
     i++;
-    LDEBUG << "Event  N° " << i << LENDL;
-    LDEBUG << " a pour poids " << (*iT)->get_weight() << LENDL;
-    LDEBUG << " a pour valeur main " << (*iT)->getMain() << LENDL;
-    LDEBUG << " est composé des fragments de texte suivants " << LENDL;
+    LDEBUG << "Event  N° " << i;
+    LDEBUG << " a pour poids " << (*iT)->get_weight();
+    LDEBUG << " a pour valeur main " << (*iT)->getMain();
+    LDEBUG << " est composé des fragments de texte suivants ";
     int j=0;
     for(std::vector<EventParagraph*>::const_iterator iT1= (*iT)->begin(); iT1!= (*iT)->end();iT1++)
     {
-      LDEBUG << "    paragraph " << j << " position = " << (*iT1)->getPosition() << " , longueur = " << (*iT1)->getLength()  << LENDL;
+      LDEBUG << "    paragraph " << j << " position = " << (*iT1)->getPosition() << " , longueur = " << (*iT1)->getLength() ;
       std::map<Common::MediaticData::EntityType,std::vector<Entity *> > otherEntities=(*iT1)->getOtherEntities();
-      LDEBUG << "      les entités sont" << LENDL;
+      LDEBUG << "      les entités sont";
       for(std::map<Common::MediaticData::EntityType,std::vector<Entity *> >::const_iterator iT2= otherEntities.begin(); iT2!= otherEntities.end();iT2++)
       {
-        LDEBUG << "        type=" << (*iT2).first << LENDL;
+        LDEBUG << "        type=" << (*iT2).first;
         for(std::vector<Entity *>::const_iterator iT3=(*iT2).second.begin();iT3!=(*iT2).second.end();iT3++)
         {
           LDEBUG << "        position=" << (*iT3)->getPosition() << "  ,longueur = " <<(*iT3)->getLength()<< ", main =" << (*iT3)->getMain()<< LENDL;
@@ -248,7 +248,7 @@ LimaStatusCode EventAnalyzer::process(
         }
       }
       std::pair<Common::MediaticData::EntityType,std::vector<Entity *> > eventEntities=(*iT1)->getEventEntities();
-      LDEBUG << "        Event type=" << eventEntities.first << LENDL;
+      LDEBUG << "        Event type=" << eventEntities.first;
       for(std::vector<Entity *>::const_iterator iT3=eventEntities.second.begin();iT3!=eventEntities.second.end();iT3++)
       {
         LDEBUG << "        position=" << (*iT3)->getPosition() << "  ,longueur = " <<(*iT3)->getLength()<< ", main =" << (*iT3)->getMain()<< LENDL;
@@ -282,7 +282,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
     {
       // ignorer le paragraphe complètement et le supprimer
       delete(v_par[i]);
-      LDEBUG << "Paragraph numéro : " << (i+1) << "  a filtrer " << LENDL;
+      LDEBUG << "Paragraph numéro : " << (i+1) << "  a filtrer ";
     }
     else
     {        
@@ -290,7 +290,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
       // Il faut juste ajouter le paragraphe dans l'évènement concerné
       if (p->getDatesSize()==1)
       {
-        LDEBUG << "   La date est " << p->getDate().first << LENDL;
+        LDEBUG << "   La date est " << p->getDate().first;
         std::pair<string,LinguisticGraphVertex> date=p->getDate();
         if (map_event.find(date.first)!=map_event.end())
         {
@@ -302,7 +302,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
         {
           Event *ev=new Event();
           ev->setDate(make_pair(m_dateEntity,date));
-          LDEBUG << "Creation d'un nouvel évènement " << LENDL;
+          LDEBUG << "Creation d'un nouvel évènement ";
           ev->addParagraph(p,true,false,annotationData,graphId,graph);
           map_event[date.first]=ev;
         }
@@ -343,7 +343,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
           
           std::pair<Common::MediaticData::EntityType, std::deque<LinguisticGraphVertex> > evententities = p->extractEventEntitiesBeforeVertex(split,graph);
           
-          LDEBUG << "EventAnalyzer evententities type " << evententities.first << LENDL;
+          LDEBUG << "EventAnalyzer evententities type " << evententities.first;
           p1->addEventEntities(evententities);
           p1->addEntities(entities);
           
@@ -364,7 +364,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
             {
               Event *ev=new Event();
               ev->setDate(make_pair(m_dateEntity,date));
-              LDEBUG << "Creation d'un nouvel évènement " << LENDL;
+              LDEBUG << "Creation d'un nouvel évènement ";
               ev->addParagraph(p1,first_time,true,annotationData,graphId,graph);
               map_event[date.first]=ev;
             }
@@ -388,7 +388,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
           {
             Event *ev=new Event();
             ev->setDate(make_pair(m_dateEntity,date));
-            LDEBUG << "Creation d'un nouvel évènement " << LENDL;
+            LDEBUG << "Creation d'un nouvel évènement ";
             ev->addParagraph(p,false,false,annotationData,graphId,graph);
             map_event[date.first]=ev;
           }
@@ -415,7 +415,7 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
   
   std::set<LinguisticGraphVertex> visited;
   std::queue<LinguisticGraphVertex> toVisit;
-  LDEBUG << "compute_paragraphs:  push  vertex " << firstVx << LENDL;
+  LDEBUG << "compute_paragraphs:  push  vertex " << firstVx;
   toVisit.push(firstVx);
 
   LinguisticGraphOutEdgeIt outItr,outItrEnd;
@@ -435,7 +435,7 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
   while (!toVisit.empty())
   {
     LinguisticGraphVertex v=toVisit.front();
-    LDEBUG << "compute_paragraphs:  pop  vertex " << v << LENDL;
+    LDEBUG << "compute_paragraphs:  pop  vertex " << v;
     toVisit.pop();
     if (v != lastVx) {
     
@@ -448,21 +448,21 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
         if (visited.find(next)==visited.end())
         {
           visited.insert(next);
-          LDEBUG << "compute_paragraphs:  push vertex " << next << LENDL;
+          LDEBUG << "compute_paragraphs:  push vertex " << next;
           toVisit.push(next);
         }
       }
     }
     if (v != firstVx && v != lastVx)
     {
-      LDEBUG << "Traitement du vertex " << v << LENDL;
+      LDEBUG << "Traitement du vertex " << v;
       LDEBUG << "current_date du vertex " << current_date<< LENDL;
       token = get(vertex_token, *graph, v);  
      // it is a vertex of a new paragraph
       if(is_a_bound(v,pb) )
       {
        
-        LDEBUG << "Je suis dans le Début d'un nouveau paragraphe " << LENDL;
+        LDEBUG << "Je suis dans le Début d'un nouveau paragraphe ";
         current_date= "00-00-00";
        // créer la map du vertex
         uint64_t par_position=v_par[v_par.size()-1]->getPosition();
@@ -478,17 +478,17 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
   
       if (is_specific_entity(v,annotationData))
       {
-        LDEBUG << "Je suis dans un vertex de type Entité nommée " << LENDL;
+        LDEBUG << "Je suis dans un vertex de type Entité nommée ";
         // verify if it is a date
         if(is_specific_entity(v,annotationData,m_dateEntity))
         {
           string date= getDate(v,annotationData,m_dateEntity);
-          LDEBUG << "Je suis dans Date " << LENDL;
-          LDEBUG << "Valeur de la Date =" << date << LENDL;
+          LDEBUG << "Je suis dans Date ";
+          LDEBUG << "Valeur de la Date =" << date;
           if (date.compare("00-00-00")==0)
           {
                // ignorer la date
-            LDEBUG << "Date mal normalisée à ignorer" << LENDL;
+            LDEBUG << "Date mal normalisée à ignorer";
           }
           else
           {
@@ -500,14 +500,14 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
         else if(is_specific_entity(v,annotationData,m_eventEntity))
         {
          // mettre l'entités nommées dans le bon para
-          LDEBUG << "Je suis dans Evenement " << LENDL;
+          LDEBUG << "Je suis dans Evenement ";
           v_par[v_par.size()-1]->addEventEntity(m_eventEntity,v);
         }
         // verify if it is is the set of entities domain
         else if(is_specific_entity_in(v,annotationData,m_set_otherentities))
         {
          // mettre l'entités nommées dans le bon para
-          LDEBUG << "Je suis dans les autres types d'EN " << LENDL;
+          LDEBUG << "Je suis dans les autres types d'EN ";
           Common::MediaticData::EntityType e =getEntityType(v,annotationData,m_graphId);
           v_par[v_par.size()-1]->addEntity(e,v);
         }
@@ -517,7 +517,7 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
      // it is the last position of the current sentence
       else if (is_a_bound(v,sb))
       {
-        LDEBUG << "Je suis dans fin d'une phrase " << LENDL;
+        LDEBUG << "Je suis dans fin d'une phrase ";
        // ajouter la position de la phrase dans le paragraphe
         v_par[v_par.size()-1]->addSentence(v);
       }
@@ -556,7 +556,7 @@ bool EventAnalyzer::is_specific_entity(LinguisticGraphVertex v,AnnotationData* a
   // OME
   EVENTANALYZERLOGINIT;
   // OME 
-  LDEBUG << "is_specific_entity at " << v << " according to annot?" << LENDL;
+  LDEBUG << "is_specific_entity at " << v << " according to annot?";
   std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graphId,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
@@ -565,11 +565,11 @@ bool EventAnalyzer::is_specific_entity(LinguisticGraphVertex v,AnnotationData* a
     
     if (annotationData->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
-      LDEBUG << "       ...return true" << LENDL;
+      LDEBUG << "       ...return true";
       return true;
     }
   }
-  LDEBUG << "       ...return false" << LENDL;
+  LDEBUG << "       ...return false";
   return false;
 }
 
@@ -581,14 +581,14 @@ bool EventAnalyzer::is_specific_entity(LinguisticGraphVertex v,AnnotationData* a
   // OME 
   std::string entityName = Common::Misc::limastring2utf8stdstring(
         Common::MediaticData::MediaticData::single().getEntityName(t) );
-  LDEBUG << "is_specific_entity(" << entityName << " at " << v << " ) ?" << LENDL;
+  LDEBUG << "is_specific_entity(" << entityName << " at " << v << " ) ?";
     
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
     // OME
-    LDEBUG << "Looking at annotation graph vertex " << vx << " for " << entityName << LENDL;
+    LDEBUG << "Looking at annotation graph vertex " << vx << " for " << entityName;
     
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -596,14 +596,14 @@ bool EventAnalyzer::is_specific_entity(LinguisticGraphVertex v,AnnotationData* a
       e=annotationData->annotation(vx,Common::Misc::utf8stdstring2limastring("SpecificEntity")).pointerValue< SpecificEntityAnnotation>()->getType();
       if (e==t) {
         // OME
-  LDEBUG << "is_specific_entity(" << entityName << " at " << v << " ) return true" << LENDL;
+  LDEBUG << "is_specific_entity(" << entityName << " at " << v << " ) return true";
   return true;
       }
 
     }
   }
   // OME
-  LDEBUG << "is_specific_entity(" << entityName << " at " << v << " ) return false" << LENDL;
+  LDEBUG << "is_specific_entity(" << entityName << " at " << v << " ) return false";
   return false;
 }
 
@@ -639,7 +639,7 @@ std::string EventAnalyzer::getDate(LinguisticGraphVertex v,AnnotationData* annot
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    LDEBUG << "Looking at annotation graph vertex " << vx << LENDL;
+    LDEBUG << "Looking at annotation graph vertex " << vx;
     
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -673,7 +673,7 @@ std::string EventAnalyzer::getDate(LinguisticGraphVertex v,AnnotationData* annot
   normalizedForm.append(month);
   normalizedForm.insert(normalizedForm.end(),'-');
   normalizedForm.append(day);
-  LDEBUG << "Returned normalizedForm = " << normalizedForm << LENDL;
+  LDEBUG << "Returned normalizedForm = " << normalizedForm;
   return (normalizedForm);
 }
 
@@ -681,14 +681,14 @@ bool EventAnalyzer::is_specific_entity_in(LinguisticGraphVertex v,AnnotationData
 {
   EVENTANALYZERLOGINIT;
   // OME 
-  LDEBUG << "is_specific_entity_in( at " << v << " ) ?" << LENDL;
+  LDEBUG << "is_specific_entity_in( at " << v << " ) ?";
   std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graphId,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
     // OME
-    LDEBUG << "Looking at annotation graph vertex " << vx << LENDL;
+    LDEBUG << "Looking at annotation graph vertex " << vx;
     
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -696,13 +696,13 @@ bool EventAnalyzer::is_specific_entity_in(LinguisticGraphVertex v,AnnotationData
       e=annotationData->annotation(vx,Common::Misc::utf8stdstring2limastring("SpecificEntity")).pointerValue< SpecificEntityAnnotation>()->getType();
       if (eset.find(e)!=eset.end())
       {
-        LDEBUG << "is_specific_entity_in( at " << v << " )  return true" << LENDL;
+        LDEBUG << "is_specific_entity_in( at " << v << " )  return true";
   return true;
       }
     }
   }
   // OME
-  LDEBUG << "is_specific_entity_in( at " << v << " )  return false" << LENDL;
+  LDEBUG << "is_specific_entity_in( at " << v << " )  return false";
   return false;
 }
 

@@ -76,7 +76,7 @@ void SyntacticAnalyzerDeps::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'actions' in SyntacticAnalyzerDeps group for language " << (int) m_language << LENDL;
+    LERROR << "no parameter 'actions' in SyntacticAnalyzerDeps group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   std::deque< std::string >::const_iterator actionsit, actionsit_end;
@@ -90,7 +90,7 @@ void SyntacticAnalyzerDeps::init(
       }
       else
       {
-        LWARN << "SyntacticAnalyzerDeps actions setl2r and setr2l are deprecated" << LENDL;
+        LWARN << "SyntacticAnalyzerDeps actions setl2r and setr2l are deprecated";
       }
 }
 
@@ -113,23 +113,23 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
 {
   Lima::TimeUtilsController timer("SyntacticAnalysis");
   SAPLOGINIT;
-  LINFO << "start syntactic analysis - dependence relations search" << LENDL;
+  LINFO << "start syntactic analysis - dependence relations search";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no sentence bounds ! abort" << LENDL;
+    LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
   if (sb->getGraphId() != "PosGraph") {
-    LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !" << LENDL;
-    LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph" << LENDL;
+    LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !";
+    LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
 
@@ -156,7 +156,7 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
 //     LDEBUG << "analyze sentence from vertex " << beginSentence
-//            << " to vertex " << endSentence << LENDL;
+//            << " to vertex " << endSentence;
 
     std::deque< std::string >::const_iterator actionsit, actionsit_end;
     actionsit = m_actions.begin(); actionsit_end = m_actions.end();
@@ -165,14 +165,14 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
       std::string action = *actionsit;
       if (action == "setl2r" || action == "setr2l")
       {
-        LWARN << "SyntacticAnalyzerDeps actions setl2r and setr2l are deprecated" << LENDL;
+        LWARN << "SyntacticAnalyzerDeps actions setl2r and setr2l are deprecated";
       }
       else
       {
-//         LDEBUG << "Geting automaton" << LENDL;
+//         LDEBUG << "Geting automaton";
         Automaton::Recognizer* recognizer = const_cast< Automaton::Recognizer*  >((*(m_recognizers.find(action))).second);
         std::vector<Automaton::RecognizerMatch> result;
-//         LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence << LENDL;
+//         LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence;
         try
         {
           recognizer->apply(*anagraph,
@@ -193,7 +193,7 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
 
   }
 
-  LINFO << "end syntactic analysis - dependence relations search" << LENDL;
+  LINFO << "end syntactic analysis - dependence relations search";
   return SUCCESS_ID;
 }
 

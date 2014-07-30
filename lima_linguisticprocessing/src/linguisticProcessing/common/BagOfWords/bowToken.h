@@ -29,6 +29,7 @@
 #ifndef BOWTOKEN_H
 #define BOWTOKEN_H
 
+#include "linguisticProcessing/common/BagOfWords/AbstractBoWElement.h"
 #include "common/LimaCommon.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "common/Data/LimaString.h"
@@ -47,33 +48,14 @@ namespace PropertyCode {
 }
 namespace BagOfWords {
 
-/**
- * enum to characterize the type of the BoWToken
- */
-//this type is necessary for binary read/write functions
-typedef enum {
-  BOW_TOKEN,                    /**< the BoWToken is a simple token */
-  BOW_TERM,                     /**< the BoWToken is a multi-term */
-  BOW_NAMEDENTITY,              /**< the BoWToken is a named entity */
-  BOW_NOTYPE                    /**< the BoWToken is an abstract one that should not be instanciated */
-} BoWType;
-
-// for input/output in text format (quick and dirty solution)
-#define CODE_TOKEN L'T'
-#define CODE_MULTITERM L'M'
-#define CODE_NAMEDENTITY L'E'
-#define PART_SEPARATOR L';'
-#define CODE_ENDOFSTREAM L"EndOfStream"
-
 class BoWTokenPrivate;
 /**
- * This class contains the representation of a element of the bag of
- * words.  This element is characterized by a normalized form, a
- * grammatical category, its position and length. It can be a simple
- * word, a multiterm or a named entity
- *
+ * This class contains the representation of an element of the bag of words. 
+ * This element is characterized by a normalized form, a grammatical category, 
+ * its position and length. It can be a simple word, a multiterm or a named 
+ * entity.
  **/
-class LIMA_BOW_EXPORT BoWToken
+class LIMA_BOW_EXPORT BoWToken : public AbstractBoWElement
 {
   friend class BoWTokenPrivate;
 public:

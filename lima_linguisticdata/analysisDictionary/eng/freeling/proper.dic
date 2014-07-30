@@ -10,6 +10,7 @@ ACQUISITION	ACQUISITION		NNP
 Act	Act		NNP
 Adam	Adam		NNP
 Administration	Administration		NNP
+A.C.L.U.	A.C.L.U.		NNP
 A-D	A-D		NNP
 A.D.	A.D.		NNP
 Adolph	Adolph		NNP
@@ -798,6 +799,7 @@ Little	Little		NNP
 Loan	Loan		NNP
 LOAN	LOAN		NNP
 Local	Local		NNP
+Lomé	Lomé		NNP
 London	London		NNP
 LONDON	LONDON		NNP
 Longwood	Longwood		NNP

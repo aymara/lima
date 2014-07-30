@@ -14,8 +14,12 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-cmake_minimum_required(VERSION 2.8)
 project(LimaLinguisticData)
+
+cmake_minimum_required(VERSION 2.8)
+
+enable_testing()
+
 
 include(Languages.cmake)
 include(cmake/LinguisticData.cmake)

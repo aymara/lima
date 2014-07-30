@@ -70,8 +70,8 @@ m_microAccessor(0)
     }
     catch (exception& e) {
       SELOGINIT;
-      LWARN << "Exception caught: " << e.what() << LENDL;
-      LWARN << "-> micros for person name normalization are not initialized" << LENDL;
+      LWARN << "Exception caught: " << e.what();
+      LWARN << "-> micros for person name normalization are not initialized";
     }
   }
   

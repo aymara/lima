@@ -126,7 +126,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
   if (status.getNumeric() != T_INTEGER) {
     return false;
   }
-  uint64_t numValue(atoi(Common::Misc::limastring2utf8stdstring(token->stringForm()).c_str()));
+  uint64_t numValue(token->stringForm().toULong());
   return (*this == numValue);
 }
 

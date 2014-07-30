@@ -53,7 +53,7 @@ void ConfigurationStructure::addParamValuePairForModuleAndGroup(const string &pa
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" << LENDL;
+    LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" ;
     throw NoSuchModule(moduleName);
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
@@ -70,7 +70,7 @@ void ConfigurationStructure::addListNamedForModuleAndGroup(const string &listNam
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" << LENDL;
+    LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" ;
     throw NoSuchModule(moduleName);
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
@@ -86,7 +86,7 @@ void ConfigurationStructure::addItemInListNamedForModuleAndGroup(const string& i
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" << LENDL;
+    LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" ;
     throw NoSuchModule(moduleName);
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
@@ -102,7 +102,7 @@ void ConfigurationStructure::addGroupNamedForModuleNamed(const string& groupName
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" << LENDL;
+    LERROR << "Error adding group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
     throw NoSuchModule(moduleName);
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
@@ -117,7 +117,7 @@ void ConfigurationStructure::addMapNamedForModuleAndGroup(const std::string &map
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding map '" << mapName.c_str() << "' in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" << LENDL;
+    LERROR << "Error adding map '" << mapName.c_str() << "' in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
     throw NoSuchModule(moduleName);
   }
   itC->second.addMapInGroup(mapName,groupName);
@@ -129,7 +129,7 @@ void ConfigurationStructure::addEntryInMapNamedForModuleAndGroup(const std::stri
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding mapEntry in '" << mapName.c_str() << "' in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" << LENDL;
+    LERROR << "Error adding mapEntry in '" << mapName.c_str() << "' in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
     throw NoSuchModule(moduleName);
   }
   itC->second.addEntryInMapInGroup(entryKey,entryValue,mapName,groupName);
@@ -141,10 +141,10 @@ void ConfigurationStructure::addAttributeForGroupInModule(const std::string& att
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "Error adding mapattribute in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" << LENDL;
+    LERROR << "Error adding mapattribute in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
     throw NoSuchModule(moduleName);
   }
-  LDEBUG << "add attribute: module='"<<moduleName.c_str()<<"' group='"<<groupName.c_str()<<"' attribute='"<<attKey.c_str()<<"' value='"<<attValue.c_str()<<"'" << LENDL;
+  LDEBUG << "add attribute: module='"<<moduleName.c_str()<<"' group='"<<groupName.c_str()<<"' attribute='"<<attKey.c_str()<<"' value='"<<attValue.c_str()<<"'" ;
   itC->second.addAttributeInGroup(attKey,attValue,groupName);
 }
 
@@ -156,7 +156,7 @@ getGroupConf(const std::string& moduleName,
   iterator itC = find(moduleName);
   if (itC == end())
   {
-    LERROR << "'No such module '" << moduleName.c_str() << "'" << LENDL;
+    LERROR << "'No such module '" << moduleName.c_str() << "'" ;
     throw NoSuchModule(moduleName);
   }
   return (*itC).second.getGroupNamed(group) ;

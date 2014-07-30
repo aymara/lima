@@ -64,7 +64,7 @@ int DumpGeoEntityAnnotation::dump(std::ostream& os, Common::AnnotationGraphs::Ge
   }
   catch (const boost::bad_any_cast& e)
   {
-    LERROR << "This annotation is not a GeoEntityAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a GeoEntityAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

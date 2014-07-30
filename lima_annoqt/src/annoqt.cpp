@@ -362,13 +362,6 @@ void Annoqt::loadFile( const QString &fileName )
   m_textEdit->document()->setModified( false );
   setWindowModified( false );
 
-  foreach (SpecificEntity* se, m_entities)
-  {
-    delete se;
-  }
-  m_entities.clear();
-  m_entitiesMap.clear();
-  
   QTextStream in( &file );
   in.setCodec(QTextCodec::codecForName("UTF-8"));
   QApplication::setOverrideCursor( Qt::WaitCursor );
@@ -386,8 +379,6 @@ void Annoqt::loadFile( const QString &fileName )
 
   setCurrentFile( fileName );
   statusBar()->showMessage( tr( "File loaded" ), 2000 );
-
-  loadEntities(fileName+".se.xml");
 }
 
 bool Annoqt::saveFile( const QString &fileName )
@@ -869,35 +860,9 @@ void Annoqt::showEntities()
 
 void Annoqt::selectEventAt(quint32 position, const QPoint& eventPos)
 {
-  qDebug() << "Annoqt::selectEventAt: "<<position<<", " << eventPos;
-  if (!m_lastSearchResult.isNull())
-  {
-    m_textEdit->undo();
-    m_lastSearchResult = QTextCursor();
-  }
-  else if (hasCurrentEntity())
-  {
-    m_textEdit->undo();
-    setCurrentEntity();
-    showEntities();
-  }
-  if (m_entitiesMap.contains(position) && !m_entitiesMap[position].empty())
-  {
-    qDebug() << "Annoqt::selectEventAt: entities map contains "<<position << "nb:" << m_entitiesMap[position].size();
-    if (m_entitiesMap[position].size() > 1)
-    {
-      QMenu* ctxmenu = new QMenu (  );
-      foreach (SpecificEntity* se, m_entitiesMap[position])
-      {
-        ctxmenu->addAction(menuItemFor(ctxmenu, *se));
-      }
-      ctxmenu->exec(eventPos);
-      delete ctxmenu;
-      return;
-    }
-    setCurrentEntity( * ( m_entitiesMap[position].begin() ) );
-    showCurrentEntityAsSelected();
-  }
+  qDebug() << "Annoqt::selectEvent   qsdfze  At: "<<position<<", " << eventPos;
+	statusBar()->showMessage( "azzaaa" );
+// 	statusBar()->showMessage( tr( "Position: %1").arg(position) );
 }
 
 void Annoqt::hideAll()

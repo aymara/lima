@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG <<  "testContentDict16 begin..." << LENDL;
+  LDEBUG <<  "testContentDict16 begin...";
 #endif
 
   // options reading
@@ -205,13 +205,13 @@ const Lima::LimaString& word) const{
   STRINGMAPLOGINIT;
   const LimaString & basicWord = word;
   LDEBUG <<  "MyAnalysisDico::getEntry("
-            << Lima::Common::Misc::convertString(basicWord) << ")" << LENDL;
+            << Lima::Common::Misc::convertString(basicWord) << ")";
 #endif
 
   // Look in FsaDictionary (or tree or..)
   index = m_accessMethod.getIndex(word);
 #ifdef DEBUG_CD
-  LDEBUG <<  "index = " << index << LENDL;
+  LDEBUG <<  "index = " << index;
 #endif
 
   index = m_accessMethod.getIndex(word);
@@ -219,7 +219,7 @@ const Lima::LimaString& word) const{
   if( index >= 0 )
   {
 #ifdef DEBUG_CD
-    LDEBUG <<  "index = " << index << LENDL;
+    LDEBUG <<  "index = " << index;
 #endif
     analysisDataElement entry = m_data + m_index2Data[index];
     return entry;

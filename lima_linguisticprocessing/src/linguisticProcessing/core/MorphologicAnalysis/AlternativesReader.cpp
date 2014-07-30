@@ -136,7 +136,7 @@ void AlternativesReader::readAlternatives(
       LDEBUG << "add word " 
              << "<marked>" << Common::Misc::limastring2utf8stdstring(str) << "</marked>" 
              << "<unmarked>" << Common::Misc::limastring2utf8stdstring(unmarked) << "</unmarked>"
-             << " to stringpool " << m_sp << LENDL;
+             << " to stringpool " << m_sp;
       StringsPoolIndex idx=(*m_sp)[unmarked];
       LDEBUG << "-> StringPool returned index " << idx;
       token.addOrthographicAlternatives(idx);
@@ -168,8 +168,14 @@ void AlternativesReader::readAlternatives(
         }
       }
     }
+    if (token.status().getAlphaCapital()==LinguisticAnalysisStructure::T_ACRONYM)
+    {
+      StringsPoolIndex idx=(*m_sp)[unmarked];
+      token = Token(idx, unmarked, token.position(), token.length(),token.status());
+      LDEBUG << "AlternativesReader::readAlternatives is  an acronym; using simpler form" << unmarked;
+    }
   }
-  LDEBUG << "AlternativesReader::readAlternatives no alternative found";
+  LDEBUG << "AlternativesReader::readAlternatives no alternative found;";
 }
 
 }

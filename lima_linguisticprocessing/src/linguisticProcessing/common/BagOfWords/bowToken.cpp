@@ -71,7 +71,7 @@ BoWTokenPrivate::BoWTokenPrivate() :
     m_vertex(0)
 {
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWTokenPrivate::BoWTokenPrivate(const LimaString& lemma,
@@ -87,7 +87,7 @@ BoWTokenPrivate::BoWTokenPrivate(const LimaString& lemma,
 {
   convertSpaces();
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWTokenPrivate::BoWTokenPrivate(const BoWToken& tok) :
@@ -99,7 +99,7 @@ BoWTokenPrivate::BoWTokenPrivate(const BoWToken& tok) :
     m_vertex(tok.m_d->m_vertex)
 {
 //   BOWLOGINIT;
-//   LDEBUG << "Copying BoWToken : " << tok << " - " << &tok << " ; new one is: " << this << LENDL;
+//   LDEBUG << "Copying BoWToken : " << tok << " - " << &tok << " ; new one is: " << this;
 }
 
 BoWTokenPrivate::BoWTokenPrivate(const LimaString& str,
@@ -125,7 +125,7 @@ BoWTokenPrivate::BoWTokenPrivate(const LimaString& str,
   }
 
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWTokenPrivate::BoWTokenPrivate(const BoWTokenPrivate& tok):
@@ -177,14 +177,14 @@ BoWToken::BoWToken(BoWTokenPrivate& d) :
     m_d(&d)
 {
   //   BOWLOGINIT;
-  //   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+  //   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWToken::BoWToken() :
     m_d(new BoWTokenPrivate())
 {
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWToken::BoWToken(const LimaString& lemma,
@@ -195,14 +195,14 @@ BoWToken::BoWToken(const LimaString& lemma,
 {
   m_d->convertSpaces();
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWToken::BoWToken(const BoWToken& tok) :
     m_d(new BoWTokenPrivate(tok))
 {
 //   BOWLOGINIT;
-//   LDEBUG << "Copying BoWToken : " << tok << " - " << &tok << " ; new one is: " << this << LENDL;
+//   LDEBUG << "Copying BoWToken : " << tok << " - " << &tok << " ; new one is: " << this;
 }
 
 BoWToken& BoWToken::operator=(const BoWToken& tok)
@@ -236,7 +236,7 @@ BoWToken::BoWToken(const LimaString& str,
   }
 
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWToken* BoWToken::clone() const
@@ -324,8 +324,8 @@ LimaString BoWToken::getString(void) const
   if (m_d->m_useOnlyLemma)
   {
 //#ifdef DEBUG_LP
-    LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'true'" << LENDL;
-    LDEBUG << "BoWToken::getString: getLemma()=" << getLemma() << LENDL;
+    LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'true'";
+    LDEBUG << "BoWToken::getString: getLemma()=" << getLemma();
 //#endif
     return getLemma();
   }
@@ -334,13 +334,13 @@ LimaString BoWToken::getString(void) const
     ostringstream cat;
     cat << m_d->m_category;
 //#ifdef DEBUG_LP
-    LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'false'" << LENDL;
+    LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'false'";
 //#endif
 /*    ostringstream len;
     len << m_length;
     return m_lemma + m_separator + LimaString(cat.str()) + m_separator + LimaString(len.str());*/
 //#ifdef DEBUG_LP
-    LDEBUG << "BoWToken::getString: getLemma()=" << getLemma() << ", cat=" << Misc::utf8stdstring2limastring(cat.str() ) << LENDL;
+    LDEBUG << "BoWToken::getString: getLemma()=" << getLemma() << ", cat=" << Misc::utf8stdstring2limastring(cat.str() );
 //#endif
     return getLemma() + m_d->m_separator + Misc::utf8stdstring2limastring(cat.str());
   }

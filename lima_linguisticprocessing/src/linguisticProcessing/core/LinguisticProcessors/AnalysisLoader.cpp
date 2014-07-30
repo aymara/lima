@@ -53,7 +53,7 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   
 {
   LOGINIT("LP::AnalysisLoader");
-  LDEBUG << "Initialization" << LENDL;
+  LDEBUG << "Initialization";
   
   bool parameterFound(false);
   try {
@@ -71,7 +71,7 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   }
 
   if (! parameterFound) {
-    LERROR << "No 'inputFile' or 'inputSuffix' parameter in AnalysisLoader" << LENDL;
+    LERROR << "No 'inputFile' or 'inputSuffix' parameter in AnalysisLoader";
     throw InvalidConfiguration();
   }
 
@@ -89,7 +89,7 @@ const std::string& AnalysisLoader::getInputFile(AnalysisContent& analysis) const
     if (metadata == 0)
     {
       LOGINIT("LP::AnalysisLoader");
-      LERROR << "no LinguisticMetaData : cannot use 'inputSuffix' parameter for AnalysisLoader" << LENDL;
+      LERROR << "no LinguisticMetaData : cannot use 'inputSuffix' parameter for AnalysisLoader";
       return inputFile;
     }
     
@@ -98,7 +98,7 @@ const std::string& AnalysisLoader::getInputFile(AnalysisContent& analysis) const
     return inputFile;
   }
   LOGINIT("LP::AnalysisLoader");
-  LERROR << "No 'inputFile' found in AnalysisLoader" << LENDL;
+  LERROR << "No 'inputFile' found in AnalysisLoader";
   return inputFile;
 }
 

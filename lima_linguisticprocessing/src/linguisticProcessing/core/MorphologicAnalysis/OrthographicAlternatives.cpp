@@ -78,7 +78,7 @@ void OrthographicAlternatives::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'dictionary' in OrthographicAlternatives group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'dictionary' in OrthographicAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
 
@@ -90,7 +90,7 @@ void OrthographicAlternatives::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'charChart' in OrthographicAlternatives group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'charChart' in OrthographicAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
 
@@ -101,8 +101,8 @@ void OrthographicAlternatives::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "no param 'confidentMode' in OrthographicAlternatives group for language " << (int) m_language << LENDL;
-    LWARN << "use default value : 'true'" << LENDL;
+    LWARN << "no param 'confidentMode' in OrthographicAlternatives group for language " << (int) m_language;
+    LWARN << "use default value : 'true'";
     m_confidentMode=true;
   }
 
@@ -115,7 +115,7 @@ LimaStatusCode OrthographicAlternatives::process(
 
   TimeUtils::updateCurrentTime();
   MORPHOLOGINIT;
-  LINFO << "MorphologicalAnalysis: starting process OrthographicAlternatives" << LENDL;
+  LINFO << "MorphologicalAnalysis: starting process OrthographicAlternatives";
 
   StringsPool& sp=Common::LinguisticData::LinguisticData::changeable().stringsPool(m_language);
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -126,7 +126,7 @@ LimaStatusCode OrthographicAlternatives::process(
   boost::tie(it,itEnd)=vertices(*g);
   for (;it!=itEnd;it++)
   {
-    LDEBUG << "processing vertex " << *it << LENDL;
+    LDEBUG << "processing vertex " << *it;
     MorphoSyntacticData* currentToken=dataMap[*it];
     Token* tok=tokenMap[*it];
     if (currentToken!=0)
@@ -138,7 +138,7 @@ LimaStatusCode OrthographicAlternatives::process(
       // set orthographic alternatives given by dictionary
       // using the alternatives directly given by the morphosyntactic data
       {
-        LDEBUG << "processing alternatives from dico" << LENDL;
+        LDEBUG << "processing alternatives from dico";
         DictionaryEntry* entry=tok->dictionaryEntry();
         entry->reset();
         if (entry->hasAccented()) {
@@ -155,7 +155,7 @@ LimaStatusCode OrthographicAlternatives::process(
       if (m_confidentMode && (currentToken->size() > 0) ) continue;
 
       // if no ling infos, then lower and unmark string
-      LDEBUG << "set unmark alternatives" << LENDL;
+      LDEBUG << "set unmark alternatives";
       setOrthographicAlternatives(
         tok,
         currentToken,
@@ -164,7 +164,7 @@ LimaStatusCode OrthographicAlternatives::process(
         sp);
     }
   }
-  LINFO << "MorphologicalAnalysis: ending process OrthographicAlternatives" << LENDL;
+  LINFO << "MorphologicalAnalysis: ending process OrthographicAlternatives";
   TimeUtils::logElapsedTime("OrthographicAlternatives");
   return SUCCESS_ID;
 }
@@ -182,7 +182,7 @@ void OrthographicAlternatives::setOrthographicAlternatives(
   LimaString lowerWord = charChart->toLower(tokenStr);
   if (!(lowerWord == "") && !(lowerWord == tokenStr) )
   {
-    LDEBUG << "createAlternative for lowerWord " << lowerWord << LENDL;
+    LDEBUG << "createAlternative for lowerWord " << lowerWord;
     createAlternative(token,tokenData,lowerWord,dictionary,sp);
   }
   if (tokenData->size()>0)
@@ -194,7 +194,7 @@ void OrthographicAlternatives::setOrthographicAlternatives(
   LimaString unmarked=charChart->unmark(tokenStr);
   if (!(unmarked=="") && !(unmarked==tokenStr))
   {
-    LDEBUG << "createAlternative for unmarked " << unmarked << LENDL;
+    LDEBUG << "createAlternative for unmarked " << unmarked;
     createAlternative(token,tokenData,unmarked,dictionary,sp);
   }
 

@@ -37,7 +37,7 @@
   - c_b = IGNORE (T_ALPHA)
   - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
   - c_Mm > ALPHA (T_ALPHA)
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_hyphen|c_plus c_5 > INTEGER (T_NUMERIC,T_INTEGER)
   - m_pattern > PATTERN (T_PATTERN)
   - c_lowline > START
@@ -132,7 +132,7 @@
   - c_hyphen c_M > ALL_UPPER (T_HYPHEN_WORD,T_CAPITAL)
   - c_m > LOWER_1ST_UPPER
   - c_hyphen c_m > LOWER_1ST_UPPER (T_HYPHEN_WORD)
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_dot c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
   - c_dot c_b|c_M > SINGLE_UPPER (T_CAPITAL_1ST)
   - c_b = IGNORE
@@ -150,7 +150,7 @@
   - c_m > LOWER_UPPER (T_CAPITAL_SMALL)
   - c_hyphen c_m > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_b = IGNORE
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_quote c_S|c_s c_del|m_line > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV,T_POSSESSIVE)
   - m_pattern m_pattern = PATTERN (T_PATTERN)
   - c_grave = GRAVE (T_WORD_BRK)
@@ -166,7 +166,7 @@
   - c_quote c_Mm > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV)
   - c_m > ALL_LOWER
   - c_hyphen c_m > ALL_LOWER (T_HYPHEN_WORD)
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHA_CONCAT_ABBREV)
   - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
   - c_hyphen c_M > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_b = IGNORE
@@ -190,7 +190,7 @@
   - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
   - c_hyphen c_M > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_hyphen m_line c_M > LOWER_UPPER(T_HYPHEN_WORD,T_CAPITAL_SMALL)
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_quote c_S|c_s c_del|m_line > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV,T_POSSESSIVE)
   - c_quote c_Mm > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV)
   - c_b = IGNORE
@@ -206,7 +206,7 @@
   - c_Mm > LOWER_UPPER
   - c_hyphen c_Mm > LOWER_UPPER (T_HYPHEN_WORD)
   - c_hyphen m_line c_Mm > LOWER_UPPER(T_HYPHEN_WORD)
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_b = IGNORE
   - c_quote c_S|c_s c_del|m_line > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV,T_POSSESSIVE)
   - m_pattern m_pattern = PATTERN (T_PATTERN)

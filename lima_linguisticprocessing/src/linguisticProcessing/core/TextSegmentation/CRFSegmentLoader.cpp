@@ -78,14 +78,14 @@ LimaStatusCode CRFSegmentLoader::process(AnalysisContent& analysis) const
   SegmentationData* fromData=0;
   if (data==0) {
     LOGINIT("LP::AnalysisLoader");
-    LERROR << "no data '" << m_fromDataName << "'" << LENDL;
+    LERROR << "no data '" << m_fromDataName << "'";
     return MISSING_DATA;
   }
   else {
     fromData = static_cast<SegmentationData*>(data);
     if (fromData==0) {
       LOGINIT("LP::AnalysisLoader");
-      LERROR << "data "<< m_fromDataName <<" is not an object of class SegmentationData" << LENDL;
+      LERROR << "data "<< m_fromDataName <<" is not an object of class SegmentationData";
       return MISSING_DATA;
     }
   }  
@@ -101,7 +101,7 @@ LimaStatusCode CRFSegmentLoader::process(AnalysisContent& analysis) const
     segmData = static_cast<SegmentationData*>(data);
     if (segmData==0) {
       LOGINIT("LP::AnalysisLoader");
-      LERROR << "data "<< m_dataName <<" is not an object of class SegmentationData" << LENDL;
+      LERROR << "data "<< m_dataName <<" is not an object of class SegmentationData";
       return MISSING_DATA;
     }
   }
@@ -109,7 +109,7 @@ LimaStatusCode CRFSegmentLoader::process(AnalysisContent& analysis) const
   ifstream file(getInputFile(analysis).c_str(), std::ifstream::binary);
   if (! file.good()) {
     LOGINIT("LP::AnalysisLoader");
-    LERROR << "Error: failed to open input file '" << getInputFile(analysis) << "'" << LENDL;
+    LERROR << "Error: failed to open input file '" << getInputFile(analysis) << "'";
     return MISSING_DATA;
   }
   
@@ -128,7 +128,7 @@ LimaStatusCode CRFSegmentLoader::process(AnalysisContent& analysis) const
     if (seg==(fromData->getSegments()).end()) {
       // data are not aligned: should not occur
       LOGINIT("LP::AnalysisLoader");
-      LERROR << "CRFLoader: CRF output is not aligned with data " << m_fromDataName << LENDL;
+      LERROR << "CRFLoader: CRF output is not aligned with data " << m_fromDataName;
       break;
     }
     // CRF tag is the last element in line (space or tab separated)

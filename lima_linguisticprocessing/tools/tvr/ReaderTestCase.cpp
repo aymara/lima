@@ -55,12 +55,12 @@ ReaderTestCaseProcessor::ReaderTestCaseProcessor(
 Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const Lima::Common::TGV::TestCase& testCase)
 {
   TGVLOGINIT;
-  LDEBUG << "ReaderTestCaseProcessor::processTestCase(" << testCase.id << ")" << LENDL;
+  LDEBUG << "ReaderTestCaseProcessor::processTestCase(" << testCase.id << ")";
   Lima::Common::TGV::TestCaseError result = Lima::Common::TGV::TestCaseError();
   const std::string& textFilename = testCase.getParam( "textFilename" );
 
   std::string filename(m_workingDirectory+"/"+textFilename+".xml");
-  LDEBUG << "ReaderTestCaseProcessor::processTestCase filename =" << filename << LENDL;
+  LDEBUG << "ReaderTestCaseProcessor::processTestCase filename =" << filename;
 /*  
   // write text in file
   std::string filename(m_workingDirectory+"/test"+testCase.id+".txt");
@@ -75,10 +75,10 @@ Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const 
   std::ifstream file(filename.c_str(), std::ifstream::binary);
   std::string contentText;
   readStream(file, contentText);
-  LDEBUG << "ReaderTestCaseProcessor::processTestCase contentText =" << contentText << LENDL;
+  LDEBUG << "ReaderTestCaseProcessor::processTestCase contentText =" << contentText;
   
   const std::string& language = testCase.getParam("language");
-  LDEBUG << "ReaderTestCaseProcessor::processTestCase language =" << language << LENDL;
+  LDEBUG << "ReaderTestCaseProcessor::processTestCase language =" << language;
 
   // For each pipeline process test
   MultiValCallParams::const_iterator pos = testCase.multiValCallParams.find("pipelines");
@@ -97,7 +97,7 @@ Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const 
       metaData["FileName"]=filenameWithPipeLine;
       metaData["DocumentName"]=testCase.id;
       LDEBUG << "ReaderTestCaseProcessor::processTestCase call to analyze text("
-             << *pipItr << ")" << LENDL;
+             << *pipItr << ")";
       std::map<std::string, AbstractAnalysisHandler*> handlers;
       m_lpclient->analyze(contentText,metaData,*pipItr,handlers);
       
@@ -106,9 +106,9 @@ Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const 
       string outputfile=filenameWithPipeLine+".bowdocument.xml";
       string cmd = "$LIMA_DIST/bin/readMultFile --output-format=xml ";
       cmd.append(tempFilename).append(" > ").append(outputfile);
-      LDEBUG << "ReaderTestCaseProcessor::processTestCase call system(" << cmd << ")" << LENDL;
+      LDEBUG << "ReaderTestCaseProcessor::processTestCase call system(" << cmd << ")";
       int status = system(cmd.c_str());
-      LDEBUG << "ReaderTestCaseProcessor::processTestCase status = " << status << LENDL;
+      LDEBUG << "ReaderTestCaseProcessor::processTestCase status = " << status;
   
       result = evalTestCase( testCase, *pipItr, filename, filenameWithPipeLine );
       if (result() != TestCaseError::NoError) return result;

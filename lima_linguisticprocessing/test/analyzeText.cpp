@@ -312,7 +312,7 @@ int main(int argc,char* argv[])
   delete Common::MediaticData::MediaticData::pchangeable();
   delete LinguisticProcessingClientFactory::pchangeable();
   TIMELOGINIT;
-  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms" << LENDL;
+  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
   
   return SUCCESS_ID;
 }

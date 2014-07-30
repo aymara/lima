@@ -65,7 +65,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
   
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDataDumper::init" << LENDL;
+  LDEBUG << "EventTemplateDataDumper::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
@@ -73,7 +73,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     m_eventData=unitConfiguration.getParamsValueAtKey("eventTemplateData");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LDEBUG << "EventTemplateDataDumper: no parameter 'eventTemplateData', use default ('"<<m_eventData << "')" << LENDL;
+    LDEBUG << "EventTemplateDataDumper: no parameter 'eventTemplateData', use default ('"<<m_eventData << "')";
     // not an error, keep default
   }
 }
@@ -81,7 +81,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
 LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDataDumper::process" << LENDL;
+  LDEBUG << "EventTemplateDataDumper::process";
   TimeUtils::updateCurrentTime();
 
   // initialize output
@@ -91,7 +91,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
   const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
   
@@ -102,7 +102,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
       const EventTemplateData* eventData=dynamic_cast<const EventTemplateData*>(data);
       if (eventData==0) {
         LOGINIT("LP::EventAnalysis");
-        LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events" << LENDL;
+        LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
         return MISSING_DATA;
       }
       else {
@@ -112,7 +112,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
     }
     else {
       LOGINIT("LP::EventAnalysis");
-      LERROR << "no data of name " << m_eventData << LENDL;
+      LERROR << "no data of name " << m_eventData;
     }
   }
   

@@ -184,11 +184,7 @@ $PREP-P::@DetArt (@NegSecond)? @PronIndef:SYNTACTIC_RELATION:
 # (A6.5 - 4.2.1.5)
 #----------------------------------------------------------------------
 
-@PronSujNonConjoint=($PRON-CLS,
-$PRON-PRO, $PRON-PRO)
-
-
-@PrepComp:@AdjAvecSubCompDeAdj:@Determinant (@AdvPos|@AdjPren){0-n} (PRON-CLO|PRON-CLO|@Substantif|@PronSujNonConjoint):SYNTACTIC_RELATION:
+@PrepComp:@Adjectif:@Determinant (@AdvPos|@AdjPren){0-n} ($PRON-CLO|@Substantif|@PronSujNonConjoint):SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.3,left.1,"ANY")
 +GenderAgreement(right.1,right.3)
 +NumberAgreement(right.1,right.3)
@@ -196,14 +192,8 @@ $PRON-PRO, $PRON-PRO)
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@PrepComp:@AdjAvecSubCompDeAdj:(@AdvPos|@AdjPren){0-n} (PRON-CLO|PRON-CLO|@Substantif|@PronSujNonConjoint):SYNTACTIC_RELATION:
-+SecondUngovernedBy(right.2,left.1,"ANY")
-+CreateRelationBetween(right.2,left.1,"COMPADJ")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
 # same with DET_ARTICLE_CONTRACTE
-$DET-DET:@AdjAvecSubCompDeAdj:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} (PRON-CLO|PRON-CLO|@Substantif):SYNTACTIC_RELATION:
+$DET-DETDU:@Adjectif:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} ($PRON-CLO|@Substantif):SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.2,left.1,"ANY")
 +GenderAgreement(trigger.1,right.2)
 +NumberAgreement(trigger.1,right.2)
@@ -356,26 +346,6 @@ $V-VPR)
 =<ClearStoredRelations()
 
 #----------------------------------------------------------------------
-# Relation entre "ne" et "pas" quand accoles et suivis d'un infinitif
-# Specifique pour Easy
-#----------------------------------------------------------------------
-@NegPrem::(@Adverbe){0-3} @NegSecond @VerbeInf:SYNTACTIC_RELATION:
-+SecondUngovernedBy(trigger.1,right.2,"ANY")
-+CreateRelationBetween(trigger.1,right.2,"NePas")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-#----------------------------------------------------------------------
-# Relation entre verbe et "pas" cas general
-# Specifique pour Easy
-#----------------------------------------------------------------------
-@NegSecond:@Verbe (@Adverbe){0-3} (@Prep @Substantif)?::SYNTACTIC_RELATION:
-+SecondUngovernedBy(trigger.1,left.1,"ANY")
-+CreateRelationBetween(trigger.1,left.1,"NePas2")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-#----------------------------------------------------------------------
 # Relation entre préposition et verbe à l'infinitif
 # Specifique pour Easy
 #----------------------------------------------------------------------
@@ -436,10 +406,10 @@ $V-VPR)
 # Relation entre adverbe et verbe à un temps simple
 # "Il n'attrape pas vraiment le chat"
 #----------------------------------------------------------------------
-@VerbeInd::(@NegSecond)? @AdvModifieurVerbePostv:SYNTACTIC_RELATION:
-+!GovernorOf(right.2,"ANY")
-+SecondUngovernedBy(right.2,trigger.1,"ANY")
-+CreateRelationBetween(right.2,trigger.1,"AdvVerbe")
+@AdvModifieurVerbePostv:@VerbeInd (@NegSecond)?::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"AdvVerbe")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 

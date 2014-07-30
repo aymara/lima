@@ -186,7 +186,7 @@ vector<Tstate> Automaton::finalStates() const {
 bool Automaton::hasTransitionsState(const Tstate state) const {
   if (m_searchStructures[state]==0) {
 //    AULOGINIT;
-//    LDEBUG << "search structure not initialized" << LENDL;
+//    LDEBUG << "search structure not initialized";
     return (! m_transitions[state].empty());
   }
   else {
@@ -241,7 +241,7 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
   if (m_searchStructures[state]==0) {
 //    AULOGINIT;
-//    LDEBUG << "search structure not initialized: linear search" << LENDL;
+//    LDEBUG << "search structure not initialized: linear search";
     //linear search on the transitions
     matchingTransitions.clear();
     vector<Transition>::const_iterator
@@ -249,7 +249,7 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       trans_end=m_transitions[state].end();
 
     for (; trans!=trans_end; trans++) {
-//       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex << LENDL;
+//       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex;
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
       if ((*trans).transitionUnit()->negative()) {
         match = (!match);
@@ -374,19 +374,19 @@ Automaton::DFSStack::top() {
 //          << "transition=" << *(m_stack.back().m_transition)
 //          << ";transitionUnit=" 
 //          << (*(m_stack.back().m_transition))->transitionUnit()
-//          << LENDL;
+//         ;
   return make_pair(m_stack.back().m_vertex,
                    *(m_stack.back().m_transition));
 }
 
 bool Automaton::DFSStack::pop() {
 //   AULOGINIT;
-//   LDEBUG << "Automaton:DFSSTack: poping " << LENDL;
+//   LDEBUG << "Automaton:DFSSTack: poping ";
   m_stack.back().m_transition++;
   if (m_stack.back().m_transition==
       m_stack.back().m_transitions.end()) {
 //     LDEBUG << "Automaton:DFSSTack: end of transitions: poping vertex "
-//            << LENDL;
+//           ;
     m_stack.pop_back();
     return true;
   }
@@ -404,7 +404,7 @@ push(const LinguisticGraphVertex& vertex,
 
 /*  AULOGINIT;
   LDEBUG << "Automaton:DFSSTack: pushing " << vertex
-          << ";" << state << LENDL;*/
+          << ";" << state;*/
   
   if (isLimitVertex(vertex)) { 
     return false;
@@ -425,7 +425,7 @@ push(const LinguisticGraphVertex& vertex,
     if (! isEndVertex(nextVertex)) {
       std::vector<const Transition*> matchingTransitions(0);
 //       LDEBUG << "Automaton:get matching transitions from state "
-//              << state << " for vertex " << nextVertex << LENDL;
+//              << state << " for vertex " << nextVertex;
       if (m_automaton.
           getMatchingTransitions(m_graph,nextVertex,analysis,
                                  state,matchingTransitions)) {
@@ -438,13 +438,13 @@ push(const LinguisticGraphVertex& vertex,
           for (;it!=it_end;it++) {
             oss << **it << ";";
           }
-          LDEBUG << oss.str() << LENDL;
+          LDEBUG << oss.str();
         }*/
         tmpStack.push_back(DFSStackElement(nextVertex,matchingTransitions));
       }
 /*      else {
         LDEBUG << "Automaton:DFSSTack: => no matching transitions" 
-               << LENDL;
+              ;
       }*/
     }
   }
@@ -476,7 +476,7 @@ getBestMatch(const LinguisticAnalysisStructure::AnalysisGraph& graph,
              const SearchGraphSense sense,
              const AutomatonControlParams& controlParams) const {
 //   AULOGINIT;
-//   LDEBUG << "testing automaton from " << begin << " to " << limit << LENDL;
+//   LDEBUG << "testing automaton from " << begin << " to " << limit;
   
  
   AutomatonMatchSet results;
@@ -496,7 +496,7 @@ getBestMatch(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
 
 //   LDEBUG << "return success=" << success 
-//          << ",match=" << longestMatch << LENDL;
+//          << ",match=" << longestMatch;
   
   return success;
 }
@@ -562,7 +562,7 @@ bool Automaton::testFromState(const Tstate firstState,
                               const AutomatonControlParams& controlParams) const {
 
 //    AULOGINIT;
-//    LDEBUG << "Automaton: testing from state " << firstState << LENDL;
+//    LDEBUG << "Automaton: testing from state " << firstState;
 
   // store in stack pairs of (automaton transition/graph vertex)
   // (store combinatory of all possible pairs, but if store only
@@ -576,13 +576,13 @@ bool Automaton::testFromState(const Tstate firstState,
   }
 
   if (S.isEndVertex(beginVertex)) {
-//     LDEBUG << beginVertex << "is end vertex. testing returns " << !results.empty() << LENDL;
+//     LDEBUG << beginVertex << "is end vertex. testing returns " << !results.empty();
     return (!results.empty());
   }
 
   // begin is the vertex that matched the trigger: 
   // push following vertices 
-//   LDEBUG << "pushing" << LENDL;
+//   LDEBUG << "pushing";
   S.push(beginVertex,firstState,analysis);
   
   LinguisticGraphVertex vertex;
@@ -593,21 +593,21 @@ bool Automaton::testFromState(const Tstate firstState,
   vector<uint64_t> backtrackDepth;
   backtrackDepth.push_back(0);
 
-//                               LDEBUG << "before while (S size: " << S.size() << ")" << LENDL;
+//                               LDEBUG << "before while (S size: " << S.size() << ")";
   while (! S.empty()) {
     
     nbIter++;
-//     LDEBUG << "in iteration " << nbIter << LENDL;
+//     LDEBUG << "in iteration " << nbIter;
     if (S.size() > controlParams.getMaxDepthStack()) {
       AULOGINIT;
       LWARN << "MaxDepthStack exceeded in automaton search: ignore rest of search" 
-            << LENDL;
+           ;
       return (!results.empty());
     }
     if (nbIter > controlParams.getMaxTransitionsExplored()) {
       AULOGINIT;
       LWARN << "MaxTransitionsExplored exceeded in automaton search: ignore rest of search" 
-            << LENDL;
+           ;
       return (!results.empty());
     }
     
@@ -618,12 +618,12 @@ bool Automaton::testFromState(const Tstate firstState,
 
 //       LDEBUG << "Automaton: backtrack: currentMatch="
 //              << currentMatch << ", next matching for vertex " 
-//              << vertex << LENDL;
+//              << vertex;
 
       if (backtrackDepth.empty()) {
         AULOGINIT;
         LWARN << "Automaton: should not be here! "
-              << "backtrack stack empty: abort search" << LENDL;
+              << "backtrack stack empty: abort search";
         return (!results.empty());
       }
 
@@ -631,7 +631,7 @@ bool Automaton::testFromState(const Tstate firstState,
       if (currentMatch.size() < depth) {
         AULOGINIT;
         LWARN << "Automaton: should not be here! "
-              << "backtrack depth larger than current match size: abort search" << LENDL;
+              << "backtrack depth larger than current match size: abort search";
         return (!results.empty());
       }
       for (uint64_t i(0); i<depth; i++) {
@@ -650,15 +650,15 @@ bool Automaton::testFromState(const Tstate firstState,
     TransitionUnit* trans=transition->transitionUnit();
 
 /*    LDEBUG << "Automaton: testing vertex " << vertex 
-           << " with transition " << *trans << LENDL;*/
+           << " with transition " << *trans;*/
 //     if (lastTransitionWithThisVertex) {
-//       LDEBUG << "=> is last transition for vertex " << vertex << LENDL;
+//       LDEBUG << "=> is last transition for vertex " << vertex;
 //     }
 
     //if (trans->match(graph,vertex,analysis,checkList)) {
     if (trans->checkConstraints(graph,vertex,analysis,checkList)) {
       
-//       LDEBUG << "Automaton: -> match found" << LENDL;
+//       LDEBUG << "Automaton: -> match found";
       // update current match
       currentMatch.addBackVertex(vertex,trans->keep());
 /*      LDEBUG << "Automaton: -> vertex (" << vertex 
@@ -682,18 +682,18 @@ bool Automaton::testFromState(const Tstate firstState,
 
       Tstate nextState=transition->nextState();
       if (isFinalState(nextState)) {
-//         LDEBUG << "Automaton: saving result of size "<< currentMatch.size() << LENDL;
+//         LDEBUG << "Automaton: saving result of size "<< currentMatch.size();
         if (currentMatch.size() > controlParams.getMaxResultSize()) {
           AULOGINIT;
           LWARN << "maxResultSize exceeded in automaton search: ignore result" 
-                << LENDL;
+               ;
         }
         else {
           results.insert(make_pair(currentMatch,checkList)); 
           if (results.size() > controlParams.getMaxNbResults()) {
             AULOGINIT;
             LWARN << "maxNbResults exceeded in automaton search: ignore rest of search" 
-                  << LENDL;
+                 ;
           return (!results.empty());
           }
         }
@@ -706,7 +706,7 @@ bool Automaton::testFromState(const Tstate firstState,
           for (;it!=it_end;it++) {
             oss << (*it).first << ";";
           }
-           LDEBUG << "results are (" << oss.str() << ")" << LENDL;
+           LDEBUG << "results are (" << oss.str() << ")";
       }*/
         if (lastTransitionWithThisVertex && ! hasTransitionsState(nextState)) {
           backtrack=true;
@@ -858,7 +858,7 @@ Automaton Automaton::subsets() const {
 //     for (uint64_t i(0); i<alphabet.size(); i++) {
 //       oss << *(alphabet[i]) << " ";
 //     }
-//     LDEBUG << oss.str() << LENDL;
+//     LDEBUG << oss.str();
 //   }
 
   detFA.addState();
@@ -878,7 +878,7 @@ Automaton Automaton::subsets() const {
       reachableStates(subsets[i],*(alphabet[j]),currentSubset);
 //       LDEBUG << "reachables from " << subsetString(subsets[i]) 
 //              << " with " << *(alphabet[j]) << ":" 
-//              << subsetString(currentSubset) << LENDL;
+//              << subsetString(currentSubset);
 
       if (currentSubset.size()) {
         // if a subset already corresponds to the current subset

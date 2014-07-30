@@ -98,7 +98,7 @@ void EventSegmentation::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-    LERROR << "No DateEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No DateEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
   try
   {
@@ -107,7 +107,7 @@ void EventSegmentation::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-     LERROR << "No EventEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+     LERROR << "No EventEntity defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
     try
   {
@@ -119,24 +119,24 @@ void EventSegmentation::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-     LERROR << "No OtherEntities defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+     LERROR << "No OtherEntities defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
    try
   {
     std::map<std::string,std::string>& weights=unitConfiguration.getMapAtKey("EntitiesWeights");
-    LDEBUG << "Weights map size =" << weights.size() << LENDL;
+    LDEBUG << "Weights map size =" << weights.size();
     for (std::map<std::string,std::string>::const_iterator it=weights.begin();
          it!=weights.end();
          it++)
     { 
-      LDEBUG << "Init EntitiesWeights entityType=" << Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(it->first)) << " , weight " << atoi((it->second).c_str()) << LENDL;
+      LDEBUG << "Init EntitiesWeights entityType=" << Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(it->first)) << " , weight " << atoi((it->second).c_str());
        m_entitiesWeights[Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(it->first))]=atoi((it->second).c_str());
        
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchMap& )
   {
-    LERROR << "No map 'EntitiesWeigths' in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No map 'EntitiesWeigths' in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
 
   }
 }
@@ -151,31 +151,31 @@ LimaStatusCode EventSegmentation::process(
 {
   EVENTANALYZERLOGINIT;
   TimeUtils::updateCurrentTime();
-  LDEBUG << "start EventSegmentation" << LENDL;
+  LDEBUG << "start EventSegmentation";
   
   // ici normalement on peut prendre soit analysis graph soit le prostgraph, cela doit être paramétré
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
   if (anagraph==0)
   {
-    LERROR << "no "<< m_graphId << " ! abort" << LENDL;
+    LERROR << "no "<< m_graphId << " ! abort";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no AnnotationData ! abort" << LENDL;
+    LERROR << "no AnnotationData ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no SentenceBoundaries ! abort" << LENDL;
+    LERROR << "no SentenceBoundaries ! abort";
     return MISSING_DATA;
   }
   SegmentationData* pb=static_cast<SegmentationData*>(analysis.getData("ParagraphBoundaries"));
   if (pb==0)
   {
-    LERROR << "no ParagraphBoundaries ! abort" << LENDL;
+    LERROR << "no ParagraphBoundaries ! abort";
     return MISSING_DATA;
   }
 
@@ -201,11 +201,11 @@ LimaStatusCode EventSegmentation::process(
     
     eventData->push_back((*iT).second);
   }
-  LDEBUG << "Le nombre d'évènements différents est égal à = " << map_event.size() << LENDL;
+  LDEBUG << "Le nombre d'évènements différents est égal à = " << map_event.size();
 
   if (main_event!=0)
   {
-    LDEBUG << "Le meilleur poids est égal à = " << max_weight << LENDL;
+    LDEBUG << "Le meilleur poids est égal à = " << max_weight;
     main_event->setMain();
   }
   
@@ -248,7 +248,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
     {
       // ignorer le paragraphe complètement et le supprimer
       delete(v_par[i]);
-      LDEBUG << "Paragraph numéro : " << (i+1) << "  a filtrer " << LENDL;
+      LDEBUG << "Paragraph numéro : " << (i+1) << "  a filtrer ";
     }
     else
     {        
@@ -256,7 +256,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
       // Il faut juste ajouter le paragraphe dans l'évènement concerné
       if (p->getDatesSize()==1)
       {
-        LDEBUG << "   La date est " << p->getDate().first << LENDL;
+        LDEBUG << "   La date est " << p->getDate().first;
         std::pair<string,LinguisticGraphVertex> date=p->getDate();
         if (map_event.find(date.first)!=map_event.end())
         {
@@ -268,7 +268,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
         {
           Event *ev=new Event();
           ev->setDate(make_pair(m_dateEntity,date));
-          LDEBUG << "Creation d'un nouvel évènement " << LENDL;
+          LDEBUG << "Creation d'un nouvel évènement ";
           ev->addParagraph(p,true,false,annotationData,graphId,graph);
           map_event[date.first]=ev;
         }
@@ -309,7 +309,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
           
           std::pair<Common::MediaticData::EntityType, std::deque<LinguisticGraphVertex> > evententities = p->extractEventEntitiesBeforeVertex(split,graph);
           
-          LDEBUG << "EventSegmentation evententities type " << evententities.first << LENDL;
+          LDEBUG << "EventSegmentation evententities type " << evententities.first;
           p1->addEventEntities(evententities);
           p1->addEntities(entities);
           
@@ -330,7 +330,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
             {
               Event *ev=new Event();
               ev->setDate(make_pair(m_dateEntity,date));
-              LDEBUG << "Creation d'un nouvel évènement " << LENDL;
+              LDEBUG << "Creation d'un nouvel évènement ";
               ev->addParagraph(p1,first_time,true,annotationData,graphId,graph);
               map_event[date.first]=ev;
             }
@@ -354,7 +354,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
           {
             Event *ev=new Event();
             ev->setDate(make_pair(m_dateEntity,date));
-            LDEBUG << "Creation d'un nouvel évènement " << LENDL;
+            LDEBUG << "Creation d'un nouvel évènement ";
             ev->addParagraph(p,false,false,annotationData,graphId,graph);
             map_event[date.first]=ev;
           }
@@ -425,7 +425,7 @@ void EventSegmentation::compute_paragraphs(std::vector<Paragraph*>& v_par,
       if(is_a_bound(v,pb) )
       {
        
-        LDEBUG << "Je suis dans le Début d'un nouveau paragraphe " << LENDL;
+        LDEBUG << "Je suis dans le Début d'un nouveau paragraphe ";
         current_date= "00-00-00";
        // créer la map du vertex
         uint64_t par_position=v_par[v_par.size()-1]->getPosition();
@@ -441,17 +441,17 @@ void EventSegmentation::compute_paragraphs(std::vector<Paragraph*>& v_par,
   
       if (is_specific_entity(v,annotationData))
       {
-        LDEBUG << "Je suis dans un vertex de type Entité nommée " << LENDL;
+        LDEBUG << "Je suis dans un vertex de type Entité nommée ";
         // verify if it is a date
         if(is_specific_entity(v,annotationData,m_dateEntity))
         {
           string date= getDate(v,annotationData,m_dateEntity);
-          LDEBUG << "Je suis dans Date " << LENDL;
-          LDEBUG << "Valeur de la Date =" << date << LENDL;
+          LDEBUG << "Je suis dans Date ";
+          LDEBUG << "Valeur de la Date =" << date;
           if (date.compare("00-00-00")==0)
           {
                // ignorer la date
-            LDEBUG << "Date mal normalisée à ignorer" << LENDL;
+            LDEBUG << "Date mal normalisée à ignorer";
           }
           else
           {
@@ -463,14 +463,14 @@ void EventSegmentation::compute_paragraphs(std::vector<Paragraph*>& v_par,
         else if(is_specific_entity(v,annotationData,m_eventEntity))
         {
          // mettre l'entités nommées dans le bon para
-          LDEBUG << "Je suis dans Evenement " << LENDL;
+          LDEBUG << "Je suis dans Evenement ";
           v_par[v_par.size()-1]->addEventEntity(m_eventEntity,v);
         }
         // verify if it is is the set of entities domain
         else if(is_specific_entity_in(v,annotationData,m_set_otherentities))
         {
          // mettre l'entités nommées dans le bon para
-          LDEBUG << "Je suis dans les autres types d'EN " << LENDL;
+          LDEBUG << "Je suis dans les autres types d'EN ";
           Common::MediaticData::EntityType e =getEntityType(v,annotationData,m_graphId);
           v_par[v_par.size()-1]->addEntity(e,v);
         }
@@ -480,7 +480,7 @@ void EventSegmentation::compute_paragraphs(std::vector<Paragraph*>& v_par,
      // it is the last position of the current sentence
       else if (is_a_bound(v,sb))
       {
-        LDEBUG << "Je suis dans fin d'une phrase " << LENDL;
+        LDEBUG << "Je suis dans fin d'une phrase ";
        // ajouter la position de la phrase dans le paragraphe
         v_par[v_par.size()-1]->addSentence(v);
       }
@@ -521,7 +521,7 @@ bool EventSegmentation::is_specific_entity(LinguisticGraphVertex v,AnnotationDat
        it != matches.end(); it++)
   {
 //     AnnotationGraphVertex vx=*it;
-    //LDEBUG << "Looking at annotation graph vertex " << vx << LENDL;
+    //LDEBUG << "Looking at annotation graph vertex " << vx;
     
     if (annotationData->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -539,7 +539,7 @@ bool EventSegmentation::is_specific_entity(LinguisticGraphVertex v,AnnotationDat
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    LDEBUG << "Looking at annotation graph vertex " << vx << LENDL;
+    LDEBUG << "Looking at annotation graph vertex " << vx;
     
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -583,7 +583,7 @@ std::string EventSegmentation::getDate(LinguisticGraphVertex v,AnnotationData* a
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    LDEBUG << "Looking at annotation graph vertex " << vx << LENDL;
+    LDEBUG << "Looking at annotation graph vertex " << vx;
     
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -617,7 +617,7 @@ std::string EventSegmentation::getDate(LinguisticGraphVertex v,AnnotationData* a
   normalizedForm.append(month);
   normalizedForm.insert(normalizedForm.end(),'-');
   normalizedForm.append(day);
-  LDEBUG << "Returned normalizedForm = " << normalizedForm << LENDL;
+  LDEBUG << "Returned normalizedForm = " << normalizedForm;
   return (normalizedForm);
 }
 
@@ -629,7 +629,7 @@ bool EventSegmentation::is_specific_entity_in(LinguisticGraphVertex v,Annotation
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    LDEBUG << "Looking at annotation graph vertex " << vx << LENDL;
+    LDEBUG << "Looking at annotation graph vertex " << vx;
     
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {

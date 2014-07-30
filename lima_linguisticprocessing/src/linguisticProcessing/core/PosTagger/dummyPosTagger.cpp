@@ -67,7 +67,7 @@ LimaStatusCode DummyPosTagger::process(
 
   // start postagging here !
   PTLOGINIT;
-  LINFO << "Start of Dummy posTagging" << LENDL;
+  LINFO << "Start of Dummy posTagging";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
@@ -113,15 +113,15 @@ LimaStatusCode DummyPosTagger::process(
       {
         Token* tok= get(vertex_token,*graph,*it);
         LWARN << "The MorphoSyntacticData " 
-          << Common::Misc::limastring2utf8stdstring(tok->stringForm()) << " is empty !" << LENDL;
+          << Common::Misc::limastring2utf8stdstring(tok->stringForm()) << " is empty !";
       }
     }
   }
 
   // Affichage du graphe après le POSTagging
-  LDEBUG << "Graph after Dummy posTagging:" << LENDL;
+  LDEBUG << "Graph after Dummy posTagging:";
 
-  LINFO << "End of Dummy posTagging" << LENDL;
+  LINFO << "End of Dummy posTagging";
 
   TimeUtils::logElapsedTime("DummyPosTagger");
   return SUCCESS_ID;

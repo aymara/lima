@@ -83,7 +83,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   }
   catch (NoSuchList& ) {
     SELOGINIT;
-    LERROR << "missing list in 'MicrosForNormalization' group of language " << (int)language << " !" << LENDL;
+    LERROR << "missing list in 'MicrosForNormalization' group of language " << (int)language << " !";
     throw InvalidConfiguration();
   }
 }
@@ -95,7 +95,7 @@ getMicros(const std::string& list)
   if (it==m_micros.end()) {
     SELOGINIT;
     LERROR << "no list " << list
-           << " for micros in named entities normalization" << LENDL;
+           << " for micros in named entities normalization";
     throw LimaException();
   }
   return &((*it).second);

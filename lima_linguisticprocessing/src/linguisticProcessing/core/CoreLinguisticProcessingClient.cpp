@@ -100,10 +100,10 @@ void CoreLinguisticProcessingClient::analyze(
 	attrIt != metaData.end() ; attrIt++ ) {
 	LINFO << "attr:" << attrIt->first << "value:" << attrIt->second << ", " ;
   }
-  LINFO << LENDL;
+  LINFO;
   
   std::map<std::string,std::string>* metaDataPtr = const_cast<std::map<std::string,std::string>*>(&metaData);
-  LINFO << "CoreLinguisticProcessingClient::analyze(" << (*metaDataPtr)["docid"] << "...)" << LENDL;
+  LINFO << "CoreLinguisticProcessingClient::analyze(" << (*metaDataPtr)["docid"] << "...)";
 
   // add date/time/location metadata in LinguisticMetaData
   if (metaData.empty()) {
@@ -170,7 +170,7 @@ void CoreLinguisticProcessingClient::analyze(
   LINFO  << "analyze file is: '" << fileName << "'";
   LINFO  << "analyze pipeline is '" << pipelineId << "'";
   LINFO  << "analyze language is '" << lang << "'";
-  LDEBUG << "texte : " << Common::Misc::limastring2utf8stdstring(texte);
+  LDEBUG << "texte : " << texte;
 
   MediaId langId=MediaticData::single().getMediaId(lang);
 

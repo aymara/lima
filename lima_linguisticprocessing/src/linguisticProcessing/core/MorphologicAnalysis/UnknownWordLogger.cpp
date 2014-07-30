@@ -69,7 +69,7 @@ void UnknownWordLogger::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'outputFile' in UnknownWordLogger group for language " << (int) language << LENDL;
+    LERROR << "no param 'outputFile' in UnknownWordLogger group for language " << (int) language;
     throw InvalidConfiguration();
   }
 }
@@ -115,7 +115,7 @@ LimaStatusCode UnknownWordLogger::process(
   catch (std::exception &exc)
   {
     MORPHOLOGINIT;
-    LWARN << "Exception in UnknownWordLogger :  " << exc.what() << LENDL;
+    LWARN << "Exception in UnknownWordLogger :  " << exc.what();
     return UNKNOWN_ERROR;
   }
 

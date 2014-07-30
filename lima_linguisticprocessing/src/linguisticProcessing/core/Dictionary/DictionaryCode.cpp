@@ -92,7 +92,7 @@ void DictionaryCode::init(
    */
   DICTIONARYLOGINIT;
 #ifdef DEBUG_CD
-  LDEBUG <<  "DictionaryCode::init" << LENDL;
+  LDEBUG <<  "DictionaryCode::init";
 #endif
   m_language=manager->getInitializationParameters().language;
   std::string resourcesPath=Common::LinguisticData::LinguisticData::single().getResourcesPath();
@@ -104,7 +104,7 @@ void DictionaryCode::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'codeListFile' in DictionaryCode group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'codeListFile' in DictionaryCode group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -113,7 +113,7 @@ void DictionaryCode::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'codeFile' in DictionaryCode group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'codeFile' in DictionaryCode group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   

@@ -75,8 +75,8 @@ bool XMLSyntagmaticMatrixFileHandler::error(const QXmlParseException& e)
     SALOGINIT;
     LERROR << "Error at file " << e.systemId()
         << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber() << LENDL
-       << "  Message: " << e.message() << LENDL;
+        << ", char " << e.columnNumber()
+       << "  Message: " << e.message();
        return false;
 }
 
@@ -85,8 +85,8 @@ bool XMLSyntagmaticMatrixFileHandler::fatalError(const QXmlParseException& e)
     SALOGINIT;
     LERROR << "Fatal Error at file " << e.systemId()
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << e.message() << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << e.message();
          return false;
 }
 
@@ -95,8 +95,8 @@ bool XMLSyntagmaticMatrixFileHandler::warning(const QXmlParseException& e)
   SALOGINIT;
   LWARN << "Warning at file " << e.systemId()
         << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber() << LENDL
-        << "  Message: " << e.message() << LENDL;
+        << ", char " << e.columnNumber()
+        << "  Message: " << e.message();
         return true;
 }
 
@@ -155,7 +155,7 @@ bool XMLSyntagmaticMatrixFileHandler::startElement(const QString & namespaceURI,
     if (name == 0)
     {
         SALOGINIT;
-        LERROR << "Error: receiving a null element name while parsing matrix file" << LENDL;
+        LERROR << "Error: receiving a null element name while parsing matrix file";
         return false;
     }
 
@@ -297,7 +297,7 @@ bool XMLSyntagmaticMatrixFileHandler::endElement(const QString & namespaceURI, c
   if (name == 0)
     {
         SALOGINIT;
-        LERROR << "Error: receiving a null closing element name while parsing matrix file" << LENDL;
+        LERROR << "Error: receiving a null closing element name while parsing matrix file";
         return false;
     }
     const QString& stringName = name;

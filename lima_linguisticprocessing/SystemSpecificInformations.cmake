@@ -115,7 +115,13 @@ if(UNIX)
         string(REPLACE "/" "_" LINUX_NAME ${LINUX_NAME})
         set(SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR "RPM")
       endif(LINUX_ISSUE MATCHES "Mandriva")
-      # Mandriva case
+      # Mageia case
+      if(LINUX_ISSUE MATCHES "Mageia")
+        string(REGEX MATCH "Mageia release ([0-9]+)" MAGEIA "${LINUX_ISSUE}")
+        set(LINUX_NAME "Mageia_${CMAKE_MATCH_1}")
+        string(REPLACE "/" "_" LINUX_NAME ${LINUX_NAME})
+        set(SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR "RPM")
+      endif(LINUX_ISSUE MATCHES "Mageia")
       # TODO      
       if(LINUX_NAME) 
          set(SPECIFIC_SYSTEM_VERSION_NAME "${CMAKE_SYSTEM_NAME}-${LINUX_NAME}")

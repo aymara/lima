@@ -68,7 +68,7 @@ LinguisticCode PropertyManager::getPropertyValue(const std::string& symbolicValu
   if (it == m_symbol2code.end())
   {
     PROPERTYCODELOGINIT;
-    LWARN << "Ask for unknown value " << symbolicValue << " for property " << m_name << LENDL;
+    LWARN << "Ask for unknown value " << symbolicValue << " for property " << m_name;
     return static_cast<LinguisticCode>(0);
   }
   return it->second;
@@ -81,7 +81,7 @@ const std::string& PropertyManager::getPropertySymbolicValue(const LinguisticCod
   if (it == m_code2symbol.end())
   {
     PROPERTYCODELOGINIT;
-    LWARN << "Ask for unknown value " << val << " (extracted from " << value << ") for property " << m_name << LENDL;
+    LWARN << "Ask for unknown value " << val << " (extracted from " << value << ") for property " << m_name;
     return s_none;
   }
   return it->second;

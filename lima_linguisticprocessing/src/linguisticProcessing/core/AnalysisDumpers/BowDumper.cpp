@@ -120,7 +120,7 @@ void BowDumper::init(
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "Missing parameter handler in BowDumper configuration" << LENDL;
+    LERROR << "Missing parameter handler in BowDumper configuration";
     throw InvalidConfiguration();
   }
   
@@ -136,11 +136,11 @@ LimaStatusCode BowDumper::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
-  LDEBUG << "BowDumper handler will be: " << m_handler << LENDL;
+  LDEBUG << "BowDumper handler will be: " << m_handler;
 //   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
@@ -148,32 +148,32 @@ LimaStatusCode BowDumper::process(
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "BowDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "BowDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "BowDumper::process: no graph 'AnaGraph' available !" << LENDL;
+    LERROR << "BowDumper::process: no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "BowDumper::process: no graph 'PosGraph' available !" << LENDL;
+    LERROR << "BowDumper::process: no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "BowDumper::process: no annotation graph available !" << LENDL;
+    LERROR << "BowDumper::process: no annotation graph available !";
     return MISSING_DATA;
   }
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
 /*  if (syntacticData==0)
   {
-    LERROR << "BowDumper::process: no SyntacticData ! abort" << LENDL;
+    LERROR << "BowDumper::process: no SyntacticData ! abort";
     return MISSING_DATA;
   }*/
   if (syntacticData==0)
@@ -211,7 +211,7 @@ LimaStatusCode BowDumper::process(
   {
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
-        LERROR << "BowDumper::process: no LinguisticMetaData ! abort" << LENDL;
+        LERROR << "BowDumper::process: no LinguisticMetaData ! abort";
         return MISSING_DATA;
     }
     std::string outputFile=metadata->getMetaData("FileName") + ".bin";
@@ -241,7 +241,7 @@ void BowDumper::buildBoWText(
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LWARN << "no SentenceBounds" << LENDL;
+    LWARN << "no SentenceBounds";
   }
 
   if (sb==0)
@@ -272,9 +272,9 @@ void BowDumper::buildBoWText(
       LinguisticGraphVertex sentenceEnd=boundItr->getLastVertex();
 
       LDEBUG << "dump sentence between " << sentenceBegin
-      << " and " << sentenceEnd << LENDL;
+      << " and " << sentenceEnd;
 
-      LDEBUG << "dump simple terms for this sentence" << LENDL;
+      LDEBUG << "dump simple terms for this sentence";
       addVerticesToBoWText(annotationData,
                            anagraph,
                            posgraph,
@@ -300,8 +300,8 @@ void BowDumper::addVerticesToBoWText(
 {
 
   DUMPERLOGINIT;
-  LDEBUG << "BowDumper: ========================================" << LENDL;
-  LDEBUG << "BowDumper: adding to BoWText from vertex "  << begin << " to vertex " << end << LENDL;
+  LDEBUG << "BowDumper: ========================================";
+  LDEBUG << "BowDumper: adding to BoWText from vertex "  << begin << " to vertex " << end;
 
   const LinguisticGraph& beforePoSGraph=*(anagraph->getGraph());
   const LinguisticGraph& graph=*(posgraph->getGraph());
@@ -345,9 +345,9 @@ void BowDumper::addVerticesToBoWText(
     {
       /// @todo replace v in LDEBUGs below by matching annotation vertices
 //       LDEBUG << "BowDumper: hasAnnotation("<<v<<", CompoundTokenAnnotation): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation"));
 //       LDEBUG << "BowDumper: hasAnnotation("<<v<<", SpecificEntity): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity"));
       //std::set< uint64_t > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead"); compatibilite 32 64 bits
       std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       if (!cpdsHeads.empty())
@@ -365,7 +365,7 @@ void BowDumper::addVerticesToBoWText(
             std::string elem = (*bowItr).second->getIdUTF8String();
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
-              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
               delete (*bowItr).first;
               delete (*bowItr).second;
             }
@@ -385,7 +385,7 @@ void BowDumper::addVerticesToBoWText(
               {
                 oss << *asvit << ", ";
               }
-            LDEBUG << "BowDumper: for " << v << " alreadyStoredVertices are: " << oss.str() << LENDL;
+            LDEBUG << "BowDumper: for " << v << " alreadyStoredVertices are: " << oss.str();
             }
           }
         }
@@ -402,7 +402,7 @@ void BowDumper::addVerticesToBoWText(
           std::string elem = (*bowItr).second->getIdUTF8String();
           if (alreadyStored.find(elem) != alreadyStored.end())
           { // already stored
-            //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+            //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
             delete (*bowItr).first;
             delete (*bowItr).second;
           }
@@ -421,13 +421,13 @@ void BowDumper::addVerticesToBoWText(
             {
               oss << *asvit << ", ";
             }
-          LDEBUG << "BowDumper: for " << v << " alreadyStoredVertices are: " << oss.str() << LENDL;
+          LDEBUG << "BowDumper: for " << v << " alreadyStoredVertices are: " << oss.str();
           }
         }
       }
       else
       {
-        LDEBUG << "BowDumper: " << v << " is already stored." << LENDL;
+        LDEBUG << "BowDumper: " << v << " is already stored.";
       }
     }
   }

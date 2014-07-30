@@ -119,24 +119,24 @@ bool BoWXMLHandler::warning(const QXmlParseException& e) {
   BOWLOGINIT;
   LWARN << "Warning at file " << e.systemId()
         << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber() << LENDL
-        << "  Message: " << e.message() << LENDL;
+        << ", char " << e.columnNumber()
+        << "  Message: " << e.message();
   return true;
 }
 bool BoWXMLHandler::error(const QXmlParseException& e) {
   BOWLOGINIT;
   LERROR << "Error at file " << e.systemId()
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << e.message() << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << e.message();
   return false;
 }
 bool BoWXMLHandler::fatalError(const QXmlParseException& e) {
   BOWLOGINIT;
   LERROR << "Fatal Error at file " << e.systemId()
          << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber() << LENDL
-         << "  Message: " << e.message() << LENDL;
+         << ", char " << e.columnNumber()
+         << "  Message: " << e.message();
   throw e;
 }
 
@@ -146,12 +146,12 @@ bool BoWXMLHandler::fatalError(const QXmlParseException& e) {
 
 bool BoWXMLHandler::startDocument() {
   BOWLOGINIT;
-  LDEBUG << "Start Document" << LENDL;
+  LDEBUG << "Start Document";
   return true;
 }
 bool BoWXMLHandler::endDocument() {
   BOWLOGINIT;
-  LDEBUG << "End Document" << LENDL;
+  LDEBUG << "End Document";
   return true;
 }
 
@@ -161,7 +161,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   const QString&  stringName = name;
 
   BOWLOGINIT;
-  LDEBUG << "Start Element " << stringName << LENDL;
+  LDEBUG << "Start Element " << stringName;
 
   LimaString lemma;
   LinguisticCode category = static_cast<LinguisticCode>(0);
@@ -198,7 +198,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
       elementName=getStringAttribute(attributes,"elementName");
     } 
     catch (NoAttributeException& ) {
-      LERROR << "missing attribute elementName in " << stringName << LENDL;
+      LERROR << "missing attribute elementName in " << stringName;
     }
     Lima::Common::Misc::writeStringField(m_outputStream, elementName);
   }
@@ -213,7 +213,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
       m_currentBoWText->clear();
     }
     else {
-      LERROR << "<tokens> found whereas no BoWText initialized" << LENDL;
+      LERROR << "<tokens> found whereas no BoWText initialized";
     }
   }
   else if (stringName == "bowToken") {
@@ -276,7 +276,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   const QString& stringName = name;
 
   BOWLOGINIT;
-  LDEBUG << "End Element " << stringName << LENDL;
+  LDEBUG << "End Element " << stringName;
 
   if (stringName == "bowNamedEntity" ||
       stringName == "bowTerm") 
@@ -414,7 +414,7 @@ bool BoWXMLHandler::addProperty(const QXmlAttributes& attributes) {
   }
   catch (exception& e) {
     BOWLOGINIT;
-    LERROR << "Error reading doc infos: " << e.what() << LENDL;
+    LERROR << "Error reading doc infos: " << e.what();
   }
   return true;
 }
@@ -494,7 +494,7 @@ BoWXMLHandler::getDateAttribute(const QXmlAttributes& attributes,
   }
   catch (exception& e) {
     BOWLOGINIT;
-    LERROR << "Error trying to read date: " << e.what() << LENDL; 
+    LERROR << "Error trying to read date: " << e.what(); 
     return QDate();
   }    
 }

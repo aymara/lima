@@ -158,14 +158,14 @@ bool SecondUngovernedBy::operator()(
 //   SAPLOGINIT;
 //   LDEBUG << "testing SecondUngovernedBy for "
 //   << v1 << " and " << v2
-//   << " with relation: " << m_relation << LENDL;
+//   << " with relation: " << m_relation;
 
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
 
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
       v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
-//     LDEBUG << "SecondUngovernedBy: false" << LENDL;
+//     LDEBUG << "SecondUngovernedBy: false";
     return false;
   }
   CEdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
@@ -192,11 +192,11 @@ bool SecondUngovernedBy::operator()(
     if ( (map[*it] == m_relation)
           || (m_relation == 0) )
     {
-//       LDEBUG << "SecondUngovernedBy: false" << LENDL;
+//       LDEBUG << "SecondUngovernedBy: false";
       return false;
     }
   }
-  //   LDEBUG << "SecondUngovernedBy: true" << LENDL;
+  //   LDEBUG << "SecondUngovernedBy: true";
   return true;
 }
 
@@ -216,13 +216,13 @@ bool GovernorOf::operator()(const AnalysisGraph& graph,
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing GovernorOf for " << v1
-//  << " with relation : " << m_relation << LENDL;
+//  << " with relation : " << m_relation;
 
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
 
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() )
   {
-//    LDEBUG << "GovernorOf: false" << LENDL;
+//    LDEBUG << "GovernorOf: false";
     return false;
   }
   CEdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
@@ -234,11 +234,11 @@ bool GovernorOf::operator()(const AnalysisGraph& graph,
     if ( (map[*it] == m_relation)
          || (m_relation == 0) )
     {
-//      LDEBUG << "GovernorOf: true" << LENDL;
+//      LDEBUG << "GovernorOf: true";
       return true;
     }
   }
-//  LDEBUG << "GovernorOf: false" << LENDL;
+//  LDEBUG << "GovernorOf: false";
   return false;
 }
 
@@ -259,11 +259,11 @@ bool GovernedBy::operator()(const AnalysisGraph& graph,
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing GovernedBy for " << v1
-//  << " with relation: " << m_relation << LENDL;
+//  << " with relation: " << m_relation;
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() )
   {
-//    LDEBUG << "GovernedBy: false" << LENDL;
+//    LDEBUG << "GovernedBy: false";
     return false;
   }
   CEdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
@@ -275,12 +275,12 @@ bool GovernedBy::operator()(const AnalysisGraph& graph,
     if ( (map[*it] == m_relation)
          || (m_relation == 0) )
     {
-//      LDEBUG << "GovernedBy: true" << LENDL;
+//      LDEBUG << "GovernedBy: true";
       return true;
     }
   }
 
-//  LDEBUG << "GovernedBy: false" << LENDL;
+//  LDEBUG << "GovernedBy: false";
   return false;
 }
 
@@ -303,7 +303,7 @@ bool SameNominalChain::operator()(const AnalysisGraph& graph,
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing SameNominalChain for " << v1 << " and " << v2
-//  << LENDL;
+// ;
 
   CVertexChainIdPropertyMap map = get(vertex_chain_id, *(graph.getGraph()));
   VertexChainIdProp::const_iterator it1 = map[v1].begin();
@@ -322,10 +322,10 @@ bool SameNominalChain::operator()(const AnalysisGraph& graph,
            //                    ( (*it1).pathId() == (*it2).pathId() ) &&
            ( (*it1).chainId() == (*it2).chainId() ) )
       {
-//        LDEBUG << " : yes" << LENDL;
+//        LDEBUG << " : yes";
         return true;
       }
-//      LDEBUG << " : no" << LENDL;
+//      LDEBUG << " : no";
     }
   }
   return false;
@@ -350,7 +350,7 @@ bool SameVerbalChain::operator()(const AnalysisGraph& graph,
   //    return graph.SameVerbalChain(v1, v2, false);
 
 //  SAPLOGINIT;
-//  LDEBUG << "testing SameVerbalChain for " << v1 << " and " << v2 << LENDL;
+//  LDEBUG << "testing SameVerbalChain for " << v1 << " and " << v2;
   CVertexChainIdPropertyMap map = get(vertex_chain_id, *(graph.getGraph()));
   VertexChainIdProp::const_iterator it1 = map[v1].begin();
   VertexChainIdProp::const_iterator it1_end = map[v1].end();
@@ -369,13 +369,13 @@ bool SameVerbalChain::operator()(const AnalysisGraph& graph,
            //                    ( (*it1).pathId() == (*it2).pathId() ) &&
            ( s1.chainId() == s2.chainId() ) )
       {
-//        LDEBUG << " : return yes" << LENDL;
+//        LDEBUG << " : return yes";
         return true;
       }
-//      LDEBUG << " : no" << LENDL;
+//      LDEBUG << " : no";
     }
   }
-//  LDEBUG << " : return no" << LENDL;
+//  LDEBUG << " : return no";
   return false;
 
 }
@@ -397,10 +397,10 @@ bool CreateRelationBetween::operator()(const AnalysisGraph&,
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
-//  << v2  << " with relation: " << m_relation << LENDL;
+//  << v2  << " with relation: " << m_relation;
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   bool res = syntacticData->relation(v1, v2, m_relation);
-//  LDEBUG << "CreateRelationBetween: " << (res?"yes":"no") << LENDL;
+//  LDEBUG << "CreateRelationBetween: " << (res?"yes":"no");
   return res;
 }
 
@@ -421,7 +421,7 @@ bool FindRelationFrom::operator()(const AnalysisGraph&,
   Critical function : comment logging message
 */
 //  SAPLOGINIT;
-//  LDEBUG << "testing FindRelationFRom for " << v1 << LENDL;
+//  LDEBUG << "testing FindRelationFRom for " << v1;
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   DependencyGraph* depGraph=syntacticData->dependencyGraph();
 
@@ -436,7 +436,7 @@ bool FindRelationFrom::operator()(const AnalysisGraph&,
 
     DependencyGraphVertex dv=toVisit.front();
     toVisit.pop();
-//    LDEBUG << "visit dep vertex " << dv << LENDL;
+//    LDEBUG << "visit dep vertex " << dv;
 
     for (boost::tie(outItr,outItrEnd)=out_edges(dv,*depGraph);
          outItr!=outItrEnd;
@@ -444,7 +444,7 @@ bool FindRelationFrom::operator()(const AnalysisGraph&,
     {
       if ( get(edge_deprel_type,*depGraph,*outItr) == m_relation)
         {
-//          LDEBUG << "find relation " << m_relation << " for edge " << *outItr << LENDL;
+//          LDEBUG << "find relation " << m_relation << " for edge " << *outItr;
           syntacticData->relation(
             syntacticData->tokenVertexForDepVertex(dv),
             syntacticData->tokenVertexForDepVertex(target(*outItr,*depGraph)),
@@ -454,7 +454,7 @@ bool FindRelationFrom::operator()(const AnalysisGraph&,
       toVisit.push(target(*outItr,*depGraph));
     }
   }
-//  LDEBUG << "FindRelationFrom: no" << LENDL;
+//  LDEBUG << "FindRelationFrom: no";
   return false;
 }
 
@@ -476,7 +476,7 @@ CreateRelationWithRelated::CreateRelationWithRelated(
   if (i == std::string::npos)
   {
     SAPLOGINIT;
-    LERROR << "Error: CreateRelationWithRelated complement must have two types" << LENDL;
+    LERROR << "Error: CreateRelationWithRelated complement must have two types";
     throw LimaException();
   }
   m_relationToCreate=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(str,i+1));
@@ -522,7 +522,7 @@ findRelatedVertices(const LinguisticGraphVertex& v2,
 //         oss << *it<< ",";
 //       }
 //       LDEBUG << "CreateRelationWithRelated: no relation "
-//       << oss.str() << " attached to vertex " << v2 << LENDL;
+//       << oss.str() << " attached to vertex " << v2;
 //     }
 //   }
   return vfollow;
@@ -539,7 +539,7 @@ bool CreateRelationWithRelated::operator()(
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing CreateRelationWithRelated for " << v1
-//  << " and " << v2 << LENDL;
+//  << " and " << v2;
 
   SyntacticData* syntacticData=
     static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -559,10 +559,10 @@ bool CreateRelationWithRelated::operator()(
   for (; v!=v_end; v++)
   {
 //    LDEBUG << "storing relation " << m_relationToCreate
-//    << " between " << v1 << " and " << *v << LENDL;
+//    << " between " << v1 << " and " << *v;
     syntacticData->relation(v1, *v, m_relationToCreate);
   }
-//  LDEBUG << "CreateRelationWithRelated: yes" << LENDL;
+//  LDEBUG << "CreateRelationWithRelated: yes";
   return true;
 }
 
@@ -601,10 +601,10 @@ bool CreateRelationReverseWithRelated::operator()(
   for (; v!=v_end; v++)
   {
 //    LDEBUG << "storing relation " << m_relationToCreate
-//    << " between " << v1 << " and " << *v << LENDL;
+//    << " between " << v1 << " and " << *v;
     syntacticData->relation(*v, v1, m_relationToCreate);
   }
-//  LDEBUG << "CreateRelationReverseWithRelated: yes" << LENDL;
+//  LDEBUG << "CreateRelationReverseWithRelated: yes";
   return true;
 }
 
@@ -650,7 +650,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 */
  SAPLOGINIT;
  LDEBUG << "creating compound tense for " << auxVertex << " and "
- << pastPartVertex << LENDL;
+ << pastPartVertex;
 
 
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -677,12 +677,12 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   LinguisticCode dataAuxMicro = dataAux->firstValue(*m_microAccessor);
 
   LinguisticCode tense = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAux->firstValue(*m_timeAccessor));
-  LDEBUG << "Tense = '" << tense << "' " << LENDL;
+  LDEBUG << "Tense = '" << tense << "' ";
 
   if (m_macroAccessor->empty(m_macro) || m_microAccessor->empty(m_micro))
   {
    LDEBUG << "CreateCompoundTense: false because macro="
-   << m_macro << " and micro=" << m_micro << LENDL;
+   << m_macro << " and micro=" << m_micro;
     return false;
   }
 
@@ -711,7 +711,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   // creer un MorphoSyntacticData
   LDEBUG << "Creating a DicoWord: "
       << int(m_macro) << " / " << Common::Misc::limastring2utf8stdstring(verbFlex) << " / "
-      << int(m_micro) << " / " << verbLemma << LENDL;
+      << int(m_micro) << " / " << verbLemma;
   MorphoSyntacticData* dataNewVerb = new MorphoSyntacticData();
   /// if the anagraph is not set to delete the morphosyntactic data, we have to do it
   if (!anagraph.ownsMorphData())
@@ -736,7 +736,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   LinguisticGraphVertex newVertex;
   DependencyGraphVertex newDepVertex;
   boost::tie (newVertex, newDepVertex) = syntacticData->addVertex();
-  LDEBUG << "New vertices are " << newVertex << " (pos) and " << newDepVertex << " (dep)" << LENDL;
+  LDEBUG << "New vertices are " << newVertex << " (pos) and " << newDepVertex << " (dep)";
 
   tokenMap[newVertex] = tokenNewVerb;
   dataMap[newVertex] = dataNewVerb;
@@ -784,19 +784,19 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   std::set< std::pair< LinguisticGraphVertex, LinguisticGraphVertex > > addedEdges;
   
   //1. entre les noeuds avant l'auxiliaire et le nouveau noeud
-  LDEBUG << "The auxiliary has " << in_degree(auxVertex, *graph) << " in edges." << LENDL;
+  LDEBUG << "The auxiliary has " << in_degree(auxVertex, *graph) << " in edges.";
   LinguisticGraphInEdgeIt auxInEdgesIt, auxInEdgesIt_end;
   boost::tie(auxInEdgesIt, auxInEdgesIt_end) = in_edges(auxVertex, *graph);
   for (; auxInEdgesIt != auxInEdgesIt_end; auxInEdgesIt++)
   {
-    LDEBUG << "auxInEdge: " << source(*auxInEdgesIt, *graph) << " -> " << target(*auxInEdgesIt, *graph) << LENDL;
+    LDEBUG << "auxInEdge: " << source(*auxInEdgesIt, *graph) << " -> " << target(*auxInEdgesIt, *graph);
     LinguisticGraphVertex auxInVertex = source(*auxInEdgesIt, *graph);
     if (addedEdges.find(std::make_pair(auxInVertex,newVertex)) != addedEdges.end())
     {
       // l'arc a deja ete ajoute, abandonner
       continue;
     }
-    LDEBUG << "edge to add (step1): " << auxInVertex << " -> " << newVertex << LENDL;
+    LDEBUG << "edge to add (step1): " << auxInVertex << " -> " << newVertex;
     edgesToRemove.insert(std::make_pair(source(*auxInEdgesIt,*graph),target(*auxInEdgesIt,*graph)));
     addedEdges.insert(std::make_pair(auxInVertex,newVertex));
   }
@@ -819,7 +819,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 //       boost::tie(e, success) = add_edge(newVertex, auxOutVertex, *graph);
 //       if (success)
 //       {
-        LDEBUG << "edge to add (step2): " << newVertex << " -> " << auxOutVertex << LENDL;
+        LDEBUG << "edge to add (step2): " << newVertex << " -> " << auxOutVertex;
         edgesToRemove.insert(std::make_pair(source(*auxOutEdgesIt,*graph),target(*auxOutEdgesIt,*graph)));
         addedEdges.insert(std::make_pair(newVertex,auxOutVertex));
 //         break;
@@ -836,11 +836,11 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     LinguisticGraphVertex pastPartInVertex = source(*pastPartInEdgesIt, *graph);
     if (pastPartInVertex == auxVertex)
     {
-      LDEBUG << "no vertex between past participle and auxiliary" << LENDL;
+      LDEBUG << "no vertex between past participle and auxiliary";
       pastPartInVertex = newVertex;
 
     }
-    LDEBUG << "past participle in vertex  " << pastPartInVertex << LENDL;
+    LDEBUG << "past participle in vertex  " << pastPartInVertex;
     edgesToRemove.insert(std::make_pair(source(*pastPartInEdgesIt,*graph),target(*pastPartInEdgesIt,*graph)));
 
     LinguisticGraphOutEdgeIt pastPartOutEdgesIt, pastPartOutEdgesIt_end;
@@ -848,7 +848,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     for (; pastPartOutEdgesIt != pastPartOutEdgesIt_end; pastPartOutEdgesIt++)
     {
       LinguisticGraphVertex pastPartOutVertex = target(*pastPartOutEdgesIt, *graph);
-      LDEBUG << "past participle out vertex " << pastPartOutVertex << LENDL;
+      LDEBUG << "past participle out vertex " << pastPartOutVertex;
 
       chainsIdsMap[pastPartInVertex] = newVerbChains;
       if (addedEdges.find(std::make_pair(pastPartInVertex,pastPartOutVertex)) != addedEdges.end())
@@ -861,7 +861,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 //       boost::tie(e, success) = add_edge(pastPartInVertex, pastPartOutVertex, *graph);
 //       if (success)
 //       {
-      LDEBUG << "edge to add (step3): " << pastPartInVertex << " -> " << pastPartOutVertex << LENDL;
+      LDEBUG << "edge to add (step3): " << pastPartInVertex << " -> " << pastPartOutVertex;
         edgesToRemove.insert(std::make_pair(source(*pastPartOutEdgesIt,*graph),target(*pastPartOutEdgesIt,*graph)));
         addedEdges.insert(std::make_pair(pastPartInVertex,pastPartOutVertex));
 //         break;
@@ -874,7 +874,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   edgesToRemoveIt_end = edgesToRemove.end();
   for (; edgesToRemoveIt != edgesToRemoveIt_end; edgesToRemoveIt++)
   {
-    LDEBUG << "remove edge " << (*edgesToRemoveIt).first << " -> " << (*edgesToRemoveIt).second << LENDL;
+    LDEBUG << "remove edge " << (*edgesToRemoveIt).first << " -> " << (*edgesToRemoveIt).second;
     remove_edge( (*edgesToRemoveIt).first, (*edgesToRemoveIt).second,*graph);
   }
 
@@ -887,11 +887,11 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     boost::tie(e, success) = add_edge(addedEdgesIt->first, addedEdgesIt->second, *graph);
     if (success)
     {
-      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target << LENDL;
+      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
     }
     else
     {
-      LERROR << "could not add edge : " << addedEdgesIt->first << " -> " <<  addedEdgesIt->second << LENDL;
+      LERROR << "could not add edge : " << addedEdgesIt->first << " -> " <<  addedEdgesIt->second;
     }
   }
 
@@ -913,7 +913,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     boost::tie(e, success) = add_edge(source(*auxDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
     if (success)
     {
-      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target << LENDL;
+      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
       edgeTypeMap[e] = edgeTypeMap[*auxDepVertexInEdgeIt];
     }
   }
@@ -928,7 +928,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     boost::tie(e, success) = add_edge(newDepVertex, target(*auxDepVertexOutEdgeIt,depGraph),depGraph);
     if (success)
     {
-      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target << LENDL;
+      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
       edgeTypeMap[e] = edgeTypeMap[*auxDepVertexOutEdgeIt];
     }
   }
@@ -948,7 +948,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
         add_edge(source(*pastPartDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
     if (success)
     {
-      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target << LENDL;
+      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
       edgeTypeMap[e] = edgeTypeMap[*pastPartDepVertexInEdgeIt];
     }
   }
@@ -964,7 +964,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
         add_edge(newDepVertex, target(*pastPartDepVertexOutEdgeIt,depGraph),depGraph);
     if (success)
     {
-      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target << LENDL;
+      LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
       edgeTypeMap[e] = edgeTypeMap[*pastPartDepVertexOutEdgeIt];
     }
   }
@@ -987,7 +987,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
                                      pastPartVertex,
                                      m_tempCompType);
 
-  LDEBUG << "CreateCompoundTense: " << res << LENDL;
+  LDEBUG << "CreateCompoundTense: " << res;
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData == 0)
   {
@@ -996,8 +996,8 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   }
   recoData->setNextVertex(newVertex);
 
-  LDEBUG << "aux vertex "<<auxDepVertex<<" out edges num: " << out_degree(auxDepVertex, depGraph) << LENDL;
-  LDEBUG << "past part vertex "<<pastPartDepVertex<<" out edges num: " << out_degree(pastPartDepVertex, depGraph) << LENDL;
+  LDEBUG << "aux vertex "<<auxDepVertex<<" out edges num: " << out_degree(auxDepVertex, depGraph);
+  LDEBUG << "past part vertex "<<pastPartDepVertex<<" out edges num: " << out_degree(pastPartDepVertex, depGraph);
   return res;
 
   //    return false;
@@ -1051,7 +1051,7 @@ EnforcePropertiesConstraints::EnforcePropertiesConstraints(
   ConstraintFunction(language,complement), m_language(language)
 {
 //   SAPLOGINIT;
-//   LDEBUG << "Initializing EnforcePropertiesConstraints" << LENDL;
+//   LDEBUG << "Initializing EnforcePropertiesConstraints";
     boost::regex linere("[^,]+");
   std::string str=Common::Misc::limastring2utf8stdstring(complement);
   std::string::const_iterator start, end;
@@ -1061,7 +1061,7 @@ EnforcePropertiesConstraints::EnforcePropertiesConstraints(
   while (regex_search(start, end, what, linere))
   {
     std::string category(what[0].first, what[0].second);
-//     LDEBUG << "   adding category: " << category << LENDL;
+//     LDEBUG << "   adding category: " << category;
     const Common::PropertyCode::PropertyAccessor* categ = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor(category));
     if (categ!=0)
     {
@@ -1082,7 +1082,7 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
 
 //  SAPLOGINIT;
 //  LDEBUG << "testing EnforcePropertiesConstraints for "
-//    << v1 << " and " << v2 << LENDL;
+//    << v1 << " and " << v2;
   bool result = true;
 
   // cannot use AnalysisGraph because it is const -> use AnalysisContent
@@ -1101,28 +1101,28 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   {
     std::set< LinguisticCode > categ1 = data1->allValues(**categ);
     std::set< LinguisticCode > categ2 = data2->allValues(**categ);
-//    LDEBUG << "    on property " << (*categ)->getPropertyName() << ", there is " << categ1.size() << " and " << categ2.size() << " values" << LENDL;
+//    LDEBUG << "    on property " << (*categ)->getPropertyName() << ", there is " << categ1.size() << " and " << categ2.size() << " values";
     if (categ1.size()!=0 && categ2.size()!=0)
     {
       for (std::set< LinguisticCode >::iterator it=categ1.begin();it!=categ1.end();it++)
       {
         std::string str1 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
-//        LDEBUG << "    categ1 " << str1 << LENDL;
+//        LDEBUG << "    categ1 " << str1;
       }
       for (std::set< LinguisticCode >::iterator it=categ2.begin();it!=categ2.end();it++)
       {
         std::string str2 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
-//        LDEBUG << "    categ2 " << str2 << LENDL;
+//        LDEBUG << "    categ2 " << str2;
       }
       std::set< LinguisticCode > common;
       std::set_intersection(categ1.begin(), categ1.end(),
                             categ2.begin(), categ2.end(),
                             std::insert_iterator< std::set< LinguisticCode> >(common, common.end()));
       ExcludePropertyPredicate epp(*categ,common);
-//      LDEBUG << "      sizes before erase: " << data1->size() << " / " << data2->size() << LENDL;
+//      LDEBUG << "      sizes before erase: " << data1->size() << " / " << data2->size();
       data1->erase(remove_if(data1->begin(),data1->end(),epp),data1->end());
       data2->erase(remove_if(data2->begin(),data2->end(),epp),data2->end());
-//      LDEBUG << "      sizes after  erase: " << data1->size() << " / " << data2->size() << LENDL;
+//      LDEBUG << "      sizes after  erase: " << data1->size() << " / " << data2->size();
       if (data1->empty() || data2->empty()) {
         result = false;
         break;
@@ -1134,14 +1134,14 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   {
     SAPLOGINIT;
     LINFO << "EnforcePropertiesConstraints: "
-    << (result?"true":"false") << LENDL;
+    << (result?"true":"false");
     LINFO << " but returns true: constraints checking "
-    << "should have been done with agreement constraints" << LENDL;
+    << "should have been done with agreement constraints";
   }
 //  else
 //  {
 //    LDEBUG << "EnforcePropertiesConstraints: "
-//    << (result?"true":"false") << LENDL;
+//    << (result?"true":"false");
 //  }
   return true;
 }
@@ -1160,7 +1160,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph&,
            AnalysisContent& analysis ) const
 {
 //   SAPLOGINIT;
-//   LDEBUG << "adding new relation in the dependency graph" << LENDL;
+//   LDEBUG << "adding new relation in the dependency graph";
 
   SyntacticData* syntacticData=
     static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -1173,7 +1173,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph&,
   {
     SAPLOGINIT;
     LERROR << "relation (" << m_relation << "," << src << ","
-    << dest << ") not added" << LENDL;
+    << dest << ") not added";
     return false;
   }
   return true;
@@ -1183,7 +1183,7 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
 {
 
 //   SAPLOGINIT;
-//   LDEBUG << "adding stored relations in the dependency graph" << LENDL;
+//   LDEBUG << "adding stored relations in the dependency graph";
 
   AnalysisGraph* anagraph=
     static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
@@ -1207,7 +1207,7 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
     {
       SAPLOGINIT;
       LERROR << "no type specified for relation between " << src
-      << " and " << dest << ": ignored" << LENDL;
+      << " and " << dest << ": ignored";
       boost::tie(src,dest,relation) = syntacticData->relation();
       continue;
     }
@@ -1222,7 +1222,7 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
     {
       SAPLOGINIT;
       LERROR << "relation (" << relation << "," << src << ","
-      << dest << ") not added" << LENDL;
+      << dest << ") not added";
     }
     boost::tie(src,dest,relation) = syntacticData->relation();
   }
@@ -1243,7 +1243,7 @@ bool ModifyRelationInGraph::operator()(const LinguisticAnalysisStructure::Analys
                                        AnalysisContent& /*ac*/) const
 {
   SAPLOGINIT;
-  LERROR << "invalid action ! modify relation in the dependency graph !" << LENDL;
+  LERROR << "invalid action ! modify relation in the dependency graph !";
   return true;
 }
 
@@ -1251,7 +1251,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
 {
 
 //   SAPLOGINIT;
-//   LDEBUG << "modify stored relations in the dependency graph" << LENDL;
+//   LDEBUG << "modify stored relations in the dependency graph";
 
   AnalysisGraph* anagraph=
     static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
@@ -1273,7 +1273,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
     {
       SAPLOGINIT;
       LERROR << "no type specified for relation between " << src
-      << " and " << dest << ": ignored" << LENDL;
+      << " and " << dest << ": ignored";
       boost::tie(src,dest,relation) = syntacticData->relation();
       continue;
     }
@@ -1287,7 +1287,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
     {
       SAPLOGINIT;
       LERROR << "relation (" << relation << "," << src << ","
-      << dest << ") not modified" << LENDL;
+      << dest << ") not modified";
     }
     boost::tie(src,dest,relation) = syntacticData->relation();
   }
@@ -1309,7 +1309,7 @@ bool ClearStoredRelations::operator()(AnalysisContent& analysis) const
 */
 
 //  SAPLOGINIT;
-//  LDEBUG << "clearing stored relations" << LENDL;
+//  LDEBUG << "clearing stored relations";
 
   SyntacticData* syntacticData=
     static_cast<SyntacticData*>(analysis.getData("SyntacticData"));

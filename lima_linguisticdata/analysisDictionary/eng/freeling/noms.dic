@@ -1,3 +1,4 @@
+A-bomb	A-bomb		NN
 American	American		NN
 English	English		NN
 French	French		NN
@@ -3907,6 +3908,8 @@ blue-print	blue-print		NN
 blueprint	blueprint		NN
 blue-prints	blue-print		NNS
 blueprints	blueprint		NNS
+blue-ribbon	blue-ribbon		NN
+blue-ribbons	blue-ribbon		NNS
 blues	blue		NN
 blues	blues		NN
 blues	blues		NNS
@@ -4420,7 +4423,8 @@ briars	briar		NNS
 bribe	bribe		NN
 bribery	bribery		NN
 bribes	bribe		NNS
-bric-a-brac	bric-a-brac		NN
+#bric-a-brac	bric-à-brac		NN
+bric-à-brac	bric-à-brac		NN
 brick	brick		NN
 bricklayer	bricklayer		NN
 bricklayers	bricklayer		NNS

@@ -56,7 +56,7 @@ define subautomaton PrepGroup {
 # relatives
 # si après conjonction ou virgule, le précédent ne doit pas être complément de nom
 # (ou alors, on remonte les liens)
-@TensedVerbSuj:($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @PronRelCa (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
+@TensedVerbSubj:($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @PronRelCa (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +CreateRelationBetween(left.4,trigger.1,"SUJ_V")
 +CreateRelationBetween(trigger.1,left.1,"MOD_N")
@@ -65,21 +65,21 @@ define subautomaton PrepGroup {
 
 @NounGroupElt=($ADV,$ADJ,$PREP,$DET)
 
-@TensedVerbSuj:($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @PronRelCa  (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
+@TensedVerbSubj:($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @PronRelCa  (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +CreateRelationBetween(left.6,trigger.1,"SUJ_V")
 +CreateRelationBetween(trigger.1,left.1,"MOD_N")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@TensedVerbSuj:($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @PronRelCa  (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
+@TensedVerbSubj:($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @PronRelCa  (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +CreateRelationBetween(left.8,trigger.1,"SUJ_V")
 +CreateRelationBetween(trigger.1,left.1,"MOD_N")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@TensedVerbSuj:($NC|$NP) ($ADV? $ADJ)? @PronRelCa  (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
+@TensedVerbSubj:($NC|$NP) ($ADV? $ADJ)? @PronRelCa  (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
 +CreateRelationBetween(left.3,trigger.1,"SUJ_V")
 +CreateRelationBetween(trigger.1,left.1,"MOD_N")
 =>AddRelationInGraph()
@@ -89,14 +89,14 @@ define subautomaton PrepGroup {
 # forme particuliere "c'est ce que GV GN" => sujet inversé
 # on met "ce" comme COD (?)
 # on met "est" comme MOD_V (?)
-# @TensedVerbSuj:c\' est ce que:$DET? ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
+# @TensedVerbSubj:c\' est ce que:$DET? ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
 # +CreateRelationBetween(right.3,trigger.1,"SUJ_V")
 # +CreateRelationBetween(left.3,trigger.1,"COD_V")
 # +CreateRelationBetween(left.2,trigger.1,"MOD_V")
 # =>AddRelationInGraph()
 # =<ClearStoredRelations()
 
-# @TensedVerbSuj:$PRON-PRON_RES::SYNTACTIC_RELATION:
+# @TensedVerbSubj:$PRON-PRON_RES::SYNTACTIC_RELATION:
 # +CreateRelationBetween(left.1,trigger.1,"SUJ_V")
 # =>AddRelationInGraph()
 
@@ -105,7 +105,7 @@ $ADJ,$ADV,$PREP,$PONCTU,
 $INTERJ,$CONJ)
 
 # sujet est nom propre => verbe 3eme pers du sing
-@TensedVerbSuj:$NP [(@NotNoun){0-n}]::SYNTACTIC_RELATION:
+@TensedVerbSubj:$NP [(@NotNoun){0-n}]::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +!GovernorOf(left.1,"COD_V")
 +!GovernorOf(left.1,"CPL_V")
@@ -122,14 +122,14 @@ $INTERJ,$CONJ)
 # @PronSujNonConjoint=($PRON-PRON_POSSESSIF_SUJET,
 # $PRON-PRON_DEMONSTRATIF)
 
-# @TensedVerbSuj:@PronSujNonConjoint (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
+# @TensedVerbSubj:@PronSujNonConjoint (@PronPersSuj){0-2}::SYNTACTIC_RELATION:
 # +NumberAgreement(trigger.1,left.1)
 # +CreateRelationBetween(left.1,trigger.1,"SUJ_V")
 # =>AddRelationInGraph()
 # =<ClearStoredRelations()
 
 
-@TensedVerbSuj:$NC [(@SujVOther){0-n}]::SYNTACTIC_RELATION:
+@TensedVerbSubj:$NC [(@SujVOther){0-n}]::SYNTACTIC_RELATION:
 +NumberAgreement(trigger.1,left.1)
 +!GovernorOf(left.1,"COMPDUNOM")
 +!GovernorOf(left.1,"ADJPRENSUB")
@@ -141,7 +141,7 @@ $INTERJ,$CONJ)
 =<ClearStoredRelations()
 
 
-@TensedVerbSuj:$NC (@SujVOther){0-n} $NC [(@SujVOther){0-n}]::SYNTACTIC_RELATION:
+@TensedVerbSubj:$NC (@SujVOther){0-n} $NC [(@SujVOther){0-n}]::SYNTACTIC_RELATION:
 +NumberAgreement(trigger.1,left.1)
 +!GovernorOf(left.1,"COMPDUNOM")
 +!GovernorOf(left.1,"ADJPRENSUB")
@@ -152,7 +152,7 @@ $INTERJ,$CONJ)
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@TensedVerbSuj:$NC ((@SujVOther){0-n} $NC){2-2} [(@SujVOther){0-n}]::SYNTACTIC_RELATION:
+@TensedVerbSubj:$NC ((@SujVOther){0-n} $NC){2-2} [(@SujVOther){0-n}]::SYNTACTIC_RELATION:
 +NumberAgreement(trigger.1,left.1)
 +!GovernorOf(left.1,"COMPDUNOM")
 +!GovernedBy(left.1,"PREPSUB")
@@ -165,7 +165,7 @@ $INTERJ,$CONJ)
 # cas des relatives
 # Paul, qui est gentil, parle
 
-@TensedVerbSuj:@PronRelCa (@PronPersSuj){0-2} @TensedVerbSuj (@NotVerbPrincipal){0-n}::SYNTACTIC_RELATION:
+@TensedVerbSubj:@PronRelCa (@PronPersSuj){0-2} @TensedVerbSubj (@NotVerbPrincipal){0-n}::SYNTACTIC_RELATION:
 +CreateRelationReverseWithRelated(trigger.1,left.3,"MOD_N,SUJ_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
@@ -189,7 +189,7 @@ $INTERJ,$CONJ)
 # cas ou le superlatif est utilisé comme un nom
 # "The oldest of my cousins is at home this week."
 #----------------------------------------------------------------------
-$ADJ:The (@Adverbe){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif @Verbe:SYNTACTIC_RELATION:
+$ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif @Verbe:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
 +CreateRelationBetween(trigger.1,right.5,"SUJ_V")
 =>AddRelationInGraph()
@@ -607,7 +607,7 @@ $PREP-PREP_GENERAL)
 # au premier verbe qui suit
 
 # cas temps composé
-$PREP::$DET? ($ADV{0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrincipal){0-n} @TensedVerbSuj  $ADV{0-2} @TensedVerbObj:SYNTACTIC_RELATION:
+$PREP::$DET? ($ADV{0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrincipal){0-n} @TensedVerbSubj  $ADV{0-2} @TensedVerbObj:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.6,right.8,"TEMPCOMP")
 +!GovernorOf(right.4,"COMPDUNOM")
 +!GovernorOf(right.4,"CPL_V")
@@ -631,7 +631,7 @@ $PREP::$DET? ($ADV{0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrinc
 # cas temps compose
 $PREP::$DET? ($ADV{0-2} $ADJ){0-2} $NC (@NotVerbPrincipal){0-n} :SYNTACTIC_RELATION:
 
-$PREP-IN::(@NotVerbPrincipal){0-n} @TensedVerbSuj  $ADV{0-2} @TensedVerbObj (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
+$PREP-IN::(@NotVerbPrincipal){0-n} @TensedVerbSubj  $ADV{0-2} @TensedVerbObj (@NotVerbPrincipal){0-n} @TensedVerbObj:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.5,right.6,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
@@ -653,7 +653,7 @@ $PREP-IN::(@NotVerbPrincipal){0-n} @TensedVerbObj (@NotVerbPrincipal){0-n} @Tens
 # COMPL
 
 # avec incise d'un groupe nominal (temps compose)
-$PREP-IN:@TensedVerbObj ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACTIC_RELATION:
+$PREP-IN:@TensedVerbObj ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSubj @Participe:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.3,left.1,"COD_V")
@@ -662,7 +662,7 @@ $PREP-IN:@TensedVerbObj ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2}
 =<ClearStoredRelations()
 
 # idem temps simple
-$PREP-IN:@TensedVerbObj ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
+$PREP-IN:@TensedVerbObj ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSubj:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.2,left.1,"COD_V")
 +CreateRelationBetween(left.6,left.1,"MOD_V")
@@ -670,7 +670,7 @@ $PREP-IN:@TensedVerbObj ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2}
 =<ClearStoredRelations()
 
 # avec incise d'un groupe prepositionnel (temps compose)
-$PREP-IN:@TensedVerbObj $ADV{0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSuj  @Participe:SYNTACTIC_RELATION:
+$PREP-IN:@TensedVerbObj $ADV{0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSubj  @Participe:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.3,left.1,"COD_V")
@@ -679,7 +679,7 @@ $PREP-IN:@TensedVerbObj $ADV{0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{
 =<ClearStoredRelations()
 
 # idem temps simple
-$PREP-IN:@TensedVerbObj ($ADV){0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
+$PREP-IN:@TensedVerbObj ($ADV){0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerbSubj:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.2,left.1,"COD_V")
 +CreateRelationBetween(left.7,left.1,"CPL_V")
@@ -687,7 +687,7 @@ $PREP-IN:@TensedVerbObj ($ADV){0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($AD
 =<ClearStoredRelations()
 
 # subordonnee completive COD "je pense qu'il viendra" (temps compose)
-$PREP-IN:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACTIC_RELATION:
+$PREP-IN:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSubj @Participe:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.3,left.1,"COD_V")
@@ -695,14 +695,14 @@ $PREP-IN:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACT
 =<ClearStoredRelations()
 
 # idem temps simple
-$PREP-IN:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
+$PREP-IN:@TensedVerbObj ($ADV){0-n}:(^$V){0-n} @TensedVerbSubj:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.2,left.1,"COD_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
 # subordonnee complément de nom "l'idée qu'il arrive en retard" (temps compose)
-$PREP-IN:$NC:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACTIC_RELATION:
+$PREP-IN:$NC:(^$V){0-n} @TensedVerbSubj @Participe:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.3,left.1,"MOD_N")
@@ -710,7 +710,7 @@ $PREP-IN:$NC:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # idem temps simple
-$PREP-IN:$NC:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
+$PREP-IN:$NC:(^$V){0-n} @TensedVerbSubj:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.2,left.1,"MOD_N")
 =>AddRelationInGraph()
@@ -718,7 +718,7 @@ $PREP-IN:$NC:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
 
 
 # subordonnee complément d'adjectif "elle est fière qu'il réussisse" (temps compose)
-$PREP-IN:$ADJ:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACTIC_RELATION:
+$PREP-IN:$ADJ:(^$V){0-n} @TensedVerbSubj @Participe:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.3,left.1,"MOD_A")
@@ -726,7 +726,7 @@ $PREP-IN:$ADJ:(^$V){0-n} @TensedVerbSuj @Participe:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # idem temps simple
-$PREP-IN:$ADJ:(^$V){0-n} @TensedVerbSuj:SYNTACTIC_RELATION:
+$PREP-IN:$ADJ:(^$V){0-n} @TensedVerbSubj:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.2,"COMPL")
 +CreateRelationBetween(right.2,left.1,"MOD_A")
 =>AddRelationInGraph()

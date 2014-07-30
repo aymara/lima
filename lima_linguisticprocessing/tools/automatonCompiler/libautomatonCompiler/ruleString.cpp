@@ -259,7 +259,7 @@ treatConstraints(const LimaString& s,
     isAction=nextIsAction;
   }
 
-  LDEBUG << "Before propagate" << LENDL;
+  LDEBUG << "Before propagate";
   // propagate the constraints to the units
   m_left.propagateConstraints();
   m_right.propagateConstraints();

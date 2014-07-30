@@ -92,7 +92,7 @@ AbstractResource* LinguisticResources::getResource(MediaId lang,const std::strin
   if (it==m_d->m_resourcesManagers.end())
   {
     RESOURCESLOGINIT;
-    LERROR << "In getLanguageResources : language " << (int)lang << " is not initialized !" << LENDL;
+    LERROR << "In getLanguageResources : language " << (int)lang << " is not initialized !";
     throw LanguageNotInitialized(lang);
   }
   return it->second->getObject(id);
@@ -116,18 +116,18 @@ void LinguisticResources::initLanguage(
     // Initialize FsaStringsPool : main keys must be registered at beginning
     try {
       string mainkeys=confModule.getParamValueAtKeyOfGroupNamed("mainKeys","FsaStringsPool");
-      LINFO << "load mainKeys " << mainkeys << " into StringPool" << LENDL;
+      LINFO << "load mainKeys " << mainkeys << " into StringPool";
       AbstractResource* res=getResource(lang,mainkeys);
       AnalysisDict::AbstractAccessResource* access=static_cast<AnalysisDict::AbstractAccessResource*>(res);
       access->setMainKeys(true);
       Common::MediaticData::MediaticData::changeable().stringsPool(lang).registerMainKeys(access->getAccessByString());
     } catch (NoSuchGroup& )
     {
-      LERROR << "No group 'FsaStringsPool' defined in Resource module. Can't register any main keys" << LENDL;
+      LERROR << "No group 'FsaStringsPool' defined in Resource module. Can't register any main keys";
       throw InvalidConfiguration();
     } catch (NoSuchParam& )
     {
-      LERROR << "No param 'mainKeys' defined in FsaStringsPool group. Can't register any main keys" << LENDL;
+      LERROR << "No param 'mainKeys' defined in FsaStringsPool group. Can't register any main keys";
       throw InvalidConfiguration();
     }
   }
@@ -144,40 +144,40 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
       string::size_type i=(*it).find("/");
       if (i==string::npos) {
         LERROR << "Cannot include resources " << *it 
-               << ": must specify file and module name" << LENDL;
+               << ": must specify file and module name";
         continue;
       }
       string fileName(""),moduleName("");
       try {
         RESOURCESLOGINIT;
-        LINFO << "i="<< i << LENDL;
+        LINFO << "i="<< i;
         fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
           "/"+string((*it),0,i);
-        LINFO << "filename="<< fileName << LENDL;
+        LINFO << "filename="<< fileName;
         moduleName=string((*it),i+1);
-        LINFO << "moduleName="<< moduleName << LENDL;
+        LINFO << "moduleName="<< moduleName;
         XMLConfigurationFileParser parser(fileName);
         ModuleConfigurationStructure& newMod=parser.getModuleConfiguration(moduleName);
         module.addModule(newMod);
-        LINFO << "added module" << LENDL;
+        LINFO << "added module";
         ostringstream oss;
         for (ModuleConfigurationStructure::const_iterator it=module.begin(),it_end=module.end();
              it!=it_end; it++) {
           oss << (*it).first << ";";
         }
-        LINFO << "module contain following groups: " << oss.str() << LENDL;
+        LINFO << "module contain following groups: " << oss.str();
         // recursive inclusions
         includeResources(module,newMod);
       }
       catch(NoSuchModule& ) {
         RESOURCESLOGINIT;
         LERROR << "Cannot find module " << moduleName
-               << " in file " << fileName << LENDL;
+               << " in file " << fileName;
       }
       catch(exception& e) {
         RESOURCESLOGINIT;
         LERROR << "Error trying to find module " << moduleName
-               << " in file " << fileName << ":" << e.what() << LENDL;
+               << " in file " << fileName << ":" << e.what();
       }
     }
   }
@@ -193,7 +193,7 @@ LinguisticResources::getModuleConfiguration(MediaId lang)
     m_d->m_resourcesManagers.find(lang);
   if (it == m_d->m_resourcesManagers.end()) {
     RESOURCESLOGINIT;
-    LERROR << "no Resources module configuration for language "<< (uint64_t)lang << LENDL;
+    LERROR << "no Resources module configuration for language "<< (uint64_t)lang;
     throw InvalidConfiguration();
   }
   return (*it).second->getModuleConfigurationStructure();

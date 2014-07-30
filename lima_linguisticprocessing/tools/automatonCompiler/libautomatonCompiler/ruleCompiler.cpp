@@ -81,11 +81,11 @@ LimaString initRule(Rule& r,
     //ruleString=s.getString();
   }
   catch (AutomatonCompilerException& exception) {
-  LERROR << "Error on rule: " << str << LENDL;
+  LERROR << "Error on rule: " << str;
     throw;
   }
   
-  //LDEBUG << "RuleCompiler:string=" << ruleString << LENDL;
+  //LDEBUG << "RuleCompiler:string=" << ruleString;
   
 
   r.setTrigger(createTransition(s.getTrigger(),language,activeEntityGroups));
@@ -97,8 +97,8 @@ LimaString initRule(Rule& r,
                                                          activeEntityGroups));
   }
   catch (AutomatonCompilerException& e) {
-    LERROR << "Error: "<< e.what() << LENDL
-      << " on left part of rule: " << str << LENDL;
+    LERROR << "Error: "<< e.what()
+      << " on left part of rule: " << str;
     throw;
   }
 
@@ -109,8 +109,8 @@ LimaString initRule(Rule& r,
                                                           activeEntityGroups));
   }
   catch (AutomatonCompilerException& e) {
-    LERROR << "Error: "<< e.what() << LENDL
-      << " on left part of rule: " << str << LENDL;
+    LERROR << "Error: "<< e.what()
+      << " on left part of rule: " << str;
     throw;
   }
   
@@ -135,14 +135,14 @@ LimaString initRule(Rule& r,
     }
   }
   catch (UnknownTypeException) {
-    LERROR << "Error on rule [" << str << "]" << LENDL;
+    LERROR << "Error on rule [" << str << "]";
     throw;
   }
 
   r.setNormalizedForm(s.getNorm());
   ostringstream oss;
   oss << filename << ":" << lineNumber;
-  LDEBUG << "rule id is '" << oss.str() << "' / filename="<< filename << ",lineNumber=" << lineNumber << LENDL;
+  LDEBUG << "rule id is '" << oss.str() << "' / filename="<< filename << ",lineNumber=" << lineNumber;
   r.setRuleId(oss.str());
 
   return str;

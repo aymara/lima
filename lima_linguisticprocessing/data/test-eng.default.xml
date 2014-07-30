@@ -18,7 +18,7 @@
     comment="le token marsupilami (5-11) doit avoir nc dans la liste des catégories"
     left="XPATH#//data_structure/vertex[token/position=5]/data/unknown_word//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="L_NC"/>
+    right="NC"/>
 </testcase>
 <testcase id="eng.default.2" type="bloquant">
   <call-parameters>
@@ -33,7 +33,7 @@
     comment="Mopti a NP parmis ses categories par defaut"
     left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="L_NP"/>
+    right="NP"/>
   <test id="eng.default.2.2" trace=".default.xml"
     comment="Mopti is normalized in itself"
     left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@lemma"
@@ -53,7 +53,7 @@
     comment="mopti a NC parmis ses categories par defaut"
     left="XPATH#//data_structure/vertex[token/position=15]/data/unknown_word//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="L_NC"/>
+    right="NC"/>
 </testcase>
 <testcase id="eng.default.4" type="bloquant">
   <call-parameters>
@@ -68,7 +68,7 @@
     comment="24,99 a la categorie num card"
     left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="L_NOMBRE_CARDINAL"/>
+    right="CD"/>
 </testcase>
 <testcase id="eng.default.5" type="bloquant">
   <call-parameters>
@@ -113,7 +113,7 @@
     comment="24.99 a la categorie num card"
     left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="L_NOMBRE_CARDINAL"/>
+    right="CD"/>
 </testcase>
 <testcase id="eng.default.8" type="bloquant">
   <call-parameters>
@@ -128,7 +128,7 @@
     comment="2/3 a la categorie nc num card"
     left="XPATH#//data_structure/vertex[token[position=16][length=3]]/data//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="L_NOMBRE_FRACTION"/>
+    right="CD"/>
 </testcase>
 <testcase id="eng.default.9" type="informatif">
   <call-parameters>
@@ -143,7 +143,7 @@
     comment="token 2h34m45 (alphanumeric) doit avoir "
     left="XPATH#//data_structure/vertex[token[position=17][length=7]]/data//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="L_DIVERS_DATE"/>
+    right="DIVERS"/>
 </testcase>
 <testcase id="eng.default.10" type="bloquant">
   <call-parameters>
@@ -158,7 +158,7 @@
     comment="le token XVème doit être de type t_ordinal_roman"
     left="XPATH#//data_structure/vertex[token/position=5]/data//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="L_NOMBRE_ORDINAL"/>
+    right="CD"/>
 </testcase>
 <testcase id="eng.default.11" type="bloquant">
   <call-parameters>
@@ -173,6 +173,26 @@
     comment="le token XIII doit être de type t_cardinal_roman"
     left="XPATH#//data_structure/vertex[token/position=9]/data//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="L_NOMBRE_CARDINAL"/>
+    right="CD"/>
+</testcase>
+<testcase id="eng.default.12" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The A380 is 3m55 long."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>tokens with letters and numbers should be normalized by themselves with lower case letters</expl>
+  <test id="eng.default.12.1" trace=".default.xml"
+    comment="normalisation of  A380"
+    left="XPATH#//data_structure/vertex[token/position=5]/data/unknown_word/form/@lemma"
+    operator="="
+    right="a380"/>
+  <test id="eng.default.12.1" trace=".default.xml"
+    comment="normalisation of 3m55"
+    left="XPATH#//data_structure/vertex[token/position=13]/data/unknown_word/form/@lemma"
+    operator="="
+    right="3m55"/>
 </testcase>
 </testcases>

@@ -89,7 +89,7 @@ LimaStatusCode FullTokenXmlLogger::process(
   if (metadata == 0)
   {
     DICTIONARYLOGINIT;
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
@@ -97,7 +97,7 @@ LimaStatusCode FullTokenXmlLogger::process(
   std::ofstream fout;
   if (!openLogFile(fout,metadata->getMetaData("FileName"))) {
     MORPHOLOGINIT;
-    LERROR << "Error: cannot open log file" << LENDL;
+    LERROR << "Error: cannot open log file";
     return CANNOT_OPEN_FILE_ERROR;
   }
 

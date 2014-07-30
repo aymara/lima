@@ -84,8 +84,8 @@ void LinearTextRepresentationDumper::init(
     }
     catch (NoSuchParam& ) {
         LWARN << "No param 'useStopList' in ltrDumper configuration group for language "
-              << m_language << LENDL;
-        LWARN << "use default value: false" << LENDL;
+              << m_language;
+        LWARN << "use default value: false";
     }
 
     if (useStopList) {
@@ -94,7 +94,7 @@ void LinearTextRepresentationDumper::init(
             m_stopList = static_cast<StopList*>(LinguisticResources::single().getResource(m_language, stoplist));
         }
         catch (NoSuchParam& ) {
-            LERROR << "LinearTextRepresentationDumper::init:  No param 'stopList' in LinearTextRepresentationDumper configuration group for language " << m_language << LENDL;
+            LERROR << "LinearTextRepresentationDumper::init:  No param 'stopList' in LinearTextRepresentationDumper configuration group for language " << m_language;
             throw InvalidConfiguration();
         }
     }
@@ -106,7 +106,7 @@ void LinearTextRepresentationDumper::init(
     }
     catch (NoSuchParam& ) {
       DUMPERLOGINIT;
-      LERROR << "LinearTextRepresentationDumper::init: Missing parameter handler in LinearTextRepresentationDumper configuration" << LENDL;
+      LERROR << "LinearTextRepresentationDumper::init: Missing parameter handler in LinearTextRepresentationDumper configuration";
       throw InvalidConfiguration();
     }    
 }
@@ -118,19 +118,19 @@ LimaStatusCode LinearTextRepresentationDumper::process(
     // get metadata    
     LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
-        LERROR << "LinearTextRepresentationDumper::process: no LinguisticMetaData ! abort" << LENDL;
+        LERROR << "LinearTextRepresentationDumper::process: no LinguisticMetaData ! abort";
         return MISSING_DATA;
     }
     // get the analysis graph    
     AnalysisGraph* anaGraph = dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
     if (anaGraph == 0) {
-        LERROR << "LinearTextRepresentationDumper::process: no AnalysisGraph ! abort" << LENDL;
+        LERROR << "LinearTextRepresentationDumper::process: no AnalysisGraph ! abort";
         return MISSING_DATA;
     }
     // get sentence boundaries    
     SegmentationData* sb = dynamic_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
     if (sb == 0) {
-        LERROR << "LinearTextRepresentationDumper::process: no SentenceBounds ! abort" << LENDL;
+        LERROR << "LinearTextRepresentationDumper::process: no SentenceBounds ! abort";
         return MISSING_DATA;
     }
     // build LTRText
@@ -143,18 +143,18 @@ LimaStatusCode LinearTextRepresentationDumper::process(
         &textRep,
         metadata->getStartOffset());
     // write LTR_Text
-    LDEBUG << "handler will be: " << m_handler << LENDL;
+    LDEBUG << "handler will be: " << m_handler;
 //     MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
     AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
     if (handler == 0) {
-      LERROR << "LinearTextRepresentationDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+      LERROR << "LinearTextRepresentationDumper::process: handler " << m_handler << " has not been given to the core client";
       return MISSING_DATA;
     }    
     handler->startAnalysis();
     HandlerStreamBuf hsb(handler);
     ostream out(&hsb);
-    LDEBUG << textRep << LENDL;
+    LDEBUG << textRep;
     textRep.binaryWriteOn(out);
     out.flush();
     handler->endAnalysis();

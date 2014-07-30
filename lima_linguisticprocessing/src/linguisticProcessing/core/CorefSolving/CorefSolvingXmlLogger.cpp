@@ -100,7 +100,7 @@ LimaStatusCode CorefSolvingXmlLogger::process(
   if (metadata == 0)
   {
     COREFSOLVERLOGINIT;
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
@@ -117,7 +117,7 @@ LimaStatusCode CorefSolvingXmlLogger::process(
     if (anagraph==0)
     {
         COREFSOLVERLOGINIT;
-        LERROR << "no PosGraph ! abort" << LENDL;
+        LERROR << "no PosGraph ! abort";
         return MISSING_DATA;
     }
   
@@ -157,7 +157,7 @@ void DumpXMLAnnotationVisitor::examine_edge(LinguisticGraphEdge e,
 //   const FsaStringsPool& stringsPool= Common::MediaticData::MediaticData::single().stringsPool(m_language);
   Token* token = get(vertex_token, g, v);
   // processing of cases like "s'y introduire", tokenized as "y s'introduire"
-  if (token != 0 && (Common::Misc::limastring2utf8stdstring(token->stringForm()) == "en" || Common::Misc::limastring2utf8stdstring(token->stringForm()) =="y"))
+  if (token != 0 && (token->stringForm() == "en" || token->stringForm() =="y"))
   {
     LinguisticGraphOutEdgeIt it, it_end;
     boost::tie(it, it_end) = boost::out_edges(v,g);  

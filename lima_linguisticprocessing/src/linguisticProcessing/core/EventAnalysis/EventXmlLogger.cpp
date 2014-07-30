@@ -62,7 +62,7 @@ void EventXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventXmlLogger::init" << LENDL;
+  LDEBUG << "EventXmlLogger::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
@@ -75,7 +75,7 @@ void EventXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
 LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventXmlLogger::process" << LENDL;
+  LDEBUG << "EventXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
   // initialize output
@@ -88,26 +88,26 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
       // see if the data is of type Events
       const Events* events=dynamic_cast<const Events*>(data);
       if (events!=0) {
-        LDEBUG << "data '" << m_eventData << "' is of type Events" << LENDL;
+        LDEBUG << "data '" << m_eventData << "' is of type Events";
         outputEvents(out, events);
       }
       else {
         // see if the data is of type EventData
         const EventData* eventData=dynamic_cast<const EventData*>(data);
         if (eventData!=0) {
-          LDEBUG << "data '" << m_eventData << "' is of type EventData" << LENDL;
+          LDEBUG << "data '" << m_eventData << "' is of type EventData";
           outputEventData(out, eventData);
         }
         else {
           // see if data is of type EventTemplateData
           const EventTemplateData* eventTemplateData=dynamic_cast<const EventTemplateData*>(data);
           if (eventTemplateData!=0) {
-            LDEBUG << "data '" << m_eventData << "' is of type EventTemplateData" << LENDL;
+            LDEBUG << "data '" << m_eventData << "' is of type EventTemplateData";
             // output it converted to Events (need annotation data)
             const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
             if (annotationData==0)
             {
-              LERROR << "no annotation graph available !" << LENDL;
+              LERROR << "no annotation graph available !";
               return MISSING_DATA;
             }
             
@@ -115,14 +115,14 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
           }
           else {
             LOGINIT("LP::EventAnalysis");
-          LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events" << LENDL;
+          LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
           }
         }
       }
     }
     else {
       LOGINIT("LP::EventAnalysis");
-      LERROR << "no data of name " << m_eventData << LENDL;
+      LERROR << "no data of name " << m_eventData;
     }
   }
   delete dstream;

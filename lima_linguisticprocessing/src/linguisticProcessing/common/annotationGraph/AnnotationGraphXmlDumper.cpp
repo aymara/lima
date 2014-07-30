@@ -95,7 +95,7 @@ void AnnotationGraphXmlDumper::DumpGraphVisitor::discover_vertex(
     const AnnotationGraph& g)
 {
   AGLOGINIT;
-  LDEBUG << "DumpGraphVisitor: discover_vertex " << v << LENDL;
+  LDEBUG << "DumpGraphVisitor: discover_vertex " << v;
 
   m_os << "<vertex v=\"" << v << "\">" << std::endl;
   /// @todo parcours des annotations, dump de chaque
@@ -155,7 +155,7 @@ void AnnotationGraphXmlDumper::DumpGraphVisitor::examine_edge(
     const AnnotationGraph& g)
 {
   AGLOGINIT;
-  LDEBUG << "DumpGraphVisitor: examine_edge " << e << LENDL;
+  LDEBUG << "DumpGraphVisitor: examine_edge " << e;
 
   m_os << "<edge src=\""<<source(e,g)<<"\" tgt=\""<<target(e,g)<<"\">" << std::endl;
   CEdgeAGIannotPropertyMap imap = get(edge_iannot, g);
