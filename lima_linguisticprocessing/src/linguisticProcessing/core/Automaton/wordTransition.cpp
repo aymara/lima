@@ -108,9 +108,9 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
         const LinguisticAnalysisStructure::MorphoSyntacticData* data) const
 {
   //AULOGINIT;
-//   LDEBUG << "WordTransition compare " << Common::MediaticData::MediaticData::changeable().stringsPool()[token->form()] << " and " << Common::MediaticData::MediaticData::changeable().stringsPool()[m_word] << LENDL;
+//   LDEBUG << "WordTransition compare " << Common::MediaticData::MediaticData::changeable().stringsPool()[token->form()] << " and " << Common::MediaticData::MediaticData::changeable().stringsPool()[m_word];
   if (token->form() == m_word) {
-//     LDEBUG << "true" << LENDL;
+//     LDEBUG << "true";
     return true;
   }
 /*  std::vector<StringsPoolIndex>::const_iterator
@@ -129,7 +129,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
       return true;
     }
   }
-//   LDEBUG << "false" << LENDL;
+//   LDEBUG << "false";
   return false;
 }
 

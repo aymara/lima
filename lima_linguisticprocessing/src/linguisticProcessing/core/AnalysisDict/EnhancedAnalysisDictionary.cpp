@@ -89,7 +89,7 @@ void EnhancedAnalysisDictionary::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'accessKeys' in EnhancedAnalysisDictionary group for language " << (int) language << LENDL;
+    LERROR << "no param 'accessKeys' in EnhancedAnalysisDictionary group for language " << (int) language;
     throw InvalidConfiguration();
   }
   try
@@ -99,7 +99,7 @@ void EnhancedAnalysisDictionary::init(
   }
   catch (NoSuchList& )
   {
-    LERROR << "no list 'dictionaryValues' in EnhancedAnalysisDictionary group for language " << (int) language << LENDL;
+    LERROR << "no list 'dictionaryValues' in EnhancedAnalysisDictionary group for language " << (int) language;
     throw InvalidConfiguration();
   }
 
@@ -109,10 +109,10 @@ void EnhancedAnalysisDictionary::init(
 DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex wordId) const
 {
 //  ANALYSISDICTLOGINIT;
-//  LDEBUG << "getEntry " << wordId << LENDL;
+//  LDEBUG << "getEntry " << wordId;
   if (wordId >= m_dicoData.getSize())
   {
-//    LDEBUG << "return empty : index out of range" << LENDL;
+//    LDEBUG << "return empty : index out of range";
 return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,&m_dicoData,m_isMainKeys,m_access,m_sp));
   }
   
@@ -131,7 +131,7 @@ return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPo
   }
   if (read == 0)
   {
-//    LDEBUG << "return empty entry" << LENDL;
+//    LDEBUG << "return empty entry";
     return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,true,false,false,false,p,p,&m_dicoData,m_isMainKeys,m_access,m_sp));
   }
   unsigned char* start=p;
@@ -141,24 +141,24 @@ return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPo
   bool hasConcat=false;
   read=DictionaryData::readCodedInt(p);
   hasLing=(read != 0);
-//  LDEBUG << "info length = " << read << LENDL;
+//  LDEBUG << "info length = " << read;
   p+=read;
   if (p!=end)
   {
     read=DictionaryData::readCodedInt(p);
-//    LDEBUG << "accented length = " << read << LENDL;
+//    LDEBUG << "accented length = " << read;
     hasAccented=(read != 0);
     p+=read;
     if (p!=end)
     {
       read=DictionaryData::readCodedInt(p);
-//      LDEBUG << "concat length = " << read << LENDL;
+//      LDEBUG << "concat length = " << read;
       hasConcat=(read != 0);
       p+=read;
     }
   }
   Q_ASSERT(p==end);
-//  LDEBUG << "return entry " << (uint64_t)start << " , " << (uint64_t)end << LENDL;
+//  LDEBUG << "return entry " << (uint64_t)start << " , " << (uint64_t)end;
   return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,false,hasLing,hasConcat,hasAccented,start,end,&m_dicoData,m_isMainKeys,m_access,m_sp));
 }
 

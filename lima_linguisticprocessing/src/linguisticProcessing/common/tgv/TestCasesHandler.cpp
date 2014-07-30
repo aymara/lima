@@ -64,25 +64,25 @@ bool TestCasesHandler::startElement (
   
   if (name=="testcase")
   {
-    LDEBUG << "TestCasesHandler::startElement: new testcase " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: new testcase ";
     currentTestCase=TestCase();
     currentTestCase.id=attributeValue("id", attrs);
     std::string typech=attributeValue("type", attrs);
     currentTestCase.type=(typech.empty()?"undefined":typech);
     LDEBUG << "TestCasesHandler::startElement: id=" << currentTestCase.id
-           << ", type=" << currentTestCase.type << LENDL;
+           << ", type=" << currentTestCase.type;
   } else if (name=="text") {
     // For compatibility with old testTva format
-    LDEBUG << "TestCasesHandler::startElement: start text " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start text ";
     m_inText=true;
   } else if (name=="expl") {
-    LDEBUG << "TestCasesHandler::startElement: start expl " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start expl ";
     m_inExpl=true;
   } else if (name=="call-parameters") {
     m_inParam=true;
-    LDEBUG << "TestCasesHandler::startElement: start call-parameters " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start call-parameters ";
   } else if (name=="list") {
-    LDEBUG << "TestCasesHandler::startElement: start list " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start list ";
     m_listKey = attributeValue("key", attrs);
     MultiValCallParams::iterator pos = currentTestCase.multiValCallParams.find(m_listKey);
     if( pos == currentTestCase.multiValCallParams.end() ) {
@@ -95,7 +95,7 @@ bool TestCasesHandler::startElement (
     }
     m_inList=true;
   } else if (name=="map") {
-    LDEBUG << "TestCasesHandler::startElement: start map " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start map ";
     m_mapKey = attributeValue("key",attrs);
     MapValCallParams::iterator pos = currentTestCase.mapValCallParams.find(m_mapKey);
     if( pos == currentTestCase.mapValCallParams.end() ) {
@@ -108,7 +108,7 @@ bool TestCasesHandler::startElement (
     }
     m_inMap=true;
   } else if (name=="item") {
-    LDEBUG << "TestCasesHandler::startElement: start item " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start item ";
     if( m_inList == true ) {
       MultiValCallParams::iterator pos = currentTestCase.multiValCallParams.find(m_listKey);
       if( pos != currentTestCase.multiValCallParams.end() ) {
@@ -116,7 +116,7 @@ bool TestCasesHandler::startElement (
         (*pos).second.push_back(val);
       }
       else {
-        LERROR << "!! TestCasesHandler::startElement: no list for param " << m_listKey << LENDL;
+        LERROR << "!! TestCasesHandler::startElement: no list for param " << m_listKey;
       }
     }
     else if (m_inMap == true) {
@@ -127,12 +127,12 @@ bool TestCasesHandler::startElement (
         (*pos).second.insert(make_pair(attr,val));
       }
       else {
-        LERROR << "!! TestCasesHandler::startElement: no list for param " << m_listKey << LENDL;
+        LERROR << "!! TestCasesHandler::startElement: no list for param " << m_listKey;
       }
     }
 //    currentTestCase.multiValCallParams.insert(std::pair<std::string, std::string>(key,val) );
   } else if (name=="param") {
-    LDEBUG << "TestCasesHandler::startElement: start param " << LENDL;
+    LDEBUG << "TestCasesHandler::startElement: start param ";
     std::string key = attributeValue("key",attrs);
     std::string val = attributeValue("value", attrs);
     currentTestCase.simpleValCallParams.insert(std::pair<std::string, std::string>(key,val) );
@@ -157,7 +157,7 @@ bool TestCasesHandler::startElement (
            << ", left =" << tu.left
            << ", op =" << tu.op
            << ", right =" << tu.right
-           << ", conditional =" << tu.conditional << LENDL;
+           << ", conditional =" << tu.conditional;
            
   }
   return true;
@@ -194,7 +194,7 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
   {
     m_reportByType[currentTestCase.type].nbtests++;
       LDEBUG << "TestCasesHandler::endElement: call processTestCase(" << currentTestCase.id
-                                                             << "," << currentTestCase.type << ")" << LENDL;
+                                                             << "," << currentTestCase.type << ")";
       TestCaseError e = m_processor.processTestCase(currentTestCase);
       if (e())
       {

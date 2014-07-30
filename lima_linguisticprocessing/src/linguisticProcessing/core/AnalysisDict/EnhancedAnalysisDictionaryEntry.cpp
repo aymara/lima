@@ -144,14 +144,14 @@ void EnhancedAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntry
         if (tmp == 1)
         {
           ANALYSISDICTLOGINIT;
-          LWARN << "WARNING ! should never accentuate to a delete entry !" << LENDL;
+          LWARN << "WARNING ! should never accentuate to a delete entry !";
           tmp=DictionaryData::readCodedInt(acc);
         }
         // tmp contains length
         if (tmp == 0)
         {
           ANALYSISDICTLOGINIT
-          LWARN << "WARNING ! should never accentuate to an empty entry !" << LENDL;
+          LWARN << "WARNING ! should never accentuate to an empty entry !";
         }
         parseLingInfos(acc,acc+tmp,m_dicoData,handler);
         parseConcatenated(acc,acc+tmp,m_dicoData,handler);
@@ -168,27 +168,27 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
 // "Le lotus croit dans le feu, et demeure invulnerable" ???
 
  ANALYSISDICTLOGINIT;
- LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , " << (uint64_t)endEntry << LENDL;
+ LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , " << (uint64_t)endEntry;
   
   unsigned char* p=startEntry;
   assert(p != endEntry);
   uint64_t read=DictionaryData::readCodedInt(p);
- LDEBUG << "read linginfo length = " << read << LENDL;
+ LDEBUG << "read linginfo length = " << read;
   unsigned char* end=p+read;
- LDEBUG << "end = " << (uint64_t)(end) << LENDL;
+ LDEBUG << "end = " << (uint64_t)(end);
   while (p!=end)
   {
-    LDEBUG << "read linginfo p = " << (uint64_t)p << LENDL;
+    LDEBUG << "read linginfo p = " << (uint64_t)p;
     bool toDelete=false;
     StringsPoolIndex lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
 
     if (lemma==static_cast<StringsPoolIndex>(0))
     {
-     LDEBUG << "read delete flag (p=" << (uint64_t)p << ")" << LENDL;
+     LDEBUG << "read delete flag (p=" << (uint64_t)p << ")";
       toDelete=true;
       lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     }
-   LDEBUG << "read lemma " << lemma << " (p=" << (uint64_t)p << ")" << LENDL;
+   LDEBUG << "read lemma " << lemma << " (p=" << (uint64_t)p << ")";
     StringsPoolIndex norm=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     if (norm==static_cast<StringsPoolIndex>(0))
     {
@@ -200,7 +200,7 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
       handler->deleteLingInfos(lemma,norm);
     }
     uint64_t lingOffset=DictionaryData::readCodedInt(p);
-   LDEBUG << "read lingOffset = " << lingOffset << " (p=" << (uint64_t)p << ")" << LENDL;
+   LDEBUG << "read lingOffset = " << lingOffset << " (p=" << (uint64_t)p << ")";
     // lingOffset=0 means there is no ling properties
     if (lingOffset!=0)
     {
@@ -220,50 +220,50 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
 void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntry,unsigned char* endEntry,const DictionaryData* dicoData,AbstractDictionaryEntryHandler* handler)
 {
 //  ANALYSISDICTLOGINIT;
-//  LDEBUG << "parse concatenated " << (uint64_t)startEntry << " , " << (uint64_t)endEntry << LENDL;
+//  LDEBUG << "parse concatenated " << (uint64_t)startEntry << " , " << (uint64_t)endEntry;
   
   unsigned char* p=startEntry;
   assert(p != endEntry);
   // skip linginfos
   uint64_t read=DictionaryData::readCodedInt(p);
   p+=read;
-//  LDEBUG << "skip ling info of length " << read << LENDL;
+//  LDEBUG << "skip ling info of length " << read;
   if (p != endEntry)
   {
     // skip accented
     read=DictionaryData::readCodedInt(p);
     p+=read;
-//    LDEBUG << "skip accented of length " << read << LENDL;
+//    LDEBUG << "skip accented of length " << read;
     if (p != endEntry)
     {
       // read concat
       read=DictionaryData::readCodedInt(p);
       unsigned char* end=p+read;
-//      LDEBUG << "read concat of length " << read << LENDL;
+//      LDEBUG << "read concat of length " << read;
       while (p!=end)
       {
         read=DictionaryData::readCodedInt(p);
         if (read == 0)
         {
           read=DictionaryData::readCodedInt(p);
-//          LDEBUG << "has delete info" << LENDL;
+//          LDEBUG << "has delete info";
           // parse concat to provide delete infos
           handler->deleteConcatenated();
           bool hasInfo=false;
           unsigned char* pp=p;
           uint64_t nb=read;
-//          LDEBUG << "has " << nb << " components" << LENDL;
+//          LDEBUG << "has " << nb << " components";
           while (nb-- > 0)
           {
             StringsPoolIndex str=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(pp));
-//            LDEBUG << "read str=" << str << LENDL;
+//            LDEBUG << "read str=" << str;
             uint64_t pos=DictionaryData::readCodedInt(pp);
-//            LDEBUG << "read pos=" << pos << LENDL;
+//            LDEBUG << "read pos=" << pos;
             uint64_t len=DictionaryData::readCodedInt(pp);
-//            LDEBUG << "read len=" << len << LENDL;
+//            LDEBUG << "read len=" << len;
             handler->foundComponent(pos,len,str);
             uint64_t lilength=DictionaryData::readCodedInt(pp);
-//            LDEBUG << "lingInfo length = " << lilength << LENDL;
+//            LDEBUG << "lingInfo length = " << lilength;
             unsigned char* pp_end=pp+lilength;
             while (pp != pp_end)
             {
@@ -281,37 +281,37 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntr
           }
         }
         uint64_t nbComponents=read;
-//        LDEBUG << "has " << nbComponents << " components" << LENDL;
+//        LDEBUG << "has " << nbComponents << " components";
         // parse concat infos
         handler->foundConcatenated();
         while (nbComponents-- > 0)
         {
           StringsPoolIndex str=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
-//          LDEBUG << "read string " << str << LENDL;
+//          LDEBUG << "read string " << str;
           uint64_t pos=DictionaryData::readCodedInt(p);
-//          LDEBUG << "read pos=" << pos << LENDL;
+//          LDEBUG << "read pos=" << pos;
           uint64_t len=DictionaryData::readCodedInt(p);
-//          LDEBUG << "read len=" << len << LENDL;
+//          LDEBUG << "read len=" << len;
           uint64_t lilength=DictionaryData::readCodedInt(p);
-//          LDEBUG << "read LIlength=" << lilength << LENDL;
+//          LDEBUG << "read LIlength=" << lilength;
           handler->foundComponent(pos,len,str);
           unsigned char* liend=p+lilength;
           while (p != liend)
           {
             StringsPoolIndex lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read lemma
-//            LDEBUG << "read lemma=" << lemma << LENDL;
+//            LDEBUG << "read lemma=" << lemma;
             StringsPoolIndex norm=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read norm
-//            LDEBUG << "read norm=" << norm << LENDL;
+//            LDEBUG << "read norm=" << norm;
             if (norm==0)
             {
               norm=lemma;
             }
             handler->foundLingInfos(lemma,norm);
             uint64_t lingOffset=DictionaryData::readCodedInt(p); // read props
-//            LDEBUG << "read ling offset = " << lingOffset << LENDL;
+//            LDEBUG << "read ling offset = " << lingOffset;
             unsigned char* props = dicoData->getLingPropertiesAddr(lingOffset);
             read = DictionaryData::readCodedInt(props);
-//            LDEBUG << "lingprops length = " << read << LENDL;
+//            LDEBUG << "lingprops length = " << read;
             unsigned char* propsEnd = props + read;
             while (props!=propsEnd)
             {

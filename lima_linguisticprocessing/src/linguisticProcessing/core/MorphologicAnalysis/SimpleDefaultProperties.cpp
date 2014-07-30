@@ -76,14 +76,14 @@ void SimpleDefaultProperties::init(
          it++)
     {
       LinguisticCode microId=microManager.getPropertyValue(*it);
-      LDEBUG << "default category : " << microId << LENDL;
+      LDEBUG << "default category : " << microId;
       if (!microManager.getPropertyAccessor().empty(microId) )
       {
         m_defaultProperties.push_back(microId);
       }
       else
       {
-        LWARN << "micro categorie seems to be undefined !" << LENDL;
+        LWARN << "micro categorie seems to be undefined !";
         throw InvalidConfiguration();
       }
     }
@@ -91,7 +91,7 @@ void SimpleDefaultProperties::init(
   catch (Lima::Common::XMLConfigurationFiles::NoSuchList& )
   {
     MORPHOLOGINIT;
-    LWARN << "SimpleDefaultCateogries: no default properties defined !" << LENDL;
+    LWARN << "SimpleDefaultCateogries: no default properties defined !";
     m_defaultProperties.push_back(static_cast<LinguisticCode>(0));
   }
   try
@@ -102,7 +102,7 @@ void SimpleDefaultProperties::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'charChart' in SimpleDefaultCateogries group for language " << (int)m_language << LENDL;
+    LERROR << "no param 'charChart' in SimpleDefaultCateogries group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
@@ -118,7 +118,7 @@ LimaStatusCode SimpleDefaultProperties::process(
 {
   TimeUtils::updateCurrentTime();
   MORPHOLOGINIT;
-  LINFO << "MorphologicalAnalysis: starting process DefaultProperties" << LENDL;
+  LINFO << "MorphologicalAnalysis: starting process DefaultProperties";
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
@@ -133,7 +133,7 @@ LimaStatusCode SimpleDefaultProperties::process(
   // std::cout << "End of Morphological Analysis" << std::endl;
   // std::cout << std::endl;
 
-  LINFO << "MorphologicalAnalysis: ending process SimpleDefaultProperties" << LENDL;
+  LINFO << "MorphologicalAnalysis: ending process SimpleDefaultProperties";
   TimeUtils::logElapsedTime("SimpleDefaultProperties");
   return SUCCESS_ID;
 }

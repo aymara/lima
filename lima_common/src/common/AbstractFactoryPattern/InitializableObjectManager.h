@@ -173,7 +173,7 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
     catch (Common::XMLConfigurationFiles::NoSuchAttribute& )
     {
       // optional
-      //LDEBUG << "no lib attribute in unitConfiguration" << LENDL;
+      //LDEBUG << "no lib attribute in unitConfiguration";
     }
 
 //     std::cerr << "class id(2) is '" << classId.c_str() << "' !" << std::endl;

@@ -77,7 +77,7 @@ EasyDumper::EasyDumper(
     for (; git != git_end; git++)
     {
       DUMPERLOGINIT;
-      LDEBUG << "EasyDumper:: setting " << group.id() << " as group of " << git->second << LENDL;
+      LDEBUG << "EasyDumper:: setting " << group.id() << " as group of " << git->second;
       m_formesIdsGroupsIds[git->second]=&group;
     }
   }
@@ -115,29 +115,29 @@ void EasyDumper::dumpConstituants(std::ostream& out)
     DUMPERLOGINIT;
     if (m_formesIndex[forme] == 0)
     {
-      LWARN << "EasyDumper:: form not found " << forme << LENDL;
+      LWARN << "EasyDumper:: form not found " << forme;
       continue;
     }
     if (alreadyDumpedForms.find(position) != alreadyDumpedForms.end())
     {
-      LDEBUG << "EasyDumper:: already dumped " << m_formesIndex[forme]->forme << LENDL;
+      LDEBUG << "EasyDumper:: already dumped " << m_formesIndex[forme]->forme;
       continue;
     }
-    LDEBUG << "EasyDumper:: dump " << m_formesIndex[forme]->forme << LENDL;
+    LDEBUG << "EasyDumper:: dump " << m_formesIndex[forme]->forme;
     if (m_inGroupFormsPositions.find(position) == m_inGroupFormsPositions.end())
     {
       std::string sforme = limastring2utf8stdstring(transcodeToXmlEntities(utf8stdstring2limastring((m_formesIndex[forme])->forme)));
 
       while (sforme.find('_') != std::string::npos)
       {
-        LDEBUG << "EasyDumper:: remove _ in " << sforme << LENDL;
+        LDEBUG << "EasyDumper:: remove _ in " << sforme;
         sforme[sforme.find('_')] = ' ';
       }
 
       std::ostringstream oss;
       oss << m_enonceId  << "F"<< formId;
       out << "  <F id=\"" << oss.str() << "\">" << sforme << "</F>" << std::endl;
-      LDEBUG << "EasyDumper:: adding to m_formesIds1: "<<m_formesIndex[forme]->forme<<" -> " << oss.str() << LENDL;
+      LDEBUG << "EasyDumper:: adding to m_formesIds1: "<<m_formesIndex[forme]->forme<<" -> " << oss.str();
       m_formesIds.insert(std::make_pair(forme, oss.str()));
       alreadyDumpedForms.insert((m_formesIndex[forme])->poslong.position);
       formId++;
@@ -169,7 +169,7 @@ void EasyDumper::dumpConstituants(std::ostream& out)
 
         while (sforme.find('_') != std::string::npos)
         {
-          LDEBUG << "EasyDumper:: remove _ in " << sforme << LENDL;
+          LDEBUG << "EasyDumper:: remove _ in " << sforme;
           sforme[sforme.find('_')] = ' ';
         }
         sout << "    <F id=\"" << oss.str() << "\">" << sforme << "</F>" << std::endl;
@@ -180,7 +180,7 @@ void EasyDumper::dumpConstituants(std::ostream& out)
         }
         else
         {
-          LERROR << "Error at " << __FILE__ << ", line " << __LINE__ << LENDL;
+          LERROR << "Error at " << __FILE__ << ", line " << __LINE__;
         }
         formId++;
       }
@@ -214,7 +214,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
 
     relType=m_relationTypeMapping[(*it)->type];
     DUMPERLOGINIT;
-    LDEBUG << "EasyDumper:: relation '"<<relType<<"'" << LENDL;
+    LDEBUG << "EasyDumper:: relation '"<<relType<<"'";
     if (relType=="") continue;
 
     // possible complement
@@ -253,26 +253,26 @@ void EasyDumper::dumpRelations(std::ostream& out)
     std::string srcFormeId=m_formesIds[m_vertexToFormeIds[(*it)->srcVertex]];
     if (srcFormeId == "")
     {
-      LWARN << "EasyDumper:: Warning: empty source form id in " << m_enonceId << " for vertex " << (*it)->srcVertex << LENDL;
+      LWARN << "EasyDumper:: Warning: empty source form id in " << m_enonceId << " for vertex " << (*it)->srcVertex;
       srcFormeId = m_enonceId + "F0";
     }
     std::string tgtFormeId=m_formesIds[m_vertexToFormeIds[(*it)->tgtVertex]];
     if (tgtFormeId == "")
     {
-      LWARN << "EasyDumper:: Warning: empty target form id in " << m_enonceId << " for vertex " << (*it)->tgtVertex << LENDL;
+      LWARN << "EasyDumper:: Warning: empty target form id in " << m_enonceId << " for vertex " << (*it)->tgtVertex;
       tgtFormeId = m_enonceId + "F0";
     }
 
     // to handle three-value relations
     std::string tgtVxTag=m_tgtVxTag[relType];
-    LDEBUG << "EasyDumper:: tgtVxTag=" << tgtVxTag << LENDL;
+    LDEBUG << "EasyDumper:: tgtVxTag=" << tgtVxTag;
     std::string::size_type k=tgtVxTag.find(",");
     if (k!=std::string::npos)
     {
-      LDEBUG << "EasyDumper:: 3-ary relation" << LENDL;
+      LDEBUG << "EasyDumper:: 3-ary relation";
       if (!notClosed)
       { //first part
-        LDEBUG << "EasyDumper:: first part: " << tgtVxTag << LENDL;
+        LDEBUG << "EasyDumper:: first part: " << tgtVxTag;
         tgtVxTag.erase(k);
         previousRelType=relType;
         previousSrcId=srcFormeId;
@@ -282,7 +282,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
       { // second part
         notClosed=false;
         tgtVxTag.erase(0,k+1);
-        LDEBUG << "EasyDumper:: second part: " << tgtVxTag << " ; " << relType <<"/" << previousRelType << " ; " << srcFormeId << "/" << previousSrcId << "/" << tgtFormeId << LENDL;
+        LDEBUG << "EasyDumper:: second part: " << tgtVxTag << " ; " << relType <<"/" << previousRelType << " ; " << srcFormeId << "/" << previousSrcId << "/" << tgtFormeId;
         if (relType==previousRelType && tgtFormeId==previousSrcId)
         {
           std::string href =  m_enonceId + srcFormeId;
@@ -298,7 +298,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
         {
           std::string href =  m_enonceId + "F0";
           out << "      <" << tgtVxTag << " xlink:type=\"locator\" xlink:href=\""<<href<<"\"/>" << std::endl;
-          LWARN << "EasyDumper:: Warning: relation " << previousRelType << " not continued" << LENDL;
+          LWARN << "EasyDumper:: Warning: relation " << previousRelType << " not continued";
           out << "    </relation>" << std::endl;
         }
       }
@@ -308,7 +308,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
       if (notClosed)
       {
         // @TODO check why this happens
-        LWARN << "EasyDumper:: Warning: non 3-ary relation marked as not closed for relation " << previousRelType << LENDL;
+        LWARN << "EasyDumper:: Warning: non 3-ary relation marked as not closed for relation " << previousRelType;
         if (relType == "COORD")
         {
           std::string href =  m_enonceId + "F0";
@@ -336,7 +336,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
     {
       /*
       DUMPERLOGINIT;
-      LDEBUG << "EasyDumper:: searching " << m_vertexToFormeIds[(*it)->srcVertex] << " in groups" << LENDL;
+      LDEBUG << "EasyDumper:: searching " << m_vertexToFormeIds[(*it)->srcVertex] << " in groups";
       if ( (relType == "CPL-V" || relType == "SUJ-V" || relType == "COD-V"
             || relType == "CPL-V" || relType == "MOD-V" || relType == "ATB-SO" || relType == "MOD-N")
             && m_formesIdsGroupsIds.find(m_vertexToFormeIds[(*it)->srcVertex]) != m_formesIdsGroupsIds.end())
@@ -361,7 +361,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
       std::string href =  m_formesIds[m_vertexToFormeIds[(*it)->secondaryVertex]];
       if (href == "")
       {
-        LWARN << "EasyDumper:: Warning: form id not found for " << (*it)->secondaryVertex << LENDL;
+        LWARN << "EasyDumper:: Warning: form id not found for " << (*it)->secondaryVertex;
         href = m_enonceId + "F0";
       }
       coorddOutputed = true;
@@ -388,7 +388,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
   if (notClosed)
   {
     DUMPERLOGINIT;
-    LWARN << "EasyDumper:: Warning: relation " << relType << " not continued" << LENDL;
+    LWARN << "EasyDumper:: Warning: relation " << relType << " not continued";
     out << "    </relation>" << std::endl;
     notClosed=false;
   }
@@ -407,7 +407,7 @@ void EasyDumper::computeFormeIds()
   {
     std::ostringstream oss;
     oss << "F" << i++;
-    LDEBUG << "EasyDumper:: adding to m_formesIds3: "<<(*it).second->forme<<" ("<<it->first<<") -> " << oss.str() << LENDL;
+    LDEBUG << "EasyDumper:: adding to m_formesIds3: "<<(*it).second->forme<<" ("<<it->first<<") -> " << oss.str();
     m_formesIds[it->first]=oss.str();
   }
   LDEBUG << "EasyDumper:: DONE computeFormeIds"<< LENDL;

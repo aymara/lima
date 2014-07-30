@@ -35,7 +35,7 @@ AccessSubWordIterator::AccessSubWordIterator(ClonableSubWordIterator* delegate) 
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG << this << ": AccessSubWordIterator::AccessSubWordIterator(ClonableSubWordIterator* delegate) "
-           << LENDL;
+          ;
 #endif
 }
 
@@ -45,7 +45,7 @@ AccessSubWordIterator::AccessSubWordIterator(const AccessSubWordIterator& origin
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG << this << ": AccessSubWordIterator::AccessSubWordIterator(const AccessSubWordIterator& original) "
-           << LENDL;
+          ;
 #endif
   m_delegate=original.m_delegate->clone();
 }
@@ -55,7 +55,7 @@ AccessSubWordIterator& AccessSubWordIterator::operator=(const AccessSubWordItera
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG <<  this << ": AccessSubWordIterator& AccessSubWordIterator::operator=(const AccessSubWordIterator& original) "
-           << LENDL;
+          ;
 #endif
   delete m_delegate;
   m_delegate=original.m_delegate->clone();
@@ -67,7 +67,7 @@ AccessSubWordIterator::~AccessSubWordIterator()
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG <<  this << ": AccessSubWordIterator::~AccessSubWordIterator() "
-           << LENDL;
+          ;
 #endif
   delete m_delegate;
 }
@@ -78,7 +78,7 @@ AccessSuperWordIterator::AccessSuperWordIterator(ClonableSuperWordIterator* dele
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG <<  this << ": AccessSuperWordIterator::AccessSuperWordIterator(ClonableSuperWordIterator* delegate) "
-           << LENDL;
+          ;
 #endif
 }
 
@@ -88,7 +88,7 @@ AccessSuperWordIterator::AccessSuperWordIterator(const AccessSuperWordIterator& 
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG <<  this << ": AccessSuperWordIterator::AccessSuperWordIterator(const AccessSuperWordIterator& original) "
-           << LENDL;
+          ;
 #endif
   m_delegate=original.m_delegate->clone();
 }
@@ -98,7 +98,7 @@ AccessSuperWordIterator& AccessSuperWordIterator::operator=(const AccessSuperWor
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG <<  this << ": AccessSuperWordIterator& AccessSuperWordIterator::operator=(const AccessSuperWordIterator& original) "
-           << LENDL;
+          ;
 #endif
   delete m_delegate;
   m_delegate=original.m_delegate->clone();
@@ -109,7 +109,7 @@ AccessSuperWordIterator::~AccessSuperWordIterator() {
 #ifdef DEBUG_CD
     STRINGMAPLOGINIT;
     LDEBUG <<  this << ": AccessSuperWordIterator::~AccessSuperWordIterator() "
-           << LENDL;
+          ;
 #endif
   delete m_delegate;
 }

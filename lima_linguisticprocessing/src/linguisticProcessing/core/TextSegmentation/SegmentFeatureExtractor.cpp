@@ -118,7 +118,7 @@ update(const AnalysisContent& analysis) {
   const LinguisticMetaData* metadata=static_cast<const LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
     LOGINIT("LP::Segmentation");
-    LWARN << "no LinguisticMetaData ! abort" << LENDL;
+    LWARN << "no LinguisticMetaData ! abort";
   }
   else {
     try {

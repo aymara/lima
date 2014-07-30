@@ -86,42 +86,42 @@ bool DefineString::operator()(const Lima::LinguisticProcessing::LinguisticAnalys
 {
   SACLOGINIT;
   LDEBUG << "testing DefineString for " << v1 << " and " << v2 << " with relation: " /*<< (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).
-    getEntityNames("SyntacticSimplification")[m_relation])*/ << LENDL;
+    getEntityNames("SyntacticSimplification")[m_relation])*/;
   std::string complement = Common::Misc::limastring2utf8stdstring(m_complement);
   SimplificationData* simplificationData =
       static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
     SACLOGINIT;
-    LERROR << "No simplificationData in DefineString constraint" << LENDL;
+    LERROR << "No simplificationData in DefineString constraint";
     return false;
   }
   if (simplificationData->coordStringsDefs().find(complement) != simplificationData->coordStringsDefs().end())
   {
     SACLOGINIT;
-    LERROR << "simplificationData already contains a " << complement << " coord string definition" << LENDL;
+    LERROR << "simplificationData already contains a " << complement << " coord string definition";
     return false;
   }
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
       v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
-  LDEBUG << "DefineString: false" << LENDL;
+  LDEBUG << "DefineString: false";
     return false;
   }
   simplificationData->coordStringsDefs().insert(std::make_pair(complement,std::vector<LinguisticGraphVertex>()));
   std::vector<LinguisticGraphVertex>& stringDef = (*simplificationData->coordStringsDefs().find(complement)).second;
-  LDEBUG << "Add " << v1 << " to string " << complement << LENDL;
+  LDEBUG << "Add " << v1 << " to string " << complement;
   stringDef.push_back(v1);
   
   LinguisticGraphVertex next = v1;
   while (next != v2)
   {
     next = boost::target(*(boost::out_edges(next, *graph.getGraph()).first),*graph.getGraph());
-    LDEBUG << "Add " << next << " to string " << complement << LENDL;
+    LDEBUG << "Add " << next << " to string " << complement;
     stringDef.push_back(next);
   }
   
-  LDEBUG << "DefineString: true" << LENDL;
+  LDEBUG << "DefineString: true";
   return true;
 }
 
@@ -141,7 +141,7 @@ bool SameString::operator()(const Lima::LinguisticProcessing::LinguisticAnalysis
 {
 
   SACLOGINIT;
-  LDEBUG << "Testing SameString on " << v1 << " and " << v2 << LENDL;
+  LDEBUG << "Testing SameString on " << v1 << " and " << v2;
 
   std::string complement = Common::Misc::limastring2utf8stdstring(m_complement);
   SyntacticData* syntacticData =
@@ -152,14 +152,14 @@ bool SameString::operator()(const Lima::LinguisticProcessing::LinguisticAnalysis
   if (simplificationData==0)
   {
     SACLOGINIT;
-    LERROR << "No simplificationData in DefineString constraint" << LENDL;
+    LERROR << "No simplificationData in DefineString constraint";
     return false;
   }
   std::vector<LinguisticGraphVertex> stringDef;
   if (simplificationData->coordStringsDefs().find(complement) == simplificationData->coordStringsDefs().end())
   {
     SACLOGINIT;
-    LWARN << "No such coord string defined: " << complement << LENDL;
+    LWARN << "No such coord string defined: " << complement;
 //     return false;
   }
   else
@@ -173,29 +173,29 @@ bool SameString::operator()(const Lima::LinguisticProcessing::LinguisticAnalysis
   }
 
   std::vector<LinguisticGraphVertex> newString;
-  LDEBUG << "Add " << v1 << " to new SameString " << complement << LENDL;
+  LDEBUG << "Add " << v1 << " to new SameString " << complement;
   newString.push_back(v1);
   LinguisticGraphVertex next = v1;
   while (next != v2)
   {
     next = boost::target(*(boost::out_edges(next, *graph).first),*graph);
-    LDEBUG << "Add " << next << " to new string " << complement << LENDL;
+    LDEBUG << "Add " << next << " to new string " << complement;
     newString.push_back(next);
   }
   if (!stringDef.empty() && newString.size() != stringDef.size())
   {
-    LDEBUG << "New string and model for " << complement << " have different sizes" << LENDL;
+    LDEBUG << "New string and model for " << complement << " have different sizes";
     
     return false;
   }
   if (stringDef.empty() && (*simplificationData->coordStrings().find(complement)).second.empty() )
   {
-    LDEBUG << "No definition and no same string yet : using myself" << LENDL;
+    LDEBUG << "No definition and no same string yet : using myself";
     stringDef = newString;
   }
   else if (stringDef.empty())
   {
-    LDEBUG << "No definition yet : using first found same string" << LENDL;
+    LDEBUG << "No definition yet : using first found same string";
     stringDef = *(*simplificationData->coordStrings().find(complement)).second.begin();
   }
   // testing equality of the new string and its definition
@@ -212,11 +212,11 @@ bool SameString::operator()(const Lima::LinguisticProcessing::LinguisticAnalysis
     MorphoSyntacticData* msdNew=get(vertex_data,*graph,*nit);
     if (!(msdNew!=0 && msdNew->hasUniqueMicro(*m_microAccessor,lmicroFilters)))
     {
-      LDEBUG << "new string vertex " << *nit << " and model string vertex " << *dit << " have different micro categories" << LENDL;
+      LDEBUG << "new string vertex " << *nit << " and model string vertex " << *dit << " have different micro categories";
       return false;
     }
   }
-  LDEBUG << "Add string " << v1 << "/" << v2 << " to same strings of " << complement << LENDL;
+  LDEBUG << "Add string " << v1 << "/" << v2 << " to same strings of " << complement;
   simplificationData->coordStrings()[complement].push_back(newString);
   return true;
 }
@@ -235,7 +235,7 @@ bool DefineModel::operator()(const Lima::LinguisticProcessing::LinguisticAnalysi
 {
   
   SACLOGINIT;
-  LDEBUG << "clearing stored subsentences" << LENDL;
+  LDEBUG << "clearing stored subsentences";
   
   //SimplificationData* simplificationData =
   //  static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
@@ -256,7 +256,7 @@ bool SetInstance::operator()(const Lima::LinguisticProcessing::LinguisticAnalysi
                              AnalysisContent& /*analysis*/) const
 {
   SACLOGINIT;
-  LDEBUG << "clearing stored subsentences" << LENDL;
+  LDEBUG << "clearing stored subsentences";
   
   //SimplificationData* simplificationData =
   //static_cast<SimplificationData*>(analysis.getData("SimplificationData"));

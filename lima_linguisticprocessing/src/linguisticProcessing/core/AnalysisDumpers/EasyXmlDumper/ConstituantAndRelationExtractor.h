@@ -165,7 +165,7 @@ private:
       {
         // if corresponding AnalysisGraph vertex, link it
         DUMPERLOGINIT;
-        LDEBUG << "ConstituantAndRelationExtractor:: got analysis " << *genAnnotVectIt << ", " << anaForme->forme << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: got analysis " << *genAnnotVectIt << ", " << anaForme->forme;
         m_anaGraphVertices[*genAnnotVectIt] = anaForme;
         genAnaVertices.push_back(*genAnnotVectIt);
       }

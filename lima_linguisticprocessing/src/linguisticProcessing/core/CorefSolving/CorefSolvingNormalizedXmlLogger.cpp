@@ -82,7 +82,7 @@ namespace Lima
         if (metadata == 0)
         {
           COREFSOLVERLOGINIT;
-          LERROR << "no LinguisticMetaData ! abort" << LENDL;
+          LERROR << "no LinguisticMetaData ! abort";
           return MISSING_DATA;
         }
 
@@ -90,20 +90,20 @@ namespace Lima
         if (!openLogFile(out,metadata->getMetaData("FileName")))
         {
           COREFSOLVERLOGINIT;
-          LERROR << "Can't open log file " << LENDL;
+          LERROR << "Can't open log file ";
           return UNKNOWN_ERROR;
         }
 
         out << "<coreferences>" << endl;
 
 
-        //   LDEBUG << "CorefSolvingNormalizedXmlLogger on graph " << m_graph << LENDL;
+        //   LDEBUG << "CorefSolvingNormalizedXmlLogger on graph " << m_graph;
         AnnotationGraphVertexIt itv, itv_end;
         boost::tie(itv, itv_end) = vertices(annotationData->getGraph());
         for (; itv != itv_end; itv++)
         {
           // process
-          //LDEBUG << "CorefSolvingNormalizedXmlLogger on annotation vertex " << *itv << LENDL;
+          //LDEBUG << "CorefSolvingNormalizedXmlLogger on annotation vertex " << *itv;
           if (annotationData->hasAnnotation(*itv,utf8stdstring2limastring("Coreferent")))
             //if (annotationData->hasAnnotation(*itv,utf8stdstring2limastring("Coreferent")))
           {
@@ -116,10 +116,10 @@ namespace Lima
             catch (const boost::bad_any_cast& )
             {
               COREFSOLVERLOGINIT;
-              LERROR << "One annotation on vertex " << *itv << " you are trying to cast is not a Coreference; Coreference not logged" << LENDL;
+              LERROR << "One annotation on vertex " << *itv << " you are trying to cast is not a Coreference; Coreference not logged";
               for (int i = 0; i < 19 ; i++)
               {
-                LERROR << "annot "<< i << " : " << limastring2utf8stdstring(annotationData->annotationName(i)) << LENDL ;
+                LERROR << "annot "<< i << " : " << annotationData->annotationName(i);
               }
               continue;
             }
@@ -127,7 +127,7 @@ namespace Lima
             if (token == 0)
             {
               COREFSOLVERLOGINIT;
-              LERROR << "Vertex " << *itv << " has no entry in the analysis graph token map. This should not happen !!" << LENDL;
+              LERROR << "Vertex " << *itv << " has no entry in the analysis graph token map. This should not happen !!";
             }
             else
             {
@@ -148,7 +148,7 @@ namespace Lima
                   catch (const boost::bad_any_cast& )
                   {
                     COREFSOLVERLOGINIT;
-                    LERROR << "One annotation on vertex you are trying to cast resulting from an edge out of " << *itv << " is not a Coreference; Coreference not logged" << LENDL;
+                    LERROR << "One annotation on vertex you are trying to cast resulting from an edge out of " << *itv << " is not a Coreference; Coreference not logged";
                     continue;
                   }
                 }

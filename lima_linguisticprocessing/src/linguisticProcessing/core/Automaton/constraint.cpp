@@ -121,7 +121,7 @@ std::string Constraint::functionName() const {
   else {
     AULOGINIT;
     LERROR << "constraint function "
-           << m_functionAddr << " not availale" << LENDL;
+           << m_functionAddr << " not availale";
     return "";
   }
 }
@@ -144,7 +144,7 @@ checkConstraint(const AnalysisGraph& graph,
   // else compare the value with the value stored in the checklist
   // using the constraint function
 
-//  LDEBUG << checkStringDebug(graph,vertex) << LENDL;
+//  LDEBUG << checkStringDebug(graph,vertex);
 
   bool success(false);
   bool compare(false);
@@ -261,10 +261,10 @@ bool Constraint::apply(const AnalysisGraph& graph,
   }
 
 // AULOGINIT;
-// LDEBUG << "case passed" << LENDL;
+// LDEBUG << "case passed";
   bool res(false);
   if (m_index==Constraint::noindex) { // no argument
-//    LDEBUG << applyStringDebug() << LENDL;
+//    LDEBUG << applyStringDebug();
 
     if ((*m_functionAddr).actionNeedsRecognizedExpression()) {
       res=(*m_functionAddr)(*result,analysis);
@@ -278,13 +278,13 @@ bool Constraint::apply(const AnalysisGraph& graph,
       constraintCheckList[m_index].getValueStack();
 
     if (firstArg == ConstraintCheckListElement::novalue) {
-//      LDEBUG << "Action: first argument is not set" << LENDL;
+//      LDEBUG << "Action: first argument is not set";
       res=false;
     }
     else {
       constraintCheckList[m_index].pop();
       if (constraintCheckList[m_index].empty()) { // only one argument
-//        LDEBUG << applyStringDebug(firstArg) << LENDL;
+//        LDEBUG << applyStringDebug(firstArg);
         res=(*m_functionAddr)(graph,
                               firstArg,
                               analysis);
@@ -294,11 +294,11 @@ bool Constraint::apply(const AnalysisGraph& graph,
           constraintCheckList[m_index].getValueStack();
 
         if (secondArg == ConstraintCheckListElement::novalue) {
-//          LDEBUG << "Action: second argument is not set" << LENDL;
+//          LDEBUG << "Action: second argument is not set";
           res=false;
         }
         else {
-//          LDEBUG << applyStringDebug(firstArg,secondArg) << LENDL;
+//          LDEBUG << applyStringDebug(firstArg,secondArg);
           res=(*m_functionAddr)(graph,
                                 firstArg,
                                 secondArg,
@@ -334,7 +334,7 @@ LimaString Constraint::str() const {
                       complement)) {
     AULOGINIT;
     LERROR << "constraint function "
-           << m_functionAddr << " not availale" << LENDL;
+           << m_functionAddr << " not availale";
   }
 
   ostringstream oss;
@@ -365,7 +365,7 @@ checkStringDebug(const AnalysisGraph& graph,
                       complement)) {
     AULOGINIT;
     LERROR << "constraint function "
-           << m_functionAddr << " not availale" << LENDL;
+           << m_functionAddr << " not availale";
   }
 
   ostringstream oss;
@@ -391,7 +391,7 @@ applyStringDebug(const LinguisticGraphVertex firstArg,
                       complement)) {
     AULOGINIT;
     LERROR << "constraint function "
-           << m_functionAddr << " not availale" << LENDL;
+           << m_functionAddr << " not availale";
   }
 
   ostringstream oss;
@@ -441,7 +441,7 @@ ostream& operator << (ostream& os, const Constraint& c) {
                     complement)) {
     AULOGINIT;
   LERROR << "constraint function "
-  << c.m_functionAddr << " not availale" << LENDL;
+  << c.m_functionAddr << " not availale";
                     }
                     switch (c.action()) {
                       case EXECUTE_IF_SUCCESS:
@@ -475,7 +475,7 @@ QDebug& operator << (QDebug& os, const Constraint& c) {
                     complement)) {
     AULOGINIT;
   LERROR << "constraint function "
-  << c.m_functionAddr << " not availale" << LENDL;
+  << c.m_functionAddr << " not availale";
                     }
                     switch (c.action()) {
                       case EXECUTE_IF_SUCCESS:

@@ -273,13 +273,13 @@ int main(int argc, char *argv[])
   {
     // initialize common
       LOGINIT("Automaton::Compiler");
-      LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")..." << LENDL;
+      LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")...";
     MediaticData::changeable().init(
       param.resourcesDir,
       param.configDir,
       param.commonConfigFile,
       langs);
-      LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!" << LENDL;
+      LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
       
     /*
     * @TODO eviter l'initialisation des ressources dans compiles rules
@@ -307,13 +307,13 @@ int main(int argc, char *argv[])
     // look at the modex config file to find the dynamic libraries that must be loaded
     if (! param.modexConfigFile.empty()) {
       LOGINIT("Automaton::Compiler");
-      LDEBUG << "use modex file " << param.modexConfigFile << LENDL;
+      LDEBUG << "use modex file " << param.modexConfigFile;
       XMLConfigurationFileParser modexconfig(param.configDir + "/" + param.modexConfigFile);
       vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
       for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
       {
         LOGINIT("Automaton::Compiler");
-        LDEBUG << "load library " << *it << LENDL;
+        LDEBUG << "load library " << *it;
         Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
       }
     }

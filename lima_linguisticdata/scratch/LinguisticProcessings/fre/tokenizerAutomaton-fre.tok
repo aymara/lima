@@ -13,7 +13,7 @@
   - c_hyphen c_a_t c_hyphen > TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote > TEUPHOT (T_ALPHA)
   - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_del2|c_dot = START (T_SENTENCE_BRK)
   - unknwn > START
   - c_lowline > ALPHA
@@ -33,6 +33,7 @@
   - c_all = START
 }
 (ALPHA) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_b = IGNORE (T_ALPHA)
   - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
   - c_M > SINGLE_UPPER (T_CAPITAL,T_ALPHA)
@@ -45,7 +46,6 @@
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
   - c_del2|c_dot = START (T_SENTENCE_BRK)
   - c_lowline > ALPHA
   - [c_N|c_n] c_degree = ALPHA
@@ -84,7 +84,7 @@
   - c_other / START
   - c_hyphen c_a_t c_hyphen / ALPHA (T_ALPHA)
   - c_del2|c_dot c_par c_par / DELIMITER (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot / DELIMITER (T_SENTENCE_BRK)
+  - c_dot c_dot c_dot / SUSP1 (T_SENTENCE_BRK)
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
   - c_lowline / ALPHA
   - [c_N|c_n] c_degree / ALPHA
@@ -102,6 +102,7 @@
   - c_all / START
 }
 (DELIMITER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|m_line = DELIMITER (T_WORD_BRK)
   - c_5 = INTEGER
   - c_par = IGNORE (T_SENTENCE_BRK)
@@ -127,11 +128,11 @@
   - c_5 = ALPHANUMERIC (T_ALPHANUMERIC)
   - c_quote c_del = START (T_WORD_BRK)
   - c_quote = START
-  - c_dot c_b c_m = START
   - m_parag = END
   - c_all = START
 }
 (SINGLE_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_M > ALL_UPPER (T_CAPITAL)
@@ -149,6 +150,7 @@
   - m_parag = END
 }
 (ALL_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_M > ALL_UPPER
@@ -161,8 +163,9 @@
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_all > START
   - m_parag = END
-}
+} 
 (ALL_LOWER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_dot c_b c_m > ALL_LOWER
@@ -183,6 +186,7 @@
   - m_parag = END
 }
 (LOWER_1ST_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_m > LOWER_1ST_UPPER
@@ -199,6 +203,7 @@
   - m_parag = END
 }
 (LOWER_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_Mm > LOWER_UPPER
@@ -224,6 +229,7 @@
 }
 (ACRONYM_CLOSE) {
   - c_b = IGNORE
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_all > START
@@ -336,6 +342,12 @@
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_all = START
   - m_parag = END
+}
+(SUSP1) {
+  - c_dot c_dot > SUSP2
+}
+(SUSP2) {
+  - c_dot > ALPHA
 }
 (END) {
 }

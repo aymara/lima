@@ -94,7 +94,7 @@ void EasyXmlDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStruct
                          Manager* manager)
 {
   DUMPERLOGINIT;
-  LDEBUG << "EasyXmlDumper:: easyXmlDumper init!" << LENDL;
+  LDEBUG << "EasyXmlDumper:: easyXmlDumper init!";
   m_language = manager->getInitializationParameters().media;
   m_propertyCodeManager = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager());
   try
@@ -105,7 +105,7 @@ void EasyXmlDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStruct
   }
   catch (NoSuchParam& )
   {
-    LERROR << "EasyXmlDumper::init: parameter not found (typeMapping, srcTag and tgtTag must be specified)" << LENDL;
+    LERROR << "EasyXmlDumper::init: parameter not found (typeMapping, srcTag and tgtTag must be specified)";
     return;
   }
   try
@@ -114,7 +114,7 @@ void EasyXmlDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStruct
   }
   catch (NoSuchParam& )
   {
-    LDEBUG << "EasyXmlDumper:: graph parameter not found, using PosGraph" << LENDL;
+    LDEBUG << "EasyXmlDumper:: graph parameter not found, using PosGraph";
     m_graph = string("PosGraph");
   }
   try
@@ -124,7 +124,7 @@ void EasyXmlDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStruct
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "EasyXmlDumper::init: Missing parameter handler in EasyXmlDumper configuration" << LENDL;
+    LERROR << "EasyXmlDumper::init: Missing parameter handler in EasyXmlDumper configuration";
     throw InvalidConfiguration();
   }
 }
@@ -136,19 +136,19 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
 
   LinguisticMetaData* metadata = static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-    LERROR << "EasyXmlDumper::process no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "EasyXmlDumper::process no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   string filename = metadata->getMetaData("FileName");
-  LDEBUG << "EasyXmlDumper::process Filename: " << filename << LENDL;
+  LDEBUG << "EasyXmlDumper::process Filename: " << filename;
 
-  LDEBUG << "handler will be: " << m_handler << LENDL;
+  LDEBUG << "handler will be: " << m_handler;
 //   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "EasyXmlDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "EasyXmlDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
   
@@ -182,12 +182,12 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
   HandlerStreamBuf hsb(handler);
   std::ostream outputStream(&hsb);
 
-  LDEBUG << "EasyXmlDumper:: process before printing heading" << LENDL;
+  LDEBUG << "EasyXmlDumper:: process before printing heading";
   AnalysisGraph* anaGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   AnalysisGraph* posGraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anaGraph != 0 && posGraph != 0)
   {
-    LDEBUG << "EasyXmlDumper:: begin of posgraph" << LENDL;
+    LDEBUG << "EasyXmlDumper:: begin of posgraph";
     std::vector< bool > alreadyDumpedTokens;
     std::map< LinguisticAnalysisStructure::Token*, uint64_t > fullTokens;
     LinguisticGraphVertexIt i, i_end;
@@ -195,7 +195,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
     alreadyDumpedTokens.resize(num_vertices(*posGraph->getGraph()));
     for (boost::tie(i, i_end) = vertices(*posGraph->getGraph()); i != i_end; ++i)
     {
-      LDEBUG << "EasyXmlDumper:: examine posgraph for " << id << LENDL;
+      LDEBUG << "EasyXmlDumper:: examine posgraph for " << id;
       alreadyDumpedTokens[id] = false;
       fullTokens[get(vertex_token, *posGraph->getGraph(), *i)] = id;
       id++;
@@ -211,7 +211,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
     string sentIdPrefix;
     try {
       sentIdPrefix = metadata->getMetaData("docid");
-      LDEBUG << "EasyXmlDumper:: retrieve sentence id " << sentIdPrefix << LENDL;
+      LDEBUG << "EasyXmlDumper:: retrieve sentence id " << sentIdPrefix;
     }catch (LinguisticProcessingException& ) {
       sentIdPrefix = "";
     }
@@ -222,7 +222,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
     {
       LinguisticGraphVertex sentenceEnd = *sbItr;
     */
-    LDEBUG << "EasyXmlDumper:: inside posgraph while " << LENDL;
+    LDEBUG << "EasyXmlDumper:: inside posgraph while ";
     dumpLimaData(outputStream,
                   sentenceBegin,
                   sentenceEnd,
@@ -239,7 +239,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
       sbItr++;
     }
     */
-    LDEBUG << "EasyXmlDumper:: end of posgraph" << LENDL;
+    LDEBUG << "EasyXmlDumper:: end of posgraph";
   }
 
   return SUCCESS_ID;
@@ -263,20 +263,20 @@ void EasyXmlDumper::dumpLimaData(std::ostream& os,
 {
 
   DUMPERLOGINIT;
-  LDEBUG << "EasyXmlDumper:: dumpLimaData parameters: " << LENDL;
-  LDEBUG << "EasyXmlDumper::   begin = " << begin << LENDL;
-  LDEBUG << "EasyXmlDumper::   end = " << end << LENDL;
-  LDEBUG << "EasyXmlDumper::   posgraph first vertex = " << posGraph.firstVertex() << LENDL;
-  LDEBUG << "EasyXmlDumper::   posgraph last vertex = " << posGraph.lastVertex() << LENDL;
-  LDEBUG << "EasyXmlDumper::   graphId = " << graphId << LENDL;
-  LDEBUG << "EasyXmlDumper::   sentIdPrefix = " << sentIdPrefix << LENDL;
+  LDEBUG << "EasyXmlDumper:: dumpLimaData parameters: ";
+  LDEBUG << "EasyXmlDumper::   begin = " << begin;
+  LDEBUG << "EasyXmlDumper::   end = " << end;
+  LDEBUG << "EasyXmlDumper::   posgraph first vertex = " << posGraph.firstVertex();
+  LDEBUG << "EasyXmlDumper::   posgraph last vertex = " << posGraph.lastVertex();
+  LDEBUG << "EasyXmlDumper::   graphId = " << graphId;
+  LDEBUG << "EasyXmlDumper::   sentIdPrefix = " << sentIdPrefix;
 
   // just in case we want to check alreadt dumped tokens' array
   for (uint64_t i = 0; i<alreadyDumpedTokens.size(); i++)
   {
     if (alreadyDumpedTokens[i])
     {
-      LDEBUG << "EasyXmlDumper:: already_dumped_tokens[" << i << "] =" << alreadyDumpedTokens[i] << LENDL;
+      LDEBUG << "EasyXmlDumper:: already_dumped_tokens[" << i << "] =" << alreadyDumpedTokens[i];
     }
   }
 
@@ -292,7 +292,7 @@ void EasyXmlDumper::dumpLimaData(std::ostream& os,
     }while(find(m_sentIds.begin(), m_sentIds.end(), sentIdStr) != m_sentIds.end());
   }
 
-  LDEBUG << "EasyXmlDumper:: searching and extracting vertices and relations" << LENDL;
+  LDEBUG << "EasyXmlDumper:: searching and extracting vertices and relations";
   LinguisticGraph* anaGraphL = const_cast<LinguisticGraph*>(anaGraph.getGraph());
   LinguisticGraph* posGraphL = const_cast<LinguisticGraph*>(posGraph.getGraph());
   ConstituantAndRelationExtractor care(m_propertyCodeManager);
@@ -306,7 +306,7 @@ void EasyXmlDumper::dumpLimaData(std::ostream& os,
                        alreadyDumpedTokens,
                        m_language);
 
-  LDEBUG << "EasyXmlDumper:: all found vertices and relations extracted" << LENDL;
+  LDEBUG << "EasyXmlDumper:: all found vertices and relations extracted";
   care.replaceSEWithCompounds();
   care.constructionDesRelationsEntrantes();
   care.splitCompoundTenses();

@@ -49,7 +49,7 @@ bool PrefixIterator::operator==(const PrefixIterator& it) const {
   FSAALOGINIT;
   LDEBUG << "PrefixIterator::operator==():"
          << "m_word_content=" << m_word_content << ", m_word_length = " << m_word_length
-         << "it.m_word_content=" << it.m_word_content << ", it.m_word_length = " << it.m_word_length << LENDL;
+         << "it.m_word_content=" << it.m_word_content << ", it.m_word_length = " << it.m_word_length;
 #endif
   return( (m_word_content == it.m_word_content)
    &&  (m_wordPos == it.m_wordPos ) );
@@ -60,7 +60,7 @@ bool PrefixIterator::operator!=(const PrefixIterator& it) const {
   FSAALOGINIT;
   LDEBUG << "PrefixIterator::operator!=():"
          << "m_word_content=" << m_word_content << ", m_word_length = " << m_word_length
-         << "it.m_word_content=" << it.m_word_content << ", it.m_word_length = " << it.m_word_length << LENDL;
+         << "it.m_word_content=" << it.m_word_content << ", it.m_word_length = " << it.m_word_length;
 #endif
   return( (m_word_content != it.m_word_content)
    ||  (m_wordPos != it.m_wordPos ) );
@@ -90,7 +90,7 @@ bool ForwardPrefixIterator::hasNextLetter() const {
 // #ifdef DEBUG_CD
 //   FSAALOGINIT;
 //   LDEBUG <<  "ForwardPrefixIterator::hasNextLetter: m_wordPos = "
-//             << m_wordPos << ", m_word_length = " << m_word_length << LENDL;
+//             << m_wordPos << ", m_word_length = " << m_word_length;
 // #endif
 
   return( m_wordPos < m_word_length );
@@ -152,7 +152,7 @@ PrefixIterator* ForwardPrefixIterator::clone( const PrefixIterator* const orig )
   LDEBUG << "ForwardPrefixIterator::clone: "
          << "m_word_content=" << result->m_word_content << ", m_word_length=" << result->m_word_length << ", wordPos=" << result->m_wordPos << "\n"
          << "                              "
-         << "orig.m_word_content=" << orig->m_word_content << ", it.m_word_length = " << orig->m_word_length << ", wordPos=" << orig->m_wordPos << LENDL;
+         << "orig.m_word_content=" << orig->m_word_content << ", it.m_word_length = " << orig->m_word_length << ", wordPos=" << orig->m_wordPos;
 #endif
   return( result );
 //  return( new ForwardPrefixIterator( orig->m_word_content, orig->m_word_length, orig->m_wordPos ) );
@@ -210,7 +210,7 @@ int32_t ForwardPrefixIterator::findEdge(
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE <<  "ForwardPrefixIterator::findEdge(" << searchChar << "): min = " << min
-            << " range = " << range << LENDL;
+            << " range = " << range;
 #endif
     char32_t edgeLabel;
     int32_t offset = min;
@@ -219,12 +219,12 @@ int32_t ForwardPrefixIterator::findEdge(
       int32_t offset0 = offset;
 #ifdef DEBUG_CD
       LTRACE <<  "ForwardPrefixIterator::findEdge(1): min = " << min
-             << " range = " << range << " try " << offset << LENDL;
+             << " range = " << range << " try " << offset;
 #endif
       U16_NEXT(m_word_content, offset, m_word_length, edgeLabel);
       if( edgeLabel == searchChar ) {
 #ifdef DEBUG_CD
-      LTRACE <<  "ForwardPrefixIterator::findEdge(1): match " << edgeLabel << " return " << offset0 << LENDL;
+      LTRACE <<  "ForwardPrefixIterator::findEdge(1): match " << edgeLabel << " return " << offset0;
 #endif
         return offset0;
       }
@@ -238,19 +238,19 @@ int32_t ForwardPrefixIterator::findEdge(
     }
 #ifdef DEBUG_CD
     LTRACE <<  "ForwardPrefixIterator::findEdge(1): min = " << min
-           << " range = " << range << " try " << min << LENDL;
+           << " range = " << range << " try " << min;
 #endif
     int32_t offset0 = min;
     U16_NEXT(m_word_content, min, m_word_length, edgeLabel);
     if( edgeLabel == searchChar ) {
 #ifdef DEBUG_CD
-      LTRACE <<  "ForwardPrefixIterator::findEdge(1): match " << edgeLabel << " return " << offset0 << LENDL;
+      LTRACE <<  "ForwardPrefixIterator::findEdge(1): match " << edgeLabel << " return " << offset0;
 #endif
       return offset0;
     }
     else {
 #ifdef DEBUG_CD
-      LTRACE <<  "ForwardPrefixIterator::findEdge(1): unmatch " << edgeLabel << " and " << searchChar << LENDL;
+      LTRACE <<  "ForwardPrefixIterator::findEdge(1): unmatch " << edgeLabel << " and " << searchChar;
 #endif
       return -1;
     }
@@ -262,7 +262,7 @@ int32_t ForwardPrefixIterator::findEdge(
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE <<  "ForwardPrefixIterator::findEdge(" << searchChar << "): min = " << min
-            << " range = " << range << LENDL;
+            << " range = " << range;
 #endif
     char32_t edgeLabel;
     int32_t offset = min;
@@ -271,12 +271,12 @@ int32_t ForwardPrefixIterator::findEdge(
       int32_t offset0 = offset;
 #ifdef DEBUG_CD
       LTRACE <<  "ForwardPrefixIterator::findEdge(2): min = " << min
-             << " range = " << range << " try " << offset << LENDL;
+             << " range = " << range << " try " << offset;
 #endif
       U16_NEXT(m_word_content, offset, m_word_length, edgeLabel);
       if( edgeLabel == searchChar ) {
 #ifdef DEBUG_CD
-      LTRACE <<  "ForwardPrefixIterator::findEdge(2): match " << edgeLabel << " return " << offset0/2 << LENDL;
+      LTRACE <<  "ForwardPrefixIterator::findEdge(2): match " << edgeLabel << " return " << offset0/2;
 #endif
         return offset0/2;
       }
@@ -290,19 +290,19 @@ int32_t ForwardPrefixIterator::findEdge(
     }
 #ifdef DEBUG_CD
     LTRACE <<  "ForwardPrefixIterator::findEdge(2): min = " << min
-           << " range = " << range << " try " << min << LENDL;
+           << " range = " << range << " try " << min;
 #endif
     int32_t offset0 = min;
     U16_NEXT(m_word_content, min, m_word_length, edgeLabel);
     if( edgeLabel == searchChar ) {
 #ifdef DEBUG_CD
-      LTRACE <<  "ForwardPrefixIterator::findEdge(2): match " << edgeLabel << " return " << offset0/2 << LENDL;
+      LTRACE <<  "ForwardPrefixIterator::findEdge(2): match " << edgeLabel << " return " << offset0/2;
 #endif
       return (offset0/2);
     }
     else {
 #ifdef DEBUG_CD
-      LTRACE <<  "ForwardPrefixIterator::findEdge(2): unmatch " << edgeLabel << " and " << searchChar << LENDL;
+      LTRACE <<  "ForwardPrefixIterator::findEdge(2): unmatch " << edgeLabel << " and " << searchChar;
 #endif
       return -1;
     }

@@ -86,7 +86,7 @@ void IdiomaticExpressionAnnotation::dump(std::ostream& os)
   }
   catch (const boost::bad_any_cast& )
   {
-    LERROR << "This annotation is not a IdiomaticExpressionAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a IdiomaticExpressionAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

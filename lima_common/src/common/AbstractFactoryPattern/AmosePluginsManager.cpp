@@ -17,6 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 #include "AmosePluginsManager.h"
+#include "common/LimaCommon.h"
 #include "common/AbstractFactoryPattern/DynamicLibrariesManager.h"
 
 #include <iostream>
@@ -33,14 +34,15 @@ AmosePluginsManager::AmosePluginsManager()
 
 bool AmosePluginsManager::loadPlugins()
 {
-  std::cerr << "AmosePluginsManager::loadPlugins" << std::endl;
+  ABSTRACTFACTORYPATTERNLOGINIT;
+  LINFO << "AmosePluginsManager::loadPlugins";
 //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   QDir pluginsDir(QString::fromUtf8(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData()) + "/plugins");
   QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
   Q_FOREACH(QString pluginsFile, pluginsFiles)
   {
-    std::cerr << "AmosePluginsManager::loadPlugins loding plugins file " << pluginsFile.toUtf8().data() << std::endl;
+    LINFO << "AmosePluginsManager::loadPlugins loding plugins file " << pluginsFile.toUtf8().data();
     QFile file(pluginsDir.path() + "/" + pluginsFile);
     if (!file.open(QIODevice::ReadOnly))
       return false;
@@ -53,7 +55,7 @@ bool AmosePluginsManager::loadPlugins()
   #else
       QString strline = QString("lib") + line.data() + ".so";
   #endif
-      std::cerr << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'" << std::endl;
+      LINFO << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
       DynamicLibrariesManager::changeable().loadLibrary(line.data());
     }
   }

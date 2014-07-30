@@ -99,7 +99,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
 {
 
   DUMPERLOGINIT;
-  LDEBUG << "ConstituantAndRelationExtractor:: begin visiting vertex " << v << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: begin visiting vertex " << v;
 
   LinguisticGraphOutEdgeIt itLing, itLing_end;
   boost::tie(itLing, itLing_end) = out_edges(v, posGraph);
@@ -108,7 +108,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
     for (; itLing != itLing_end; itLing++)
     {
       const LinguisticGraphVertex& nextVertex = target(*itLing, posGraph);
-      LDEBUG << "ConstituantAndRelationExtractor:: visiting out edge " << nextVertex << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: visiting out edge " << nextVertex;
       visitBoostGraph(nextVertex,
                       end,
                       anaGraph,
@@ -126,7 +126,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
   if(forme == 0)
     return;
 
-  LDEBUG << "ConstituantAndRelationExtractor:: insert form in index " << forme->id << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: insert form in index " << forme->id;
   m_formesIndex[forme->id] = forme;
   m_positionsFormsIds.insert(std::make_pair(forme->poslong.position, forme->id));
   m_vertexToFormeIds.insert(std::make_pair(v,forme->id));
@@ -187,7 +187,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
                           language);
           if(m_formesIndex[auxV] != 0 && m_formesIndex[ppV] != 0)
           {
-            LDEBUG << "ConstituantAndRelationExtractor:: register compound tense " << *vAnnotIt << ", " << forme->forme << LENDL;
+            LDEBUG << "ConstituantAndRelationExtractor:: register compound tense " << *vAnnotIt << ", " << forme->forme;
             m_compoundTenses[*vAnnotIt] = std::make_pair(auxV, ppV);
           }
         }
@@ -208,7 +208,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
       LimaString idiomExprLimaString = Common::Misc::utf8stdstring2limastring("IdiomExpr");
       if(annotationData.hasAnnotation(*vAnnotIt, idiomExprLimaString))
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: found idiomatic " << *vAnnotIt << ", " << forme->forme << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: found idiomatic " << *vAnnotIt << ", " << forme->forme;
         splitCompoundAnalysisAnnotation<IdiomaticExpressionAnnotation>(
           *vAnnotIt,
           *forme,
@@ -223,7 +223,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
       LimaString seLimaString = Common::Misc::utf8stdstring2limastring("SpecificEntity");
       if(annotationData.hasAnnotation(*vAnnotIt, seLimaString))
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: found specific entity " << *vAnnotIt << ", " << forme->forme << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: found specific entity " << *vAnnotIt << ", " << forme->forme;
         splitCompoundAnalysisAnnotation<SpecificEntityAnnotation>(
           *vAnnotIt,
           *forme,
@@ -251,7 +251,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
     }
   }
 
-  LDEBUG << "ConstituantAndRelationExtractor:: end visiting vertex " << v << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: end visiting vertex " << v;
 
 }
 
@@ -275,7 +275,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
     return 0;
   if(checkFullTokens){
     LDEBUG << "ConstituantAndRelationExtractor:: check token " << v  << "(" 
-           << Common::Misc::limastring2utf8stdstring(token->stringForm()) << ")" << LENDL;
+           << token->stringForm() << ")";
     std::map< LinguisticAnalysisStructure::Token*, uint64_t >::const_iterator tokenIter;
     tokenIter = fullTokens.find(token);
     if(tokenIter != fullTokens.end())
@@ -288,7 +288,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
   }
 
   LDEBUG << "ConstituantAndRelationExtractor:: extract vertex " << v << "(" 
-         << Common::Misc::limastring2utf8stdstring(token->stringForm()) << ")" << LENDL;
+         << token->stringForm() << ")";
   Forme* forme = new Forme();
   forme->id = v;
   forme->forme = Common::Misc::limastring2utf8stdstring(token->stringForm());
@@ -307,7 +307,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
     if(itForms != (*data).end())
     {
 
-      LDEBUG << "ConstituantAndRelationExtractor:: found morphosyntactic data " << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: found morphosyntactic data ";
       forme->inflForme = Common::Misc::limastring2utf8stdstring(sp[itForms->inflectedForm]);
 
       forme->poslong.position = token->position();
@@ -321,7 +321,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
     itForms++;
     if(itForms != (*data).end())
     {
-      LWARN << "ConstituantAndRelationExtractor:: ommitting multiple morphosyntactic data " << LENDL;
+      LWARN << "ConstituantAndRelationExtractor:: ommitting multiple morphosyntactic data ";
     }
 
   }
@@ -342,7 +342,7 @@ Relation* ConstituantAndRelationExtractor::extractEdge(const LinguisticGraphEdge
   std::string relationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationName(relTypeMap[e]);
 
   DUMPERLOGINIT;
-  LDEBUG << "ConstituantAndRelationExtractor:: extract dependency " << relationName << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: extract dependency " << relationName;
 
   uint64_t srcTokenId = syntacticData.tokenVertexForDepVertex(source(e, depGraph));
   if(srcTokenId == 0)
@@ -365,7 +365,7 @@ Relation* ConstituantAndRelationExtractor::extractEdge(const LinguisticGraphEdge
        )
       )
     {
-      LDEBUG << "ConstituantAndRelationExtractor:: found duplicate relation" << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: found duplicate relation";
       return 0;
     }
   }
@@ -387,14 +387,14 @@ Relation* ConstituantAndRelationExtractor::extractEdge(const LinguisticGraphEdge
       {
         if((*it)->srcVertex == relation->tgtVertex)
         {
-          LDEBUG << "ConstituantAndRelationExtractor:: found coord second edge" << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: found coord second edge";
           (*it)->secondaryVertex = relation->srcVertex;
           delete relation;
           return 0;
         }
         else if((*it)->tgtVertex == relation->srcVertex)
         {
-          LDEBUG << "ConstituantAndRelationExtractor:: found coord second edge" << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: found coord second edge";
           relation->secondaryVertex = (*it)->srcVertex;
           it_toErase = it;
         }
@@ -420,7 +420,7 @@ Relation* ConstituantAndRelationExtractor::extractEdge(const LinguisticGraphEdge
         }
       }
       m_outRelations.erase(it_toErase);
-      LDEBUG << "ConstituantAndRelationExtractor:: erased coord second edge" << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: erased coord second edge";
     }
   }
 
@@ -449,7 +449,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
   formesIt_end = m_positionsFormsIds.end();
 
   DUMPERLOGINIT;
-  LDEBUG << "ConstituantAndRelationExtractor:: construction des groupes" << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: construction des groupes";
 
   for (; formesIt != formesIt_end; formesIt++)
   {
@@ -461,13 +461,13 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       Forme* forme = m_formesIndex[formeId];
       if(forme == 0)
       {
-        LWARN << "ConstituantAndRelationExtractor:: form not found in index: " << formeId << LENDL;
+        LWARN << "ConstituantAndRelationExtractor:: form not found in index: " << formeId;
         continue;
       }
-      LDEBUG << "ConstituantAndRelationExtractor:: construction des groupes " << forme->forme << "(" << forme->macro << "/" << forme->micro << ")" << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: construction des groupes " << forme->forme << "(" << forme->macro << "/" << forme->micro << ")";
       if (addToGroupIfIsInsideAGroup(forme))
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: already inserted " << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: already inserted ";
         continue;
       }
       // always follow SECOMPOUND as it is a specific entity composition
@@ -478,7 +478,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       // verbe non pointe par une relation SujInv
       if ( (forme->macro == "V") && !(forme->hasInRelation("SujInv") )  && !(forme->hasOutRelation("SUBADJPOST") ) )
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: verbe non pointe par une relation SujInv" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: verbe non pointe par une relation SujInv";
         createGroupe(forme, relationsToFollow, "NV", true);
       }
       else if ( forme->micro == "ADV" )
@@ -499,7 +499,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       else if (forme->macro == "DET"  || forme->macro == "ADJ" )
       {
         relationsToFollow.insert("CodAnaph"); // "le veut" dans "a qui le veut."
-        LDEBUG << "ConstituantAndRelationExtractor:: construction de groupe déterminant" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: construction de groupe déterminant";
         newGrp = createGroupe(forme, relationsToFollow, "NV");
         if (newGrp == 0)
         {
@@ -513,8 +513,8 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
           relationsToFollow.insert("ADVADV");
           relationsToFollow.insert("PrepPronRelCa");
           relationsToFollow.insert("SUBSUBJUX;NPP;NPP");
-//           relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;NC");
-          LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GP group" << LENDL;
+//           relationsToFollow.insert("SUBSUBJUX;U;NC");
+          LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GP group";
           newGrp = createGroupe(forme, relationsToFollow, "GP");
 
           if(newGrp == 0)
@@ -526,7 +526,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
             relationsToFollow2.insert("ADVADV");
             relationsToFollow2.insert("COORD1;CC;ADJ");
             relationsToFollow2.insert("COORD2;CC;ADJ");
-            LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GN group" << LENDL;
+            LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GN group";
             createGroupe(forme, relationsToFollow2, "GN");
           }
 
@@ -540,7 +540,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         newGrp = createGroupe(forme, relationsToFollow, "GP");
         if (newGrp == 0)
         {
-          LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GR group" << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in GR group";
           newGrp = createGroupe(forme, relationsToFollow, "GR");
         }
       }
@@ -599,7 +599,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
         relationsToFollow.insert("COORD1");
         relationsToFollow.insert("COORD2");
         relationsToFollow.insert("SUBSUBJUX;NPP;NPP");
-//         relationsToFollow.insert("SUBSUBJUX;L_NC_INCONNU;L_NC_INCONNU");
+//         relationsToFollow.insert("SUBSUBJUX;U;U");
         newGrp = createGroupe(forme, relationsToFollow, "GP");
 
         if(newGrp == 0)
@@ -667,7 +667,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
 */
       if(newGrp != 0)
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: inserted " << forme->forme << " in " << newGrp->type() << " group" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: inserted " << forme->forme << " in " << newGrp->type() << " group";
       }
     }
   }
@@ -679,7 +679,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
 void ConstituantAndRelationExtractor::constructionDesRelationsEntrantes()
 {
   DUMPERLOGINIT;
-  LDEBUG << "ConstituantAndRelationExtractor:: constructionDesRelationsEntrantes" << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: constructionDesRelationsEntrantes";
   std::map<uint64_t,Forme*>::iterator formesIt, formesIt_end;
   formesIt = m_formesIndex.begin();
   formesIt_end = m_formesIndex.end();
@@ -755,7 +755,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
       relationsToFollow.insert(*fit);
     }
   }
-  LDEBUG << "ConstituantAndRelationExtractor:: collected relations to insert" << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: collected relations to insert";
   Groupe* newGrp = new Groupe();
   newGrp->type(groupType);
   std::vector< uint64_t > formsToLookup;
@@ -764,7 +764,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
   while (formsToLookup.size() > 0)
   {
     Forme* currentForm = m_formesIndex[formsToLookup.back()];
-    LDEBUG << "ConstituantAndRelationExtractor:: current form is " << currentForm->forme << LENDL;
+    LDEBUG << "ConstituantAndRelationExtractor:: current form is " << currentForm->forme;
     formsToLookup.pop_back();
     if (m_inGroupFormsPositions.find(currentForm->poslong.position) != m_inGroupFormsPositions.end())
       continue;
@@ -776,7 +776,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
     for (; inIt != inIt_end; inIt++)
     {
       Relation* rel = *inIt;
-      LDEBUG << "ConstituantAndRelationExtractor:: looking at in rel " << rel->type << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: looking at in rel " << rel->type;
       if(relationsToFollow.find(rel->type) != relationsToFollow.end() &&
           formsAlreadyLookuped.find(m_vertexToFormeIds[rel->srcVertex]) == formsAlreadyLookuped.end() &&
           m_inGroupFormsPositions.find(m_formesIndex[m_vertexToFormeIds[rel->srcVertex]]->poslong.position) == m_inGroupFormsPositions.end()
@@ -804,7 +804,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
         {
           formsToLookup.push_back( m_vertexToFormeIds[rel->srcVertex]);
           formsAlreadyLookuped.insert(m_vertexToFormeIds[rel->srcVertex]);
-          LDEBUG << "ConstituantAndRelationExtractor:: ins src form '" << srcForme->forme << "' in " << newGrp->type() << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: ins src form '" << srcForme->forme << "' in " << newGrp->type();
           newGrp->insert( std::make_pair(srcForme->poslong.position, srcForme->id) );
         }
       }
@@ -815,7 +815,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
     for (; outIt != outIt_end; outIt++)
     {
       Relation& rel = **outIt;
-      LDEBUG << "ConstituantAndRelationExtractor:: looking at out rel " << rel.type << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: looking at out rel " << rel.type;
       if (
           rel.doFollow &&
           (m_vertexToFormeIds[rel.tgtVertex] != 0) &&
@@ -824,7 +824,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
           (formsAlreadyLookuped.find(m_vertexToFormeIds[rel.tgtVertex]) == formsAlreadyLookuped.end() ) &&
           (m_inGroupFormsPositions.find(m_formesIndex[m_vertexToFormeIds[rel.tgtVertex]]->poslong.position) == m_inGroupFormsPositions.end() ) )
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: first condition fullfilled" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: first condition fullfilled";
         const Forme* srcForme = m_formesIndex[m_vertexToFormeIds[rel.srcVertex]];
         const Forme* tgtForme = m_formesIndex[m_vertexToFormeIds[rel.tgtVertex]];
         std::pair< std::string, std::string > pair1 = std::make_pair(srcForme->macro, tgtForme->macro);
@@ -845,10 +845,10 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
               || (followConds[rel.type].find(pair7) != followConds[rel.type].end())
               || (followConds[rel.type].find(pair8) != followConds[rel.type].end()) )
         {
-          LDEBUG << "ConstituantAndRelationExtractor:: second condition fullfilled" << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: second condition fullfilled";
           formsToLookup.push_back( m_vertexToFormeIds[rel.tgtVertex]);
           formsAlreadyLookuped.insert(m_vertexToFormeIds[rel.tgtVertex]);
-          LDEBUG << "ConstituantAndRelationExtractor:: insert tgt form '" << tgtForme->forme << "' in " << newGrp->type() << " group" << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: insert tgt form '" << tgtForme->forme << "' in " << newGrp->type() << " group";
           newGrp->insert( std::make_pair(tgtForme->poslong.position, tgtForme->id) );
         }
       }
@@ -856,7 +856,7 @@ Groupe* ConstituantAndRelationExtractor::createGroupe(
   }
   if (mayBeUnique || !newGrp->empty())
   {
-    LDEBUG << "ConstituantAndRelationExtractor:: insert forme '" << forme->forme << "' in " << newGrp->type() << " group" << LENDL;
+    LDEBUG << "ConstituantAndRelationExtractor:: insert forme '" << forme->forme << "' in " << newGrp->type() << " group";
     newGrp->insert( std::make_pair(forme->poslong.position, forme->id) );
     insertGroup(*newGrp);
     return newGrp;
@@ -906,7 +906,7 @@ bool ConstituantAndRelationExtractor::addToGroupIfIsInsideAGroup(const Forme* fo
             ( (*(m_groupes[pos].begin())).first <= position ) )
     {
       DUMPERLOGINIT;
-      LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in " << m_groupes[pos].type() << " group" << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: insert '" << forme->forme << "' in " << m_groupes[pos].type() << " group";
       m_groupes[pos].insert( std::make_pair(position, forme->id) );
       m_inGroupFormsPositions.insert(position);
       return true;
@@ -922,7 +922,7 @@ bool ConstituantAndRelationExtractor::addToGroupIfIsInsideAGroup(const Forme* fo
 void ConstituantAndRelationExtractor::addLastFormsInGroups()
 {
   DUMPERLOGINIT;
-  LDEBUG << "ConstituantAndRelationExtractor:: add last forms in groups" << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: add last forms in groups";
   std::map<uint64_t, uint64_t>formsInGroups;
   std::map<uint64_t, Groupe>::iterator itGr, itGr_end;
   itGr = m_groupes.begin();
@@ -956,13 +956,13 @@ void ConstituantAndRelationExtractor::addLastFormsInGroups()
 void ConstituantAndRelationExtractor::splitCompoundTenses()
 {
   DUMPERLOGINIT;
-  LDEBUG << "ConstituantAndRelationExtractor:: splitCompoundTenses" << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: splitCompoundTenses";
   std::map<uint64_t, uint64_t>::iterator it, it_end;
   it = m_positionsFormsIds.begin(); it_end = m_positionsFormsIds.end();
   uint64_t compoundSplitted = 0;
   for (; it != it_end; it++)
   {
-    LDEBUG << "ConstituantAndRelationExtractor:: pos/id/annot="<<(*it).first<<"/"<<(*it).second<<"/"<<m_posAnnotMatching[(*it).first] << LENDL;
+    LDEBUG << "ConstituantAndRelationExtractor:: pos/id/annot="<<(*it).first<<"/"<<(*it).second<<"/"<<m_posAnnotMatching[(*it).first];
     // le noeud a la position courante definit un temps compose
     if (m_compoundTenses.find(m_posAnnotMatching[(*it).first]) != m_compoundTenses.end() )
     {
@@ -973,7 +973,7 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
       uint64_t auxid = m_compoundTenses[m_posAnnotMatching[(*it).first]].first;
       uint64_t pastpartid = m_compoundTenses[m_posAnnotMatching[(*it).first]].second;
 
-      LDEBUG << "ConstituantAndRelationExtractor:: cpd tense: "<<cpdtenseid<<"->("<<auxid << "," << pastpartid << ")" << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: cpd tense: "<<cpdtenseid<<"->("<<auxid << "," << pastpartid << ")";
       Forme* cpdtenseForme = m_formesIndex[cpdtenseid];
       Forme* auxForme = m_formesIndex[auxid];
       Forme* pastpartForme = m_formesIndex[pastpartid];
@@ -981,7 +981,7 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
       if(cpdtenseForme != 0 && auxForme != 0 && pastpartForme != 0){
 
         // remplacer la forme a la position courante par celle de l'auxiliaire
-        LDEBUG << "ConstituantAndRelationExtractor:: replacing at " << position <<" by " << auxForme->forme << " (" << auxid << ")" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: replacing at " << position <<" by " << auxForme->forme << " (" << auxid << ")";
         m_positionsFormsIds[position] = auxid;
 
         // pour chaque relation entrante sur temps compose
@@ -993,7 +993,7 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
         for (;cpdTenseInRelsIt != cpdTenseInRelsIt_end; cpdTenseInRelsIt++)
         {
           Relation* cpdTenseInRel = *cpdTenseInRelsIt;
-          LDEBUG << "ConstituantAndRelationExtractor:: compound tense input relation = " << cpdTenseInRel->type << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: compound tense input relation = " << cpdTenseInRel->type;
           if (cpdTenseInRel->type == "SujInv" || cpdTenseInRel->type == "SUJ_V" || cpdTenseInRel->type == "Neg" || cpdTenseInRel->type == "PronSujVerbe")
           {
             LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseInRel->srcVertex << "-> " << cpdTenseInRel->tgtVertex << ") to (" << cpdTenseInRel->srcVertex << "->" << auxForme->forme << ")"<<LENDL;
@@ -1010,7 +1010,7 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
             {
               Forme* srcForme = m_formesIndex[m_vertexToFormeIds[cpdTenseInRel->srcVertex]];
               if(srcForme != 0){
-                LDEBUG << "ConstituantAndRelationExtractor:: specific compound tense case: " << srcForme->forme << LENDL;
+                LDEBUG << "ConstituantAndRelationExtractor:: specific compound tense case: " << srcForme->forme;
                 cpdTenseInRel->doFollow = false;
                 Relation* cplRel = new Relation();
                 cplRel->srcVertex = cpdTenseInRel->srcVertex;
@@ -1033,7 +1033,7 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
         for (;cpdTenseOutRelsIt != cpdTenseOutRelsIt_end; cpdTenseOutRelsIt++)
         {
           Relation* cpdTenseOutRel = *cpdTenseOutRelsIt;
-          LDEBUG << "ConstituantAndRelationExtractor:: compound tense output relation = " << cpdTenseOutRel->type << LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: compound tense output relation = " << cpdTenseOutRel->type;
           LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseOutRel->srcVertex << "-> " << cpdTenseOutRel->tgtVertex << ") to (" << pastpartForme->forme << "->" << cpdTenseOutRel->tgtVertex << ")"<<LENDL;
           cpdTenseOutRel->srcVertex = m_formeIdsToVertex[pastpartForme->id];
           pastpartForme->m_outRelations.push_back(cpdTenseOutRel);
@@ -1044,14 +1044,14 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
       }
       else
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: compound tense not found part" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: compound tense not found part";
       }
     }
   }
-  LDEBUG << "ConstituantAndRelationExtractor:: splitCompoundTenses DONE" << LENDL;
+  LDEBUG << "ConstituantAndRelationExtractor:: splitCompoundTenses DONE";
 
   if(compoundSplitted > 0){
-    LDEBUG << "ConstituantAndRelationExtractor:: trying recursive splitCompoundTenses" << LENDL;
+    LDEBUG << "ConstituantAndRelationExtractor:: trying recursive splitCompoundTenses";
     //splitCompoundTenses();
   }
 
@@ -1080,7 +1080,7 @@ void ConstituantAndRelationExtractor::replaceSEWithCompounds()
     if (m_namedEntitiesVertices.find(position) != m_namedEntitiesVertices.end())
     {
       DUMPERLOGINIT;
-      LDEBUG << "ConstituantAndRelationExtractor:: se at " << position << " for " << forme->forme  << LENDL;
+      LDEBUG << "ConstituantAndRelationExtractor:: se at " << position << " for " << forme->forme ;
       //on récupère l'id du vertex dans l'analysis graph qui correspond �  l'id du posgraph
       uint64_t matchingVertex = m_posAnaMatching[((*It).first)];
       //on stocke dans un vecteur les composants de l'entité nommée
@@ -1097,7 +1097,7 @@ void ConstituantAndRelationExtractor::replaceSEWithCompounds()
       {
         //pour chacune des composantes de l'entité nommée, on en extrait la forme sur laquelle on fait quelques modification
         Forme* tmpForme = m_anaGraphVertices[*vectIt];
-        LDEBUG << "ConstituantAndRelationExtractor:: se compound: " << tmpForme->forme << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: se compound: " << tmpForme->forme;
         //afin qu'il n'y ait pas de conflit dans la numérotation des vertex, l'id de la première composante est égale �  l'id la plus grande de m_formesIndex que l'on incrémente de 1
         tmpForme->id = maxVertex+1;
         maxVertex++;
@@ -1139,7 +1139,7 @@ void ConstituantAndRelationExtractor::replaceSEWithCompounds()
           {
             if ((*relIt)->tgtVertex == position)
             {
-              LDEBUG << "ConstituantAndRelationExtractor:: update relation target " << (*relIt)->tgtVertex << LENDL;
+              LDEBUG << "ConstituantAndRelationExtractor:: update relation target " << (*relIt)->tgtVertex;
               (*relIt)->tgtVertex = tmpForme->id;
             }
           }
@@ -1156,7 +1156,7 @@ void ConstituantAndRelationExtractor::replaceSEWithCompounds()
         }
 
         //on insère la forme créée dans les différents conteneurs
-        LDEBUG << "ConstituantAndRelationExtractor:: adding compound " << tmpForme->forme << ", "  << tmpForme->id << "(" << tmpForme->poslong.position << ")" << LENDL;
+        LDEBUG << "ConstituantAndRelationExtractor:: adding compound " << tmpForme->forme << ", "  << tmpForme->id << "(" << tmpForme->poslong.position << ")";
         std::map< LinguisticAnalysisStructure::Token*, uint64_t >::const_iterator tokenIter;
         m_positionsFormsIds.erase(tmpForme->poslong.position);
         m_positionsFormsIds.insert(std::make_pair(tmpForme->poslong.position, tmpForme->id));
@@ -1177,7 +1177,7 @@ void ConstituantAndRelationExtractor::replaceSEWithCompounds()
   for (;eraseIt!=eraseIt_end;eraseIt++)
   {
     DUMPERLOGINIT;
-    LDEBUG << "ConstituantAndRelationExtractor:: erase compound " << *eraseIt << LENDL;
+    LDEBUG << "ConstituantAndRelationExtractor:: erase compound " << *eraseIt;
     m_formesIndex.erase(*eraseIt);
   }
 }

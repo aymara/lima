@@ -70,18 +70,18 @@ void StopList::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No param 'file' in StopList configuration group ! " << LENDL;
+    LERROR << "No param 'file' in StopList configuration group ! ";
     throw InvalidConfiguration();
   }
 
   std::ifstream stopListFile(stopListFileName.c_str(), std::ifstream::binary);
   if (!stopListFile) {
-    LERROR << "invalid file " << stopListFileName << LENDL;
+    LERROR << "invalid file " << stopListFileName;
     throw InvalidConfiguration();
   }
   
   LimaString wword = Common::Misc::utf8stdstring2limastring(Common::Misc::readLine(stopListFile));
-  LDEBUG << "Loading stop list file: " << stopListFileName << LENDL;
+  LDEBUG << "Loading stop list file: " << stopListFileName;
   while (!wword.isEmpty())
   {
     insert(wword);

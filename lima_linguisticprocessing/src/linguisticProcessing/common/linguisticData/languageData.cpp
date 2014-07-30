@@ -183,7 +183,7 @@ void  LanguageData::initialize(
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageData::initialize " << (int)lang << " " << resourcesPath << LENDL;
+  LINFO << "LanguageData::initialize " << (int)lang << " " << resourcesPath;
   MediaData::initialize(lang, resourcesPath, conf);
   m_d->initPropertyCode(resourcesPath,conf);
   //m_d->initSentenceBreakMicros(conf);
@@ -203,26 +203,26 @@ void LanguageDataPrivate::initPropertyCode(
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system" << LENDL;
+  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system";
   try
   {
     std::string propertyFile=resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile");
-    LDEBUG << "LanguageDataPrivate::initPropertyCode propertyFile is:" << propertyFile << LENDL;
+    LDEBUG << "LanguageDataPrivate::initPropertyCode propertyFile is:" << propertyFile;
     m_propCodeManager.readFromXmlFile(propertyFile);
   }
   catch (std::exception& e)
   {
-    LERROR << "Error while reading PropertyFile file: " << e.what() << LENDL;
+    LERROR << "Error while reading PropertyFile file: " << e.what();
     throw InvalidConfiguration();
   }
-  LDEBUG << "LanguageDataPrivate::initPropertyCode DONE" << LENDL;
+  LDEBUG << "LanguageDataPrivate::initPropertyCode DONE";
 }
 
 /*
 void LanguageDataPrivate::initSentenceBreakMicros(XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "initialize sentence break micros" << LENDL;
+  LINFO << "initialize sentence break micros";
   const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
   try
   {
@@ -232,13 +232,13 @@ void LanguageDataPrivate::initSentenceBreakMicros(XMLConfigurationFileParser& co
          it++)
     {
       LinguisticCode micro=microManager.getPropertyValue(*it);
-      LDEBUG << "insert " << *it << " with code " << micro << LENDL;
+      LDEBUG << "insert " << *it << " with code " << micro;
       m_sentenceBreakMicros.push_back(micro);
     }
   }
   catch (NoSuchList& )
   {
-    LERROR << "No sentence break micros defines for language " << MediaticData::single().media(m_language) << LENDL;
+    LERROR << "No sentence break micros defines for language " << MediaticData::single().media(m_language);
     throw InvalidConfiguration();
   }
 }
@@ -248,7 +248,7 @@ void LanguageDataPrivate::initEmptyMicroCategories(XMLConfigurationFileParser& c
 {
   LDATALOGINIT;
   // initializes the lists of empty micro categories
-  LINFO << "initializes the lists of empty micro categories" << LENDL;
+  LINFO << "initializes the lists of empty micro categories";
   m_emptyMicroCategories.clear();
   std::deque< std::string >& emptyMicroCategoriesList =
     conf.getModuleGroupListValues("LinguisticData","Categories","emptyMicro");
@@ -256,7 +256,7 @@ void LanguageDataPrivate::initEmptyMicroCategories(XMLConfigurationFileParser& c
   for (std::deque< std::string >::iterator it = emptyMicroCategoriesList.begin(); it != emptyMicroCategoriesList.end(); it++)
   {
     LinguisticCode mic=microManager.getPropertyValue(*it);
-    LDEBUG << "add " << mic << " to empty micros" << LENDL;
+    LDEBUG << "add " << mic << " to empty micros";
     m_emptyMicroCategories.insert(mic);
   }
 }
@@ -265,7 +265,7 @@ void LanguageDataPrivate::initConjugatedVerbs(XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
   // initializes the lists of empty micro categories
-  LINFO << "initializes the lists conjugated verbs" << LENDL;
+  LINFO << "initializes the lists conjugated verbs";
   m_conjugatedVerbs.clear();
   std::deque< std::string >& conjugatedVerbsList =
     conf.getModuleGroupListValues("LinguisticData","Categories","conjugatedVerbs");
@@ -273,7 +273,7 @@ void LanguageDataPrivate::initConjugatedVerbs(XMLConfigurationFileParser& conf)
   for (std::deque< std::string >::iterator it = conjugatedVerbsList.begin(); it != conjugatedVerbsList.end(); it++)
   {
     LinguisticCode mic=microManager.getPropertyValue(*it);
-    LDEBUG << "add " << mic << " to conjugated verbs" << LENDL;
+    LDEBUG << "add " << mic << " to conjugated verbs";
     m_conjugatedVerbs.insert(mic);
   }
 }
@@ -282,7 +282,7 @@ void LanguageDataPrivate::initPropositionIntroductors(XMLConfigurationFileParser
 {
   LDATALOGINIT;
   // initializes the lists of empty micro categories
-  LINFO << "initializes the list of proposition introductors" << LENDL;
+  LINFO << "initializes the list of proposition introductors";
   m_propositionIntroductors.clear();
   std::deque< std::string >& propositionIntroductorsList =
     conf.getModuleGroupListValues("LinguisticData","Categories","propositionIntroductors");
@@ -290,7 +290,7 @@ void LanguageDataPrivate::initPropositionIntroductors(XMLConfigurationFileParser
   for (std::deque< std::string >::iterator it = propositionIntroductorsList.begin(); it != propositionIntroductorsList.end(); it++)
   {
     LinguisticCode mic=microManager.getPropertyValue(*it);
-    LDEBUG << "add " << mic << " to proposition introductors" << LENDL;
+    LDEBUG << "add " << mic << " to proposition introductors";
     m_propositionIntroductors.insert(mic);
   }
 }
@@ -300,7 +300,7 @@ void LanguageDataPrivate::initEmptyMacroCategories(XMLConfigurationFileParser& c
   LDATALOGINIT;
 
   // initializes the lists of empty macro categories
-  LINFO << "initializes the lists of empty macro categories:" << LENDL;
+  LINFO << "initializes the lists of empty macro categories:";
   m_emptyMacroCategories.clear();
   std::deque< std::string >& emptyMacroCategoriesList =
     conf.getModuleGroupListValues("LinguisticData","Categories","emptyMacro");
@@ -340,7 +340,7 @@ void LanguageDataPrivate::initHomoSyntagmaticChainsAndRelationsTypes(
   }
   catch (const NoSuchList& )
   {
-    LERROR << "LinguisticData/SyntacticAnalysis/NominalHomoSyntagmaticRelations parameter not found." << LENDL;
+    LERROR << "LinguisticData/SyntacticAnalysis/NominalHomoSyntagmaticRelations parameter not found.";
     throw InvalidConfiguration();
   }
   try
@@ -366,7 +366,7 @@ void LanguageDataPrivate::initHomoSyntagmaticChainsAndRelationsTypes(
   }
   catch (const NoSuchList& )
   {
-    LWARN << "LinguisticData/SyntacticAnalysis/VerbalHomoSyntagmaticRelations parameter not found." << LENDL;
+    LWARN << "LinguisticData/SyntacticAnalysis/VerbalHomoSyntagmaticRelations parameter not found.";
     throw InvalidConfiguration();
   }
 }
@@ -376,7 +376,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   XMLConfigurationFileParser& configParser)
 {
   LDATALOGINIT;
-  LINFO << "initializes the compound tenses definitions" << LENDL;
+  LINFO << "initializes the compound tenses definitions";
   std::string resourcesPath=MediaticData::single().getResourcesPath();
 
   const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
@@ -392,7 +392,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   catch (const NoSuchParam& )
   {
-    LERROR << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << "." << LENDL;
+    LERROR << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
     throw InvalidConfiguration();
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
@@ -405,7 +405,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 
   if (!ifl)
   {
-    LWARN << "Compound tenses definition file not found: " << compoundTensesDefinitionsFile << LENDL;
+    LWARN << "Compound tenses definition file not found: " << compoundTensesDefinitionsFile;
     return;
   }
 
@@ -417,14 +417,14 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   {
     if ( (line != "") && (line[0] != '#') )
     {
-      LDEBUG << "read line : " << line << LENDL;
+      LDEBUG << "read line : " << line;
 
       size_t index = 0;
 
       size_t next = line.find_first_of(";", index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find first delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find first delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       LinguisticCode mode = microManager.getPropertyValue(line.substr(0, next));
@@ -433,7 +433,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
       next=line.find_first_of(";",index);
       if (next == std::string::npos)
       {
-        LERROR << "Cannot find second delimiter in line: " << line << LENDL;
+        LERROR << "Cannot find second delimiter in line: " << line;
         throw InvalidConfiguration();
       }
       LinguisticCode auxTense = tenseManager.getPropertyValue(line.substr(index, next-index));
@@ -471,7 +471,7 @@ bool LanguageData::isTypeARelationForChain(
 void LanguageDataPrivate::initNounPhraseHeadMicroCategories(XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "init noun phrase head micro categories" << LENDL;
+  LINFO << "init noun phrase head micro categories";
   const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
   try
   {
@@ -485,12 +485,12 @@ void LanguageDataPrivate::initNounPhraseHeadMicroCategories(XMLConfigurationFile
   }
   catch (NoSuchList& )
   {
-    LERROR << "No list 'NounPhraseHeadCategs' in 'SyntacticAnalysis' group for language " << (int)m_language << LENDL;
+    LERROR << "No list 'NounPhraseHeadCategs' in 'SyntacticAnalysis' group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   catch (NoSuchGroup& )
   {
-    LERROR << "No group 'SyntacticAnalysis' in common language configuration file for language " << (int)m_language << LENDL;
+    LERROR << "No group 'SyntacticAnalysis' in common language configuration file for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 }
@@ -498,7 +498,7 @@ void LanguageDataPrivate::initNounPhraseHeadMicroCategories(XMLConfigurationFile
 void LanguageDataPrivate::initDefiniteMicroCategories(XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "init definite micro categories" << LENDL;
+  LINFO << "init definite micro categories";
   const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
   try
   {
@@ -512,12 +512,12 @@ void LanguageDataPrivate::initDefiniteMicroCategories(XMLConfigurationFileParser
   }
   catch (NoSuchList& )
   {
-    LERROR << "No list 'DefiniteCategs' in 'SyntacticAnalysis' group for language " << (int)m_language << LENDL;
+    LERROR << "No list 'DefiniteCategs' in 'SyntacticAnalysis' group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   catch (NoSuchGroup& )
   {
-    LERROR << "No group 'SyntacticAnalysis' in common language configuration file for language " << (int)m_language << LENDL;
+    LERROR << "No group 'SyntacticAnalysis' in common language configuration file for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 }
@@ -525,7 +525,7 @@ void LanguageDataPrivate::initDefiniteMicroCategories(XMLConfigurationFileParser
 void LanguageDataPrivate::initSyntacticRelations(XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "init syntacticRelations" << LENDL;
+  LINFO << "init syntacticRelations";
 
   m_syntacticRelations.clear();
 
@@ -548,13 +548,13 @@ void LanguageDataPrivate::initSyntacticRelations(XMLConfigurationFileParser& con
   catch (NoSuchList& )
   {
     LERROR << "No map 'relationList' in common language configuration file for language "
-    << (int)m_language << LENDL;
+    << (int)m_language;
     throw InvalidConfiguration();
   }
   catch (NoSuchGroup& )
   {
     LERROR << "No group 'SyntacticRelations' in common language configuration file for language "
-    << (int)m_language << LENDL;
+    << (int)m_language;
     throw InvalidConfiguration();
   }
 }
@@ -567,7 +567,7 @@ LinguisticCode LanguageData::compoundTense(LinguisticCode mode, LinguisticCode a
   if (defIt == m_d->m_compoundTenseDefiniton.end())
   {
     LDATALOGINIT;
-    LWARN << "ask for unknown compound tense definition: '" << mode << "/" << auxTense << "'" << LENDL;
+    LWARN << "ask for unknown compound tense definition: '" << mode << "/" << auxTense << "'";
     return ID_NONE_1;
   }
 
@@ -582,7 +582,7 @@ LinguisticCode LanguageData::compoundTense(std::string& mode, std::string& auxTe
   if (res == ID_NONE_1)
   {
     LDATALOGINIT;
-    LWARN << "ask for unknown compound tense definition: '" << mode << "/" << auxTense << "'" << LENDL;
+    LWARN << "ask for unknown compound tense definition: '" << mode << "/" << auxTense << "'";
     return ID_NONE_1;
   }
 
@@ -598,7 +598,7 @@ const std::string& LanguageData::getSyntacticRelationName(SyntacticRelationId id
          it_end=m_d->m_syntacticRelations.end(); it!=it_end; it++) {
     if ((*it).second==id) {
       LDATALOGINIT;
-      LDEBUG << "found " << id << " <=> " << (*it).first << LENDL;
+      LDEBUG << "found " << id << " <=> " << (*it).first;
       return (*it).first;
     }
   }
@@ -610,7 +610,7 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
   map<string,SyntacticRelationId>::const_iterator it=m_d->m_syntacticRelations.find(name);
   if (it!=m_d->m_syntacticRelations.end()) {
     LDATALOGINIT;
-    LDEBUG << "found " << name << " <=> " << (*it).second << LENDL;
+    LDEBUG << "found " << name << " <=> " << (*it).second;
     return (*it).second;
   }
   return 0;

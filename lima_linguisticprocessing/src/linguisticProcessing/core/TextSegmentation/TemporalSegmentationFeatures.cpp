@@ -66,7 +66,7 @@ update(const AnalysisContent& analysis) {
   if (m_annotationData==0)
   {
     LOGINIT("LP::Segmentation");
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
   }
 }
 
@@ -198,7 +198,7 @@ m_entityType()
   string::size_type i=complement.find(",");
   if (i==string::npos) {
     LOGINIT("LP::Segmentation");
-    LERROR << "No data name provided for entityInData" << LENDL;
+    LERROR << "No data name provided for entityInData";
     m_entityName=complement;
   }
   else {
@@ -216,12 +216,12 @@ update(const AnalysisContent& analysis) {
   const AnalysisData* resultData=analysis.getData(m_dataName);
   if (resultData == 0) {
     LOGINIT("LP::Segmentation");
-    LERROR << "no data " << m_data << "in AnalysisContent" << LENDL;
+    LERROR << "no data " << m_data << "in AnalysisContent";
   }
   m_data=dynamic_cast<const ApplyRecognizer::RecognizerResultData*>(resultData);
   if (m_data == 0) {
     LOGINIT("LP::Segmentation");
-    LERROR << "data " << m_data << "in AnalysisContent is not a RecognizerResultData" << LENDL;
+    LERROR << "data " << m_data << "in AnalysisContent is not a RecognizerResultData";
   }
   
 }
@@ -300,7 +300,7 @@ m_propertyAccessor(0)
   string::size_type i=complement.find("=");
   if (i==string::npos) {
     LOGINIT("LP::Segmentation");
-    LERROR << SegmentFeatureCheckProperty_ID << ": no property value (format must be PROPERTY=VALUE)" << LENDL;
+    LERROR << SegmentFeatureCheckProperty_ID << ": no property value (format must be PROPERTY=VALUE)";
   }
   else {
     m_propertyName=string(complement,0,i);
@@ -409,7 +409,7 @@ update(const AnalysisContent& analysis)
   const AnalysisData* data=analysis.getData(m_segmentData);
   if (data==0) {
     LOGINIT("LP::Segmentation");
-    LERROR << SegmentFeatureInSegment_ID << ": No data " << m_segmentData << LENDL;
+    LERROR << SegmentFeatureInSegment_ID << ": No data " << m_segmentData;
     m_data=0;
   }
   else {

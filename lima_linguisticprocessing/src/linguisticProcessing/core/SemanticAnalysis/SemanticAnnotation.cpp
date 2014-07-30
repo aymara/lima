@@ -45,7 +45,7 @@ int DumpSemanticAnnotation::dump(std::ostream& os, Common::AnnotationGraphs::Gen
   }
   catch (const boost::bad_any_cast& e)
   {
-    LERROR << "This annotation is not a SemanticAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a SemanticAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

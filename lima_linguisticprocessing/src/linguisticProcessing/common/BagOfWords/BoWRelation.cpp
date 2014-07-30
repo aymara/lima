@@ -64,7 +64,7 @@ BoWRelation::BoWRelation() :
     s_type(0)
 {
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWRelation : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWRelation : " << (*this) << " - " << this;
 }
 
 BoWRelation::BoWRelation(const LimaString& realization,
@@ -74,7 +74,7 @@ BoWRelation::BoWRelation(const LimaString& realization,
 {
   convertSpaces();
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWRelation : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWRelation : " << (*this) << " - " << this;
 }
 
 BoWRelation::BoWRelation(const LimaString& realization,
@@ -85,7 +85,7 @@ BoWRelation::BoWRelation(const LimaString& realization,
 {
   convertSpaces();
 //   BOWLOGINIT;
-//   LDEBUG << "Creating BoWRelation : " << (*this) << " - " << this << LENDL;
+//   LDEBUG << "Creating BoWRelation : " << (*this) << " - " << this;
 }
 
 BoWRelation::BoWRelation(const BoWRelation& rel) :
@@ -94,7 +94,7 @@ BoWRelation::BoWRelation(const BoWRelation& rel) :
     s_type(rel.s_type)
 {
 //   BOWLOGINIT;
-//   LDEBUG << "Copying BoWRelation : " << rel << " - " << &rel << " ; new one is: " << this << LENDL;
+//   LDEBUG << "Copying BoWRelation : " << rel << " - " << &rel << " ; new one is: " << this;
 }
 
 
@@ -114,7 +114,7 @@ LimaString BoWRelation::getString(void) const
   //     std::string dummy;
   //     std::wostringstream wossdummy;
   //     wossdummy << m_realization << m_separator;
-  //     LDEBUG << "getString: " << Lima::Common::Misc::wstring2string(dummy, wossdummy.str()) << m_type << LENDL;
+  //     LDEBUG << "getString: " << Lima::Common::Misc::wstring2string(dummy, wossdummy.str()) << m_type;
 
   if (m_useOnlyRealization)
   {
@@ -203,12 +203,12 @@ void BoWRelation::read(std::istream& file)
   Misc::readUTF8StringField(file,m_realization);
   m_type=Misc::readCodedInt(file);
   s_type=Misc::readCodedInt(file);
-//   LDEBUG << "BoWRelation::read " <<  Misc::limastring2utf8stdstring(m_realization) << " / " << m_type << LENDL;
+//   LDEBUG << "BoWRelation::read " <<  Misc::limastring2utf8stdstring(m_realization) << " / " << m_type;
 }
 
 void BoWRelation::write(std::ostream& file) const
 {
-//   LDEBUG << "BoWRelation::write " <<  Misc::limastring2utf8stdstring(m_realization) << " / " << m_type << LENDL;
+//   LDEBUG << "BoWRelation::write " <<  Misc::limastring2utf8stdstring(m_realization) << " / " << m_type;
   Misc::writeUTF8StringField(file,m_realization);
   Misc::writeCodedInt(file,m_type);
   Misc::writeCodedInt(file,s_type);

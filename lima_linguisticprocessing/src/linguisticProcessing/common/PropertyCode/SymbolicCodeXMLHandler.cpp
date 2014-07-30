@@ -50,9 +50,9 @@ bool SymbolicCodeXMLHandler::endElement(const QString & namespaceURI, const QStr
   if (stringName == "code")
   {
     PROPERTYCODELOGINIT;
-    LDEBUG << "write code " << m_currentCode << LENDL;
+    LDEBUG << "write code " << m_currentCode;
     if (m_outputMap.find(m_currentCode)!=m_outputMap.end()) {
-      LWARN << m_currentCode << " already exists ! overwrite it" << LENDL;
+      LWARN << m_currentCode << " already exists ! overwrite it";
     }
     m_outputMap[m_currentCode]=m_propCodeManager.encode(m_currentPropertyValues);
   }
@@ -69,13 +69,13 @@ bool SymbolicCodeXMLHandler::startElement(const QString & namespaceURI, const QS
   {
     m_currentCode=attributes.value("key").toUtf8().data();
     m_currentPropertyValues.clear();
-    LDEBUG << "read code " << m_currentCode << LENDL;
+    LDEBUG << "read code " << m_currentCode;
   }
   else if (stringName == "field")
   {
     string key=attributes.value("key").toUtf8().data();
     string value=attributes.value("value").toUtf8().data();
-    LDEBUG << "read field key=" << key << " value=" << value << LENDL;
+    LDEBUG << "read field key=" << key << " value=" << value;
     if (value!="")
     {
       m_currentPropertyValues[key]=value;

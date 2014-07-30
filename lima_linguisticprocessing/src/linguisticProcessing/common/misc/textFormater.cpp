@@ -111,7 +111,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         tag << '_';
                         tag << ' ';
                         tagValue << carLu;
-                        LDEBUG << "TEXT-> DEBCOL" << LENDL;
+                        LDEBUG << "TEXT-> DEBCOL";
                         etat = DEBCOL;
                     break;
                     case '>':
@@ -123,14 +123,14 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         output << txt.str();
                         txt.str("");
                         entity << carLu;
-                        LDEBUG << "TEXT -> BEGENTITY;" << LENDL;
+                        LDEBUG << "TEXT -> BEGENTITY;";
                         etat = BEGENTITY;
                     break;
                     case ' ':case '\t':case '\n':
                         output << txt.str();;
                         output << carLu;
                         txt.str("");
-                        LDEBUG << "TEXT-> BLANC" << LENDL;
+                        LDEBUG << "TEXT-> BLANC";
                         etat = BLANC;
                     break;
                     default:
@@ -150,7 +150,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                     case 'o':;case 'p':;case 'q':;case 'r':;case 's':;case 't':;case 'u':;
                     case 'v':;case 'w':;case 'x':;case 'y':;case 'z':
                         entity << carLu;
-                        LDEBUG << "BEGENTITY-> ENTITY" << LENDL;
+                        LDEBUG << "BEGENTITY-> ENTITY";
                         etat = ENTITY;
                     break;
                     case '<':
@@ -159,7 +159,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         entity.str("");
                         tag << '_';
                         tag << ' ';
-                        LDEBUG << "BEGENTITY-> DEBCOL" << LENDL;
+                        LDEBUG << "BEGENTITY-> DEBCOL";
                         etat = DEBCOL;
                     break;
                     case ' ':case '\t':case '\n':
@@ -167,7 +167,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         output.put(' ');
                         output << carLu;
                         entity.str("");
-                        LDEBUG << "BEGENTITY-> BLANC" << LENDL;
+                        LDEBUG << "BEGENTITY-> BLANC";
                         etat = BLANC;
                     break;
                     default:
@@ -175,7 +175,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         output.put(' ');
                         output << carLu;
                         entity.str("");
-                        LDEBUG << "BEGENTITY-> TEXT" << LENDL;
+                        LDEBUG << "BEGENTITY-> TEXT";
                         etat = TEXT;
                     break;
                 }
@@ -202,7 +202,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         entity.str("");
 //                        tag << '_';
                         tag << ' ';
-                        LDEBUG << "ENTITY-> DEBCOL" << LENDL;
+                        LDEBUG << "ENTITY-> DEBCOL";
                         etat = DEBCOL;
                     break;
                     case ' ':case '\t':case '\n':
@@ -213,7 +213,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         }
                         output << carLu;
                         entity.str("");
-                        LDEBUG << "ENTITY-> BLANC" << LENDL;
+                        LDEBUG << "ENTITY-> BLANC";
                         etat = BLANC;
                     break;
                     case ';':
@@ -223,7 +223,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                             output << ' '; 
                         }
                         entity.str("");
-                        LDEBUG << "ENTITY-> TEXT" << LENDL;
+                        LDEBUG << "ENTITY-> TEXT";
                         etat = TEXT;
                     break;
                     default:
@@ -234,7 +234,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         }
                         output << carLu;
                         entity.str("");
-                        LDEBUG << "ENTITY-> TEXT" << LENDL;
+                        LDEBUG << "ENTITY-> TEXT";
                         etat = TEXT;
                     break;
                 }
@@ -252,23 +252,23 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                     case '>':
 //                        tag << '_';
                         tag << ' ';
-                        LDEBUG << "DEBCOL-> FINCOL" << LENDL;
+                        LDEBUG << "DEBCOL-> FINCOL";
                         etat = FINCOL;
                     break;
                     case ' ':case '\t':case '\n':
                         tag << carLu;
                     break;
                     default:
-                        LDEBUG << "Looking at " << carLu << LENDL;
+                        LDEBUG << "Looking at " << carLu;
                         char buf[MB_LEN_MAX];
                         buf[0] = carLu;
                         input.rdbuf()-> sgetn(buf+1, 9);
                         wchar_t mbc;
                         int transRes = mbtowc(&mbc, buf, MB_LEN_MAX);
-                        LDEBUG << "transres value is " << transRes << LENDL;
+                        LDEBUG << "transres value is " << transRes;
                         if (transRes > 1)
                         {
-                            LDEBUG << "Got a multibyte char inside tag: " << mbc << LENDL;
+                            LDEBUG << "Got a multibyte char inside tag: " << mbc;
                             for (int i = 1; i < transRes; i++)
                             {
                                 input.get(carLu);
@@ -286,7 +286,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
 //                        tag << '_';
                         tag << ' ';
                         tagValue << carLu;
-                        LDEBUG << "FINCOL-> DEBCOL" << LENDL;
+                        LDEBUG << "FINCOL-> DEBCOL";
                         etat = DEBCOL;
                     break;
                     case '>':
@@ -299,20 +299,20 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                     case ' ':case '\t':case '\n':
                         putTag(status, output, wide, endSentenceTag, tag, tagValue);
                         output << carLu;
-                        LDEBUG << "FINCOL-> BLANC" << LENDL;
+                        LDEBUG << "FINCOL-> BLANC";
                         etat = BLANC;
                     break;
                     case '&':
                         putTag(status, output, wide, endSentenceTag, tag, tagValue);
                         entity << carLu;
-                        LDEBUG << "FINCOL -> BEGENTITY;" << LENDL;
+                        LDEBUG << "FINCOL -> BEGENTITY;";
                         etat = BEGENTITY;
                     break;
                     default:
                         putTag(status, output, wide, endSentenceTag, tag, tagValue);
                         txt << carLu;
                         tagValue << carLu;
-                        LDEBUG << "FINCOL-> TEXT" << LENDL;
+                        LDEBUG << "FINCOL-> TEXT";
                         etat = TEXT;
                     break;
                 }
@@ -322,21 +322,21 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                 {
                     case '&':
                         entity << carLu;
-                        LDEBUG << "BLANC -> BEGENTITY;" << LENDL;
+                        LDEBUG << "BLANC -> BEGENTITY;";
                         etat = BEGENTITY;
                     break;
                     case '<':
                         nb = 1;
                         nbNewLines = 0;
                         tagValue << carLu;
-                        LDEBUG << "BLANC-> DEBBLANC" << LENDL;
+                        LDEBUG << "BLANC-> DEBBLANC";
                         etat = DEBBLANC;
                     break;
                     case '>':
                         output << '>';
                         status << "Invalid '>' character at " << position << std::endl;
                         retVal = INVALID_CLOSING_TAG_CHAR;
-                        LDEBUG << "BLANC-> TEXT" << LENDL;
+                        LDEBUG << "BLANC-> TEXT";
                         etat = TEXT;
                     break;
                     case ' ':case '\t':case '\n':
@@ -344,7 +344,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                     break;
                     default:
                         txt << carLu;
-                        LDEBUG << "BLANC-> TEXT" << LENDL;
+                        LDEBUG << "BLANC-> TEXT";
                         etat = TEXT;
                     break;
                 }
@@ -360,14 +360,14 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                     break;
                     case '>':
                         nb++;
-                        LDEBUG << "DEBBLANC-> FINBLANC" << LENDL;
+                        LDEBUG << "DEBBLANC-> FINBLANC";
                         etat = FINBLANC;
                     break;
                     case '\n':
                         nbNewLines++;
                     break;
                     default:
-                        LDEBUG << "Looking at " << carLu << LENDL;
+                        LDEBUG << "Looking at " << carLu;
                         char buf[MB_LEN_MAX];
                         buf[0] = carLu;
                         std::streamsize got = input.rdbuf()-> sgetn(buf+1, 9);
@@ -375,13 +375,13 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                             input.rdbuf()-> sungetc();
                         for (uint64_t i = 0; i<MB_LEN_MAX; i++)
                             LDEBUG << buf[i];
-                        LDEBUG << LENDL;
+                        LDEBUG;
                         wchar_t mbc;
                         int transRes = mbtowc(&mbc, buf, MB_LEN_MAX);
-                        LDEBUG << "transres  is " << transRes << LENDL;
+                        LDEBUG << "transres  is " << transRes;
                         if (transRes > 1)
                         {
-                            LDEBUG << "Got a multibyte char inside tag: " << mbc << LENDL;
+                            LDEBUG << "Got a multibyte char inside tag: " << mbc;
                             for (int i = 1; i < transRes; i++)
                             {
                                 input.get(carLu);
@@ -397,7 +397,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                     case '<':
                         nb++;
                         tagValue << carLu;
-                        LDEBUG << "FINBLANC-> DEBBLANC" << LENDL;
+                        LDEBUG << "FINBLANC-> DEBBLANC";
                         etat = DEBBLANC;
                     break;
                     case '>':
@@ -405,13 +405,13 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
                         retVal = DUPLICATED_CLOSING_TAG_CHAR;
                         putWhites(status, output, wide,endSentenceTag, tagValue,
                                 output, carLu, ' ', nb, nbNewLines);
-                        LDEBUG << "FINBLANC-> TEXT" << LENDL;
+                        LDEBUG << "FINBLANC-> TEXT";
                         etat = TEXT;
                     break;
                     case ' ':case '\t':case '\n':
                         putWhites(status, output, wide,endSentenceTag, tagValue,
                                 output, carLu, ' ', nb, nbNewLines);
-                        LDEBUG << "FINBLANC-> BLANC" << LENDL;
+                        LDEBUG << "FINBLANC-> BLANC";
                         etat = BLANC;
                     break;
                     case '&':
@@ -419,7 +419,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
 //                                entity, carLu, '_', nb, nbNewLines);
                         putWhites(status, output, wide,endSentenceTag, tagValue,
                                 entity, carLu, ' ', nb, nbNewLines);
-                        LDEBUG << "FINBLANC -> BEGENTITY;" << LENDL;
+                        LDEBUG << "FINBLANC -> BEGENTITY;";
                         etat = BEGENTITY;
                     break;
                     default:
@@ -427,7 +427,7 @@ int TextFormater::untaggingWithSpaces(std::ostream& status, std::istream& input,
 //                                txt, carLu, '_', nb, nbNewLines);
                         putWhites(status, output, wide,endSentenceTag, tagValue,
                                 txt, carLu, ' ', nb, nbNewLines);
-                        LDEBUG << "FINBLANC-> TEXT" << LENDL;
+                        LDEBUG << "FINBLANC-> TEXT";
                         etat = TEXT;
                     break;
                 }

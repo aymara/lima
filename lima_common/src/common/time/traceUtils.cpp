@@ -120,7 +120,7 @@ void TimeUtils::logAllCumulatedTime(const std::string& mess) {
   LINFO << mess << ": ";
   for( std::map<std::string , std::pair<timeval,uint64_t> >::const_iterator it = m_cumulatedTime.begin() ; 
 	   it != m_cumulatedTime.end() ; it++ ) {
-	LINFO << it->first << ":" << it->second.second << " ms" << LENDL;
+	LINFO << it->first << ":" << it->second.second << " ms" ;
   }
 }
 

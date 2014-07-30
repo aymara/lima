@@ -97,7 +97,7 @@ LimaStatusCode WordSenseXmlLogger::process(
   if (metadata == 0)
   {
     LOGINIT("WordSenseDisambiguator");
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
@@ -114,7 +114,7 @@ LimaStatusCode WordSenseXmlLogger::process(
     if (anagraph==0)
     {
         LOGINIT("WordSenseDisambiguator");
-        LERROR << "no AnalysisGraph ! abort" << LENDL;
+        LERROR << "no AnalysisGraph ! abort";
         return MISSING_DATA;
     }
   

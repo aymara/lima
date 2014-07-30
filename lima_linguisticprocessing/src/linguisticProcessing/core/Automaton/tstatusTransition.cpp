@@ -151,44 +151,44 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
 
 bool TStatusTransition::compareTStatus(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::TStatus& t) const {
     AULOGINIT;
-    LDEBUG << "TStatusTransition::compareTStatus" << LENDL;
-    LDEBUG << "   rule  status: " << m_status.getStatus() << " ; " << Lima::Common::Misc::limastring2utf8stdstring(m_status.defaultKey()) << LENDL;
-    LDEBUG << "   token status: " << t.getStatus() << " ; " << Lima::Common::Misc::limastring2utf8stdstring(t.defaultKey()) << LENDL;
+    LDEBUG << "TStatusTransition::compareTStatus";
+    LDEBUG << "   rule  status: " << m_status.getStatus() << " ; " << m_status.defaultKey();
+    LDEBUG << "   token status: " << t.getStatus() << " ; " << t.defaultKey();
 
-//   if (t == 0) { LDEBUG << "   FALSE" << LENDL; return false; }
+//   if (t == 0) { LDEBUG << "   FALSE"; return false; }
   if (t == TStatus()) {
-    LDEBUG << "   " << (t == m_status) << LENDL;
+    LDEBUG << "   " << (t == m_status);
     return (t == m_status);
   }
   
   if (!m_status.defaultKey().isEmpty()
     && m_status.defaultKey() != Common::Misc::utf8stdstring2limastring("t_fallback") ) {
-    LDEBUG << "   " << ((m_status.defaultKey()==t.defaultKey()) ? "TRUE" : "FALSE") << LENDL;
+    LDEBUG << "   " << ((m_status.defaultKey()==t.defaultKey()) ? "TRUE" : "FALSE");
     return (m_status.defaultKey()==t.defaultKey());
   }
 
   if (m_status.getStatus() != t.getStatus()) {
-    LDEBUG << "   FALSE" << LENDL;
+    LDEBUG << "   FALSE";
     return false;
   }
   switch(m_status.getStatus()) {
   case T_ALPHA : {
     if (m_status.getAlphaCapital() != T_NULL_CAPITAL &&
         m_status.getAlphaCapital() != t.getAlphaCapital() ) {
-      LDEBUG << "   FALSE" << LENDL;
+      LDEBUG << "   FALSE";
       return false;
     }
     if (m_status.getAlphaRoman() != T_NULL_ROMAN &&
         m_status.getAlphaRoman() != m_status.getAlphaRoman() ) {
-      LDEBUG << "   FALSE" << LENDL;
+      LDEBUG << "   FALSE";
       return false;
     }
     if (m_status.isAlphaHyphen() && (! t.isAlphaHyphen())) {
-      LDEBUG << "   FALSE" << LENDL;
+      LDEBUG << "   FALSE";
       return false;
     }
     if (m_status.isAlphaPossessive() && (! t.isAlphaPossessive())) {
-      LDEBUG << "   FALSE" << LENDL;
+      LDEBUG << "   FALSE";
       return false;
     }
     break;
@@ -196,24 +196,24 @@ bool TStatusTransition::compareTStatus(const Lima::LinguisticProcessing::Linguis
   case T_NUMERIC : {
     if (m_status.getNumeric() != T_NULL_NUM &&
         m_status.getNumeric() != t.getNumeric() ) {
-      LDEBUG << "   FALSE" << LENDL;
+      LDEBUG << "   FALSE";
       return false;
     }
     break;
   }
   case T_NULL_CAPITAL: {
     if (m_status.defaultKey() != t.defaultKey()) {
-      LDEBUG << "   FALSE" << LENDL;
+      LDEBUG << "   FALSE";
       return false;
     }
     break;
   }
   default: {
-    LDEBUG << "   TRUE" << LENDL;
+    LDEBUG << "   TRUE";
     return true;
   }
   }
-  LDEBUG << "   TRUE" << LENDL;
+  LDEBUG << "   TRUE";
   return true;
 }
 

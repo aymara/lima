@@ -192,6 +192,7 @@ IndexElement IndexElementIterator::getElement()
                             (*m_d->m_iterator)->getLength());
       }
       case BOW_TERM:
+      case BOW_PREDICATE:
       case BOW_NAMEDENTITY:
         // element itself will be stored in queue as part
         m_d->storePartsInQueue(*m_d->m_iterator,0);
@@ -246,16 +247,16 @@ bool IndexElementIteratorPrivate::addInPartQueue(const uint64_t id,
 {
   if (m_partQueue.size() >= m_maxSizeQueue) {
     BOWLOGINIT;
-    LWARN << "size of queue exceeded" << LENDL; 
+    LWARN << "size of queue exceeded"; 
     return false;
   }
   
   m_partQueue.push_back(IndexElement(id,word,cat,position,length,neType,reType));
 //   BOWLOGINIT;
 //   LDEBUG << "add in part queue " << id << ":" 
-//          << Common::Misc::limastring2utf8stdstring(word)
+//          << word
 //          << ";size of queue=" << m_partQueue.size()
-//          << LENDL;
+//         ;
   return true;
 }
 
@@ -287,7 +288,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const IndexElement& newElement)
 {
   if (m_partQueue.size() >= m_maxSizeQueue) {
     BOWLOGINIT;
-    LWARN << "size of queue exceeded" << LENDL; 
+    LWARN << "size of queue exceeded"; 
     return false;
   }
   
@@ -302,7 +303,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const IndexElement& newElement)
 //     LDEBUG << "add in part queue " << id << ":" 
 //            << oss.str()
 //            << ";size of queue=" << m_partQueue.size()
-//            << LENDL;
+//           ;
 //   }
   return true;
 }
@@ -314,7 +315,7 @@ void IndexElementIteratorPrivate::storePartsInQueue(const BoWToken* token,const 
   if (!addPartElementsInQueue(token,tokenIds,rel)) {
     BOWLOGINIT;
     LWARN << "Token contain too many subparts (some are ignored): " 
-      << Common::Misc::limastring2utf8stdstring(token->getLemma()) << LENDL;
+      << token->getLemma();
   }
 }
 
@@ -323,7 +324,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
                        uint64_t rel) 
 {
 //   BOWLOGINIT;
-//    LDEBUG << "addPartElementsInQueue:" << Common::Misc::limastring2utf8stdstring(token->getLemma()) << ", rel=" << rel << LENDL;
+//    LDEBUG << "addPartElementsInQueue:" << token->getLemma() << ", rel=" << rel;
 
   Common::MediaticData::EntityType neType;
   
@@ -352,9 +353,9 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     neType=static_cast<const BoWNamedEntity*>(token)->getNamedEntityType();
     break;
   case BOW_TERM:
-    break;
+  case BOW_PREDICATE:
   case BOW_NOTYPE:
-    break;
+  default:;
   }
 
   // is a complex token
@@ -363,7 +364,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   
   if (complexToken==0) {
     BOWLOGINIT;
-    LERROR << "failed to convert BoWText element in complex token" << LENDL;
+    LERROR << "failed to convert BoWText element in complex token";
     return false;
   }
 
@@ -441,7 +442,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
 //        oss << (*it).first << "/" << (*it).second << ";";
 //      }
 //      LDEBUG << "addCombinedPartsInQueue: nb parts=" << partIdsRels.size() 
-//             << ", head=" << head << ", current=" << i << ",structure=" << oss.str() << LENDL;
+//             << ", head=" << head << ", current=" << i << ",structure=" << oss.str();
 //    }
   
   if (i>=partIdsRels.size()) {
@@ -465,7 +466,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
     
     uint64_t id=m_idGenerator->getId(structure);
 //    BOWLOGINIT;
-//    LDEBUG << "IndexElementIterator: get id from generator " << id << LENDL;
+//    LDEBUG << "IndexElementIterator: get id from generator " << id;
     compoundElement.setId(id);
     if (!addInPartQueue(compoundElement)) {
       return false;

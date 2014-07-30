@@ -93,7 +93,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0) {
     AULOGINIT;
-    LDEBUG << "no annotation graph available !" << LENDL;
+    LDEBUG << "no annotation graph available !";
     return false;
   }
 

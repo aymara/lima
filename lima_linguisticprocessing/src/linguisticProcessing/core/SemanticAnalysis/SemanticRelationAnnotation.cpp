@@ -42,7 +42,7 @@ int DumpSemanticRelation::dump(std::ostream& os, Common::AnnotationGraphs::Gener
   }
   catch (const boost::bad_any_cast& e)
   {
-    LERROR << "This annotation is not a SemanticRelationAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a SemanticRelationAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

@@ -61,7 +61,7 @@ DictionaryData::~DictionaryData()
 void DictionaryData::loadBinaryFile(const std::string& file)
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "load binary data file : " << file << LENDL;
+  LDEBUG << "load binary data file : " << file;
   uint64_t dataSize = 0;
   if( !QFileInfo(file.c_str()).exists())
 //  if( !boost::filesystem3::exists(file))
@@ -113,7 +113,7 @@ void DictionaryData::loadBinaryFile(const std::string& file)
     }
     p += read;
   }
-  LDEBUG << "read " << nbEntries << " entries" << LENDL;
+  LDEBUG << "read " << nbEntries << " entries";
 
   // parseLingProperties
   uint64_t nbLingProp=readCodedInt(p);
@@ -126,7 +126,7 @@ void DictionaryData::loadBinaryFile(const std::string& file)
     read = readCodedInt(p);
     p += read;
   }
-  LDEBUG << "read " << nbLingProp << " lingPropsSet" << LENDL;
+  LDEBUG << "read " << nbLingProp << " lingPropsSet";
   Q_ASSERT((uint64_t)(p-m_data) == dataSize);
 }
 

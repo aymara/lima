@@ -78,7 +78,7 @@ void SpecificEntitiesRecognizer::init(
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LERROR << "No param 'automaton' in SpecificEntitiesRecognizer group for language "
-           << (int)language << " !" << LENDL;
+           << (int)language << " !";
     throw InvalidConfiguration();
   }
 
@@ -120,7 +120,7 @@ void SpecificEntitiesRecognizer::init(
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LWARN << "No 'graph' parameter in unit configuration '"
-        << unitConfiguration.getName() << "' ; using PosGraph" << LENDL;
+        << unitConfiguration.getName() << "' ; using PosGraph";
     m_graph=string("PosGraph");
   }
 
@@ -131,7 +131,7 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
 {
   TimeUtils::updateCurrentTime();
   SELOGINIT;
-  LINFO << "start process" << LENDL;
+  LINFO << "start process";
 
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
@@ -211,14 +211,14 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
 //         if (specificEntityFound) {
 //           LDEBUG << "found specific entity for vertex "
 //               << currentVertex << "("
-//               << currentToken->stringForm() << ")" << LENDL;
+//               << currentToken->stringForm() << ")";
 /*          updateGraph(anagraph->getGraph(),se,verticesToRemove,
                       addedVertices,annotationData);*/
 //         }
 //         else {
 //           LDEBUG << "no specific entity found for vertex "
 //               << currentVertex << "("
-//               << currentToken->stringForm() << ")" << LENDL;
+//               << currentToken->stringForm() << ")";
 //         }
       }
       std::set<LinguisticGraphVertex>::const_iterator addedIt, addedIt_end;
@@ -252,7 +252,7 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
   catch (std::exception &exc)
   {
     SELOGINIT;
-    LWARN << "Exception in Specific Entities : " << exc.what() << LENDL;
+    LWARN << "Exception in Specific Entities : " << exc.what();
 //     throw;
     return UNKNOWN_ERROR;
   }
@@ -267,12 +267,12 @@ LimaStatusCode SpecificEntitiesRecognizer::
 processOnEachSentence(AnalysisContent& analysis) const
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesRecognizer::processOnEachSentence" << LENDL;
+  LDEBUG << "SpecificEntitiesRecognizer::processOnEachSentence";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (anagraph==0) {
     SELOGINIT;
-    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no graph '" << m_graph << "' available !!" << LENDL;
+    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no graph '" << m_graph << "' available !!";
     return MISSING_DATA;
   }
 
@@ -281,13 +281,13 @@ processOnEachSentence(AnalysisContent& analysis) const
   if (sb==0)
   {
     SELOGINIT;
-    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no sentence bounds defined ! abort" << LENDL;
+    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no sentence bounds defined ! abort";
     return MISSING_DATA;
   }
   if (sb->graphId() != m_graph) {
     SELOGINIT;
-    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: SentenceBounds are computed on graph '" << sb->graphId() << "'" << LENDL;
-    LERROR << "can't compute specificEntities on graph '" << m_graph << "' !" << LENDL;
+    LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: SentenceBounds are computed on graph '" << sb->graphId() << "'";
+    LERROR << "can't compute specificEntities on graph '" << m_graph << "' !";
     return INVALID_CONFIGURATION;
   }
 
@@ -298,7 +298,7 @@ processOnEachSentence(AnalysisContent& analysis) const
   while (boundItr!=sb->end())
   {
     LinguisticGraphVertex endSentence=*boundItr;
-//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << LENDL;
+//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 
     seRecognizerResult.clear();
     m_recognizer->apply(
@@ -325,12 +325,12 @@ LimaStatusCode SpecificEntitiesRecognizer::
 processOnWholeText(AnalysisContent& analysis) const
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesRecognizer::processOnWholeText" << LENDL;
+  LDEBUG << "SpecificEntitiesRecognizer::processOnWholeText";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (anagraph == 0) {
     SELOGINIT;
-    LERROR << "no graph '" << m_graph << "' available !!" << LENDL;
+    LERROR << "no graph '" << m_graph << "' available !!";
     return MISSING_DATA;
   }
 
@@ -354,7 +354,7 @@ processOnWholeText(AnalysisContent& analysis) const
 //   SpecificEntityFound* seFound = static_cast<SpecificEntityFound*>(analysis.getData("SEFound"));
 //   do
 //   {
-//     LDEBUG << "Applying automaton" << LENDL;
+//     LDEBUG << "Applying automaton";
 //     seFound->setFound(false);
 //     m_recognizer->apply(*anagraph,
 //                          anagraph->firstVertex(),
@@ -378,7 +378,7 @@ bool SpecificEntitiesRecognizer::findSEFromRecognizer(
     RecognizerMatch& se) const
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesRecognizer::findSEFromRecognizer " << currentVertex << LENDL;
+  LDEBUG << "SpecificEntitiesRecognizer::findSEFromRecognizer " << currentVertex;
 
   // search in recognizer if vertex matches one trigger
   std::vector<RecognizerMatch> result;

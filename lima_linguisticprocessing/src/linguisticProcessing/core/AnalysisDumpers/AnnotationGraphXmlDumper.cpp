@@ -88,7 +88,7 @@ void AnnotationGraphXmlDumper::init(
   catch (NoSuchParam& )
   {
     LWARN << "dumpFullTokens parameter not found, using default: " 
-        << (m_dumpFullTokens?"true":"false") << LENDL;
+        << (m_dumpFullTokens?"true":"false");
   }*/
   try
   {
@@ -97,7 +97,7 @@ void AnnotationGraphXmlDumper::init(
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "AnnotationGraphXmlDumper::init: Missing parameter handler in AnnotationGraphXmlDumper configuration" << LENDL;
+    LERROR << "AnnotationGraphXmlDumper::init: Missing parameter handler in AnnotationGraphXmlDumper configuration";
     throw InvalidConfiguration();
   }
 }
@@ -109,15 +109,15 @@ LimaStatusCode AnnotationGraphXmlDumper::process(
   DUMPERLOGINIT;
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "AnnotationGraphXmlDumper::process: no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "AnnotationGraphXmlDumper::process: no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
-  LDEBUG << "handler will be: " << m_handler << LENDL;
+  LDEBUG << "handler will be: " << m_handler;
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "AnnotationGraphXmlDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "AnnotationGraphXmlDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
   
@@ -320,14 +320,14 @@ void AnnotationGraphXmlDumper::DumpGraphVisitor::examine_vertex(AnnotationGraphV
 {
   LIMA_UNUSED(g);
   DUMPERLOGINIT;
-  LDEBUG << "DumpGraphVisitor: examine_vertex " << v << LENDL;
+  LDEBUG << "DumpGraphVisitor: examine_vertex " << v;
 }
 
 void AnnotationGraphXmlDumper::DumpGraphVisitor::examine_edge(AnnotationGraphEdge e,
                const AnnotationGraph& g) 
 {
     DUMPERLOGINIT;
-    LDEBUG << "DumpGraphVisitor: discover_edge " << e << LENDL;
+    LDEBUG << "DumpGraphVisitor: discover_edge " << e;
 
     m_dumper.outputEdge(e, g, m_data, m_os);      
 }

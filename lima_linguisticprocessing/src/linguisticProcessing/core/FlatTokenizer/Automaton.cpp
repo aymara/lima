@@ -73,7 +73,7 @@ void Automaton::init(
     
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Creating a Tokenizer Automaton (loads file)" << LENDL;
+  LDEBUG << "Creating a Tokenizer Automaton (loads file)";
   MediaId language=manager->getInitializationParameters().language;
 
   try {
@@ -83,7 +83,7 @@ void Automaton::init(
 
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'automatonFile' in tokenizer group for language " << (int) language << " !" << LENDL;
+    LERROR << "no parameter 'automatonFile' in tokenizer group for language " << (int) language << " !";
     throw InvalidConfiguration();
   }
 }
@@ -98,18 +98,18 @@ const State* Automaton::run(Text& text, const State* state) const
     if (m_startState == 0)
     {
       TOKENIZERLOGINIT;
-      LERROR << "No start state" << LENDL;
+      LERROR << "No start state";
       return 0;
     }
     currentState = m_startState;
   }
   TOKENIZERLOGINIT;
   LDEBUG << "Running Automaton ; currentState is '"
-      << ((currentState==0)?"":Common::Misc::limastring2utf8stdstring(currentState->name())) << "'" << LENDL;
+      << ((currentState==0)?"":Common::Misc::limastring2utf8stdstring(currentState->name())) << "'";
   const State* result =  currentState->run(text);
   if (result == 0 && text.position() < text.size())
   {
-    LWARN << "Current state failed: backtracking to start state" << LENDL;
+    LWARN << "Current state failed: backtracking to start state";
     result = m_startState;
   }
   return result;
@@ -118,7 +118,7 @@ const State* Automaton::run(Text& text, const State* state) const
 void Automaton::loadFromFile(const std::string& fileName)
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Loading tokenizer automaton from " << fileName << LENDL;
+  LDEBUG << "Loading tokenizer automaton from " << fileName;
   SpiritTokenizerLoader parser(*this, fileName);
 }
 

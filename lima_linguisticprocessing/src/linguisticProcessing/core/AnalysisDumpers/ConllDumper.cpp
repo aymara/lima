@@ -170,7 +170,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   DUMPERLOGINIT;
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   // read positions files previously obtained from reference data. it gives the position for each token of the reference data in the obtained text file
@@ -201,7 +201,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));//est de type PosGraph et non pas AnalysisGraph
   if (tokenList==0) {
-    LERROR << "graph " << m_graph << " has not been produced: check pipeline" << LENDL;
+    LERROR << "graph " << m_graph << " has not been produced: check pipeline";
     return MISSING_DATA;
   }
   LinguisticGraph* graph=tokenList->getGraph();
@@ -426,7 +426,7 @@ std::string ConllDumper::outputVertex(std::ostream& out,
         }
         else {
           DUMPERLOGINIT;
-          LERROR << "failed to output specific entity for vertex " << v << LENDL;
+          LERROR << "failed to output specific entity for vertex " << v;
         }
       }
     }
@@ -476,7 +476,7 @@ std::string ConllDumper::outputVertex(std::ostream& out,
           {
             std::ostringstream os4;
             bool wordIsVerb = false;
-            std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("L_VERBE");
+            std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("V");
             if (subStrPos != std::string::npos){
               wordIsVerb = true;
             }
@@ -540,7 +540,7 @@ std::string ConllDumper::outputSpecificEntity(std::ostream& out,
   LIMA_UNUSED(sp);
   LIMA_UNUSED(offset);
   DUMPERLOGINIT;
-  LDEBUG << "ConllDumper::outputSpecificEntity previous=" << previousNE << LENDL;
+  LDEBUG << "ConllDumper::outputSpecificEntity previous=" << previousNE;
 
   std::map< std::string, std::string > entityTypesMapping;
   std::string microCategory = "CAT";

@@ -238,15 +238,15 @@ inline std::set< LinguisticCode > CorefSolver::definiteCategs() const
 }
 inline LinguisticCode CorefSolver::L_PRON() const
 {
-  return (*m_tagLocalDef.find("L_PRON")).second;
+  return (*m_tagLocalDef.find("PRON")).second;
 }
 inline LinguisticCode CorefSolver::L_VERB() const
 {
-  return (*m_tagLocalDef.find("L_VERB")).second;
+  return (*m_tagLocalDef.find("V")).second;
 }
 inline LinguisticCode CorefSolver::L_PREP() const
 {
-  return (*m_tagLocalDef.find("L_PREP")).second;
+  return (*m_tagLocalDef.find("PREP")).second;
 }
 inline std::map<std::string,LinguisticCode> CorefSolver::tagLocalDef() const
 {

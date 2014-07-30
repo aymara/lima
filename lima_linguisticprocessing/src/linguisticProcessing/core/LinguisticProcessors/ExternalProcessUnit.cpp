@@ -90,7 +90,7 @@ void ExternalProcessUnit::init(
 
 {
   LOGINIT("LP:External");
-  LDEBUG << "Initialization" << LENDL;
+  LDEBUG << "Initialization";
 
   MediaId language=manager->getInitializationParameters().media;
   try {
@@ -99,8 +99,8 @@ void ExternalProcessUnit::init(
     m_dumper=manager->getObject(dumperName);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LERROR << "MisCommon::sing 'dumper' parameter in ExternalProcessUnit group for language "
-           << (int)language << " !" << LENDL;
+    LERROR << "Missing 'dumper' parameter in ExternalProcessUnit group for language "
+           << (int)language << " !";
     throw InvalidConfiguration();
   }
 
@@ -114,7 +114,7 @@ void ExternalProcessUnit::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LERROR << "Missing 'loader' parameter in ExternalProcessUnit group for language "
-           << (int)language << " !" << LENDL;
+           << (int)language << " !";
     throw InvalidConfiguration();
   }
 
@@ -144,7 +144,7 @@ void ExternalProcessUnit::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LERROR << "Missing 'command' parameter in ExternalProcessUnit group for language "
-           << (int)language << " !" << LENDL;
+           << (int)language << " !";
     throw InvalidConfiguration();
   }
 }
@@ -153,20 +153,20 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
   LOGINIT("LP:External");
-  LINFO << "ExternalProcessUnit: start" << LENDL;
+  LINFO << "ExternalProcessUnit: start";
 
   LimaStatusCode returnCode(SUCCESS_ID);
 
   // produce temporary file with the given dumper
-  LDEBUG << "ExternalProcessUnit: write tmp file" << LENDL;
+  LDEBUG << "ExternalProcessUnit: write tmp file";
   returnCode=m_dumper->process(analysis);
   if (returnCode!=SUCCESS_ID) {
-    LERROR << "ExternalProcessUnit: failed to dump data to temporary file" << LENDL;
+    LERROR << "ExternalProcessUnit: failed to dump data to temporary file";
     return returnCode;
   }
 
   // apply command line
-  LDEBUG << "ExternalProcessUnit: apply external program" << LENDL;
+  LDEBUG << "ExternalProcessUnit: apply external program";
   QProcess::execute(m_commandLine.c_str());
 
   if (m_loader != 0) {

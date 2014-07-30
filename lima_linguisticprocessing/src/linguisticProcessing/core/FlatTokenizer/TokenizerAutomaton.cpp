@@ -79,7 +79,7 @@ void TokenizerAutomaton::init(
   catch (NoSuchParam& )
   {
     LERROR << "no param 'charChart' in TokenizerAutomaton group configuration (language="
-    << (int) _language << ")" << LENDL;
+    << (int) _language << ")";
     throw InvalidConfiguration();
   }
 
@@ -94,7 +94,7 @@ void TokenizerAutomaton::init(
   catch (NoSuchParam& )
   {
     LERROR << "no param 'automatonFile' in TokenizerAutomaton group configuration (language="
-    << (int) _language << ")" << LENDL;
+    << (int) _language << ")";
     throw InvalidConfiguration();
   }
   // when input XML file is syntactically wrong
@@ -118,13 +118,13 @@ void TokenizerAutomaton::init(
         case XmlSyntaxException::INV_CLASS_EXC : mess << "INV_CLASS_EXC"; break;
         default: mess << "??";
     }
-    LERROR << mess.str() << LENDL;
+    LERROR << mess.str();
     throw InvalidConfiguration();
   }
   catch (std::exception &exc)
   {
     // @todo remove all causes of InfiniteLoopException
-    LERROR << exc.what() << LENDL;
+    LERROR << exc.what();
     throw InvalidConfiguration();
   }
 

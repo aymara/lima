@@ -74,11 +74,11 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
   StringsPoolIndex lemma=(*m_stringsPool)[lemmaString];
   LinguisticCode idiomProperty=recognizedExpression.getLinguisticProperties();
   LOGINIT("LP::MorphologicAnalysis");
-  LDEBUG << "Idiomatic property=" << idiomProperty << LENDL;
+  LDEBUG << "Idiomatic property=" << idiomProperty;
   
   if (recognizedExpression.getHead() == 0) {
 //     APPRLOGINIT;
-//     LDEBUG << "Expression " << lemmaString << " has no head" << LENDL;
+//     LDEBUG << "Expression " << lemmaString << " has no head";
 
     // set TStatus from first token
     Token* firstToken=recognizedExpression.getToken(recognizedExpression.begin());
@@ -126,7 +126,7 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
   // if none found, keep base one
   if (compatibleProperties.empty()) {
     APPRLOGINIT;
-    LWARN << "head of expression " << lemma << " has no compatible properties" << LENDL;
+    LWARN << "head of expression " << lemma << " has no compatible properties";
     compatibleProperties.insert(idiomProperty);
   }
 
@@ -228,7 +228,7 @@ void CreateAlternative::createBeginAlternative(
     bool ok;
     boost::tie(newEdge, ok) = add_edge(previousVertex, alternativeFirstVertex, graph);
     if (!ok) throw LinguisticProcessingException();
-//      LDEBUG << "  added initial edge " << newEdge << LENDL;
+//      LDEBUG << "  added initial edge " << newEdge;
   }
 }
 
@@ -258,7 +258,7 @@ void CreateAlternative::attachEndOfAlternative(
     bool ok;
     boost::tie(newEdge, ok) = add_edge(alternativeLastVertex, nextVertex, graph);
     if (!ok) throw LinguisticProcessingException();
-//      LDEBUG << "  added final edge " << newEdge << LENDL;
+//      LDEBUG << "  added final edge " << newEdge;
   }
 }
 
@@ -276,12 +276,12 @@ m_propertyCodeManager(0)
   
   if (m_propertyCodeManager==0) {
     APPRLOGINIT;
-    LERROR << "cannot acces property code manager for language " << (int) language << LENDL;
+    LERROR << "cannot acces property code manager for language " << (int) language;
     throw LimaException();
   }
   if (m_macroAccessor==0) {
     APPRLOGINIT;
-    LERROR << "cannot initialize MACRO property accessor for language " << (int) language << LENDL;
+    LERROR << "cannot initialize MACRO property accessor for language " << (int) language;
     throw LimaException();
   }
 
@@ -293,7 +293,7 @@ operator()(RecognizerMatch& result,
 {
 
 //   APPRLOGINIT;
-//   LDEBUG << "in CreateAlternative action" << LENDL;
+//   LDEBUG << "in CreateAlternative action";
   // need dictionary
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -307,21 +307,21 @@ operator()(RecognizerMatch& result,
       // ignore current idiomatic expression, continue
       APPRLOGINIT;
       LWARN << "recognized entity ignored: " 
-        << Common::Misc::limastring2utf8stdstring(result.concatString())
-            << ": overlapping with a previous one" << LENDL;
+        << result.concatString()
+            << ": overlapping with a previous one";
       return false;
     }
     
     // create the new token
     pair<Token*,MorphoSyntacticData*> newToken=
       createAlternativeToken(result);
-//     LDEBUG << "create alternative token " << newToken.first->stringForm() << LENDL;
+//     LDEBUG << "create alternative token " << newToken.first->stringForm();
     
     // add the vertex
     LinguisticGraphVertex alternativeVertex = 
       addAlternativeVertex(newToken.first, newToken.second,graph);
 
-//     LDEBUG << "add alternative vertex " << alternativeVertex << LENDL;
+//     LDEBUG << "add alternative vertex " << alternativeVertex;
     
     //create the alternative with this only vertex
     createBeginAlternative(result.front().getVertex(),
@@ -336,15 +336,15 @@ operator()(RecognizerMatch& result,
   }
   else { // several parts
 //     LDEBUG << "non adjacent recognized expression found: "
-//            << result.concatString() << LENDL;
+//            << result.concatString();
         // check if there is an overlap first
     if (recoData->matchOnRemovedVertices(result))
     {
       // ignore current expression, continue
       APPRLOGINIT;
     LWARN << "alternative expression ignored: " 
-        << Common::Misc::limastring2utf8stdstring(result.concatString())
-            << ": overlapping with a previous one" << LENDL;
+        << result.concatString()
+            << ": overlapping with a previous one";
       return false;
     }
 
@@ -359,9 +359,9 @@ operator()(RecognizerMatch& result,
     //create the alternative with this vertex and duplicate of other vertives
     deque<LinguisticGraphVertex> alternative;
     LinguisticGraphVertex headVertex=result.getHead();
-//     LDEBUG << "headVertex = " << headVertex << LENDL;
+//     LDEBUG << "headVertex = " << headVertex;
 /*    if (headVertex!=0) {
-      LDEBUG << "=> " << get(vertex_token,*graph,headVertex)->stringForm() << LENDL;
+      LDEBUG << "=> " << get(vertex_token,*graph,headVertex)->stringForm();
     }*/
     bool foundHead=false;
     for (RecognizerMatch::const_iterator matchItr=result.begin();
@@ -371,7 +371,7 @@ operator()(RecognizerMatch& result,
       if (!matchItr->isKept())
       {
         // duplicate this vertex
-//         LDEBUG << "duplication vertex " << matchItr->getVertex() << LENDL;;
+//         LDEBUG << "duplication vertex " << matchItr->getVertex();;
         Token* token=get(vertex_token,*graph,matchItr->getVertex());
         MorphoSyntacticData* data=new MorphoSyntacticData(*get(vertex_data,*graph,matchItr->getVertex()));
         LinguisticGraphVertex dupVx=add_vertex(*graph);
@@ -381,11 +381,11 @@ operator()(RecognizerMatch& result,
       }
       else
       {
-//         LDEBUG << "kept vertex " << matchItr->getVertex() << LENDL;
+//         LDEBUG << "kept vertex " << matchItr->getVertex();
         if (matchItr->getVertex()==headVertex)
         {
           foundHead=true;
-//           LDEBUG << "add head vertex " << altVertex << LENDL;
+//           LDEBUG << "add head vertex " << altVertex;
           alternative.push_back(altVertex);
         }
       }
@@ -393,12 +393,12 @@ operator()(RecognizerMatch& result,
     if (!foundHead) {
       APPRLOGINIT;
       LWARN << "head token has not been found in non contiguous expression. "
-            << "Alternative token is placed first" << LENDL;
+            << "Alternative token is placed first";
       alternative.push_front(altVertex);
     }
     
     // link alternatives
-//     LDEBUG << "alternative has " << alternative.size() << " vertex" << LENDL;
+//     LDEBUG << "alternative has " << alternative.size() << " vertex";
     createBeginAlternative(result.front().getVertex(),
                            alternative.front(),*graph);
     {
@@ -436,11 +436,11 @@ operator()(RecognizerMatch& result,
            AnalysisContent& analysis) const
 {
 //   APPRLOGINIT;
-//   LDEBUG << "add result in data:" << result << LENDL;
+//   LDEBUG << "add result in data:" << result;
   RecognizerData* recoData=dynamic_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     APPRLOGINIT;
-    LWARN << "StoreInData: cannot find RecognizerData in AnalysisContent" << LENDL;
+    LWARN << "StoreInData: cannot find RecognizerData in AnalysisContent";
     return false;
   }
   recoData->addResult(result);

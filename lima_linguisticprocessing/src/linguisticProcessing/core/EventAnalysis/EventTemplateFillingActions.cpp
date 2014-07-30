@@ -89,7 +89,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
   }
   if (! m_type.isNull()) {
     EventTemplateElement elt(v,&graph,m_type);
-    LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role << LENDL;
+    LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role;
     eventData->addElementInCurrentTemplate(m_role,elt);
   }
   else {
@@ -98,7 +98,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
     if (annotationData==0)
     {
       LOGINIT("LP::EventAnalysis");
-      LERROR << "AddTemplateElement: no annotation graph available !" << LENDL;
+      LERROR << "AddTemplateElement: no annotation graph available !";
       return false;
     }
     // check if vertex corresponds to a specific entity found 
@@ -114,7 +114,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
         pointerValue<SpecificEntityAnnotation>();
 
         EventTemplateElement elt(v,&graph,se->getType());
-        LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role << LENDL;
+        LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role;
         eventData->addElementInCurrentTemplate(m_role,elt);
       }
     }
@@ -128,7 +128,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
                                     AnalysisContent& /*analysis*/) const
 {
   LOGINIT("LP::EventAnalysis");
-  LERROR << "Calling constraint AddTemplateElement with two vertices: not implemented yet" << LENDL;
+  LERROR << "Calling constraint AddTemplateElement with two vertices: not implemented yet";
   return true;
 }
 
@@ -144,11 +144,11 @@ bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "CreateEventTemplate: Missing data EventTemplateData" << LENDL;
+    LERROR << "CreateEventTemplate: Missing data EventTemplateData";
     return false;
   }
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "CreateEventTemplate" << LENDL;
+  LDEBUG << "CreateEventTemplate";
   
   // validate current template by creating a new empty template which will be new current template
   eventData->addTemplate();
@@ -167,11 +167,11 @@ bool ClearEventTemplate::operator()(AnalysisContent& analysis) const
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "CreateEventTemplate: Missing data EventTemplateData" << LENDL;
+    LERROR << "CreateEventTemplate: Missing data EventTemplateData";
     return false;
   }
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "ClearEventTemplate" << LENDL;
+  LDEBUG << "ClearEventTemplate";
   eventData->clearCurrentTemplate();
   return true;
 }

@@ -69,7 +69,7 @@ void SyntagmDefStruct::init(
 
 {
   SALOGINIT;
-  LDEBUG << "Creating a SyntagmDefStruct (loads file)" << LENDL;
+  LDEBUG << "Creating a SyntagmDefStruct (loads file)";
   m_language=manager->getInitializationParameters().language;
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
@@ -83,7 +83,7 @@ void SyntagmDefStruct::init(
   
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'file' in SyntagmDefinitionStructure group for language " << (int) m_language << " !" << LENDL;
+    LERROR << "no parameter 'file' in SyntagmDefinitionStructure group for language " << (int) m_language << " !";
     throw InvalidConfiguration();
   }
 
@@ -101,7 +101,7 @@ void SyntagmDefStruct::deleteMatrices()
 void SyntagmDefStruct::loadFromFile(const std::string& fileName)
 {
   SALOGINIT;
-  LDEBUG << "Loading matrices from " << fileName << LENDL;
+  LDEBUG << "Loading matrices from " << fileName;
   //
   //  Create a SAX parser object. Then, according to what we were told on
   //  the command line, set it to validate or not.
@@ -118,24 +118,20 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  try
+  XMLSyntagmaticMatrixFileHandler handler(*this,m_language);
+  parser.setContentHandler(&handler);
+  parser.setErrorHandler(&handler);
+  QFile file(fileName.c_str());
+  if (!file.open(QFile::ReadOnly))
   {
-    XMLSyntagmaticMatrixFileHandler handler(*this,m_language);
-    parser.setContentHandler(&handler);
-    parser.setErrorHandler(&handler);
-    QFile file(fileName.c_str());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException();
-    if (!parser.parse( QXmlInputSource(&file)))
-    {
-      throw XMLException();
-    }
+    XMLCFGLOGINIT;
+    LERROR << "Error opening " << fileName.c_str();
+    throw XMLException(std::string("SyntagmDefStruct::loadFromFile Unable to open ") + fileName);
   }
-
-  catch (const XMLException& toCatch)
+  if (!parser.parse( QXmlInputSource(&file)))
   {
-    LERROR << "An error occurred  Error: " << toCatch.getMessage() <<  LENDL;
-    throw;
+    LERROR << "Error parsing " << fileName.c_str();
+    throw XMLException(std::string("SyntagmDefStruct::loadFromFile Unable to parse ") + fileName + " : " + parser.errorHandler()->errorString().toUtf8().constData());
   }
 }
 
@@ -179,7 +175,7 @@ void SyntagmDefStruct::display() const
 bool SyntagmDefStruct::canChainBeginBy(const MorphoSyntacticData* filter, ChainsType type) const
 {
 //   SALOGINIT;
-//   LDEBUG << "SyntagmDefStruct::canChainBeginBy(" << filter << "," << type << ")" << LENDL;
+//   LDEBUG << "SyntagmDefStruct::canChainBeginBy(" << filter << "," << type << ")";
   if (type == NOMINAL)
     return canNominalChainBeginBy(filter);
   else if (type == VERBAL)
@@ -239,18 +235,18 @@ bool SyntagmDefStruct::belongsToNominalMatrix(const MorphoSyntacticData* src, co
   {
     if ( (*it).first == src )
     { 
-      LDEBUG << "Found a row for " << src << " : " << ((*it).first) << LENDL;
+      LDEBUG << "Found a row for " << src << " : " << ((*it).first);
       const SyntagmaticMatrixRow& row = (*it).second;
       SyntagmaticMatrixRow::iterator itRow = row.find(dest);
-      LDEBUG << "Searching " << dest << " in " << row << LENDL;
+      LDEBUG << "Searching " << dest << " in " << row;
       if (itRow != row.end()) 
       {
-        LDEBUG << "Cell OK found: " << (*itRow) << LENDL; 
+        LDEBUG << "Cell OK found: " << (*itRow); 
         return true;
       }
     }
   }
-  LDEBUG << "No row found" << LENDL;
+  LDEBUG << "No row found";
   return false;
 }
 */

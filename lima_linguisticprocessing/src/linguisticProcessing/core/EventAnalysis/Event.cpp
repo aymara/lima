@@ -51,7 +51,7 @@ Event::Event():
     std::vector< EventParagraph* >(), m_entities_weight(0), m_main(false)
 {
   EVENTANALYZERLOGINIT;
-  LDEBUG << "Nouvel évènement" << LENDL;
+  LDEBUG << "Nouvel évènement";
 }
 
 Event::~Event()
@@ -104,7 +104,7 @@ void Event::compute_entities_weight(std::map<Common::MediaticData::EntityType,un
     if (has_entity((*iT).first)) m_entities_weight=m_entities_weight+(*iT).second;
   }
   
-  LDEBUG << "computed entities_weight of event = " << m_entities_weight << LENDL;
+  LDEBUG << "computed entities_weight of event = " << m_entities_weight;
 }
 
 bool Event::has_entity(Common::MediaticData::EntityType t) const
@@ -141,7 +141,7 @@ Common::MediaticData::EntityType Event::getEntityType(LinguisticGraphVertex v, C
 void Event::addParagraph(Paragraph *p,bool firstpos,bool split,Common::AnnotationGraphs::AnnotationData* annotationData, std::string graphId,LinguisticGraph* graph)
 {
   EVENTANALYZERLOGINIT;
-  LDEBUG << "Ajout de Paragraph" << LENDL;
+  LDEBUG << "Ajout de Paragraph";
   
   EventParagraph *ep =new EventParagraph(p,split,annotationData,graphId,graph);
   if (this->size()==0) push_back(ep);
@@ -150,7 +150,7 @@ void Event::addParagraph(Paragraph *p,bool firstpos,bool split,Common::Annotatio
     EventParagraph *lastp =this->back();
     if ((lastp->getId()+1) == p->getId() && firstpos && (lastp->is_splitted() == false))
     {
-      LDEBUG << "Les deux paragraphes sont contigus" << LENDL;
+      LDEBUG << "Les deux paragraphes sont contigus";
       // ce sont deux paragraphes contigüs
       // ajouter tous les élément de p dans lastp et changer l'indice de lastp
       lastp->setId(p->getId());
@@ -166,7 +166,7 @@ void Event::addParagraph(Paragraph *p,bool firstpos,bool split,Common::Annotatio
     {
       // ce sont deux paragraphes non contigüs
       this->push_back(ep);
-      LDEBUG << "Les deux paragraphes appartiennent à des sections différentes" << LENDL;
+      LDEBUG << "Les deux paragraphes appartiennent à des sections différentes";
     }
     delete(p);
   }
@@ -188,8 +188,8 @@ void Event::read(std::istream& file) {
   EVENTANALYZERLOGINIT;
   m_main=Common::Misc::readCodedInt(file);
   uint64_t size=Common::Misc::readCodedInt(file);
-  LDEBUG << " Read Main = " << m_main << LENDL;
-  LDEBUG << " Read size of fragments " << size << LENDL;
+  LDEBUG << " Read Main = " << m_main;
+  LDEBUG << " Read size of fragments " << size;
   for (uint64_t i(0); i<size; i++) {
     EventParagraph* p=new EventParagraph();
     p->read(file);
@@ -203,7 +203,7 @@ void Event::write(std::ostream& file) const {
   //EVENTANALYZERLOGINIT;
   Common::Misc::writeCodedInt(file,m_main);
   Common::Misc::writeCodedInt(file,size());
-  LDEBUG << " Write size of fragments " << size() << LENDL; 
+  LDEBUG << " Write size of fragments " << size(); 
   for (std::vector< EventParagraph* >::const_iterator iT=begin(); iT!=end(); iT++) {
      (*iT)->write(file);
    }

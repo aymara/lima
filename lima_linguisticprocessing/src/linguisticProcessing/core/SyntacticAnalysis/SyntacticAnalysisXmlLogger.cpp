@@ -85,7 +85,7 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
@@ -95,7 +95,7 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
   if (!openLogFile(outputStream,metadata->getMetaData("FileName")))
   {
     SALOGINIT;
-    LERROR << "Can't open log file " << LENDL;
+    LERROR << "Can't open log file ";
     return CANNOT_OPEN_FILE_ERROR;
   }*/
 
@@ -104,20 +104,20 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    LERROR << "no SyntacticData ! abort" << LENDL;
+    LERROR << "no SyntacticData ! abort";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LERROR << "no SentenceBounds ! abort" << LENDL;
+    LERROR << "no SentenceBounds ! abort";
     return MISSING_DATA;
   }
 //  LinguisticGraph* graph=anagraph->getGraph();
@@ -306,7 +306,7 @@ void SyntacticAnalysisXmlLogger::DumpGraphVisitor::examine_vertex(LinguisticGrap
                const LinguisticGraph& g)
 {
 //   DUMPERLOGINIT;
-//   LDEBUG << "DumpGraphVisitor: examine_vertex " << v << LENDL;
+//   LDEBUG << "DumpGraphVisitor: examine_vertex " << v;
 
   if (v == m_lastVertex)
   {
@@ -323,7 +323,7 @@ void SyntacticAnalysisXmlLogger::DumpGraphVisitor::examine_vertex(LinguisticGrap
     }
     if (finished)
     {
-//       LDEBUG << "DumpGraphVisitor: finished" << LENDL;
+//       LDEBUG << "DumpGraphVisitor: finished";
       throw EndOfSearch();
     }
   }
@@ -333,7 +333,7 @@ void SyntacticAnalysisXmlLogger::DumpGraphVisitor::examine_edge(LinguisticGraphE
                const LinguisticGraph& g)
 {
 //     DUMPERLOGINIT;
-//     LDEBUG << "DumpGraphVisitor: discover_edge " << e << LENDL;
+//     LDEBUG << "DumpGraphVisitor: discover_edge " << e;
 
     m_dumper.outputEdge(e, g, m_os);
 }

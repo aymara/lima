@@ -73,7 +73,7 @@ void TrigramMatrix::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'trigramFile' in TrigramMatrix group for language " << (int)m_language << LENDL;
+    LERROR << "no param 'trigramFile' in TrigramMatrix group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 }
@@ -81,7 +81,7 @@ void TrigramMatrix::init(
 void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
 {
   PTLOGINIT;
-  LINFO << "Loading trigrams matrix file: " << fileName << LENDL;
+  LINFO << "Loading trigrams matrix file: " << fileName;
 
   std::ifstream ifl;
   // Open the data file TriGramMatrix.dat in read mode
@@ -89,7 +89,7 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
 
   if (!ifl)
   {
-    LERROR << "can't read trigrams from file " << fileName << LENDL;
+    LERROR << "can't read trigrams from file " << fileName;
     throw  InvalidConfiguration();
   }
 
@@ -137,7 +137,7 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
       }
       else throw(std::runtime_error("invalid trigram line: " + linenum));
 
-      //      LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"]" << LENDL;
+      //      LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"]";
       m_trigrams[trigram[0]][trigram[1]][trigram[2]] = proba;
     }
     getline(ifl, lineString);
@@ -186,7 +186,7 @@ void BigramMatrix::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'bigramFile' in BigramMatrix group for language " << (int)m_language << LENDL;
+    LERROR << "no param 'bigramFile' in BigramMatrix group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 }
@@ -202,7 +202,7 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
   if (!ifl)
   {
     // Standard error output
-    LERROR << "can't read bigrams from file " << fileName << LENDL;
+    LERROR << "can't read bigrams from file " << fileName;
     throw  InvalidConfiguration();
   }
 
@@ -248,7 +248,7 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
     }
     else throw(std::runtime_error("invalid bigram line: " + linenum));
 
-    //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]" << LENDL;
+    //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]";
     m_bigrams[bigram[0]][bigram[1]] = proba;
 
     getline(ifl, lineString);

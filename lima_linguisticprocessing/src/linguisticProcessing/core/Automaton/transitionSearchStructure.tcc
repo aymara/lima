@@ -123,7 +123,7 @@ init(const std::vector<TargetType>& l,
      const Common::PropertyCode::PropertyAccessor* macroAccessor,
      const Common::PropertyCode::PropertyAccessor* microAccessor) {
 //   AULOGINIT;
-//   LDEBUG << "TransitionSearchStructure: init" << LENDL;
+//   LDEBUG << "TransitionSearchStructure: init";
   typename std::vector<TargetType>::const_iterator
     it=l.begin(),
     it_end=l.end();
@@ -147,28 +147,28 @@ init(const std::vector<TargetType>& l,
     case T_WORD: {
       WordTransition* t=static_cast<WordTransition*>(transition);
 //       LDEBUG << "TransitionSearchStructure: insert WordTransition " 
-//              << t->printValue() << LENDL;
+//              << t->printValue();
       m_wordMap.insert(std::make_pair(t->word(),newTarget));
       break;
     }
     case T_POS: {
       PosTransition* t=static_cast<PosTransition*>(transition);
 //       LDEBUG << "TransitionSearchStructure: insert PosTransition " 
-//              << t->printValue() << LENDL;
+//              << t->printValue();
       m_posMap.insert(std::make_pair(t->pos(),newTarget));
       break;
     }
     case T_LEMMA: {
       LemmaTransition* t=static_cast<LemmaTransition*>(transition);
 //       LDEBUG << "TransitionSearchStructure: insert LemmaTransition " 
-//              << t->printValue() << LENDL;
+//              << t->printValue();
       m_lemmaMap.insert(std::make_pair(std::make_pair(t->lemma(),t->partOfSpeech()),newTarget));
       break;
     }
     case T_TSTATUS: {
       TStatusTransition* t=static_cast<TStatusTransition*>(transition);
 //       LDEBUG << "TransitionSearchStructure: insert TstatusTransition " 
-//              << t->printValue() << LENDL;
+//              << t->printValue();
       m_tstatusMap.insert(std::make_pair(t->status(),newTarget));
       break;
     }
@@ -179,19 +179,19 @@ init(const std::vector<TargetType>& l,
     case T_ENTITY:
     case T_DEACCENTUATED: {
 //       LDEBUG << "TransitionSearchStructure: insert other Transition " 
-//              << transition->printValue() << LENDL;
+//              << transition->printValue();
       m_otherTransitions.push_back(std::make_pair(transition->clone(),newTarget));
       break;
     }
     default: {
       AULOGINIT;
       LERROR << "transition type " << transition->type() 
-             << " not handled in transitionSearchStructure" << LENDL;
+             << " not handled in transitionSearchStructure";
     }
     }
   }
 
-//   LDEBUG << m_posMap.size() << " pos stored in posMap" << LENDL;
+//   LDEBUG << m_posMap.size() << " pos stored in posMap";
   
   // initialization of helper members (to avoid doing it for each comparison)
   m_macroAccessor=macroAccessor;
@@ -212,7 +212,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 {
 
    AULOGINIT;
-   LDEBUG << "findMatchingTransitions from vertex " << vertex << LENDL;
+   LDEBUG << "findMatchingTransitions from vertex " << vertex;
   matchingTransitions.clear();
 
   if (! m_wordMap.empty()) {
@@ -290,7 +290,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 /*    if (tstatus==0) {
       AULOGINIT;
       LWARN << "no tstatus found for fulltoken " 
-        << Common::Misc::limastring2utf8stdstring(token->stringForm()) << LENDL;
+        << token->stringForm();
     }
     else {*/
       std::pair<typename TstatusMap::const_iterator,typename TstatusMap::const_iterator>

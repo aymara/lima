@@ -96,7 +96,7 @@ void DynamicSvmToolPosTagger::init(
   Lima::TimeUtilsController timer("DynamicSvmToolPosTagger init");
 
   PTLOGINIT;
-  LDEBUG << "init!" << LENDL;
+  LDEBUG << "init!";
 
   m_language=manager->getInitializationParameters().media;
   const Common::MediaticData::LanguageData& ldata = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language));
@@ -113,7 +113,7 @@ void DynamicSvmToolPosTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No default microtageory for DynamicSvmToolPosTagger! using PONCTU_FORTE." << LENDL;
+    LWARN << "No default microtageory for DynamicSvmToolPosTagger! using PONCTU_FORTE.";
     defaultName = "PONCTU_FORTE";
   }
   m_defaultCateg = m_MicroManager->getPropertyValue(defaultName);
@@ -132,7 +132,7 @@ void DynamicSvmToolPosTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No stop categories defined! using the default category" << LENDL;
+    LWARN << "No stop categories defined! using the default category";
     m_stopCategories.push_back(m_defaultCateg);
   }
 
@@ -141,7 +141,7 @@ void DynamicSvmToolPosTagger::init(
   try {
     model = unitConfiguration.getParamsValueAtKey("model");
   } catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LERROR << "No SVMTool model defined in the configuration file!" << LENDL;
+    LERROR << "No SVMTool model defined in the configuration file!";
     throw InvalidConfiguration();
   }
 
@@ -209,7 +209,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
   while (!tokenQueue.empty()) {
     LinguisticGraphVertex vertex = tokenQueue.front();
     tokenQueue.pop();
-    LDEBUG << "\n" << vertex << " -> " << getWord(vertex, srcGraph) << LENDL;
+    LDEBUG << "\n" << vertex << " -> " << getWord(vertex, srcGraph);
 
 
     uint64_t logMaxWeight = -LDBL_MAX;
@@ -226,7 +226,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
         /* Call SVMTool */
         boost::tie(pos, w) = SVMTool(srcGraph, vertex, prevVertex, maxAncestor);
         logCurWeight = log(w);
-        LDEBUG << "weight = " <<  (float)logCurWeight << " -> " << pos << "(" << (float)w << ")" << LENDL;
+        LDEBUG << "weight = " <<  (float)logCurWeight << " -> " << pos << "(" << (float)w << ")";
       }
 
 
@@ -247,11 +247,11 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
         maxAncestor[vertex] = currentPath;
         logMaxWeight = logCurWeight + logPrevPrice;
         maxLength = prevLength;
-        LDEBUG << "  -> " << (float)logMaxWeight << " (" << maxLength << ")" << LENDL;
+        LDEBUG << "  -> " << (float)logMaxWeight << " (" << maxLength << ")";
       } 
     }
 
-    LDEBUG << getWord(vertex, srcGraph) << " -> " << maxAncestor[vertex].pos << LENDL;
+    LDEBUG << getWord(vertex, srcGraph) << " -> " << maxAncestor[vertex].pos;
 
 
     /* we're only adding the vertices we never added before */
@@ -292,7 +292,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     boost::tie(vertex, code) = chosenPath.top(); chosenPath.pop();
 
     LinguisticGraphVertex newVertex = boost::add_vertex(*resultGraph);
-    LDEBUG << "create vertex " << newVertex << LENDL;
+    LDEBUG << "create vertex " << newVertex;
     annotationData->addMatching("PosGraph", newVertex, "annot", vertex);
     annotationData->addMatching("AnalysisGraph", vertex, "PosGraph", newVertex);
     AnnotationGraphVertex annotVertex = annotationData->createAnnotationVertex();
@@ -308,10 +308,10 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
       std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
       if (posData->empty() || morphoData->empty()) {
-        LWARN << "No matching category found for tagger result " << getWord(vertex, srcGraph) << " " << m_MicroManager->getPropertySymbolicValue(code) << LENDL;
+        LWARN << "No matching category found for tagger result " << getWord(vertex, srcGraph) << " " << m_MicroManager->getPropertySymbolicValue(code);
         if (!morphoData->empty())
         {
-          LWARN << "Taking any one" << LENDL;
+          LWARN << "Taking any one";
           posData->push_back(morphoData->front());
         }
       }
@@ -322,7 +322,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     boost::add_edge(previousPosVertex, newVertex, *resultGraph);
 
 
-    LDEBUG << getWord(vertex, srcGraph) << " -> " << m_MicroManager->getPropertySymbolicValue(code) << LENDL;
+    LDEBUG << getWord(vertex, srcGraph) << " -> " << m_MicroManager->getPropertySymbolicValue(code);
     previousPosVertex = newVertex;
   }
 
@@ -346,7 +346,7 @@ boost::tuple<std::string, uint64_t> DynamicSvmToolPosTagger::SVMTool(
       std::vector<std::string> microsStr = getMicros(vertex, srcGraph);
 
       if (microsStr.empty()) {
-        LERROR << getWord(vertex, srcGraph) << " has no attached microcategories" << LENDL;
+        LERROR << getWord(vertex, srcGraph) << " has no attached microcategories";
         return boost::make_tuple("", LDBL_MIN);
       }
 
@@ -361,7 +361,7 @@ boost::tuple<std::string, uint64_t> DynamicSvmToolPosTagger::SVMTool(
       node_context[2]->weight += 10.0;
       node_context[2]->weight /= 20.0;
 
-      LDEBUG << "§" << node_context[2]->pos << "|" << (float)(node_context[2]->weight) << "§" << LENDL;
+      LDEBUG << "§" << node_context[2]->pos << "|" << (float)(node_context[2]->weight) << "§";
 
       return boost::make_tuple(node_context[2]->pos, node_context[2]->weight);
 

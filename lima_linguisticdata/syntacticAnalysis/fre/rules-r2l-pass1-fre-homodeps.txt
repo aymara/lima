@@ -281,6 +281,26 @@ $NP-NPP:$DET?:$NC-NC:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
+#----------------------------------------------------------------------
+# Relation entre "ne" et "pas" quand accoles et suivis d'un infinitif
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@NegPrem::(@Adverbe){0-3} @NegSecond @VerbeInf:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"NePas")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre verbe et "pas" cas general
+# Specifique pour Easy
+#----------------------------------------------------------------------
+@NegSecond:@Verbe (@Adverbe){0-3} (@Prep @Substantif)?::SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"NePas2")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
 
 #----------------------------------------------------------------------
 # Relation entre adverbe et adverbe: AdvAdv

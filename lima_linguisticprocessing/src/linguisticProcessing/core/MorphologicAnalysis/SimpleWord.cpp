@@ -89,7 +89,7 @@ void SimpleWord::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'dictionary' in SimpleWord group for language " << (int) language << LENDL;
+    LERROR << "no param 'dictionary' in SimpleWord group for language " << (int) language;
     throw InvalidConfiguration();
   }
 
@@ -104,8 +104,8 @@ void SimpleWord::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "no param 'confidentMode' in SimpleWord group for language " << (int) language << LENDL;
-    LWARN << "use default value : 'true'" << LENDL;
+    LWARN << "no param 'confidentMode' in SimpleWord group for language " << (int) language;
+    LWARN << "use default value : 'true'";
     m_confidentMode=true;
   }
 
@@ -119,7 +119,7 @@ void SimpleWord::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'charChart' in SimpleWord group for language " << (int) language << LENDL;
+    LERROR << "no param 'charChart' in SimpleWord group for language " << (int) language;
     throw InvalidConfiguration();
   }
 
@@ -132,8 +132,8 @@ void SimpleWord::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "no param 'parseConcatenated' in SimpleWord group for language " << (int) language << LENDL;
-    LWARN << "use default value : 'true'" << LENDL;
+    LWARN << "no param 'parseConcatenated' in SimpleWord group for language " << (int) language;
+    LWARN << "use default value : 'true'";
     m_confidentMode=true;
   }
 
@@ -145,7 +145,7 @@ LimaStatusCode SimpleWord::process(
 {
   Lima::TimeUtilsController timer("SimpleWord");
   MORPHOLOGINIT;
-  LINFO << "starting process SimpleWord" << LENDL;
+  LINFO << "starting process SimpleWord";
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
@@ -229,7 +229,7 @@ LimaStatusCode SimpleWord::process(
     static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
   }
   
-  LINFO << "ending process SimpleWord" << LENDL;
+  LINFO << "ending process SimpleWord";
   return SUCCESS_ID;
 }
 

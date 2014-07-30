@@ -92,7 +92,7 @@ EventParagraph* EventData::locate( Event* event, const Entity *entity ) const {
   for( std::vector< EventParagraph* >::iterator pars = event->begin() ;
     pars != event->end() ; pars++ ) {
     LDEBUG << "EventData::convertToEvents: try paragraph ( "
-           << (*pars)->getPosition() << ", " << (*pars)->getEnd() << " )..." << LENDL;
+           << (*pars)->getPosition() << ", " << (*pars)->getEnd() << " )...";
     if( (entity->getPosition() >= (*pars)->getPosition()) &&
         ((entity->getPosition()+entity->getLength()-1) <= (*pars)->getEnd() ) ) {
       return (*pars);
@@ -121,14 +121,14 @@ convertToEvents(const SegmentationData* segmData) const
   std::vector<Lima::LinguisticProcessing::Segment> const &segments = segmData->getSegments();
 //   const Segment *mainSegment = 0;
   // find paragraph of main event
-  LDEBUG << "EventData::convertToEvents: looking for main segment..." << LENDL;
+  LDEBUG << "EventData::convertToEvents: looking for main segment...";
   for( std::vector<Lima::LinguisticProcessing::Segment>::const_iterator sIter = segments.begin() ;
     sIter != segments.end() ; sIter++ ) {
-    LDEBUG << "EventData::convertToEvents: type of segment is " <<  sIter->getType() << LENDL;
+    LDEBUG << "EventData::convertToEvents: type of segment is " <<  sIter->getType();
     if( !sIter->getType().compare("MAIN_EVENT") ) {
 //       mainSegment = &(*sIter);
       LDEBUG << "EventData::convertToEvents: location is ( "
-             <<  sIter->getPosBegin() << ", " << sIter->getPosEnd() << " )" << LENDL;
+             <<  sIter->getPosBegin() << ", " << sIter->getPosEnd() << " )";
       EventParagraph* eventPar=new EventParagraph();
       eventPar->setPosition(sIter->getPosBegin());
       eventPar->setLength(sIter->getLength());
@@ -143,7 +143,7 @@ convertToEvents(const SegmentationData* segmData) const
     it=entities.begin(),it_end=entities.end();it!=it_end;it++) {
     string entityName = Lima::Common::Misc::limastring2utf8stdstring(
              MediaticData::MediaticData::single().getEntityName((*it).first));
-    LDEBUG << "EventData::convertToEvents: process entity of type " <<  entityName << LENDL;
+    LDEBUG << "EventData::convertToEvents: process entity of type " <<  entityName;
     for(std::vector<Entity>::const_iterator e=(*it).second.begin(),e_end=(*it).second.end();e!=e_end;e++)
     {
       // int pos = e->getPosition();
@@ -155,23 +155,23 @@ convertToEvents(const SegmentationData* segmData) const
       if( eventPar == 0 ) {
         LWARN << "EventData::convertToEvents: cannot find paragraph where to place event "
              << entityName << " ( " <<  e->getPosition() << ", "
-                                    << (e->getPosition()+e->getLength()-1) << " )" << LENDL;
+                                    << (e->getPosition()+e->getLength()-1) << " )";
       }
       else if( !entityName.compare( "Seisme.SEISMIC_EVENT" ) )
       {
         LDEBUG << "EventData::convertToEvents: addEventEntity( "
-             << entityName << ", " <<  e->getOutputUTF8String() << " )" << LENDL;
+             << entityName << ", " <<  e->getOutputUTF8String() << " )";
         eventPar->addEventEntity( (*it).first, entity );
       }
       else
       {
         LDEBUG << "EventData::convertToEvents: addEntity( "
-             << entityName << ", " <<  e->getOutputUTF8String() << " )" << LENDL;
+             << entityName << ", " <<  e->getOutputUTF8String() << " )";
         eventPar->addEntity( (*it).first, entity );
       }
     }
   }
-  LDEBUG << "EventData::convertToEvents: end..." << LENDL;
+  LDEBUG << "EventData::convertToEvents: end...";
   
   return events;
 }

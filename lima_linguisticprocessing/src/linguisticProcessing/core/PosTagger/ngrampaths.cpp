@@ -45,7 +45,7 @@ void buildThreeVerticesPaths(PhoenixGraphVertex& v, const PhoenixLingGraph& g,
 {
     PTLOGINIT;
 
-    LDEBUG << LENDL << "====> Call of buildThreeVerticesPaths(" << v << "):" << LENDL;
+    LDEBUG << "====> Call of buildThreeVerticesPaths(" << v << "):";
 
     // Pile contenant les noeuds adjacents au noeud v
     std::stack<PhoenixGraphVertex> verticesStack;
@@ -113,7 +113,7 @@ void buildParticularCaseThreeVerticesPaths(PhoenixGraphVertex& v, const PhoenixL
 {
     PTLOGINIT;
 
-    LDEBUG << LENDL << "====> Call of buildParticularCaseThreeVerticesPaths(" << v << "):" << LENDL;
+    LDEBUG << "====> Call of buildParticularCaseThreeVerticesPaths(" << v << "):";
 
     // Pile contenant les noeuds adjacents au noeud v
     std::stack<PhoenixGraphVertex> verticesStack;
@@ -181,7 +181,7 @@ void buildTwoVerticesPaths(PhoenixGraphVertex& v,
 {
     PTLOGINIT;
 
-    LDEBUG << LENDL << "====> Call of buildTwoVerticesPaths(" << v << "):" << LENDL;
+    LDEBUG << "====> Call of buildTwoVerticesPaths(" << v << "):";
 
     // Objet temporaire du type TriGramPaths
     BiGramPaths    tempBiGramPaths;

@@ -82,7 +82,7 @@ public:
     void addEntity(const Common::MediaticData::EntityType& type, Entity* entity);
     void addEventEntity(const Common::MediaticData::EntityType& type, Entity* entity);
     
-    ~EventParagraph();
+    virtual ~EventParagraph();
     
      //@{ binary input/output
     virtual void read(std::istream& file);

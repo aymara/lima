@@ -58,21 +58,21 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 
-@Substantif::(@Substantif|@AdjPren){1-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::(@Substantif|@Adjectif){1-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Substantif::(@Substantif|@AdjPren){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::(@Substantif|@Adjectif){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Ing::(@Substantif|@AdjPren){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Ing::(@Substantif|@Adjectif){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
@@ -97,7 +97,7 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 # Deux noms juxtaposes. En dernier pour essayer de creer les autre relations
 # avant et donc generer moins de bruit
 #----------------------------------------------------------------------
-#-@SubsNonNum::(@Adjectif){0-n} @SubsNonNum:SYNTACTIC_RELATION:
+#-@Substantif::(@Adjectif){0-n} @Substantif:SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,right.2,"ANY")
 #-+CreateRelationBetween(trigger.1,right.2,"COMPDUNOM")
 
@@ -106,11 +106,11 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 # Relation entre deux substantifs juxtaposés : SubSubJux
 # A revoir et completer  (voir l2r 24/1/05 GG)
 #----------------------------------------------------------------------
-#-@NomPropre::@SubsNonNum:SYNTACTIC_RELATION:
+#-@NomPropre::@Substantif:SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,right.1,"ANY")
 #-+CreateRelationBetween(trigger.1,right.1)
 
-#-@NomPropre:@SubsNonNum::SYNTACTIC_RELATION:
+#-@NomPropre:@Substantif::SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,left.1,"ANY")
 #-+CreateRelationBetween(trigger.1,left.1)
 
