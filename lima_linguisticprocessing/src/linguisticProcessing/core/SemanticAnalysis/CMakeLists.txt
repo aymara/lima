@@ -21,7 +21,7 @@ add_definitions(-DLIMA_SEMANTICANALYSIS_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-semanticanalysis_LIB_SRCS
-   ConstraintFunction.cpp SemanticRelationAnnotation.cpp SemanticRelationData.cpp ExampleLoader.cpp SemanticRoleLabelingLoader.cpp
+   ConstraintFunction.cpp SemanticRelationAnnotation.cpp SemanticRelationData.cpp ExampleLoader.cpp SemanticRoleLabelingLoader.cpp LimaConllTokenIdMapping.cpp
 )
 
 add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})

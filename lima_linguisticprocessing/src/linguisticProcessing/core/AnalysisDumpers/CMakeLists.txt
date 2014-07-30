@@ -57,6 +57,7 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-linguisticanalysisstructure
   lima-lp-lineartextrepresentation
   lima-lp-textsegmentation
+  lima-lp-semanticanalysis
 )
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

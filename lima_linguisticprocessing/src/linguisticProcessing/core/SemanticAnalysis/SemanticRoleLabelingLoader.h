@@ -35,9 +35,13 @@
 #include "linguisticProcessing/core/LinguisticProcessors/AnalysisLoader.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
+#include "LimaConllTokenIdMapping.h"
+#include "QStringList"
 #include <QFile>
 #include <iostream>
 #include <fstream>
+#include <map>
+
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -66,25 +70,22 @@ class SemanticRoleLabelingLoader : public AnalysisLoader
   class ConllHandler
   {
   public:
-    QMap<uint64_t,LinguisticCode> m_tagIndex;
+    std::map<LinguisticGraphVertex, std::map<LinguisticGraphVertex, std::string>> m_semanticRoleIndex;
 
     ConllHandler(MediaId language, AnalysisContent& analysis, LinguisticAnalysisStructure::AnalysisGraph* graph);
     virtual ~ConllHandler();
 
 
-    bool extractSemanticRole(const QString & expectedRole);// repeated on each line beginning
-
+    bool extractSemanticRole(int sentenceNb, LimaConllTokenIdMapping* limaConllMapping, const QString & line);// repeated on each line beginning
+    bool newSentence(const QString & line);
+    QStringList splitConllColumn(const QString & line);
 
 
   private:
     MediaId m_language;
     AnalysisContent& m_analysis;
     LinguisticAnalysisStructure::AnalysisGraph* m_graph;
-    uint64_t m_position;
-    uint64_t m_length;
-    std::string m_type;
-    std::string m_string;
-    std::string m_currentElement;
+
 
   };
 
