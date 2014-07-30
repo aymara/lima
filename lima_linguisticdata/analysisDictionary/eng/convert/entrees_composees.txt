@@ -2,12 +2,12 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PPIS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'m">
       <i l="be">
-        <p v="VB0"/>
+        <p v="VBP"/>
       </i>
     </c>
   </concat>
@@ -16,15 +16,15 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PPIS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="have">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -33,12 +33,12 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PPY"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBR"/>
+        <p v="VBP"/>
       </i>
     </c>
   </concat>
@@ -47,7 +47,7 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PPHS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'s">
@@ -55,7 +55,7 @@
         <p v="VBZ"/>
       </i>
       <i l="have">
-        <p v="VHZ"/>
+        <p v="VBZ"/>
       </i>
     </c>
   </concat>
@@ -64,7 +64,7 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PPHS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'s">
@@ -72,7 +72,7 @@
         <p v="VBZ"/>
       </i>
       <i l="have">
-        <p v="VHZ"/>
+        <p v="VBZ"/>
       </i>
     </c>
   </concat>
@@ -81,7 +81,7 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PPH1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'s">
@@ -89,7 +89,7 @@
         <p v="VBZ"/>
       </i>
       <i l="have">
-        <p v="VHZ"/>
+        <p v="VBZ"/>
       </i>
     </c>
   </concat>
@@ -98,12 +98,12 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PPIS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBR"/>
+        <p v="VBP"/>
       </i>
     </c>
   </concat>
@@ -117,7 +117,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -131,7 +131,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -145,7 +145,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -154,12 +154,12 @@
   <concat>
     <c form="are">
       <i l="be">
-        <p v="VBR"/>
+        <p v="VBP"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -168,12 +168,12 @@
   <concat>
     <c form="I">
       <i>
-        <p v="PPIS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VH0"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -182,12 +182,12 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PPIS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VH0"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -196,12 +196,12 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PPY"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VH0"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -210,12 +210,12 @@
   <concat>
     <c form="they">
       <i>
-        <p v="PPHS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VH0"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -224,12 +224,12 @@
   <concat>
     <c form="have">
       <i>
-        <p v="VH0"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -238,12 +238,12 @@
   <concat>
     <c form="has">
       <i l="have">
-        <p v="VHZ"/>
+        <p v="VBZ"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -257,7 +257,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -266,12 +266,12 @@
   <concat>
     <c form="do">
       <i>
-        <p v="VD0"/>
+        <p v="VBP"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -285,7 +285,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -299,7 +299,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -308,12 +308,12 @@
   <concat>
     <c form="ca">
       <i l="can">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -322,12 +322,12 @@
   <concat>
     <c form="can">
       <i l="can">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="not">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -336,12 +336,12 @@
   <concat>
     <c form="could">
       <i l="could">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -350,12 +350,12 @@
   <concat>
     <c form="might">
       <i>
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -364,12 +364,12 @@
   <concat>
     <c form="must">
       <i>
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -378,12 +378,12 @@
   <concat>
     <c form="need">
       <i>
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -392,12 +392,12 @@
   <concat>
     <c form="ought">
       <i>
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -406,12 +406,12 @@
   <concat>
     <c form="sha">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -420,12 +420,12 @@
   <concat>
     <c form="should">
       <i>
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -434,12 +434,12 @@
   <concat>
     <c form="wo">
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -448,12 +448,12 @@
   <concat>
     <c form="would">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="XX"/>
+        <p v="NOT"/>
       </i>
     </c>
   </concat>
@@ -462,15 +462,15 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PPIS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -479,15 +479,15 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PPY"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -496,15 +496,15 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PPHS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -513,15 +513,15 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PPHS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -530,15 +530,15 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PPH1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -547,15 +547,15 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PPIS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -564,15 +564,15 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PPHS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="will">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -581,12 +581,12 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PPHS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBR"/>
+        <p v="VBP"/>
       </i>
     </c>
   </concat>
@@ -595,12 +595,12 @@
   <concat>
     <c form="I">
       <i>
-        <p v="PPIS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -609,15 +609,15 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PPY"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="have">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -626,15 +626,15 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PPHS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="have">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -643,15 +643,15 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PPHS1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="have">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -660,12 +660,12 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PPH1"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -674,15 +674,15 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PPIS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="have">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -691,15 +691,15 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PPHS2"/>
+        <p v="PRP"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
       <i l="have">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -714,7 +714,7 @@
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>
@@ -728,7 +728,7 @@
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VM"/>
+        <p v="VB"/>
       </i>
     </c>
   </concat>

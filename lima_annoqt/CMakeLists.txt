@@ -1,6 +1,10 @@
 project(annoqt)
 cmake_minimum_required(VERSION 2.8)
 
+enable_testing()
+
+include(SystemSpecificInformations.cmake)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/modules ${CMAKE_INSTALL_PREFIX})
 find_package(Qt4 REQUIRED)
 
@@ -10,3 +14,22 @@ add_subdirectory(src)
 ########### install files ###############
 
 
+########### packaging ###############
+INCLUDE(InstallRequiredSystemLibraries)
+
+set(CPACK_MONOLITHIC_INSTALL 1)
+SET(CPACK_PACKAGE_NAME "limaannoqt")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A text annotation GUI in LIMA")
+SET(CPACK_PACKAGE_VENDOR "CEA LIST")
+SET(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
+SET(CPACK_SOURCE_STRIP_FILES "")
+set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
+
+INCLUDE(CPack)

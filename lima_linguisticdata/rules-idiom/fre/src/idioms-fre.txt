@@ -1352,11 +1352,12 @@ D;i;D;part;d' une part;adverbe;d'une part
 D;i;D;partie;en partie;adverbe;
 D;i;D;partie;en partie;adverbe postv;
 D;i;D;partir;à partir d';préposition;à partir de
-D;i;D;partir;à partir du;préposition;à partir de
-D;i;D;partir;à partir du;préposition article;à partir de
+D;i;A;partir;à partir de;préposition;à partir de
+D;i;A;partir;à partir du;préposition article;à partir de
 D;i;D;passant;en passant;adverbe;
 D;i;D;plein;plein d';article de quantité;plein de
 D;i;D;plein;plein de;article de quantité;plein de
+F;;A;plus;de plus en plus;adverbe;
 D;i;D;plus;[P]de plus;adverbe;
 D;i;D;point;sur ce point;adverbe;
 D;i;D;point;sur le point de;préposition verbale;sur le point de
@@ -2414,8 +2415,6 @@ F;;A;issue;à l' issue d';préposition;à l' issue de
 F;;A;issue;à l' issue du;préposition;à l' issue de
 F;;A;jour;à ce jour;adverbe;
 F;;A;lieu;[V]&donner (D) lieu;verbe intransitif;donner lieu
-F;;A;lors;lors d';conjonction de subordination;
-F;;A;lors;lors de;conjonction de subordination;
 F;;A;lors;lors de;préposition;
 F;;A;lors;lors d';préposition;lors de
 F;;A;mesure;dans la mesure où;pronom relatif;
@@ -2456,7 +2455,6 @@ F;;A;place;[V]&faire (D) place nette;verbe intransitif;faire place nette
 F;;A;place;[V]&faire (D) place;verbe intransitif;faire place
 F;;A;place;[V]&laisser (D) place;verbe intransitif;laisser place
 F;;A;place;[V]&mettre (D) en place;verbe transitif;mettre en place
-F;;A;plus;de plus en plus;adverbe;
 F;;A;plus;plus que jamais;adverbe;
 F;;A;point;[V]&faire le point;verbe intransitif;faire le point
 F;;A;politesse;[V]&griller la politesse;verbe intransitif;griller la politesse
@@ -2846,6 +2844,7 @@ I;;A;apparaître;entr' apparaître;verbe intransitif;entr'apparaître
 I;;A;approche;à l' approche de;préposition;à l'approche de
 I;;A;bene;nota bene;nom masculin;
 I;;A;bien;eh bien;interjection;
+I;;A;oui;eh oui;interjection;
 I;;A;bille;[S]&crayon à bille;nom masculin;stylo à bille
 I;;A;bloc;à bloc;adverbe;
 I;;A;bon;bon ap;interjection;
@@ -3765,3 +3764,12 @@ GC;;A;suites;des suites des;préposition article pluriel;des suites de
 GC;;A;suites;des suites d';préposition;des suites de
 GC;;A;suites;des suites du;préposition article;des suites de
 GC;;A;…;( … );ponctuation faible;
+GC;;A;plaît;s'il vous plaît;interjection;
+GC;;A;plaît;s'il te plaît;interjection;s'il vous plaît
+GC;;A;open;open source;adjectif;
+GC;;A;garden;garden party;nom féminin;
+GC;;A;manière;de manière à ce que;conjonction de subordination;
+GC;;;ce;et ce;préposition;
+GC;;;ce;et ce;conjonction de coordination;
+GC;;;qualité;en qualité de;adverbe;
+GC;;;qualité;en qualité d';adverbe;

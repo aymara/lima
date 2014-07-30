@@ -159,7 +159,7 @@ void RecognizerToApply::printResults(const ResultType& result,
         type=entityNames.find(result[i].getType());
       if (type==entityNames.end()) {
         AULOGINIT;
-        LERROR << "undefined type " << result[i].getType() << LENDL;
+        LERROR << "undefined type " << result[i].getType();
       }
       else {
         output << result[i] << " "
@@ -401,15 +401,15 @@ uint64_t RecognizerOnAnalyzedText::applyToText(LimaString contentText,
     std::string pipelineId("main"); // hard-coded pipeline
     const LinguisticProcessUnitPipeline* pipeline=LinguisticProcessors::single().getPipelineForId(m_language,pipelineId);
     if (pipeline==0) {
-      LWARN << "can't get pipeline '" << pipelineId << "'" << LENDL;
+      LWARN << "can't get pipeline '" << pipelineId << "'";
       throw LinguisticProcessingException();
     }
 
     // process pipeline
     LimaStatusCode status=pipeline->process(m_analysis);
-    LDEBUG << "pipeline process returned status " << (int)status  << LENDL;
+    LDEBUG << "pipeline process returned status " << (int)status ;
     if (status!=SUCCESS_ID) {
-      LWARN << "analysis failed : receive status " << (int)status << " from pipeline. exit" << LENDL;
+      LWARN << "analysis failed : receive status " << (int)status << " from pipeline. exit";
       throw LinguisticProcessingException();    
     }
 /*      LinguisticProcessing::TextAnalysis textanalysis(

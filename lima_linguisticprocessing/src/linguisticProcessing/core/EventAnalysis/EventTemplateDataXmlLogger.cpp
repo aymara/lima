@@ -67,7 +67,7 @@ void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfig
   
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDataXmlLogger::init" << LENDL;
+  LDEBUG << "EventTemplateDataXmlLogger::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
@@ -75,7 +75,7 @@ void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfig
     m_eventData=unitConfiguration.getParamsValueAtKey("eventTemplateData");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LDEBUG << "EventTemplateDataXmlLogger: no parameter 'eventTemplateData', use default ('"<<m_eventData << "')" << LENDL;
+    LDEBUG << "EventTemplateDataXmlLogger: no parameter 'eventTemplateData', use default ('"<<m_eventData << "')";
     // not an error, keep default
   }
 }
@@ -83,7 +83,7 @@ void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfig
 LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDataXmlLogger::process" << LENDL;
+  LDEBUG << "EventTemplateDataXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
   // initialize output
@@ -93,7 +93,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
   const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
   
@@ -104,7 +104,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
       const EventTemplateData* eventData=dynamic_cast<const EventTemplateData*>(data);
       if (eventData==0) {
         LOGINIT("LP::EventAnalysis");
-        LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events" << LENDL;
+        LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
         return MISSING_DATA;
       }
       else {
@@ -113,7 +113,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
     }
     else {
       LOGINIT("LP::EventAnalysis");
-      LERROR << "no data of name " << m_eventData << LENDL;
+      LERROR << "no data of name " << m_eventData;
     }
   }
   
@@ -165,7 +165,7 @@ void EventTemplateDataXmlLogger::outputEntity(std::ostream& out,
 {
   LinguisticAnalysisStructure::Token* token=get(vertex_token, *(graph->getGraph()), v);
   if (token==0) {
-        LOGINIT("LP::EventAnalysis");    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v << LENDL;
+        LOGINIT("LP::EventAnalysis");    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v;
     return;
   }
   out << "        <entityOccurrence"

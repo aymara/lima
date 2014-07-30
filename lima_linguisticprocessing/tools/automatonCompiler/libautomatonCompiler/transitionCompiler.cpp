@@ -98,7 +98,7 @@ TransitionUnit* createTransition(const LimaString str,
 
   LDEBUG << "creating transition from string [" 
          << Common::Misc::limastring2utf8stdstring(str)
-         << "]" << LENDL;
+         << "]";
 
   if (str.size()==0) { return t; }
 
@@ -140,7 +140,7 @@ TransitionUnit* createTransition(const LimaString str,
     if (s[s.length()-1] != CHAR_NOKEEP_CLOSE_TR) {
       AUCLOGINIT;
       LERROR << "confused by no_keep format (maybe incomplete) :"
-             << Common::Misc::limastring2utf8stdstring(str) << LENDL;
+             << Common::Misc::limastring2utf8stdstring(str);
     }
     else {
       keepIt = false;
@@ -246,7 +246,7 @@ TransitionUnit* createTransition(const LimaString str,
       resolveEntityName(s.mid(1,s.size()-2),activeEntityGroups);
     if (type.isNull()) {
       LERROR << "cannot resolve entity name " 
-             << Common::Misc::limastring2utf8stdstring(s) << LENDL;
+             << Common::Misc::limastring2utf8stdstring(s);
     }
     else {
       t=new EntityTransition(type);
@@ -285,17 +285,17 @@ resolveEntityName(const LimaString s,
 {
   AUCLOGINIT;
   LDEBUG << "TransitionCompiler: try to resolve entity name " 
-         << Common::Misc::limastring2utf8stdstring(s) << LENDL;
+         << Common::Misc::limastring2utf8stdstring(s);
   
   // test if word is a known entity name => in this case, entity transition
   if (s.indexOf(Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator())!=-1) {
-    LDEBUG << "TransitionCompiler: entity name is complete" << LENDL;
+    LDEBUG << "TransitionCompiler: entity name is complete";
     try {
       return Common::MediaticData::MediaticData::single().getEntityType(s);
     }
     catch (LimaException& e) {
       AUCLOGINIT;
-      LERROR << "unknown entity " << s << LENDL;
+      LERROR << "unknown entity " << s;
     }
   }
   else { // try to find this entity in active groups
@@ -312,7 +312,7 @@ resolveEntityName(const LimaString s,
           AUCLOGINIT;
           LERROR << "cannot resolve entity group for entity " 
                  << Common::Misc::limastring2utf8stdstring(s)
-                 << " (at least two groups contain this entity)" << LENDL;
+                 << " (at least two groups contain this entity)";
         }
         else {
           type=findType;
@@ -321,14 +321,14 @@ resolveEntityName(const LimaString s,
       catch (LimaException& e) { 
         // not in this group: do nothing (continue search)
         LDEBUG << "entity " << Common::Misc::limastring2utf8stdstring(s)
-               << " not in group " << Common::Misc::limastring2utf8stdstring(*it) << LENDL;
+               << " not in group " << Common::Misc::limastring2utf8stdstring(*it);
       }
     }
     if (type.isNull()) {
       AUCLOGINIT;
       LERROR << "cannot resolve entity group for entity " 
              << Common::Misc::limastring2utf8stdstring(s)
-             << " (no active group contains this entity)" << LENDL;
+             << " (no active group contains this entity)";
     }
     else {
      return type;
@@ -345,7 +345,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
   Tpos p(0);
   AUCLOGINIT;
   if (s.empty()) {
-    LERROR << "empty Part-Of-Speech transition: use NONE_1" << LENDL;
+    LERROR << "empty Part-Of-Speech transition: use NONE_1";
     p=NONE_1;
   }
 
@@ -357,7 +357,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
 
   if (isdigit(s[0])) {
     LWARN << "numeric part-of-speech are deprecated: "
-          << "please use symbolic names" << LENDL;
+          << "please use symbolic names";
     //int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO,0));
     int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO,0));
     if (sep==-1) {
@@ -381,14 +381,14 @@ Tpos createTpos(const std::string& s, MediaId language) {
 //         microCode= microManager.getPropertyValue(micro);
 //       }
       p = microCode;
-      LDEBUG << "TransitionCompiler: micro="<< micro << "->" << p << LENDL;
+      LDEBUG << "TransitionCompiler: micro="<< micro << "->" << p;
     }
     else {
       // only macro
       string macro=s;
 //       if (macro.find("L_")!=0) { macro=string("L_")+ macro; }
       p= macroManager.getPropertyValue(macro);
-      LDEBUG << "TransitionCompiler: macro="<< macro << "->" << p << LENDL;
+      LDEBUG << "TransitionCompiler: macro="<< macro << "->" << p;
       /*
       //search for separator '_'
       int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO_STRING,0));
@@ -402,7 +402,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
         p.first= macroManager.getPropertyValue(macro);
         p.second=NONE_1;
         LDEBUG << "TransitionCompiler: macro="<< macro << "->" << p.first
-               << ", no micro" << "->" << p.second << LENDL;
+               << ", no micro" << "->" << p.second;
       }
       else { // micro -> try to guess macro
         string macro=string(s,0,sep);
@@ -413,17 +413,17 @@ Tpos createTpos(const std::string& s, MediaId language) {
         p.first= macroManager.getPropertyValue(macro);
         p.second= microManager.getPropertyValue(micro);
         LDEBUG << "TransitionCompiler: macro="<< macro << "->" << p.first
-               << ", micro="<< micro << "->" << p.second << LENDL;
+               << ", micro="<< micro << "->" << p.second;
       }
       */
     }
     if (macroManager.getPropertyAccessor().empty(p)) {
       LERROR << "transitionCompiler: failed identifying macro category \""
-             << s << "\": use NONE_1 instead" << LENDL;
+             << s << "\": use NONE_1 instead";
     }
     if (hasMicro && microManager.getPropertyAccessor().empty(p)) {
       LERROR << "transitionCompiler: failed identifying micro category in \""
-             << s << "\": use NONE_1 instead" << LENDL;
+             << s << "\": use NONE_1 instead";
     }
   }
   return p;
@@ -436,7 +436,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
 TStatusTransition* createStructuredTStatusTransition(const LimaString& s,
                                                      const int begin) {
   AUCLOGINIT;
-  LDEBUG << "Create TStatus transition: parse structured format" << LENDL;
+  LDEBUG << "Create TStatus transition: parse structured format";
   TStatusTransition* t = new TStatusTransition();
 
   int current=begin;
@@ -544,7 +544,7 @@ TStatusTransition* createStructuredTStatusTransition(const LimaString& s,
 TStatusTransition* createDefaultTStatusTransition(const LimaString& s,
                                                   const int /*begin*/) {
   AUCLOGINIT;
-  LDEBUG << "Create TStatus transition: default status" << LENDL;
+  LDEBUG << "Create TStatus transition: default status";
   
   TStatusTransition* t = new TStatusTransition();
   

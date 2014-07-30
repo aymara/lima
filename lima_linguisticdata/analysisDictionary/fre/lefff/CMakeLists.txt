@@ -24,7 +24,7 @@ add_custom_command(
   COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt >> lefff-ext-simplified.txt
   COMMAND LC_ALL="C" sort -u -o lefff-ext-simplified.txt lefff-ext-simplified.txt
   DEPENDS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lefff-ext.txt 
+    ${lefffFiles}
     ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt
     ${PROJECT_SOURCE_DIR}/scripts/extract-lefff-forms.sh
   COMMENT "Simplify the Lefff"

@@ -98,17 +98,17 @@ DumperStream* AbstractTextualAnalysisDumper::
 initialize(AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
-  LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream" << LENDL;
+  LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream";
   
   // if handler is defined, find handler
   if (! m_handlerName.empty()) {
-    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with handler "<< m_handlerName << LENDL;
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with handler "<< m_handlerName;
     AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handlerName));
     if (handler==0)
     {
       DUMPERLOGINIT;
-      LWARN << "handler " << handler << " has not been given to the core client" << LENDL;
+      LWARN << "handler " << handler << " has not been given to the core client";
     }
     else {
       return new DumperStream(handler);
@@ -116,7 +116,7 @@ initialize(AnalysisContent& analysis) const
   }
 
   if (! m_outputFile.empty()) {
-    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile << LENDL;
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;
     return new DumperStream(m_outputFile,m_append);
   }
 
@@ -124,19 +124,19 @@ initialize(AnalysisContent& analysis) const
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
       DUMPERLOGINIT;
-      LERROR << "AbstractTextualAnalysisDumper::initialize: no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "AbstractTextualAnalysisDumper::initialize: no LinguisticMetaData ! abort";
     }
     else {
       std::string sourceFile(metadata->getMetaData("FileName"));
       LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output suffix "
-             << m_outputSuffix << " on file " << sourceFile << LENDL;
+             << m_outputSuffix << " on file " << sourceFile;
       string outputFile=sourceFile + m_outputSuffix;
       return new DumperStream(outputFile,m_append);
     }
   }
 
   // return
-  LERROR << "AbstractTextualAnalysisDumper::initialize: missing parameters to initialize output stream: use default file 'output'" << LENDL;
+  LERROR << "AbstractTextualAnalysisDumper::initialize: missing parameters to initialize output stream: use default file 'output'";
   return new DumperStream("output",m_append);
 }
 

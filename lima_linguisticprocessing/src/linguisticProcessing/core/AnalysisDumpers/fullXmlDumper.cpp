@@ -100,7 +100,7 @@ void FullXmlDumper::init(
 
 {
   DUMPERLOGINIT;
-  LDEBUG << "fullXmlDumper init!" << LENDL;
+  LDEBUG << "fullXmlDumper init!";
   m_language=manager->getInitializationParameters().media;
   m_propertyCodeManager= &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager());
   try
@@ -110,7 +110,7 @@ void FullXmlDumper::init(
   catch (NoSuchParam& )
   {
     LWARN << "dumpTokens parameter not found, using default: "
-        << (m_dumpFullTokens?"true":"false") << LENDL;
+        << (m_dumpFullTokens?"true":"false");
   }
   try
   {
@@ -127,7 +127,7 @@ void FullXmlDumper::init(
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "FullXmlDumper::init: Missing parameter handler in FullXmlDumper configuration" << LENDL;
+    LERROR << "FullXmlDumper::init: Missing parameter handler in FullXmlDumper configuration";
     throw InvalidConfiguration();
   }
   
@@ -140,16 +140,16 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "FullXmlDumper::process:  no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "FullXmlDumper::process:  no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
-  LDEBUG << "handler will be: " << m_handler << LENDL;
+  LDEBUG << "handler will be: " << m_handler;
 //   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "FullXmlDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "FullXmlDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
   
@@ -170,7 +170,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
 /*  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (anagraph==0)
   {
-    LERROR << "FullXmlDumper::process: no AnalysisGraph ! abort" << LENDL;
+    LERROR << "FullXmlDumper::process: no AnalysisGraph ! abort";
     return MISSING_DATA;
   }*/
 
@@ -179,7 +179,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    LDEBUG << "FullXmlDumper: SentenceBounds not found "<< analysis.getData("SentenceBoundaries") << LENDL;
+    LDEBUG << "FullXmlDumper: SentenceBounds not found "<< analysis.getData("SentenceBoundaries");
     sb=new SegmentationData(m_graph);
     analysis.setData("SentenceBoundaries",sb);
   }
@@ -254,8 +254,8 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
       id++;
       LDEBUG << " p"<< id;
     }
-    // ??OME2 LDEBUG << "FullXmlDumper: end of posgraph for: sbItr "<< sbItr->getLastVertex() << " sb-end() " << sb->end()->getLastVertex() << LENDL;
-    LDEBUG << "FullXmlDumper: end of posgraph for: sbItr "<< sbItr->getLastVertex() << " sb-end() " << (sb->getSegments()).end()->getLastVertex() << LENDL;
+    // ??OME2 LDEBUG << "FullXmlDumper: end of posgraph for: sbItr "<< sbItr->getLastVertex() << " sb-end() " << sb->end()->getLastVertex();
+    LDEBUG << "FullXmlDumper: end of posgraph for: sbItr "<< sbItr->getLastVertex() << " sb-end() " << (sb->getSegments()).end()->getLastVertex();
     outputStream << "  <PosGraph>" << std::endl;
     // ??OME2 while (sbItr!=sb->end())
     while (sbItr!=(sb->getSegments()).end())
@@ -330,7 +330,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   DUMPERLOGINIT;
 
   LDEBUG << "FullXmlDumper::dumpLimaData parameters: "<< LENDL;
-  LDEBUG << "begin = "<< begin << LENDL;
+  LDEBUG << "begin = "<< begin;
   LDEBUG << "end = " << end <<LENDL;
   LDEBUG << "anagraph fist vertex= " << anagraph->firstVertex() <<LENDL;
   LDEBUG << "anagraph last vertex= " << anagraph->lastVertex() <<LENDL;  
@@ -338,7 +338,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   LDEBUG << "bySentence= " << bySentence <<LENDL;
   // just in case we want to check alreadt dumped tokens' array
   for (uint64_t i=0; i<alreadyDumpedTokens.size(); i++) {
-    if (alreadyDumpedTokens[i]) {LDEBUG << "already_dumped_tokens[" << i << "]=" << alreadyDumpedTokens[i] << LENDL;}
+    if (alreadyDumpedTokens[i]) {LDEBUG << "already_dumped_tokens[" << i << "]=" << alreadyDumpedTokens[i];}
   }
 
   LinguisticGraph* graph = const_cast< LinguisticGraph* >(anagraph->getGraph());
@@ -426,7 +426,7 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
   if (token == 0)
   {
     DUMPERLOGINIT;
-    LWARN << "No token (vertex_token) for vertex "  << v << LENDL;
+    LWARN << "No token (vertex_token) for vertex "  << v;
     xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
     return;
   }
@@ -466,7 +466,7 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
             CEdgeDepRelTypePropertyMap relTypeMap = get(edge_deprel_type, *depGraph);
             // This line changed after MODEX
             std::string relationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(relTypeMap[*depIt]);
-            LDEBUG << "dep " << v << " -> " << targV << " ( " << relationName << " )" << LENDL;
+            LDEBUG << "dep " << v << " -> " << targV << " ( " << relationName << " )";
 //          CEdgeDepChainIdPropertyMap chainsMap = get(edge_depchain_id, *depGraph);
             xmlStream << "        <dep v=\"_" << targV;
 //               xmlStream << "\" c=\"" << chainsMap[*depIt];
@@ -481,7 +481,7 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
   if (data == 0)
   {
     DUMPERLOGINIT;
-    LWARN << "No morphosyntactic (vertex_data) data for vertex "  << v << LENDL;
+    LWARN << "No morphosyntactic (vertex_data) data for vertex "  << v;
   }
   else
   {
@@ -517,7 +517,7 @@ void FullXmlDumper::DumpGraphVisitor::examine_vertex(LinguisticGraphVertex v,
                const LinguisticGraph& g)
 {
 //   DUMPERLOGINIT;
-//   LDEBUG << "DumpGraphVisitor: examine_vertex " << v << LENDL;
+//   LDEBUG << "DumpGraphVisitor: examine_vertex " << v;
 
   if (v == m_lastVertex)
   {
@@ -534,7 +534,7 @@ void FullXmlDumper::DumpGraphVisitor::examine_vertex(LinguisticGraphVertex v,
     }
     if (finished)
     {
-//       LDEBUG << "DumpGraphVisitor: finished" << LENDL;
+//       LDEBUG << "DumpGraphVisitor: finished";
       throw EndOfSearch();
     }
   }
@@ -544,7 +544,7 @@ void FullXmlDumper::DumpGraphVisitor::examine_edge(LinguisticGraphEdge e,
                const LinguisticGraph& g)
 {
 //     DUMPERLOGINIT;
-//     LDEBUG << "DumpGraphVisitor: discover_edge " << e << LENDL;
+//     LDEBUG << "DumpGraphVisitor: discover_edge " << e;
 
     m_dumper.outputEdge(e, g, m_os);
 }

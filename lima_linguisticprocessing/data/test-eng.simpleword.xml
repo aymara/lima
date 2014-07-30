@@ -38,7 +38,7 @@
     comment="on vérifie la présence du mot '.' avec la categ ponctu forte"
     left="XPATH#//data_structure/vertex[token[position=43][length=1]]/data/simple_word//property/p[@prop='MICRO']/@val"
     operator="="
-    right="L_PONCTU_FORTE"/>
+    right="SENT"/>
 </testcase>
 <testcase id="eng.sw.2" type="bloquant">
   <call-parameters>

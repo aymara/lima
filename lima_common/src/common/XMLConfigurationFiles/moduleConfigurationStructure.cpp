@@ -95,7 +95,7 @@ GroupConfigurationStructure& ModuleConfigurationStructure::getGroupNamed(const s
   ModuleConfigurationStructure::iterator it = find(name);
   if (it == end())
   {
-    LWARN << "Error ("<<this<<"): no such group '" << name.c_str() << "' !" << LENDL;
+    LWARN << "Error ("<<this<<"): no such group '" << name.c_str() << "' !";
     throw NoSuchGroup(name);
   }
   return ((*it).second);
@@ -110,12 +110,12 @@ string& ModuleConfigurationStructure::getParamValueAtKeyOfGroupNamed(const std::
   }
   catch (NoSuchGroup& nsg)
   {
-    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': "<< nsg.what().c_str() << LENDL;
+    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': "<< nsg.what().c_str();
     throw;
   }
   catch (NoSuchParam& nsp)
   {
-    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str() << nsp.what().c_str() << LENDL;
+    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str() << nsp.what().c_str();
     throw;
   }
   catch (...)
@@ -158,14 +158,14 @@ void ModuleConfigurationStructure::addItemInListNamedForGroup(const std::string&
 void ModuleConfigurationStructure::addGroupNamed(const string& groupName)
 {
   XMLCFGLOGINIT;
-  LDEBUG << "ModuleConfigurationStructure::addGroupNamed " << this << " " << groupName.c_str() << LENDL;
+  LDEBUG << "ModuleConfigurationStructure::addGroupNamed " << this << " " << groupName.c_str();
   if (find(groupName) == end())
   {
     insert(make_pair(groupName, GroupConfigurationStructure(groupName)));
   }
   else {
     XMLCFGLOGINIT;
-    LWARN << "group " << groupName.c_str() << " not added: already exists" << LENDL;
+    LWARN << "group " << groupName.c_str() << " not added: already exists";
   }
 }
 
@@ -196,7 +196,7 @@ void ModuleConfigurationStructure::addModule(const ModuleConfigurationStructure&
     }
     else {
       XMLCFGLOGINIT;
-      LWARN << "group " << (*it).first.c_str() << " not added: already exists" << LENDL;
+      LWARN << "group " << (*it).first.c_str() << " not added: already exists";
     }
   }
 }

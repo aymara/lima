@@ -99,7 +99,7 @@ void GeoDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure&
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "GeoDumper::init: Missing parameter handler in BowDumper configuration" << LENDL;
+    LERROR << "GeoDumper::init: Missing parameter handler in BowDumper configuration";
     throw InvalidConfiguration();
   }
 
@@ -132,33 +132,33 @@ LimaStatusCode GeoDumper::process(
   AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
-  LDEBUG << "Process GeoDumper " << LENDL;
+  LDEBUG << "Process GeoDumper ";
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "GeoDumper::process: no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "GeoDumper::process: no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   /*AnalysisHandlerContainer* handlerContainer=static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   if (handlerContainer == 0) {
-    LERROR << "GeoDumper::process: no handler in analysisContent ! abort" << LENDL;
+    LERROR << "GeoDumper::process: no handler in analysisContent ! abort";
     return MISSING_DATA;
   }*/
 
   Lima::Common::AnnotationGraphs::AnnotationData* annotationData = static_cast< Lima::Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "GeoDumper::process: no AnnotationData ! abort" << LENDL;
+    LERROR << "GeoDumper::process: no AnnotationData ! abort";
     return MISSING_DATA;
   }
 
   //AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(handlerContainer->getHandler());
-  LDEBUG << "handler will be: " << m_handler << LENDL;
+  LDEBUG << "handler will be: " << m_handler;
   //MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "GeoDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "GeoDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
   //handler->setOut(&std::cout);

@@ -63,7 +63,7 @@ SimpleAnalysisDictionarySubWordIterator::operator*() const
 {
 #ifdef DEBUG_CD
   ANALYSISDICTLOGINIT;
-  LDEBUG <<  "SimpleAnalysisDictionarySubWordIterator::operator*()" << LENDL;
+  LDEBUG <<  "SimpleAnalysisDictionarySubWordIterator::operator*()";
 #endif
   const std::pair<int,int64_t> pos =
     *m_accessItr;
@@ -71,7 +71,7 @@ SimpleAnalysisDictionarySubWordIterator::operator*() const
 #ifdef DEBUG_CD
   LDEBUG <<  "SimpleAnalysisDictionarySubWordIterator::operator*(): m_access=("
   << pos.first << "," << pos.second << ")"
-  << LENDL;
+ ;
 #endif
 
   int offset = pos.first;
@@ -85,7 +85,7 @@ SimpleAnalysisDictionarySubWordIterator::operator*() const
   int dataOffset = m_dico.m_index2Data[pos.second-1];
 LDEBUG <<  "SimpleAnalysisDictionarySubWordIterator::operator*(): word=" << word8
   << ", index =" << pos.second
-  << ", dataOffset =" << dataOffset << LENDL;
+  << ", dataOffset =" << dataOffset;
 #endif
 
   return std::pair<int, Dictionary::DictionaryEntry>

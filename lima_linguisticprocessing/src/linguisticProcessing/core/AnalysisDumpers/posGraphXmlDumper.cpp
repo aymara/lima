@@ -109,7 +109,7 @@ void posGraphXmlDumper::init(
 
 {
   DUMPERLOGINIT;
-  LDEBUG << "posGraphXmlDumper init!" << LENDL;
+  LDEBUG << "posGraphXmlDumper init!";
   m_language=manager->getInitializationParameters().media;
   m_propertyCodeManager= &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager());
   try
@@ -119,7 +119,7 @@ void posGraphXmlDumper::init(
   catch (NoSuchParam& )
   {
     LWARN << "dumpTokens parameter not found, using default: "
-        << (m_dumpFullTokens?"true":"false") << LENDL;
+        << (m_dumpFullTokens?"true":"false");
   }
   try
   {
@@ -136,7 +136,7 @@ void posGraphXmlDumper::init(
   catch (NoSuchParam& )
   {
     DUMPERLOGINIT;
-    LERROR << "posGraphXmlDumper::init: Missing parameter handler in posGraphXmlDumper configuration" << LENDL;
+    LERROR << "posGraphXmlDumper::init: Missing parameter handler in posGraphXmlDumper configuration";
     throw InvalidConfiguration();
   }
 
@@ -152,15 +152,15 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "posGraphXmlDumper::process: no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "posGraphXmlDumper::process: no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
-  LDEBUG << "handler will be: " << m_handler << LENDL;
+  LDEBUG << "handler will be: " << m_handler;
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
-    LERROR << "posGraphXmlDumper::process: handler " << m_handler << " has not been given to the core client" << LENDL;
+    LERROR << "posGraphXmlDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
 
@@ -272,7 +272,7 @@ void posGraphXmlDumper::dumpLimaData(std::ostream& os,
   DUMPERLOGINIT;
 
   LDEBUG << "posGraphXmlDumper::dumpLimaData parameters: "<< LENDL;
-  LDEBUG << "begin = "<< begin << LENDL;
+  LDEBUG << "begin = "<< begin;
   LDEBUG << "end = " << end <<LENDL;
   LDEBUG << "posgraph fist vertex= " << posgraph->firstVertex() <<LENDL;
   LDEBUG << "posgraph last vertex= " << posgraph->lastVertex() <<LENDL;
@@ -280,7 +280,7 @@ void posGraphXmlDumper::dumpLimaData(std::ostream& os,
   LDEBUG << "bySentence= " << bySentence <<LENDL;
 //    just in case we want to check alreadt dumped tokens' array
 //     for (uint64_t i=0; i<alreadyDumpedTokens.size(); i++)
-//     if (alreadyDumpedTokens[i]) LDEBUG << "already_dumped_tokens[" << i << "]=" << alreadyDumpedTokens[i] << LENDL;
+//     if (alreadyDumpedTokens[i]) LDEBUG << "already_dumped_tokens[" << i << "]=" << alreadyDumpedTokens[i];
 
 
 
@@ -358,7 +358,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
  if (!alreadyDumped)
  {
     DUMPERLOGINIT;
-    LDEBUG << "posGraphXmlDumper::outputVertex " << v << LENDL;
+    LDEBUG << "posGraphXmlDumper::outputVertex " << v;
     if (v == syntacticData->iterator()->firstVertex() ||
         v == syntacticData->iterator()->lastVertex())
     {
@@ -368,7 +368,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
     if (token == 0)
     {
       DUMPERLOGINIT;
-      LWARN << "No token (vertex_token) for vertex "  << v << LENDL;
+      LWARN << "No token (vertex_token) for vertex "  << v;
       xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
       return;
     }
@@ -465,7 +465,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
     if (data == 0)
     {
       DUMPERLOGINIT;
-      LWARN << "No morphosyntactic (vertex_data) data for vertex "  << v << LENDL;
+      LWARN << "No morphosyntactic (vertex_data) data for vertex "  << v;
     }
     else
     {
@@ -502,14 +502,14 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
           std::string elem = (*bowItr).second->getIdUTF8String();
           if (alreadyStored.find(elem) != alreadyStored.end())
           { // already stored
-          //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+          //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
             delete (*bowItr).first;
             delete (*bowItr).second;
           }
           else
           {
             const BoWToken* compound = (*bowItr).second;
-            LDEBUG << "Outputing compound: " << compound << LENDL;
+            LDEBUG << "Outputing compound: " << compound;
 //             std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(compound->getCategory());
 
             QVector<LimaString> compounds;
@@ -525,7 +525,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
               if (data == 0)
               {
                 DUMPERLOGINIT;
-                LWARN << "No morphosyntactic (vertex_data) data for vertex "  << v << LENDL;
+                LWARN << "No morphosyntactic (vertex_data) data for vertex "  << v;
               }
               else
               {

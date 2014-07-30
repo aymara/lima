@@ -67,7 +67,7 @@ void DotGraphWriter::init(
     AbstractResource* res=LinguisticResources::single().getResource(m_language,trigrams);
     m_trigramMatrix=static_cast<PosTagger::TrigramMatrix*>(res);
   } catch (NoSuchParam& ) {
-    LERROR << "No param 'trigramMatrix' in DotGraphWriter group for language " << (int)m_language << LENDL;
+    LERROR << "No param 'trigramMatrix' in DotGraphWriter group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   try {
@@ -75,7 +75,7 @@ void DotGraphWriter::init(
     AbstractResource* res=LinguisticResources::single().getResource(m_language,bigrams);
     m_bigramMatrix=static_cast<PosTagger::BigramMatrix*>(res);
   } catch (NoSuchParam& ) {
-    LWARN << "No param 'bigramMatrix' in DotGraphWriter group for language " << (int)m_language << LENDL;
+    LWARN << "No param 'bigramMatrix' in DotGraphWriter group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   try
@@ -84,8 +84,8 @@ void DotGraphWriter::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "No param 'outputSuffix' in DotGraphWriter group for language " << (int)m_language << LENDL;
-    LWARN << "use .graph.dot" << LENDL;
+    LWARN << "No param 'outputSuffix' in DotGraphWriter group for language " << (int)m_language;
+    LWARN << "use .graph.dot";
     m_outputSuffix=string(".graph.dot");
   }
   try
@@ -94,8 +94,8 @@ void DotGraphWriter::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "No param 'graph' in "<<unitConfiguration.getName() << " group for language " << (int)m_language << LENDL;
-    LWARN << "use PosGraph" << LENDL;
+    LWARN << "No param 'graph' in "<<unitConfiguration.getName() << " group for language " << (int)m_language;
+    LWARN << "use PosGraph";
     m_graphId=string("PosGraph");
   }
   try
@@ -135,12 +135,12 @@ LimaStatusCode DotGraphWriter::process(AnalysisContent& analysis) const
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       PTLOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   if (anagraph == 0) {
       PTLOGINIT;
-      LERROR << "no AnalysisGraph named " << m_graphId << " ! " << LENDL;
+      LERROR << "no AnalysisGraph named " << m_graphId << " ! ";
       return MISSING_DATA;
   }
   string outputFileName=metadata->getMetaData("FileName") + m_outputSuffix;

@@ -41,11 +41,11 @@ void LinguisticProcessingClientFactory::configureClientFactory(
   std::deque<std::string> pipelines)
 {
   LPCLIENTFACTORYLOGINIT;
-  LINFO << "configure factory for client '" << id << "'" << LENDL;
+  LINFO << "configure factory for client '" << id << "'";
   AbstractLinguisticProcessingClientFactory* factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
-    LERROR << "No factory defined for client '" << id << "' !" << LENDL;
+    LERROR << "No factory defined for client '" << id << "' !";
     throw LinguisticProcessingException();
   }
   std::deque<std::string>::iterator Itrlangs;
@@ -61,11 +61,11 @@ AbstractProcessingClient* LinguisticProcessingClientFactory::createClient(
   const std::string& id) const 
 {
   LPCLIENTFACTORYLOGINIT;
-  LINFO << "Create client '" << id << "'" << LENDL;
+  LINFO << "Create client '" << id << "'";
   const AbstractLinguisticProcessingClientFactory* factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
-    LERROR << "No factory defined for client '" << id << "' !" << LENDL;
+    LERROR << "No factory defined for client '" << id << "' !";
     throw LinguisticProcessingException();
   }
   

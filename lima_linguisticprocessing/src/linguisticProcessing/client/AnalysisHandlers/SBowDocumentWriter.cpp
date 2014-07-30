@@ -64,7 +64,7 @@ void SBowDocumentWriter::startDocument(const Common::Misc::GenericDocumentProper
 void SBowDocumentWriter::endDocument()
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "SBowDocumentWriter::endDocument()" << LENDL;
+  LDEBUG << "SBowDocumentWriter::endDocument()";
   m_out->flush();
 }
 
@@ -72,14 +72,14 @@ void SBowDocumentWriter::endDocument()
 void SBowDocumentWriter::handle(const char* buf,int length) 
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "SBowDocumentWriter::handle()" << LENDL;
+  LDEBUG << "SBowDocumentWriter::handle()";
   m_out->write(buf,length);
 }
 
 void SBowDocumentWriter::startNode( const std::string& elementName, bool forIndexing )
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "SBowDocumentWriter::startNode(" << elementName << "," << forIndexing << ")" << LENDL;
+  LDEBUG << "SBowDocumentWriter::startNode(" << elementName << "," << forIndexing << ")";
   if( forIndexing )
     *m_out << Common::BagOfWords::INDEXING_BLOC;
   else 
@@ -91,7 +91,7 @@ void SBowDocumentWriter::startNode( const std::string& elementName, bool forInde
 void SBowDocumentWriter::endNode( const Common::Misc::GenericDocumentProperties& props )
 {
   LPCLIENTSBOWHANDLERLOGINIT;
-  LDEBUG << "SBowDocumentWriter::endNode()" << LENDL;
+  LDEBUG << "SBowDocumentWriter::endNode()";
   *m_out << Common::BagOfWords::NODE_PROPERTIES_BLOC;
   props.write(*m_out);
   *m_out << Common::BagOfWords::END_BLOC;

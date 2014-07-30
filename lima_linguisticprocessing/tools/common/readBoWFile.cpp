@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
 
   case BOWFILE_TEXT: {
 
-    LINFO << "ReadBoWFile: file contains a BoWText" << LENDL;
+    LINFO << "ReadBoWFile: file contains a BoWText";
     BoWText text;
     reader.readBoWText(fileIn,text);
 
@@ -348,7 +348,7 @@ int main(int argc, char *argv[])
         }
       }
       else if (param.useIndexIterator) {
-        LINFO << "ReadBoWFile: call IndexElementIterator with maxCompoundSize=" << param.maxCompoundSize << LENDL;
+        LINFO << "ReadBoWFile: call IndexElementIterator with maxCompoundSize=" << param.maxCompoundSize;
         IndexElementIterator it(text,0,param.maxCompoundSize);
         while (! it.isAtEnd()) {
           cout << it.getElement() << endl;
@@ -366,7 +366,7 @@ int main(int argc, char *argv[])
   }
   case BOWFILE_SDOCUMENT:
   {
-    LINFO << "ReadBoWFile: file contains a StructuredBoWDocument" << LENDL;
+    LINFO << "ReadBoWFile: file contains a StructuredBoWDocument";
     BoWDocument* document=new BoWDocument();
     try
     {

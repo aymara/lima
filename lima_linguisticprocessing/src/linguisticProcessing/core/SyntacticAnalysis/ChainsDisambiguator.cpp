@@ -158,9 +158,9 @@ void ChainsDisambiguator::computePaths()
       Key& currentKey = currentHyp.key();
       LinguisticGraphVertex currentVertex = currentKey.id();
       const std::set< ChainIdStruct >& currentVertexChains = chainsMap[currentVertex];
-//       LDEBUG << "New hyp on " << currentVertex << LENDL;
+//       LDEBUG << "New hyp on " << currentVertex;
       const Elem& currentElem = *(currentHyp.elems().rbegin());
-//       LDEBUG << "Current elem: " << currentElem << LENDL;
+//       LDEBUG << "Current elem: " << currentElem;
       LinguisticGraphOutEdgeIt it, it_end;
       boost::tie(it, it_end) = boost::out_edges(currentVertex, *graph);
       uint64_t branchNum = 0;
@@ -174,7 +174,7 @@ void ChainsDisambiguator::computePaths()
         }
 
         LinguisticGraphVertex nextVertex = target(*it, *graph);
-//         LDEBUG << "Looking at next vertex: " << nextVertex << " (current is "<<currentVertex<<")" << LENDL;
+//         LDEBUG << "Looking at next vertex: " << nextVertex << " (current is "<<currentVertex<<")";
         if (currentVertex==0 && nextVertex==1)
           continue;
         const std::set< ChainIdStruct >& nextVertexChains = chainsMap[nextVertex];
@@ -183,7 +183,7 @@ void ChainsDisambiguator::computePaths()
         if (nextData == 0)
         {
           SADLOGINIT;
-          LWARN << "vertex " << nextVertex << " has no data" << LENDL;
+          LWARN << "vertex " << nextVertex << " has no data";
           // @TODO ensure that continuing with a 0 microcateg is a good solution
 //           continue;
         }
@@ -191,14 +191,14 @@ void ChainsDisambiguator::computePaths()
         {
           nextMicroCateg = nextData->firstValue(*m_microAccessor);
         }
-//         LDEBUG << "vertex microcateg is " << nextMicroCateg << LENDL;
+//         LDEBUG << "vertex microcateg is " << nextMicroCateg;
         if ( currentElem.type() == 0 ) // no chain on current vertex
         {
-//           LDEBUG << "no chain on current vertex" << LENDL;
+//           LDEBUG << "no chain on current vertex";
           // no chain on the new vertex
           if (nextVertexChains.empty())
           {
-//             LDEBUG << "no chain on the new vertex" << LENDL;
+//             LDEBUG << "no chain on the new vertex";
             Path newHyp(currentHyp);
             Key newKey(nextVertex);
             Elem newElem(nextVertex);
@@ -212,7 +212,7 @@ void ChainsDisambiguator::computePaths()
           // one chain on the new vertex
           else if (nextVertexChains.size() == 1)
           {
-//             LDEBUG << "one chain on the new vertex" << LENDL;
+//             LDEBUG << "one chain on the new vertex";
             Path newHyp(currentHyp);
             Key newKey(nextVertex);
             ChainIdStruct nextVertexChain = (*(nextVertexChains.begin()));
@@ -239,13 +239,13 @@ void ChainsDisambiguator::computePaths()
           // several chains on the new vertex
           else
           {
-//             LDEBUG << "several chains on the new vertex" << LENDL;
+//             LDEBUG << "several chains on the new vertex";
             startWithSeveralChainsOnNewVertex(nextVertex, nextVertexChains, currentHyp);
           }
         }
         else if ( currentKey.chainsToIgnore().empty() ) // a chain on current vertex and no chain to ignore
         {
-//           LDEBUG << "a chain on current vertex and no chain to ignore" << LENDL;
+//           LDEBUG << "a chain on current vertex and no chain to ignore";
           uint64_t currentElemChainId = currentElem.id();
           ChainIdStruct currentElemChainIdStruct;
           std::set< ChainIdStruct >::const_iterator currentVertexChainsIt, currentVertexChainsIt_end;
@@ -268,7 +268,7 @@ void ChainsDisambiguator::computePaths()
             if ( (currentElemChainIdStruct.elemType() == END) ||
                  (currentElemChainIdStruct.elemType() == UNIGRAM) )
             {
-//               LDEBUG << "current chain was finished, no new chain" << LENDL;
+//               LDEBUG << "current chain was finished, no new chain";
               Path newHyp(currentHyp);
               Key newKey(nextVertex);
               Elem newElem(nextVertex);
@@ -284,9 +284,9 @@ void ChainsDisambiguator::computePaths()
             // made from its elements
             else
             {
-//               LDEBUG << "current chain was not finished, we are on a divergent branch" << LENDL;
-//               LDEBUG << "current chain elem has to be removed and replaced by vertices elems" << LENDL;
-//               LDEBUG << "made from its elements" << LENDL;
+//               LDEBUG << "current chain was not finished, we are on a divergent branch";
+//               LDEBUG << "current chain elem has to be removed and replaced by vertices elems";
+//               LDEBUG << "made from its elements";
               Path newHyp(currentHyp);
               cancelCurrentChain(currentElem, newHyp);
               Key newKey(nextVertex);
@@ -302,7 +302,7 @@ void ChainsDisambiguator::computePaths()
           // one chain on the new vertex
           else if (nextVertexChains.size() == 1)
           {
-//             LDEBUG << "one chain on the new vertex" << LENDL;
+//             LDEBUG << "one chain on the new vertex";
             // verify if we continue the same chain
             // or finish it and start a new one
             // or finish it and new vertex is a confluent on another chain
@@ -310,7 +310,7 @@ void ChainsDisambiguator::computePaths()
             // continue the same chain
             if ( (*(nextVertexChains.begin())).chainId() == currentElem.id() )
             {
-//               LDEBUG << "continue the same chain" << LENDL;
+//               LDEBUG << "continue the same chain";
               Path newHyp(currentHyp);
               Key newKey(nextVertex);
               Elem& newElem = *(newHyp.elems().rbegin());
@@ -324,8 +324,8 @@ void ChainsDisambiguator::computePaths()
             else // 1. finish it or cancel it if it was not finished
               // 2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)
             {
-//               LDEBUG << "1. finish it or cancel it if it was not finished" << LENDL;
-//               LDEBUG << "2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)" << LENDL;
+//               LDEBUG << "1. finish it or cancel it if it was not finished";
+//               LDEBUG << "2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)";
               Path newHyp(currentHyp);
               // current chain was not finished, we are on a divergent branch
               // current chain elem has to be removed and replaced by vertices elems
@@ -333,8 +333,8 @@ void ChainsDisambiguator::computePaths()
               if (!( (currentElemChainIdStruct.elemType() == END) ||
                      (currentElemChainIdStruct.elemType() == UNIGRAM) ))
               {
-//                 LDEBUG << "current chain was not finished, we are on a divergent branch" << LENDL;
-//                 LDEBUG << "current chain elem has to be removed and replaced by vertices elems" << LENDL;
+//                 LDEBUG << "current chain was not finished, we are on a divergent branch";
+//                 LDEBUG << "current chain elem has to be removed and replaced by vertices elems";
                 cancelCurrentChain(currentElem, newHyp);
               }
               // now continue as when there was no chain on current vertex
@@ -364,7 +364,7 @@ void ChainsDisambiguator::computePaths()
           // several chains on the new vertex
           else
           {
-//             LDEBUG << "several chains on the new vertex" << LENDL;
+//             LDEBUG << "several chains on the new vertex";
             // verify if we continue the same chain
             // or finish it and start a new one
             // or finish it and new vertex is a confluent on another chain
@@ -385,7 +385,7 @@ void ChainsDisambiguator::computePaths()
             // continue the same chain
             if (currentChainFound)
             {
-//               LDEBUG << "continue the same chain" << LENDL;
+//               LDEBUG << "continue the same chain";
               Path newHyp(currentHyp);
               Key newKey(nextVertex, nextVertexChainsIdsToIgnore);
               Elem& newElem = *(newHyp.elems().rbegin());
@@ -399,8 +399,8 @@ void ChainsDisambiguator::computePaths()
             else // 1. finish it or cancel it if it was not finished
               // 2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)
             {
-//               LDEBUG << "1. finish it or cancel it if it was not finished;" << LENDL;
-//               LDEBUG << "2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)" << LENDL;
+//               LDEBUG << "1. finish it or cancel it if it was not finished;";
+//               LDEBUG << "2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)";
               Path newHyp(currentHyp);
               // current chain was not finished, we are on a divergent branch
               // current chain elem has to be removed and replaced by vertices elems
@@ -408,19 +408,19 @@ void ChainsDisambiguator::computePaths()
               if (!( (currentElemChainIdStruct.elemType() == END) ||
                      (currentElemChainIdStruct.elemType() == UNIGRAM) ))
               {
-//                 LDEBUG << "current chain was not finished, we are on a divergent branch" << LENDL;
-//                 LDEBUG << "current chain elem has to be removed and replaced by vertices elems made from its elements" << LENDL;
+//                 LDEBUG << "current chain was not finished, we are on a divergent branch";
+//                 LDEBUG << "current chain elem has to be removed and replaced by vertices elems made from its elements";
                 cancelCurrentChain(currentElem, newHyp);
               }
               // now continue as when there was no chain on current vertex
-//               LDEBUG << "now continue as when there was no chain on current vertex" << LENDL;
+//               LDEBUG << "now continue as when there was no chain on current vertex";
               startWithSeveralChainsOnNewVertex(nextVertex, nextVertexChains, currentHyp);
             }
           }
         }
         else // a chain on current vertex and one (or more) chain(s) to ignore
         {
-//           LDEBUG << "a chain on current vertex and one (or more) chain(s) to ignore" << LENDL;
+//           LDEBUG << "a chain on current vertex and one (or more) chain(s) to ignore";
           uint64_t currentElemChainId = currentElem.id();
           ChainIdStruct currentElemChainIdStruct;
           std::set< ChainIdStruct >::const_iterator currentVertexChainsIt, currentVertexChainsIt_end;
@@ -439,12 +439,12 @@ void ChainsDisambiguator::computePaths()
 
           if (nextVertexChains.empty()) // no chain on next vertex: the current chain does not continue
           {
-//             LDEBUG << "no chain on next vertex: the current chain does not continue" << LENDL;
+//             LDEBUG << "no chain on next vertex: the current chain does not continue";
             // current chain was finished, continuing normaly
             if ( (currentElemChainIdStruct.elemType() == END) ||
                  (currentElemChainIdStruct.elemType() == UNIGRAM) )
             {
-//               LDEBUG << "current chain was finished, continuing normaly" << LENDL;
+//               LDEBUG << "current chain was finished, continuing normaly";
               Path newHyp(currentHyp);
               Key newKey(nextVertex, currentKey.chainsToIgnore());
               Elem newElem(nextVertex);
@@ -460,7 +460,7 @@ void ChainsDisambiguator::computePaths()
             // made from its elements
             else
             {
-//               LDEBUG << "current chain was not finished, we are on a divergent branch ; current chain elem has to be removed and replaced by vertices elems made from its elements" << LENDL;
+//               LDEBUG << "current chain was not finished, we are on a divergent branch ; current chain elem has to be removed and replaced by vertices elems made from its elements";
               Path newHyp(currentHyp);
               cancelCurrentChain(currentElem, newHyp);
               Key newKey(nextVertex, currentKey.chainsToIgnore());
@@ -477,7 +477,7 @@ void ChainsDisambiguator::computePaths()
           // one chain on the new vertex
           else if (nextVertexChains.size() == 1)
           {
-//             LDEBUG << "one chain on the new vertex" << LENDL;
+//             LDEBUG << "one chain on the new vertex";
             // verify if we continue the same chain
             // or finish it and start a new one
             // or finish it and new vertex is a confluent on another chain
@@ -485,7 +485,7 @@ void ChainsDisambiguator::computePaths()
             // continue the same chain
             if ( (*(nextVertexChains.begin())).chainId() == currentElem.id() )
             {
-//               LDEBUG << "continue the same chain" << LENDL;
+//               LDEBUG << "continue the same chain";
               Path newHyp(currentHyp);
               Key newKey(nextVertex);
               Elem& newElem = *(newHyp.elems().rbegin());
@@ -501,7 +501,7 @@ void ChainsDisambiguator::computePaths()
               // 2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)
               // 3. continue without chain if new chain have to be ignored
             {
-//               LDEBUG << "does not continue the same chain" << LENDL;
+//               LDEBUG << "does not continue the same chain";
               Path newHyp(currentHyp);
               // current chain was not finished, we are on a divergent branch
               // current chain elem has to be removed and replaced by vertices elems
@@ -509,15 +509,15 @@ void ChainsDisambiguator::computePaths()
               if (!( (currentElemChainIdStruct.elemType() == END) ||
                      (currentElemChainIdStruct.elemType() == UNIGRAM) ))
               {
-//                 LDEBUG << "current chain was not finished, we are on a divergent branch" << LENDL;
+//                 LDEBUG << "current chain was not finished, we are on a divergent branch";
                 cancelCurrentChain(currentElem, newHyp);
               }
               else
               {
-//                 LDEBUG << "current chain was finished" << LENDL;
+//                 LDEBUG << "current chain was finished";
               }
 
-//               LDEBUG << "now continue as when there was no chain on current vertex" << LENDL;
+//               LDEBUG << "now continue as when there was no chain on current vertex";
               // now continue as when there was no chain on current vertex
               Key newKey(nextVertex, currentKey.chainsToIgnore());
               ChainIdStruct nextVertexChain = (*(nextVertexChains.begin()));
@@ -546,7 +546,7 @@ void ChainsDisambiguator::computePaths()
           // several chains on the new vertex
           else
           {
-//             LDEBUG << "several chains on the new vertex" << LENDL;
+//             LDEBUG << "several chains on the new vertex";
             // verify if we continue the same chain
             // or finish it and start a new one
             // or finish it and new vertex is a confluent on another chain
@@ -566,7 +566,7 @@ void ChainsDisambiguator::computePaths()
             // continue the same chain
             if (currentChainFound)
             {
-//               LDEBUG << "continue the same chain" << LENDL;
+//               LDEBUG << "continue the same chain";
               Path newHyp(currentHyp);
               Key newKey(nextVertex, nextVertexChainsIdsToIgnore);
               Elem& newElem = *(newHyp.elems().rbegin());
@@ -581,8 +581,8 @@ void ChainsDisambiguator::computePaths()
               // 1. finish it or cancel it if it was not finished
               // 2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)
             {
-//               LDEBUG << "1. finish it or cancel it if it was not finished ;" << LENDL;
-//               LDEBUG << "2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)" << LENDL;
+//               LDEBUG << "1. finish it or cancel it if it was not finished ;";
+//               LDEBUG << "2. start a new chain or add to ignore if new vertex is a confluent on another chain (begin or continued)";
               Path newHyp(currentHyp);
               // current chain was not finished, we are on a divergent branch
               // current chain elem has to be removed and replaced by vertices elems
@@ -610,7 +610,7 @@ void ChainsDisambiguator::startWithSeveralChainsOnNewVertex(
     const Path& currentHyp)
 {
 //   SADLOGINIT;
-//   LDEBUG << "startWithSeveralChainsOnNewVertex: " << nextVertex << LENDL;
+//   LDEBUG << "startWithSeveralChainsOnNewVertex: " << nextVertex;
   const Key& currentKey = currentHyp.key();
   const LinguisticGraph* graph = m_data->graph();
   CVertexDataPropertyMap dataMap = get(vertex_data, *graph);
@@ -637,7 +637,7 @@ void ChainsDisambiguator::startWithSeveralChainsOnNewVertex(
   }
   if (nextVertexBeginChainsIds.empty())  //no chain begin found
   {
-//     LDEBUG << "no chain begin found" << nextVertex << LENDL;
+//     LDEBUG << "no chain begin found" << nextVertex;
     Key newKey(nextVertex, currentKey.chainsToIgnore());
     Path newHyp(currentHyp);
     newChainsToIgnore = nextVertexChainsIds;
@@ -652,7 +652,7 @@ void ChainsDisambiguator::startWithSeveralChainsOnNewVertex(
   }
   else //chain(s) begin(s) found
   {
-//     LDEBUG << "chain(s) begin(s) found" << nextVertex << LENDL;
+//     LDEBUG << "chain(s) begin(s) found" << nextVertex;
     std::set<uint64_t>::const_iterator nextVertexBeginChainsIdsIt, nextVertexBeginChainsIdsIt_end;
     nextVertexBeginChainsIdsIt = nextVertexBeginChainsIds.begin();
     nextVertexBeginChainsIdsIt_end = nextVertexBeginChainsIds.end();
@@ -674,14 +674,14 @@ void ChainsDisambiguator::startWithSeveralChainsOnNewVertex(
         m_hypsStack.pop_back();
     }
   }
-//   LDEBUG << "END startWithSeveralChainsOnNewVertex: " << nextVertex << LENDL;
+//   LDEBUG << "END startWithSeveralChainsOnNewVertex: " << nextVertex;
 }
 
 /** simplify the graph to keep only the selected chains path */
 void ChainsDisambiguator::applyDisambiguisation()
 {
 //   SADLOGINIT;
-//   LDEBUG << "ChainsDisambiguator::applyDisambiguisation on " << m_completePaths.size() << " complete paths" << LENDL;
+//   LDEBUG << "ChainsDisambiguator::applyDisambiguisation on " << m_completePaths.size() << " complete paths";
   if (m_completePaths.empty()) return;
   std::set< Path > updatedPaths;
   std::multiset< Path >::const_iterator pathsIt, pathsIt_end;
@@ -692,11 +692,11 @@ void ChainsDisambiguator::applyDisambiguisation()
     Path path = *pathsIt;
     uint64_t nb = computeDepsNb(path);
     path.depsNb(nb);
-//     LDEBUG << path << LENDL;
+//     LDEBUG << path;
     updatedPaths.insert(path);
   }
   const Path& selectedPath = *(updatedPaths.begin());
-//   LDEBUG << "Selected path: " << selectedPath << LENDL;
+//   LDEBUG << "Selected path: " << selectedPath;
   std::set< LinguisticGraphVertex > selectedVertices;
   std::list< Elem >::const_iterator it, it_end;
   it = selectedPath.elems().begin();

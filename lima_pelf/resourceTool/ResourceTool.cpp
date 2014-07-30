@@ -374,7 +374,7 @@ void ResourceTool::nGramsCorpusInit (QString symbolicCodesPath, QString corpusPa
             prevText = curText;
             prevCode = curCode;
             prevCat = curCat;
-            if(curCat == "L_PONCTU_FORTE" || curCat == "SENT")
+            if(curCat == "PONCTU_FORTE" || curCat == "SENT")
             {
                 curSentence = "<br/>> ";
                 prevPrevText = prevText = "";

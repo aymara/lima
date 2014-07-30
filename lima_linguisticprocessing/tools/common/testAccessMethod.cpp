@@ -315,7 +315,7 @@ int readListOfHyperWords(
       if( term_pos == string::npos)
       {
 #ifdef DEBUG_CD
-        LERROR << "error in list of hyperwords line = " << line << LENDL;
+        LERROR << "error in list of hyperwords line = " << line;
 #endif
         break;
       }
@@ -324,7 +324,7 @@ int readListOfHyperWords(
       int offset = atoi(strOffset.c_str());
       listOfHyperWords.push_back(std::pair<string,int>(term,offset));
 #ifdef DEBUG_CD
-      LDEBUG <<  "readListOfHyperWords: push(" << term << "," << offset << ")" << LENDL;
+      LDEBUG <<  "readListOfHyperWords: push(" << term << "," << offset << ")";
 #endif
 
     }

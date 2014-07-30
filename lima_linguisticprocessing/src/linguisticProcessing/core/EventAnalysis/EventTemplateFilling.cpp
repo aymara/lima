@@ -78,12 +78,12 @@ void EventTemplateFilling::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateFilling: Missing 'eventTemplate' parameter in EventTemplateFilling definition" << LENDL;
+    LERROR << "EventTemplateFilling: Missing 'eventTemplate' parameter in EventTemplateFilling definition";
     //throw InvalidConfiguration;
   }
   catch (std::exception& e) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateFilling: Missing ressource for 'eventTemplate' parameter" << LENDL;
+    LERROR << "EventTemplateFilling: Missing ressource for 'eventTemplate' parameter";
     //throw InvalidConfiguration;
   }
 }
@@ -91,13 +91,13 @@ void EventTemplateFilling::init(
 LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateFilling process" << LENDL;
+  LDEBUG << "EventTemplateFilling process";
   TimeUtils::updateCurrentTime();
 
   // create EventTemplateData
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
-    LDEBUG << "EventTemplateFilling: create new data 'EventTemplateData'" << LENDL;
+    LDEBUG << "EventTemplateFilling: create new data 'EventTemplateData'";
     eventData = new EventTemplateData();
     analysis.setData("EventTemplateData", eventData);
   }

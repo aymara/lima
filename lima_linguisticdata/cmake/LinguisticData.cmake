@@ -688,18 +688,40 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
   add_custom_target(
     syntanalrules-${_lang}
     ALL
-    DEPENDS categoriesClassesDeclaration-${_lang}.txt ${${_lang}_BIN_RULES_FILES}
+    DEPENDS ${${_lang}_BIN_RULES_FILES} ${${_lang}_SA_DEPENDS_FILES}
   )
 
   foreach (file ${${_lang}_BIN_RULES_FILES})
     install(FILES
-        chainsMatrix-${_lang}.bin
-        categoriesClassesDeclaration-${_lang}.txt
-        compoundTenses-${_lang}.bin
         ${CMAKE_CURRENT_BINARY_DIR}/${file}
       COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SyntacticAnalysis)
   endforeach (file ${${_lang}_BIN_RULES_FILES})
 endmacro (COMPILE_SA_RULES_WRAPPER  _lang)
+
+macro (ADD_SA_RULES_DEPENDS _lang)
+  set(${_lang}_SA_DEPENDS_FILES)
+  foreach(SA_DEPS_FILE ${ARGN})
+    set (${_lang}_SA_DEPENDS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${SA_DEPS_FILE} ${${_lang}_SA_DEPENDS_FILES})
+  endforeach(SA_DEPS_FILE ${ARGN})
+message("Execute ADD_SA_RULES_DEPENDS on ${${_lang}_SA_DEPENDS_FILES}")
+
+  add_custom_command(
+    OUTPUT syntanaldepends
+    COMMAND touch syntanaldepends
+    DEPENDS ${${_lang}_SA_DEPENDS_FILES}
+    VERBATIM
+  )
+
+  add_custom_target(
+    syntanaldepends-${_lang}
+    ALL
+    DEPENDS syntanaldepends
+  )
+
+  install(FILES ${${_lang}_SA_DEPENDS_FILES}
+    COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SyntacticAnalysis)
+  
+endmacro (ADD_SA_RULES_DEPENDS  _lang)
 
 ############
 #

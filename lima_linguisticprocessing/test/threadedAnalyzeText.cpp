@@ -89,7 +89,7 @@ public:
   }
 
 private:
-  ProtectedFileList(const ProtectedFileList& pfl) {}
+  ProtectedFileList(const ProtectedFileList& pfl);
   
   boost::mutex m_mutex;
   std::list<std::string> m_list;
@@ -362,7 +362,7 @@ int dowork(int argc,char* argv[])
   */
   delete client;
   TIMELOGINIT;
-  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms" << LENDL;
+  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
 
   return SUCCESS_ID;
 }

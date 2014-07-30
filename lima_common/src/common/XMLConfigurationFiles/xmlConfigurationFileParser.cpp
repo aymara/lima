@@ -72,10 +72,16 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLCo
     m_parser->setErrorHandler(&handler);
     QFile file(m_configurationFileName.c_str());
     if (!file.open(QIODevice::ReadOnly))
-      throw XMLException();
+    {
+      XMLCFGLOGINIT;
+      LERROR << "XMLConfigurationFileParser unable to open" << QString::fromUtf8(m_configurationFileName.c_str());
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.c_str());
+    }
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      throw XMLException();
+      XMLCFGLOGINIT;
+      LERROR << "XMLConfigurationFileParser unable to parse" << QString::fromUtf8(m_configurationFileName.c_str()) << ":" << m_parser->errorHandler()->errorString();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
     }
 }
 
@@ -83,7 +89,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     m_parser(0), m_configurationFileName(configurationFileName)
 {
     XMLCFGLOGINIT;
-    LDEBUG << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str() << LENDL;
+    LINFO << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str();
 
     m_parser = new QXmlSimpleReader();
 
@@ -98,13 +104,14 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     QFile file(m_configurationFileName.c_str());
     if (!file.open(QFile::ReadOnly))
     {
-      std::cerr << "Error opening " << m_configurationFileName.c_str() << std::endl;
-      throw XMLException();
+      XMLCFGLOGINIT;
+      LERROR << "Error opening " << m_configurationFileName.c_str();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName);
     }
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      std::cerr << "Error parsing " << m_configurationFileName.c_str() << std::endl;
-      throw XMLException();
+      LERROR << "Error parsing " << m_configurationFileName.c_str();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
     }
 }
 
@@ -164,20 +171,20 @@ string& XMLConfigurationFileParser::getModuleGroupParamValue(const string& modul
     catch(NoSuchModule& nsm)
     {
       std::cerr << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str() << LENDL;
+      LWARN << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str();
         //not LERROR because user may want the module to be optional -> no error
         throw;
     }
     catch(NoSuchGroup& nsg)
     {
       std::cerr << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str() << LENDL;
+      LWARN << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str();
         throw;
     }
     catch(NoSuchParam& nsp)
     {
       std::cerr << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str() << LENDL;
+      LWARN << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str();
         throw;
     }
     catch(...)

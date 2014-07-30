@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
     ifstream fileIn((*it).c_str(), std::ifstream::binary);
     if (! fileIn) {
-      LERROR << "file \"" << *it << "\" ignored: cannot open file" << LENDL;
+      LERROR << "file \"" << *it << "\" ignored: cannot open file";
       continue;
     }
 
@@ -161,14 +161,14 @@ int main(int argc, char *argv[])
       type=reader.getFileType();
       writer.writeHeader(*(param.fileOut),type);
       LINFO << "catBowFiles: concatenate files of type " 
-            << reader.getFileTypeString() << LENDL;
+            << reader.getFileTypeString();
       firstFile=false;
     }
     else if (reader.getFileType() != type) {
       LERROR << "file \"" <<  *it
              << "\" ignored: incompatible file type "
              << reader.getFileTypeString() 
-             << LENDL;
+            ;
       continue;
     }
     

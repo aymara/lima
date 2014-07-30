@@ -75,31 +75,31 @@ void EventHandler::endDocument()
 void EventHandler::endAnalysis()
 {
   DUMPERLOGINIT;
-  LDEBUG << "EventHandler::endAnalysis()" << LENDL;
+  LDEBUG << "EventHandler::endAnalysis()";
   m_writer->endAnalysis();
   istringstream in(m_stream->str()); 
-  LDEBUG << "EventHandler::endAnalysis(): m_stream->str= " << m_stream->str() << LENDL;
+  LDEBUG << "EventHandler::endAnalysis(): m_stream->str= " << m_stream->str();
   m_events.read(in);
 }
 
 void EventHandler::startAnalysis()
 {
   DUMPERLOGINIT;
-  LDEBUG << "EventHandler::startAnalysis()" << LENDL;
+  LDEBUG << "EventHandler::startAnalysis()";
   if (m_writer!=0) {
-    LDEBUG << "EventHandler::startAnalysis(): delete m_writer" << LENDL;
+    LDEBUG << "EventHandler::startAnalysis(): delete m_writer";
     delete m_writer;
     m_writer=0;
   }
   if (m_stream!=0) {
-    LDEBUG << "EventHandler::startAnalysis(): delete m_stream" << LENDL;
+    LDEBUG << "EventHandler::startAnalysis(): delete m_stream";
     delete m_stream;
     m_writer=0;
   }
   m_stream= new ostringstream();
   m_writer=new SimpleStreamHandler();
   m_writer->setOut(m_stream);
-  LDEBUG << "EventHandler::startAnalysis(): m_stream->StartAnalysis()..." << LENDL;
+  LDEBUG << "EventHandler::startAnalysis(): m_stream->StartAnalysis()...";
   m_writer->startAnalysis();
 }
 
@@ -107,7 +107,7 @@ void EventHandler::startAnalysis()
 void EventHandler::handle(const char* buf,int length) 
 {
   DUMPERLOGINIT;
-  LDEBUG << "EventHandler::handle( buff, " << length << ")" << LENDL;
+  LDEBUG << "EventHandler::handle( buff, " << length << ")";
   m_writer->handle(buf,length);
 }
   

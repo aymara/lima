@@ -103,7 +103,7 @@ void SegmentFeaturesDumper::init(Common::XMLConfigurationFiles::GroupConfigurati
   }
   catch (NoSuchList& ) { // keep default value
     LOGINIT("LP::Dumper");
-    LERROR << "Warning: no features selected in SegmentFeaturesDumper: output will be empty" << LENDL;
+    LERROR << "Warning: no features selected in SegmentFeaturesDumper: output will be empty";
   }
   
 }
@@ -112,16 +112,16 @@ LimaStatusCode SegmentFeaturesDumper::process(
   AnalysisContent& analysis) const
 {
   LOGINIT("LP::Segmentation");
-  LDEBUG << "SegmentFeaturesDumper::process" << LENDL;
+  LDEBUG << "SegmentFeaturesDumper::process";
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
   if (m_features==0) {
-    LERROR << "No features selected => no output" << LENDL;
+    LERROR << "No features selected => no output";
     return SUCCESS_ID;
   }
 
@@ -132,21 +132,21 @@ LimaStatusCode SegmentFeaturesDumper::process(
   
   AnalysisData* data=analysis.getData(m_data);
   if (data==0) {
-    LERROR << "Error: no data '"<< m_data << "'" << LENDL;
+    LERROR << "Error: no data '"<< m_data << "'";
     return MISSING_DATA;
   }
   SegmentationData* segmData=static_cast<SegmentationData*>(data);
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(segmData->getGraphId()));
 
-  // ??OME2 LDEBUG << "SegmentationData " << m_data << " has " << segmData->size() << " segments" << LENDL;
-  LDEBUG << "SegmentationData " << m_data << " has " << segmData->getSegments().size() << " segments" << LENDL;
+  // ??OME2 LDEBUG << "SegmentationData " << m_data << " has " << segmData->size() << " segments";
+  LDEBUG << "SegmentationData " << m_data << " has " << segmData->getSegments().size() << " segments";
   
   uint64_t i(0);
   // ??OME2 for (vector<Segment>::const_iterator s=segmData->begin(),
   //     s_end=segmData->end();s!=s_end;s++) {
   for (vector<Segment>::const_iterator s=(segmData->getSegments()).begin(),
        s_end=(segmData->getSegments()).end();s!=s_end;s++) {
-    LDEBUG << "looking at segment " << i << ":" << (*s).getPosBegin() << "," << (*s).getLength() << LENDL;
+    LDEBUG << "looking at segment " << i << ":" << (*s).getPosBegin() << "," << (*s).getLength();
     bool first=true;
     for (SegmentFeatures::const_iterator f=m_features->begin(),f_end=m_features->end();f!=f_end;f++) {
       if (first) { first=false; }

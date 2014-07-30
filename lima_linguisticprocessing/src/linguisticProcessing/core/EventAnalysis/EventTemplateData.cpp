@@ -127,7 +127,7 @@ createEntity(const LinguisticAnalysisStructure::AnalysisGraph* graph,
 {
   LinguisticAnalysisStructure::Token* token=get(vertex_token, *(graph->getGraph()), v);
   if (token==0) {
-    LOGINIT("LP::EventAnalysis");    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v << LENDL;
+    LOGINIT("LP::EventAnalysis");    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v;
     return 0;
   }
 

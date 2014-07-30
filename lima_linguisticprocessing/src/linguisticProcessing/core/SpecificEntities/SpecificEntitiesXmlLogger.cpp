@@ -58,7 +58,7 @@ m_graph("PosGraph"),
 m_followGraph(false)
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesXmlLogger::SpecificEntitiesXmlLogger()" << LENDL;
+  LDEBUG << "SpecificEntitiesXmlLogger::SpecificEntitiesXmlLogger()";
 }
 
 
@@ -71,7 +71,7 @@ void SpecificEntitiesXmlLogger::init(
 
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesXmlLogger::init" << LENDL;
+  LDEBUG << "SpecificEntitiesXmlLogger::init";
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
   m_language=manager->getInitializationParameters().media;
@@ -84,7 +84,7 @@ void SpecificEntitiesXmlLogger::init(
   {
     SELOGINIT;
     LWARN << "No 'graph' parameter in unit configuration '"
-        << unitConfiguration.getName() << "' ; using PosGraph" << LENDL;
+        << unitConfiguration.getName() << "' ; using PosGraph";
     m_graph=string("PosGraph");
   }
   try
@@ -112,13 +112,13 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   AnalysisContent& analysis) const
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesXmlLogger::process" << LENDL;
+  LDEBUG << "SpecificEntitiesXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData == 0) {
     SELOGINIT;
-    LERROR << "no annotationData ! abort" << LENDL;
+    LERROR << "no annotationData ! abort";
     return MISSING_DATA;
   }
   
@@ -126,7 +126,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   LinguisticAnalysisStructure::AnalysisGraph* graphp = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph));
   if (graphp == 0) {
     SELOGINIT;
-    LERROR << "no graph "<< m_graph <<" ! abort" << LENDL;
+    LERROR << "no graph "<< m_graph <<" ! abort";
     return MISSING_DATA;
   }
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *graphp;
@@ -136,7 +136,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SELOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
@@ -186,7 +186,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
 
     AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
     if (tokenList==0) {
-      LERROR << "graph " << m_graph << " has not been produced: check pipeline" << LENDL;
+      LERROR << "graph " << m_graph << " has not been produced: check pipeline";
       return MISSING_DATA;
     }
     LinguisticGraph* graph=tokenList->getGraph();
@@ -225,10 +225,10 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
     boost::tie(itv, itv_end) = vertices(annotationData->getGraph());
     for (; itv != itv_end; itv++)
     {
-      //     LDEBUG << "SpecificEntitiesXmlLogger on annotation vertex " << *itv << LENDL;
+      //     LDEBUG << "SpecificEntitiesXmlLogger on annotation vertex " << *itv;
       if (annotationData->hasAnnotation(*itv,Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
-        //       LDEBUG << "    it has SpecificEntityAnnotation" << LENDL;
+        //       LDEBUG << "    it has SpecificEntityAnnotation";
         const SpecificEntityAnnotation* annot = 0;
         try
         {
@@ -238,7 +238,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
         catch (const boost::bad_any_cast& )
         {
           SELOGINIT;
-          LERROR << "This annotation is not a SpecificEntity; SE not logged" << LENDL;
+          LERROR << "This annotation is not a SpecificEntity; SE not logged";
           continue;
         }
         
@@ -247,7 +247,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
         if (!annotationData->hasIntAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph)))
         {
           //         SELOGINIT;
-          //         LDEBUG << *itv << " has no " << m_graph << " annotation. Skeeping it." << LENDL;
+          //         LDEBUG << *itv << " has no " << m_graph << " annotation. Skeeping it.";
           continue;
         }
         v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph));
@@ -256,7 +256,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
     }
   }   
   
-  //   LDEBUG << "    all vertices done" << LENDL;
+  //   LDEBUG << "    all vertices done";
   if (m_compactFormat) {
     out << "</entities>" << endl;
   }
@@ -277,11 +277,11 @@ outputEntity(std::ostream& out,
              uint64_t offset) const
 {
   LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
-  //       LDEBUG << "SpecificEntitiesXmlLogger tokenMap[" << v << "] = " << vToken << LENDL;
+  //       LDEBUG << "SpecificEntitiesXmlLogger tokenMap[" << v << "] = " << vToken;
   if (vToken == 0)
   {
     SELOGINIT;
-    LERROR << "Vertex " << v << " has no entry in the analysis graph token map. This should not happen !!" << LENDL;
+    LERROR << "Vertex " << v << " has no entry in the analysis graph token map. This should not happen !!";
   }
   else
   {

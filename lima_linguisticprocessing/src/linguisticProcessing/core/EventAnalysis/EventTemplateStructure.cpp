@@ -47,7 +47,7 @@ void EventTemplateStructure::addTemplateElement(const std::string& role,
 {
   if (m_structure.find(role)!=m_structure.end()) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "In event " << m_name << ", element '"<< role <<"' is defined twice"  << LENDL;
+    LERROR << "In event " << m_name << ", element '"<< role <<"' is defined twice" ;
   }
   else {
     Common::MediaticData::EntityType type=

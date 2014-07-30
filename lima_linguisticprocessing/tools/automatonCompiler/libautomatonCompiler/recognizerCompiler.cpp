@@ -64,10 +64,10 @@ m_stream(0),
 m_nbRule(0)
 {
   AUCLOGINIT;
-  LINFO << "Opening recognizer compiler with file " << filename << LENDL;
+  LINFO << "Opening recognizer compiler with file " << filename;
   m_stream=new ifstream(filename.c_str(), std::ifstream::binary);
   if (! m_stream || !m_stream->good()) {
-    LERROR << "Cannot open file [" << filename << "]" << LENDL;
+    LERROR << "Cannot open file [" << filename << "]";
     throw AutomatonCompilerException("no file "+filename);
   }
 }
@@ -92,7 +92,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     tmpStream=m_stream;
     m_stream=new ifstream(filename.c_str(), std::ifstream::binary);
     if (! m_stream || !m_stream->good()) {
-      LERROR << "Cannot open file [" << filename << "]" << LENDL;
+      LERROR << "Cannot open file [" << filename << "]";
       throw AutomatonCompilerException("no file "+filename);
     }
     m_filename=filename;
@@ -104,7 +104,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
   vector <SubAutomaton> subAutomatons;
   while (! m_stream->eof()) {
     readline(s);
-    //LDEBUG << "[" << Misc::limastring2utf8stdstring(s) << "]" << LENDL;
+    //LDEBUG << "[" << Misc::limastring2utf8stdstring(s) << "]";
     if (s.length() == 0) { continue; } // skip blank lines
     if (s[0] == CHAR_COMMENT) { continue; } // skip comments
 
@@ -112,7 +112,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     if (s.indexOf(STRING_DEFINE_ENCODING)==0) {
       m_recognizerEncoding = Misc::limastring2utf8stdstring(s.mid(STRING_DEFINE_ENCODING.size()));
       LDEBUG << "Got encoding definition: '"
-             << m_recognizerEncoding << "'" << LENDL;
+             << m_recognizerEncoding << "'";
       continue;
     }
     // check if it is a type definition
@@ -128,7 +128,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
         LimaString str = s.mid(begin,next-begin);
-        LDEBUG << "RecognizerCompiler: use lib " << Common::Misc::limastring2utf8stdstring(str) << LENDL;
+        LDEBUG << "RecognizerCompiler: use lib " << Common::Misc::limastring2utf8stdstring(str);
         
         begin=next+1;
       } while (next != -1);
@@ -143,7 +143,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
         LimaString str = s.mid(begin,next-begin);
-        LDEBUG << "RecognizerCompiler: use group " << Common::Misc::limastring2utf8stdstring(str) << LENDL;
+        LDEBUG << "RecognizerCompiler: use group " << Common::Misc::limastring2utf8stdstring(str);
         m_activeEntityGroups.push_back(str);
         begin=next+1;
       } while (next != -1);
@@ -154,7 +154,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       //default action to be associated to all rules
       LWARN << "this syntax (" 
             << Common::Misc::limastring2utf8stdstring(STRING_DEFINE_ENTITYTYPES) 
-            << ") is deprecated: should be 'using modex XXX,YYY'" << LENDL;
+            << ") is deprecated: should be 'using modex XXX,YYY'";
       continue;
     }
 
@@ -266,13 +266,13 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         for (;git!=git_end;git++) {
           if ((*git).alias() == alias) {
             LWARN << "class with name " << alias
-                  << " already exists: second definition is ignored" << LENDL;
+                  << " already exists: second definition is ignored";
             gazeteerExist=true;
             break;
           }
         }
         if (! gazeteerExist) {
-        LINFO << "Adding gazeteer:" << g.alias() << "->" << g.size() << LENDL;
+        LINFO << "Adding gazeteer:" << g.alias() << "->" << g.size();
           gazeteers.push_back(g);
         }
       }
@@ -364,11 +364,11 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     /*
     ostringstream message;
     if (!checkRule(*r,trigger,language,message)) {
-      LERROR << message.str() << LENDL;
+      LERROR << message.str();
     }
     */
     LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
-          << ": trigger=" << *trigger << LENDL;
+          << ": trigger=" << *trigger;
     reco.addRule(trigger,r);
     m_nbRule++;
     delete trigger;
@@ -443,7 +443,7 @@ readSubAutomaton(const LimaString& line,
   }
 
   AUCLOGINIT;
-  LDEBUG << "read sub automaton " << sub << LENDL;
+  LDEBUG << "read sub automaton " << sub;
 
   sub.buildAutomatonString(gazeteers,subAutomatons);
   subAutomatons.push_back(sub);
@@ -528,7 +528,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
         //copy the properties of the trigger of the rule
         trigger->copyProperties(*(r->getTrigger()));
         reco.addRule(trigger,indexRule);
-        //LINFO << nbRule << ": trigger=" << *trigger << LENDL;
+        //LINFO << nbRule << ": trigger=" << *trigger;
         delete trigger; // it has been copied
       }
     }
@@ -553,7 +553,7 @@ double RecognizerCompiler::currentRuleWeight() {
   // (first rules are prioritary)
   AUCLOGINIT;
   double w=MAX_RULE_WEIGHT/(1+log((double)m_nbRule+1));
-  LDEBUG << "weight of rule " << m_nbRule << "=" << w << LENDL;
+  LDEBUG << "weight of rule " << m_nbRule << "=" << w;
   return w;
 }
 
@@ -582,7 +582,7 @@ void RecognizerCompiler::readline(LimaString& line) {
     oss <<  "file " << m_filename << ",line "
         << m_lineNumber << ": " << e.what();
     AUCLOGINIT;
-    LERROR << "Recognizer compiler Error: " << oss.str() << LENDL;
+    LERROR << "Recognizer compiler Error: " << oss.str();
     throw RecognizerCompilerException(oss.str());
   }
 }
@@ -601,7 +601,7 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
                                        vector<Gazeteer>& gazeteers,
                                        const vector<SubAutomaton>& subAutomatons) {
   AUCLOGINIT;
-  LDEBUG << "reading gazeteer file: " << filename << LENDL;
+  LDEBUG << "reading gazeteer file: " << filename;
   RecognizerCompiler reco(filename);
   while (! reco.endOfFile()) {
     Gazeteer g;
@@ -609,12 +609,12 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
     if (g.numberOfWords()!=0) {
       LINFO << "Adding gazeteer:" 
             << g.alias()
-            << "->" << g.size() << LENDL;
+            << "->" << g.size();
       g.buildAutomatonString(gazeteers,subAutomatons);
       gazeteers.push_back(g);
     }
-    else { LDEBUG << "gazeteer is empty: " << g << LENDL; }
-    if (reco.endOfFile()) { LDEBUG << "reached end of file" << LENDL; }
+    else { LDEBUG << "gazeteer is empty: " << g; }
+    if (reco.endOfFile()) { LDEBUG << "reached end of file"; }
   }
 }
 
@@ -653,8 +653,8 @@ void RecognizerCompiler::
 expandSubAutomatonsInRule(LimaString& s,
                           const std::vector<SubAutomaton>& subAutomatons) {
   AUCLOGINIT;
-  LDEBUG << "expand rule with sub-automatons" << LENDL;
-  LDEBUG << "rule before expansion :" << Common::Misc::limastring2utf8stdstring(s) << LENDL;
+  LDEBUG << "expand rule with sub-automatons";
+  LDEBUG << "rule before expansion :" << Common::Misc::limastring2utf8stdstring(s);
   int beginSub(findSpecialCharacter(s,CHAR_BEGIN_NAMESUB,0));
   int next(0);
   while (beginSub != -1) {
@@ -680,7 +680,7 @@ expandSubAutomatonsInRule(LimaString& s,
     beginSub = findSpecialCharacter(s,CHAR_BEGIN_NAMESUB,
                                     beginSub+1);
   }
-  LDEBUG << "rule after expansion :" << Common::Misc::limastring2utf8stdstring(s) << LENDL;
+  LDEBUG << "rule after expansion :" << Common::Misc::limastring2utf8stdstring(s);
 }
 
 bool RecognizerCompiler::
@@ -829,9 +829,9 @@ throwError(const std::string& error,
   AUCLOGINIT;
   LERROR << "Error file " << m_filename
          << ", line " << m_lineNumber
-         << ": " << error << LENDL;
+         << ": " << error;
   if (! ruleString.isEmpty()) {
-    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString) << LENDL;
+    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString);
   }
   throw AutomatonCompilerException(error);
 }
@@ -843,9 +843,9 @@ printWarning(const std::string& error,
   // print warnings in LERROR, because they should not be missed !
   LERROR << "Warning file " << m_filename
         << ", line " << m_lineNumber
-        << ": " << error << LENDL;
+        << ": " << error;
   if (! ruleString.isEmpty()) {
-    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString) << LENDL;
+    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString);
   }
 }
 

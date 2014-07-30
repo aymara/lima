@@ -238,7 +238,7 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const Lim
   VertexAGSannotPropertyMap map = get(vertex_sannot, m_graph);
   map[v][annot] = value;
   AGLOGINIT;
-  LDEBUG << "Annotating " << v << " ("<<m_pool[StringsPoolIndex(annot)]<<") : " << Lima::Common::Misc::limastring2utf8stdstring(value);
+  LDEBUG << "Annotating " << v << " ("<<m_pool[StringsPoolIndex(annot)]<<") : " << value;
 }
 
 void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const GenericAnnotation& value)

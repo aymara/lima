@@ -14,6 +14,13 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+ADD_SA_RULES_DEPENDS(eng
+        chainsMatrix-eng.bin
+        categoriesClassesDeclaration-eng.txt
+        compoundTenses-eng.bin
+)
+
+
 set(ENG_RULES_FILES
   rules-l2r-eng-homodeps.txt
   rules-r2l-eng-homodeps.txt

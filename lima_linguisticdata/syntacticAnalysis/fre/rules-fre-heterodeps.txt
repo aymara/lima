@@ -923,8 +923,6 @@ $PRON-CLO
 #en general si infinitif alors verbe est plutôt MOD_N
 #ex: Aux méthodes classiques pour accroître la productivité, ils en avaient redécouvert une quatrième.
 
-@PrepEtContracte=($PREP,$DET-DET)
-
 # cas temps composé
 @PrepEtContracte::%NounGroup (@NotTensedVerbSuj){0-n} @TensedVerbSujSansPPresent @PronInsideCompTense? %AdvGroup @TensedVerbSuj:SYNTACTIC_RELATION:
 +!SecondUngovernedBy(right.3,right.6,"TEMPCOMP")

@@ -93,10 +93,10 @@ void SvmToolPosTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "No SVMTool model defined in configuration file !" << LENDL;
+    LWARN << "No SVMTool model defined in configuration file !";
     throw InvalidConfiguration();
   }
-  LDEBUG << "Creating SVM Tagger with model: " << m_model << LENDL;
+  LDEBUG << "Creating SVM Tagger with model: " << m_model;
   erCompRegExp();
   m_tagger = new tagger(m_model.c_str());
   m_tagger->taggerLoadModelsForTagging();
@@ -109,7 +109,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 
   // start postagging here !
   PTLOGINIT;
-  LINFO << "start SvmToolPosTager" << LENDL;
+  LINFO << "start SvmToolPosTager";
 
   // Retrieve morphosyntactic graph
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -197,7 +197,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       currentVx = endVx;
     }
   }
-  LDEBUG << "Tagging '" << oss.str() << "'" << LENDL;
+  LDEBUG << "Tagging '" << oss.str() << "'";
   std::istringstream iss(oss.str());
 
   std::stringstream resOss;
@@ -217,12 +217,12 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   
   while (anaVerticesIndex < anaVertices.size() && std::getline(resOss,resultLine))
   {
-    LDEBUG << "Result line: '" << resultLine << "'" << LENDL;
+    LDEBUG << "Result line: '" << resultLine << "'";
     std::vector<std::string> elements;
     boost::split(elements,resultLine,boost::is_any_of(" "));
     if (elements.size() < 2)
     {
-      LERROR << "Error in SVMTagger result line: did not get 2 elements in '"<< resultLine << "'" << LENDL;
+      LERROR << "Error in SVMTagger result line: did not get 2 elements in '"<< resultLine << "'";
       return UNKNOWN_ERROR;
     }
     LinguisticGraphVertex anaVertex = anaVertices[anaVerticesIndex];
@@ -231,7 +231,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     boost::replace_all(token," ","_");
     if (token != elements[0])
     {
-      LERROR << "Error in SVMTagger result alignement with analysis graph: got '"<< elements[0] << "' from SVMTagger and '" << Common::Misc::limastring2utf8stdstring(currentAnaToken->stringForm()) << "' from graph" << LENDL;
+      LERROR << "Error in SVMTagger result alignement with analysis graph: got '"<< elements[0] << "' from SVMTagger and '" << Common::Misc::limastring2utf8stdstring(currentAnaToken->stringForm()) << "' from graph";
       return UNKNOWN_ERROR;
     }
 
@@ -252,10 +252,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
       if (posData->empty() || morphoData->empty())
       {
-        LWARN << "No matching category found for tagger result " << elements[0] << " " << elements[1] << LENDL;
+        LWARN << "No matching category found for tagger result " << elements[0] << " " << elements[1];
         if (!morphoData->empty())
         {
-          LWARN << "Taking any one" << LENDL;
+          LWARN << "Taking any one";
           posData->push_back(morphoData->front());
         }
       }
@@ -270,7 +270,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   }
   boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
   
-  LINFO << "SvmToolPosTagger postagging done." << LENDL;
+  LINFO << "SvmToolPosTagger postagging done.";
 
   return SUCCESS_ID;
 }
@@ -284,22 +284,21 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
     Common::AnnotationGraphs::AnnotationData* annotationData) const
 {
   PTLOGINIT;
-  LINFO << "reportPathsInGraph" << LENDL;
+  LINFO << "reportPathsInGraph";
 
   std::map<TargetVertexId,LinguisticGraphVertex> vertexMapping;
   typedef std::map<TargetVertexId,LinguisticGraphVertex>::iterator VertexMappingItr;
 
   std::queue<std::pair<LinguisticGraphVertex,PredData>,std::list< std::pair<LinguisticGraphVertex,PredData> > > toProcess;
   LinguisticGraphVertex endVertex=add_vertex(*resultgraph);
-  //    LDEBUG << "add end vertex " << endVertex << LENDL;
+  //    LDEBUG << "add end vertex " << endVertex;
   {
 
     {
       StepData& endStep=stepData.back();
       if (endStep.m_microCatsData.size()!=1) {
-        LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!" << LENDL;
+        LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!";
       }
-      MicroCatDataMapItr microItr=endStep.m_microCatsData.begin();
 
       // put linguistic data to end vertex
       LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,endStep.m_srcVertex);
@@ -320,12 +319,12 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
   {
     PredData& current=toProcess.front().second;
     LinguisticGraphVertex succVertex=toProcess.front().first;
-    //        LDEBUG << "process index " << current.m_predIndex << " and categ " << current.m_predMicro << LENDL;
+    //        LDEBUG << "process index " << current.m_predIndex << " and categ " << current.m_predMicro;
 
     if (current.m_predIndex==0) {
       // rien �cr�r, juste �connecter
       add_edge(startVertex,succVertex,*resultgraph);
-      //          LDEBUG << "just add link " << startVertex << " -> " << succVertex << LENDL;
+      //          LDEBUG << "just add link " << startVertex << " -> " << succVertex;
     } else {
 
       StepData& currentStep=stepData[current.m_predIndex];
@@ -341,10 +340,10 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
       {
         //            std::ostringstream os;
         //            copy(tvi.m_preds.begin(),tvi.m_preds.end(),std::ostream_iterator<LinguisticCode>(os,","));
-        //            LDEBUG << "TargetVertexID source " << tvi.m_sourceVx << ", categ " << tvi.m_categ << " | pred categs " << os.str() << " is not graph. add it" << LENDL;
+        //            LDEBUG << "TargetVertexID source " << tvi.m_sourceVx << ", categ " << tvi.m_categ << " | pred categs " << os.str() << " is not graph. add it";
         // if not exists create an register it
         LinguisticGraphVertex newVx=add_vertex(*resultgraph);
-        //            LDEBUG << "create vertex " << newVx << LENDL;
+        //            LDEBUG << "create vertex " << newVx;
         std::pair<
         VertexMappingItr,
         bool> insertStatus=vertexMapping.insert(make_pair(tvi,newVx));
@@ -385,7 +384,7 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
           } else if (*predPredMicroItr > pdsItr->m_predMicro) {
             pdsItr++;
           } else {
-            //                LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex << " micro " << pdsItr->m_predMicro << LENDL;
+            //                LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex << " micro " << pdsItr->m_predMicro;
             toProcess.push(make_pair(tgtVxItr->second,*pdsItr));
             pdsItr++;
             predPredMicroItr++;
@@ -395,7 +394,7 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
       }
 
       // link to pred
-      //          LDEBUG << "add link " << tgtVxItr->second << " -> " << succVertex << LENDL;
+      //          LDEBUG << "add link " << tgtVxItr->second << " -> " << succVertex;
       add_edge(tgtVxItr->second,succVertex,*resultgraph);
 
     }
@@ -403,7 +402,7 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
     toProcess.pop();
   }
 
-  LDEBUG << "end reporting paths" << LENDL;
+  LDEBUG << "end reporting paths";
   return endVertex;
 }
 

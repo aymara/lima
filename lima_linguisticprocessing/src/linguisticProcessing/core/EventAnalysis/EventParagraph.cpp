@@ -121,7 +121,7 @@ void EventParagraph::addEventEntities(Paragraph *p,Common::AnnotationGraphs::Ann
   std::pair<Common::MediaticData::EntityType,std::deque<LinguisticGraphVertex> > event_pair= p->getEventEntities();
   EVENTANALYZERLOGINIT;
   
-  LDEBUG << "EventParagraph::addEventEntities EventEntitie type " << event_pair.first << LENDL;
+  LDEBUG << "EventParagraph::addEventEntities EventEntitie type " << event_pair.first;
   std::vector<Entity *> v_entity;
   for(std::deque<LinguisticGraphVertex>::const_iterator iT= event_pair.second.begin(); iT != event_pair.second.end();iT++)
   {
@@ -210,10 +210,10 @@ void EventParagraph::write(std::ostream& file) const
   Common::Misc::writeCodedInt(file,m_position);
   Common::Misc::writeCodedInt(file,m_length);
   LDEBUG << "EventParagraph::write: write typeId of m_evententities..."
-      << m_evententities.first.getTypeId() << LENDL; 
+      << m_evententities.first.getTypeId(); 
   Common::Misc::writeCodedInt(file,m_evententities.first.getTypeId());
   LDEBUG << "EventParagraph::write: write groupId of m_evententities..."
-      << m_evententities.first.getGroupId() << LENDL; 
+      << m_evententities.first.getGroupId(); 
   Common::Misc::writeCodedInt(file,m_evententities.first.getGroupId());
   Common::Misc::writeCodedInt(file,m_evententities.second.size());
   for(std::vector<Entity*>::const_iterator iT=m_evententities.second.begin();iT!=m_evententities.second.end();iT++)

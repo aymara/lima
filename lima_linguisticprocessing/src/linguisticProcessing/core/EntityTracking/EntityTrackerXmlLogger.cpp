@@ -62,7 +62,7 @@ void EntityTrackerXmlLogger::init(
 
 {
   SELOGINIT;
-  LDEBUG << "EntityTrackerXmlLogger::init" << LENDL;
+  LDEBUG << "EntityTrackerXmlLogger::init";
   AbstractLinguisticLogger::init(unitConfiguration,manager);
 
   m_language=manager->getInitializationParameters().media;
@@ -75,7 +75,7 @@ void EntityTrackerXmlLogger::init(
   {
     SELOGINIT;
     LWARN << "No 'graph' parameter in unit configuration '"
-        << unitConfiguration.getName() << "' ; using AnalysisGraph" << LENDL;
+        << unitConfiguration.getName() << "' ; using AnalysisGraph";
     m_graph=string("AnalysisGraph");
   }
   try
@@ -94,7 +94,7 @@ LimaStatusCode EntityTrackerXmlLogger::process(
   AnalysisContent& analysis) const
 {
   SELOGINIT;
-  LDEBUG << "EntityTrackerXmlLogger::process" << LENDL;
+  LDEBUG << "EntityTrackerXmlLogger::process";
   TimeUtils::updateCurrentTime();
   /* permet de récupérer les annotations */
   //AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -105,21 +105,21 @@ LimaStatusCode EntityTrackerXmlLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SELOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
   CoreferenceData* corefData=static_cast<CoreferenceData*>(analysis.getData("CoreferenceData"));
   if (corefData == 0) {
       SELOGINIT;
-      LERROR << "no CoreferenceData ! abort" << LENDL;
+      LERROR << "no CoreferenceData ! abort";
       return MISSING_DATA;
   }
 
   ofstream out;
   if (!openLogFile(out,metadata->getMetaData("FileName"))) {
     SELOGINIT;
-    LERROR << "Can't open log file '" << metadata->getMetaData("FileName") << "'" << LENDL;
+    LERROR << "Can't open log file '" << metadata->getMetaData("FileName") << "'";
     return UNKNOWN_ERROR;
   }
 

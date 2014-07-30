@@ -99,12 +99,12 @@ FsaStringsPool& FsaStringsPool::operator=(const FsaStringsPool& /*unused p*/)
 void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)
 {
   STRPOOLLOGINIT;
-  LINFO << "register main keys" << LENDL;
+  LINFO << "register main keys" ;
 
   if (!m_d->m_additionalPool.empty())
   {
-    LERROR << "Can't register main keys if stringspool not empty !" << LENDL;
-    LERROR << "contains " << m_d->m_additionalPool[static_cast<StringsPoolIndex>(1)] << LENDL;
+    LERROR << "Can't register main keys if stringspool not empty !" ;
+    LERROR << "contains " << m_d->m_additionalPool[static_cast<StringsPoolIndex>(1)] ;
     throw LimaException("Can't register main keys if stringspool not empty !");
   }
 
@@ -136,7 +136,7 @@ StringsPoolIndex FsaStringsPool::operator[](const LimaString& str)
 const LimaString& FsaStringsPool::operator[](const StringsPoolIndex ind) const
 {
   //    STRPOOLLOGINIT;
-  //    LDEBUG << "const FsaStringsPool[" << ind << "]" << LENDL;
+  //    LDEBUG << "const FsaStringsPool[" << ind << "]" ;
   if (ind < m_d->m_mainKeySize)
   {
     boost::mutex::scoped_lock lock(m_d->m_mutex);

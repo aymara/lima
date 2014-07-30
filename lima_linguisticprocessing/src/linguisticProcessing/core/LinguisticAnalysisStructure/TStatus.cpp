@@ -158,10 +158,10 @@ bool TStatusPrivate::operator<(const TStatusPrivate& s) const {
 //   std::ostringstream oss1,oss2;
 //   TStatus(*this).outputXML(oss1);
 //   TStatus(s).outputXML(oss2);
-//   LDEBUG << "comparing TStatus " << LENDL
-//          << oss1.str() << LENDL
-//          << " with " << LENDL
-//          << oss2.str() << LENDL;
+//   LDEBUG << "comparing TStatus "
+//          << oss1.str()
+//          << " with "
+//          << oss2.str();
 
   if (!_defaultKey.empty() && !_defaultKey.back().isEmpty() &&
       !s._defaultKey.empty() && !s._defaultKey.back().isEmpty()) {
@@ -169,38 +169,38 @@ bool TStatusPrivate::operator<(const TStatusPrivate& s) const {
   }
   else {
     if (_status < s._status) {
-      //LDEBUG << "return true on status" << LENDL;
+      //LDEBUG << "return true on status";
       return true;
     }
     if (_status == s._status) {
       switch(_status) {
       case T_ALPHA:
         if (_capital < s._capital) {
-          //LDEBUG << "return true on capital" << LENDL;
+          //LDEBUG << "return true on capital";
           return true;
         }
         if (_capital == s._capital) {
           if (_roman < s._roman) {
-            //LDEBUG << "return true on roman" << LENDL;
+            //LDEBUG << "return true on roman";
             return true;
           }
         }
-        //LDEBUG << "return false on other alpha" << LENDL;
+        //LDEBUG << "return false on other alpha";
         return false;
       case T_NUMERIC:
         if (_numeric < s._numeric) {
-          //LDEBUG << "return true on numeric" << LENDL;
+          //LDEBUG << "return true on numeric";
           return true;
         }
-        //LDEBUG << "return false on other numeric" << LENDL;
+        //LDEBUG << "return false on other numeric";
         return false;
       default:
-        //LDEBUG << "return false on other status" << LENDL;
+        //LDEBUG << "return false on other status";
         return false;
       }
     }
   }
-  //LDEBUG << "return false on other" << LENDL;
+  //LDEBUG << "return false on other";
   return false;
 }
 
@@ -337,11 +337,11 @@ const Lima::LimaString& TStatus::defaultKey() const {
 
 void TStatus::setDefaultKey(const Lima::LimaString& defaultKey) {
   TOKENIZERLOGINIT;
-  LDEBUG << "TStatus::setDefaultKey to" << Common::Misc::limastring2utf8stdstring(defaultKey) << LENDL;
+  LDEBUG << "TStatus::setDefaultKey to" << Common::Misc::limastring2utf8stdstring(defaultKey);
   LDEBUG << "TStatus::setDefaultKey previous:" << ((m_d->_defaultKey.empty())?LimaString("EMPTY"):m_d->_defaultKey.back());
   if (!m_d->_defaultKey.empty())
   {
-    LDEBUG << "TStatus::setDefaultKey previous:" << Common::Misc::limastring2utf8stdstring(m_d->_defaultKey.back()) << LENDL;
+    LDEBUG << "TStatus::setDefaultKey previous:" << Common::Misc::limastring2utf8stdstring(m_d->_defaultKey.back());
   }
   // do not push several times the same value
   if (!m_d->_defaultKey.empty() && m_d->_defaultKey.back() == defaultKey)

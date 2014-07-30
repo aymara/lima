@@ -117,19 +117,19 @@ LimaStatusCode DepTripletLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "no AnalysisGraph ! abort" << LENDL;
+    LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "no PosGraph ! abort" << LENDL;
+    LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -142,7 +142,7 @@ LimaStatusCode DepTripletLogger::process(
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
 
@@ -150,7 +150,7 @@ LimaStatusCode DepTripletLogger::process(
   if (!openLogFile(outputStream,metadata->getMetaData("FileName")))
   {
     SALOGINIT;
-    LERROR << "Can't open log file " << LENDL;
+    LERROR << "Can't open log file ";
     return CANNOT_OPEN_FILE_ERROR;
   }
 
@@ -176,9 +176,9 @@ void DepTripletLogger::dumpDependencyRelations(std::ostream& outputStream,
                         const VxToTermsMap& compoundsHeads) const
 {
   SALOGINIT;
-  LDEBUG << "Address of syntactic data used to dump: " << syntData << LENDL;
+  LDEBUG << "Address of syntactic data used to dump: " << syntData;
   const DependencyGraph* depGraph = syntData-> dependencyGraph();
-  LDEBUG << "Address of dependency graph used to dump: " << depGraph << LENDL;
+  LDEBUG << "Address of dependency graph used to dump: " << depGraph;
 
 
   const LinguisticGraph* graph = syntData->graph();
@@ -189,24 +189,24 @@ void DepTripletLogger::dumpDependencyRelations(std::ostream& outputStream,
   boost::tie(it, it_end) = edges(*depGraph);
   for (; it != it_end; it++)
   {
-    LDEBUG << "Dumping dependency edge " << source(*it, *depGraph) << " -> " << target(*it, *depGraph) << LENDL;
+    LDEBUG << "Dumping dependency edge " << source(*it, *depGraph) << " -> " << target(*it, *depGraph);
     try
     {
-      LDEBUG << "DepTripletLogger::dumpDependencyRelations" << LENDL;
+      LDEBUG << "DepTripletLogger::dumpDependencyRelations";
       CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *depGraph);
       Common::MediaticData::SyntacticRelationId type = typeMap[*it];
       LDEBUG << "DepTripletLogger::dumpDependencyRelations relation = "
-             << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type) << LENDL;
+             << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type);
       std::set<std::string>::const_iterator relationPos =
           m_relation_names.find(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type));
       if( relationPos != m_relation_names.end() )
       {
         LDEBUG << "Src  : Dep vertex= " << source(*it, *depGraph);
         LinguisticGraphVertex src = syntData->tokenVertexForDepVertex(source(*it, *depGraph));
-        LDEBUG << "Src  : Morph vertex= " << src << LENDL;
+        LDEBUG << "Src  : Morph vertex= " << src;
         LDEBUG << "Targ : Dep vertex= " << target(*it, *depGraph) ;
         LinguisticGraphVertex dest = syntData->tokenVertexForDepVertex(target(*it, *depGraph));
-        LDEBUG << "Targ : Morph vertex= " << dest << LENDL;
+        LDEBUG << "Targ : Morph vertex= " << dest;
 
         std::set<StringsPoolIndex> srcLemmas=dataMap[src]->allLemma();
         std::set<StringsPoolIndex> destLemmas=dataMap[dest]->allLemma();
@@ -228,7 +228,7 @@ void DepTripletLogger::dumpDependencyRelations(std::ostream& outputStream,
       }
       else
       {
-        LDEBUG << "DepTripletLogger::dumpDependencyRelations: dump nothing.." << LENDL;
+        LDEBUG << "DepTripletLogger::dumpDependencyRelations: dump nothing..";
       }
     }
     catch (const std::range_error& )
@@ -236,7 +236,7 @@ void DepTripletLogger::dumpDependencyRelations(std::ostream& outputStream,
     }
     catch (...)
     {
-      LDEBUG << "DepTripletLogger::dumpDependencyRelations: catch others....." << LENDL;
+      LDEBUG << "DepTripletLogger::dumpDependencyRelations: catch others.....";
       throw;
     }
   }
@@ -356,8 +356,8 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
 {
   LIMA_UNUSED(analysis);
   SALOGINIT;
-  LDEBUG << "DepTripletDumper: ========================================" << LENDL;
-  LDEBUG << "DepTripletDumper: getting compounds heads" << LENDL;
+  LDEBUG << "DepTripletDumper: ========================================";
+  LDEBUG << "DepTripletDumper: getting compounds heads";
   const LinguisticGraphVertex begin = posAgraph->firstVertex();
   const LinguisticGraphVertex end = posAgraph->lastVertex();
 
@@ -399,9 +399,9 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
     {
       /// @todo replace v in LDEBUGs below by matching annotation vertices
 //     LDEBUG << "hasAnnotation("<<v<<", CompoundTokenAnnotation): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation"));
 //       LDEBUG << "hasAnnotation("<<v<<", SpecificEntity): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")) << LENDL;
+//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity"));
       //std::set< uint32_t > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       if (!cpdsHeads.empty())
@@ -421,7 +421,7 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
             std::string elem = (*bowItr).second->getIdUTF8String();
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
-              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
               delete (*bowItr).first;
               delete (*bowItr).second;
             }
@@ -448,7 +448,7 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
           std::string elem = (*bowItr).second->getIdUTF8String();
           if (alreadyStored.find(elem) != alreadyStored.end())
           { // already stored
-            //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+            //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
             delete (*bowItr).first;
             delete (*bowItr).second;
           }

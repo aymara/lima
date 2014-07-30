@@ -88,7 +88,7 @@ void GeoEntitiesTagger::init(
 {
   GEOENTITIESTAGGERLOGINIT;
   m_language=manager->getInitializationParameters().media;
-  LDEBUG << "initialize GeoEntitiesTagger with language "<< (int) m_language << LENDL;
+  LDEBUG << "initialize GeoEntitiesTagger with language "<< (int) m_language;
   try
   {
     m_graphId=unitConfiguration.getParamsValueAtKey("graph");
@@ -106,7 +106,7 @@ void GeoEntitiesTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-    LERROR << "No maxEntityLength defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No maxEntityLength defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
   try
   {
@@ -115,7 +115,7 @@ void GeoEntitiesTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-    LERROR << "No fieldClass defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No fieldClass defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
    try
   {
@@ -124,9 +124,9 @@ void GeoEntitiesTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-    LERROR << "No dbConnection defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No dbConnection defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
-  LDEBUG << "initialize GeoEntitiesTagger with dbConnection "<<  m_db_connect << LENDL;
+  LDEBUG << "initialize GeoEntitiesTagger with dbConnection "<<  m_db_connect;
    try
   {
     m_dbms=unitConfiguration.getParamsValueAtKey("dbms");
@@ -134,9 +134,9 @@ void GeoEntitiesTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
-    LERROR << "No dbms defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+    LERROR << "No dbms defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
   }
-  LDEBUG << "initialize GeoEntitiesTagger with dbms "<<  m_dbms << LENDL;
+  LDEBUG << "initialize GeoEntitiesTagger with dbms "<<  m_dbms;
   
   const Common::PropertyCode::PropertyManager& macroManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO");
   const Common::PropertyCode::PropertyManager& microManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO");
@@ -177,7 +177,7 @@ void GeoEntitiesTagger::init(
    }
    catch(Common::XMLConfigurationFiles::NoSuchParam& )
    {
-     LERROR << "No Trigger defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+     LERROR << "No Trigger defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
    }
    try{
       endWords=unitConfiguration.getMapOfItems("EndWord");
@@ -210,7 +210,7 @@ void GeoEntitiesTagger::init(
    }
    catch(Common::XMLConfigurationFiles::NoSuchParam& )
    {
-     LERROR << "No Trigger defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language << LENDL;
+     LERROR << "No Trigger defined in "<<unitConfiguration.getName()<<" configuration group for language " << m_language;
    }
  
    
@@ -222,7 +222,7 @@ void GeoEntitiesTagger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'charChart' in GeoEntitiesTagger group for language " << m_language << LENDL;
+    LERROR << "no param 'charChart' in GeoEntitiesTagger group for language " << m_language;
     throw InvalidConfiguration();
   }
 
@@ -266,7 +266,7 @@ std::map<std::string,std::vector<uint64_t> ,lTokenMap> GeoEntitiesTagger::getLoc
   
   if (! m_db->isConnected()) 
    {
-     LERROR << "Problème de connexion à la base" << LENDL;
+     LERROR << "Problème de connexion à la base";
      return result;
    }
    else
@@ -379,19 +379,19 @@ LimaStatusCode GeoEntitiesTagger::process(
 {
   GEOENTITIESTAGGERLOGINIT;
   TimeUtils::updateCurrentTime();
-  LDEBUG << "start GeoEntitiesTagger" << LENDL;
+  LDEBUG << "start GeoEntitiesTagger";
   
   // ici normalement on peut prendre soit analysis graph soit le prostgraph, cela doit être paramétré
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
   if (anagraph==0)
   {
-    LERROR << "no "<< m_graphId << " ! abort" << LENDL;
+    LERROR << "no "<< m_graphId << " ! abort";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no AnnotationData ! abort" << LENDL;
+    LERROR << "no AnnotationData ! abort";
     return MISSING_DATA;
   }
   
@@ -408,7 +408,7 @@ bool GeoEntitiesTagger::isTrigger(LinguisticGraphVertex v,LinguisticGraph* graph
   bool result=false;
   Token* token = get(vertex_token, *graph, v);  
   //Token* previous_token = get(vertex_token, *graph, vprev);  
-  LDEBUG << "isTrigger Token=" << Lima::Common::Misc::limastring2utf8stdstring(token->stringForm()) << LENDL;
+  LDEBUG << "isTrigger Token=" << Lima::Common::Misc::limastring2utf8stdstring(token->stringForm());
   std::string statusKey=Lima::Common::Misc::limastring2utf8stdstring(token->status()->defaultKey());
   std::map< std::string, boost::tuple<std::set<Lima::LinguisticCode>, std::set<std::string> ,bool> >::const_iterator it;
   it=m_TriggerStatus.find(statusKey);
@@ -439,9 +439,9 @@ bool GeoEntitiesTagger::isTrigger(LinguisticGraphVertex v,LinguisticGraph* graph
       {
         micro_found=(m_TriggerMicro.find(*sit) != m_TriggerMicro.end());
         if (!micro_found) sit++;
-        LDEBUG << "Current Micro=" << *sit << LENDL;
+        LDEBUG << "Current Micro=" << *sit;
       }
-      LDEBUG << "Micro_Found ="<<micro_found << LENDL;
+      LDEBUG << "Micro_Found ="<<micro_found;
       if (! micro_found) return false;
       else
       {
@@ -544,7 +544,7 @@ void GeoEntitiesTagger::compute_entities(LinguisticGraph* graph,AnalysisGraph* a
       token = get(vertex_token, *graph, v);  
       if (isTrigger(v,graph,previous_v,anagraph))
       {
-        LDEBUG << "It s a trigger " << LENDL;
+        LDEBUG << "It s a trigger ";
         bool lower_match=false;;
         std::map<std::string,std::vector<uint64_t>, lTokenMap > results;
         
@@ -586,7 +586,7 @@ void GeoEntitiesTagger::compute_entities(LinguisticGraph* graph,AnalysisGraph* a
             }
       Token *tok=get(vertex_token, *graph, vne);
             if (tok==0) {
-              LERROR << "Error: no token found for vertex " << vne << LENDL;
+              LERROR << "Error: no token found for vertex " << vne;
               v=vne;
               toVisit.pop();
               continue;
@@ -641,7 +641,7 @@ void GeoEntitiesTagger::compute_entities(LinguisticGraph* graph,AnalysisGraph* a
             lower_match_vertexs.clear();
           }
           bool first=true;
-          LDEBUG << "found word " << last_found_word << "  found_vertexs.size()=" << exact_match_vertexs.size() << LENDL;
+          LDEBUG << "found word " << last_found_word << "  found_vertexs.size()=" << exact_match_vertexs.size();
           for(std::vector<LinguisticGraphVertex>::const_iterator it=exact_match_vertexs.begin();it!=exact_match_vertexs.end();)
           {
             std::set< AnnotationGraphVertex > matches = annotationData->matches(anagraph->getGraphId(),*it,"annot");

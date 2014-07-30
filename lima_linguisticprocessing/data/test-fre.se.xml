@@ -388,7 +388,7 @@
     </call-parameters>
     <expl>PERSON : titre</expl>
     <test id="fre.se.58.1" trace=".se.xml"
-          comment="Person.PERSON."
+          comment="Find the event even if not capitalized."
           left="XPATH#//specific_entities/specific_entity[position=16][length=23]/type"
           operator="="
           right="Event.EVENT"/>

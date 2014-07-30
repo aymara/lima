@@ -244,7 +244,7 @@ m_language(language)
       str.clear();
     }
     LDEBUG << "CreateSpecificEntity: getting entity type "
-           <<  Common::Misc::limastring2utf8stdstring(typeName) << LENDL;
+           <<  Common::Misc::limastring2utf8stdstring(typeName);
     m_type=Common::MediaticData::MediaticData::single().getEntityType(typeName);
   }
 
@@ -269,7 +269,7 @@ getPropertyManager("MICRO");
       std::string smicro=Common::Misc::limastring2utf8stdstring(str.mid(currentPos, sepPos-currentPos));
       LinguisticCode micro = microManager.getPropertyValue(smicro);
       m_microsToKeep.insert(micro);
-//       LDEBUG << "Added " << smicro << " / " << micro << " to micros to keep" << LENDL;
+//       LDEBUG << "Added " << smicro << " / " << micro << " to micros to keep";
       currentPos = sepPos+1;
     }
   }
@@ -288,7 +288,7 @@ getPropertyManager("MICRO");
 //   m_sp=&(Common::MediaticData::MediaticData::changeable().stringsPool(language));
 // 
 //   std::string str=Common::Misc::limastring2utf8stdstring(complement);
-//   LDEBUG << "CreateSpecificEntity constructor with complement: " <<  str << LENDL;
+//   LDEBUG << "CreateSpecificEntity constructor with complement: " <<  str;
 //   if (! str.empty()) {
 //     //uint64_t i=str.find("group:"); portage 32 64
 //     std::string::size_type i=str.find("group:");
@@ -296,7 +296,7 @@ getPropertyManager("MICRO");
 //       //uint64_t j=str.find(","); portage 32 64
 //       std::string::size_type j=str.find(",");
 //       entityGroup=std::string(str,i+6,j-i-6);
-//       LDEBUG << "CreateSpecificEntity: use group " << entityGroup << LENDL;
+//       LDEBUG << "CreateSpecificEntity: use group " << entityGroup;
 //       if (j==std::string::npos) {
 //  str.clear();
 //       }
@@ -304,7 +304,7 @@ getPropertyManager("MICRO");
 //         str=std::string(str,j+1);
 //       }
 //     }
-//     else LDEBUG << "CreateSpecificEntity: no group specified" << LENDL;
+//     else LDEBUG << "CreateSpecificEntity: no group specified";
 //   }
 //   if (!str.empty()) {
 //     LimaString typeName;
@@ -318,7 +318,7 @@ getPropertyManager("MICRO");
 //       str.clear();
 //     }
 //     LDEBUG << "CreateSpecificEntity: getting entity type " 
-//            <<  Common::Misc::limastring2utf8stdstring(typeName) << LENDL;
+//            <<  Common::Misc::limastring2utf8stdstring(typeName);
 //     m_type=Common::MediaticData::MediaticData::single().getEntityType(typeName);
 //   }
 // 
@@ -342,7 +342,7 @@ getPropertyManager("MICRO");
 //       std::string smicro=Common::Misc::limastring2utf8stdstring(LimaString(str, currentPos, sepPos-currentPos));
 //       LinguisticCode micro = microManager.getPropertyValue(smicro);
 //       m_microsToKeep.insert(micro);
-// //       LDEBUG << "Added " << smicro << " / " << micro << " to micros to keep" << LENDL;
+// //       LDEBUG << "Added " << smicro << " / " << micro << " to micros to keep";
 //       currentPos = sepPos+1;
 //     }
 //   }
@@ -354,14 +354,14 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
                                       AnalysisContent& analysis) const
 {
    SELOGINIT;
-   LDEBUG << "CreateSpecificEntity: create entity of type " << match.getType() << " on vertices " << match << LENDL;
+   LDEBUG << "CreateSpecificEntity: create entity of type " << match.getType() << " on vertices " << match;
   if (match.empty()) return false;
   LinguisticGraphVertex v1 = (*(match.begin())).m_elem.first;
   LinguisticGraphVertex v2 = (*(match.rbegin())).m_elem.first;
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *(match.getGraph());
   
 //     LDEBUG << "CreateSpecificEntity action between " << v1 << " and " << v2
-//         << " with complement " << m_complement << LENDL;
+//         << " with complement " << m_complement;
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
 
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -402,16 +402,16 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   std::string graphId=recoData->getGraphId();
     
-//   LDEBUG << "    match is " << match << LENDL;
+//   LDEBUG << "    match is " << match;
 
 //   LDEBUG << "    Creating annotation "<< LENDL;
   SpecificEntityAnnotation annot(match,*m_sp);
   
 
-//   LDEBUG << "    Building new morphologic data for head "<< annot.getHead() << LENDL;
+//   LDEBUG << "    Building new morphologic data for head "<< annot.getHead();
   // getting data
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
-//   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2 << LENDL;
+//   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
   VertexDataPropertyMap dataMap = get(vertex_data, *lingGraph);
 
@@ -440,7 +440,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     addMicrosToMorphoSyntacticData(newMorphData,dataHead,m_microsToKeep,elem);
   }
   else {
-    LDEBUG << "CreateSpecificEntity, use micros from config file " << LENDL;
+    LDEBUG << "CreateSpecificEntity, use micros from config file ";
     // use micros given in the config file : get the specific resource
     // (specific to modex) 
     // WARN : some hard coded stuff here in resource names
@@ -448,7 +448,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     std::string resourceName=
       Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId()))+"Micros";
     AbstractResource* res=LinguisticResources::single().getResource(m_language,resourceName);
-    LDEBUG << "Entities resource name is : " << resourceName << LENDL;
+    LDEBUG << "Entities resource name is : " << resourceName;
     if (res!=0) {
       SpecificEntitiesMicros* entityMicros=static_cast<SpecificEntitiesMicros*>(res);
       const std::set<LinguisticCode>* micros=entityMicros->getMicros(seType);
@@ -458,13 +458,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
         for (std::set<LinguisticCode>::const_iterator it=micros->begin(),it_end=micros->end();it!=it_end;it++) {
           oss << (*it) << ";";
         }
-        LDEBUG << "CreateSpecificEntity, micros are " << oss.str() << LENDL;
+        LDEBUG << "CreateSpecificEntity, micros are " << oss.str();
       }
       addMicrosToMorphoSyntacticData(newMorphData,dataHead,*micros,elem);
     }
     else {
       // cannot find micros for this type: error
-      LERROR << "CreateSpecificEntity: missing resource " << resourceName  << LENDL;
+      LERROR << "CreateSpecificEntity: missing resource " << resourceName ;
     }
   }
 
@@ -481,7 +481,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   newToken->setStatus(tokenMap[v1]->status());
   //}  
 
-//   LDEBUG << "    Updating morphologic graph "<< graphId << LENDL;
+//   LDEBUG << "    Updating morphologic graph "<< graphId;
   // creer le noeud et ses 2 arcs
   LinguisticGraphVertex newVertex;
   DependencyGraphVertex newDepVertex = 0;
@@ -499,7 +499,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   tokenMap[newVertex] = newToken;
   dataMap[newVertex] = newMorphData;
   LDEBUG << "      - new vertex " << newVertex << "("<<graphId<<"), " << newDepVertex
-      << "(dep), " << agv << "(annot) added" << LENDL;
+      << "(dep), " << agv << "(annot) added";
 
 //   LDEBUG << "    Setting annotation "<< LENDL;
   GenericAnnotation ga(annot);
@@ -566,7 +566,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
     else
     {
-      LDEBUG << "        - edge " << *pit << " - " << newVertex << " not added because " << *pit << " - " << v1 << " has to be removed" << LENDL;
+      LDEBUG << "        - edge " << *pit << " - " << newVertex << " not added because " << *pit << " - " << v1 << " has to be removed";
     }
   }
   std::set< std::pair<LinguisticGraphVertex,LinguisticGraphVertex > >::iterator newEdgesToRemoveIt = newEdgesToRemove.begin();
@@ -578,13 +578,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   
   
   // 2. entre le nouveau noeud et les noeuds qui etaient apres v2
-  LDEBUG << "        there is " << out_degree(v2, *lingGraph) << " edges out of " << v2 << LENDL;
+  LDEBUG << "        there is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
   LinguisticGraphOutEdgeIt secondOutEdgesIt, secondOutEdgesIt_end;
   boost::tie(secondOutEdgesIt, secondOutEdgesIt_end) = out_edges(v2, *lingGraph);
   std::vector< LinguisticGraphVertex > nexts;
   for (; secondOutEdgesIt != secondOutEdgesIt_end; secondOutEdgesIt++)
   {
-    LDEBUG << "        looking at edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << LENDL;
+    LDEBUG << "        looking at edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph);
     LinguisticGraphVertex secondOutVertex = target(*secondOutEdgesIt, *lingGraph);
     if (secondOutVertex ==  v2) continue;
     nexts.push_back(secondOutVertex);
@@ -695,7 +695,7 @@ bool CreateSpecificEntity::shouldRemoveInitial(
   matchIt_end = match.end()-1;
   if (boost::out_degree((*matchIt).m_elem.first,*graph.getGraph()) > 1)
   {
-    LDEBUG << "removing edge (" << (*matchIt).m_elem.first << "," << (*(matchIt+1)).m_elem.first << ") because there is more than one path from the first vertex of the match." << LENDL;
+    LDEBUG << "removing edge (" << (*matchIt).m_elem.first << "," << (*(matchIt+1)).m_elem.first << ") because there is more than one path from the first vertex of the match.";
     boost::remove_edge((*matchIt).m_elem.first,(*(matchIt+1)).m_elem.first, *const_cast<LinguisticGraph*>(graph.getGraph()));
     return false;
   }
@@ -710,7 +710,7 @@ bool CreateSpecificEntity::shouldRemoveInitial(
       {
         if (matchVertices.find(source(*outIt, *graph.getGraph())) != matchVertices.end())
         {
-//            LDEBUG << "removing initial edge " << *outIt << LENDL;
+//            LDEBUG << "removing initial edge " << *outIt;
 //           boost::remove_edge(*outIt, *const_cast<LinguisticGraph*>(graph.getGraph()));
           break;
         }
@@ -756,7 +756,7 @@ bool CreateSpecificEntity::shouldRemoveFinal(
       {
         if (matchVertices.find(source(*inIt, *graph.getGraph())) != matchVertices.end())
         {
-          LDEBUG << "removing final edge " << source(*inIt, *graph.getGraph()) << " -> " << target(*inIt, *graph.getGraph()) << LENDL;
+          LDEBUG << "removing final edge " << source(*inIt, *graph.getGraph()) << " -> " << target(*inIt, *graph.getGraph());
           boost::remove_edge(*inIt, *const_cast<LinguisticGraph*>(graph.getGraph()));
           break;
         }

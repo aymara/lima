@@ -76,7 +76,7 @@ void SimpleEventBuilder::init(Common::XMLConfigurationFiles::GroupConfigurationS
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
     LERROR << "No segmentationData specified in "<<unitConfiguration.getName()
-           <<" configuration group for language " << language << LENDL;
+           <<" configuration group for language " << language;
   }
   
   try
@@ -86,7 +86,7 @@ void SimpleEventBuilder::init(Common::XMLConfigurationFiles::GroupConfigurationS
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
     LERROR << "No segmentType specified in "<<unitConfiguration.getName()
-           <<" configuration group for language " << language << LENDL;
+           <<" configuration group for language " << language;
   }
 
   try
@@ -98,14 +98,14 @@ void SimpleEventBuilder::init(Common::XMLConfigurationFiles::GroupConfigurationS
         m_entities.push_back(Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(*it)));
       }
       catch (LimaException& ) {
-        LERROR << "Error: unknown entity type '"<< *it << "' : ignored" << LENDL;
+        LERROR << "Error: unknown entity type '"<< *it << "' : ignored";
       }
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) 
   {
     LERROR << "No entities specified in "<<unitConfiguration.getName()
-           <<" configuration group for language " << language << LENDL;
+           <<" configuration group for language " << language;
   }
   
 }
@@ -114,26 +114,26 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
 {
   EVENTANALYZERLOGINIT;
   TimeUtils::updateCurrentTime();
-  LDEBUG << "start SimpleEventBuilder" << LENDL;
+  LDEBUG << "start SimpleEventBuilder";
 
   // get annotation data (for entities)
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
     
   // get segmentation data
   AnalysisData* data=analysis.getData(m_segmData);
   if (data==0) {
-    LERROR << "Missing data '" << m_segmData << "'" << LENDL;
+    LERROR << "Missing data '" << m_segmData << "'";
     return MISSING_DATA;
   }
   SegmentationData* segmData=static_cast<SegmentationData*>(data);
   if (segmData==0)
   {
-    LERROR << "Failed to interpret data '" << m_segmData << "' as SegmentationData" << LENDL;
+    LERROR << "Failed to interpret data '" << m_segmData << "' as SegmentationData";
     return MISSING_DATA;
   }
 
@@ -141,12 +141,12 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
   string graphId=segmData->getGraphId();
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(graphId));
   if (graph==0) {
-    LERROR << "Cannot get graph '" << graphId << "' (from segmentation data)" << LENDL;
+    LERROR << "Cannot get graph '" << graphId << "' (from segmentation data)";
     return MISSING_DATA;
   }
   
   EventData* eventData=new EventData;
-  LDEBUG << "set new data EventData of type EventData" << LENDL;
+  LDEBUG << "set new data EventData of type EventData";
   analysis.setData("EventData", eventData);
 
   // get entities
@@ -154,13 +154,13 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
   // ??OME2 for (SegmentationData::const_iterator it=segmData->begin(),it_end=segmData->end();it!=it_end;it++) {
   for (std::vector<Segment>::const_iterator it=(segmData->getSegments()).begin(),it_end=(segmData->getSegments()).end();it!=it_end;it++) {
     if ((*it).getType()==m_segmentType) {
-      LDEBUG << "in segment " << m_segmentType << " [" << (*it).getPosBegin() << "," << (*it).getLength() << "]" << LENDL;
+      LDEBUG << "in segment " << m_segmentType << " [" << (*it).getPosBegin() << "," << (*it).getLength() << "]";
       // get entities in this segment
       getEntitiesFromSegment(entities,graph,(*it).getFirstVertex(),(*it).getLastVertex(),annotationData);
-      LDEBUG << "found " << entities.size() << " entities" << LENDL;
+      LDEBUG << "found " << entities.size() << " entities";
     }
     else {
-      LDEBUG << "ignored segment " << (*it).getType() << LENDL;
+      LDEBUG << "ignored segment " << (*it).getType();
     }
   }
 
@@ -168,7 +168,7 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
   for (map<Common::MediaticData::EntityType,vector<Entity> >::iterator it=entities.begin(),
     it_end=entities.end();it!=it_end;it++) {
     if ((*it).second.size()!=0) {
-      LDEBUG << "set main for entity of type " << (*it).first << " at pos " << (*it).second[0].getPosition() << LENDL;
+      LDEBUG << "set main for entity of type " << (*it).first << " at pos " << (*it).second[0].getPosition();
       (*it).second[0].setMain(true);
     }
   }
@@ -223,7 +223,7 @@ void SimpleEventBuilder::getEntitiesFromSegment(map<Common::MediaticData::Entity
       if (se!=0) {
         entities[se->getType()].push_back(Entity(se->getPosition(),se->getLength(),se->getFeatures()));
         EVENTANALYZERLOGINIT;
-        LDEBUG << "inserted entity of type " << se->getType() << " at pos " << se->getPosition() << " with main=" << entities[se->getType()].back().getMain() << LENDL;
+        LDEBUG << "inserted entity of type " << se->getType() << " at pos " << se->getPosition() << " with main=" << entities[se->getType()].back().getMain();
       }
     }
   }
@@ -237,7 +237,7 @@ getSpecificEntity(AnalysisGraph* graph,
   EVENTANALYZERLOGINIT;
   // then check if vertex corresponds to a specific entity found after POS tagging
   std::set< AnnotationGraphVertex > matches = annotationData->matches(graph->getGraphId(),v,"annot");
-  LDEBUG << "vertex " << v << " has " << matches.size() << " annotations" << LENDL;
+  LDEBUG << "vertex " << v << " has " << matches.size() << " annotations";
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
   {
@@ -251,7 +251,7 @@ getSpecificEntity(AnalysisGraph* graph,
       return se;
     }
   }
-  LDEBUG << "vertex " << v << ": no entity in graph " << graph->getGraphId() << LENDL;
+  LDEBUG << "vertex " << v << ": no entity in graph " << graph->getGraphId();
   return 0;
 }
 

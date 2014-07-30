@@ -58,7 +58,7 @@ init(GroupConfigurationStructure& unitConfiguration,
      Manager* manager)
 {
   SELOGINIT;
-  LDEBUG << "SpecificEntitiesMicros initialization" << LENDL;
+  LDEBUG << "SpecificEntitiesMicros initialization";
   MediaId language=manager->getInitializationParameters().language;
   const PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
 
@@ -68,19 +68,19 @@ init(GroupConfigurationStructure& unitConfiguration,
   for (map<string,deque<string> >::const_iterator it=entities.begin(),
          it_end=entities.end(); it!=it_end; it++) {
     LimaString entityName=Common::Misc::utf8stdstring2limastring((*it).first);
-    LDEBUG << "Adding categories to entity " << entityName << LENDL;
+    LDEBUG << "Adding categories to entity " << entityName;
     try {
       EntityType type=static_cast<const Common::MediaticData::MediaticData&>(MediaticData::single()).getEntityType(entityName);
       for (deque<string>::const_iterator micro=(*it).second.begin(),
              micro_end=(*it).second.end(); micro!=micro_end; micro++) {
-        LDEBUG << "Adding " << microManager.getPropertyValue(*micro) << " to EntityType " << type << LENDL;
+        LDEBUG << "Adding " << microManager.getPropertyValue(*micro) << " to EntityType " << type;
         m_micros[type].insert(microManager.getPropertyValue(*micro));
       }
     }
     catch (LimaException& e) {
       // just a warning (on LERROR)
       SELOGINIT;
-      LERROR << (*it).first << " is not a defined specific entity" << LENDL;
+      LERROR << (*it).first << " is not a defined specific entity";
     }
   }
 }
@@ -93,7 +93,7 @@ getMicros(const EntityType& type)
     SELOGINIT;
     LERROR << "no microcategories defined for type " << type << " (" 
            << Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(type)) 
-           << ")" << LENDL;
+           << ")";
     throw LimaException();
   }
   return &((*it).second);

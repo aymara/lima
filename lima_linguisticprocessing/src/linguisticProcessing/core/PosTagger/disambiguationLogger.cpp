@@ -103,7 +103,7 @@ LimaStatusCode DisambiguationLogger::process(
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       PTLOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   ofstream fout;

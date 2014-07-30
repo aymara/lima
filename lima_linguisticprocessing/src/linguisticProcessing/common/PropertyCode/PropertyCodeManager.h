@@ -101,9 +101,9 @@ public:
    * the given map. The given is an xml file :
    * &lt;codes&gt;
    *   &lt;code key="Ncgms-"&gt;
-   *     &lt;field key="MICRO" value="L_NC_GEN"/&gt;
-   *     &lt;field key="GENDER" value="L_MASC"/&gt;
-   *     &lt;field key="NUMBER" value="L_SING"/&gt;
+   *     &lt;field key="MICRO" value="NC"/&gt;
+   *     &lt;field key="GENDER" value="MASC"/&gt;
+   *     &lt;field key="NUMBER" value="SING"/&gt;
    *     &lt;field key="PERSON" value=""/&gt;
    *     &lt;field key="TIME" value=""/&gt;
    *     &lt;field key="SYNTAX" value=""/&gt;

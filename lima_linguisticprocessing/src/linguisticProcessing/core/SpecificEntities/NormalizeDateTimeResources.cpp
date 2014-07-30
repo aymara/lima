@@ -92,13 +92,13 @@ init(GroupConfigurationStructure& unitConfiguration,
   catch (NoSuchParam& ) {
     SELOGINIT;
     LERROR << "No param 'timezoneDatabase' in NormalizeDateTimeResources group for language " 
-           << (int)m_language << LENDL;
+           << (int)m_language;
     throw InvalidConfiguration();
   }
   catch (exception& e) {
     SELOGINIT;
     LERROR << "Error loading timezoneDatabase '"
-           << tzDbFile << "':" << e.what() << LENDL;
+           << tzDbFile << "':" << e.what();
     // reset database to 0
 //     delete m_timezoneDatabase;
 //     m_timezoneDatabase=0;
@@ -112,13 +112,13 @@ init(GroupConfigurationStructure& unitConfiguration,
     if (!readMonthDays(monthsDaysFile)) {
       SELOGINIT;
       LERROR << "Error loading monthsDays resources '" 
-             << monthsDaysFile << "'" << LENDL;
+             << monthsDaysFile << "'";
     }
   }
   catch (NoSuchParam& ) {
     SELOGINIT;
     LERROR << "No param 'monthsDays' in NormalizeDateTimeResources group for language " 
-           << (int)m_language << LENDL;
+           << (int)m_language;
     throw InvalidConfiguration();
   }
  
@@ -143,7 +143,7 @@ readMonthDays(const std::string& monthsDaysFile)
       // three elements in line: (month|day) num list,of,strings
       if (elements.size()!=3) {
         SELOGINIT;
-        LWARN << "MonthsDaysResources: cannot parse line " << utf8line << LENDL;
+        LWARN << "MonthsDaysResources: cannot parse line " << utf8line;
         continue;
       }
       map<LimaString,unsigned short>* names(0);
@@ -152,7 +152,7 @@ readMonthDays(const std::string& monthsDaysFile)
       else {
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line 
-              << ": first element must be 'm' or 'd'" << LENDL;
+              << ": first element must be 'm' or 'd'";
         continue;
       }
 
@@ -173,7 +173,7 @@ readMonthDays(const std::string& monthsDaysFile)
 // {
 //   if (m_timezoneDatabase==0) {
 //     SELOGINIT;
-//     LERROR << "No timezone available" << LENDL;
+//     LERROR << "No timezone available";
 //     throw(LinguisticProcessingException());
 //   }
 //   return *m_timezoneDatabase;

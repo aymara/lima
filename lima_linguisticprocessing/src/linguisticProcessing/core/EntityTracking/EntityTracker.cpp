@@ -85,21 +85,21 @@ LimaStatusCode EntityTracker::process(AnalysisContent& analysis) const
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "no graph 'AnaGraph' available !" << LENDL;
+    LERROR << "no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
 
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
 

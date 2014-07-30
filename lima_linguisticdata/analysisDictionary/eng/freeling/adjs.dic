@@ -900,7 +900,7 @@ briny	briny		JJ
 brisk	brisk		JJ
 bristly	bristly		JJ
 britannic	britannic		JJ
-british	british		JJ
+#british	british		JJ # the right form is 'British'
 brittle	brittle		JJ
 broad	broad		JJ
 broadband	broadband		JJ
@@ -7297,7 +7297,7 @@ successional	successional		JJ
 successive	successive		JJ
 succinct	succinct		JJ
 succulent	succulent		JJ
-such	such		JJ
+#such	such		JJ # such is not an adjective
 sudanese	sudanese		JJ
 sudden	sudden		JJ
 sufficient	sufficient		JJ

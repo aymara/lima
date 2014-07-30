@@ -76,12 +76,12 @@ void EventTemplateMerging::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateMerging: Missing 'eventTemplate' parameter in EventTemplateMerging definition" << LENDL;
+    LERROR << "EventTemplateMerging: Missing 'eventTemplate' parameter in EventTemplateMerging definition";
     //throw InvalidConfiguration;
   }
   catch (std::exception& ) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateMerging: Missing ressource for 'eventTemplate' parameter" << LENDL;
+    LERROR << "EventTemplateMerging: Missing ressource for 'eventTemplate' parameter";
     //throw InvalidConfiguration;
   }
   
@@ -90,14 +90,14 @@ void EventTemplateMerging::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {
     //LOGINIT("LP::EventAnalysis");
-    //LDEBUG << "EventTemplateMerging: no list parameter 'mandatoryElements' in EventTemplateMerging definition" << LENDL;
+    //LDEBUG << "EventTemplateMerging: no list parameter 'mandatoryElements' in EventTemplateMerging definition";
   }
 }
 
 LimaStatusCode EventTemplateMerging::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateMerging process" << LENDL;
+  LDEBUG << "EventTemplateMerging process";
   TimeUtils::updateCurrentTime();
 
   LimaStatusCode returnCode=SUCCESS_ID;
@@ -111,13 +111,13 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
 {
   // ad hoc strategy for merging event templates
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateMerging mergeEventTemplates" << LENDL;
+  LDEBUG << "EventTemplateMerging mergeEventTemplates";
   TimeUtils::updateCurrentTime();
   
   // get EventTemplateData
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
-    LERROR << "EventTemplateMerging::mergeEventTemplates: missing data 'EventTemplateData'" << LENDL;
+    LERROR << "EventTemplateMerging::mergeEventTemplates: missing data 'EventTemplateData'";
     return MISSING_DATA;
   }
 
@@ -176,7 +176,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
             // different values, assume templates of different elements
             LDEBUG << "EventTemplateMerging::mergeEventTemplates : templates " 
             << (numTemplate+1) << " and " << (numOtherTemplate+1) 
-            << " have incompatible values for role "<< role << LENDL;
+            << " have incompatible values for role "<< role;
             compatibleTemplates=false;
           }
         }
@@ -193,7 +193,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
                 // different values, assume templates of different elements
                 LDEBUG << "EventTemplateMerging::mergeEventTemplates : templates " 
                        << (numTemplate+1) << " and " << (numOtherTemplate+1) 
-                       << " have incompatible values for matching roles "<< role << " and " << (*e).first << LENDL;
+                       << " have incompatible values for matching roles "<< role << " and " << (*e).first;
                 compatibleTemplates=false;
               }
               // do not search for another match in mapping, take first
@@ -207,31 +207,31 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
         // perform the merge : add elements from first template in second
         LDEBUG << "EventTemplateMerging::mergeEventTemplates : template " 
                << (numTemplate+1) << " compatible with template "
-               << (numOtherTemplate+1) << " : perform the merge" << LENDL;
+               << (numOtherTemplate+1) << " : perform the merge";
         for (map<string,EventTemplateElement>::const_iterator elt1=templateElements1.begin(),elt1_end=templateElements1.end();
         elt1!=elt1_end; elt1++) 
         {
           map<string,pair<string,int> >::const_iterator match=matchingElements.find((*elt1).first);
           if (match==matchingElements.end()) {
             // no matching: add element from first template in second one
-            LDEBUG << "EventTemplateMerging::mergeEventTemplates : add element "<< (*elt1).first << LENDL;
+            LDEBUG << "EventTemplateMerging::mergeEventTemplates : add element "<< (*elt1).first;
             templateElements2.insert(*elt1);
           }
           else {
             // matching exists : check value
             if ((*match).second.second==-1) {
               // mapping from 1 to 2 : remove role from 2 and insert role from 1
-              LDEBUG << "EventTemplateMerging::mergeEventTemplates : replace element "<< (*match).second.first << " with " << (*elt1).first << LENDL;
+              LDEBUG << "EventTemplateMerging::mergeEventTemplates : replace element "<< (*match).second.first << " with " << (*elt1).first;
               templateElements2.insert(*elt1);
               templateElements2.erase((*match).second.first);
             }
             else if ((*match).second.second==1) {
-              LDEBUG << "EventTemplateMerging::mergeEventTemplates : mapping 1: ignore "<< (*elt1).first << " (keep " << (*match).second.first << ")" << LENDL;
+              LDEBUG << "EventTemplateMerging::mergeEventTemplates : mapping 1: ignore "<< (*elt1).first << " (keep " << (*match).second.first << ")";
               // mapping from 2 to 1 : do not insert element in second template, keep role
             }
             else {
               // else (0) : same role : do not insert element in second template
-              LDEBUG << "EventTemplateMerging::mergeEventTemplates : mapping 0: ignore "<< (*elt1).first << LENDL;
+              LDEBUG << "EventTemplateMerging::mergeEventTemplates : mapping 0: ignore "<< (*elt1).first;
             }
           }
         }
@@ -243,7 +243,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
       else{
         LDEBUG << "EventTemplateMerging::mergeEventTemplates : template " 
         << (numTemplate+1) << " not compatible with template "
-        << (numOtherTemplate+1) << LENDL;
+        << (numOtherTemplate+1);
       }
     }
     numTemplate++;
@@ -253,7 +253,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   for (set<uint64_t>::reverse_iterator it=toRemove.rbegin(),
     it_end=toRemove.rend(); it!=it_end; it++) 
   {
-    LDEBUG << "Erase template " << (*it)+1 << LENDL;
+    LDEBUG << "Erase template " << (*it)+1;
     eventData->erase(eventData->begin()+(*it));
   }
 

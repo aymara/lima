@@ -59,31 +59,31 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
     a.setDeterministic(true);
   }
   else {
-//     LDEBUG << "automatonString is: " << automatonString << LENDL;
+//     LDEBUG << "automatonString is: " << automatonString;
     Tstate finalState=buildAutomaton(a,automatonString,
                                      initialState,language,
                                      activeEntityGroups);
-    // LDEBUG << "final state is " << finalState << LENDL;
+    // LDEBUG << "final state is " << finalState;
     a.makeFinal(finalState);
 
-    // LDEBUG << "automaton=" << LENDL << a << LENDL;
+    // LDEBUG << "automaton=" << a;
 
     a.setDeterministic(false);
 
     if (sense==BACKWARDSEARCH) { // reverse automaton
       a=a.reverse();
-      // LDEBUG << "reverse automaton=" << LENDL << a << LENDL;
+      // LDEBUG << "reverse automaton=" << a;
     }
     
     // make it deterministic
     a=a.subsets();
 
-    // LDEBUG << "deterministic automaton=" << LENDL << a << LENDL;
+    // LDEBUG << "deterministic automaton=" << a;
 
     // make it minimal
     a=a.brzozowskiMinimize();
 
-    // LDEBUG << "minimal automaton=" << LENDL << a << LENDL;
+    // LDEBUG << "minimal automaton=" << a;
 
   }
 
@@ -101,14 +101,14 @@ Tstate buildAutomaton(Automaton& a,
                       const std::vector<LimaString>& activeEntityGroups) {
   
   AUCLOGINIT;
-  LDEBUG << "build automaton from " << automatonString.getString() << LENDL;
+  LDEBUG << "build automaton from " << automatonString.getString();
 
   if (automatonString.isOptional()) {
 
     int min=automatonString.getMinOccurrences();
     int max=automatonString.getMaxOccurrences();
 
-    LDEBUG << "automaton is optional {"<<min<<"-"<<max<< "}" << LENDL;
+    LDEBUG << "automaton is optional {"<<min<<"-"<<max<< "}";
 
     Tstate finalState=initialState;
 
@@ -169,11 +169,11 @@ Tstate buildAutomatonNotOptional(Automaton& a,
                                  const std::vector<LimaString>& activeEntityGroups) 
 {
   AUCLOGINIT;
-  LDEBUG << "build non-optional automaton from " << automatonString.getString() << LENDL;
+  LDEBUG << "build non-optional automaton from " << automatonString.getString();
 
   //-------------------------- alternative ------------------------------
   if (automatonString.isAlternative()) {
-    LDEBUG << "is alternative " << LENDL;
+    LDEBUG << "is alternative ";
     Tstate finalState=a.addState(); // the final state to which all 
                                     // options will converge
    
@@ -188,7 +188,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
   }
   //----------------------------- sequence ------------------------------
   else if (automatonString.isSequence()) {
-    LDEBUG << "is sequence " << LENDL;
+    LDEBUG << "is sequence ";
     std::vector<AutomatonString>::const_iterator
       it=automatonString.getParts().begin(),
       it_end=automatonString.getParts().end();
@@ -203,7 +203,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
   }
   //-------------------------- simple unit ------------------------------
   else if (automatonString.isUnit()) {
-    LDEBUG << "is unit " << LENDL;
+    LDEBUG << "is unit ";
     TransitionUnit *t = createTransition(automatonString,language,activeEntityGroups);
     if (t != 0) {
       Tstate finalState = a.addState();

@@ -103,7 +103,7 @@ void AbbreviationSplitAlternatives::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'dictionary' in AbbreviationSplitAlternatives group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'dictionary' in AbbreviationSplitAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -114,7 +114,7 @@ void AbbreviationSplitAlternatives::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'tokenizer' in AbbreviationSplitAlternatives group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'tokenizer' in AbbreviationSplitAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -129,7 +129,7 @@ void AbbreviationSplitAlternatives::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& )
   {
-    LERROR << "no list 'abbreviations' in AbbreviationSplitAlternatives group for language " << (int) m_language << LENDL;
+    LERROR << "no list 'abbreviations' in AbbreviationSplitAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   
@@ -142,7 +142,7 @@ void AbbreviationSplitAlternatives::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no param 'charChart' in AbbreviationSplitAlternatives group for language " << (int) m_language << LENDL;
+    LERROR << "no param 'charChart' in AbbreviationSplitAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -152,8 +152,8 @@ void AbbreviationSplitAlternatives::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "no param 'confidentMode' in AbbreviationSplitAlternatives group for language " << (int) m_language << LENDL;
-    LWARN << "use default value : 'true'" << LENDL;
+    LWARN << "no param 'confidentMode' in AbbreviationSplitAlternatives group for language " << (int) m_language;
+    LWARN << "use default value : 'true'";
     m_confidentMode=true;
   }
   FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
@@ -166,7 +166,7 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
 {
   Lima::TimeUtilsController timer("AbbreviationSplitAlternatives");
   MORPHOLOGINIT;
-  LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives" << LENDL;
+  LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives";
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
@@ -248,11 +248,11 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   catch (std::exception &exc)
   {
     MORPHOLOGINIT;
-    LWARN << "Exception in AbbreviationSplitAlternatives : " << exc.what() << LENDL;
+    LWARN << "Exception in AbbreviationSplitAlternatives : " << exc.what();
     return UNKNOWN_ERROR;
   }
 
-  LINFO << "MorphologicalAnalysis: ending process AbbreviationSplitAlternatives" << LENDL;
+  LINFO << "MorphologicalAnalysis: ending process AbbreviationSplitAlternatives";
   return SUCCESS_ID;
 }
 
@@ -266,7 +266,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   VertexTokenPropertyMap tokenMap = get( vertex_token,*graph );
   Token* ftok = tokenMap[splitted];
   const LimaString& ft = ftok->stringForm();
-  LDEBUG << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft) << LENDL;
+  LDEBUG << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft);
   
   int aposPos = ft.indexOf(Common::Misc::utf8stdstring2limastring("'"), 0);
   if (aposPos==-1 || aposPos==0) return false;
@@ -306,7 +306,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
     if (adjItr==adjItrEnd)
     {
       MORPHOLOGINIT;
-      LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor : no token forward !" << LENDL;
+      LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor : no token forward !";
       throw LinguisticProcessingException();
     }
     firstToken=*adjItr;
@@ -350,12 +350,12 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
     }
     else
     {
-    LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor: dictionary entry for abbreviated word " <<  Lima::Common::Misc::limastring2utf8stdstring(abbrev) << " has no linguistic info" << LENDL;
+    LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor: dictionary entry for abbreviated word " <<  Lima::Common::Misc::limastring2utf8stdstring(abbrev) << " has no linguistic info";
     }
   }
   else
   {
-    LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor: Cannot find a dictionary entry for abbreviated word " <<  Lima::Common::Misc::limastring2utf8stdstring(abbrev) << LENDL;
+    LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor: Cannot find a dictionary entry for abbreviated word " <<  Lima::Common::Misc::limastring2utf8stdstring(abbrev);
   }
 
 //  LinguisticGraphVertex afterVertex = listIterator.createVertexFor(newFT);
@@ -398,12 +398,12 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
   Token* ftok = tokenMap[splitted];
   const LimaString& ft = ftok->stringForm();
-  LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft) << LENDL;
+  LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft);
   
   int aposPos = ft.indexOf(LimaChar('\''), 0);
   if (aposPos==-1 || aposPos==0) return false;
   LimaString possessivedWord(ft.left(aposPos));
-  LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor possesive word: " << Common::Misc::limastring2utf8stdstring(possessivedWord) << LENDL;
+  LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor possesive word: " << Common::Misc::limastring2utf8stdstring(possessivedWord);
 
   boost::regex pronounre("^(he|she|it|let)$", boost::regex::icase);
   if (boost::regex_match(Common::Misc::limastring2utf8stdstring(possessivedWord),pronounre))
@@ -418,7 +418,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   LimaStatusCode status=m_tokenizer->process(toTokenize);
   if (status != SUCCESS_ID)
   {
-    LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor: Failed to tokenize possesive word" << LENDL;
+    LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor: Failed to tokenize possesive word";
     return false;
   }
   AnalysisGraph* tokenizerList=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
@@ -433,7 +433,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
     if (adjItr==adjItrEnd)
     {
       MORPHOLOGINIT;
-      LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor : no token forward !" << LENDL;
+      LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor : no token forward !";
       throw LinguisticProcessingException();
     }
     firstToken=*adjItr;

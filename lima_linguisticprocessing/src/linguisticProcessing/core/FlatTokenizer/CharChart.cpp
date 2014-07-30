@@ -81,7 +81,7 @@ void CharChart::init(
     
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "Creating a CharChart (loads file)" << LENDL;
+  LDEBUG << "Creating a CharChart (loads file)";
   MediaId language=manager->getInitializationParameters().language;
 
   try {
@@ -91,7 +91,7 @@ void CharChart::init(
 
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'charFile' in charchart group for language " << (int) language << " !" << LENDL;
+    LERROR << "no parameter 'charFile' in charchart group for language " << (int) language << " !";
     throw InvalidConfiguration();
   }
 }
@@ -106,7 +106,7 @@ const CharClass* CharChart::charClass (LimaChar c) const
     if (c.unicode() >= m_chars.size() || m_chars[c.unicode()] == 0 || m_chars[c.unicode()]->charClass() == 0)
     {
       TOKENIZERLOGINIT;
-      LNOTICE << "CharChart::charClass undefined char: " << c << LENDL;
+      LNOTICE << "CharChart::charClass undefined char: " << c;
       return classNamed(utf8stdstring2limastring("unknwn"));
     }
     return m_chars[c.unicode()]->charClass();
@@ -117,14 +117,14 @@ const CharClass* CharChart::charClass (LimaChar c1, LimaChar c2) const
   if (m_surrogates.find(c1) == m_surrogates.end())
   {
       TOKENIZERLOGINIT;
-      LNOTICE << "CharChart::charClass undefined 32 bytes char: " << c1  << c2  << LENDL;
+      LNOTICE << "CharChart::charClass undefined 32 bytes char: " << c1  << c2 ;
       return classNamed(utf8stdstring2limastring("unknwn"));
   }
   const std::map<LimaChar,Char*>& c1classes = (*(m_surrogates.find(c1))).second;
   if (c1classes.find(c2) == c1classes.end())
   {
       TOKENIZERLOGINIT;
-      LNOTICE << "CharChart::charClass undefined 32 bytes char: " << c1  << c2  << LENDL;
+      LNOTICE << "CharChart::charClass undefined 32 bytes char: " << c1  << c2 ;
       return classNamed(utf8stdstring2limastring("unknwn"));
   }
   else
@@ -166,6 +166,7 @@ LimaChar CharChart::min (LimaChar c) const
 // character. If specified character was not defined,
 // InvalidCharException is raised.
 LimaChar CharChart::unmark (LimaChar c) const {
+  TOKENIZERLOGINIT;
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
   if (m_chars[c.unicode()] == 0)
@@ -187,22 +188,26 @@ LimaChar CharChart::unmark (LimaChar c) const {
 // Null string, one, two and more characters string can be returned.
 LimaString CharChart::unmarkByString (LimaChar c) const
 {
+  TOKENIZERLOGINIT;
+	LDEBUG << "CharChart::unmarkByString" << c;
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
   if (m_chars[c.unicode()] == 0)
-    {
-      LimaString result;
-      result.push_back(c);
-      return result;
-    }
-    if (!m_chars[c.unicode()]->charClass())
-        throw InvalidCharException();
+  {
+    LimaString result;
+    result.push_back(c);
+    LDEBUG << "CharChart::unmarkByString" << result;
+    return result;
+  }
+  if (!m_chars[c.unicode()]->charClass())
+      throw InvalidCharException();
 
     LimaString result;
   if (m_chars[c.unicode()]->unmark() != 0 && m_chars[c.unicode()]->unmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->unmark()->code());
   if (m_chars[c.unicode()]->longUnmark() != 0 && m_chars[c.unicode()]->longUnmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->longUnmark()->code());
+  LDEBUG << "CharChart::unmarkByString" << result;
   return result;
 }
 
@@ -299,26 +304,26 @@ LimaString CharChart::toLower(const LimaString& src) const
 const CharClass* CharChart::classNamed(const LimaString& name) const
 {
   TOKENIZERLOGINIT;
-//   LDEBUG << "Searching class " << limastring2utf8stdstring(name) << LENDL;
+//   LDEBUG << "Searching class " << limastring2utf8stdstring(name);
   std::vector<CharClass*>::const_iterator itcc, itcc_end;
   itcc = m_classes.begin(); itcc_end = m_classes.end();
   for (; itcc != itcc_end; itcc++)
   {
-//     LDEBUG << "  looking at " << limastring2utf8stdstring((*itcc)->id()) << LENDL;
+//     LDEBUG << "  looking at " << limastring2utf8stdstring((*itcc)->id());
     if ( (*itcc)->id() == name)
     {
-//       LDEBUG << "Found " << limastring2utf8stdstring((*itcc)->id()) << LENDL;
+//       LDEBUG << "Found " << limastring2utf8stdstring((*itcc)->id());
       return (*itcc);
     }
   }
-  LERROR << "CharChart::classNamed "<<Common::Misc::limastring2utf8stdstring(name)<<" NOT Found " << LENDL;
+  LERROR << "CharChart::classNamed "<<Common::Misc::limastring2utf8stdstring(name)<<" NOT Found ";
   return 0;
 }
 
 bool CharChart::loadFromFile(const std::string& fileName)
 {
   TOKENIZERLOADERLOGINIT;
-  LDEBUG << "Loading CharChart from " << fileName << LENDL;
+  LDEBUG << "Loading CharChart from " << fileName;
   std::ifstream file(fileName.c_str(), std::ifstream::binary);
   if (!file.good())
   {
@@ -356,11 +361,11 @@ bool CharChart::loadFromFile(const std::string& fileName)
       }
       if (newClass->superClass() != 0)
       {
-        LDEBUG << "  Loaded class " << ch.name << " < " << Common::Misc::limastring2utf8stdstring(newClass->superClass()->id()) << LENDL;
+        LDEBUG << "  Loaded class " << ch.name << " < " << Common::Misc::limastring2utf8stdstring(newClass->superClass()->id());
       }
       else
       {
-        LDEBUG << "  Loaded class " << ch.name << " < NONE" << LENDL;
+        LDEBUG << "  Loaded class " << ch.name << " < NONE";
       }
       m_classes.push_back(newClass);
     }
@@ -372,13 +377,13 @@ bool CharChart::loadFromFile(const std::string& fileName)
       Char* newChar = lazyGetChar(ch.code);
       if (newChar == 0)
       {
-        LERROR << "Error loading char '" << ch.code << "'" << LENDL;
+        LERROR << "Error loading char '" << ch.code << "'";
         continue;
       }
       const CharClass* newCharClass = classNamed(Common::Misc::utf8stdstring2limastring(ch.charclass));
       if (newCharClass == 0)
       {
-        LERROR << "Error loading char '" << ch.code << "' : unknown class '" << ch.charclass << "'" << LENDL;
+        LERROR << "Error loading char '" << ch.code << "' : unknown class '" << ch.charclass << "'";
         continue;
       }
       newChar->setCharClass(newCharClass);
@@ -424,7 +429,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
   }
   else
   {
-    LERROR << "Error while parsing: " << fileName << LENDL;
+    LERROR << "Error while parsing: " << fileName;
   }
   return true;
 }

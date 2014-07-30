@@ -65,7 +65,7 @@ State::~State()
 const State* State::run(Text& text) const
 {
   TOKENIZERLOGINIT;
-  LDEBUG << "--------Entering State " << limastring2utf8stdstring(name()) << LENDL;
+  LDEBUG << "--------Entering State " << limastring2utf8stdstring(name());
 //   Lima::LimaChar returnedStatus;
 //   Lima::LimaChar innerStatus = 0;
 
@@ -76,7 +76,7 @@ const State* State::run(Text& text) const
     const Transition* transition = (*it);
     if (transition->events().size() == 0)
     {
-      LDEBUG << "| Empty transition... continuing." << LENDL;
+      LDEBUG << "| Empty transition... continuing.";
       continue;
     }
     
@@ -85,17 +85,17 @@ const State* State::run(Text& text) const
         << (transition->events()[0]==0?"":limastring2utf8stdstring(transition->events()[0]->id()))
         <<" / '"
         << (transition->events()[0]==0?"":limastring2utf8stdstring(transition->events()[0]->name()))
-        << "'" << LENDL;
-    LDEBUG << "|   (text position " << text.position() << " ; char: '" << Common::Misc::limastring2utf8stdstring(LimaString()+text.currentChar()) << "')" << LENDL;
+        << "'";
+    LDEBUG << "|   (text position " << text.position() << " ; char: '" << Common::Misc::limastring2utf8stdstring(LimaString()+text.currentChar()) << "')";
         const State* toState = transition->run(text);
     if (toState != 0)
     {
-          LDEBUG << "| transition from " << Common::Misc::limastring2utf8stdstring(this->name()) << " to " << Common::Misc::limastring2utf8stdstring(transition-> nextStateName()) << " succeeded." << LENDL;
-          LDEBUG << "| text position is now " << text.position() << " ; char: '" << Common::Misc::limastring2utf8stdstring(LimaString()+text.currentChar()) << "'" << LENDL;
+          LDEBUG << "| transition from " << Common::Misc::limastring2utf8stdstring(this->name()) << " to " << Common::Misc::limastring2utf8stdstring(transition-> nextStateName()) << " succeeded.";
+          LDEBUG << "| text position is now " << text.position() << " ; char: '" << Common::Misc::limastring2utf8stdstring(LimaString()+text.currentChar()) << "'";
         return toState;
     }
   }
-  LDEBUG << "--------All transitions failed: state failed" << LENDL;
+  LDEBUG << "--------All transitions failed: state failed";
   return 0;
 }
 

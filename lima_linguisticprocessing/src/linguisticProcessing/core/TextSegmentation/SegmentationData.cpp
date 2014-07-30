@@ -71,7 +71,7 @@ m_type(type)
     LinguisticGraphVertex v=target(*it,*graph);
     if (v==end) { // vertex following begin vertex is end vertex => empty segment
       LOGINIT("LP::Segmentation");
-      LDEBUG << "Warning: empty segment" << LENDL;
+      LDEBUG << "Warning: empty segment";
       // keep default 0 values for (pos,len) to be informed that this is an empty segment
       return;
     }
@@ -79,7 +79,7 @@ m_type(type)
     if (t!=0) {
       if (foundPos && position!=t->position()) {
         LOGINIT("LP::Segmentation");
-        LWARN << "Warning: conflicting position for alternative vertices" << LENDL;
+        LWARN << "Warning: conflicting position for alternative vertices";
       }
       else {
         position=t->position();
@@ -88,7 +88,7 @@ m_type(type)
     }
     else {
       LOGINIT("LP::Segmentation");
-      LDEBUG << "Warning: no token for vertex " << v << LENDL;
+      LDEBUG << "Warning: no token for vertex " << v;
     }
   }
   if (foundPos) {
@@ -96,7 +96,7 @@ m_type(type)
   }
   else {
     LOGINIT("LP::Segmentation");
-    LERROR << "Error: cannot find position of begin vertex " << begin << " for segmentation data" << LENDL;
+    LERROR << "Error: cannot find position of begin vertex " << begin << " for segmentation data";
   }
 
   // last vertex is the vertex just after the last element of the
@@ -113,7 +113,7 @@ m_type(type)
     if (t!=0) {
       if (foundPosEnd && positionEnd!=t->position()+t->length()) {
         LOGINIT("LP::Segmentation");
-        LWARN << "Warning: conflicting position for alternative vertices" << LENDL;
+        LWARN << "Warning: conflicting position for alternative vertices";
       }
       else {
         positionEnd=t->position()+t->length();
@@ -122,7 +122,7 @@ m_type(type)
     }
     else {
       LOGINIT("LP::Segmentation");
-      LWARN << "Warning: no token for vertex " << v << LENDL;
+      LWARN << "Warning: no token for vertex " << v;
     }
   }
   if (foundPosEnd) {
@@ -131,7 +131,7 @@ m_type(type)
   else {
     LOGINIT("LP::Segmentation");
     LERROR << "Error: cannot determine length of segment for segmentation data ("
-           << begin << "," << end << ")" << LENDL;
+           << begin << "," << end << ")";
   }
 }
 
@@ -220,7 +220,7 @@ bool Segment::operator<(const Segment& s) const
 void Segment::addSegment(const Segment& s)
 {
   LOGINIT("LP::Segmentation");
-  LDEBUG << "add segment [" << s.getPosBegin() << "," << s.getLength() << "] to [" << getPosBegin() << "," << getLength() << "]" << LENDL;
+  LDEBUG << "add segment [" << s.getPosBegin() << "," << s.getLength() << "] to [" << getPosBegin() << "," << getLength() << "]";
   
   // do not check types, keep type of current segment
   // do not check adjacency, juste update end of segment
@@ -244,7 +244,7 @@ void SegmentationData::add(const Segment& s)
   // segments are sorted in the vector: use binary search to insert new segment
   if (s.getLength()==0) {
     LOGINIT("LP::Segmentation");
-    LDEBUG << "add(): trying to add empty segment: ignored" << LENDL;
+    LDEBUG << "add(): trying to add empty segment: ignored";
   }
   else {
     

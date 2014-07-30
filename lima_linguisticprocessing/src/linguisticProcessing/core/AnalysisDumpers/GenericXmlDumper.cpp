@@ -157,16 +157,16 @@ void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap,
   if (! featureOrder.empty()) {
     // use specified order 
     DUMPERLOGINIT;
-    LDEBUG << "GenericXmlDumper: initialize features: use order" << LENDL;
+    LDEBUG << "GenericXmlDumper: initialize features: use order";
     featureTags=featureOrder;
     for (deque<string>::const_iterator it=featureOrder.begin(),it_end=featureOrder.end();it!=it_end;it++) {
-      LDEBUG << "GenericXmlDumper: --"<< (*it) << LENDL;
+      LDEBUG << "GenericXmlDumper: --"<< (*it);
       const std::string& featureTag=(*it);
       map<string,string>::const_iterator f=featuresMap.find(featureTag);
       if (f==featuresMap.end()) {
         DUMPERLOGINIT;
         LWARN << "GenericXmlDumper: 'featureOrder' parameter mentions a feature '" << featureTag
-              << "' not in feature map parameter: order ignored" << LENDL;
+              << "' not in feature map parameter: order ignored";
         useMapOrder=true;
         features.clear();
         featureTags.clear();
@@ -190,7 +190,7 @@ void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap,
   m_features.initialize(features);
   if (m_features.size()!=featureTags.size()) {
     DUMPERLOGINIT;
-    LERROR << "GenericXmlDumper: error: failed to initialize all features" << LENDL;
+    LERROR << "GenericXmlDumper: error: failed to initialize all features";
     throw InvalidConfiguration();
   }
   for (unsigned int i=0,end=m_features.size();i!=end;i++) {
@@ -203,31 +203,31 @@ process(AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
   DUMPERLOGINIT;
-  LDEBUG << "GenericXmlDumper::process" << LENDL;
+  LDEBUG << "GenericXmlDumper::process";
   
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
-    LERROR << "no LinguisticMetaData ! abort" << LENDL;
+    LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
-    LERROR << "no graph 'AnaGraph' available !" << LENDL;
+    LERROR << "no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
-    LERROR << "no graph 'PosGraph' available !" << LENDL;
+    LERROR << "no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    LERROR << "no annotation graph available !" << LENDL;
+    LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
 
@@ -258,7 +258,7 @@ xmlOutput(std::ostream& out,
   if (m_outputSentenceBoundaries) {
     SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
      if (sb==0) {
-      LWARN << "no SentenceBoundaries" << LENDL;
+      LWARN << "no SentenceBoundaries";
     }
   }
 
@@ -278,7 +278,7 @@ xmlOutput(std::ostream& out,
   {
     // ??OME2 uint64_t nbSentences(sb->size());
     uint64_t nbSentences((sb->getSegments()).size());
-    LDEBUG << "GenericXmlDumper: "<< nbSentences << " sentences found" << LENDL;
+    LDEBUG << "GenericXmlDumper: "<< nbSentences << " sentences found";
     for (uint64_t i=0; i<nbSentences; i++)
     {
       // ??OME2 LinguisticGraphVertex sentenceBegin=(*sb)[i].getFirstVertex();
@@ -290,8 +290,8 @@ xmlOutput(std::ostream& out,
       //   continue;
       // }
       
-      LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd << LENDL;
-      LDEBUG << "dump simple terms for this sentence" << LENDL;
+      LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd;
+      LDEBUG << "dump simple terms for this sentence";
       
       ostringstream oss;
       xmlOutputVertices(oss,
@@ -304,7 +304,7 @@ xmlOutput(std::ostream& out,
                         metadata->getStartOffset());
       string str=oss.str();
       if (str.empty()) {
-        LDEBUG << "nothing to dump in this sentence" << LENDL;
+        LDEBUG << "nothing to dump in this sentence";
       }
       else {
         out << "<s id=\"" << i << "\">" << endl
@@ -328,8 +328,8 @@ xmlOutputVertices(std::ostream& out,
 {
 
   DUMPERLOGINIT;
-  LDEBUG << "GenericXmlDumper: ========================================" << LENDL;
-  LDEBUG << "GenericXmlDumper: outputXml from vertex "  << begin << " to vertex " << end << LENDL;
+  LDEBUG << "GenericXmlDumper: ========================================";
+  LDEBUG << "GenericXmlDumper: outputXml from vertex "  << begin << " to vertex " << end;
 
   LinguisticGraph* graph=posgraph->getGraph();
   LinguisticGraphVertex lastVertex=posgraph->lastVertex();
@@ -429,7 +429,7 @@ xmlOutputVertex(std::ostream& out,
         }
         else {
           DUMPERLOGINIT;
-          LERROR << "failed to output specific entity for vertex " << v << LENDL;
+          LERROR << "failed to output specific entity for vertex " << v;
         }
       }
     }
@@ -453,7 +453,7 @@ xmlOutputVertex(std::ostream& out,
       }
       else {
         DUMPERLOGINIT;
-        LERROR << "failed to output specific entity for vertex " << v << LENDL;
+        LERROR << "failed to output specific entity for vertex " << v;
       }
     }
   }  
@@ -495,7 +495,7 @@ bool GenericXmlDumper::xmlOutputSpecificEntity(std::ostream& out,
 {
   if (se == 0) {
     DUMPERLOGINIT;
-    LERROR << "missing specific entity annotation" << LENDL;
+    LERROR << "missing specific entity annotation";
     return false;
   }
   
@@ -507,7 +507,7 @@ bool GenericXmlDumper::xmlOutputSpecificEntity(std::ostream& out,
   }
   catch (std::exception& ) {
     DUMPERLOGINIT;
-    LERROR << "Undefined entity type " << se->getType() << LENDL;
+    LERROR << "Undefined entity type " << se->getType();
     return false;
   }
   out << "<e type=\"" << typeName << "\""
@@ -518,7 +518,7 @@ bool GenericXmlDumper::xmlOutputSpecificEntity(std::ostream& out,
   // take as category for parts the category for the named entity
   /*LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
   DUMPERLOGINIT;
-  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName << LENDL;
+  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
   */
   // get the parts of the named entity match
   // use the category of the named entity for all elements
@@ -613,7 +613,7 @@ outputSpecificEntity(std::ostream& out,
 {
   if (se == 0) {
     DUMPERLOGINIT;
-    LERROR << "missing specific entity annotation" << LENDL;
+    LERROR << "missing specific entity annotation";
     return false;
   }
   
@@ -625,7 +625,7 @@ outputSpecificEntity(std::ostream& out,
   }
   catch (std::exception& ) {
     DUMPERLOGINIT;
-    LERROR << "Undefined entity type " << se->getType() << LENDL;
+    LERROR << "Undefined entity type " << se->getType();
     return false;
   }
   out 
@@ -637,7 +637,7 @@ outputSpecificEntity(std::ostream& out,
   // take as category for parts the category for the named entity
   LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
   DUMPERLOGINIT;
-  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName << LENDL;
+  LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
   
   // get the parts of the named entity match
   // use the category of the named entity for all elements

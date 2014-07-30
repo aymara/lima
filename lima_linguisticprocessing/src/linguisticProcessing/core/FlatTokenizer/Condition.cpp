@@ -64,7 +64,7 @@ bool Condition::isFulfilled(const Text& text) const
   TOKENIZERLOGINIT;
   LDEBUG << "| | | testing if condition is fullfilled with "
       << _before.size() << " events before and "
-      << _after.size() << " events after." << LENDL;
+      << _after.size() << " events after.";
   try {
     int currentIndex = 0;
     for (uint64_t b = 0; b < _before.size(); b++)
@@ -72,7 +72,7 @@ bool Condition::isFulfilled(const Text& text) const
       LimaChar c = 0;
       if (!(((currentIndex == 0) && _before[b].isRecognized(c))||(_before[b].isRecognized(text[--currentIndex]))))
       {
-        LDEBUG << "| | | before condition is not fullfilled" << LENDL;
+        LDEBUG << "| | | before condition is not fullfilled";
         return false;
       }
     }
@@ -81,17 +81,17 @@ bool Condition::isFulfilled(const Text& text) const
     {
       if (!(_after[a].isRecognized(text[++currentIndex])))
       {
-        LDEBUG << "| | | after condition is not fullfilled" << LENDL;
+        LDEBUG << "| | | after condition is not fullfilled";
         return false;
       }
     }
   }
   catch (BoundsErrorException)
   {
-    LDEBUG << "Condition tried to reach out of text bounds" << LENDL;
+    LDEBUG << "Condition tried to reach out of text bounds";
     return 0;
   }
-  LDEBUG << "| | | condition is fullfilled" << LENDL;
+  LDEBUG << "| | | condition is fullfilled";
   return true;
 }
 

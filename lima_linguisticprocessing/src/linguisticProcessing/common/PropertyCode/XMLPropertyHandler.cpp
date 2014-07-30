@@ -71,7 +71,7 @@ bool XMLPropertyHandler::startElement(const QString & namespaceURI, const QStrin
       m_currentProp=PROP;
       m_properties.push_back(PropertyDescription());
       m_properties.back().name = attributes.value("name").toUtf8().data();
-      LDEBUG << "read property " << m_properties.back().name << LENDL;
+      LDEBUG << "read property " << m_properties.back().name;
   }
   else if (stringName == "subproperty")
   {
@@ -79,12 +79,12 @@ bool XMLPropertyHandler::startElement(const QString & namespaceURI, const QStrin
     m_subproperties.push_back(SubPropertyDescription());
     m_subproperties.back().name = attributes.value("name").toUtf8().data();
     m_subproperties.back().parentName = attributes.value("parent").toUtf8().data();
-    LDEBUG << "read subproperty " << m_subproperties.back().name << " of parent property " << m_subproperties.back().parentName << LENDL;
+    LDEBUG << "read subproperty " << m_subproperties.back().name << " of parent property " << m_subproperties.back().parentName;
   }
   else if (stringName == "value")
   {
     string value=attributes.value("name").toUtf8().data();
-    LDEBUG << "read value " << value << LENDL;
+    LDEBUG << "read value " << value;
     if (m_currentProp == PROP)
     {
       m_properties.back().values.push_back(value);
@@ -95,20 +95,20 @@ bool XMLPropertyHandler::startElement(const QString & namespaceURI, const QStrin
     }
     else
     {
-      LERROR << "Don't know what to do with value " << value << " !" << LENDL;
+      LERROR << "Don't know what to do with value " << value << " !";
     }
   }
   else if (stringName == "subvalues")
   {
     string value=attributes.value("value").toUtf8().data();
-    LDEBUG << "read subvalues " << value << LENDL;
+    LDEBUG << "read subvalues " << value;
     if (m_currentProp == SUBPROP)
     {
       m_subproperties.back().values.push_back(make_pair(value,vector<string>()));
     }
     else
     {
-      LERROR << "Don't know what to do with subvalues " << value << " !" << LENDL;
+      LERROR << "Don't know what to do with subvalues " << value << " !";
     }
   }
   return true;

@@ -103,7 +103,7 @@ void TextFeaturesDumper::init(Common::XMLConfigurationFiles::GroupConfigurationS
   }
   catch (NoSuchList& ) { // keep default value
     LOGINIT("LP::Dumper");
-    LERROR << "Warning: no features selected in TextFeaturesDumper: output will be empty" << LENDL;
+    LERROR << "Warning: no features selected in TextFeaturesDumper: output will be empty";
   }
 
 }
@@ -114,7 +114,7 @@ LimaStatusCode TextFeaturesDumper::process(
   DUMPERLOGINIT;
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
@@ -124,7 +124,7 @@ LimaStatusCode TextFeaturesDumper::process(
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (anagraph==0) {
-    LERROR << "graph " << m_graph << " has not been produced: check pipeline" << LENDL;
+    LERROR << "graph " << m_graph << " has not been produced: check pipeline";
     return MISSING_DATA;
   }
   LinguisticGraph* graph=anagraph->getGraph();

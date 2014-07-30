@@ -104,7 +104,7 @@ int DumpSpecificEntityAnnotation::dump(std::ostream& os, Common::AnnotationGraph
   }
   catch (const boost::bad_any_cast& )
   {
-    LERROR << "This annotation is not a SpecificEntityAnnotation ; nothing dumped" << LENDL;
+    LERROR << "This annotation is not a SpecificEntityAnnotation ; nothing dumped";
     return UNKNOWN_ERROR;
   }
 }

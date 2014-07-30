@@ -86,14 +86,14 @@ LimaStatusCode ParagraphBoundariesFinder::process(
 {
   TimeUtils::updateCurrentTime();
   SENTBOUNDLOGINIT;
-  LINFO << "start finding paragraph founds" << LENDL;
+  LINFO << "start finding paragraph founds";
   
   // find paragraphs in text (positions of double carriage returns),
   // then find corresponding vertices in graph
 
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (graph==0) {
-    LERROR << "no graph '" << m_graph << "' available !" << LENDL;
+    LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
   }
   SegmentationData* boundaries=new SegmentationData(m_graph);
@@ -101,18 +101,18 @@ LimaStatusCode ParagraphBoundariesFinder::process(
 
   LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
   
-  vector<int> paragraphPositions;
+  std::vector<uint64_t> paragraphPositions;
   int currentPos=0;
   int i=text->indexOf(m_paragraphSeparator,currentPos);
   while (i!=-1) {
-    paragraphPositions.push_back(i);
+    paragraphPositions.push_back((uint64_t)i);
     // goto next char that is not a carriage return
     currentPos=text->indexOf(QRegExp(QString("[^")+ m_paragraphSeparator+"]"),i+1);
     i=text->indexOf(m_paragraphSeparator,currentPos);
   }
 
   if (paragraphPositions.empty()) {
-    LWARN << "no paragraph found" << LENDL;
+    LWARN << "no paragraph found";
     return SUCCESS_ID;
   }
 

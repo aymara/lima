@@ -157,7 +157,7 @@ typedef struct ParamStruct {
   bool runIndex;
   bool addWord;
   bool runSpelling;
-  uint64_t termId;
+  int64_t termId;
   bool composed;
   bool withAssert;
   std::string inputDicoComp;
@@ -428,7 +428,6 @@ template <typename dictType>
   std::vector<Lima::LimaString > & hyperwords,
   std::vector<int> & offsets,
   std::vector<std::vector<Lima::LimaString > >& subwords, bool withAssert ) {
-  typedef typename Lima::Common::FsaAccess::FsaAccessSpare16::subword_iterator sub_it;
 
   typename std::vector<Lima::LimaString >::iterator wordIt;
   std::vector<int>::iterator offsetIt = offsets.begin();
@@ -439,16 +438,16 @@ template <typename dictType>
       std::pair<AccessSubWordIterator,AccessSubWordIterator> entries = m_dico.getSubWords(*offsetIt,word);
       FSAALOGINIT;
       LDEBUG <<  "test getSubWords("
-             << ", " << word << ")" << LENDL;
+             << ", " << word << ")" ;
       for( AccessSubWordIterator entry = entries.first ; entry != entries.second ; entry++ ) {
         LINFO << "string(" << *offsetIt << "," << (*entry).first << "),  ";
       }
-      LINFO << LENDL;
+      LINFO ;
       for( AccessSubWordIterator entry = entries.first  ; entry != entries.second ; entry++ ) {
         Lima::LimaString subWord = word.mid(*offsetIt, (*entry).first - *offsetIt);
         LINFO << subWord << ", ";
       }
-      LINFO << LENDL;
+      LINFO ;
       if( withAssert ) {
         // r�up�ation des r�onses attendues pour v�ifications
         assert( answersIt != subwords.end() );
@@ -505,7 +504,7 @@ int main(int argc, char *argv[])
   setlocale(LC_ALL, "");
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG << argv[0] <<  " begin..." << LENDL;
+  LDEBUG << argv[0] <<  " begin..." ;
 #endif
 
   // options reading

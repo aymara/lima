@@ -106,7 +106,7 @@ namespace WordSenseDisambiguation
       } else {
         LERROR << "(reason unknown)" ; 
       }
-      LERROR << ". " << LENDL;
+      LERROR << ". ";
       return nbSenses;
     }
     while (getline(ifs, s)) {      
@@ -141,16 +141,16 @@ namespace WordSenseDisambiguation
     LERROR << "an error occured while opening file " << sensesFile;
     switch (errno) {
       case      ENOENT :
-        LERROR << "noentry " << LENDL;
+        LERROR << "noentry ";
         break;
       case     EMFILE  :
-        LERROR << "too many files open " << LENDL;
+        LERROR << "too many files open ";
         break;
       case      EACCES :
-        LERROR << "eaccess " << LENDL;
+        LERROR << "eaccess ";
         break;
       default :
-        LERROR << "unrecognized error : impossible to open : "<< sensesFile << LENDL;        
+        LERROR << "unrecognized error : impossible to open : "<< sensesFile;        
         exit(EXIT_FAILURE);
         break;
     }

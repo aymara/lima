@@ -98,34 +98,6 @@
     right="" />
 </testcase>
 
-<testcase id="fre.sa.7" type="bloquant">
-  <comment> - contenu test modifié : l'ambiguite NC/Adj de petite fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
-  <call-parameters>
-      <param key="text" value="La très jolie sombre maison. "/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl>DETSUB</expl>
-  <test id="fre.sa.7.1" trace=".sa.xml"
-    comment=" rules-l2r-fre-homodeps.txt. La relation DETSUB doit exister entre 'La' et 'maison'. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='La']/dependents/dep[@t='DETSUB']"
-    operator="exists"
-    right="" />
-  <test id="fre.sa.7.2" trace=".sa.xml"
-    comment=" rules-l2r-fre-homodeps.txt. La relation ADJPRENSUB doit exister entre les adjectifs et 'maison'. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='jolie']/dependents/dep[@t='ADJPRENSUB']"
-    operator="exists"
-    right="" />
-  <test id="fre.sa.7.3" trace=".sa.xml"
-    comment=" rules-l2r-fre-homodeps.txt. La relation DETSUB doit exister entre adjectifs et 'maison'. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='jolie']/dependents/dep[@t='ADJPRENSUB']"
-    operator="exists"
-    right="" />
-</testcase>
-
 <testcase id="fre.sa.8" type="bloquant">
   <call-parameters>
       <param key="text" value="Cette maison est la plus belle du quartier. "/>
@@ -297,8 +269,8 @@
     </call-parameters>
   <expl>TEMPCOMP</expl>
 <test id="fre.sa.16.1" trace=".sa.xml"
-      comment=" rules-l2r-fre-homodeps.txt. Le token a_visité doit être présent avec passé composé (L_PC) comme attribut TIME"
-      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='a_visité']/data/simple_word/form/property/p[@prop='TIME'][@val='L_PC']"
+      comment=" rules-l2r-fre-homodeps.txt. Le token a_visité doit être présent avec passé composé (PC) comme attribut TIME"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='a_visité']/data/simple_word/form/property/p[@prop='TIME'][@val='PC']"
     operator="exists"
     right="" />
 <!--/data/dictionary/property/p  -->
@@ -314,8 +286,8 @@
     </call-parameters>
   <expl>TEMPCOMP</expl>
 <test id="fre.sa.17.1" trace=".sa.xml"
-      comment=" rules-l2r-fre-homodeps.txt. Le token a_visité doit être présent avec passé composé (L_PC) comme attribut TIME"
-      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='a_visité']/data/simple_word/form/property/p[@prop='TIME'][@val='L_PC']"
+      comment=" rules-l2r-fre-homodeps.txt. Le token a_visité doit être présent avec passé composé (PC) comme attribut TIME"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='a_visité']/data/simple_word/form/property/p[@prop='TIME'][@val='PC']"
     operator="exists"
     right="" />
 </testcase>
@@ -542,122 +514,6 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.31" type="bloquant">
-  <call-parameters>
-      <param key="text" value="C'est un chat très très enjoué. "/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl> un chat très très enjoué : MEME CHAINE NOMINALE. </expl>
-<test id="fre.sa.31.1" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='un']/chains/chain[@type='N']/@id"
-    operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chat']/chains/chain[@type='N']/@id"  />
-<test id="fre.sa.31.2" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chat']/chains/chain[@type='N']/@id"
-    operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=15]/chains/chain[@type='N']/@id"  />
-<test id="fre.sa.31.3" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=15]/chains/chain[@type='N']/@id"
-    operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=20]/chains/chain[@type='N']/@id"  />
-<test id="fre.sa.31.4" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  un chat très très enjoué : MEME CHAINE NOMINALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=20]/chains/chain[@type='N']/@id"
-    operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='enjoué']/chains/chain[@type='N']/@id"  />
-</testcase>
-<testcase id="fre.sa.32" type="bloquant">
-  <call-parameters>
-      <param key="text" value="Le chat est très très enjoué. "/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl> est très très enjoué : MEME CHAINE VERBALE... (chaine adjectivale...)</expl>
-<test id="fre.sa.32.1" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  est très très enjoué : MEME CHAINE VERBALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='est']/chains/chain[@type='V']/@id"
-    operator="contains"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=13]/chains/chain[@type='V']/@id"  />
-<test id="fre.sa.32.2" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  est très très enjoué : MEME CHAINE VERBALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=13]/chains/chain[@type='V']/@id"
-    operator="contains"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=18]/chains/chain[@type='V']/@id"  />
-<test id="fre.sa.32.3" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  est très très enjoué : MEME CHAINE VERBALE. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='très'][@pos=18]/chains/chain[@type='V']/@id"
-    operator="contains"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='enjoué']/chains/chain[@type='V']/@id"  />
-</testcase>
-<testcase id="fre.sa.33" type="bloquant">
-  <call-parameters>
-      <param key="text" value=" L'acteur Jean Nompropre fut le compagnon du poète et metteur en scène Jean Cocteau qui le dirigea dans plusieurs films. "/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl>SUBSUBJUX</expl>
-<test id="fre.sa.33.1" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  L, acteur, 'Jean Nompropre', même syntagme "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form=&quot;L&apos;&quot;]/chains/chain[@type='N']/@id"
-    operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='acteur']/chains/chain[@type='N']/@id"  />
-<test id="fre.sa.33.2" trace=".sa.xml"
-     comment=" rules-l2r-fre-homodeps.txt.  L, acteur, 'Jean Nompropre', même syntagme "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='acteur']/chains/chain[@type='N']/@id"
-    operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Jean Nompropre'][@pos=11]/chains/chain[@type='N']/@id"  />
-</testcase>
-<testcase id="fre.sa.34" type="bloquant">
-  <call-parameters>
-      <param key="text" value="La très jolie petite maison est à vendre."/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl>ADJPRENSUB</expl>
-<test id="fre.sa.34.1" trace=".sa.xml"
-    comment=" rules-r2l-pass1-fre-homodeps.txt. est, à, vendre, même syntagme."
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='est']/chains/chain[@type='V']/@id"
-    operator="intersect"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='à'][@pos=33]/chains/chain[@type='V']/@id"  />
-<test id="fre.sa.34.2" trace=".sa.xml"
-    comment=" rules-r2l-pass1-fre-homodeps.txt.  est, à, vendre, même syntagme."
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='à']/chains/chain[@type='V']/@id"
-    operator="intersect"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='vendre'][@pos=35]/chains/chain[@type='V']/@id"  />
-</testcase>
-<testcase id="fre.sa.35.a" type="bloquant">
-  <comment> - contenu test modifié : l'ambiguite NC/Adj de petite fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
-  <call-parameters>
-      <param key="text" value="La très jolie sombre maison est à vendre."/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl>ADJPRENSUB</expl>
-<test id="fre.sa.35.1" trace=".sa.xml"
-    comment=" rules-r2l-pass1-fre-homodeps.txt, AdjPrenSub : la chaine nominale 'sombre maison' doit exister."
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='sombre']/dependents/dep[@t='ADJPRENSUB']"
-    operator="exists"
-    right="" />
-</testcase>
 <testcase id="fre.sa.35.b" type="bloquant">
   <call-parameters>
       <param key="text" value="La très jolie petite maison est à vendre."/>
@@ -671,51 +527,6 @@
 <test id="fre.sa.35.2" trace=".sa.xml"
     comment=" rules-r2l-pass1-fre-homodeps.txt, AdjPrenSub : la chaine nominale 'jolie maison' doit exister."
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='jolie']/dependents/dep[@t='ADJPRENSUB']"
-    operator="exists"
-    right="" />
-</testcase>
-<testcase id="fre.sa.36" type="bloquant">
-  <comment>La notion de chaine nominale/verbale n'est plus utilisée</comment>
-  <call-parameters>
-      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl>deux substantifs contigus = configuration interdite dans la matrice de
-        desambiguisation morphosyntaxique.</expl>
-  <test id="fre.sa.36.1" trace=".sa.xml"
-    comment="La chaine nominale 'Les oiseaux... passereaux' doit exister"
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Les']/chains/chain[@type='N']/@id"
-    operator="intersect"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='passereaux']/chains/chain[@type='N']/@id" />
-  <test id="fre.sa.36.2" trace=".sa.xml"
-    comment="La chaine nominale 'Les oiseaux... passereaux' doit exister"
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='Les']/chains/chain[@type='N']"
-    operator="exists"
-    right="" />
-</testcase>
-<testcase id="fre.sa.37" type="bloquant">
-  <comment>La notion de chaine nominale/verbale n'est plus utilisée</comment>
-  <call-parameters>
-      <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="query"/>
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-  <expl>La chaine verbale inclut l'adjectif qui le suit.</expl>
-  <test id="fre.sa.37.1" trace=".sa.xml"
-    comment="La chaine verbale 'sont tres petits' doit exister"
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='sont']/chains/chain[@type='V']/@id"
-    operator="contains"
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='petits']/chains/chain[@type='V']/@id" />
-  <test id="fre.sa.37.2" trace=".sa.xml"
-    comment="La chaine verbale 'sont tres petits' doit exister"
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='sont']/chains/chain[@type='V']"
     operator="exists"
     right="" />
 </testcase>
