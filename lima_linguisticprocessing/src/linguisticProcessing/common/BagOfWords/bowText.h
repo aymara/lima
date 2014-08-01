@@ -40,7 +40,7 @@ namespace Lima {
 namespace Common {
 namespace BagOfWords {
 
-class BoWToken;
+class AbstractBoWElement;
 
 /**
  * This class represents a list of elements, that are pointers on
@@ -55,7 +55,7 @@ class BoWToken;
  * references will cause problems in read/write functions)
  * 
  **/
-class LIMA_BOW_EXPORT BoWText : public std::vector< BoWToken* >
+class LIMA_BOW_EXPORT BoWText : public std::vector< AbstractBoWElement* >
 {
 public:
   BoWText();

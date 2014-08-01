@@ -41,13 +41,13 @@ namespace BagOfWords {
 // constructors,destructor,copy assignment
 //**********************************************************************
 BoWText::BoWText():
-std::vector< BoWToken* >()
+std::vector< AbstractBoWElement* >()
 {
 }
 
 
 BoWText::BoWText(const BoWText& t):
-std::vector< BoWToken* >() 
+std::vector< AbstractBoWElement* >() 
 {
   (*this) = t;
 }
@@ -57,12 +57,12 @@ BoWText& BoWText::operator = (const BoWText& t) {
     clear();
     // have to store a pointer map to handle references in
     // the component lists of complex tokens
-    std::map<BoWToken*,BoWToken*> pointerMap;
+//     std::map<AbstractBoWElement*,AbstractBoWElement*> pointerMap;
     for (BoWText::const_iterator i(t.begin());
         i != t.end(); i++) {
-      BoWToken* tok=(*i)->clone(/*pointerMap*/);
+      AbstractBoWElement* tok=(*i)->clone(/*pointerMap*/);
       push_back(tok);
-      pointerMap[(*i)]=tok;
+//       pointerMap[(*i)]=tok;
     }
   }
   return *this;
@@ -82,7 +82,7 @@ void BoWText::clear() {
       (*i)=0;
     }
   }
-  std::vector< BoWToken* >::clear();
+  std::vector< AbstractBoWElement* >::clear();
 }
 
 //**********************************************************************
