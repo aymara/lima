@@ -30,6 +30,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
+#include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/BoWRelation.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 
