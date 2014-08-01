@@ -71,6 +71,8 @@ public:
 
   virtual ~AbstractBoWElement() {}
 
+  virtual void clear() {}
+
   virtual AbstractBoWElement* clone() const = 0;
 
   /** size of the AbstractBoWElement is the number of parts in the token: 0 for 
@@ -78,6 +80,8 @@ public:
   virtual uint64_t size(void) const = 0;
 
   virtual BoWType getType() const {return BOW_NOTYPE;}
+
+  virtual Lima::LimaString getString(void) const = 0;
 
   /** get a string of the AbstractBoWElement for output function
     * @param macroAccessor if not null, will output the human readable form of the macrocategory.

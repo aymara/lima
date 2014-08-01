@@ -126,6 +126,11 @@ BoWPredicate* BoWPredicate::clone() const
 //**********************************************************************
 // input/output functions
 //**********************************************************************
+Lima::LimaString BoWPredicate::getString(void) const
+{
+  return Lima::LimaString();
+}
+
 std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const {
   std::ostringstream oss;
 //   oss << BoWToken::getOutputUTF8String(macroManager) << "->" << getUTF8StringParts(macroManager)

@@ -67,7 +67,7 @@ class BoWBinaryReaderPrivate
   void readNamedEntityProperties(std::istream& file,
                                  BoWNamedEntity* ne);
   BoWRelation* readBoWRelation(std::istream& file);
-  BoWToken* readBoWToken(std::istream& file,
+  AbstractBoWElement* readBoWToken(std::istream& file,
                          std::vector<BoWToken*>& refMap);
   void readSimpleToken(std::istream& file,
                        BoWToken* token);
@@ -167,7 +167,7 @@ void BoWBinaryReader::readBoWText(std::istream& file,
 #ifdef DEBUG_LP
         LDEBUG << "BoWBinaryReader::readBoWText reading token " << i;
 #endif
-        BoWToken* token=readBoWToken(file,refMap);
+        AbstractBoWElement* token=readBoWToken(file,refMap);
         if (token) {
             bowText.push_back(token);
         }
@@ -258,14 +258,13 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
     }
 }
 
-BoWToken* BoWBinaryReader::readBoWToken(std::istream& file,
+AbstractBoWElement* BoWBinaryReader::readBoWToken(std::istream& file,
              std::vector<BoWToken*>& refMap)
 {
   return m_d->readBoWToken(file, refMap);
 }
 
-BoWToken* BoWBinaryReaderPrivate::readBoWToken(std::istream& file,
-             std::vector<BoWToken*>& refMap)
+AbstractBoWElement* BoWBinaryReaderPrivate::readBoWToken( std::istream& file, std::vector< Lima::Common::BagOfWords::BoWToken* >& refMap )
 {
   BOWLOGINIT;
   BoWType type=static_cast<BoWType>(Misc::readOneByteInt(file));
@@ -350,7 +349,7 @@ void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
         bool isInList;
         file.read((char*) &(isInList), sizeof(bool));
         if (! isInList) {
-            BoWToken *tok=readBoWToken(file,refMap);
+            BoWToken* tok = dynamic_cast<BoWToken*>(readBoWToken(file,refMap));
             token->addPart(rel,tok,isInList);
             // tok is copied during addition. Must be deleted here.
             delete tok;
@@ -425,7 +424,7 @@ class BoWBinaryWriterPrivate
   void writeBoWRelation(std::ostream& file,
                         BoWRelation* rel) const;
   void writeBoWToken(std::ostream& file,
-                     const BoWToken* bowToken,
+                     const AbstractBoWElement* bowToken,
                      std::map<BoWToken*,uint64_t>& refMap) const;
   void writeSimpleToken(std::ostream& file,
                         const BoWToken* token) const;
@@ -470,7 +469,8 @@ void BoWBinaryWriter::writeBoWText(std::ostream& file,
     std::map<BoWToken*,uint64_t> refMap;
     for (BoWText::const_iterator it=bowText.begin(),
             it_end=bowText.end(); it!=it_end; it++) {
-        refMap[(*it)]=tokenCounter;
+        if ((*it)->getType() != BOW_PREDICATE)
+          refMap[static_cast<BoWToken*>(*it)]=tokenCounter;
         writeBoWToken(file,*it,refMap);
         tokenCounter++;
     }
@@ -485,15 +485,13 @@ void BoWBinaryWriter::writeBoWDocument(std::ostream& file,
 }
 
 void BoWBinaryWriter::writeBoWToken(std::ostream& file,
-              const BoWToken* token,
+              const AbstractBoWElement* token,
               std::map<BoWToken*,uint64_t>& refMap) const
 {
   m_d->writeBoWToken(file, token, refMap);
 }
 
-void BoWBinaryWriterPrivate::writeBoWToken(std::ostream& file,
-              const BoWToken* token,
-              std::map<BoWToken*,uint64_t>& refMap) const
+void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const Lima::Common::BagOfWords::AbstractBoWElement* token, std::map< Lima::Common::BagOfWords::BoWToken*, uint64_t >& refMap ) const
 {
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeBoWToken token type is " << token->getType();
@@ -501,17 +499,17 @@ void BoWBinaryWriterPrivate::writeBoWToken(std::ostream& file,
   switch (token->getType()) {
     case BOW_TOKEN: {
         // do not use refMap
-        writeSimpleToken(file,token);
+        writeSimpleToken(file,static_cast<const BoWToken*>(token));
         break;
     }
     case BOW_TERM: {
-        writeSimpleToken(file,token);
+        writeSimpleToken(file,static_cast<const BoWToken*>(token));
         writeComplexTokenParts(file,static_cast<const BoWComplexToken*>(token),refMap);
         break;
     }
     case BOW_NAMEDENTITY: {
         const BoWNamedEntity* ne=static_cast<const BoWNamedEntity*>(token);
-        writeSimpleToken(file,token);
+        writeSimpleToken(file,static_cast<const BoWToken*>(token));
         writeComplexTokenParts(file,ne,refMap);
         writeNamedEntityProperties(file,ne);
         break;

@@ -92,7 +92,7 @@ public:
   void setPosition(const uint64_t pos);
   void setLength(const uint64_t len);
 
-  Lima::LimaString getString(void) const;
+  virtual Lima::LimaString getString(void) const;
   // for compatibility
   Lima::LimaString getIndexString(void) const;
 

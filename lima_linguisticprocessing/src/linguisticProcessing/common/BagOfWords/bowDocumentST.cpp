@@ -153,7 +153,7 @@ std::ostream& operator << (std::ostream& os, const BoWDocumentST& d) {
     std::vector<BoWText::const_iterator>::const_iterator itSentBrk;
     for (itSentBrk = d.m_sentenceBreaks.begin();
          itSentBrk != d.m_sentenceBreaks.end(); itSentBrk ++) {
-        os << ***itSentBrk << std::endl;
+        os << (**itSentBrk)->getOutputUTF8String() << std::endl;
     }
 
       // dump topic shifts
@@ -164,7 +164,7 @@ std::ostream& operator << (std::ostream& os, const BoWDocumentST& d) {
     std::vector<BoWText::const_iterator>::const_iterator itTopSht;
     for (itTopSht = d.m_topicShifts.begin();
          itTopSht != d.m_topicShifts.end(); itTopSht ++) {
-        os << ***itTopSht << std::endl;
+        os << (**itTopSht)->getOutputUTF8String() << std::endl;
     }
 
     return os;
@@ -266,7 +266,7 @@ void BoWDocumentST::writeSTData(std::ostream& file) const
       BOWLOGINIT;
       std::ostringstream oss;
       do { 
-        oss << ***itTopSht << " "; itTopSht++;
+        oss << (**itTopSht)->getOutputUTF8String() << " "; itTopSht++;
       } while (itTopSht != m_topicShifts.end());
       LERROR << "Write BoWDocumentST: missing topic shifts on tokens " 
              << oss.str();
@@ -275,7 +275,7 @@ void BoWDocumentST::writeSTData(std::ostream& file) const
       BOWLOGINIT;
       std::ostringstream oss;
       do { 
-        oss << ***itSentBrk << " "; itSentBrk++;
+        oss << (**itSentBrk)->getOutputUTF8String() << " "; itSentBrk++;
       } while (itSentBrk != m_sentenceBreaks.end());
       LERROR << "Write BoWDocumentST: missing sentence breaks on tokens " 
              << oss.str();
