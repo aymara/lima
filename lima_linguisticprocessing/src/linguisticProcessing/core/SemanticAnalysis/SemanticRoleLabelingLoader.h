@@ -37,6 +37,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "LimaConllTokenIdMapping.h"
 #include "QStringList"
+#include <QString>
 #include <QFile>
 #include <iostream>
 #include <fstream>
@@ -70,15 +71,19 @@ class SemanticRoleLabelingLoader : public AnalysisLoader
   class ConllHandler
   {
   public:
-    std::map<LinguisticGraphVertex, std::map<LinguisticGraphVertex, std::string>> m_semanticRoleIndex;
+    std::pair<int,QString> *verbClasses;
+    std::vector<std::pair<int,QString>> *semanticRoles;
+    QRegExp m_descriptorSeparator;
+    QRegExp m_tokenSeparator;
 
     ConllHandler(MediaId language, AnalysisContent& analysis, LinguisticAnalysisStructure::AnalysisGraph* graph);
     virtual ~ConllHandler();
 
 
-    bool extractSemanticRole(int sentenceNb, LimaConllTokenIdMapping* limaConllMapping, const QString & line);// repeated on each line beginning
+    bool extractSemanticInformations(int sentenceNb, LimaConllTokenIdMapping* limaConllMapping, const QString & sentence);// repeated on each line beginning
     bool newSentence(const QString & line);
-    QStringList splitConllColumn(const QString & line);
+    QStringList splitSegment(const QString & segment, QRegExp separator);
+    LinguisticGraphVertex getLimaTokenId(LinguisticGraphVertex conllTokenId, int sentenceNb, LimaConllTokenIdMapping* limaConllMapping);
 
 
   private:
