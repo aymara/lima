@@ -39,8 +39,6 @@
 #include "QStringList"
 #include <QString>
 #include <QFile>
-#include <iostream>
-#include <fstream>
 #include <map>
 
 
@@ -65,25 +63,46 @@ class SemanticRoleLabelingLoader : public AnalysisLoader
   MediaId m_language;
   std::string m_graph;
   std::string m_suffix;
-//   QXmlSimpleReader* m_parser;   /*< XML parser for the loader*/
 
-  // XML handler
+  // Conll handler
   class ConllHandler
   {
   public:
-    std::pair<int,QString> *verbClasses;
-    std::vector<std::pair<int,QString>> *semanticRoles;
     QRegExp m_descriptorSeparator;
     QRegExp m_tokenSeparator;
+    std::pair<LinguisticGraphVertex,QString> *m_verbalClasses;
+    std::vector<std::pair<LinguisticGraphVertex,QString>> *m_semanticRoles;
+    int m_verbalClassNb;
 
     ConllHandler(MediaId language, AnalysisContent& analysis, LinguisticAnalysisStructure::AnalysisGraph* graph);
     virtual ~ConllHandler();
 
+    /**
+     * @brief extract semantic annotations associated to token
+     * @param sentenceIndex the index of the current sentence
+     * @param limaConllMapping the chosen lima conll token id mapping
+     * @param sentence the current sentence
+     * @return true if any verbal class is found, false otherwise
+     */
+    bool extractSemanticInformations(int sentenceIndex, LimaConllTokenIdMapping* limaConllMapping, const QString & sentence);
 
-    bool extractSemanticInformations(int sentenceNb, LimaConllTokenIdMapping* limaConllMapping, const QString & sentence);// repeated on each line beginning
-    bool newSentence(const QString & line);
+    /**
+     * @brief split a text into different types segments
+     * @param segment the segment to split
+     * @param separator the separator used to split
+     * @return the segment split
+     */
     QStringList splitSegment(const QString & segment, QRegExp separator);
-    LinguisticGraphVertex getLimaTokenId(LinguisticGraphVertex conllTokenId, int sentenceNb, LimaConllTokenIdMapping* limaConllMapping);
+
+    /**
+     * @brief get the lima token id matching any conll token one from the same text
+     * @param conllTokenId the conll token id one search the matched lima id
+     * @param sentenceNb the index of the current sentence
+     * @param limaConllMapping the chosen lima conll token id mapping
+     * @return the lima token id
+     * @note function to put in the LimaConllTokenIdMapping class?
+     */
+    LinguisticGraphVertex getLimaTokenId(int conllTokenId, int sentenceIndex, LimaConllTokenIdMapping* limaConllMapping);
 
 
   private:
