@@ -30,19 +30,12 @@
 #include "SemanticRoleLabelingLoader.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/Data/strwstrtools.h"
-#include "linguisticProcessing/core/Automaton/recognizerMatch.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
-#include "QStringList"
-#include <QString>
-#include "QTextCodec"
-#include <boost/regex.hpp>
-#include <queue>
-#include <map>
 #include <utility>
 #include <iostream>
 #include<fstream>
@@ -54,8 +47,6 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::SemanticAnalysis;
 using namespace Lima::Common::AnnotationGraphs;
-
-
 
 
 namespace Lima {
@@ -78,16 +69,14 @@ SemanticRoleLabelingLoader::~SemanticRoleLabelingLoader()
 
 //***********************************************************************
 
-void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager){
+void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration, Manager* manager){
 
   SEMANTICANALYSISLOGINIT;
   m_language=manager->getInitializationParameters().media;
-   AnalysisLoader::init(unitConfiguration,manager);
+  AnalysisLoader::init(unitConfiguration,manager);
   try
   {
     m_graph=unitConfiguration.getParamsValueAtKey("graph");
-
   }
   catch (NoSuchParam& ) {} // keep default value
   try
@@ -96,47 +85,50 @@ void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfig
   }
    catch (NoSuchParam& ) {} // keep default value
     AnalysisLoader::init(unitConfiguration,manager);
-}
+  }
 
 
 LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) const{
   SEMANTICANALYSISLOGINIT;
-  std::cerr << "je suis le fichier SRLLoader" << endl;
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (tokenList==0) {
     LERROR << "graph " << m_graph << " has not been produced: check pipeline" << LENDL;
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  int sentencesNb;
   LimaConllTokenIdMapping* limaConllMapping= static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
 
   QFile file("/home/clemence/textes_test/jamaica_out.conll");
-  int sentenceNb=1;
-  std::map <int, QString> sentence;
   if (!file.open(QIODevice::ReadOnly))
     qDebug() << "cannot open file" << endl;
+  int sentenceNb=1;
+  std::map <int, QString> sentences;
   while (!file.atEnd()) {
     QByteArray text=file.readLine();
     QString textString = QString::fromUtf8(text.constData());
-//     LDEBUG << " ligne : " << textString << " " << LENDL;
+    //One assume that the input file does not start with a blank line
     if (textString.size()<3){
       sentenceNb++;
     }else {
-      QString becomingSentence=sentence[sentenceNb]+textString;
-      sentence[sentenceNb]= becomingSentence;
+      QString becomingSentence=sentences[sentenceNb]+textString;
+      sentences[sentenceNb]= becomingSentence;
     }
   }
-  qDebug() << " There is " << sentenceNb << "sentences ";
-
-//     SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, analysis, tokenList);
-//     if(cHandler.extractSemanticInformations(sentenceNb, limaConllMapping,sentence)){
-// // 
-// // //         AnnotationGraphEdge semAnnotation=annotationData->createAnnotationEdge(it->first, );
-// // //         annotationData->annotate(it->first, semRole, semRole);
-// // //         annotationData->annotate(semAnnotation, "SemAnnot", roleName);
-//     }
-  
+  SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, analysis, tokenList);
+  for (std::map<int,QString>::iterator it=sentences.begin(); it!=sentences.end(); ++it){
+    int sentenceIndex=it->first;
+    QString sentence=it->second;
+    if(cHandler.extractSemanticInformations(sentenceIndex, limaConllMapping,sentence)){
+      LDEBUG << "there are " << cHandler.m_verbalClassNb << "classes for this sentence " << LENDL;
+      for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++){
+        LDEBUG  << cHandler.m_verbalClasses[vClassIndex].second << " triggered by the lima token whose id is " << cHandler.m_verbalClasses[vClassIndex].first<< ", and which evokes the following semantic roles in the sentence : " << LENDL;
+        std::vector <pair<LinguisticGraphVertex,QString>>::iterator semRoleIt;
+        for (semRoleIt=cHandler.m_semanticRoles[vClassIndex].begin(); semRoleIt!=cHandler.m_semanticRoles[vClassIndex].end();semRoleIt++){
+          LDEBUG << (*semRoleIt).second << LENDL;
+        }
+      }
+    }
+  }
   return SUCCESS_ID;
 }
 
@@ -146,95 +138,96 @@ SemanticRoleLabelingLoader::ConllHandler::ConllHandler(MediaId language, Analysi
 m_language(language),
 m_analysis(analysis),
 m_graph(graph),
-m_descriptorSeparator("\\t+"),
-m_tokenSeparator("\\n+")
+m_descriptorSeparator("\t+"),
+m_tokenSeparator("\n+"),
+m_verbalClasses(),
+m_semanticRoles(),
+m_verbalClassNb()
 {
   SEMANTICANALYSISLOGINIT;
   LDEBUG << "SemanticRoleLabelingLoader::ConllHandler constructor";
 }
-SemanticRoleLabelingLoader::ConllHandler::~ConllHandler(){}
+SemanticRoleLabelingLoader::ConllHandler::~ConllHandler(){
+  delete [] m_semanticRoles;
+  delete [] m_verbalClasses;
+}
 
-// repeated on each sentence
-bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformations(int sentenceNb, LimaConllTokenIdMapping* limaConllMapping, const QString & sent)
-{
+// designed to be repeated on each sentence
+bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformations(int sentenceI, LimaConllTokenIdMapping* limaConllMapping, const QString & sent){
   SEMANTICANALYSISLOGINIT;
   SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, m_analysis, m_graph);
   QStringList sentenceTokens=cHandler.splitSegment(sent, m_tokenSeparator);
   QStringList::const_iterator tokensIterator;
-  QString firstSentenceToken=(*sent.constBegin());
-  int classIndex=0;
-  int classNumbers=cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size()-11;
-
-//   LDEBUG << "There is " << classNumbers << "verbal classes in the sentence " <<LENDL;
-  
-//   verbClasses=new std::pair<int, QString>[classNumbers];
-  //repeated on each token of the sentence, that is on each line
-//   for (tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
-//             ++tokensIterator){
-//     int  roleNumbers=0;
-//     QStringList descriptors=cHandler.splitSegment((*tokensIterator),"\\t+");
-//     if (descriptors.size()>=10){
-//       int conllTokenId=descriptors[0].toInt();
-//       int conllToken=descriptors[1].toInt();
-//       std::string semanticRoleLabel=descriptors[11].toStdString();
-//       if(descriptors[10]!="-"){
-//         QString vClass=descriptors[10];
-//         LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceNb, limaConllMapping);
-//           LDEBUG << limaTokenId <<endl;
-//           verbClasses[classIndex]=make_pair(limaTokenId, vClass);
-//           classIndex++;
-//           break;
-//       }else{
-//         LDEBUG <<  "no relation found in mapping for the token " << conllToken << " in the sentence " << sentenceNb <<endl;
-//       }
-//       for (int i = descriptors.size()-classNumbers; i < descriptors.size(); ++i){
-//         if (descriptors.at(i)!="-"){
-//           LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceNb, limaConllMapping);
-//           semanticRoles=new std::vector<std::pair<int,QString>>[classNumbers];
-//           semanticRoles[classNumbers][roleNumbers]=make_pair(limaTokenId,descriptors.at(i));
-//           roleNumbers++;
-//           delete [] semanticRoles;
-//         }
-//       }
-//       return true;
-//     }else{
-//       LERROR << "no token on line" <<endl;
-//       return false;
-//     }
-//   }
-//   delete [] verbClasses;
-}
-
-
-bool SemanticRoleLabelingLoader::ConllHandler::newSentence(const QString & line){
-  SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, m_analysis, m_graph);
-  QStringList columns;
-  columns=cHandler.splitSegment(line, m_descriptorSeparator);
-  if (columns[0].toInt()==1){
-    return true;
-  }else{
-    return false;
+  QString firstSentenceToken=(*sentenceTokens.constBegin());
+  int descriptorsNb=cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
+  m_verbalClassNb=descriptorsNb-11;
+  if (m_verbalClassNb!=0){
+    LDEBUG << sentenceI << " : \n" << sent << LENDL;
+    int classIndex=0;
+    m_verbalClasses=new std::pair<LinguisticGraphVertex, QString>[m_verbalClassNb];
+    m_semanticRoles=new std::vector<std::pair<LinguisticGraphVertex,QString>>[m_verbalClassNb];
+    //repeated on each token of the sentence, that is on each line
+    for (tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
+            ++tokensIterator){
+      int  roleNumbers=0;
+      QStringList descriptors=cHandler.splitSegment((*tokensIterator),m_descriptorSeparator);
+      if (descriptors.size()>=10){
+        int conllTokenId=descriptors[0].toInt();
+        QString conllToken=descriptors[1];
+        if(descriptors[10]!="-"){
+          QString verbalClass=descriptors[10];
+          QString vClass=descriptors[10];
+          LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
+          m_verbalClasses[classIndex]=make_pair(limaTokenId, vClass);
+          classIndex++;
+          continue;
+        }
+        else{
+          for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++){
+            if (descriptors[11+roleTargetFieldIndex]!="-"){
+              QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];
+              LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI,   limaConllMapping);
+              std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
+              m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));
+              roleNumbers++;
+            }
+          }
+        }
+      }
+    }
+    return classIndex;
   }
 }
 
-QStringList SemanticRoleLabelingLoader::ConllHandler::splitSegment(const QString & segment, QRegExp separator)
-{
-QStringList segmentsSplited;
-segmentsSplited =segment.split(QRegExp(separator));
-return segmentsSplited;
+
+
+QStringList SemanticRoleLabelingLoader::ConllHandler::splitSegment(const QString & segment, QRegExp separator){
+  QStringList segmentsSplited;
+  segmentsSplited =segment.split(QRegExp(separator),QString::SkipEmptyParts);
+  return segmentsSplited;
 }
 
-LinguisticGraphVertex SemanticRoleLabelingLoader::ConllHandler::getLimaTokenId(LinguisticGraphVertex conllTokenId, int sentenceNb, LimaConllTokenIdMapping* limaConllMapping){
-  std::map< int,std::map< int,LinguisticGraphVertex>>::iterator limaConllMappingIt = limaConllMapping->find(sentenceNb);
-  if (limaConllMappingIt!= limaConllMapping->end() and limaConllMapping[sentenceNb].find(conllTokenId)!= limaConllMapping->end()){
-  LinguisticGraphVertex limaTokenId=limaConllMappingIt->second.at(conllTokenId);
-  return limaTokenId; 
-
+LinguisticGraphVertex SemanticRoleLabelingLoader::ConllHandler::getLimaTokenId(int conllTokenId, int sentenceI, LimaConllTokenIdMapping* limaConllMapping){
+  SEMANTICANALYSISLOGINIT;
+  std::map< int,std::map< int,LinguisticGraphVertex>>::iterator limaConllMappingIt;
+  limaConllMappingIt=limaConllMapping->find(sentenceI);
+  if (limaConllMappingIt == limaConllMapping->end()) {
+    LERROR << "Sentence " << sentenceI << " not found";
+    // TODO exit or raise an exception
   }
+  std::map< int,LinguisticGraphVertex> limaConllId=(*limaConllMappingIt).second;
+  std::map< int,LinguisticGraphVertex>::iterator limaConllIdIt=limaConllId.find(conllTokenId);
+  if (limaConllIdIt==limaConllId.end()) {
+    LERROR << "Conll token id " << conllTokenId << " not found";
+    // TODO exit or raise an exception
+  }
+  LinguisticGraphVertex limaTokenId=limaConllIdIt->second;
+  return limaTokenId;
 }
+
+
 
 }
 }
 } // end namespace
-
 
