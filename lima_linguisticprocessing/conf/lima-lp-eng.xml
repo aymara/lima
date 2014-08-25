@@ -46,7 +46,8 @@
         <!--item value="tagFusion"/-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
-        <item value="conllDumper"/>
+        <item value="srl"/>
+        <!--item value="conllDumper"/-->
         <!--item value="bowDumper"/-->
         <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
@@ -563,24 +564,17 @@
       <param key="commonNounCategory" value="NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
+    <group name="srl" class="ExternalProcessUnit">
+      <param key="dumper" value="conllDumper"/>
+      <param key="tmpFileName" value="/tmp/mm-lp.SyntacticalAnalysis.tmp"/>
+      <param key="command" value="ls ."/>
+      <param key="loader" value="srlLoader"/>
+    </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
-      <param key="stopList" value="stopList"/>
-      <param key="useStopList" value="true"/>
-      <param key="useEmptyMacro" value="true"/>
-      <param key="useEmptyMicro" value="true"/>
-      <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
-      </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
-      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="srlLoader" class="SemanticRoleLabelingLoader">
+      <param key="inputFile" value="..."/>
     </group>
     <group name="bowDumperXml" class="BowDumper">
       <param key="handler" value="xmlDocumentHandler"/>
