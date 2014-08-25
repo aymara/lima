@@ -114,9 +114,7 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
       sentences[sentenceNb]= becomingSentence;
     }
   }
-  // // //         AnnotationGraphEdge semAnnotation=annotationData->createAnnotationEdge(it->first, );
-// // //         annotationData->annotate(it->first, semRole, semRole);
-// // //         annotationData->annotate(semAnnotation, "SemAnnot", roleName);
+
   SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, analysis, tokenList);
   LimaString predicateTypeAnnotation="predicate";
   LimaString roleTypeAnnotation="semantic role";
