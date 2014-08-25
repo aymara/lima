@@ -114,17 +114,29 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
       sentences[sentenceNb]= becomingSentence;
     }
   }
+  // // //         AnnotationGraphEdge semAnnotation=annotationData->createAnnotationEdge(it->first, );
+// // //         annotationData->annotate(it->first, semRole, semRole);
+// // //         annotationData->annotate(semAnnotation, "SemAnnot", roleName);
   SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, analysis, tokenList);
+  LimaString predicateTypeAnnotation="predicate";
+  LimaString roleTypeAnnotation="semantic role";
   for (std::map<int,QString>::iterator it=sentences.begin(); it!=sentences.end(); ++it){
     int sentenceIndex=it->first;
     QString sentence=it->second;
-    if(cHandler.extractSemanticInformations(sentenceIndex, limaConllMapping,sentence)){
+    if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping,sentence)){
       LDEBUG << "there are " << cHandler.m_verbalClassNb << "classes for this sentence " << LENDL;
       for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++){
-        LDEBUG  << cHandler.m_verbalClasses[vClassIndex].second << " triggered by the lima token whose id is " << cHandler.m_verbalClasses[vClassIndex].first<< ", and which evokes the following semantic roles in the sentence : " << LENDL;
+        LinguisticGraphVertex predicateVertex=cHandler.m_verbalClasses[vClassIndex].first;
+        LimaString verbalClass=cHandler.m_verbalClasses[vClassIndex].second;
+        annotationData->annotate(predicateVertex, predicateTypeAnnotation, verbalClass);
+        LDEBUG << " A vertex was created for the verbal class "<< annotationData->stringAnnotation(predicateVertex, predicateTypeAnnotation)<< LENDL;
         std::vector <pair<LinguisticGraphVertex,QString>>::iterator semRoleIt;
         for (semRoleIt=cHandler.m_semanticRoles[vClassIndex].begin(); semRoleIt!=cHandler.m_semanticRoles[vClassIndex].end();semRoleIt++){
-          LDEBUG << (*semRoleIt).second << LENDL;
+          LimaString semanticRole=(*semRoleIt).second;
+          AnnotationGraphVertex roleVertex=annotationData->createAnnotationVertex();
+          AnnotationGraphEdge roleEdge=annotationData->createAnnotationEdge(predicateVertex, roleVertex);
+          annotationData->annotate(roleEdge, roleTypeAnnotation,semanticRole);
+          LDEBUG << " An edge annotated " << annotationData->stringAnnotation(roleEdge, roleTypeAnnotation)<< "was created between " << verbalClass << " and the vertex " << (*semRoleIt).first << LENDL;
         }
       }
     }
@@ -153,7 +165,7 @@ SemanticRoleLabelingLoader::ConllHandler::~ConllHandler(){
 }
 
 // designed to be repeated on each sentence
-bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformations(int sentenceI, LimaConllTokenIdMapping* limaConllMapping, const QString & sent){
+bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMapping* limaConllMapping, const QString & sent){
   SEMANTICANALYSISLOGINIT;
   SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, m_analysis, m_graph);
   QStringList sentenceTokens=cHandler.splitSegment(sent, m_tokenSeparator);
