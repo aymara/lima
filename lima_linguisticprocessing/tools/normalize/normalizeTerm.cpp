@@ -26,6 +26,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
@@ -63,7 +64,9 @@ pair<int,int> getStartEnd(const BoWToken* tok);
 int main(int argc,char* argv[])
 {
   QCoreApplication a(argc, argv);
-  QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  
   bool docatch = false;
   if (argc>1)
   {
