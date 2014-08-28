@@ -99,7 +99,7 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   LimaConllTokenIdMapping* limaConllMapping= static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
 
-  QFile file("/home/clemence/textes_test/jamaica_out.conll");
+  QFile file("/home/clemence/textes_test/jamaica.outpython.conll");
   if (!file.open(QIODevice::ReadOnly))
     qDebug() << "cannot open file" << endl;
   int sentenceNb=1;
@@ -123,14 +123,15 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
     int sentenceIndex=it->first;
     QString sentence=it->second;
     if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping,sentence)){
-      LDEBUG << "there are " << cHandler.m_verbalClassNb << "verbal classes for this sentence " << LENDL;
+      LDEBUG << "there is/are " << cHandler.m_verbalClassNb << "verbal class(es) for this sentence " << LENDL;
       for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++){
         LinguisticGraphVertex posGraphPredicateVertex=cHandler.m_verbalClasses[vClassIndex].first;
         LimaString verbalClass=cHandler.m_verbalClasses[vClassIndex].second;
 
         AnnotationGraphVertex annotPredicateVertex=annotationData->createAnnotationVertex();
         annotationData->addMatching("PosGraph", posGraphPredicateVertex, "annot", annotPredicateVertex);
-        annotationData->annotate(annotPredicateVertex, predicateTypeAnnotation, verbalClass);
+        annotationData->annotate(annotPredicateVertex, Common::Misc::utf8stdstring2limastring("predicate"), verbalClass);
+
 
         LDEBUG << " A vertex was created for the verbal class "<< annotationData->stringAnnotation(annotPredicateVertex, predicateTypeAnnotation)<< LENDL;
         std::vector <pair<LinguisticGraphVertex,QString>>::iterator semRoleIt;
@@ -194,18 +195,17 @@ bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformation(int se
         int conllTokenId=descriptors[0].toInt();
         QString conllToken=descriptors[1];
         if(descriptors[10]!="-"){
-          QString verbalClass=descriptors[10];
-          QString vClass=descriptors[10];
-          LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
-          m_verbalClasses[classIndex]=make_pair(limaTokenId, vClass);
-          classIndex++;
-          continue;
-        }
-        else{
+            QString verbalClass=descriptors[10];
+            QString vClass=descriptors[10];
+            LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
+            m_verbalClasses[classIndex]=make_pair(limaTokenId, vClass);
+            classIndex++;
+          }
           for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++){
             if (descriptors[11+roleTargetFieldIndex]!="-"){
               QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];
               LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI,   limaConllMapping);
+              LDEBUG << "The Lima token id matching the conll token id " << conllTokenId << " is " << limaTokenId<< LENDL;
               std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
               m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));
               roleNumbers++;
@@ -213,7 +213,6 @@ bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformation(int se
           }
         }
       }
-    }
     return classIndex;
   }
 }
