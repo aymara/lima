@@ -88,6 +88,8 @@ static const string HELP("A compiler for the rules of the Named Entities recogni
 +"--pipeline=...       : specify the name of the pipeline for the modex\n"
 +"--configDir=...      : specify the directory to find the config files (default is $LIMA_CONF)\n"
 +"--resourcesDir=...   : specify the directory to find the resources (default is $LIMA_RESOURCES)\n"
++"--common-config-file=...   : =<configuration/file/name>  Optional. Default is lima-common.xml\n"
++"--lp-config-file=...       : =<configuration/file/name>  Optional. Default is lima-analysis.xml\n"
 +"--encoding=...       : specify the encoding of the rules file\n"
 +"--useDictionary      : uses a dictionary to reorganize rules\n"
 +"--debug              : compiles in debug mode\n"
@@ -148,7 +150,10 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
   {
     string s(argv[i]);
     if (s=="-h" || s=="--help")
+    {
       param.help=true;
+      cerr << HELP; exit(1);
+    }
     else if (s=="-r" || s=="--decompile" || s=="--bin")
       param.decompile=true;
     else if (s=="-l" || s=="--listTriggers")
@@ -168,6 +173,14 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     else if (s.find("--configDir=",0)==0)
     {
       param.configDir=string(s,12);
+    }
+    else if (s.find("--common-config-file=")==0)
+    {
+      param.commonConfigFile=string(s,21);
+    }
+    else if (s.find("--lp-config-file=")==0)
+    {
+      param.lpConfigFile=string(s,17);
     }
     else if (s.find("--language=",0)==0)
     {
@@ -263,7 +276,6 @@ int main(int argc, char *argv[])
   #endif
   QsLogging::initQsLog();
   readCommandLineArguments(argc,argv);
-  if (param.help) { cerr << HELP; exit(1); }
 
   deque<string> langs;
   langs.push_back(param.language);

@@ -129,9 +129,9 @@ int dowork(int argc,char* argv[])
           listunits();
         else if (arg== "--catch") ;
         else if ( (pos = arg.find("--lp-config-file=")) != std::string::npos )
-          lpConfigFile = arg.substr(pos+14);
+          lpConfigFile = arg.substr(pos+17);
         else if ( (pos = arg.find("--common-config-file=")) != std::string::npos )
-          commonConfigFile = arg.substr(pos+20);
+          commonConfigFile = arg.substr(pos+21);
         else if ( (pos = arg.find("--config-dir=")) != std::string::npos )
           configDir = arg.substr(pos+13);
         else if ( (pos = arg.find("--resources-dir=")) != std::string::npos )
