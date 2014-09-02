@@ -1,0 +1,5 @@
+set encoding=utf8
+using modex VerbNet-modex.xml
+using groups VerbNet
+set defaultAction=>CreateSpecificEntity()
+

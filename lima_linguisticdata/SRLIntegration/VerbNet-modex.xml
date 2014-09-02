@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="entities">
+    <group name="VerbNet">
+      <list name="entityList">
+        <item value="Agent"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="VerbNetModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="VerbNetRecognition"/>
+      </list>
+    </group>
+    <group name="VerbNetRecognition" class="ApplyRecognizer" > <!--lib="lima-lp-se-person"-->
+      <param key="automaton" value="VerbNetRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="VerbNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/VerbNet-eng.bin"/>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="VerbNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/VerbNet-fre.bin"/>
+    </group>
+  </module>
+</modulesConfig>

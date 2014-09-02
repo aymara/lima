@@ -43,6 +43,7 @@ add_subdirectory(disambiguisationMatrices)
 add_subdirectory(rules-idiom)
 add_subdirectory(SpecificEntities)
 add_subdirectory(syntacticAnalysis)
+add_subdirectory(SRLIntegration)
 
 
 ########### install files ###############
