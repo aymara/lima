@@ -84,7 +84,7 @@ class SemanticRoleLabelingLoader : public AnalysisLoader
      * @param sentence the current sentence
      * @return true if any verbal class is found, false otherwise
      */
-    bool extractSemanticInformations(int sentenceIndex, LimaConllTokenIdMapping* limaConllMapping, const QString & sentence);
+    bool extractSemanticInformation(int sentenceIndex, LimaConllTokenIdMapping* limaConllMapping, const QString & sentence);
 
     /**
      * @brief split a text into different types segments
