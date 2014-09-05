@@ -36,13 +36,6 @@ class LimaConllTokenIdMapping : public std::map<int, std::map<int,LinguisticGrap
 public:
   LimaConllTokenIdMapping();
   ~LimaConllTokenIdMapping();
-  
-
-
-// private:
-//   int m_sentenceId;
-//   LinguisticGraphVertex m_textVertexId;
-//   int m_sentenceVertexId;
 
 };
 
