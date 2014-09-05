@@ -91,7 +91,7 @@ m_sepPOS("#"),
 m_conllLimaDepMapping(),
 m_suffix(".conll")
 {DUMPERLOGINIT;
-  std::string mappingFile="Projets/Lima/lima/lima_linguisticdata/SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt";
+  std::string mappingFile="/home/clemence/Projets/Lima/lima/lima_linguisticdata/SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt";
   std::ifstream ifs(mappingFile, std::ifstream::binary);
   if (!ifs.good())
   {
