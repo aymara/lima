@@ -35,6 +35,7 @@
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include <utility>
 #include <iostream>
@@ -81,7 +82,7 @@ void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfig
   catch (NoSuchParam& ) {} // keep default value
   try
   {
-    m_suffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
+    m_suffix=unitConfiguration.getParamsValueAtKey("inputSuffix");
   }
    catch (NoSuchParam& ) {} // keep default value
     AnalysisLoader::init(unitConfiguration,manager);
@@ -99,7 +100,15 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   LimaConllTokenIdMapping* limaConllMapping= static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
 
-  QFile file("/home/clemence/textes_test/jamaica.outpython.conll");
+  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  if (metadata == 0) {
+      LERROR << "no LinguisticMetaData ! abort";
+      return MISSING_DATA;
+  }
+  
+  QFile file(QString::fromUtf8((metadata->getMetaData("FileName")+m_suffix).c_str()));
+
+
   if (!file.open(QIODevice::ReadOnly))
     qDebug() << "cannot open file" << endl;
   int sentenceNb=1;
