@@ -4,6 +4,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="VerbNet-modex.xml/Processors"/>
       </list>
     </group>
 
@@ -46,6 +47,8 @@
         <!--item value="tagFusion"/-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="srl"/>
         <!--item value="conllDumper"/-->
         <!--item value="bowDumper"/-->
@@ -778,6 +781,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-eng"/>
+        <item value="VerbNet-modex.xml/resources-eng"/>
       </list>
     </group>
 
