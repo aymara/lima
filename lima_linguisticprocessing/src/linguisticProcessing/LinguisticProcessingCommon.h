@@ -118,6 +118,7 @@
 #define SENTBOUNDLOGINIT LOGINIT("LP::SentenceBounds");
 #define SEGMENTATIONLOGINIT LOGINIT("LP::Segmentation");
 #define GEOENTITIESTAGGERLOGINIT LOGINIT("LP::GeoEntities");
+#define SEMANTICANALYSISLOGINIT LOGINIT("LP::SemanticAnalysis");
 
 
 #define L_NONE static_cast<LinguisticCode>(0)
