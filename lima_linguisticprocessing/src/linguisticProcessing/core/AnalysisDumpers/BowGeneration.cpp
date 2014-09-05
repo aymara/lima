@@ -236,17 +236,18 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
     vxGovernors.push_back(source(*inIt, annotationData->getGraph()));
   }
 
-  std::vector< std::pair<BoWRelation*,BoWToken*> > vxBoWTokens = createBoWTokens(vxTokVertex, anagraph, posgraph, offset, annotationData,visited);
+  std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > vxBoWTokens = createAbstractBoWElement(vxTokVertex, anagraph, posgraph, offset, annotationData,visited);
 
   LDEBUG << "BowGenerator: There is " << vxBoWTokens.size() << " bow tokens";
   if (vxGovernors.empty())
   {
+    std::vector< std::pair<BoWRelation*,BoWToken*> > vxBoWTk;
     LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):empty governors ";
     BoWRelation* relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
     if (relation)
     {
-      std::vector< std::pair<BoWRelation*,BoWToken*> >::iterator 
-        vxBoWTokensIt, vxBoWTokensIt_end;
+      std::vector< std::pair<BoWRelation*,AbstractBoWElement*> >::iterator 
+      vxBoWTokensIt, vxBoWTokensIt_end;
       vxBoWTokensIt = vxBoWTokens.begin(); vxBoWTokensIt_end = vxBoWTokens.end();
       for (; vxBoWTokensIt != vxBoWTokensIt_end; vxBoWTokensIt++)
       {
@@ -254,7 +255,14 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
       }
       delete relation;
     }
-    return vxBoWTokens;
+    std::vector< std::pair<BoWRelation*,AbstractBoWElement*> >::iterator 
+    vxBoWTokensIt, vxBoWTokensIt_end;
+    vxBoWTokensIt = vxBoWTokens.begin(); vxBoWTokensIt_end = vxBoWTokens.end();
+    for (; vxBoWTokensIt != vxBoWTokensIt_end; vxBoWTokensIt++)
+    {
+      vxBoWTk.push_back(std::make_pair((*vxBoWTokensIt).first,static_cast<BoWToken*>((*vxBoWTokensIt).second)));
+    }
+    return vxBoWTk;
   }
 
   std::vector< std::pair<BoWRelation*,BoWToken*> > result;
@@ -293,8 +301,8 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
     BoWRelation* relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
     if (relation)
     {
-      std::vector< std::pair<BoWRelation*,BoWToken*> >::iterator 
-        vxBoWTokensIt, vxBoWTokensIt_end;
+      std::vector< std::pair<BoWRelation*,AbstractBoWElement*> >::iterator 
+      vxBoWTokensIt, vxBoWTokensIt_end;
       vxBoWTokensIt = vxBoWTokens.begin(); vxBoWTokensIt_end = vxBoWTokens.end();
       for (; vxBoWTokensIt != vxBoWTokensIt_end; vxBoWTokensIt++)
       {
@@ -302,17 +310,25 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
       }
       delete relation;
     }
-    return vxBoWTokens;
+    std::vector< std::pair<BoWRelation*,BoWToken*> > vxBoWTk;
+    std::vector< std::pair<BoWRelation*,AbstractBoWElement*> >::iterator 
+    vxBoWTokensIt, vxBoWTokensIt_end;
+    vxBoWTokensIt = vxBoWTokens.begin(); vxBoWTokensIt_end = vxBoWTokens.end();
+    for (; vxBoWTokensIt != vxBoWTokensIt_end; vxBoWTokensIt++)
+      {
+      vxBoWTk.push_back(std::make_pair((*vxBoWTokensIt).first,static_cast<BoWToken*>((*vxBoWTokensIt).second)));
+      }
+    return vxBoWTk;
   }
   std::vector< std::pair<BoWRelation*,BoWToken*> >::iterator t;
   while (!stack.empty())
   {
     LDEBUG << "BowGenerator: There is " << vxBoWTokens.size() << " heads, " << vxGovernors.size() << " governors and stack size is " << stack.size();
-    for (std::vector< std::pair<BoWRelation*,BoWToken*> >::iterator vxBoWToken=vxBoWTokens.begin();
+    for (std::vector< std::pair<BoWRelation*,AbstractBoWElement*> >::iterator vxBoWToken=vxBoWTokens.begin();
          vxBoWToken!=vxBoWTokens.end();
          vxBoWToken++)
     {
-      const BoWToken* head = (*vxBoWToken).second;
+      const BoWToken* head = static_cast<BoWToken*>((*vxBoWToken).second);
       LDEBUG << "BowGenerator: Working on head " << *head << "(" << head << ")";
 
       std::set< std::pair<BoWRelation*,BoWToken*>, A > extensions;
@@ -423,7 +439,7 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
   }
 
   LDEBUG << "BowGenerator: Memory cleaning...";
-  for (std::vector<std::pair<BoWRelation*,BoWToken*> >::iterator vxBoWToken=vxBoWTokens.begin();
+  for (std::vector<std::pair<BoWRelation*,AbstractBoWElement*> >::iterator vxBoWToken=vxBoWTokens.begin();
        vxBoWToken!=vxBoWTokens.end();
        vxBoWToken++)
   {
@@ -493,7 +509,7 @@ BoWRelation* BowGenerator::createBoWRelationFor(
 }
 
 
-std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::createBoWTokens(const LinguisticGraphVertex v,
+std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createAbstractBoWElement(const LinguisticGraphVertex v,
   const LinguisticGraph& anagraph,
   const LinguisticGraph& posgraph,
   const uint64_t offsetBegin,
@@ -503,7 +519,7 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::createBoWTokens(c
 {
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::createBoWTokens for " << v;
-  std::vector<std::pair<BoWRelation*,BoWToken*> > bowTokens;
+  std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > bowTokens;
 //   if (visited.find(v) != visited.end())
 //   {
 //     LDEBUG << "BowGenerator: " << v << " has already been visited.";
@@ -615,7 +631,7 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::createBoWTokens(c
             {
               LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
               LDEBUG << "BowGenerator::createBoWTokens calling createBoWTokens on PoS graph vertex" << posGraphSemRoleVertex;
-              std::vector<std::pair<BoWRelation*,BoWToken*> > semRoleTokens = createBoWTokens(posGraphSemRoleVertex, anagraph,posgraph, offsetBegin, annotationData, visited, keepAnyway);
+              std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offsetBegin, annotationData, visited, keepAnyway);
 
               if (!semRoleTokens.empty())
               {
@@ -1278,16 +1294,16 @@ BoWToken* BowGenerator::createCompoundTense(
     LinguisticGraphVertex ppTokVertex =
       *(annotationData->matches("annot", ppVertex, "PosGraph").begin());
 
-    std::vector< std::pair<BoWRelation*,BoWToken*> > ppBoWTokens = createBoWTokens(ppTokVertex, anagraph, posgraph, offset, annotationData, visited, true);
+    std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > ppBoWTokens = createAbstractBoWElement(ppTokVertex, anagraph, posgraph, offset, annotationData, visited, true);
     if (ppBoWTokens.empty())
     {
       return 0;
     }
     else
     {
-      head = ppBoWTokens.back().second;
+      head = static_cast<BoWToken*>(ppBoWTokens.back().second);
       ppBoWTokens.pop_back();
-      std::vector<std::pair<BoWRelation*,BoWToken*> >::iterator it, it_end;
+      std::vector<std::pair<BoWRelation*,AbstractBoWElement*> >::iterator it, it_end;
       it = ppBoWTokens.begin(); it_end = ppBoWTokens.end();
       for (; it != it_end; it++)
       {
@@ -1309,7 +1325,7 @@ BoWToken* BowGenerator::createCompoundTense(
     LinguisticGraphVertex auxTokVertex =
       *(annotationData->matches("annot", auxVertex, "PosGraph").begin());
 
-    std::vector<std::pair<BoWRelation*,BoWToken*> > auxBoWTokens = createBoWTokens(auxTokVertex, anagraph, posgraph, offset, annotationData, visited, true);
+    std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > auxBoWTokens = createAbstractBoWElement(auxTokVertex, anagraph, posgraph, offset, annotationData, visited, true);
     if (auxBoWTokens.empty())
     {
       delete head;
@@ -1317,9 +1333,9 @@ BoWToken* BowGenerator::createCompoundTense(
     }
     else
     {
-      extension = auxBoWTokens.back().second;
+      extension = static_cast<BoWToken*>(auxBoWTokens.back().second);
       auxBoWTokens.pop_back();
-      std::vector<std::pair<BoWRelation*,BoWToken*> >::iterator it, it_end;
+      std::vector<std::pair<BoWRelation*,AbstractBoWElement*> >::iterator it, it_end;
       it = auxBoWTokens.begin(); it_end = auxBoWTokens.end();
       for (; it != it_end; it++)
       {

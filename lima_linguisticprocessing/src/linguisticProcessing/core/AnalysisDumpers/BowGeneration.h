@@ -109,7 +109,7 @@ public:
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     std::set<LinguisticGraphVertex>& visited) const;
 
-  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::BoWToken*> > createBoWTokens(
+  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> > createAbstractBoWElement(
     const LinguisticGraphVertex v,
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
