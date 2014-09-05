@@ -211,10 +211,13 @@ bool SemanticRoleLabelingLoader::ConllHandler::extractSemanticInformation(int se
           for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++){
             if (descriptors[11+roleTargetFieldIndex]!="-"){
               QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];
+
               LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI,   limaConllMapping);
-              LDEBUG << "The Lima token id matching the conll token id " << conllTokenId << " is " << limaTokenId<< LENDL;
-              std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
-              m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));
+              if(limaTokenId!=0){
+                LDEBUG << "SemanticRoleLabelingLoader::ConllHandler The Lima token id matching the conll token id " << conllTokenId << " is " << limaTokenId<< LENDL;
+                std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
+                m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));
+              }
               roleNumbers++;
             }
           }
@@ -238,13 +241,13 @@ LinguisticGraphVertex SemanticRoleLabelingLoader::ConllHandler::getLimaTokenId(i
   limaConllMappingIt=limaConllMapping->find(sentenceI);
   if (limaConllMappingIt == limaConllMapping->end()) {
     LERROR << "Sentence " << sentenceI << " not found";
-    // TODO exit or raise an exception
+    return 0;
   }
   std::map< int,LinguisticGraphVertex> limaConllId=(*limaConllMappingIt).second;
   std::map< int,LinguisticGraphVertex>::iterator limaConllIdIt=limaConllId.find(conllTokenId);
   if (limaConllIdIt==limaConllId.end()) {
     LERROR << "Conll token id " << conllTokenId << " not found";
-    // TODO exit or raise an exception
+    return 0;
   }
   LinguisticGraphVertex limaTokenId=limaConllIdIt->second;
   return limaTokenId;
