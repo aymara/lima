@@ -27,7 +27,7 @@
 #define BOWPREDICATE_H
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
-#include "common/BagOfWords/AbstractBoWElement.h"
+#include "linguisticProcessing/common/BagOfWords/AbstractBoWElement.h"
 #include "common/MediaticData/EntityType.h"
 
 namespace Lima {
