@@ -126,23 +126,23 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
   }
 
   SemanticRoleLabelingLoader::ConllHandler cHandler(m_language, analysis, tokenList);
-  LimaString predicateTypeAnnotation="predicate";
-  LimaString roleTypeAnnotation="semantic role";
+  const LimaString predicateTypeAnnotation="Predicate";
+  const LimaString roleTypeAnnotation="SemanticRole";
   for (std::map<int,QString>::iterator it=sentences.begin(); it!=sentences.end(); ++it){
     int sentenceIndex=it->first;
     QString sentence=it->second;
     if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping,sentence)){
-      LDEBUG << "there is/are " << cHandler.m_verbalClassNb << "verbal class(es) for this sentence " << LENDL;
+      LDEBUG << "SemanticRoleLabelingLoader::process there is/are " << cHandler.m_verbalClassNb << "verbal class(es) for this sentence " << LENDL;
       for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++){
         LinguisticGraphVertex posGraphPredicateVertex=cHandler.m_verbalClasses[vClassIndex].first;
         LimaString verbalClass=cHandler.m_verbalClasses[vClassIndex].second;
 
         AnnotationGraphVertex annotPredicateVertex=annotationData->createAnnotationVertex();
         annotationData->addMatching("PosGraph", posGraphPredicateVertex, "annot", annotPredicateVertex);
-        annotationData->annotate(annotPredicateVertex, Common::Misc::utf8stdstring2limastring("predicate"), verbalClass);
+        annotationData->annotate(annotPredicateVertex, Common::Misc::utf8stdstring2limastring(predicateTypeAnnotation.toStdString()), verbalClass);
 
 
-        LDEBUG << " A vertex was created for the verbal class "<< annotationData->stringAnnotation(annotPredicateVertex, predicateTypeAnnotation)<< LENDL;
+        LDEBUG << "SemanticRoleLabelingLoader::process A vertex was created for the verbal class "<< annotationData->stringAnnotation(annotPredicateVertex, "Predicate")<< LENDL;
         std::vector <pair<LinguisticGraphVertex,QString>>::iterator semRoleIt;
         for (semRoleIt=cHandler.m_semanticRoles[vClassIndex].begin();         semRoleIt!=cHandler.m_semanticRoles[vClassIndex].end();semRoleIt++){
           LinguisticGraphVertex posGraphRoleVertex=(*semRoleIt).first;
@@ -151,9 +151,9 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
           AnnotationGraphVertex annotRoleVertex=annotationData->createAnnotationVertex();
           annotationData->addMatching("PosGraph", posGraphRoleVertex, "annot", annotRoleVertex);
           AnnotationGraphEdge roleEdge=annotationData->createAnnotationEdge(annotPredicateVertex, annotRoleVertex);
-          annotationData->annotate(roleEdge, roleTypeAnnotation,semanticRole);
+          annotationData->annotate(roleEdge, Common::Misc::utf8stdstring2limastring(roleTypeAnnotation.toStdString()),semanticRole);
 
-          LDEBUG << " An edge annotated " << annotationData->stringAnnotation(roleEdge, roleTypeAnnotation)<< "was created between " << verbalClass << " and the Lima vertex " << posGraphRoleVertex << LENDL;
+          LDEBUG << "SemanticRoleLabelingLoader::process An edge annotated " << annotationData->stringAnnotation(roleEdge, roleTypeAnnotation)<< "was created between " << verbalClass << " and the Lima vertex " << posGraphRoleVertex << LENDL;
         }
       }
     }
@@ -173,8 +173,6 @@ m_verbalClasses(),
 m_semanticRoles(),
 m_verbalClassNb()
 {
-  SEMANTICANALYSISLOGINIT;
-  LDEBUG << "SemanticRoleLabelingLoader::ConllHandler constructor";
 }
 SemanticRoleLabelingLoader::ConllHandler::~ConllHandler(){
   delete [] m_semanticRoles;
