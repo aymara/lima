@@ -62,7 +62,9 @@ m_useTemporaryFile(true),
 m_cleanTemporaryFile(true),
 m_tmpFileName(DEFAULT_TEMPFILE),
 m_handler(0),
-m_out(0)
+m_out(0),
+m_inputSuffix(),
+m_outputSuffix()
 {
 }
 
@@ -119,6 +121,20 @@ void ExternalProcessUnit::init(
   }
 
   try {
+    m_inputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
     m_useTemporaryFile=getBooleanParameter(unitConfiguration,"useTmpFile");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
@@ -140,7 +156,7 @@ void ExternalProcessUnit::init(
   }
 
   try {
-    m_commandLine=unitConfiguration.getParamsValueAtKey("command");
+    m_commandLine=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("command").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LERROR << "Missing 'command' parameter in ExternalProcessUnit group for language "
@@ -167,7 +183,16 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
 
   // apply command line
   LDEBUG << "ExternalProcessUnit: apply external program";
-  QProcess::execute(m_commandLine.c_str());
+  QString commandLine = m_commandLine;
+  if (!m_inputSuffix.isEmpty())
+  {
+    commandLine = commandLine.arg(m_inputSuffix);
+  }
+  if (!m_outputSuffix.isEmpty())
+  {
+    commandLine = commandLine.arg(m_outputSuffix);
+  }
+  QProcess::execute(commandLine);
 
   if (m_loader != 0) {
     // load results from the external program with the given loader
