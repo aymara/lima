@@ -229,16 +229,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
   }
 
-  LimaConllTokenIdMapping* limaConllTokenIdMapping;
-  limaConllTokenIdMapping = new LimaConllTokenIdMapping();
+  LimaConllTokenIdMapping* limaConllTokenIdMapping = new LimaConllTokenIdMapping();
   analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   int sentenceNb=0;
   while (sbItr!=(sd->getSegments().end()))//for each sentence
   {sentenceNb++;
-    std::cout << sentenceNb <<endl;
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
-    map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (global graphe and Conll segmentation)
+    map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
     map<int,LinguisticGraphVertex>segmentationMappingReverse;
 
     LDEBUG << "begin - end: " << sentenceBegin << " - " << sentenceEnd << LENDL;
@@ -253,6 +251,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       visited.insert(v);
       segmentationMapping.insert(make_pair(v,tokenId));
       segmentationMappingReverse.insert(make_pair(tokenId,v));
+      LDEBUG << "conll id : " << tokenId << " Lima id : " << v << LENDL;
       DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
       std::vector<DependencyGraphEdge> edges;
@@ -330,7 +329,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       toVisit.pop();
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
-      LDEBUG << v << "th token in the global graph" <<endl;
+      LDEBUG << v << "th token in the Lima graph" <<endl;
       if( morphoData!=0 && v != sentenceBegin) {
         const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
         const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
@@ -382,8 +381,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     ++tokenId;
     }
     ofs << std::endl;
-    sbItr++;
     limaConllTokenIdMapping->insert(std::make_pair(sentenceNb, segmentationMappingReverse));
+    sbItr++;
   }
 
   return SUCCESS_ID;
