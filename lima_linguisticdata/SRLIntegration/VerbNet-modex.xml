@@ -4,7 +4,6 @@
     <group name="VerbNet">
       <list name="entityList">
         <item value="Agent"/>
-        <item value="Agent"/>
         <item value="Asset"/>
         <item value="Attribute"/>
         <item value="Beneficiary"/>
