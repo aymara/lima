@@ -75,7 +75,15 @@ m_d(new BoWPredicatePrivate())
 BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType) :
     m_d(new BoWPredicatePrivate())
 {
-  static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType = theType;
+  m_d->m_predicateType = theType;
+}
+
+
+BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles) :
+    m_d(new BoWPredicatePrivate())
+{
+  m_d->m_predicateType = theType;
+  m_d->m_roles = pRoles;
 }
 
 BoWPredicate::BoWPredicate(const BoWPredicate& ne):
@@ -115,8 +123,23 @@ MediaticData::EntityType BoWPredicate::getPredicateType(void) const
 
 void BoWPredicate::setPredicateType(const MediaticData::EntityType& predicateType)
 {
-  static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType = predicateType;
+  m_d->m_predicateType = predicateType;
 }
+
+const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& BoWPredicate::roles() const
+{
+  return m_d->m_roles;
+}
+
+QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& BoWPredicate::roles()
+{
+  return m_d->m_roles;
+}
+
+void BoWPredicate::setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles){
+  m_d->m_roles=pRoles;
+}
+
 
 BoWPredicate* BoWPredicate::clone() const
 {
