@@ -392,10 +392,10 @@ void BowDumper::addVerticesToBoWText(
       }
       else if (alreadyStoredVertices.find(v) == alreadyStoredVertices.end())
       {
-        std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens=
-          m_bowGenerator->createBoWTokens(v, beforePoSGraph, graph, offset, annotationData, visited);
+        std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > bowTokens=
+          m_bowGenerator->createAbstractBoWElement(v, beforePoSGraph, graph, offset, annotationData, visited);
 
-        for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
+        for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator bowItr=bowTokens.begin();
             bowItr!=bowTokens.end();
             bowItr++)
         {
@@ -409,7 +409,7 @@ void BowDumper::addVerticesToBoWText(
           else
           {
             bowText.push_back((*bowItr).second); // copy pointer
-            std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
+            std::set<uint64_t> bowTokenVertices = static_cast<BoWToken*>((*bowItr).second)->getVertices();
             alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
             alreadyStored.insert(elem);
           
