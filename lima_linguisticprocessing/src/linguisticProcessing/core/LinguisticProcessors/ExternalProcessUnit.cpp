@@ -31,6 +31,7 @@
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/time/traceUtils.h"
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
@@ -171,6 +172,12 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
   LOGINIT("LP:External");
   LINFO << "ExternalProcessUnit: start";
 
+  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  if (metadata == 0) {
+      LERROR << "no LinguisticMetaData ! abort";
+      return MISSING_DATA;
+  }
+
   LimaStatusCode returnCode(SUCCESS_ID);
 
   // produce temporary file with the given dumper
@@ -181,25 +188,29 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
     return returnCode;
   }
 
+  QString fileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
+  QString inputFilename, outputFilename;
   // apply command line
   LDEBUG << "ExternalProcessUnit: apply external program";
   QString commandLine = m_commandLine;
   if (!m_inputSuffix.isEmpty())
   {
-    commandLine = commandLine.arg(m_inputSuffix);
+    inputFilename = fileName+ m_inputSuffix;
   }
   if (!m_outputSuffix.isEmpty())
   {
-    commandLine = commandLine.arg(m_outputSuffix);
+    outputFilename = fileName + m_outputSuffix;
   }
+//   commandLine = commandLine.arg(inputFilename).arg(outputFilename);
+  LDEBUG << "Launching " << commandLine;
   QProcess::execute(commandLine);
 
   if (m_loader != 0) {
     // load results from the external program with the given loader
-    LDEBUG << "ExternalProcessUnit: read results" << LENDL;
+    LDEBUG << "ExternalProcessUnit: read results";
     returnCode=m_loader->process(analysis);
     if (returnCode!=SUCCESS_ID) {
-      LERROR << "ExternalProcessUnit: failed to load data from temporary file" << LENDL;
+      LERROR << "ExternalProcessUnit: failed to load data from temporary file";
       return returnCode;
     }
   }

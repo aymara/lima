@@ -29,7 +29,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace SemanticAnalysis {
 
-// class LimaConllTokenIdMapping : public std::map<int, std::map<int,LinguisticGraphVertex>>, public AnalysisData
+
 class LimaConllTokenIdMapping : public std::map<int, std::map<int,LinguisticGraphVertex>>, public AnalysisData
 {
 

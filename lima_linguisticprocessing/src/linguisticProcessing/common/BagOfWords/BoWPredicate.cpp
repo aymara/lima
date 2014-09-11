@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- * @file     bowNamedEntity.h
+ * @file     BoWPredicate.cpp
  * @author   Besancon Romaric
  * @date     Tue Oct  7 2003
  * copyright Copyright (C) 2003 by CEA LIST
@@ -46,6 +46,8 @@ public:
    * role1=value1;role2=value2
    */
   std::string getRolesUtf8String(void) const;
+  
+  void setRoles(QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles);
 
 
   MediaticData::EntityType m_predicateType;
@@ -87,7 +89,7 @@ BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType, QMult
 }
 
 BoWPredicate::BoWPredicate(const BoWPredicate& ne):
-m_d(new BoWPredicatePrivate(static_cast<BoWPredicatePrivate&>(*ne.m_d)))
+m_d(new BoWPredicatePrivate(*ne.m_d))
 {
 }
 
@@ -104,21 +106,21 @@ BoWPredicate::~BoWPredicate()
 BoWPredicate& BoWPredicate::operator=(const BoWPredicate& t)
 {
   if (&t != this) {
-    static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType=static_cast<BoWPredicatePrivate*>(t.m_d)->m_predicateType;
-    static_cast<BoWPredicatePrivate*>(m_d)->m_roles=static_cast<BoWPredicatePrivate*>(t.m_d)->m_roles;
+    m_d->m_predicateType=t.m_d->m_predicateType;
+    m_d->m_roles=t.m_d->m_roles;
   }
   return *this;
 }
 
 bool BoWPredicate::operator==(const BoWPredicate& t)
 {
-  return( static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType == static_cast<BoWPredicatePrivate*>(t.m_d)->m_predicateType 
-      && static_cast<BoWPredicatePrivate*>(m_d)->m_roles == static_cast<BoWPredicatePrivate*>(t.m_d)->m_roles);
+  return( m_d->m_predicateType == t.m_d->m_predicateType 
+      && m_d->m_roles == t.m_d->m_roles);
 }
 
 MediaticData::EntityType BoWPredicate::getPredicateType(void) const
 {
-  return static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType;
+  return m_d->m_predicateType;
 }
 
 void BoWPredicate::setPredicateType(const MediaticData::EntityType& predicateType)
@@ -143,7 +145,7 @@ void BoWPredicate::setRoles(QMultiMap<Common::MediaticData::EntityType, Common::
 
 BoWPredicate* BoWPredicate::clone() const
 {
-  return new BoWPredicate(*(new BoWPredicatePrivate(static_cast<BoWPredicatePrivate&>(*(this->m_d)))));
+  return new BoWPredicate(*(new BoWPredicatePrivate(*(this->m_d))));
 }
 
 //**********************************************************************
@@ -158,7 +160,7 @@ std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::Proper
   std::ostringstream oss;
 //   oss << BoWToken::getOutputUTF8String(macroManager) << "->" << getUTF8StringParts(macroManager)
 //   << ":" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType)) << ":" << getRolesUtf8String();
-  return oss.str();
+//   return oss.str();
 }
 
 std::string BoWPredicate::getIdUTF8String() const {
@@ -187,6 +189,14 @@ std::string BoWPredicatePrivate::getRolesUtf8String() const
   }
   return oss.str();
 }
+
+//   void BoWPredicatePrivate::setRoles(QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles){
+//   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::const_iterator it=pRoles.begin();
+//     while (it != pRoles.end()) 
+//     {
+//       m_roles.insert(it.key(),it.value());
+//     }
+//   }
 
 
 } // namespace BagOfWords

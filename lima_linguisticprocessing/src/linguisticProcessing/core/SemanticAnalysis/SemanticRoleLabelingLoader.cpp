@@ -61,7 +61,7 @@ SimpleFactory<MediaProcessUnit,SemanticRoleLabelingLoader> SemanticRoleLabelingF
 SemanticRoleLabelingLoader::SemanticRoleLabelingLoader():
 m_language(0),
 m_graph("PosGraph"),
-m_suffix(".conll")
+m_suffix(".conll.srl")
 {}
 
 SemanticRoleLabelingLoader::~SemanticRoleLabelingLoader() 
@@ -106,11 +106,12 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
       return MISSING_DATA;
   }
   
-  QFile file(QString::fromUtf8((metadata->getMetaData("FileName")+m_suffix).c_str()));
+  QString fileName = QString::fromUtf8((metadata->getMetaData("FileName")+m_suffix).c_str());
+  QFile file(fileName);
 
 
   if (!file.open(QIODevice::ReadOnly))
-    qDebug() << "cannot open file" << endl;
+    LERROR << "cannot open file" << fileName;
   int sentenceNb=1;
   std::map <int, QString> sentences;
   while (!file.atEnd()) {
@@ -149,9 +150,10 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
           LimaString semanticRole=(*semRoleIt).second;
 
           AnnotationGraphVertex annotRoleVertex=annotationData->createAnnotationVertex();
-          annotationData->addMatching("PosGraph", posGraphRoleVertex, "annot", annotRoleVertex);
           AnnotationGraphEdge roleEdge=annotationData->createAnnotationEdge(annotPredicateVertex, annotRoleVertex);
           annotationData->annotate(roleEdge, Common::Misc::utf8stdstring2limastring(roleTypeAnnotation.toStdString()),semanticRole);
+          annotationData->addMatching("PosGraph", posGraphRoleVertex, "annot", annotRoleVertex);
+
 
           LDEBUG << "SemanticRoleLabelingLoader::process An edge annotated " << annotationData->stringAnnotation(roleEdge, roleTypeAnnotation)<< "was created between " << verbalClass << " and the Lima vertex " << posGraphRoleVertex << LENDL;
         }

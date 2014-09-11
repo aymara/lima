@@ -51,7 +51,7 @@
         <item value="VerbNetRecognition"/>
         <item value="srl"/>
         <!--item value="conllDumper"/-->
-        <!--item value="bowDumper"/-->
+        <item value="bowDumper"/>
         <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
@@ -143,9 +143,9 @@
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
         <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
-				<entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-				<entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-			</map>
+        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+      </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
@@ -569,15 +569,18 @@
     </group>
     <group name="srl" class="ExternalProcessUnit">
       <param key="dumper" value="conllDumper"/>
-      <param key="tmpFileName" value="/tmp/mm-lp.SyntacticalAnalysis.tmp"/>
+      <!--param key="inputSuffix" value=".conll"/-->
+      <!--param key="outputSuffix" value=".conll.srl"/-->
       <param key="command" value="ls ."/>
+      <!-- param key="command" value="./main.py conll_input %1.conll conll_output %1.conll.srl"/ -->
+
       <param key="loader" value="srlLoader"/>
     </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
     </group>
     <group name="srlLoader" class="SemanticRoleLabelingLoader">
-      <param key="inputFile" value="..."/>
+      <param key="inputSuffix" value=".conll.srl"/>
     </group>
     <group name="bowDumperXml" class="BowDumper">
       <param key="handler" value="xmlDocumentHandler"/>

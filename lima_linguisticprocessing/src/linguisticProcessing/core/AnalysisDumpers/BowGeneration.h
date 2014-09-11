@@ -185,9 +185,16 @@ private:
     const uint64_t offset,
     std::set<LinguisticGraphVertex>& visited) const;
 
-  Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles,
-    const Common::AnnotationGraphs::AnnotationData* annotationData) const;
-
+//   Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles) const;
+  
+  Common::BagOfWords::BoWPredicate* createPredicate(const AnnotationGraphVertex& v,
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const LinguisticGraph& anagraph,
+    const LinguisticGraph& posgraph,
+    const uint64_t offset,
+    std::set<LinguisticGraphVertex>& visited,
+    bool keepAnyway)const;
+  
   bool checkStopWordInCompound(
     Common::BagOfWords::BoWToken*&,
     uint64_t offset,

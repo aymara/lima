@@ -47,6 +47,7 @@ public:
   BoWPredicate();
   BoWPredicate(const BoWPredicate&);
   BoWPredicate(const Common::MediaticData::EntityType theType);
+  BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles);
 
   virtual ~BoWPredicate();
 
@@ -66,6 +67,8 @@ public:
 
   const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles() const;
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles();
+  
+    void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles);
   
   virtual Lima::LimaString getString(void) const;
   /** get a string of the predicate for output function */

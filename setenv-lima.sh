@@ -1,10 +1,10 @@
-export LIMA_ROOT=$PWD/..
+export LIMA_ROOT=/home/clemence/Projets/Lima
 LIMA_SOURCES=$LIMA_ROOT/lima
 pushd $LIMA_SOURCES
 current_branch=`git rev-parse --abbrev-ref HEAD`
 popd
 
-export NLTK_PTB_DP_FILE=<path/to/nltk_data>/corpora/dependency_treebank/nltk-ptb.dp
+export NLTK_PTB_DP_FILE=/home/clemence/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 export LINGUISTIC_DATA_ROOT=$LIMA_ROOT/Sources/lima_linguisticData
 
 export LIMA_BUILD_DIR=$LIMA_ROOT/Builds
