@@ -212,13 +212,13 @@ const BoWToken* BoWTokenIterator::getElement() {
     else {
       switch ((*m_d->m_iterator)->getType()) {
       case BOW_TOKEN: {
-        return *m_d->m_iterator;
+        return static_cast<const BoWToken*>(*m_d->m_iterator);
         break;
       }
       case BOW_TERM:
       case BOW_NAMEDENTITY: {
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(*m_d->m_iterator);
+        m_d->storePartsInQueue(static_cast<const BoWToken*>(*m_d->m_iterator));
         return m_d->m_partQueue.front().getBoWToken();
         break;
       }

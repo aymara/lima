@@ -270,16 +270,19 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
        bowItr!=bowText.end();
        bowItr++)
   {
-    pair<int,int> posLen=getStartEnd(*bowItr);
-    //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
-    if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
+    if ((*bowItr)->getType() != BOW_PREDICATE)
     {
-      result.insert(make_pair(
-                      (*bowItr)->getLemma(),
-                      macroManager.getPropertySymbolicValue((*bowItr)->getCategory())));
-      //        cerr << " keep it !";
+      pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(*bowItr));
+      //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
+      if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
+      {
+        result.insert(make_pair(
+                        static_cast<const BoWToken*>(*bowItr)->getLemma(),
+                        macroManager.getPropertySymbolicValue(static_cast<const BoWToken*>(*bowItr)->getCategory())));
+        //        cerr << " keep it !";
+      }
+      //      cerr << endl;
     }
-    //      cerr << endl;
   }
   //   }
   return result;

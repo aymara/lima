@@ -181,21 +181,24 @@ IndexElement IndexElementIterator::getElement()
     }
     else
     {
+      BoWToken* token = 0;
       switch ((*m_d->m_iterator)->getType())
       {
       case BOW_TOKEN:
       {
-        uint64_t id=m_d->m_idGenerator->getId((*m_d->m_iterator)->getIndexString());
-        return IndexElement(id,(*m_d->m_iterator)->getLemma(),
-                            (*m_d->m_iterator)->getCategory(),
-                            (*m_d->m_iterator)->getPosition(),
-                            (*m_d->m_iterator)->getLength());
+        token = static_cast<BoWToken*>((*m_d->m_iterator));
+        uint64_t id=m_d->m_idGenerator->getId(token->getIndexString());
+        return IndexElement(id,token->getLemma(),
+                            token->getCategory(),
+                            token->getPosition(),
+                            token->getLength());
       }
       case BOW_TERM:
       case BOW_NAMEDENTITY:
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(*m_d->m_iterator,0);
+        m_d->storePartsInQueue(static_cast<BoWToken*>((*m_d->m_iterator)),0);
         return m_d->m_partQueue.front();
+      case BOW_PREDICATE:
       case BOW_NOTYPE:
         ;
       }
@@ -352,9 +355,9 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     neType=static_cast<const BoWNamedEntity*>(token)->getNamedEntityType();
     break;
   case BOW_TERM:
-    break;
+  case BOW_PREDICATE:
   case BOW_NOTYPE:
-    break;
+  default:;
   }
 
   // is a complex token

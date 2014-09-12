@@ -70,7 +70,7 @@ friend class BoWXMLWriter;
   void reinitIndent();
   void setSpaces(const std::string& s);
 
-  void writeBoWToken(const BoWToken* token);
+  void writeBoWToken(const AbstractBoWElement* token);
   void writeBoWRelation(const BoWRelation* relation);
   void writeComplexTokenParts(const BoWComplexToken* token);
   void writeBoWTokenList(const BoWText* text,
@@ -386,17 +386,20 @@ void BoWXMLWriterPrivate::writeBoWRelation(const BoWRelation* relation) {
 }
 
 void BoWXMLWriterPrivate::writeBoWToken(
-                                 const BoWToken* token) {
+                                 const Lima::Common::BagOfWords::AbstractBoWElement* token ) {
   m_currentTokId++;
-  m_refMap[token]=m_currentTokId;
+  if (token->getType() != BOW_PREDICATE)
+    m_refMap[static_cast<const BoWToken*>(token)]=m_currentTokId;
+  const BoWToken* tok = 0;
   switch(token->getType()) {
   case BOW_TOKEN: {
+    tok = static_cast<const BoWToken*>(token);
     m_outputStream <<m_spaces << "<bowToken "
        << "id=\"" << m_currentTokId
-       << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(token->getLemma()))
-       << "\" category=\"" << token->getCategory()
-       <<"\" position=\"" << token->getPosition() 
-       << "\" length=\"" << token->getLength() << "\"" 
+       << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(tok->getLemma()))
+       << "\" category=\"" << tok->getCategory()
+       <<"\" position=\"" << tok->getPosition() 
+       << "\" length=\"" << tok->getLength() << "\"" 
        << "/>" << std::endl;
     break;
   }
