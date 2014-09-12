@@ -409,7 +409,7 @@ void BowDumper::addVerticesToBoWText(
           else
           {
             bowText.push_back((*bowItr).second); // copy pointer
-            std::set<uint64_t> bowTokenVertices = static_cast<BoWToken*>((*bowItr).second)->getVertices();
+            std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
             alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
             alreadyStored.insert(elem);
           
