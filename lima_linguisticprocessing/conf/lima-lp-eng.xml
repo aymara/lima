@@ -49,7 +49,7 @@
         <!--item value="bowDumperXml"/-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <item value="VerbNetRecognition"/>
-        <item value="srl"/>
+        <!--item value="srl"/-->
         <!--item value="conllDumper"/-->
         <item value="bowDumper"/>
         <!--item value="textDumper"/-->
