@@ -172,17 +172,17 @@ Lima::LimaString BoWPredicate::getString(void) const
   return Lima::LimaString();
 }
 
-std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const {
+std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const 
+{
   std::ostringstream oss;
-//   oss << BoWToken::getOutputUTF8String(macroManager) << "->" << getUTF8StringParts(macroManager)
-//   << ":" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType)) << ":" << getRolesUtf8String();
-//   return oss.str();
+  oss << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType)) << ":" << m_d->getRolesUtf8String();
+  return oss.str();
 }
 
-std::string BoWPredicate::getIdUTF8String() const {
+std::string BoWPredicate::getIdUTF8String() const 
+{
   std::ostringstream oss;
-//   oss << BoWToken::getOutputUTF8String() << "->" << getUTF8StringParts()
-//   << ":" << m_d->m_type << ":" << m_d->getRolesUtf8String();
+  oss << getOutputUTF8String();
   return oss.str();
 }
 
@@ -192,13 +192,13 @@ std::string BoWPredicatePrivate::getRolesUtf8String() const
   if (! m_roles.empty()) 
   { 
     QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::const_iterator it=m_roles.begin();   
-    oss << it.key() << "=" 
+    oss <<  Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key()))  << "=" 
       << it.value()->getOutputUTF8String();
     it++;
     while (it != m_roles.end()) 
     {
       oss << ";" 
-          << it.key() << "=" 
+          << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key()))   << "=" 
         << it.value()->getOutputUTF8String();
       it++;
     }
