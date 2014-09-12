@@ -569,10 +569,9 @@
     </group>
     <group name="srl" class="ExternalProcessUnit">
       <param key="dumper" value="conllDumper"/>
-      <!--param key="inputSuffix" value=".conll"/-->
-      <!--param key="outputSuffix" value=".conll.srl"/-->
-      <param key="command" value="ls ."/>
-      <!-- param key="command" value="./main.py conll_input %1.conll conll_output %1.conll.srl"/ -->
+      <param key="inputSuffix" value=".conll"/>
+      <param key="outputSuffix" value=".conll.srl"/>
+      <param key="command" value="./main.py --conll_input %1 --conll_output %2"/>
 
       <param key="loader" value="srlLoader"/>
     </group>
