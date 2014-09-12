@@ -148,6 +148,22 @@ BoWPredicate* BoWPredicate::clone() const
   return new BoWPredicate(*(new BoWPredicatePrivate(*(this->m_d))));
 }
 
+std::set< uint64_t > BoWPredicate::getVertices() const
+{
+  /// FIXME Vertex of predicate is missing from the class definition. Cannot add it.
+  std::set< uint64_t > result;
+  for (QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::const_iterator it=m_d->m_roles.begin(); it != m_d->m_roles.end(); it++)
+  {
+    std::set< uint64_t > vertices = (*it)->getVertices();
+    for (std::set< uint64_t >::const_iterator it2 = vertices.begin(); it2 != vertices.end(); it2++)
+    {
+      result.insert(*it2);
+    }
+  }
+  return result;
+}
+
+
 //**********************************************************************
 // input/output functions
 //**********************************************************************

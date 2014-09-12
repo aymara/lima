@@ -69,7 +69,15 @@ public:
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles();
   
     void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles);
-  
+
+  /**
+   * returns the vertices of the predicate and the roles
+   *
+   * @return the vertices of the predicate and the roles
+   */
+  virtual std::set< uint64_t > getVertices() const;
+
+
   virtual Lima::LimaString getString(void) const;
   /** get a string of the predicate for output function */
   virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const;
