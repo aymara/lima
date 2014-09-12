@@ -49,6 +49,7 @@ class BoWText;
 class BoWToken;
 class BoWRelation;
 class BoWNamedEntity;
+class BoWPredicate;
 // reader/writer are kept independent from BoW (instead of having
 // read/write functions in each BoW element) because it is easier
 // to handle common mappings (pointers, entity types etc).
@@ -80,9 +81,11 @@ class LIMA_BOW_EXPORT BoWBinaryReader
                        AbstractBoWDocumentHandler& handler, 
                        bool useIterator=false);
   AbstractBoWElement* readBoWToken(std::istream& file,
-                         std::vector<BoWToken*>& refMap);
+                         std::vector<AbstractBoWElement*>& refMap);
   void readSimpleToken(std::istream& file,
                        BoWToken* token);
+  void readPredicate(std::istream& file,
+                   BoWPredicate* bowPred);
 
   BoWFileType getFileType() const;
   std::string getFileTypeString() const;
@@ -111,6 +114,9 @@ class LIMA_BOW_EXPORT BoWBinaryWriter
                      std::map<BoWToken*,uint64_t>& refMap) const;
   void writeSimpleToken(std::ostream& file,
                         const BoWToken* token) const;
+  void writePredicate(std::ostream& file,
+                        const BoWPredicate* token,
+                        std::map<BoWToken*,uint64_t>& refMap) const;
 
  private:
   BoWBinaryWriter(const BoWBinaryWriter&);
