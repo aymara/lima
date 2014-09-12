@@ -599,9 +599,9 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
     else if (annotationData->hasStringAnnotation(*it, Common::Misc::utf8stdstring2limastring("Predicate"))){
 
       LDEBUG << "BowGenerator::createAbstractBoWElement Found a predicate in the PosGraph annnotation graph matching";
-      BoWPredicate* bP=createPredicate(*it, annotationData, anagraph, posgraph, offsetBegin, visited);
+      BoWPredicate* bP=createPredicate(*it, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
       if (bP!=0){
-        LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate: " ;
+        LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate" ;
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),bP));
   //         visited.insert(v);
         return abstractBowEl;
@@ -1027,7 +1027,7 @@ BoWPredicate* BowGenerator::createPredicate(
   bool keepAnyway)const{
 
   DUMPERLOGINIT;
-  BoWPredicate* bowP;
+  BoWPredicate* bowP = new BoWPredicate();
   // FIXME handle the ambiguous case when there is several class values for the predicate
   QStringList predicateIds=annotationData->stringAnnotation(v,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
   if (predicateIds.size()>1)
@@ -1095,6 +1095,8 @@ BoWPredicate* BowGenerator::createPredicate(
   }
   catch (const Lima::LimaException& e) {
     LERROR << "Unknown predicate" << predicate << ";" << e.what();
+    delete bowP;
+    return 0;
   }
 }
 
