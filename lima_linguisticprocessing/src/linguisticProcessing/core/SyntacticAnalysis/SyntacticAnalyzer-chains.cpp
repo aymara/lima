@@ -71,7 +71,6 @@ void SyntacticAnalyzerChains::init(
   SACLOGINIT;
   m_language=manager->getInitializationParameters().media;
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
   {
     std::string chainMatrixId=unitConfiguration.getParamsValueAtKey("chainMatrix");
@@ -173,7 +172,6 @@ LimaStatusCode SyntacticAnalyzerChains::process(
     while (next != endSentence)
     {
 //       LDEBUG << "nextChainsBreak";
-      //next = anagraph->nextChainsBreakFrom(current, *m_macroAccessor,m_ponctuCategory,*m_microAccessor,endSentence);
       next = anagraph->nextMainPathVertex(current,*m_macroAccessor,ponctuMacroFilter,endSentence);
 //       LDEBUG << "analyze chain from " << current << " to " << next;
 //       LDEBUG << "identify chains";
