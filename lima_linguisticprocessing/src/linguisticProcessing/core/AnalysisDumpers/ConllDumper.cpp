@@ -43,6 +43,7 @@
 #include "common/misc/AbstractAccessByString.h"
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/ConstituantAndRelationExtractor.h"
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/relation.h"
+#include "linguisticProcessing/core/SemanticAnalysis/LimaConllTokenIdMapping.h"
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -63,6 +64,7 @@ using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
+using namespace Lima::LinguisticProcessing::SemanticAnalysis;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace Lima::LinguisticProcessing::AnalysisDumpers;
 
@@ -89,7 +91,7 @@ m_sepPOS("#"),
 m_conllLimaDepMapping(),
 m_suffix(".conll")
 {DUMPERLOGINIT;
-  std::string mappingFile="Projets/Lima/lima/lima_linguisticdata/SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt";
+  std::string mappingFile="/home/clemence/Projets/Lima/lima/lima_linguisticdata/SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt";
   std::ifstream ifs(mappingFile, std::ifstream::binary);
   if (!ifs.good())
   {
@@ -222,17 +224,20 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
   LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
 
-
   map<std::string, std::string>::const_iterator im;
   for (im=m_conllLimaDepMapping.begin();im!=m_conllLimaDepMapping.end();im++){
     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
   }
 
+  LimaConllTokenIdMapping* limaConllTokenIdMapping = new LimaConllTokenIdMapping();
+  analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
+  int sentenceNb=0;
   while (sbItr!=(sd->getSegments().end()))//for each sentence
-  {
+  {sentenceNb++;
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
-    map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (global graphe and Conll segmentation)
+    map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
+    map<int,LinguisticGraphVertex>segmentationMappingReverse;
 
     LDEBUG << "begin - end: " << sentenceBegin << " - " << sentenceEnd << LENDL;
     //LinguisticGraphOutEdgeIt outItr,outItrEnd;
@@ -245,6 +250,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       LDEBUG << "Vertex index : " << v;
       visited.insert(v);
       segmentationMapping.insert(make_pair(v,tokenId));
+      segmentationMappingReverse.insert(make_pair(tokenId,v));
+      LDEBUG << "conll id : " << tokenId << " Lima id : " << v << LENDL;
       DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
       std::vector<DependencyGraphEdge> edges;
@@ -265,10 +272,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           LDEBUG << "DepTripleDumper::dumpDependencyRelations";
           CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *depGraph);
           SyntacticRelationId type = typeMap[*it];
-          string SyntRelName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type);
-          LDEBUG << "DepTripleDumper::dumpDependencyRelations relation = " << SyntRelName;
+          std::string syntRelName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type);
+          LDEBUG << "DepTripleDumper::dumpDependencyRelations relation = " << syntRelName;
           std::set<std::string>::const_iterator relationPos =
-          m_relation_names.find(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type));
+          m_relation_names.find(syntRelName);
   //      if( relationPos != m_relation_names.end() )
   //      {
           LDEBUG << "Src  : Dep vertex= " << source(*it, *depGraph);
@@ -277,8 +284,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           LDEBUG << "Targ : Dep vertex= " << target(*it, *depGraph);
           LinguisticGraphVertex dest = syntacticData->tokenVertexForDepVertex(target(*it, *depGraph));
           LDEBUG << "Targ : Morph vertex= " << dest;
-          if (SyntRelName!=""){
-            vertexDependencyInformations.insert(make_pair(v,make_pair(dest,SyntRelName)));
+          if (syntRelName!=""){
+            vertexDependencyInformations.insert(make_pair(v,make_pair(dest,syntRelName)));
           }
           LDEBUG << "target saved for " << v << " is " << dest;
         }
@@ -295,7 +302,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       {
         continue;
       }
-      LinguisticGraphOutEdgeIt outItr,outItrEnd;
+      LinguisticGraphOutEdgeIt outItr,outItrEnd;bool newSentence(const QString & line);
       for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
       {
         LinguisticGraphVertex next=target(*outItr,*graph);
@@ -322,7 +329,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       toVisit.pop();
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
-      LDEBUG << v << "th token in the global graph" <<endl;
+      LDEBUG << v << "th token in the Lima graph" <<endl;
       if( morphoData!=0 && v != sentenceBegin) {
         const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
         const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
@@ -374,6 +381,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     ++tokenId;
     }
     ofs << std::endl;
+    limaConllTokenIdMapping->insert(std::make_pair(sentenceNb, segmentationMappingReverse));
     sbItr++;
   }
 

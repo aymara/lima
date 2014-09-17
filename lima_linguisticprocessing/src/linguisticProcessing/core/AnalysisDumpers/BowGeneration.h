@@ -32,6 +32,7 @@
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/BoWRelation.h"
+#include "linguisticProcessing/common/BagOfWords/BoWPredicate.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 
 
@@ -48,6 +49,7 @@ namespace AnnotationGraphs
 namespace BagOfWords
 {
   class BoWNamedEntity;
+  class BoWPredicate;
 }
 }
 namespace LinguisticProcessing
@@ -107,7 +109,7 @@ public:
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     std::set<LinguisticGraphVertex>& visited) const;
 
-  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::BoWToken*> > createBoWTokens(
+  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> > createAbstractBoWElement(
     const LinguisticGraphVertex v,
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
@@ -183,7 +185,16 @@ private:
     const uint64_t offset,
     std::set<LinguisticGraphVertex>& visited) const;
 
-
+//   Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles) const;
+  
+  Common::BagOfWords::BoWPredicate* createPredicate(const AnnotationGraphVertex& v,
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const LinguisticGraph& anagraph,
+    const LinguisticGraph& posgraph,
+    const uint64_t offset,
+    std::set<LinguisticGraphVertex>& visited,
+    bool keepAnyway)const;
+  
   bool checkStopWordInCompound(
     Common::BagOfWords::BoWToken*&,
     uint64_t offset,

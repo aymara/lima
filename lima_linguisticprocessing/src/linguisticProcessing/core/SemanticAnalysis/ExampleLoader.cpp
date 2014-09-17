@@ -95,7 +95,7 @@ LimaStatusCode ExampleLoader::process(AnalysisContent& analysis) const
       LinguisticGraph::vertex_iterator vxItr,vxItrEnd;
       boost::tie(vxItr,vxItrEnd) = boost::vertices(*lingGraph);
       for (;vxItr!=vxItrEnd;vxItr++){
-       MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, *vxItr);
+        MorphoSyntacticData* morphoData=get(vertex_data,*lingGraph, *vxItr);
         Token* ft=get(vertex_token,*lingGraph,*vxItr);
         if( ft!=0){
           const QString tag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(handler.m_tagIndex[ft->position()]));

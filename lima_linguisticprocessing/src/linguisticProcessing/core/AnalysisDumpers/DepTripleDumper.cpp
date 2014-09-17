@@ -337,14 +337,14 @@ void DepTripleDumper::dumpDepWithCompounds(
   //   CVertexDataPropertyMap dataMap = get(vertex_data, posgraph);
 
   std::set< LinguisticGraphVertex > visited;
-  std::vector<std::pair<BoWRelation*, BoWToken*> > srcTokens =
-    m_bowGenerator->createBoWTokens(src, anagraph, posgraph, 0, annotationData, visited);
-  std::vector<std::pair<BoWRelation*, BoWToken*> > destTokens =
-    m_bowGenerator->createBoWTokens(dest, anagraph, posgraph, 0, annotationData, visited);
+  std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > srcTokens =
+    m_bowGenerator->createAbstractBoWElement(src, anagraph, posgraph, 0, annotationData, visited);
+  std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > destTokens =
+    m_bowGenerator->createAbstractBoWElement(dest, anagraph, posgraph, 0, annotationData, visited);
 
   std::map<std::string, std::set<LinguisticGraphVertex> > srcs, dests;
 
-  for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator srcItr=srcTokens.begin();
+  for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator srcItr=srcTokens.begin();
        srcItr!=srcTokens.end();
        srcItr++)
   {
@@ -372,7 +372,7 @@ void DepTripleDumper::dumpDepWithCompounds(
     }
   }
 
-  for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator destItr=destTokens.begin();
+  for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator destItr=destTokens.begin();
         destItr!=destTokens.end();
         destItr++)
   {
@@ -518,9 +518,9 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
       }
       else
       {
-        std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens=m_bowGenerator->createBoWTokens(v, anagraph, posgraph, 0, annotationData, visited);
+        std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
 
-        for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
+        for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator bowItr=bowTokens.begin();
              bowItr!=bowTokens.end();
              bowItr++)
         {

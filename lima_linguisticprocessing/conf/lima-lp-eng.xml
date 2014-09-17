@@ -4,6 +4,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="VerbNet-modex.xml/Processors"/>
       </list>
     </group>
 
@@ -33,13 +34,12 @@
         <!--item value="SvmToolPosTagger"/-->
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
-        <!--item value="dotGraphWriter"/-->
+        <item value="dotGraphWriter"/>
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="coreferencesSolving"/--> 
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
@@ -47,8 +47,11 @@
         <!--item value="tagFusion"/-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
-        <item value="conllDumper"/>
-        <!--item value="bowDumper"/-->
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
+        <!--item value="srl"/-->
+        <!--item value="conllDumper"/-->
+        <item value="bowDumper"/>
         <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
@@ -140,9 +143,9 @@
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
         <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
-				<entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-				<entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-			</map>
+        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+      </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
@@ -564,24 +567,19 @@
       <param key="commonNounCategory" value="NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
+    <group name="srl" class="ExternalProcessUnit">
+      <param key="dumper" value="conllDumper"/>
+      <param key="inputSuffix" value=".conll"/>
+      <param key="outputSuffix" value=".conll.srl"/>
+      <param key="command" value="./main.py --conll_input %1 --conll_output %2"/>
+
+      <param key="loader" value="srlLoader"/>
+    </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
-      <param key="stopList" value="stopList"/>
-      <param key="useStopList" value="true"/>
-      <param key="useEmptyMacro" value="true"/>
-      <param key="useEmptyMicro" value="true"/>
-      <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
-      </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
-      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="srlLoader" class="SemanticRoleLabelingLoader">
+      <param key="inputSuffix" value=".conll.srl"/>
     </group>
     <group name="bowDumperXml" class="BowDumper">
       <param key="handler" value="xmlDocumentHandler"/>
@@ -785,6 +783,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-eng"/>
+        <item value="VerbNet-modex.xml/resources-eng"/>
       </list>
     </group>
 
