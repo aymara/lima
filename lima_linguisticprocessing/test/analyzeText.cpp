@@ -198,7 +198,7 @@ int main(int argc,char* argv[])
 
   pipelines.push_back(pipeline);
   
-  timeval beginTime=TimeUtils::getCurrentTime();
+  uint64_t beginTime=TimeUtils::getCurrentTime();
   
   AbstractLinguisticProcessingClient* client(0);
   

@@ -120,7 +120,7 @@ int dowork(int argc,char* argv[])
     return -1;
   }
 
-  timeval beginTime=TimeUtils::getCurrentTime();
+  uint64_t beginTime=TimeUtils::getCurrentTime();
     
   AbstractLinguisticProcessingClient* client(0);
   
