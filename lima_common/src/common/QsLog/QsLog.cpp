@@ -29,6 +29,7 @@
 #include <QList>
 #include <QDateTime>
 #include <QtGlobal>
+#include <QThread>
 #include <cassert>
 #include <cstdlib>
 #include <stdexcept>
@@ -163,9 +164,13 @@ const QString& Logger::zone() const
 void Logger::Helper::writeToLog()
 {
    const char* const levelName = LevelToText(level);
-   const QString completeMessage(QString("%1 %2 %3")
+   QString s;
+   QTextStream ts(&s);
+   ts << QThread::currentThread();
+   const QString completeMessage(QString("%1 %2 %3 %4")
       .arg(levelName, 5)
       .arg(QDateTime::currentDateTime().toString(fmtDateTime))
+      .arg(s)
       .arg(buffer)
       );
 
