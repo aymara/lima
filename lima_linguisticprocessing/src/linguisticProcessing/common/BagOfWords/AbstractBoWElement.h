@@ -83,6 +83,13 @@ public:
 
   virtual Lima::LimaString getString(void) const = 0;
 
+  /**
+   * returns the set of vertices covered by this element
+   *
+   * @return the set of vertices covered by this element
+   */
+  virtual std::set< uint64_t > getVertices() const = 0;
+
   /** get a string of the AbstractBoWElement for output function
     * @param macroAccessor if not null, will output the human readable form of the macrocategory.
     * otherwise output the integer code
