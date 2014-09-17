@@ -1,0 +1,1 @@
+install(FILES mapping_conll_Lima.txt COMPONENT common DESTINATION share/apps/lima/resources/SRLIntegration/lima_conll_dependency_tag_mapping)

@@ -34,7 +34,7 @@
         <!--item value="SvmToolPosTagger"/-->
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
-        <item value="dotGraphWriter"/>
+        <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
@@ -45,18 +45,16 @@
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
         <!--item value="tagFusion"/-->
-        <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
-        <!--item value="bowDumperXml"/-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
+        <!--item value="VerbNetRecognition"/-->
         <!--item value="srl"/-->
         <!--item value="conllDumper"/-->
-        <item value="bowDumper"/>
-        <!--item value="textDumper"/-->
+        <!--item value="bowDumper"/-->
+        <item value="textDumper"/>
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
         <!--item value="temporalXmlDumper"/-->
-        <item value="afterFusionXmlDumper"/>
+        <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
     <group name="query" class="ProcessUnitPipeline">
@@ -89,7 +87,7 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="bowDumperXml"/>
+        <item value="bowDumper"/>
       </list>
     </group>
     <group name="normalization" class="ProcessUnitPipeline">
@@ -577,28 +575,10 @@
     </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
+      <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
     </group>
     <group name="srlLoader" class="SemanticRoleLabelingLoader">
       <param key="inputSuffix" value=".conll.srl"/>
-    </group>
-    <group name="bowDumperXml" class="BowDumper">
-      <param key="handler" value="xmlDocumentHandler"/>
-      <param key="stopList" value="stopList"/>
-      <param key="useStopList" value="true"/>
-      <param key="useEmptyMacro" value="true"/>
-      <param key="useEmptyMicro" value="true"/>
-      <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
-      </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
-      <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="bowTextHandler" class="BowDumper">
       <param key="handler" value="bowTextHandler"/>

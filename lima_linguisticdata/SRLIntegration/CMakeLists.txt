@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
+add_subdirectory(lima_conll_dependency_tag_mapping)
+
 set (DEPENDENCIES )
 
 foreach(LANG ${LIMA_LANGUAGES})

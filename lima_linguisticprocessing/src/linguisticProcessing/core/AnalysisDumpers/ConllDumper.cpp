@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2014 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,12 +16,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
+
 #include "ConllDumper.h"
-// #include "linguisticProcessing/core/LinguisticProcessors/DumperStream.h"
 #include "common/MediaProcessors/DumperStream.h"
 #include "common/time/traceUtils.h"
 #include "common/Data/strwstrtools.h"
@@ -90,23 +86,7 @@ m_sep(" "),
 m_sepPOS("#"),
 m_conllLimaDepMapping(),
 m_suffix(".conll")
-{DUMPERLOGINIT;
-  std::string mappingFile="/home/clemence/Projets/Lima/lima/lima_linguisticdata/SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt";
-  std::ifstream ifs(mappingFile, std::ifstream::binary);
-  if (!ifs.good())
-  {
-    LERROR << "ERROR: cannot open"+ mappingFile << LENDL;
-  }
-  while (ifs.good() && !ifs.eof())
-  {
-    std::vector<std::string> strs;
-    string line;
-    while(getline(ifs, line))  // as long as we can put the line on "line"
-    {
-      boost::split(strs, line, boost::is_any_of("\t"));
-      m_conllLimaDepMapping.insert(make_pair(strs[0],strs[1]));
-    }
-  }
+{
 }
 
 ConllDumper::~ConllDumper()
@@ -115,6 +95,7 @@ ConllDumper::~ConllDumper()
 void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
                       Manager* manager)
 {
+  DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
   m_language=manager->getInitializationParameters().media;
   try
@@ -124,7 +105,6 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  //Ajout
   try
   {
     m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag"); 
@@ -159,10 +139,35 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
-   /*ajout*/
+
   m_timeManager=&codeManager.getPropertyManager("TIME");
   m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
-  /*fin ajout*/
+  
+  try {
+    std::string resourcePath = Common::MediaticData::MediaticData::single().getResourcesPath();
+    std::string mappingFile = resourcePath + "/" + unitConfiguration.getParamsValueAtKey("mappingFile");
+    std::ifstream ifs(mappingFile, std::ifstream::binary);
+    if (!ifs.good())
+    {
+      LERROR << "ERROR: cannot open"+ mappingFile << LENDL;
+      throw InvalidConfiguration();
+    }
+    while (ifs.good() && !ifs.eof())
+    {
+      std::vector<std::string> strs;
+      std::string line;
+      while(getline(ifs, line))  // as long as we can put the line on "line"
+      {
+        boost::split(strs, line, boost::is_any_of("\t"));
+        m_conllLimaDepMapping.insert(make_pair(strs[0],strs[1]));
+      }
+    }
+
+  } catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    LERROR << "no parameter 'mappingFile' in ConllDumper group" << " !";
+    throw InvalidConfiguration();
+  }
 }
 
 LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
@@ -193,11 +198,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     //     std::cerr << "storing " << position << ", " << netype << std::endl;
   }
   ifs.close();
-
-  DumperStream* dstream=initialize(analysis);
-
-
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));//est de type PosGraph et non pas AnalysisGraph
   if (tokenList==0) {
@@ -455,12 +455,12 @@ std::string ConllDumper::outputVertex(std::ostream& out,
         curNorm=elemItr->normalizedForm;
         curMicro=m_propertyAccessor->readValue(elemItr->properties);
         microCategory = m_propertyManager->getPropertySymbolicValue(curMicro);
-        curTense=m_timeAccessor->readValue(elemItr->properties); //ajout
+        curTense=m_timeAccessor->readValue(elemItr->properties);
         if ((curNorm != norm) || (curMicro != micro))
         {
           norm=curNorm;
           micro=curMicro;
-          tense=curTense; //ajout
+          tense=curTense;
           
           std::ostringstream os2;
           os2 << m_sep << m_sepPOS;
@@ -554,7 +554,7 @@ std::string ConllDumper::outputSpecificEntity(std::ostream& out,
  // {
     //out << std::endl;
  // }
-  //return neType;
+  return neType;
 }
 
 

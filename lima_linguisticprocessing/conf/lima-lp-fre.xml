@@ -53,7 +53,6 @@
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger"/-->
         <!--item value="geoDumper"/-->
-        <!--item value="bowDumperXml"/-->
         <!--item value="bowDumper"/-->
         <!--item value="posGraphXmlDumper"/-->
         <!--item value="fullXmlDumper"/-->
@@ -115,7 +114,7 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="bowDumperXml"/>
+        <item value="bowDumper"/>
       </list>
     </group>
     <group name="normalization" class="ProcessUnitPipeline" >
@@ -601,27 +600,6 @@
 *********************************************** -->
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>
-      <param key="stopList" value="stopList"/>
-      <param key="useStopList" value="true"/>
-      <param key="useEmptyMacro" value="true"/>
-      <param key="useEmptyMicro" value="true"/>
-      <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="L_NC"/>
-        <entry key="Numex.NUMBER" value="L_NC"/>
-        <entry key="Numex.UNIT" value="L_NC"/>
-        <entry key="Numex.NUMEX" value="L_NC"/>
-        <entry key="Organization.ORGANIZATION" value="L_NP"/>
-        <entry key="Location.LOCATION" value="L_NP"/>
-        <entry key="Person.PERSON" value="L_NP"/>
-        <entry key="Product.PRODUCT" value="L_NP"/>
-        <entry key="Event.EVENT" value="L_NP"/>
-      </map>
-      <param key="properNounCategory" value="L_NP"/>
-      <param key="commonNounCategory" value="L_NC"/>
-      <param key="NEnormalization" value="useNENormalizedForm"/>
-    </group>
-    <group name="bowDumperXml" class="BowDumper">
-      <param key="handler" value="xmlDocumentHandler"/>
       <param key="stopList" value="stopList"/>
       <param key="useStopList" value="true"/>
       <param key="useEmptyMacro" value="true"/>
