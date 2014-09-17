@@ -113,7 +113,13 @@ operator()(RecognizerMatch& m,
   // if firstname or lastname were given as arguments to the action
   if (!m_firstname.isEmpty() || !m_lastname.isEmpty()) {
     m.features().addFeature(FIRSTNAME_FEATURE_NAME,m_firstname);
+    std::vector<EntityFeature>::iterator firstnameFeatureIt = m.features().find(FIRSTNAME_FEATURE_NAME);
+    (*firstnameFeatureIt).setPosition(0);
+    (*firstnameFeatureIt).setLength(0);
     m.features().addFeature(LASTNAME_FEATURE_NAME,m_lastname);
+    std::vector<EntityFeature>::iterator lastnameFeatureIt = m.features().find(LASTNAME_FEATURE_NAME);
+    (*lastnameFeatureIt).setPosition(0);
+    (*lastnameFeatureIt).setLength(0);
     // modified stored normalized string to given normalization:
     m.features().addFeature(DEFAULT_ATTRIBUTE,m_firstname+LimaChar(' ')+m_lastname);
     return true;
@@ -147,6 +153,13 @@ operator()(RecognizerMatch& m,
   if (((!firstname.isEmpty()) && (!lastname.isEmpty()))
       || m.size() == 1) {
     m.features().addFeature(FIRSTNAME_FEATURE_NAME,firstname);
+    RecognizerMatch::const_iterator i(m.begin());
+    Token* t = m.getToken(i);
+    uint64_t pos = (int64_t)(t->position());
+    std::vector<EntityFeature>::iterator firstnameFeatureIt = m.features().find(FIRSTNAME_FEATURE_NAME);
+    uint64_t len = (int64_t)(t->length());
+    (*firstnameFeatureIt).setPosition(pos);
+    (*firstnameFeatureIt).setLength(len);
     m.features().addFeature(LASTNAME_FEATURE_NAME,lastname);
     return true;
   }
@@ -158,11 +171,21 @@ operator()(RecognizerMatch& m,
     RecognizerMatch::const_iterator i(m.begin());
     Token* t = m.getToken(i);
     firstname = t->stringForm();
+    m.features().addFeature(FIRSTNAME_FEATURE_NAME,firstname);
+    std::vector<EntityFeature>::iterator firstnameFeatureIt = m.features().find(FIRSTNAME_FEATURE_NAME);
+    uint64_t pos = (int64_t)(t->position());
+    (*firstnameFeatureIt).setPosition(pos);
+    uint64_t len = (int64_t)(t->length());
+    (*firstnameFeatureIt).setLength(len);
     i++;
     t = m.getToken(i);
     lastname = t->stringForm();
-    m.features().addFeature(FIRSTNAME_FEATURE_NAME,firstname);
     m.features().addFeature(LASTNAME_FEATURE_NAME,lastname);
+    std::vector<EntityFeature>::iterator lastnameFeatureIt = m.features().find(LASTNAME_FEATURE_NAME);
+    pos = (int64_t)(t->position());
+    (*lastnameFeatureIt).setPosition(pos);
+    len = (int64_t)(t->length());
+    (*lastnameFeatureIt).setLength(len);
     return true;
   }
 
@@ -172,6 +195,10 @@ operator()(RecognizerMatch& m,
 
   lastname=LimaString();
   firstname=LimaString();
+  uint64_t lastnamePos = 2001;
+  uint64_t lastnameLen = 2002;
+  uint64_t firstnamePos = 2003;
+  uint64_t firstnameLen = 2004;
   bool inLastname(false);
   bool initial(false);
   RecognizerMatch::const_iterator next;
@@ -219,10 +246,14 @@ operator()(RecognizerMatch& m,
         lastname += LimaChar(' '); 
       }
       lastname += t->stringForm();
+      lastnamePos = t->position();
+      lastnameLen = t->length();
     }
     else {
       if (!firstname.isEmpty()) { firstname += LimaChar(' '); }
       firstname += t->stringForm();
+      firstnamePos = t->position();
+      firstnameLen = t->length();
     }
   }
   
@@ -233,7 +264,13 @@ operator()(RecognizerMatch& m,
   } 
   else {
     m.features().addFeature(FIRSTNAME_FEATURE_NAME,firstname);
+    std::vector<EntityFeature>::iterator featureIt = m.features().find(FIRSTNAME_FEATURE_NAME);
+    (*featureIt).setPosition(firstnamePos);
+    (*featureIt).setLength(firstnameLen);
     m.features().addFeature(LASTNAME_FEATURE_NAME,lastname);
+    featureIt = m.features().find(LASTNAME_FEATURE_NAME);
+    (*featureIt).setPosition(lastnamePos);
+    (*featureIt).setLength(lastnameLen);
   }
   return true;
 }

@@ -49,6 +49,13 @@
 #include <set>
 // #include <ext/hash_set>
 
+namespace Lima {
+namespace LinguisticProcessing {
+namespace AnalysisDumpers {
+  class FullXmlDumper;
+}
+}
+}
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -58,6 +65,8 @@ namespace AnalysisDumpers {
 
 class LIMA_ANALYSISDUMPERS_EXPORT AnnotationGraphXmlDumper : public MediaProcessUnit 
 {
+friend class Lima::LinguisticProcessing::AnalysisDumpers::FullXmlDumper;
+
 public:
 
   AnnotationGraphXmlDumper();
@@ -71,7 +80,12 @@ public:
   LimaStatusCode process(
     AnalysisContent& analysis) const;
 
+  LimaStatusCode dump(
+    AnalysisContent& analysis, const std::string& prologue = "" ) const;
 
+private:
+  // constructor to be used by FullXmlDumper
+  AnnotationGraphXmlDumper( const MediaId& language, const std::string& handler );
 protected:
     /**
     * a visitor for going through the graph between two points

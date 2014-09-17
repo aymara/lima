@@ -17,8 +17,10 @@
 project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 2.8)
 
+if(POLICY CMP0017)
 cmake_policy(SET CMP0017 NEW)
 
+endif()
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP" )
@@ -110,10 +112,11 @@ else (ENCHANT_FOUND)
   message("Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
 endif (ENCHANT_FOUND)
 
-find_package(Qt4 REQUIRED QtCore QtXml QtXmlPatterns)
+find_package(Qt4 REQUIRED QtCore QtXml QtXmlPatterns QtNetwork)
 include(${QT_USE_FILE})
 include_directories(${Qt4_INCLUDE_DIR})
 link_directories(${Qt4_LIBRARY_DIRS})
+MESSAGE(STATUS "Qt4_INCLUDE_DIR=${Qt4_INCLUDE_DIR}")
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -123,6 +126,16 @@ set( BOOST_LIB_DIAGNOSTIC )
 FIND_PACKAGE(Boost 1.48 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
+
+# QHttpServer is necessary for limaserver HTTP server
+find_package(QHttpServer QUIET)
+if (NOT QHTTPSERVER_FOUND)
+  message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
+else(NOT QHTTPSERVER_FOUND)
+  message(STATUS "Found QHttpServer. lima HTTP server will be built")
+  include_directories($ENV{LIMA_EXTERNALS}/include)
+  link_directories($ENV{LIMA_EXTERNALS}/lib)
+endif (NOT QHTTPSERVER_FOUND)
 
 
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
@@ -178,6 +191,7 @@ SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 SET(CPACK_STRIP_FILES "bin/analyzeText;bin/readBowFile")
 SET(CPACK_SOURCE_STRIP_FILES "")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
 IF (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
   set(CPACK_RPM_PACKAGE_REQUIRES "qt4-common >= 4.7, limacommon >= 1.0.0")

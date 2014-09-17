@@ -1,6 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
   <module name="common">
+    <group name="SemanticData">
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+    </group>
     <group name="mediaDeclaration">
       <list name="available">
         <item value="eng" />

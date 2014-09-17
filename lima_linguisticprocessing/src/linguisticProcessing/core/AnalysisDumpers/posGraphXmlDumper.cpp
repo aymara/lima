@@ -48,7 +48,6 @@
 #include "linguisticProcessing/common/BagOfWords/bowNamedEntity.h"
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "linguisticProcessing/common/annotationGraph/AnnotationGraphXmlDumper.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h" //rajout
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"

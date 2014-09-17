@@ -43,7 +43,8 @@ namespace Automaton {
 
 EntityFeature::EntityFeature():
 m_name(""),
-m_value()
+m_value(),
+m_hasPos(false)
 {}
 
 EntityFeature::~EntityFeature()

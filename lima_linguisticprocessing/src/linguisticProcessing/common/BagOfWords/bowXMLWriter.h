@@ -59,6 +59,7 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
   void writeBoWText(const BoWText* document,
                     const bool useIterator=false,
                     const bool useIndexIterator=false);
+  void writeBoWToken(const BoWToken* token);
   void writeBoWDocument(const BoWDocument* document,
                         const bool useIterator=false,
                         const bool useIndexIterator=false);

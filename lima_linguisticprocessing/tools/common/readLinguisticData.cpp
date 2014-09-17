@@ -41,9 +41,9 @@ int main(int argc,char* argv[])
   QCoreApplication a(argc, argv);
   QsLogging::initQsLog();
   
-  std::string resourcesPath=string(getenv("LIMA_RESOURCES"));
-  std::string configDir=string(getenv("LIMA_CONF"));
-  std::string configFile=string("lima-common.xml");
+  string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  string configFile=string("lima-common.xml");
+  string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
 
   std::deque<std::string> langs;
 

@@ -22,8 +22,7 @@ add_definitions(-DLIMA_ANNOTATIONGRAPH_EXPORTING)
 
 SET(lima-lp-annotationgraph_LIB_SRCS
     AnnotationGraph.cpp
-    AnnotationData.cpp 
-    AnnotationGraphXmlDumper.cpp
+    AnnotationData.cpp
     AnnotationGraphWriter.cpp
 )
 
@@ -41,6 +40,9 @@ install(FILES
     GenericAnnotation.h
     AnnotationData.h
     AnnotationGraph.h
-    AnnotationGraphXmlDumper.h
     AnnotationGraphWriter.h
   DESTINATION include/linguisticProcessing/common/annotationGraph/)
+
+
+
+add_subdirectory(tests)

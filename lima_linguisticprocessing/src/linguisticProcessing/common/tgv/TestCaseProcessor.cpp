@@ -91,8 +91,8 @@ TestCaseError TestCaseProcessor::evalTestCase(
     /* Load XML document */
     QXmlQuery theDocument;
     if (!theDocument.setFocus(&sourceDocument)) {
-      LERROR << "Error: unable to parse file " << traceFile;
-      return TestCaseError();
+      LERROR << "Error: Unable to parse file " << traceFile << LENDL;
+      return TestCaseError(testCase, TestCaseError::TestCaseFailed,"No output file to evaluate !", pipeName, *tuItr);
     }
 
 

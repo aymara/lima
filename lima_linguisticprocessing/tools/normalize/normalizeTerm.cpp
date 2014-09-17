@@ -98,8 +98,8 @@ int main(int argc,char* argv[])
 int dowork(int argc,char* argv[])
 {
 
-  string resourcesPath=string(getenv("LIMA_RESOURCES"));
-  string configDir=string(getenv("LIMA_CONF"));
+  string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
   string lpConfigFile=string("lima-analysis.xml");
   string commonConfigFile=string("lima-common.xml");
   string pipeline=string("normalization");
