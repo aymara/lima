@@ -569,7 +569,7 @@
       <param key="dumper" value="conllDumper"/>
       <param key="inputSuffix" value=".conll"/>
       <param key="outputSuffix" value=".conll.srl"/>
-      <param key="command" value="./main.py --conll_input %1 --conll_output %2"/>
+      <param key="command" value="(path to knowledgesrl)/src/main.py --conll_input %1 --conll_output %2"/>
 
       <param key="loader" value="srlLoader"/>
     </group>
