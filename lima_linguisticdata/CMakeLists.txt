@@ -84,13 +84,13 @@ SET(CPACK_COMPONENTS_ALL common fre eng)
 # by default create one package for each component
 # SET(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
 
-SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon >= 1.0.0, limalinguisticprocessing >= 1.0.0")
+SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon, limalinguisticprocessing")
 # by default behaviour of rpm packager is to disable components
 SET(CPACK_RPM_COMPONENT_INSTALL ON)
 # mangle CPACK_PACKAGE_FILE_NAME and component name
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon (>= 1.0.0), limalinguisticprocessing (>= 1.0.0)")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon, limalinguisticprocessing")
 SET(CPACK_DEBIAN_COMPONENT_INSTALL ON)
 SET(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME ON)
 
