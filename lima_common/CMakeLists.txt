@@ -108,8 +108,8 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 
-find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_SOURCE_DIR})
-
+configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
+find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(conf)
 add_subdirectory(src)
@@ -117,7 +117,6 @@ add_subdirectory(test)
 
 
 ########### install files ###############
-configure_file(LIMACOMMONConfig.cmake LIMACOMMONConfig.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
 
 ########### documentation ###############
@@ -143,9 +142,9 @@ SET(CPACK_PACKAGE_VENDOR "CEA LIST")
 SET(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "0")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
 SET(CPACK_SOURCE_STRIP_FILES "")

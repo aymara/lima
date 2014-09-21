@@ -94,10 +94,10 @@ else
 cmake_mode="Debug"
 fi
 
-echo "version='$version'"
+echo "version='$release'"
 install -d $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
-cmake -DLIMA_RESOURCES="$resources" -DLIMA_VERSION_RELEASE="$release" -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=$cmake_mode $source_dir
+cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 make -j$j && [ $current_project != "lima" ] && make test && make install
 result=$?
