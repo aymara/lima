@@ -72,7 +72,7 @@ SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSIO
 SET(CPACK_STRIP_FILES "")
 SET(CPACK_SOURCE_STRIP_FILES ${CPACK_STRIP_FILES})
 SET(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-SET(CPACK_PACKAGE_FILE_NAME "limadata")
+# SET(CPACK_PACKAGE_FILE_NAME "limadata")
 
 # set of commands to define component based packaging
 # The idea is to define one component with files common to all languages (common)
