@@ -189,40 +189,10 @@ LimaStatusCode BowDumper::process(
   bowText.lang=metadata->getMetaData("Lang");
   buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
 
-  // pass bowText to the handler
-  /*  {
-      BoWBinaryWriter writer;
-      handler->startAnalysis();
-      HandlerStreamBuf hsb(handler);
-      std::ostream out(&hsb);
-      writer.writeBoWText(out,bowText);
-      out.flush();
-      handler->endAnalysis();
-    }*/
-  {
-      BoWBinaryWriter writer;
-      DumperStream* dstream=initialize(analysis);
-      writer.writeBoWText(dstream->out(),bowText);
-      delete dstream;
-  }
-  /**
-  * @TODO Handling of bowtext
-  **
-  {
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-    if (metadata == 0) {
-        LERROR << "BowDumper::process: no LinguisticMetaData ! abort";
-        return MISSING_DATA;
-    }
-    std::string outputFile=metadata->getMetaData("FileName") + ".bin";
-    std::ofstream fout(outputFile.c_str());
-    BoWFileHeader header(BOWFILE_TEXT);
-    header.write(fout);
-    bowText.write(fout);
-    fout.close();
-  }
-  */
-  ///
+  BoWBinaryWriter writer;
+  DumperStream* dstream=initialize(analysis);
+  writer.writeBoWText(dstream->out(),bowText);
+  delete dstream;
   return SUCCESS_ID;
 }
 
@@ -230,9 +200,9 @@ void BowDumper::buildBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const SyntacticData* syntacticData,
     BoWText& bowText,
-                              AnalysisContent& analysis,
-                              AnalysisGraph* anagraph,
-                              AnalysisGraph* posgraph) const
+    AnalysisContent& analysis,
+    AnalysisGraph* anagraph,
+    AnalysisGraph* posgraph) const
 {
   DUMPERLOGINIT;
 
