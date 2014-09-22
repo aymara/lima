@@ -115,7 +115,7 @@ Level Categories::levelFor(const QString& category) const
 
 LIMA_COMMONQSLOG_EXPORT int initQsLog() {
   try {
-    QString initFileName = QString::fromUtf8(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData())+ "/log4cpp.properties";
+    QString initFileName = QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":qgetenv("LIMA_CONF").constData())+ "/log4cpp.properties";
     if (!QsLogging::Categories::instance().configure(initFileName))
     {
       std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
