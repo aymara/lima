@@ -133,7 +133,7 @@ protected:
                             uint64_t offset) const;
 
   void xmlOutputBoWInfos(std::ostream& out, 
-                         Common::BagOfWords::BoWToken* token,
+                         Common::BagOfWords::AbstractBoWElement* token,
                          uint64_t offset) const;
                           
   /**
@@ -170,13 +170,7 @@ protected:
                 uint64_t offset,
                 std::set<LinguisticGraphVertex>& visited) const;
 
-  void xmlOutputCompound(std::ostream& out, 
-                         Common::BagOfWords::BoWToken* token,
-                         LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                         LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-                         const Common::AnnotationGraphs::AnnotationData* annotationData,
-                         const FsaStringsPool& sp,
-                         uint64_t offset) const;
+  void xmlOutputCompound(std::ostream& out, Lima::Common::BagOfWords::AbstractBoWElement* token, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* anagraph, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* posgraph, const Lima::Common::AnnotationGraphs::AnnotationData* annotationData, const Lima::FsaStringsPool& sp, uint64_t offset) const;
                                
   /*void xmlOutputVertexInfos(std::ostream& out, 
                             const LinguisticAnalysisStructure::Token* ft,

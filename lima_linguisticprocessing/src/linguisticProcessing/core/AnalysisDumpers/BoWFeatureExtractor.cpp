@@ -110,10 +110,11 @@ AbstractBoWFeatureExtractor(language,complement)
 {}
 
 std::string BoWFeaturePosition::
-getValue(const Common::BagOfWords::BoWToken* token) const
+getValue(const AbstractBoWElement* token) const
 {
   ostringstream oss;
-  oss << token->getPosition();
+  if  (dynamic_cast<const BoWToken*>(token) != 0)
+    oss << dynamic_cast<const BoWToken*>(token)->getPosition();
   return oss.str();
 }
 
@@ -123,9 +124,12 @@ AbstractBoWFeatureExtractor(language,complement)
 {}
 
 std::string BoWFeatureToken::
-getValue(const BagOfWords::BoWToken* token) const
+getValue(const AbstractBoWElement* token) const
 {
-  return Common::Misc::limastring2utf8stdstring(token->getInflectedForm());
+  if  (dynamic_cast<const BoWToken*>(token) != 0)
+    return Common::Misc::limastring2utf8stdstring(dynamic_cast<const BoWToken*>(token)->getInflectedForm());
+  else
+    return token->getIdUTF8String();
 }
 
 //***********************************************************************
@@ -135,9 +139,12 @@ AbstractBoWFeatureExtractor(language,complement)
 }
 
 std::string BoWFeatureLemma::
-getValue(const BagOfWords::BoWToken* token) const
+getValue(const AbstractBoWElement* token) const
 {
-  return Common::Misc::limastring2utf8stdstring(token->getLemma());
+  if  (dynamic_cast<const BoWToken*>(token) != 0)
+    return Common::Misc::limastring2utf8stdstring(dynamic_cast<const BoWToken*>(token)->getLemma());
+  else
+    return token->getIdUTF8String();
 }
 
 //***********************************************************************
@@ -155,10 +162,11 @@ m_propertyManager(0)
 }
 
 std::string BoWFeatureProperty::
-getValue(const BagOfWords::BoWToken* token) const
+getValue(const AbstractBoWElement* token) const
 {
   ostringstream oss;
-  oss << m_propertyManager->getPropertySymbolicValue(token->getCategory());
+  if  (dynamic_cast<const BoWToken*>(token) != 0)
+    oss << dynamic_cast<const BoWToken*>(token)->getCategory();
   return oss.str();
 }
 
@@ -168,7 +176,7 @@ AbstractBoWFeatureExtractor(language,complement)
 {}
 
 std::string BoWFeatureTstatus::
-getValue(const BagOfWords::BoWToken* /*token*/) const
+getValue(const AbstractBoWElement* token /*token*/) const
 {
   return "";
 }

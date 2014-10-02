@@ -187,7 +187,7 @@ private:
 
 //   Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles) const;
   
-  Common::BagOfWords::BoWPredicate* createPredicate(const AnnotationGraphVertex& v,
+  Common::BagOfWords::BoWPredicate* createPredicate(const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
