@@ -37,6 +37,7 @@
 #include "bowDocumentST.h"
 #include "bowTokenIterator.h"
 #include "indexElementIterator.h"
+#include "BoWPredicate.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/Data/genericDocumentProperties.h"
@@ -77,6 +78,7 @@ friend class BoWXMLWriter;
                          const bool useIterator=false,
                          const bool useIndexIterator=false);
   void writeGenericDocumentProperties(const Misc::GenericDocumentProperties* prop);
+  void writePredicateRoles(const BoWPredicate* term);
   template<typename PropertyType>
   void writeProperty(const std::string& name,
                        const std::string& type,
@@ -295,6 +297,25 @@ void BoWXMLWriterPrivate::writeGenericDocumentProperties(
   m_outputStream <<m_spaces << "</properties>" << std::endl;
 }
 
+void BoWXMLWriterPrivate::writePredicateRoles(const BoWPredicate* term)
+{
+  m_outputStream <<m_spaces << "<roles>" << std::endl;
+  incIndent();
+  for (auto it = term->roles().begin(); it != term->roles().end(); it++)
+  {
+    m_outputStream <<m_spaces << "<role type=\""
+       << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key()))
+       << "\" >" << std::endl;
+    incIndent();
+    writeBoWToken(it.value());
+    decIndent();
+    m_outputStream <<m_spaces  << "</role>" << std::endl;
+  }
+  decIndent();
+  m_outputStream <<m_spaces << "</roles>" << std::endl;
+  term->roles();
+}
+
 void BoWXMLWriterPrivate::writeBoWTokenList(
                                      const BoWText* text,
                                      const bool useIterator,
@@ -403,14 +424,28 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "/>" << std::endl;
     break;
   }
+  case BOW_PREDICATE: {
+    const BoWPredicate* term=static_cast<const BoWPredicate*>(token);
+    m_outputStream <<m_spaces << "<bowPredicate "
+       << "id=\"" << m_currentTokId
+       << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(term->getPredicateType())))
+       <<"\" position=\"" << term->getPosition() 
+       << "\" length=\"" << term->getLength() << "\"" 
+       << ">" << std::endl;
+    incIndent();
+    writePredicateRoles(term);
+    decIndent();
+    m_outputStream <<m_spaces << "</bowPredicate>" << std::endl;
+    break;
+  }
   case BOW_TERM: {
     const BoWTerm* term=static_cast<const BoWTerm*>(token);
     m_outputStream <<m_spaces << "<bowTerm "
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(term->getLemma()))
        << "\" category=\"" << term->getCategory()
-       <<"\" position=\"" << term->getPosition() 
-       << "\" length=\"" << term->getLength() << "\"" 
+       <<"\" position=\"" << term->getPosition()
+       << "\" length=\"" << term->getLength() << "\""
        << ">" << std::endl;
     incIndent();
     writeComplexTokenParts( term);

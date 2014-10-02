@@ -52,8 +52,10 @@ install(TARGETS lima-lp-bagofwords DESTINATION lib)
 
 ########### install files ###############
 install(FILES
+    AbstractBoWElement.h
     AbstractBoWDocumentHandler.h
     bowDocument.h
+    BoWPredicate.h
     bowTerm.h
     bowXMLReader.h
     indexElementIterator.h

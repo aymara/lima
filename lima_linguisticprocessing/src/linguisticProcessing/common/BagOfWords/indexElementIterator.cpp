@@ -187,7 +187,7 @@ IndexElement IndexElementIterator::getElement()
       case BOW_TOKEN:
       {
         token = static_cast<BoWToken*>((*m_d->m_iterator));
-        uint64_t id=m_d->m_idGenerator->getId(token->getIndexString());
+        uint64_t id=m_d->m_idGenerator->getId(token->getString());
         return IndexElement(id,token->getLemma(),
                             token->getCategory(),
                             token->getPosition(),
@@ -336,7 +336,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   case BOW_TOKEN:
   {
     // simple token : get Id and push in parts
-    uint64_t id=m_idGenerator->getId(token->getIndexString());
+    uint64_t id=m_idGenerator->getId(token->getString());
     ids_rel=make_pair(vector<uint64_t>(1,id),rel);
 
     LimaString lemma=token->getLemma();
@@ -374,7 +374,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     // only one part, do not get into it
     // (for instance, named entity with one element)
     // push simple token in parts 
-    uint64_t id=m_idGenerator->getId(token->getIndexString());
+    uint64_t id=m_idGenerator->getId(token->getString());
     ids_rel=make_pair(vector<uint64_t>(1,id),rel);
 
     LimaString lemma=token->getLemma();

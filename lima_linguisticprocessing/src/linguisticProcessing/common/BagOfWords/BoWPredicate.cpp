@@ -51,18 +51,24 @@ public:
 
 
   MediaticData::EntityType m_predicateType;
+  uint64_t m_position;
+  uint64_t m_length;
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> m_roles;
 };
 
 BoWPredicatePrivate::BoWPredicatePrivate():
 m_predicateType(),
-m_roles()
+m_roles(),
+m_position(0),
+m_length(0)
 {
 }
 
 BoWPredicatePrivate::BoWPredicatePrivate(const BoWPredicatePrivate& bnep):
 m_predicateType(bnep.m_predicateType),
-m_roles(bnep.m_roles)
+m_roles(bnep.m_roles),
+m_position(bnep.m_position),
+m_length(bnep.m_length)
 {
 }
 
@@ -101,6 +107,7 @@ m_d(new BoWPredicatePrivate(d))
 
 BoWPredicate::~BoWPredicate()
 {
+  delete m_d;
 }
 
 BoWPredicate& BoWPredicate::operator=(const BoWPredicate& t)
@@ -108,6 +115,8 @@ BoWPredicate& BoWPredicate::operator=(const BoWPredicate& t)
   if (&t != this) {
     m_d->m_predicateType=t.m_d->m_predicateType;
     m_d->m_roles=t.m_d->m_roles;
+    m_d->m_position = t.m_d->m_position;
+    m_d->m_length = t.m_d->m_length;
   }
   return *this;
 }
@@ -115,7 +124,9 @@ BoWPredicate& BoWPredicate::operator=(const BoWPredicate& t)
 bool BoWPredicate::operator==(const BoWPredicate& t)
 {
   return( m_d->m_predicateType == t.m_d->m_predicateType 
-      && m_d->m_roles == t.m_d->m_roles);
+      && m_d->m_roles == t.m_d->m_roles
+      && m_d->m_position == t.m_d->m_position
+      && m_d->m_length == t.m_d->m_length);
 }
 
 MediaticData::EntityType BoWPredicate::getPredicateType(void) const
@@ -163,13 +174,17 @@ std::set< uint64_t > BoWPredicate::getVertices() const
   return result;
 }
 
+uint64_t BoWPredicate::getPosition(void) const {return m_d->m_position;};
+uint64_t BoWPredicate::getLength(void)   const {return m_d->m_length;};
+void BoWPredicate::setPosition(const uint64_t pos){m_d->m_position = pos;};
+void BoWPredicate::setLength(const uint64_t len)  {m_d->m_length = len;};
 
 //**********************************************************************
 // input/output functions
 //**********************************************************************
 Lima::LimaString BoWPredicate::getString(void) const
 {
-  return Lima::LimaString();
+  return MediaticData::MediaticData::single().getEntityName(static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType);
 }
 
 std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const 
