@@ -612,7 +612,7 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
     else if (annotationData->hasStringAnnotation(*it, Common::Misc::utf8stdstring2limastring("Predicate"))){
 
       LDEBUG << "BowGenerator::createAbstractBoWElement Found a predicate in the PosGraph annnotation graph matching";
-      BoWPredicate* bP=createPredicate(*it, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
+      BoWPredicate* bP=createPredicate(v, *it, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
       if (bP!=0){
         LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate" ;
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),bP));
@@ -1031,18 +1031,17 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
 
 
 BoWPredicate* BowGenerator::createPredicate(
-  const AnnotationGraphVertex& v,
-  const AnnotationData* annotationData,
-  const LinguisticGraph& anagraph,
-  const LinguisticGraph& posgraph,
-  const uint64_t offset,
-  std::set<LinguisticGraphVertex>& visited,
-  bool keepAnyway)const{
+    const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv, const AnnotationData* annotationData, const LinguisticGraph& anagraph, const LinguisticGraph& posgraph, const uint64_t offset, std::set< LinguisticGraphVertex >& visited, bool keepAnyway)const{
 
   DUMPERLOGINIT;
   BoWPredicate* bowP = new BoWPredicate();
+
+  Token* token = get(vertex_token, posgraph, lgv);
+  bowP->setPosition(offset+token->position());
+  bowP->setLength(token->length());
+
   // FIXME handle the ambiguous case when there is several class values for the predicate
-  QStringList predicateIds=annotationData->stringAnnotation(v,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
+  QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
   if (predicateIds.size()>1)
   {
     LERROR << "BowGenerator::createAbstractBoWElement Predicate has" << predicateIds.size() << "values:" << predicateIds;
@@ -1054,13 +1053,14 @@ BoWPredicate* BowGenerator::createPredicate(
     LDEBUG << "BowGenerator::createAbstractBoWElement The role(s) related to "<< predicate << " is/are "<< LENDL;
     AnnotationGraph annotGraph=annotationData->getGraph();
     AnnotationGraphOutEdgeIt outIt, outIt_end;
-    boost::tie(outIt, outIt_end) = boost::out_edges(v, annotationData->getGraph());
+    boost::tie(outIt, outIt_end) = boost::out_edges(agv, annotationData->getGraph());
     QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> roles;
     const LimaString typeAnnot="SemanticRole";
-    for (; outIt != outIt_end; outIt++) {
+    for (; outIt != outIt_end; outIt++)
+    {
       // FIXME handle the ambiguous case when there is several values for each role
       const AnnotationGraphVertex semRoleVx=boost::target(*outIt, annotGraph);
-      QStringList semRoleIds = annotationData->stringAnnotation(v,semRoleVx,typeAnnot).split("|");
+      QStringList semRoleIds = annotationData->stringAnnotation(agv,semRoleVx,typeAnnot).split("|");
       if (semRoleIds.size()>1)
       {
         LERROR << "BowGenerator::createAbstractBoWElement Role has" << semRoleIds.size() << "values:" << semRoleIds;
@@ -1068,7 +1068,8 @@ BoWPredicate* BowGenerator::createPredicate(
       // FIXME replace the hardcoded VerbNet by a value from configuration
       LimaString semRole = LimaString("VerbNet.%1").arg(semRoleIds.first());
       LDEBUG << semRole;
-      try {
+      try
+      {
         EntityType semRoleEntity = Common::MediaticData::MediaticData::single().getEntityType(semRole);
         std::set< LinguisticGraphVertex > posGraphSemRoleVertices = annotationData->matches("annot", semRoleVx,  "PosGraph");
         if (!posGraphSemRoleVertices.empty())
@@ -1083,11 +1084,13 @@ BoWPredicate* BowGenerator::createPredicate(
             roles.insert(semRoleEntity, semRoleTokens[0].second);
           }
         }
-        else {
+        else
+        {
           LDEBUG << "BowGenerator::createAbstractBoWElement Found no matching for the semRole in the annot graph";
         }
       }
-      catch (const Lima::LimaException& e) {
+      catch (const Lima::LimaException& e)
+      {
         LDEBUG << "BowGenerator::createAbstractBoWElement Unknown semantic role" << semRole << ";" << e.what();
       }
     }

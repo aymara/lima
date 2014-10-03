@@ -92,7 +92,7 @@ void ExternalProcessUnit::init(
   Manager* manager)
 
 {
-  LOGINIT("LP:External");
+  LOGINIT("LP::External");
   LDEBUG << "Initialization";
 
   MediaId language=manager->getInitializationParameters().media;
@@ -169,7 +169,7 @@ void ExternalProcessUnit::init(
 LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  LOGINIT("LP:External");
+  LOGINIT("LP::External");
   LINFO << "ExternalProcessUnit: start";
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));

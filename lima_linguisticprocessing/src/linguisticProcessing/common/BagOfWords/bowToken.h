@@ -93,8 +93,6 @@ public:
   void setLength(const uint64_t len);
 
   virtual Lima::LimaString getString(void) const;
-  // for compatibility
-  Lima::LimaString getIndexString(void) const;
 
   static void setInternalSeparator(const LimaChar c);
   static void setCompoundSeparator(const LimaChar c);

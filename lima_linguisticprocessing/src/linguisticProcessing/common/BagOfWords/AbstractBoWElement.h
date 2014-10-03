@@ -83,6 +83,11 @@ public:
 
   virtual Lima::LimaString getString(void) const = 0;
 
+  virtual uint64_t getPosition(void) const = 0;
+  virtual uint64_t getLength(void) const = 0;
+  virtual void setPosition(const uint64_t pos) = 0;
+  virtual void setLength(const uint64_t len) = 0;
+
   /**
    * returns the set of vertices covered by this element
    *

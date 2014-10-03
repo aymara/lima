@@ -279,9 +279,6 @@ void BoWToken::setCategory(LinguisticCode c)  {m_d->m_category = c;};
 void BoWToken::setPosition(const uint64_t pos){m_d->m_position = pos;};
 void BoWToken::setLength(const uint64_t len)  {m_d->m_length = len;};
 
-// for compatibility
-Lima::LimaString BoWToken::getIndexString(void) const { return getString(); }
-
 BoWType BoWToken::getType() const { return BOW_TOKEN; }
 
 uint64_t BoWToken::getVertex() const {return m_d->m_vertex;}

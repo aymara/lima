@@ -47,11 +47,9 @@ class AbstractProcessingClientHandler
     {
         if (m_clients.find(clientId)==m_clients.end())
         {
-             ABSTRACTPROCESSINGCLIENTLOGINIT;
-//             LERROR << "Handler for handlerId '" << handlerId << "' already exists !" ;
-//             throw LimaException();
-	    LERROR << "AbstarctProcessingHandler::no Client for clientId '" << clientId ;	
-            throw LimaException();
+          ABSTRACTPROCESSINGCLIENTLOGINIT;
+          LERROR << "AbstarctProcessingHandler::no Client for clientId" << clientId ;
+          throw LimaException();
 	    return NULL;
         }
         else

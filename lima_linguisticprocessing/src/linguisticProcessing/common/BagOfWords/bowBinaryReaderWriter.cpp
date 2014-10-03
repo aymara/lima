@@ -352,6 +352,8 @@ void BoWBinaryReaderPrivate::readPredicate(std::istream& file,
   BOWLOGINIT;
   EntityGroupId entityGrId = static_cast<EntityGroupId>( Misc::readCodedInt(file));
   EntityTypeId entityTypId = static_cast<EntityTypeId>(Misc::readCodedInt(file));
+  bowPred->setPosition(Misc::readCodedInt(file));
+  bowPred->setLength(Misc::readCodedInt(file));
   int roleNb = Misc::readCodedInt(file);
   LDEBUG << "BoWBinaryReader::readPredicate Read "<< roleNb<< "roles associated to the predicate";
   
@@ -601,6 +603,8 @@ void BoWBinaryWriterPrivate::writePredicate(std::ostream& file,
   LDEBUG << "BoWBinaryWriter : write predicate type " << type.getGroupId() << "." << type.getTypeId();
   Misc::writeCodedInt(file,type.getGroupId());
   Misc::writeCodedInt(file,type.getTypeId());
+  Misc::writeCodedInt(file,predicate->getPosition());
+  Misc::writeCodedInt(file,predicate->getLength());
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>pRoles=predicate->roles();
   Misc::writeCodedInt(file,pRoles.size());
   for (QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::iterator it = pRoles.begin();

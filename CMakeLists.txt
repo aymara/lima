@@ -21,12 +21,15 @@ macro (CompileLimaSubproject _project _dependsOn)
     add_dependencies(${_project} ${_dependsOn})
   endif()
 
-  ExternalProject_Add_Step(${_project} packaging
-   COMMAND make package
-   COMMENT "Packaging ${_project}"
-   WORKING_DIRECTORY <BINARY_DIR>
-   DEPENDEES install
-  )
+  if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
+    ExternalProject_Add_Step(${_project} packaging
+    COMMAND make package
+    COMMENT "Packaging ${_project}"
+    WORKING_DIRECTORY <BINARY_DIR>
+    DEPENDEES install
+    )
+  endif()
+
   ## Force rebuilding of the main subproject every time building from super structure
   ExternalProject_Add_Step(${_project} forcebuild
     COMMAND ${CMAKE_COMMAND} -E remove

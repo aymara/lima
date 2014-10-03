@@ -70,6 +70,7 @@ current_branch=`git rev-parse --abbrev-ref HEAD`
 current_revision=`git rev-parse --short HEAD`
 current_timestamp=`git show -s --format=%ct HEAD`
 current_project=`basename $PWD`
+current_project_name="`head -n1 CMakeLists.txt`"
 build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
@@ -99,7 +100,7 @@ install -d $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
 cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
-make -j$j && [ $current_project != "lima" ] && make test && make install
+make -j$j && [ "x$current_project_name" != "xproject(Lima)" ] && make test && make install
 result=$?
 popd
 

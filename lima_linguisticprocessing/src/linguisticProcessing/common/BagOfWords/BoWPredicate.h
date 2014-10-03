@@ -65,10 +65,21 @@ public:
 
   virtual BoWType getType() const { return BOW_PREDICATE; }
 
+  virtual Lima::LimaString getString(void) const;
+
+  virtual uint64_t getPosition(void) const;
+  virtual uint64_t getLength(void) const;
+  virtual void setPosition(const uint64_t pos);
+  virtual void setLength(const uint64_t len);
+
+  /** get a string of the predicate for output function */
+  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
+  virtual std::string getIdUTF8String(void) const;
+
   const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles() const;
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles();
   
-    void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles);
+  void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles);
 
   /**
    * returns the vertices of the predicate and the roles
@@ -77,11 +88,6 @@ public:
    */
   virtual std::set< uint64_t > getVertices() const;
 
-
-  virtual Lima::LimaString getString(void) const;
-  /** get a string of the predicate for output function */
-  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
-  virtual std::string getIdUTF8String(void) const;
 
 protected:
     BoWPredicate(BoWPredicatePrivate&);
