@@ -20,8 +20,23 @@ SET(EnhancedAnalysisDictionaryTest0_SRCS
    EnhancedAnalysisDictionaryTest0.cpp
 )
 
+configure_file(lima-lp-res-Enhanced.xml lima-lp-res-Enhanced.xml COPYONLY )
+
 add_executable(EnhancedAnalysisDictionaryTest0 ${EnhancedAnalysisDictionaryTest0_SRCS})
 
 target_link_libraries(EnhancedAnalysisDictionaryTest0 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(EnhancedAnalysisDictionaryTest0 EnhancedAnalysisDictionaryTest0)
+
+########### next test ###############
+
+SET(EnhancedAnalysisDictionaryTest1_SRCS
+   EnhancedAnalysisDictionaryTest1.cpp
+)
+
+add_executable(EnhancedAnalysisDictionaryTest1 ${EnhancedAnalysisDictionaryTest1_SRCS})
+
+target_link_libraries(EnhancedAnalysisDictionaryTest1 lima-common-data lima-common-mediaticdata lima-lp-linguisticdata lima-common-fsaaccess lima-common-qslog lima-common-xmlconfigurationfiles lima-lp-linguisticresources lima-lp-analysisdict ${Boost_LIBRARIES} ${QT_LIBRARIES})
+
+add_test(EnhancedAnalysisDictionaryTest1 EnhancedAnalysisDictionaryTest1)
+

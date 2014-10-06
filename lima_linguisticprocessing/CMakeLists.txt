@@ -148,7 +148,8 @@ ELSE (LIMACOMMON_FOUND)
   MESSAGE(FATAL_ERROR "Could not find lima_common")
 ENDIF(LIMACOMMON_FOUND)
 
-
+configure_file(LIMALPConfig-src.cmake LIMALPConfig.cmake @ONLY)
+find_package(LIMALP PATHS ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)
@@ -159,7 +160,7 @@ add_subdirectory(cmake)
 
 
 ########### install files ###############
-install(FILES LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
 install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins)
 
 ########### documentation ###############

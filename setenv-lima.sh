@@ -2,12 +2,12 @@
 # be able to source this script from elsewhere
 export LIMA_ROOT=$PWD/..
 
-LIMA_SOURCES=$LIMA_ROOT/lima
+LIMA_SOURCES=$LIMA_ROOT/lima.testOfDict
 pushd $LIMA_SOURCES
 current_branch=`git rev-parse --abbrev-ref HEAD`
 popd
 
-export NLTK_PTB_DP_FILE=$HOME/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+export NLTK_PTB_DP_FILE=~/Projects/Aymara/NLTK/corpora/dependency_treebank/nltk-ptb.dp
 export LINGUISTIC_DATA_ROOT=$LIMA_SOURCES/lima_linguisticData
 
 export LIMA_BUILD_DIR=$LIMA_ROOT/Builds

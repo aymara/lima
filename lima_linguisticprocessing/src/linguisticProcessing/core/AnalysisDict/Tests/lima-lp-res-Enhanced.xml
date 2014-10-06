@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="Resources">
+
+    <group name="FsaStringsPool">
+      <param key="mainKeys" value="globalFsaAccess"/>
+    </group>
+    <group name="mainDictionary" class="EnhancedAnalysisDictionary">
+      <param key="accessKeys" value="globalFsaAccess"/>
+      <param key="dictionaryValuesFile" value="LinguisticProcessings/fre/dicoDat-fre.dat"/>
+    </group>
+    <group name="globalFsaAccess" class="FsaAccess">
+      <param key="keyFile" value="LinguisticProcessings/fre/dicoKey-fre.dat"/>
+    </group>
+  </module>
+</modulesConfig>
