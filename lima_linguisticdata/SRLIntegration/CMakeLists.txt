@@ -118,7 +118,7 @@ foreach(LANG ${LIMA_LANGUAGES})
       OUTPUT VerbNet-${LANG}.bin
       COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config --debug --language=${LANG} -oVerbNet-${LANG}.bin ${_current} --modex=VerbNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules
       DEPENDS ${_current} ${DEPENDENCIES}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
     )
 
@@ -133,7 +133,7 @@ foreach(LANG ${LIMA_LANGUAGES})
 
     add_dependencies(rules-VerbNet-${LANG}-main rules-${LANG}-VerbNet-configEnv srl-rules-${LANG}-execEnv)
     
-    install(FILES VerbNet-${LANG}.bin COMPONENT ${LANG} DESTINATION share/apps/lima/resources/SRLIntegration)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/VerbNet-${LANG}.bin COMPONENT ${LANG} DESTINATION share/apps/lima/resources/SRLIntegration)
 
 
   endif ()
