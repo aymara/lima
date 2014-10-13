@@ -35,6 +35,15 @@ ELSE (LIMACOMMON_FOUND)
   MESSAGE(FATAL_ERROR "Could not find limacommon")
 ENDIF(LIMACOMMON_FOUND)
 
+FIND_PACKAGE(LIMALP PATHS $ENV{LIMA_DIST}/share/apps/lima/cmake/Modules ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules share/apps/lima/cmake/Modules)
+IF(LIMALP_FOUND)
+  include_directories(${LIMALP_INCLUDE_DIR})
+  link_directories(${LIMALP_LIBRARY_DIRS})
+ELSE (LIMALP_FOUND)
+  MESSAGE(FATAL_ERROR "Could not find limalp")
+ENDIF(LIMALP_FOUND)
+
+configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
 add_subdirectory(cmake)
 add_subdirectory(scratch)
@@ -47,6 +56,7 @@ add_subdirectory(SRLIntegration)
 
 
 ########### install files ###############
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
 
 
 ########### packaging ###############
