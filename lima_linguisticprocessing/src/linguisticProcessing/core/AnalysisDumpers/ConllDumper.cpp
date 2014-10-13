@@ -149,7 +149,7 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     std::ifstream ifs(mappingFile, std::ifstream::binary);
     if (!ifs.good())
     {
-      LERROR << "ERROR: cannot open"+ mappingFile << LENDL;
+      LERROR << "ERROR: cannot open"+ mappingFile;
       throw InvalidConfiguration();
     }
     while (ifs.good() && !ifs.eof())
@@ -225,33 +225,36 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
 
   map<std::string, std::string>::const_iterator im;
-  for (im=m_conllLimaDepMapping.begin();im!=m_conllLimaDepMapping.end();im++){
+  for (im=m_conllLimaDepMapping.begin();im!=m_conllLimaDepMapping.end();im++)
+  {
     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
   }
 
   LimaConllTokenIdMapping* limaConllTokenIdMapping = new LimaConllTokenIdMapping();
   analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   int sentenceNb=0;
-  while (sbItr!=(sd->getSegments().end()))//for each sentence
-  {sentenceNb++;
+  while (sbItr != sd->getSegments().end() ) //for each sentence
+  {
+    sentenceNb++;
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
     map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
     map<int,LinguisticGraphVertex>segmentationMappingReverse;
 
-    LDEBUG << "begin - end: " << sentenceBegin << " - " << sentenceEnd << LENDL;
+    LDEBUG << "begin - end: " << sentenceBegin << " - " << sentenceEnd;
     //LinguisticGraphOutEdgeIt outItr,outItrEnd;
     std::queue<LinguisticGraphVertex> toVisit;
     std::set<LinguisticGraphVertex> visited;
     toVisit.push(sentenceBegin);
     int tokenId = 0;
-    for (LinguisticGraphVertex v=toVisit.front();v!=sentenceEnd;v=toVisit.front()) {
+    for (LinguisticGraphVertex v=toVisit.front();v!=sentenceEnd && !toVisit.empty();v=toVisit.front())
+    {
       toVisit.pop();
       LDEBUG << "Vertex index : " << v;
       visited.insert(v);
       segmentationMapping.insert(make_pair(v,tokenId));
       segmentationMappingReverse.insert(make_pair(tokenId,v));
-      LDEBUG << "conll id : " << tokenId << " Lima id : " << v << LENDL;
+      LDEBUG << "conll id : " << tokenId << " Lima id : " << v;
       DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
       std::vector<DependencyGraphEdge> edges;
@@ -280,7 +283,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   //      {
           LDEBUG << "Src  : Dep vertex= " << source(*it, *depGraph);
           LinguisticGraphVertex src = syntacticData->tokenVertexForDepVertex(source(*it, *depGraph));
-          LDEBUG << "Src  : Morph vertex= " << src << LENDL;
+          LDEBUG << "Src  : Morph vertex= " << src;
           LDEBUG << "Targ : Dep vertex= " << target(*it, *depGraph);
           LinguisticGraphVertex dest = syntacticData->tokenVertexForDepVertex(target(*it, *depGraph));
           LDEBUG << "Targ : Morph vertex= " << dest;
@@ -294,7 +297,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         }
         catch (...)
         {
-          LDEBUG << "DepTripleDumper::dumpDependencyRelations: catch others....." << LENDL;
+          LDEBUG << "DepTripleDumper::dumpDependencyRelations: catch others.....";
         throw;
         }
       }
