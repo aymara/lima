@@ -458,6 +458,17 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
      ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
     DEPENDS
       ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/${_group}-modex.xml
+    COMMENT "create config env for specific entities rules (VerbNet-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
     COMMENT "create config env for specific entities rules (${_group}-modex.xml)"
     VERBATIM
   )
@@ -523,6 +534,7 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
     rules-${_lang}-${_group}-configEnv-${_subtarget}
     ALL
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
