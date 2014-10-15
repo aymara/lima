@@ -52,18 +52,22 @@ class AnalysisThreadPrivate
 friend class AnalysisThread;
 public:
   AnalysisThreadPrivate (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer, 
-                        QHttpRequest *req, QHttpResponse *resp);
+                        QHttpRequest *req, QHttpResponse *resp,
+                        const std::set<std::string>& langs);
   ~AnalysisThreadPrivate() {}
   
   Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
   QHttpRequest* m_request;
   QHttpResponse* m_response;
+  const std::set<std::string>& m_langs;
 };
 
 AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 
-                    QHttpRequest *req, QHttpResponse *resp) :
+                    QHttpRequest *req, QHttpResponse *resp,
+                    const std::set<std::string>& langs) :
     m_analyzer(analyzer),
-    m_request(req), m_response(resp)
+    m_request(req), m_response(resp),
+    m_langs(langs)
 {
 }
 
@@ -71,8 +75,7 @@ AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticPr
                   QHttpRequest *req, QHttpResponse *resp, 
                   const std::set<std::string>& langs, QObject* parent ):
     QThread(parent),
-    m_d(new AnalysisThreadPrivate(analyzer,req,resp)),
-    m_langs(langs)
+    m_d(new AnalysisThreadPrivate(analyzer,req,resp,langs))
 {
   CORECLIENTLOGINIT;
   LDEBUG << "AnalysisThread::AnalysisThread()...";
@@ -135,11 +138,10 @@ void AnalysisThread::startAnalysis()
 	LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << text << "'";
       }
     }
-    if( m_langs.find(metaData["Lang"]) == m_langs.end() )
+    if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
     {
         m_d->m_response->writeHead(400);
-        QString errorMessage("Language ");
-	errorMessage.append(language).append(" is no initialized");
+        QString errorMessage = QString(tr("Language %1 is no initialized")).arg(language);
         m_d->m_response->end(errorMessage.toUtf8());
     }
     else if( !language.isEmpty() && !text.isEmpty() )
@@ -215,7 +217,7 @@ void AnalysisThread::startAnalysis()
       m_d->m_response->end(QByteArray("Empty language"));
       return;
     }
-    else if( m_langs.find(metaData["Lang"]) == m_langs.end() )
+    else if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
     {
         m_d->m_response->writeHead(400);
         QString errorMessage("Language ");

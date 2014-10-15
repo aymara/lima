@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="dbus-server">
+    <group name="analyzer">
+      <list name="languages">
+        <item value="fre"/>
+        <item value="eng"/>
+      </list>
+      <list name="pipelines">
+        <item value="main"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

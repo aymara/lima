@@ -58,6 +58,8 @@
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 // factories
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
+#include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
+
 
 #include <qhttpserver.h>
 #include <qhttprequest.h>
@@ -66,6 +68,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QStringList>
 #include <QCoreApplication>
+#include <QTimer>
 
 #include <stdlib.h>
 #include <boost/graph/buffer_concepts.hpp>
@@ -79,7 +82,6 @@ using namespace Lima::LinguisticProcessing;
 
 LimaServer::LimaServer( const std::string& configDir,
 		   const std::deque<std::string>& langs,
-		   const std::vector<std::string>& vinactiveUnits,
 		   const std::deque<std::string>& pipelines,
 		   int port,
 		   QObject *parent,
@@ -123,7 +125,6 @@ LimaServer::LimaServer( const std::string& configDir,
   
   LDEBUG << "LimaServer::LimaServer: createClient...";
   m_analyzer=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
-  
   
   LDEBUG << "LimaServer::LimaServer: create QHttpServer...";
   m_server = new QHttpServer(this);

@@ -17,7 +17,7 @@
 */
 
 
-#include "LimaServer.h"
+#include "LimaDBusServer.h"
 #include <qdir.h>
 #include <QByteArray>
 #include <QCoreApplication>
@@ -57,6 +57,8 @@ int main(int argc, char **argv)
   std::vector<std::string> languages;
   // list of pipelines to initialize analyzer
   std::vector<std::string> pipelines;
+  // list of inacive units in pipelines
+  std::vector<std::string> vinactiveUnits;
   int optional_port;
   // time before service stop
   int service_life = 0;
@@ -68,9 +70,11 @@ int main(int argc, char **argv)
   ("language,l", po::value< std::vector<std::string> >(&languages), "supported languages trigrams")
   ("config-dir", po::value<std::string>(&configDir)->default_value(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData(),"$LIMA_CONF"),
                                                                                                                   "Set the directory containing the (LIMA) configuration files")
-  ("common-config-file", po::value<std::string>(&limaServerConfigFile)->default_value("lima-server.xml"),
+  ("common-config-file", po::value<std::string>(&limaServerConfigFile)->default_value("lima-dbusserver.xml"),
                                                                                   "Set the LIMA server configuration file to use")
   ("pipeline,p", po::value< std::vector<std::string> >(&pipelines), "Set the linguistic analysis supported pipelines")
+  ("inactive-units", po::value< std::vector<std::string> >(&vinactiveUnits),
+   "Inactive some process units of the used pipeline")
   ("port", po::value< int >(&optional_port),
    "set the listening port")
   ("service-life,t", po::value< int >(&service_life),
@@ -101,28 +105,6 @@ int main(int argc, char **argv)
   std::string fileName(configDir);
   fileName.append("/").append(limaServerConfigFile);
   XMLConfigurationFileParser configLimaServer(fileName);
-  quint16 port = DEFAULT_PORT;
-  std::cout << "main: before, port = " << port << std::endl;
-  if (varMap.count("port")) {
-    port = optional_port;
-  }
-  else {
-    try
-    {
-      port = QString::fromAscii(configLimaServer.getModuleGroupParamValue("http-server","address","port").c_str()).toInt();
-    }
-    catch (NoSuchModule& e1)
-    {
-      qDebug() << "http-server module not defined in config file. Using default port" << DEFAULT_PORT;
-    } catch (NoSuchGroup& e2)
-    {
-      qDebug() << "http-server/address group not defined in config file. Using default port" << DEFAULT_PORT;
-    } catch (NoSuchParam& e3)
-    {
-      qDebug() << "http-server/address/port parameter not defined in config file. Using default port" << DEFAULT_PORT;
-    }
-  }
-  std::cout << "main: after, port = " << port << std::endl;
 
   // analyzer languages
   {
@@ -132,24 +114,27 @@ int main(int argc, char **argv)
     std::cout << "main: before, languages = " << oss.str() << std::endl;
   }
   std::deque<std::string> langs;
-  if (varMap.count("language")) {
-    if( !languages.empty() ) {
+  if (varMap.count("language"))
+  {
+    if( !languages.empty() )
+    {
       langs.resize(languages.size());
       std::copy(languages.begin(), languages.end(), langs.begin());
     }
   }
-  else {
+  else
+  {
     try
     {
-      langs = configLimaServer.getModuleGroupListValues("http-server", "analyzer", "languages") ;
+      langs = configLimaServer.getModuleGroupListValues("dbus-server", "analyzer", "languages") ;
     }
     catch (NoSuchModule& e1)
     {
-	qDebug() << "http-server module not defined in config file. Ininialize with all available languages";
+      qDebug() << "dbus-server module not defined in config file. Ininialize with all available languages";
     }
     catch (NoSuchParam& e3)
     {
-      qDebug() << "http-server/analyzer/languages parameter not defined in config file. Ininialize with all available languages";
+      qDebug() << "dbus-server/analyzer/languages parameter not defined in config file. Ininialize with all available languages";
     }
   }
   {
@@ -177,15 +162,15 @@ int main(int argc, char **argv)
   else {
     try
     {
-      pipes = configLimaServer.getModuleGroupListValues("http-server", "analyzer", "pipelines") ;
+      pipes = configLimaServer.getModuleGroupListValues("dbus-server", "analyzer", "pipelines") ;
     }
     catch (NoSuchModule& e1)
     {
-	qDebug() << "http-server module not defined in config file. Ininialize with all available pipelines";
+	qDebug() << "dbus-server module not defined in config file. Ininialize with all available pipelines";
     }
     catch (NoSuchParam& e3)
     {
-      qDebug() << "http-server/analyzer/languages parameter not defined in config file. Ininialize with all available pipelines";
+      qDebug() << "dbus-server/analyzer/languages parameter not defined in config file. Ininialize with all available pipelines";
     }
   }
   {
@@ -195,17 +180,8 @@ int main(int argc, char **argv)
     std::cout << "main: after, pipes = " << oss.str() << std::endl;
   }
 
-  QTimer t;
   // Create instance of server
-  LimaServer server( configDir, langs, pipes, port, &app, &t);
-
-  if (varMap.count("service-life")) {
-    // Stop server and app after service-life seconds
-    //note that we need to use t.connect, as main is not a QObject
-    t.connect (&t, SIGNAL(timeout()), &server, SLOT(quit()));
-    int time_out = service_life*1000;
-    t.start(time_out);
-  }
+  LimaDBusServer server( configDir, langs, pipes, service_life*1000, &app);
 
   //return app.exec();
   int ret = app.exec();

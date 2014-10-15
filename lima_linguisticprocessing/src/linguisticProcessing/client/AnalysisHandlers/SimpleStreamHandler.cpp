@@ -80,7 +80,11 @@ void SimpleStreamHandler::endDocument()
 {}
 
 void SimpleStreamHandler::endAnalysis()
-{}
+{
+  DUMPERLOGINIT;
+  LDEBUG << "SimpleStreamHandler::endAnalysis";
+  if (m_d->m_out != 0) m_d->m_out->flush();
+}
 
 void SimpleStreamHandler::startAnalysis()
 {}
@@ -88,6 +92,9 @@ void SimpleStreamHandler::startAnalysis()
 
 void SimpleStreamHandler::handle(const char* buf,int length) 
 {
+  DUMPERLOGINIT;
+  LDEBUG << "SimpleStreamHandler::handle";
+
   if (m_d->m_out != 0) m_d->m_out->write(buf,length);
 }
   
@@ -95,7 +102,8 @@ void SimpleStreamHandler::startNode( const std::string& /*elementName*/, bool /*
 {}
   
 void SimpleStreamHandler::endNode( const Common::Misc::GenericDocumentProperties& /*props*/ )
-{}
+{
+}
 
 void SimpleStreamHandler::setOut(std::ostream* out)
 {

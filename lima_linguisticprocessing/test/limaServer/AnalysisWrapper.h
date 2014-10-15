@@ -18,11 +18,12 @@
 
 */
 
-#ifndef ANALYSISTHREAD_H
-#define ANALYSISTHREAD_H
+#ifndef ANALYSISWRAPPER_H
+#define ANALYSISWRAPPER_H
 
 #include <set>
 #include <QtCore/QThread>
+#include <QtCore/QString>
 
 class QObject;
 class QHttpRequest;
@@ -36,29 +37,22 @@ namespace Lima
   }
 }
 
-class AnalysisThreadPrivate;
+class AnalysisWrapperPrivate;
 /**
- * @brief Analyser thread
+ * @brief Analyser wrapper
  */
-class AnalysisThread : public QThread
+class AnalysisWrapper : public QObject
 {
   Q_OBJECT
 public:
-    AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer, 
-                  QHttpRequest *req, QHttpResponse *resp, 
+    AnalysisWrapper (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer,
                   const std::set<std::string>& langs, QObject* parent = 0 );
-    virtual ~AnalysisThread();
+    virtual ~AnalysisWrapper();
     
-Q_SIGNALS:
-  void anlysisFinished();
-  void ready();
-  
-public Q_SLOTS:
-    void startAnalysis();
-    void slotStarted();
+  QString analyze(const QString& text, const QString& language, const QString& pipeline);
 
 private:
-  AnalysisThreadPrivate* m_d;
+  AnalysisWrapperPrivate* m_d;
 };
 
-#endif // ANALYSISTHREAD_H
+#endif // ANALYSISWRAPPER_H
