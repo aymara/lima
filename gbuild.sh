@@ -14,6 +14,9 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
+#Fail if anything goes wrong 
+set -e
+
 usage() 
 { 
 cat << EOF 1>&2; exit 1; 
