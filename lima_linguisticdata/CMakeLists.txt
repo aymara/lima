@@ -45,6 +45,10 @@ ENDIF(LIMALP_FOUND)
 
 configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
+
+LIMA_GENERIC_CONFIGENV(eng)
+LIMA_GENERIC_CONFIGENV(fre)
+
 add_subdirectory(cmake)
 add_subdirectory(scratch)
 add_subdirectory(analysisDictionary)

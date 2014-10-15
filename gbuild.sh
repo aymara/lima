@@ -14,6 +14,9 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
+#Fail if anything goes wrong 
+set -e
+
 usage() 
 { 
 cat << EOF 1>&2; exit 1; 
@@ -100,7 +103,13 @@ install -d $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
 cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
-make -j$j && [ "x$current_project_name" != "xproject(Lima)" ] && make test && make install
+make -j$j 
+
+if [ "x$current_project_name" != "xproject(Lima)" ];
+then
+  make test && make install
+fi
+
 result=$?
 popd
 

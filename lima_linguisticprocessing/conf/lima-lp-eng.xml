@@ -70,6 +70,8 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowTextHandler"/>
       </list>
     </group>
@@ -87,6 +89,8 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowDumper"/>
       </list>
     </group>
@@ -103,6 +107,8 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowTextHandler"/>
       </list>
     </group>
@@ -125,6 +131,8 @@
         <item value="dotDepGraphWriter"/>
         <item value="easyXmlDumper"/>
         <item value="fullXmlDumper"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowDumper"/>
       </list>
     </group>
