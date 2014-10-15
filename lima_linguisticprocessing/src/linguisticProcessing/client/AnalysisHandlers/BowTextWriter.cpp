@@ -67,9 +67,6 @@ BowTextWriter::~BowTextWriter()
 void BowTextWriter::setOut(std::ostream* out)
 {
   m_d->m_out = out;
-  
-  Common::BagOfWords::BoWBinaryWriter writer;
-  writer.writeHeader(*m_d->m_out,Common::BagOfWords::BOWFILE_TEXT);
 }
 
 void BowTextWriter::endAnalysis()
@@ -99,7 +96,19 @@ void BowTextWriter::handle(const char* buf, int length)
 }
 
 void BowTextWriter::startAnalysis()
-{}
+{
+  BOWLOGINIT;
+  LDEBUG << "BowTextWriter::startAnalysis";
+  if (m_d->m_out == 0)
+  {
+    BOWLOGINIT;
+    LERROR << "BowTextWriter Error: output stream is not set !";
+    return;
+  }
+  Common::BagOfWords::BoWBinaryWriter writer;
+  writer.writeHeader(*m_d->m_out,Common::BagOfWords::BOWFILE_TEXT);
+
+}
 
 void BowTextWriter::startDocument(const Common::Misc::GenericDocumentProperties&)
 {}
