@@ -236,17 +236,17 @@ public :
     MediaNotInitialized(MediaId medId) : LimaException(),m_medId(medId),m_med(),m_num(true) {};
     MediaNotInitialized(const std::string& med) : LimaException(),m_medId(0),m_med(med),m_num(false) {};
     virtual ~MediaNotInitialized() throw() {};
-    std::string what()
+    const char* what() const throw()
     {
         if (m_num)
         {
             std::ostringstream oo;
             oo << "uninitialized media " << (int)m_medId;
-            return oo.str();
+            return oo.str().c_str();
         }
         else
         {
-            return std::string("uninitialized media ")+m_med;
+            return (std::string("uninitialized media ")+m_med).c_str();
         }
     };
 private:
@@ -261,13 +261,13 @@ public :
     LanguageNotInitialized(MediaId langId) : LimaException(),m_langId(langId),m_lang(),m_num(true) {};
     LanguageNotInitialized(const std::string& lang) : LimaException(),m_langId(0),m_lang(lang),m_num(false) {};
     virtual ~LanguageNotInitialized() throw() {};
-    std::string what() {
+    const char* what() const throw() {
         if (m_num) {
             std::ostringstream oo;
             oo << "uninitialized language " << (int)m_langId;
-            return oo.str();
+            return oo.str().c_str();
         } else {
-            return std::string("uninitialized language ")+m_lang;
+            return (std::string("uninitialized language ")+m_lang).c_str();
         }
     };
 private:
@@ -281,10 +281,10 @@ class AccessByStringNotInitialized : public LimaException {
 public :
     AccessByStringNotInitialized(const std::string& reason) : LimaException(), m_reason(reason) {};
     virtual ~AccessByStringNotInitialized() throw() {};
-    std::string what() {
+    const char* what() const throw() {
         std::ostringstream oo;
         oo << "Fsa not initialized because of " << m_reason;
-        return oo.str();
+        return oo.str().c_str();
     };
 private:
   AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) {return  *this;}
@@ -295,10 +295,10 @@ class AccessByStringOutOfRange : public LimaException {
 public :
     AccessByStringOutOfRange(const std::string& reason) : LimaException(), m_reason(reason) {};
     virtual ~AccessByStringOutOfRange() throw() {};
-    std::string what() {
+    const char* what() const throw() {
         std::ostringstream oo;
         oo << "parameter out of range " << m_reason;
-        return oo.str();
+        return oo.str().c_str();
     };
 private:
   AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) {return  *this;}
@@ -309,8 +309,8 @@ class IncompleteResources : public LimaException {
 public :
     IncompleteResources(const std::string& reason) : LimaException(), m_reason(reason) {}
     virtual ~IncompleteResources() throw() {}
-    std::string what() {
-        return std::string("incomplete ressources:  ") + m_reason ;
+    const char* what() const throw() {
+        return (std::string("incomplete ressources:  ") + m_reason).c_str() ;
     }
 private:
   IncompleteResources& operator=(const IncompleteResources&) {return  *this;}
