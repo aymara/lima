@@ -112,7 +112,7 @@ else (ENCHANT_FOUND)
   message("Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
 endif (ENCHANT_FOUND)
 
-find_package(Qt4 REQUIRED QtCore QtXml QtXmlPatterns QtNetwork QtDBus)
+find_package(Qt4 4.7 REQUIRED QtCore QtXml QtXmlPatterns QtNetwork QtDBus)
 include(${QT_USE_FILE})
 include_directories(${Qt4_INCLUDE_DIR})
 link_directories(${Qt4_LIBRARY_DIRS})
