@@ -104,13 +104,14 @@ pushd $build_prefix/$mode/$current_project
 cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 make -j$j 
+result=$?
 
 if [ "x$current_project_name" != "xproject(Lima)" ];
 then
   make test && make install
+  result=$?
 fi
 
-result=$?
 popd
 
 exit $result
