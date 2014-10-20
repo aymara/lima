@@ -191,10 +191,10 @@ LimaStatusCode RegexMatcher::process(
   QMap< QString, QString >::const_iterator reit, reit_end;
   reit = m_d->m_regexes.begin(); reit_end = m_d->m_regexes.end();
   std::string::const_iterator start = text.begin();
-  for (auto reit : m_d->m_regexes.toStdMap())
+  for (auto reit = m_d->m_regexes.toStdMap().begin(); reit != m_d->m_regexes.toStdMap().end(); reit++)
   {
-    QRegExp re(reit.first);
-    QString tstatus = reit.second;
+    QRegExp re(reit->first);
+    QString tstatus = reit->second;
     
     int position = 0;
     while ((position = re.indexIn(*originalText, position)) != -1)  
