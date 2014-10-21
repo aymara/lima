@@ -16,17 +16,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/** @brief       A structure that holds an annotation graph and gives a high
-  *              level API to access it
-  *
-  * @file        AnnotationData.h
-  * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
-
-  *              Copyright (c) 2004-2005 by CEA
-  * @date        Created on Nov, 8 2004
-  * @version     $Id$
-  *
-  */
+/**
+ * @brief This file is the main header file for the data related to annotation
+ *        graphs
+ * @file        AnnotationData.h
+ * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr>
+ *              Copyright (c) 2004-2014 by CEA LIST
+ * @date        Created on Nov, 8 2004
+ */
 
 #ifndef LIMA_ANNOTATIONGRAPHS_ANNOTATIONDATA_H
 #define LIMA_ANNOTATIONGRAPHS_ANNOTATIONDATA_H
@@ -36,22 +33,17 @@
 
 #include "AnnotationGraph.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
-/** @brief This file is the main header file for the data related to annotation
- *        graphs
- * @file        AnnotationData.h
- * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
-
- *              Copyright (c) 2005 by CEA
- * @date        Created on
- * @version     $Id$
- */
 
 namespace Lima {
 namespace Common {
 namespace AnnotationGraphs {
 
-/** @brief Holds an annotation graph and gives an API to manipulate it
-  */
+class AnnotationDataPrivate;
+
+/**
+ * @brief Holds an annotation graph and gives an API to manipulate it
+ * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr>
+ */
 class LIMA_ANNOTATIONGRAPH_EXPORT AnnotationData : public AnalysisData
 {
 public:
@@ -212,21 +204,15 @@ public:
 
   /** @defgroup AGAccess access to the underlying annotation graph
    @{ */
-  inline AnnotationGraph& getGraph() { return m_graph; }
-  inline const AnnotationGraph& getGraph() const { return m_graph; }
+  AnnotationGraph& getGraph();
+  const AnnotationGraph& getGraph() const;
   /** @} */
 
   /** @brief Gives the name of an annotation id */
-  const LimaString& annotationName(uint64_t annotationId) const
-  {
-    return m_pool[static_cast<StringsPoolIndex>(annotationId)];
-  }
+  const LimaString& annotationName(uint64_t annotationId) const;
 
   /** @brief Gives the id of an annotation name */
-  uint64_t annotationId(const LimaString& s)
-  {
-    return m_pool[s];
-  }
+  uint64_t annotationId(const LimaString& s);
 
   /** @defgroup AccessDump Accessors for dumpFunctions
    *
@@ -296,47 +282,11 @@ public:
                         std::set< std::string >& excepted);
 
   /** @brief Access to the underlying raw matching structure */
-  const std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> >& matchings() const {return m_matchings;}
+  const std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> >& matchings() const;
 
 private:
-  /** @brief Holds the graph */
-  AnnotationGraph m_graph;
-
-  /** @brief Contains mapping between annotations names and annotations ids */
-  Lima::StringsPool m_pool;
-
-  /** @brief Associates a dumping function to each annotation id */
-  std::map< uint64_t, const Dumper* > m_dumpFunctions;
-
-  /** @brief Stores matching between various graphs vertices and the annotation
-   *  graph vertices.
-   *
-   *  each key is the name of a matching (e.g. index of 'morph2annot') and the value is the
-   *  mapping itsel in which the keys are the source graph vertices and the
-   *  values are the matching target graph vertices
-   */
-  std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> > m_matchings;
+  AnnotationDataPrivate* m_d;
 };
-
-/** @brief Definition of a dummy function suitable to be used as a dumper for
-  * the annotations of an annotation graph
-  *
-  * @param @b os <I>std::ostream&amp;</I> the stream on which to dump
-  * @param @b ga <I>GenericAnnotation&amp;</I> the annotation to be dumped.
-  * @return <I>int</I> The dummy dumping is considered as succesful, so
-  *         SUCCESS_ID is returned.
-  */
-class LIMA_ANNOTATIONGRAPH_EXPORT DummyDumpFunction : public AnnotationData::Dumper {
-  public:
-    virtual int dump(std::ostream&, GenericAnnotation&) const;
-};
-
-inline void AnnotationData::addMatching(const StringsPoolIndex& direction, AnnotationGraphVertex firstVx,
-                                 AnnotationGraphVertex secondVx)
-{
-  m_matchings[direction].insert(std::make_pair(firstVx,secondVx));
-}
-
 
 } // closing namespace AnnotationGraphs
 } // closing namespace Common
