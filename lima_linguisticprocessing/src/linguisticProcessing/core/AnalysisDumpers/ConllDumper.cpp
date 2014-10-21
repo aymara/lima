@@ -40,21 +40,13 @@
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/ConstituantAndRelationExtractor.h"
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/relation.h"
 #include "linguisticProcessing/core/SemanticAnalysis/LimaConllTokenIdMapping.h"
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
 
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/lexical_cast.hpp>
-#include <iostream>
+#include <QQueue>
+#include <QSet>
+#include <QStringList>
+
 #include <fstream>
-#include <queue>
-#include <sstream>
-#include <map>
 
-using namespace boost;
-using namespace boost::tuples;
-using namespace std;
-using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -62,7 +54,7 @@ using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SemanticAnalysis;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
-using namespace Lima::LinguisticProcessing::AnalysisDumpers;
+using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima
 {
@@ -75,8 +67,37 @@ namespace AnalysisDumpers
 
 SimpleFactory<MediaProcessUnit,ConllDumper> conllDumperFactory(CONLLDUMPER_CLASSID);
 
-ConllDumper::ConllDumper():
-AbstractTextualAnalysisDumper(),
+class ConllDumperPrivate
+{
+  friend class ConllDumper;
+  ConllDumperPrivate();
+
+  virtual ~ConllDumperPrivate();
+
+  /**
+   * @brief Collect all annotation tokens corresponding to a predicate of the
+   * sentence starting at @ref sentenceBegin and finishing at @ref sentenceEnd
+   */
+  QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex>  collectPredicateTokens(
+                                  Lima::AnalysisContent& analysis, LinguisticGraphVertex sentenceBegin, LinguisticGraphVertex sentenceEnd);
+
+  MediaId m_language;
+  std::string m_property;
+  const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
+  const Common::PropertyCode::PropertyManager* m_propertyManager;
+  const Common::PropertyCode::PropertyManager* m_timeManager; //Ajout
+  const Common::PropertyCode::PropertyAccessor* m_timeAccessor; //Ajout
+
+  std::string m_graph;
+  std::string m_sep;
+  std::string m_sepPOS;
+  std::string m_verbTenseFlag; //Ajout
+  QMap<QString, QString> m_conllLimaDepMapping;
+  std::string m_suffix;
+};
+
+
+ConllDumperPrivate::ConllDumperPrivate():
 m_language(0),
 m_property("MICRO"),
 m_propertyAccessor(0),
@@ -89,59 +110,68 @@ m_suffix(".conll")
 {
 }
 
-ConllDumper::~ConllDumper()
+ConllDumperPrivate::~ConllDumperPrivate()
 {}
+
+ConllDumper::ConllDumper():
+AbstractTextualAnalysisDumper(),
+m_d(new ConllDumperPrivate())
+{
+}
+
+ConllDumper::~ConllDumper()
+{
+  delete m_d;
+}
 
 void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
                       Manager* manager)
 {
   DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
-  m_language=manager->getInitializationParameters().media;
+  m_d->m_language=manager->getInitializationParameters().media;
   try
   {
-    m_graph=unitConfiguration.getParamsValueAtKey("graph");
-
+    m_d->m_graph=unitConfiguration.getParamsValueAtKey("graph");
   }
   catch (NoSuchParam& ) {} // keep default value
+  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
+  m_d->m_propertyAccessor=&codeManager.getPropertyAccessor("MICRO");
 
   try
   {
-    m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag"); 
+    m_d->m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag");
   }
   catch (NoSuchParam& ) {
-    m_verbTenseFlag=std::string("False");
+    m_d->m_verbTenseFlag=std::string("False");
   } // keep default value
-  //---
 
   try
   {
-    m_sep=unitConfiguration.getParamsValueAtKey("sep"); 
+    m_d->m_sep=unitConfiguration.getParamsValueAtKey("sep");
   }
   catch (NoSuchParam& ) {} // keep default value
 
   try
   {
-    m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS"); 
+    m_d->m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS");
   }
   catch (NoSuchParam& ) {} // keep default value
 
   try
   {
-    m_property=unitConfiguration.getParamsValueAtKey("property"); 
+    m_d->m_property=unitConfiguration.getParamsValueAtKey("property");
   }
   catch (NoSuchParam& ) {} // keep default value
   try
   {
-    m_suffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
+    m_d->m_suffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
   }
   catch (NoSuchParam& ) {} // keep default value
-  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-  m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
-  m_propertyManager=&codeManager.getPropertyManager(m_property);
+  m_d->m_propertyManager=&codeManager.getPropertyManager(m_d->m_property);
 
-  m_timeManager=&codeManager.getPropertyManager("TIME");
-  m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
+  m_d->m_timeManager=&codeManager.getPropertyManager("TIME");
+  m_d->m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
   
   try {
     std::string resourcePath = Common::MediaticData::MediaticData::single().getResourcesPath();
@@ -154,12 +184,11 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     }
     while (ifs.good() && !ifs.eof())
     {
-      std::vector<std::string> strs;
       std::string line;
       while(getline(ifs, line))  // as long as we can put the line on "line"
       {
-        boost::split(strs, line, boost::is_any_of("\t"));
-        m_conllLimaDepMapping.insert(make_pair(strs[0],strs[1]));
+        QStringList strs = QString::fromUtf8(line.c_str()).split('\t');
+        m_d->m_conllLimaDepMapping.insert(strs[0],strs[1]);
       }
     }
 
@@ -173,40 +202,30 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
 LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
+  LDEBUG << "ConllDumper::process";
+
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "no LinguisticMetaData ! abort";
+      LERROR << "ConllDumper::process no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
-  // read positions files previously obtained from reference data. it gives the position for each token of the reference data in the obtained text file
-  std::map<int, std::string> positions;
-  std::ifstream ifs((metadata->getMetaData("FileName")+".positions.txt").c_str(), std::ifstream::binary);
-  if (!ifs.good())
-  {
-    std::cerr << "ERROR: cannot open " + metadata->getMetaData("FileName") + ".positions.txt" << std::endl;
+  AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
+  if (annotationData == 0) {
+      LERROR << "ConllDumper::process no AnnotationData ! abort";
+      return MISSING_DATA;
   }
-  std::ofstream ofs((metadata->getMetaData("FileName")+m_suffix), std::ofstream::binary);
-
-  while (ifs.good() && !ifs.eof())
-  {
-    std::string line = Lima::Common::Misc::readLine(ifs);
-    std::istringstream iss(line);
-    int position;
-    std::string netype;
-    iss >> position >> netype;
-    positions.insert(std::make_pair(position,netype));
-    //     std::cerr << "storing " << position << ", " << netype << std::endl;
-  }
-  ifs.close();
-
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));//est de type PosGraph et non pas AnalysisGraph
+  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));//est de type PosGraph et non pas AnalysisGraph
   if (tokenList==0) {
-    LERROR << "graph " << m_graph << " has not been produced: check pipeline";
+    LERROR << "ConllDumper::process graph " << m_d->m_graph << " has not been produced: check pipeline";
     return MISSING_DATA;
   }
   LinguisticGraph* graph=tokenList->getGraph();
+  SegmentationData* sd=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  if (sd==0) {
+    LERROR << "ConllDumper::process no SentenceBoundaries! abort";
+    return MISSING_DATA;
+  }
 
-  const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
@@ -215,89 +234,86 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     analysis.setData("SyntacticData",syntacticData);
   }
   const DependencyGraph* depGraph = syntacticData-> dependencyGraph();
-  std::map<LinguisticGraphVertex, pair<LinguisticGraphVertex, string>>vertexDependencyInformations;
 
-  SegmentationData* sd=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  QScopedPointer<DumperStream> dstream(initialize(analysis));
+
+  std::map< LinguisticGraphVertex, std::pair<LinguisticGraphVertex, std::string> > vertexDependencyInformations;
+
   std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
   uint64_t nbSentences((sd->getSegments()).size());
-  LDEBUG << "\n There are "<< nbSentences << " sentences"<< LENDL;
-  LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
-  LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
+  LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
+  LinguisticGraphVertex sentenceBegin = sbItr->getFirstVertex();
+  LinguisticGraphVertex sentenceEnd = sbItr->getLastVertex();
 
-  map<std::string, std::string>::const_iterator im;
-  for (im=m_conllLimaDepMapping.begin();im!=m_conllLimaDepMapping.end();im++)
+
+    const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_d->m_language);
+//   for (auto im=m_d->m_conllLimaDepMapping.begin();im!=m_d->m_conllLimaDepMapping.end();im++)
+//   {
+//     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
+//   }
+
+  LimaConllTokenIdMapping* limaConllTokenIdMapping = static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
+  if (limaConllTokenIdMapping == 0)
   {
-    LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
+    limaConllTokenIdMapping = new LimaConllTokenIdMapping();
+    analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   }
-
-  LimaConllTokenIdMapping* limaConllTokenIdMapping = new LimaConllTokenIdMapping();
-  analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   int sentenceNb=0;
+
   while (sbItr != sd->getSegments().end() ) //for each sentence
   {
     sentenceNb++;
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
-    map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
-    map<int,LinguisticGraphVertex>segmentationMappingReverse;
+    std::map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
+    std::map<int,LinguisticGraphVertex>segmentationMappingReverse;
 
-    LDEBUG << "begin - end: " << sentenceBegin << " - " << sentenceEnd;
+    LDEBUG << "ConllDumper::process begin - end: " << sentenceBegin << " - " << sentenceEnd;
     //LinguisticGraphOutEdgeIt outItr,outItrEnd;
-    std::queue<LinguisticGraphVertex> toVisit;
-    std::set<LinguisticGraphVertex> visited;
-    toVisit.push(sentenceBegin);
+    QQueue<LinguisticGraphVertex> toVisit;
+    QSet<LinguisticGraphVertex> visited;
+    toVisit.enqueue(sentenceBegin);
     int tokenId = 0;
-    for (LinguisticGraphVertex v=toVisit.front();v!=sentenceEnd && !toVisit.empty();v=toVisit.front())
+    LinguisticGraphVertex v = 0;
+    while (v != sentenceEnd && !toVisit.empty())
+
     {
-      toVisit.pop();
-      LDEBUG << "Vertex index : " << v;
+      v = toVisit.dequeue();
+      LDEBUG << "ConllDumper::process Vertex index : " << v;
       visited.insert(v);
-      segmentationMapping.insert(make_pair(v,tokenId));
-      segmentationMappingReverse.insert(make_pair(tokenId,v));
-      LDEBUG << "conll id : " << tokenId << " Lima id : " << v;
+      segmentationMapping.insert(std::make_pair(v,tokenId));
+      segmentationMappingReverse.insert(std::make_pair(tokenId,v));
+      LDEBUG << "ConllDumper::process conll id : " << tokenId << " Lima id : " << v;
       DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
-      std::vector<DependencyGraphEdge> edges;
-      boost::tie(dit,dit_end)=out_edges(dcurrent,*depGraph);
+      boost::tie(dit,dit_end) = boost::out_edges(dcurrent,*depGraph);
       for (; dit != dit_end; dit++)
       {
-        edges.push_back(*dit);
-      }
-      // Token* ft=get(vertex_token,*graph,v);
-      std::vector<DependencyGraphEdge>::const_iterator it, it_end;
-      it = edges.begin(); it_end = edges.end();
-      std::set<std::string> m_relation_names;
-      for (; it != it_end; it++)
-      {
-        LDEBUG << "Dumping dependency edge " << (*it).m_source << " -> " << (*it).m_target;
+        LDEBUG << "ConllDumper::process Dumping dependency edge " << (*dit).m_source << " -> " << (*dit).m_target;
         try
         {
-          LDEBUG << "DepTripleDumper::dumpDependencyRelations";
           CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *depGraph);
-          SyntacticRelationId type = typeMap[*it];
-          std::string syntRelName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(type);
-          LDEBUG << "DepTripleDumper::dumpDependencyRelations relation = " << syntRelName;
-          std::set<std::string>::const_iterator relationPos =
-          m_relation_names.find(syntRelName);
-  //      if( relationPos != m_relation_names.end() )
-  //      {
-          LDEBUG << "Src  : Dep vertex= " << source(*it, *depGraph);
-          LinguisticGraphVertex src = syntacticData->tokenVertexForDepVertex(source(*it, *depGraph));
-          LDEBUG << "Src  : Morph vertex= " << src;
-          LDEBUG << "Targ : Dep vertex= " << target(*it, *depGraph);
-          LinguisticGraphVertex dest = syntacticData->tokenVertexForDepVertex(target(*it, *depGraph));
-          LDEBUG << "Targ : Morph vertex= " << dest;
-          if (syntRelName!=""){
-            vertexDependencyInformations.insert(make_pair(v,make_pair(dest,syntRelName)));
+          SyntacticRelationId type = typeMap[*dit];
+          std::string syntRelName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getSyntacticRelationName(type);
+          LDEBUG << "ConllDumper::process relation = " << syntRelName;
+          LDEBUG << "ConllDumper::process Src  : Dep vertex= " << boost::source(*dit, *depGraph);
+          LinguisticGraphVertex src = syntacticData->tokenVertexForDepVertex(boost::source(*dit, *depGraph));
+          LDEBUG << "ConllDumper::process Src  : Morph vertex= " << src;
+          LDEBUG << "ConllDumper::process Targ : Dep vertex= " << boost::target(*dit, *depGraph);
+          LinguisticGraphVertex dest = syntacticData->tokenVertexForDepVertex(boost::target(*dit, *depGraph));
+          LDEBUG << "ConllDumper::process Targ : Morph vertex= " << dest;
+          if (syntRelName!="")
+          {
+            LDEBUG << "ConllDumper::process saving target for" << v << ":" << dest << syntRelName;
+            vertexDependencyInformations.insert(std::make_pair(v, std::make_pair(dest,syntRelName)));
           }
-          LDEBUG << "target saved for " << v << " is " << dest;
         }
         catch (const std::range_error& )
         {
         }
         catch (...)
         {
-          LDEBUG << "DepTripleDumper::dumpDependencyRelations: catch others.....";
+          LDEBUG << "ConllDumper::process: catch others.....";
         throw;
         }
       }
@@ -305,13 +321,13 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       {
         continue;
       }
-      LinguisticGraphOutEdgeIt outItr,outItrEnd;bool newSentence(const QString & line);
-      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
+      LinguisticGraphOutEdgeIt outItr,outItrEnd;
+      for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr!=outItrEnd; outItr++)
       {
-        LinguisticGraphVertex next=target(*outItr,*graph);
-        if (visited.find(next)==visited.end() && next != tokenList->lastVertex())
+        LinguisticGraphVertex next=boost::target(*outItr,*graph);
+        if (!visited.contains(next) && next != tokenList->lastVertex())
         {
-          toVisit.push(next);
+          toVisit.enqueue(next);
         }
       }
       ++tokenId;
@@ -321,69 +337,143 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   // morphological graph, some vertices are not related to main graph:
   // idiomatic expressions parts and named entity parts)
 
-    toVisit = std::queue<LinguisticGraphVertex>();
+    toVisit.clear();
     visited.clear();
 
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
-    toVisit.push(sentenceBegin);
+
+    // get the list of predicates for the current sentence
+    QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex > predicates = m_d->collectPredicateTokens( analysis, sentenceBegin, sentenceEnd );
+    LDEBUG << "ConllDumper::process predicates for sentence between" << sentenceBegin << "and" << sentenceEnd << "are:" << predicates;
+
+    toVisit.enqueue(sentenceBegin);
     tokenId=0;
-    for (LinguisticGraphVertex v=toVisit.front();!toVisit.empty() && v!=sentenceEnd;v=toVisit.front()) {//as long as there are vertices in the sentence
-      toVisit.pop();
+    v=0;
+    while (!toVisit.empty() && v!=sentenceEnd)
+    { //as long as there are vertices in the sentence
+      v = toVisit.dequeue();
+
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
-      LDEBUG << v << "th token in the Lima graph" <<endl;
-      if( morphoData!=0 && v != sentenceBegin) {
-        const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-        const Common::PropertyCode::PropertyAccessor m_propertyAccessor=codeManager.getPropertyAccessor("MICRO");
+      LDEBUG << "ConllDumper::process PosGraph token" << v;
+      if( morphoData!=0 )
+      {
+        const QString graphTag=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
 
-        const QString graphTag=QString::fromStdString(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(m_propertyAccessor)));
+        std::string inflectedToken=ft->stringForm().toUtf8().constData();
+        std::string lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().constData();
 
-
-        std::string unLemmatizedToken=ft->stringForm().toStdString();
-        std::string lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().data();
-
-        if (vertexDependencyInformations.count(v)!=0){
-          LinguisticGraphVertex source=vertexDependencyInformations.find(v)->second.first;
-          LinguisticGraphVertex sourceConllId=segmentationMapping.find(source)->second;
-          LDEBUG << "source saved for " << tokenId << " is " << sourceConllId<<endl; 
-          std::string relName=vertexDependencyInformations.find(v)->second.second;
-          std::map< std::string, std::string >::const_iterator m_conllLimaDepMappingIt = m_conllLimaDepMapping.find(relName);
-          std::string conllRelName = "-";
-          if (m_conllLimaDepMappingIt != m_conllLimaDepMapping.end())
+        QString conllRelName = "-";
+        int targetConllId = 0;
+        if (vertexDependencyInformations.count(v)!=0)
+        {
+          LinguisticGraphVertex target=vertexDependencyInformations.find(v)->second.first;
+          LDEBUG << "ConllDumper::process target saved for" << v << "is" << target;
+          targetConllId=segmentationMapping.find(target)->second;
+          LDEBUG << "ConllDumper::process conll target saved for " << tokenId << " is " << targetConllId;
+          QString relName = QString::fromUtf8(vertexDependencyInformations.find(v)->second.second.c_str());
+          LDEBUG << "ConllDumper::process the lima dependency tag for "
+                 << ft->stringForm()<< " is " << relName;
+          if (m_d->m_conllLimaDepMapping.contains(relName))
           {
-            conllRelName=m_conllLimaDepMappingIt->second;
+            conllRelName=m_d->m_conllLimaDepMapping[relName];
           }
           else
           {
-            LERROR << relName << "not found in mapping";
+            LERROR << "ConllDumper::process" << relName << "not found in mapping";
           }
+        }
+        QString targetConllIdString = targetConllId > 0 ? QString("%1").arg(targetConllId) : "-";
+        dstream->out() << tokenId << "\t"<< inflectedToken << "\t"
+                        << lemmatizedToken << "\t" << graphTag  << "\t"
+                        << graphTag << "\t" << "-" << "\t" << targetConllIdString << "\t"
+                        << conllRelName.toUtf8().constData() << "\t-\t-";
+        if (!predicates.isEmpty())
+        {
+          dstream->out() << "\t";
+          LDEBUG << "ConllDumper::process output the predicate if any";
+          if (!predicates.contains(v))
+          {
+            // No predicate for this token
+            dstream->out() << "-";
+          }
+          else
+          {
+            // This token is a predicate, output it
+            QString predicateAnnotation = annotationData->stringAnnotation(predicates.value(v),"Predicate");
+            dstream->out() << predicateAnnotation;
+          }
+          // Now output the roles supported by the current PoS graph token
 
-          ofs << tokenId << "\t"<< unLemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t" << "-" << "\t" << sourceConllId << "\t" << conllRelName << "\t-\t-" << endl;
-          LDEBUG << "the lima dependency tag for " << ft->stringForm().toStdString() << " is " << relName<< endl;
+          LDEBUG << "ConllDumper::process output the roles for the" << predicates.keys().size() << "predicates";
+          for (int i = 0; i < predicates.keys().size(); i++)
+          {
+            // There will be one column for each predicate. Output the
+            // separator right now
+            dstream->out() << "\t";
+            AnnotationGraphVertex predicateVertex = predicates.value(predicates.keys()[i]);
+
+            std::set< AnnotationGraphVertex > vMatches = annotationData->matches("PosGraph", v, "annot");
+            if (vMatches.empty())
+            {
+              LDEBUG << "ConllDumper::process no node matching PoS graph vertex" << v << "in the annotation graph. Output '-'.";
+              dstream->out() << "-";
+            }
+            else
+            {
+              LDEBUG << "ConllDumper::process there is"<<vMatches.size()<<"nodes matching PoS graph vertex" << v << "in the annotation graph.";
+              QString roleAnnotation = "-";
+              for (auto it = vMatches.begin(); it != vMatches.end(); it++)
+              {
+                AnnotationGraphVertex vMatch = *it;
+                AnnotationGraphInEdgeIt vMatchInEdgesIt, vMatchInEdgesIt_end;
+                boost::tie(vMatchInEdgesIt, vMatchInEdgesIt_end) = boost::in_edges(vMatch,annotationData->getGraph());
+                for (; vMatchInEdgesIt != vMatchInEdgesIt_end; vMatchInEdgesIt++)
+                {
+                  AnnotationGraphVertex inVertex = boost::source(*vMatchInEdgesIt, annotationData->getGraph());
+                  std::set< LinguisticGraphVertex > inVertexAnnotPosGraphMatches = annotationData->matches("annot",inVertex,"PosGraph");
+                  if (inVertex == predicateVertex && !inVertexAnnotPosGraphMatches.empty())
+                  {
+                    // Current edge is holding a role of the current predicate
+                    roleAnnotation = annotationData->stringAnnotation(*vMatchInEdgesIt,"SemanticRole");
+                    break;
+                  }
+                  else
+                  {
+                    // Current edge does not hold a role of the current predicate
+//                     dstream->out() << "-";
+                  }
+                }
+                if (roleAnnotation != "-") break;
+              }
+              dstream->out() << roleAnnotation.toUtf8().constData();
+            }
+          }
         }
-        else{
-          ofs << tokenId << "\t"<< unLemmatizedToken << "\t" << lemmatizedToken << "\t" << graphTag  << "\t" << graphTag << "\t-\t-\t-\t-\t-" << endl;
-        }
+        dstream->out() << std::endl;
       }
 
       if (v == sentenceEnd)
       {
         continue;
       }
+      LDEBUG << "ConllDumper::process look at out edges of" << v;
       LinguisticGraphOutEdgeIt outIter,outIterEnd;
-      for (boost::tie(outIter,outIterEnd)=out_edges(v,*graph); outIter!=outIterEnd; outIter++) 
+      for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,*graph); outIter!=outIterEnd; outIter++)
       {
-        LinguisticGraphVertex next=target(*outIter,*graph);
-        if (visited.find(next)==visited.end())
+        LinguisticGraphVertex next = boost::target(*outIter,*graph);
+        LDEBUG << "ConllDumper::process looking out vertex" << next;
+        if (!visited.contains(next))
         {
-        visited.insert(next);
-        toVisit.push(next);
+          LDEBUG << "ConllDumper::process enqueuing" << next;
+          visited.insert(next);
+          toVisit.enqueue(next);
         }
       }
-    ++tokenId;
+      tokenId++;
     }
-    ofs << std::endl;
+    dstream->out() << std::endl;
     limaConllTokenIdMapping->insert(std::make_pair(sentenceNb, segmentationMappingReverse));
     sbItr++;
   }
@@ -392,174 +482,54 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
 }
 
-
-std::string ConllDumper::outputVertex(std::ostream& out,
-                              const Token* ft,
-                              const std::vector<MorphoSyntacticData*>& vdata,
-                              const FsaStringsPool& sp,
-                              LinguisticGraphVertex v,
-                              const AnnotationData* annotationData,
-                              uint64_t offset,
-                            const std::string& previousNE,
-                            const std::map<int, std::string>& positions
-) const
+QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> ConllDumperPrivate::collectPredicateTokens(
+                                  Lima::AnalysisContent& analysis, LinguisticGraphVertex sentenceBegin, LinguisticGraphVertex sentenceEnd)
 {
+  DUMPERLOGINIT;
+ QMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
 
-  ltNormProperty sorter(m_propertyAccessor);
+  AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
 
-  std::set< LinguisticGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
+  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  if (tokenList==0) {
+    LERROR << "graph " << m_graph << " has not been produced: check pipeline";
+    return result;
+  }
+  LinguisticGraph* graph=tokenList->getGraph();
 
-  for (std::set< LinguisticGraphVertex >::const_iterator anaVerticesIt = anaVertices.begin();
-  anaVerticesIt != anaVertices.end(); anaVerticesIt++)
+
+  QQueue<LinguisticGraphVertex> toVisit;
+  QSet<LinguisticGraphVertex> visited;
+  toVisit.enqueue(sentenceBegin);
+  LinguisticGraphVertex v = 0;
+  while (v!=sentenceEnd && !toVisit.empty())
   {
-    std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVerticesIt,"annot");
-    for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
-         it != matches.end(); it++)
+    v = toVisit.dequeue();
+    LDEBUG << "ConllDumperPrivate::collectPredicateTokens vertex:" << v;
+    visited.insert(v);
+
+    std::set< AnnotationGraphVertex > vMatches = annotationData->matches("PosGraph", v, "annot");
+    for (auto it = vMatches.begin(); it != vMatches.end(); it++)
     {
-      AnnotationGraphVertex vx=*it;
-      if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+      AnnotationGraphVertex vMatch = *it;
+      if (annotationData->hasStringAnnotation(vMatch,"Predicate"))
       {
-        const SpecificEntityAnnotation* se =
-          annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
-          pointerValue<SpecificEntityAnnotation>();
-          std::string neType = outputSpecificEntity(out,se,vdata,sp,offset, previousNE, positions);
-        if (neType != "") {
-          return neType;
-        }
-        else {
-          DUMPERLOGINIT;
-          LERROR << "failed to output specific entity for vertex " << v;
-        }
+        LDEBUG << "ConllDumperPrivate::collectPredicateTokens insert" << v <<    vMatch;
+        result.insert(v, vMatch);
+      }
+    }
+    LinguisticGraphOutEdgeIt outItr,outItrEnd;bool newSentence(const QString & line);
+    for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr!=outItrEnd; outItr++)
+    {
+      LinguisticGraphVertex next=boost::target(*outItr,*graph);
+      if (!visited.contains(next) && next != tokenList->lastVertex())
+      {
+        toVisit.enqueue(next);
       }
     }
   }
-  
-//    uint64_t nbmicros=ft->countMicros();
-
-    if ((*vdata.begin())->empty())
-    {
-          std::cerr << "ERROR: vertex " << ft->stringForm() << " at " << ft->position() << " has no morphosyntactic data" << std::endl;
-          return "";
-    }
-//     uint64_t position=ft->position() + offset;
-    std::string microCategory;
-    outputString(out,Common::Misc::limastring2utf8stdstring(ft->stringForm()));
-    for (std::vector<MorphoSyntacticData*>::const_iterator vdataItr=vdata.begin(),
-           vdataItr_end=vdata.end(); vdataItr!=vdataItr_end; vdataItr++)
-    {
-      MorphoSyntacticData* data=*vdataItr;
-      std::sort(data->begin(),data->end(),sorter);
-      StringsPoolIndex norm(0),curNorm(0);
-      LinguisticCode micro(0),curMicro(0),tense(0),curTense(0);
-      for (MorphoSyntacticData::const_iterator elemItr=data->begin();
-           elemItr!=data->end();
-             elemItr++)
-      {
-        curNorm=elemItr->normalizedForm;
-        curMicro=m_propertyAccessor->readValue(elemItr->properties);
-        microCategory = m_propertyManager->getPropertySymbolicValue(curMicro);
-        curTense=m_timeAccessor->readValue(elemItr->properties);
-        if ((curNorm != norm) || (curMicro != micro))
-        {
-          norm=curNorm;
-          micro=curMicro;
-          tense=curTense;
-          
-          std::ostringstream os2;
-          os2 << m_sep << m_sepPOS;
-          //out << os2.str();
-          //outputString(out,Common::Misc::limastring2utf8stdstring(sp[norm]));
-          std::ostringstream os3;
-          os3 << m_sep << microCategory;
-          out << os3.str();
-
-          /*modifications pour afficher le temps des verbes*/
-          if(m_verbTenseFlag ==  "True")
-          {
-            std::ostringstream os4;
-            bool wordIsVerb = false;
-            std::string::size_type subStrPos = m_propertyManager->getPropertySymbolicValue(curMicro).find("V");
-            if (subStrPos != std::string::npos){
-              wordIsVerb = true;
-            }
-            if (wordIsVerb == true){
-              if (m_timeManager->getPropertySymbolicValue(curTense) != "NONE"){
-                os4 << m_sep << m_timeManager->getPropertySymbolicValue(curTense);
-              }
-              else {
-                os4 << m_sep << m_propertyManager->getPropertySymbolicValue(curMicro);
-              }
-            }
-            else{os4 << m_sep << m_timeManager->getPropertySymbolicValue(curTense);}
-            out << os4.str();
-          }
-              /*modifications in order to show the named entity*/
-          std::ostringstream os5;
-          os5 << m_sep << "CHUNK" << m_sep;
-          out << os5.str();
-          /*fin des modifications*/
-          break;
-        }
-      }
-      break;
-    }
-    if (positions.find(ft->position()-1) != positions.end())
-    {
-      out << (*(positions.find(ft->position()-1))).second << m_sep;
-    }
-    else
-    {
-      std::cerr << "ERROR: no such position " << ft->position()-1 << " in positions map!" << std::endl;
-      out << "O" << m_sep;
-    }
-    out  << "O" << std::endl;
-    if (microCategory == "PONCTU_FORTE")
-    {
-      out << std::endl;
-    }
-    return "";
+  return result;
 }
-
-// output string: escape endline characters and separator characters
-void ConllDumper::outputString(std::ostream& out,const std::string& str) const
-{
-  std::string newstr(str);
-  boost::replace_all(newstr,"\n","\n");
-  boost::replace_all(newstr," ","_");
-  //boost::replace_all(newstr,m_sep,"\"+m_sep);
-  out << newstr;
-}
-
-std::string ConllDumper::outputSpecificEntity(std::ostream& out,
-                          const SpecificEntities::SpecificEntityAnnotation* se,
-                          const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,
-                          const FsaStringsPool& sp,
-                          const uint64_t offset,
-                          const std::string& previousNE,
-                          const std::map<int, std::string>& positions) const
-{
-  LIMA_UNUSED(data);
-  LIMA_UNUSED(sp);
-  LIMA_UNUSED(offset);
-  DUMPERLOGINIT;
-  LDEBUG << "ConllDumper::outputSpecificEntity previous=" << previousNE;
-
-  std::map< std::string, std::string > entityTypesMapping;
-  std::string microCategory = "CAT";
-  entityTypesMapping.insert(std::make_pair("Person.PERSON", "PER"));
-  entityTypesMapping.insert(std::make_pair("Location.LOCATION", "LOC"));
-  entityTypesMapping.insert(std::make_pair("Organization.ORGANIZATION", "ORG"));
-  std::vector< LinguisticGraphVertex>::const_iterator itse, itse_end;
-  itse = se->m_vertices.begin(); itse_end = se->m_vertices.end();
-  std::string neType = "";
-
-  //if (microCategory == "PONCTU_FORTE")
- // {
-    //out << std::endl;
- // }
-  return neType;
-}
-
 
 } // end namespace
 } // end namespace
