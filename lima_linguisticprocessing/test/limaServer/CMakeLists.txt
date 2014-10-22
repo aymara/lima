@@ -32,6 +32,9 @@ target_link_libraries(limaserver
 install(TARGETS limaserver DESTINATION bin)
 
 ########### next target ###############
+if (${QT_DBUSCPP2XML_EXECUTABLE} STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
+  message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
+else ()
 
 SET(limadbusserver_SRCS
   LimaDBusServer.cpp
@@ -70,4 +73,4 @@ target_link_libraries(limadbusserver
     ${QHTTPSERVER_NAMES})
 
 install(TARGETS limadbusserver DESTINATION bin)
-
+endif()
