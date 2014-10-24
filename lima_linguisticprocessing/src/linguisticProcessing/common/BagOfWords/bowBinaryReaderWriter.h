@@ -54,8 +54,6 @@ class BoWPredicate;
 // read/write functions in each BoW element) because it is easier
 // to handle common mappings (pointers, entity types etc).
 
-#define BOW_VERSION "0.8"
-
 typedef enum {
   BOWFILE_NOTYPE,
   BOWFILE_TEXT,
