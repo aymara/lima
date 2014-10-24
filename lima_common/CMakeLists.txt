@@ -85,6 +85,7 @@ set(CMAKE_MODULE_PATH
 
 # find_path and find_library will search in these dirs too
 set(CMAKE_PREFIX_PATH
+    "${CMAKE_PREFIX_PATH}"
     "${CMAKE_INSTALL_PREFIX}"
     "$ENV{LIMA_EXTERNALS}"
 )
