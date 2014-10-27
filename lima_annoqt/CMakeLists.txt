@@ -6,7 +6,9 @@ enable_testing()
 include(SystemSpecificInformations.cmake)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/modules ${CMAKE_INSTALL_PREFIX})
-find_package(Qt4 REQUIRED QtCore)
+find_package(Qt4 REQUIRED QtCore QtWidgets QtXml)
+include_directories(${Qt4_INCLUDE_DIR})
+link_directories(${Qt4_LIBRARY_DIRS})
 
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
 IF(LIMACOMMON_FOUND)
