@@ -183,8 +183,7 @@
     <entry key="NomPropreMacroCategory" value="NP" />
   </map>
   <list name="LexicalAnaphora">
-        <item value="PRONOM_PERSONNEL_REFLECHI"/>
-        <item value="PRONOM_REFLEXIF_INDEFINI"/>
+        <item value="PRP$"/>
   </list>
   <list name="UndefinitePronouns"> 
   </list>
@@ -295,7 +294,7 @@
     </group>
     <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
       <list name="defaultCategories">
-        <item value="NP L_NOM_PROPRE"/>
+        <item value="NP NNP"/>
       </list>
     </group>
     <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
@@ -342,6 +341,17 @@
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+      <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
+      <param key="maxChainsNbByVertex" value="30"/>
+      <param key="maxChainLength" value="12"/>
+    </group>
+    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
+    experimental module used to test if LIMA analysis works without nominal and
+    verbal. It allows also to build compounds using verbs and heterosyntagmatic
+    dependencies. For that, one have to add adequate relations in
+    CompoundRelations in mm-common. -->
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
       <param key="chainMatrix" value="chainMatrix"/>
       <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>

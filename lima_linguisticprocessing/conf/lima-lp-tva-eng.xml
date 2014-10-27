@@ -256,16 +256,16 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="TIMEX" value="L_NC"/>
-        <entry key="NUMEX" value="L_NC"/>
-        <entry key="ORGANIZATION" value="L_NP"/>
-        <entry key="LOCATION" value="L_NP"/>
-        <entry key="PERSON" value="L_NP"/>
-        <entry key="PRODUCT" value="L_NP"/>
-        <entry key="EVENT" value="L_NP"/>
+        <entry key="TIMEX" value="NC"/>
+        <entry key="NUMEX" value="NC"/>
+        <entry key="ORGANIZATION" value="NP"/>
+        <entry key="LOCATION" value="NP"/>
+        <entry key="PERSON" value="NP"/>
+        <entry key="PRODUCT" value="NP"/>
+        <entry key="EVENT" value="NP"/>
       </map>
-      <param key="properNounCategory" value="L_NP"/>
-      <param key="commonNounCategory" value="L_NC"/>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
   </module>
