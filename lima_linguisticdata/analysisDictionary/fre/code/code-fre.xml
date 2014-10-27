@@ -50,9 +50,9 @@
   <subproperty name="MICRO" parent="MACRO">
     <subvalues value="ADJ">
       <value name="ADJ"/>
-			<value name="ADJWH"/>
-			<value name="ADJNUM"/>
-		</subvalues>
+      <value name="ADJWH"/>
+      <value name="ADJNUM"/>
+    </subvalues>
     <subvalues value="ADV">
       <value name="ADV"/>
       <value name="ADVWH"/>
@@ -66,9 +66,9 @@
       <value name="DETDE"/>
       <value name="DETDES"/>
       <value name="DETDU"/>
-			<value name="DETWH"/>
-			<value name="DETNUM"/>
-		</subvalues>
+      <value name="DETWH"/>
+      <value name="DETNUM"/>
+    </subvalues>
     <subvalues value="DIVERS">
       <value name="U"/>
       <value name="ET"/>
