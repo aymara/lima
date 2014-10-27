@@ -52,3 +52,22 @@ target_link_libraries(BagOfWordsTest1
 
 add_test(BagOfWordsTest1 BagOfWordsTest1)
 
+########### next test ###############
+
+SET(BagOfWordsTest2_SRCS BagOfWordsTest2.cpp)
+
+set (BagOfWordsTest2_MOC_HEADERS BagOfWordsTest2.h)
+qt4_wrap_cpp (BagOfWordsTest2_MOC_OUTFILES ${BagOfWordsTest2_MOC_HEADERS})
+
+add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS} ${BagOfWordsTest2_MOC_OUTFILES})
+target_link_libraries(BagOfWordsTest2
+  lima-common-data
+  lima-common-mediaticdata
+  lima-common-qslog
+  lima-lp-bagofwords
+  ${Boost_LIBRARIES}
+  ${QT_LIBRARIES}
+)
+
+add_test(BagOfWordsTest2 BagOfWordsTest2)
+
