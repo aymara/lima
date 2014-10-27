@@ -600,10 +600,10 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
     else if (annotationData->hasIntAnnotation(*it, Common::Misc::utf8stdstring2limastring("CpdTense")))
     {
       BoWToken* ct = createCompoundTense(*it, annotationData, anagraph, posgraph, offsetBegin, visited);
-      ct->setVertex(v);
       if (ct != 0)
       {
         LDEBUG << "BowGenerator::createAbstractBoWElement created compound tense: " << *ct;
+        ct->setVertex(v);
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),ct));
 //         visited.insert(v);
         return abstractBowEl;
