@@ -29,8 +29,8 @@ set(pelf-resedit_UIS
 )
 
 # Wrap Qt UIs
-qt4_wrap_ui(pelf-resedit_UIS_H ${pelf-resedit_UIS})
-qt4_automoc(${pelf-resedit_SRCS})
+qt5_wrap_ui(pelf-resedit_UIS_H ${pelf-resedit_UIS})
+qt5_automoc(${pelf-resedit_SRCS})
 
 # Compile, link and install main exec
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

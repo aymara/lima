@@ -23,7 +23,7 @@
 
 #include "specificEntitiesHandler.h"
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QTextEdit>
 #include <iostream>
 

@@ -92,10 +92,11 @@ set(CMAKE_PREFIX_PATH
 
 add_definitions(-D QT_NO_KEYWORDS)
 
-find_package(Qt4 4.7 REQUIRED QtCore QtXml)
-include(${QT_USE_FILE})
-include_directories(${Qt4_INCLUDE_DIR})
-link_directories(${Qt4_LIBRARY_DIRS})
+include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+addQt5Modules(Core Xml)
+
+include_directories(${Qt5_INCLUDES})
+set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 
 #add_definitions( -DBOOST_ALL_NO_LIB )

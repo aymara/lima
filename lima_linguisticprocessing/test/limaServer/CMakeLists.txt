@@ -1,4 +1,4 @@
-INCLUDE(${QT_USE_FILE})
+
 
 ########### next target ###############
 
@@ -15,9 +15,9 @@ set (limaserver_MOC_HEADERS
     analysisthread.h )
 
 
-qt4_wrap_cpp (limaserver_MOC_OUTFILES ${limaserver_MOC_HEADERS})
+qt5_wrap_cpp (limaserver_MOC_OUTFILES ${limaserver_MOC_HEADERS})
 
-# qt4_add_resources(limaserver amoseserver.qrc)
+# qt5_add_resources(limaserver amoseserver.qrc)
 
 # add_executable(limaserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
 add_executable(limaserver ${limaserver_SRCS} ${limaserver_MOC_OUTFILES})
@@ -48,19 +48,19 @@ set (limadbusserver_MOC_HEADERS
     AnalysisWrapper.h
     )
 
-qt4_generate_dbus_interface(
+qt5_generate_dbus_interface(
     LimaDBusServer.h
     fr.cea.limadbusserver.xml
     OPTIONS -a -M
 )
 # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
 
-qt4_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
+qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
                      LimaDBusServer.h LimaDBusServer)
 
-qt4_wrap_cpp (limadbusserver_MOC_OUTFILES ${limadbusserver_MOC_HEADERS})
+qt5_wrap_cpp (limadbusserver_MOC_OUTFILES ${limadbusserver_MOC_HEADERS})
 
-# qt4_add_resources(limadbusserver amoseserver.qrc)
+# qt5_add_resources(limadbusserver amoseserver.qrc)
 
 # add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
 add_executable(limadbusserver ${limadbusserver_SRCS} ${limadbusserver_MOC_OUTFILES})

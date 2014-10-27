@@ -22,9 +22,9 @@
 #include <QtCore/QtDebug>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QMessageBox>
 
 #include "ui_pelf-rt-editresourcetextfiledialog.h"
 
