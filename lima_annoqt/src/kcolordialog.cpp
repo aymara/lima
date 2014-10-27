@@ -55,6 +55,7 @@
 #include <QtCore/QTimer>
 #include <QtGui/QDoubleValidator>
 #include <QSettings>
+#include <QtGui/QDrag>
 
 // #include <kapplication.h>
 // #include <kconfig.h>
