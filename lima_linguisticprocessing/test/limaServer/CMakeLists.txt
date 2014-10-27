@@ -32,7 +32,7 @@ target_link_libraries(limaserver
 install(TARGETS limaserver DESTINATION bin)
 
 ########### next target ###############
-if (${QT_DBUSCPP2XML_EXECUTABLE} STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
+if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 else ()
 
