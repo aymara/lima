@@ -32,6 +32,23 @@
 
 using namespace std;
 
+QTextStream& operator << (QTextStream& os,
+                           const Lima::Common::Misc::PositionLengthList& p)
+{
+  if (! p.empty())
+  {
+    Lima::Common::Misc::PositionLengthList::const_iterator pos=p.begin();
+    os << "(" << (*pos).first << "," << (*pos).second << ")";
+    pos++;
+    while (pos != p.end())
+    {
+      os << "; (" << (*pos).first << "," << (*pos).second << ")";
+      pos++;
+    }
+  }
+  return os;
+}
+
 std::ostream& operator << (std::ostream& os,
                            const Lima::Common::Misc::PositionLengthList& p)
 {
