@@ -28,11 +28,11 @@ add_test(EnhancedAnalysisDictionaryTest0 EnhancedAnalysisDictionaryTest0)
 
 ########### next test ###############
 
+# generate EnhancedAnalysisDictionaryTest1.cpp if it does not exist 
 configure_file(EnhancedAnalysisDictionaryTest1-src.cpp ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1.cpp @ONLY)
 
+# generate EnhancedAnalysisDictionaryTest1.cpp when EnhancedAnalysisDictionaryTest1-src.cpp is modified
 add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1-src.cpp
-#  COMMAND ${CMAKE_COMMAND} -P
-#    ${CMAKE_CURRENT_BINARY_DIR}/configure_json_file.cmake
   COMMAND configure_file(${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1-src.cpp ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1.cpp @ONLY)
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1-src.cpp
@@ -40,9 +40,6 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionary
   VERBATIM)
 add_custom_target(EnhancedAnalysisDictionaryTest1-src.cpp ALL
   DEPENDS EnhancedAnalysisDictionaryTest1-src.cpp)
-
-# add_custom_target(configure_json ALL
-#  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/json_file.json)
 
 configure_file(lima-lp-res-Enhanced.xml lima-lp-res-Enhanced.xml COPYONLY )
 
