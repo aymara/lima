@@ -29,6 +29,21 @@ add_test(EnhancedAnalysisDictionaryTest0 EnhancedAnalysisDictionaryTest0)
 ########### next test ###############
 
 configure_file(EnhancedAnalysisDictionaryTest1-src.cpp ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1.cpp @ONLY)
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1-src.cpp
+#  COMMAND ${CMAKE_COMMAND} -P
+#    ${CMAKE_CURRENT_BINARY_DIR}/configure_json_file.cmake
+  COMMAND configure_file(${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1-src.cpp ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1.cpp @ONLY)
+  DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/EnhancedAnalysisDictionaryTest1-src.cpp
+  COMMENT "generate EnhancedAnalysisDictionaryTest1.cpp"
+  VERBATIM)
+add_custom_target(EnhancedAnalysisDictionaryTest1-src.cpp ALL
+  DEPENDS EnhancedAnalysisDictionaryTest1-src.cpp)
+
+# add_custom_target(configure_json ALL
+#  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/json_file.json)
+
 configure_file(lima-lp-res-Enhanced.xml lima-lp-res-Enhanced.xml COPYONLY )
 
 SET(EnhancedAnalysisDictionaryTest1_SRCS

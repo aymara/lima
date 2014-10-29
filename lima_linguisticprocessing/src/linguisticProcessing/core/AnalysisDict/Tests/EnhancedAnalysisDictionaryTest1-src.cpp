@@ -93,11 +93,13 @@ BOOST_AUTO_TEST_CASE( EnhancedAnalysisDictionaryTest1 )
   // check if it an AbstractAccessResource
   const LinguisticProcessing::AnalysisDict::AbstractAccessResource* aar=static_cast<const LinguisticProcessing::AnalysisDict::AbstractAccessResource*>(globalFsaAccess);
   BOOST_REQUIRE(aar != 0);
+  std::cout << "EnhancedAnalysisDictionaryTest1: test aar != 0 OK\n";
   // check if it isMainKeys
   BOOST_REQUIRE(aar->isMainKeys());
   // check if it a FsaAccessResource
   const Lima::LinguisticProcessing::AnalysisDict::FsaAccessResource* far=static_cast<const Lima::LinguisticProcessing::AnalysisDict::FsaAccessResource*>(globalFsaAccess);
   BOOST_REQUIRE(far != 0);
+  std::cout << "EnhancedAnalysisDictionaryTest1: test far != 0 OK\n";
   // get AbstractAccessByString
   const Common::AbstractAccessByString* aas = aar->getAccessByString();
   // check if it a FsaAccess::FsaAccessSpare16*
