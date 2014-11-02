@@ -114,6 +114,7 @@ public:
 
   friend LIMA_BOW_EXPORT std::ostream& operator<<(std::ostream& os, const IndexElement& elt);
   friend LIMA_BOW_EXPORT QDebug& operator<<(QDebug& os, const IndexElement& elt);
+  friend LIMA_BOW_EXPORT QTextStream& operator<<(QTextStream& os, const IndexElement& elt);
 
 private:
   IndexElementPrivate* m_d;
