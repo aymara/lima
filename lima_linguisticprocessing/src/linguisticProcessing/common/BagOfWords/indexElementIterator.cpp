@@ -30,6 +30,7 @@
 #include "indexElement.h"
 
 #include "linguisticProcessing/common/BagOfWords/BoWRelation.h"
+#include "linguisticProcessing/common/BagOfWords/BoWPredicate.h"
 #include "indexElementIterator.h"
 #include "common/FsaAccess/AbstractLexiconIdGenerator.h"
 #include "defaultIdGenerator.h"
@@ -183,6 +184,7 @@ IndexElement IndexElementIterator::getElement()
     else
     {
       BoWToken* token = 0;
+      BoWPredicate* predicate = 0;
       switch ((*m_d->m_iterator)->getType())
       {
       case BOW_TOKEN:
@@ -201,7 +203,18 @@ IndexElement IndexElementIterator::getElement()
         // element itself will be stored in queue as part
         m_d->storePartsInQueue(static_cast<BoWToken*>((*m_d->m_iterator)),0);
         return m_d->m_partQueue.front();
+      // FIXME Change the handling of predicates to take into account their complex structure nature
       case BOW_PREDICATE:
+      {
+        predicate = static_cast<BoWPredicate*>((*m_d->m_iterator));
+        uint64_t id=m_d->m_idGenerator->getId(predicate->getString());
+        return IndexElement(id,
+                            predicate->getType(),
+                            predicate->getString(),
+                            0,
+                            predicate->getPosition(),
+                            predicate->getLength());
+      }
       case BOW_NOTYPE:
         ;
       }
