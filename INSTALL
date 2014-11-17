@@ -17,14 +17,18 @@ The various modules (lima_*) have different purposes:
 == Install ==
 
 Build dependencies: cmake, c++ (tested with gcc), gawk, libraries and 
-development packages for : boost , Qt4, enchant (optional, for  
+development packages for : boost , Qt4, Qwt, enchant (optional, for  
 orthographic correction), qhttpserver (optional, for lima http/json API).
 
 Under Ubuntu, most of these dependencies are installed with the following 
 packages:
 $ sudo apt-get install gawk cmake libqtcore4 libqtgui4 libqt4-network \
-build-essential libqt4-dev qt4-dev-tools libboost-all-dev \
+libqwt-dev build-essential libqt4-dev qt4-dev-tools libboost-all-dev \
 libenchant-dev 
+
+Under Magia, most of these dependencies are installed with the following 
+packages:
+$ sudo urpmi cmake, lib64qwt-devel, (to be completed)
 
 qhttpserver can be downloaded and installed from 
 https://github.com/aymara/qhttpserver
