@@ -36,7 +36,7 @@ using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::FsaAccess;
 
-// create EnhancedAnalysisDictionary and check size
+// create EnhancedAnalysisDictionary and check most of public operation
 BOOST_AUTO_TEST_CASE( EnhancedAnalysisDictionaryTest1 )
 {
   // Initialize MediaData (for fre)

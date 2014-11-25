@@ -53,3 +53,27 @@ target_link_libraries(EnhancedAnalysisDictionaryTest1 lima-common-data lima-comm
 
 add_test(EnhancedAnalysisDictionaryTest1 EnhancedAnalysisDictionaryTest1)
 
+########### next test ###############
+
+# generate DictionaryDataTest1.cpp
+configure_file(DictionaryDataTest1-src.cpp ${CMAKE_CURRENT_SOURCE_DIR}/DictionaryDataTest1.cpp @ONLY)
+
+# generate DictionaryDataTest1.cpp when DictionaryDataTest1-src.cpp is modified
+# add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/DictionaryDataTest1.cpp
+#   COMMAND configure_file(${CMAKE_CURRENT_SOURCE_DIR}/DictionaryDataTest1-src.cpp ${CMAKE_CURRENT_SOURCE_DIR}/DictionaryDataTest1.cpp @ONLY)
+#   DEPENDS
+#     ${CMAKE_CURRENT_SOURCE_DIR}/DictionaryDataTest1-src.cpp
+#   VERBATIM)
+# add_custom_target(DictionaryDataTest1.cpp ALL
+#   DEPENDS DictionaryDataTest1-src.cpp)
+
+SET(DictionaryDataTest1_SRCS
+   DictionaryDataTest1.cpp
+)
+
+add_executable(DictionaryDataTest1 ${DictionaryDataTest1_SRCS})
+
+target_link_libraries(DictionaryDataTest1 lima-common-data lima-common-mediaticdata lima-lp-linguisticdata lima-common-fsaaccess lima-common-qslog lima-common-xmlconfigurationfiles lima-lp-linguisticresources lima-lp-analysisdict  lima-lp-morphologicanalysis lima-lp-linguisticanalysisstructure ${Boost_LIBRARIES} ${QT_LIBRARIES})
+
+add_test(DictionaryDataTest1 DictionaryDataTest1)
+

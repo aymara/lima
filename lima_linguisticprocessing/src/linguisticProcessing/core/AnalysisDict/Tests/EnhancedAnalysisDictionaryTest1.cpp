@@ -36,13 +36,13 @@ using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::FsaAccess;
 
-// create EnhancedAnalysisDictionary and check size
+// create EnhancedAnalysisDictionary and check most of public operation
 BOOST_AUTO_TEST_CASE( EnhancedAnalysisDictionaryTest1 )
 {
   // Initialize MediaData (for fre)
   //value of LIMA_RESOURCE_DIR is set by find_package(LIMADATA) and LIMALDATAConfig.cmake;
-  std::string resourcesPath("/home/mesnard/Projects/Aymara/tmp/lima.master/../Dist/master/debug/share/apps/lima/resources");
-  std::string configDir(getenv("LIMA_CONF")==0?"/home/mesnard/Projects/Aymara/tmp/lima.master/../Dist/master/debug/usr/share/config/lima/":getenv("LIMA_CONF"));
+  std::string resourcesPath("/home/mesnard/Projects/Aymara/lima.master/../Dist/master/debug/share/apps/lima/resources");
+  std::string configDir(getenv("LIMA_CONF")==0?"/home/mesnard/Projects/Aymara/lima.master/../Dist/master/debug/usr/share/config/lima/":getenv("LIMA_CONF"));
   std::string commonConfigFile("lima-common.xml");
   std::deque<std::string>langs(1,"fre");
   Common::MediaticData::MediaticData::changeable().init(
@@ -93,11 +93,13 @@ BOOST_AUTO_TEST_CASE( EnhancedAnalysisDictionaryTest1 )
   // check if it an AbstractAccessResource
   const LinguisticProcessing::AnalysisDict::AbstractAccessResource* aar=static_cast<const LinguisticProcessing::AnalysisDict::AbstractAccessResource*>(globalFsaAccess);
   BOOST_REQUIRE(aar != 0);
+  std::cout << "EnhancedAnalysisDictionaryTest1: test aar != 0 OK\n";
   // check if it isMainKeys
   BOOST_REQUIRE(aar->isMainKeys());
   // check if it a FsaAccessResource
   const Lima::LinguisticProcessing::AnalysisDict::FsaAccessResource* far=static_cast<const Lima::LinguisticProcessing::AnalysisDict::FsaAccessResource*>(globalFsaAccess);
   BOOST_REQUIRE(far != 0);
+  std::cout << "EnhancedAnalysisDictionaryTest1: test far != 0 OK\n";
   // get AbstractAccessByString
   const Common::AbstractAccessByString* aas = aar->getAccessByString();
   // check if it a FsaAccess::FsaAccessSpare16*
