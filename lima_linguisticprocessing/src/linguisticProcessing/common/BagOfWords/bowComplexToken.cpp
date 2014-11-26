@@ -214,7 +214,7 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t) {
   m_position = t.m_d->m_position;
   m_separator = t.m_d->m_separator;
   m_useOnlyLemma = t.m_d->m_useOnlyLemma;
-  m_vertex = t.m_d->m_useOnlyLemma;
+  m_vertex = t.m_d->m_vertex;
   for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
        i != t.getParts().end(); i++) {
     BoWRelation* rel=0;
@@ -247,7 +247,7 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t,
   m_position = t.m_d->m_position;
   m_separator = t.m_d->m_separator;
   m_useOnlyLemma = t.m_d->m_useOnlyLemma;
-  m_vertex = t.m_d->m_useOnlyLemma;
+  m_vertex = t.m_d->m_vertex;
   for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
        i != t.getParts().end(); i++) {
     BoWRelation* rel=0;
