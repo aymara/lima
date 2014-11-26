@@ -172,17 +172,38 @@ BOOST_AUTO_TEST_CASE( EnhancedAnalysisDictionaryTest1 )
 
   std::set<StringsPoolIndex> forms; 
   forms = msd.allInflectedForms();
-  std::ostream_iterator<StringsPoolIndex> out_forms (std::cout,", ");
-  std::copy ( forms.begin(), forms.end(), out_forms );
+  std::set<StringsPoolIndex>::const_iterator formsIt = forms.begin();
+  std::cout << "allInflectedForms: ";
+  for( ; formsIt != forms.end() ; formsIt++ ) {
+    StringsPoolIndex formId = *formsIt;
+    LimaString formLimaString = aas->getSpelling(formId);
+    std::string formStdString = Lima::Common::Misc::limastring2utf8stdstring(formLimaString);
+    std::cout << formStdString << ", ";
+  }
+  std::cout << std::endl;
   
   std::set<StringsPoolIndex> lemmas; 
   lemmas = msd.allLemma();
-  std::ostream_iterator<StringsPoolIndex> out_lemmas (std::cout,", ");
-  std::copy ( lemmas.begin(), lemmas.end(), out_lemmas );
+  std::set<StringsPoolIndex>::const_iterator lemmasIt = lemmas.begin();
+  std::cout << "allLemma: ";
+  for( ; lemmasIt != lemmas.end() ; lemmasIt++ ) {
+    StringsPoolIndex lemmaId = *lemmasIt;
+    LimaString lemmaLimaString = aas->getSpelling(lemmaId);
+    std::string lemmaStdString = Lima::Common::Misc::limastring2utf8stdstring(lemmaLimaString);
+    std::cout << lemmaStdString << ", ";
+  }
+  std::cout << std::endl;
   
   std::set<StringsPoolIndex> normalized; 
   normalized = msd.allNormalizedForms();
-  std::ostream_iterator<StringsPoolIndex> out_normalized (std::cout,", ");
-  std::copy ( normalized.begin(), normalized.end(), out_normalized );
+  std::cout << "allNormalizedForms: ";
+  std::set<StringsPoolIndex>::const_iterator normalizedIt = normalized.begin();
+  for( ; normalizedIt != normalized.end() ; normalizedIt++ ) {
+    StringsPoolIndex normalizedId = *normalizedIt;
+    LimaString normalizedLimaString = aas->getSpelling(normalizedId);
+    std::string normalizedStdString = Lima::Common::Misc::limastring2utf8stdstring(normalizedLimaString);
+    std::cout << normalizedStdString << ", ";
+  }
+  std::cout << std::endl;
   
 }

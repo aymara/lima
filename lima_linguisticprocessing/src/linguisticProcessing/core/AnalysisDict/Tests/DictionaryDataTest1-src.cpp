@@ -50,6 +50,9 @@ BOOST_AUTO_TEST_CASE( DictionaryDataTest1 )
   std::cout << "dicoData.getEntryAddr[0]=" << hex << static_cast<void*>(entryAddr) << std::endl;
   std::cout << "dicoData..m_data=" << hex << static_cast<void*>(dicoData.m_data) << std::endl;
 //  BOOST_REQUIRE();
+  // Que tester???
+  // Il faudrait un petit dictionnaire bien contrôlé pour effectuer un jeu de test efficace
+  
   
   // test inline unsigned char* getLingPropertiesAddr(uint64_t index) const;
   // unsigned char*
