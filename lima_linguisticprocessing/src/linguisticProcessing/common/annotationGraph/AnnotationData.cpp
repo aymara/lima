@@ -82,14 +82,39 @@ class AnnotationDataPrivate
    *  values are the matching target graph vertices
    */
   std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> > m_matchings;
+  
+  CVertexAGGannotPropertyMap m_mapCVertexAGGannotPropertyMap;
+  CVertexAGSannotPropertyMap m_mapCVertexAGSannotPropertyMap;
+  VertexAGIannotPropertyMap m_mapVertexAGIannotPropertyMap;
+  VertexAGSannotPropertyMap m_mapVertexAGSannotPropertyMap;
+  EdgeAGIannotPropertyMap m_mapEdgeAGIannotPropertyMap;
+  CEdgeAGIannotPropertyMap m_mapCEdgeAGIannotPropertyMap;
+  VertexAGGannotPropertyMap m_mapVertexAGGannotPropertyMap;
+  EdgeAGSannotPropertyMap m_mapEdgeAGSannotPropertyMap;
+  CEdgeAGSannotPropertyMap m_mapCEdgeAGSannotPropertyMap;
+  EdgeAGGannotPropertyMap m_mapEdgeAGGannotPropertyMap;
+  CEdgeAGGannotPropertyMap m_mapCEdgeAGGannotPropertyMap;
+  CVertexAGIannotPropertyMap m_mapCVertexAGIannotPropertyMap;
 };
 
 
 AnnotationDataPrivate::AnnotationDataPrivate() :
-  m_graph(0),
+  m_graph(),
   m_pool(),
   m_dumpFunctions(),
-  m_matchings()
+  m_matchings(),
+  m_mapCVertexAGGannotPropertyMap( get(vertex_gannot, (const AnnotationGraph&)m_graph) ),
+  m_mapCVertexAGSannotPropertyMap( get(vertex_sannot, (const AnnotationGraph&)m_graph) ),
+  m_mapVertexAGIannotPropertyMap( get(vertex_iannot, m_graph) ),
+  m_mapVertexAGSannotPropertyMap( get(vertex_sannot, m_graph) ),
+  m_mapEdgeAGIannotPropertyMap( get(edge_iannot, m_graph) ),
+  m_mapCEdgeAGIannotPropertyMap( get(edge_iannot, (const AnnotationGraph)m_graph) ),
+  m_mapVertexAGGannotPropertyMap( get(vertex_gannot, m_graph) ),
+  m_mapEdgeAGSannotPropertyMap( get(edge_sannot, m_graph) ),
+  m_mapCEdgeAGSannotPropertyMap( get(edge_sannot, (const AnnotationGraph)m_graph) ),
+  m_mapEdgeAGGannotPropertyMap( get(edge_gannot, m_graph) ),
+  m_mapCEdgeAGGannotPropertyMap( get(edge_gannot, (const AnnotationGraph)m_graph) ),
+  m_mapCVertexAGIannotPropertyMap( get(vertex_iannot, (const AnnotationGraph)m_graph) )
 {
 }
 
@@ -297,8 +322,7 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, uint64_t 
   {
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
-  VertexAGIannotPropertyMap map = get(vertex_iannot, m_d->m_graph);
-  map[v][annot] = value;
+  m_d->m_mapVertexAGIannotPropertyMap[v][annot] = value;
   AGLOGINIT;
   LDEBUG << "Annotating " << v << " ("<<m_d->m_pool[StringsPoolIndex(annot)]<<") : " << value;
 }
@@ -309,8 +333,7 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const Lim
   {
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
-  VertexAGSannotPropertyMap map = get(vertex_sannot, m_d->m_graph);
-  map[v][annot] = value;
+  m_d->m_mapVertexAGSannotPropertyMap[v][annot] = value;
   AGLOGINIT;
   LDEBUG << "Annotating " << v << " ("<<m_d->m_pool[StringsPoolIndex(annot)]<<") : " << value;
 }
@@ -321,7 +344,6 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const Gen
   {
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
-  VertexAGGannotPropertyMap map = get(vertex_gannot, m_d->m_graph);
   if (num_vertices(m_d->m_graph) <= v)
   {
     std::ostringstream oss;
@@ -329,8 +351,8 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const Gen
     << ". Graph size in vertices is: " << num_vertices(m_d->m_graph) << std::endl;
     throw std::range_error(oss.str());
   }
-  std::map< uint64_t, GenericAnnotation > m = map[v];
-  map[v][annot] = value;
+  std::map< uint64_t, GenericAnnotation > m = m_d->m_mapVertexAGGannotPropertyMap[v];
+  m_d->m_mapVertexAGGannotPropertyMap[v][annot] = value;
   AGLOGINIT;
   LDEBUG << "Annotating " << v << " ("<< m_d->m_pool[StringsPoolIndex(annot)] <<") : GA";
 }
@@ -369,8 +391,7 @@ void AnnotationData::annotate(AnnotationGraphEdge e, uint64_t annot, uint64_t va
   {
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
-  EdgeAGIannotPropertyMap map = get(edge_iannot, m_d->m_graph);
-  map[e][annot] = value;
+  m_d->m_mapEdgeAGIannotPropertyMap[e][annot] = value;
 }
 
 void AnnotationData::annotate(AnnotationGraphEdge e, uint64_t annot, const LimaString& value)
@@ -379,8 +400,7 @@ void AnnotationData::annotate(AnnotationGraphEdge e, uint64_t annot, const LimaS
   {
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
-  EdgeAGSannotPropertyMap map = get(edge_sannot, m_d->m_graph);
-  map[e][annot] = value;
+  m_d->m_mapEdgeAGSannotPropertyMap[e][annot] = value;
 }
 
 void AnnotationData::annotate(AnnotationGraphEdge e, uint64_t annot, const GenericAnnotation& value)
@@ -389,58 +409,49 @@ void AnnotationData::annotate(AnnotationGraphEdge e, uint64_t annot, const Gener
   {
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
-  EdgeAGGannotPropertyMap map = get(edge_gannot, m_d->m_graph);
-  map[e][annot] = value;
+  m_d->m_mapEdgeAGGannotPropertyMap[e][annot] = value;
 }
 
 
 uint64_t AnnotationData::intAnnotation(AnnotationGraphVertex v, uint64_t annot) const
 {
-  VertexAGIannotPropertyMap map = get(vertex_iannot, const_cast<AnnotationData*>(this)->m_d->m_graph);
-  return map[v][annot];
+  return m_d->m_mapVertexAGIannotPropertyMap[v][annot];
 }
 
 const LimaString& AnnotationData::stringAnnotation(AnnotationGraphVertex v, uint64_t annot) const
 {
-  VertexAGSannotPropertyMap map = get(vertex_sannot, const_cast<AnnotationData*>(this)->m_d->m_graph);
-  return map[v][annot];
+  return m_d->m_mapVertexAGSannotPropertyMap[v][annot];
 }
 
 const GenericAnnotation& AnnotationData::annotation(AnnotationGraphVertex v, uint64_t annot) const
 {
-  VertexAGGannotPropertyMap map = get(vertex_gannot, const_cast<AnnotationData*>(this)->m_d->m_graph);
-  return map[v][annot];
+  return m_d->m_mapVertexAGGannotPropertyMap[v][annot];
 }
 
 GenericAnnotation& AnnotationData::annotation(AnnotationGraphVertex v, uint64_t annot)
 {
-  VertexAGGannotPropertyMap map = get(vertex_gannot, const_cast<AnnotationData*>(this)->m_d->m_graph);
-  return map[v][annot];
+  return m_d->m_mapVertexAGGannotPropertyMap[v][annot];
 }
 
 
 uint64_t AnnotationData::intAnnotation(AnnotationGraphEdge e, uint64_t annot)
 {
-  EdgeAGIannotPropertyMap map = get(edge_iannot, m_d->m_graph);
-  return map[e][annot];
+  return m_d->m_mapEdgeAGIannotPropertyMap[e][annot];
 }
 
 LimaString& AnnotationData::stringAnnotation(AnnotationGraphEdge e, uint64_t annot)
 {
-  EdgeAGSannotPropertyMap map = get(edge_sannot, m_d->m_graph);
-  return map[e][annot];
+  return m_d->m_mapEdgeAGSannotPropertyMap[e][annot];
 }
 
 const GenericAnnotation& AnnotationData::annotation(AnnotationGraphEdge e, uint64_t annot) const
 {
-  CEdgeAGGannotPropertyMap map = boost::get(edge_gannot, (const AnnotationGraph)m_d->m_graph);
-  return (*(map[e].find(annot))).second;
+  return (*(m_d->m_mapCEdgeAGGannotPropertyMap[e].find(annot))).second;
 }
 
 GenericAnnotation& AnnotationData::annotation(AnnotationGraphEdge e, uint64_t annot)
 {
-  EdgeAGGannotPropertyMap map = get(edge_gannot, m_d->m_graph);
-  return map[e][annot];
+  return m_d->m_mapEdgeAGGannotPropertyMap[e][annot];
 }
 
 
@@ -455,8 +466,7 @@ uint64_t AnnotationData::intAnnotation(AnnotationGraphVertex v1, AnnotationGraph
     oss << "Error trying to access to inexistant edge " << v1 << " -> " << v2;
     throw std::runtime_error(oss.str().c_str());
   }
-  CEdgeAGIannotPropertyMap map = get(edge_iannot, (const AnnotationGraph)m_d->m_graph);
-  return (*(map[e].find(annot))).second;
+  return (*(m_d->m_mapCEdgeAGIannotPropertyMap[e].find(annot))).second;
 }
 
 const LimaString& AnnotationData::stringAnnotation(AnnotationGraphVertex v1, AnnotationGraphVertex v2, uint64_t annot) const
@@ -469,8 +479,7 @@ const LimaString& AnnotationData::stringAnnotation(AnnotationGraphVertex v1, Ann
     oss << "Error trying to access to inexistant edge " << v1 << " -> " << v2;
     throw std::runtime_error(oss.str().c_str());
   }
-  CEdgeAGSannotPropertyMap map = get(edge_sannot, (const AnnotationGraph)m_d->m_graph);
-  return (*(map[e].find(annot))).second;
+  return (*(m_d->m_mapCEdgeAGSannotPropertyMap[e].find(annot))).second;
 }
 
 const GenericAnnotation& AnnotationData::annotation(AnnotationGraphVertex v1, AnnotationGraphVertex v2, uint64_t annot) const
@@ -483,14 +492,13 @@ const GenericAnnotation& AnnotationData::annotation(AnnotationGraphVertex v1, An
     oss << "Error trying to access to inexistant edge " << v1 << " -> " << v2;
     throw std::runtime_error(oss.str().c_str());
   }
-  CEdgeAGGannotPropertyMap map = get(edge_gannot, (const AnnotationGraph)m_d->m_graph);
-  if (map[e].find(annot) == map[e].end())
+  if (m_d->m_mapCEdgeAGGannotPropertyMap[e].find(annot) == m_d->m_mapCEdgeAGGannotPropertyMap[e].end())
   {
     std::ostringstream oss;
     oss << "Error trying to access to inexistant edge annotation" << v1 << " -> " << v2 << ", " << annot;
     throw std::runtime_error(oss.str().c_str());
   }
-  return (*(map[e].find(annot))).second;
+  return (*(m_d->m_mapCEdgeAGGannotPropertyMap[e].find(annot))).second;
 }
 
 GenericAnnotation& AnnotationData::annotation(AnnotationGraphVertex v1, AnnotationGraphVertex v2, uint64_t annot)
@@ -503,14 +511,13 @@ GenericAnnotation& AnnotationData::annotation(AnnotationGraphVertex v1, Annotati
     oss << "Error trying to access to inexistant edge " << v1 << " -> " << v2;
     throw std::runtime_error(oss.str().c_str());
   }
-  EdgeAGGannotPropertyMap map = get(edge_gannot, m_d->m_graph);
-  if (map[e].find(annot) == map[e].end())
+  if (m_d->m_mapEdgeAGGannotPropertyMap[e].find(annot) == m_d->m_mapEdgeAGGannotPropertyMap[e].end())
   {
     std::ostringstream oss;
     oss << "Error trying to access to inexistant edge annotation" << v1 << " -> " << v2 << ", " << annot;
     throw std::runtime_error(oss.str().c_str());
   }
-  return (*(map[e].find(annot))).second;
+  return (*(m_d->m_mapEdgeAGGannotPropertyMap[e].find(annot))).second;
 }
 //////////////////////////////////////
 
@@ -563,20 +570,17 @@ bool AnnotationData::hasAnnotation(AnnotationGraphEdge e, const LimaString& anno
 
 bool AnnotationData::hasIntAnnotation(AnnotationGraphVertex v, uint64_t annot) const
 {
-  CVertexAGIannotPropertyMap map = get(vertex_iannot, (const AnnotationGraph)m_d->m_graph);
-  return (map[v].find(annot) != map[v].end());
+  return (m_d->m_mapCVertexAGIannotPropertyMap[v].find(annot) != m_d->m_mapCVertexAGIannotPropertyMap[v].end());
 }
 
 bool AnnotationData::hasStringAnnotation(AnnotationGraphVertex v, uint64_t annot) const
 {
-  CVertexAGSannotPropertyMap map = get(vertex_sannot, (const AnnotationGraph)m_d->m_graph);
-  return (map[v].find(annot) != map[v].end());
+  return (m_d->m_mapCVertexAGSannotPropertyMap[v].find(annot) != m_d->m_mapCVertexAGSannotPropertyMap[v].end());
 }
 
 bool AnnotationData::hasAnnotation(AnnotationGraphVertex v, uint64_t annot) const
 {
-  CVertexAGGannotPropertyMap map = get(vertex_gannot, (const AnnotationGraph)m_d->m_graph);
-  return (map[v].find(annot) != map[v].end());
+  return (m_d->m_mapCVertexAGGannotPropertyMap[v].find(annot) != m_d->m_mapCVertexAGGannotPropertyMap[v].end());
 }
 
 bool AnnotationData::hasIntAnnotation(AnnotationGraphVertex v1, AnnotationGraphVertex v2, uint64_t annot) const
@@ -605,20 +609,17 @@ bool AnnotationData::hasAnnotation(AnnotationGraphVertex v1, AnnotationGraphVert
 
 bool AnnotationData::hasIntAnnotation(AnnotationGraphEdge e, uint64_t annot) const
 {
-  CEdgeAGIannotPropertyMap map = get(edge_iannot, (const AnnotationGraph)m_d->m_graph);
-  return (map[e].find(annot) != map[e].end());
+  return (m_d->m_mapCEdgeAGIannotPropertyMap[e].find(annot) != m_d->m_mapCEdgeAGIannotPropertyMap[e].end());
 }
 
 bool AnnotationData::hasStringAnnotation(AnnotationGraphEdge e, uint64_t annot) const
 {
-  CEdgeAGSannotPropertyMap map = get(edge_sannot, (const AnnotationGraph)m_d->m_graph);
-  return (map[e].find(annot) != map[e].end());
+  return (m_d->m_mapCEdgeAGSannotPropertyMap[e].find(annot) != m_d->m_mapCEdgeAGSannotPropertyMap[e].end());
 }
 
 bool AnnotationData::hasAnnotation(AnnotationGraphEdge e, uint64_t annot) const
 {
-  CEdgeAGGannotPropertyMap map = get(edge_gannot, (const AnnotationGraph)m_d->m_graph);
-  return (map[e].find(annot) != map[e].end());
+  return (m_d->m_mapCEdgeAGGannotPropertyMap[e].find(annot) != m_d->m_mapCEdgeAGGannotPropertyMap[e].end());
 }
 
 
@@ -787,9 +788,8 @@ void AnnotationData::cloneAnnotations(AnnotationGraphVertex src,
     iexcepted.insert(m_d->m_pool[Misc::utf8stdstring2limastring(*eit)]);
   }
 
-  VertexAGIannotPropertyMap iannotsMap = get(vertex_iannot, m_d->m_graph);
-  AGIannotProp& srcimap = iannotsMap[src];
-  AGIannotProp& tgtimap = iannotsMap[tgt];
+  AGIannotProp& srcimap = m_d->m_mapVertexAGIannotPropertyMap[src];
+  AGIannotProp& tgtimap = m_d->m_mapVertexAGIannotPropertyMap[tgt];
   for (AGIannotProp::const_iterator iamit=srcimap.begin();
        iamit != srcimap.end(); iamit++)
   {
@@ -799,9 +799,8 @@ void AnnotationData::cloneAnnotations(AnnotationGraphVertex src,
     }
   }
 
-  VertexAGSannotPropertyMap sannotsMap = get(vertex_sannot, m_d->m_graph);
-  std::map< uint64_t, LimaString >& srcsmap = sannotsMap[src];
-  std::map< uint64_t, LimaString >& tgtsmap = sannotsMap[tgt];
+  std::map< uint64_t, LimaString >& srcsmap = m_d->m_mapVertexAGSannotPropertyMap[src];
+  std::map< uint64_t, LimaString >& tgtsmap = m_d->m_mapVertexAGSannotPropertyMap[tgt];
   for (std::map< uint64_t, LimaString >::const_iterator samit=srcsmap.begin();
        samit != srcsmap.end(); samit++)
   {
@@ -811,9 +810,8 @@ void AnnotationData::cloneAnnotations(AnnotationGraphVertex src,
     }
   }
 
-  VertexAGGannotPropertyMap gannotsMap = get(vertex_gannot, m_d->m_graph);
-  std::map< uint64_t, GenericAnnotation >& srcmap = gannotsMap[src];
-  std::map< uint64_t, GenericAnnotation >& tgtmap = gannotsMap[tgt];
+  std::map< uint64_t, GenericAnnotation >& srcmap = m_d->m_mapVertexAGGannotPropertyMap[src];
+  std::map< uint64_t, GenericAnnotation >& tgtmap = m_d->m_mapVertexAGGannotPropertyMap[tgt];
   for (std::map< uint64_t, GenericAnnotation >::const_iterator amit=srcmap.begin();
        amit != srcmap.end(); amit++)
   {
