@@ -108,13 +108,13 @@ AnnotationDataPrivate::AnnotationDataPrivate() :
   m_mapVertexAGIannotPropertyMap( get(vertex_iannot, m_graph) ),
   m_mapVertexAGSannotPropertyMap( get(vertex_sannot, m_graph) ),
   m_mapEdgeAGIannotPropertyMap( get(edge_iannot, m_graph) ),
-  m_mapCEdgeAGIannotPropertyMap( get(edge_iannot, (const AnnotationGraph)m_graph) ),
+  m_mapCEdgeAGIannotPropertyMap( get(edge_iannot, (const AnnotationGraph&)m_graph) ),
   m_mapVertexAGGannotPropertyMap( get(vertex_gannot, m_graph) ),
   m_mapEdgeAGSannotPropertyMap( get(edge_sannot, m_graph) ),
-  m_mapCEdgeAGSannotPropertyMap( get(edge_sannot, (const AnnotationGraph)m_graph) ),
+  m_mapCEdgeAGSannotPropertyMap( get(edge_sannot, (const AnnotationGraph&)m_graph) ),
   m_mapEdgeAGGannotPropertyMap( get(edge_gannot, m_graph) ),
-  m_mapCEdgeAGGannotPropertyMap( get(edge_gannot, (const AnnotationGraph)m_graph) ),
-  m_mapCVertexAGIannotPropertyMap( get(vertex_iannot, (const AnnotationGraph)m_graph) )
+  m_mapCEdgeAGGannotPropertyMap( get(edge_gannot, (const AnnotationGraph&)m_graph) ),
+  m_mapCVertexAGIannotPropertyMap( get(vertex_iannot, (const AnnotationGraph&)m_graph) )
 {
 }
 
