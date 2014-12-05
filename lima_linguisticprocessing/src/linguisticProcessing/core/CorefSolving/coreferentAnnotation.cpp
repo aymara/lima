@@ -105,7 +105,7 @@ LinguisticGraphVertex CoreferentAnnotation::npHeadVertex(
       std::string relationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationName(relationId);
       
       
-      if (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).isACompoundRel(relationName)||relationName=="MOD_N")
+      if (/*static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).isACompoundRel(relationName)||*/relationName=="MOD_N")
       {
         headNode = target(*it, *(sd->dependencyGraph())) ;
         CoreferentAnnotation ca(m_id, sd->tokenVertexForDepVertex(headNode));
