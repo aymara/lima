@@ -105,8 +105,6 @@ public:
   
   bool isTypeARelationForChain(ChainsType, uint64_t) const;
 
-  bool isACompoundRel(const std::string& rel) const;
-
   LinguisticCode compoundTense(LinguisticCode mode, LinguisticCode auxTense) const;
   LinguisticCode compoundTense(std::string& mode, std::string& auxTense) const;
   

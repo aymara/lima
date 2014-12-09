@@ -35,18 +35,10 @@
 
 #include "common/LimaCommon.h"
 
-#ifdef WIN32
-#include <stdlib.h> // for timeval on Cygwin
-#include <time.h>
-#include <winsock2.h>
-#endif
+#include <QtCore/QMutex>
 
-#include <ctime>
 #include <string>
 
-#include "common/LimaCommon.h"
-
-#include <boost/thread/mutex.hpp>
 
 namespace Lima {
   
@@ -73,8 +65,8 @@ namespace Lima {
     //   static void updateCurrentTime( const std::string& taskCategory = std::string("") );
     static void updateCurrentTime( const std::string& taskCategory = std::string("") );
     
-    //   static void setCurrentTime(timeval time);
-    static void setCurrentTime(timeval time, const std::string& taskCategory = std::string(""));
+    //   static void setCurrentTime(uint64_t time);
+    static void setCurrentTime(uint64_t time, const std::string& taskCategory = std::string(""));
     
     /**
      * @note this class is deprecated to count the time passed in a specific class. Use @ref TimeUtilsController instead.
@@ -86,8 +78,8 @@ namespace Lima {
     /**
      * return the difference between two times in microseconds
      */
-    static uint64_t diffTime(const timeval& begin,
-                             const timeval& end);
+    static uint64_t diffTime(const uint64_t& begin,
+                             const uint64_t& end);
     
     /**
      * log the number of microseconds since last UpdateCurrentTime
@@ -114,13 +106,13 @@ namespace Lima {
        * stored)
        *
        */
-      static timeval getCurrentTime();
+      static uint64_t getCurrentTime();
       
     private:
       /** last current time stored */
-      //   static timeval currentTime;
-      static std::map<std::string , std::pair<timeval,uint64_t> > m_cumulatedTime;
-      static boost::mutex m_mutex;
+      //   static uint64_t currentTime;
+      static std::map<std::string , std::pair<uint64_t,uint64_t> > m_cumulatedTime;
+      static QMutex m_mutex;
     };
     
   } // end namespace

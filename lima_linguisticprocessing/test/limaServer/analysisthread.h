@@ -59,7 +59,6 @@ public Q_SLOTS:
 
 private:
   AnalysisThreadPrivate* m_d;
-  const std::set<std::string>& m_langs;
 };
 
 #endif // ANALYSISTHREAD_H

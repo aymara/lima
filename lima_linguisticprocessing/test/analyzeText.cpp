@@ -57,6 +57,7 @@
 #include <boost/program_options.hpp>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QStringList>
 
 namespace po = boost::program_options;
 
@@ -66,8 +67,8 @@ using namespace Lima::Common::Misc;
 using namespace Lima;
 
 void listunits();
-std::ofstream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId);
-void closeHandlerOutputFile(std::ofstream* ofs);
+std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set< std::string >& dumpers, const std::string& dumperId);
+void closeHandlerOutputFile(std::ostream* ofs);
 
 int main(int argc,char* argv[])
 {
@@ -85,6 +86,7 @@ int main(int argc,char* argv[])
   std::string cesartOutput;
   std::vector<std::string> languages;
   std::vector<std::string> dumpersv;
+  std::vector<std::string> outputsv;
   std::string pipeline;
   std::vector<std::string> files;
   std::vector<std::string> vinactiveUnits;
@@ -98,6 +100,8 @@ int main(int argc,char* argv[])
    "supported languages trigrams")
   ("dumper,d", po::value< std::vector<std::string> >(&dumpersv),
    "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter),bowh (BowTextHandler),fullxml (SimpleStreamHandler),text (SimpleStreamHandler), event (EventHandler)]. To use any of them, the corresponding dumper must be available in the pipeline configuration. Default is bow but must be set if any other is set")
+  ("output,o", po::value< std::vector<std::string> >(&outputsv),
+   "where to write dumpers output. By default, each dumper writes its results on a file whose name is the input file with a predefined suffix  appended. This option allows to chose another suffix or to write on standard output. Its syntax  is the following: <dumper>:<destination> with <dumper> a  dumper name and destination, either the value 'stdout' or a suffix.")
   ("mm-core-client", po::value<std::string>(&clientId)->default_value("lima-coreclient"),
                                                                       "Set the linguistic processing client to use")
   ("resources-dir", po::value<std::string>(&resourcesPath)->default_value(qgetenv("LIMA_RESOURCES").constData()==0?"":qgetenv("LIMA_RESOURCES").constData(),"$LIMA_RESOURCES"),
@@ -123,10 +127,14 @@ int main(int argc,char* argv[])
   p.add("input-file", -1);
   
   po::variables_map vm;
-  po::store(po::command_line_parser(argc, argv).
-  options(desc).positional(p).run(), vm);
-  po::notify(vm);
-  
+  try {
+    po::store(po::command_line_parser(argc, argv).
+    options(desc).positional(p).run(), vm);
+    po::notify(vm);
+  } catch (const boost::program_options::unknown_option& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
   if (vm.count("help")) {
     std::cout << desc << std::endl;
     return 1;
@@ -166,6 +174,21 @@ int main(int argc,char* argv[])
     return -1;
   }
   
+  QMap< QString, QString > outputs;
+  for(std::vector<std::string>::const_iterator outputsIt = outputsv.begin();
+      outputsIt != outputsv.end(); outputsIt++)
+  {
+    QStringList output = QString::fromUtf8((*outputsIt).c_str()).split(":");
+    if (output.size()==2)
+    {
+      outputs[output[0]] = output[1];
+    }
+    else
+    {
+      // Option syntax  error
+      std::cerr << "syntax error in output setting:" << *outputsIt << std::endl;
+    }
+  }
   std::vector<std::pair<std::string,std::string> > userMetaData;
   // parse 'meta' argument to add metadata
   if(!meta.empty()) {
@@ -198,7 +221,7 @@ int main(int argc,char* argv[])
 
   pipelines.push_back(pipeline);
   
-  timeval beginTime=TimeUtils::getCurrentTime();
+  uint64_t beginTime=TimeUtils::getCurrentTime();
   
   AbstractLinguisticProcessingClient* client(0);
   
@@ -274,9 +297,18 @@ int main(int argc,char* argv[])
     
     // set the output files (to 0 if not in list)
     // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile
-    std::ofstream* bowofs  = openHandlerOutputFile(bowTextWriter, std::string((*fileItr)+".bin"), dumpers, "bow");
-    std::ofstream* txtofs  = openHandlerOutputFile(simpleStreamHandler, std::string((*fileItr)+".out"), dumpers, "text");
-    std::ofstream* fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler, std::string((*fileItr)+".anal.xml"), dumpers, "fullxml");
+    QString bowOut = outputs.contains("bow")
+        ? (outputs["bow"] == "stdout"? "stdout" : QString::fromUtf8((*fileItr).c_str())+outputs["bow"])
+        : QString::fromUtf8((*fileItr).c_str())+".bin";
+    std::ostream* bowofs  = openHandlerOutputFile(bowTextWriter, std::string(bowOut.toUtf8().constData()), dumpers, "bow");
+    QString textOut = outputs.contains("text")
+        ? (outputs["text"] == "stdout"? "stdout" : QString::fromUtf8((*fileItr).c_str())+outputs["text"])
+        : "stdout";
+    std::ostream* txtofs  = openHandlerOutputFile(simpleStreamHandler, std::string(textOut.toUtf8().constData()), dumpers, "text");
+    QString fullxmlOut = outputs.contains("fullxml")
+        ? (outputs["fullxml"] == "stdout"? "stdout" : QString::fromUtf8((*fileItr).c_str())+outputs["fullxml"])
+        : "stdout";
+    std::ostream* fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler, std::string(fullxmlOut.toUtf8().constData()), dumpers, "fullxml");
     
     // loading of the input file
     TimeUtils::updateCurrentTime();
@@ -326,12 +358,19 @@ int main(int argc,char* argv[])
   return SUCCESS_ID;
 }
 
-std::ofstream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId)
+std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId)
 {
-  std::ofstream* ofs = 0;
+  std::ostream* ofs = 0;
   if (dumpers.find(dumperId)!=dumpers.end())
   {
+    if (fileName=="stdout")
+    {
+      ofs = &std::cout;
+    }
+    else
+    {
     ofs = new std::ofstream(fileName.c_str(), std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+    }
     if (ofs->good()) {
       handler->setOut(ofs);
     }
@@ -343,11 +382,11 @@ std::ofstream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, co
   return ofs;
 }
 
-void closeHandlerOutputFile(std::ofstream* ofs)
+void closeHandlerOutputFile(std::ostream* ofs)
 {
-  if (ofs != 0)
+  if (ofs != 0 && dynamic_cast<std::ofstream*>(ofs)!=0)
   {
-    ofs->close();
+    dynamic_cast<std::ofstream*>(ofs)->close();
     delete ofs;
     ofs = 0;
   }

@@ -46,7 +46,7 @@ enum BoWTokenIteratorNamedEntitiesPartsPolicy {
 };
 
 class BoWText;
-class BoWToken;
+class AbstractBoWElement;
 
 /** 
  * an iterator (const) to go through the BoWText and get all BoWTokens
@@ -88,7 +88,7 @@ class LIMA_BOW_EXPORT BoWTokenIterator {
   ~BoWTokenIterator();
       
   bool isAtEnd() const;
-  const BoWToken* getElement();
+  const AbstractBoWElement* getElement();
   BoWTokenIterator& operator++();   //prefix ++
   BoWTokenIterator operator++(int); //postfix++
 

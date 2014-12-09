@@ -139,7 +139,7 @@ int main(int argc,char* argv[])
 // ofstream ftmp;
 int dowork(int argc,char* argv[])
 {
-  timeval beginTime=TimeUtils::getCurrentTime();
+  uint64_t beginTime=TimeUtils::getCurrentTime();
   string inputFile("");
   string outputFile("");
   string corpusFormat(""); 

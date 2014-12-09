@@ -26,6 +26,7 @@
  ***********************************************************************/
 
 #include "bowTokenIterator.h"
+#include "AbstractBoWElement.h"
 #include "bowTerm.h"
 #include "bowText.h"
 #include "bowComplexToken.h"
@@ -53,16 +54,16 @@ class BoWTokenIteratorPrivate
   // a class to represent complex tokens parts that are stored in
   // queue: some are pointers to tokens in BoWText, some are
   // created => keep information for clean delete
-  class BoWTokenPart : public std::pair<const BoWToken*,bool> {
+  class BoWTokenPart : public std::pair<const AbstractBoWElement*,bool> {
   public:
-    BoWTokenPart():std::pair<const BoWToken*,bool>((BoWToken*)0,false) {}
-    BoWTokenPart(const BoWToken* token,bool isCreated):
-      std::pair<const BoWToken*,bool>(token,isCreated) {}
+    BoWTokenPart():std::pair<const AbstractBoWElement*,bool>((AbstractBoWElement*)0,false) {}
+    BoWTokenPart(const AbstractBoWElement* token,bool isCreated):
+      std::pair<const AbstractBoWElement*,bool>(token,isCreated) {}
 
     ~BoWTokenPart() {}
 
-    const BoWToken* const& getBoWToken() const { return first; }
-    const BoWToken*& getBoWToken() { return first; }
+    const AbstractBoWElement* const& getBoWToken() const { return first; }
+    const AbstractBoWElement*& getBoWToken() { return first; }
     bool& isCreated() { return second; }
     bool isCreated() const { return second; }
   };
@@ -204,13 +205,14 @@ bool BoWTokenIterator::isAtEnd() const {
 // getting parts is done in this function (rather than in ++ function):
 // which means that is a ++ is done before calling a getElement on 
 // a complex token, no parts will be explored
-const BoWToken* BoWTokenIterator::getElement() {
+const AbstractBoWElement* BoWTokenIterator::getElement() {
   if (m_d->m_partQueue.empty()) {
     if (m_d->m_iterator==m_d->m_iteratorEnd) { // at end
       return 0;
     }
     else {
       switch ((*m_d->m_iterator)->getType()) {
+      case BOW_PREDICATE:
       case BOW_TOKEN: {
         return *m_d->m_iterator;
         break;
@@ -218,7 +220,7 @@ const BoWToken* BoWTokenIterator::getElement() {
       case BOW_TERM:
       case BOW_NAMEDENTITY: {
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(*m_d->m_iterator);
+        m_d->storePartsInQueue(static_cast<const BoWToken*>(*m_d->m_iterator));
         return m_d->m_partQueue.front().getBoWToken();
         break;
       }

@@ -27,30 +27,28 @@
  ***********************************************************************/
 
 #include "traceUtils.h"
-#include "PortableGetTimeOfDay.h"
+#include <QDateTime>
 
 namespace Lima {
 
 //**********************************************************************
 //initialization of static members
 //**********************************************************************
-// timeval TimeUtils::currentTime={0,0};
-std::map<std::string , std::pair<timeval,uint64_t> > TimeUtils::m_cumulatedTime =
-  std::map<std::string , std::pair<timeval,uint64_t> >();
-boost::mutex TimeUtils::m_mutex;
+// uint64_t TimeUtils::currentTime={0,0};
+std::map<std::string , std::pair<uint64_t,uint64_t> > TimeUtils::m_cumulatedTime =
+  std::map<std::string , std::pair<uint64_t,uint64_t> >();
+QMutex TimeUtils::m_mutex;
 
 //**********************************************************************
 // member functions
 //**********************************************************************
-timeval TimeUtils::getCurrentTime() { 
-  timeval current;
-  gettimeofday(&current,0);
-  return current;
+uint64_t TimeUtils::getCurrentTime() { 
+  return QDateTime::currentMSecsSinceEpoch();
 }
 
 void TimeUtils::updateCurrentTime( const std::string& taskCategory ) {
-  boost::mutex::scoped_lock(m_mutex);
-  gettimeofday(&(m_cumulatedTime[taskCategory].first),0);
+  QMutexLocker locker(&m_mutex);
+  m_cumulatedTime[taskCategory].first = QDateTime::currentMSecsSinceEpoch();
 }
 
 // void TimeUtils::updateCurrentTime() {
@@ -58,39 +56,23 @@ void TimeUtils::updateCurrentTime( const std::string& taskCategory ) {
 //   gettimeofday(&currentTime,0);
 // }
 
-void TimeUtils::setCurrentTime(timeval time, const std::string& taskCategory) {
-  boost::mutex::scoped_lock(m_mutex);
+void TimeUtils::setCurrentTime(uint64_t time, const std::string& taskCategory) {
+  QMutexLocker locker(&m_mutex);
   m_cumulatedTime[taskCategory].first=time;
 }
 
-// void TimeUtils::setCurrentTime(timeval time) {
-//   boost::mutex::scoped_lock(m_mutex);
-//   currentTime=time;
-// }
-
-
-uint64_t TimeUtils::diffTime(const timeval& begin,
-                                  const timeval& end) {
-  uint64_t 
-    microsecondsElapsed=((end.tv_sec*1000000+end.tv_usec) - 
-                         (begin.tv_sec*1000000+begin.tv_usec));
-  return microsecondsElapsed; // return microseconds
+uint64_t TimeUtils::diffTime(const uint64_t& begin,
+                                  const uint64_t& end) {
+  return end - begin;
 }
 
 uint64_t TimeUtils::elapsedTime(const std::string& taskCategory) {
-  timeval newTime;
-  gettimeofday(&newTime,0);
+  uint64_t newTime = QDateTime::currentMSecsSinceEpoch();
   uint64_t delta = diffTime(m_cumulatedTime[taskCategory].first,newTime);
   m_cumulatedTime[taskCategory].second += delta;
   m_cumulatedTime[taskCategory].first = newTime;
   return delta;
 }
-
-// uint64_t TimeUtils::elapsedTime() {
-//   timeval newTime;
-//   gettimeofday(&newTime,0);
-//   return diffTime(currentTime,newTime);
-// }
 
 /**
  * log the number of microseconds since last UpdateCurrentTime
@@ -100,11 +82,6 @@ void TimeUtils::logElapsedTime(const std::string& mess,
   TIMELOGINIT;
   LINFO << mess << "(" << taskCategory << "): " << TimeUtils::elapsedTime(taskCategory) << " ms";
 }
-
-//   void TimeUtils::logElapsedTime(const std::string& mess) {
-//   TIMELOGINIT;
-//   LINFO << mess << ": " << elapsedTime() << " ms";
-// }
 
 /**
  * log the number of microseconds since last UpdateCurrentTime
@@ -118,7 +95,7 @@ void TimeUtils::logCumulatedTime(const std::string& mess,
 void TimeUtils::logAllCumulatedTime(const std::string& mess) {
   TIMELOGINIT;
   LINFO << mess << ": ";
-  for( std::map<std::string , std::pair<timeval,uint64_t> >::const_iterator it = m_cumulatedTime.begin() ; 
+  for( std::map<std::string , std::pair<uint64_t,uint64_t> >::const_iterator it = m_cumulatedTime.begin() ; 
 	   it != m_cumulatedTime.end() ; it++ ) {
 	LINFO << it->first << ":" << it->second.second << " ms" ;
   }

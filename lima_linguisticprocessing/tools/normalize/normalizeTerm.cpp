@@ -26,6 +26,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
@@ -63,7 +64,9 @@ pair<int,int> getStartEnd(const BoWToken* tok);
 int main(int argc,char* argv[])
 {
   QCoreApplication a(argc, argv);
-  QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  
   bool docatch = false;
   if (argc>1)
   {
@@ -126,9 +129,9 @@ int dowork(int argc,char* argv[])
           listunits();
         else if (arg== "--catch") ;
         else if ( (pos = arg.find("--lp-config-file=")) != std::string::npos )
-          lpConfigFile = arg.substr(pos+14);
+          lpConfigFile = arg.substr(pos+17);
         else if ( (pos = arg.find("--common-config-file=")) != std::string::npos )
-          commonConfigFile = arg.substr(pos+20);
+          commonConfigFile = arg.substr(pos+21);
         else if ( (pos = arg.find("--config-dir=")) != std::string::npos )
           configDir = arg.substr(pos+13);
         else if ( (pos = arg.find("--resources-dir=")) != std::string::npos )
@@ -270,16 +273,19 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
        bowItr!=bowText.end();
        bowItr++)
   {
-    pair<int,int> posLen=getStartEnd(*bowItr);
-    //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
-    if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
+    if ((*bowItr)->getType() != BOW_PREDICATE)
     {
-      result.insert(make_pair(
-                      (*bowItr)->getLemma(),
-                      macroManager.getPropertySymbolicValue((*bowItr)->getCategory())));
-      //        cerr << " keep it !";
+      pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(*bowItr));
+      //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
+      if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
+      {
+        result.insert(make_pair(
+                        static_cast<const BoWToken*>(*bowItr)->getLemma(),
+                        macroManager.getPropertySymbolicValue(static_cast<const BoWToken*>(*bowItr)->getCategory())));
+        //        cerr << " keep it !";
+      }
+      //      cerr << endl;
     }
-    //      cerr << endl;
   }
   //   }
   return result;

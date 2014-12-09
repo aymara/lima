@@ -147,7 +147,7 @@ LimaStatusCode TextDumper::process(
       return MISSING_DATA;
   }
 
-  DumperStream* dstream=initialize(analysis);
+  QScopedPointer<DumperStream> dstream(initialize(analysis));
 
   map<Token*,vector<MorphoSyntacticData*>,lTokenPosition > categoriesMapping;
 
@@ -212,7 +212,6 @@ LimaStatusCode TextDumper::process(
     outputVertex(dstream->out(),ftItr->first,ftItr->second,sp,metadata->getStartOffset());
   }
 
-  delete dstream;
   return SUCCESS_ID;
 }
 

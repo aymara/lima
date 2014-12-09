@@ -61,7 +61,7 @@ public:
 
   const std::string& getInputFile(AnalysisContent& analysis) const;
 
-private:
+protected:
   std::string m_inputFileName;
   std::string m_inputFileExtension;
 };

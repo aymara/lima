@@ -91,7 +91,7 @@ set(CMAKE_PREFIX_PATH
 
 add_definitions(-D QT_NO_KEYWORDS)
 
-find_package(Qt4 REQUIRED QtCore QtXml)
+find_package(Qt4 4.7 REQUIRED QtCore QtXml)
 include(${QT_USE_FILE})
 include_directories(${Qt4_INCLUDE_DIR})
 link_directories(${Qt4_LIBRARY_DIRS})
@@ -108,8 +108,8 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 
-find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_SOURCE_DIR})
-
+configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
+find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(conf)
 add_subdirectory(src)
@@ -117,7 +117,6 @@ add_subdirectory(test)
 
 
 ########### install files ###############
-configure_file(LIMACOMMONConfig.cmake LIMACOMMONConfig.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
 
 ########### documentation ###############
@@ -143,20 +142,14 @@ SET(CPACK_PACKAGE_VENDOR "CEA LIST")
 SET(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "0")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
 SET(CPACK_SOURCE_STRIP_FILES "")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-IF (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  set(CPACK_RPM_PACKAGE_REQUIRES "qt4 >= 4.7")
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt4, libboost-date-time1.42.0, libboost-program-options1.42.0, libboost-regex1.42.0, libboost-system1.42.0")
-ELSE (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  set(CPACK_RPM_PACKAGE_REQUIRES "qt4 >= 4.7")
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt4, libboost-date-time1.42.0, libboost-program-options1.42.0, libboost-regex1.42.0, libboost-system1.42.0")
-endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+set(CPACK_RPM_PACKAGE_REQUIRES "qt4 >= 4.7")
 
 INCLUDE(CPack)

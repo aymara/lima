@@ -30,6 +30,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "linguisticProcessing/common/BagOfWords/bowNamedEntity.h"
 #include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
 #include "linguisticProcessing/common/BagOfWords/bowTokenIterator.h"
@@ -740,7 +741,7 @@ checkCompound(LinguisticGraphVertex v,
 
 void GenericXmlDumper::
 xmlOutputCompound(std::ostream& out, 
-                  Common::BagOfWords::BoWToken* token,
+                  Common::BagOfWords::AbstractBoWElement* token,
                   LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                   LinguisticAnalysisStructure::AnalysisGraph* posgraph,
                   const AnnotationData* annotationData,
@@ -750,6 +751,11 @@ xmlOutputCompound(std::ostream& out,
   DUMPERLOGINIT;
   LDEBUG << "GenericXmlDumper: output BoWToken [" << token->getOutputUTF8String() << "]";
   switch (token->getType()) {
+    case BOW_PREDICATE:{
+      // FIXME To implement
+      LERROR << "GenericXmlDumper: BOW_PREDICATE support not implemented";
+      break;
+    }
     case BOW_TERM: {
       LDEBUG << "GenericXmlDumper: output BoWTerm";
       // compound informations
@@ -776,7 +782,7 @@ xmlOutputCompound(std::ostream& out,
           bit++; // first one is same BoWTerm
         }
         while (! bit.isAtEnd()) {
-          BoWToken* tok=const_cast<BoWToken*>(bit.getElement());
+          AbstractBoWElement* tok=const_cast<AbstractBoWElement*>(bit.getElement());
           LDEBUG << "next token=" << tok->getOutputUTF8String();
           xmlOutputCompound(out,tok,anagraph,posgraph,annotationData,sp,offset);
           bit++;
@@ -798,7 +804,7 @@ xmlOutputCompound(std::ostream& out,
     }
     case BOW_NAMEDENTITY: {
       if (m_outputCompoundParts) {
-        LinguisticGraphVertex v=token->getVertex();
+        LinguisticGraphVertex v=dynamic_cast<BoWNamedEntity*>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWNamedEntity of vertex " << v;
         std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>
         se=checkSpecificEntity(v,anagraph,posgraph,annotationData);
@@ -814,7 +820,7 @@ xmlOutputCompound(std::ostream& out,
     }
     case BOW_TOKEN: {
       if  (m_outputCompoundParts) {
-        LinguisticGraphVertex v=token->getVertex();
+        LinguisticGraphVertex v=dynamic_cast<BoWToken*>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWToken of vertex " << v;
         xmlOutputVertexInfos(out,v,posgraph,offset);
       }
@@ -852,9 +858,7 @@ void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out,
   out << "/>" << endl;
 }                          
 
-void GenericXmlDumper::xmlOutputBoWInfos(std::ostream& out, 
-                                         BoWToken* token,
-                                         uint64_t offset) const
+void GenericXmlDumper::xmlOutputBoWInfos(ostream& out, AbstractBoWElement* token, uint64_t offset) const
 {
   for (unsigned int i=0,size=m_bowFeatures.size();i<size;i++) {
     std::string value;

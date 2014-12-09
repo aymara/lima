@@ -38,28 +38,23 @@
  **
  ****************************************************************************/
 
- #ifndef AMOSESERVER_H
- #define AMOSESERVER_H
+ #ifndef LIMASERVER_H
+ #define LIMASERVER_H
 
-#include <QtNetwork/QTcpServer>
-#include <QTimer>
 #include "qhttpserver.h"
 
 #include <deque>
+#include <vector>
+#include <set>
+#include <string>
 
-#include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
+class QTimer;
 
-class QSettings;
-
-/*
- * namespace Lima {
-  namespace Common {
-    namespace XMLConfigurationFiles {
-      class GroupConfigurationStructure;
-    }
+namespace Lima {
+  namespace LinguisticProcessing {
+    class AbstractLinguisticProcessingClient;
   }
 }
-*/
 
 class LimaServer : public QObject
 {
@@ -67,19 +62,17 @@ class LimaServer : public QObject
 
 public:
     LimaServer( const std::string& limaServerConfigFile,
-		       const std::deque<std::string>& langs,
-		       const std::vector<std::string>& vinactiveUnits,
-		       const std::deque<std::string>& pipelines,
-		       int port,
-		       QObject *parent,
-		       QTimer* t);
+                const std::deque<std::string>& langs,
+                const std::deque<std::string>& pipelines,
+                int port,
+                QObject *parent,
+                QTimer* t);
     virtual ~LimaServer();
 
 private Q_SLOTS:
     void quit();
 private Q_SLOTS:
     void handleRequest(QHttpRequest* req, QHttpResponse* resp);
-//     void incomingConnection(int socketDescriptor);
 
 private:
   const std::set<std::string> m_langs;

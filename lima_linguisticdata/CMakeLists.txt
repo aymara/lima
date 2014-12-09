@@ -35,6 +35,19 @@ ELSE (LIMACOMMON_FOUND)
   MESSAGE(FATAL_ERROR "Could not find limacommon")
 ENDIF(LIMACOMMON_FOUND)
 
+FIND_PACKAGE(LIMALP PATHS $ENV{LIMA_DIST}/share/apps/lima/cmake/Modules ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules share/apps/lima/cmake/Modules)
+IF(LIMALP_FOUND)
+  include_directories(${LIMALP_INCLUDE_DIR})
+  link_directories(${LIMALP_LIBRARY_DIRS})
+ELSE (LIMALP_FOUND)
+  MESSAGE(FATAL_ERROR "Could not find limalp")
+ENDIF(LIMALP_FOUND)
+
+configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
+
+
+LIMA_GENERIC_CONFIGENV(eng)
+LIMA_GENERIC_CONFIGENV(fre)
 
 add_subdirectory(cmake)
 add_subdirectory(scratch)
@@ -43,9 +56,11 @@ add_subdirectory(disambiguisationMatrices)
 add_subdirectory(rules-idiom)
 add_subdirectory(SpecificEntities)
 add_subdirectory(syntacticAnalysis)
+add_subdirectory(SRLIntegration)
 
 
 ########### install files ###############
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
 
 
 ########### packaging ###############
@@ -63,15 +78,15 @@ SET(CPACK_PACKAGE_VENDOR "CEA LIST")
 SET(CPACK_PACKAGE_CONTACT "Gael de Chalendar <gael.de-chalendar AT cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "0")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
 SET(CPACK_PROJECT_CONFIG_FILE ${${CMAKE_SOURCE_DIR}}/cmake/CPackOptions.cmake)
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 SET(CPACK_STRIP_FILES "")
 SET(CPACK_SOURCE_STRIP_FILES ${CPACK_STRIP_FILES})
 SET(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-SET(CPACK_PACKAGE_FILE_NAME "limadata")
+# SET(CPACK_PACKAGE_FILE_NAME "limadata")
 
 # set of commands to define component based packaging
 # The idea is to define one component with files common to all languages (common)
@@ -83,13 +98,13 @@ SET(CPACK_COMPONENTS_ALL common fre eng)
 # by default create one package for each component
 # SET(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
 
-SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon >= 1.0.0, limalinguisticprocessing >= 1.0.0")
+SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon, limalinguisticprocessing")
 # by default behaviour of rpm packager is to disable components
 SET(CPACK_RPM_COMPONENT_INSTALL ON)
 # mangle CPACK_PACKAGE_FILE_NAME and component name
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon (>= 1.0.0), limalinguisticprocessing (>= 1.0.0)")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon, limalinguisticprocessing")
 SET(CPACK_DEBIAN_COMPONENT_INSTALL ON)
 SET(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME ON)
 

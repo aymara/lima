@@ -30,7 +30,7 @@
 #include "stringspool.h"
 #include "common/Data/strwstrtools.h"
 
-#include <boost/thread/mutex.hpp>
+#include <QMutex>
 
 #include <set>
 
@@ -119,7 +119,7 @@ class StringsPoolPrivate
 
   std::set< void* > m_users;
 
-  boost::mutex m_mutex;
+  QMutex m_mutex;
 };
 
 StringsPoolPrivate::StringsPoolPrivate():
@@ -200,7 +200,7 @@ StringsPoolIndex StringsPool::operator[](const LimaString& str)
   //LTRACE << "StringsPool[" << str << "]";
   if (m_d->m_hashPool.find(&str) == m_d->m_hashPool.end())
   {
-    boost::mutex::scoped_lock(m_d->m_mutex);
+    QMutexLocker locker(&m_d->m_mutex);
     StringsPoolIndex newPosition = static_cast<StringsPoolIndex>(m_d->m_vecPool.size());
     LimaString* newString = new LimaString(str);
     m_d->m_vecPool.push_back(newString);

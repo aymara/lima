@@ -2,8 +2,6 @@ INCLUDE(${QT_USE_FILE})
 
 ########### next target ###############
 
-
-
 include_directories( ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/test ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 SET(limaserver_SRCS
@@ -27,46 +25,52 @@ add_executable(limaserver ${limaserver_SRCS} ${limaserver_MOC_OUTFILES})
 target_link_libraries(limaserver
     lima-common
     lima-linguisticprocessing
-    ${optionalLibs}
-    ${Boost_LIBRARIES}
+    ${QHTTPSERVER_NAMES}
     ${QT_LIBRARIES}
-# lima-lp-analysisdumpers 
-# lima-lp-analysishandlers 
-# lima-lp-applyrecognizer 
-# lima-lp-automaton
-# lima-lp-bagofwords 
-# lima-lp-annotationgraph 
-# #lima-lp-compounds
-# lima-lp-regexmatcher 
-# lima-lp-linguisticdata 
-# lima-lp-linguisticprocessors 
-# lima-lp-linguisticresources 
-# lima-lp-client
-# lima-lp-linguisticprocessing-core 
-# lima-lp-morphologicanalysis
-# lima-lp-analysisdict 
-# lima-lp-linguisticanalysisstructure 
-# lima-lp-misc
-# lima-lp-postagger 
-# lima-lp-propertycode 
-# lima-lp-specificentities
-# lima-lp-syntacticanalysis 
-# lima-lp-flattokenizer
-# lima-lp-textsegmentation
-
-# lima-common-data 
-# lima-common-misc 
-# lima-common-datahandler 
-# lima-common-fsaaccess
-# lima-common-qslog 
-# lima-common-mediaprocessors 
-# lima-common-mediaticdata
-# lima-common-processunitframework 
-# lima-common-xmlconfigurationfiles
-# lima-common-time
-
-${QHTTPSERVER_NAMES}
-${OpenCV_LIBS} ${QT_LIBRARIES} ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
+    ${Boost_LIBRARIES})
 
 install(TARGETS limaserver DESTINATION bin)
 
+########### next target ###############
+if (${QT_DBUSCPP2XML_EXECUTABLE} STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
+  message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
+else ()
+
+SET(limadbusserver_SRCS
+  LimaDBusServer.cpp
+  mainLimaDBusServer.cpp
+  AnalysisWrapper.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
+)
+
+set (limadbusserver_MOC_HEADERS
+    LimaDBusServer.h
+    AnalysisWrapper.h
+    )
+
+qt4_generate_dbus_interface(
+    LimaDBusServer.h
+    fr.cea.limadbusserver.xml
+    OPTIONS -a -M
+)
+# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
+
+qt4_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
+                     LimaDBusServer.h LimaDBusServer)
+
+qt4_wrap_cpp (limadbusserver_MOC_OUTFILES ${limadbusserver_MOC_HEADERS})
+
+# qt4_add_resources(limadbusserver amoseserver.qrc)
+
+# add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
+add_executable(limadbusserver ${limadbusserver_SRCS} ${limadbusserver_MOC_OUTFILES})
+
+target_link_libraries(limadbusserver
+    lima-common
+    lima-linguisticprocessing
+    ${Boost_LIBRARIES}
+    ${QT_LIBRARIES}
+    ${QHTTPSERVER_NAMES})
+
+install(TARGETS limadbusserver DESTINATION bin)
+endif()

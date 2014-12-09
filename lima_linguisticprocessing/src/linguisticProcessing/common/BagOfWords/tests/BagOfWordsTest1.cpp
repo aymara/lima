@@ -40,8 +40,8 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_1 )
   writer.writeBoWToken(stream, &bt1, refMap);
 
   BoWBinaryReader reader;
-  std::vector<BoWToken*> rrefMap;
-  BoWToken* bt2 = reader.readBoWToken(stream, rrefMap);
+  std::vector<AbstractBoWElement*> rrefMap;
+  BoWToken* bt2 = static_cast<BoWToken*>(reader.readBoWToken(stream, rrefMap));
 
   BOOST_REQUIRE( bt1.getLemma() == bt2->getLemma() );
   delete bt2;
@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_2 )
   writer.writeBoWToken(stream, &bt1, refMap);
 
   BoWBinaryReader reader;
-  std::vector<BoWToken*> rrefMap;
-  BoWToken* bt2 = reader.readBoWToken(stream, rrefMap);
+  std::vector<AbstractBoWElement*> rrefMap;
+  BoWToken* bt2 = static_cast<BoWToken*>(reader.readBoWToken(stream, rrefMap));
 
   BOOST_REQUIRE( bt1.getLemma() == bt2->getLemma() );
   delete bt2;
@@ -79,10 +79,10 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_3 )
   writer.writeBoWToken(stream, &bt3, refMap);
 
   BoWBinaryReader reader;
-  std::vector<BoWToken*> rrefMap;
-  BoWToken* rbt1 = reader.readBoWToken(stream, rrefMap);
-  BoWToken* rbt2 = reader.readBoWToken(stream, rrefMap);
-  BoWToken* rbt3 = reader.readBoWToken(stream, rrefMap);
+  std::vector<AbstractBoWElement*> rrefMap;
+  BoWToken* rbt1 = static_cast<BoWToken*>(reader.readBoWToken(stream, rrefMap));
+  BoWToken* rbt2 = static_cast<BoWToken*>(reader.readBoWToken(stream, rrefMap));
+  BoWToken* rbt3 = static_cast<BoWToken*>(reader.readBoWToken(stream, rrefMap));
 
   BOOST_REQUIRE( bt2.getLemma() == rbt2->getLemma() );
   delete rbt1;

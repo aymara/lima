@@ -23,5 +23,6 @@ install(FILES
   lima-lp-eng.xml 
   lima-lp-tva.xml 
   lima-lp-tva-eng.xml 
-  lima-server.xml 
+  lima-server.xml
+  lima-dbusserver.xml 
   DESTINATION share/config/lima)

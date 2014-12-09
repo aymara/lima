@@ -64,7 +64,7 @@ private:
   std::ostream* m_out;
   std::set<std::string> m_toLog;
   std::string m_statusFile;
-  timeval* m_predTime;
+  uint64_t m_predTime;
 
 };
 

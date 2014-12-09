@@ -273,7 +273,6 @@ protected:
   uint64_t m_maxChainLength;
 
   const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   LinguisticCode m_ponctuCategory;
 };
 

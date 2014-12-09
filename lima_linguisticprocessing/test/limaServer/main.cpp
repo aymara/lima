@@ -24,8 +24,10 @@
 #include <QNetworkInterface>
 #include <QTimer>
 
+#include "common/LimaCommon.h"
 #include "common/QsLog/QsLogCategories.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
+#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 // #ifdef WIN32
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 // #endif
@@ -55,11 +57,9 @@ int main(int argc, char **argv)
   std::vector<std::string> languages;
   // list of pipelines to initialize analyzer
   std::vector<std::string> pipelines;
-  // list of inacive units in pipelines
-  std::vector<std::string> vinactiveUnits;
   int optional_port;
   // time before service stop
-  int service_life;
+  int service_life = 0;
   
   // Declare the supported options.
   po::options_description desc("Usage");
@@ -71,8 +71,6 @@ int main(int argc, char **argv)
   ("common-config-file", po::value<std::string>(&limaServerConfigFile)->default_value("lima-server.xml"),
                                                                                   "Set the LIMA server configuration file to use")
   ("pipeline,p", po::value< std::vector<std::string> >(&pipelines), "Set the linguistic analysis supported pipelines")
-  ("inactive-units", po::value< std::vector<std::string> >(&vinactiveUnits),
-   "Inactive some process units of the used pipeline")
   ("port", po::value< int >(&optional_port),
    "set the listening port")
   ("service-life,t", po::value< int >(&service_life),
@@ -199,7 +197,7 @@ int main(int argc, char **argv)
 
   QTimer t;
   // Create instance of server
-  LimaServer server( configDir, langs, vinactiveUnits, pipes, port, &app, &t);
+  LimaServer server( configDir, langs, pipes, port, &app, &t);
 
   if (varMap.count("service-life")) {
     // Stop server and app after service-life seconds

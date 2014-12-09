@@ -166,8 +166,8 @@ LimaString getStringDecomp(const BoWToken* token) {
     const BoWComplexToken* complexToken=0;
     switch (token->getType()) {
     case BOW_TOKEN:
-        //cerr << "token is a simple token -> " << token->getIndexString() << endl;
-        return token->getIndexString();
+        //cerr << "token is a simple token -> " << token->getString() << endl;
+        return token->getString();
         break;
     case BOW_TERM:
     case BOW_NAMEDENTITY:
@@ -232,17 +232,17 @@ void GetLexiconBoWDocumentHandler::processSBoWText(const BoWText* text,
   LIMA_UNUSED(useIterators);
     BoWTokenIterator it(*text);
     while (! it.isAtEnd()) {
-        const BoWToken& token = *(it.getElement());
+        const BoWToken& token = dynamic_cast<const BoWToken&>(*(it.getElement()));
 //     const std::string& stringProp = m_macroManager.getPropertySymbolicValue(token.getCategory());
         if (m_filterCategory) {
             set<LinguisticCode>::const_iterator referencePropertyIt =
                 m_referenceProperties.find(m_propertyAccessor.readValue(token.getCategory()));
             if ( referencePropertyIt != m_referenceProperties.end() ) {
-                m_lex.add(getStringDecomp(&token),token.getIndexString());
+                m_lex.add(getStringDecomp(&token),token.getString());
             }
         }
         else {
-            m_lex.add(getStringDecomp(&token),token.getIndexString());
+            m_lex.add(getStringDecomp(&token),token.getString());
         }
         it++;
     }
@@ -271,16 +271,16 @@ void readBowFileText(ifstream& fileIn,
 
     BoWTokenIterator it(text);
     while (! it.isAtEnd()) {
-        const BoWToken& token = *(it.getElement());
+        const BoWToken& token = dynamic_cast<const BoWToken&>(*(it.getElement()));
         if (filterCategory) {
             set<LinguisticCode>::const_iterator referencePropertyIt =
                 referenceProperties.find(propertyAccessor.readValue(token.getCategory()));
             if ( referencePropertyIt != referenceProperties.end() ) {
-                lex.add(getStringDecomp(&token),token.getIndexString());
+                lex.add(getStringDecomp(&token),token.getString());
             }
         }
         else {
-            lex.add(getStringDecomp(&token),token.getIndexString());
+            lex.add(getStringDecomp(&token),token.getString());
         }
         it++;
     }

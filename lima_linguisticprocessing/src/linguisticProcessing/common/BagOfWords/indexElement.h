@@ -23,11 +23,11 @@
  * @date       Tue Feb  7 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
  * Project     BagOfWords
- * 
+ *
  * @brief a class to represent the element to index in the bag of
  * words structure
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #ifndef INDEXELEMENT_H
@@ -35,6 +35,7 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/common/misc/positionLengthList.h"
+#include "linguisticProcessing/common/BagOfWords/AbstractBoWElement.h"
 #include "common/Data/LimaString.h"
 #include "common/MediaticData/EntityType.h"
 #include <vector>
@@ -45,18 +46,29 @@ namespace Common {
 namespace BagOfWords {
 
 class IndexElementPrivate;
+
+/**
+ * Represent an element of an index
+ * If it is a predicate, its simple term is "PredicateElement" and its neType is the
+ * type of the predicate. Its structure and relations allow to find its roles
+ * If it is a role, its simple term is "PredicateRole" and its neType is the
+ * type of the type of the. Its structure and relations are empty except if it is
+ * itself a predicate (in case of reified predicates).
+ */
 class LIMA_BOW_EXPORT IndexElement
 {
- public:
-  IndexElement(); 
+public:
+  IndexElement();
   IndexElement(const uint64_t id,
+               const Lima::Common::BagOfWords::BoWType type,
                const LimaString& word,
                const uint64_t cat=0,
                const uint64_t position=0,
                const uint64_t length=0,
                const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
-               const uint64_t reType=0); 
+               const uint64_t reType=0);
   IndexElement(const uint64_t id,
+               const Lima::Common::BagOfWords::BoWType type,
                const std::vector<uint64_t>& structure,
                const std::vector<uint64_t>& relations,
                const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
@@ -74,8 +86,10 @@ class LIMA_BOW_EXPORT IndexElement
 
   bool empty() const;
   uint64_t getId() const;
+  Lima::Common::BagOfWords::BoWType getType() const;
   bool isSimpleTerm() const;
   bool isComposedTerm() const;
+  bool isPredicate() const;
 
   const LimaString& getSimpleTerm() const;
   uint64_t getCategory() const;
@@ -97,9 +111,10 @@ class LIMA_BOW_EXPORT IndexElement
   void setStructure(const std::vector<uint64_t>& s,
                     const std::vector<uint64_t>& r);
   void addInStructure(uint64_t id, uint64_t rel);
-  
+
   friend LIMA_BOW_EXPORT std::ostream& operator<<(std::ostream& os, const IndexElement& elt);
   friend LIMA_BOW_EXPORT QDebug& operator<<(QDebug& os, const IndexElement& elt);
+  friend LIMA_BOW_EXPORT QTextStream& operator<<(QTextStream& os, const IndexElement& elt);
 
 private:
   IndexElementPrivate* m_d;

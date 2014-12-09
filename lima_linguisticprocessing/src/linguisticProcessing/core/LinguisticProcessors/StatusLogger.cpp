@@ -85,7 +85,7 @@ void StatusLogger::init(
   {
     m_toLog.insert(string("VmSize"));
   }
-  m_predTime=new timeval(TimeUtils::getCurrentTime());
+  m_predTime=TimeUtils::getCurrentTime();
 }
 
 
@@ -93,10 +93,10 @@ LimaStatusCode StatusLogger::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  timeval tmp=TimeUtils::getCurrentTime();
+  uint64_t tmp=TimeUtils::getCurrentTime();
   // log time
-  *m_out << TimeUtils::diffTime(*m_predTime,tmp) << " ";
-  *m_predTime=tmp;
+  *m_out << TimeUtils::diffTime(m_predTime,tmp) << " ";
+  const_cast<StatusLogger*>(this)->m_predTime=tmp;
 
   // log file and document name
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));

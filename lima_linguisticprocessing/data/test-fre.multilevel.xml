@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-  <testcase id="fre.ml.1" type="bloquant">
+  <!--testcase id="fre.ml.1" type="bloquant">
     <call-parameters>
       <param key="text" value="musique"/>
       <param key="language" value="fre"/>
@@ -101,5 +101,5 @@
     <test id="fre.ml.8.1" trace=".simpleword.xml" comment="le lemme 'phoenix' ne doit pas être présent" left="XPATH#//data_structure/vertex/data//form[@lemma='phoenix']" operator="notexists" right=""/>
     <test id="fre.ml.8.2" trace=".simpleword.xml" comment="présence du composant 'nouveau'" left="XPATH#//data_structure/vertex/data//form[@lemma='nouveau']" operator="exists" right=""/>
     <test id="fre.ml.8.3" trace=".simpleword.xml" comment="présence du composant 'phenix'" left="XPATH#//data_structure/vertex/data//form[@lemma='phenix']" operator="exists" right=""/>
-  </testcase>
+  </testcase-->
 </testcases>

@@ -31,6 +31,7 @@
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/time/traceUtils.h"
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
@@ -62,7 +63,9 @@ m_useTemporaryFile(true),
 m_cleanTemporaryFile(true),
 m_tmpFileName(DEFAULT_TEMPFILE),
 m_handler(0),
-m_out(0)
+m_out(0),
+m_inputSuffix(),
+m_outputSuffix()
 {
 }
 
@@ -89,7 +92,7 @@ void ExternalProcessUnit::init(
   Manager* manager)
 
 {
-  LOGINIT("LP:External");
+  LOGINIT("LP::External");
   LDEBUG << "Initialization";
 
   MediaId language=manager->getInitializationParameters().media;
@@ -109,10 +112,27 @@ void ExternalProcessUnit::init(
     // create the loader
     m_loader=manager->getObject(loaderName);
   }
+  catch (InvalidConfiguration& ) {
+    m_loader = 0;
+  }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LERROR << "Missing 'loader' parameter in ExternalProcessUnit group for language "
            << (int)language << " !";
     throw InvalidConfiguration();
+  }
+
+  try {
+    m_inputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try {
+    m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
   }
 
   try {
@@ -137,7 +157,7 @@ void ExternalProcessUnit::init(
   }
 
   try {
-    m_commandLine=unitConfiguration.getParamsValueAtKey("command");
+    m_commandLine=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("command").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     LERROR << "Missing 'command' parameter in ExternalProcessUnit group for language "
@@ -149,8 +169,14 @@ void ExternalProcessUnit::init(
 LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  LOGINIT("LP:External");
+  LOGINIT("LP::External");
   LINFO << "ExternalProcessUnit: start";
+
+  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  if (metadata == 0) {
+      LERROR << "no LinguisticMetaData ! abort";
+      return MISSING_DATA;
+  }
 
   LimaStatusCode returnCode(SUCCESS_ID);
 
@@ -162,16 +188,34 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
     return returnCode;
   }
 
+  QString fileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
+  QString inputFilename, outputFilename;
   // apply command line
   LDEBUG << "ExternalProcessUnit: apply external program";
-  QProcess::execute(m_commandLine.c_str());
+  QString commandLine = m_commandLine;
+  if (!m_inputSuffix.isEmpty())
+  {
+    inputFilename = fileName+ m_inputSuffix;
+  }
+  if (!m_outputSuffix.isEmpty())
+  {
+    outputFilename = fileName + m_outputSuffix;
+  }
+  commandLine = commandLine.arg(inputFilename).arg(outputFilename);
+  LDEBUG << "Launching " << commandLine;
+  QProcess::execute(commandLine);
 
-  // load results from the external program with the given loader
-  LDEBUG << "ExternalProcessUnit: read results";
-  returnCode=m_loader->process(analysis);
-  if (returnCode!=SUCCESS_ID) {
-    LERROR << "ExternalProcessUnit: failed to load data from temporary file";
-    return returnCode;
+  if (m_loader != 0) {
+    // load results from the external program with the given loader
+    LDEBUG << "ExternalProcessUnit: read results";
+    returnCode=m_loader->process(analysis);
+    if (returnCode!=SUCCESS_ID) {
+      LERROR << "ExternalProcessUnit: failed to load data from temporary file";
+      return returnCode;
+    }
+  }
+  else {
+    LWARN << "ExternalProcessUnit: no loader defined for the current external process unit";
   }
   
   TimeUtils::logElapsedTime("ExternalProcessUnit");

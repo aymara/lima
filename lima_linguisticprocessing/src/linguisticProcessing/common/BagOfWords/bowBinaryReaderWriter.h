@@ -43,16 +43,16 @@ namespace Common {
 namespace BagOfWords {
 
 class AbstractBoWDocumentHandler;
+class AbstractBoWElement;
 class BoWDocument;
 class BoWText;
 class BoWToken;
 class BoWRelation;
 class BoWNamedEntity;
+class BoWPredicate;
 // reader/writer are kept independent from BoW (instead of having
 // read/write functions in each BoW element) because it is easier
 // to handle common mappings (pointers, entity types etc).
-
-#define BOW_VERSION "0.8"
 
 typedef enum {
   BOWFILE_NOTYPE,
@@ -78,10 +78,12 @@ class LIMA_BOW_EXPORT BoWBinaryReader
                        BoWDocument& document,
                        AbstractBoWDocumentHandler& handler, 
                        bool useIterator=false);
-  BoWToken* readBoWToken(std::istream& file,
-                         std::vector<BoWToken*>& refMap);
+  AbstractBoWElement* readBoWToken(std::istream& file,
+                         std::vector<AbstractBoWElement*>& refMap);
   void readSimpleToken(std::istream& file,
                        BoWToken* token);
+  void readPredicate(std::istream& file,
+                   BoWPredicate* bowPred);
 
   BoWFileType getFileType() const;
   std::string getFileTypeString() const;
@@ -106,10 +108,13 @@ class LIMA_BOW_EXPORT BoWBinaryWriter
   void writeBoWDocument(std::ostream& file,
                         const BoWDocument& bowText) const;
   void writeBoWToken(std::ostream& file,
-                     const BoWToken* bowToken,
+                     const AbstractBoWElement* bowToken,
                      std::map<BoWToken*,uint64_t>& refMap) const;
   void writeSimpleToken(std::ostream& file,
                         const BoWToken* token) const;
+  void writePredicate(std::ostream& file,
+                        const BoWPredicate* token,
+                        std::map<BoWToken*,uint64_t>& refMap) const;
 
  private:
   BoWBinaryWriter(const BoWBinaryWriter&);

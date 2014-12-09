@@ -30,6 +30,7 @@
 #include "indexElement.h"
 
 #include "linguisticProcessing/common/BagOfWords/BoWRelation.h"
+#include "linguisticProcessing/common/BagOfWords/BoWPredicate.h"
 #include "indexElementIterator.h"
 #include "common/FsaAccess/AbstractLexiconIdGenerator.h"
 #include "defaultIdGenerator.h"
@@ -72,6 +73,7 @@ class IndexElementIteratorPrivate
   // add in queue
   // (return false if size of queue becomes greater than max)
   bool addInPartQueue(const uint64_t id,
+                      const BoWType type,
                       const LimaString& word,
                       const uint64_t cat,
                       const uint64_t position,
@@ -177,25 +179,42 @@ IndexElement IndexElementIterator::getElement()
   {
     if (m_d->m_iterator==m_d->m_iteratorEnd)
     { // at end
-      return IndexElement(0,LimaString()); // empty element has id 0
+      return IndexElement(); // empty element has id 0
     }
     else
     {
+      BoWToken* token = 0;
+      BoWPredicate* predicate = 0;
       switch ((*m_d->m_iterator)->getType())
       {
       case BOW_TOKEN:
       {
-        uint64_t id=m_d->m_idGenerator->getId((*m_d->m_iterator)->getIndexString());
-        return IndexElement(id,(*m_d->m_iterator)->getLemma(),
-                            (*m_d->m_iterator)->getCategory(),
-                            (*m_d->m_iterator)->getPosition(),
-                            (*m_d->m_iterator)->getLength());
+        token = static_cast<BoWToken*>((*m_d->m_iterator));
+        uint64_t id=m_d->m_idGenerator->getId(token->getString());
+        return IndexElement(id,
+                            token->getType(),
+                            token->getLemma(),
+                            token->getCategory(),
+                            token->getPosition(),
+                            token->getLength());
       }
       case BOW_TERM:
       case BOW_NAMEDENTITY:
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(*m_d->m_iterator,0);
+        m_d->storePartsInQueue(static_cast<BoWToken*>((*m_d->m_iterator)),0);
         return m_d->m_partQueue.front();
+      // FIXME Change the handling of predicates to take into account their complex structure nature
+      case BOW_PREDICATE:
+      {
+        predicate = static_cast<BoWPredicate*>((*m_d->m_iterator));
+        uint64_t id=m_d->m_idGenerator->getId(predicate->getString());
+        return IndexElement(id,
+                            predicate->getType(),
+                            predicate->getString(),
+                            0,
+                            predicate->getPosition(),
+                            predicate->getLength());
+      }
       case BOW_NOTYPE:
         ;
       }
@@ -204,7 +223,7 @@ IndexElement IndexElementIterator::getElement()
   else {
     return m_d->m_partQueue.front();
   }
-  return IndexElement(0,LimaString()); // empty element has id 0
+  return IndexElement(); // empty element has id 0
 }
 
 //**********************************************************************
@@ -237,6 +256,7 @@ IndexElementIterator IndexElementIterator::operator++(int) {
 // helper functions for iterator
 //**********************************************************************
 bool IndexElementIteratorPrivate::addInPartQueue(const uint64_t id,
+               const BoWType type,
                const LimaString& word,
                const uint64_t cat,
                const uint64_t position,
@@ -250,7 +270,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const uint64_t id,
     return false;
   }
   
-  m_partQueue.push_back(IndexElement(id,word,cat,position,length,neType,reType));
+  m_partQueue.push_back(IndexElement(id,type,word,cat,position,length,neType,reType));
 //   BOWLOGINIT;
 //   LDEBUG << "add in part queue " << id << ":" 
 //          << word
@@ -333,7 +353,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   case BOW_TOKEN:
   {
     // simple token : get Id and push in parts
-    uint64_t id=m_idGenerator->getId(token->getIndexString());
+    uint64_t id=m_idGenerator->getId(token->getString());
     ids_rel=make_pair(vector<uint64_t>(1,id),rel);
 
     LimaString lemma=token->getLemma();
@@ -341,7 +361,9 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
         lemma=token->getInflectedForm();
     }
     
-    return addInPartQueue(id,lemma,
+    return addInPartQueue(id,
+                          token->getType(),
+                          lemma,
                           token->getCategory(),
                           token->getPosition(),
                           token->getLength(),
@@ -352,9 +374,9 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     neType=static_cast<const BoWNamedEntity*>(token)->getNamedEntityType();
     break;
   case BOW_TERM:
-    break;
+  case BOW_PREDICATE:
   case BOW_NOTYPE:
-    break;
+  default:;
   }
 
   // is a complex token
@@ -371,14 +393,16 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     // only one part, do not get into it
     // (for instance, named entity with one element)
     // push simple token in parts 
-    uint64_t id=m_idGenerator->getId(token->getIndexString());
+    uint64_t id=m_idGenerator->getId(token->getString());
     ids_rel=make_pair(vector<uint64_t>(1,id),rel);
 
     LimaString lemma=token->getLemma();
     if (lemma.size()==0) {
         lemma=token->getInflectedForm();
     }
-    return addInPartQueue(id,lemma,
+    return addInPartQueue(id,
+                          token->getType(),
+                          lemma,
                           token->getCategory(),
                           token->getPosition(),
                           token->getLength(),
@@ -453,7 +477,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
     // true size of compound (trick: use PositionLengthList to have
     // the size: number of leaves of the structure), and to avoid
     // compute the id if size is more than maxCompoundSize
-    IndexElement compoundElement(0,structure,relations,neType,0); // relType is not used
+    IndexElement compoundElement(0,BOW_TERM,structure,relations,neType,0); // relType is not used
     getPositionLengthList(structure,compoundElement.getPositionLengthList());
     if (compoundElement.getPositionLengthList().size() > m_maxCompoundSize) {
       // compound larger than allowed, do not add it in parts, but

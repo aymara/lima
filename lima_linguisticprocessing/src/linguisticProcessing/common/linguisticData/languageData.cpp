@@ -111,7 +111,7 @@ class LanguageDataPrivate
   std::set< LinguisticCode > m_propositionIntroductors;
 
   std::multimap<ChainsType, uint64_t> m_homoSyntagmaticChainsAndRelationsTypes;
-  std::set< std::string > m_compoundsRels;
+  
   std::map< std::pair<LinguisticCode, LinguisticCode>, LinguisticCode > m_compoundTenseDefiniton;
 
   static const std::string s_emptycateg;
@@ -148,9 +148,6 @@ bool LanguageData::isAConjugatedVerb(LinguisticCode id) const
 bool LanguageData::isAPropositionIntroductor(LinguisticCode id) const
   { return m_d->m_propositionIntroductors.find(id)!=m_d->m_propositionIntroductors.end(); }
 
-bool LanguageData::isACompoundRel(const std::string& rel) const
-  {  return (m_d->m_compoundsRels.find(rel) != m_d->m_compoundsRels.end()); }
-
 std::set< LinguisticCode >&  LanguageData::getNounPhraseHeadMicroCategories()
   { return m_d->m_nounPhraseHeadMicroCategories; }
 
@@ -183,8 +180,9 @@ void  LanguageData::initialize(
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageData::initialize " << (int)lang << " " << resourcesPath;
+  LINFO << "LanguageData::initialize " << lang << " " << resourcesPath;
   MediaData::initialize(lang, resourcesPath, conf);
+  m_d->m_language = lang;
   m_d->initPropertyCode(resourcesPath,conf);
   //m_d->initSentenceBreakMicros(conf);
   m_d->initEmptyMacroCategories(conf);

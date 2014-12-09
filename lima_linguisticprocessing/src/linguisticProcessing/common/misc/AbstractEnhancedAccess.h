@@ -21,7 +21,7 @@
 #define LIMA_COMMON_ABSTRACTENHANCEDACCESS_H
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
-#include "AbstractAccessByString.h"
+#include <common/misc/AbstractAccessByString.h>
 
 namespace Lima
 {

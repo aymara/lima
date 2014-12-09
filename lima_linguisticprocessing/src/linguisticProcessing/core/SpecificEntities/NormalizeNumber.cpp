@@ -199,7 +199,7 @@ operator()(RecognizerMatch& m,
       values.push_back(0.0);
     }
     else if (testMicroCategory(m_microsForUnit,m_microAccessor,data)) {
-      LDEBUG << "NormalizeNumber: add feature UNIT " << Common::Misc::limastring2utf8stdstring(t->stringForm());
+      LDEBUG << "NormalizeNumber: add feature UNIT " << t->stringForm();
       m.features().addFeature(UNIT_FEATURE_NAME,t->stringForm());
     }
     // ignore other non numbers (can be % or "de"...)
@@ -207,8 +207,7 @@ operator()(RecognizerMatch& m,
 
   if (values.empty()) {
     SELOGINIT;
-    LWARN << "Warning: cannot normalize number \"" 
-          <<  Common::Misc::limastring2utf8stdstring(m.getString())
+    LWARN << "Warning: cannot normalize number \"" <<  m.getString()
           << "\": no numeric information available for components";
     m.features().addFeature(NUMVALUE_FEATURE_NAME,(double)0.0);
     // return true even if value could not be computed: a value has been set in

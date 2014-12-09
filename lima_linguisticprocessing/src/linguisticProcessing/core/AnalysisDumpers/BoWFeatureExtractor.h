@@ -53,7 +53,7 @@ public:
   AbstractBoWFeatureExtractor(MediaId language, const std::string& complement="");
   virtual ~AbstractBoWFeatureExtractor() {}
 
-  virtual std::string getValue(const Common::BagOfWords::BoWToken* token) const=0;
+  virtual std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const=0;
   const std::string& getName() { return m_name; }
   void setName(const std::string& name) { m_name=name; }
 
@@ -113,7 +113,7 @@ public:
   BoWFeaturePosition(MediaId language,const std::string& complement="");
   ~BoWFeaturePosition() {}
 
-  std::string getValue(const Common::BagOfWords::BoWToken* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
 };
 
 //----------------------------------------------------------------------
@@ -123,7 +123,7 @@ public:
    BoWFeatureToken(MediaId language,const std::string& complement="");
   ~BoWFeatureToken() {}
 
-  std::string getValue(const Common::BagOfWords::BoWToken* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
 };
 
 //----------------------------------------------------------------------
@@ -133,7 +133,7 @@ public:
   BoWFeatureLemma(MediaId language,const std::string& complement="");
   ~BoWFeatureLemma() {}
 
-  std::string getValue(const Common::BagOfWords::BoWToken* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
 private:
 };
 
@@ -144,7 +144,7 @@ public:
   BoWFeatureProperty(MediaId language, const std::string& complement="");
   ~BoWFeatureProperty() {}
   
-  std::string getValue(const Common::BagOfWords::BoWToken* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
 
 private:
   std::string m_propertyName;
@@ -159,7 +159,7 @@ public:
   BoWFeatureTstatus(MediaId language,const std::string& complement="");
   ~BoWFeatureTstatus() {}
 
-  std::string getValue(const Common::BagOfWords::BoWToken* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
 };
 
 } // end namespace

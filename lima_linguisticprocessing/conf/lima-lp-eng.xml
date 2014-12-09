@@ -4,6 +4,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="VerbNet-modex.xml/Processors"/>
       </list>
     </group>
 
@@ -39,18 +40,21 @@
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="coreferencesSolving"/--> 
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
-        <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
-        <!--item value="bowDumperXml"/-->
+        <!--item value="tagFusion"/-->
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
+        <!--item value="srl"/-->
         <!--item value="conllDumper"/-->
         <!--item value="bowDumper"/-->
         <item value="textDumper"/>
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
+        <!--item value="temporalXmlDumper"/-->
+        <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
     <group name="query" class="ProcessUnitPipeline">
@@ -66,6 +70,8 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowTextHandler"/>
       </list>
     </group>
@@ -83,7 +89,9 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="bowDumperXml"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
+        <item value="bowDumper"/>
       </list>
     </group>
     <group name="normalization" class="ProcessUnitPipeline">
@@ -99,6 +107,8 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowTextHandler"/>
       </list>
     </group>
@@ -121,6 +131,8 @@
         <item value="dotDepGraphWriter"/>
         <item value="easyXmlDumper"/>
         <item value="fullXmlDumper"/>
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <item value="VerbNetRecognition"/>
         <item value="bowDumper"/>
       </list>
     </group>
@@ -137,9 +149,9 @@
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
         <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
-				<entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-				<entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-			</map>
+        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+      </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
@@ -171,8 +183,7 @@
     <entry key="NomPropreMacroCategory" value="NP" />
   </map>
   <list name="LexicalAnaphora">
-        <item value="PRONOM_PERSONNEL_REFLECHI"/>
-        <item value="PRONOM_REFLEXIF_INDEFINI"/>
+        <item value="PRP$"/>
   </list>
   <list name="UndefinitePronouns"> 
   </list>
@@ -283,7 +294,7 @@
     </group>
     <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
       <list name="defaultCategories">
-        <item value="NP L_NOM_PROPRE"/>
+        <item value="NP NNP"/>
       </list>
     </group>
     <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
@@ -335,6 +346,17 @@
       <param key="maxChainsNbByVertex" value="30"/>
       <param key="maxChainLength" value="12"/>
     </group>
+    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
+    experimental module used to test if LIMA analysis works without nominal and
+    verbal. It allows also to build compounds using verbs and heterosyntagmatic
+    dependencies. For that, one have to add adequate relations in
+    CompoundRelations in mm-common. -->
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
+      <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
+      <param key="maxChainsNbByVertex" value="30"/>
+      <param key="maxChainLength" value="12"/>
+    </group>
     <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
       <param key="depGraphMaxBranchingFactor" value="100"/>
     </group>
@@ -377,6 +399,15 @@
         <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
         <entry key="ConjNominale" value="heteroSyntagmaticRelationRules"/>
       </map>
+    </group>
+    <group name="tagFusion" class="ExternalProcessUnit">
+      <param key="dumper" value="temporalXmlDumper"/>
+      <param key="tmpFileName" value="/tmp/mm-lp.morphoSyntacticalAnalysis.tmp"/>
+      <param key="command" value="python /home/clemence/conversion_tag.py"/>
+      <param key="loader" value="tagFusionLoader"/>
+    </group>
+    <group name="tagFusionLoader" class="ExampleLoader">
+      <param key="inputFile" value="..."/>
     </group>
 <!-- ******************************************
   Definition of loggers
@@ -552,43 +583,20 @@
       <param key="commonNounCategory" value="NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
-    <group name="conllDumper" class="ConllDumper">
-      <param key="handler" value="simpleStreamHandler"/>
-      <param key="stopList" value="stopList"/>
-      <param key="useStopList" value="true"/>
-      <param key="useEmptyMacro" value="true"/>
-      <param key="useEmptyMicro" value="true"/>
-      <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
-      </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
-      <param key="NEnormalization" value="useNENormalizedForm"/>
+    <group name="srl" class="ExternalProcessUnit">
+      <param key="dumper" value="conllDumper"/>
+      <param key="inputSuffix" value=".conll"/>
+      <param key="outputSuffix" value=".conll.srl"/>
+      <param key="command" value="(path to knowledgesrl)/src/main.py --conll_input %1 --conll_output %2"/>
+
+      <param key="loader" value="srlLoader"/>
     </group>
-    <group name="bowDumperXml" class="BowDumper">
-      <param key="handler" value="xmlDocumentHandler"/>
-      <param key="stopList" value="stopList"/>
-      <param key="useStopList" value="true"/>
-      <param key="useEmptyMacro" value="true"/>
-      <param key="useEmptyMicro" value="true"/>
-      <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
-      </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
-      <param key="NEnormalization" value="useNENormalizedForm"/>
+    <group name="conllDumper" class="ConllDumper">
+      <param key="outputSuffix" value=".conll"/>
+      <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
+    </group>
+    <group name="srlLoader" class="SemanticRoleLabelingLoader">
+      <param key="inputSuffix" value=".conll.srl"/>
     </group>
     <group name="bowTextHandler" class="BowDumper">
       <param key="handler" value="bowTextHandler"/>
@@ -759,6 +767,12 @@
         <entry key="COORD" value="coord-g"/>
       </map>
     </group>
+    <group name="temporalXmlDumper" class="SimpleXmlDumper">
+     <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis.tmp"/>
+    </group>
+    <group name="afterFusionXmlDumper" class="SimpleXmlDumper">
+     <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis-changed.tmp"/>
+    </group>
   </module>
 <!-- ******************************************
   Definition of resources
@@ -767,6 +781,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-eng"/>
+        <item value="VerbNet-modex.xml/resources-eng"/>
       </list>
     </group>
 

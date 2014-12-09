@@ -47,16 +47,21 @@ bool AmosePluginsManager::loadPlugins()
     if (!file.open(QIODevice::ReadOnly))
       return false;
     // for each entry, call load library
-    while (!file.atEnd()) {
+    while (!file.atEnd()) 
+    {
       QByteArray line = file.readLine();
       if (line.endsWith('\n')) line.chop(1);
-  #ifdef WIN32
-      QString strline = QString(line.data()) + ".dll";
-  #else
-      QString strline = QString("lib") + line.data() + ".so";
-  #endif
-      LINFO << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
-      DynamicLibrariesManager::changeable().loadLibrary(line.data());
+      // Allows empty and comment lines
+      if ( !line.isEmpty() && !line.startsWith('#') )
+      {
+#ifdef WIN32
+        QString strline = QString(line.data()) + ".dll";
+#else
+        QString strline = QString("lib") + line.data() + ".so";
+#endif
+        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
+        DynamicLibrariesManager::changeable().loadLibrary(line.data());
+      }
     }
   }
   return true;

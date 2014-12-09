@@ -21,23 +21,24 @@ add_definitions(-DLIMA_BOW_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-bagofwords_LIB_SRCS
+   BinaryWriterBoWDocumentHandler.cpp
+   bowBinaryReaderWriter.cpp
    bowComplexToken.cpp
    bowDocument.cpp
    bowDocumentST.cpp
    bowNamedEntity.cpp
+   BoWPredicate.cpp
+   BoWRelation.cpp
    bowTerm.cpp
    bowText.cpp
    bowToken.cpp
+   bowTokenIterator.cpp
    bowXMLReader.cpp
    bowXMLWriter.cpp
+   defaultIdGenerator.cpp
    indexElement.cpp
    indexElementIterator.cpp
-   defaultIdGenerator.cpp
-   bowTokenIterator.cpp
-   BoWRelation.cpp
-   bowBinaryReaderWriter.cpp
    TextWriterBoWDocumentHandler.cpp
-   BinaryWriterBoWDocumentHandler.cpp
 )
 
 add_library(lima-lp-bagofwords SHARED ${lima-lp-bagofwords_LIB_SRCS})
@@ -51,8 +52,10 @@ install(TARGETS lima-lp-bagofwords DESTINATION lib)
 
 ########### install files ###############
 install(FILES
+    AbstractBoWElement.h
     AbstractBoWDocumentHandler.h
     bowDocument.h
+    BoWPredicate.h
     bowTerm.h
     bowXMLReader.h
     indexElementIterator.h

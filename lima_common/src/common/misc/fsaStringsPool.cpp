@@ -30,7 +30,7 @@
 #include "fsaStringsPool.h"
 #include "common/Data/strwstrtools.h"
 
-#include <boost/thread/mutex.hpp>
+#include <QMutex>
 
 using namespace Lima::Common;
 using namespace Lima::Common::Misc;
@@ -54,7 +54,7 @@ class FsaStringsPoolPrivate
   StringsPoolIndex m_mainKeySize;
   StringsPool m_additionalPool;
   std::vector<LimaString>* m_cache;
-  boost::mutex m_mutex;
+  QMutex m_mutex;
 };
 
 FsaStringsPoolPrivate::FsaStringsPoolPrivate():
@@ -121,7 +121,7 @@ StringsPoolIndex FsaStringsPool::operator[](const LimaString& str)
     StringsPoolIndex res= static_cast<StringsPoolIndex>(m_d->m_mainKeys->getIndex(str));
     if (res!=static_cast<StringsPoolIndex>(0))
     {
-      boost::mutex::scoped_lock lock(m_d->m_mutex);
+      QMutexLocker lock(&m_d->m_mutex);
       LimaString& cachedStr=(*m_d->m_cache)[res];
       if (cachedStr.size()==0)
       {
@@ -139,7 +139,7 @@ const LimaString& FsaStringsPool::operator[](const StringsPoolIndex ind) const
   //    LDEBUG << "const FsaStringsPool[" << ind << "]" ;
   if (ind < m_d->m_mainKeySize)
   {
-    boost::mutex::scoped_lock lock(m_d->m_mutex);
+    QMutexLocker lock(&m_d->m_mutex);
     LimaString& str=(*m_d->m_cache)[ind];
     if (ind == 0)
     {

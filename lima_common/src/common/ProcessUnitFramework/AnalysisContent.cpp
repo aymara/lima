@@ -50,8 +50,8 @@ AnalysisData* AnalysisContent::getData(
   if (it==m_analysisData.end())
   {
     PROCESSUNITFRAMEWORKLOGINIT;
-    LWARN << "data " << id.c_str() << " doesn't exists, return 0";
-    return 0;
+    LTRACE << "data " << id.c_str() << " doesn't exists, return 0";
+    return nullptr;
   }
   return it->second;
 }
@@ -63,8 +63,8 @@ const AnalysisData* AnalysisContent::getData(
   if (it==m_analysisData.end())
   {
     PROCESSUNITFRAMEWORKLOGINIT;
-    LWARN << "data " << id.c_str() << " doesn't exists, return 0";
-    return 0;
+    LTRACE << "data " << id.c_str() << " doesn't exists, return 0";
+    return nullptr;
   }
   return it->second;
 }

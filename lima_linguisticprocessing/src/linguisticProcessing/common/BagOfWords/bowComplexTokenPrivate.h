@@ -29,7 +29,7 @@
 
 
 #include "bowTokenPrivate.h"
-
+#include "bowComplexToken.h"
 // #include "BoWRelation.h"
 // #include "common/Data/readwritetools.h"
 // #include "common/Data/strwstrtools.h"
