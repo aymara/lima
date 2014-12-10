@@ -266,11 +266,42 @@ operator()(RecognizerMatch& m,
   SELOGINIT;
   
   unsigned short day(0);
+  if (m.features().find("numday") != m.features().end()) {
+    bool ok = true;
+    day = (*m.features().find("numday")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      day = m_resources->getDayNumber((*m.features().find("numday")).getValueLimaString());
+    }
+  }
   unsigned short day_end(0);
+  if (m.features().find("numdayend") != m.features().end()) {
+    bool ok = true;
+    day_end = (*m.features().find("numdayend")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      day_end = m_resources->getDayNumber((*m.features().find("numdayend")).getValueLimaString());
+    }
+  }
   unsigned short month(0);
+  if (m.features().find("month") != m.features().end()) {
+    bool ok = true;
+    month = (*m.features().find("month")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      month = m_resources->getMonthNumber((*m.features().find("month")).getValueLimaString());
+    }
+  }
   unsigned short month_end(0);
+  if (m.features().find("monthend") != m.features().end()) {
+    bool ok = true;
+    month_end = (*m.features().find("monthend")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      month_end = m_resources->getMonthNumber((*m.features().find("monthend")).getValueLimaString());
+    }
+  }
   unsigned short year(0);
-
+  if (m.features().find("numyear") != m.features().end()) {
+    year = (*m.features().find("numyear")).getValueLimaString().toUShort();
+  }
+  
   for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++) {
     if (! (*i).isKept()) {
       continue;
@@ -279,22 +310,22 @@ operator()(RecognizerMatch& m,
     MorphoSyntacticData* data = m.getData(i);
     if (testMicroCategory(m_microsForMonth,m_microAccessor,data)) {
       if (isInteger(t)) {
-        month=LimaStringToInt(t->stringForm());
+        if (month == 0) month=LimaStringToInt(t->stringForm());
       }
       else if (m_resources) {
-        unsigned short monthNum=m_resources->getMonthNumber(t->stringForm());
+        LimaString monthString = m.features().find("month")==m.features().end() ? t->stringForm() : (*m.features().find("month")).getValueLimaString();
+        unsigned short monthNum=m_resources->getMonthNumber(monthString);
         if (monthNum==NormalizeDateTimeResources::no_month) {
           // failed to recognize month => no normalization
-          LDEBUG << "NormalizeDate: '" << Common::Misc::limastring2utf8stdstring(t->stringForm())
-          << "' not recognized as month\n";
+          LDEBUG << "NormalizeDate: '" << monthString << "' not recognized as month";
           m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
         }
         else {
           if (month!=0 && m_isInterval) {
-            month_end=monthNum;
+            if (month_end == 0) month_end=monthNum;
           }
           else {
-            month=monthNum;
+            if (month == 0) month=monthNum;
           }
         }
       }
@@ -307,9 +338,9 @@ operator()(RecognizerMatch& m,
         uint64_t val2=t->stringForm().mid(pos+1).toUInt();
         if (val1 > 31) {
           //assume year
-          year=val1;
+          if (year == 0) year=val1;
           //assume next is month
-          if (val2 <= 12) {
+          if (month == 0 && val2 <= 12) {
             month=val2;
           }
           else { // should not happen => it may not be a date
@@ -317,12 +348,12 @@ operator()(RecognizerMatch& m,
         }
         // otherwhise, suppose day before month, but test it
         else if (val2 > 12) {
-          day=val2;
-          month=val1;
+          if (day == 0) day=val2;
+          if (month == 0) month=val1;
         }
         else {
-          day=val1;
-          month=val2;
+          if (day == 0) day=val1;
+          if (month == 0) month=val2;
         }
       }
       else if (isInteger(t)) {
@@ -337,24 +368,24 @@ operator()(RecognizerMatch& m,
           else if (month==0) {
             if (value > 12) { // swap : month cant be > 12
               month = day;
-              day = value;
+              if (day == 0) day = value;
             }
             else { // assume month
-              month = value;
+              if (month == 0) month = value;
             }
           }
           else { // month and day are assigned -> assume year
-            year = value;
+            if (year == 0) year = value;
           }
         }
         else {
           if (value > 1000 && value < 3000) {
-            year = value;
+            if (year == 0) year = value;
           }
           else if (month!=0) {
             // can be a year on two digits -> year assumed if
             // day and month are already assigned
-            year = value;
+            if (year == 0) year = value;
           }
         }
       }
