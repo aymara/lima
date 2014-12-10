@@ -19,7 +19,9 @@ The following functions were defined:
 
 - AddEntityFeature: stores a value for a given attribute. The
    value is defined by the element of the rule given by the first argument, the 
-   attribute name is defined by the second argument (a string). 
+   attribute name is defined by the second argument (a string). The name can be 
+   can be followed by the type of the attribute separated by a colon. 
+   Currently supported types are int, double and string (which is the default).
    Attribute names are not controlled.
 
 - NormalizeEntity: apply all the attributes stored in the created entity. 
@@ -91,14 +93,14 @@ TODO
 
 This is a first implementation. There are still things to do:
 
+- The *NormalizeEntity* function only copies the attributes stored in
+   the created entity. It is necessary to manage the integration of this
+   functionality with the previously existing heuristic normalization 
+   functions. This is Currently done for the *NormalizeDate* function only.
 - Implement a version of *AddEntityFeature* that takes two arguments
    delimiting a string between two elements of the rule (two
    vertices).
 - In the current version, a second call to the function AddEntityFeature
    overwrites the first stored attribute: is it enough or do we
    need to merge the values (concatenation)?
-- The current version only supports string atributes: are other types needed?
-- The *NormalizeEntity* function only copies the attributes stored in
-   the created entity. It may be necessary to manage the integration of this
-   functionality with the reviously existing heuristic normalization functions.
 
