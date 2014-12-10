@@ -51,6 +51,12 @@ trente\ et\ un
 
 # lundi 22 mai 1968
 @day::@numday @month @numyear?:DATE:
++AddEntityFeature(trigger,"day")
++AddEntityFeature(right.1,"numday")
++AddEntityFeature(right.2,"month")
++AddEntityFeature(right.3,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 # jours simples
@@ -78,9 +84,25 @@ trente\ et\ un
 =>NormalizeDate("isInterval")
 
 <NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
++AddEntityFeature(trigger,"numday")
++AddEntityFeature(right.1,"month")
++AddEntityFeature(right.2,"numyear")
++AddEntityFeature(right.4,"numdayend")
++AddEntityFeature(right.5,"monthend")
++AddEntityFeature(right.6,"numyearend")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 @month:[du] [(@numday|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|<NUMBER>):(@numyear)?:DATE:
++AddEntityFeature(left.2,"numday")
++AddEntityFeature(left.3,"month")
++AddEntityFeature(left.4,"numyear")
++AddEntityFeature(left.6,"numdayend")
++AddEntityFeature(trigger,"monthend")
++AddEntityFeature(right.1,"numyearend")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 #------------------------------
@@ -97,6 +119,11 @@ trente\ et\ un
 # 31 octobre prochain
 
 @month:@numday?:@numyear:DATE:
++AddEntityFeature(left.1,"numday")
++AddEntityFeature(trigger,"month")
++AddEntityFeature(right.1,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 @month:@numday?:(dernier|suivant)?:DATE:
@@ -117,8 +144,7 @@ année::(dernière|passée|prochaine):DATE:
 an::(dernier|passé|prochain):DATE:
 mois::(dernier|passé|prochain):DATE:
 
-# remove this one : dans les annees 90: not easy to normalize, and
-# not specially useful to date seismic event
+# remove this one : dans les annees 90: not easy to normalize
 #[@annee]::(t_integer|((<NUMBER>){1-3})):DATE:
 #=>NormalizeDate()
 
@@ -181,21 +207,31 @@ siècle$NC:<NUMBER>::DATE:
 # integer - integer - integer
 
 @numday::- t_integer - t_integer:DATE:
++AddEntityFeature(trigger,"numday")
++AddEntityFeature(right.2,"month")
++AddEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 @numyear4::- t_integer - t_integer:DATE:
++AddEntityFeature(trigger,"numyear")
++AddEntityFeature(right.2,"month")
++AddEntityFeature(right.4,"numday")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 # 22/05/68 
 # fraction / integer or integer / integer / integer
 
 @numday::/ t_integer / t_integer:DATE:
++AddEntityFeature(trigger,"numday")
++AddEntityFeature(right.2,"month")
++AddEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
-
-# Ne fonctionne pas remplace par @numyear4:T_Nf /::DATE:
-#T_Nf::/ t_integer:DATE:
-#=>NormalizeDate()
-
 
 # numbers between 1700 and 2050 are dates 
 # unless followed by a unit
@@ -203,8 +239,14 @@ siècle$NC:<NUMBER>::DATE:
 @numyear4::(de|d\')? $NC:NOT_DATE:
 
 @numyear4:t_fraction /::DATE:
++AddEntityFeature(trigger,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
 
 
 @numyear4:::DATE:
++AddEntityFeature(trigger,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate()
