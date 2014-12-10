@@ -31,6 +31,7 @@
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "SpecificEntitiesConstraints.h"
 #include "SpecificEntitiesMicros.h"
+#include <QStringList>
 
 // #include <assert.h>
 
@@ -789,10 +790,28 @@ bool CreateSpecificEntity::shouldRemoveFinal(
 AddEntityFeature::AddEntityFeature(MediaId language,
                                    const LimaString& complement):
 ConstraintFunction(language,complement),
-m_featureName("")
+m_featureName(""),
+m_featureType(QVariant::String)
 {
   if (complement.size()) {
-    m_featureName=Common::Misc::limastring2utf8stdstring(complement);
+    QStringList complementElements = complement.split(":");
+    m_featureName=complementElements.front().toUtf8().constData();
+    complementElements.pop_front();
+    if (!complementElements.empty()) {
+      const QString& complementType = complementElements.front();
+      m_featureType = QVariant::nameToType(complementType.toUtf8().constData());
+      if (m_featureType != QVariant::Invalid) {
+        if (complementType == "int") {
+          m_featureType = QVariant::Int;
+        }
+        else if (complementType == "double") {
+          m_featureType = QVariant::Double;
+        }
+        else {
+          m_featureType = QVariant::String;
+        }
+      }
+    }
   }
 }
 
@@ -818,10 +837,19 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (token!=0) {
     featureValue=token->stringForm();
   }
- 
-  // add string as a feature
-  // @todo: handle other types of features
-  recoData->addEntityFeature(m_featureName,featureValue);  
+  switch (m_featureType) {
+    case QVariant::String:
+      recoData->addEntityFeature(m_featureName,featureValue);  
+      break;
+    case QVariant::Int:
+      recoData->addEntityFeature(m_featureName,featureValue.toInt());  
+      break;
+    case QVariant::Double:
+      recoData->addEntityFeature(m_featureName,featureValue.toDouble());  
+      break;
+    default:
+      recoData->addEntityFeature(m_featureName,featureValue);  
+  }
   
   return true;
 }
@@ -832,7 +860,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& v2,
            AnalysisContent& analysis) const
 {
-  return true;
+  SELOGINIT;
+  LERROR << "AddEntityFeature:: Error: version with two vertices parameters is not implemented";
+  return false;
 }
 
 // clear stored entity features, added by the AddEntityFeature function
