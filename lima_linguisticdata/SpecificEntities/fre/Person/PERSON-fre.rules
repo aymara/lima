@@ -13,7 +13,7 @@ use person.lst
 # contextual rules for person recognition
 #----------------------------------------------------------------------
 
-#------------------------------
+#------------------------------ 
 # pape Jean-Paul II
 # (T_Acc|T_Aco|T_Asc|T_Aso) = alpha capital/small roman ordinal/cardinal: too noisy, use a simple dynasty order numbers list
 @DynastyOrder=(I,II,III,IV,V,VI,VII,VIII,IX,X,XI,XII,XIII,XIV,XV,XVI,XVII,XVIII,XIX,XX)

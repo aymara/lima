@@ -357,27 +357,28 @@ addConstraint(const LimaString& constraint,
     readConstraintComplement(arguments,
                              complement);
   }
-  else {
-    // constraint has no arguments: is action
-    // do not increment the number of constraints on the rule
-    // (necessary for the constraintCheckList, that is not used for actions)
-    if (isAction) {
-      ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
-      if (! actionIfSuccess) {
-        executeAction=EXECUTE_IF_FAILURE;
-      }
-      Constraint a(Constraint::noindex,constraintName,executeAction,language,complement);
-      addAction(a);
-      LDEBUG << "RuleString::addConstraint returns";
-      
-      return;
+  // constraint has no arguments: is action
+  // do not increment the number of constraints on the rule
+  // (necessary for the constraintCheckList, that is not used for actions)
+  if (isAction) {
+    if (! arguments.isEmpty()) {
+      LERROR << "Actions with arguments are not yet supported: arguments will be ignored";
     }
-    else {
-      ostringstream oss;
-      oss << "Error on constraint " << Misc::limastring2utf8stdstring(constraint)
-          << ": no arguments found (maybe should be an action)";
-      throw ConstraintSyntaxException(oss.str());
+    ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
+    if (! actionIfSuccess) {
+      executeAction=EXECUTE_IF_FAILURE;
     }
+    Constraint a(Constraint::noindex,constraintName,executeAction,language,complement);
+    addAction(a);
+    LDEBUG << "RuleString::addConstraint returns";
+    
+    return;
+  }
+  else if (arguments.isEmpty()) {
+    ostringstream oss;
+    oss << "Error on constraint " << Misc::limastring2utf8stdstring(constraint)
+        << ": no arguments found (maybe should be an action)";
+    throw ConstraintSyntaxException(oss.str());
   }
 
   // read first argument
@@ -470,13 +471,13 @@ addUnaryConstraint(const std::string& constraintName,
                    const SubPartIndex& index,
                    const bool negative,
                    const bool isAction,
-                   const bool)
+                   const bool actionIfSuccess)
 {
   if (isAction) {
     //unary actions are not supported yet
     AUCLOGINIT;
-    LERROR << "Actions with arguments are not yet supported: ignored"
-          ;
+    LERROR << "Actions with arguments are not yet supported";
+    throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
     ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
@@ -516,8 +517,8 @@ addBinaryConstraint(const std::string& constraintName,
   << " neg: " << negative << " isAction: " << isAction << " reverseArguments: " << reverseArguments;
   if (isAction) {
     // binary actions are not supported
-    LERROR << "Actions with arguments are not yet supported: behavior is not guaranteed"
-          ;
+    LERROR << "Actions with arguments are not yet supported";
+    throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
     // push both arguments, action is EXECUTE

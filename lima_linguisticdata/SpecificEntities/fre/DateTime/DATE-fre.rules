@@ -63,24 +63,45 @@ trente\ et\ un
 @daytime=(matin,midi,après-midi,soir)
 
 @day::[t_integer] [(\:|H|h)] [t_integer]:DATE:
++AddEntityFeature(trigger,"day")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 @day:ce::DATE:
++AddEntityFeature(trigger,"day")
++AddEntityFeature(left.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 @day::prochain:DATE:
++AddEntityFeature(trigger,"day")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate("next_day")
 
 @day::(dernier|@daytime|@numday)?:DATE:
++AddEntityFeature(trigger,"day")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 #------------------------------
-@modifierDate=(début,mi,fin);
+@modifierDate=(début,mi,milieu,fin);
 
 #------------------------------
 # annonceur mois pour période
 
 @month:(de|d\') (@modifierDate)?:(@numyear)? à (@modifierDate)? @month (@numyear)?:DATE:
++AddEntityFeature(trigger,"month")
++AddEntityFeature(right.1,"numyear")
++AddEntityFeature(right.4,"monthend")
++AddEntityFeature(right.5,"numyearend")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeDate("isInterval")
 
 <NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
@@ -109,6 +130,10 @@ trente\ et\ un
 
 # fin juin
 @month:@modifierDate::DATE:
++AddEntityFeature(trigger,"month")
++AddEntityFeature(left.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 # 22 mai 1968
@@ -127,22 +152,59 @@ trente\ et\ un
 =>NormalizeDate()
 
 @month:@numday?:(dernier|suivant)?:DATE:
++AddEntityFeature(left.1,"numday")
++AddEntityFeature(trigger,"month")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 @month::prochain:DATE:
++AddEntityFeature(trigger,"month")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate("next_month")
 
 # fin 2003
 
 @numyear4:@modifierDate::DATE:
-=>NormalizeRelativeDate()
++AddEntityFeature(trigger,"numyear")
++AddEntityFeature(left.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
 
 @annee=(année$NC,an$NC)
 
-@annee:(début|milieu|fin) (de|(de l\')|d\'):t_integer?:DATE:
+@annee:@modifierDate (de|(de l\')|d\'):t_integer?:DATE:
++AddEntityFeature(trigger,"year")
++AddEntityFeature(right.1,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
 année::(dernière|passée|prochaine):DATE:
++AddEntityFeature(trigger,"year")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
 an::(dernier|passé|prochain):DATE:
++AddEntityFeature(trigger,"year")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
 mois::(dernier|passé|prochain):DATE:
++AddEntityFeature(trigger,"month")
++AddEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
 
 # remove this one : dans les annees 90: not easy to normalize
 #[@annee]::(t_integer|((<NUMBER>){1-3})):DATE:
@@ -161,10 +223,16 @@ rentrée:[la]:(de (l\'année)?)? @numyear4:DATE:
 # centuries
 
 siècle$NC:(t_ordinal_roman|t_cardinal_roman)::DATE:
++AddEntityFeature(left.1,"century")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 
 siècle$NC:<NUMBER>::DATE:
++AddEntityFeature(left.1,"century:int")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 # 1984
@@ -174,6 +242,9 @@ siècle$NC:<NUMBER>::DATE:
 @in=(en,depuis)
 
 @month:[(@in|au? mois de)?]::DATE:
++AddEntityFeature(trigger,"month")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
 #------------------------------
