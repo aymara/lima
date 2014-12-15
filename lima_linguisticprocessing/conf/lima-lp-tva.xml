@@ -23,6 +23,10 @@
       <entry key="fre" value="indexer"/>
       <entry key="eng" value="indexer"/>
     </map>
+    <map name="limaserver">
+      <entry key="fre" value="limaserver"/>
+      <entry key="eng" value="limaserver"/>
+    </map>
     <map name="normalization">
       <entry key="fre" value="normalization"/>
       <entry key="eng" value="normalization"/>
