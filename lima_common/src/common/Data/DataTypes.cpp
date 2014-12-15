@@ -136,6 +136,9 @@ Node::~Node() {delete m_d;}
 Node::Node(const Node& n) : m_d(new NodePrivate(*n.m_d)) {}
 Node &Node::operator=(const Node& n)
 {
+  if (m_d != 0) {
+    delete m_d;
+  }
   m_d = new NodePrivate(*n.m_d);
   return *this;
 }
@@ -320,6 +323,9 @@ Structure::Structure ( const Structure& s )  : m_d(new StructurePrivate(*s.m_d))
 
 Structure& Structure::operator=( const Structure& s )
 {
+  if (m_d!=0) {
+    delete m_d;
+  }
   m_d = new StructurePrivate(*s.m_d);
   return *this;
 }
