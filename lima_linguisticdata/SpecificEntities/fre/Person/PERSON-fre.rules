@@ -33,6 +33,18 @@ use person.lst
 
 #[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
+Barack::Obama:PERSON:
++AddEntityFeature(trigger,"firstname")
++AddEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:
++AddEntityFeature(trigger.1,"firstname")
++AddEntityFeature(left.1,"title")
++AddEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
 @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
