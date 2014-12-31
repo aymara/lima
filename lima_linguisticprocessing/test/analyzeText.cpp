@@ -67,7 +67,7 @@ using namespace Lima;
 void listunits();
 std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set< std::string >& dumpers, const std::string& dumperId);
 void closeHandlerOutputFile(std::ostream* ofs);
-void run(int aargc,char** aargv);
+int run(int aargc,char** aargv);
 
 int main(int argc, char **argv)
 {
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished()), &a, SLOT(quit()));
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 }
 
 
-void run(int argc,char** argv)
+int run(int argc,char** argv)
 {
   QsLogging::initQsLog();
   // Necessary to initialize factories under Windows
@@ -151,11 +151,11 @@ void run(int argc,char** argv)
     po::notify(vm);
   } catch (const boost::program_options::unknown_option& e) {
     std::cerr << e.what() << std::endl;
-    return ;
+    return 1;
   }
   if (vm.count("help")) {
     std::cout << desc << std::endl;
-    return ;
+    return SUCCESS_ID;
   }
   if (resourcesPath.empty())
   {
@@ -184,12 +184,12 @@ void run(int argc,char** argv)
   if (vm.count("availableUnits"))
   {
     listunits();
-    return ;
+    return SUCCESS_ID;
   }
   if (langs.size()<1)
   {
     std::cerr << "no language defined !" << std::endl;
-    return;
+    return 1;
   }
   
   QMap< QString, QString > outputs;
@@ -373,7 +373,7 @@ void run(int argc,char** argv)
   TIMELOGINIT;
   LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
   
-//   return SUCCESS_ID;
+  return SUCCESS_ID;
 }
 
 std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId)

@@ -42,6 +42,7 @@ namespace AnalysisDict {
 */
 class LIMA_ANALYSISDICT_EXPORT EnhancedAnalysisDictionary : public AbstractAnalysisDictionary
 {
+  Q_OBJECT
 public:
     EnhancedAnalysisDictionary();
     
@@ -75,6 +76,9 @@ public:
     
     DictionaryEntry getEntryData(const StringsPoolIndex entryId) const;
 
+private Q_SLOTS:
+  void dictionaryFileChanged ( const QString & path );
+
 private :
 
   Lima::Common::AbstractAccessByString* m_access;
@@ -83,11 +87,6 @@ private :
   bool m_isMainKeys;
   
 };
-
-inline void EnhancedAnalysisDictionary::loadDataFile(const std::string& file)
-{
-  m_dicoData.loadBinaryFile(file);
-}
 
 inline uint64_t EnhancedAnalysisDictionary::getSize() const
 {

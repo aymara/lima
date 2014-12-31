@@ -28,7 +28,9 @@
 
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/AbstractFactoryPattern/InitializableObject.h"
-// #include "common/AbstractFactoryPattern/InitializableObjectManager.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QFileSystemWatcher>
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -37,16 +39,21 @@ struct ResourceInitializationParameters {
   MediaId language;
 };
 
+class AbstractResourcePrivate;
 /** 
   * @brief resource abstraction. All resource should inherit from this class
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
   *
   *
   */
-class AbstractResource : public InitializableObject<AbstractResource,ResourceInitializationParameters>
+class AbstractResource : public QObject, public InitializableObject<AbstractResource,ResourceInitializationParameters>
 {
+  Q_OBJECT
 public:
-  
+  explicit AbstractResource ( QObject* parent = 0 );
+  virtual ~AbstractResource();
+  AbstractResource(const AbstractResource&);
+    
   /**
   * @brief initialize with parameters from configuration file and languageId.
   * @param unitConfiguration @IN : <group> tag in xml configuration file that
@@ -58,6 +65,15 @@ public:
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) = 0;
   
+  QFileSystemWatcher& resourceFileWatcher();
+
+Q_SIGNALS:
+  void resourceFileChanged ( const QString & path );
+
+
+protected:
+  AbstractResourcePrivate* m_d;
+
 };
 
 } // LinguisticProcessing

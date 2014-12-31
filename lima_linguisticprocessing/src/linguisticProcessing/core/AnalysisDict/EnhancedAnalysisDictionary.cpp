@@ -29,6 +29,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <iostream>
+#include <QFileSystemWatcher>
 
 using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -51,7 +52,11 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary()
     : AbstractAnalysisDictionary(),
     m_access(0),
     m_sp(0)
-{}
+{
+  ANALYSISDICTLOGINIT;
+//   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary";
+  connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
+}
 
 EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
       FsaStringsPool* sp,
@@ -60,16 +65,16 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
    m_access(access),
    m_sp(sp)
 {
-  loadDataFile(dataFile);
+  ANALYSISDICTLOGINIT;
+//   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary" << dataFile.c_str();
+  connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
+  resourceFileWatcher().addPath(QString::fromUtf8(dataFile.c_str()));
+  m_dicoData.loadBinaryFile(dataFile);
 }
 
 
 EnhancedAnalysisDictionary::~EnhancedAnalysisDictionary()
 {
-//   if (m_access) {
-//     delete m_access;
-//     m_access=0;
-//   }
 }
 
 void EnhancedAnalysisDictionary::init(
@@ -77,6 +82,7 @@ void EnhancedAnalysisDictionary::init(
   Manager* manager)
 {
   ANALYSISDICTLOGINIT;
+//   LDEBUG  << "EnhancedAnalysisDictionary::init";
   MediaId language=manager->getInitializationParameters().language;
   m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
   try
@@ -95,6 +101,7 @@ void EnhancedAnalysisDictionary::init(
   try
   {
     string temp=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("dictionaryValuesFile");
+    resourceFileWatcher().addPath(QString::fromUtf8(temp.c_str()));
     m_dicoData.loadBinaryFile(temp);
   }
   catch (NoSuchList& )
@@ -106,6 +113,20 @@ void EnhancedAnalysisDictionary::init(
 
 }
 
+void EnhancedAnalysisDictionary::loadDataFile(const std::string& file)
+{
+  ANALYSISDICTLOGINIT;
+  LDEBUG << "EnhancedAnalysisDictionary::loadDataFile" << file.c_str();
+  resourceFileWatcher().addPath(QString::fromUtf8(file.c_str()));
+  m_dicoData.loadBinaryFile(file);
+}
+
+void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
+{
+  ANALYSISDICTLOGINIT;
+  LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged" << path;
+}
+
 DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex wordId) const
 {
 //  ANALYSISDICTLOGINIT;
@@ -113,7 +134,7 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   if (wordId >= m_dicoData.getSize())
   {
 //    LDEBUG << "return empty : index out of range";
-return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,&m_dicoData,m_isMainKeys,m_access,m_sp));
+    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,&m_dicoData,m_isMainKeys,m_access,m_sp));
   }
   
   StringsPoolIndex strId=wordId;

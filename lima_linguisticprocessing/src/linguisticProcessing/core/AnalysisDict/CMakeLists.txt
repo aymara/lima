@@ -19,6 +19,11 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 
 ########### next target ###############
+set (lima-lp-analysisdict_MOC_HEADERS
+  EnhancedAnalysisDictionary.h
+)
+
+qt4_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})
 
 SET(lima-lp-analysisdict_LIB_SRCS
    AnalysisDictionaryIterators.cpp 
@@ -28,7 +33,7 @@ SET(lima-lp-analysisdict_LIB_SRCS
   MultiLevelAnalysisDictionaryEntry.cpp MultiLevelAnalysisDictionaryIterators.cpp
 )
 
-add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS})
+add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS} ${lima-lp-analysisdict_MOC_OUTFILES})
 
 target_link_libraries(lima-lp-analysisdict
   lima-common-factory

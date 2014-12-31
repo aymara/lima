@@ -115,12 +115,12 @@ LimaDBusServer::LimaDBusServer( const std::string& configDir,
      : QObject(parent), m_d(new LimaDBusServerPrivate(configDir,langs,pipelines,this))
 {
   CORECLIENTLOGINIT;
-  LDEBUG << "LimaDBusServer::LimaDBusServer()";
+  LDEBUG << "LimaDBusServer::LimaDBusServer()" << serviceLife;
 
   if (serviceLife > 0)
   {
     // Stop server and app after service-life seconds
-    connect (&m_d->m_timer, SIGNAL(timeout()), this, SLOT(quit()));
+    connect (&m_d->m_timer, SIGNAL(timeout()), QCoreApplication::instance(), SLOT(quit()));
     m_d->m_timer.start(serviceLife);
   }
 
