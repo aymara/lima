@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2014 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,10 +16,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
+
 
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCES_H
 #define LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCES_H
@@ -43,8 +40,13 @@ class AbstractResourcePrivate;
 /** 
   * @brief resource abstraction. All resource should inherit from this class
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
-  *
-  *
+  * 
+  * @ref AbstractResource inherits from @ref QObject to be able to trigger the resourceFileChanged
+  * signal whenever one of the files it has registered changes. The @ref init function should
+  * use the @ref QFileSystemWatcher accessed using the protected @ref resourceFileWatcher
+  * accessor to register its resource files. Then it can connect a slot to the 
+  * @ref resourceFileChanged signal to do whatever necessary with this changed resource, for 
+  * example reloading it.
   */
 class AbstractResource : public QObject, public InitializableObject<AbstractResource,ResourceInitializationParameters>
 {
@@ -55,7 +57,7 @@ public:
   AbstractResource(const AbstractResource&);
     
   /**
-  * @brief initialize with parameters from configuration file and languageId.
+  * @brief initialize with parameters from configuration file.
   * @param unitConfiguration @IN : <group> tag in xml configuration file that
   *        contains parameters to initialize the object.
   * @param manager @IN : manager that asked for initialization and carries parameters.
@@ -65,9 +67,18 @@ public:
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) = 0;
   
+protected:
+  /**
+   * @brief Accessor to the file watcher used to register resource files to be watched for changes.
+   * @return The file watcher used to register resource files to be watched for changes.
+   */
   QFileSystemWatcher& resourceFileWatcher();
 
 Q_SIGNALS:
+  /**
+   * @brief Signal triggered whenever one of the registered files changes on disk.
+   * @param path The full path to the changed file
+   */
   void resourceFileChanged ( const QString & path );
 
 
