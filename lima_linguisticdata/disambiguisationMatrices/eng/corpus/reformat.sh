@@ -16,4 +16,4 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
-awk -F "|" '{ print $2"#"$3 }' $1 | ~/Developpements/Perl/niemesTokens.pl -osep="	" "#" 1,3 | sed -r -e 's/ *	/	/g' -e 's/^ *//'
+awk -F "|" '{ print $2"#"$3 }' $1 | ../../../scripts/niemesTokens.pl -osep="	" "#" 1,3 | sed -r -e 's/ *	/	/g' -e 's/^ *//'
