@@ -26,6 +26,9 @@
 
 #include <iostream>
 #include <QFileSystemWatcher>
+#include <QReadWriteLock>
+#include <QWriteLocker>
+#include <QReadLocker>
 
 using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -61,11 +64,13 @@ class EnhancedAnalysisDictionaryPrivate
   DictionaryData* m_dicoData;
   Lima::FsaStringsPool* m_sp;
   bool m_isMainKeys;
+  // A read/write locker to prevent accessing m_dicoData during its loading
+  QReadWriteLock m_lock;
 };
 
 EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate() :
     m_access(0),
-    m_dicoData(0),
+    m_dicoData(new DictionaryData()),
     m_sp(0)
 {
 }
@@ -78,6 +83,7 @@ EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate(
    m_dicoData(new DictionaryData()),
    m_sp(sp)
 {
+  QWriteLocker locker(&m_lock);
   m_dicoData->loadBinaryFile(dataFile);
 }
 
@@ -98,6 +104,7 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(const QString& dataFilePa
   if (!dataFilePath.isEmpty())
   {
     resourceFileWatcher().addPath(dataFilePath);
+    QWriteLocker locker(&m_d->m_lock);
     m_d->m_dicoData->loadBinaryFile(dataFilePath.toUtf8().constData());
   }
 }
@@ -112,12 +119,14 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary" << dataFile.c_str();
   connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
   resourceFileWatcher().addPath(QString::fromUtf8(dataFile.c_str()));
+  QWriteLocker locker(&m_d->m_lock);
   m_d->m_dicoData->loadBinaryFile(dataFile);
 }
 
 
 EnhancedAnalysisDictionary::~EnhancedAnalysisDictionary()
 {
+  delete m_d;
 }
 
 void EnhancedAnalysisDictionary::init(
@@ -145,6 +154,7 @@ void EnhancedAnalysisDictionary::init(
   {
     std::string binaryFilePath = Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("dictionaryValuesFile");
     resourceFileWatcher().addPath(QString::fromUtf8(binaryFilePath.c_str()));
+    QWriteLocker locker(&m_d->m_lock);
     m_d->m_dicoData->loadBinaryFile(binaryFilePath);
   }
   catch (NoSuchList& )
@@ -160,6 +170,7 @@ void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 {
   ANALYSISDICTLOGINIT;
   LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged" << path;
+  QWriteLocker locker(&m_d->m_lock);
   if (m_d->m_dicoData != 0)
     delete m_d->m_dicoData;
   m_d->m_dicoData = new DictionaryData();
@@ -168,6 +179,7 @@ void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 
 uint64_t EnhancedAnalysisDictionary::getSize() const
 {
+  QReadLocker locker(&m_d->m_lock);
   return m_d->m_dicoData->getSize();
 }
 
@@ -193,6 +205,7 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
 {
 //  ANALYSISDICTLOGINIT;
 //  LDEBUG << "getEntry " << wordId;
+  QReadLocker locker(&m_d->m_lock);
   if (wordId >= m_d->m_dicoData->getSize())
   {
 //    LDEBUG << "return empty : index out of range";
