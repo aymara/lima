@@ -1,0 +1,32 @@
+# LIMA text analyzer server auto-start
+# description: Auto-starts limaserver
+# processname: limaserver
+# pidfile: /var/run/limaserver/limaserver.pid
+USER=lima
+GROUP=lima
+
+export LIMA_CONF=/usr/share/config/lima
+export LIMA_DIST=/usr
+export LIMA_RUN=/var/run/limaserver
+
+export PATH=$LIMA_DIST/bin:$PATH
+export LD_LIBRARY_PATH=$LIMA_DIST/lib:$LD_LIBRARY_PATH
+
+case $1 in
+start)
+# edit to indicate the right owner and group for the limaserver server
+chown -R $USER.$GROUP /var/run/limaserver
+su $USER -c "/usr/bin/limaserver >> /var/run/limaserver/output.log 2>> /var/run/limaserver/error.log &"
+;;
+stop)
+kill `cat /var/run/limaserver/limaserver.pid`
+rm -f /var/run/limaserver/limaserver.pid
+;;
+restart)
+kill `cat /var/run/limaserver/limaserver.pid`
+rm -f /var/run/limaserver/limaserver.pid
+su $USER -c "/usr/bin/limaserver >> /var/run/limaserver/output.log 2>> /var/run/limaserver/error.log &"
+
+;;
+esac
+exit 0
