@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2015 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
 #include "EnhancedAnalysisDictionary.h"
 #include "EnhancedAnalysisDictionaryIterator.h"
 #include "AbstractAccessResource.h"
@@ -48,28 +44,75 @@ namespace AnalysisDict
 SimpleFactory<AbstractResource,EnhancedAnalysisDictionary> enhancedAnalysisDictionaryFactory(ENHANCEDANALYSISDICTIONARY_CLASSID);
 
 
-EnhancedAnalysisDictionary::EnhancedAnalysisDictionary()
-    : AbstractAnalysisDictionary(),
+class EnhancedAnalysisDictionaryPrivate
+{
+  friend class EnhancedAnalysisDictionary;
+  
+  EnhancedAnalysisDictionaryPrivate();
+  
+  EnhancedAnalysisDictionaryPrivate(
+    FsaStringsPool* sp,
+    Lima::Common::AbstractAccessByString* access,
+    const std::string& dataFile);
+
+  ~EnhancedAnalysisDictionaryPrivate();
+
+  Lima::Common::AbstractAccessByString* m_access;
+  DictionaryData* m_dicoData;
+  Lima::FsaStringsPool* m_sp;
+  bool m_isMainKeys;
+};
+
+EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate() :
     m_access(0),
+    m_dicoData(0),
     m_sp(0)
+{
+}
+
+EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate(
+      FsaStringsPool* sp,
+      Lima::Common::AbstractAccessByString* access,
+      const std::string& dataFile) :
+   m_access(access),
+   m_dicoData(new DictionaryData()),
+   m_sp(sp)
+{
+  m_dicoData->loadBinaryFile(dataFile);
+}
+
+
+EnhancedAnalysisDictionaryPrivate::~EnhancedAnalysisDictionaryPrivate()
+{
+}
+
+
+EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(const QString& dataFilePath)
+    : AbstractAnalysisDictionary(),
+    m_d(new EnhancedAnalysisDictionaryPrivate())
 {
   ANALYSISDICTLOGINIT;
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary";
   connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
+  
+  if (!dataFilePath.isEmpty())
+  {
+    resourceFileWatcher().addPath(dataFilePath);
+    m_d->m_dicoData->loadBinaryFile(dataFilePath.toUtf8().constData());
+  }
 }
 
 EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
       FsaStringsPool* sp,
       Lima::Common::AbstractAccessByString* access,
       const std::string& dataFile) :
-   m_access(access),
-   m_sp(sp)
+   m_d(new EnhancedAnalysisDictionaryPrivate(sp, access, dataFile))
 {
   ANALYSISDICTLOGINIT;
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary" << dataFile.c_str();
   connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
   resourceFileWatcher().addPath(QString::fromUtf8(dataFile.c_str()));
-  m_dicoData.loadBinaryFile(dataFile);
+  m_d->m_dicoData->loadBinaryFile(dataFile);
 }
 
 
@@ -84,14 +127,14 @@ void EnhancedAnalysisDictionary::init(
   ANALYSISDICTLOGINIT;
 //   LDEBUG  << "EnhancedAnalysisDictionary::init";
   MediaId language=manager->getInitializationParameters().language;
-  m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
+  m_d->m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
   try
   {
     string accessId=unitConfiguration.getParamsValueAtKey("accessKeys");
     const AbstractResource* res=LinguisticResources::single().getResource(language,accessId);
     const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
-    m_isMainKeys=aar->isMainKeys();
-    m_access=aar->getAccessByString();
+    m_d->m_isMainKeys=aar->isMainKeys();
+    m_d->m_access=aar->getAccessByString();
   }
   catch (NoSuchParam& )
   {
@@ -100,9 +143,9 @@ void EnhancedAnalysisDictionary::init(
   }
   try
   {
-    string temp=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("dictionaryValuesFile");
-    resourceFileWatcher().addPath(QString::fromUtf8(temp.c_str()));
-    m_dicoData.loadBinaryFile(temp);
+    std::string binaryFilePath = Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("dictionaryValuesFile");
+    resourceFileWatcher().addPath(QString::fromUtf8(binaryFilePath.c_str()));
+    m_d->m_dicoData->loadBinaryFile(binaryFilePath);
   }
   catch (NoSuchList& )
   {
@@ -113,36 +156,55 @@ void EnhancedAnalysisDictionary::init(
 
 }
 
-void EnhancedAnalysisDictionary::loadDataFile(const std::string& file)
-{
-  ANALYSISDICTLOGINIT;
-  LDEBUG << "EnhancedAnalysisDictionary::loadDataFile" << file.c_str();
-  resourceFileWatcher().addPath(QString::fromUtf8(file.c_str()));
-  m_dicoData.loadBinaryFile(file);
-}
-
 void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 {
   ANALYSISDICTLOGINIT;
   LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged" << path;
+  if (m_d->m_dicoData != 0)
+    delete m_d->m_dicoData;
+  m_d->m_dicoData = new DictionaryData();
+  m_d->m_dicoData->loadBinaryFile(path.toUtf8().constData());
 }
+
+uint64_t EnhancedAnalysisDictionary::getSize() const
+{
+  return m_d->m_dicoData->getSize();
+}
+
+DictionaryEntry EnhancedAnalysisDictionary::getEntry(const StringsPoolIndex wordId, const Lima::LimaString& word) const
+{
+  if (m_d->m_isMainKeys) return getEntryData(wordId);
+  return getEntryData(static_cast<StringsPoolIndex>(m_d->m_access->getIndex(word)));
+}
+
+DictionaryEntry EnhancedAnalysisDictionary::getEntry(const Lima::LimaString& word) const
+{
+  return getEntryData( static_cast<StringsPoolIndex>(m_d->m_access->getIndex(word)) );
+}
+
+DictionaryEntry EnhancedAnalysisDictionary::getEntry(const StringsPoolIndex wordId) const
+{
+  if (m_d->m_isMainKeys) return getEntryData(wordId);
+  return getEntryData( static_cast<StringsPoolIndex>(m_d->m_access->getIndex((*m_d->m_sp)[wordId])) );
+}
+
 
 DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex wordId) const
 {
 //  ANALYSISDICTLOGINIT;
 //  LDEBUG << "getEntry " << wordId;
-  if (wordId >= m_dicoData.getSize())
+  if (wordId >= m_d->m_dicoData->getSize())
   {
 //    LDEBUG << "return empty : index out of range";
-    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,&m_dicoData,m_isMainKeys,m_access,m_sp));
+    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
   }
   
   StringsPoolIndex strId=wordId;
-  if (!m_isMainKeys) {
-    strId = (*m_sp)[m_access->getSpelling(wordId)];
+  if (!m_d->m_isMainKeys) {
+    strId = (*m_d->m_sp)[m_d->m_access->getSpelling(wordId)];
   }
  
-  unsigned char* p=m_dicoData.getEntryAddr(wordId);
+  unsigned char* p=m_d->m_dicoData->getEntryAddr(wordId);
   uint64_t read=DictionaryData::readCodedInt(p);
   bool final=false;
   if (read == 1)
@@ -153,7 +215,7 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   if (read == 0)
   {
 //    LDEBUG << "return empty entry";
-    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,true,false,false,false,p,p,&m_dicoData,m_isMainKeys,m_access,m_sp));
+    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,true,false,false,false,p,p,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
   }
   unsigned char* start=p;
   unsigned char* end=p+read;
@@ -180,13 +242,13 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   }
   Q_ASSERT(p==end);
 //  LDEBUG << "return entry " << (uint64_t)start << " , " << (uint64_t)end;
-  return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,false,hasLing,hasConcat,hasAccented,start,end,&m_dicoData,m_isMainKeys,m_access,m_sp));
+  return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,false,hasLing,hasConcat,hasAccented,start,end,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
 }
 
 std::pair< DictionarySubWordIterator, DictionarySubWordIterator > EnhancedAnalysisDictionary::getSubWordEntries(const int offset, const LimaString& key) const
 {
   std::pair<AccessSubWordIterator,AccessSubWordIterator> accessItrs=
-    m_access->getSubWords(offset,key);
+    m_d->m_access->getSubWords(offset,key);
   return std::pair< DictionarySubWordIterator, DictionarySubWordIterator >(
            DictionarySubWordIterator(new EnhancedAnalysisDictionarySubWordIterator(accessItrs.first,*this)),
            DictionarySubWordIterator(new EnhancedAnalysisDictionarySubWordIterator(accessItrs.second,*this)));
@@ -196,14 +258,12 @@ std::pair< DictionarySubWordIterator, DictionarySubWordIterator > EnhancedAnalys
 std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > EnhancedAnalysisDictionary::getSuperWordEntries(const LimaString& key) const
 {
   std::pair<AccessSuperWordIterator,AccessSuperWordIterator> accessItrs=
-    m_access->getSuperWords(key);
+    m_d->m_access->getSuperWords(key);
   return std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator >(
            DictionarySuperWordIterator(new EnhancedAnalysisDictionarySuperWordIterator(accessItrs.first)),
            DictionarySuperWordIterator(new EnhancedAnalysisDictionarySuperWordIterator(accessItrs.second)));
 }
 
-}
-
-}
-
-}
+} // namespace
+} // namespace
+} // namespace

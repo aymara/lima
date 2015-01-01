@@ -66,8 +66,7 @@ int main(int argc, char *argv[])
     }
   }
   
-  EnhancedAnalysisDictionary dico;
-  dico.loadDataFile(argv[1]);
+  EnhancedAnalysisDictionary dico(QString::fromUtf8(argv[1]));
   cout << dico.getSize() << " entries in data" << endl;
   if (argc == 2) {
     for (uint64_t i=0;i<dico.getSize();i++)
