@@ -17,9 +17,6 @@ set (limaserver_MOC_HEADERS
 
 qt4_wrap_cpp (limaserver_MOC_OUTFILES ${limaserver_MOC_HEADERS})
 
-# qt4_add_resources(limaserver amoseserver.qrc)
-
-# add_executable(limaserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
 add_executable(limaserver ${limaserver_SRCS} ${limaserver_MOC_OUTFILES})
 
 target_link_libraries(limaserver
@@ -60,9 +57,6 @@ qt4_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.lima
 
 qt4_wrap_cpp (limadbusserver_MOC_OUTFILES ${limadbusserver_MOC_HEADERS})
 
-# qt4_add_resources(limadbusserver amoseserver.qrc)
-
-# add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
 add_executable(limadbusserver ${limadbusserver_SRCS} ${limadbusserver_MOC_OUTFILES})
 
 target_link_libraries(limadbusserver
