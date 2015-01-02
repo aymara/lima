@@ -1,0 +1,149 @@
+/*
+ *     Copyright 2015 CEA LIST
+ *
+ *     This file is part of LIMA.
+ *
+ *     LIMA is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     LIMA is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+ */
+
+#include "LimaFileSystemWatcher.h"
+#include "LimaFileSystemWatcher_p.h"
+#include "common/LimaCommon.h"
+
+#include <QDebug>
+#include <QStringList>
+#include <QFileInfo>
+#include <QDir>
+
+namespace Lima 
+{
+  
+LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate ( LimaFileSystemWatcher* q, QObject* parent  ) : QObject(parent), q_ptr ( q )
+{
+  MISCLOGINIT;
+  if (!connect(&m_watcher,  SIGNAL(directoryChanged(QString)),this, SLOT(slotDirectoryChanged(QString)) ))
+  {
+    LERROR << "LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate failt to connect directoryChanged signal";
+  }
+  if (!connect(&m_watcher,  SIGNAL(fileChanged(QString)),this, SLOT(slotFileChanged(QString)) ))
+  {
+    LERROR << "LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate failt to connect fileChanged signal";
+  }
+}
+
+LimaFileSystemWatcherPrivate::~LimaFileSystemWatcherPrivate()
+{
+}
+
+void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path )
+{
+  qDebug() << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path;
+  if (m_pathToDeletedFileMap.contains(path))
+  {
+    // for each of the files associated to the dir 'path', check if it exists again.
+    QList<QString> files = m_pathToDeletedFileMap.values(path);
+    Q_FOREACH(QString file, files)
+    {
+      // file has been recreated: watch it again, remove it from list of deleted and signal the change
+      if (QFileInfo(file).exists())
+      {
+        qDebug() << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
+        // watch file again
+        m_watcher.addPath(file);
+        // remove file from list of deleted
+        m_pathToDeletedFileMap.remove(path, file);
+        // if there is no more deleted file in path, stop to watch it
+        if (!m_pathToDeletedFileMap.contains(path))
+        {
+          m_watcher.removePath(path);
+        }
+        // signal the change
+        Q_EMIT fileChanged(file);
+      }
+    }
+  }
+}
+
+void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
+{
+  qDebug() << "LimaFileSystemWatcherPrivate::slotFileChanged" << path;
+  // File just disapeared
+  if (!QFileInfo(path).exists())
+  {
+    // explicitely remove the  file from the watcher, otherwise, even if  it is no longer 
+    // monitored, it cannot be added again
+    m_watcher.removePath(path);
+    // get file dir
+    QString dir = QFileInfo(path).absoluteDir().absolutePath();
+    // add the link dir -file to the list of  deleted files
+    m_pathToDeletedFileMap.insert(dir, path);
+    // add the dir to the watcher
+    m_watcher.addPath(dir);
+  }
+  // In all cases, transmit the signal
+  qDebug() << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private";
+  Q_EMIT fileChanged(path);
+}
+
+LimaFileSystemWatcher::LimaFileSystemWatcher( QObject* parent )
+    : QObject(parent), m_d ( new LimaFileSystemWatcherPrivate ( this ) )
+{
+  if   (!connect(m_d, SIGNAL(fileChanged(QString)),this,SIGNAL(fileChanged(QString))))
+  {
+    MISCLOGINIT;
+    LERROR << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal";
+  }
+}
+
+LimaFileSystemWatcher::LimaFileSystemWatcher ( const LimaFileSystemWatcher& other )
+    : QObject(other.parent()), m_d ( new LimaFileSystemWatcherPrivate ( this ) )
+{
+  if   (!connect(m_d, SIGNAL(fileChanged(QString)),this,SIGNAL(fileChanged(QString))))
+  {
+    MISCLOGINIT;
+    LERROR << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal";
+  }
+}
+
+LimaFileSystemWatcher::~LimaFileSystemWatcher()
+{
+  delete m_d;
+}
+
+void  LimaFileSystemWatcher::addPath ( const QString & path )
+{
+  m_d->m_watcher.addPath(path);
+}
+
+void  LimaFileSystemWatcher::removePath ( const QString & path )
+{
+  m_d->m_watcher.removePath(path);
+}
+
+LimaFileSystemWatcher& LimaFileSystemWatcher::operator= ( const LimaFileSystemWatcher& other )
+{
+  m_d->m_watcher.removePaths(m_d->m_watcher.directories());
+  m_d->m_watcher.removePaths(m_d->m_watcher.files());
+  m_d->m_watcher.addPaths(other.m_d->m_watcher.directories());
+  m_d->m_watcher.addPaths(other.m_d->m_watcher.files());
+  return *this;
+}
+
+bool LimaFileSystemWatcher::operator== ( const LimaFileSystemWatcher& other )
+{
+  return m_d->m_watcher.directories() == other.m_d->m_watcher.directories()
+        && m_d->m_watcher.files() == other.m_d->m_watcher.files();
+}
+
+} // Lima

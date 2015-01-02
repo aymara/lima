@@ -91,7 +91,7 @@ set(CMAKE_PREFIX_PATH
 
 add_definitions(-D QT_NO_KEYWORDS)
 
-find_package(Qt4 4.7 REQUIRED QtCore QtXml)
+find_package(Qt4 4.7 REQUIRED QtCore QtXml QtTest)
 include(${QT_USE_FILE})
 include_directories(${Qt4_INCLUDE_DIR})
 link_directories(${Qt4_LIBRARY_DIRS})

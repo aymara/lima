@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2015 CEA LIST
 #    
 #   This file is part of LIMA.
 #
@@ -20,11 +20,14 @@ add_definitions( -DLIMA_COMMONMISC_EXPORTING )
 ########### next target ###############
 
 set (lima-common-misc_MOC_HEADERS
+    LimaFileSystemWatcher.h
+    LimaFileSystemWatcher_p.h
     LimaMainTaskRunner.h)
 
 qt4_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
 
-SET(lima-common-misc_LIB_SRCS
+SET(lima-common-misc_LIB_SRCS 
+    LimaFileSystemWatcher.cpp
     AbstractAccessIterators.cpp
     fsaStringsPool.cpp
     stringspool.cpp
@@ -66,4 +69,5 @@ install(FILES
     XalanOutputStreamPrintWriternowarn.hpp
     linenoise.h
     LimaMainTaskRunner.h
+    LimaFileSystemWatcher.h
   DESTINATION include/common/misc)
