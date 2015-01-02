@@ -25,11 +25,12 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <iostream>
-#include <QFileSystemWatcher>
 #include <QReadWriteLock>
 #include <QWriteLocker>
 #include <QReadLocker>
+#include <QFileInfo>
 
+using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::MediaticData;
@@ -169,12 +170,22 @@ void EnhancedAnalysisDictionary::init(
 void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 {
   ANALYSISDICTLOGINIT;
-  LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged" << path;
-  QWriteLocker locker(&m_d->m_lock);
-  if (m_d->m_dicoData != 0)
-    delete m_d->m_dicoData;
-  m_d->m_dicoData = new DictionaryData();
-  m_d->m_dicoData->loadBinaryFile(path.toUtf8().constData());
+  // Check if the file exists as, when a file is replaced, dictionaryFileChanged can be triggered 
+  // two times, when it is first suppressed and when the new version is available. One should not 
+  // try to load the missing file
+  if (QFileInfo(path).exists())
+  {
+    LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged reload" << path;
+    QWriteLocker locker(&m_d->m_lock);
+    if (m_d->m_dicoData != 0)
+      delete m_d->m_dicoData;
+    m_d->m_dicoData = new DictionaryData();
+    m_d->m_dicoData->loadBinaryFile(path.toUtf8().constData());
+  }
+  else
+  {
+    LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged deleted, ignoring" << path;
+  }
 }
 
 uint64_t EnhancedAnalysisDictionary::getSize() const
