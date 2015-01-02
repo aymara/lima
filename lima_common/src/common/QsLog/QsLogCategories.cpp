@@ -17,6 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 #include "QsLogCategories.h"
+#include "common/misc/LimaFileSystemWatcher.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)
@@ -26,11 +27,11 @@
 #include <QDateTime>
 #include <QtGlobal>
 #include <QStringList>
-#include <QtCore/QFileSystemWatcher>
 #include <cassert>
 #include <cstdlib>
 #include <stdexcept>
 
+using namespace Lima;
 
 namespace QsLogging
 {
@@ -45,7 +46,7 @@ public:
    }
    QMap<QString,Level> categories;
 
-   QFileSystemWatcher m_configFileWatcher;
+   LimaFileSystemWatcher m_configFileWatcher;
 };
 
 Categories::Categories(QObject* parent) :
@@ -62,7 +63,10 @@ Categories::~Categories()
 
 void Categories::configureFileChanged ( const QString & path )
 {
-  configure(path);
+  if (QFile(path).exists())
+  {
+    configure(path);
+  }
 }
 
 bool Categories::configure(const QString& fileName)

@@ -24,20 +24,24 @@
 #include <QStringList>
 #include <QFileInfo>
 #include <QDir>
+#include <QTime>
+#include <QCoreApplication>
+
+#include <iostream>
 
 namespace Lima 
 {
   
 LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate ( LimaFileSystemWatcher* q, QObject* parent  ) : QObject(parent), q_ptr ( q )
 {
-  MISCLOGINIT;
+//   MISCLOGINIT;
   if (!connect(&m_watcher,  SIGNAL(directoryChanged(QString)),this, SLOT(slotDirectoryChanged(QString)) ))
   {
-    LERROR << "LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate failt to connect directoryChanged signal";
+    std::cerr << "LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate failed to connect directoryChanged signal"  << std::endl;
   }
   if (!connect(&m_watcher,  SIGNAL(fileChanged(QString)),this, SLOT(slotFileChanged(QString)) ))
   {
-    LERROR << "LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate failt to connect fileChanged signal";
+    std::cerr << "LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate failed to connect fileChanged signal" << std::endl;
   }
 }
 
@@ -45,6 +49,15 @@ LimaFileSystemWatcherPrivate::~LimaFileSystemWatcherPrivate()
 {
 }
 
+
+void LimaFileSystemWatcherPrivate::delay( int millisecondsToWait )
+{
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
+}
 void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path )
 {
   MISCLOGINIT;
@@ -58,6 +71,8 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
       // file has been recreated: watch it again, remove it from list of deleted and signal the change
       if (QFileInfo(file).exists())
       {
+        // Wait a few time to let the creator of the file to finish its work on it
+        delay(500);
         LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
         // watch file again
         m_watcher.addPath(file);

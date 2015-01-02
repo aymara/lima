@@ -44,6 +44,8 @@ Q_SIGNALS:
     void  fileChanged ( const QString & path );
 
 private:
+    void delay( int millisecondsToWait );
+
     LimaFileSystemWatcher* const q_ptr;
     Q_DECLARE_PUBLIC ( LimaFileSystemWatcher )
     
