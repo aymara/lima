@@ -23,8 +23,6 @@
 
 #include "AbstractResource.h"
 
-#include <QtCore/QFileSystemWatcher>
-
 namespace Lima {
 namespace LinguisticProcessing {
 
@@ -36,7 +34,7 @@ friend  class AbstractResource;
   ~AbstractResourcePrivate() {}
   AbstractResourcePrivate(const AbstractResourcePrivate&) {}
     
-  QFileSystemWatcher m_resourceFileWatcher;
+  LimaFileSystemWatcher m_resourceFileWatcher;
 };
 
 AbstractResource::AbstractResource( QObject* parent ) : QObject( parent ), m_d(new AbstractResourcePrivate())
@@ -54,7 +52,7 @@ AbstractResource::AbstractResource(const AbstractResource& r) : QObject(r.parent
   connect(&m_d->m_resourceFileWatcher,SIGNAL(fileChanged(QString)),this,SIGNAL(resourceFileChanged(QString)));
 }
 
-QFileSystemWatcher& AbstractResource::resourceFileWatcher()
+LimaFileSystemWatcher& AbstractResource::resourceFileWatcher()
 {
   return m_d->m_resourceFileWatcher;
 }

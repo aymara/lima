@@ -25,9 +25,9 @@
 
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/AbstractFactoryPattern/InitializableObject.h"
+#include "common/misc/LimaFileSystemWatcher.h"
 
 #include <QtCore/QObject>
-#include <QtCore/QFileSystemWatcher>
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -43,7 +43,7 @@ class AbstractResourcePrivate;
   * 
   * @ref AbstractResource inherits from @ref QObject to be able to trigger the resourceFileChanged
   * signal whenever one of the files it has registered changes. The @ref init function should
-  * use the @ref QFileSystemWatcher accessed using the protected @ref resourceFileWatcher
+  * use the @ref LimaFileSystemWatcher accessed using the protected @ref resourceFileWatcher
   * accessor to register its resource files. Then it can connect a slot to the 
   * @ref resourceFileChanged signal to do whatever necessary with this changed resource, for 
   * example reloading it.
@@ -72,7 +72,7 @@ protected:
    * @brief Accessor to the file watcher used to register resource files to be watched for changes.
    * @return The file watcher used to register resource files to be watched for changes.
    */
-  QFileSystemWatcher& resourceFileWatcher();
+  LimaFileSystemWatcher& resourceFileWatcher();
 
 Q_SIGNALS:
   /**
