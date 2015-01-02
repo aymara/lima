@@ -21,7 +21,6 @@
 #include "LimaFileSystemWatcher_p.h"
 #include "common/LimaCommon.h"
 
-#include <QDebug>
 #include <QStringList>
 #include <QFileInfo>
 #include <QDir>
@@ -48,7 +47,8 @@ LimaFileSystemWatcherPrivate::~LimaFileSystemWatcherPrivate()
 
 void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path )
 {
-  qDebug() << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path;
+  MISCLOGINIT;
+  LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path;
   if (m_pathToDeletedFileMap.contains(path))
   {
     // for each of the files associated to the dir 'path', check if it exists again.
@@ -58,7 +58,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
       // file has been recreated: watch it again, remove it from list of deleted and signal the change
       if (QFileInfo(file).exists())
       {
-        qDebug() << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
+        LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
         // watch file again
         m_watcher.addPath(file);
         // remove file from list of deleted
@@ -77,7 +77,8 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
 
 void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
 {
-  qDebug() << "LimaFileSystemWatcherPrivate::slotFileChanged" << path;
+  MISCLOGINIT;
+  LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged" << path;
   // File just disapeared
   if (!QFileInfo(path).exists())
   {
@@ -92,7 +93,7 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
     m_watcher.addPath(dir);
   }
   // In all cases, transmit the signal
-  qDebug() << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private";
+  LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private";
   Q_EMIT fileChanged(path);
 }
 
