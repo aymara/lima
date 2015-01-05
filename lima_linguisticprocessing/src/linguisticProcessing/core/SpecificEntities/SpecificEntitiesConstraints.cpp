@@ -850,6 +850,16 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     default:
       recoData->addEntityFeature(m_featureName,featureValue);  
   }
+  uint64_t pos = (int64_t)(token->position());
+  uint64_t len = (int64_t)(token->length());
+  Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+  std::vector<EntityFeature>::iterator firstnameFeatureIt = 
+    features.find(m_featureName);
+  if( firstnameFeatureIt != recoData->getEntityFeatures().end() )
+  {
+    firstnameFeatureIt->setPosition(pos);
+    firstnameFeatureIt->setLength(len);
+  }
   
   return true;
 }

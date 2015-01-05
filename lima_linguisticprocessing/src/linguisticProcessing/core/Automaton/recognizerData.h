@@ -125,7 +125,7 @@ class LIMA_AUTOMATON_EXPORT RecognizerData : public AnalysisData
     m_entityFeatures.addFeature<ValueType>(name,value);
   }
   void clearEntityFeatures();
-  const Automaton::EntityFeatures& getEntityFeatures() { return m_entityFeatures; }
+  Automaton::EntityFeatures& getEntityFeatures() { return m_entityFeatures; }
   
 private:
   

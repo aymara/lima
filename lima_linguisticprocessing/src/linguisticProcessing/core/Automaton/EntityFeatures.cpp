@@ -44,7 +44,8 @@ namespace Automaton {
 EntityFeature::EntityFeature():
 m_name(""),
 m_value(),
-m_hasPos(false)
+m_pos(UNDEFPOSITION),
+m_len(UNDEFLENGTH)
 {}
 
 EntityFeature::~EntityFeature()

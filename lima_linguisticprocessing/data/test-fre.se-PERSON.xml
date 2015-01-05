@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+  <!--==================== tests PERSON with components ====================-->
+  <testcase id="fre.se.pers.comp.1" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Barack Obama"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>rule Obama : firstname: Barack lastname: Obama</expl>
+    <test id="fre.se.pers.comp.1.1" trace=".se.xml"
+          comment="type d'entité = Person.PERSONNE"
+          left="XPATH#//entities/entity[pos=1][len=12]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.pers.comp.2" type="pertinent">
+    <call-parameters>
+      <param key="text" value="le président François Monge"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>rule firstname components : title: président, firstname: François lastname: Monge</expl>
+    <test id="fre.se.pers.comp.2.1" trace=".se.xml"
+          comment="type d'entité = Person.PERSONNE"
+          left="XPATH#//entities/entity[pos=14][len=14]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="fre.se.pers.comp.2.2" trace=".se.xml"
+          comment="titre = président"
+          left="XPATH#//entities/entity/components/title"
+          operator="="
+          right="président"/>
+    <test id="fre.se.pers.comp.2.3" trace=".se.xml"
+          comment="titre = président"
+          left="XPATH#//entities/entity/components/title/@pos"
+          operator="="
+          right="4"/>
+    <test id="fre.se.pers.comp.2.4" trace=".se.xml"
+          comment="titre = président"
+          left="XPATH#//entities/entity/components/title/@len"
+          operator="="
+          right="9"/>
+    <test id="fre.se.pers.comp.2.5" trace=".se.xml"
+          comment="prénom = François"
+          left="XPATH#//entities/entity/components/firstname"
+          operator="="
+          right="François"/>
+    <test id="fre.se.pers.comp.2.8" trace=".se.xml"
+          comment="nom = Monge"
+          left="XPATH#//entities/entity/components/lastname"
+          operator="="
+          right="Monge"/>
+  </testcase>
+  <testcase id="fre.se.pers.comp.3" type="pertinent">
+    <call-parameters>
+      <param key="text" value="le président François G Monge"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>rule firstname components : title: président, firstname: (François, G.) lastname: Monge</expl>
+    <test id="fre.se.pers.comp.3.1" trace=".se.xml"
+          comment="type d'entité = Person.PERSONNE"
+          left="XPATH#//entities/entity[pos=14][len=16]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+<!--
+<testcase id="fre.se.44" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Jacques Bsdufof va à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Jacques Bsdufof</expl>
+    <test id="fre.se.44.1" trace=".se.xml"
+          comment="personne avec prénom"
+          left="XPATH#//specific_entities/specific_entity[position=1][length=15]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.45" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Jacques Porte va à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Jacques Porte</expl>
+    <test id="fre.se.45.1" trace=".se.xml"
+          comment="personne avec prénom et nom qui est un mot du dictionnaire"
+          left="XPATH#//specific_entities/specific_entity[position=1][length=13]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.46" type="pertinent">
+    <call-parameters>
+      <param key="text" value="MM. Sfar et Blain vont à la cantine."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : MM. Sfar et Blain</expl>
+    <test id="fre.se.46.1" trace=".se.xml"
+          comment="annonceur multiple (Sfar)"
+          left="XPATH#//specific_entities/specific_entity[position=5][length=4]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="fre.se.46.2" trace=".se.xml"
+          comment="annonceur multiple (Blain)"
+          left="XPATH#//specific_entities/specific_entity[position=13][length=5]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.47" type="pertinent">
+    <call-parameters>
+      <param key="text" value="&quot;ah bon&quot;, déclare Sanjiv Sidhu, président d' i2 Technologies."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : Sanjiv Sidhu</expl>
+    <test id="fre.se.47.1" trace=".se.xml"
+          comment="annonceur postérieur au nom (prénom inconnu)"
+          left="XPATH#//specific_entities/specific_entity[position=19][length=12]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+   <testcase id="fre.se.55" type="bloquant">
+    <call-parameters>
+      <param key="text" value="A l'attention du Dr Watson"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.55.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=21][length=6]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>
+  <testcase id="fre.se.56" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme Bernadette Chirac."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.56.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=61][length=17]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>  
+ <testcase id="fre.se.61" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme B. Youza."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre avec initiale.</expl>
+    <test id="fre.se.61.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=61][length=8]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>  
+ <testcase id="fre.se.62" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est B. Youza."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.62.1" trace=".se.xml"
+          comment="Person.PERSON."
+          left="XPATH#//specific_entities/specific_entity[position=57][length=8]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase>  
+  -->
+  </testcases>
+
