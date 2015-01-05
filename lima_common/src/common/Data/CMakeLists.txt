@@ -32,7 +32,10 @@ SET(lima-common-data_LIB_SRCS
 
 add_library(lima-common-data SHARED ${lima-common-data_LIB_SRCS})
 
-target_link_libraries(lima-common-data lima-common-qslog ${BOOST_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(lima-common-data 
+  ${BOOST_LIBRARIES} 
+  ${QT_LIBRARIES}
+)
 
 set_target_properties(lima-common-data PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-data DESTINATION lib)

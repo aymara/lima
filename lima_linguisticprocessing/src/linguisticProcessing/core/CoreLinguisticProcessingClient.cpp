@@ -38,8 +38,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
-#include "common/misc/gregoriannowarn.hpp"
-// #include "boost/date_time/posix_time/ptime.hpp"
+#include <QtCore/QDate>
 
 using namespace std;
 using namespace Lima::Common::MediaticData;

@@ -36,7 +36,9 @@ SET(lima-common-qslog_LIB_SRCS
    )
 
 add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
-target_link_libraries(lima-common-qslog ${QT_LIBRARIES})
+target_link_libraries(lima-common-qslog 
+  ${QT_LIBRARIES}
+)
 set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-qslog DESTINATION lib)
 

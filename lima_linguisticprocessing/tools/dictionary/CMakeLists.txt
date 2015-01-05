@@ -27,11 +27,14 @@ add_executable(sortutf16 ${sortutf16_SRCS})
 
 target_link_libraries(
   sortutf16
+  lima-common-misc
+  lima-common-qslog
   lima-lp-misc
+  lima-common-data
   ${Boost_LIBRARIES}
-   ${QT_LIBRARIES} lima-common-qslog
-   ${optionalLibs}
-  lima-common-data)
+  ${QT_LIBRARIES}
+  ${optionalLibs}
+  )
 
 install(TARGETS sortutf16 DESTINATION bin)
 

@@ -38,9 +38,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
-
 #include <QtCore/QCoreApplication>
 
 using namespace Lima::LinguisticProcessing;

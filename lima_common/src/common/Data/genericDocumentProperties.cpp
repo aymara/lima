@@ -28,6 +28,9 @@
 
 #include "genericDocumentProperties.h"
 #include "strwstrtools.h"
+
+#include <QtCore/QDate>
+
 #include <iostream>
 #include <fstream>
 
@@ -331,47 +334,47 @@ void GenericDocumentProperties::read(std::istream& file) {
   m_d->m_multipleStringValues.clear();
   m_d->m_multipleWeightedPropValues.clear();
 
-  BOWLOGINIT;
+//   BOWLOGINIT;
 
   // read integer properties
   file.read((char*) &size, sizeof(uint32_t));
-  LDEBUG << "read size " << size;
+//   LDEBUG << "read size " << size;
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
     uint64_t val;
     file.read((char*) &val, sizeof(uint64_t));
-    LDEBUG << "read int " << val << " as value of " << name.c_str();
+//     LDEBUG << "read int " << val << " as value of " << name.c_str();
     m_d->m_intValues.insert(std::pair<std::string,uint64_t>(name,val));
   }
   
   // read string properties
   file.read((char*) &size, sizeof(uint32_t));
-  LDEBUG << "read size " << size;
+//   LDEBUG << "read size " << size;
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
     string str;
     Misc::readStringField(file,str);
-    LDEBUG << "read string " << str.c_str() << " as value of " << name.c_str();
+//     LDEBUG << "read string " << str.c_str() << " as value of " << name.c_str();
     m_d->m_stringValues.insert(std::pair<std::string,std::string>(name,str) );
   }
 
   // read date properties
   file.read((char*) &size, sizeof(uint32_t));
-  LDEBUG << "read size " << size;
+//   LDEBUG << "read size " << size;
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
     QDate d=m_d->readDate(file);
     string strDate=d.toString().toUtf8().data();
-    LDEBUG << "read date " << strDate.c_str() << " as value of " << name.c_str();
+//     LDEBUG << "read date " << strDate.c_str() << " as value of " << name.c_str();
     m_d->m_dateValues.insert(std::pair<std::string,QDate>(name,d));
   }
 
   // read date interval properties
   file.read((char*) &size, sizeof(uint32_t));
-  LDEBUG << "read size " << size;
+//   LDEBUG << "read size " << size;
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
@@ -379,14 +382,14 @@ void GenericDocumentProperties::read(std::istream& file) {
     QDate endD=m_d->readDate(file);
     string strStartDate=startD.toString().toUtf8().data();
     string strEndDate=endD.toString().toUtf8().data();
-    LDEBUG << "read interval [" << strStartDate.c_str() << "," << strEndDate.c_str() << " as value of " << name.c_str();
+//     LDEBUG << "read interval [" << strStartDate.c_str() << "," << strEndDate.c_str() << " as value of " << name.c_str();
     std::pair<QDate,QDate> interval(startD,endD);
     m_d->m_dateIntervalValues.insert(std::pair<std::string,std::pair<QDate,QDate> >(name,interval));
   }
 
   // read multi-valued string properties
   file.read((char*) &size, sizeof(uint32_t));
-  LDEBUG << "read size " << size;
+//   LDEBUG << "read size " << size;
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
@@ -396,7 +399,7 @@ void GenericDocumentProperties::read(std::istream& file) {
     for (uint32_t j(0); j<sizeMultipleValues; j++) {
       string str;
       Misc::readStringField(file,str);
-      LDEBUG << "read string " << str.c_str();
+//       LDEBUG << "read string " << str.c_str();
       val.push_back(str);
     }
     m_d->m_multipleStringValues.insert(std::pair<std::string,std::vector<std::string> >(name,val) );
@@ -404,7 +407,7 @@ void GenericDocumentProperties::read(std::istream& file) {
 
   // read multi-valued weighted properties
   file.read((char*) &size, sizeof(uint32_t));
-  LDEBUG << "read size " << size;
+//   LDEBUG << "read size " << size;
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
@@ -421,58 +424,58 @@ void GenericDocumentProperties::read(std::istream& file) {
     m_d->m_multipleWeightedPropValues.insert(std::pair<std::string,vector<std::pair<std::string,float> > > (name,val) );
   }
 
-  LDEBUG << "eop";
+//   LDEBUG << "eop";
 
 }
 
 void GenericDocumentProperties::write(std::ostream& file) const {
   std::map <std::string, uint64_t >::size_type size(0);
 
-  BOWLOGINIT;
+//   BOWLOGINIT;
   
   // Write integer properties
   size=m_d->m_intValues.size();
-  LDEBUG << "GenericDocumentProperties::write write size " << size;
+//   LDEBUG << "GenericDocumentProperties::write write size " << size;
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,uint64_t>::const_iterator it = m_d->m_intValues.begin() ;
      it != m_d->m_intValues.end() ; it++) {
-    LDEBUG << "write name " << (*it).first.c_str();
+//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
-    LDEBUG << "write int " << (*it).second;
+//     LDEBUG << "write int " << (*it).second;
     file.write((char*) &((*it).second), sizeof(uint64_t));
   }
 //  Misc::writeStringField(file,"eoi");
   
   // Write string properties
   size=m_d->m_stringValues.size();
-  LDEBUG << "write size " << size;
+//   LDEBUG << "write size " << size;
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::string>::const_iterator it = m_d->m_stringValues.begin() ;
-     it != m_d->m_stringValues.end() ; it++) {
-    LDEBUG << "write name " << (*it).first.c_str();
+    it != m_d->m_stringValues.end() ; it++) {
+//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
-  LDEBUG << "write string " << (*it).second.c_str();
+//   LDEBUG << "write string " << (*it).second.c_str();
     Misc::writeStringField(file,(*it).second);
   }
 //  Misc::writeStringField(file,"eos");
 
   // Write date properties
   size=m_d->m_dateValues.size();
-  LDEBUG << "write size " << size;
+//   LDEBUG << "write size " << size;
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,QDate>::const_iterator it = m_d->m_dateValues.begin() ;
      it != m_d->m_dateValues.end() ; it++) {
-    LDEBUG << "write name " << (*it).first.c_str();
+//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
     string strDate=(*it).second.toString().toUtf8().data();
-    LDEBUG << "write date " << strDate.c_str();
+//     LDEBUG << "write date " << strDate.c_str();
     m_d->writeDate(file,(*it).second);
   }
 //  Misc::writeStringField(file,"eod");
 
   // Write date interval properties
   size=m_d->m_dateIntervalValues.size();
-  LDEBUG << "write size " << size;
+//   LDEBUG << "write size " << size;
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::pair<QDate,QDate> >::const_iterator it
      = m_d->m_dateIntervalValues.begin() ;  it != m_d->m_dateIntervalValues.end() ; it++) {
@@ -480,18 +483,18 @@ void GenericDocumentProperties::write(std::ostream& file) const {
     Misc::writeStringField(file,val.first);
     string strStartDate=(val.second).first.toString().toUtf8().data();
     string strEndDate=(val.second).second.toString().toUtf8().data();
-  LDEBUG << "write interval [ " << strStartDate.c_str() << "," << strEndDate.c_str();
+//   LDEBUG << "write interval [ " << strStartDate.c_str() << "," << strEndDate.c_str();
     m_d->writeDate(file,(val.second).first);
     m_d->writeDate(file,(val.second).second);
   }
 
   // Write multiple string properties
   size=m_d->m_multipleStringValues.size();
-  LDEBUG << "write size " << size;
+//   LDEBUG << "write size " << size;
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::vector<std::string> >::const_iterator it = m_d->m_multipleStringValues.begin() ;
      it != m_d->m_multipleStringValues.end() ; it++) {
-    LDEBUG << "write name " << (*it).first.c_str();
+//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
     const std::vector<std::string>& vval = (*it).second;
     std::vector<std::string >::size_type sizeMultipleValues=vval.size();
@@ -505,12 +508,12 @@ void GenericDocumentProperties::write(std::ostream& file) const {
 
   // Write multiple weighted properties
   size=m_d->m_multipleWeightedPropValues.size();
-  LDEBUG << "write size " << size;
+//   LDEBUG << "write size " << size;
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::vector<std::pair<std::string,float> > >::const_iterator it =
      m_d->m_multipleWeightedPropValues.begin() ;
      it != m_d->m_multipleWeightedPropValues.end() ; it++) {
-    LDEBUG << "write name " << (*it).first.c_str();
+//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
     const std::vector<std::pair<std::string,float> >& vval = (*it).second;
     std::vector<std::pair <std::string, float > >::size_type sizeMultipleValues=vval.size();

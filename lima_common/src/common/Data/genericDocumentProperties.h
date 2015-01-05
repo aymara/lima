@@ -34,8 +34,13 @@
 #define GENERICDOCUMENTPROPERTIES_H
 
 #include "common/LimaCommon.h"
-#include "common/misc/gregoriannowarn.hpp"
+
+#include <QtCore/QDate>
+
 #include <iostream>
+#include <string>
+#include <vector>
+#include <map>
 
 namespace Lima {
 namespace Common {
@@ -47,7 +52,7 @@ namespace Misc {
 template<typename ValT>
 class MultiValuedPropertyIterator {
 public:
-  MultiValuedPropertyIterator(const typename std::map<std::string,std::vector<ValT> >::const_iterator pos); 
+  MultiValuedPropertyIterator(const typename std::map<std::string, std::vector<ValT> >::const_iterator pos); 
   MultiValuedPropertyIterator(const MultiValuedPropertyIterator& orig); 
   MultiValuedPropertyIterator& operator = (const MultiValuedPropertyIterator& orig); 
   MultiValuedPropertyIterator& operator++(int); 

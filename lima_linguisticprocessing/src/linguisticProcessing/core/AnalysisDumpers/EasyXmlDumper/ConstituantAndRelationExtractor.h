@@ -63,8 +63,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/properties.hpp>
 
-#include "common/misc/gregoriannowarn.hpp"
-
 namespace Lima {
 namespace LinguisticProcessing {
 namespace AnalysisDumpers {

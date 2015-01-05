@@ -35,7 +35,6 @@
 #include "SpecificEntitiesExport.h"
 #include "common/Data/LimaString.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
-#include "common/misc/local_timenowarn.hpp"
 
 namespace Lima {
 namespace LinguisticProcessing {

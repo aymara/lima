@@ -100,7 +100,11 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(const QString& dataFilePa
 {
   ANALYSISDICTLOGINIT;
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary";
-  connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
+  if (!connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString))))
+  {
+    LERROR << "Unable to connect resourceFileChanged";
+    throw LimaException("Unable to connect resourceFileChanged");
+  }
   
   if (!dataFilePath.isEmpty())
   {
@@ -118,7 +122,11 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
 {
   ANALYSISDICTLOGINIT;
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary" << dataFile.c_str();
-  connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString)));
+  if   (!connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString))))
+  {
+    LERROR << "Unable to connect resourceFileChanged";
+    throw LimaException("Unable to connect resourceFileChanged");
+  }
   resourceFileWatcher().addPath(QString::fromUtf8(dataFile.c_str()));
   QWriteLocker locker(&m_d->m_lock);
   m_d->m_dicoData->loadBinaryFile(dataFile);
@@ -135,7 +143,7 @@ void EnhancedAnalysisDictionary::init(
   Manager* manager)
 {
   ANALYSISDICTLOGINIT;
-//   LDEBUG  << "EnhancedAnalysisDictionary::init";
+  LDEBUG  << "EnhancedAnalysisDictionary::init";
   MediaId language=manager->getInitializationParameters().language;
   m_d->m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
   try
@@ -143,6 +151,11 @@ void EnhancedAnalysisDictionary::init(
     string accessId=unitConfiguration.getParamsValueAtKey("accessKeys");
     const AbstractResource* res=LinguisticResources::single().getResource(language,accessId);
     const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
+    if (!connect(aar,SIGNAL(accessFileReloaded(Common::AbstractAccessByString*)),this,SLOT(slotAccessFileReloaded(Common::AbstractAccessByString*))))
+    {
+      LERROR << "Unable to connect accessFileReloaded";
+      throw LimaException("Unable to connect accessFileReloaded");
+    }
     m_d->m_isMainKeys=aar->isMainKeys();
     m_d->m_access=aar->getAccessByString();
   }
@@ -166,6 +179,13 @@ void EnhancedAnalysisDictionary::init(
 
 
 }
+
+void EnhancedAnalysisDictionary::slotAccessFileReloaded(Common::AbstractAccessByString* access)
+{
+  ANALYSISDICTLOGINIT;
+  LDEBUG << "EnhancedAnalysisDictionary::slotAccessFileReloaded";
+  m_d->m_access=access;
+ }
 
 void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 {

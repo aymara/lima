@@ -23,6 +23,7 @@
 #include <QtCore/qglobal.h>
 #include <QFileSystemWatcher>
 #include <QMultiMap>
+#include <QMutex>
 #include "stringspool.h"
 
 namespace Lima
@@ -51,6 +52,7 @@ private:
     
     QFileSystemWatcher m_watcher;
     QMultiMap<QString,QString> m_pathToDeletedFileMap;
+    QMutex m_pathToDeletedFileMapMutex;
 };
 
 } // Lima

@@ -176,8 +176,9 @@ AbstractBoWFeatureExtractor(language,complement)
 {}
 
 std::string BoWFeatureTstatus::
-getValue(const AbstractBoWElement* token /*token*/) const
+getValue(const AbstractBoWElement* token) const
 {
+  LIMA_UNUSED(token);
   return "";
 }
 

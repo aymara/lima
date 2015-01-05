@@ -32,7 +32,7 @@
 namespace Lima 
 {
   
-LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate ( LimaFileSystemWatcher* q, QObject* parent  ) : QObject(parent), q_ptr ( q )
+LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate ( LimaFileSystemWatcher* q, QObject* parent  ) : QObject(parent), q_ptr ( q ), m_pathToDeletedFileMapMutex()
 {
 //   MISCLOGINIT;
   if (!connect(&m_watcher,  SIGNAL(directoryChanged(QString)),this, SLOT(slotDirectoryChanged(QString)) ))
@@ -62,6 +62,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
 {
   MISCLOGINIT;
   LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path;
+  QMutexLocker locker(&m_pathToDeletedFileMapMutex);
   if (m_pathToDeletedFileMap.contains(path))
   {
     // for each of the files associated to the dir 'path', check if it exists again.
@@ -72,10 +73,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
       if (QFileInfo(file).exists())
       {
         // Wait a few time to let the creator of the file to finish its work on it
-        delay(500);
-        LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
-        // watch file again
-        m_watcher.addPath(file);
+        delay(1000);
         // remove file from list of deleted
         m_pathToDeletedFileMap.remove(path, file);
         // if there is no more deleted file in path, stop to watch it
@@ -83,6 +81,9 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
         {
           m_watcher.removePath(path);
         }
+        LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
+        // watch file again
+        m_watcher.addPath(file);
         // signal the change
         Q_EMIT fileChanged(file);
       }
@@ -94,9 +95,12 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
 {
   MISCLOGINIT;
   LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged" << path;
+  delay(500);
   // File just disapeared
   if (!QFileInfo(path).exists())
   {
+    LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged removed" << path;
+    QMutexLocker locker(&m_pathToDeletedFileMapMutex);
     // explicitely remove the  file from the watcher, otherwise, even if  it is no longer 
     // monitored, it cannot be added again
     m_watcher.removePath(path);
@@ -108,7 +112,7 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
     m_watcher.addPath(dir);
   }
   // In all cases, transmit the signal
-  LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private";
+  LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private" << path;
   Q_EMIT fileChanged(path);
 }
 

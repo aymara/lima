@@ -58,12 +58,9 @@ install(FILES
     fsaStringsPool.h
     stringspool.h
     Exceptions.h
-    gregoriannowarn.hpp
     adjacency_listnowarn.hpp
     graphviznowarn.hpp
-    posix_timenowarn.hpp
     depth_first_searchnowarn.hpp
-    local_timenowarn.hpp
     XSLExceptionnowarn.hpp
     NodeRefListnowarn.hpp
     XalanOutputStreamPrintWriternowarn.hpp

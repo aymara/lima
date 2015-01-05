@@ -61,8 +61,7 @@ DictionaryData::~DictionaryData()
 void DictionaryData::loadBinaryFile(const std::string& file)
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "load binary data file : " << file;
-  uint64_t dataSize = 0;
+  LDEBUG << "DictionaryData::loadBinaryFile" << file;
   if( !QFileInfo(file.c_str()).exists())
 //  if( !boost::filesystem3::exists(file))
   {
@@ -70,7 +69,8 @@ void DictionaryData::loadBinaryFile(const std::string& file)
     mess.append(file).append(" not found!");
     throw( std::logic_error( mess ) );
   }
-  dataSize += QFileInfo(file.c_str()).size();
+  u_int64_t dataSize = QFileInfo(file.c_str()).size();
+  LDEBUG << "DictionaryData::loadBinaryFile data size: " << dataSize;
   m_data = new unsigned char [dataSize];
   if (m_data == NULL)
   {

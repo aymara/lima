@@ -7,8 +7,6 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
 #include "common/time/traceUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"

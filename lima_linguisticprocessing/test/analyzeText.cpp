@@ -51,8 +51,6 @@
 #include <iomanip>
 #include <fstream>
 
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
 #include <boost/program_options.hpp>
 
 #include <QtCore>

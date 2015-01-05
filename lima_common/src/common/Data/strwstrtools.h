@@ -89,31 +89,31 @@ namespace Misc {
 //
 
 /*!
-    rief        Read an input stream into a string, until EOF
+    @brief        Read an input stream into a string, until EOF
     \ingroup    Misc
 */
 LIMA_DATA_EXPORT void readStream (std::istream &is,std::string &dest);
 
 /*!
-    rief        Write a string to an output stream
+    @brief        Write a string to an output stream
     \ingroup    Misc
 */
 LIMA_DATA_EXPORT void writeStream(std::ostream &os,const std::string &src);
 
 /*!
-    rief        Read an input stream into a wide string, until EOF
+    @brief        Read an input stream into a wide string, until EOF
     \ingroup    Misc
 */
 //
 // reading and writing string and wstring in binary format
 //
 /*!
-    rief        read a string in an input file stream
+    @brief        read a string in an input file stream
     \ingroup    Misc
 */
 LIMA_DATA_EXPORT void readString(std::istream& file, std::string& s);
 /*!
-    rief        write a string on an output file stream
+    @brief        write a string on an output file stream
     \ingroup    Misc
 */
 LIMA_DATA_EXPORT void writeString(std::ostream& file, const std::string& s);
@@ -157,7 +157,7 @@ LIMA_DATA_EXPORT LimaString latin15stdstring2limastring(const std::string &src);
 /** LIMA own code */
 
 /*!
-    rief        Convert a string in the locale codepage to a UTF8 string
+    @brief        Convert a string in the locale codepage to a UTF8 string
     \ingroup    Misc
 */
 LIMA_DATA_EXPORT std::string localestring2utf8string(const std::string &src);

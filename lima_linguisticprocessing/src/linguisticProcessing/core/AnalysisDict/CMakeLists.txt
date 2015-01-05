@@ -21,6 +21,8 @@ add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 ########### next target ###############
 set (lima-lp-analysisdict_MOC_HEADERS
   EnhancedAnalysisDictionary.h
+  AbstractAccessResource.h
+  FsaAccessResource.h
 )
 
 qt4_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})

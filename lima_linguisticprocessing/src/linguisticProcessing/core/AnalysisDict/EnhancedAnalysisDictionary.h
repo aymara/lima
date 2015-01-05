@@ -73,6 +73,7 @@ public:
 
 private Q_SLOTS:
   void dictionaryFileChanged ( const QString & path );
+  void slotAccessFileReloaded(Common::AbstractAccessByString* access);
 
 private :
   EnhancedAnalysisDictionary(const EnhancedAnalysisDictionary& ead);
