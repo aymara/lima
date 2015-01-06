@@ -16,6 +16,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
+#ifndef LIMA_LIMAMAINTASKRUNNER_H
+#define LIMA_LIMAMAINTASKRUNNER_H
 
 #include <QObject>
 
@@ -70,3 +72,5 @@ private:
 };
 
 }
+
+#endif

@@ -22,7 +22,13 @@ SET(EnhancedAnalysisDictionaryTest0_SRCS
 
 add_executable(EnhancedAnalysisDictionaryTest0 ${EnhancedAnalysisDictionaryTest0_SRCS})
 
-target_link_libraries(EnhancedAnalysisDictionaryTest0 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(EnhancedAnalysisDictionaryTest0 
+  lima-common-data 
+  lima-common-qslog 
+  lima-common-misc 
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES}
+)
 
 add_test(EnhancedAnalysisDictionaryTest0 EnhancedAnalysisDictionaryTest0)
 
@@ -49,7 +55,21 @@ SET(EnhancedAnalysisDictionaryTest1_SRCS
 
 add_executable(EnhancedAnalysisDictionaryTest1 ${EnhancedAnalysisDictionaryTest1_SRCS})
 
-target_link_libraries(EnhancedAnalysisDictionaryTest1 lima-common-data lima-common-mediaticdata lima-lp-linguisticdata lima-common-fsaaccess lima-common-qslog lima-common-xmlconfigurationfiles lima-lp-linguisticresources lima-lp-analysisdict  lima-lp-morphologicanalysis lima-lp-linguisticanalysisstructure ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(EnhancedAnalysisDictionaryTest1 
+  lima-common-data 
+  lima-common-misc 
+  lima-common-mediaticdata 
+  lima-common-fsaaccess 
+  lima-common-qslog 
+  lima-common-xmlconfigurationfiles 
+  lima-lp-linguisticdata 
+  lima-lp-linguisticresources 
+  lima-lp-analysisdict  
+  lima-lp-morphologicanalysis 
+  lima-lp-linguisticanalysisstructure 
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES}
+)
 
 add_test(EnhancedAnalysisDictionaryTest1 EnhancedAnalysisDictionaryTest1)
 

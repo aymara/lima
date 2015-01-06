@@ -40,7 +40,6 @@ void convertToUtf8(const std::string& inputStr,const std::string& srcEncoding,st
 int main(int argc,char* argv[])
 {
   QCoreApplication a(argc, argv);
-  QsLogging::initQsLog();
   string encoding(argv[2]);
   
   string content;

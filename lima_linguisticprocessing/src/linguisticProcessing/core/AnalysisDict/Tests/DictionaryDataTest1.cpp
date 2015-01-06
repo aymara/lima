@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( DictionaryDataTest1 )
 {
   
   //value of LIMA_RESOURCE_DIR is set by find_package(LIMADATA) and LIMALDATAConfig.cmake;
-  std::string resourcesPath("/home/gael/Projets/Lima/Dist/master/debug/share/apps/lima/resources");
+  std::string resourcesPath("/home/gael/Projets/Amose/amose-install/AMOSE/DistLima/share/apps/lima/resources");
   // create and read DictionaryData
   LinguisticProcessing::AnalysisDict::DictionaryData dicoData;
   std::string dicoFile(resourcesPath);

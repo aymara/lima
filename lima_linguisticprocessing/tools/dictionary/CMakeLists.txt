@@ -27,10 +27,11 @@ add_executable(sortutf16 ${sortutf16_SRCS})
 
 target_link_libraries(
   sortutf16
+  lima-common-factory
   lima-common-misc
   lima-common-qslog
-  lima-lp-misc
   lima-common-data
+  lima-lp-misc
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
   ${optionalLibs}

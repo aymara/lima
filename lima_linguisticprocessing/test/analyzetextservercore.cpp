@@ -48,19 +48,39 @@ using namespace std;
 
 void usage(int argc, char* argv[]);
 void listunits();
-int dowork(int argc,char* argv[]);
 
-int main(int argc,char* argv[])
+#include "common/misc/LimaMainTaskRunner.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QTimer>
+
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
-  QsLogging::initQsLog();
-  return dowork(argc,argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
 }
 
 
-int dowork(int argc,char* argv[])
+int run(int argc,char** argv)
 {
-
+  QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  
   string resourcesPath=string(getenv("LIMA_RESOURCES"));
   string configDir=string(getenv("LIMA_CONF"));
   if (resourcesPath.empty())
