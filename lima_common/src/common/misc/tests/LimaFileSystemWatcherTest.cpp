@@ -40,6 +40,7 @@ void LimaFileSystemWatcherTest::initTestCase()
 void LimaFileSystemWatcherTest::cleanupTestCase()
 {
     // Called after the last testfunction was executed
+  std::cerr << "LimaFileSystemWatcherTest::cleanupTestCase" << std::endl;
 }
 
 void LimaFileSystemWatcherTest::init()
@@ -64,7 +65,6 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
 
  
   QTemporaryFile tmpFile;
-  tmpFile.setAutoRemove(false);
   QVERIFY2(tmpFile.open(),"Was not able to open the temporary file");
   QString tmpFileName = tmpFile.fileName();
   
@@ -77,6 +77,7 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
   QTest::qWait(500);
   // we changed the file. The fileChanged signal should have been triggered
   QCOMPARE( stateSpy.count(), 1 );
+  std::cerr << "LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0 1" << std::endl;
 
   // remove the tmp file. This should trigger the signal
   QFile::remove(tmpFileName);
@@ -85,6 +86,7 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
   QTest::qWait(500);
   // we removed the file. The fileChanged signal should have been triggered
   QCOMPARE( stateSpy.count(), 2 );
+  std::cerr << "LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0 2" << std::endl;
 
   // recreate the file. This should also trigger the signal
   QFile recreatedFile(tmpFileName);
@@ -93,6 +95,7 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
   QTest::qWait(500);
   // we recreated the file. The fileChanged signal should have been triggered
   QCOMPARE( stateSpy.count(), 3 );
+  std::cerr << "LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0 3" << std::endl;
 
 }
 
