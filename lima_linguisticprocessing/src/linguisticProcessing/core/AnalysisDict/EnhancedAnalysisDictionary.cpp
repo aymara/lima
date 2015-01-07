@@ -210,7 +210,7 @@ void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 
 uint64_t EnhancedAnalysisDictionary::getSize() const
 {
-  QReadLocker locker(&m_d->m_lock);
+//   QReadLocker locker(&m_d->m_lock);
   return m_d->m_dicoData->getSize();
 }
 
@@ -236,7 +236,7 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
 {
 //  ANALYSISDICTLOGINIT;
 //  LDEBUG << "getEntry " << wordId;
-  QReadLocker locker(&m_d->m_lock);
+//   QReadLocker locker(&m_d->m_lock);
   if (wordId >= m_d->m_dicoData->getSize())
   {
 //    LDEBUG << "return empty : index out of range";
