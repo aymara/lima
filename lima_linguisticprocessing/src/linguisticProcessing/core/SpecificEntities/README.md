@@ -37,7 +37,7 @@ Example
 
 An example of a rule:
 
-    @Firstname:[(@Title|@FunctionTitle)?]:@Initial? (T_A1|T_Amh|$NP){1-2}:PERSON:
+    @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (T_A1|T_Amh|$NP){1-2}:PERSON:
     +AddEntityFeature(trigger.1,"firstname")
     +AddEntityFeature(left.1,"title")
     +AddEntityFeature(right.2,"lastname")
@@ -91,16 +91,58 @@ The process is thus relatively simple:
 TODO
 ----
 
-This is a first implementation. There are still things to do:
+This is a first implementation.
+Suppose we wants to apply the following rule:
+
+    @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (T_A1|T_Amh|$NP){1-2}:PERSON:
+    +AddEntityFeature(trigger.1,"firstname")
+    +AddEntityFeature(left.1,"title")
+    +AddEntityFeature(right.1.1, right.1.2,"firstname")
+    +AddEntityFeature(right.2,"lastname")
+    =>NormalizeEntity()
+    =<ClearEntityFeatures()
+ 
+There are still things to do:
+    
+- Implement a new function *AugmentEntityFeature* that takes the same argument as function
+  *AddEntityFeature()* but concatenate the value with a previously stored value if it already exists. The semantic of AddEntityFeature is to replace the value of already existing feature.
+
+- Implement a version of *AddEntityFeature* that takes two arguments
+   delimiting a string between two elements of the rule (two
+   vertices). Not sure it is usefull...
+   The default behavior of constraints is that the rule is not applied when one node does not exist. This is the case when one node is an optional premise as in the following example:
+    *Gaspard P. Monge* is OK because right.1.1 and right.2 nodes both exist.
+    *Gaspard Monge* is not OK because right.1.1does not exist, so constraint failed and rules is not applied.
+
+- In the current version, a second call to the function AddEntityFeature
+   overwrites the first stored attribute: is it enough or do we
+   need to merge the values (concatenation)?
 
 - The *NormalizeEntity* function only copies the attributes stored in
    the created entity. It is necessary to manage the integration of this
    functionality with the previously existing heuristic normalization 
    functions. This is Currently done for the *NormalizeDate* function only.
-- Implement a version of *AddEntityFeature* that takes two arguments
-   delimiting a string between two elements of the rule (two
-   vertices).
-- In the current version, a second call to the function AddEntityFeature
-   overwrites the first stored attribute: is it enough or do we
-   need to merge the values (concatenation)?
 
+- Enable AddEntityFeature to be called after triggering the rule.
+
+As explained in the description of the process, the function AddEntityFeature is called during the application of the rules. When there is optional premise in the rule (a? or b*), the case exist where there is more than one possible match.
+
+for example:
+
+*Gaspard P Monge* can match *P* as initial and *Monge* as lastname or *P* as lastname and *Monge* as lastname.
+
+The rule is applied to the longuest match (specification). But during the triggering, the function *adEntityFeature* is called more than one time.
+
+During the triggering, function *adEntityFeature* is called more than one time.
+Once with the parameter P as firstname and a second one with the parameter P as lastname.
+
+The better is to be able to call function *adEntityFeature* as a side effect of applying the rule, only for the node actuallly matching the rule as in the following example:
+
+    @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (T_A1|T_Amh|$NP){1-2}:PERSON:
+    =>AddEntityFeature(trigger.1,"firstname")
+    =>AddEntityFeature(left.1,"title")
+    =>AddEntityFeature(right.1.1, right.1.2,"firstname")
+    =>AddEntityFeature(right.2,"lastname")
+    =>NormalizeEntity()
+    =<ClearEntityFeatures()
+ 
