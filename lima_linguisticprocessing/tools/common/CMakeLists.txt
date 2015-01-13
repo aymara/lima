@@ -90,18 +90,6 @@ install(TARGETS convertToUtf8 DESTINATION bin)
 
 ########### next target ###############
 
-SET(icu_wstring2nstring_SRCS
-   icu_wstring2nstring.cpp
-)
-
-add_executable(icu_wstring2nstring ${icu_wstring2nstring_SRCS})
-
-target_link_libraries(icu_wstring2nstring lima-common-factory lima-common-misc lima-lp-misc lima-common-data ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog ${optionalLibs})
-
-install(TARGETS icu_wstring2nstring DESTINATION bin)
-
-########### next target ###############
-
 SET(testAbstractFactoryPattern_SRCS
    testAbstractFactoryPattern.cpp
 )

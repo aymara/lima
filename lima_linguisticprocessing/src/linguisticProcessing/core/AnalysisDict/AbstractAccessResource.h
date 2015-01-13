@@ -41,10 +41,11 @@ namespace AnalysisDict
 */
 class AbstractAccessResource : public AbstractResource
 {
+  Q_OBJECT
 public:
 
-  AbstractAccessResource() :
-    AbstractResource(),
+  AbstractAccessResource(QObject* parent = 0) :
+    AbstractResource(parent),
     m_isMainKeys(false)
   {};
 
@@ -57,6 +58,9 @@ public:
   inline bool isMainKeys() const;
   inline void setMainKeys(bool flag);
 
+Q_SIGNALS:
+  void accessFileReloaded ( Common::AbstractAccessByString* fsaAccess );
+  
 protected:
   bool m_isMainKeys;
 

@@ -17,6 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 #include "QsLogCategories.h"
+#include "common/misc/LimaFileSystemWatcher.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)
@@ -25,29 +26,34 @@
 #include <QList>
 #include <QDateTime>
 #include <QtGlobal>
-#include <qstringlist.h>
+#include <QStringList>
 #include <cassert>
 #include <cstdlib>
 #include <stdexcept>
 
+using namespace Lima;
 
 namespace QsLogging
 {
 
-static const int init =  initQsLog();
+// static const int init =  initQsLog();
   
-  class CategoriesImpl
+class CategoriesImpl
 {
 public:
    CategoriesImpl()
    {
    }
    QMap<QString,Level> categories;
+
+   LimaFileSystemWatcher m_configFileWatcher;
 };
 
-Categories::Categories() :
-   d(new CategoriesImpl())
+Categories::Categories(QObject* parent) :
+  QObject(parent),
+  d(new CategoriesImpl())
 {
+  connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
 }
 
 Categories::~Categories()
@@ -55,16 +61,23 @@ Categories::~Categories()
    delete d;
 }
 
+void Categories::configureFileChanged ( const QString & path )
+{
+  if (QFile(path).exists())
+  {
+    configure(path);
+  }
+}
 
 bool Categories::configure(const QString& fileName)
 {
-  //std::cerr << "Configuring qslog with file: " << fileName.toUtf8().data() << std::endl;
   QFile file(fileName);
   if (!file.open(QIODevice::ReadOnly))
   {
     std::cerr << "Unable to open qslog configuration file: " << fileName.toUtf8().data() << std::endl;
     return false;
   }
+  d->m_configFileWatcher.addPath(fileName);
 
   bool res = true;
   QTextStream in(&file);
@@ -123,7 +136,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog() {
     }
     //    }
 } catch(...) {
-  std::cerr << "Exception Configure Problem " << std::endl;
+  std::cerr << "Exception during logging system configuration" << std::endl;
   return -1;
 }
 return 0;

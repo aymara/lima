@@ -26,6 +26,10 @@
 #include "common/MediaticData/mediaticData.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 
+#include <QReadLocker>
+#include <QWriteLocker>
+#include <QFileInfo>
+
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common;
 using namespace std;
@@ -44,9 +48,11 @@ namespace AnalysisDict
 
 SimpleFactory<AbstractResource,FsaAccessResource> fsaAccessResourceFactory(FSAACCESSRESSOURCE_CLASSID);
 
-FsaAccessResource::FsaAccessResource()
-    : AbstractAccessResource(),m_fsaAccess(0)
-{}
+FsaAccessResource::FsaAccessResource(QObject* parent)
+    : AbstractAccessResource(parent),m_fsaAccess(0)
+{
+  connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(accessFileChanged(QString)));
+}
 
 
 FsaAccessResource::~FsaAccessResource()
@@ -71,7 +77,9 @@ void FsaAccessResource::init(
   {
     string keyfile=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("keyFile");
     FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
-    LDEBUG << "FsaAccessResource::init read keyFile" << keyfile.c_str();
+    resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
+    QWriteLocker locker(&m_lock);
+    LDEBUG << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
     fsaAccess->read(keyfile);
     m_fsaAccess=fsaAccess;
   }
@@ -95,8 +103,28 @@ void FsaAccessResource::init(
 AbstractAccessByString* FsaAccessResource::getAccessByString() const
   { return m_fsaAccess;}
 
+void FsaAccessResource::accessFileChanged ( const QString & path )
+{
+  ANALYSISDICTLOGINIT;
+  // Check if the file exists as, when a file is replaced, accessFileChanged can be triggered 
+  // two times, when it is first suppressed and when the new version is available. One should not 
+  // try to load the missing file
+  if (QFileInfo(path).exists())
+  {
+    LINFO << "FsaAccessResource::accessFileChanged reload" << path;
+    FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+    QWriteLocker locker(&m_lock);
+    fsaAccess->read(path.toUtf8().constData());
+    delete m_fsaAccess;
+    m_fsaAccess=fsaAccess;
+    Q_EMIT accessFileReloaded(m_fsaAccess);
+  }
+  else
+  {
+    LINFO << "FsaAccessResource::accessFileChanged deleted, ignoring" << path;
+  }
 }
 
-}
-
-}
+} // AnalysisDict
+} // LinguisticProcessing
+} // Lima

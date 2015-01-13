@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2015 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICTENHANCEDANALYSISDICTIONARY_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICTENHANCEDANALYSISDICTIONARY_H
 
@@ -37,13 +33,15 @@ namespace AnalysisDict {
 
 #define ENHANCEDANALYSISDICTIONARY_CLASSID "EnhancedAnalysisDictionary"
 
+class EnhancedAnalysisDictionaryPrivate;
 /**
 @author Benoit Mathieu
 */
 class LIMA_ANALYSISDICT_EXPORT EnhancedAnalysisDictionary : public AbstractAnalysisDictionary
 {
+  Q_OBJECT
 public:
-    EnhancedAnalysisDictionary();
+    EnhancedAnalysisDictionary(const QString& dataFilePath = QString());
     
     EnhancedAnalysisDictionary(
       FsaStringsPool* sp,
@@ -71,45 +69,18 @@ public:
     virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > getSuperWordEntries(const LimaString& key) const;
     virtual uint64_t getSize() const;
     
-    void loadDataFile(const std::string& file);
-    
     DictionaryEntry getEntryData(const StringsPoolIndex entryId) const;
 
+private Q_SLOTS:
+  void dictionaryFileChanged ( const QString & path );
+  void slotAccessFileReloaded(Common::AbstractAccessByString* access);
+
 private :
+  EnhancedAnalysisDictionary(const EnhancedAnalysisDictionary& ead);
+  EnhancedAnalysisDictionary& operator=(const EnhancedAnalysisDictionary& ead);
 
-  Lima::Common::AbstractAccessByString* m_access;
-  DictionaryData m_dicoData;
-  Lima::FsaStringsPool* m_sp;
-  bool m_isMainKeys;
-  
+  EnhancedAnalysisDictionaryPrivate* m_d;
 };
-
-inline void EnhancedAnalysisDictionary::loadDataFile(const std::string& file)
-{
-  m_dicoData.loadBinaryFile(file);
-}
-
-inline uint64_t EnhancedAnalysisDictionary::getSize() const
-{
-  return m_dicoData.getSize();
-}
-
-inline DictionaryEntry EnhancedAnalysisDictionary::getEntry(const StringsPoolIndex wordId, const Lima::LimaString& word) const
-{
-  if (m_isMainKeys) return getEntryData(wordId);
-  return getEntryData(static_cast<StringsPoolIndex>(m_access->getIndex(word)));
-}
-
-inline DictionaryEntry EnhancedAnalysisDictionary::getEntry(const Lima::LimaString& word) const
-{
-  return getEntryData( static_cast<StringsPoolIndex>(m_access->getIndex(word)) );
-}
-
-inline DictionaryEntry EnhancedAnalysisDictionary::getEntry(const StringsPoolIndex wordId) const
-{
-  if (m_isMainKeys) return getEntryData(wordId);
-  return getEntryData( static_cast<StringsPoolIndex>(m_access->getIndex((*m_sp)[wordId])) );
-}
 
 }
 

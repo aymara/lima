@@ -79,15 +79,15 @@
       <value name="JJS"/>
     </subvalues>
     <subvalues value="ADV">
-			<value name="RB"/>
-			<value name="ABOUTRB"/>
-			<value name="THATRB"/>
-			<value name="THERERB"/>
-			<value name="RBR"/>
+      <value name="RB"/>
+      <value name="ABOUTRB"/>
+      <value name="THATRB"/>
+      <value name="THERERB"/>
+      <value name="RBR"/>
       <value name="RBS"/>
       <value name="WRB"/>
-			<value name="NOT"/>
-		</subvalues>
+      <value name="NOT"/>
+    </subvalues>
     <subvalues value="CONJ">
       <value name="CC"/>
     </subvalues>
@@ -130,9 +130,9 @@
     </subvalues>
     <subvalues value="PREP">
       <value name="IN"/>
-			<value name="THATIN"/>
-			<value name="ABOUTIN"/>
-			<value name="TO"/>
+      <value name="THATIN"/>
+      <value name="ABOUTIN"/>
+      <value name="TO"/>
       <!--value name="RP"/-->
     </subvalues>
     <subvalues value="PRON">

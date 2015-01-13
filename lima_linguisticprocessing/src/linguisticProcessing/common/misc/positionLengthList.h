@@ -47,6 +47,7 @@ namespace Misc {
 } // namespace Common
 } // namespace Lima
 
+LIMA_LPMISC_EXPORT QTextStream& operator << (QTextStream& os, const Lima::Common::Misc::PositionLengthList& p);
 LIMA_LPMISC_EXPORT std::ostream& operator << (std::ostream& os, const Lima::Common::Misc::PositionLengthList& p);
 LIMA_LPMISC_EXPORT QDebug& operator << (QDebug& os, const Lima::Common::Misc::PositionLengthList& p);
 

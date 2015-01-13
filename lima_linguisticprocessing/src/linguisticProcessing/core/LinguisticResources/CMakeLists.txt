@@ -18,12 +18,19 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 add_definitions(-DLIMA_LINGUISTICRESOURCES_EXPORTING)
 ########### next target ###############
-
-SET(lima-lp-linguisticresources_LIB_SRCS
-   LinguisticResources.cpp
+set (lima-lp-linguisticresources_MOC_HEADERS
+  AbstractResource.h
 )
 
-add_library(lima-lp-linguisticresources SHARED ${lima-lp-linguisticresources_LIB_SRCS})
+qt4_wrap_cpp (lima-lp-linguisticresources_MOC_OUTFILES ${lima-lp-linguisticresources_MOC_HEADERS})
+
+
+SET(lima-lp-linguisticresources_LIB_SRCS
+  AbstractResource.cpp
+  LinguisticResources.cpp
+)
+
+add_library(lima-lp-linguisticresources SHARED ${lima-lp-linguisticresources_LIB_SRCS} ${lima-lp-linguisticresources_MOC_OUTFILES})
 
 target_link_libraries(lima-lp-linguisticresources lima-common-factory lima-common-misc lima-common-data lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources )
 

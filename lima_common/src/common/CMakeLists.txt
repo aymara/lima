@@ -33,6 +33,7 @@ add_definitions( -DLIMA_COMMON_EXPORTING )
 add_library(lima-common SHARED LimaCommon.cpp)
 target_link_libraries(lima-common 
     lima-common-processunitframework 
+    lima-common-factory
     lima-common-fsaaccess 
     lima-common-qslog 
     lima-common-xmlconfigurationfiles 

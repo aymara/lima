@@ -62,7 +62,7 @@ public:
    * @param id Id of analysis to return
    * @return AnalysisData*
    * @retval pointer to valid AnalysisData if exists
-   * @retvel 0 if specified AnalysisData doesn't exists
+   * @retval 0 if specified AnalysisData doesn't exists
    */
   AnalysisData* getData(const std::string& id);
   
@@ -71,7 +71,7 @@ public:
    * @param id Id of analysis to return
    * @return AnalysisData*
    * @retval pointer to valid AnalysisData if exists
-   * @retvel 0 if specified AnalysisData doesn't exists
+   * @retval 0 if specified AnalysisData doesn't exists
    */
   const AnalysisData* getData(const std::string& id) const;
   

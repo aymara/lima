@@ -41,10 +41,10 @@ class IndexElementPrivate
 {
   friend class IndexElement;
   friend std::ostream& operator<<(std::ostream& os, const IndexElement& elt);
-  friend LIMA_BOW_EXPORT QDebug& operator<<(QDebug& os, const IndexElement& elt);
+  friend QDebug& operator<<(QDebug& os, const IndexElement& elt);
+  friend QTextStream& operator<<(QTextStream& os, const IndexElement& elt);
 
   IndexElementPrivate();
-  IndexElementPrivate(const IndexElementPrivate& iep);
   IndexElementPrivate(const uint64_t id,
                const Lima::Common::BagOfWords::BoWType type,
                const LimaString& word,
@@ -59,6 +59,8 @@ class IndexElementPrivate
                const std::vector<uint64_t>& relations,
                const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
                const uint64_t reType=0);
+  IndexElementPrivate(const IndexElementPrivate& iep);
+  IndexElementPrivate& operator=(const IndexElementPrivate& iep);
   ~IndexElementPrivate() {}
 
   uint64_t m_id;
@@ -156,6 +158,26 @@ m_relations(relations)
 {
 }
 
+
+IndexElementPrivate& IndexElementPrivate::operator=(const IndexElementPrivate& iep)
+{
+  if (this != &iep)
+  {
+    m_id = iep.m_id;
+    m_type = iep.m_type;
+    m_word = iep.m_word;
+    m_category = iep.m_category;
+    m_position  = iep.m_position;
+    m_length = iep.m_length;
+    m_neType = iep.m_neType;
+    m_reType = iep.m_reType;
+    m_poslenlist = iep.m_poslenlist;
+    m_structure = iep.m_structure;
+    m_relations = iep.m_relations;
+  }
+  return *this;
+}
+
 //***********************************************************************
 // constructors and destructors
 IndexElement::IndexElement(): m_d(new IndexElementPrivate())
@@ -186,18 +208,21 @@ IndexElement::IndexElement(
 {
 }
 
-IndexElement::IndexElement(const IndexElement& ie): m_d(new IndexElementPrivate())
+IndexElement::IndexElement(const IndexElement& ie): m_d(new IndexElementPrivate(*ie.m_d))
 {
-  *m_d = *ie.m_d;
 }
 
 IndexElement& IndexElement::operator=(const IndexElement& ie)
 {
-  *m_d = *ie.m_d;
+  if (this != &ie)
+  {
+    *m_d = *ie.m_d;
+  }
   return *this;
 }
 
-IndexElement::~IndexElement() {
+IndexElement::~IndexElement()
+{
   delete m_d;
 }
 
@@ -369,9 +394,47 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt) {
 
 QDebug& operator<<(QDebug& os, const IndexElement& elt) {
   os << elt.m_d->m_id;
-  if (elt.empty()) {
-    return os;
+//   if (elt.empty()) {
+//     return os;
+//   }
+//   if (elt.isSimpleTerm()) {
+  os << ":" << elt.m_d->m_word;
+    if (elt.m_d->m_category != 0) {
+      os << "/" << elt.m_d->m_category;
+    }
+    os << "/" << elt.m_d->m_position;
+    os << "," << elt.m_d->m_length;
+//   }
+//   else {
+    if (elt.m_d->m_structure.empty()) {
+      return os << ":";
+    }
+    if (!elt.m_d->m_structure.empty()) {
+      uint64_t i=0;
+      os << ":" << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+      i++;
+      while (i<elt.m_d->m_structure.size()) {
+        os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+        i++;
+      }
+    }
+    os << "/";
+    ::operator<<(os,elt.m_d->m_poslenlist);
+//   }
+  if (! elt.m_d->m_neType.isNull()) {
+    os << "/NE(" << elt.m_d->m_neType << ")";
   }
+  if (elt.m_d->m_reType!=0) {
+    os << "/RE(" << elt.m_d->m_reType << ")";
+  }
+  return os;
+}
+
+QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
+  os << elt.m_d->m_id;
+//   if (elt.empty()) {
+//     return os;
+//   }
   if (elt.isSimpleTerm()) {
   os << ":" << elt.m_d->m_word;
     if (elt.m_d->m_category != 0) {
@@ -404,7 +467,6 @@ QDebug& operator<<(QDebug& os, const IndexElement& elt) {
   }
   return os;
 }
-
 
 
 } // end namespace

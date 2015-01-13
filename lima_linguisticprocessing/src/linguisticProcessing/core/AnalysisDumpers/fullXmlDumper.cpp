@@ -85,9 +85,9 @@ SimpleFactory<MediaProcessUnit,FullXmlDumper> fullXmlDumperFactory(FULLXMLDUMPER
 
 FullXmlDumper::FullXmlDumper()
 : MediaProcessUnit(),
+      m_annotXmlDumperPtr(0),
       m_dumpFullTokens(true),
-      m_handler(),
-      m_annotXmlDumperPtr(0)
+      m_handler()
 {
 }
 

@@ -23,10 +23,10 @@
  * @date       Mon Jan 22 2007
  * copyright   Copyright (C) 2007-2012 by CEA LIST
  * Project     InformationExtraction
- * 
- * @brief      
- * 
- * 
+ *
+ * @brief
+ *
+ *
  ***********************************************************************/
 
 #ifndef ENTITYTYPE_H
@@ -37,7 +37,6 @@
 #include <iostream>
 
 #include <boost/strong_typedef.hpp>
-#include <boost/concept_check.hpp>
 
 namespace Lima {
 namespace Common {
@@ -50,12 +49,12 @@ class EntityTypePrivate;
 class LIMA_MEDIATICDATA_EXPORT EntityType
 {
  public:
-  EntityType(); 
-  EntityType(EntityTypeId id, EntityGroupId groupId); 
+  EntityType();
+  EntityType(EntityTypeId id, EntityGroupId groupId);
   EntityType& operator=(const EntityType& et);
   EntityType(const EntityType& et);
   ~EntityType();
-  
+
   bool operator==(const EntityType& other) const;
   bool operator!=(const EntityType& other) const;
   bool operator<(const EntityType& other) const;
@@ -67,10 +66,11 @@ class LIMA_MEDIATICDATA_EXPORT EntityType
 
   void setTypeId(EntityTypeId id);
   void setGroupId(EntityGroupId groupId);
-  
+
+  friend LIMA_MEDIATICDATA_EXPORT QTextStream& operator << (QTextStream&, const EntityType&);
   friend LIMA_MEDIATICDATA_EXPORT std::ostream& operator << (std::ostream&, const EntityType&);
   friend LIMA_MEDIATICDATA_EXPORT QDebug& operator << (QDebug&, const EntityType&);
-  
+
 private:
   EntityTypePrivate* m_d;
 };

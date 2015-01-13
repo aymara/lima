@@ -46,6 +46,9 @@ namespace Lima {
 namespace Common {
 namespace BagOfWords {
 
+#define BOW_VERSION "0.9"
+
+
 class BoWBinaryReaderPrivate
 {
   friend class BoWBinaryReader;

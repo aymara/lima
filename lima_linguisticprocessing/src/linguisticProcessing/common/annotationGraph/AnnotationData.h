@@ -285,6 +285,10 @@ public:
   const std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> >& matchings() const;
 
 private:
+  AnnotationData(const AnnotationData&);
+  AnnotationData& operator=(const AnnotationData&);
+
+
   AnnotationDataPrivate* m_d;
 };
 

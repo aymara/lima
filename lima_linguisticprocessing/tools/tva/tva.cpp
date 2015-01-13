@@ -54,14 +54,38 @@ using namespace Lima;
 
 void usage(int argc, char* argv[]);
 
-int main(int argc,char* argv[])
+#include "common/misc/LimaMainTaskRunner.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QTimer>
+
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
   QsLogging::initQsLog();
-// #ifdef WIN32
-  // Necessary to initialize factories under Windows
+  // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-// #endif
+  
   std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":std::string(getenv("LIMA_RESOURCES"));
   std::string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":std::string(getenv("LIMA_CONF"));
   std::string lpConfigFile=std::string("lima-lp-tva.xml");
@@ -211,6 +235,7 @@ int main(int argc,char* argv[])
   delete bowTextWriter;
   delete simpleStreamHandler;
   delete bowTextHandler;
+  return 0;
 }
 
 

@@ -24,6 +24,7 @@
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
+#include "common/misc/LimaMainTaskRunner.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
@@ -33,9 +34,7 @@
 #include "common/QsLog/QsLogDest.h"
 #include "common/QsLog/QsLogCategories.h"
 #include "common/QsLog/QsDebugOutput.h"
-// #ifdef WIN32
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-// #endif
 
 #include "linguisticProcessing/common/linguisticData/languageData.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
@@ -52,12 +51,9 @@
 #include <iomanip>
 #include <fstream>
 
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
 #include <boost/program_options.hpp>
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QStringList>
+#include <QtCore>
 
 namespace po = boost::program_options;
 
@@ -69,14 +65,34 @@ using namespace Lima;
 void listunits();
 std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set< std::string >& dumpers, const std::string& dumperId);
 void closeHandlerOutputFile(std::ostream* ofs);
+int run(int aargc,char** aargv);
 
-int main(int argc,char* argv[])
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
-// #ifdef WIN32
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
+  QsLogging::initQsLog();
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
-// #endif
+  //   std::cerr << "Amose plugins initialized" << std::endl;
 
   std::string resourcesPath;
   std::string configDir;
@@ -137,7 +153,7 @@ int main(int argc,char* argv[])
   }
   if (vm.count("help")) {
     std::cout << desc << std::endl;
-    return 1;
+    return SUCCESS_ID;
   }
   if (resourcesPath.empty())
   {
@@ -166,12 +182,12 @@ int main(int argc,char* argv[])
   if (vm.count("availableUnits"))
   {
     listunits();
-    return -1;
+    return SUCCESS_ID;
   }
   if (langs.size()<1)
   {
     std::cerr << "no language defined !" << std::endl;
-    return -1;
+    return 1;
   }
   
   QMap< QString, QString > outputs;

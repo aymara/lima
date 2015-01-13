@@ -27,6 +27,10 @@
 #include <string>
 #include <vector>
 
+#define UNIT_TEST
+
+class DictionaryDataTest1;
+
 namespace Lima
 {
 
@@ -41,6 +45,9 @@ namespace AnalysisDict
 */
 class LIMA_ANALYSISDICT_EXPORT DictionaryData
 {
+#ifdef UNIT_TEST
+  friend class ::DictionaryDataTest1; // to test private operation in DictionaryData
+#endif
 public:
   DictionaryData();
 

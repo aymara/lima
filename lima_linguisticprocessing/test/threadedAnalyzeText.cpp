@@ -42,8 +42,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
 #include <boost/program_options.hpp>
 
 #include <boost/bind.hpp>//THREAD
@@ -95,10 +93,39 @@ private:
   std::list<std::string> m_list;
 };
 
-int main(int argc,char* argv[])
+#include "common/misc/LimaMainTaskRunner.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QTimer>
+
+
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  Lima::LimaMainTaskRunner* task = new Lima::LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
   QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  
   bool docatch = false;
     if (argc>1)
     {
@@ -119,10 +146,12 @@ int main(int argc,char* argv[])
         catch (const std::exception& e)
         {
             std::cerr << "Catched an exception: " << e.what() << std::endl;
+            return 1;
         }
         catch (...)
         {
             std::cerr << "Catched an unknown exception " << std::endl;
+            return 1;
         }
     }
     else

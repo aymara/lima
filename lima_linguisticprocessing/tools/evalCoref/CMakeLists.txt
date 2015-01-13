@@ -24,7 +24,15 @@ SET(XmlParser_SRCS
 
 add_executable(XmlParser ${XmlParser_SRCS})
 
-target_link_libraries(XmlParser ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog lima-common-time lima-common-data ${optionalLibs})
+target_link_libraries(XmlParser 
+  lima-common-misc
+  lima-common-qslog 
+  lima-common-time 
+  lima-common-data 
+  ${optionalLibs}
+  ${Boost_LIBRARIES}  
+  ${QT_LIBRARIES} 
+)
 
 install(TARGETS XmlParser DESTINATION bin)
 

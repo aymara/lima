@@ -38,6 +38,8 @@
 #include "bowText.h"
 #include "bowDocument.h"
 #include <stack>
+
+#include <QtCore/QDate>
 #include <QtXml/QXmlSimpleReader>
 
 namespace Lima {

@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2015 CEA LIST
 #    
 #   This file is part of LIMA.
 #
@@ -19,10 +19,19 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions( -DLIMA_COMMONMISC_EXPORTING )
 ########### next target ###############
 
-SET(lima-common-misc_LIB_SRCS
+set (lima-common-misc_MOC_HEADERS
+    LimaFileSystemWatcher.h
+    LimaFileSystemWatcher_p.h
+    LimaMainTaskRunner.h)
+
+qt4_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
+
+SET(lima-common-misc_LIB_SRCS 
+    LimaFileSystemWatcher.cpp
     AbstractAccessIterators.cpp
     fsaStringsPool.cpp
     stringspool.cpp
+    LimaMainTaskRunner.cpp
   )
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -32,7 +41,7 @@ SET(lima-common-misc_LIB_SRCS
   )
 
 endif()
-add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS})
+add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS} ${lima-common-misc_MOC_OUTFILES})
 
 target_link_libraries(lima-common-misc lima-common-data ${BOOST_LIBRARIES} ${QT_LIBRARIES})
 
@@ -49,14 +58,13 @@ install(FILES
     fsaStringsPool.h
     stringspool.h
     Exceptions.h
-    gregoriannowarn.hpp
     adjacency_listnowarn.hpp
     graphviznowarn.hpp
-    posix_timenowarn.hpp
     depth_first_searchnowarn.hpp
-    local_timenowarn.hpp
     XSLExceptionnowarn.hpp
     NodeRefListnowarn.hpp
     XalanOutputStreamPrintWriternowarn.hpp
     linenoise.h
+    LimaMainTaskRunner.h
+    LimaFileSystemWatcher.h
   DESTINATION include/common/misc)

@@ -20,14 +20,25 @@ add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
 
 ########### next target ###############
 
+set (lima-common-qslog_MOC_HEADERS
+    QsLogCategories.h
+)
+
+
+qt4_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
+
+
 SET(lima-common-qslog_LIB_SRCS
     QsLog.cpp
     QsDebugOutput.cpp
     QsLogDest.cpp
     QsLogCategories.cpp
    )
-add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS})
-target_link_libraries(lima-common-qslog ${QT_LIBRARIES})
+
+add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
+target_link_libraries(lima-common-qslog 
+  ${QT_LIBRARIES}
+)
 set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-qslog DESTINATION lib)
 

@@ -21,7 +21,8 @@
 
 #include "QsLog.h"
 
-#include <QString>
+#include <QtCore/QString>
+#include <QtCore/QObject>
 
 #ifdef WIN32
 
@@ -42,8 +43,9 @@ namespace QsLogging
 LIMA_COMMONQSLOG_EXPORT int initQsLog();
 
 class CategoriesImpl; // d pointer
-class LIMA_COMMONQSLOG_EXPORT Categories
+class LIMA_COMMONQSLOG_EXPORT Categories : public QObject
 {
+Q_OBJECT
   friend class CategoriesImpl;
 public:
    static Categories& instance()
@@ -55,12 +57,16 @@ public:
     bool configure(const QString& fileName);
     Level levelFor(const QString& category) const;
 
+private Q_SLOTS:
+  void configureFileChanged ( const QString & path );
+
 private:
-  Categories();
+  Categories(QObject* parent = 0);
    Categories(const Categories&);
-   ~Categories();
+   virtual ~Categories();
    Categories& operator=(const Categories&);
    
+
    CategoriesImpl* d;
 };
 

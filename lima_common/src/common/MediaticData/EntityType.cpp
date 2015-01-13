@@ -35,6 +35,7 @@ namespace MediaticData {
 class EntityTypePrivate
 {
   friend class EntityType;
+  friend QTextStream& operator << (QTextStream&, const EntityType&);
   friend std::ostream& operator << (std::ostream&, const EntityType&);
   friend QDebug& operator << (QDebug&, const EntityType&);
   
@@ -130,6 +131,10 @@ EntityGroupId EntityType::getGroupId() const { return m_d->m_groupId; }
 
 void EntityType::setTypeId(EntityTypeId id) { m_d->m_id=id; }
 void EntityType::setGroupId(EntityGroupId groupId) { m_d->m_groupId=groupId; }
+
+QTextStream& operator << (QTextStream& os, const EntityType& type) {
+  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
+}
 
 std::ostream& operator << (std::ostream& os, const EntityType& type) {
   return os << type.m_d->m_groupId << "." << type.m_d->m_id;

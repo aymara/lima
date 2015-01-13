@@ -99,10 +99,38 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 // M A I N
 //
 //**********************************************************************
-int main(int argc, char *argv[])
+#include "common/misc/LimaMainTaskRunner.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QTimer>
+
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  Lima::LimaMainTaskRunner* task = new Lima::LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
   QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  
   if (argc<2) {    cerr << USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
   if (param.help) { cerr << HELP; exit(1); }
