@@ -93,7 +93,7 @@ set(CMAKE_PREFIX_PATH
 add_definitions(-D QT_NO_KEYWORDS)
 
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Xml)
+addQt5Modules(Core Xml Test)
 
 include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")

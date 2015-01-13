@@ -113,7 +113,7 @@ else (ENCHANT_FOUND)
 endif (ENCHANT_FOUND)
 
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Xml XmlPatterns Network DBus)
+addQt5Modules(Core Xml XmlPatterns Network DBus Test)
 
 include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
