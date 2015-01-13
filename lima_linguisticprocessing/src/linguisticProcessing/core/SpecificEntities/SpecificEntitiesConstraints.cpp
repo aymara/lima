@@ -32,6 +32,7 @@
 #include "SpecificEntitiesConstraints.h"
 #include "SpecificEntitiesMicros.h"
 #include <QStringList>
+#include <queue>
 
 // #include <assert.h>
 
@@ -820,6 +821,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& vertex,
            AnalysisContent& analysis) const
 {
+  SELOGINIT;
+  LDEBUG << "AddEntityFeature:: (one argument) start... ";
+  LDEBUG << "AddEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
@@ -871,8 +875,86 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            AnalysisContent& analysis) const
 {
   SELOGINIT;
-  LERROR << "AddEntityFeature:: Error: version with two vertices parameters is not implemented";
-  return false;
+//  LERROR << "AddEntityFeature:: Error: version with two vertices parameters is not implemented";
+//  return false;
+  LDEBUG << "AddEntityFeature:: (two arguments) start... ";
+  LDEBUG << "AddEntityFeature::(feature:" << m_featureName << ", v1:" << v1 << ", v2:" << v2 << ")";
+  
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    LERROR << "AddEntityFeature:: Error: missing RecognizerData";
+    return false;
+  }
+  // get string from the set of vertices between v1 and v2
+  // @todo: if named entity, take normalized string, otherwise take lemma
+  LimaString featureValue;
+  const LinguisticGraph& lGraph = *(graph.getGraph());
+  
+  // (some code borrowed from SpecificEntitiesXmlLogger::process)
+  // assert v2 follows v1 within a path composed with a direct sequence of out_edges
+  // assert also there exist no ambiguities in the graph.
+  std::queue<LinguisticGraphVertex> toVisit;
+  std::set<LinguisticGraphVertex> visited;
+  toVisit.push(v1);
+  uint64_t pos = UNDEFPOSITION;
+  uint64_t len = UNDEFLENGTH;
+    
+  LinguisticGraphOutEdgeIt outItr,outItrEnd;
+  unsigned int nbEdges(0);
+  while (!toVisit.empty()) {
+    LinguisticGraphVertex v=toVisit.front();
+    toVisit.pop();
+    if (v != v2) {
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,lGraph); outItr!=outItrEnd; outItr++) 
+      {
+        LinguisticGraphVertex next=target(*outItr,lGraph);
+        if (visited.find(next)==visited.end())
+        {
+          visited.insert(next);
+          toVisit.push(next);
+          nbEdges++;
+        }
+      }
+    }
+    if( nbEdges > 1 ) 
+      LWARN << "AddEntityFeature:: Warning: ambiguïties in graph";
+
+    Token* token=get(vertex_token,lGraph,v);
+    if (v == v1) {
+      pos = (int64_t)(token->position());
+    }
+    if (v == v2) {
+      if( pos != UNDEFPOSITION )
+        len = (int64_t)(token->position()) - pos + 1 + (int64_t)(token->length());
+    }
+    // @ todo: add separator, check non standard cases where separator is no whitespace.
+    // see RecognizeMatch::getString()
+    featureValue.append( token->stringForm());
+  }
+    
+  switch (m_featureType) {
+    case QVariant::String:
+      recoData->addEntityFeature(m_featureName,featureValue);  
+      break;
+    case QVariant::Int:
+      recoData->addEntityFeature(m_featureName,featureValue.toInt());  
+      break;
+    case QVariant::Double:
+      recoData->addEntityFeature(m_featureName,featureValue.toDouble());  
+      break;
+    default:
+      recoData->addEntityFeature(m_featureName,featureValue);  
+  }
+  Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+  std::vector<EntityFeature>::iterator firstnameFeatureIt = 
+    features.find(m_featureName);
+  if( firstnameFeatureIt != recoData->getEntityFeatures().end() )
+  {
+    firstnameFeatureIt->setPosition(pos);
+    firstnameFeatureIt->setLength(len);
+  }
+  return true;
 }
 
 // clear stored entity features, added by the AddEntityFeature function
