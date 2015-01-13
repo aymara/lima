@@ -25,7 +25,7 @@ set (lima-common-qslog_MOC_HEADERS
 )
 
 
-qt4_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
+qt5_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
 
 
 SET(lima-common-qslog_LIB_SRCS
