@@ -37,6 +37,7 @@ namespace SpecificEntities {
 #define isInSameSpecificEntityId "isInSameSpecificEntity"
 #define CreateSpecificEntityId "CreateSpecificEntity"
 #define AddEntityFeatureId "AddEntityFeature"
+#define AppendEntityFeatureId "AppendEntityFeature"
 #define ClearEntityFeaturesId "ClearEntityFeatures"
 #define NormalizeEntityId "NormalizeEntity"
 
@@ -153,6 +154,33 @@ public:
                           const LinguisticGraphVertex& v1,
                           const LinguisticGraphVertex& v2,
                           AnalysisContent& analysis) const;
+
+private:
+  std::string m_featureName;
+  Common::MediaticData::EntityType m_type;
+  FsaStringsPool* m_sp;
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  QVariant::Type m_featureType;
+};
+
+/** 
+ * @brief This action stores a feature for an entity during the recognition 
+ * of the entity (i.e. during the rule matching process). Unary operator: associate the given 
+ * vertex to the entity feature specified in the complement. Binary operator: associate the string 
+ * delimited by the two vertices to the entity feature specified in the complement.
+ *
+ */
+class LIMA_SPECIFICENTITIES_EXPORT AppendEntityFeature : public Automaton::ConstraintFunction
+{
+public:
+  AppendEntityFeature(MediaId language,
+                   const LimaString& complement=LimaString());
+  ~AppendEntityFeature() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                          const LinguisticGraphVertex& vertex,
+                          AnalysisContent& analysis) const;
+  uint64_t minPos( const uint64_t pos1, const uint64_t pos2 )const;
+  uint64_t maxPos( const uint64_t pos1, const uint64_t pos2 )const;
 
 private:
   std::string m_featureName;

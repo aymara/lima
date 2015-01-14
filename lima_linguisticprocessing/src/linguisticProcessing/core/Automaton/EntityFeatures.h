@@ -110,8 +110,8 @@ public:
     {
       // if feature with same name already exists, overwrite it
       EntityFeatures::iterator it=find(name);
-//      if (it!=end()) {
-      if( (it!=end()) && (name==DEFAULT_ATTRIBUTE) ){
+      if (it!=end()) {
+//      if( (it!=end()) && (name==DEFAULT_ATTRIBUTE) ){
         (*it).setValue(boost::any(value));
       }
       else {
@@ -122,6 +122,10 @@ public:
         back().setValue(boost::any(value));
       }
     }
+  
+  template<typename ValueType>
+  void appendFeature(const std::string& name,
+                  const ValueType& value);
   
 
   EntityFeatures::const_iterator find(const std::string& featureName) const;

@@ -65,6 +65,9 @@ ConstraintFunctionFactory<CreateSpecificEntity>
 ConstraintFunctionFactory<AddEntityFeature>
   AddEntityFeatureFactory(AddEntityFeatureId);
 
+ConstraintFunctionFactory<AppendEntityFeature>
+  AppendEntityFeatureFactory(AppendEntityFeatureId);
+
 ConstraintFunctionFactory<ClearEntityFeatures>
   ClearEntityFeaturesFactory(ClearEntityFeaturesId);
 
@@ -857,12 +860,12 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   uint64_t pos = (int64_t)(token->position());
   uint64_t len = (int64_t)(token->length());
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
-  std::vector<EntityFeature>::iterator firstnameFeatureIt = 
+  std::vector<EntityFeature>::iterator featureIt = 
     features.find(m_featureName);
-  if( firstnameFeatureIt != recoData->getEntityFeatures().end() )
+  if( featureIt != recoData->getEntityFeatures().end() )
   {
-    firstnameFeatureIt->setPosition(pos);
-    firstnameFeatureIt->setLength(len);
+    featureIt->setPosition(pos);
+    featureIt->setLength(len);
   }
   
   return true;
@@ -947,58 +950,191 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       recoData->addEntityFeature(m_featureName,featureValue);  
   }
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
-  std::vector<EntityFeature>::iterator firstnameFeatureIt = 
+  std::vector<EntityFeature>::iterator featureIt = 
     features.find(m_featureName);
-  if( firstnameFeatureIt != recoData->getEntityFeatures().end() )
+  if( featureIt != recoData->getEntityFeatures().end() )
   {
-    firstnameFeatureIt->setPosition(pos);
-    firstnameFeatureIt->setLength(len);
+    featureIt->setPosition(pos);
+    featureIt->setLength(len);
   }
+  return true;
+}
+
+//----------------------------------------------------------------------------------------
+// AppendEntityFeature : add a given feature to the recognized entity or append the
+// value of a given feature if it already exists.
+// Same remark as for AddEntityFeature about the relation with RecognizerMatch
+// and RecognizerData.
+
+AppendEntityFeature::AppendEntityFeature(MediaId language,
+                                   const LimaString& complement):
+ConstraintFunction(language,complement),
+m_featureName(""),
+m_featureType(QVariant::String)
+{
+  if (complement.size()) {
+    QStringList complementElements = complement.split(":");
+    m_featureName=complementElements.front().toUtf8().constData();
+    complementElements.pop_front();
+    if (!complementElements.empty()) {
+      const QString& complementType = complementElements.front();
+      m_featureType = QVariant::nameToType(complementType.toUtf8().constData());
+      if (m_featureType != QVariant::Invalid) {
+        if (complementType == "int") {
+          m_featureType = QVariant::Int;
+        }
+        else if (complementType == "double") {
+          m_featureType = QVariant::Double;
+        }
+        else {
+          m_featureType = QVariant::String;
+        }
+      }
+    }
+  }
+}
+
+uint64_t AppendEntityFeature::minPos( const uint64_t pos1, const uint64_t pos2 ) const {
+  if( pos1 == UNDEFPOSITION )
+    return pos2;
+  if( pos2 == UNDEFPOSITION )
+    return pos1;
+  if( pos1 < pos2 ) 
+    return pos1;
+  return pos2;
+}
+
+uint64_t AppendEntityFeature::maxPos( const uint64_t pos1, const uint64_t pos2 ) const {
+  if( pos1 == UNDEFPOSITION )
+    return pos2;
+  if( pos2 == UNDEFPOSITION )
+    return pos1;
+  if( pos1 > pos2 ) 
+    return pos1;
+  return pos2;
+}
+
+bool AppendEntityFeature::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+           const LinguisticGraphVertex& vertex,
+           AnalysisContent& analysis) const
+{
+  SELOGINIT;
+  LDEBUG << "AppendEntityFeature::() (one argument) start... ";
+  LDEBUG << "AppendEntityFeature::() feature:" << m_featureName << ", vertex:" << vertex << ")";
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "AppendEntityFeature::() Error: missing RecognizerData";
+    return false;
+  }
+  
+  // get position/length from feature 
+  // position is min of position.
+  // length is span from min of position 
+  // to max of position + augmented with length of last element.
+  uint64_t pos = UNDEFPOSITION;
+  uint64_t len = UNDEFLENGTH;
+  Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+  std::vector<EntityFeature>::iterator featureIt = features.find(m_featureName);
+  Token* token=get(vertex_token,*(graph.getGraph()),vertex);
+//  Token* token=get(vertex_token,lGraph,vertex);
+  // if feature already exists
+  if( featureIt != recoData->getEntityFeatures().end() )
+  {
+    pos = minPos( featureIt->getPosition(), (int64_t)(token->position()) );
+    LDEBUG << "AppendEntityFeature::() minPos=" << pos;
+    uint64_t maxPos1 = UNDEFPOSITION;
+    if( featureIt->getPosition() != UNDEFPOSITION ) {
+      maxPos1 = featureIt->getPosition() + featureIt->getLength();
+    }
+    LDEBUG << "AppendEntityFeature::() maxPos1=" << maxPos1;
+    uint64_t maxPos2 = (int64_t)(token->position()) + (int64_t)(token->length());
+    LDEBUG << "AppendEntityFeature::() maxPos2=" << maxPos2;
+    uint64_t maxPos3 = maxPos( maxPos1, maxPos2 );
+    LDEBUG << "AppendEntityFeature::() maxPos3=" << maxPos3;
+    len = maxPos3 - pos;
+    LDEBUG << "AppendEntityFeature::() len=" << len;
+  }
+  else {
+    pos = (int64_t)(token->position());
+    len = (int64_t)(token->length());
+  }
+  
+  // get string from the vertex and associate it to the feature
+
+  // get string from the vertex : 
+  // @todo: if named entity, take normalized string, otherwise take lemma
+  LimaString featureValue;
+  if (token!=0) {
+    featureValue=token->stringForm();
+  }
+  switch (m_featureType) {
+    case QVariant::String:
+      recoData->appendEntityFeature(m_featureName,featureValue);  
+      break;
+    case QVariant::Int:
+      recoData->appendEntityFeature(m_featureName,featureValue.toInt());  
+      break;
+    case QVariant::Double:
+      recoData->appendEntityFeature(m_featureName,featureValue.toDouble());  
+      break;
+    default:
+      recoData->appendEntityFeature(m_featureName,featureValue);  
+  }
+  featureIt = features.find(m_featureName);
+  LDEBUG << "AppendEntityFeature::() pos before = ("
+         << featureIt->getPosition() << ","
+         << featureIt->getLength() << ")";
+  featureIt->setPosition(pos);
+  featureIt->setLength(len);
+  LDEBUG << "AppendEntityFeature::() pos after = (" << pos << "," << len << ")";
+  
   return true;
 }
 
 // clear stored entity features, added by the AddEntityFeature function
 ClearEntityFeatures::ClearEntityFeatures(MediaId language,
-                                   const LimaString& complement):
+const LimaString& complement):
 ConstraintFunction(language,complement)
 {
 }
-
 bool ClearEntityFeatures::
 operator()(AnalysisContent& analysis) const
 {
-  // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  if (recoData!=0) {
-    recoData->clearEntityFeatures();
-  }
-  return true;
+// get RecognizerData: the data in which the features are stored
+RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+if (recoData!=0) {
+recoData->clearEntityFeatures();
 }
+return true;
+}
+
 
 //----------------------------------------------------
 // Normalize entity using stored features
 NormalizeEntity::NormalizeEntity(MediaId language,
-                                 const LimaString& complement):
+const LimaString& complement):
 ConstraintFunction(language,complement)
 {
 }
-
 bool NormalizeEntity::
 operator()(Automaton::RecognizerMatch& match,
-           AnalysisContent& analysis) const
+AnalysisContent& analysis) const
 {
-  // get stored features in recognizerData
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  if (recoData==0) {
-    SELOGINIT;
-    LERROR << "AddEntityFeature:: Error: missing RecognizerData";
-    return false;
-  }
-  // assign stored features to RecognizerMatch features
-  match.features()=recoData->getEntityFeatures();
-  // must clear the stored features, once they are used (otherwise, will be kept for next entity)
-  recoData->clearEntityFeatures();
-  return true;
+// get stored features in recognizerData
+RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+if (recoData==0) {
+SELOGINIT;
+LERROR << "AddEntityFeature:: Error: missing RecognizerData";
+return false;
+}
+// assign stored features to RecognizerMatch features
+match.features()=recoData->getEntityFeatures();
+// must clear the stored features, once they are used (otherwise, will be kept for next entity)
+recoData->clearEntityFeatures();
+return true;
 }
 
 } // SpecificEntities

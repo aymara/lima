@@ -31,6 +31,8 @@
 #include "common/misc/gregoriannowarn.hpp"
 #include "common/misc/posix_timenowarn.hpp"
 
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
+
 using namespace std;
 using namespace Lima::Common::Misc;
 
@@ -153,6 +155,92 @@ bool EntityFeatures::operator==(const EntityFeatures& f) const
   return true;
 }
 
+template<typename ValueType>
+  void EntityFeatures::appendFeature(const std::string& name,
+                  const ValueType& value)
+    {
+      SELOGINIT;
+      // if feature with same name already exists, append to it
+      LDEBUG << "EntityFeatures::<ValueType>appendFeature(" << name << "," << value << ")";
+      // if feature with same name already exists, but type is neither
+      // int neitheer float, nor string, overwrite it
+      EntityFeatures::iterator it=find(name);
+      if (it!=end()) {
+        (*it).setValue(boost::any(value));
+      }
+      else {
+        //push empy feature and set values to avoid two copies
+        //of value (do not know the type: it may be a big class)
+        push_back(EntityFeature());
+        back().setName(name);
+        back().setValue(boost::any(value));
+      }
+    }
+
+template<>
+  void EntityFeatures::appendFeature(const std::string& name,
+                  const QString& value)
+    {
+      SELOGINIT;
+      // if feature with same name already exists, append to it
+      LDEBUG << "EntityFeatures::appendFeature(" << name << "," << value << ")";
+      EntityFeatures::iterator it=find(name);
+      if (it!=end()) {
+       QString previous = boost::any_cast<QString>(it->getValue());
+       LDEBUG << "EntityFeatures::appendFeature: previous =" << previous;
+       previous.append(" ").append(value);
+        (*it).setValue(boost::any(previous));
+       LDEBUG << "EntityFeatures::appendFeature: now =" << previous;
+      }
+      else {
+        //push empy feature and set values to avoid two copies
+        //of value (do not know the type: it may be a big class)
+        push_back(EntityFeature());
+        back().setName(name);
+        back().setValue(boost::any(value));
+      }
+    }
+ 
+template<>
+  void EntityFeatures::appendFeature(const std::string& name,
+                  const int& value)
+    {
+      // if feature with same name already exists, append to it
+      EntityFeatures::iterator it=find(name);
+      if (it!=end()) {
+       int previous = boost::any_cast<int>(*it);
+       previous += value;
+        (*it).setValue(boost::any(previous));
+      }
+      else {
+        //push empy feature and set values to avoid two copies
+        //of value (do not know the type: it may be a big class)
+        push_back(EntityFeature());
+        back().setName(name);
+        back().setValue(boost::any(value));
+      }
+    }
+ 
+template<>
+  void EntityFeatures::appendFeature(const std::string& name,
+                  const double& value)
+    {
+      // if feature with same name already exists, append to it
+      EntityFeatures::iterator it=find(name);
+      if (it!=end()) {
+       double previous = boost::any_cast<double>(*it);
+       previous += value;
+        (*it).setValue(boost::any(previous));
+      }
+      else {
+        //push empy feature and set values to avoid two copies
+        //of value (do not know the type: it may be a big class)
+        push_back(EntityFeature());
+        back().setName(name);
+        back().setValue(boost::any(value));
+      }
+    }
+ 
 EntityFeatures::const_iterator EntityFeatures::
 find(const std::string& featureName) const 
 { 
