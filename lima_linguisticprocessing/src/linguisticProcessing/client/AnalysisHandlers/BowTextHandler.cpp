@@ -67,7 +67,6 @@ void BowTextHandler::endAnalysis()
   set_LastContentId(get_LastContentId()+1);
   CONTENT_ID contentId=get_LastContentId();
   ContentHandler< BoWText >::addContent(contentId,m_bowtext);
-  Structure structure(1);
   // TODO: replace BOW_TEXT_NAME2 with some consistent value
   std::string BOW_TEXT_NAME2("BOW_TEXT_NAME2");
   Node node(BOW_TEXT_NAME2,1,1,contentId,2, "" , "text" , "bow" , "bow" , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 );
