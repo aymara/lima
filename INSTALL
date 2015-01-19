@@ -26,7 +26,7 @@ $ sudo apt-get install python-nltk gawk cmake libqtcore4 libqtgui4 libqt4-networ
 libqwt-dev build-essential libqt4-dev qt4-dev-tools libboost-all-dev \
 libenchant-dev 
 
-Under Magia, most of these dependencies are installed with the following 
+Under Mageia, most of these dependencies are installed with the following 
 packages:
 $ sudo urpmi cmake, lib64qwt-devel, (to be completed)
 
