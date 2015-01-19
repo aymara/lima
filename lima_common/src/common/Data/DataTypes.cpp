@@ -346,7 +346,13 @@ void Structure::addNode ( CONTENT_ID ContentId, const Node& node )
     m_d->m_nodes[ContentId]=node;
 }
 
-Node* Structure::getNode ( CONTENT_ID ContentId ) {
+Node* Structure::getNode ( CONTENT_ID ContentId )
+{
+    return &m_d->m_nodes[ContentId];
+}
+
+const Node* Structure::getNode ( CONTENT_ID ContentId ) const
+{
     return &m_d->m_nodes[ContentId];
 }
 
@@ -373,6 +379,19 @@ Node* Structure::getFirstNode ( STRUCT_ID StructureId )
     if ((ItrNodes->second.nodeType()=="topic"))
     {
       return getNode(ItrNodes->first);
+    }
+  }
+  return 0;
+}
+
+const Node* Structure::getFirstNode ( STRUCT_ID StructureId ) const
+{
+  LIMA_UNUSED(StructureId);
+  for (auto nodesIt=m_d->m_nodes.begin();nodesIt!=m_d->m_nodes.end();nodesIt++)
+  {
+    if ((nodesIt->second.nodeType()=="topic"))
+    {
+      return getNode(nodesIt->first);
     }
   }
   return 0;
