@@ -617,7 +617,8 @@ EntityType MediaticData::addEntity(EntityGroupId groupId, const LimaString& enti
 {
   if (static_cast<uint32_t>(groupId)>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
-    LERROR << "unknown entity group id " << groupId;
+    LERROR << "MediaticData::addEntity unknown entity group id " << groupId
+            << "adding" << entityName;
     throw LimaException();
   }
   EntityTypeId typeId= m_d->m_entityTypes[groupId]->insert(entityName);
@@ -650,7 +651,8 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
 {
   if (static_cast<uint32_t>(groupId)>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
-    LERROR << "unknown entity group id " << groupId;
+    LERROR << "MediaticData::getEntityType unknown entity group id " << groupId
+            <<"accessing" << entityName;
     throw LimaException();
   }
   try {
@@ -686,12 +688,12 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
   }
   if (type.getGroupId()==0) {
     MDATALOGINIT;
-    LERROR << "invalid entity group id " << type.getGroupId() << " in entity " /*<< type */<< LENDL;
+    LERROR << "MediaticData::getEntityName invalid entity group id " << type.getGroupId() << " in entity " << type;
     throw LimaException();
   }
   if (static_cast<uint32_t>(type.getGroupId())>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
-    LERROR << "unknown entity group id " << type.getGroupId() << " in entity " /*<< type */<< LENDL;
+    LERROR << "MediaticData::getEntityName unknown entity group id " << type.getGroupId() << " in entity " << type;
     throw LimaException();
   }
   try {
@@ -703,8 +705,7 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
   }
   catch(LimaException& ) {
     MDATALOGINIT;
-    LERROR << "Cannot find name of entity type "
-           /*<< type */<< LENDL;
+    LERROR << "Cannot find name of entity type " << type;
     throw;
   }
 }
