@@ -17,5 +17,5 @@
 #!/bin/bash
 
 FILENAME=`basename $1 .xml`
-xsltproc --stringparam paper.type A4 /usr/share/sgml/docbook/xsl-stylesheets-1.75.2/fo/docbook.xsl $FILENAME.xml > $FILENAME.fo
+xsltproc --stringparam paper.type A4 `locate fo/docbook.xsl | grep "/usr" | head -n 1` $FILENAME.xml > $FILENAME.fo
 fop $FILENAME.fo -pdf $FILENAME.pdf
