@@ -16,18 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/************************************************************************
- *
- * @file       indexElementIterator.h
- * @author     Besancon Romaric (romaric.besancon@cea.fr)
- * @date       Tue Feb  7 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
- * Project     BagOfWords
- * 
- * @brief      an iterator on the bowText that returns IndexElements
- * 
- * 
- ***********************************************************************/
 
 #ifndef INDEXELEMENTITERATOR_H
 #define INDEXELEMENTITERATOR_H
@@ -44,6 +32,11 @@ class IndexElement;
 
 class IndexElementIteratorPrivate;
 
+/**
+ * @brief      An iterator on the bowText that returns IndexElements
+ * @author     Besancon Romaric <romaric.besancon@cea.fr>
+ * @date       Tue Feb  7 2006
+ */
 class LIMA_BOW_EXPORT IndexElementIterator
 {
  public:
