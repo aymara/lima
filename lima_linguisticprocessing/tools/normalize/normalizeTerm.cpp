@@ -50,6 +50,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
 
+#include "common/time/timeUtilsController.h"
+
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
@@ -246,9 +248,13 @@ int dowork(int argc,char* argv[])
 
         // analyze it
         metaData["FileName"]=*fileItr;
-
+	
+	Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
         client->analyze(contentText,metaData,pipeline,handlers);
-
+	delete timer;
+	
+	
+	
         // analyze resulting bowText to extract normalization
         multimap<LimaString,string> norms=extractNormalization(contentText,bowTextHandler.getBowText(),lang);
         if (norms.empty())

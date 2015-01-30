@@ -81,12 +81,15 @@ void BowTextHandler::startAnalysis()
     delete m_bowstream;
     m_bowstream=0;
   }
-  if (m_writer!=0) {
-    delete m_writer;
-    m_writer=0;
+  //if (m_writer!=0) {
+  //  delete m_writer;
+  //  m_writer=0;
+  //}
+  if (m_writer == 0){
+    m_writer=new BowTextWriter();
   }
   m_bowstream=new std::ostringstream();
-  m_writer=new BowTextWriter();
+  //m_writer=new BowTextWriter();
   m_writer->setOut(m_bowstream);
   m_writer->startAnalysis();
 //    set_LastStructureId(1);
