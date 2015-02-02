@@ -41,6 +41,17 @@ Barack::Obama:PERSON:
 =<ClearEntityFeatures()
 
 # rule firstname components
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
++AddEntityFeature(trigger.1,"firstname")
++AddEntityFeature(left.1,"title")
++AppendEntityFeature(right.1.1,"firstname")
++AppendEntityFeature(right.1.2,"firstname")
++AddEntityFeature(right.2.1,"lastname")
++AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# rule firstname components
 @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:
 +AddEntityFeature(trigger.1,"firstname")
 +AddEntityFeature(left.1,"title")
@@ -50,13 +61,20 @@ Barack::Obama:PERSON:
 +AppendEntityFeature(right.2.2,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-# =>NormalizePerson()
-#+AddEntityFeature(right.2.1,right.2.2,"lastname")
-# +AddEntityFeature(right.2.2,"lastname")
 
-# OME @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
-
-# OME @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:=>NormalizePersonName()
+# rule firstname components
+# OME @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:
+# OME +AddEntityFeature(trigger.1,"firstname")
+# OME +AddEntityFeature(left.1,"title")
+# OME +AppendEntityFeature(right.1.1,"firstname")
+# OME +AppendEntityFeature(right.1.2,"firstname")
+# OME +AddEntityFeature(right.2.1,"lastname")
+# OME +AppendEntityFeature(right.2.2,"lastname")
+# OME =>NormalizeEntity()
+# OME =<ClearEntityFeatures()
+# OME # =>NormalizePerson()
+# OME #+AddEntityFeature(right.2.1,right.2.2,"lastname")
+# OME # +AddEntityFeature(right.2.2,"lastname")
 
 # OME @PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
