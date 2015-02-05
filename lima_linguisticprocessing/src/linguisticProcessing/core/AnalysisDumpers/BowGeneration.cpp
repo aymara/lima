@@ -954,7 +954,7 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
   if (data->empty())
   {
     LERROR << "Empty data for vertex " << vertex << " at " << __FILE__ << ", line " << __LINE__;
-    LERROR << "This is a bug. Returning null entity";
+    LERROR << "This is a bug. Returning null entity for" << se->getString() << typeName;
     return 0;
 
   }
