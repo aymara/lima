@@ -28,6 +28,8 @@ target_link_libraries(BagOfWordsTest0
   lima-common-data
   lima-common-qslog
   lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-linguisticdata
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
@@ -46,6 +48,8 @@ target_link_libraries(BagOfWordsTest1
   lima-common-data
   lima-common-qslog
   lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-linguisticdata
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
@@ -65,6 +69,8 @@ target_link_libraries(BagOfWordsTest2
   lima-common-mediaticdata
   lima-common-qslog
   lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-linguisticdata
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
