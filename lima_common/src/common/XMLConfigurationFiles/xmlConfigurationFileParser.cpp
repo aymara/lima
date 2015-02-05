@@ -152,7 +152,13 @@ ModuleConfigurationStructure& XMLConfigurationFileParser::getModuleConfiguration
 {
 
     ConfigurationStructure::iterator it = m_d->m_configuration.find(moduleName);
-    if (it == m_d->m_configuration.end()) throw NoSuchModule(moduleName);
+
+    if (it == m_d->m_configuration.end())
+    {
+      XMLCFGLOGINIT;
+      LDEBUG << "XMLConfigurationFileParser::getModuleConfiguration no such module" << moduleName << "in" << m_d->m_configurationFileName.c_str();
+      throw NoSuchModule(moduleName);
+    }
     return (*it).second;
 }
 
