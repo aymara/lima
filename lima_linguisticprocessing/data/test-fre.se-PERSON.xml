@@ -271,7 +271,7 @@
   <!-- : bug = "Bsdufof"  added multiple time -->
   <!-- : more than one possible triggering ?? -->
   <!-- : ?? transform AddFeatureConstraint in AddFeatureAction -->
-  <!--testcase id="fre.se.pers.comp.6" type="pertinent">
+  <testcase id="fre.se.pers.comp.6" type="pertinent">
     <call-parameters>
       <param key="text" value="Jacques Bsdufof va à la cantine."/>
       <param key="language" value="fre"/>
@@ -295,7 +295,7 @@
           left="XPATH#//entities/entity/components/lastname"
           operator="="
           right="Bsdufof"/>
-  </testcase-->
+  </testcase>
   <!--testcase id="fre.se.pers.comp.7" type="pertinent">
     <call-parameters>
       <param key="text" value="Jacques Table va à la cantine."/>
