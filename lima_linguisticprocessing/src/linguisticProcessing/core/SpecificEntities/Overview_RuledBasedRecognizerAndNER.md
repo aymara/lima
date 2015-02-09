@@ -42,7 +42,7 @@ The process follows in a top down manner the hierarchical decomposition from Rec
 
 - compile-rule.cpp: compile-rule = utility, read a source file containing a set of rule, call RecognizerCompiler::buildRecognizer
 - -> RecognizerCompiler: build a recognizer = set of rules with ressources (gazeteer), call RuleCompiler::initRule
-- -> RuleCompiler: build a RuleString and then a Rule from a string, create Constraints, call buildAutomaton from AutomatonCompiler
+- -> RuleCompiler: build a RuleString from a string, create Constraints, and then create a Rule, call buildAutomaton from AutomatonCompiler
 - -> AutomatonCompiler: build an Automaton (call recursively buildAutomaton), call createTransition in TransitionCompiler and Automaton::addTransition
 - -> TransitionCompiler: build transitionUnit with Constraints attached to transition
 - then, call writer.writeRecognizer to write output of compilation in a binary file.
@@ -72,9 +72,9 @@ High level execution process
 - Recognizer: testOnVertex, select rules that match trigger with current vertex, call testSetOfRules
 - Recognizer: testSetOfRules, check constraint on trigger, call test of rule
 - Rule: test, find best match in right part and left part
-- Automaton: getBestMatch, getAllMatches, buikld a stackOfVertex and call testFromState
+- Automaton: getBestMatch, getAllMatches, build a stackOfVertex and call testFromState
 - Automaton::testFromState, call RtransitionUnit::checkConstraints,  call RecognizerMatch::addBackVertex
-- TransitionUnit: checkConstraints, call checkConstraint and return faalse at first failure
+- TransitionUnit: checkConstraints, call checkConstraint and return false at first failure
 - Constraint: checkConstraint, according to numlber of arguments, update the ConstraintCheckList
 
 - RecognizerMatch::addBackVertex
@@ -111,29 +111,7 @@ There are two aditional constraints (AddEntityFeature) and one additional action
 At compile time, a rule is read and is interpreted as the specification of an automaton to be built.
 The automaton is a set of transitions connected to states.
 
-![](images/Autom1.gif?raw=true)
-
-                                      [count = 1]
-              token is firstname/     token is UpperCase /
-                add "firstname"         add "lastname"
-1: initState  ---------------> 2: ---------------------> 3: token with UpperCase  --> 4: final state
-                                  |   ^
-                                  |   |
-                                   --- 
-                                   [count = 0]
-                                   token is UpperCase /
-                                   add "lastname"
-                                   
-Barack::Obama:PERSON:
-+AddEntityFeature(trigger,"firstname")
-+AddEntityFeature(right.1,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-Barack::Obama:PERSON:+AddEntityFeature(trigger,"firstname")+AddEntityFeature(right.1,"lastname")=>NormalizeEntity()=<ClearEntityFeatures()=>CreateSpecificEntity()  
-Is transformed to 
-Barack+4294967295/5/AddEntityFeature/firstname::Obama+4294967295/5/AddEntityFeature/lastname:PERSON:
-
+                                 
 ----------------------
 
 let's start with a more simple rule
@@ -145,20 +123,24 @@ let's start with a more simple rule
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+
 In this case, the first line defines a gazeteer, with a list of firstName.
 The trigger element of the rule reference a gazeteer, so we duplicate the rule at compile time (one for each element of the gazetteer as trigger) and then we initialize each rule:
 
   RuleCompiler:initRule (init rule from string  "Abe::$NP:PERSON:+AddEntityFeature(right.1)=>NormalizeEntity()=<ClearEntityFeatures()=>CreateSpecificEntity()")
 
-  =======
+![](images/Autom1.gif?raw=true)
+
   
 Low level compilation process
 ------------------------------
 In a first step, initRule create a RuleString object (with 3 input arguments: a string, a set of gazeteer, a set of subAutomaton)
 RuleString is a data structure which decompose elements of the rule after parsing.
-RuleString is an intermediate artefact of the compilitaion process.
+RuleString is an intermediate artefact of the compilation process.
 
-void RuleString::addConstraint(LimaString& constraint...) call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..)
+RuleString constructor call RuleString::treatConstraints which call RuleString::addConstraint 
+void RuleString::addConstraint(LimaString& constraint...) call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..) and call Automaton insertConstraint.
+
 
 In a second step, initRule create and initialize a Rule Object from the RuleString.
 Rule is a final product of the compilation process, which will be saved in a binary file, an then loaded at run time.
@@ -219,8 +201,24 @@ a.addTransition( initState, finalState, transition)
 
 At last, createTransition is an operation of TransitionCompiler
 
-C'est dans cette opértation que sont gérées les contraintes.
-les contraintes
+Some details about Constraints and their arguments
+---------------------------------------------------
+We have seen where are created Constraint objects. During compilation process, RuleString constructor call RuleString::treatConstraints which call RuleString::addConstraint, which call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..) and at least, call Automaton insertConstraint.
+
+We want to look at some details about management of arguments for these Constraints.
+
+Let's have the folowing rule:
+
+    @Firstname: : (@particule? T_Amh){1-2}:PERSON:
+    +AddEntityFeature(right.1.1, right1.2,"lastname")
+
+The AddEntityFeature contraint will use values of vertices from right.1.1 to right1.2 to compute value of lastname property of the created named entity.    
+
+Currently, arguments of constraints are operated this way: 
+During compilation process, constraint ar attached to transition.
+When a constraint has two arguments, it is attached to more than one transition.
+
+![](images/Autom2WithConstraints.gif?raw=true)
 
 
 TransitionUnit.addConstraint
@@ -234,21 +232,19 @@ At run time, we go through both the analysis graph and the automaton.
  - During this walkthrough, vertexes are added to the RecognizerMatch
  - Action functions are called if final state is reached.
 
-The RecognizerMatch is created with a 
+The RecognizerMatch is created with the current node as initial state (the node where the trigger consition is tested)
 
+...
 for example, inside SpecificEntitiesRecognizer::process
+...
 
 
-In the first step, 
-
-- partie droite
-- partie gauche (qui demande un parcours à l'envers et sera "retourné") 
+- the automaton of left part (in backward direction) is matched with graph from current node
+- the automaton of right part is matches with graph from curent node.
 
 We have seen that an automaton can be 'decorated' with function of two different types: 'actions' and 'constraints'.
-constraints are applied upon transition
-action are applied upon recognizerMatch
-
-Les fonctions de type action (effet de bord sur les transition) sont portées par le RecognizerMatch.
+constraints are applied upon initial state of transition
+action are applied upon recognizerMatch (which node??)
 
 Data structures
 ---------------
@@ -309,7 +305,7 @@ Todo
 ----
 There are 2 kinds of function: 
 
-- constraints, which can hold zero, one or two arguments, and 
+- constraints, which can hold zero, one or two arguments,
 - actions, without arguments.
 
 We need to create actions with arguments.
@@ -332,7 +328,7 @@ For example, in the folowing rule:
  - right.1.1 references the element @particule?
  - right.1.2 references the element T_Amh
 
-We try to keep this numbering during execution time, so that it will me easier to interpret the log.
+We try to keep this numbering during execution time, so that it will be easier to interpret the log.
 RuleElmtId is a string whose value references a rule element like "trigger.1" or "right.1.2".
 
 We need to manage a mapping of this numbering for each vertex added to the recognizermatch.
