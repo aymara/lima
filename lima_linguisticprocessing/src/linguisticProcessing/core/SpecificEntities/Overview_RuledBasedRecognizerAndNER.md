@@ -36,38 +36,50 @@ The main components are:
  - compile-rules, AutomatonCompiler,... (located in tools/automatonCompiler): compiler to interpret rules and build automaton
 
 
-High level compilation process
+Overview of compilation process
 ------------------------------
-The process follows in a top down manner the hierarchical decomposition from Recognizer down to Transition.
+
+The input of compilation process of a Recognizer is a file of rules specification, written in human readable way, and optionally one or more gazetteers. A gazetteer is a list of predefined elements of same type, each defined with a litteral.
+
+The source file of a Recognizer includes optionally the definition of  gazetteers, and is mainly  composed of  a list of  rules.  A rule is decomposed in parts, each part specifies some regular expression.
+Additionaly, some functions may be associated to elements of the rule.
+
+The output of the compilation process is a Recognizer object, which is composed of a set of Rules objects,  a Rule is made of one or two Automaton, an Automaton is composed of TSates and TransitionUnit. Additionaly, different types of function (Constraint objects and Actions) are attached to Transition and Rule objects.
+
+The compilation process follows in a top down manner the hierarchical decomposition from Recognizer down to Transition.
 
 - compile-rule.cpp: compile-rule = utility, read a source file containing a set of rule, call RecognizerCompiler::buildRecognizer
-- -> RecognizerCompiler: build a recognizer = set of rules with ressources (gazeteer), call RuleCompiler::initRule
+- -> RecognizerCompiler: build a recognizer = set of rules with ressources (gazeteer)
+     Read Modex definition file, load additional library (plugins), initialize Gazeteer: read gazeteer file
+     Initialize Rule: call RuleCompiler::initRule
 - -> RuleCompiler: build a RuleString from a string, create Constraints, and then create a Rule, call buildAutomaton from AutomatonCompiler
 - -> AutomatonCompiler: build an Automaton (call recursively buildAutomaton), call createTransition in TransitionCompiler and Automaton::addTransition
 - -> TransitionCompiler: build transitionUnit with Constraints attached to transition
 - then, call writer.writeRecognizer to write output of compilation in a binary file.
 
-Constraint ar only the specification of a ConstraintFunction. At run time, ConstaintFunction will be built which contains code to be executed during execution.
+Some objects like RuleString and AutomatonString are only intermediate by-products of the compilation process and are not saved in the binary file.
+
+Constraints are only the specification of a ConstraintFunction. At run time, ConstaintFunction will be built and associated to objects which contains code to be executed during triggering of a rule.
 
 High level initialisation process
 -----------------------------
-The process follows the same way in a top down manner from Recognizer down to Transition and ConstraintFunction.
+The input of initialisation process of a Recognizer is a binary file of rules.
+
+The initialisation process follows the same way in a top down manner from Recognizer down to TransitionUnit and ConstraintFunction.
+Factory functions (readXXX) are called as data are read from input file.
 
 - ApplyRecognizer: processUnit, create a Recognizer
-- Recognizer: call AutomatonReader::readRecognizer at init time
-
-reading of automaton:
-
+- Recognizer: call AutomatonReader::readHeader and AutomatonReader::readRecognizer at init time
  - readHeader, read set of constraint functions and build map of constraint functions indexed by name (readRegisteredConstraints)
  - readRecognizer call readRule
  - readRule: call readAutomaton
  - readAutomaton: call readTState for terminal states, and for each state, create new state, create Transition from this state, read TransitionUnit
- - readTransitionUnit, create transition of different type according to type, ant then read properties and constraints
+ - readTransitionUnit, create transition of different types according to read type, ant then read properties and constraints
  - readTstate
 
 High level execution process
 -----------------------------
-- ApplyRecognizer: process, select a search algorithm (whole graph ar sentence by sentence) and call apply of Recognizer on a set of vertex in the the graph
+- ApplyRecognizer: process, select a search algorithm (whole graph ar sentence by sentence) and call Recognizer::apply on a set of vertex in the the graph
 - Recognizer: apply, call testOnVertex and get results in RecognizerData
 - Recognizer: testOnVertex, select rules that match trigger with current vertex, call testSetOfRules
 - Recognizer: testSetOfRules, check constraint on trigger, call test of rule
@@ -79,14 +91,9 @@ High level execution process
 
 - RecognizerMatch::addBackVertex
   
-ConstraintCheckList: datastructure containing a vertex (stared) and a stack of vertices
+ConstraintCheckList: datastructure containing a vertex (started) and a stack of vertices
 
   
-Read Modex definition file
-Load additional library (plugins)
-Initialize Gazeteer: read gazeteer file
-Initialize Rule: initialize a rule from string
-
 Structure of Rule
 -----------------
 A rule is composed of 4 parts: the trigger, a left part, a right part and an action.
@@ -132,15 +139,14 @@ The trigger element of the rule reference a gazeteer, so we duplicate the rule a
 ![](images/Autom1.gif?raw=true)
 
   
-Low level compilation process
+more details about compilation process
 ------------------------------
 In a first step, initRule create a RuleString object (with 3 input arguments: a string, a set of gazeteer, a set of subAutomaton)
-RuleString is a data structure which decompose elements of the rule after parsing.
+RuleString is a data structure which organize elements of the rule after parsing.
 RuleString is an intermediate artefact of the compilation process.
 
 RuleString constructor call RuleString::treatConstraints which call RuleString::addConstraint 
 void RuleString::addConstraint(LimaString& constraint...) call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..) and call Automaton insertConstraint.
-
 
 In a second step, initRule create and initialize a Rule Object from the RuleString.
 Rule is a final product of the compilation process, which will be saved in a binary file, an then loaded at run time.
@@ -184,7 +190,7 @@ creating transition from string [ Nick ]
 
 After call to initRule, a transition is added to the recognizer with the trigger
 
-Now, let s have a look to the Automaton buildAutomaton operation.
+Now, let's have a look to the Automaton buildAutomaton operation.
 
 The first step is to creat an initial state of type Tstate.
 The second step is to create other states transition and by calling in a kind of recursive way buildAutomaton operation
@@ -193,7 +199,7 @@ The fourth step to make the automaton determinist
 If in BACKWARDSEARCH, the automaton is reversed
 The last step is to minimize the automaton (Brzozowski algorithm)
 
-inside the buildAutomaton opertion, new state and transition are created.
+inside the buildAutomaton operation, new state and transition are created.
 
 TransitionUnit *transition = createTransition(automatonString,language,activeEntityGroups);
 finalState = a.addState()
@@ -203,19 +209,57 @@ At last, createTransition is an operation of TransitionCompiler
 
 Some details about Constraints and their arguments
 ---------------------------------------------------
-We have seen where are created Constraint objects. During compilation process, RuleString constructor call RuleString::treatConstraints which call RuleString::addConstraint, which call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..) and at least, call Automaton insertConstraint.
+We have seen where are created Constraint objects. During compilation process, RuleString constructor call RuleString::treatConstraints which call RuleString::addConstraint, which call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..) and at least, call Automaton::insertConstraint.
 
 We want to look at some details about management of arguments for these Constraints.
 
 Let's have the folowing rule:
 
     @Firstname: : (@particule? T_Amh){1-2}:PERSON:
-    +AddEntityFeature(right.1.1, right1.2,"lastname")
+    +AddEntityFeature(right.1.1,"lastname")
+    +AppendEntityFeature(right.1.2,"lastname")
+    
+The AddEntityFeature constraint will use values of vertices right.1.1 to set value of lastname property of the created named entity.<p>
+The AppendEntityFeature constraint will use values of vertices right.1.2 to be concatenated to value of lastname property of the created named entity.<p>
+During first phase of building of the ruleString object, we got:
 
-The AddEntityFeature contraint will use values of vertices from right.1.1 to right1.2 to compute value of lastname property of the created named entity.    
+  Augustin::(((de|le){0-1} T_Amh){1-2}:PERSON:+AddEntityFeature(right.1.1,"lastname")+AddEntityFeature(right.1.2,"lastname")
+
+all Constraints are rejected at the end of the rule definition, as in the source file.<p>
+Rule::treatConstraints consists in placing the constraints in the right place (near the elements which concerns the constraint)<p>
+for this purpose, it reads each constraints one at a time and decode the arguments<p>
+Suppose that constraint has only one argument as in the example, for exemple "right.1.2"<p>
+The first part reference which part of the rule is concerns, the right automaton , so Automaton::addConstraint is called on the right part which is ((de|le){0-1} T_Amh){1-2}<p>
+
+Then, from left to right, the index is decoded.<p>
+Next numbering element is 1, which means first element in automaton, so Automaton::addConstraint is called on the first part which is (de|le){0-1} T\_Amh<p>
+Next numbering element is 2, which means second element in sub automaton, so Automaton::addConstraint is called on the scond part which is T\_Amh<p>
+Now we have found the right place, the constraint is append to the rule element. T\_Amh+AddEntityFeature(right.1.2,"lastname")<p>
+After call the rule has been transformed in<p>
+  "Augustin::(((de|le)+4294967295/5/AddEntityFeature/lastname{0-1} T_Amh+4294967295/5/AddEntityFeature/lastname){1-2}):PERSON:"
+Which means:<p>
+  "Augustin::(((de|le)+noIndex/TEST/AddEntityFeature/lastname{0-1} T_Amh+noIndex/TEST/AddEntityFeature/lastname){1-2}):PERSON:"
+
+Let's have the folowing rule:
+
+    @Firstname: : (@particule? T\_Amh){1-2}:PERSON:
+    +AddEntityFeature(right.1.1, right.1.2,"lastname")
+The AddEntityFeature constraint will use values of set of vertices from right.1.1 to right.1.2 to set value of lastname property of the created named entity.<p>
+    
+addConstraint(constraintIndex: 0 constraintName: AddEntityFeature storeAction: 1 )
+addConstraint(constraintIndex: 0 constraintName: AddEntityFeature compareAction: 2 )
+
+After call the rule has been transformed in<p>
+"Augustin::(((de|le)+0/1/AddEntityFeature/lastname{0-1} T_Amh+0/2/AddEntityFeature/lastname){1-2}):PERSON:"
+Which means:
+"Augustin::(((de|le)+0/STORE/AddEntityFeature/lastname{0-1} T_Amh+0/COMPARE/AddEntityFeature/lastname){1-2}):PERSON:"
+
+...
+
+The analysis of text "Augustin Cebron de Lisle" will lead to call twice the function AddEntityFeature
 
 Currently, arguments of constraints are operated this way: 
-During compilation process, constraint ar attached to transition.
+During compilation process, constraint are attached to transition.
 When a constraint has two arguments, it is attached to more than one transition.
 
 ![](images/Autom2WithConstraints.gif?raw=true)
@@ -312,14 +356,16 @@ We need to create actions with arguments.
 
  - Constraints are called during matching process. Constraint have been designed as conditions which must be fulfilled to pass a transition or to set the matching of the rule as a success.
  - Action are side-effect operation and are called when applying the rule (after the matching process, if it is a success).
- - During the matching process, vertices are added to the RecognizerMatch.
+ - During the matching process, vertices are added to (or removed from?) the RecognizerMatch.
 
 Arguments in functions (constraint or actions) reference elements of the rule.
 So we need identifier of rule element. Let's call them RuleElmtId.
-These elements of rules are abstraction which are mapped to vertex in the graph during the matching process.
-So we need to manage these identifier when adding vertices to the recognizerMatch
+These elements of rules are abstraction which specifies the transitions of the atomaton.
+These transitions are mapped to vertices in the graph during the matching process.
+
+So we need to manage these identifier of transition when adding vertices to the recognizerMatch
 A rule is structured, so one way to identify a rule elment is to follow this structure.
-This the way we identify rule elment in source (in the specification of the rule).
+This is the way we identify rule elments in source (in the specification of the rule).
 For example, in the folowing rule: 
 
     @Firstname: : (@particule? T_Amh){1-2}:PERSON:
@@ -328,13 +374,28 @@ For example, in the folowing rule:
  - right.1.1 references the element @particule?
  - right.1.2 references the element T_Amh
 
-We try to keep this numbering during execution time, so that it will be easier to interpret the log.
+We try to keep this numbering during execution, so that it will be easier to interpret the log.
 RuleElmtId is a string whose value references a rule element like "trigger.1" or "right.1.2".
 
-We need to manage a mapping of this numbering for each vertex added to the recognizermatch.
-So we ned to keep this information when building the automaton, and when we do matching opertion with vertex in the graph
+We need to manage this numbering as a property for each vertex added to the recognizermatch.
+This way, after completion of triggering process, the recognizermatch is completed with a list of vertices, each vertex is informed of the rule element which have made it selected.
+When we execute the rule, we have to execute each action.
+For each action, each argument references a ruleElementId. Each ruleElementId is associated to a set of vertices.
+The action is called upon the combination of vertices associated to the different ruleElementId which compose the arguments of the action.
+We have to solve a combinatorial problem.
+
+So we need to keep the information related to the ruleElement that was the source of the TransitionUnit  when building the automaton. This way, when we match a vertex in the graph during triggring process, we can associate a ruleElementId to it.
 
 The idea is to add an argument of type RuleElmtId to the two functions addBackVertex and addFrontVertex.
-This numbering must be transferred at compile time, and within IO operation to transition.
-A transition is the point where we have to track the numbering of the destination vertex.
-
+This numbering must be transferred at compile time, and within I/O operations.
+Recognizer::testSetOfRules 
+ - call Rule::test  (find best match on right part and left part
+ build complete match (add one argument = elmtOfRuleId? to addBackVertex...)
+ Permet de construire une liste de vertex accompagné d'un elmtOfRuleId
+ 
+ - then actionSuccess = currentRule->executeActions(graph, analysis,
+                                                  constraintCheckList,
+                                                  success,
+                                                  match);
+La liste des action est executée, pour chaque action, on retrouve les vertex concerné à partir des elmtOfRuleId
+                                              
