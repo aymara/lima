@@ -100,6 +100,12 @@ class AutomatonString
   void insertConstraintInUnit(const Constraint& c);
   void insertConstraintInPart(std::vector <Lima::LinguisticProcessing::Automaton::AutomatonString >::size_type index,
                               const Constraint& c);
+  
+  // Prepare work to build an identifier of type RuleElementIdentifier for each transition
+  // The idea is to go through the structure of the ruleString and set a property for each node
+  // of the rule, down to the leaves (AutomatonString of type UNIT). The property is a pair (partId, index) 
+  // This property can be used afteer to create RuleElementIdentifier for each TransitionUnit.
+  void identifyTransition(const std::string & id);
 
   /** 
    * propagate the constraints from groups to elements
@@ -150,6 +156,7 @@ class AutomatonString
   const LimaString& getUnitString() const { return m_unit; }
   const std::vector<Constraint>& getConstraints() const { return m_constraints; }
   ElementType getType() const { return m_type; }
+  void setRuleElementId(const std::string& partId, const SubPartIndex index);
 
   void setType(const ElementType type);
   void setKeep(const bool keep);
@@ -219,6 +226,7 @@ class AutomatonString
   // just for debug
   LimaString getModifier() const;
   LimaString getStringDebug() const;
+  const std::string& getId() const; /** id  with embeded numbering */
   
   std::vector<AutomatonString>& getParts();
   const std::vector<AutomatonString>& getParts() const;
@@ -231,6 +239,7 @@ class AutomatonString
   ElementType m_type;           /**< type of the element */
   std::vector<AutomatonString> m_parts; /**< parts of the expression (when 
                                            element is sequence or choice)*/
+  std::string m_automId; /** id of automaton */
   
   // possible modifiers
   int m_minOccurrences;
@@ -267,6 +276,10 @@ class AutomatonString
 //**********************************************************************
 // inline functions
 //**********************************************************************
+inline const std::string & AutomatonString::getId() const {
+  return m_automId;
+}
+
 inline bool AutomatonString::empty() const {
   return (m_unit.isEmpty() && m_parts.empty());
 }

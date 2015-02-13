@@ -88,7 +88,7 @@ LimaString initRule(Rule& r,
   //LDEBUG << "RuleCompiler:string=" << ruleString;
   
 
-  r.setTrigger(createTransition(s.getTrigger(),language,activeEntityGroups));
+  r.setTrigger(createTransition(s.getTrigger(),language,"trigger",activeEntityGroups));
 
   try {
     r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(), 

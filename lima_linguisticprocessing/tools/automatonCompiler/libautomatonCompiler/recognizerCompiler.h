@@ -134,7 +134,7 @@ class LIMA_AUTOMATONCOMPILER_EXPORT RecognizerCompiler
                                   const std::vector<SubAutomaton>& subAutomatons,
                                   const LimaString& defaultAction,
                                   Recognizer& reco,
-                                  MediaId language,
+                                  MediaId language,const std::string& currentId,
                                   const bool keepTrigger=true,
                                   const bool headTrigger=false);
   double currentRuleWeight();

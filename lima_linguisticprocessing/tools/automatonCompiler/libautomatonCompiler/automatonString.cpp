@@ -589,6 +589,11 @@ parseGroup(const LimaString& str,
   return begin;
 }
 
+// Set the prefix of identifier for each transition in the automaton
+void AutomatonString::identifyTransition(const std::string& partId) {
+  m_automId = partId;
+}
+
 //***********************************************************************
 // split the string in parts, according to a given separator
 // and add the parts in the expression (used for splitting basic sequences

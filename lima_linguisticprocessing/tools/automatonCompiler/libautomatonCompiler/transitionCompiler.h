@@ -44,12 +44,12 @@ namespace AutomatonCompiler {
 
 Lima::LinguisticProcessing::Automaton::TransitionUnit* 
   createTransition(const AutomatonString& automatonString,
-                   MediaId language,
+                   MediaId language, const std::string& id,
                    const std::vector<LimaString>& activeEntityGroups);
 
 Lima::LinguisticProcessing::Automaton::TransitionUnit* 
   createTransition(const LimaString,
-                   MediaId language,
+                   MediaId language, const std::string& id,
                    const std::vector<LimaString>& activeEntityGroups,
                    const bool keep=true,
                    const bool neg=false,

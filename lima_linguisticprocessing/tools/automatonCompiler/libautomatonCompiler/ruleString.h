@@ -98,6 +98,9 @@ class RuleString
   typedef enum { TRIGGER=0, LEFT=1, RIGHT=2 } PartOfRule;
 
   // private utility functions
+  // set some RuleElementIdentifier to each transition
+  void identifyTransition();
+  
   void initPart(const LimaString& str, AutomatonString& part,
                 const std::vector<Gazeteer>& gazeteers,
                 const std::vector<SubAutomaton>& subAutomatons);

@@ -283,7 +283,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         LimaString classAlias = s.mid(1,(endTrigger==-1)?endTrigger:endTrigger-1);
         s=s.mid(endTrigger+1);
         addRuleWithGazeteerTrigger(classAlias,s,gazeteers,subAutomatons,
-                                   m_defaultAction,reco,language,true);
+                                   m_defaultAction,reco,language,"trigger", true);
       }
       continue;
     }
@@ -296,7 +296,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         s=s.mid(endTrigger+1);
         // add default actions
         addRuleWithGazeteerTrigger(classAlias,s,gazeteers,subAutomatons,
-                                   m_defaultAction,reco,language,false);
+                                   m_defaultAction,reco,language,"trigger",false);
         continue;
       }
       if (s[0] == CHAR_HEAD_TR) {
@@ -306,7 +306,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         s=s.mid(endTrigger+1);
         // add default actions
         addRuleWithGazeteerTrigger(classAlias,s,gazeteers,subAutomatons,
-                                   m_defaultAction,reco,language,true,true);
+                                   m_defaultAction,reco,language,"trigger",true,true);
         continue;
       }
     }
@@ -459,7 +459,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
                            const std::vector<SubAutomaton>& subAutomatons,
                            const LimaString& defaultAction,
                            Recognizer& reco,
-                           MediaId language,
+                           MediaId language,const std::string& currentId,
                            const bool keepTrigger,
                            const bool headTrigger) {
 
@@ -520,7 +520,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
         triggerString=CHAR_HEAD_TR+triggerString;
       }
       TransitionUnit* trigger = createTransition(triggerString,
-                                                 language,
+                                                 language,currentId,
                                                  m_activeEntityGroups,
                                                  keepTrigger);
       if (trigger != 0)

@@ -113,12 +113,14 @@ m_actions()
   }
   LDEBUG << "norm=" << Common::Misc::limastring2utf8stdstring(m_norm);
 
+  // set some identifier for each element of the rule
+  identifyTransition();
   //constraints
   if (next != -1) {
     // need subAutomatons to deal with named sub-indexes
     treatConstraints(str.mid(next),language,subAutomatons);
   }
-
+  
   //simplify automatonStrings (help building minimal automata)
   m_left.removeUnitSequences();
   m_right.removeUnitSequences();
@@ -585,11 +587,17 @@ addBinaryConstraint(const std::string& constraintName,
     if (addFirstConstraint) {
       Constraint cfirst(constraintIndex,constraintName,
                         storeAction,language,complement);
+      LDEBUG << "addConstraint(constraintIndex:" << constraintIndex
+             << "constraintName:" << constraintName
+             << "storeAction:" << storeAction << ")";
       addConstraint(partFirstArg,indexFirstArg,cfirst);
     }
     if (addSecondConstraint) {
       Constraint csecond(constraintIndex,constraintName,
                          compareAction,language,complement,negative);
+      LDEBUG << "addConstraint(constraintIndex:" << constraintIndex
+             << "constraintName:" << constraintName
+             << "compareAction:" << compareAction << ")";
       addConstraint(partSecondArg,indexSecondArg,csecond);
     }
     if (incrementConstraint) {
@@ -654,7 +662,6 @@ IsOnSameRepetitiveStructure(const SubPartIndex& index1,
   }
   return false;
 }
-
 
 LimaString RuleString::
 readConstraintName(const LimaString& str,
@@ -746,6 +753,7 @@ readConstraintComplement(LimaString& str,
   //LINFO << "  str is now " << str;
 }
 
+
 LimaString RuleString::
 readConstraintArgument(const LimaString& arguments,
                        PartOfRule& part,
@@ -797,6 +805,14 @@ readConstraintArgument(const LimaString& arguments,
 //   }
 
   return nextArgument;
+}
+
+// set some RuleElementIdentifier to each transition
+void RuleString::identifyTransition() {
+  
+  m_trigger.identifyTransition("trigger");
+  m_left.identifyTransition("left");
+  m_right.identifyTransition("right");
 }
 
 

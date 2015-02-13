@@ -64,12 +64,13 @@ AutomatonControlParams::~AutomatonControlParams()
 /***********************************************************************/
 // constructors
 /***********************************************************************/
-Automaton::Automaton():
+Automaton::Automaton( const std::string& automId ):
   m_numberStates(0),
   m_finalStates(0),
   m_transitions(0),
   m_searchStructures(0),
-  m_deterministic(false)
+  m_deterministic(false),
+  m_id(automId)
 {
 }
 
@@ -78,7 +79,8 @@ Automaton::Automaton(const Tstate nbStates):
   m_finalStates(nbStates,false),
   m_transitions(nbStates), 
   m_searchStructures(nbStates,0),
-  m_deterministic(false)
+  m_deterministic(false),
+  m_id("")
 {
 }
 
@@ -739,7 +741,7 @@ Tstate Automaton::addState(bool is_final) {
 
 // copy the content of the pointer (insert function of the 
 bool Automaton::addTransition(Tstate initialState, 
-                  Tstate finalState,    
+                  Tstate finalState,
                   TransitionUnit* transition) {
 
   vector<Transition>& transitions=m_transitions[initialState];

@@ -50,6 +50,7 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
                          SearchGraphSense sense,
                          const std::vector<LimaString>& activeEntityGroups) {
   AUCLOGINIT;
+  std::string currentId(automatonString.getId());
   Automaton a;
   
   // etat initial
@@ -61,7 +62,7 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
   else {
 //     LDEBUG << "automatonString is: " << automatonString;
     Tstate finalState=buildAutomaton(a,automatonString,
-                                     initialState,language,
+                                     initialState,currentId,language,
                                      activeEntityGroups);
     // LDEBUG << "final state is " << finalState;
     a.makeFinal(finalState);
@@ -96,12 +97,12 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
 /***********************************************************************/
 Tstate buildAutomaton(Automaton& a,
                       const AutomatonString& automatonString, 
-                      const Tstate& initialState,
+                      const Tstate& initialState, const std::string& currentId,
                       MediaId language,
                       const std::vector<LimaString>& activeEntityGroups) {
   
   AUCLOGINIT;
-  LDEBUG << "build automaton from " << automatonString.getString();
+  LDEBUG << "build automaton from " << automatonString.getString() << " with id " << currentId;
 
   if (automatonString.isOptional()) {
 
@@ -113,9 +114,10 @@ Tstate buildAutomaton(Automaton& a,
     Tstate finalState=initialState;
 
     // if min occurrences not 0 : non-optional part
+    // TODO: check if we have to handle modifiers of numbering like first, next and last in currentId
     while (min > 0) {
       // must be there x times -> insert it as non-optional
-      finalState = buildAutomatonNotOptional(a,automatonString,finalState,language,activeEntityGroups);
+      finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,activeEntityGroups);
       min--;
       if (max != AutomatonString::INFINITE_OCC) { 
         max--;
@@ -130,12 +132,12 @@ Tstate buildAutomaton(Automaton& a,
       // add the epsilon-transition from first to last (for minOcurrences=0)
       // and insert again the automaton from last to first 
       // (to avoid epsilon-cycles)
-      finalState = buildAutomatonNotOptional(a,automatonString,finalState,language,activeEntityGroups);
+      finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,activeEntityGroups);
       a.addTransition(optInitialState,finalState,new EpsilonTransition());
       
       Tstate tmpFinalState(finalState);
       Tstate tmpReturnState = buildAutomatonNotOptional(a,automatonString,
-                                                        tmpFinalState,language,activeEntityGroups);
+                                                        tmpFinalState,currentId,language,activeEntityGroups);
       //a.addTransition(tmpReturnState,optInitialState,new EpsilonTransition());
       a.addTransition(tmpReturnState,finalState,new EpsilonTransition());
 
@@ -150,7 +152,7 @@ Tstate buildAutomaton(Automaton& a,
       // insert it as non-optional as many times as necessary 
       // and add the epsilon-transition
       while (max > 0) {
-        finalState = buildAutomatonNotOptional(a,automatonString,finalState,language,activeEntityGroups);
+        finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,activeEntityGroups);
         a.addTransition(optInitialState,finalState,new EpsilonTransition());
         max--;
       }
@@ -158,31 +160,32 @@ Tstate buildAutomaton(Automaton& a,
     return finalState;
   }
   else {
-    return buildAutomatonNotOptional(a,automatonString,initialState,language,activeEntityGroups);
+    return buildAutomatonNotOptional(a,automatonString,initialState,currentId,language,activeEntityGroups);
   }
 }
 
 Tstate buildAutomatonNotOptional(Automaton& a,
                                  const AutomatonString& automatonString, 
-                                 const Tstate& initialState,
+                                 const Tstate& initialState, const std::string& initialId,
                                  MediaId language,
                                  const std::vector<LimaString>& activeEntityGroups) 
 {
   AUCLOGINIT;
-  LDEBUG << "build non-optional automaton from " << automatonString.getString();
-
+  LDEBUG << "build non-optional automaton from " << automatonString.getString() << " with id " << initialId;
+  
   //-------------------------- alternative ------------------------------
   if (automatonString.isAlternative()) {
     LDEBUG << "is alternative ";
     Tstate finalState=a.addState(); // the final state to which all 
                                     // options will converge
-   
+    std::string currentId(initialId);
+    currentId.append(".1");
     std::vector<AutomatonString>::const_iterator
       it=automatonString.getParts().begin(),
       it_end=automatonString.getParts().end();
     for (; it!=it_end; it++) {
-      Tstate altFinalState=buildAutomaton(a,*it,initialState,language,activeEntityGroups);
-      a.addTransition(altFinalState,finalState,new EpsilonTransition());
+      Tstate altFinalState=buildAutomaton(a,*it,initialState,currentId,language,activeEntityGroups);
+      a.addTransition(altFinalState,finalState,new EpsilonTransition()); // id???
     }
     return finalState;
   }
@@ -195,8 +198,11 @@ Tstate buildAutomatonNotOptional(Automaton& a,
 
     Tstate seqInitialState=initialState;
     Tstate seqfinalState=initialState;
-    for (; it!=it_end; it++) {
-      seqfinalState=buildAutomaton(a,*it,seqInitialState,language,activeEntityGroups);
+    int subCount = 1;
+    for (; it!=it_end; it++, subCount++) {
+      std::string currentId(initialId);
+      currentId.append(".").append(std::to_string(subCount));
+      seqfinalState=buildAutomaton(a,*it,seqInitialState,currentId,language,activeEntityGroups);
       seqInitialState=seqfinalState;
     }
     return seqfinalState;
@@ -204,7 +210,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
   //-------------------------- simple unit ------------------------------
   else if (automatonString.isUnit()) {
     LDEBUG << "is unit ";
-    TransitionUnit *t = createTransition(automatonString,language,activeEntityGroups);
+    TransitionUnit *t = createTransition(automatonString,language,initialId,activeEntityGroups);
     if (t != 0) {
       Tstate finalState = a.addState();
       a.addTransition(initialState, finalState, t);
