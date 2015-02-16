@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2015 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,13 +16,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
-#include "linguisticProcessing/common/BagOfWords/bowDocument.h"
+
 #include "BowDumper.h"
-// #include "linguisticProcessing/core/LinguisticProcessors/HandlerStreamBuf.h"
+
+#include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 #include "common/MediaProcessors/HandlerStreamBuf.h"
 #include "common/time/timeUtilsController.h"
 #include "common/Data/strwstrtools.h"
@@ -49,7 +46,6 @@
 #include "common/Handler/AbstractAnalysisHandler.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "linguisticProcessing/client/AnalysisHandlers/AbstractTextualAnalysisHandler.h"
-// #include "linguisticProcessing/core/LinguisticProcessors/DumperStream.h"
 #include "common/MediaProcessors/DumperStream.h"
 
 #include <boost/graph/properties.hpp>
@@ -66,7 +62,6 @@ using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::Automaton;
 using namespace Lima::LinguisticProcessing::Compounds;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
-// using namespace Lima::LinguisticProcessing::Compounds;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace std;
@@ -85,7 +80,6 @@ typedef boost::color_traits<boost::default_color_type> Color;
 
 BowDumper::BowDumper():
    AbstractTextualAnalysisDumper(),
-//     MediaProcessUnit(),
     m_bowGenerator(new Compounds::BowGenerator()),
     m_handler(),
     m_graph()
@@ -101,7 +95,6 @@ void BowDumper::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 {
-//   DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
   
   MediaId language = manager->getInitializationParameters().media;
