@@ -271,7 +271,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
         }
       }
       if (toRemove) {
-        LDEBUG << "Erase template " << n << " because it does not contain mandatory elements" <<  LENDL;
+        LDEBUG << "Erase template " << n << " because it does not contain mandatory elements" ;
         it=eventData->erase(it);
       }
       else {

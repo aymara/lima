@@ -57,7 +57,7 @@ void Events::read(std::istream& file)
 void Events::write(std::ostream& file) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Events::write()..."<< LENDL; 
+  LDEBUG << "Events::write()..."; 
   Common::Misc::writeCodedInt(file,size());
   for(std::vector<Event*>::const_iterator iT=begin(); iT !=end();iT++)
   {

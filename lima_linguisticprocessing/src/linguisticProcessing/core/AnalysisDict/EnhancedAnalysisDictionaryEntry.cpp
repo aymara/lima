@@ -194,7 +194,7 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
     {
       norm=lemma;
     }
-   LDEBUG << "read norm " << norm << " (p=" << (uint64_t)p << ")" <<LENDL;
+   LDEBUG << "read norm " << norm << " (p=" << (uint64_t)p << ")" ;
     if (toDelete)
     {
       handler->deleteLingInfos(lemma,norm);

@@ -270,13 +270,13 @@ void posGraphXmlDumper::dumpLimaData(std::ostream& os,
 
   DUMPERLOGINIT;
 
-  LDEBUG << "posGraphXmlDumper::dumpLimaData parameters: "<< LENDL;
+  LDEBUG << "posGraphXmlDumper::dumpLimaData parameters: ";
   LDEBUG << "begin = "<< begin;
-  LDEBUG << "end = " << end <<LENDL;
-  LDEBUG << "posgraph fist vertex= " << posgraph->firstVertex() <<LENDL;
-  LDEBUG << "posgraph last vertex= " << posgraph->lastVertex() <<LENDL;
-  LDEBUG << "graphId= " << graphId <<LENDL;
-  LDEBUG << "bySentence= " << bySentence <<LENDL;
+  LDEBUG << "end = " << end ;
+  LDEBUG << "posgraph fist vertex= " << posgraph->firstVertex() ;
+  LDEBUG << "posgraph last vertex= " << posgraph->lastVertex() ;
+  LDEBUG << "graphId= " << graphId ;
+  LDEBUG << "bySentence= " << bySentence ;
 //    just in case we want to check alreadt dumped tokens' array
 //     for (uint64_t i=0; i<alreadyDumpedTokens.size(); i++)
 //     if (alreadyDumpedTokens[i]) LDEBUG << "already_dumped_tokens[" << i << "]=" << alreadyDumpedTokens[i];

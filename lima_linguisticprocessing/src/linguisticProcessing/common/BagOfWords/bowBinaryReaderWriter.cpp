@@ -523,7 +523,7 @@ void BoWBinaryWriter::writeBoWDocument(std::ostream& file,
                  const BoWDocument& doc) const
 {
     BOWLOGINIT;
-    LERROR << "BoWBinaryWriter: writeBoWDocument non implemented"<<  LENDL;
+    LERROR << "BoWBinaryWriter: writeBoWDocument non implemented";
     LERROR << "Can not write "<< doc << " into "<< file;
 }
 

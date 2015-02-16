@@ -199,7 +199,7 @@ void Event::read(std::istream& file) {
 
 void Event::write(std::ostream& file) const {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Event::write().."<< LENDL; 
+  LDEBUG << "Event::write().."; 
   //EVENTANALYZERLOGINIT;
   Common::Misc::writeCodedInt(file,m_main);
   Common::Misc::writeCodedInt(file,size());

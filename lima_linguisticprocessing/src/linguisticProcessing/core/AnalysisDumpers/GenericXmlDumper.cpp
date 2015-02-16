@@ -156,7 +156,7 @@ void GenericXmlDumper::init(
     else {
       m_outputWords=true;
       m_wordTag=str;
-      LDEBUG << "GenericXmlDumper: outputSpecificEntities set to true (tag is " << str << ")" << LENDL;
+      LDEBUG << "GenericXmlDumper: outputSpecificEntities set to true (tag is " << str << ")";
     }
   }
   catch (NoSuchParam& ) {// optional : do not output entities if param not specified
@@ -167,7 +167,7 @@ void GenericXmlDumper::init(
     if (str!="no" && str!="false" && str!="") {
       m_outputSpecificEntities=true;
       m_specificEntityTag=str;
-      LDEBUG << "GenericXmlDumper: outputSpecificEntities set to true (tag is " << str << ")" << LENDL;
+      LDEBUG << "GenericXmlDumper: outputSpecificEntities set to true (tag is " << str << ")";
     }
   }
   catch (NoSuchParam& ) {// optional : do not output entities if param not specified
@@ -186,7 +186,7 @@ void GenericXmlDumper::init(
     if (str!="no" && str!="false" && str!="") {
       m_outputSentenceBoundaries=true;
       m_sentenceBoundaryTag=str;
-      LDEBUG << "GenericXmlDumper: outputSentenceBoundaries set to true (tag is " << str << ")" << LENDL;
+      LDEBUG << "GenericXmlDumper: outputSentenceBoundaries set to true (tag is " << str << ")";
     }
   }
   catch (NoSuchParam& ) {} // optional : do not output entities if param not specified
@@ -199,7 +199,7 @@ void GenericXmlDumper::init(
       // initialize compound creator
       m_bowGenerator=new Compounds::BowGenerator();
       m_bowGenerator->init(unitConfiguration, m_language);
-      LDEBUG << "GenericXmlDumper: outputCompounds set to true (tag is " << str << ")" << LENDL;
+      LDEBUG << "GenericXmlDumper: outputCompounds set to true (tag is " << str << ")";
     }
   }
   catch (NoSuchParam& ) {} // optional : do not output entities if param not specified
@@ -330,7 +330,7 @@ process(AnalysisContent& analysis) const
     syntacticData=static_cast< SyntacticData* >(analysis.getData("SyntacticData"));
     if (annotationData==0)
     {
-      LWARN << "compounds are supposed to be printed in output but no syntactic data available !" << LENDL;
+      LWARN << "compounds are supposed to be printed in output but no syntactic data available !";
     }
   }
 
@@ -550,7 +550,7 @@ xmlOutputVertex(std::ostream& out,
     }
     else {
       DUMPERLOGINIT;
-      LERROR << "failed to output specific entity for vertex " << v << LENDL;
+      LERROR << "failed to output specific entity for vertex " << v;
     }
   }
 
@@ -726,7 +726,7 @@ checkCompound(LinguisticGraphVertex v,
       if (alreadyStored.find(elem) != alreadyStored.end())
       {  
         // already stored
-        //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it." << LENDL;
+        //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
         delete (*bowItr).first;
         delete (*bowItr).second;
       }
@@ -810,7 +810,7 @@ xmlOutputCompound(std::ostream& out,
         se=checkSpecificEntity(v,anagraph,posgraph,annotationData);
         if (se.first==0) {
         DUMPERLOGINIT;
-        LERROR << "GenericXmlDumper: for vertex " << v << ": specific entity not found" << LENDL;
+        LERROR << "GenericXmlDumper: for vertex " << v << ": specific entity not found";
         }
         else {
           xmlOutputSpecificEntity(out,se.first,se.second,sp,offset);

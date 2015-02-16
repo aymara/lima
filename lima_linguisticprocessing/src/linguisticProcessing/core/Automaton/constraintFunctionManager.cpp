@@ -75,7 +75,7 @@ getConstraintFunction(const std::string& id,
       return (*it).second;
     }
   }
-//   LDEBUG << "getConstraintFunction: function does not exist"<< LENDL;
+//   LDEBUG << "getConstraintFunction: function does not exist";
   return createConstraintFunction(id,language,complement);
 }
 

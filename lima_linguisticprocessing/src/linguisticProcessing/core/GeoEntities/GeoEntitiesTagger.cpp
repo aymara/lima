@@ -171,7 +171,7 @@ void GeoEntitiesTagger::init(
   if (name.compare("Micro")==0)
   {
     m_TriggerMicro[microManager.getPropertyValue((*it).first)]=p;
-          LDEBUG << "This Micro code "<<microManager.getPropertyValue((*it).first) <<"is a Trigger"<< LENDL; 
+          LDEBUG << "This Micro code "<<microManager.getPropertyValue((*it).first) <<"is a Trigger"; 
   }
       }
    }
@@ -262,7 +262,7 @@ std::map<std::string,std::vector<uint64_t> ,lTokenMap> GeoEntitiesTagger::getLoc
   std::string loc_name;
 
   uint64_t loc_id;
-  LDEBUG << "Before Statement" <<  LENDL;
+  LDEBUG << "Before Statement" ;
   
   if (! m_db->isConnected()) 
    {
@@ -271,7 +271,7 @@ std::map<std::string,std::vector<uint64_t> ,lTokenMap> GeoEntitiesTagger::getLoc
    }
    else
    {  
-    LDEBUG << "Mdb is connected, word to find=" <<word<< LENDL;
+    LDEBUG << "Mdb is connected, word to find=" <<word;
     
 
   statement m_BlobManipStatement ( m_db->getDb2() );
@@ -288,9 +288,9 @@ std::map<std::string,std::vector<uint64_t> ,lTokenMap> GeoEntitiesTagger::getLoc
 
   while ( m_BlobManipStatement.fetch() )
     {
-       LDEBUG << "LOC_NAME" <<loc_name<< LENDL;
+       LDEBUG << "LOC_NAME" <<loc_name;
        std::string loc_name_normalized=Normalize(loc_name);     
-       LDEBUG << "Normalized LOC_NAME" <<loc_name_normalized<< LENDL;
+       LDEBUG << "Normalized LOC_NAME" <<loc_name_normalized;
        if(result.find(loc_name_normalized) == result.end())
        {
          std::vector<uint64_t> vect;

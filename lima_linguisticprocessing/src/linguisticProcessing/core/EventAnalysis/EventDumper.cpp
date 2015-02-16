@@ -153,7 +153,7 @@ LimaStatusCode EventDumper::process(
   std::string stringEvents = events->toString("P_URI");
   LDEBUG << "EventDumper::process(): stringEvents =" << stringEvents;
 
-  LDEBUG << "EventDumper::process() events->size()=" << events->size()<< LENDL;
+  LDEBUG << "EventDumper::process() events->size()=" << events->size();
   LDEBUG << "EventDumper::process(): events->write()...";
   events->write(out);
   out.flush();
