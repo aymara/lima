@@ -61,6 +61,7 @@ TransitionUnit::TransitionUnit(const TransitionUnit& t):
   m_keep(t.m_keep),
   m_negative(t.m_negative),
   m_head(t.m_head),
+  m_id(t.m_id),
   m_constraints(t.m_constraints) {
 }
 
@@ -148,6 +149,7 @@ ostream& operator << (ostream& os, const TransitionUnit& t)
   
   if (t.negative()) { os << '^'; }
   if (t.head()) { os << 'H'; }
+  os << "'" << t.getId() << "'";
   if (! t.keep()) {
     os << '_' << t.printValue() << '_';
   }

@@ -266,6 +266,7 @@ TransitionUnit* createTransition(const LimaString str,
   t->setKeep(keepIt);
   t->setNegative(negative);
   t->setHead(head);
+  t->setId(id);
   for (std::size_t i(0); i<constraints.size(); i++) {
     t->addConstraint(constraints[i]);
   }

@@ -78,6 +78,9 @@ class LIMA_AUTOMATON_EXPORT TransitionUnit
   bool head() const;
   bool isHead() const;
   void setHead(const bool);
+  const std::string& getId() const;
+  void setId(const std::string& id);
+
   const Constraint& constraint(const uint64_t) const;
   uint64_t numberOfConstraints() const;
   void addConstraint(const Constraint&);
@@ -126,7 +129,7 @@ class LIMA_AUTOMATON_EXPORT TransitionUnit
                // in the recognized expression
   bool m_negative;  // indicates if the transition is negative
   bool m_head;
-  
+  std::string m_id;   // id of transition = ruleElementId
   std::vector<Constraint> m_constraints;
 };
 
@@ -140,6 +143,8 @@ inline void TransitionUnit::setNegative(const bool negative) { m_negative = nega
 inline bool TransitionUnit::head() const { return m_head; }
 inline bool TransitionUnit::isHead() const { return m_head; }
 inline void TransitionUnit::setHead(const bool h) { m_head = h; }
+inline const std::string& TransitionUnit::getId() const { return m_id; }
+inline void TransitionUnit::setId(const std::string& id) { m_id = id; }
 
 inline const Constraint& TransitionUnit::constraint(const uint64_t i) const {
   return m_constraints[i];
