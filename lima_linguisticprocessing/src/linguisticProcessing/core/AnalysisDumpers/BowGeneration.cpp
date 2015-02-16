@@ -1055,13 +1055,14 @@ BoWPredicate* BowGenerator::createPredicate(
   QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
   if (predicateIds.size()>1)
   {
-    LERROR << "BowGenerator::createAbstractBoWElement Predicate has" << predicateIds.size() << "values:" << predicateIds;
+    LERROR << "BowGenerator::createPredicate Predicate has" << predicateIds.size() << "values:" << predicateIds;
   }
   // FIXME replace the hardcoded VerbNet by a value from configuration
   LimaString predicate=LimaString("VerbNet.%1").arg(predicateIds.first());
-  try {
+  try
+  {
     EntityType predicateEntity= Common::MediaticData::MediaticData::single().getEntityType(predicate);
-    LDEBUG << "BowGenerator::createAbstractBoWElement The role(s) related to "<< predicate << " is/are "<< LENDL;
+    LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< predicate << " is/are ";
     AnnotationGraph annotGraph=annotationData->getGraph();
     AnnotationGraphOutEdgeIt outIt, outIt_end;
     boost::tie(outIt, outIt_end) = boost::out_edges(agv, annotationData->getGraph());
@@ -1074,7 +1075,7 @@ BoWPredicate* BowGenerator::createPredicate(
       QStringList semRoleIds = annotationData->stringAnnotation(agv,semRoleVx,typeAnnot).split("|");
       if (semRoleIds.size()>1)
       {
-        LERROR << "BowGenerator::createAbstractBoWElement Role has" << semRoleIds.size() << "values:" << semRoleIds;
+        LERROR << "BowGenerator::createPredicate Role has" << semRoleIds.size() << "values:" << semRoleIds;
       }
       // FIXME replace the hardcoded VerbNet by a value from configuration
       LimaString semRole = LimaString("VerbNet.%1").arg(semRoleIds.first());
@@ -1086,9 +1087,9 @@ BoWPredicate* BowGenerator::createPredicate(
         if (!posGraphSemRoleVertices.empty())
         {
           LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
-          LDEBUG << "BowGenerator::createAbstractBoWElement Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
+          LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
           std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
-          LDEBUG << "BowGenerator::createAbstractBoWElement Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
+          LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
 //               if (semRoleTokens[0].second!="")
           if (!semRoleTokens.empty())
           {
@@ -1097,22 +1098,24 @@ BoWPredicate* BowGenerator::createPredicate(
         }
         else
         {
-          LDEBUG << "BowGenerator::createAbstractBoWElement Found no matching for the semRole in the annot graph";
+          LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
         }
       }
       catch (const Lima::LimaException& e)
       {
-        LDEBUG << "BowGenerator::createAbstractBoWElement Unknown semantic role" << semRole << ";" << e.what();
+        LDEBUG << "BowGenerator::createPredicate Unknown semantic role" << semRole << ";" << e.what();
       }
     }
     bowP->setPredicateType(predicateEntity);
     Common::MediaticData::EntityType pEntityType=bowP->getPredicateType();
     LDEBUG << "BowGenerator::createPredicate Created a Predicate for the verbal class " << Common::MediaticData::MediaticData::single().getEntityName(pEntityType);
-    if (!roles.empty()){
+    if (!roles.empty())
+    {
       bowP->setRoles(roles);
       QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>pRoles=bowP->roles();
       for (QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::iterator it = pRoles.begin();
-            it != pRoles.end(); it++){
+            it != pRoles.end(); it++)
+      {
         BoWToken* outputRoles=static_cast<BoWToken*>(it.value());
         LimaString roleLabel=Common::MediaticData::MediaticData::single().getEntityName(it.key());
         LDEBUG << "BowGenerator::createPredicate Associated "<< outputRoles->getString() << " to it" << "via the semantic role label "<< roleLabel ;
@@ -1120,8 +1123,9 @@ BoWPredicate* BowGenerator::createPredicate(
     }
     return bowP;
   }
-  catch (const Lima::LimaException& e) {
-    LERROR << "Unknown predicate" << predicate << ";" << e.what();
+  catch (const Lima::LimaException& e)
+  {
+    LERROR << "BowGenerator::createPredicate Unknown predicate" << predicate << ";" << e.what();
     delete bowP;
     return 0;
   }
