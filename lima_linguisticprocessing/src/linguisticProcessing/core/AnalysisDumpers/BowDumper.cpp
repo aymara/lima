@@ -43,6 +43,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 #include "linguisticProcessing/core/AnalysisDumpers/BowGeneration.h"
+#include "linguisticProcessing/core/SemanticAnalysis/SemanticRelationAnnotation.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "linguisticProcessing/client/AnalysisHandlers/AbstractTextualAnalysisHandler.h"
@@ -64,6 +65,7 @@ using namespace Lima::LinguisticProcessing::Compounds;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
+using namespace Lima::LinguisticProcessing::SemanticAnalysis;
 using namespace std;
 namespace Lima
 {
@@ -244,6 +246,52 @@ void BowDumper::buildBoWText(
 
     }
   }
+
+  // look at all edges for relations
+  AnnotationGraphEdgeIt it,it_end;
+  const AnnotationGraph& annotGraph=annotationData->getGraph();
+  boost::tie(it, it_end) = boost::edges(annotGraph);
+  for (; it != it_end; it++)
+  {
+    LDEBUG << "BowDumper::buildBoWText on annotation edge "
+           << source(*it,annotGraph) << "->" << target(*it,annotGraph);
+    if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation")))
+    {
+      LDEBUG << "found semantic relation";
+      try
+      {
+        AnnotationGraphVertex agvs = source(*it,annotGraph);
+        AnnotationGraphVertex agvt = target(*it,annotGraph);
+        std::set< LinguisticGraphVertex > anaGraphVertices = annotationData->matches("annot", agvs, "AnalysisGraph");
+        if  (anaGraphVertices.empty())
+        {
+          LERROR << "Found no analysis graph vertex associated to the annotation graph vertex" << agvs << ". It will crash";
+        }
+        LinguisticGraphVertex lgvs = *anaGraphVertices.begin();
+        std::set< LinguisticGraphVertex > visited;
+        bool keepAnyway=true;
+
+        const SemanticRelationAnnotation& annot = annotationData->annotation(
+          *it,Common::Misc::utf8stdstring2limastring("SemanticRelation"))
+              .value<SemanticRelationAnnotation>();
+        BoWPredicate* predicate = m_bowGenerator->createPredicate(
+                                        lgvs, agvs, agvt, annot,
+                                        annotationData,
+                                        *anagraph->getGraph(),
+                                        *posgraph->getGraph(),
+                                        metadata->getStartOffset(), visited,
+                                        keepAnyway);
+        bowText.push_back(predicate);
+      }
+      catch (const boost::bad_any_cast& e)
+      {
+        LERROR << "This annotation is not a SemanticAnnotation";
+        continue;
+      }
+    }
+  }
+
+
 }
 
 void BowDumper::addVerticesToBoWText(
