@@ -76,7 +76,7 @@ class BoWBinaryReaderPrivate
   void readSimpleToken(std::istream& file,
                        BoWToken* token);
   void readPredicate(std::istream& file,
-                   BoWPredicate* bowPred);
+                    BoWPredicate* bowPred);
 
 };
 
@@ -303,6 +303,7 @@ AbstractBoWElement* BoWBinaryReaderPrivate::readBoWToken( std::istream& file, st
   case BOW_PREDICATE:{
       token=new BoWPredicate;
       readPredicate(file,static_cast<BoWPredicate*>(token));
+      refMap.push_back(token);
       break;
   }
   default:
@@ -348,29 +349,32 @@ void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
 void BoWBinaryReader::readPredicate(std::istream& file,
                    BoWPredicate* bowPred){
   m_d->readPredicate(file, bowPred);
- }
+}
 
 void BoWBinaryReaderPrivate::readPredicate(std::istream& file,
-                   BoWPredicate* bowPred){
+                                    BoWPredicate* bowPred){
   BOWLOGINIT;
-  EntityGroupId entityGrId = static_cast<EntityGroupId>( Misc::readCodedInt(file));
-  EntityTypeId entityTypId = static_cast<EntityTypeId>(Misc::readCodedInt(file));
+  LDEBUG << "BoWBinaryReaderPrivate::readPredicate";
+  EntityGroupId groupId = static_cast<EntityGroupId>( Misc::readCodedInt(file));
+  EntityTypeId typeId = static_cast<EntityTypeId>(Misc::readCodedInt(file));
+  Common::MediaticData::EntityType oldType=Common::MediaticData::EntityType(typeId,groupId);
+  Common::MediaticData::EntityType predType=m_entityTypeMapping[oldType];
+
   bowPred->setPosition(Misc::readCodedInt(file));
   bowPred->setLength(Misc::readCodedInt(file));
-  int roleNb = Misc::readCodedInt(file);
+  uint64_t roleNb = Misc::readCodedInt(file);
   LDEBUG << "BoWBinaryReader::readPredicate Read "<< roleNb<< "roles associated to the predicate";
   
-  bowPred->setPredicateType(EntityType(entityTypId,entityGrId));
-  for (int i = 0; i < roleNb; i++)
+  bowPred->setPredicateType(predType);
+  for (uint64_t i = 0; i < roleNb; i++)
   {
     EntityGroupId roleGrId = static_cast<EntityGroupId>(Misc::readCodedInt(file));
     EntityTypeId roleTypId = static_cast<EntityTypeId>(Misc::readCodedInt(file));
+    Common::MediaticData::EntityType oldRoleType=Common::MediaticData::EntityType(roleTypId,roleGrId);
+    Common::MediaticData::EntityType roleType=m_entityTypeMapping[oldRoleType];
     std::vector<AbstractBoWElement*> refMap;
-    readBoWToken(file,refMap);
-    for(std::vector<AbstractBoWElement*>::iterator it = refMap.begin(); it != refMap.end(); it++)
-    {
-      bowPred->roles().insert(EntityType(roleTypId,roleGrId),*it);
-    }
+    AbstractBoWElement* role = readBoWToken(file,refMap);
+    bowPred->roles().insert(roleType,role);
   }
 }
 
@@ -378,8 +382,8 @@ void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
                       BoWComplexToken* token,
                       std::vector<AbstractBoWElement*>& refMap)
 {
-//     BOWLOGINIT;
-//     LDEBUG << "BoWBinaryReader::readComplexTokenParts";
+    BOWLOGINIT;
+    LDEBUG << "BoWBinaryReader::readComplexTokenParts";
     // read parts
     uint64_t head=Misc::readCodedInt(file);
     token->setHead(head);
@@ -388,6 +392,7 @@ void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
         BoWRelation* rel=readBoWRelation(file);
         bool isInList;
         file.read((char*) &(isInList), sizeof(bool));
+        LDEBUG << "BoWBinaryReader::readComplexTokenParts isInList=" << isInList;
         if (! isInList) {
             BoWToken* tok = dynamic_cast<BoWToken*>(readBoWToken(file,refMap));
             token->addPart(rel,tok,isInList);
@@ -431,13 +436,15 @@ void BoWBinaryReaderPrivate::readNamedEntityProperties(std::istream& file,
 
 BoWRelation* BoWBinaryReaderPrivate::readBoWRelation(std::istream& file)
 {
-    BoWRelation* rel=0;
-    uint64_t hasRelation=Misc::readCodedInt(file);
-    if (hasRelation) {
-        rel = new BoWRelation();
-        rel->read(file);
-    }
-    return rel;
+  BOWLOGINIT;
+  BoWRelation* rel=0;
+  uint64_t hasRelation=Misc::readCodedInt(file);
+  LDEBUG << "BoWBinaryWriter::readBoWRelation: read hasRelation" << hasRelation;
+  if (hasRelation) {
+      rel = new BoWRelation();
+      rel->read(file);
+  }
+  return rel;
 }
 
 BoWFileType BoWBinaryReader::getFileType() const
@@ -603,16 +610,16 @@ void BoWBinaryWriterPrivate::writePredicate(std::ostream& file,
                         std::map<BoWToken*,uint64_t>& refMap) const{
   BOWLOGINIT;
   MediaticData::EntityType type=predicate->getPredicateType();
-  LDEBUG << "BoWBinaryWriter : write predicate type " << type.getGroupId() << "." << type.getTypeId();
+  LDEBUG << "BoWBinaryWriter::writePredicate type" << type;
   Misc::writeCodedInt(file,type.getGroupId());
   Misc::writeCodedInt(file,type.getTypeId());
   Misc::writeCodedInt(file,predicate->getPosition());
   Misc::writeCodedInt(file,predicate->getLength());
-  QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>pRoles=predicate->roles();
+  const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& pRoles = predicate->roles();
+  LDEBUG << "BoWBinaryWriter::writePredicate nb  roles" << pRoles.size();
   Misc::writeCodedInt(file,pRoles.size());
-  for (QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::iterator it = pRoles.begin();
-            it != pRoles.end(); it++){
-
+  for (auto it = pRoles.begin(); it != pRoles.end(); it++)
+  {
     Misc::writeCodedInt(file,it.key().getGroupId());
     Misc::writeCodedInt(file,it.key().getTypeId());
     writeBoWToken(file,it.value(),refMap);
@@ -634,7 +641,7 @@ void BoWBinaryWriterPrivate::writeComplexTokenParts(std::ostream& file,
     for (uint64_t i(0); i<parts.size(); i++) {
         writeBoWRelation(file,parts[i].get<0>());
         bool isInList=parts[i].isInList();
-        // LDEBUG << "writing isInList=" << isInList;
+        LDEBUG << "BoWBinaryWriter::writeComplexTokenParts writing isInList=" << isInList;
         file.write((char*) &(isInList), sizeof(bool));
         if (! isInList) {
             writeBoWToken(file,parts[i].getBoWToken(),refMap);
@@ -677,7 +684,9 @@ void BoWBinaryWriterPrivate::writeNamedEntityProperties(std::ostream& file,
 void BoWBinaryWriterPrivate::writeBoWRelation(std::ostream& file,
                  BoWRelation* rel) const
 {
+    BOWLOGINIT;
     uint64_t hasRelation=(rel!=0);
+    LDEBUG << "BoWBinaryWriter::writeBoWRelation: write hasRelation" << hasRelation;
     Misc::writeCodedInt(file, hasRelation);
     if (hasRelation) {
         Misc::writeUTF8StringField(file,rel->getRealization());
