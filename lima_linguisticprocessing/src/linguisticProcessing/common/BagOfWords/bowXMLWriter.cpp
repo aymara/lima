@@ -313,7 +313,7 @@ void BoWXMLWriterPrivate::writePredicateRoles(const BoWPredicate* term)
   for (auto it = term->roles().begin(); it != term->roles().end(); it++)
   {
     m_outputStream <<m_spaces << "<role type=\""
-       << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key()))
+       <<  (it.key().isNull() ? "" : Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key())))
        << "\" >" << std::endl;
     incIndent();
     writeBoWToken(it.value());
