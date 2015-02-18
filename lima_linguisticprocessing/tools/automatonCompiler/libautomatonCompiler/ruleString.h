@@ -67,6 +67,7 @@ class RuleString
   const std::vector<Constraint>& getActions() const { return m_actions; }
 
   void addAction(const Constraint& a) { m_actions.push_back(a); }
+  void addAction(const Constraint& a, const LimaString& argument);
   
   LimaString getString() const;
 
@@ -88,8 +89,10 @@ class RuleString
   bool m_hasLeftRightConstraint; /**< indicates if at least one constraint is on left and right parts */
   std::string m_ruleId; /**< identifier of the rule (file + line number, for debug) */
 
-  // possible actions attached to the rule (not to transitions)
+  // possible actions (with no arguments) attached to the rule (not to transitions)
   std::vector<Constraint> m_actions;
+  // possible actions (with 1 argument) attached to the rule
+  std::map<LimaString,Constraint> m_actionsWithOneArgument;
 
   // enum types for internal use only
   /**
@@ -136,6 +139,15 @@ class RuleString
                       SubPartIndex& indexFirstArg,
                       PartOfRule& partSecondArg,
                       SubPartIndex&  indexSecondArg);
+  
+  void 
+    addUnaryAction(const std::string& constraintName,
+                   const LimaString& complement,
+                   MediaId language,
+                   const LimaString& argument,
+                   const bool negative,
+                   const bool isAction,
+                   const bool actionIfSuccess);
 
   void 
     addUnaryConstraint(const std::string& constraintName,
@@ -174,6 +186,9 @@ class RuleString
   void readConstraintComplement(LimaString& str,
                                 LimaString& complement);
 
+  LimaString 
+    readActionArgument(const LimaString& arguments,
+                       LimaString& argument);
   LimaString 
     readConstraintArgument(const LimaString& arguments, 
                            PartOfRule& part, 

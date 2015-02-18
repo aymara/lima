@@ -268,6 +268,18 @@ treatConstraints(const LimaString& s,
 }
 
 /**
+ * ??? return true if the action has been added, false if it has not
+ * (not an error, additions could have been made to an old action) ???
+ */
+void RuleString::addAction(const Constraint& a, const LimaString& argument) {
+  AUCLOGINIT;
+  LDEBUG << "adding action indexed with" << argument;
+
+  m_actionsWithOneArgument.insert(std::pair<LimaString,Constraint>(argument,a));
+}
+
+
+/**
  * return true if the constraint has been added, false if it has not
  * (not an error, additions could have been made to an old constraint)
  */
@@ -364,16 +376,24 @@ addConstraint(const LimaString& constraint,
   // (necessary for the constraintCheckList, that is not used for actions)
   if (isAction) {
     if (! arguments.isEmpty()) {
-      LERROR << "Actions with arguments are not yet supported: arguments will be ignored";
+      LWARN << "Actions with arguments...";
+      LWARN << "Hypothesis is only 1 argument...";
+      // read (first) argument
+      LimaString firstArg;
+      arguments= readActionArgument(arguments,firstArg);
+      const bool negative(false);
+      // build Constraint object (to be registered in Recognizer)
+      addUnaryAction(constraintName, complement, language, firstArg, negative, isAction, actionIfSuccess);
     }
-    ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
-    if (! actionIfSuccess) {
-      executeAction=EXECUTE_IF_FAILURE;
+    else {
+      ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
+      if (! actionIfSuccess) {
+        executeAction=EXECUTE_IF_FAILURE;
+      }
+      Constraint a(Constraint::noindex,constraintName,executeAction,language,complement);
+      addAction(a);
+      LDEBUG << "RuleString::addConstraint returns";
     }
-    Constraint a(Constraint::noindex,constraintName,executeAction,language,complement);
-    addAction(a);
-    LDEBUG << "RuleString::addConstraint returns";
-    
     return;
   }
   else if (arguments.isEmpty()) {
@@ -466,6 +486,47 @@ orderArguments(PartOfRule& partFirstArg,
 }
 
 void RuleString::
+addUnaryAction(const std::string& constraintName,
+                   const LimaString& complement,
+                   MediaId language,
+                   const LimaString& argument,
+                   const bool negative,
+                   const bool isAction,
+                   const bool actionIfSuccess)
+{
+  if (isAction) {
+    /*
+    ???  unary action not implemented version
+    ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
+    if (! actionIfSuccess) {
+      executeAction=EXECUTE_IF_FAILURE;
+    }
+    Constraint c(m_nbConstraints,constraintName,STORE,complement,negative);
+    Constraint a(m_nbConstraints,constraintName,executeAction,complement,negative);
+    addConstraint(part,index,subindex,c);
+    addAction(a);
+    m_nbConstraints++;
+    ??? unary constraint version
+    Constraint c(Constraint::noindex,constraintName,TEST,language,complement,negative);
+    addConstraint(part,index,c);
+    */
+    // ??? synthesis
+    ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
+    if (! actionIfSuccess) {
+      executeAction=EXECUTE_IF_FAILURE;
+    }
+    Constraint a(Constraint::noindex,constraintName,executeAction,language,complement,negative);
+    addAction(a,argument);
+  }
+  else {
+    //unary actions are not supported yet
+    AUCLOGINIT;
+    LERROR << "addUnaryAction: isAction = false!";
+    throw ConstraintSyntaxException("Action or Constraint with bad arguments...");
+  }
+}
+
+void RuleString::
 addUnaryConstraint(const std::string& constraintName,
                    const LimaString& complement,
                    MediaId language,
@@ -478,7 +539,7 @@ addUnaryConstraint(const std::string& constraintName,
   if (isAction) {
     //unary actions are not supported yet
     AUCLOGINIT;
-    LERROR << "Actions with arguments are not yet supported";
+    LERROR << "addUnaryConstraint: Actions with arguments are not yet supported";
     throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
@@ -519,7 +580,7 @@ addBinaryConstraint(const std::string& constraintName,
   << " neg: " << negative << " isAction: " << isAction << " reverseArguments: " << reverseArguments;
   if (isAction) {
     // binary actions are not supported
-    LERROR << "Actions with arguments are not yet supported";
+    LERROR << "addBinaryConstraint: Actions with arguments are not yet supported";
     throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
@@ -753,6 +814,40 @@ readConstraintComplement(LimaString& str,
   //LINFO << "  str is now " << str;
 }
 
+LimaString RuleString::
+readActionArgument(const LimaString& arguments,
+                       LimaString& argument) {
+  LimaString nextArgument;
+
+  // check if more than 1 argument
+  int sep=
+    findSpecialCharacter(arguments,
+                         CHAR_CONSTRAINT_SEP_ARG,
+                         0);
+  if (sep != -1) {
+    argument=arguments.left(sep);
+    nextArgument=arguments.mid(sep+1);
+  }
+  else
+    argument=arguments;
+  // check if argument begin with "trigger", "left" or "right"
+  if ( (argument.indexOf(STRING_CONSTRAINT_TRIGGER) != 0)
+    && (argument.indexOf(STRING_CONSTRAINT_LEFT) != 0)
+    && (argument.indexOf(STRING_CONSTRAINT_RIGHT) != 0) )
+  {
+    AUCLOGINIT;
+    LWARN << "Warning! readActionArgument: [" << argument
+        << "/" << nextArgument << "], bad value for argument";
+  }
+  else
+  {
+    AUCLOGINIT;
+    LDEBUG << "readActionArgument: [" << argument
+          << "/" << nextArgument << "]";
+  }
+  return nextArgument;
+}
+
 
 LimaString RuleString::
 readConstraintArgument(const LimaString& arguments,
@@ -814,7 +909,6 @@ void RuleString::identifyTransition() {
   m_left.identifyTransition("left");
   m_right.identifyTransition("right");
 }
-
 
 //------------------------------
 // parse the index specifying the word in the rule part
