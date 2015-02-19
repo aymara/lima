@@ -50,7 +50,8 @@
         <!--item value="srl"/-->
         <!--item value="conllDumper"/-->
         <!--item value="bowDumper"/-->
-        <item value="textDumper"/>
+        <!--item value="textDumper"/-->
+	<item value="crfSEDumper"/>
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
         <!--item value="temporalXmlDumper"/-->
@@ -773,6 +774,20 @@
     <group name="afterFusionXmlDumper" class="SimpleXmlDumper">
      <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis-changed.tmp"/>
     </group>
+    <group name="crfSEDumper" class="CrfSEDumper">
+        <param key="outputSuffix" value=".dat"/>
+       <map name="NECategoryAuthorized" value="1">
+	<entry key="Location.LOCATION" value="1"/>
+        <entry key="Location.GPE" value="1"/>
+        <entry key="Person.PERSON" value="1"/>
+        <entry key="Organization.ORG" value="1"/>
+        <entry key="DateTime.DATE" value="1"/>
+        <entry key="DateTime.TIME" value="1"/>
+        <entry key="Numex.NUMBER" value="1"/>
+        <entry key="Numex.UNIT" value="1"/>
+        <entry key="Numex.NUMEX" value="1"/> 
+       </map>
+     </group>
   </module>
 <!-- ******************************************
   Definition of resources
