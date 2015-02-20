@@ -35,30 +35,30 @@ use person.lst
 
 # rule Obama
 Barack::Obama:PERSON:
-+AddEntityFeature(trigger,"firstname")
-+AddEntityFeature(right.1,"lastname")
+=>AddEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# rule firstname components
-@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:
-+AddEntityFeature(trigger.1,"firstname")
-+AddEntityFeature(left.1,"title")
-+AppendEntityFeature(right.1.1,"firstname")
-+AppendEntityFeature(right.1.2,"firstname")
-+AddEntityFeature(right.2.1,"lastname")
-+AppendEntityFeature(right.2.2,"lastname")
+# generic rule firstname components without stop condition
+@Firstname:(@Title|@FunctionTitle)?:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:
+=>AddEntityFeature(left,"title")
+=>AddEntityFeature(trigger,"firstname")
+=>AppendEntityFeature(right.1.1,"firstname")
+=>AppendEntityFeature(right.1.2,"firstname")
+=>AddEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# rule firstname components
-@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
-+AddEntityFeature(trigger.1,"firstname")
-+AddEntityFeature(left.1,"title")
-+AppendEntityFeature(right.1.1,"firstname")
-+AppendEntityFeature(right.1.2,"firstname")
-+AddEntityFeature(right.2.1,"lastname")
-+AppendEntityFeature(right.2.2,"lastname")
+# generic rule firstname components with stop condition
+# @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
+# +AddEntityFeature(trigger.1,"firstname")
+# +AddEntityFeature(left.1,"title")
+# +AppendEntityFeature(right.1.1,"firstname")
+# +AppendEntityFeature(right.1.2,"firstname")
+# +AddEntityFeature(right.2.1,"lastname")
+# +AppendEntityFeature(right.2.2,"lastname")
 # OME =>NormalizeEntity()
 # OME =<ClearEntityFeatures()
 
