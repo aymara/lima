@@ -846,11 +846,13 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   switch (m_featureType) {
     case QVariant::String:
+      LDEBUG << "AddEntityFeature:: recoData->addEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
       recoData->addEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
       recoData->addEntityFeature(m_featureName,featureValue.toInt());  
       break;
+      
     case QVariant::Double:
       recoData->addEntityFeature(m_featureName,featureValue.toDouble());  
       break;

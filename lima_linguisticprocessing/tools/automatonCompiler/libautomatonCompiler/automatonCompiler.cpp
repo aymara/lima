@@ -179,7 +179,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
     Tstate finalState=a.addState(); // the final state to which all 
                                     // options will converge
     std::string currentId(initialId);
-    currentId.append(".1");
+    //currentId.append(".1");
     std::vector<AutomatonString>::const_iterator
       it=automatonString.getParts().begin(),
       it_end=automatonString.getParts().end();

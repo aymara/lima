@@ -49,7 +49,8 @@ m_type(),
 m_norm(),
 m_nbConstraints(0),
 m_hasLeftRightConstraint(false),
-m_actions()
+m_actions(),
+m_actionsWithOneArgument()
 {
 }
 
@@ -61,7 +62,8 @@ m_type(r.m_type),
 m_norm(r.m_norm),
 m_nbConstraints(r.m_nbConstraints),
 m_hasLeftRightConstraint(r.m_hasLeftRightConstraint),
-m_actions(r.m_actions)
+m_actions(r.m_actions),
+m_actionsWithOneArgument(r.m_actionsWithOneArgument)
 {
 }
 
@@ -76,7 +78,8 @@ m_type(),
 m_norm(),
 m_nbConstraints(0),
 m_hasLeftRightConstraint(false),
-m_actions()
+m_actions(),
+m_actionsWithOneArgument()
 {
   AUCLOGINIT;
   int position = findSpecialCharacter(str,CHAR_SEP_RULE,0);
@@ -149,6 +152,7 @@ RuleString& RuleString::operator = (const RuleString& r) {
   m_nbConstraints=r.m_nbConstraints;
   m_hasLeftRightConstraint=r.m_hasLeftRightConstraint;
   m_actions=r.m_actions;
+  m_actionsWithOneArgument=r.m_actionsWithOneArgument;
   return *this;
 }
 

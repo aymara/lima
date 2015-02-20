@@ -77,6 +77,10 @@ LimaString initRule(Rule& r,
          a!=s.getActions().end(); a++) {
       r.addAction(*a);
     }
+    for (std::map<LimaString,Constraint>::const_iterator a=s.getActionsWithOneArgument().begin(); 
+         a!=s.getActionsWithOneArgument().end(); a++) {
+      r.addAction(a->second,a->first);
+    }
     
     //ruleString=s.getString();
   }

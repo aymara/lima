@@ -65,6 +65,7 @@ class RuleString
   int getNbConstraints() { return m_nbConstraints; }
   int hasLeftRightConstraint() {return m_hasLeftRightConstraint;}
   const std::vector<Constraint>& getActions() const { return m_actions; }
+  const std::map<LimaString,Constraint>& getActionsWithOneArgument() const { return m_actionsWithOneArgument; }
 
   void addAction(const Constraint& a) { m_actions.push_back(a); }
   void addAction(const Constraint& a, const LimaString& argument);

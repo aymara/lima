@@ -662,7 +662,8 @@ bool Automaton::testFromState(const Tstate firstState,
       
 //       LDEBUG << "Automaton: -> match found";
       // update current match
-      currentMatch.addBackVertex(vertex,trans->keep());
+      LimaString transId = LimaString::fromUtf8( trans->getId().c_str() );
+      currentMatch.addBackVertex(vertex,trans->keep(), transId);
 /*      LDEBUG << "Automaton: -> vertex (" << vertex 
              << ",keep=" << trans->keep() 
              << ") added in result, currentMatch="

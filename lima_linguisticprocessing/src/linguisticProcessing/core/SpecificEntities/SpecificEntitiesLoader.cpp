@@ -181,14 +181,15 @@ addSpecificEntity(AnalysisContent& analysis,
         break; // no need to go further
       }
       else {
-        match.addBackVertex(v);
+        // OME?? valeur true?,"SE"?
+        match.addBackVertex(v,true,"SE");
       }
     }
     else {
       LinguisticAnalysisStructure::Token* t=get(vertex_token,*graph,v);
       if(t!=0) {
         if (t->position() == posBegin) {
-          match.addBackVertex(v);
+          match.addBackVertex(v,true,"SE");
           inEntity=true;
         }
       }

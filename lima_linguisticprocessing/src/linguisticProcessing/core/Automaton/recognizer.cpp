@@ -428,7 +428,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       // build complete match
 
       match=new RecognizerMatch(leftmatch);
-      match->addBackVertex(position,trigger.keep());
+      match->addBackVertex(position,trigger.keep(), "trigger");
       match->addBack(rightmatch);
       // remove elements not kept at begin and end of the expression
       match->removeUnkeptAtExtremity();

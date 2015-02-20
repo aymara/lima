@@ -54,6 +54,7 @@ Rule::Rule():
   m_negative(false),
   m_hasLeftRightConstraint(false),
   m_actions(),
+  m_actionsWithOneArgument(),
   m_weight(0.0),
   m_ruleId("")
 {
@@ -71,6 +72,7 @@ Rule::Rule(const Rule& r):
   m_negative(r.m_negative),
   m_hasLeftRightConstraint(r.m_hasLeftRightConstraint),
   m_actions(r.m_actions),
+  m_actionsWithOneArgument(r.m_actionsWithOneArgument),
   m_weight(r.m_weight),
   m_ruleId(r.m_ruleId)
 {
@@ -101,6 +103,7 @@ void Rule::reinit() {
   m_negative=false;
   m_hasLeftRightConstraint=false;
   m_actions.clear();
+  m_actionsWithOneArgument.clear();
   m_weight=0.0;
   m_ruleId="";
 }
@@ -136,6 +139,7 @@ void Rule::init()
   m_negative=false;
   m_hasLeftRightConstraint=false;
   m_actions=std::vector<Constraint>();
+  m_actionsWithOneArgument=std::map<LimaString,Constraint>();
   m_weight=0.0;
   m_ruleId="";
 }
@@ -153,6 +157,7 @@ void Rule::copy(const Rule& r)
   m_negative = r.negative();
   m_hasLeftRightConstraint = r.m_hasLeftRightConstraint;
   m_actions = r.getActions();
+  m_actionsWithOneArgument = r.getActionsWithOneArgument();
   m_weight = r.m_weight;
   m_ruleId = r.m_ruleId;
 }
@@ -266,9 +271,30 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
     return true;
   }
 
-//  AULOGINIT;
-  
-  // execute actions associated to the rule
+  AULOGINIT;
+/*
+ *  for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
+      matchElmt != result->end() ; matchElmt++ ) {
+  }
+*/  
+  // execute actions with 1 argument associated to the rule
+  for (std::map<LimaString,Constraint>::const_iterator action=m_actionsWithOneArgument.begin();
+       action!=m_actionsWithOneArgument.end(); action++) {
+    const LimaString& ruelElemtId = action->first;
+    LDEBUG << "Rule::executeActions: check " << ruelElemtId << "for function " << action->second.functionName();
+    const ConstraintFunction* functionAddr = action->second.functionAddr();
+    //  search for vertex which match same ruleElemntId
+    for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
+        matchElmt != result->end() ; matchElmt++ ) {
+      LDEBUG << "Rule::executeActions: check vertex "
+             << matchElmt->m_elem.first << " with " << matchElmt->getRuleElemtId();
+      if( matchElmt->getRuleElemtId() == ruelElemtId ) {
+        LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
+        bool ok=(*functionAddr)(graph,matchElmt->m_elem.first,analysis);
+      }
+    }
+  }
+  // execute actions without arguments associated to the rule
   // even if rule failed (actions are internally conditionned by success)
   for (std::vector<Constraint>::const_iterator action=m_actions.begin();
        action!=m_actions.end(); action++) {
@@ -294,10 +320,14 @@ ostream& operator << (ostream& os, const Rule& r) {
   os << "right=" << endl << r.rightAutomaton();
   os << r.getType()<< ";" << r.getLinguisticProperties() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
-       action!=r.m_actions.end(); action++) {
+    action!=r.m_actions.end(); action++) {
     os << *action << endl;
-       }
-       return os;
+  }
+  for (std::map<LimaString,Constraint>::const_iterator action=r.m_actionsWithOneArgument.begin();
+    action!=r.m_actionsWithOneArgument.end(); action++) {
+    os << "(" << (*action).first.toUtf8().data() << ","<< (*action).second<< ")" << endl;
+  }
+  return os;
 }
 QDebug& operator << (QDebug& os, const Rule& r) {
   os << r.getRuleId() << ":" << endl;
@@ -306,10 +336,14 @@ QDebug& operator << (QDebug& os, const Rule& r) {
   os << "right=" << endl << r.rightAutomaton();
   os << r.getType()<< ";" << r.getLinguisticProperties() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
-       action!=r.m_actions.end(); action++) {
+    action!=r.m_actions.end(); action++) {
     os << *action << endl;
-       }
-       return os;
+  }
+  for (std::map<LimaString,Constraint>::const_iterator action=r.m_actionsWithOneArgument.begin();
+    action!=r.m_actionsWithOneArgument.end(); action++) {
+    os << "(" << action->first << ","<< action->second<< ")" << endl;
+  }
+  return os;
 }
 
 } // namespace end
