@@ -445,6 +445,11 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     // (specific to modex) 
     // WARN : some hard coded stuff here in resource names
     EntityType seType=match.getType();
+    if  (seType.getGroupId() == 0)
+    {
+      LERROR << "CreateSpecificEntity::operator() null group id:" << seType;
+      return false;
+    }
     std::string resourceName=
       Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId()))+"Micros";
     AbstractResource* res=LinguisticResources::single().getResource(m_language,resourceName);
