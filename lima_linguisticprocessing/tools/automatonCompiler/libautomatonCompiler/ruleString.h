@@ -65,7 +65,7 @@ class RuleString
   int getNbConstraints() { return m_nbConstraints; }
   int hasLeftRightConstraint() {return m_hasLeftRightConstraint;}
   const std::vector<Constraint>& getActions() const { return m_actions; }
-  const std::map<LimaString,Constraint>& getActionsWithOneArgument() const { return m_actionsWithOneArgument; }
+  const std::vector<std::pair<LimaString,Constraint> >& getActionsWithOneArgument() const { return m_actionsWithOneArgument; }
 
   void addAction(const Constraint& a) { m_actions.push_back(a); }
   void addAction(const Constraint& a, const LimaString& argument);
@@ -93,7 +93,7 @@ class RuleString
   // possible actions (with no arguments) attached to the rule (not to transitions)
   std::vector<Constraint> m_actions;
   // possible actions (with 1 argument) attached to the rule
-  std::map<LimaString,Constraint> m_actionsWithOneArgument;
+  std::vector<std::pair<LimaString,Constraint> > m_actionsWithOneArgument;
 
   // enum types for internal use only
   /**

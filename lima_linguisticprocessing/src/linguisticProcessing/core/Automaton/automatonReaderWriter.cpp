@@ -258,7 +258,7 @@ readRule(std::ifstream& file,MediaId language)
     readConstraint(file,c);
     LimaString id;
     Misc::readUTF8StringField(file,id);
-    rule->m_actionsWithOneArgument.insert(std::pair<LimaString,Constraint>(id,c));
+    rule->m_actionsWithOneArgument.push_back(std::pair<LimaString,Constraint>(id,c));
   }
   file.read((char*) &(rule->m_weight),sizeof(double));
   return rule;
@@ -594,7 +594,7 @@ writeRule(std::ofstream& file,
   // write actions (with one argument) attached to the rule
   uint64_t nbActionsWithOneArgument=rule.m_actionsWithOneArgument.size();
   Common::Misc::writeCodedInt(file,nbActionsWithOneArgument);
-  for (std::map<LimaString,Constraint>::const_iterator it = rule.m_actionsWithOneArgument.begin() ; 
+  for (std::vector<std::pair<LimaString,Constraint>>::const_iterator it = rule.m_actionsWithOneArgument.begin() ; 
        it != rule.m_actionsWithOneArgument.end() ; it++ ) {
     writeConstraint(file,it->second);
     Misc::writeUTF8StringField(file,it->first);

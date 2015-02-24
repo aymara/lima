@@ -279,7 +279,7 @@ void RuleString::addAction(const Constraint& a, const LimaString& argument) {
   AUCLOGINIT;
   LDEBUG << "adding action indexed with" << argument;
 
-  m_actionsWithOneArgument.insert(std::pair<LimaString,Constraint>(argument,a));
+  m_actionsWithOneArgument.push_back(std::pair<LimaString,Constraint>(argument,a));
 }
 
 
@@ -515,6 +515,9 @@ addUnaryAction(const std::string& constraintName,
     addConstraint(part,index,c);
     */
     // ??? synthesis
+    AUCLOGINIT;
+    LDEBUG << "RuleString::addUnaryAction " << constraintName << "," << complement << "," << argument;
+    
     ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
     if (! actionIfSuccess) {
       executeAction=EXECUTE_IF_FAILURE;

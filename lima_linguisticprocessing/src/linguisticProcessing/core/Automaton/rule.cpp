@@ -139,7 +139,7 @@ void Rule::init()
   m_negative=false;
   m_hasLeftRightConstraint=false;
   m_actions=std::vector<Constraint>();
-  m_actionsWithOneArgument=std::map<LimaString,Constraint>();
+  m_actionsWithOneArgument=std::vector<std::pair<LimaString,Constraint> >();
   m_weight=0.0;
   m_ruleId="";
 }
@@ -278,7 +278,7 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
   }
 */  
   // execute actions with 1 argument associated to the rule
-  for (std::map<LimaString,Constraint>::const_iterator actionItr=m_actionsWithOneArgument.begin();
+  for (std::vector<std::pair<LimaString,Constraint> >::const_iterator actionItr=m_actionsWithOneArgument.begin();
        actionItr!=m_actionsWithOneArgument.end(); actionItr++) {
     const ConstraintAction& action = actionItr->second.action();
     // test if execution of action is required
@@ -334,7 +334,7 @@ ostream& operator << (ostream& os, const Rule& r) {
     action!=r.m_actions.end(); action++) {
     os << *action << endl;
   }
-  for (std::map<LimaString,Constraint>::const_iterator action=r.m_actionsWithOneArgument.begin();
+  for (std::vector<std::pair<LimaString,Constraint> >::const_iterator action=r.m_actionsWithOneArgument.begin();
     action!=r.m_actionsWithOneArgument.end(); action++) {
     os << "(" << (*action).first.toUtf8().data() << ","<< (*action).second<< ")" << endl;
   }
@@ -350,7 +350,7 @@ QDebug& operator << (QDebug& os, const Rule& r) {
     action!=r.m_actions.end(); action++) {
     os << *action << endl;
   }
-  for (std::map<LimaString,Constraint>::const_iterator action=r.m_actionsWithOneArgument.begin();
+  for (std::vector<std::pair<LimaString,Constraint> >::const_iterator action=r.m_actionsWithOneArgument.begin();
     action!=r.m_actionsWithOneArgument.end(); action++) {
     os << "(" << action->first << ","<< action->second<< ")" << endl;
   }

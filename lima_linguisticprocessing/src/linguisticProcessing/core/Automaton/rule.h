@@ -75,7 +75,7 @@ friend class AutomatonWriter;
   bool contextual() const;
   bool negative() const;
   const std::vector<Constraint>& getActions() const;
-  const std::map<LimaString,Constraint>& getActionsWithOneArgument() const;
+  const std::vector<std::pair<LimaString,Constraint> >& getActionsWithOneArgument() const;
   double getWeight() const { return m_weight; }
   const std::string& getRuleId() const { return m_ruleId; }
 
@@ -150,7 +150,7 @@ friend class AutomatonWriter;
   bool m_hasLeftRightConstraint; // the rule has at least one 
                                  // binary constraint that deals with left AND right parts
   std::vector<Constraint> m_actions;
-  std::map<LimaString,Constraint> m_actionsWithOneArgument;
+  std::vector<std::pair<LimaString,Constraint> > m_actionsWithOneArgument;
 
   double m_weight; // weight of the rule
   std::string m_ruleId; // id of the rule
@@ -180,7 +180,7 @@ inline uint64_t Rule::numberOfConstraints() const {
 inline const std::vector<Constraint>& Rule::getActions() const { 
   return m_actions; 
 }
-inline const std::map<LimaString,Constraint>& Rule::getActionsWithOneArgument() const { 
+inline const std::vector<std::pair<LimaString,Constraint> >& Rule::getActionsWithOneArgument() const { 
   return m_actionsWithOneArgument; 
 }
 
@@ -209,7 +209,7 @@ inline void Rule::addAction(const Constraint& c) {
 m_actions.push_back(c);
 }
 inline void Rule::addAction(const Constraint& c, const LimaString& id) { 
-  m_actionsWithOneArgument.insert(std::pair<LimaString,Constraint>(id,c)); 
+  m_actionsWithOneArgument.push_back(std::pair<LimaString,Constraint>(id,c)); 
 }
 
 } // namespace end
