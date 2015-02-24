@@ -74,15 +74,14 @@ void writeCodedInt(std::ostream& file, const uint64_t number)
 }
 
 //**********************************************************************
-uint64_t readOneByteInt(std::istream& file) {
+uint8_t readOneByteInt(std::istream& file) {
   uint8_t c;
   file.read((char*)&c, 1);
-  return static_cast<uint64_t>(c);
+  return c;
 }
 
-void writeOneByteInt(std::ostream& file, const uint64_t number) {
-  uint8_t c=static_cast<uint8_t>(number);
-  file.put((char)c);
+void writeOneByteInt(std::ostream& file, const uint8_t number) {
+  file.put((char)number);
   file.flush();
 }
 

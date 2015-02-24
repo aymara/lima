@@ -74,7 +74,7 @@ LIMA_DATA_EXPORT void writeCodedInt(std::ostream& file, const uint64_t number);
  * 
  * @return the integer read
  */
-LIMA_DATA_EXPORT uint64_t readOneByteInt(std::istream& file);
+uint8_t readOneByteInt(std::istream& file);
 
 /** 
  *  write a integer coded on one byte format in a file
@@ -82,7 +82,7 @@ LIMA_DATA_EXPORT uint64_t readOneByteInt(std::istream& file);
  * @param file the file to write in
  * @param number the integer to write
  */
-LIMA_DATA_EXPORT void writeOneByteInt(std::ostream& file, const uint64_t number);
+LIMA_DATA_EXPORT void writeOneByteInt(std::ostream& file, const uint8_t number);
 
 //@}
 
