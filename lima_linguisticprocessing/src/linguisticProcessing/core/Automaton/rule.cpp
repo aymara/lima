@@ -278,20 +278,31 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
   }
 */  
   // execute actions with 1 argument associated to the rule
-  for (std::map<LimaString,Constraint>::const_iterator action=m_actionsWithOneArgument.begin();
-       action!=m_actionsWithOneArgument.end(); action++) {
-    const LimaString& ruelElemtId = action->first;
-    LDEBUG << "Rule::executeActions: check " << ruelElemtId << "for function " << action->second.functionName();
-    const ConstraintFunction* functionAddr = action->second.functionAddr();
-    //  search for vertex which match same ruleElemntId
-    for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
-        matchElmt != result->end() ; matchElmt++ ) {
-      LDEBUG << "Rule::executeActions: check vertex "
-             << matchElmt->m_elem.first << " with " << matchElmt->getRuleElemtId();
-      if( matchElmt->getRuleElemtId() == ruelElemtId ) {
-        LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
-        bool ok=(*functionAddr)(graph,matchElmt->m_elem.first,analysis);
+  for (std::map<LimaString,Constraint>::const_iterator actionItr=m_actionsWithOneArgument.begin();
+       actionItr!=m_actionsWithOneArgument.end(); actionItr++) {
+    const ConstraintAction& action = actionItr->second.action();
+    // test if execution of action is required
+    LDEBUG << "Rule::executeActions: success = " << success
+           << ", check if execution is required for function " << actionItr->second.functionName();
+    if( (( success ) && (action==EXECUTE_IF_SUCCESS || action==EXECUTE_IF_SUCCESS_REVERSE))
+     || (( !success ) && (action==EXECUTE_IF_FAILURE || action==EXECUTE_IF_FAILURE_REVERSE)) ) {
+      const LimaString& ruelElemtId = actionItr->first;
+      LDEBUG << "Rule::executeActions: check " << ruelElemtId << "for function " << actionItr->second.functionName();
+      const ConstraintFunction* functionAddr = actionItr->second.functionAddr();
+      //  search for vertex which match same ruleElemntId as actionItr
+      for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
+          matchElmt != result->end() ; matchElmt++ ) {
+        LDEBUG << "Rule::executeActions: check vertex "
+              << matchElmt->m_elem.first << " with " << matchElmt->getRuleElemtId();
+        if( matchElmt->getRuleElemtId() == ruelElemtId ) {
+          LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
+          bool ok=(*functionAddr)(graph,matchElmt->m_elem.first,analysis);
+          // TODO: what to do with value of ok??
+        }
       }
+    }
+    else {
+      LDEBUG << "Rule::executeActions: execution of function " << actionItr->second.functionName() << " not required";
     }
   }
   // execute actions without arguments associated to the rule
