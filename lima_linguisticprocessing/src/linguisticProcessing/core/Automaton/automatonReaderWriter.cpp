@@ -548,7 +548,7 @@ writeRule(std::ofstream& file,
   // write id if debug
   if (m_debug) {
     //LOGINIT("LP::Automaton");
-    //LDEBUG<< "write rule id '"<< rule.m_ruleId<< "'"<< LENDL;
+    //LDEBUG<< "write rule id '"<< rule.m_ruleId<< "'";
     Misc::writeStringField(file,rule.m_ruleId);
   }
 

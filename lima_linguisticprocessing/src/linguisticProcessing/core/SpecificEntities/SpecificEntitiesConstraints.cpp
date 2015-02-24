@@ -404,7 +404,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     
 //   LDEBUG << "    match is " << match;
 
-//   LDEBUG << "    Creating annotation "<< LENDL;
+//   LDEBUG << "    Creating annotation ";
   SpecificEntityAnnotation annot(match,*m_sp);
   
 
@@ -423,8 +423,8 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   StringsPoolIndex seLemma = annot.getNormalizedString();
   StringsPoolIndex seNorm = annot.getNormalizedForm();
 
-//   LDEBUG << "    Creating LinguisticElement"<< LENDL;
-//   LDEBUG << "    Creating MorphoSyntacticData"<< LENDL;
+//   LDEBUG << "    Creating LinguisticElement";
+//   LDEBUG << "    Creating MorphoSyntacticData";
   // creer un MorphoSyntacticData
   MorphoSyntacticData* newMorphData = new MorphoSyntacticData();
 
@@ -506,12 +506,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   LDEBUG << "      - new vertex " << newVertex << "("<<graphId<<"), " << newDepVertex
       << "(dep), " << agv << "(annot) added";
 
-//   LDEBUG << "    Setting annotation "<< LENDL;
+//   LDEBUG << "    Setting annotation ";
   GenericAnnotation ga(annot);
 
   annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("SpecificEntity"), ga);
 //   LDEBUG << "    Creating SE annotation edges between SE match vertices "
-//       "annotation and the new annotation vertex"<< LENDL;
+//       "annotation and the new annotation vertex";
   Automaton::RecognizerMatch::const_iterator matchIt, matchIt_end;
   matchIt = match.begin(); matchIt_end = match.end();
   for (; matchIt != matchIt_end; matchIt++)
@@ -540,13 +540,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     previous.push_back(firstInVertex);
     if (shouldRemoveInitial(source(*firstInEdgesIt, *lingGraph),target(*firstInEdgesIt, *lingGraph), match))
     {
-      LDEBUG << "        - storing edge " << source(*firstInEdgesIt, *lingGraph) <<" -> "<<target(*firstInEdgesIt, *lingGraph) << " to be removed"<< LENDL;
+      LDEBUG << "        - storing edge " << source(*firstInEdgesIt, *lingGraph) <<" -> "<<target(*firstInEdgesIt, *lingGraph) << " to be removed";
 /*      recoData->setEdgeToBeRemoved(analysis, *firstInEdgesIt);*/
       newEdgesToRemove.insert(std::make_pair(source(*firstInEdgesIt, *lingGraph),target(*firstInEdgesIt, *lingGraph)));
     }
     else
     {
-      LDEBUG << "        - do not store initial edge " << source(*firstInEdgesIt, *lingGraph) <<" -> "<<target(*firstInEdgesIt, *lingGraph) << " to be removed"<< LENDL;
+      LDEBUG << "        - do not store initial edge " << source(*firstInEdgesIt, *lingGraph) <<" -> "<<target(*firstInEdgesIt, *lingGraph) << " to be removed";
     }
   }
   std::vector< LinguisticGraphVertex >::iterator pit, pit_end;
@@ -562,11 +562,11 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       boost::tie(e, success) = add_edge(*pit, newVertex, *lingGraph);
       if (success)
       {
-        LDEBUG << "        - in edge " << e.m_source << " -> " << e.m_target << " added"<< LENDL;
+        LDEBUG << "        - in edge " << e.m_source << " -> " << e.m_target << " added";
       }
       else
       {
-        LERROR << "        - in edge " << *pit << " ->" << newVertex << " NOT added"<< LENDL;
+        LERROR << "        - in edge " << *pit << " ->" << newVertex << " NOT added";
       }
     }
     else
@@ -579,7 +579,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   {
     recoData->setEdgeToBeRemoved(analysis, edge( newEdgesToRemoveIt->first, newEdgesToRemoveIt->second, *lingGraph).first);
   }
-  LDEBUG << "      - in edges added"<< LENDL;
+  LDEBUG << "      - in edges added";
   
   
   // 2. entre le nouveau noeud et les noeuds qui etaient apres v2
@@ -595,12 +595,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     nexts.push_back(secondOutVertex);
     if (shouldRemoveFinal(source(*secondOutEdgesIt, *lingGraph),target(*secondOutEdgesIt, *lingGraph), match))
     {
-      LDEBUG << "        - storing edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << " to be removed"<< LENDL;
+      LDEBUG << "        - storing edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << " to be removed";
       recoData->setEdgeToBeRemoved(analysis, *secondOutEdgesIt);
     }
     else
     {
-      LDEBUG << "        - do not store final edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << " to be removed"<< LENDL;
+      LDEBUG << "        - do not store final edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << " to be removed";
     }
   }
   std::vector< LinguisticGraphVertex >::iterator nit, nit_end;
@@ -612,14 +612,14 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     boost::tie(e, success) = add_edge(newVertex, *nit, *lingGraph);
     if (success)
     {
-      LDEBUG << "        - out edge " << e.m_source << " -> " << e.m_target << " added"<< LENDL;
+      LDEBUG << "        - out edge " << e.m_source << " -> " << e.m_target << " added";
     }
     else
     {
-      LERROR << "        - out edge " << newVertex << " ->" << *nit << " NOT added"<< LENDL;
+      LERROR << "        - out edge " << newVertex << " ->" << *nit << " NOT added";
     }
   }
-  LDEBUG << "      - out edges added"<< LENDL;
+  LDEBUG << "      - out edges added";
 
   // 3. supprimer les arcs a remplacer
   recoData->removeEdges( analysis );

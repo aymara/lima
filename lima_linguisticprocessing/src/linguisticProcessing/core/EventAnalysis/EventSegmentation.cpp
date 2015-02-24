@@ -252,7 +252,7 @@ void EventSegmentation::compute_events(std::map<std::string,Event*>& map_event, 
     }
     else
     {        
-      LDEBUG << "Paragraph numéro : " << (i+1) << " a étudier ayant comme nombre de date = " << p->getDatesSize()<< LENDL;
+      LDEBUG << "Paragraph numéro : " << (i+1) << " a étudier ayant comme nombre de date = " << p->getDatesSize();
       // Il faut juste ajouter le paragraphe dans l'évènement concerné
       if (p->getDatesSize()==1)
       {
@@ -418,8 +418,8 @@ void EventSegmentation::compute_paragraphs(std::vector<Paragraph*>& v_par,
     }
     if (v != firstVx && v != lastVx)
     {
-      LDEBUG << "Traitement du vertex " << v<< LENDL;
-      LDEBUG << "current_date du vertex " << current_date<< LENDL;
+      LDEBUG << "Traitement du vertex " << v;
+      LDEBUG << "current_date du vertex " << current_date;
       token = get(vertex_token, *graph, v);  
      // it is a vertex of a new paragraph
       if(is_a_bound(v,pb) )
@@ -492,7 +492,7 @@ void EventSegmentation::compute_paragraphs(std::vector<Paragraph*>& v_par,
           uint64_t par_position=v_par[v_par.size()-1]->getPosition();
           uint64_t last_position=previous_token->position()+previous_token->length()-1;
           v_par[v_par.size()-1]->setLength(last_position-par_position+1);
-          LDEBUG << "par_position " << par_position << ", last_position" << last_position<< LENDL;
+          LDEBUG << "par_position " << par_position << ", last_position" << last_position;
         
       }
     }
@@ -599,7 +599,7 @@ std::string EventSegmentation::getDate(LinguisticGraphVertex v,AnnotationData* a
                featureItr=features.begin(),features_end=features.end();
                featureItr!=features_end; featureItr++)
           {
-            LDEBUG << "Looking for feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString()<<LENDL;
+            LDEBUG << "Looking for feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString();
              if (featureItr->getName().compare("date") == 0)
              return (featureItr->getValueString());
              if (featureItr->getName().compare("year") == 0)

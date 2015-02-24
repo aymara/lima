@@ -96,7 +96,7 @@ void BoWFeatures::initialize(const deque<std::string>& featureNames)
       featureName=string(featureName,0,i);
     }
     DUMPERLOGINIT;
-    LDEBUG << "BoWFeatures: initialize feature" << featureName << LENDL;
+    LDEBUG << "BoWFeatures: initialize feature" << featureName;
     push_back(BoWFeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
     back()->setName(featureName);
   }

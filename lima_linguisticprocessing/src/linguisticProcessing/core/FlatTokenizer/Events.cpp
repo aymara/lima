@@ -63,7 +63,7 @@ bool Events::isRecognized(const LimaChar event) const
     while (eventClass != 0)
     {
       LDEBUG << "| | | test event '"<< limastring2utf8stdstring(eventClass->name())
-          << "' on '" << ((*this)[i]==0?"":limastring2utf8stdstring((*this)[i]->name())) <<"'"<<LENDL;
+          << "' on '" << ((*this)[i]==0?"":limastring2utf8stdstring((*this)[i]->name())) <<"'";
       if ( (*this)[i] == eventClass )
       {
         return true;

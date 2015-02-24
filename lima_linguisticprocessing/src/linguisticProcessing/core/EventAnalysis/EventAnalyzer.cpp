@@ -237,13 +237,13 @@ LimaStatusCode EventAnalyzer::process(
         LDEBUG << "        type=" << (*iT2).first;
         for(std::vector<Entity *>::const_iterator iT3=(*iT2).second.begin();iT3!=(*iT2).second.end();iT3++)
         {
-          LDEBUG << "        position=" << (*iT3)->getPosition() << "  ,longueur = " <<(*iT3)->getLength()<< ", main =" << (*iT3)->getMain()<< LENDL;
+          LDEBUG << "        position=" << (*iT3)->getPosition() << "  ,longueur = " <<(*iT3)->getLength()<< ", main =" << (*iT3)->getMain();
           Lima::LinguisticProcessing::Automaton::EntityFeatures features= (*iT3)->getFeatures();
           for (Automaton::EntityFeatures::const_iterator 
                featureItr=features.begin(),features_end=features.end();
                featureItr!=features_end; featureItr++)
           {
-            LDEBUG << "        Feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString()<<LENDL;
+            LDEBUG << "        Feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString();
           }
         }
       }
@@ -251,13 +251,13 @@ LimaStatusCode EventAnalyzer::process(
       LDEBUG << "        Event type=" << eventEntities.first;
       for(std::vector<Entity *>::const_iterator iT3=eventEntities.second.begin();iT3!=eventEntities.second.end();iT3++)
       {
-        LDEBUG << "        position=" << (*iT3)->getPosition() << "  ,longueur = " <<(*iT3)->getLength()<< ", main =" << (*iT3)->getMain()<< LENDL;
+        LDEBUG << "        position=" << (*iT3)->getPosition() << "  ,longueur = " <<(*iT3)->getLength()<< ", main =" << (*iT3)->getMain();
         Lima::LinguisticProcessing::Automaton::EntityFeatures features= (*iT3)->getFeatures();
         for (Automaton::EntityFeatures::const_iterator 
              featureItr=features.begin(),features_end=features.end();
              featureItr!=features_end; featureItr++)
         {
-          LDEBUG << "        Feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString()<<LENDL;
+          LDEBUG << "        Feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString();
         }
       }
       j++;
@@ -286,7 +286,7 @@ void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std:
     }
     else
     {        
-      LDEBUG << "Paragraph numéro : " << (i+1) << " a étudier ayant comme nombre de date = " << p->getDatesSize()<< LENDL;
+      LDEBUG << "Paragraph numéro : " << (i+1) << " a étudier ayant comme nombre de date = " << p->getDatesSize();
       // Il faut juste ajouter le paragraphe dans l'évènement concerné
       if (p->getDatesSize()==1)
       {
@@ -456,7 +456,7 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
     if (v != firstVx && v != lastVx)
     {
       LDEBUG << "Traitement du vertex " << v;
-      LDEBUG << "current_date du vertex " << current_date<< LENDL;
+      LDEBUG << "current_date du vertex " << current_date;
       token = get(vertex_token, *graph, v);  
      // it is a vertex of a new paragraph
       if(is_a_bound(v,pb) )
@@ -529,7 +529,7 @@ void EventAnalyzer::compute_paragraphs(std::vector<Paragraph*>& v_par,
           uint64_t par_position=v_par[v_par.size()-1]->getPosition();
           uint64_t last_position=previous_token->position()+previous_token->length()-1;
           v_par[v_par.size()-1]->setLength(last_position-par_position+1);
-          LDEBUG << "par_position " << par_position << ", last_position" << last_position<< LENDL;
+          LDEBUG << "par_position " << par_position << ", last_position" << last_position;
         
       }
     }
@@ -655,7 +655,7 @@ std::string EventAnalyzer::getDate(LinguisticGraphVertex v,AnnotationData* annot
                featureItr=features.begin(),features_end=features.end();
                featureItr!=features_end; featureItr++)
           {
-            LDEBUG << "Looking for feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString()<<LENDL;
+            LDEBUG << "Looking for feature=" << featureItr->getName() << ",  value=" << featureItr->getValueString();
              if (featureItr->getName().compare("date") == 0)
              return (featureItr->getValueString());
              if (featureItr->getName().compare("year") == 0)

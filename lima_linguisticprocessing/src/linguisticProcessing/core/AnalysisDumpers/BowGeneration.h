@@ -54,6 +54,10 @@ namespace BagOfWords
 }
 namespace LinguisticProcessing
 {
+namespace SemanticAnalysis
+{
+  class SemanticRelationAnnotation;
+}
 namespace SyntacticAnalysis
 {
   class SyntacticData;
@@ -117,6 +121,28 @@ public:
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     std::set<LinguisticGraphVertex>& visited,
     bool keepAnyway = false) const;
+
+  /**
+   * Builds a BoWPredicate corresoonding to a  semantic relation (an edge in the
+   * annotation graph holding a SemanticRelation annotation
+   *
+   * @param lgvs source linguistic graph vertex
+   * @param agvs source annotation graph vertex matching lgvs
+   * @param lgvt target linguistic graph vertex
+   * @param agvt target annotation graph vertex matching lgvt
+   * @param age annotation graph edge porting the   semantic relation
+   */
+  Common::BagOfWords::BoWPredicate* createPredicate(
+    const LinguisticGraphVertex& lgvs,
+    const AnnotationGraphVertex& agvs,
+    const AnnotationGraphVertex& agvt,
+    const SemanticAnalysis::SemanticRelationAnnotation& annot,
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const LinguisticGraph& anagraph,
+    const LinguisticGraph& posgraph,
+    uint64_t offset,
+    std::set< LinguisticGraphVertex >& visited,
+    bool keepAnyway) const;
 
 
 private:
@@ -194,8 +220,8 @@ private:
     const uint64_t offset,
     std::set<LinguisticGraphVertex>& visited,
     bool keepAnyway)const;
-  
-  bool checkStopWordInCompound(
+
+    bool checkStopWordInCompound(
     Common::BagOfWords::BoWToken*&,
     uint64_t offset,
     std::set< std::string >& alreadyStored,

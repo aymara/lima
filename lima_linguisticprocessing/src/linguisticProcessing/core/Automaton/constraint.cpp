@@ -196,13 +196,13 @@ checkConstraint(const AnalysisGraph& graph,
   case EXECUTE_IF_FAILURE_REVERSE: {
     AULOGINIT;
     LERROR << "Constraint: cannot call checkConstraint with EXECUTE type"
-           << "(function " << functionName() << ")"<< LENDL;
+           << "(function " << functionName() << ")";
     return false;
   }
   default: {
     AULOGINIT;
     LERROR << "Constraint: no action specified "
-           << "(function " << functionName() << ")"<< LENDL;
+           << "(function " << functionName() << ")";
     return false;
   }
   }
@@ -218,7 +218,7 @@ checkConstraint(const AnalysisGraph& graph,
   }
 
 //  LDEBUG << " -> " << success << " => "
-//         << (m_negative?(!success):success) <<  LENDL;
+//         << (m_negative?(!success):success) ;
   return (m_negative?(!success):success);
 }
 
@@ -255,7 +255,7 @@ bool Constraint::apply(const AnalysisGraph& graph,
     AULOGINIT;
     LERROR << "cannot apply an action if not type EXECUTE "
            << "(function " << functionName()
-           << ")"<< LENDL;
+           << ")";
     return false;
   }
   }
@@ -307,7 +307,7 @@ bool Constraint::apply(const AnalysisGraph& graph,
       }
     }
   }
-  //LDEBUG << " -> " << res << " => " << (m_negative?(!res):res) <<  LENDL;
+  //LDEBUG << " -> " << res << " => " << (m_negative?(!res):res) ;
   return (m_negative?(!res):res);
 }
 

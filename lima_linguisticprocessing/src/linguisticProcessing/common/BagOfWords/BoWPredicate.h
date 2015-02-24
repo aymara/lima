@@ -79,7 +79,7 @@ public:
   const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles() const;
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles();
   
-  void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles);
+  void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*>& pRoles);
 
   /**
    * returns the vertices of the predicate and the roles

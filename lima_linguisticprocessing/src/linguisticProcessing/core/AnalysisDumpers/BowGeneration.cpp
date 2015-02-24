@@ -47,6 +47,7 @@
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "linguisticProcessing/core/Compounds/CompoundTokenAnnotation.h"
+#include "linguisticProcessing/core/SemanticAnalysis/SemanticRelationAnnotation.h"
 
 #include <boost/graph/properties.hpp>
 
@@ -66,6 +67,7 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace Lima::LinguisticProcessing::AnalysisDumpers;
+using namespace Lima::LinguisticProcessing::SemanticAnalysis;
 
 namespace Lima
 {
@@ -564,7 +566,7 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
         BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin, false);
         if (se != 0)
         {
-          LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << se->getOutputUTF8String();
+          LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << QString::fromUtf8(se->getOutputUTF8String().c_str());
           se->setVertex(v);
           abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),se));
 //           visited.insert(v);
@@ -577,8 +579,6 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
 
   // check if there is specific entities or compound tenses associated to v.
   // return them if any
-  //std::set< uint64_t > matches = annotationData->matches("PosGraph",v,"annot"); portage 32 64
-  //for (std::set< uint64_t >::const_iterator it = matches.begin(); portage 32 64
   std::set< AnnotationGraphVertex > matches = annotationData->matches("PosGraph",v,"annot");
   LDEBUG << "BowGenerator::createAbstractBoWElement there are " << matches.size() << " annotation graph vertices matching the current PsGraph vertex " << v;
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
@@ -591,7 +591,7 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
       BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin);
       if (se != 0)
       {
-        LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << *se;
+        LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << QString::fromUtf8(se->getOutputUTF8String().c_str());
         se->setVertex(v);
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),se));
 //         visited.insert(v);
@@ -1014,7 +1014,7 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
     bowNE->addFeature((*f).getName(),
                       (*f).getValueLimaString());
   }
-  LDEBUG << "CreateSpecificEntity: created features " << bowNE->getFeaturesUTF8String();
+  LDEBUG << "CreateSpecificEntity: created features " << QString::fromUtf8(bowNE->getFeaturesUTF8String().c_str());
 
   std::string elem = bowNE->getIdUTF8String();
   if (alreadyStored.find(elem) != alreadyStored.end())
@@ -1034,13 +1034,13 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
 
 
 BoWPredicate* BowGenerator::createPredicate(
-    const LinguisticGraphVertex& lgv, 
-    const AnnotationGraphVertex& agv, 
-    const AnnotationData* annotationData, 
-    const LinguisticGraph& anagraph, 
-    const LinguisticGraph& posgraph, 
-    const uint64_t offset, 
-    std::set< LinguisticGraphVertex >& visited, 
+    const LinguisticGraphVertex& lgv,
+    const AnnotationGraphVertex& agv,
+    const AnnotationData* annotationData,
+    const LinguisticGraph& anagraph,
+    const LinguisticGraph& posgraph,
+    const uint64_t offset,
+    std::set< LinguisticGraphVertex >& visited,
     bool keepAnyway) const
 {
   DUMPERLOGINIT;
@@ -1055,13 +1055,15 @@ BoWPredicate* BowGenerator::createPredicate(
   QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
   if (predicateIds.size()>1)
   {
-    LERROR << "BowGenerator::createAbstractBoWElement Predicate has" << predicateIds.size() << "values:" << predicateIds;
+    LERROR << "BowGenerator::createPredicate Predicate has" << predicateIds.size() << "values:" << predicateIds;
   }
   // FIXME replace the hardcoded VerbNet by a value from configuration
+  LWARN << "BowGenerator::createPredicate FIXME replace the hardcoded VerbNet by a value from configuration at" << __FILE__ << ", line"<< __LINE__;
   LimaString predicate=LimaString("VerbNet.%1").arg(predicateIds.first());
-  try {
+  try
+  {
     EntityType predicateEntity= Common::MediaticData::MediaticData::single().getEntityType(predicate);
-    LDEBUG << "BowGenerator::createAbstractBoWElement The role(s) related to "<< predicate << " is/are "<< LENDL;
+    LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< predicate << " is/are ";
     AnnotationGraph annotGraph=annotationData->getGraph();
     AnnotationGraphOutEdgeIt outIt, outIt_end;
     boost::tie(outIt, outIt_end) = boost::out_edges(agv, annotationData->getGraph());
@@ -1074,7 +1076,7 @@ BoWPredicate* BowGenerator::createPredicate(
       QStringList semRoleIds = annotationData->stringAnnotation(agv,semRoleVx,typeAnnot).split("|");
       if (semRoleIds.size()>1)
       {
-        LERROR << "BowGenerator::createAbstractBoWElement Role has" << semRoleIds.size() << "values:" << semRoleIds;
+        LERROR << "BowGenerator::createPredicate Role has" << semRoleIds.size() << "values:" << semRoleIds;
       }
       // FIXME replace the hardcoded VerbNet by a value from configuration
       LimaString semRole = LimaString("VerbNet.%1").arg(semRoleIds.first());
@@ -1086,9 +1088,9 @@ BoWPredicate* BowGenerator::createPredicate(
         if (!posGraphSemRoleVertices.empty())
         {
           LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
-          LDEBUG << "BowGenerator::createAbstractBoWElement Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
+          LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
           std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
-          LDEBUG << "BowGenerator::createAbstractBoWElement Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
+          LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
 //               if (semRoleTokens[0].second!="")
           if (!semRoleTokens.empty())
           {
@@ -1097,34 +1099,106 @@ BoWPredicate* BowGenerator::createPredicate(
         }
         else
         {
-          LDEBUG << "BowGenerator::createAbstractBoWElement Found no matching for the semRole in the annot graph";
+          LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
         }
       }
       catch (const Lima::LimaException& e)
       {
-        LDEBUG << "BowGenerator::createAbstractBoWElement Unknown semantic role" << semRole << ";" << e.what();
+        LDEBUG << "BowGenerator::createPredicate Unknown semantic role" << semRole << ";" << e.what();
       }
     }
     bowP->setPredicateType(predicateEntity);
     Common::MediaticData::EntityType pEntityType=bowP->getPredicateType();
     LDEBUG << "BowGenerator::createPredicate Created a Predicate for the verbal class " << Common::MediaticData::MediaticData::single().getEntityName(pEntityType);
-    if (!roles.empty()){
+    if (!roles.empty())
+    {
       bowP->setRoles(roles);
       QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>pRoles=bowP->roles();
       for (QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::iterator it = pRoles.begin();
-            it != pRoles.end(); it++){
+            it != pRoles.end(); it++)
+      {
         BoWToken* outputRoles=static_cast<BoWToken*>(it.value());
         LimaString roleLabel=Common::MediaticData::MediaticData::single().getEntityName(it.key());
-        LDEBUG << "BowGenerator::createPredicate Associated "<< outputRoles->getString() << " to it" << "via the semantic role label "<< roleLabel ;
+        LDEBUG << "BowGenerator::createPredicate Associated "<< QString::fromUtf8(outputRoles->getOutputUTF8String().c_str()) << " to it" << "via the semantic role label "<< roleLabel ;
       }
     }
     return bowP;
   }
-  catch (const Lima::LimaException& e) {
-    LERROR << "Unknown predicate" << predicate << ";" << e.what();
+  catch (const Lima::LimaException& e)
+  {
+    LERROR << "BowGenerator::createPredicate Unknown predicate" << predicate << ";" << e.what();
     delete bowP;
     return 0;
   }
+}
+
+BoWPredicate* BowGenerator::createPredicate(
+    const LinguisticGraphVertex& lgvs,
+    const AnnotationGraphVertex& agvs,
+    const AnnotationGraphVertex& agvt,
+    const SemanticRelationAnnotation& annot ,
+    const AnnotationData* annotationData,
+    const LinguisticGraph& anagraph,
+    const LinguisticGraph& posgraph,
+    uint64_t offset,
+    std::set< LinguisticGraphVertex >& visited,
+    bool keepAnyway) const
+{
+  DUMPERLOGINIT;
+  LDEBUG << "BowGenerator::createPredicate " << lgvs << agvs << agvt << annot.type().c_str();
+  BoWPredicate* bowP = new BoWPredicate();
+
+  EntityType predicateEntity = Common::MediaticData::MediaticData::single().getEntityType(QString::fromUtf8(annot.type().c_str()));
+  bowP->setPredicateType(predicateEntity);
+
+  bowP->setPosition(0);
+  bowP->setLength(0);
+
+  std::vector<AnnotationGraphVertex> vertices;
+  vertices.push_back(agvs);
+  vertices.push_back(agvt);
+  LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< annot.type().c_str() << " is/are ";
+  QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> roles;
+  const LimaString typeAnnot="SemanticRole";
+  for (auto verticesIt = vertices.begin(); verticesIt != vertices.end(); verticesIt++)
+  {
+    const AnnotationGraphVertex semRoleVx = *verticesIt;
+    std::set< LinguisticGraphVertex > anaGraphSemRoleVertices = annotationData->matches("annot", semRoleVx,  "AnalysisGraph");
+    if (!anaGraphSemRoleVertices.empty())
+    {
+      LinguisticGraphVertex anaGraphSemRoleVertex = *anaGraphSemRoleVertices.begin();
+      std::set< LinguisticGraphVertex > posGraphSemRoleVertices = annotationData->matches("AnalysisGraph", anaGraphSemRoleVertex,  "PosGraph");
+      if (!posGraphSemRoleVertices.empty())
+      {
+        LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
+        LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
+        std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
+        LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << annot.type().c_str();
+        if (!semRoleTokens.empty())
+        {
+          EntityType semRoleEntity;
+          roles.insert(semRoleEntity, semRoleTokens[0].second);
+        }
+      }
+      else
+      {
+        LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
+      }
+    }
+  }
+  LDEBUG << "BowGenerator::createPredicate Created a Predicate for the semantic relation"
+      << predicateEntity << Common::MediaticData::MediaticData::single().getEntityName(predicateEntity);
+  if (!roles.empty())
+  {
+    bowP->setRoles(roles);
+    for (auto it = roles.begin(); it != roles.end(); it++)
+    {
+      BoWToken* outputRoles=static_cast<BoWToken*>(it.value());
+      LimaString roleLabel = it.key().isNull() ? QString() : Common::MediaticData::MediaticData::single().getEntityName(it.key());
+      LDEBUG << "BowGenerator::createPredicate Associated "<< QString::fromUtf8(outputRoles->getOutputUTF8String().c_str()) << " to it" << "via the semantic role label "<< roleLabel ;
+    }
+  }
+  return bowP;
 }
 
 

@@ -791,7 +791,7 @@ bool CoreferentAnnotation::sf4(
   AnalysisContent& ac) const
 {
 //   COREFSOLVERLOGINIT; 
-//   LDEBUG << "sf4" <<  LENDL;
+//   LDEBUG << "sf4" ;
   const LinguisticGraph* g = anagraph->getGraph();
   if (ca.isPronoun(g, macroAccessor, L_PRON))
   {
@@ -1047,7 +1047,7 @@ int CoreferentAnnotation::getSlotValue(
   std::map<std::string,std::deque<std::string> >::const_iterator rel = relLocalDef.find("SubjectRelation");
   if (rel == relLocalDef.end())
   {
-    LERROR << "\"SubjectRelation\" not defined in s2-lp-xxx.xml"<< LENDL;
+    LERROR << "\"SubjectRelation\" not defined in s2-lp-xxx.xml";
   }
   else if (isFunctionMasterOf(sd,(*rel).second, language))
   {
@@ -1057,7 +1057,7 @@ int CoreferentAnnotation::getSlotValue(
   rel = relLocalDef.find("AgentRelation");
   if (rel == relLocalDef.end())
   {
-    LERROR << "\"AgentRelation\" not defined in s2-lp-xxx.xml"<< LENDL;
+    LERROR << "\"AgentRelation\" not defined in s2-lp-xxx.xml";
   } 
   else if(isFunctionMasterOf(sd,(*rel).second,language))
   {
@@ -1066,7 +1066,7 @@ int CoreferentAnnotation::getSlotValue(
   rel = relLocalDef.find("CODRelation");
   if (rel == relLocalDef.end())
   {
-    LERROR << "\"CODRelation\" not defined in s2-lp-xxx.xml"<< LENDL;
+    LERROR << "\"CODRelation\" not defined in s2-lp-xxx.xml";
   } 
   else if (isFunctionMasterOf(sd,(*rel).second,language)) 
     return (*slotValues.find("CODRelation")).second;
@@ -1074,7 +1074,7 @@ int CoreferentAnnotation::getSlotValue(
   rel = relLocalDef.find("COIRelation");
   if (rel == relLocalDef.end())
   {
-    LERROR << "\"COIRelation\" not defined in s2-lp-xxx.xml"<< LENDL;
+    LERROR << "\"COIRelation\" not defined in s2-lp-xxx.xml";
   } 
   else if (isFunctionMasterOf(sd,(*rel).second,language)) 
     return (*slotValues.find("COIRelation")).second;
@@ -1082,7 +1082,7 @@ int CoreferentAnnotation::getSlotValue(
   rel = relLocalDef.find("AdjunctRelation");
   if (rel == relLocalDef.end())
   {
-    LERROR << "\"AdjunctRelation\" not defined in s2-lp-xxx.xml"<< LENDL;
+    LERROR << "\"AdjunctRelation\" not defined in s2-lp-xxx.xml";
   } 
   else if (isFunctionMasterOf(sd,(*rel).second,language)) 
     return (*slotValues.find("AdjunctRelation")).second;

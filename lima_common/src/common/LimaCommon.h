@@ -157,7 +157,7 @@ logger.setLoggingLevel( QsLogging::Categories::instance().levelFor( X ) );
 //logger.addDestination(debugDestination.get());
 
 
-#define LENDL ""
+#define LENDL ". Note: LENDL is deprecated. It will be removed from a future release."
 
 #define ABSTRACTFACTORYPATTERNLOGINIT LOGINIT("Common::AbstractFactoryPattern")
 #define ABSTRACTPROCESSINGCLIENTLOGINIT LOGINIT("Common::AbstractProcessingClient")

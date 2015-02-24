@@ -996,13 +996,13 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
           LDEBUG << "ConstituantAndRelationExtractor:: compound tense input relation = " << cpdTenseInRel->type;
           if (cpdTenseInRel->type == "SujInv" || cpdTenseInRel->type == "SUJ_V" || cpdTenseInRel->type == "Neg" || cpdTenseInRel->type == "PronSujVerbe")
           {
-            LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseInRel->srcVertex << "-> " << cpdTenseInRel->tgtVertex << ") to (" << cpdTenseInRel->srcVertex << "->" << auxForme->forme << ")"<<LENDL;
+            LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseInRel->srcVertex << "-> " << cpdTenseInRel->tgtVertex << ") to (" << cpdTenseInRel->srcVertex << "->" << auxForme->forme << ")";
             cpdTenseInRel->tgtVertex = m_formeIdsToVertex[auxForme->id];
             auxForme->m_inRelations.push_back(cpdTenseInRel);
           }
           else // at least COD_V and CPL_V
           {
-            LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseInRel->srcVertex << "-> " << cpdTenseInRel->tgtVertex << ") to (" << cpdTenseInRel->srcVertex << "->" << pastpartForme->forme << ")"<<LENDL;
+            LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseInRel->srcVertex << "-> " << cpdTenseInRel->tgtVertex << ") to (" << cpdTenseInRel->srcVertex << "->" << pastpartForme->forme << ")";
             cpdTenseInRel->tgtVertex = m_formeIdsToVertex[pastpartForme->id];
             pastpartForme->m_inRelations.push_back(cpdTenseInRel);
             // dans ce cas attention �  ne pas suivre dans la construction des groupes, mais �  suivre AuxCplPrev
@@ -1034,7 +1034,7 @@ void ConstituantAndRelationExtractor::splitCompoundTenses()
         {
           Relation* cpdTenseOutRel = *cpdTenseOutRelsIt;
           LDEBUG << "ConstituantAndRelationExtractor:: compound tense output relation = " << cpdTenseOutRel->type;
-          LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseOutRel->srcVertex << "-> " << cpdTenseOutRel->tgtVertex << ") to (" << pastpartForme->forme << "->" << cpdTenseOutRel->tgtVertex << ")"<<LENDL;
+          LDEBUG << "ConstituantAndRelationExtractor:: change it from (" << cpdTenseOutRel->srcVertex << "-> " << cpdTenseOutRel->tgtVertex << ") to (" << pastpartForme->forme << "->" << cpdTenseOutRel->tgtVertex << ")";
           cpdTenseOutRel->srcVertex = m_formeIdsToVertex[pastpartForme->id];
           pastpartForme->m_outRelations.push_back(cpdTenseOutRel);
         }
