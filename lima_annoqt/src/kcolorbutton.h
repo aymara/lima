@@ -22,7 +22,7 @@
 
 #include <kdeui_export.h>
 
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 
 class KColorButtonPrivate;
 /**

@@ -24,7 +24,7 @@ set (lima-common-misc_MOC_HEADERS
     LimaFileSystemWatcher_p.h
     LimaMainTaskRunner.h)
 
-qt4_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
+qt5_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
 
 SET(lima-common-misc_LIB_SRCS 
     LimaFileSystemWatcher.cpp

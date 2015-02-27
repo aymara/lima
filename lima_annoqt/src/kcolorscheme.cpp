@@ -27,7 +27,7 @@
 
 #include <QtGui/QColor>
 #include <QtGui/QBrush>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 //BEGIN StateEffects
 class StateEffects {

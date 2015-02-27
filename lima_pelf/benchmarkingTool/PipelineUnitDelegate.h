@@ -20,7 +20,7 @@
 #define LIMA_PELF_PIPELINEUNITDELEGATE_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QItemDelegate>
+#include <QtWidgets/QItemDelegate>
 #include <QtGui/QPainter>
 
 #include "Pipeline.h"

@@ -70,10 +70,11 @@ IF(SVMTOOL++_FOUND)
   link_directories($ENV{LIMA_EXTERNALS}/lib)
 ENDIF(SVMTOOL++_FOUND)
 
-find_package(Qt4 REQUIRED QtCore QtXml QtXmlPatterns QtGui)
-include(${QT_USE_FILE})
-include_directories(${Qt4_INCLUDE_DIR})
-link_directories(${Qt4_LIBRARY_DIRS})
+include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+addQt5Modules(Core Xml XmlPatterns Gui Widgets)
+
+include_directories(${Qt5_INCLUDES})
+set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 # Find required packages
 include(FindQwt.cmake)

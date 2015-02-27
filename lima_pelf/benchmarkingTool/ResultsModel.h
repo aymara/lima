@@ -22,7 +22,7 @@
 #include <QtCore/QtDebug>
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QDateTime>
-#include <QtGui/QTableView>
+#include <QtWidgets/QTableView>
 #include <QtGui/QColor>
 
 #include "Pipeline.h"

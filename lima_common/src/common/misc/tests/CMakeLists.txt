@@ -14,7 +14,7 @@ add_test(StringsPoolTest0 StringsPoolTest0)
 
 ########### next test ###############
 set (LimaFileSystemWatcherTest0_MOC_HEADERS LimaFileSystemWatcherTest.h)
-qt4_wrap_cpp (LimaFileSystemWatcherTest0_MOC_OUTFILES ${LimaFileSystemWatcherTest0_MOC_HEADERS})
+qt5_wrap_cpp (LimaFileSystemWatcherTest0_MOC_OUTFILES ${LimaFileSystemWatcherTest0_MOC_HEADERS})
 
 
 SET(LimaFileSystemWatcherTest0_SRCS 

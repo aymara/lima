@@ -85,16 +85,18 @@ set(CMAKE_MODULE_PATH
 
 # find_path and find_library will search in these dirs too
 set(CMAKE_PREFIX_PATH
+    "${CMAKE_PREFIX_PATH}"
     "${CMAKE_INSTALL_PREFIX}"
     "$ENV{LIMA_EXTERNALS}"
 )
 
 add_definitions(-D QT_NO_KEYWORDS)
 
-find_package(Qt4 4.7 REQUIRED QtCore QtXml QtTest)
-include(${QT_USE_FILE})
-include_directories(${Qt4_INCLUDE_DIR})
-link_directories(${Qt4_LIBRARY_DIRS})
+include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+addQt5Modules(Core Xml Test)
+
+include_directories(${Qt5_INCLUDES})
+set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 
 #add_definitions( -DBOOST_ALL_NO_LIB )

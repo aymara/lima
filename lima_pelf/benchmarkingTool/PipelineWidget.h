@@ -20,10 +20,10 @@
 #define LIMA_PELF_PIPELINEWIDGET_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QListView>
+#include <QtWidgets/QListView>
 #include <QtGui/QDropEvent>
-#include <QtGui/QMessageBox>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QMenu>
 
 #include "Pipeline.h"
 #include "PipelineEditFileDlg.h"
