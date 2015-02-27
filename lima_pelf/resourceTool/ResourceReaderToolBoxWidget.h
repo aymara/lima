@@ -20,7 +20,7 @@
 #define LIMA_PELF_RESOURCEREADERTOOLBOXWIDGET_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QToolBox>
+#include <QtWidgets/QToolBox>
 
 #include "ResourceReaderSimpleWidget.h"
 #include "ResourceReaderToolBoxModel.h"

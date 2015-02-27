@@ -25,15 +25,15 @@
 #ifndef KCOLORDIALOG_H
 #define KCOLORDIALOG_H
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QtGui/QPixmap>
-#include <QtGui/QSpinBox>
-#include <QtGui/QLabel>
-#include <QtGui/QRadioButton>
-#include <QtGui/QScrollArea>
-#include <QtGui/QTableWidget>
-#include <QtGui/QComboBox>
-#include <QtGui/QListWidget>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QListWidget>
 #include "kcolorchoosermode.h"
 
 #include "khuesaturationselect.h"

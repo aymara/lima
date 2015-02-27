@@ -21,8 +21,8 @@
 
 #include <QtCore/QtDebug>
 #include <QtCore/QFileInfo>
-#include <QtGui/QTableView>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QHeaderView>
 
 #include "ResourceReaderSimpleWidget.h"
 #include "ResourceEditorTableModel.h"

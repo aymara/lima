@@ -21,7 +21,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QMap>
-#include <QtXml/QXmlStreamReader>
+#include <QtCore/QXmlStreamReader>
 
 namespace Lima {
 namespace Pelf {

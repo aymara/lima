@@ -20,8 +20,8 @@
 #define LIMA_PELF_RESULTSWIDGET_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QTableView>
-#include <QtGui/QMenu>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QMenu>
 #include <QtGui/QContextMenuEvent>
 
 #include "Pipeline.h"

@@ -33,9 +33,9 @@ SET(pelf-bt_RCCS pelf-bt-resources.qrc)
 
 
 # Wrap Qt UIs
-qt4_wrap_ui(pelf-bench_UIS_H ${pelf-bench_UIS})
-qt4_automoc(${pelf-bench_SRCS})
-qt4_add_resources(pelf-bt_RCC_SRCS ${pelf-bt_RCCS})
+qt5_wrap_ui(pelf-bench_UIS_H ${pelf-bench_UIS})
+qt5_automoc(${pelf-bench_SRCS})
+qt5_add_resources(pelf-bt_RCC_SRCS ${pelf-bt_RCCS})
 # Compile, link and install main exec
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})

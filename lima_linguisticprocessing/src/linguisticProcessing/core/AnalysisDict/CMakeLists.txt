@@ -25,7 +25,7 @@ set (lima-lp-analysisdict_MOC_HEADERS
   FsaAccessResource.h
 )
 
-qt4_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})
+qt5_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})
 
 SET(lima-lp-analysisdict_LIB_SRCS
    AnalysisDictionaryIterators.cpp 
