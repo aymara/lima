@@ -57,6 +57,17 @@
         <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
+    <group name="limaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="specificEntitiesXmlLoggerForLimaserver"/>
+      </list>
+    </group>
     <group name="query" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -425,6 +436,12 @@
     </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".toks.xml"/>
+    </group>
+    <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="compactFormat" value="yes"/>
+      <param key="handler" value="se"/>
     </group>
     <group name="fullTokenXmlLoggerHyphen" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".hyph.xml"/>
