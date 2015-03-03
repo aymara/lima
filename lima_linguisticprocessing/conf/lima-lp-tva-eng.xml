@@ -177,9 +177,9 @@
     </group>
     <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
       <list name="actions">
-         <item value="r2lHomoSyntagmaticRelationRules"/>
-         <item value="l2rHomoSyntagmaticRelationRules"/>
-         <item value="l2rPleonasticPronouns"/>
+         <item value="pass1HomoSyntagmaticRelationRules"/>
+         <item value="pass2HomoSyntagmaticRelationRules"/>
+         <item value="pleonasticPronouns"/>
       </list>
       <param key="disambiguated" value="true"/>
     </group>
@@ -310,14 +310,14 @@
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.bin"/>
     </group>
-    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-eng-homodeps.txt.bin"/>
+    <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass1.txt.bin"/>
     </group>
-    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-r2l-eng-homodeps.txt.bin"/>
+    <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass2.txt.bin"/>
     </group>
-    <group name="l2rPleonasticPronouns" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-eng-pleonasticPronouns.txt.bin"/>
+    <group name="pleonasticPronouns" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-pleonasticPronouns.txt.bin"/>
     </group>
   </module>
 </modulesConfig>
