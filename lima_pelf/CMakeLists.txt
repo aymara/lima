@@ -71,6 +71,8 @@ IF(SVMTOOL++_FOUND)
 ENDIF(SVMTOOL++_FOUND)
 
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 addQt5Modules(Core Xml XmlPatterns Gui Widgets)
 
 include_directories(${Qt5_INCLUDES})
