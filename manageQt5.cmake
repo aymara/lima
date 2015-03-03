@@ -16,7 +16,10 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
    
 # It is necessary to define Qt5_INSTALL_DIR in your environment.
-set(CMAKE_PREFIX_PATH  $ENV{Qt5_INSTALL_DIR})
+set(CMAKE_PREFIX_PATH  
+  "$ENV{Qt5_INSTALL_DIR}"
+  "${CMAKE_PREFIX_PATH}" 
+)
 
 # Add definitions and flags
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
@@ -39,7 +42,7 @@ macro(addQt5Modules )
       message("Adding module ${_module}")
       set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5${_module}_INCLUDE_DIRS} )
       set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5${_module}_LIBRARIES} )
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5${_module}_EXECUTABLE_COMPILE_FLAGS}")
+      #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5${_module}_EXECUTABLE_COMPILE_FLAGS}")
     endforeach()
   endif()
 endmacro()
