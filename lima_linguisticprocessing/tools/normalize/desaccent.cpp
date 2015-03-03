@@ -205,6 +205,7 @@ int run(int argc,char** argv)
       }
     }
   }
+  return 0;
 }
 
 void usage(int, char *argv[])
