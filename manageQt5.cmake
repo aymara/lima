@@ -35,6 +35,8 @@ macro(addQt5Modules )
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "" )
     #Use find_package to get includes and libraries directories
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+    set(CMAKE_AUTOMOC ON)
     find_package(Qt5 REQUIRED ${_MODULES})
 
     #Add Qt5 include and libraries paths to the sets
