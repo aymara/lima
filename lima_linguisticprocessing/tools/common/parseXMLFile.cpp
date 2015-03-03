@@ -136,10 +136,10 @@ int run(int argc,char** argv)
   
   if (! param.param.empty()) {
       try {
-    cout << parser.getModuleGroupParamValue(param.module,param.group,param.param) << endl;
+        cout << parser.getModuleGroupParamValue(param.module,param.group,param.param) << endl;
       }  
       catch (NoSuchParam& e) {
-    cout << e.what() << endl;
+        cout << e.what() << endl;
       }
   }
   else if (! param.group.empty()) {
@@ -147,7 +147,7 @@ int run(int argc,char** argv)
 //     cout << parser.getModuleGroupConfiguration(param.module,param.group) << endl;
       }
       catch (NoSuchGroup& e) {
-    cout << e.what() << endl;
+        cout << e.what() << endl;
       }
   }
   else if (! param.module.empty()) {
@@ -155,12 +155,13 @@ int run(int argc,char** argv)
 //     cout << parser.getModuleConfiguration(param.module) << endl;
       }
       catch (NoSuchModule & e) {
-    cout << e.what() << endl;
+        cout << e.what() << endl;
       }
   }
   else {
       cout << parser << endl;
   }
+  return 0;
 }
 
 void usage(int argc, char *argv[])
