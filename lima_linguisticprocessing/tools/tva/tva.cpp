@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &LimaMainTaskRunner::finished, &a, &QCoreApplication::exit);
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
@@ -195,14 +195,17 @@ int run(int argc,char** argv)
     catch (Lima::LimaException& e)
     {
       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught LimaException : " << std::endl << e.what() << std::endl;
+        return 1;
     }
     catch (std::logic_error& e)
     {
       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught logic_error : " << std::endl << e.what() << std::endl;
+        return 1;
     }
     catch (std::runtime_error& e)
     {
       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught runtime_error : " << std::endl << e.what() << std::endl;
+        return 1;
     }
 
     TestCasesHandler::TestReport resTotal;
