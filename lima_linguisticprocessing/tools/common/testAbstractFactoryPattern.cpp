@@ -68,6 +68,8 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
+  LIMA_UNUSED(argc);
+  LIMA_UNUSED(argv);
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
