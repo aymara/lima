@@ -191,9 +191,17 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
       param.outputFile=s.substr(2,s.length()-2);
       if (param.outputFile == "")
       {
-        std::cerr << "no output filename given" << endl;
-        cerr << USAGE << endl;
-        exit(1);
+        i++;
+        if (i >= argc)
+        {
+          std::cerr << "no output filename given" << endl;
+          cerr << USAGE << endl;
+          exit(1);
+        }
+        else
+        {
+          param.outputFile = argv[i];
+        }
       }
     }
     else if (s.find("--output=",0)==0)
