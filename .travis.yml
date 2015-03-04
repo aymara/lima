@@ -5,7 +5,7 @@ env: NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIM
   PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib
 install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libboost1.48-all-dev  libenchant-dev python-nltk gawk
+  - sudo apt-get install -y libboost1.48-all-dev  libenchant-dev python-nltk gawk qtbase5-dev
   - sudo sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
   - python -m nltk.downloader -d nltk_data dependency_treebank
   - cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
