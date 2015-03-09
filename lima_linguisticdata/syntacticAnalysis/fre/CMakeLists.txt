@@ -22,19 +22,18 @@ ADD_SA_RULES_DEPENDS(fre
 )
 
 set(FRE_RULES_FILES
-  rules-l2r-fre-homodeps.txt
   rules-fre-heterodeps.txt
-  rules-l2r-fre-homodeps.txt
-  rules-r2l-fre-homodeps.txt
-  rules-r2l-pass1-fre-homodeps.txt
-  rules-l2r-fre-pleonasticPronouns.txt
+  rules-fre-homodeps-pass1.txt
+  rules-fre-homodeps-pass2.txt
+  rules-fre-homodeps-pass0.txt
+  rules-fre-pleonasticPronouns.txt
   rules-fre-heterodeps.txt
   rules-fre-heterodeps-specializer.txt
   simplification-first-rules-fre.txt
   simplification-quotes-rules-fre.txt
   simplification-last-rules-fre.txt
   simplification-rules-fre.txt
-  rules-l2r-fre-dummy.txt
+  rules-fre-dummy.txt
   rules-compoundTense.txt
   rules-fre-coord.txt 
 )

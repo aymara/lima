@@ -405,10 +405,10 @@
     </group>
     <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
       <list name="actions">
-          <item value="r2l-pass1HomoSyntagmaticRelationRules"/>
-          <item value="l2rHomoSyntagmaticRelationRules"/>
-          <item value="r2lHomoSyntagmaticRelationRules"/>
-          <item value="l2rPleonasticPronouns"/>
+          <item value="pass0HomoSyntagmaticRelationRules"/>
+          <item value="pass1HomoSyntagmaticRelationRules"/>
+          <item value="pass2HomoSyntagmaticRelationRules"/>
+          <item value="pleonasticPronouns"/>
           <item value="compoundTensesRules"/>
       </list>
       <param key="applySameRuleWhileSuccess" value="true"/>
@@ -922,16 +922,16 @@
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-fre.bin"/>
     </group>
-    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-fre-homodeps.txt.bin"/>
+    <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass1.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-r2l-fre-homodeps.txt.bin"/>
+    <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass2.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="r2l-pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-r2l-pass1-fre-homodeps.txt.bin"/>
+    <group name="pass0HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass0.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
     <group name="l2rPleonasticPronouns" class="AutomatonRecognizer">
