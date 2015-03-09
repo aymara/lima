@@ -22,10 +22,10 @@ ADD_SA_RULES_DEPENDS(eng
 
 
 set(ENG_RULES_FILES
-  rules-l2r-eng-homodeps.txt
-  rules-r2l-eng-homodeps.txt
-  rules-l2r-eng-pleonasticPronouns.txt
+  rules-eng-homodeps-pass1.txt
+  rules-eng-homodeps-pass2.txt
+  rules-eng-pleonasticPronouns.txt
   rules-eng-heterodeps.txt
-  rules-l2r-eng-dummy.txt
+  rules-eng-dummy.txt
 )
 COMPILE_SA_RULES_WRAPPER (eng ${ENG_RULES_FILES})

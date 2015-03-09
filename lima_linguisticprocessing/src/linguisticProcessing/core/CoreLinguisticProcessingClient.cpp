@@ -38,8 +38,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
-#include "common/misc/gregoriannowarn.hpp"
-// #include "boost/date_time/posix_time/ptime.hpp"
+#include <QtCore/QDate>
 
 using namespace std;
 using namespace Lima::Common::MediaticData;
@@ -230,7 +229,7 @@ void CoreLinguisticProcessingClientFactory::configure(
 {
   Lima::TimeUtilsController timer("LPCoreClientInit");
   LPCLIENTFACTORYLOGINIT;
-  LINFO << "initialize CoreLinguisticProcessingClientFactory";
+  LINFO << "CoreLinguisticProcessingClientFactory::configure";
   
   // initialize some entity types internally used in linguistic processing
   Common::MediaticData::MediaticData::changeable().initEntityTypes(configuration);
@@ -257,7 +256,7 @@ void CoreLinguisticProcessingClientFactory::configure(
        langItr!=langToload.end();
        langItr++)
   {
-    LINFO << "load language " << *langItr;
+    LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
     MediaId langid=MediaticData::single().getMediaId(*langItr);
     string file;
     try

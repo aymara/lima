@@ -46,7 +46,7 @@ m_out(0)
   m_buffer=new HandlerStreamBuf(m_handler);
   m_out=new ostream(m_buffer);
   // start communication with handler
-//  LDEBUG << "DumperStream constructor: start analysis (handler=" << m_handler << ")"<< LENDL;
+//  LDEBUG << "DumperStream constructor: start analysis (handler=" << m_handler << ")";
   m_handler->startAnalysis();
 }
 

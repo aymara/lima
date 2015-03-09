@@ -470,7 +470,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       }
       else {
         LDEBUG << "vertex " << v << "[" << str << "]:rule " 
-               << currentRule->getRuleId() << "-> success=0"<< LENDL;
+               << currentRule->getRuleId() << "-> success=0";
       }
     }
 

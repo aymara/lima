@@ -28,9 +28,6 @@
 #include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
 
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
-
 namespace Lima
 {
 

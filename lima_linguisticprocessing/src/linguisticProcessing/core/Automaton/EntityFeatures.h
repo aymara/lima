@@ -37,7 +37,6 @@
 #include "AutomatonExport.h"
 #include "common/Data/LimaString.h"
 #include "boost/any.hpp"
-#include "common/misc/gregoriannowarn.hpp"
 
 #include <vector>
 #include <iostream>

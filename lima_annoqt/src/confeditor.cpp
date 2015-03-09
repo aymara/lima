@@ -21,7 +21,7 @@
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
-#include <QtGui>
+#include <QtWidgets>
 #include "confeditor.h"
 #include "annotationConfigurationHandler.h"
 #include "kcolorvalueselector.h"

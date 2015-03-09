@@ -7,8 +7,6 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
 #include "common/time/traceUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
@@ -115,12 +113,12 @@ LimaDBusServer::LimaDBusServer( const std::string& configDir,
      : QObject(parent), m_d(new LimaDBusServerPrivate(configDir,langs,pipelines,this))
 {
   CORECLIENTLOGINIT;
-  LDEBUG << "LimaDBusServer::LimaDBusServer()";
+  LDEBUG << "LimaDBusServer::LimaDBusServer()" << serviceLife;
 
   if (serviceLife > 0)
   {
     // Stop server and app after service-life seconds
-    connect (&m_d->m_timer, SIGNAL(timeout()), this, SLOT(quit()));
+    connect (&m_d->m_timer, SIGNAL(timeout()), QCoreApplication::instance(), SLOT(quit()));
     m_d->m_timer.start(serviceLife);
   }
 

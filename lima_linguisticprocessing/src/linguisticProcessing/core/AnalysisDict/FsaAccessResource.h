@@ -26,6 +26,8 @@
 #include "AnalysisDictExport.h"
 #include "AbstractAccessResource.h"
 
+#include <QReadWriteLock>
+
 namespace Lima {
 
 namespace Common {
@@ -43,8 +45,9 @@ namespace AnalysisDict {
 */
 class LIMA_ANALYSISDICT_EXPORT FsaAccessResource : public AbstractAccessResource
 {
+  Q_OBJECT
 public:
-    FsaAccessResource();
+    FsaAccessResource(QObject* parent = 0);
 
     virtual ~FsaAccessResource();
 
@@ -54,9 +57,16 @@ public:
     
     virtual Common::AbstractAccessByString* getAccessByString() const;
     
+private Q_SLOTS:
+  void accessFileChanged ( const QString & path );
+
+
 protected:
   Common::AbstractAccessByString* m_fsaAccess;
-    
+
+private:
+  // A read/write locker to prevent accessing m_dicoData during its loading
+  QReadWriteLock m_lock;
 };
 
 }

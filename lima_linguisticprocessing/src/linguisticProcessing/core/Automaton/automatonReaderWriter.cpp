@@ -71,7 +71,7 @@ void writeTypeTransition(std::ofstream& file, const TypeTransition t) {
 }
 
 
-#define RECOGNIZER_VERSION "1.9"
+#define RECOGNIZER_VERSION "1.10"
 #define RECOGNIZER_DEBUG_VERSION ".debug"
 
 //----------------------------------------------------------------------
@@ -228,8 +228,8 @@ readRule(std::ifstream& file,MediaId language)
   readAutomaton(file,rule->m_right,language);
 
   // read type of expression
-  EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readOneByteInt(file));
-  EntityTypeId typeId=static_cast<EntityTypeId>(Misc::readOneByteInt(file));
+  EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
+  EntityTypeId typeId=static_cast<EntityTypeId>(Misc::readCodedInt(file));
   // use EntityType mapping
   rule->setType(m_entityTypeMapping[EntityType(typeId,groupId)]);
   uint64_t lingProp = 0;
@@ -435,8 +435,8 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     break; 
   }
   case T_ENTITY: {
-    EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readOneByteInt(file));
-    EntityTypeId typeId=static_cast<EntityTypeId>(Misc::readOneByteInt(file));
+    EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
+    EntityTypeId typeId=static_cast<EntityTypeId>(Misc::readCodedInt(file));
     // use entity type mapping
     t=new EntityTransition(m_entityTypeMapping[EntityType(typeId,groupId)]);
     break; 
@@ -561,7 +561,7 @@ writeRule(std::ofstream& file,
   // write id if debug
   if (m_debug) {
     //LOGINIT("LP::Automaton");
-    //LDEBUG<< "write rule id '"<< rule.m_ruleId<< "'"<< LENDL;
+    //LDEBUG<< "write rule id '"<< rule.m_ruleId<< "'";
     Misc::writeStringField(file,rule.m_ruleId);
   }
 
@@ -570,8 +570,8 @@ writeRule(std::ofstream& file,
   writeAutomaton(file,rule.m_right,language);
 
   // write type of expression
-  Misc::writeOneByteInt(file,rule.getType().getGroupId());
-  Misc::writeOneByteInt(file,rule.getType().getTypeId());
+  Misc::writeCodedInt(file,rule.getType().getGroupId());
+  Misc::writeCodedInt(file,rule.getType().getTypeId());
 
   uint64_t lingProp=rule.getLinguisticProperties();
   file.write((char *) &lingProp,sizeof(uint64_t));
@@ -728,8 +728,8 @@ writeTransitionUnit(std::ofstream& file,
   case T_ENTITY: {
     EntityTransition* t=static_cast<EntityTransition*>(transition);
     EntityType entityType=t->entityType();
-    Misc::writeOneByteInt(file,entityType.getGroupId());
-    Misc::writeOneByteInt(file,entityType.getTypeId());
+    Misc::writeCodedInt(file,entityType.getGroupId());
+    Misc::writeCodedInt(file,entityType.getTypeId());
     break;
   }
   case T_EPSILON: 

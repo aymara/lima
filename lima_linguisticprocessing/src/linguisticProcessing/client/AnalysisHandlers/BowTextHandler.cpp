@@ -67,7 +67,6 @@ void BowTextHandler::endAnalysis()
   set_LastContentId(get_LastContentId()+1);
   CONTENT_ID contentId=get_LastContentId();
   ContentHandler< BoWText >::addContent(contentId,m_bowtext);
-  Structure structure(1);
   // TODO: replace BOW_TEXT_NAME2 with some consistent value
   std::string BOW_TEXT_NAME2("BOW_TEXT_NAME2");
   Node node(BOW_TEXT_NAME2,1,1,contentId,2, "" , "text" , "bow" , "bow" , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 );
@@ -82,12 +81,15 @@ void BowTextHandler::startAnalysis()
     delete m_bowstream;
     m_bowstream=0;
   }
-  if (m_writer!=0) {
-    delete m_writer;
-    m_writer=0;
+  //if (m_writer!=0) {
+  //  delete m_writer;
+  //  m_writer=0;
+  //}
+  if (m_writer == 0){
+    m_writer=new BowTextWriter();
   }
   m_bowstream=new std::ostringstream();
-  m_writer=new BowTextWriter();
+  //m_writer=new BowTextWriter();
   m_writer->setOut(m_bowstream);
   m_writer->startAnalysis();
 //    set_LastStructureId(1);

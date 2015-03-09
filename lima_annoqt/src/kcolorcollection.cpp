@@ -22,7 +22,7 @@
 #include "kcolorcollection.h"
 
 #include <QtCore/QFile>
-#include <QtCore/QTextIStream>
+#include <QtCore/QTextStream>
 // #include <kstandarddirs.h>
 // #include <kglobal.h>
 // #include <ksavefile.h>

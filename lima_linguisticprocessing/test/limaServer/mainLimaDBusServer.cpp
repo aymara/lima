@@ -44,12 +44,10 @@ namespace po = boost::program_options;
 int main(int argc, char **argv)
 {
   QCoreApplication app(argc, argv);
-//#ifdef WIN32
+
+  QsLogging::initQsLog();
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
-  std::cerr << "Amose plugins initialized" << std::endl;
-//#endif
-  QsLogging::initQsLog();
 
   std::string configDir;
   std::string limaServerConfigFile;

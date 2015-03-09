@@ -51,10 +51,37 @@ Param;
 
 void displayEntry(EnhancedAnalysisDictionary& data,StringsPoolIndex index);
 
-int main(int argc, char *argv[])
+#include "common/misc/LimaMainTaskRunner.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QTimer>
+
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
   QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
   
   for (int i = 1 ; i < argc; i++)
   {
@@ -66,8 +93,7 @@ int main(int argc, char *argv[])
     }
   }
   
-  EnhancedAnalysisDictionary dico;
-  dico.loadDataFile(argv[1]);
+  EnhancedAnalysisDictionary dico(QString::fromUtf8(argv[1]));
   cout << dico.getSize() << " entries in data" << endl;
   if (argc == 2) {
     for (uint64_t i=0;i<dico.getSize();i++)
@@ -77,7 +103,7 @@ int main(int argc, char *argv[])
   } else {
     displayEntry(dico,StringsPoolIndex(atoi(argv[2])));
   }
-  
+  return 0;
 }
 
 void displayEntry(EnhancedAnalysisDictionary& dico,StringsPoolIndex index)

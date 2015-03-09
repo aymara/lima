@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
+#include "common/misc/LimaMainTaskRunner.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/Data/strwstrtools.h"
@@ -47,6 +48,9 @@
 #include <fstream>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QTimer>
+
+#include "common/time/timeUtilsController.h"
 
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
@@ -61,9 +65,31 @@ int dowork(int argc,char* argv[]);
 multimap<LimaString,string> extractNormalization(const LimaString& source,const BoWText& bowText,MediaId lang);
 pair<int,int> getStartEnd(const BoWToken* tok);
 
-int main(int argc,char* argv[])
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
+  QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   
@@ -87,10 +113,12 @@ int main(int argc,char* argv[])
     catch (const std::exception& e)
     {
       std::cerr << "Catched an exception: " << e.what() << std::endl;
+      return 1;
     }
     catch (...)
     {
       std::cerr << "Catched an unknown exception " << std::endl;
+      return 1;
     }
   }
   else
@@ -220,9 +248,13 @@ int dowork(int argc,char* argv[])
 
         // analyze it
         metaData["FileName"]=*fileItr;
-
+	
+	Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
         client->analyze(contentText,metaData,pipeline,handlers);
-
+	delete timer;
+	
+	
+	
         // analyze resulting bowText to extract normalization
         multimap<LimaString,string> norms=extractNormalization(contentText,bowTextHandler.getBowText(),lang);
         if (norms.empty())

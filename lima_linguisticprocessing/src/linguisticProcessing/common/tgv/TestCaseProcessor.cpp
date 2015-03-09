@@ -91,7 +91,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
     /* Load XML document */
     QXmlQuery theDocument;
     if (!theDocument.setFocus(&sourceDocument)) {
-      LERROR << "Error: Unable to parse file " << traceFile << LENDL;
+      LERROR << "Error: Unable to parse file " << traceFile;
       return TestCaseError(testCase, TestCaseError::TestCaseFailed,"No output file to evaluate !", pipeName, *tuItr);
     }
 
@@ -249,7 +249,7 @@ QStringList TestCaseProcessor::evaluateExpression(
     document.setQuery(xpath);
     QString sresults;
     if(!document.evaluateTo(&results)) {
-      LERROR << "TestCaseProcessor::evaluateExpression unable to evaluate xpath expression \""<<xpath<<LENDL;
+      LERROR << "TestCaseProcessor::evaluateExpression unable to evaluate xpath expression \""<<xpath;
       return results;
     }
     LDEBUG << "TestCaseProcessor::evaluateExpression evaluates to " << results;

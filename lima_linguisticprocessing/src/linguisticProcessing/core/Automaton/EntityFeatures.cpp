@@ -28,8 +28,9 @@
 
 #include "EntityFeatures.h"
 #include "common/Data/strwstrtools.h"
-#include "common/misc/gregoriannowarn.hpp"
-#include "common/misc/posix_timenowarn.hpp"
+
+#include <QtCore/QDate>
+#include <QtCore/QTime>
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 

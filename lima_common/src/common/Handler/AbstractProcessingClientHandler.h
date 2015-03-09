@@ -67,7 +67,7 @@ class AbstractProcessingClientHandler
                          const std::set<std::string>& inactiveUnits = std::set<std::string>())
 	{
     ABSTRACTPROCESSINGCLIENTLOGINIT;
-    LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName) <<" class: "<<typeid(*getAnalysisClient(tagName)).name()<< LENDL;
+    LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName) <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
 	  getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits);
 	}
 

@@ -170,7 +170,9 @@ public:
     //! @return a content node
     Node* getNode ( CONTENT_ID ContentId );
     Node* getFirstNode ( STRUCT_ID StructureId );
-    
+    const Node* getNode ( CONTENT_ID ContentId ) const;
+    const Node* getFirstNode ( STRUCT_ID StructureId ) const;
+
     //! @brief get all nodes of the current structure
     //! @return the set of all nodes of the current structure
     const std::map<CONTENT_ID,Node>* getNodes() const;

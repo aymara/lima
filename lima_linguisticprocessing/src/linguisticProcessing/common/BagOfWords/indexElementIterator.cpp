@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2015 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,12 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       indexElementIterator.cpp
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Feb  7 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
  ***********************************************************************/
 
 #include "bowNamedEntity.h"
@@ -36,6 +32,7 @@
 #include "defaultIdGenerator.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/EntityType.h"
+#include "common/MediaticData/mediaticData.h"
 #include <limits.h>
 #include <algorithm>
 
@@ -175,6 +172,8 @@ bool IndexElementIterator::isAtEnd() const
 // a complex token, no parts will be explored
 IndexElement IndexElementIterator::getElement()
 {
+  BOWLOGINIT;
+
   if (m_d->m_partQueue.empty())
   {
     if (m_d->m_iterator==m_d->m_iteratorEnd)
@@ -196,12 +195,14 @@ IndexElement IndexElementIterator::getElement()
                             token->getLemma(),
                             token->getCategory(),
                             token->getPosition(),
-                            token->getLength());
+                            token->getLength()
+                           );
       }
       case BOW_TERM:
       case BOW_NAMEDENTITY:
+        LDEBUG  << "IndexElementIterator::getElement BOW_NAMEDENTITY" /*<<   * (static_cast<BoWNamedEntity*>((*m_d->m_iterator)) ) << Lima::Common::MediaticData::MediaticData::single().getEntityName(static_cast<BoWNamedEntity*>((*m_d->m_iterator))->getNamedEntityType())*/;
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(static_cast<BoWToken*>((*m_d->m_iterator)),0);
+        m_d->storePartsInQueue(static_cast<BoWNamedEntity*>(*m_d->m_iterator),0);
         return m_d->m_partQueue.front();
       // FIXME Change the handling of predicates to take into account their complex structure nature
       case BOW_PREDICATE:
@@ -213,7 +214,9 @@ IndexElement IndexElementIterator::getElement()
                             predicate->getString(),
                             0,
                             predicate->getPosition(),
-                            predicate->getLength());
+                            predicate->getLength(),
+                            predicate->getPredicateType()
+                           );
       }
       case BOW_NOTYPE:
         ;

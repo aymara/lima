@@ -16,19 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/************************************************************************
- *
- * @file       DoubleAccessObjectToIdMap.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Mon Jan 22 2007
- * copyright   Copyright (C) 2007-2012 by CEA LIST
- * Project     common
- * 
- * @brief storage for double access: from object to id and from id to
- * object : id must be integer.
- * Objects and ids cannot be of the same type
- * 
- ***********************************************************************/
 
 #ifndef DOUBLEACCESSOBJECTTOIDMAP_H
 #define DOUBLEACCESSOBJECTTOIDMAP_H
@@ -51,6 +38,15 @@ class CompareObjectPtr {
   }
 };
 
+/**
+ *
+ * @brief storage for double access: from object to id and from id to
+ * object : id must be integer.
+ * Objects and ids cannot be of the same type
+ *
+ * @author     Romaric Besancon (romaric.besancon@cea.fr)
+ * @date       Mon Jan 22 2007
+ */
 template<typename Object, typename Id>
 class DoubleAccessObjectToIdMap
 {

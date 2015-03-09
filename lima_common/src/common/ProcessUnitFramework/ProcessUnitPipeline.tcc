@@ -38,7 +38,7 @@ void ProcessUnitPipeline<ProcessUnit>::init(
     typename ProcessUnit::Manager* manager)
 {
   PROCESSUNITFRAMEWORKLOGINIT;
-  LINFO << "init pipeline '" << this->getId().c_str() << "'" << LENDL;
+  LINFO << "init pipeline '" << this->getId().c_str() << "'";
   try
   {
     std::deque<std::string> sequence=unitConfiguration.getListsValueAtKey("processUnitSequence");
@@ -46,14 +46,14 @@ void ProcessUnitPipeline<ProcessUnit>::init(
          it!=sequence.end();
          it++)
     {
-      LINFO << "get processUnit '" << (*it).c_str() << "'" << LENDL;
+      LINFO << "get processUnit '" << (*it).c_str() << "'";
       const ProcessUnit* pu=manager->getObject(*it);
       m_processUnitSequence.push_back(pu);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& )
   {
-    LERROR << "No 'processUnitSequence' list defined in pipeline '" << this->getId().c_str() << "'" << LENDL;
+    LERROR << "No 'processUnitSequence' list defined in pipeline '" << this->getId().c_str() << "'";
     throw InvalidConfiguration();
   }
 }
@@ -64,7 +64,7 @@ void ProcessUnitPipeline<ProcessUnit>::push_back(
     typename ProcessUnit::Manager* manager)
 {
   PROCESSUNITFRAMEWORKLOGINIT;
-  LINFO << "push back unit '" << unitId.c_str() << "'" << LENDL;
+  LINFO << "push back unit '" << unitId.c_str() << "'";
   const ProcessUnit* pu=manager->getObject(unitId);
   m_processUnitSequence.push_back(pu);
 }
@@ -74,7 +74,7 @@ LimaStatusCode ProcessUnitPipeline<ProcessUnit>::process(
     AnalysisContent& analysis) const
 {
   PROCESSUNITFRAMEWORKLOGINIT;
-  LINFO << "process pipeline '" << this->getId().c_str() << "'" << LENDL;
+  LINFO << "process pipeline '" << this->getId().c_str() << "'";
   LimaStatusCode status=SUCCESS_ID;
 
   debugPrintInactiveUnits();
@@ -85,17 +85,17 @@ LimaStatusCode ProcessUnitPipeline<ProcessUnit>::process(
        (status==SUCCESS_ID) && (it!=m_processUnitSequence.end());
        it++)
   {
-    LINFO << "- process '" << (*it)->getId().c_str() << "'" << LENDL;
+    LINFO << "- process '" << (*it)->getId().c_str() << "'";
     if ( !hasInactiveProcessUnits
         || m_inactiveUnitsIds.find((*it)->getId()) == m_inactiveUnitsIds.end()
         || (dataInactiveProcessUnits != 0 && dataInactiveProcessUnits->find((*it)->getId()) != dataInactiveProcessUnits->end()) )
     {
-    LINFO << "    processing" << LENDL;
+    LINFO << "    processing";
       status=(*it)->process(analysis);
     }
-    LDEBUG << "return status " << status << LENDL;
+    LDEBUG << "return status " << status;
   }
-  LINFO << "processing of pipeline return status " << status << LENDL;
+  LINFO << "processing of pipeline return status " << status;
   return status;
 }
 
@@ -103,7 +103,7 @@ template <typename ProcessUnit>
 void ProcessUnitPipeline<ProcessUnit>::setActiveProcessUnit(const std::string& processUnitId)
 {
   PROCESSUNITFRAMEWORKLOGINIT;
-  LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::setActiveProcessUnit. See ProcessUnitPipeline.h" << LENDL;
+  LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::setActiveProcessUnit. See ProcessUnitPipeline.h";
   if (m_inactiveUnitsIds.find(processUnitId)!=m_inactiveUnitsIds.end())
   {
     m_inactiveUnitsIds.erase(m_inactiveUnitsIds.find(processUnitId));
@@ -114,7 +114,7 @@ template <typename ProcessUnit>
 void ProcessUnitPipeline<ProcessUnit>::setInactiveProcessUnit(const std::string& processUnitId)
 {
   PROCESSUNITFRAMEWORKLOGINIT;
-  LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::setActiveProcessUnit. See ProcessUnitPipeline.h" << LENDL;
+  LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::setInactiveProcessUnit. See ProcessUnitPipeline.h";
   m_inactiveUnitsIds.insert(processUnitId);
 }
 
@@ -122,8 +122,8 @@ template <typename ProcessUnit>
 void ProcessUnitPipeline<ProcessUnit>::debugPrintInactiveUnits() const
 {
   PROCESSUNITFRAMEWORKLOGINIT;
-  LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::setActiveProcessUnit. See ProcessUnitPipeline.h" << LENDL;
-  LDEBUG << "Inactive units are:" << LENDL;
+  LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::debugPrintInactiveUnits. See ProcessUnitPipeline.h";
+  LDEBUG << "Inactive units are:";
   
   std::set<std::string>::const_iterator it, it_end;
   it = m_inactiveUnitsIds.begin();
@@ -131,7 +131,7 @@ void ProcessUnitPipeline<ProcessUnit>::debugPrintInactiveUnits() const
 
   for (;it!=it_end;it++)
   {
-    LDEBUG << "  " << (*it).c_str() << LENDL;
+    LDEBUG << "  " << (*it).c_str();
   }
 
 }

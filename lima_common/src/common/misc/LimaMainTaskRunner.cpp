@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2014 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,26 +16,24 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef GREGORIANNOWARN_HPP
-#define GREGORIANNOWARN_HPP
 
-// #if defined __GNUC__
-// #pragma GCC system_header
-// #elif defined __SUNPRO_CC
-// #pragma disable_warn
-// #elif defined _MSC_VER
-// #pragma warning(push, 1)
-// #endif
-// 
-// #include <boost/date_time/gregorian/gregorian.hpp>
-// 
-// 
-// #if defined __SUNPRO_CC
-// #pragma enable_warn
-// #elif defined _MSC_VER
-// #pragma warning(pop)
-// #endif
+#include "LimaMainTaskRunner.h"
 
-#include <QtCore/QDate>
+namespace Lima {
 
-#endif // GREGORIANNOWARN_HPP
+
+LimaMainTaskRunner::LimaMainTaskRunner(int aargc,char** aargv,int (*afoo)(int, char**), QObject *parent) :
+    QObject(parent),
+    argc(aargc),
+    argv(aargv), foo(afoo)
+{
+//   qDebug() << "LimaMainTaskRunner::LimaMainTaskRunner" <<argc << *argv;
+}
+
+void LimaMainTaskRunner::run()
+{
+  int result = foo(argc, argv);
+  Q_EMIT finished(result);
+}
+
+}

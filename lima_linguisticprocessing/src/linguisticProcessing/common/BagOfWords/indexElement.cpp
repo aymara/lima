@@ -28,6 +28,7 @@
 #include "indexElement.h"
 #include "common/Data/strwstrtools.h"
 #include "common/Data/LimaString.h"
+#include "common/MediaticData/mediaticData.h"
 
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::BagOfWords;
@@ -384,7 +385,7 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt) {
     ::operator<<(os,elt.m_d->m_poslenlist);
   }
   if (! elt.m_d->m_neType.isNull()) {
-    os << "/NE(" << elt.m_d->m_neType << ")";
+    os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType).toUtf8().constData() << ")";
   }
   if (elt.m_d->m_reType!=0) {
     os << "/RE(" << elt.m_d->m_reType << ")";
@@ -406,9 +407,9 @@ QDebug& operator<<(QDebug& os, const IndexElement& elt) {
     os << "," << elt.m_d->m_length;
 //   }
 //   else {
-    if (elt.m_d->m_structure.empty()) {
-      return os << ":";
-    }
+//     if (elt.m_d->m_structure.empty()) {
+//       os << ":";
+//     }
     if (!elt.m_d->m_structure.empty()) {
       uint64_t i=0;
       os << ":" << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
@@ -422,7 +423,7 @@ QDebug& operator<<(QDebug& os, const IndexElement& elt) {
     ::operator<<(os,elt.m_d->m_poslenlist);
 //   }
   if (! elt.m_d->m_neType.isNull()) {
-    os << "/NE(" << elt.m_d->m_neType << ")";
+    os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
   }
   if (elt.m_d->m_reType!=0) {
     os << "/RE(" << elt.m_d->m_reType << ")";
@@ -460,7 +461,7 @@ QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
     ::operator<<(os,elt.m_d->m_poslenlist);
   }
   if (! elt.m_d->m_neType.isNull()) {
-    os << "/NE(" << elt.m_d->m_neType << ")";
+    os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
   }
   if (elt.m_d->m_reType!=0) {
     os << "/RE(" << elt.m_d->m_reType << ")";

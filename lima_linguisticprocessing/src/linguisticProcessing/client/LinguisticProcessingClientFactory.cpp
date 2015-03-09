@@ -41,7 +41,7 @@ void LinguisticProcessingClientFactory::configureClientFactory(
   std::deque<std::string> pipelines)
 {
   LPCLIENTFACTORYLOGINIT;
-  LINFO << "configure factory for client '" << id << "'";
+  LINFO << "LinguisticProcessingClientFactory::configureClientFactory" << id;
   AbstractLinguisticProcessingClientFactory* factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {

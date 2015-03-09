@@ -26,9 +26,8 @@
  * 
  ***********************************************************************/
 
-#include <boost/detail/binary_search.hpp>
- #include <algorithm>
- #include <cstring>
+#include <algorithm>
+#include <cstring>
  
 // #include "lexiconIdAccessor.h"
 #include "common/Data/strwstrtools.h"

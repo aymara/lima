@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "structureHandler.h"
-#include <boost/graph/graph_concepts.hpp>
+
 using namespace Lima;
 
 namespace Lima {

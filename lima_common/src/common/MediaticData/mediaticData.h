@@ -82,6 +82,8 @@ public:
         const std::string& configFile,
         const std::deque< std::string >& meds);
 
+    void initMedia(const std::string& media);
+
     void initMediaData(MediaId med);
 
     void initXMLParser();
@@ -149,6 +151,8 @@ public:
     const std::string& getResourcesPath() const;
 
     const std::string& getConfigPath() const;
+
+    const std::string& getConfigFile() const;
 
     /** @return the number of categories */
     size_t getNbCategories() const;

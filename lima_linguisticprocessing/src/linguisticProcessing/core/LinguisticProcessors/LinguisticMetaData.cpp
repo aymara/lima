@@ -22,6 +22,8 @@
  ***************************************************************************/
 #include "LinguisticMetaData.h"
 
+#include <QDate>
+
 namespace Lima {
 
 namespace LinguisticProcessing {

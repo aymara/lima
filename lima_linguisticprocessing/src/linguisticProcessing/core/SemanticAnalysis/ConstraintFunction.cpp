@@ -69,6 +69,8 @@ ConstraintFunction(language,complement)
 
 bool ClearSemanticRelation::operator()(AnalysisContent& analysis ) const
 {
+  SEMLOGINIT;
+  LDEBUG << "ClearSemanticRelation::operator()";
   SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
   if (semanticData==0)
   {
@@ -88,6 +90,8 @@ SaveSemanticRelation::SaveSemanticRelation(MediaId language,
 
 bool SaveSemanticRelation::operator()(AnalysisContent& analysis ) const
 {
+  SEMLOGINIT;
+  LDEBUG << "SaveSemanticRelation::operator()";
   SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
   if (semanticData==0)
   {
@@ -112,6 +116,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
            const LinguisticGraphVertex& vertex2,
            AnalysisContent& analysis ) const
 {
+  SEMLOGINIT;
+  LDEBUG << "CreateSemanticRelation::operator()" << vertex1 << vertex2 << m_semanticRelationType;
   LIMA_UNUSED(anagraph);
   SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
   if (semanticData==0)

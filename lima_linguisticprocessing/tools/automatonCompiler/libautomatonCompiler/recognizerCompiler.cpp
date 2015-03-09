@@ -512,7 +512,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
 
     r->setWeight(currentRuleWeight());
     LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
-          << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteers[i][0])<<")"<<LENDL;
+          << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteers[i][0])<<")";
     int indexRule=reco.addRuleInStorage(r);
     for (std::size_t j(0); j<gazeteers[i].size(); j++) {
       triggerString=gazeteers[i][j];

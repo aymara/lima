@@ -14,4 +14,4 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-for d in {1..3} ; do ./reformat.sh ~/Projets/evalPosTagging/results.eng.viterbi/$d/10pc.brut.out ; done > oanc.pos.lima
+for d in {1..3} ; do ./reformat.sh $LIMA_ROOT/lima/lima_pelf/evalPosTagging/results.eng.viterbi/$d/10pc.brut.out ; done > oanc.pos.lima

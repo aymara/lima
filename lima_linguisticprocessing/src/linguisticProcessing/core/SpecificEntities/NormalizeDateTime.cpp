@@ -34,6 +34,8 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
+#include <QtCore/QDate>
+
 #include <limits>
 #ifdef WIN32
 #undef min  

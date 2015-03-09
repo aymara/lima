@@ -21,7 +21,7 @@
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
-#include <QtGui>
+#include <QtWidgets>
 #include "annoqt.h"
 #include "annotationConfigurationHandler.h"
 #include "specificEntitiesHandler.h"

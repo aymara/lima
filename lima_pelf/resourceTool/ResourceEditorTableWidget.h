@@ -20,10 +20,10 @@
 #define LIMA_PELF_RESOURCEEDITORTABLEWIDGET_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QAction>
-#include <QtGui/QMenu>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMenu>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 
 #include "ResourceReaderTableWidget.h"
 

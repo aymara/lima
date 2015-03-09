@@ -40,10 +40,37 @@ using namespace std;
 
 void usage(int argc, char* argv[]);
 
-int main(int argc,char* argv[])
+#include "common/misc/LimaMainTaskRunner.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QTimer>
+
+int run(int aargc,char** aargv);
+
+int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+
+  // Task parented to the application so that it
+  // will be deleted by the application.
+  Lima::LimaMainTaskRunner* task = new Lima::LimaMainTaskRunner(argc, argv, run, &a);
+
+  // This will cause the application to exit when
+  // the task signals finished.
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+
+  // This will run the task from the application event loop.
+  QTimer::singleShot(0, task, SLOT(run()));
+
+  return a.exec();
+
+}
+
+
+int run(int argc,char** argv)
+{
   QsLogging::initQsLog();
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
   
   std::string resourcesPath=string(getenv("LIMA_RESOURCES"));
   std::string configDir=string(getenv("LIMA_CONF"));
@@ -83,6 +110,7 @@ int main(int argc,char* argv[])
   const Lima::Common::MediaticData::LanguageData& languageData = static_cast<const Lima::Common::MediaticData::LanguageData&>(Lima::Common::MediaticData::MediaticData::single().mediaData(m_language));
 
   Lima::Common::PropertyCode::PropertyCodeManager propertyManager = languageData.getPropertyCodeManager();
+  return 0;
 }
 
 void usage(int argc, char *argv[])

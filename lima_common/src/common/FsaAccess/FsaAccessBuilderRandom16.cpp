@@ -738,7 +738,7 @@ void FsaAccessBuilderRandom16::addEdge(
     Lima::LimaString textpart = LimaString(word_content).left(wordOffset);
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: text.insert("
            << textOffset0 << ","
-           << LimaString(textpart.data()) << ")"<< LENDL;
+           << LimaString(textpart.data()) << ")";
 #endif
     text.insert(textOffset0, word_content, wordOffset);
 #ifdef DEBUG_CD
@@ -1011,8 +1011,8 @@ void FsaAccessBuilderRandom16::suppressEdge(
           ;
     Lima::LimaString textpart = LimaString(word_content).left(wordOffset);
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text.erase("
-//           << textOffset0 << "," << textpart << ")"<< LENDL;
-           << textOffset0 << "," << ")"<< LENDL;
+//           << textOffset0 << "," << textpart << ")";
+           << textOffset0 << "," << ")";
 #endif
     text.remove(textOffset0, wordOffset);
 #ifdef DEBUG_CD

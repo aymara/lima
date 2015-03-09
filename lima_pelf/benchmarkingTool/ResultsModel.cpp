@@ -86,9 +86,9 @@ QVariant ResultsModel::data (const QModelIndex& index, int role) const
         if(displayedData == -1 || prevDisplayedData == -1 || displayedData == prevDisplayedData)
             return QVariant();
         else if(displayedData > prevDisplayedData)
-            return QVariant(revertColors ? Qt::red : Qt::green);
+            return QVariant(QColor(revertColors ? Qt::red : Qt::green));
         else
-            return QVariant(revertColors ? Qt::green : Qt::red);
+            return QVariant(QColor(revertColors ? Qt::green : Qt::red));
     }
     if(role != Qt::DisplayRole)
         return QVariant();

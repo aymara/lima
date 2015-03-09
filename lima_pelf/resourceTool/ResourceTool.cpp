@@ -34,7 +34,7 @@
 #include <QtCore/QSharedMemory>
 #include <QtCore/QTimer>
 #include <QtCore/QFile>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 
 using namespace Lima::Pelf;

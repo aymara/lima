@@ -85,9 +85,9 @@ SimpleFactory<MediaProcessUnit,FullXmlDumper> fullXmlDumperFactory(FULLXMLDUMPER
 
 FullXmlDumper::FullXmlDumper()
 : MediaProcessUnit(),
+      m_annotXmlDumperPtr(0),
       m_dumpFullTokens(true),
-      m_handler(),
-      m_annotXmlDumperPtr(0)
+      m_handler()
 {
 }
 
@@ -201,7 +201,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
   std::ostream outputStream(&hsb);
   std::set< std::pair<size_t, size_t> > alreadyDumped;
 
-  LDEBUG << "FullXmlDumper::process before printing heading"<< LENDL;
+  LDEBUG << "FullXmlDumper::process before printing heading";
 
   outputStream << "<?xml version='1.0' encoding='UTF-8'?>" << std::endl;
   outputStream << "<!DOCTYPE lima_analysis_dump SYSTEM \"lima-xml-output.dtd\">" << std::endl;
@@ -215,7 +215,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph != 0)
   {
-    LDEBUG << "FullXmlDumper:: inside if anagraph: "<< LENDL;
+    LDEBUG << "FullXmlDumper:: inside if anagraph: ";
     std::vector< bool > alreadyDumpedTokens;
     std::map< LinguisticAnalysisStructure::Token*, uint64_t > fullTokens;
 
@@ -242,7 +242,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
   AnalysisGraph* posgraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph != 0)
   {
-    LDEBUG << "FullXmlDumper:: inside if posgraph: "<< LENDL;
+    LDEBUG << "FullXmlDumper:: inside if posgraph: ";
     std::vector< bool > alreadyDumpedTokens;
     std::map< LinguisticAnalysisStructure::Token*, uint64_t > fullTokens;
     LinguisticGraphVertexIt i, i_end;
@@ -263,7 +263,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
     while (sbItr!=(sb->getSegments()).end())
     {
 
-      LDEBUG << "FullXmlDumper: inside posgraph while "<< LENDL;
+      LDEBUG << "FullXmlDumper: inside posgraph while ";
       LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
       LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
       dumpLimaData(outputStream,
@@ -281,7 +281,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
 
     outputStream << "  <DetachedVertices>" << std::endl;
       // dump non non-connex nodes
-    LDEBUG << "FullXmlDumper:: dump non-connex nodes and related edges: "<< LENDL;
+    LDEBUG << "FullXmlDumper:: dump non-connex nodes and related edges: ";
     id = 0;
     for (boost::tie(i, i_end) = vertices(*posgraph->getGraph()); i != i_end; ++i)
     {
@@ -332,13 +332,13 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
 
   DUMPERLOGINIT;
 
-  LDEBUG << "FullXmlDumper::dumpLimaData parameters: "<< LENDL;
+  LDEBUG << "FullXmlDumper::dumpLimaData parameters: ";
   LDEBUG << "begin = "<< begin;
-  LDEBUG << "end = " << end <<LENDL;
-  LDEBUG << "anagraph fist vertex= " << anagraph->firstVertex() <<LENDL;
-  LDEBUG << "anagraph last vertex= " << anagraph->lastVertex() <<LENDL;  
-  LDEBUG << "graphId= " << graphId <<LENDL;
-  LDEBUG << "bySentence= " << bySentence <<LENDL;
+  LDEBUG << "end = " << end ;
+  LDEBUG << "anagraph fist vertex= " << anagraph->firstVertex() ;
+  LDEBUG << "anagraph last vertex= " << anagraph->lastVertex() ;  
+  LDEBUG << "graphId= " << graphId ;
+  LDEBUG << "bySentence= " << bySentence ;
   // just in case we want to check alreadt dumped tokens' array
   for (uint64_t i=0; i<alreadyDumpedTokens.size(); i++) {
     if (alreadyDumpedTokens[i]) {LDEBUG << "already_dumped_tokens[" << i << "]=" << alreadyDumpedTokens[i];}
@@ -346,11 +346,11 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
 
   LinguisticGraph* graph = const_cast< LinguisticGraph* >(anagraph->getGraph());
   // go through the graph, add BoWTokens that are not in complex terms
-  LDEBUG << "after LinguisticGraph" <<LENDL;
+  LDEBUG << "after LinguisticGraph" ;
   DumpGraphVisitor vis(*this, os, end, syntacticData, 
       fullTokens, alreadyDumpedTokens,
       m_language, graphId);
-  LDEBUG << "after DumpGraphVisitor" <<LENDL;
+  LDEBUG << "after DumpGraphVisitor" ;
   if (bySentence)
   {
     os << "  <sentence>" << std::endl;
@@ -367,7 +367,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
       // of the 0->1 edge) :
       // initializing the colors and calling breadth_first_visit
       // works (?)
-      LDEBUG << "inside dumpLimaData's try" <<LENDL;
+      LDEBUG << "inside dumpLimaData's try" ;
       LinguisticGraphVertexIt i, i_end;
       for (boost::tie(i, i_end) = vertices(*graph); i != i_end; ++i)
       {
@@ -375,7 +375,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
       }
 
       boost::breadth_first_visit(*graph, begin, boost::visitor(vis));
-      LDEBUG << "breadth_first_visit arguments: "<< LENDL;
+      LDEBUG << "breadth_first_visit arguments: ";
 //       boost::depth_first_search(*graph, boost::visitor(vis));
   }
   catch (DumpGraphVisitor::EndOfSearch)
@@ -383,7 +383,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   }
   if (bySentence)
   {
-    LDEBUG << "BY SENTENCE "<< LENDL;
+    LDEBUG << "BY SENTENCE ";
     os << "  </sentence>" << std::endl;
   }
   else

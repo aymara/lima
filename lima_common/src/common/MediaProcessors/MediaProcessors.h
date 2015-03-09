@@ -22,7 +22,6 @@
  ***************************************************************************/
 #ifndef LIMA_COMMON_MEDIAPROCESSORSMEDIAPROCESSORS_H
 #define LIMA_COMMON_MEDIAPROCESSORSMEDIAPROCESSORS_H
-#include <boost/graph/graph_concepts.hpp>
 
 #include "MediaProcessUnitPipeline.h"
 

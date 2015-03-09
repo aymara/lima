@@ -24,7 +24,7 @@ SET(LimaStringTest0_SRCS
 
 add_executable(LimaStringTest0 ${LimaStringTest0_SRCS})
 
-target_link_libraries(LimaStringTest0 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(LimaStringTest0 LimaStringTest0)
 
@@ -36,7 +36,7 @@ SET(LimaStringTest1_SRCS
 
 add_executable(LimaStringTest1 ${LimaStringTest1_SRCS})
 
-target_link_libraries(LimaStringTest1 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest1 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(LimaStringTest1 LimaStringTest1)
 
@@ -48,7 +48,7 @@ SET(LimaStringTest2_SRCS
 
 add_executable(LimaStringTest2 ${LimaStringTest2_SRCS})
 
-target_link_libraries(LimaStringTest2 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(LimaStringTest2 LimaStringTest2)
 
@@ -61,7 +61,7 @@ SET(LimaStringTest3_SRCS
 
 add_executable(LimaStringTest3 ${LimaStringTest3_SRCS})
 
-target_link_libraries(LimaStringTest3 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest3 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(LimaStringTest3 LimaStringTest3)
 
@@ -74,7 +74,7 @@ SET(ReadWriteTools1_SRCS
 
 add_executable(ReadWriteTools1 ${ReadWriteTools1_SRCS})
 
-target_link_libraries(ReadWriteTools1 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(ReadWriteTools1 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(ReadWriteTools1 ReadWriteTools1)
 
@@ -86,6 +86,6 @@ SET(ReadWriteTools2_SRCS
 
 add_executable(ReadWriteTools2 ${ReadWriteTools2_SRCS})
 
-target_link_libraries(ReadWriteTools2 lima-common-data lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(ReadWriteTools2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(ReadWriteTools2 ReadWriteTools2)

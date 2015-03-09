@@ -394,7 +394,7 @@ TimeUtils::updateCurrentTime();*/
     for (Vertices::iterator anaphItr=npAnaphora->begin();
          anaphItr!=npAnaphora->end();
          anaphItr++)
-      LDEBUG<<(*anaphItr)->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm()) <<(*anaphItr)->newerRef()->morphVertex()<<LENDL;
+      LDEBUG<<(*anaphItr)->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm()) <<(*anaphItr)->newerRef()->morphVertex();
     LDEBUG<< " - ";
 
     LDEBUG<< "Candidates:";
@@ -418,13 +418,13 @@ TimeUtils::updateCurrentTime();*/
          itro != roBinding->end( ); 
          itro++ )
     {
-      LDEBUG<< " Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itro).first->morphVertex())->stringForm())<< LENDL;
+      LDEBUG<< " Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itro).first->morphVertex())->stringForm());
       for (std::set<CoreferentAnnotation*>::iterator its = (*itro).second.begin( );
            its != (*itro).second.end( ); 
            its++ )
         LDEBUG << " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its)->morphVertex())->stringForm()) << " - ";
     }
-    LDEBUG<< LENDL;
+    LDEBUG;
 
     LDEBUG << "initialize lexical anaphora binding";
     bindingLexicalAnaphora(analysis,posgraph, syntacticData, npAnaphora, npCandidates, lexAnaBinding);
@@ -437,7 +437,7 @@ TimeUtils::updateCurrentTime();*/
          itp != lexAnaBinding->end( ); 
          itp++ )
     {
-      LDEBUG<< "Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itp).first->morphVertex())->stringForm())<< LENDL;
+      LDEBUG<< "Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itp).first->morphVertex())->stringForm());
       for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
            its != (*itp).second.end( ); 
            its++ )  
@@ -462,7 +462,7 @@ TimeUtils::updateCurrentTime();*/
          itp != pBinding->end( ); 
          itp++ )
     {
-      LDEBUG<< "Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itp).first->morphVertex())->stringForm())<< LENDL;
+      LDEBUG<< "Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itp).first->morphVertex())->stringForm());
       for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
            its != (*itp).second.end( ); 
            its++ ) 
@@ -470,7 +470,7 @@ TimeUtils::updateCurrentTime();*/
         LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second;
       }
     }
-    LDEBUG<< LENDL;
+    LDEBUG;
 
 
 

@@ -70,7 +70,7 @@ void RecognizerResultLogger::init(
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     APPRLOGINIT;
     LERROR << "missing \"data\" parameter in configuration of RecognizerResultLogger" 
-           << " for language " << (int) m_language<< LENDL;
+           << " for language " << (int) m_language;
     throw InvalidConfiguration();
   }
 }

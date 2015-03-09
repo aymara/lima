@@ -33,14 +33,12 @@
 #include <algorithm>
 #include <string.h>
 
-#define LIDLOGINIT LOGINIT("LanguageIdent::dedal")
-
-/*! ile
-    rief   string and wstring utility routines
+/*! @file
+    @brief   string and wstring utility routines
     \ingroup Misc
 */
 
-/*! xample string.cpp
+/*! @example string.cpp
  
     String functionality example and regression test.
  

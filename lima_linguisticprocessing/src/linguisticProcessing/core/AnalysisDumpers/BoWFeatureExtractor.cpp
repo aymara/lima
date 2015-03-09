@@ -96,7 +96,7 @@ void BoWFeatures::initialize(const deque<std::string>& featureNames)
       featureName=string(featureName,0,i);
     }
     DUMPERLOGINIT;
-    LDEBUG << "BoWFeatures: initialize feature" << featureName << LENDL;
+    LDEBUG << "BoWFeatures: initialize feature" << featureName;
     push_back(BoWFeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
     back()->setName(featureName);
   }
@@ -176,8 +176,9 @@ AbstractBoWFeatureExtractor(language,complement)
 {}
 
 std::string BoWFeatureTstatus::
-getValue(const AbstractBoWElement* token /*token*/) const
+getValue(const AbstractBoWElement* token) const
 {
+  LIMA_UNUSED(token);
   return "";
 }
 

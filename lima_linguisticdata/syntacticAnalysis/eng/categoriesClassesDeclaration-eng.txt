@@ -19,8 +19,6 @@ set entityTypes=SyntacticRelations
 
 @Pron=($PRON)
 
-@Verbe=($V)
-
 @Adverb=($ADV)
 
 @Substantif=($NC,$NP)
@@ -41,41 +39,32 @@ set entityTypes=SyntacticRelations
 
 @CompDuNomTrig=($PREP)
 
-@Aux=($V)
+@Verbe=($V)
+
+@InfinitiveVerb=($V-VB)
+
+@Aux=(am,is,are,was,were,have,has,had,will)
 
 @AuxModal=($V-MD)
 
-@Is=($V)
+@Is=(is)
 
-@Was=($V)
-
+@Was=(was)
 
 @Ing=($V-VBG)
 
-@AuxParticipe=($V-VBN)
-
 @Participe=($V-VBN,$V-VBG)
+
+@TensedVerb=($V-VBD,$V-VBP,$V-VBZ)
+
+@Copule=(am,is,are,was,were)
+
+
+
 
 @AdvTempComp=($ADV-RB)
 
 @Inc=($DIVERS-UNK)
-
-@VerbeDansQuestion=($V)
-
-# pas infinitif, ni impératif (pas de sujet)
-# ni participe (sujet attaché à l'auxiliaire)
-@TensedVerbSubj=($V-VBD,
-$V-VBP,
-$V-VBZ)
-
-@Copule=($V)
-
-
-# pas auxiliaire (les COD sont attachés au verbe principal)
-# A verifier (copier du francais)
-@TensedVerbObj=($V-VBD,
-$V-VBP,
-$V-VBZ)
 
 # A verifier (copier du francais)
 @SujVOther=($DET,
@@ -90,9 +79,10 @@ $ADJ,$ADV,$PREP,$PONCTU,
 $INTERJ,$CONJ,$V-MD)
 
 
-# A verifier (copier du francais)
-@InfinitiveVerb=($V-VB)
 
+
+# Possessive pronoun
+@PronPoss=($PRON-PRP$)
 
 @PronPersSujInverse=($PRON-PRP)
 
@@ -114,13 +104,10 @@ $INTERJ,$CONJ,$V-MD)
 
 @ConjSubord=($PREP-IN)
 
-@Verbe=($V)
-
 
 # pronom qui peut etre entre l'auxiliaire et le verbe : a-t-on construit 
 
 @PronInsideCompTense=($PRON)
 
-@AuxInd=($V)
-
+@AfterNominalChunk=($DET,$PREP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
 

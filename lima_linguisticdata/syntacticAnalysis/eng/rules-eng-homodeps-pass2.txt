@@ -1,24 +1,18 @@
-###############################################################################
-# 
-# rules for the recognition of english left to right homosyntagmatic relations
-# this file uses the syntax for the declarations of automatons by Romaric 
-# Besancon (Cf. his 2003/03/11 document)
-# 
-# Created on Thu nov 21 2003 
-# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)
+#
+# Rules for the second pass recognition of english relations inside chunks
+# This file uses the Modex rules syntax
+#
+# Created on Thu nov 21 2003
+# by Gael de Chalendar <Gael.de-Chalendar@cea.fr>
+# initial rules by Hubert Naets
 # Modified Jan 12, 2005 (Gregory Grefenstette)
-# Translation of rules created by Gael de Chalendar and Romaric Besancon
-# 
-# $Id: rules-l2r-eng-homodeps.txt,v 1.8 2005/01/05 15:35:39 lic2m Exp
-# 
-###############################################################################
-# NOTE: pour les relations homosyntagmatiques, le recognizer est appelé
-# avec les parametres suivants:
+#
+
+# NOTE: for these rules, the recognizer is called with the parameters:
 # test all vertices: true
 # stop at first success: false
 # only one success per type: false
 # return at first success: false
-
 
 set encoding=utf8
 using modex lima-analysis.xml
@@ -85,6 +79,14 @@ use categoriesClassesDeclaration-eng.txt
 +!GovernorOf(left.3,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,left.3,"ANY")
 +CreateRelationBetween(trigger.1,left.3,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@DetNum::(@Adjectif|@Substantif){0-n} @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++SecondUngovernedBy(right.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"DETSUB")
++CreateRelationBetween(right.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
@@ -464,33 +466,18 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation entre auxiliaire et participe passe
 #----------------------------------------------------------------------
-#@Participe:@Aux (@AuxParticipe){0-2} (@AdvTempComp)?::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
-
-@Participe:@AuxInd @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
+@Participe:@Aux @PronInsideCompTense? (@Aux){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
 +CreateCompoundTense(trigger.1,left.1,"V;VBD;PASS")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-#@Participe:@AuxInf @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PASS")
-
-#@Participe:@AuxImp @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
-
-#@Participe:@AuxSubj @PronInsideCompTense? (@AuxParticipe){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
-
-
-# @Participe:@Aux (@AdvTempComp)?::SYNTACTIC_RELATION:
-# +CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
 
 #----------------------------------------------------------------------
 # Relation entre verbe et sujet pronominal inverse
 # Has he been good?
 #  SujInv :       he[5|5]{26/54}  -> Has[6|6]{28/98}
 #----------------------------------------------------------------------
-@PronPersSujInverse:(^$PRON)? @VerbeDansQuestion::SYNTACTIC_RELATION:
+@PronPersSujInverse:(^$PRON)? @Verbe::SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,left.2,"ANY")
 +CreateRelationBetween(trigger.1,left.2,"SujInv")
 =>AddRelationInGraph()
@@ -568,10 +555,9 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 #----------------------------------------------------------------------
-# Relation entre adverbe et verbe à l'infinitif 
-# Specifique pour Easy
+# Relation between an adverb and an infinitive verb
 # He wanted to quickly sell his apartment but could not find a taker
-# AdvVerbe :      quickly[11|11]{29/102}  -> sell[10|10]{28/101}
+# AdvVerbe :      quickly -> sell
 #----------------------------------------------------------------------
 @Adverb::(@Neg)? @InfinitiveVerb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
@@ -579,6 +565,16 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
+#----------------------------------------------------------------------
+# Relation between an adverb and a past tenst verb
+# The Convention also established eleven Working Groups
+# AdvVerbe :      also-> established
+#----------------------------------------------------------------------
+@Adverb::@TensedVerb:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
 
 #----------------------------------------------------------------------
 # Relation entre pronom personnel sujet et verbe
