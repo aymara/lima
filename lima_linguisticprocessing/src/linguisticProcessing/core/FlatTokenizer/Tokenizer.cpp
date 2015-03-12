@@ -169,7 +169,7 @@ LimaStatusCode Tokenizer::process(
   text->setText(*originalText);
   text->setGraph(anagraph->firstVertex(),graph);
 
-  LINFO << "Running automaton on '" << *originalText << "'";
+  LINFO << "Running automaton on" << *originalText;
   const State* newState = m_d->_automaton.run(*text);
   while (newState)
   {
