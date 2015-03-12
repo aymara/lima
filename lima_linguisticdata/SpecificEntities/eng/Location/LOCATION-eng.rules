@@ -21,17 +21,29 @@ www::. (* .){1-4} @WebAddressesEndings (/ ~? *){0-4} (/|/ * . @fileExtension)?:U
 
 #town
 Palm:West:Beach:LOCATION:West Palm Beach
-+AddEntityFeature(left,right,"name")
+=>AddEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+# ------------------------
+#=>AddEntityFeature(trigger,"name-1")
+#=>AddEntityFeature(left,"name-2")
+#=>AddEntityFeature(right,"name-3")
+
+#=>AppendEntityFeature(right.1,"name")
 
 Palm::Beach:LOCATION:Palm Beach
-+AddEntityFeature(trigger,right,"name")
+=>AddEntityFeature(trigger,right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 Wall::Street:NOT_LOCATION:
+
+#Evangelical Lutheran Church in Canada Act 317. => todo problem 
+Church:Evangelical Lutheran::NOT_LOCATION:
+
 #----------------------------------------------------------------------
 # recognition of location names
 #----------------------------------------------------------------------
@@ -52,79 +64,103 @@ use locationKey.lst,locationPre.lst,streetKey.lst,stateAbbrev.lst
 @orientation=(N,S,E,W,NE,NW,SE,SW,N . E,N . W,S . E,S . W )
 
 #12400 SW 152nd Avenue
-T_Ni>1::(@orientation .?)? *{1-2} (@streetKey):LOCATION:
-+AddEntityFeature(trigger,"adress-number")
-+AddEntityFeature(right.1,"qualifier")
-+AddEntityFeature(right.2,"name")
-+AddEntityFeature(right.3,"kind")
+#former rule => T_Ni>1::(@orientation .?)? *{1-2} @streetKey:LOCATION:
+T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:LOCATION:
+=>AppendEntityFeature(trigger,"adress-number")
+=>AppendEntityFeature(right.1.1,"qualifier")
+=>AppendEntityFeature(right.2,"name")
+=>AppendEntityFeature(right.3,"kind")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#adress
+# =>todo : Unable to catch the name (right 2) with the former regex. 
+# Very strange regex to cath 152nd ! 
 
-T_Ni>1::(@StateAbbrev|US|U.S.) -? T_Ni<999:LOCATION:
-#+AddEntityFeature(trigger,"adress-number") ???
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
+
+T_Ni>1::(@StateAbbrev|US|U.S.) (-?) (T_Ni<999):LOCATION:
+=>AddEntityFeature(right.3,"zip-code")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#Aux États-Unis, le code postal est le code ZIP. Comprenant 5 chiffres, il se place à la fin d'une ligne commençant par le nom de la ville, précédé du nom ou du sigle de l’État :
 
 ## zip codes : five digits
 ## FL 33301
 @StateAbbrev::T_Ni>9999<99999:LOCATION:
-+AddEntityFeature(trigger,"name")
-+AddEntityFeature(right,"zip-code")
+=>AddEntityFeature(right,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+#=>AddEntityFeature(trigger,"name")
 
 ## P.O. Box
-Box:(PO|P.O.)?:T_Ni:LOCATION:
-+AddEntityFeature(left,right,"po-box")
+Box:(PO|P.O.|po)?:T_Ni:LOCATION:
+=>AppendEntityFeature(left,,"po-box")
+=>AppendEntityFeature(trigger,"po-box")
+=>AppendEntityFeature(right,"po-box")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
-
-## BOX:(PO)
 ## Mile Markers
+#Jeremy said there's an access road just past mile marker 6.
 mile::marker (T_Ni|T_Nd):LOCATION:
-+AddEntityFeature(trigger,right.1,"kind")
-+AddEntityFeature(right.2,"name")
+=>AddEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.1,"kind")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#=> loc odo ? => Jeremy said there's an access road just past mile marker 6.
+
 
 ## highway names
 
 #Interstate 40
 interstate::T_Ni<99:LOCATION:
-+AddEntityFeature(trigger,"kind")
-+AddEntityFeature(right,"name")
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(right,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#+AddEntityFeature(trigger,right,"name")
+#=>AddEntityFeature(right.1,"name")
+
+Interstate::T_Ni<99:LOCATION:
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(right,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=>AddEntityFeature(right.1,"name")
+
+
+#=>AddEntityFeature(trigger,right,"name")
 #=> loc odo ? 
 
-I::- T_Ni<99:LOCATION:
-+AddEntityFeature(trigger,right.2,"name")
+#convention : A10=name
+I::(-) (T_Ni<99):LOCATION:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right.1,"name")
+=>AppendEntityFeature(right.2,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#=> loc odo ? 
+#=> loc odo ?  - 24/02 - cela ne marche toujours pas.  
 
 @StateAbbrev::-? T_Ni<999:LOCATION:
-+AddEntityFeature(trigger,right.2,"name")
+=>AddEntityFeature(right.2,"zip-code")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc odo ?
 
-#@StateAbbrev:[,]:.?:LOCATION:
+@StateAbbrev:[,]:.?:LOCATION:
+=>AddEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
 
 US::-? T_Ni<999:LOCATION:
-+AddEntityFeature(trigger,right.2,"name")
+=>AddEntityFeature(right.2,"zip-code")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#=> loc odo ?
+#=> loc odo 
 
+
+#----------------------------------
 U.S.::-? T_Ni<999:LOCATION:
-+AddEntityFeature(trigger,right.2,"name")
+=>AddEntityFeature(right,"zip-code")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
+#todo je ne sais pas =>AddEntityFeature(trigger,right.2,"name")
 #=> loc odo ?
 
 ## general contextual location rule
@@ -133,68 +169,96 @@ U.S.::-? T_Ni<999:LOCATION:
 ## @Capitalized=(t_capital_1st,T_Amh,$NP)
 @Capitalized=(t_capital_1st,t_capital)
 
-@Capitalized:@locationPre? (@Capitalized){0-2}:@locationKey:LOCATION:
-+AddEntityFeature(trigger,"name")
-+AddEntityFeature(left.2,trigger,"name")
-+AddEntityFeature(right,"kind")
-=<ClearEntityFeatures()
-=>NormalizeEntity()
+#todo : que se passe-t-il avec cette regle ?
+#@Capitalized:@locationPre? (@Capitalized){0-2}:@locationKey:LOCATION:
+#=>AddEntityFeature(trigger,"name")
+#=>AddEntityFeature(left.2,trigger,"name")
+#=>AddEntityFeature(right,"kind")
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
 #=> loc phys ?
 
-@Capitalized:@locationPre? (@Capitalized){0-2}:@streetKey:LOCATION:
-+AddEntityFeature(trigger,"name")
-+AddEntityFeature(left.2,trigger,"name")
-+AddEntityFeature(right,"kind")
-=<ClearEntityFeatures()
-=>NormalizeEntity()
+#todo = a priori probleme avec ?
+#Jeremy Martinson
+#455 Larkspur Dr.
+#California Springs, CA 92926-4601
+#@Capitalized:@locationPre? (@Capitalized){0-2}:@streetKey:LOCATION:
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+#=>AddEntityFeature(trigger.1,"name")
+#=>AddEntityFeature(right,"kind")
+#=>AppendEntityFeature(left.2,"name")
+#=>AddEntityFeature(left.1,"todo")
 #=> loc odo
 
 ## @locationKey:@locationPre? @Capitalized{1-2}::LOCATION:
-## @streetKey:@locationPre? @Capitalized{1-2}::LOCATION:
+@streetKey:@locationPre? (@Capitalized{1-2})::LOCATION:
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(left.2,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
 
 Park:@Capitalized{1-3}::LOCATION:
-+AddEntityFeature(trigger,"kind")
-+AddEntityFeature(left,"name")
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(left,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc odo
 
-Church:@Capitalized{2-5}::LOCATION:
-+AddEntityFeature(trigger,"kind")
-+AddEntityFeature(left,"name")
+Church:@Capitalized{1-5}::LOCATION:
+=>AddEntityFeature(trigger,"kind")
+=>AppendEntityFeature(left,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc odo
 
-Place:@Capitalized?:@Capitalized?:LOCATION:
-+AddEntityFeature(trigger,"kind")
-+AddEntityFeature(left,"name")
-+AddEntityFeature(right,"name")
+#Nothing beats an espresso in Place Vendome.
+Place::Vendome:LOCATION:
+=>AddEntityFeature(trigger.1,"kind")
+=>AddEntityFeature(right.1,"name")
+=<ClearEntityFeatures()
+
+#For years we lived on Beekman Place.
+Place:@Capitalized?:(@Capitalized|of the Vosges|of the Bastille)?:LOCATION:
+=>AppendEntityFeature(trigger,"kind")
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(right.1,"name")
+=>AppendEntityFeature(right.2,"name")
+=>AppendEntityFeature(right.3,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc odo
 
-@locationKey:[@locationPre?] @Capitalized{1-3}::LOCATION:
-+AddEntityFeature(left.2,"name")
+
+#The bedrooms overlook Sloane Square
+@locationKey:[@locationPre?] (@Capitalized{1-3})::LOCATION:
+=>AppendEntityFeature(trigger,"kind")
+=>AppendEntityFeature(left.2,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc ????
 
 
-@Capitalized::[,] [@StateAbbrev]:LOCATION:
-+AddEntityFeature(trigger,"name")
-=<ClearEntityFeatures()
-=>NormalizeEntity()
+#todo _ je ne sais pas
+#@Capitalized::[,] [@StateAbbrev]:LOCATION:
+#=>AddEntityFeature(trigger,"name")
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
 #=> loc ????
 
 
-Republic::of @Capitalized:LOCATION:
+#Republic::of @Capitalized:LOCATION:
+#=>AddEntityFeature(right.2,"name")
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
 #=> loc loc.adm.nat
 
-@locationPre::(@City|@State|@CountryOrRegion):LOCATION:
-+AddEntityFeature(right,"name")
-=<ClearEntityFeatures()
-=>NormalizeEntity()
+#todo y reflechir ....
+#@locationPre::(@City|@State|@CountryOrRegion):LOCATION:
+#=>AddEntityFeature(right,"name")
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
 
 @CityInd=(
 village,
@@ -254,21 +318,33 @@ October,
 December
 )
 
+#the city of Peterborough
 #original regex : [@CityInd]::[of] t_capital_1st{1-3}:LOCATION:
 @CityInd::of t_capital_1st{1-3}:LOCATION:
-+AddEntityFeature(trigger,"kind")
-+AddEntityFeature(right.2,"name")
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(right.2,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #loc adm
+#bug
 
-
-[@CityIndPlur]::[of] t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
-+AddEntityFeature(trigger,"kind")
-+AddEntityFeature(right.2,right.4,"name")
+#[@CityIndPlur]::[of] t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
+@CityIndPlur::of (t_capital_1st{1-3}) and (t_capital_1st{1-3}):LOCATION:
+=>AddEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.2,"name1")
+=>AppendEntityFeature(right.4,"name2")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
+#todo - celui la ne passe pas !!!!! 
+
+#@CityIndPlur::of t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
+#=>AddEntityFeature(trigger,"kind")
+#=>AddEntityFeature(right.4,"name_2")
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+
 #loc adm - unable to define two names !
+#todo : bug 
 
 include ../Person/firstname.lst
 
@@ -282,16 +358,19 @@ include ../Person/firstname.lst
 [in]::(@Capitalized){1-3} ':NOT_LOCATION:
 
 [in]::t_capital_1st{1-3}:LOCATION:
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
 
 # a list of known locations
 include location.rules
 
 # to bypass errors in analysis
 U.S::.:LOCATION:U.S.
-+AddEntityFeature(trigger,right,"name")
+=>AddEntityFeature(trigger,right,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-
+#todo je ne sais pas
 
 @nearKey=(
 in,
@@ -299,36 +378,42 @@ by,
 close\ to,
 )
 
-[near]::@Capitalized [@nearKey] @Capitalized:LOCATION:
-+AddEntityFeature(right.1,right.3,"name")
+[near]::@Capitalized{1-3} [@nearKey] [@Capitalized{1-3}]:LOCATION:
+=>AppendEntityFeature(right.1,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-# unable to define two names !! 
+#same rule than the previous rule. 
+[near]::[@Capitalized{1-3}] [@nearKey] @Capitalized{1-3}:LOCATION:
+=>AppendEntityFeature(right.3,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+# todo : error : unable to define two names with the same attribute !!
 
-[near]::@Capitalized{1-3}:LOCATION:
-+AddEntityFeature(right,"name")
+near::@Capitalized{1-3}:LOCATION:
+=>AppendEntityFeature(right,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
+#todo : error : unable to catch a name with 2/3 tokens
 
 # redundancies
 # Arkansas state
 # Exeter city
-@State::(state|State):LOCATION:
-+AddEntityFeature(trigger,"name")
-+AddEntityFeature(right.1,"kind")
+@State::(state|State|STATE):LOCATION:
+=>AddEntityFeature(trigger,"name")
+=>AddEntityFeature(right,"kind")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
 
-@State:(State|STATE) of::LOCATION:
-+AddEntityFeature(trigger,"name")
-+AddEntityFeature(left.1,"kind")
+@State:(State|STATE|state) of::LOCATION:
+=>AddEntityFeature(trigger,"name")
+=>AddEntityFeature(left.1,"kind")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
-@City::city:LOCATION:
-+AddEntityFeature(trigger,"name")
-+AddEntityFeature(right.1,"kind")
+@City::(city|City|CITY):LOCATION:
+=>AddEntityFeature(trigger,"name")
+=>AddEntityFeature(right,"kind")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
@@ -344,6 +429,7 @@ Southwestern, Northwestern, Southeastern, Northeastern
 )
 
 Ruth::[and] Ruff:LOCATION:
+#??
 
 #------------------------------
 # telephone numbers are locations
@@ -360,12 +446,25 @@ T_Ni<999::- T_Ni<999 - T_Ni<9999:LOCATION:
 use miscLocations.lst
 
 @City:::LOCATION:
+=>AddEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
 
 @State:::LOCATION:
+=>AddEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
 
 @CountryOrRegion:::LOCATION:
+=>AddEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
 
 @miscLocation:::LOCATION:
+=>AddEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
 
 @locationVerbs=(
 come,
@@ -378,16 +477,19 @@ went,
 emigrate,
 emigrates,
 landed,
-trip
+trip,
+have been,
+has been,
+had been
 )
 
-[@locationVerbs]::[(to|in)] @Capitalized{1-3}:LOCATION:
-+AddEntityFeature(right.2,"name")
+[@locationVerbs]::[(to|in|from|across)] (@Capitalized{1-3}):LOCATION:
+=>AddEntityFeature(right.2,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
 #Cap::(de @Capitalized|d\'):LOCATION:
 Cap::(de|d\') @Capitalized:LOCATION:
-+AddEntityFeature(right.2,"name")
+=>AddEntityFeature(right.2,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
