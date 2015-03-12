@@ -59,7 +59,8 @@ public:
   std::vector<Char*>& chars() {return m_chars;}
 
   /** Gets the Class of the specified character. If specified character was not
-   * defined, class named unknwn is returned. */
+   * defined, try to use the mapping with Qt Unicode categories and if this 
+   * fails too, class named unknwn is returned. */
   const CharClass* charClass(Lima::LimaChar c) const;
   const CharClass* charClass (LimaChar c1, LimaChar c2) const;
 
@@ -112,6 +113,14 @@ private:
   std::vector<Char*> m_chars;
 
   std::map< LimaChar, std::map< LimaChar, Char* > > m_surrogates;
+  
+  /// names of unicode char catgories at QChar::Categories positions (Qt 5.4)
+  QVector<QString> m_unicodeCategories;
+  
+  /// mapping of m_unicodeCategories names to Lima char classes names.
+  /// currently a default list of Lima names is used but the mapping 
+  /// should be loaded or completed from the resource file
+  QMap<QString,QString> m_unicodeCategories2LimaClasses;
 };
 
 } // Tokenizer
