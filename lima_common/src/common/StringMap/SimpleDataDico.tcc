@@ -37,7 +37,7 @@ SimpleDataDico<accessMethod, contentElement, storedSet>::SimpleDataDico( const c
     : StringMap<accessMethod, contentElement>( defaultValue ) {
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "SimpleDataDico::SimpleDataDico()" << LENDL;
+  LDEBUG <<  "SimpleDataDico::SimpleDataDico()";
 #endif
 }
 
@@ -46,14 +46,14 @@ void SimpleDataDico<accessMethod, contentElement, storedSet>::parseData( const s
 {
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG << "SimpleDataDico::parseData(" << dataFileName << LENDL;
+  LDEBUG << "SimpleDataDico::parseData(" << dataFileName;
 #endif
 
   std::ifstream is(dataFileName.c_str(), std::ios::binary );
   if( is.bad() ) {
     std::string mess = "SimpleDataDico::parseData: Can't open file " + dataFileName;
 #ifdef DEBUG_CD
-    LERROR << mess << LENDL;
+    LERROR << mess;
 #endif
     throw( Lima::IncompleteResources(mess) );
   }
@@ -62,14 +62,14 @@ void SimpleDataDico<accessMethod, contentElement, storedSet>::parseData( const s
   uint64_t dataSize = m_data.size();
 #ifdef DEBUG_CD
   LDEBUG << "SimpleDataDico::parseData: read " << dataSize
-            << " pieces of data from " << dataFileName << LENDL;
+            << " pieces of data from " << dataFileName;
 #endif
   if( StringMap<accessMethod, contentElement>::m_accessMethod.getSize() != dataSize ) {
     std::ostringstream oss;
     oss << "SimpleDataDico::parseData dataSize = " << dataSize
         << " != accessSize = " << StringMap<accessMethod, contentElement>::m_accessMethod.getSize();
 #ifdef DEBUG_CD
-    LERROR << oss.str() << LENDL;
+    LERROR << oss.str();
 #endif
     throw( Lima::IncompleteResources(oss.str()) );
   }
@@ -86,13 +86,13 @@ const Lima::LimaString& word) const{
   STRINGMAPLOGINIT;
   const Lima::LimaString & basicWord = word;
   LDEBUG <<  "SimpleDataDico::getElement("
-            << Lima::Common::Misc::convertString(basicWord) << ")" << LENDL;
+            << Lima::Common::Misc::convertString(basicWord) << ")";
 #endif
 
   // Look in FsaDictionary (or tree or..)
   index = StringMap<accessMethod, contentElement>::m_accessMethod.getIndex(word);
 #ifdef DEBUG_CD
-  LDEBUG <<  "index = " << index << LENDL;
+  LDEBUG <<  "index = " << index;
 #endif
   if( index > 0 )
     return m_data[index];

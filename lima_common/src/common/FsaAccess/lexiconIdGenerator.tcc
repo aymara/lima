@@ -99,7 +99,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextDepData(
     std::ostringstream ostr;
     ostr << "LexiconIdGenerator::feedWithNextDepData: dep=" << dep
          << ", cmpId=" << cmpId;
-    LDEBUG << ostr.str().c_str() << LENDL;
+    LDEBUG << ostr.str().c_str();
 #endif
     DepCompoundLinksM::const_iterator pos = m_depCompoundLinks.find(dep);
     if( pos == m_depCompoundLinks.end() ) {
@@ -107,7 +107,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextDepData(
       std::ostringstream ostr;
       ostr << "LexiconIdGenerator::feedWithNextDepData: insert (dep=" << dep
            << ", cmpId=" << cmpId << ")";
-      LDEBUG << ostr.str().c_str() << LENDL;
+      LDEBUG << ostr.str().c_str();
 #endif
       std::pair<DepCompoundLinksM::iterator,bool> ret = 
         m_depCompoundLinks.insert( std::make_pair(dep,cmpId) );
@@ -117,7 +117,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextDepData(
         ostr << "!Error in LexiconIdGenerator::feedWithNextDepData: "
                << "dep.insert(" << dep
                << "," << cmpId << ") = false";
-        LERROR << ostr.str().c_str() << LENDL;
+        LERROR << ostr.str().c_str();
         throw(AccessByStringNotInitialized(ostr.str()));
       }
     }
@@ -126,7 +126,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextDepData(
       std::ostringstream ostr;
       ostr << "!Error in LexiconIdGenerator::feedWithNextDepData: "
              << "dep.find(" << dep << ") != end()";
-      LERROR << ostr.str().c_str() << LENDL;
+      LERROR << ostr.str().c_str();
       throw(AccessByStringNotInitialized(ostr.str()));
     }
   }
@@ -140,7 +140,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextExtData(
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
   LDEBUG <<  "LexiconIdAccessor::feedWithNextExtData("
-         << buffSize << ")" << LENDL;
+         << buffSize << ")";
 #endif
   uint64_t  size = 0;
   for( ; ; ) {
@@ -164,7 +164,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextExtData(
     std::ostringstream ostr;
     ostr << "LexiconIdGenerator::feedWithNextExtData: push (ext=" << ext
          << ", cmpId=" << cmpId << ")";
-    LDEBUG << ostr.str().c_str() << LENDL;
+    LDEBUG << ostr.str().c_str();
 #endif
 
     ExtCompoundLinksM::const_iterator pos = m_extCompoundLinks.find(ext);
@@ -173,7 +173,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextExtData(
       std::ostringstream ostr;
       ostr << "LexiconIdGenerator::feedWithNextExtData: insert (ext=" << ext
            << ", cmpId=" << cmpId << ")";
-      LDEBUG << ostr.str().c_str() << LENDL;
+      LDEBUG << ostr.str().c_str();
 #endif
       std::pair<ExtCompoundLinksM::iterator,bool> ret = 
         m_extCompoundLinks.insert( std::make_pair(ext,cmpId) );
@@ -183,7 +183,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextExtData(
         ostr << "!Error in LexiconIdGenerator::feedWithNextExtData: "
                << "ext.insert(" << ext
                << "," << cmpId << ") = false";
-        LERROR << ostr.str().c_str() << LENDL;
+        LERROR << ostr.str().c_str();
         throw(AccessByStringNotInitialized(ostr.str()));
       }
     }
@@ -192,7 +192,7 @@ void LexiconIdGenerator<SimpleStringAccess>::feedWithNextExtData(
       std::ostringstream ostr;
       ostr << "!Error in LexiconIdGenerator::feedWithNextExtData: "
              << "dep.find(" << ext << ") != end()";
-             LERROR << ostr.str().c_str() << LENDL;
+             LERROR << ostr.str().c_str();
       throw(AccessByStringNotInitialized(ostr.str()));
     }
   }
@@ -206,7 +206,7 @@ void LexiconIdGenerator<SimpleStringAccess>::print(std::ostream& os) const {
   
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "LexiconIdGenerator::print: m_depCompoundLinks.size= " << m_depCompoundLinks.size() << LENDL;
+  LDEBUG <<  "LexiconIdGenerator::print: m_depCompoundLinks.size= " << m_depCompoundLinks.size();
 #endif
   os << "m_depCompoundLinks = {" << std::endl;
   DepCompoundLinksM::const_iterator links = m_depCompoundLinks.begin();
@@ -222,7 +222,7 @@ void LexiconIdGenerator<SimpleStringAccess>::print(std::ostream& os) const {
   os << " }" << std::endl;
   
 #ifdef DEBUG_CD
-  LDEBUG <<  "LexiconIdGenerator::print: m_extCompoundLinks.size= " << m_extCompoundLinks.size() << LENDL;
+  LDEBUG <<  "LexiconIdGenerator::print: m_extCompoundLinks.size= " << m_extCompoundLinks.size();
 #endif
   os << "m_extCompoundLinks = {" << std::endl;
   ExtCompoundLinksM::const_iterator exts = m_extCompoundLinks.begin();
@@ -295,7 +295,7 @@ uint64_t LexiconIdGenerator<SimpleStringAccess>::getId(
    const std::vector<uint64_t>& structure ) {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG << "LexiconIdGenerator::getId(std::vector<...>)" << LENDL;
+  LDEBUG << "LexiconIdGenerator::getId(std::vector<...>)";
 #endif
 
   assert(structure.size()>1);
@@ -315,7 +315,7 @@ uint64_t LexiconIdGenerator<SimpleStringAccess>::getId(
       ostr << "LexiconIdGenerator::getId: insert ext (" << ext.getFirst()
            << "," << ext.getNext() << "), "
            <<  MAX_DEP_ID+m_extCompoundLinks.size()+1 << ")";
-           LDEBUG << ostr.str().c_str() << LENDL;
+           LDEBUG << ostr.str().c_str();
 #endif
       std::pair<ExtCompoundLinksM::iterator,bool> ret = 
         m_extCompoundLinks.insert( std::make_pair(ext,MAX_DEP_ID+m_extCompoundLinks.size()+1) );
@@ -344,7 +344,7 @@ uint64_t LexiconIdGenerator<SimpleStringAccess>::getId(
     ostr << "LexiconIdGenerator::getId: insert dep (" << dep.getHead()
          << "," << dep.getExt() << "), "
          <<  MAX_TOKEN_ID+m_depCompoundLinks.size()+1 << ")";
-         LDEBUG << ostr.str().c_str() << LENDL;
+         LDEBUG << ostr.str().c_str();
 #endif
     std::pair<DepCompoundLinksM::iterator,bool> ret = 
       m_depCompoundLinks.insert( std::make_pair(dep,MAX_TOKEN_ID+m_depCompoundLinks.size()+1) );
@@ -369,7 +369,7 @@ template<typename SimpleStringAccess>
 void LexiconIdGenerator<SimpleStringAccess>::write(FsaAccessDataOutputHandler& outputHandler) {
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG << "LexiconIdGenerator::write(FsaAccessDataOutputHandler)" << LENDL;
+  LDEBUG << "LexiconIdGenerator::write(FsaAccessDataOutputHandler)";
 #endif
   // enregistrement des mots simples
   m_simpleWords.write(outputHandler);
@@ -383,7 +383,7 @@ void LexiconIdGenerator<SimpleStringAccess>::write(FsaAccessDataOutputHandler& o
     size = getNextDepData( buff );
 #ifdef DEBUG_CD
     LDEBUG << "LexiconIdGenerator::write: outputHandler.saveData(depData..," 
-           << size << ")" << LENDL;
+           << size << ")";
 #endif
     outputHandler.saveData((const char*)&size,sizeof(size));
     outputHandler.saveData(buff,size);
@@ -392,7 +392,7 @@ void LexiconIdGenerator<SimpleStringAccess>::write(FsaAccessDataOutputHandler& o
     size = getNextExtData( buff );
 #ifdef DEBUG_CD
     LDEBUG << "LexiconIdGenerator::write: outputHandler.saveData(dextData..," 
-           << size << ")" << LENDL;
+           << size << ")";
 #endif
     outputHandler.saveData((const char*)&size,sizeof(size));
     outputHandler.saveData(buff,size);
@@ -439,7 +439,7 @@ uint64_t LexiconIdGenerator<SimpleStringAccess>::getNextDepData(char* buff ) {
 #ifdef DEBUG_CD
     FSAAIOLOGINIT;
     LDEBUG << "LexiconIdGenerator::getNextDepData: memcpy buffer+"
-           << size << " <- " << head << "," << ext << "," << cmpId << LENDL;
+           << size << " <- " << head << "," << ext << "," << cmpId;
 #endif
     if( size + sizeof(DepCompoundLink) > AbstractLexiconIdAccessor::BUFFER_SIZE )
       return size;
@@ -468,7 +468,7 @@ uint64_t LexiconIdGenerator<SimpleStringAccess>::getNextExtData(char* buff ) {
 #ifdef DEBUG_CD
     FSAAIOLOGINIT;
     LDEBUG << "LexiconIdGenerator::getNextExtData: memcpy buffer+"
-           << size << " <- " << id1 << "," << id2 << "," << extId << LENDL;
+           << size << " <- " << id1 << "," << id2 << "," << extId;
 #endif
     if( size + sizeof(ExtCompoundLink) > AbstractLexiconIdAccessor::BUFFER_SIZE )
       return size;

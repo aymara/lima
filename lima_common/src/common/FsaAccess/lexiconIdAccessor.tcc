@@ -98,11 +98,11 @@ uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(
   assert(structure.size()>1);
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "LexiconIdAccessor::getId(std::vector<...>)" << LENDL;
+  LTRACE <<  "LexiconIdAccessor::getId(std::vector<...>)";
   LTRACE <<  "LexiconIdAccessor::getId m_extCompoundLinks.size()="
-         << m_extCompoundLinks.size() << LENDL;
+         << m_extCompoundLinks.size();
   LTRACE <<  "LexiconIdAccessor::getId m_depCompoundLinks.size()="
-         << m_depCompoundLinks.size() << LENDL;
+         << m_depCompoundLinks.size();
 #endif
 
   std::vector<uint64_t>::const_reverse_iterator depIt = structure.rbegin();
@@ -117,7 +117,7 @@ uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(
 #ifdef DEBUG_CD
     std::ostringstream ostr;
     ostr << "LexiconIdAccessor::getId: ext=" << ext;
-    LTRACE << ostr.str().c_str() << LENDL;
+    LTRACE << ostr.str().c_str();
 #endif
     ExtCompoundLink extlink(ext, 0);
     ExtCompoundLinkLtOp extLinkLtOp;
@@ -138,7 +138,7 @@ uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(
 #ifdef DEBUG_CD
   std::ostringstream ostr;
   ostr << "LexiconIdAccessor::getId: conj=" << conj;
-  LTRACE << ostr.str().c_str() << LENDL;
+  LTRACE << ostr.str().c_str();
 #endif
   if (( pos ==  m_depCompoundLinks.end() ) ||
       ( (*pos).getDepCompound() != conj )) {
@@ -211,7 +211,7 @@ void LexiconIdAccessor<SimpleStringAccess>::feedWithNextDepData(
   std::ostringstream ostr;
   ostr << "LexiconIdAccessor::feedWithNextDepData: dep=" << dep
        << ", cmpId=" << cmpId;
-  LTRACE << ostr.str().c_str() << LENDL;
+  LTRACE << ostr.str().c_str();
 #endif
     DepCompoundLink link(dep, cmpId);
     m_depCompoundLinks.push_back( link );
@@ -225,7 +225,7 @@ void LexiconIdAccessor<SimpleStringAccess>::feedWithNextExtData(
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
   LTRACE <<  "LexiconIdAccessor::feedWithNextExtData("
-         << buffSize << ")" << LENDL;
+         << buffSize << ")";
 #endif
   uint64_t  size = 0;
   for( ; ; ) {
@@ -249,7 +249,7 @@ void LexiconIdAccessor<SimpleStringAccess>::feedWithNextExtData(
     std::ostringstream ostr;
     ostr << "LexiconIdAccessor::feedWithNextDepData: ext=" << ext
          << ", cmpId=" << cmpId;
-    LTRACE << ostr.str().c_str() << LENDL;
+    LTRACE << ostr.str().c_str();
 #endif
     ExtCompoundLink link(ext, cmpId);
     m_extCompoundLinks.push_back( link );

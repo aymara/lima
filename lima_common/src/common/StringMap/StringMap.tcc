@@ -38,7 +38,7 @@ StringMap<accessMethod, contentElement>::StringMap( const contentElement& defaul
   : m_accessMethod(true), m_emptyElement(defaultValue) {
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "StringMap::StringMap()" << LENDL;
+  LDEBUG <<  "StringMap::StringMap()";
 #endif
 }
 
@@ -55,14 +55,14 @@ template <typename accessMethod, typename contentElement>
 void StringMap<accessMethod, contentElement>::parseAccessMethod( const std::string &keyFileName ) {
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "StringMap::parseKeys(" << keyFileName << ")" << LENDL;
+  LDEBUG <<  "StringMap::parseKeys(" << keyFileName << ")";
 #endif
 
   // read main & default keys
   m_accessMethod.read(keyFileName);
 #ifdef DEBUG_CD
   uint64_t size = m_accessMethod.getSize();
-  LDEBUG <<  "StringMap::parseKeys: " << size << " keys read from main keyfile" << LENDL;
+  LDEBUG <<  "StringMap::parseKeys: " << size << " keys read from main keyfile";
 #endif
 }
 

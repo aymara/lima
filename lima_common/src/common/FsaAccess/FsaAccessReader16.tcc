@@ -61,19 +61,19 @@ void FsaAccessReader16<graphType>::read ( const std::string & filename )
 {
   FSAAIOLOGINIT;
 #ifdef DEBUG_CD
-  LDEBUG <<  "FsaAccessReader16::read(" << filename.c_str() << ")" << LENDL;
+  LDEBUG <<  "FsaAccessReader16::read(" << filename.c_str() << ")";
 #endif
   std::ifstream is(filename.data(), std::ios::binary );
   if( is.bad() ) {
     std::string mess = "FsaAccess16::read: Can't open file " + filename;
-    LERROR << mess.c_str() << LENDL;
+    LERROR << mess.c_str();
     throw( AccessByStringNotInitialized( mess ) );
   }
   
   FsaAccessReader16<graphType>::read(is);
   is.close();
 #ifdef DEBUG_CD
-  LDEBUG <<  "FsaAccessReader16::read(" << filename.c_str() << "): end" << LENDL;
+  LDEBUG <<  "FsaAccessReader16::read(" << filename.c_str() << "): end";
 #endif
 }
 
@@ -82,7 +82,7 @@ void FsaAccessReader16<graphType>::read ( std::istream& is )
 {
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "FsaAccessReader16::read(std::istream)" << LENDL;
+  LDEBUG <<  "FsaAccessReader16::read(std::istream)";
 #endif
   FsaAccessIStreamWrapper iw(is);
   FsaAccessReader16<graphType>::read(iw);
@@ -93,7 +93,7 @@ void FsaAccessReader16<graphType>::read ( FsaAccessDataInputHandler& ih )
 {
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "FsaAccessReader16::read(FsaAccessDataInputHandler)" << LENDL;
+  LDEBUG <<  "FsaAccessReader16::read(FsaAccessDataInputHandler)";
 #endif
   FsaAccessInputHandlerWrapper iw(ih);
   FsaAccessReader16<graphType>::read(iw);
@@ -104,7 +104,7 @@ void FsaAccessReader16<graphType>::read ( AbstractFsaAccessIStreamWrapper& iw )
 {
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LDEBUG <<  "FsaAccessReader16::read(AbstractFsaAccessIStreamWrapper)" << LENDL;
+  LDEBUG <<  "FsaAccessReader16::read(AbstractFsaAccessIStreamWrapper)";
 #endif
   FsaAccessHeader::read(iw);
 
@@ -121,11 +121,11 @@ template <typename graphType >
 uint64_t  FsaAccessReader16<graphType>::buildHash() {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG <<  "FsaAccessReader16::buildHash()" << LENDL;
+  LDEBUG <<  "FsaAccessReader16::buildHash()";
 #endif
   uint64_t result = computeHash( FsaAccess16<graphType>::m_rootVertex );
 #ifdef DEBUG_CD
-  LDEBUG <<  "FsaAccessReader16::buildHash result = " << result << LENDL;
+  LDEBUG <<  "FsaAccessReader16::buildHash result = " << result;
 #endif
   return result;
 }
@@ -140,7 +140,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
   
 #ifdef DEBUG_CD
   FSAAHASHLOGINIT;
-  LTRACE << "FsaAccessReader16::computeHash(" << from << ")" << LENDL ;
+  LTRACE << "FsaAccessReader16::computeHash(" << from << ")" ;
 #endif
 
   typename dicoGraph_traits16<graphType>::nconst_vname_map_type vname_map =
@@ -168,7 +168,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
       // On m�orise les outd-1 premier pour le calcul de hash
       if( i+1 < outd ) {
 #ifdef DEBUG_CD
-        LTRACE << "FsaAccessReader16::computeHash(" << from << "): counts.push_back(" << total << ")" << LENDL ;
+        LTRACE << "FsaAccessReader16::computeHash(" << from << "): counts.push_back(" << total << ")" ;
 #endif
         counts.push_back(total);
       }
@@ -184,11 +184,11 @@ typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
       total = counts[outd-2];
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessReader16::computeHash(" << from << "): outd="
-             << outd << ", total=" << total << ")" << LENDL ;
+             << outd << ", total=" << total << ")" ;
       std::ostringstream oss;
       copy(counts.begin(), counts.end(), std::ostream_iterator<int>(oss, ", "));
       LTRACE << "FsaAccessReader16::computeHash(" << from << "): counts=["
-      <<  oss.str().c_str() << "]" << LENDL ;
+      <<  oss.str().c_str() << "]" ;
 #endif
       ei += (outd - 1);
     }
@@ -199,7 +199,7 @@ typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
     for( uint32_t i = 0 ; i+1 < outd ; ei++ , i++, cIt++ ) {
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessReader16::computeHash: before assert 1004, outd="
-             << outd << ", i=" << i << ")" << LENDL ;
+             << outd << ", i=" << i << ")" ;
 #endif
       assert(ei != edge_end);
       total = total + *cIt;
@@ -213,7 +213,7 @@ typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
   }
   if( (val & FINAL_16) == FINAL_16 ) {
 #ifdef DEBUG_CD
-    LTRACE << "FsaAccessReader16::computeHash(" << from << "): FINAL node, increment " << total << LENDL ;
+    LTRACE << "FsaAccessReader16::computeHash(" << from << "): FINAL node, increment " << total ;
 #endif
     total++;
   }
@@ -230,7 +230,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
  {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "FsaAccessReader::getIndex(" << word << ")" << LENDL;
+  LTRACE <<  "FsaAccessReader::getIndex(" << word << ")";
 #endif
  uint64_t result = 0;
 
@@ -257,14 +257,14 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
 
 #ifdef DEBUG_CD
     LTRACE <<  "FsaAccessReader::getIndex: search letter in text of vertex " << currentVertex
-              << LENDL;
+             ;
 #endif
     VERTEX_PROPERTY_16 vprop = get(vname_map,currentVertex);
 
     if( (vprop&FINAL_16) == FINAL_16) {
       result++;
 #ifdef DEBUG_CD
-      LTRACE <<  "FsaAccessReader::getIndex: result++ " << result << LENDL;
+      LTRACE <<  "FsaAccessReader::getIndex: result++ " << result;
 #endif
     }
 
@@ -273,7 +273,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     int32_t highCharTextPos = vprop&TEXT_POS_16;
     int32_t edgeOffset;
 #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccessReader::getIndex: highCharTextPos= "<< highCharTextPos << LENDL;
+    LTRACE <<  "FsaAccessReader::getIndex: highCharTextPos= "<< highCharTextPos;
 #endif
     if( wordOffset == 1 ) {
       edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos );
@@ -282,12 +282,12 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
       int32_t textOffset;
       textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length() );
 #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccessReader::getIndex: textOffset= "<< textOffset << LENDL;
+    LTRACE <<  "FsaAccessReader::getIndex: textOffset= "<< textOffset;
 #endif
       edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
     }
 #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccessReader::getIndex: edgeOffset= "<< edgeOffset << LENDL;
+    LTRACE <<  "FsaAccessReader::getIndex: edgeOffset= "<< edgeOffset;
 #endif
 
     if( edgeOffset >= 0 ) {
@@ -296,7 +296,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
       boost::tie(ei,edge_end) = boost::out_edges(currentVertex,FsaAccess16<graphType>::m_graph);
       if (ei==edge_end) {
 #ifdef DEBUG_CD
-        LTRACE <<  "FsaAccessReader::getIndex: no output edges, edgeOffset="<< edgeOffset << LENDL;
+        LTRACE <<  "FsaAccessReader::getIndex: no output edges, edgeOffset="<< edgeOffset;
 #endif
         return 0;
       }
@@ -308,25 +308,25 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
 #ifdef DEBUG_CD
       LTRACE <<  "FsaAccessReader::getIndex: match " << edgeOffset;
       if( edgeOffset > 0 ) {
-        LTRACE << " add " << counts[edgeOffset-1] << LENDL;
+        LTRACE << " add " << counts[edgeOffset-1];
       }
 #endif
     }
     else {
 #ifdef DEBUG_CD
-     LTRACE <<  "FsaAccessReader::getIndex: mismatch " << letter << LENDL;
+     LTRACE <<  "FsaAccessReader::getIndex: mismatch " << letter;
 #endif
       delete prefixIt;
       return 0;
     }
   }
 #ifdef DEBUG_CD
-  LTRACE <<  "FsaAccessReader::getIndex: !prefixIt.hasNextLetter()" << LENDL;
+  LTRACE <<  "FsaAccessReader::getIndex: !prefixIt.hasNextLetter()";
 #endif
   delete prefixIt;
 #ifdef DEBUG_CD
   LTRACE <<  "FsaAccessReader::getIndex: get(vname_map,currentVertex) = "
-        << std::hex << get(vname_map,currentVertex) << std::dec << LENDL;
+        << std::hex << get(vname_map,currentVertex) << std::dec;
 #endif
   if( (get(vname_map,currentVertex)&FINAL_16) == FINAL_16)
     return result+1;
@@ -340,7 +340,7 @@ Lima::LimaString FsaAccessReader16<graphType>::getExtent(
 {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "FsaDictionary::getExtent(" << prefix << ")" << LENDL;
+  LTRACE <<  "FsaDictionary::getExtent(" << prefix << ")";
 #endif
 
   typename boost::graph_traits<graphType>::vertex_descriptor prefixPos = getStartNode(prefix);
@@ -364,7 +364,7 @@ template <typename graphType >
   FSAALOGINIT;
   LTRACE <<  "FsaAccessReader16<graphType>::getSubWords("
           << offset << ", "
-          << word << ")" << LENDL;
+          << word << ")";
 #endif
 
   // return prefix_iterator starting at this node
@@ -403,7 +403,7 @@ fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(
   FSAALOGINIT;
   LTRACE <<  "fsaSpare_subword_iterator::fsaSpare_subword_iterator("
             << word
-            << offset << ")" << LENDL;
+            << offset << ")";
 #endif
   operator ++(0);
 }
@@ -418,7 +418,7 @@ fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(const fsaR
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE <<  "fsaSpare_subword_iterator::fsaSpare_subword_iterator(orig)"
-         << LENDL;
+        ;
 #endif
 }
 
@@ -433,7 +433,7 @@ const std::pair< uint64_t,uint64_t>
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE << "fsaSpare_subword_iterator::operator*(): externalWordPos = "
-              << m_prefixIt->getExternalWordPos() << " curr = " << m_curr << LENDL;
+              << m_prefixIt->getExternalWordPos() << " curr = " << m_curr;
 #endif
    /**
    * 06/10/2005 Benoit Mathieu :
@@ -456,7 +456,7 @@ template <typename graphType >
 bool fsaReader_subword_iterator16<graphType>::operator!=(const AbstractSubWordIterator& it) const {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "fsaSpare_subword_iterator::operator!=()" << LENDL;
+  LTRACE <<  "fsaSpare_subword_iterator::operator!=()";
 #endif
   const fsaReader_subword_iterator16<graphType>& fsaAsi=dynamic_cast<const fsaReader_subword_iterator16<graphType>&>(it);
   return( (m_prefixIt->operator!=(*(fsaAsi.m_prefixIt)))
@@ -468,7 +468,7 @@ template <typename graphType >
 ClonableSubWordIterator* fsaReader_subword_iterator16<graphType>::clone() const {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "fsaSpare_subword_iterator::clone()" << LENDL;
+  LTRACE <<  "fsaSpare_subword_iterator::clone()";
 #endif
   return new fsaReader_subword_iterator16<graphType>(*this);
 }
@@ -478,7 +478,7 @@ fsaReader_subword_iterator16<graphType> & fsaReader_subword_iterator16<graphType
   LIMA_UNUSED(dummy);
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "fsaSpare_subword_iterator::operator++(): begin" << LENDL;
+  LTRACE <<  "fsaSpare_subword_iterator::operator++(): begin";
 #endif
   typename dicoGraph_traits16<graphType>::vname_map_type vname_map =
     boost::get(boost::vertex_name,m_graph);
@@ -492,12 +492,12 @@ fsaReader_subword_iterator16<graphType> & fsaReader_subword_iterator16<graphType
     int32_t wordOffset;
 #ifdef DEBUG_CD
     LTRACE <<  "fsaSpare_subword_iterator::operator++(): m_curr = "
-              << m_curr << ", m_wordPos = " << m_prefixIt->getWordPos() << LENDL;
+              << m_curr << ", m_wordPos = " << m_prefixIt->getWordPos();
 #endif
     char32_t letter = m_prefixIt->getNextLetter(wordOffset);
 #ifdef DEBUG_CD
     LTRACE <<  "fsaSpare_subword_iterator::operator++(): search for letter "
-              << LimaChar(letter) << "wordOffset=" << wordOffset << LENDL;
+              << LimaChar(letter) << "wordOffset=" << wordOffset;
 #endif
     // find the character letter in text property
     const Lima::LimaString& text = get(vtext_map,m_curr);
@@ -520,7 +520,7 @@ fsaReader_subword_iterator16<graphType> & fsaReader_subword_iterator16<graphType
       boost::tie(ei,edge_end) = boost::out_edges(m_curr,m_graph);
       if (ei==edge_end) {
 #ifdef DEBUG_CD
-        LTRACE <<  "FsaAccessReader::fsaReader_subword_iterator16<graphType>::operator++: no output edges, edgeOffset="<< edgeOffset << LENDL;
+        LTRACE <<  "FsaAccessReader::fsaReader_subword_iterator16<graphType>::operator++: no output edges, edgeOffset="<< edgeOffset;
 #endif
         return *this;
       }
@@ -532,7 +532,7 @@ fsaReader_subword_iterator16<graphType> & fsaReader_subword_iterator16<graphType
 #ifdef DEBUG_CD
       LTRACE <<  "fsaSpare_subword_iterator::operator++(): match" << edgeOffset;
       if( edgeOffset > 0 ) {
-        LTRACE << " add " << counts[edgeOffset-1] << LENDL;
+        LTRACE << " add " << counts[edgeOffset-1];
       }
 #endif
       // check if current label is final
@@ -560,7 +560,7 @@ std::pair< AccessSuperWordIterator, AccessSuperWordIterator >
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE <<  "FsaDictionary::getSuperWords("
-                 << word << ")" << LENDL;
+                 << word << ")";
 #endif
 
   typename boost::graph_traits<graphType>::vertex_descriptor prefixPos = getStartNode(word);
@@ -575,7 +575,7 @@ std::pair< AccessSuperWordIterator, AccessSuperWordIterator >
     AccessSuperWordIterator(new fsaReader_superword_iterator16<graphType>(*this,word)));
   }
 #ifdef DEBUG_CD
-  LTRACE <<  "FsaDictionary::getSuperWords: startVertex = " << prefixPos << LENDL;
+  LTRACE <<  "FsaDictionary::getSuperWords: startVertex = " << prefixPos;
 #endif
 
   // return prefix_iterator starting at this node
@@ -646,14 +646,14 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
   uint64_t accu = 0;
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "FsaAccessSpare::getSpelling(" << index << ")" << LENDL;
+  LTRACE <<  "FsaAccessSpare::getSpelling(" << index << ")";
 #endif
   LimaString result;
 
   // start at initial State of Fsa
   typename boost::graph_traits<graphType>::vertex_descriptor currentVertex = FsaAccess16<graphType>::m_rootVertex;
 #ifdef DEBUG_CD
-  LTRACE <<  "FsaAccessSpare::getSpelling: (0) currentV = " << currentVertex << LENDL;
+  LTRACE <<  "FsaAccessSpare::getSpelling: (0) currentV = " << currentVertex;
 #endif
 
   typename dicoGraph_traits16<graphType>::vname_map_type vname_map =
@@ -666,7 +666,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
   // test if index exceeds maxIndex
   if( index >= m_size ) {
 #ifdef DEBUG_CD
-    LERROR << "FsaAccessSpare::getSpelling: no word for id " << index << LENDL;
+    LERROR << "FsaAccessSpare::getSpelling: no word for id " << index;
 #endif
     return result;
   }
@@ -675,12 +675,12 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
   for( ; accu < index ; ) {
 #ifdef DEBUG_CD
     LTRACE << "FsaAccessSpare::getSpelling: (1) currentV = " << currentVertex
-              << ", accu = " << accu << LENDL;
+              << ", accu = " << accu;
 #endif
     if(( (get(vname_map, currentVertex)&FINAL_16) == FINAL_16) ) {
 #ifdef DEBUG_CD
         LTRACE << "FsaAccessSpare::getSpelling: (2) currentV = "
-	          << currentVertex << " accu++ " << LENDL;
+	          << currentVertex << " accu++ ";
 #endif
       accu++;
     }
@@ -688,7 +688,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
     boost::tie(ei,edge_end) = boost::out_edges(currentVertex,FsaAccess16<graphType>::m_graph);
     if (ei==edge_end) {
 #ifdef DEBUG_CD
-      LTRACE <<  "FsaAccessReader::getSpelling: no output edges" << LENDL;
+      LTRACE <<  "FsaAccessReader::getSpelling: no output edges";
 #endif
       return result;
     }
@@ -706,7 +706,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
     }
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessSpare::getSpelling: edgeOffset = "
-         << edgeOffset << ", delta = " << delta << LENDL;
+         << edgeOffset << ", delta = " << delta;
 #endif
     accu += delta;
     const Lima::LimaString& text = get(vtext_map,currentVertex);
@@ -716,7 +716,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
       Lima::LimaString letter = text_content[edgeOffset];
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessSpare::getSpelling: edgeOffset < " << highCharTextPos
-         << ", letter = " << letter.unicode() << ", text_length = " << text.length() << LENDL;
+         << ", letter = " << letter.unicode() << ", text_length = " << text.length();
 #endif
       if( FsaAccessHeader::getTrieDirectionForward() )
         result.push_back(letter);
@@ -727,11 +727,11 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
 //      Lima::LimaString letter = text_content[edgeOffset];
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessSpare::getSpelling: edgeOffset >= " << highCharTextPos
-                << ", text_content += " << highCharTextPos << LENDL;
+                << ", text_content += " << highCharTextPos;
 #endif
       text_content += highCharTextPos;
 #ifdef DEBUG_CD
-      LTRACE << "text_content += " << (edgeOffset - highCharTextPos)*2 << LENDL;
+      LTRACE << "text_content += " << (edgeOffset - highCharTextPos)*2;
 #endif
       text_content = text_content + (edgeOffset - highCharTextPos)*2;
       if( FsaAccessHeader::getTrieDirectionForward() ) {
@@ -750,7 +750,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
   while(( (get(vname_map, currentVertex)&FINAL_16) != FINAL_16 ) ) {
 #ifdef DEBUG_CD
     LTRACE <<  "FsaAccessSpare::getSpelling phase2: accu = "
-              << accu << ", currentV = " << currentVertex <<  LENDL;
+              << accu << ", currentV = " << currentVertex;
 #endif
     typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
     boost::tie(ei,edge_end) = boost::out_edges(currentVertex,FsaAccess16<graphType>::m_graph);
@@ -759,7 +759,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
     if(ei != edge_end) {
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessSpare::getSpelling: push '"
-                << (*eprop).unicode() << "'" << LENDL;
+                << (*eprop).unicode() << "'";
 #endif
       if( FsaAccessHeader::getTrieDirectionForward() )
         result.push_back(*eprop);
@@ -770,7 +770,7 @@ LimaString FsaAccessReader16<graphType>::getSpelling(const uint64_t givenIndex )
     else {
 #ifdef DEBUG_CD
       LERROR << "FsaAccessSpare::getSpelling: no word for id " << index
-             << " because no final state at end of trie !" << LENDL;
+             << " because no final state at end of trie !";
 #endif
       result.clear();
       return result;
@@ -811,7 +811,7 @@ fsaReader_superword_iterator16<graphType> &
     LIMA_UNUSED(dummy);
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "superword_iterator::operator++(): begin" << LENDL;
+  LTRACE <<  "superword_iterator::operator++(): begin";
 #endif
 
   typename dicoGraph_traits16<graphType>::vname_map_type vname_map =
@@ -826,7 +826,7 @@ fsaReader_superword_iterator16<graphType> &
     stro << "superword_iterator::operator++(): context=";
     context.print(stro);
     stro << "m_curr=" << m_curr;
-    LTRACE << stro.str().c_str() << LENDL;
+    LTRACE << stro.str().c_str();
 #endif
     if( context.out_edge != context.out_edge_end) {
       int32_t wordPos0 = context.wordPos;
@@ -838,7 +838,7 @@ fsaReader_superword_iterator16<graphType> &
 #ifdef DEBUG_CD
           LTRACE << "superword_iterator::operator++(): m_suffix.append( 1,"
                  << std::hex << (*(context.word_content+i)).unicode() << std::dec << ")"
-                 << " = context.word_content + " << i << LENDL;
+                 << " = context.word_content + " << i;
 #endif
           m_suffix.append( *(context.word_content+i) );
         }
@@ -862,12 +862,12 @@ fsaReader_superword_iterator16<graphType> &
       stro1 << "superword_iterator::operator++(): push(";
       new_context.print(stro1);
       stro1 << "), m_curr=" << m_curr;
-      LTRACE << stro1.str().c_str() << LENDL;
+      LTRACE << stro1.str().c_str();
 #endif
       m_context_stack.push_back(new_context);
 #ifdef DEBUG_CD
       LTRACE <<  "superword_iterator::operator++(): append ->"
-            << m_suffix << LENDL;
+            << m_suffix;
 #endif
       if( (get(vname_map,m_curr)&FINAL_16) == FINAL_16 ) {
         return *this;
@@ -876,12 +876,12 @@ fsaReader_superword_iterator16<graphType> &
     else {
 //      iterator_context<graphType>& previous_context = m_context_stack.back();
 #ifdef DEBUG_CD
-      LTRACE <<  "superword_iterator::operator++(): ei= edge_end" << LENDL;
+      LTRACE <<  "superword_iterator::operator++(): ei= edge_end";
       std::ostringstream stro2(std::ios::in | std::ios::out);
       stro2 << "superword_iterator::operator++(): pop(";
       context.print(stro2);
       stro2 << "), m_curr=" << m_curr;
-      LTRACE << stro2.str().c_str() << LENDL;
+      LTRACE << stro2.str().c_str();
 #endif
       m_context_stack.pop_back();
       if(m_context_stack.size() == 0)
@@ -891,7 +891,7 @@ fsaReader_superword_iterator16<graphType> &
       std::ostringstream stro3(std::ios::in | std::ios::out);
       stro3 << "superword_iterator::operator++(): current_context=";
       current_context.print(stro3);
-      LTRACE << stro3.str().c_str() << LENDL;
+      LTRACE << stro3.str().c_str();
 #endif
       if( m_dico.FsaAccessHeader::getTrieDirectionForward() ) {
         for( int i = current_context.wordOffset ; i > 0 ; i--) {
@@ -905,7 +905,7 @@ fsaReader_superword_iterator16<graphType> &
       }
 #ifdef DEBUG_CD
       LTRACE <<  "superword_iterator::operator++(): erase -> "
-          << m_suffix << LENDL;
+          << m_suffix;
 #endif
       current_context.out_edge++;
 //      m_context_stack.push_back(current_context);
@@ -921,7 +921,7 @@ FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE <<  "FsaDictionary::getStartNode("
-                 << word << ")" << LENDL;
+                 << word << ")";
 #endif
   typename dicoGraph_traits16<graphType>::vtext_map_type vtext_map =
     boost::get(vertex_text,FsaAccess16<graphType>::m_graph);
@@ -959,14 +959,14 @@ FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
       boost::tie(ei,edge_end) = boost::out_edges(from,FsaAccess16<graphType>::m_graph);
       if (ei==edge_end) {
 #ifdef DEBUG_CD
-        LTRACE <<  "FsaAccessReader::getStartNode: no output edges, edgeOffset="<< edgeOffset << LENDL;
+        LTRACE <<  "FsaAccessReader::getStartNode: no output edges, edgeOffset="<< edgeOffset;
 #endif
         return( FsaAccess16<graphType>::m_rootVertex );
       }
       typename FsaAccessReader16<graphType>::dicoEdgeType edge = *(ei+edgeOffset);
       from = target(edge, FsaAccess16<graphType>::m_graph);
 #ifdef DEBUG_CD
-      LTRACE <<  "FsaDictionary::getStartNode: match" << edgeOffset << LENDL;
+      LTRACE <<  "FsaDictionary::getStartNode: match" << edgeOffset;
 #endif
     }
     else {
@@ -974,7 +974,7 @@ FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
       LimaString temp = word;
       mess.append( Lima::Common::Misc::limastring2utf8stdstring(temp));
 #ifdef DEBUG_CD
-      LERROR << mess.c_str() << LENDL;
+      LERROR << mess.c_str();
 #endif
       return( FsaAccess16<graphType>::m_rootVertex );
     }

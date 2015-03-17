@@ -43,7 +43,7 @@ AnalysisDico<accessMethod>::AnalysisDico( bool trie_direction_fwd )
       m_trie_direction_fwd(trie_direction_fwd) {
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "AnalysisDico::AnalysisDico()" << LENDL;
+  LDEBUG <<  "AnalysisDico::AnalysisDico()";
 #endif
 }
 
@@ -55,13 +55,13 @@ analysisDicoEntry AnalysisDico<accessMethod>::getEntry(const Lima::LimaString& w
   STRINGMAPLOGINIT;
   const LimaString & basicWord = word;
   LDEBUG <<  "AnalysisDico::getEntry("
-            << Lima::Common::Misc::convertString(basicWord) << ")" << LENDL;
+            << Lima::Common::Misc::convertString(basicWord) << ")";
 #endif
 
   // Look in FsaDictionary (or tree or..)
   index = m_accessMethod.getIndex(word);
 #ifdef DEBUG_CD
-  LDEBUG <<  "index = " << index << LENDL;
+  LDEBUG <<  "index = " << index;
 #endif
 
   index = m_accessMethod.getIndex(word);
@@ -69,7 +69,7 @@ analysisDicoEntry AnalysisDico<accessMethod>::getEntry(const Lima::LimaString& w
   if( index >= 0 )
   {
 #ifdef DEBUG_CD
-    LDEBUG <<  "index = " << index << LENDL;
+    LDEBUG <<  "index = " << index;
 #endif
     analysisDicoEntry entry(word, m_data+m_index2Data[index], m_dicoCode );
     return entry;
@@ -86,7 +86,7 @@ void AnalysisDico<accessMethod>::fillIndex2Data() {
   m_index2Data = new uint64_t[keyCount];
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "IndirectDataDico::parseData: fill index_2data... " << LENDL;
+  LDEBUG <<  "IndirectDataDico::parseData: fill index_2data... ";
 #endif
   size_t ptrOffset = 0;
   unsigned char *datasAddr = m_data;
@@ -94,14 +94,14 @@ void AnalysisDico<accessMethod>::fillIndex2Data() {
   for( uint64_t entry=0 ; entry < keyCount ; entry++ )
   {
 #ifdef DEBUG_CD
-//    LDEBUG <<  "IndirectDataDico::parseData: offset m_index2Data[" << entry << "]=" << ptrOffset << LENDL;
+//    LDEBUG <<  "IndirectDataDico::parseData: offset m_index2Data[" << entry << "]=" << ptrOffset;
 #endif
     ptrOffset = datasAddr - m_data;
     m_index2Data[entry] = ptrOffset;
     binaryEntry.nextField(datasAddr);
   }
 #ifdef DEBUG_CD
-  LDEBUG <<  "IndirectDataDico::parseData: end fill index_2data" << LENDL;
+  LDEBUG <<  "IndirectDataDico::parseData: end fill index_2data";
 #endif
 }
 

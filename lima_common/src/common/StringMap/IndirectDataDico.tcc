@@ -48,7 +48,7 @@ IndirectDataDico<accessMethod, contentElement>::IndirectDataDico( const contentE
     : StringMap<accessMethod, contentElement>( defaultValue ) , m_index2Data(0){
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "IndirectDataDico::IndirectDataDico()" << LENDL;
+  LDEBUG <<  "IndirectDataDico::IndirectDataDico()";
 #endif
 }
 
@@ -66,7 +66,7 @@ void IndirectDataDico<accessMethod, contentElement>::parseData( const std::strin
 {
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG << "IndirectDataDico::parseData(" << dataFileName << ")" << LENDL;
+  LDEBUG << "IndirectDataDico::parseData(" << dataFileName << ")";
 #endif
 
   // create datas memory storage
@@ -78,13 +78,13 @@ void IndirectDataDico<accessMethod, contentElement>::parseData( const std::strin
   std::cerr << "IndirectDataDico::parseData: sts.st_size = " << sts.st_size << std::endl;
   m_data = new uint8_t [dataSize];
 #ifdef DEBUG_CD
-  LDEBUG << "IndirectDataDico::parseData: allocate " << dataSize << " bytes" << LENDL;
+  LDEBUG << "IndirectDataDico::parseData: allocate " << dataSize << " bytes";
 #endif
   if (m_data == NULL)
   {
     std::string mess = "IndirectDataDico::parseData: memory allocation error";
 #ifdef DEBUG_CD
-    LERROR << mess << LENDL;
+    LERROR << mess;
 #endif
     throw( std::logic_error( mess ) );
   }
@@ -98,7 +98,7 @@ void IndirectDataDico<accessMethod, contentElement>::parseData( const std::strin
     std::ostringstream stro (std::ios::in | std::ios::out);
     stro << "IndirectDataDico::parseData error cannot open data file " << dataFileName;
 #ifdef DEBUG_CD
-    LERROR << stro.str() << LENDL;
+    LERROR << stro.str();
 #endif
     throw( Lima::IncompleteResources(stro.str()) );
   }
@@ -106,12 +106,12 @@ void IndirectDataDico<accessMethod, contentElement>::parseData( const std::strin
   //    fseek(dataFile, DATA_HEADER_SIZE, SEEK_SET);            // skip header
 #ifdef DEBUG_CD
   LDEBUG <<  "IndirectDataDico::parseData: fread(" << totalDataReadSize
-         << ", " << dataSize-totalDataReadSize << ")" << LENDL;
+         << ", " << dataSize-totalDataReadSize << ")";
 #endif
   readSize = fread(m_data+totalDataReadSize, 1, dataSize-totalDataReadSize, dataFile);        //_dataSize = max
 #ifdef DEBUG_CD
   LDEBUG <<  "IndirectDataDico::parseData: read " << readSize
-         << " bytes from " << dataFileName << LENDL;
+         << " bytes from " << dataFileName;
 #endif
   totalDataReadSize += readSize;
   fclose(dataFile);
@@ -119,7 +119,7 @@ void IndirectDataDico<accessMethod, contentElement>::parseData( const std::strin
   {
     std::string mess = "IndirectDataDico::parseData: totalDataReadSize != _dataSize ";
 #ifdef DEBUG_CD
-    LERROR << mess << LENDL;
+    LERROR << mess;
 #endif
     throw( std::logic_error( mess ) );
   }
@@ -133,14 +133,14 @@ void IndirectDataDico<accessMethod, contentElement>::fillIndex2Data() {
   m_index2Data = new uint64_t[keyCount];
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  LDEBUG <<  "IndirectDataDico::parseData: fill index_2data... " << LENDL;
+  LDEBUG <<  "IndirectDataDico::parseData: fill index_2data... ";
 #endif
   size_t ptrOffset = 0;
   uint8_t *datasAddr = m_data;
   for( uint32_t entry=0 ; entry < keyCount ; entry++ )
   {
 #ifdef DEBUG_CD
-//    LDEBUG <<  "IndirectDataDico::parseData: offset m_index2Data[" << entry << "]=" << ptrOffset << LENDL;
+//    LDEBUG <<  "IndirectDataDico::parseData: offset m_index2Data[" << entry << "]=" << ptrOffset;
 #endif
     ptrOffset = datasAddr - m_data;
     m_index2Data[entry] = ptrOffset;
@@ -148,7 +148,7 @@ void IndirectDataDico<accessMethod, contentElement>::fillIndex2Data() {
 //    binaryEntry.nextField(datasAddr);
   }
 #ifdef DEBUG_CD
-  LDEBUG <<  "IndirectDataDico::parseData: end fill index_2data" << LENDL;
+  LDEBUG <<  "IndirectDataDico::parseData: end fill index_2data";
 #endif
 }
 
