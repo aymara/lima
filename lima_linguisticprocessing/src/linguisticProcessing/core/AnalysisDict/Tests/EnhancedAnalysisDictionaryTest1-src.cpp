@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( EnhancedAnalysisDictionaryTest1 )
   // Initialize MediaData (for fre)
   //value of LIMA_RESOURCE_DIR is set by find_package(LIMADATA) and LIMALDATAConfig.cmake;
   std::string resourcesPath("@LIMA_RESOURCE_DIR@");
-  std::string configDir(getenv("LIMA_CONF")==0?"@CMAKE_INSTALL_PREFIX@/usr/share/config/lima/":getenv("LIMA_CONF"));
+  std::string configDir(getenv("LIMA_CONF")==0?"@CMAKE_INSTALL_PREFIX@/share/config/lima/":getenv("LIMA_CONF"));
   std::string commonConfigFile("lima-common.xml");
   std::deque<std::string>langs(1,"fre");
   Common::MediaticData::MediaticData::changeable().init(
