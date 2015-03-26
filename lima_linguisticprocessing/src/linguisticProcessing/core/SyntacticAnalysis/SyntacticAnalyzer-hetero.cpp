@@ -176,14 +176,14 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
   SAHLOGINIT;
   LINFO << "start heterosyntagmatic dependence relations search";
 
-  AnalysisGraph* anagraph=
+  AnalysisGraph* posgraph=
     static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-  if (anagraph==0)
+  if (posgraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  LinguisticGraph* graph = anagraph->getGraph();
+  LinguisticGraph* graph = posgraph->getGraph();
 
   SegmentationData* sb=
     static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
@@ -202,7 +202,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
     static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
-    simplificationData=new SimplificationData(anagraph);
+    simplificationData=new SimplificationData(posgraph);
     analysis.setData("SimplificationData",simplificationData);
   }
 
@@ -219,7 +219,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
            << " to vertex " << endSentence;
 
     std::vector<Automaton::RecognizerMatch> result;
-    m_recognizer->apply(*anagraph,
+    m_recognizer->apply(*posgraph,
                         beginSentence,
                         endSentence,
                         analysis,
@@ -251,7 +251,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
       std::vector<Automaton::RecognizerMatch> subSentResult;
       LDEBUG << "Hetero rules on a subsentence: " << boost::target(first,*graph) << " / " << boost::source(last,*graph);
 
-      m_recognizer->apply(*anagraph,
+      m_recognizer->apply(*posgraph,
                           boost::target(first,*graph),
                           boost::source(last,*graph),
                           analysis,
@@ -299,7 +299,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                 << boost::source(last,*graph) << "/" << beginSentence << "/"
                 << endSentence;
             Automaton::Recognizer* subSentRecognizer = (*(m_subSentRecognizers.find(subSentType))).second;
-            subSentRecognizer->apply(*anagraph,
+            subSentRecognizer->apply(*posgraph,
                                      boost::target(first,*graph),
                                      boost::source(last,*graph),
                                      beginSentence,
