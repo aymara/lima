@@ -1,24 +1,18 @@
-###############################################################################
-# 
-# rules for the recognition of english left to right homosyntagmatic relations
-# this file uses the syntax for the declarations of automatons by Romaric 
-# Besancon (Cf. his 2003/03/11 document)
-# 
-# Created on Thu nov 21 2003 
-# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)
+#
+# Rules for the second pass recognition of english relations inside chunks
+# This file uses the Modex rules syntax
+#
+# Created on Thu nov 21 2003
+# by Gael de Chalendar <Gael.de-Chalendar@cea.fr>
+# initial rules by Hubert Naets
 # Modified Jan 12, 2005 (Gregory Grefenstette)
-# Translation of rules created by Gael de Chalendar and Romaric Besancon
-# 
-# $Id: rules-l2r-eng-homodeps.txt,v 1.8 2005/01/05 15:35:39 lic2m Exp
-# 
-###############################################################################
-# NOTE: pour les relations homosyntagmatiques, le recognizer est appelé
-# avec les parametres suivants:
+#
+
+# NOTE: for these rules, the recognizer is called with the parameters:
 # test all vertices: true
 # stop at first success: false
 # only one success per type: false
 # return at first success: false
-
 
 set encoding=utf8
 using modex lima-analysis.xml
@@ -536,26 +530,11 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation entre auxiliaire et participe passe
 #----------------------------------------------------------------------
-#@Participe:@Aux (@AuxParticipe){0-2} (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
-
-#@AuxInd::@Pron? (@AuxParticipe){0-2} (@AdvTempComp|@Neg){0-2} @Participe:SYNTACTIC_RELATION:
-#+CreateCompoundTense(right.4,trigger.1,"V;VBD;PASS")
+#@Participe:@Aux @PronInsideCompTense? (@Aux){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
+#+CreateCompoundTense(trigger.1,left.1,"V;VBD;PASS")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-#@Participe:@AuxInf @Pron? (@AuxParticipe){0-2} (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PASS")
-
-#@Participe:@AuxImp @Pron? (@AuxParticipe){0-2} (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
-
-#@Participe:@AuxSubj @Pron? (@AuxParticipe){0-2} (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
-
-
-# @Participe:@Aux (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
-# +CreateCompoundTense(trigger.1,left.1,"V;VB;PRES")
 
 #----------------------------------------------------------------------
 # Relation entre verbe et sujet pronominal inverse
@@ -583,7 +562,7 @@ to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation entre adverbe et verbe à l'infinitif 
 # He wanted to quickly sell his apartment but could not find a taker
-# AdvVerbe :      quickly[11|11]{29/102}  -> sell[10|10]{28/101}
+# AdvVerbe :      quickly -> sell
 #----------------------------------------------------------------------
 @Adverb::(@Neg)? @BaseFormVerb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
@@ -591,6 +570,16 @@ to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
+#----------------------------------------------------------------------
+# Relation between an adverb and a past tenst verb
+# The Convention also established eleven Working Groups
+# AdvVerbe :      also-> established
+#----------------------------------------------------------------------
+@Adverb::@TensedVerb:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
 
 #----------------------------------------------------------------------
 # Relation entre substantif et adverbe dans : "as chief"
@@ -599,29 +588,6 @@ to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"AdvSub")
-
-########################################
-# Regles adaptees pour les mots inconnus
-########################################
-
-@Determinant::((@Adverb){0-3} @Adjectif){0-3} @Inc:SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"det")
-+SecondUngovernedBy(trigger.1,right.2,"ANY")
-+CreateRelationBetween(trigger.1,right.2,"det")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-@PrepComp:@Adjectif:(@Determinant)? (@Adverb|@Adjectif){0-n} @Inc:SYNTACTIC_RELATION:
-+SecondUngovernedBy(right.3,left.1,"ANY")
-+CreateRelationBetween(right.3,left.1,"COMPADJ")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-@PrepComp:$ADV-RB:@Determinant (@Adverb|@Adjectif){0-n} @Inc:SYNTACTIC_RELATION:
-+SecondUngovernedBy(right.3,left.1,"ANY")
-+CreateRelationBetween(right.3,left.1,"COMPADV")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
 
 
 $PONCTU-QUOT:@Substantif $PONCTU-QUOT (^$PONCTU-QUOT){0-n} @Substantif::SYNTACTIC_RELATION:

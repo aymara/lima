@@ -61,7 +61,7 @@ define subautomaton PrepGroup {
 =<ClearStoredRelations()
 
 # a pronoun at  the end of an enumeration
-@TensedVerb:($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @Pron (@PronPers){0-2}::SYNTACTIC_RELATION:
+@TensedVerb:($NC|$NP) %NounGroup ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @Pron (@PronPers){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +SecondUngovernedBy(left.6,trigger.1,"ANY")
 +CreateRelationBetween(left.6,trigger.1,"SUJ_V")
@@ -70,7 +70,7 @@ define subautomaton PrepGroup {
 =<ClearStoredRelations()
 
 # a pronoun at  the end of an enumeration
-@TensedVerb:($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) (@NounGroupElt){0-n} ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @Pron  (@PronPers){0-2}::SYNTACTIC_RELATION:
+@TensedVerb:($NC|$NP) %NounGroup ($NC|$NP) %NounGroup ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @Pron  (@PronPers){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +SecondUngovernedBy(left.8,trigger.1,"ANY")
 +CreateRelationBetween(left.8,trigger.1,"SUJ_V")

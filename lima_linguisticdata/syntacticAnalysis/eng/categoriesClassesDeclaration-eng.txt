@@ -13,7 +13,6 @@ set entityTypes=SyntacticRelations
 
 @Adjectif=($ADJ)
 
-
 @Adverb=($ADV)
 @AdvTempComp=($ADV-RB)
 @Neg=($ADV-NOT)
@@ -50,8 +49,6 @@ set entityTypes=SyntacticRelations
 @TensedVerb=($V-VB,$V-VBD,$V-VBP,$V-VBZ)
 @BaseFormVerb=($V-VB)
 
-@Inc=($DIVERS-UNK)
-
 @SujVOther=($DET,
 $ADJ,$ADV,
 $PREP,$PONCTU,
@@ -63,7 +60,27 @@ $CONJ-CC)
 $ADJ,$ADV,$PREP,$PONCTU,
 $INTERJ,$CONJ,$V-MD)
 
-@NounGroupElt=($ADV,$ADJ,$PREP,$DET)
+
+
+
+# Possessive pronoun
+@PronPoss=($PRON-PRP$)
+
+@PronPersSujInverse=($PRON-PRP)
+
+@PronPersSuj=($PRON-PRP)
+
+@PronPersObj=($PRON-PRP)
+
+@PronRefl=($PRON)
+
+@PronRelS=($PRON)
+
+@Neg=($ADV-NOT)
+
+@PronRelCa=($PRON)
+
+@Virg=(\,)
 
 @ConjCoord=($CONJ-CC)
 
