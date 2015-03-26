@@ -608,7 +608,7 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
   map<string,SyntacticRelationId>::const_iterator it=m_d->m_syntacticRelations.find(name);
   if (it!=m_d->m_syntacticRelations.end()) {
     LDATALOGINIT;
-    LDEBUG << "found " << name << " <=> " << (*it).second;
+    LDEBUG << "LanguageData::getSyntacticRelationId found" << name << " <=> " << (*it).second;
     return (*it).second;
   }
   return 0;

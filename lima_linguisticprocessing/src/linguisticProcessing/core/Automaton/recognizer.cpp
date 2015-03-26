@@ -466,11 +466,11 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         LDEBUG << "trigger " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success=" << success 
                << ",actionSuccess=" << actionSuccess;
-        LDEBUG << "        matched: '" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language)) << "'";
+        LDEBUG << "        matched:" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language));
       }
       else {
         LDEBUG << "vertex " << v << "[" << str << "]:rule " 
-               << currentRule->getRuleId() << "-> success=0";
+               << currentRule->getRuleId() << "-> success= false";
       }
     }
 
@@ -669,8 +669,7 @@ uint64_t Recognizer::
         if (returnAtFirstSuccess)
           return numberOfRecognized;
         if (! testAllVertices) { // restart from end of recognized expression
-          LDEBUG << "success: continue from vertex "
-                 << currentVertex;
+          LDEBUG << "success: continue from vertex " << currentVertex;
           // GC on 20110803: the clearing below was problematic in case of rules like that:
           // [<Location.LOCATION>]:(t_capital_1st|t_capital){1-3} [,]::LOCATION:N_LOCATION
           // which matches text before (left) the trigger which is not included in the match.
@@ -701,7 +700,7 @@ uint64_t Recognizer::
         //visited.insert(next);
       }
       else {
-        LDEBUG << "Recognizer: already visited: " << next;
+        LDEBUG << "Recognizer: already visited:" << next;
       }
     }
     RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
