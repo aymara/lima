@@ -9,118 +9,71 @@ set entityTypes=SyntacticRelations
 
 @VraimentTout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
 
-@PonctuForte=($PONCTU-SENT)
-
 @NomPropre=($NP-NNP,$NP-NNPS)
 
 @Adjectif=($ADJ)
 
-@Prep=($PREP-IN)
-
-@Pron=($PRON)
-
-@Verbe=($V)
 
 @Adverb=($ADV)
+@AdvTempComp=($ADV-RB)
+@Neg=($ADV-NOT)
 
 @Substantif=($NC,$NP)
 
 @Determinant=($DET-DT,$DET-THATDT)
-
 @DetDef=(the)
-
 @DetIndef=(a,an)
-
 @DetInt=($DET-WDT)
-
 @DetNum=($NOMBRE-CD)
 
+@Prep=($PREP)
 @PrepComp=($PREP-IN,$PREP-THATIN)
 
-@PrepGVInf=($PREP-TO)
+@Pron=($PRON)
+@PronPers=($PRON-PRP)
 
-@CompDuNomTrig=($PREP)
-
+@Verbe=($V)
+@Copule=(am,is,are,was,were,become,get,feel,seem)
+# liste des verbes copule pouvant être suivi d'un infinitif
+# (sous-liste des verbes copule du dictionnaire)
+@CopulePlusInfinitif=(seem$V,appear$V,become$V)
 @Aux=($V)
-
+@AuxInd=($V)
 @AuxModal=($V-MD)
-
-@Is=($V)
-
-@Was=($V)
-
-
+@Is=(is)
+@Was=(was)
 @Ing=($V-VBG)
-
 @AuxParticipe=($V-VBN)
-
+@PastTense=($V-VBD)
+@PastParticiple=($V-VBN)
 @Participe=($V-VBN,$V-VBG)
-
-@AdvTempComp=($ADV-RB)
+@TensedVerb=($V-VB,$V-VBD,$V-VBP,$V-VBZ)
+@BaseFormVerb=($V-VB)
 
 @Inc=($DIVERS-UNK)
 
-@VerbeDansQuestion=($V)
-
-# pas infinitif, ni impératif (pas de sujet)
-# ni participe (sujet attaché à l'auxiliaire)
-@TensedVerbSubj=($V-VBD,
-$V-VBP,
-$V-VBZ)
-
-@Copule=($V)
-
-
-# pas auxiliaire (les COD sont attachés au verbe principal)
-# A verifier (copier du francais)
-@TensedVerbObj=($V-VBD,
-$V-VBP,
-$V-VBZ)
-
-# A verifier (copier du francais)
 @SujVOther=($DET,
 $ADJ,$ADV,
 $PREP,$PONCTU,
 $INTERJ,
 $CONJ-CC)
 
-# A verifier (copier du francais)
+# A verifier (copie du francais)
 @NotVerbPrincipal=($NC,$NP,$PRON,$DET,
 $ADJ,$ADV,$PREP,$PONCTU,
 $INTERJ,$CONJ,$V-MD)
 
-
-# A verifier (copier du francais)
-@InfinitiveVerb=($V-VB)
-
-
-@PronPersSujInverse=($PRON-PRP)
-
-@PronPersSuj=($PRON-PRP)
-
-@PronPersObj=($PRON-PRP)
-
-@PronRefl=($PRON)
-
-@PronRelS=($PRON)
-
-@Neg=($ADV-NOT)
-
-@PronRelCa=($PRON)
-
-@Virg=(\,)
+@NounGroupElt=($ADV,$ADJ,$PREP,$DET)
 
 @ConjCoord=($CONJ-CC)
 
 @ConjSubord=($PREP-IN)
 
-@Verbe=($V)
+@Sent=($PONCTU-SENT)
 
+@Comma=(\,)
 
-# pronom qui peut etre entre l'auxiliaire et le verbe : a-t-on construit 
+@OpenQuot=($PONCTU-OQU,$PONCTU-QUOT,$PONCTU-OPAR)
 
-@PronInsideCompTense=($PRON)
-
-@AuxInd=($V)
-
+@ClosQuot=($PONCTU-QUOT,$PONCTU-CPAR)
 
