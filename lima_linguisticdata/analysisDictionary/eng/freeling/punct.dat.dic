@@ -8,6 +8,8 @@
 -	-		COLON
 --	--		COLON
 "	"		QUOT
+“	“		OQU
+”	”		QUOT
 '	'		QUOT
 ''	''		QUOT
 \\	\\		COMMA

@@ -271,6 +271,7 @@ what	what		WDT
 whatever	whatever		WDT
 whatever	whatever		WP
 # removed as very noisy when	when		IN
+when	when		CC
 when	when		WRB
 whence	whence		WRB
 whenever	whenever		WRB
