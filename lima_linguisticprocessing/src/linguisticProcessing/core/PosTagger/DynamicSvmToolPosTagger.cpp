@@ -212,7 +212,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     LDEBUG << "\n" << vertex << " -> " << getWord(vertex, srcGraph);
 
 
-    uint64_t logMaxWeight = -LDBL_MAX;
+    double logMaxWeight = -LDBL_MAX;
     int maxLength = 0;
 
     /* For every ancestor of our node */
@@ -221,17 +221,17 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     BOOST_FOREACH(LinguisticGraphVertex prevVertex, previousTokens) {
 
       std::string pos = "";
-      uint64_t logCurWeight = log(1.0), w;
+      double logCurWeight = log(1.0), w;
       if (vertex != 1) {
         /* Call SVMTool */
         boost::tie(pos, w) = SVMTool(srcGraph, vertex, prevVertex, maxAncestor);
         logCurWeight = log(w);
-        LDEBUG << "weight = " <<  (float)logCurWeight << " -> " << pos << "(" << (float)w << ")";
+        LDEBUG << "weight = " <<  logCurWeight << " -> " << pos << "(" << w << ")";
       }
 
 
       /* find out the previous weight */
-      uint64_t logPrevPrice = log(1.0);
+      double logPrevPrice = log(1.0);
       int prevLength = 0;
       if(maxAncestor.find(prevVertex) != maxAncestor.end()) {
         struct PathInfo prevPath = maxAncestor[prevVertex];
@@ -247,7 +247,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
         maxAncestor[vertex] = currentPath;
         logMaxWeight = logCurWeight + logPrevPrice;
         maxLength = prevLength;
-        LDEBUG << "  -> " << (float)logMaxWeight << " (" << maxLength << ")";
+        LDEBUG << "  -> " << logMaxWeight << " (" << maxLength << ")";
       } 
     }
 
