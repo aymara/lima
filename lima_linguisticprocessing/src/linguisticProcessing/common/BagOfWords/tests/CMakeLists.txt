@@ -61,7 +61,7 @@ add_test(BagOfWordsTest1 BagOfWordsTest1)
 SET(BagOfWordsTest2_SRCS BagOfWordsTest2.cpp)
 
 set (BagOfWordsTest2_MOC_HEADERS BagOfWordsTest2.h)
-qt4_wrap_cpp (BagOfWordsTest2_MOC_OUTFILES ${BagOfWordsTest2_MOC_HEADERS})
+qt5_wrap_cpp (BagOfWordsTest2_MOC_OUTFILES ${BagOfWordsTest2_MOC_HEADERS})
 
 add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS} ${BagOfWordsTest2_MOC_OUTFILES})
 target_link_libraries(BagOfWordsTest2

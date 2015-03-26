@@ -59,7 +59,7 @@ void ViterbiCostFunction<Cost,CostFactory>::apply(
 //       {
 //         os << it->m_predMicro << ",";
 //       }
-//  LDEBUG << "apply cost on " << micro << " " << predData.m_predMicro << " | " << os.str() << LENDL;
+//  LDEBUG << "apply cost on " << micro << " " << predData.m_predMicro << " | " << os.str();
   predData.m_cost=m_maximumCost;
   
   typename std::map<LinguisticCode, std::map<LinguisticCode, GramsData> >::const_iterator microItr=m_data.find(micro);
@@ -91,16 +91,16 @@ void ViterbiCostFunction<Cost,CostFactory>::apply(
 //          LDEBUG << "trigram : " <<
 //            m_microManager->getPropertySymbolicValue(predPredDataItr->m_predMicro) << " " <<
 //            m_microManager->getPropertySymbolicValue(predData.m_predMicro) << " " <<
-//            m_microManager->getPropertySymbolicValue(micro) << " doesn't exists " << LENDL;
+//            m_microManager->getPropertySymbolicValue(micro) << " doesn't exists ";
           Cost tmp=predPredDataItr->m_cost + predMicroItr->second.m_default;
-//          LDEBUG << "cost for bigram is + " << predMicroItr->second.m_default << " = " << tmp << LENDL;
+//          LDEBUG << "cost for bigram is + " << predMicroItr->second.m_default << " = " << tmp;
           if (tmp<predData.m_cost) {
-//            LDEBUG << "cost is better" << LENDL;
+//            LDEBUG << "cost is better";
             predData.m_predPredMicros.clear();
             predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
             predData.m_cost=tmp;
           } else if (tmp==predData.m_cost) {
-//            LDEBUG << "cost is equal" << LENDL;
+//            LDEBUG << "cost is equal";
             predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
           }
           predPredDataItr++;
@@ -109,16 +109,16 @@ void ViterbiCostFunction<Cost,CostFactory>::apply(
 //          LDEBUG << "found trigram : " <<
 //            m_microManager->getPropertySymbolicValue(predPredDataItr->m_predMicro) << " " <<
 //            m_microManager->getPropertySymbolicValue(predData.m_predMicro) << " " <<
-//            m_microManager->getPropertySymbolicValue(micro) << " ! " << LENDL;
+//            m_microManager->getPropertySymbolicValue(micro) << " ! ";
           Cost tmp=predPredDataItr->m_cost + gramItr->m_cost;
-//          LDEBUG << "cost for this trigram is " << gramItr->m_cost << " => " << tmp << LENDL;
+//          LDEBUG << "cost for this trigram is " << gramItr->m_cost << " => " << tmp;
           if (tmp<predData.m_cost) {
-//            LDEBUG << "cost is better" << LENDL;
+//            LDEBUG << "cost is better";
             predData.m_predPredMicros.clear();
             predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
             predData.m_cost=tmp;
           } else if (tmp==predData.m_cost) {
-//            LDEBUG << "cost is equal" << LENDL;
+//            LDEBUG << "cost is equal";
             predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
           }
           predPredDataItr++;
@@ -131,16 +131,16 @@ void ViterbiCostFunction<Cost,CostFactory>::apply(
 //          LDEBUG << "trigram : " <<
 //            m_microManager->getPropertySymbolicValue(predPredDataItr->m_predMicro) << " " <<
 //            m_microManager->getPropertySymbolicValue(predData.m_predMicro) << " " <<
-//            m_microManager->getPropertySymbolicValue(micro) << " doesn't exists " << LENDL;
+//            m_microManager->getPropertySymbolicValue(micro) << " doesn't exists ";
           Cost tmp=predPredDataItr->m_cost + predMicroItr->second.m_default;
-//          LDEBUG << "cost for bigram is " << predMicroItr->second.m_default << " => " << tmp << LENDL;
+//          LDEBUG << "cost for bigram is " << predMicroItr->second.m_default << " => " << tmp;
           if (tmp<predData.m_cost) {
-//            LDEBUG << "cost is better" << LENDL;
+//            LDEBUG << "cost is better";
             predData.m_predPredMicros.clear();
             predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
             predData.m_cost=tmp;
           } else if (tmp==predData.m_cost) {
-//            LDEBUG << "cost is equal" << LENDL;
+//            LDEBUG << "cost is equal";
             predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
           }
           predPredDataItr++;
@@ -158,7 +158,7 @@ void ViterbiCostFunction<Cost,CostFactory>::apply(
       Cost tmp=predPredDataItr->m_cost + m_unigramCost;
       if (tmp<predData.m_cost)
       {
-//        LDEBUG << "better cost " << tmp << LENDL;
+//        LDEBUG << "better cost " << tmp;
         predData.m_cost=tmp;
         predData.m_predPredMicros.clear();
         predData.m_predPredMicros.push_back(predPredDataItr->m_predMicro);
@@ -176,7 +176,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
   const CostFactory& costFactory)
 {
   PTLOGINIT;
-  LINFO << "Loading trigrams matrix file: " << fileName << LENDL;
+  LINFO << "Loading trigrams matrix file: " << fileName;
   
   std::ifstream ifl;
   // Open the data file TriGramMatrix.dat in read mode
@@ -184,7 +184,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
 
   if (!ifl)
   {
-    LERROR << "can't read trigrams from file " << fileName << LENDL;
+    LERROR << "can't read trigrams from file " << fileName;
     throw  InvalidConfiguration();
   }
 
@@ -251,9 +251,9 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
       
       if (biFreq>0) {
         cpp.m_cost=costFactory.getCost(true,false,false,proba/biFreq);
-//        LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"] proba=" << proba/biFreq << LENDL;
+//        LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"] proba=" << proba/biFreq;
       } else {
-//        LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"] proba=" << proba << LENDL;
+//        LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"] proba=" << proba;
         cpp.m_cost=costFactory.getCost(true,false,false,proba);
       }
       gd.m_grams.push_back(cpp);
@@ -292,7 +292,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
   if (!ifl)
   {
     // Standard error output
-    LERROR << "can't read bigrams from file " << fileName << LENDL;
+    LERROR << "can't read bigrams from file " << fileName;
     throw  InvalidConfiguration();
   }
 
@@ -343,7 +343,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
       throw(std::runtime_error(oss.str()));
     }
     
-//    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"] proba=" << proba << LENDL;      
+//    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"] proba=" << proba;      
     
     GramsData& gd=m_data[bigram[1]][bigram[0]];
     gd.m_default=costFactory.getCost(false,true,false,proba);

@@ -21,8 +21,8 @@
 
 #include <QtCore/QtDebug>
 #include <QtCore/QFileInfo>
-#include <QtGui/QDialog>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFileDialog>
 
 #include "ui_pelf-bt-configurepipelinedialog.h"
 #include "Pipeline.h"

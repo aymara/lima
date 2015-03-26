@@ -22,8 +22,8 @@
 #include <QtCore/QtDebug>
 #include <QtCore/QDir>
 #include <QtCore/QAbstractListModel>
-#include <QtGui/QListView>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QListView>
+#include <QtWidgets/QMessageBox>
 #include <QDateTime>
 
 #include "PipelineUnit.h"

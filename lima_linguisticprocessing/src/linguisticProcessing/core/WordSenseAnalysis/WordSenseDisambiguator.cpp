@@ -423,7 +423,7 @@ LimaStatusCode WordSenseDisambiguator::process(
       for (set<string>::const_iterator itLemmas = lemmas.begin(); itLemmas != lemmas.end(); itLemmas++) 
       { 
   // Store preview window contexts
-  LDEBUG << "Storing preview window contexts... "<<LENDL;
+  LDEBUG << "Storing preview window contexts... ";
   if ( data->firstValue(*m_macroAccessor) == m_L_NC 
     || data->firstValue(*m_macroAccessor) == m_L_NP 
     || data->firstValue(*m_macroAccessor) == m_L_V 
@@ -431,7 +431,7 @@ LimaStatusCode WordSenseDisambiguator::process(
     || data->firstValue(*m_macroAccessor) == m_L_ADV 
   )
   {
-    //LDEBUG << "lemma : "<< *itLemmas <<LENDL;
+    //LDEBUG << "lemma : "<< *itLemmas ;
     lemmasIds.insert(lemma2Index(*itLemmas));
   }
   
@@ -470,7 +470,7 @@ LimaStatusCode WordSenseDisambiguator::process(
       lemmasBuffer.push_back(lemmasIds);
       
       // Load matching Target Words        
-      //LDEBUG << "Loading matching target words... "<<LENDL;
+      //LDEBUG << "Loading matching target words... ";
       map<string, set<uint64_t> >context = map<string, set<uint64_t> >();
       
       // Get syntactic contexts
@@ -484,7 +484,7 @@ LimaStatusCode WordSenseDisambiguator::process(
       // Store context into targetWords
        /* print debug */
        /*
-      LINFO << "Storing current context into targetWords... "<<LENDL;
+      LINFO << "Storing current context into targetWords... ";
       for (set<uint64_t>::iterator itLemmaId = lemmasIds.begin(); 
         itLemmaId != lemmasIds.end(); 
         itLemmaId++)
@@ -510,7 +510,7 @@ LimaStatusCode WordSenseDisambiguator::process(
            
       
       // Add postview window contexts      
-      //LDEBUG << "Adding postview window contexts... "<<LENDL;
+      //LDEBUG << "Adding postview window contexts... ";
       addPostviewWindowContext(lemmasIds, targetWords);
       
             
@@ -533,19 +533,19 @@ LimaStatusCode WordSenseDisambiguator::process(
                itLemmas++)
       {
   //* debug printing 
-  LDEBUG << "Context of " << *itLemmas << " : "<<LENDL;
+  LDEBUG << "Context of " << *itLemmas << " : ";
   for (SemanticContext::const_iterator itContext = itTargets->context.begin();
                itContext != itTargets->context.end();
                itContext++)
   {
-    LDEBUG << "Rel " << itContext->first << " : "<<LENDL;
+    LDEBUG << "Rel " << itContext->first << " : ";
     for (set<uint64_t>::iterator itContextValue = itContext->second.begin();
                itContextValue != itContext->second.end(); 
              itContextValue++)
     {  
       if(m_index2Lemma.find(*itContextValue)!=m_index2Lemma.end()) 
       {
-        LDEBUG << "Contextual value : " << index2Lemma(*itContextValue) <<LENDL;
+        LDEBUG << "Contextual value : " << index2Lemma(*itContextValue) ;
       }
     }
       

@@ -35,11 +35,11 @@
 #include <QtCore/QSharedMemory>
 #include <QtCore/QTimer>
 #include <QtCore/QProcess>
-#include <QtGui/QMainWindow>
-#include <QtGui/QFileDialog>
-#include <QtGui/QDirModel>
-#include <QtGui/QLabel>
-#include <QtGui/QCheckBox>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QDirModel>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QCheckBox>
 
 #include <qwt/qwt_plot_curve.h>
 #include <qwt/qwt_plot_marker.h>

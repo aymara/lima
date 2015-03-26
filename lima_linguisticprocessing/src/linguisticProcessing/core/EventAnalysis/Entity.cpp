@@ -139,12 +139,12 @@ void Entity::read(std::istream& file)
 void Entity::write(std::ostream& file) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Entity::write().."<< LENDL; 
+  LDEBUG << "Entity::write().."; 
   Common::Misc::writeCodedInt(file,m_position);
   Common::Misc::writeCodedInt(file,m_length);
   Common::Misc::writeCodedInt(file,m_main);
   Common::Misc::writeCodedInt(file,m_features.size());
-  LDEBUG << "Entity::write: write features..."<< LENDL; 
+  LDEBUG << "Entity::write: write features..."; 
   for (Automaton::EntityFeatures::const_iterator 
        featureItr=m_features.begin();
        featureItr!=m_features.end(); featureItr++)

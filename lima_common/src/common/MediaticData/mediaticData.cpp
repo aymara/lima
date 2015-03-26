@@ -373,7 +373,7 @@ void MediaticDataPrivate::initMedias(
         try
         {
           MediaId id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",*it).c_str()));
-          LINFO << "media '" << (*it).c_str() << "' has id " << (int)id;
+          LINFO << "media '" << (*it).c_str() << "' has id " << id;
           LDEBUG << (void*)this << " initialize string pool";
           m_stringsPool.insert(std::make_pair(id, new FsaStringsPool()));
 
@@ -673,7 +673,7 @@ EntityGroupId MediaticData::addEntityGroup(const LimaString& groupName)
 {
   EntityGroupId groupId= m_d->m_entityGroups.insert(groupName);
   // insert may have created new element or not
-  if (static_cast<uint32_t>(groupId) >= m_d->m_entityTypes.size()) {
+  if (static_cast<std::size_t>(groupId) >= m_d->m_entityTypes.size()) {
     m_d->m_entityTypes.push_back(new MediaticDataPrivate::EntityTypeMap());
   }
   return groupId;
@@ -681,7 +681,7 @@ EntityGroupId MediaticData::addEntityGroup(const LimaString& groupName)
 
 EntityType MediaticData::addEntity(EntityGroupId groupId, const LimaString& entityName)
 {
-  if (static_cast<uint32_t>(groupId)>=m_d->m_entityTypes.size()) {
+  if (static_cast<std::size_t>(groupId)>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
     LERROR << "MediaticData::addEntity unknown entity group id " << groupId
             << "adding" << entityName;
@@ -715,7 +715,7 @@ EntityType MediaticData::getEntityType(const LimaString& entityName) const
 EntityType MediaticData::getEntityType(const EntityGroupId groupId,
               const LimaString& entityName) const
 {
-  if (static_cast<uint32_t>(groupId)>=m_d->m_entityTypes.size()) {
+  if (static_cast<size_t>(groupId)>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
     LERROR << "MediaticData::getEntityType unknown entity group id " << groupId
             <<"accessing" << entityName;
@@ -757,7 +757,7 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
     LERROR << "MediaticData::getEntityName invalid entity group id " << type.getGroupId() << " in entity " << type;
     throw LimaException();
   }
-  if (static_cast<uint32_t>(type.getGroupId())>=m_d->m_entityTypes.size()) {
+  if (static_cast<size_t>(type.getGroupId())>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
     LERROR << "MediaticData::getEntityName unknown entity group id " << type.getGroupId() << " in entity " << type;
     throw LimaException();

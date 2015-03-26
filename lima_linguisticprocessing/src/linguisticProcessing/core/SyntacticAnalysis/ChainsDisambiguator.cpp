@@ -169,7 +169,7 @@ void ChainsDisambiguator::computePaths()
         if (++branchNum >= m_depGraphMaxBranchingFactor)
         {
           SADLOGINIT;
-          LWARN << "Breaking computePaths inner loop on "<<currentVertex<<" due to excessive branching factor."<<LENDL;
+          LWARN << "Breaking computePaths inner loop on "<<currentVertex<<" due to excessive branching factor.";
           break;
         }
 
@@ -743,7 +743,7 @@ void ChainsDisambiguator::applyDisambiguisation()
     }
     if (selectedVertices.find(currentVertex) == selectedVertices.end())
     {
-//      LDEBUG << "Clearing " << currentVertex << "(dep="<<m_data->depVertexForTokenVertex(currentVertex)<<")"<<LENDL;
+//      LDEBUG << "Clearing " << currentVertex << "(dep="<<m_data->depVertexForTokenVertex(currentVertex)<<")";
       boost::clear_vertex(m_data->depVertexForTokenVertex(currentVertex), depGraph );
       boost::clear_vertex(currentVertex, graph);
       //boost::remove_vertex(currentVertex, graph);

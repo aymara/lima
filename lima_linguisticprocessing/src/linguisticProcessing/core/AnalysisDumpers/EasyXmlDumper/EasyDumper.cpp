@@ -399,7 +399,7 @@ void EasyDumper::dumpRelations(std::ostream& out)
 void EasyDumper::computeFormeIds()
 {
   DUMPERLOGINIT;
-  LDEBUG << "EasyDumper:: computeFormeIds"<< LENDL;
+  LDEBUG << "EasyDumper:: computeFormeIds";
   int i=1;
   for (std::map<uint64_t,Forme*>::const_iterator it=m_formesIndex.begin();
        it!=m_formesIndex.end();
@@ -410,7 +410,7 @@ void EasyDumper::computeFormeIds()
     LDEBUG << "EasyDumper:: adding to m_formesIds3: "<<(*it).second->forme<<" ("<<it->first<<") -> " << oss.str();
     m_formesIds[it->first]=oss.str();
   }
-  LDEBUG << "EasyDumper:: DONE computeFormeIds"<< LENDL;
+  LDEBUG << "EasyDumper:: DONE computeFormeIds";
 }
 
 } // end namespace EasyXmlDumper

@@ -348,12 +348,16 @@ void Structure::addNode ( CONTENT_ID ContentId, const Node& node )
 
 Node* Structure::getNode ( CONTENT_ID ContentId )
 {
-    return &m_d->m_nodes[ContentId];
+  if (m_d->m_nodes.find(ContentId) == m_d->m_nodes.end())
+    return 0;
+  return &m_d->m_nodes[ContentId];
 }
 
 const Node* Structure::getNode ( CONTENT_ID ContentId ) const
 {
-    return &m_d->m_nodes[ContentId];
+  if (m_d->m_nodes.find(ContentId) == m_d->m_nodes.end())
+    return 0;
+  return &m_d->m_nodes[ContentId];
 }
 
 const map<CONTENT_ID,Node>* Structure::getNodes() const

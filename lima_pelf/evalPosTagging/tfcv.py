@@ -43,9 +43,9 @@ def TenPcSample(path,sep):
     """
     with open(path,'r') as c:
         lines = 0
-        for line in c.xreadlines(  ): lines += 1
+        lines = sum(1 for line in c)
         partition_size = (lines/numfold)
-    print "*** Sample "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") ongoing ..."
+    print "*** Sample of "+path+" "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") ongoing ..."
     num = range(1,numfold+1)
     with open(path,'r') as corpus:
         cnt = 1
@@ -126,7 +126,7 @@ def AnalyzeTextAll(matrix_path):
         copy("matrices/unigramMatrix-%s.dat"%lang, matrix_path)
         copy("matrices/priorUnigramMatrix-%s.dat"%lang, matrix_path)
         print "in " + getcwd()
-        ret = system("analyzeText -l %s 10pc.brut"%lang)
+        ret = system("analyzeText -l %s 10pc.brut -o text:.out "%lang)
         chdir("../..")
         #if ret is not 0:
           #raise Exception('analyzeText failure')
@@ -299,5 +299,5 @@ parser.add_option("-n", "--numfold", dest="numfold",action="store", default='10'
 print args
 
 numfold = int(options.numfold)
-
+print " ******* NUMFOLD: %s *******  \n" % numfold
 main(args[0], args[1], args[2], args[3], options.sep, options.lang, options.clean, options.forceTrain)

@@ -33,8 +33,8 @@
 #include "kcolorcombo.h"
 
 #include <QtCore/QVector>
-#include <QtGui/QAbstractItemDelegate>
-#include <QtGui/QStylePainter>
+#include <QtWidgets/QAbstractItemDelegate>
+#include <QtWidgets/QStylePainter>
 
 #include <kglobal.h>
 #include <klocale.h>

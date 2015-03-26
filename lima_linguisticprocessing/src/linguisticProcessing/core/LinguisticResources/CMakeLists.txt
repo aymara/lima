@@ -22,7 +22,7 @@ set (lima-lp-linguisticresources_MOC_HEADERS
   AbstractResource.h
 )
 
-qt4_wrap_cpp (lima-lp-linguisticresources_MOC_OUTFILES ${lima-lp-linguisticresources_MOC_HEADERS})
+qt5_wrap_cpp (lima-lp-linguisticresources_MOC_OUTFILES ${lima-lp-linguisticresources_MOC_HEADERS})
 
 
 SET(lima-lp-linguisticresources_LIB_SRCS

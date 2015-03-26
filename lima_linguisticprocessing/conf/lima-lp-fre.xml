@@ -65,6 +65,19 @@
       <list name="processUnitSequence">
       </list>
     </group> 
+    <group name="limaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="specificEntitiesXmlLoggerForLimaserver"/>
+        <!--item value="viterbiPostagger-int-none"/-->
+        <!--item value="limaserverHandler"/-->
+      </list>
+    </group>
     <group name="easy" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -392,10 +405,10 @@
     </group>
     <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
       <list name="actions">
-          <item value="r2l-pass1HomoSyntagmaticRelationRules"/>
-          <item value="l2rHomoSyntagmaticRelationRules"/>
-          <item value="r2lHomoSyntagmaticRelationRules"/>
-          <item value="l2rPleonasticPronouns"/>
+          <item value="pass0HomoSyntagmaticRelationRules"/>
+          <item value="pass1HomoSyntagmaticRelationRules"/>
+          <item value="pass2HomoSyntagmaticRelationRules"/>
+          <item value="pleonasticPronouns"/>
           <item value="compoundTensesRules"/>
       </list>
       <param key="applySameRuleWhileSuccess" value="true"/>
@@ -464,6 +477,12 @@
     <group name="specificEntitiesXmlLogger" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".se.xml"/>
       <param key="graph" value="AnalysisGraph"/>
+    </group>
+    <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="compactFormat" value="yes"/>
+      <param key="handler" value="se"/>
     </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".tokenizer.xml"/>
@@ -903,16 +922,16 @@
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-fre.bin"/>
     </group>
-    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-fre-homodeps.txt.bin"/>
+    <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass1.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-r2l-fre-homodeps.txt.bin"/>
+    <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass2.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="r2l-pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-r2l-pass1-fre-homodeps.txt.bin"/>
+    <group name="pass0HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass0.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
     <group name="l2rPleonasticPronouns" class="AutomatonRecognizer">

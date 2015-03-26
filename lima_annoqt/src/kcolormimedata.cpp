@@ -24,7 +24,7 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QPainter>
-
+#include <QWidget>
 void
 KColorMimeData::populateMimeData(QMimeData *mimeData, const QColor &color)
 {

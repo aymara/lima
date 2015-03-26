@@ -30,7 +30,7 @@ KdeCleanUpFunction func;
 
 inline ~KCleanUpGlobalStatic() { func(); }
 };
-  
+/*
   # define K_GLOBAL_STATIC_STRUCT_NAME(NAME)
 
 #define K_GLOBAL_STATIC(TYPE, NAME) K_GLOBAL_STATIC_WITH_ARGS(TYPE, NAME, ())
@@ -80,6 +80,9 @@ delete x;                                                              \
 
 
 K_GLOBAL_STATIC(QVector<QColor>, s_standardPalette)
+*/
+
+static QVector<QColor>* s_standardPalette;
 
 // Shared with KColorValueSelector
 QVector<QColor> kdeui_standardPalette()

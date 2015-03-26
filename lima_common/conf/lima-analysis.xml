@@ -25,6 +25,11 @@
         <entry key="eng" value="main"/>
         <entry key="fre" value="main"/>
       </map>
+      <!-- The limaserver pipeline is used from the http limaserver -->
+      <map name="limaserver">
+        <entry key="eng" value="limaserver"/>
+        <entry key="fre" value="limaserver"/>
+      </map>
       <!-- The indexer pipeline is used in order to add media content into the dedicated indexes.
       The text ones use a bowDumperXml to handle XML input. -->
       <map name="indexer">

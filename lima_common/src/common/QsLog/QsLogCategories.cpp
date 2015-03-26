@@ -27,6 +27,8 @@
 #include <QDateTime>
 #include <QtGlobal>
 #include <QStringList>
+#include <QFileInfo>
+#include <QDir>
 #include <cassert>
 #include <cstdlib>
 #include <stdexcept>
@@ -72,6 +74,26 @@ void Categories::configureFileChanged ( const QString & path )
 bool Categories::configure(const QString& fileName)
 {
   QFile file(fileName);
+  QFileInfo fileInfo(fileName);
+  QDir configDir = fileInfo.dir();
+
+  if (configDir.exists("log4cpp"))
+  {
+    QString log4cppSubdirName = configDir.filePath("log4cpp");
+    QFileInfo log4cppSubdirInfo(log4cppSubdirName);
+    if (log4cppSubdirInfo.isDir())
+    {
+      QStringList nameFilters;
+      nameFilters << "log4cpp.*.properties";
+      QDir log4cppSubdir(log4cppSubdirName);
+      QFileInfoList configFiles = log4cppSubdir.entryInfoList(nameFilters);
+      Q_FOREACH(QFileInfo configFile, configFiles)
+      {
+        configure(configFile.absoluteFilePath());
+      }
+    }
+  }
+
   if (!file.open(QIODevice::ReadOnly))
   {
     std::cerr << "Unable to open qslog configuration file: " << fileName.toUtf8().data() << std::endl;
@@ -109,6 +131,16 @@ bool Categories::configure(const QString& fileName)
           res = false;
           d->categories.insert(category,QsLogging::TraceLevel);
         }
+      }
+      else if (elts.size()==2 && elts.at(0).trimmed() == "include")
+      {
+        QString includedFileName = elts.at(1).trimmed();
+        QString includedInitFileName = includedFileName;
+        if  (!QFileInfo(includedInitFileName).isAbsolute())
+        {
+          includedInitFileName = configDir.filePath(includedInitFileName);
+        }
+        configure(includedInitFileName);
       }
     }
     line = in.readLine();

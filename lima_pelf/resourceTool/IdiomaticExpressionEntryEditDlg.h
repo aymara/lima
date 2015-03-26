@@ -20,8 +20,8 @@
 #define LIMA_PELF_IDIOMATICEXPRESSIONENTRYEDITDLG_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QPushButton>
 
 #include "ui_pelf-rt-editidiomaticexpressionentrydialog.h"
 

@@ -193,7 +193,7 @@ void BoWXMLWriter::writeBoWText(
                                 const BoWText* text,
                                 const bool useIterator,
                                 const bool useIndexIterator) {
-  m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
+  //m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
 
   m_d->reinit();
   m_d->m_outputStream <<"<bowText>" << std::endl;
@@ -313,7 +313,7 @@ void BoWXMLWriterPrivate::writePredicateRoles(const BoWPredicate* term)
   for (auto it = term->roles().begin(); it != term->roles().end(); it++)
   {
     m_outputStream <<m_spaces << "<role type=\""
-       << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key()))
+       <<  (it.key().isNull() ? "" : Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key())))
        << "\" >" << std::endl;
     incIndent();
     writeBoWToken(it.value());

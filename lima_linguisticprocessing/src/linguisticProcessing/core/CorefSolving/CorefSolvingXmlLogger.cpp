@@ -194,7 +194,7 @@ void DumpXMLAnnotationVisitor::examine_edge(LinguisticGraphEdge e,
     catch (const boost::bad_any_cast& )
     {
       COREFSOLVERLOGINIT;
-      LERROR << "non coreferent annotation"<< LENDL;
+      LERROR << "non coreferent annotation";
     }
   }
   else 

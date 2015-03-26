@@ -70,14 +70,14 @@ void FsaAccessIOHandler<graphType>::readEdgeAsInt( AbstractFsaAccessIStreamWrapp
   VERT_ID& source, VERT_ID& target ) {
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
-  LTRACE <<  "FsaAccessIOHandler::readEdgeAsInt()" << LENDL;
+  LTRACE <<  "FsaAccessIOHandler::readEdgeAsInt()";
 #endif
   iw.readData((char *)(&source), sizeof(VERT_ID) );
   iw.readData((char *)(&target), sizeof(VERT_ID) );
 #ifdef DEBUG_CD
   LTRACE <<  "FsaAccessIOHandler::readEdgeAsInt: ("
             << source << ", " << target << ")"
-            << LENDL;
+           ;
 #endif
 }
 
@@ -100,7 +100,7 @@ void FsaAccessIOHandlerWithoutMapping<graphType>::readVertice( AbstractFsaAccess
   FSAAIOLOGINIT;
   LTRACE <<  "FsaAccessIOHandlerWithoutMapping::readVertice(" << currentId << "):  "
             << " propVal = " << propVal
-            << " text = " << text << LENDL;
+            << " text = " << text;
 #endif
 }
 
@@ -111,7 +111,7 @@ void FsaAccessIOHandler<graphType>::readVerticeAsInt( AbstractFsaAccessIStreamWr
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
   LTRACE <<  "FsaAccessIOHandler::readVerticeAsInt( " << current
-            << ") " << LENDL;
+            << ") ";
 #endif
   iw.readData((char *)(&propVal), sizeof(VERTEX_PROPERTY_16) );
   int16_t strlenShort;
@@ -126,7 +126,7 @@ void FsaAccessIOHandler<graphType>::readVerticeAsInt( AbstractFsaAccessIStreamWr
 #ifdef DEBUG_CD
   LTRACE <<  "FsaAccessIOHandler::readVerticeAsInt:  "
             << " propVal = " << propVal
-            << " text = " << text << LENDL;
+            << " text = " << text;
 #endif
 }
 
@@ -154,7 +154,7 @@ void FsaAccessIOHandlerWithMapping<graphType>::writeVertice(
   stro << "FsaAccessIOHandlerWithMapping::writeVertice(" << current << ") = "
        << std::hex << propVal << std::dec
        << "," << text8 << " to " << currentId;
-  LTRACE << stro.str().c_str() << LENDL;
+  LTRACE << stro.str().c_str();
 #endif
 
   FsaAccessIOHandler<graphType>::writeVerticeAsInt( ow, currentId, propVal, text );
@@ -185,7 +185,7 @@ void FsaAccessIOHandlerWithoutMapping<graphType>::writeVertice(
   stro << "FsaAccessIOHandlerWithoutMapping::writeVertice(" << current << ") = "
        << std::hex << propVal << std::dec
        << "," << text8 << " to " << (*pos).second;
-  LTRACE << stro.str().c_str() << LENDL;
+  LTRACE << stro.str().c_str();
 #endif
 
   FsaAccessIOHandler<graphType>::writeVerticeAsInt( ow, static_cast<VERT_ID>(current), propVal, text );
@@ -197,7 +197,7 @@ void FsaAccessIOHandler<graphType>::writeVerticeAsInt( AbstractFsaAccessOStreamW
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
   LTRACE <<  "FsaAccessIOHandler::writeVertice: " << current
-                << "] = " << propVal << LENDL;
+                << "] = " << propVal;
 #endif
 
   ow.writeData( (const char *)(&propVal), sizeof(VERTEX_PROPERTY_16) );
@@ -248,7 +248,7 @@ void FsaAccessIOHandler<graphType>::writeEdgeAsInt(
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
   LTRACE <<  "FsaAccessIOHandler::writeEdge(" << source
-            << "," << target << ")" << LENDL;
+            << "," << target << ")";
 #endif
 
   ow.writeData( (const char *)(&source), sizeof(VERT_ID) );

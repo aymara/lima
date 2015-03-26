@@ -1,18 +1,13 @@
-###############################################################################
-#                                                                             #
-# rules for the recognition of english left to right homosyntagmatic relations#
-# this file uses the syntax for the declarations of automatons by Romaric     #
-# Besancon (Cf. his 2003/03/11 document)                                      #
-#                                                                             #
-# Created on Thu nov 21 2003                                                  #
-# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)                             #
-# rules by Hubert Naets (Hubert.Naets@cea.fr)                                 #
-#                                                                             #
-# $Id$        #
-#                                                                             #
-###############################################################################
-# NOTE: pour les relations homosyntagmatiques, le recognizer est appelé
-# avec les parametres suivants:
+#
+# Rules for the first pass recognition of english relations inside chunks
+# This file uses the Modex rules syntax
+#
+# Created on Thu nov 21 2003
+# by Gael de Chalendar <Gael.de-Chalendar@cea.fr>
+# initial rules by Hubert Naets
+#
+
+# NOTE: for these rules, the recognizer is called with the parameters:
 # test all vertices: true
 # stop at first success: false
 # only one success per type: false
@@ -28,6 +23,12 @@ using groups LinguisticProcessing
 # microcategories classes
 #----------------------------------------------------------------------
 use categoriesClassesDeclaration-eng.txt
+
+@Substantif:@PronPoss (@Adjectif|@Substantif){0-n}:@AfterNominalChunk:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"DETSUB")
++CreateRelationBetween(left.1,trigger.1,"DETSUB")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
 
 #----------------------------------------------------------------------
 # 1. Relation entre adjectif prenominal et substantif : AdjPrenSub
@@ -113,4 +114,3 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 #-@NomPropre:@Substantif::SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,left.1,"ANY")
 #-+CreateRelationBetween(trigger.1,left.1)
-

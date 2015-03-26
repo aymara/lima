@@ -85,12 +85,12 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   QFile file(filename.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
-    LERROR << "An error occurred  Error: Cannot open " << filename <<  LENDL;
+    LERROR << "An error occurred  Error: Cannot open " << filename ;
     return;
   }
   if (!parser->parse( QXmlInputSource(&file)))
   {
-    LERROR << "An error occurred  Error: " << parser->errorHandler()->errorString() <<  LENDL;
+    LERROR << "An error occurred  Error: " << parser->errorHandler()->errorString() ;
     return;
   }
   LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser";
@@ -289,12 +289,12 @@ void PropertyCodeManager::convertSymbolicCodes(const std::string& symbolicCodeFi
   QFile file(symbolicCodeFile.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
-    LERROR << "An error occurred  Error: Cannot open " << symbolicCodeFile <<  LENDL;
+    LERROR << "An error occurred  Error: Cannot open " << symbolicCodeFile ;
     return;
   }
   if (!parser->parse( QXmlInputSource(&file)))
   {
-    LERROR << "An error occurred parsing" << symbolicCodeFile << ". Error: " << parser->errorHandler()->errorString() <<  LENDL;
+    LERROR << "An error occurred parsing" << symbolicCodeFile << ". Error: " << parser->errorHandler()->errorString() ;
     throw std::runtime_error(parser->errorHandler()->errorString().toUtf8().constData());
   }
   delete parser;

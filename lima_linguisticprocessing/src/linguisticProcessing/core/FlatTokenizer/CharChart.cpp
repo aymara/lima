@@ -54,8 +54,73 @@ namespace FlatTokenizer {
 
 SimpleFactory<AbstractResource,CharChart> flatTokenizerCharChartFactory(FLATTOKENIZERCHARCHART_CLASSID);
 
-CharChart::CharChart() : AbstractResource(), m_classes(), m_chars()
+CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(), 
+    m_unicodeCategories(),
+    m_unicodeCategories2LimaClasses()
 {
+  m_unicodeCategories
+  << "Mark_NonSpacing"
+  << "Mark_SpacingCombining"
+  << "Mark_Enclosing"
+  << "Number_DecimalDigit"
+  << "Number_Letter"
+  << "Number_Other"
+  << "Separator_Space"
+  << "Separator_Line"
+  << "Separator_Paragraph"
+  << "Other_Control"
+  << "Other_Format"
+  << "Other_Surrogate"
+  << "Other_PrivateUse"
+  << "Other_NotAssigned"
+  << "Letter_Uppercase"
+  << "Letter_Lowercase"
+  << "Letter_Titlecase"
+  << "Letter_Modifier"
+  << "Letter_Other"
+  << "Punctuation_Connector"
+  << "Punctuation_Dash"
+  << "Punctuation_Open"
+  << "Punctuation_Close"
+  << "Punctuation_InitialQuote"
+  << "Punctuation_FinalQuote"
+  << "Punctuation_Other"
+  << "Symbol_Math"
+  << "Symbol_Currency"
+  << "Symbol_Modifier"
+  << "Symbol_Other";
+  
+// c_all, c_del, c_b, c_par, c_dot, c_comma, c_slash, c_hyphen, c_lowline, c_quote, c_fraction, c_percent, c_del1, c_plus, c_del2, c_Mm, c_degree, c_M, c_A, c_O, c_S, c_N, c_V, c_m, c_o, c_l_o, c_a, c_s, c_n, c_a_t, c_5, c_other, m_pattern, m_end_pattern, m_line, m_parag, unknwn
+//   m_unicodeCategories2LimaClasses.insert("Mark_NonSpacing","");
+//   m_unicodeCategories2LimaClasses.insert("Mark_SpacingCombining","");
+//   m_unicodeCategories2LimaClasses.insert("Mark_Enclosing","");
+  m_unicodeCategories2LimaClasses.insert("Number_DecimalDigit","c_5");
+  m_unicodeCategories2LimaClasses.insert("Number_Letter","c_5");
+  m_unicodeCategories2LimaClasses.insert("Number_Other","c_5");
+  m_unicodeCategories2LimaClasses.insert("Separator_Space","c_b");
+  m_unicodeCategories2LimaClasses.insert("Separator_Line","c_par");
+  m_unicodeCategories2LimaClasses.insert("Separator_Paragraph","c_par");
+//   m_unicodeCategories2LimaClasses.insert("Other_Control","");
+//   m_unicodeCategories2LimaClasses.insert("Other_Format","");
+//   m_unicodeCategories2LimaClasses.insert("Other_Surrogate","");
+//   m_unicodeCategories2LimaClasses.insert("Other_PrivateUse","");
+  m_unicodeCategories2LimaClasses.insert("Other_NotAssigned","unknwn");
+  m_unicodeCategories2LimaClasses.insert("Letter_Uppercase","c_M");
+  m_unicodeCategories2LimaClasses.insert("Letter_Lowercase","c_m");
+  m_unicodeCategories2LimaClasses.insert("Letter_Titlecase","c_M");
+  m_unicodeCategories2LimaClasses.insert("Letter_Modifier","c_Mm");
+  m_unicodeCategories2LimaClasses.insert("Letter_Other","c_Mm");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_Connector","c_hyphen");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_Dash","c_hyphen");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_Open","c_par");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_Close","c_par");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_InitialQuote","c_quote");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_FinalQuote","c_quote");
+  m_unicodeCategories2LimaClasses.insert("Punctuation_Other","c_dot");
+  m_unicodeCategories2LimaClasses.insert("Symbol_Math","c_plus");
+  m_unicodeCategories2LimaClasses.insert("Symbol_Currency","c_del1");
+  m_unicodeCategories2LimaClasses.insert("Symbol_Modifier","c_del1");
+  m_unicodeCategories2LimaClasses.insert("Symbol_Other","c_del1");
 }
 
 CharChart::~CharChart()
@@ -100,12 +165,23 @@ void CharChart::init(
 
 // Gets the Class of the specified character.
 // If specified character was not defined,
+// try to use the mapping with Qt Unicode categories and if this fails too,
 // class named unknwn is returned
 const CharClass* CharChart::charClass (LimaChar c) const
 {
     if (c.unicode() >= m_chars.size() || m_chars[c.unicode()] == 0 || m_chars[c.unicode()]->charClass() == 0)
     {
       TOKENIZERLOGINIT;
+      if (c.category() < m_unicodeCategories.size())
+      {
+        QString unicodeCategory = m_unicodeCategories[c.category()];
+        if (m_unicodeCategories2LimaClasses.contains(unicodeCategory))
+        {
+          TOKENIZERLOGINIT;
+          LDEBUG << "CharChart::charClass using unicode category" << unicodeCategory  << "and LIMA class" << m_unicodeCategories2LimaClasses[unicodeCategory] ;
+          return classNamed(m_unicodeCategories2LimaClasses[unicodeCategory]);
+        }
+      }
       LNOTICE << "CharChart::charClass undefined char: " << c;
       return classNamed(utf8stdstring2limastring("unknwn"));
     }

@@ -664,7 +664,7 @@ bool Automaton::testFromState(const Tstate firstState,
 /*      LDEBUG << "Automaton: -> vertex (" << vertex 
              << ",keep=" << trans->keep() 
              << ") added in result, currentMatch="
-             << currentMatch<< LENDL;*/
+             << currentMatch;*/
       // test if it is the head
       if (trans->head()) {
         // get token associated to next vertex
@@ -891,7 +891,7 @@ Automaton Automaton::subsets() const {
             detFA.addTransition(i,k,t);
             existingSubset=true;
 //             LDEBUG << "adding transition [" << i << "+" 
-//                    << *(alphabet[j]) << "->" << k << "]"<< LENDL;
+//                    << *(alphabet[j]) << "->" << k << "]";
             break;
           }
         }
@@ -904,7 +904,7 @@ Automaton Automaton::subsets() const {
           detFA.addTransition(i,lastState,t);
 //           LDEBUG << "adding new state " << lastState 
 //                  << " and transition [" << i << "+" 
-//                  << *(alphabet[j]) << "->" << lastState << "]"<< LENDL;
+//                  << *(alphabet[j]) << "->" << lastState << "]";
         }
       }
     }

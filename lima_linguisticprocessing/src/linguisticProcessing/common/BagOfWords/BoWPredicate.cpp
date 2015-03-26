@@ -58,17 +58,17 @@ public:
 
 BoWPredicatePrivate::BoWPredicatePrivate():
 m_predicateType(),
-m_roles(),
 m_position(0),
-m_length(0)
+m_length(0),
+m_roles()
 {
 }
 
 BoWPredicatePrivate::BoWPredicatePrivate(const BoWPredicatePrivate& bnep):
 m_predicateType(bnep.m_predicateType),
-m_roles(bnep.m_roles),
 m_position(bnep.m_position),
-m_length(bnep.m_length)
+m_length(bnep.m_length),
+m_roles(bnep.m_roles)
 {
 }
 
@@ -149,7 +149,7 @@ QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& BoWPredicate::
   return m_d->m_roles;
 }
 
-void BoWPredicate::setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> pRoles){
+void BoWPredicate::setRoles(QMultiMap< Lima::Common::MediaticData::EntityType, Lima::Common::BagOfWords::AbstractBoWElement* >& pRoles){
   m_d->m_roles=pRoles;
 }
 

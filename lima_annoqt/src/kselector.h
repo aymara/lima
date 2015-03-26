@@ -23,8 +23,8 @@
 #ifndef KSELECTOR_H
 #define KSELECTOR_H
 
-#include <QtGui/QAbstractSlider>
-#include <QtGui/QWidget>
+#include <QtWidgets/QAbstractSlider>
+#include <QtWidgets/QWidget>
 
 /**
  * KSelector is the base class for other widgets which

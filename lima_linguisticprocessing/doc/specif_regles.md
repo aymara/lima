@@ -306,15 +306,25 @@ Dans le second cas, _elt_ est le seul élément sur lesquel porte la contrainte.
 Les éléments sont repérés par leur position dans la règle, en deux temps : d'abord, le contexte, qui peut être _right_ (contexte droit), _left_ (contexte gauche) ou _trigger_ (déclencheur), puis la position du mot dans le contexte (l'indication des positions des mots est pour le moment très limitée: on peut seulement accéder à des éléments simples dans le contexte: les groupes de mots sont comptés comme un élément) 
 
 Exemple: pour le cas des verbes pronominaux, si l'on veux faire la distinction entre "je m'arrête", "je t'arrête", "tu m'arrêtes", "tu t'arrêtes") : on peut alors utiliser une règle intégrant des contraintes d'accord : 
-    
-    
-    
+
+```  
 arrêter$L_V:$L_PRON-L_PRON_REFLEXIF @PronPrev[$?]::IDIOM$V:s'arrêter
     +AgreementConstraint(trigger.1,left.1,"PERSON")
     +AgreementConstraint(trigger.1,left.1,"NUMBER")
-              
+```
 
 où _@PronPrev_ est la classe des catégories des pronoms personnels préverbaux. 
+
+A constraint return true iff:
+  * its element(s) is/are found;
+  * its function returns true.
+
+This means that a constraint will return false if refering to an absent optional element. For example, the following rule will **not** match for `a c`:
+
+```
+a:b? c::TYPE:
+    +Constraint(left.1,"value")
+```
 
 Les actions sont définies à la suite des règles (ou dans les lignes suivantes), par un _=_, suivi d'un signe > ou < et du nom de la fonction. 
 

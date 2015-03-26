@@ -39,7 +39,7 @@ for lang in $*; do
     addOption=""
     case $lang in
         fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale-fre.SVMT ;;
-        eng) addOption="-s . -n $nbParts"; corpus=$LIMA_RESOURCES/Disambiguation/corpus_eng_merge.txt conf=config-minimale-fre.SVMT;;
+        eng) addOption="-s . -n $nbParts"; corpus=$LIMA_RESOURCES/Disambiguation/corpus_eng_merge.txt conf=config-minimale-eng.SVMT;;
     esac
     method=$(readMethod $lang)
     echo "treating $lang.$method... (see ${lang}.${method}.log)"
@@ -50,7 +50,7 @@ for lang in $*; do
     $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn
     if  [[ $? -ne 0 ]]; then
       echo "tfcv error, exiting"
-      exit
+      exit 1
     fi
 
     echo results.$lang.$method

@@ -20,7 +20,7 @@
 #define LIMA_PELF_RESOURCEREADERSIMPLEWIDGET_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 
 #include "ResourceReaderSimpleModel.h"
 

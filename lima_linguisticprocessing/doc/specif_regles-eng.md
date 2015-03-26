@@ -317,6 +317,18 @@ stop L_V $ $ L_PRON-L_PRON_REFLEXIFPronPrev [$?] :: IDIOM $ V: stop
 
 where _ @ PronPrev_ is the class of the categories of preverbal pronouns.
 
+A constraint return true iff:
+  * its element(s) is/are found;
+  * its function returns true.
+
+This means that a constraint will return false if refering to an absent optional element. For example, the following rule will **not** match for `a c`:
+
+```
+a:b? c::TYPE:
+    +Constraint(left.1,"value")
+```
+
+
 The actions are defined following the rules (or in the following lines) by a _ = _ followed by a sign> or <and the function name.
 
    * => DoSomething () indicates that the _faitQuelqueChose_ action will be taken in case of successful application of the rule;

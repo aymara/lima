@@ -20,7 +20,7 @@
 #define LIMA_PELF_COMMENTEDITDLG_H
 
 #include <QtCore/QtDebug>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 #include "BenchmarkingResult.h"
 #include "Pipeline.h"

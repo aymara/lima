@@ -20,7 +20,7 @@
 #ifndef KCOLORDIALOGP_H
 #define KCOLORDIALOGP_H
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace KDEPrivate {
 

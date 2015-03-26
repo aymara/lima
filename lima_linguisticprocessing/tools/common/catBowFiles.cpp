@@ -181,7 +181,7 @@ int run(int argc,char** argv)
       reader.readHeader(fileIn);
     }
     catch (exception& e) {
-      LERROR << "Error: " << e.what() << ": file " << *it << " ignored"<< LENDL;
+      LERROR << "Error: " << e.what() << ": file " << *it << " ignored";
       continue;
     }
     

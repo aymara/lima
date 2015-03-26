@@ -206,7 +206,7 @@ void EventParagraph::read(std::istream& file)
 void EventParagraph::write(std::ostream& file) const
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventParagraph::write().."<< LENDL; 
+  LDEBUG << "EventParagraph::write().."; 
   Common::Misc::writeCodedInt(file,m_position);
   Common::Misc::writeCodedInt(file,m_length);
   LDEBUG << "EventParagraph::write: write typeId of m_evententities..."
@@ -218,15 +218,15 @@ void EventParagraph::write(std::ostream& file) const
   Common::Misc::writeCodedInt(file,m_evententities.second.size());
   for(std::vector<Entity*>::const_iterator iT=m_evententities.second.begin();iT!=m_evententities.second.end();iT++)
   {
-    LDEBUG << "EventParagraph::write m_evententities"<< LENDL; 
+    LDEBUG << "EventParagraph::write m_evententities"; 
     (*iT)->write(file);
   }
-  LDEBUG << "EventParagraph::write size of m_otherentities (" << m_otherentities.size() << ")...."<< LENDL; 
+  LDEBUG << "EventParagraph::write size of m_otherentities (" << m_otherentities.size() << ")...."; 
   Common::Misc::writeCodedInt(file,m_otherentities.size());
   for(std::map<EntityType,std::vector<Entity *> >::const_iterator iT=m_otherentities.begin();
       iT!=m_otherentities.end();iT++)
   {
-  LDEBUG << "EventParagraph::write m_otherentity...."<< LENDL; 
+  LDEBUG << "EventParagraph::write m_otherentity...."; 
     Common::Misc::writeCodedInt(file,(*iT).first.getTypeId());
     Common::Misc::writeCodedInt(file,(*iT).first.getGroupId());
     Common::Misc::writeCodedInt(file,(*iT).second.size());

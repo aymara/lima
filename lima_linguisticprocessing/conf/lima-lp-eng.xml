@@ -65,6 +65,17 @@
         <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
+    <group name="limaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="specificEntitiesXmlLoggerForLimaserver"/>
+      </list>
+    </group>
     <group name="query" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -468,9 +479,9 @@
     </group>
     <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
       <list name="actions">
-         <item value="r2lHomoSyntagmaticRelationRules"/>
-         <item value="l2rHomoSyntagmaticRelationRules"/>
-         <item value="l2rPleonasticPronouns"/>
+         <item value="pass1HomoSyntagmaticRelationRules"/>
+         <item value="pass2HomoSyntagmaticRelationRules"/>
+         <item value="pleonasticPronouns"/>
       </list>
       <param key="disambiguated" value="true"/>
     </group>
@@ -547,6 +558,12 @@
     </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".toks.xml"/>
+    </group>
+    <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="compactFormat" value="yes"/>
+      <param key="handler" value="se"/>
     </group>
     <group name="fullTokenXmlLoggerHyphen" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".hyph.xml"/>
@@ -954,14 +971,14 @@
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.bin"/>
     </group>
-    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-eng-homodeps.txt.bin"/>
+    <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass1.txt.bin"/>
     </group>
-    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-r2l-eng-homodeps.txt.bin"/>
+    <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass2.txt.bin"/>
     </group>
-    <group name="l2rPleonasticPronouns" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-eng-pleonasticPronouns.txt.bin"/>
+    <group name="pleonasticPronouns" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-pleonasticPronouns.txt.bin"/>
     </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/rules-eng-heterodeps.txt.bin"/>

@@ -147,7 +147,7 @@ void DumpXMLAnnotationVisitor::examine_edge(LinguisticGraphEdge e,
     catch (const boost::bad_any_cast& e)
     {
       LOGINIT("WordSenseDisambiguator");
-      LERROR << "non word sense annotation"<< LENDL;
+      LERROR << "non word sense annotation";
     }
   }
   else 

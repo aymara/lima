@@ -43,7 +43,7 @@ ComposedDict16<contentElement, contentSet>::ComposedDict16( const contentElement
 //ComposedDict16::ComposedDict16(contentSet& datas) : m_datas(datas), m_fsaDict(true) {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG <<  "ComposedDict16::ComposedDict16()" << LENDL;
+  LDEBUG <<  "ComposedDict16::ComposedDict16()";
 #endif
 }
 
@@ -56,22 +56,22 @@ template <typename contentElement, typename contentSet>
 void ComposedDict16<contentElement, contentSet>::parseKeys( const std::string &keyFileName ) {
 #ifdef DEBUG_CD
   FSAALOGINIT;
-  LDEBUG <<  "ComposedDict16::parse..." << LENDL;
+  LDEBUG <<  "ComposedDict16::parse...";
 #endif
 
 #ifdef DEBUG_CD
-  LDEBUG <<  "ComposedDict16::parse: readKeyFile..." << LENDL;
+  LDEBUG <<  "ComposedDict16::parse: readKeyFile...";
 #endif
   // read main & default keys
   uint64_t size;
   m_fsaDict.read(keyFileName);
   size = m_fsaDict.getSize();
 #ifdef DEBUG_CD
-  LDEBUG <<  "ComposedDict16::parse " << size << " keys in main keyfile" << LENDL;
+  LDEBUG <<  "ComposedDict16::parse " << size << " keys in main keyfile";
 #endif
 
 #ifdef DEBUG_CD
-    LDEBUG <<  "ComposedDict16::parse end " << LENDL;
+    LDEBUG <<  "ComposedDict16::parse end ";
 #endif
 }
 
@@ -91,13 +91,13 @@ const Lima::LimaString& word) const{
   FSAALOGINIT;
   const Lima::LimaString & basicWord = word;
   LDEBUG <<  "ComposedDict16::getElement("
-            << Lima::Misc::convertString(basicWord) << ")" << LENDL;
+            << Lima::Misc::convertString(basicWord) << ")";
 #endif
 
   // Look in FsaDictionary
   index = m_fsaDict.getIndex(word);
 #ifdef DEBUG_CD
-  LDEBUG <<  "index = " << index << LENDL;
+  LDEBUG <<  "index = " << index;
 #endif
   if( index > 0 )
     return m_datas[index];
