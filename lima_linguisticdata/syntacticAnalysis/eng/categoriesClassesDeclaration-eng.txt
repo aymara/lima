@@ -36,8 +36,7 @@ set entityTypes=SyntacticRelations
 # liste des verbes copule pouvant être suivi d'un infinitif
 # (sous-liste des verbes copule du dictionnaire)
 @CopulePlusInfinitif=(seem$V,appear$V,become$V)
-@Aux=($V)
-@AuxInd=($V)
+@Aux=(have,has,had)
 @AuxModal=($V-MD)
 @Is=(is)
 @Was=(was)

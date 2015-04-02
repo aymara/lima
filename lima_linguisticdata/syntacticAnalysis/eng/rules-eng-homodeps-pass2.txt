@@ -528,12 +528,13 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 
 
 #----------------------------------------------------------------------
-# Relation entre auxiliaire et participe passe
+# Relation between auxiliary and past participle
 #----------------------------------------------------------------------
-#@Participe:@Aux @PronInsideCompTense? (@Aux){0-2} (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-#+CreateCompoundTense(trigger.1,left.1,"V;VBD;PASS")
-#=>AddRelationInGraph()
-#=<ClearStoredRelations()
+@PastParticiple:@Aux @Pron? (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"aux")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
 
 
 #----------------------------------------------------------------------
