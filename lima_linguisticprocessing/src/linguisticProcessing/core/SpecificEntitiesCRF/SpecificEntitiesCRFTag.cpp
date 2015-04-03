@@ -101,7 +101,6 @@ void SpecificEntitiesCRFTag::init(
   mdl_t *mod;
   for (int i=0; i<m_listmodel.size(); i++) {
     mod = mdl_new(rdr_new(false));
-    //m_f_mod=mdl_new(rdr_new(false));
     opt_t *opt=(opt_t*) malloc(sizeof(opt_t));
     opt->mode=-1;
     opt->input = NULL;
@@ -110,7 +109,7 @@ void SpecificEntitiesCRFTag::init(
     opt->maxent=false;
     opt->algo="l-bfgs";
     opt->pattern=NULL;
-    opt->model=strdup((resourcePath+"/SpecificEntitiesCRF/"+m_listmodel[i]).c_str());
+    opt->model=strdup((resourcePath+"/SpecificEntities/"+m_listmodel[i]).c_str());
     opt->devel=NULL;
     opt->rstate=NULL;
     opt->sstate=NULL;
@@ -143,7 +142,6 @@ void SpecificEntitiesCRFTag::init(
     opt->prec=5;
     opt->all=false;
     
-    //m_f_mod->opt=opt;
     mod->opt=opt;
     // First, load the model provided by the user. This is mandatory to
     // label new datas ;-)
@@ -155,6 +153,8 @@ void SpecificEntitiesCRFTag::init(
     FILE *file = fopen(mod->opt->model, "r");
     if (file == NULL)
       {
+	std::string mess="cannot open input model file";
+	throw(std::runtime_error(mess));
 	//LERROR << "cannot open input model file" << LENDL;
       }//pfatal("cannot open input model file");
     mdl_load(mod, file);

@@ -55,55 +55,12 @@ namespace LinguisticProcessing
 
 
 TaggerWap::TaggerWap() {
-  /*
-  m_mod = mdl_new(rdr_new(false));
-  opt.mode=-1;
-  opt.input = NULL;
-  opt.output=NULL;
-  opt.type="crf";
-  opt.maxent=false;
-  opt.algo="l-bfgs";
-  opt.pattern=NULL;
-  opt.model=NULL;
-  opt.devel=NULL;
-  opt.rstate=NULL;
-  opt.sstate=NULL;
-  opt.compact=false;
-  opt.sparse=NULL;
-  opt.nthread=1;
-  opt.jobsize=64;
-  opt.maxiter=0;
-  opt.rho1=0.5;
-  opt.rho2=0.0001;
-  opt.objwin=5;
-  opt.stopwin=5;
-  opt.stopeps=0.02;
-  opt.lbfgs.clip=false;
-  opt.lbfgs.histsz=5;
-  opt.lbfgs.maxls=40;
-  opt.sgdl1.eta0=0.8;
-  opt.sgdl1.alpha=0.85;
-  opt.bcd.kappa=1.5;
-  opt.rprop.stpmin= 1e-8;
-  opt.rprop.stpmax=50.0;
-  opt.rprop.stpdec=0.5;
-  opt.rprop.cutoff=false;
-  opt.label=false;
-  opt.check=false;
-  opt.outsc=false;
-  opt.lblpost=false;
-  opt.nbest=1;
-  opt.force=false;
-  opt.prec=5;
-  opt.all=false;
 
-  m_mod->opt=(&opt);
-*/
  
 }
 
 TaggerWap::~TaggerWap() {
-  //mdl_free(m_mod);
+ 
 }
  
   
@@ -160,23 +117,7 @@ void TaggerWap::initOptions(const std::map<std::string, std::string>& options) {
 }
 
 void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
-// First, load the model provided by the user. This is mandatory to
-	// label new datas ;-)
 
-  /*
-	if (m_mod->opt->model == NULL)
-	  {
-	    //LERROR  << "you must specify a model" << LENDL;
-	  }//fatal("you must specify a model");
-	//info("* Load model\n");
-	std::cout << "* Load model" << std::endl;
-	FILE *file = fopen(m_mod->opt->model, "r");
-	if (file == NULL)
-	  {
-	    //LERROR << "cannot open input model file" << LENDL;
-	  }//pfatal("cannot open input model file");
-	mdl_load(m_mod, file);
-*/
 	// Open input and output files
 	FILE *fin = stdin, *fout = stdout;
 	if (m_mod->opt->input != NULL) {
@@ -194,12 +135,8 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	}
 	// Do the labelling
 	//info("* Label sequences\n");
-	std::cout << "* Label sequences" << std::endl;
+	//std::cout << "* Label sequences" << std::endl;
 
-	//ancienne version
-	//tag_label(m_mod, fin, fout);
-	
-	//nouvelle version
 	raw_t *r=graphToRaw(analysis, lg);
 
 	
@@ -208,7 +145,7 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	ltmp=tag_label2(m_mod, fin, fout, &lst, r);
 
 	deleteList(lst);
-	std::cout << "* Done " << std::endl;
+	//std::cout << "* Done " << std::endl;
 	// And close files
 	if (m_mod->opt->input != NULL)
 		fclose(fin);
@@ -224,57 +161,62 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	int lastLength=0;
 	std::string currentEN;
 	bool isFirst=true;
-	
-	while (ltmp!=NULL) {
-	  std::cout << "type: "<<  ltmp->data->type << " str: " << ltmp->data->str << std::endl;
-	  std::istringstream iss(ltmp->data->type ); 
-	  std::string mot; 
-	  std::vector<std::string> resvalue;
-	  while ( std::getline( iss, mot, '.' ) ) {
-	    resvalue.push_back(mot); 
-	  } 
-	  std::cout << "resvalue[1][0]: " << resvalue[1][0] << std::endl;
-	  if (resvalue[1][0]=='B') {
-	    if (!isFirst) {
-	      addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
-	    } else {
-	      isFirst=false;
-	    }
-	    positionDebut=ltmp->data->pos;
-	    lastPos=positionDebut;
-	    lastLength=ltmp->data->lgth;
-	    resvalue[1].replace(0, 2, "");
-	    currentEN=resvalue[0]+"."+resvalue[1];
-	    std::cout << "resvalue[1]: " << resvalue[1] << std::endl;
-	    isEN=true;
-	  } else if (resvalue[1][0]=='I') {
-	    resvalue[1].replace(0, 2, "");
-	    if (resvalue[0]+"."+resvalue[1]!=currentEN) {
-	      // if we don't start with a B-
+
+	if (ltmp!=NULL) {
+	  while (ltmp!=NULL) {
+	    
+	    std::istringstream iss(ltmp->data->type ); 
+	    std::string mot; 
+	    std::vector<std::string> resvalue;
+	    while ( std::getline( iss, mot, '.' ) ) {
+	      resvalue.push_back(mot); 
+	    } 
+	    if (resvalue[1][0]=='B') {
 	      if (!isFirst) {
-	      addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
+		
+		addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
 	      } else {
 		isFirst=false;
 	      }
-	      currentEN=resvalue[0]+"."+resvalue[1];
 	      positionDebut=ltmp->data->pos;
 	      
+	      lastPos=positionDebut;
+	      lastLength=ltmp->data->lgth;
+	      
+	      resvalue[1].replace(0, 2, "");
+	      currentEN=resvalue[0]+"."+resvalue[1];
+	      
+	      isEN=true;
+	    } else if (resvalue[1][0]=='I') {
+	      resvalue[1].replace(0, 2, "");
+	      
+	      if (resvalue[0]+"."+resvalue[1]!=currentEN || (ltmp->data->pos>(lastPos+lastLength+1))) {
+		// if we don't start with a B-
+		if (!isFirst) {
+		  addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
+		} else {
+		  isFirst=false;
+		}
+		currentEN=resvalue[0]+"."+resvalue[1];
+		positionDebut=ltmp->data->pos;
+		
+	      }
+	      lastPos=ltmp->data->pos;
+	      lastLength=ltmp->data->lgth;
+	      
+	    } else {
 	    }
-	    lastPos=ltmp->data->pos;
-	    lastLength=ltmp->data->lgth;
-	  } else {
-	  }
-	
-	  //addSpecificEntities(analysis,lg, currentEN, currentEN, ltmp->data->pos,ltmp->data->lgth);
-	  //addSpecificEntities(analysis,lg,  ltmp->data->type, ltmp->data->str, ltmp->data->pos,ltmp->data->lgth);
-	 
-	  ltmp=ltmp->next;
+	    
 	  
+	    ltmp=ltmp->next;
+	    
+	  }
+	  //add the last entity
+	  addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
 	}
-	//addSpecificEntities(analysis,lg, "Inspection.DATE_REPORT" , "Inspection.DATE_REPORT", 1,23);
+
 	deleteList(ll);
-
-
+	
 }
   
 
@@ -326,17 +268,6 @@ listDat_t* TaggerWap::firstList(AnalysisContent& analysis, MediaId lg) {
 
   int cb=0;
 
-  const Common::PropertyCode::PropertyAccessor* propertyAccessor;
-  const Common::PropertyCode::PropertyManager* propertyManager;
-  std::string propertyName="L_MACRO_MICRO";
-  const Common::PropertyCode::PropertyCodeManager& codeManager=
-  static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(lg)).getPropertyCodeManager();
-  propertyAccessor=&codeManager.getPropertyAccessor(propertyName);
-  propertyManager=&codeManager.getPropertyManager(propertyName);
-
-  // output vertices between begin and end,
-  // but do not include begin (beginning of text or previous end of sentence) and include end (end of sentence)
-  
   toVisit.push(anagraph->firstVertex());
   bool first=true;
   bool last=false;

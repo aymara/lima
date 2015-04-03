@@ -78,9 +78,6 @@ class LIMA_SPECIFICENTITIESCRF_EXPORT SpecificEntitiesCRFTag : public MediaProce
 
 private:
 
-  bool m_useSentenceBounds;
-  bool m_useDicoWords;
-  std::string m_graph;
   std::string m_crflib;
 
   std::deque<std::string> m_listmodel;
@@ -88,8 +85,6 @@ private:
   MediaId m_lg;
 
   std::vector<mdl_t*> m_vecmod;
-
-  mdl_t *m_f_mod;
 
 
 };

@@ -75,13 +75,10 @@ class LIMA_SPECIFICENTITIESCRF_EXPORT SpecificEntitiesCRFLearn : public MediaPro
 
 private:
 
-  bool m_useSentenceBounds;
-  bool m_useDicoWords;
-  std::string m_graph;
   std::string m_crflib;
-  bool m_useAnnot;
 
-  std::deque<std::string> m_listpattern;
+  std::string m_pattern;
+  std::string m_model;
 
   MediaId m_lg;
 

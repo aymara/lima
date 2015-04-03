@@ -1,5 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
+<module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/entities"/>
+        <item value="DateTime-modex.xml/entities"/>
+        <item value="Organization-modex.xml/entities"/>
+        <item value="Location-modex.xml/entities"/>
+        <item value="Person-modex.xml/entities"/>
+        <item value="Event-modex.xml/entities"/>
+        <item value="Product-modex.xml/entities"/>
+      </list>
+    </group>
+  </module>
   <module name="Processors">
     <group name="include">
       <list name="includeList">

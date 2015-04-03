@@ -1,5 +1,24 @@
-/***************************************************************************
- *   Copyright (C) 2004-2014 by CEA LIST                              *
+/*
+    Copyright 2002-2014 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
+
+ ***************************************************************************
+ *   Copyright (C) 2004-2014 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -30,10 +49,9 @@
 #include "TrainerWap.h"
 
 //#include "common/LimaCommon.h"
-#include <common/QsLog/QsLog.h>
+//#include <common/QsLog/QsLog.h>
 
-#include <QtXml/QXmlStreamReader>
-#include <QFile>
+//#include <QFile>
 
 #include <iostream>
 #include <fstream>
@@ -84,33 +102,30 @@ void SpecificEntitiesCRFLearn::init(
       // optional parameter: keep default value
     }
 
-   try {
-     string useAnnot=unitConfiguration.getParamsValueAtKey("useAnnot");
-    if (useAnnot=="yes" ||
-        useAnnot=="true" ||
-        useAnnot=="1") {
-      m_useAnnot=true;
-    }
-    else {
-      m_useAnnot=false;
-    }
-  }
-  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    // optional parameter: keep default value
-  }
-  
+   
 
   m_lg=manager->getInitializationParameters().media;
   
 
   try {
     std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    m_listpattern=unitConfiguration.getListsValueAtKey("patternList");
+    m_pattern=unitConfiguration.getParamsValueAtKey("patternFile");
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LERROR << "no parameter 'patternList' in group for language " << (int) m_lg << " !" << LENDL;
     throw InvalidConfiguration();
   }
+
+
+  try {
+     std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
+     m_model=unitConfiguration.getParamsValueAtKey("model");
+   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
+     {
+       
+       m_model="";
+     }
+   
 
 }
 
@@ -133,19 +148,20 @@ LimaStatusCode SpecificEntitiesCRFLearn::process(
   options["inputFile"]=lMetaData->getMetaData("FileName");
   //options["patternFile"]=lMetaData->getMetaData("patternFile");
 
-  options["patternFile"]=resourcePath+"/SpecificEntitiesCRF/"+m_listpattern[0];
+  options["patternFile"]=resourcePath+"/SpecificEntities/"+m_pattern;
+
+  if (m_model!="") {
+    options["model"]=resourcePath+"/SpecificEntitiesCRF/"+m_model;
+  }
+
   abTr=TrainerWapitiFactory.getFactory(m_crflib)->create();
 
   if (abTr!=NULL) {
     abTr->initOptions(options);
-    if (m_useAnnot) {
       abTr->training();
-    } else {
-      abTr->learning(analysis, m_lg);
-    }
   }
 
-  // transformer rs to LimaStatusCode
+  
   free(abTr);
   
   

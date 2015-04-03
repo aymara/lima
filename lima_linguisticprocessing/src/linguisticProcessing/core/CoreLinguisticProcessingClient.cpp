@@ -274,6 +274,9 @@ void CoreLinguisticProcessingClientFactory::configure(
 
     XMLConfigurationFileParser langParser(file);
 
+    //initialize SpecificEntities 
+    Common::MediaticData::MediaticData::changeable().initEntityTypes(langParser);
+
     // initialize resources
     LINFO << "configure resources for language " << *langItr;
     try

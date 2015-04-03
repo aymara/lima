@@ -112,7 +112,7 @@ raw_t* graphToRaw(AnalysisContent& analysis, MediaId lg) {
  
   const Common::PropertyCode::PropertyAccessor* propertyAccessor;
   const Common::PropertyCode::PropertyManager* propertyManager;
-  std::string propertyName="L_MACRO_MICRO";
+  std::string propertyName="MICRO";
   const Common::PropertyCode::PropertyCodeManager& codeManager=
   static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(lg)).getPropertyCodeManager();
   propertyAccessor=&codeManager.getPropertyAccessor(propertyName);
@@ -304,7 +304,7 @@ raw_t* graphToRawTrain(AnalysisContent& analysis, MediaId lg) {
  
   const Common::PropertyCode::PropertyAccessor* propertyAccessor;
   const Common::PropertyCode::PropertyManager* propertyManager;
-  std::string propertyName="L_MACRO_MICRO";
+  std::string propertyName="MICRO";
   const Common::PropertyCode::PropertyCodeManager& codeManager=
   static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(lg)).getPropertyCodeManager();
   propertyAccessor=&codeManager.getPropertyAccessor(propertyName);

@@ -530,9 +530,7 @@
     <group name="SpecificEntitiesCRFLearn" class="SpecificEntitiesCRFLearn">
        <param key="crflibrary" value="trainWap"/>
        <param key="useAnnot" value="1"/>
-       <list name="patternList">
-	  <item value="pattern.txt"/>
-      </list>
+       <param key="patternFile" value="pattern.txt"/>
     </group>
     <group name="SpecificEntitiesCRFTag" class="SpecificEntitiesCRFTag">
        <param key="crflibrary" value="tagWap"/>

@@ -72,16 +72,20 @@ public:
 
   ~TaggerWap();
 
-  //TaggerWap(Lima::MediaId&, const std::string&); 
-
+ /**
+   * @brief Initialize the labelling options
+   */
   void initOptions(const std::map<std::string, std::string>& options);
   
+   /**
+   * @brief Apply CRF to label the datas
+   */
   void tag(AnalysisContent& analysis, MediaId lg);
-
+ /**
+   * @brief Load the model to use in CRF
+   */
   void setMod(mdl_t *m);
 
-  // add Specific Entities in the graphs
-  //void addSpecificEntities(AnalysisContent& analysis, MediaId lg, std::string str, std::string type, uint64_t pos, uint64_t length); 
 
   /**
    * @brief Create a list and add Position and Length according to the graph

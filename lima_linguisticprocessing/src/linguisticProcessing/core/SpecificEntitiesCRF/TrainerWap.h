@@ -68,12 +68,8 @@ public:
 
   void initOptions(const std::map<std::string, std::string>& options);
   
-  // deprecated
   void training();
 
-  void testTrain(AnalysisContent& ac);
-
-  void learning(AnalysisContent& ac, MediaId lg);
 
 private:
   mdl_t *mod;
