@@ -536,7 +536,7 @@
        <param key="crflibrary" value="tagWap"/>
         
        <list name="modelList">
-	<item value="ConcatNumber100.txt.dat.mod"/>
+	<item value="MODEL-NAME-TO-COMPLETE.mod"/>
       </list>
     </group>
 

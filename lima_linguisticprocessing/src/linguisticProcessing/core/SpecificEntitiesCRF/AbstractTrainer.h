@@ -53,7 +53,7 @@ public:
 
   virtual void training() = 0;
   
-  virtual void learning(AnalysisContent& ac, MediaId lg)=0;
+  //virtual void learning(AnalysisContent& ac, MediaId lg)=0;
 
 
 
