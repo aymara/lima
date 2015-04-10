@@ -47,7 +47,8 @@ RecognizerData::RecognizerData():
     m_verticesToRemove(),
     m_resultData(0),
     m_currentSentence(0),
-    m_nextVertices()
+    m_nextVertices(),
+    m_entityFeatures()
 {}
 
 RecognizerData::RecognizerData(const RecognizerData& d):
@@ -55,7 +56,8 @@ RecognizerData::RecognizerData(const RecognizerData& d):
     m_verticesToRemove(d.m_verticesToRemove),
     m_resultData(d.m_resultData),
     m_currentSentence(d.m_currentSentence),
-    m_nextVertices(d.m_nextVertices)
+    m_nextVertices(d.m_nextVertices),
+    m_entityFeatures(d.m_entityFeatures)
 {}
 
 //***********************************************************************
@@ -77,6 +79,7 @@ RecognizerData& RecognizerData::operator = (const RecognizerData& d)
     m_resultData=d.m_resultData;
     m_currentSentence=d.m_currentSentence;
     m_nextVertices = d.m_nextVertices;
+    m_entityFeatures = d.m_entityFeatures;
   }
   return *this;
 }
@@ -429,6 +432,13 @@ void RecognizerData::deleteResultData()
   }
 }
 
+//**********************************************************************
+// use also this AnalysisData to store Entity Features
+
+void RecognizerData::clearEntityFeatures()
+{
+  m_entityFeatures.clear();
+}
 
 //**********************************************************************
 // Data to store the results
@@ -477,7 +487,6 @@ insert(const RecognizerMatch& m,
   }
   (*this)[sentenceId].push_back(m);
 }
-
 
 
 } // end namespace

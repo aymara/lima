@@ -8,7 +8,18 @@ set defaultAction=>CreateSpecificEntity()
 use hours.lst
 use timezone.lst
 
-heure$NC:(T_Ni|<NUMBER>):(T_Ni|(et (demie|quart)))?:TIME:
+heure$NC:<NUMBER>:(<NUMBER>)?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1,"minute:int")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime()
+
+heure$NC:<NUMBER>:(et (demie|quart))?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1.2,"minute")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeLocalTime()
 
 # 08:43:08
@@ -30,14 +41,29 @@ heure$NC:(T_Ni|<NUMBER>):(T_Ni|(et (demie|quart)))?:TIME:
 
 # when both local and UTC are specified
 @h:<NUMBER>:<NUMBER> (\(? @localtime \)?)? \( <NUMBER> @h <NUMBER> @utc \):TIME:
++AddEntityFeature(right.4,"hour:int")
++AddEntityFeature(right.6,"minute:int")
++AddEntityFeature(right.7,"utc")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeUTCTime("date_current")
 
 # when only UTC time
 @h:<NUMBER>:<NUMBER> \(? @utc \)?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1,"minute:int")
++AddEntityFeature(right.3,"utc")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeUTCTime("date_current")
 
 # when local time or nothing
 @h:<NUMBER>:<NUMBER> (\(? @localtime \)?)?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1,"minute:int")
++AddEntityFeature(right.2.2,"local")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeLocalTime("date_current")
 
 #@h:<NUMBER>::TIME:
@@ -45,9 +71,17 @@ heure$NC:(T_Ni|<NUMBER>):(T_Ni|(et (demie|quart)))?:TIME:
 
 # 12h45 (values in a list -> should be recognized by tokenizer)
 @Hours::(\(? @utc \)?)?:TIME:
++AddEntityFeature(trigger,"time")
++AddEntityFeature(right.1.2,"utc")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeUTCTime("date_current")
 
 @Hours::(\(? @localtime \)?)?:TIME:
++AddEntityFeature(trigger,"time")
++AddEntityFeature(right.1.2,"local")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeLocalTime("date_current")
 
 #----------------------------------------------------------------------
@@ -62,8 +96,17 @@ semaine,semaines,mois,an,ans
 
 @PrecisionPre=(derniers)
 
-T_Ni:@PrecisionPre::TIME:
+<NUMBER>:@PrecisionPre::TIME:
++AddEntityFeature(trigger,"timeval")
++AddEntityFeature(left.1,"timemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeLocalTime()
 
-T_Ni::@timeUnit @PrecisionPost:TIME:
+<NUMBER>::@timeUnit @PrecisionPost:TIME:
++AddEntityFeature(trigger,"timeval")
++AddEntityFeature(right.1,"timeunit")
++AddEntityFeature(right.2,"timemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 =>NormalizeLocalTime()

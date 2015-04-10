@@ -49,7 +49,8 @@ m_type(),
 m_norm(),
 m_nbConstraints(0),
 m_hasLeftRightConstraint(false),
-m_actions()
+m_actions(),
+m_actionsWithOneArgument()
 {
 }
 
@@ -61,7 +62,8 @@ m_type(r.m_type),
 m_norm(r.m_norm),
 m_nbConstraints(r.m_nbConstraints),
 m_hasLeftRightConstraint(r.m_hasLeftRightConstraint),
-m_actions(r.m_actions)
+m_actions(r.m_actions),
+m_actionsWithOneArgument(r.m_actionsWithOneArgument)
 {
 }
 
@@ -76,7 +78,8 @@ m_type(),
 m_norm(),
 m_nbConstraints(0),
 m_hasLeftRightConstraint(false),
-m_actions()
+m_actions(),
+m_actionsWithOneArgument()
 {
   AUCLOGINIT;
   int position = findSpecialCharacter(str,CHAR_SEP_RULE,0);
@@ -113,12 +116,14 @@ m_actions()
   }
   LDEBUG << "norm=" << Common::Misc::limastring2utf8stdstring(m_norm);
 
+  // set some identifier for each element of the rule
+  identifyTransition();
   //constraints
   if (next != -1) {
     // need subAutomatons to deal with named sub-indexes
     treatConstraints(str.mid(next),language,subAutomatons);
   }
-
+  
   //simplify automatonStrings (help building minimal automata)
   m_left.removeUnitSequences();
   m_right.removeUnitSequences();
@@ -147,6 +152,7 @@ RuleString& RuleString::operator = (const RuleString& r) {
   m_nbConstraints=r.m_nbConstraints;
   m_hasLeftRightConstraint=r.m_hasLeftRightConstraint;
   m_actions=r.m_actions;
+  m_actionsWithOneArgument=r.m_actionsWithOneArgument;
   return *this;
 }
 
@@ -266,6 +272,18 @@ treatConstraints(const LimaString& s,
 }
 
 /**
+ * ??? return true if the action has been added, false if it has not
+ * (not an error, additions could have been made to an old action) ???
+ */
+void RuleString::addAction(const Constraint& a, const LimaString& argument) {
+  AUCLOGINIT;
+  LDEBUG << "adding action indexed with" << argument;
+
+  m_actionsWithOneArgument.push_back(std::pair<LimaString,Constraint>(argument,a));
+}
+
+
+/**
  * return true if the constraint has been added, false if it has not
  * (not an error, additions could have been made to an old constraint)
  */
@@ -357,11 +375,21 @@ addConstraint(const LimaString& constraint,
     readConstraintComplement(arguments,
                              complement);
   }
-  else {
-    // constraint has no arguments: is action
-    // do not increment the number of constraints on the rule
-    // (necessary for the constraintCheckList, that is not used for actions)
-    if (isAction) {
+  // constraint has no arguments: is action
+  // do not increment the number of constraints on the rule
+  // (necessary for the constraintCheckList, that is not used for actions)
+  if (isAction) {
+    if (! arguments.isEmpty()) {
+      LWARN << "Actions with arguments...";
+      LWARN << "Hypothesis is only 1 argument...";
+      // read (first) argument
+      LimaString firstArg;
+      arguments= readActionArgument(arguments,firstArg);
+      const bool negative(false);
+      // build Constraint object (to be registered in Recognizer)
+      addUnaryAction(constraintName, complement, language, firstArg, negative, isAction, actionIfSuccess);
+    }
+    else {
       ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
       if (! actionIfSuccess) {
         executeAction=EXECUTE_IF_FAILURE;
@@ -369,15 +397,14 @@ addConstraint(const LimaString& constraint,
       Constraint a(Constraint::noindex,constraintName,executeAction,language,complement);
       addAction(a);
       LDEBUG << "RuleString::addConstraint returns";
-      
-      return;
     }
-    else {
-      ostringstream oss;
-      oss << "Error on constraint " << Misc::limastring2utf8stdstring(constraint)
-          << ": no arguments found (maybe should be an action)";
-      throw ConstraintSyntaxException(oss.str());
-    }
+    return;
+  }
+  else if (arguments.isEmpty()) {
+    ostringstream oss;
+    oss << "Error on constraint " << Misc::limastring2utf8stdstring(constraint)
+        << ": no arguments found (maybe should be an action)";
+    throw ConstraintSyntaxException(oss.str());
   }
 
   // read first argument
@@ -463,6 +490,50 @@ orderArguments(PartOfRule& partFirstArg,
 }
 
 void RuleString::
+addUnaryAction(const std::string& constraintName,
+                   const LimaString& complement,
+                   MediaId language,
+                   const LimaString& argument,
+                   const bool negative,
+                   const bool isAction,
+                   const bool actionIfSuccess)
+{
+  if (isAction) {
+    /*
+    ???  unary action not implemented version
+    ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
+    if (! actionIfSuccess) {
+      executeAction=EXECUTE_IF_FAILURE;
+    }
+    Constraint c(m_nbConstraints,constraintName,STORE,complement,negative);
+    Constraint a(m_nbConstraints,constraintName,executeAction,complement,negative);
+    addConstraint(part,index,subindex,c);
+    addAction(a);
+    m_nbConstraints++;
+    ??? unary constraint version
+    Constraint c(Constraint::noindex,constraintName,TEST,language,complement,negative);
+    addConstraint(part,index,c);
+    */
+    // ??? synthesis
+    AUCLOGINIT;
+    LDEBUG << "RuleString::addUnaryAction " << constraintName << "," << complement << "," << argument;
+    
+    ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
+    if (! actionIfSuccess) {
+      executeAction=EXECUTE_IF_FAILURE;
+    }
+    Constraint a(Constraint::noindex,constraintName,executeAction,language,complement,negative);
+    addAction(a,argument);
+  }
+  else {
+    //unary actions are not supported yet
+    AUCLOGINIT;
+    LERROR << "addUnaryAction: isAction = false!";
+    throw ConstraintSyntaxException("Action or Constraint with bad arguments...");
+  }
+}
+
+void RuleString::
 addUnaryConstraint(const std::string& constraintName,
                    const LimaString& complement,
                    MediaId language,
@@ -470,13 +541,13 @@ addUnaryConstraint(const std::string& constraintName,
                    const SubPartIndex& index,
                    const bool negative,
                    const bool isAction,
-                   const bool)
+                   const bool actionIfSuccess)
 {
   if (isAction) {
     //unary actions are not supported yet
     AUCLOGINIT;
-    LERROR << "Actions with arguments are not yet supported: ignored"
-          ;
+    LERROR << "addUnaryConstraint: Actions with arguments are not yet supported";
+    throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
     ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
@@ -516,8 +587,8 @@ addBinaryConstraint(const std::string& constraintName,
   << " neg: " << negative << " isAction: " << isAction << " reverseArguments: " << reverseArguments;
   if (isAction) {
     // binary actions are not supported
-    LERROR << "Actions with arguments are not yet supported: behavior is not guaranteed"
-          ;
+    LERROR << "addBinaryConstraint: Actions with arguments are not yet supported";
+    throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
     // push both arguments, action is EXECUTE
@@ -584,11 +655,17 @@ addBinaryConstraint(const std::string& constraintName,
     if (addFirstConstraint) {
       Constraint cfirst(constraintIndex,constraintName,
                         storeAction,language,complement);
+      LDEBUG << "addConstraint(constraintIndex:" << constraintIndex
+             << "constraintName:" << constraintName
+             << "storeAction:" << storeAction << ")";
       addConstraint(partFirstArg,indexFirstArg,cfirst);
     }
     if (addSecondConstraint) {
       Constraint csecond(constraintIndex,constraintName,
                          compareAction,language,complement,negative);
+      LDEBUG << "addConstraint(constraintIndex:" << constraintIndex
+             << "constraintName:" << constraintName
+             << "compareAction:" << compareAction << ")";
       addConstraint(partSecondArg,indexSecondArg,csecond);
     }
     if (incrementConstraint) {
@@ -653,7 +730,6 @@ IsOnSameRepetitiveStructure(const SubPartIndex& index1,
   }
   return false;
 }
-
 
 LimaString RuleString::
 readConstraintName(const LimaString& str,
@@ -746,6 +822,41 @@ readConstraintComplement(LimaString& str,
 }
 
 LimaString RuleString::
+readActionArgument(const LimaString& arguments,
+                       LimaString& argument) {
+  LimaString nextArgument;
+
+  // check if more than 1 argument
+  int sep=
+    findSpecialCharacter(arguments,
+                         CHAR_CONSTRAINT_SEP_ARG,
+                         0);
+  if (sep != -1) {
+    argument=arguments.left(sep);
+    nextArgument=arguments.mid(sep+1);
+  }
+  else
+    argument=arguments;
+  // check if argument begin with "trigger", "left" or "right"
+  if ( (argument.indexOf(STRING_CONSTRAINT_TRIGGER) != 0)
+    && (argument.indexOf(STRING_CONSTRAINT_LEFT) != 0)
+    && (argument.indexOf(STRING_CONSTRAINT_RIGHT) != 0) )
+  {
+    AUCLOGINIT;
+    LWARN << "Warning! readActionArgument: [" << argument
+        << "/" << nextArgument << "], bad value for argument";
+  }
+  else
+  {
+    AUCLOGINIT;
+    LDEBUG << "readActionArgument: [" << argument
+          << "/" << nextArgument << "]";
+  }
+  return nextArgument;
+}
+
+
+LimaString RuleString::
 readConstraintArgument(const LimaString& arguments,
                        PartOfRule& part,
                        SubPartIndex& index,
@@ -798,6 +909,13 @@ readConstraintArgument(const LimaString& arguments,
   return nextArgument;
 }
 
+// set some RuleElementIdentifier to each transition
+void RuleString::identifyTransition() {
+  
+  m_trigger.identifyTransition("trigger");
+  m_left.identifyTransition("left");
+  m_right.identifyTransition("right");
+}
 
 //------------------------------
 // parse the index specifying the word in the rule part

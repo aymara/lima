@@ -268,11 +268,42 @@ operator()(RecognizerMatch& m,
   SELOGINIT;
   
   unsigned short day(0);
+  if (m.features().find("numday") != m.features().end()) {
+    bool ok = true;
+    day = (*m.features().find("numday")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      day = m_resources->getDayNumber((*m.features().find("numday")).getValueLimaString());
+    }
+  }
   unsigned short day_end(0);
+  if (m.features().find("numdayend") != m.features().end()) {
+    bool ok = true;
+    day_end = (*m.features().find("numdayend")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      day_end = m_resources->getDayNumber((*m.features().find("numdayend")).getValueLimaString());
+    }
+  }
   unsigned short month(0);
+  if (m.features().find("month") != m.features().end()) {
+    bool ok = true;
+    month = (*m.features().find("month")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      month = m_resources->getMonthNumber((*m.features().find("month")).getValueLimaString());
+    }
+  }
   unsigned short month_end(0);
+  if (m.features().find("monthend") != m.features().end()) {
+    bool ok = true;
+    month_end = (*m.features().find("monthend")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      month_end = m_resources->getMonthNumber((*m.features().find("monthend")).getValueLimaString());
+    }
+  }
   unsigned short year(0);
-
+  if (m.features().find("numyear") != m.features().end()) {
+    year = (*m.features().find("numyear")).getValueLimaString().toUShort();
+  }
+  
   for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++) {
     if (! (*i).isKept()) {
       continue;
@@ -281,22 +312,22 @@ operator()(RecognizerMatch& m,
     MorphoSyntacticData* data = m.getData(i);
     if (testMicroCategory(m_microsForMonth,m_microAccessor,data)) {
       if (isInteger(t)) {
-        month=LimaStringToInt(t->stringForm());
+        if (month == 0) month=LimaStringToInt(t->stringForm());
       }
       else if (m_resources) {
-        unsigned short monthNum=m_resources->getMonthNumber(t->stringForm());
+        LimaString monthString = m.features().find("month")==m.features().end() ? t->stringForm() : (*m.features().find("month")).getValueLimaString();
+        unsigned short monthNum=m_resources->getMonthNumber(monthString);
         if (monthNum==NormalizeDateTimeResources::no_month) {
           // failed to recognize month => no normalization
-          LDEBUG << "NormalizeDate: '" << Common::Misc::limastring2utf8stdstring(t->stringForm())
-          << "' not recognized as month\n";
+          LDEBUG << "NormalizeDate: '" << monthString << "' not recognized as month";
           m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
         }
         else {
           if (month!=0 && m_isInterval) {
-            month_end=monthNum;
+            if (month_end == 0) month_end=monthNum;
           }
           else {
-            month=monthNum;
+            if (month == 0) month=monthNum;
           }
         }
       }
@@ -309,9 +340,9 @@ operator()(RecognizerMatch& m,
         uint64_t val2=t->stringForm().mid(pos+1).toUInt();
         if (val1 > 31) {
           //assume year
-          year=val1;
+          if (year == 0) year=val1;
           //assume next is month
-          if (val2 <= 12) {
+          if (month == 0 && val2 <= 12) {
             month=val2;
           }
           else { // should not happen => it may not be a date
@@ -319,12 +350,12 @@ operator()(RecognizerMatch& m,
         }
         // otherwhise, suppose day before month, but test it
         else if (val2 > 12) {
-          day=val2;
-          month=val1;
+          if (day == 0) day=val2;
+          if (month == 0) month=val1;
         }
         else {
-          day=val1;
-          month=val2;
+          if (day == 0) day=val1;
+          if (month == 0) month=val2;
         }
       }
       else if (isInteger(t)) {
@@ -339,24 +370,24 @@ operator()(RecognizerMatch& m,
           else if (month==0) {
             if (value > 12) { // swap : month cant be > 12
               month = day;
-              day = value;
+              if (day == 0) day = value;
             }
             else { // assume month
-              month = value;
+              if (month == 0) month = value;
             }
           }
           else { // month and day are assigned -> assume year
-            year = value;
+            if (year == 0) year = value;
           }
         }
         else {
           if (value > 1000 && value < 3000) {
-            year = value;
+            if (year == 0) year = value;
           }
           else if (month!=0) {
             // can be a year on two digits -> year assumed if
             // day and month are already assigned
-            year = value;
+            if (year == 0) year = value;
           }
         }
       }
@@ -517,90 +548,112 @@ operator()(RecognizerMatch& m,
   }
 
   QDate referenceDate;
-  
+  QDate newCurrentDate;
+
+
   if (! m_referenceData.getReferenceDate(analysis,referenceDate)) {
     m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
   
-  // get day of the week
-  QDate newCurrentDate;
-  unsigned short dayOfMonth(0); 
-  for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++) {
-    if (! (*i).isKept()) {
-      continue;
+// "datemod"
+// "century"
+  unsigned short day(0);
+  if (m.features().find("day") != m.features().end() && m_resources != 0) {
+    day=m_resources->getDayNumber((*m.features().find("day")).getValueLimaString());
+  }
+  // test if it is a day name
+  if (day!=NormalizeDateTimeResources::no_day) {
+    if (day == referenceDate.dayOfWeek()) {
+      // same day of week as reference: assume it's the same date
+      newCurrentDate=referenceDate;
+      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
-    Token* t=m.getToken(i);
-    LimaString str=t->stringForm();
-
-    // if integer, assume it's a day number (10 mai prochain)
-    if (isInteger(t)) {
-      dayOfMonth=str.toUShort();
-      if (dayOfMonth>31) { dayOfMonth=0; }
-      continue;
-    }
-
-    // test if it is a day name
-    unsigned short day=m_resources->getDayNumber(str);
-    if (day!=NormalizeDateTimeResources::no_day) {
-      if (day == referenceDate.dayOfWeek()) {
-        // same day of week as reference: assume it's the same date
-        newCurrentDate=referenceDate;
-        m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
-      }
-      else if (m_getNext) {
-        // get next day according to reference
-        newCurrentDate=referenceDate.addDays(1);
+    else if (m_getNext) {
+      // get next day according to reference
+      newCurrentDate=referenceDate.addDays(1);
 //         first_day_of_the_week_after nextDay(day);
 //         newCurrentDate=nextDay.get_date(referenceDate);
-        m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
-      }
-      else {
-        // get previous day according to reference
-        newCurrentDate=referenceDate.addDays(-1);
+      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+    }
+    else {
+      // get previous day according to reference
+      newCurrentDate=referenceDate.addDays(-1);
 //         first_day_of_the_week_before prevDay(day);
 //         newCurrentDate=prevDay.get_date(referenceDate);
-        m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
-      }
-      continue;
-    }
-
-    // test if it is a month name
-    unsigned short month=m_resources->getMonthNumber(str);
-    if (month!=NormalizeDateTimeResources::no_month) {
-      unsigned short year=referenceDate.year();
-      int refmonth=referenceDate.month();
-      // possible change of year
-      if (m_getNext) {
-        if (refmonth>month) {
-          year++;
-        }
-      }
-      else {
-        if (refmonth<month) {
-          year--;
-        }
-      }
-      // if a day is specified
-      if (dayOfMonth!=0) {
-        newCurrentDate=QDate(year,month,dayOfMonth);
-        m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
-      }
-      else {
-        // set an interval value
-        QDate firstDayOfMonth(year,month,1);
-        m.features().addFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
-        m.features().addFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.addMonths(1).addDays(-1));
-      }
-      continue;
-    }
-
-    // other cases: maybe a diff (hier,ajourd'hui...)
-    if (m_diff != 0) {
-      newCurrentDate=referenceDate.addDays(m_diff);
       m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
   }
+
+  unsigned short dayOfMonth(0); 
+  if (m.features().find("numday") != m.features().end()) {
+    bool ok = true;
+    dayOfMonth = (*m.features().find("numday")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      dayOfMonth = m_resources->getDayNumber((*m.features().find("numday")).getValueLimaString());
+    }
+  }
+  if (dayOfMonth>31) { dayOfMonth=0; }
+  
+  unsigned short month(0);
+  if (m.features().find("month") != m.features().end()) {
+    bool ok = true;
+    month = (*m.features().find("month")).getValueLimaString().toUShort(&ok);
+    if (!ok && m_resources) {
+      month = m_resources->getMonthNumber((*m.features().find("month")).getValueLimaString());
+    }
+  }
+  unsigned short year=referenceDate.year();
+  if (m.features().find("numyear") != m.features().end()) {
+    year = (*m.features().find("numyear")).getValueLimaString().toUShort();
+  }
+
+  unsigned short century(0);
+  if (m.features().find("century") != m.features().end()) {
+    (*m.features().find("century")).getValue();
+    try {
+      century = boost::any_cast<unsigned short>((*m.features().find("century")).getValue());
+    }
+    catch(const boost::bad_any_cast &) {
+      century = (*m.features().find("century")).getValueLimaString().toUShort();
+    }
+    // 20 (th century) changed to year 1900
+    year = (century-1)*100;
+  }
+
+  // test if it is a month name
+  if (month!=NormalizeDateTimeResources::no_month) {
+    int refmonth=referenceDate.month();
+    // possible change of year
+    if (m_getNext) {
+      if (refmonth>month) {
+        year++;
+      }
+    }
+    else {
+      if (refmonth<month) {
+        year--;
+      }
+    }
+    // if a day is specified
+    if (dayOfMonth!=0) {
+      newCurrentDate=QDate(year,month,dayOfMonth);
+      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+    }
+    else {
+      // set an interval value
+      QDate firstDayOfMonth(year,month,1);
+      m.features().addFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
+      m.features().addFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.addMonths(1).addDays(-1));
+    }
+  }
+
+  // other cases: maybe a diff (hier,ajourd'hui...)
+  if (m_diff != 0) {
+    newCurrentDate=referenceDate.addDays(m_diff);
+    m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+  }
+
   if (newCurrentDate.isValid()) {
     updateCurrentDate(analysis,newCurrentDate);
   }
@@ -644,9 +697,35 @@ getTimeDuration(const RecognizerMatch& m) const
 {
   SELOGINIT;
   QTime timeDuration;
-  if (m.size()==1) {
-    std::string timeString=Common::Misc::
-      limastring2utf8stdstring(m.getToken(m.begin())->stringForm());
+  
+  unsigned short hou(0),min(0),sec(0);
+  if (m.features().find("hour") != m.features().end()) {
+    try {
+      hou = boost::any_cast<unsigned short>((*m.features().find("hour")).getValue());
+    }
+    catch(const boost::bad_any_cast &) {
+      hou = (*m.features().find("hour")).getValueLimaString().toUShort();
+    }
+  }
+  if (m.features().find("minute") != m.features().end()) {
+    try {
+      min = boost::any_cast<unsigned short>((*m.features().find("minute")).getValue());
+    }
+    catch(const boost::bad_any_cast &) {
+      min = (*m.features().find("minute")).getValueLimaString().toUShort();
+    }
+  }
+  if (m.features().find("second") != m.features().end()) {
+    try {
+      sec = boost::any_cast<unsigned short>((*m.features().find("second")).getValue());
+    }
+    catch(const boost::bad_any_cast &) {
+      sec = (*m.features().find("second")).getValueLimaString().toUShort();
+    }
+  }
+
+  if (m.features().find("time") != m.features().end()) {
+    std::string timeString=(*m.features().find("time")).getValueLimaString().toUtf8().constData();
     //uint64_t i=timeString.find(':'); portage 32 64
     string::size_type i=timeString.find(':');
     if (i!=string::npos) {
@@ -664,41 +743,12 @@ getTimeDuration(const RecognizerMatch& m) const
     else {
       i=timeString.find_first_of("hH");
       if (i!=string::npos) {
-        uint64_t h=atoi(string(timeString,0,i).c_str());
-        uint64_t m=atoi(string(timeString,i+1).c_str());
-        timeDuration=QTime(h,m);
+        hou=atoi(string(timeString,0,i).c_str());
+        min=atoi(string(timeString,i+1).c_str());
       }
     }
   }
-  else {
-    // several tokens: 11 h 57
-    uint64_t hou(0),min(0),sec(0);
-    bool isSetH(false),isSetM(false),isSetS(false);
-    for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++) {
-      if (! (*i).isKept()) {
-        continue;
-      }
-      Token* t = m.getToken(i);
-      const TStatus& status=t->status();
-      if (status.getNumeric()==T_INTEGER) {
-        int val=LimaStringToInt(t->stringForm());
-        if (! isSetH) { hou=val; isSetH=true; }
-        else if (! isSetM) { min=val; isSetM=true; }
-        else if (! isSetS) { sec=val; isSetS=true; }
-      }
-      else { // not a number
-        static const LimaString openPar=Common::Misc::utf8stdstring2limastring("(");
-        if (t->stringForm()==openPar) {
-          // probably format xx h yy (aa h bb GMT)
-          // -> reinit hour decoding
-          hou=0; isSetH=false; 
-          min=0; isSetM=false;
-          sec=0; isSetS=false;
-        }
-      }
-    }
-    timeDuration=QTime(hou,min,sec);
-  }
+  timeDuration=QTime(hou,min,sec);
   return timeDuration;
 }
 
@@ -711,30 +761,6 @@ getUTCTime(const QDate& d,
            const boost::local_time::tz_database& tz_db*/) const
 {
   return QDateTime(d,duration).toUTC().time();
-//   time_zone_ptr zone;
-//   try {
-//     zone=tz_db.time_zone_from_region(location);
-//   }
-//   catch (std::exception& e) {
-//     cerr << "Error getting timezone:" << e.what() << endl;
-//     return QTime();
-//   }
-//   if (zone == 0 ) {
-//     cerr << "Error getting timezone for '" << location <<"'"<< endl;
-//     return QTime();
-//   }
-// 
-//   if (zone->has_dst()) {
-//     ptime ptimeLocal(d,duration);
-//     if (ptimeLocal > zone->dst_local_start_time(d.year()) &&
-//         ptimeLocal < zone->dst_local_end_time(d.year())) {
-//       return local_date_time(d, duration, zone, true).utc_time();
-//     }
-//     else {
-//       return local_date_time(d, duration, zone, false).utc_time();
-//     }
-//   }
-//   return local_date_time(d, duration, zone, false).utc_time();
 }
 
 NormalizeLocalTime::
