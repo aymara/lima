@@ -77,7 +77,7 @@ American::Reporter:ORGANIZATION:
 Village::Voice:ORGANIZATION:
 Le::Monde:ORGANIZATION:
 
-# other 
+# other
 
 use ../Location/cities.lst,../Location/states.lst
 
