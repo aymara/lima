@@ -84,7 +84,8 @@ release="2"
 fi
 
 if [[ $parallel = "true" ]]; then
-j=`grep -c ^processor /proc/cpuinfo`
+#j=`grep -c ^processor /proc/cpuinfo`
+j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
 echo "Parallel build on $j processors"
 else
 echo "Linear build"
@@ -99,7 +100,7 @@ cmake_mode="Debug"
 fi
 
 echo "version='$release'"
-install -d $build_prefix/$mode/$current_project
+mkdir -p $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
 cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
