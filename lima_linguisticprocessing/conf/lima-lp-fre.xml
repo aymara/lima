@@ -934,8 +934,8 @@
       <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass0.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="l2rPleonasticPronouns" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-l2r-fre-pleonasticPronouns.txt.bin"/>
+    <group name="pleonasticPronouns" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-pleonasticPronouns.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
     <group name="compoundTensesRules" class="AutomatonRecognizer">
