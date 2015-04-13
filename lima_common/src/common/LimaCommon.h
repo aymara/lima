@@ -96,6 +96,12 @@ typedef unsigned __int64 uint64_t;
    #define LIMA_COMMONMISC_EXPORT    __declspec(dllimport)
 #endif
 
+#ifdef LIMA_COMMONTOOLS_EXPORTING
+   #define LIMA_COMMONTOOLS_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_COMMONTOOLS_EXPORT    __declspec(dllimport)
+#endif
+
 #ifdef LIMA_PROCESSUNITFRAMEWORK_EXPORTING
    #define LIMA_PROCESSUNITFRAMEWORK_EXPORT    __declspec(dllexport)
 #else

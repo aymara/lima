@@ -24,7 +24,7 @@ cmake_minimum_required(VERSION 2.8)
 # In debug mode, adds the -DDEBUG_CD to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD" )
-
+set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
 include(SystemSpecificInformations.cmake)
@@ -66,7 +66,6 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   IF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
   ENDIF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
-
   set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
 
@@ -96,8 +95,9 @@ include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml Test)
 
 include_directories(${Qt5_INCLUDES})
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
-
+message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
+set(QT_LIBRARIES "${Qt5_LIBRARIES};Qt5::WinMain")
+cmake_policy(SET CMP0020 OLD)
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -106,6 +106,7 @@ set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
 find_package(Boost 1.46 REQUIRED COMPONENTS unit_test_framework system)
+message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 

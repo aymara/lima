@@ -102,14 +102,17 @@ fi
 echo "version='$release'"
 mkdir -p $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
-cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
-
-make -j$j 
+#cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+exit 0
+#make -j$j 
+nmake
 result=$?
 
 if [ "x$current_project_name" != "xproject(Lima)" ];
 then
-  make test && make install
+  #make test && make install
+  nmake test && nmake install
   result=$?
 fi
 

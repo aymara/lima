@@ -18,7 +18,7 @@
  */
 
 #include "LimaFileSystemWatcherTest.h"
-#include "common/misc/LimaFileSystemWatcher.h"
+#include "common/tools/LimaFileSystemWatcher.h"
 #include "common/QsLog/QsLogCategories.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 
