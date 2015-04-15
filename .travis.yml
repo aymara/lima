@@ -21,7 +21,7 @@ install:
   - sudo apt-get install -qq -y qt53base  qt53tools 
     #  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
     #  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y libboost1.48-all-dev  libenchant-dev python-nltk gawk qt5-qmake qtbase5-dev
+  - sudo apt-get install -qq -y libboost1.48-all-dev  libenchant-dev python-nltk gawk
   - sudo sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
   - python -m nltk.downloader -d nltk_data dependency_treebank
   - cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
