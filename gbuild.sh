@@ -32,6 +32,7 @@ Options default values are in parentheses.
                 precompiled ones
   -v version    <(val)|rev> version number is set either to the value set by  
                 config files or to the short git sha1
+  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.  
 EOF
 exit 1
 }
@@ -43,13 +44,23 @@ mode="debug"
 version="val"
 resources="build"
 parallel="true"
+CMAKE_GENERATOR="Unix"
 
-while getopts ":m:p:r:v:" o; do
+while getopts ":m:p:r:v:G:" o; do
     case "${o}" in
         m)
             mode=${OPTARG}
             [[ "$mode" == "debug" || "$mode" == "release" ]] || usage
             ;;
+        G)
+          CMAKE_GENERATOR=${OPTARG}
+          echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
+          [[     "$CMAKE_GENERATOR" == "Unix"  || 
+                 "$CMAKE_GENERATOR" == "MSYS"  ||
+                 "$CMAKE_GENERATOR" == "NMake" ||
+                 "$CMAKE_GENERATOR" == "VS"
+          ]] || usage
+          ;;
         p)
             parallel=${OPTARG}
             [[ "$parallel" == "true" || "$parallel" == "false" ]] || usage
@@ -99,15 +110,33 @@ else
 cmake_mode="Debug"
 fi
 
+if [[ $CMAKE_GENERATOR == "Unix" ]]; then
+  make_cmd="make -j$j"
+  generator="Unix Makefiles"
+elif [[ $CMAKE_GENERATOR == "MSYS" ]]; then
+  make_cmd="make -j$j"
+  generator="MSYS Makefiles"
+elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
+  make_cmd="nmake && exit 0"
+  generator="NMake Makefiles"
+elif [[ $CMAKE_GENERATOR == "VS" ]]; then
+  make_cmd="exit 0"
+  generator="Visual Studio 10 2010"
+else
+  make_cmd="make -j$j"
+fi
+
 echo "version='$release'"
 mkdir -p $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
-#cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
-cmake -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
-exit 0
+cmake -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+
+eval $make_cmd
 #make -j$j 
-nmake
+#nmake
 result=$?
+
+exit 0
 
 if [ "x$current_project_name" != "xproject(Lima)" ];
 then
