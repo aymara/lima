@@ -3,8 +3,22 @@ compiler: gcc
 env: NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIMA_DIST=$PWD/dist
   LIMA_CONF=$LIMA_DIST/share/config/lima LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources
   PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib
+  LIMA_DISABLE_FSW_TESTING=true
+  LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=true
+  QT_BASE_DIR=/opt/qt53
+  QTDIR=$QT_BASE_DIR
+  PATH=$QT_BASE_DIR/bin:$PATH
+  LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
+  PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 install:
   - cat /etc/*-release
+  - echo `echo 2 | sudo update-alternatives --config gcc`
+  - sudo add-apt-repository ppa:kubuntu-ppa/backports 
+  - sudo apt-get update
+  - sudo apt-get install cmake
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt532
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq qt53base  qt53tools 
   - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update -qq
   - sudo apt-get install -qq -y libboost1.48-all-dev  libenchant-dev python-nltk gawk qt5-qmake qtbase5-dev
