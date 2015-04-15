@@ -20,7 +20,7 @@ add_definitions( -DLIMA_COMMONMISC_EXPORTING )
 ########### next target ###############
 
 set (lima-common-misc_MOC_HEADERS
-	)
+  )
 
 qt5_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
 
@@ -40,10 +40,10 @@ endif()
 add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS} ${lima-common-misc_MOC_OUTFILES})
 
 target_link_libraries(lima-common-misc 
-	lima-common-data 
-	lima-common-qslog 
-	${BOOST_LIBRARIES} 
-	${QT_LIBRARIES})
+  lima-common-data 
+  lima-common-qslog 
+  ${BOOST_LIBRARIES} 
+  ${QT_LIBRARIES})
 
 set_target_properties(lima-common-misc PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-misc DESTINATION lib)

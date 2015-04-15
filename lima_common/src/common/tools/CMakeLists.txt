@@ -43,8 +43,8 @@ set_property(
    APPEND_STRING PROPERTY COMPILE_FLAGS " -DLIMA_COMMONTOOLS_EXPORTING" 
 )
 target_link_libraries(lima-common-tools 
-	${BOOST_LIBRARIES} 
-	${QT_LIBRARIES})
+  ${BOOST_LIBRARIES} 
+  ${QT_LIBRARIES})
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-tools DESTINATION lib)

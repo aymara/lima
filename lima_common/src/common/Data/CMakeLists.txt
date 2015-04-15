@@ -33,7 +33,7 @@ SET(lima-common-data_LIB_SRCS
 add_library(lima-common-data SHARED ${lima-common-data_LIB_SRCS})
 
 target_link_libraries(lima-common-data 
-	lima-common-qslog
+  lima-common-qslog
   ${BOOST_LIBRARIES} 
   ${QT_LIBRARIES}
 )
