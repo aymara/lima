@@ -23,7 +23,7 @@ use person.lst
 #@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
-@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
 
 @PersonNamePart=(t_capital_1st,t_capital,$NP)
 

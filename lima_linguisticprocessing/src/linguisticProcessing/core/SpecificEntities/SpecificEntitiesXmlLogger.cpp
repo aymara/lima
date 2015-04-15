@@ -297,22 +297,24 @@ outputEntity(std::ostream& out,
       << Common::MediaticData::MediaticData::single().getEntityName(annot->getType()).toUtf8().data()
       << "</type>"
       << "<string>"<< Common::Misc::transcodeToXmlEntities(vToken->stringForm()).toUtf8().data() << "</string>"
-      << "<norm>";
+      << "<components>";
       const Automaton::EntityFeatures& features=annot->getFeatures();
       for (Automaton::EntityFeatures::const_iterator 
         featureItr=features.begin(),features_end=features.end();
       featureItr!=features_end; featureItr++)
       {
         out << "<" << featureItr->getName();
-        if( featureItr->hasPos() ) {
-	  out << " pos=\"" << featureItr->getPosition() << "\"";
-	  out << " len=\"" << featureItr->getLength() << "\"";
-	}
+        if( featureItr->getPosition() != UNDEFPOSITION ) {
+          out << " pos=\"" << featureItr->getPosition() << "\"";
+        }
+        if( featureItr->getLength() != UNDEFLENGTH ) {
+          out << " len=\"" << featureItr->getLength() << "\"";
+        }
         out << ">";
         out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
         << "</" << featureItr->getName() << ">";
       }
-      out << "</norm>"
+      out << "</components>"
       << "</entity>"
       << endl;
     }

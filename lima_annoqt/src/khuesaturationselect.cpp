@@ -79,7 +79,9 @@ delete x;                                                              \
 } NAME;
 
 
-K_GLOBAL_STATIC(QVector<QColor>, s_standardPalette)*/
+K_GLOBAL_STATIC(QVector<QColor>, s_standardPalette)
+*/
+
 static QVector<QColor>* s_standardPalette;
 
 // Shared with KColorValueSelector

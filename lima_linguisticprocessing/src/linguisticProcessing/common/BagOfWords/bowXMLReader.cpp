@@ -78,10 +78,12 @@ m_parser()
     m_parser->setErrorHandler(&handler);
     QFile file(filename.c_str());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException();
+      throw XMLException(QString("Error opening %1").arg(filename.c_str()).toUtf8().constData());
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      throw XMLException();
+      throw XMLException(QString("Error parsing %1: %2")
+                .arg(filename.c_str())
+                .arg(m_parser->errorHandler()->errorString()).toUtf8().constData());
     }
   }
   catch (const XMLException& e) {

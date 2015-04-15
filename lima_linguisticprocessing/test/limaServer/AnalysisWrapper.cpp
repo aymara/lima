@@ -33,6 +33,7 @@
 // factories
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 
+#include <QSharedPointer>
 #include <QStringList>
 #include <QPair>
 #include <boost/graph/buffer_concepts.hpp>

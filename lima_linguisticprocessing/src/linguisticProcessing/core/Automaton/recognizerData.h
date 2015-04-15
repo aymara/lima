@@ -117,6 +117,23 @@ class LIMA_AUTOMATON_EXPORT RecognizerData : public AnalysisData
   inline std::set< LinguisticGraphVertex >& getNextVertices() { return m_nextVertices; }
   inline void setNextVertex(LinguisticGraphVertex v) { m_nextVertices.insert(v); }
 
+  template<typename ValueType>
+  void addEntityFeature(const std::string& name, const ValueType& value)
+  {
+    // if feature already exists, overwrite it
+    // @todo : concat to existing feature
+    m_entityFeatures.addFeature<ValueType>(name,value);
+  }
+  template<typename ValueType>
+  void appendEntityFeature(const std::string& name, const ValueType& value)
+  {
+    // if feature already exists, overwrite it
+    // @todo : concat to existing feature
+    m_entityFeatures.appendFeature<ValueType>(name,value);
+  }
+  void clearEntityFeatures();
+  Automaton::EntityFeatures& getEntityFeatures() { return m_entityFeatures; }
+  
 private:
   
   RecognizerData(const RecognizerData&);
@@ -129,6 +146,9 @@ private:
   RecognizerResultData* m_resultData;
   uint64_t m_currentSentence;
   std::set< LinguisticGraphVertex > m_nextVertices;
+  
+  // EntityFeatures : for functions to add features
+  Automaton::EntityFeatures m_entityFeatures;
 };
 
 } // end namespace

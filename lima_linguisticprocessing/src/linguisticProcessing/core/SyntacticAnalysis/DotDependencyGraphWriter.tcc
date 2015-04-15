@@ -54,7 +54,7 @@ public:
       get(edge_deprel_type, *m_graph);
     std::string relName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(static_cast<Common::MediaticData::SyntacticRelationId>(typeMap[e]));
     SALOGINIT;
-    LDEBUG << "Got name="<<relName<<" for rel="<<source(e,*m_graph)<<","<<target(e,*m_graph)<<"," << typeMap[e] << LENDL;
+    LDEBUG << "Got name="<<relName<<" for rel="<<source(e,*m_graph)<<","<<target(e,*m_graph)<<"," << typeMap[e];
     if (relName.empty()) {
       relName="UNKNOWN";
     }
@@ -131,7 +131,7 @@ public:
           << " [color=red,fontcolor=red,weight=0,fontname=\"Monospace\",fontsize=\"9\",label=\"" ;
           std::string relName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(relid);
 //       SALOGINIT;
-//       LDEBUG << "Got name="<<relName<<" for rel="<<depv<<","<<m_syntacticData->tokenVertexForDepVertex(target(*it,*m_depGraph))<<"," << typeMap[*it] << LENDL;
+//       LDEBUG << "Got name="<<relName<<" for rel="<<depv<<","<<m_syntacticData->tokenVertexForDepVertex(target(*it,*m_depGraph))<<"," << typeMap[*it];
       if (relName.empty()) {
         relName="UNKNOWN";
       }

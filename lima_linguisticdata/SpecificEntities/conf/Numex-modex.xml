@@ -104,9 +104,9 @@
     <group name="NumexMicros" class="SpecificEntitiesMicros">
       <list name="Numex.NUMBER">
         <item value="NC"/>
-        <item value="DETNUM"/>
+        <item value="DET"/>
         <item value="PRON"/>
-        <item value="ADJNUM"/>
+        <item value="ADJ"/>
       </list>
       <list name="Numex.UNIT">
         <item value="NC"/>
@@ -114,7 +114,7 @@
       <list name="Numex.NUMEX">
         <item value="NC"/>
       </list>
-    </group> 
+    </group>
     <group name="microsForNumberNormalization" class="MicrosForNormalization">
       <list name="microGroups">
         <item value="NumberMicros"/>
@@ -123,9 +123,9 @@
       </list>
       <list name="NumberMicros">
         <item value="NC"/>
-        <item value="DETNUM"/>
+        <item value="DET"/>
         <item value="PRON"/>
-        <item value="ADJNUM"/>
+        <item value="ADJ"/>
       </list>
       <list name="UnitMicros">
         <item value="NC"/>
