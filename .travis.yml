@@ -35,7 +35,7 @@ after_success:
   
   # This is calling Bintray API for uploading the artifact to Bintray, Under the existing lima package an new version will be created
   # with the Travis build number which will contain the artifacts
-  - curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-*-Linux.deb -ukleag:$KEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/
+  - curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-2.0.2-Linux.deb -ukleag:$KEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.0.2-Linux.deb
   # This is calling Bintray API for publishing the new version with its artifacts
   - curl -XPOST -ukleag:$KEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/publish
   - curl -XGET https://bintray.com/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER
