@@ -25,7 +25,7 @@
 
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/AbstractFactoryPattern/InitializableObject.h"
-#include "common/misc/LimaFileSystemWatcher.h"
+#include "common/tools/LimaFileSystemWatcher.h"
 
 #include <QtCore/QObject>
 

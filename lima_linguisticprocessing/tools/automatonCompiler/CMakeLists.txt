@@ -39,6 +39,7 @@ target_link_libraries(compile-rules
   lima-common-data
   lima-common-factory
   lima-common-misc
+  lima-common-tools
   lima-common-fsaaccess
   lima-common-qslog
   lima-lp-automatoncompiler

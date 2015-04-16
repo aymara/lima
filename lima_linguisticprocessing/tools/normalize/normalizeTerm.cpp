@@ -22,7 +22,7 @@
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/Data/strwstrtools.h"

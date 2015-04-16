@@ -41,7 +41,7 @@ SimpleFactory<DummyInitializableObject,NotSoDummyInitializableObject> notSoDummy
 template<> MainFactory< RegistrableFactory< InitializableObjectFactory< DummyInitializableObject > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< DummyInitializableObject > > >::s_instance(0);
 
 //****************************************************************************
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 int run(int aargc,char** aargv);

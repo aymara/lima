@@ -34,7 +34,7 @@
 #include "tools/automatonCompiler/compilerExceptions.h"
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 #include "linguisticProcessing/core/Automaton/automatonReaderWriter.h"
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/Data/LimaString.h"
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"

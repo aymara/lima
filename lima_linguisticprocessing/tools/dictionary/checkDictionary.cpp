@@ -51,7 +51,7 @@ Param;
 
 void displayEntry(EnhancedAnalysisDictionary& data,StringsPoolIndex index);
 
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 

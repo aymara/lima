@@ -24,7 +24,7 @@
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"

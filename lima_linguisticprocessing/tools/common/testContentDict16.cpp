@@ -71,7 +71,7 @@ typedef struct ParamStruct {
 void testSimpleDataDico(const Param& param );
 void testAnalysisDico(const Param& param );
 
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 

@@ -39,6 +39,8 @@ enable_testing()
 
 include(SystemSpecificInformations.cmake)
 
+message("System name is ${CMAKE_SYSTEM_NAME}")
+cmake_policy(SET CMP0020 OLD)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
 
