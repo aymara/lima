@@ -10,6 +10,13 @@ env: NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIM
   PATH=$QT_BASE_DIR/bin:$PATH
   LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
   PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
+  current_branch=`git rev-parse --abbrev-ref HEAD`
+  current_revision=`git rev-parse --short HEAD`
+  current_timestamp=`git show -s --format=%ct HEAD`
+  current_project=`basename $PWD`
+  current_project_name="`head -n1 CMakeLists.txt`"
+  release="$current_timestamp-$current_revision"
+
 install:
   - cat /etc/*-release
   - echo `echo 2 | sudo update-alternatives --config gcc`
@@ -26,7 +33,7 @@ install:
   - python -m nltk.downloader -d nltk_data dependency_treebank
   - cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 script: mkdir dist && mkdir build && cd build && cmake -DLIMA_RESOURCES:STRING=build
-  -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=Release ..
+  -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$release" ..
   && make -j4 
 after_success:
   - pushd $LIMA_DIST/share/apps/lima/tests
@@ -35,7 +42,7 @@ after_success:
   
   # This is calling Bintray API for uploading the artifact to Bintray, Under the existing lima package an new version will be created
   # with the Travis build number which will contain the artifacts
-  - curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-2.0.2-Linux.deb -ukleag:$KEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.0.2-Linux.deb
+  - curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-2.0.$release-Linux.deb -ukleag:$KEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.0.$release-Linux.deb
   # This is calling Bintray API for publishing the new version with its artifacts
   - curl -XPOST -ukleag:$KEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/publish
   - curl -XGET https://bintray.com/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER
