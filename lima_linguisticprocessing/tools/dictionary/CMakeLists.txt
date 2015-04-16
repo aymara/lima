@@ -28,7 +28,7 @@ add_executable(sortutf16 ${sortutf16_SRCS})
 target_link_libraries(
   sortutf16
   lima-common-factory
-  lima-common-misc
+  lima-common-misc lima-common-tools
   lima-common-qslog
   lima-common-data
   lima-lp-misc
@@ -59,7 +59,7 @@ target_link_libraries(
   lima-lp-linguisticresources
   lima-common-fsaaccess
   lima-common-factory
-  lima-common-misc
+  lima-common-misc lima-common-tools
   lima-common-data
   lima-common-mediaticdata
   lima-common-xmlconfigurationfiles
@@ -98,7 +98,7 @@ target_link_libraries(
  ${Boost_LIBRARIES}
   lima-lp-annotationgraph
    ${QT_LIBRARIES} lima-common-qslog lima-lp-linguisticdata
-   ${optionalLibs} lima-common-factory lima-common-misc
+   ${optionalLibs} lima-common-factory lima-common-misc lima-common-tools
   lima-common-processunitframework
   lima-lp-propertycode
   lima-common-xmlconfigurationfiles
@@ -127,7 +127,7 @@ target_link_libraries(check-dictionary
  ${Boost_LIBRARIES}
    ${QT_LIBRARIES} lima-common-qslog
   lima-lp-linguisticdata
-  lima-common-factory lima-common-misc
+  lima-common-factory lima-common-misc lima-common-tools
   lima-common-mediaticdata
   lima-common-mediaprocessors
   lima-common-data
