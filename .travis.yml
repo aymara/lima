@@ -1,18 +1,9 @@
 language: cpp
 compiler: gcc
-env:
-  matrix:
-  - NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIMA_DIST=$PWD/dist
-    LIMA_CONF=$LIMA_DIST/share/config/lima LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources
-    PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib
-    LIMA_DISABLE_FSW_TESTING=true LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=true
-    QT_BASE_DIR=/opt/qt53 QTDIR=$QT_BASE_DIR PATH=$QT_BASE_DIR/bin:$PATH LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
-    PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH current_branch=`git
-    rev-parse --abbrev-ref HEAD` current_revision=`git rev-parse --short HEAD` current_timestamp=`git
-    show -s --format=%ct HEAD` current_project=`basename $PWD` current_project_name="`head
-    -n1 CMakeLists.txt`" release="$current_timestamp-$current_revision"
-global:
-  secure: FlsmywHiGR6VKejCGcEd59rhvk5YI1f+FUAWfBLVxzqG4haLGT0MQwyxDr2EPS3Iu+v16nsMxHT2dwMCotC8zTPSmHUr6evE4jpNcqs+vIOAz7VLjdqwD0jweeguOR4JxL1XcgFZMAPTnoQFBFZlEOFu8OxaDjOoG7Oj0iGH+Fo=
+env: 
+  global:
+    - secure: FlsmywHiGR6VKejCGcEd59rhvk5YI1f+FUAWfBLVxzqG4haLGT0MQwyxDr2EPS3Iu+v16nsMxHT2dwMCotC8zTPSmHUr6evE4jpNcqs+vIOAz7VLjdqwD0jweeguOR4JxL1XcgFZMAPTnoQFBFZlEOFu8OxaDjOoG7Oj0iGH+Fo=
+    - NLTK_PTB_DP_FILE=$PWD/nltk_data/corpora/dependency_treebank/nltk-ptb.dp LIMA_DIST=$PWD/dist LIMA_CONF=$LIMA_DIST/share/config/lima LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources PATH=$LIMA_DIST/bin:$LIMA_DIST/share/apps/lima/scripts:$PATH LD_LIBRARY_PATH=$LIMA_DIST/lib    LIMA_DISABLE_FSW_TESTING=true LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=true QT_BASE_DIR=/opt/qt53 QTDIR=$QT_BASE_DIR PATH=$QT_BASE_DIR/bin:$PATH LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH current_branch=`git rev-parse --abbrev-ref HEAD` current_revision=`git rev-parse --short HEAD` current_timestamp=`git show -s --format=%ct HEAD` current_project=`basename $PWD` current_project_name="`head -n1 CMakeLists.txt`" release="$current_timestamp-$current_revision"
 install:
 - cat /etc/*-release
 - echo `echo 2 | sudo update-alternatives --config gcc`
