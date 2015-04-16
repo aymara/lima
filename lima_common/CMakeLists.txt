@@ -30,6 +30,7 @@ enable_testing()
 include(SystemSpecificInformations.cmake)
 
 message("System name is ${CMAKE_SYSTEM_NAME}")
+cmake_policy(SET CMP0020 OLD)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
 
@@ -97,7 +98,6 @@ addQt5Modules(Core Xml Test)
 include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
 set(QT_LIBRARIES "${Qt5_LIBRARIES};Qt5::WinMain")
-cmake_policy(SET CMP0020 OLD)
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )

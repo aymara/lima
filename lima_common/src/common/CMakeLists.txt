@@ -41,6 +41,7 @@ target_link_libraries(lima-common
     lima-common-factory 
     lima-common-data 
     lima-common-misc 
+    lima-common-tools 
     lima-common-datahandler 
     lima-common-time 
     lima-common-mediaprocessors 
