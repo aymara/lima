@@ -41,6 +41,8 @@
 
 #include <fstream>
 #include <sstream>      // std::stringstream
+#include <QtCore/QString>
+#include <QtCore/QTemporaryFile>
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -113,29 +115,29 @@ void AnalysisThread::startAnalysis()
     LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
     handlers.insert(std::make_pair("se", seLogWriter));
 
-    std::string fileName("testLimaserver.out");
     // OME?? Dont forget to delete it!!!
     std::ostringstream* oss = new std::ostringstream();
     seLogWriter->setOut(oss);
    
     Q_FOREACH( item, m_d->m_request->url().queryItems())
     {
-      metaData["FileName"]=fileName.c_str();
+      QTemporaryFile tempFile;
+      metaData["FileName"]=tempFile.fileName().toUtf8().constData();
       if (item.first == "lang")
       {
-	language = item.second;
-	metaData["Lang"]=language.toUtf8().data();
-	LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
+        language = item.second;
+        metaData["Lang"]=language.toUtf8().data();
+        LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
       }
       if (item.first == "pipeline")
       {
-	pipeline = item.second;
-	LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+        pipeline = item.second;
+        LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
       }
       if (item.first == "text")
       {
-	text = item.second;
-	LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << text << "'";
+        text = item.second;
+        LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << text << "'";
       }
     }
     if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
@@ -180,24 +182,22 @@ void AnalysisThread::startAnalysis()
   {
     LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
 
-    std::string fileName("testLimaserver.out");
     QString language, pipeline, text_QS;
     std::string text_s;
     QPair<QString, QString> item;
     std::map<std::string,std::string> metaData;
     Q_FOREACH( item, m_d->m_request->url().queryItems())
     {
-      metaData["FileName"]=fileName.c_str();
       if (item.first == "lang")
       {
-	language = item.second;
-	metaData["Lang"]=language.toUtf8().data();
-	LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
+        language = item.second;
+        metaData["Lang"]=language.toUtf8().data();
+        LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
       }
       if (item.first == "pipeline")
       {
-	pipeline = item.second;
-	LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+        pipeline = item.second;
+        LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
       }
     }
 
@@ -219,16 +219,16 @@ void AnalysisThread::startAnalysis()
     }
     else if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
     {
-        m_d->m_response->writeHead(400);
-        QString errorMessage("Language ");
-	errorMessage.append(language).append(" no initialized");
-//	errorMessage << "language " << language " is no initialized"));
-        m_d->m_response->end(errorMessage.toUtf8());
+      m_d->m_response->writeHead(400);
+      QString errorMessage = QString("Language %1 no initialized").arg(language);
+//  errorMessage << "language " << language " is no initialized"));
+      m_d->m_response->end(errorMessage.toUtf8());
     }
     else if( !language.isEmpty() && !text_s.empty() )
     {
       metaData["Lang"]=language.toUtf8().data();
-      metaData["FileName"]=fileName.c_str();
+      QTemporaryFile tempFile;
+      metaData["FileName"]=tempFile.fileName().toUtf8().constData();
       std::string pipe = pipeline.toUtf8().data();
       text_QS = Misc::utf8stdstring2limastring(text_s);
 
