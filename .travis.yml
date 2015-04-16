@@ -29,5 +29,9 @@ after_success:
   2>&1 | tee tva-fre.log
 - curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-2.0.$release-Linux.deb
   -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.0.$release-Linux.deb
+- curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limalinguisticprocessing-2.0.$release-Linux.deb
+  -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.0.$release-Linux.deb
+- curl -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limalinguisticdata-2.0.$release-Linux.deb
+  -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.0.$release-Linux.deb
 - curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER/publish
 - curl -XGET https://bintray.com/kleag/ubuntu/lima/$TRAVIS_JOB_NUMBER
