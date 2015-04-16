@@ -32,7 +32,7 @@ SET(lima-lp-linguisticresources_LIB_SRCS
 
 add_library(lima-lp-linguisticresources SHARED ${lima-lp-linguisticresources_LIB_SRCS} ${lima-lp-linguisticresources_MOC_OUTFILES})
 
-target_link_libraries(lima-lp-linguisticresources lima-common-factory lima-common-misc lima-common-tools lima-common-data lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources )
+target_link_libraries(lima-lp-linguisticresources lima-common-factory lima-common-misc lima-common-tools lima-common-data lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors)
 
 set_target_properties(lima-lp-linguisticresources PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
