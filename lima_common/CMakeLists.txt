@@ -15,7 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(limacommon)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
+
+#cmake_policy
+if(POLICY CMP0020)
+cmake_policy(SET CMP0020 OLD)
+endif()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
 # -DCMAKE_INSTALL_PREFIX="c:mose" -DCMAKE_BUILD_TYPE=Release
@@ -30,7 +35,6 @@ enable_testing()
 include(SystemSpecificInformations.cmake)
 
 message("System name is ${CMAKE_SYSTEM_NAME}")
-cmake_policy(SET CMP0020 OLD)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
 
@@ -97,7 +101,7 @@ addQt5Modules(Core Xml Test)
 
 include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
-set(QT_LIBRARIES "${Qt5_LIBRARIES};Qt5::WinMain")
+set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
