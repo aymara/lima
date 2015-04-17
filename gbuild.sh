@@ -129,6 +129,14 @@ fi
 echo "version='$release'"
 mkdir -p $build_prefix/$mode/$current_project
 pushd $build_prefix/$mode/$current_project
+#consider linking this current place to $LIMA_BUILD_PATH if different
+#this could be usefull to trick windows path length limitation
+#when building with VS
+mkdir -p $LIMA_BUILD_PATH
+pushd $LIMA_BUILD_PATH
+
+echo "LIMA_BUILD_PATH=$LIMA_BUILD_PATH"
+echo "Launching cmake"
 cmake -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 eval $make_cmd
