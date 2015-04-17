@@ -96,6 +96,19 @@
         <!--item value="bowDumper"/-->
       </list>
     </group>
+    <group name="limaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="specificEntitiesXmlLoggerForLimaserver"/>
+        <!--item value="viterbiPostagger-int-none"/-->
+        <!--item value="limaserverHandler"/-->
+      </list>
+    </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -239,6 +252,12 @@
     <group name="specificEntitiesXmlLogger" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".se.xml"/>
       <param key="graph" value="AnalysisGraph"/>
+    </group>
+    <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="compactFormat" value="yes"/>
+      <param key="handler" value="se"/>
     </group>
     <group name="specificEntities-beforeposXmlLogger" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".sebp.xml"/>
