@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(LimaLinguisticData)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 enable_testing()
 
