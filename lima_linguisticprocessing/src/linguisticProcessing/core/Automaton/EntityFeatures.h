@@ -125,7 +125,6 @@ public:
   template<typename ValueType>
   void appendFeature(const std::string& name,
                   const ValueType& value);
-  
 
   EntityFeatures::const_iterator find(const std::string& featureName) const;
   EntityFeatures::iterator find(const std::string& featureName);
@@ -133,6 +132,9 @@ public:
   friend LIMA_AUTOMATON_EXPORT std::ostream& operator<<(std::ostream& os, const EntityFeatures& f);
 };
 
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<int>(const std::string&, const int& );
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<double>(const std::string&, const double& );
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<QString>(const std::string&, const QString& );
 } // end namespace
 } // end namespace
 } // end namespace
