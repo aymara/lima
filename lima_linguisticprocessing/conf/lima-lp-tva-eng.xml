@@ -258,6 +258,12 @@
       <param key="outputSuffix" value=".se.xml"/>
       <param key="graph" value="AnalysisGraph"/>
     </group>
+    <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="compactFormat" value="yes"/>
+      <param key="handler" value="se"/>
+    </group>
     <group name="syntacticAnalysisXmlLogger" class="SyntacticAnalysisXmlLogger">
       <param key="outputSuffix" value=".sa.xml"/>
     </group>
