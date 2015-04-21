@@ -7,7 +7,7 @@
       <param key="text" value="Barack Obama"/>
       <param key="language" value="fre"/>
       <list key="pipelines">g
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>rule Obama : firstname: Barack lastname: Obama</expl>
