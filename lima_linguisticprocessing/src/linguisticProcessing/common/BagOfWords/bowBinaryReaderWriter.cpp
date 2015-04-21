@@ -439,7 +439,7 @@ BoWRelation* BoWBinaryReaderPrivate::readBoWRelation(std::istream& file)
   BOWLOGINIT;
   BoWRelation* rel=0;
   uint64_t hasRelation=Misc::readCodedInt(file);
-  LDEBUG << "BoWBinaryWriter::readBoWRelation: read hasRelation" << hasRelation;
+  LDEBUG << "BoWBinaryReaderPrivate::readBoWRelation: read hasRelation" << hasRelation;
   if (hasRelation) {
       rel = new BoWRelation();
       rel->read(file);
@@ -459,7 +459,7 @@ class BoWBinaryWriterPrivate
 {
   friend class BoWBinaryWriter;
 
-  BoWBinaryWriterPrivate();
+  BoWBinaryWriterPrivate(const QMap< uint64_t,uint64_t >& shiftFrom);
   ~BoWBinaryWriterPrivate();
 
     // private member functions
@@ -478,18 +478,29 @@ class BoWBinaryWriterPrivate
   void writePredicate(std::ostream& file,
                         const BoWPredicate* predicate,
                         std::map<BoWToken*,uint64_t>& refMap) const;
+                        
+  QMap< uint64_t,uint64_t > m_shiftFrom;
 };
 
-BoWBinaryWriterPrivate::BoWBinaryWriterPrivate()
-{}
+BoWBinaryWriterPrivate::BoWBinaryWriterPrivate(const QMap< uint64_t, uint64_t >& shiftFrom) :
+    m_shiftFrom(shiftFrom)
+{
+  BOWLOGINIT;
+  LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate" << shiftFrom.size();
+  LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate" << m_shiftFrom.size();
+ 
+}
 
 BoWBinaryWriterPrivate::~BoWBinaryWriterPrivate()
 {}
 
 
-BoWBinaryWriter::BoWBinaryWriter() :
-    m_d(new BoWBinaryWriterPrivate())
-{}
+BoWBinaryWriter::BoWBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom) :
+    m_d(new BoWBinaryWriterPrivate(shiftFrom))
+{
+  BOWLOGINIT;
+  LDEBUG << "BoWBinaryWriter::BoWBinaryWriter" << m_d->m_shiftFrom.size();
+}
 
 BoWBinaryWriter::~BoWBinaryWriter()
 {
@@ -500,11 +511,11 @@ void BoWBinaryWriter::writeHeader(std::ostream& file, BoWFileType type) const
 {
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeHeader version=" << BOW_VERSION << " ; type=" << type;
-    Misc::writeString(file,BOW_VERSION);
-    Misc::writeOneByteInt(file,type);
-    // write entity types
-    MediaticData::MediaticData::single().writeEntityTypes(file);
-    LDEBUG << "BoWBinaryWriter::writeHeader end file at: " << file.tellp();
+  Misc::writeString(file,BOW_VERSION);
+  Misc::writeOneByteInt(file,type);
+  // write entity types
+  MediaticData::MediaticData::single().writeEntityTypes(file);
+  LDEBUG << "BoWBinaryWriter::writeHeader end on file " << &file << "at: " << file.tellp();
 }
 
 void BoWBinaryWriter::writeBoWText(std::ostream& file,
@@ -513,7 +524,7 @@ void BoWBinaryWriter::writeBoWText(std::ostream& file,
     BOWLOGINIT;
     Misc::writeCodedInt(file,bowText.size());
     Misc::writeString(file,bowText.lang);
-    LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang file at: " << file.tellp();
+    LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang on file"<<&file<<" at: " << file.tellp();
     uint64_t tokenCounter(0);
     // build reverse map to store in file numbers instead of pointers
     std::map<BoWToken*,uint64_t> refMap;
@@ -544,7 +555,7 @@ void BoWBinaryWriter::writeBoWToken(std::ostream& file,
 void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const Lima::Common::BagOfWords::AbstractBoWElement* token, std::map< Lima::Common::BagOfWords::BoWToken*, uint64_t >& refMap ) const
 {
   BOWLOGINIT;
-  LDEBUG << "BoWBinaryWriter::writeBoWToken token type is " << token->getType();
+  LDEBUG << "BoWBinaryWriter::writeBoWToken token type is " << token->getType() << &file;
   Misc::writeOneByteInt(file,token->getType());
   switch (token->getType()) {
     case BOW_TOKEN: {
@@ -587,16 +598,35 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 {
 #ifdef DEBUG_LP
   BOWLOGINIT;
-  LDEBUG << "BoWBinaryWriter::writeSimpleToken write lemma: " << token->getLemma();
+  LDEBUG << "BoWBinaryWriter::writeSimpleToken write lemma: " << &file << token->getLemma();
 #endif
-    Misc::writeUTF8StringField(file,token->getLemma());
+  Misc::writeUTF8StringField(file,token->getLemma());
 #ifdef DEBUG_LP
-  LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
+LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
 #endif
-    Misc::writeUTF8StringField(file,token->getInflectedForm());
-    Misc::writeCodedInt(file,token->getCategory());
-    Misc::writeCodedInt(file,token->getPosition());
-    Misc::writeCodedInt(file,token->getLength());
+  Misc::writeUTF8StringField(file,token->getInflectedForm());
+  Misc::writeCodedInt(file,token->getCategory());
+  if (m_shiftFrom.empty())
+  {
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is empty";
+    Misc::writeCodedInt(file,token->getPosition()-1);
+  }
+  else 
+  {
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from" << token->getPosition();
+    QMap<uint64_t,uint64_t>::const_iterator it = m_shiftFrom.lowerBound(token->getPosition()-1);
+    if (it == m_shiftFrom.constBegin())
+    {
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom NO shift";
+      Misc::writeCodedInt(file,token->getPosition()-1);
+    }
+    else
+    {
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom shift by" << (it-1).value();
+      Misc::writeCodedInt(file,token->getPosition()+ (it-1).value()-1);
+    }
+  }
+  Misc::writeCodedInt(file,token->getLength());
 }
 
 void BoWBinaryWriter::writePredicate(std::ostream& file,
@@ -613,7 +643,7 @@ void BoWBinaryWriterPrivate::writePredicate(std::ostream& file,
   LDEBUG << "BoWBinaryWriter::writePredicate type" << type;
   Misc::writeCodedInt(file,type.getGroupId());
   Misc::writeCodedInt(file,type.getTypeId());
-  Misc::writeCodedInt(file,predicate->getPosition());
+  Misc::writeCodedInt(file,predicate->getPosition()-1);
   Misc::writeCodedInt(file,predicate->getLength());
   const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& pRoles = predicate->roles();
   LDEBUG << "BoWBinaryWriter::writePredicate nb  roles" << pRoles.size();

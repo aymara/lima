@@ -36,7 +36,11 @@ namespace Lima {
 class AbstractXmlAnalysisHandler : public AbstractAnalysisHandler
 {
 public:
-    virtual ~AbstractXmlAnalysisHandler() {}
+  AbstractXmlAnalysisHandler(const QMap< uint64_t,uint64_t >& shiftFrom = QMap< uint64_t,uint64_t >()) :
+      m_shiftFrom(shiftFrom)
+  {}
+
+  virtual ~AbstractXmlAnalysisHandler() {}
     
   /** notify the start of a new document, and give its properties */
   virtual void startDocument(const Common::Misc::GenericDocumentProperties& props) = 0;
@@ -55,6 +59,11 @@ public:
   
   /** set the output stream. Implementations can be empty if the handler should not write its output to a stream */
   virtual void setOut( std::ostream* out ) = 0;
+  
+  const QMap< uint64_t,uint64_t >& shiftFrom() {return m_shiftFrom;}
+  
+private:
+  QMap< uint64_t,uint64_t > m_shiftFrom;
 };
 
 } // Lima
