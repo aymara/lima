@@ -74,8 +74,6 @@
         <item value="defaultProperties"/>
         <item value="SpecificEntitiesModex"/>
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
-        <!--item value="viterbiPostagger-int-none"/-->
-        <!--item value="limaserverHandler"/-->
       </list>
     </group>
     <group name="easy" class="ProcessUnitPipeline" >
