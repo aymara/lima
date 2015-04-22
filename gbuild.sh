@@ -120,7 +120,10 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
   generator="NMake Makefiles"
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
-  make_cmd="exit 0"
+  make_cmd="""
+  MSBuild.exe -p:configuration=$mode -t:Build lima_common.vcxproj &&
+  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing.vcxproj
+  """
   generator="Visual Studio 10 2010"
 else
   make_cmd="make -j$j"
