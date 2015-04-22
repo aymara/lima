@@ -596,14 +596,10 @@ void BoWBinaryWriter::writeSimpleToken(std::ostream& file,
 void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
                  const BoWToken* token) const
 {
-#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeSimpleToken write lemma: " << &file << token->getLemma();
-#endif
   Misc::writeUTF8StringField(file,token->getLemma());
-#ifdef DEBUG_LP
-LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
-#endif
+  LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
   Misc::writeUTF8StringField(file,token->getInflectedForm());
   Misc::writeCodedInt(file,token->getCategory());
   if (m_shiftFrom.empty())
