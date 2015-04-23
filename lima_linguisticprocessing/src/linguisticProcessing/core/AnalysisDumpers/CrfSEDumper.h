@@ -24,13 +24,13 @@
 
 #include "WordFeatureExtractor.h"
 
-#include "common/MediaProcessors/MediaProcessUnit.h"
+//#include "common/MediaProcessors/MediaProcessUnit.h"
 
 #include "linguisticProcessing/core/LinguisticProcessors/AbstractTextualAnalysisDumper.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
+//#include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
+//#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+//#include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
+//#include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
@@ -41,6 +41,7 @@ namespace AnalysisDumpers {
 
 #define CRFSEDUMPER_CLASSID "CrfSEDumper"
 
+class CrfSEDumperPrivate;
 
 class LIMA_ANALYSISDUMPERS_EXPORT CrfSEDumper : public AbstractTextualAnalysisDumper 
 {
@@ -59,58 +60,8 @@ public:
     AnalysisContent& analysis) const;
 
 protected:
-  std::string m_graph;
-  WordFeatures m_features; //!< use dedicated class for feature storage (easy initialization functions)
-  std::map<AbstractFeatureExtractor*,std::string> m_featuresMap; //!< use additional map to associate features with XML tags (only pointers)
-  std::map<std::string,std::string> m_defaultFeatures;
-  bool m_outputSentenceBoundaries;
-  bool m_outputSpecificEntities;
-  std::map<std::string, std::string> m_NEauthorized;
-  
-  // private member functions
-  void clearFeatures();
-  void initializeFeatures(const std::map<std::string,std::string>& features,
-                          const std::deque<std::string>& featureOrder=std::deque<std::string>());
-  
-  void xmlOutput(std::ostream& out,
-                 AnalysisContent& analysis,
-                 LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                 LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-                 const Common::AnnotationGraphs::AnnotationData* annotationData) const;
-  
-  void xmlOutputVertices(std::ostream& out,
-                         LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                         LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-                         const Common::AnnotationGraphs::AnnotationData* annotationData,
-                         const LinguisticGraphVertex begin,
-                         const LinguisticGraphVertex end,
-                         const FsaStringsPool& sp,
-                         const uint64_t offset) const;
-
-  /**
-   * @brief display Vertex Infos
-   */
-  void xmlOutputVertex(std::ostream& out, 
-                       LinguisticGraphVertex v,
-                       LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                       LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-                       const Common::AnnotationGraphs::AnnotationData* annotationData,
-                       const FsaStringsPool& sp,
-                       uint64_t offset) const;
-
-  /**
-   * @brief Display Vertex Infos if several interpretation of the token
-   */
-  void xmlOutputVertexInfos(std::ostream& out, 
-                            LinguisticGraphVertex v,
-                            LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                            uint64_t offset) const;
-
-
-  // string manipulation functions to protect XML entities
-  std::string xmlString(const std::string& str) const;
-  void replace(std::string& str, const std::string& toReplace, const std::string& newValue) const;
-
+ 
+  CrfSEDumperPrivate *m_d;
 
 };
 }

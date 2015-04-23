@@ -22,47 +22,15 @@
  *                                                                         *
  ***************************************************************************/
 
-
-#include <ctype.h>
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
-//#include <stdbool.h>
-//#include <stddef.h>
-//#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream>
-
 #include <queue>
 
-#include "decoder.h"
-//#include "model.h"
-#include "options.h"
 #include "progress.h"
-#include "quark.h"
-#include "reader.h"
-#include "sequence.h"
-//#include "tools.h"
 #include "trainers.h"
 #include "TrainerWap.h"
 
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/Automaton/recognizerData.h"
-#include "linguisticProcessing/core/SpecificEntities/SpecificEntitiesConstraints.h"
-#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
-
 #include "common/Data/strwstrtools.h"
 
-#include "common/MediaProcessors/HandlerStreamBuf.h"
-#include "common/time/traceUtils.h"
-#include "common/Data/strwstrtools.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/MediaticData/mediaticData.h"
-//#include <common/LimaCommon.h> 
 #include "SpecificEntitiesCRFExport.h"
-
-#include "linguisticProcessing/core/AnalysisDumpers/TextDumper.h" // for lTokenPosition comparison function to order tokens
 
 #include "linguisticProcessing/core/AnalysisDumpers/WordFeatureExtractor.h"
 
@@ -73,86 +41,97 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima {
 
-  namespace LinguisticProcessing {
+namespace LinguisticProcessing {
+
+class TrainerWapPrivate {
+
+  friend class TrainerWap;
+public:
+  TrainerWapPrivate();
+  ~TrainerWapPrivate();
+  TrainerWapPrivate(const TrainerWapPrivate& tw);
+  TrainerWapPrivate& operator= (const TrainerWapPrivate& tw);
+  
+  mdl_t *m_mod;
+  opt_t m_opt;
+
+};
+
+
+TrainerWapPrivate::TrainerWapPrivate() {
+  m_mod = mdl_new(rdr_new(false));
+  m_opt.mode=-1;
+  m_opt.input ="";
+  m_opt.output="";
+  m_opt.type="crf";
+  m_opt.maxent=false;
+  m_opt.algo="l-bfgs";
+  m_opt.pattern="";
+  m_opt.model=NULL;
+  m_opt.devel=NULL;
+  m_opt.rstate=NULL;
+  m_opt.sstate=NULL;
+  m_opt.compact=false;
+  m_opt.sparse=NULL;
+  m_opt.nthread=1;
+  m_opt.jobsize=64;
+  m_opt.maxiter=0;
+  m_opt.rho1=0.5;
+  m_opt.rho2=0.0001;
+  m_opt.objwin=5;
+  m_opt.stopwin=5;
+  m_opt.stopeps=0.02;
+  m_opt.lbfgs.clip=false;
+  m_opt.lbfgs.histsz=5;
+  m_opt.lbfgs.maxls=40;
+  m_opt.sgdl1.eta0=0.8;
+  m_opt.sgdl1.alpha=0.85;
+  m_opt.bcd.kappa=1.5;
+  m_opt.rprop.stpmin= 1e-8;
+  m_opt.rprop.stpmax=50.0;
+  m_opt.rprop.stpdec=0.5;
+  m_opt.rprop.cutoff=false;
+  m_opt.label=false;
+  m_opt.check=false;
+  m_opt.outsc=false;
+  m_opt.lblpost=false;
+  m_opt.nbest=1;
+  m_opt.force=false;
+  m_opt.prec=5;
+  m_opt.all=false;
+  
+  m_mod->opt=(&m_opt);
+
+}
+
+TrainerWapPrivate::~TrainerWapPrivate() {
+  mdl_free(m_mod);
+}
+
+TrainerWapPrivate::TrainerWapPrivate(const TrainerWapPrivate& tw) {
+  m_opt=tw.m_opt;
+  *m_mod=*(tw.m_mod);
+}
+
+TrainerWapPrivate& TrainerWapPrivate::operator= (const TrainerWapPrivate& tw) {
+  if (this!=&tw) {
+    m_opt=tw.m_opt;
+    *m_mod=*(tw.m_mod);
+  }
+  return *this;
+}
 
 
 TrainerWap::TrainerWap() {
-
-  mod = mdl_new(rdr_new(false));
-  opt.mode=-1;
-  opt.input ="";
-  opt.output="";
-  opt.type="crf";
-  opt.maxent=false;
-  opt.algo="l-bfgs";
-  opt.pattern="";
-  opt.model=NULL;
-  opt.devel=NULL;
-  opt.rstate=NULL;
-  opt.sstate=NULL;
-  opt.compact=false;
-  opt.sparse=NULL;
-  opt.nthread=1;
-  opt.jobsize=64;
-  opt.maxiter=0;
-  opt.rho1=0.5;
-  opt.rho2=0.0001;
-  opt.objwin=5;
-  opt.stopwin=5;
-  opt.stopeps=0.02;
-  opt.lbfgs.clip=false;
-  opt.lbfgs.histsz=5;
-  opt.lbfgs.maxls=40;
-  opt.sgdl1.eta0=0.8;
-  opt.sgdl1.alpha=0.85;
-  opt.bcd.kappa=1.5;
-  opt.rprop.stpmin= 1e-8;
-  opt.rprop.stpmax=50.0;
-  opt.rprop.stpdec=0.5;
-  opt.rprop.cutoff=false;
-  opt.label=false;
-  opt.check=false;
-  opt.outsc=false;
-  opt.lblpost=false;
-  opt.nbest=1;
-  opt.force=false;
-  opt.prec=5;
-  opt.all=false;
-  
-  mod->opt=(&opt);
+ 
+  m_tw=new TrainerWapPrivate();
 
 }
 
 TrainerWap::~TrainerWap() {
-  mdl_free(mod);
+  delete m_tw;
 }
 
-
-void TrainerWap::setModelFile(std::string st) {
-
-  opt.model=strdup(st.c_str());
-  
-
-}
-
-void TrainerWap::setInputFile(std::string st) {
-
-  opt.input = strdup(st.c_str());
-  
-}
-
-
-void TrainerWap::setOutputFile(std::string st) {
-
-  opt.output=strdup(st.c_str());
-
-}
-
-void TrainerWap::setPatternFile(std::string st) {
-
-  opt.pattern=strdup(st.c_str());
-
-}
 
 
 void TrainerWap::initOptions(const std::map<std::string, std::string>& options) {
@@ -164,23 +143,23 @@ void TrainerWap::initOptions(const std::map<std::string, std::string>& options) 
   //model file
    it=options.find("model");
   if (((*it).second).compare(testcomp)!=0  && it!=options.end()) {
-    mod->opt->model=strdup(((*it).second).c_str());
+    m_tw->m_mod->opt->model=strdup(((*it).second).c_str());
   } else {
-    mod->opt->model=NULL;
+    m_tw->m_mod->opt->model=NULL;
   }
 
   //input output file
   it=options.find("inputFile");
   if (it!=options.end()) {
-    mod->opt->input=strdup(((*it).second).c_str());
+    m_tw->m_mod->opt->input=strdup(((*it).second).c_str());
     output=(*it).second + ".mod";
-    mod->opt->output=strdup(output.c_str());
+    m_tw->m_mod->opt->output=strdup(output.c_str());
   } 
 
   //pattern file
   it=options.find("patternFile");
   if (((*it).second).compare(testcomp)!=0 && it!=options.end()) {
-    mod->opt->pattern=strdup(((*it).second).c_str());
+    m_tw->m_mod->opt->pattern=strdup(((*it).second).c_str());
   } 
   
 }
@@ -213,13 +192,13 @@ static const uint32_t trn_cnt = sizeof(trn_lst) / sizeof(trn_lst[0]);
 
 void TrainerWap::training() {
 
-  if (mod->opt->maxiter == 0) {
-    mod->opt->maxiter = INT_MAX;
+  if (m_tw->m_mod->opt->maxiter == 0) {
+    m_tw->m_mod->opt->maxiter = INT_MAX;
   }
   
   // Check if the user requested the type or trainer list. If this is not
   // the case, search them in the lists.
-  if (!strcmp(mod->opt->type, "list")) {
+  if (!strcmp(m_tw->m_mod->opt->type, "list")) {
     //info("Available types of models:\n");
     std::cout << "Available types of models: " << std::endl;
     for (uint32_t i = 0; i < typ_cnt; i++) {
@@ -229,7 +208,7 @@ void TrainerWap::training() {
     exit(EXIT_SUCCESS);
   }
   
-  if (!strcmp(mod->opt->algo, "list")) {
+  if (!strcmp(m_tw->m_mod->opt->algo, "list")) {
     //info("Available training algorithms:\n");
     std::cout << "Available training algorithms:" << std::endl;
     for (uint32_t i = 0; i < trn_cnt; i++) {
@@ -240,40 +219,40 @@ void TrainerWap::training() {
   }
   uint32_t typ, trn;
   for (typ = 0; typ < typ_cnt; typ++)
-    if (!strcmp(mod->opt->type, typ_lst[typ]))
+    if (!strcmp(m_tw->m_mod->opt->type, typ_lst[typ]))
       break;
   if (typ == typ_cnt) {
     //fatal("unknown model type '%s'", mod->opt->type);
   }
-  mod->type = typ;
+  m_tw->m_mod->type = typ;
   for (trn = 0; trn < trn_cnt; trn++)
-    if (!strcmp(mod->opt->algo, trn_lst[trn].name))
+    if (!strcmp(m_tw->m_mod->opt->algo, trn_lst[trn].name))
       break;
   if (trn == trn_cnt) {
     //fatal("unknown algorithm '%s'", mod->opt->algo);
   }
   
   // Load a previous model to train again if specified by the user.
-  if (mod->opt->model != NULL) {
+  if (m_tw->m_mod->opt->model != NULL) {
     //info("* Load previous model\n");
     std::cout << "* Load previous model" << std::endl;
-    FILE *file = fopen(mod->opt->model, "r");
+    FILE *file = fopen(m_tw->m_mod->opt->model, "r");
     if (file == NULL) {
       //pfatal("cannot open input model file");
     }
-    mdl_load(mod, file);
+    mdl_load(m_tw->m_mod, file);
   }
   // Load the pattern file. This will unlock the database if previously
   // locked by loading a model.
-  if (mod->opt->pattern != NULL) {
+  if (m_tw->m_mod->opt->pattern != NULL) {
     std::cout << "* Load patterns" << std::endl;
-    FILE *file = fopen(mod->opt->pattern, "r");
+    FILE *file = fopen(m_tw->m_mod->opt->pattern, "r");
     if (file == NULL) {
       //pfatal("cannot open pattern file");
     }
-    rdr_loadpat(mod->reader, file);
+    rdr_loadpat(m_tw->m_mod->reader, file);
     fclose(file);
-    qrk_lock(mod->reader->obs, false);
+    qrk_lock(m_tw->m_mod->reader->obs, false);
   }
 
   // Load the training data. When this is done we lock the quarks as we
@@ -281,8 +260,8 @@ void TrainerWap::training() {
   // devlopment set.
   std::cout << "* Load training data" << std::endl;
   FILE *file = stdin;
-  if (mod->opt->input != NULL) {
-    file = fopen(mod->opt->input, "r");
+  if (m_tw->m_mod->opt->input != NULL) {
+    file = fopen(m_tw->m_mod->opt->input, "r");
     if (file == NULL) {
       //pfatal("cannot open input data file");
     }
@@ -290,29 +269,29 @@ void TrainerWap::training() {
   else {
     //pfatal("no input file !");
   }
-  mod->train = rdr_readdat(mod->reader, file, true);
-  if (mod->opt->input != NULL)
+  m_tw->m_mod->train = rdr_readdat(m_tw->m_mod->reader, file, true);
+  if (m_tw->m_mod->opt->input != NULL)
     fclose(file);
-  qrk_lock(mod->reader->lbl, true);
-  qrk_lock(mod->reader->obs, true);
-  if (mod->train == NULL || mod->train->nseq == 0) {
+  qrk_lock(m_tw->m_mod->reader->lbl, true);
+  qrk_lock(m_tw->m_mod->reader->obs, true);
+  if (m_tw->m_mod->train == NULL || m_tw->m_mod->train->nseq == 0) {
     //fatal("no train data loaded");
   }
   // If present, load the development set in the model. If not specified,
   // the training dataset will be used instead.
-  if (mod->opt->devel != NULL) {
+  if (m_tw->m_mod->opt->devel != NULL) {
     std::cout << "* Load development data" << std::endl;
-    FILE *file = fopen(mod->opt->devel, "r");
+    FILE *file = fopen(m_tw->m_mod->opt->devel, "r");
     if (file == NULL) {
       //pfatal("cannot open development file");
     }
-    mod->devel = rdr_readdat(mod->reader, file, true);
+    m_tw->m_mod->devel = rdr_readdat(m_tw->m_mod->reader, file, true);
     fclose(file);
   }
 
   // Initialize the model. If a previous model was loaded, this will be
   // just a resync, else the model structure will be created.
-  if (mod->theta == NULL) {
+  if (m_tw->m_mod->theta == NULL) {
     //info("* Initialize the model\n");
     std::cout << "* Initialize the model" << std::endl;
   }
@@ -320,46 +299,46 @@ void TrainerWap::training() {
     //info("* Resync the model\n");
     std::cout << "* Resync the model" << std::endl;
   }
-  mdl_sync(mod);
+  mdl_sync(m_tw->m_mod);
   // Display some statistics as we all love this.
   std::cout << "* Summary" << std::endl;
-  std::cout << "    nb train: " <<  mod->train->nseq << std::endl;
-  if (mod->devel != NULL) {
-    std::cout << "    nb devel:   " <<  mod->devel->nseq << std::endl;
+  std::cout << "    nb train: " <<  m_tw->m_mod->train->nseq << std::endl;
+  if (m_tw->m_mod->devel != NULL) {
+    std::cout << "    nb devel:   " <<  m_tw->m_mod->devel->nseq << std::endl;
   }
-  std::cout << "    nb labels:   " << mod->nlbl << std::endl;
-  std::cout << "    nb blocks:    " << mod->nobs << std::endl;
-  std::cout << "    nb features: " << mod->nftr << std::endl;
+  std::cout << "    nb labels:   " << m_tw->m_mod->nlbl << std::endl;
+  std::cout << "    nb blocks:    " << m_tw->m_mod->nobs << std::endl;
+  std::cout << "    nb features: " << m_tw->m_mod->nftr << std::endl;
   // And train the model...
-  std::cout << "* Train the model with " << mod->opt->algo << std::endl;
-  uit_setup(mod);
-  trn_lst[trn].train(mod);
-  uit_cleanup(mod);
+  std::cout << "* Train the model with " << m_tw->m_mod->opt->algo << std::endl;
+  uit_setup(m_tw->m_mod);
+  trn_lst[trn].train(m_tw->m_mod);
+  uit_cleanup(m_tw->m_mod);
   // If requested compact the model.
-  if (mod->opt->compact) {
-    const uint64_t O = mod->nobs;
-    const uint64_t F = mod->nftr;
+  if (m_tw->m_mod->opt->compact) {
+    const uint64_t O = m_tw->m_mod->nobs;
+    const uint64_t F = m_tw->m_mod->nftr;
     std::cout << "* Compacting the model" << std::endl;
-    mdl_compact(mod);
+    mdl_compact(m_tw->m_mod);
     //std::cout << "    " << 0 - mod->nobs << " observations removed" << std::endl;
     //std::cout << "    " << F - mod->nftr << " features removed" << std::endl;
   }
   // And save the trained model
   std::cout << "* Save the model" << std::endl;
   file = stdout;
-  if (mod->opt->output != NULL) {
-    file = fopen(mod->opt->output, "w");
+  if (m_tw->m_mod->opt->output != NULL) {
+    file = fopen(m_tw->m_mod->opt->output, "w");
     if (file == NULL) {
       //pfatal("cannot open output model");
     }
   }
-  mdl_save(mod, file);
-  if (mod->opt->output != NULL)
+  mdl_save(m_tw->m_mod, file);
+  if (m_tw->m_mod->opt->output != NULL)
     fclose(file);
   std::cout << "* Done" << std::endl;
  
 
-  mdl_free(mod);
+  mdl_free(m_tw->m_mod);
 
 }
 

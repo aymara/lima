@@ -35,8 +35,7 @@
 #include "SpecificEntitiesCRFExport.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "linguisticProcessing/core/Automaton/recognizer.h"
-//#include "TrainerSE.h"
-//#include "ToolsCRF.h"
+
 
 namespace Lima
 {
@@ -55,6 +54,8 @@ namespace SpecificEntitiesCRF
 {
 
 #define SPECIFICENTITIESCRFLEARN_CLASSID "SpecificEntitiesCRFLearn"
+
+class SpecificEntitiesCRFLearnPrivate;
 
 class LIMA_SPECIFICENTITIESCRF_EXPORT SpecificEntitiesCRFLearn : public MediaProcessUnit
 {
@@ -75,13 +76,7 @@ class LIMA_SPECIFICENTITIESCRF_EXPORT SpecificEntitiesCRFLearn : public MediaPro
 
 private:
 
-  std::string m_crflib;
-
-  std::string m_pattern;
-  std::string m_model;
-
-  MediaId m_lg;
-
+   SpecificEntitiesCRFLearnPrivate *m_sp;
 };
 }
 }

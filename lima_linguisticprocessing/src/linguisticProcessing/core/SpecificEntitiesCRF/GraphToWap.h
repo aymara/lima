@@ -33,18 +33,17 @@
 #define GRAPHTOWAP_H
 
 
-#include "model.h"
-#include "decoder.h"
-
-#include "SpecificEntitiesCRFExport.h"
-#include "common/MediaticData/EntityType.h"
-#include "common/misc/fsaStringsPool.h"
-
 namespace Lima {
 namespace LinguisticProcessing {
 
+  /**
+   * @brief Create a raw from the analysis 
+   */
 raw_t* graphToRaw(AnalysisContent& analysis, MediaId lg);
 
+  /**
+   * @brief Create a raw from the analysis for learn a model (unused for the moment)
+   */
 raw_t* graphToRawTrain(AnalysisContent& analysis, MediaId lg);
 
 

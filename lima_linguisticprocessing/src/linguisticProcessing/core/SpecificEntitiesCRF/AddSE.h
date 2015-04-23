@@ -31,19 +31,18 @@
 #ifndef ADDSE_H
 #define ADDSE_H
 
-//#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "SpecificEntitiesCRFExport.h"
-//#include "common/MediaProcessors/MediaProcessUnit.h"
-//#include "linguisticProcessing/core/Automaton/recognizer.h"
-//#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 
-#include "common/MediaticData/EntityType.h"
+#include "SpecificEntitiesCRFExport.h"
+
 #include "common/misc/fsaStringsPool.h"
 namespace Lima {
 
   namespace LinguisticProcessing {
 
 
+    /**
+     * @brief Add an entity in the graph
+     */
 void addSpecificEntities(AnalysisContent& analysis, MediaId lg,  std::string str, std::string type, uint64_t pos, uint64_t length) ;
 
   }

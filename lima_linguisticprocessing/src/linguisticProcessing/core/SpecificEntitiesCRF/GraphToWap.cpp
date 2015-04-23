@@ -1,50 +1,37 @@
-#include <ctype.h>
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
-//#include <stdbool.h>
-//#include <stddef.h>
-//#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream>
+/*
+    Copyright 2002-2014 CEA LIST
 
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+ 
+************************************************************************/
+#include <boost/algorithm/string/replace.hpp>
 #include <queue>
 #include <map>
 #include <string>
 
-#include "decoder.h"
-//#include "model.h"
-#include "options.h"
-#include "progress.h"
-#include "quark.h"
-#include "reader.h"
-#include "sequence.h"
-//#include "tools.h"
-#include "trainers.h"
 #include "TaggerWap.h"
 
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/Automaton/recognizerData.h"
-#include "linguisticProcessing/core/SpecificEntities/SpecificEntitiesConstraints.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 
-#include "common/Data/strwstrtools.h"
-
-#include "common/MediaProcessors/HandlerStreamBuf.h"
 #include "common/time/traceUtils.h"
 #include "common/Data/strwstrtools.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/MediaticData/mediaticData.h"
 
 #include "SpecificEntitiesCRFExport.h"
 
 #include "linguisticProcessing/core/AnalysisDumpers/TextDumper.h" // for lTokenPosition comparison function to order tokens
-
-#include "linguisticProcessing/core/AnalysisDumpers/WordFeatureExtractor.h"
-
-#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 
 #include "GraphToWap.h"
 
@@ -54,46 +41,15 @@ namespace Lima {
 
   namespace LinguisticProcessing {
 
-/**
-     @brief Separe a token composed of more than one word
-   */
-static std::vector<std::string> separeToken(const std::string& line) {
-  
-  uint i;
-  std::string res = "";
-  std::vector<std::string> resLine;
-  for (i=0; i<line.size(); i++) {
-    if (isspace(line[i]) ) {
-      if (res.size()!=0) {
-	resLine.push_back(res);
-      }
-      res="";
-    }
-    else {
-      res.push_back(line[i]);
-    }
-  }
-  //add last element if necessary
-  if (res.size()>0) {
-    resLine.push_back(res);
-  }
-  return resLine;
-}
-
-
-
 
 raw_t* graphToRaw(AnalysisContent& analysis, MediaId lg) {
   
   FILE *file;
   uint32_t size = 32, cnt = 0;
   raw_t *raw =(raw_t*)malloc(sizeof(raw_t) + sizeof(char *) * size);
-	// And read the next sequence in the file, this will skip any blank line
-	// before reading the sequence stoping at end of file or on a new blank
-	// line.
-
-
-  
+  // And read the next sequence in the file, this will skip any blank line
+  // before reading the sequence stoping at end of file or on a new blank
+  // line.
 
   // parcours
 
@@ -134,15 +90,13 @@ raw_t* graphToRaw(AnalysisContent& analysis, MediaId lg) {
       last=true;
     }
     
-    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
-      {
-	LinguisticGraphVertex next=target(*outItr,*graph);
-	if (visited.find(next)==visited.end())
-	  {
-	    visited.insert(next);
-	    toVisit.push(next);
-	  }
-      }
+    //only the first node is selected to avoid ambiguity
+    boost::tie(outItr,outItrEnd)=out_edges(v,*graph);
+    LinguisticGraphVertex next=target(*outItr,*graph);
+    if (visited.find(next)==visited.end()) {  
+      visited.insert(next);
+      toVisit.push(next);
+    }
     
     if (first) {
       first=false;
@@ -212,43 +166,38 @@ raw_t* graphToRaw(AnalysisContent& analysis, MediaId lg) {
 	}
       }
       
-      std::vector<std::string> lineVec;
-      lineVec=separeToken(word);
-      std::string partWord;
-      for (int k=0; k<lineVec.size(); k++) {
-	partWord=lineVec[k];
-	
-	
-	linestr=partWord+" "+prop+" NAN";
-	char *line=strdup(linestr.c_str());
-	if (line == NULL)
-	  break;
-	// Check for empty line marking the end of the current sequence
-	int len = strlen(line);
-	while (len != 0 && isspace(line[len - 1]))
-	  len--;
-	if (len == 0) {
-	  free(line);
-	  // Special case when no line was already read, we try
-	  // again. This allow multiple blank lines beetwen
-	  // sequences.
-	  if (cnt == 0)
-	    continue;
-	  break;
-	}
-	// Next, grow the buffer if needed and add the new line in it
-	if (size == cnt) {
-	  size *= 1.4;
-	  raw =(raw_t*) realloc(raw, sizeof(raw_t)
-				+ sizeof(char *) * size);
-	}
-	raw->lines[cnt++] = line;
-	// In autouni mode, there will be only unigram features so we
-	// can use small sequences to improve multi-theading.
-	//if (rdr->autouni) 
-	//  break;
-      }
       
+      boost::replace_all(word, " ", "_");
+     
+      linestr=word+" "+prop+" NAN";
+      char *line=strdup(linestr.c_str());
+      if (line == NULL)
+	break;
+      // Check for empty line marking the end of the current sequence
+      int len = strlen(line);
+      while (len != 0 && isspace(line[len - 1]))
+	len--;
+      if (len == 0) {
+	free(line);
+	// Special case when no line was already read, we try
+	// again. This allow multiple blank lines beetwen
+	// sequences.
+	if (cnt == 0)
+	  continue;
+	break;
+      }
+      // Next, grow the buffer if needed and add the new line in it
+      if (size == cnt) {
+	size *= 1.4;
+	raw =(raw_t*) realloc(raw, sizeof(raw_t)
+			      + sizeof(char *) * size);
+      }
+      raw->lines[cnt++] = line;
+      // In autouni mode, there will be only unigram features so we
+      // can use small sequences to improve multi-theading.
+      //if (rdr->autouni) 
+      //  break;
+ 
     }
   
   //End parcours
@@ -277,12 +226,10 @@ raw_t* graphToRawTrain(AnalysisContent& analysis, MediaId lg) {
   FILE *file;
   uint32_t size = 32, cnt = 0;
   raw_t *raw =(raw_t*)malloc(sizeof(raw_t) + sizeof(char *) * size);
-	// And read the next sequence in the file, this will skip any blank line
-	// before reading the sequence stoping at end of file or on a new blank
-	// line.
+  // And read the next sequence in the file, this will skip any blank line
+  // before reading the sequence stoping at end of file or on a new blank
+  // line.
 
-
-  
 
   // parcours
  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
@@ -326,15 +273,13 @@ raw_t* graphToRawTrain(AnalysisContent& analysis, MediaId lg) {
       last=true;
     }
     
-    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
-      {
-	LinguisticGraphVertex next=target(*outItr,*graph);
-	if (visited.find(next)==visited.end())
-	  {
-	    visited.insert(next);
-	    toVisit.push(next);
-	  }
-      }
+    //only the first node is selected to avoid ambiguity
+    boost::tie(outItr,outItrEnd)=out_edges(v,*graph);
+    LinguisticGraphVertex next=target(*outItr,*graph);
+    if (visited.find(next)==visited.end()) {  
+      visited.insert(next);
+      toVisit.push(next);
+    }
     
     if (first) {
       first=false;
@@ -448,61 +393,57 @@ raw_t* graphToRawTrain(AnalysisContent& analysis, MediaId lg) {
 
       }
       
-      std::vector<std::string> lineVec;
-      lineVec=separeToken(word);
-      std::string partWord;
-      for (int k=0; k<lineVec.size(); k++) {
-	partWord=lineVec[k];
+     
+      boost::replace_all(word, " ", "_");
+    
+      linestr=word+" "+prop+" "+specEntity;
+      char *line=strdup(linestr.c_str());
+      if (line == NULL)
+	break;
+      // Check for empty line marking the end of the current sequence
+      int len = strlen(line);
+      while (len != 0 && isspace(line[len - 1]))
+	len--;
+      if (len == 0) {
+	free(line);
+	// Special case when no line was already read, we try
+	// again. This allow multiple blank lines beetwen
+	// sequences.
 	
-	linestr=partWord+" "+prop+" "+specEntity;
-	char *line=strdup(linestr.c_str());
-	if (line == NULL)
-	  break;
-	// Check for empty line marking the end of the current sequence
-	int len = strlen(line);
-	while (len != 0 && isspace(line[len - 1]))
-	  len--;
-	if (len == 0) {
-	  free(line);
-	  // Special case when no line was already read, we try
-	  // again. This allow multiple blank lines beetwen
-	  // sequences.
-			
-	  if (cnt == 0)
-	    continue;
-	  break;
-	}
-	// Next, grow the buffer if needed and add the new line in it
-	if (size == cnt) {
-	  size *= 1.4;
-	  raw =(raw_t*) realloc(raw, sizeof(raw_t)
-				+ sizeof(char *) * size);
-	}
-	raw->lines[cnt++] = line;
-	// In autouni mode, there will be only unigram features so we
-	// can use small sequences to improve multi-theading.
-	//if (rdr->autouni) 
-	//  break;
+	if (cnt == 0)
+	  continue;
+	break;
       }
+      // Next, grow the buffer if needed and add the new line in it
+      if (size == cnt) {
+	size *= 1.4;
+	raw =(raw_t*) realloc(raw, sizeof(raw_t)
+			      + sizeof(char *) * size);
+      }
+      raw->lines[cnt++] = line;
+      // In autouni mode, there will be only unigram features so we
+      // can use small sequences to improve multi-theading.
+      //if (rdr->autouni) 
+      //  break;
       
     }
   
   // End parcours
 	
       
-      // If no lines was read, we just free allocated memory and return NULL
-      // to signal the end of file to the caller. Else, we adjust the object
-      // size and return it.
-      if (cnt == 0) {
-	free(raw);
-	return NULL;
-      }
-      raw =(raw_t*) realloc(raw, sizeof(raw_t) + sizeof(char *) * cnt);
-      raw->len = cnt;
-      
-
-      return raw;
-      
+  // If no lines was read, we just free allocated memory and return NULL
+  // to signal the end of file to the caller. Else, we adjust the object
+  // size and return it.
+  if (cnt == 0) {
+    free(raw);
+    return NULL;
+  }
+  raw =(raw_t*) realloc(raw, sizeof(raw_t) + sizeof(char *) * cnt);
+  raw->len = cnt;
+  
+  
+  return raw;
+  
 }
 
 

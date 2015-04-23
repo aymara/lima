@@ -25,37 +25,13 @@
 #include "SpecificEntitiesCRFLearn.h"
 
 
-#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/time/traceUtils.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
-#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
-//#include "linguisticProcessing/core/LinguisticAnalysisStructure/SentenceBounds.h"
-#include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
-#include "linguisticProcessing/core/Automaton/recognizerMatch.h"
-#include "common/MediaProcessors/MediaProcessUnit.h"
 
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
-#include "linguisticProcessing/core/AnalysisDumpers/CrfSEDumper.h"
 
-//#include <crfsuite_api.hpp>
 
 #include "AbstractTrainerFactory.h"
 #include "TrainerWap.h"
-
-//#include "common/LimaCommon.h"
-//#include <common/QsLog/QsLog.h>
-
-//#include <QFile>
-
-#include <iostream>
-#include <fstream>
-
 
 
 using namespace std;
@@ -78,11 +54,61 @@ SimpleFactory<MediaProcessUnit,SpecificEntitiesCRFLearn> specificEntitiesCRFLear
   //  TrainerFactory<TrainerSE> TrainerCRFSuiteFactory(TrainerSE_ID);
 
 
+class SpecificEntitiesCRFLearnPrivate {
+
+  friend class SpecificEntitiesCRFLearn;
+
+  
+
+public:
+  SpecificEntitiesCRFLearnPrivate();
+  ~SpecificEntitiesCRFLearnPrivate();
+  SpecificEntitiesCRFLearnPrivate(const SpecificEntitiesCRFLearnPrivate& sp);
+  SpecificEntitiesCRFLearnPrivate& operator= ( const SpecificEntitiesCRFLearnPrivate& sp );
+
+  std::string m_crflib;
+
+  std::string m_pattern;
+  std::string m_model;
+
+  MediaId m_lg;
+
+};
+ 
+SpecificEntitiesCRFLearnPrivate::SpecificEntitiesCRFLearnPrivate() {
+
+}
+
+SpecificEntitiesCRFLearnPrivate::~SpecificEntitiesCRFLearnPrivate() {
+
+}
+
+SpecificEntitiesCRFLearnPrivate::SpecificEntitiesCRFLearnPrivate(const SpecificEntitiesCRFLearnPrivate& sp) {
+
+  m_crflib=sp.m_crflib;
+  m_pattern=sp.m_pattern;
+  m_model=sp.m_model;
+  m_lg=sp.m_lg;
+
+}
+ 
+SpecificEntitiesCRFLearnPrivate& SpecificEntitiesCRFLearnPrivate::operator= ( const SpecificEntitiesCRFLearnPrivate& sp ) {
+  if (this!=&sp) {
+    m_crflib=sp.m_crflib;
+    m_pattern=sp.m_pattern;
+    m_model=sp.m_model;
+    m_lg=sp.m_lg;
+  }
+  return *this;
+
+}
+
 SpecificEntitiesCRFLearn::SpecificEntitiesCRFLearn() {
+  m_sp=new SpecificEntitiesCRFLearnPrivate();
 }
 
 SpecificEntitiesCRFLearn::~SpecificEntitiesCRFLearn() {
-
+  delete m_sp;
 }
 
 void SpecificEntitiesCRFLearn::init(
@@ -95,7 +121,7 @@ void SpecificEntitiesCRFLearn::init(
    
   try
     {
-      m_crflib=unitConfiguration.getParamsValueAtKey("crflibrary");
+      m_sp->m_crflib=unitConfiguration.getParamsValueAtKey("crflibrary");
     }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {
@@ -104,26 +130,26 @@ void SpecificEntitiesCRFLearn::init(
 
    
 
-  m_lg=manager->getInitializationParameters().media;
+  m_sp->m_lg=manager->getInitializationParameters().media;
   
 
   try {
     std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    m_pattern=unitConfiguration.getParamsValueAtKey("patternFile");
+    m_sp->m_pattern=unitConfiguration.getParamsValueAtKey("patternFile");
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'patternList' in group for language " << (int) m_lg << " !" << LENDL;
+    LERROR << "no parameter 'patternList' in group for language " << (int) m_sp->m_lg << " !" << LENDL;
     throw InvalidConfiguration();
   }
 
 
   try {
      std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-     m_model=unitConfiguration.getParamsValueAtKey("model");
+     m_sp->m_model=unitConfiguration.getParamsValueAtKey("model");
    } catch (Common::XMLConfigurationFiles::NoSuchParam& )
      {
        
-       m_model="";
+       m_sp->m_model="";
      }
    
 
@@ -148,13 +174,13 @@ LimaStatusCode SpecificEntitiesCRFLearn::process(
   options["inputFile"]=lMetaData->getMetaData("FileName");
   //options["patternFile"]=lMetaData->getMetaData("patternFile");
 
-  options["patternFile"]=resourcePath+"/SpecificEntities/"+m_pattern;
+  options["patternFile"]=resourcePath+"/SpecificEntities/"+m_sp->m_pattern;
 
-  if (m_model!="") {
-    options["model"]=resourcePath+"/SpecificEntitiesCRF/"+m_model;
+  if (m_sp->m_model!="") {
+    options["model"]=resourcePath+"/SpecificEntitiesCRF/"+m_sp->m_model;
   }
 
-  abTr=TrainerWapitiFactory.getFactory(m_crflib)->create();
+  abTr=TrainerWapitiFactory.getFactory(m_sp->m_crflib)->create();
 
   if (abTr!=NULL) {
     abTr->initOptions(options);

@@ -1,37 +1,31 @@
-#include <ctype.h>
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
-//#include <stdbool.h>
-//#include <stddef.h>
-//#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream>
+/*
+    Copyright 2002-2014 CEA LIST
 
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+ 
+************************************************************************/
 #include <queue>
 
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
 #include "linguisticProcessing/core/SpecificEntities/SpecificEntitiesConstraints.h"
-#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 
 #include "common/Data/strwstrtools.h"
-
-#include "common/MediaProcessors/HandlerStreamBuf.h"
-#include "common/time/traceUtils.h"
-#include "common/Data/strwstrtools.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/MediaticData/mediaticData.h"
-
-#include "SpecificEntitiesCRFExport.h"
 
 #include "linguisticProcessing/core/AnalysisDumpers/TextDumper.h" // for lTokenPosition comparison function to order tokens
 
-#include "linguisticProcessing/core/AnalysisDumpers/WordFeatureExtractor.h"
-
-#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 
 #include "AddSE.h"
 

@@ -1,37 +1,28 @@
-/***************************************************************************
- *   Copyright (C) 2004-2014 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
+/*
+    Copyright 2002-2014 CEA LIST
 
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+ 
+************************************************************************/
 #include "SpecificEntitiesCRFTag.h"
 
 
-#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/time/traceUtils.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
-//#include "linguisticProcessing/core/LinguisticAnalysisStructure/SentenceBounds.h"
-#include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
-#include "linguisticProcessing/core/Automaton/recognizerMatch.h"
-#include "common/MediaProcessors/MediaProcessUnit.h"
-
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
-//#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
-
-#include "linguisticProcessing/core/SpecificEntities/SpecificEntitiesConstraints.h"
-#include "linguisticProcessing/core/Automaton/recognizerData.h"
-#include "common/MediaticData/mediaticData.h"
-
-
-//#include <crfsuite_api.hpp>
-
-#include <stdlib.h>
-#include <stdio.h>
 
 #include "AbstractTaggerFactory.h"
 #include "TaggerWap.h"
@@ -56,16 +47,67 @@ SimpleFactory<MediaProcessUnit,SpecificEntitiesCRFTag> specificEntitiesCRFTagFac
 TaggerFactory<TaggerWap> TaggerWapitiFactory(TaggerWap_ID);
   //TaggerFactory<TaggerSE> TaggerCRFSuiteFactory(TaggerSE_ID);
 
-SpecificEntitiesCRFTag::SpecificEntitiesCRFTag() {
+
+class SpecificEntitiesCRFTagPrivate {
+
+  friend class SpecificEntitiesCRFTag;
+
+  
+
+public:
+  SpecificEntitiesCRFTagPrivate();
+  ~SpecificEntitiesCRFTagPrivate();
+  SpecificEntitiesCRFTagPrivate(const SpecificEntitiesCRFTagPrivate& sp);
+  SpecificEntitiesCRFTagPrivate& operator= ( const SpecificEntitiesCRFTagPrivate& sp );
+
+  std::string m_crflib;
+  std::deque<std::string> m_listmodel;
+  MediaId m_lg;
+  std::vector<mdl_t*> m_vecmod;
+
+ 
+};
+ 
+SpecificEntitiesCRFTagPrivate::SpecificEntitiesCRFTagPrivate() {
 
 }
 
-SpecificEntitiesCRFTag::~SpecificEntitiesCRFTag() {
-  for (int i=0; i<m_vecmod.size(); ++i) {
-    free(m_vecmod[i]->opt);
-    mdl_free(m_vecmod[i]);
-  }
+SpecificEntitiesCRFTagPrivate::~SpecificEntitiesCRFTagPrivate() {
 
+}
+
+SpecificEntitiesCRFTagPrivate::SpecificEntitiesCRFTagPrivate(const SpecificEntitiesCRFTagPrivate& sp) {
+
+  m_crflib=sp.m_crflib;
+  m_vecmod=sp.m_vecmod;
+  m_listmodel=sp.m_listmodel;
+  m_lg=sp.m_lg;
+
+}
+ 
+SpecificEntitiesCRFTagPrivate& SpecificEntitiesCRFTagPrivate::operator= ( const SpecificEntitiesCRFTagPrivate& sp ) {
+  if (this!= &sp) {
+    m_crflib=sp.m_crflib;
+    m_vecmod=sp.m_vecmod;
+    m_listmodel=sp.m_listmodel;
+    m_lg=sp.m_lg;
+  }
+  return *this;
+
+}
+
+
+
+SpecificEntitiesCRFTag::SpecificEntitiesCRFTag() {
+  m_spt=new SpecificEntitiesCRFTagPrivate();
+}
+
+SpecificEntitiesCRFTag::~SpecificEntitiesCRFTag() {
+  for (int i=0; i<m_spt->m_vecmod.size(); ++i) {
+    free(m_spt->m_vecmod[i]->opt);
+    mdl_free(m_spt->m_vecmod[i]);
+  }
+  delete m_spt;
 }
 
 void SpecificEntitiesCRFTag::init(
@@ -76,30 +118,30 @@ void SpecificEntitiesCRFTag::init(
   SELOGINIT;
   try
     {
-      m_crflib=unitConfiguration.getParamsValueAtKey("crflibrary");
+      m_spt->m_crflib=unitConfiguration.getParamsValueAtKey("crflibrary");
     }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {
       // optional parameter: keep default value
     }
 
-  m_lg=manager->getInitializationParameters().media;
+  m_spt->m_lg=manager->getInitializationParameters().media;
   std::string resourcePath;
   try {
     resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
     LDEBUG << "resourcePath " << resourcePath << LENDL;
-    m_listmodel=unitConfiguration.getListsValueAtKey("modelList");
+    m_spt->m_listmodel=unitConfiguration.getListsValueAtKey("modelList");
     
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'modelList' in group for language " << (int) m_lg << " !" << LENDL;
+    LERROR << "no parameter 'modelList' in group for language " << (int) m_spt->m_lg << " !" << LENDL;
     throw InvalidConfiguration();
   }
 
 
   //load model
   mdl_t *mod;
-  for (int i=0; i<m_listmodel.size(); i++) {
+  for (int i=0; i<m_spt->m_listmodel.size(); i++) {
     mod = mdl_new(rdr_new(false));
     opt_t *opt=(opt_t*) malloc(sizeof(opt_t));
     opt->mode=-1;
@@ -109,7 +151,7 @@ void SpecificEntitiesCRFTag::init(
     opt->maxent=false;
     opt->algo="l-bfgs";
     opt->pattern=NULL;
-    opt->model=strdup((resourcePath+"/SpecificEntities/"+m_listmodel[i]).c_str());
+    opt->model=strdup((resourcePath+"/SpecificEntities/"+m_spt->m_listmodel[i]).c_str());
     opt->devel=NULL;
     opt->rstate=NULL;
     opt->sstate=NULL;
@@ -150,16 +192,17 @@ void SpecificEntitiesCRFTag::init(
 	//LERROR  << "you must specify a model" << LENDL;
 	std::cout << "you must specify a model" << std::endl;
       }
+    
     FILE *file = fopen(mod->opt->model, "r");
     if (file == NULL)
       {
 	std::string mess="cannot open input model file";
 	throw(std::runtime_error(mess));
 	//LERROR << "cannot open input model file" << LENDL;
-      }//pfatal("cannot open input model file");
+      }
     mdl_load(mod, file);
     fclose(file);
-    m_vecmod.push_back(mod);
+    m_spt->m_vecmod.push_back(mod);
   }
    
   
@@ -169,9 +212,7 @@ void SpecificEntitiesCRFTag::init(
 
 LimaStatusCode SpecificEntitiesCRFTag::process(AnalysisContent& analysis) const
 {
-  std::cout << "process" << std::endl;
   LimaStatusCode lm=SUCCESS_ID;
-  //LINFO << "start process" << LENDL;
   LinguisticMetaData *lMD=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -182,19 +223,16 @@ LimaStatusCode SpecificEntitiesCRFTag::process(AnalysisContent& analysis) const
   AbstractTagger *abTag;
   std::map<std::string, std::string> options;
   std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-  for (int i=0; i<m_listmodel.size(); ++i) {
+  for (int i=0; i<m_spt->m_listmodel.size(); ++i) {
     
-    options["model"]=resourcePath+"/SpecificEntitiesCRF/"+m_listmodel[i];
-    //std::cout <<"model: " << options["model"] << std::endl;
-    //options["model"]=lMD->getMetaData("modelFile");
+    options["model"]=resourcePath+"/SpecificEntitiesCRF/"+m_spt->m_listmodel[i];
     options["inputFile"]=lMD->getMetaData("FileName");
-    //options["patternFile"]=lMD->getMetaData("patternFile");  
-    
-    abTag=TaggerWapitiFactory.getFactory(m_crflib)->create();
+   
+    abTag=TaggerWapitiFactory.getFactory(m_spt->m_crflib)->create();
     if (abTag!=NULL) {
-      abTag->setMod(m_vecmod[i]);
+      abTag->setMod(m_spt->m_vecmod[i]);
       abTag->initOptions(options);
-      abTag->tag(analysis, m_lg);
+      abTag->tag(analysis, m_spt->m_lg);
 
     }
     free(abTag);

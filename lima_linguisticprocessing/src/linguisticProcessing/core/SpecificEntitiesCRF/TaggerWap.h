@@ -29,42 +29,26 @@
  * 
  ***********************************************************************/
 
-
 #ifndef TAGGERWAP_H
 #define TAGGERWAP_H
 
-
-//#include "linguisticProcessing/common/PropertyCode/PropertyAccessor.h"
-//#include "common/AbstractFactoryPattern/RegistrableFactory.h"
-//#include "SpecificEntitiesCRFExport.h"
 #include "AbstractTagger.h"
 #include "model.h"
 #include "decoder.h"
 
-//#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "SpecificEntitiesCRFExport.h"
-//#include "common/MediaProcessors/MediaProcessUnit.h"
-//#include "linguisticProcessing/core/Automaton/recognizer.h"
-//#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
-
-#include "common/MediaticData/EntityType.h"
-#include "common/misc/fsaStringsPool.h"
 
 namespace Lima
 {
 class AnalysisContent; 
 namespace LinguisticProcessing
 {
-  /*
-namespace LinguisticAnalysisStructure
-{
-  class AnalysisGraph;
-}
-  */
  
 
-
 #define TaggerWap_ID "tagWap"
+  
+class TaggerWapPrivate;
+
 class TaggerWap : public AbstractTagger
 {
 public:
@@ -93,10 +77,8 @@ public:
   listDat_t* firstList(AnalysisContent& analysis, MediaId lg);
 
  private:
-  mdl_t *m_mod;
-  opt_t opt;
 
- 
+  TaggerWapPrivate *m_tw;
   
 };
 }

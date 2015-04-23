@@ -33,13 +33,11 @@
 
 #include <string>
 
-//#include "options.h"
 #include "model.h"
 #include "AbstractTrainer.h"
 #include <vector>
 
 #include "SpecificEntitiesCRFExport.h"
-#include "common/MediaProcessors/MediaProcessUnit.h"
 
 namespace Lima {
    
@@ -48,6 +46,9 @@ class AnalysisContent;
   namespace LinguisticProcessing {
  
 #define TrainerWap_ID "trainWap"
+
+class TrainerWapPrivate;
+
 class TrainerWap : public AbstractTrainer 
 {
 
@@ -57,23 +58,20 @@ public:
   ~TrainerWap();
 
   
-  void setModelFile(std::string st);
-
-  void setInputFile(std::string st);
-  
-  void setOutputFile(std::string st);
-
-  void setPatternFile(std::string st);
-  
-
+  /**
+   * @brief Initialize the training options
+   * @param options Map with all the options and their values
+   */
   void initOptions(const std::map<std::string, std::string>& options);
   
+  /**
+   * @brief Perform the training: create a model from input data
+   */
   void training();
 
 
 private:
-  mdl_t *mod;
-  opt_t opt;
+  TrainerWapPrivate *m_tw;
 
 
 };

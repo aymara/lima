@@ -675,7 +675,6 @@ listDat_t* tag_label2(mdl_t *mdl, FILE *fin, FILE *fout, listDat_t **lstD, raw_t
 	listDat_t *ptemp=(*lstD);
 	uint64_t ptest;
 	uint64_t ltest;
-	int compt=0;
 	for (uint32_t y = 0; y < Y; y++)
 		stat[0][y] = stat[1][y] = stat[2][y] = 0;
 	// Next read the input file sequence by sequence and label them, we have
@@ -688,7 +687,7 @@ listDat_t* tag_label2(mdl_t *mdl, FILE *fin, FILE *fout, listDat_t **lstD, raw_t
 	raw_t *raw=r;
 	if (raw == NULL) {
 	  //	break;
-	  info("raw est NULL\n");
+	  info("raw NULL\n");
 	}
 	seq_t *seq = rdr_raw2seq(mdl->reader, raw,
 				 mdl->opt->check | mdl->opt->force);
@@ -718,17 +717,28 @@ listDat_t* tag_label2(mdl_t *mdl, FILE *fin, FILE *fout, listDat_t **lstD, raw_t
 	    }
 	    uint32_t lbl = out[t * N + n];
 	    const char *lblstr = qrk_id2str(lbls, lbl);
-	    if (strcmp(lblstr,  "NAN")) {
-	      //info( "%s\n", lblstr); // print Tag
-	    }
+	    
 	    //info("rawLines: %s\n", raw->lines[t]);
 	    //fprintf(fout, "%s", lblstr); // tag ici
-	    
-	    compt++;
+	    char *lineRes = xstrdup(raw->lines[t]);
+	    char *toks[strlen(lineRes) / 2 + 1];
+
+	    uint32_t cnt = 0;
+	    while (*lineRes != '\0') {
+	      toks[cnt++] = lineRes;
+	      while (*lineRes != '\0' && !isspace(*lineRes))
+		lineRes++;
+	      if (*lineRes == '\0')
+		break;
+	      *lineRes++ = '\0';
+	      while (*lineRes != '\0' && isspace(*lineRes))
+		lineRes++;
+	    }
+
 	    if (strcmp(lblstr,  "NAN")) {
 	      ptest=ptemp->data->pos;
 	      ltest=ptemp->data->lgth;
-	      lstDtmp=addBack(lstDtmp, createDataSE(ptest,ltest, lblstr, lblstr));
+	      lstDtmp=addBack(lstDtmp, createDataSE(ptest,ltest, lblstr, toks[0]));
 	      //lstDtmp=addBack(lstDtmp, createDataSE(ptemp->data->pos,ptemp->data->lgth, lblstr, lblstr));
 	    }
 	    ptemp=ptemp->next;

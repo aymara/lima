@@ -36,7 +36,6 @@
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
-//#include "ToolsCRF.h"
 
 #include "model.h"
 #include "decoder.h"
@@ -59,6 +58,8 @@ namespace SpecificEntitiesCRF
 
 #define SPECIFICENTITIESCRFTAG_CLASSID "SpecificEntitiesCRFTag"
 
+class SpecificEntitiesCRFTagPrivate;
+
 class LIMA_SPECIFICENTITIESCRF_EXPORT SpecificEntitiesCRFTag : public MediaProcessUnit
 {
 
@@ -77,15 +78,8 @@ class LIMA_SPECIFICENTITIESCRF_EXPORT SpecificEntitiesCRFTag : public MediaProce
     AnalysisContent& analysis) const;
 
 private:
-
-  std::string m_crflib;
-
-  std::deque<std::string> m_listmodel;
-
-  MediaId m_lg;
-
-  std::vector<mdl_t*> m_vecmod;
-
+  
+  SpecificEntitiesCRFTagPrivate *m_spt;
 
 };
 }

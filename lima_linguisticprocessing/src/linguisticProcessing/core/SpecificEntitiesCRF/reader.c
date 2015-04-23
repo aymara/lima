@@ -203,7 +203,6 @@ void rdr_loadpat(rdr_t *rdr, FILE *file) {
  *   sequence was read.
  */
 raw_t *rdr_readraw(rdr_t *rdr, FILE *file) {
-  info("rdrreadraw\n");
 	if (feof(file))
 		return NULL;
 	// Prepare the raw sequence object

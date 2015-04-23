@@ -1,42 +1,31 @@
-#include <ctype.h>
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
-//#include <stdbool.h>
-//#include <stddef.h>
-//#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream>
+/*
+    Copyright 2002-2014 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+ 
+************************************************************************/
 
 #include <queue>
 
 #include "decoder.h"
-//#include "model.h"
-#include "options.h"
-#include "progress.h"
-#include "quark.h"
-#include "reader.h"
 #include "sequence.h"
-//#include "tools.h"
 #include "trainers.h"
 #include "TaggerWap.h"
 
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/Automaton/recognizerData.h"
-#include "linguisticProcessing/core/SpecificEntities/SpecificEntitiesConstraints.h"
-#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
-
 #include "common/Data/strwstrtools.h"
-
-#include "common/MediaProcessors/HandlerStreamBuf.h"
-#include "common/time/traceUtils.h"
-#include "common/Data/strwstrtools.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/MediaticData/mediaticData.h"
-//#include <common/LimaCommon.h> 
-#include "SpecificEntitiesCRFExport.h"
-
 #include "linguisticProcessing/core/AnalysisDumpers/TextDumper.h" // for lTokenPosition comparison function to order tokens
 
 #include "linguisticProcessing/core/AnalysisDumpers/WordFeatureExtractor.h"
@@ -54,13 +43,50 @@ namespace LinguisticProcessing
 {
 
 
-TaggerWap::TaggerWap() {
 
+class TaggerWapPrivate {
+
+  friend class TaggerWap;
+
+public:
+  
+  TaggerWapPrivate();
+  ~TaggerWapPrivate();
+  TaggerWapPrivate(const TaggerWapPrivate& tw);
+  TaggerWapPrivate& operator= (const TaggerWapPrivate& tw);
+  
+  mdl_t *m_mod;
+  
+};
+
+TaggerWapPrivate::TaggerWapPrivate() {
+
+  
+}
+
+TaggerWapPrivate::~TaggerWapPrivate() {
+
+}
+
+TaggerWapPrivate::TaggerWapPrivate(const TaggerWapPrivate& tw) {
+
+  *m_mod=*(tw.m_mod);
+}
+
+TaggerWapPrivate& TaggerWapPrivate::operator= (const TaggerWapPrivate& tw) {
+
+  *m_mod=*(tw.m_mod);
+  return *this;
+}
+
+
+TaggerWap::TaggerWap() {
+  m_tw=new TaggerWapPrivate();
  
 }
 
 TaggerWap::~TaggerWap() {
- 
+  delete m_tw;
 }
  
   
@@ -92,7 +118,7 @@ static const uint32_t trn_cnt = sizeof(trn_lst) / sizeof(trn_lst[0]);
 
 void TaggerWap::setMod(mdl_t *m) {
   
-  m_mod=m;
+  m_tw->m_mod=m;
 
 }
 
@@ -100,56 +126,48 @@ void TaggerWap::initOptions(const std::map<std::string, std::string>& options) {
  
   std::string outputFile;
   std::map<std::string, std::string>::const_iterator it;
-  //model
-  //it=options.find("model");
-  //if (it!=options.end()) {
-  //m_mod->opt->model=strdup(((*it).second).c_str());
-  //} 
   
   //input output file
   it=options.find("inputFile");
   if (it!=options.end()) {
-    m_mod->opt->input=strdup(((*it).second).c_str());
-    //outputFile=(*it).second + ".tag";
-    //m_mod->opt->output=strdup(outputFile.c_str());
+    m_tw->m_mod->opt->input=strdup(((*it).second).c_str());
+    
   } 
  
 }
 
 void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
-
+  
 	// Open input and output files
 	FILE *fin = stdin, *fout = stdout;
-	if (m_mod->opt->input != NULL) {
-		fin = fopen(m_mod->opt->input, "r");
+	if (m_tw->m_mod->opt->input != NULL) {
+		fin = fopen(m_tw->m_mod->opt->input, "r");
 		if (fin == NULL)
 		  {
 		  }//pfatal("cannot open input data file");
 	}
-	if (m_mod->opt->output != NULL) {
-		fout = fopen(m_mod->opt->output, "w");
+	if (m_tw->m_mod->opt->output != NULL) {
+		fout = fopen(m_tw->m_mod->opt->output, "w");
 		if (fout == NULL) {
 		  //LERROR << "cannot open output data file" << LENDL;
 		}
 		  //pfatal("cannot open output data file");
 	}
 	// Do the labelling
-	//info("* Label sequences\n");
-	//std::cout << "* Label sequences" << std::endl;
-
+	
 	raw_t *r=graphToRaw(analysis, lg);
 
 	
 	listDat_t *lst=firstList(analysis, lg);
 	listDat_t *ltmp;
-	ltmp=tag_label2(m_mod, fin, fout, &lst, r);
+	ltmp=tag_label2(m_tw->m_mod, fin, fout, &lst, r);
 
 	deleteList(lst);
-	//std::cout << "* Done " << std::endl;
+
 	// And close files
-	if (m_mod->opt->input != NULL)
+	if (m_tw->m_mod->opt->input != NULL)
 		fclose(fin);
-	if (m_mod->opt->output != NULL)
+	if (m_tw->m_mod->opt->output != NULL)
 		fclose(fout);
   
 	listDat_t *ll=ltmp;
@@ -160,6 +178,7 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	int lastPos=0;
 	int lastLength=0;
 	std::string currentEN;
+	std::string currentStr;
 	bool isFirst=true;
 
 	if (ltmp!=NULL) {
@@ -174,7 +193,7 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	    if (resvalue[1][0]=='B') {
 	      if (!isFirst) {
 		
-		addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
+		addSpecificEntities(analysis,lg, currentStr , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
 	      } else {
 		isFirst=false;
 	      }
@@ -185,7 +204,7 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	      
 	      resvalue[1].replace(0, 2, "");
 	      currentEN=resvalue[0]+"."+resvalue[1];
-	      
+	      currentStr=ltmp->data->str;
 	      isEN=true;
 	    } else if (resvalue[1][0]=='I') {
 	      resvalue[1].replace(0, 2, "");
@@ -193,11 +212,12 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	      if (resvalue[0]+"."+resvalue[1]!=currentEN || (ltmp->data->pos>(lastPos+lastLength+1))) {
 		// if we don't start with a B-
 		if (!isFirst) {
-		  addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
+		  addSpecificEntities(analysis,lg, currentStr , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
 		} else {
 		  isFirst=false;
 		}
 		currentEN=resvalue[0]+"."+resvalue[1];
+		currentStr=currentStr+ltmp->data->str;
 		positionDebut=ltmp->data->pos;
 		
 	      }
@@ -212,39 +232,12 @@ void TaggerWap::tag(AnalysisContent& analysis, MediaId lg) {
 	    
 	  }
 	  //add the last entity
-	  addSpecificEntities(analysis,lg, currentEN , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
+	  addSpecificEntities(analysis,lg, currentStr , currentEN, positionDebut,(lastPos+lastLength)-positionDebut);
 	}
 
 	deleteList(ll);
 	
 }
-  
-
- /**
-     @brief Separe a token composed of more than one word
-   */
-static std::vector<std::string> separeToken(const std::string& line) {
-  uint i;
-  std::string res = "";
-  std::vector<std::string> resLine;
-  for (i=0; i<line.size(); i++) {
-    if (isspace(line[i]) ) {
-      if (res.size()!=0) {
-	resLine.push_back(res);
-      }
-      res="";
-    }
-    else {
-      res.push_back(line[i]);
-    }
-  }
-  //add last element if necessary
-  if (res.size()>0) {
-    resLine.push_back(res);
-  }
-  return resLine;
-}
-
 
 
 listDat_t* TaggerWap::firstList(AnalysisContent& analysis, MediaId lg) {
@@ -280,16 +273,14 @@ listDat_t* TaggerWap::firstList(AnalysisContent& analysis, MediaId lg) {
     if (v == anagraph->lastVertex()) {
       last=true;
     }
-    
-    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
-      {
-	LinguisticGraphVertex next=target(*outItr,*graph);
-	if (visited.find(next)==visited.end())
-	  {
-	    visited.insert(next);
-	    toVisit.push(next);
-	  }
-      }
+   
+     //only the first node is selected to avoid ambiguity
+    boost::tie(outItr,outItrEnd)=out_edges(v,*graph);
+    LinguisticGraphVertex next=target(*outItr,*graph);
+    if (visited.find(next)==visited.end()) {  
+      visited.insert(next);
+      toVisit.push(next);
+    }
     
     if (first) {
       first=false;
@@ -326,20 +317,9 @@ listDat_t* TaggerWap::firstList(AnalysisContent& analysis, MediaId lg) {
 	
       }
       
-      std::vector<std::string> lineVec;
-      lineVec=separeToken(word);
-      std::string partWord;
-      if (lineVec.size()<2) {
-	lst=addBack(lst, createDataSE((*it).first->position(), (*it).first->length(),"",""));
-      } else {
-	int currentPos=(*it).first->position();
-	for (int k=0; k<lineVec.size(); k++) {
-	  partWord=lineVec[k];
-	  lst=addBack(lst, createDataSE(currentPos, partWord.size(),"partWord","partWord"));
-	  currentPos+=partWord.size()+1;
-	}
-      }
       
+	lst=addBack(lst, createDataSE((*it).first->position(), (*it).first->length(),"",""));
+     
 	
     }	
   

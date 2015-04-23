@@ -5,26 +5,18 @@
 #include "CrfSEDumper.h"
 #include "TextDumper.h" // for lTokenPosition comparison function to order tokens
 
-// #include "linguisticProcessing/core/LinguisticProcessors/HandlerStreamBuf.h"
-#include "common/MediaProcessors/HandlerStreamBuf.h"
 #include "common/time/traceUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
-#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
-#include "common/Handler/AbstractAnalysisHandler.h"
 
 #include <boost/graph/properties.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
-#include <fstream>
 #include <deque>
 #include <queue>
-#include <iostream>
 
 using namespace std;
 using namespace boost;
@@ -42,15 +34,79 @@ namespace AnalysisDumpers {
 
 SimpleFactory<MediaProcessUnit,CrfSEDumper> crfSEDumperFactory(CRFSEDUMPER_CLASSID);
 
-CrfSEDumper::CrfSEDumper():
-AbstractTextualAnalysisDumper(),
+class CrfSEDumperPrivate {
+
+  friend class CrfSEDumper;
+
+  CrfSEDumperPrivate();
+  ~CrfSEDumperPrivate();
+  CrfSEDumperPrivate(const CrfSEDumperPrivate& sp);
+  CrfSEDumperPrivate& operator= ( const CrfSEDumperPrivate& sp );
+  
+private:
+  MediaId m_language;
+  std::string m_graph;
+  WordFeatures m_features; //!< use dedicated class for feature storage (easy initialization functions)
+  std::map<AbstractFeatureExtractor*,std::string> m_featuresMap; //!< use additional map to associate features with XML tags (only pointers)
+  std::map<std::string,std::string> m_defaultFeatures;
+  bool m_outputSentenceBoundaries;
+  std::map<std::string, std::string> m_NEauthorized;
+  
+ void clearFeatures();
+  void initializeFeatures(const std::map<std::string,std::string>& features,
+                          const std::deque<std::string>& featureOrder=std::deque<std::string>());
+  
+  void xmlOutput(std::ostream& out,
+                 AnalysisContent& analysis,
+                 LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                 LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                 const Common::AnnotationGraphs::AnnotationData* annotationData) const;
+  
+  void xmlOutputVertices(std::ostream& out,
+                         LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                         LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                         const Common::AnnotationGraphs::AnnotationData* annotationData,
+                         const LinguisticGraphVertex begin,
+                         const LinguisticGraphVertex end,
+                         const FsaStringsPool& sp,
+                         const uint64_t offset) const;
+
+  /**
+   * @brief display Vertex Infos
+   */
+  void xmlOutputVertex(std::ostream& out, 
+                       LinguisticGraphVertex v,
+                       LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                       LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+                       const Common::AnnotationGraphs::AnnotationData* annotationData,
+                       const FsaStringsPool& sp,
+                       uint64_t offset) const;
+
+  /**
+   * @brief Display Vertex Infos if several interpretation of the token
+   */
+  void xmlOutputVertexInfos(std::ostream& out, 
+                            LinguisticGraphVertex v,
+                            LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+                            uint64_t offset) const;
+
+
+  // string manipulation functions to protect XML entities
+  std::string xmlString(const std::string& str) const;
+  void replace(std::string& str, const std::string& toReplace, const std::string& newValue) const;
+
+
+
+};
+
+
+CrfSEDumperPrivate::CrfSEDumperPrivate(): 
 m_graph("PosGraph"),
 m_features(),
 m_featuresMap(),
 m_defaultFeatures(),
-m_outputSentenceBoundaries(true),
-m_outputSpecificEntities(true)
-{
+m_outputSentenceBoundaries(true)
+  {
   // default features
   //m_defaultFeatures["p"]="position";
   m_defaultFeatures["inf"]="word";
@@ -59,48 +115,28 @@ m_outputSpecificEntities(true)
   //m_defaultFeatures["lemma"]="lemma";
 }
 
+CrfSEDumperPrivate::~CrfSEDumperPrivate() {
+  clearFeatures();
+}
+
+
+
+CrfSEDumper::CrfSEDumper():
+  AbstractTextualAnalysisDumper()
+{
+  m_d=new CrfSEDumperPrivate();
+
+}
+
 //@todo : copy constructor: deal with copy of pointers
 
 CrfSEDumper::~CrfSEDumper()
 {
-  clearFeatures();
+  delete m_d;
 }
 
-  /**
-     @brief Separe a token composed of more than one word
-   */
-static std::vector<std::string> separeToken(const std::string& line) {
-  //std::cout << "separeToken: " << line << std::endl;
-  uint i;
-  std::string res = "";
-  std::vector<std::string> resLine;
-  for (i=0; i<line.size(); i++) {
-    if (isspace(line[i]) ) {
-      if (res.size()!=0) {
-	resLine.push_back(res);	
-      }
-      res="";
-    }
-    else {
-      res.push_back(line[i]);
-    }
-  }
-  //add last element if necessary
-  if (res.size()>0) {
-    // if the coma isn't separed with the word
-    char lastCar=res.back();
-	if (res.size()>1 && lastCar==',') {
-	  res.erase(res.size()-1);
-	  resLine.push_back(res);
-	  resLine.push_back(",");
-	} else {
-	  resLine.push_back(res);
-	}
-  }
-  return resLine;
-}
 
-void CrfSEDumper::clearFeatures() {
+void CrfSEDumperPrivate::clearFeatures() {
   for (WordFeatures::const_iterator it=m_features.begin(),it_end=m_features.end();it!=it_end;it++) {
     if (*it!=0) {
       delete *it;
@@ -110,49 +146,40 @@ void CrfSEDumper::clearFeatures() {
   m_featuresMap.clear();
 }
 
+
 void CrfSEDumper::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 
 {
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
+
+  m_d->m_language = manager->getInitializationParameters().media;
+  
   try
   {
-    m_graph=unitConfiguration.getParamsValueAtKey("graph");
+    m_d->m_graph=unitConfiguration.getParamsValueAtKey("graph");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  m_features.setLanguage(m_language);
+  m_d->m_features.setLanguage(m_d->m_language);
   try { 
     // if some features are specified, all must be specified: do not keep any default ones
     map<string,string> featuresMap=unitConfiguration.getMapAtKey("features"); 
     try {
       // order can be specified (not in map: map is unordered)
       deque<string> featureOrder=unitConfiguration.getListsValueAtKey("featureOrder"); 
-      initializeFeatures(featuresMap,featureOrder);
+      m_d->initializeFeatures(featuresMap,featureOrder);
     }
     catch (NoSuchList& ) { // no order specified: keep order from map
-      initializeFeatures(featuresMap);
+      m_d->initializeFeatures(featuresMap);
     }
   }
   catch (NoSuchMap& ) {
     //initialize with default values
-    initializeFeatures(m_defaultFeatures);
+    m_d->initializeFeatures(m_d->m_defaultFeatures);
   }
 
- try
-  {
-    m_outputFile=unitConfiguration.getParamsValueAtKey("outputfile");
-  }
-  catch (NoSuchParam& ) {} // keep default value 
- 
- 
- try
-  {
-    m_outputSuffix=unitConfiguration.getParamsValueAtKey("outputsuffix");
-  }
-  catch (NoSuchParam& ) {} // keep default value 
- 
   std::map<std::string, std::string> mpNEauthorized;
   try
   {
@@ -160,11 +187,11 @@ void CrfSEDumper::init(
   }
   catch (NoSuchParam& ) {} // keep default value 
   
-  static_cast<FeatureSpecificEntity*> (m_features.back())->setNEauthorized(mpNEauthorized);
+  static_cast<FeatureSpecificEntity*> (m_d->m_features.back())->setNEauthorized(mpNEauthorized);
  
 }
 
-void CrfSEDumper::initializeFeatures(const map<string,string>& featuresMap, 
+void CrfSEDumperPrivate::initializeFeatures(const map<string,string>& featuresMap, 
                                           const std::deque<std::string>& featureOrder) 
 {
   clearFeatures();
@@ -247,17 +274,18 @@ process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  static_cast<FeatureSpecificEntity*> (m_features.back())->annot=annotationData;
+  static_cast<FeatureSpecificEntity*> (m_d->m_features.back())->annot=annotationData;
  
    DumperStream* dstream=initialize(analysis);
-   xmlOutput(dstream->out(), analysis, anagraph, posgraph, annotationData);
+   m_d->xmlOutput(dstream->out(), analysis, anagraph, posgraph, annotationData);
    delete dstream;
 
    TimeUtils::logElapsedTime("CrfSEDumper");
    return SUCCESS_ID;
 }
+ 
 
-void CrfSEDumper::
+void CrfSEDumperPrivate::
 xmlOutput(std::ostream& out,
           AnalysisContent& analysis,
           AnalysisGraph* anagraph,
@@ -341,7 +369,9 @@ xmlOutput(std::ostream& out,
   }
 }
 
-void CrfSEDumper::
+
+ 
+void CrfSEDumperPrivate::
 xmlOutputVertices(std::ostream& out,
                   AnalysisGraph* anagraph,
                   AnalysisGraph* posgraph,
@@ -423,8 +453,8 @@ xmlOutputVertices(std::ostream& out,
     }
   }
 }
-
-void CrfSEDumper::
+ 
+void CrfSEDumperPrivate::
 xmlOutputVertex(std::ostream& out, 
                 LinguisticGraphVertex v,
                 AnalysisGraph* anagraph,
@@ -470,21 +500,9 @@ xmlOutputVertex(std::ostream& out,
 		    uint64_t position=token->position() + offset;
 		  
 		    std::string resline = Common::Misc::limastring2utf8stdstring(token->stringForm()) ;
-		    if (resline.size()>0) {
-		      // if the coma isn't separed with the word
-		      char lastCar=resline.back();
-		      if (resline.size()>1 && lastCar==',') {
-			resline.erase(resline.size()-1);
-			line2.push_back(resline);
-			line2.push_back(",");
-		      } else if (resline.size()>1 && lastCar=='.') {
-			resline.erase(resline.size()-1);
-			line2.push_back(resline);
-			line2.push_back(".");
-		    } else {
-			line2.push_back(resline);
-		      }
-		    }
+		   
+		    line2.push_back(resline);
+		   
 		   
 		  }
 		}
@@ -495,7 +513,8 @@ xmlOutputVertex(std::ostream& out,
   if (line2.size()>1) {
     line=line2;
   } else {
-    line=separeToken(value);
+    boost::replace_all(value, " ", "_");
+    line.push_back(value);
   }
   
   
@@ -532,8 +551,6 @@ xmlOutputVertex(std::ostream& out,
 	}
 	
       }
-      
-      
       out << val << " ";
     }
     out << endl;
@@ -541,7 +558,8 @@ xmlOutputVertex(std::ostream& out,
   
 }
 
-void CrfSEDumper::xmlOutputVertexInfos(std::ostream& out, 
+
+void CrfSEDumperPrivate::xmlOutputVertexInfos(std::ostream& out, 
                                            LinguisticGraphVertex v,
                                            LinguisticAnalysisStructure::AnalysisGraph* graph,
                                            uint64_t offset) const
@@ -563,24 +581,20 @@ void CrfSEDumper::xmlOutputVertexInfos(std::ostream& out,
     out << value << " ";
   }
   out  << endl;
-}                          
-  
+}        
 
 
-// string manipulation functions to protect XML entities
-std::string CrfSEDumper::xmlString(const std::string& inputStr) const
+
+std::string CrfSEDumperPrivate::xmlString(const std::string& inputStr) const
 {
   // protect XML entities
   std::string str(inputStr);
-  replace(str,"&", "&amp;");
-  replace(str,"<", "&lt;");
-  replace(str,">", "&gt;");
-  replace(str,"\"", "&quot;");
-  replace(str,"\n", "\\n");
+ 
   return str;
 }
 
-void CrfSEDumper::replace(std::string& str, 
+
+void CrfSEDumperPrivate::replace(std::string& str, 
                               const std::string& toReplace, 
                               const std::string& newValue) const
 {
