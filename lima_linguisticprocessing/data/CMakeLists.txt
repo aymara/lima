@@ -33,6 +33,7 @@ install(FILES
     test-fre.idiom.xml 
     test-fre.sa.xml 
     test-fre.se.xml 
+    test-fre.se-PERSON.xml 
     test-fre.simpleword.xml
     test-fre.tokenizer.xml 
     #test-fre.se-beforepos.xml 

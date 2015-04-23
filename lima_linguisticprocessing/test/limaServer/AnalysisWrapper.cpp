@@ -40,6 +40,7 @@
 
 #include <fstream>
 #include <sstream>      // std::stringstream
+#include <QtCore/QTemporaryFile>
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -125,11 +126,11 @@ QString AnalysisWrapper::analyze(const QString& text, const QString& language, c
   CORECLIENTLOGINIT;
   LDEBUG << "AnalysisWrapper::analyze" << text.left(100);
 
-  std::string fileName("testLimaserver.out");
+  QTemporaryFile tempFile;
   QPair<QString, QString> item;
   std::map<std::string,std::string> metaData;
-  metaData["Lang"]=language.toUtf8().data();
-  metaData["FileName"]=fileName.c_str();
+  metaData["Lang"]=language.toUtf8().constData();
+  metaData["FileName"]=tempFile.fileName().toUtf8().constData();
 
   std::set<std::string> inactiveUnits;
 

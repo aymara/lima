@@ -37,6 +37,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <QtCore/QMap>
 
 namespace Lima {
 namespace Common {
@@ -98,7 +99,7 @@ class BoWBinaryWriterPrivate;
 class LIMA_BOW_EXPORT BoWBinaryWriter
 {
  public:
-  BoWBinaryWriter(); 
+  BoWBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom = QMap< uint64_t, uint64_t >()); 
   virtual ~BoWBinaryWriter();
   
   void writeHeader(std::ostream& file, 

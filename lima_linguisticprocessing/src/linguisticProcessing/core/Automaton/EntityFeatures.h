@@ -46,6 +46,8 @@ namespace LinguisticProcessing {
 namespace Automaton {
 
 #define DEFAULT_ATTRIBUTE "value"
+#define UNDEFLENGTH std::numeric_limits<uint64_t>::max()
+#define UNDEFPOSITION std::numeric_limits<uint64_t>::max()
 
 /** 
  * @brief a generic feature that is defined by a name and a value, which can be
@@ -73,11 +75,10 @@ public:
   const boost::any& getValue() const { return m_value; }
   boost::any getValue() { return m_value; }
 
-  void setPosition(const uint64_t& pos) { m_pos=pos; m_hasPos=true; }
-  void setLength(const uint64_t& val) { m_length=val; }
+  void setPosition(const uint64_t& pos) { m_pos=pos; }
+  void setLength(const uint64_t& val) { m_len=val; }
   uint64_t getPosition() const { return m_pos; }
-  uint64_t getLength() const { return m_length; }
-  uint64_t hasPos() const { return m_hasPos; }
+  uint64_t getLength() const { return m_len; }
 
   // these functions test value type using RTTI: this is not really
   // efficient and should be avoided unless necessary (i.e. if the
@@ -88,9 +89,8 @@ public:
 private:
   std::string m_name;
   boost::any m_value;
-  bool m_hasPos;
   uint64_t m_pos;
-  uint64_t m_length;
+  uint64_t m_len;
 };
 
 /** 
@@ -110,6 +110,7 @@ public:
       // if feature with same name already exists, overwrite it
       EntityFeatures::iterator it=find(name);
       if (it!=end()) {
+//      if( (it!=end()) && (name==DEFAULT_ATTRIBUTE) ){
         (*it).setValue(boost::any(value));
       }
       else {
@@ -120,6 +121,10 @@ public:
         back().setValue(boost::any(value));
       }
     }
+  
+  template<typename ValueType>
+  void appendFeature(const std::string& name,
+                  const ValueType& value);
   
 
   EntityFeatures::const_iterator find(const std::string& featureName) const;

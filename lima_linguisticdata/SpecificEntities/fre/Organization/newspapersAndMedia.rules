@@ -1,5 +1,5 @@
 #
-# rules for French newspaper names
+# rules for french newspaper names
 #
 
 Libération:::ORGANIZATION:
@@ -68,10 +68,3 @@ France::6:ORGANIZATION:France 6
 France::7:ORGANIZATION:France 7
 France::Ô:ORGANIZATION:France Ô
 R.T.L.:::ORGANIZATION:
-
-
-#
-# rules for International newspaper names
-#
-Observer:The::ORGANIZATION:
-Guardian:The::ORGANIZATION:

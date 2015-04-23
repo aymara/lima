@@ -45,17 +45,19 @@ namespace Automaton {
 class LIMA_AUTOMATON_EXPORT MatchElement  {
  public:
   MatchElement() {}
-  MatchElement(const LinguisticGraphVertex& v, const bool isKept):
-    m_elem(std::make_pair(v,isKept)) {}
+  MatchElement(const LinguisticGraphVertex& v, const bool isKept, const LimaString& ruleElemtId):
+    m_elem(std::make_pair(v,isKept)), m_ruleElemtId(ruleElemtId) {}
   ~MatchElement() {}
   bool operator==(const MatchElement& m) {
-    return (m_elem.first==m.m_elem.first && m_elem.second==m.m_elem.second);
+    return (m_elem.first==m.m_elem.first && m_elem.second==m.m_elem.second && m_ruleElemtId==m.m_ruleElemtId);
   }
   const LinguisticGraphVertex& getVertex() const { return m_elem.first; }
   LinguisticGraphVertex& getVertex() { return m_elem.first; }
   bool isKept() const { return m_elem.second; }
+  const LimaString& getRuleElemtId() const { return m_ruleElemtId; }
 
   std::pair<LinguisticGraphVertex,bool> m_elem;
+  LimaString m_ruleElemtId;
 };
 
 class RecognizerMatch;
@@ -106,8 +108,8 @@ class LIMA_AUTOMATON_EXPORT RecognizerMatch :
     getHeadData() const;
 
   void reinit();
-  void addBackVertex(const LinguisticGraphVertex&,bool isKept=true);
-  void addFrontVertex(const LinguisticGraphVertex&,bool isKept=true);
+  void addBackVertex(const LinguisticGraphVertex&,bool isKept=true,const LimaString& ruleElementId="");
+  void addFrontVertex(const LinguisticGraphVertex&,bool isKept=true,const LimaString& ruleElementId="");
   void popBackVertex();
   void popFrontVertex();
   void addBack(const RecognizerMatch& l);

@@ -106,7 +106,7 @@ public:
    * void constructor initializes an empty automaton
    * (no state, no transition)
    */
-  Automaton();
+  Automaton( const std::string& automId = "" );
 
   /**
    * copy constructor
@@ -305,16 +305,14 @@ public:
    * @param det the value to set the flag with (true to say the automaton
    * is deterministic, false to say it is not)
    */
-  void setDeterministic(const bool det);
   
-
+  void setDeterministic(const bool det);
   /** 
    * make deterministic automaton with the subsets method
    * (does not change the current instance of the autmomaton)
    * @return the deterministic automaton obtained
    */  
   Automaton subsets() const;
-
 
   /** 
    * build the automaton that will accept the reverse strings of the language
@@ -354,6 +352,7 @@ public:
   std::vector< TransitionSearchStructure<Transition>* > m_searchStructures; 
   bool m_deterministic;        /**< a boolean flag indicating if the 
                                   automaton is deterministic or not */
+  std::string m_id;         /** profix of identifier of transition */
   
   //private methods
   //**********************************************************************

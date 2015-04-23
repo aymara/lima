@@ -191,9 +191,9 @@ void CoreLinguisticProcessingClient::analyze(
   
   // add handler to analysis
   LDEBUG << "add handler to analysis" ;
-  for (std::map<std::string, AbstractAnalysisHandler*>::const_iterator hit = const_cast<std::map<std::string, AbstractAnalysisHandler*>& >(handlers).begin(); hit != const_cast<std::map<std::string, AbstractAnalysisHandler*>& >(handlers).end(); hit++)
+  for (auto hit = handlers.begin(); hit != handlers.end(); hit++)
   {
-    LDEBUG << "    " << (*hit).first;
+    LDEBUG << "    " << (*hit).first << (*hit).second;
   }
   AnalysisHandlerContainer* h = new AnalysisHandlerContainer(const_cast<std::map<std::string, AbstractAnalysisHandler*>& >(handlers));
   LDEBUG << "set data" ;

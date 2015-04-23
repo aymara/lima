@@ -77,6 +77,10 @@ LimaString initRule(Rule& r,
          a!=s.getActions().end(); a++) {
       r.addAction(*a);
     }
+    for (std::vector<std::pair<LimaString,Constraint> >::const_iterator a=s.getActionsWithOneArgument().begin(); 
+         a!=s.getActionsWithOneArgument().end(); a++) {
+      r.addAction(a->second,a->first);
+    }
     
     //ruleString=s.getString();
   }
@@ -88,7 +92,7 @@ LimaString initRule(Rule& r,
   //LDEBUG << "RuleCompiler:string=" << ruleString;
   
 
-  r.setTrigger(createTransition(s.getTrigger(),language,activeEntityGroups));
+  r.setTrigger(createTransition(s.getTrigger(),language,"trigger",activeEntityGroups));
 
   try {
     r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(), 

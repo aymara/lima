@@ -45,12 +45,12 @@ class AbstractXmlDocumentHandler :
             public AbstractXmlAnalysisHandler,
             public AbstractProcessingClientHandler,
             public ContentHandler<Common::Misc::GenericDocumentProperties>,  
-	    public ContentHandler< std::vector<float> >
+            public ContentHandler< std::vector<float> >
 {
 public:
-    AbstractXmlDocumentHandler():
+    AbstractXmlDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom = QMap< uint64_t,uint64_t >()):
             StructureHandler(),
-            AbstractXmlAnalysisHandler(),
+            AbstractXmlAnalysisHandler(shiftFrom),
             AbstractProcessingClientHandler(),
 //             AbstractTextualAnalysisHandler(),
             ContentHandler<Common::Misc::GenericDocumentProperties>()
@@ -98,16 +98,6 @@ public:
       else
         return ""; //should not suppose a default language. Weird bugs otherwise.
     };
-
-//     std::map<std::string, std::map<int , std::map<int, std::vector< std::pair<int, std::string> > > > >* getToIndex() {
-//         return &m_mapToIndex;
-//     };
-// 
-//     void newToIndex() {
-//         m_mapToIndex.erase(m_mapToIndex.begin(),m_mapToIndex.end());
-//     };
-// 
-//     std::map<std::string, std::map<int , std::map<int, std::vector< std::pair<int, std::string> > > > > m_mapToIndex;
 
     virtual void startAnalysis(std::string bloc_type){(void)bloc_type;};
 

@@ -51,13 +51,13 @@ namespace AutomatonCompiler {
 
   LIMA_AUTOMATONCOMPILER_EXPORT Tstate buildAutomaton(Automaton& a,
                         const AutomatonString& automatonString, 
-                        const Tstate& initialState,
+                        const Tstate& initialState, const std::string& currentId,
                         MediaId language,
                         const std::vector<LimaString>& activeEntityGroups);
   
   LIMA_AUTOMATONCOMPILER_EXPORT Tstate buildAutomatonNotOptional(Automaton& a,
                                    const AutomatonString& automatonString, 
-                                   const Tstate& initialState,
+                                   const Tstate& initialState, const std::string& currentId,
                                    MediaId language,
                                    const std::vector<LimaString>& activeEntityGroups);
 } // end namespace

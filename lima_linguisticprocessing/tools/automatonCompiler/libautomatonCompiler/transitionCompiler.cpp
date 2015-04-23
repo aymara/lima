@@ -67,11 +67,11 @@ TStatusTransition* createDefaultTStatusTransition(const LimaString& str,
 //
 TransitionUnit*
 createTransition(const AutomatonString& automatonString,
-                 MediaId language,
+                 MediaId language, const std::string& id,
                  const std::vector<LimaString>& activeEntityGroups)
 {
   return createTransition(automatonString.getUnitString(),
-                          language,
+                          language, id,
                           activeEntityGroups,
                           automatonString.isKept(),
                           automatonString.isNegative(),
@@ -79,7 +79,7 @@ createTransition(const AutomatonString& automatonString,
 }
 
 TransitionUnit* createTransition(const LimaString str,
-                                 MediaId language,
+                                 MediaId language, const std::string& id,
                                  const std::vector<LimaString>& activeEntityGroups,
                                  const bool keep,
                                  const bool neg,
@@ -98,7 +98,7 @@ TransitionUnit* createTransition(const LimaString str,
 
   LDEBUG << "creating transition from string [" 
          << Common::Misc::limastring2utf8stdstring(str)
-         << "]";
+         << "] with id" << id;
 
   if (str.size()==0) { return t; }
 
@@ -266,6 +266,7 @@ TransitionUnit* createTransition(const LimaString str,
   t->setKeep(keepIt);
   t->setNegative(negative);
   t->setHead(head);
+  t->setId(id);
   for (std::size_t i(0); i<constraints.size(); i++) {
     t->addConstraint(constraints[i]);
   }

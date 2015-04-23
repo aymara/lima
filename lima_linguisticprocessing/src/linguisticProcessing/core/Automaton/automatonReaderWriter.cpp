@@ -252,6 +252,14 @@ readRule(std::ifstream& file,MediaId language)
     readConstraint(file,c);
     rule->m_actions.push_back(c);
   }
+  uint64_t nbActionsWithOneArgument=Misc::readCodedInt(file);
+  for (uint64_t i(0); i<nbActionsWithOneArgument; i++) {
+    Constraint c;
+    readConstraint(file,c);
+    LimaString id;
+    Misc::readUTF8StringField(file,id);
+    rule->m_actionsWithOneArgument.push_back(std::pair<LimaString,Constraint>(id,c));
+  }
   file.read((char*) &(rule->m_weight),sizeof(double));
   return rule;
 }
@@ -441,12 +449,17 @@ readTransitionUnit(std::ifstream& file,MediaId language)
   // read properties
   if (t!=0) {
     bool keep, neg, head;
+    int len;
     file.read((char*)&keep, sizeof(bool));
     t->setKeep(keep);
     file.read((char*)&neg, sizeof(bool));
     t->setNegative(neg);
     file.read((char*)&head, sizeof(bool));
     t->setHead(head);
+    file.read((char*)&len, sizeof(len));
+    char *buf = new char [len];
+    file.read(buf, len);
+    t->setId(std::string(buf,len));
     uint64_t n=Misc::readCodedInt(file);
     Constraint c;
     for (uint64_t i(0); i<n; i++) {
@@ -576,6 +589,15 @@ writeRule(std::ofstream& file,
   Common::Misc::writeCodedInt(file,nbActions);
   for (uint64_t i(0); i<nbActions; i++) {
     writeConstraint(file,rule.m_actions[i]);
+  }
+
+  // write actions (with one argument) attached to the rule
+  uint64_t nbActionsWithOneArgument=rule.m_actionsWithOneArgument.size();
+  Common::Misc::writeCodedInt(file,nbActionsWithOneArgument);
+  for (std::vector<std::pair<LimaString,Constraint>>::const_iterator it = rule.m_actionsWithOneArgument.begin() ; 
+       it != rule.m_actionsWithOneArgument.end() ; it++ ) {
+    writeConstraint(file,it->second);
+    Misc::writeUTF8StringField(file,it->first);
   }
   file.write((char*) &(rule.m_weight),sizeof(double));
 }
@@ -724,9 +746,16 @@ writeTransitionUnit(std::ofstream& file,
   bool keep=transition->keep();
   bool negative=transition->negative();
   bool head=transition->head();
+  std::string id = transition->getId();
   file.write((char *) &keep, sizeof(bool));
   file.write((char *) &negative, sizeof(bool));
   file.write((char *) &head, sizeof(bool));
+  int len = id.size();
+  LOGINIT("Automaton::Compiler");
+  std::string(id.c_str(),len);
+  LDEBUG << "Transition Writer: write id = " << id;
+  file.write((char *) &len, sizeof(len));
+  file.write((char *) id.c_str(), len);
   uint64_t n=transition->numberOfConstraints();
   Misc::writeCodedInt(file,n);
   for (uint64_t i(0); i<n; i++) {

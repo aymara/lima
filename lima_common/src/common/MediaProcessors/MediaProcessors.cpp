@@ -141,6 +141,13 @@ void MediaProcessors::initPipelines (
         }
     }
 
+    LDEBUG << "MediaProcessors::initPipelines ";
+    for ( deque<string>::const_iterator pipItr=pipelinesToInit.begin();
+            pipItr!=pipelinesToInit.end();
+            pipItr++ )
+    {
+      LDEBUG << "\t" << *pipItr << ", ";
+    }
     // init pipelines for all available medias
     for ( deque<string>::const_iterator pipItr=pipelinesToInit.begin();
             pipItr!=pipelinesToInit.end();

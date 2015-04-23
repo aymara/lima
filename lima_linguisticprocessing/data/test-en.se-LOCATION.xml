@@ -1,0 +1,712 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+  <!--==================== tests LOCATION with components ====================-->
+  <!--testcase id="fre.se.pers.comp.1" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Barack Obama"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">g
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>rule Obama : firstname: Barack lastname: Obama</expl>
+    <test id="fre.se.pers.comp.1.1" trace=".se.xml"
+          comment="type d'entité = Person.PERSONNE"
+          left="XPATH#//entities/entity[pos=1][len=12]/type"
+          operator="="
+          right="Person.PERSON"/>
+  </testcase-->
+
+ <testcase id="en.se.location.comp.1" type="pertinent">
+    <call-parameters>
+      <param key="text" value="West Palm Beach"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.1.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=15]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.1.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="West Palm Beach"/>
+  </testcase>
+
+ <!--testcase id="en.se.location.comp.2" type="pertinent">
+    <call-parameters>
+      <param key="text" value="12400 SW 157nd Avenue"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.2.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=21]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.2.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/adress-number"
+          operator="="
+          right="12400"/>
+    <test id="en.se.location.comp.2.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/qualifier"
+          operator="="
+          right="SW"/>
+    <test id="en.se.location.comp.2.3" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="157nd"/>
+    <test id="en.se.location.comp.2.4" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Avenue"/>
+  </testcase-->
+ <testcase id="en.se.location.comp.3" type="pertinent">
+    <call-parameters>
+      <param key="text" value="FL 33301"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.3.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=8]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.3.2" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity/components/zip-code"
+          operator="="
+          right="33301"/>
+ </testcase>
+ <testcase id="en.se.location.comp.4" type="pertinent">
+    <call-parameters>
+      <param key="text" value="PO Box 111"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.4.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=10]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.4.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/po-box"
+          operator="="
+          right="PO Box 111"/>
+ </testcase>
+ <testcase id="en.se.location.comp.5" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Jeremy said there's an access road just past mile marker 6."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.5.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=46][len=13]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.5.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="mile marker"/>
+    <!--test id="en.se.location.comp.5.3" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="6"/-->
+ </testcase>
+ <testcase id="en.se.location.comp.6" type="pertinent">
+    <call-parameters>
+      <param key="text" value="P.O. Box 111"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.6.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=12]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.5.2" trace=".se.xml"
+          comment="composant - rmq : P.O. => po (comportemenent normal ?)"
+          left="XPATH#//entities/entity/components/po-box"
+          operator="="
+          right="po Box 111"/>
+ </testcase>
+ <testcase id="en.se.location.comp.7" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Interstate 40"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.7.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=13]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.7.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Interstate"/>
+    <test id="en.se.location.comp.7.3" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="40"/>
+ </testcase>
+ <testcase id="en.se.location.comp.8" type="pertinent">
+    <call-parameters>
+      <param key="text" value="I-40"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.8.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=4]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.8.2" trace=".se.xml"
+          comment="composant - le resultat pourrait etre normalisé... (todo)"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="I - 40"/>
+ </testcase>
+ <testcase id="en.se.location.comp.9" type="pertinent">
+    <call-parameters>
+      <param key="text" value="I  love Geology College, Lenin Hill..."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.9.1" trace=".se.xml"
+          comment="type d'entité = location.LOCATION"
+          left="XPATH#//entities/entity[pos=26][len=10]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.9.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Lenin"/>
+ </testcase>
+ <testcase id="en.se.location.comp.10" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Ayres Avenue, off ...."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.10.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION - ne s interesse qu a Ayres Avenue"
+          left="XPATH#//entities/entity[pos=1][len=12]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.10.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Ayres"/>
+    <test id="en.se.location.comp.10.3" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Avenue"/>
+ </testcase>
+ <testcase id="en.se.location.comp.11" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The mystery leads to Hawkstone Park."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.11.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=22][len=14]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.11.1" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Hawkstone"/>
+    <test id="en.se.location.comp.11.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Park"/>
+ </testcase>
+ <testcase id="en.se.location.comp.12" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The bedrooms overlook Holy Trinity Church."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.12.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=23][len=19]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.12.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Holy Trinity"/>
+    <test id="en.se.location.comp.12.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Church"/>
+</testcase> 
+<testcase id="en.se.location.comp.13" type="pertinent">
+    <call-parameters>
+      <param key="text" value="For years we lived on Beekman Place."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.13.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=23][len=13]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.13.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Beekman"/>
+    <test id="en.se.location.comp.13.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Place"/>
+ </testcase>
+<testcase id="en.se.location.comp.14" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The bedrooms overlook Sloane Square."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.14.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=23][len=13]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.14.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Sloane"/>
+    <test id="en.se.location.comp.14.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="Square"/>
+ </testcase>
+<testcase id="en.se.location.comp.15" type="pertinent">
+    <call-parameters>
+      <param key="text" value="above the city of Peterborough"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.15.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=11][len=20]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.15.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Peterborough"/>
+    <test id="en.se.location.comp.15.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="city"/>
+ </testcase>
+<!--testcase id="en.se.location.comp.16" type="pertinent">
+    <call-parameters>
+      <param key="text" value="above the cities of Peterborough and Paris"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.16.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=11][len=32]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.16.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name_1"
+          operator="="
+          right="Peterborough"/>
+  <test id="en.se.location.comp.16.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name_2"
+          operator="="
+          right="Paris"/>
+    <test id="en.se.location.comp.16.4" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="cities"/>
+ </testcase-->
+<testcase id="en.se.location.comp.17" type="pertinent">
+    <call-parameters>
+      <param key="text" value="above the cities of Peterborough Xfictif and Parisss"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <!--test id="en.se.location.comp.17.1" trace=".se.xml"
+          comment="type d'endite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=11][len=40]/type"
+          operator="="
+          right="Location.LOCATION"/-->
+    <!--test id="en.se.location.comp.17.2" trace=".se.xml"
+          comment="todo : bug"
+          left="XPATH#//entities/entity/components/name_1"
+          operator="="
+          right="PeterborougXfictif"/-->
+   <!--test id="en.se.location.comp.17.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name_2"
+          operator="="
+          right="Paris"/-->
+    <!--test id="en.se.location.comp.17.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="cities"/-->
+ </testcase>
+<testcase id="en.se.location.comp.18" type="pertinent">
+    <call-parameters>
+      <param key="text" value="in New York "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.18.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=4][len=8]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.18.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="New York"/>
+</testcase>
+<testcase id="en.se.location.comp.19" type="pertinent">
+    <call-parameters>
+      <param key="text" value="near Pariss in Francee"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.19.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=6][len=6]/type"
+          operator="="
+          right="Location.LOCATION"/>
+   <test id="en.se.location.comp.19.2" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=16][len=7]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <!--test id="en.se.location.comp.19.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Pariss,Francee"/-->
+
+</testcase>
+<testcase id="en.se.location.comp.20" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Arkansas state "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.20.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=14]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.20.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="state"/>
+ <test id="en.se.location.comp.20.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Arkansas"/>
+</testcase>
+<testcase id="en.se.location.comp.21" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Official site of the State of Colorado. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.21.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=22][len=17]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.21.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="State"/>
+ <test id="en.se.location.comp.21.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Colorado"/>
+</testcase>
+<testcase id="en.se.location.comp.22" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Exeter city"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.22.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=11]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.22.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Exeter"/>
+ <test id="en.se.location.comp.22.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="city"/>
+</testcase>
+<testcase id="en.se.location.comp.22" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Los Angeles city"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.22.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=1][len=16]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.22.2" trace=".se.xml"
+          comment="nom de ville compose"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Los Angeles"/>
+ <test id="en.se.location.comp.22.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="city"/>
+</testcase>
+<testcase id="en.se.location.comp.23" type="pertinent">
+    <call-parameters>
+      <param key="text" value="from Mercury"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.23.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=6][len=7]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.23.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Mercury"/>
+</testcase>
+<testcase id="en.se.location.comp.24" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The most notable sportsmen to come from York in ...."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.24.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=41][len=4]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.24.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="York"/>
+</testcase>
+<testcase id="en.se.location.comp.25" type="pertinent">
+    <call-parameters>
+      <param key="text" value="I never really drank tea, but I've been in Londonia three months now and I can't live without it."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.25.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=44][len=8]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.25.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Londonia"/>
+</testcase>
+<testcase id="en.se.location.comp.26" type="pertinent">
+    <call-parameters>
+      <param key="text" value="I live near New York."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.26.1" trace=".se.xml"
+          comment="type d'entite = location.LOCATION"
+          left="XPATH#//entities/entity[pos=8][len=13]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.26.2" trace=".se.xml"
+          comment="entité avec deux éléments dans ressource"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="New York"/>
+</testcase>
+
+  <!--testcase id="eng.se.loc.27" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The Herald, 1 Herald Plaza, Miami, FL 33132."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.loc.27.1" trace=".se.xml"
+          comment="1"
+          left="XPATH#//entities/entity/components/adress-number"
+          operator="="
+          right="1"/>
+    <test id="eng.se.loc.27.2" trace=".se.xml"
+          comment="Herald Plaza"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Herald Plaza"/>
+    <test id="eng.se.loc.27.3" trace=".se.xml"
+          comment="Miami"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="miami"/>
+    <test id="eng.se.loc.27.4" trace=".se.xml"
+          comment=" 33132"
+          left="XPATH#//entities/entity/components/zip-code"
+          operator="="
+          right=" 33132"/>
+    <test id="eng.se.loc.27.5" trace=".se.xml"
+          comment="FL"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="FL"/>
+</testcase-->
+<!--testcase id="eng.se.loc.28" type="pertinent">
+    <call-parameters>
+      <param key="text" value="This Decision is addressed to NattoParma, Dammensveien 40, PO Box 2896 Solli, N-0230 Oslo, Norway."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+     <test id="eng.se.loc.28.1" trace=".se.xml"
+          comment="PO Box"
+          left="XPATH#//entities/entity/components/po-box"
+          operator="="
+          right="PO Box"/>
+  </testcase-->
+</testcases>

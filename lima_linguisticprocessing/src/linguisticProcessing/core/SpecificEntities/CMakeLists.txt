@@ -61,6 +61,7 @@ install(TARGETS lima-lp-se-number DESTINATION lib)
 
 SET(lima-lp-se-person_LIB_SRCS
   NormalizePersonName.cpp
+  NormalizePerson.cpp
 )
 DECLARE_LIMA_PLUGIN(lima-lp-se-person)
 target_link_libraries(lima-lp-se-person    ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES} lima-lp-misc lima-lp-linguisticprocessing-core lima-lp-linguisticresources lima-lp-flattokenizer lima-lp-propertycode lima-lp-applyrecognizer lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-linguisticdata lima-lp-bagofwords lima-lp-postagger )
@@ -78,5 +79,6 @@ install(FILES
   SpecificEntitiesConstraints.h 
   SpecificEntitiesRecognizer.h 
   NormalizePersonName.h 
+  NormalizePerson.h 
   SpecificEntitiesLoader.h 
   DESTINATION include/linguisticProcessing/core/SpecificEntities)

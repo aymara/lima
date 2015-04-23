@@ -15,9 +15,9 @@ représentation,réunion,salon,séminaire,symposium,opération)
 
 #guerres
 guerre::du Golfe:EVENT:
-guerre:première:mondiale:EVENT:
+guerre$NC:première$ADJ:mondiale$ADJ:EVENT:
 Guerre:Première:Mondiale:EVENT:première guerre mondiale
-guerre:(seconde|deuxième):mondiale:EVENT:seconde guerre mondiale
+guerre$NC:(seconde$ADJ|deuxième$ADJ):mondiale$ADJ:EVENT:seconde guerre mondiale
 Guerre:(Seconde|Deuxième):Mondiale:EVENT:seconde guerre mondiale
 Guerre:(Seconde|Deuxième):mondiale:EVENT:seconde guerre mondiale
 

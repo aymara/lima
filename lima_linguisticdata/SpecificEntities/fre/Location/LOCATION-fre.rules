@@ -48,8 +48,6 @@ Penmarc'::h:LOCATION:Penmarc'h
 Charente::Maritime:LOCATION:Charente Maritime
 Loire::Atlantique:LOCATION:Loire-atlantique
 Plaine:La:St Denis:LOCATION:
-Charm::el-Cheikh:LOCATION:
-Charm::el Cheikh:LOCATION:Charm el-Cheikh
 
 Rhénanie-Westphalie:::LOCATION:
 Rhénanie::Westphalie:LOCATION:
@@ -63,7 +61,7 @@ PORTO::TORRES:LOCATION:PORTO TORRES
 
 @PrecisionGeographique:(NUMBER (km|kms|kilometre|kilometres|kilomètre|kilomètres) (au)?)?:(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@RegionsAndCountries|@Cities|$NP|t_capital_1st):LOCATION:
 
-@AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? ($NP|t_capital_1st|t_capital_small):LOCATION: 
+@AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? ($NP|t_capital_1st):LOCATION: 
 
 @Cities:::LOCATION:
 
