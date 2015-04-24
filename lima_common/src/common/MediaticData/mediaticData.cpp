@@ -602,30 +602,51 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
 {
   MDATALOGINIT;
   LINFO << "MediaticData::initEntityTypes";
-
   // look at all groups : ModuleConfigurationStructure is a map
   try {
     ModuleConfigurationStructure& moduleConf=configParser.getModuleConfiguration("entities");
-
+    
     for (ModuleConfigurationStructure::iterator it=moduleConf.begin(),
            it_end=moduleConf.end(); it!=it_end; it++) {
       LDEBUG << "initEntityTypes: looking at group " << (*it).first.c_str();
-      
+     
       LimaString groupName=Common::Misc::utf8stdstring2limastring((*it).first);
-      EntityGroupId groupId=addEntityGroup(groupName);
-      LDEBUG << "initEntityTypes: id is " << groupId;
-      
-      GroupConfigurationStructure& groupConf=(*it).second;
-      
-      deque<string>& entityList=groupConf.getListsValueAtKey("entityList");
-      for (deque<string>::const_iterator ent=entityList.begin(),
-             ent_end=entityList.end(); ent!=ent_end; ent++) {
-        
-        LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
-        LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group "
-               << groupName;
-        EntityType type=addEntity(groupId,entityName);
-        LDEBUG << "initEntityTypes: type is " << type;
+
+      if (groupName=="include") {
+	deque<string> includeList=moduleConf.getListValuesAtKeyOfGroupNamed("includeList","include");
+	string::size_type i;
+	string fileName("");
+	string moduleName("");
+	for (int k=0; k<includeList.size(); k++) {
+	  i=includeList[k].find("/");
+	  if (i==string::npos) {
+	    LERROR << "Cannot include resources " << includeList[k] 
+	    	   << ": must specify file and module name" << LENDL;
+	  continue;
+	  }
+	  fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
+          "/"+string(includeList[k],0,i);
+	 
+	  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig2(fileName);
+	  Common::MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
+	}
+	
+      } else {  
+	EntityGroupId groupId=addEntityGroup(groupName);
+	LDEBUG << "initEntityTypes: id is " << groupId;
+	
+	GroupConfigurationStructure& groupConf=(*it).second;
+	
+	deque<string>& entityList=groupConf.getListsValueAtKey("entityList");
+	for (deque<string>::const_iterator ent=entityList.begin(),
+	       ent_end=entityList.end(); ent!=ent_end; ent++) {
+	  
+	  LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
+	  LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group "
+		 << groupName;
+	  EntityType type=addEntity(groupId,entityName);
+	  LDEBUG << "initEntityTypes: type is " << type;
+	}
       }
     }
   }

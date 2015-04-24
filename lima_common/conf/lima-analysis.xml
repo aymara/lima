@@ -46,6 +46,19 @@
         <entry key="eng" value="normalization"/>
         <entry key="fre" value="normalization"/>
       </map>
+      
+      <!-- The learn pipeline is used to generate a model by training the CRF -->
+      <map name="learn">
+        <entry key="eng" value="learn"/>
+        <entry key="fre" value="learn"/>
+      </map>
+
+      <!-- The tag pipeline is used to label data with a given CRF model -->    
+      <map name="tag">
+        <entry key="eng" value="tag"/>
+        <entry key="fre" value="tag"/>
+      </map>
+
       <!-- The easy pipeline is used in order to produce a result in the Easy campaign format. -->
       <map name="easy">
         <entry key="eng" value="easy"/>
