@@ -97,27 +97,11 @@ set(CMAKE_PREFIX_PATH
     "$ENV{LIMA_EXTERNALS}"
 )
 
-FIND_PACKAGE(SVMTOOL++) 
-IF(SVMTOOL++_FOUND)
-  SET(optionalLibs ${optionalLibs} ${SVMTOOL++_NAMES})
-        include_directories($ENV{LIMA_EXTERNALS}/include)
-        link_directories($ENV{LIMA_EXTERNALS}/lib)
-ENDIF(SVMTOOL++_FOUND)
-
-find_package (Enchant) 
-if (ENCHANT_FOUND)
-  set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
-  include_directories(${ENCHANT_INCLUDE_DIRS})
-else (ENCHANT_FOUND)
-  message("Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
-endif (ENCHANT_FOUND)
-
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml XmlPatterns Network DBus Test)
-
 include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
-MESSAGE(STATUS "Qt4_INCLUDE_DIR=${Qt4_INCLUDE_DIR}")
+message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
 message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
 endif()
@@ -130,6 +114,24 @@ set( BOOST_LIB_DIAGNOSTIC )
 FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
+
+find_package(SVMTOOL++) 
+if(SVMTOOL++_FOUND)
+  set(optionalLibs ${optionalLibs} ${SVMTOOL++_NAMES})
+  include_directories(${SVMTOOL++CPP_INCLUDE_DIR})
+  link_directories(${SVMTOOL++CPP_LIBRARY_DIRS})
+  message(STATUS "Found SVMTool++ ${SVMTOOL++CPP_INCLUDE_DIR}.")
+else ()
+  message(STATUS "Could not find SVMTool++. SVM-base PoS tagger will not be available.")
+endif()
+
+find_package (Enchant) 
+if (ENCHANT_FOUND)
+  set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
+  include_directories(${ENCHANT_INCLUDE_DIRS})
+else (ENCHANT_FOUND)
+  message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
+endif (ENCHANT_FOUND)
 
 # QHttpServer is necessary for limaserver HTTP server
 find_package(QHttpServer QUIET)
