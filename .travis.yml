@@ -18,6 +18,10 @@ install:
   = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
 - python -m nltk.downloader -d nltk_data dependency_treebank
 - cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+- wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/14.1/qhttpserver-0.0.1-Linux.deb
+- sudo dpkg -i qhttpserver-0.0.1-Linux.deb
+- wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/5.1/svmtool%2B%2B-1.1.7-Linux.deb
+- sudo dpkg -i svmtool++-1.1.7-Linux.deb
 script: mkdir dist && mkdir build && cd build && cmake -DLIMA_RESOURCES:STRING=build
   -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$release"
   .. && make -j4
@@ -35,3 +39,5 @@ after_success:
   -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.0.$release-Linux.deb
 - curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/publish
 - curl -XGET https://bintray.com/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER
+
+
