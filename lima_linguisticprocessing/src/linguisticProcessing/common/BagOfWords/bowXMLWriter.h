@@ -84,6 +84,7 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
   
   
   void setLanguage(const Lima::MediaId lang);
+  void setLanguage(const std::string& lang);
 private:
   BoWXMLWriter(const BoWXMLWriter&);
   BoWXMLWriter& operator=(const BoWXMLWriter&);

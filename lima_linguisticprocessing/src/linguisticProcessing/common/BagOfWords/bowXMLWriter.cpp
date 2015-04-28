@@ -97,6 +97,7 @@ friend class BoWXMLWriter;
   void decIndent() { m_spaces.erase(m_spaces.size()-2); }
 
   void setLanguage(const Lima::MediaId lang);
+  void setLanguage(const std::string& lang);
 };
 
 void BoWXMLWriter::reinitRefMap() {m_d->reinitRefMap();}
@@ -574,6 +575,16 @@ void BoWXMLWriter::setLanguage(const Lima::MediaId lang)
 void BoWXMLWriterPrivate::setLanguage(const Lima::MediaId lang)
 {
   m_language = lang;
+}
+
+void BoWXMLWriter::setLanguage(const std::string& lang)
+{
+  m_d->setLanguage(lang);
+}
+
+void BoWXMLWriterPrivate::setLanguage(const std::string& lang)
+{
+  m_language = Common::MediaticData::MediaticData::single().getMediaId (lang);
 }
 
 void BoWXMLWriter::writeIndexElement(const IndexElement& element)
