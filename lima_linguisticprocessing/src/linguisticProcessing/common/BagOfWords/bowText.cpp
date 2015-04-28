@@ -30,6 +30,8 @@
 #include "bowNamedEntity.h"
 #include "common/Data/strwstrtools.h"
 
+#include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
+
 using namespace std;
 
 namespace Lima {
@@ -72,6 +74,12 @@ BoWText::~BoWText()
 {
   clear();
 }
+void BoWText::writeBoWText(ostream& stream)
+{
+  BoWBinaryWriter writer;
+  writer.writeBoWText(stream, *this);
+}
+
 
 void BoWText::clear() {
   for (BoWText::iterator i(begin()); 
