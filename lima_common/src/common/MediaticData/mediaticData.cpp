@@ -49,6 +49,8 @@
 #include <deque>
 
 #include <QSet>
+#include <QRegExp>
+#include <QString>
 
 using namespace std;
 
@@ -245,9 +247,19 @@ void MediaticData::init(
 //  TimeUtils::logElapsedTime("MediaticDataInit");
 }
 
+bool MediaticData::isValidMedia(const std::string& media){
+  QRegExp rx("(\\b\\w{3})\\b");
+  QString q_media(media.c_str());
+  return rx.exactMatch(q_media );
+}
+
 void MediaticData::initMedia(const std::string& media)
 {
-
+  if(!isValidMedia(media)){
+    MDATALOGINIT;
+    LERROR << "MediaId for string '" << media << "' will not be initialized ! ";
+    throw MediaNotInitialized(media);
+  }
 //  TimeUtils::updateCurrentTime();
   MDATALOGINIT;
   LINFO << "MediaticData::initMedia" << media;
