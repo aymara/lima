@@ -17,14 +17,14 @@
    <corpusFile pathSuffix="disambiguisationMatrices/fre/corpus/corpus_fr_merge.lvic.svmt.txt" />
   </ngrams>
   <syntacticRules>
-   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-l2r-fre-homodeps.txt" />
-   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-r2l-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-homodeps-pass1.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-homodeps-pass2.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-heterodeps.txt" />
-   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-r2l-pass1-fre-homodeps.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-homodeps-pass0.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/simplification-first-rules-fre.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/simplification-rules-fre.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/simplification-last-rules-fre.txt" />
-   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-l2r-fre-pleonasticPronouns.txt" />
+   <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-pleonasticPronouns.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/categoriesClassesDeclaration-fre.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/rules-fre-heterodeps-specializer.txt" />
    <resourceFile pathSuffix="syntacticAnalysis/fre/rules-l2r-fre-dummy.txt" />
