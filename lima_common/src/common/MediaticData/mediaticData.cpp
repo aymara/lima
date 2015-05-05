@@ -710,16 +710,27 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     throw;
   }
 }
- 
+
+#if defined __GNUC__
+#include <execinfo.h>
+#endif
+
 EntityGroupId MediaticData::getEntityGroupId(const LimaString& groupName) const
 {
   try {
     return m_d->m_entityGroups.get(groupName);
   }
-  catch(LimaException& ) {
+  catch(LimaException& e) {
     MDATALOGINIT;
-    LERROR << "Unknown entity group "
-           << groupName;
+    LERROR << "Unknown entity group " << groupName << e.what();
+#if defined __GNUC__
+    size_t size;
+    void *array[10];
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 10);
+    // print out all the frames to stderr
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+#endif
     throw;
   }
 }
