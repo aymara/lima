@@ -34,11 +34,11 @@ c_other < c_all : Unrecognized sign ;
 m_pattern < c_hyphen : Pattern start markup ;
 m_end_pattern < c_all : Pattern end markup ;
 m_line < c_all : Line empty markup ;
-m_parag : Paragraph empty markup ;
+m_eof : Paragraph empty markup ;
 unknwn : All characters not in the following table
 }
 chars {
-0000, NULL, m_parag ;
+0000, NULL, m_eof ;
 0009, CHARACTER TABULATION, c_b ;
 000A, LINE FEED (LF), c_par ;
 000D, CARRIAGE RETURN (CR), c_par ;
