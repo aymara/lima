@@ -180,7 +180,7 @@ void WordSenseDisambiguator::init(
       deque<string> tmpDeque = unitConfiguration.getListsValueAtKey("NounContextList");
       for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++) 
       {
-        m_contextList["L_N"].insert(tmpDeque.begin(), tmpDeque.end());
+        m_contextList["N"].insert(tmpDeque.begin(), tmpDeque.end());
       }
       tmpDeque.clear();
     }
@@ -631,19 +631,19 @@ int WordSenseDisambiguator::addPostviewWindowContext(const set<uint64_t>& lemmas
       }
       if (cntPostContext < 5) 
       {    
-  if (contextList("L_N").find("window5") != contextList("L_N").end())
+  if (contextList("N").find("window5") != contextList("N").end())
   {
     itStoredContext->context["window5"].insert(lemmasIds.begin(), lemmasIds.end());    
   }
   if (cntPostContext < 10) 
   {
-    if (contextList("L_N").find("window10") != contextList("L_N").end())
+    if (contextList("N").find("window10") != contextList("N").end())
     {
       itStoredContext->context["window10"].insert(lemmasIds.begin(), lemmasIds.end());     
     }
     if (cntPostContext < 20) 
     {
-      if (contextList("L_N").find("window20") != contextList("L_N").end())
+      if (contextList("N").find("window20") != contextList("N").end())
       {
         itStoredContext->context["window20"].insert(lemmasIds.begin(), lemmasIds.end());    
       }
@@ -672,19 +672,19 @@ int WordSenseDisambiguator::addPreviewWindowContext(vector<set<uint64_t> >& prev
     }
     if (cnt < 5)
     {
-      if (contextList("L_N").find("window5") != contextList("L_N").end())
+      if (contextList("N").find("window5") != contextList("N").end())
       {
   context["window5"].insert(itWindow->begin(), itWindow->end());    
       }
       if (cnt < 10)
       {
-  if (contextList("L_N").find("window10") != contextList("L_N").end())
+  if (contextList("N").find("window10") != contextList("N").end())
   {
     context["window10"].insert(itWindow->begin(), itWindow->end());    
   }
   if (cnt < 20)
   {
-    if (contextList("L_N").find("window20") != contextList("L_N").end())
+    if (contextList("N").find("window20") != contextList("N").end())
     {
       context["window20"].insert(itWindow->begin(), itWindow->end());    
     }
@@ -718,7 +718,7 @@ int WordSenseDisambiguator::getContext(SyntacticData* syntacticData,
     for (set<string>::iterator itLemmas = targetLemmas.begin(); itLemmas != targetLemmas.end(); itLemmas++)
     {
       string relation = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(map[*it_out]);
-      if (contextList("L_N").find(relation) != contextList("L_N").end())
+      if (contextList("N").find(relation) != contextList("N").end())
       {
   context[relation].insert(lemma2Index(*itLemmas));
       }
@@ -737,7 +737,7 @@ int WordSenseDisambiguator::getContext(SyntacticData* syntacticData,
     for (set<string>::iterator itLemmas = sourceLemmas.begin(); itLemmas != sourceLemmas.end(); itLemmas++)
     {
       string relation = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(map[*it_in])+".reverse";
-      if (contextList("L_N").find(relation) != contextList("L_N").end())
+      if (contextList("N").find(relation) != contextList("N").end())
       {
   context[relation].insert(lemma2Index(*itLemmas));
       }
