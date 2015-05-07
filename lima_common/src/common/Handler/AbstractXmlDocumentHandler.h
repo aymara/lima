@@ -53,16 +53,21 @@ public:
             AbstractXmlAnalysisHandler(shiftFrom),
             AbstractProcessingClientHandler(),
 //             AbstractTextualAnalysisHandler(),
-            ContentHandler<Common::Misc::GenericDocumentProperties>()
+            ContentHandler<Common::Misc::GenericDocumentProperties>(),
+            ContentHandler< std::vector<float> >(),
+            m_openedNodes(),
+            m_parentlastOpenedNode(0),
+            m_lastNode(0),
+            m_metadata()
     {}
 
     virtual ~AbstractXmlDocumentHandler() {};
 
-    int get_parentlastOpenedNode() const {
+    NODE_ID get_parentlastOpenedNode() const {
         return m_parentlastOpenedNode;
     };
 
-    void set_parentlastOpenedNode ( int nodeId ) {
+    void set_parentlastOpenedNode ( NODE_ID nodeId ) {
         m_parentlastOpenedNode = nodeId;
     };
 
@@ -71,7 +76,7 @@ public:
         m_lastNode=NID;
     };
 
-    uint64_t get_lastNodeId() const
+    NODE_ID get_lastNodeId() const
     {
         return m_lastNode;
     };
@@ -101,10 +106,10 @@ public:
 
     virtual void startAnalysis(std::string bloc_type){(void)bloc_type;};
 
-    std::vector<uint64_t> m_openedNodes;
-    std::vector<uint64_t>::iterator m_lastOpenedNode;
-    uint64_t m_parentlastOpenedNode;
-    uint64_t m_lastNode;
+    std::vector<NODE_ID> m_openedNodes;
+    std::vector<NODE_ID>::iterator m_lastOpenedNode;
+    NODE_ID m_parentlastOpenedNode;
+    NODE_ID m_lastNode;
     std::map<std::string,std::string> m_metadata;
 };
 
