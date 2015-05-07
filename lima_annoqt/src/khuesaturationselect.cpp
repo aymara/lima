@@ -30,6 +30,7 @@ KdeCleanUpFunction func;
 
 inline ~KCleanUpGlobalStatic() { func(); }
 };
+
 /*
   # define K_GLOBAL_STATIC_STRUCT_NAME(NAME)
 
