@@ -65,7 +65,6 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
   }
   LimaString contentText = Common::Misc::utf8stdstring2limastring(text);
   const std::string& language = testCase.getParam("language");
-
   // For each pipeline process test
   MultiValCallParams::const_iterator pos = testCase.multiValCallParams.find("pipelines");
   if( pos != testCase.multiValCallParams.end() ) {
@@ -84,7 +83,8 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
       m_lpclient->analyze(contentText,metaData, *pipItr, m_handlers);
       BowTextHandler* bowHandler = static_cast<BowTextHandler*>(m_handlers["bowTextHandler"]);
       // dump results
-      Common::BagOfWords::BoWText text=bowHandler->getBowText();
+      Common::BagOfWords::BoWText& text=bowHandler->getBowText();
+      text.lang = language;
       string outputfile=filenameWithPipeLine+".indexed.xml";
       ofstream fout(outputfile.c_str(), std::ofstream::binary);
       fout << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
