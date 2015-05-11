@@ -119,7 +119,7 @@ struct modifiersymbol_ : qi::symbols<char, unsigned>
   }
 
 };
-boost::shared_ptr<modifiersymbol_> modifiersymbol(new modifiersymbol_);
+// boost::shared_ptr<modifiersymbol_> modifiersymbol(new modifiersymbol_);
 
 typedef BOOST_TYPEOF(skipper) skipper_type_;
 
@@ -127,7 +127,7 @@ typedef BOOST_TYPEOF(skipper) skipper_type_;
 template <typename Iterator>
 struct charchart_parser : qi::grammar<Iterator, charchart(), skipper_type_>
 {
-
+modifiersymbol_ mymodifiersymbol;
   charchart_parser() : charchart_parser::base_type(start, "start")
   {
     using qi::eps;
@@ -149,7 +149,7 @@ struct charchart_parser : qi::grammar<Iterator, charchart(), skipper_type_>
     classdef %= identifier >> -('<' >> identifier) >> ':' >> lexeme[+(char_ - (';'|eol))];
     // 0000, NULL, m_parag
     chardef %= hex >> ',' >> lexeme[+(char_ - ',')] >> ',' >> identifier >> -(',' >> modifier % ',');
-    modifier %= *modifiersymbol >> hex;
+    modifier %= mymodifiersymbol >> hex;
   }
 
   qi::rule<Iterator, charchart(), skipper_type_> start;
