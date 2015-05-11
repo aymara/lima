@@ -280,6 +280,12 @@ const std::string& MediaticData::getMediaId(MediaId idNum) const
 /** @return the numerical value of the given string media id (3 chars code) */
 MediaId MediaticData::getMediaId(const std::string& stringId) const
 {
+  if (stringId.empty())
+  {
+    MDATALOGINIT;
+    LERROR << "MediaticData::getMediaId invalid empty argument stringId at" << __FILE__ << ", line" << __LINE__;
+    throw std::runtime_error( std::string("MediaticData::getMediaId invalid empty argument stringId at ").c_str() );
+  }
   std::map< std::string, MediaId >::const_iterator it = m_d->m_mediasIds.find(stringId);
   if (it == m_d->m_mediasIds.end())
   {
@@ -711,10 +717,6 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
   }
 }
 
-#if defined __GNUC__
-#include <execinfo.h>
-#endif
-
 EntityGroupId MediaticData::getEntityGroupId(const LimaString& groupName) const
 {
   try {
@@ -723,14 +725,6 @@ EntityGroupId MediaticData::getEntityGroupId(const LimaString& groupName) const
   catch(LimaException& e) {
     MDATALOGINIT;
     LERROR << "Unknown entity group " << groupName << e.what();
-#if defined __GNUC__
-    size_t size;
-    void *array[10];
-    // get void*'s for all entries on the stack
-    size = backtrace(array, 10);
-    // print out all the frames to stderr
-    backtrace_symbols_fd(array, size, STDERR_FILENO);
-#endif
     throw;
   }
 }
