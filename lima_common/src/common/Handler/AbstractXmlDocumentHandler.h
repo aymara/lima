@@ -81,9 +81,12 @@ public:
         return m_lastNode;
     };
 
-    std::string get_lastUri()
+    std::string get_lastUri() const
     {
-        return m_metadata["LastUri"];
+      if (m_metadata.find("LastUri")!=m_metadata.end())
+        return m_metadata.find("LastUri")->second;
+      else
+        return "";
     };
 
     void set_lastUri(std::string uri)
@@ -104,7 +107,7 @@ public:
         return ""; //should not suppose a default language. Weird bugs otherwise.
     };
 
-    virtual void startAnalysis(std::string bloc_type){(void)bloc_type;};
+    virtual void startAnalysis(const std::string& bloc_type) {LIMA_UNUSED(bloc_type)}
 
     std::vector<NODE_ID> m_openedNodes;
     std::vector<NODE_ID>::iterator m_lastOpenedNode;
