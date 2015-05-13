@@ -34,7 +34,7 @@
 #include <map>
 #include <algorithm>
 
-using namespace boost;
+//using namespace boost;
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::MediaticData;

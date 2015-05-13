@@ -40,7 +40,7 @@
 #include <ctime>
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -111,7 +111,7 @@ LimaStatusCode FullTokenXmlLogger::process(
 //**********************************************************************
 // define a visitor to go through the graph and output the fulltokens
 
-class DumpXMLVisitor : public default_bfs_visitor
+class DumpXMLVisitor : public boost::default_bfs_visitor
 {
   std::ostream& m_ostream;
   std::map<LinguisticGraphVertex,uint64_t> m_depthSource;

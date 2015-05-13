@@ -42,7 +42,7 @@
 #include <queue>
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace boost::tuples;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::MediaticData;

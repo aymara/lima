@@ -33,7 +33,7 @@
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include <common/Data/readwritetools.h>
 #include "common/Data/strwstrtools.h"
-using namespace boost;
+//using namespace boost;
 using namespace std;
 using namespace Lima;
 using namespace Lima::Common::Misc;

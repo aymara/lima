@@ -54,7 +54,7 @@
 using namespace Lima;
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace boost::tuples;
 
 
@@ -66,7 +66,7 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::MorphologicAnalysis;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 
-typedef color_traits<default_color_type> Color;
+typedef boost::color_traits<boost::default_color_type> Color;
 
 namespace Lima {
 namespace LinguisticProcessing {

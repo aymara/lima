@@ -37,10 +37,10 @@
 #include <fstream>
 #include <queue>
 
-using namespace boost;
+//using namespace boost;
 using namespace boost::tuples;
 
-typedef color_traits<default_color_type> Color;
+typedef boost::color_traits<boost::default_color_type> Color;
 
 using namespace Lima::Common;
 using namespace Lima::Common::BagOfWords;

@@ -46,7 +46,7 @@
 #include <boost/regex.hpp>
 #include "common/misc/graphviznowarn.hpp"
 
-using namespace boost;
+//using namespace boost;
 using namespace std;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::XMLConfigurationFiles;

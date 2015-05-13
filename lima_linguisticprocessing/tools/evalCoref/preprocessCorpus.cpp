@@ -34,12 +34,15 @@
 #include <iostream>
 #include <fstream>
 #include <deque>
+#ifndef WIN32
+#include <cstdint> //uint32_t
+#endif
 #include <boost/regex.hpp>
 
 #include <QtCore/QCoreApplication>
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace Lima;
 
 typedef map<string,string> CorefsMap;
@@ -50,22 +53,22 @@ static const string USAGE("usage: preprocessCorpus --xml=corpusFormat (wh|cl) in
 "cl: 'Clouzot' format (from reference data by Catherine Clouzot from her DEA (Cf. doc_clouzot.rtf for more details))\n"
 ); 
 
-static const regex eWhStart("<TEXT>");
-static const regex eWhBeginTag("<COREFID=\"([[:alnum:]]+)\"([^>]*REF=\"([[:alnum:]]+)\")?([^>]*CATEG=\"([[:alnum:]]+)\")?>");
-static const regex eWhEndTag("</COREF>");
+static const boost::regex eWhStart("<TEXT>");
+static const boost::regex eWhBeginTag("<COREFID=\"([[:alnum:]]+)\"([^>]*REF=\"([[:alnum:]]+)\")?([^>]*CATEG=\"([[:alnum:]]+)\")?>");
+static const boost::regex eWhEndTag("</COREF>");
 /*
 static const string eBeginString("[.[.<COREF ID=\".]([[:alnum:]]+)[.\"([^>]*REF=\".]([[:alnum:]]+)[.\")?>.].]");
 static const string eEndString("[.</COREF>.]");
 static const regex eTag("["+eBeginString+"[^"+eEndString+"]*]*"+ eBeginString + "[^"+eEndString+"]*"+eEndString+eEndString+"*");*/
 
-static const regex eClStart("<PID=\"[[:digit:]]+\">");
-static const regex eClStop("</P>");
-static const regex eClBeginTag("<RSID=\"([[:digit:]]+[.][[:digit:]]+)\"[^>]*>");
+static const boost::regex eClStart("<PID=\"[[:digit:]]+\">");
+static const boost::regex eClStop("</P>");
+static const boost::regex eClBeginTag("<RSID=\"([[:digit:]]+[.][[:digit:]]+)\"[^>]*>");
 // <LINKARGS='"1.1""1.2"'TYPE="COREF"TYPANA="AG"/>
-static const regex eClEndTag("</RS>");
-static const regex eClLinkBeginTag("<LINKARGS=\'(\"[?]*[[:digit:]]+[.][[:digit:]]+\")+\'TYPE=\"([[:alnum:]]+)\"TYPANA=\"([[:alnum:]]+)\"/>");
-static const regex eClLinkEndTag("</LINK>");
-static const regex
+static const boost::regex eClEndTag("</RS>");
+static const boost::regex eClLinkBeginTag("<LINKARGS=\'(\"[?]*[[:digit:]]+[.][[:digit:]]+\")+\'TYPE=\"([[:alnum:]]+)\"TYPANA=\"([[:alnum:]]+)\"/>");
+static const boost::regex eClLinkEndTag("</LINK>");
+static const boost::regex
 eClLinkExtract("[?]*([[:digit:]]+[.][[:digit:]]+)");
 
 int cpt = 0;
@@ -75,7 +78,7 @@ void whProcess(ifstream& fin, ofstream& fout);
 void clProcess(ifstream& fin, ofstream& fout/*, ofstream& ftmp*/);
 string preprocessLine(string s);
 void doWhActionOnOpeningString(
-    match_results<std::string::const_iterator>& what,
+    boost::match_results<std::string::const_iterator>& what,
     std::string::const_iterator start,
     std::string::const_iterator end,
     boost::match_flag_type& flags,
@@ -93,7 +96,7 @@ void doClActionOnOpeningString(/*
 void doRsTag(
     std::string::const_iterator& start,
     std::string::const_iterator& end,
-    match_results<std::string::const_iterator> what1,
+    boost::match_results<std::string::const_iterator> what1,
     boost::match_flag_type& flags,
     int& offset,
     deque<std::string>* ids,
@@ -216,37 +219,37 @@ string preprocessLine (string s)
   const string format_string3("$1 $2 $3");
   boost::regex e;
   
-  e = regex("[[:space:]]");
-  s = regex_replace(s, e, "");
+  e = boost::regex("[[:space:]]");
+  s = boost::regex_replace(s, e, "");
 
-  e = regex("[-_]");
-  s = regex_replace(s, e, "");
+  e = boost::regex("[-_]");
+  s = boost::regex_replace(s, e, "");
 
-  e = regex("</?SEG>");
-  s = regex_replace(s, e, "");
+  e = boost::regex("</?SEG>");
+  s = boost::regex_replace(s, e, "");
 
 
 //produce .txt for analyzeText from Clouzot.xml
-//   e = regex("<LIST>[^<]*</LIST>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<ITEM>[^<]*</ITEM>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<HEAD>[^<]*</HEAD>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<BIBL>[^<]*</BIBL>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<TITLE>[^<]*</TITLE>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<AUTHOR>[^<]*</AUTHOR>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<FRONT>[^<]*</FRONT>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<DOCAUTHOR>[^<]*</DOCAUTHOR>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<DOCDATE>[^<]*</DOCDATE>");
-//   s = regex_replace(s, e, "");
-//   e = regex("<[^>]*>");
-//   s = regex_replace(s, e, "");
+//   e = boost::regex("<LIST>[^<]*</LIST>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<ITEM>[^<]*</ITEM>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<HEAD>[^<]*</HEAD>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<BIBL>[^<]*</BIBL>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<TITLE>[^<]*</TITLE>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<AUTHOR>[^<]*</AUTHOR>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<FRONT>[^<]*</FRONT>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<DOCAUTHOR>[^<]*</DOCAUTHOR>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<DOCDATE>[^<]*</DOCDATE>");
+//   s = boost::regex_replace(s, e, "");
+//   e = boost::regex("<[^>]*>");
+//   s = boost::regex_replace(s, e, "");
 
 
   return s;
@@ -259,7 +262,7 @@ void whProcess(
 {
   string s;
   int offset;
-  regex expression(eWhStart);
+  boost::regex expression(eWhStart);
 
   while( getline(fin,s) ) 
   {
@@ -271,7 +274,7 @@ void whProcess(
     std::string::const_iterator start, end; 
     start = s.begin(); 
     end = s.end(); 
-    match_results<std::string::const_iterator> what; 
+    boost::match_results<std::string::const_iterator> what; 
     boost::match_flag_type flags = boost::match_default; 
     while (regex_search(start, end, what, expression, flags))   
     {
@@ -297,7 +300,7 @@ void whProcess(
 
 
 void doWhActionOnOpeningString(
-    match_results<std::string::const_iterator>& what,
+    boost::match_results<std::string::const_iterator>& what,
     std::string::const_iterator start,
     std::string::const_iterator end,
     boost::match_flag_type& flags,
@@ -307,8 +310,8 @@ void doWhActionOnOpeningString(
 {
   uint64_t npBegin;
   uint64_t npEnd;
-  match_results<std::string::const_iterator> what1;
-  match_results<std::string::const_iterator> what2;
+  boost::match_results<std::string::const_iterator> what1;
+  boost::match_results<std::string::const_iterator> what2;
 
   // update data to be written
   // npBegin = offset + (what[0].second-start) - (what[0].second - what[0].first); 
@@ -363,7 +366,7 @@ void clProcess(ifstream& fin, ofstream& fout/*,ofstream& ftmp*/)
 
     std::string::const_iterator start(s.begin());
     std::string::const_iterator end(s.end()); 
-    match_results<std::string::const_iterator> what; 
+    boost::match_results<std::string::const_iterator> what; 
     boost::match_flag_type flags = boost::match_default; 
     while (regex_search(start, end, what, eClStart, flags))   
     {
@@ -394,10 +397,10 @@ void doClActionOnOpeningString(
 
   while(true)
   {
-    match_results<std::string::const_iterator> what;
-    match_results<std::string::const_iterator> what1;
-    match_results<std::string::const_iterator> what2;
-    match_results<std::string::const_iterator> what3;
+    boost::match_results<std::string::const_iterator> what;
+    boost::match_results<std::string::const_iterator> what1;
+    boost::match_results<std::string::const_iterator> what2;
+    boost::match_results<std::string::const_iterator> what3;
 
     regex_search(start, end, what1, eClBeginTag, flags);
     regex_search(start, end, what2, eClLinkBeginTag, flags);
@@ -418,9 +421,9 @@ void doClActionOnOpeningString(
         regex_search(what2[0].first,what2[0].second,what,eClLinkExtract, flags);
         stringstream sstream;
         std::string ref = string(what[1].first,what[1].second);
-        match_results<std::string::const_iterator> whatCompAnte;
-        match_results<std::string::const_iterator> whatCompAna;
-        regex_search(what[1].first,what[1].second, whatCompAnte, regex("([[:digit:]]+)\\.[[:digit:]]+"));
+        boost::match_results<std::string::const_iterator> whatCompAnte;
+        boost::match_results<std::string::const_iterator> whatCompAna;
+        regex_search(what[1].first,what[1].second, whatCompAnte, boost::regex("([[:digit:]]+)\\.[[:digit:]]+"));
         // extraction de la référence la plus à droite
         // et inscription dans la map
 //         cerr<<string(what[0].second, what2[0].second)<<endl;;
@@ -430,7 +433,7 @@ void doClActionOnOpeningString(
         {
           what1 = what;
         }
-        regex_search(what1[1].first,what1[1].second,whatCompAna,regex("([[:digit:]]+)\\.[[:digit:]]+"));
+        regex_search(what1[1].first,what1[1].second,whatCompAna,boost::regex("([[:digit:]]+)\\.[[:digit:]]+"));
         // Renumérotation. Exemples :
         // si id = 12.4 et ref = 12.3
         // alors => id = 118.12.4 et ref = 118.12.3
@@ -499,7 +502,7 @@ void doClActionOnOpeningString(
 void doRsTag(
     std::string::const_iterator& start,
     std::string::const_iterator& end,
-    match_results<std::string::const_iterator> what,
+    boost::match_results<std::string::const_iterator> what,
     boost::match_flag_type& flags,
     int& offset,
     deque<std::string>* ids,
@@ -508,7 +511,7 @@ void doRsTag(
     deque<uint64_t>* npEnds,
     std::string& np) 
 {
-  match_results<std::string::const_iterator> what2;
+  boost::match_results<std::string::const_iterator> what2;
   stringstream sstream;
   sstream << cpt;
   string id =  sstream.str() + "." + string(what[1].first,what[1].second);

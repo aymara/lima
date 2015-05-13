@@ -64,21 +64,21 @@ install(TARGETS analyzeText DESTINATION bin)
 
 ########### next target ###############
 
-SET(threadedAnalyzeText_SRCS
-   threadedAnalyzeText.cpp
-)
-
-add_executable(threadedAnalyzeText ${threadedAnalyzeText_SRCS})
-
-target_link_libraries(threadedAnalyzeText
-    lima-common
-    lima-linguisticprocessing
-  ${optionalLibs}
-  ${QT_LIBRARIES}
-  ${Boost_LIBRARIES}
-)
-
-install(TARGETS threadedAnalyzeText DESTINATION bin)
+# SET(threadedAnalyzeText_SRCS
+#    threadedAnalyzeText.cpp
+# )
+# 
+# add_executable(threadedAnalyzeText ${threadedAnalyzeText_SRCS})
+# 
+# target_link_libraries(threadedAnalyzeText
+#     lima-common
+#     lima-linguisticprocessing
+#   ${optionalLibs}
+#   ${QT_LIBRARIES}
+#   ${Boost_LIBRARIES}
+# )
+# 
+# install(TARGETS threadedAnalyzeText DESTINATION bin)
 
 
 ########### next target ###############

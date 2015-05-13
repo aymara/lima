@@ -31,7 +31,7 @@
 #include <algorithm>
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima {

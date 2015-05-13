@@ -39,7 +39,7 @@
 using namespace std;
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
-using namespace boost;
+//using namespace boost;
 
 namespace Lima
 {

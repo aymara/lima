@@ -52,7 +52,7 @@
 
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 #include "common/Data/strwstrtools.h"
 
 using namespace Lima::Common::Misc;

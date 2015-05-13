@@ -1,8 +1,24 @@
 
+# find_package(QHttpServer QUIET)
+# if (NOT QHTTPSERVER_FOUND)
+#   message(STATUS "QHttpServer Not found...")
+# else(NOT QHTTPSERVER_FOUND)
+#   message(STATUS "Found QHttpServer??")
+#   message (STATUS,"QHTTPSERVER_NAMES: ${QHTTPSERVER_NAMES}")
+#   message(STATUS "QHTTPSERVERCPP_INCLUDE_DIR=${QHTTPSERVERCPP_INCLUDE_DIR}")
+#   message(STATUS "QHTTPSERVERCPP_LIBRARY_DIRS=${QHTTPSERVERCPP_LIBRARY_DIRS}")
+#   include_directories($ENV{LIMA_EXTERNALS}/include)
+#   link_directories($ENV{LIMA_EXTERNALS}/lib)
+# endif (NOT QHTTPSERVER_FOUND)
+
 
 ########### next target ###############
-
 include_directories( ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/test ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+# foreach(dir ${dirs})
+#   message(STATUS "dir='${dir}'")
+# endforeach()
 
 SET(limaserver_SRCS
    LimaServer.cpp

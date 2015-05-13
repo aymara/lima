@@ -41,7 +41,7 @@
 #undef max
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
