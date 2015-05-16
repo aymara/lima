@@ -7,7 +7,7 @@
 # Created on Thu may 10 2007                                                 #
 # by Claire Mouton (Claire.Mouton@cea.fr)                                    #
 #                                                                            #
-# $Id: rules-l2r-eng-pleonasticPronouns.txt                                  #
+# $Id: rules-eng-pleonasticPronouns.txt                                  #
 #                                                                            #
 ##############################################################################
 # expression des positions dans les contraintes: first current next last

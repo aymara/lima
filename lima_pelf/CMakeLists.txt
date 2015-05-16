@@ -48,6 +48,7 @@ endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
+  "${CMAKE_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
   "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
   "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
@@ -79,10 +80,12 @@ include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 # Find required packages
-include(FindQwt.cmake)
-if(QWT_FOUND)
+find_package(Qwt)
+if(Qwt_FOUND)
     include_directories(QWT_INCLUDE_DIR)
-endif(QWT_FOUND)
+else()
+message(FATAL "Could not find Qwt")
+endif()
 
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
@@ -121,7 +124,7 @@ set(LIMA_PELF_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
 
 # Go to subdirectories
 add_subdirectory(easyprocessor)
-if (DEFINED ENV{PELF_EVALUATOR} AND DEFINED ENV{PELF_ALIGNER})
+if (DEFINED ENV{PELF_EVALUATOR} AND DEFINED ENV{PELF_ALIGNER} AND Qwt_FOUND)
   set(PELF_EVALUATOR $ENV{PELF_EVALUATOR})
   set(PELF_ALIGNER $ENV{PELF_ALIGNER})
   add_subdirectory(benchmarkingTool)
@@ -130,8 +133,9 @@ else ()
 endif()
 
 
-
+if (Qwt_FOUND)
 add_subdirectory(resourceTool)
+endif()
 add_subdirectory(evalPosTagging)
 add_subdirectory(commands)
 

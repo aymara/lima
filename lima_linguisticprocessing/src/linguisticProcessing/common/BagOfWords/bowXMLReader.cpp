@@ -192,7 +192,6 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     }
     if (isIndexingNode) {
       m_outputStream << INDEXING_BLOC;
-      m_currentBoWText=new BoWText();
     }
     else {
       m_outputStream << HIERARCHY_BLOC;
@@ -222,6 +221,8 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   }
   else if (stringName == "bowToken") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
+    
+    LDEBUG <<lemma<<category<<position<<length<<id ;
     BoWToken* token=new BoWToken(lemma,category,position,length);
     m_refMap[id]=token;
     if (m_currentComplexToken.empty()) {
@@ -310,7 +311,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   else if (stringName == "tokens") {
     m_outputStream << BOW_TEXT_BLOC;
     //@todo
-    //m_currentBoWText->write(m_outputStream);
+    m_currentBoWText->writeBoWText(m_outputStream);
   }
   else if (stringName == "hierarchy") {
     m_outputStream << END_BLOC;
