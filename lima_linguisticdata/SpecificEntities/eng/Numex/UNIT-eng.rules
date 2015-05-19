@@ -22,6 +22,6 @@ square feet,square miles,square inches,
 miles square,feet square,inches square,
 square meter,square-meter,square metre,square-metre,
 square meters,square-meters,square metres,square-metres,
-pound,pounds,mV,°C,oC,°F)
+pound,pounds,watt,watts,mV,°C,oC,°F)
 
 @units:::UNIT:
