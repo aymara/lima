@@ -14,12 +14,12 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-file(GLOB lefffFiles ${CMAKE_CURRENT_SOURCE_DIR}/lefff-ext-?.dic)
+file(GLOB lefffFiles ${CMAKE_CURRENT_SOURCE_DIR}/lefff-ext-?.txt)
 
 
 add_custom_command(
   OUTPUT lefff-ext-simplified.txt
-  COMMAND cat ${lefffFiles}> lefff-ext.txt
+  COMMAND cat ${lefffFiles} > lefff-ext.txt
   COMMAND ${PROJECT_SOURCE_DIR}/scripts/extract-lefff-forms.sh lefff-ext.txt > lefff-ext-simplified.txt
   COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt >> lefff-ext-simplified.txt
   COMMAND LC_ALL="C" sort -u -o lefff-ext-simplified.txt lefff-ext-simplified.txt
