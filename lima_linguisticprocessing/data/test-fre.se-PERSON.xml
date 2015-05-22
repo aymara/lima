@@ -77,7 +77,7 @@
           operator="="
           right="5"/>
   </testcase>
-  <!--testcase id="fre.se.pers.comp.2" type="pertinent">
+  <testcase id="fre.se.pers.comp.2" type="pertinent">
     <call-parameters>
       <param key="text" value="le président François Monge mange sous la pluie."/>
       <param key="language" value="fre"/>
@@ -136,7 +136,7 @@
           left="XPATH#//entities/entity/components/lastname/@len"
           operator="="
           right="5"/>
-  </testcase-->
+  </testcase>
   <!--testcase id="fre.se.pers.comp.3" type="pertinent">
     <call-parameters>
       <param key="text" value="le président François de Monge"/>
