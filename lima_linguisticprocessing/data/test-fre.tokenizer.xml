@@ -766,4 +766,20 @@
   operator="exists"
     right=""/>
 </testcase>
+  <testcase id="fre.tok.48" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Pier P. Pasolini "/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>Détection d'une abbréviation</expl>
+    <test id="fre.tok.48.1" trace=".tokenizer.xml"
+          comment="status tokenizer"
+          left="XPATH#//data_structure/vertex/token[position=6]/t_status/t_alpha/t_alpha_capital"
+          operator="="
+          right="t_abbrev"/>
+  </testcase>
+
 </testcases>
