@@ -43,7 +43,8 @@ enum AlphaCapitalType
   T_SMALL,
   T_CAPITAL_1ST,
   T_ACRONYM,
-  T_CAPITAL_SMALL
+  T_CAPITAL_SMALL,
+  T_ABBREV
 } ;
 enum AlphaRomanType
 {

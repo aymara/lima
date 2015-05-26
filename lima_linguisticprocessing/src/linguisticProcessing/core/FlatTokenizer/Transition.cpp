@@ -86,7 +86,8 @@ const char* Transition::SettingNames[] = {
     "SET_T_ART_DEF",            // 25
     "SET_T_ACRONYM_ARABIC",     // 26
     "SET_T_ACRONYM_LATIN_ARABIC"// 27
-    "SET_T_TWITTER"             // 28
+    "SET_T_TWITTER",            // 28
+    "SET_T_ABBREV"              // 29
 };
 
 Transition::Transition(const State* state) :
@@ -190,6 +191,7 @@ void Transition::applySettings(Text& text) const
       case SET_T_CAPITAL_1ST : text.setAlphaCapital(T_CAPITAL_1ST); break;
       case SET_T_ACRONYM : text.setAlphaCapital(T_ACRONYM); break;
       case SET_T_CAPITAL_SMALL : text.setAlphaCapital(T_CAPITAL_SMALL); break;
+      case SET_T_ABBREV : text.setAlphaCapital(T_ABBREV); break;
       case SET_T_CARDINAL_ROMAN : text.setAlphaRoman(T_CARDINAL_ROMAN); break;
       case SET_T_ORDINAL_ROMAN : text.setAlphaRoman(T_ORDINAL_ROMAN); break;
       case SET_T_NOT_ROMAN : text.setAlphaRoman(T_NOT_ROMAN); break;
@@ -331,6 +333,10 @@ bool Transition::setSetting(const LimaString& s)
   else if (str == "T_TWITTER")
   {
     m_settings.push_back(SET_T_TWITTER);
+  }
+  else if (str == "T_ABBREV")
+  {
+    m_settings.push_back(SET_T_ABBREV);
   }
   else
   {

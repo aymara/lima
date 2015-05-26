@@ -230,6 +230,9 @@ void Text::setAlphaCapital(const LinguisticAnalysisStructure::AlphaCapitalType a
     case T_CAPITAL_SMALL:
       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_capital_small"));
       break;
+    case T_ABBREV:
+      _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_abbrev"));
+      break;
     default:
     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_small"));
   }
@@ -369,6 +372,7 @@ void Text::computeDefaultStatus()
         case T_CAPITAL_1ST   : defaultKey = "t_capital_1st"  ; break;
         case T_ACRONYM       : defaultKey = "t_acronym"      ; break;
         case T_CAPITAL_SMALL : defaultKey = "t_capital_small"; break;
+        case T_ABBREV       : defaultKey = "t_abbrev"      ; break;
         default : break;
       }
       switch (_curSettings.getAlphaRoman()) { // Roman supersedes Cardinal

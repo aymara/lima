@@ -95,7 +95,8 @@ public:
     SET_T_ART_DEF,             // 25
     SET_T_ACRONYM_ARABIC,      // 26
     SET_T_ACRONYM_LATIN_ARABIC,// 27
-    SET_T_TWITTER              // 28
+    SET_T_TWITTER,             // 28
+    SET_T_ABBREV               // 29
   };
   static const char* SettingNames[];
 
