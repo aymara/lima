@@ -203,7 +203,20 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
   }
   commandLine = commandLine.arg(inputFilename).arg(outputFilename);
   LDEBUG << "Launching " << commandLine;
-  QProcess::execute(commandLine);
+  int processResult = QProcess::execute(commandLine);
+  switch (processResult) {
+    case -2 :
+    LERROR << "ExternalProcessUnit: Was not able to start '" << commandLine << "'" ;
+    return returnCode;
+    case -1 :
+    LERROR << "ExternalProcessUnit: '" << commandLine << "' crashed!";
+    return returnCode;
+    case 0 :
+    break;
+    default:
+    LERROR << "ExternalProcessUnit: '" << commandLine << "' returned error status:" << processResult;
+    return returnCode;
+  }
 
   if (m_loader != 0) {
     // load results from the external program with the given loader
