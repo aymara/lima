@@ -44,7 +44,6 @@
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
-        <!--item value="tagFusion"/-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <item value="VerbNetRecognition"/>
         <!--item value="srl"/-->
@@ -410,15 +409,6 @@
         <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
         <entry key="ConjNominale" value="heteroSyntagmaticRelationRules"/>
       </map>
-    </group>
-    <group name="tagFusion" class="ExternalProcessUnit">
-      <param key="dumper" value="temporalXmlDumper"/>
-      <param key="tmpFileName" value="/tmp/mm-lp.morphoSyntacticalAnalysis.tmp"/>
-      <param key="command" value="python /home/clemence/conversion_tag.py"/>
-      <param key="loader" value="tagFusionLoader"/>
-    </group>
-    <group name="tagFusionLoader" class="ExampleLoader">
-      <param key="inputFile" value="..."/>
     </group>
 <!-- ******************************************
   Definition of loggers
