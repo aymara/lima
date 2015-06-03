@@ -264,12 +264,11 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
   SEMANTICANALYSISLOGINIT;
   ConllHandler cHandler(m_language, m_analysis, m_graph);
   QStringList sentenceTokens=cHandler.splitSegment(sent, m_tokenSeparator);
-  QStringList::const_iterator tokensIterator;
   QString firstSentenceToken=(*sentenceTokens.constBegin());
-  int descriptorsNb=cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
-  m_verbalClassNb=descriptorsNb-11;
+  int descriptorsNb = cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
+  m_verbalClassNb = descriptorsNb -11;
   int classIndex=0;
-  if (m_verbalClassNb!=0)
+  if (m_verbalClassNb > 0)
   {
     LDEBUG << "ConllHandler::extractSemanticInformation" << sentenceI << " : \n" << sent ;
     m_verbalClasses.clear();
@@ -277,7 +276,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
     m_semanticRoles.clear();
     m_semanticRoles.resize(m_verbalClassNb);
     //repeated on each token of the sentence, that is on each line
-    for (tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
+    for (QStringList::const_iterator tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
             ++tokensIterator)
     {
       int  roleNumbers=0;
