@@ -307,13 +307,13 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
   {
     if ((*bowItr)->getType() != BOW_PREDICATE)
     {
-      pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(*bowItr));
+      pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(&**bowItr));
       //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
       if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
       {
         result.insert(make_pair(
-                        static_cast<const BoWToken*>(*bowItr)->getLemma(),
-                        macroManager.getPropertySymbolicValue(static_cast<const BoWToken*>(*bowItr)->getCategory())));
+                        qSharedPointerCast<BoWToken>(*bowItr)->getLemma(),
+                        macroManager.getPropertySymbolicValue(qSharedPointerCast<BoWToken>(*bowItr)->getCategory())));
         //        cerr << " keep it !";
       }
       //      cerr << endl;
@@ -346,11 +346,11 @@ pair<int,int> getStartEnd(const BoWToken* tok)
       exit(0);
     }
     std::deque< BoWComplexToken::Part >::const_iterator partItr=parts.begin();
-    res=getStartEnd(partItr->get<1>());
+    res=getStartEnd(&*partItr->get<1>());
     partItr++;
     for (;partItr!=parts.end();partItr++)
     {
-      pair<int,int> tmp=getStartEnd(partItr->get<1>());
+      pair<int,int> tmp=getStartEnd(&*partItr->get<1>());
       if (tmp.first<res.first) res.first=tmp.first;
       if (tmp.second>res.second) res.second=tmp.second;
     }

@@ -36,6 +36,8 @@
 
 #include <deque>
 
+#include <QtCore/QSharedPointer>
+
 namespace Lima {
 namespace Common {
 namespace BagOfWords {
@@ -88,7 +90,7 @@ class LIMA_BOW_EXPORT BoWTokenIterator {
   ~BoWTokenIterator();
       
   bool isAtEnd() const;
-  const AbstractBoWElement* getElement();
+  QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > getElement();
   BoWTokenIterator& operator++();   //prefix ++
   BoWTokenIterator operator++(int); //postfix++
 

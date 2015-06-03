@@ -66,17 +66,17 @@ class BoWBinaryReaderPrivate
 
   // private member functions
   void readComplexTokenParts(std::istream& file,
-                             BoWComplexToken* token,
-                             std::vector<AbstractBoWElement*>& refMap);
+                             QSharedPointer< BoWComplexToken > token,
+                             std::vector< QSharedPointer< AbstractBoWElement > >& refMap);
   void readNamedEntityProperties(std::istream& file,
-                                 BoWNamedEntity* ne);
-  BoWRelation* readBoWRelation(std::istream& file);
-  AbstractBoWElement* readBoWToken(std::istream& file,
-                         std::vector<AbstractBoWElement*>& refMap);
+                                 QSharedPointer< BoWNamedEntity >  ne);
+  QSharedPointer< BoWRelation > readBoWRelation(std::istream& file);
+  QSharedPointer< AbstractBoWElement > readBoWToken(std::istream& file,
+      std::vector< QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > >& refMap);
   void readSimpleToken(std::istream& file,
-                       BoWToken* token);
+                       QSharedPointer< BoWToken > token);
   void readPredicate(std::istream& file,
-                    BoWPredicate* bowPred);
+                    QSharedPointer< BoWPredicate > bowPred);
 
 };
 
@@ -168,12 +168,12 @@ void BoWBinaryReader::readBoWText(std::istream& file,
 #endif
     // need to store the tokens to handle the references in the part
     // list of the complex tokens
-    std::vector<AbstractBoWElement*> refMap;
+    std::vector< QSharedPointer< AbstractBoWElement > > refMap;
     for (uint64_t i(0); i<size; i++) {
 #ifdef DEBUG_LP
         LDEBUG << "BoWBinaryReader::readBoWText reading token " << i;
 #endif
-        AbstractBoWElement* token=readBoWToken(file,refMap);
+        QSharedPointer< AbstractBoWElement > token=readBoWToken(file,refMap);
         if (token) {
             bowText.push_back(token);
         }
@@ -264,63 +264,63 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
     }
 }
 
-AbstractBoWElement* BoWBinaryReader::readBoWToken(std::istream& file,
-             std::vector<AbstractBoWElement*>& refMap)
+QSharedPointer< AbstractBoWElement > BoWBinaryReader::readBoWToken(std::istream& file,
+             std::vector< QSharedPointer< AbstractBoWElement > >& refMap)
 {
   return m_d->readBoWToken(file, refMap);
 }
 
-AbstractBoWElement* BoWBinaryReaderPrivate::readBoWToken( std::istream& file, std::vector< Lima::Common::BagOfWords::AbstractBoWElement* >& refMap )
+QSharedPointer< AbstractBoWElement > BoWBinaryReaderPrivate::readBoWToken( std::istream& file, std::vector< QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > >& refMap )
 {
   BOWLOGINIT;
   BoWType type=static_cast<BoWType>(Misc::readOneByteInt(file));
   LDEBUG << "BoWBinaryReader::readBoWToken token type is " << type;
-  AbstractBoWElement* token(0);
+  QSharedPointer< AbstractBoWElement > token;
   switch (type)  {
   case BOW_TOKEN: {
-      token=new BoWToken;
-      readSimpleToken(file,static_cast<BoWToken*>(token));
+      token=QSharedPointer< AbstractBoWElement >( new BoWToken);
+      readSimpleToken(file, qSharedPointerCast<BoWToken>(token));
       refMap.push_back(token);
       break;
   }
   case BOW_TERM: {
-      token=new BoWTerm;
+      token=QSharedPointer< AbstractBoWElement >(new BoWTerm);
       //     LDEBUG << "BoWToken: calling read(file,refMap) on term";
-      readSimpleToken(file,static_cast<BoWToken*>(token));
+      readSimpleToken(file,qSharedPointerCast<BoWToken>(token));
       refMap.push_back(token);
-      readComplexTokenParts(file,static_cast<BoWComplexToken*>(token),refMap);
+      readComplexTokenParts(file,qSharedPointerCast<BoWComplexToken>(token),refMap);
       break;
   }
   case BOW_NAMEDENTITY: {
-      token=new BoWNamedEntity;
+      token=QSharedPointer< AbstractBoWElement >(new BoWNamedEntity);
 //         LDEBUG << "BoWToken: calling read(file,refMap) on NE";
-      readSimpleToken(file,static_cast<BoWToken*>(token));
+      readSimpleToken(file,qSharedPointerCast<BoWToken>(token));
       refMap.push_back(token);
-      readComplexTokenParts(file,static_cast<BoWComplexToken*>(token),refMap);
-      readNamedEntityProperties(file,static_cast<BoWNamedEntity*>(token));
+      readComplexTokenParts(file,qSharedPointerCast<BoWComplexToken>(token),refMap);
+      readNamedEntityProperties(file,qSharedPointerCast<BoWNamedEntity>(token));
       break;
   }
   case BOW_PREDICATE:{
-      token=new BoWPredicate;
-      readPredicate(file,static_cast<BoWPredicate*>(token));
+      token=QSharedPointer< AbstractBoWElement >(new BoWPredicate);
+      readPredicate(file,qSharedPointerCast<BoWPredicate>(token));
       refMap.push_back(token);
       break;
   }
   default:
     LERROR << "Read error: unknown token type.";
   }
-  if (token != 0) {LDEBUG << "BoWToken: token=" << static_cast<BoWToken*>(token);}
+//   if (token != 0) {LDEBUG << "BoWToken: token=" << qSharedPointerCast<BoWToken>(token);}
   return token;
 }
 
 void BoWBinaryReader::readSimpleToken(std::istream& file,
-                BoWToken* token)
+                QSharedPointer< BoWToken > token)
 {
   m_d->readSimpleToken(file, token);
 }
 
 void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
-                BoWToken* token)
+                QSharedPointer< BoWToken > token)
 {
 
   LimaString lemma,inflectedForm;
@@ -347,12 +347,12 @@ void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
 }
 
 void BoWBinaryReader::readPredicate(std::istream& file,
-                   BoWPredicate* bowPred){
+                   QSharedPointer< BoWPredicate > bowPred){
   m_d->readPredicate(file, bowPred);
 }
 
 void BoWBinaryReaderPrivate::readPredicate(std::istream& file,
-                                    BoWPredicate* bowPred){
+                                    QSharedPointer< BoWPredicate > bowPred){
   BOWLOGINIT;
   LDEBUG << "BoWBinaryReaderPrivate::readPredicate";
   EntityGroupId groupId = static_cast<EntityGroupId>( Misc::readCodedInt(file));
@@ -372,15 +372,15 @@ void BoWBinaryReaderPrivate::readPredicate(std::istream& file,
     EntityTypeId roleTypId = static_cast<EntityTypeId>(Misc::readCodedInt(file));
     Common::MediaticData::EntityType oldRoleType=Common::MediaticData::EntityType(roleTypId,roleGrId);
     Common::MediaticData::EntityType roleType=m_entityTypeMapping[oldRoleType];
-    std::vector<AbstractBoWElement*> refMap;
-    AbstractBoWElement* role = readBoWToken(file,refMap);
+    std::vector< QSharedPointer< AbstractBoWElement > > refMap;
+    QSharedPointer< AbstractBoWElement > role = readBoWToken(file,refMap);
     bowPred->roles().insert(roleType,role);
   }
 }
 
 void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
-                      BoWComplexToken* token,
-                      std::vector<AbstractBoWElement*>& refMap)
+    QSharedPointer< Lima::Common::BagOfWords::BoWComplexToken > token,
+    std::vector< QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > >& refMap)
 {
     BOWLOGINIT;
     LDEBUG << "BoWBinaryReader::readComplexTokenParts";
@@ -389,15 +389,13 @@ void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
     token->setHead(head);
     uint64_t nbParts=Misc::readCodedInt(file);
     for (uint64_t i(0); i<nbParts; i++) {
-        BoWRelation* rel=readBoWRelation(file);
+        QSharedPointer< BoWRelation> rel=readBoWRelation(file);
         bool isInList;
         file.read((char*) &(isInList), sizeof(bool));
         LDEBUG << "BoWBinaryReader::readComplexTokenParts isInList=" << isInList;
         if (! isInList) {
-            BoWToken* tok = dynamic_cast<BoWToken*>(readBoWToken(file,refMap));
+            QSharedPointer< BoWToken > tok = qSharedPointerDynamicCast<BoWToken>(readBoWToken(file,refMap));
             token->addPart(rel,tok,isInList);
-            // tok is copied during addition. Must be deleted here.
-            delete tok;
         }
         else {
             uint64_t refnum=Misc::readCodedInt(file);
@@ -409,13 +407,12 @@ void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
                 LERROR << oss.str();
                 throw LimaException();
             }
-            token->addPart(rel,dynamic_cast<BoWToken*>(refMap[refnum]),isInList);
+            token->addPart(rel,qSharedPointerDynamicCast<BoWToken>(refMap[refnum]),isInList);
         }
     }
 }
 
-void BoWBinaryReaderPrivate::readNamedEntityProperties(std::istream& file,
-                          BoWNamedEntity* ne)
+void BoWBinaryReaderPrivate::readNamedEntityProperties(std::istream& file, QSharedPointer< Lima::Common::BagOfWords::BoWNamedEntity > ne)
 {
     BOWLOGINIT;
     EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
@@ -434,14 +431,14 @@ void BoWBinaryReaderPrivate::readNamedEntityProperties(std::istream& file,
     }
 }
 
-BoWRelation* BoWBinaryReaderPrivate::readBoWRelation(std::istream& file)
+QSharedPointer< BoWRelation > BoWBinaryReaderPrivate::readBoWRelation(std::istream& file)
 {
   BOWLOGINIT;
-  BoWRelation* rel=0;
+  QSharedPointer< BoWRelation > rel=QSharedPointer< BoWRelation >(0);
   uint64_t hasRelation=Misc::readCodedInt(file);
   LDEBUG << "BoWBinaryReaderPrivate::readBoWRelation: read hasRelation" << hasRelation;
   if (hasRelation) {
-      rel = new BoWRelation();
+      rel = QSharedPointer< BoWRelation >(new BoWRelation());
       rel->read(file);
   }
   return rel;
@@ -464,20 +461,20 @@ class BoWBinaryWriterPrivate
 
     // private member functions
   void writeComplexTokenParts(std::ostream& file,
-                              const BoWComplexToken* token,
-                              std::map<BoWToken*,uint64_t>& refMap) const;
+                              const QSharedPointer< BoWComplexToken > token,
+                              std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const;
   void writeNamedEntityProperties(std::ostream& file,
-                                  const BoWNamedEntity* ne) const;
+                                  const QSharedPointer< BoWNamedEntity > ne) const;
   void writeBoWRelation(std::ostream& file,
-                        BoWRelation* rel) const;
+                        QSharedPointer< BoWRelation > rel) const;
   void writeBoWToken(std::ostream& file,
-                     const AbstractBoWElement* bowToken,
-                     std::map<BoWToken*,uint64_t>& refMap) const;
+                     const QSharedPointer< AbstractBoWElement > bowToken,
+                     std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const;
   void writeSimpleToken(std::ostream& file,
-                        const BoWToken* token) const;
+                        const QSharedPointer< BoWToken > token) const;
   void writePredicate(std::ostream& file,
-                        const BoWPredicate* predicate,
-                        std::map<BoWToken*,uint64_t>& refMap) const;
+                        const QSharedPointer< BoWPredicate > predicate,
+                        std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const;
                         
   QMap< uint64_t,uint64_t > m_shiftFrom;
 };
@@ -527,11 +524,11 @@ void BoWBinaryWriter::writeBoWText(std::ostream& file,
     LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang on file"<<&file<<" at: " << file.tellp();
     uint64_t tokenCounter(0);
     // build reverse map to store in file numbers instead of pointers
-    std::map<BoWToken*,uint64_t> refMap;
+    std::map<QSharedPointer< BoWToken >, uint64_t> refMap;
     for (BoWText::const_iterator it=bowText.begin(),
             it_end=bowText.end(); it!=it_end; it++) {
         if ((*it)->getType() != BOW_PREDICATE)
-          refMap[static_cast<BoWToken*>(*it)]=tokenCounter;
+          refMap[qSharedPointerCast<BoWToken>(*it)]=tokenCounter;
         writeBoWToken(file,*it,refMap);
         tokenCounter++;
     }
@@ -546,13 +543,13 @@ void BoWBinaryWriter::writeBoWDocument(std::ostream& file,
 }
 
 void BoWBinaryWriter::writeBoWToken(std::ostream& file,
-              const AbstractBoWElement* token,
-              std::map<BoWToken*,uint64_t>& refMap) const
+              const QSharedPointer< AbstractBoWElement > token,
+              std::map< QSharedPointer< BoWToken >, uint64_t>& refMap) const
 {
   m_d->writeBoWToken(file, token, refMap);
 }
 
-void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const Lima::Common::BagOfWords::AbstractBoWElement* token, std::map< Lima::Common::BagOfWords::BoWToken*, uint64_t >& refMap ) const
+void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > token, std::map< QSharedPointer< Lima::Common::BagOfWords::BoWToken >, uint64_t >& refMap ) const
 {
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeBoWToken token type is " << token->getType() << &file;
@@ -560,23 +557,23 @@ void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const Lima::Comm
   switch (token->getType()) {
     case BOW_TOKEN: {
         // do not use refMap
-        writeSimpleToken(file,static_cast<const BoWToken*>(token));
+        writeSimpleToken(file,qSharedPointerCast<BoWToken>(token));
         break;
     }
     case BOW_TERM: {
-        writeSimpleToken(file,static_cast<const BoWToken*>(token));
-        writeComplexTokenParts(file,static_cast<const BoWComplexToken*>(token),refMap);
+        writeSimpleToken(file,qSharedPointerCast<BoWToken>(token));
+        writeComplexTokenParts(file,qSharedPointerCast<BoWComplexToken>(token),refMap);
         break;
     }
     case BOW_NAMEDENTITY: {
-        const BoWNamedEntity* ne=static_cast<const BoWNamedEntity*>(token);
-        writeSimpleToken(file,static_cast<const BoWToken*>(token));
+        QSharedPointer< BoWNamedEntity > ne=qSharedPointerCast<BoWNamedEntity>(token);
+        writeSimpleToken(file,qSharedPointerCast<BoWToken>(token));
         writeComplexTokenParts(file,ne,refMap);
         writeNamedEntityProperties(file,ne);
         break;
     }
     case BOW_PREDICATE:{
-        writePredicate(file,static_cast<const BoWPredicate*>(token), refMap);
+        writePredicate(file,qSharedPointerCast<BoWPredicate>(token), refMap);
       break;
     }
     default: {
@@ -588,13 +585,13 @@ void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const Lima::Comm
 }
 
 void BoWBinaryWriter::writeSimpleToken(std::ostream& file,
-                 const BoWToken* token) const
+                 const QSharedPointer< BoWToken > token) const
 {
   m_d->writeSimpleToken(file, token);
 }
 
 void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
-                 const BoWToken* token) const
+                 const QSharedPointer< BoWToken > token) const
 {
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeSimpleToken write lemma: " << &file << token->getLemma();
@@ -626,14 +623,14 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 }
 
 void BoWBinaryWriter::writePredicate(std::ostream& file,
-                        const BoWPredicate* predicate,
-                        std::map<BoWToken*,uint64_t>& refMap) const{
+                        const QSharedPointer< BoWPredicate > predicate,
+                        std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const{
   m_d->writePredicate(file, predicate, refMap);
 }
 
 void BoWBinaryWriterPrivate::writePredicate(std::ostream& file,
-                        const BoWPredicate* predicate,
-                        std::map<BoWToken*,uint64_t>& refMap) const{
+                        const QSharedPointer< BoWPredicate > predicate,
+                        std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const{
   BOWLOGINIT;
   MediaticData::EntityType type=predicate->getPredicateType();
   LDEBUG << "BoWBinaryWriter::writePredicate type" << type;
@@ -641,7 +638,7 @@ void BoWBinaryWriterPrivate::writePredicate(std::ostream& file,
   Misc::writeCodedInt(file,type.getTypeId());
   Misc::writeCodedInt(file,predicate->getPosition()-1);
   Misc::writeCodedInt(file,predicate->getLength());
-  const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& pRoles = predicate->roles();
+  const QMultiMap<Common::MediaticData::EntityType, QSharedPointer< AbstractBoWElement > >& pRoles = predicate->roles();
   LDEBUG << "BoWBinaryWriter::writePredicate nb  roles" << pRoles.size();
   Misc::writeCodedInt(file,pRoles.size());
   for (auto it = pRoles.begin(); it != pRoles.end(); it++)
@@ -654,8 +651,8 @@ void BoWBinaryWriterPrivate::writePredicate(std::ostream& file,
 
 
 void BoWBinaryWriterPrivate::writeComplexTokenParts(std::ostream& file,
-                       const BoWComplexToken* token,
-                       std::map<BoWToken*,uint64_t>& refMap) const
+                       const QSharedPointer< BoWComplexToken > token,
+                       std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const
 {
     BOWLOGINIT;
     // write parts
@@ -673,8 +670,7 @@ void BoWBinaryWriterPrivate::writeComplexTokenParts(std::ostream& file,
             writeBoWToken(file,parts[i].getBoWToken(),refMap);
         }
         else {
-            std::map<BoWToken*,uint64_t>::const_iterator
-            ref=refMap.find(parts[i].getBoWToken());
+            auto ref=refMap.find(parts[i].getBoWToken());
             if (ref == refMap.end()) {
                 BOWLOGINIT;
                 LERROR << "write():undefined pointer in complex token ("<< parts[i].getBoWToken()
@@ -691,7 +687,7 @@ void BoWBinaryWriterPrivate::writeComplexTokenParts(std::ostream& file,
 }
 
 void BoWBinaryWriterPrivate::writeNamedEntityProperties(std::ostream& file,
-                           const BoWNamedEntity* ne) const
+                           const QSharedPointer< BoWNamedEntity > ne) const
 {
     BOWLOGINIT;
     MediaticData::EntityType type=ne->getNamedEntityType();
@@ -708,7 +704,7 @@ void BoWBinaryWriterPrivate::writeNamedEntityProperties(std::ostream& file,
 }
 
 void BoWBinaryWriterPrivate::writeBoWRelation(std::ostream& file,
-                 BoWRelation* rel) const
+                 QSharedPointer< BoWRelation > rel) const
 {
     BOWLOGINIT;
     uint64_t hasRelation=(rel!=0);

@@ -167,7 +167,7 @@ BoWComplexToken(*new BoWNamedEntityPrivate(static_cast<BoWNamedEntityPrivate&>(*
 }
 
 BoWNamedEntity::BoWNamedEntity(const BoWNamedEntity& ne,
-                               const std::map<BoWToken*,BoWToken*>& refmap):
+                               const std::map<QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >& refmap):
     BoWComplexToken(*new BoWNamedEntityPrivate(static_cast<BoWNamedEntityPrivate&>(*ne.m_d)))
 {
   static_cast<BoWNamedEntityPrivate&>(*m_d).copy(ne,refmap);

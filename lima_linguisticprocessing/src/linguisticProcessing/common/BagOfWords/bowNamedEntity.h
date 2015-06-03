@@ -50,7 +50,7 @@ public:
   BoWNamedEntity();
   BoWNamedEntity(const BoWNamedEntity&);
   BoWNamedEntity(const BoWNamedEntity&,
-                 const std::map<BoWToken*,BoWToken*>&);
+                 const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >&);
 
   BoWNamedEntity(const Lima::LimaString& lemma,
                  const Common::MediaticData::EntityType theType,

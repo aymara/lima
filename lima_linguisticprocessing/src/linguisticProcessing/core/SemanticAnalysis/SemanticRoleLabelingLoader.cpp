@@ -271,7 +271,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
   int classIndex=0;
   if (m_verbalClassNb!=0)
   {
-    LDEBUG << sentenceI << " : \n" << sent ;
+    LDEBUG << "ConllHandler::extractSemanticInformation" << sentenceI << " : \n" << sent ;
     m_verbalClasses.clear();
     m_verbalClasses.resize(m_verbalClassNb);
     m_semanticRoles.clear();
@@ -282,7 +282,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
     {
       int  roleNumbers=0;
       QStringList descriptors=cHandler.splitSegment((*tokensIterator),m_descriptorSeparator);
-      if (descriptors.size()>=10)
+      if (descriptors.size()>=11+m_verbalClassNb)
       {
         int conllTokenId=descriptors[0].toInt();
         QString conllToken=descriptors[1];
@@ -296,6 +296,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
         }
         for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++)
         {
+          LDEBUG << "ConllHandler::extractSemanticInformation descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
           if (descriptors[11+roleTargetFieldIndex]!="-")
           {
             QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];

@@ -174,10 +174,10 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     m_currentBoWDocument.clear();
   }
   else if (stringName == "bowText") {
-    m_currentBoWText=new BoWText();
+    m_currentBoWText= QSharedPointer< BoWText >(new BoWText());
   }
   else if (stringName == "hierarchy") {
-    m_currentBoWText=new BoWText();
+    m_currentBoWText=QSharedPointer< BoWText >(new BoWText());
     bool isIndexingNode(false);
     try {
       string indexingNode=getStringAttribute(attributes,"indexingNode");
@@ -190,7 +190,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     }
     if (isIndexingNode) {
       m_outputStream << INDEXING_BLOC;
-      m_currentBoWText=new BoWText();
+      m_currentBoWText=QSharedPointer< BoWText >(new BoWText());
     }
     else {
       m_outputStream << HIERARCHY_BLOC;
@@ -220,7 +220,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   }
   else if (stringName == "bowToken") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
-    BoWToken* token=new BoWToken(lemma,category,position,length);
+    QSharedPointer< BoWToken > token = QSharedPointer< BoWToken >(new BoWToken(lemma,category,position,length));
     m_refMap[id]=token;
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
@@ -235,13 +235,12 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
       }
       m_currentComplexToken.back().currentPart++;
       // token has been cloned in complex token
-      delete token;
     }
   }
   else if (stringName == "bowTerm") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
     // use empty lemma: no need to store lemma for compound
-    BoWTerm* term=new BoWTerm(LimaString(),category,position,length);
+    QSharedPointer< BoWTerm > term=QSharedPointer< BoWTerm >(new BoWTerm(LimaString(),category,position,length));
     m_refMap[id]=term;
     m_currentComplexToken.push_back(CurrentComplexToken(term));
   }
@@ -249,9 +248,9 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     getTokenAttributes(attributes,lemma,category,position,length,id);
     LimaString typeName=getLimaStringAttribute(attributes,"type");
     // use empty lemma: no need to store lemma for compound
-    BoWNamedEntity* ne=new BoWNamedEntity(LimaString(),category,
+    QSharedPointer< BoWNamedEntity > ne=QSharedPointer< BoWNamedEntity >(new BoWNamedEntity(LimaString(),category,
                                           MediaticData::MediaticData::single().getEntityType(typeName),
-                                          position,length);
+                                          position,length));
     m_refMap[id]=ne;
     m_currentComplexToken.push_back(CurrentComplexToken(ne));
   } 
@@ -266,7 +265,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   else if (stringName == "feature") {
     std::string name=getStringAttribute(attributes,"name");
     LimaString value=getLimaStringAttribute(attributes,"value");
-    static_cast<BoWNamedEntity*>(m_currentComplexToken.back().token)->
+    qSharedPointerCast<BoWNamedEntity>(m_currentComplexToken.back().token)->
       addFeature(name,value);
   }
   return true;
@@ -283,7 +282,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   if (stringName == "bowNamedEntity" ||
       stringName == "bowTerm") 
   {
-    BoWToken* token=m_currentComplexToken.back().token;
+    QSharedPointer< BoWToken > token=m_currentComplexToken.back().token;
     m_currentComplexToken.pop_back();
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
@@ -298,7 +297,6 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
       }
       m_currentComplexToken.back().currentPart++;
       // token has been cloned in addPart => delete it
-      delete token;
     }
   }
   else if (stringName == "properties") {
@@ -315,14 +313,13 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
     if (m_currentBoWText !=0) {
       BoWBinaryWriter writer;
       writer.writeBoWText(m_outputStream,*m_currentBoWText);
-      delete m_currentBoWText;
-      m_currentBoWText=0;
+      m_currentBoWText=QSharedPointer< BoWText >(0);
     }
   }
   else if (stringName == "bowDocument") {
     //@todo
     // m_currentBoWDocument.write(m_outputStream);
-    m_currentBoWText=0;
+    m_currentBoWText=QSharedPointer <Lima::Common::BagOfWords::BoWText >(0);
   }
   return true;
 }

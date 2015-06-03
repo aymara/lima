@@ -82,9 +82,9 @@ class IndexElementIteratorPrivate
   // add in queue: only used for compound elements
   bool addInPartQueue(const IndexElement& newElement);
 
-  void storePartsInQueue(const BoWToken* token, const uint64_t rel);
+  void storePartsInQueue(QSharedPointer< BoWToken > token, const uint64_t rel);
 
-  bool addPartElementsInQueue(const BoWToken* token,
+  bool addPartElementsInQueue(QSharedPointer< BoWToken > token,
                               std::pair<std::vector<uint64_t>, uint64_t> & ids_rels,
                               const uint64_t rel);
   bool addCombinedPartsInQueue(const std::vector<std::pair<std::vector<uint64_t>, uint64_t> >& partIds_Rels,
@@ -182,13 +182,13 @@ IndexElement IndexElementIterator::getElement()
     }
     else
     {
-      BoWToken* token = 0;
-      BoWPredicate* predicate = 0;
+      QSharedPointer< BoWToken> token;
+      QSharedPointer< BoWPredicate > predicate;
       switch ((*m_d->m_iterator)->getType())
       {
       case BOW_TOKEN:
       {
-        token = static_cast<BoWToken*>((*m_d->m_iterator));
+        token = qSharedPointerCast<BoWToken>((*m_d->m_iterator));
         uint64_t id=m_d->m_idGenerator->getId(token->getString());
         return IndexElement(id,
                             token->getType(),
@@ -202,12 +202,12 @@ IndexElement IndexElementIterator::getElement()
       case BOW_NAMEDENTITY:
         LDEBUG  << "IndexElementIterator::getElement BOW_NAMEDENTITY" /*<<   * (static_cast<BoWNamedEntity*>((*m_d->m_iterator)) ) << Lima::Common::MediaticData::MediaticData::single().getEntityName(static_cast<BoWNamedEntity*>((*m_d->m_iterator))->getNamedEntityType())*/;
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(static_cast<BoWNamedEntity*>(*m_d->m_iterator),0);
+        m_d->storePartsInQueue(qSharedPointerCast<BoWNamedEntity>(*m_d->m_iterator),0);
         return m_d->m_partQueue.front();
       // FIXME Change the handling of predicates to take into account their complex structure nature
       case BOW_PREDICATE:
       {
-        predicate = static_cast<BoWPredicate*>((*m_d->m_iterator));
+        predicate = qSharedPointerCast<BoWPredicate>((*m_d->m_iterator));
         uint64_t id=m_d->m_idGenerator->getId(predicate->getString());
         return IndexElement(id,
                             predicate->getType(),
@@ -331,7 +331,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const IndexElement& newElement)
 }
 
 
-void IndexElementIteratorPrivate::storePartsInQueue(const BoWToken* token,const uint64_t rel)
+void IndexElementIteratorPrivate::storePartsInQueue(QSharedPointer< Lima::Common::BagOfWords::BoWToken > token, const uint64_t rel)
 {
   pair<vector<uint64_t>, uint64_t> tokenIds;
   if (!addPartElementsInQueue(token,tokenIds,rel)) {
@@ -341,7 +341,7 @@ void IndexElementIteratorPrivate::storePartsInQueue(const BoWToken* token,const 
   }
 }
 
-bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
+bool IndexElementIteratorPrivate::addPartElementsInQueue(QSharedPointer< BoWToken > token,
                        pair<vector<uint64_t>, uint64_t>& ids_rel,
                        uint64_t rel) 
 {
@@ -374,7 +374,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
                           rel);
   }
   case BOW_NAMEDENTITY: 
-    neType=static_cast<const BoWNamedEntity*>(token)->getNamedEntityType();
+    neType=qSharedPointerCast<BoWNamedEntity>(token)->getNamedEntityType();
     break;
   case BOW_TERM:
   case BOW_PREDICATE:
@@ -383,8 +383,8 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   }
 
   // is a complex token
-  const BoWComplexToken* complexToken=
-    static_cast<const BoWComplexToken*>(token);
+  QSharedPointer< BoWComplexToken > complexToken=
+    qSharedPointerCast<BoWComplexToken>(token);
   
   if (complexToken==0) {
     BOWLOGINIT;
@@ -420,7 +420,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   for (uint64_t i=0; i<nbParts; i++) {
     pair<vector<uint64_t>, uint64_t>& thisPartIdsRels=partIdsRels[i];
     uint64_t relType;
-    BoWRelation * relation=(complexToken->getParts()[i]).getBoWRelation();
+    QSharedPointer< BoWRelation > relation=(complexToken->getParts()[i]).getBoWRelation();
     if (relation !=0 ) relType=relation->getSynType(); else  relType=0; 
     if (!addPartElementsInQueue(complexToken->getParts()[i].getBoWToken(),thisPartIdsRels,relType)) {
       return false;
@@ -502,8 +502,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
   }
 
   // add possible at end of structure and recursive call
-  for (std::vector<uint64_t>::const_iterator 
-         it=partIdsRels[i].first.begin(),it_end=partIdsRels[i].first.end();
+  for (auto it=partIdsRels[i].first.begin(),it_end=partIdsRels[i].first.end();
        it!=it_end; it++) {
     structure.push_back(*it);
     relations.push_back(partIdsRels[i].second);

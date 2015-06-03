@@ -103,7 +103,7 @@ public:
     * the case, the edge between vx and tgt is used to build the BoWRelations 
     * of the returned vector
     */
-  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::BoWToken*> > buildTermFor(
+  std::vector< std::pair< QSharedPointer< Common::BagOfWords::BoWRelation >, QSharedPointer< Common::BagOfWords::BoWToken > > > buildTermFor(
     const AnnotationGraphVertex& vx,
     const AnnotationGraphVertex& tgt,
     const LinguisticGraph& anagraph,
@@ -113,7 +113,7 @@ public:
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     std::set<LinguisticGraphVertex>& visited) const;
 
-  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> > createAbstractBoWElement(
+  std::vector< std::pair< QSharedPointer< Common::BagOfWords::BoWRelation >, QSharedPointer< Common::BagOfWords::AbstractBoWElement > > > createAbstractBoWElement(
     const LinguisticGraphVertex v,
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
@@ -132,7 +132,7 @@ public:
    * @param agvt target annotation graph vertex matching lgvt
    * @param age annotation graph edge porting the   semantic relation
    */
-  Common::BagOfWords::BoWPredicate* createPredicate(
+  QSharedPointer< Common::BagOfWords::BoWPredicate > createPredicate(
     const LinguisticGraphVertex& lgvs,
     const AnnotationGraphVertex& agvs,
     const AnnotationGraphVertex& agvt,
@@ -147,7 +147,7 @@ public:
 
 private:
 
-  Common::BagOfWords::BoWRelation* createBoWRelationFor(
+  QSharedPointer< Common::BagOfWords::BoWRelation > createBoWRelationFor(
     const AnnotationGraphVertex& vx, 
     const AnnotationGraphVertex& tgt,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -194,7 +194,7 @@ private:
   } NENormalization;
   NENormalization m_NEnormalization;
 
-  Common::BagOfWords::BoWNamedEntity* createSpecificEntity(
+  QSharedPointer< Common::BagOfWords::BoWNamedEntity > createSpecificEntity(
     const LinguisticGraphVertex& vertex,
     const AnnotationGraphVertex& v,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -203,7 +203,7 @@ private:
     const uint64_t offset,
     bool frompos = true) const;
 
-  Common::BagOfWords::BoWToken* createCompoundTense(
+  QSharedPointer< Common::BagOfWords::BoWToken > createCompoundTense(
     const AnnotationGraphVertex& v,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const LinguisticGraph& anagraph,
@@ -213,7 +213,7 @@ private:
 
 //   Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles) const;
   
-  Common::BagOfWords::BoWPredicate* createPredicate(const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv,
+  QSharedPointer< Common::BagOfWords::BoWPredicate > createPredicate(const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
@@ -222,7 +222,7 @@ private:
     bool keepAnyway)const;
 
     bool checkStopWordInCompound(
-    Common::BagOfWords::BoWToken*&,
+    QSharedPointer< Common::BagOfWords::BoWToken>&,
     uint64_t offset,
     std::set< std::string >& alreadyStored,
     Common::BagOfWords::BoWText& bowText) const;
@@ -245,16 +245,16 @@ private:
    */
   std::vector<NamedEntityPart> createNEParts(
       const AnnotationGraphVertex& v,
-                                              const Common::AnnotationGraphs::AnnotationData* annotationData,
-                                              const LinguisticGraph& anagraph,
-                                              const LinguisticGraph& posgraph,
-                                            bool frompos = true) const;
+      const Common::AnnotationGraphs::AnnotationData* annotationData,
+      const LinguisticGraph& anagraph,
+      const LinguisticGraph& posgraph,
+      bool frompos = true) const;
 
   void bowTokenPositions(TokenPositions& res,
-                         const Common::BagOfWords::BoWToken* tok) const;
+                         const QSharedPointer< Common::BagOfWords::BoWToken > tok) const;
 
   uint64_t computeCompoundLength(const TokenPositions& headTokPositions,
-                                     const TokenPositions& extensionPositions) const;
+                                const TokenPositions& extensionPositions) const;
 };
 
 } // Compounds

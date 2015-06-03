@@ -38,6 +38,7 @@
 #include <vector>
 #include <map>
 #include <QtCore/QMap>
+#include <QtCore/QSharedPointer>
 
 namespace Lima {
 namespace Common {
@@ -79,12 +80,11 @@ class LIMA_BOW_EXPORT BoWBinaryReader
                        BoWDocument& document,
                        AbstractBoWDocumentHandler& handler, 
                        bool useIterator=false);
-  AbstractBoWElement* readBoWToken(std::istream& file,
-                         std::vector<AbstractBoWElement*>& refMap);
+  QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file, std::vector< QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > >& refMap);
   void readSimpleToken(std::istream& file,
-                       BoWToken* token);
+                       QSharedPointer< BoWToken > token);
   void readPredicate(std::istream& file,
-                   BoWPredicate* bowPred);
+                   QSharedPointer< BoWPredicate > bowPred);
 
   BoWFileType getFileType() const;
   std::string getFileTypeString() const;
@@ -109,13 +109,13 @@ class LIMA_BOW_EXPORT BoWBinaryWriter
   void writeBoWDocument(std::ostream& file,
                         const BoWDocument& bowText) const;
   void writeBoWToken(std::ostream& file,
-                     const AbstractBoWElement* bowToken,
-                     std::map<BoWToken*,uint64_t>& refMap) const;
+                     const QSharedPointer< AbstractBoWElement > bowToken,
+                     std::map< QSharedPointer< BoWToken >, uint64_t>& refMap) const;
   void writeSimpleToken(std::ostream& file,
-                        const BoWToken* token) const;
+                        const QSharedPointer< BoWToken > token) const;
   void writePredicate(std::ostream& file,
-                        const BoWPredicate* token,
-                        std::map<BoWToken*,uint64_t>& refMap) const;
+                        const QSharedPointer< BoWPredicate > token,
+                        std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const;
 
  private:
   BoWBinaryWriter(const BoWBinaryWriter&);

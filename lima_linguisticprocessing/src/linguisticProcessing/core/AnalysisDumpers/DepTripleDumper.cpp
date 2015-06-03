@@ -337,30 +337,24 @@ void DepTripleDumper::dumpDepWithCompounds(
   //   CVertexDataPropertyMap dataMap = get(vertex_data, posgraph);
 
   std::set< LinguisticGraphVertex > visited;
-  std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > srcTokens =
+  std::vector<std::pair< QSharedPointer< BoWRelation >,  QSharedPointer< AbstractBoWElement > > > srcTokens =
     m_bowGenerator->createAbstractBoWElement(src, anagraph, posgraph, 0, annotationData, visited);
-  std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > destTokens =
+  std::vector<std::pair<QSharedPointer< BoWRelation >, QSharedPointer< AbstractBoWElement > > > destTokens =
     m_bowGenerator->createAbstractBoWElement(dest, anagraph, posgraph, 0, annotationData, visited);
 
   std::map<std::string, std::set<LinguisticGraphVertex> > srcs, dests;
 
-  for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator srcItr=srcTokens.begin();
-       srcItr!=srcTokens.end();
-       srcItr++)
+  for (auto srcItr=srcTokens.begin(); srcItr!=srcTokens.end(); srcItr++)
   {
     std::set<LinguisticGraphVertex> theSet;
 //     std::cerr << "collecting vertices for " << (*srcItr)->getOutputUTF8String() << std::endl;
 //     std::cerr << "  inserting " << src << std::endl;
     theSet.insert(src);
     srcs.insert(std::make_pair((*srcItr).second->getOutputUTF8String(),theSet));
-    delete (*srcItr).first;
-    delete (*srcItr).second;
   }
   if (compoundsHeads.find(src) != compoundsHeads.end())
   {
-    std::set<const BoWTerm*>::const_iterator it, it_end;
-    it = (*(compoundsHeads.find(src))).second.begin();
-    it_end = (*(compoundsHeads.find(src))).second.end();
+    auto it = (*(compoundsHeads.find(src))).second.begin(), it_end= (*(compoundsHeads.find(src))).second.end();
     for (; it != it_end; it++)
     {
       std::ostringstream oss;
@@ -372,23 +366,17 @@ void DepTripleDumper::dumpDepWithCompounds(
     }
   }
 
-  for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator destItr=destTokens.begin();
-        destItr!=destTokens.end();
-        destItr++)
+  for (auto destItr=destTokens.begin(); destItr!=destTokens.end(); destItr++)
   {
     std::set<LinguisticGraphVertex> theSet;
 //     std::cerr << "collectiong vertices for " << (*destItr)->getOutputUTF8String() << std::endl;
 //     std::cerr << "  inserting " << dest << std::endl;
     theSet.insert(dest);
     dests.insert(std::make_pair((*destItr).second->getOutputUTF8String(),theSet));
-    delete (*destItr).first;
-    delete (*destItr).second;
   }
   if (compoundsHeads.find(dest) != compoundsHeads.end())
   {
-    std::set<const BoWTerm*>::const_iterator it, it_end;
-    it = (*(compoundsHeads.find(dest))).second.begin();
-    it_end = (*(compoundsHeads.find(dest))).second.end();
+    auto it = (*(compoundsHeads.find(dest))).second.begin(), it_end = (*(compoundsHeads.find(dest))).second.end();
     for (; it != it_end; it++)
     {
       std::ostringstream oss;
@@ -490,10 +478,10 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens = 
+          std::vector<std::pair<QSharedPointer< BoWRelation>, QSharedPointer< BoWToken > > > bowTokens =
             m_bowGenerator->buildTermFor(agv, agv, anagraph, posgraph, 0, 
                                          syntacticData, annotationData, visited);
-          for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
+          for (auto bowItr=bowTokens.begin();
                bowItr!=bowTokens.end();
                bowItr++)
           {
@@ -501,12 +489,10 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
               //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-              delete (*bowItr).first;
-              delete (*bowItr).second;
             }
             else
             {
-              const BoWTerm* bt = dynamic_cast<const BoWTerm*>((*bowItr).second);
+              QSharedPointer<BoWTerm> bt = qSharedPointerDynamicCast<BoWTerm>((*bowItr).second);
               if (bt != 0)
               {
                 getCompoundsHeads(result, bt);
@@ -518,9 +504,9 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
       }
       else
       {
-        std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
+        std::vector<std::pair<QSharedPointer< BoWRelation> , QSharedPointer< AbstractBoWElement > > > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
 
-        for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator bowItr=bowTokens.begin();
+        for (auto bowItr=bowTokens.begin();
              bowItr!=bowTokens.end();
              bowItr++)
         {
@@ -528,12 +514,10 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
           if (alreadyStored.find(elem) != alreadyStored.end())
           { // already stored
             //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-            delete (*bowItr).first;
-            delete (*bowItr).second;
           }
           else
           {
-            const BoWTerm* bt = dynamic_cast<const BoWTerm*>((*bowItr).second);
+            QSharedPointer< BoWTerm > bt = qSharedPointerDynamicCast<BoWTerm>((*bowItr).second);
             if (bt != 0)
             {
               getCompoundsHeads(result, bt);
@@ -550,35 +534,34 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
 
 void DepTripleDumper::getCompoundsHeads(
                                          VxToTermsMap& result,
-                                         const BoWTerm* bt) const
+                                         QSharedPointer< BoWTerm > bt) const
 {
   if (result.find(bt->getVertex()) == result.end())
   {
-    result.insert(std::make_pair(bt->getVertex(), std::set<const BoWTerm*>()));
+    result.insert(std::make_pair(bt->getVertex(), std::set<QSharedPointer< BoWTerm > >()));
   }
-  result[bt->getVertex()].insert(dynamic_cast<const BoWTerm*>(bt));
+  result[bt->getVertex()].insert(qSharedPointerDynamicCast<BoWTerm>(bt));
   std::deque<BoWComplexToken::Part>::const_iterator partsit, partsit_end;
   partsit = bt->getParts().begin(); partsit_end = bt->getParts().end();
   for (; partsit!=partsit_end; partsit++)
   {
-    if ( dynamic_cast<const BoWTerm*>((*partsit).get<1>()) != 0)
+    if ( qSharedPointerDynamicCast<BoWTerm>((*partsit).get<1>()) != 0)
     {
-      getCompoundsHeads(result, dynamic_cast<const BoWTerm*>((*partsit).get<1>()));
+      getCompoundsHeads(result, qSharedPointerDynamicCast<BoWTerm>((*partsit).get<1>()));
     }
   }
 }
 
 void DepTripleDumper::collectVertices(
         std::set<LinguisticGraphVertex>& theSet,
-        const BoWToken* term) const
+        QSharedPointer< BoWToken > term) const
 {
 //   std::cerr << "  inserting " << term->getVertex() << std::endl;
   theSet.insert(term->getVertex());
-  if ( dynamic_cast<const BoWTerm*>(term) != 0)
+  if ( qSharedPointerDynamicCast<BoWTerm>(term) != 0)
   {
-    std::deque<BoWComplexToken::Part>::const_iterator partsit, partsit_end;
-    partsit = dynamic_cast<const BoWTerm*>(term)->getParts().begin();
-    partsit_end = dynamic_cast<const BoWTerm*>(term)->getParts().end();
+    auto partsit = qSharedPointerDynamicCast<BoWTerm>(term)->getParts().begin(),
+    partsit_end = qSharedPointerDynamicCast<BoWTerm>(term)->getParts().end();
     for (; partsit!=partsit_end; partsit++)
     {
       collectVertices(theSet, (*partsit).get<1>());

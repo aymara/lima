@@ -56,7 +56,7 @@ BoWTerm::BoWTerm(const BoWTerm& t):BoWComplexToken(*new BoWTermPrivate())
 }
 
 BoWTerm::BoWTerm(const BoWTerm& t,
-                 const std::map<BoWToken*,BoWToken*>& refmap):
+                 const std::map<QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >& refmap):
                  BoWComplexToken(*new BoWTermPrivate())
 {
   static_cast<BoWTermPrivate&>(*m_d).copy(t,refmap);
@@ -84,7 +84,7 @@ BoWTerm::BoWTerm(const Lima::LimaString& lemma,
                  const uint64_t category,
                  const uint64_t position,
                  const uint64_t length,
-                 std::deque<BoWToken>& parts,
+                 std::deque< QSharedPointer< BoWToken > >& parts,
                  const uint64_t head):
     BoWComplexToken(*new BoWComplexTokenPrivate())
 {
@@ -93,9 +93,9 @@ BoWTerm::BoWTerm(const Lima::LimaString& lemma,
   m_d->m_position = position;
   m_d->m_length = length;
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head = head;
-  for (std::deque<BoWToken>::iterator i=parts.begin(); i!=parts.end(); i++)
+  for (auto i=parts.begin(); i!=parts.end(); i++)
   {
-    addPart(&(*i),false);
+    addPart(*i,false);
   }
   static_cast<BoWComplexTokenPrivate*>(m_d)->m_head = head;
 }

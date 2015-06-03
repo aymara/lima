@@ -65,7 +65,7 @@ public:
    *
    */
   BoWComplexTokenPrivate(const BoWComplexToken&,
-                  const std::map<BoWToken*,BoWToken*>&);
+                  const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >&);
 
   BoWComplexTokenPrivate(const Lima::LimaString& lemma,
                   const uint64_t category,
@@ -90,7 +90,7 @@ public:
                   const uint64_t category,
                   const uint64_t position,
                   const uint64_t length,
-                  std::deque<BoWToken>& parts,
+                  std::deque< QSharedPointer< BoWToken > >& parts,
                   const uint64_t head);
 
   virtual ~BoWComplexTokenPrivate();
@@ -103,15 +103,15 @@ public:
   uint64_t m_head;       /**< the index of the head of the
                                 complex token in its part list*/
 
-  BoWToken* addPart(BoWRelation* rel,
-                    BoWToken* tok,
+  QSharedPointer< BoWToken > addPart(QSharedPointer< BoWRelation > rel,
+                    QSharedPointer< BoWToken > tok,
                     const bool isInList,
                     const bool isHead=false);
 
   //helper functions for constructors, destructor and assignment operator
   void copy(const BoWComplexToken& a);
   void copy(const BoWComplexToken& t,
-            const std::map<BoWToken*,BoWToken*>& refMap);
+            const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >& refMap);
 
 };
 

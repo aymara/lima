@@ -41,13 +41,13 @@ namespace BagOfWords {
 // constructors,destructor,copy assignment
 //**********************************************************************
 BoWText::BoWText():
-std::vector< AbstractBoWElement* >()
+std::vector< QSharedPointer< AbstractBoWElement > >()
 {
 }
 
 
 BoWText::BoWText(const BoWText& t):
-std::vector< AbstractBoWElement* >() 
+std::vector< QSharedPointer< AbstractBoWElement > >()
 {
   (*this) = t;
 }
@@ -60,7 +60,7 @@ BoWText& BoWText::operator = (const BoWText& t) {
 //     std::map<AbstractBoWElement*,AbstractBoWElement*> pointerMap;
     for (BoWText::const_iterator i(t.begin());
         i != t.end(); i++) {
-      AbstractBoWElement* tok=(*i)->clone(/*pointerMap*/);
+      QSharedPointer< AbstractBoWElement > tok( (*i)->clone(/*pointerMap*/) );
       push_back(tok);
 //       pointerMap[(*i)]=tok;
     }
@@ -74,15 +74,7 @@ BoWText::~BoWText()
 }
 
 void BoWText::clear() {
-  for (BoWText::iterator i(begin()); 
-       i != end(); i++) {
-    if (*i != 0) {
-      (*i)->clear();
-      delete (*i);
-      (*i)=0;
-    }
-  }
-  std::vector< AbstractBoWElement* >::clear();
+  std::vector< QSharedPointer<  AbstractBoWElement > >::clear();
 }
 
 //**********************************************************************

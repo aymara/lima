@@ -316,7 +316,7 @@ void BoWXMLWriterPrivate::writePredicateRoles(const BoWPredicate* term)
        <<  (it.key().isNull() ? "" : Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key())))
        << "\" >" << std::endl;
     incIndent();
-    writeBoWToken(it.value());
+    writeBoWToken(&*it.value());
     decIndent();
     m_outputStream <<m_spaces  << "</role>" << std::endl;
   }
@@ -337,7 +337,7 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
     BoWTokenIterator it(*text);
     while (! it.isAtEnd())
     { 
-      writeBoWToken( it.getElement());
+      writeBoWToken( &*it.getElement());
       it++;
     }
   }
@@ -354,7 +354,7 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
   {
     for (BoWText::const_iterator tok=text->begin();
         tok!=text->end(); tok++) {
-      writeBoWToken( *tok);
+      writeBoWToken( &**tok);
     }
   }
   decIndent();
@@ -516,14 +516,14 @@ void BoWXMLWriterPrivate::writeComplexTokenParts(const BoWComplexToken* token) {
     if ((*part).isInList()) {
       // !!! careful: should check existence of token in map
       m_outputStream <<m_spaces << "<bowTokenRef refId=\"" 
-         << m_refMap[(*part).getBoWToken()] 
+         << m_refMap[&*(*part).getBoWToken()]
          << "\"/>" << std::endl;
     }
     else {
       if ((*part).getBoWRelation()!=0) {
-        writeBoWRelation( (*part).getBoWRelation());
+        writeBoWRelation( &*(*part).getBoWRelation());
       }
-      writeBoWToken( (*part).getBoWToken());
+      writeBoWToken( &*(*part).getBoWToken());
     }
 //     decIndent();
 //     m_outputStream <<m_spaces << "</part>" << std::endl;

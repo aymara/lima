@@ -75,14 +75,14 @@ BoWComplexTokenPrivate::BoWComplexTokenPrivate(const LimaString& lemma,
                                  const uint64_t category,
                                  const uint64_t position,
                                  const uint64_t length,
-                                 std::deque<BoWToken>& parts,
+                                 std::deque< QSharedPointer< BoWToken > >& parts,
                                  const uint64_t head):
 BoWTokenPrivate(lemma, category, position, length),
 m_parts(0),
 m_head(head)
 {
-  for (std::deque<BoWToken>::iterator i=parts.begin(); i!=parts.end(); i++) {
-    addPart(0,&(*i),false);
+  for (auto i = parts.begin(); i != parts.end(); i++) {
+    addPart(QSharedPointer< BoWRelation >(0),*i,false);
   }
   if (m_head>m_parts.size()) {
     m_head=0;
@@ -98,7 +98,7 @@ m_head(0)
 }
 
 BoWComplexTokenPrivate::BoWComplexTokenPrivate(const BoWComplexToken& t,
-                                 const std::map<BoWToken*,BoWToken*>& refMap):
+                                 const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >& refMap):
 BoWTokenPrivate(t),
 m_parts(0),
 m_head(0)
@@ -136,7 +136,7 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
                                  const uint64_t category,
                                  const uint64_t position,
                                  const uint64_t length,
-                                 std::deque<BoWToken>& parts,
+                                 std::deque< QSharedPointer< BoWToken > >& parts,
                                  const uint64_t head):
                                  BoWToken(*new BoWComplexTokenPrivate())
 {
@@ -145,10 +145,12 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
   m_d->m_position = position;
   m_d->m_length = length;
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head = head;
-  for (std::deque<BoWToken>::iterator i=parts.begin(); i!=parts.end(); i++) {
-    addPart(0,&(*i),false);
+  for (auto i = parts.begin(); i != parts.end(); i++)
+  {
+    addPart(QSharedPointer< BoWRelation >(0), *i, false);
   }
-  if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head > static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size()) {
+  if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head > static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size())
+  {
     static_cast<BoWComplexTokenPrivate *>(m_d)->m_head=0;
   }
 }
@@ -217,18 +219,8 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t) {
   m_vertex = t.m_d->m_vertex;
   for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
        i != t.getParts().end(); i++) {
-    BoWRelation* rel=0;
-    if ((*i).get<0>()!=0) {
-      rel = (*i).get<0>()->clone();
-    }
-    if ((*i).isInList()) {
-      //m_parts.push_back(*i); // copy pointer, do not create new object
-      //create new object, and make it internal
-      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()->clone(),false));
-    }
-    else {
-      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()->clone(),(*i).isInList()));
-    }
+    QSharedPointer< BoWRelation > rel = (*i).get<0>();
+    m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken(),(*i).isInList()));
   }
 }
 
@@ -236,7 +228,7 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t) {
 // elsewhere in the list, but I use the pointer-to-pointer correspondance
 // given by the map
 void BoWComplexTokenPrivate::copy(const BoWComplexToken& t,
-                           const std::map<BoWToken*,BoWToken*>& refMap) {
+                           const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >& refMap) {
   m_parts.clear();
   m_head = static_cast<BoWComplexTokenPrivate *>(t.m_d)->m_head;
   m_category = t.m_d->m_category;
@@ -250,20 +242,16 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t,
   m_vertex = t.m_d->m_vertex;
   for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
        i != t.getParts().end(); i++) {
-    BoWRelation* rel=0;
-    if ((*i).get<0>()!=0) {
-      rel = (*i).get<0>()->clone();
-    }
+    QSharedPointer< BoWRelation > rel = (*i).get<0>();
     if ((*i).isInList()) {
-      std::map<BoWToken*,BoWToken*>::const_iterator
-        ref=refMap.find((*i).getBoWToken());
+      auto ref = refMap.find((*i).getBoWToken());
       if (ref == refMap.end()) {
         throw std::runtime_error("BoW: reference does not exist in map : maybe forward reference");
       }
       m_parts.push_back(BoWComplexToken::Part(rel,(*ref).second,(*i).isInList()));
     }
     else {
-      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()->clone(),(*i).isInList()));
+      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken(),(*i).isInList()));
     }
   }
   m_head=t.getHead();
@@ -304,72 +292,69 @@ void BoWComplexToken::setHead(const uint64_t i) {
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head=i;
 }
 
-BoWToken* BoWComplexTokenPrivate::addPart(BoWRelation* rel,
-                                          BoWToken* tok,
+QSharedPointer< BoWToken > BoWComplexTokenPrivate::addPart(QSharedPointer< BoWRelation > rel,
+                                          QSharedPointer< BoWToken > tok,
                                           bool isInList,
                                           bool isHead)
 {
-  BoWToken* res = 0;
-  BoWRelation* crel = rel==0?0:rel->clone();
-  res = (isInList)?tok:tok->clone();
-  m_parts.push_back(BoWComplexToken::Part(crel, res, isInList));
+  m_parts.push_back(BoWComplexToken::Part(rel, tok, isInList));
   if (isHead) {
     m_head=m_parts.size()-1;
   }
   if (tok->getPosition() < m_position) m_position = tok->getPosition();
   if (tok->getPosition() > (m_position + m_length)) m_length = (tok->getPosition()+tok->getLength()-m_position-1);
-  return res;
+  return tok;
 }
 
 
-BoWToken* BoWComplexToken::addPart(BoWToken* tok,
+QSharedPointer< BoWToken > BoWComplexToken::addPart(QSharedPointer< BoWToken > tok,
                                           bool isInList,
                                           bool isHead)
 {
-  return addPart(0, tok, isInList, isHead);
+  return addPart(QSharedPointer< BoWRelation >(0), tok, isInList, isHead);
 }
 
 
-BoWToken* BoWComplexToken::addPart(BoWRelation* rel,
-                                          BoWToken* tok,
+QSharedPointer< BoWToken > BoWComplexToken::addPart(QSharedPointer< BoWRelation > rel,
+                                          QSharedPointer< BoWToken > tok,
                                           bool isInList,
                                           bool isHead)
 {
     return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(rel,tok,isInList,isHead);
 }
 
-BoWToken* BoWComplexToken::addPart(const BoWToken* tok,
-                                   bool isHead)
-{
-  return addPart(0, const_cast<BoWToken*>(tok), false, isHead);
-}
-
-
-BoWToken* BoWComplexToken::addPart(const BoWRelation* rel,
-                                   const BoWToken* tok,
-                                   bool isHead)
-{
-  return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(const_cast<BoWRelation*>(rel),const_cast<BoWToken*>(tok),false,isHead);
-}
+// BoWToken* BoWComplexToken::addPart(const BoWToken* tok,
+//                                    bool isHead)
+// {
+//   return addPart(0, const_cast<BoWToken*>(tok), false, isHead);
+// }
+//
+//
+// BoWToken* BoWComplexToken::addPart(const BoWRelation* rel,
+//                                    const BoWToken* tok,
+//                                    bool isHead)
+// {
+//   return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(const_cast<BoWRelation*>(rel),const_cast<BoWToken*>(tok),false,isHead);
+// }
 
 
 
 void BoWComplexToken::clear()
 {
-  for (std::deque<Part>::iterator i(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.begin());
-       i != static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.end(); i++)
-  {
-    if (! (*i).isInList())
-    {
-      if ((*i).getBoWToken() != 0)
-      {
-        delete ((*i).getBoWRelation());
-        delete ((*i).getBoWToken());
-        (*i).get<0>()=0;
-        (*i).get<1>()=0;
-      }
-    }
-  }
+//   for (std::deque<Part>::iterator i(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.begin());
+//        i != static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.end(); i++)
+//   {
+//     if (! (*i).isInList())
+//     {
+//       if ((*i).getBoWToken() != 0)
+//       {
+//         delete ((*i).getBoWRelation());
+//         delete ((*i).getBoWToken());
+//         (*i).get<0>()=0;
+//         (*i).get<1>()=0;
+//       }
+//     }
+//   }
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.clear();
 }
 
@@ -430,10 +415,7 @@ Common::Misc::PositionLengthList BoWComplexToken::getPositionLengthList() const 
   Common::Misc::PositionLengthList poslenlist(0);
   for (std::deque<Part>::const_iterator i(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.begin());
        i != static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.end(); i++) {
-    BoWToken* partToken=(*i).getBoWToken();
-//     poslenlist.push_back(std::make_pair(partToken->getPosition(),
-//                                         partToken->getLength()));
-    Common::Misc::PositionLengthList partposlen=partToken->getPositionLengthList();
+    Common::Misc::PositionLengthList partposlen=(*i).getBoWToken()->getPositionLengthList();
     poslenlist.insert(poslenlist.end(),partposlen.begin(),partposlen.end());
   }
   return poslenlist;
@@ -506,11 +488,11 @@ std::string BoWComplexToken::getstdstringParts() const
 std::set< uint64_t > BoWComplexToken::getVertices() const
 {
   std::set< uint64_t > result;
-  for (uint64_t i(0); i<static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size(); i++) 
+  for (uint64_t i(0); i<static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size(); i++)
   {
-    if (dynamic_cast< const BoWComplexToken* >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>()) != 0)
+    if (qSharedPointerDynamicCast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>()) != 0)
     {
-      std::set< uint64_t > partResult = ((const BoWComplexToken*)static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>())->getVertices();
+      std::set< uint64_t > partResult = qSharedPointerDynamicCast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>())->getVertices();
       result.insert(partResult.begin(), partResult.end());
     }
     else

@@ -35,6 +35,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <deque>
 
+#include <QtCore/QSharedPointer>
+
 namespace Lima {
 namespace Common {
 namespace BagOfWords {
@@ -61,16 +63,16 @@ public:
    * says if the BoWToken is also in the global list (the BoWText)
    * or not.
    */
-  class Part : public boost::tuple<BoWRelation*,BoWToken*,bool>
+  class Part : public boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >,bool>
   {
   public:
-    Part():boost::tuple<BoWRelation*,BoWToken*,bool>(0,0,false) {};
-    Part(BoWToken* tok, bool isInList):
-      boost::tuple<BoWRelation*,BoWToken*,bool>(0,tok,isInList) {};
-    Part(BoWRelation* rel, BoWToken* tok, bool isInList):
-      boost::tuple<BoWRelation*,BoWToken*,bool>(rel,tok,isInList) {};
-    BoWRelation* getBoWRelation() const { return get<0>(); }
-    BoWToken* getBoWToken() const { return get<1>(); }
+    Part():boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >, bool>(QSharedPointer< BoWRelation >(0), QSharedPointer< BoWToken >(0),false) {};
+    Part(QSharedPointer< BoWToken > tok, bool isInList):
+      boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >, bool>(QSharedPointer< BoWRelation >(0),tok,isInList) {};
+    Part(QSharedPointer< BoWRelation > rel, QSharedPointer< BoWToken > tok, bool isInList):
+      boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >,bool>(rel,tok,isInList) {};
+    QSharedPointer< BoWRelation > getBoWRelation() const { return get<0>(); }
+    QSharedPointer< BoWToken > getBoWToken() const { return get<1>(); }
     bool isInList() const { return get<2>(); }
     void setInList(const bool b) { get<2>() = b; }
     LimaString getLemma() const { return get<1>()->getLemma(); }
@@ -116,12 +118,7 @@ public:
    *
    * @return
    */
-  BoWComplexToken(const Lima::LimaString& lemma,
-                  const uint64_t category,
-                  const uint64_t position,
-                  const uint64_t length,
-                  std::deque<BoWToken>& parts,
-                  const uint64_t head);
+  BoWComplexToken(const Lima::LimaString& lemma, const uint64_t category, const uint64_t position, const uint64_t length, std::deque< QSharedPointer< Lima::Common::BagOfWords::BoWToken > >& parts, const uint64_t head);
 
   virtual ~BoWComplexToken();
   
@@ -157,7 +154,7 @@ public:
    * pointed has an existence outside of the part list
    * @param isHead a boolean indicating that the BoWToken a
    */
-  BoWToken* addPart(BoWToken* tok,
+  QSharedPointer< BoWToken > addPart(QSharedPointer< BoWToken > tok,
                     const bool isInList,
                     const bool isHead=false);
 
@@ -175,8 +172,8 @@ public:
    * pointed has an existence outside of the part list
    * @param isHead a boolean indicating that the BoWToken a
    */
-  BoWToken* addPart(BoWRelation* rel,
-                    BoWToken* tok,
+  QSharedPointer< BoWToken > addPart(QSharedPointer< BoWRelation > rel,
+                    QSharedPointer< BoWToken > tok,
                     const bool isInList,
                     const bool isHead=false);
 
@@ -188,9 +185,9 @@ public:
    * @param isHead a boolean indicating that the BoWToken is the head of the complex token it
    *        is part of
    */
-  BoWToken* addPart(const BoWToken* tok,
-//                     const bool isInList,
-                    const bool isHead=false);
+//   BoWToken* addPart(const QSharedPointer< BoWToken > tok,
+// //                     const bool isInList,
+//                     const bool isHead=false);
   
   /**
    * add a part in the list of parts of the complex token. A pointer on a copy of @ref tok
@@ -202,10 +199,10 @@ public:
    * @param isHead a boolean indicating that the BoWToken is the head of the complex token it
    *        is part of
    */
-  BoWToken* addPart(const BoWRelation* rel,
-                    const BoWToken* tok,
-//                     const bool isInList,
-                    const bool isHead=false);
+//   BoWToken* addPart(const QSharedPointer< BoWRelation > rel,
+//                     const QSharedPointer< BoWToken > tok,
+// //                     const bool isInList,
+//                     const bool isHead=false);
   
   
 

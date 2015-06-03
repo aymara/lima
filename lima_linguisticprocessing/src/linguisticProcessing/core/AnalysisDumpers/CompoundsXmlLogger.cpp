@@ -238,10 +238,10 @@ void CompoundsXmlLogger::dumpLimaData(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens = 
+          std::vector<std::pair< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken > > > bowTokens =
             m_bowGenerator->buildTermFor(agv, agv, lanagraph, lposgraph, offsetBegin, 
                                          syntacticData, annotationData, visited);
-          for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
+          for (auto bowItr=bowTokens.begin();
                bowItr!=bowTokens.end();
                bowItr++)
           {
@@ -249,12 +249,10 @@ void CompoundsXmlLogger::dumpLimaData(
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
               //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-              delete (*bowItr).first;
-              delete (*bowItr).second;
             }
             else
             {
-              outputCompound(os,(*bowItr).second,offsetBegin);
+              outputCompound(os,&*(*bowItr).second,offsetBegin);
               alreadyStored.insert(elem);
             }
           }
@@ -299,12 +297,12 @@ void CompoundsXmlLogger::outputCompound(
     partIt_end = term->getParts().end();
     for (uint64_t partId=0; partIt != partIt_end; partIt++,partId++)
     {
-      const BoWToken* partTok = (*partIt).get<1>();
+      QSharedPointer< BoWToken > partTok = (*partIt).get<1>();
       //        bool head = (*partIt).second;
       os << "<part head=\"" << std::boolalpha << (partId == headId) << "\" >" << std::endl;
-      if (dynamic_cast<const BoWComplexToken*>(partTok))
+      if (qSharedPointerDynamicCast<BoWComplexToken>(partTok))
       {
-        outputCompound(os, const_cast<BoWToken*>(partTok), offsetBegin);
+        outputCompound(os, &*partTok, offsetBegin);
       }
       else
       {
