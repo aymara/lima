@@ -290,12 +290,22 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
             QString verbalClass=descriptors[10];
             QString vClass=descriptors[10];
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
+            if (classIndex >= m_verbalClasses.size())
+            {
+              LERROR << "ConllHandler::extractSemanticInformation classIndex error" <<  classIndex;
+              break;
+            }
             m_verbalClasses[classIndex]=qMakePair(limaTokenId, vClass);
             classIndex++;
         }
         for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++)
         {
           LDEBUG << "ConllHandler::extractSemanticInformation descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
+          if (11+roleTargetFieldIndex >= descriptors.size())
+          {
+            LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error" <<  roleTargetFieldIndex;
+            break;
+          }
           if (descriptors[11+roleTargetFieldIndex]!="-")
           {
             QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];
@@ -305,6 +315,11 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
             {
               LDEBUG << "ConllHandler::extractSemanticInformation The PoS graph token id matching the conll token id " << conllTokenId << " is " << limaTokenId;
               std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
+              if (roleTargetFieldIndex >= m_semanticRoles.size())
+              {
+                LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error 2" <<  roleTargetFieldIndex;
+                break;
+              }
               m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));
             }
             roleNumbers++;
