@@ -55,12 +55,15 @@ bool AmosePluginsManager::loadPlugins()
       if ( !line.isEmpty() && !line.startsWith('#') )
       {
 #ifdef WIN32
-        QString strline = QString(line.data()) + ".dll";
+        QString strline = QString(line.data()).trimmed() + ".dll";
+        QString library_path=QString::fromUtf8(qgetenv("LD_LIBRARY_PATH").constData()==0?"c:\amose\lib":qgetenv("LD_LIBRARY_PATH").constData());
+        DynamicLibrariesManager::changeable().addSearchPathes( library_path.toUtf8().data());
 #else
         QString strline = QString("lib") + line.data() + ".so";
 #endif
-        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
-        DynamicLibrariesManager::changeable().loadLibrary(line.data());
+        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << strline.toUtf8().data() << "'";
+        std::cout << "AmosePluginsManager::loadPlugins loading plugin '" << strline.toUtf8().data() << "'"<<std::endl;
+        DynamicLibrariesManager::changeable().loadLibrary(strline.toUtf8().data());
       }
     }
   }

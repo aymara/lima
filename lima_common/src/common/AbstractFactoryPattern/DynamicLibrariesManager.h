@@ -42,6 +42,7 @@
 #include <map>
 #include <vector>
 
+class QString;
 namespace Lima {
 namespace Common {
 
@@ -55,6 +56,7 @@ friend class Singleton<DynamicLibrariesManager>;
   bool isLoaded(const std::string& libName);
   bool loadLibrary(const std::string& libName);
   void addSearchPath(const std::string& searchPath);
+  void addSearchPathes(QString searchPathes);
 
  private:
   DynamicLibrariesManager();
