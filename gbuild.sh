@@ -121,8 +121,9 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   generator="NMake Makefiles"
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
-  MSBuild.exe -p:configuration=$mode -t:Build lima_common.vcxproj &&
-  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing.vcxproj
+  pwd &&
+  MSBuild.exe -p:configuration=$mode -t:Build lima_common-prefix/src/lima_common-build/limacommon.sln &&
+  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing-prefix/src/lima_linguisticprocessing-build/limalinguisticprocessing.sln
   """
   generator="Visual Studio 10 2010"
 else
@@ -140,9 +141,12 @@ pushd $LIMA_BUILD_PATH
 
 echo "LIMA_BUILD_PATH=$LIMA_BUILD_PATH"
 echo "Launching cmake"
-cmake -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
+echo "Running command:"
+echo "$make_cmd"
 eval $make_cmd
+
 #make -j$j 
 #nmake
 result=$?
