@@ -5,6 +5,8 @@ LIMA is a multilingual linguistic analyzer developed by the [CEA LIST](http://ww
 
 For more information, installation instructions and documentation, please refer to [the LIMA Wiki](https://github.com/aymara/lima/wiki).
 
+<!---
 Drone.io Build Status: [![Drone.io Build Status](https://drone.io/github.com/aymara/lima/status.png)](https://drone.io/github.com/aymara/lima/latest)
+-->
 
 Travis-ci Build Status: [![Travis-ci Build Status](https://travis-ci.org/aymara/lima.svg?branch=master)](https://travis-ci.org/aymara/lima)

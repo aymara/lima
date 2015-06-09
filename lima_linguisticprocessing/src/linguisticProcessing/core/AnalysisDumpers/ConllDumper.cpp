@@ -362,7 +362,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         const QString graphTag=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
 
         std::string inflectedToken=ft->stringForm().toUtf8().constData();
-        std::string lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().constData();
+        std::string lemmatizedToken;
+        if (morphoData != 0 && !morphoData->empty())
+        {
+          lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().constData();
+        }
 
         QString conllRelName = "-";
         int targetConllId = 0;

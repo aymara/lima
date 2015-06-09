@@ -43,7 +43,7 @@
     </call-parameters>
   <expl>DETSUB</expl>
 <test id="eng.sa.5.1" trace=".sa.xml"
-    comment=" rules-l2r-eng-homodeps.txt. La relation DETSUB doit exister entre 'The' et 'house' "
+    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre 'The' et 'house' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']" 
     operator="exists"
     right="" />
@@ -59,7 +59,7 @@
     </call-parameters>
   <expl>DETSUB</expl>
 <test id="eng.sa.6.1" trace=".sa.xml"
-    comment=" rules-l2r-eng-homodeps.txt. La relation DETSUB doit exister entre 'The' et 'house' "
+    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre 'The' et 'house' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']" 
     operator="exists"
     right="" />
@@ -76,17 +76,17 @@
     </call-parameters>
   <expl>DETSUB</expl>
   <test id="eng.sa.7.1" trace=".sa.xml"
-    comment=" rules-l2r-eng-homodeps.txt. La relation DETSUB doit exister entre 'The' et 'house'. "
+    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre 'The' et 'house'. "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']"
     operator="exists"
     right="" />
   <test id="eng.sa.7.2" trace=".sa.xml"
-    comment=" rules-l2r-eng-homodeps.txt. La relation ADJPRENSUB doit exister entre les adjectifs et 'house'. "
+    comment=" rules-eng-homodeps-pass1.txt. La relation ADJPRENSUB doit exister entre les adjectifs et 'house'. "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='beautiful']/dependents/dep[@t='ADJPRENSUB']"
     operator="exists"
     right="" />
   <test id="eng.sa.7.3" trace=".sa.xml"
-    comment=" rules-l2r-eng-homodeps.txt. La relation DETSUB doit exister entre adjectifs et 'house'. "
+    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre adjectifs et 'house'. "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='dark']/dependents/dep[@t='ADJPRENSUB']"
     operator="exists"
     right="" />
@@ -102,7 +102,7 @@
     </call-parameters>
   <expl>COMPADJ</expl>
 <test id="eng.sa.8.1" trace=".sa.xml"
-    comment=" rules-l2r-eng-homodeps.txt. La relation COMPADJ doit exister entre 'la' et 'quartier' "
+    comment=" rules-eng-homodeps-pass1.txt. La relation COMPADJ doit exister entre 'la' et 'quartier' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='neighborhood']/dependents/dep[@t='COMPADJ']" 
     operator="exists"
     right="" />
@@ -118,7 +118,7 @@
     </call-parameters>
   <expl>COMPADJ</expl>
 <test id="eng.sa.9.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation COMPADJ doit exister entre 'prettiest' et 'street' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation COMPADJ doit exister entre 'prettiest' et 'street' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='street']/dependents/dep[@t='COMPADJ']" 
     operator="exists"
     right="" />
@@ -134,7 +134,7 @@
     </call-parameters>
   <expl>ADVADJ</expl>
 <test id="eng.sa.11.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation ADVADJ doit exister entre 'most' et 'unpleasant' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation ADVADJ doit exister entre 'most' et 'unpleasant' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='more']/dependents/dep[@t='ADVADJ']" 
     operator="exists"
     right="" />
@@ -150,7 +150,7 @@
     </call-parameters>
   <expl>ADVADJ</expl>
 <test id="eng.sa.12.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation ADVADJ doit exister entre 'very ' et 'beautiful' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation ADVADJ doit exister entre 'very ' et 'beautiful' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='very']/dependents/dep[@t='ADVADJ']" 
     operator="exists"
     right="" />
@@ -166,7 +166,7 @@
     </call-parameters>
   <expl>ADVADV</expl>
 <test id="eng.sa.13.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation ADVADV doit exister entre 'really ' et 'very' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation ADVADV doit exister entre 'really ' et 'very' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='really']/dependents/dep[@t='ADVADV']" 
     operator="exists"
     right="" />
@@ -182,7 +182,7 @@
     </call-parameters>
   <expl>DetIntSub</expl>
 <test id="eng.sa.14.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation DetIntSub doit exister entre 'what' et 'year' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation DetIntSub doit exister entre 'what' et 'year' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='what']/dependents/dep[@t='DetIntSub']" 
     operator="exists"
     right="" />
@@ -198,7 +198,7 @@
     </call-parameters>
   <expl>DetIntSub</expl>
 <test id="eng.sa.14.2" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation DetIntSub doit exister entre 'what' et 'year' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation DetIntSub doit exister entre 'what' et 'year' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='what']/dependents/dep[@t='DetIntSub']" 
     operator="exists"
     right="" />
@@ -214,7 +214,7 @@
     </call-parameters>
   <expl>PrepDetInt</expl>
 <test id="eng.sa.15.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation PrepDetInt doit exister entre 'In' et 'what' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation PrepDetInt doit exister entre 'In' et 'what' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='In']/dependents/dep[@t='PrepDetInt']" 
     operator="exists"
     right="" />
@@ -230,7 +230,7 @@
     </call-parameters>
   <expl>PrepDetInt</expl>
 <test id="eng.sa.15.2" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation PrepDetInt doit exister entre 'à' et 'what' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation PrepDetInt doit exister entre 'à' et 'what' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='At']/dependents/dep[@t='PrepDetInt']" 
     operator="exists"
     right="" />
@@ -246,7 +246,7 @@
     </call-parameters>
   <expl>TEMPCOMP</expl>
 <test id="eng.sa.16.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation TEMPCOMP doit exister entre 'has' et 'visited', d'ou l'existence de la forme has_visited"
+     comment=" rules-eng-homodeps-pass1.txt. La relation TEMPCOMP doit exister entre 'has' et 'visited', d'ou l'existence de la forme has_visited"
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has_visited']" 
     operator="exists"
     right="" />
@@ -262,7 +262,7 @@
     </call-parameters>
   <expl>TEMPCOMP</expl>
 <test id="eng.sa.17.1" trace=".sa.xml"
-      comment=" rules-l2r-eng-homodeps.txt. La relation TEMPCOMP doit exister entre 'has' et 'visited', d'ou l'existence de la forme has_visited "
+      comment=" rules-eng-homodeps-pass1.txt. La relation TEMPCOMP doit exister entre 'has' et 'visited', d'ou l'existence de la forme has_visited "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has_visited']" 
     operator="exists"
     right="" />
@@ -279,7 +279,7 @@
     </call-parameters>
   <expl>SujInv</expl>
 <test id="eng.sa.18.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation SujInv doit exister entre 'il' et 'accepte' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation SujInv doit exister entre 'il' et 'accepte' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='he']/dependents/dep[@t='SujInv']"
     operator="exists"
     right="" />
@@ -295,7 +295,7 @@
     </call-parameters>
   <expl>PrepInf</expl>
 <test id="eng.sa.22.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation PrepInf doit exister entre 'to' et 'come' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation PrepInf doit exister entre 'to' et 'come' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='to']/dependents/dep[@t='PrepInf']" 
     operator="exists"
     right="" />
@@ -311,7 +311,7 @@
     </call-parameters>
   <expl>PrepInf</expl>
 <test id="eng.sa.23.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation PrepInf doit exister entre 'to' et 'meet' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation PrepInf doit exister entre 'to' et 'meet' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='to']/dependents/dep[@t='PrepInf']" 
     operator="exists"
     right="" />
@@ -327,7 +327,7 @@
     </call-parameters>
   <expl>PronSujVerbe</expl>
 <test id="eng.sa.24.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation PronSujVerbe doit exister entre 'she' et 'suggests' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation PronSujVerbe doit exister entre 'she' et 'suggests' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='She']/dependents/dep[@t='PronSujVerbe']" 
     operator="exists"
     right="" />
@@ -343,7 +343,7 @@
     </call-parameters>
   <expl>PronSujVerbe</expl>
 <test id="eng.sa.25.1" trace=".sa.xml"
-     comment=" rules-l2r-eng-homodeps.txt. La relation PronSujVerbe doit exister entre 'I' et 'suggest' "
+     comment=" rules-eng-homodeps-pass1.txt. La relation PronSujVerbe doit exister entre 'I' et 'suggest' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='I']/dependents/dep[@t='PronSujVerbe']" 
     operator="exists"
     right="" />
@@ -359,7 +359,7 @@
     </call-parameters>
   <expl>SUBADJPOST</expl>
 <test id="eng.sa.26.1" trace=".sa.xml"
-     comment=" rules-r2l-eng-homodeps.txt. La relation SUBADJPOST doit exister entre 'men' et 'ready' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation SUBADJPOST doit exister entre 'men' et 'ready' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='noisy']/dependents/dep[@t='SUBADJPOST']" 
     operator="exists"
     right="" />
@@ -375,7 +375,7 @@
     </call-parameters>
   <expl>SUBADJPOST</expl>
 <test id="eng.sa.27.1" trace=".sa.xml"
-     comment=" rules-r2l-eng-homodeps.txt. La relation SUBADJPOST doit exister entre 'door' et 'green' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation SUBADJPOST doit exister entre 'door' et 'green' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='wary']/dependents/dep[@t='SUBADJPOST']" 
     operator="exists"
     right="" />
@@ -391,7 +391,7 @@
     </call-parameters>
   <expl>PREPSUB</expl>
 <test id="eng.sa.28.1" trace=".sa.xml"
-     comment=" rules-r2l-eng-homodeps.txt. La relation PREPSUB doit exister entre 'à travers' et 'lesquels' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB doit exister entre 'à travers' et 'lesquels' "
   left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='through']/dependents/dep[@t='PREPSUB']" 
     operator="exists"
     right="" />
@@ -407,7 +407,7 @@
     </call-parameters>
   <expl>PREPSUB</expl>
 <test id="eng.sa.29.1" trace=".sa.xml"
-     comment=" rules-r2l-eng-homodeps.txt. La relation PREPSUB ne doit pas exister entre 'of' et 'house' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB ne doit pas exister entre 'of' et 'house' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='of']/dependents/dep[@v=3]" 
     operator="notexists"
     right="" />
@@ -423,7 +423,7 @@
     </call-parameters>
   <expl>PREPSUB</expl>
 <test id="eng.sa.30.1" trace=".sa.xml"
-     comment=" rules-r2l-eng-homodeps.txt. La relation PREPSUB doit exister entre 'cat' et 'neighbor' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB doit exister entre 'cat' et 'neighbor' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='of']/dependents/dep[@t='PREPSUB']" 
     operator="exists"
     right="" />

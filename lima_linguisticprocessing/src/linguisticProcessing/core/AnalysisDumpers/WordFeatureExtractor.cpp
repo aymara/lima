@@ -30,9 +30,16 @@
 #include "common/Data/strwstrtools.h"
 #include <sstream>
 
+#include "common/MediaticData/mediaticData.h"
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
+#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
+
 using namespace std;
 using namespace boost;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+
+using namespace Lima::Common::MediaticData;
+using namespace Lima::LinguisticProcessing::SpecificEntities;
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -55,6 +62,7 @@ FeatureExtractorFactory<FeatureToken> FeatureTokenFactory(FeatureToken_ID);
 FeatureExtractorFactory<FeatureLemma> FeatureLemmaFactory(FeatureLemma_ID);
 FeatureExtractorFactory<FeatureProperty> FeaturePropertyFactory(FeatureProperty_ID);
 FeatureExtractorFactory<FeatureTstatus> FeatureTstatusFactory(FeatureTstatus_ID);
+FeatureExtractorFactory<FeatureSpecificEntity> FeatureSpecificEntityFactory(FeatureSpecificEntity_ID);
 
 //***********************************************************************
 // Feature list
@@ -203,6 +211,77 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
   }
   return Common::Misc::limastring2utf8stdstring(token->status().defaultKey());
 }
+
+
+//***********************************************************************
+FeatureSpecificEntity::FeatureSpecificEntity(MediaId language, const std::string& complement):
+AbstractFeatureExtractor(language,complement)
+{
+}
+
+std::string FeatureSpecificEntity::
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+         LinguisticGraphVertex v) const
+{
+  std::string typeName("");
+  std::map<std::string, std::string>::const_iterator itMSS;
+  int isPresent;
+
+  std::set< AnnotationGraphVertex > anaVertices = annot->matches("PosGraph",v,"AnalysisGraph");
+  if (anaVertices.size()==0) {
+    return "NAN" ;
+    }
+  // note: anaVertices size should be 0 or 1
+  for (std::set< AnnotationGraphVertex >::const_iterator anaVerticesIt = anaVertices.begin();
+       anaVerticesIt != anaVertices.end(); anaVerticesIt++)
+    {
+      std::set< AnnotationGraphVertex > matches = annot->matches("AnalysisGraph",*anaVerticesIt,"annot");
+      for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
+	   it != matches.end(); it++)
+	{
+	  AnnotationGraphVertex vx=*it;
+	  if (annot->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+	    {
+	      const SpecificEntityAnnotation* se =
+		annot->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+		pointerValue<SpecificEntityAnnotation>();
+	      try {
+		LimaString str= MediaticData::single().getEntityName(se->getType());
+		typeName=Common::Misc::limastring2utf8stdstring(str);
+	      }
+	      catch (std::exception& ) {
+		DUMPERLOGINIT;
+		LERROR << "Undefined entity type " << se->getType() << LENDL;
+		LERROR << "failed to output specific entity for vertex " << v << LENDL;
+	      }
+
+	      
+	    } else {
+	    // we don't find any entity
+	      return "NAN";
+	  }
+	}
+    }
+  
+  // Test if the finded type is selected
+  isPresent=0; // by default, an unfinded entity isn't dumped
+  itMSS=m_NEauthorized.find(typeName);
+  if (itMSS!=m_NEauthorized.end()) {
+    isPresent=atoi(((*itMSS).second).c_str());
+  }
+  if (isPresent) {
+    return typeName;
+  } else {
+    return "NAN";
+  }
+}
+  
+void FeatureSpecificEntity::setNEauthorized(std::map<std::string, std::string> mp) {
+  
+  m_NEauthorized = mp;
+
+}
+
 
 
 

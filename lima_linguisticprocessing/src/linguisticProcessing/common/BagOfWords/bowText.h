@@ -67,6 +67,8 @@ public:
   friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWText&);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWText&);
   
+  void writeBoWText(std::ostream& stream);
+  
   std::string lang;
 };
 

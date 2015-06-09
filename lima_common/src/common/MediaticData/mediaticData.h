@@ -164,6 +164,7 @@ public:
 
     const LimaString& getEntityTypeNameSeparator() const;
 
+    bool isValidMedia(const std::string& media);
 private:
   MediaticData();
   MediaticData(const MediaticData& md);

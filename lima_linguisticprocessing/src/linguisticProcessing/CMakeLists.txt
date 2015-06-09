@@ -58,6 +58,7 @@ lima-lp-postagger
 lima-lp-automaton
 lima-lp-analysishandlers
 lima-lp-client
+lima-lp-specificentitiesCrf
 )
 
 set_target_properties(lima-linguisticprocessing PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

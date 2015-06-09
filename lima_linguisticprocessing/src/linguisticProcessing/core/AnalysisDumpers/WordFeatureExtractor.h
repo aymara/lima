@@ -169,6 +169,25 @@ public:
              LinguisticGraphVertex v) const;
 };
 
+//--------------------------------------------------------
+#define FeatureSpecificEntity_ID "specificEntity"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureSpecificEntity : public AbstractFeatureExtractor
+{
+ public:
+  FeatureSpecificEntity(MediaId language, const std::string& complement="");
+  ~FeatureSpecificEntity() {}
+
+  std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+             LinguisticGraphVertex v) const;
+
+  void setNEauthorized(std::map<std::string, std::string> mp);
+
+  Common::AnnotationGraphs::AnnotationData* annot;
+  std::map<std::string, std::string> m_NEauthorized; 
+
+};
+
+
 } // end namespace
 } // end namespace
 

@@ -7,7 +7,7 @@
       <param key="text" value="Barack Obama"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>rule Obama : firstname: Barack lastname: Obama</expl>
@@ -22,7 +22,7 @@
       <param key="text" value="le président François Monge"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>generic rule with firstname as trigger, simple case : title firstname lastname = le président François Monge</expl>
@@ -82,7 +82,7 @@
       <param key="text" value="le président François de Monge"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>generic rule with firstname as trigger, case with optional particule in lastname : title firstname particule lastname = président François de Monge</expl>
@@ -148,7 +148,7 @@
       <param key="text" value="le président François G. Monge"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>generic rule with firstname as trigger, case with optional second firstname initial (with .) : title firstname firstname initial lastname = le président François G. Monge</expl>
@@ -212,7 +212,7 @@
       <param key="text" value="le président François G Monge"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>generic rule with firstname as trigger, case with optional second firstname initial : title firstname firstname initial lastname = le président François G Monge</expl>
@@ -276,7 +276,7 @@
       <param key="text" value="Jacques Bsdufof va à la cantine."/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>PERSON : test de terminaison</expl>
@@ -301,7 +301,7 @@
       <param key="text" value="Jacques Table va à la cantine."/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="limaserver"/>
+        <item value="indexer"/>
       </list>
     </call-parameters>
     <expl>PERSON : test de terminaison, le nom est dans le dictionnaire</expl>

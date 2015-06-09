@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
+<module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/entities"/>
+      </list>
+    </group>
+</module>
   <module name="Processors">
     <group name="include">
       <list name="includeList">
@@ -50,7 +57,8 @@
         <!--item value="srl"/-->
         <!--item value="conllDumper"/-->
         <!--item value="bowDumper"/-->
-        <item value="textDumper"/>
+        <!--item value="textDumper"/-->
+	<item value="crfSEDumper"/>
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
         <!--item value="temporalXmlDumper"/-->
@@ -147,6 +155,104 @@
         <item value="bowDumper"/>
       </list>
     </group>
+
+    <group name="learn" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+	<!--item value="flattokenizer"/-->
+        <!--item value="regexmatcher"/-->
+        <!--item value="tokenizer"/-->
+        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <!--item value="simpleWord"/-->
+        <!--item value="dotGraphWriter-forCorefEval"/-->
+        <!--item value="fullTokenXmlLoggerSimpleWord"/-->
+        <!--item value="idiomaticAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerIdiomatic"/-->
+        <!--item value="hyphenWordAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerHyphen"/-->
+        <!--item value="abbreviationSplitAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerAbbreviations"/-->
+        <!--item value="defaultProperties"/??-->
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="RapportInspectionModex"/-->
+	<!--item value="RapportInspectionCRFModex"/-->
+	<!--item value="RapportInspectionFiltrageModex"/-->
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <!--item value="dotGraphWriter-beforepos"/-->
+        <!--item value="viterbiPostagger-freq"/-->
+	<item value="SpecificEntitiesCRFLearn"/>
+        <!--item value="SvmToolPosTagger"/-->
+        <!--item value="DynamicSvmToolPosTagger"/-->
+        <!--item value="disambiguatedGraphXmlLogger"/-->
+        <!--item value="dotGraphWriter"/-->
+        <!--item value="sentenceBoundariesFinder"/-->
+        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
+        <!--item value="dotDepGraphWriter"/-->
+        <!--item value="syntacticAnalysisXmlLogger"/-->
+        <!--item value="compoundBuilderFromSyntacticData"/-->
+        <!--item value="compoundsXmlLogger"/-->
+        <!--item value="coreferencesSolving"/--> 
+        <!--item value="annotDotGraphWriter"/-->
+        <!--item value="depTripletLogger"/-->
+        <!--item value="corefLogger" /-->
+        <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
+        <!--item value="bowDumperXml"/-->
+	<!--item value="crfSEDumper"/-->
+        <!--item value="conllDumper"/-->
+        <!--item value="textDumper"/-->
+        <!--item value="fullXmlDumper"/-->
+        <!--item value="NullDumper"/-->
+      </list>
+    </group>
+    
+     <group name="tag" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+	<item value="flattokenizer"/>
+        <!--item value="regexmatcher"/-->
+        <!--item value="tokenizer"/-->
+        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <item value="simpleWord"/>
+        <!--item value="dotGraphWriter-forCorefEval"/-->
+        <!--item value="fullTokenXmlLoggerSimpleWord"/-->
+        <item value="idiomaticAlternatives"/>
+        <!--item value="fullTokenXmlLoggerIdiomatic"/-->
+        <item value="hyphenWordAlternatives"/>
+        <!--item value="fullTokenXmlLoggerHyphen"/-->
+        <item value="abbreviationSplitAlternatives"/>
+        <!--item value="fullTokenXmlLoggerAbbreviations"/-->
+        <item value="defaultProperties"/>
+        <item value="fullTokenXmlLoggerDefaultProperties"/>
+        <item value="specificEntitiesXmlLogger"/>
+	<item value="SpecificEntitiesCRFTag"/>
+        <!--item value="dotGraphWriter-beforepos"/-->
+        <item value="viterbiPostagger-freq"/>
+        <!--item value="SvmToolPosTagger"/-->
+        <!--item value="DynamicSvmToolPosTagger"/-->
+        <!--item value="disambiguatedGraphXmlLogger"/-->
+        <!--item value="dotGraphWriter"/-->
+        <!--item value="sentenceBoundariesFinder"/-->
+        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
+        <!--item value="dotDepGraphWriter"/-->
+        <!--item value="syntacticAnalysisXmlLogger"/-->
+        <!--item value="compoundBuilderFromSyntacticData"/-->
+        <!--item value="compoundsXmlLogger"/-->
+        <!--item value="coreferencesSolving"/--> 
+        <!--item value="annotDotGraphWriter"/-->
+        <!--item value="depTripletLogger"/-->
+        <!--item value="corefLogger" /-->
+        <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
+        <!--item value="bowDumperXml"/-->
+	<item value="crfSEDumper"/>
+        <!--item value="conllDumper"/-->
+        <!--item value="textDumper"/-->
+        <!--item value="fullXmlDumper"/-->
+        <!--item value="NullDumper"/-->
+      </list>
+    </group>
+
     <group name="none" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
@@ -420,6 +526,20 @@
     <group name="tagFusionLoader" class="ExampleLoader">
       <param key="inputFile" value="..."/>
     </group>
+
+    <group name="SpecificEntitiesCRFLearn" class="SpecificEntitiesCRFLearn">
+       <param key="crflibrary" value="trainWap"/>
+       <param key="useAnnot" value="1"/>
+       <param key="patternFile" value="pattern.txt"/>
+    </group>
+    <group name="SpecificEntitiesCRFTag" class="SpecificEntitiesCRFTag">
+       <param key="crflibrary" value="tagWap"/>
+        
+       <list name="modelList">
+	<item value="MODEL-NAME-TO-COMPLETE.mod"/>
+      </list>
+    </group>
+
 <!-- ******************************************
   Definition of loggers
 *********************************************** -->
@@ -790,6 +910,20 @@
     <group name="afterFusionXmlDumper" class="SimpleXmlDumper">
      <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis-changed.tmp"/>
     </group>
+    <group name="crfSEDumper" class="CrfSEDumper">
+        <param key="outputSuffix" value=".dat"/>
+       <map name="NECategoryAuthorized" value="1">
+	<entry key="Location.LOCATION" value="1"/>
+        <entry key="Location.GPE" value="1"/>
+        <entry key="Person.PERSON" value="1"/>
+        <entry key="Organization.ORG" value="1"/>
+        <entry key="DateTime.DATE" value="1"/>
+        <entry key="DateTime.TIME" value="1"/>
+        <entry key="Numex.NUMBER" value="1"/>
+        <entry key="Numex.UNIT" value="1"/>
+        <entry key="Numex.NUMEX" value="1"/> 
+       </map>
+     </group>
   </module>
 <!-- ******************************************
   Definition of resources

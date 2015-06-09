@@ -135,12 +135,11 @@ LimaStatusCode BowDumper::process(
     return MISSING_DATA;
   }
 
-  LDEBUG << "BowDumper handler will be: " << m_handler;
-//   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
 
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
+  LDEBUG << "BowDumper handler will be: " << m_handler << (void*)handler;
   if (handler==0)
   {
     LERROR << "BowDumper::process: handler " << m_handler << " has not been given to the core client";
@@ -184,8 +183,9 @@ LimaStatusCode BowDumper::process(
   bowText.lang=metadata->getMetaData("Lang");
   buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
 
-  BoWBinaryWriter writer;
+  BoWBinaryWriter writer(handler->shiftFrom());
   DumperStream* dstream=initialize(analysis);
+  LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
   writer.writeBoWText(dstream->out(),bowText);
   delete dstream;
   return SUCCESS_ID;

@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 add_subdirectory(conf)
+add_subdirectory(Patterns)
+add_subdirectory(Modeles)
 
 foreach(LANG ${LIMA_LANGUAGES})
   if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${LANG})
