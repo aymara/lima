@@ -58,9 +58,13 @@ lima-lp-postagger
 lima-lp-automaton
 lima-lp-analysishandlers
 lima-lp-client
-lima-lp-specificentitiesCrf
 )
 
+if(NOT ${SYSTEM_NAME} STREQUAL "Windows")
+  target_link_libraries(lima-linguisticprocessing
+  lima-lp-specificentitiesCrf
+  )
+endif()
 set_target_properties(lima-linguisticprocessing PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-linguisticprocessing DESTINATION lib)
