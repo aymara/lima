@@ -44,7 +44,6 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
    GenericXmlDumper.cpp
    BowGeneration.cpp
    CompoundsXmlLogger.cpp
-   CrfSEDumper.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-analysisdumpers)
@@ -84,5 +83,4 @@ install(FILES
     DepTripletLogger.h
     BowGeneration.h
     CompoundsXmlLogger.h
-    CrfSEDumper.h
 DESTINATION include/linguisticProcessing/core/AnalysisDumpers)
