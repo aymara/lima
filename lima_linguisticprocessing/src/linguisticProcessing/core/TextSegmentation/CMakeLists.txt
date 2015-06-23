@@ -31,7 +31,6 @@ SET(lima-lp-textsegmentation_LIB_SRCS
    SentenceBoundariesXmlLogger.cpp
 # TemporalSegmentationFeatures has to be moved to a new library just because otherwise it does not compile under Windows
 #   TemporalSegmentationFeatures.cpp
-   CRFSegmentLoader.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-textsegmentation)
@@ -54,6 +53,5 @@ install(FILES
   ParagraphBoundariesFinder.h
   SentenceBoundariesXmlLogger.h
   TemporalSegmentationFeatures.h
-  CRFSegmentLoader.h
   TextSegmentationExport.h
   DESTINATION include/linguisticProcessing/core/TextSegmentation)

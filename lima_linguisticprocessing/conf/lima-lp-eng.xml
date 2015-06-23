@@ -58,7 +58,6 @@
         <!--item value="conllDumper"/-->
         <!--item value="bowDumper"/-->
         <!--item value="textDumper"/-->
-	<item value="crfSEDumper"/>
         <!--item value="fullXmlDumper"/-->
         <!--item value="NullDumper"/-->
         <!--item value="temporalXmlDumper"/-->
@@ -198,7 +197,6 @@
         <!--item value="corefLogger" /-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
-	<!--item value="crfSEDumper"/-->
         <!--item value="conllDumper"/-->
         <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
@@ -245,7 +243,6 @@
         <!--item value="corefLogger" /-->
         <!-- Use bowDumperXml to analyze XML documents containing several media using analyzeMultimediaXmlDocuments-->
         <!--item value="bowDumperXml"/-->
-	<item value="crfSEDumper"/>
         <!--item value="conllDumper"/-->
         <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
@@ -525,19 +522,6 @@
     </group>
     <group name="tagFusionLoader" class="ExampleLoader">
       <param key="inputFile" value="..."/>
-    </group>
-
-    <group name="SpecificEntitiesCRFLearn" class="SpecificEntitiesCRFLearn">
-       <param key="crflibrary" value="trainWap"/>
-       <param key="useAnnot" value="1"/>
-       <param key="patternFile" value="pattern.txt"/>
-    </group>
-    <group name="SpecificEntitiesCRFTag" class="SpecificEntitiesCRFTag">
-       <param key="crflibrary" value="tagWap"/>
-        
-       <list name="modelList">
-	<item value="MODEL-NAME-TO-COMPLETE.mod"/>
-      </list>
     </group>
 
 <!-- ******************************************
@@ -910,20 +894,6 @@
     <group name="afterFusionXmlDumper" class="SimpleXmlDumper">
      <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis-changed.tmp"/>
     </group>
-    <group name="crfSEDumper" class="CrfSEDumper">
-        <param key="outputSuffix" value=".dat"/>
-       <map name="NECategoryAuthorized" value="1">
-	<entry key="Location.LOCATION" value="1"/>
-        <entry key="Location.GPE" value="1"/>
-        <entry key="Person.PERSON" value="1"/>
-        <entry key="Organization.ORG" value="1"/>
-        <entry key="DateTime.DATE" value="1"/>
-        <entry key="DateTime.TIME" value="1"/>
-        <entry key="Numex.NUMBER" value="1"/>
-        <entry key="Numex.UNIT" value="1"/>
-        <entry key="Numex.NUMEX" value="1"/> 
-       </map>
-     </group>
   </module>
 <!-- ******************************************
   Definition of resources
