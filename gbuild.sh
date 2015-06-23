@@ -151,7 +151,7 @@ eval $make_cmd
 #nmake
 result=$?
 
-exit 0
+exit $result
 
 if [ "x$current_project_name" != "xproject(Lima)" ];
 then
