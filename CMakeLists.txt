@@ -9,7 +9,7 @@ macro (CompileLimaSubproject _project _dependsOn)
 
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    set(_TEST_COMMAND "make test")
+    set(_TEST_COMMAND make test)
   else()
     set(_TEST_COMMAND "")
   endif()
