@@ -95,8 +95,8 @@ release="2"
 fi
 
 if [[ $parallel = "true" ]]; then
-#j=`grep -c ^processor /proc/cpuinfo`
-j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
+j=`grep -c ^processor /proc/cpuinfo`
+#j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
 echo "Parallel build on $j processors"
 else
 echo "Linear build"
@@ -112,19 +112,27 @@ fi
 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_cmd="make -j$j"
+  make_test="make test"
+  make_install="make install"
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "MSYS" ]]; then
   make_cmd="make -j$j"
+  make_test="make test"
+  make_install="make install"
   generator="MSYS Makefiles"
 elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
+  make_test="nmake test"
+  make_install="nmake install"
   generator="NMake Makefiles"
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
   pwd &&
-  MSBuild.exe -p:configuration=$mode -t:Build lima_common-prefix/src/lima_common-build/limacommon.sln &&
-  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing-prefix/src/lima_linguisticprocessing-build/limalinguisticprocessing.sln
+  MSBuild.exe -p:configuration=$mode -t:Build lima_common.vcxproj &&
+  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing.vcxproj
   """
+  make_test=""
+  make_install=""""
   generator="Visual Studio 10 2010"
 else
   make_cmd="make -j$j"
@@ -146,17 +154,13 @@ cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PA
 echo "Running command:"
 echo "$make_cmd"
 eval $make_cmd
-
-#make -j$j 
-#nmake
 result=$?
 
-exit $result
+#exit $result
 
 if [ "x$current_project_name" != "xproject(Lima)" ];
 then
-  #make test && make install
-  nmake test && nmake install
+  eval $make_test && eval $make_install
   result=$?
 fi
 
