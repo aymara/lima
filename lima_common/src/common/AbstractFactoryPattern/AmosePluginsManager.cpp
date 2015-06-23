@@ -61,8 +61,9 @@ bool AmosePluginsManager::loadPlugins()
 #else
         QString strline = QString("lib") + line.data() + ".so";
 #endif
+#ifdef DEBUG_CD
         LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << strline.toUtf8().data() << "'";
-        std::cout << "AmosePluginsManager::loadPlugins loading plugin '" << strline.toUtf8().data() << "'"<<std::endl;
+#endif
         DynamicLibrariesManager::changeable().loadLibrary(strline.toUtf8().data());
       }
     }
