@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
   <!--==================== tests PERSON with components ====================-->
-  <!--testcase id="fre.se.pers.comp.0" type="pertinent">
+  <testcase id="fre.se.pers.comp.0" type="pertinent">
     <call-parameters>
       <param key="text" value="Barack Obama"/>
       <param key="language" value="fre"/>
@@ -16,7 +16,7 @@
           left="XPATH#//entities/entity[pos=1][len=12]/type"
           operator="="
           right="Person.PERSON"/>
-  </testcase-->
+  </testcase>
   <testcase id="fre.se.pers.comp.1" type="pertinent">
     <call-parameters>
       <param key="text" value="le président François Monge"/>
@@ -137,7 +137,7 @@
           operator="="
           right="5"/>
   </testcase>
-  <!--testcase id="fre.se.pers.comp.3" type="pertinent">
+  <testcase id="fre.se.pers.comp.3" type="pertinent">
     <call-parameters>
       <param key="text" value="le président François de Monge"/>
       <param key="language" value="fre"/>
@@ -148,7 +148,7 @@
     <expl>generic rule with firstname as trigger, case with optional particule in lastname : title firstname particule lastname = président François de Monge</expl>
     <test id="fre.se.pers.comp.3.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=14]/type"
+          left="XPATH#//entities/entity[pos=4]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.3.2" trace=".se.xml"
@@ -196,25 +196,30 @@
           left="XPATH#//entities/entity/components/lastname/@len"
           operator="="
           right="8"/>
-  </testcase-->
+  </testcase>
   <!-- TODO: test 4 to be activated when bug fixed -->
   <!-- : bug = "G." not part of firstname but in last name -->
   <!-- : t_status:t_alpha =  t_capital_1st -->
   <!-- : interpreted as @PersonNamePart ? -->
   <!--   ?? add status of tokenizer "abbrev" for "G." -->
   <!--   ?? or add status of tokenizer "abbrev" for "G." -->
-  <!--testcase id="fre.se.pers.comp.4" type="pertinent">
+  <!--OME testcase id="fre.se.pers.comp.4" type="pertinent">
     <call-parameters>
-      <param key="text" value="le président François G. Monge"/>
+      <param key="text" value="Augustin G. Monge"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
         <item value="limaserver"/>
       </list>
     </call-parameters>
-    <expl>generic rule with firstname as trigger, case with optional second firstname initial (with .) : title firstname firstname initial lastname = le président François G. Monge</expl>
+    <expl>generic rule with firstname as trigger, case with optional second firstname initial (with .) : title, firstname, firstname initial, lastname = le président Augustin G. Monge</expl>
+    <test id="fre.se.pers.comp.4.0" trace=".tokenizer.xml"
+          comment="status tokenizer"
+          left="XPATH#//data_structure/vertex/token[position=10]/t_status/t_alpha/t_alpha_capital"
+          operator="="
+          right="t_abbrev"/>
     <test id="fre.se.pers.comp.4.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=14][len=17]/type"
+          left="XPATH#//entities/entity[pos=0][len=23]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.4.2" trace=".se.xml"
@@ -238,7 +243,7 @@
           operator="="
           right="François G."/>
     <test id="fre.se.pers.comp.4.6" trace=".se.xml"
-          comment="position prénom= 14"
+          comment="position prénom= 0"
           left="XPATH#//entities/entity/components/firstname/@pos"
           operator="="
           right="14"/>
@@ -264,7 +269,7 @@
           right="5"/>
   </testcase-->
   <!-- TODO: test 5 to be activated when bug fixed -->
-  <!-- : bug = "G"  anf "Monge" added multiple time -->
+  <!-- : bug = "G"  and "Monge" added multiple time -->
   <!-- : more than one possible triggering  -->
   <!-- : ?? transform AddFeatureConstraint in AddFeatureAction -->
   <!--testcase id="fre.se.pers.comp.5" type="pertinent">
@@ -278,7 +283,7 @@
     <expl>generic rule with firstname as trigger, case with optional second firstname initial : title firstname firstname initial lastname = le président François G Monge</expl>
     <test id="fre.se.pers.comp.5.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=14][len=16]/type"
+          left="XPATH#//entities/entity[pos=4][len=26]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.5.2" trace=".se.xml"
@@ -297,65 +302,37 @@
           operator="="
           right="9"/>
     <test id="fre.se.pers.comp.5.5" trace=".se.xml"
-          comment="prénom = François G."
+          comment="prénom = François G"
           left="XPATH#//entities/entity/components/firstname"
           operator="="
-          right="François G."/>
+          right="François G"/>
     <test id="fre.se.pers.comp.5.6" trace=".se.xml"
           comment="position prénom= 14"
           left="XPATH#//entities/entity/components/firstname/@pos"
           operator="="
           right="14"/>
     <test id="fre.se.pers.comp.5.7" trace=".se.xml"
-          comment="longueur prénom= 11"
+          comment="longueur prénom= 10"
           left="XPATH#//entities/entity/components/firstname/@len"
           operator="="
-          right="11"/>
+          right="10"/>
     <test id="fre.se.pers.comp.5.8" trace=".se.xml"
           comment="nom = Monge"
           left="XPATH#//entities/entity/components/lastname"
           operator="="
           right="Monge"/>
     <test id="fre.se.pers.comp.5.9" trace=".se.xml"
-          comment="position nom= 24"
+          comment="position nom= 25"
           left="XPATH#//entities/entity/components/lastname/@pos"
           operator="="
-          right="24"/>
+          right="25"/>
     <test id="fre.se.pers.comp.5.10" trace=".se.xml"
           comment="longueur nom= 5"
           left="XPATH#//entities/entity/components/lastname/@len"
           operator="="
           right="5"/>
   </testcase-->
-  <!-- TODO: test 6 to be activated when bug fixed -->
-  <!-- : bug = "Bsdufof"  added multiple time -->
-  <!-- : more than one possible triggering ?? -->
-  <!-- : ?? transform AddFeatureConstraint in AddFeatureAction -->
-  <!--testcase id="fre.se.pers.comp.6" type="pertinent">
-    <call-parameters>
-      <param key="text" value="Jacques Bsdufof va à la cantine."/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <expl>PERSON : test de terminaison</expl>
-    <test id="fre.se.pers.comp.6.1" trace=".se.xml"
-          comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=1][len=15]/type"
-          operator="="
-          right="Person.PERSON"/>
-    <test id="fre.se.pers.comp.6.2" trace=".se.xml"
-          comment="prénom = Jacques"
-          left="XPATH#//entities/entity/components/firstname"
-          operator="="
-          right="Jacques"/>
-    <test id="fre.se.pers.comp.6.3" trace=".se.xml"
-          comment="nom = Bsdufof"
-          left="XPATH#//entities/entity/components/lastname"
-          operator="="
-          right="Bsdufof"/>
-  </testcase-->
+  <!-- test avec Nom dans le dictionnaire !-->
   <!--testcase id="fre.se.pers.comp.7" type="pertinent">
     <call-parameters>
       <param key="text" value="Jacques Table va à la cantine."/>
