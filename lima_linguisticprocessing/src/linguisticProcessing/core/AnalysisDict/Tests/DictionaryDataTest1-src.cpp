@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( DictionaryDataTest1 )
 
   // uint64_t getSize() const;
   uint64_t size = dicoData.getSize();
-  BOOST_REQUIRE(size == 660156);
+  BOOST_REQUIRE(size == 660157);
 
   // test unsigned char* getEntryAddr(uint64_t index) const;
   uint64_t index(0);
