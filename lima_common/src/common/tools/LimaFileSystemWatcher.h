@@ -20,8 +20,8 @@
 #ifndef LIMAFILESYSTEMWATCHER_H
 #define LIMAFILESYSTEMWATCHER_H
 
+#include "common/LimaCommon.h"
 #include <QObject>
-#include "stringspool.h"
 
 namespace Lima 
 {
@@ -37,7 +37,7 @@ class LimaFileSystemWatcherPrivate;
  * The public API is a subpart of those of QFileSystemWatcher.
  * @todo Complete the API to implement all the QFileSystemWatcher one
  */
-class LimaFileSystemWatcher : public QObject
+class LIMA_COMMONTOOLS_EXPORT LimaFileSystemWatcher : public QObject
 {
     Q_OBJECT
 public:

@@ -60,8 +60,8 @@ void LimaFileSystemWatcherPrivate::delay( int millisecondsToWait )
 }
 void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path )
 {
-  MISCLOGINIT;
-  LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path;
+  
+  std::cerr  << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path.toUtf8().constData() << std::endl;
   QMutexLocker locker(&m_pathToDeletedFileMapMutex);
   if (m_pathToDeletedFileMap.contains(path))
   {
@@ -81,7 +81,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
         {
           m_watcher.removePath(path);
         }
-        LDEBUG << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file;
+        std::cerr  << "LimaFileSystemWatcherPrivate::slotDirectoryChanged watching again" << file.toUtf8().constData() << std::endl ;
         // watch file again
         m_watcher.addPath(file);
         // signal the change
@@ -93,13 +93,12 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
 
 void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
 {
-  MISCLOGINIT;
-  LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged" << path;
+  std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged" << path.toUtf8().constData() << std::endl;
   delay(500);
   // File just disapeared
   if (!QFileInfo(path).exists())
   {
-    LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged removed" << path;
+    std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged removed" << path.toUtf8().constData() << std::endl;
     QMutexLocker locker(&m_pathToDeletedFileMapMutex);
     // explicitely remove the  file from the watcher, otherwise, even if  it is no longer 
     // monitored, it cannot be added again
@@ -112,7 +111,7 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
     m_watcher.addPath(dir);
   }
   // In all cases, transmit the signal
-  LDEBUG << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private" << path;
+  std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private" << path.toUtf8().constData() << std::endl;
   Q_EMIT fileChanged(path);
 }
 
@@ -121,8 +120,7 @@ LimaFileSystemWatcher::LimaFileSystemWatcher( QObject* parent )
 {
   if   (!connect(m_d, SIGNAL(fileChanged(QString)),this,SIGNAL(fileChanged(QString))))
   {
-    MISCLOGINIT;
-    LERROR << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal";
+      std::cerr << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal"  << std::endl;
   }
 }
 
@@ -131,8 +129,7 @@ LimaFileSystemWatcher::LimaFileSystemWatcher ( const LimaFileSystemWatcher& othe
 {
   if   (!connect(m_d, SIGNAL(fileChanged(QString)),this,SIGNAL(fileChanged(QString))))
   {
-    MISCLOGINIT;
-    LERROR << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal";
+    std::cerr << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal" << std::endl;
   }
 }
 

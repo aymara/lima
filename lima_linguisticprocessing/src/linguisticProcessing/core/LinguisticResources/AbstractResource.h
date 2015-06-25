@@ -21,11 +21,14 @@
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCES_H
 #define LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCES_H
 
+
+#include "LinguisticResourcesExport.h"
+
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/AbstractFactoryPattern/InitializableObject.h"
-#include "common/misc/LimaFileSystemWatcher.h"
+#include "common/tools/LimaFileSystemWatcher.h"
 
 #include <QtCore/QObject>
 
@@ -36,7 +39,7 @@ struct ResourceInitializationParameters {
   MediaId language;
 };
 
-class AbstractResourcePrivate;
+class  AbstractResourcePrivate;
 /** 
   * @brief resource abstraction. All resource should inherit from this class
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
@@ -48,7 +51,7 @@ class AbstractResourcePrivate;
   * @ref resourceFileChanged signal to do whatever necessary with this changed resource, for 
   * example reloading it.
   */
-class AbstractResource : public QObject, public InitializableObject<AbstractResource,ResourceInitializationParameters>
+class LIMA_LINGUISTICRESOURCES_EXPORT AbstractResource : public QObject, public InitializableObject<AbstractResource,ResourceInitializationParameters>
 {
   Q_OBJECT
 public:

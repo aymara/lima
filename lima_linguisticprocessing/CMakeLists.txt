@@ -15,12 +15,23 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(limalinguisticprocessing)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
+#cmake_policy
 if(POLICY CMP0017)
 cmake_policy(SET CMP0017 NEW)
 
 endif()
+
+if(POLICY CMP0020)
+cmake_policy(SET CMP0020 OLD)
+endif()
+
+if(POLICY CMP0038)
+cmake_policy(SET CMP0038 NEW)
+endif()
+
+
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP" )
@@ -39,6 +50,7 @@ enable_testing()
 
 include(SystemSpecificInformations.cmake)
 
+message("System name is ${CMAKE_SYSTEM_NAME}")
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
 

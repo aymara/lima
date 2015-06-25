@@ -21,6 +21,7 @@
 #ifndef LIMACONLLTOKENIDMAPPING_H
 #define LIMACONLLTOKENIDMAPPING_H
 
+#include "SemanticAnalysisExport.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include <map>
@@ -30,7 +31,7 @@ namespace LinguisticProcessing {
 namespace SemanticAnalysis {
 
 
-class LimaConllTokenIdMapping : public std::map<int, std::map<int,LinguisticGraphVertex>>, public AnalysisData
+class LIMA_SEMANTICANALYSIS_EXPORT LimaConllTokenIdMapping : public std::map<int, std::map<int,LinguisticGraphVertex>>, public AnalysisData
 {
 
 public:

@@ -69,7 +69,7 @@ void DictionaryData::loadBinaryFile(const std::string& file)
     mess.append(file).append(" not found!");
     throw( std::logic_error( mess ) );
   }
-  u_int64_t dataSize = QFileInfo(file.c_str()).size();
+  uint64_t dataSize = QFileInfo(file.c_str()).size();
   LDEBUG << "DictionaryData::loadBinaryFile data size: " << dataSize;
   m_data = new unsigned char [dataSize];
   if (m_data == NULL)

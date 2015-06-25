@@ -93,7 +93,7 @@ private:
   std::list<std::string> m_list;
 };
 
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 

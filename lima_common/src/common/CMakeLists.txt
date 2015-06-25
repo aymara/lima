@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+add_subdirectory(tools)
 add_subdirectory(QsLog)
 add_subdirectory(AbstractFactoryPattern)
 add_subdirectory(AbstractProcessingClient)
@@ -40,6 +41,7 @@ target_link_libraries(lima-common
     lima-common-factory 
     lima-common-data 
     lima-common-misc 
+    lima-common-tools 
     lima-common-datahandler 
     lima-common-time 
     lima-common-mediaprocessors 

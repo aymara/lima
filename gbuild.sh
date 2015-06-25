@@ -32,6 +32,7 @@ Options default values are in parentheses.
                 precompiled ones
   -v version    <(val)|rev> version number is set either to the value set by  
                 config files or to the short git sha1
+  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.  
 EOF
 exit 1
 }
@@ -43,13 +44,23 @@ mode="debug"
 version="val"
 resources="build"
 parallel="true"
+CMAKE_GENERATOR="Unix"
 
-while getopts ":m:p:r:v:" o; do
+while getopts ":m:p:r:v:G:" o; do
     case "${o}" in
         m)
             mode=${OPTARG}
             [[ "$mode" == "debug" || "$mode" == "release" ]] || usage
             ;;
+        G)
+          CMAKE_GENERATOR=${OPTARG}
+          echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
+          [[     "$CMAKE_GENERATOR" == "Unix"  || 
+                 "$CMAKE_GENERATOR" == "MSYS"  ||
+                 "$CMAKE_GENERATOR" == "NMake" ||
+                 "$CMAKE_GENERATOR" == "VS"
+          ]] || usage
+          ;;
         p)
             parallel=${OPTARG}
             [[ "$parallel" == "true" || "$parallel" == "false" ]] || usage
@@ -85,6 +96,7 @@ fi
 
 if [[ $parallel = "true" ]]; then
 j=`grep -c ^processor /proc/cpuinfo`
+#j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
 echo "Parallel build on $j processors"
 else
 echo "Linear build"
@@ -98,17 +110,57 @@ else
 cmake_mode="Debug"
 fi
 
-echo "version='$release'"
-install -d $build_prefix/$mode/$current_project
-pushd $build_prefix/$mode/$current_project
-cmake -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+if [[ $CMAKE_GENERATOR == "Unix" ]]; then
+  make_cmd="make -j$j"
+  make_test="make test"
+  make_install="make install"
+  generator="Unix Makefiles"
+elif [[ $CMAKE_GENERATOR == "MSYS" ]]; then
+  make_cmd="make -j$j"
+  make_test="make test"
+  make_install="make install"
+  generator="MSYS Makefiles"
+elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
+  make_cmd="nmake && exit 0"
+  make_test="nmake test"
+  make_install="nmake install"
+  generator="NMake Makefiles"
+elif [[ $CMAKE_GENERATOR == "VS" ]]; then
+  make_cmd="""
+  pwd &&
+  MSBuild.exe -p:configuration=$mode -t:Build lima_common.vcxproj &&
+  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing.vcxproj
+  """
+  make_test=""
+  make_install=""""
+  generator="Visual Studio 10 2010"
+else
+  make_cmd="make -j$j"
+fi
 
-make -j$j 
+echo "version='$release'"
+mkdir -p $build_prefix/$mode/$current_project
+pushd $build_prefix/$mode/$current_project
+#consider linking this current place to $LIMA_BUILD_PATH if different
+#this could be usefull to trick windows path length limitation
+#when building with VS
+mkdir -p $LIMA_BUILD_PATH
+pushd $LIMA_BUILD_PATH
+
+echo "LIMA_BUILD_PATH=$LIMA_BUILD_PATH"
+echo "Launching cmake"
+cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+
+echo "Running command:"
+echo "$make_cmd"
+eval $make_cmd
 result=$?
+
+#exit $result
 
 if [ "x$current_project_name" != "xproject(Lima)" ];
 then
-  make test && make install
+  eval $make_test && eval $make_install
   result=$?
 fi
 

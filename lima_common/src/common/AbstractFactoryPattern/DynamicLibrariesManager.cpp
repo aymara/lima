@@ -29,6 +29,9 @@
 #include "common/LimaCommon.h"
 
 #include <iostream>
+#include<QString>
+#include<QStringList>
+#include<QRegularExpression>
 
 using namespace std;
 
@@ -61,6 +64,7 @@ loadLibrary(const std::string& libName)
 {
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
+  LDEBUG <<"DynamicLibrariesManager::loadLibrary() -- "<<"libName="<<libName ;
 #endif
   std::map<std::string,QLibrary*>::const_iterator
     it=m_handles.find(libName);
@@ -82,13 +86,16 @@ loadLibrary(const std::string& libName)
     if (libhandle->load())
     {
       m_handles.insert(std::make_pair(libName,libhandle));
+#ifdef DEBUG_CD
+    LDEBUG << "the library " << libName.c_str() << " was loaded";
+#endif
       return true;
     }
     else
     {
 //      if ( QLibrary::isLibrary(((*it)+"/"+libName).c_str()) )
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR << "Failed to open lib " << libhandle->errorString().toUtf8().data();
+      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "<<"Failed to open lib " << libhandle->errorString().toUtf8().data();
       delete libhandle;
       libhandle = 0;
     }
@@ -104,22 +111,25 @@ loadLibrary(const std::string& libName)
     if (libhandle->load())
     {
       m_handles.insert(std::make_pair(libName,libhandle));
+#ifdef DEBUG_CD
+    LDEBUG << "the library " << libName.c_str() << " was loaded";
+#endif
       return true;
     }
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR << "Failed to open lib " << libhandle->errorString().toUtf8().data();
+      LINFO <<"DynamicLibrariesManager::loadLibrary() -- "<< "Failed to open lib " << libhandle->errorString().toUtf8().data();
       delete libhandle;
       libhandle = 0;
       return false;
     }
   }
   else {
+    m_handles[libName]=libhandle;
 #ifdef DEBUG_CD
     LDEBUG << "the library " << libName.c_str() << " was loaded";
 #endif
-    m_handles[libName]=libhandle;
     return true;
   }
 }
@@ -127,11 +137,33 @@ loadLibrary(const std::string& libName)
 void DynamicLibrariesManager::
 addSearchPath(const std::string& searchPath)
 {
+  if(std::find(m_supplementarySearchPath.begin(), m_supplementarySearchPath.end(), searchPath)!=m_supplementarySearchPath.end()){
+    return;
+  }
+#ifdef DEBUG_CD
+    ABSTRACTFACTORYPATTERNLOGINIT;
+    LINFO << "adding search path '"<<searchPath.c_str()<<"'";
+    std::cout<< "adding search path '"<<searchPath.c_str()<<"'" << std::endl;
+#endif
+    m_supplementarySearchPath.push_back(searchPath);
+  
+}
+
+void DynamicLibrariesManager::
+addSearchPathes(QString searchPathes)
+{
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "adding search path '"<<searchPath.c_str()<<"'";
 #endif
-  m_supplementarySearchPath.push_back(searchPath);
+  QStringList list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"), QString::SkipEmptyParts);
+  for(QStringList::iterator it = list.begin();
+        it!=list.end();++it) {
+      QString searchPath = *it;
+#ifdef DEBUG_CD
+      LINFO << "DynamicLibrariesManager::addSearchPathes() -- " <<"adding:"<<searchPath.toUtf8().data();
+#endif
+      this->addSearchPath(searchPath.toUtf8().data());
+    }
 }
 
 

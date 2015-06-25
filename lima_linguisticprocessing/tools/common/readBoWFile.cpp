@@ -294,7 +294,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
 // M A I N
 //
 //**********************************************************************
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 

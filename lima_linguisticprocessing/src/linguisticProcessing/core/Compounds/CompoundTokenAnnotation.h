@@ -43,7 +43,7 @@ namespace Compounds
  * It is a node annotation for adverbs or pronouns and a link annotation for 
  * adjectives
 */
-class LIMA_COMPOUNDS_EXPORT ConceptModifier 
+class  ConceptModifier 
 {
 public:
   
@@ -95,7 +95,7 @@ private:
 };
 
 
-class LIMA_COMPOUNDS_EXPORT CompoundTokenAnnotation : public std::vector< ConceptModifier >
+class  CompoundTokenAnnotation : public std::vector< ConceptModifier >
 {
 public: 
   CompoundTokenAnnotation() {}

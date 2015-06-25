@@ -19,6 +19,7 @@
 #ifndef LIMA_LIMAMAINTASKRUNNER_H
 #define LIMA_LIMAMAINTASKRUNNER_H
 
+#include "common/LimaCommon.h"
 #include <QObject>
 
 namespace Lima {
@@ -52,7 +53,7 @@ int main(int argc, char **argv)
 }
   \endcode
  */
-class LimaMainTaskRunner : public QObject
+class LIMA_COMMONTOOLS_EXPORT LimaMainTaskRunner : public QObject
 {
     Q_OBJECT
 public:

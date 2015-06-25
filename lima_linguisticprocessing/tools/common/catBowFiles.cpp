@@ -123,7 +123,7 @@ void readAndWriteBoWText(ifstream& fileIn,
 // M A I N
 //
 //**********************************************************************
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 

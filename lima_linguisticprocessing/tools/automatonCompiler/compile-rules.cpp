@@ -40,7 +40,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 // #include "common/AbstractFactoryPattern/MainFactory.h"
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
@@ -274,7 +274,7 @@ std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& pars
 //****************************************************************************
 //  M A I N
 //****************************************************************************
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 

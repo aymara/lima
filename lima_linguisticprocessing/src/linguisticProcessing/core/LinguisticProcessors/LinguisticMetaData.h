@@ -28,6 +28,7 @@
 #include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
 
+#include <QDate>
 namespace Lima
 {
 

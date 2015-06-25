@@ -126,6 +126,6 @@ typedef boost::property_map<LinguisticGraph, vertex_chain_id_t>::const_type CVer
 // typedef boost::property_map<LinguisticGraph, edge_chain_id_t>::type EdgeChainIdPropertyMap;
 typedef boost::property_map<LinguisticGraph, boost::vertex_color_t >::type VertexColorLinguisticGraphPropertyMap;
 
-QDebug& operator<< (QDebug& qd, LinguisticGraphEdge& edge);
+LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT QDebug& operator<< (QDebug& qd, LinguisticGraphEdge& edge);
 
 #endif // LIMA_GRAPH_PHOENIXGRAPH_H

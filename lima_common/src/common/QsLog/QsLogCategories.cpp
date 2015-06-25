@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 #include "QsLogCategories.h"
-#include "common/misc/LimaFileSystemWatcher.h"
+#include "common/tools/LimaFileSystemWatcher.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)

@@ -201,7 +201,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
     int subCount = 1;
     for (; it!=it_end; it++, subCount++) {
       std::string currentId(initialId);
-      currentId.append(".").append(std::to_string(subCount));
+      currentId.append(".").append(std::to_string(static_cast<long long>(subCount)));
       seqfinalState=buildAutomaton(a,*it,seqInitialState,currentId,language,activeEntityGroups);
       seqInitialState=seqfinalState;
     }

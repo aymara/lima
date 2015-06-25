@@ -24,7 +24,6 @@
 #include <QFileSystemWatcher>
 #include <QMultiMap>
 #include <QMutex>
-#include "stringspool.h"
 
 namespace Lima
 {

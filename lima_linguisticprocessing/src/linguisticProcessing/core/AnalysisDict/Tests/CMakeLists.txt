@@ -25,7 +25,7 @@ add_executable(EnhancedAnalysisDictionaryTest0 ${EnhancedAnalysisDictionaryTest0
 target_link_libraries(EnhancedAnalysisDictionaryTest0 
   lima-common-data 
   lima-common-qslog 
-  lima-common-misc 
+  lima-common-misc lima-common-tools 
   ${Boost_LIBRARIES} 
   ${QT_LIBRARIES}
 )
@@ -57,7 +57,7 @@ add_executable(EnhancedAnalysisDictionaryTest1 ${EnhancedAnalysisDictionaryTest1
 
 target_link_libraries(EnhancedAnalysisDictionaryTest1 
   lima-common-data 
-  lima-common-misc 
+  lima-common-misc lima-common-tools 
   lima-common-mediaticdata 
   lima-common-fsaaccess 
   lima-common-qslog 

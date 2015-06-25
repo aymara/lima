@@ -1,5 +1,5 @@
 project(Lima)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 enable_testing()
 
@@ -7,27 +7,40 @@ include(ExternalProject)
 
 macro (CompileLimaSubproject _project _dependsOn)
 
+  ## Define test command.
+  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    set(_TEST_COMMAND make test)
+  else()
+    set(_TEST_COMMAND "")
+  endif()
+  
+  ## Add external project
   ExternalProject_Add(
     ${_project}
     DOWNLOAD_COMMAND ""
     PATCH_COMMAND ""
     UPDATE_COMMAND ""
-    TEST_COMMAND make test
+    TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}"
   )
+
+  ## Add specified dependencies
   if (NOT "x${_dependsOn}" STREQUAL "x")
     add_dependencies(${_project} ${_dependsOn})
   endif()
 
-  if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
-    ExternalProject_Add_Step(${_project} packaging
-    COMMAND make package
-    COMMENT "Packaging ${_project}"
-    WORKING_DIRECTORY <BINARY_DIR>
-    DEPENDEES install
-    )
+    ## Add packaging command
+  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
+      ExternalProject_Add_Step(${_project} packaging
+      COMMAND make package
+      COMMENT "Packaging ${_project}"
+      WORKING_DIRECTORY <BINARY_DIR>
+      DEPENDEES install
+      )
+    endif()
   endif()
 
   ## Force rebuilding of the main subproject every time building from super structure
