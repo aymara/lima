@@ -34,6 +34,8 @@
 #include "common/LimaCommon.h"
 #include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
+#include "common/time/timeUtilsController.h"
+
 #include "linguisticProcessing/core/Automaton/automatonCommon.h" // for exceptions
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h" // to check rules
 #include "linguisticProcessing/core/Automaton/entityTransition.h" // for exceptions
@@ -82,6 +84,8 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
                                          MediaId language,
                                          const std::string& filename) {
   AUCLOGINIT;
+  // Lima::TimeUtilsController("RecognizerCompiler::buildRecognizer", true);
+  Lima::TimeUtilsController* ctrl1  = new Lima::TimeUtilsController("RecognizerCompiler::buildRecognizer", true);
   // ugly hack to keep tracks of the files
   // (should be rewritten more properly)
   std::ifstream* tmpStream(0);
@@ -380,7 +384,10 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     m_lineNumber=tmpLineNumber;
   }
 
+  Lima::TimeUtilsController* ctrl3  = new Lima::TimeUtilsController("initializeSearchStructure", true);
   reco.initializeSearchStructure();
+  delete ctrl3;
+  delete ctrl1;
 }
 
 //**********************************************************************
@@ -464,11 +471,13 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
                            const bool headTrigger) {
 
   AUCLOGINIT;
+  Lima::TimeUtilsController* ctrl4  = new Lima::TimeUtilsController("addRuleWithGazeteerTrigger", true);
   // identify class alias
 //   int endTrigger(findSpecialCharacter(s,CHAR_SEP_RULE,1));
 //   Tword classAlias(s.mid(1,endTrigger-1));
 //   s=s.mid(endTrigger+1);
   // find gazeteer
+  Lima::TimeUtilsController* ctrl41  = new Lima::TimeUtilsController("before init Rule inside addRuleWithGazeteerTrigger", true);
   std::size_t i;
   for (i=0; i<gazeteers.size(); i++) {
     if (gazeteers[i].alias() == gazeteerName) {
@@ -499,6 +508,8 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
     }
 
     ruleString=triggerString+CHAR_SEP_RULE+ruleString;
+    delete ctrl41;
+    Lima::TimeUtilsController* ctrl42  = new Lima::TimeUtilsController("init Rule inside addRuleWithGazeteerTrigger", true);
     try {
       RuleCompiler::initRule(*r,ruleString,language,
                              gazeteers,subAutomatons,
@@ -509,7 +520,9 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
     catch (AutomatonCompilerException& e) {
       throwError(e.what(),m_currentLine);
     }
+    delete ctrl42;
 
+    Lima::TimeUtilsController* ctrl43  = new Lima::TimeUtilsController("after init Rule inside addRuleWithGazeteerTrigger", true);
     r->setWeight(currentRuleWeight());
     LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
           << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteers[i][0])<<")";
@@ -533,6 +546,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
       }
     }
     m_nbRule++;
+    delete ctrl43;
   }
   else {
     string str=Misc::limastring2utf8stdstring(gazeteerName);
@@ -543,6 +557,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
       printWarning("Unrecognized class as trigger ["+str+"]",ruleString);
     }
   }
+  delete ctrl4;
 }
 
 //**********************************************************************

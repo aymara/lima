@@ -156,36 +156,14 @@ bool EntityFeatures::operator==(const EntityFeatures& f) const
   return true;
 }
 
-template<typename ValueType>
-  void EntityFeatures::appendFeature(const std::string& name,
-                  const ValueType& value)
-    {
-      SELOGINIT;
-      // if feature with same name already exists, append to it
-      LDEBUG << "EntityFeatures::<ValueType>appendFeature(" << name << "," << value << ")";
-      // if feature with same name already exists, but type is neither
-      // int neitheer float, nor string, overwrite it
-      EntityFeatures::iterator it=find(name);
-      if (it!=end()) {
-        (*it).setValue(boost::any(value));
-      }
-      else {
-        //push empy feature and set values to avoid two copies
-        //of value (do not know the type: it may be a big class)
-        push_back(EntityFeature());
-        back().setName(name);
-        back().setValue(boost::any(value));
-      }
-    }
-
 template<>
   void EntityFeatures::appendFeature(const std::string& name,
                   const QString& value)
     {
       SELOGINIT;
       // if feature with same name already exists, append to it
-      LDEBUG << "EntityFeatures::appendFeature(" << name << "," << value << ")";
-      EntityFeatures::iterator it=find(name);
+      LDEBUG << "EntityFeatures<QString>::appendFeature(" << name << "," << value << ")";
+      EntityFeatures::iterator it=findLast(name);
       if (it!=end()) {
        QString previous = boost::any_cast<QString>(it->getValue());
        LDEBUG << "EntityFeatures::appendFeature: previous =" << previous;
@@ -206,8 +184,10 @@ template<>
   void EntityFeatures::appendFeature(const std::string& name,
                   const int& value)
     {
+      SELOGINIT;
+      LDEBUG << "EntityFeatures<int>::appendFeature(" << name << "," << value << ")";
       // if feature with same name already exists, append to it
-      EntityFeatures::iterator it=find(name);
+      EntityFeatures::iterator it=findLast(name);
       if (it!=end()) {
        int previous = boost::any_cast<int>(*it);
        previous += value;
@@ -226,8 +206,10 @@ template<>
   void EntityFeatures::appendFeature(const std::string& name,
                   const double& value)
     {
+      SELOGINIT;
+      LDEBUG << "EntityFeatures<double>::appendFeature(" << name << "," << value << ")";
       // if feature with same name already exists, append to it
-      EntityFeatures::iterator it=find(name);
+      EntityFeatures::iterator it=findLast(name);
       if (it!=end()) {
        double previous = boost::any_cast<double>(*it);
        previous += value;
@@ -254,7 +236,21 @@ find(const std::string& featureName)
   return std::find(begin(),end(),featureName);
 }
 
-//***********************************************************************
+EntityFeatures::const_iterator EntityFeatures::
+findLast(const std::string& featureName) const 
+{ 
+  std::vector<std::string> pattern(1,featureName);
+  return std::find_end(begin(),end(),pattern.begin(),pattern.end());
+}
+
+EntityFeatures::iterator EntityFeatures::
+findLast(const std::string& featureName)
+{
+  std::vector<std::string> pattern(1,featureName);
+  return std::find_end(begin(),end(),pattern.begin(),pattern.end());
+}
+
+///***********************************************************************
 std::ostream& operator<<(std::ostream& os, const EntityFeatures& f) {
   if (f.empty()) {
     return os;

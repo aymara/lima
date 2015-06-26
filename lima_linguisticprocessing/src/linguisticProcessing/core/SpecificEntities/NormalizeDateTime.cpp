@@ -320,7 +320,7 @@ operator()(RecognizerMatch& m,
         if (monthNum==NormalizeDateTimeResources::no_month) {
           // failed to recognize month => no normalization
           LDEBUG << "NormalizeDate: '" << monthString << "' not recognized as month";
-          m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+          m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
         }
         else {
           if (month!=0 && m_isInterval) {
@@ -411,24 +411,24 @@ operator()(RecognizerMatch& m,
       LDEBUG << "NormalizeDate: no day, month or year identified in " 
              << Common::Misc::limastring2utf8stdstring(m.getString())
             ;
-      m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+      m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     }
     else {
       if (day==0) {
         if (month==0) {
           // only year : do not set interval of dates from first to last day of year
           // set only year : cast to int in features
-          m.features().addFeature(YEAR_FEATURE_NAME,static_cast<int>(year));
+          m.features().setFeature(YEAR_FEATURE_NAME,static_cast<int>(year));
         }
         else {
           // set interval
           QDate firstDayOfMonth(year,month,1);
-          m.features().addFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
+          m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
           if (month_end==0) {
-            m.features().addFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.daysInMonth());
+            m.features().setFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.daysInMonth());
           }
           else {
-            m.features().addFeature(DATE_END_FEATURE_NAME,QDate(year,month_end,1).daysInMonth());
+            m.features().setFeature(DATE_END_FEATURE_NAME,QDate(year,month_end,1).daysInMonth());
           }
         }
       }
@@ -438,13 +438,13 @@ operator()(RecognizerMatch& m,
             //day only => take month and year from reference
             QDate referenceDate;
             if (! m_referenceData.getReferenceDate(analysis,referenceDate)) {
-              m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+              m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
             }
             else {
               int refYear=referenceDate.year();
               int refMonth=referenceDate.month();
               newCurrentDate=QDate(refYear,refMonth,day);
-              m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+              m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
             }
           }
           else {
@@ -452,7 +452,7 @@ operator()(RecognizerMatch& m,
             LDEBUG << "NormalizeDate: only day and year in " 
                    << Common::Misc::limastring2utf8stdstring(m.getString())
                   ;
-            m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+            m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
           }
         }
         else {
@@ -460,17 +460,17 @@ operator()(RecognizerMatch& m,
             // get year from reference
             QDate referenceDate;
             if (! m_referenceData.getReferenceDate(analysis,referenceDate)) {
-              m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+              m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
             }
             else {
               int refYear=referenceDate.year();
               newCurrentDate=QDate(refYear,month,day);
               if (day_end==0) {
-                m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+                m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
               }
               else {
-                m.features().addFeature(DATE_BEGIN_FEATURE_NAME,QDate(refYear,month,day));
-                m.features().addFeature(DATE_END_FEATURE_NAME,QDate(refYear,month,day_end));
+                m.features().setFeature(DATE_BEGIN_FEATURE_NAME,QDate(refYear,month,day));
+                m.features().setFeature(DATE_END_FEATURE_NAME,QDate(refYear,month,day_end));
               }
             }
           }
@@ -478,11 +478,11 @@ operator()(RecognizerMatch& m,
             // complete !!
             if (day_end==0) {
               newCurrentDate=QDate(year,month,day);
-              m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+              m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
             }
             else {
-              m.features().addFeature(DATE_BEGIN_FEATURE_NAME,QDate(year,month,day));
-              m.features().addFeature(DATE_END_FEATURE_NAME,QDate(year,month,day_end));
+              m.features().setFeature(DATE_BEGIN_FEATURE_NAME,QDate(year,month,day));
+              m.features().setFeature(DATE_END_FEATURE_NAME,QDate(year,month,day_end));
             }
           }
         }
@@ -495,7 +495,7 @@ operator()(RecognizerMatch& m,
           << Common::Misc::limastring2utf8stdstring(m.getString())
           << ":" << e.what()
          ;
-    m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
 
@@ -543,7 +543,7 @@ operator()(RecognizerMatch& m,
     SELOGINIT;
     LDEBUG << "NormalizeRelativeDate: no resources" 
           ;
-    m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
 
@@ -552,7 +552,7 @@ operator()(RecognizerMatch& m,
 
 
   if (! m_referenceData.getReferenceDate(analysis,referenceDate)) {
-    m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
   
@@ -567,21 +567,21 @@ operator()(RecognizerMatch& m,
     if (day == referenceDate.dayOfWeek()) {
       // same day of week as reference: assume it's the same date
       newCurrentDate=referenceDate;
-      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+      m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
     else if (m_getNext) {
       // get next day according to reference
       newCurrentDate=referenceDate.addDays(1);
 //         first_day_of_the_week_after nextDay(day);
 //         newCurrentDate=nextDay.get_date(referenceDate);
-      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+      m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
     else {
       // get previous day according to reference
       newCurrentDate=referenceDate.addDays(-1);
 //         first_day_of_the_week_before prevDay(day);
 //         newCurrentDate=prevDay.get_date(referenceDate);
-      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+      m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
   }
 
@@ -638,20 +638,20 @@ operator()(RecognizerMatch& m,
     // if a day is specified
     if (dayOfMonth!=0) {
       newCurrentDate=QDate(year,month,dayOfMonth);
-      m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+      m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
     else {
       // set an interval value
       QDate firstDayOfMonth(year,month,1);
-      m.features().addFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
-      m.features().addFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.addMonths(1).addDays(-1));
+      m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
+      m.features().setFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.addMonths(1).addDays(-1));
     }
   }
 
   // other cases: maybe a diff (hier,ajourd'hui...)
   if (m_diff != 0) {
     newCurrentDate=referenceDate.addDays(m_diff);
-    m.features().addFeature(DATE_FEATURE_NAME,newCurrentDate);
+    m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
   }
 
   if (newCurrentDate.isValid()) {
@@ -784,7 +784,7 @@ operator()(RecognizerMatch& m,
   bool hasReferenceLocation(true);
   
   if (! getReferenceData().getReferenceDate(analysis,referenceDate)) {
-    m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
   }                                                               
 
@@ -798,14 +798,14 @@ operator()(RecognizerMatch& m,
   // parse recognized expression to get duration
   QTime timeDuration=getTimeDuration(m);
   if (!timeDuration.isValid()) {
-    m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
   }
 
   try {
     QTime local(QDateTime(referenceDate,timeDuration).time());
    
-    m.features().addFeature(LOCALTIME_FEATURE_NAME,local);
+    m.features().setFeature(LOCALTIME_FEATURE_NAME,local);
 
     if (! hasReferenceLocation) {
       return true;
@@ -818,10 +818,10 @@ operator()(RecognizerMatch& m,
       if (!utc.isValid()) {
         SELOGINIT;
         LWARN << "failed to normalize time: ";
-        m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+        m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
       }
       else {
-        m.features().addFeature(UTCTIME_FEATURE_NAME,utc);
+        m.features().setFeature(UTCTIME_FEATURE_NAME,utc);
       }
     }
   }
@@ -830,7 +830,7 @@ operator()(RecognizerMatch& m,
     LWARN << "exception caught in time normalization of '"
           << Common::Misc::limastring2utf8stdstring(m.getString()) 
           << "': " << e.what();
-    m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
   }
   return true;
 }
@@ -852,7 +852,7 @@ operator()(RecognizerMatch& m,
   // get reference date
   QDate referenceDate;
   if (! getReferenceData().getReferenceDate(analysis,referenceDate)) {
-    m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
   }
   
@@ -862,20 +862,20 @@ operator()(RecognizerMatch& m,
     LWARN << "cannot compute time duration for '"
           << Common::Misc::limastring2utf8stdstring(m.getString())
           << "'";
-    m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
   }
     
   try {
     QTime utcTime(QDateTime(referenceDate,timeDuration).toUTC().time());
-    m.features().addFeature(UTCTIME_FEATURE_NAME,utcTime);
+    m.features().setFeature(UTCTIME_FEATURE_NAME,utcTime);
   }
   catch (std::exception& e) {
     SELOGINIT;
     LWARN << "exception caught in time normalization of '"
           << Common::Misc::limastring2utf8stdstring(m.getString())
           << "': " << e.what();
-    m.features().addFeature(TIMESTRING_FEATURE_NAME,m.getString());
+    m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
   }
   
   return true;

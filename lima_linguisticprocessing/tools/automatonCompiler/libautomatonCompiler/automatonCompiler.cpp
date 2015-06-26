@@ -34,6 +34,8 @@
 
 #include <QtCore/QCoreApplication>
 
+#include "common/time/timeUtilsController.h"
+
 using namespace std;
 
 namespace Lima {
@@ -50,6 +52,7 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
                          SearchGraphSense sense,
                          const std::vector<LimaString>& activeEntityGroups) {
   AUCLOGINIT;
+  Lima::TimeUtilsController* ctrlA  = new Lima::TimeUtilsController("buildAutomaton", true);
   std::string currentId(automatonString.getId());
   Automaton a;
   
@@ -64,12 +67,16 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
     Tstate finalState=buildAutomaton(a,automatonString,
                                      initialState,currentId,language,
                                      activeEntityGroups);
+    Lima::TimeUtilsController* ctrlAF  = new Lima::TimeUtilsController("make final", true);
     // LDEBUG << "final state is " << finalState;
     a.makeFinal(finalState);
+    delete ctrlAF;
 
     // LDEBUG << "automaton=" << a;
 
+    Lima::TimeUtilsController* ctrlAD  = new Lima::TimeUtilsController("setDeterministic", true);
     a.setDeterministic(false);
+    delete ctrlAD;
 
     if (sense==BACKWARDSEARCH) { // reverse automaton
       a=a.reverse();
@@ -77,17 +84,22 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
     }
     
     // make it deterministic
+    Lima::TimeUtilsController* ctrlASubset  = new Lima::TimeUtilsController("subsets", true);
     a=a.subsets();
+    delete ctrlASubset;
 
     // LDEBUG << "deterministic automaton=" << a;
 
     // make it minimal
+    Lima::TimeUtilsController* ctrlAMin  = new Lima::TimeUtilsController("brzozowskiMinimize", true);
     a=a.brzozowskiMinimize();
+    delete ctrlAMin;
 
     // LDEBUG << "minimal automaton=" << a;
 
   }
 
+  delete ctrlA;
   return a;
 }
 
@@ -172,6 +184,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
 {
   AUCLOGINIT;
   LDEBUG << "build non-optional automaton from " << automatonString.getString() << " with id " << initialId;
+  Lima::TimeUtilsController("buildAutomaton not optional");
   
   //-------------------------- alternative ------------------------------
   if (automatonString.isAlternative()) {

@@ -1011,7 +1011,7 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
         f=features.begin(),f_end=features.end();
       f!=f_end; f++)
   {
-    bowNE->addFeature((*f).getName(),
+    bowNE->setFeature((*f).getName(),
                       (*f).getValueLimaString());
   }
   LDEBUG << "CreateSpecificEntity: created features " << QString::fromUtf8(bowNE->getFeaturesUTF8String().c_str());

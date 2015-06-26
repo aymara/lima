@@ -200,7 +200,7 @@ operator()(RecognizerMatch& m,
     }
     else if (testMicroCategory(m_microsForUnit,m_microAccessor,data)) {
       LDEBUG << "NormalizeNumber: add feature UNIT " << t->stringForm();
-      m.features().addFeature(UNIT_FEATURE_NAME,t->stringForm());
+      m.features().setFeature(UNIT_FEATURE_NAME,t->stringForm());
     }
     // ignore other non numbers (can be % or "de"...)
   }
@@ -209,7 +209,7 @@ operator()(RecognizerMatch& m,
     SELOGINIT;
     LWARN << "Warning: cannot normalize number \"" <<  m.getString()
           << "\": no numeric information available for components";
-    m.features().addFeature(NUMVALUE_FEATURE_NAME,(double)0.0);
+    m.features().setFeature(NUMVALUE_FEATURE_NAME,(double)0.0);
     // return true even if value could not be computed: a value has been set in
     // features
     return true;
@@ -218,8 +218,8 @@ operator()(RecognizerMatch& m,
   // then compute the number
   double number=computeNumberValue(values,values.begin(),values.end());
   LDEBUG << "NormalizeNumber: add feature VALUE " << number;
-  m.features().addFeature(NUMVALUE_FEATURE_NAME,number);
-  m.features().addFeature(DEFAULT_ATTRIBUTE,m.getString());
+  m.features().setFeature(NUMVALUE_FEATURE_NAME,number);
+  m.features().setFeature(DEFAULT_ATTRIBUTE,m.getString());
   return true;
 }
 

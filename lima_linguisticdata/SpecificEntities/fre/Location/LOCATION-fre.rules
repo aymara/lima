@@ -49,35 +49,35 @@ détecter$V)
 # les voies
 #la nationale 118.
 T_Ni::(voie|route)? (nationale|départementale|communale):LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"kind")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #A10
 AT_Ni>1::(autoroute)?:LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"kind")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #la n118
 nT_Ni>1::(autoroute)?:LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"kind")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #le triangle de Rocquencourt
 triangle::de Rocquencourt:LOCATION:
-=>AddEntityFeature(trigger,"kind")
+=>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #place de la république
 @Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st{1-3}):LOCATION:
-=>AddEntityFeature(trigger,"kind")
+=>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.3,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -87,7 +87,7 @@ triangle::de Rocquencourt:LOCATION:
 # les adresses
 #
 T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
-=>AddEntityFeature(trigger,"address-number")
+=>SetEntityFeature(trigger,"address-number")
 =>AppendEntityFeature(right.3.1,"other-adress-componant")
 =>AppendEntityFeature(right.3.2,"other-adress-componant")
 =>AppendEntityFeature(right.4.1,"other-adress-componant")
@@ -98,7 +98,7 @@ T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâ
 
 
 T_Ni>1::(@Cities) (@Countries)?:LOCATION:
-=>AddEntityFeature(trigger,"zip-code")
+=>SetEntityFeature(trigger,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 #******************************************************************************
@@ -107,7 +107,7 @@ T_Ni>1::(@Cities) (@Countries)?:LOCATION:
 #mer d'Iroise, mer de tranquilité (Lune), mare au diable, etc.
 #@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):LOCATION:
 @aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):LOCATION:
-=>AddEntityFeature(trigger,"kind")
+=>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -138,12 +138,12 @@ rose:[(la)?] ville::LOCATION:Toulouse :
 =<ClearEntityFeatures()
 
 Elysée:::LOCATION:Élysée
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 Élysée:::LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
@@ -151,25 +151,25 @@ Elysée:::LOCATION:Élysée
 # regles avec normalisation
 # Penmarc'| Penmarch => Penmarc'h
 Penmarc'::h:LOCATION:Penmarc'h
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =<ClearEntityFeatures()
 Penmarch:::LOCATION:Penmarc'h
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =<ClearEntityFeatures()
 #******************************
 
 # regle avec normalisation
 Loire::Atlantique:LOCATION:Loire-atlantique
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 
 Plaine:La:(St|Saint) Denis:LOCATION:
-=>AddEntityFeature(left,"name")
+=>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
@@ -177,7 +177,7 @@ Plaine:La:(St|Saint) Denis:LOCATION:
 #quartier
 
 Bolline:La::LOCATION:
-=>AddEntityFeature(left,"name")
+=>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -185,18 +185,18 @@ Bolline:La::LOCATION:
 
 #regle avec normalisation
 Charm::el Cheikh:LOCATION:Charm el-Cheikh
-=>AddEntityFeature(trigger,right,"name")
+=>SetEntityFeature(trigger,right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 Cap::Canaveral:LOCATION:
-=>AddEntityFeature(trigger,right,"name")
+=>SetEntityFeature(trigger,right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 # regle avec normalisation
 PORTO::TORRES:LOCATION:Porto Torres
-=>AddEntityFeature(trigger,right,"name")
+=>SetEntityFeature(trigger,right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
@@ -236,55 +236,55 @@ PORTO::TORRES:LOCATION:Porto Torres
 =<ClearEntityFeatures()
 
 ville$NC::($ADJ)? (de|du|d'|de $DET) (@Regions|@Countries|@Cities|$NP):LOCATION:
-=>AddEntityFeature(trigger,"kind")
+=>SetEntityFeature(trigger,"kind")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 #si ville loc.adm.town
 
 @Cities:::LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 #loc.adm.town
 
 @Regions:::LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 @Greeklocations:::LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 @Countries:::LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 ##Ajout le 25/07
 #[@locationVerbs]::[(à|au|le|l'|la|en|dans|entre)?] (t_capital_1st) (et?) (en?) (t_capital_1st)?:LOCATION:
-#=>AddEntityFeature(right.1,"name") 
+#=>SetEntityFeature(right.1,"name") 
 #=>AppendEntityFeature(right.4,"name") 
 #=>NormalizeEntity()
 #=<ClearEntityFeatures()
-#todo ajouter =>AddEntityFeature(right.5,"name") - todo cette regle ne passe pas ! 
+#todo ajouter =>SetEntityFeature(right.5,"name") - todo cette regle ne passe pas ! 
 
 #[@locationVerbs]::[(à|au|en|dans)] (@Regions|@Countries|@Cities|t_capital_1st):#LOCATION: 
-#=>AddEntityFeature(right.1.1,"name") 
-#=>AddEntityFeature(right.1.2,"name") 
-#=>AddEntityFeature(right.1.3,"name") 
-#=>AddEntityFeature(right.1.4,"name") 
+#=>SetEntityFeature(right.1.1,"name") 
+#=>SetEntityFeature(right.1.2,"name") 
+#=>SetEntityFeature(right.1.3,"name") 
+#=>SetEntityFeature(right.1.4,"name") 
 #=>NormalizeEntity()
 #=<ClearEntityFeatures()
 
 #[@locationVerbs]::[(à|au|en|dans|vers|en direction de|près de|à coté de|proche de|au @PrecisionGeographique de)? (un|une|le[la|les)?] $NP:LOCATION:
-#=>AddEntityFeature(right.3,"kind") 
+#=>SetEntityFeature(right.3,"kind") 
 #=>NormalizeEntity()
 #=<ClearEntityFeatures()
 
 [habiter$V]::[(à|au|en|dans|vers|en direction de|près de|à coté de|au @PrecisionGeographique de)? (un|une|le|la|les|l')?] $NP:LOCATION:
-#=>AddEntityFeature(right.3,"kind") 
+#=>SetEntityFeature(right.3,"kind") 
 #=>NormalizeEntity()
 #=<ClearEntityFeatures()
 #NP -> noun phrase. j'habite la rue, dans une grotte, vers la superette. 
@@ -314,7 +314,7 @@ MHz:t_dot_number::LOCATION:
 
 #@leguidedannotation
 \@::(*):LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -322,7 +322,7 @@ MHz:t_dot_number::LOCATION:
 
 #01 69 85 80 02 ou 01-69-85-80-02
 t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -330,7 +330,7 @@ t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
 
 #+33 1 23 45 67 89 a
 +33::t_integer -? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
-=>AddEntityFeature(trigger,"name")
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()

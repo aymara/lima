@@ -44,7 +44,7 @@
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-
+#include "common/time/timeUtilsController.h"
 
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 #include "linguisticProcessing/core/Automaton/automatonReaderWriter.h"
@@ -80,7 +80,7 @@ static const string HELP("A compiler for the rules of the Named Entities recogni
                          +"\n"
 +"-h : this help page\n"
 +"--output=file        : name of the output file for the compiled rules\n"
-+"(or -ofile)\n"
+// +"(or -ofile)\n"
 +"\n"
 +"--language=...       : specify the language of the recognizer\n"
 +"--modex=...          : specify the name of the modex config file\n"
@@ -303,6 +303,8 @@ int main(int argc, char **argv)
 int run(int argc,char** argv)
 {
   QsLogging::initQsLog();
+  Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("run");
+  //Lima::TimeUtilsController("run", true);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   
@@ -387,9 +389,12 @@ int run(int argc,char** argv)
       // read the rules file in text format
       //try
       {
+        Lima::TimeUtilsController *ctrl2 = new Lima::TimeUtilsController("read file and build recognizer", true);
+	// Lima::TimeUtilsController("read file and build recognizer", true);
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
         RecognizerCompiler compiler(param.inputRulesFile);
         compiler.buildRecognizer(reco,language);
+	delete ctrl2;
       }
       /*catch (exception& e)
       {
@@ -400,6 +405,7 @@ int run(int argc,char** argv)
       // if we want to use a dictionary to reorganize rules
       if (param.useDictionary)
       {
+	Lima::TimeUtilsController("useDictionary", true);
         try
         {
 
@@ -441,6 +447,7 @@ int run(int argc,char** argv)
     {
       reco.listTriggers();
     }
+  delete timer;
 
   }
 //   catch (InvalidConfiguration& e)
@@ -460,6 +467,8 @@ int run(int argc,char** argv)
 //   {
 //     std::cerr << e.what() << std::endl;
 //   }
+  TIMELOGINIT;
+  TimeUtils::logAllCumulatedTime("And at last");
 
 
   return EXIT_SUCCESS;

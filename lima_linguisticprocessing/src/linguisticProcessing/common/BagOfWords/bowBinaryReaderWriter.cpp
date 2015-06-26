@@ -430,7 +430,7 @@ void BoWBinaryReaderPrivate::readNamedEntityProperties(std::istream& file,
         LimaString value;
         Misc::readStringField(file,attribute);
         Misc::readUTF8StringField(file,value);
-        ne->addFeature(attribute,value);
+        ne->setFeature(attribute,value);
     }
 }
 

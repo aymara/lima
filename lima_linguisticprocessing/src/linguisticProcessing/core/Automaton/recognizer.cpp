@@ -556,10 +556,10 @@ setNormalizedForm(const LimaString& norm,
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   if (norm.isEmpty()) {
     // use surface form of the expression as normalized form 
-    match.features().addFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
+    match.features().setFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
   }
   else {
-    match.features().addFeature(DEFAULT_ATTRIBUTE,norm);
+    match.features().setFeature(DEFAULT_ATTRIBUTE,norm);
   }
 }
 
