@@ -249,9 +249,9 @@ int dowork(int argc,char* argv[])
         // analyze it
         metaData["FileName"]=*fileItr;
 	
-	Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
+	// Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
         client->analyze(contentText,metaData,pipeline,handlers);
-	delete timer;
+	// delete timer;
 	
 	
 	

@@ -303,7 +303,6 @@ int main(int argc, char **argv)
 int run(int argc,char** argv)
 {
   QsLogging::initQsLog();
-  Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("run");
   //Lima::TimeUtilsController("run", true);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
@@ -389,12 +388,12 @@ int run(int argc,char** argv)
       // read the rules file in text format
       //try
       {
-        Lima::TimeUtilsController *ctrl2 = new Lima::TimeUtilsController("read file and build recognizer", true);
+        // Lima::TimeUtilsController *ctrl2 = new Lima::TimeUtilsController("read file and build recognizer", true);
 	// Lima::TimeUtilsController("read file and build recognizer", true);
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
         RecognizerCompiler compiler(param.inputRulesFile);
         compiler.buildRecognizer(reco,language);
-	delete ctrl2;
+	// delete ctrl2;
       }
       /*catch (exception& e)
       {
@@ -405,7 +404,7 @@ int run(int argc,char** argv)
       // if we want to use a dictionary to reorganize rules
       if (param.useDictionary)
       {
-	Lima::TimeUtilsController("useDictionary", true);
+	// Lima::TimeUtilsController("useDictionary", true);
         try
         {
 
@@ -447,7 +446,6 @@ int run(int argc,char** argv)
     {
       reco.listTriggers();
     }
-  delete timer;
 
   }
 //   catch (InvalidConfiguration& e)
