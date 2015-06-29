@@ -23,7 +23,7 @@ use person.lst
 @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
-@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
 
 @PersonNamePart=(t_capital_1st,t_capital,$NP)
 
@@ -36,8 +36,10 @@ use person.lst
 # rule Obama
 Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonName()
 
-# generic rule for components with stop condition
-@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial|t_abbrev)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:=>NormalizePersonName()
 
 @PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
@@ -52,8 +54,8 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 #t_capital_1st:[@TitlePlural]:(t_capital_1st|$NP){0-2} [et] (t_capital_1st|$NP){1-3}:PERSON:
 #$NP:[@TitlePlural]:(t_capital_1st|$NP){0-2} [et] (t_capital_1st|$NP){1-3}:PERSON:
 # => one rule for each part
-OME @PersonNamePart:[@TitlePlural]:(@PersonNamePart){0-2} [et]:PERSON:
-OME @PersonNamePart:[(@TitlePlural (@PersonNamePart){0-2} et)]:(@PersonNamePart){0-2}:PERSON:
+@PersonNamePart:[@TitlePlural]:(@PersonNamePart){0-2} [et]:PERSON:
+@PersonNamePart:[(@TitlePlural (@PersonNamePart){0-2} et)]:(@PersonNamePart){0-2}:PERSON:
 
 # @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? (t_capital_1st|t_capital)){1-2}:PERSON:=>NormalizePersonName()
 # t_capital_1st:[(@Title|@FunctionTitle)]:(t_capital_1st|t_capital){0-2}:PERSON:=>NormalizePersonName()
@@ -64,7 +66,7 @@ OME @PersonNamePart:[(@TitlePlural (@PersonNamePart){0-2} et)]:(@PersonNamePart)
 #------------------------------
 # a list of known persons (single entities)
 
-# OME @person:::PERSON:=>NormalizePersonName()
+@person:::PERSON:=>NormalizePersonName()
 
 #------------------------------
 # firstname without name ?

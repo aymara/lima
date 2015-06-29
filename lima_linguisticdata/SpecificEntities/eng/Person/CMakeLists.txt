@@ -16,4 +16,4 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES firstname.lst function_title.lst person.lst person_ending.lst title.lst)
 
-SPECIFICENTITIES(main eng Person PERSON-eng.rules)
+SPECIFICENTITIES(main eng Person PERSON-eng.rules PERSON_COMP-eng.rules)
