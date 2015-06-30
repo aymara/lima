@@ -22,21 +22,21 @@ use days.lst,months.lst,monthAbbrev.lst
 # Wed, July 1, 2000
 # Wed, July 1st, 2000
 @day:(@timeModifier)?:(,)? @numday (of)? (@month|@monthAbbrev .?) (t_integer>1000<3000|t_integer>1<99)?:DATE:
-+AddEntityFeature(trigger,"day")
-+AddEntityFeature(left.1,"datemod")
-+AddEntityFeature(right.2,"numday")
-+AddEntityFeature(right.4.1,"month")
-+AddEntityFeature(right.5,"numyear")
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(left.1,"datemod")
+=>SetEntityFeature(right.2,"numday")
+=>SetEntityFeature(right.4.1,"month")
+=>SetEntityFeature(right.5,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 @day:(@timeModifier)?:(,)? (@month|@monthAbbrev .?) the? @numday (,? t_integer>1000<3000)?:DATE:
-+AddEntityFeature(trigger,"day")
-+AddEntityFeature(left.1,"datemod")
-+AddEntityFeature(right.4,"numday")
-+AddEntityFeature(right.2.1,"month")
-+AddEntityFeature(right.5,"numyear")
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(left.1,"datemod")
+=>SetEntityFeature(right.4,"numday")
+=>SetEntityFeature(right.2.1,"month")
+=>SetEntityFeature(right.5,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -44,8 +44,8 @@ use days.lst,months.lst,monthAbbrev.lst
 @daytime=(morning,afternon,evening)
 
 @day:(@timeModifier)?:(@daytime)?:DATE:
-+AddEntityFeature(trigger,"day")
-+AddEntityFeature(left.1,"datemod")
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(left.1,"datemod")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -56,25 +56,25 @@ use days.lst,months.lst,monthAbbrev.lst
 # 10 July
 # 10th of July
 @month:(@numday|t_ordinal_integer) of?:(,? t_integer>1000<3000)?:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(left.1,"numday")
-+AddEntityFeature(right.1.2,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left.1,"numday")
+=>SetEntityFeature(right.1.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 @month::the? (@numday|t_ordinal_integer) (,? t_integer>1000<3000)?:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(right.2,"numday")
-+AddEntityFeature(right.3.2,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numday")
+=>SetEntityFeature(right.3.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 # July, 2000
 @month::,? t_integer>1000<3000:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(right.2,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -82,24 +82,24 @@ use days.lst,months.lst,monthAbbrev.lst
 # same with abbreviated month names
 # (abbreviations can be followed by a dot)
 @monthAbbrev:(@numday|t_ordinal_integer>1<31) of?:.? (,? t_integer>1000<3000)?:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(left.1,"numday")
-+AddEntityFeature(right.2.2,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left.1,"numday")
+=>SetEntityFeature(right.2.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 @monthAbbrev::.? the? (@numday|t_ordinal_integer>1<31) (,? t_integer>1000<3000)?:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(right.3,"numday")
-+AddEntityFeature(right.4.2,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.3,"numday")
+=>SetEntityFeature(right.4.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 @monthAbbrev::.? ,? t_integer>1000<3000:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(right.3,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.3,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -113,8 +113,8 @@ use days.lst,months.lst,monthAbbrev.lst
 @modifierDate=(early,late,mid,end)
 
 @month:@modifierDate::DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(left.1,"datemod")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left.1,"datemod")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -122,8 +122,8 @@ use days.lst,months.lst,monthAbbrev.lst
 # the early 90s
 # the late 80s
 @modifierDate:[the?]:t_integer ('s)?:DATE:
-+AddEntityFeature(trigger,"datemod")
-+AddEntityFeature(right.1,"numyear")
+=>SetEntityFeature(trigger,"datemod")
+=>SetEntityFeature(right.1,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -148,13 +148,13 @@ use days.lst,months.lst,monthAbbrev.lst
 #t_integer>1200<2100::(of)? $NC-NN:NOT_DATE:
 
 t_integer>1200<2100:[@in]::DATE:
-+AddEntityFeature(trigger,"numyear")
+=>SetEntityFeature(trigger,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 @month:[@in?]::DATE:
-+AddEntityFeature(trigger,"month")
+=>SetEntityFeature(trigger,"month")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -165,9 +165,9 @@ t_integer>1200<2100:[@in]::DATE:
 # 05-22-68
 # integer - integer - integer
 @numday::- @numday - (t_integer>1000<3000|t_integer<99):DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(right.2,"numday")
-+AddEntityFeature(right.4,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numday")
+=>SetEntityFeature(right.4,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -175,21 +175,21 @@ t_integer>1200<2100:[@in]::DATE:
 # 22/05/68
 # fraction / integer or integer / integer / integer
 t_fraction::/ t_integer:DATE:
-+AddEntityFeature(right.2,"numyear")
+=>SetEntityFeature(right.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 @numday::/ t_integer / t_integer:DATE:
-+AddEntityFeature(trigger,"month")
-+AddEntityFeature(right.2,"numday")
-+AddEntityFeature(right.4,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numday")
+=>SetEntityFeature(right.4,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 t_integer>1900<2100:::DATE:
-+AddEntityFeature(trigger,"numyear")
+=>SetEntityFeature(trigger,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()

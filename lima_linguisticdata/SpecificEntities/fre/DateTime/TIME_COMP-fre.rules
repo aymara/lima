@@ -9,15 +9,15 @@ use hours.lst
 use timezone.lst
 
 heure$NC:<NUMBER>:(<NUMBER>)?:TIME:
-+AddEntityFeature(left.1,"hour:int")
-+AddEntityFeature(right.1,"minute:int")
+=>SetEntityFeature(left.1,"hour:int")
+=>SetEntityFeature(right.1,"minute:int")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime()
 
 heure$NC:<NUMBER>:(et (demie|quart))?:TIME:
-+AddEntityFeature(left.1,"hour:int")
-+AddEntityFeature(right.1.2,"minute")
+=>SetEntityFeature(left.1,"hour:int")
+=>SetEntityFeature(right.1.2,"minute")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime()
@@ -41,27 +41,27 @@ heure$NC:<NUMBER>:(et (demie|quart))?:TIME:
 
 # when both local and UTC are specified
 @h:<NUMBER>:<NUMBER> (\(? @localtime \)?)? \( <NUMBER> @h <NUMBER> @utc \):TIME:
-+AddEntityFeature(right.4,"hour:int")
-+AddEntityFeature(right.6,"minute:int")
-+AddEntityFeature(right.7,"utc")
+=>SetEntityFeature(right.4,"hour:int")
+=>SetEntityFeature(right.6,"minute:int")
+=>SetEntityFeature(right.7,"utc")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeUTCTime("date_current")
 
 # when only UTC time
 @h:<NUMBER>:<NUMBER> \(? @utc \)?:TIME:
-+AddEntityFeature(left.1,"hour:int")
-+AddEntityFeature(right.1,"minute:int")
-+AddEntityFeature(right.3,"utc")
+=>SetEntityFeature(left.1,"hour:int")
+=>SetEntityFeature(right.1,"minute:int")
+=>SetEntityFeature(right.3,"utc")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeUTCTime("date_current")
 
 # when local time or nothing
 @h:<NUMBER>:<NUMBER> (\(? @localtime \)?)?:TIME:
-+AddEntityFeature(left.1,"hour:int")
-+AddEntityFeature(right.1,"minute:int")
-+AddEntityFeature(right.2.2,"local")
+=>SetEntityFeature(left.1,"hour:int")
+=>SetEntityFeature(right.1,"minute:int")
+=>SetEntityFeature(right.2.2,"local")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime("date_current")
@@ -71,15 +71,15 @@ heure$NC:<NUMBER>:(et (demie|quart))?:TIME:
 
 # 12h45 (values in a list -> should be recognized by tokenizer)
 @Hours::(\(? @utc \)?)?:TIME:
-+AddEntityFeature(trigger,"time")
-+AddEntityFeature(right.1.2,"utc")
+=>SetEntityFeature(trigger,"time")
+=>SetEntityFeature(right.1.2,"utc")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeUTCTime("date_current")
 
 @Hours::(\(? @localtime \)?)?:TIME:
-+AddEntityFeature(trigger,"time")
-+AddEntityFeature(right.1.2,"local")
+=>SetEntityFeature(trigger,"time")
+=>SetEntityFeature(right.1.2,"local")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime("date_current")
@@ -97,16 +97,16 @@ semaine,semaines,mois,an,ans
 @PrecisionPre=(derniers)
 
 <NUMBER>:@PrecisionPre::TIME:
-+AddEntityFeature(trigger,"timeval")
-+AddEntityFeature(left.1,"timemod")
+=>SetEntityFeature(trigger,"timeval")
+=>SetEntityFeature(left.1,"timemod")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime()
 
 <NUMBER>::@timeUnit @PrecisionPost:TIME:
-+AddEntityFeature(trigger,"timeval")
-+AddEntityFeature(right.1,"timeunit")
-+AddEntityFeature(right.2,"timemod")
+=>SetEntityFeature(trigger,"timeval")
+=>SetEntityFeature(right.1,"timeunit")
+=>SetEntityFeature(right.2,"timemod")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime()

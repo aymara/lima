@@ -14,11 +14,11 @@ pm,p . m .,p . m.,p.m.,PM,P . M .,P . M.,P M
 
 # 08:43:08
 t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
-+AddEntityFeature(trigger,"hour:int")
-+AddEntityFeature(right.2,"minute:int")
-+AddEntityFeature(right.3.2,"minute:int")
-+AddEntityFeature(right.4,"ampm")
-+AddEntityFeature(right.5,"timezone")
+=>SetEntityFeature(trigger,"hour:int")
+=>SetEntityFeature(right.2,"minute:int")
+=>SetEntityFeature(right.3.2,"minute:int")
+=>SetEntityFeature(right.4,"ampm")
+=>SetEntityFeature(right.5,"timezone")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
@@ -26,7 +26,7 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 
 # ten o'clock
 <NUMBER>::o'clock:TIME:
-+AddEntityFeature(trigger,"hour:int")
+=>SetEntityFeature(trigger,"hour:int")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
@@ -35,24 +35,24 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 # twenty six minutes to twelve
 
 <NUMBER>:<NUMBER> (minutes|half|quarter)? (past|to)::TIME:
-+AddEntityFeature(trigger,"hour:int")
-+AddEntityFeature(left.1,"hourmodnum:int")
-+AddEntityFeature(left.2,"hourmodunit:int")
-+AddEntityFeature(left.3,"hourmodpos")
+=>SetEntityFeature(trigger,"hour:int")
+=>SetEntityFeature(left.1,"hourmodnum:int")
+=>SetEntityFeature(left.2,"hourmodunit:int")
+=>SetEntityFeature(left.3,"hourmodpos")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 # seven thirty tomorrow
 <NUMBER>::<NUMBER>? @TimeKey:TIME:
-+AddEntityFeature(trigger,"hour:int")
-+AddEntityFeature(right.1,"minute:int")
+=>SetEntityFeature(trigger,"hour:int")
+=>SetEntityFeature(right.1,"minute:int")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 <NUMBER>:[at?]:@AM_PM @TimeZone?:TIME:
-+AddEntityFeature(trigger,"hour:int")
-+AddEntityFeature(right.1,"ampm")
-+AddEntityFeature(right.2,"timezone")
+=>SetEntityFeature(trigger,"hour:int")
+=>SetEntityFeature(right.1,"ampm")
+=>SetEntityFeature(right.2,"timezone")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
