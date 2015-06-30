@@ -16,4 +16,4 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES hours.lst timezone.lst)
 SPECIFICENTITIESCONFIGENV(main fre DateTime)
-SPECIFICENTITIES(main fre DateTime DATE-fre.rules TIME-fre.rules)
+SPECIFICENTITIES(main fre DateTime DATE-fre.rules DATE_COMP-fre.rules TIME-fre.rules TIME_COMP-fre.rules)

@@ -1,0 +1,112 @@
+set encoding=utf8
+using modex DateTime-modex.xml,Numex-modex.xml
+using groups DateTime,Numex
+set defaultAction=>CreateSpecificEntity()
+
+# timex (to bypass lacks in tokenization)
+
+use hours.lst
+use timezone.lst
+
+heure$NC:<NUMBER>:(<NUMBER>)?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1,"minute:int")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime()
+
+heure$NC:<NUMBER>:(et (demie|quart))?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1.2,"minute")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime()
+
+# 08:43:08
+
+@localtime=(locales,heure$NC local$ADJ,heure de Paris,heure française)
+
+@h=(h,H,\:)
+
+@utc=(UTC,GMT)
+
+#T_Ni::\: T_Ni (\: T_Ni)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
+#=>NormalizeLocalTime("date_current")
+
+#t_integer::\: t_integer (\: t_integer)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
+#=>NormalizeLocalTime("date_current")
+
+#<NUMBER>::\: <NUMBER> (\: <NUMBER>)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
+#=>NormalizeLocalTime("date_current")
+
+# when both local and UTC are specified
+@h:<NUMBER>:<NUMBER> (\(? @localtime \)?)? \( <NUMBER> @h <NUMBER> @utc \):TIME:
++AddEntityFeature(right.4,"hour:int")
++AddEntityFeature(right.6,"minute:int")
++AddEntityFeature(right.7,"utc")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeUTCTime("date_current")
+
+# when only UTC time
+@h:<NUMBER>:<NUMBER> \(? @utc \)?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1,"minute:int")
++AddEntityFeature(right.3,"utc")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeUTCTime("date_current")
+
+# when local time or nothing
+@h:<NUMBER>:<NUMBER> (\(? @localtime \)?)?:TIME:
++AddEntityFeature(left.1,"hour:int")
++AddEntityFeature(right.1,"minute:int")
++AddEntityFeature(right.2.2,"local")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime("date_current")
+
+#@h:<NUMBER>::TIME:
+#=>NormalizeUTCTime("date_current")
+
+# 12h45 (values in a list -> should be recognized by tokenizer)
+@Hours::(\(? @utc \)?)?:TIME:
++AddEntityFeature(trigger,"time")
++AddEntityFeature(right.1.2,"utc")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeUTCTime("date_current")
+
+@Hours::(\(? @localtime \)?)?:TIME:
++AddEntityFeature(trigger,"time")
++AddEntityFeature(right.1.2,"local")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime("date_current")
+
+#----------------------------------------------------------------------
+# precise time periods
+
+@timeUnit=(
+seconde,secondes,heure,heures,jour,jours,
+semaine,semaines,mois,an,ans
+)
+
+@PrecisionPost=(plus tard,plus tôt,avant)
+
+@PrecisionPre=(derniers)
+
+<NUMBER>:@PrecisionPre::TIME:
++AddEntityFeature(trigger,"timeval")
++AddEntityFeature(left.1,"timemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime()
+
+<NUMBER>::@timeUnit @PrecisionPost:TIME:
++AddEntityFeature(trigger,"timeval")
++AddEntityFeature(right.1,"timeunit")
++AddEntityFeature(right.2,"timemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeLocalTime()
