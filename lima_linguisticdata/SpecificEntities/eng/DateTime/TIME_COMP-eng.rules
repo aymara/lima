@@ -1,0 +1,79 @@
+set encoding=utf8
+using modex DateTime-modex.xml,Numex-modex.xml
+using groups DateTime,Numex
+set defaultAction=>CreateSpecificEntity()
+
+#------------------------------ TIME ----------
+use timekey.lst,timezone.lst
+
+# several decompositions because several tokenizations possible
+@AM_PM=(
+am,a . m .,a . m.,a.m.,AM,A . M .,A . M.,A M,
+pm,p . m .,p . m.,p.m.,PM,P . M .,P . M.,P M
+)
+
+# 08:43:08
+t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
++AddEntityFeature(trigger,"hour:int")
++AddEntityFeature(right.2,"minute:int")
++AddEntityFeature(right.3.2,"minute:int")
++AddEntityFeature(right.4,"ampm")
++AddEntityFeature(right.5,"timezone")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Number=($NOMBRE)
+
+# ten o'clock
+<NUMBER>::o'clock:TIME:
++AddEntityFeature(trigger,"hour:int")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# half past ten
+# ten to twelve
+# twenty six minutes to twelve
+
+<NUMBER>:<NUMBER> (minutes|half|quarter)? (past|to)::TIME:
++AddEntityFeature(trigger,"hour:int")
++AddEntityFeature(left.1,"hourmodnum:int")
++AddEntityFeature(left.2,"hourmodunit:int")
++AddEntityFeature(left.3,"hourmodpos")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# seven thirty tomorrow
+<NUMBER>::<NUMBER>? @TimeKey:TIME:
++AddEntityFeature(trigger,"hour:int")
++AddEntityFeature(right.1,"minute:int")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+<NUMBER>:[at?]:@AM_PM @TimeZone?:TIME:
++AddEntityFeature(trigger,"hour:int")
++AddEntityFeature(right.1,"ampm")
++AddEntityFeature(right.2,"timezone")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#------------------------------
+# periods of time
+# (maybe should be numbers with units)
+
+# special case of ages -> TIME also ?
+
+t_integer::[-?] (year-old|month-old):TIME:
+
+t_integer::t_fraction? [-?] (years|months) old:TIME:
+
+#@TimeUnit=(hour,hours,minute,minutes,mins,second,seconds,secs,
+#day,days,night,nights,week,weeks,month,months,year,years,decade,decades,
+#century,centuries)
+
+#t_integer::t_fraction? [-?] @TimeUnit:TIME:
+
+#t_dot_number::[-?] @TimeUnit:TIME:
+
+#t_comma_number::[-?] @TimeUnit:TIME:
+
+#@Number::[-?] @TimeUnit:TIME:
