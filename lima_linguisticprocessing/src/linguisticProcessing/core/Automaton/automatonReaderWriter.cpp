@@ -71,7 +71,7 @@ void writeTypeTransition(std::ofstream& file, const TypeTransition t) {
 }
 
 
-#define RECOGNIZER_VERSION "1.11"
+#define RECOGNIZER_VERSION "1.20"
 #define RECOGNIZER_DEBUG_VERSION ".debug"
 
 //----------------------------------------------------------------------
