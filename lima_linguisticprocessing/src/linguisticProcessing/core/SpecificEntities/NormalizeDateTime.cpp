@@ -394,6 +394,10 @@ operator()(RecognizerMatch& m,
     }
   }
 
+  LDEBUG << "NormalizeDate operator(): day=" << day << ", day_end=" << day_end;
+  LDEBUG << "NormalizeDate operator(): month=" << month << ", month_end=" << month_end;
+  LDEBUG << "NormalizeDate operator(): year=" << year;
+
   //ad hoc correction of year on two digits
   if (year!=0 && year<99) {
     if (year < 10) {
@@ -423,12 +427,17 @@ operator()(RecognizerMatch& m,
         else {
           // set interval
           QDate firstDayOfMonth(year,month,1);
+	  LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
           m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
           if (month_end==0) {
-            m.features().setFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.daysInMonth());
+            QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
+	    LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
+            m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
+            m.features().setFeature(DATE_FEATURE_NAME,QString("XX"));
           }
           else {
-            m.features().setFeature(DATE_END_FEATURE_NAME,QDate(year,month_end,1).daysInMonth());
+            QDate date_end(year,month_end,1);
+            m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
           }
         }
       }
