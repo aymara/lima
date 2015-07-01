@@ -58,6 +58,7 @@ install(TARGETS lima-common-qslog DESTINATION lib)
 
 ########### install files ###############
 install(FILES
+    QsLog_export.h
     QsLog.h
     QsDebugOutput.h
     QsLogDest.h

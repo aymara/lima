@@ -26,19 +26,7 @@
 #ifndef QSDEBUGOUTPUT_H
 #define QSDEBUGOUTPUT_H
 
-#ifdef WIN32
-
-#ifdef LIMA_COMMONQSLOG_EXPORTING
-#define LIMA_COMMONQSLOG_EXPORT    __declspec(dllexport)
-#else
-#define LIMA_COMMONQSLOG_EXPORT    __declspec(dllimport)
-#endif
-
-#else // Not WIN32
-
-#define LIMA_COMMONQSLOG_EXPORT
-
-#endif
+#include "QsLog_export.h"
 
 
 class QString;

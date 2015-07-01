@@ -24,19 +24,8 @@
 #include <QtCore/QString>
 #include <QtCore/QObject>
 
-#ifdef WIN32
+#include "QsLog_export.h"
 
-#ifdef LIMA_COMMONQSLOG_EXPORTING
-#define LIMA_COMMONQSLOG_EXPORT    __declspec(dllexport)
-#else
-#define LIMA_COMMONQSLOG_EXPORT    __declspec(dllimport)
-#endif
-
-#else // Not WIN32
-
-#define LIMA_COMMONQSLOG_EXPORT
-
-#endif
 
 namespace QsLogging
 {

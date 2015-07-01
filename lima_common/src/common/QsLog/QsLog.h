@@ -36,22 +36,7 @@
 
 #include <iostream>
 
-#ifdef WIN32
-// #pragma message("WIN32 defined")
-#ifdef LIMA_COMMONQSLOG_EXPORTING
-//#pragma message("LIMA_COMMONQSLOG_EXPORTING defined")
-#define LIMA_COMMONQSLOG_EXPORT    __declspec(dllexport)
-#else
-//#pragma message("LIMA_COMMONQSLOG_EXPORTING NOT defined")
-#define LIMA_COMMONQSLOG_EXPORT    __declspec(dllimport)
-#endif
-
-#else // Not WIN32
-// #pragma message("WIN32 NOT defined")
-
-#define LIMA_COMMONQSLOG_EXPORT
-
-#endif
+#include "QsLog_export.h"
 
 
 namespace QsLogging
@@ -66,8 +51,6 @@ enum Level
    FatalLevel
 };
 
-// #include <boost/preprocessor/stringize.hpp>
-// #pragma message("LIMA_COMMONQSLOG_EXPORT=" BOOST_PP_STRINGIZE(LIMA_COMMONQSLOG_EXPORT))
 
 class Destination;
 class LoggerImpl; // d pointer
