@@ -71,7 +71,7 @@
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
+        <item value="SpecificEntitiesModexForLimaserver"/>
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
       </list>
     </group>

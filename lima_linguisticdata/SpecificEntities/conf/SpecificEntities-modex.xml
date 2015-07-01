@@ -38,6 +38,19 @@
         <item value="ProductModex"/>
       </list>
     </group>
+    <group name="SpecificEntitiesModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognition"/>
+        <item value="UnitRecognition"/>
+        <item value="DateTimeModexForLimaserver"/>
+        <item value="NumexRecognition"/>
+        <item value="OrganizationModex"/>
+        <item value="LocationModex"/>
+        <item value="PersonModexForLimaserver"/>
+        <item value="EventModex"/>
+        <item value="ProductModex"/>
+      </list>
+    </group>
   </module>
   <module name="resources-fre">
     <group name="include">

@@ -13,15 +13,28 @@
         <item value="PersonRecognition"/>
       </list>
     </group>
+    <group name="PersonModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PersonRecognitionForLimaserver"/>
+      </list>
+    </group>
     <group name="PersonRecognition" class="ApplyRecognizer" lib="lima-lp-se-person">
       <param key="automaton" value="PersonRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
   </module>
+    <group name="PersonRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="PersonCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
   <module name="resources-eng">
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-eng.bin"/>
+    </group>
+    <group name="PersonCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON_COMP-eng.bin"/>
     </group>
     <group name="PersonIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">
@@ -45,6 +58,9 @@
   <module name="resources-fre">
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-fre.bin"/>
+    </group>
+    <group name="PersonCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON_COMP-fre.bin"/>
     </group>
     <group name="PersonIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">
