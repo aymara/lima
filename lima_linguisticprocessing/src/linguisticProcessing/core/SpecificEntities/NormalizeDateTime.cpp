@@ -269,8 +269,26 @@ operator()(RecognizerMatch& m,
   
   unsigned short day(0);
   if (m.features().find("numday") != m.features().end()) {
+    // LimaString testNumday = (*m.features().find("numday")).getValueLimaString();
+    // LDEBUG << "NormalizeDate operator(): testNumday=" << testNumday;
+    // bool testConversion = true;
+    // unsigned short testDay= testNumday.toUShort(&testConversion);
+    // LDEBUG << "NormalizeDate operator(): testConversion=" << testConversion << ", testDay=" << testDay;
     bool ok = true;
-    day = (*m.features().find("numday")).getValueLimaString().toUShort(&ok);
+    LimaString numdayString = (*m.features().find("numday")).getValueLimaString();
+    // try first conversion of type "premier" -> 1
+    day =  m_resources->getCardinalFromNumberOrdinal(numdayString);
+    LDEBUG << "NormalizeDate operator(): testConversion 1 of " << numdayString << "1 day=" << day;
+    // then try conversion of type "10th" -> 10
+    if( day == NormalizeDateTimeResources::no_day ) {
+      day =  m_resources->getDayNumberFromWordOrdinal(numdayString);
+      LDEBUG << "NormalizeDate operator(): testConversion 2 of " << numdayString << "1 day=" << day;
+    }
+    // then try conversion of type "10" -> 10
+    if( day == NormalizeDateTimeResources::no_day ) {
+      day = (*m.features().find("numday")).getValueLimaString().toUShort(&ok);
+      LDEBUG << "NormalizeDate operator(): testConversion 3 of " << numdayString << "1 day=" << day;
+    }
     if (!ok && m_resources) {
       day = m_resources->getDayNumber((*m.features().find("numday")).getValueLimaString());
     }
@@ -433,7 +451,7 @@ operator()(RecognizerMatch& m,
             QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
 	    LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
             m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
-            m.features().setFeature(DATE_FEATURE_NAME,QString("XX"));
+            m.features().setFeature("numday",QString("XX"));
           }
           else {
             QDate date_end(year,month_end,1);

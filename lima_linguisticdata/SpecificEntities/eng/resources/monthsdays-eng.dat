@@ -17,3 +17,8 @@ d 3 wednesday,Wednesday,WEDNESDAY
 d 4 thursday,Thursday,THURSDAY
 d 5 friday,Friday,FRIDAY
 d 6 saturday,Saturday,SATURDAY
+o 1 first,1st
+o 2 second,2nd
+o 3 third,3rd
+s 0 th,nd,rd
+
