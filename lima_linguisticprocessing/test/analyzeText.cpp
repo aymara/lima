@@ -52,6 +52,8 @@
 #include <fstream>
 
 #include <boost/program_options.hpp>
+#include <QtCore/QString>
+#include <QtCore/QStringRef>
 
 #include <QtCore>
 
@@ -107,6 +109,7 @@ int run(int argc,char** argv)
   std::vector<std::string> files;
   std::vector<std::string> vinactiveUnits;
   std::string meta;
+  std::string splitMode;
   
   
   po::options_description desc("Usage");
@@ -135,8 +138,8 @@ int run(int argc,char** argv)
   ("inactive-units", po::value< std::vector<std::string> >(&vinactiveUnits),
    "Inactive some process units of the used pipeline")
   ("availableUnits", "Ask the program to list its known processing units")
-  ("catch", "Executes the program inside a try/catch block")
   ("meta", po::value< std::string >(&meta), "Sets metadata values, in the format data1:value1,data2:value2,...")
+  ("split-mode,s", po::value< std::string >(&splitMode)->default_value("none"), "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
   ;
   
   po::positional_options_description p;
@@ -328,25 +331,56 @@ int run(int argc,char** argv)
     
     // loading of the input file
     TimeUtils::updateCurrentTime();
-    std::ifstream file(fileItr->c_str(), std::ifstream::binary);
-    std::string text_s;
-    readStream(file, text_s);
-    if (text_s.size() == 0)
+    QFile file(fileItr->c_str());
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-      std::cerr << "file " << *fileItr << " has empty input ! " << std::endl;
+      std::cerr << "Cannot open file " << *fileItr << " ! " << std::endl;
       continue;
     }
-    
-    LimaString contentText;
-    // The input text MUST be UTF-8 encoded !!!
-    contentText = utf8stdstring2limastring(text_s);
-    TimeUtils::logElapsedTime("ReadInputFile");
-
-    TimeUtils::updateCurrentTime();
-    std::string outputFile = *fileItr + ".";
-    // analyze it
     metaData["FileName"]=*fileItr;
-    client->analyze(contentText,metaData, pipeline, handlers, inactiveUnits);
+
+    if (splitMode == "lines")
+    {
+      int lineNum = 0, nbLines = 0;
+      std::cerr << "Counting number of lines…";
+      while (!file.atEnd())
+      {
+        file.readLine();
+        nbLines++;
+      }
+      file.seek(0);
+      
+      QTextStream in(&file);
+      std::cerr << "\rStarting analysis";
+      while (!in.atEnd())
+      {
+        lineNum++;
+        QString percent = QString::number((lineNum*1.0/nbLines*100),'f',2);
+        QString contentText = in.readLine();
+        if ( (lineNum % 100) == 0)
+          std::cerr << "\rAnalyzed "<< lineNum << "/" << nbLines << " (" << percent.toUtf8().constData() << "%) lines. At " << file.pos();
+        // analyze it
+        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+      }
+      file.close();
+    }
+    else // default == none
+    {
+      QString contentText = QString::fromUtf8(file.readAll().constData());
+      file.close();
+      if (contentText.isEmpty())
+      {
+        std::cerr << "file " << *fileItr << " has empty input ! " << std::endl;
+        continue;
+      }
+    
+      // The input text MUST be UTF-8 encoded !!!
+      TimeUtils::logElapsedTime("ReadInputFile");
+      TimeUtils::updateCurrentTime();
+      
+      // analyze it
+      client->analyze(contentText,metaData, pipeline, handlers, inactiveUnits);
+    }
     
     // Close and delete opened output files
     closeHandlerOutputFile(bowofs);
