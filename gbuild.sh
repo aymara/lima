@@ -15,7 +15,9 @@
 #!/bin/bash
 
 #Fail if anything goes wrong 
-set -e
+set -o errexit
+set -o nounset
+set -o xtrace
 
 usage() 
 { 
@@ -139,16 +141,19 @@ else
 fi
 
 echo "version='$release'"
-mkdir -p $build_prefix/$mode/$current_project
-pushd $build_prefix/$mode/$current_project
-#consider linking this current place to $LIMA_BUILD_PATH if different
-#this could be usefull to trick windows path length limitation
-#when building with VS
-mkdir -p $LIMA_BUILD_PATH
-pushd $LIMA_BUILD_PATH
 
-echo "LIMA_BUILD_PATH=$LIMA_BUILD_PATH"
-echo "Launching cmake"
+if [[ $CMAKE_GENERATOR == "VS" ]]; then
+  #consider linking this current place to $LIMA_BUILD_DIR if different
+  #this could be usefull to trick windows path length limitation
+  #when building with VS
+  mkdir -p $LIMA_BUILD_DIR
+  pushd $LIMA_BUILD_DIR
+else
+  mkdir -p $build_prefix/$mode/$current_project
+  pushd $build_prefix/$mode/$current_project
+fi
+
+echo "Launching cmake from $PWD"
 cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 echo "Running command:"
