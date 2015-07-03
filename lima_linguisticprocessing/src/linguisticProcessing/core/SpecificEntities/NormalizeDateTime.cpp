@@ -61,6 +61,7 @@ namespace SpecificEntities {
 #define DATE_FEATURE_NAME "date" // date as a QDate
 #define DATE_BEGIN_FEATURE_NAME "date_begin" 
 #define DATE_END_FEATURE_NAME "date_end" 
+#define DATE_SPAN_FEATURE_NAME "date_span" 
 #define DAY_FEATURE_NAME "day"
 #define MONTH_FEATURE_NAME "month"
 #define YEAR_FEATURE_NAME "year"
@@ -258,6 +259,28 @@ updateCurrentDate(AnalysisContent& analysis,
   metadata->setDate("current",currentDate);
 }
 
+unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) const
+{
+  SELOGINIT;
+  // try first conversion of type "premier" -> 1
+  unsigned short day =  m_resources->getCardinalFromNumberOrdinal(numdayString);
+  LDEBUG << "NormalizeDate::getDayFromString: testConversion 1 of " << numdayString << "1 day=" << day;
+  // then try conversion of type "10th" -> 10
+  if( day == NormalizeDateTimeResources::no_day ) {
+    day =  m_resources->getDayNumberFromWordOrdinal(numdayString);
+    LDEBUG << "NormalizeDate::getDayFromString: testConversion 2 of " << numdayString << "1 day=" << day;
+  }
+  // then try conversion of type "10" -> 10
+  if( day == NormalizeDateTimeResources::no_day ) {
+    bool ok;
+    day = numdayString.toUShort(&ok);
+    LDEBUG << "NormalizeDate::getDayFromString: testConversion 3 of " << numdayString << "1 day=" << day;
+    if( !ok )
+      day = NormalizeDateTimeResources::no_day;
+  }
+  return day;
+}
+
 bool NormalizeDate::
 operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const 
@@ -269,37 +292,13 @@ operator()(RecognizerMatch& m,
   
   unsigned short day(0);
   if (m.features().find("numday") != m.features().end()) {
-    // LimaString testNumday = (*m.features().find("numday")).getValueLimaString();
-    // LDEBUG << "NormalizeDate operator(): testNumday=" << testNumday;
-    // bool testConversion = true;
-    // unsigned short testDay= testNumday.toUShort(&testConversion);
-    // LDEBUG << "NormalizeDate operator(): testConversion=" << testConversion << ", testDay=" << testDay;
-    bool ok = true;
     LimaString numdayString = (*m.features().find("numday")).getValueLimaString();
-    // try first conversion of type "premier" -> 1
-    day =  m_resources->getCardinalFromNumberOrdinal(numdayString);
-    LDEBUG << "NormalizeDate operator(): testConversion 1 of " << numdayString << "1 day=" << day;
-    // then try conversion of type "10th" -> 10
-    if( day == NormalizeDateTimeResources::no_day ) {
-      day =  m_resources->getDayNumberFromWordOrdinal(numdayString);
-      LDEBUG << "NormalizeDate operator(): testConversion 2 of " << numdayString << "1 day=" << day;
-    }
-    // then try conversion of type "10" -> 10
-    if( day == NormalizeDateTimeResources::no_day ) {
-      day = (*m.features().find("numday")).getValueLimaString().toUShort(&ok);
-      LDEBUG << "NormalizeDate operator(): testConversion 3 of " << numdayString << "1 day=" << day;
-    }
-    if (!ok && m_resources) {
-      day = m_resources->getDayNumber((*m.features().find("numday")).getValueLimaString());
-    }
+    day = getDayFromString(numdayString);
   }
   unsigned short day_end(0);
   if (m.features().find("numdayend") != m.features().end()) {
-    bool ok = true;
-    day_end = (*m.features().find("numdayend")).getValueLimaString().toUShort(&ok);
-    if (!ok && m_resources) {
-      day_end = m_resources->getDayNumber((*m.features().find("numdayend")).getValueLimaString());
-    }
+    LimaString numdayString = (*m.features().find("numdayend")).getValueLimaString();
+    day_end = getDayFromString(numdayString);
   }
   unsigned short month(0);
   if (m.features().find("month") != m.features().end()) {
@@ -451,7 +450,6 @@ operator()(RecognizerMatch& m,
             QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
 	    LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
             m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
-            m.features().setFeature("numday",QString("XX"));
           }
           else {
             QDate date_end(year,month_end,1);
@@ -523,8 +521,34 @@ operator()(RecognizerMatch& m,
           << ":" << e.what()
          ;
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
-    return true;
   }
+  
+  QString dateSpan = QString::number(year);
+  LDEBUG << "NormalizeDate operator(): year: dateSpan=" << dateSpan;
+  dateSpan.append("-");
+  if( month == 0 ) {
+    dateSpan.append("XX-XX");
+    LDEBUG << "NormalizeDate operator(): year + xx-xx dateSpan=" << dateSpan;
+  }
+  else {
+    // dateSpan.append(QString::number(month));
+    QString monthString = QString("%1").arg(month, 2, 10, QLatin1Char('0'));
+    dateSpan.append(monthString);
+    LDEBUG << "NormalizeDate operator(): year + month dateSpan=" << dateSpan;
+    dateSpan.append("-");
+    if( day == 0 ) {
+      dateSpan.append("XX");
+      LDEBUG << "NormalizeDate operator(): year + month + xx dateSpan=" << dateSpan;
+    }
+    else {
+      // QString QString::arg(int integerVar, int fieldWidth = 0, int base = 10, const QChar & fillChar = QLatin1Char( ' ' )) const
+      QString dayString = QString("%1").arg(day, 2, 10, QLatin1Char('0'));
+      dateSpan.append(dayString);
+      LDEBUG << "NormalizeDate operator(): year + month + day dateSpan=" << dateSpan;
+    }
+  }
+    
+  m.features().setFeature(DATE_SPAN_FEATURE_NAME,dateSpan);
 
   if (newCurrentDate.isValid()) {
     updateCurrentDate(analysis,newCurrentDate);
