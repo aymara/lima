@@ -58,7 +58,7 @@ use days.lst,months.lst,monthAbbrev.lst
 @month:(@numday|t_ordinal_integer) of?:(,? t_integer>1000<3000)?:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(left.1,"numday")
-=>SetEntityFeature(right.1.2,"numyear")
+=>SetEntityFeature(right.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
