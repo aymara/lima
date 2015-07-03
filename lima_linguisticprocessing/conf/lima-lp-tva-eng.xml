@@ -7,17 +7,6 @@
       </list>
     </group>
 
-    <group name="limaserver" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="specificEntitiesXmlLoggerForLimaserver"/>
-      </list>
-    </group>
     <group name="query" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -64,6 +53,22 @@
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
+      </list>
+    </group>
+    <group name="limaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="fullTokenXmlLoggerTokenizer"/>
+        <item value="simpleWord"/>
+        <item value="fullTokenXmlLoggerSimpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="fullTokenXmlLoggerHyphen"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="fullTokenXmlLoggerIdiomatic"/>
+        <item value="defaultProperties"/>
+        <item value="fullTokenXmlLoggerDefaultProperties"/>
+        <item value="SpecificEntitiesModexForLimaserver"/>
+        <item value="specificEntitiesXmlLoggerForLimaserver"/>
       </list>
     </group>
     <group name="normalization" class="ProcessUnitPipeline">
