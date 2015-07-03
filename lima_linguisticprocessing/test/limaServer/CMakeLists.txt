@@ -48,6 +48,22 @@ target_link_libraries(limaserver
 install(TARGETS limaserver DESTINATION bin)
 
 ########### next target ###############
+
+# SET(testQsLogger_SRCS
+#    testQHttpServer.cpp
+# )
+
+# add_executable(testQsLogger ${testQsLogger_SRCS})
+
+# target_link_libraries(testQHttpServer
+#     lima-common
+#     ${QHTTPSERVER_NAMES}
+#     ${QT_LIBRARIES}
+#     ${Boost_LIBRARIES})
+
+# install(TARGETS testQHttpServer DESTINATION bin)
+
+########### next target ###############
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 else ()
