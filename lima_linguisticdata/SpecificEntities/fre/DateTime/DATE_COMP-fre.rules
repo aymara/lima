@@ -46,8 +46,8 @@ trente\ et\ un
 
 @nummonth=(t_integer>1<12)
 
-@numyear=(t_integer>1700<2050,t_integer>1<99)
-@numyear4=(t_integer>1700<2050)
+@numyear=(t_integer>1700<2950,t_integer>1<99)
+@numyear4=(t_integer>1700<2950)
 
 # lundi 22 mai 1968
 @day::@numday @month @numyear?:DATE:
@@ -62,12 +62,14 @@ trente\ et\ un
 # jours simples
 @daytime=(matin,midi,après-midi,soir)
 
+# lundi (12h30)
 @day::[t_integer] [(\:|H|h)] [t_integer]:DATE:
 =>SetEntityFeature(trigger,"day")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
+# ce lundi
 @day:ce::DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(left.1,"datemod")
@@ -75,6 +77,7 @@ trente\ et\ un
 =<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
+# lundi prochain
 @day::prochain:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"datemod")
@@ -82,6 +85,7 @@ trente\ et\ un
 =<ClearEntityFeatures()
 =>NormalizeRelativeDate("next_day")
 
+# lundi après-midi, lundi dernier, lundi 8
 @day::(dernier|@daytime|@numday)?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"datemod")
@@ -95,6 +99,7 @@ trente\ et\ un
 #------------------------------
 # annonceur mois pour période
 
+# de début septembre 98 à fin janvier 2012
 @month:(de|d\') (@modifierDate)?:(@numyear)? à (@modifierDate)? @month (@numyear)?:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.1,"numyear")
@@ -104,6 +109,7 @@ trente\ et\ un
 =<ClearEntityFeatures()
 =>NormalizeDate("isInterval")
 
+# de début septembre 98 à fin janvier 2012
 <NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.1,"month")
@@ -115,6 +121,8 @@ trente\ et\ un
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
+# (du premier) septembre (1955 au) 31 aout 1956
+# TODO: trop de chose en [] ?
 @month:[du] [(@numday|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|<NUMBER>):(@numyear)?:DATE:
 =>SetEntityFeature(left.2,"numday")
 =>SetEntityFeature(left.3,"month")
@@ -142,11 +150,11 @@ trente\ et\ un
 # mai
 # 18 juin 40
 # 31 octobre prochain
-
+# 1er avril 1950
 @month:@numday?:@numyear:DATE:
-=>SetEntityFeature(left.1,"numday")
+=>SetEntityFeature(left,"numday")
 =>SetEntityFeature(trigger,"month")
-=>SetEntityFeature(right.1,"numyear")
+=>SetEntityFeature(right,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
