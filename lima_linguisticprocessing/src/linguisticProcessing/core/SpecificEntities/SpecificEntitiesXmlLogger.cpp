@@ -287,8 +287,12 @@ outputEntity(std::ostream& out,
   {
     if (m_compactFormat) {
       // same format as RecognizerResultLogger
-      out 
-      << "<entity>" 
+      // Check compatibility with RecognizerResultLogger
+      // display list of components and normalization
+      // components are the list of features whose value are strings in the texte with a (position,length) info
+      // normalisations  are the list of features whose value are computed and does not have (position,length) info
+      const Automaton::EntityFeatures& features=annot->getFeatures();
+      out << "<entity>" 
       //<< "<pos>" << offset+annot->getPosition() << "</pos>" 
       << "<pos>" << offset+annot->getPosition() << "</pos>" 
       << "<len>" << annot->getLength() << "</len>" 
@@ -298,23 +302,33 @@ outputEntity(std::ostream& out,
       << "</type>"
       << "<string>"<< Common::Misc::transcodeToXmlEntities(vToken->stringForm()).toUtf8().data() << "</string>"
       << "<components>";
-      const Automaton::EntityFeatures& features=annot->getFeatures();
       for (Automaton::EntityFeatures::const_iterator 
         featureItr=features.begin(),features_end=features.end();
       featureItr!=features_end; featureItr++)
       {
-        out << "<" << featureItr->getName();
         if( featureItr->getPosition() != UNDEFPOSITION ) {
+	  out << "<" << featureItr->getName();
           out << " pos=\"" << featureItr->getPosition() << "\"";
-        }
-        if( featureItr->getLength() != UNDEFLENGTH ) {
           out << " len=\"" << featureItr->getLength() << "\"";
-        }
-        out << ">";
-        out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
-        << "</" << featureItr->getName() << ">";
+	  out << ">";
+	  out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
+	  << "</" << featureItr->getName() << ">";
+	}
       }
       out << "</components>"
+      << "<normalization>";
+      for (Automaton::EntityFeatures::const_iterator 
+        featureItr=features.begin(),features_end=features.end();
+      featureItr!=features_end; featureItr++)
+      {
+        if( featureItr->getPosition() == UNDEFPOSITION ) {
+	  out << "<" << featureItr->getName();
+	  out << ">";
+	  out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())));
+	  out << "</" << featureItr->getName() << ">";
+	}
+      }
+      out << "</normalization>"
       << "</entity>"
       << endl;
     }
