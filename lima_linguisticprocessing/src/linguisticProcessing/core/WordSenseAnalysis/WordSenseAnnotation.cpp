@@ -32,7 +32,7 @@
 #include <iostream>
 
 
-using namespace boost;
+//using namespace boost;
 using namespace std;
 #include "common/Data/strwstrtools.h"
 

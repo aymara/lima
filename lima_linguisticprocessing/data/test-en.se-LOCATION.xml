@@ -2,28 +2,13 @@
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
   <!--==================== tests LOCATION with components ====================-->
-  <!--testcase id="fre.se.pers.comp.1" type="pertinent">
-    <call-parameters>
-      <param key="text" value="Barack Obama"/>
-      <param key="language" value="fre"/>
-      <list key="pipelines">g
-        <item value="indexer"/>
-      </list>
-    </call-parameters>
-    <expl>rule Obama : firstname: Barack lastname: Obama</expl>
-    <test id="fre.se.pers.comp.1.1" trace=".se.xml"
-          comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=1][len=12]/type"
-          operator="="
-          right="Person.PERSON"/>
-  </testcase-->
 
  <testcase id="en.se.location.comp.1" type="pertinent">
     <call-parameters>
       <param key="text" value="West Palm Beach"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -44,7 +29,7 @@
       <param key="text" value="12400 SW 157nd Avenue"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -79,7 +64,7 @@
       <param key="text" value="FL 33301"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -99,7 +84,7 @@
       <param key="text" value="PO Box 111"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -119,7 +104,7 @@
       <param key="text" value="Jeremy said there's an access road just past mile marker 6."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -144,7 +129,7 @@
       <param key="text" value="P.O. Box 111"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -164,7 +149,7 @@
       <param key="text" value="Interstate 40"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -189,7 +174,7 @@
       <param key="text" value="I-40"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -209,7 +194,7 @@
       <param key="text" value="I  love Geology College, Lenin Hill..."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -229,7 +214,7 @@
       <param key="text" value="Ayres Avenue, off ...."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -254,7 +239,7 @@
       <param key="text" value="The mystery leads to Hawkstone Park."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -279,7 +264,7 @@
       <param key="text" value="The bedrooms overlook Holy Trinity Church."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -304,7 +289,7 @@
       <param key="text" value="For years we lived on Beekman Place."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -329,7 +314,7 @@
       <param key="text" value="The bedrooms overlook Sloane Square."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -354,7 +339,7 @@
       <param key="text" value="above the city of Peterborough"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -379,7 +364,7 @@
       <param key="text" value="above the cities of Peterborough and Paris"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -409,7 +394,7 @@
       <param key="text" value="above the cities of Peterborough Xfictif and Parisss"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -439,7 +424,7 @@
       <param key="text" value="in New York "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -459,7 +444,7 @@
       <param key="text" value="near Pariss in Francee"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -485,7 +470,7 @@
       <param key="text" value="Arkansas state "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -510,7 +495,7 @@
       <param key="text" value="Official site of the State of Colorado. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -535,7 +520,7 @@
       <param key="text" value="Exeter city"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -560,7 +545,7 @@
       <param key="text" value="Los Angeles city"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -585,7 +570,7 @@
       <param key="text" value="from Mercury"/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -605,7 +590,7 @@
       <param key="text" value="The most notable sportsmen to come from York in ...."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -625,7 +610,7 @@
       <param key="text" value="I never really drank tea, but I've been in Londonia three months now and I can't live without it."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -645,7 +630,7 @@
       <param key="text" value="I live near New York."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <expl></expl>
@@ -666,7 +651,7 @@
       <param key="text" value="The Herald, 1 Herald Plaza, Miami, FL 33132."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
     <test id="eng.se.loc.27.1" trace=".se.xml"
@@ -700,7 +685,7 @@
       <param key="text" value="This Decision is addressed to NattoParma, Dammensveien 40, PO Box 2896 Solli, N-0230 Oslo, Norway."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
-        <item value="indexer"/>
+        <item value="limaserver"/>
       </list>
     </call-parameters>
      <test id="eng.se.loc.28.1" trace=".se.xml"

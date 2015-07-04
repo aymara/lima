@@ -28,10 +28,13 @@
   *
   */
 
+#ifndef WIN32
+#include <cstdint> //uint32_t
+#endif
 #include "AnnotationData.h"
 #include "common/Data/strwstrtools.h"
 
-using namespace boost;
+//using namespace boost;
 
 namespace Lima
 {

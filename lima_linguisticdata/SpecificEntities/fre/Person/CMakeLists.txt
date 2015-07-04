@@ -17,6 +17,6 @@
 set (DEPENDENCIES firstname.lst function_title.lst person.lst persons.rules prefirstname.lst title.lst)
 
 SPECIFICENTITIESCONFIGENV(main fre Person)
-SPECIFICENTITIES(main fre Person PERSON-fre.rules)
+SPECIFICENTITIES(main fre Person PERSON_COMP-fre.rules PERSON-fre.rules)
 
 add_dependencies(rules-Person-fre-main rules-fre-Person-configEnv-main)

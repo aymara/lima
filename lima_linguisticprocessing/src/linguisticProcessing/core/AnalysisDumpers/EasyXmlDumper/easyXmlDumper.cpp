@@ -54,7 +54,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/AbstractTextualAnalysisHandler.h"
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace boost::tuples;
 
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -67,7 +67,7 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace Lima::LinguisticProcessing::AnalysisDumpers::EasyXmlDumper;
 
-typedef color_traits<default_color_type> Color;
+typedef boost::color_traits<boost::default_color_type> Color;
 
 namespace Lima {
 namespace LinguisticProcessing {

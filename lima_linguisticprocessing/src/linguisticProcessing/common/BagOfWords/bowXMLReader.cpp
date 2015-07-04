@@ -270,7 +270,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     std::string name=getStringAttribute(attributes,"name");
     LimaString value=getLimaStringAttribute(attributes,"value");
     static_cast<BoWNamedEntity*>(m_currentComplexToken.back().token)->
-      addFeature(name,value);
+      setFeature(name,value);
   }
   return true;
 }

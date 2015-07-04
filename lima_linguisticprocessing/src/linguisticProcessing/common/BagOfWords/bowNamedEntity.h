@@ -75,7 +75,7 @@ public:
   void setNamedEntityType(const Common::MediaticData::EntityType&);
 
   const std::map<std::string, LimaString>& getFeatures() const; 
-  void addFeature(const std::string& attribute,
+  void setFeature(const std::string& attribute,
                   const LimaString& value); 
   
   virtual BoWType getType() const { return BOW_NAMEDENTITY; }

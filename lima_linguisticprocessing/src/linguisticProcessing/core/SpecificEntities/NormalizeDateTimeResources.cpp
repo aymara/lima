@@ -55,6 +55,10 @@ const std::string NormalizeDateTimeResources::
 MONTHSDAYS_MONTH_ID=std::string("m");
 const std::string NormalizeDateTimeResources::
 MONTHSDAYS_DAY_ID=std::string("d");
+const std::string NormalizeDateTimeResources::
+MONTHSDAYS_ORDINAL_ID=std::string("o");
+const std::string NormalizeDateTimeResources::
+MONTHSDAYS_SUFFIX_ID=std::string("s");
 
 
 NormalizeDateTimeResources::NormalizeDateTimeResources():
@@ -140,7 +144,7 @@ readMonthDays(const std::string& monthsDaysFile)
       line=Common::Misc::utf8stdstring2limastring(utf8line);
       std::vector<std::string> elements;
       split(elements,utf8line,is_any_of(MONTHSDAYS_MAIN_SEP));
-      // three elements in line: (month|day) num list,of,strings
+      // three elements in line: (month|day|ordinal|suffix) num list,of,strings
       if (elements.size()!=3) {
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line;
@@ -149,10 +153,12 @@ readMonthDays(const std::string& monthsDaysFile)
       map<LimaString,unsigned short>* names(0);
       if (elements[0] == MONTHSDAYS_MONTH_ID) { names=&m_months; }
       else if (elements[0] == MONTHSDAYS_DAY_ID) { names=&m_days; }
+      else if (elements[0] == MONTHSDAYS_ORDINAL_ID) { names=&m_ordinal; }
+      else if (elements[0] == MONTHSDAYS_SUFFIX_ID) { names=&m_ordinalSuffixes; }
       else {
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line 
-              << ": first element must be 'm' or 'd'";
+              << ": first element must be 'm' 'd', 'o' or 's'";
         continue;
       }
 
@@ -199,6 +205,37 @@ getDayNumber(const LimaString& dayName) const
     return NormalizeDateTimeResources::no_day;
   }
   return (*it).second;
+}
+
+unsigned short NormalizeDateTimeResources::
+getDayNumberFromWordOrdinal(const LimaString& dayName) const
+{
+  map<LimaString,unsigned short>::const_iterator 
+    it=m_ordinal.find(dayName);
+  if (it==m_ordinal.end()) {
+    return NormalizeDateTimeResources::no_day;
+  }
+  return (*it).second;
+}
+
+unsigned short NormalizeDateTimeResources::
+getCardinalFromNumberOrdinal(const LimaString& dayName) const
+{
+  // try to extract number as int from string <number><ordinalSuffix>
+  map<LimaString,unsigned short>::const_iterator it=m_ordinalSuffixes.begin();
+  for( ; it!=m_ordinalSuffixes.end() ; it++ )
+  {
+    const LimaString& suffix = (*it).first;
+    int index = dayName.indexOf(suffix, 0, Qt::CaseInsensitive);
+    if (index < 0)
+      continue;
+    LimaString numberAsString(dayName.constData(),index);
+    bool ok(false);
+    unsigned short day = numberAsString.toUShort(&ok);
+    if( ok) 
+      return day;
+  }
+  return NormalizeDateTimeResources::no_day;
 }
 
 

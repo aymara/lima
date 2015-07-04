@@ -453,6 +453,7 @@ void TStatus::outputXML(std::ostream& xmlStream) const
           case T_CAPITAL_1ST : xmlStream << "t_capital_1st"; break;
           case T_ACRONYM : xmlStream << "t_acronym"; break;
           case T_CAPITAL_SMALL : xmlStream << "t_capital_small"; break;
+          case T_ABBREV : xmlStream << "t_abbrev"; break;
           default : ;//xmlStream << _capital;
         }
         xmlStream << "</t_alpha_capital>" << std::endl;

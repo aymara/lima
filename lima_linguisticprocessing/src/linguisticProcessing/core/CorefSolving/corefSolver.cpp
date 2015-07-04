@@ -44,7 +44,7 @@
 #include <math.h>
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::AnnotationGraphs;

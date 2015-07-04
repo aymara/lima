@@ -36,6 +36,7 @@ namespace SpecificEntities {
 #define isASpecificEntityId "isASpecificEntity"
 #define isInSameSpecificEntityId "isInSameSpecificEntity"
 #define CreateSpecificEntityId "CreateSpecificEntity"
+#define SetEntityFeatureId "SetEntityFeature"
 #define AddEntityFeatureId "AddEntityFeature"
 #define AppendEntityFeatureId "AppendEntityFeature"
 #define ClearEntityFeaturesId "ClearEntityFeatures"
@@ -135,8 +136,41 @@ private:
 };
 
 /** 
- * @brief This action stores a feature for an entity during the recognition 
- * of the entity (i.e. during the rule matching process). Unary operator: associate the given 
+ * @brief This action set the value of a feature for an entity during the recognition 
+ * of the entity (i.e. during the rule matching process). 
+ * If a value already exists for the feaure, the new value overwrite the previous one.
+ * Unary operator: associate the given 
+ * vertex to the entity feature specified in the complement. Binary operator: associate the string 
+ * delimited by the two vertices to the entity feature specified in the complement.
+ *
+ */
+class LIMA_SPECIFICENTITIES_EXPORT SetEntityFeature : public Automaton::ConstraintFunction
+{
+public:
+  SetEntityFeature(MediaId language,
+                   const LimaString& complement=LimaString());
+  ~SetEntityFeature() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                          const LinguisticGraphVertex& vertex,
+                          AnalysisContent& analysis) const;
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                          const LinguisticGraphVertex& v1,
+                          const LinguisticGraphVertex& v2,
+                          AnalysisContent& analysis) const;
+
+private:
+  std::string m_featureName;
+  Common::MediaticData::EntityType m_type;
+  FsaStringsPool* m_sp;
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  QVariant::Type m_featureType;
+};
+
+/** 
+ * @brief This action set the value of a feature for an entity during the recognition 
+ * of the entity (i.e. during the rule matching process). 
+ * If a value already exists for the feaure, the new value overwrite the previous one.
+ * Unary operator: associate the given 
  * vertex to the entity feature specified in the complement. Binary operator: associate the string 
  * delimited by the two vertices to the entity feature specified in the complement.
  *
@@ -164,9 +198,11 @@ private:
 };
 
 /** 
- * @brief This action stores a feature for an entity during the recognition 
- * of the entity (i.e. during the rule matching process). Unary operator: associate the given 
- * vertex to the entity feature specified in the complement. Binary operator: associate the string 
+ * @brief This action appends a value to the previously set value of a feature for an entity during 
+ * the recognition  of the entity (i.e. during the rule matching process).
+ * Appends performs a concatenatipon when the type of the property is a string.
+ * Appends performs an adition when the type of the property is an int.
+ * Unary operator: associate the given vertex to the entity feature specified in the complement. Binary operator: associate the string 
  * delimited by the two vertices to the entity feature specified in the complement.
  *
  */
@@ -210,7 +246,7 @@ private:
 
 /** 
  * @brief This action performs the normalization of an entity according to stored features. 
- * This action uses the features stored by the addEntityFeature() function to perform the 
+ * This action uses the features stored by the setEntityFeature() function to perform the 
  * normalization of the entity. 
  *
  */

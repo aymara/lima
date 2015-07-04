@@ -99,6 +99,7 @@ protected:
 
   void updateCurrentDate(AnalysisContent& analysis,
                          const QDate& currentDate) const;
+  unsigned short getDayFromString(const LimaString& numdayString) const;
 };
 
 class LIMA_SPECIFICENTITIES_EXPORT NormalizeRelativeDate : public NormalizeDate

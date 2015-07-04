@@ -37,6 +37,7 @@
 #include "AutomatonExport.h"
 #include "common/Data/LimaString.h"
 #include "boost/any.hpp"
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 
 #include <vector>
 #include <iostream>
@@ -104,9 +105,33 @@ public:
   bool operator==(const EntityFeatures& f) const;
 
   template<typename ValueType>
+  void setFeature(const std::string& name,
+                  const ValueType& value);
+
+  template<typename ValueType>
   void addFeature(const std::string& name,
+                  const ValueType& value);
+
+  
+  template<typename ValueType>
+  void appendFeature(const std::string& name,
+                  const ValueType& value);
+  
+
+  EntityFeatures::const_iterator find(const std::string& featureName) const;
+  EntityFeatures::iterator find(const std::string& featureName);
+  EntityFeatures::const_iterator findLast(const std::string& featureName) const;
+  EntityFeatures::iterator findLast(const std::string& featureName);
+
+  friend LIMA_AUTOMATON_EXPORT std::ostream& operator<<(std::ostream& os, const EntityFeatures& f);
+};
+
+template<typename ValueType>
+  void EntityFeatures::setFeature(const std::string& name,
                   const ValueType& value)
     {
+      SELOGINIT;
+      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << value << ")";
       // if feature with same name already exists, overwrite it
       EntityFeatures::iterator it=find(name);
       if (it!=end()) {
@@ -121,21 +146,41 @@ public:
         back().setValue(boost::any(value));
       }
     }
+template<typename ValueType>
+  void EntityFeatures::addFeature(const std::string& name,
+                  const ValueType& value)
+    {
+      SELOGINIT;
+      LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << value << ")";
+      push_back(EntityFeature());
+      back().setName(name);
+      back().setValue(boost::any(value));
+    }
+/*
+template<typename ValueType>
+  void EntityFeatures::appendFeature(const std::string& name,
+                  const ValueType& value)
+    {
+      SELOGINIT;
+      // if feature with same name already exists, append to it
+      LDEBUG << "EntityFeatures::<ValueType>appendFeature(" << name << "," << value << ")";
+      // if feature with same name already exists, but type is neither
+      // int neitheer float, nor string, overwrite it
+      EntityFeatures::iterator it=findLast(name);
+      if (it!=end()) {
+        (*it).setValue(boost::any(value));
+      }
+      else {
+        //push empy feature and set values to avoid two copies
+        //of value (do not know the type: it may be a big class)
+        push_back(EntityFeature());
+        back().setName(name);
+        back().setValue(boost::any(value));
+      }
+    }
+*/
+
   
-  template<typename ValueType>
-  void appendFeature(const std::string& name,
-                  const ValueType& value);
-
-  EntityFeatures::const_iterator find(const std::string& featureName) const;
-  EntityFeatures::iterator find(const std::string& featureName);
-
-  friend LIMA_AUTOMATON_EXPORT std::ostream& operator<<(std::ostream& os, const EntityFeatures& f);
-};
-#if defined(WIN32)
-  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<int>(const std::string&, const int& );
-  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<double>(const std::string&, const double& );
-  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<QString>(const std::string&, const QString& );
-#endif
 } // end namespace
 } // end namespace
 } // end namespace

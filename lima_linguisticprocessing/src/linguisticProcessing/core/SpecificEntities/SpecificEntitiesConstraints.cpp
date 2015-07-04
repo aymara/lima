@@ -33,6 +33,8 @@
 #include "SpecificEntitiesMicros.h"
 #include <QStringList>
 #include <queue>
+#include <iostream>
+#include <sstream>
 
 // #include <assert.h>
 
@@ -61,6 +63,9 @@ ConstraintFunctionFactory<isInSameSpecificEntity>
 
 ConstraintFunctionFactory<CreateSpecificEntity>
   CreateSpecificEntityFactory(CreateSpecificEntityId);
+
+ConstraintFunctionFactory<SetEntityFeature>
+  SetEntityFeatureFactory(SetEntityFeatureId);
 
 ConstraintFunctionFactory<AddEntityFeature>
   AddEntityFeatureFactory(AddEntityFeatureId);
@@ -419,7 +424,9 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
 
 //   LDEBUG << "    Creating annotation ";
   SpecificEntityAnnotation annot(match,*m_sp);
-  
+  std::ostringstream oss;
+  annot.dump(oss);
+  LDEBUG << "CreateSpecificEntity: annot =  " << oss.str();
 
 //   LDEBUG << "    Building new morphologic data for head "<< annot.getHead();
   // getting data
@@ -788,7 +795,187 @@ bool CreateSpecificEntity::shouldRemoveFinal(
 
 
 //----------------------------------------------------------------------------------------
-// AddEntityFeature : add a given feature to the recognized entity
+// SetEntityFeature : add a given feature to the recognized entity
+// we do not have direct access to the RecognizerMatch of the entity when calling this function 
+// (called during the matching process) => hence, store features in an AnalysisData and use 
+// this Data in normalization functions or CreateSpecificEntity function to get the features.
+// Use already existing RecognizerData (no need for another Data).
+// CAREFUL: the features must be cleaned after use: explicit call to clearFeatures in case of 
+// matching failure must be added in the rule.
+
+SetEntityFeature::SetEntityFeature(MediaId language,
+                                   const LimaString& complement):
+ConstraintFunction(language,complement),
+m_featureName(""),
+m_featureType(QVariant::String)
+{
+  if (complement.size()) {
+    QStringList complementElements = complement.split(":");
+    m_featureName=complementElements.front().toUtf8().constData();
+    complementElements.pop_front();
+    if (!complementElements.empty()) {
+      const QString& complementType = complementElements.front();
+      m_featureType = QVariant::nameToType(complementType.toUtf8().constData());
+      if (m_featureType != QVariant::Invalid) {
+        if (complementType == "int") {
+          m_featureType = QVariant::Int;
+        }
+        else if (complementType == "double") {
+          m_featureType = QVariant::Double;
+        }
+        else {
+          m_featureType = QVariant::String;
+        }
+      }
+    }
+  }
+}
+
+bool SetEntityFeature::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+           const LinguisticGraphVertex& vertex,
+           AnalysisContent& analysis) const
+{
+  SELOGINIT;
+  LDEBUG << "SetEntityFeature:: (one argument) start... ";
+  LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "SetEntityFeature:: Error: missing RecognizerData";
+    return false;
+  }
+  
+  // get string from the vertex and associate it to the feature
+  
+  // get string from the vertex : 
+  // @todo: if named entity, take normalized string, otherwise take lemma
+  LimaString featureValue;
+  Token* token=get(vertex_token,*(graph.getGraph()),vertex);
+  if (token!=0) {
+    featureValue=token->stringForm();
+  }
+  switch (m_featureType) {
+    case QVariant::String:
+      LDEBUG << "SetEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
+      recoData->setEntityFeature(m_featureName,featureValue);  
+      break;
+    case QVariant::Int:
+      recoData->setEntityFeature(m_featureName,featureValue.toInt());  
+      break;
+      
+    case QVariant::Double:
+      recoData->setEntityFeature(m_featureName,featureValue.toDouble());  
+      break;
+    default:
+      recoData->setEntityFeature(m_featureName,featureValue);  
+  }
+  uint64_t pos = (int64_t)(token->position());
+  uint64_t len = (int64_t)(token->length());
+  Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+  std::vector<EntityFeature>::iterator featureIt = 
+    features.find(m_featureName);
+  if( featureIt != recoData->getEntityFeatures().end() )
+  {
+    featureIt->setPosition(pos);
+    featureIt->setLength(len);
+  }
+  
+  return true;
+}
+
+bool SetEntityFeature::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+           const LinguisticGraphVertex& v1,
+           const LinguisticGraphVertex& v2,
+           AnalysisContent& analysis) const
+{
+  SELOGINIT;
+//  LERROR << "SetEntityFeature:: Error: version with two vertices parameters is not implemented";
+//  return false;
+  LDEBUG << "SetEntityFeature:: (two arguments) start... ";
+  LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", v1:" << v1 << ", v2:" << v2 << ")";
+  
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    LERROR << "SetEntityFeature:: Error: missing RecognizerData";
+    return false;
+  }
+  // get string from the set of vertices between v1 and v2
+  // @todo: if named entity, take normalized string, otherwise take lemma
+  LimaString featureValue;
+  const LinguisticGraph& lGraph = *(graph.getGraph());
+  
+  // (some code borrowed from SpecificEntitiesXmlLogger::process)
+  // assert v2 follows v1 within a path composed with a direct sequence of out_edges
+  // assert also there exist no ambiguities in the graph.
+  std::queue<LinguisticGraphVertex> toVisit;
+  std::set<LinguisticGraphVertex> visited;
+  toVisit.push(v1);
+  uint64_t pos = UNDEFPOSITION;
+  uint64_t len = UNDEFLENGTH;
+    
+  LinguisticGraphOutEdgeIt outItr,outItrEnd;
+  unsigned int nbEdges(0);
+  while (!toVisit.empty()) {
+    LinguisticGraphVertex v=toVisit.front();
+    toVisit.pop();
+    if (v != v2) {
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,lGraph); outItr!=outItrEnd; outItr++) 
+      {
+        LinguisticGraphVertex next=target(*outItr,lGraph);
+        if (visited.find(next)==visited.end())
+        {
+          visited.insert(next);
+          toVisit.push(next);
+          nbEdges++;
+        }
+      }
+    }
+    if( nbEdges > 1 ) 
+      LWARN << "SetEntityFeature:: Warning: ambiguïties in graph";
+
+    Token* token=get(vertex_token,lGraph,v);
+    if (v == v1) {
+      pos = (int64_t)(token->position());
+    }
+    if (v == v2) {
+      if( pos != UNDEFPOSITION )
+        len = (int64_t)(token->position()) - pos + 1 + (int64_t)(token->length());
+    }
+    // @ todo: add separator, check non standard cases where separator is no whitespace.
+    // see RecognizeMatch::getString()
+    featureValue.append( token->stringForm());
+  }
+    
+  switch (m_featureType) {
+    case QVariant::String:
+      recoData->setEntityFeature(m_featureName,featureValue);  
+      break;
+    case QVariant::Int:
+      recoData->setEntityFeature(m_featureName,featureValue.toInt());  
+      break;
+    case QVariant::Double:
+      recoData->setEntityFeature(m_featureName,featureValue.toDouble());  
+      break;
+    default:
+      recoData->setEntityFeature(m_featureName,featureValue);  
+  }
+  Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+  std::vector<EntityFeature>::iterator featureIt = 
+    features.find(m_featureName);
+  if( featureIt != recoData->getEntityFeatures().end() )
+  {
+    featureIt->setPosition(pos);
+    featureIt->setLength(len);
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------------------
+// AddEntityFeature : add a value for a given feature to the recognized entity
 // we do not have direct access to the RecognizerMatch of the entity when calling this function 
 // (called during the matching process) => hence, store features in an AnalysisData and use 
 // this Data in normalization functions or CreateSpecificEntity function to get the features.
@@ -851,7 +1038,12 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   switch (m_featureType) {
     case QVariant::String:
-      LDEBUG << "AddEntityFeature:: recoData->addEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
+      LDEBUG << "AddEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
+      /*
+       * S'assurer que addEntityFeature ajoute un élément à la fin du vecteur
+       * (et donc que les fonctions template addEntityFeature dans EntityFeatres.h) 
+       * ajoutent bien un élement à la fin du vecteur par convention
+      */
       recoData->addEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
@@ -867,8 +1059,14 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   uint64_t pos = (int64_t)(token->position());
   uint64_t len = (int64_t)(token->length());
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+  /*
+   * Comment être sûr que l'élément que l'on récupère est le dernier inséré?
+   * ajoute  un élement à la fin du vecteur par convention
+   * On peut développer une fonction features.findLast(m_featureName);
+  */
+  
   std::vector<EntityFeature>::iterator featureIt = 
-    features.find(m_featureName);
+    features.findLast(m_featureName);
   if( featureIt != recoData->getEntityFeatures().end() )
   {
     featureIt->setPosition(pos);
@@ -945,16 +1143,16 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     
   switch (m_featureType) {
     case QVariant::String:
-      recoData->addEntityFeature(m_featureName,featureValue);  
+      recoData->setEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
-      recoData->addEntityFeature(m_featureName,featureValue.toInt());  
+      recoData->setEntityFeature(m_featureName,featureValue.toInt());  
       break;
     case QVariant::Double:
-      recoData->addEntityFeature(m_featureName,featureValue.toDouble());  
+      recoData->setEntityFeature(m_featureName,featureValue.toDouble());  
       break;
     default:
-      recoData->addEntityFeature(m_featureName,featureValue);  
+      recoData->setEntityFeature(m_featureName,featureValue);  
   }
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
   std::vector<EntityFeature>::iterator featureIt = 
@@ -970,7 +1168,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 //----------------------------------------------------------------------------------------
 // AppendEntityFeature : add a given feature to the recognized entity or append the
 // value of a given feature if it already exists.
-// Same remark as for AddEntityFeature about the relation with RecognizerMatch
+// Same remark as for SetEntityFeature about the relation with RecognizerMatch
 // and RecognizerData.
 
 AppendEntityFeature::AppendEntityFeature(MediaId language,
@@ -1101,7 +1299,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   return true;
 }
 
-// clear stored entity features, added by the AddEntityFeature function
+// clear stored entity features, added by the SetEntityFeature function
 ClearEntityFeatures::ClearEntityFeatures(MediaId language,
 const LimaString& complement):
 ConstraintFunction(language,complement)
@@ -1134,7 +1332,7 @@ AnalysisContent& analysis) const
 RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
 if (recoData==0) {
 SELOGINIT;
-LERROR << "AddEntityFeature:: Error: missing RecognizerData";
+LERROR << "NormalizeEntity:: Error: missing RecognizerData";
 return false;
 }
 // assign stored features to RecognizerMatch features

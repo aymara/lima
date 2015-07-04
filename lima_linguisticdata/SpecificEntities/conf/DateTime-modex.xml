@@ -15,13 +15,29 @@
         <item value="TimeRecognition"/>
       </list>
     </group>
+    <group name="DateTimeModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="DateRecognitionForLimaserver"/>
+        <item value="TimeRecognitionForLimaserver"/>
+      </list>
+    </group>
     <group name="DateRecognition" class="ApplyRecognizer" lib="lima-lp-se-datetime">
       <param key="automaton" value="DateRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
+    <group name="DateRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="DateCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
     <group name="TimeRecognition" class="ApplyRecognizer" lib="lima-lp-se-datetime">
       <param key="automaton" value="TimeRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="TimeRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="TimeCompRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
@@ -31,8 +47,14 @@
     <group name="DateRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/DATE-eng.bin"/>
     </group>
+    <group name="DateCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE_COMP-eng.bin"/>
+    </group>
     <group name="TimeRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/TIME-eng.bin"/>
+    </group>
+    <group name="TimeCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME_COMP-eng.bin"/>
     </group>
     <group name="DateTimeIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">
@@ -69,8 +91,14 @@
     <group name="DateRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/DATE-fre.bin"/>
     </group>
+    <group name="DateCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE_COMP-fre.bin"/>
+    </group>
     <group name="TimeRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/TIME-fre.bin"/>
+    </group>
+    <group name="TimeCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME_COMP-fre.bin"/>
     </group>
     <group name="DateTimeIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">

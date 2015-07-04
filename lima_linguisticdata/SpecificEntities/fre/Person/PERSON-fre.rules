@@ -20,21 +20,24 @@ use person.lst
 @Firstname:[(@PreFirstname)?]:$NP? @DynastyOrder:PERSON:=>NormalizePersonName()
 
 #------------------------------
-#@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
 
 @PersonNamePart=(t_capital_1st,t_capital,$NP)
 
-#[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
-#[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
-#[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+
+# rule Obama
+Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonName()
 
 
-@Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:(@Initial|t_abbrev)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
 @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:=>NormalizePersonName()
 

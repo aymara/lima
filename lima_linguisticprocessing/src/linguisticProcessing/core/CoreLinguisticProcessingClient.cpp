@@ -24,6 +24,9 @@
  *   Copyright (C) 2004-2012 by CEA LIST                              *
  *                                                                         *
  ***************************************************************************/
+#ifndef WIN32
+#include <cstdint> //uint32_t
+#endif
 #include "CoreLinguisticProcessingClient.h"
 
 #include "common/MediaticData/mediaticData.h"
@@ -40,11 +43,15 @@
 
 #include <QtCore/QDate>
 
+uint64_t t1;
+
 using namespace std;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
 
-using namespace boost;
+//using namespace boost;
+
+uint64_t t2;
 
 namespace Lima
 {

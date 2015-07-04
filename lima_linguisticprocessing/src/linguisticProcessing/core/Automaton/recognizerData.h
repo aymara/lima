@@ -118,10 +118,16 @@ class LIMA_AUTOMATON_EXPORT RecognizerData : public AnalysisData
   inline void setNextVertex(LinguisticGraphVertex v) { m_nextVertices.insert(v); }
 
   template<typename ValueType>
-  void addEntityFeature(const std::string& name, const ValueType& value)
+  void setEntityFeature(const std::string& name, const ValueType& value)
   {
     // if feature already exists, overwrite it
     // @todo : concat to existing feature
+    m_entityFeatures.setFeature<ValueType>(name,value);
+  }
+  template<typename ValueType>
+  void addEntityFeature(const std::string& name, const ValueType& value)
+  {
+    // add one feature at the end of existing ones
     m_entityFeatures.addFeature<ValueType>(name,value);
   }
   template<typename ValueType>

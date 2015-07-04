@@ -1,0 +1,331 @@
+set encoding=utf8
+using modex DateTime-modex.xml,Numex-modex.xml
+using groups DateTime,Numex
+set defaultAction=>CreateSpecificEntity()
+
+
+@day=(lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche)
+
+@month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
+
+@numday=(
+t_integer>1<31,
+premier,
+1er,
+deux,
+trois,
+quatre,
+cinq,
+six,
+sept,
+huit,
+neuf,
+dix,
+onze,
+douze,
+treize,
+quatorze,
+quinze,
+seize,
+dix-sept,
+dix-huit,
+dix-neuf,
+vingt,
+vingts,
+vingt-deux,
+vingt-trois,
+vingt-quatre,
+vingt-cinq,
+vingt-six,
+vingt-sept,
+vingt-huit,
+vingt-neuf,
+trente,
+trente\ et\ un
+)
+
+@nummonth=(t_integer>1<12)
+
+@numyear=(t_integer>1700<2950,t_integer>1<99)
+@numyear4=(t_integer>1700<2950)
+
+# lundi 22 mai 1968
+@day::@numday @month @numyear?:DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(right.1,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.3,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# jours simples
+@daytime=(matin,midi,après-midi,soir)
+
+# lundi (12h30)
+@day::[t_integer] [(\:|H|h)] [t_integer]:DATE:
+=>SetEntityFeature(trigger,"day")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+# ce lundi
+@day:ce::DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(left.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+# lundi prochain
+@day::prochain:DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate("next_day")
+
+# lundi après-midi, lundi dernier, lundi 8
+@day::(dernier|@daytime|@numday)?:DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+#------------------------------
+@modifierDate=(début,mi,milieu,fin);
+
+#------------------------------
+# annonceur mois pour période
+
+# de début septembre 98 à fin janvier 2012
+@month:(de|d\') (@modifierDate)?:(@numyear)? à (@modifierDate)? @month (@numyear)?:DATE:
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.1,"numyear")
+=>SetEntityFeature(right.4,"monthend")
+=>SetEntityFeature(right.5,"numyearend")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate("isInterval")
+
+# de début septembre 98 à fin janvier 2012
+<NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.1,"month")
+=>SetEntityFeature(right.2,"numyear")
+=>SetEntityFeature(right.4,"numdayend")
+=>SetEntityFeature(right.5,"monthend")
+=>SetEntityFeature(right.6,"numyearend")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# (du premier) septembre (1955 au) 31 aout 1956
+# TODO: trop de chose en [] ?
+@month:[du] [(@numday|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|<NUMBER>):(@numyear)?:DATE:
+=>SetEntityFeature(left.2,"numday")
+=>SetEntityFeature(left.3,"month")
+=>SetEntityFeature(left.4,"numyear")
+=>SetEntityFeature(left.6,"numdayend")
+=>SetEntityFeature(trigger,"monthend")
+=>SetEntityFeature(right.1,"numyearend")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+#------------------------------
+
+# fin juin
+@month:@modifierDate::DATE:
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+# 22 mai 1968
+# 22 mai
+# mai 1968
+# mai
+# 18 juin 40
+# 31 octobre prochain
+# 1er avril 1950
+@month:@numday?:@numyear:DATE:
+=>SetEntityFeature(left,"numday")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+@month:@numday?:(dernier|suivant)?:DATE:
+=>SetEntityFeature(left.1,"numday")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+@month::prochain:DATE:
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate("next_month")
+
+# fin 2003
+
+@numyear4:@modifierDate::DATE:
+=>SetEntityFeature(trigger,"numyear")
+=>SetEntityFeature(left.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+@annee=(année$NC,an$NC)
+
+@annee:@modifierDate (de|(de l\')|d\'):t_integer?:DATE:
+=>SetEntityFeature(trigger,"year")
+=>SetEntityFeature(right.1,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+année::(dernière|passée|prochaine):DATE:
+=>SetEntityFeature(trigger,"year")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+an::(dernier|passé|prochain):DATE:
+=>SetEntityFeature(trigger,"year")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+mois::(dernier|passé|prochain):DATE:
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+
+# remove this one : dans les annees 90: not easy to normalize
+#[@annee]::(t_integer|((<NUMBER>){1-3})):DATE:
+#=>NormalizeDate()
+
+#partial periods of years
+
+semestre:(premier|second):((de (l\'année)?)? @numyear4)?:DATE:
+trimestre:(premier|deuxième|troisième|quatrième):((de (l\'année)?)? @numyear4)?:DATE:
+rentrée:[la]:(de (l\'année)?)? @numyear4:DATE:
+
+@saison=(printemps$NC,été$NC,automne$NC,hiver$NC)
+@saison:((début|milieu|fin) (de|(de l\')|d\'|du)?)?:(de (l\'année)?)? @numyear:DATE:
+
+
+# centuries
+
+siècle$NC:(t_ordinal_roman|t_cardinal_roman)::DATE:
+=>SetEntityFeature(left.1,"century")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+
+siècle$NC:<NUMBER>::DATE:
+=>SetEntityFeature(left.1,"century:int")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+# 1984
+# en 1979
+# en Décembre
+
+@in=(en,depuis)
+
+@month:[(@in|au? mois de)?]::DATE:
+=>SetEntityFeature(trigger,"month")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+#------------------------------
+# informal dates (to normalize, indicate the difference from the reference)
+#aujourd\'::hui:DATE:
+#=>NormalizeRelativeDate("diff_0")
+
+#GC20130730: aujourd\'hui as dates are given category NC while they should remain adverbs.
+# Should find a solution: specific EN type,  ? 
+
+#aujourd\'hui:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_0d")
+
+## ce matin, ce soir etc.
+#@daytime:(ce|cet)::DATE:
+#=>NormalizeRelativeDate("date_document,diff_0d")
+
+#hier:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_-1d")
+
+#demain:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_1d")
+
+#après-demain:::DATE:
+#=>NormalizeRelativeDate("date_document,diff_2d")
+
+#------------------------------
+# numeric forms (should be recognized by tokenizer in the future)
+
+# 22-05-68 
+# integer - integer - integer
+
+@numday::- t_integer - t_integer:DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+@numyear4::- t_integer - t_integer:DATE:
+=>SetEntityFeature(trigger,"numyear")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numday")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# 22/05/68 
+# fraction / integer or integer / integer / integer
+
+@numday::/ t_integer / t_integer:DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# numbers between 1700 and 2050 are dates 
+# unless followed by a unit
+
+@numyear4::(de|d\')? $NC:NOT_DATE:
+
+@numyear4:t_fraction /::DATE:
+=>SetEntityFeature(trigger,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+
+@numyear4:::DATE:
+=>SetEntityFeature(trigger,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()

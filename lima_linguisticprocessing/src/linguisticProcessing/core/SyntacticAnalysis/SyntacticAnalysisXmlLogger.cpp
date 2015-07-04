@@ -41,13 +41,13 @@
 #include <iostream>
 #include <fstream>
 
-using namespace boost;
+//using namespace boost;
 using namespace boost::tuples;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
-typedef color_traits<default_color_type> Color;
+typedef boost::color_traits<boost::default_color_type> Color;
 
 namespace Lima
 {

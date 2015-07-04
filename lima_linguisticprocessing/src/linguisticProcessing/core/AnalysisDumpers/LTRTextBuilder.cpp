@@ -47,7 +47,7 @@ using namespace Lima::Common::BagOfWords;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace std;
-using namespace boost;
+//using namespace boost;
 
 #ifdef WIN32
 #undef min

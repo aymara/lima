@@ -217,7 +217,7 @@ std::map<std::string, LimaString>& BoWNamedEntity::getFeatures() const {
   return static_cast<BoWNamedEntityPrivate*>(m_d)->m_features;
 }
 
-void BoWNamedEntity::addFeature(const std::string& attribute,
+void BoWNamedEntity::setFeature(const std::string& attribute,
                                        const LimaString& value) {
   static_cast<BoWNamedEntityPrivate*>(m_d)->m_features[attribute]=value;
 }

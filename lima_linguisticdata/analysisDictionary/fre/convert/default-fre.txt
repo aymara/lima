@@ -18,6 +18,14 @@ t_acronym	Nppms-
 t_acronym	Nppfs-
 t_acronym	Nppmp-
 t_acronym	Nppfp-
+t_abbrev	Npgms-
+t_abbrev	Npgfs-
+t_abbrev	Npgmp-
+t_abbrev	Npgfp-
+t_abbrev	Nppms-
+t_abbrev	Nppfs-
+t_abbrev	Nppmp-
+t_abbrev	Nppfp-
 t_capital_small	Npgms-
 t_capital_small	Npgfs-
 t_capital_small	Npgmp-

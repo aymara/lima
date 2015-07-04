@@ -35,7 +35,7 @@ using namespace std;
 using namespace Lima::Common;
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
-using namespace boost;
+//using namespace boost;
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -148,8 +148,8 @@ createEntity(const LinguisticAnalysisStructure::AnalysisGraph* graph,
       pointerValue<SpecificEntityAnnotation>();
       
       Automaton::EntityFeatures features=se->getFeatures();
-      features.addFeature("role",role);
-      features.addFeature("eventId",eid.str());
+      features.setFeature("role",role);
+      features.setFeature("eventId",eid.str());
       Entity* e=new Entity(token->position(),token->length(),features);
       e->setMain(true);
       return e;
@@ -158,9 +158,9 @@ createEntity(const LinguisticAnalysisStructure::AnalysisGraph* graph,
   
   // otherwise, have to create entity features
   Automaton::EntityFeatures features;
-  features.addFeature("value",token->stringForm());
-  features.addFeature("role",role);
-  features.addFeature("eventId",eid.str());
+  features.setFeature("value",token->stringForm());
+  features.setFeature("role",role);
+  features.setFeature("eventId",eid.str());
   Entity* e=new Entity(token->position(),token->length(),features);
   e->setMain(true);
   return e;
