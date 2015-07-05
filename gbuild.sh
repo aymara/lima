@@ -15,9 +15,9 @@
 #!/bin/bash
 
 #Fail if anything goes wrong 
-set -o errexit
-set -o nounset
-set -o xtrace
+# set -o errexit
+# set -o nounset
+# set -o xtrace
 
 usage() 
 { 
