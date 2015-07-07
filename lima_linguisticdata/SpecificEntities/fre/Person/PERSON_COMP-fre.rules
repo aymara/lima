@@ -68,6 +68,15 @@ t_abbrev:(@Title|@FunctionTitle):(@PersonNamePart){1-2}:PERSON:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+# Dr Watson
+# =>SetEntityFeature(trigger,"title")
+# =>SetEntityFeature(right,"lastname")
+@Title::@PersonNamePart:PERSON:
+=>SetEntityFeature(trigger,"title")
+=>SetEntityFeature(right,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 # OME @PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 # OME @PersonNamePart:[$PREP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 # OME @PersonNamePart:(@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
