@@ -10,11 +10,16 @@
     <group name="limaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
+        <item value="fullTokenXmlLoggerTokenizer"/>
         <item value="simpleWord"/>
+        <item value="fullTokenXmlLoggerSimpleWord"/>
         <item value="hyphenWordAlternatives"/>
+        <item value="fullTokenXmlLoggerHyphen"/>
         <item value="idiomaticAlternatives"/>
+        <item value="fullTokenXmlLoggerIdiomatic"/>
         <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
+        <item value="fullTokenXmlLoggerDefaultProperties"/>
+        <item value="SpecificEntitiesModexForLimaserver"/>
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
       </list>
     </group>
