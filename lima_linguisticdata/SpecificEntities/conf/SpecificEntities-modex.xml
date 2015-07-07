@@ -45,7 +45,7 @@
         <item value="DateTimeModexForLimaserver"/>
         <item value="NumexRecognition"/>
         <item value="OrganizationModex"/>
-        <item value="LocationModexForMergeMulti"/>
+        <item value="LocationModexForLimaserver"/>
         <item value="PersonModexForLimaserver"/>
         <item value="EventModex"/>
         <item value="ProductModex"/>
