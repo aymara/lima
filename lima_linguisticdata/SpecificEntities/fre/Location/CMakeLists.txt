@@ -18,4 +18,4 @@ set (DEPENDENCIES annonceurLieu.lst cities.lst greeklocations.lst highways.lst m
 
 SPECIFICENTITIESCONFIGENV(main fre Location)
 
-SPECIFICENTITIES(main fre Location LOCATION-fre.rules PostLOCATION-fre.rules)
+SPECIFICENTITIES(main fre Location LOCATION-fre.rules LOCATION_COMP-fre.rules  PostLOCATION-fre.rules)
