@@ -89,3 +89,21 @@ add_executable(ReadWriteTools2 ${ReadWriteTools2_SRCS})
 target_link_libraries(ReadWriteTools2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
 add_test(ReadWriteTools2 ReadWriteTools2)
+
+########### next test ###############
+set (FileUtilsTest0_MOC_HEADERS FileUtilsTest.h)
+qt5_wrap_cpp (FileUtilsTest0_MOC_OUTFILES ${FileUtilsTest0_MOC_HEADERS})
+
+
+SET(FileUtilsTest0_SRCS 
+  FileUtilsTest.cpp
+)
+
+add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFILES})
+
+target_link_libraries(FileUtilsTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+
+add_test(FileUtilsTest0 FileUtilsTest0)
+set_tests_properties(FileUtilsTest0 PROPERTIES ENVIRONMENT LIMA_CONF=${CMAKE_SOURCE_DIR}/conf)
+
+

@@ -390,6 +390,7 @@ int run(int argc,char** argv)
       {
         // Lima::TimeUtilsController *ctrl2 = new Lima::TimeUtilsController("read file and build recognizer", true);
 	// Lima::TimeUtilsController("read file and build recognizer", true);
+        std::cerr << "\rBuilding recognizer…";
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
         RecognizerCompiler compiler(param.inputRulesFile);
         compiler.buildRecognizer(reco,language);
@@ -431,6 +432,7 @@ int run(int argc,char** argv)
       {
         if (! param.outputFile.empty())
         {
+          std::cerr << "\rWriting recognizer…";
           AutomatonWriter writer;
           writer.writeRecognizer(reco,param.outputFile,language,param.debug);
           //reco.writeToFile(param.outputFile);
