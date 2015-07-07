@@ -41,7 +41,7 @@ Barack::Obama:PERSON:
 =<ClearEntityFeatures()
 
 # generic rule for components with stop condition
-@Firstname:(@Title|@FunctionTitle)?:(@Firstname|@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
+@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
 =>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
 =>AddEntityFeature(right.1,"firstname")
@@ -51,7 +51,7 @@ Barack::Obama:PERSON:
 =<ClearEntityFeatures()
 
 # generic rule for components without stop condition
-@Firstname:(@Title|@FunctionTitle)?:(@Firstname|@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
+@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
 =>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
 =>AddEntityFeature(right.1,"firstname")
