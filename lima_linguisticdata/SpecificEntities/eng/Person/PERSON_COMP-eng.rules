@@ -84,10 +84,27 @@ Chirac:::PERSON:
 
 use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
-@Firstname:(@Title|@FunctionTitle)?:($NP|t_capital_1st){0-3} @PersonEnding?:PERSON:
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
+@PersonNamePart=(t_capital_1st,t_capital,$NP)
+@particule=(de,da,le,van,von,el,al,Al,del,Del,De,La)
+
+# generic rule for components with stop condition
+@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
 =>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
-=>AppendEntityFeature(right.1,"lastname")
+=>AddEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# generic rule for components without stop condition
+@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
+=>SetEntityFeature(left,"title")
+=>SetEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
@@ -106,8 +123,6 @@ $NP:$NP{0-2}:@PersonEnding? , @FunctionTitle:PERSON:
 =<ClearEntityFeatures()
 
 # hack to take initials into account -> should be in tokenizer
-
-@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
 
 # @Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 
