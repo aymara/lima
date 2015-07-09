@@ -65,45 +65,27 @@ std::istream& operator>>(std::istream& in,BoWBlocType& blocType)
   return in;
 }
 
-class BoWDocumentPrivate
-{
-  friend class BoWDocument;
-
-  BoWDocumentPrivate();
-  ~BoWDocumentPrivate();
-
-  typedef std::pair<std::deque<BoWText*>, Misc::GenericDocumentProperties*> NodeValue;
-  std::deque<NodeValue> children;
-};
-
-
-BoWDocumentPrivate::BoWDocumentPrivate()
-{}
-
-BoWDocumentPrivate::~BoWDocumentPrivate()
-{}
-
 //***********************************************************************
 // constructors
 //***********************************************************************
 BoWDocument::BoWDocument():
     BoWText(),
-    GenericDocumentProperties(),
-    m_d(new BoWDocumentPrivate())
+    GenericDocumentProperties()
 {}
 
 BoWDocument::BoWDocument(const BoWDocument& d):
     BoWText(d),
     GenericDocumentProperties(d)
 {
-  delete m_d;
 }
 
 //***********************************************************************
 // destructor
 //***********************************************************************
 BoWDocument::~BoWDocument()
-{}
+{
+  
+}
 
 //***********************************************************************
 // assignment operator
