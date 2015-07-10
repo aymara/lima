@@ -150,7 +150,6 @@ bool Categories::configure(const QString& fileName)
 
 Level Categories::levelFor(const QString& category) const
 {
-  std::cout << "\n\n\nUsing log4cpp.prope"<<std::endl;
   if (d->categories.contains(category))
   {
     return d->categories[category];
@@ -162,7 +161,6 @@ Level Categories::levelFor(const QString& category) const
 LIMA_COMMONQSLOG_EXPORT int initQsLog() {
   try {
     QString initFileName = QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":qgetenv("LIMA_CONF").constData())+ "/log4cpp.properties";
-    std::cout << "\n\n\nUsing log4cpp.properties:\n " << initFileName.toUtf8().data() << std::endl;
     if (!QsLogging::Categories::instance().configure(initFileName))
     {
       std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
