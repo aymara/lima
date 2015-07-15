@@ -69,8 +69,6 @@ t_abbrev:(@Title|@FunctionTitle):(@PersonNamePart){1-2}:PERSON:
 =<ClearEntityFeatures()
 
 # Dr Watson
-# =>SetEntityFeature(trigger,"title")
-# =>SetEntityFeature(right,"lastname")
 @Title::@PersonNamePart:PERSON:
 =>SetEntityFeature(trigger,"title")
 =>SetEntityFeature(right,"lastname")
