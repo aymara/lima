@@ -104,7 +104,7 @@ class AutomatonString
   // Prepare work to build an identifier of type RuleElementIdentifier for each transition
   // The idea is to go through the structure of the ruleString and set a property for each node
   // of the rule, down to the leaves (AutomatonString of type UNIT). The property is a pair (partId, index) 
-  // This property can be used afteer to create RuleElementIdentifier for each TransitionUnit.
+  // This property will be used to create RuleElementIdentifier for each TransitionUnit.
   void identifyTransition(const std::string & id);
 
   /** 
