@@ -295,7 +295,8 @@ void Recognizer::freeMem()
 // at a given position
 // stop at the first rule recognized
 //**********************************************************************
-bool Recognizer::parse(const LinguisticAnalysisStructure::Token& /*unused*/,
+/* TODO: tobe deleted?
+bool Recognizer::parse(const LinguisticAnalysisStructure::Token&,
                        const LinguisticAnalysisStructure::AnalysisGraph& graph,
                        const LinguisticGraphVertex& current,
                        uint64_t offset,
@@ -317,6 +318,7 @@ bool Recognizer::parse(const LinguisticAnalysisStructure::Token& /*unused*/,
   }
   return false;
 }
+*/
 
 //**********************************************************************
 // test a set of rules for a trigger

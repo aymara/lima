@@ -255,6 +255,7 @@ friend class AutomatonWriter;
                                  = DEFAULT_OVERLAP_STRATEGY) const;
   
   /** 
+   * TODO: toBeDeleted
    * Parse tokens paths from the trigger point
    * 
    * @param triggerToken : the token that triggered the rules
@@ -264,13 +265,13 @@ friend class AutomatonWriter;
    * @param results      : the output
    * 
    * @return true if match, false otherwise
-   */  
   bool parse(const LinguisticAnalysisStructure::Token& triggerToken,
              const LinguisticAnalysisStructure::AnalysisGraph& graph,
              const LinguisticGraphVertex& current,
              uint64_t offset,
              AnalysisContent& analysis,
              RecognizerMatch& result) const;
+   */  
   
   /** 
    * test a given set of rules of the recognizer on a text,
