@@ -46,7 +46,9 @@ Each regular expression is the specification of an automaton (a transducer). A r
 
 The output of the compilation process is a Recognizer object, which is composed of a set of Rule objects (instances of the class Rule), a Rule is made of one or two Automaton, an Automaton is composed of TSates and TransitionUnit. Additionaly, different types of function (Constraint objects and Actions) are attached to Transition and Rule objects.
 
-The compilation process follows in a top down manner the hierarchical decomposition from Recognizer down to Transition. (Some objects like RuleString and AutomatonString are only intermediate by-products of the compilation process and are not saved in the binary file)
+The compilation process follows in a top down manner the hierarchical decomposition from Recognizer down to Transition. (Some objects like RuleString, Gazeteer and AutomatonString are only intermediate by-products of the compilation process and are not saved in the binary file).
+
+A Gazeteer is a set of strings, which are the possible values for a type, subtype or component. For example the set of title or firstname in a language.
 
 - compile-rule.cpp: utility code to build compile-rule binary utility = main entry of the compilation process, read a source file containing a set of rule, call RecognizerCompiler::buildRecognizer
 - -> RecognizerCompiler: build a recognizer = set of rules with ressources (gazeteer)
@@ -117,8 +119,8 @@ At compile time, a rule is read and is interpreted as the specification of an au
 The automaton is a set of transitions connected to states.
 
                                  
-more details about compilation process
-------------------------------
+more details about compilation of rules: RuleString, gazeteer, Rule
+-------------------------------------------------------------------
 
 let's start with a more simple rule
 
@@ -169,8 +171,71 @@ Then the rule is indexed with the trigger "Abe".
 Then other transitions are created with the other values of the gazetteer ("Nick") to build triggers.
 The same rule is indexed with the other valures of the trigger.
 
-more details about compilation of automaton
-------------------------------
+More details about Gazeteer
+---------------------------
+Gazeteer are used as a synthetic way to use enumeration in the specification of a rule, and especially when we use alternatives among predefined values. For example we define what is a firstname and we use this definition in the specification of a trigger or anywhere else:
+
+    @Firstname={Abe,Luciano,Khaled}
+    @Firstname::@Firstname? $NP{1-2}:PERSON:=>NormalizeEntity()=<ClearEntityFeatures()
+
+This specification enable to specify the rule in a more synthetic way than using directly the list of possible values of firstname: like 
+
+    Abe|Luciano|Khaled::(Abe|Luciano|Khaled)? $NP{1-2}:PERSON:=>NormalizeEntity()=<ClearEntityFeatures()
+
+Is is possible to define the list of values of a Gazeteer in a separate file which enable easier maintenance operations:
+
+    use firstname.lst
+    @Firstname::@Firstname? $NP{1-2}:PERSON:=>NormalizeEntity()=<ClearEntityFeatures()
+    
+firstname.lst is a file which contains the definition of the gazeteer and is used as an include file
+    @Firstname={Abe,Luciano,Khaled}
+    
+Gazetteer are considered as subautomaton.
+
+![](images/Gazeteer1.png?raw=true)
+    
+Gazeteer seems to be managed as atomic element of a rule but it is wrong as we will see in the next example
+
+The gazeteer Firstname shows only 2 states and there are as many transitions as different values in the gazeteer.
+
+Gazeteer may contain multi-term string, like in:
+
+    @Title={Admiral,1st Lieutenant,General}
+
+"1st Lieutenant" is made of two terms and the subautomaton built from this gazeteer is made of more than two states.
+
+![](images/Gazeteer2.png?raw=true)
+
+Gazeteer are built with RecognizerCompiler::readGazeteers()
+Gazeteers has a member of type AutomatonString (of subtype ALTERNATIVE) which owns the list of parts read from the Gazeteer definition.
+
+RecognizerCompiler::readGazeteers() call Gazeteer::buildAutomatonString() which call AutomatonString::parse
+During parsing, AutomatonString::parse considers each part ("Admiral","1st Lieutenant","General") and recursively call AutomatonString::parse for each part. According to presence/absence of space character, AutomatonString::parse considers "Admiral" part as a UNIT AutomatonString and "1st Lieutenant" part as a SEQUENCE and builds an AutomatonString of subtype SEQUENCE from "1st Lieutenant"
+
+Gazeteers are used in addRuleWithGazeteerTrigger() operation and AutomatonString::parseUnit
+
+More details about compilation of a rule with gazeteeer as trigger
+-------------------------------------------
+Lest have the simple rule 
+    @Title={Admiral,1st Lieutenant,General}
+    
+    @FunctionTitle::George Bush:PERSON:
+
+When a rule is read with a gazeter as trigger, the special function RecognizerCompiler::addRuleWithGazeteerTrigger() is called.
+This function use gazeteer in a special way.
+First, an artificial RuleString is created with a simple word transition as trigger. The word is the first element of the gazeteer. The artificial RuleString in our example is:
+
+    Admiral::George Bush:PERSON:
+
+A rule r is created from this Rulestring.
+Then, for each element in the gazeteer, a simple transition t is created and the pair (t,r) is indexed in the recognizer.
+This way, we compile only once the rule, and we index it multiple time, once for each value of the gazeteer.
+
+Unfortunately, this does not work when the gazeteer contains multiple terms element. (for exemple "1st Lieutenant")
+
+
+More details about compilation of automaton
+-------------------------------------------
 Now, let's have a look to the Automaton buildAutomaton operation.
 
 The first step is to create an initial state of type Tstate.
@@ -188,7 +253,7 @@ a.addTransition( initState, finalState, transition)
 
 Some details about functions (Constraints and Actions) and their arguments
 ---------------------------------------------------
-We have seen when and which class create function objects.
+We have seen which class creates function objects and when.
 During compilation process, RuleString constructor call RuleString::treatConstraints which call RuleString::addConstraint, which call Constraint constructor and add typed Constraint object (addAction, addUnaryConstraint, addBinaryConstraint..) and at least, call Automaton::insertConstraint.
 
   - Constraint are operation which are called when a rule is checked against the vertices in the graph
@@ -213,7 +278,7 @@ Rule::treatConstraints consists in placing the functions in the right place (nea
 For this purpose, Rule::treatConstraints reads each functions one at a time and decode the arguments<p>
 Suppose that functions has only one argument as in the example, for exemple "right.1.2"<p>
 right.1.2 is a what we call a RuleElementId.
-The first component of a RuleElementId reference which part of the rule is concerns: in our case the right automaton.<p>
+The first component of a RuleElementId references which part of the rule it deals with: in our case the right automaton.<p>
 So Automaton::addConstraint is called on the right part which is ((de|le){0-1} t\_capital\_1st){1-2}<p>
 
 Then, from left to right, the RuleElementId is decoded.<p>
@@ -243,21 +308,40 @@ TransitionUnit.addConstraint
 Low level execution process
 ----------------------------
 
-At run time, the function rule:test walk through both the analysis graph (from one token to next token) and through  the automaton (from one state to the next state throigh transition).
+The execution of a rule is performed in two steps.
+The first step is to select the rule (Rule:test), the second step is to execute the rule.
+
+During the first step (Rule::test), the rule:
+
+  - checks if the left automaton can match nodes at the left side of the current token 
+  - checks if the right automaton can match nodes at the right side of the current token
+  
+
+function Automaton::getBestMatch test longuest match among all matches 
+function Automaton::getAllMatches get all matches
+Automaton::testFromState find match and return complete match (final state has been reached)
+
+An automaton is a vector of states, each state is represented as a vector of Transition.
+
+Additionaly there is a second data structure usefull to perform side-effects: the RecognizerMatch
+The RecognizerMatch is created with the current node as initial state (the node where the trigger condition is tested). 
+
+Automaton::testFromState 
+The Automaton walks through both the analysis graph (from one token to next token) and through the automaton (from one state to the next state through transition), and check if the next token match the transition. It rely on a stack of pair(state,vertex).
+The stack is initialized with the firstState and the current vertex
+For each transition, function TransitionUnit::checkConstraints is called.
+
+TransitionUnit::checkConstraints: test if constraint associated to the transition are verified with the current vertex. If it is the case, the vertex is added to the RecognizerMatch
+
+- from the current state to the next state through transition
 
  - Constraints functions are called during this walkthrough.
- - During this walkthrough, vertexes are added to the RecognizerMatch
+ - During this walkthrough, vertices are added to the RecognizerMatch
  - Action functions are called if final state is reached.
 
-The RecognizerMatch is created with the current node as initial state (the node where the trigger consition is tested)
 
-...
-for example, inside SpecificEntitiesRecognizer::process
-...
-
-
-- the automaton of left part (in backward direction) is matched with graph from current node
-- the automaton of right part is matches with graph from curent node.
+- the left part automaton is matched with graph from current node in backward direction.
+- the right part automaton is matcheed with graph from curent node in forward direction.
 
 We have seen that an automaton can be 'decorated' with function of two different types: 'actions' and 'constraints'.
 constraints are applied upon initial state of transition
@@ -265,17 +349,13 @@ action are applied upon recognizerMatch (which node??)
 
 Data structures
 ---------------
-An automaton is a vector of states, each state is represented as a vector of Transition.
-Automaton 
-
-Additionaly there is a second data structure to hold action: the RecognizerMatch
 
 Todo
 ----
 There are 2 kinds of function: 
 
 - constraints, which can hold zero, one or two arguments,
-- actions, can hold zeroor one argument.
+- actions, can hold zero or one argument.
 
 
 So we need to manage these identifier of transition when adding vertices to the recognizerMatch
@@ -297,11 +377,14 @@ This way, after completion of triggering process, the recognizermatch is complet
 When we execute the rule, we have to execute each action.
 For each action, each argument references a ruleElementId. Each ruleElementId is associated to a set of vertices.
 The action is called upon the combination of vertices associated to the different ruleElementId which compose the arguments of the action.
-We have to solve a combinatorial problem.
 
-So we need to keep the information related to the ruleElement that was the source of the TransitionUnit  when building the automaton. This way, when we match a vertex in the graph during triggring process, we can associate a ruleElementId to it.
+(In case of more tha one argument, we have to solve a combinatorial problem.)
+
+So we need to keep the information related to the ruleElement that was the source of the TransitionUnit  when building the automaton. This way, when we match a vertex in the graph during triggering process, we can associate a ruleElementId to it.
 
 The idea is to add an argument of type RuleElmtId to the two functions addBackVertex and addFrontVertex.
+When a transition is done, the RuleElmtId and the vertex is added to the RecognizerMatch.
+
 This numbering must be transferred at compile time, and within I/O operations.
 Recognizer::testSetOfRules 
  - call Rule::test  (find best match on right part and left part
