@@ -58,15 +58,6 @@ public:
    */
   BoWComplexTokenPrivate(const BoWComplexToken&);
 
-  /**
-   * specialized copy constructor that takes into account a
-   * pointer-to-pointer map giving the correspondance of tokens for
-   * the component list, in case of a complete BoWText copy.
-   *
-   */
-  BoWComplexTokenPrivate(const BoWComplexToken&,
-                  const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >&);
-
   BoWComplexTokenPrivate(const Lima::LimaString& lemma,
                   const uint64_t category,
                   const uint64_t position,
@@ -105,13 +96,10 @@ public:
 
   QSharedPointer< BoWToken > addPart(QSharedPointer< BoWRelation > rel,
                     QSharedPointer< BoWToken > tok,
-                    const bool isInList,
                     const bool isHead=false);
 
   //helper functions for constructors, destructor and assignment operator
   void copy(const BoWComplexToken& a);
-  void copy(const BoWComplexToken& t,
-            const std::map< QSharedPointer< BoWToken >, QSharedPointer< BoWToken > >& refMap);
 
 };
 

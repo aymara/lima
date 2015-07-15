@@ -80,7 +80,7 @@ class LIMA_BOW_EXPORT BoWBinaryReader
                        BoWDocument& document,
                        AbstractBoWDocumentHandler& handler, 
                        bool useIterator=false);
-  QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file, std::vector< QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > >& refMap);
+  QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file);
   void readSimpleToken(std::istream& file,
                        QSharedPointer< BoWToken > token);
   void readPredicate(std::istream& file,
@@ -109,13 +109,11 @@ class LIMA_BOW_EXPORT BoWBinaryWriter
   void writeBoWDocument(std::ostream& file,
                         const BoWDocument& bowText) const;
   void writeBoWToken(std::ostream& file,
-                     const QSharedPointer< AbstractBoWElement > bowToken,
-                     std::map< QSharedPointer< BoWToken >, uint64_t>& refMap) const;
+                     const QSharedPointer< AbstractBoWElement > bowToken) const;
   void writeSimpleToken(std::ostream& file,
                         const QSharedPointer< BoWToken > token) const;
   void writePredicate(std::ostream& file,
-                        const QSharedPointer< BoWPredicate > token,
-                        std::map< QSharedPointer< BoWToken >,uint64_t>& refMap) const;
+                        const QSharedPointer< BoWPredicate > token) const;
 
  private:
   BoWBinaryWriter(const BoWBinaryWriter&);

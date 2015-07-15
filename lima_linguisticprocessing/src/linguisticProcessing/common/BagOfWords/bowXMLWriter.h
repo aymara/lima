@@ -54,7 +54,7 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
 {
  public:
   BoWXMLWriter(std::ostream& os); 
-  ~BoWXMLWriter();
+  virtual ~BoWXMLWriter();
 
   void writeBoWText(const BoWText* document,
                     const bool useIterator=false,
@@ -78,7 +78,6 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
   void closeSBoWNode();
   void writeIndexElement(const IndexElement& element);
   void setSpaces(const std::string& s);
-  void reinitRefMap();
   void incIndent();
   void decIndent();
   

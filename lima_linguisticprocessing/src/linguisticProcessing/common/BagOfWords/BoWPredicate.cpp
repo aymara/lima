@@ -189,6 +189,7 @@ Lima::LimaString BoWPredicate::getString(void) const
 
 std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const 
 {
+  LIMA_UNUSED(macroManager);
   std::ostringstream oss;
   oss << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType)) << ":" << m_d->getRolesUtf8String();
   return oss.str();

@@ -63,18 +63,16 @@ public:
    * says if the BoWToken is also in the global list (the BoWText)
    * or not.
    */
-  class Part : public boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >,bool>
+  class Part : public boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken > >
   {
   public:
-    Part():boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >, bool>(QSharedPointer< BoWRelation >(0), QSharedPointer< BoWToken >(0),false) {};
-    Part(QSharedPointer< BoWToken > tok, bool isInList):
-      boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >, bool>(QSharedPointer< BoWRelation >(0),tok,isInList) {};
-    Part(QSharedPointer< BoWRelation > rel, QSharedPointer< BoWToken > tok, bool isInList):
-      boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >,bool>(rel,tok,isInList) {};
+    Part():boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken > >(QSharedPointer< BoWRelation >(0), QSharedPointer< BoWToken >(0) ) {};
+    Part(QSharedPointer< BoWToken > tok):
+      boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >>(QSharedPointer< BoWRelation >(0),tok) {};
+    Part(QSharedPointer< BoWRelation > rel, QSharedPointer< BoWToken > tok):
+      boost::tuple< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken >>(rel,tok) {};
     QSharedPointer< BoWRelation > getBoWRelation() const { return get<0>(); }
     QSharedPointer< BoWToken > getBoWToken() const { return get<1>(); }
-    bool isInList() const { return get<2>(); }
-    void setInList(const bool b) { get<2>() = b; }
     LimaString getLemma() const { return get<1>()->getLemma(); }
     uint64_t getCategory() const { return get<1>()->getCategory(); }
   };
@@ -155,7 +153,6 @@ public:
    * @param isHead a boolean indicating that the BoWToken a
    */
   QSharedPointer< BoWToken > addPart(QSharedPointer< BoWToken > tok,
-                    const bool isInList,
                     const bool isHead=false);
 
   /**
@@ -174,7 +171,6 @@ public:
    */
   QSharedPointer< BoWToken > addPart(QSharedPointer< BoWRelation > rel,
                     QSharedPointer< BoWToken > tok,
-                    const bool isInList,
                     const bool isHead=false);
 
   /**

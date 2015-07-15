@@ -318,10 +318,8 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(QSharedPointer< BoWToken > 
     LDEBUG << "storing token " << *token;
     partTokens.back().push_back(token);
     const BoWComplexToken::Part& headPart=complexToken->getParts()[complexToken->getHead()];
-    if (!headPart.isInList()) {
       LDEBUG << "storing head token " << *(headPart.getBoWToken());
       partTokens.back().push_back(headPart.getBoWToken());
-    }
     
     // treat parts
     vector<PartTokens> subPartTokens;
@@ -422,7 +420,7 @@ QSharedPointer< BoWComplexToken > BoWTokenIteratorPrivate::createComplexToken(co
   // for compounds
 
   for (auto it=parts.begin(), it_end=parts.end(); it!=it_end; it++) {
-    partialComplexToken->addPart(qSharedPointerConstCast<BoWToken>(*it),false);
+    partialComplexToken->addPart(qSharedPointerConstCast<BoWToken>(*it));
   }
   // set position and length
   Common::Misc::PositionLengthList

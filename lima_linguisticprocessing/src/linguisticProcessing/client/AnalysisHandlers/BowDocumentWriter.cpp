@@ -23,6 +23,7 @@
 #include "BowDocumentWriter.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
+#include "common/Data/readwritetools.h"
 
 namespace Lima
 {
@@ -44,7 +45,7 @@ BowDocumentWriter::~BowDocumentWriter()
 /** notify the start of an analysis content */
 void BowDocumentWriter::startAnalysis()
 {
-  *m_out << Common::BagOfWords::BOW_TEXT_BLOC;
+  Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::BOW_TEXT_BLOC);
 }
 
 /** notify the end of an analysis content */
@@ -54,14 +55,14 @@ void BowDocumentWriter::endAnalysis()
 void BowDocumentWriter::startDocument(const Common::Misc::GenericDocumentProperties& props)
 {
   // enum type with small number of values coded on one byte;
-  *m_out << Common::BagOfWords::DOCUMENT_PROPERTIES_BLOC;
+  Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::DOCUMENT_PROPERTIES_BLOC);
   props.write(*m_out);
 }
 
 /** notify the end of the document */
 void BowDocumentWriter::endDocument()
 {
-  *m_out << Common::BagOfWords::END_BLOC;
+  Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::END_BLOC);
   m_out->flush();
 }
 

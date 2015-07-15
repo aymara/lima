@@ -51,8 +51,6 @@ class LIMA_BOW_EXPORT BoWTerm : public BoWComplexToken
   BoWTerm();
   BoWTerm(const BoWTerm&);
 
-  BoWTerm(const Lima::Common::BagOfWords::BoWTerm& t, const std::map< QSharedPointer< Lima::Common::BagOfWords::BoWToken >, QSharedPointer< Lima::Common::BagOfWords::BoWToken > >& refmap);
-
   BoWTerm(const Lima::LimaString& lemma,
           const uint64_t category, 
           const uint64_t position,

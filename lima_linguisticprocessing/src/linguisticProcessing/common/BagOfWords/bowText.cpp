@@ -43,17 +43,25 @@ namespace BagOfWords {
 BoWText::BoWText():
 std::vector< QSharedPointer< AbstractBoWElement > >()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::BoWText()" << this;
 }
 
 
 BoWText::BoWText(const BoWText& t):
 std::vector< QSharedPointer< AbstractBoWElement > >()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::BoWText(BoWText)" << this;
   (*this) = t;
 }
 
-BoWText& BoWText::operator = (const BoWText& t) {
-  if (this != &t) {
+BoWText& BoWText::operator = (const BoWText& t)
+{
+  BOWLOGINIT;
+  LDEBUG << "BoWText::operator=" << this;
+  if (this != &t)
+  {
     clear();
     // have to store a pointer map to handle references in
     // the component lists of complex tokens
@@ -70,10 +78,19 @@ BoWText& BoWText::operator = (const BoWText& t) {
 
 BoWText::~BoWText()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::~BoWText()" << this;
   clear();
 }
 
 void BoWText::clear() {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::clear()" << this;
+  for (auto it = begin(); it != end(); it++)
+  {
+    LDEBUG << "BoWText::clear clearing" << (*it);
+    (*it).clear();
+  }
   std::vector< QSharedPointer<  AbstractBoWElement > >::clear();
 }
 

@@ -36,12 +36,10 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_1 )
   QSharedPointer< BoWToken > bt1(new BoWToken( QString::fromUtf8("lemma"), 1, 10, 5));
   BoWBinaryWriter writer;
   std::stringstream stream;
-  std::map< QSharedPointer< BoWToken > , uint64_t> refMap;
-  writer.writeBoWToken(stream, bt1, refMap);
+  writer.writeBoWToken(stream, bt1);
 
   BoWBinaryReader reader;
-  std::vector<QSharedPointer< AbstractBoWElement> > rrefMap;
-  QSharedPointer< BoWToken > bt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream, rrefMap));
+  QSharedPointer< BoWToken > bt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
 
   BOOST_REQUIRE( bt1->getLemma() == bt2->getLemma() );
 }
@@ -51,12 +49,10 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_2 )
   QSharedPointer< BoWToken > bt1(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
   BoWBinaryWriter writer;
   std::stringstream stream;
-  std::map<QSharedPointer< BoWToken >,uint64_t> refMap;
-  writer.writeBoWToken(stream, bt1, refMap);
+  writer.writeBoWToken(stream, bt1);
 
   BoWBinaryReader reader;
-  std::vector<QSharedPointer< AbstractBoWElement >> rrefMap;
-  QSharedPointer< BoWToken > bt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream, rrefMap));
+  QSharedPointer< BoWToken > bt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
 
   BOOST_REQUIRE( bt1->getLemma() == bt2->getLemma() );
 }
@@ -71,16 +67,14 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_3 )
   bt3->setInflectedForm(QString::fromUtf8("word"));
   BoWBinaryWriter writer;
   std::stringstream stream;
-  std::map<QSharedPointer< BoWToken >,uint64_t> refMap;
-  writer.writeBoWToken(stream, bt1, refMap);
-  writer.writeBoWToken(stream, bt2, refMap);
-  writer.writeBoWToken(stream, bt3, refMap);
+  writer.writeBoWToken(stream, bt1);
+  writer.writeBoWToken(stream, bt2);
+  writer.writeBoWToken(stream, bt3);
 
   BoWBinaryReader reader;
-  std::vector<QSharedPointer< AbstractBoWElement>> rrefMap;
-  QSharedPointer< BoWToken > rbt1 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream, rrefMap));
-  QSharedPointer< BoWToken > rbt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream, rrefMap));
-  QSharedPointer< BoWToken > rbt3 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream, rrefMap));
+  QSharedPointer< BoWToken > rbt1 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
+  QSharedPointer< BoWToken > rbt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
+  QSharedPointer< BoWToken > rbt3 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
 
   BOOST_REQUIRE( bt2->getLemma() == rbt2->getLemma() );
 }

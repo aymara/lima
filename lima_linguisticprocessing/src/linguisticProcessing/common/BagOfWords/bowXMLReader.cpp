@@ -31,6 +31,7 @@
 #include "bowDocumentST.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "common/Data/strwstrtools.h"
+#include "common/Data/readwritetools.h"
 #include "common/MediaticData/mediaticData.h"
 
 using namespace Lima::Common::Misc;
@@ -189,11 +190,11 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
       // do nothing -> is not indexing node
     }
     if (isIndexingNode) {
-      m_outputStream << INDEXING_BLOC;
+      Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::INDEXING_BLOC);
       m_currentBoWText=QSharedPointer< BoWText >(new BoWText());
     }
     else {
-      m_outputStream << HIERARCHY_BLOC;
+      Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::HIERARCHY_BLOC);
     }
     string elementName("");
     try {
@@ -228,10 +229,10 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     else { 
       if (m_currentComplexToken.back().currentPart == 
           m_currentComplexToken.back().head) {
-        m_currentComplexToken.back().token->addPart(token,false,true);
+        m_currentComplexToken.back().token->addPart(token,true);
       }
       else {
-        m_currentComplexToken.back().token->addPart(token,false);
+        m_currentComplexToken.back().token->addPart(token);
       }
       m_currentComplexToken.back().currentPart++;
       // token has been cloned in complex token
@@ -260,7 +261,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   }
   else if (stringName == "bowTokenRef") {
     uint64_t refId=getIntAttribute(attributes,"refId");
-    m_currentComplexToken.back().token->addPart(m_refMap[refId],true);
+    m_currentComplexToken.back().token->addPart(m_refMap[refId]);
   }
   else if (stringName == "feature") {
     std::string name=getStringAttribute(attributes,"name");
@@ -290,26 +291,26 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
     else { // this complex token is a part of another
       if (m_currentComplexToken.back().currentPart == 
           m_currentComplexToken.back().head) {
-        m_currentComplexToken.back().token->addPart(token,false,true);
+        m_currentComplexToken.back().token->addPart(token,true);
       }
       else {
-        m_currentComplexToken.back().token->addPart(token,false);
+        m_currentComplexToken.back().token->addPart(token);
       }
       m_currentComplexToken.back().currentPart++;
       // token has been cloned in addPart => delete it
     }
   }
   else if (stringName == "properties") {
-    m_outputStream << NODE_PROPERTIES_BLOC;
+    Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::NODE_PROPERTIES_BLOC);
     m_currentProperties.write(m_outputStream);
   }
   else if (stringName == "tokens") {
-    m_outputStream << BOW_TEXT_BLOC;
+    Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::BOW_TEXT_BLOC);
     //@todo
     //m_currentBoWText->write(m_outputStream);
   }
   else if (stringName == "hierarchy") {
-    m_outputStream << END_BLOC;
+    Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::END_BLOC);
     if (m_currentBoWText !=0) {
       BoWBinaryWriter writer;
       writer.writeBoWText(m_outputStream,*m_currentBoWText);

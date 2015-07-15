@@ -400,7 +400,7 @@ std::vector< std::pair< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken 
       complex->setVertex(head->getVertex());
       complex->setInflectedForm(infl);
       complex->setCategory(head->getCategory());
-      complex->addPart(head, false);
+      complex->addPart(head);
 //       delete head; head = 0;
 
       extensionsIt = extensions.begin();
@@ -410,9 +410,9 @@ std::vector< std::pair< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken 
         QSharedPointer< BoWToken > extension = (*extensionsIt).second;
 //         LDEBUG << "BowGenerator:     extension: " << (*(dynamic_cast< const BoWTerm* >(extension)));
         if ((*extensionsIt).first == 0)
-          complex->addPart(extension,false);
+          complex->addPart(extension);
         else
-          complex->addPart((*extensionsIt).first,extension, false);
+          complex->addPart((*extensionsIt).first,extension);
 //         LDEBUG << "Built complex: " << ((dynamic_cast< BoWTerm* >(complex)==0)?(*complex):(*(dynamic_cast< BoWTerm* >(complex))));
         LDEBUG << "BowGenerator: Built complex: " << *complex;
       }
@@ -961,7 +961,7 @@ QSharedPointer< BoWNamedEntity > BowGenerator::createSpecificEntity(
     Token* token = get(vertex_token, posgraph, vertex);
     bowToken->setInflectedForm(token->stringForm());
 
-    bowNE->addPart(bowToken,false);
+    bowNE->addPart(bowToken);
   }
   else {
 
@@ -974,7 +974,7 @@ QSharedPointer< BoWNamedEntity > BowGenerator::createSpecificEntity(
       bowToken->setInflectedForm((*p).inflectedForm);
       LDEBUG << "BowGenerator: specific entity part infl " << (*p).inflectedForm;
 
-      bowNE->addPart(bowToken,false);
+      bowNE->addPart(bowToken);
 
     }
   }
