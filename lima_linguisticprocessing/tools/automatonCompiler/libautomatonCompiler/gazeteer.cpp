@@ -81,11 +81,12 @@ Gazeteer& Gazeteer::operator = (const Gazeteer& g) {
 
 /***********************************************************************/
 // operations on gazeteers
-/***********************************************************************/
+// TODO: unused operation, to be deleted?
 Gazeteer& Gazeteer::add(const Gazeteer& g) {
   insert(end(),g.begin(),g.end());
   return *this;
 }
+/***********************************************************************/
 
 
 /***********************************************************************/

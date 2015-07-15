@@ -62,6 +62,7 @@ class Gazeteer : public std::vector<LimaString>
 
   void setAlias(const LimaString&);
   void addWord(const LimaString&);
+  // TODO: unused operation, to be deleted?
   Gazeteer& add(const Gazeteer&);
   void buildAutomatonString(const std::vector<Gazeteer>& gazeteers,
                             const std::vector<SubAutomaton>& subAutomatons);
