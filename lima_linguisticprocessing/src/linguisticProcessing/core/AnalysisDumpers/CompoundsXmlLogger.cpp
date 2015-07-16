@@ -238,7 +238,7 @@ void CompoundsXmlLogger::dumpLimaData(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken > > > bowTokens =
+          std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens =
             m_bowGenerator->buildTermFor(agv, agv, lanagraph, lposgraph, offsetBegin, 
                                          syntacticData, annotationData, visited);
           for (auto bowItr=bowTokens.begin();
@@ -297,16 +297,16 @@ void CompoundsXmlLogger::outputCompound(
     partIt_end = term->getParts().end();
     for (uint64_t partId=0; partIt != partIt_end; partIt++,partId++)
     {
-      QSharedPointer< BoWToken > partTok = (*partIt).get<1>();
+      boost::shared_ptr< BoWToken > partTok = (*partIt).get<1>();
       //        bool head = (*partIt).second;
       os << "<part head=\"" << std::boolalpha << (partId == headId) << "\" >" << std::endl;
-      if (qSharedPointerDynamicCast<BoWComplexToken>(partTok))
+      if (boost::dynamic_pointer_cast<BoWComplexToken>(partTok))
       {
         outputCompound(os, &*partTok, offsetBegin);
       }
       else
       {
-        LDEBUG << "    part: " << partTok;
+        LDEBUG << "    part: " << *partTok;
         uint64_t partPos = getPosition(partTok->getPosition(),offsetBegin);
         LimaString partForm = partTok->getLemma();
         std::string partCat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(partTok->getCategory()) ;

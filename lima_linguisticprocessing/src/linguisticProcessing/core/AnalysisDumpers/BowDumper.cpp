@@ -274,7 +274,7 @@ void BowDumper::buildBoWText(
         const SemanticRelationAnnotation& annot = annotationData->annotation(
           *it,Common::Misc::utf8stdstring2limastring("SemanticRelation"))
               .value<SemanticRelationAnnotation>();
-        QSharedPointer< BoWPredicate > predicate = m_bowGenerator->createPredicate(
+        boost::shared_ptr< BoWPredicate > predicate = m_bowGenerator->createPredicate(
                                         lgvs, agvs, agvt, annot,
                                         annotationData,
                                         *anagraph->getGraph(),
@@ -364,7 +364,7 @@ void BowDumper::addVerticesToBoWText(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair< QSharedPointer< BoWRelation >, QSharedPointer< BoWToken > > > bowTokens = m_bowGenerator->buildTermFor(agv, agv, beforePoSGraph, graph, offset, syntacticData, annotationData, visited);
+          std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens = m_bowGenerator->buildTermFor(agv, agv, beforePoSGraph, graph, offset, syntacticData, annotationData, visited);
           for (auto bowItr=bowTokens.begin(); bowItr!=bowTokens.end(); bowItr++)
           {
             std::string elem = (*bowItr).second->getIdUTF8String();
@@ -427,7 +427,7 @@ void BowDumper::addVerticesToBoWText(
 //         if   (!isInCompound)
         {
           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "isn't a compound head";
-          std::vector<std::pair<QSharedPointer< BoWRelation>, QSharedPointer< AbstractBoWElement>> > bowTokens=
+          std::vector<std::pair<boost::shared_ptr< BoWRelation>, boost::shared_ptr< AbstractBoWElement>> > bowTokens=
             m_bowGenerator->createAbstractBoWElement(v, beforePoSGraph, graph, offset, annotationData, visited);
 
           for (auto bowItr=bowTokens.begin();

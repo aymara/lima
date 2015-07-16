@@ -81,7 +81,7 @@ public:
                   const uint64_t category,
                   const uint64_t position,
                   const uint64_t length,
-                  std::deque< QSharedPointer< BoWToken > >& parts,
+                  std::deque< boost::shared_ptr< BoWToken > >& parts,
                   const uint64_t head);
 
   virtual ~BoWComplexTokenPrivate();
@@ -94,8 +94,8 @@ public:
   uint64_t m_head;       /**< the index of the head of the
                                 complex token in its part list*/
 
-  QSharedPointer< BoWToken > addPart(QSharedPointer< BoWRelation > rel,
-                    QSharedPointer< BoWToken > tok,
+  boost::shared_ptr< BoWToken > addPart(boost::shared_ptr< BoWRelation > rel,
+                    boost::shared_ptr< BoWToken > tok,
                     const bool isHead=false);
 
   //helper functions for constructors, destructor and assignment operator

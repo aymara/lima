@@ -494,7 +494,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
       for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
       {
         AnnotationGraphVertex agv  = *cpdsHeadsIt;
-        std::vector<std::pair< QSharedPointer< BoWRelation>, QSharedPointer< BoWToken > > > bowTokens =
+        std::vector<std::pair< boost::shared_ptr< BoWRelation>, boost::shared_ptr< BoWToken > > > bowTokens =
         m_bowGenerator->buildTermFor(agv, agv, lanagraph, lposgraph, 0, syntacticData, annotationData, visited);
         for (auto bowItr=bowTokens.begin(); bowItr!=bowTokens.end(); bowItr++)
         {
@@ -505,12 +505,12 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
           }
           else
           {
-            QSharedPointer< BoWToken > compound = (*bowItr).second;
-            LDEBUG << "Outputing compound: " << compound;
+            boost::shared_ptr< BoWToken > compound = (*bowItr).second;
+            LDEBUG << "Outputing compound: " << *compound;
 //             std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(compound->getCategory());
 
             QVector<LimaString> compounds;
-            naturalCompoundTokenString(&*qSharedPointerDynamicCast< Common::BagOfWords::BoWTerm >(compound), compounds);
+            naturalCompoundTokenString(&*boost::dynamic_pointer_cast< Common::BagOfWords::BoWTerm >(compound), compounds);
             Q_FOREACH(const LimaString& compoundString, compounds)
             {
 //               qDebug() << "naturalCompoundTokenString :" << compoundString;
@@ -615,7 +615,7 @@ void posGraphXmlDumper::naturalCompoundTokenString(const Common::BagOfWords::BoW
     QMap<int, QSet<LimaString> > recurseresults;
     for (std::deque< BoWComplexToken::Part >::size_type i = 0; i < parts.size(); i++)
     {
-      QSharedPointer< BoWToken > partToken = parts[i].getBoWToken();
+      boost::shared_ptr< BoWToken > partToken = parts[i].getBoWToken();
       recurseresults.insert(partToken->getPosition(), QSet<LimaString>());
       const BoWComplexToken::Part& part = parts[i];
       LimaString relation;
@@ -629,10 +629,10 @@ void posGraphXmlDumper::naturalCompoundTokenString(const Common::BagOfWords::BoW
         relationSet.insert(relation);
         recurseresults.insert(partToken->getPosition()-1,relationSet);
       }
-      if (qSharedPointerDynamicCast<Common::BagOfWords::BoWTerm>(partToken) != 0)
+      if (boost::dynamic_pointer_cast<Common::BagOfWords::BoWTerm>(partToken) != 0)
       {
-        std::deque< BoWComplexToken::Part > parts = qSharedPointerDynamicCast< Common::BagOfWords::BoWTerm >(partToken)->getParts();
-        QMap<int, QSet<LimaString> > partTokenResults = recurse(parts,qSharedPointerDynamicCast< Common::BagOfWords::BoWTerm >(partToken)->getHead());
+        std::deque< BoWComplexToken::Part > parts = boost::dynamic_pointer_cast< Common::BagOfWords::BoWTerm >(partToken)->getParts();
+        QMap<int, QSet<LimaString> > partTokenResults = recurse(parts,boost::dynamic_pointer_cast< Common::BagOfWords::BoWTerm >(partToken)->getHead());
 //         naturalCompoundTokenString(dynamic_cast<const Common::BagOfWords::BoWTerm*>(partToken), partStrings);
         QSet<LimaString> partStrings = recurseResult(partTokenResults,0,head);
         // After building all terms for the parts, add the head

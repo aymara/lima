@@ -77,7 +77,7 @@ BoWTerm::BoWTerm(const Lima::LimaString& lemma,
                  const uint64_t category,
                  const uint64_t position,
                  const uint64_t length,
-                 std::deque< QSharedPointer< BoWToken > >& parts,
+                 std::deque< boost::shared_ptr< BoWToken > >& parts,
                  const uint64_t head):
     BoWComplexToken(*new BoWComplexTokenPrivate())
 {

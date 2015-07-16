@@ -102,19 +102,19 @@ class LIMA_BOW_EXPORT BoWXMLHandler : public QXmlDefaultHandler
   class CurrentComplexToken {
   public:
     CurrentComplexToken():token(0),currentPart(0),head(0) {}
-    CurrentComplexToken(QSharedPointer< BoWComplexToken > tok):
+    CurrentComplexToken(boost::shared_ptr< BoWComplexToken > tok):
       token(tok),currentPart(0),head(0) {}
-    QSharedPointer< BoWComplexToken > token;
+    boost::shared_ptr< BoWComplexToken > token;
     uint64_t currentPart;
     uint64_t head;
   };
 
   std::ostream& m_outputStream;
   BoWDocument m_currentBoWDocument;
-  QSharedPointer< BoWText > m_currentBoWText;
+  boost::shared_ptr< BoWText > m_currentBoWText;
   Common::Misc::GenericDocumentProperties m_currentProperties;
   std::vector<CurrentComplexToken> m_currentComplexToken;
-  std::map<uint64_t, QSharedPointer< BoWToken > > m_refMap;
+  std::map<uint64_t, boost::shared_ptr< BoWToken > > m_refMap;
   
   // private functions
   uint64_t 

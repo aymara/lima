@@ -175,10 +175,10 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     m_currentBoWDocument.clear();
   }
   else if (stringName == "bowText") {
-    m_currentBoWText= QSharedPointer< BoWText >(new BoWText());
+    m_currentBoWText= boost::shared_ptr< BoWText >(new BoWText());
   }
   else if (stringName == "hierarchy") {
-    m_currentBoWText=QSharedPointer< BoWText >(new BoWText());
+    m_currentBoWText=boost::shared_ptr< BoWText >(new BoWText());
     bool isIndexingNode(false);
     try {
       string indexingNode=getStringAttribute(attributes,"indexingNode");
@@ -191,7 +191,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     }
     if (isIndexingNode) {
       Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::INDEXING_BLOC);
-      m_currentBoWText=QSharedPointer< BoWText >(new BoWText());
+      m_currentBoWText=boost::shared_ptr< BoWText >(new BoWText());
     }
     else {
       Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::HIERARCHY_BLOC);
@@ -221,7 +221,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   }
   else if (stringName == "bowToken") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
-    QSharedPointer< BoWToken > token = QSharedPointer< BoWToken >(new BoWToken(lemma,category,position,length));
+    boost::shared_ptr< BoWToken > token = boost::shared_ptr< BoWToken >(new BoWToken(lemma,category,position,length));
     m_refMap[id]=token;
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
@@ -241,7 +241,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   else if (stringName == "bowTerm") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
     // use empty lemma: no need to store lemma for compound
-    QSharedPointer< BoWTerm > term=QSharedPointer< BoWTerm >(new BoWTerm(LimaString(),category,position,length));
+    boost::shared_ptr< BoWTerm > term=boost::shared_ptr< BoWTerm >(new BoWTerm(LimaString(),category,position,length));
     m_refMap[id]=term;
     m_currentComplexToken.push_back(CurrentComplexToken(term));
   }
@@ -249,7 +249,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     getTokenAttributes(attributes,lemma,category,position,length,id);
     LimaString typeName=getLimaStringAttribute(attributes,"type");
     // use empty lemma: no need to store lemma for compound
-    QSharedPointer< BoWNamedEntity > ne=QSharedPointer< BoWNamedEntity >(new BoWNamedEntity(LimaString(),category,
+    boost::shared_ptr< BoWNamedEntity > ne=boost::shared_ptr< BoWNamedEntity >(new BoWNamedEntity(LimaString(),category,
                                           MediaticData::MediaticData::single().getEntityType(typeName),
                                           position,length));
     m_refMap[id]=ne;
@@ -266,7 +266,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   else if (stringName == "feature") {
     std::string name=getStringAttribute(attributes,"name");
     LimaString value=getLimaStringAttribute(attributes,"value");
-    qSharedPointerCast<BoWNamedEntity>(m_currentComplexToken.back().token)->
+    boost::dynamic_pointer_cast<BoWNamedEntity>(m_currentComplexToken.back().token)->
       addFeature(name,value);
   }
   return true;
@@ -283,7 +283,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   if (stringName == "bowNamedEntity" ||
       stringName == "bowTerm") 
   {
-    QSharedPointer< BoWToken > token=m_currentComplexToken.back().token;
+    boost::shared_ptr< BoWToken > token=m_currentComplexToken.back().token;
     m_currentComplexToken.pop_back();
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
@@ -314,13 +314,13 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
     if (m_currentBoWText !=0) {
       BoWBinaryWriter writer;
       writer.writeBoWText(m_outputStream,*m_currentBoWText);
-      m_currentBoWText=QSharedPointer< BoWText >(0);
+      m_currentBoWText=boost::shared_ptr< BoWText >(0);
     }
   }
   else if (stringName == "bowDocument") {
     //@todo
     // m_currentBoWDocument.write(m_outputStream);
-    m_currentBoWText=QSharedPointer <Lima::Common::BagOfWords::BoWText >(0);
+    m_currentBoWText=boost::shared_ptr <Lima::Common::BagOfWords::BoWText >(0);
   }
   return true;
 }

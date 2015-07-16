@@ -312,8 +312,8 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
       if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
       {
         result.insert(make_pair(
-                        qSharedPointerCast<BoWToken>(*bowItr)->getLemma(),
-                        macroManager.getPropertySymbolicValue(qSharedPointerCast<BoWToken>(*bowItr)->getCategory())));
+                        boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma(),
+                        macroManager.getPropertySymbolicValue(boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getCategory())));
         //        cerr << " keep it !";
       }
       //      cerr << endl;

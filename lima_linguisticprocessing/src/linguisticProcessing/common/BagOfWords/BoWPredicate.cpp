@@ -47,13 +47,13 @@ public:
    */
   std::string getRolesUtf8String(void) const;
   
-  void setRoles(QMultiMap<Common::MediaticData::EntityType, QSharedPointer< AbstractBoWElement >  > pRoles);
+  void setRoles(QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement >  > pRoles);
 
 
   MediaticData::EntityType m_predicateType;
   uint64_t m_position;
   uint64_t m_length;
-  QMultiMap<Common::MediaticData::EntityType, QSharedPointer< AbstractBoWElement > > m_roles;
+  QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > m_roles;
 };
 
 BoWPredicatePrivate::BoWPredicatePrivate():
@@ -87,7 +87,7 @@ BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType) :
 }
 
 
-BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, QSharedPointer< AbstractBoWElement > > pRoles) :
+BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > pRoles) :
     m_d(new BoWPredicatePrivate())
 {
   m_d->m_predicateType = theType;
@@ -139,17 +139,17 @@ void BoWPredicate::setPredicateType(const MediaticData::EntityType& predicateTyp
   m_d->m_predicateType = predicateType;
 }
 
-const QMultiMap<Common::MediaticData::EntityType, QSharedPointer< AbstractBoWElement > >& BoWPredicate::roles() const
+const QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& BoWPredicate::roles() const
 {
   return m_d->m_roles;
 }
 
-QMultiMap<Common::MediaticData::EntityType, QSharedPointer< AbstractBoWElement > >& BoWPredicate::roles()
+QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& BoWPredicate::roles()
 {
   return m_d->m_roles;
 }
 
-void BoWPredicate::setRoles(QMultiMap< Lima::Common::MediaticData::EntityType, QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > >& pRoles){
+void BoWPredicate::setRoles(QMultiMap< Lima::Common::MediaticData::EntityType, boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > >& pRoles){
   m_d->m_roles=pRoles;
 }
 

@@ -556,7 +556,7 @@ xmlOutputVertex(std::ostream& out,
 
   if (m_outputCompounds) {
     // check if the word is head of a compound
-    std::vector< QSharedPointer< BoWToken > > compoundTokens=
+    std::vector< boost::shared_ptr< BoWToken > > compoundTokens=
     checkCompound(v, anagraph, posgraph, annotationData, syntacticData, offset, visited);
     if (compoundTokens.size()!=0) {
       for (auto it=compoundTokens.begin(), it_end=compoundTokens.end();it!=it_end;it++) {
@@ -681,7 +681,7 @@ xmlOutputSpecificEntity(std::ostream& out,
 
 }
 
-std::vector< QSharedPointer< BoWToken > > GenericXmlDumper::
+std::vector< boost::shared_ptr< BoWToken > > GenericXmlDumper::
 checkCompound(LinguisticGraphVertex v,
               AnalysisGraph* anagraph,
               AnalysisGraph* posgraph,
@@ -697,11 +697,11 @@ checkCompound(LinguisticGraphVertex v,
   if (cpdsHeads.empty())
   {
     // not a compound
-    return std::vector< QSharedPointer< BoWToken > >();
+    return std::vector< boost::shared_ptr< BoWToken > >();
   }
   
   LDEBUG << "GenericXmlDumper: -- is head of a compound ";
-  std::vector< QSharedPointer< BoWToken > > tokens;
+  std::vector< boost::shared_ptr< BoWToken > > tokens;
   std::set< std::string > alreadyStored;
   for (std::set< AnnotationGraphVertex >::const_iterator it=cpdsHeads.begin(), it_end=cpdsHeads.end(); 
        it!=it_end; it++)
@@ -709,7 +709,7 @@ checkCompound(LinguisticGraphVertex v,
     const AnnotationGraphVertex& agv=*it;
 
     // create compound using BoWGeneration : store in BoW
-    std::vector<std::pair<QSharedPointer< BoWRelation >, QSharedPointer<BoWToken> > > bowTokens =
+    std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr<BoWToken> > > bowTokens =
     m_bowGenerator->buildTermFor(agv, agv, *(anagraph->getGraph()), *(posgraph->getGraph()), offset, 
                                  syntacticData, annotationData, visited);
     for (auto bowItr=bowTokens.begin();
@@ -732,7 +732,7 @@ checkCompound(LinguisticGraphVertex v,
 
 void GenericXmlDumper::
 xmlOutputCompound(std::ostream& out, 
-                  QSharedPointer<Common::BagOfWords::AbstractBoWElement> token,
+                  boost::shared_ptr<Common::BagOfWords::AbstractBoWElement> token,
                   LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                   LinguisticAnalysisStructure::AnalysisGraph* posgraph,
                   const AnnotationData* annotationData,
@@ -773,7 +773,7 @@ xmlOutputCompound(std::ostream& out,
           bit++; // first one is same BoWTerm
         }
         while (! bit.isAtEnd()) {
-          QSharedPointer< AbstractBoWElement > tok=bit.getElement();
+          boost::shared_ptr< AbstractBoWElement > tok=bit.getElement();
           LDEBUG << "next token=" << tok->getOutputUTF8String();
           xmlOutputCompound(out,tok,anagraph,posgraph,annotationData,sp,offset);
           bit++;
@@ -781,7 +781,7 @@ xmlOutputCompound(std::ostream& out,
       }
       else {
         // output only enclosed compounds
-        QSharedPointer< BoWTerm > term=qSharedPointerCast<BoWTerm>(token);
+        boost::shared_ptr< BoWTerm > term=boost::dynamic_pointer_cast<BoWTerm>(token);
         const std::deque< BoWComplexToken::Part >& parts=term->getParts();
         for (auto p=parts.begin(),p_end=parts.end();p!=p_end;p++) {
           xmlOutputCompound(out,(*p).getBoWToken(),anagraph,posgraph,annotationData,sp,offset);
@@ -795,7 +795,7 @@ xmlOutputCompound(std::ostream& out,
     }
     case BOW_NAMEDENTITY: {
       if (m_outputCompoundParts) {
-        LinguisticGraphVertex v=qSharedPointerDynamicCast<BoWNamedEntity>(token)->getVertex();
+        LinguisticGraphVertex v=boost::dynamic_pointer_cast<BoWNamedEntity>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWNamedEntity of vertex " << v;
         std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>
         se=checkSpecificEntity(v,anagraph,posgraph,annotationData);
@@ -811,7 +811,7 @@ xmlOutputCompound(std::ostream& out,
     }
     case BOW_TOKEN: {
       if  (m_outputCompoundParts) {
-        LinguisticGraphVertex v=qSharedPointerDynamicCast<BoWToken>(token)->getVertex();
+        LinguisticGraphVertex v=boost::dynamic_pointer_cast<BoWToken>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWToken of vertex " << v;
         xmlOutputVertexInfos(out,v,posgraph,offset);
       }

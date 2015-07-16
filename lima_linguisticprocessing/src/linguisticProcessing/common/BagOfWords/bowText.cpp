@@ -41,7 +41,7 @@ namespace BagOfWords {
 // constructors,destructor,copy assignment
 //**********************************************************************
 BoWText::BoWText():
-std::vector< QSharedPointer< AbstractBoWElement > >()
+std::vector< boost::shared_ptr< AbstractBoWElement > >()
 {
   BOWLOGINIT;
   LDEBUG << "BoWText::BoWText()" << this;
@@ -49,7 +49,7 @@ std::vector< QSharedPointer< AbstractBoWElement > >()
 
 
 BoWText::BoWText(const BoWText& t):
-std::vector< QSharedPointer< AbstractBoWElement > >()
+std::vector< boost::shared_ptr< AbstractBoWElement > >()
 {
   BOWLOGINIT;
   LDEBUG << "BoWText::BoWText(BoWText)" << this;
@@ -68,7 +68,7 @@ BoWText& BoWText::operator = (const BoWText& t)
 //     std::map<AbstractBoWElement*,AbstractBoWElement*> pointerMap;
     for (BoWText::const_iterator i(t.begin());
         i != t.end(); i++) {
-      QSharedPointer< AbstractBoWElement > tok( (*i)->clone(/*pointerMap*/) );
+      boost::shared_ptr< AbstractBoWElement > tok( (*i)->clone(/*pointerMap*/) );
       push_back(tok);
 //       pointerMap[(*i)]=tok;
     }
@@ -88,10 +88,10 @@ void BoWText::clear() {
   LDEBUG << "BoWText::clear()" << this;
   for (auto it = begin(); it != end(); it++)
   {
-    LDEBUG << "BoWText::clear clearing" << (*it);
-    (*it).clear();
+    LDEBUG << "BoWText::clear clearing" << &(**it);
+    (*it)->clear();
   }
-  std::vector< QSharedPointer<  AbstractBoWElement > >::clear();
+  std::vector< boost::shared_ptr<  AbstractBoWElement > >::clear();
 }
 
 //**********************************************************************

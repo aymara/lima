@@ -38,7 +38,7 @@
 #include <vector>
 #include <map>
 #include <QtCore/QMap>
-#include <QtCore/QSharedPointer>
+#include <boost/shared_ptr.hpp>
 
 namespace Lima {
 namespace Common {
@@ -80,11 +80,11 @@ class LIMA_BOW_EXPORT BoWBinaryReader
                        BoWDocument& document,
                        AbstractBoWDocumentHandler& handler, 
                        bool useIterator=false);
-  QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file);
+  boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file);
   void readSimpleToken(std::istream& file,
-                       QSharedPointer< BoWToken > token);
+                       boost::shared_ptr< BoWToken > token);
   void readPredicate(std::istream& file,
-                   QSharedPointer< BoWPredicate > bowPred);
+                   boost::shared_ptr< BoWPredicate > bowPred);
 
   BoWFileType getFileType() const;
   std::string getFileTypeString() const;
@@ -109,11 +109,11 @@ class LIMA_BOW_EXPORT BoWBinaryWriter
   void writeBoWDocument(std::ostream& file,
                         const BoWDocument& bowText) const;
   void writeBoWToken(std::ostream& file,
-                     const QSharedPointer< AbstractBoWElement > bowToken) const;
+                     const boost::shared_ptr< AbstractBoWElement > bowToken) const;
   void writeSimpleToken(std::ostream& file,
-                        const QSharedPointer< BoWToken > token) const;
+                        const boost::shared_ptr< BoWToken > token) const;
   void writePredicate(std::ostream& file,
-                        const QSharedPointer< BoWPredicate > token) const;
+                        const boost::shared_ptr< BoWPredicate > token) const;
 
  private:
   BoWBinaryWriter(const BoWBinaryWriter&);

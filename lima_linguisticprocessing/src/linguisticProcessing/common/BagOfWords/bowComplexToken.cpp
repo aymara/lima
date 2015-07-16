@@ -75,14 +75,14 @@ BoWComplexTokenPrivate::BoWComplexTokenPrivate(const LimaString& lemma,
                                  const uint64_t category,
                                  const uint64_t position,
                                  const uint64_t length,
-                                 std::deque< QSharedPointer< BoWToken > >& parts,
+                                 std::deque< boost::shared_ptr< BoWToken > >& parts,
                                  const uint64_t head):
 BoWTokenPrivate(lemma, category, position, length),
 m_parts(0),
 m_head(head)
 {
   for (auto i = parts.begin(); i != parts.end(); i++) {
-    addPart(QSharedPointer< BoWRelation >(0),*i);
+    addPart(boost::shared_ptr< BoWRelation >(0),*i);
   }
   if (m_head>m_parts.size()) {
     m_head=0;
@@ -126,7 +126,7 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
                                  const uint64_t category,
                                  const uint64_t position,
                                  const uint64_t length,
-                                 std::deque< QSharedPointer< BoWToken > >& parts,
+                                 std::deque< boost::shared_ptr< BoWToken > >& parts,
                                  const uint64_t head):
                                  BoWToken(*new BoWComplexTokenPrivate())
 {
@@ -137,7 +137,7 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head = head;
   for (auto i = parts.begin(); i != parts.end(); i++)
   {
-    addPart(QSharedPointer< BoWRelation >(0), *i);
+    addPart(boost::shared_ptr< BoWRelation >(0), *i);
   }
   if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head > static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size())
   {
@@ -189,7 +189,7 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t) {
   m_vertex = t.m_d->m_vertex;
   for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
        i != t.getParts().end(); i++) {
-    QSharedPointer< BoWRelation > rel = (*i).get<0>();
+    boost::shared_ptr< BoWRelation > rel = (*i).get<0>();
     m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()));
   }
 }
@@ -229,8 +229,8 @@ void BoWComplexToken::setHead(const uint64_t i) {
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head=i;
 }
 
-QSharedPointer< BoWToken > BoWComplexTokenPrivate::addPart(QSharedPointer< BoWRelation > rel,
-                                          QSharedPointer< BoWToken > tok,
+boost::shared_ptr< BoWToken > BoWComplexTokenPrivate::addPart(boost::shared_ptr< BoWRelation > rel,
+                                          boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
   m_parts.push_back(BoWComplexToken::Part(rel, tok));
@@ -243,15 +243,15 @@ QSharedPointer< BoWToken > BoWComplexTokenPrivate::addPart(QSharedPointer< BoWRe
 }
 
 
-QSharedPointer< BoWToken > BoWComplexToken::addPart(QSharedPointer< BoWToken > tok,
+boost::shared_ptr< BoWToken > BoWComplexToken::addPart(boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
-  return addPart(QSharedPointer< BoWRelation >(0), tok, isHead);
+  return addPart(boost::shared_ptr< BoWRelation >(0), tok, isHead);
 }
 
 
-QSharedPointer< BoWToken > BoWComplexToken::addPart(QSharedPointer< BoWRelation > rel,
-                                          QSharedPointer< BoWToken > tok,
+boost::shared_ptr< BoWToken > BoWComplexToken::addPart(boost::shared_ptr< BoWRelation > rel,
+                                          boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
     return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(rel,tok,isHead);
@@ -418,9 +418,9 @@ std::set< uint64_t > BoWComplexToken::getVertices() const
   std::set< uint64_t > result;
   for (uint64_t i(0); i<static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size(); i++)
   {
-    if (qSharedPointerDynamicCast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>()) != 0)
+    if (boost::dynamic_pointer_cast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>()) != 0)
     {
-      std::set< uint64_t > partResult = qSharedPointerDynamicCast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>())->getVertices();
+      std::set< uint64_t > partResult = boost::dynamic_pointer_cast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>())->getVertices();
       result.insert(partResult.begin(), partResult.end());
     }
     else

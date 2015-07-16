@@ -50,21 +50,21 @@ void BagOfWordsTest3::test_BoWText()
 
   std::stringstream stream;
   {
-    QSharedPointer< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
+    boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
     bt1->setInflectedForm(QString::fromUtf8("lemma"));
-    QSharedPointer< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+    boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
     bt2->setInflectedForm(QString::fromUtf8("démocratique"));
-    QSharedPointer< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
     bt3->setInflectedForm(QString::fromUtf8("word"));
 
-    QSharedPointer< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), 1, 10, 4));
     bt4->setInflectedForm(QString::fromUtf8("autre"));
 
     bt1Lemma = bt1->getLemma();
 
-    QSharedPointer< BoWTerm > term(new BoWTerm);
+    boost::shared_ptr< BoWTerm > term(new BoWTerm);
     term->addPart(bt1);
-    QSharedPointer< BoWTerm > term2(new BoWTerm);
+    boost::shared_ptr< BoWTerm > term2(new BoWTerm);
     term2->addPart(bt2);
     term2->addPart(bt3);
     term->addPart(term2);
@@ -82,7 +82,7 @@ void BagOfWordsTest3::test_BoWText()
   reader.readBoWText(stream, text);
 
   QVERIFY( text.size() == 2 );
-  QSharedPointer<BoWTerm> rterm = qSharedPointerCast<BoWTerm>(text[0]);
+  boost::shared_ptr<BoWTerm> rterm = boost::dynamic_pointer_cast<BoWTerm>(text[0]);
   QVERIFY( rterm->getParts().size() == 2 );
 
   QVERIFY( bt1Lemma == rterm->getParts()[0].getBoWToken()->getLemma() );
@@ -95,31 +95,31 @@ void BagOfWordsTest3::test_BoWText2()
 
   std::stringstream stream;
   {
-    QSharedPointer< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
+    boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
     bt1->setInflectedForm(QString::fromUtf8("lemma"));
-    QSharedPointer< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+    boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
     bt2->setInflectedForm(QString::fromUtf8("démocratique"));
-    QSharedPointer< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
     bt3->setInflectedForm(QString::fromUtf8("word"));
 
-    QSharedPointer< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), 1, 10, 4));
     bt4->setInflectedForm(QString::fromUtf8("autre"));
 
-    QSharedPointer< BoWTerm > term(new BoWTerm);
+    boost::shared_ptr< BoWTerm > term(new BoWTerm);
     term->addPart(bt1);
-    QSharedPointer< BoWTerm > term2(new BoWTerm);
+    boost::shared_ptr< BoWTerm > term2(new BoWTerm);
     term2->addPart(bt2);
     term2->addPart(bt3);
     term->addPart(term2);
 
-    QSharedPointer< BoWNamedEntity > ne(new BoWNamedEntity);
+    boost::shared_ptr< BoWNamedEntity > ne(new BoWNamedEntity);
     ne->setNamedEntityType(EntityType(EntityTypeId(1),EntityGroupId(3)));
     ne->addFeature("surname","John");
     ne->addFeature("name","Doe");
     name = ne->getFeatures().at("name");
-    QSharedPointer< BoWToken > btsurname(new BoWToken(QString::fromUtf8("John"), 1, 10, 5));
+    boost::shared_ptr< BoWToken > btsurname(new BoWToken(QString::fromUtf8("John"), 1, 10, 5));
     bt1->setInflectedForm(QString::fromUtf8("John"));
-    QSharedPointer< BoWToken > btname(new BoWToken(QString::fromUtf8("Doe"), 1, 10, 12));
+    boost::shared_ptr< BoWToken > btname(new BoWToken(QString::fromUtf8("Doe"), 1, 10, 12));
     bt2->setInflectedForm(QString::fromUtf8("Doe"));
     ne->addPart(btsurname);
     ne->addPart(btname);
@@ -138,7 +138,7 @@ void BagOfWordsTest3::test_BoWText2()
   reader.readBoWText(stream, text);
 
   QVERIFY( text.size() == 3 );
-  QSharedPointer<BoWNamedEntity> rne = qSharedPointerCast<BoWNamedEntity>(text[2]);
+  boost::shared_ptr<BoWNamedEntity> rne = boost::dynamic_pointer_cast<BoWNamedEntity>(text[2]);
   QVERIFY( rne->getParts().size() == 2 );
 
   QVERIFY( name == rne->getFeatures().at("name") );

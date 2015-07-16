@@ -29,7 +29,7 @@
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 #include "common/MediaticData/mediaticData.h"
 
-#include <QtCore/QSharedPointer>
+#include <boost/shared_ptr.hpp>
 
 namespace Lima
 {
@@ -65,7 +65,7 @@ namespace AnalysisDumpers
 
 #define DEPTRIPLEDUMPER_CLASSID "DepTripleDumper"
 
-typedef std::map< LinguisticGraphVertex, std::set< QSharedPointer< Common::BagOfWords::BoWTerm > > > VxToTermsMap ;
+typedef std::map< LinguisticGraphVertex, std::set< boost::shared_ptr< Common::BagOfWords::BoWTerm > > > VxToTermsMap ;
 
 /**
 @author Olivier Mesnard
@@ -114,11 +114,11 @@ private:
                                   const LinguisticGraph& anagraph,
                                   const LinguisticGraph& posgraph) const;
 
-  void getCompoundsHeads(VxToTermsMap&, QSharedPointer< Common::BagOfWords::BoWTerm > bt) const;
+  void getCompoundsHeads(VxToTermsMap&, boost::shared_ptr< Common::BagOfWords::BoWTerm > bt) const;
 
   void collectVertices(
         std::set<LinguisticGraphVertex>& theSet,
-        QSharedPointer< Common::BagOfWords::BoWToken > term
+        boost::shared_ptr< Common::BagOfWords::BoWToken > term
       ) const;
 
   MediaId m_language;

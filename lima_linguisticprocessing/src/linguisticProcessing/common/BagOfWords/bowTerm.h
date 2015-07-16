@@ -56,7 +56,7 @@ class LIMA_BOW_EXPORT BoWTerm : public BoWComplexToken
           const uint64_t position,
           const uint64_t length);
 
-  BoWTerm(const Lima::LimaString& lemma, const uint64_t category, const uint64_t position, const uint64_t length, std::deque< QSharedPointer< Lima::Common::BagOfWords::BoWToken > >& parts, const uint64_t head);
+  BoWTerm(const Lima::LimaString& lemma, const uint64_t category, const uint64_t position, const uint64_t length, std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, const uint64_t head);
 
   virtual ~BoWTerm();
 

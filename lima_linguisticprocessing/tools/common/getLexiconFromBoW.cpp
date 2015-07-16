@@ -160,10 +160,10 @@ private:
 
 // For simple tokens, it's themselves
 // For complex tokens, each simple token is separated with a ';'
-LimaString getStringDecomp(QSharedPointer< BoWToken > token) {
+LimaString getStringDecomp(boost::shared_ptr< BoWToken > token) {
     LimaString str;
     std::deque< BoWComplexToken::Part >::const_iterator it, it_end;
-    QSharedPointer< BoWComplexToken> complexToken(0);
+    boost::shared_ptr< BoWComplexToken> complexToken(0);
     switch (token->getType()) {
     case BOW_TOKEN:
         //cerr << "token is a simple token -> " << token->getString() << endl;
@@ -172,7 +172,7 @@ LimaString getStringDecomp(QSharedPointer< BoWToken > token) {
     case BOW_TERM:
     case BOW_NAMEDENTITY:
         //cerr << "token is a complex token" << endl;
-        complexToken=qSharedPointerCast<BoWComplexToken>(token);
+        complexToken=boost::dynamic_pointer_cast<BoWComplexToken>(token);
         it=complexToken->getParts().begin(); it_end=complexToken->getParts().end();
         str=getStringDecomp((*it).getBoWToken());
         it++;
@@ -232,7 +232,7 @@ void GetLexiconBoWDocumentHandler::processSBoWText(const BoWText* text,
   LIMA_UNUSED(useIterators);
     BoWTokenIterator it(*text);
     while (! it.isAtEnd()) {
-        QSharedPointer< BoWToken > token = qSharedPointerDynamicCast<BoWToken>((it.getElement()));
+        boost::shared_ptr< BoWToken > token = boost::dynamic_pointer_cast<BoWToken>((it.getElement()));
 //     const std::string& stringProp = m_macroManager.getPropertySymbolicValue(token.getCategory());
         if (m_filterCategory) {
             set<LinguisticCode>::const_iterator referencePropertyIt =
@@ -271,7 +271,7 @@ void readBowFileText(ifstream& fileIn,
 
     BoWTokenIterator it(text);
     while (! it.isAtEnd()) {
-        QSharedPointer< BoWToken > token = qSharedPointerDynamicCast<BoWToken>((it.getElement()));
+        boost::shared_ptr< BoWToken > token = boost::dynamic_pointer_cast<BoWToken>((it.getElement()));
         if (filterCategory) {
             set<LinguisticCode>::const_iterator referencePropertyIt =
                 referenceProperties.find(propertyAccessor.readValue(token->getCategory()));

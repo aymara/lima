@@ -54,16 +54,16 @@ class BoWTokenIteratorPrivate
   // a class to represent complex tokens parts that are stored in
   // queue: some are pointers to tokens in BoWText, some are
   // created => keep information for clean delete
-  class BoWTokenPart : public std::pair< QSharedPointer< AbstractBoWElement >,bool> {
+  class BoWTokenPart : public std::pair< boost::shared_ptr< AbstractBoWElement >,bool> {
   public:
-    BoWTokenPart():std::pair< QSharedPointer< AbstractBoWElement >,bool>(QSharedPointer< AbstractBoWElement >(0),false) {}
-    BoWTokenPart(QSharedPointer< AbstractBoWElement > token,bool isCreated):
-      std::pair< QSharedPointer< AbstractBoWElement >,bool>(token,isCreated) {}
+    BoWTokenPart():std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(boost::shared_ptr< AbstractBoWElement >(0),false) {}
+    BoWTokenPart(boost::shared_ptr< AbstractBoWElement > token,bool isCreated):
+      std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(token,isCreated) {}
 
     ~BoWTokenPart() {}
 
-    const QSharedPointer< AbstractBoWElement >& getBoWToken() const { return first; }
-    QSharedPointer< AbstractBoWElement >& getBoWToken() { return first; }
+    const boost::shared_ptr< AbstractBoWElement >& getBoWToken() const { return first; }
+    boost::shared_ptr< AbstractBoWElement >& getBoWToken() { return first; }
     bool& isCreated() { return second; }
     bool isCreated() const { return second; }
   };
@@ -86,19 +86,19 @@ class BoWTokenIteratorPrivate
 
   // add in queue
   // (return false if size of queue becomes greater than max)
-  bool addInPartQueue(QSharedPointer< BoWToken > token,
+  bool addInPartQueue(boost::shared_ptr< BoWToken > token,
                       const bool isCreated);
 
-  void storePartsInQueue(QSharedPointer< BoWToken > token);
+  void storePartsInQueue(boost::shared_ptr< BoWToken > token);
 
   // a type to store interesting parts of complex tokens
   // (the parts used to be combined to create partial complex tokens)
-  typedef std::vector<QSharedPointer< BoWToken > > PartTokens;
+  typedef std::vector<boost::shared_ptr< BoWToken > > PartTokens;
 
   // recursive function to get all parts of complex token
   // and create partial complex tokens
   // (return false if size of queue becomes greater than max)
-  bool addPartElementsInQueue(QSharedPointer< Lima::Common::BagOfWords::BoWToken > token, vector< Lima::Common::BagOfWords::BoWTokenIteratorPrivate::PartTokens >& partTokens);
+  bool addPartElementsInQueue(boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > token, vector< Lima::Common::BagOfWords::BoWTokenIteratorPrivate::PartTokens >& partTokens);
 
   /**
    * combine parts to create partial complex tokens
@@ -126,7 +126,7 @@ class BoWTokenIteratorPrivate
    * @param iterators the iterators that define a combination
    * @return the created complex token
    */
-  QSharedPointer< BoWComplexToken > createComplexToken(const PartTokens& parts);
+  boost::shared_ptr< BoWComplexToken > createComplexToken(const PartTokens& parts);
 };
 
 BoWTokenIteratorPrivate::BoWTokenIteratorPrivate(const BoWText& bowText,
@@ -184,10 +184,10 @@ bool BoWTokenIterator::isAtEnd() const {
 // getting parts is done in this function (rather than in ++ function):
 // which means that is a ++ is done before calling a getElement on 
 // a complex token, no parts will be explored
-QSharedPointer< AbstractBoWElement > BoWTokenIterator::getElement() {
+boost::shared_ptr< AbstractBoWElement > BoWTokenIterator::getElement() {
   if (m_d->m_partQueue.empty()) {
     if (m_d->m_iterator==m_d->m_iteratorEnd) { // at end
-      return QSharedPointer< AbstractBoWElement >();
+      return boost::shared_ptr< AbstractBoWElement >();
     }
     else {
       switch ((*m_d->m_iterator)->getType()) {
@@ -199,7 +199,7 @@ QSharedPointer< AbstractBoWElement > BoWTokenIterator::getElement() {
       case BOW_TERM:
       case BOW_NAMEDENTITY: {
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(qSharedPointerCast< BoWToken >(*m_d->m_iterator));
+        m_d->storePartsInQueue(boost::dynamic_pointer_cast< BoWToken >(*m_d->m_iterator));
         return m_d->m_partQueue.front().getBoWToken();
         break;
       }
@@ -210,7 +210,7 @@ QSharedPointer< AbstractBoWElement > BoWTokenIterator::getElement() {
   else {
     return m_d->m_partQueue.front().getBoWToken();
   }
-  return QSharedPointer< AbstractBoWElement >(0);
+  return boost::shared_ptr< AbstractBoWElement >(0);
 }
 
 //**********************************************************************
@@ -242,7 +242,7 @@ BoWTokenIterator BoWTokenIterator::operator++(int) {
 //**********************************************************************
 // helper functions for iterator
 //**********************************************************************
-bool BoWTokenIteratorPrivate::addInPartQueue(const QSharedPointer< BoWToken > token,
+bool BoWTokenIteratorPrivate::addInPartQueue(const boost::shared_ptr< BoWToken > token,
                const bool isCreated) 
 {
   if (m_partQueue.size() >= m_maxSizeQueue) {
@@ -262,8 +262,8 @@ bool BoWTokenIteratorPrivate::addInPartQueue(const QSharedPointer< BoWToken > to
   return true;
 }
 
-void BoWTokenIteratorPrivate::storePartsInQueue(QSharedPointer< BoWToken > token) {
-  vector<vector<QSharedPointer< BoWToken > > > partTokens;
+void BoWTokenIteratorPrivate::storePartsInQueue(boost::shared_ptr< BoWToken > token) {
+  vector<vector<boost::shared_ptr< BoWToken > > > partTokens;
   if (!addPartElementsInQueue(token,partTokens)) {
     BOWLOGINIT;
     LWARN << "Token contain too many subparts (some are ignored): " 
@@ -271,7 +271,7 @@ void BoWTokenIteratorPrivate::storePartsInQueue(QSharedPointer< BoWToken > token
   }
 }
 
-bool BoWTokenIteratorPrivate::addPartElementsInQueue(QSharedPointer< BoWToken > token,
+bool BoWTokenIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWToken > token,
                        vector<PartTokens>& partTokens) {
 
   BOWLOGINIT;
@@ -300,7 +300,7 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(QSharedPointer< BoWToken > 
   }
   case BOW_TERM:
   case BOW_NAMEDENTITY: {
-    QSharedPointer< BoWComplexToken > complexToken=qSharedPointerCast<BoWComplexToken>(token);
+    boost::shared_ptr< BoWComplexToken > complexToken=boost::dynamic_pointer_cast<BoWComplexToken>(token);
 
     if (complexToken->size() == 1) { 
       // only one part, do not get into it
@@ -370,7 +370,7 @@ bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const vector< Lima::Common
     }
 
     // at end of parts => add current currentPartialToken
-    QSharedPointer< BoWComplexToken > partialComplexToken=
+    boost::shared_ptr< BoWComplexToken > partialComplexToken=
       createComplexToken(currentPartialToken);
 
     if (partialComplexToken!=0) {
@@ -409,18 +409,18 @@ bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const vector< Lima::Common
 
 //**********************************************************************
 // create a partial complex token 
-QSharedPointer< BoWComplexToken > BoWTokenIteratorPrivate::createComplexToken(const PartTokens& parts) {
+boost::shared_ptr< BoWComplexToken > BoWTokenIteratorPrivate::createComplexToken(const PartTokens& parts) {
 
 //   BOWLOGINIT;
 //   LDEBUG << "create complex token";
 
-  QSharedPointer< BoWTerm > partialComplexToken(new BoWTerm);
+  boost::shared_ptr< BoWTerm > partialComplexToken(new BoWTerm);
 
   // do not set lemma of partial token : do not store computed lemmas
   // for compounds
 
   for (auto it=parts.begin(), it_end=parts.end(); it!=it_end; it++) {
-    partialComplexToken->addPart(qSharedPointerConstCast<BoWToken>(*it));
+    partialComplexToken->addPart(boost::dynamic_pointer_cast<BoWToken>(*it));
   }
   // set position and length
   Common::Misc::PositionLengthList

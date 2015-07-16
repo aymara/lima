@@ -258,9 +258,9 @@ void DepTripletLogger::dumpDepWithCompounds(
 //   CVertexDataPropertyMap dataMap = get(vertex_data, posgraph);
 
   std::set< LinguisticGraphVertex > visited;
-  std::vector< std::pair< QSharedPointer< Common::BagOfWords::BoWRelation > , QSharedPointer< Common::BagOfWords::AbstractBoWElement > > > srcTokens =
+  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation > , boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > > > srcTokens =
     m_bowGenerator->createAbstractBoWElement(src, anagraph, posgraph, 0, annotationData, visited);
-  std::vector< std::pair< QSharedPointer< Common::BagOfWords::BoWRelation >, QSharedPointer< Common::BagOfWords::AbstractBoWElement > > >  destTokens =
+  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >, boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > > >  destTokens =
     m_bowGenerator->createAbstractBoWElement(dest, anagraph, posgraph, 0, annotationData, visited);
 
   std::map<std::string, std::set<LinguisticGraphVertex> > srcs, dests;
@@ -405,7 +405,7 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair<QSharedPointer< BoWRelation >, QSharedPointer< BoWToken > > > bowTokens =
+          std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens =
             m_bowGenerator->buildTermFor(agv, agv, anagraph, posgraph, 0, 
                                          syntacticData, annotationData, visited);
           for (auto bowItr=bowTokens.begin();
@@ -419,7 +419,7 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
             }
             else
             {
-              QSharedPointer< BoWTerm > bt = qSharedPointerDynamicCast<BoWTerm>((*bowItr).second);
+              boost::shared_ptr< BoWTerm > bt = boost::dynamic_pointer_cast<BoWTerm>((*bowItr).second);
               if (bt != 0)
               {
                 getCompoundsHeads(result, &*bt);
@@ -431,7 +431,7 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
       }
       else
       {
-        std::vector<std::pair< QSharedPointer< BoWRelation >, QSharedPointer< AbstractBoWElement > > > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
+        std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
 
         for (auto bowItr=bowTokens.begin();
              bowItr!=bowTokens.end();
@@ -444,7 +444,7 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
           }
           else
           {
-            QSharedPointer< BoWTerm > bt = qSharedPointerDynamicCast< BoWTerm >((*bowItr).second);
+            boost::shared_ptr< BoWTerm > bt = boost::dynamic_pointer_cast< BoWTerm >((*bowItr).second);
             if (bt != 0)
             {
               getCompoundsHeads(result, &*bt);
@@ -472,9 +472,9 @@ void DepTripletLogger::getCompoundsHeads(
   partsit = bt->getParts().begin(); partsit_end = bt->getParts().end();
   for (; partsit!=partsit_end; partsit++)
   {
-    if ( qSharedPointerDynamicCast<BoWTerm>((*partsit).get<1>()) != 0)
+    if ( boost::dynamic_pointer_cast<BoWTerm>((*partsit).get<1>()) != 0)
     {
-      getCompoundsHeads(result, &*qSharedPointerDynamicCast<BoWTerm>((*partsit).get<1>()));
+      getCompoundsHeads(result, &*boost::dynamic_pointer_cast<BoWTerm>((*partsit).get<1>()));
     }
   }
 }

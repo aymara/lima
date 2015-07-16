@@ -33,7 +33,7 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
-#include <QtCore/QSharedPointer>
+#include <boost/shared_ptr.hpp>
 
 #include <vector>
 #include <iostream>
@@ -57,7 +57,7 @@ class AbstractBoWElement;
  * references will cause problems in read/write functions)
  * 
  **/
-class LIMA_BOW_EXPORT BoWText : public std::vector< QSharedPointer< AbstractBoWElement > >
+class LIMA_BOW_EXPORT BoWText : public std::vector< boost::shared_ptr< AbstractBoWElement > >
 {
 public:
   BoWText();

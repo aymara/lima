@@ -36,7 +36,7 @@
 
 #include <deque>
 
-#include <QtCore/QSharedPointer>
+#include <boost/shared_ptr.hpp>
 
 namespace Lima {
 namespace Common {
@@ -90,7 +90,7 @@ class LIMA_BOW_EXPORT BoWTokenIterator {
   ~BoWTokenIterator();
       
   bool isAtEnd() const;
-  QSharedPointer< Lima::Common::BagOfWords::AbstractBoWElement > getElement();
+  boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > getElement();
   BoWTokenIterator& operator++();   //prefix ++
   BoWTokenIterator operator++(int); //postfix++
 

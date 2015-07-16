@@ -33,37 +33,37 @@ using namespace Lima::Common::BagOfWords;
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest1_1 )
 {
-  QSharedPointer< BoWToken > bt1(new BoWToken( QString::fromUtf8("lemma"), 1, 10, 5));
+  boost::shared_ptr< BoWToken > bt1(new BoWToken( QString::fromUtf8("lemma"), 1, 10, 5));
   BoWBinaryWriter writer;
   std::stringstream stream;
   writer.writeBoWToken(stream, bt1);
 
   BoWBinaryReader reader;
-  QSharedPointer< BoWToken > bt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
+  boost::shared_ptr< BoWToken > bt2 = boost::dynamic_pointer_cast<BoWToken>(reader.readBoWToken(stream));
 
   BOOST_REQUIRE( bt1->getLemma() == bt2->getLemma() );
 }
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest1_2 )
 {
-  QSharedPointer< BoWToken > bt1(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+  boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
   BoWBinaryWriter writer;
   std::stringstream stream;
   writer.writeBoWToken(stream, bt1);
 
   BoWBinaryReader reader;
-  QSharedPointer< BoWToken > bt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
+  boost::shared_ptr< BoWToken > bt2 = boost::dynamic_pointer_cast<BoWToken>(reader.readBoWToken(stream));
 
   BOOST_REQUIRE( bt1->getLemma() == bt2->getLemma() );
 }
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest1_3 )
 {
-  QSharedPointer< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
+  boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
   bt1->setInflectedForm(QString::fromUtf8("lemma"));
-  QSharedPointer< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+  boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
   bt2->setInflectedForm(QString::fromUtf8("démocratique"));
-  QSharedPointer< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
+  boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
   bt3->setInflectedForm(QString::fromUtf8("word"));
   BoWBinaryWriter writer;
   std::stringstream stream;
@@ -72,9 +72,9 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_3 )
   writer.writeBoWToken(stream, bt3);
 
   BoWBinaryReader reader;
-  QSharedPointer< BoWToken > rbt1 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
-  QSharedPointer< BoWToken > rbt2 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
-  QSharedPointer< BoWToken > rbt3 = qSharedPointerCast<BoWToken>(reader.readBoWToken(stream));
+  boost::shared_ptr< BoWToken > rbt1 = boost::dynamic_pointer_cast<BoWToken>(reader.readBoWToken(stream));
+  boost::shared_ptr< BoWToken > rbt2 = boost::dynamic_pointer_cast<BoWToken>(reader.readBoWToken(stream));
+  boost::shared_ptr< BoWToken > rbt3 = boost::dynamic_pointer_cast<BoWToken>(reader.readBoWToken(stream));
 
   BOOST_REQUIRE( bt2->getLemma() == rbt2->getLemma() );
 }

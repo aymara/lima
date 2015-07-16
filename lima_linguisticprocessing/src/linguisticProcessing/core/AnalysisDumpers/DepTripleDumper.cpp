@@ -337,9 +337,9 @@ void DepTripleDumper::dumpDepWithCompounds(
   //   CVertexDataPropertyMap dataMap = get(vertex_data, posgraph);
 
   std::set< LinguisticGraphVertex > visited;
-  std::vector<std::pair< QSharedPointer< BoWRelation >,  QSharedPointer< AbstractBoWElement > > > srcTokens =
+  std::vector<std::pair< boost::shared_ptr< BoWRelation >,  boost::shared_ptr< AbstractBoWElement > > > srcTokens =
     m_bowGenerator->createAbstractBoWElement(src, anagraph, posgraph, 0, annotationData, visited);
-  std::vector<std::pair<QSharedPointer< BoWRelation >, QSharedPointer< AbstractBoWElement > > > destTokens =
+  std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > destTokens =
     m_bowGenerator->createAbstractBoWElement(dest, anagraph, posgraph, 0, annotationData, visited);
 
   std::map<std::string, std::set<LinguisticGraphVertex> > srcs, dests;
@@ -478,7 +478,7 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair<QSharedPointer< BoWRelation>, QSharedPointer< BoWToken > > > bowTokens =
+          std::vector<std::pair<boost::shared_ptr< BoWRelation>, boost::shared_ptr< BoWToken > > > bowTokens =
             m_bowGenerator->buildTermFor(agv, agv, anagraph, posgraph, 0, 
                                          syntacticData, annotationData, visited);
           for (auto bowItr=bowTokens.begin();
@@ -492,7 +492,7 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
             }
             else
             {
-              QSharedPointer<BoWTerm> bt = qSharedPointerDynamicCast<BoWTerm>((*bowItr).second);
+              boost::shared_ptr<BoWTerm> bt = boost::dynamic_pointer_cast<BoWTerm>((*bowItr).second);
               if (bt != 0)
               {
                 getCompoundsHeads(result, bt);
@@ -504,7 +504,7 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
       }
       else
       {
-        std::vector<std::pair<QSharedPointer< BoWRelation> , QSharedPointer< AbstractBoWElement > > > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
+        std::vector<std::pair<boost::shared_ptr< BoWRelation> , boost::shared_ptr< AbstractBoWElement > > > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
 
         for (auto bowItr=bowTokens.begin();
              bowItr!=bowTokens.end();
@@ -517,7 +517,7 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
           }
           else
           {
-            QSharedPointer< BoWTerm > bt = qSharedPointerDynamicCast<BoWTerm>((*bowItr).second);
+            boost::shared_ptr< BoWTerm > bt = boost::dynamic_pointer_cast<BoWTerm>((*bowItr).second);
             if (bt != 0)
             {
               getCompoundsHeads(result, bt);
@@ -534,34 +534,34 @@ VxToTermsMap DepTripleDumper::getCompoundsHeads(
 
 void DepTripleDumper::getCompoundsHeads(
                                          VxToTermsMap& result,
-                                         QSharedPointer< BoWTerm > bt) const
+                                         boost::shared_ptr< BoWTerm > bt) const
 {
   if (result.find(bt->getVertex()) == result.end())
   {
-    result.insert(std::make_pair(bt->getVertex(), std::set<QSharedPointer< BoWTerm > >()));
+    result.insert(std::make_pair(bt->getVertex(), std::set<boost::shared_ptr< BoWTerm > >()));
   }
-  result[bt->getVertex()].insert(qSharedPointerDynamicCast<BoWTerm>(bt));
+  result[bt->getVertex()].insert(boost::dynamic_pointer_cast<BoWTerm>(bt));
   std::deque<BoWComplexToken::Part>::const_iterator partsit, partsit_end;
   partsit = bt->getParts().begin(); partsit_end = bt->getParts().end();
   for (; partsit!=partsit_end; partsit++)
   {
-    if ( qSharedPointerDynamicCast<BoWTerm>((*partsit).get<1>()) != 0)
+    if ( boost::dynamic_pointer_cast<BoWTerm>((*partsit).get<1>()) != 0)
     {
-      getCompoundsHeads(result, qSharedPointerDynamicCast<BoWTerm>((*partsit).get<1>()));
+      getCompoundsHeads(result, boost::dynamic_pointer_cast<BoWTerm>((*partsit).get<1>()));
     }
   }
 }
 
 void DepTripleDumper::collectVertices(
         std::set<LinguisticGraphVertex>& theSet,
-        QSharedPointer< BoWToken > term) const
+        boost::shared_ptr< BoWToken > term) const
 {
 //   std::cerr << "  inserting " << term->getVertex() << std::endl;
   theSet.insert(term->getVertex());
-  if ( qSharedPointerDynamicCast<BoWTerm>(term) != 0)
+  if ( boost::dynamic_pointer_cast<BoWTerm>(term) != 0)
   {
-    auto partsit = qSharedPointerDynamicCast<BoWTerm>(term)->getParts().begin(),
-    partsit_end = qSharedPointerDynamicCast<BoWTerm>(term)->getParts().end();
+    auto partsit = boost::dynamic_pointer_cast<BoWTerm>(term)->getParts().begin(),
+    partsit_end = boost::dynamic_pointer_cast<BoWTerm>(term)->getParts().end();
     for (; partsit!=partsit_end; partsit++)
     {
       collectVertices(theSet, (*partsit).get<1>());
