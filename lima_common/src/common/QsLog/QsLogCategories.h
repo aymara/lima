@@ -40,7 +40,7 @@
 
 namespace QsLogging
 {
-LIMA_COMMONQSLOG_EXPORT int initQsLog();
+LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configDir = "");
 
 class CategoriesImpl; // d pointer
 class LIMA_COMMONQSLOG_EXPORT Categories : public QObject
