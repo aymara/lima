@@ -82,7 +82,7 @@ m_parts(0),
 m_head(head)
 {
   for (auto i = parts.begin(); i != parts.end(); i++) {
-    addPart(boost::shared_ptr< BoWRelation >(0),*i);
+    addPart(boost::shared_ptr< BoWRelation >(),*i);
   }
   if (m_head>m_parts.size()) {
     m_head=0;
@@ -137,7 +137,7 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head = head;
   for (auto i = parts.begin(); i != parts.end(); i++)
   {
-    addPart(boost::shared_ptr< BoWRelation >(0), *i);
+    addPart(boost::shared_ptr< BoWRelation >(), *i);
   }
   if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head > static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size())
   {
@@ -246,7 +246,7 @@ boost::shared_ptr< BoWToken > BoWComplexTokenPrivate::addPart(boost::shared_ptr<
 boost::shared_ptr< BoWToken > BoWComplexToken::addPart(boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
-  return addPart(boost::shared_ptr< BoWRelation >(0), tok, isHead);
+  return addPart(boost::shared_ptr< BoWRelation >(), tok, isHead);
 }
 
 

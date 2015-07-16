@@ -163,7 +163,7 @@ private:
 LimaString getStringDecomp(boost::shared_ptr< BoWToken > token) {
     LimaString str;
     std::deque< BoWComplexToken::Part >::const_iterator it, it_end;
-    boost::shared_ptr< BoWComplexToken> complexToken(0);
+    boost::shared_ptr< BoWComplexToken> complexToken;
     switch (token->getType()) {
     case BOW_TOKEN:
         //cerr << "token is a simple token -> " << token->getString() << endl;

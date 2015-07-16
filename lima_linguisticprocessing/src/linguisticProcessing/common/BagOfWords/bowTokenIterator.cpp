@@ -56,7 +56,7 @@ class BoWTokenIteratorPrivate
   // created => keep information for clean delete
   class BoWTokenPart : public std::pair< boost::shared_ptr< AbstractBoWElement >,bool> {
   public:
-    BoWTokenPart():std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(boost::shared_ptr< AbstractBoWElement >(0),false) {}
+    BoWTokenPart():std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(boost::shared_ptr< AbstractBoWElement >(),false) {}
     BoWTokenPart(boost::shared_ptr< AbstractBoWElement > token,bool isCreated):
       std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(token,isCreated) {}
 
@@ -210,7 +210,7 @@ boost::shared_ptr< AbstractBoWElement > BoWTokenIterator::getElement() {
   else {
     return m_d->m_partQueue.front().getBoWToken();
   }
-  return boost::shared_ptr< AbstractBoWElement >(0);
+  return boost::shared_ptr< AbstractBoWElement >();
 }
 
 //**********************************************************************

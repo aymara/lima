@@ -549,7 +549,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
         {
           LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << QString::fromUtf8(se->getOutputUTF8String().c_str());
           se->setVertex(v);
-          abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(0),se));
+          abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),se));
 //           visited.insert(v);
           break;
         }
@@ -574,7 +574,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       {
         LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << QString::fromUtf8(se->getOutputUTF8String().c_str());
         se->setVertex(v);
-        abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(0),se));
+        abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),se));
 //         visited.insert(v);
         return abstractBowEl;
       }
@@ -586,7 +586,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       {
         LDEBUG << "BowGenerator::createAbstractBoWElement created compound tense: " << *ct;
         ct->setVertex(v);
-        abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(0),ct));
+        abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),ct));
 //         visited.insert(v);
         return abstractBowEl;
       }
@@ -598,7 +598,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       boost::shared_ptr< BoWPredicate > bP=createPredicate(v, *it, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
       if (bP!=0){
         LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate" ;
-        abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(0),bP));
+        abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),bP));
   //         visited.insert(v);
         return abstractBowEl;
       }
@@ -643,7 +643,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
             newbowtok->setVertex(v);
             newbowtok->setInflectedForm(token->stringForm());
             LDEBUG << "BowGenerator::createAbstractBoWElement created bow token: " << *newbowtok;
-            abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(0),newbowtok));
+            abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),newbowtok));
           }
           alreadyCreated.insert(normCode);
         }
@@ -908,7 +908,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
   LINFO << "BowGenerator: createSpecificEntity ling:" << vertex <<"; annot:"<< v;
   if (!annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
   {
-    return boost::shared_ptr< BoWNamedEntity >(0);
+    return boost::shared_ptr< BoWNamedEntity >();
   }
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
@@ -927,7 +927,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
   }
   catch (std::exception& e) {
     LERROR << "Undefined entity type " << se->getType();
-    return boost::shared_ptr< BoWNamedEntity >(0);
+    return boost::shared_ptr< BoWNamedEntity >();
   }
   LDEBUG << "BowGenerator: specific entity type name is " << typeName;
   // get the macro-category to use for this named entity 
@@ -936,7 +936,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
   {
     LERROR << "Empty data for vertex " << vertex << " at " << __FILE__ << ", line " << __LINE__;
     LERROR << "This is a bug. Returning null entity for" << se->getString() << typeName;
-    return boost::shared_ptr< BoWNamedEntity >(0);
+    return boost::shared_ptr< BoWNamedEntity >();
 
   }
   LinguisticCode category=m_macroAccessor->readValue(data->begin()->properties);
@@ -994,7 +994,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
   if (alreadyStored.find(elem) != alreadyStored.end())
   { // already stored
     LDEBUG << "BowGenerator: BoWNE already stored. Skipping it.";
-    return boost::shared_ptr< BoWNamedEntity >(0);
+    return boost::shared_ptr< BoWNamedEntity >();
   }
   else
   {
@@ -1101,7 +1101,7 @@ boost::shared_ptr< BoWPredicate > BowGenerator::createPredicate(
   catch (const Lima::LimaException& e)
   {
     LERROR << "BowGenerator::createPredicate Unknown predicate" << predicate << ";" << e.what();
-    return boost::shared_ptr< BoWPredicate >(0);
+    return boost::shared_ptr< BoWPredicate >();
   }
 }
 
@@ -1369,7 +1369,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
   LDEBUG << "BowGenerator: createCompoundTense " << v;
   if (!annotationData->hasIntAnnotation(v, Common::Misc::utf8stdstring2limastring("CpdTense")))
   {
-    return boost::shared_ptr< BoWToken >(0);
+    return boost::shared_ptr< BoWToken >();
   }
 
   // chercher l'aux et le pp ;
@@ -1391,13 +1391,13 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
   if ( auxVertex == std::numeric_limits< AnnotationGraphVertex >::max()
        || ppVertex == std::numeric_limits< AnnotationGraphVertex >::max())
   {
-    return boost::shared_ptr< BoWToken >(0);
+    return boost::shared_ptr< BoWToken >();
   }
   //   parcourir les liens entrants su v annotes par Aux et PastPart
   //   si la source est annotee CpdTense, rappeler recursivement
   //   createCompoundTense ; sinon, creer un BoWToken simple
   // creer eventuellement un compound tense pour chaque ;
-  boost::shared_ptr< BoWToken> head (0), extension (0);
+  boost::shared_ptr< BoWToken> head, extension;
   if (annotationData->hasIntAnnotation(ppVertex, Common::Misc::utf8stdstring2limastring("CpdTense")))
   {
     head = createCompoundTense(ppVertex, annotationData, anagraph, posgraph, offset, visited);
@@ -1410,7 +1410,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
     std::vector< std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > ppBoWTokens = createAbstractBoWElement(ppTokVertex, anagraph, posgraph, offset, annotationData, visited, true);
     if (ppBoWTokens.empty())
     {
-      return boost::shared_ptr< BoWToken >(0);
+      return boost::shared_ptr< BoWToken >();
     }
     else
     {
@@ -1420,7 +1420,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
   }
   if (head == 0)
   {
-    return boost::shared_ptr< BoWToken >(0);
+    return boost::shared_ptr< BoWToken >();
   }
   if (annotationData->hasIntAnnotation(auxVertex, Common::Misc::utf8stdstring2limastring("CpdTense")))
   {
@@ -1434,7 +1434,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
     std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > auxBoWTokens = createAbstractBoWElement(auxTokVertex, anagraph, posgraph, offset, annotationData, visited, true);
     if (auxBoWTokens.empty())
     {
-      return boost::shared_ptr< BoWToken >(0);
+      return boost::shared_ptr< BoWToken >();
     }
     else
     {
@@ -1444,7 +1444,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
   }
   if (extension == 0 && head != 0)
   {
-    return boost::shared_ptr< BoWToken >(0);
+    return boost::shared_ptr< BoWToken >();
   }
   // construire un BoWTerm avec le pp pour tete et l'aux pour extension
   LimaString lemma, infl;

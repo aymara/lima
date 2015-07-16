@@ -417,7 +417,7 @@ void BoWBinaryReaderPrivate::readNamedEntityProperties(std::istream& file, boost
 boost::shared_ptr< BoWRelation > BoWBinaryReaderPrivate::readBoWRelation(std::istream& file)
 {
   BOWLOGINIT;
-  boost::shared_ptr< BoWRelation > rel=boost::shared_ptr< BoWRelation >(0);
+  boost::shared_ptr< BoWRelation > rel=boost::shared_ptr< BoWRelation >();
   uint64_t hasRelation=Misc::readCodedInt(file);
   LDEBUG << "BoWBinaryReaderPrivate::readBoWRelation: read hasRelation" << hasRelation;
   if (hasRelation) {

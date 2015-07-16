@@ -66,9 +66,9 @@ public:
   class Part : public boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >
   {
   public:
-    Part():boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(0), boost::shared_ptr< BoWToken >(0) ) {};
+    Part():boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(), boost::shared_ptr< BoWToken >() ) {};
     Part(boost::shared_ptr< BoWToken > tok):
-      boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(boost::shared_ptr< BoWRelation >(0),tok) {};
+      boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(boost::shared_ptr< BoWRelation >(),tok) {};
     Part(boost::shared_ptr< BoWRelation > rel, boost::shared_ptr< BoWToken > tok):
       boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(rel,tok) {};
     boost::shared_ptr< BoWRelation > getBoWRelation() const { return get<0>(); }

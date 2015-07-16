@@ -101,7 +101,7 @@ class LIMA_BOW_EXPORT BoWXMLHandler : public QXmlDefaultHandler
  private:
   class CurrentComplexToken {
   public:
-    CurrentComplexToken():token(0),currentPart(0),head(0) {}
+    CurrentComplexToken():token(),currentPart(0),head() {}
     CurrentComplexToken(boost::shared_ptr< BoWComplexToken > tok):
       token(tok),currentPart(0),head(0) {}
     boost::shared_ptr< BoWComplexToken > token;

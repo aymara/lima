@@ -68,9 +68,9 @@ install(FILES  AbstractAccessResource.h FsaAccessResource.h
   AnalysisDictExport.h
 DESTINATION include/linguisticProcessing/core/AnalysisDict)
 
-FIND_PACKAGE(LIMALDATA PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
+FIND_PACKAGE(LIMALDATA PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
 IF(LIMALDATA_FOUND)
-  add_subdirectory(Tests)
+#  add_subdirectory(Tests)
 ELSE (LIMALDATA_FOUND)
   MESSAGE(STATUS "Could not find lingustic ressources to run test")
 ENDIF(LIMALDATA_FOUND)

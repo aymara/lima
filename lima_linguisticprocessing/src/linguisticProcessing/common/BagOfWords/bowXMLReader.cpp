@@ -105,7 +105,7 @@ BoWXMLReader::~BoWXMLReader() {
 BoWXMLHandler::BoWXMLHandler(std::ostream& output):
 m_outputStream(output),
 m_currentBoWDocument(),
-m_currentBoWText(0),
+m_currentBoWText(),
 m_currentComplexToken(),
 m_refMap()
 {
@@ -314,13 +314,13 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
     if (m_currentBoWText !=0) {
       BoWBinaryWriter writer;
       writer.writeBoWText(m_outputStream,*m_currentBoWText);
-      m_currentBoWText=boost::shared_ptr< BoWText >(0);
+      m_currentBoWText=boost::shared_ptr< BoWText >();
     }
   }
   else if (stringName == "bowDocument") {
     //@todo
     // m_currentBoWDocument.write(m_outputStream);
-    m_currentBoWText=boost::shared_ptr <Lima::Common::BagOfWords::BoWText >(0);
+    m_currentBoWText=boost::shared_ptr <Lima::Common::BagOfWords::BoWText >();
   }
   return true;
 }
