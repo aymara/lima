@@ -450,6 +450,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     //LDEBUG << "Recognizer: executing actions: ";
     bool actionSuccess = true;
     if (!currentRule->negative()) {
+      // std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
+      //       << currentRule->getType() << " on vertex " << position << std::endl;
       actionSuccess = currentRule->executeActions(graph, analysis,
                                                   constraintCheckList,
                                                   success,
