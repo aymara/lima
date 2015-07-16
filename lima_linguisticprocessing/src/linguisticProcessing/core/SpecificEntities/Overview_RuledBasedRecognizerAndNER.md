@@ -82,7 +82,7 @@ High level execution process
 - ApplyRecognizer: process, select a search algorithm in the graph (whole graph or sentence by sentence) and call Recognizer::apply on the set of vertices that algorithm has reached
 - Recognizer: apply, call testOnVertex (which try each rule in a set of rule) and get results in RecognizerData
 - Recognizer: testOnVertex, select rules that match trigger with current vertex, call testSetOfRules
-- Recognizer: testSetOfRules, check constraint on trigger, call test of rule
+- Recognizer: testSetOfRules, check constraint on trigger, call test of rule, abort test on forbiddenrules (when a precedent rule output a NOT_PERSON for example) if test result is a success, build a recognizerMatch, call Rule::executeActions
 - Rule: test, find best match in right part and left part (froim current vertex, select vertices in graph )
 - Automaton: getBestMatch, getAllMatches, build a stackOfVertex and call testFromState
 - Automaton::testFromState, call RtransitionUnit::checkConstraints,  call RecognizerMatch::addBackVertex
@@ -232,6 +232,15 @@ Then, for each element in the gazeteer, a simple transition t is created and the
 This way, we compile only once the rule, and we index it multiple time, once for each value of the gazeteer.
 
 Unfortunately, this does not work when the gazeteer contains multiple terms element. (for exemple "1st Lieutenant")
+
+Todo:
+====
+We could fix this problem with some changes:
+We consider a new type of transition of type gazeteer which holds the set of values of the gazeteer.
+This way, we avoid compilation time problem (which is quadratic with the size o the gazeteer when a gazeteer is used as two consecutive element in a rule. (This is the case for example with the rule @firstname::@Firstname?:PersonNamePart{1-2}:PERSON: )
+Such transition could manage multi-term values?
+Which changes must be made in parts of the code which use the trigger?
+
 
 
 More details about compilation of automaton
