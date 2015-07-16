@@ -32,7 +32,7 @@ namespace Lima {
  * the program main function. All programs wishing to use the Lima framework
  * should use it like this:
  * \code{.cpp}
-#include "common/misc/LimaMainTaskRunner.h"
+#include "common/tools/LimaMainTaskRunner.h"
 
 void run(int argc,char** argv)
 {

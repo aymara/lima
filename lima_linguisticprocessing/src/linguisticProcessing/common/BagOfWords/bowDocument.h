@@ -58,7 +58,6 @@ typedef enum {
 LIMA_BOW_EXPORT std::ostream& operator<<(std::ostream& out,const BoWBlocType& blocType);
 LIMA_BOW_EXPORT std::istream& operator>>(std::istream& in,BoWBlocType& blocType);
 
-class BoWDocumentPrivate;
 /**
 * @brief represent a document as a Bag Of Word, with associated document properties.
 */
@@ -88,8 +87,6 @@ friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWDocume
 friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWDocument&);
 
 private:
-
-  BoWDocumentPrivate* m_d;
 };
 
 
