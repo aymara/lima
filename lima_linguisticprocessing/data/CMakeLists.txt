@@ -25,6 +25,9 @@ install(FILES
     test-eng.idiom.xml
     test-eng.sa.xml 
     test-eng.se.xml 
+    test-eng.se-PERSON.xml 
+    test-eng.se-DATE.xml 
+    test-eng.se-LOCATION.xml 
     test-eng.simpleword.xml 
     test-eng.tokenizer.xml
     test-fre.default.xml 
@@ -34,7 +37,8 @@ install(FILES
     test-fre.sa.xml 
     test-fre.se.xml 
     test-fre.se-PERSON.xml 
-    test-eng.se-PERSON.xml 
+    test-fre.se-DATE.xml 
+    test-fre.se-LOCATION.xml 
     test-fre.simpleword.xml
     test-fre.tokenizer.xml 
     #test-fre.se-beforepos.xml 
