@@ -248,8 +248,10 @@
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
   - c_V > CARDINAL_ROMAN (T_CARDINAL_ROMAN)
-  - c_l_eg c_l_m c_l_e | c_l_e c_l_m c_l_e > ORDINAL_ROMAN2 (T_NUMERIC,T_ORDINAL_ROMAN)
-  - c_l_n c_l_d | c_l_e c_l_r > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_eg c_l_m c_l_e > ORDINAL_ROMAN2 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_e c_l_m c_l_e > ORDINAL_ROMAN2 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_e c_l_r > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_eg > ORDINAL_ROMAN (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_5 > ALPHANUMERIC
   - c_dot c_b|c_M > SINGLE_UPPER (T_NOT_ROMAN,T_ALPHA,T_CAPITAL_1ST)
@@ -271,9 +273,8 @@
 (ORDINAL_ROMAN) {
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
-  - c_o > ORDINAL_ROMAN (T_ORDINAL_ROMAN)
   - c_Mm > LOWER_UPPER (T_ALPHA,T_NOT_ROMAN)
-  - c_5 > ALPHANUMERIC
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_b = IGNORE
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
@@ -287,8 +288,10 @@
   - c_comma c_5 > COMMA_NUMBER (T_COMMA_NUMBER)
   - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
   - c_slash c_5 > FRACTION (T_FRACTION)
-  - c_l_eg c_l_m c_l_e | c_l_e c_l_m c_l_e  > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
-  - c_l_n c_l_d | c_l_e c_l_r > ORDINAL_INTEGER1 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_eg c_l_m c_l_e > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_e c_l_m c_l_e  > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_n c_l_d > ORDINAL_INTEGER1 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_e c_l_r > ORDINAL_INTEGER1 (T_NUMERIC,T_ORDINAL_INTEGER)
   - c_l_eg > ORDINAL_INTEGER (T_NUMERIC,T_ORDINAL_INTEGER)
   - c_Mm > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_b = IGNORE
@@ -328,6 +331,9 @@
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_all > START
   - m_eof = END
+}
+(ORDINAL_INTEGER1) {
+  - c_all > ORDINAL_INTEGER
 }
 (ORDINAL_INTEGER) {
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
