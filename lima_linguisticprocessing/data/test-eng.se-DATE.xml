@@ -128,6 +128,7 @@
         <item value="limaserver"/>
       </list>
     </call-parameters>
+    <expl>test date with ordinal as word</expl>
     <test id="eng.se.DATE.4.1" trace=".se.xml"
           comment="type"
           left="XPATH#//entities/entity[pos=12][len=18]/type"
@@ -138,8 +139,108 @@
           left="XPATH#//entities/entity[pos=12][len=18]/string"
           operator="="
           right="fourth March, 2015"/>
+    <test id="eng.se.DATE.4.3" trace=".se.xml"
+          comment="month"
+          left="XPATH#//entities/entity[pos=12][len=18]/components/month"
+          operator="="
+          right="March"/>
+    <test id="eng.se.DATE.4.4" trace=".se.xml"
+          comment="day"
+          left="XPATH#//entities/entity[pos=12][len=18]/components/numday"
+          operator="="
+          right="fourth"/>
+    <test id="eng.se.DATE.4.5" trace=".se.xml"
+          comment="année"
+          left="XPATH#//entities/entity[pos=12][len=18]/components/numyear"
+          operator="="
+          right="2015"/>
+    <test id="eng.se.DATE.4.6" trace=".se.xml"
+          comment="date normalisée"
+          left="XPATH#//entities/entity[pos=12][len=18]/normalization/date"
+          operator="="
+          right="2015-04-04"/>
   </testcase>
   <testcase id="eng.se.DATE.5" type="bloquant">
+    <call-parameters>
+      <param key="text" value="He died on twenty-second March, 2015"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>test date with ordinal as word</expl>
+    <test id="eng.se.DATE.5.1" trace=".se.xml"
+          comment="type"
+          left="XPATH#//entities/entity[pos=12][len=25]/type"
+          operator="="
+          right="DateTime.DATE"/>
+    <test id="eng.se.DATE.5.2" trace=".se.xml"
+          comment="date mois/année"
+          left="XPATH#//entities/entity[pos=12][len=25]/string"
+          operator="="
+          right="twenty-second March, 2015"/>
+    <test id="eng.se.DATE.5.3" trace=".se.xml"
+          comment="month"
+          left="XPATH#//entities/entity[pos=12][len=25]/components/month"
+          operator="="
+          right="March"/>
+    <test id="eng.se.DATE.5.4" trace=".se.xml"
+          comment="day"
+          left="XPATH#//entities/entity[pos=12][len=25]/components/numday"
+          operator="="
+          right="twenty-second"/>
+    <test id="eng.se.DATE.5.5" trace=".se.xml"
+          comment="année"
+          left="XPATH#//entities/entity[pos=12][len=25]/components/numyear"
+          operator="="
+          right="2015"/>
+    <test id="eng.se.DATE.5.6" trace=".se.xml"
+          comment="date normalisée"
+          left="XPATH#//entities/entity[pos=12][len=25]/normalization/date"
+          operator="="
+          right="2015-03-22"/>
+  </testcase>
+  <testcase id="eng.se.DATE.6" type="bloquant">
+    <call-parameters>
+      <param key="text" value="He died on twenty second of March, 2015"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>test date with ordinal as word</expl>
+    <test id="eng.se.DATE.6.1" trace=".se.xml"
+          comment="type"
+          left="XPATH#//entities/entity[pos=12][len=28]/type"
+          operator="="
+          right="DateTime.DATE"/>
+    <test id="eng.se.DATE.6.2" trace=".se.xml"
+          comment="date mois/année"
+          left="XPATH#//entities/entity[pos=12][len=28]/string"
+          operator="="
+          right="twenty second of March, 2015"/>
+    <test id="eng.se.DATE.6.3" trace=".se.xml"
+          comment="month"
+          left="XPATH#//entities/entity[pos=12][len=28]/components/month"
+          operator="="
+          right="March"/>
+    <test id="eng.se.DATE.6.4" trace=".se.xml"
+          comment="day"
+          left="XPATH#//entities/entity[pos=12][len=28]/components/numday"
+          operator="="
+          right="twenty second"/>
+    <test id="eng.se.DATE.6.5" trace=".se.xml"
+          comment="année"
+          left="XPATH#//entities/entity[pos=12][len=28]/components/numyear"
+          operator="="
+          right="2015"/>
+    <test id="eng.se.DATE.6.6" trace=".se.xml"
+          comment="date normalisée"
+          left="XPATH#//entities/entity[pos=12][len=28]/normalization/date"
+          operator="="
+          right="2015-03-22"/>
+  </testcase>
+  <testcase id="eng.se.DATE.7" type="bloquant">
     <call-parameters>
       <param key="text" value="He died on March, 2015"/>
       <param key="language" value="eng"/>
@@ -147,12 +248,12 @@
         <item value="limaserver"/>
       </list>
     </call-parameters>
-    <test id="eng.se.DATE.5.1" trace=".se.xml"
+    <test id="eng.se.DATE.7.1" trace=".se.xml"
           comment="type"
           left="XPATH#//entities/entity[pos=12][len=11]/type"
           operator="="
           right="DateTime.DATE"/>
-    <test id="eng.se.DATE.5.2" trace=".se.xml"
+    <test id="eng.se.DATE.7.2" trace=".se.xml"
           comment="date mois/année"
           left="XPATH#//entities/entity[pos=12][len=11]/string"
           operator="="
