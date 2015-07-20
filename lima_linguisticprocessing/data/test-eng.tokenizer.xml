@@ -224,7 +224,7 @@
     comment="le tokenizer doit donner un token D."
     left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
     operator="="
-    right="t_capital_1st"/>
+    right="t_abbrev"/>
 </testcase>
 <testcase id="eng.tok.16" type="bloquant">
   <call-parameters>
@@ -244,7 +244,7 @@
     comment="le tokenizer doit donner un token D."
     left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
     operator="="
-    right="t_capital_1st"/>
+    right="t_abbrev"/>
 </testcase>
 <testcase id="eng.tok.17" type="pertinent">
   <call-parameters>

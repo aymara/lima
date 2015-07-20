@@ -63,6 +63,7 @@
   - m_eof / END
   - c_b / IGNORE
   - c_Mm c_dot c_Mm c_dot / ACRONYM_2 (T_ACRONYM)
+  - c_M c_dot / ABBREV_1 (T_ALPHA,T_ABBREV)
   - c_V / CARDINAL_ROMAN_FIRST_UPPER (T_NUMERIC,T_CARDINAL_ROMAN)
   - c_M / SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
   - c_m / ALL_LOWER (T_ALPHA,T_SMALL)
@@ -127,6 +128,7 @@
   - c_hyphen c_m > LOWER_1ST_UPPER (T_HYPHEN_WORD)
   - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_dot c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
+  - c_dot c_b > ABBREV (T_ABBREV)
   - c_dot c_b|c_M > SINGLE_UPPER (T_CAPITAL_1ST)
   - c_b = IGNORE
   - c_quote c_S|c_s c_del|m_line > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV,T_POSSESSIVE)
@@ -207,6 +209,13 @@
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_all > START
+}
+(ABBREV_1) {
+  - c_all > ABBREV_2
+}
+(ABBREV_2) {
+  - c_b = IGNORE (T_ALPHA)
+  - c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
 }
 (ACRONYM_1) {
   - c_all > ACRONYM_2
