@@ -534,7 +534,9 @@ operator()(RecognizerMatch& m,
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
   }
   
-  QString dateSpan = QString::number(year);
+  QString dateSpan = "XXXX";
+  if( year != 0 )
+    dateSpan = QString::number(year);
 #ifdef DEBUG_LP
   LDEBUG << "NormalizeDate operator(): year: dateSpan=" << dateSpan;
 #endif
