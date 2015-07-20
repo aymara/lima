@@ -264,12 +264,13 @@ updateCurrentDate(AnalysisContent& analysis,
 unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) const
 {
   SELOGINIT;
-  // try first conversion of type "premier" -> 1
-  unsigned short day =  m_resources->getCardinalFromNumberOrdinal(numdayString);
+  // try to extract number as int from string <number><ordinalSuffix> like 4th, 22nd, 1st or <number> like 17
+  unsigned short day =  m_resources->getValueFromNumberOrdinal(numdayString);
   LDEBUG << "NormalizeDate::getDayFromString: testConversion 1 of " << numdayString << "1 day=" << day;
+  // try first conversion of type "premier" -> 1
   // then try conversion of type "10th" -> 10
   if( day == NormalizeDateTimeResources::no_day ) {
-    day =  m_resources->getDayNumberFromWordOrdinal(numdayString);
+    day =  m_resources->getValueFromWordCardinalOrOrdinal(numdayString);
     LDEBUG << "NormalizeDate::getDayFromString: testConversion 2 of " << numdayString << "1 day=" << day;
   }
   // then try conversion of type "10" -> 10
