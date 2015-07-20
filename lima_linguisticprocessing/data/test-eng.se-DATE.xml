@@ -158,7 +158,7 @@
           comment="date normalisée"
           left="XPATH#//entities/entity[pos=12][len=18]/normalization/date"
           operator="="
-          right="2015-04-04"/>
+          right="2015-03-04"/>
   </testcase>
   <testcase id="eng.se.DATE.5" type="bloquant">
     <call-parameters>
@@ -208,7 +208,7 @@
         <item value="limaserver"/>
       </list>
     </call-parameters>
-    <expl>test date with ordinal as word</expl>
+    <expl>test date with ordinal as 2 word</expl>
     <test id="eng.se.DATE.6.1" trace=".se.xml"
           comment="type"
           left="XPATH#//entities/entity[pos=12][len=28]/type"
@@ -248,6 +248,7 @@
         <item value="limaserver"/>
       </list>
     </call-parameters>
+    <expl>test incomplete date (without day)</expl>
     <test id="eng.se.DATE.7.1" trace=".se.xml"
           comment="type"
           left="XPATH#//entities/entity[pos=12][len=11]/type"
@@ -258,6 +259,56 @@
           left="XPATH#//entities/entity[pos=12][len=11]/string"
           operator="="
           right="March, 2015"/>
+    <test id="eng.se.DATE.8.3" trace=".se.xml"
+          comment="month"
+          left="XPATH#//entities/entity[pos=12][len=11]/components/month"
+          operator="="
+          right="March"/>
+    <test id="eng.se.DATE.7.5" trace=".se.xml"
+          comment="année"
+          left="XPATH#//entities/entity[pos=12][len=11]/components/numyear"
+          operator="="
+          right="2015"/>
+    <test id="eng.se.DATE.7.6" trace=".se.xml"
+          comment="date normalisée"
+          left="XPATH#//entities/entity[pos=12][len=11]/normalization/date_span"
+          operator="="
+          right="2015-03-XX"/>
+  </testcase>
+  <testcase id="eng.se.DATE.8" type="bloquant">
+    <call-parameters>
+      <param key="text" value="He died on 1st July."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>rule for incomplete date (without year) </expl>
+    <test id="eng.se.DATE.8.1" trace=".se.xml"
+          comment="type"
+          left="XPATH#//entities/entity[pos=12][len=8]/type"
+          operator="="
+          right="DateTime.DATE"/>
+    <test id="eng.se.DATE.8.2" trace=".se.xml"
+          comment="date mois/année"
+          left="XPATH#//entities/entity[pos=12][len=8]/string"
+          operator="="
+          right="1st July"/>
+    <test id="eng.se.DATE.8.3" trace=".se.xml"
+          comment="month"
+          left="XPATH#//entities/entity[pos=12][len=8]/components/month"
+          operator="="
+          right="July"/>
+    <test id="eng.se.DATE.8.4" trace=".se.xml"
+          comment="day"
+          left="XPATH#//entities/entity[pos=12][len=8]/components/numday"
+          operator="="
+          right="1st"/>
+    <test id="eng.se.DATE.8.6" trace=".se.xml"
+          comment="date normalisée"
+          left="XPATH#//entities/entity[pos=12][len=8]/normalization/date_span"
+          operator="="
+          right="XXXX-07-01"/>
   </testcase>
   <!--testcase id="eng.se.timex.1" type="bloquant">
     <call-parameters>
