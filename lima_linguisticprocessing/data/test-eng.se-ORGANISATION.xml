@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+  <!--==================== tests ORGANISATION  ====================-->
+  <testcase id="eng.se.org.comp.01" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Bill Gates founded Microsoft at Redmond on 2nd July 1975."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.comp.01.1" trace=".se.xml"
+          comment="organisation connue"
+          left="XPATH#//entities/entity[pos=19]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+    <test id="eng.se.org.comp.01.2" trace=".se.xml"
+          comment="organisation connue"
+          left="XPATH#//entities/entity[pos=1]/string]"
+          operator="="
+          right="Microsoft"/>
+  </testcase>
+  <testcase id="eng.se.org.comp.02" type="bloquant">
+    <call-parameters>
+      <param key="text" value="One year later Steve Jobs founded Apple Inc. at California on 4th July 1976."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.comp.02.1" trace=".se.xml"
+          comment="organisation connue"
+          left="XPATH#//entities/entity[pos=36]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+    <test id="eng.se.org.comp.02.2" trace=".se.xml"
+          comment="organisation connue avec kind"
+          left="XPATH#//entities/entity[pos=1]/components/string]"
+          operator="="
+          right="Apple Inc."/>
+  </testcase>
+  <!--==================== tests ORGANIZATION ====================-->
+  <!--testcase id="eng.se.org.1" type="pertinent">
+    <call-parameters>
+      <param key="text" value="According to the U.S. Environmental Protection Agency, indoor air pollution is one of the top five urgent environmental risks to public health."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.1.1" trace=".se.xml"
+          comment="U.S. Environmental Protection Agency"
+          left="XPATH#//entities/entity[pos=18][len=36]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <!--testcase id="eng.se.org.2" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Neither the American Lung Association nor its Health House Project endorse products."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.2.1" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity[pos=13][len=26]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <!--testcase id="eng.se.org.3" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The Assembly Education Committee is set to hear the bill."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.3.1" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity[pos=5][len=29]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <!--testcase id="eng.se.org.4" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Cally Weise, an eighth-grader at Westborough Middle School in South San Francisco, said she almost fell down stairs at her school because her backpack weighs so much."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.1.1" trace=".se.xml"
+          comment="Westborough Middle School"
+          left="XPATH#//entities/entity[pos=34][len=25]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <!--testcase id="eng.se.org.5" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The California Medical Association supports the bill."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.5.1" trace=".se.xml"
+          comment="California Medical Association"
+          left="XPATH#//entities/entity[pos=5][len=30]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <!--testcase id="eng.se.org.6" type="pertinent">
+    <call-parameters>
+      <param key="text" value="The American Academy of Orthopedic Surgeons says children should not carry more than 15 percent of their body weight."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.6.1" trace=".se.xml"
+          comment="American Academy of Orthopedic Surgeons"
+          left="XPATH#//entities/entity[pos=5][len=39]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <!--testcase id="eng.se.org.7" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Her funeral was Saturday at Greene Funeral Service's South Chapel."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.org.7.1" trace=".se.xml"
+          comment="Greene Funeral Service"
+          left="XPATH#//entities/entity[pos=29][len=22]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase-->
+  <testcase id="eng.se.org.8" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Dr. Chris J. McCarthy, research physiotherapist at Manchester University is the lead author of the report."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.8.1" trace=".se.xml"
+          comment="Manchester University"
+          left="XPATH#//entities/entity[pos=52][len=21]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+  <testcase id="eng.se.org.9" type="bloquant">
+    <call-parameters>
+      <param key="text" value="He had the official seal of approval of the Miami Police Department."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.9.1" trace=".se.xml"
+          comment="Miami Police Department"
+          left="XPATH#//entities/entity[pos=45][len=23]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+  <testcase id="eng.se.org.10" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Informed Families is delighted with the Supreme Court's decision."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.10.1" trace=".se.xml"
+          comment="Supreme Court"
+          left="XPATH#//entities/entity[pos=41][len=13]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+  <testcase id="eng.se.org.11" type="bloquant">
+    <call-parameters>
+      <param key="text" value="They want the Catholic Church to be a part of their recovery."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.11.1" trace=".se.xml"
+          comment="Catholic Church"
+          left="XPATH#//entities/entity[pos=15][len=15]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+  <testcase id="eng.se.org.12" type="bloquant">
+    <call-parameters>
+      <param key="text" value="The Federal Bureau of Investigation has begun investigating the shredding allegations."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.12.1" trace=".se.xml"
+          comment="Federal Bureau of Investigation"
+          left="XPATH#//entities/entity[pos=5][len=31]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
+ 
+</testcases>
