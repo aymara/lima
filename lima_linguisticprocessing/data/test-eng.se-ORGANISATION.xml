@@ -11,12 +11,12 @@
     </call-parameters>
     <test id="eng.se.org.comp.01.1" trace=".se.xml"
           comment="organisation connue"
-          left="XPATH#//entities/entity[pos=19]/type"
+          left="XPATH#//entities/entity[pos=20]/type"
           operator="="
           right="Organization.ORGANIZATION"/>
     <test id="eng.se.org.comp.01.2" trace=".se.xml"
           comment="organisation connue"
-          left="XPATH#//entities/entity[pos=1]/string]"
+          left="XPATH#//entities/entity[pos=20]/string"
           operator="="
           right="Microsoft"/>
   </testcase>
@@ -30,12 +30,12 @@
     </call-parameters>
     <test id="eng.se.org.comp.02.1" trace=".se.xml"
           comment="organisation connue"
-          left="XPATH#//entities/entity[pos=36]/type"
+          left="XPATH#//entities/entity[pos=35]/type"
           operator="="
           right="Organization.ORGANIZATION"/>
     <test id="eng.se.org.comp.02.2" trace=".se.xml"
           comment="organisation connue avec kind"
-          left="XPATH#//entities/entity[pos=1]/components/string]"
+          left="XPATH#//entities/entity[pos=35]/string"
           operator="="
           right="Apple Inc."/>
   </testcase>
