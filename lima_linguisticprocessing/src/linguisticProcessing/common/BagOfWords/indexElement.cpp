@@ -52,14 +52,12 @@ class IndexElementPrivate
                const uint64_t cat=0,
                const uint64_t position=0,
                const uint64_t length=0,
-               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
-               const uint64_t reType=0);
+               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType());
   IndexElementPrivate(const uint64_t id,
                const Lima::Common::BagOfWords::BoWType type,
                const std::vector<uint64_t>& structure,
                const std::vector<uint64_t>& relations,
-               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
-               const uint64_t reType=0);
+               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType());
   IndexElementPrivate(const IndexElementPrivate& iep);
   IndexElementPrivate& operator=(const IndexElementPrivate& iep);
   ~IndexElementPrivate() {}
@@ -73,7 +71,6 @@ class IndexElementPrivate
   uint64_t m_position;
   uint64_t m_length;
   Common::MediaticData::EntityType m_neType;
-  uint64_t m_reType;
   Misc::PositionLengthList m_poslenlist;
   std::vector<uint64_t> m_structure;
   std::vector<uint64_t> m_relations;
@@ -91,7 +88,6 @@ m_category(0),
 m_position(0),
 m_length(0),
 m_neType(),
-m_reType(0),
 m_poslenlist(0),
 m_structure(),
 m_relations()
@@ -106,7 +102,6 @@ m_category(iep.m_category),
 m_position(iep.m_position),
 m_length(iep.m_length),
 m_neType(iep.m_neType),
-m_reType(iep.m_reType),
 m_poslenlist(iep.m_poslenlist),
 m_structure(iep.m_structure),
 m_relations(iep.m_relations)
@@ -120,8 +115,7 @@ IndexElementPrivate::IndexElementPrivate(
              const uint64_t cat,
              const uint64_t position,
              const uint64_t length,
-             const Common::MediaticData::EntityType neType,
-             const uint64_t reType):
+             const Common::MediaticData::EntityType neType):
 m_id(id),
 m_type(type),
 m_word(word),
@@ -129,7 +123,6 @@ m_category(cat),
 m_position(position),
 m_length(length),
 m_neType(neType),
-m_reType(reType),
 m_poslenlist(1, std::make_pair(
       Common::Misc::Position(position),
       Common::Misc::Length(length))),
@@ -143,8 +136,7 @@ IndexElementPrivate::IndexElementPrivate(
              const Lima::Common::BagOfWords::BoWType type,
              const std::vector<uint64_t>& structure,
              const std::vector<uint64_t>& relations,
-             const Common::MediaticData::EntityType neType,
-             const uint64_t reType):
+             const Common::MediaticData::EntityType neType):
 m_id(id),
 m_type(type),
 m_word(),
@@ -152,7 +144,6 @@ m_category(0),
 m_position(0),
 m_length(0),
 m_neType(neType),
-m_reType(reType),
 m_poslenlist(0),
 m_structure(structure),
 m_relations(relations)
@@ -171,7 +162,6 @@ IndexElementPrivate& IndexElementPrivate::operator=(const IndexElementPrivate& i
     m_position  = iep.m_position;
     m_length = iep.m_length;
     m_neType = iep.m_neType;
-    m_reType = iep.m_reType;
     m_poslenlist = iep.m_poslenlist;
     m_structure = iep.m_structure;
     m_relations = iep.m_relations;
@@ -192,9 +182,8 @@ IndexElement::IndexElement(
              const uint64_t cat,
              const uint64_t position,
              const uint64_t length,
-             const Common::MediaticData::EntityType neType,
-             const uint64_t reType):
-    m_d(new IndexElementPrivate(id, type, word, cat, position, length, neType, reType))
+             const Common::MediaticData::EntityType neType):
+    m_d(new IndexElementPrivate(id, type, word, cat, position, length, neType))
 {
 }
 
@@ -203,9 +192,8 @@ IndexElement::IndexElement(
              const Lima::Common::BagOfWords::BoWType type,
              const std::vector<uint64_t>& structure,
              const std::vector<uint64_t>& relations,
-             const Common::MediaticData::EntityType neType,
-             const uint64_t reType):
-    m_d(new IndexElementPrivate(id, type, structure, relations, neType, reType))
+             const Common::MediaticData::EntityType neType):
+    m_d(new IndexElementPrivate(id, type, structure, relations, neType))
 {
 }
 
@@ -355,11 +343,9 @@ bool IndexElement::hasNearlySamePosition(const IndexElement& other) const
   return false;
 }
 
-std::ostream& operator<<(std::ostream& os, const IndexElement& elt) {
-  os << elt.m_d->m_id;
-  if (elt.empty()) {
-    return os;
-  }
+std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
+{
+  os << "[IndexElement" << elt.m_d->m_id << "," << elt.m_d->m_type ;
   if (elt.isSimpleTerm()) {
   os << ":" << Common::Misc::limastring2utf8stdstring(elt.m_d->m_word);
     if (elt.m_d->m_category != 0) {
@@ -387,56 +373,46 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt) {
   if (! elt.m_d->m_neType.isNull()) {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType).toUtf8().constData() << ")";
   }
-  if (elt.m_d->m_reType!=0) {
-    os << "/RE(" << elt.m_d->m_reType << ")";
-  }
+  os << "]";
   return os;
 }
 
 QDebug& operator<<(QDebug& os, const IndexElement& elt) {
-  os << elt.m_d->m_id;
-//   if (elt.empty()) {
-//     return os;
-//   }
-//   if (elt.isSimpleTerm()) {
+  os << "[IndexElement" << elt.m_d->m_id << "," << elt.m_d->m_type;
   os << ":" << elt.m_d->m_word;
-    if (elt.m_d->m_category != 0) {
-      os << "/" << elt.m_d->m_category;
-    }
-    os << "/" << elt.m_d->m_position;
-    os << "," << elt.m_d->m_length;
-//   }
-//   else {
-//     if (elt.m_d->m_structure.empty()) {
-//       os << ":";
-//     }
-    if (!elt.m_d->m_structure.empty()) {
-      uint64_t i=0;
-      os << ":" << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+  if (elt.m_d->m_category != 0)
+  {
+    os << "/" << elt.m_d->m_category;
+  }
+  os << "/" << elt.m_d->m_position;
+  os << "," << elt.m_d->m_length;
+  if (!elt.m_d->m_structure.empty())
+  {
+    uint64_t i=0;
+    os << ":" << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+    i++;
+    while (i<elt.m_d->m_structure.size()) {
+      os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
       i++;
-      while (i<elt.m_d->m_structure.size()) {
-        os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
-        i++;
-      }
     }
-    os << "/";
-    ::operator<<(os,elt.m_d->m_poslenlist);
-//   }
-  if (! elt.m_d->m_neType.isNull()) {
+  }
+  os << "/" << elt.m_d->m_poslenlist;
+  if (elt.isNamedEntity())
+  {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
   }
-  if (elt.m_d->m_reType!=0) {
-    os << "/RE(" << elt.m_d->m_reType << ")";
+  else if (elt.isPredicate())
+  {
+    os << "/P(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
   }
+  os << "]";
   return os;
 }
 
 QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
-  os << elt.m_d->m_id;
-//   if (elt.empty()) {
-//     return os;
-//   }
-  if (elt.isSimpleTerm()) {
+  os << "[IndexElement"  << elt.m_d->m_id << "," << elt.m_d->m_type;
+  if (elt.isSimpleTerm())
+  {
   os << ":" << elt.m_d->m_word;
     if (elt.m_d->m_category != 0) {
       os << "/" << elt.m_d->m_category;
@@ -444,7 +420,8 @@ QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
     os << "/" << elt.m_d->m_position;
     os << "," << elt.m_d->m_length;
   }
-  else {
+  else
+  {
     if (elt.m_d->m_structure.empty()) {
       return os << ":";
     }
@@ -463,9 +440,7 @@ QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
   if (! elt.m_d->m_neType.isNull()) {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
   }
-  if (elt.m_d->m_reType!=0) {
-    os << "/RE(" << elt.m_d->m_reType << ")";
-  }
+  os << "]";
   return os;
 }
 

@@ -65,14 +65,12 @@ public:
                const uint64_t cat=0,
                const uint64_t position=0,
                const uint64_t length=0,
-               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
-               const uint64_t reType=0);
+               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType());
   IndexElement(const uint64_t id,
                const Lima::Common::BagOfWords::BoWType type,
                const std::vector<uint64_t>& structure,
                const std::vector<uint64_t>& relations,
-               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
-               const uint64_t reType=0);
+               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType());
   IndexElement(const IndexElement& ie);
   IndexElement& operator=(const IndexElement&);
   ~IndexElement();

@@ -66,9 +66,8 @@ void BagOfWordsTest2::test_indexElementConstructor1()
   uint64_t position = 0;
   uint64_t length = (uint64_t)word.size();
   EntityType neType = EntityType();
-  uint64_t reType = 0;
 
-  IndexElement el(id,type,word,cat,position,length,neType,reType);
+  IndexElement el(id,type,word,cat,position,length,neType);
   QVERIFY(el.getId() == id);
   QVERIFY(el.getType() == BOW_TOKEN);
   QVERIFY(el.getSimpleTerm() == word);
@@ -98,9 +97,8 @@ void BagOfWordsTest2::test_indexElementConstructor2()
   std::vector<uint64_t> structure;
   std::vector<uint64_t> relations;
   EntityType neType = EntityType();
-  uint64_t reType = 0;
 
-  IndexElement el(id,type,structure,relations,neType,reType);
+  IndexElement el(id,type,structure,relations,neType);
   QVERIFY(el.getId() == id);
   QVERIFY(el.getType() == BOW_TERM);
   QVERIFY(el.getSimpleTerm().isEmpty());
@@ -127,9 +125,8 @@ void BagOfWordsTest2::test_indexElementCopyConstructor()
   uint64_t position = 0;
   uint64_t length = (uint64_t)word.size();
   EntityType neType = EntityType();
-  uint64_t reType = 0;
 
-  IndexElement* el = new IndexElement(id,type,word,cat,position,length,neType,reType);
+  IndexElement* el = new IndexElement(id,type,word,cat,position,length,neType);
   IndexElement el_copy(*el);
   // Test members after copy
   QVERIFY(el->getId() == el_copy.getId());
@@ -175,8 +172,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   uint64_t position = 0;
   uint64_t length = (uint64_t)word.size();
   EntityType neType = EntityType();
-  uint64_t reType = 0;
-  IndexElement* el = new IndexElement(id,type,word,cat,position,length,neType,reType);
+  IndexElement* el = new IndexElement(id,type,word,cat,position,length,neType);
 
   uint64_t id2 = 2;
   BoWType type2 = BOW_TERM;
@@ -185,8 +181,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   uint64_t position2 = 10;
   uint64_t length2 = (uint64_t)word.size();
   EntityType neType2 = EntityType();
-  uint64_t reType2 = 0;
-  IndexElement el2(id2,type2,word2,cat2,position2,length2,neType2,reType2);
+  IndexElement el2(id2,type2,word2,cat2,position2,length2,neType2);
 
   el2 = *el;
 
