@@ -302,7 +302,7 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
         LDEBUG << "Rule::executeActions: check vertex "
               << matchElmt->m_elem.first << " with " << matchElmt->getRuleElemtId();
 #endif
-        if( matchElmt->getRuleElemtId() == ruelElemtId ) {
+        if( (matchElmt->getRuleElemtId()).startsWith(ruelElemtId) ) {
 #ifdef DEBUG_LP
           LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
 #endif
