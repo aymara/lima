@@ -43,6 +43,7 @@
 #include <vector>
 #include <queue>
 #include <map>
+#include <stack>
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -334,6 +335,52 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                         bool stopAtFirstSuccess,
                                         bool onlyOneSuccessPerType,
                                         bool applySameRuleWhileSuccess) const {
+  // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
+  const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
+  std::vector<std::vector<LimaString> > additionalMultiTermList;
+  std::stack<std::stack<LinguisticGraphVertex,vector<LinguisticGraphVertex> >,vector<stack<LinguisticGraphVertex> > > triggerMatches;
+  std::stack<int,std::vector<int> > third;  // empty stack using vector
+  RecognizerMatch triggermatch(&graph);
+  LinguisticGraphVertex right=position;
+  if( gazeteerTrigger != 0 ) {
+    Token* token = get(vertex_token, *(graph.getGraph()), position);
+    const LimaString firstSimpleTerm = token->stringForm();
+    /*
+     * First step is to get multi-term elements whose first term mach the current position
+     * and then build the list of all following terms from this selected multiterm elements
+     * with GazeteerTransition::buildNextTermsList()
+     */
+    gazeteerTrigger->buildNextTermsList( firstSimpleTerm, additionalMultiTermList );
+    //ForwardSearch forward0;
+    /*
+     * Second step is to check these multi-term in graph from current position and select the longuest match
+     */
+
+    bool success = gazeteerTrigger->checkMultiTerms(graph, position,
+                                     begin, end, analysis, additionalMultiTermList,
+                                     triggerMatches );
+    /*
+     * Last step consists in initializing triggermatch with this longuest match
+     */
+    if( triggerMatches.empty() ) {
+      AULOGINIT;
+      LDEBUG << "Recognizer::testSetOfRules: trigger of type gazeteer selected but no match";
+      return 0;
+    }
+    else {
+      std::stack<LinguisticGraphVertex>& vertices = triggerMatches.top();
+      right=vertices.top();
+      while( !vertices.empty() ) {
+        triggermatch.addFrontVertex(vertices.top(),trigger.keep(),"trigger");
+        vertices.pop();
+      }
+    }
+  }
+  else {
+    triggermatch.addBackVertex(position,trigger.keep(),"trigger");
+    right=position;
+  }
+
   RecognizerMatch leftmatch(&graph);
   RecognizerMatch rightmatch(&graph);
 
@@ -350,8 +397,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   // left context is same LinguisticAnalysisStructure::AnalysisGraph as current (current is in fact
   // between the current token and the previous one)
   LinguisticGraphVertex left=position;
-  LinguisticGraphVertex right=position;
-  //LinguisticGraphVertex right=position.forward();
 
 #ifdef DEBUG_LP
   AULOGINIT;
@@ -432,9 +477,17 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     if (success) {
       // build complete match
-
+ 
       match=new RecognizerMatch(leftmatch);
-      match->addBackVertex(position,trigger.keep(), "trigger");
+      // TODO: add node of gazeteerTrigger
+      //match->addBackVertex(position,trigger.keep(), "trigger");
+      /*
+      RecognizerMatch::const_iterator triggerMatchIt = triggermatch.begin();
+      for( ; triggerMatchIt != triggermatch.end(); triggerMatchIt++) {
+        match->addBackVertex(*triggerMatchIt,trigger.keep(), "trigger");
+      }
+      */
+      match->addBack(triggermatch);
       match->addBack(rightmatch);
       // remove elements not kept at begin and end of the expression
       match->removeUnkeptAtExtremity();
@@ -454,8 +507,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     //LDEBUG << "Recognizer: executing actions: ";
     bool actionSuccess = true;
     if (!currentRule->negative()) {
-      // std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
-      //       << currentRule->getType() << " on vertex " << position << std::endl;
       actionSuccess = currentRule->executeActions(graph, analysis,
                                                   constraintCheckList,
                                                   success,
@@ -492,6 +543,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
+      std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
+                << currentRule->getType() << " on vertex " << position << std::endl;
 
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
       if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {

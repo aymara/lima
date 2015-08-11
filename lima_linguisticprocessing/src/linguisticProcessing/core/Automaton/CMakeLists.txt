@@ -39,6 +39,7 @@ SET(lima-lp-automaton_LIB_SRCS
    transitionUnit.cpp
    tstatusTransition.cpp
    wordTransition.cpp
+   gazeteerTransition.cpp
    constraint.cpp
    recognizerMatch.cpp
    deaccentuatedTransition.cpp
@@ -73,5 +74,5 @@ AutomatonExport.h  constraintFunction.h transition.h   rule.h transitionSearchSt
     transitionUnit.h
     automaton.h    lemmaTransition.h numericTransition.h   basicConstraintFunctions.h constraintCheckList.h
     automatonCommon.h transitionSearchStructure.tcc   recognizerMatch.h constraintFunctionManager.h
-    wordTransition.h
+    wordTransition.h gazeteerTransition.h
   DESTINATION include/linguisticProcessing/core/Automaton)

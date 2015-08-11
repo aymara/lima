@@ -47,6 +47,13 @@ Lima::LinguisticProcessing::Automaton::TransitionUnit*
                    MediaId language, const std::string& id,
                    const std::vector<LimaString>& activeEntityGroups);
 
+Lima::LinguisticProcessing::Automaton::TransitionUnit*
+  createGazeteerTransition(const AutomatonString& automatonString,
+                 MediaId language, const std::string& id,
+                 const std::vector<LimaString>& activeEntityGroups,
+                 const std::vector<LimaString>& gazeteerAsVectorOfString,
+                 const bool keepTrigger);
+
 Lima::LinguisticProcessing::Automaton::TransitionUnit* 
   createTransition(const LimaString,
                    MediaId language, const std::string& id,
@@ -54,7 +61,8 @@ Lima::LinguisticProcessing::Automaton::TransitionUnit*
                    const bool keep=true,
                    const bool neg=false,
                    const std::vector<Constraint>& constraints=
-                   std::vector<Constraint>(0));
+                   std::vector<Constraint>(0),
+                   const std::vector<LimaString>& gazeteerAsVectorOfString = std::vector<LimaString>(0) );
 
 Common::MediaticData::EntityType
   resolveEntityName(const LimaString str,

@@ -56,7 +56,8 @@ typedef enum {
   T_AND,
   T_SET,
   T_DEACCENTUATED,
-  T_ENTITY
+  T_ENTITY,
+  T_GAZETEER
 } TypeTransition; // useful for the read/write functions
 
 class LIMA_AUTOMATON_EXPORT TransitionUnit

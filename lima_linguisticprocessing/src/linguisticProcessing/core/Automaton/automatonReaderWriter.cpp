@@ -71,7 +71,7 @@ void writeTypeTransition(std::ofstream& file, const TypeTransition t) {
 }
 
 
-#define RECOGNIZER_VERSION "1.20"
+#define RECOGNIZER_VERSION "1.30"
 #define RECOGNIZER_DEBUG_VERSION ".debug"
 
 //----------------------------------------------------------------------
@@ -396,6 +396,18 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     t=new TStatusTransition(status);
     break;
   }
+  case T_GAZETEER: {
+    // read alias
+    LimaString alias;
+    Misc::readUTF8StringField(file,alias);
+    // read set of words
+    std::vector<LimaString> wordVector;
+    readWordVector(file,wordVector);
+    // read keep
+    int keepVal = Misc::readCodedInt(file);
+    // create transition
+    t=new GazeteerTransition(wordVector, alias, keepVal == 1); 
+    break; }
   case T_AND: {
     uint64_t size=Misc::readCodedInt(file);
     vector<TransitionUnit*> tmp(size);
@@ -663,6 +675,16 @@ writeTransitionUnit(std::ofstream& file,
     LemmaTransition* t=static_cast<LemmaTransition*>(transition);
     writeTword(file,t->lemma(),sp);
     writeTpos(file,t->partOfSpeech());
+    break;
+  }
+  case T_GAZETEER: {
+    GazeteerTransition* t=static_cast<GazeteerTransition*>(transition);
+    Misc::writeUTF8StringField(file,t->alias());
+    writeWordSet(file,t->wordSet());
+    if( t->keep() )
+      Misc::writeCodedInt(file,1); 
+    else
+      Misc::writeCodedInt(file,0); 
     break;
   }
   case T_NUM: {
