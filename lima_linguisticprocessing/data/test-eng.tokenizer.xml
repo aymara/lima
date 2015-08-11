@@ -60,6 +60,21 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
+<testcase id="eng.tok.4.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Mopti is a lovely city."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type première lettre majuscule, reste minuscule, quand la lettre 1ère lettre est un chiffre romain</expl>
+  <test id="eng.tok.4.1.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token Mopti doit être de type t_capital_1st"
+    left="XPATH#//data_structure/vertex/token[position=1]/t_status/t_default"
+    operator="="
+    right="t_capital_1st"/>
+</testcase>
 <testcase id="eng.tok.5" type="bloquant">
   <call-parameters>
       <param key="text" value="The NMPP distributes newsprint. "/>
