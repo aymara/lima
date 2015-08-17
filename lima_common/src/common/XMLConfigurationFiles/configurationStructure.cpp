@@ -152,10 +152,10 @@ GroupConfigurationStructure& ConfigurationStructure::
 getGroupConf(const std::string& moduleName, 
              const std::string& group)
 {
-  XMLCFGLOGINIT;
   iterator itC = find(moduleName);
   if (itC == end())
   {
+    XMLCFGLOGINIT;
     LERROR << "'No such module '" << moduleName.c_str() << "'" ;
     throw NoSuchModule(moduleName);
   }
