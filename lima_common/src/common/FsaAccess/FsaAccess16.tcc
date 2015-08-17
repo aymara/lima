@@ -172,7 +172,9 @@ void FsaAccess16<graphType>::readBody(
     Lima::LimaString epropVal;
     iOHandler->readEdge( iw, source, target );
     std::pair<dicoEdgeType, bool> res = add_edge( source, target, m_graph );
+  #ifdef DEBUG_CD
     assert( res.second );
+#endif
     if( epropVal.size() > 0 ) {
       Lima::LimaString text =  get(vtext_map, source);
       text.append(epropVal);
