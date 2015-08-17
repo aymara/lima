@@ -167,28 +167,30 @@ void CharChart::init(
 // If specified character was not defined,
 // try to use the mapping with Qt Unicode categories and if this fails too,
 // class named unknwn is returned
-const CharClass* CharChart::charClass (LimaChar c) const
+const CharClass* CharChart::charClass (const LimaChar& c) const
 {
     if (c.unicode() >= m_chars.size() || m_chars[c.unicode()] == 0 || m_chars[c.unicode()]->charClass() == 0)
     {
-      TOKENIZERLOGINIT;
       if (c.category() < m_unicodeCategories.size())
       {
         QString unicodeCategory = m_unicodeCategories[c.category()];
         if (m_unicodeCategories2LimaClasses.contains(unicodeCategory))
         {
+#ifdef DEBUG_LP
           TOKENIZERLOGINIT;
           LDEBUG << "CharChart::charClass using unicode category" << unicodeCategory  << "and LIMA class" << m_unicodeCategories2LimaClasses[unicodeCategory] ;
+#endif
           return classNamed(m_unicodeCategories2LimaClasses[unicodeCategory]);
         }
       }
+      TOKENIZERLOGINIT;
       LNOTICE << "CharChart::charClass undefined char: " << c;
       return classNamed(utf8stdstring2limastring("unknwn"));
     }
     return m_chars[c.unicode()]->charClass();
 }
 
-const CharClass* CharChart::charClass (LimaChar c1, LimaChar c2) const
+const CharClass* CharChart::charClass (const LimaChar& c1, const LimaChar& c2) const
 {
   if (m_surrogates.find(c1) == m_surrogates.end())
   {
@@ -213,7 +215,7 @@ const CharClass* CharChart::charClass (LimaChar c1, LimaChar c2) const
 // character. If specified character was not defined,
 // InvalidCharException is raised.
 
-LimaChar CharChart::maj(LimaChar c) const
+LimaChar CharChart::maj(const LimaChar& c) const
 {
     if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
@@ -227,7 +229,7 @@ LimaChar CharChart::maj(LimaChar c) const
 // Gets the lower case corresponding of the specified
 // character. If specified character was not defined,
 // InvalidCharException is raised.
-LimaChar CharChart::min (LimaChar c) const
+LimaChar CharChart::min (const LimaChar& c) const
 {
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
@@ -241,8 +243,10 @@ LimaChar CharChart::min (LimaChar c) const
 // Gets the unmark character corresponding to the specified
 // character. If specified character was not defined,
 // InvalidCharException is raised.
-LimaChar CharChart::unmark (LimaChar c) const {
+LimaChar CharChart::unmark (const LimaChar& c) const {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
+#endif
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
   if (m_chars[c.unicode()] == 0)
@@ -262,17 +266,21 @@ LimaChar CharChart::unmark (LimaChar c) const {
 // character. If specified character was not defined,
 // InvalidCharException is raised.
 // Null string, one, two and more characters string can be returned.
-LimaString CharChart::unmarkByString (LimaChar c) const
+LimaString CharChart::unmarkByString (const LimaChar& c) const
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
 	LDEBUG << "CharChart::unmarkByString" << c;
+#endif
   if (c.unicode() >= m_chars.size())
         throw InvalidCharException();
   if (m_chars[c.unicode()] == 0)
   {
     LimaString result;
     result.push_back(c);
+#ifdef DEBUG_LP
     LDEBUG << "CharChart::unmarkByString" << result;
+#endif
     return result;
   }
   if (!m_chars[c.unicode()]->charClass())
@@ -283,7 +291,9 @@ LimaString CharChart::unmarkByString (LimaChar c) const
     result.push_back(m_chars[c.unicode()]->unmark()->code());
   if (m_chars[c.unicode()]->longUnmark() != 0 && m_chars[c.unicode()]->longUnmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->longUnmark()->code());
+#ifdef DEBUG_LP
   LDEBUG << "CharChart::unmarkByString" << result;
+#endif
   return result;
 }
 
@@ -354,8 +364,10 @@ LimaString CharChart::unmarkWithMapping(const LimaString& str,std::vector<unsign
 /** Converts src to its lowercase equivalent */
 LimaString CharChart::toLower(const LimaString& src) const
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
   LDEBUG << "toLower("<<src<<") = " << src.toLower();
+#endif
   return src.toLower();
 //   LimaString newString;
 //   newString.reserve(src.size());
@@ -379,8 +391,10 @@ LimaString CharChart::toLower(const LimaString& src) const
 
 const CharClass* CharChart::classNamed(const LimaString& name) const
 {
-  TOKENIZERLOGINIT;
+// #ifdef DEBUG_LP
+//   TOKENIZERLOGINIT;
 //   LDEBUG << "Searching class " << limastring2utf8stdstring(name);
+// #endif
   std::vector<CharClass*>::const_iterator itcc, itcc_end;
   itcc = m_classes.begin(); itcc_end = m_classes.end();
   for (; itcc != itcc_end; itcc++)
@@ -392,17 +406,23 @@ const CharClass* CharChart::classNamed(const LimaString& name) const
       return (*itcc);
     }
   }
-  LERROR << "CharChart::classNamed "<<Common::Misc::limastring2utf8stdstring(name)<<" NOT Found ";
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "CharChart::classNamed "<<Common::Misc::limastring2utf8stdstring(name)<<" NOT Found ";
+  }
   return 0;
 }
 
 bool CharChart::loadFromFile(const std::string& fileName)
 {
+#ifdef DEBUG_LP
   TOKENIZERLOADERLOGINIT;
   LDEBUG << "Loading CharChart from " << fileName;
+#endif
   std::ifstream file(fileName.c_str(), std::ifstream::binary);
   if (!file.good())
   {
+    TOKENIZERLOADERLOGINIT;
     LERROR << "Unable to open" << fileName;
     return false;
   }
@@ -435,6 +455,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
       {
         newClass->setSuperClass(classNamed(Common::Misc::utf8stdstring2limastring(ch.parent.get())));
       }
+#ifdef DEBUG_LP
       if (newClass->superClass() != 0)
       {
         LDEBUG << "  Loaded class " << ch.name << " < " << Common::Misc::limastring2utf8stdstring(newClass->superClass()->id());
@@ -443,6 +464,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
       {
         LDEBUG << "  Loaded class " << ch.name << " < NONE";
       }
+#endif
       m_classes.push_back(newClass);
     }
     std::vector<charchart_char>::const_iterator charIt, charItend;
@@ -453,32 +475,39 @@ bool CharChart::loadFromFile(const std::string& fileName)
       Char* newChar = lazyGetChar(ch.code);
       if (newChar == 0)
       {
+        TOKENIZERLOGINIT;
         LERROR << "Error loading char '" << ch.code << "'";
         continue;
       }
       const CharClass* newCharClass = classNamed(Common::Misc::utf8stdstring2limastring(ch.charclass));
       if (newCharClass == 0)
       {
+        TOKENIZERLOGINIT;
         LERROR << "Error loading char '" << ch.code << "' : unknown class '" << ch.charclass << "'";
         continue;
       }
       newChar->setCharClass(newCharClass);
       newChar->setName(Common::Misc::utf8stdstring2limastring(ch.name));
+#ifdef DEBUG_LP
       LDEBUG << "Adding char" << newChar->name();
+#endif
     }
     charIt = charchart.chars.begin(); charItend = charchart.chars.end();
     for (; charIt != charItend; charIt++)
     {
       const charchart_char& ch = *charIt;
       Char* newChar = lazyGetChar(ch.code);
+#ifdef DEBUG_LP
       LDEBUG << "Modifiers for" << newChar->name();
+#endif
 //       const CharClass* newCharClass = classNamed(Common::Misc::utf8stdstring2limastring(ch.charclass));
       std::vector<modifierdef>::const_iterator modIt, modItEnd;
       modIt = ch.modifiers.begin(); modItEnd = ch.modifiers.end();
       for (; modIt != modItEnd; modIt++)
       {
+#ifdef DEBUG_LP
         LDEBUG << "  modifier "<< (*modIt).first <<":" << lazyGetChar((*modIt).second)->name();
-
+#endif
         switch ( (*modIt).first )
         {
           case MIN:
@@ -505,12 +534,13 @@ bool CharChart::loadFromFile(const std::string& fileName)
   }
   else
   {
+    TOKENIZERLOGINIT;
     LERROR << "Error while parsing: " << fileName;
   }
   return true;
 }
 
-Char* CharChart::lazyGetChar(LimaChar code)
+Char* CharChart::lazyGetChar(const LimaChar& code)
 {
   Char* newChar = 0;
 //   if (code <= 0xD800)

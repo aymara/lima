@@ -90,8 +90,10 @@ void Tokenizer::init(
   Manager* manager)
 
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
   LDEBUG << "Tokenizer::init";
+#endif
   m_d->_language=manager->getInitializationParameters().media;
   try
   {
@@ -101,6 +103,7 @@ void Tokenizer::init(
   }
   catch (NoSuchParam& )
   {
+    TOKENIZERLOGINIT;
     LERROR << "no param 'charChart' in Tokenizer group configuration (language="
     << (int) m_d->_language << ")";
     throw InvalidConfiguration();
@@ -115,6 +118,7 @@ void Tokenizer::init(
   }
   catch (NoSuchParam& )
   {
+    TOKENIZERLOGINIT;
     LERROR << "no param 'automatonFile' in Tokenizer group configuration (language="
     << (int) m_d->_language << ")";
     throw InvalidConfiguration();
@@ -140,12 +144,14 @@ void Tokenizer::init(
         case XmlSyntaxException::INV_CLASS_EXC : mess << "INV_CLASS_EXC"; break;
         default: mess << "??";
     }
+    TOKENIZERLOGINIT;
     LERROR << mess.str();
     throw InvalidConfiguration();
   }
   catch (std::exception &exc)
   {
     // @todo remove all causes of InfiniteLoopException
+    TOKENIZERLOGINIT;
     LERROR << exc.what();
     throw InvalidConfiguration();
   }

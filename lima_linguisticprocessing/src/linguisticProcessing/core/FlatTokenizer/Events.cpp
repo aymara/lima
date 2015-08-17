@@ -53,17 +53,21 @@ void Events::addEventNamed(const LimaString& eventName)
     push_back(m_chart->classNamed(eventName));
 }
 
-bool Events::isRecognized(const LimaChar event) const
+bool Events::isRecognized(const Lima::LimaChar& event) const
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
-//   LDEBUG << "Events("<<i<<","<<event<<") ; size=" << size();
+#endif
   for (uint64_t i = 0; i < size(); i++)
   {
+//   LDEBUG << "Events::isRecognized("<<i<<","<<event<<") ; size=" << size();
     const CharClass* eventClass = m_chart->charClass(event);
     while (eventClass != 0)
     {
-      LDEBUG << "| | | test event '"<< limastring2utf8stdstring(eventClass->name())
-          << "' on '" << ((*this)[i]==0?"":limastring2utf8stdstring((*this)[i]->name())) <<"'";
+#ifdef DEBUG_LP 
+      LDEBUG << "| | | test event '"<< eventClass->name()
+          << "' on '" << ((*this)[i]==0?"":(*this)[i]->name()) <<"'";
+#endif
       if ( (*this)[i] == eventClass )
       {
         return true;

@@ -354,8 +354,10 @@ void MediaticDataPrivate::initMedias(
   XMLConfigurationFileParser& configParser,
   const std::deque< std::string >& meds)
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticDataPrivate::initMedias" << meds.size();
+#endif
   //LINFO << "initializes available medias list";
   if (meds.size()==0)
   {
@@ -385,8 +387,10 @@ void MediaticDataPrivate::initMedias(
         try
         {
           MediaId id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",*it).c_str()));
+#ifdef DEBUG_CD
           LINFO << "media '" << (*it).c_str() << "' has id " << id;
           LDEBUG << (void*)this << " initialize string pool";
+#endif
           m_stringsPool.insert(std::make_pair(id, new FsaStringsPool()));
 
           m_mediasIds[*it]=id;
@@ -398,6 +402,7 @@ void MediaticDataPrivate::initMedias(
         }
         catch (NoSuchList& )
         {
+          MDATALOGINIT;
           LERROR << "missing id or definition file for media " << (*it).c_str();
           throw InvalidConfiguration();
         }
@@ -625,40 +630,40 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
       LimaString groupName=Common::Misc::utf8stdstring2limastring((*it).first);
 
       if (groupName=="include") {
-	deque<string> includeList=moduleConf.getListValuesAtKeyOfGroupNamed("includeList","include");
-	string::size_type i;
-	string fileName("");
-	string moduleName("");
-	for (int k=0; k<includeList.size(); k++) {
-	  i=includeList[k].find("/");
-	  if (i==string::npos) {
-	    LERROR << "Cannot include resources " << includeList[k] 
-	    	   << ": must specify file and module name" << LENDL;
-	  continue;
-	  }
-	  fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
-          "/"+string(includeList[k],0,i);
-	 
-	  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig2(fileName);
-	  Common::MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
-	}
-	
+        deque<string> includeList=moduleConf.getListValuesAtKeyOfGroupNamed("includeList","include");
+        string::size_type i;
+        string fileName("");
+        string moduleName("");
+        for (std::size_t k=0; k<includeList.size(); k++) {
+          i=includeList[k].find("/");
+          if (i==string::npos) {
+            LERROR << "Cannot include resources " << includeList[k] 
+                << ": must specify file and module name" << LENDL;
+          continue;
+          }
+          fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
+                "/"+string(includeList[k],0,i);
+        
+          Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig2(fileName);
+          Common::MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
+        }
+        
       } else {  
-	EntityGroupId groupId=addEntityGroup(groupName);
-	LDEBUG << "initEntityTypes: id is " << groupId;
-	
-	GroupConfigurationStructure& groupConf=(*it).second;
-	
-	deque<string>& entityList=groupConf.getListsValueAtKey("entityList");
-	for (deque<string>::const_iterator ent=entityList.begin(),
-	       ent_end=entityList.end(); ent!=ent_end; ent++) {
-	  
-	  LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
-	  LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group "
-		 << groupName;
-	  EntityType type=addEntity(groupId,entityName);
-	  LDEBUG << "initEntityTypes: type is " << type;
-	}
+        EntityGroupId groupId=addEntityGroup(groupName);
+        LDEBUG << "initEntityTypes: id is " << groupId;
+        
+        GroupConfigurationStructure& groupConf=(*it).second;
+        
+        deque<string>& entityList=groupConf.getListsValueAtKey("entityList");
+        for (deque<string>::const_iterator ent=entityList.begin(),
+              ent_end=entityList.end(); ent!=ent_end; ent++) {
+          
+          LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
+          LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group "
+          << groupName;
+          EntityType type=addEntity(groupId,entityName);
+          LDEBUG << "initEntityTypes: type is " << type;
+        }
       }
     }
   }
@@ -759,11 +764,13 @@ EntityGroupId MediaticData::getEntityGroupId(const LimaString& groupName) const
 
 LimaString MediaticData::getEntityName(const EntityType& type) const
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticData::getEntityName("  << type << ")";
   if (logger.loggingLevel()<=QsLogging::TraceLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
   }
+#endif
   if (type.getGroupId()==0) {
     MDATALOGINIT;
     LERROR << "MediaticData::getEntityName invalid entity group id " << type.getGroupId() << " in entity " << type;
@@ -838,37 +845,52 @@ void MediaticData::readEntityTypes(std::istream& file,
                 std::map<EntityGroupId,EntityGroupId>& entityGroupIdMapping,
                 std::map<EntityType,EntityType>& entityTypeMapping)
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticData::readEntityTypes from binary file with its mapping";
+#endif
   uint64_t size=Misc::readCodedInt(file);
   // read group names
-  for (uint64_t i(0); i<size; i++) {
+  for (uint64_t i(0); i<size; i++) 
+  {
     EntityGroupId groupId= static_cast<EntityGroupId>(Misc::readCodedInt(file));
+#ifdef DEBUG_CD
     LDEBUG << "readEntityTypes: read group id " << groupId;
+#endif
     LimaString groupName;
     Misc::readUTF8StringField(file,groupName);
+#ifdef DEBUG_CD
     LDEBUG << "readEntityTypes: read group name " << groupName;
+#endif
     EntityGroupId newGroupId=addEntityGroup(groupName);
     entityGroupIdMapping[groupId]=newGroupId;
+#ifdef DEBUG_CD
     LDEBUG << "readEntityTypes: added group id mapping " << groupId << "->" << newGroupId;
-
+#endif
     // read entities for this group
     uint64_t nbEntities=Misc::readCodedInt(file);
     
     for (uint64_t j(0);j<nbEntities; j++) {
       EntityTypeId typeId = static_cast<EntityTypeId>(Misc::readCodedInt(file));
+#ifdef DEBUG_CD
       LDEBUG << "readEntityTypes: read entity id " << typeId;
+#endif
       LimaString entityName;
       Misc::readUTF8StringField(file,entityName);
+#ifdef DEBUG_CD
       LDEBUG << "readEntityTypes: read entity name " << entityName;
       if (logger.loggingLevel()<=QsLogging::TraceLevel) {
         printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
       }
+#endif
       EntityType oldTypeId(typeId,groupId);
       EntityType newTypeId=addEntity(newGroupId,entityName);
+#ifdef DEBUG_CD
       LDEBUG << "readEntityTypes: added entity type mapping " << oldTypeId << "->" << newTypeId;
       LDEBUG << "before insert " << entityTypeMapping.size();
+#endif
       entityTypeMapping.insert(make_pair(oldTypeId,newTypeId));
+#ifdef DEBUG_CD
       LDEBUG << "after insert " << entityTypeMapping.size();
       if (logger.loggingLevel()<=QsLogging::TraceLevel) {
         LDEBUG << "readEntityTypes: type mapping is";
@@ -880,11 +902,14 @@ void MediaticData::readEntityTypes(std::istream& file,
         }
         LDEBUG << oss.str();
       }
+#endif
     }
   }
+#ifdef DEBUG_CD
   if (logger.loggingLevel()<=QsLogging::TraceLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
   }
+#endif
 }
 
 const FsaStringsPool& MediaticData::stringsPool(MediaId med) const

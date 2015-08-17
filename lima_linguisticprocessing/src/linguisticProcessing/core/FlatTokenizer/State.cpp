@@ -64,8 +64,10 @@ State::~State()
 // Returns true if a transition was founs open
 const State* State::run(Text& text) const
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
   LDEBUG << "--------Entering State " << limastring2utf8stdstring(name());
+#endif
 //   Lima::LimaChar returnedStatus;
 //   Lima::LimaChar innerStatus = 0;
 
@@ -76,10 +78,13 @@ const State* State::run(Text& text) const
     const Transition* transition = (*it);
     if (transition->events().size() == 0)
     {
+#ifdef DEBUG_LP
       LDEBUG << "| Empty transition... continuing.";
+#endif
       continue;
     }
     
+#ifdef DEBUG_LP
     LDEBUG << "| state " << limastring2utf8stdstring(name())
         << " running transition first event="
         << (transition->events()[0]==0?"":limastring2utf8stdstring(transition->events()[0]->id()))
@@ -87,15 +92,20 @@ const State* State::run(Text& text) const
         << (transition->events()[0]==0?"":limastring2utf8stdstring(transition->events()[0]->name()))
         << "'";
     LDEBUG << "|   (text position " << text.position() << " ; char: '" << Common::Misc::limastring2utf8stdstring(LimaString()+text.currentChar()) << "')";
-        const State* toState = transition->run(text);
+#endif
+    const State* toState = transition->run(text);
     if (toState != 0)
     {
+#ifdef DEBUG_LP
           LDEBUG << "| transition from " << Common::Misc::limastring2utf8stdstring(this->name()) << " to " << Common::Misc::limastring2utf8stdstring(transition-> nextStateName()) << " succeeded.";
           LDEBUG << "| text position is now " << text.position() << " ; char: '" << Common::Misc::limastring2utf8stdstring(LimaString()+text.currentChar()) << "'";
+#endif
         return toState;
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "--------All transitions failed: state failed";
+#endif
   return 0;
 }
 

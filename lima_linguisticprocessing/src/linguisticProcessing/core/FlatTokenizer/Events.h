@@ -52,7 +52,7 @@ public:
     
     // Return 1 if supplied event is into the Events class, 0
     // otherwise
-    bool isRecognized(const Lima::LimaChar event) const;
+    bool isRecognized(const Lima::LimaChar& event) const;
 
 private:
   const CharChart* m_chart;

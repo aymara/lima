@@ -73,11 +73,14 @@ void AnalysisContent::setData(
   const std::string& id,
   AnalysisData* data)
 {
+#ifdef DEBUG_CD
   PROCESSUNITFRAMEWORKLOGINIT;
   LDEBUG << "setData " << id.c_str();
+#endif
   map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
   if (it!=m_analysisData.end())
   {
+    PROCESSUNITFRAMEWORKLOGINIT;
     LERROR << "id " << id.c_str() << " already exists, it will be replaced";
     if (it->second != 0) {
       delete it->second;
@@ -89,8 +92,10 @@ void AnalysisContent::setData(
 
 void AnalysisContent::removeData(const std::string& id)
 {
+#ifdef DEBUG_CD
   PROCESSUNITFRAMEWORKLOGINIT;
   LDEBUG << "removeData " << id.c_str();
+#endif
   map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
   if (it!=m_analysisData.end())
   {
@@ -103,8 +108,10 @@ void AnalysisContent::removeData(const std::string& id)
 
 void AnalysisContent::releaseData(const std::string& id)
 {
+#ifdef DEBUG_CD
   PROCESSUNITFRAMEWORKLOGINIT;
   LDEBUG << "AnalysisContent::releaseData " << id.c_str();
+#endif
   map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
   if (it!=m_analysisData.end())
   {

@@ -103,12 +103,15 @@ const State* Automaton::run(Text& text, const State* state) const
     }
     currentState = m_startState;
   }
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
   LDEBUG << "Running Automaton ; currentState is '"
       << ((currentState==0)?"":Common::Misc::limastring2utf8stdstring(currentState->name())) << "'";
+#endif
   const State* result =  currentState->run(text);
   if (result == 0 && text.position() < text.size())
   {
+    TOKENIZERLOGINIT;
     LWARN << "Current state failed: backtracking to start state";
     result = m_startState;
   }
@@ -117,8 +120,10 @@ const State* Automaton::run(Text& text, const State* state) const
 
 void Automaton::loadFromFile(const std::string& fileName)
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
   LDEBUG << "Loading tokenizer automaton from " << fileName;
+#endif
   SpiritTokenizerLoader parser(*this, fileName);
 }
 

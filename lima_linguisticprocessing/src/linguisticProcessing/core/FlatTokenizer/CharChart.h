@@ -61,18 +61,18 @@ public:
   /** Gets the Class of the specified character. If specified character was not
    * defined, try to use the mapping with Qt Unicode categories and if this 
    * fails too, class named unknwn is returned. */
-  const CharClass* charClass(Lima::LimaChar c) const;
-  const CharClass* charClass (LimaChar c1, LimaChar c2) const;
+  const CharClass* charClass(const Lima::LimaChar& c) const;
+  const CharClass* charClass (const LimaChar& c1, const LimaChar& c2) const;
 
   /** Gets the upper case corresponding to the specified
    character. If specified character was not defined,
    InvalidCharException is raised. */
-  Lima::LimaChar maj(Lima::LimaChar c) const;
+  Lima::LimaChar maj(const Lima::LimaChar& c) const;
 
   /** Gets the lower case corresponding to the specified
    character. If specified character was not defined,
    InvalidCharException is raised. */
-  Lima::LimaChar min(Lima::LimaChar c) const;
+  Lima::LimaChar min(const Lima::LimaChar& c) const;
 
   LimaString unmarkWithMapping(const LimaString& str,std::vector<unsigned char>& mapping) const;
   
@@ -82,7 +82,7 @@ public:
    InvalidCharException is raised.
    If unmark replacement is less or more than one character,
    0 is returned. In that case, replacement by string must be called */
-  Lima::LimaChar unmark(Lima::LimaChar c) const;
+  Lima::LimaChar unmark(const Lima::LimaChar& c) const;
 
   LimaString unmark(const LimaString& str) const;
   
@@ -90,7 +90,7 @@ public:
    character. If specified character was not defined,
    InvalidCharException is raised.
    Null string, one, two and more characters string can be returned. */
-  Lima::LimaString unmarkByString (Lima::LimaChar c) const;
+  Lima::LimaString unmarkByString (const Lima::LimaChar& c) const;
 
   /** @brief Converts src to its lowercase equivalent */
   Lima::LimaString toLower(const Lima::LimaString& src) const;
@@ -107,7 +107,7 @@ private:
   
   /// @brief char accessor with lazy initializer.
   /// If the the does not currently exist, it will be created
-  Char* lazyGetChar(LimaChar code);
+  Char* lazyGetChar(const LimaChar& code);
   
   std::vector<CharClass*> m_classes;
   std::vector<Char*> m_chars;

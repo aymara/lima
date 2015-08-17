@@ -108,29 +108,39 @@ Transition::~Transition()
 // for run-time use. Transition does its works
 const State* Transition::run(Text& text) const
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
+#endif
   const CharClass* currentClass = text.currentClass();
   if (currentClass == 0)
   {
+    TOKENIZERLOGINIT;
     LERROR << "Transition::run Null Class for char '"<< limastring2utf8stdstring(LimaString()+text.currentChar()) << "'";
     return 0;
   }
   LimaChar chcl = text.currentChar();
+#ifdef DEBUG_LP
   LDEBUG << "| | looking at transition "<<this<<" with char (" << chcl << " ; " << currentClass->id() << " ; " << currentClass->name() << ")";
+#endif
   if (!_events.isRecognized(chcl))
   {
+#ifdef DEBUG_LP
     LDEBUG << "| | event " << chcl << " not recognized.";
     LDEBUG << "| | transition failed";
+#endif
     return 0;
   }
   else if (!_condition.isFulfilled(text))
   {
+#ifdef DEBUG_LP
     LDEBUG << "| | event " << chcl << " recognized but conditions not fullfilled.";
     LDEBUG << "| | transition failed";
+#endif
     return 0;
   }
+#ifdef DEBUG_LP
   LDEBUG << "| | event " << chcl << " recognized: taking actions length="<<m_defaultKey.length()<<", tokenize: "<<m_tokenize<<", flush: "<<m_flush<<".";
-
+#endif
   if (text.position() == 0)
   {
     applySettings(text);
@@ -141,18 +151,24 @@ const State* Transition::run(Text& text) const
   
   if (m_defaultKey.length() != 0)
   {
+#ifdef DEBUG_LP
     LDEBUG << "Setting token default key to " << limastring2utf8stdstring(m_defaultKey);
+#endif
     text.setDefaultKey(m_defaultKey);
   }
 
   if (m_tokenize)
   {
+#ifdef DEBUG_LP
     LDEBUG << "| | | adding token";
+#endif
     text.token();
   }
   if (m_flush)
   {
+#ifdef DEBUG_LP
     LDEBUG << "| | | flushing";
+#endif
     text.flush();
   }
 
@@ -161,21 +177,27 @@ const State* Transition::run(Text& text) const
     applySettings(text);
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "| |  "<<this<<" transition succeeded (next state is "
       << nextStateName() << ") on "
       << currentClass->name();
+#endif
   text.advance();
   return _toState;
 }
 
 void Transition::applySettings(Text& text) const
 {
+#ifdef DEBUG_LP
   TOKENIZERLOGINIT;
+#endif
   std::vector<Setting>::const_iterator it, it_end;
   it = m_settings.begin(); it_end = m_settings.end();
   for (; it != it_end; it++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "Putting status setting to text: " << Transition::SettingNames[*it];
+#endif
     switch (*it)
     {
       case SET_T_ALPHA : text.setStatus(T_ALPHA); break;
@@ -215,9 +237,11 @@ void Transition::applySettings(Text& text) const
 
 bool Transition::setSetting(const LimaString& s)
 {
-  TOKENIZERLOADERLOGINIT;
   std::string str = limastring2utf8stdstring(s);
+#ifdef DEBUG_LP
+  TOKENIZERLOADERLOGINIT;
   LDEBUG << "    Setting transition status setting to " << str;
+#endif
   if (str == "T_CAPITAL")
   {
     m_settings.push_back(SET_T_CAPITAL);
