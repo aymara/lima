@@ -57,8 +57,10 @@ void SpecificEntitiesMicros::
 init(GroupConfigurationStructure& unitConfiguration,
      Manager* manager)
 {
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "SpecificEntitiesMicros initialization";
+#endif
   MediaId language=manager->getInitializationParameters().language;
   const PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
 
@@ -68,19 +70,23 @@ init(GroupConfigurationStructure& unitConfiguration,
   for (map<string,deque<string> >::const_iterator it=entities.begin(),
          it_end=entities.end(); it!=it_end; it++) {
     LimaString entityName=Common::Misc::utf8stdstring2limastring((*it).first);
+#ifdef DEBUG_LP
     LDEBUG << "Adding categories to entity " << entityName;
+#endif
     try {
       EntityType type=static_cast<const Common::MediaticData::MediaticData&>(MediaticData::single()).getEntityType(entityName);
       for (deque<string>::const_iterator micro=(*it).second.begin(),
              micro_end=(*it).second.end(); micro!=micro_end; micro++) {
+#ifdef DEBUG_LP
         LDEBUG << "Adding " << microManager.getPropertyValue(*micro) << " to EntityType " << type;
+#endif
         m_micros[type].insert(microManager.getPropertyValue(*micro));
       }
     }
     catch (LimaException& e) {
       // just a warning (on LERROR)
       SELOGINIT;
-      LERROR << (*it).first << " is not a defined specific entity";
+      LERROR << entityName << " is not a defined specific entity";
     }
   }
 }

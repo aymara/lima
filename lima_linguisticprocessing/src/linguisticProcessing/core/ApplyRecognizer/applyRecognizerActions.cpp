@@ -73,8 +73,8 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
   
   StringsPoolIndex lemma=(*m_stringsPool)[lemmaString];
   LinguisticCode idiomProperty=recognizedExpression.getLinguisticProperties();
-  LOGINIT("LP::MorphologicAnalysis");
-  LDEBUG << "Idiomatic property=" << idiomProperty;
+//   LOGINIT("LP::MorphologicAnalysis");
+//   LDEBUG << "Idiomatic property=" << idiomProperty;
   
   if (recognizedExpression.getHead() == 0) {
 //     APPRLOGINIT;
@@ -126,7 +126,7 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
   // if none found, keep base one
   if (compatibleProperties.empty()) {
     APPRLOGINIT;
-    LWARN << "head of expression " << lemma << " has no compatible properties";
+    LWARN << "head of expression " << (*m_stringsPool)[lemma] << " has no compatible properties, use"<< idiomProperty;
     compatibleProperties.insert(idiomProperty);
   }
 

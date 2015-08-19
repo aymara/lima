@@ -13,7 +13,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
+    You should have received a copy of the GNU Affero General Public Lice↔nse
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
@@ -31,16 +31,22 @@ AnalysisContent::AnalysisContent() :
 
 AnalysisContent::~AnalysisContent()
 {
+#ifdef DEBUG_CD
   PROCESSUNITFRAMEWORKLOGINIT;
+#endif
   for (map<string,AnalysisData*>::iterator it=m_analysisData.begin();
          it!=m_analysisData.end();
          it++)
   {
+#ifdef DEBUG_CD
     LDEBUG << "delete data " << it->first.c_str();
+#endif
     delete it->second;
     it->second=0;
   }
+#ifdef DEBUG_CD
   LDEBUG << "AnalysisContent::~AnalysisContent all data deleted";
+#endif
 }
 
 AnalysisData* AnalysisContent::getData(
@@ -49,8 +55,10 @@ AnalysisData* AnalysisContent::getData(
   map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
   if (it==m_analysisData.end())
   {
+#ifdef DEBUG_CD
     PROCESSUNITFRAMEWORKLOGINIT;
     LTRACE << "data " << id.c_str() << " doesn't exists, return 0";
+#endif
     return nullptr;
   }
   return it->second;
@@ -62,8 +70,10 @@ const AnalysisData* AnalysisContent::getData(
   map<string,AnalysisData*>::const_iterator it=m_analysisData.find(id);
   if (it==m_analysisData.end())
   {
+#ifdef DEBUG_CD
     PROCESSUNITFRAMEWORKLOGINIT;
     LTRACE << "data " << id.c_str() << " doesn't exists, return 0";
+#endif
     return nullptr;
   }
   return it->second;

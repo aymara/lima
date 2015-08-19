@@ -70,8 +70,10 @@ void CreateIdiomaticAlternative::removeEdges(
     const RecognizerMatch& match,
     AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
    MORPHOLOGINIT;
    LDEBUG << "IdiomaticAlternatives: removing edges";
+#endif
 /*  if (first == last)
   {
     LDEBUG << "  first and last are equal => ignoring";
@@ -146,10 +148,12 @@ void CreateIdiomaticAlternative::removeEdges(
 bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
                                             AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
     MORPHOLOGINIT;
     LDEBUG << "CreateIdiomaticAlternative, match is " << result;
     LDEBUG << "    expression is " << (result.isContiguous()?"":"non") <<
      " contiguous and" << (result.isContextual()?" non":"") << " absolute";
+#endif
   if (result.empty()) return false;
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *(result.getGraph());
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -259,11 +263,13 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
     //create the alternative with this vertex and duplicate of other vertices
     deque<LinguisticGraphVertex> idiomAlternative;
     LinguisticGraphVertex headVertex=result.getHead();
+#ifdef DEBUG_LP
    LDEBUG << "headVertex = " << headVertex;
     if (headVertex!=0) 
     {
       LDEBUG << "=> " << Common::Misc::limastring2utf8stdstring(get(vertex_token,*graph.getGraph(),headVertex)->stringForm());
     }
+#endif
     bool foundHead=false;
     bool keeping = false;
     std::pair< LinguisticGraphVertex, LinguisticGraphVertex > idiomPartBounds;
@@ -278,11 +284,15 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
           RecognizerMatch::const_iterator prevItr = matchItr - 1;
           idiomPartBounds.second = prevItr->getVertex();
           keeping = false;
+#ifdef DEBUG_LP
           LDEBUG << "adding " << idiomPartBounds.first << " -> " << idiomPartBounds.second << " in edgesToRemove";
+#endif
           edgesToRemove.insert(idiomPartBounds);
         }
         // duplicate this vertex
+#ifdef DEBUG_LP
         LDEBUG << "duplication of vertex " << matchItr->getVertex();;
+#endif
         Token* token=get(vertex_token,*graph.getGraph(),matchItr->getVertex());
         MorphoSyntacticData* data = 
           new MorphoSyntacticData(*get(vertex_data,*graph.getGraph(),matchItr->getVertex()));
@@ -312,11 +322,15 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
           idiomPartBounds.first = matchItr->getVertex();
           keeping = true;
         }
+#ifdef DEBUG_LP
          LDEBUG << "kept vertex " << matchItr->getVertex();
+#endif
         if (matchItr->getVertex()==headVertex)
         {
           foundHead=true;
+#ifdef DEBUG_LP
            LDEBUG << "add head vertex " << idiomaticVertex;
+#endif
           idiomAlternative.push_back(idiomaticVertex);
         }
       }
@@ -333,12 +347,16 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
       RecognizerMatch::const_iterator prevItr = matchItr - 1;
       idiomPartBounds.second = prevItr->getVertex();
       keeping = false;
+#ifdef DEBUG_LP
       LDEBUG << "adding " << idiomPartBounds.first << " -> " << idiomPartBounds.second << " in edgesToRemove";
+#endif
       edgesToRemove.insert(idiomPartBounds);
     }
 
     // link alternatives
+#ifdef DEBUG_LP
      LDEBUG << "idiomAlternative has " << idiomAlternative.size() << " vertex";
+#endif
     createBeginAlternative(result.front().getVertex(),
                             idiomAlternative.front(),const_cast<LinguisticGraph&>(*graph.getGraph()));
     {
@@ -350,7 +368,9 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
         LinguisticGraphEdge newEdge;
         bool ok;
         boost::tie(newEdge, ok) = add_edge(lastIdiomVx,*idItr,const_cast<LinguisticGraph&>(*graph.getGraph()));
+#ifdef DEBUG_LP
          LDEBUG << "added new edge in alternatives linking: " << newEdge.m_source << " -> " << newEdge.m_target;
+#endif
         lastIdiomVx=*idItr;
         idItr++;
       }
@@ -361,12 +381,16 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
     // if expression is not contextual, only keep alternative
     if (! result.isContextual())
     {
+#ifdef DEBUG_LP
       LDEBUG << "expression is not contextual, only keep alternative";
+#endif
       std::set< std::pair< LinguisticGraphVertex, LinguisticGraphVertex > >::const_iterator edgesToRemoveIt, edgesToRemoveIt_end;
       edgesToRemoveIt = edgesToRemove.begin(); edgesToRemoveIt_end = edgesToRemove.end();
       for (; edgesToRemoveIt != edgesToRemoveIt_end; edgesToRemoveIt++)
       {
+#ifdef DEBUG_LP
          LDEBUG << "Removing edge " << (*edgesToRemoveIt).first << " -> " << (*edgesToRemoveIt).second;
+#endif
         removeEdges(const_cast<LinguisticGraph&>(*graph.getGraph()),
                    result, analysis);
       }

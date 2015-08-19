@@ -115,8 +115,10 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     // check if it is a type definition
     if (s.indexOf(STRING_DEFINE_ENCODING)==0) {
       m_recognizerEncoding = Misc::limastring2utf8stdstring(s.mid(STRING_DEFINE_ENCODING.size()));
+#ifdef DEBUG_LP
       LDEBUG << "Got encoding definition: '"
              << m_recognizerEncoding << "'";
+#endif
       continue;
     }
     // check if it is a type definition
@@ -132,7 +134,9 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
         LimaString str = s.mid(begin,next-begin);
+#ifdef DEBUG_LP
         LDEBUG << "RecognizerCompiler: use lib " << Common::Misc::limastring2utf8stdstring(str);
+#endif
         
         begin=next+1;
       } while (next != -1);
@@ -147,7 +151,9 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
         LimaString str = s.mid(begin,next-begin);
+#ifdef DEBUG_LP
         LDEBUG << "RecognizerCompiler: use group " << Common::Misc::limastring2utf8stdstring(str);
+#endif
         m_activeEntityGroups.push_back(str);
         begin=next+1;
       } while (next != -1);
@@ -449,8 +455,10 @@ readSubAutomaton(const LimaString& line,
     throwError(oss.str(),line);
   }
 
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "read sub automaton " << sub;
+#endif
 
   sub.buildAutomatonString(gazeteers,subAutomatons);
   subAutomatons.push_back(sub);
@@ -566,9 +574,13 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
 double RecognizerCompiler::currentRuleWeight() {
   // decreasing function of the rule number
   // (first rules are prioritary)
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
   double w=MAX_RULE_WEIGHT/(1+log((double)m_nbRule+1));
+#ifdef DEBUG_LP
   LDEBUG << "weight of rule " << m_nbRule << "=" << w;
+#endif
   return w;
 }
 
@@ -616,7 +628,9 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
                                        vector<Gazeteer>& gazeteers,
                                        const vector<SubAutomaton>& subAutomatons) {
   AUCLOGINIT;
+#ifdef DEBUG_LP
   LDEBUG << "reading gazeteer file: " << filename;
+#endif
   RecognizerCompiler reco(filename);
   while (! reco.endOfFile()) {
     Gazeteer g;
@@ -628,8 +642,10 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
       g.buildAutomatonString(gazeteers,subAutomatons);
       gazeteers.push_back(g);
     }
+#ifdef DEBUG_LP
     else { LDEBUG << "gazeteer is empty: " << g; }
     if (reco.endOfFile()) { LDEBUG << "reached end of file"; }
+#endif
   }
 }
 
@@ -667,9 +683,11 @@ expandGazeteersInRule(LimaString& s,
 void RecognizerCompiler::
 expandSubAutomatonsInRule(LimaString& s,
                           const std::vector<SubAutomaton>& subAutomatons) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "expand rule with sub-automatons";
   LDEBUG << "rule before expansion :" << Common::Misc::limastring2utf8stdstring(s);
+#endif
   int beginSub(findSpecialCharacter(s,CHAR_BEGIN_NAMESUB,0));
   int next(0);
   while (beginSub != -1) {
@@ -695,7 +713,9 @@ expandSubAutomatonsInRule(LimaString& s,
     beginSub = findSpecialCharacter(s,CHAR_BEGIN_NAMESUB,
                                     beginSub+1);
   }
-  LDEBUG << "rule after expansion :" << Common::Misc::limastring2utf8stdstring(s);
+#ifdef DEBUG_LP
+  LDEBUG << "rule after expansion :" << s;
+#endif
 }
 
 bool RecognizerCompiler::

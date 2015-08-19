@@ -81,7 +81,9 @@ m_hasLeftRightConstraint(false),
 m_actions(),
 m_actionsWithOneArgument()
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
   int position = findSpecialCharacter(str,CHAR_SEP_RULE,0);
   // trigger
   initPart(str.left(position),m_trigger,gazeteers,subAutomatons);
@@ -103,8 +105,10 @@ m_actionsWithOneArgument()
   // normalized form (do not keep possible constraints at end of string)
   position=next;
   next = findSpecialCharacter(str,CHAR_BEGIN_CONSTRAINT,position+1);
+#ifdef DEBUG_LP
   LDEBUG << "str='" << str
     <<"' position='"<<position<<"' next='"<<next<<"'";
+#endif
   if (next == -1) {
     next = findSpecialCharacter(str,CHAR_BEGIN_ACTION,position+1);
   }
@@ -114,7 +118,9 @@ m_actionsWithOneArgument()
   else {
     m_norm=str.mid(position+1,next-position-1);
   }
+#ifdef DEBUG_LP
   LDEBUG << "norm=" << Common::Misc::limastring2utf8stdstring(m_norm);
+#endif
 
   // set some identifier for each element of the rule
   identifyTransition();
@@ -128,8 +134,10 @@ m_actionsWithOneArgument()
   m_left.removeUnitSequences();
   m_right.removeUnitSequences();
 
+#ifdef DEBUG_LP
   LDEBUG << "left=" << Common::Misc::limastring2utf8stdstring(m_left.getStringDebug());
   LDEBUG << "right=" << Common::Misc::limastring2utf8stdstring(m_right.getStringDebug());
+#endif
 
 //   LDEBUG << "RuleString:init:rule=" << getString() << endl;
 }
@@ -234,7 +242,9 @@ treatConstraints(const LimaString& s,
                  MediaId language,
                  const std::vector<SubAutomaton>& subAutomatons)
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
   bool isAction(false);
 
   int currentConstraint=findNextConstraint(s,0,isAction);
@@ -259,13 +269,17 @@ treatConstraints(const LimaString& s,
     // treats the constraint
     addConstraint(constraint,language,subAutomatons,isAction);
 
+#ifdef DEBUG_LP
     LDEBUG << "After adding constraint";
+#endif
     // to the next constraint
     currentConstraint=nextConstraint;
     isAction=nextIsAction;
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "Before propagate";
+#endif
   // propagate the constraints to the units
   m_left.propagateConstraints();
   m_right.propagateConstraints();
@@ -276,8 +290,10 @@ treatConstraints(const LimaString& s,
  * (not an error, additions could have been made to an old action) ???
  */
 void RuleString::addAction(const Constraint& a, const LimaString& argument) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "adding action indexed with" << argument;
+#endif
 
   m_actionsWithOneArgument.push_back(std::pair<LimaString,Constraint>(argument,a));
 }
@@ -290,8 +306,10 @@ void RuleString::addAction(const Constraint& a, const LimaString& argument) {
 bool RuleString::addConstraint(const PartOfRule part,
                                const SubPartIndex& index,
                                Constraint& c) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "adding constraint in " << part << ":" << index;
+#endif
 
   switch (part) {
   case TRIGGER: {
@@ -351,6 +369,7 @@ addConstraint(const LimaString& constraint,
               MediaId language,
               const std::vector<SubAutomaton>& subAutomatons,
               const bool isAction) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   if (isAction) {
     LDEBUG << "adding action " << constraint;
@@ -358,6 +377,7 @@ addConstraint(const LimaString& constraint,
   else {
     LDEBUG << "adding constraint " << constraint;
   }
+#endif
 
   bool negative(false);
   bool actionIfSuccess(false);
@@ -369,7 +389,9 @@ addConstraint(const LimaString& constraint,
                         constraintName,
                         negative,
                         actionIfSuccess);
+#ifdef DEBUG_LP
   LDEBUG << "RuleString::addConstraint constraintName: " << constraintName << "; arguments: " << arguments;
+#endif
     
   if (! arguments.isEmpty()) {
     readConstraintComplement(arguments,
@@ -380,6 +402,7 @@ addConstraint(const LimaString& constraint,
   // (necessary for the constraintCheckList, that is not used for actions)
   if (isAction) {
     if (! arguments.isEmpty()) {
+      AUCLOGINIT;
       LWARN << "Actions with arguments...";
       LWARN << "Hypothesis is only 1 argument...";
       // read (first) argument
@@ -396,7 +419,9 @@ addConstraint(const LimaString& constraint,
       }
       Constraint a(Constraint::noindex,constraintName,executeAction,language,complement);
       addAction(a);
+#ifdef DEBUG_LP
       LDEBUG << "RuleString::addConstraint returns";
+#endif
     }
     return;
   }
@@ -447,7 +472,9 @@ addConstraint(const LimaString& constraint,
                         reverseArguments);
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "RuleString:Rule=" << getString();
+#endif
 }
 
 // reorder arguments relatively to the order in which they will be
@@ -515,8 +542,10 @@ addUnaryAction(const std::string& constraintName,
     addConstraint(part,index,c);
     */
     // ??? synthesis
+#ifdef DEBUG_LP
     AUCLOGINIT;
     LDEBUG << "RuleString::addUnaryAction " << constraintName << "," << complement << "," << argument;
+#endif
     
     ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
     if (! actionIfSuccess) {
@@ -581,13 +610,16 @@ addBinaryConstraint(const std::string& constraintName,
                     const bool reverseArguments)
 {
   LIMA_UNUSED(actionIfSuccess);
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "RuleString::addBinaryConstraint " << constraintName << " " << Common::Misc::limastring2utf8stdstring(complement)
   << " " << partFirstArg << " " << indexFirstArg << " " << partSecondArg << " " << indexSecondArg
   << " neg: " << negative << " isAction: " << isAction << " reverseArguments: " << reverseArguments;
+#endif
   if (isAction) {
     // binary actions are not supported
-    LERROR << "addBinaryConstraint: Actions with arguments are not yet supported";
+   AUCLOGINIT;
+   LERROR << "addBinaryConstraint: Actions with arguments are not yet supported";
     throw ConstraintSyntaxException("Actions with arguments are not yet supported");
 
     /*
@@ -635,18 +667,26 @@ addBinaryConstraint(const std::string& constraintName,
         compareAction=COMPARE_STACK_REVERSE;
       }
 
+#ifdef DEBUG_LP
       LDEBUG << "testing exists constraint";
+#endif
       if (existsConstraint(partFirstArg,indexFirstArg,constraintName,
                            storeAction,constraintIndex)) {
+#ifdef DEBUG_LP
         LDEBUG << "=> true: constraint " << constraintIndex;
+#endif
         addFirstConstraint=false;
         incrementConstraint=false;
       }
+#ifdef DEBUG_LP
       LDEBUG << "testing exists second constraint";
+#endif
       int constraintIndex2(0);
       if (existsConstraint(partSecondArg,indexSecondArg,constraintName,
                            compareAction,constraintIndex2)) {
+#ifdef DEBUG_LP
         LDEBUG << "=> true: constraint " << constraintIndex;
+#endif
         addSecondConstraint=false;
         incrementConstraint=false;
         constraintIndex=constraintIndex2;
@@ -655,24 +695,30 @@ addBinaryConstraint(const std::string& constraintName,
     if (addFirstConstraint) {
       Constraint cfirst(constraintIndex,constraintName,
                         storeAction,language,complement);
+#ifdef DEBUG_LP
       LDEBUG << "addConstraint(constraintIndex:" << constraintIndex
              << "constraintName:" << constraintName
              << "storeAction:" << storeAction << ")";
+#endif
       addConstraint(partFirstArg,indexFirstArg,cfirst);
     }
     if (addSecondConstraint) {
       Constraint csecond(constraintIndex,constraintName,
                          compareAction,language,complement,negative);
+#ifdef DEBUG_LP
       LDEBUG << "addConstraint(constraintIndex:" << constraintIndex
              << "constraintName:" << constraintName
              << "compareAction:" << compareAction << ")";
+#endif
       addConstraint(partSecondArg,indexSecondArg,csecond);
     }
     if (incrementConstraint) {
       m_nbConstraints++;
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "====== END RuleString::addBinaryConstraint ";
+#endif
 }
 
 bool RuleString::
@@ -848,9 +894,11 @@ readActionArgument(const LimaString& arguments,
   }
   else
   {
+#ifdef DEBUG_LP
     AUCLOGINIT;
     LDEBUG << "readActionArgument: [" << argument
           << "/" << nextArgument << "]";
+#endif
   }
   return nextArgument;
 }

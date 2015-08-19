@@ -79,7 +79,9 @@ void SentenceBoundariesFinder::init(
     for (deque<string>::const_iterator it=boundariesRestrictions.begin(),it_end=boundariesRestrictions.end();
     it!=it_end; it++) 
     {
+#ifdef DEBUG_LP
       LDEBUG << "init(): add filter for value " << *it;
+#endif
       m_boundaryValues.insert(Common::Misc::utf8stdstring2limastring(*it));
     }
   }
@@ -98,7 +100,9 @@ void SentenceBoundariesFinder::init(
         LERROR << "init(): cannot find linguistic code for micro " << *it;
       }
       else {
+#ifdef DEBUG_LP
         LDEBUG << "init(): add filter for micro " << micro;
+#endif
         m_boundaryMicros.push_back(micro);
       }
     }
@@ -126,7 +130,9 @@ LimaStatusCode SentenceBoundariesFinder::process(
 
   LinguisticGraphVertex lastVx=anagraph->lastVertex();
   LinguisticGraphVertex beginSentence=anagraph->firstVertex();
+#ifdef DEBUG_LP
   LDEBUG << "found beginSentence at " << beginSentence;
+#endif
 
   SegmentationData* sb=new SegmentationData(m_graph);
   analysis.setData("SentenceBoundaries",sb);
@@ -135,7 +141,9 @@ LimaStatusCode SentenceBoundariesFinder::process(
     while (beginSentence!=lastVx)
     {
       LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
+#ifdef DEBUG_LP
       LDEBUG << "found endSentence at " << endSentence;
+#endif
       sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
       beginSentence=endSentence;
     }
@@ -147,6 +155,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
     while (endSentence!=lastVx)
     {
       Token* t=get(vertex_token,*(anagraph->getGraph()),endSentence);
+#ifdef DEBUG_LP
       if (t!=0) {
         LDEBUG << "found endSentence at " << endSentence  << "(" 
                << Common::Misc::limastring2utf8stdstring(t->stringForm()) << ")";
@@ -154,12 +163,15 @@ LimaStatusCode SentenceBoundariesFinder::process(
       else {
         LDEBUG << "found endSentence at " << endSentence;
       }
+#endif
       if (t==0 || m_boundaryValues.find(t->stringForm())!=m_boundaryValues.end()) {
         sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
         beginSentence=endSentence;
       }
       else {
+#ifdef DEBUG_LP
         LDEBUG << " -> not kept (not in restricted values)";
+#endif
       }
       endSentence=anagraph->nextMainPathVertex(endSentence,*m_microAccessor,m_boundaryMicros,lastVx);
     }

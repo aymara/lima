@@ -157,10 +157,14 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
       LDEBUG << "in segment " << m_segmentType << " [" << (*it).getPosBegin() << "," << (*it).getLength() << "]";
       // get entities in this segment
       getEntitiesFromSegment(entities,graph,(*it).getFirstVertex(),(*it).getLastVertex(),annotationData);
+#ifdef DEBUG_LP
       LDEBUG << "found " << entities.size() << " entities";
+#endif
     }
     else {
+#ifdef DEBUG_LP
       LDEBUG << "ignored segment " << (*it).getType();
+#endif
     }
   }
 
@@ -168,7 +172,9 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
   for (map<Common::MediaticData::EntityType,vector<Entity> >::iterator it=entities.begin(),
     it_end=entities.end();it!=it_end;it++) {
     if ((*it).second.size()!=0) {
-      LDEBUG << "set main for entity of type " << (*it).first << " at pos " << (*it).second[0].getPosition();
+#ifdef DEBUG_LP
+     LDEBUG << "set main for entity of type " << (*it).first << " at pos " << (*it).second[0].getPosition();
+#endif
       (*it).second[0].setMain(true);
     }
   }

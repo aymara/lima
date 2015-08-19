@@ -137,8 +137,10 @@ getReferenceDate(const AnalysisContent& analysis,
   const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
 
   date=metadata->getDate(m_dateRefName);
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "m_dateRefName =" << m_dateRefName <<" , date = " << date.toString();
+#endif
   if (!date.isValid()) {
     //try backoff on document date
     SELOGINIT;
@@ -288,7 +290,6 @@ operator()(RecognizerMatch& m,
   // assume all information for normalization is in recognized 
   // expression: do not use external information
 
-  SELOGINIT;
   
   unsigned short day(0);
   if (m.features().find("numday") != m.features().end()) {
@@ -336,8 +337,9 @@ operator()(RecognizerMatch& m,
         unsigned short monthNum=m_resources->getMonthNumber(monthString);
         if (monthNum==NormalizeDateTimeResources::no_month) {
           // failed to recognize month => no normalization
-          LDEBUG << "NormalizeDate: '" << monthString << "' not recognized as month";
-          m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
+          SELOGINIT;
+          LWARN << "NormalizeDate: '" << monthString << "' not recognized as month";
+          m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
         }
         else {
           if (month!=0 && m_isInterval) {
@@ -429,7 +431,8 @@ operator()(RecognizerMatch& m,
   try { // catch date conversion exceptions
     if (day==0 && month==0 && year==0) {
       //const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
-      LDEBUG << "NormalizeDate: no day, month or year identified in " 
+      SELOGINIT;
+      LWARN << "NormalizeDate: no day, month or year identified in " 
              << Common::Misc::limastring2utf8stdstring(m.getString())
             ;
       m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
@@ -474,7 +477,8 @@ operator()(RecognizerMatch& m,
           }
           else {
             // day and year => should not happen: failed to normalize: set only string
-            LDEBUG << "NormalizeDate: only day and year in " 
+            SELOGINIT;
+            LWARN << "NormalizeDate: only day and year in " 
                    << Common::Misc::limastring2utf8stdstring(m.getString())
                   ;
             m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
@@ -591,10 +595,11 @@ operator()(RecognizerMatch& m,
 
   if (m_resources == 0) {
     // no resources: cannot normalize date
+#ifdef DEBUG_LP
     SELOGINIT;
-    LDEBUG << "NormalizeRelativeDate: no resources" 
-          ;
-    m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
+    LDEBUG << "NormalizeRelativeDate: no resources" ;
+#endif
+    m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
 
@@ -746,7 +751,6 @@ m_referenceData()
 QTime NormalizeTime::
 getTimeDuration(const RecognizerMatch& m) const
 {
-  SELOGINIT;
   QTime timeDuration;
   
   unsigned short hou(0),min(0),sec(0);
@@ -786,6 +790,7 @@ getTimeDuration(const RecognizerMatch& m) const
         timeDuration=QTime::fromString(QString::fromUtf8(timeString.c_str()));
       }
       catch (std::exception& e) {
+        SELOGINIT;
         LWARN << "Error getting time duration from string '"
                << timeString << "'";
         return timeDuration;

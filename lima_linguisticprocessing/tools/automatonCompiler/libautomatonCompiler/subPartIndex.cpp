@@ -68,8 +68,10 @@ m_subPartIndex(0) {
 
 void SubPartIndex::init(const LimaString& str,
                         const std::vector<SubAutomaton>& subAutomatons) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
-  LDEBUG << "initialization SubPartIndex from " << Common::Misc::limastring2utf8stdstring(str);
+  LDEBUG << "initialization SubPartIndex from " << str;
+#endif
 
   m_partIndex=make_pair(SUB_NONE,0);
   m_subPartIndex=0;
@@ -125,7 +127,9 @@ void SubPartIndex::init(const LimaString& str,
     m_subPartIndex=new SubPartIndex(subIndex,subAutomatons);
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "=>" << *this;
+#endif
 }
 
 
@@ -161,9 +165,11 @@ SubPartIndex& SubPartIndex::operator = (const SubPartIndex& i) {
 //***********************************************************************
 bool SubPartIndex::isBefore(const SubPartIndex& i) {
 
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "comparing part indexes "
          << *this << " and " << i;
+#endif
 
   bool isBefore(false);
   bool isEqual(false);

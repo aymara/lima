@@ -167,8 +167,10 @@ AnnotationGraphVertex AnnotationData::createAnnotationVertex()
 
 AnnotationGraphEdge AnnotationData::createAnnotationEdge(AnnotationGraphVertex s, AnnotationGraphVertex t)
 {
+#ifdef DEBUG_LP
   AGLOGINIT;
   LDEBUG << "Creating annotation edge " << s << " -> " << t;
+#endif
   return add_edge(s, t, m_d->m_graph).first;
 }
 
@@ -326,8 +328,10 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, uint64_t 
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
   m_d->m_mapVertexAGIannotPropertyMap[v][annot] = value;
+#ifdef DEBUG_LP
   AGLOGINIT;
   LDEBUG << "Annotating " << v << " ("<<m_d->m_pool[StringsPoolIndex(annot)]<<") : " << value;
+#endif
 }
 
 void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const LimaString& value)
@@ -337,8 +341,10 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const Lim
     m_d->m_dumpFunctions[annot] = new DummyDumpFunction();
   }
   m_d->m_mapVertexAGSannotPropertyMap[v][annot] = value;
+#ifdef DEBUG_LP
   AGLOGINIT;
   LDEBUG << "Annotating " << v << " ("<<m_d->m_pool[StringsPoolIndex(annot)]<<") : " << value;
+#endif
 }
 
 void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const GenericAnnotation& value)
@@ -356,8 +362,10 @@ void AnnotationData::annotate(AnnotationGraphVertex v, uint64_t annot, const Gen
   }
   std::map< uint64_t, GenericAnnotation > m = m_d->m_mapVertexAGGannotPropertyMap[v];
   m_d->m_mapVertexAGGannotPropertyMap[v][annot] = value;
+#ifdef DEBUG_LP
   AGLOGINIT;
   LDEBUG << "Annotating " << v << " ("<< m_d->m_pool[StringsPoolIndex(annot)] <<") : GA";
+#endif
 }
 
 
@@ -367,8 +375,10 @@ void AnnotationData::annotate(AnnotationGraphVertex vs, AnnotationGraphVertex vt
   boost::tie(e, ok) = edge(vs,vt,m_d->m_graph);
   if (!ok) e = createAnnotationEdge(vs, vt);
   annotate(e, annot, value);
+#ifdef DEBUG_LP
   AGLOGINIT;
   LDEBUG << "Annotating " << vs << " -> " << vt << " ("<<m_d->m_pool[StringsPoolIndex(annot)]<<") : " << value;
+#endif
 }
 
 void AnnotationData::annotate(AnnotationGraphVertex vs, AnnotationGraphVertex vt, uint64_t annot, const LimaString& value)
@@ -693,8 +703,10 @@ const std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, Annotation
 void AnnotationData::addMatching(const std::string& first, AnnotationGraphVertex firstVx,
                                  const std::string& second, AnnotationGraphVertex secondVx)
 {
+#ifdef DEBUG_LP
   AGLOGINIT;
   LDEBUG << "AnnotationData::addMatching " << first << firstVx << second << secondVx;
+#endif
   
   addMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(first + second) ], firstVx, secondVx);
   addMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(second + first) ], secondVx, firstVx);

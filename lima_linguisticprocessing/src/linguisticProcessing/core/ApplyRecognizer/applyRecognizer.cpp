@@ -202,6 +202,7 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
     LDEBUG << "ApplyRecognizer: No recognizer to apply";
     return MISSING_DATA;
   }
+#ifdef DEBUG_LP
   APPRLOGINIT;
   LINFO << "start process";
   LDEBUG << "  parameters are:";
@@ -214,6 +215,7 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   LDEBUG << "    - onlyOneSuccessPerType       :" << m_onlyOneSuccessPerType;
   LDEBUG << "    - graphId                     :" << m_graphId;
   LDEBUG << "    - dataForStorage              :" << m_dataForStorage;
+#endif
   
   LimaStatusCode returnCode(SUCCESS_ID);
 

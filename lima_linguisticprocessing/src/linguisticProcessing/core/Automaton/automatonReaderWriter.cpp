@@ -751,9 +751,11 @@ writeTransitionUnit(std::ofstream& file,
   file.write((char *) &negative, sizeof(bool));
   file.write((char *) &head, sizeof(bool));
   int len = id.size();
-  LOGINIT("Automaton::Compiler");
   std::string(id.c_str(),len);
+#ifdef DEBUG_LP
+  LOGINIT("Automaton::Compiler");
   LDEBUG << "Transition Writer: write id = " << id;
+#endif
   file.write((char *) &len, sizeof(len));
   file.write((char *) id.c_str(), len);
   uint64_t n=transition->numberOfConstraints();

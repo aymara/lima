@@ -210,9 +210,10 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                         const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
                         std::vector<const TargetType*>& matchingTransitions) const
 {
-
+#ifdef DEBUG_LP
    AULOGINIT;
    LDEBUG << "findMatchingTransitions from vertex " << vertex;
+#endif
   matchingTransitions.clear();
 
   if (! m_wordMap.empty()) {

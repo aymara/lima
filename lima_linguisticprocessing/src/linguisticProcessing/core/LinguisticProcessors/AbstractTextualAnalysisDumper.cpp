@@ -98,17 +98,21 @@ DumperStream* AbstractTextualAnalysisDumper::
 initialize(AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
+#ifdef DEBUG_LP
   LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream";
+#endif
   
   // if handler is defined, find handler
   if (! m_handlerName.empty()) {
+#ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with handler "<< m_handlerName;
+#endif
     AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handlerName));
     if (handler==0)
     {
       DUMPERLOGINIT;
-      LWARN << "handler " << handler << " has not been given to the core client";
+      LWARN << "handler " << m_handlerName << " has not been given to the core client";
     }
     else {
       return new DumperStream(handler);
@@ -116,7 +120,9 @@ initialize(AnalysisContent& analysis) const
   }
 
   if (! m_outputFile.empty()) {
+#ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;
+#endif
     return new DumperStream(m_outputFile,m_append);
   }
 
@@ -128,8 +134,10 @@ initialize(AnalysisContent& analysis) const
     }
     else {
       std::string sourceFile(metadata->getMetaData("FileName"));
+#ifdef DEBUG_LP
       LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output suffix "
              << m_outputSuffix << " on file " << sourceFile;
+#endif
       string outputFile=sourceFile + m_outputSuffix;
       return new DumperStream(outputFile,m_append);
     }

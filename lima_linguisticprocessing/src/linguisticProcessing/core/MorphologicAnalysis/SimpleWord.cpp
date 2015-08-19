@@ -160,7 +160,9 @@ LimaStatusCode SimpleWord::process(
     Token* currentToken=tokenMap[*it];
     if (currentToken!=0)
     {
+#ifdef DEBUG_LP
       LDEBUG << "SimpleWord for token" <<  currentToken->stringForm();
+#endif
       // Init handlers
       MorphoSyntacticData* msd=dataMap[*it];
       AbstractDictionaryEntryHandler* lingInfoHandler=new MorphoSyntacticDataHandler(*msd,SIMPLE_WORD);
@@ -229,7 +231,9 @@ LimaStatusCode SimpleWord::process(
     static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
   }
   
-  LINFO << "ending process SimpleWord";
+#ifdef DEBUG_LP
+  LDEBUG << "ending process SimpleWord";
+#endif
   return SUCCESS_ID;
 }
 

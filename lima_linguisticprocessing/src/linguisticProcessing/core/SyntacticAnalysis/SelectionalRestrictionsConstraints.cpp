@@ -103,8 +103,10 @@ bool StoreForDisambiguation::operator()(
     //     LDEBUG << "SecondUngovernedBy: false";
     return false;
   }
+#ifdef DEBUG_LP
   SAPLOGINIT;
   LDEBUG << "StoreForDisambiguation " << v1 << ", " << v2 << ", " << m_relation;
+#endif
   syntacticData->storeRelationForSelectionalConstraint(v1, v2, m_relation);
   return true;
 }
@@ -143,8 +145,10 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
 /*
   Critical function : comment logging messages
 */
+#ifdef DEBUG_LP
   SAPLOGINIT;
   LDEBUG << "DisambiguateWith " << v1 << ", " << v2;
+#endif
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   SyntacticData::Relation oldRelation = syntacticData->relationStoredForSelectionalConstraint();
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
@@ -163,6 +167,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
+    SAPLOGINIT;
     LERROR << "no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
@@ -190,9 +195,11 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   double preference = 0;
   const PropertyAccessor& macroAccessor = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO");
   
+#ifdef DEBUG_LP
   LDEBUG << "DisambiguateWith " << Common::Misc::limastring2utf8stdstring(sp[*(v2Data->allLemma().begin())])
       << ", " << Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())])
       << ", " << Common::Misc::limastring2utf8stdstring(sp[*(v1Data->allLemma().begin())]);
+#endif
   std::string oldRelationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(oldRelation.get<2>());
   double oldProba = m_preferences->dependencyProbability(Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())]),
                                                          *(ov2Data->allValues(macroAccessor).begin()),
@@ -209,7 +216,9 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
     && (Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())]) == "bonbon")
     && (Common::Misc::limastring2utf8stdstring(sp[*(v1Data->allLemma().begin())]) == "fraise")
     ) )*/
+#ifdef DEBUG_LP
   LDEBUG << "Old proba=" << oldProba << "; new proba=" << newProba;
+#endif
   preference = newProba - oldProba;
   
   // if old one: don't do anything

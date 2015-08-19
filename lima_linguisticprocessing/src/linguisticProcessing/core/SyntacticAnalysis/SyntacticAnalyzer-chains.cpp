@@ -218,8 +218,10 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 //     LDEBUG << "LOOP";
     if (pile.size() >= m_maxChainLength)
     {
+#ifdef DEBUG_LP
       SACLOGINIT;
       LNOTICE << "Chain reached its max size or is too long.";
+#endif
 //       LDEBUG << "Trying to find a chain end in the too long stack";
       LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data, pile, currentType);
       if (lastChainVx != first) {

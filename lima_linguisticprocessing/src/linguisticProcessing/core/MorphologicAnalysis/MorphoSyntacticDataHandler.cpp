@@ -64,8 +64,10 @@ void MorphoSyntacticDataHandler::endLingInfos()
 
 void MorphoSyntacticDataHandler::foundAccentedForm(StringsPoolIndex form) 
 {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
   LDEBUG << "MorphoSyntacticDataHandler::foundAccentedForm" << form;
+#endif
   m_current.inflectedForm=form;
 }
 

@@ -648,10 +648,11 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 /*
   Critical function : comment logging message
 */
- SAPLOGINIT;
- LDEBUG << "creating compound tense for " << auxVertex << " and "
+#ifdef DEBUG_LP
+  SAPLOGINIT;
+  LDEBUG << "creating compound tense for " << auxVertex << " and "
  << pastPartVertex;
-
+#endif
 
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
@@ -677,12 +678,16 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   LinguisticCode dataAuxMicro = dataAux->firstValue(*m_microAccessor);
 
   LinguisticCode tense = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAux->firstValue(*m_timeAccessor));
+#ifdef DEBUG_LP
   LDEBUG << "Tense = '" << tense << "' ";
+#endif
 
   if (m_macroAccessor->empty(m_macro) || m_microAccessor->empty(m_micro))
   {
+#ifdef DEBUG_LP
    LDEBUG << "CreateCompoundTense: false because macro="
    << m_macro << " and micro=" << m_micro;
+#endif
     return false;
   }
 
@@ -709,9 +714,11 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   }
 
   // creer un MorphoSyntacticData
+#ifdef DEBUG_LP
   LDEBUG << "Creating a DicoWord: "
       << int(m_macro) << " / " << Common::Misc::limastring2utf8stdstring(verbFlex) << " / "
       << int(m_micro) << " / " << verbLemma;
+#endif
   MorphoSyntacticData* dataNewVerb = new MorphoSyntacticData();
   /// if the anagraph is not set to delete the morphosyntactic data, we have to do it
   if (!anagraph.ownsMorphData())
@@ -736,7 +743,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   LinguisticGraphVertex newVertex;
   DependencyGraphVertex newDepVertex;
   boost::tie (newVertex, newDepVertex) = syntacticData->addVertex();
+#ifdef DEBUG_LP
   LDEBUG << "New vertices are " << newVertex << " (pos) and " << newDepVertex << " (dep)";
+#endif
 
   tokenMap[newVertex] = tokenNewVerb;
   dataMap[newVertex] = dataNewVerb;
@@ -784,19 +793,25 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   std::set< std::pair< LinguisticGraphVertex, LinguisticGraphVertex > > addedEdges;
   
   //1. entre les noeuds avant l'auxiliaire et le nouveau noeud
+#ifdef DEBUG_LP
   LDEBUG << "The auxiliary has " << in_degree(auxVertex, *graph) << " in edges.";
+#endif
   LinguisticGraphInEdgeIt auxInEdgesIt, auxInEdgesIt_end;
   boost::tie(auxInEdgesIt, auxInEdgesIt_end) = in_edges(auxVertex, *graph);
   for (; auxInEdgesIt != auxInEdgesIt_end; auxInEdgesIt++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "auxInEdge: " << source(*auxInEdgesIt, *graph) << " -> " << target(*auxInEdgesIt, *graph);
+#endif
     LinguisticGraphVertex auxInVertex = source(*auxInEdgesIt, *graph);
     if (addedEdges.find(std::make_pair(auxInVertex,newVertex)) != addedEdges.end())
     {
       // l'arc a deja ete ajoute, abandonner
       continue;
     }
+#ifdef DEBUG_LP
     LDEBUG << "edge to add (step1): " << auxInVertex << " -> " << newVertex;
+#endif
     edgesToRemove.insert(std::make_pair(source(*auxInEdgesIt,*graph),target(*auxInEdgesIt,*graph)));
     addedEdges.insert(std::make_pair(auxInVertex,newVertex));
   }
@@ -819,7 +834,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 //       boost::tie(e, success) = add_edge(newVertex, auxOutVertex, *graph);
 //       if (success)
 //       {
+#ifdef DEBUG_LP
         LDEBUG << "edge to add (step2): " << newVertex << " -> " << auxOutVertex;
+#endif
         edgesToRemove.insert(std::make_pair(source(*auxOutEdgesIt,*graph),target(*auxOutEdgesIt,*graph)));
         addedEdges.insert(std::make_pair(newVertex,auxOutVertex));
 //         break;
@@ -836,11 +853,15 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     LinguisticGraphVertex pastPartInVertex = source(*pastPartInEdgesIt, *graph);
     if (pastPartInVertex == auxVertex)
     {
+#ifdef DEBUG_LP
       LDEBUG << "no vertex between past participle and auxiliary";
+#endif
       pastPartInVertex = newVertex;
 
     }
+#ifdef DEBUG_LP
     LDEBUG << "past participle in vertex  " << pastPartInVertex;
+#endif
     edgesToRemove.insert(std::make_pair(source(*pastPartInEdgesIt,*graph),target(*pastPartInEdgesIt,*graph)));
 
     LinguisticGraphOutEdgeIt pastPartOutEdgesIt, pastPartOutEdgesIt_end;
@@ -848,7 +869,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     for (; pastPartOutEdgesIt != pastPartOutEdgesIt_end; pastPartOutEdgesIt++)
     {
       LinguisticGraphVertex pastPartOutVertex = target(*pastPartOutEdgesIt, *graph);
+#ifdef DEBUG_LP
       LDEBUG << "past participle out vertex " << pastPartOutVertex;
+#endif
 
       chainsIdsMap[pastPartInVertex] = newVerbChains;
       if (addedEdges.find(std::make_pair(pastPartInVertex,pastPartOutVertex)) != addedEdges.end())
@@ -861,7 +884,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 //       boost::tie(e, success) = add_edge(pastPartInVertex, pastPartOutVertex, *graph);
 //       if (success)
 //       {
+#ifdef DEBUG_LP
       LDEBUG << "edge to add (step3): " << pastPartInVertex << " -> " << pastPartOutVertex;
+#endif
         edgesToRemove.insert(std::make_pair(source(*pastPartOutEdgesIt,*graph),target(*pastPartOutEdgesIt,*graph)));
         addedEdges.insert(std::make_pair(pastPartInVertex,pastPartOutVertex));
 //         break;
@@ -874,7 +899,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   edgesToRemoveIt_end = edgesToRemove.end();
   for (; edgesToRemoveIt != edgesToRemoveIt_end; edgesToRemoveIt++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "remove edge " << (*edgesToRemoveIt).first << " -> " << (*edgesToRemoveIt).second;
+#endif
     remove_edge( (*edgesToRemoveIt).first, (*edgesToRemoveIt).second,*graph);
   }
 
@@ -887,10 +914,13 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     boost::tie(e, success) = add_edge(addedEdgesIt->first, addedEdgesIt->second, *graph);
     if (success)
     {
+#ifdef DEBUG_LP
       LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
+#endif
     }
     else
     {
+      SAPLOGINIT;
       LERROR << "could not add edge : " << addedEdgesIt->first << " -> " <<  addedEdgesIt->second;
     }
   }
@@ -913,7 +943,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     boost::tie(e, success) = add_edge(source(*auxDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
     if (success)
     {
+#ifdef DEBUG_LP
       LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
+#endif
       edgeTypeMap[e] = edgeTypeMap[*auxDepVertexInEdgeIt];
     }
   }
@@ -928,7 +960,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     boost::tie(e, success) = add_edge(newDepVertex, target(*auxDepVertexOutEdgeIt,depGraph),depGraph);
     if (success)
     {
+#ifdef DEBUG_LP
       LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
+#endif
       edgeTypeMap[e] = edgeTypeMap[*auxDepVertexOutEdgeIt];
     }
   }
@@ -948,8 +982,10 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
         add_edge(source(*pastPartDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
     if (success)
     {
+#ifdef DEBUG_LP
       LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
-      edgeTypeMap[e] = edgeTypeMap[*pastPartDepVertexInEdgeIt];
+ #endif
+     edgeTypeMap[e] = edgeTypeMap[*pastPartDepVertexInEdgeIt];
     }
   }
   DependencyGraphOutEdgeIt pastPartDepVertexOutEdgeIt, pastPartDepVertexOutEdgeIt_end;
@@ -964,7 +1000,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
         add_edge(newDepVertex, target(*pastPartDepVertexOutEdgeIt,depGraph),depGraph);
     if (success)
     {
+#ifdef DEBUG_LP
       LDEBUG << "edge added : " << e.m_source << " -> " << e.m_target;
+#endif
       edgeTypeMap[e] = edgeTypeMap[*pastPartDepVertexOutEdgeIt];
     }
   }
@@ -987,7 +1025,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
                                      pastPartVertex,
                                      m_tempCompType);
 
+#ifdef DEBUG_LP
   LDEBUG << "CreateCompoundTense: " << res;
+#endif
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData == 0)
   {
@@ -996,8 +1036,10 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   }
   recoData->setNextVertex(newVertex);
 
+#ifdef DEBUG_LP
   LDEBUG << "aux vertex "<<auxDepVertex<<" out edges num: " << out_degree(auxDepVertex, depGraph);
   LDEBUG << "past part vertex "<<pastPartDepVertex<<" out edges num: " << out_degree(pastPartDepVertex, depGraph);
+#endif
   return res;
 
   //    return false;

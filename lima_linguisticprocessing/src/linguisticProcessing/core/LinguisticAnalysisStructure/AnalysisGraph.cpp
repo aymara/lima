@@ -144,10 +144,10 @@ void AnalysisGraph::createGraph()
 
 void AnalysisGraph::deleteGraph()
 {
-
+#ifdef DEBUG_LP
   LASLOGINIT;
   LDEBUG << "deleteGraph";
-
+#endif
   if (m_graph == 0) return;
   
   if (m_deleteTokenWhenDestroyed) 
@@ -299,7 +299,9 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
   const Common::PropertyCode::PropertyAccessor& microAccessor,
   LinguisticGraphVertex& nextSentenceBreak)
 {
+#ifdef DEBUG_LP
   LASLOGINIT;
+#endif
 
   LinguisticGraphVertex current = v;
   size_t accumulator=out_degree(current,*m_graph);
@@ -322,10 +324,13 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
     {
       if (next != nextSentenceBreak)
       {
+        LASLOGINIT;
         LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak;
         LERROR << "   returning graph's last vertex " << next;
       }
+#ifdef DEBUG_LP
       LDEBUG << "Next chains break is: " << next;
+#endif
       return next;
     }
     accumulator-=in_degree(next,*m_graph);
@@ -374,6 +379,7 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
     accumulator+=out_degree(next,*m_graph);
     if (next == current)
     {
+      LASLOGINIT;
       LERROR << "In nextChainsBreakFrom: cannot go beyond " << current;
       return m_lastVertex;
     }

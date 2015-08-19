@@ -194,7 +194,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   // last currentResultVx must be the last vertex
   {
     LinguisticGraphVertex lastVx=posgraph->lastVertex();
-    LINFO << "replace last vertex " << currentResultVx << " by " << lastVx;
+//     LDEBUG << "replace last vertex " << currentResultVx << " by " << lastVx;
     LinguisticGraphInEdgeIt inItr,inItrEnd;
     boost::tie(inItr,inItrEnd) = in_edges(currentResultVx,*resultgraph);
     for (;inItr!=inItrEnd;inItr++)
@@ -206,7 +206,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
 //remove_vertex(currentResultVx,*resultgraph);
   }
 
-  LINFO << "postagging done.";
+//   LDEBUG << "postagging done.";
 
   return SUCCESS_ID;
 }
@@ -221,8 +221,8 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
       LinguisticGraphVertex end,
       StepDataVector& stepData) const
 {
-    PTLOGINIT;
-    LINFO << "initializeStepDataFromGraph ...";
+//     PTLOGINIT;
+//     DEBUG << "initializeStepDataFromGraph ...";
 
     CVertexDataPropertyMap dataMap=get(vertex_data,*srcgraph);
 
@@ -273,7 +273,8 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
       {
         if (current != start && current != end)
         {
-          LWARN << "No microcategory found for morphograph vertex " << current << " !";
+          PTLOGINIT;
+          LWARN << "No microcategory found for morphograph vertex " << current << " ! Use" << m_defaultCateg;
         }
         micros.insert(m_defaultCateg);
       }
@@ -299,6 +300,7 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
       }
     }
     if (stepData.back().m_srcVertex!=end) {
+      PTLOGINIT;
       LERROR << "Invalid Graph ! Following analysis will fail !";
     }
 }
@@ -377,8 +379,8 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
   StepDataVector& stepData,
   Common::AnnotationGraphs::AnnotationData* annotationData) const
 {
-    PTLOGINIT;
-    LINFO << "reportPathsInGraph";
+//     PTLOGINIT;
+//     LDEBUG << "reportPathsInGraph";
 
 
     std::map<TargetVertexId,LinguisticGraphVertex> vertexMapping;
@@ -392,6 +394,7 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
       {
         StepData& endStep=stepData.back();
         if (endStep.m_microCatsData.size()!=1) {
+          PTLOGINIT;
           LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!";
         }
         MicroCatDataMapItr microItr=endStep.m_microCatsData.begin();
@@ -522,7 +525,7 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
         toProcess.pop();
     }
 
-    LDEBUG << "end reporting paths";
+//     LDEBUG << "end reporting paths";
     return endVertex;
 }
 

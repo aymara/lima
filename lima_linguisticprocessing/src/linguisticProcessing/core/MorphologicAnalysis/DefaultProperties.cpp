@@ -194,7 +194,9 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
       istringstream is(line);
       is >> type;
       is >> props;
+#ifdef DEBUG_LP
       LDEBUG << "read default " << type << " => " << props;
+#endif
       m_defaults[Common::Misc::utf8stdstring2limastring(type)].push_back(props);
     }
   }

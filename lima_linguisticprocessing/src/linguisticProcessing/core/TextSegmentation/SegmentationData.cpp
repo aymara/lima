@@ -70,8 +70,10 @@ m_type(type)
   for (; it!=it_end; it++) {
     LinguisticGraphVertex v=target(*it,*graph);
     if (v==end) { // vertex following begin vertex is end vertex => empty segment
+#ifdef DEBUG_LP
       LOGINIT("LP::Segmentation");
       LDEBUG << "Warning: empty segment";
+#endif
       // keep default 0 values for (pos,len) to be informed that this is an empty segment
       return;
     }
@@ -87,8 +89,10 @@ m_type(type)
       }
     }
     else {
+#ifdef DEBUG_LP
       LOGINIT("LP::Segmentation");
       LDEBUG << "Warning: no token for vertex " << v;
+#endif
     }
   }
   if (foundPos) {
@@ -219,8 +223,10 @@ bool Segment::operator<(const Segment& s) const
 
 void Segment::addSegment(const Segment& s)
 {
+#ifdef DEBUG_LP
   LOGINIT("LP::Segmentation");
   LDEBUG << "add segment [" << s.getPosBegin() << "," << s.getLength() << "] to [" << getPosBegin() << "," << getLength() << "]";
+#endif
   
   // do not check types, keep type of current segment
   // do not check adjacency, juste update end of segment
@@ -243,8 +249,10 @@ void SegmentationData::add(const Segment& s)
 {
   // segments are sorted in the vector: use binary search to insert new segment
   if (s.getLength()==0) {
+#ifdef DEBUG_LP
     LOGINIT("LP::Segmentation");
     LDEBUG << "add(): trying to add empty segment: ignored";
+#endif
   }
   else {
     

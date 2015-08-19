@@ -245,7 +245,9 @@ CreateSpecificEntity::CreateSpecificEntity(MediaId language,
 ConstraintFunction(language,complement),
 m_language(language)
 {
+#ifdef DEBUG_LP
   SELOGINIT;
+#endif
   m_sp=&(Common::MediaticData::MediaticData::changeable().stringsPool(language));
 
   LimaString str=complement; // copy for easier parse (modify)
@@ -261,8 +263,10 @@ m_language(language)
       typeName=complement;
       str.clear();
     }
+#ifdef DEBUG_LP
     LDEBUG << "CreateSpecificEntity: getting entity type "
            <<  Common::Misc::limastring2utf8stdstring(typeName);
+#endif
     m_type=Common::MediaticData::MediaticData::single().getEntityType(typeName);
   }
 
@@ -371,8 +375,10 @@ getPropertyManager("MICRO");
 bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
                                       AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
    SELOGINIT;
    LDEBUG << "CreateSpecificEntity: create entity of type " << match.getType() << " on vertices " << match;
+#endif
   if (match.empty()) return false;
   LinguisticGraphVertex v1 = (*(match.begin())).m_elem.first;
   LinguisticGraphVertex v2 = (*(match.rbegin())).m_elem.first;
@@ -460,23 +466,29 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     addMicrosToMorphoSyntacticData(newMorphData,dataHead,m_microsToKeep,elem);
   }
   else {
+#ifdef DEBUG_LP
     LDEBUG << "CreateSpecificEntity, use micros from config file ";
+#endif
     // use micros given in the config file : get the specific resource
     // (specific to modex) 
     // WARN : some hard coded stuff here in resource names
     EntityType seType=match.getType();
     if  (seType.getGroupId() == 0)
     {
+      SELOGINIT;
       LERROR << "CreateSpecificEntity::operator() null group id:" << seType;
       return false;
     }
     std::string resourceName=
       Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId()))+"Micros";
     AbstractResource* res=LinguisticResources::single().getResource(m_language,resourceName);
+#ifdef DEBUG_LP
     LDEBUG << "Entities resource name is : " << resourceName;
+#endif
     if (res!=0) {
       SpecificEntitiesMicros* entityMicros=static_cast<SpecificEntitiesMicros*>(res);
       const std::set<LinguisticCode>* micros=entityMicros->getMicros(seType);
+#ifdef DEBUG_LP
       if (logger.isDebugEnabled()) 
       {
         std::ostringstream oss;
@@ -485,10 +497,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
         }
         LDEBUG << "CreateSpecificEntity, micros are " << oss.str();
       }
+#endif
       addMicrosToMorphoSyntacticData(newMorphData,dataHead,*micros,elem);
     }
     else {
       // cannot find micros for this type: error
+      SELOGINIT;
       LERROR << "CreateSpecificEntity: missing resource " << resourceName ;
     }
   }
@@ -523,10 +537,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring(graphId), newVertex);
   tokenMap[newVertex] = newToken;
   dataMap[newVertex] = newMorphData;
+#ifdef DEBUG_LP
   LDEBUG << "      - new vertex " << newVertex << "("<<graphId<<"), " << newDepVertex
       << "(dep), " << agv << "(annot) added";
 
 //   LDEBUG << "    Setting annotation ";
+#endif
   GenericAnnotation ga(annot);
 
   annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("SpecificEntity"), ga);
@@ -539,6 +555,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     std::set< AnnotationGraphVertex > matches = annotationData->matches(graphId,(*matchIt).m_elem.first,"annot");
     if (matches.empty())
     {
+      SELOGINIT;
       LERROR << "CreateSpecificEntity::operator() No annotation 'annot' for" << (*matchIt).m_elem.first;
     }
     else
@@ -560,13 +577,17 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     previous.push_back(firstInVertex);
     if (shouldRemoveInitial(source(*firstInEdgesIt, *lingGraph),target(*firstInEdgesIt, *lingGraph), match))
     {
+#ifdef DEBUG_LP
       LDEBUG << "        - storing edge " << source(*firstInEdgesIt, *lingGraph) <<" -> "<<target(*firstInEdgesIt, *lingGraph) << " to be removed";
+#endif
 /*      recoData->setEdgeToBeRemoved(analysis, *firstInEdgesIt);*/
       newEdgesToRemove.insert(std::make_pair(source(*firstInEdgesIt, *lingGraph),target(*firstInEdgesIt, *lingGraph)));
     }
     else
     {
+#ifdef DEBUG_LP
       LDEBUG << "        - do not store initial edge " << source(*firstInEdgesIt, *lingGraph) <<" -> "<<target(*firstInEdgesIt, *lingGraph) << " to be removed";
+#endif
     }
   }
   std::vector< LinguisticGraphVertex >::iterator pit, pit_end;
@@ -582,16 +603,21 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       boost::tie(e, success) = add_edge(*pit, newVertex, *lingGraph);
       if (success)
       {
+#ifdef DEBUG_LP
         LDEBUG << "        - in edge " << e.m_source << " -> " << e.m_target << " added";
+#endif
       }
       else
       {
+        SELOGINIT
         LERROR << "        - in edge " << *pit << " ->" << newVertex << " NOT added";
       }
     }
     else
     {
+#ifdef DEBUG_LP
       LDEBUG << "        - edge " << *pit << " - " << newVertex << " not added because " << *pit << " - " << v1 << " has to be removed";
+#endif
     }
   }
   std::set< std::pair<LinguisticGraphVertex,LinguisticGraphVertex > >::iterator newEdgesToRemoveIt = newEdgesToRemove.begin();
@@ -599,28 +625,38 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   {
     recoData->setEdgeToBeRemoved(analysis, edge( newEdgesToRemoveIt->first, newEdgesToRemoveIt->second, *lingGraph).first);
   }
+#ifdef DEBUG_LP
   LDEBUG << "      - in edges added";
+#endif
   
   
   // 2. entre le nouveau noeud et les noeuds qui etaient apres v2
+#ifdef DEBUG_LP
   LDEBUG << "        there is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
+#endif
   LinguisticGraphOutEdgeIt secondOutEdgesIt, secondOutEdgesIt_end;
   boost::tie(secondOutEdgesIt, secondOutEdgesIt_end) = out_edges(v2, *lingGraph);
   std::vector< LinguisticGraphVertex > nexts;
   for (; secondOutEdgesIt != secondOutEdgesIt_end; secondOutEdgesIt++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "        looking at edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph);
+#endif
     LinguisticGraphVertex secondOutVertex = target(*secondOutEdgesIt, *lingGraph);
     if (secondOutVertex ==  v2) continue;
     nexts.push_back(secondOutVertex);
     if (shouldRemoveFinal(source(*secondOutEdgesIt, *lingGraph),target(*secondOutEdgesIt, *lingGraph), match))
     {
+#ifdef DEBUG_LP
       LDEBUG << "        - storing edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << " to be removed";
+#endif
       recoData->setEdgeToBeRemoved(analysis, *secondOutEdgesIt);
     }
     else
     {
+#ifdef DEBUG_LP
       LDEBUG << "        - do not store final edge " << source(*secondOutEdgesIt, *lingGraph) << " -> " << target(*secondOutEdgesIt, *lingGraph) << " to be removed";
+#endif
     }
   }
   std::vector< LinguisticGraphVertex >::iterator nit, nit_end;
@@ -632,14 +668,19 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     boost::tie(e, success) = add_edge(newVertex, *nit, *lingGraph);
     if (success)
     {
+#ifdef DEBUG_LP
       LDEBUG << "        - out edge " << e.m_source << " -> " << e.m_target << " added";
+#endif
     }
     else
     {
+      SELOGINIT;
       LERROR << "        - out edge " << newVertex << " ->" << *nit << " NOT added";
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "      - out edges added";
+#endif
 
   // 3. supprimer les arcs a remplacer
   recoData->removeEdges( analysis );
@@ -699,7 +740,9 @@ bool CreateSpecificEntity::shouldRemoveInitial(
                                                LinguisticGraphVertex /*tgt*/, 
                                                const RecognizerMatch& match) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
+#endif
   if (match.size() == 1)
   {
     return true;
@@ -720,7 +763,9 @@ bool CreateSpecificEntity::shouldRemoveInitial(
   matchIt_end = match.end()-1;
   if (boost::out_degree((*matchIt).m_elem.first,*graph.getGraph()) > 1)
   {
+#ifdef DEBUG_LP
     LDEBUG << "removing edge (" << (*matchIt).m_elem.first << "," << (*(matchIt+1)).m_elem.first << ") because there is more than one path from the first vertex of the match.";
+#endif
     boost::remove_edge((*matchIt).m_elem.first,(*(matchIt+1)).m_elem.first, *const_cast<LinguisticGraph*>(graph.getGraph()));
     return false;
   }
@@ -752,7 +797,9 @@ bool CreateSpecificEntity::shouldRemoveFinal(
                                              LinguisticGraphVertex /*tgt*/, 
                                              const RecognizerMatch& match) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
+#endif
   if (match.size() == 1)
   {
     return true;
@@ -781,7 +828,9 @@ bool CreateSpecificEntity::shouldRemoveFinal(
       {
         if (matchVertices.find(source(*inIt, *graph.getGraph())) != matchVertices.end())
         {
+#ifdef DEBUG_LP
           LDEBUG << "removing final edge " << source(*inIt, *graph.getGraph()) << " -> " << target(*inIt, *graph.getGraph());
+#endif
           boost::remove_edge(*inIt, *const_cast<LinguisticGraph*>(graph.getGraph()));
           break;
         }
@@ -1016,9 +1065,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& vertex,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "AddEntityFeature:: (one argument) start... ";
   LDEBUG << "AddEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
+#endif
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
@@ -1038,12 +1089,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   switch (m_featureType) {
     case QVariant::String:
-      LDEBUG << "AddEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
-      /*
-       * S'assurer que addEntityFeature ajoute un élément à la fin du vecteur
-       * (et donc que les fonctions template addEntityFeature dans EntityFeatres.h) 
-       * ajoutent bien un élement à la fin du vecteur par convention
-      */
+#ifdef DEBUG_LP
+      LDEBUG << "AddEntityFeature:: recoData->addEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
+#endif
       recoData->addEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
@@ -1082,15 +1130,16 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& v2,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
-//  LERROR << "AddEntityFeature:: Error: version with two vertices parameters is not implemented";
-//  return false;
   LDEBUG << "AddEntityFeature:: (two arguments) start... ";
   LDEBUG << "AddEntityFeature::(feature:" << m_featureName << ", v1:" << v1 << ", v2:" << v2 << ")";
+#endif
   
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
+    SELOGINIT;
     LERROR << "AddEntityFeature:: Error: missing RecognizerData";
     return false;
   }
@@ -1125,9 +1174,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         }
       }
     }
-    if( nbEdges > 1 ) 
+    if( nbEdges > 1 ) {
+      SELOGINIT;
       LWARN << "AddEntityFeature:: Warning: ambiguïties in graph";
-
+    }
+    
     Token* token=get(vertex_token,lGraph,v);
     if (v == v1) {
       pos = (int64_t)(token->position());
@@ -1224,9 +1275,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& vertex,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "AppendEntityFeature::() (one argument) start... ";
   LDEBUG << "AppendEntityFeature::() feature:" << m_featureName << ", vertex:" << vertex << ")";
+#endif
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
@@ -1249,18 +1302,28 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if( featureIt != recoData->getEntityFeatures().end() )
   {
     pos = minPos( featureIt->getPosition(), (int64_t)(token->position()) );
+#ifdef DEBUG_LP
     LDEBUG << "AppendEntityFeature::() minPos=" << pos;
+#endif
     uint64_t maxPos1 = UNDEFPOSITION;
     if( featureIt->getPosition() != UNDEFPOSITION ) {
       maxPos1 = featureIt->getPosition() + featureIt->getLength();
     }
+#ifdef DEBUG_LP
     LDEBUG << "AppendEntityFeature::() maxPos1=" << maxPos1;
-    uint64_t maxPos2 = (int64_t)(token->position()) + (int64_t)(token->length());
+ #endif
+   uint64_t maxPos2 = (int64_t)(token->position()) + (int64_t)(token->length());
+#ifdef DEBUG_LP
     LDEBUG << "AppendEntityFeature::() maxPos2=" << maxPos2;
+#endif
     uint64_t maxPos3 = maxPos( maxPos1, maxPos2 );
+#ifdef DEBUG_LP
     LDEBUG << "AppendEntityFeature::() maxPos3=" << maxPos3;
+#endif
     len = maxPos3 - pos;
+#ifdef DEBUG_LP
     LDEBUG << "AppendEntityFeature::() len=" << len;
+#endif
   }
   else {
     pos = (int64_t)(token->position());
@@ -1289,12 +1352,16 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       recoData->appendEntityFeature(m_featureName,featureValue);  
   }
   featureIt = features.find(m_featureName);
+#ifdef DEBUG_LP
   LDEBUG << "AppendEntityFeature::() pos before = ("
          << featureIt->getPosition() << ","
          << featureIt->getLength() << ")";
+#endif
   featureIt->setPosition(pos);
   featureIt->setLength(len);
+#ifdef DEBUG_LP
   LDEBUG << "AppendEntityFeature::() pos after = (" << pos << "," << len << ")";
+#endif
   
   return true;
 }

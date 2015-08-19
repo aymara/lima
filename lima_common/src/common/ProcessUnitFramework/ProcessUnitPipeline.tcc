@@ -90,10 +90,10 @@ LimaStatusCode ProcessUnitPipeline<ProcessUnit>::process(
         || m_inactiveUnitsIds.find((*it)->getId()) == m_inactiveUnitsIds.end()
         || (dataInactiveProcessUnits != 0 && dataInactiveProcessUnits->find((*it)->getId()) != dataInactiveProcessUnits->end()) )
     {
-    LINFO << "    processing";
+      LINFO << "    processing";
       status=(*it)->process(analysis);
+      LINFO << "return status " << status;
     }
-    LDEBUG << "return status " << status;
   }
   LINFO << "processing of pipeline return status " << status;
   return status;

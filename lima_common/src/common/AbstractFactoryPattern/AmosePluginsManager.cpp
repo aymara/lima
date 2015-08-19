@@ -42,7 +42,9 @@ bool AmosePluginsManager::loadPlugins()
   QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
   Q_FOREACH(QString pluginsFile, pluginsFiles)
   {
-    LINFO << "AmosePluginsManager::loadPlugins loding plugins file " << pluginsFile.toUtf8().data();
+#ifdef DEBUG_CD
+   LDEBUG << "AmosePluginsManager::loadPlugins loding plugins file " << pluginsFile.toUtf8().data();
+#endif
     QFile file(pluginsDir.path() + "/" + pluginsFile);
     if (!file.open(QIODevice::ReadOnly))
       return false;
@@ -62,9 +64,9 @@ bool AmosePluginsManager::loadPlugins()
         QString strline = QString("lib") + line.data() + ".so";
 #endif
 #ifdef DEBUG_CD
-        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << strline.toUtf8().data() << "'";
+        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
 #endif
-        DynamicLibrariesManager::changeable().loadLibrary(strline.toUtf8().data());
+        DynamicLibrariesManager::changeable().loadLibrary(line.data());
       }
     }
   }

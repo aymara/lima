@@ -70,15 +70,18 @@ MediaProcessors::MediaProcessors(const MediaProcessors& mp) : Singleton<MediaPro
 
 MediaProcessors::~MediaProcessors()
 {
-
+#ifdef DEBUG_CD
     PROCESSORSLOGINIT;
 
-    LWARN << "MediaProcessors::~MediaProcessors() delete MediaProcessors ";
+    LDEBUG << "MediaProcessors::~MediaProcessors() delete MediaProcessors ";
+#endif
     for ( std::map<MediaId,MediaProcessUnit::Manager*>::iterator it=m_d->m_pipelineManagers.begin();
             it!=m_d->m_pipelineManagers.end();
             it++ )
     {
-        LWARN <<  "delete " << it->first;
+#ifdef DEBUG_CD
+        LDEBUG <<  "delete " << it->first;
+#endif
         delete it->second;
         it->second=0;
     }
@@ -96,8 +99,10 @@ void MediaProcessors::initMedia (
     MediaId med,
     Common::XMLConfigurationFiles::ModuleConfigurationStructure& confProc )
 {
+#ifdef DEBUG_CD
   PROCESSORSLOGINIT;
   LDEBUG << "MediaProcessors::initMedia" << med;
+#endif
 
   MediaProcessUnitInitializationParameters lpuinit;
   lpuinit.media=med;
@@ -117,7 +122,9 @@ void MediaProcessors::initPipelines (
     Common::XMLConfigurationFiles::GroupConfigurationStructure& confGroup,
     const std::deque<std::string>& pipelines )
 {
+#ifdef DEBUG_CD
     PROCESSORSLOGINIT;
+#endif
     deque<string> pipelinesToInit ( pipelines );
     map<string,map<string,string> > allpipelines;
     try
@@ -126,7 +133,8 @@ void MediaProcessors::initPipelines (
     }
     catch ( NoSuchGroup& e )
     {
-        LDEBUG << "no group 'declaration' to configure linguistic pipelines ";
+        PROCESSORSLOGINIT;
+        LERROR << "no group 'declaration' to configure linguistic pipelines ";
         throw InvalidConfiguration(e.what());
     }
 
@@ -141,6 +149,7 @@ void MediaProcessors::initPipelines (
         }
     }
 
+#ifdef DEBUG_CD
     LDEBUG << "MediaProcessors::initPipelines ";
     for ( deque<string>::const_iterator pipItr=pipelinesToInit.begin();
             pipItr!=pipelinesToInit.end();
@@ -148,6 +157,7 @@ void MediaProcessors::initPipelines (
     {
       LDEBUG << "\t" << *pipItr << ", ";
     }
+#endif
     // init pipelines for all available medias
     for ( deque<string>::const_iterator pipItr=pipelinesToInit.begin();
             pipItr!=pipelinesToInit.end();

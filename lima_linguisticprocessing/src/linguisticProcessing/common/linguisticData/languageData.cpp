@@ -205,7 +205,9 @@ void LanguageDataPrivate::initPropertyCode(
   try
   {
     std::string propertyFile=resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile");
+#ifdef DEBUG_LP
     LDEBUG << "LanguageDataPrivate::initPropertyCode propertyFile is:" << propertyFile;
+#endif
     m_propCodeManager.readFromXmlFile(propertyFile);
   }
   catch (std::exception& e)
@@ -213,7 +215,9 @@ void LanguageDataPrivate::initPropertyCode(
     LERROR << "Error while reading PropertyFile file: " << e.what();
     throw InvalidConfiguration();
   }
+#ifdef DEBUG_LP
   LDEBUG << "LanguageDataPrivate::initPropertyCode DONE";
+#endif
 }
 
 /*
@@ -254,7 +258,9 @@ void LanguageDataPrivate::initEmptyMicroCategories(XMLConfigurationFileParser& c
   for (std::deque< std::string >::iterator it = emptyMicroCategoriesList.begin(); it != emptyMicroCategoriesList.end(); it++)
   {
     LinguisticCode mic=microManager.getPropertyValue(*it);
+#ifdef DEBUG_LP
     LDEBUG << "add " << mic << " to empty micros";
+#endif
     m_emptyMicroCategories.insert(mic);
   }
 }
@@ -271,7 +277,9 @@ void LanguageDataPrivate::initConjugatedVerbs(XMLConfigurationFileParser& conf)
   for (std::deque< std::string >::iterator it = conjugatedVerbsList.begin(); it != conjugatedVerbsList.end(); it++)
   {
     LinguisticCode mic=microManager.getPropertyValue(*it);
+#ifdef DEBUG_LP
     LDEBUG << "add " << mic << " to conjugated verbs";
+#endif
     m_conjugatedVerbs.insert(mic);
   }
 }
@@ -288,7 +296,9 @@ void LanguageDataPrivate::initPropositionIntroductors(XMLConfigurationFileParser
   for (std::deque< std::string >::iterator it = propositionIntroductorsList.begin(); it != propositionIntroductorsList.end(); it++)
   {
     LinguisticCode mic=microManager.getPropertyValue(*it);
+#ifdef DEBUG_LP
     LDEBUG << "add " << mic << " to proposition introductors";
+#endif
     m_propositionIntroductors.insert(mic);
   }
 }
@@ -415,7 +425,9 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   {
     if ( (line != "") && (line[0] != '#') )
     {
+#ifdef DEBUG_LP
       LDEBUG << "read line : " << line;
+#endif
 
       size_t index = 0;
 
@@ -595,8 +607,10 @@ const std::string& LanguageData::getSyntacticRelationName(SyntacticRelationId id
          it=m_d->m_syntacticRelations.begin(),
          it_end=m_d->m_syntacticRelations.end(); it!=it_end; it++) {
     if ((*it).second==id) {
+#ifdef DEBUG_LP
       LDATALOGINIT;
       LDEBUG << "found " << id << " <=> " << (*it).first;
+#endif
       return (*it).first;
     }
   }
@@ -607,8 +621,10 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
 {
   map<string,SyntacticRelationId>::const_iterator it=m_d->m_syntacticRelations.find(name);
   if (it!=m_d->m_syntacticRelations.end()) {
+#ifdef DEBUG_LP
     LDATALOGINIT;
     LDEBUG << "found " << name << " <=> " << (*it).second;
+#endif
     return (*it).second;
   }
   return 0;

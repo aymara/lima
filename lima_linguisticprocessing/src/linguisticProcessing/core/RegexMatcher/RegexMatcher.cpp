@@ -200,14 +200,18 @@ LimaStatusCode RegexMatcher::process(
     while ((position = re.indexIn(*originalText, position)) != -1)  
     {
       QString matchedString = originalText->mid(position, re.matchedLength());
+#ifdef DEBUG_LP
       LDEBUG << "Matched '" << matchedString << "' at " << position << " as " << tstatus;
+#endif
       RegexMatch match = boost::make_tuple(position+1, matchedString.size(), matchedString, tstatus);
       matches.insert(std::make_pair(position+1, match));
 
       position += re.matchedLength();
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "Matching finished. Updating graph";
+#endif
   // must ensure that we handle only one regex on a given token
 
   if (!matches.empty())
@@ -231,7 +235,9 @@ LimaStatusCode RegexMatcher::process(
     {
       Token* token=get(vertex_token,*graph,v);
       uint64_t tokenPosition = token->position();
+#ifdef DEBUG_LP
       LDEBUG << "Working on current match '" << currentMatchString << "' (" << currentMatchPosition << ", " << currentMatchLength << ") and token" << v << "at position" << tokenPosition;
+#endif
       while (v != anagraph->lastVertex() && tokenPosition < currentMatchPosition)
       {
         for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr!=outItrEnd; outItr++)
@@ -246,11 +252,15 @@ LimaStatusCode RegexMatcher::process(
         }
       }
         
+#ifdef DEBUG_LP
         LDEBUG << "current token ("<<v<<", "<<token->stringForm()<<") position is: " << tokenPosition << " ; current match position is: " << currentMatchPosition;
+#endif
         // current token is at current match position
       if (tokenPosition == currentMatchPosition)
       {
+#ifdef DEBUG_LP
         LDEBUG << "    current match found on token on token" << v << "at position" << tokenPosition << ". Now filling mach vertices" ;
+#endif
         std::vector< LinguisticGraphVertex > matchVertices;
         matchVertices.push_back(v);
         // get all tokens inside current match
@@ -267,7 +277,9 @@ LimaStatusCode RegexMatcher::process(
         
         while (next != anagraph->lastVertex() && nextTokenPosition < (currentMatchPosition + currentMatchLength))
         {
+#ifdef DEBUG_LP
           LDEBUG << "        next token ("<<next<<") position is: " << nextTokenPosition;
+#endif
           matchVertices.push_back(next);
           for (boost::tie(outItr,outItrEnd)=boost::out_edges(next,*graph); outItr!=outItrEnd; outItr++)
           {
@@ -280,12 +292,14 @@ LimaStatusCode RegexMatcher::process(
         std::vector< LinguisticGraphVertex >::const_iterator matchVerticesIt, matchVerticesIt_end;
         matchVerticesIt = matchVertices.begin(); matchVerticesIt_end = matchVertices.end();
 
+#ifdef DEBUG_LP
         LDEBUG << "Match Found. Vertices are: ";
         for (; matchVerticesIt != matchVerticesIt_end; matchVerticesIt++)
         {
           LDEBUG << (*matchVerticesIt) << ", ";
         }
         LDEBUG;
+#endif
         if (matchVertices.empty()) continue;
 
         // before  = get vertex before first match vertex
@@ -336,17 +350,23 @@ LimaStatusCode RegexMatcher::process(
           currentMatchLength = (*matchesIt).second.get<1>();
           currentMatchString = (*matchesIt).second.get<2>();
           currentMatchStatus = (*matchesIt).second.get<3>();
+#ifdef DEBUG_LP
           LDEBUG << "    current match is now: " << currentMatchPosition << currentMatchLength << currentMatchString << currentMatchStatus;
+#endif
         }
         else
         {
+#ifdef DEBUG_LP
           LDEBUG << "    no more match";
+#endif
           break;
         }
       }
       else // tokenPosition > currentMatchPosition 
       {
+#ifdef DEBUG_LP
         LDEBUG << "Skiping matches up to after next token position: " << tokenPosition << currentMatchPosition << currentMatchLength;
+#endif
         // advances current match until we find one which starts after the end of the last token which is in the current match
         while ((matchesIt != matches.end()) && ((currentMatchPosition ) <= tokenPosition))
         {
@@ -357,14 +377,18 @@ LimaStatusCode RegexMatcher::process(
           currentMatchString = (*matchesIt).second.get<2>();
           currentMatchStatus = (*matchesIt).second.get<3>();
         }
+#ifdef DEBUG_LP
         if (matchesIt != matches.end())
           LDEBUG << "    current match is now: " << currentMatchPosition << currentMatchLength << currentMatchString << currentMatchStatus;
         else
           LDEBUG << "    no more match";
+#endif
       }
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "DONE";
+#endif
   return SUCCESS_ID;
 }
 

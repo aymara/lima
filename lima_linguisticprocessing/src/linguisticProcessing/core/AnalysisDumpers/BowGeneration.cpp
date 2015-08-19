@@ -131,10 +131,12 @@ void BowGenerator::init(
     {
       std::string stoplist=unitConfiguration.getParamsValueAtKey("stopList");
       m_stopList=static_cast<StopList*>(LinguisticResources::single().getResource(m_language,stoplist));
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator.init(): STOPLIST:";
       for( StopList::const_iterator wordIt = m_stopList->begin() ; wordIt != m_stopList->end() ; wordIt++ ) {
         LDEBUG << "BowGenerator.init(): " << *wordIt;
       }
+#endif
     }
     catch (NoSuchParam& )
     {
@@ -224,8 +226,10 @@ void BowGenerator::init(
 std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
       const AnnotationGraphVertex& vx, const AnnotationGraphVertex& tgt, const LinguisticGraph& anagraph, const LinguisticGraph& posgraph, const uint64_t offset, const SyntacticData* syntacticData, const AnnotationData* annotationData, std::set< LinguisticGraphVertex >& visited) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::buildTermFor annot:" << vx << "; pointing on annot:"<<tgt;
+#endif
 
   LinguisticGraphVertex vxTokVertex =
       *(annotationData->matches("cpd", vx, "PosGraph").begin());
@@ -241,11 +245,15 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
 
   std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > vxBoWTokens = createAbstractBoWElement(vxTokVertex, anagraph, posgraph, offset, annotationData,visited);
 
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator: There is " << vxBoWTokens.size() << " bow tokens";
+#endif
   if (vxGovernors.empty())
   {
     std::vector< std::pair<BoWRelation*,BoWToken*> > vxBoWTk;
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):empty governors ";
+#endif
     BoWRelation* relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
     if (relation)
     {
@@ -277,7 +285,9 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
 
     std::vector< std::pair<BoWRelation*,BoWToken*> > pairs = buildTermFor(*govsIt, vx, anagraph, posgraph, offset, syntacticData, annotationData,visited);
     termsForVxGovernors.push_back(pairs);
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: For governor " << i << ", there is " << pairs.size() << " terms.";
+#endif
   }
 
 
@@ -299,8 +309,10 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
 
   if (stack.empty())
   {
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: Stack is empty ! Returning bow tokens of " << vxTokVertex;
     LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):stack governors ";
+#endif
     BoWRelation* relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
     if (relation)
     {
@@ -326,23 +338,31 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
   std::vector< std::pair<BoWRelation*,BoWToken*> >::iterator t;
   while (!stack.empty())
   {
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: There is " << vxBoWTokens.size() << " heads, " << vxGovernors.size() << " governors and stack size is " << stack.size();
+#endif
     for (std::vector< std::pair<BoWRelation*,AbstractBoWElement*> >::iterator vxBoWToken=vxBoWTokens.begin();
          vxBoWToken!=vxBoWTokens.end();
          vxBoWToken++)
     {
       const BoWToken* head = static_cast<BoWToken*>((*vxBoWToken).second);
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator: Working on head " << *head << "(" << head << ")";
+#endif
 
       std::set< std::pair<BoWRelation*,BoWToken*>, A > extensions;
       std::vector< std::vector< std::pair<BoWRelation*,BoWToken*> >::iterator >::const_iterator govsIt, govsIt_end;
       govsIt = stack.begin(); govsIt_end = stack.end();
       for (; govsIt != govsIt_end; govsIt++)
       {
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator: Entering loop body";
+#endif
         BoWRelation* relation = (**govsIt).first==0 ? 0 : (**govsIt).first->clone();
         BoWToken* bt = (**govsIt).second->clone();
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator:     ... done.";
+#endif
 //         LDEBUG << "BowGenerator: Inserting extension...";
         extensions.insert(std::make_pair(relation,bt));
 //         LDEBUG << "BowGenerator:     ... done.";
@@ -356,31 +376,41 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
       bowTokenPositions(headPositions, head);
       TokenPositions extensionPositions;
 
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator: Working on extensions";
+#endif
       std::set< std::pair<BoWRelation*,BoWToken*>, A >::const_iterator extensionsIt, extensionsIt_end;
       extensionsIt = extensions.begin();
       extensionsIt_end = extensions.end();
       for (; extensionsIt != extensionsIt_end; extensionsIt++)
       {
         const BoWToken* extension = (*extensionsIt).second;
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator:     extension: " << ((dynamic_cast< const BoWTerm* >(extension)==0)?(*extension):(*(dynamic_cast< const BoWTerm* >(extension))));
+#endif
 
         bowTokenPositions(extensionPositions, extension);
 
       }
 
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator: Building term";
+#endif
       // position is the min of head min position and extension min position
       position=headPositions.begin()->first;
       if (position > extensionPositions.begin()->first)
       {
         position = extensionPositions.begin()->first;
       }
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator:     position: " << position;
+#endif
 
         // length is the length in original text: take end of term
       length=computeCompoundLength(headPositions,extensionPositions);
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator:     length  : " << length;
+#endif
 
       BoWTerm* complex = new BoWTerm( lemma, head->getCategory(), position, length);
       complex->setVertex(head->getVertex());
@@ -394,13 +424,17 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
       for (; extensionsIt != extensionsIt_end; extensionsIt++)
       {
         const BoWToken* extension = (*extensionsIt).second;
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator:     extension: " << ((dynamic_cast< const BoWTerm* >(extension)==0)?(*extension):(*(dynamic_cast< const BoWTerm* >(extension))));
+#endif
         if ((*extensionsIt).first == 0)
           complex->addPart(extension);
         else
           complex->addPart((*extensionsIt).first,extension);
 //         LDEBUG << "Built complex: " << ((dynamic_cast< BoWTerm* >(complex)==0)?(*complex):(*(dynamic_cast< BoWTerm* >(complex))));
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator: Built complex: " << *complex;
+#endif
 
         delete (*extensionsIt).first;
         delete extension;
@@ -409,12 +443,16 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
 
       BoWRelation* relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
 
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator: Filling result with: " << *complex;
+#endif
       result.push_back(std::make_pair(relation,complex));
     }
 
     // Mise a joueur de la pile d'iterateurs pour produire une nouvelle serie d'extensions
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: Stack updating...";
+#endif
     {
       t = *stack.rbegin();
       t++;
@@ -432,7 +470,9 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
       {
         stack.pop_back();
         stack.push_back(t);
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator: Stack filling...";
+#endif
         for (uint64_t i = stack.size(); i < begins.size();i++)
         {
           stack.push_back(begins[i]);
@@ -441,7 +481,9 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
     }
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator: Memory cleaning...";
+#endif
   for (std::vector<std::pair<BoWRelation*,AbstractBoWElement*> >::iterator vxBoWToken=vxBoWTokens.begin();
        vxBoWToken!=vxBoWTokens.end();
        vxBoWToken++)
@@ -464,7 +506,9 @@ std::vector< std::pair<BoWRelation*,BoWToken*> > BowGenerator::buildTermFor(
     }
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<")";
+#endif
   return result;
 }
 
@@ -477,14 +521,18 @@ BoWRelation* BowGenerator::createBoWRelationFor(
 {
   LIMA_UNUSED(posgraph);
   const DependencyGraph* depGraph = syntacticData->dependencyGraph();
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::createBoWRelationFor" << vx << tgt;
+#endif
   BoWRelation* relation = 0;
   if (vx != tgt 
       && annotationData->hasAnnotation(vx, tgt,
           Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) )
   {
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator:     working on relation";
+#endif
     const CompoundTokenAnnotation* annot = annotationData->annotation(vx,tgt, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")).pointerValue<CompoundTokenAnnotation>();
     if (annot != 0 && !annot->empty())
     {
@@ -500,8 +548,10 @@ BoWRelation* BowGenerator::createBoWRelationFor(
     }
     LinguisticGraphVertex vxTokVertex = *(annotationData->matches("cpd", vx, "PosGraph").begin());
     LinguisticGraphVertex tgtTokVertex = *(annotationData->matches("cpd", tgt, "PosGraph").begin());
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator:     working vx  " << vxTokVertex;
     LDEBUG << "BowGenerator:     working tgt  " << tgtTokVertex;
+#endif
     DependencyGraphVertex depV = syntacticData->depVertexForTokenVertex(vxTokVertex);
     if (out_degree(depV, *depGraph) > 0){
       DependencyGraphOutEdgeIt depIt, depIt_end;
@@ -517,10 +567,12 @@ BoWRelation* BowGenerator::createBoWRelationFor(
       }
     }
   }
+#ifdef DEBUG_LP
   if (relation !=0)
   {
     LDEBUG << "BowGenerator:     relation : " << *relation;
   }
+#endif
   return relation;
 }
 
@@ -533,8 +585,10 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
   std::set<LinguisticGraphVertex>& visited,
   bool keepAnyway) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::createAbstractBoWElement for " << v;
+#endif
   std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > abstractBowEl;
 //   if (visited.find(v) != visited.end())
 //   {
@@ -546,27 +600,35 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
   // analysis graph
   //std::set< uint64_t > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph"); portage 32 64
   std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement " << v << " has " << anaVertices.size() << " matching vertices in analysis graph";
+#endif
 
   // note: anaVertices size should be 0 or 1
   //for (std::set< uint64_t >::const_iterator anaVerticesIt = anaVertices.begin(); portage 32 64
   for (std::set< AnnotationGraphVertex >::const_iterator anaVerticesIt = anaVertices.begin();
   anaVerticesIt != anaVertices.end(); anaVerticesIt++)
   {
-    LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << *anaVerticesIt;
+ #ifdef DEBUG_LP
+   LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << *anaVerticesIt;
+#endif
     //std::set< uint64_t > matches = annotationData->matches("AnalysisGraph",*anaVerticesIt,"annot"); portage 32 64
     std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVerticesIt,"annot");
     //for (std::set< uint64_t >::const_iterator it = matches.begin(); portage 32 64
     for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
          it != matches.end(); it++)
     {
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << *it;
+#endif
       if (annotationData->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
         BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin, false);
         if (se != 0)
         {
+#ifdef DEBUG_LP
           LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << QString::fromUtf8(se->getOutputUTF8String().c_str());
+#endif
           se->setVertex(v);
           abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),se));
 //           visited.insert(v);
@@ -575,23 +637,31 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
       }
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement move on the PosGraph annot matching test";
+#endif
 
   // check if there is specific entities or compound tenses associated to v.
   // return them if any
   std::set< AnnotationGraphVertex > matches = annotationData->matches("PosGraph",v,"annot");
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement there are " << matches.size() << " annotation graph vertices matching the current PsGraph vertex " << v;
+#endif
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << vx;
+#endif
     if (annotationData->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
       BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin);
       if (se != 0)
       {
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator::createAbstractBoWElement created specific entity: " << QString::fromUtf8(se->getOutputUTF8String().c_str());
+#endif
         se->setVertex(v);
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),se));
 //         visited.insert(v);
@@ -603,7 +673,9 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
       BoWToken* ct = createCompoundTense(*it, annotationData, anagraph, posgraph, offsetBegin, visited);
       if (ct != 0)
       {
-        LDEBUG << "BowGenerator::createAbstractBoWElement created compound tense: " << *ct;
+ #ifdef DEBUG_LP
+       LDEBUG << "BowGenerator::createAbstractBoWElement created compound tense: " << *ct;
+#endif
         ct->setVertex(v);
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),ct));
 //         visited.insert(v);
@@ -613,10 +685,14 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
     else if (annotationData->hasStringAnnotation(*it, Common::Misc::utf8stdstring2limastring("Predicate")))
     {
 
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createAbstractBoWElement Found a predicate in the PosGraph annnotation graph matching";
+#endif
       BoWPredicate* bP=createPredicate(v, *it, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
       if (bP!=0){
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate" ;
+#endif
         abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),bP));
   //         visited.insert(v);
         return abstractBowEl;
@@ -624,7 +700,9 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
     }
     else
     {
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createAbstractBoWElement No SpecificEntity nor CpdTense nor Predicate found";
+#endif
     }
   }
 
@@ -661,7 +739,9 @@ std::vector< std::pair<BoWRelation*,AbstractBoWElement*> > BowGenerator::createA
                                                token->length());
             newbowtok->setVertex(v);
             newbowtok->setInflectedForm(token->stringForm());
+#ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createAbstractBoWElement created bow token: " << *newbowtok;
+#endif
             abstractBowEl.push_back(std::make_pair((BoWRelation*)(0),newbowtok));
           }
           alreadyCreated.insert(normCode);
@@ -684,43 +764,55 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
 /*
   Critical function : comment logging messages
 */
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
+#endif
   //  bool result = false;
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   const LanguageData& ldata=static_cast<const LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language));
   if (m_useEmptyMacro && ldata.isAnEmptyMacroCategory(m_macroAccessor->readValue(elem.properties)))
   {
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: token ("
       << sp[elem.lemma] << "|"
       << elem.properties << ") not kept : macro category is empty ";
+#endif
     return false;
   }
 
 
   if (m_useEmptyMicro && ldata.isAnEmptyMicroCategory(m_microAccessor->readValue(elem.properties)))
   {
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: token ("
       << sp[elem.lemma] << "|"
       << elem.properties << ") not kept : micro category is empty ";
+#endif
     return false;
   }
 
+#ifdef DEBUG_LP
    LDEBUG << "BowGenerator: check token (" << sp[elem.normalizedForm] << ")";
+#endif
    if (m_useStopList && m_stopList!=0 && (m_stopList->find(sp[elem.normalizedForm]) != m_stopList->end()))
    {
+#ifdef DEBUG_LP
      LDEBUG << "BowGenerator: token (" 
        << sp[elem.lemma] << "|" 
        << elem.properties << ") not kept : normalization " 
        << sp[elem.normalizedForm] 
        << " is in stoplist";
+#endif
      return false;
    }
 
+#ifdef DEBUG_LP
    LDEBUG << "BowGenerator: token (" 
      << sp[elem.lemma] << "|" 
      << elem.properties << "), normalization " 
      << sp[elem.normalizedForm] << " kept";
+#endif
 
   return true;
 }
@@ -923,8 +1015,10 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
   const uint64_t offset,
   bool frompos) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LINFO << "BowGenerator: createSpecificEntity ling:" << vertex <<"; annot:"<< v;
+#endif
   if (!annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
   {
     return 0;
@@ -935,7 +1029,9 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
     annotationData->annotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
       pointerValue<SpecificEntityAnnotation>();
 
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator: specific entity type is " << se->getType();
+#endif
 
   std::set< std::string > alreadyStored;
 
@@ -945,14 +1041,18 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
     typeName = MediaticData::single().getEntityName(se->getType());
   }
   catch (std::exception& e) {
+    DUMPERLOGINIT;
     LERROR << "Undefined entity type " << se->getType();
     return 0;
   }
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator: specific entity type name is " << typeName;
+#endif
   // get the macro-category to use for this named entity 
   MorphoSyntacticData* data = get(vertex_data, posgraph, vertex);
   if (data->empty())
   {
+    DUMPERLOGINIT;
     LERROR << "Empty data for vertex " << vertex << " at " << __FILE__ << ", line " << __LINE__;
     LERROR << "This is a bug. Returning null entity for" << se->getString() << typeName;
     return 0;
@@ -970,6 +1070,7 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
   std::vector<BowGenerator::NamedEntityPart> neParts = createNEParts(v, annotationData, anagraph, posgraph,frompos);
   if (neParts.empty())
   {
+    DUMPERLOGINIT;
     LWARN << "No parts kept for named entity " << (*se).getString();
     // set named entity itself as part
     BoWToken* bowToken = new
@@ -992,7 +1093,9 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
                                       offset+(*p).position,
                                       (*p).length);
       bowToken->setInflectedForm((*p).inflectedForm);
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator: specific entity part infl " << (*p).inflectedForm;
+#endif
 
       bowNE->addPart(bowToken,false);
 
@@ -1014,12 +1117,16 @@ BoWNamedEntity* BowGenerator::createSpecificEntity(
     bowNE->setFeature((*f).getName(),
                       (*f).getValueLimaString());
   }
+#ifdef DEBUG_LP
   LDEBUG << "CreateSpecificEntity: created features " << QString::fromUtf8(bowNE->getFeaturesUTF8String().c_str());
+#endif
 
   std::string elem = bowNE->getIdUTF8String();
   if (alreadyStored.find(elem) != alreadyStored.end())
   { // already stored
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator: BoWNE already stored. Skipping it.";
+#endif
     delete bowNE;
     return 0;
   }
@@ -1044,7 +1151,9 @@ BoWPredicate* BowGenerator::createPredicate(
     bool keepAnyway) const
 {
   DUMPERLOGINIT;
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createPredicate ling:" << lgv << "; annot:" << agv;
+#endif
   BoWPredicate* bowP = new BoWPredicate();
 
   Token* token = get(vertex_token, posgraph, lgv);
@@ -1063,7 +1172,9 @@ BoWPredicate* BowGenerator::createPredicate(
   try
   {
     EntityType predicateEntity= Common::MediaticData::MediaticData::single().getEntityType(predicate);
+#ifdef DEBUG_LP
     LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< predicate << " is/are ";
+#endif
     AnnotationGraph annotGraph=annotationData->getGraph();
     AnnotationGraphOutEdgeIt outIt, outIt_end;
     boost::tie(outIt, outIt_end) = boost::out_edges(agv, annotationData->getGraph());
@@ -1088,9 +1199,13 @@ BoWPredicate* BowGenerator::createPredicate(
         if (!posGraphSemRoleVertices.empty())
         {
           LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
+#ifdef DEBUG_LP
           LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
+#endif
           std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
+#ifdef DEBUG_LP
           LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
+#endif
 //               if (semRoleTokens[0].second!="")
           if (!semRoleTokens.empty())
           {
@@ -1099,12 +1214,14 @@ BoWPredicate* BowGenerator::createPredicate(
         }
         else
         {
+#ifdef DEBUG_LP
           LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
+#endif
         }
       }
       catch (const Lima::LimaException& e)
       {
-        LDEBUG << "BowGenerator::createPredicate Unknown semantic role" << semRole << ";" << e.what();
+        LERROR << "BowGenerator::createPredicate Unknown semantic role" << semRole << ";" << e.what();
       }
     }
     bowP->setPredicateType(predicateEntity);
@@ -1119,7 +1236,9 @@ BoWPredicate* BowGenerator::createPredicate(
       {
         BoWToken* outputRoles=static_cast<BoWToken*>(it.value());
         LimaString roleLabel=Common::MediaticData::MediaticData::single().getEntityName(it.key());
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator::createPredicate Associated "<< QString::fromUtf8(outputRoles->getOutputUTF8String().c_str()) << " to it" << "via the semantic role label "<< roleLabel ;
+#endif
       }
     }
     return bowP;
@@ -1144,8 +1263,10 @@ BoWPredicate* BowGenerator::createPredicate(
     std::set< LinguisticGraphVertex >& visited,
     bool keepAnyway) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::createPredicate " << lgvs << agvs << agvt << annot.type().c_str();
+#endif
   BoWPredicate* bowP = new BoWPredicate();
 
   EntityType predicateEntity = Common::MediaticData::MediaticData::single().getEntityType(QString::fromUtf8(annot.type().c_str()));
@@ -1157,7 +1278,9 @@ BoWPredicate* BowGenerator::createPredicate(
   std::vector<AnnotationGraphVertex> vertices;
   vertices.push_back(agvs);
   vertices.push_back(agvt);
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< annot.type().c_str() << " is/are ";
+#endif
   QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> roles;
   const LimaString typeAnnot="SemanticRole";
   for (auto verticesIt = vertices.begin(); verticesIt != vertices.end(); verticesIt++)
@@ -1171,9 +1294,13 @@ BoWPredicate* BowGenerator::createPredicate(
       if (!posGraphSemRoleVertices.empty())
       {
         LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
+#endif
         std::vector<std::pair<BoWRelation*,AbstractBoWElement*> > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << annot.type().c_str();
+#endif
         if (!semRoleTokens.empty())
         {
           EntityType semRoleEntity;
@@ -1182,12 +1309,16 @@ BoWPredicate* BowGenerator::createPredicate(
       }
       else
       {
+#ifdef DEBUG_LP
         LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
+#endif
       }
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createPredicate Created a Predicate for the semantic relation"
       << predicateEntity << Common::MediaticData::MediaticData::single().getEntityName(predicateEntity);
+#endif
   if (!roles.empty())
   {
     bowP->setRoles(roles);
@@ -1195,7 +1326,9 @@ BoWPredicate* BowGenerator::createPredicate(
     {
       BoWToken* outputRoles=static_cast<BoWToken*>(it.value());
       LimaString roleLabel = it.key().isNull() ? QString() : Common::MediaticData::MediaticData::single().getEntityName(it.key());
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createPredicate Associated "<< QString::fromUtf8(outputRoles->getOutputUTF8String().c_str()) << " to it" << "via the semantic role label "<< roleLabel ;
+#endif
     }
   }
   return bowP;
@@ -1208,12 +1341,16 @@ StringsPoolIndex BowGenerator::getNamedEntityNormalization(
 {
   if (!annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
   {
+#ifdef DEBUG_LP
     DUMPERLOGINIT;
     LDEBUG << "BowGenerator::getNamedEntityNormalization: no SpecificEntity annotation for " << v << " ; return 0";
+#endif
     return static_cast<StringsPoolIndex>(0);
   }
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::getNamedEntityNormalization: m_NEnormalization is " << m_NEnormalization;
+#endif
   StringsPoolIndex normalizedForm(0);
   switch (m_NEnormalization)
   {
@@ -1241,7 +1378,9 @@ StringsPoolIndex BowGenerator::getNamedEntityNormalization(
     normalizedForm=sp[typeStr];
     break;
   }
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator::getNamedEntityNormalization return " << normalizedForm;
+#endif
   return normalizedForm;
 }
 
@@ -1252,7 +1391,9 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
   const LinguisticGraph& posgraph,
   bool frompos) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
+#endif
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
@@ -1351,7 +1492,9 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
         if (! m_keepAllNamedEntityParts &&
               ! shouldBeKept(elem))
         {
+#ifdef DEBUG_LP
           LDEBUG << "BowGenerator: part of named entity not kept: " << token->stringForm();
+#endif
           continue;
         }
 
@@ -1384,8 +1527,10 @@ BoWToken* BowGenerator::createCompoundTense(
                                              const uint64_t offset,
                                              std::set<LinguisticGraphVertex>& visited) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator: createCompoundTense " << v;
+#endif
   if (!annotationData->hasIntAnnotation(v, Common::Misc::utf8stdstring2limastring("CpdTense")))
   {
     return 0;
@@ -1509,7 +1654,9 @@ BoWToken* BowGenerator::createCompoundTense(
   complex->setInflectedForm(head->getInflectedForm());
   delete head; head = 0;  
   delete extension; extension = 0;
+#ifdef DEBUG_LP
   LDEBUG << "BowGenerator: Built complex: " << *complex;
+#endif
 
   return complex;
 }

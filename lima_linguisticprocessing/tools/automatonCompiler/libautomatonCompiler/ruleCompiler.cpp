@@ -63,8 +63,9 @@ LimaString initRule(Rule& r,
                      uint64_t lineNumber) {
 
   AUCLOGINIT;
+#ifdef DEBUG_LP
   LDEBUG << "RuleCompiler:initializing rule " << str;
-  // Lima::TimeUtilsController* ctrl5  = new Lima::TimeUtilsController("initRule", true);
+#endif
 
   //LimaString ruleString;
   // Lima::TimeUtilsController* ctrl6  = new Lima::TimeUtilsController("build RuleString and function inside compiler", true);
@@ -158,7 +159,9 @@ LimaString initRule(Rule& r,
   r.setNormalizedForm(s.getNorm());
   ostringstream oss;
   oss << filename << ":" << lineNumber;
+#ifdef DEBUG_LP
   LDEBUG << "rule id is '" << oss.str() << "' / filename="<< filename << ",lineNumber=" << lineNumber;
+#endif
   r.setRuleId(oss.str());
   // delete ctrl10;
 

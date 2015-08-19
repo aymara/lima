@@ -388,7 +388,7 @@ void MediaticDataPrivate::initMedias(
         {
           MediaId id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",*it).c_str()));
 #ifdef DEBUG_CD
-          LINFO << "media '" << (*it).c_str() << "' has id " << id;
+          LDEBUG << "media '" << (*it).c_str() << "' has id " << id;
           LDEBUG << (void*)this << " initialize string pool";
 #endif
           m_stringsPool.insert(std::make_pair(id, new FsaStringsPool()));
@@ -413,18 +413,25 @@ void MediaticDataPrivate::initMedias(
 
 void MediaticData::initMediaData(MediaId med)
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticData::initMediaData '" << (int)med << "'";
+#endif
   map<MediaId,string>::const_iterator it=m_d->m_mediaDefinitionFiles.find(med);
   if (it==m_d->m_mediaDefinitionFiles.end())
   {
+    MDATALOGINIT;
     LERROR << "No media definition file for med id " << med;
     throw InvalidConfiguration();
   }
+#ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Parse MediaConfigurationFile " << (it->second).c_str();
+#endif
   XMLConfigurationFileParser parser(it->second);
 
+#ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Class: " << parser.getModuleGroupParamValue("MediaData","Class","class").c_str();
+#endif
   MediaData* ldata = MediaData::Factory::getFactory(parser.getModuleGroupParamValue("MediaData","Class","class"))->create(parser.getModuleGroupConfiguration("MediaData","Class"),0);
 
 //   MediaData* ldata=new MediaData();
@@ -471,7 +478,9 @@ uint8_t MediaticData::getRelation(const std::string& relation) const
 void MediaticDataPrivate::initRelations(
   XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
+#endif
   //LINFO << "intialize Relations";
   m_relTypes[s_undefinedRelation]=0;
   m_relTypesNum[0]=s_undefinedRelation;
@@ -483,15 +492,19 @@ void MediaticDataPrivate::initRelations(
          it++)
          {
             uint8_t relId=atoi(it->second.c_str());
+#ifdef DEBUG_CD
             LDEBUG << "read relation " << it->first.c_str() << " -> " << (int)relId;
+#endif
             m_relTypes[it->first]=relId;
             m_relTypesNum[relId]=it->first;
          }
   
   } catch (NoSuchGroup& ) {
+    MDATALOGINIT;
     LERROR << "No group 'semanticRelations' in 'common' module of lima-common configuration file";
     throw InvalidConfiguration();
   } catch (NoSuchMap& ) {
+    MDATALOGINIT;
     LERROR << "No map 'declaration' in 'semanticRelations' group of lima-common configuration file";
     throw InvalidConfiguration();
   }
@@ -500,7 +513,9 @@ void MediaticDataPrivate::initRelations(
 void MediaticDataPrivate::initConceptTypes(
     XMLConfigurationFiles::XMLConfigurationFileParser& configParser) 
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
+#endif
   //LINFO << "intialize Concepts Types";
   
   try {
@@ -510,15 +525,19 @@ void MediaticDataPrivate::initConceptTypes(
          it++)
     {
       ConceptType type = static_cast<ConceptType>(atoi(it->second.c_str()));
+#ifdef DEBUG_CD
       LDEBUG << "read concept type " << it->first.c_str() << " -> " << type;
+#endif
       m_conceptTypes[it->first] = type;
       m_conceptNames[type] = it->first;
     }
   
   } catch (NoSuchGroup& ) {
+    MDATALOGINIT;
     LERROR << "No group 'SemanticData' in 'common' module of lima-common configuration file";
     throw InvalidConfiguration();
   } catch (NoSuchMap& ) {
+    MDATALOGINIT;
     LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file";
     throw InvalidConfiguration();
   }
@@ -593,8 +612,7 @@ void printEntities(QsLogging::Logger& logger,
       const DoubleAccessObjectToIdMap<LimaString,EntityTypeId>::AccessMap& t=types[(*it).second]->getAccessMap();
       for (DoubleAccessObjectToIdMap<LimaString,EntityTypeId>::AccessMap::const_iterator it2=t.begin(),
              it2_end=t.end(); it2!=it2_end; it2++) {
-        LDEBUG 
-           << "   " << *((*it2).first)
+        LDEBUG << "   " << *((*it2).first)
            << "(" << (*it2).first << ")"
            << "->" << (*it2).second;
       }
@@ -603,13 +621,11 @@ void printEntities(QsLogging::Logger& logger,
   // reverse maps
   const std::vector<const LimaString*>& rg=groups.getReverseAccessMap();
   for (uint32_t i(0);i<rg.size(); i++) {
-    LDEBUG 
-       << "reverse " << i << "->" << rg[i];
+    LDEBUG << "reverse " << i << "->" << rg[i];
     if (rg[i]!=0) {
       const std::vector<const LimaString*>& rt=types[i]->getReverseAccessMap();
       for (uint32_t j(0);j<rt.size(); j++) {
-        LDEBUG
-           << "    reverse " << j << "->" << rt[j];
+        LDEBUG << "    reverse " << j << "->" << rt[j];
       }
     }
   }
@@ -625,7 +641,9 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
     
     for (ModuleConfigurationStructure::iterator it=moduleConf.begin(),
            it_end=moduleConf.end(); it!=it_end; it++) {
+#ifdef DEBUG_CD
       LDEBUG << "initEntityTypes: looking at group " << (*it).first.c_str();
+#endif
      
       LimaString groupName=Common::Misc::utf8stdstring2limastring((*it).first);
 
@@ -650,7 +668,9 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
         
       } else {  
         EntityGroupId groupId=addEntityGroup(groupName);
+#ifdef DEBUG_CD
         LDEBUG << "initEntityTypes: id is " << groupId;
+#endif
         
         GroupConfigurationStructure& groupConf=(*it).second;
         
@@ -659,10 +679,14 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
               ent_end=entityList.end(); ent!=ent_end; ent++) {
           
           LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
+#ifdef DEBUG_CD
           LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group "
           << groupName;
+#endif
           EntityType type=addEntity(groupId,entityName);
+#ifdef DEBUG_CD
           LDEBUG << "initEntityTypes: type is " << type;
+#endif
         }
       }
     }
@@ -681,9 +705,11 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
     LERROR << "missing list 'entityList' in entity types configuration";
     throw InvalidConfiguration();
   }
+#ifdef DEBUG_CD
   if (logger.loggingLevel()<=QsLogging::DebugLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
   }
+#endif
 }
 
 EntityGroupId MediaticData::addEntityGroup(const LimaString& groupName)
@@ -810,35 +836,55 @@ const LimaString& MediaticData::getEntityGroupName(EntityGroupId id) const
 
 void MediaticData::writeEntityTypes(std::ostream& file) const
 {
+#ifdef DEBUG_CD
   MDATALOGINIT;
+#endif
 
   const DoubleAccessObjectToIdMap<LimaString,EntityGroupId>::AccessMap& groups=m_d->m_entityGroups.getAccessMap();
   Misc::writeCodedInt(file,groups.size());
   for (DoubleAccessObjectToIdMap<LimaString,EntityGroupId>::AccessMap::const_iterator 
          it=groups.begin(),it_end=groups.end();it!=it_end; it++) {
+#ifdef DEBUG_CD
     LDEBUG << "writeEntityTypes: write group id " << (*it).second;
+#endif
     Misc::writeCodedInt(file,(*it).second);
+#ifdef DEBUG_CD
     LDEBUG << "writeEntityTypes: write group name " << *((*it).first);
+#endif
     Misc::writeUTF8StringField(file,*((*it).first));
+#ifdef DEBUG_CD
     LDEBUG  << "writeEntityTypes: after group name file at " << file.tellp();
+#endif
     // write entities for this group
     const DoubleAccessObjectToIdMap<LimaString,EntityTypeId>::AccessMap& entities=m_d->m_entityTypes[(*it).second]->getAccessMap();
+#ifdef DEBUG_CD
     LDEBUG << "writeEntityTypes: write nb entities: " << entities.size();
+#endif
     Misc::writeCodedInt(file,entities.size());
+#ifdef DEBUG_CD
     LDEBUG  << "writeEntityTypes: after write nb entities, file at " << file.tellp();
+#endif
     for (DoubleAccessObjectToIdMap<LimaString,EntityTypeId>::AccessMap::const_iterator 
            it2=entities.begin(),it2_end=entities.end();it2!=it2_end; it2++) {
+#ifdef DEBUG_CD
       LDEBUG << "writeEntityTypes: write entity id " << (*it2).second;
+#endif
       Misc::writeCodedInt(file,(*it2).second);
+#ifdef DEBUG_CD
       LDEBUG  << "writeEntityTypes: after write entity id file at " << file.tellp();
       LDEBUG << "writeEntityTypes: write entity name " << *((*it2).first);
+#endif
       Misc::writeUTF8StringField(file,*((*it2).first));
-    LDEBUG  << "writeEntityTypes: after write entity name file at " << file.tellp();
+ #ifdef DEBUG_CD
+   LDEBUG  << "writeEntityTypes: after write entity name file at " << file.tellp();
+#endif
     }
   }
+#ifdef DEBUG_CD
   if (logger.loggingLevel()<=QsLogging::TraceLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
   }
+#endif
 }
 
 void MediaticData::readEntityTypes(std::istream& file,

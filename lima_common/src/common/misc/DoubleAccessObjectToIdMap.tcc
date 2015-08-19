@@ -91,21 +91,27 @@ template <typename Object, typename Id>
 Id& DoubleAccessObjectToIdMap<Object,Id>::
 operator[](const Object& val)
 {
+#ifdef DEBUG_CD
   LDATALOGINIT;
   LDEBUG << "DoubleAccessObjectToIdMap:operator["
          << val
          << "(" << &val << ")]";
+#endif
     typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator it=m_accessMap.find(&val);
   if (it==m_accessMap.end()) {
     // insert it 
+#ifdef DEBUG_CD
     LDEBUG << "DoubleAccessObjectToIdMap: new element: insert it";
+#endif
     Id id= static_cast<Id>(m_reverseAccessMap.size());
     std::pair<typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator, bool>
       ret=m_accessMap.insert(std::make_pair(new Object(val),id));
     if (ret.second) {
       typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator inserted=ret.first;
       m_reverseAccessMap.push_back((*inserted).first);
+#ifdef DEBUG_CD
       LDEBUG << "DoubleAccessObjectToIdMap: new element: return "<< (*inserted).second;
+#endif
       return (*inserted).second;
     }
     else {
@@ -113,7 +119,9 @@ operator[](const Object& val)
     }
   }
   else {
+#ifdef DEBUG_CD
     LDEBUG << "DoubleAccessObjectToIdMap: already inserted element: return "<< (*it).second;
+#endif
     return (*it).second;
   }
 }

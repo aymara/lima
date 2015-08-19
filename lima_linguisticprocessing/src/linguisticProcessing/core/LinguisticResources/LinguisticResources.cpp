@@ -150,22 +150,24 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
       string fileName(""),moduleName("");
       try {
         RESOURCESLOGINIT;
-        LINFO << "i="<< i;
+#ifdef DEBUG_LP
+        LDEBUG << "i="<< i;
+#endif
         fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
           "/"+string((*it),0,i);
-        LINFO << "filename="<< fileName;
         moduleName=string((*it),i+1);
-        LINFO << "moduleName="<< moduleName;
+        LINFO << "includeResources filename="<< fileName << "moduleName="<< moduleName;
         XMLConfigurationFileParser parser(fileName);
         ModuleConfigurationStructure& newMod=parser.getModuleConfiguration(moduleName);
         module.addModule(newMod);
-        LINFO << "added module";
+#ifdef DEBUG_LP
         ostringstream oss;
         for (ModuleConfigurationStructure::const_iterator it=module.begin(),it_end=module.end();
              it!=it_end; it++) {
           oss << (*it).first << ";";
         }
-        LINFO << "module contain following groups: " << oss.str();
+       LDEBUG << "added module with the following groups: " << oss.str();
+#endif
         // recursive inclusions
         includeResources(module,newMod);
       }

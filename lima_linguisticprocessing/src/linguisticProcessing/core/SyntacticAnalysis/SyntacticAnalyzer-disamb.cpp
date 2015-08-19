@@ -113,7 +113,9 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
+#ifdef DEBUG_LP
     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+#endif
     ChainsDisambiguator cd(dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData")), 
         beginSentence, endSentence, m_language, m_depGraphMaxBranchingFactor);
     cd.initPaths();

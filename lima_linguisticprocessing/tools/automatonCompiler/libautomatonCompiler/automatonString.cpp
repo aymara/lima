@@ -120,12 +120,16 @@ m_isSplittedLast(false)
 {
   // a correction of certain syntax simplifications [a b] -> [(a b)]
   LimaString s=syntaxCorrection(str);
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString: building automaton from : " << s;
+#endif
 
   init(str,gazeteers,subAutomatons,0,str.size());
 
+#ifdef DEBUG_LP
   LDEBUG << "AutomatonString:BUILT:" << getStringDebug();
+#endif
 }
 
 AutomatonString::
@@ -271,12 +275,14 @@ bool AutomatonString::parse(const LimaString& s,
   // easier to work on a copy of the substring
   LimaString str = s.mid(begin,size);
 
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString:parsing string "
          << str
          << "[" << begin << "," << size << "] in "
          << s
         ;
+#endif
 
   int offsetGroupOpen=findSpecialCharacter(str,CHAR_GROUP_OPEN_RE,0);
   
@@ -362,10 +368,12 @@ parseGroupSequence(const LimaString& str,
                    const int begin,
                    const LimaChar endChar) 
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString:parsing sequence group \"" 
          << str.mid(begin) << "\""
          << " (endChar='" << endChar << "')";
+#endif
 
   int nextSepSeq=findSpecialCharacter(str,CHAR_SEP_RE,begin);
   int subGroupOpen=findSpecialCharacter(str,CHAR_GROUP_OPEN_RE,begin);
@@ -423,17 +431,23 @@ parseGroupAlternative(const LimaString& str,
   int nextGroupEnd=findSpecialCharacter(str,CHAR_GROUP_CLOSE_RE,begin);
   
   
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString:parsing alternative group" << begin
          << str.mid(begin) << nextSepAlt << nextSepSeq << subGroupOpen << nextGroupEnd;
+#endif
 
   if (nextSepAlt != -1 && nextSepAlt==begin) {
+#ifdef DEBUG_LP
     LDEBUG << "AutomatonString:parseAlternative: goto next element";
+#endif
     return parseGroupAlternative(str,gazeteers,subAutomatons,begin+1);
   }
 
   if (nextGroupEnd != -1 && nextGroupEnd == begin) { 
+#ifdef DEBUG_LP
     LDEBUG << "AutomatonString:parseAlternative: end";
+#endif
     return begin; 
   }
    
@@ -472,10 +486,12 @@ parseGroupAlternative(const LimaString& str,
     (nextSepSeq == -1 || subGroupOpen < nextSepSeq) &&
     (nextSepAlt == -1 || subGroupOpen < nextSepAlt) &&
     (nextGroupEnd == -1 || subGroupOpen < nextGroupEnd)) {
-    LDEBUG << "AutomatonString:parseAlternative: parsing subGroup";
     int subGroupEnd=addGroup(str,gazeteers,subAutomatons,subGroupOpen);
+#ifdef DEBUG_LP
+    LDEBUG << "AutomatonString:parseAlternative: parsing subGroup";
     LDEBUG << "AutomatonString:parseAlternative: end of subGroup is "
            << subGroupEnd;
+#endif
     return parseGroupAlternative(str,gazeteers,subAutomatons,subGroupEnd+1);
   }
 
@@ -497,15 +513,19 @@ parseGroup(const LimaString& str,
            const int begin)
 {
 
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
   int nextSepAlt=findSpecialCharacter(str,CHAR_CHOICESEP_RE,begin);
   int nextSepSeq=findSpecialCharacter(str,CHAR_SEP_RE,begin);
   int subGroupOpen=findSpecialCharacter(str,CHAR_GROUP_OPEN_RE,begin);
   int nextGroupEnd=findSpecialCharacter(str,CHAR_GROUP_CLOSE_RE,begin);
   
+#ifdef DEBUG_LP
   LDEBUG << "AutomatonString:parsing unknown group "
          << str.mid(begin)
          << nextSepAlt << nextSepSeq << subGroupOpen << nextGroupEnd;
+#endif
   
   if (nextGroupEnd == begin) { 
     return begin; 
@@ -644,9 +664,11 @@ void AutomatonString::splitOnChar(const LimaString& str,
 // remove artificial sequences
 //***********************************************************************
 void AutomatonString::removeArtificialSequences(const bool inSubPart) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "removing artificial sequences from(inSubPart="<< inSubPart<< "): " 
           << getString();
+#endif
   switch (m_type) {
   case UNKNOWN_TYPE:
   case UNIT:
@@ -659,8 +681,10 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
          part != m_parts.end(); part++) {
       if ((*part).isSequence()) {
         (*part).removeArtificialSequences(true);
+#ifdef DEBUG_LP
          LDEBUG << "part without artificial sub-sequences : " 
             << (*part).getString();
+#endif
       }
       if ((*part).isArtificialSequence()) {
         if ((*part).hasModifiers() || (*part).hasConstraint()) {
@@ -681,7 +705,9 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
 //           (*part).setArtificialSequence(false);
 //           }
         }
+#ifdef DEBUG_LP
         LDEBUG << "sequence is artificial: " << (*part).getString();
+#endif
         // insert elements one by one (otherwise, loose the iterator)
         for (uint64_t i(0); i<(*part).getParts().size(); i++) {
           part=m_parts.insert(part,(*part).getParts()[i]);
@@ -705,9 +731,11 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
 }
 
 void AutomatonString::removeUnitSequences() {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "removeUnitSequences";
   LDEBUG << "removing unit sequences from " << getString();
+#endif
   switch (m_type) {
   case UNKNOWN_TYPE:
   case UNIT: {
@@ -798,7 +826,9 @@ int AutomatonString::parseModifiersPost(const LimaString& s,
 
   int end(begin);
 
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
   if (s[begin+1] == CHAR_OPTIONAL_RE) {
     m_minOccurrences = 0;
     m_maxOccurrences = 1;
@@ -810,7 +840,9 @@ int AutomatonString::parseModifiersPost(const LimaString& s,
                                                   begin);
     int offsetMinus=findSpecialCharacter(s,CHAR_CARDINALITY_UNTIL_RE,
                                                    begin);
+#ifdef DEBUG_LP
     LDEBUG << "AutomatonString::parseModifiersPost offsets" << offsetOpen << offsetMinus << offsetClose << s.mid(offsetOpen+1,offsetMinus-offsetOpen-1);
+#endif
     m_minOccurrences=s.mid(offsetOpen+1,offsetMinus-offsetOpen-1).toInt();
     
     // max occurrences can be infinite
@@ -832,7 +864,9 @@ int AutomatonString::parseModifiersPost(const LimaString& s,
     // keep has already been set on pre modifier
     end++;
   }
+#ifdef DEBUG_LP
   LDEBUG << "AutomatonString::parseModifiersPost got" << m_minOccurrences << m_maxOccurrences << end ;
+#endif
   
   return end;
 }
@@ -911,8 +945,10 @@ void AutomatonString::parseUnit(const LimaString& str,
                                 const int begin,
                                 const int size) {
 
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString: parsing unit" << str << begin << size;
+#endif
   
   int newBegin(begin);
   int newSize(size);
@@ -938,16 +974,21 @@ void AutomatonString::parseUnit(const LimaString& str,
     m_unit=(*it).getAutomatonString().getUnitString();
   }
   else if (str[newBegin] == CHAR_BEGIN_NAMESUB) {
+#ifdef DEBUG_LP
     LDEBUG << "AutomatonString: searching subautomaton" << str.mid(newBegin+1,newSize-1) << "in" << subAutomatons.size() << "subautomatons";
+#endif
     // copy automaton string of the corresponding subAutomaton
     vector<SubAutomaton>::const_iterator it= subAutomatons.begin();
     for(;it!=subAutomatons.end();it++)
     {
+#ifdef DEBUG_LP
       LDEBUG << "AutomatonString: one subAutomaton named:" << (*it).getName();
+#endif
       if ((*it).getName() == str.mid(newBegin+1,newSize-1)) break;
       
     }
     if (it==subAutomatons.end()) {
+      AUCLOGINIT;
       LERROR << "unknown class " << str.mid(newBegin+1,newSize-1);
       ostringstream oss;
       oss << "unknown class " << Common::Misc::limastring2utf8stdstring(str.mid(newBegin+1,newSize-1));
@@ -1117,8 +1158,10 @@ LimaString AutomatonString::getStringDebug() const {
 // find an subpart of a group element
 //***********************************************************************
 AutomatonString& AutomatonString::findSubPart(std::vector <Lima::LinguisticProcessing::Automaton::AutomatonString >::size_type index) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "findSubPart " << index << " in " << *this;
+#endif
   
   switch (m_type) {
   case UNKNOWN_TYPE:
@@ -1245,6 +1288,7 @@ existsConstraint(const SubPartIndex* index,
                  const ConstraintAction& constraintAction,
                  int& c) const {
  
+#ifdef DEBUG_LP
   AUCLOGINIT;
   if (index != 0) {
     LDEBUG << "testing exists constraint " 
@@ -1255,6 +1299,7 @@ existsConstraint(const SubPartIndex* index,
     LDEBUG << "testing exists constraint " 
            << constraintName << " on " << *this;
   }
+#endif
 
   if (index==0 || index->empty()) {
     // no more subindexes: apply on this 
@@ -1268,7 +1313,9 @@ existsConstraint(const SubPartIndex* index,
                        constraintAction,c);
   case SUB_FIRST: 
     if (isUnit()) { 
+#ifdef DEBUG_LP
       LDEBUG << "return false";
+#endif
       return false; // will be splitted
     } 
     else if (m_isSplittedFirst) {
@@ -1285,7 +1332,9 @@ existsConstraint(const SubPartIndex* index,
   case SUB_CURRENT:
   case SUB_NEXT:
     if (isUnit()) { 
+#ifdef DEBUG_LP
       LDEBUG << "return false";
+#endif
       return false; // will be splitted
     }
     else if (m_isSplittedFirst) {
@@ -1314,7 +1363,9 @@ existsConstraint(const SubPartIndex* index,
     break;
   case SUB_LAST:
     if (isUnit()) { 
+#ifdef DEBUG_LP
       LDEBUG << "return false";
+#endif
       return false;  // will be splitted
     }
     else if (m_isSplittedFirst) {
@@ -1350,12 +1401,16 @@ existsConstraint(const std::string& constraintName,
                  const ConstraintAction& constraintAction,
                  int& c) const
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "testing exists constraint " 
          << constraintName << " on " << *this;
+#endif
   if (m_constraints.empty()) {
     c=0;
+#ifdef DEBUG_LP
     LDEBUG << "=> false: no constraint";
+#endif
     return false;
   }
   else {
@@ -1366,11 +1421,15 @@ existsConstraint(const std::string& constraintName,
       if ((*constraint).functionName()==constraintName && 
           (*constraint).action()==constraintAction) {
         c=(*constraint).index();
+#ifdef DEBUG_LP
         LDEBUG << "=> true: " << c;
+#endif
         return true;
       }
     }
+#ifdef DEBUG_LP
     LDEBUG << "=> false: last constraint is "<< m_constraints.back();
+#endif
     return false;
   }
 }
@@ -1433,6 +1492,7 @@ void AutomatonString::insertConstraintInUnit(const Constraint& c) {
 void AutomatonString::insertConstraint(const SubPartIndex* index,
                                        Constraint& constraint,
                                        const std::string& depth) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   if (index==0) {
     LDEBUG << depth << "insertConstraint " << constraint
@@ -1442,6 +1502,7 @@ void AutomatonString::insertConstraint(const SubPartIndex* index,
     LDEBUG << depth << "insertConstraint " << constraint << " in part " 
            << *index << " of " << *this ;
   }
+#endif
   
   if (index==0 || index->empty()) {
     // no more subindexes: apply on this 
@@ -1450,10 +1511,14 @@ void AutomatonString::insertConstraint(const SubPartIndex* index,
   }
   else {
     // in case of relative indexes, change store/compare to use stack
+#ifdef DEBUG_LP
     LDEBUG << depth << "AutomatonString::insertConstraint index->getPartIndex().first: " << index->getPartIndex().first;
+#endif
     switch (index->getPartIndex().first) {
     case SUB_NONE: {
+#ifdef DEBUG_LP
       LDEBUG << depth << "SUB_NONE " << m_isSplittedFirst << " " << m_isSplittedLast;
+#endif
       // no relative index 
       // -1 to match vector indexes
 
@@ -1469,7 +1534,9 @@ void AutomatonString::insertConstraint(const SubPartIndex* index,
       break;
     }
     case SUB_FIRST: {
+#ifdef DEBUG_LP
       LDEBUG << depth << "SUB_FIRST " << m_isSplittedFirst << " " << m_isSplittedLast;
+#endif
       // the element must be composed
       // if it is not, split 
       if (isOptional()) {
@@ -1504,7 +1571,9 @@ void AutomatonString::insertConstraint(const SubPartIndex* index,
     }
     case SUB_CURRENT: 
     case SUB_NEXT: {
+#ifdef DEBUG_LP
       LDEBUG << depth << "SUB_CURRENT/SUB_NEXT " << m_isSplittedFirst << " " << m_isSplittedLast << " " << isUnit();
+#endif
       if (isUnit()) {
         insertConstraint(index->getSubPartIndex(),constraint, depth+"  ");
       }
@@ -1530,7 +1599,9 @@ void AutomatonString::insertConstraint(const SubPartIndex* index,
       break;
     }
     case SUB_LAST: {
+#ifdef DEBUG_LP
       LDEBUG << depth << "SUB_LAST " << m_isSplittedFirst << " " << m_isSplittedLast;
+#endif
       if (isOptional()) {
         split(false);
         findSubPart(1).
@@ -1550,8 +1621,10 @@ void AutomatonString::insertConstraint(const SubPartIndex* index,
         insertConstraint(index->getSubPartIndex(),constraint, depth+"  ");
       }
       else {
+#ifdef DEBUG_LP
         LDEBUG << depth << "insertConstraint " << constraint << " in part "
         << *index << " of " << *this << ": SUB_LAST, " << isOptional() << ", " << m_isSplittedFirst << ", " << m_isSplittedLast << ", cannot handle LAST in this context" ;
+#endif
         ostringstream oss;
         oss << "cannot handle LAST in this context";
         throw ConstraintSyntaxException(oss.str());
@@ -1571,8 +1644,10 @@ void AutomatonString::insertConstraint(std::vector <Lima::LinguisticProcessing::
 
 void AutomatonString::insertConstraint(const LimaString& subindex,
                                        const Constraint& constraint) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString::insertConstraint '" << subindex << "',  '" << constraint << "'";
+#endif
   if (subindex.isEmpty()) {
     insertConstraintInUnit(constraint);
     return;
@@ -1632,11 +1707,15 @@ LimaString stringCardinality(const int cardmin,
 }
 
 void AutomatonString::split() {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString::split() splitting automaton " << *this;
+#endif
 
   if (m_maxOccurrences != -1 && m_maxOccurrences < 3) {
+#ifdef DEBUG_LP
     LDEBUG << "m_maxOccurrences: " << m_maxOccurrences;
+#endif
     throw ConstraintSyntaxException("cannot split element "+
                                     Misc::limastring2utf8stdstring(getString()));
   }
@@ -1676,7 +1755,9 @@ void AutomatonString::split() {
   m_parts.push_back(part3);
 
 
+#ifdef DEBUG_LP
   LDEBUG << "=> " << *this;
+#endif
 }
 
 // split(first=true) : split to get first element :
@@ -1689,12 +1770,16 @@ void AutomatonString::split() {
 
 void AutomatonString::split(const bool first) 
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "AutomatonString::split(bool) splitting automaton (first=" << first 
          << ") " << *this;
+#endif
 
   if (m_maxOccurrences != -1 && m_maxOccurrences < 2) {
+#ifdef DEBUG_LP
     LDEBUG << "AutomatonString::split m_maxOccurrences: " << m_maxOccurrences;
+#endif
     throw ConstraintSyntaxException("cannot split element "+
                                     Misc::limastring2utf8stdstring(getString()));
   }
@@ -1741,7 +1826,9 @@ void AutomatonString::split(const bool first)
   m_parts.push_back(part1);
   m_parts.push_back(part2);
 
+#ifdef DEBUG_LP
   LDEBUG << "=> " << *this;
+#endif
 }
 
 //***********************************************************************

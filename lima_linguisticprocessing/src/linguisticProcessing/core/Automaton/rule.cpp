@@ -271,7 +271,9 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
     return true;
   }
 
+#ifdef DEBUG_LP
   AULOGINIT;
+#endif
 /*
  *  for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
       matchElmt != result->end() ; matchElmt++ ) {
@@ -282,27 +284,37 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
        actionItr!=m_actionsWithOneArgument.end(); actionItr++) {
     const ConstraintAction& action = actionItr->second.action();
     // test if execution of action is required
+#ifdef DEBUG_LP
     LDEBUG << "Rule::executeActions: success = " << success
            << ", check if execution is required for function " << actionItr->second.functionName();
+#endif
     if( (( success ) && (action==EXECUTE_IF_SUCCESS || action==EXECUTE_IF_SUCCESS_REVERSE))
      || (( !success ) && (action==EXECUTE_IF_FAILURE || action==EXECUTE_IF_FAILURE_REVERSE)) ) {
       const LimaString& ruelElemtId = actionItr->first;
+#ifdef DEBUG_LP
       LDEBUG << "Rule::executeActions: check " << ruelElemtId << "for function " << actionItr->second.functionName();
+#endif
       const ConstraintFunction* functionAddr = actionItr->second.functionAddr();
       //  search for vertex which match same ruleElemntId as actionItr
       for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
           matchElmt != result->end() ; matchElmt++ ) {
+#ifdef DEBUG_LP
         LDEBUG << "Rule::executeActions: check vertex "
               << matchElmt->m_elem.first << " with " << matchElmt->getRuleElemtId();
+#endif
         if( matchElmt->getRuleElemtId() == ruelElemtId ) {
+#ifdef DEBUG_LP
           LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
+#endif
           bool ok=(*functionAddr)(graph,matchElmt->m_elem.first,analysis);
           // TODO: what to do with value of ok??
         }
       }
     }
     else {
+#ifdef DEBUG_LP
       LDEBUG << "Rule::executeActions: execution of function " << actionItr->second.functionName() << " not required";
+#endif
     }
   }
   // execute actions without arguments associated to the rule

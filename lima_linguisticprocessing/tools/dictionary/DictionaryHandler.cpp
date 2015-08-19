@@ -138,7 +138,9 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI, const QStrin
       LimaString desaccstr=m_charChart->unmark(m_currentKey);
       if (desaccstr.size()>0 && desaccstr!=m_currentKey)
       {
+#ifdef DEBUG_LP
         LDEBUG << "DictionaryCompiler::startElement read desacc " << m_currentKey << " => " << desaccstr;
+#endif
         uint64_t desaccIndex=getStringIndex(desaccstr);
         if (desaccIndex!=0)
         {

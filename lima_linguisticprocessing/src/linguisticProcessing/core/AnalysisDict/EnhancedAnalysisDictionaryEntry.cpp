@@ -108,8 +108,10 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(AbstractDictionaryEntryH
 
 void EnhancedAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntryHandler* targetHandler) const
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "EnhancedAnalysisDictionaryEntry::parseAccentedForms";
+#endif
   AbstractDictionaryEntryHandler* handler = targetHandler;
   if (m_notMainKeysHandler) {
     m_notMainKeysHandler->setDelegate(targetHandler);
@@ -136,7 +138,9 @@ void EnhancedAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntry
       }
       else
       {
+#ifdef DEBUG_LP
         LDEBUG << "  found accented form:" << (*m_stringsPool)[read];
+#endif
         handler->foundAccentedForm(read);
         // parse accented form
         unsigned char* acc=m_dicoData->getEntryAddr(read);
@@ -167,40 +171,56 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
 
 // "Le lotus croit dans le feu, et demeure invulnerable" ???
 
+#ifdef DEBUG_LP
  ANALYSISDICTLOGINIT;
  LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , " << (uint64_t)endEntry;
+#endif
   
   unsigned char* p=startEntry;
   assert(p != endEntry);
   uint64_t read=DictionaryData::readCodedInt(p);
+#ifdef DEBUG_LP
  LDEBUG << "read linginfo length = " << read;
+#endif
   unsigned char* end=p+read;
+#ifdef DEBUG_LP
  LDEBUG << "end = " << (uint64_t)(end);
+#endif
   while (p!=end)
   {
+#ifdef DEBUG_LP
     LDEBUG << "read linginfo p = " << (uint64_t)p;
+#endif
     bool toDelete=false;
     StringsPoolIndex lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
 
     if (lemma==static_cast<StringsPoolIndex>(0))
     {
+#ifdef DEBUG_LP
      LDEBUG << "read delete flag (p=" << (uint64_t)p << ")";
+#endif
       toDelete=true;
       lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     }
+#ifdef DEBUG_LP
    LDEBUG << "read lemma " << lemma << " (p=" << (uint64_t)p << ")";
+#endif
     StringsPoolIndex norm=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     if (norm==static_cast<StringsPoolIndex>(0))
     {
       norm=lemma;
     }
+#ifdef DEBUG_LP
    LDEBUG << "read norm " << norm << " (p=" << (uint64_t)p << ")" ;
+#endif
     if (toDelete)
     {
       handler->deleteLingInfos(lemma,norm);
     }
     uint64_t lingOffset=DictionaryData::readCodedInt(p);
+#ifdef DEBUG_LP
    LDEBUG << "read lingOffset = " << lingOffset << " (p=" << (uint64_t)p << ")";
+#endif
     // lingOffset=0 means there is no ling properties
     if (lingOffset!=0)
     {

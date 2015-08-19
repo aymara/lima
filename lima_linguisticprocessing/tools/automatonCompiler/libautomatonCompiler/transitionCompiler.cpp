@@ -85,7 +85,9 @@ TransitionUnit* createTransition(const LimaString str,
                                  const bool neg,
                                  const std::vector<Constraint>& constraints) 
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
 
   TransitionUnit* t(0);
   bool keepIt(keep);
@@ -96,9 +98,11 @@ TransitionUnit* createTransition(const LimaString str,
   const PropertyCode::PropertyAccessor* microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
 
+#ifdef DEBUG_LP
   LDEBUG << "creating transition from string [" 
          << Common::Misc::limastring2utf8stdstring(str)
          << "] with id" << id;
+#endif
 
   if (str.size()==0) { return t; }
 
@@ -245,6 +249,7 @@ TransitionUnit* createTransition(const LimaString str,
     Common::MediaticData::EntityType type=
       resolveEntityName(s.mid(1,s.size()-2),activeEntityGroups);
     if (type.isNull()) {
+      AUCLOGINIT;
       LERROR << "cannot resolve entity name " 
              << Common::Misc::limastring2utf8stdstring(s);
     }
@@ -284,13 +289,17 @@ Common::MediaticData::EntityType
 resolveEntityName(const LimaString s,
                   const std::vector<LimaString>& activeEntityGroups)
 {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "TransitionCompiler: try to resolve entity name " 
          << Common::Misc::limastring2utf8stdstring(s);
+#endif
   
   // test if word is a known entity name => in this case, entity transition
   if (s.indexOf(Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator())!=-1) {
+#ifdef DEBUG_LP
     LDEBUG << "TransitionCompiler: entity name is complete";
+#endif
     try {
       return Common::MediaticData::MediaticData::single().getEntityType(s);
     }
@@ -305,7 +314,9 @@ resolveEntityName(const LimaString s,
            it_end=activeEntityGroups.end(); it!=it_end; it++) {
       try {
         LimaString entityName=(*it)+Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator()+s;
+#ifdef DEBUG_LP
         LDEBUG << "TransitionCompiler: try entity name " << Common::Misc::limastring2utf8stdstring(entityName);
+#endif
         Common::MediaticData::EntityType findType=
           Common::MediaticData::MediaticData::single().getEntityType(entityName);
         if (!type.isNull()) {
@@ -321,8 +332,10 @@ resolveEntityName(const LimaString s,
       }
       catch (LimaException& e) { 
         // not in this group: do nothing (continue search)
+#ifdef DEBUG_LP
         LDEBUG << "entity " << Common::Misc::limastring2utf8stdstring(s)
                << " not in group " << Common::Misc::limastring2utf8stdstring(*it);
+#endif
       }
     }
     if (type.isNull()) {
@@ -382,14 +395,18 @@ Tpos createTpos(const std::string& s, MediaId language) {
 //         microCode= microManager.getPropertyValue(micro);
 //       }
       p = microCode;
+#ifdef DEBUG_LP
       LDEBUG << "TransitionCompiler: micro="<< micro << "->" << p;
+#endif
     }
     else {
       // only macro
       string macro=s;
 //       if (macro.find("L_")!=0) { macro=string("L_")+ macro; }
       p= macroManager.getPropertyValue(macro);
+#ifdef DEBUG_LP
       LDEBUG << "TransitionCompiler: macro="<< macro << "->" << p;
+#endif
       /*
       //search for separator '_'
       int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO_STRING,0));
@@ -436,8 +453,10 @@ Tpos createTpos(const std::string& s, MediaId language) {
 // TStatus in structured form (T_A1, T_Ni etc.)
 TStatusTransition* createStructuredTStatusTransition(const LimaString& s,
                                                      const int begin) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "Create TStatus transition: parse structured format";
+#endif
   TStatusTransition* t = new TStatusTransition();
 
   int current=begin;
@@ -544,8 +563,10 @@ TStatusTransition* createStructuredTStatusTransition(const LimaString& s,
 // TStatus in default status format (t_integer,t_capital_1st etc)
 TStatusTransition* createDefaultTStatusTransition(const LimaString& s,
                                                   const int /*begin*/) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
   LDEBUG << "Create TStatus transition: default status";
+#endif
   
   TStatusTransition* t = new TStatusTransition();
   

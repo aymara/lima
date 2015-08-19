@@ -353,6 +353,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   LinguisticGraphVertex right=position;
   //LinguisticGraphVertex right=position.forward();
 
+#ifdef DEBUG_LP
   AULOGINIT;
   LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
     LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
@@ -363,6 +364,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
    }
    LDEBUG << "Rule weights" << oss.str();
   }
+#endif
   
   bool reapplySameRule(false);
 
@@ -372,11 +374,13 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   for (; rule!=rule_end; rule++) {
     Rule* currentRule=*rule;
 
+#ifdef DEBUG_LP
     if (logger.isDebugEnabled()) {
       LDEBUG << "testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
              << currentRule->getType() << ",reapply="
              << reapplySameRule << " from " << position;
     }
+#endif
 
     if (forbiddenTypes &&
         forbiddenTypes->find(currentRule->getType())
@@ -459,6 +463,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       //LDEBUG << "actionSuccess=" << actionSuccess;
     }
 
+#ifdef DEBUG_LP
     if (logger.isDebugEnabled()) {
       LinguisticGraphVertex v=position;
       LimaString str("");
@@ -477,6 +482,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                << currentRule->getRuleId() << "-> success=0";
       }
     }
+#endif
 
     if (success && actionSuccess) {
       if (forbiddenTypes && currentRule->negative()) {
@@ -492,22 +498,24 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         matches.push_back(*match);
         delete match; // a copy has been made
         match=0;
+#ifdef DEBUG_LP
         if (logger.isDebugEnabled()) {
           LDEBUG << "Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty (" 
             << (recoData->getNextVertices().empty()) 
             << ")";
         }
+#endif
         return 1;
       }
       else {
         if (applySameRuleWhileSuccess) {
           if (reapplySameRule) {
             if (*match==matches.back()) {
-              AULOGINIT;
-              LWARN << "Reapplication of same rule gives same result: "
-                    << "abort to avoid inifinite loop: "
-                    << *match << ";" << matches.back();
+//               AULOGINIT;
+//               LDEBUG << "Reapplication of same rule gives same result: "
+//                     << "abort to avoid inifinite loop: "
+//                     << *match << ";" << matches.back();
               delete match; // a copy has been made
               match=0;
               reapplySameRule=false;
@@ -619,13 +627,15 @@ uint64_t Recognizer::
     stopAtFirstSuccess=true; // implied by the other
   }
 
+#ifdef DEBUG_LP
   AULOGINIT;
   LDEBUG << "apply recognizer " << m_filename << " from vertex "
          << begin << " to vertex " << end;
   LDEBUG << "  up bound: " << upstreamBound << "; down bound: " << downstreamBound << "; testAllVertices: " << testAllVertices;
   LDEBUG << "  stopAtFirstSuccess: " << stopAtFirstSuccess << "; onlyOneSuccessPerType: " << onlyOneSuccessPerType;
   LDEBUG << "  returnAtFirstSuccess: " << returnAtFirstSuccess << "; applySameRuleWhileSuccess: " << applySameRuleWhileSuccess;
-
+#endif
+  
   uint64_t numberOfRecognized(0);
   bool success(false);
 
@@ -649,7 +659,9 @@ uint64_t Recognizer::
     }
 
     visited.insert(currentVertex);
+#ifdef DEBUG_LP
     LDEBUG << "to visit size=" << toVisit.size() << " ; currentVertex=" << currentVertex;
+#endif
 
     if (lastReached ||                // limit given by argument
         currentVertex == graph.lastVertex()) { // end of the graph
@@ -661,7 +673,9 @@ uint64_t Recognizer::
     }
 
     if (currentVertex != graph.firstVertex()) {
+#ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
+#endif
       success = testOnVertex(graph,currentVertex,
                              upstreamBound,downstreamBound,
                              analysis,result,
@@ -673,8 +687,9 @@ uint64_t Recognizer::
         if (returnAtFirstSuccess)
           return numberOfRecognized;
         if (! testAllVertices) { // restart from end of recognized expression
-          LDEBUG << "success: continue from vertex "
-                 << currentVertex;
+#ifdef DEBUG_LP
+          LDEBUG << "success: continue from vertex " << currentVertex;
+#endif
           // GC on 20110803: the clearing below was problematic in case of rules like that:
           // [<Location.LOCATION>]:(t_capital_1st|t_capital){1-3} [,]::LOCATION:N_LOCATION
           // which matches text before (left) the trigger which is not included in the match.
@@ -697,7 +712,9 @@ uint64_t Recognizer::
     for (; outEdge!=outEdge_end; outEdge++) {
       LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
       if (visited.find(next)==visited.end()) {
+#ifdef DEBUG_LP
         LDEBUG << "Recognizer: adding out edge target vertex to the 'to visit' list: " << next;
+#endif
         toVisit.push_back(next);
         // do not put in visited unless it is really visited
         // (otherwise, may be suppressed when testAllVertices is false
@@ -705,25 +722,33 @@ uint64_t Recognizer::
         //visited.insert(next);
       }
       else {
+#ifdef DEBUG_LP
         LDEBUG << "Recognizer: already visited: " << next;
+#endif
       }
     }
     RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
     std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
     if (recoData != 0 && !nextVertices.empty() )
     {
+#ifdef DEBUG_LP
       LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
+#endif
       std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
       nvit = nextVertices.begin();
       nvit_end = nextVertices.end();
       for (; nvit != nvit_end; nvit++)
       {
+#ifdef DEBUG_LP
         LDEBUG << "           - " << *nvit;
+#endif
         toVisit.push_front(*nvit);
       }
       nextVertices.clear();
     }
+#ifdef DEBUG_LP
     LDEBUG << "Recognizer: 'to visit' list size is now: " << toVisit.size();
+#endif
   }
   return numberOfRecognized;
 }

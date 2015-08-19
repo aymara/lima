@@ -230,14 +230,18 @@ void RecognizerData::removeVertices(AnalysisContent& analysis) const
   // remove vertices and edges in reverse order, so that
   // it does not affect the reordering of vertex numbers in
   // the graph
+#ifdef DEBUG_LP
   APPRLOGINIT;
   LDEBUG << "RecognizerData: removing vertices";
+#endif
   LinguisticGraph& g=*(anagraph->getGraph());
   for (set<LinguisticGraphVertex>::const_reverse_iterator
        it=m_verticesToRemove.rbegin();
        it!=m_verticesToRemove.rend(); it++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "  clearing vertex " << *it;
+#endif
     clear_vertex(*it,g);
     // remove FullToken;
     //Data::FullToken* token=get(vertex_ling,g,*it);
@@ -251,8 +255,8 @@ void RecognizerData::removeVertices(AnalysisContent& analysis) const
 void RecognizerData::addResult(const Automaton::RecognizerMatch& result)
 {
   if (m_resultData==0) {
-  APPRLOGINIT;
-  LERROR << "RecognizerData: cannot add result: missing data";
+    APPRLOGINIT;
+    LERROR << "RecognizerData: cannot add result: missing data";
     return;
   }
   m_resultData->insert(result,m_currentSentence);
@@ -260,8 +264,10 @@ void RecognizerData::addResult(const Automaton::RecognizerMatch& result)
 
 void RecognizerData::removeEdges(AnalysisContent& analysis)
 {
+#ifdef DEBUG_LP
   APPRLOGINIT;
   LDEBUG << "RecognizerData: removing edges to remove";
+#endif
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
     static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
   LinguisticGraph& g=*(anagraph->getGraph());
@@ -269,7 +275,9 @@ void RecognizerData::removeEdges(AnalysisContent& analysis)
   it = m_edgesToRemove.begin(); it_end = m_edgesToRemove.end();
   for (; it != it_end; it++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "RecognizerData::removeEdges removing edge " << (*it).first << " - " << (*it).second;
+#endif
     boost::remove_edge((*it).first,(*it).second, g);
     clearUnreachableVertices(analysis, (*it).first);
     clearUnreachableVertices(analysis, (*it).second);
@@ -301,8 +309,10 @@ void RecognizerData::clearUnreachableVertices(
   LinguisticGraphVertex to,
   std::set< std::pair<LinguisticGraphVertex, LinguisticGraphVertex > >& storedEdges)
 {
+#ifdef DEBUG_LP
   APPRLOGINIT;
   LDEBUG << "RecognizerData: clearing unreachable vertices from " << from << " and to " << to;
+#endif
   std::deque< std::deque< LinguisticGraphVertex > > paths;
   std::deque< LinguisticGraphVertex > current;
   std::set< std::pair<LinguisticGraphVertex, LinguisticGraphVertex > > validated;
@@ -333,7 +343,9 @@ void RecognizerData::clearUnreachableVertices(
         std::pair< LinguisticGraphVertex, LinguisticGraphVertex > p = std::make_pair(src,tgt);
         if (storedEdges.find(p) == storedEdges.end())
         {
+#ifdef DEBUG_LP
           LDEBUG << "RecognizerData::clearUnreachableVertices removing edge " << src << " -> " << tgt;
+#endif
           remove_edge(edge(src,tgt,g).first,g);
         }
         tgt = src;
@@ -374,8 +386,10 @@ void RecognizerData::clearUnreachableVertices(
   AnalysisContent& analysis,
   LinguisticGraphVertex from)
 {
+#ifdef DEBUG_LP
   APPRLOGINIT;
   LDEBUG << "RecognizerData: clearing unreachable vertices from " << from;
+#endif
 
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
     static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
@@ -385,11 +399,15 @@ void RecognizerData::clearUnreachableVertices(
   verticesToCheck.push( from );
   while (! verticesToCheck.empty() )
   {
+#ifdef DEBUG_LP
     LDEBUG << "    vertices to check size = " << verticesToCheck.size();
+#endif
     LinguisticGraphVertex v = verticesToCheck.front();
     verticesToCheck.pop();
     bool toClear = false;
+#ifdef DEBUG_LP
     LDEBUG << "  out degree of " << v << " is " << out_degree(v, g);
+#endif
     if (out_degree(v, g) == 0 && v != anagraph->lastVertex())
     {
       toClear = true;
@@ -400,7 +418,9 @@ void RecognizerData::clearUnreachableVertices(
           verticesToCheck.push(source(*it,g));
       }
     }
+#ifdef DEBUG_LP
     LDEBUG << "  in degree of " << v << " is " << in_degree(v, g);
+#endif
     if (in_degree(v, g) == 0 && v != anagraph->firstVertex())
     {
       toClear = true;
@@ -413,7 +433,9 @@ void RecognizerData::clearUnreachableVertices(
     }
     if (toClear)
     {
+#ifdef DEBUG_LP
       LDEBUG << "  clearing vertex " << v;
+#endif
       clear_vertex(v,g);
     }
   }

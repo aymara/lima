@@ -144,7 +144,9 @@ void ConfigurationStructure::addAttributeForGroupInModule(const std::string& att
     LERROR << "Error adding mapattribute in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
     throw NoSuchModule(moduleName);
   }
+#ifdef DEBUG_CD
   LDEBUG << "add attribute: module='"<<moduleName.c_str()<<"' group='"<<groupName.c_str()<<"' attribute='"<<attKey.c_str()<<"' value='"<<attValue.c_str()<<"'" ;
+#endif
   itC->second.addAttributeInGroup(attKey,attValue,groupName);
 }
 

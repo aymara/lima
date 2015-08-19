@@ -215,8 +215,10 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
+#ifdef DEBUG_LP
     LDEBUG << "analyze sentence from vertex " << beginSentence
            << " to vertex " << endSentence;
+#endif
 
     std::vector<Automaton::RecognizerMatch> result;
     m_recognizer->apply(*anagraph,
@@ -249,7 +251,9 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
       Common::MediaticData::SyntacticRelationId subSentType;
       boost::tie(first, last, subSentType) = *subSentRIt;
       std::vector<Automaton::RecognizerMatch> subSentResult;
+#ifdef DEBUG_LP
       LDEBUG << "Hetero rules on a subsentence: " << boost::target(first,*graph) << " / " << boost::source(last,*graph);
+#endif
 
       m_recognizer->apply(*anagraph,
                           boost::target(first,*graph),
@@ -264,8 +268,10 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                           );
       if (m_unfold)
       {
+#ifdef DEBUG_LP
         LDEBUG << "Unfolding";
         LDEBUG << "Remove edge " << boost::source(first,*graph) << " -> " << boost::target(last,*graph);
+#endif
         boost::remove_edge(boost::source(first,*graph),
                           boost::target(last,*graph),
                           *graph);
@@ -273,7 +279,9 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                         boost::target(first,*graph),
                         *graph).second)
         {
+#ifdef DEBUG_LP
           LDEBUG << "Add edge " << boost::source(first,*graph) << " -> " << boost::target(first,*graph);
+#endif
           boost::add_edge(boost::source(first,*graph),
                       boost::target(first,*graph),
                       *graph);
@@ -282,7 +290,9 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                         boost::target(last,*graph),
                         *graph).second)
         {
+#ifdef DEBUG_LP
           LDEBUG << "Add edge " << boost::source(last,*graph) << " -> " << boost::target(last,*graph);
+#endif
           boost::add_edge(boost::source(last,*graph),
                       boost::target(last,*graph),
                       *graph);
@@ -295,9 +305,11 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
           }
           else
           {
+#ifdef DEBUG_LP
             LDEBUG << "Link subsentence to main one " << boost::target(first,*graph) << "/"
                 << boost::source(last,*graph) << "/" << beginSentence << "/"
                 << endSentence;
+#endif
             Automaton::Recognizer* subSentRecognizer = (*(m_subSentRecognizers.find(subSentType))).second;
             subSentRecognizer->apply(*anagraph,
                                      boost::target(first,*graph),
@@ -325,13 +337,16 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
 
 LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SAHLOGINIT;
   LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings";
+#endif
 
   // Initialisation
   SyntacticData* syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
+    SAHLOGINIT;
     LERROR << "no syntacticData ! abort";
     return MISSING_DATA;
   }
@@ -339,6 +354,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
   SimplificationData* simplificationData = static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
+    SAHLOGINIT;
     LERROR << "no simplificationData ! abort";
     return MISSING_DATA;
   }
@@ -352,13 +368,17 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
     if (simplificationData->coordStrings().find((*dit).first) == simplificationData->coordStrings().end())
     {
       // no same string for definition
+#ifdef DEBUG_LP
       LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings no same string for definition " << (*dit).first;
+#endif
       continue;
     }
     const std::vector< LinguisticGraphVertex >& stringDef = (*dit).second;
     const std::vector< std::vector< LinguisticGraphVertex > >& sameStrings = (*simplificationData->coordStrings().find((*dit).first)).second;
+#ifdef DEBUG_LP
     LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings there is " << sameStrings.size() << " same strings for " << (*dit).first;
-    // for each same string s of d
+ #endif
+   // for each same string s of d
     for (std::vector< std::vector< LinguisticGraphVertex > >::const_iterator ssit = sameStrings.begin(); ssit != sameStrings.end(); ssit++)
     {
       const std::vector< LinguisticGraphVertex >& sameString = *ssit;
@@ -385,7 +405,9 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
           std::pair< LinguisticGraphEdge, bool > sameStringEdge = boost::edge(depSameStringVx, depTargV, *depGraph);
           if (!sameStringEdge.second)
           {
+#ifdef DEBUG_LP
             LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings create edge " << depSameStringVx << " -("<<relationName<<")-> " << depTargV;
+#endif
             std::pair<DependencyGraphEdge,bool> newSameStringEdge = boost::add_edge(depSameStringVx, depTargV, *depGraph);
             if (newSameStringEdge.second)
             {
@@ -408,7 +430,9 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
             std::pair<DependencyGraphEdge,bool> newSameStringEdge = boost::add_edge(depSameStringVx, depSrcV, *depGraph);
             if (newSameStringEdge.second)
             {
+#ifdef DEBUG_LP
               LDEBUG << "SyntacticAnalyzerDepsHetero::recopyCoordinationStrings create edge " << depSameStringVx << " <-("<<relationName<<")- " << depSrcV;
+#endif
               relTypeMap[newSameStringEdge.first] = relTypeMap[*depInIt];
             }
           }

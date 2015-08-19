@@ -128,9 +128,11 @@ void Gazeteer::readFromFile(const std::string& filename) {
 void Gazeteer::read(RecognizerCompiler& reco) {
   LimaString stringBegin=readName(reco);
   if (m_alias.isEmpty()) {
+#ifdef DEBUG_LP
     AUCLOGINIT;
     LDEBUG << "No more gazeteer defined in file " 
            << reco.getFilename();
+#endif
     return;
   }
   readValues(reco,stringBegin);
@@ -165,13 +167,17 @@ LimaString Gazeteer::readName(RecognizerCompiler& reco) {
 
 void Gazeteer::readValues(RecognizerCompiler& reco,
                           const LimaString& stringBegin) {
+#ifdef DEBUG_LP
   AUCLOGINIT;
+#endif
   LimaString s(stringBegin);
   do {
     s = s.trimmed();
     int offset(0);
     int previousOffset(0);
+#ifdef DEBUG_LP
     LDEBUG << "Gazeteer: line read=" << s;
+#endif
     offset=findSpecialCharacter(s,CHAR_OPEN_GAZ,previousOffset);
     if (offset != -1) {
       previousOffset=offset+1;

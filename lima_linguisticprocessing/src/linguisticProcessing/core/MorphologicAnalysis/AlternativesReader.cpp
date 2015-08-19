@@ -60,18 +60,26 @@ void AlternativesReader::readAlternatives(
   AnalysisDict::AbstractDictionaryEntryHandler* concatHandler,
   AnalysisDict::AbstractDictionaryEntryHandler* accentedHandler) const
 {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
+#endif
   const LimaString& str=token.stringForm();
+#ifdef DEBUG_LP
   LDEBUG << "AlternativesReader::readAlternatives (direct: "<<m_tryDirect<<" ; uncap: "<<m_tryUncapitalized<<" ; desac: "<<m_tryDesaccentedForm<<")" << str;
+#endif
   if (m_tryDirect)
   {
+#ifdef DEBUG_LP
     LDEBUG << "AlternativesReader::readAlternatives trying direct";
+#endif
     DictionaryEntry entry=dico.getEntry(token.form(),str);
     if (!entry.isEmpty())
     {
       if (lingInfosHandler && entry.hasLingInfos())
       {
+#ifdef DEBUG_LP
         LDEBUG << "AlternativesReader::readAlternatives direct, hasLingInfos";
+#endif
         entry.parseLingInfos(lingInfosHandler);
         // if hasLingInfos, assume that infos has been read, then,
         // in confident mode, we can return
@@ -79,13 +87,17 @@ void AlternativesReader::readAlternatives(
       }
       if (concatHandler && entry.hasConcatenated())
       {
+#ifdef DEBUG_LP
         LDEBUG << "AlternativesReader::readAlternatives direct, hasConcatenated";
+#endif
         entry.parseConcatenated(concatHandler);
         if (m_confidentMode) return;
       }
       if (accentedHandler && entry.hasAccentedForms())
       {
+#ifdef DEBUG_LP
         LDEBUG << "AlternativesReader::readAlternatives direct, hasAccentedForms";
+#endif
         entry.parseAccentedForms(accentedHandler);
         if (m_confidentMode) return;
       }
@@ -94,13 +106,16 @@ void AlternativesReader::readAlternatives(
   if (m_tryUncapitalized && m_charChart)
   {
     LimaString lowerWord = m_charChart->toLower(str);
+#ifdef DEBUG_LP
     LDEBUG << "AlternativesReader::readAlternatives trying lower:" << lowerWord;
+#endif
     if (!(lowerWord.isEmpty())  && (lowerWord!=str))
     {
-      MORPHOLOGINIT;
+#ifdef DEBUG_LP
       LDEBUG << "add word "
       << "<marked>" << str << "</marked>"
       << "<lower>" << lowerWord << "</lower>";
+#endif
       StringsPoolIndex idx=(*m_sp)[lowerWord];
       token.addOrthographicAlternatives(idx);
       DictionaryEntry entry=dico.getEntry(idx,lowerWord);
@@ -129,24 +144,33 @@ void AlternativesReader::readAlternatives(
   if (m_tryDesaccentedForm && m_charChart)
   {
     LimaString unmarked=m_charChart->unmark(str);
+#ifdef DEBUG_LP
     LDEBUG << "AlternativesReader::readAlternatives trying desac:" << unmarked;
+#endif
     if ((unmarked!=LimaString()) && (unmarked!=str))
     {
-      MORPHOLOGINIT;
+#ifdef DEBUG_LP
       LDEBUG << "add word " 
              << "<marked>" << Common::Misc::limastring2utf8stdstring(str) << "</marked>" 
              << "<unmarked>" << Common::Misc::limastring2utf8stdstring(unmarked) << "</unmarked>"
              << " to stringpool " << m_sp;
+#endif
       StringsPoolIndex idx=(*m_sp)[unmarked];
+#ifdef DEBUG_LP
       LDEBUG << "-> StringPool returned index " << idx;
+#endif
       token.addOrthographicAlternatives(idx);
       DictionaryEntry entry=dico.getEntry(idx,unmarked);
+#ifdef DEBUG_LP
       LDEBUG << "entry.isEmpty:" << entry.isEmpty(); 
+#endif
       
       if (!entry.isEmpty())
       {
-        LDEBUG << "confident mode: " << m_confidentMode;
+ #ifdef DEBUG_LP
+       LDEBUG << "confident mode: " << m_confidentMode;
         LDEBUG << "lingInfosHandler: " << (void*)accentedHandler << "  entry.hasLingInfos:" << entry.hasLingInfos();
+#endif
         if (lingInfosHandler && entry.hasLingInfos())
         {
           entry.parseLingInfos(lingInfosHandler);
@@ -154,13 +178,17 @@ void AlternativesReader::readAlternatives(
           // in confident mode, we can return
           if (m_confidentMode) return;
         }
+#ifdef DEBUG_LP
         LDEBUG << "concatHandler: " << (void*)accentedHandler << "  entry.hasConcatenated:" << entry.hasConcatenated();
-        if (concatHandler && entry.hasConcatenated())
+ #endif
+       if (concatHandler && entry.hasConcatenated())
         {
           entry.parseConcatenated(concatHandler);
           if (m_confidentMode) return;
         }
+#ifdef DEBUG_LP
         LDEBUG << "accentedHandler: " << (void*)accentedHandler << "  entry.hasAccentedForms:" << entry.hasAccentedForms();
+#endif
         if (accentedHandler && entry.hasAccentedForms())
         {
           entry.parseAccentedForms(accentedHandler);
@@ -172,10 +200,14 @@ void AlternativesReader::readAlternatives(
     {
       StringsPoolIndex idx=(*m_sp)[unmarked];
       token = Token(idx, unmarked, token.position(), token.length(),token.status());
+#ifdef DEBUG_LP
       LDEBUG << "AlternativesReader::readAlternatives is  an acronym; using simpler form" << unmarked;
+#endif
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "AlternativesReader::readAlternatives no alternative found;";
+#endif
 }
 
 }

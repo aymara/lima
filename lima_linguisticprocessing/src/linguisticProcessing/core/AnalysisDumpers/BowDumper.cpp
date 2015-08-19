@@ -139,7 +139,9 @@ LimaStatusCode BowDumper::process(
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
 
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
+#ifdef DEBUG_LP
   LDEBUG << "BowDumper handler will be: " << m_handler << (void*)handler;
+#endif
   if (handler==0)
   {
     LERROR << "BowDumper::process: handler " << m_handler << " has not been given to the core client";
@@ -185,7 +187,9 @@ LimaStatusCode BowDumper::process(
 
   BoWBinaryWriter writer(handler->shiftFrom());
   DumperStream* dstream=initialize(analysis);
+#ifdef DEBUG_LP
   LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
+#endif
   writer.writeBoWText(dstream->out(),bowText);
   delete dstream;
   return SUCCESS_ID;
@@ -199,13 +203,16 @@ void BowDumper::buildBoWText(
     AnalysisGraph* anagraph,
     AnalysisGraph* posgraph) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
+#endif
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
 
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
+    DUMPERLOGINIT;
     LWARN << "no SentenceBounds";
   }
 
@@ -232,9 +239,11 @@ void BowDumper::buildBoWText(
       LinguisticGraphVertex sentenceBegin=boundItr->getFirstVertex();
       LinguisticGraphVertex sentenceEnd=boundItr->getLastVertex();
 
+#ifdef DEBUG_LP
       LDEBUG << "BowDumper::buildBoWText dump sentence between " << sentenceBegin << " and " << sentenceEnd;
 
       LDEBUG << "BowDumper::buildBoWText dump simple terms for this sentence";
+#endif
       addVerticesToBoWText(annotationData,
                            anagraph,
                            posgraph,
@@ -253,11 +262,15 @@ void BowDumper::buildBoWText(
   boost::tie(it, it_end) = boost::edges(annotGraph);
   for (; it != it_end; it++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "BowDumper::buildBoWText on annotation edge "
            << source(*it,annotGraph) << "->" << target(*it,annotGraph);
+#endif
     if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation")))
     {
+#ifdef DEBUG_LP
       LDEBUG << "found semantic relation";
+#endif
       try
       {
         AnnotationGraphVertex agvs = source(*it,annotGraph);
@@ -265,6 +278,7 @@ void BowDumper::buildBoWText(
         std::set< LinguisticGraphVertex > anaGraphVertices = annotationData->matches("annot", agvs, "AnalysisGraph");
         if  (anaGraphVertices.empty())
         {
+          DUMPERLOGINIT;
           LERROR << "Found no analysis graph vertex associated to the annotation graph vertex" << agvs << ". It will crash";
         }
         LinguisticGraphVertex lgvs = *anaGraphVertices.begin();
@@ -285,6 +299,7 @@ void BowDumper::buildBoWText(
       }
       catch (const boost::bad_any_cast& e)
       {
+        DUMPERLOGINIT;
         LERROR << "This annotation is not a SemanticAnnotation";
         continue;
       }
@@ -305,8 +320,10 @@ void BowDumper::addVerticesToBoWText(
     BoWText& bowText) const
 {
 
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowDumper::addVerticesToBoWText from"  << begin << "to" << end << "; offset:" << offset;
+#endif
 
   const LinguisticGraph& beforePoSGraph=*(anagraph->getGraph());
   const LinguisticGraph& graph=*(posgraph->getGraph());
@@ -328,7 +345,9 @@ void BowDumper::addVerticesToBoWText(
   while (!toVisit.empty())
   {
     LinguisticGraphVertex v=toVisit.front();
+#ifdef DEBUG_LP
     LDEBUG << "BowDumper::addVerticesToBoWText visiting" << v;
+#endif
 
     toVisit.pop();
     if (v == end) {
@@ -359,7 +378,9 @@ void BowDumper::addVerticesToBoWText(
       std::set< AnnotationGraphVertex > cpdsExts = annotationData->matches("PosGraph", v, "cpdExt");
       if (!cpdsHeads.empty())
       {
+#ifdef DEBUG_LP
         LDEBUG << "BowDumper::addVerticesToBoWText" << v << "is a compound head";
+#endif
         auto cpdsHeadsIt = cpdsHeads.begin(), cpdsHeadsIt_end = cpdsHeads.end();
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
@@ -392,7 +413,9 @@ void BowDumper::addVerticesToBoWText(
               {
                 oss << *asvit << ", ";
               }
+#ifdef DEBUG_LP
               LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << oss.str();
+#endif
             }
           }
         }
@@ -430,7 +453,9 @@ void BowDumper::addVerticesToBoWText(
 //         
 //         if   (!isInCompound)
         {
+#ifdef DEBUG_LP
           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "isn't a compound head";
+#endif
           std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > bowTokens=
             m_bowGenerator->createAbstractBoWElement(v, beforePoSGraph, graph, offset, annotationData, visited);
 
@@ -460,14 +485,18 @@ void BowDumper::addVerticesToBoWText(
               {
                 oss << *asvit << ", ";
               }
+#ifdef DEBUG_LP
               LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << oss.str();
+#endif
             }
           }
         }
       }
       else
       {
+#ifdef DEBUG_LP
         LDEBUG << "BowDumper::addVerticesToBoWText" << v << "is already stored.";
+#endif
       }
     }
   }

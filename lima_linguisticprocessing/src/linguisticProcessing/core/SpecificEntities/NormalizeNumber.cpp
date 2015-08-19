@@ -142,8 +142,10 @@ bool NormalizeNumber::
 operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const 
 {
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "NormalizeNumber " << m;
+#endif
 
   // annotation data is used to get numeric value of already recognized number entities
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -167,17 +169,23 @@ operator()(RecognizerMatch& m,
     for (std::set< AnnotationGraphVertex >::const_iterator annot = matches.begin(),
            annot_end=matches.end(); annot != annot_end; annot++) {
       if (annotationData->hasAnnotation(*annot, Common::Misc::utf8stdstring2limastring("SpecificEntity"))) {
+#ifdef DEBUG_LP
         LDEBUG << "NormalizeNumber: vertex " << (*it).m_elem.first << " has specific entity annotation";
+#endif
         const SpecificEntityAnnotation* se =
           annotationData->annotation(*annot, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
           pointerValue<SpecificEntityAnnotation>();
         const EntityFeatures& features=se->getFeatures();
         for (EntityFeatures::const_iterator f=features.begin(),f_end=features.end();
              f!=f_end; f++) {
+#ifdef DEBUG_LP
           LDEBUG << "NormalizeNumber: looking at feature " << (*f).getName();
+#endif
           if ((*f).getName()==NUMVALUE_FEATURE_NAME) {
             double value=boost::any_cast<double>((*f).getValue());
+#ifdef DEBUG_LP
             LDEBUG << "NormalizeNumber: add value " << value;
+#endif
             values.push_back(value);
             hasNumericValue=true;
           }
@@ -199,8 +207,10 @@ operator()(RecognizerMatch& m,
       values.push_back(0.0);
     }
     else if (testMicroCategory(m_microsForUnit,m_microAccessor,data)) {
+#ifdef DEBUG_LP
       LDEBUG << "NormalizeNumber: add feature UNIT " << t->stringForm();
-      m.features().setFeature(UNIT_FEATURE_NAME,t->stringForm());
+#endif
+      m.features().addFeature(UNIT_FEATURE_NAME,t->stringForm());
     }
     // ignore other non numbers (can be % or "de"...)
   }
@@ -217,9 +227,11 @@ operator()(RecognizerMatch& m,
   
   // then compute the number
   double number=computeNumberValue(values,values.begin(),values.end());
+#ifdef DEBUG_LP
   LDEBUG << "NormalizeNumber: add feature VALUE " << number;
-  m.features().setFeature(NUMVALUE_FEATURE_NAME,number);
-  m.features().setFeature(DEFAULT_ATTRIBUTE,m.getString());
+#endif
+  m.features().addFeature(NUMVALUE_FEATURE_NAME,number);
+  m.features().addFeature(DEFAULT_ATTRIBUTE,m.getString());
   return true;
 }
 
