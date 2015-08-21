@@ -34,7 +34,7 @@ endif()
 
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP" )
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP -DDEBUG_CD" )
 
 file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
 macro (DECLARE_LIMA_PLUGIN _plugin)

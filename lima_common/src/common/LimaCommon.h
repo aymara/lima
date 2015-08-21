@@ -35,6 +35,7 @@
 #ifndef LIMA_MMCOMMONS_H
 #define LIMA_MMCOMMONS_H
 
+#include <QtCore/QMutex>
 #include <cstdint>
 
 #ifdef WIN32
@@ -156,10 +157,35 @@ typedef unsigned __int64 uint64_t;
 #define LWARN QLOG_WARN()
 #define LERROR QLOG_ERROR()
 #define LFATAL QLOG_FATAL()
-// #define LERROR if (logger.isErrorEnabled()) logger << 300
-// #define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance();
-#define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance(X); \
-logger.setLoggingLevel( QsLogging::Categories::instance().levelFor( X ) );
+
+// #define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance(X); 
+// logger.setLoggingLevel( QsLogging::Categories::instance().levelFor( X ) );
+
+class LogInit
+{
+public:
+  LogInit(char const* x)
+  {
+    // initialisation thread-safe
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);
+    pLogger = &QsLogging::Logger::instance(x);
+    QsLogging::Level level = QsLogging::Categories::instance().levelFor(x);
+    pLogger->setLoggingLevel(level);
+  }
+  QsLogging::Logger* pLogger;
+};
+#ifndef DEBUG_CD
+#define LOGINIT(X) \
+  static LogInit logInit(X); /*initialisation exécutée une seul fois*/\
+  auto& logger = *(logInit.pLogger);
+#else
+#define LOGINIT(X) \
+  static LogInit logInit(X); /*initialisation exécutée une seul fois*/\
+  auto& logger = *(logInit.pLogger); \
+  logger.setLoggingLevel(QsLogging::Categories::instance().levelFor( X ));
+#endif
+
 //QsLogging::DestinationPtr debugDestination(  QsLogging::DestinationFactory::MakeDebugOutputDestination() );
 //logger.addDestination(debugDestination.get());
 
