@@ -231,9 +231,7 @@ const Lima::LimaString& word) const{
   std::cerr <<  "MyAnalysisDico::getEntry().." << std::endl;
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
-  const LimaString & basicWord = word;
-  LDEBUG <<  "MyAnalysisDico::getEntry("
-            << Lima::Common::Misc::convertString(basicWord) << ")";
+  LDEBUG <<  "MyAnalysisDico::getEntry(" << word << ")";
 #endif
 
   // Look in FsaDictionary (or tree or..)
