@@ -85,8 +85,7 @@ const Lima::LimaString& word) const{
 #ifdef DEBUG_CD
   STRINGMAPLOGINIT;
   const Lima::LimaString & basicWord = word;
-  LDEBUG <<  "SimpleDataDico::getElement("
-            << Lima::Common::Misc::convertString(basicWord) << ")";
+  LDEBUG <<  "SimpleDataDico::getElement(" << basicWord << ")";
 #endif
 
   // Look in FsaDictionary (or tree or..)
