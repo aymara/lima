@@ -150,12 +150,14 @@ bool Categories::configure(const QString& fileName)
 
 Level Categories::levelFor(const QString& category) const
 {
-  if (d->categories.contains(category))
+#ifdef DEBUG_CD
+  // Do not compile this costly check in release
+  if (!d->categories.contains(category))
   {
-    return d->categories[category];
+    std::cerr << "Error: unknown category. Using TRACE for " << category.toUtf8().constData() << std::endl;
   }
-  std::cerr << "Error: unknown category. Using TRACE for " << category.toUtf8().constData() << std::endl;
-  return QsLogging::TraceLevel;
+#endif
+  return d->categories.value(category, QsLogging::TraceLevel);
 }
 
 LIMA_COMMONQSLOG_EXPORT int initQsLog() {
