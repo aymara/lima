@@ -2,7 +2,7 @@
 # be able to source this script from elsewhere
 export LIMA_ROOT=$PWD/..
 
-LIMA_SOURCES=$LIMA_ROOT/lima
+LIMA_SOURCES=$PWD
 pushd $LIMA_SOURCES
 current_branch=`git rev-parse --abbrev-ref HEAD`
 popd
