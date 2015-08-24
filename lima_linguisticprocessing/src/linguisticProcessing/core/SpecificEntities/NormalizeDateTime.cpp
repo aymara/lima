@@ -413,10 +413,12 @@ operator()(RecognizerMatch& m,
     }
   }
 
+#ifdef DEBUG_LP
+  SELOGINIT;
   LDEBUG << "NormalizeDate operator(): day=" << day << ", day_end=" << day_end;
   LDEBUG << "NormalizeDate operator(): month=" << month << ", month_end=" << month_end;
   LDEBUG << "NormalizeDate operator(): year=" << year;
-
+#endif
   //ad hoc correction of year on two digits
   if (year!=0 && year<99) {
     if (year < 10) {
@@ -447,11 +449,15 @@ operator()(RecognizerMatch& m,
         else {
           // set interval
           QDate firstDayOfMonth(year,month,1);
-	  LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
+#ifdef DEBUG_LP
+          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
+#endif
           m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
           if (month_end==0) {
             QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
-	    LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
+#ifdef DEBUG_LP
+          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
+#endif
             m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
           }
           else {
@@ -528,27 +534,37 @@ operator()(RecognizerMatch& m,
   }
   
   QString dateSpan = QString::number(year);
+#ifdef DEBUG_LP
   LDEBUG << "NormalizeDate operator(): year: dateSpan=" << dateSpan;
+#endif
   dateSpan.append("-");
   if( month == 0 ) {
     dateSpan.append("XX-XX");
+#ifdef DEBUG_LP
     LDEBUG << "NormalizeDate operator(): year + xx-xx dateSpan=" << dateSpan;
+#endif
   }
   else {
     // dateSpan.append(QString::number(month));
     QString monthString = QString("%1").arg(month, 2, 10, QLatin1Char('0'));
     dateSpan.append(monthString);
+#ifdef DEBUG_LP
     LDEBUG << "NormalizeDate operator(): year + month dateSpan=" << dateSpan;
+#endif
     dateSpan.append("-");
     if( day == 0 ) {
       dateSpan.append("XX");
+#ifdef DEBUG_LP
       LDEBUG << "NormalizeDate operator(): year + month + xx dateSpan=" << dateSpan;
+#endif
     }
     else {
       // QString QString::arg(int integerVar, int fieldWidth = 0, int base = 10, const QChar & fillChar = QLatin1Char( ' ' )) const
       QString dayString = QString("%1").arg(day, 2, 10, QLatin1Char('0'));
       dateSpan.append(dayString);
+#ifdef DEBUG_LP
       LDEBUG << "NormalizeDate operator(): year + month + day dateSpan=" << dateSpan;
+#endif
     }
   }
     
