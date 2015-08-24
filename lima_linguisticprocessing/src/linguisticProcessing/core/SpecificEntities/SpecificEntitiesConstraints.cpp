@@ -432,9 +432,11 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   SpecificEntityAnnotation annot(match,*m_sp);
   std::ostringstream oss;
   annot.dump(oss);
+#ifdef DEBUG_LP
   LDEBUG << "CreateSpecificEntity: annot =  " << oss.str();
 
 //   LDEBUG << "    Building new morphologic data for head "<< annot.getHead();
+#endif
   // getting data
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
 //   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
