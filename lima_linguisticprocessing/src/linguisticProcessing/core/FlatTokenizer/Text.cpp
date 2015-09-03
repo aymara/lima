@@ -142,14 +142,27 @@ Lima::LimaChar Text::advance()
 
 const CharClass* Text::currentClass() const
 {
-//   TOKENIZERLOGINIT;
-//   LDEBUG << "currentClass() at " << _curPtr << ", for " << m_text[_curPtr];
-  if (_curPtr+1 >= m_text.size())
+#ifdef DEBUG_LP
+  TOKENIZERLOGINIT;
+    if (_curPtr+1 >= m_text.size())
+    {
+      LDEBUG << "currentClass() at " << _curPtr << ". No char after text end";
+    }
+    else
+    {
+      LDEBUG << "currentClass() at " << _curPtr << ", for " << m_text[_curPtr];
+    }
+#endif
+  if (_curPtr >= m_text.size())
   {
     return m_charChart->charClass(0);
   }
   if (m_text[_curPtr] >= 0xD800)
   {
+    if (_curPtr+1 >= m_text.size())
+    {
+      return m_charChart->charClass(0);
+    }
     return m_charChart->charClass( m_text[_curPtr], m_text[_curPtr+1] );
   }
   else

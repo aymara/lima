@@ -187,6 +187,10 @@ const CharClass* CharChart::charClass (const LimaChar& c) const
       LNOTICE << "CharChart::charClass undefined char: " << c;
       return classNamed(utf8stdstring2limastring("unknwn"));
     }
+#ifdef DEBUG_LP
+  TOKENIZERLOGINIT;
+  LTRACE << "CharChart::charClass" << c << c.unicode() << m_chars.size() << m_chars[c.unicode()]<< m_chars[c.unicode()]->charClass();
+#endif
     return m_chars[c.unicode()]->charClass();
 }
 
@@ -489,7 +493,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
       newChar->setCharClass(newCharClass);
       newChar->setName(Common::Misc::utf8stdstring2limastring(ch.name));
 #ifdef DEBUG_LP
-      LDEBUG << "Adding char" << newChar->name();
+      LDEBUG << "Adding char" << newChar->name() << newCharClass->name();
 #endif
     }
     charIt = charchart.chars.begin(); charItend = charchart.chars.end();
@@ -546,18 +550,18 @@ Char* CharChart::lazyGetChar(const LimaChar& code)
 //   if (code <= 0xD800)
 //   {
   if (chars().size() <= code.unicode())
-    {
-      chars().resize(code.unicode()+1);
-    }
-    if (chars()[code.unicode()] == 0)
-    {
-      newChar = new Char(code);
-      chars()[code.unicode()] = newChar;
-    }
-    else
-    {
-      newChar = chars()[code.unicode()];
-    }
+  {
+    chars().resize(code.unicode()+1);
+  }
+  if (chars()[code.unicode()] == 0)
+  {
+    newChar = new Char(code);
+    chars()[code.unicode()] = newChar;
+  }
+  else
+  {
+    newChar = chars()[code.unicode()];
+  }
 //   }
   return newChar;
 }

@@ -94,9 +94,11 @@ bool Condition::isFulfilled(const Text& text) const
   }
   catch (BoundsErrorException)
   {
+#ifdef DEBUG_LP
     TOKENIZERLOGINIT;
-    LERROR << "Condition tried to reach out of text bounds";
-    return 0;
+    LDEBUG << "Condition tried to reach out of text bounds";
+#endif
+    return false;
   }
 #ifdef DEBUG_LP
   LDEBUG << "| | | condition is fullfilled";
