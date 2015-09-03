@@ -160,10 +160,10 @@ private:
 
 // For simple tokens, it's themselves
 // For complex tokens, each simple token is separated with a ';'
-LimaString getStringDecomp(const BoWToken* token) {
+LimaString getStringDecomp(boost::shared_ptr< BoWToken > token) {
     LimaString str;
     std::deque< BoWComplexToken::Part >::const_iterator it, it_end;
-    const BoWComplexToken* complexToken=0;
+    boost::shared_ptr< BoWComplexToken> complexToken;
     switch (token->getType()) {
     case BOW_TOKEN:
         //cerr << "token is a simple token -> " << token->getString() << endl;
@@ -172,7 +172,7 @@ LimaString getStringDecomp(const BoWToken* token) {
     case BOW_TERM:
     case BOW_NAMEDENTITY:
         //cerr << "token is a complex token" << endl;
-        complexToken=static_cast<const BoWComplexToken*>(token);
+        complexToken=boost::dynamic_pointer_cast<BoWComplexToken>(token);
         it=complexToken->getParts().begin(); it_end=complexToken->getParts().end();
         str=getStringDecomp((*it).getBoWToken());
         it++;
@@ -232,17 +232,17 @@ void GetLexiconBoWDocumentHandler::processSBoWText(const BoWText* text,
   LIMA_UNUSED(useIterators);
     BoWTokenIterator it(*text);
     while (! it.isAtEnd()) {
-        const BoWToken& token = dynamic_cast<const BoWToken&>(*(it.getElement()));
+        boost::shared_ptr< BoWToken > token = boost::dynamic_pointer_cast<BoWToken>((it.getElement()));
 //     const std::string& stringProp = m_macroManager.getPropertySymbolicValue(token.getCategory());
         if (m_filterCategory) {
             set<LinguisticCode>::const_iterator referencePropertyIt =
-                m_referenceProperties.find(m_propertyAccessor.readValue(token.getCategory()));
+                m_referenceProperties.find(m_propertyAccessor.readValue(token->getCategory()));
             if ( referencePropertyIt != m_referenceProperties.end() ) {
-                m_lex.add(getStringDecomp(&token),token.getString());
+                m_lex.add(getStringDecomp(token),token->getString());
             }
         }
         else {
-            m_lex.add(getStringDecomp(&token),token.getString());
+            m_lex.add(getStringDecomp(token),token->getString());
         }
         it++;
     }
@@ -271,16 +271,16 @@ void readBowFileText(ifstream& fileIn,
 
     BoWTokenIterator it(text);
     while (! it.isAtEnd()) {
-        const BoWToken& token = dynamic_cast<const BoWToken&>(*(it.getElement()));
+        boost::shared_ptr< BoWToken > token = boost::dynamic_pointer_cast<BoWToken>((it.getElement()));
         if (filterCategory) {
             set<LinguisticCode>::const_iterator referencePropertyIt =
-                referenceProperties.find(propertyAccessor.readValue(token.getCategory()));
+                referenceProperties.find(propertyAccessor.readValue(token->getCategory()));
             if ( referencePropertyIt != referenceProperties.end() ) {
-                lex.add(getStringDecomp(&token),token.getString());
+                lex.add(getStringDecomp(token),token->getString());
             }
         }
         else {
-            lex.add(getStringDecomp(&token),token.getString());
+            lex.add(getStringDecomp(token),token->getString());
         }
         it++;
     }

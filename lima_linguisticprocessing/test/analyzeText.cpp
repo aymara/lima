@@ -312,7 +312,7 @@ int run(int argc,char** argv)
     // display the progress of the analysis
     std::cout << "\rAnalyzing "<< i << "/" << files.size()
     << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
-    << *fileItr << "'" << std::endl << std::flush;
+    << *fileItr << "'" << std::flush;
     
     // set the output files (to 0 if not in list)
     // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile

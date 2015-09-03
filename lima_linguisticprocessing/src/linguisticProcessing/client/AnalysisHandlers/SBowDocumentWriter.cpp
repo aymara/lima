@@ -24,6 +24,7 @@
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "common/Data/strwstrtools.h"
+#include "common/Data/readwritetools.h"
 
 namespace Lima
 {
@@ -50,6 +51,7 @@ SBowDocumentWriter::~SBowDocumentWriter()
 void SBowDocumentWriter::startAnalysis()
 {
   *m_out << Common::BagOfWords::BOW_TEXT_BLOC;
+  Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::BOW_TEXT_BLOC);
 }
 
 /** notify the end of an analysis content */
@@ -81,9 +83,9 @@ void SBowDocumentWriter::startNode( const std::string& elementName, bool forInde
   LPCLIENTSBOWHANDLERLOGINIT;
   LDEBUG << "SBowDocumentWriter::startNode(" << elementName << "," << forIndexing << ")";
   if( forIndexing )
-    *m_out << Common::BagOfWords::INDEXING_BLOC;
-  else 
-    *m_out << Common::BagOfWords::HIERARCHY_BLOC;
+    Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::INDEXING_BLOC);
+  else
+    Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::HIERARCHY_BLOC);
   Lima::Common::Misc::writeStringField(*m_out, elementName);
 }
   
@@ -92,9 +94,9 @@ void SBowDocumentWriter::endNode( const Common::Misc::GenericDocumentProperties&
 {
   LPCLIENTSBOWHANDLERLOGINIT;
   LDEBUG << "SBowDocumentWriter::endNode()";
-  *m_out << Common::BagOfWords::NODE_PROPERTIES_BLOC;
+  Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::NODE_PROPERTIES_BLOC);
   props.write(*m_out);
-  *m_out << Common::BagOfWords::END_BLOC;
+  Common::Misc::writeOneByteInt(*m_out,Common::BagOfWords::END_BLOC);
   m_out->flush();
 }
 

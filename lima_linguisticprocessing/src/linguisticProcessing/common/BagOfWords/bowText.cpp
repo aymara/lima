@@ -43,26 +43,34 @@ namespace BagOfWords {
 // constructors,destructor,copy assignment
 //**********************************************************************
 BoWText::BoWText():
-std::vector< AbstractBoWElement* >()
+std::vector< boost::shared_ptr< AbstractBoWElement > >()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::BoWText()" << this;
 }
 
 
 BoWText::BoWText(const BoWText& t):
-std::vector< AbstractBoWElement* >() 
+std::vector< boost::shared_ptr< AbstractBoWElement > >()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::BoWText(BoWText)" << this;
   (*this) = t;
 }
 
-BoWText& BoWText::operator = (const BoWText& t) {
-  if (this != &t) {
+BoWText& BoWText::operator = (const BoWText& t)
+{
+  BOWLOGINIT;
+  LDEBUG << "BoWText::operator=" << this;
+  if (this != &t)
+  {
     clear();
     // have to store a pointer map to handle references in
     // the component lists of complex tokens
 //     std::map<AbstractBoWElement*,AbstractBoWElement*> pointerMap;
     for (BoWText::const_iterator i(t.begin());
         i != t.end(); i++) {
-      AbstractBoWElement* tok=(*i)->clone(/*pointerMap*/);
+      boost::shared_ptr< AbstractBoWElement > tok( (*i)->clone(/*pointerMap*/) );
       push_back(tok);
 //       pointerMap[(*i)]=tok;
     }
@@ -72,6 +80,8 @@ BoWText& BoWText::operator = (const BoWText& t) {
 
 BoWText::~BoWText()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWText::~BoWText()" << this;
   clear();
 }
 void BoWText::writeBoWText(ostream& stream)
@@ -82,15 +92,14 @@ void BoWText::writeBoWText(ostream& stream)
 
 
 void BoWText::clear() {
-  for (BoWText::iterator i(begin()); 
-       i != end(); i++) {
-    if (*i != 0) {
-      (*i)->clear();
-      delete (*i);
-      (*i)=0;
-    }
+  BOWLOGINIT;
+  LDEBUG << "BoWText::clear()" << this;
+  for (auto it = begin(); it != end(); it++)
+  {
+    LDEBUG << "BoWText::clear clearing" << &(**it);
+    (*it)->clear();
   }
-  std::vector< AbstractBoWElement* >::clear();
+  std::vector< boost::shared_ptr<  AbstractBoWElement > >::clear();
 }
 
 //**********************************************************************

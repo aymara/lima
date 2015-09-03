@@ -47,13 +47,13 @@ public:
    */
   std::string getRolesUtf8String(void) const;
   
-  void setRoles(QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles);
+  void setRoles(QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement >  > pRoles);
 
 
   MediaticData::EntityType m_predicateType;
   uint64_t m_position;
   uint64_t m_length;
-  QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> m_roles;
+  QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > m_roles;
 };
 
 BoWPredicatePrivate::BoWPredicatePrivate():
@@ -87,7 +87,7 @@ BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType) :
 }
 
 
-BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles) :
+BoWPredicate::BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > pRoles) :
     m_d(new BoWPredicatePrivate())
 {
   m_d->m_predicateType = theType;
@@ -139,17 +139,17 @@ void BoWPredicate::setPredicateType(const MediaticData::EntityType& predicateTyp
   m_d->m_predicateType = predicateType;
 }
 
-const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& BoWPredicate::roles() const
+const QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& BoWPredicate::roles() const
 {
   return m_d->m_roles;
 }
 
-QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& BoWPredicate::roles()
+QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& BoWPredicate::roles()
 {
   return m_d->m_roles;
 }
 
-void BoWPredicate::setRoles(QMultiMap< Lima::Common::MediaticData::EntityType, Lima::Common::BagOfWords::AbstractBoWElement* >& pRoles){
+void BoWPredicate::setRoles(QMultiMap< Lima::Common::MediaticData::EntityType, boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > >& pRoles){
   m_d->m_roles=pRoles;
 }
 
@@ -163,7 +163,7 @@ std::set< uint64_t > BoWPredicate::getVertices() const
 {
   /// FIXME Vertex of predicate is missing from the class definition. Cannot add it.
   std::set< uint64_t > result;
-  for (QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::const_iterator it=m_d->m_roles.begin(); it != m_d->m_roles.end(); it++)
+  for (auto it = m_d->m_roles.begin(); it != m_d->m_roles.end(); it++)
   {
     std::set< uint64_t > vertices = (*it)->getVertices();
     for (std::set< uint64_t >::const_iterator it2 = vertices.begin(); it2 != vertices.end(); it2++)
@@ -189,6 +189,7 @@ Lima::LimaString BoWPredicate::getString(void) const
 
 std::string BoWPredicate::getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const 
 {
+  LIMA_UNUSED(macroManager);
   std::ostringstream oss;
   oss << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(static_cast<BoWPredicatePrivate*>(m_d)->m_predicateType)) << ":" << m_d->getRolesUtf8String();
   return oss.str();
@@ -206,7 +207,7 @@ std::string BoWPredicatePrivate::getRolesUtf8String() const
   std::ostringstream oss;
   if (! m_roles.empty()) 
   { 
-    QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>::const_iterator it=m_roles.begin();   
+    auto it = m_roles.begin();
     oss <<  Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key()))  << "=" 
       << it.value()->getOutputUTF8String();
     it++;

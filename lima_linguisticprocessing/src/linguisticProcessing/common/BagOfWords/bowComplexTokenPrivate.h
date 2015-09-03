@@ -58,15 +58,6 @@ public:
    */
   BoWComplexTokenPrivate(const BoWComplexToken&);
 
-  /**
-   * specialized copy constructor that takes into account a
-   * pointer-to-pointer map giving the correspondance of tokens for
-   * the component list, in case of a complete BoWText copy.
-   *
-   */
-  BoWComplexTokenPrivate(const BoWComplexToken&,
-                  const std::map<BoWToken*,BoWToken*>&);
-
   BoWComplexTokenPrivate(const Lima::LimaString& lemma,
                   const uint64_t category,
                   const uint64_t position,
@@ -90,7 +81,7 @@ public:
                   const uint64_t category,
                   const uint64_t position,
                   const uint64_t length,
-                  std::deque<BoWToken>& parts,
+                  std::deque< boost::shared_ptr< BoWToken > >& parts,
                   const uint64_t head);
 
   virtual ~BoWComplexTokenPrivate();
@@ -103,15 +94,12 @@ public:
   uint64_t m_head;       /**< the index of the head of the
                                 complex token in its part list*/
 
-  BoWToken* addPart(BoWRelation* rel,
-                    BoWToken* tok,
-                    const bool isInList,
+  boost::shared_ptr< BoWToken > addPart(boost::shared_ptr< BoWRelation > rel,
+                    boost::shared_ptr< BoWToken > tok,
                     const bool isHead=false);
 
   //helper functions for constructors, destructor and assignment operator
   void copy(const BoWComplexToken& a);
-  void copy(const BoWComplexToken& t,
-            const std::map<BoWToken*,BoWToken*>& refMap);
 
 };
 

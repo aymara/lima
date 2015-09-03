@@ -40,6 +40,7 @@
 #include <vector>
 #include <iostream>
 
+#include <boost/shared_ptr.hpp>
 
 namespace Lima {
 namespace Common {
@@ -58,7 +59,7 @@ LIMA_LINEARTEXTREPRESENTATION_EXPORT QDebug& operator<<(QDebug& os, const LTR_To
   */
 
 class LIMA_LINEARTEXTREPRESENTATION_EXPORT LTR_Token : public
-    std::vector<std::pair<Lima::Common::BagOfWords::BoWToken*, bool> > {
+    std::vector<std::pair< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken >, bool> > {
 
 public:  // -- methods
     /** @name  constructors */

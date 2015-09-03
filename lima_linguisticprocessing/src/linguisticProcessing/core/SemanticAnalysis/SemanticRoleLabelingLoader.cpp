@@ -264,25 +264,24 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
   SEMANTICANALYSISLOGINIT;
   ConllHandler cHandler(m_language, m_analysis, m_graph);
   QStringList sentenceTokens=cHandler.splitSegment(sent, m_tokenSeparator);
-  QStringList::const_iterator tokensIterator;
   QString firstSentenceToken=(*sentenceTokens.constBegin());
-  int descriptorsNb=cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
-  m_verbalClassNb=descriptorsNb-11;
+  int descriptorsNb = cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
+  m_verbalClassNb = descriptorsNb -11;
   int classIndex=0;
-  if (m_verbalClassNb!=0)
+  if (m_verbalClassNb > 0)
   {
-    LDEBUG << sentenceI << " : \n" << sent ;
+    LDEBUG << "ConllHandler::extractSemanticInformation" << sentenceI << " : \n" << sent ;
     m_verbalClasses.clear();
     m_verbalClasses.resize(m_verbalClassNb);
     m_semanticRoles.clear();
     m_semanticRoles.resize(m_verbalClassNb);
     //repeated on each token of the sentence, that is on each line
-    for (tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
+    for (QStringList::const_iterator tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
             ++tokensIterator)
     {
       int  roleNumbers=0;
       QStringList descriptors=cHandler.splitSegment((*tokensIterator),m_descriptorSeparator);
-      if (descriptors.size()>=10)
+      if (descriptors.size()>=11+m_verbalClassNb)
       {
         int conllTokenId=descriptors[0].toInt();
         QString conllToken=descriptors[1];
@@ -291,11 +290,22 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
             QString verbalClass=descriptors[10];
             QString vClass=descriptors[10];
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
+            if (classIndex >= m_verbalClasses.size())
+            {
+              LERROR << "ConllHandler::extractSemanticInformation classIndex error" <<  classIndex;
+              break;
+            }
             m_verbalClasses[classIndex]=qMakePair(limaTokenId, vClass);
             classIndex++;
         }
         for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++)
         {
+          LDEBUG << "ConllHandler::extractSemanticInformation descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
+          if (11+roleTargetFieldIndex >= descriptors.size())
+          {
+            LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error" <<  roleTargetFieldIndex;
+            break;
+          }
           if (descriptors[11+roleTargetFieldIndex]!="-")
           {
             QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];
@@ -305,6 +315,11 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
             {
               LDEBUG << "ConllHandler::extractSemanticInformation The PoS graph token id matching the conll token id " << conllTokenId << " is " << limaTokenId;
               std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
+              if (roleTargetFieldIndex >= m_semanticRoles.size())
+              {
+                LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error 2" <<  roleTargetFieldIndex;
+                break;
+              }
               m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));
             }
             roleNumbers++;

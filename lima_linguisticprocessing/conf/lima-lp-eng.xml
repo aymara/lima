@@ -51,7 +51,6 @@
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
-        <!--item value="tagFusion"/-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <item value="VerbNetRecognition"/>
         <!--item value="srl"/-->

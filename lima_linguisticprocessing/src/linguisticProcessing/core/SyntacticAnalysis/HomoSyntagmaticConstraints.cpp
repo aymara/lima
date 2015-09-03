@@ -76,6 +76,9 @@ GovernorOfFactory(GovernorOfId);
 Automaton::ConstraintFunctionFactory<GovernedBy>
 GovernedByFactory(GovernedById);
 
+Automaton::ConstraintFunctionFactory<RemoveOutRelationFrom>
+RemoveOutRelationFromFactory(RemoveOutRelationFromId);
+
 Automaton::ConstraintFunctionFactory<SameNominalChain>
 SameNominalChainFactory(SameNominalChainId);
 
@@ -90,6 +93,9 @@ CreateRelationWithRelatedFactory(CreateRelationWithRelatedId);
 
 Automaton::ConstraintFunctionFactory<CreateRelationReverseWithRelated>
 CreateRelationReverseWithRelatedFactory(CreateRelationReverseWithRelatedId);
+
+Automaton::ConstraintFunctionFactory<CopyRelationsOutOfTo>
+CopyRelationsOutOfToFactory(CopyRelationsOutOfToId);
 
 Automaton::ConstraintFunctionFactory<CreateCompoundTense>
 CreateCompoundTenseFactory(CreateCompoundTenseId);
@@ -119,6 +125,7 @@ ConstraintWithRelationComplement::ConstraintWithRelationComplement(
     ConstraintFunction(language,complement),
     m_relation(0)
 {
+//   SAPLOGINIT;
   if (! complement.isEmpty())
   {
     std::string str=Common::Misc::limastring2utf8stdstring(complement);
@@ -137,6 +144,7 @@ ConstraintWithRelationComplement::ConstraintWithRelationComplement(
       }
     }
   }
+//   LDEBUG << "ConstraintWithRelationComplement::ConstraintWithRelationComplement" << language << complement << m_relation;
 }
 
 //**********************************************************************
@@ -381,6 +389,8 @@ bool SameVerbalChain::operator()(const AnalysisGraph& graph,
 }
 
 
+//**********************************************************************
+
 CreateRelationBetween::CreateRelationBetween(
   MediaId language,
   const LimaString& complement):
@@ -397,10 +407,103 @@ bool CreateRelationBetween::operator()(const AnalysisGraph&,
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
-//  << v2  << " with relation: " << m_relation;
+//  << v2  << " with relation: " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   bool res = syntacticData->relation(v1, v2, m_relation);
 //  LDEBUG << "CreateRelationBetween: " << (res?"yes":"no");
+  return res;
+}
+
+//**********************************************************************
+
+RemoveOutRelationFrom::RemoveOutRelationFrom(MediaId language,
+                       const LimaString& complement):
+    ConstraintWithRelationComplement(language,complement)
+{
+/*
+  Critical function : comment logging message
+*/
+//   SAPLOGINIT;
+//   LDEBUG << "RemoveOutRelationFrom::RemoveOutRelationFrom" << language << complement << m_relation;
+}
+
+bool RemoveOutRelationFrom::operator()(const AnalysisGraph& graph,
+                            const LinguisticGraphVertex& v1,
+                            AnalysisContent& analysis) const
+{
+/*
+  Critical function : comment logging message
+*/
+//   SAPLOGINIT;
+//   LDEBUG << "testing RemoveOutRelationFrom for " << v1 << " with relation: " << m_relation;
+  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  if ( v1 == graph.firstVertex() || v1 == graph.lastVertex() )
+  {
+//     LDEBUG << "RemoveOutRelationFrom: false";
+    return false;
+  }
+  EdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
+  DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
+  DependencyGraphOutEdgeIt it, it_end;
+  boost::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
+  for (; it != it_end; it++)
+  {
+    if ( map[*it] == m_relation )
+    {
+//       LDEBUG << "RemoveOutRelationFrom: remove_edge" << source(*it,*(syntacticData-> dependencyGraph())) << boost::target(*it,*(syntacticData-> dependencyGraph()));
+      boost::remove_edge(source(*it,*(syntacticData-> dependencyGraph())) , boost::target(*it,*(syntacticData-> dependencyGraph())),*(syntacticData-> dependencyGraph()));
+    }
+  }
+
+//   LDEBUG << "RemoveOutRelationFrom: true";
+  return true;
+}
+
+
+//**********************************************************************
+
+CopyRelationsOutOfTo::CopyRelationsOutOfTo(MediaId language,
+                       const LimaString& complement):
+    ConstraintWithRelationComplement(language,complement)
+{
+/*
+  Critical function : comment logging message
+*/
+//   SAPLOGINIT;
+//   LDEBUG << "CopyRelationsOutOfTo::CopyRelationsOutOfTo" << language << complement << m_relation;
+}
+
+bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
+                            const LinguisticGraphVertex& v1,
+                            const LinguisticGraphVertex& v2,
+                            AnalysisContent& analysis) const
+{
+/*
+  Critical function : comment logging message
+*/
+//   SAPLOGINIT;
+//   LDEBUG << "CopyRelationsOutOfTo" << v1 << v2;
+  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  if ( v1 == graph.firstVertex() || v1 == graph.lastVertex()
+    || v2 == graph.firstVertex() || v2 == graph.lastVertex() )
+  {
+//     LDEBUG << "CopyRelationsOutOfTo: false";
+    return false;
+  }
+  EdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
+  DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
+  DependencyGraphOutEdgeIt it, it_end;
+  boost::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
+  bool res = true;
+  for (; it != it_end; it++)
+  {
+    LinguisticGraphVertex target = syntacticData->tokenVertexForDepVertex(boost::target(*it,*(syntacticData-> dependencyGraph())));
+
+    res = syntacticData->relation(v2, target, map[*it]);
+    if (!res) break;
+  }
+
+//   LDEBUG << "CopyRelationsOutOfTo:" << res;
   return res;
 }
 
@@ -582,7 +685,8 @@ bool CreateRelationReverseWithRelated::operator()(
 /*
   Critical function : comment logging message
 */
-//  SAPLOGINIT;
+//   SAPLOGINIT;
+//   LDEBUG << "CreateRelationReverseWithRelated::operator()" << v1 << v2 << m_relationToCreate;
 
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
 
@@ -595,16 +699,13 @@ bool CreateRelationReverseWithRelated::operator()(
   }
 
   // add the relations
-  std::vector<LinguisticGraphVertex>::const_iterator
-  v=vfollow.begin(),
-    v_end=vfollow.end();
-  for (; v!=v_end; v++)
+  for (auto v=vfollow.begin(), v_end=vfollow.end(); v!=v_end; v++)
   {
 //    LDEBUG << "storing relation " << m_relationToCreate
 //    << " between " << v1 << " and " << *v;
     syntacticData->relation(*v, v1, m_relationToCreate);
   }
-//  LDEBUG << "CreateRelationReverseWithRelated: yes";
+//   LDEBUG << "CreateRelationReverseWithRelated: yes";
   return true;
 }
 
@@ -638,8 +739,6 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   m_personAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("PERSON"));
 }
 
-/** @param macroMicroAndType = symbols for category and microcategory
-    (e.g.: L_NC;L_NC_GEN;) */
 bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
                                      const LinguisticGraphVertex& pastPartVertex,
                                      const LinguisticGraphVertex& auxVertex,

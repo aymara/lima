@@ -357,9 +357,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
       LDEBUG << "ConllDumper::process PosGraph token" << v;
-      if( morphoData!=0 )
+      if( morphoData!=0 && !morphoData->empty() && ft != 0)
       {
         const QString graphTag=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
+      LDEBUG << "ConllDumper::process graphTag:" << graphTag;
 
         std::string inflectedToken=ft->stringForm().toUtf8().constData();
         std::string lemmatizedToken;

@@ -50,11 +50,13 @@ namespace SyntacticAnalysis {
 #define SecondUngovernedById "SecondUngovernedBy"
 #define GovernorOfId "GovernorOf"
 #define GovernedById "GovernedBy"
+#define RemoveOutRelationFromId "RemoveOutRelationFrom"
 #define SameNominalChainId "SameNominalChain"
 #define SameVerbalChainId "SameVerbalChain"
 #define CreateRelationBetweenId "CreateRelationBetween"
 #define CreateRelationWithRelatedId "CreateRelationWithRelated"
 #define CreateRelationReverseWithRelatedId "CreateRelationReverseWithRelated"
+#define CopyRelationsOutOfToId "CopyRelationsOutOfTo"
 #define CreateCompoundTenseId "CreateCompoundTense"
 #define CreateEasyCompoundTenseId "CreateEasyCompoundTense"
 #define FindRelationFromId "FindRelationFrom"
@@ -66,7 +68,8 @@ namespace SyntacticAnalysis {
 /** @defgroup SAConstraints Syntactic analysis rules constraints (or action constraints) classes */
 ///@{
 
-/** @brief Abstract constraint function that takes a complement string
+/**
+ * @brief Abstract constraint function that takes a complement string
  * that represents a relation name (entity type)
  * (used by several constraint functions of this file)
  */
@@ -81,7 +84,8 @@ protected:
 };
 
 
-/** @brief This constraint tests if the second argument is not governed by the
+/**
+ * @brief This constraint tests if the second argument is not governed by the
  * first one with a relation of the given type.
  *
  * So , if there is a relation a-(X)->b in the graph, SecondUngovernedBy(a,b,X)
@@ -102,7 +106,8 @@ private:
 };
 
 
-/** @brief This constraint tests if its argument is the governor of a relation
+/**
+ * @brief This constraint tests if its argument is the governor of a relation
  * of the given type.
  *
  * So , if there is a relation a-(X)->b in the graph, GovernorOf(a,X)
@@ -121,7 +126,8 @@ public:
 private:
 };
 
-/** @brief This constraint tests if its argument is governed by a relation
+/**
+ * @brief This constraint tests if its argument is governed by a relation
  * of the given type.
  *
  * So , if there is a relation a-(X)->b in the graph, GovernedBy(b,X)
@@ -140,7 +146,8 @@ public:
 private:
 };
 
-/** @brief This constraint tests if its two argument vertices have at least one
+/**
+ * @brief This constraint tests if its two argument vertices have at least one
  * common nominal chain.
  */
 class LIMA_SYNTACTICANALYSIS_EXPORT SameNominalChain : public Automaton::ConstraintFunction
@@ -158,7 +165,8 @@ private:
 };
 
 
-/** @brief This constraint tests if its two argument vertices have at least one
+/**
+ * @brief This constraint tests if its two argument vertices have at least one
  * common verbal chain.
  */
 class LIMA_SYNTACTICANALYSIS_EXPORT SameVerbalChain : public Automaton::ConstraintFunction
@@ -176,7 +184,8 @@ private:
 };
 
 
-/** @brief This constraint add the specified relation in the relations
+/**
+ * @brief This constraint add the specified relation in the relations
  * buffer.
  *
  * It will be really added later on succes of the rule by the action
@@ -197,6 +206,18 @@ private:
 };
 
 //**********************************************************************
+/**
+ * @brief This constraint add in the relations buffer the relations of the given
+ * type from v1 to the targets of relations out of v2 of the given types.
+ *
+ * The complement must be of the form:
+ * "rel2|…|reln,rel1"
+ * with rel1 the type of the relation to create and rel2, …, reln the types of
+ * the relations to follow.
+ *
+ * Relations added to the buffer will be really added later on succes of the
+ * rule by the action constraint AddRelationInGraph
+ */
 class LIMA_SYNTACTICANALYSIS_EXPORT CreateRelationWithRelated : public Automaton::ConstraintFunction
 {
 public:
@@ -218,13 +239,61 @@ protected:
 
 };
 
-/** @brief Specialization of CreateRelationWithRelated: just redefines the operator function. */
+/**
+ * @brief This constraint add in the relations buffer the relations of the given
+ * type from the targets of relations out of v2 of the given types to v1.
+ *
+ * The complement must be of the form:
+ * "rel2|…|reln,rel1"
+ * with rel1 the type of the relation to create and rel2, …, reln the types of
+ * the relations to follow.
+ *
+ * Relations added to the buffer will be really added later on succes of the
+ * rule by the action constraint AddRelationInGraph
+ */
 class LIMA_SYNTACTICANALYSIS_EXPORT CreateRelationReverseWithRelated : public CreateRelationWithRelated
 {
 public:
   explicit CreateRelationReverseWithRelated(MediaId language,
                                    const LimaString& complement=LimaString());
   ~CreateRelationReverseWithRelated() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                  const LinguisticGraphVertex& v1,
+                  const LinguisticGraphVertex& v2,
+                  AnalysisContent& analysis) const;
+
+private:
+};
+
+/**
+ * @brief This constraint removes any relation of the type given by the
+ * complement outgoing from the given vertex.
+ *
+ * So, if there is a relation a-(X)->b in the graph, RemoveOutRelationFrom(a,X)
+ * will remove it.
+ */
+class LIMA_SYNTACTICANALYSIS_EXPORT RemoveOutRelationFrom : public ConstraintWithRelationComplement
+{
+public:
+  explicit RemoveOutRelationFrom(MediaId language,
+                const LimaString& complement=LimaString());
+  ~RemoveOutRelationFrom() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                  const LinguisticGraphVertex& v1,
+                  AnalysisContent& analysis) const;
+
+private:
+};
+
+/**
+ *@brief Copy all relations out of v1 t relations out of v2. Targets and types are kept.
+ */
+class LIMA_SYNTACTICANALYSIS_EXPORT CopyRelationsOutOfTo : public ConstraintWithRelationComplement
+{
+public:
+  explicit CopyRelationsOutOfTo(MediaId language,
+                                   const LimaString& complement=LimaString());
+  ~CopyRelationsOutOfTo() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,

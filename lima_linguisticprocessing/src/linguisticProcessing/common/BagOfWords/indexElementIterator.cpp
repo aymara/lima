@@ -75,19 +75,19 @@ class IndexElementIteratorPrivate
                       const uint64_t cat,
                       const uint64_t position,
                       const uint64_t length,
-                      const Common::MediaticData::EntityType neType,
-                      const uint64_t reType);
+                      const Common::MediaticData::EntityType neType);
   void getPositionLengthList(const std::vector<uint64_t>& structure,
                              Misc::PositionLengthList& poslenlist) const;
   // add in queue: only used for compound elements
   bool addInPartQueue(const IndexElement& newElement);
 
-  void storePartsInQueue(const BoWToken* token, const uint64_t rel);
+  void storePartsInQueue(boost::shared_ptr< BoWToken > token, const uint64_t rel);
 
-  bool addPartElementsInQueue(const BoWToken* token,
+  bool addPartElementsInQueue(boost::shared_ptr< BoWToken > token,
                               std::pair<std::vector<uint64_t>, uint64_t> & ids_rels,
                               const uint64_t rel);
-  bool addCombinedPartsInQueue(const std::vector<std::pair<std::vector<uint64_t>, uint64_t> >& partIds_Rels,
+  bool addCombinedPartsInQueue(const Lima::Common::BagOfWords::BoWType type,
+                               const std::vector<std::pair<std::vector<uint64_t>, uint64_t> >& partIds_Rels,
                                const uint64_t head,
                                const Common::MediaticData::EntityType neType,
                                std::pair<std::vector<uint64_t>, uint64_t>& ids_rels,
@@ -182,13 +182,13 @@ IndexElement IndexElementIterator::getElement()
     }
     else
     {
-      BoWToken* token = 0;
-      BoWPredicate* predicate = 0;
+      boost::shared_ptr< BoWToken> token;
+      boost::shared_ptr< BoWPredicate > predicate;
       switch ((*m_d->m_iterator)->getType())
       {
       case BOW_TOKEN:
       {
-        token = static_cast<BoWToken*>((*m_d->m_iterator));
+        token = boost::dynamic_pointer_cast<BoWToken>((*m_d->m_iterator));
         uint64_t id=m_d->m_idGenerator->getId(token->getString());
         return IndexElement(id,
                             token->getType(),
@@ -202,12 +202,12 @@ IndexElement IndexElementIterator::getElement()
       case BOW_NAMEDENTITY:
         LDEBUG  << "IndexElementIterator::getElement BOW_NAMEDENTITY" /*<<   * (static_cast<BoWNamedEntity*>((*m_d->m_iterator)) ) << Lima::Common::MediaticData::MediaticData::single().getEntityName(static_cast<BoWNamedEntity*>((*m_d->m_iterator))->getNamedEntityType())*/;
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(static_cast<BoWNamedEntity*>(*m_d->m_iterator),0);
+        m_d->storePartsInQueue(boost::dynamic_pointer_cast<BoWToken>(*m_d->m_iterator),0);
         return m_d->m_partQueue.front();
       // FIXME Change the handling of predicates to take into account their complex structure nature
       case BOW_PREDICATE:
       {
-        predicate = static_cast<BoWPredicate*>((*m_d->m_iterator));
+        predicate = boost::dynamic_pointer_cast<BoWPredicate>((*m_d->m_iterator));
         uint64_t id=m_d->m_idGenerator->getId(predicate->getString());
         return IndexElement(id,
                             predicate->getType(),
@@ -264,8 +264,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const uint64_t id,
                const uint64_t cat,
                const uint64_t position,
                const uint64_t length,
-               const Common::MediaticData::EntityType neType,
-               const uint64_t reType)
+               const Common::MediaticData::EntityType neType)
 {
   if (m_partQueue.size() >= m_maxSizeQueue) {
     BOWLOGINIT;
@@ -273,7 +272,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const uint64_t id,
     return false;
   }
   
-  m_partQueue.push_back(IndexElement(id,type,word,cat,position,length,neType,reType));
+  m_partQueue.push_back(IndexElement(id,type,word,cat,position,length,neType));
 //   BOWLOGINIT;
 //   LDEBUG << "add in part queue " << id << ":" 
 //          << word
@@ -331,7 +330,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const IndexElement& newElement)
 }
 
 
-void IndexElementIteratorPrivate::storePartsInQueue(const BoWToken* token,const uint64_t rel)
+void IndexElementIteratorPrivate::storePartsInQueue(boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > token, const uint64_t rel)
 {
   pair<vector<uint64_t>, uint64_t> tokenIds;
   if (!addPartElementsInQueue(token,tokenIds,rel)) {
@@ -341,7 +340,7 @@ void IndexElementIteratorPrivate::storePartsInQueue(const BoWToken* token,const 
   }
 }
 
-bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
+bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWToken > token,
                        pair<vector<uint64_t>, uint64_t>& ids_rel,
                        uint64_t rel) 
 {
@@ -370,11 +369,10 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
                           token->getCategory(),
                           token->getPosition(),
                           token->getLength(),
-                          neType,
-                          rel);
+                          neType);
   }
   case BOW_NAMEDENTITY: 
-    neType=static_cast<const BoWNamedEntity*>(token)->getNamedEntityType();
+    neType=boost::dynamic_pointer_cast<BoWNamedEntity>(token)->getNamedEntityType();
     break;
   case BOW_TERM:
   case BOW_PREDICATE:
@@ -383,8 +381,8 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   }
 
   // is a complex token
-  const BoWComplexToken* complexToken=
-    static_cast<const BoWComplexToken*>(token);
+  boost::shared_ptr< BoWComplexToken > complexToken=
+    boost::dynamic_pointer_cast<BoWComplexToken>(token);
   
   if (complexToken==0) {
     BOWLOGINIT;
@@ -409,8 +407,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
                           token->getCategory(),
                           token->getPosition(),
                           token->getLength(),
-                          neType,
-                          rel);
+                          neType);
   }
 
   ids_rel=make_pair(vector<uint64_t>(0),rel);
@@ -420,7 +417,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   for (uint64_t i=0; i<nbParts; i++) {
     pair<vector<uint64_t>, uint64_t>& thisPartIdsRels=partIdsRels[i];
     uint64_t relType;
-    BoWRelation * relation=(complexToken->getParts()[i]).getBoWRelation();
+    boost::shared_ptr< BoWRelation > relation=(complexToken->getParts()[i]).getBoWRelation();
     if (relation !=0 ) relType=relation->getSynType(); else  relType=0; 
     if (!addPartElementsInQueue(complexToken->getParts()[i].getBoWToken(),thisPartIdsRels,relType)) {
       return false;
@@ -433,7 +430,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   // add ids for combined parts
   vector<uint64_t> structure; //current structure in recursive function
   vector<uint64_t> relations; //current relations in recursive function
-  if (!addCombinedPartsInQueue(partIdsRels,head,neType,ids_rel,structure,relations,0)) {
+  if (!addCombinedPartsInQueue(token->getType(),partIdsRels,head,neType,ids_rel,structure,relations,0)) {
     return false;
   }
   return true;
@@ -452,13 +449,15 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
  * 
  * @return 
  */
-bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std::pair<std::vector<uint64_t>, uint64_t> >& partIdsRels,
-                        const uint64_t head,
-                        const Common::MediaticData::EntityType neType,
-                        std::pair<std::vector<uint64_t>, uint64_t>& ids_rel,
-                        std::vector<uint64_t>& structure,
-                        std::vector<uint64_t>& relations,
-                        const uint64_t i)
+bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
+    const Lima::Common::BagOfWords::BoWType type,
+    const std::vector<std::pair<std::vector<uint64_t>, uint64_t> >& partIdsRels,
+    const uint64_t head,
+    const Common::MediaticData::EntityType neType,
+    std::pair<std::vector<uint64_t>, uint64_t>& ids_rel,
+    std::vector<uint64_t>& structure,
+    std::vector<uint64_t>& relations,
+    const uint64_t i)
 {
 //    BOWLOGINIT;
 //    if (logger.isDebugEnabled()) {
@@ -480,7 +479,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
     // true size of compound (trick: use PositionLengthList to have
     // the size: number of leaves of the structure), and to avoid
     // compute the id if size is more than maxCompoundSize
-    IndexElement compoundElement(0,BOW_TERM,structure,relations,neType,0); // relType is not used
+    IndexElement compoundElement(0,type,structure,relations,neType);
     getPositionLengthList(structure,compoundElement.getPositionLengthList());
     if (compoundElement.getPositionLengthList().size() > m_maxCompoundSize) {
       // compound larger than allowed, do not add it in parts, but
@@ -502,12 +501,11 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
   }
 
   // add possible at end of structure and recursive call
-  for (std::vector<uint64_t>::const_iterator 
-         it=partIdsRels[i].first.begin(),it_end=partIdsRels[i].first.end();
+  for (auto it=partIdsRels[i].first.begin(),it_end=partIdsRels[i].first.end();
        it!=it_end; it++) {
     structure.push_back(*it);
     relations.push_back(partIdsRels[i].second);
-    if (!addCombinedPartsInQueue(partIdsRels,head,neType,ids_rel,structure,relations,i+1)) {
+    if (!addCombinedPartsInQueue(type, partIdsRels,head,neType,ids_rel,structure,relations,i+1)) {
       return false;
     }
     structure.pop_back();
@@ -517,7 +515,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(const std::vector<std:
   // otherwise, recursive call without current iterator (that is an
   // extension)
   if (i!=head) {
-    if (!addCombinedPartsInQueue(partIdsRels,head,neType,ids_rel,structure,relations,i+1)) {
+    if (!addCombinedPartsInQueue(type, partIdsRels,head,neType,ids_rel,structure,relations,i+1)) {
       return false;
     }
   }

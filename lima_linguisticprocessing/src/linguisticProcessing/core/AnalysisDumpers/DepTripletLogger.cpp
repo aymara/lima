@@ -258,14 +258,14 @@ void DepTripletLogger::dumpDepWithCompounds(
 //   CVertexDataPropertyMap dataMap = get(vertex_data, posgraph);
 
   std::set< LinguisticGraphVertex > visited;
-  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> > srcTokens =
+  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation > , boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > > > srcTokens =
     m_bowGenerator->createAbstractBoWElement(src, anagraph, posgraph, 0, annotationData, visited);
-  std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> >  destTokens =
+  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >, boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > > >  destTokens =
     m_bowGenerator->createAbstractBoWElement(dest, anagraph, posgraph, 0, annotationData, visited);
 
   std::map<std::string, std::set<LinguisticGraphVertex> > srcs, dests;
 
-  for (std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> > ::const_iterator srcItr=srcTokens.begin();
+  for (auto srcItr=srcTokens.begin();
        srcItr!=srcTokens.end();
        srcItr++)
   {
@@ -274,13 +274,10 @@ void DepTripletLogger::dumpDepWithCompounds(
 //     std::cerr << "  inserting " << src << std::endl;
     theSet.insert(src);
     srcs.insert(std::make_pair((*srcItr).second->getOutputUTF8String(),theSet));
-    delete (*srcItr).first;
-    delete (*srcItr).second;
   }
   if (compoundsHeads.find(src) != compoundsHeads.end())
   {
-    std::set<const BoWTerm*>::const_iterator it, it_end;
-    it = (*(compoundsHeads.find(src))).second.begin();
+    auto it = (*(compoundsHeads.find(src))).second.begin(),
     it_end = (*(compoundsHeads.find(src))).second.end();
     for (; it != it_end; it++)
     {
@@ -293,7 +290,7 @@ void DepTripletLogger::dumpDepWithCompounds(
     }
   }
 
-  for (std::vector< std::pair<Common::BagOfWords::BoWRelation*,Common::BagOfWords::AbstractBoWElement*> > ::const_iterator destItr=destTokens.begin();
+  for (auto destItr=destTokens.begin();
         destItr!=destTokens.end();
         destItr++)
   {
@@ -302,13 +299,10 @@ void DepTripletLogger::dumpDepWithCompounds(
 //     std::cerr << "  inserting " << dest << std::endl;
     theSet.insert(dest);
     dests.insert(std::make_pair((*destItr).second->getOutputUTF8String(),theSet));
-    delete (*destItr).first;
-    delete (*destItr).second;
   }
   if (compoundsHeads.find(dest) != compoundsHeads.end())
   {
-    std::set<const BoWTerm*>::const_iterator it, it_end;
-    it = (*(compoundsHeads.find(dest))).second.begin();
+    auto it = (*(compoundsHeads.find(dest))).second.begin(),
     it_end = (*(compoundsHeads.find(dest))).second.end();
     for (; it != it_end; it++)
     {
@@ -411,10 +405,10 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens = 
+          std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens =
             m_bowGenerator->buildTermFor(agv, agv, anagraph, posgraph, 0, 
                                          syntacticData, annotationData, visited);
-          for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
+          for (auto bowItr=bowTokens.begin();
                bowItr!=bowTokens.end();
                bowItr++)
           {
@@ -422,15 +416,13 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
               //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-              delete (*bowItr).first;
-              delete (*bowItr).second;
             }
             else
             {
-              const BoWTerm* bt = dynamic_cast<const BoWTerm*>((*bowItr).second);
+              boost::shared_ptr< BoWTerm > bt = boost::dynamic_pointer_cast<BoWTerm>((*bowItr).second);
               if (bt != 0)
               {
-                getCompoundsHeads(result, bt);
+                getCompoundsHeads(result, &*bt);
               }
               alreadyStored.insert(elem);
             }
@@ -439,9 +431,9 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
       }
       else
       {
-        std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
+        std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > bowTokens=m_bowGenerator->createAbstractBoWElement(v, anagraph, posgraph, 0, annotationData, visited);
 
-        for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator bowItr=bowTokens.begin();
+        for (auto bowItr=bowTokens.begin();
              bowItr!=bowTokens.end();
              bowItr++)
         {
@@ -449,15 +441,13 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
           if (alreadyStored.find(elem) != alreadyStored.end())
           { // already stored
             //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-            delete (*bowItr).first;
-            delete (*bowItr).second;
           }
           else
           {
-            const BoWTerm* bt = dynamic_cast<const BoWTerm*>((*bowItr).second);
+            boost::shared_ptr< BoWTerm > bt = boost::dynamic_pointer_cast< BoWTerm >((*bowItr).second);
             if (bt != 0)
             {
-              getCompoundsHeads(result, bt);
+              getCompoundsHeads(result, &*bt);
             }
             alreadyStored.insert(elem);
           }
@@ -482,9 +472,9 @@ void DepTripletLogger::getCompoundsHeads(
   partsit = bt->getParts().begin(); partsit_end = bt->getParts().end();
   for (; partsit!=partsit_end; partsit++)
   {
-    if ( dynamic_cast<const BoWTerm*>((*partsit).get<1>()) != 0)
+    if ( boost::dynamic_pointer_cast<BoWTerm>((*partsit).get<1>()) != 0)
     {
-      getCompoundsHeads(result, dynamic_cast<const BoWTerm*>((*partsit).get<1>()));
+      getCompoundsHeads(result, &*boost::dynamic_pointer_cast<BoWTerm>((*partsit).get<1>()));
     }
   }
 }
@@ -502,7 +492,7 @@ void DepTripletLogger::collectVertices(
     partsit_end = dynamic_cast<const BoWTerm*>(term)->getParts().end();
     for (; partsit!=partsit_end; partsit++)
     {
-      collectVertices(theSet, (*partsit).get<1>());
+      collectVertices(theSet, &*(*partsit).get<1>());
     }
   }
 }

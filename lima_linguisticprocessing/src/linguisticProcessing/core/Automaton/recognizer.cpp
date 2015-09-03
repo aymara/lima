@@ -475,11 +475,11 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         LDEBUG << "trigger " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success=" << success 
                << ",actionSuccess=" << actionSuccess;
-        LDEBUG << "        matched: '" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language)) << "'";
+        LDEBUG << "        matched:" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language));
       }
       else {
         LDEBUG << "vertex " << v << "[" << str << "]:rule " 
-               << currentRule->getRuleId() << "-> success=0";
+               << currentRule->getRuleId() << "-> success= false";
       }
     }
 #endif
@@ -723,7 +723,7 @@ uint64_t Recognizer::
       }
       else {
 #ifdef DEBUG_LP
-        LDEBUG << "Recognizer: already visited: " << next;
+        LDEBUG << "Recognizer: already visited:" << next;
 #endif
       }
     }

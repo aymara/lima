@@ -31,6 +31,7 @@
 #include "bowDocumentST.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "common/Data/strwstrtools.h"
+#include "common/Data/readwritetools.h"
 #include "common/MediaticData/mediaticData.h"
 
 using namespace Lima::Common::Misc;
@@ -106,7 +107,7 @@ BoWXMLReader::~BoWXMLReader() {
 BoWXMLHandler::BoWXMLHandler(std::ostream& output):
 m_outputStream(output),
 m_currentBoWDocument(),
-m_currentBoWText(0),
+m_currentBoWText(),
 m_currentComplexToken(),
 m_refMap()
 {
@@ -176,10 +177,10 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     m_currentBoWDocument.clear();
   }
   else if (stringName == "bowText") {
-    m_currentBoWText=new BoWText();
+    m_currentBoWText= boost::shared_ptr< BoWText >(new BoWText());
   }
   else if (stringName == "hierarchy") {
-    m_currentBoWText=new BoWText();
+    m_currentBoWText=boost::shared_ptr< BoWText >(new BoWText());
     bool isIndexingNode(false);
     try {
       string indexingNode=getStringAttribute(attributes,"indexingNode");
@@ -191,10 +192,11 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
       // do nothing -> is not indexing node
     }
     if (isIndexingNode) {
-      m_outputStream << INDEXING_BLOC;
+      Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::INDEXING_BLOC);
+      m_currentBoWText=boost::shared_ptr< BoWText >(new BoWText());
     }
     else {
-      m_outputStream << HIERARCHY_BLOC;
+      Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::HIERARCHY_BLOC);
     }
     string elementName("");
     try {
@@ -221,9 +223,8 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   }
   else if (stringName == "bowToken") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
-    
     LDEBUG <<lemma<<category<<position<<length<<id ;
-    BoWToken* token=new BoWToken(lemma,category,position,length);
+    boost::shared_ptr< BoWToken > token = boost::shared_ptr< BoWToken >(new BoWToken(lemma,category,position,length));
     m_refMap[id]=token;
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
@@ -231,20 +232,19 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     else { 
       if (m_currentComplexToken.back().currentPart == 
           m_currentComplexToken.back().head) {
-        m_currentComplexToken.back().token->addPart(token,false,true);
+        m_currentComplexToken.back().token->addPart(token,true);
       }
       else {
-        m_currentComplexToken.back().token->addPart(token,false);
+        m_currentComplexToken.back().token->addPart(token);
       }
       m_currentComplexToken.back().currentPart++;
       // token has been cloned in complex token
-      delete token;
     }
   }
   else if (stringName == "bowTerm") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
     // use empty lemma: no need to store lemma for compound
-    BoWTerm* term=new BoWTerm(LimaString(),category,position,length);
+    boost::shared_ptr< BoWTerm > term=boost::shared_ptr< BoWTerm >(new BoWTerm(LimaString(),category,position,length));
     m_refMap[id]=term;
     m_currentComplexToken.push_back(CurrentComplexToken(term));
   }
@@ -252,9 +252,9 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     getTokenAttributes(attributes,lemma,category,position,length,id);
     LimaString typeName=getLimaStringAttribute(attributes,"type");
     // use empty lemma: no need to store lemma for compound
-    BoWNamedEntity* ne=new BoWNamedEntity(LimaString(),category,
+    boost::shared_ptr< BoWNamedEntity > ne=boost::shared_ptr< BoWNamedEntity >(new BoWNamedEntity(LimaString(),category,
                                           MediaticData::MediaticData::single().getEntityType(typeName),
-                                          position,length);
+                                          position,length));
     m_refMap[id]=ne;
     m_currentComplexToken.push_back(CurrentComplexToken(ne));
   } 
@@ -264,12 +264,12 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   }
   else if (stringName == "bowTokenRef") {
     uint64_t refId=getIntAttribute(attributes,"refId");
-    m_currentComplexToken.back().token->addPart(m_refMap[refId],true);
+    m_currentComplexToken.back().token->addPart(m_refMap[refId]);
   }
   else if (stringName == "feature") {
     std::string name=getStringAttribute(attributes,"name");
     LimaString value=getLimaStringAttribute(attributes,"value");
-    static_cast<BoWNamedEntity*>(m_currentComplexToken.back().token)->
+    boost::dynamic_pointer_cast<BoWNamedEntity>(m_currentComplexToken.back().token)->
       setFeature(name,value);
   }
   return true;
@@ -286,7 +286,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   if (stringName == "bowNamedEntity" ||
       stringName == "bowTerm") 
   {
-    BoWToken* token=m_currentComplexToken.back().token;
+    boost::shared_ptr< BoWToken > token=m_currentComplexToken.back().token;
     m_currentComplexToken.pop_back();
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
@@ -294,38 +294,36 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
     else { // this complex token is a part of another
       if (m_currentComplexToken.back().currentPart == 
           m_currentComplexToken.back().head) {
-        m_currentComplexToken.back().token->addPart(token,false,true);
+        m_currentComplexToken.back().token->addPart(token,true);
       }
       else {
-        m_currentComplexToken.back().token->addPart(token,false);
+        m_currentComplexToken.back().token->addPart(token);
       }
       m_currentComplexToken.back().currentPart++;
       // token has been cloned in addPart => delete it
-      delete token;
     }
   }
   else if (stringName == "properties") {
-    m_outputStream << NODE_PROPERTIES_BLOC;
+    Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::NODE_PROPERTIES_BLOC);
     m_currentProperties.write(m_outputStream);
   }
   else if (stringName == "tokens") {
-    m_outputStream << BOW_TEXT_BLOC;
+    Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::BOW_TEXT_BLOC);
     //@todo
     m_currentBoWText->writeBoWText(m_outputStream);
   }
   else if (stringName == "hierarchy") {
-    m_outputStream << END_BLOC;
+    Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::END_BLOC);
     if (m_currentBoWText !=0) {
       BoWBinaryWriter writer;
       writer.writeBoWText(m_outputStream,*m_currentBoWText);
-      delete m_currentBoWText;
-      m_currentBoWText=0;
+      m_currentBoWText=boost::shared_ptr< BoWText >();
     }
   }
   else if (stringName == "bowDocument") {
     //@todo
     // m_currentBoWDocument.write(m_outputStream);
-    m_currentBoWText=0;
+    m_currentBoWText=boost::shared_ptr <Lima::Common::BagOfWords::BoWText >();
   }
   return true;
 }

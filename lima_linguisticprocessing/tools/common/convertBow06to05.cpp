@@ -81,14 +81,13 @@ void readDocuments(istream& fileIn, ostream& out)
   while (! fileIn.eof())
   {
     // enum type with small number of values coded on one byte;
-    BoWBlocType blocType;
-    fileIn >> blocType;
+    BoWBlocType blocType = static_cast<BoWBlocType >( readOneByteInt(fileIn));
     if (blocType==DOCUMENT_PROPERTIES_BLOC)
     {
       Lima::Common::Misc::DocumentProperties props;
       props.read(fileIn);
       props.write(out);
-      fileIn >> blocType;
+      blocType = static_cast<BoWBlocType >( readOneByteInt(fileIn));    
     }
     BoWText text;
     while (blocType==BOW_TEXT_BLOC)

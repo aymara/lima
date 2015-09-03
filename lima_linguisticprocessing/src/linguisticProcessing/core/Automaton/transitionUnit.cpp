@@ -144,8 +144,8 @@ void TransitionUnit::popConstraints(ConstraintCheckList& checklist) const {
 
 ostream& operator << (ostream& os, const TransitionUnit& t)
 {
-  AULOGINIT;
-  // LDEBUG << "TransitionUnit::operator<< on transition of type " << t.type();
+//   AULOGINIT;
+//   LTRACE << "TransitionUnit::operator<< on transition of type " << t.type();
   
   if (t.negative()) { os << '^'; }
   if (t.head()) { os << 'H'; }
@@ -167,8 +167,8 @@ ostream& operator << (ostream& os, const TransitionUnit& t)
 
 QDebug& operator << (QDebug& os, const TransitionUnit& t)
 {
-  AULOGINIT;
-  //LDEBUG << "TransitionUnit::operator<< on transition of type " << t.type();
+//   AULOGINIT;
+//   LTRACE << "TransitionUnit::operator<< on transition of type " << t.type();
   
   if (t.negative()) { os << '^'; }
   if (t.head()) { os << 'H'; }

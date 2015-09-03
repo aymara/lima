@@ -54,16 +54,16 @@ class BoWTokenIteratorPrivate
   // a class to represent complex tokens parts that are stored in
   // queue: some are pointers to tokens in BoWText, some are
   // created => keep information for clean delete
-  class BoWTokenPart : public std::pair<const AbstractBoWElement*,bool> {
+  class BoWTokenPart : public std::pair< boost::shared_ptr< AbstractBoWElement >,bool> {
   public:
-    BoWTokenPart():std::pair<const AbstractBoWElement*,bool>((AbstractBoWElement*)0,false) {}
-    BoWTokenPart(const AbstractBoWElement* token,bool isCreated):
-      std::pair<const AbstractBoWElement*,bool>(token,isCreated) {}
+    BoWTokenPart():std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(boost::shared_ptr< AbstractBoWElement >(),false) {}
+    BoWTokenPart(boost::shared_ptr< AbstractBoWElement > token,bool isCreated):
+      std::pair< boost::shared_ptr< AbstractBoWElement >,bool>(token,isCreated) {}
 
     ~BoWTokenPart() {}
 
-    const AbstractBoWElement* const& getBoWToken() const { return first; }
-    const AbstractBoWElement*& getBoWToken() { return first; }
+    const boost::shared_ptr< AbstractBoWElement >& getBoWToken() const { return first; }
+    boost::shared_ptr< AbstractBoWElement >& getBoWToken() { return first; }
     bool& isCreated() { return second; }
     bool isCreated() const { return second; }
   };
@@ -77,13 +77,6 @@ class BoWTokenIteratorPrivate
   BoWTokenQueue m_partQueue;
   uint64_t m_maxSizeQueue;
 
-  // created tokens are stored in a separate vector:
-  // make memory management easier (copy and destructor
-  // of BoWTokenPart and BoWTokenIterator do not
-  // have to care about pointers)
-  // this object is cleared at end of part
-  std::vector<const BoWToken*> m_createdTokens;
-
   /// set to DO_NOT_ITERATE_THROUGH_NAMEDENTITIES_PARTS to don't iterate over named entities parts
   /// Default is ITERATE_THROUGH_NAMEDENTITIES_PARTS
   BoWTokenIteratorNamedEntitiesPartsPolicy m_iterateThroughNamedEntitiesParts;
@@ -93,20 +86,19 @@ class BoWTokenIteratorPrivate
 
   // add in queue
   // (return false if size of queue becomes greater than max)
-  bool addInPartQueue(const BoWToken* token,
+  bool addInPartQueue(boost::shared_ptr< BoWToken > token,
                       const bool isCreated);
 
-  void storePartsInQueue(const BoWToken* token);
+  void storePartsInQueue(boost::shared_ptr< BoWToken > token);
 
   // a type to store interesting parts of complex tokens
   // (the parts used to be combined to create partial complex tokens)
-  typedef std::vector<const BoWToken*> PartTokens;
+  typedef std::vector<boost::shared_ptr< BoWToken > > PartTokens;
 
   // recursive function to get all parts of complex token
   // and create partial complex tokens
   // (return false if size of queue becomes greater than max)
-  bool addPartElementsInQueue(const BoWToken* token,
-                              std::vector<PartTokens>& partTokens);
+  bool addPartElementsInQueue(boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > token, vector< Lima::Common::BagOfWords::BoWTokenIteratorPrivate::PartTokens >& partTokens);
 
   /**
    * combine parts to create partial complex tokens
@@ -123,8 +115,8 @@ class BoWTokenIteratorPrivate
    */
   bool addCombinedPartsInQueue(const std::vector<PartTokens>& subPartTokens,
                                const uint64_t head,
-                               std::vector<BoWToken*>& createdTokens,
-                               std::vector<const BoWToken*>& currentPartialToken,
+                               PartTokens& createdTokens,
+                               PartTokens& currentPartialToken,
                                const uint64_t i,
                                bool& first);
   /**
@@ -134,7 +126,7 @@ class BoWTokenIteratorPrivate
    * @param iterators the iterators that define a combination
    * @return the created complex token
    */
-  BoWComplexToken* createComplexToken(const std::vector<const BoWToken*>& parts);
+  boost::shared_ptr< BoWComplexToken > createComplexToken(const PartTokens& parts);
 };
 
 BoWTokenIteratorPrivate::BoWTokenIteratorPrivate(const BoWText& bowText,
@@ -144,7 +136,6 @@ m_iterator(bowText.begin()),
 m_iteratorEnd(bowText.end()),
 m_partQueue(),
 m_maxSizeQueue(nbMaxPartialCompounds),
-m_createdTokens(0),
 m_iterateThroughNamedEntitiesParts(iterateThroughNamedEntitiesParts)
 {
 }
@@ -155,7 +146,6 @@ BoWTokenIteratorPrivate::BoWTokenIteratorPrivate(const BoWTokenIteratorPrivate& 
   m_iteratorEnd = btip.m_iteratorEnd;
   m_partQueue = btip.m_partQueue;
   m_maxSizeQueue = btip.m_maxSizeQueue;
-  m_createdTokens = btip.m_createdTokens;
   m_iterateThroughNamedEntitiesParts = btip.m_iterateThroughNamedEntitiesParts;
 }
 
@@ -184,17 +174,6 @@ BoWTokenIterator::~BoWTokenIterator()
   delete m_d;
 }
 
-void BoWTokenIterator::deletePartialComplexTokens() {
-  std::vector<const BoWToken*>::iterator 
-    it=m_d->m_createdTokens.begin(),
-    it_end=m_d->m_createdTokens.end();
-  for (; it!=it_end; it++) {
-    delete *it;
-    *it=0;
-  }
-  m_d->m_createdTokens.clear();
-}
-
 bool BoWTokenIterator::isAtEnd() const {
   return (m_d->m_iterator == m_d->m_iteratorEnd);
 }
@@ -205,10 +184,10 @@ bool BoWTokenIterator::isAtEnd() const {
 // getting parts is done in this function (rather than in ++ function):
 // which means that is a ++ is done before calling a getElement on 
 // a complex token, no parts will be explored
-const AbstractBoWElement* BoWTokenIterator::getElement() {
+boost::shared_ptr< AbstractBoWElement > BoWTokenIterator::getElement() {
   if (m_d->m_partQueue.empty()) {
     if (m_d->m_iterator==m_d->m_iteratorEnd) { // at end
-      return 0;
+      return boost::shared_ptr< AbstractBoWElement >();
     }
     else {
       switch ((*m_d->m_iterator)->getType()) {
@@ -220,7 +199,7 @@ const AbstractBoWElement* BoWTokenIterator::getElement() {
       case BOW_TERM:
       case BOW_NAMEDENTITY: {
         // element itself will be stored in queue as part
-        m_d->storePartsInQueue(static_cast<const BoWToken*>(*m_d->m_iterator));
+        m_d->storePartsInQueue(boost::dynamic_pointer_cast< BoWToken >(*m_d->m_iterator));
         return m_d->m_partQueue.front().getBoWToken();
         break;
       }
@@ -231,7 +210,7 @@ const AbstractBoWElement* BoWTokenIterator::getElement() {
   else {
     return m_d->m_partQueue.front().getBoWToken();
   }
-  return 0;
+  return boost::shared_ptr< AbstractBoWElement >();
 }
 
 //**********************************************************************
@@ -248,8 +227,6 @@ BoWTokenIterator& BoWTokenIterator::operator++()
     m_d->m_partQueue.pop_front();
     if (m_d->m_partQueue.empty()) { // finished for the parts of this token
         m_d->m_iterator++;
-        // delete partial complex tokens created for this token
-        deletePartialComplexTokens(); 
     }
   }
   return *this;
@@ -265,7 +242,7 @@ BoWTokenIterator BoWTokenIterator::operator++(int) {
 //**********************************************************************
 // helper functions for iterator
 //**********************************************************************
-bool BoWTokenIteratorPrivate::addInPartQueue(const BoWToken* token,
+bool BoWTokenIteratorPrivate::addInPartQueue(const boost::shared_ptr< BoWToken > token,
                const bool isCreated) 
 {
   if (m_partQueue.size() >= m_maxSizeQueue) {
@@ -277,9 +254,6 @@ bool BoWTokenIteratorPrivate::addInPartQueue(const BoWToken* token,
   m_partQueue.push_back(BoWTokenPart());
   m_partQueue.back().getBoWToken()=token;
   m_partQueue.back().isCreated()=isCreated;
-  if (isCreated) {
-    m_createdTokens.push_back(token);
-  }
   BOWLOGINIT;
   LDEBUG << "add in part queue " << *token 
          << "; isCreated=" << isCreated 
@@ -288,8 +262,8 @@ bool BoWTokenIteratorPrivate::addInPartQueue(const BoWToken* token,
   return true;
 }
 
-void BoWTokenIteratorPrivate::storePartsInQueue(const BoWToken* token) {
-  vector<vector<const BoWToken*> > partTokens;
+void BoWTokenIteratorPrivate::storePartsInQueue(boost::shared_ptr< BoWToken > token) {
+  vector<vector<boost::shared_ptr< BoWToken > > > partTokens;
   if (!addPartElementsInQueue(token,partTokens)) {
     BOWLOGINIT;
     LWARN << "Token contain too many subparts (some are ignored): " 
@@ -297,7 +271,7 @@ void BoWTokenIteratorPrivate::storePartsInQueue(const BoWToken* token) {
   }
 }
 
-bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
+bool BoWTokenIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWToken > token,
                        vector<PartTokens>& partTokens) {
 
   BOWLOGINIT;
@@ -311,7 +285,8 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   if (token->getType()==BOW_NAMEDENTITY
     && m_iterateThroughNamedEntitiesParts==DO_NOT_ITERATE_THROUGH_NAMEDENTITIES_PARTS)
   {
-    partTokens.push_back(vector<const BoWToken*>());
+    PartTokens pt;
+    partTokens.push_back(pt);
     partTokens.back().push_back(token);
     return true;
   }
@@ -319,37 +294,35 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
   switch (token->getType()) {
   case BOW_TOKEN: {
     // push simple token in parts 
-    partTokens.push_back(vector<const BoWToken*>());
+    partTokens.push_back(PartTokens());
     partTokens.back().push_back(token);
     break;
   }
   case BOW_TERM:
   case BOW_NAMEDENTITY: {
-    const BoWComplexToken* complexToken=static_cast<const BoWComplexToken*>(token);
+    boost::shared_ptr< BoWComplexToken > complexToken=boost::dynamic_pointer_cast<BoWComplexToken>(token);
 
     if (complexToken->size() == 1) { 
       // only one part, do not get into it
       // (for instance, named entity with one element)
       // push simple token in parts 
-      partTokens.push_back(vector<const BoWToken*>());
+      partTokens.push_back(PartTokens());
       partTokens.back().push_back(token);
       return true;
     }
 
     // add new vector for token parts
-    partTokens.push_back(vector<const BoWToken*>());
+    partTokens.push_back(PartTokens());
 
     // push token itself and head
     LDEBUG << "storing token " << *token;
     partTokens.back().push_back(token);
     const BoWComplexToken::Part& headPart=complexToken->getParts()[complexToken->getHead()];
-    if (!headPart.isInList()) {
       LDEBUG << "storing head token " << *(headPart.getBoWToken());
       partTokens.back().push_back(headPart.getBoWToken());
-    }
     
     // treat parts
-    vector<vector<const BoWToken*> > subPartTokens;
+    vector<PartTokens> subPartTokens;
 
     deque<BoWComplexToken::Part>::const_iterator 
       part=complexToken->getParts().begin(),
@@ -362,8 +335,8 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
     }
 
     if (subPartTokens.size()>1) {
-      vector<BoWToken*> combined(0);
-      vector<const BoWToken*> currentPartialToken(0);
+      PartTokens combined;
+      PartTokens currentPartialToken;
       bool first(true);
       if (!addCombinedPartsInQueue(subPartTokens,complexToken->getHead(),
                                    combined,currentPartialToken,0,first)) {
@@ -380,12 +353,7 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(const BoWToken* token,
 }
 
 
-bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const std::vector<PartTokens>& subPartTokens,
-                        const uint64_t head,
-                        std::vector<BoWToken*>& createdTokens,
-                        std::vector<const BoWToken*>& currentPartialToken,
-                        const uint64_t i,
-                        bool& first)
+bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const vector< Lima::Common::BagOfWords::BoWTokenIteratorPrivate::PartTokens >& subPartTokens, const uint64_t head, Lima::Common::BagOfWords::BoWTokenIteratorPrivate::PartTokens& createdTokens, Lima::Common::BagOfWords::BoWTokenIteratorPrivate::PartTokens& currentPartialToken, const uint64_t i, bool& first)
 {
   if (i>=subPartTokens.size()) {
     if (first) {
@@ -402,7 +370,7 @@ bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const std::vector<PartToke
     }
 
     // at end of parts => add current currentPartialToken
-    BoWComplexToken* partialComplexToken=
+    boost::shared_ptr< BoWComplexToken > partialComplexToken=
       createComplexToken(currentPartialToken);
 
     if (partialComplexToken!=0) {
@@ -416,8 +384,7 @@ bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const std::vector<PartToke
   }
 
   // add possible at end of currentPartialToken and recursive call
-  for (std::vector<const BoWToken*>::const_iterator 
-         it=subPartTokens[i].begin(),it_end=subPartTokens[i].end();
+  for (auto it=subPartTokens[i].begin(),it_end=subPartTokens[i].end();
        it!=it_end; it++) {
     currentPartialToken.push_back(*it);
     if (!addCombinedPartsInQueue(subPartTokens,head,
@@ -442,21 +409,18 @@ bool BoWTokenIteratorPrivate::addCombinedPartsInQueue(const std::vector<PartToke
 
 //**********************************************************************
 // create a partial complex token 
-BoWComplexToken* BoWTokenIteratorPrivate::createComplexToken(const vector<const BoWToken*>& parts) {
+boost::shared_ptr< BoWComplexToken > BoWTokenIteratorPrivate::createComplexToken(const PartTokens& parts) {
 
 //   BOWLOGINIT;
 //   LDEBUG << "create complex token";
 
-  BoWTerm* partialComplexToken=new BoWTerm;
+  boost::shared_ptr< BoWTerm > partialComplexToken(new BoWTerm);
 
   // do not set lemma of partial token : do not store computed lemmas
   // for compounds
 
-  for (vector<const BoWToken*>::const_iterator 
-         it=parts.begin(),
-         it_end=parts.end();
-       it!=it_end; it++) {
-    partialComplexToken->addPart(const_cast<BoWToken*>(*it),true);
+  for (auto it=parts.begin(), it_end=parts.end(); it!=it_end; it++) {
+    partialComplexToken->addPart(boost::dynamic_pointer_cast<BoWToken>(*it));
   }
   // set position and length
   Common::Misc::PositionLengthList

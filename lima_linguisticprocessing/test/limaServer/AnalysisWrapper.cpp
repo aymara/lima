@@ -37,6 +37,7 @@
 #include <QStringList>
 #include <QPair>
 #include <boost/graph/buffer_concepts.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <fstream>
 #include <sstream>      // std::stringstream
@@ -59,7 +60,7 @@ public:
   std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId);
   void closeHandlerOutputFile(std::ostream* ofs);
 
-  QSharedPointer< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
+  boost::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
   const std::set<std::string>& m_langs;
 };
 

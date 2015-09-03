@@ -176,15 +176,15 @@ BoWTokenPrivate::~BoWTokenPrivate()
 BoWToken::BoWToken(BoWTokenPrivate& d) :
     m_d(&d)
 {
-  //   BOWLOGINIT;
-  //   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
+    BOWLOGINIT;
+    LDEBUG << "BoWToken::BoWToken(BoWTokenPrivate): " << (*this) << " - " << this;
 }
 
 BoWToken::BoWToken() :
     m_d(new BoWTokenPrivate())
 {
-//   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
+  BOWLOGINIT;
+  LDEBUG << "BoWToken::BoWToken()" << this;
 }
 
 BoWToken::BoWToken(const LimaString& lemma,
@@ -194,19 +194,21 @@ BoWToken::BoWToken(const LimaString& lemma,
     m_d(new BoWTokenPrivate(lemma, category, position, length))
 {
   m_d->convertSpaces();
-//   BOWLOGINIT;
-//   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
+  BOWLOGINIT;
+  LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
 }
 
 BoWToken::BoWToken(const BoWToken& tok) :
     m_d(new BoWTokenPrivate(tok))
 {
-//   BOWLOGINIT;
-//   LDEBUG << "Copying BoWToken : " << tok << " - " << &tok << " ; new one is: " << this;
+  BOWLOGINIT;
+  LDEBUG << "BoWToken::BoWToken(BoWToken) : " << tok << " - " << &tok << " ; new one is: " << this;
 }
 
 BoWToken& BoWToken::operator=(const BoWToken& tok)
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWToken::operator=(BoWToken) : " << tok << " - " << &tok << " ; new one is: " << this;
   *m_d = *tok.m_d;
   return *this;
 }
@@ -221,6 +223,8 @@ BoWToken::BoWToken(const LimaString& str,
                    const uint64_t length):
     m_d(new BoWTokenPrivate(str, position, length))
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWToken::BoWToken" <<  this << str << position << length;
   //uint64_t i(str.find(m_separator));
   // uint64_t i(str.find(m_separator));
   int i(str.indexOf(m_d->m_separator));
@@ -241,6 +245,8 @@ BoWToken::BoWToken(const LimaString& str,
 
 BoWToken* BoWToken::clone() const
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWToken::clone " << this;
   return new BoWToken(*(new BoWTokenPrivate(static_cast<BoWTokenPrivate&>(*(this->m_d)))));
 }
 
@@ -256,6 +262,8 @@ BoWToken* BoWToken::clone() const
 //***********************************************************************
 BoWToken::~BoWToken()
 {
+  BOWLOGINIT;
+  LDEBUG << "BoWToken::~BoWToken " << this;
   delete m_d;
 }
 

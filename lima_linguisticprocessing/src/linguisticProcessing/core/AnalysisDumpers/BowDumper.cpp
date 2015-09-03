@@ -139,6 +139,7 @@ LimaStatusCode BowDumper::process(
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
 
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
+
 #ifdef DEBUG_LP
   LDEBUG << "BowDumper handler will be: " << m_handler << (void*)handler;
 #endif
@@ -187,6 +188,7 @@ LimaStatusCode BowDumper::process(
 
   BoWBinaryWriter writer(handler->shiftFrom());
   DumperStream* dstream=initialize(analysis);
+
 #ifdef DEBUG_LP
   LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
 #endif
@@ -288,7 +290,7 @@ void BowDumper::buildBoWText(
         const SemanticRelationAnnotation& annot = annotationData->annotation(
           *it,Common::Misc::utf8stdstring2limastring("SemanticRelation"))
               .value<SemanticRelationAnnotation>();
-        BoWPredicate* predicate = m_bowGenerator->createPredicate(
+        boost::shared_ptr< BoWPredicate > predicate = m_bowGenerator->createPredicate(
                                         lgvs, agvs, agvt, annot,
                                         annotationData,
                                         *anagraph->getGraph(),
@@ -385,17 +387,13 @@ void BowDumper::addVerticesToBoWText(
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
-          std::vector<std::pair<BoWRelation*, BoWToken*> > bowTokens = m_bowGenerator->buildTermFor(agv, agv, beforePoSGraph, graph, offset, syntacticData, annotationData, visited);
-          for (std::vector<std::pair<BoWRelation*, BoWToken*> >::const_iterator bowItr=bowTokens.begin();
-              bowItr!=bowTokens.end();
-              bowItr++)
+          std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens = m_bowGenerator->buildTermFor(agv, agv, beforePoSGraph, graph, offset, syntacticData, annotationData, visited);
+          for (auto bowItr=bowTokens.begin(); bowItr!=bowTokens.end(); bowItr++)
           {
             std::string elem = (*bowItr).second->getIdUTF8String();
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
               //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-              delete (*bowItr).first;
-              delete (*bowItr).second;
             }
             else
             {             
@@ -456,10 +454,10 @@ void BowDumper::addVerticesToBoWText(
 #ifdef DEBUG_LP
           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "isn't a compound head";
 #endif
-          std::vector<std::pair<BoWRelation*, AbstractBoWElement*> > bowTokens=
+          std::vector<std::pair<boost::shared_ptr< BoWRelation>, boost::shared_ptr< AbstractBoWElement>> > bowTokens=
             m_bowGenerator->createAbstractBoWElement(v, beforePoSGraph, graph, offset, annotationData, visited);
 
-          for (std::vector<std::pair<BoWRelation*, AbstractBoWElement*> >::const_iterator bowItr=bowTokens.begin();
+          for (auto bowItr=bowTokens.begin();
               bowItr!=bowTokens.end();
               bowItr++)
           {
@@ -467,8 +465,6 @@ void BowDumper::addVerticesToBoWText(
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
               //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
-              delete (*bowItr).first;
-              delete (*bowItr).second;
             }
             else
             {

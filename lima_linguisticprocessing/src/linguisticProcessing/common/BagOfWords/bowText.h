@@ -33,6 +33,8 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
+#include <boost/shared_ptr.hpp>
+
 #include <vector>
 #include <iostream>
 
@@ -55,14 +57,14 @@ class AbstractBoWElement;
  * references will cause problems in read/write functions)
  * 
  **/
-class LIMA_BOW_EXPORT BoWText : public std::vector< AbstractBoWElement* >
+class LIMA_BOW_EXPORT BoWText : public std::vector< boost::shared_ptr< AbstractBoWElement > >
 {
 public:
   BoWText();
   BoWText(const BoWText&);
   BoWText& operator = (const BoWText&);
   virtual ~BoWText();
-  void clear();
+  virtual void clear();
 
   friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWText&);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWText&);

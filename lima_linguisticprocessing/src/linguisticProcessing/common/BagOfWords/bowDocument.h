@@ -61,10 +61,12 @@ LIMA_BOW_EXPORT std::istream& operator>>(std::istream& in,BoWBlocType& blocType)
 /**
 * @brief represent a document as a Bag Of Word, with associated document properties.
 */
-class LIMA_BOW_EXPORT BoWDocument : public BoWText, public ::Lima::Common::Misc::GenericDocumentProperties
+class LIMA_BOW_EXPORT BoWDocument :
+    public ::Lima::Common::Misc::GenericDocumentProperties,
+    public BoWText
 {
 public:
-  void clear(){BoWText::clear();Lima::Common::Misc::GenericDocumentProperties::reinit();};
+  virtual void clear();
   BoWDocument();
   BoWDocument(const BoWDocument&);
   virtual ~BoWDocument();

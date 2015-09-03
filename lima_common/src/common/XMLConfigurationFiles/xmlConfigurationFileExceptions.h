@@ -109,10 +109,10 @@ class LIMA_XMLCONFIGURATIONFILES_EXPORT NoSuchParam : public XMLConfigurationFil
 public:
   //! @brief constructor (send a message was default)
   //! @param name the <i>param</i> that was not found
-  NoSuchParam ( const std::string &name ) : XMLConfigurationFileException ( "No such param " + name ),paramName ( name ) {/*std::cout << "No such param " << name << std::endl;*/}
+  NoSuchParam ( const std::string &name ) : XMLConfigurationFileException ( "No such param '" + name + "'" ),paramName ( name ) {/*std::cout << "No such param " << name << std::endl;*/}
   virtual ~NoSuchParam() throw() {}
   //! @brief return the message error
-  const std::string what() {return ( "No such param " + paramName );}
+  const std::string what() {return ( "No such param '" + paramName + "'" );}
 private:
   NoSuchParam& operator=(const NoSuchParam&) {return *this;}
   //! @brief the name of the <i>param</i> that was not found

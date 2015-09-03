@@ -4053,6 +4053,7 @@ B;;A;case;just in case;subordinating conjunction;just in case;
 B;;A;case;Just in case;subordinating conjunction;just in case;
 B;;A;event;in the event that;subordinating conjunction;in the event that;
 B;;A;event;In the event that;subordinating conjunction;in the event that;
+B;;A;case;in case of;preposition;in case of;
 B;;D;case;in case;subordinating conjunction;in case;
 B;;D;case;In case;subordinating conjunction;in case;
 B;;A;time;by the time;subordinating conjunction;by the time;

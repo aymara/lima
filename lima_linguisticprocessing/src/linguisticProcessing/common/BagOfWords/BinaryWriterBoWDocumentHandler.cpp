@@ -29,6 +29,7 @@
 #include "bowDocument.h"
 #include "bowTokenIterator.h"
 #include "common/Data/strwstrtools.h"
+#include "common/Data/readwritetools.h"
 
 namespace Lima {
 namespace Common {
@@ -50,7 +51,7 @@ void BinaryWriterBoWDocumentHandler::
 openSBoWNode(const Misc::GenericDocumentProperties* /*properties*/,
              const std::string& elementName)
 {
-  m_outputStream << HIERARCHY_BLOC;
+  Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::HIERARCHY_BLOC);
   Misc::writeStringField(m_outputStream,elementName);
 }
 
@@ -58,7 +59,7 @@ void BinaryWriterBoWDocumentHandler::
 openSBoWIndexingNode(const Misc::GenericDocumentProperties* /*properties*/,
                      const std::string& elementName)
 {
-  m_outputStream << INDEXING_BLOC;
+  Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::INDEXING_BLOC);
   Misc::writeStringField(m_outputStream,elementName);
 }
 
@@ -66,7 +67,7 @@ void BinaryWriterBoWDocumentHandler::
 processSBoWText(const BoWText* boWText, 
                 bool /*useIterators*/)
 {
-  m_outputStream << BOW_TEXT_BLOC;
+  Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::BOW_TEXT_BLOC);
   m_writer.writeBoWText(m_outputStream,*boWText);
 }
 
@@ -74,14 +75,14 @@ void BinaryWriterBoWDocumentHandler::
 processProperties(const Misc::GenericDocumentProperties* properties, 
                   bool /*useIterators*/)
 {
-  m_outputStream << DOCUMENT_PROPERTIES_BLOC;
+  Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::DOCUMENT_PROPERTIES_BLOC);
   properties->write(m_outputStream);
 }
 
 void BinaryWriterBoWDocumentHandler::
 closeSBoWNode()
 {
-  m_outputStream << END_BLOC;
+  Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::END_BLOC);
 }
 
 

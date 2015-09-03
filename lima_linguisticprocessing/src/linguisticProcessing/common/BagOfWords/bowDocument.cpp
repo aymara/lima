@@ -69,14 +69,23 @@ std::istream& operator>>(std::istream& in,BoWBlocType& blocType)
 // constructors
 //***********************************************************************
 BoWDocument::BoWDocument():
-    BoWText(),
-    GenericDocumentProperties()
-{}
+    GenericDocumentProperties(),
+    BoWText()
+{
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LDEBUG << "BoWDocument::BoWDocument()" << this;
+#endif
+}
 
 BoWDocument::BoWDocument(const BoWDocument& d):
-    BoWText(d),
-    GenericDocumentProperties(d)
+    GenericDocumentProperties(d),
+    BoWText(d)
 {
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LDEBUG << "BoWDocument::BoWDocument(BoWDocument)" << this;
+#endif
 }
 
 //***********************************************************************
@@ -84,7 +93,11 @@ BoWDocument::BoWDocument(const BoWDocument& d):
 //***********************************************************************
 BoWDocument::~BoWDocument()
 {
-  
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LDEBUG << "BoWDocument::~BoWDocument" << this;
+#endif
+  clear();
 }
 
 //***********************************************************************
@@ -98,6 +111,12 @@ BoWDocument& BoWDocument::operator = (const BoWDocument& d)
     GenericDocumentProperties::operator=(d);
   }
   return *this;
+}
+
+void BoWDocument::clear()
+{
+  BoWText::clear();
+  Lima::Common::Misc::GenericDocumentProperties::reinit();
 }
 
 //***********************************************************************
@@ -124,8 +143,7 @@ void BoWDocument::reinit()
 void BoWDocument::read(std::istream& file)
 {
   // enum type with small number of values coded on one byte;
-  BoWBlocType blocType;
-  file >> blocType;
+  BoWBlocType blocType = readOneByteInt(file);
   // old format
   if (blocType==DOCUMENT_PROPERTIES_BLOC)
   {
@@ -144,8 +162,7 @@ void BoWDocument::read(std::istream& file)
 /*
 void BoWDocument::readPart(std::istream& file, AbstractBoWXMLWriter& writer, bool useIterator, std::ostream& os)
 {
-  BoWBlocType blocType;
-  file >> blocType;
+  BoWBlocType blocType = readOneByteInt(file);
   
   BOWLOGINIT;
   LDEBUG << "BoWDocument::readPart: read " 
@@ -196,9 +213,9 @@ void BoWDocument::write(std::ostream& file) const
   // enum type with small number of values coded on one byte;
   file << DOCUMENT_PROPERTIES_BLOC;
   Misc::GenericDocumentProperties::write(file);
-  file << BOW_TEXT_BLOC;
+  writeOneByteInt(file, BOW_TEXT_BLOC)
   BoWText::write(file);
-  file << END_BLOC;
+  writeOneByteInt(file, END_BLOC)
 }
 */
 

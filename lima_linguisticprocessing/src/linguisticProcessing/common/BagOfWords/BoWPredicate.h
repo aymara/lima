@@ -30,6 +30,8 @@
 #include "linguisticProcessing/common/BagOfWords/AbstractBoWElement.h"
 #include "common/MediaticData/EntityType.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace Lima {
 namespace Common {
 namespace BagOfWords {
@@ -47,7 +49,7 @@ public:
   BoWPredicate();
   BoWPredicate(const BoWPredicate&);
   BoWPredicate(const Common::MediaticData::EntityType theType);
-  BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*> pRoles);
+  BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > pRoles);
 
   virtual ~BoWPredicate();
 
@@ -76,10 +78,10 @@ public:
   virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
   virtual std::string getIdUTF8String(void) const;
 
-  const QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles() const;
-  QMultiMap<Common::MediaticData::EntityType, AbstractBoWElement*>& roles();
+  const QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& roles() const;
+  QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& roles();
   
-  void setRoles(QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*>& pRoles);
+  void setRoles(QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > >& pRoles);
 
   /**
    * returns the vertices of the predicate and the roles

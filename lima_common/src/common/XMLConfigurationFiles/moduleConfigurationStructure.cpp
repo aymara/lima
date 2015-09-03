@@ -115,7 +115,7 @@ string& ModuleConfigurationStructure::getParamValueAtKeyOfGroupNamed(const std::
   }
   catch (NoSuchParam& nsp)
   {
-    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str() << nsp.what().c_str();
+    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': " << nsp.what().c_str();
     throw;
   }
   catch (...)

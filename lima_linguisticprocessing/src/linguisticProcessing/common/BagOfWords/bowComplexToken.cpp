@@ -54,7 +54,7 @@ BoWComplexTokenPrivate::BoWComplexTokenPrivate(const BoWComplexTokenPrivate& bct
 {
   for (std::deque<BoWComplexToken::Part>::const_iterator i=bctp.m_parts.begin(); i!=bctp.m_parts.end(); i++) {
     // with the second parameter set to false, ensure that the part token will be cloned
-    addPart((*i).getBoWRelation(),(*i).getBoWToken(),(*i).isInList());
+    addPart((*i).getBoWRelation(),(*i).getBoWToken());
   }
   if (m_head>m_parts.size()) {
     m_head=0;
@@ -75,14 +75,14 @@ BoWComplexTokenPrivate::BoWComplexTokenPrivate(const LimaString& lemma,
                                  const uint64_t category,
                                  const uint64_t position,
                                  const uint64_t length,
-                                 std::deque<BoWToken>& parts,
+                                 std::deque< boost::shared_ptr< BoWToken > >& parts,
                                  const uint64_t head):
 BoWTokenPrivate(lemma, category, position, length),
 m_parts(0),
 m_head(head)
 {
-  for (std::deque<BoWToken>::iterator i=parts.begin(); i!=parts.end(); i++) {
-    addPart(0,&(*i),false);
+  for (auto i = parts.begin(); i != parts.end(); i++) {
+    addPart(boost::shared_ptr< BoWRelation >(),*i);
   }
   if (m_head>m_parts.size()) {
     m_head=0;
@@ -96,16 +96,6 @@ m_head(0)
 {
   copy(t);
 }
-
-BoWComplexTokenPrivate::BoWComplexTokenPrivate(const BoWComplexToken& t,
-                                 const std::map<BoWToken*,BoWToken*>& refMap):
-BoWTokenPrivate(t),
-m_parts(0),
-m_head(0)
-{
-  copy(t,refMap);
-}
-
 
 
 BoWComplexTokenPrivate::~BoWComplexTokenPrivate()
@@ -136,7 +126,7 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
                                  const uint64_t category,
                                  const uint64_t position,
                                  const uint64_t length,
-                                 std::deque<BoWToken>& parts,
+                                 std::deque< boost::shared_ptr< BoWToken > >& parts,
                                  const uint64_t head):
                                  BoWToken(*new BoWComplexTokenPrivate())
 {
@@ -145,10 +135,12 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
   m_d->m_position = position;
   m_d->m_length = length;
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head = head;
-  for (std::deque<BoWToken>::iterator i=parts.begin(); i!=parts.end(); i++) {
-    addPart(0,&(*i),false);
+  for (auto i = parts.begin(); i != parts.end(); i++)
+  {
+    addPart(boost::shared_ptr< BoWRelation >(), *i);
   }
-  if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head > static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size()) {
+  if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head > static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size())
+  {
     static_cast<BoWComplexTokenPrivate *>(m_d)->m_head=0;
   }
 }
@@ -158,31 +150,11 @@ BoWComplexToken::BoWComplexToken(BoWComplexTokenPrivate& d) : BoWToken(d)
 {
 }
 
-// BoWComplexToken::BoWComplexToken(const BoWComplexToken& t):
-//   BoWToken(t)
-// {
-// }
-// 
-// BoWComplexToken::BoWComplexToken(const BoWComplexToken& t,
-//                                  const std::map<BoWToken*,BoWToken*>& refMap):
-//   BoWToken(t)
-// {
-//   static_cast<BoWComplexTokenPrivate *>(m_d)->copy(t, refMap);
-// }
-
-
-
 BoWComplexToken::~BoWComplexToken()
 {
   clear();
 //   delete m_d;
 }
-
-// BoWComplexToken* BoWComplexToken::clone() const
-// {
-  //   return new BoWComplexToken(*(static_cast<BoWComplexTokenPrivate*>(this->m_d)));
-// }
-
 
 BoWComplexToken& BoWComplexToken::operator= (const BoWComplexToken& t) {
   if (this != &t) {
@@ -217,56 +189,9 @@ void BoWComplexTokenPrivate::copy(const BoWComplexToken& t) {
   m_vertex = t.m_d->m_vertex;
   for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
        i != t.getParts().end(); i++) {
-    BoWRelation* rel=0;
-    if ((*i).get<0>()!=0) {
-      rel = (*i).get<0>()->clone();
-    }
-    if ((*i).isInList()) {
-      //m_parts.push_back(*i); // copy pointer, do not create new object
-      //create new object, and make it internal
-      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()->clone(),false));
-    }
-    else {
-      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()->clone(),(*i).isInList()));
-    }
+    boost::shared_ptr< BoWRelation > rel = (*i).get<0>();
+    m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()));
   }
-}
-
-// Careful : I do not create new objects for tokens that exist
-// elsewhere in the list, but I use the pointer-to-pointer correspondance
-// given by the map
-void BoWComplexTokenPrivate::copy(const BoWComplexToken& t,
-                           const std::map<BoWToken*,BoWToken*>& refMap) {
-  m_parts.clear();
-  m_head = static_cast<BoWComplexTokenPrivate *>(t.m_d)->m_head;
-  m_category = t.m_d->m_category;
-  m_compoundSeparator = t.m_d->m_compoundSeparator;
-  m_inflectedForm = t.m_d->m_inflectedForm;
-  m_lemma = t.m_d->m_lemma;
-  m_length = t.m_d->m_length;
-  m_position = t.m_d->m_position;
-  m_separator = t.m_d->m_separator;
-  m_useOnlyLemma = t.m_d->m_useOnlyLemma;
-  m_vertex = t.m_d->m_vertex;
-  for (std::deque<BoWComplexToken::Part>::const_iterator i(t.getParts().begin());
-       i != t.getParts().end(); i++) {
-    BoWRelation* rel=0;
-    if ((*i).get<0>()!=0) {
-      rel = (*i).get<0>()->clone();
-    }
-    if ((*i).isInList()) {
-      std::map<BoWToken*,BoWToken*>::const_iterator
-        ref=refMap.find((*i).getBoWToken());
-      if (ref == refMap.end()) {
-        throw std::runtime_error("BoW: reference does not exist in map : maybe forward reference");
-      }
-      m_parts.push_back(BoWComplexToken::Part(rel,(*ref).second,(*i).isInList()));
-    }
-    else {
-      m_parts.push_back(BoWComplexToken::Part(rel,(*i).getBoWToken()->clone(),(*i).isInList()));
-    }
-  }
-  m_head=t.getHead();
 }
 
 //**************************************************************
@@ -304,72 +229,66 @@ void BoWComplexToken::setHead(const uint64_t i) {
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_head=i;
 }
 
-BoWToken* BoWComplexTokenPrivate::addPart(BoWRelation* rel,
-                                          BoWToken* tok,
-                                          bool isInList,
+boost::shared_ptr< BoWToken > BoWComplexTokenPrivate::addPart(boost::shared_ptr< BoWRelation > rel,
+                                          boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
-  BoWToken* res = 0;
-  BoWRelation* crel = rel==0?0:rel->clone();
-  res = (isInList)?tok:tok->clone();
-  m_parts.push_back(BoWComplexToken::Part(crel, res, isInList));
+  m_parts.push_back(BoWComplexToken::Part(rel, tok));
   if (isHead) {
     m_head=m_parts.size()-1;
   }
   if (tok->getPosition() < m_position) m_position = tok->getPosition();
   if (tok->getPosition() > (m_position + m_length)) m_length = (tok->getPosition()+tok->getLength()-m_position-1);
-  return res;
+  return tok;
 }
 
 
-BoWToken* BoWComplexToken::addPart(BoWToken* tok,
-                                          bool isInList,
+boost::shared_ptr< BoWToken > BoWComplexToken::addPart(boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
-  return addPart(0, tok, isInList, isHead);
+  return addPart(boost::shared_ptr< BoWRelation >(), tok, isHead);
 }
 
 
-BoWToken* BoWComplexToken::addPart(BoWRelation* rel,
-                                          BoWToken* tok,
-                                          bool isInList,
+boost::shared_ptr< BoWToken > BoWComplexToken::addPart(boost::shared_ptr< BoWRelation > rel,
+                                          boost::shared_ptr< BoWToken > tok,
                                           bool isHead)
 {
-    return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(rel,tok,isInList,isHead);
+    return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(rel,tok,isHead);
 }
 
-BoWToken* BoWComplexToken::addPart(const BoWToken* tok,
-                                   bool isHead)
-{
-  return addPart(0, const_cast<BoWToken*>(tok), false, isHead);
-}
-
-
-BoWToken* BoWComplexToken::addPart(const BoWRelation* rel,
-                                   const BoWToken* tok,
-                                   bool isHead)
-{
-  return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(const_cast<BoWRelation*>(rel),const_cast<BoWToken*>(tok),false,isHead);
-}
+// BoWToken* BoWComplexToken::addPart(const BoWToken* tok,
+//                                    bool isHead)
+// {
+//   return addPart(0, const_cast<BoWToken*>(tok), false, isHead);
+// }
+//
+//
+// BoWToken* BoWComplexToken::addPart(const BoWRelation* rel,
+//                                    const BoWToken* tok,
+//                                    bool isHead)
+// {
+//   return static_cast<BoWComplexTokenPrivate *>(m_d)->addPart(const_cast<BoWRelation*>(rel),const_cast<BoWToken*>(tok),false,isHead);
+// }
 
 
 
 void BoWComplexToken::clear()
 {
-  for (std::deque<Part>::iterator i(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.begin());
-       i != static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.end(); i++)
-  {
-    if (! (*i).isInList())
-    {
-      if ((*i).getBoWToken() != 0)
-      {
-        delete ((*i).getBoWRelation());
-        delete ((*i).getBoWToken());
-        (*i).get<0>()=0;
-        (*i).get<1>()=0;
-      }
-    }
-  }
+//   for (std::deque<Part>::iterator i(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.begin());
+//        i != static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.end(); i++)
+//   {
+//     if (! (*i).isInList())
+//     {
+//       if ((*i).getBoWToken() != 0)
+//       {
+//         delete ((*i).getBoWRelation());
+//         delete ((*i).getBoWToken());
+//         (*i).get<0>()=0;
+//         (*i).get<1>()=0;
+//       }
+//     }
+//   }
   static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.clear();
 }
 
@@ -430,10 +349,7 @@ Common::Misc::PositionLengthList BoWComplexToken::getPositionLengthList() const 
   Common::Misc::PositionLengthList poslenlist(0);
   for (std::deque<Part>::const_iterator i(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.begin());
        i != static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.end(); i++) {
-    BoWToken* partToken=(*i).getBoWToken();
-//     poslenlist.push_back(std::make_pair(partToken->getPosition(),
-//                                         partToken->getLength()));
-    Common::Misc::PositionLengthList partposlen=partToken->getPositionLengthList();
+    Common::Misc::PositionLengthList partposlen=(*i).getBoWToken()->getPositionLengthList();
     poslenlist.insert(poslenlist.end(),partposlen.begin(),partposlen.end());
   }
   return poslenlist;
@@ -465,9 +381,6 @@ std::string BoWComplexToken::getUTF8StringParts(const Common::PropertyCode::Prop
     if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head == i) {
       oss << "*";
     }
-    if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].isInList()) {
-      oss << "E";
-    }
     //oss << m_parts[i].getBoWToken() << ":" << *(m_parts[i].getBoWToken());
     if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].getBoWRelation()!=0) {
       oss << static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].getBoWRelation()->getOutputUTF8String();
@@ -490,9 +403,6 @@ std::string BoWComplexToken::getstdstringParts() const
     if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_head == i) {
       oss << "*";
     }
-    if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].isInList()) {
-      oss << "E";
-    }
     //oss << m_parts[i].getBoWToken() << ":" << *(m_parts[i].getBoWToken());
     if (static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].getBoWRelation()!=0) {
       oss << *(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].getBoWRelation());
@@ -506,11 +416,11 @@ std::string BoWComplexToken::getstdstringParts() const
 std::set< uint64_t > BoWComplexToken::getVertices() const
 {
   std::set< uint64_t > result;
-  for (uint64_t i(0); i<static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size(); i++) 
+  for (uint64_t i(0); i<static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts.size(); i++)
   {
-    if (dynamic_cast< const BoWComplexToken* >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>()) != 0)
+    if (boost::dynamic_pointer_cast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>()) != 0)
     {
-      std::set< uint64_t > partResult = ((const BoWComplexToken*)static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>())->getVertices();
+      std::set< uint64_t > partResult = boost::dynamic_pointer_cast< BoWComplexToken >(static_cast<BoWComplexTokenPrivate *>(m_d)->m_parts[i].get<1>())->getVertices();
       result.insert(partResult.begin(), partResult.end());
     }
     else

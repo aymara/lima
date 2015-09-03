@@ -219,9 +219,9 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
                 // test if the current token is a plain word
                 bool plainWordFlag =
                     this->isWordToSelect(normStr, macro,m_microAccessor->readValue(elemItr->properties));
-                BoWToken* bowToken = new BoWToken(normStr,macro,
+                boost::shared_ptr< BoWToken> bowToken (new BoWToken(normStr,macro,
                                                   fullToken->position() + offset,
-                                                  fullToken->length());
+                                                  fullToken->length()));
                 bowToken->setInflectedForm(fullToken->stringForm());
                 tokenRep->push_back(make_pair(bowToken, plainWordFlag));
             }

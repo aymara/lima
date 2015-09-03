@@ -623,7 +623,7 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
   if (it!=m_d->m_syntacticRelations.end()) {
 #ifdef DEBUG_LP
     LDATALOGINIT;
-    LDEBUG << "found " << name << " <=> " << (*it).second;
+    LDEBUG << "LanguageData::getSyntacticRelationId found" << name << " <=> " << (*it).second;
 #endif
     return (*it).second;
   }

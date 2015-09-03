@@ -292,6 +292,12 @@ const std::string& MediaticData::getMediaId(MediaId idNum) const
 /** @return the numerical value of the given string media id (3 chars code) */
 MediaId MediaticData::getMediaId(const std::string& stringId) const
 {
+  if (stringId.empty())
+  {
+    MDATALOGINIT;
+    LERROR << "MediaticData::getMediaId invalid empty argument stringId at" << __FILE__ << ", line" << __LINE__;
+    throw std::runtime_error( std::string("MediaticData::getMediaId invalid empty argument stringId at ").c_str() );
+  }
   std::map< std::string, MediaId >::const_iterator it = m_d->m_mediasIds.find(stringId);
   if (it == m_d->m_mediasIds.end())
   {
@@ -774,16 +780,15 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     throw;
   }
 }
- 
+
 EntityGroupId MediaticData::getEntityGroupId(const LimaString& groupName) const
 {
   try {
     return m_d->m_entityGroups.get(groupName);
   }
-  catch(LimaException& ) {
+  catch(LimaException& e) {
     MDATALOGINIT;
-    LERROR << "Unknown entity group "
-           << groupName;
+    LERROR << "Unknown entity group " << groupName << e.what();
     throw;
   }
 }
@@ -804,6 +809,7 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
   }
   if (static_cast<size_t>(type.getGroupId())>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
+    LERROR << "MediaticData::getEntityName type.getGroupId()=" << type.getGroupId()<<" > m_entityTypes.size()=" << m_d->m_entityTypes.size();
     LERROR << "MediaticData::getEntityName unknown entity group id " << type.getGroupId() << " in entity " << type;
     throw LimaException();
   }

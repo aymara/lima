@@ -63,16 +63,12 @@ friend class BoWXMLWriter;
   std::ostream& m_outputStream;
 
   uint64_t m_currentTokId;
-  std::map<const BoWToken*,uint64_t> m_refMap;
 
   std::string m_spaces;         /**< for pretty indentations */
 
   Lima::MediaId m_language;
 
   // private functions
-  void reinit();
-  void reinitRefMap();
-  void reinitIndent();
   void setSpaces(const std::string& s);
 
   void writeBoWToken(const AbstractBoWElement* token);
@@ -100,14 +96,12 @@ friend class BoWXMLWriter;
   void setLanguage(const std::string& lang);
 };
 
-void BoWXMLWriter::reinitRefMap() {m_d->reinitRefMap();}
 void BoWXMLWriter::incIndent() { m_d->incIndent() ; }
 void BoWXMLWriter::decIndent() { m_d->decIndent(); }
   
 BoWXMLWriterPrivate::BoWXMLWriterPrivate(std::ostream& os):
 m_outputStream(os),
 m_currentTokId(0),
-m_refMap(),
 m_spaces(""),
 m_language(0)
 {
@@ -130,25 +124,11 @@ BoWXMLWriter::~BoWXMLWriter()
   delete m_d;
 }
 
-void BoWXMLWriterPrivate::reinit() {
-  reinitRefMap();
-  reinitIndent();
-}
-
 /*
 void BoWXMLWriter::setOutputStream(std::ostream& os) {
   m_os = &os;
 }
 */
-
-void BoWXMLWriterPrivate::reinitRefMap() {
-  m_currentTokId=0;
-  m_refMap.clear();
-}
-
-void BoWXMLWriterPrivate::reinitIndent() {
-  m_spaces="";
-}
 
 void BoWXMLWriter::writeBoWDocumentsHeader() {
   m_d->m_outputStream << "<?xml-stylesheet type=\"text/xsl\" href=\"bow.xslt\"?>" << endl;
@@ -169,7 +149,7 @@ void BoWXMLWriter::openSBoWNode(
 void BoWXMLWriter::openSBoWIndexingNode(
   const Lima::Common::Misc::GenericDocumentProperties* /*unused properties*/,
   const std::string& elementName ) {
-  m_d->reinitRefMap();
+  m_d->m_currentTokId=0;
   m_d->m_outputStream << m_d->m_spaces << "<hierarchy elementName=\"" << elementName << "\" indexingNode=\"yes\">" << std::endl;
   m_d->incIndent();
 }
@@ -196,7 +176,7 @@ void BoWXMLWriter::writeBoWText(
                                 const bool useIndexIterator) {
   //m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
 
-  m_d->reinit();
+  m_d->m_spaces="";
   m_d->m_outputStream <<"<bowText>" << std::endl;
   m_d->incIndent();
   m_d->writeBoWTokenList(text,useIterator,useIndexIterator);
@@ -317,7 +297,7 @@ void BoWXMLWriterPrivate::writePredicateRoles(const BoWPredicate* term)
        <<  (it.key().isNull() ? "" : Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(it.key())))
        << "\" >" << std::endl;
     incIndent();
-    writeBoWToken(it.value());
+    writeBoWToken(&*it.value());
     decIndent();
     m_outputStream <<m_spaces  << "</role>" << std::endl;
   }
@@ -338,7 +318,7 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
     BoWTokenIterator it(*text);
     while (! it.isAtEnd())
     { 
-      writeBoWToken( it.getElement());
+      writeBoWToken( &*it.getElement());
       it++;
     }
   }
@@ -355,7 +335,7 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
   {
     for (BoWText::const_iterator tok=text->begin();
         tok!=text->end(); tok++) {
-      writeBoWToken( *tok);
+      writeBoWToken( &**tok);
     }
   }
   decIndent();
@@ -421,8 +401,6 @@ void BoWXMLWriterPrivate::writeBoWRelation(const BoWRelation* relation) {
 void BoWXMLWriterPrivate::writeBoWToken(
                                  const Lima::Common::BagOfWords::AbstractBoWElement* token ) {
   m_currentTokId++;
-  if (token->getType() != BOW_PREDICATE)
-    m_refMap[static_cast<const BoWToken*>(token)]=m_currentTokId;
   const BoWToken* tok = 0;
   switch(token->getType()) {
   case BOW_TOKEN: {
@@ -511,21 +489,16 @@ void BoWXMLWriterPrivate::writeComplexTokenParts(const BoWComplexToken* token) {
   incIndent();
   for (std::deque<BoWComplexToken::Part>::const_iterator
          part=token->getParts().begin(); 
-       part!=token->getParts().end(); part++) {
+       part!=token->getParts().end(); part++)
+  {
 //     m_outputStream <<m_spaces << "<part>" << std::endl;
 //     incIndent();
-    if ((*part).isInList()) {
-      // !!! careful: should check existence of token in map
-      m_outputStream <<m_spaces << "<bowTokenRef refId=\"" 
-         << m_refMap[(*part).getBoWToken()] 
-         << "\"/>" << std::endl;
+    if ((*part).getBoWRelation()!=0)
+    {
+      writeBoWRelation( &*(*part).getBoWRelation());
     }
-    else {
-      if ((*part).getBoWRelation()!=0) {
-        writeBoWRelation( (*part).getBoWRelation());
-      }
-      writeBoWToken( (*part).getBoWToken());
-    }
+    writeBoWToken( &*(*part).getBoWToken());
+
 //     decIndent();
 //     m_outputStream <<m_spaces << "</part>" << std::endl;
   }

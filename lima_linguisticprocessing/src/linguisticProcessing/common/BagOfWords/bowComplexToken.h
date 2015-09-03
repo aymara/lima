@@ -35,6 +35,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <deque>
 
+#include <boost/shared_ptr.hpp>
+
 namespace Lima {
 namespace Common {
 namespace BagOfWords {
@@ -61,18 +63,16 @@ public:
    * says if the BoWToken is also in the global list (the BoWText)
    * or not.
    */
-  class Part : public boost::tuple<BoWRelation*,BoWToken*,bool>
+  class Part : public boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >
   {
   public:
-    Part():boost::tuple<BoWRelation*,BoWToken*,bool>(0,0,false) {};
-    Part(BoWToken* tok, bool isInList):
-      boost::tuple<BoWRelation*,BoWToken*,bool>(0,tok,isInList) {};
-    Part(BoWRelation* rel, BoWToken* tok, bool isInList):
-      boost::tuple<BoWRelation*,BoWToken*,bool>(rel,tok,isInList) {};
-    BoWRelation* getBoWRelation() const { return get<0>(); }
-    BoWToken* getBoWToken() const { return get<1>(); }
-    bool isInList() const { return get<2>(); }
-    void setInList(const bool b) { get<2>() = b; }
+    Part():boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(), boost::shared_ptr< BoWToken >() ) {};
+    Part(boost::shared_ptr< BoWToken > tok):
+      boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(boost::shared_ptr< BoWRelation >(),tok) {};
+    Part(boost::shared_ptr< BoWRelation > rel, boost::shared_ptr< BoWToken > tok):
+      boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(rel,tok) {};
+    boost::shared_ptr< BoWRelation > getBoWRelation() const { return get<0>(); }
+    boost::shared_ptr< BoWToken > getBoWToken() const { return get<1>(); }
     LimaString getLemma() const { return get<1>()->getLemma(); }
     uint64_t getCategory() const { return get<1>()->getCategory(); }
   };
@@ -116,12 +116,7 @@ public:
    *
    * @return
    */
-  BoWComplexToken(const Lima::LimaString& lemma,
-                  const uint64_t category,
-                  const uint64_t position,
-                  const uint64_t length,
-                  std::deque<BoWToken>& parts,
-                  const uint64_t head);
+  BoWComplexToken(const Lima::LimaString& lemma, const uint64_t category, const uint64_t position, const uint64_t length, std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, const uint64_t head);
 
   virtual ~BoWComplexToken();
   
@@ -157,8 +152,7 @@ public:
    * pointed has an existence outside of the part list
    * @param isHead a boolean indicating that the BoWToken a
    */
-  BoWToken* addPart(BoWToken* tok,
-                    const bool isInList,
+  boost::shared_ptr< BoWToken > addPart(boost::shared_ptr< BoWToken > tok,
                     const bool isHead=false);
 
   /**
@@ -175,9 +169,8 @@ public:
    * pointed has an existence outside of the part list
    * @param isHead a boolean indicating that the BoWToken a
    */
-  BoWToken* addPart(BoWRelation* rel,
-                    BoWToken* tok,
-                    const bool isInList,
+  boost::shared_ptr< BoWToken > addPart(boost::shared_ptr< BoWRelation > rel,
+                    boost::shared_ptr< BoWToken > tok,
                     const bool isHead=false);
 
   /**
@@ -188,9 +181,9 @@ public:
    * @param isHead a boolean indicating that the BoWToken is the head of the complex token it
    *        is part of
    */
-  BoWToken* addPart(const BoWToken* tok,
-//                     const bool isInList,
-                    const bool isHead=false);
+//   BoWToken* addPart(const boost::shared_ptr< BoWToken > tok,
+// //                     const bool isInList,
+//                     const bool isHead=false);
   
   /**
    * add a part in the list of parts of the complex token. A pointer on a copy of @ref tok
@@ -202,10 +195,10 @@ public:
    * @param isHead a boolean indicating that the BoWToken is the head of the complex token it
    *        is part of
    */
-  BoWToken* addPart(const BoWRelation* rel,
-                    const BoWToken* tok,
-//                     const bool isInList,
-                    const bool isHead=false);
+//   BoWToken* addPart(const boost::shared_ptr< BoWRelation > rel,
+//                     const boost::shared_ptr< BoWToken > tok,
+// //                     const bool isInList,
+//                     const bool isHead=false);
   
   
 

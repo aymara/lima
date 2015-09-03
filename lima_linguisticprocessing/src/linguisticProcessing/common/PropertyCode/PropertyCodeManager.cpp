@@ -69,7 +69,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #ifdef DEBUG_LP
   LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
-  QXmlSimpleReader* parser = new QXmlSimpleReader();
+  QScopedPointer< QXmlSimpleReader > parser(new QXmlSimpleReader());
 //   parser->setValidationScheme(SAXParser::Val_Auto);
 //   parser->setDoNamespaces(false);
 //   parser->setDoSchema(false);
@@ -100,7 +100,6 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser";
 #endif
-  delete parser;
   // Compute coding properties
   uint64_t usedBits=0;
 
@@ -314,7 +313,7 @@ void PropertyCodeManager::convertSymbolicCodes(const std::string& symbolicCodeFi
   LDEBUG << "convert Symbolic Code file " << symbolicCodeFile;
 #endif
 
-  QXmlSimpleReader* parser = new QXmlSimpleReader();
+  QScopedPointer< QXmlSimpleReader > parser ( new QXmlSimpleReader() );
 //   parser->setValidationScheme(SAXParser::Val_Auto);
 //   parser->setDoNamespaces(false);
 //   parser->setDoSchema(false);
@@ -341,7 +340,6 @@ void PropertyCodeManager::convertSymbolicCodes(const std::string& symbolicCodeFi
     LERROR << "An error occurred parsing" << symbolicCodeFile << ". Error: " << parser->errorHandler()->errorString() ;
     throw std::runtime_error(parser->errorHandler()->errorString().toUtf8().constData());
   }
-  delete parser;
 }
 
 } // PropertyCode

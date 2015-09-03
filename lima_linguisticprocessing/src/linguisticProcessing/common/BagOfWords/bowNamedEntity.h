@@ -49,8 +49,6 @@ class LIMA_BOW_EXPORT BoWNamedEntity : public BoWComplexToken
 public:
   BoWNamedEntity();
   BoWNamedEntity(const BoWNamedEntity&);
-  BoWNamedEntity(const BoWNamedEntity&,
-                 const std::map<BoWToken*,BoWToken*>&);
 
   BoWNamedEntity(const Lima::LimaString& lemma,
                  const Common::MediaticData::EntityType theType,

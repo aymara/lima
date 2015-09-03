@@ -54,11 +54,6 @@ namespace BagOfWords {
 // -----------------------------------------------------------------------------
 
 LTR_Token::~LTR_Token() {
-
-    for (LTR_Token::const_iterator itBow = this->begin();
-         itBow != this->end(); itBow ++) {
-        delete itBow->first;
-    }
 }
 
 
@@ -67,12 +62,12 @@ LTR_Token::~LTR_Token() {
 // -----------------------------------------------------------------------------
 
 LTR_Token::LTR_Token(const LTR_Token& tok):
-vector<pair<BoWToken*, bool> >()
+vector<pair<boost::shared_ptr< BoWToken >, bool> >()
 {
 
     for (LTR_Token::const_iterator itBow = tok.begin();
          itBow != tok.end(); itBow ++) {
-        this->push_back(make_pair(new BoWToken(*(itBow->first)), itBow->second));
+        this->push_back(make_pair(boost::shared_ptr< BoWToken >(new BoWToken(*(itBow->first))), itBow->second));
     }
 }
 
@@ -102,7 +97,7 @@ void LTR_Token::binaryReadFrom(std::istream& is) {
     BoWBinaryReader reader;
     uint64_t tokenNb = readCodedInt(is);
     for (uint64_t i = 1; i <= tokenNb; i ++) {
-        BoWToken* bowTok = new BoWToken();
+        boost::shared_ptr< BoWToken > bowTok(new BoWToken());
         reader.readSimpleToken(is, bowTok);
         uint64_t selectionFlag = readCodedInt(is);
         this->push_back(make_pair(bowTok, selectionFlag != 0));

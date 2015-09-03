@@ -78,7 +78,7 @@ init(GroupConfigurationStructure& unitConfiguration,
       for (deque<string>::const_iterator micro=(*it).second.begin(),
              micro_end=(*it).second.end(); micro!=micro_end; micro++) {
 #ifdef DEBUG_LP
-        LDEBUG << "Adding " << microManager.getPropertyValue(*micro) << " to EntityType " << type;
+        LDEBUG << "Adding " << *micro << microManager.getPropertyValue(*micro) << " to EntityType " << type;
 #endif
         m_micros[type].insert(microManager.getPropertyValue(*micro));
       }
@@ -100,7 +100,8 @@ getMicros(const EntityType& type)
     LERROR << "no microcategories defined for type " << type << " (" 
            << Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(type)) 
            << ")";
-    throw LimaException();
+    throw LimaException( (QString("no microcategories defined for type ")
+           + Common::MediaticData::MediaticData::single().getEntityName(type)).toUtf8().constData() );
   }
   return &((*it).second);
 }
