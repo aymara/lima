@@ -96,7 +96,7 @@ private:
    */
   struct PathInfo {
     LinguisticGraphVertex prev;
-    uint64_t score;
+    double score;
     std::string pos;
     int pathLength;
   };
