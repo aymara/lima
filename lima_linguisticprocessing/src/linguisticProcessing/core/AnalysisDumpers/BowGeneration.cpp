@@ -1272,7 +1272,9 @@ boost::shared_ptr< BoWPredicate > BowGenerator::createPredicate(
         LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
         if (posGraphSemRoleVertex == lgvs)
         {
+#ifdef DEBUG_LP
           LERROR << "BowGenerator::createPredicate role vertex is the same as the trigger vertex. Abort this role.";
+#endif
           continue;
         }
 #ifdef DEBUG_LP
