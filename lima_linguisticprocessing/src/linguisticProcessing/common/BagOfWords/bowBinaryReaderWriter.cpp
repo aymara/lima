@@ -402,10 +402,9 @@ void BoWBinaryReaderPrivate::readComplexTokenParts(std::istream& file,
         boost::shared_ptr< BoWRelation> rel=readBoWRelation(file);
         bool isInList;
         file.read((char*) &(isInList), sizeof(bool));
-        LDEBUG << "BoWBinaryReader::readComplexTokenParts";
-            boost::shared_ptr< BoWToken > tok = boost::dynamic_pointer_cast<BoWToken>(readBoWToken(file));
-            if (tok)
-              token->addPart(rel,tok);
+        boost::shared_ptr< BoWToken > tok = boost::dynamic_pointer_cast<BoWToken>(readBoWToken(file));
+        if (tok)
+          token->addPart(rel,tok);
     }
 }
 
