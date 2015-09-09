@@ -46,8 +46,14 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
   
   std::string str;
   std::ifstream file(fileName.c_str(), std::ifstream::binary);
+  if( ! file.is_open() ){
+    std::string error_message = std::string("cannot open file ") + fileName;
+    LERROR << error_message;
+    throw std::runtime_error(error_message);
+  }
+  
   Lima::Common::Misc::readStream(file, str);
-
+  
   std::string::const_iterator iter = str.begin();
   std::string::const_iterator end = str.end();
 
