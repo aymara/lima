@@ -170,8 +170,11 @@ public:
     static QMutex mutex;
     QMutexLocker locker(&mutex);
     pLogger = &QsLogging::Logger::instance(x);
+#ifndef DEBUG_CD
     QsLogging::Level level = QsLogging::Categories::instance().levelFor(x);
     pLogger->setLoggingLevel(level);
+#endif
+
   }
   QsLogging::Logger* pLogger;
 };
