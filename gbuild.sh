@@ -97,12 +97,16 @@ release="2"
 fi
 
 if [[ $parallel = "true" ]]; then
-j=`grep -c ^processor /proc/cpuinfo`
-#j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
-echo "Parallel build on $j processors"
+  j=
+  if [[ $CMAKE_GENERATOR == "VS" ]]; then
+    j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
+  else
+  j=`grep -c ^processor /proc/cpuinfo`
+  fi
+  echo "Parallel build on $j processors"
 else
-echo "Linear build"
-j="1"
+  echo "Linear build"
+  j="1"
 fi
 
 # export VERBOSE=1
