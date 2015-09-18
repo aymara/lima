@@ -55,6 +55,7 @@ MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 target_link_libraries(analyzeText
     lima-common
     lima-linguisticprocessing
+    lima-lp-morphologicanalysisext
     ${optionalLibs}
     ${Boost_LIBRARIES}
     ${QT_LIBRARIES}
