@@ -43,7 +43,9 @@ bool AmosePluginsManager::loadPlugins()
   {
     configDir = "/usr/share/config/lima/";
   }
-  QDir pluginsDir(QString::fromUtf8(configDir.c_str()));
+  std::string stdPluginsDir(configDir);
+  stdPluginsDir.append("/plugins");
+  QDir pluginsDir(QString::fromUtf8(stdPluginsDir.c_str()));
   QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
   Q_FOREACH(QString pluginsFile, pluginsFiles)
   {
