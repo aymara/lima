@@ -93,7 +93,7 @@ source_dir=$PWD
 if [[ $version = "rev" ]]; then
 release="$current_timestamp-$current_revision"
 else
-release="2"
+release="0"
 fi
 
 if [[ $parallel = "true" ]]; then
