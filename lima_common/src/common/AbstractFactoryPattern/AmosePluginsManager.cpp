@@ -38,7 +38,12 @@ bool AmosePluginsManager::loadPlugins()
   LINFO << "AmosePluginsManager::loadPlugins";
 //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
-  QDir pluginsDir(QString::fromUtf8(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData()) + "/plugins");
+  std::string configDir = qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData();
+  if (configDir.empty())
+  {
+    configDir = "/usr/share/config/lima/";
+  }
+  QDir pluginsDir(QString::fromUtf8(configDir.c_str()));
   QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
   Q_FOREACH(QString pluginsFile, pluginsFiles)
   {
