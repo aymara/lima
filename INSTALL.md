@@ -46,6 +46,9 @@ $ python
 d dependency_treebank
 ```
 
+:warning: **Note:** Under Ubuntu 14.04, you can get an HTTP 404 error while downloading nltk data. Please refer to [this StackExchange question](http://askubuntu.com/questions/527388/python-nltk-on-ubuntu-12-04-lts-nltk-downloadbrown-results-in-html-error-40) for a solution.
+
+
 Then prepare the data for use with LIMA by running the following commands:
 
 ```bash
