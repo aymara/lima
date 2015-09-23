@@ -126,6 +126,12 @@ public:
   friend LIMA_AUTOMATON_EXPORT std::ostream& operator<<(std::ostream& os, const EntityFeatures& f);
 };
 
+#if defined(WIN32)
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<int>(const std::string&, const int& );
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<double>(const std::string&, const double& );
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<QString>(const std::string&, const QString& );
+#endif
+
 template<typename ValueType>
   void EntityFeatures::setFeature(const std::string& name,
                   const ValueType& value)
