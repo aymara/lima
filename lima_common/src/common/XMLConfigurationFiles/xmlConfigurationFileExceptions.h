@@ -64,7 +64,7 @@ namespace Lima {
         //! @brief destructor (throw the exception)
         virtual ~NoSuchModule() throw() {}
         //! @brief return the message error
-        virtual const std::string const throw() {return ( "No such module " + moduleName );}
+        virtual const std::string what() const throw() {return ( "No such module " + moduleName );}
     private:
       NoSuchModule& operator=(const NoSuchModule&) {return *this;}
       //! @brief the name of the <i>module</i> that was not found
