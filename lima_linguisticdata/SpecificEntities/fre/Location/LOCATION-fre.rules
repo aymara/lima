@@ -38,7 +38,7 @@ localiser$V,
 ébranler$V,	
 détecter$V)
 
-@Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationnale,départementale,route\ nationale,route\ départementale,route\ communale,place$NC)
+@Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale,place$NC)
 
 #Quartier present dans la convention Quaero 
 # pas de liste ???
