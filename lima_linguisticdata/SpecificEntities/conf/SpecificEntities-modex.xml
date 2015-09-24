@@ -44,7 +44,7 @@
         <item value="UnitRecognition"/>
         <item value="DateTimeModexForLimaserver"/>
         <item value="NumexRecognition"/>
-        <item value="OrganizationModex"/>
+        <item value="OrganizationModexForLimaserver"/>
         <item value="LocationModexForLimaserver"/>
         <item value="PersonModexForLimaserver"/>
         <item value="EventModex"/>

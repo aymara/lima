@@ -56,6 +56,9 @@
       <list name="Location.LOCATION">
         <item value="NNP"/>
       </list>
+      <list name="Location.URL">
+        <item value="NC"/>
+      </list>
     </group>
   </module>
   <module name="resources-fre">

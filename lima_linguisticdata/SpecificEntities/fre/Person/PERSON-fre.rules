@@ -27,11 +27,11 @@ use person.lst
 
 @PersonNamePart=(t_capital_1st,t_capital,$NP)
 
-[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+#[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
-[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+#[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
-[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+#[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 # rule Obama
 Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonName()

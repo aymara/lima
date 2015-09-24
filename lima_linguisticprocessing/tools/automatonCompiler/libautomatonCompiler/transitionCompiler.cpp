@@ -34,6 +34,7 @@
 #include "linguisticProcessing/core/Automaton/wordTransition.h"
 #include "linguisticProcessing/core/Automaton/posTransition.h"
 #include "linguisticProcessing/core/Automaton/lemmaTransition.h"
+#include "linguisticProcessing/core/Automaton/gazeteerTransition.h"
 #include "linguisticProcessing/core/Automaton/starTransition.h"
 #include "linguisticProcessing/core/Automaton/entityTransition.h"
 #include "linguisticProcessing/core/Automaton/tstatusTransition.h"
@@ -65,6 +66,23 @@ TStatusTransition* createDefaultTStatusTransition(const LimaString& str,
 // creates a transition from a entry string, depending on the syntax
 // defined in the previous macros
 //
+// TODO: unify diffferent Factory for Transition 
+TransitionUnit*
+  createGazeteerTransition(const AutomatonString& automatonString,
+                 MediaId language, const std::string& id,
+                 const std::vector<LimaString>& activeEntityGroups,
+                 const std::vector<LimaString>& gazeteerAsVectorOfString,
+                           const bool keepTrigger)
+{
+  return createTransition(automatonString.getUnitString(),
+                          language, id,
+                          activeEntityGroups,
+                          keepTrigger,
+                          automatonString.isNegative(),
+                          automatonString.getConstraints(),
+                          gazeteerAsVectorOfString);
+}
+
 TransitionUnit*
 createTransition(const AutomatonString& automatonString,
                  MediaId language, const std::string& id,
@@ -83,7 +101,9 @@ TransitionUnit* createTransition(const LimaString str,
                                  const std::vector<LimaString>& activeEntityGroups,
                                  const bool keep,
                                  const bool neg,
-                                 const std::vector<Constraint>& constraints) 
+                                 const std::vector<Constraint>& constraints,
+                                 const std::vector<LimaString>& gazeteerAsVectorOfString
+                                 ) 
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
@@ -238,6 +258,14 @@ TransitionUnit* createTransition(const LimaString str,
   else if (s.indexOf(STRING_TSTATUS_TR_small,0) == 0) {
     t = createDefaultTStatusTransition(s,LENGTH_TSTATUS_TR);
   }
+  // ----------------------------------------------------------------------
+  // GazeteerTransition: form belongs to gazeteer
+  /*
+  else if (s.indexOf(CHAR_BEGIN_NAMEGAZ,0) == 0) {
+    // name of gazeteer already identified!
+    t = new GazeteerTransition(gazeteerAsVectorOfString,alias,keep);
+  }
+  */
   // ----------------------------------------------------------------------
   // * transition
   else if (s == STRING_ANY_TR) {

@@ -10,18 +10,61 @@ set defaultAction=>CreateSpecificEntity()
 #------------------------------ DATES ----------
 use days.lst,months.lst,monthAbbrev.lst
 
-@numday=(t_integer>1<31,T_No>1<31)
+@numdayAsNumeric=(
+t_integer>1<31,
+T_No>1<31
+)
+
+@numdayAsWord=(
+first,
+second,
+third,
+fourth,
+fivth,
+fifth,
+sixth,
+seventh,
+eighth,
+ninth,
+tenth,
+eleventh,
+twelvth,
+twelfth,
+thirteenth,
+fourteenth,
+forteenth,
+fifteenth,
+sixteenth,
+seventeenth,
+eighteenth,
+nineteenth,
+twentieth,
+twenty,
+twenty-first,
+twenty-second,
+twenty-third,
+twenty-fourth,
+twenty-fifth,
+twenty-fivth,
+twenty-sixth,
+twenty-seventh,
+twenty-eighth,
+twenty-ninth,
+thirty,
+thirtieth,
+thirty-first
+)
 
 @timeModifier=(last,next,first,previous)
 
-# date with a precise day
+# date with a precise day, numdays as numeric
 # Wed 10 July
 # Wed 10 July, 2000
 # Sun, 21 May 2000
 # Wed. July 1st, 2000
 # Wed, July 1, 2000
 # Wed, July 1st, 2000
-@day:(@timeModifier)?:(,)? @numday (of)? (@month|@monthAbbrev .?) (t_integer>1000<3000|t_integer>1<99)?:DATE:
+@day:(@timeModifier)?:(,)? @numdayAsNumeric (of)? (@month|@monthAbbrev .?) (t_integer>1000<3000|t_integer>1<99)?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(left.1,"datemod")
 =>SetEntityFeature(right.2,"numday")
@@ -31,10 +74,39 @@ use days.lst,months.lst,monthAbbrev.lst
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@day:(@timeModifier)?:(,)? (@month|@monthAbbrev .?) the? @numday (,? t_integer>1000<3000)?:DATE:
+# date with a precise day, numdays as word
+# Wed ten July
+# Wed tenth July, 2000
+# Sun, twenty-first May 2000
+# Wed. twenty sixth, 2000
+@day:(@timeModifier)?:(,)? @numdayAsWord{1-2} (of)? (@month|@monthAbbrev .?) (t_integer>1000<3000|t_integer>1<99)?:DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(left.1,"datemod")
+=>AppendEntityFeature(right.2,"numday")
+=>SetEntityFeature(right.4.1,"month")
+=>SetEntityFeature(right.5,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# date with a precise day, numdays as numeric (other order: num day after day)
+# Wed ten July the 4th
+@day:(@timeModifier)?:(,)? (@month|@monthAbbrev .?) the? @numdayAsNumeric (,? t_integer>1000<3000)?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(left.1,"datemod")
 =>SetEntityFeature(right.4,"numday")
+=>SetEntityFeature(right.2.1,"month")
+=>SetEntityFeature(right.5,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# date with a precise day, numdays as word (other order: num day after day)
+# Wed ten July the fourth
+@day:(@timeModifier)?:(,)? (@month|@monthAbbrev .?) the? @numdayAsWord{1-2} (,? t_integer>1000<3000)?:DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(left.1,"datemod")
+=>AppendEntityFeature(right.4,"numday")
 =>SetEntityFeature(right.2.1,"month")
 =>SetEntityFeature(right.5,"numyear")
 =>NormalizeEntity()
@@ -51,11 +123,11 @@ use days.lst,months.lst,monthAbbrev.lst
 =>NormalizeDate()
 
 #------------------------------
-# dates with a precise month (no day)
+# dates with a precise month (no day), numday as numeric
 # 10th of July, 2000
 # 10 July
 # 10th of July
-@month:(@numday|t_ordinal_integer) of?:(,? t_integer>1000<3000)?:DATE:
+@month:(@numdayAsNumeric|t_ordinal_integer) of?:(,? t_integer>1000<3000)?:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(left.1,"numday")
 =>SetEntityFeature(right.2,"numyear")
@@ -63,9 +135,32 @@ use days.lst,months.lst,monthAbbrev.lst
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@month::the? (@numday|t_ordinal_integer) (,? t_integer>1000<3000)?:DATE:
+# dates with a precise month (no day), numday as word
+# tenth of July, 2000
+# twenty first July , 2015
+@month:@numdayAsWord{1-2} of?:(,? t_integer>1000<3000)?:DATE:
+=>SetEntityFeature(trigger,"month")
+=>AppendEntityFeature(left.1,"numday")
+=>SetEntityFeature(right.2,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# dates with a precise month (no day), numday as numeric
+# July the 10th 2015
+@month::the? (@numdayAsNumeric|t_ordinal_integer) (,? t_integer>1000<3000)?:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.2,"numday")
+=>SetEntityFeature(right.3.2,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+# dates with a precise month (no day), numday as word
+# July the tenth 2015
+@month::the? @numdayAsWord{1-2} (,? t_integer>1000<3000)?:DATE:
+=>SetEntityFeature(trigger,"month")
+=>AppendEntityFeature(right.2,"numday")
 =>SetEntityFeature(right.3.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -81,7 +176,7 @@ use days.lst,months.lst,monthAbbrev.lst
 
 # same with abbreviated month names
 # (abbreviations can be followed by a dot)
-@monthAbbrev:(@numday|t_ordinal_integer>1<31) of?:.? (,? t_integer>1000<3000)?:DATE:
+@monthAbbrev:(@numdayAsNumeric|t_ordinal_integer>1<31) of?:.? (,? t_integer>1000<3000)?:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(left.1,"numday")
 =>SetEntityFeature(right.2.2,"numyear")
@@ -89,9 +184,25 @@ use days.lst,months.lst,monthAbbrev.lst
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@monthAbbrev::.? the? (@numday|t_ordinal_integer>1<31) (,? t_integer>1000<3000)?:DATE:
+@monthAbbrev:@numdayAsWord{1-2} of?:.? (,? t_integer>1000<3000)?:DATE:
+=>SetEntityFeature(trigger,"month")
+=>AppendEntityFeature(left.1,"numday")
+=>SetEntityFeature(right.2.2,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+@monthAbbrev::.? the? (@numdayAsNumeric|t_ordinal_integer>1<31) (,? t_integer>1000<3000)?:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.3,"numday")
+=>SetEntityFeature(right.4.2,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+@monthAbbrev::.? the? @numdayAsWord{1-2} (,? t_integer>1000<3000)?:DATE:
+=>SetEntityFeature(trigger,"month")
+=>AppendEntityFeature(right.3,"numday")
 =>SetEntityFeature(right.4.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -164,7 +275,7 @@ t_integer>1200<2100:[@in]::DATE:
 
 # 05-22-68
 # integer - integer - integer
-@numday::- @numday - (t_integer>1000<3000|t_integer<99):DATE:
+@numdayAsNumeric::- @numdayAsNumeric - (t_integer>1000<3000|t_integer<99):DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.2,"numday")
 =>SetEntityFeature(right.4,"numyear")
@@ -180,7 +291,7 @@ t_fraction::/ t_integer:DATE:
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@numday::/ t_integer / t_integer:DATE:
+@numdayAsNumeric::/ t_integer / t_integer:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.2,"numday")
 =>SetEntityFeature(right.4,"numyear")

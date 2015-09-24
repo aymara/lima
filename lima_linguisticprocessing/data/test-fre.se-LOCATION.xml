@@ -22,6 +22,9 @@
           operator="="
           right="Paris"/>
   </testcase>
+  <!-- NOK: Tizi Ouzou n'est pas dans les ressources cities.lst -->
+  <!-- TODO: enrichir les ressources à partir de geonames-->
+  <!-- Pour info Tizi Ouzou fait partie des villes > 100.000 habitants -->
   <!--testcase id="fre.se.location.comp.2" type="pertinent">
     <call-parameters>
       <param key="text" value="Connais-tu Tizi Ouzou ?"/>
@@ -244,6 +247,35 @@
   </testcase>
 <testcase id="fre.se.location.comp.12" type="bloquant">
     <call-parameters>
+      <param key="text" value="la manisfestation a lieu place de la République."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="fre.se.location.comp.12.1" trace=".se.xml"
+          comment="Exemple dans guide d'annotation IMM (modifié)"
+          left="XPATH#//entities/entity[pos=26][len=22]/type"
+          operator="="
+          right="Location.LOCATION"/>
+    <test id="en.se.location.comp.12.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/kind"
+          operator="="
+          right="place"/>
+   <test id="en.se.location.comp.12.3" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="République"/>
+</testcase>
+<!-- Si on n'a pas de majuscule à "république", le test ne passe pas -->
+<!-- La règle applicable est celle qui prend @AnnonceurLieu comme trigger -->
+<!-- si on n'attend pas une majuiscule, on va déclencher la règle sur l'expression -->
+<!-- "l'accélérateur à la place du frein" -->
+<testcase id="fre.se.location.comp.12" type="pertinent">
+    <call-parameters>
       <param key="text" value="la manisfestation a lieu place de la république."/>
       <param key="language" value="fre"/>
       <list key="pipelines">
@@ -252,7 +284,7 @@
     </call-parameters>
     <expl></expl>
     <test id="fre.se.location.comp.12.1" trace=".se.xml"
-          comment="Exemple dans guide d'annotation IMM"
+          comment="Exemple dans guide d'annotation IMM (original)"
           left="XPATH#//entities/entity[pos=26][len=22]/type"
           operator="="
           right="Location.LOCATION"/>

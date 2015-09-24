@@ -60,6 +60,21 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
+<testcase id="eng.tok.4.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Mopti is a lovely city."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>mot inconnu de type première lettre majuscule, reste minuscule, quand la lettre 1ère lettre est un chiffre romain</expl>
+  <test id="eng.tok.4.1.1" trace=".tokenizer.xml"
+    comment="Après tokenizer, le token Mopti doit être de type t_capital_1st"
+    left="XPATH#//data_structure/vertex/token[position=1]/t_status/t_default"
+    operator="="
+    right="t_capital_1st"/>
+</testcase>
 <testcase id="eng.tok.5" type="bloquant">
   <call-parameters>
       <param key="text" value="The NMPP distributes newsprint. "/>
@@ -224,7 +239,7 @@
     comment="le tokenizer doit donner un token D."
     left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
     operator="="
-    right="t_capital_1st"/>
+    right="t_abbrev"/>
 </testcase>
 <testcase id="eng.tok.16" type="bloquant">
   <call-parameters>
@@ -244,7 +259,67 @@
     comment="le tokenizer doit donner un token D."
     left="XPATH#//data_structure/vertex/token[position=8][length=2]/t_status/t_default"
     operator="="
-    right="t_capital_1st"/>
+    right="t_abbrev"/>
+</testcase>
+<testcase id="eng.tok.sup.1" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Apple Inc."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Abbreviation incorporated</expl>
+  <test id="eng.tok.sup.1.1" trace=".tokenizer.xml"
+    comment="le tokenizer doit repérer l'abbréviation Inc. avec le point"
+    left="XPATH#//data_structure/vertex/token[position=7][length=4]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.sup.1.2" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token Inc."
+    left="XPATH#//data_structure/vertex/token[position=7][length=4]/t_status/t_default"
+    operator="="
+    right="t_abbrev"/>
+</testcase>
+<testcase id="eng.tok.sup.2" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Buffalo Corp."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Abbreviation Corp.</expl>
+  <test id="eng.tok.sup.2.1" trace=".tokenizer.xml"
+    comment="le tokenizer doit repérer l'abbréviation Corp. avec le point"
+    left="XPATH#//data_structure/vertex/token[position=9][length=5]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.sup.2.2" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token Corp."
+    left="XPATH#//data_structure/vertex/token[position=9][length=5]/t_status/t_default"
+    operator="="
+    right="t_abbrev"/>
+</testcase>
+<testcase id="eng.tok.sup.3" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Epiphone Ltd."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Abbreviation Corp.</expl>
+  <test id="eng.tok.sup.3.1" trace=".tokenizer.xml"
+    comment="le tokenizer doit repérer l'abbréviation Ltd. avec le point"
+    left="XPATH#//data_structure/vertex/token[position=10][length=4]"
+    operator="exists"
+    right=""/>
+  <test id="eng.tok.sup.3.2" trace=".tokenizer.xml"
+    comment="le tokenizer doit donner un token Ltd."
+    left="XPATH#//data_structure/vertex/token[position=10][length=4]/t_status/t_default"
+    operator="="
+    right="t_abbrev"/>
 </testcase>
 <testcase id="eng.tok.17" type="pertinent">
   <call-parameters>

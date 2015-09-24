@@ -18,6 +18,11 @@
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
+    <group name="EventRecognitionOnPosGraph" class="ApplyRecognizer">
+      <param key="automaton" value="EventRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
   </module>
   <module name="resources-eng">
     <group name="EventRules" class="AutomatonRecognizer">

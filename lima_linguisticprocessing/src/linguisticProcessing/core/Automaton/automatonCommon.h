@@ -42,6 +42,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
+#include <set>
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -69,6 +71,10 @@ void writeTword(std::ofstream& file,const Tword& s,const FsaStringsPool& sp);
 // reading and writing Tpos in binary format
 void readTpos(std::ifstream&, Tpos&);
 void writeTpos(std::ofstream&,const Tpos&);
+
+// reading and writing set of words (for gazeteer)
+void readWordVector(std::ifstream& file, std::vector<LimaString>& wordVector);
+void writeWordSet(std::ofstream& file,const std::set<LimaString>& wordSet);
 
 //comparing the part-of-speech type with a LingPropertyEntry
 // should take a const LingPropertyEntry& argument

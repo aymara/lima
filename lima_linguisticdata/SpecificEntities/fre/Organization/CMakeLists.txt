@@ -18,7 +18,7 @@ set (DEPENDENCIES annonceurOrg.lst carMakers.lst computers.lst organization.lst 
 
 SPECIFICENTITIESCONFIGENV(main2 fre Location)
 SPECIFICENTITIESCONFIGENV(main fre Organization)
-SPECIFICENTITIES(main fre Organization ORGANIZATION-fre.rules)
+SPECIFICENTITIES(main fre Organization ORGANIZATION-fre.rules ORGANIZATION_COMP-fre.rules)
 
 add_dependencies(rules-Organization-fre-main rules-fre-Location-configEnv-main2)
 add_dependencies(rules-Organization-fre-main rules-fre-Organization-configEnv-main)

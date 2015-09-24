@@ -38,7 +38,7 @@ localiser$V,
 ébranler$V,	
 détecter$V)
 
-@Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationnale,départementale,route\ nationale,route\ départementale,route\ communale,place$NC)
+@Street=(rue,route,chemin,avenue,voie,impasse,venelle,autoroute,nationnale,départementale,route nationale,route  départementale,route communale,place)
 
 #Quartier present dans la convention Quaero 
 # pas de liste ???
@@ -76,6 +76,9 @@ triangle::de Rocquencourt:LOCATION:
 =<ClearEntityFeatures()
 
 #place de la république
+# Attention, cette règle semble un peu redondante avec la règle:
+# @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
+# Elle est plus fine (déclencheur=@Street) et ratrape des cas ou le nom ne prend pas de majuscules
 @Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st{1-3}):LOCATION:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.3,"name")
@@ -227,7 +230,7 @@ PORTO::TORRES:LOCATION:Porto Torres
 # loc.adm.reg
 #loc phys
 # est = dist (imm guide - p7) 
- 
+
 
 @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
 =>AppendEntityFeature(trigger,"kind")

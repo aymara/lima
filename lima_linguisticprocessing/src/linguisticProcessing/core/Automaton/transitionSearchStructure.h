@@ -76,12 +76,14 @@ class TransitionSearchStructure
   typedef std::multimap<Tpos,const TargetType*> PosMap;
   typedef std::multimap<std::pair<Tword,Tpos>,const TargetType*> LemmaMap;
   typedef std::multimap<LinguisticAnalysisStructure::TStatus,const TargetType*> TstatusMap;
+  typedef std::multimap<LimaString,const TargetType*> GazeteerMap;
   typedef std::vector<std::pair<TransitionUnit*,const TargetType*> > TransitionList;
   
   WordMap m_wordMap;
   PosMap m_posMap;
   LemmaMap m_lemmaMap;
   TstatusMap m_tstatusMap;
+  GazeteerMap m_gazeteerMap;
   TransitionList m_otherTransitions;
 
   // static members for access of macro and macro_micro

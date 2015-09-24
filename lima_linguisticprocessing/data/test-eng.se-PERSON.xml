@@ -33,9 +33,39 @@
           operator="="
           right="Obama"/>
   </testcase>
+  <!-- idem with abbrev between firstname  and lastname is interpreted as 2nd firstname -->
+  <testcase id="eng.se.pers.comp.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Barack H. Obama"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.comp.2.1" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.comp.2.2" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/firstname[@pos=1]"
+          operator="="
+          right="Barack"/>
+    <test id="eng.se.pers.comp.2.3" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/firstname[@pos=8]"
+          operator="="
+          right="H."/>
+    <test id="eng.se.pers.comp.2.4" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/lastname"
+          operator="="
+          right="Obama"/>
+  </testcase>
   <!-- check generic rules triggered by firstname -->
   <!-- check Title is recognized  -->
-  <testcase id="eng.se.pers.comp.2" type="bloquant">
+  <testcase id="eng.se.pers.comp.3" type="bloquant">
     <call-parameters>
       <param key="text" value="president George Bush"/>
       <param key="language" value="eng"/>
@@ -43,34 +73,34 @@
         <item value="limaserver"/>
       </list>
     </call-parameters>
-    <test id="eng.se.pers.comp.2.1" trace=".se.xml"
+    <test id="eng.se.pers.comp.3.1" trace=".se.xml"
           comment="type"
           left="XPATH#//entities/entity[pos=1]/type"
           operator="="
           right="Person.PERSON"/>
-    <test id="eng.se.pers.comp.2.2" trace=".se.xml"
+    <test id="eng.se.pers.comp.3.2" trace=".se.xml"
           comment="value"
           left="XPATH#//entities/entity[pos=1]/string"
           operator="="
           right="president George Bush"/>
-    <test id="eng.se.pers.comp.2.3" trace=".se.xml"
+    <test id="eng.se.pers.comp.3.3" trace=".se.xml"
           comment="title component"
           left="XPATH#//entities/entity[pos=1]/components/title"
           operator="="
           right="president"/>
-    <test id="eng.se.pers.comp.2.4" trace=".se.xml"
+    <test id="eng.se.pers.comp.3.4" trace=".se.xml"
           comment="firstname component"
           left="XPATH#//entities/entity[pos=1]/components/firstname"
           operator="="
           right="George"/>
-    <test id="eng.se.pers.comp.2.5" trace=".se.xml"
+    <test id="eng.se.pers.comp.3.5" trace=".se.xml"
           comment="personne connue"
           left="XPATH#//entities/entity[pos=1]/components/lastname"
           operator="="
           right="Bush"/>
   </testcase>
   <!-- check generic rules triggered by PersonamePart -->
-  <testcase id="eng.se.pers.comp.3" type="bloquant">
+  <testcase id="eng.se.pers.comp.4" type="bloquant">
     <call-parameters>
       <param key="text" value="president Bush"/>
       <param key="language" value="eng"/>
@@ -78,17 +108,42 @@
         <item value="limaserver"/>
       </list>
     </call-parameters>
-    <test id="eng.se.pers.comp.3.1" trace=".se.xml"
+    <test id="eng.se.pers.comp.4.1" trace=".se.xml"
           comment="personne connue"
           left="XPATH#//entities/entity[pos=1][len=14]/type"
           operator="="
           right="Person.PERSON"/>
-    <test id="eng.se.pers.comp.3.2" trace=".se.xml"
+    <test id="eng.se.pers.comp.4.2" trace=".se.xml"
           comment=""
           left="XPATH#//entities/entity[pos=1]/components/title"
           operator="="
           right="president"/>
-    <test id="eng.se.pers.comp.3.3" trace=".se.xml"
+    <test id="eng.se.pers.comp.4.3" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity[pos=1]/components/lastname"
+          operator="="
+          right="Bush"/>
+  </testcase>
+  <!-- check generic rules triggered by PersonamePart -->
+  <testcase id="eng.se.pers.comp.5" type="bloquant">
+    <call-parameters>
+      <param key="text" value="president Bush"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.comp.5.1" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1][len=14]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.comp.5.2" trace=".se.xml"
+          comment=""
+          left="XPATH#//entities/entity[pos=1]/components/title"
+          operator="="
+          right="president"/>
+    <test id="eng.se.pers.comp.5.3" trace=".se.xml"
           comment=""
           left="XPATH#//entities/entity[pos=1]/components/lastname"
           operator="="

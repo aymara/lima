@@ -110,12 +110,12 @@ string& ModuleConfigurationStructure::getParamValueAtKeyOfGroupNamed(const std::
   }
   catch (NoSuchGroup& nsg)
   {
-    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': "<< nsg.what().c_str();
+    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': "<< nsg.what();
     throw;
   }
   catch (NoSuchParam& nsp)
   {
-    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': " << nsp.what().c_str();
+    LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': " << nsp.what();
     throw;
   }
   catch (...)

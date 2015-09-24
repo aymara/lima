@@ -35,6 +35,7 @@
 #include "lemmaTransition.h"
 #include "numericTransition.h"
 #include "epsilonTransition.h"
+#include "gazeteerTransition.h"
 #include "starTransition.h"
 #include "tstatusTransition.h"
 #include "andTransition.h"
@@ -85,6 +86,7 @@ clearMaps() {
   clearTransitionSearchStructureMap(m_posMap);
   clearTransitionSearchStructureMap(m_lemmaMap);
   clearTransitionSearchStructureMap(m_tstatusMap);
+  clearTransitionSearchStructureMap(m_gazeteerMap);
   typename TransitionList::iterator 
     oit=m_otherTransitions.begin(),
     oit_end=m_otherTransitions.end();
@@ -110,6 +112,7 @@ empty() const {
   if (! m_posMap.empty() ) { return false; }
   if (! m_lemmaMap.empty() ) { return false; }
   if (! m_tstatusMap.empty() ) { return false; }
+  if (! m_gazeteerMap.empty() ) { return false; }
   if (! m_otherTransitions.empty() ) { return false; }
   return true;
 }
@@ -170,6 +173,13 @@ init(const std::vector<TargetType>& l,
 //       LDEBUG << "TransitionSearchStructure: insert TstatusTransition " 
 //              << t->printValue();
       m_tstatusMap.insert(std::make_pair(t->status(),newTarget));
+      break;
+    }
+    case T_GAZETEER: {
+      GazeteerTransition* t=static_cast<GazeteerTransition*>(transition);
+//       LDEBUG << "TransitionSearchStructure: insert WordTransition " 
+//              << t->printValue();
+      m_gazeteerMap.insert(std::make_pair(t->alias(),newTarget));
       break;
     }
     case T_STAR: 
@@ -282,6 +292,20 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,posMacro));
       for (; lemmaRange.first!=lemmaRange.second; lemmaRange.first++) {
         matchingTransitions.push_back(lemmaRange.first->second);
+      }
+    }
+  }
+
+  if (! m_gazeteerMap.empty()) {
+    typename GazeteerMap::const_iterator gazeteerTrigger=m_gazeteerMap.begin();
+    for (; gazeteerTrigger != m_gazeteerMap.end() ; gazeteerTrigger++) {
+      const GazeteerTransition* trigger = static_cast<const GazeteerTransition*>(((*gazeteerTrigger).second)->transitionUnit());
+      bool match = trigger->compare(graph,vertex,analysis,token,data);
+      if (trigger->negative()) {
+        match = (!match);
+      }
+      if (match) {
+        matchingTransitions.push_back((*gazeteerTrigger).second);
       }
     }
   }

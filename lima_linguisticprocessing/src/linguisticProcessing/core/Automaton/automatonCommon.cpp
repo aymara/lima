@@ -59,6 +59,37 @@ void writeTword(std::ofstream& file,const Tword& s,const FsaStringsPool& sp)
   Misc::writeUTF8StringField(file,sp[s]);
 }
 
+// LimaString type
+void readLimaString(std::ifstream& file, LimaString& s)
+{
+  Misc::readUTF8StringField(file,s);
+}
+void writeLimaString(std::ofstream& file,const LimaString& s)
+{
+  Misc::writeUTF8StringField(file,s);
+}
+
+// wordSet = set of multi-term
+void readWordVector(std::ifstream& file, std::vector<LimaString>& wordVector)
+{
+  int i = Misc::readCodedInt(file);
+  for( ; i > 0 ; i-- ) {
+    LimaString s;
+    Misc::readUTF8StringField(file,s);
+    wordVector.push_back(s);
+  }
+}
+
+void writeWordSet(std::ofstream& file,const std::set<LimaString>& wordSet)
+{
+  int i = wordSet.size();
+  Misc::writeCodedInt(file,i);
+  std::set<LimaString>::const_iterator wordIt =  wordSet.begin();
+  for( ; wordIt !=  wordSet.end() ; wordIt++ ) {
+    Misc::writeUTF8StringField(file,*wordIt);
+  }
+}
+
 //----------------------------------------------------------------------
 // Part-of-speech type
 void readTpos(std::ifstream& file, Tpos& p)
