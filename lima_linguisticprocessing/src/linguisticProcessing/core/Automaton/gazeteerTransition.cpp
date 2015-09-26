@@ -252,6 +252,8 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
     else {
       // go one step ahead from curentPosition if possible
       while ( searchPos.getNextVertex(lGraph, nextVertex )) {
+        if (nextVertex == aGraph.lastVertex() )
+          return false;
         LDEBUG << "GazeteerTransition::checkMultiTerms: progress one step forward, nextVertex=" << nextVertex;
         LDEBUG << "GazeteerTransition::checkMultiTerms: test " << *termsIt;
         // test currentVertex
