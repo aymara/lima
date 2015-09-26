@@ -543,8 +543,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
-      std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
-                << currentRule->getType() << " on vertex " << position << std::endl;
+      // std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
+      //          << currentRule->getType() << " on vertex " << position << std::endl;
 
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
       if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
