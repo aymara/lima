@@ -521,7 +521,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
     LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
           << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteers[i][0])<<")";
     int indexRule=reco.addRuleInStorage(r);
-    
+#ifdef OPTIM_GAZETEER_TRIGGER
     const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteers[i];
     TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger);
 
@@ -533,7 +533,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
       //LINFO << nbRule << ": trigger=" << *trigger;
       delete trigger; // it has been copied
     }
-    /*
+#else
     for (std::size_t j(0); j<gazeteers[i].size(); j++) {
       triggerString=gazeteers[i][j];
       if (headTrigger) {
@@ -552,7 +552,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
         delete trigger; // it has been copied
       }
     }
-    */
+#endif    
     
     m_nbRule++;
   }
