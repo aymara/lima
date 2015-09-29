@@ -41,10 +41,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>DETSUB</expl>
+  <expl>det</expl>
 <test id="eng.sa.5.1" trace=".sa.xml"
-    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre 'The' et 'house' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']" 
+    comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre 'The' et 'house' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='det']" 
     operator="exists"
     right="" />
 </testcase>
@@ -57,10 +57,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>DETSUB</expl>
+  <expl>det</expl>
 <test id="eng.sa.6.1" trace=".sa.xml"
-    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre 'The' et 'house' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']" 
+    comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre 'The' et 'house' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='det']" 
     operator="exists"
     right="" />
 </testcase>
@@ -74,10 +74,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>DETSUB</expl>
+  <expl>det</expl>
   <test id="eng.sa.7.1" trace=".sa.xml"
-    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre 'The' et 'house'. "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']"
+    comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre 'The' et 'house'. "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='det']"
     operator="exists"
     right="" />
   <test id="eng.sa.7.2" trace=".sa.xml"
@@ -86,7 +86,7 @@
     operator="exists"
     right="" />
   <test id="eng.sa.7.3" trace=".sa.xml"
-    comment=" rules-eng-homodeps-pass1.txt. La relation DETSUB doit exister entre adjectifs et 'house'. "
+    comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre adjectifs et 'house'. "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='dark']/dependents/dep[@t='ADJPRENSUB']"
     operator="exists"
     right="" />
@@ -470,15 +470,15 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>article et substantifs forment une relation DETSUB.</expl>
+  <expl>article et substantifs forment une relation det.</expl>
   <test id="eng.sa.38.1" trace=".sa.xml"
-    comment="La relation DETSUB doit exister entre 'The' et 'birds' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']"
+    comment="La relation det doit exister entre 'The' et 'birds' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='det']"
     operator="exists"
     right="" />
   <test id="eng.sa.38.2" trace=".sa.xml"
-    comment="La relation DETSUB doit exister entre 'The' et 'birds' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='DETSUB']/@v"
+    comment="La relation det doit exister entre 'The' et 'birds' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='det']/@v"
     operator="="
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='birds']/@id" />
 </testcase>
