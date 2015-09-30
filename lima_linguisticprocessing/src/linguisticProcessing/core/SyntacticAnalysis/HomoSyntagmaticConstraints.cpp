@@ -160,13 +160,10 @@ bool SecondUngovernedBy::operator()(
   const LinguisticGraphVertex& v2,
                                      AnalysisContent& analysis ) const
 {
-/*
-  Critical Function : comment logging messages
-*/
-//   SAPLOGINIT;
-//   LDEBUG << "testing SecondUngovernedBy for "
-//   << v1 << " and " << v2
-//   << " with relation: " << m_relation;
+#ifdef DEBUG_LP
+  SAPLOGINIT;
+  LDEBUG << "testing SecondUngovernedBy for " << v1 << " and " << v2 << " with relation: " << m_relation;
+#endif
 
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
 
@@ -219,12 +216,10 @@ bool GovernorOf::operator()(const AnalysisGraph& graph,
                             const LinguisticGraphVertex& v1,
                             AnalysisContent& analysis) const
 {
-/*
-  Critical function : comment logging messages
-*/
-//  SAPLOGINIT;
-//  LDEBUG << "testing GovernorOf for " << v1
-//  << " with relation : " << m_relation;
+#ifdef DEBUG_LP
+ SAPLOGINIT;
+ LDEBUG << "testing GovernorOf for " << v1 << " with relation : " << m_relation;
+#endif
 
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
 
@@ -262,12 +257,10 @@ bool GovernedBy::operator()(const AnalysisGraph& graph,
                             const LinguisticGraphVertex& v1,
                             AnalysisContent& analysis) const
 {
-/*
-  Critical function : comment logging message
-*/
-//  SAPLOGINIT;
-//  LDEBUG << "testing GovernedBy for " << v1
-//  << " with relation: " << m_relation;
+#ifdef DEBUG_LP
+ SAPLOGINIT;
+ LDEBUG << "testing GovernedBy for " << v1 << " with relation: " << m_relation;
+#endif
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() )
   {
@@ -306,12 +299,10 @@ bool SameNominalChain::operator()(const AnalysisGraph& graph,
                                   const LinguisticGraphVertex& v2,
                                   AnalysisContent& /*ac*/) const
 {
-/*
-  Critical function : comment logging message
-*/
-//  SAPLOGINIT;
-//  LDEBUG << "testing SameNominalChain for " << v1 << " and " << v2
-// ;
+#ifdef DEBUG_LP
+ SAPLOGINIT;
+ LDEBUG << "testing SameNominalChain for " << v1 << " and " << v2;
+#endif
 
   CVertexChainIdPropertyMap map = get(vertex_chain_id, *(graph.getGraph()));
   VertexChainIdProp::const_iterator it1 = map[v1].begin();
@@ -352,13 +343,10 @@ bool SameVerbalChain::operator()(const AnalysisGraph& graph,
                                  const LinguisticGraphVertex& v2,
                                  AnalysisContent& /*ac*/) const
 {
-/*
-  Critical function : comment logging message
-*/
-  //    return graph.SameVerbalChain(v1, v2, false);
-
-//  SAPLOGINIT;
-//  LDEBUG << "testing SameVerbalChain for " << v1 << " and " << v2;
+#ifdef DEBUG_LP
+  SAPLOGINIT;
+  LDEBUG << "testing SameVerbalChain for " << v1 << " and " << v2;
+#endif
   CVertexChainIdPropertyMap map = get(vertex_chain_id, *(graph.getGraph()));
   VertexChainIdProp::const_iterator it1 = map[v1].begin();
   VertexChainIdProp::const_iterator it1_end = map[v1].end();
@@ -402,12 +390,11 @@ bool CreateRelationBetween::operator()(const AnalysisGraph&,
                                        const LinguisticGraphVertex& v2,
                                        AnalysisContent& analysis ) const
 {
-/*
-  Critical function : comment logging message
-*/
-//  SAPLOGINIT;
-//  LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
-//  << v2  << " with relation: " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
+#ifdef DEBUG_LP
+ SAPLOGINIT;
+ LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
+ << v2  << " with relation: " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
+#endif
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   bool res = syntacticData->relation(v1, v2, m_relation);
 //  LDEBUG << "CreateRelationBetween: " << (res?"yes":"no");
@@ -728,7 +715,7 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
   m_micro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
 
-  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("TEMPCOMP");
+  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
 
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
@@ -744,13 +731,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
                                      const LinguisticGraphVertex& auxVertex,
                                      AnalysisContent& analysis ) const
 {
-/*
-  Critical function : comment logging message
-*/
 #ifdef DEBUG_LP
   SAPLOGINIT;
-  LDEBUG << "creating compound tense for " << auxVertex << " and "
- << pastPartVertex;
+  LDEBUG << "creating compound tense for " << auxVertex << " and " << pastPartVertex;
 #endif
 
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -814,9 +797,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 
   // creer un MorphoSyntacticData
 #ifdef DEBUG_LP
-  LDEBUG << "Creating a DicoWord: "
-      << int(m_macro) << " / " << Common::Misc::limastring2utf8stdstring(verbFlex) << " / "
-      << int(m_micro) << " / " << verbLemma;
+  LDEBUG << "Creating a DicoWord: " << m_macro << " / " << verbFlex << " / " << m_micro << " / " << verbLemma;
 #endif
   MorphoSyntacticData* dataNewVerb = new MorphoSyntacticData();
   /// if the anagraph is not set to delete the morphosyntactic data, we have to do it
@@ -1025,7 +1006,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   }
 
   // copier vers le noeud du nouveau verbe toutes les relations de
-  // dépendance (sauf TEMPCOMP) qui avaient pour source ou destination
+  // dépendance (sauf aux) qui avaient pour source ou destination
   // l'auxiliaire ou le participe passé
   EdgeDepRelTypePropertyMap edgeTypeMap = get( edge_deprel_type, depGraph);
 
@@ -1160,7 +1141,7 @@ CreateEasyCompoundTense::CreateEasyCompoundTense(MediaId language,
   size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
   m_micro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
 
-  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("TEMPCOMP");
+  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
 
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));

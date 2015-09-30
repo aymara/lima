@@ -342,13 +342,14 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #+SecondUngovernedBy(trigger.1,right.1,"ANY")
 #+CreateRelationBetween(trigger.1,right.1,"ADVADJ")
 
+
 #----------------------------------------------------------------------
 # Relation entre is et ing ou is et -ed
 # is it appearing to become difficult...
 # TEMPCOMP :      is_appearing[6|6]{28/94}        -> appearing[5|5]{28/96}
 #----------------------------------------------------------------------
 #@Is::(@AdvTempComp|@Neg){0-2} @Ing:SYNTACTIC_RELATION:
-#+CreateCompoundTense(right.2,right.1,"V;VERBE_GENERABASE;PRES")
+#+CreateCompoundTense(right.2,right.1,"V;VERBE_GENERAL_BASE;PRES")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
@@ -364,7 +365,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #
 #----------------------------------------------------------------------
 #@Was::(@AdvTempComp|@Neg){0-2} @Ing:SYNTACTIC_RELATION:
-#+CreateCompoundTense(right.2,right.1,"V;VERBE_GENERABASE;PRETERIT")
+#+CreateCompoundTense(right.2,right.1,"V;VERBE_GENERAL_BASE;PRETERIT")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
@@ -530,9 +531,14 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation between auxiliary and past participle
 #----------------------------------------------------------------------
+@Aux::@Pron? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.3,"aux")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
 @PastParticiple:@Aux @Pron? (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-+!GovernorOf(left.1,"ANY")
-+CreateRelationBetween(left.1,trigger.1,"aux")
++CreateCompoundTense(trigger.1,left.1,"V;VB;")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
@@ -579,6 +585,18 @@ to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
 @Adverb::@TensedVerb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"AdvVerbe")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation entre pronom personnel sujet et verbe
+# Specifique pour Easy
+# He was sure that she would be there
+# PronSujVerbe : He[15|15]{26/54}        -> was[14|14]{28/76}
+#----------------------------------------------------------------------
+@PronPers::(@Neg)? (@PronRefl)? @Verbe:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.3,"ANY")
++CreateRelationBetween(trigger.1,right.3,"SUJ_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 

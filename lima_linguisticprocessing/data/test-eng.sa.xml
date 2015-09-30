@@ -325,10 +325,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>PronSujVerbe</expl>
+  <expl>SUJ_V</expl>
 <test id="eng.sa.24.1" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass1.txt. La relation PronSujVerbe doit exister entre 'she' et 'suggests' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='She']/dependents/dep[@t='PronSujVerbe']" 
+     comment=" rules-eng-homodeps-pass1.txt. La relation SUJ_V doit exister entre 'she' et 'suggests' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='She']/dependents/dep[@t='SUJ_V']" 
     operator="exists"
     right="" />
 </testcase>
@@ -341,10 +341,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>PronSujVerbe</expl>
+  <expl>SUJ_V</expl>
 <test id="eng.sa.25.1" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass1.txt. La relation PronSujVerbe doit exister entre 'I' et 'suggest' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='I']/dependents/dep[@t='PronSujVerbe']" 
+     comment=" rules-eng-homodeps-pass1.txt. La relation SUJ_V doit exister entre 'I' et 'suggest' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='I']/dependents/dep[@t='SUJ_V']" 
     operator="exists"
     right="" />
 </testcase>
