@@ -42,7 +42,7 @@
     </group> 
     <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
       <list name="AuthorsPosition.AUTHORS_POSITION">
-	<item value="NOM_COMMUN"/>
+        <item value="NC"/>
       </list>
     </group>
   </module>
