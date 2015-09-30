@@ -79,7 +79,7 @@ triangle::de Rocquencourt:LOCATION:
 # Attention, cette règle semble un peu redondante avec la règle:
 # @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
 # Elle est plus fine (déclencheur=@Street) et ratrape des cas ou le nom ne prend pas de majuscules
-@Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st{1-3}):LOCATION:
+@Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.3,"name")
 =>NormalizeEntity()

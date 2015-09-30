@@ -76,7 +76,7 @@ triangle::de Rocquencourt:LOCATION:
 =<ClearEntityFeatures()
 
 #place de la république
-@Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st{1-3}):LOCATION:
+@Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.3,"name")
 =>NormalizeEntity()
