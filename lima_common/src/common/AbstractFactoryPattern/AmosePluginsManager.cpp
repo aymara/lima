@@ -38,42 +38,46 @@ bool AmosePluginsManager::loadPlugins()
   LINFO << "AmosePluginsManager::loadPlugins";
 //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
+  
+  // Look for LIMA_CONF directory.
   std::string configDir = qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData();
   if (configDir.empty())
   {
     configDir = "/usr/share/config/lima/";
   }
+  
+  // Deduce plugins directory.
   std::string stdPluginsDir(configDir);
   stdPluginsDir.append("/plugins");
   QDir pluginsDir(QString::fromUtf8(stdPluginsDir.c_str()));
+  
+  // For each file under plugins directory, read plugins names and deduce shared libraries to load.
   QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
   Q_FOREACH(QString pluginsFile, pluginsFiles)
   {
 #ifdef DEBUG_CD
-   LDEBUG << "AmosePluginsManager::loadPlugins loding plugins file " << pluginsFile.toUtf8().data();
+   LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
 #endif
+    // Open plugin file.
     QFile file(pluginsDir.path() + "/" + pluginsFile);
-    if (!file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODevice::ReadOnly)) {
+      LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " << pluginsFile.toUtf8().data();
       return false;
-    // for each entry, call load library
+    }
+    
+    // For each entry, call load library
     while (!file.atEnd()) 
     {
-      QByteArray line = file.readLine();
-      if (line.endsWith('\n')) line.chop(1);
-      // Allows empty and comment lines
+      // Remove whitespace characters from the start and the end.
+      QString line = QString(file.readLine()).trimmed();
+      
+      // Allow empty and comment lines.
       if ( !line.isEmpty() && !line.startsWith('#') )
       {
-#ifdef WIN32
-        QString strline = QString(line.data()).trimmed() + ".dll";
-        QString library_path=QString::fromUtf8(qgetenv("LD_LIBRARY_PATH").constData()==0?"c:\amose\lib":qgetenv("LD_LIBRARY_PATH").constData());
-        DynamicLibrariesManager::changeable().addSearchPathes( library_path.toUtf8().data());
-#else
-        QString strline = QString("lib") + line.data() + ".so";
-#endif
 #ifdef DEBUG_CD
-        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
+        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
 #endif
-        DynamicLibrariesManager::changeable().loadLibrary(line.data());
+        DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str());
       }
     }
   }
