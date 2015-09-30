@@ -192,6 +192,11 @@
         <item value="DetAdv"/><!-- for things like "les plus utilisés"-->
         <item value="PrepDetNum"/><!-- for things like "une femme active sur cinq est..."-->
         <item value="IncInc"/><!-- to link unknown works, typically from a foreign language-->
+        <!-- Start to integrate Universal Dependencies -->
+        <item value="aux"/>
+        <item value="auxpass"/>
+        <item value="det"/>
+        <item value="acl"/>
       </list>
     </group>
     <group name="SyntacticAnalysis">
