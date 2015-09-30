@@ -125,7 +125,7 @@
     </call-parameters>
   <expl>COMPADJ</expl>
 <test id="fre.sa.9.1" trace=".sa.xml"
-     comment=" rules-fre-homodeps-pass1.txt. La relation COMPADJ doit exister entre 'la' et 'rue' "
+     comment=" rules-fre-homodeps-pass1.txt. A COMPADJ dependence must exist between 'rue' and 'belle' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='rue']/dependents/dep[@t='COMPADJ']"
     operator="exists"
     right="" />
