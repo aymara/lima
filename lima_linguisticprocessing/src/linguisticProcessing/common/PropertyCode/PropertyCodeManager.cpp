@@ -55,6 +55,9 @@ PropertyCodeManager::PropertyCodeManager()
 void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 {
   PROPERTYCODELOGINIT;
+#ifdef DEBUG_LP
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile" << filename;
+#endif
   
   // check that file exists
   {

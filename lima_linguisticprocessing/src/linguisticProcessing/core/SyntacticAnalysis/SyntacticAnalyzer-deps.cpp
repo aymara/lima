@@ -155,9 +155,9 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-//     LDEBUG << "analyze sentence from vertex " << beginSentence
-//            << " to vertex " << endSentence;
-
+#ifdef DEBUG_LP
+    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+#endif
     std::deque< std::string >::const_iterator actionsit, actionsit_end;
     actionsit = m_actions.begin(); actionsit_end = m_actions.end();
     for (; actionsit != actionsit_end; actionsit++)
@@ -169,10 +169,14 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
       }
       else
       {
-//         LDEBUG << "Geting automaton";
+#ifdef DEBUG_LP
+        LDEBUG << "Geting automaton for action" << action;
+#endif
         Automaton::Recognizer* recognizer = const_cast< Automaton::Recognizer*  >((*(m_recognizers.find(action))).second);
         std::vector<Automaton::RecognizerMatch> result;
-//         LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence;
+#ifdef DEBUG_LP
+        LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence;
+#endif
         try
         {
           recognizer->apply(*anagraph,
