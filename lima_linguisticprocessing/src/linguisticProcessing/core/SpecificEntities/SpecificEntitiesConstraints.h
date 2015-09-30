@@ -34,7 +34,6 @@ namespace SpecificEntities {
 
 // ids for constraints in this file
 #define isASpecificEntityId "isASpecificEntity"
-#define isInSameSpecificEntityId "isInSameSpecificEntity"
 #define CreateSpecificEntityId "CreateSpecificEntity"
 #define SetEntityFeatureId "SetEntityFeature"
 #define AddEntityFeatureId "AddEntityFeature"
@@ -55,34 +54,6 @@ public:
                   const LinguisticGraphVertex& v,
                   AnalysisContent& analysis) const;
 
-private:
-  Common::MediaticData::EntityType m_type;
-};
-
-class LIMA_SPECIFICENTITIES_EXPORT isInSameSpecificEntity : public Automaton::ConstraintFunction
-{
-public:
-  isInSameSpecificEntity(MediaId language,
-                         const LimaString& complement=LimaString());
-  ~isInSameSpecificEntity() {}
-
-  /** @brief Tests if the two given vertices are in the same specific entity
-   *
-   * There is several cases:
-   *   - va1 and va2 are SE vertices : true iff va1 == va2
-   *   - va1 and va2 are standard vertices : true iff there is an outgoing edge in
-   *     the annotation graph annotated with "belongstose" from each of them and
-   *     toward the same vertex
-   *   - va1 (va2) is a SE vertex and there is an outgoing edge in the annotation
-   *     graph annotated with "belongstose" from va2 (va1) to va1 (va2).
-   *
-   * In all the cases, va1 and va2 are the uniq "morphannot" matches of v1 and v2
-  */
-  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
-                  const LinguisticGraphVertex& v1,
-                  const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
-  
 private:
   Common::MediaticData::EntityType m_type;
 };

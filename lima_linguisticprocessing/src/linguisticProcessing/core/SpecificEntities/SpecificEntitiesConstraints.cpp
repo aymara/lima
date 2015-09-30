@@ -58,9 +58,6 @@ namespace SpecificEntities
 ConstraintFunctionFactory<isASpecificEntity>
 isASpecificEntityFactory(isASpecificEntityId);
 
-ConstraintFunctionFactory<isInSameSpecificEntity>
-  isInSameSpecificEntityFactory(isInSameSpecificEntityId);
-
 ConstraintFunctionFactory<CreateSpecificEntity>
   CreateSpecificEntityFactory(CreateSpecificEntityId);
 
@@ -141,103 +138,6 @@ bool isASpecificEntity::operator()(const LinguisticAnalysisStructure::AnalysisGr
   }
   return false;
 }
-
-isInSameSpecificEntity::
-  isInSameSpecificEntity(MediaId language,
-                         const LimaString& complement):
-  ConstraintFunction(language,complement),
-  m_type()
-{
-  if (! complement.isEmpty()) {
-    m_type=Common::MediaticData::MediaticData::single().getEntityType(complement);
-  }
-}
-
-/** @brief Tests if the two given vertices are in the same specific entity
-  *
-  * There is several cases:
-  *   - va1 and va2 are SE vertices : true iff va1 == va2
-  *   - va1 and va2 are standard vertices : true iff there is an outgoing edge
-  *     in the annotation graph annotated with "belongstose" from each of them
-  *     and toward the same vertex
-  *   - va1 (va2) is a SE vertex and there is an outgoing edge in the annotation
-  *     graph annotated with "belongstose" from va2 (va1) to va1 (va2).
-  *
-  * In all the cases, va1 and va2 are the uniq "morphannot" matches of v1 and v2
-  *
-  * @note This method handles only the first level of SE: if a SE is recursively
-  * included in a second one, morph vertices from the first one and from the
-  * the second one (not in the first one) will NOT be considered as being in the
-  * same specific entity.
-  * @note It is considered that a morph vertex can be directly in only one SE.
-  * So, its annotation vertex will have at most one "belongstose" annotated
-  * outgoing edge.
-  */
-bool isInSameSpecificEntity::operator()(
-           const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
-           const LinguisticGraphVertex& v1,
-           const LinguisticGraphVertex& v2,
-           AnalysisContent& analysis) const
-{
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
-  AnnotationGraphVertex va1 = *(annotationData->matches(recoData->getGraphId(), v1, "annot").begin());
-  AnnotationGraphVertex va2 = *(annotationData->matches(recoData->getGraphId(), v2, "annot").begin());
-
-  if ( (va1 == va2) && annotationData->hasAnnotation(va1, Common::Misc::utf8stdstring2limastring("SpecificEntity")) )
-  { // first case
-    return true;
-  }
-  AnnotationGraphVertex vase = std::numeric_limits<uint64_t>::max();
-  AnnotationGraphVertex va = std::numeric_limits<uint64_t>::max();
-  if (annotationData->hasAnnotation(va1, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
-  {
-    vase = va1;
-    va = va2;
-  }
-  else if (annotationData->hasAnnotation(va2, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
-  {
-    vase = va2;
-    va = va1;
-  }
-  if (vase == std::numeric_limits<uint64_t>::max())
-  { // second case
-    AnnotationGraphOutEdgeIt it1, it1_end;
-    AnnotationGraphVertex se1 = std::numeric_limits<uint64_t>::max();
-    boost::tie(it1, it1_end) = out_edges(va1, annotationData->getGraph());
-    for (; it1 != it1_end; it1++)
-    {
-      if ( annotationData->intAnnotation((*it1), Common::Misc::utf8stdstring2limastring("belongstose"))==1)
-      {
-        se1 = target(*it1, annotationData->getGraph());
-        break;
-      }
-    }
-    if (se1 == std::numeric_limits<uint64_t>::max())
-    {
-      return false;
-    }
-    AnnotationGraphVertex se2 = std::numeric_limits<uint64_t>::max();
-    AnnotationGraphOutEdgeIt it2, it2_end;
-    boost::tie(it2, it2_end) = out_edges(va2, annotationData->getGraph());
-    for (; it2 != it2_end; it2++)
-    {
-      if ( annotationData->intAnnotation((*it2), Common::Misc::utf8stdstring2limastring("belongstose"))==1)
-      {
-        se2 = target(*it2, annotationData->getGraph());
-        break;
-      }
-    }
-    return (se1 == se2);
-  }
-  else
-  { // third case
-    bool ok; AnnotationGraphEdge e;
-    boost::tie(e, ok) = edge(va,vase,annotationData->getGraph());
-    return (ok && (annotationData->intAnnotation(e, Common::Misc::utf8stdstring2limastring("belongstose"))==1));
-  }
-}
-
 
 
 CreateSpecificEntity::CreateSpecificEntity(MediaId language,
@@ -578,7 +478,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     else
     {
       AnnotationGraphVertex src = *(matches.begin());
-      annotationData->annotate( src, agv, Common::Misc::utf8stdstring2limastring("belongstose"), 1);
+      annotationData->annotate( agv, src, Common::Misc::utf8stdstring2limastring("holds"), 1);
     }
   }
 
