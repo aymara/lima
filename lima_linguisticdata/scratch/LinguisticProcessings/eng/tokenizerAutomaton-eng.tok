@@ -1,7 +1,7 @@
 (START) {
   - c_Mm c_dot c_Mm c_dot > ACRONYM_2 (T_ACRONYM)
   - c_Mm c_dot > ABBREV_1 (T_ABBREV)
-  - c_I c_l_n c_l_c c_dot > ABBREV_3 (T_ABBREV)
+  - c_I c_n c_l_c c_dot > ABBREV_3 (T_ABBREV)
   - c_C c_l_o c_l_r c_l_p c_dot > ABBREV_4 (T_ABBREV)
   - c_C c_l_o c_dot > ABBREV_2 (T_ABBREV)
   - c_L c_l_t c_l_d c_dot > ABBREV_3 (T_ABBREV)
@@ -69,7 +69,7 @@
   - m_eof / END
   - c_b / IGNORE
   - c_Mm c_dot c_Mm c_dot / ACRONYM_2 (T_ACRONYM)
-  - c_I c_l_n c_l_c c_dot / ABBREV_3 (T_ABBREV)
+  - c_I c_n c_l_c c_dot / ABBREV_3 (T_ABBREV)
   - c_C c_l_o c_l_r c_l_p c_dot / ABBREV_4 (T_ABBREV)
   - c_C c_l_o c_dot / ABBREV_2 (T_ABBREV)
   - c_L c_l_t c_l_d c_dot / ABBREV_3 (T_ABBREV)
@@ -263,8 +263,8 @@
 (CARDINAL_ROMAN) {
   - m_eof = END
   - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
-  - c_l_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
-  - c_l_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_r c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_t c_l_h > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_S c_T > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
@@ -286,8 +286,8 @@
 }
 (CARDINAL_ROMAN_FIRST_UPPER) {
   - m_eof = END
-  - c_l_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
-  - c_l_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_r c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_t c_l_h > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_S c_T > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
@@ -312,8 +312,8 @@
 (CARDINAL_ROMAN_ALL_UPPER) {
   - m_eof = END
   - c_V > CARDINAL_ROMAN_ALL_UPPER (T_NUMERIC,T_CARDINAL_ROMAN)
-  - c_l_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
-  - c_l_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_r c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_l_t c_l_h > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_S c_T > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
@@ -366,8 +366,8 @@
   - c_comma c_5 > COMMA_NUMBER (T_COMMA_NUMBER)
   - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
   - c_slash c_5 > FRACTION (T_FRACTION)
-  - c_l_s c_l_t > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
-  - c_l_n c_l_d > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
+  - c_s c_l_t > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
+  - c_n c_l_d > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
   - c_l_r c_l_d > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
   - c_l_t c_l_h > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
   - c_S c_T > ORDINAL_INTEGER1 (T_ORDINAL_INTEGER)
