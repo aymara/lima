@@ -357,7 +357,14 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   {
     LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor: Cannot find a dictionary entry for abbreviated word " <<  Lima::Common::Misc::limastring2utf8stdstring(abbrev);
   }
-
+  if (newData->empty())
+  {
+    MORPHOLOGINIT;
+    LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor Got empty morphosyntactic data. Abort.";
+    delete newFT;
+    delete newData;
+    return false;
+  }
 //  LinguisticGraphVertex afterVertex = listIterator.createVertexFor(newFT);
   LinguisticGraphVertex afterVertex = add_vertex(*graph);
   put(vertex_token,*graph,afterVertex,newFT);
