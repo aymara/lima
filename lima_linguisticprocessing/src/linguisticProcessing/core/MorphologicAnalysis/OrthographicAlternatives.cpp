@@ -127,13 +127,13 @@ LimaStatusCode OrthographicAlternatives::process(
   for (;it!=itEnd;it++)
   {
     LDEBUG << "processing vertex " << *it;
-    MorphoSyntacticData* currentToken=dataMap[*it];
+    MorphoSyntacticData* currentTokenData=dataMap[*it];
     Token* tok=tokenMap[*it];
-    if (currentToken!=0)
+    if (currentTokenData!=0)
     {
 
       // if in confidentMode and token has already ling infos, skip
-      if ( m_confidentMode && (currentToken->size()>0) ) continue;
+      if ( m_confidentMode && (currentTokenData->size()>0) ) continue;
 
       // set orthographic alternatives given by dictionary
       // using the alternatives directly given by the morphosyntactic data
@@ -145,20 +145,20 @@ LimaStatusCode OrthographicAlternatives::process(
           LimaString oa = entry->nextAccented();
           while ( oa.size() > 0 )
           {
-            createAlternative(tok,currentToken,oa,m_dictionary,sp);
+            createAlternative(tok,currentTokenData,oa,m_dictionary,sp);
             oa = entry->nextAccented();
           }
         }
       }
 
       // if in confidentMode and token has already ling infos, skip
-      if (m_confidentMode && (currentToken->size() > 0) ) continue;
+      if (m_confidentMode && (currentTokenData->size() > 0) ) continue;
 
       // if no ling infos, then lower and unmark string
       LDEBUG << "set unmark alternatives";
       setOrthographicAlternatives(
         tok,
-        currentToken,
+        currentTokenData,
         m_dictionary,
         m_charChart,
         sp);
