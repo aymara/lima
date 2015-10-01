@@ -332,6 +332,9 @@
   - c_all > START
   - m_eof = END
 }
+(ORDINAL_INTEGER2) {
+  - c_all > ORDINAL_INTEGER1
+}
 (ORDINAL_INTEGER1) {
   - c_all > ORDINAL_INTEGER
 }
