@@ -627,6 +627,8 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
 #endif
     return (*it).second;
   }
+  LDATALOGINIT;
+  LERROR << "LanguageData::getSyntacticRelationId NOT found" << name << "!" ;
   return 0;
 }
 
