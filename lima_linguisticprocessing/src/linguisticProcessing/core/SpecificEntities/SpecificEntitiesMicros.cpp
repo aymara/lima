@@ -77,10 +77,17 @@ init(GroupConfigurationStructure& unitConfiguration,
       EntityType type=static_cast<const Common::MediaticData::MediaticData&>(MediaticData::single()).getEntityType(entityName);
       for (deque<string>::const_iterator micro=(*it).second.begin(),
              micro_end=(*it).second.end(); micro!=micro_end; micro++) {
+        LinguisticCode code = microManager.getPropertyValue(*micro);
+        if (code == 0) {
+          SELOGINIT;
+          LERROR << "SpecificEntitiesMicros::init on entity" << entityName << "," << *micro << "linguistic code is not defined";
+        }
+        else {
 #ifdef DEBUG_LP
-        LDEBUG << "Adding " << *micro << microManager.getPropertyValue(*micro) << " to EntityType " << type;
+          LDEBUG << "Adding " << *micro << code << " to EntityType " << type;
 #endif
-        m_micros[type].insert(microManager.getPropertyValue(*micro));
+          m_micros[type].insert(code);
+        }
       }
     }
     catch (LimaException& e) {
