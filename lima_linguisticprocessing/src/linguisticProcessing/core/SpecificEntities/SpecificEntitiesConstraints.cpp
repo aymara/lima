@@ -464,6 +464,9 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   elem.type = SPECIFIC_ENTITY; // MorphoSyntacticType
 
   if (! m_microsToKeep.empty()) { 
+#ifdef DEBUG_LP
+    LDEBUG << "CreateSpecificEntity, use micros from the rule ";
+#endif
     // micros are given in the rules
     addMicrosToMorphoSyntacticData(newMorphData,dataHead,m_microsToKeep,elem);
   }
@@ -479,11 +482,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     {
       SELOGINIT;
       LERROR << "CreateSpecificEntity::operator() null group id:" << seType;
+      delete newMorphData;
       return false;
     }
-    std::string resourceName=
-      Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId()))+"Micros";
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,resourceName);
+    const LimaString& resourceName =
+      Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId())+"Micros";
+    AbstractResource* res=LinguisticResources::single().getResource(m_language,resourceName.toUtf8().constData());
 #ifdef DEBUG_LP
     LDEBUG << "Entities resource name is : " << resourceName;
 #endif
@@ -506,6 +510,8 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       // cannot find micros for this type: error
       SELOGINIT;
       LERROR << "CreateSpecificEntity: missing resource " << resourceName ;
+      delete newMorphData;
+      return false;
     }
   }
 
@@ -522,6 +528,15 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   newToken->setStatus(tokenMap[v1]->status());
   //}  
 
+  if (newMorphData->empty())
+  {
+    SELOGINIT;
+    LERROR << "CreateSpecificEntity::operator() Found no morphosyntactic  data for new vertex. Abort.";
+    delete newToken;
+    delete newMorphData;
+    assert(false);
+    return false;
+  }
 //   LDEBUG << "    Updating morphologic graph "<< graphId;
   // creer le noeud et ses 2 arcs
   LinguisticGraphVertex newVertex;
@@ -985,8 +1000,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         }
       }
     }
-    if( nbEdges > 1 ) 
+    if( nbEdges > 1 )  {
       LWARN << "SetEntityFeature:: Warning: ambiguïties in graph";
+    }
 
     Token* token=get(vertex_token,lGraph,v);
     if (v == v1) {

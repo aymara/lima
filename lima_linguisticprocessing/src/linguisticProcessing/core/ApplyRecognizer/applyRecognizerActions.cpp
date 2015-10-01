@@ -315,6 +315,13 @@ operator()(RecognizerMatch& result,
     // create the new token
     pair<Token*,MorphoSyntacticData*> newToken=
       createAlternativeToken(result);
+    if (newToken.second->empty()) {
+      APPRLOGINIT;
+      LERROR << "CreateAlternative::operator(): Got empty morphosyntactic data. Abort.";
+      delete newToken.first;
+      delete newToken.second;
+      return false;
+    }
 //     LDEBUG << "create alternative token " << newToken.first->stringForm();
     
     // add the vertex
@@ -351,6 +358,13 @@ operator()(RecognizerMatch& result,
     // create the new token
     pair<Token*,MorphoSyntacticData*> newToken=
       createAlternativeToken(result);
+    if (newToken.second->empty()) {
+      APPRLOGINIT;
+      LERROR << "CreateAlternative::operator(): Got empty morphosyntactic data. Abort.";
+      delete newToken.first;
+      delete newToken.second;
+      return false;
+    }
     
     // add the vertex
     LinguisticGraphVertex altVertex = 
@@ -374,6 +388,14 @@ operator()(RecognizerMatch& result,
 //         LDEBUG << "duplication vertex " << matchItr->getVertex();;
         Token* token=get(vertex_token,*graph,matchItr->getVertex());
         MorphoSyntacticData* data=new MorphoSyntacticData(*get(vertex_data,*graph,matchItr->getVertex()));
+        if (data->empty())
+        {
+          // ignore current idiomatic expression, continue
+          APPRLOGINIT;
+          LERROR << "CreateAlternative::operator() Got empty morphosyntactic data. Abort";
+          delete data;
+          return false;
+        }
         LinguisticGraphVertex dupVx=add_vertex(*graph);
         put(vertex_token,*graph,dupVx,token);
         put(vertex_data,*graph,dupVx,data);

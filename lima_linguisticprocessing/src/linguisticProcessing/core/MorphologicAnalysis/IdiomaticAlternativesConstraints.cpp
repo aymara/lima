@@ -180,13 +180,22 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
     {
       // ignore current idiomatic expression, continue
       MORPHOLOGINIT;
-    LWARN << "idiomatic expression ignored: " << Common::Misc::limastring2utf8stdstring(result.concatString())
+      LWARN << "idiomatic expression ignored: " << Common::Misc::limastring2utf8stdstring(result.concatString())
           << ": overlapping with a previous one";
       return false;
     }
 
     // create the new token
     std::pair<Token*,MorphoSyntacticData*> newToken = createAlternativeToken(result);
+    if (newToken.second->empty())
+    {
+      // ignore current idiomatic expression, continue
+      MORPHOLOGINIT;
+      LERROR << "CreateIdiomaticAlternative::operator() Got empty morphosyntactic data. Abort";
+      delete newToken.first;
+      delete newToken.second;
+      return false;
+    }
 
     // add the vertex
     LinguisticGraphVertex idiomaticVertex =
@@ -241,13 +250,22 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
     {
       // ignore current idiomatic expression, continue
       MORPHOLOGINIT;
-    LWARN << "idiomatic expression ignored: " << Common::Misc::limastring2utf8stdstring(result.concatString())
+      LWARN << "idiomatic expression ignored: " << Common::Misc::limastring2utf8stdstring(result.concatString())
           << ": overlapping with a previous one";
       return false;
     }
 
     // create the new token
     pair<Token*,MorphoSyntacticData*> newToken = createAlternativeToken(result);
+    if (newToken.second->empty())
+    {
+      // ignore current idiomatic expression, continue
+      MORPHOLOGINIT;
+      LERROR << "CreateIdiomaticAlternative::operator() Got empty morphosyntactic data. Abort";
+      delete newToken.first;
+      delete newToken.second;
+      return false;
+    }
 
     // add the vertex
     LinguisticGraphVertex idiomaticVertex =
