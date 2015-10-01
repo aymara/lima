@@ -180,7 +180,7 @@ void ChainsDisambiguator::computePaths()
         const std::set< ChainIdStruct >& nextVertexChains = chainsMap[nextVertex];
         LinguisticCode nextMicroCateg(0);
         const MorphoSyntacticData* nextData = dataMap[nextVertex];
-        if (nextData == 0)
+        if (nextData == 0 || nextData->empty())
         {
           SADLOGINIT;
           LWARN << "vertex " << nextVertex << " has no data";
