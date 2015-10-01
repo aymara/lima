@@ -87,7 +87,8 @@ loadLibrary(const std::string& libName)
     {
       m_handles.insert(std::make_pair(libName,libhandle));
 #ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded";
+    LDEBUG << "the library " << libName.c_str() << " was loaded from supplementary search path";
+    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
 #endif
       return true;
     }
@@ -112,7 +113,8 @@ loadLibrary(const std::string& libName)
     {
       m_handles.insert(std::make_pair(libName,libhandle));
 #ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded";
+    LDEBUG << "the library " << libName.c_str() << " was loaded from system default search path";
+    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
 #endif
       return true;
     }
