@@ -719,6 +719,10 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
     m_micro(0),
     m_tempCompType(0)
 {
+#ifdef DEBUG_LP
+  SAPLOGINIT;
+  LDEBUG << "CreateCompoundTense::CreateCompoundTense()" << language << complement;
+#endif
   const std::string str=
     Common::Misc::limastring2utf8stdstring(complement);
 
@@ -728,7 +732,10 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
   m_micro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
 
-  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("TEMPCOMP");
+  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
+#ifdef DEBUG_LP
+  LDEBUG << "CreateCompoundTense::CreateCompoundTense() m_tempCompType" << m_tempCompType;
+#endif
 
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
@@ -773,7 +780,19 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   Token* tokenAux = tokenMap[auxVertex];
   Token* tokenPastPart = tokenMap[pastPartVertex];
   const MorphoSyntacticData* dataAux = dataMap[auxVertex];
+  if (dataAux->empty())
+  {
+    SAPLOGINIT;
+    LERROR << "CreateCompoundTense::operator() morphosyntactic data is empty for aux. Abort.";
+    return false;
+  }
   const MorphoSyntacticData* dataPastPart = dataMap[pastPartVertex];
+  if (dataPastPart->empty())
+  {
+    SAPLOGINIT;
+    LERROR << "CreateCompoundTense::operator() morphosyntactic data is empty for past participle. Abort.";
+    return false;
+  }
   LinguisticCode dataAuxMicro = dataAux->firstValue(*m_microAccessor);
 
   LinguisticCode tense = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAux->firstValue(*m_timeAccessor));
@@ -1125,7 +1144,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
                                      m_tempCompType);
 
 #ifdef DEBUG_LP
-  LDEBUG << "CreateCompoundTense: " << res;
+  LDEBUG << "CreateCompoundTense: " << m_tempCompType << res;
 #endif
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData == 0)
