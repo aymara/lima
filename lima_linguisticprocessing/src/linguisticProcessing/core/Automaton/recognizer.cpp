@@ -356,7 +356,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
      * Second step is to check these multi-term in graph from current position and select the longuest match
      */
 
-    bool success = gazeteerTrigger->checkMultiTerms(graph, position,
+    gazeteerTrigger->checkMultiTerms(graph, position,
                                      begin, end, analysis, additionalMultiTermList,
                                      triggerMatches );
     /*
