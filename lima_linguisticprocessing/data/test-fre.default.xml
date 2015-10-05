@@ -29,17 +29,19 @@
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>nom propre inconnu en tête de phrase</expl>
+  <expl>An unknown proper noun at sentence begin must get the NP tag and not be normalized
+    Change on 2015 10/05/2015. This test was verifying the absence of uppercase on normalized form, 
+    which is wrong.</expl>
   <test id="fre.default.2.1" trace=".default.xml"
     comment="Mopti a NP parmis ses categories par defaut"
     left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word//p[@prop='MACRO']/@val"
     operator="contains"
     right="NP"/>
   <test id="fre.default.2.2" trace=".default.xml"
-    comment="Mopti est normalisée en 'mopti'"
+    comment="Mopti est normalisée en 'Mopti'."
     left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@norm"
     operator="="
-    right="mopti"/>    
+    right="Mopti"/>    
 </testcase>
 <testcase id="fre.default.3" type="informatif">
   <call-parameters>
