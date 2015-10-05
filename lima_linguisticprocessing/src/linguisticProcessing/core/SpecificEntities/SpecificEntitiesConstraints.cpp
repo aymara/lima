@@ -64,6 +64,9 @@ ConstraintFunctionFactory<CreateSpecificEntity>
 ConstraintFunctionFactory<SetEntityFeature>
   SetEntityFeatureFactory(SetEntityFeatureId);
 
+ConstraintFunctionFactory<AddEntityFeatureAsEntity>
+  AddEntityFeatureAsEntityFactory(AddEntityFeatureAsEntityId);
+
 ConstraintFunctionFactory<AddEntityFeature>
   AddEntityFeatureFactory(AddEntityFeatureId);
 
@@ -477,8 +480,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
     else
     {
-      AnnotationGraphVertex src = *(matches.begin());
-      annotationData->annotate( agv, src, Common::Misc::utf8stdstring2limastring("holds"), 1);
+      if( recoData->hasVertexAsEmbededEntity((*matchIt).m_elem.first) )
+      {
+        LDEBUG << "CreateSpecificEntity::operator(): vertex " << *(matches.begin()) << " is embeded";
+        AnnotationGraphVertex src = *(matches.begin());
+        annotationData->annotate( agv, src, Common::Misc::utf8stdstring2limastring("holds"), 1);
+      }
     }
   }
 
@@ -900,7 +907,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         }
       }
     }
-    if( nbEdges > 1 )  {
+    if( nbEdges > 1 ) {
       LWARN << "SetEntityFeature:: Warning: ambiguïties in graph";
     }
 
@@ -938,6 +945,54 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     featureIt->setPosition(pos);
     featureIt->setLength(len);
   }
+  return true;
+}
+
+//----------------------------------------------------------------------------------------
+// AddEntityFeatureAsEntity : assert the the vertex is a named entity.
+// Add it to the list of components as an embeded entity (the list is used to create the link
+// "holds" between the annotation of the embeded and the embedding entity.
+// Remember the embedding entity is no yet created.
+
+AddEntityFeatureAsEntity::AddEntityFeatureAsEntity(MediaId language,
+                                   const LimaString& complement):
+ConstraintFunction(language,complement),
+m_featureName(""),
+m_featureType(QVariant::UserType)
+{
+  if (complement.size()) {
+    QStringList complementElements = complement.split(":");
+    m_featureName=complementElements.front().toUtf8().constData();
+    complementElements.pop_front();
+    if (!complementElements.empty()) {
+#ifdef DEBUG_LP
+      SELOGINIT;
+      LERROR << "AddEntityFeatureAsEntity::AddEntityFeatureAsEntity(): no type specification authorized for the feature ("
+             << complementElements << ") the feature type is the type of the entity";
+#endif
+    }
+  }
+}
+
+bool AddEntityFeatureAsEntity::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& /* unused graph */,
+           const LinguisticGraphVertex& vertex,
+           AnalysisContent& analysis) const
+{
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "AddEntityFeatureAsEntity:: (one argument) start... ";
+  LDEBUG << "AddEntityFeatureAsEntity::(feature:" << m_featureName << ", vertex:" << vertex << ")";
+#endif
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "AddEntityFeatureAsEntity:: Error: missing RecognizerData";
+    return false;
+  }
+  // add the vertex to the list of embeded named entities
+  recoData->addVertexAsEmbededEntity(vertex);
   return true;
 }
 

@@ -36,6 +36,7 @@ namespace SpecificEntities {
 #define isASpecificEntityId "isASpecificEntity"
 #define CreateSpecificEntityId "CreateSpecificEntity"
 #define SetEntityFeatureId "SetEntityFeature"
+#define AddEntityFeatureAsEntityId "AddEntityFeatureAsEntity"
 #define AddEntityFeatureId "AddEntityFeature"
 #define AppendEntityFeatureId "AppendEntityFeature"
 #define ClearEntityFeaturesId "ClearEntityFeatures"
@@ -134,6 +135,27 @@ private:
   Common::MediaticData::EntityType m_type;
   FsaStringsPool* m_sp;
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  QVariant::Type m_featureType;
+};
+
+/** 
+ * @brief This action add a vertex as an embeded entity
+ * of the entity (i.e. during the rule matching process). 
+ *
+ */
+class LIMA_SPECIFICENTITIES_EXPORT AddEntityFeatureAsEntity : public Automaton::ConstraintFunction
+{
+public:
+  AddEntityFeatureAsEntity(MediaId language,
+                   const LimaString& complement=LimaString());
+  ~AddEntityFeatureAsEntity() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                          const LinguisticGraphVertex& vertex,
+                          AnalysisContent& analysis) const;
+
+private:
+  std::string m_featureName;
+  Common::MediaticData::EntityType m_type;
   QVariant::Type m_featureType;
 };
 
