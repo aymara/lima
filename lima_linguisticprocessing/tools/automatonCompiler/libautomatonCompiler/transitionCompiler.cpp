@@ -37,6 +37,7 @@
 #include "linguisticProcessing/core/Automaton/gazeteerTransition.h"
 #include "linguisticProcessing/core/Automaton/starTransition.h"
 #include "linguisticProcessing/core/Automaton/entityTransition.h"
+#include "linguisticProcessing/core/Automaton/entityGroupTransition.h"
 #include "linguisticProcessing/core/Automaton/tstatusTransition.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
@@ -119,7 +120,7 @@ TransitionUnit* createTransition(const LimaString str,
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
 
 #ifdef DEBUG_LP
-  LDEBUG << "creating transition from string [" 
+  LDEBUG << "createTransition: creating transition from string [" 
          << Common::Misc::limastring2utf8stdstring(str)
          << "] with id" << id;
 #endif
@@ -163,7 +164,7 @@ TransitionUnit* createTransition(const LimaString str,
   if (s[0] == CHAR_NOKEEP_OPEN_TR) {
     if (s[s.length()-1] != CHAR_NOKEEP_CLOSE_TR) {
       AUCLOGINIT;
-      LERROR << "confused by no_keep format (maybe incomplete) :"
+      LERROR << "createTransition: confused by no_keep format (maybe incomplete) :"
              << Common::Misc::limastring2utf8stdstring(str);
     }
     else {
@@ -274,14 +275,24 @@ TransitionUnit* createTransition(const LimaString str,
   // ----------------------------------------------------------------------
   // entity transition
   else if (s.size()>=2 && s[0]==CHAR_BEGIN_ENTITY && s[s.size()-1]==CHAR_END_ENTITY) {
-    Common::MediaticData::EntityType type=
-      resolveEntityName(s.mid(1,s.size()-2),activeEntityGroups);
+    LimaString entityName(s.mid(1,s.size()-2));
+    Common::MediaticData::EntityType type=resolveEntityName(entityName,activeEntityGroups);
     if (type.isNull()) {
-      AUCLOGINIT;
-      LERROR << "cannot resolve entity name " 
-             << Common::Misc::limastring2utf8stdstring(s);
+      Common::MediaticData::EntityGroupId groupId = resolveGroupName(entityName,activeEntityGroups);
+      if( groupId == 0) {
+        AUCLOGINIT;
+        LERROR << "createTransition: cannot resolve entity name " 
+               << Common::Misc::limastring2utf8stdstring(s);
+      }
+      else {
+        AUCLOGINIT;
+        LDEBUG << "createTransition: create EntityGroupTransition(" << groupId << ")";
+        t=new EntityGroupTransition(groupId);
+      }
     }
     else {
+      AUCLOGINIT;
+      LDEBUG << "createTransition: create EntityTransition(" << type << ")";
       t=new EntityTransition(type);
     }
   }
@@ -313,27 +324,67 @@ TransitionUnit* createTransition(const LimaString str,
 
 //**********************************************************************
 //
+Common::MediaticData::EntityGroupId
+resolveGroupName(const LimaString s,
+                  const std::vector<LimaString>& activeEntityGroups)
+{
+#ifdef DEBUG_LP
+  AUCLOGINIT;
+  LDEBUG << "resolveGroupName: try to resolve group name " 
+         << Common::Misc::limastring2utf8stdstring(s);
+  Common::MediaticData::EntityGroupId foundGroup;
+#endif
+  try {
+    LimaString groupName=s;
+#ifdef DEBUG_LP
+    LDEBUG << "resolveGroupName: try group name " << Common::Misc::limastring2utf8stdstring(s);
+#endif
+    foundGroup = Common::MediaticData::MediaticData::single().getEntityGroupId(groupName);
+    // group is among active groups
+#ifdef DEBUG_LP
+    LDEBUG << "resolveGroupName: foundGroup" << foundGroup;
+#endif
+    for (vector<LimaString>::const_iterator it=activeEntityGroups.begin(),
+       it_end=activeEntityGroups.end(); it!=it_end; it++) {
+      if( groupName == *it ) {
+        return foundGroup;
+      }
+      LERROR << "resolveGroupName: group " << Common::Misc::limastring2utf8stdstring(s) << " not active";
+      return foundGroup;
+    }
+  }
+  catch (LimaException& e) {
+#ifdef DEBUG_LP
+      LERROR << "resolveGroupName: cannot resolve group for " 
+             << Common::Misc::limastring2utf8stdstring(s);
+#endif
+  }
+  return foundGroup;
+}
+
+//**********************************************************************
+//
 Common::MediaticData::EntityType
 resolveEntityName(const LimaString s,
                   const std::vector<LimaString>& activeEntityGroups)
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
-  LDEBUG << "TransitionCompiler: try to resolve entity name " 
+  LDEBUG << "resolveEntityName: try to resolve entity name " 
          << Common::Misc::limastring2utf8stdstring(s);
 #endif
   
   // test if word is a known entity name => in this case, entity transition
   if (s.indexOf(Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator())!=-1) {
 #ifdef DEBUG_LP
-    LDEBUG << "TransitionCompiler: entity name is complete";
+    LDEBUG << "resolveEntityName: entity name is complete";
 #endif
     try {
       return Common::MediaticData::MediaticData::single().getEntityType(s);
     }
     catch (LimaException& e) {
       AUCLOGINIT;
-      LERROR << "unknown entity " << s;
+      LERROR << "resolveEntityName: unknown entity " << s;
     }
   }
   else { // try to find this entity in active groups
@@ -343,14 +394,14 @@ resolveEntityName(const LimaString s,
       try {
         LimaString entityName=(*it)+Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator()+s;
 #ifdef DEBUG_LP
-        LDEBUG << "TransitionCompiler: try entity name " << Common::Misc::limastring2utf8stdstring(entityName);
+        LDEBUG << "resolveEntityName: try entity name " << Common::Misc::limastring2utf8stdstring(entityName);
 #endif
         Common::MediaticData::EntityType findType=
           Common::MediaticData::MediaticData::single().getEntityType(entityName);
         if (!type.isNull()) {
           // there is ambiguity
           AUCLOGINIT;
-          LERROR << "cannot resolve entity group for entity " 
+          LERROR << "resolveEntityName: cannot resolve entity group for entity " 
                  << Common::Misc::limastring2utf8stdstring(s)
                  << " (at least two groups contain this entity)";
         }
@@ -361,14 +412,14 @@ resolveEntityName(const LimaString s,
       catch (LimaException& e) { 
         // not in this group: do nothing (continue search)
 #ifdef DEBUG_LP
-        LDEBUG << "entity " << Common::Misc::limastring2utf8stdstring(s)
+        LDEBUG << "resolveEntityName: entity " << Common::Misc::limastring2utf8stdstring(s)
                << " not in group " << Common::Misc::limastring2utf8stdstring(*it);
 #endif
       }
     }
-    if (type.isNull()) {
+    if (type.isNull()) { // try to interpret s as group
       AUCLOGINIT;
-      LERROR << "cannot resolve entity group for entity " 
+      LERROR << "resolveEntityName: cannot resolve entity group for entity " 
              << Common::Misc::limastring2utf8stdstring(s)
              << " (no active group contains this entity)";
     }

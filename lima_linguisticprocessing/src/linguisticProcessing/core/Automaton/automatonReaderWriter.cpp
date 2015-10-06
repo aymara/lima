@@ -46,6 +46,7 @@
 #include "setTransition.h"
 #include "deaccentuatedTransition.h"
 #include "entityTransition.h"
+#include "entityGroupTransition.h"
 
 #include "common/Data/readwritetools.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/TStatus.h"
@@ -453,6 +454,12 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     t=new EntityTransition(m_entityTypeMapping[EntityType(typeId,groupId)]);
     break; 
   }
+  case T_ENTITY_GROUP: {
+    EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
+    // use entityGroup mapping
+    t=new EntityGroupTransition(m_entityGroupMapping[groupId]);
+    break; 
+  }
   default: {
     AULOGINIT;
     LERROR << "Undefined type of transition: " << codeTrans;
@@ -745,6 +752,12 @@ writeTransitionUnit(std::ofstream& file,
     Misc::writeUTF8StringField(file,t->getDeaccentuatedForm());
     MediaId lang=t->getLanguage();
     file.write((char*) &lang,sizeof(unsigned char));
+    break;
+  }
+  case T_ENTITY_GROUP: {
+    EntityGroupTransition* t=static_cast<EntityGroupTransition*>(transition);
+    EntityGroupId entityGroupId=t->entityGroupId();
+    Misc::writeCodedInt(file,entityGroupId);
     break;
   }
   case T_ENTITY: {

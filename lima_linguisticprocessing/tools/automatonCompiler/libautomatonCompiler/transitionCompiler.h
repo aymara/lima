@@ -67,6 +67,9 @@ Lima::LinguisticProcessing::Automaton::TransitionUnit*
 Common::MediaticData::EntityType
   resolveEntityName(const LimaString str,
                     const std::vector<LimaString>& activeEntityGroups);
+Common::MediaticData::EntityGroupId
+  resolveGroupName(const LimaString s,
+                   const std::vector<LimaString>& activeEntityGroups);
  
 } // end namespace
 } // end namespace
