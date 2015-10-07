@@ -37,7 +37,10 @@ friend  class AbstractResource;
   LimaFileSystemWatcher m_resourceFileWatcher;
 };
 
-AbstractResource::AbstractResource( QObject* parent ) : QObject( parent ), m_d(new AbstractResourcePrivate())
+AbstractResource::AbstractResource( QObject* parent ) : 
+    QObject( parent ), 
+    InitializableObject<AbstractResource,ResourceInitializationParameters>(), 
+    m_d(new AbstractResourcePrivate())
 {
   connect(&m_d->m_resourceFileWatcher,SIGNAL(fileChanged(QString)),this,SIGNAL(resourceFileChanged(QString)));
 }
@@ -47,7 +50,10 @@ AbstractResource::~AbstractResource()
   delete m_d;
 }
 
-AbstractResource::AbstractResource(const AbstractResource& r) : QObject(r.parent()), m_d(new AbstractResourcePrivate(*r.m_d))
+AbstractResource::AbstractResource(const AbstractResource& r) : 
+    QObject(r.parent()), 
+    InitializableObject<AbstractResource,ResourceInitializationParameters>(), 
+    m_d(new AbstractResourcePrivate(*r.m_d))
 {
   connect(&m_d->m_resourceFileWatcher,SIGNAL(fileChanged(QString)),this,SIGNAL(resourceFileChanged(QString)));
 }
