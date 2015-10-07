@@ -6,13 +6,17 @@ set defaultAction=>CreateSpecificEntity()
 
 # units (including some that are not in the dictionary)
 
+# TODO: remettre les entrée avec des espaces, ou éliminer les catégories???
+# \$,M\$,Mds\$,M \$,
+# M€,Mds€,Mds €,Md€,Md €,
+# ME,MdsE,Mds E,MdE,Md E,MEuros,
 @units=(
 yen,yens,
 pts,Pts,
-\$,M\$,Mds\$,M \$,
+\$,M\$,Mds\$,M\$,
 €,Euro,Euros,
-M€,Mds€,Mds €,Md€,Md €,
-ME,MdsE,Mds E,MdE,Md E,MEuros,
+M€,Mds€,Md€,
+ME,MdsE,MdE,MEuros,
 Go,Mo,t,m,MF,
 m2,
 p,
