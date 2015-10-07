@@ -38,7 +38,11 @@ localiser$V,
 ébranler$V,	
 détecter$V)
 
-@Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale,place$NC)
+# TODO: comment remettre les lemmes de rue et place ou supprimer les entrées avec un espace (route départementale)
+# @Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale,place$NC)
+@Street=(route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale)
+@StreetNC=(rue$NC,place$NC)
+
 
 #Quartier present dans la convention Quaero 
 # pas de liste ???
@@ -81,12 +85,18 @@ triangle::de Rocquencourt:LOCATION:
 =>AppendEntityFeature(right.3,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#loc.odo
+
+#idem avec le déclencheur sur rue ou place
+@StreetNC::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
 #******************************************************************************
 # les adresses
 #
-T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
+T_Ni>1::(@Street|StreetNC) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
 =>SetEntityFeature(trigger,"address-number")
 =>AppendEntityFeature(right.3.1,"other-adress-componant")
 =>AppendEntityFeature(right.3.2,"other-adress-componant")
