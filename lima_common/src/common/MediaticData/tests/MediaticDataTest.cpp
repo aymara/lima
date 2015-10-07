@@ -32,7 +32,7 @@
 using namespace Lima;
 
 // conversion functions
-BOOST_AUTO_TEST_CASE( MediaticData0 )
+BOOST_AUTO_TEST_CASE( MediaticDataTest )
 {
   QsLogging::initQsLog();
   Lima::AmosePluginsManager::single();

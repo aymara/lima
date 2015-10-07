@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
-add_subdirectory(tests)
+# add_subdirectory(tests)
 
 add_definitions( -DLIMA_MEDIATICDATA_EXPORTING )
 ########### next target ###############
