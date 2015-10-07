@@ -482,7 +482,9 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     {
       if( recoData->hasVertexAsEmbededEntity((*matchIt).m_elem.first) )
       {
+#ifdef DEBUG_LP
         LDEBUG << "CreateSpecificEntity::operator(): vertex " << *(matches.begin()) << " is embeded";
+#endif
         AnnotationGraphVertex src = *(matches.begin());
         annotationData->annotate( agv, src, Common::Misc::utf8stdstring2limastring("holds"), 1);
       }
@@ -809,9 +811,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& vertex,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "SetEntityFeature:: (one argument) start... ";
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
+#endif
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
@@ -831,7 +835,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   switch (m_featureType) {
     case QVariant::String:
+#ifdef DEBUG_LP
       LDEBUG << "SetEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
+#endif
       recoData->setEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
@@ -864,11 +870,13 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& v2,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
 //  LERROR << "SetEntityFeature:: Error: version with two vertices parameters is not implemented";
 //  return false;
   LDEBUG << "SetEntityFeature:: (two arguments) start... ";
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", v1:" << v1 << ", v2:" << v2 << ")";
+#endif
   
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
