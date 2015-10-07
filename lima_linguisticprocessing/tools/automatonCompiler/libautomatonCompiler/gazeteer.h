@@ -72,8 +72,15 @@ class Gazeteer : public std::vector<LimaString>
   LimaString readName(RecognizerCompiler& reco);
   void readValues(RecognizerCompiler& reco,
                   const LimaString& stringBegin=LimaString());
+  bool hasMultiTermWord() const { return m_hasMultiTermWord; }
+  bool hasNoCategoryNorTstatus() const { return m_hasNoCategoryNorTstatus; }
+  void resetCategoryOrTstatusFlag() { m_hasNoCategoryNorTstatus = false; }
+  void setHasMultiTermWordFlag() { m_hasMultiTermWord = true; }
+
  private:
   LimaString m_alias;
+  bool m_hasMultiTermWord;
+  bool m_hasNoCategoryNorTstatus;
   AutomatonString m_automatonString;
 };
 
@@ -81,7 +88,6 @@ class Gazeteer : public std::vector<LimaString>
 // inline access functions
 /***********************************************************************/
 inline uint64_t Gazeteer::numberOfWords() const { return size(); }
-inline void Gazeteer::addWord(const LimaString& s) { push_back(s); }
 inline const LimaString& Gazeteer::alias() const { return m_alias; }
 inline void Gazeteer::setAlias(const LimaString& a) { m_alias = a; }
 
