@@ -30,7 +30,9 @@ use categoriesClassesDeclaration-fre.txt
 
 @VerbeCognitif=(recommandé,pensé,cru,su,anticipé,supposé,assumé,prévu,prouvé,dit,écrit,attendu)
 
-@VerbeLogique=(sembler$V,apparaitre$V,importer$V,s'ensuivre$V,empêcher$V,se trouver$V,arriver$V)
+# TODO, comment réintégrer se trouver (ou supprimer les catégories)
+# @VerbeLogique=(sembler$V,apparaitre$V,importer$V,s'ensuivre$V,empêcher$V,se trouver$V,arriver$V)
+@VerbeLogique=(sembler$V,apparaitre$V,importer$V,s'ensuivre$V,empêcher$V,arriver$V)
 
 @VerbeImpersonnel=(falloir$V,faudrait,faudra,s'agir$V,pleuvoir$V,neiger$V,geler$V,venter$V,durer$V)
 
@@ -218,9 +220,20 @@ jeter$V:il @Negation? (@VerbeModal (@Adverbe){0-2})? (s'en|se):$ADV{0-n} $DET ($
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-@IdiomPassif=(prendre_acte$V,mettre_fin$V,mettre fin,mis fin)
+# TODO: comment réintégrer tous les cas dans le même trigger
+#@IdiomPassif=(prendre_acte$V,mettre_fin$V,mettre fin,mis fin)
+@IdiomPassif1=(prendre_acte$V,mettre_fin$V)
+
 #La Russie a menacé à plusieurs reprises Tallinn de sanctions économiques s'il n'était pas mis fin à ce que Moscou appelle "une violation des droits de l' homme".
-@IdiomPassif:il @Negation? (@VerbeModal (@Adverbe){0-2})? être$V? (@Adverbe){0-2}::SYNTACTIC_RELATION:
+@IdiomPassif1:il @Negation? (@VerbeModal (@Adverbe){0-2})? être$V? (@Adverbe){0-2}::SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@IdiomPassif2=(mettre\ fin,mis\ fin)
+
+@IdiomPassif2:il @Negation? (@VerbeModal (@Adverbe){0-2})? être$V? (@Adverbe){0-2}::SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,trigger.1,"Pleon")
 +CreateRelationBetween(left.1,trigger.1,"Pleon")
 =>AddRelationInGraph()
