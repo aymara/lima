@@ -43,6 +43,10 @@ template<typename Base,typename InitializationParameters = NoParameters>
 class InitializableObject {
 public:
 
+  InitializableObject() : m_id() {}
+  InitializableObject(const InitializableObject& object) { m_id = object.m_id; }
+  InitializableObject& operator=(const InitializableObject& object) { m_id = object.m_id; return *this; }
+  
   /**
   * Manager is the type of the Manager associated to the initializableObject.
   * This type is an instanciation of InitializableObjectManager template with
