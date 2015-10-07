@@ -9,7 +9,6 @@ set defaultAction=>CreateSpecificEntity()
 @month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
 
 @numday=(
-t_integer>1<31,
 premier,
 1er,
 deux,
@@ -41,7 +40,7 @@ vingt-sept,
 vingt-huit,
 vingt-neuf,
 trente,
-trente\ et\ un
+trente et un
 )
 
 @nummonth=(t_integer>1<12)
@@ -50,7 +49,7 @@ trente\ et\ un
 @numyear4=(t_integer>1700<2050)
 
 # lundi 22 mai 1968
-@day::@numday @month @numyear?:DATE:
+@day::(@numday | t_integer>1<31)  @month @numyear?:DATE:
 =>NormalizeDate()
 
 # jours simples
@@ -65,7 +64,7 @@ trente\ et\ un
 @day::prochain:DATE:
 =>NormalizeRelativeDate("next_day")
 
-@day::(dernier|@daytime|@numday)?:DATE:
+@day::(dernier|@daytime|@numday|t_integer>1<3)?:DATE:
 =>NormalizeRelativeDate()
 
 #------------------------------
@@ -77,10 +76,10 @@ trente\ et\ un
 @month:(de|d\') (@modifierDate)?:(@numyear)? à (@modifierDate)? @month (@numyear)?:DATE:
 =>NormalizeDate("isInterval")
 
-<NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
+<NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|t_integer>1<31|<NUMBER>)] [@month] [(@numyear)?]:DATE:
 =>NormalizeDate()
 
-@month:[du] [(@numday|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|<NUMBER>):(@numyear)?:DATE:
+@month:[du] [(@numday|t_integer>1<31|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|t_integer>1<31|<NUMBER>):(@numyear)?:DATE:
 =>NormalizeDate()
 
 #------------------------------
@@ -96,10 +95,10 @@ trente\ et\ un
 # 18 juin 40
 # 31 octobre prochain
 
-@month:@numday?:@numyear:DATE:
+@month:(@numday | t_integer>1<31)?:@numyear:DATE:
 =>NormalizeDate()
 
-@month:@numday?:(dernier|suivant)?:DATE:
+@month:(@numday | t_integer>1<31)?:(dernier|suivant)?:DATE:
 =>NormalizeRelativeDate()
 
 @month::prochain:DATE:
@@ -180,6 +179,9 @@ siècle$NC:<NUMBER>::DATE:
 # 22-05-68 
 # integer - integer - integer
 
+t_integer>1<31::- t_integer - t_integer:DATE:
+=>NormalizeDate()
+
 @numday::- t_integer - t_integer:DATE:
 =>NormalizeDate()
 
@@ -190,6 +192,9 @@ siècle$NC:<NUMBER>::DATE:
 # fraction / integer or integer / integer / integer
 
 @numday::/ t_integer / t_integer:DATE:
+=>NormalizeDate()
+
+t_integer>1<31::/ t_integer / t_integer:DATE:
 =>NormalizeDate()
 
 # Ne fonctionne pas remplace par @numyear4:T_Nf /::DATE:

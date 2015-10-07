@@ -9,7 +9,6 @@ set defaultAction=>CreateSpecificEntity()
 @month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
 
 @numday=(
-t_integer>1<31,
 premier,
 1er,
 deux,
@@ -50,7 +49,7 @@ trente\ et\ un
 @numyear4=(t_integer>1700<2950)
 
 # lundi 22 mai 1968
-@day::@numday @month @numyear?:DATE:
+@day::(@numday|t_integer>1<31) @month @numyear?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"numday")
 =>SetEntityFeature(right.2,"month")
@@ -86,7 +85,7 @@ trente\ et\ un
 =>NormalizeRelativeDate("next_day")
 
 # lundi après-midi, lundi dernier, lundi 8
-@day::(dernier|@daytime|@numday)?:DATE:
+@day::(dernier|@daytime|(@numday|t_integer>1<31))?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"datemod")
 =>NormalizeEntity()
@@ -110,7 +109,7 @@ trente\ et\ un
 =>NormalizeDate("isInterval")
 
 # de début septembre 98 à fin janvier 2012
-<NUMBER>:[du]:(@month)? (@numyear)? [au] [(@numday|<NUMBER>)] [@month] [(@numyear)?]:DATE:
+<NUMBER>:[du]:(@month)? (@numyear)? [au] [((@numday|t_integer>1<31)|<NUMBER>)] [@month] [(@numyear)?]:DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.1,"month")
 =>SetEntityFeature(right.2,"numyear")
@@ -123,7 +122,7 @@ trente\ et\ un
 
 # (du premier) septembre (1955 au) 31 aout 1956
 # TODO: trop de chose en [] ?
-@month:[du] [(@numday|<NUMBER>)] [(@month)?] [(@numyear)?] [au] (@numday|<NUMBER>):(@numyear)?:DATE:
+@month:[du] [((@numday|t_integer>1<31)|<NUMBER>)] [(@month)?] [(@numyear)?] [au] ((@numday|t_integer>1<31)|<NUMBER>):(@numyear)?:DATE:
 =>SetEntityFeature(left.2,"numday")
 =>SetEntityFeature(left.3,"month")
 =>SetEntityFeature(left.4,"numyear")
@@ -151,7 +150,7 @@ trente\ et\ un
 # 18 juin 40
 # 31 octobre prochain
 # 1er avril 1950
-@month:@numday?:@numyear:DATE:
+@month:(@numday|t_integer>1<31)?:@numyear:DATE:
 =>SetEntityFeature(left,"numday")
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right,"numyear")
@@ -159,7 +158,7 @@ trente\ et\ un
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@month:@numday?:(dernier|suivant)?:DATE:
+@month:(@numday|t_integer>1<31)?:(dernier|suivant)?:DATE:
 =>SetEntityFeature(left.1,"numday")
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.1,"datemod")
@@ -285,6 +284,17 @@ siècle$NC:<NUMBER>::DATE:
 # 22-05-68 
 # integer - integer - integer
 
+
+
+# Obligé de dupliquer la règle car on n'accepte pas "trente et un" et t_integer dans un gazeteer pour un trigger
+t_integer>1<31::- t_integer - t_integer:DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
 @numday::- t_integer - t_integer:DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.2,"month")
@@ -303,6 +313,15 @@ siècle$NC:<NUMBER>::DATE:
 
 # 22/05/68 
 # fraction / integer or integer / integer / integer
+
+
+t_integer>1<31::/ t_integer / t_integer:DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
 
 @numday::/ t_integer / t_integer:DATE:
 =>SetEntityFeature(trigger,"numday")
