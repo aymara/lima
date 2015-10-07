@@ -332,8 +332,8 @@ resolveGroupName(const LimaString s,
   AUCLOGINIT;
   LDEBUG << "resolveGroupName: try to resolve group name " 
          << Common::Misc::limastring2utf8stdstring(s);
-  Common::MediaticData::EntityGroupId foundGroup;
 #endif
+  Common::MediaticData::EntityGroupId foundGroup;
   try {
     LimaString groupName=s;
 #ifdef DEBUG_LP
@@ -349,15 +349,15 @@ resolveGroupName(const LimaString s,
       if( groupName == *it ) {
         return foundGroup;
       }
+      AUCLOGINIT;
       LERROR << "resolveGroupName: group " << Common::Misc::limastring2utf8stdstring(s) << " not active";
       return foundGroup;
     }
   }
   catch (LimaException& e) {
-#ifdef DEBUG_LP
+      AUCLOGINIT;
       LERROR << "resolveGroupName: cannot resolve group for " 
              << Common::Misc::limastring2utf8stdstring(s);
-#endif
   }
   return foundGroup;
 }

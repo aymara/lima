@@ -881,6 +881,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
+    SELOGINIT;
     LERROR << "SetEntityFeature:: Error: missing RecognizerData";
     return false;
   }
@@ -916,6 +917,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       }
     }
     if( nbEdges > 1 ) {
+      SELOGINIT;
       LWARN << "SetEntityFeature:: Warning: ambiguïties in graph";
     }
 
