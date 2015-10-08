@@ -41,6 +41,15 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 
 @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (@particule? @PersonNamePart){1-2}:PERSON:=>NormalizePersonName()
 
+# Mme Bernadette Chirac
+[@Title]::@Firstname @PersonNamePart:PERSON:=>NormalizePersonName()
+# [@Title]::@Firstname (@Initial|t_abbrev)? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+# [@Title]::@Firstname (@Initial|t_abbrev)? @particule? @PersonNamePart:PERSON:=>NormalizePersonName()
+# [@Title]::(@Initial|t_abbrev)? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+# [@Title]::(@Initial|t_abbrev)? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+[@Title]::(@Initial|t_abbrev)? @PersonNamePart:PERSON:=>NormalizePersonName()
+# [@Title]::(@Initial|t_abbrev)? @particule? @PersonNamePart:PERSON:=>NormalizePersonName()
+
 @PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
 @PersonNamePart:[$PREP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
