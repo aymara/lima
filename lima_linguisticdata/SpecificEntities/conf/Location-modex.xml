@@ -57,7 +57,7 @@
         <item value="NNP"/>
       </list>
       <list name="Location.URL">
-        <item value="NC"/>
+        <item value="NN"/>
       </list>
     </group>
   </module>
