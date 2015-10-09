@@ -137,6 +137,14 @@ class LIMA_AUTOMATON_EXPORT RecognizerData : public AnalysisData
     // @todo : concat to existing feature
     m_entityFeatures.appendFeature<ValueType>(name,value);
   }
+  void addVertexAsEmbededEntity(const LinguisticGraphVertex& vertex)
+  {
+    m_embededEntities.insert(vertex);
+  }
+  bool hasVertexAsEmbededEntity(const LinguisticGraphVertex& vertex) const
+  {
+    return (m_embededEntities.find(vertex) != m_embededEntities.end());
+  }
   void clearEntityFeatures();
   Automaton::EntityFeatures& getEntityFeatures() { return m_entityFeatures; }
   
@@ -155,6 +163,8 @@ private:
   
   // EntityFeatures : for functions to add features
   Automaton::EntityFeatures m_entityFeatures;
+  // embededEntities : set of embeded entities
+  std::set< LinguisticGraphVertex > m_embededEntities;
 };
 
 } // end namespace

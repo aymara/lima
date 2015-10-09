@@ -215,7 +215,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
       }
       const SpecificEntityAnnotation* annot=getSpecificEntityAnnotation(v,annotationData);
       if (annot != 0) {
-        outputEntity(out,v,annot,tokenMap,offset);
+        outputEntity(annotationData,out,v,annot,tokenMap,offset);
       }
     }
   }
@@ -251,7 +251,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
           continue;
         }
         v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph));
-        outputEntity(out,v,annot,tokenMap,offset);
+        outputEntity(annotationData,out,v,annot,tokenMap,offset);
       }
     }
   }   
@@ -270,18 +270,20 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
 }
 
 void SpecificEntitiesXmlLogger::
-outputEntity(std::ostream& out, 
-             LinguisticGraphVertex v,
-             const SpecificEntityAnnotation* annot,
-             const VertexTokenPropertyMap& tokenMap,
-             uint64_t offset) const
+outputEntity( AnnotationData* annotationData,
+              std::ostream& out, 
+              LinguisticGraphVertex v,
+              const SpecificEntityAnnotation* annot,
+              const VertexTokenPropertyMap& tokenMap,
+              uint64_t offset) const
 {
   LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
   //       LDEBUG << "SpecificEntitiesXmlLogger tokenMap[" << v << "] = " << vToken;
   if (vToken == 0)
   {
     SELOGINIT;
-    LERROR << "Vertex " << v << " has no entry in the analysis graph token map. This should not happen !!";
+    LERROR << "SpecificEntitiesXmlLogger::outputEntity: Vertex " << v
+           << " has no entry in the analysis graph token map. This should not happen !!";
   }
   else
   {
@@ -307,13 +309,61 @@ outputEntity(std::ostream& out,
       featureItr!=features_end; featureItr++)
       {
         if( featureItr->getPosition() != UNDEFPOSITION ) {
-	  out << "<" << featureItr->getName();
+          out << "<" << featureItr->getName();
           out << " pos=\"" << featureItr->getPosition() << "\"";
           out << " len=\"" << featureItr->getLength() << "\"";
-	  out << ">";
-	  out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
-	  << "</" << featureItr->getName() << ">";
-	}
+          out << ">";
+          out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
+              << "</" << featureItr->getName() << ">";
+        }
+      }
+      
+      // TODO: Follow "belongstose" links to outputs embeded entities as components
+      // Get the current annotationVertex (is there any more simple solution???)
+      std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,v,"annot");
+      AnnotationGraphVertex va1;
+      std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
+      for( ; it != matches.end(); it++)
+      {
+        va1=*it;
+        SELOGINIT;
+        LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: get agv = " << va1;
+        if (annotationData->hasAnnotation(va1, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+        break;
+      }
+      if( it == matches.end() )
+      {
+        SELOGINIT;
+        LERROR << "SpecificEntitiesXmlLogger::outputEntity: could not find annotation of node " << v << "in LinguisticGraph";
+      }
+      else
+      {
+        SELOGINIT;
+        LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: agv " << va1 << " is a SpecificEntity Annotation";
+        // Follow "belongstose" out_edges to get annotationVertex of embededed NE
+        AnnotationGraphOutEdgeIt it1, it1_end;
+        boost::tie(it1, it1_end) = boost::out_edges(va1, annotationData->getGraph());
+        for (; it1 != it1_end; it1++)
+        {
+          if ( annotationData->intAnnotation((*it1), Common::Misc::utf8stdstring2limastring("holds"))==1)
+          {
+            AnnotationGraphVertex va2;
+            va2 = target(*it1, annotationData->getGraph());
+            LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: embeded agv = " << va2;
+            // récupérer le noeud du graphe linguistique
+            LinguisticGraphVertex v2 = annotationData->intAnnotation(va2, Common::Misc::utf8stdstring2limastring(m_graph));
+            LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: vertex in " << m_graph << " is " << v2;
+            // récupérer l'annotation SpecifiEntity
+            if (annotationData->hasAnnotation(va2, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+            {
+              SpecificEntityAnnotation* annot2 =
+                annotationData->annotation(va2, Common::Misc::utf8stdstring2limastring("SpecificEntity")).pointerValue<SpecificEntityAnnotation>();
+              LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: annot2 = " << annot2;
+              outputEntity(annotationData,out, v2, annot2, tokenMap, offset);
+              break;
+            }
+          }
+        }
       }
       out << "</components>"
       << "<normalization>";

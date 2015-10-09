@@ -57,6 +57,7 @@ typedef enum {
   T_SET,
   T_DEACCENTUATED,
   T_ENTITY,
+  T_ENTITY_GROUP,
   T_GAZETEER
 } TypeTransition; // useful for the read/write functions
 

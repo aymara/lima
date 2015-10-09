@@ -65,7 +65,8 @@ private:
   const SpecificEntityAnnotation* 
   getSpecificEntityAnnotation(LinguisticGraphVertex v,
                               const Common::AnnotationGraphs::AnnotationData* annotationData) const;
-  void outputEntity(std::ostream& out, 
+  void outputEntity(Common::AnnotationGraphs::AnnotationData* annotationData,
+                    std::ostream& out, 
                     LinguisticGraphVertex v,
                     const SpecificEntityAnnotation* annot,
                     const VertexTokenPropertyMap& tokenMap,

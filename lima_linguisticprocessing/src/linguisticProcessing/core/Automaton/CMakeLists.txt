@@ -50,6 +50,7 @@ SET(lima-lp-automaton_LIB_SRCS
    automatonCommon.cpp
    searchGraph.cpp
    EntityFeatures.cpp
+   entityGroupTransition.cpp
    entityTransition.cpp
 )
 
@@ -69,7 +70,7 @@ AutomatonExport.h  constraintFunction.h transition.h   rule.h transitionSearchSt
     setTransition.h deaccentuatedTransition.h   recognizer.h EntityFeatures.h
     posTransition.h andTransition.h   starTransition.h constraint.h
     constraintFunctionFactory.h tstatusTransition.h   epsilonTransition.h
-    automatonReaderWriter.h entityTransition.h    entityProperties.h
+    automatonReaderWriter.h entityTransition.h entityGroupTransition.h entityProperties.h
     searchGraph.h
     transitionUnit.h
     automaton.h    lemmaTransition.h numericTransition.h   basicConstraintFunctions.h constraintCheckList.h
