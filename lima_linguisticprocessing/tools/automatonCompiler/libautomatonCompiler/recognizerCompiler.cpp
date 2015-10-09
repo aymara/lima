@@ -539,7 +539,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
   if( (!gazeteer.hasNoCategoryNorTstatus()) && gazeteer.hasMultiTermWord() ) {
     throwError("use of gazetteer with multi-term words and with category or t_status forbidden in trigger: ",m_currentLine);
   }
-  if( !gazeteer.hasNoCategoryNorTstatus() )
+  if( gazeteer.hasNoCategoryNorTstatus() )
   {
     const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
     TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger);
