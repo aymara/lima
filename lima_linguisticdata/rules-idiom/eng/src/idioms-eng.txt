@@ -4118,7 +4118,6 @@ B;;A;yet;as yet;adverb;as yet;
 B;;A;yet;As yet;adverb;as yet;
 ;;;door;next door;locative adverb;next-door;
 GC;;A;International;International University;proper noun;International University;
-GC;;A;Supreme;Supreme Court;proper noun;Supreme Court;
 GC;;A;Circuit;Circuit Court;proper noun;Circuit Court;
 GC;;A;Police;Police Department;proper noun;Police Department;
 GC;;A;state;state of the art;adjective;state of the art;
