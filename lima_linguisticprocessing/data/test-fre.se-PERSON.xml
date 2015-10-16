@@ -424,7 +424,7 @@
     <expl>PERSON : titre avec initiale.</expl>
     <test id="fre.se.61.1" trace=".se.xml"
           comment="Person.PERSON."
-          left="XPATH#//entities/entity[position=61][length=8]/type"
+          left="XPATH#//entities/entity[pos=57][len=12]/type"
           operator="="
           right="Person.PERSON"/>
   </testcase>  
@@ -439,7 +439,7 @@
     <expl>PERSON : titre</expl>
     <test id="fre.se.62.1" trace=".se.xml"
           comment="Person.PERSON."
-          left="XPATH#//entities/entity[position=57][length=8]/type"
+          left="XPATH#//entities/entity[pos=57][len=8]/type"
           operator="="
           right="Person.PERSON"/>
   </testcase>  

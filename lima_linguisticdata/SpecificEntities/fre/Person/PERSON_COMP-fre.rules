@@ -34,13 +34,14 @@ use person.lst
 #[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 # rule Obama
-Barack::Obama:PERSON:
-=>SetEntityFeature(trigger,"firstname")
-=>SetEntityFeature(right,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Barack::Obama:PERSON:
+# =>SetEntityFeature(trigger,"firstname")
+# =>SetEntityFeature(right,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
-# generic rule for components with stop condition
+# generic rule with firstname with stop condition
+# Ambroise Long va à la cantine.
 @Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} [($DET|$PRON|$ADJ|$V)]:PERSON:
 =>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
@@ -50,30 +51,54 @@ Barack::Obama:PERSON:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# generic rule for components without stop condition
+# generic rule with firstname without stop condition
+# title is not usefull, because rule with title ar triggered 1 node before!!!
+# Barack Obama
+# le président Ambroise de Monge
+# le président Ambroise André Monge: 2 firstname disable, NOK because of duration of compilation
+# le président Augustin G. Monge
+# le président Ambroise G Monge
+# Ambroise Long
 @Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
-=>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
 =>AddEntityFeature(right.1,"firstname")
 =>AppendEntityFeature(right.2.1,"lastname")
 =>AppendEntityFeature(right.2.2,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# generic for title initial lastname
-t_abbrev:(@Title|@FunctionTitle):(@PersonNamePart){1-2}:PERSON:
-=>SetEntityFeature(left,"title")
+# generic with title (take precedence over generic with firstname because title is in 1st position)
+# Dr Watson
+# le président Ambroise de Monge
+# le président Ambroise André Monge: 2 firstname disable, NOK because of duration of compilation
+# le président Augustin G. Monge
+# le président Ambroise G Monge
+# Une des responsables de l'opération "Pièces Jaunes" est Mme Bernadette Chirac.
+# le président Ambroise Monge mange
+@Title::@Firstname? (@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
+=>SetEntityFeature(trigger,"title")
+=>SetEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AddEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# generic with initial lastname without title nor firstname
+# too productive?
+# B. Youza
+t_abbrev::(@PersonNamePart){1-2}:PERSON:
 =>SetEntityFeature(trigger,"firstname")
 =>AppendEntityFeature(right,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# Dr Watson
-@Title::@PersonNamePart:PERSON:
-=>SetEntityFeature(trigger,"title")
-=>SetEntityFeature(right,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# @Title::@PersonNamePart:PERSON:
+# =>SetEntityFeature(trigger,"title")
+# =>SetEntityFeature(right,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
 # OME @PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 # OME @PersonNamePart:[$PREP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
