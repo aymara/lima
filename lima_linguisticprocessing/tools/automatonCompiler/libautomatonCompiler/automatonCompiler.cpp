@@ -27,6 +27,7 @@
 ************************************************************************/
 
 #include "automatonCompiler.h"
+#include "gazeteer.h"
 #include "transitionCompiler.h"
 #include "compilerExceptions.h"
 #include "linguisticProcessing/core/Automaton/automatonCommon.h"
@@ -49,6 +50,7 @@ namespace AutomatonCompiler {
 /***********************************************************************/
 Automaton buildAutomaton(const AutomatonString& automatonString,
                          MediaId language, 
+                         const std::vector<Gazeteer>& gazeteers,
                          SearchGraphSense sense,
                          const std::vector<LimaString>& activeEntityGroups) {
   AUCLOGINIT;
@@ -65,7 +67,7 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
   else {
 //     LDEBUG << "automatonString is: " << automatonString;
     Tstate finalState=buildAutomaton(a,automatonString,
-                                     initialState,currentId,language,
+                                     initialState,currentId,language,gazeteers,
                                      activeEntityGroups);
     // Lima::TimeUtilsController* ctrlAF  = new Lima::TimeUtilsController("make final", true);
     // LDEBUG << "final state is " << finalState;
@@ -111,6 +113,7 @@ Tstate buildAutomaton(Automaton& a,
                       const AutomatonString& automatonString, 
                       const Tstate& initialState, const std::string& currentId,
                       MediaId language,
+                      const std::vector<Gazeteer>& gazeteers,
                       const std::vector<LimaString>& activeEntityGroups) {
   
 #ifdef DEBUG_LP
@@ -133,7 +136,7 @@ Tstate buildAutomaton(Automaton& a,
     // TODO: check if we have to handle modifiers of numbering like first, next and last in currentId
     while (min > 0) {
       // must be there x times -> insert it as non-optional
-      finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,activeEntityGroups);
+      finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,gazeteers,activeEntityGroups);
       min--;
       if (max != AutomatonString::INFINITE_OCC) { 
         max--;
@@ -148,12 +151,12 @@ Tstate buildAutomaton(Automaton& a,
       // add the epsilon-transition from first to last (for minOcurrences=0)
       // and insert again the automaton from last to first 
       // (to avoid epsilon-cycles)
-      finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,activeEntityGroups);
+      finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,gazeteers,activeEntityGroups);
       a.addTransition(optInitialState,finalState,new EpsilonTransition());
       
       Tstate tmpFinalState(finalState);
       Tstate tmpReturnState = buildAutomatonNotOptional(a,automatonString,
-                                                        tmpFinalState,currentId,language,activeEntityGroups);
+                                                        tmpFinalState,currentId,language,gazeteers,activeEntityGroups);
       //a.addTransition(tmpReturnState,optInitialState,new EpsilonTransition());
       a.addTransition(tmpReturnState,finalState,new EpsilonTransition());
 
@@ -168,7 +171,7 @@ Tstate buildAutomaton(Automaton& a,
       // insert it as non-optional as many times as necessary 
       // and add the epsilon-transition
       while (max > 0) {
-        finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,activeEntityGroups);
+        finalState = buildAutomatonNotOptional(a,automatonString,finalState,currentId,language,gazeteers,activeEntityGroups);
         a.addTransition(optInitialState,finalState,new EpsilonTransition());
         max--;
       }
@@ -176,7 +179,7 @@ Tstate buildAutomaton(Automaton& a,
     return finalState;
   }
   else {
-    return buildAutomatonNotOptional(a,automatonString,initialState,currentId,language,activeEntityGroups);
+    return buildAutomatonNotOptional(a,automatonString,initialState,currentId,language,gazeteers,activeEntityGroups);
   }
 }
 
@@ -184,6 +187,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
                                  const AutomatonString& automatonString, 
                                  const Tstate& initialState, const std::string& initialId,
                                  MediaId language,
+                                 const std::vector<Gazeteer>& gazeteers,
                                  const std::vector<LimaString>& activeEntityGroups) 
 {
 #ifdef DEBUG_LP
@@ -204,7 +208,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
       it=automatonString.getParts().begin(),
       it_end=automatonString.getParts().end();
     for (; it!=it_end; it++) {
-      Tstate altFinalState=buildAutomaton(a,*it,initialState,currentId,language,activeEntityGroups);
+      Tstate altFinalState=buildAutomaton(a,*it,initialState,currentId,language,gazeteers,activeEntityGroups);
       a.addTransition(altFinalState,finalState,new EpsilonTransition()); // id???
     }
     return finalState;
@@ -224,7 +228,7 @@ Tstate buildAutomatonNotOptional(Automaton& a,
     for (; it!=it_end; it++, subCount++) {
       std::string currentId(initialId);
       currentId.append(".").append(std::to_string(static_cast<long long>(subCount)));
-      seqfinalState=buildAutomaton(a,*it,seqInitialState,currentId,language,activeEntityGroups);
+      seqfinalState=buildAutomaton(a,*it,seqInitialState,currentId,language,gazeteers,activeEntityGroups);
       seqInitialState=seqfinalState;
     }
     return seqfinalState;
@@ -234,7 +238,42 @@ Tstate buildAutomatonNotOptional(Automaton& a,
 #ifdef DEBUG_LP
     LDEBUG << "is unit ";
 #endif
-    TransitionUnit *t = createTransition(automatonString,language,initialId,activeEntityGroups);
+    TransitionUnit* t;
+#ifdef DEBUG_LP
+    LDEBUG << "buildAutomatonNotOptional: createSimpleTransition from " << automatonString.getString();
+#endif
+    t = createTransition(automatonString,language,initialId,activeEntityGroups);
+    if (t != 0) {
+      Tstate finalState = a.addState();
+      a.addTransition(initialState, finalState, t);
+      return finalState;
+    }
+    else {
+      throw AutomatonErrorException("attempt to insert empty transition\n");
+    }
+  }
+  else if (automatonString.isSimpleGazeteer()) {
+#ifdef DEBUG_LP
+    LDEBUG << "is simpleGazeteer ";
+#endif
+    TransitionUnit* t;
+    LimaString gazeteerName = automatonString.getUnitString().mid(1,automatonString.getString().size()-1);
+    int i;
+    for (i=0; i<gazeteers.size(); i++) {
+      if (gazeteers[i].alias() == gazeteerName) {
+        break;
+      }
+    }
+    const Gazeteer& gazeteer = gazeteers[i];
+    const std::vector<LimaString> gazeteerAsVectorOfString = gazeteer;
+#ifdef DEBUG_LP
+    LDEBUG << "buildAutomatonNotOptional: createGazeteerTransition from " << gazeteer.alias();
+#endif
+    // t = createGazeteerTransition(automatonString,language,initialId,activeEntityGroups,gazeteerAsVectorOfString,true);
+    // TODO: replace new GazeteerTransition by createTransition....
+    t = new GazeteerTransition(gazeteerAsVectorOfString,gazeteer.alias(),true);
+    t->setId(initialId);
+
     if (t != 0) {
       Tstate finalState = a.addState();
       a.addTransition(initialState, finalState, t);
