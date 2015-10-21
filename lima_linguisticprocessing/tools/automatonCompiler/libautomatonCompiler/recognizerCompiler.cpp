@@ -380,6 +380,10 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
           << ": trigger=" << *trigger;
     reco.addRule(trigger,r);
+#ifdef DEBUG_LP
+    LDEBUG << "rule[" << m_nbRule << "]=" << *r;
+#endif
+    
     m_nbRule++;
     delete trigger;
   }
