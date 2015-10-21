@@ -1,0 +1,60 @@
+set encoding=utf8
+using modex Location-modex.xml
+using groups Location
+using modex Person-modex.xml
+using groups Person
+set defaultAction=>CreateSpecificEntity()
+
+use title.lst,function_title.lst
+use ../Location/annonceurLieu.lst
+
+# TODO: mettre le gazeteer dans un fichier à partager avec Location
+@Street=(rue,route,chemin,avenue,voie,impasse,venelle,autoroute,nationnale,départementale,route nationale,route  départementale,route communale,place)
+
+#====================== Lieux
+
+# adresses
+# rue de la Beauce
+# On ne garde pas l'entité Location
+@Street::$ADJ? (de|des|du|d'|de $DET)? <Location.LOCATION>:LOCATION: 
+=>AppendEntityFeature(trigger,"kind")
+=>AddEntityFeature(right.1,"name")
+=>AppendEntityFeature(right.2,"name")
+=>AppendEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# rue du général de Gaulle
+#  On ne garde pas l'entité Personne
+@Street:: (de|des|du|d'|de $DET)? <Person.PERSON>:LOCATION:
+=>AddEntityFeature(trigger,"street")
+=>AddEntityFeature(right.2,"name:string")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#place de la république
+@Street::(à la|au|aux|de|des|du|d'|de $DET)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#loc.odo
+
+@adminTitle=(député,conseiller général,sénateur,maire,président,préfet)
+
+# "député de l'Essonne" ou "maire de Paris"
+#  On garde l'entité Location et on produit 2 entités imbriquées
+#TODO Est-ce qu'on peut tester <Location.CITY> ou <Location> seulement
+@adminTitle::(de|des|du|d'|de $DET) <Location>:PERSON:
+=>AddEntityFeature(trigger,"title")
+=>AddEntityFeatureAsEntity(right.2,"Location")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Family=(frère,soeur,femme,mari,époux,épouse,père,mère,grand-père,grand-mère,fils,fille,petit-fils,petite-fille,nièce,neveu,cousin,oncle,tante,cousine)
+#  frère du roi
+@Family:beau$ADJ: (du|de|de la|de l')? <Person.PERSON>:PERSON:
+=>AddEntityFeature(trigger,"family")
+=>AddEntityFeatureAsEntity(right.2,"Person")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
