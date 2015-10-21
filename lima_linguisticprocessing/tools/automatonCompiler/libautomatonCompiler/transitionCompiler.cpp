@@ -27,6 +27,7 @@
 
 #include "transitionCompiler.h"
 #include "ruleFormat.h"
+#include "gazeteer.h"
 #include "tstring.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/TStatus.h"
@@ -42,6 +43,7 @@
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
+
 
 using namespace std;
 using namespace Lima::Common;
@@ -67,21 +69,41 @@ TStatusTransition* createDefaultTStatusTransition(const LimaString& str,
 // creates a transition from a entry string, depending on the syntax
 // defined in the previous macros
 //
-// TODO: unify diffferent Factory for Transition 
+// TODO: unify different Factory for Transition ...
 TransitionUnit*
-  createGazeteerTransition(const AutomatonString& automatonString,
+  createGazeteerTransition(const LimaString& gazeteerName,
                  MediaId language, const std::string& id,
                  const std::vector<LimaString>& activeEntityGroups,
-                 const std::vector<LimaString>& gazeteerAsVectorOfString,
-                           const bool keepTrigger)
+                 const vector<Gazeteer>& gazeteers,
+                 const bool keep,
+                 const bool head)
 {
-  return createTransition(automatonString.getUnitString(),
-                          language, id,
-                          activeEntityGroups,
-                          keepTrigger,
-                          automatonString.isNegative(),
-                          automatonString.getConstraints(),
-                          gazeteerAsVectorOfString);
+  int gazeteerIndex;
+  for (gazeteerIndex=0; gazeteerIndex<gazeteers.size(); gazeteerIndex++) {
+    if (gazeteers[gazeteerIndex].alias() == gazeteerName) {
+      break;
+    }
+  }
+  if ( gazeteerIndex >= gazeteers.size() || gazeteers[gazeteerIndex].size() == 0 ) {
+    AUCLOGINIT;
+    string str=Misc::limastring2utf8stdstring(gazeteerName);
+    if (gazeteerIndex<gazeteers.size()) {
+      LERROR << "empty class as trigger [" << str << "]";
+    }
+    else {
+     LERROR << "Unrecognized class as trigger [" << str << "]";
+    }
+    return 0;
+  }
+  const Gazeteer& gazeteer = gazeteers[gazeteerIndex];
+  const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
+  // TODO bool negative = automatonString.isNegative()??, Est-ce qu'on autorise un trigger avec une négation?
+  bool negative(false);
+  TransitionUnit* t = new GazeteerTransition(gazeteerAsVectorOfString, gazeteerName, keep); 
+  t->setNegative(negative);
+  t->setHead(head);
+  t->setId(id);
+  return t;
 }
 
 TransitionUnit*

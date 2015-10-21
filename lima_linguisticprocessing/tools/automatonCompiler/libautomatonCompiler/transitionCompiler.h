@@ -47,12 +47,21 @@ Lima::LinguisticProcessing::Automaton::TransitionUnit*
                    MediaId language, const std::string& id,
                    const std::vector<LimaString>& activeEntityGroups);
 
-Lima::LinguisticProcessing::Automaton::TransitionUnit*
+/**
+ * Lima::LinguisticProcessing::Automaton::TransitionUnit*
   createGazeteerTransition(const AutomatonString& automatonString,
                  MediaId language, const std::string& id,
                  const std::vector<LimaString>& activeEntityGroups,
                  const std::vector<LimaString>& gazeteerAsVectorOfString,
                  const bool keepTrigger);
+*/
+Lima::LinguisticProcessing::Automaton::TransitionUnit*
+  createGazeteerTransition(const LimaString& gazeteerName,
+                 MediaId language, const std::string& id,
+                 const std::vector<LimaString>& activeEntityGroups,
+                 const std::vector<Gazeteer>& gazeteers,
+                 const bool keep=true,
+                 const bool head=false);
 
 Lima::LinguisticProcessing::Automaton::TransitionUnit* 
   createTransition(const LimaString,

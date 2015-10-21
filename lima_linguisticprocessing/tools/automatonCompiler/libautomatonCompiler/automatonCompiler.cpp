@@ -252,29 +252,42 @@ Tstate buildAutomatonNotOptional(Automaton& a,
       throw AutomatonErrorException("attempt to insert empty transition\n");
     }
   }
+  // We do not yet know how to use gazetteer with any element defined with a category or with space chrecter
   else if (automatonString.isSimpleGazeteer()) {
 #ifdef DEBUG_LP
     LDEBUG << "is simpleGazeteer ";
 #endif
-    TransitionUnit* t;
-    LimaString gazeteerName = automatonString.getUnitString().mid(1,automatonString.getString().size()-1);
-    int i;
-    for (i=0; i<gazeteers.size(); i++) {
-      if (gazeteers[i].alias() == gazeteerName) {
-        break;
-      }
-    }
-    const Gazeteer& gazeteer = gazeteers[i];
-    const std::vector<LimaString> gazeteerAsVectorOfString = gazeteer;
-#ifdef DEBUG_LP
-    LDEBUG << "buildAutomatonNotOptional: createGazeteerTransition from " << gazeteer.alias();
-#endif
+     const LimaString& unitString = automatonString.getUnitString();
+     const LimaString& gazeteerName = unitString.mid(1,unitString.size()-1);
+// OME    LimaString gazeteerName = automatonString.getUnitString().mid(1,automatonString.getString().size()-1);
+// OME     int i;
+// OME     for (i=0; i<gazeteers.size(); i++) {
+// OME       if (gazeteers[i].alias() == gazeteerName) {
+// OME         break;
+// OME       }
+// OME     }
+// OME     const Gazeteer& gazeteer = gazeteers[i];
+// OME    const std::vector<LimaString> gazeteerAsVectorOfString = gazeteer;
+// OME #ifdef DEBUG_LP
+// OME     LDEBUG << "buildAutomatonNotOptional: new GazeteerTransition from " << gazeteer.alias();
+// OME #endif
     // t = createGazeteerTransition(automatonString,language,initialId,activeEntityGroups,gazeteerAsVectorOfString,true);
-    // TODO: replace new GazeteerTransition by createTransition....
-    t = new GazeteerTransition(gazeteerAsVectorOfString,gazeteer.alias(),true);
-    t->setId(initialId);
+    // DONE?: replace new GazeteerTransition by createTransition....
+    // t = new GazeteerTransition(gazeteerAsVectorOfString,gazeteer.alias(),true);
+    // TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger); */
+    // TODO, vérifier que 
+    //     - que trigger = true, est le bon paramétrage
+    //     - que head = false est le bon paramétrage
+    //     - gérer aussi les "constraints"
+    TransitionUnit* t = createGazeteerTransition(gazeteerName,
+                 language, initialId, activeEntityGroups,
+                 gazeteers,true,false);
 
     if (t != 0) {
+      const std::vector<Constraint>& constraints = automatonString.getConstraints();
+      for (std::size_t i(0); i<constraints.size(); i++) {
+        t->addConstraint(constraints[i]);
+      }
       Tstate finalState = a.addState();
       a.addTransition(initialState, finalState, t);
       return finalState;

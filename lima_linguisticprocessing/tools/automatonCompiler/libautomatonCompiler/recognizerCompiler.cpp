@@ -488,17 +488,17 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
 
   AUCLOGINIT;
   // find gazeteer
-  std::size_t i;
-  for (i=0; i<gazeteers.size(); i++) {
-    if (gazeteers[i].alias() == gazeteerName) {
+  std::size_t gazeteerIndex;
+  for (gazeteerIndex=0; gazeteerIndex<gazeteers.size(); gazeteerIndex++) {
+    if (gazeteers[gazeteerIndex].alias() == gazeteerName) {
       break;
     }
   }
 
   // gazeteer not found
-  if ( i >= gazeteers.size() || gazeteers[i].size() == 0 ) {
+  if ( gazeteerIndex >= gazeteers.size() || gazeteers[gazeteerIndex].size() == 0 ) {
     string str=Misc::limastring2utf8stdstring(gazeteerName);
-    if (i<gazeteers.size()) {
+    if (gazeteerIndex<gazeteers.size()) {
       printWarning("empty class as trigger ["+str+"]",ruleString);
     }
     else {
@@ -506,7 +506,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
     }
     return;
   }
-  const Gazeteer& gazeteer = gazeteers[i];
+  const Gazeteer& gazeteer = gazeteers[gazeteerIndex];
   Rule* r=new Rule;
 
   // check if there are agreement constraints on following lines
@@ -545,9 +545,11 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
   }
   if( gazeteer.hasNoCategoryNorTstatus() )
   {
-    const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
-    TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger);
-
+    // const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
+    // TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger); */
+    TransitionUnit* trigger = createGazeteerTransition(gazeteerName,
+                 language, currentId, m_activeEntityGroups,
+                 gazeteers,keepTrigger,headTrigger);
     if (trigger != 0)
     {
       //copy the properties of the trigger of the rule
