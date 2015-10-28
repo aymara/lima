@@ -27,12 +27,6 @@ use person.lst
 
 @PersonNamePart=(t_capital_1st,t_capital,$NP)
 
-#[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
-
-#[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
-
-#[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
-
 # rule Obama
 # Barack::Obama:PERSON:
 # =>SetEntityFeature(trigger,"firstname")
@@ -68,7 +62,7 @@ use person.lst
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# generic with title (take precedence over generic with firstname because title is in 1st position)
+# generic with title (take precedence over generic with firstname because title is before firstname)
 # Dr Watson
 # le président Ambroise de Monge
 # le président Ambroise André Monge: 2 firstname disable, NOK because of duration of compilation
@@ -80,7 +74,7 @@ use person.lst
 =>SetEntityFeature(trigger,"title")
 =>SetEntityFeature(right.1,"firstname")
 =>AddEntityFeature(right.2,"firstname")
-=>AddEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
 =>AppendEntityFeature(right.4,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -89,7 +83,7 @@ use person.lst
 =>SetEntityFeature(trigger,"title")
 =>SetEntityFeature(right.1,"firstname")
 =>AddEntityFeature(right.2,"firstname")
-=>AddEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
 =>AppendEntityFeature(right.4,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -102,12 +96,6 @@ t_abbrev::(@PersonNamePart){1-2}:PERSON:
 =>AppendEntityFeature(right,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-
-# @Title::@PersonNamePart:PERSON:
-# =>SetEntityFeature(trigger,"title")
-# =>SetEntityFeature(right,"lastname")
-# =>NormalizeEntity()
-# =<ClearEntityFeatures()
 
 #t_capital_1st:[@TitlePlural]:(t_capital_1st|$NP){0-2} [et] (t_capital_1st|$NP){1-3}:PERSON:
 #$NP:[@TitlePlural]:(t_capital_1st|$NP){0-2} [et] (t_capital_1st|$NP){1-3}:PERSON:
