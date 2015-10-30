@@ -36,6 +36,8 @@ use ../Location/streetKey.lst
 =<ClearEntityFeatures()
 #loc.odo
 
+#====================== Personnes
+
 # Governor of Oklahoma
 #  On garde l'entité Location et on produit 1 entité imbriquée
 #@adminTitle::of <Location>:PERSON:
@@ -46,9 +48,17 @@ governor::of Oklahoma:PERSON:
 =<ClearEntityFeatures()
 
 @Family=(brother,sister,wife,spouse,husband,father,mother,grandfather,grandmother,son,daughter,nephew,niece,cousin,uncle,aunt)
-#  frère du roi
+# daughter of Barack Obama
 @Family:: of <Person.PERSON>:PERSON:
 =>AddEntityFeature(trigger,"family")
 =>AddEntityFeatureAsEntity(right.2,"Person")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# test relation family avec marque du posessif '
+# Barack Obama's daughter
+@Family:<Person.PERSON> '::PERSON:
+=>AddEntityFeature(trigger,"family")
+=>AddEntityFeatureAsEntity(left.1,"Person")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
