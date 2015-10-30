@@ -261,6 +261,7 @@
       <param key="graph" value="AnalysisGraph"/>
       <param key="compactFormat" value="yes"/>
       <param key="handler" value="se"/>
+      <param key="followGraph" value="true"/>
     </group>
     <group name="specificEntities-beforeposXmlLogger" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".sebp.xml"/>
