@@ -543,9 +543,10 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
-      // std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
-      //          << currentRule->getType() << " on vertex " << position << std::endl;
-
+      LINFO << "execute rule " << currentRule->getRuleId()
+            << " of type "<< currentRule->getType()
+            << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
+            << ") on vertex " << position;
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
       if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);
