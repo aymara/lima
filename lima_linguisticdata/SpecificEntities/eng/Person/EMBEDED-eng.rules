@@ -30,7 +30,7 @@ use ../Location/streetKey.lst
 
 # Victory Street
 @streetKey:($NC|$NP|t_capital_1st){1-3}::ODO:
-=>SetEntityFeature(trigger,"street")
+=>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
