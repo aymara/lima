@@ -259,6 +259,9 @@ U.S.::-? T_Ni<999:COORDINATE:
 # =<ClearEntityFeatures()
 
 # Does not exist in cities.lst
+# "Palm Beach" exists in list of Region
+# TODO: filter out of list of Region names of city
+# how to avoid this case?
 Palm::Beach:CITY:
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
