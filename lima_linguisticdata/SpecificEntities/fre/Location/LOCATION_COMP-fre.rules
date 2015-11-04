@@ -76,7 +76,7 @@ t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
 #******************************************************************************
 # les adresses
 #
-T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:COORDINATE:
+T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:ADDRESS:
 =>SetEntityFeature(trigger,"address-number")
 =>AppendEntityFeature(right.3.1,"other-adress-componant")
 =>AppendEntityFeature(right.3.2,"other-adress-componant")
@@ -85,7 +85,7 @@ T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâ
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-T_Ni>1::(@Cities) (@Countries)?:COORDINATE:
+T_Ni>1::(@Cities) (@Countries)?:ADDRESS:
 =>SetEntityFeature(trigger,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()

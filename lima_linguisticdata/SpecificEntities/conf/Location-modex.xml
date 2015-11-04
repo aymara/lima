@@ -7,6 +7,7 @@
         <item value="REGION"/>
         <item value="COUNTRY"/>
         <item value="ODO"/>
+        <item value="ADDRESS"/>
         <item value="LOCATION"/>
         <item value="GEO"/>
         <item value="COORDINATE"/>
@@ -83,6 +84,9 @@
       <list name="Location.COORDINATE">
         <item value="NN"/>
       </list>
+      <list name="Location.ADDRESS">
+        <item value="NN"/>
+      </list>
     </group>
   </module>
   <module name="resources-fre">
@@ -124,6 +128,9 @@
         <item value="NC"/>
       </list>
       <list name="Location.COORDINATE">
+        <item value="NC"/>
+      </list>
+      <list name="Location.ADDRESS">
         <item value="NC"/>
       </list>
     </group>

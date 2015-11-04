@@ -110,7 +110,7 @@ T_Ni<999::- T_Ni<999 - T_Ni<9999:COORDINATE:
 
 #12400 SW 152nd Avenue
 #former rule => T_Ni>1::(@orientation .?)? *{1-2} @streetKey:LOCATION:
-T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:COORDINATE:
+T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:ADDRESS:
 =>AppendEntityFeature(trigger,"adress-number")
 =>AppendEntityFeature(right.1.1,"qualifier")
 =>AppendEntityFeature(right.2,"name")
@@ -121,7 +121,7 @@ T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:COORDINATE:
 # Very strange regex to cath 152nd ! 
 
 
-T_Ni>1::(@StateAbbrev|US|U.S.) (-?) (T_Ni<999):COORDINATE:
+T_Ni>1::(@StateAbbrev|US|U.S.) (-?) (T_Ni<999):ADDRESS:
 =>SetEntityFeature(right.3,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -129,14 +129,14 @@ T_Ni>1::(@StateAbbrev|US|U.S.) (-?) (T_Ni<999):COORDINATE:
 
 ## zip codes : five digits
 ## FL 33301
-@StateAbbrev::T_Ni>9999<99999:COORDINATE:
+@StateAbbrev::T_Ni>9999<99999:ADDRESS:
 =>SetEntityFeature(right,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 #=>SetEntityFeature(trigger,"name")
 
 ## P.O. Box
-Box:(PO|P.O.|po)?:T_Ni:COORDINATE:
+Box:(PO|P.O.|po)?:T_Ni:ADDRESS:
 =>AppendEntityFeature(left,,"po-box")
 =>AppendEntityFeature(trigger,"po-box")
 =>AppendEntityFeature(right,"po-box")
@@ -228,18 +228,18 @@ I::(-) (T_Ni<99):ODO:
 # To be placed with recognition of US adresses???
 #----------------------------------------------------------------------
 
-@StateAbbrev::-? T_Ni<999:COORDINATE:
+@StateAbbrev::-? T_Ni<999:ADDRESS:
 =>SetEntityFeature(right.2,"zip-code")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc odo ?
 
-@StateAbbrev:[,]:.?:COORDINATE:
+@StateAbbrev:[,]:.?:ODO:
 =>SetEntityFeature(trigger,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
-US::-? T_Ni<999:COORDINATE:
+US::-? T_Ni<999:ADDRESS:
 =>SetEntityFeature(right.2,"zip-code")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
@@ -247,7 +247,7 @@ US::-? T_Ni<999:COORDINATE:
 
 
 #----------------------------------
-U.S.::-? T_Ni<999:COORDINATE:
+U.S.::-? T_Ni<999:ADDRESS:
 =>SetEntityFeature(right,"zip-code")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
