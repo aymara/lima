@@ -57,7 +57,7 @@ governor::of Oklahoma:PERSON:
 
 # test relation family avec marque du posessif '
 # Barack Obama's daughter
-@Family:<Person.PERSON> '::PERSON:
+@Family:<Person.PERSON>::PERSON:
 =>AddEntityFeature(trigger,"family")
 =>AddEntityFeatureAsEntity(left.1,"Person")
 =>NormalizeEntity()
