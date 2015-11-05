@@ -67,7 +67,7 @@
   </testcase-->
     <testcase id="fre.se.location.comp.3" type="pertinent">
     <call-parameters>
-      <param key="text" value="Connais-tu l'ile de Sumatra ?"/>
+      <param key="text" value="Connais-tu l'île de Sumatra ?"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
         <item value="limaserver"/>
