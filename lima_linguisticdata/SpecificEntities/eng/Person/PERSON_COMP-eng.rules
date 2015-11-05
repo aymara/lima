@@ -77,6 +77,11 @@ Chirac:::PERSON:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+Barack::&Obama:PERSON:
+=>SetEntityFeature(left,"firstname")
+=>SetEntityFeature(trigger,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
 # recognition of person names
