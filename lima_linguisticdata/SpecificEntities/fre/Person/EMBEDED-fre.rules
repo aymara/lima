@@ -58,3 +58,11 @@ use ../Location/annonceurVoie.lst
 =>AddEntityFeatureAsEntity(right.2,"Person")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+
+# Île de Sumatra
+@AnnonceurLieu:: (du|de $DET?)? <Location>:Location.GEO:
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(right.2,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
