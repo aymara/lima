@@ -479,6 +479,10 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       // build complete match
  
       match=new RecognizerMatch(leftmatch);
+      if (leftmatch.getHead() != 0) {
+        match->setHead(leftmatch.getHead());
+      }
+
       // TODO: add node of gazeteerTrigger
       //match->addBackVertex(position,trigger.keep(), "trigger");
       /*
@@ -493,9 +497,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       match->removeUnkeptAtExtremity();
 
       // check if trigger is head
-      if (trigger.head()) {
-        match->setHead(position);
-      }
       match->setType(currentRule->getType());
       match->setLinguisticProperties(currentRule->getLinguisticProperties());
       match->setContextual(currentRule->contextual());

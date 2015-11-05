@@ -346,6 +346,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
   VertexDataPropertyMap dataMap = get(vertex_data, *lingGraph);
 
+  LinguisticGraphVertex head = annot.getHead();
+  if( head == 0 ) {
+    // take status of last element in match for eng
+    head = v2;
+    // or take status of first element in match (in fre?)
+    // head = v1;
+  }
   const MorphoSyntacticData* dataHead = dataMap[annot.getHead()];
 
   // Preparer le Token et le MorphoSyntacticData pour le nouveau noeud. Construits
@@ -425,11 +432,8 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       match.positionBegin(),
       match.length());
 
-  // always take status from first element in match
-  //if (match.size() == 1)
-  //{
-  newToken->setStatus(tokenMap[v1]->status());
-  //}  
+  // take status from head
+  newToken->setStatus(tokenMap[head]->status());
 
   if (newMorphData->empty())
   {
