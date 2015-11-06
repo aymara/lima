@@ -40,8 +40,8 @@ use ../Location/streetKey.lst
 
 # Governor of Oklahoma
 #  On garde l'entité Location et on produit 1 entité imbriquée
-#@adminTitle::of <Location>:PERSON:
-governor::of Oklahoma:PERSON:
+# governor::of Oklahoma:PERSON:
+@adminTitle::of <Location>:PERSON:
 =>AddEntityFeature(trigger,"title")
 =>AddEntityFeatureAsEntity(right.2,"Location")
 =>NormalizeEntity()
