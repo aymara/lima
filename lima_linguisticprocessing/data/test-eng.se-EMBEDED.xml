@@ -130,13 +130,13 @@
           operator="="
           right="Person.PERSON"/>
     <test id="eng.se.pers.embed.12.2" trace=".se.xml"
-          comment="personne connue"
-          left="XPATH#//entities/entity[pos=1]/components/family[@pos=1]"
+          comment="label of famly relation"
+          left="XPATH#//entities/entity[pos=1]/components/family"
           operator="="
           right="daughter"/>
     <test id="eng.se.pers.embed.12.3" trace=".se.xml"
           comment="personne connue"
-          left="XPATH#//entities/entity[pos=1]/components/entity[pos=13]/string"
+          left="XPATH#//entities/entity[pos=1]/components/entity[pos=1]/string"
           operator="="
           right="Barack Obama"/>
   </testcase>

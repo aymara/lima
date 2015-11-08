@@ -58,7 +58,8 @@ use ../Location/streetKey.lst
 # test relation family avec marque du posessif '
 # Barack Obama's daughter
 @Family:<Person.PERSON>::PERSON:
++isAlphaPossessive(left,"possessive")
 =>AddEntityFeature(trigger,"family")
-=>AddEntityFeatureAsEntity(left.1,"Person")
+=>AddEntityFeatureAsEntity(left,"Person")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
