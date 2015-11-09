@@ -16,6 +16,8 @@ use annonceurLieu.lst
 use greeklocations.lst
 use annonceurVille.lst
 use annonceurVoie.lst
+use annonceurGeo.lst
+use annonceurFact.lst
 
 @aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,courant$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
@@ -126,36 +128,6 @@ triangle::de Rocquencourt:ODO:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-####################################
-@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"qualifier")
-=>AppendEntityFeature(right.1,"qualifier")
-=>AppendEntityFeature(right.2,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#1.1 + 1.2 => du sud. 
-
-@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):GEO:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"qualifier")
-=>AppendEntityFeature(right.1,"qualifier")
-=>AppendEntityFeature(right.2,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.adm.reg
-
-#à 3 km à l'est de la ville de Paris.
-#annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
-@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):GEO:
-=>AppendEntityFeature(trigger,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-# loc.adm.reg
-#loc phys
-# est = dist (imm guide - p7) 
-
-
 #----------------------------------------------------------------------
 # Geopolitical entities (loc.admin)
 #----------------------------------------------------------------------
@@ -191,7 +163,7 @@ rose:[(la)?] ville::CITY:Toulouse :
 
 ########################### Region ##############################################
 @Regions:::REGION:
-=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
@@ -296,11 +268,47 @@ Maison:(la|La)?:Blanche:ODO:
 =<ClearEntityFeatures()
 #=>NormalizeEntity()
 
+####################################
+@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"qualifier")
+=>AppendEntityFeature(right.1,"qualifier")
+=>AppendEntityFeature(right.2,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#1.1 + 1.2 => du sud. 
+
+@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):GEO:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"qualifier")
+=>AppendEntityFeature(right.1,"qualifier")
+=>AppendEntityFeature(right.2,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#loc.adm.reg
+
+#à 3 km à l'est de la ville de Paris.
+#annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
+@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? (@AnnonceurFact|@AnnonceurGeo|@AnnonceurVille) (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):GEO:
+=>AppendEntityFeature(trigger,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+# loc.adm.reg
+#loc phys
+# est = dist (imm guide - p7) 
+
+
 #*****************************************************************************
 
 
 Trévaresse:::GEO:
 #chaine de collines
+
+@AnnonceurGeo::(de|du|d'|de $DET)? t_capital_1st:GEO:
+=>SetEntityFeature(trigger,"kind")
+=>SetEntityFeature(right.2,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
 [habiter$V]::[(à|au|en|dans|vers|en direction de|près de|à coté de|au @PrecisionGeographique de)? (un|une|le|la|les|l')?] $NP:GEO:
 #=>SetEntityFeature(right.3,"kind") 
