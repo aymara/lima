@@ -335,6 +335,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                         bool stopAtFirstSuccess,
                                         bool onlyOneSuccessPerType,
                                         bool applySameRuleWhileSuccess) const {
+  AULOGINIT;
   // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
   const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
   std::vector<std::vector<LimaString> > additionalMultiTermList;
@@ -363,7 +364,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
      * Last step consists in initializing triggermatch with this longuest match
      */
     if( triggerMatches.empty() ) {
-      AULOGINIT;
       LDEBUG << "Recognizer::testSetOfRules: trigger of type gazeteer selected but no match";
       return 0;
     }
@@ -385,7 +385,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   RecognizerMatch rightmatch(&graph);
 
   if (onlyOneSuccessPerType && forbiddenTypes==0) {
-    AULOGINIT;
     LERROR << "cannot use onlyOneSuccessPerType "
            << "when forbidden types are not allowed";
     onlyOneSuccessPerType=false;
@@ -399,7 +398,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   LinguisticGraphVertex left=position;
 
 #ifdef DEBUG_LP
-  AULOGINIT;
   LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
     LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
   if (logger.isDebugEnabled()) {
