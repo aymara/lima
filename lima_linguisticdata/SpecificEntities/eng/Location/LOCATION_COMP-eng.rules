@@ -111,7 +111,7 @@ T_Ni<999::- T_Ni<999 - T_Ni<9999:COORDINATE:
 #12400 SW 152nd Avenue
 #former rule => T_Ni>1::(@orientation .?)? *{1-2} @streetKey:LOCATION:
 T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:ADDRESS:
-=>AppendEntityFeature(trigger,"adress-number")
+=>AppendEntityFeature(trigger,"address-number")
 =>AppendEntityFeature(right.1.1,"qualifier")
 =>AppendEntityFeature(right.2,"name")
 =>AppendEntityFeature(right.3,"kind")
