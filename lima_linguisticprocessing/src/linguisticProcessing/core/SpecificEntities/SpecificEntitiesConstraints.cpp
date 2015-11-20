@@ -454,7 +454,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       match.positionBegin(),
       match.length());
 
-  // take status from head
+  // take posessive tstatus from head
+  TStatus tStatus(T_NULL_CAPITAL,T_NULL_ROMAN,false,false,false,false,T_NULL_NUM,T_NULL_STATUS);
+  const TStatus& headTStatus = tokenMap[head]->status();
+  if(headTStatus.isAlphaPossessive()) {
+    tStatus.setAlphaPossessive(true);
+  }
   newToken->setStatus(tokenMap[head]->status());
 
   if (newMorphData->empty())
