@@ -100,7 +100,7 @@
       <list name="Numex.NUMBER">
         <item value="NC"/>
         <item value="DET"/>
-        <item value="PRON"/>
+        <item value="PRO"/>
         <item value="ADJ"/>
       </list>
       <list name="Numex.UNIT">
@@ -119,7 +119,7 @@
       <list name="NumberMicros">
         <item value="NC"/>
         <item value="DET"/>
-        <item value="PRON"/>
+        <item value="PRO"/>
         <item value="ADJ"/>
       </list>
       <list name="UnitMicros">
