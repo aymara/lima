@@ -3,6 +3,8 @@ using modex Location-modex.xml
 using groups Location
 using modex Person-modex.xml
 using groups Person
+using modex Organization-modex.xml
+using groups Organization
 set defaultAction=>CreateSpecificEntity()
 
 use title.lst,function_title.lst
@@ -61,5 +63,11 @@ use ../Location/streetKey.lst
 +isAlphaPossessive(left,"possessive")
 =>AddEntityFeature(trigger,"family")
 =>AddEntityFeatureAsEntity(left,"Person")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Hack, to add a component "name" to Organisation
+<Organization.ORGANIZATION>:::ORGANIZATION:
+=>AddEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
