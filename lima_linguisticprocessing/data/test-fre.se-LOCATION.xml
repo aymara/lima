@@ -924,4 +924,44 @@
           operator="="
           right="jean.dupon"/>
   </testcase!-->
-  </testcases>
+    <testcase id="en.se.location.comp.37" type="bloquant">
+    <call-parameters>
+      <param key="text" value="voir aussi http://www.globalpost.com"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.37.1" trace=".se.xml"
+          comment="type d'entité = location.URL"
+          left="XPATH#//entities/entity[pos=12][len=25]/type"
+          operator="="
+          right="Location.URL"/>
+    <test id="en.se.location.comp.37.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity[pos=12][len=25]/string"
+          operator="="
+          right="http://www.globalpost.com"/>
+  </testcase>
+  <testcase id="en.se.location.comp.38" type="pertinent">
+    <call-parameters>
+      <param key="text" value="voir aussi http://www.globalpost.com/article/6637525/2015/08/27/hungary-border-fence-problems article"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="en.se.location.comp.38.1" trace=".se.xml"
+          comment="type d'entité = location.URL"
+          left="XPATH#//entities/entity[pos=12][len=82]/type"
+          operator="="
+          right="Location.URL"/>
+    <test id="en.se.location.comp.38.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity[pos=12][len=82]/string"
+          operator="="
+          right="http://www.globalpost.com/article/6637525/2015/08/27/hungary-border-fence-problems"/>
+  </testcase>
+</testcases>
