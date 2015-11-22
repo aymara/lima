@@ -6,10 +6,12 @@
         <item value="CITY"/>
         <item value="REGION"/>
         <item value="COUNTRY"/>
+        <item value="BUILDING"/>
         <item value="ODO"/>
         <item value="ADDRESS"/>
         <item value="LOCATION"/>
         <item value="GEO"/>
+        <item value="STATION_TC"/>
         <item value="COORDINATE"/>
         <item value="URL"/>
       </list>
@@ -118,8 +120,14 @@
       <list name="Location.COUNTRY">
         <item value="NPP"/>
       </list>
+      <list name="Location.BUILDING">
+        <item value="NPP"/>
+      </list>
       <list name="Location.GEO">
         <item value="NPP"/>
+      </list>
+      <list name="Location.STATION_TC">
+        <item value="NC"/>
       </list>
       <list name="Location.ODO">
         <item value="NC"/>
