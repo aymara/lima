@@ -3,6 +3,8 @@ using modex Location-modex.xml
 using groups Location
 using modex Person-modex.xml
 using groups Person
+using modex Organization-modex.xml
+using groups Organization
 set defaultAction=>CreateSpecificEntity()
 
 use title.lst,function_title.lst
@@ -39,6 +41,13 @@ use ../Location/annonceurVoie.lst
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+# Île de Sumatra
+@AnnonceurLieu:: (du|de $DET?)? <Location>:Location.GEO:
+=>AddEntityFeature(trigger,"kind")
+=>AddEntityFeature(right.2,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 #====================== Personnes
 
 # "député de l'Essonne" ou "maire de Paris"
@@ -59,10 +68,18 @@ use ../Location/annonceurVoie.lst
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# Île de Sumatra
-@AnnonceurLieu:: (du|de $DET?)? <Location>:Location.GEO:
-=>AddEntityFeature(trigger,"kind")
-=>AddEntityFeature(right.2,"name")
+# "député de l'Essonne" ou "maire de Paris"
+#  On garde l'entité Location et on produit 2 entités imbriquées
+@adminTitle::(des|du|d'|de $DET?) <Organization.ORGANIZATION>:PERSON:
+=>AddEntityFeature(trigger,"title")
+=>AddEntityFeatureAsEntity(right.2,"Organization")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+#======== hack TODO: remove idiomatic expr, remove specific ruls rules, put multi term names in gazetteer ==========
+
+# Hack, to add a component "name" to Organisation
+<Organization.ORGANIZATION>:::ORGANIZATION:
+=>AddEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
