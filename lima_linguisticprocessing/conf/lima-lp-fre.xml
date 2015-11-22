@@ -483,6 +483,7 @@
       <param key="graph" value="AnalysisGraph"/>
       <param key="compactFormat" value="yes"/>
       <param key="handler" value="se"/>
+      <param key="followGraph" value="true"/>
     </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".tokenizer.xml"/>
