@@ -3,7 +3,16 @@
   <module name="entities">
     <group name="Location">
       <list name="entityList">
+        <item value="CITY"/>
+        <item value="REGION"/>
+        <item value="COUNTRY"/>
+        <item value="BUILDING"/>
+        <item value="ODO"/>
+        <item value="ADDRESS"/>
         <item value="LOCATION"/>
+        <item value="GEO"/>
+        <item value="STATION_TC"/>
+        <item value="COORDINATE"/>
         <item value="URL"/>
       </list>
     </group>
@@ -56,7 +65,28 @@
       <list name="Location.LOCATION">
         <item value="NNP"/>
       </list>
+      <list name="Location.CITY">
+        <item value="NNP"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="NNP"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="NNP"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="NNP"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NN"/>
+      </list>
       <list name="Location.URL">
+        <item value="NN"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NN"/>
+      </list>
+      <list name="Location.ADDRESS">
         <item value="NN"/>
       </list>
     </group>
@@ -81,7 +111,34 @@
       <list name="Location.LOCATION">
         <item value="NPP"/>
       </list>
+      <list name="Location.CITY">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.STATION_TC">
+        <item value="NC"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NC"/>
+      </list>
       <list name="Location.URL">
+        <item value="NC"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NC"/>
+      </list>
+      <list name="Location.ADDRESS">
         <item value="NC"/>
       </list>
     </group>

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+  <testcase id="eng.se.pers.embed.0" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Oklahoma"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.0.1" trace=".se.xml"
+          comment="Region from regions.lst"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Location.REGION"/>
+  </testcase>
+  <!-- test "Churchill street"-->
+  <testcase id="eng.se.pers.embed.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Churchill street"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.1.1" trace=".se.xml"
+          comment="not embeded Person, convert as name of Location "
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Location.ODO"/>
+    <test id="eng.se.pers.embed.1.2" trace=".se.xml"
+          comment="not embeded Person, convert as name of Location "
+          left="XPATH#//entities/entity[pos=1]/components/name"
+          operator="="
+          right="Churchill"/>
+    <test id="eng.se.pers.embed.1.3" trace=".se.xml"
+          comment="not embeded Person, convert as name of Location "
+          left="XPATH#//entities/entity[pos=1]/components/kind"
+          operator="="
+          right="street"/>
+  </testcase>
+  <!-- test "Victory street"-->
+  <testcase id="eng.se.pers.embed.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Victory street"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.2.1" trace=".se.xml"
+          comment="t_capital_first as name of location"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Location.ODO"/>
+    <test id="eng.se.pers.embed.2.2" trace=".se.xml"
+          comment="t_capital_first as name of location"
+          left="XPATH#//entities/entity[pos=1]/components/name"
+          operator="="
+          right="Victory"/>
+    <test id="eng.se.pers.embed.2.3" trace=".se.xml"
+          comment="t_capital_first as name of location"
+          left="XPATH#//entities/entity[pos=1]/components/kind"
+          operator="="
+          right="street"/>
+  </testcase>
+  <!-- test "Governor of Oklahoma"-->
+  <testcase id="eng.se.pers.embed.10" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Governor of Oklahoma"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.10.1" trace=".se.xml"
+          comment="embeded Location in Person"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.embed.10.2" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/title[@pos=1]"
+          operator="="
+          right="Governor"/>
+    <test id="eng.se.pers.embed.10.3" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/entity[pos=13]/string"
+          operator="="
+          right="Oklahoma"/>
+  </testcase>
+  <!-- test relation family "-->
+  <!-- test "daughter of Barack Obama"-->
+  <testcase id="eng.se.pers.embed.11" type="bloquant">
+    <call-parameters>
+      <param key="text" value="daughter of Barack Obama"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.11.1" trace=".se.xml"
+          comment="embeded Location in Person"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.embed.11.2" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/family[@pos=1]"
+          operator="="
+          right="daughter"/>
+    <test id="eng.se.pers.embed.11.3" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/entity[pos=13]/string"
+          operator="="
+          right="Barack Obama"/>
+  </testcase>
+  <!-- test relation family avec marque du posessif ' "Barack Obama's daughter"-->
+  <testcase id="eng.se.pers.embed.12" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Barack Obama's daughter"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.12.1" trace=".se.xml"
+          comment="embeded Location in Person"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.embed.12.2" trace=".se.xml"
+          comment="label of famly relation"
+          left="XPATH#//entities/entity[pos=1]/components/family"
+          operator="="
+          right="daughter"/>
+    <test id="eng.se.pers.embed.12.3" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/entity[pos=1]/string"
+          operator="="
+          right="Barack Obama"/>
+  </testcase>
+  <!-- test d'overlapp Person et Organisation-->
+  <!-- Nav est un prénom -->
+  <!-- Pall est une société normalisée en Pall corp. -->
+  <testcase id="eng.se.pers.embed.20" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Nav Pall"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.embed.embed.20.1" trace=".se.xml"
+          comment="embeded Location in Person"
+          left="XPATH#//entities/entity[pos=1]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.embed.20.2" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/firstname"
+          operator="="
+          right="Nav"/>
+    <test id="eng.se.pers.embed.20.3" trace=".se.xml"
+          comment="personne connue"
+          left="XPATH#//entities/entity[pos=1]/components/lastname"
+          operator="="
+          right="Pall"/>
+  </testcase>
+</testcases>
