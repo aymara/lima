@@ -81,7 +81,17 @@ GazeteerTransition& GazeteerTransition::operator = (const GazeteerTransition& t)
 
 std::string GazeteerTransition::printValue() const {
   ostringstream oss;
-  oss << m_alias.data()->unicode();
+  oss << "alias:" <<  Lima::Common::Misc::limastring2utf8stdstring(m_alias);
+  std::set<LimaString>::const_iterator it =  m_wordSet.begin();
+  if( it != m_wordSet.end() ) {
+    const Lima::LimaString & word = *it;
+    oss << "(" << Lima::Common::Misc::limastring2utf8stdstring(word);
+  }
+  for( it++ ; it != m_wordSet.end(); it++ ) {
+    const Lima::LimaString & word = *it;
+    oss << "," << Lima::Common::Misc::limastring2utf8stdstring(word);
+  }
+  oss << ")";
   return oss.str();
 }
 

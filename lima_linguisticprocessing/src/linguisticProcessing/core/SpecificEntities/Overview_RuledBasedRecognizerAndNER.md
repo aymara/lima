@@ -314,6 +314,26 @@ During compilation process, constraint are attached to transition.
 
 TransitionUnit.addConstraint
 
+more details about creation of transition
+-----------------------------------------
+Transition are the smallest component of the recognizer with States:
+A recognizer is a set of rules. Rules is made of 3 automaton. An automaton is made of states and transition.
+Additionally, rules are indexed according to their trigger which is a transition.
+Transition a created in 3 points:
+Inside the process of building ann automaton, 
+
+0) buildAutomatonNotOptional call createTransition from automatonString when it detects that the automatonString is a "simple unit".
+At this point, we would like to call createGazeteerTransition (or before)
+Other call to createTransition are:
+1) initRule which call createTransition to build the trigger of the rule.
+2) addRuleWithGazeteerTrigger which call createTransition to build one trigger for each element in the gaeteer.
+3) addRuleWithGazeteerTrigger which call new GazeteerTransition to build one triggerfor all elements in the Gazeteer.
+
+type of AutomatonString are either UNKNOWN_TYPE(when created), UNIT, ALTERNATIVE, SEQUENCE
+The type is defined in AutomatonString::parse()
+AutomatonString::parse call AutomatonString::parseUnit when it detcts neither sequence nor group
+AutomatonString::parseUnit
+
 Low level execution process
 ----------------------------
 

@@ -54,6 +54,7 @@ typedef enum {
   UNKNOWN_TYPE,
   UNIT,
   SEQUENCE,
+  SIMPLE_GAZETEER,
   ALTERNATIVE
 } ElementType;
 
@@ -125,6 +126,7 @@ class AutomatonString
   bool isUnit() const;
   bool isSequence() const;
   bool isAlternative() const;
+  bool isSimpleGazeteer() const;
 
   bool isArtificialSequence() const; //only for construction
   bool isSplittedFirst() const { return m_isSplittedFirst; }
@@ -345,6 +347,9 @@ inline bool AutomatonString::isArtificialSequence() const {
 }
 inline bool AutomatonString::isUnit() const { 
   return (m_type == UNIT); 
+}
+inline bool AutomatonString::isSimpleGazeteer() const { 
+  return (m_type == SIMPLE_GAZETEER); 
 }
 inline bool AutomatonString::isSequence() const { 
   return (m_type == SEQUENCE); 

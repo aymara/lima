@@ -335,6 +335,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                         bool stopAtFirstSuccess,
                                         bool onlyOneSuccessPerType,
                                         bool applySameRuleWhileSuccess) const {
+  AULOGINIT;
   // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
   const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
   std::vector<std::vector<LimaString> > additionalMultiTermList;
@@ -363,7 +364,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
      * Last step consists in initializing triggermatch with this longuest match
      */
     if( triggerMatches.empty() ) {
-      AULOGINIT;
       LDEBUG << "Recognizer::testSetOfRules: trigger of type gazeteer selected but no match";
       return 0;
     }
@@ -385,7 +385,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   RecognizerMatch rightmatch(&graph);
 
   if (onlyOneSuccessPerType && forbiddenTypes==0) {
-    AULOGINIT;
     LERROR << "cannot use onlyOneSuccessPerType "
            << "when forbidden types are not allowed";
     onlyOneSuccessPerType=false;
@@ -399,7 +398,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   LinguisticGraphVertex left=position;
 
 #ifdef DEBUG_LP
-  AULOGINIT;
   LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
     LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
   if (logger.isDebugEnabled()) {
@@ -479,6 +477,10 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       // build complete match
  
       match=new RecognizerMatch(leftmatch);
+      if (leftmatch.getHead() != 0) {
+        match->setHead(leftmatch.getHead());
+      }
+
       // TODO: add node of gazeteerTrigger
       //match->addBackVertex(position,trigger.keep(), "trigger");
       /*
@@ -493,9 +495,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       match->removeUnkeptAtExtremity();
 
       // check if trigger is head
-      if (trigger.head()) {
-        match->setHead(position);
-      }
       match->setType(currentRule->getType());
       match->setLinguisticProperties(currentRule->getLinguisticProperties());
       match->setContextual(currentRule->contextual());
@@ -543,9 +542,10 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
-      // std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
-      //          << currentRule->getType() << " on vertex " << position << std::endl;
-
+      LINFO << "execute rule " << currentRule->getRuleId()
+            << " of type "<< currentRule->getType()
+            << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
+            << ") on vertex " << position;
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
       if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);

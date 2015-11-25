@@ -49,6 +49,7 @@
         <item value="PersonModexForLimaserver"/>
         <item value="EventModex"/>
         <item value="ProductModex"/>
+        <item value="EmbededModex"/>
       </list>
     </group>
   </module>

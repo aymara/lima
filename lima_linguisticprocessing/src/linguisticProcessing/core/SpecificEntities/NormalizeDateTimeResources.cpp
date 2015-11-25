@@ -136,6 +136,7 @@ bool NormalizeDateTimeResources::
 readMonthDays(const std::string& monthsDaysFile) 
 {
 
+  m_wordCardinalSeparator[Common::Misc::utf8stdstring2limastring(" ")]=0;
   ifstream file(monthsDaysFile.c_str(), std::ifstream::binary);
   if (!file.good()) {
     return false;

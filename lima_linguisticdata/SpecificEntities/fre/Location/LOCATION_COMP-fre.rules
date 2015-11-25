@@ -3,7 +3,9 @@ using modex Location-modex.xml
 using groups Location
 set defaultAction=>CreateSpecificEntity()
 
-
+#----------------------------------------------------------------------
+# loading of gazeteers
+#----------------------------------------------------------------------
 use regions.lst
 use countries.lst
 use cities.lst
@@ -12,7 +14,10 @@ use miscLocations.lst
 use highways.lst
 use annonceurLieu.lst
 use greeklocations.lst
-
+use annonceurVille.lst
+use annonceurVoie.lst
+use annonceurGeo.lst
+use annonceurFact.lst
 
 @aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,courant$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
@@ -21,75 +26,59 @@ use greeklocations.lst
 
 @PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
-@locationVerbs=(
-ressentir$V,
-ressenti$ADJ,
-secouer$V,
-produire$V,
-trembler$V,
-survenir$V,
-frapper$V,
-enregistrer$V,	
-avoir\ lieu$V,	
-trouver$V,	
-toucher$V,	
-situer$V,	
-localiser$V,	
-ébranler$V,	
-détecter$V)
+#----------------------------------------------------------------------
+# recognition of web adresses
+#----------------------------------------------------------------------
+36-15::$NC:COORDINATE:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Street=(rue,route,chemin,avenue,voie,impasse,venelle,autoroute,nationnale,départementale,route nationale,route  départementale,route communale,place)
+t_url:::URL:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-#Quartier present dans la convention Quaero 
-# pas de liste ???
+#Radio Bleue sur 98.8 MHz
+MHz:t_dot_number::COORDINATE:
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#@leguidedannotation
+\@::(*):COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#----------------------------------------------------------------------
+# recognition tel adresses
+#----------------------------------------------------------------------
+#01 69 85 80 02 ou 01-69-85-80-02
+t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#+33 1 23 45 67 89 a
++33::t_integer -? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 
 @AnnonceurLieu::(t_alphanumeric):NOT_LOCATION: 
 
-#******************************************************************************
-# les voies
-#la nationale 118.
-T_Ni::(voie|route)? (nationale|départementale|communale):LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"kind")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#A10
-AT_Ni>1::(autoroute)?:LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"kind")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#la n118
-nT_Ni>1::(autoroute)?:LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"kind")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#le triangle de Rocquencourt
-triangle::de Rocquencourt:LOCATION:
-=>SetEntityFeature(trigger,"kind")
-=>AppendEntityFeature(right.2,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#place de la république
-# Attention, cette règle semble un peu redondante avec la règle:
-# @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
-# Elle est plus fine (déclencheur=@Street) et ratrape des cas ou le nom ne prend pas de majuscules
-@Street::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
-=>SetEntityFeature(trigger,"kind")
-=>AppendEntityFeature(right.3,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.odo
+#----------------------------------------------------------------------
+# recognition of french adresses
+#----------------------------------------------------------------------
 
 #******************************************************************************
 # les adresses
 #
-T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
+T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:ADDRESS:
 =>SetEntityFeature(trigger,"address-number")
 =>AppendEntityFeature(right.3.1,"other-adress-componant")
 =>AppendEntityFeature(right.3.2,"other-adress-componant")
@@ -97,113 +86,190 @@ T_Ni>1::(@Street|place) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâ
 =>AppendEntityFeature(right.4.2,"other-adress-componant")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#la voie est annotée avec loc.odo.
 
-
-T_Ni>1::(@Cities) (@Countries)?:LOCATION:
+T_Ni>1::(@Cities) (@Countries)?:ADDRESS:
 =>SetEntityFeature(trigger,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#******************************************************************************
-#lieux physiques aquatiques 
 
-#mer d'Iroise, mer de tranquilité (Lune), mare au diable, etc.
-#@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):LOCATION:
-@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):LOCATION:
+#----------------------------------------------------------------------
+# recognition of other adresss/location
+#    = incomplete address ?
+#----------------------------------------------------------------------
+
+#----------------------------------------------------------------------
+# recognition of steets and highways
+#----------------------------------------------------------------------
+#la nationale 118.
+T_Ni::(voie|route)? (nationale|départementale|communale):ODO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"kind")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#A10
+AT_Ni>1::(autoroute)?:ODO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"kind")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#la n118
+nT_Ni>1::(autoroute)?:ODO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"kind")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#le triangle de Rocquencourt
+triangle::de Rocquencourt:ODO:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-@RiversAndSeas:::LOCATION:
-=>AppendEntityFeature(trigger.1,"name")
-=<ClearEntityFeatures()
-#=>NormalizeEntity()
-#*****************************************************************************
+#----------------------------------------------------------------------
+# Geopolitical entities (loc.admin)
+#----------------------------------------------------------------------
+########################### CITY ##############################################
 
-
-Trévaresse:::LOCATION:
-#chaine de collines
-
-Salon:::LOCATION:
-# regle dangeureuse ??
-
-Maison:(la|La)?:Blanche:LOCATION:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-rose:[(la)?] ville::LOCATION:Toulouse :
+rose:[(la)?] ville::CITY:Toulouse :
 =>AppendEntityFeature(left.2,"name.nickname")
 =>AppendEntityFeature(trigger,"name.nickname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-Elysée:::LOCATION:Élysée
+
+# repérage des ville grâce à l'annonceur
+# la ville de Hong Kong
+@AnnonceurVille::($ADJ)? (de|du|d'|de $DET) (@Regions|@Countries|@Cities|$NP):CITY:
+=>SetEntityFeature(trigger,"kind")
+=>SetEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# repérage des ville grâce à l'annonceur
+@AnnonceurVille::($ADJ)? (de|du|d'|de $DET) (@Regions|@Countries|@Cities|$NP):CITY:
+=>SetEntityFeature(trigger,"kind")
+=>SetEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Cities:::CITY:
+=>SetEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#loc.adm.town
+
+########################### Region ##############################################
+@Regions:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Greeklocations:::LOCATION:
 =>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-Élysée:::LOCATION:
+########################### Pays ##############################################
+@Countries:::COUNTRY:
 =>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#******************************
-# regles avec normalisation
+
+#****************************** regle avec normalisation
+
 # Penmarc'| Penmarch => Penmarc'h
-Penmarc'::h:LOCATION:Penmarc'h
+Penmarc'::h:GEO:Penmarc'h
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =<ClearEntityFeatures()
-Penmarch:::LOCATION:Penmarc'h
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=<ClearEntityFeatures()
-#******************************
 
-# regle avec normalisation
-Loire::Atlantique:LOCATION:Loire-atlantique
+Penmarch:::GEO:Penmarc'h
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+
+Loire::Atlantique:REGION:Loire-atlantique
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+Charm::el Cheikh:COUNTRY:Charm el-Cheikh
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-Plaine:La:(St|Saint) Denis:LOCATION:
+#****************************** regle pour noms composés
+# put them in gazeteer??
+
+Cap::Canaveral:GEO:
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Plaine:La:(St|Saint) Denis:CITY:
 =>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#quartier
 
-Bolline:La::LOCATION:
+Bolline:La::CITY:
 =>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 #quartier
 
-#regle avec normalisation
-Charm::el Cheikh:LOCATION:Charm el-Cheikh
+PORTO::TORRES:CITY:Porto Torres
 =>SetEntityFeature(trigger,right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-Cap::Canaveral:LOCATION:
-=>SetEntityFeature(trigger,right,"name")
+
+###################### Geographical and Buildings ########################################
+
+Elysée:::ODO:Élysée
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# regle avec normalisation
-PORTO::TORRES:LOCATION:Porto Torres
-=>SetEntityFeature(trigger,right,"name")
+Élysée:::ODO:
+=>SetEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):LOCATION:
+Maison:(la|La)?:Blanche:ODO:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+###################### Geographical and Buildings ########################################
+
+#******************************************************************************
+#lieux physiques aquatiques 
+
+#mer d'Iroise, mer de tranquilité (Lune), mare au diable, etc.
+#@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):GEO:
+@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):GEO:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.2,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@RiversAndSeas:::GEO:
+=>AppendEntityFeature(trigger.1,"name")
+=<ClearEntityFeatures()
+#=>NormalizeEntity()
+
+####################################
+@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"qualifier")
 =>AppendEntityFeature(right.1,"qualifier")
@@ -212,7 +278,7 @@ PORTO::TORRES:LOCATION:Porto Torres
 =<ClearEntityFeatures()
 #1.1 + 1.2 => du sud. 
 
-@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):LOCATION:
+@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):GEO:
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"qualifier")
 =>AppendEntityFeature(right.1,"qualifier")
@@ -223,7 +289,7 @@ PORTO::TORRES:LOCATION:Porto Torres
 
 #à 3 km à l'est de la ville de Paris.
 #annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
-@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):LOCATION:
+@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? (@AnnonceurFact|@AnnonceurGeo|@AnnonceurVille) (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):GEO:
 =>AppendEntityFeature(trigger,"qualifier")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -232,61 +298,19 @@ PORTO::TORRES:LOCATION:Porto Torres
 # est = dist (imm guide - p7) 
 
 
-@AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
-=>AppendEntityFeature(trigger,"kind")
-=>AppendEntityFeature(right.3,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+#*****************************************************************************
 
-ville$NC::($ADJ)? (de|du|d'|de $DET) (@Regions|@Countries|@Cities|$NP):LOCATION:
+
+Trévaresse:::GEO:
+#chaine de collines
+
+@AnnonceurGeo::(de|du|d'|de $DET)? t_capital_1st:GEO:
 =>SetEntityFeature(trigger,"kind")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#si ville loc.adm.town
-
-@Cities:::LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.adm.town
-
-@Regions:::LOCATION:
-=>SetEntityFeature(trigger,"name")
+=>SetEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-@Greeklocations:::LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-@Countries:::LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-##Ajout le 25/07
-#[@locationVerbs]::[(à|au|le|l'|la|en|dans|entre)?] (t_capital_1st) (et?) (en?) (t_capital_1st)?:LOCATION:
-#=>SetEntityFeature(right.1,"name") 
-#=>AppendEntityFeature(right.4,"name") 
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-#todo ajouter =>SetEntityFeature(right.5,"name") - todo cette regle ne passe pas ! 
-
-#[@locationVerbs]::[(à|au|en|dans)] (@Regions|@Countries|@Cities|t_capital_1st):#LOCATION: 
-#=>SetEntityFeature(right.1.1,"name") 
-#=>SetEntityFeature(right.1.2,"name") 
-#=>SetEntityFeature(right.1.3,"name") 
-#=>SetEntityFeature(right.1.4,"name") 
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-#[@locationVerbs]::[(à|au|en|dans|vers|en direction de|près de|à coté de|proche de|au @PrecisionGeographique de)? (un|une|le[la|les)?] $NP:LOCATION:
-#=>SetEntityFeature(right.3,"kind") 
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-[habiter$V]::[(à|au|en|dans|vers|en direction de|près de|à coté de|au @PrecisionGeographique de)? (un|une|le|la|les|l')?] $NP:LOCATION:
+[habiter$V]::[(à|au|en|dans|vers|en direction de|près de|à coté de|au @PrecisionGeographique de)? (un|une|le|la|les|l')?] $NP:GEO:
 #=>SetEntityFeature(right.3,"kind") 
 #=>NormalizeEntity()
 #=<ClearEntityFeatures()
@@ -297,49 +321,4 @@ ville$NC::($ADJ)? (de|du|d'|de $DET) (@Regions|@Countries|@Cities|$NP):LOCATION:
 # (je ne peux pas me permettre d\'étiqueter "est" tout seul)
 # => la plupart des occurrences de Nord, Sud-Est etc ne sont pas étiquetées
 #@PrecisionGeographique::(du pays)?:LOCATION:
-
-36-15::$NC:LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#CONTACT
-
-t_url:::URL:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#CONTACT
-
-#Radio Bleue sur 98.8 MHz
-MHz:t_dot_number::LOCATION:
-=>AppendEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#@leguidedannotation
-\@::(*):LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#CONTACT
-
-#01 69 85 80 02 ou 01-69-85-80-02
-t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#CONTACT
-
-#+33 1 23 45 67 89 a
-+33::t_integer -? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-
-#mon identifiant skype est jean.dupont
-#todo => car LIMA perd les espaces.
-
 

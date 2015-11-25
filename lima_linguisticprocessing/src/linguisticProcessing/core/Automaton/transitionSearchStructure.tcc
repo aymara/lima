@@ -187,6 +187,7 @@ init(const std::vector<TargetType>& l,
     case T_AND:
     case T_SET:
     case T_ENTITY:
+    case T_ENTITY_GROUP:
     case T_DEACCENTUATED: {
 //       LDEBUG << "TransitionSearchStructure: insert other Transition " 
 //              << transition->printValue();

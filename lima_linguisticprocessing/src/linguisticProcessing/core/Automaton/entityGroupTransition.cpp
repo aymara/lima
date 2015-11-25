@@ -102,7 +102,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (matches.empty())
   {
     AULOGINIT;
-    LERROR << "EntityGroupTransition::compare: No annotation ("<<graph.getGraphId()<<", "<<v<<", \"annot\") available";
+    LDEBUG << "annotation ("<<graph.getGraphId()<<", "<<v<<", \"annot\") available";
     return false;
   }
   AnnotationGraphVertex annotVertex = *(matches.begin());
@@ -110,7 +110,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (!annotationData->hasAnnotation(annotVertex, m_entityAnnotation))
   {
     AULOGINIT;
-    LERROR << "EntityGroupTransition::compare: No " << m_entityAnnotation << " annotation available on " << v;
+    LDEBUG << "EntityGroupTransition::compare: No " << m_entityAnnotation << " annotation available on " << v;
     return false;
   }
   

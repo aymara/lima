@@ -319,10 +319,16 @@ void RecognizerMatch::popFrontVertex() {
 }
 
 void RecognizerMatch::addBack(const RecognizerMatch& l) {
+  if( l.getHead() != 0 ){
+    setHead(l.getHead());
+  }
   insert(end(),l.begin(),l.end());
 }
   
 void RecognizerMatch::addFront(const RecognizerMatch& l) {
+  if( l.getHead() != 0 ){
+    setHead(l.getHead());
+  }
   insert(begin(),l.begin(),l.end());
 }
 

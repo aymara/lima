@@ -55,8 +55,11 @@ namespace SpecificEntities
 {
 
 // factories for constraint functions defined in this file
+ConstraintFunctionFactory<isAlphaPossessive>
+  isAlphaPossessiveFactory(isAlphaPossessiveId);
+
 ConstraintFunctionFactory<isASpecificEntity>
-isASpecificEntityFactory(isASpecificEntityId);
+  isASpecificEntityFactory(isASpecificEntityId);
 
 ConstraintFunctionFactory<CreateSpecificEntity>
   CreateSpecificEntityFactory(CreateSpecificEntityId);
@@ -78,6 +81,25 @@ ConstraintFunctionFactory<ClearEntityFeatures>
 
 ConstraintFunctionFactory<NormalizeEntity>
   NormalizeEntityFactory(NormalizeEntityId);
+
+
+isAlphaPossessive::
+isAlphaPossessive(MediaId language,
+                  const LimaString& complement):
+ConstraintFunction(language,complement)
+{
+}
+
+bool isAlphaPossessive::operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                                   const LinguisticGraphVertex& v,
+                                   AnalysisContent& /*analysis*/) const
+{
+  LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
+//  Token* token=get(vertex_token,*(graph.getGraph()),v);
+  VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
+  const TStatus& status = tokenMap[v]->status();
+  return( status.isAlphaPossessive() );
+}
 
 
 isASpecificEntity::
@@ -346,7 +368,14 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
   VertexDataPropertyMap dataMap = get(vertex_data, *lingGraph);
 
-  const MorphoSyntacticData* dataHead = dataMap[annot.getHead()];
+  LinguisticGraphVertex head = annot.getHead();
+  if( head == 0 ) {
+    // take status of last element in match for eng
+    head = v2;
+    // or take status of first element in match (in fre?)
+    // head = v1;
+  }
+  const MorphoSyntacticData* dataHead = dataMap[head];
 
   // Preparer le Token et le MorphoSyntacticData pour le nouveau noeud. Construits
   // a partir des infos de l'entitee nommee
@@ -425,11 +454,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       match.positionBegin(),
       match.length());
 
-  // always take status from first element in match
-  //if (match.size() == 1)
-  //{
-  newToken->setStatus(tokenMap[v1]->status());
-  //}  
+  // take posessive tstatus from head
+  TStatus tStatus(T_NULL_CAPITAL,T_NULL_ROMAN,false,false,false,false,T_NULL_NUM,T_NULL_STATUS);
+  const TStatus& headTStatus = tokenMap[head]->status();
+  if(headTStatus.isAlphaPossessive()) {
+    tStatus.setAlphaPossessive(true);
+  }
+  newToken->setStatus(tokenMap[head]->status());
 
   if (newMorphData->empty())
   {

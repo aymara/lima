@@ -12,27 +12,20 @@ set defaultAction=>CreateSpecificEntity()
 #----------------------------------------------------------------------
 
 # known identified persons
-#Hafez::Al-Assad:PERSON:Hafez Al-Assad
-#Saddam::Hussein?:PERSON:Saddam Hussein
-#Laden:(Oussama|Ousama|Osama|Usama)? (ben|bin|Ben|Bin)::PERSON:Ousama Ben Laden
-#Arafat:Yasser?::PERSON:Yasser Arafat
-#Sharon:Ariel?::PERSON:Ariel Sharon
-#Mobutu::(Sese Seko)?:PERSON:Mobutu
-#Yitzhak::Rabin:PERSON:Yitzhak Rabin
-#Isaac::Rabin:PERSON:Yitzhak Rabin
-#Chirac:::PERSON:Jacques Chirac
 
-Hafez::Al-Assad:PERSON:
-=>SetEntityFeature(trigger,"firstname")
-=>SetEntityFeature(right,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Hafez is now in the gazeteer @firstname
+# Hafez::Al-Assad:PERSON:
+# =>SetEntityFeature(trigger,"firstname")
+# =>SetEntityFeature(right,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
-Saddam::Hussein:PERSON:
-=>SetEntityFeature(trigger,"firstname")
-=>SetEntityFeature(right,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Saddam is now in the gazeteer @firstname
+# Saddam::Hussein:PERSON:
+# =>SetEntityFeature(trigger,"firstname")
+# =>SetEntityFeature(right,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
 Laden:(Oussama|Ousama|Osama|Usama)? (ben|bin|Ben|Bin)::PERSON:
 =>SetEntityFeature(left.1,"firstname")
@@ -41,17 +34,19 @@ Laden:(Oussama|Ousama|Osama|Usama)? (ben|bin|Ben|Bin)::PERSON:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-Arafat:Yasser::PERSON:
-=>SetEntityFeature(left,"firstname")
-=>SetEntityFeature(trigger,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Yasser is now in the gazeteer @firstname
+# Arafat:Yasser::PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
-Sharon:Ariel::PERSON:
-=>SetEntityFeature(left,"firstname")
-=>SetEntityFeature(trigger,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Ariel is now in the gazeteer @firstname
+# Sharon:Ariel::PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
 Mobutu::(Sese Seko)?:PERSON:
 =>SetEntityFeature(left,"firstname")
@@ -59,17 +54,19 @@ Mobutu::(Sese Seko)?:PERSON:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-Yitzhak::Rabin:PERSON:
-=>SetEntityFeature(left,"firstname")
-=>SetEntityFeature(trigger,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Yitzhak is in the gazeteer @firstname
+# Yitzhak::Rabin:PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
-Isaac::Rabin:PERSON:
-=>SetEntityFeature(left,"firstname")
-=>SetEntityFeature(trigger,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# Isaac is in the gazeteer @firstname
+# Isaac::Rabin:PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
 Chirac:::PERSON:
 =>SetEntityFeature(left,"firstname")
@@ -77,6 +74,12 @@ Chirac:::PERSON:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+# Barack is now in the gazeteer @firstname
+# Barack::&Obama:PERSON:
+# =>SetEntityFeature(right,"lastname")
+# =>SetEntityFeature(trigger,"firstname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
 # recognition of person names
@@ -113,6 +116,7 @@ use person_ending.lst
 =<ClearEntityFeatures()
 
 # what is the role of <Location.LOCATION>???: ask to Romaric
+# John Doo Paris???
 @Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 =>SetEntityFeature(trigger,"firstname")
 =>AddEntityFeature(right.1,"lastname")
@@ -264,6 +268,7 @@ t_capital_1st:(@FunctionTitle|@Title):(t_capital_1st){0-2}:PERSON:
 [said]:[<Organization.ORGANIZATION>]::NOT_PERSON:
 [who]:(@Pronouns|@Conjunctions) [,]::NOT_PERSON:
 
+# Doo Xu who
 [who]:t_capital_1st t_capital_1st{0-2} [,]::PERSON:
 =>SetEntityFeature(left.1,"firstname")
 =>AddEntityFeature(left.2,"lastname")
