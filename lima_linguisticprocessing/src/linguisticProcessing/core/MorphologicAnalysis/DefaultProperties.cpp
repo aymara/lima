@@ -147,11 +147,15 @@ LimaStatusCode DefaultProperties::process(
         if (it!=m_defaults.end()) {
           LinguisticElement elem;
           elem.inflectedForm=currentToken->form();
-          LimaString str=currentToken->stringForm();
-          if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end()){
-            str = m_charChart->unmark(currentToken->stringForm());
+          if (!currentToken->orthographicAlternatives().empty())
+          {
+            elem.lemma = *(currentToken->orthographicAlternatives().begin());
           }
-          elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
+          else if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
+          {
+            LimaString str = m_charChart->toLower(currentToken->stringForm());
+            elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
+          }
           elem.normalizedForm=elem.lemma;
           elem.type=UNKNOWN_WORD;
           

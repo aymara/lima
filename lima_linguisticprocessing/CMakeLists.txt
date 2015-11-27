@@ -139,11 +139,21 @@ endif()
 
 find_package (Enchant) 
 if (ENCHANT_FOUND)
+  message(STATUS "Found Enchant. Enchant spelling correction will be built.")
   set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
   include_directories(${ENCHANT_INCLUDE_DIRS})
 else (ENCHANT_FOUND)
-  message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
+  message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Enchant spelling correction will not be built.")
 endif (ENCHANT_FOUND)
+
+find_package (HUNSPELL) 
+if (HUNSPELL_FOUND)
+  message(STATUS "Found Hunspell. Hunspell spelling correction will be built.")
+  set(optionalLibs ${optionalLibs} ${HUNSPELL_LIBRARIES})
+  include_directories(${HUNSPELL_INCLUDE_DIR})
+else (HUNSPELL_FOUND)
+  message(STATUS "Could not find Hunspell ${HUNSPELL_INCLUDE_DIRS}. Hunspell spelling correction will not be built.")
+endif (HUNSPELL_FOUND)
 
 # QHttpServer is necessary for limaserver HTTP server
 find_package(QHttpServer QUIET)

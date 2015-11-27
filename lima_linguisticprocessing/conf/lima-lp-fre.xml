@@ -18,6 +18,12 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
+        <!-- Uncoment EnchantSpellingAlternatives below if lima is built with Enchant 
+        support and if you wish to support background spelling correction -->
+        <!--item value="EnchantSpellingAlternatives"/-->
+        <!-- Uncoment HunspellSpellingAlternatives below if lima is built with Hunspell 
+        support and if you wish to support background spelling correction -->
+        <!--item value="HunspellSpellingAlternatives"/-->
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
@@ -317,6 +323,16 @@
         <!--entry key="PONCTU_PARAGRAPHE" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/-->
         <entry key="T_COMMA_NUMBER" value="Status" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
       </map>
+    </group>
+    <group name="EnchantSpellingAlternatives" class="EnchantSpellingAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+      <!-- Set the spellchecking dictionary. By default the system one for the current language -->
+      <param key="spellcheckDictionary" value="fr_FR"/>
+    </group>
+    <group name="HunspellSpellingAlternatives" class="HunspellSpellingAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+      <!-- Set the spellchecking dictionary. Will be searched in LIMA_RESOURCES/Spellchecking -->
+      <param key="spellcheckDictionary" value="umls_fre"/>
     </group>
     <group name="idiomaticAlternatives" class="ApplyRecognizer">
       <param key="automaton" value="idiomaticExpressionsRecognizer"/>
