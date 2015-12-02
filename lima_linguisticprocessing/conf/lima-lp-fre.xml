@@ -18,13 +18,13 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
         <!-- Uncoment EnchantSpellingAlternatives below if lima is built with Enchant 
         support and if you wish to support background spelling correction -->
         <!--item value="EnchantSpellingAlternatives"/-->
         <!-- Uncoment HunspellSpellingAlternatives below if lima is built with Hunspell 
         support and if you wish to support background spelling correction -->
         <!--item value="HunspellSpellingAlternatives"/-->
-        <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
@@ -163,8 +163,10 @@
     </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
-        <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
-        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_]+(\.[\w\-_]+)+" value="t_url"/>
+        <entry key="www\.[\w\-_]+(\.[\w\-_]+)+" value="t_url"/>
+        <entry key="[\w\-_]+(\.[\w\-_]+)*\.(com|fr|org|edu)" value="t_url"/>
+        <entry key="(mailto|http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
       </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
@@ -333,6 +335,8 @@
       <param key="dictionary" value="mainDictionary"/>
       <!-- Set the spellchecking dictionary. Will be searched in LIMA_RESOURCES/Spellchecking -->
       <param key="spellcheckDictionary" value="umls_fre"/>
+      <!-- If true, only the first correction is used. Otherwise, all possible corrections are used.-->
+      <param key="bestOnly" value="false"/>
     </group>
     <group name="idiomaticAlternatives" class="ApplyRecognizer">
       <param key="automaton" value="idiomaticExpressionsRecognizer"/>
