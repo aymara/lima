@@ -31,6 +31,7 @@
 #include "linguisticProcessing/core/AnalysisDict/AbstractAnalysisDictionary.h"
 
 #include <hunspell/hunspell.hxx>
+#include <queue>
 
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::AnalysisDict;
@@ -52,7 +53,7 @@ class HunspellSpellingAlternativesPrivate
   friend class HunspellSpellingAlternatives;
 
 public:
-  HunspellSpellingAlternativesPrivate() : m_hunspell(0) {}
+  HunspellSpellingAlternativesPrivate() : m_hunspell(0), m_bestOnly(false) {}
   virtual ~HunspellSpellingAlternativesPrivate() {delete m_hunspell;}
   
   
@@ -64,6 +65,7 @@ public:
   AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
   MediaId m_language;
   Hunspell* m_hunspell;
+  bool m_bestOnly;
 };
 
 
@@ -110,6 +112,15 @@ void HunspellSpellingAlternatives::init(
     LERROR << "no param 'dictionary' in HunspellSpellingAlternatives group for language " << (int) m_d->m_language;
     throw InvalidConfiguration();
   }
+  try
+  {
+    // try to get a specific spellchecking dictionary name from the config file
+    m_d->m_bestOnly = unitConfiguration.getBooleanParameter("bestOnly");
+  }
+  catch (NoSuchParam& )
+  {
+    LNOTICE << "no param 'bestOnly' in HunspellSpellingAlternatives group for language " << (int) m_d->m_language << ". Use default";
+  }
 }
 
 
@@ -124,24 +135,63 @@ LimaStatusCode HunspellSpellingAlternatives::process(AnalysisContent& analysis) 
   LinguisticGraph* g=tokenList->getGraph();
   VertexDataPropertyMap dataMap=get(vertex_data,*g);
   VertexTokenPropertyMap tokenMap=get(vertex_token,*g);
-  LinguisticGraphVertexIt it,itEnd;
-  for (boost::tie(it,itEnd)=vertices(*g) ; it != itEnd ; it++)
+  
+  LinguisticGraphVertex firstVx = tokenList->firstVertex();
+  LinguisticGraphVertex lastVx = tokenList->lastVertex();
+
+  std::set< std::string > alreadyStored;
+  std::set<LinguisticGraphVertex> visited;
+  //std::set<uint32_t> alreadyStoredVertices; compatibilite 32 64 bits
+  std::set<LinguisticGraphVertex> alreadyStoredVertices;
+
+  std::queue<LinguisticGraphVertex> toVisit;
+  toVisit.push(firstVx);
+
+  while (!toVisit.empty())
   {
-    LDEBUG << "HunspellSpellingAlternatives::process processing vertex " << *it;
-    Token* currentToken=tokenMap[*it];
-    MorphoSyntacticData* msd=dataMap[*it];
-    
-    if (currentToken!=0)
+    LinguisticGraphVertex v=toVisit.front();
+#ifdef DEBUG_LP
+    LDEBUG << "BowDumper::addVerticesToBoWText visiting" << v;
+#endif
+
+    toVisit.pop();
+    if (v == lastVx) {
+      continue;
+    }
+
+    LinguisticGraphOutEdgeIt outItr,outItrEnd;
+    for (boost::tie(outItr,outItrEnd)=out_edges(v,*g);
+         outItr!=outItrEnd;
+         outItr++)
     {
-      if (msd->empty())
+      LinguisticGraphVertex next=target(*outItr,*g);
+      if (visited.find(next)==visited.end())
       {
-        m_d->setHunspellSpellingAlternatives(
-          currentToken,
-          msd,
-          sp);
+        visited.insert(next);
+        toVisit.push(next);
+      }
+    }
+
+    if (v != firstVx && v != lastVx)
+    {
+      LDEBUG << "HunspellSpellingAlternatives::process processing vertex " << v;
+      Token* currentToken=tokenMap[v];
+      MorphoSyntacticData* msd=dataMap[v];
+      
+      if (currentToken!=0)
+      {
+        if (msd->empty())
+        {
+          m_d->setHunspellSpellingAlternatives(
+            currentToken,
+            msd,
+            sp);
+        }
       }
     }
   }
+
+
   LINFO << "MorphologicalAnalysis: ending process HunspellSpellingAlternatives";
   return SUCCESS_ID;
 }
@@ -161,12 +211,17 @@ void HunspellSpellingAlternativesPrivate::setHunspellSpellingAlternatives(
     || token->status().isAlphaConcatAbbrev()
     || token->status().isAlphaHyphen()
     || token->status().isAlphaPossessive()
-    || tokenStr.toUpper() == tokenStr)
+    || tokenStr.toUpper() == tokenStr
+    || token->status().defaultKey() == "t_url")
   {
     return;
   }
   char **suggestions;
   int suggestResult = m_hunspell->suggest(&suggestions, tokenStr.toUtf8().constData());
+  if (suggestResult > 1 && m_bestOnly)
+  {
+    suggestResult = 1;
+  }
   for (int i = 0; i < suggestResult;    i++)
   {
     LimaString correction = LimaString::fromUtf8(suggestions[i]);
@@ -180,7 +235,7 @@ void HunspellSpellingAlternativesPrivate::setHunspellSpellingAlternatives(
       
 //       if (!entry.isEmpty())
       {
-        LINFO << "HunspellSpellingAlternativesPrivate::setHunspellSpellingAlternatives correcting" << tokenStr << "into" << correction;
+        LINFO << "HunspellSpellingAlternativesPrivate::setHunspellSpellingAlternatives correcting" << tokenStr << "into" << correction << "at" << token->position();
         // add orthographic alternative to Token;
         StringsPoolIndex idx=sp[correction];
         token->addOrthographicAlternatives(idx);
