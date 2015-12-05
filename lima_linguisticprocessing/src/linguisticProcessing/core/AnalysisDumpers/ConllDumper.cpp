@@ -194,8 +194,8 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
 
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'mappingFile' in ConllDumper group" << " !";
-    throw InvalidConfiguration();
+    LINFO << "no parameter 'mappingFile' in ConllDumper group" << " !";
+//     throw InvalidConfiguration();
   }
 }
 
@@ -386,7 +386,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           }
           else
           {
-            LERROR << "ConllDumper::process" << relName << "not found in mapping";
+            conllRelName= relName;
+//             LERROR << "ConllDumper::process" << relName << "not found in mapping";
           }
         }
         QString targetConllIdString = targetConllId > 0 ? QString("%1").arg(targetConllId) : "-";
