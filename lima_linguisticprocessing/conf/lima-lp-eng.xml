@@ -54,7 +54,7 @@
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <item value="VerbNetRecognition"/>
         <!--item value="srl"/-->
-        <!--item value="conllDumper"/-->
+        <item value="conllDumper"/>
         <!--item value="bowDumper"/-->
         <!--item value="textDumper"/-->
         <!--item value="fullXmlDumper"/-->
@@ -712,10 +712,6 @@
 
       <param key="loader" value="srlLoader"/>
     </group>
-    <group name="conllDumper" class="ConllDumper">
-      <param key="outputSuffix" value=".conll"/>
-      <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
-    </group>
     <group name="srlLoader" class="SemanticRoleLabelingLoader">
       <param key="inputSuffix" value=".conll.srl"/>
     </group>
@@ -784,6 +780,11 @@
     </group>
     <group name="posGraphXmlDumper" class="posGraphXmlDumper">
       <param key="handler" value="xmlSimpleStreamHandler"/>
+    </group>
+    <group name="conllDumper" class="ConllDumper">
+      <param key="outputSuffix" value=".conll"/>
+      <param key="handler" value="simpleStreamHandler"/>
+      <!--param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/-->
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
