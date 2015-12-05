@@ -63,7 +63,8 @@
         <!--item value="posGraphXmlDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="simpleXmlDumper"/-->
-        <item value="textDumper"/>
+        <item value="conllDumper"/>
+        <!--item value="textDumper"/-->
         <!--item value="NullDumper"/-->
       </list>
     </group>
@@ -791,6 +792,10 @@
     </group>
     <group name="posGraphXmlDumper" class="posGraphXmlDumper">
       <param key="handler" value="xmlSimpleStreamHandler"/>
+    </group>
+    <group name="conllDumper" class="ConllDumper">
+      <param key="outputSuffix" value=".conll"/>
+      <param key="handler" value="simpleStreamHandler"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
