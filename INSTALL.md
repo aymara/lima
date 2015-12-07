@@ -56,7 +56,7 @@ $ cd $HOME/nltk_data/corpora/dependency_treebank
 $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
 ```
 
-:warning: **If you havn't already downloaded LIMA source code, please [do it now](https://github.com/aymara/lima.git).**
+:warning: **If you havn't already downloaded LIMA git repository (source code), please [do it now](https://github.com/aymara/lima.git).**
 
 Move to the root of the LIMA  git repository, e.g.:
 ```bash
