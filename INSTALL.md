@@ -56,10 +56,20 @@ $ cd $HOME/nltk_data/corpora/dependency_treebank
 $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
 ```
 
+If you havn't  already downloaded LIMA source code, please do  it now:
+```bash
+$ git clone https://github.com/aymara/lima.git
+```
+
+And then move to the newly downloaded LIMA  git repository:
+```bash
+$ cd lima
+```
+
 You need to set up a few environment variables. For this purpose, you can 
 source the setenv-lima.sh script from the root of the repository please check 
 values before):
-```
+```bash
 $ source ./setenv-lima.sh
 ```
 
