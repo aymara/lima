@@ -1,8 +1,9 @@
 environment: 
-  NLTK_PTB_DP_FILE: $PWD\nltk_data\corpora\dependency_treebank\nltk-ptb.dp 
-  LIMA_DIST: $PWD\dist LIMA_CONF=$LIMA_DIST\share\config\lima
-  LIMA_RESOURCES: $LIMA_DIST\share\apps\lima\resources 
-  PATH: $LIMA_DIST\bin:$LIMA_DIST\share\apps\lima\scripts::$LIMA_DIST\lib:$PATH
+  NLTK_PTB_DP_FILE: c:\projects\lima\nltk_data\corpora\dependency_treebank\nltk-ptb.dp 
+  LIMA_DIST: c:\projects\lima\dist 
+  LIMA_CONF: %LIMA_DIST%\share\config\lima
+  LIMA_RESOURCES: %LIMA_DIST%\share\apps\lima\resources 
+  PATH: %LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%
   LIMA_DISABLE_FSW_TESTING: true 
 
 #install:
