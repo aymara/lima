@@ -4,7 +4,9 @@ environment:
   LIMA_CONF: '%LIMA_DIST%\share\config\lima'
   LIMA_RESOURCES: '%LIMA_DIST%\share\apps\lima\resources' 
   PATH: '%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%'
+  PATH: 'C:\Qt\5.5\msvc2010_64\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true 
+  QTDIR: 'C:\Qt\5.5\msvc2010_64'
 
 #install:
   #- python -m nltk.downloader -d nltk_data dependency_treebank
