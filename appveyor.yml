@@ -11,10 +11,8 @@ environment:
   #- cat nltk_data\corpora\dependency_treebank\wsj_*.dp | grep -v "^$" > nltk_data\corpora\dependency_treebank\nltk-ptb.dp
 
 build_script:
-  mkdir dist
-  mkdir build
-  cd build
-  cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="master" ..
-  nmake
-  
+  - mkdir build
+  - cd build
+  - cmake ../ -G "Visual Studio 10 Win64"
+  - cmake --build . --config Release  
 
