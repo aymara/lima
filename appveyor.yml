@@ -3,9 +3,11 @@ environment:
   LIMA_DIST: c:\projects\lima\dist 
   LIMA_CONF: '%LIMA_DIST%\share\config\lima'
   LIMA_RESOURCES: '%LIMA_DIST%\share\apps\lima\resources' 
-  PATH: 'C:\Qt\5.5\msvc2010_64\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%'
+  QTDIR: 'C:\Qt\5.5\msvc2013_64'
+  PATH: '%QTDIR%\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true 
-  QTDIR: 'C:\Qt\5.5\msvc2010_64'
+
+os: Visual Studio 2013
 
 #install:
   #- python -m nltk.downloader -d nltk_data dependency_treebank
@@ -14,6 +16,6 @@ environment:
 build_script:
   - mkdir build
   - cd build
-  - cmake ../ -G "Visual Studio 10 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%"
+  - cmake ../ -G "Visual Studio 13 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%"
   - cmake --build . --config Release  
 
