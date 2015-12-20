@@ -5,7 +5,7 @@ enable_testing()
 
 include(ExternalProject)
 
-macro (CompileLimaSubproject _project _dependsOn)
+macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
 
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -23,7 +23,7 @@ macro (CompileLimaSubproject _project _dependsOn)
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" ${_cmakeArgs}
   )
 
   ## Add specified dependencies
@@ -54,7 +54,12 @@ macro (CompileLimaSubproject _project _dependsOn)
   
 endmacro ()
 
-CompileLimaSubproject(lima_common "")
+set (CMAKE_ARGS "")
+if (NOT "x${BOOST_ROOT}" STREQUAL "x")
+  set(CMAKE_ARGS "-DBOOST_ROOT=${BOOST_ROOT}")
+endif ()
+
+CompileLimaSubproject(lima_common "" "${CMAKE_ARGS}")
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
