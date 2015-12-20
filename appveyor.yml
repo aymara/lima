@@ -17,6 +17,6 @@ build_script:
   - mkdir build
   - cd build
   - dir C:\Libraries\boost_1_59_0\boost
-  - cmake ../ -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" -DBOOST_ROOT=C:\Libraries\boost_1_59_0 -DBoost_INCLUDE_DIR=C:\Libraries\boost_1_59_0\include
+  - cmake ../ -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" -DBOOST_ROOT=C:/Libraries/boost_1_59_0 -DBoost_INCLUDE_DIR=C:/Libraries/boost_1_59_0
   - cmake --build . --config Release  
 
