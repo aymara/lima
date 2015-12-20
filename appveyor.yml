@@ -14,6 +14,6 @@ environment:
 build_script:
   - mkdir build
   - cd build
-  - cmake ../ -G "Visual Studio 10 Win64"
+  - cmake ../ -G "Visual Studio 10 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%"
   - cmake --build . --config Release  
 
