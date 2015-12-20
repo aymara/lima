@@ -60,15 +60,15 @@ if (NOT "x${BOOST_ROOT}" STREQUAL "x")
 endif ()
 
 CompileLimaSubproject(lima_common "" "${CMAKE_ARGS}")
-CompileLimaSubproject(lima_linguisticprocessing lima_common)
+CompileLimaSubproject(lima_linguisticprocessing lima_common "${CMAKE_ARGS}")
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
-  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
+  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing "${CMAKE_ARGS}")
 endif()
 
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+CompileLimaSubproject(lima_pelf lima_linguisticprocessing "${CMAKE_ARGS}")
 
-CompileLimaSubproject(lima_annoqt lima_common)
+CompileLimaSubproject(lima_annoqt lima_common "${CMAKE_ARGS}")
 
 install(FILES)
 
