@@ -59,6 +59,11 @@ if (NOT "x${BOOST_ROOT}" STREQUAL "x")
   set(CMAKE_ARGS "-DBOOST_ROOT=${BOOST_ROOT}")
 endif ()
 
+set (CMAKE_ARGS "")
+if (NOT "x${BOOST_LIBRARYDIR}" STREQUAL "x")
+  set(CMAKE_ARGS "-DBOOST_LIBRARYDIR=${BOOST_LIBRARYDIR}  ${CMAKE_ARGS}")
+endif ()
+
 CompileLimaSubproject(lima_common "" "${CMAKE_ARGS}")
 CompileLimaSubproject(lima_linguisticprocessing lima_common "${CMAKE_ARGS}")
 
