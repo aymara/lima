@@ -60,6 +60,11 @@ if (NOT "x${BOOST_ROOT}" STREQUAL "x")
 endif ()
 
 set (CMAKE_ARGS "")
+if (NOT "x${Boost_INCLUDE_DIR}" STREQUAL "x")
+  set(CMAKE_ARGS "-DBoost_INCLUDE_DIR=${Boost_INCLUDE_DIR}")
+endif ()
+
+set (CMAKE_ARGS "")
 if (NOT "x${BOOST_LIBRARYDIR}" STREQUAL "x")
   set(CMAKE_ARGS "-DBOOST_LIBRARYDIR=${BOOST_LIBRARYDIR}  ${CMAKE_ARGS}")
 endif ()
