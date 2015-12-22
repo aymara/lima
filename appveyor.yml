@@ -1,3 +1,6 @@
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 environment: 
   NLTK_PTB_DP_FILE: c:\projects\lima\nltk_data\corpora\dependency_treebank\nltk-ptb.dp 
   LIMA_DIST: c:\projects\lima\dist 
@@ -16,7 +19,10 @@ os: Visual Studio 2013
 build_script:
   - mkdir build
   - cd build
-  - dir C:\Libraries\boost_1_59_0\libs
+  - dir C:\Libraries\boost_1_59_0\lib64-msvc-14.0
   - cmake ../ -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" -DBOOST_ROOT=C:/Libraries/boost_1_59_0 -DBoost_INCLUDE_DIR=C:/Libraries/boost_1_59_0 -DBOOST_LIBRARYDIR=C:/Libraries/boost_1_59_0/lib64-msvc-14.0
   - cmake --build . --config Release  
+  - tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
 
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
