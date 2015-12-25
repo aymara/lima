@@ -14,6 +14,8 @@ macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
     set(_TEST_COMMAND "")
   endif()
   
+  message("ExternalProject_Add _cmakeArgs=${_cmakeArgs}")
+
   ## Add external project
   ExternalProject_Add(
     ${_project}
@@ -54,6 +56,9 @@ macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
   
 endmacro ()
 
+message("Before CMAKE_ARGS BOOST_ROOT=${BOOST_ROOT}")
+message("Before CMAKE_ARGS Boost_INCLUDE_DIR=${Boost_INCLUDE_DIR}")
+message("Before CMAKE_ARGS BOOST_LIBRARYDIR=${BOOST_LIBRARYDIR}")
 set (CMAKE_ARGS "")
 if (NOT "x${BOOST_ROOT}" STREQUAL "x")
   set(CMAKE_ARGS "-DBOOST_ROOT:STRING=${BOOST_ROOT}")
