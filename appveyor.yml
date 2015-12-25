@@ -10,7 +10,7 @@ environment:
   PATH: '%QTDIR%\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true 
 
-os: Visual Studio 2013
+os: Visual Studio 2014
 
 #install:
   #- python -m nltk.downloader -d nltk_data dependency_treebank

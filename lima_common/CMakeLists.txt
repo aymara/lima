@@ -103,6 +103,10 @@ include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
+
+message("Before find_package BOOST_ROOT=${BOOST_ROOT}")
+message("Before find_package Boost_INCLUDE_DIR=${Boost_INCLUDE_DIR}")
+message("Before find_package BOOST_LIBRARYDIR=${BOOST_LIBRARYDIR}")
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
