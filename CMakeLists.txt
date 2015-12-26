@@ -11,7 +11,7 @@ macro (CompileLimaSubproject _project _dependsOn )
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     set(_TEST_COMMAND make test)
   else()
-    set(_TEST_COMMAND cmake --build . --target TEST --config Release)
+    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config Release)
   endif()
   
   ## Add external project
