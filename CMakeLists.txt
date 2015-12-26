@@ -11,7 +11,7 @@ macro (CompileLimaSubproject _project _dependsOn )
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     set(_TEST_COMMAND make test)
   else()
-    set(_TEST_COMMAND "nmake test")
+    set(_TEST_COMMAND "cmake --build . --target TEST.vcxproj --config Release")
   endif()
   
   ## Add external project
@@ -43,7 +43,7 @@ macro (CompileLimaSubproject _project _dependsOn )
       )
     else()
       ExternalProject_Add_Step(${_project} packaging
-      COMMAND nmake package
+      COMMAND cmake --build . --target PACKAGE.vcxproj --config Release
       COMMENT "Packaging ${_project}"
       WORKING_DIRECTORY <BINARY_DIR>
       DEPENDEES install
