@@ -67,7 +67,7 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   message("Windows flags")
   add_definitions(-D WIN32)
   
-  set(Boost_COMPILER "-vc120")
+  set(Boost_COMPILER "-vc140")
   
   # By default, do not warn when built on machines using only VS Express:
   IF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
