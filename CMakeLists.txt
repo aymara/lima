@@ -33,8 +33,8 @@ macro (CompileLimaSubproject _project _dependsOn )
   endif()
 
     ## Add packaging command
-  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
+  if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
+    if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
       ExternalProject_Add_Step(${_project} packaging
       COMMAND make package
       COMMENT "Packaging ${_project}"
