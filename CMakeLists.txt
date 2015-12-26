@@ -41,7 +41,7 @@ macro (CompileLimaSubproject _project _dependsOn )
       WORKING_DIRECTORY <BINARY_DIR>
       DEPENDEES install
       )
-    else()
+    elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ExternalProject_Add_Step(${_project} packaging
       COMMAND cmake --build . --target PACKAGE --config Release
       COMMENT "Packaging ${_project}"
