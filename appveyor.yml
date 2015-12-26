@@ -9,6 +9,7 @@ environment:
   QTDIR: 'C:\Qt\5.5\msvc2013_64'
   PATH: '%QTDIR%\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true 
+  BOOST_ROOT: 'C:\Libraries\boost_1_59_0'
 
 os: Visual Studio 2013
 
@@ -21,7 +22,7 @@ build_script:
   - cp C:\Libraries\boost_1_59_0\lib64-msvc-14.0\boost_unit_test_framework-vc140-mt-gd-1_59.dll C:\Libraries\boost_1_59_0\lib64-msvc-14.0\boost_unit_test_framework.dll 
   - mkdir build
   - cd build
-  - cmake ../ -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" -DBOOST_ROOT=C:/Libraries/boost_1_59_0 -DBOOST_INCLUDE_DIR=C:/Libraries/boost_1_59_0 -DBOOST_LIBRARYDIR=C:/Libraries/boost_1_59_0/lib64-msvc-14.0
+  - cmake ../ -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%"
   - cmake --build . --config Release  
   - tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
 
