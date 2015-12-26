@@ -49,13 +49,7 @@ set_target_properties(lima-common-misc PROPERTIES VERSION ${LIMA_COMMON_LIB_VERS
 install(TARGETS lima-common-misc DESTINATION lib)
 
 
-if ("x$ENV{LIMA_DISABLE_FSW_TESTING}" STREQUAL "x")
-message(STATUS "LIMA_DISABLE_FSW_TESTING is NOT set: build tests for misc")
 add_subdirectory(tests)
-else()
-message(STATUS "LIMA_DISABLE_FSW_TESTING is set: do NOT build tests for misc")
-endif()
-
 
 ########### install files ###############
 install(FILES
