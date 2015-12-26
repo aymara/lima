@@ -5,7 +5,7 @@ enable_testing()
 
 include(ExternalProject)
 
-macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
+macro (CompileLimaSubproject _project _dependsOn )
 
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -14,8 +14,6 @@ macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
     set(_TEST_COMMAND "")
   endif()
   
-  message("ExternalProject_Add _cmakeArgs=${_cmakeArgs}")
-
   ## Add external project
   ExternalProject_Add(
     ${_project}
@@ -25,7 +23,7 @@ macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" ${_cmakeArgs}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" -DBoost_DEBUG=ON
   )
 
   ## Add specified dependencies
@@ -56,32 +54,19 @@ macro (CompileLimaSubproject _project _dependsOn _cmakeArgs)
   
 endmacro ()
 
-message("Before CMAKE_ARGS BOOST_ROOT=${BOOST_ROOT}")
-message("Before CMAKE_ARGS Boost_INCLUDE_DIR=${Boost_INCLUDE_DIR}")
-message("Before CMAKE_ARGS BOOST_LIBRARYDIR=${BOOST_LIBRARYDIR}")
-set (CMAKE_ARGS "")
-if (NOT "x${BOOST_ROOT}" STREQUAL "x")
-  set(CMAKE_ARGS "-DBOOST_ROOT:STRING=${BOOST_ROOT}")
-endif ()
+message("Before BOOST_ROOT=$ENV{BOOST_ROOT}")
+message("Before BOOST_LIBRARYDIR=$ENV{BOOST_LIBRARYDIR}")
 
-if (NOT "x${BOOST_INCLUDE_DIR}" STREQUAL "x")
-  set(CMAKE_ARGS "-DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR} ${CMAKE_ARGS}")
-endif ()
-
-if (NOT "x${BOOST_LIBRARYDIR}" STREQUAL "x")
-  set(CMAKE_ARGS "-DBOOST_LIBRARYDIR:PATH=${BOOST_LIBRARYDIR} ${CMAKE_ARGS}")
-endif ()
-
-CompileLimaSubproject(lima_common "" "${CMAKE_ARGS}")
-CompileLimaSubproject(lima_linguisticprocessing lima_common "${CMAKE_ARGS}")
+CompileLimaSubproject(lima_common "")
+CompileLimaSubproject(lima_linguisticprocessing lima_common)
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
-  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing "${CMAKE_ARGS}")
+  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
 endif()
 
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing "${CMAKE_ARGS}")
+CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
-CompileLimaSubproject(lima_annoqt lima_common "${CMAKE_ARGS}")
+CompileLimaSubproject(lima_annoqt lima_common)
 
 install(FILES)
 
