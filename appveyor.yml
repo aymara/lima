@@ -7,7 +7,7 @@ environment:
   LIMA_CONF: '%LIMA_DIST%\share\config\lima'
   LIMA_RESOURCES: '%LIMA_DIST%\share\apps\lima\resources' 
   QTDIR: 'C:\Qt\5.5\msvc2013_64'
-  PATH: '%QTDIR%\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts%LIMA_DIST%\lib;%PATH%'
+  PATH: '%QTDIR%\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts;%LIMA_DIST%\lib;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true 
   BOOST_ROOT: 'C:\Libraries\boost'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
@@ -23,7 +23,7 @@ build_script:
   - cd c:\b
   - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" c:/projects/lima
   - cmake --build . --config Release  
-  - tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
+  - tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
 
 on_finish:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

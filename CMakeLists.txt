@@ -10,8 +10,8 @@ macro (CompileLimaSubproject _project _dependsOn )
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     set(_TEST_COMMAND make test)
-#   else()
-#     set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config Release)
+  else()
+    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config Release)
   endif()
   
   ## Add external project
@@ -46,7 +46,7 @@ macro (CompileLimaSubproject _project _dependsOn )
       COMMAND cmake --build . --target PACKAGE --config Release
       COMMENT "Packaging ${_project}"
       WORKING_DIRECTORY <BINARY_DIR>
-      DEPENDEES install
+      DEPENDEES INSTALL
       )
     endif()
   endif()
@@ -61,9 +61,6 @@ macro (CompileLimaSubproject _project _dependsOn )
   )
   
 endmacro ()
-
-message("Before BOOST_ROOT=$ENV{BOOST_ROOT}")
-message("Before BOOST_LIBRARYDIR=$ENV{BOOST_LIBRARYDIR}")
 
 CompileLimaSubproject(lima_common "")
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
