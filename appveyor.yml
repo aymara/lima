@@ -14,9 +14,10 @@ environment:
 
 os: Visual Studio 2013
 
-#install:
-  #- python -m nltk.downloader -d nltk_data dependency_treebank
-  #- cat nltk_data\corpora\dependency_treebank\wsj_*.dp | grep -v "^$" > nltk_data\corpora\dependency_treebank\nltk-ptb.dp
+install:
+  - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'dependency_treebank.zip')
+  - ps: unzip dependency_treebank.zip
+  - cat dependency_treebank/wsj_*.dp | grep -v "^$" > dependency_treebank/nltk-ptb.dp
 
 build_script:
   - mkdir c:\b
