@@ -15,9 +15,9 @@ environment:
 os: Visual Studio 2013
 
 install:
-  - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'dependency_treebank.zip')
-  - ps: unzip dependency_treebank.zip
-  - cat dependency_treebank/wsj_*.dp | grep -v "^$" > dependency_treebank/nltk-ptb.dp
+  - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
+  - ps: unzip c:\dependency_treebank.zip
+  - cat c:\dependency_treebank\wsj_*.dp | grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
 
 build_script:
   - mkdir c:\b
