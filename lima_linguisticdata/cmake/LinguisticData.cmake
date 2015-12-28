@@ -305,14 +305,14 @@ macro (COMPILE_RULES _lang)
   set (COMPILE_RULES_DEBUG_MODE)
   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
     set (COMPILE_RULES_DEBUG_MODE "--debug")
-  endif (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+  endif ()
   foreach(_current ${ARGN})
     add_custom_command(
       OUTPUT ${_current}.bin
       COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
       DEPENDS ${_current}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  endforeach(_current ${ARGN})
+  endforeach()
 endmacro (COMPILE_RULES)
 
 ###############
