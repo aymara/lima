@@ -11,13 +11,14 @@ environment:
   BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
   PATH: '%QTDIR%\bin;%LIMA_DIST%\bin;%LIMA_DIST%\share\apps\lima\scripts;%LIMA_DIST%\lib;%BOOST_LIBRARYDIR%;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true 
+  NLTK_PTB_DP_DIR: 'c:/dependency_treebank'
 
 os: Visual Studio 2013
 
 install:
   - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
   - ps: unzip c:\dependency_treebank.zip
-  - cat c:\dependency_treebank\wsj_*.dp | grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
+  - cat dependency_treebank/wsj_*.dp | grep -v "^$" > dependency_treebank/nltk-ptb.dp
 
 build_script:
   - mkdir c:\b
