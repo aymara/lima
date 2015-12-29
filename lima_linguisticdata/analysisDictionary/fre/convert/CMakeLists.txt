@@ -21,27 +21,49 @@ set(ENV{LC_ALL} "C")
 # because it will make difficult to transmit changes and corrections upstream
 file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../lefff/*.dic)
 
+if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  add_custom_command(
+    OUTPUT dico.xml
+    COMMAND echo "<dictionary>" > dico.xml.tmp
 
-add_custom_command(
-  OUTPUT dico.xml
-  COMMAND echo "<dictionary>" > dico.xml.tmp
+  # Continuation of [1] above
+  #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
+    COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
 
-# Continuation of [1] above
-#   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
-  COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
+    COMMAND LC_ALL="C" sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
+    COMMAND echo "</dictionary>" >> dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
+    COMMAND mv dico.xml.tmp dico.xml
+    DEPENDS 
+      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt 
+      ${dicoFiles}
+    COMMENT "produce XML dico"
+    VERBATIM
+  )
+else()
+  add_custom_command(
+    OUTPUT dico.xml
+    COMMAND echo "<dictionary>" > dico.xml.tmp
 
-  COMMAND LC_ALL="C" sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
-  COMMAND echo "</dictionary>" >> dico.xml.tmp
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
-  COMMAND mv dico.xml.tmp dico.xml
-  DEPENDS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt 
-    ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt 
-    ${dicoFiles}
-  COMMENT "produce XML dico"
-  VERBATIM
-)
+  # Continuation of [1] above
+  #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
+    COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
+
+    COMMAND sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
+    COMMAND echo "</dictionary>" >> dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
+    COMMAND mv dico.xml.tmp dico.xml
+    DEPENDS 
+      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt 
+      ${dicoFiles}
+    COMMENT "produce XML dico"
+    VERBATIM
+  )
+endif()
 
 add_custom_target(
   dicoxmlfre

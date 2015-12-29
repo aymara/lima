@@ -2,7 +2,7 @@ init:
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 environment: 
-  NLTK_PTB_DP_FILE: c:\projects\lima\nltk_data\corpora\dependency_treebank\nltk-ptb.dp 
+  NLTK_PTB_DP_FILE: c:\dependency_treebank\nltk-ptb.dp 
   LIMA_DIST: c:\d 
   LIMA_CONF: '%LIMA_DIST%\share\config\lima'
   LIMA_RESOURCES: '%LIMA_DIST%\share\apps\lima\resources' 
