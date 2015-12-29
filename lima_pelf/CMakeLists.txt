@@ -12,25 +12,27 @@ cmake_policy(SET CMP0017 NEW)
 SET(optionalLibs)
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    message("Linux flags")
-    
-    # Flags needed for the plugins mechanism to work: our libs are dynamically loaded by
-    # factories, thus their symbols must be known even if not used by the binary
-    set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-as-needed")
+  message("Linux flags")
+  
+  # Flags needed for the plugins mechanism to work: our libs are dynamically loaded by
+  # factories, thus their symbols must be known even if not used by the binary
+  set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
+  set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-as-needed")
+  set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-as-needed")
 
 
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
-    set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
-    if (HAVE_STDCPP0X)
-      message("C++0x supported")
-      set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-    else (HAVE_STDCPP0X)
-      message("C++0x NOT supported")
-      set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
-    endif (HAVE_STDCPP0X)
+  include(CheckCXXCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
+  set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
+  if (HAVE_STDCPP0X)
+    message("C++0x supported")
+    set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
+  else (HAVE_STDCPP0X)
+    message("C++0x NOT supported")
+    set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
+  endif (HAVE_STDCPP0X)
+
+  set(LIB_INSTALL_DIR "lib")
 else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   message("Windows flags")
   add_definitions(-D WIN32)
@@ -43,6 +45,7 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
 
+  set(LIB_INSTALL_DIR "bin")
 endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
     
