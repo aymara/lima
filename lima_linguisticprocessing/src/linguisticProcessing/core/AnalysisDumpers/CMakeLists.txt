@@ -63,7 +63,7 @@ target_link_libraries(lima-lp-analysisdumpers
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysisdumpers DESTINATION lib)
+install(TARGETS lima-lp-analysisdumpers DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

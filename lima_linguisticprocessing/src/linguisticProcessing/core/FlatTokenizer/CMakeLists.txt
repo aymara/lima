@@ -45,7 +45,7 @@ target_link_libraries(lima-lp-flattokenizer lima-common-factory lima-common-misc
 
 set_target_properties(lima-lp-flattokenizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-flattokenizer DESTINATION lib)
+install(TARGETS lima-lp-flattokenizer DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 

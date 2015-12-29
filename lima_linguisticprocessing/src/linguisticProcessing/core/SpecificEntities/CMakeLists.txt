@@ -37,7 +37,7 @@ target_link_libraries(lima-lp-specificentities lima-common-factory lima-common-m
 
 set_target_properties(lima-lp-specificentities PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-specificentities DESTINATION lib)
+install(TARGETS lima-lp-specificentities DESTINATION ${LIB_INSTALL_DIR})
 
 ########### specific targets for normalization actions ###############
 
@@ -48,7 +48,7 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-datetime)
 target_link_libraries(lima-lp-se-datetime  lima-lp-specificentities lima-lp-automaton  ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES} lima-lp-misc lima-lp-linguisticprocessing-core lima-lp-linguisticresources lima-lp-flattokenizer lima-lp-propertycode lima-lp-applyrecognizer lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-linguisticdata  lima-lp-bagofwords lima-lp-postagger )
 set_target_properties(lima-lp-se-datetime PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-se-datetime DESTINATION lib)
+install(TARGETS lima-lp-se-datetime DESTINATION ${LIB_INSTALL_DIR})
 
 SET(lima-lp-se-number_LIB_SRCS
   NormalizeNumber.cpp
@@ -57,7 +57,7 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-number)
 target_link_libraries(lima-lp-se-number  ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES} lima-lp-misc lima-lp-linguisticprocessing-core lima-lp-linguisticresources lima-lp-flattokenizer lima-lp-propertycode lima-lp-applyrecognizer lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-linguisticdata lima-lp-bagofwords lima-lp-postagger ${optionalLibs})
 set_target_properties(lima-lp-se-number PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-se-number DESTINATION lib)
+install(TARGETS lima-lp-se-number DESTINATION ${LIB_INSTALL_DIR})
 
 SET(lima-lp-se-person_LIB_SRCS
   NormalizePersonName.cpp
@@ -67,7 +67,7 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-person)
 target_link_libraries(lima-lp-se-person    ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES} lima-lp-misc lima-lp-linguisticprocessing-core lima-lp-linguisticresources lima-lp-flattokenizer lima-lp-propertycode lima-lp-applyrecognizer lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-linguisticdata lima-lp-bagofwords lima-lp-postagger )
 set_target_properties(lima-lp-se-person PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-se-person DESTINATION lib)
+install(TARGETS lima-lp-se-person DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 install(FILES  

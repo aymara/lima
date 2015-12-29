@@ -32,7 +32,7 @@ add_library(lima-common-mediaticdata SHARED ${lima-common-mediaticdata_LIB_SRCS}
 target_link_libraries(lima-common-mediaticdata lima-common-factory lima-common-xmlconfigurationfiles lima-common-misc lima-common-data)
 
 set_target_properties(lima-common-mediaticdata PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-mediaticdata DESTINATION lib)
+install(TARGETS lima-common-mediaticdata DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

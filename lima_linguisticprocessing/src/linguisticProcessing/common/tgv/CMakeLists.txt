@@ -33,7 +33,7 @@ target_link_libraries(lima-lp-tgv lima-lp-misc  ${QT_LIBRARIES} lima-common-qslo
 
 set_target_properties(lima-lp-tgv PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-tgv DESTINATION lib)
+install(TARGETS lima-lp-tgv DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

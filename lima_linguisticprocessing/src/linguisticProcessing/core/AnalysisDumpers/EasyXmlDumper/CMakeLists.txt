@@ -34,7 +34,7 @@ target_link_libraries(lima-lp-easyxmldumper lima-lp-lineartextrepresentation lim
 
 set_target_properties(lima-lp-easyxmldumper PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-easyxmldumper DESTINATION lib)
+install(TARGETS lima-lp-easyxmldumper DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

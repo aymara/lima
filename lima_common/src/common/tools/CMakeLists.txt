@@ -47,7 +47,7 @@ target_link_libraries(lima-common-tools
   ${QT_LIBRARIES})
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-tools DESTINATION lib)
+install(TARGETS lima-common-tools DESTINATION ${LIB_INSTALL_DIR})
 
 add_subdirectory(tests)
 

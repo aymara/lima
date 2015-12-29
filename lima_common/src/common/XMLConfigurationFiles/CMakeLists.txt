@@ -33,7 +33,7 @@ add_library(lima-common-xmlconfigurationfiles SHARED ${lima-common-xmlconfigurat
 target_link_libraries(lima-common-xmlconfigurationfiles lima-common-qslog lima-common-data ${QT_LIBRARIES})
 
 set_target_properties(lima-common-xmlconfigurationfiles PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-xmlconfigurationfiles DESTINATION lib)
+install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

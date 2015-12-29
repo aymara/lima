@@ -39,7 +39,7 @@ target_link_libraries(lima-lp-textsegmentation lima-common-factory lima-common-m
 
 set_target_properties(lima-lp-textsegmentation PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-textsegmentation DESTINATION lib)
+install(TARGETS lima-lp-textsegmentation DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 

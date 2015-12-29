@@ -41,7 +41,7 @@ target_link_libraries(lima-common-qslog
   ${QT_LIBRARIES}
 )
 set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-qslog DESTINATION lib)
+install(TARGETS lima-common-qslog DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 

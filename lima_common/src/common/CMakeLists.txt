@@ -49,7 +49,7 @@ target_link_libraries(lima-common
 
 set_target_properties(lima-common PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 
-install(TARGETS lima-common DESTINATION lib)
+install(TARGETS lima-common DESTINATION ${LIB_INSTALL_DIR})
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 

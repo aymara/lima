@@ -34,7 +34,7 @@ target_link_libraries(lima-lp-propertycode lima-lp-misc ${QT_LIBRARIES} lima-com
 
 set_target_properties(lima-lp-propertycode PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-propertycode DESTINATION lib)
+install(TARGETS lima-lp-propertycode DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

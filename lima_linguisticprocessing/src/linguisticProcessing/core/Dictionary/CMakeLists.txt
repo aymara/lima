@@ -37,7 +37,7 @@ target_link_libraries(lima-lp-dictionary lima-common-factory lima-common-misc li
 
 set_target_properties(lima-lp-dictionary PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-dictionary DESTINATION lib)
+install(TARGETS lima-lp-dictionary DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

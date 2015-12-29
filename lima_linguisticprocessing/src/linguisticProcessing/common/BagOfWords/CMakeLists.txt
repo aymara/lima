@@ -49,7 +49,7 @@ lima-lp-misc lima-lp-propertycode lima-common-data lima-common-mediaticdata lima
 
 set_target_properties(lima-lp-bagofwords PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-bagofwords DESTINATION lib)
+install(TARGETS lima-lp-bagofwords DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

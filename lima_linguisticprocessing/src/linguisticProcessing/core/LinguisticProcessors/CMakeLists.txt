@@ -46,7 +46,7 @@ target_link_libraries(lima-lp-linguisticprocessors
 
 set_target_properties(lima-lp-linguisticprocessors PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticprocessors DESTINATION lib)
+install(TARGETS lima-lp-linguisticprocessors DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
