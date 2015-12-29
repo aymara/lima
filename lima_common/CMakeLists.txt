@@ -106,6 +106,13 @@ include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES C:/Qt/5.5/msvc2013_64/bin/Qt5Core.dll
+                C:/Qt/5.5/msvc2013_64/bin/Qt5Xml.dll
+                C:/Qt/5.5/msvc2013_64/bin/Qt5Test.dll
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
 add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
@@ -117,6 +124,11 @@ message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES C:/Libraries/boost/lib64-msvc-12.0/boost_system-vc120-mt-1_56.dll
+                C:/Libraries/boost/lib64-msvc-12.0/boost_unit_test_framework-vc120-mt-1_56.dll
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
 
 configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
 find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR})
