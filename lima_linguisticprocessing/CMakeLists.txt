@@ -131,6 +131,14 @@ FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS regex filesystem program_options sys
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${Boost_REGEX_LIBRARY_RELEASE}
+                ${Boost_FILESYSTEM_LIBRARY_RELEASE}
+                ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}
+                ${Boost_THREAD_LIBRARY_RELEASE}
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
 find_package(SVMTOOL++) 
 if(SVMTOOL++_FOUND)
   set(optionalLibs ${optionalLibs} ${SVMTOOL++_NAMES})

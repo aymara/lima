@@ -125,8 +125,8 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES C:/Libraries/boost/lib64-msvc-12.0/boost_system-vc120-mt-1_56.dll
-                C:/Libraries/boost/lib64-msvc-12.0/boost_unit_test_framework-vc120-mt-1_56.dll
+  install(FILES ${Boost_SYSTEM_LIBRARY_RELEASE}
+                ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE}
           DESTINATION ${LIB_INSTALL_DIR})
 endif ()
 
