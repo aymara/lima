@@ -220,7 +220,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     COMMENT "compile-dictionary"
     VERBATIM
   )
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
     COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
@@ -233,7 +233,7 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     COMMENT "compile-dictionary"
     VERBATIM
   )
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+endif ()
 
   add_custom_target(
     compilexmldic${_lang}${_dicostr}
