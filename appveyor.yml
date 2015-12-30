@@ -35,10 +35,10 @@ build_script:
   #- tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
 
 on_success:
-  - curl -T C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limacommon-2.1.-Linux.deb
-  - curl -T C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.-Linux.deb
-  - curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu/lima/$APPVEYOR_BUILD_NUMBER/publish
-  - curl -XGET https://bintray.com/kleag/ubuntu/lima/$APPVEYOR_BUILD_NUMBER
+  - ps: curl -T C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limacommon-2.1.-Linux.deb
+  - ps: curl -T C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.-Linux.deb
+  - ps: curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu/lima/$APPVEYOR_BUILD_NUMBER/publish
+  - ps: curl -XGET https://bintray.com/kleag/ubuntu/lima/$APPVEYOR_BUILD_NUMBER
 
 on_failure:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
