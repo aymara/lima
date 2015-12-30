@@ -59,16 +59,6 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile" << filename;
 #endif
   
-  // check that file exists
-  {
-    ifstream fin(filename.c_str(), std::ifstream::binary);
-    if (!fin.good()) {
-      LERROR << "invalid XMLPropertyCode file " << filename;
-      throw InvalidConfiguration();
-    }
-    fin.close();
-  }
-  
 #ifdef DEBUG_LP
   LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
