@@ -155,13 +155,13 @@ COMMENT "Generating API documentation with Doxygen" VERBATIM
 endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
-INCLUDE(InstallRequiredSystemLibraries)
+include(InstallRequiredSystemLibraries)
 
 set(CPACK_MONOLITHIC_INSTALL 1)
-SET(CPACK_PACKAGE_NAME "limacommon")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Common libraries")
-SET(CPACK_PACKAGE_VENDOR "CEA LIST")
-SET(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
+set(CPACK_PACKAGE_NAME "limacommon")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Common libraries")
+set(CPACK_PACKAGE_VENDOR "CEA LIST")
+set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
