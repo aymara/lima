@@ -36,14 +36,13 @@ build_script:
 
 on_success:
   - ps: $user = "kleag"
-  - ps: $pass = $BINTRAYKEY
+  - ps: $pass = "$BINTRAYKEY"
   - ps: $pair = "${user}:${pass}"
   - ps: $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
   - ps: $base64 = [System.Convert]::ToBase64String($bytes)
   - ps: $basicAuthValue = "Basic $base64"
   - ps: $headers = @{ Authorization = $basicAuthValue }
-  - ps: $limacommonbody = "file=$(get-content C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe -raw)"
-  - ps: Invoke-RestMethod -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limacommon-2.1.-Linux.deb -method POST -body $limacommonbody
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limacommon-2.1.-Linux.deb?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe
   #- ps: curl -T C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.-Linux.deb
   - ps: curl -method POST -Headers $headers -uri https://api.bintray.com/content/kleag/ubuntu/lima/$APPVEYOR_BUILD_NUMBER/publish
   - ps: curl -method GET -uri https://bintray.com/kleag/ubuntu/lima/$APPVEYOR_BUILD_NUMBER
