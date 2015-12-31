@@ -35,7 +35,8 @@ build_script:
   #- tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
 
 on_success:
-  - ps: $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f kleag,$BINTRAYKEY)))
+  - ps: $kleag = "kleag"
+  - ps: $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $kleag,$BINTRAYKEY)))
   - ps: $limacommonbody = "file=$(get-content C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe -raw)"
   - ps: Invoke-RestMethod -uri https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limacommon-2.1.-Linux.deb -method POST -body $limacommonbody -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)}
   #- ps: curl -T C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/windows64/lima/$APPVEYOR_BUILD_NUMBER/$APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.-Linux.deb
