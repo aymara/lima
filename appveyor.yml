@@ -42,8 +42,10 @@ on_success:
   - ps: $base64 = [System.Convert]::ToBase64String($bytes)
   - ps: $basicAuthValue = "Basic $base64"
   - ps: $headers = @{ Authorization = $basicAuthValue }
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$Env:APPVEYOR_REPO_COMMIT-win64.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$Env:APPVEYOR_REPO_COMMIT-win64.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe
+  - ps: $commit = $Env:APPVEYOR_REPO_COMMIT
+  - ps: $commit  = $commit.substring(0,7)
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe
 
   
 on_failure:
