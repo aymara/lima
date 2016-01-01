@@ -122,6 +122,14 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
 message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
 endif()
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES C:/Qt/5.5/msvc2013_64/bin/Qt5Network.dll
+                C:/Qt/5.5/msvc2013_64/bin/Qt5XmlPatterns.dll
+                C:/Qt/5.5/msvc2013_64/bin/Qt5DBus.dll
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
+
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
@@ -132,10 +140,14 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES ${Boost_REGEX_LIBRARY_RELEASE}
-                ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}
-                ${Boost_THREAD_LIBRARY_RELEASE}
+  string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_RELEASE})
+  install(FILES ${Boost_REGEX_LIBRARY_dll}
+                ${Boost_FILESYSTEM_LIBRARY_dll}
+                ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
+                ${Boost_THREAD_LIBRARY_dll}
           DESTINATION ${LIB_INSTALL_DIR})
 endif ()
 
