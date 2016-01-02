@@ -15,3 +15,4 @@ Ubuntu 14.04, Semaphore Build Status: [![Semaphore Build Status](https://semapho
 
 Ubuntu 12.04, Travis-ci Build Status: [![Travis-ci Build Status](https://travis-ci.org/aymara/lima.svg?branch=master)](https://travis-ci.org/aymara/lima)
 
+MS Windows 64, Appveyor Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/tyj7jgks2cxx94w9?svg=true)](https://ci.appveyor.com/project/kleag/lima)
