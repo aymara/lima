@@ -96,9 +96,8 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
   boost::regex linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
   boost::regex numre("^\\d+$");
 
-  std::string lineString;
+  std::string lineString = Lima::Common::Misc::readLine(ifl);
   size_t linenum(0);
-  getline(ifl, lineString);
   while (ifl.good() && !ifl.eof())
   {
     Common::Misc::chomp(lineString);
@@ -140,7 +139,7 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
       //      LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"]";
       m_trigrams[trigram[0]][trigram[1]][trigram[2]] = proba;
     }
-    getline(ifl, lineString);
+    lineString = Lima::Common::Misc::readLine(ifl);
   }
 }
 
@@ -211,7 +210,7 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
 
   std::string lineString;
   size_t linenum(0);
-  getline(ifl, lineString);
+  lineString = Lima::Common::Misc::readLine(ifl);
   while (ifl.good() && !ifl.eof())
   {
     Common::Misc::chomp(lineString);
@@ -251,7 +250,7 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
     //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]";
     m_bigrams[bigram[0]][bigram[1]] = proba;
 
-    getline(ifl, lineString);
+    lineString = Lima::Common::Misc::readLine(ifl);
   }
 }
 

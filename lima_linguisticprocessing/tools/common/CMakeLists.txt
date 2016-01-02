@@ -127,9 +127,17 @@ SET(parseXMLPropertyFile_SRCS
 
 add_executable(parseXMLPropertyFile ${parseXMLPropertyFile_SRCS})
 
-target_link_libraries(parseXMLPropertyFile lima-common-factory lima-common-misc lima-common-tools
-#   lima-lp-misc
-  lima-common-data lima-lp-propertycode ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
+target_link_libraries(parseXMLPropertyFile 
+  lima-common-data
+  lima-common-factory 
+  lima-common-misc 
+  lima-common-qslog  
+  lima-common-tools
+  lima-lp-propertycode 
+  ${Boost_LIBRARIES}  
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
 
 install(TARGETS parseXMLPropertyFile DESTINATION bin)
 

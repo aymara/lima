@@ -240,8 +240,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 // local getline
 
 void localGetline(ifstream& file, LimaString& line) {
-  string str;
-  getline(file,str);
+  string str = Lima::Common::Misc::readLine(file);
   if (param.encoding=="latin1") {
     line = Misc::latin15stdstring2limastring(str);
   }

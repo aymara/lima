@@ -23,6 +23,7 @@
 
 
 #include "common/LimaCommon.h"
+#include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
 #include <string>
@@ -218,10 +219,10 @@ int run(int argc,char** argv)
       string line;
       while (fin.good() && !fin.eof())
       {
-        getline(fin,line);
-  if (line.size()>0) {
-    LinguisticCode prop(atoi(line.c_str()));
-    decode(propcodemanager,prop);
+        line = Lima::Common::Misc::readLine(fin);
+        if (line.size()>0) {
+          LinguisticCode prop(atoi(line.c_str()));
+          decode(propcodemanager,prop);
         }
       }
     }

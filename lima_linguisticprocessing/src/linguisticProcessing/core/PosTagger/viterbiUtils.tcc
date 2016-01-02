@@ -193,7 +193,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
   
   std::string lineString;
   size_t linenum(0);
-  getline(ifl, lineString);
+  lineString = Lima::Common::Misc::readLine(ifl);
   while (ifl.good() && !ifl.eof())
   {
     Common::Misc::chomp(lineString);
@@ -274,7 +274,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
         }
       }
     }
-    getline(ifl, lineString);
+    lineString = Lima::Common::Misc::readLine(ifl);
   }
 }
 
@@ -301,7 +301,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
   
   std::string lineString;
   size_t linenum(0);
-  getline(ifl, lineString);
+  lineString = Lima::Common::Misc::readLine(ifl);
   while (ifl.good() && !ifl.eof())
   {
     Common::Misc::chomp(lineString);
@@ -348,7 +348,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
     GramsData& gd=m_data[bigram[1]][bigram[0]];
     gd.m_default=costFactory.getCost(false,true,false,proba);
     m_biFreq[bigram[0]][bigram[1]]=proba;
-    getline(ifl, lineString);
+    lineString = Lima::Common::Misc::readLine(ifl);
   }
 }
 
