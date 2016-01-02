@@ -12,6 +12,7 @@ environment:
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
+  NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
   BINTRAYKEY:
     secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
 
