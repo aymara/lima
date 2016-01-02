@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -18,21 +18,39 @@ add_subdirectory(corpus)
 
 # file(GLOB DP_FILES $ENV{NLTK_PTB_DP_DIR}/*.dp)
 
-add_custom_command(
-  OUTPUT succession_categs_retag.txt
-  COMMAND gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt
-  COMMAND patch -p 0 corpus_eng_merge.txt ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch | cat
-#  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos corpus_eng_merge.txt
-#  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/ptb.pos corpus_eng_merge.txt
-#   COMMAND gawk -F "	" 'BEGIN {OFS = FS} {print $1"	"$2}' ${DP_FILES} > corpus_eng_merge.txt
-#   COMMAND cat ${DP_FILES} > corpus_eng_merge.txt
-  COMMAND cat corpus_eng_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
+if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  add_custom_command(
+    OUTPUT succession_categs_retag.txt
+    COMMAND gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt
+    COMMAND patch -p 0 corpus_eng_merge.txt ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch | cat
+  #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos corpus_eng_merge.txt
+  #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/ptb.pos corpus_eng_merge.txt
+  #   COMMAND gawk -F "	" 'BEGIN {OFS = FS} {print $1"	"$2}' ${DP_FILES} > corpus_eng_merge.txt
+  #   COMMAND cat ${DP_FILES} > corpus_eng_merge.txt
+    COMMAND cat corpus_eng_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
 
-#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch $ENV{NLTK_PTB_DP_FILE}
-  COMMENT "produce eng categs succession" 
-  VERBATIM
-)
+  #   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch $ENV{NLTK_PTB_DP_FILE}
+    COMMENT "produce eng categs succession"
+    VERBATIM
+  )
+else ()
+  add_custom_command(
+    OUTPUT succession_categs_retag.txt
+    COMMAND c:\\msys64\\usr\\bin\\gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt
+    COMMAND C:\\MinGW\\msys\\1.0\\bin\\patch -p 0 corpus_eng_merge.txt ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch | cat
+  #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos corpus_eng_merge.txt
+  #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/ptb.pos corpus_eng_merge.txt
+  #   COMMAND gawk -F "	" 'BEGIN {OFS = FS} {print $1"	"$2}' ${DP_FILES} > corpus_eng_merge.txt
+  #   COMMAND cat ${DP_FILES} > corpus_eng_merge.txt
+    COMMAND c:\\msys64\\usr\\bin\\cat corpus_eng_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
+
+  #   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch $ENV{NLTK_PTB_DP_FILE}
+    COMMENT "produce eng categs succession"
+    VERBATIM
+  )
+endif ()
 add_custom_target(
   categs-eng
   ALL

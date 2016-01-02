@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -16,15 +16,27 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 add_subdirectory(corpus)
 
-add_custom_command(
-  OUTPUT succession_categs_retag.txt
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/corpus_fre.txt corpus_fre_merge.txt
-  COMMAND cat corpus_fre_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
+if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  add_custom_command(
+    OUTPUT succession_categs_retag.txt
+    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/corpus_fre.txt corpus_fre_merge.txt
+    COMMAND cat corpus_fre_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
 
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/corpus_fre.txt
-  COMMENT "produce fre categs succession"
-  VERBATIM
-)
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/corpus_fre.txt
+    COMMENT "produce fre categs succession"
+    VERBATIM
+  )
+else ()
+  add_custom_command(
+    OUTPUT succession_categs_retag.txt
+    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/corpus_fre.txt corpus_fre_merge.txt
+    COMMAND c:\\msys64\\usr\\bin\\cat corpus_fre_merge.txt | c:\\msys64\\usr\\bin\\gawk -F "	" "{print $2}" > succession_categs_retag.txt
+
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/corpus_fre.txt
+    COMMENT "produce fre categs succession"
+    VERBATIM
+  )
+endif ()
 add_custom_target(
   categs-fre
   ALL

@@ -61,7 +61,7 @@ endmacro (CODES _lang)
 macro (FLEXION _lang)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/formes-${_lang}.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/flex.pl def.txt  mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt exclude.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/flex.pl def.txt  mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt exclude.txt
     DEPENDS def.txt  mots-simples.txt exclude.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -81,7 +81,7 @@ macro(CONVERT _lang)
 
   add_custom_command(
     OUTPUT dicotabs.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt
     COMMENT "COMMAND ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs formes-${_lang}.txt dicotabs.txt"
     VERBATIM
@@ -95,7 +95,7 @@ macro(CONVERT _lang)
 
   add_custom_command(
     OUTPUT dicostd.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
     DEPENDS dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt
     COMMENT "${PROJECT_SOURCE_DIR}/scripts/convertstd dicotabs.txt dicostd.txt"
     VERBATIM
@@ -111,7 +111,7 @@ macro(CONVERT _lang)
   foreach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
     add_custom_command(
       OUTPUT ${ADDED_LIST_FILE}.add
-      COMMAND ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
       DEPENDS dicostd.txt ${ADDED_LIST_FILE}
       COMMENT "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
     )
@@ -137,7 +137,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT dicocompletstd.txt
-    COMMAND sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
+    COMMAND c:\\msys64\\usr\\bin\\sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
     DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
     COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
     VERBATIM
@@ -154,12 +154,12 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT dico.xml
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
     COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
     COMMENT "produce XML dico"
@@ -168,13 +168,13 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT dico.xml
-    COMMAND c:\\cygwin\\bin\\echo "<dictionary>" > dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
-    COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
-    COMMAND c:\\cygwin\\bin\\echo "</dictionary>" >> dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+    COMMAND c:\\msys64\\usr\\bin\\echo "<dictionary>" > dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+    COMMAND c:\\msys64\\usr\\bin\\bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+    COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
     COMMENT "produce XML dico"
@@ -224,8 +224,8 @@ else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
     COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
-    COMMAND sort -T . -u keys > keys.sorted
-    COMMAND dos2unix keys.sorted
+    COMMAND c:\\msys64\\usr\\bin\\sort -T . -u keys > keys.sorted
+    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix keys.sorted
     COMMAND testDict16 --charSize=2 --listOfWords=keys.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output
     COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
@@ -257,7 +257,7 @@ macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tablecon
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
     COMMAND cat ${_succession_categs} | sort | uniq -c | awk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
     COMMAND ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
     COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
@@ -270,12 +270,12 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
-    COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND dos2unix unigramMatrix-${_lang}.dat
-    COMMAND ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND c:\\msys64\\usr\\bin\\cat ${_succession_categs} | c:\\msys64\\usr\\bin\\sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
+    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix unigramMatrix-${_lang}.dat
+    COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
     COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
 
     DEPENDS ${_codesymbol} ${_succession_categs}
     COMMENT "compile ${_lang} trigram matrix"
@@ -343,11 +343,11 @@ endmacro (IDIOMATICENTITIES _lang)
 #
 # LIMA_GENERIC_CONFIGENV
 #
-# 
+#
 macro (LIMA_GENERIC_CONFIGENV _lang)
   MESSAGE( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
   # This macro could be used to group execEnv configuration and dependecies
-  # This macro adds a custom target 'lima-execEnv-...' that depends 
+  # This macro adds a custom target 'lima-execEnv-...' that depends
   # on execEnv's files. Other top level targets could depend on this target
   # to be sure execEnv is set.
   # Maybe a unique 'lima-execEnv' target could be created.
@@ -356,7 +356,7 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   set(_LIMA_EXECENV_FILES "")
 
   # Add custom command to copy files to execEnv (rules to produce them)
-  # and Add destitation files to lima-execEnv target's dependencies list 
+  # and Add destitation files to lima-execEnv target's dependencies list
   CustomCopyFileAndAddExecEnvDependency(
     ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
     ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
@@ -430,7 +430,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/AuthorPosition-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
     DEPENDS
@@ -441,7 +441,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/DateTime-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
     DEPENDS
@@ -452,7 +452,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Event-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
     DEPENDS
@@ -463,7 +463,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Location-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
     DEPENDS
@@ -474,7 +474,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Numex-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
     DEPENDS
@@ -485,7 +485,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Organization-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
     DEPENDS
@@ -496,7 +496,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Person-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
     DEPENDS
@@ -507,7 +507,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Product-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
     DEPENDS
@@ -534,11 +534,11 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
 endmacro (SPECIFICENTITIES_GENERIC_CONFIGENV)
 
 macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
-  # TODO: some tools like compile-rule need access to a set of very 
+  # TODO: some tools like compile-rule need access to a set of very
   # complete configuration files (lima-lp-<lang>.xml, <group>-modex.xml...)
-  # Many macro could be simplified if the dependencies of these tools 
+  # Many macro could be simplified if the dependencies of these tools
   # could be reduced to really usefull ones.
-  # 
+  #
   # Permet de créer un lien build/execEnv/config/_group-modex.xml
   # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/_group-modex.xml
   add_custom_command(
@@ -566,7 +566,7 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
     DEPENDS
@@ -663,7 +663,7 @@ macro (SPECIFICENTITIESEXECENV _lang)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/analysisDictionary/${_lang}/code/code-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
     DEPENDS
@@ -724,7 +724,7 @@ macro (COMPILE_SA_RULES_CONFIGENV _subtarget _lang _group)
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     DEPENDS
@@ -823,7 +823,7 @@ message("Execute ADD_SA_RULES_DEPENDS on ${${_lang}_SA_DEPENDS_FILES}")
 
   install(FILES ${${_lang}_SA_DEPENDS_FILES}
     COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SyntacticAnalysis)
-  
+
 endmacro (ADD_SA_RULES_DEPENDS  _lang)
 
 ############
