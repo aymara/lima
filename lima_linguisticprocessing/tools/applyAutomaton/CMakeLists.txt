@@ -27,33 +27,34 @@ SET(apply-rules_SRCS
 add_executable(apply-rules ${apply-rules_SRCS})
 
 target_link_libraries(apply-rules
-  lima-lp-automatoncompiler
+  misc
+  data
   tokenizer
+  phenixGraph
+  general
+  lp-core-annotationGraph
+  lima-lp-automatoncompiler
   lima-lp-syntacticanalysis
   lima-lp-specificentities
   lima-lp-postagger
   lima-lp-morphologicanalysis
   lima-lp-linguisticresources
   lima-lp-linguisticprocessors
-  phenixGraph
-  general
   lima-lp-dictionary
-  data
   lima-lp-automaton
   lima-lp-analysisdumpers
   lima-lp-linguisticprocessing-core
   lima-lp-analysishandlers
   lima-lp-client
-  lp-core-annotationGraph
   lima-lp-applyrecognizer
   lima-lp-analysisdict 
   lima-lp-propertycode 
+  lima-lp-linguisticdata
+  lima-lp-bagofwords 
+  lima-common-data 
   lima-common-fsaaccess 
   lima-common-processunitframework
   lima-common-xmlconfigurationfiles
-  lima-lp-linguisticdata
-  lima-lp-bagofwords 
-  misc
  ${QT_LIBRARIES} lima-common-qslog
  ${Boost_REGEX}
   ${Boost_LIBRARIES} #wsock32
