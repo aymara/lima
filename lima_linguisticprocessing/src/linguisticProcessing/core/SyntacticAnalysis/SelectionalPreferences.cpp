@@ -93,8 +93,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
     return;
   }
   
-  std::string line;
-  getline(ifl, line);
+  std::string line = Lima::Common::Misc::readLine(ifl);
   Common::Misc::chomp(line);
   linesCounter++;
   while (ifl.good() && !ifl.eof())
@@ -158,7 +157,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
       boost::tuple< std::string, LinguisticCode, std::string, std::string, LinguisticCode > tuple(target,targetMacro,dependency,source,soureceMacro);
       m_preferences.insert(std::make_pair(tuple, probability));
     }
-    getline(ifl, line);
+    line = Lima::Common::Misc::readLine(ifl);
     Common::Misc::chomp(line);
     linesCounter++;
   }

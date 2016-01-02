@@ -601,8 +601,7 @@ double RecognizerCompiler::currentRuleWeight() {
 
 // get a line and interpret it with respect to its encoding
 void RecognizerCompiler::readline(LimaString& line) {
-  string str;
-  getline(*m_stream,str);
+  string str = Lima::Common::Misc::readLine(*m_stream);
   m_lineNumber++;
   if (str.empty()) {
     line.clear();

@@ -187,7 +187,7 @@ int run(int argc,char** argv)
     string line;
     if (fin.good())
     {
-      getline(fin,line);
+      line = Lima::Common::Misc::readLine(fin);
       while (fin.good() && !fin.eof() && line!="")
       {
         LimaString str=utf8stdstring2limastring(line);
@@ -201,7 +201,7 @@ int run(int argc,char** argv)
           res = charChart->unmark(str);
         }
         cout << limastring2utf8stdstring(res) << endl;
-        getline(fin,line);
+        line = Lima::Common::Misc::readLine(fin);
       }
     }
   }

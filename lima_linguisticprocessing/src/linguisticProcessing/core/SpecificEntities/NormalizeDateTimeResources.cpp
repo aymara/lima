@@ -144,7 +144,7 @@ readMonthDays(const std::string& monthsDaysFile)
   string utf8line;
   LimaString line;
   while (file.good()) {
-    getline(file,utf8line);
+    utf8line = Lima::Common::Misc::readLine(file);
     if (!utf8line.empty()) {
       line=Common::Misc::utf8stdstring2limastring(utf8line);
       std::vector<std::string> elements;

@@ -44,8 +44,7 @@ namespace Automaton {
 //***************************************************************************
 void getlineLimaString(std::istream& in, LimaString& s) {
   // first get a string and convert it to wstring
-  std::string tmp;
-  getline(in,tmp);
+  std::string tmp = Lima::Common::Misc::readLine(in);
   s=Common::Misc::utf8stdstring2limastring(tmp);
 }
 
