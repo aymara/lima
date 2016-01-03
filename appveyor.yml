@@ -46,6 +46,7 @@ on_success:
   - ps: $commit  = $commit.substring(0,7)
   - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe
   - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.-win64.exe
 
 
 on_failure:
