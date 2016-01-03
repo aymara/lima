@@ -24,7 +24,7 @@ install:
   - ps: mkdir c:\dependency_treebank
   - ps: unzip c:\dependency_treebank.zip -d c:\
   - ps: cd c:\
-  - ps: cat c:\dependency_treebank\wsj_*.dp | grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
+  - c:\msys64\usr\bin\cat /c/dependency_treebank/wsj_*.dp | c:\msys64\usr\bin\grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
 
 build_script:
   - mkdir c:\b
