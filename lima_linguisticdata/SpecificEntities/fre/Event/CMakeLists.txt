@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,7 +14,6 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-SPECIFICENTITIESCONFIGENV(main fre Event)
 SPECIFICENTITIES(main fre Event EVENT-fre.rules)
 
 add_dependencies(rules-Event-fre-main rules-fre-Event-configEnv-main)

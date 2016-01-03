@@ -565,6 +565,10 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
   )
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/analysisDictionary/${_lang}/code/code-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
@@ -710,7 +714,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
   install(FILES ${BINFILENAMES} COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SpecificEntities)
 
   # add the link between the current target and its execution environment dependencies
-  add_dependencies(rules-${_group}-${_lang}-${_subtarget} rules-${_lang}-${_group}-configEnv-${_subtarget} rules-${_lang}-execEnv)
+  add_dependencies(rules-${_group}-${_lang}-${_subtarget} specificentitiesconfigenv-${_lang}-all rules-${_lang}-${_group}-configEnv-${_subtarget} rules-${_lang}-execEnv)
 
 endmacro (SPECIFICENTITIES _lang _group)
 
