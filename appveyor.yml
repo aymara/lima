@@ -30,11 +30,14 @@ build_script:
   - mkdir c:\b
   - cd c:\b
   - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
-  #- cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
   - cmake --build . --config Release
-  #- tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
 
 on_success:
+  - ps: pushd $Env:LIMA_DIST/share/apps/lima/tests
+  - ps: tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
+  - ps: tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
+  - ps: popd
+
   - ps: $user = "kleag"
   - ps: $pass = $Env:BINTRAYKEY
   - ps: $pair = "${user}:${pass}"
