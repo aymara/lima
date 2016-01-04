@@ -1091,8 +1091,4 @@ Function un.DeleteEnvStr
     Pop $0
 FunctionEnd
  
-!ifndef IsNT_KiCHiK
-!define IsNT_KiCHiK
- 
- 
 !endif ; _WriteEnvStr_nsh
