@@ -1,3 +1,9 @@
+
+; HKLM (all users) vs HKCU (current user) defines
+!define env_hklm 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
+!define env_hkcu 'HKCU "Environment"'
+
+
 ; CPack install script designed for a nmake build
 
 ;--------------------------------
@@ -976,7 +982,3 @@ inst:
   noOptionsPage:
 FunctionEnd
 
-
-; HKLM (all users) vs HKCU (current user) defines
-!define env_hklm 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
-!define env_hkcu 'HKCU "Environment"'
