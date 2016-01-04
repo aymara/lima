@@ -1094,37 +1094,5 @@ FunctionEnd
 !ifndef IsNT_KiCHiK
 !define IsNT_KiCHiK
  
-#
-# [un.]IsNT - Pushes 1 if running on NT, 0 if not
-#
-# Example:
-#   Call IsNT
-#   Pop $0
-#   StrCmp $0 1 +3
-#     MessageBox MB_OK "Not running on NT!"
-#     Goto +2
-#     MessageBox MB_OK "Running on NT!"
-#
-!macro IsNT UN
-Function ${UN}IsNT
-  Push $0
-  ReadRegStr $0 HKLM \
-    "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-  StrCmp $0 "" 0 IsNT_yes
-  ; we are not NT.
-  Pop $0
-  Push 0
-  Return
- 
-  IsNT_yes:
-    ; NT!!!
-    Pop $0
-    Push 1
-FunctionEnd
-!macroend
-!insertmacro IsNT ""
-!insertmacro IsNT "un."
- 
-!endif ; IsNT_KiCHiK
  
 !endif ; _WriteEnvStr_nsh
