@@ -1,21 +1,3 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateDefinitionResource.cpp
@@ -44,11 +26,39 @@ EventTemplateDefinitionResourceFactory(EVENTTEMPLATEDEFINITIONRESOURCE_CLASSID);
 
 //----------------------------------------------------------------------
 EventTemplateDefinitionResource::EventTemplateDefinitionResource():
-m_language(0)
+m_language(0),
+m_templates(),
+m_elementMapping()
 {
 }
 
 EventTemplateDefinitionResource::~EventTemplateDefinitionResource() {
+}
+
+const std::string& EventTemplateDefinitionResource::getMention (const std::string name) const
+{
+  std::string mention="";
+  LOGINIT("LP::EventAnalysis");
+  LDEBUG << "getMention m_templates.size() " << m_templates.size() << LENDL;
+  for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
+  {
+    LDEBUG << "Cuurent Mention " << it->getMention()<< LENDL;
+    if (name.compare(it->getName())==0) return it->getMention();
+  }
+  return mention;
+}
+
+const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefinitionResource::getStructure (const std::string name) const
+{
+  std::map<std::string,Common::MediaticData::EntityType> structure;
+  LOGINIT("LP::EventAnalysis");
+  LDEBUG << "getMention m_templates.size() " << m_templates.size() << LENDL;
+  for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
+  {
+    //LDEBUG << "Cuurent Mention " << it->getMention()<< LENDL;
+    if (name.compare(it->getName())==0) return it->getStructure();
+  }
+  return structure;
 }
 
 //----------------------------------------------------------------------
@@ -61,51 +71,68 @@ init(GroupConfigurationStructure& unitConfiguration,
 
   m_language=manager->getInitializationParameters().language;
   string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
-  
+  LDEBUG << "resourcesPath = "<< resourcesPath << LENDL;
   EventTemplateStructure structure;
   // get name
   try
   {
     string name = unitConfiguration.getParamsValueAtKey("templateName");
     structure.setName(name);
+    LDEBUG << "Template name = "<< name << LENDL;
+    
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language;
+    LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language << LENDL;
     throw InvalidConfiguration();
+  }
+  try{
+  
+    string nameMention = unitConfiguration.getParamsValueAtKey("templateMention");
+    LDEBUG << "Template mention = "<< nameMention << LENDL;
+    structure.setMention(nameMention);
+  }
+  
+  catch (NoSuchParam& ) {
+    LERROR << "No param 'templateMention' in EventTemplateDefinitionResource for language " << (int)m_language << LENDL;
+    //throw InvalidConfiguration();
   }
 
   // get template elements: role and entity types
   try
   {
     map<string,string> elts  = unitConfiguration.getMapAtKey("templateElements");
+    LDEBUG << "templateElements .size " << elts.size() << LENDL;
     for(map<string,string>::const_iterator it=elts.begin(),it_end=elts.end();it!=it_end;it++) {
+      LDEBUG << "templateElement =" << (*it).first << LENDL;
       structure.addTemplateElement((*it).first,(*it).second);
     }
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language;
+    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language << LENDL;
     throw InvalidConfiguration();
   }
 
   // get element mapping, for template merging
+  LDEBUG << "get elementMapping " << LENDL;
   try
   {
     map<string,string> mapping  = unitConfiguration.getMapAtKey("elementMapping");
+    LDEBUG << "after Getting map " << LENDL;
     for(map<string,string>::const_iterator it=mapping.begin(),it_end=mapping.end();it!=it_end;it++) {
       const std::string& elements=(*it).second;
       // comma-separated list of elements
       boost::char_separator<char> sep(",; ");
       boost::tokenizer<boost::char_separator<char> > tok(elements,sep);
       for(boost::tokenizer<boost::char_separator<char> >::iterator e=tok.begin(),e_end=tok.end(); e!=e_end;e++) {
-        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e;
+        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e << LENDL;
         m_elementMapping[(*it).first].insert(*e);
       }
     }
   }
-  catch (NoSuchParam& ) {
-    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language;
+  catch (NoSuchMap& ) {
+    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language << LENDL;
   }
-  
+  LDEBUG << "Adding Structure " << LENDL;
   m_templates.push_back(structure);
 }
 
@@ -129,7 +156,7 @@ existsMapping(const std::string& eltName1, const std::string& eltName2) const
     }
   }
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res;
+  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res << LENDL;
   return res;
 }
 

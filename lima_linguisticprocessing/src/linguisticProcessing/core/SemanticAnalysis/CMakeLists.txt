@@ -21,10 +21,19 @@ add_definitions(-DLIMA_SEMANTICANALYSIS_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-semanticanalysis_LIB_SRCS
-   ConstraintFunction.cpp SemanticRelationAnnotation.cpp SemanticRelationData.cpp SemanticRoleLabelingLoader.cpp LimaConllTokenIdMapping.cpp
+   ConstraintFunction.cpp 
+   SemanticRelationAnnotation.cpp 
+   SemanticRelationData.cpp 
+   SemanticRoleLabelingLoader.cpp 
+   LimaConllTokenIdMapping.cpp 
+   SemanticRelationsXmlLogger.cpp
 )
 
-add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})
+
+DECLARE_LIMA_PLUGIN(lima-lp-semanticanalysis)
+
+#add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})
+
 
 target_link_libraries(lima-lp-semanticanalysis lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph  lima-lp-linguisticanalysisstructure lima-lp-textsegmentation lima-lp-syntacticanalysis lima-lp-automaton lima-lp-applyrecognizer
 )
@@ -36,4 +45,10 @@ install(TARGETS lima-lp-semanticanalysis DESTINATION lib)
 
 ########### install files ###############
 
-install(FILES  SemanticAnnotation.h SemanticRelationAnnotation.h SemanticRelationData.h SemanticRelationsXmlLogger.h DESTINATION include/linguisticProcessing/core/SemanticAnalysis)
+install(FILES  
+SemanticAnnotation.h 
+SemanticRelationAnnotation.h 
+SemanticRelationData.h 
+SemanticRelationsXmlLogger.h 
+SemanticAnalysisExport.h
+DESTINATION include/linguisticProcessing/core/SemanticAnalysis)

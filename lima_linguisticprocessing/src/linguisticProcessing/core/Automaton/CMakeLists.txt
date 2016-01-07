@@ -66,14 +66,39 @@ install(TARGETS lima-lp-automaton DESTINATION lib)
 
 ########### install files ###############
 install(FILES
-AutomatonExport.h  constraintFunction.h transition.h   rule.h transitionSearchStructure.h
-    setTransition.h deaccentuatedTransition.h   recognizer.h EntityFeatures.h
-    posTransition.h andTransition.h   starTransition.h constraint.h
-    constraintFunctionFactory.h tstatusTransition.h   epsilonTransition.h
-    automatonReaderWriter.h entityTransition.h entityGroupTransition.h entityProperties.h
+    AutomatonExport.h
+    constraintFunction.h
+    transition.h
+    rule.h
+    transitionSearchStructure.h
+    setTransition.h
+    deaccentuatedTransition.h
+    recognizer.h
+    EntityFeatures.h
+    posTransition.h
+    andTransition.h
+    starTransition.h
+    constraint.h
+    constraintFunctionFactory.h
+    tstatusTransition.h
+    epsilonTransition.h
+    automatonReaderWriter.h
+    entityTransition.h
+    entityGroupTransition.h
+    entityProperties.h
     searchGraph.h
     transitionUnit.h
-    automaton.h    lemmaTransition.h numericTransition.h   basicConstraintFunctions.h constraintCheckList.h
-    automatonCommon.h transitionSearchStructure.tcc   recognizerMatch.h constraintFunctionManager.h
-    wordTransition.h gazeteerTransition.h
+    automaton.h
+    lemmaTransition.h
+    numericTransition.h
+    basicConstraintFunctions.h
+    constraintCheckList.h
+    automatonCommon.h
+    transitionSearchStructure.tcc
+    recognizerMatch.h
+    constraintFunctionManager.h
+    wordTransition.h
+    gazeteerTransition.h
+    SpecificEntityAnnotation.h
+    recognizerData.h
   DESTINATION include/linguisticProcessing/core/Automaton)

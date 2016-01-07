@@ -68,6 +68,7 @@ install(TARGETS lima-lp-analysisdumpers DESTINATION lib)
 
 ########### install files ###############
 install(FILES
+    AnalysisDumpersExport.h
     DepTripleDumper.h
     AnnotationGraphXmlDumper.h
     fullXmlDumper.h TextDumper.h

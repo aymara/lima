@@ -490,7 +490,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
       //search for separator '_'
       int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO_STRING,0));
       if (sep != -1 && string(s,0,sep) == "L") {
-        // '_' found after L (L_NC)
+        // '_' found after L (NC)
         sep=findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO_STRING,sep+1);
       }
       if (sep == -1) { // only macro
