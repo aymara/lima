@@ -5,25 +5,26 @@ enable_testing()
 
 include(ExternalProject)
 
-macro (CompileLimaSubproject _project _dependsOn)
+macro (CompileLimaSubproject _project _dependsOn )
 
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     set(_TEST_COMMAND make test)
   else()
-    set(_TEST_COMMAND "")
+    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config Release)
   endif()
   
   ## Add external project
   ExternalProject_Add(
     ${_project}
+    PREFIX "${_project}"
     DOWNLOAD_COMMAND ""
     PATCH_COMMAND ""
     UPDATE_COMMAND ""
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" -DBoost_DEBUG=ON
   )
 
   ## Add specified dependencies
@@ -32,15 +33,20 @@ macro (CompileLimaSubproject _project _dependsOn)
   endif()
 
     ## Add packaging command
-  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
+  if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ExternalProject_Add_Step(${_project} packaging
       COMMAND make package
       COMMENT "Packaging ${_project}"
       WORKING_DIRECTORY <BINARY_DIR>
       DEPENDEES install
       )
-    endif()
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    ExternalProject_Add_Step(${_project} packaging
+    COMMAND cmake --build . --target PACKAGE --config Release
+    COMMENT "Packaging ${_project}"
+    WORKING_DIRECTORY <BINARY_DIR>
+    DEPENDEES INSTALL
+    )
   endif()
 
   ## Force rebuilding of the main subproject every time building from super structure

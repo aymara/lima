@@ -1,14 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
   <module name="common">
-    <group name="SemanticData">
-      <map name="conceptTypes">
-        <entry key="LatticeDown" value="0"/>
-        <entry key="Determiner" value="1"/>
-        <entry key="SemanticModifier" value="2"/>
-        <entry key="Complementer" value="3"/>
-      </map>
-    </group>
     <group name="mediaDeclaration">
       <list name="available">
         <item value="eng" />
@@ -24,20 +16,16 @@
       <param key="eng" value="lima-common-eng.xml" />
       <param key="fre" value="lima-common-fre.xml" />
     </group>
-
     <group name="stringPool">
       <param key="release" value="false"/>
     </group>
-    <group name="CommonEntityTypes">
-      <list name="SpecificEntities">
-        <item value="TIMEX"/>
-        <item value="NUMEX"/>
-        <item value="PERSON"/>
-        <item value="LOCATION"/>
-        <item value="ORGANIZATION"/>
-        <item value="EVENT"/>
-        <item value="PRODUCT"/>
-      </list>
+    <group name="SemanticData">
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
     </group>
     <group name="semanticRelations">
       <map name="declaration">

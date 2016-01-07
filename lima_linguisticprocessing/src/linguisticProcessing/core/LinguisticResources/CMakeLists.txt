@@ -36,7 +36,7 @@ target_link_libraries(lima-lp-linguisticresources lima-common-factory lima-commo
 
 set_target_properties(lima-lp-linguisticresources PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticresources DESTINATION lib)
+install(TARGETS lima-lp-linguisticresources DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

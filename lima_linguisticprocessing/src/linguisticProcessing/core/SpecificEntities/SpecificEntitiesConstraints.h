@@ -33,6 +33,7 @@ namespace LinguisticProcessing {
 namespace SpecificEntities {
 
 // ids for constraints in this file
+#define isAlphaPossessiveId "isAlphaPossessive"
 #define isASpecificEntityId "isASpecificEntity"
 #define CreateSpecificEntityId "CreateSpecificEntity"
 #define SetEntityFeatureId "SetEntityFeature"
@@ -45,6 +46,17 @@ namespace SpecificEntities {
 /**
 @author Benoit Mathieu
 */
+class LIMA_SPECIFICENTITIES_EXPORT isAlphaPossessive : public Automaton::ConstraintFunction
+{
+public:
+  isAlphaPossessive(MediaId language,
+                    const LimaString& complement=LimaString());
+  ~isAlphaPossessive() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                  const LinguisticGraphVertex& v,
+                  AnalysisContent& analysis) const;
+};
+
 class LIMA_SPECIFICENTITIES_EXPORT isASpecificEntity : public Automaton::ConstraintFunction
 {
 public:

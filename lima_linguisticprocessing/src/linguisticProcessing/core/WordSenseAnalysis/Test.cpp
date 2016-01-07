@@ -23,7 +23,7 @@ int main(int argc,char* argv[])
   
   std::string lineString;
   size_t linenum(0);
-  getline(ifl, lineString);
+  lineString = Lima::Common::Misc::readLine(ifl);
   while (ifl.good() && !ifl.eof())
   {
     Common::Misc::chomp(lineString);

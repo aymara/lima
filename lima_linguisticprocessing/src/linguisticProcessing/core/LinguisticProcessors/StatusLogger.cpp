@@ -29,6 +29,7 @@
 #include "LinguisticMetaData.h"
 #include "LimaStringText.h"
 
+#include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/time/traceUtils.h"
@@ -118,7 +119,7 @@ LimaStatusCode StatusLogger::process(
   string line;
   while (!statusIn.eof())
   {
-    getline(statusIn,line);
+    line = Lima::Common::Misc::readLine(statusIn);
     size_t index=line.find(":");
     string key=line.substr(0,index);
     if (m_toLog.find(key)!=m_toLog.end())

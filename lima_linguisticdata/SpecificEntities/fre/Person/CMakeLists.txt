@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES firstname.lst function_title.lst person.lst persons.rules prefirstname.lst title.lst)
 
-SPECIFICENTITIESCONFIGENV(main fre Person)
-SPECIFICENTITIES(main fre Person PERSON_COMP-fre.rules PERSON-fre.rules)
+SPECIFICENTITIES(main fre Person PERSON_COMP-fre.rules PERSON-fre.rules EMBEDED-fre.rules)
 
 add_dependencies(rules-Person-fre-main rules-fre-Person-configEnv-main)

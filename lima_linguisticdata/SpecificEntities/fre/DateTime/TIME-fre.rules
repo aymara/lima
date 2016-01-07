@@ -67,3 +67,9 @@ T_Ni:@PrecisionPre::TIME:
 
 T_Ni::@timeUnit @PrecisionPost:TIME:
 =>NormalizeLocalTime()
+
+t_hour:::TIME:
+
+minuit:::TIME:
+midi:::TIME:
+

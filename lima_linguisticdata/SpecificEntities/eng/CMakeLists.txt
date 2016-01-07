@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -28,6 +28,17 @@ SPECIFICENTITIESCONFIGENV(main eng Person)
 
 SPECIFICENTITIESCONFIGENV(main eng Product)
 
+add_custom_target(
+  specificentitiesconfigenv-eng-all
+  ALL
+  DEPENDS rules-eng-DateTime-configEnv-main
+  rules-eng-Event-configEnv-main
+  rules-eng-Location-configEnv-main
+  rules-eng-Numex-configEnv-main
+  rules-eng-Organization-configEnv-main
+  rules-eng-Person-configEnv-main
+  rules-eng-Product-configEnv-main
+)
 
 add_subdirectory(resources)
 add_subdirectory(Numex)

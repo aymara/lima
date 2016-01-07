@@ -76,19 +76,22 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
       set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X")
     endif ()
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    
+    set(LIB_INSTALL_DIR "lib")
+else ()
   message("Windows flags")
   add_definitions(-D WIN32)
 
   # By default, do not warn when built on machines using only VS Express:
-  IF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
-    SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
-  ENDIF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
+  if (NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
+  endif ()
 
   set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
 
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  set(LIB_INSTALL_DIR "bin")
+endif ()
 
 
 
@@ -115,9 +118,24 @@ addQt5Modules(Core Xml XmlPatterns Network DBus Test)
 include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
+get_target_property(QtNetwork_location Qt5::Network LOCATION)
+get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
-message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
+  message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
+  get_target_property(QtDBus_location Qt5::DBus LOCATION)
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${QtDBus_location}
+            DESTINATION ${LIB_INSTALL_DIR})
+  endif ()
+else ()
 endif()
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtNetwork_location}
+                ${QtXmlPatterns_location}
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -127,6 +145,18 @@ set( BOOST_LIB_DIAGNOSTIC )
 FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_RELEASE})
+  install(FILES ${Boost_REGEX_LIBRARY_dll}
+                ${Boost_FILESYSTEM_LIBRARY_dll}
+                ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
+                ${Boost_THREAD_LIBRARY_dll}
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
 
 find_package(SVMTOOL++) 
 if(SVMTOOL++_FOUND)
@@ -208,7 +238,9 @@ SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
+SET(CPACK_NSIS_MODIFY_PATH "ON")
 SET(CPACK_STRIP_FILES "bin/analyzeText;bin/readBowFile")
 SET(CPACK_SOURCE_STRIP_FILES "")
 if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")

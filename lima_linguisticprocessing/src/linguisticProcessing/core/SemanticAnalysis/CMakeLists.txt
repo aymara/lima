@@ -40,7 +40,7 @@ target_link_libraries(lima-lp-semanticanalysis lima-common-factory lima-common-m
 
 set_target_properties(lima-lp-semanticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-semanticanalysis DESTINATION lib)
+install(TARGETS lima-lp-semanticanalysis DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

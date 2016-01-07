@@ -1,0 +1,53 @@
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+environment:
+  LIMA_DIST: c:\d
+  LIMA_CONF: 'c:\d\share\config\lima'
+  LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
+  QTDIR: 'C:\Qt\5.5\msvc2013_64'
+  BOOST_ROOT: 'C:\Libraries\boost'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
+  PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;%PATH%'
+  LIMA_DISABLE_FSW_TESTING: true
+  NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
+  NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
+  BINTRAYKEY:
+    secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
+
+configuration: Release
+
+os: Visual Studio 2013
+
+install:
+  - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
+  - ps: mkdir c:\dependency_treebank
+  - ps: unzip c:\dependency_treebank.zip -d c:\
+  - ps: cd c:\
+  - c:\msys64\usr\bin\cat /c/dependency_treebank/wsj_*.dp | c:\msys64\usr\bin\grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
+
+build_script:
+  - mkdir c:\b
+  - cd c:\b
+  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
+  #- cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
+  - cmake --build . --config Release
+  #- tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
+
+on_success:
+  - ps: $user = "kleag"
+  - ps: $pass = $Env:BINTRAYKEY
+  - ps: $pair = "${user}:${pass}"
+  - ps: $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
+  - ps: $base64 = [System.Convert]::ToBase64String($bytes)
+  - ps: $basicAuthValue = "Basic $base64"
+  - ps: $headers = @{ Authorization = $basicAuthValue }
+  - ps: $commit = $Env:APPVEYOR_REPO_COMMIT
+  - ps: $commit  = $commit.substring(0,7)
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.-win32.exe
+
+
+on_failure:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

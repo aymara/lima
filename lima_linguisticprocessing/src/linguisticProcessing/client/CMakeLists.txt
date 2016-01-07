@@ -32,7 +32,7 @@ target_link_libraries(lima-lp-client lima-common-factory lima-common-qslog ${QT_
 
 set_target_properties(lima-lp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-client DESTINATION lib)
+install(TARGETS lima-lp-client DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

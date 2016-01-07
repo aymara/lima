@@ -417,8 +417,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
     return;
   }
 
-  std::string line;
-  getline(ifl, line);
+  std::string line = Lima::Common::Misc::readLine(ifl);
   Misc::chomp(line);
   linesCounter++;
   while (ifl.good() && !ifl.eof())
@@ -452,7 +451,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 
       m_compoundTenseDefiniton.insert(std::make_pair( std::make_pair(mode, auxTense), compoundTense));
     }
-    getline(ifl, line);
+    line = Lima::Common::Misc::readLine(ifl);
     Misc::chomp(line);
     linesCounter++;
   }

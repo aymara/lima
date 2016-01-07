@@ -6,11 +6,23 @@ set defaultAction=>CreateSpecificEntity()
 
 @day=(lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche)
 
-@month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
+@month=(janvier,JANVIER,Janvier,janv,Janv,JANV,
+	février,FEVRIER,Février,fév,FEV,Fév,
+	mars,MARS,Mars,mar,Mar,MAR,
+	avril,AVRIL,Avril,
+	mai,MAI,Mai,
+	juin,JUIN,Juin,
+	juillet,JUILLET,Juillet,juil,Juil,JUIL,
+	août,AOUT,Août,
+	septembre,SEPTEMBRE,Septembre,sept,SEPT,Sept,
+	octobre,OCTOBRE,Octobre,octobr,oct,OCT,Oct,octob,OCTOB,Octob,
+	novembre,NOVEMBRE,Novembre,nov,NOV,Nov,
+	décembre,DECEMBRE,Décembre,déc,dec)
+
 
 @numday=(
 premier,
-1er,
+1er,O
 deux,
 trois,
 quatre,
@@ -40,7 +52,16 @@ vingt-sept,
 vingt-huit,
 vingt-neuf,
 trente,
-trente et un
+trente et un,
+01,
+02,
+03,
+04,
+05,
+06,
+07,
+08,
+09
 )
 
 @nummonth=(t_integer>1<12)
@@ -90,15 +111,16 @@ trente et un
 
 # 22 mai 1968
 # 22 mai
+# 02 mai
 # mai 1968
 # mai
 # 18 juin 40
 # 31 octobre prochain
 
-@month:(@numday | t_integer>1<31)?:@numyear:DATE:
+@month:(@numday | t_integer>1<31 )?:@numyear:DATE:
 =>NormalizeDate()
 
-@month:(@numday | t_integer>1<31)?:(dernier|suivant)?:DATE:
+@month:(@numday | t_integer>1<31 )?:(dernier|suivant)?:DATE:
 =>NormalizeRelativeDate()
 
 @month::prochain:DATE:
@@ -172,6 +194,9 @@ siècle$NC:<NUMBER>::DATE:
 
 #après-demain:::DATE:
 #=>NormalizeRelativeDate("date_document,diff_2d")
+
+#------------------------------
+t_date:::DATE:
 
 #------------------------------
 # numeric forms (should be recognized by tokenizer in the future)

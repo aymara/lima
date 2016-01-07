@@ -548,7 +548,7 @@ void BoWBinaryWriter::writeBoWDocument(std::ostream& file,
 {
     BOWLOGINIT;
     LERROR << "BoWBinaryWriter: writeBoWDocument non implemented";
-    LERROR << "Can not write "<< doc << " into "<< file;
+    LERROR << "Can not write "<< doc << " into stream"<< &file;
 }
 
 void BoWBinaryWriter::writeBoWToken(std::ostream& file,

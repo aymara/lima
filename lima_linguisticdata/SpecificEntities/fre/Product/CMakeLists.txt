@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES carBrands.rules product.lst)
 
-SPECIFICENTITIESCONFIGENV(main fre Product)
 SPECIFICENTITIES(main fre Product PRODUCT-fre.rules)
 
 add_dependencies(rules-Product-fre-main rules-fre-Product-configEnv-main)

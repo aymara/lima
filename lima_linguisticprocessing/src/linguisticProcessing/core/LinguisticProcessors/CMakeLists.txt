@@ -35,6 +35,7 @@ SET(lima-lp-linguisticprocessors_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticprocessors)
 
 target_link_libraries(lima-lp-linguisticprocessors
+  lima-common-data
   lima-common-time
   lima-common-mediaprocessors
   lima-common-processunitframework
@@ -46,7 +47,7 @@ target_link_libraries(lima-lp-linguisticprocessors
 
 set_target_properties(lima-lp-linguisticprocessors PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticprocessors DESTINATION lib)
+install(TARGETS lima-lp-linguisticprocessors DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

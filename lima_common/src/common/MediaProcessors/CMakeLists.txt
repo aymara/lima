@@ -34,7 +34,7 @@ add_library(lima-common-mediaprocessors SHARED ${lima-common-mediaprocessors_LIB
 target_link_libraries(lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework)
 
 set_target_properties(lima-common-mediaprocessors PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-mediaprocessors DESTINATION lib)
+install(TARGETS lima-common-mediaprocessors DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

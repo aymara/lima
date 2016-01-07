@@ -28,7 +28,7 @@ endif()
 
 # In debug mode, adds the -DDEBUG_CD to the compiler command line.
 # Allows to build with conditionally built debug output
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD" )
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES" )
 set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
@@ -63,18 +63,21 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
       set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
     endif (HAVE_STDCPP11)
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    
+    set(LIB_INSTALL_DIR "lib")
+else ()
   message("Windows flags")
   add_definitions(-D WIN32)
-
+  
   # By default, do not warn when built on machines using only VS Express:
-  IF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
-    SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
-  ENDIF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
+  if(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
+  endif()
   set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
 
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  set(LIB_INSTALL_DIR "bin")
+endif ()
 
 
 # Find*.cmake will be searched in the following dirs if not found in system dirs
@@ -95,15 +98,23 @@ set(CMAKE_PREFIX_PATH
 )
 
 add_definitions(-D QT_NO_KEYWORDS)
-
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml Test)
-
 include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
+get_target_property(QtCore_location Qt5::Core LOCATION)
+get_target_property(QtXml_location Qt5::Xml LOCATION)
+get_target_property(QtTest_location Qt5::Test LOCATION)
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
-#add_definitions( -DBOOST_ALL_NO_LIB )
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtCore_location}
+                ${QtXml_location}
+                ${QtTest_location}
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
+add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
@@ -114,6 +125,14 @@ message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_RELEASE})
+  string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE})
+  install(FILES ${Boost_SYSTEM_LIBRARY_dll}
+                ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll}
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
 
 configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
 find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR})
@@ -140,25 +159,35 @@ COMMENT "Generating API documentation with Doxygen" VERBATIM
 endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
-INCLUDE(InstallRequiredSystemLibraries)
+include(InstallRequiredSystemLibraries)
 
 set(CPACK_MONOLITHIC_INSTALL 1)
-SET(CPACK_PACKAGE_NAME "limacommon")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Common libraries")
-SET(CPACK_PACKAGE_VENDOR "CEA LIST")
-SET(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
+set(CPACK_PACKAGE_NAME "limacommon")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Common libraries")
+set(CPACK_PACKAGE_VENDOR "CEA LIST")
+set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
+SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+SET(CPACK_NSIS_MODIFY_PATH "ON")
 SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
 SET(CPACK_SOURCE_STRIP_FILES "")
 if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 endif()
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-set(CPACK_RPM_PACKAGE_REQUIRES "qt4 >= 4.7")
+
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteRegExpandStr \\\${env_hklm} LIMA_CONF ${CPACK_NSIS_INSTALL_ROOT}\\\\${CPACK_PACKAGE_INSTALL_DIRECTORY}\\\\share\\\\config\\\\lima")
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteRegExpandStr \\\${env_hklm} LIMA_RESOURCES ${CPACK_NSIS_INSTALL_ROOT}\\\\${CPACK_PACKAGE_INSTALL_DIRECTORY}\\\\share\\\\apps\\\\lima\\\\resources")
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "SendMessage \\\${HWND_BROADCAST} \\\${WM_WININICHANGE} 0 \\\"STR:Environment\\\" /TIMEOUT=5000")
+string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_INSTALL_COMMANDS "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}")
+
+list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "DeleteRegValue \\\${env_hklm} LIMA_CONF")
+list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "SendMessage \\\${HWND_BROADCAST} \\\${WM_WININICHANGE} 0 \\\"STR:Environment\\\" /TIMEOUT=5000")
+string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}")
 
 INCLUDE(CPack)

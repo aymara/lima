@@ -39,7 +39,7 @@ target_link_libraries(lima-lp-linguisticanalysisstructure lima-common-factory li
 
 set_target_properties(lima-lp-linguisticanalysisstructure PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticanalysisstructure DESTINATION lib)
+install(TARGETS lima-lp-linguisticanalysisstructure DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

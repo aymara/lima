@@ -52,7 +52,7 @@ target_link_libraries(lima-lp-syntacticanalysis lima-common-factory lima-common-
 
 set_target_properties(lima-lp-syntacticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-syntacticanalysis DESTINATION lib)
+install(TARGETS lima-lp-syntacticanalysis DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

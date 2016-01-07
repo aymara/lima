@@ -57,14 +57,11 @@
         <!--item value="posGraphXmlDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="simpleXmlDumper"/-->
-        <item value="textDumper"/>
+        <item value="conllDumper"/>
+        <!--item value="textDumper"/-->
         <!--item value="NullDumper"/-->
       </list>
     </group>
-       <group name="vide" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-      </list>
-    </group> 
     <group name="limaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -97,52 +94,6 @@
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="dotDepGraphWriter"/>
         <item value="easyXmlDumper"/>
-      </list>
-    </group>
-    <group name="query" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <item value="bowTextHandler"/>
-      </list>
-    </group>
-    <group name="indexer" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-        <item value="beginStatusLogger"/>
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-freq"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <item value="bowDumper"/>
-      </list>
-    </group>
-    <group name="normalization" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <item value="bowTextHandler"/>
       </list>
     </group>
     <group name="none" class="ProcessUnitPipeline">
@@ -483,6 +434,7 @@
       <param key="graph" value="AnalysisGraph"/>
       <param key="compactFormat" value="yes"/>
       <param key="handler" value="se"/>
+      <param key="followGraph" value="true"/>
     </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".tokenizer.xml"/>
@@ -771,6 +723,10 @@
     </group>
     <group name="posGraphXmlDumper" class="posGraphXmlDumper">
       <param key="handler" value="xmlSimpleStreamHandler"/>
+    </group>
+    <group name="conllDumper" class="ConllDumper">
+      <param key="outputSuffix" value=".conll"/>
+      <param key="handler" value="simpleStreamHandler"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>

@@ -189,7 +189,7 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
   string type;
   LinguisticCode props;
   while (fin.good() && !fin.eof()) {
-    getline(fin,line);
+    line = Lima::Common::Misc::readLine(fin);
     if (line.size()>0) {
       istringstream is(line);
       is >> type;
