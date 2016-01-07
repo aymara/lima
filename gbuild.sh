@@ -134,8 +134,7 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
   pwd &&
-  MSBuild.exe -p:configuration=$mode -t:Build lima_common.vcxproj &&
-  MSBuild.exe -p:configuration=$mode -t:Build lima_linguisticprocessing.vcxproj
+  cmake --build . --config Release
   """
   make_test=""
   make_install=""""
