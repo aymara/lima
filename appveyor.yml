@@ -33,7 +33,8 @@ build_script:
   - cmake --build . --config Release
 
 on_success:
-  - ps: pushd $Env:LIMA_DIST/share/apps/lima/tests
+  - ps: ls c:/d/share/apps/lima/tests
+  - ps: pushd c:/d/share/apps/lima/tests
   - ps: tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
   - ps: tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
   - ps: popd
