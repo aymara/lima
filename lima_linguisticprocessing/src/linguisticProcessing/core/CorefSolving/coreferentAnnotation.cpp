@@ -1111,8 +1111,8 @@ bool CoreferentAnnotation::aba5(
 //   COREFSOLVERLOGINIT; 
 //   LDEBUG << "aba5";
   LinguisticGraph* graph = anagraph->getGraph();
-  LinguisticCode L_NC = (*tagLocalDef.find("NomCommunMacroCategory")).second;
-  LinguisticCode L_NP = (*tagLocalDef.find("NomPropreMacroCategory")).second;
+  LinguisticCode NC = (*tagLocalDef.find("NomCommunMacroCategory")).second;
+  LinguisticCode NP = (*tagLocalDef.find("NomPropreMacroCategory")).second;
   bool res = false;
   DependencyGraphVertex* qv = new DependencyGraphVertex();
   if (ca.isDeterminer(qv,sd, relLocalDef, language, anagraph, ac))
@@ -1120,7 +1120,7 @@ bool CoreferentAnnotation::aba5(
     MorphoSyntacticData* data = get(vertex_data,*graph,sd->tokenVertexForDepVertex(*qv));
     if (data ==0 || data->empty()) { return false; };
     // if *qv is a noun
-    if (data->firstValue(*macroAccessor) == L_NC || data->firstValue(*macroAccessor) == L_NP)
+    if (data->firstValue(*macroAccessor) == NC || data->firstValue(*macroAccessor) == NP)
     {
       // if Q is in the argument domain of N,
       CoreferentAnnotation caQ(0,*qv);

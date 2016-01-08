@@ -80,5 +80,6 @@ install(FILES
   SpecificEntitiesRecognizer.h 
   NormalizePersonName.h 
   NormalizePerson.h 
-  SpecificEntitiesLoader.h 
+  SpecificEntitiesLoader.h
+  SpecificEntitiesExport.h
   DESTINATION include/linguisticProcessing/core/SpecificEntities)

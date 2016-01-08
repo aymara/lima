@@ -698,7 +698,7 @@ bool CreateRelationReverseWithRelated::operator()(
 
 //**********************************************************************
 // complement contains symbols for category and microcategory
-// (e.g.: L_NC;L_NC_GEN;)
+// (e.g.: NC;NC_GEN;)
 CreateCompoundTense::CreateCompoundTense(MediaId language,
     const LimaString& complement):
     ConstraintFunction(language,complement),

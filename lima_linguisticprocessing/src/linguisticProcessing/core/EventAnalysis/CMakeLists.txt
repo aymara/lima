@@ -87,5 +87,10 @@ Entity.h
 EventXmlLogger.h
 EventSegmentation.h
 SimpleEventBuilder.h
+EventTemplateData.h
+EventTemplate.h
+EventTemplateElement.h
+EventTemplateDefinitionResource.h
+EventTemplateStructure.h
 EventData.h
 DESTINATION include/linguisticProcessing/core/EventAnalysis)

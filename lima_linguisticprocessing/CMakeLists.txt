@@ -118,14 +118,21 @@ addQt5Modules(Core Xml XmlPatterns Network DBus Test)
 include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
+get_target_property(QtNetwork_location Qt5::Network LOCATION)
+get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
-message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
+  message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
+  get_target_property(QtDBus_location Qt5::DBus LOCATION)
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${QtDBus_location}
+            DESTINATION ${LIB_INSTALL_DIR})
+  endif ()
+else ()
 endif()
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES C:/Qt/5.5/msvc2013_64/bin/Qt5Network.dll
-                C:/Qt/5.5/msvc2013_64/bin/Qt5XmlPatterns.dll
-                C:/Qt/5.5/msvc2013_64/bin/Qt5DBus.dll
+  install(FILES ${QtNetwork_location}
+                ${QtXmlPatterns_location}
           DESTINATION ${LIB_INSTALL_DIR})
 endif ()
 

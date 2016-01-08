@@ -28,7 +28,7 @@ endif()
 
 # In debug mode, adds the -DDEBUG_CD to the compiler command line.
 # Allows to build with conditionally built debug output
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD" )
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES" )
 set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
@@ -98,18 +98,19 @@ set(CMAKE_PREFIX_PATH
 )
 
 add_definitions(-D QT_NO_KEYWORDS)
-
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml Test)
-
 include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
+get_target_property(QtCore_location Qt5::Core LOCATION)
+get_target_property(QtXml_location Qt5::Xml LOCATION)
+get_target_property(QtTest_location Qt5::Test LOCATION)
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES C:/Qt/5.5/msvc2013_64/bin/Qt5Core.dll
-                C:/Qt/5.5/msvc2013_64/bin/Qt5Xml.dll
-                C:/Qt/5.5/msvc2013_64/bin/Qt5Test.dll
+  install(FILES ${QtCore_location}
+                ${QtXml_location}
+                ${QtTest_location}
           DESTINATION ${LIB_INSTALL_DIR})
 endif ()
 
