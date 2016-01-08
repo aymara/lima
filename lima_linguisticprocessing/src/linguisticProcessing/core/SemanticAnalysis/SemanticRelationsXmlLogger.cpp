@@ -279,12 +279,12 @@ vertexStringForSemanticAnnotation(const std::string& vertexRole,
         continue;
       }
         LimaString typeStr=Common::MediaticData::MediaticData::single().getEntityName(annot->getType());
-  oss << "  <" << vertexRole 
-      << " type=\"" << Common::Misc::limastring2utf8stdstring(typeStr) << "\"" 
-      << " pos=\"" << offset+vToken->position() << "\"" 
-      << " len=\"" << vToken->length() << "\"" 
-      << " string=\"" << vToken->stringForm() << "\"" 
-      << "/>" << endl;
+      oss << "  <" << vertexRole 
+        << " type=\"" << Common::Misc::limastring2utf8stdstring(typeStr) << "\"" 
+        << " pos=\"" << offset+vToken->position() << "\"" 
+        << " len=\"" << vToken->length() << "\"" 
+        << " string=\"" << Common::Misc::limastring2utf8stdstring(vToken->stringForm()) << "\"" 
+        << "/>" << endl;
        //EntityType type=Common::MediaticData::MediaticData::single().getEntityName(annot->getType());
       break;
     }
