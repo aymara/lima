@@ -55,7 +55,7 @@ int DumpCoreferent::dump(std::ostream& os, Common::AnnotationGraphs::GenericAnno
   PROCESSORSLOGINIT;
   try
   {
-    ga.value<CoreferentAnnotation>().dump(os);
+    ga.value<CoreferentAnnotation>().dump(os, m_ad);
     return SUCCESS_ID;
   }
   catch (const boost::bad_any_cast& )
@@ -1307,6 +1307,49 @@ AnnotationGraphVertex CoreferentAnnotation::writeAnnotation(
   return AnnotationGraphVertex(); //unused;
 }
 
+DumpCoreferent::DumpCoreferent(const Lima::Common::AnnotationGraphs::AnnotationData* ad) :
+    Common::AnnotationGraphs::AnnotationData::Dumper(),
+    m_ad(ad) 
+{
+}
+
+void CoreferentAnnotation::dump(std::ostream& os, const Common::AnnotationGraphs::AnnotationData* ad) const
+{
+  os << "#" << m_id << ";" << m_categ<< ";" /*<< "V:" << m_morphVertex */;
+  CoreferentAnnotation antecedent;
+  bool hasAntecedent = false;
+  std::set< AnnotationGraphVertex > matches = ad->matches("PosGraph",m_morphVertex,"annot");
+  if (matches.empty())
+  {
+    COREFSOLVERLOGINIT;
+    LERROR << "CoreferentAnnotation::dump No annotation graph vertex matches PoS graph vertex " << m_morphVertex <<  ". This should not happen.";
+    return ;
+  }
+  AnnotationGraphVertex av = *matches.begin();
+  AnnotationGraphOutEdgeIt it, it_end;
+  boost::tie(it, it_end) = boost::out_edges(av, ad->getGraph());
+  if (it != it_end) 
+  {
+    for (; it != it_end; it++)
+    {
+       GenericAnnotation ga = ad->annotation(boost::target(*it, ad->getGraph()), utf8stdstring2limastring("Coreferent"));
+       try
+      {
+        antecedent = ga.value<CoreferentAnnotation>(); 
+        hasAntecedent = true;
+        break;
+      }
+      catch (const boost::bad_any_cast& )
+      {
+        continue;
+      }
+    }
+  }
+  if (hasAntecedent)
+  {
+    os << "#" << antecedent.id();
+  }
+}
 
 void CoreferentAnnotation::outputXml(std::ostream& xmlStream,const LinguisticGraph& g, const AnnotationData* ad) const
 {

@@ -292,7 +292,7 @@ LimaStatusCode CorefSolver::process(
     * function */
   if (annotationData->dumpFunction("Coreferent") == 0)
   {
-    annotationData->dumpFunction("Coreferent", new DumpCoreferent());
+    annotationData->dumpFunction("Coreferent", new DumpCoreferent(annotationData));
   }
 
 
