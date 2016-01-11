@@ -38,7 +38,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include "common/misc/depth_first_searchnowarn.hpp"
 #include <boost/graph/breadth_first_search.hpp>
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 
 
 //========== defines

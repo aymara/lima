@@ -31,7 +31,7 @@
 #include <stdint.h> //uint32_t
 #endif
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <boost/cstdint.hpp>
 
 namespace Lima

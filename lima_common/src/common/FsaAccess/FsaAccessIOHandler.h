@@ -26,7 +26,7 @@
 #ifndef FSA_IO_HANDLER_HPP
 #define FSA_IO_HANDLER_HPP
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <common/FsaAccess/FsaAccessIOStreamWrapper.h>
 
 namespace Lima {

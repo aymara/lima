@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Lima {
 namespace Common {

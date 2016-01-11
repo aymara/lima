@@ -56,7 +56,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 
 #ifdef WIN32
 
