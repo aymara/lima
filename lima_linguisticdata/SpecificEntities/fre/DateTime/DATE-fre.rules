@@ -3,22 +3,57 @@ using modex DateTime-modex.xml,Numex-modex.xml
 using groups DateTime,Numex
 set defaultAction=>CreateSpecificEntity()
 
+@day=(lundi,Lundi,LUNDI,lun,lund,Lun,Lund,LUN,LUND,
+mardi,Mardi,MARDI,mard,mar,Mard,Mar,MARD,MAR,Mar\.,
+mercredi,Mercredi,MERCREDI,mercred,mer,mercre,Mercred,Mer,Mercred,MERCRED,MER,MERCRE,
+jeudi,Jeudi,JEUDI,jeu,jeud,Jeu,Jeud,JEU,JEUD,
+vendredi,Vendredi,VENDREDI,ven,vendred,Ven,Vendred,VEN,VENDRED,
+samedi,Samedi,SAMEDI,sam,samed,SAM,Samed,SAM,SAMED,
+dimanche,Dimanche,DIMANCHEdim,dimanch,di,Dim,Dimanch,Di,DIM,DIMANCH,DI);
 
-@day=(lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche)
+@dayNoAbbrev=(lundi,Lundi,LUNDI,
+mardi,Mardi,MARDI,
+mercredi,Mercredi,MERCREDI,
+jeudi,Jeudi,JEUDI,
+vendredi,Vendredi,VENDREDI,
+samedi,Samedi,SAMEDI,
+dimanche,Dimanche,DIMANCHE);
 
 @month=(janvier,JANVIER,Janvier,janv,Janv,JANV,
-	février,FEVRIER,Février,fév,FEV,Fév,
-	mars,MARS,Mars,mar,Mar,MAR,
-	avril,AVRIL,Avril,
-	mai,MAI,Mai,
-	juin,JUIN,Juin,
-	juillet,JUILLET,Juillet,juil,Juil,JUIL,
-	août,AOUT,Août,
-	septembre,SEPTEMBRE,Septembre,sept,SEPT,Sept,
-	octobre,OCTOBRE,Octobre,octobr,oct,OCT,Oct,octob,OCTOB,Octob,
-	novembre,NOVEMBRE,Novembre,nov,NOV,Nov,
-	décembre,DECEMBRE,Décembre,déc,dec)
+février,FEVRIER,Février,fév,FEV,Fév,
+mars,MARS,Mars,mar,Mar,MAR,
+avril,AVRIL,Avril,avr,
+mai,MAI,Mai,
+juin,JUIN,Juin,
+juillet,JUILLET,Juillet,juil,Juil,JUIL,
+août,AOUT,Août,
+septembre,SEPTEMBRE,Septembre,sept,SEPT,Sept,
+octobre,OCTOBRE,Octobre,octobr,oct,OCT,Oct,octob,OCTOB,Octob,
+novembre,NOVEMBRE,Novembre,nov,NOV,Nov,
+décembre,DECEMBRE,Décembre,déc,dec);
 
+@monthAbbrev=(janv,Janv,JANV,
+fév,FEV,Fév,
+mar,Mar,MAR,
+avr,
+juil,Juil,JUIL,
+sept,SEPT,Sept,
+octobr,oct,OCT,Oct,octob,OCTOB,Octob,
+nov,NOV,Nov,
+déc,dec);
+
+@monthNoAbbrev=(janvier,JANVIER,Janvier,
+février,FEVRIER,Février,
+mars,MARS,Mars,
+avril,AVRIL,Avril,
+mai,MAI,Mai,
+juin,JUIN,Juin,
+juillet,JUILLET,Juillet,
+août,AOUT,Août,
+septembre,SEPTEMBRE,Septembre
+octobre,OCTOBRE,Octobre,
+novembre,NOVEMBRE,Novembre,
+décembre,DECEMBRE,Décembre);
 
 @numday=(
 premier,
@@ -69,23 +104,25 @@ trente et un,
 @numyear=(t_integer>1700<2050,t_integer>1<99)
 @numyear4=(t_integer>1700<2050)
 
-# lundi 22 mai 1968
-@day::(@numday | t_integer>1<31)  @month @numyear?:DATE:
+# lundi 22 mai 1968 | lundi, 4 sepetembre 2014 | lundi 18 octobre, 2014 | Mer. 28 février 2015
+@day::\.? ,? (@numday|t_integer>1<31) (@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
 =>NormalizeDate()
+
+@day::\.? ,? t_date:DATE:
 
 # jours simples
 @daytime=(matin,midi,après-midi,soir)
 
-@day::[t_integer] [(\:|H|h)] [t_integer]:DATE:
+@day::,? [t_integer] [(\:|H|h)] [t_integer]:DATE:
 =>NormalizeRelativeDate()
 
-@day:ce::DATE:
+@dayNoAbbrev:ce::DATE:
 =>NormalizeRelativeDate()
 
-@day::prochain:DATE:
+@dayNoAbbrev::prochain:DATE:
 =>NormalizeRelativeDate("next_day")
 
-@day::(dernier|@daytime|@numday|t_integer>1<31)?:DATE:
+@dayNoAbbrev::(dernier|@daytime|@numday|t_integer>1<31)?:DATE:
 =>NormalizeRelativeDate()
 
 #------------------------------
@@ -116,8 +153,10 @@ trente et un,
 # mai
 # 18 juin 40
 # 31 octobre prochain
+# 22 sept. 2014
 
-@month:(@numday | t_integer>1<31 )?:@numyear:DATE:
+lundi 18 octobre, 2014 (atteste Wipolo)
+@month:(@numday | t_integer>1<31 )?:[(\.? \,?)?] @numyear:DATE:
 =>NormalizeDate()
 
 @month:(@numday | t_integer>1<31 )?:(dernier|suivant)?:DATE:
@@ -168,7 +207,7 @@ siècle$NC:<NUMBER>::DATE:
 
 @in=(en,depuis)
 
-@month:[(@in|au? mois de)?]::DATE:
+@monthNoAbbrev:[(@in|au? mois de)?]::DATE:
 =>NormalizeRelativeDate()
 
 #------------------------------
