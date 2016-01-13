@@ -39,6 +39,7 @@ install(FILES
     test-fre.se-PERSON.xml 
     test-fre.se-DATE.xml 
     test-fre.se-LOCATION.xml 
+    test-eng.se-EMBEDED.xml
     test-fre.simpleword.xml
     test-fre.tokenizer.xml 
     #test-fre.se-beforepos.xml 
