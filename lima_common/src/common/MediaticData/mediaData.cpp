@@ -53,10 +53,10 @@ class MediaDataPrivate
   //std::list< LinguisticCode > m_sentenceBreakMicros;
 };
 
-MediaData::MediaData() : m_d(new MediaDataPrivate())
+MediaData::MediaData() : InitializableObject<MediaData>(), m_d(new MediaDataPrivate())
 {}
 
-MediaData::MediaData(const MediaData& md) : m_d(new MediaDataPrivate(*md.m_d))
+MediaData::MediaData(const MediaData& md) : InitializableObject<MediaData>(md), m_d(new MediaDataPrivate(*md.m_d))
 {}
 
 MediaData::~MediaData()

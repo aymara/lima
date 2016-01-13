@@ -33,6 +33,7 @@
 #include "tstring.h"
 #include "common/LimaCommon.h"
 #include "common/Data/strwstrtools.h"
+#include "common/Data/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/time/timeUtilsController.h"
 
@@ -176,9 +177,9 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
         LimaString str = s.mid(begin,(next==-1)?next:next-begin);
         // initialize entities
-        string filename=Common::MediaticData::MediaticData::single().getConfigPath()+"/"+
-          Misc::limastring2utf8stdstring(str);
-        XMLConfigurationFiles::XMLConfigurationFileParser parser(filename);
+        
+        QString filename = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),str);
+        XMLConfigurationFiles::XMLConfigurationFileParser parser(filename.toUtf8().constData());
         MediaticData::MediaticData::changeable().initEntityTypes(parser);
         begin=next+1;
       } while (next != -1);

@@ -28,6 +28,7 @@
 #include "SpecificEntitiesLoader.h"
 #include "SpecificEntitiesConstraints.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/core/Automaton/recognizerMatch.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
@@ -77,8 +78,8 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     deque<string> modex=unitConfiguration.getListsValueAtKey("modex");
     for (deque<string>::const_iterator it=modex.begin(),it_end=modex.end();it!=it_end;it++) {
       LDEBUG << "loader: initialize modex " << *it;
-      string filename=Common::MediaticData::MediaticData::single().getConfigPath()+"/"+*it;
-      Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename);
+      QString filename = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),(*it).c_str());
+      Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename.toUtf8().constData());
       Common::MediaticData::MediaticData::changeable().initEntityTypes(parser);
     }
   }

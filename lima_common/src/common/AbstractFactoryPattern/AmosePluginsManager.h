@@ -22,6 +22,8 @@
 #include "common/AbstractFactoryPattern/AbstractFactoryPatternExport.h"
 #include "common/AbstractFactoryPattern/Singleton.h"
 
+#include <QtCore>
+
 namespace Lima
 {
   
@@ -30,11 +32,15 @@ public Singleton<AmosePluginsManager>
 {
   friend class Singleton<AmosePluginsManager>;
   
+  /** Load plugins in the plugins subdir of the semicolon separated config dirs 
+   * @param configDirs semicolon separated list of config dirs. If empty, loads a default location
+   */
+  bool loadPlugins(const QString& configDirs = "");
+  
 private:
   AmosePluginsManager();
   virtual ~AmosePluginsManager() {}
 
-  bool loadPlugins();
 };
 
 }

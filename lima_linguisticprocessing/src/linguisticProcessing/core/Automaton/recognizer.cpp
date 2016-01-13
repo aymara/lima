@@ -31,6 +31,7 @@
 #include "automatonCommon.h"
 #include "transitionUnit.h"
 #include "recognizerData.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/LimaString.h"
 #include "common/MediaticData/EntityType.h"
 #include "common/MediaticData/mediaticData.h"
@@ -153,15 +154,15 @@ void Recognizer::init(
   string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
   try
   {
-    string rulesFile = unitConfiguration.getParamsValueAtKey("rules");
-    if (rulesFile != "")
+    QString rulesFile = unitConfiguration.getParamsValueAtKey("rules").c_str();
+    if (!rulesFile.isEmpty())
     {
-      m_filename=rulesFile;
-      rulesFile = resourcesPath + "/" + rulesFile;
+      m_filename=rulesFile.toUtf8().constData();
+      rulesFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), rulesFile);
 //       LDEBUG << "read recognizer from file : " << rulesFile;
       //readFromFile(rulesFile);
       AutomatonReader reader;
-      reader.readRecognizer(rulesFile,*this);
+      reader.readRecognizer(rulesFile.toUtf8().constData(),*this);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {

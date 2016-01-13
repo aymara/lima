@@ -77,22 +77,22 @@ bool Categories::configure(const QString& fileName)
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
 
-  if (configDir.exists("log4cpp"))
-  {
-    QString log4cppSubdirName = configDir.filePath("log4cpp");
-    QFileInfo log4cppSubdirInfo(log4cppSubdirName);
-    if (log4cppSubdirInfo.isDir())
-    {
-      QStringList nameFilters;
-      nameFilters << "log4cpp.*.properties";
-      QDir log4cppSubdir(log4cppSubdirName);
-      QFileInfoList configFiles = log4cppSubdir.entryInfoList(nameFilters);
-      Q_FOREACH(QFileInfo configFile, configFiles)
-      {
-        configure(configFile.absoluteFilePath());
-      }
-    }
-  }
+//   if (configDir.exists("log4cpp"))
+//   {
+//     QString log4cppSubdirName = configDir.filePath("log4cpp");
+//     QFileInfo log4cppSubdirInfo(log4cppSubdirName);
+//     if (log4cppSubdirInfo.isDir())
+//     {
+//       QStringList nameFilters;
+//       nameFilters << "log4cpp.*.properties";
+//       QDir log4cppSubdir(log4cppSubdirName);
+//       QFileInfoList configFiles = log4cppSubdir.entryInfoList(nameFilters);
+//       Q_FOREACH(QFileInfo configFile, configFiles)
+//       {
+//         configure(configFile.absoluteFilePath());
+//       }
+//     }
+//   }
 
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -160,19 +160,50 @@ Level Categories::levelFor(const QString& category) const
   return d->categories.value(category, QsLogging::TraceLevel);
 }
 
-LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configDir) {
+LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) {
   try {
-    QString initFileName = (configDir.isEmpty() ? 
-        QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty() ?
-            "/usr/share/config/lima" : 
-            qgetenv("LIMA_CONF").constData()) : 
-        configDir ) + "/log4cpp.properties";
-    if (!QsLogging::Categories::instance().configure(initFileName))
+    if (configString.isEmpty())
     {
-      std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
-      return -1;
+      QString initFileName = QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty() ?
+              "/usr/share/config/lima" : 
+              qgetenv("LIMA_CONF").constData())  + "/log4cpp.properties";
+      if (!QsLogging::Categories::instance().configure(initFileName))
+      {
+        std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
+        return -1;
+      }
     }
-    //    }
+    else
+    {
+      QStringList configDirsList = configString.split(';');
+      while (! configDirsList.isEmpty() )
+      {
+        QString configDir = configDirsList.last();
+        configDirsList.pop_back();
+        bool somethingLoaded = false;
+        QDir initDir( configDir + "/log4cpp");
+        if (initDir.exists())
+        {
+          QStringList entryList = initDir.entryList(QDir::Files);
+          Q_FOREACH(QString entry, entryList)
+          {
+            if (!QsLogging::Categories::instance().configure(entry))
+            {
+              std::cerr << "Configure Problem " << entry.toUtf8().constData() << std::endl;
+              return -1;
+            }
+            else somethingLoaded = true;
+          }
+        }
+        
+        QString initFileName = configDir + "/log4cpp.properties";
+        if (!QsLogging::Categories::instance().configure(initFileName) && ! somethingLoaded)
+        {
+          std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
+          return -1;
+        }
+      }
+    }
 } catch(...) {
   std::cerr << "Exception during logging system configuration" << std::endl;
   return -1;

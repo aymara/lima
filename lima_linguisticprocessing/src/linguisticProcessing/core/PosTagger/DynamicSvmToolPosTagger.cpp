@@ -25,6 +25,7 @@
 
 
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/Data/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/traceUtils.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
@@ -148,7 +149,7 @@ void DynamicSvmToolPosTagger::init(
 
   // Creates the tagger we use
   erCompRegExp();
-  t = new tagger(resourcesPath + "/" + model);
+  t = new tagger(Common::Misc::findFileInPaths(resourcesPath.c_str(), model.c_str()).toUtf8().constData());
   t->taggerLoadModelsForTagging();
   t->taggerShowComments();
   t->taggerActiveShowScoresFlag();

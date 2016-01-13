@@ -39,7 +39,7 @@ const std::string& EventTemplateDefinitionResource::getMention (const std::strin
 {
   std::string mention="";
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "getMention m_templates.size() " << m_templates.size() << LENDL;
+  LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
   {
     LDEBUG << "Cuurent Mention " << it->getMention()<< LENDL;
@@ -52,7 +52,7 @@ const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefin
 {
   std::map<std::string,Common::MediaticData::EntityType> structure;
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "getMention m_templates.size() " << m_templates.size() << LENDL;
+  LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
   {
     //LDEBUG << "Cuurent Mention " << it->getMention()<< LENDL;
@@ -70,30 +70,28 @@ init(GroupConfigurationStructure& unitConfiguration,
   LOGINIT("LP::EventAnalysis");
 
   m_language=manager->getInitializationParameters().language;
-  string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
-  LDEBUG << "resourcesPath = "<< resourcesPath << LENDL;
   EventTemplateStructure structure;
   // get name
   try
   {
     string name = unitConfiguration.getParamsValueAtKey("templateName");
     structure.setName(name);
-    LDEBUG << "Template name = "<< name << LENDL;
+    LDEBUG << "Template name = "<< name;
     
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language << LENDL;
+    LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   try{
   
     string nameMention = unitConfiguration.getParamsValueAtKey("templateMention");
-    LDEBUG << "Template mention = "<< nameMention << LENDL;
+    LDEBUG << "Template mention = "<< nameMention;
     structure.setMention(nameMention);
   }
   
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateMention' in EventTemplateDefinitionResource for language " << (int)m_language << LENDL;
+    LERROR << "No param 'templateMention' in EventTemplateDefinitionResource for language " << (int)m_language;
     //throw InvalidConfiguration();
   }
 
@@ -101,38 +99,38 @@ init(GroupConfigurationStructure& unitConfiguration,
   try
   {
     map<string,string> elts  = unitConfiguration.getMapAtKey("templateElements");
-    LDEBUG << "templateElements .size " << elts.size() << LENDL;
+    LDEBUG << "templateElements .size " << elts.size();
     for(map<string,string>::const_iterator it=elts.begin(),it_end=elts.end();it!=it_end;it++) {
-      LDEBUG << "templateElement =" << (*it).first << LENDL;
+      LDEBUG << "templateElement =" << (*it).first;
       structure.addTemplateElement((*it).first,(*it).second);
     }
   }
   catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language << LENDL;
+    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 
   // get element mapping, for template merging
-  LDEBUG << "get elementMapping " << LENDL;
+  LDEBUG << "get elementMapping ";
   try
   {
     map<string,string> mapping  = unitConfiguration.getMapAtKey("elementMapping");
-    LDEBUG << "after Getting map " << LENDL;
+    LDEBUG << "after Getting map ";
     for(map<string,string>::const_iterator it=mapping.begin(),it_end=mapping.end();it!=it_end;it++) {
       const std::string& elements=(*it).second;
       // comma-separated list of elements
       boost::char_separator<char> sep(",; ");
       boost::tokenizer<boost::char_separator<char> > tok(elements,sep);
       for(boost::tokenizer<boost::char_separator<char> >::iterator e=tok.begin(),e_end=tok.end(); e!=e_end;e++) {
-        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e << LENDL;
+        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e;
         m_elementMapping[(*it).first].insert(*e);
       }
     }
   }
   catch (NoSuchMap& ) {
-    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language << LENDL;
+    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language;
   }
-  LDEBUG << "Adding Structure " << LENDL;
+  LDEBUG << "Adding Structure ";
   m_templates.push_back(structure);
 }
 
@@ -156,7 +154,7 @@ existsMapping(const std::string& eltName1, const std::string& eltName2) const
     }
   }
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res << LENDL;
+  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res;
   return res;
 }
 

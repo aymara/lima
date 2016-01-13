@@ -29,6 +29,7 @@
 #include "SyntagmaticMatrix.h"
 #include "XmlSyntagmaticMatrixFileHandler.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/Data/FileUtils.h"
 
 #include <QtXml/QXmlSimpleReader>
 
@@ -77,9 +78,8 @@ void SyntagmDefStruct::init(
   m_verbalMatrix.language(m_language);
   
   try {
-    std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    std::string matricesFileName=resourcePath + "/" + unitConfiguration.getParamsValueAtKey("file");
-    loadFromFile(matricesFileName);
+    QString matricesFileName = findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("file").c_str());
+    loadFromFile(matricesFileName.toUtf8().constData());
   
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

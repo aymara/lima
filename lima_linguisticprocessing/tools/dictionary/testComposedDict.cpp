@@ -34,7 +34,9 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/Data/LimaString.h"
+#include "common/Data/FileUtils.h"
 #include "common/misc/fsaStringsPool.h"
+#include "common/FsaAccess/FsaAccessSpare16.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 #include "linguisticProcessing/core/AnalysisDict/AbstractAnalysisDictionary.h"
 #include "linguisticProcessing/core/AnalysisDict/EnhancedAnalysisDictionary.h"
@@ -199,17 +201,18 @@ int run(int argc,char** argv)
     cout << " --dicoId='" << param.dicoId << "'" << endl;
 
 
-    string configPath=Common::MediaticData::MediaticData::single().getConfigPath();
+    QString configPath=QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str());
     cout << "load language " << param.language << endl;
     MediaId langid=MediaticData::single().getMediaId(param.language);
-    string file;
+    QString file;
     try
     {
-      Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configPath + "/lima-analysis.xml");
-      file=configPath + "/" + configuration.getModuleGroupParamValue(
+      QString configurationFile = Common::Misc::findFileInPaths(configPath, QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigFile().c_str()));
+      Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configurationFile.toUtf8().constData());
+      file = Common::Misc::findFileInPaths(configPath, QString::fromUtf8( configuration.getModuleGroupParamValue(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
-             param.language);
+             param.language).c_str() ) );
     }
     catch (NoSuchParam& )
     {
@@ -217,7 +220,7 @@ int run(int argc,char** argv)
       throw InvalidConfiguration();
     }
 
-    XMLConfigurationFileParser langParser(file);
+    XMLConfigurationFileParser langParser(file.toUtf8().constData());
 
     // initialize resources
     try

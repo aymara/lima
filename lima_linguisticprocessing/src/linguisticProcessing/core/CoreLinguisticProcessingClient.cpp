@@ -42,6 +42,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <QtCore/QDate>
+#include <QtCore/QFileInfo>
 
 uint64_t t1;
 
@@ -258,7 +259,6 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
   }
 
-  string configPath=Common::MediaticData::MediaticData::single().getConfigPath();
   for (deque<string>::const_iterator langItr=langToload.begin();
        langItr!=langToload.end();
        langItr++)
@@ -268,17 +268,30 @@ void CoreLinguisticProcessingClientFactory::configure(
     string file;
     try
     {
-      file=configPath + "/" + configuration.getModuleGroupParamValue(
+      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(';');
+      Q_FOREACH(QString confPath, configPaths)
+      {
+        QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
-             *langItr);
+             *langItr).c_str());
+        if  (QFileInfo(confPath + "/" + mediaProcessingDefinitionFile).exists())
+        {
+          file= (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
+          break;
+        }
+      }
     }
     catch (NoSuchParam& )
     {
       LERROR << "no language definition file for language " << *langItr;
       throw InvalidConfiguration("no language definition file for language ");
     }
-
+    if (file.empty())
+    {
+      LERROR << "no language definition file for language " << *langItr;
+      throw InvalidConfiguration("no language definition file for language ");
+    }
     XMLConfigurationFileParser langParser(file);
 
     //initialize SpecificEntities 

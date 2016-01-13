@@ -29,6 +29,7 @@
 #include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "boost/algorithm/string/split.hpp"
 #include "boost/algorithm/string/classification.hpp"
@@ -93,7 +94,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   try
   {
     tzDbFile = unitConfiguration.getParamsValueAtKey("timezoneDatabase");
-    tzDbFile = resourcesPath + "/" + tzDbFile;
+    tzDbFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), tzDbFile.c_str()).toUtf8().constData();
 //     m_timezoneDatabase = new boost::local_time::tz_database();
 //     m_timezoneDatabase->load_from_file(tzDbFile);
   }

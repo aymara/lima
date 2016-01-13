@@ -27,6 +27,7 @@
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/timeUtilsController.h"
 #include "svmtool/tagger.h"
@@ -89,7 +90,7 @@ void SvmToolPosTagger::init(
   string resourcesPath=MediaticData::single().getResourcesPath();  
   try
   {
-    m_model = resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("model");
+    m_model = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("model").c_str()).toUtf8().constData();
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

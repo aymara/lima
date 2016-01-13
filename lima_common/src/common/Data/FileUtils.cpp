@@ -24,10 +24,13 @@
  ***********************************************************************/
 
 #include "FileUtils.h"
+
 #include <deque>
 #include <iostream>
+
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 
 namespace Lima {
 namespace Common {
@@ -70,6 +73,20 @@ uint64_t countLines(QFile& file)
   return result;
 }
 
+QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator)
+{
+  QStringList pathsList = paths.split(separator);
+  Q_FOREACH(QString path, pathsList)
+  {
+    if (QFileInfo(path+ "/" + fileName).exists())
+    {
+      return path+ "/" + fileName;
+    }
+  }
+  MISCLOGINIT;
+  LWARN << "findFileInPaths no" << fileName << "found in" << paths << "separated by" << separator;
+  return QString();
+}
 
 
 } // end namespace

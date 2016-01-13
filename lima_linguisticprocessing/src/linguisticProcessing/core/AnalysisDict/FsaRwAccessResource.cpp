@@ -23,6 +23,7 @@
 #include "FsaRwAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/Data/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/FsaAccess/FsaAccessBuilderRandom16.h"
 
@@ -68,9 +69,9 @@ void FsaRwAccessResource::init(
   FsaAccess::FsaAccessBuilderRandom16* fsaAccess;
   try
   {
-    string keyfile=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("keyFile");
+    QString keyfile = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(), unitConfiguration.getParamsValueAtKey("keyFile").c_str());
     fsaAccess=new FsaAccess::FsaAccessBuilderRandom16();
-    fsaAccess->read(keyfile);
+    fsaAccess->read(keyfile.toUtf8().constData());
     m_fsaAccess=fsaAccess;
     m_fsaRwAccess=fsaAccess;
   }

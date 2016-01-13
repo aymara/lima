@@ -33,6 +33,7 @@
 
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
@@ -73,8 +74,8 @@ void DefaultProperties::init(
   std::deque<std::string> skipUnmarkStatus;
   try
   {
-    string file=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("defaultPropertyFile");
-    readDefaultsFromFile(file);
+    QString file = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),  unitConfiguration.getParamsValueAtKey("defaultPropertyFile").c_str());
+    readDefaultsFromFile(file.toUtf8().constData());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

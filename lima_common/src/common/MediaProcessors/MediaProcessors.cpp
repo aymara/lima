@@ -29,6 +29,7 @@
 #include "common/XMLConfigurationFiles/moduleConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/Data/FileUtils.h"
 #include <iostream>
 
 
@@ -252,8 +253,7 @@ includeProcessors(Common::XMLConfigurationFiles::ModuleConfigurationStructure& m
             try {
                 //PROCESSORSLOGINIT;
                 //LDEBUG << "i="<< i;
-                fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
-                         "/"+string((*it),0,i);
+                fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),string((*it),0,i).c_str()).toUtf8().constData();
                 //LDEBUG << "filename="<< fileName;
                 moduleName=string((*it),i+1);
                 //LDEBUG << "moduleName="<< moduleName;

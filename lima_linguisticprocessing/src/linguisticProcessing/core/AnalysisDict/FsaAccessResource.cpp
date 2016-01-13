@@ -75,13 +75,21 @@ void FsaAccessResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    string keyfile=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("keyFile");
-    FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
-    resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
-    QWriteLocker locker(&m_lock);
-    LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-    fsaAccess->read(keyfile);
-    m_fsaAccess=fsaAccess;
+    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(';');
+    Q_FOREACH(QString resPath, resourcesPaths)
+    {
+      if  (QFileInfo(resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).exists())
+      {
+        string keyfile= (resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).toUtf8().constData();
+        FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+        resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
+        QWriteLocker locker(&m_lock);
+        LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
+        fsaAccess->read(keyfile);
+        m_fsaAccess=fsaAccess;
+        break;
+      }
+    }
   }
   catch (NoSuchParam& )
   {

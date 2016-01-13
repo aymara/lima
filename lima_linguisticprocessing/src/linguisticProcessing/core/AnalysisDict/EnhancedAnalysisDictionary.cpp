@@ -21,6 +21,7 @@
 #include "AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/Data/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
@@ -166,10 +167,11 @@ void EnhancedAnalysisDictionary::init(
   }
   try
   {
-    std::string binaryFilePath = Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("dictionaryValuesFile");
-    resourceFileWatcher().addPath(QString::fromUtf8(binaryFilePath.c_str()));
+    QString binaryFilePath = Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+                                                   unitConfiguration.getParamsValueAtKey("dictionaryValuesFile").c_str());
+    resourceFileWatcher().addPath(binaryFilePath);
     QWriteLocker locker(&m_d->m_lock);
-    m_d->m_dicoData->loadBinaryFile(binaryFilePath);
+    m_d->m_dicoData->loadBinaryFile(binaryFilePath.toUtf8().constData());
   }
   catch (NoSuchList& )
   {

@@ -32,6 +32,7 @@
 #include "common/LimaCommon.h"
 #include "common/QsLog/QsLog.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/readwritetools.h"
 #include "common/misc/DoubleAccessObjectToIdMap.h"
 //#include "common/misc/strwstrtools.h"
@@ -51,6 +52,7 @@
 #include <QSet>
 #include <QRegExp>
 #include <QString>
+#include <QFileInfo>
 
 using namespace std;
 
@@ -98,7 +100,7 @@ private:
 
     std::map< std::string, MediaId > m_mediasIds;
     std::map< MediaId, std::string > m_mediasSymbol;
-    std::map< MediaId, std::string > m_mediaDefinitionFiles;
+    std::map< MediaId, QString > m_mediaDefinitionFiles;
     std::map< MediaId, MediaData* > m_mediasData;
 
     // entity types
@@ -203,7 +205,7 @@ void MediaticData::init(
 
 //  TimeUtils::updateCurrentTime();
   MDATALOGINIT;
-  LINFO << "MediaticData::init " << resourcesPath.c_str() << " " << configPath.c_str() << " " << configFile.c_str();
+  LINFO << "MediaticData::init " << resourcesPath << " " << configPath << " " << configFile;
   //LINFO << "Mediatic data initialization";
 
   m_d->m_resourcesPath=resourcesPath;
@@ -211,38 +213,50 @@ void MediaticData::init(
   m_d->m_configFile=configFile;
 
   //LINFO << "initialize XMLParser";
-  initXMLParser();
-  //LINFO << "parse configuration file: " << configPath << "/" << configFile;
-  Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configPath + "/" + configFile);
-
-  LINFO << "MediaticData::init for ";
-  for (std::deque< std::string >::const_iterator it = meds.begin(); it != meds.end(); it++)
-    LINFO << "    " << (*it).c_str();
-
-  //    initHomoSyntagmaticChainsAndRelationsTypes(*configParser);
-  LDEBUG << "initialize global parameters";
-  m_d->initReleaseStringsPool(configuration);
-
-  initEntityTypes(configuration);
-
-  m_d->initRelations(configuration);
-  
-  m_d->initConceptTypes(configuration);
-  
-  /**
-    * initialize active medias
-    */
-
-  m_d->initMedias(configuration, meds);
-  
-  m_d->m_mediasData.clear();
-  for (map<string,MediaId>::const_iterator it=m_d->m_mediasIds.begin();
-       it!=m_d->m_mediasIds.end();
-       it++)
+  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(';');
+  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(';');
+  bool configurationFileFound = false;
+  Q_FOREACH(QString confPath, configPaths)
   {
-    initMediaData(it->second);
-  }
+    Q_FOREACH(QString confFile, configFiles)
+    {
+      if (QFileInfo(confPath + "/" + confFile).exists())
+      {
+        LDEBUG << "MediaticData::init parse configuration file: " << (confPath + "/" + confFile);
+        configurationFileFound = true;
+        Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration((confPath + "/" + confFile).toUtf8().constData());
 
+        //    initHomoSyntagmaticChainsAndRelationsTypes(*configParser);
+        LDEBUG << "MediaticData::init initialize global parameters";
+        m_d->initReleaseStringsPool(configuration);
+
+        initEntityTypes(configuration);
+
+        m_d->initRelations(configuration);
+        
+        m_d->initConceptTypes(configuration);
+        
+        /**
+          * initialize active medias
+          */
+        LINFO << "!!! MediaticData::init for ";
+        for (std::deque< std::string >::const_iterator it = meds.begin(); it != meds.end(); it++)
+          LINFO << "    " << (*it).c_str();
+
+        m_d->initMedias(configuration, meds);
+        
+        m_d->m_mediasData.clear();
+        for (map<string,MediaId>::const_iterator it=m_d->m_mediasIds.begin();
+            it!=m_d->m_mediasIds.end();
+            it++)
+        {
+          initMediaData(it->second);
+        }
+      }
+      if (configurationFileFound) break;
+    }
+    if (configurationFileFound) break;
+  }
   //LINFO << "Mediatic data initialization finished";
 //  TimeUtils::logElapsedTime("MediaticDataInit");
 }
@@ -265,7 +279,7 @@ void MediaticData::initMedia(const std::string& media)
   LINFO << "MediaticData::initMedia" << media;
 
   //LINFO << "parse configuration file: " << configPath << "/" << configFile;
-  Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(m_d->m_configPath + "/" + m_d->m_configFile);
+  Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(Common::Misc::findFileInPaths(m_d->m_configPath.c_str(), m_d->m_configFile.c_str()).toUtf8().constData());
   Lima::Common::MediaticData::MediaticData::changeable().initEntityTypes(configuration);
 
   std::deque< std::string > meds;
@@ -349,13 +363,6 @@ MediaData& MediaticData::mediaData(MediaId media)
   return *(it->second);
 }
 
-void MediaticData::initXMLParser()
-{
-//   MDATALOGINIT;
-  //LINFO << "XMLParser initialization";
-
-}
-
 void MediaticDataPrivate::initMedias(
   XMLConfigurationFileParser& configParser,
   const std::deque< std::string >& meds)
@@ -402,9 +409,16 @@ void MediaticDataPrivate::initMedias(
           m_mediasIds[*it]=id;
           m_mediasSymbol[id]=*it;
 
-          string deffile=configParser.getModuleGroupParamValue("common","mediaDefinitionFiles",*it);
-          m_mediaDefinitionFiles[id]= m_configPath+"/"+deffile;
-
+          QString deffile= QString::fromUtf8(configParser.getModuleGroupParamValue("common","mediaDefinitionFiles",*it).c_str());
+          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(';');
+          Q_FOREACH(QString confPath, configPaths)
+          {
+            if (QFileInfo(confPath + "/" + deffile).exists())
+            {
+              m_mediaDefinitionFiles[id]= (confPath+"/"+deffile);
+              break;
+            }
+          }
         }
         catch (NoSuchList& )
         {
@@ -423,7 +437,7 @@ void MediaticData::initMediaData(MediaId med)
   MDATALOGINIT;
   LDEBUG << "MediaticData::initMediaData '" << (int)med << "'";
 #endif
-  map<MediaId,string>::const_iterator it=m_d->m_mediaDefinitionFiles.find(med);
+  auto it=m_d->m_mediaDefinitionFiles.find(med);
   if (it==m_d->m_mediaDefinitionFiles.end())
   {
     MDATALOGINIT;
@@ -431,9 +445,9 @@ void MediaticData::initMediaData(MediaId med)
     throw InvalidConfiguration();
   }
 #ifdef DEBUG_CD
-  LDEBUG << "MediaticData::initMediaData Parse MediaConfigurationFile " << (it->second).c_str();
+  LDEBUG << "MediaticData::initMediaData Parse MediaConfigurationFile " << (it->second);
 #endif
-  XMLConfigurationFileParser parser(it->second);
+  XMLConfigurationFileParser parser((it->second).toUtf8().constData());
 
 #ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Class: " << parser.getModuleGroupParamValue("MediaData","Class","class").c_str();
@@ -486,8 +500,8 @@ void MediaticDataPrivate::initRelations(
 {
 #ifdef DEBUG_CD
   MDATALOGINIT;
+  LDEBUG << "MediaticDataPrivate::initRelations";
 #endif
-  //LINFO << "intialize Relations";
   m_relTypes[s_undefinedRelation]=0;
   m_relTypesNum[0]=s_undefinedRelation;
   
@@ -496,14 +510,14 @@ void MediaticDataPrivate::initRelations(
     for (map<string,string>::const_iterator it=rels.begin();
          it!=rels.end();
          it++)
-         {
-            uint8_t relId=atoi(it->second.c_str());
+    {
+      uint8_t relId=atoi(it->second.c_str());
 #ifdef DEBUG_CD
-            LDEBUG << "read relation " << it->first.c_str() << " -> " << (int)relId;
+      LDEBUG << "read relation " << it->first.c_str() << " -> " << (int)relId;
 #endif
-            m_relTypes[it->first]=relId;
-            m_relTypesNum[relId]=it->first;
-         }
+      m_relTypes[it->first]=relId;
+      m_relTypesNum[relId]=it->first;
+    }
   
   } catch (NoSuchGroup& ) {
     MDATALOGINIT;
@@ -521,8 +535,8 @@ void MediaticDataPrivate::initConceptTypes(
 {
 #ifdef DEBUG_CD
   MDATALOGINIT;
+  LDEBUG << "MediaticDataPrivate::initConceptTypes";
 #endif
-  //LINFO << "intialize Concepts Types";
   
   try {
     const map<string,string>& mapping=configParser.getModuleConfiguration("common").getGroupNamed("SemanticData").getMapAtKey("conceptTypes");
@@ -653,10 +667,10 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
      
       LimaString groupName=Common::Misc::utf8stdstring2limastring((*it).first);
 
-      if (groupName=="include") {
+      if (groupName=="include") 
+      {
         deque<string> includeList=moduleConf.getListValuesAtKeyOfGroupNamed("includeList","include");
         string::size_type i;
-        string fileName("");
         string moduleName("");
         for (std::size_t k=0; k<includeList.size(); k++) {
           i=includeList[k].find("/");
@@ -665,14 +679,24 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
                 << ": must specify file and module name" << LENDL;
           continue;
           }
-          fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
-                "/"+string(includeList[k],0,i);
+          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(';');
+          Q_FOREACH(QString confPath, configPaths)
+          {
+            if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())
+            {
+
+              std::string  fileName= (confPath + "/" + string(includeList[k],0,i).c_str()).toUtf8().toStdString();
         
-          Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig2(fileName);
-          Common::MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
+              Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig2(fileName);
+              Common::MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
+              break;
+            }
+          }
         }
         
-      } else {  
+      } 
+      else 
+      {  
         EntityGroupId groupId=addEntityGroup(groupName);
 #ifdef DEBUG_CD
         LDEBUG << "initEntityTypes: id is " << groupId;

@@ -30,6 +30,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "common/MediaProcessors/MediaProcessors.h"
 // #include "linguisticProcessing/common/linguisticData/linguisticData.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
 
@@ -64,7 +65,7 @@ void Modex::init(GroupConfigurationStructure& unitConfiguration,
   try {
     // try to get a single automaton
     string filename=unitConfiguration.getParamsValueAtKey("modexConfig");
-    string configFile=LinguisticData::single().getConfigPath()+"/"+filename;
+    string configFile=Common::Misc::findFileInPaths(LinguisticData::single().getConfigPath().c_str(),filename.c_str()).toUtf8().constData();
 
     initModex(configFile,m_language);
   }
@@ -156,7 +157,7 @@ addConfiguration(ModuleConfigurationStructure& modexConfig,
 void Modex::
 initEntities(const std::string& filename)
 {
-  XMLConfigurationFileParser configuration(LinguisticData::single().getConfigPath() + "/" + filename);
+  XMLConfigurationFileParser configuration(Common::Misc::findFileInPaths(LinguisticData::single().getConfigPath().c_str(),filename.c_str()).toUtf8().constData());
   initEntities(configuration);
 }
 

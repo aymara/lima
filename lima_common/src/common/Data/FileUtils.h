@@ -59,6 +59,14 @@ LIMA_DATA_EXPORT uint64_t countLines(std::istream& file);
  */
 LIMA_DATA_EXPORT uint64_t countLines(QFile& file);
 
+/**
+ * Find the given file in the given paths. 
+ * @param paths the list of concatenated paths to search th file in
+ * @param fileName the name of the file  to search into the paths. Can include a relative path
+ * @param separator the character used to split the list of paths. Defaults to semicolon
+ * @return the full path of the found file if found. Empty string otherwise.
+ */
+LIMA_DATA_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator = ';');
 
 } // end namespace
 } // end namespace

@@ -35,6 +35,7 @@
 
 #include <string>
 #include <fstream>
+#include <QtCore>
 
 using namespace std;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -197,18 +198,28 @@ void  LanguageData::initialize(
 }
 
 void LanguageDataPrivate::initPropertyCode(
-  const std::string& resourcesPath,
+  const std::string& resourcesPathsStd,
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
   LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system";
   try
   {
-    std::string propertyFile=resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile");
+    QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(';');
+    Q_FOREACH(QString resourcesPath, resourcesPaths)
+    {
+      QString propertyFile(resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile").c_str());
+      QFileInfo propertyFileInfo(propertyFile);
+      if (propertyFileInfo.exists())
+      {
 #ifdef DEBUG_LP
-    LDEBUG << "LanguageDataPrivate::initPropertyCode propertyFile is:" << propertyFile;
+        LDEBUG << "LanguageDataPrivate::initPropertyCode reading property file" << propertyFileInfo.filePath();
 #endif
-    m_propCodeManager.readFromXmlFile(propertyFile);
+        m_propCodeManager.readFromXmlFile(propertyFileInfo.filePath().toUtf8().constData());
+        // Read at most one property code file for a language
+        break;
+      }
+    }
   }
   catch (std::exception& e)
   {
@@ -405,7 +416,15 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {
-    compoundTensesDefinitionsFile = resourcesPath + std::string("/") + compoundTensesDefinitionsFile;
+    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(';');
+    Q_FOREACH(QString resPath, resourcesPaths)
+    {
+      if  (QFileInfo(resPath + "/" + compoundTensesDefinitionsFile.c_str()).exists())
+      {
+        compoundTensesDefinitionsFile = (resPath + "/" + compoundTensesDefinitionsFile.c_str()).toUtf8().constData();
+        break;
+      }
+    }
   }
 
   std::ifstream ifl(compoundTensesDefinitionsFile.c_str(), std::ifstream::binary);

@@ -27,6 +27,7 @@
   */
 
 #include "SelectionalPreferences.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
@@ -66,7 +67,7 @@ void SelectionalPreferences::init(
   
   try {
     std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    std::string preferencesFileName=resourcePath + "/" + unitConfiguration.getParamsValueAtKey("file");
+    std::string preferencesFileName = Common::Misc::findFileInPaths(resourcePath.c_str(), unitConfiguration.getParamsValueAtKey("file").c_str()).toUtf8().constData();
     loadFromFile(preferencesFileName);
   
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )

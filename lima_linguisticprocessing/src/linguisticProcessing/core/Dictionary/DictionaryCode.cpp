@@ -30,6 +30,7 @@
 #include "common/linguisticData/languageData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/misc/FileUtils.h"
 #include "common/misc/strwstrtools.h"
 
 // #include "linguisticProcessing/core/Tokenizer/Exceptions.h"
@@ -96,20 +97,22 @@ void DictionaryCode::init(
 #endif
   m_language=manager->getInitializationParameters().language;
   std::string resourcesPath=Common::LinguisticData::LinguisticData::single().getResourcesPath();
-  std::string codesListFileName;
-  std::string codeFileName;
+//   QString codesListFileName;
+//   try
+//   {
+//     codesListFileName = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("codeListFile").c_str());
+//   }
+//   catch (NoSuchParam& )
+//   {
+//     LERROR << "no param 'codeListFile' in DictionaryCode group for language " << (int) m_language;
+//     throw InvalidConfiguration();
+//   }
+//   loadCodesMaps(codesListFileName);
+  
+  QString codeFileName;
   try
   {
-    codesListFileName=resourcesPath+"/"+unitConfiguration.getParamsValueAtKey("codeListFile");
-  }
-  catch (NoSuchParam& )
-  {
-    LERROR << "no param 'codeListFile' in DictionaryCode group for language " << (int) m_language;
-    throw InvalidConfiguration();
-  }
-  try
-  {
-    codeFileName=resourcesPath+"/"+unitConfiguration.getParamsValueAtKey("codeFile");
+    codeFileName = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("codeFile").c_str());
   }
   catch (NoSuchParam& )
   {
@@ -117,8 +120,7 @@ void DictionaryCode::init(
     throw InvalidConfiguration();
   }
   
-//  loadCodesMaps(codesListFileName);
-  parse(codeFileName);
+  parse(codeFileName.toUtf8().constData());
 }
 
 

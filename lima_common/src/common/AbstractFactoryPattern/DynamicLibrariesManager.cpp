@@ -59,8 +59,7 @@ isLoaded(const std::string& libName)
   return (it!=m_handles.end());
 }
 
-bool DynamicLibrariesManager::
-loadLibrary(const std::string& libName)
+bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 {
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
@@ -70,7 +69,8 @@ loadLibrary(const std::string& libName)
     it=m_handles.find(libName);
   if (it!=m_handles.end()) {
 #ifdef DEBUG_CD
-    LWARN << "DEBUG_CD: trying to reload dynamic library " << libName.c_str();
+    LDEBUG << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library" << libName.c_str();
+    return false;
 #endif
   }
 

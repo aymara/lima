@@ -20,8 +20,10 @@
 #include "ConllDumper.h"
 #include "common/MediaProcessors/DumperStream.h"
 #include "common/time/traceUtils.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/misc/AbstractAccessByString.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
@@ -36,7 +38,6 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
-#include "common/misc/AbstractAccessByString.h"
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/ConstituantAndRelationExtractor.h"
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/relation.h"
 #include "linguisticProcessing/core/SemanticAnalysis/LimaConllTokenIdMapping.h"
@@ -175,11 +176,11 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   
   try {
     std::string resourcePath = Common::MediaticData::MediaticData::single().getResourcesPath();
-    std::string mappingFile = resourcePath + "/" + unitConfiguration.getParamsValueAtKey("mappingFile");
-    std::ifstream ifs(mappingFile, std::ifstream::binary);
+    QString mappingFile =  Common::Misc::findFileInPaths(resourcePath.c_str(), unitConfiguration.getParamsValueAtKey("mappingFile").c_str());
+    std::ifstream ifs(mappingFile.toUtf8().constData(), std::ifstream::binary);
     if (!ifs.good())
     {
-      LERROR << "ERROR: cannot open"+ mappingFile;
+      LERROR << "ERROR: cannot open" << mappingFile;
       throw InvalidConfiguration();
     }
     while (ifs.good() && !ifs.eof())

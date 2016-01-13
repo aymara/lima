@@ -26,6 +26,7 @@
   */
 
 #include "ngramMatrices.h"
+#include "common/Data/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/linguisticData/languageData.h"
@@ -68,7 +69,7 @@ void TrigramMatrix::init(
   string resourcesPath=MediaticData::single().getResourcesPath();
   try
   {
-    string trigramFile=resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("trigramFile");
+    string trigramFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("trigramFile").c_str()).toUtf8().constData();
     readTrigramMatrixFile(trigramFile);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
@@ -180,7 +181,7 @@ void BigramMatrix::init(
   string resourcesPath=MediaticData::single().getResourcesPath();
   try
   {
-    string trigramFile=resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("bigramFile");
+    string trigramFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("bigramFile").c_str()).toUtf8().constData();
     readBigramMatrixFile(trigramFile);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )

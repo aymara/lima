@@ -84,50 +84,6 @@ void TokenizerAutomaton::init(
   }
 
   m_text=new Text(_language,_charChart);
-  
-  try
-  {
-    string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    string fileName=resourcesPath +"/"+unitConfiguration.getParamsValueAtKey("automatonFile");
-
-  }
-  catch (NoSuchParam& )
-  {
-    LERROR << "no param 'automatonFile' in TokenizerAutomaton group configuration (language="
-    << (int) _language << ")";
-    throw InvalidConfiguration();
-  }
-  // when input XML file is syntactically wrong
-  catch (XmlSyntaxException exc)
-  {
-    std::ostringstream mess;
-    mess << "XmlSyntaxException at line "<<exc._lineNumber<<" cause: ";
-    switch (exc._why)
-    {
-        case XmlSyntaxException::SYNTAX_EXC : mess << "SYNTAX_EXC"; break;
-        case XmlSyntaxException::NO_DATA_EXC : mess << "NO_DATA_EXC"; break;
-        case XmlSyntaxException::DOUBLE_EXC : mess << "DOUBLE_EXC"; break;
-        case XmlSyntaxException::FWD_CLASS_EXC : mess << "FWD_CLASS_EXC"; break;
-        case XmlSyntaxException::MULT_CLASS_EXC : mess << "MULT_CLASS_EXC"; break;
-        case XmlSyntaxException::EOF_EXC : mess << "EOF_EXC"; break;
-        case XmlSyntaxException::NO_CODE_EXC : mess << "NO_CODE_EXC"; break;
-        case XmlSyntaxException::BAD_CODE_EXC : mess << "BAD_CODE_EXC"; break;
-        case XmlSyntaxException::NO_CLASS_EXC : mess << "NO_CLASS_EXC"; break;
-        case XmlSyntaxException::UNK_CLASS_EXC : mess << "UNK_CLASS_EXC"; break;
-        case XmlSyntaxException::INT_ERROR_EXC : mess << "INT_ERROR_EXC"; break;
-        case XmlSyntaxException::INV_CLASS_EXC : mess << "INV_CLASS_EXC"; break;
-        default: mess << "??";
-    }
-    LERROR << mess.str();
-    throw InvalidConfiguration();
-  }
-  catch (std::exception &exc)
-  {
-    // @todo remove all causes of InfiniteLoopException
-    LERROR << exc.what();
-    throw InvalidConfiguration();
-  }
-
 }
 
 const State* TokenizerAutomaton::stateNamed(const LimaString& name) const

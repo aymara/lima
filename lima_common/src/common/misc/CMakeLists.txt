@@ -62,8 +62,6 @@ install(FILES
     adjacency_listnowarn.hpp
     graphviznowarn.hpp
     depth_first_searchnowarn.hpp
-    XSLExceptionnowarn.hpp
     NodeRefListnowarn.hpp
-    XalanOutputStreamPrintWriternowarn.hpp
     linenoise.h
   DESTINATION include/common/misc)
