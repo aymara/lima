@@ -31,7 +31,7 @@ class LIMA_FACTORY_EXPORT AmosePluginsManager :
 public Singleton<AmosePluginsManager>
 {
   friend class Singleton<AmosePluginsManager>;
-  
+public:
   /** Load plugins in the plugins subdir of the semicolon separated config dirs 
    * @param configDirs semicolon separated list of config dirs. If empty, loads a default location
    */
