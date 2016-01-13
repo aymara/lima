@@ -138,7 +138,7 @@ elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   """
   make_test=""
   make_install=""""
-  generator="Visual Studio 10 2010"
+  generator="Visual Studio 14 2015 Win64"
 else
   make_cmd="make -j$j"
 fi
