@@ -685,7 +685,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
             if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())
             {
 
-              std::string  fileName= (confPath + "/" + string(includeList[k],0,i).c_str()).toUtf8().toStdString();
+              std::string  fileName= (confPath + "/" + string(includeList[k],0,i).c_str()).toUtf8().constData();
         
               Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig2(fileName);
               Common::MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
