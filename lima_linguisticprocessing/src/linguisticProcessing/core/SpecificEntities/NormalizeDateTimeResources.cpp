@@ -117,7 +117,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   try
   {
     string monthsDaysFile = unitConfiguration.getParamsValueAtKey("monthsDays");
-    monthsDaysFile = resourcesPath + "/" + monthsDaysFile;
+    monthsDaysFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), monthsDaysFile.c_str()).toUtf8().constData();
     if (!readMonthDays(monthsDaysFile)) {
       SELOGINIT;
       LERROR << "Error loading monthsDays resources '" 
