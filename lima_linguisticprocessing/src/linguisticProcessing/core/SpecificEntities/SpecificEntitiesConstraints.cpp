@@ -1416,8 +1416,11 @@ SELOGINIT;
 LERROR << "NormalizeEntity:: Error: missing RecognizerData";
 return false;
 }
-// assign stored features to RecognizerMatch features
-match.features()=recoData->getEntityFeatures();
+// assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
+//match.features()=recoData->getEntityFeatures();
+for (const auto& f: recoData->getEntityFeatures()) {
+   match.features().setFeature(f.getName(),f.getValue());
+}
 // must clear the stored features, once they are used (otherwise, will be kept for next entity)
 recoData->clearEntityFeatures();
 return true;
