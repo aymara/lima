@@ -205,11 +205,15 @@ LinguisticGraphVertex AnalysisGraph::nextMainPathVertex(
   const std::list<LinguisticCode> microFilters,
   LinguisticGraphVertex end)
 {
+#ifdef DEBUG_LP
+  LASLOGINIT;
+#endif
   /*
    * Algorithm: we're using a Breadth First Search and keep track of the
    * "thickness" of the lattice, and only stop if both condition apply:
    *  1/ the thickness is 1, meaning that every path goes through this node
    *  2/ the node is in microFilters (eg. a full stop in english)
+   *     OR the node has t_sentence_break tokenization status
    */
   std::set<LinguisticGraphVertex> visited;
   LinguisticGraphOutEdgeIt outItr,outItrEnd;
@@ -225,6 +229,7 @@ LinguisticGraphVertex AnalysisGraph::nextMainPathVertex(
     toVisit.push(target(*outItr,*m_graph));
   }
 
+  VertexTokenPropertyMap tokenMap = get( vertex_token, *m_graph );
   // search
   while (!toVisit.empty())
   {
@@ -235,13 +240,27 @@ LinguisticGraphVertex AnalysisGraph::nextMainPathVertex(
     {
       return end;
     }
+    Token* ft = tokenMap[current];
 
     accumulator-=in_degree(current,*m_graph);
     if (accumulator==0)
     {
       // check unique category only if accumulator is 0
       MorphoSyntacticData* msd=get(vertex_data,*m_graph,current);
-      if (msd!=0 && msd->hasUniqueMicro(microAccessor,microFilters)) return current;
+      if (msd!=0 && msd->hasUniqueMicro(microAccessor,microFilters))
+      {
+#ifdef DEBUG_LP
+        LDEBUG << "AnalysisGraph::nextMainPathVertex micro, return" << current;
+#endif
+        return current;
+      }
+      if (ft && ft->status().getStatus() == T_SENTENCE_BRK)
+      {
+#ifdef DEBUG_LP
+        LDEBUG << "AnalysisGraph::nextMainPathVertex sentence break, return" << current;
+#endif
+        return current;
+      }
     }
     accumulator+=out_degree(current,*m_graph);
 
