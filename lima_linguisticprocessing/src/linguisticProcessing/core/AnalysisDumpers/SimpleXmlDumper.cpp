@@ -167,8 +167,9 @@ xmlOutput(std::ostream& out,
           AnalysisGraph* posgraph,
           const Common::AnnotationGraphs::AnnotationData* annotationData) const
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
-
+#endif
   out << "<text>" << endl;
   
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
@@ -179,6 +180,7 @@ xmlOutput(std::ostream& out,
 
   if (sb==0)
   {
+    DUMPERLOGINIT;
     LWARN << "no SentenceBoundaries";
   }
 
@@ -200,7 +202,9 @@ xmlOutput(std::ostream& out,
   {
     // ??OME2 uint64_t nbSentences(sb->size());
     uint64_t nbSentences((sb->getSegments()).size());
+#ifdef DEBUG_LP
     LDEBUG << "SimpleXmlDumper: "<< nbSentences << " sentences found";
+#endif
     for (uint64_t i=0; i<nbSentences; i++)
     {
       // ??OME2 LinguisticGraphVertex sentenceBegin=(*sb)[i].getFirstVertex();
@@ -212,9 +216,10 @@ xmlOutput(std::ostream& out,
       //   continue;
       // }
       
+#ifdef DEBUG_LP
       LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd;
       LDEBUG << "dump simple terms for this sentence";
-      
+#endif      
       ostringstream oss;
       xmlOutputVertices(oss,
                         anagraph,
@@ -226,7 +231,9 @@ xmlOutput(std::ostream& out,
                         metadata->getStartOffset());
       string str=oss.str();
       if (str.empty()) {
+#ifdef DEBUG_LP
         LDEBUG << "nothing to dump in this sentence";
+#endif
       }
       else {
         out << "<s id=\"" << i << "\">" << endl
@@ -249,10 +256,10 @@ xmlOutputVertices(std::ostream& out,
                   const uint64_t offset) const
 {
 
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LDEBUG << "SimpleXmlDumper: ========================================";
-  LDEBUG << "SimpleXmlDumper: outputXml from vertex "  << begin << " to vertex " << end;
-
+  LDEBUG << "SimpleXmlDumper::xmlOutputVertices from vertex "  << begin << " to vertex " << end;
+#endif
   LinguisticGraph* graph=posgraph->getGraph();
   LinguisticGraphVertex lastVertex=posgraph->lastVertex();
   
@@ -333,6 +340,10 @@ xmlOutputVertex(std::ostream& out,
                 const FsaStringsPool& sp,
                 uint64_t offset) const
 {
+#ifdef DEBUG_LP
+  DUMPERLOGINIT;
+  LDEBUG << "SimpleXmlDumper::xmlOutputVertex"  << v;
+#endif
   MorphoSyntacticData* data=get(vertex_data,*(posgraph->getGraph()),v);
   
   // first, check if vertex corresponds to a specific entity found before pos tagging (i.e. in analysis graph)
@@ -341,16 +352,25 @@ xmlOutputVertex(std::ostream& out,
   for (std::set< AnnotationGraphVertex >::const_iterator anaVerticesIt = anaVertices.begin();
        anaVerticesIt != anaVertices.end(); anaVerticesIt++)
   {
+#ifdef DEBUG_LP
+    LDEBUG << "SimpleXmlDumper::xmlOutputVertex AnalysisGraph vertex for"  << v << "is" << *anaVerticesIt;
+#endif
     std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVerticesIt,"annot");
     for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
          it != matches.end(); it++)
     {
       AnnotationGraphVertex vx=*it;
+#ifdef DEBUG_LP
+      LDEBUG << "SimpleXmlDumper::xmlOutputVertex vertex"  << v << "," << *anaVerticesIt << "has annot vertex" << vx;
+#endif
       if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
         const SpecificEntityAnnotation* se =
           annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
           pointerValue<SpecificEntityAnnotation>();
+#ifdef DEBUG_LP
+        LDEBUG << "SimpleXmlDumper::xmlOutputVertex annot vertex" << vx << "has SpecificEntity annotation";
+#endif
         if (outputSpecificEntity(out,se,data,anagraph->getGraph(),sp,offset)) {
           return;
         }
@@ -485,9 +505,10 @@ outputSpecificEntity(std::ostream& out,
 
   // take as category for parts the category for the named entity
   LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "Using category " << m_propertyManager->getPropertySymbolicValue(category) << " for specific entity of type " << typeName;
-  
+#endif
   // get the parts of the named entity match
   // use the category of the named entity for all elements
   for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
@@ -512,7 +533,7 @@ std::string SimpleXmlDumper::xmlString(const std::string& inputStr) const
   replace(str,"<", "&lt;");
   replace(str,">", "&gt;");
   replace(str,"\"", "&quot;");
-  replace(str,"\n", "\n");
+  replace(str,"\n", "");
   return str;
 }
 
