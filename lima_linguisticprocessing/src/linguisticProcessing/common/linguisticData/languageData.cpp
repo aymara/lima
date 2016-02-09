@@ -202,13 +202,16 @@ void LanguageDataPrivate::initPropertyCode(
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system";
+  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system with" << resourcesPathsStd;
   try
   {
     QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(';');
     Q_FOREACH(QString resourcesPath, resourcesPaths)
     {
       QString propertyFile(resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile").c_str());
+#ifdef DEBUG_LP
+        LDEBUG << "LanguageDataPrivate::initPropertyCode trying property file" << propertyFile;
+#endif
       QFileInfo propertyFileInfo(propertyFile);
       if (propertyFileInfo.exists())
       {
