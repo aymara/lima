@@ -137,8 +137,8 @@ template<typename ValueType>
   void EntityFeatures::setFeature(const std::string& name,
                   const ValueType& value)
     {
-      SELOGINIT;
-      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << value << ")";
+//      SELOGINIT;
+//      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << value << ")";
       // if feature with same name already exists, overwrite it
       EntityFeatures::iterator it=find(name);
       if (it!=end()) {
@@ -157,8 +157,8 @@ template<typename ValueType>
   void EntityFeatures::addFeature(const std::string& name,
                   const ValueType& value)
     {
-      SELOGINIT;
-      LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << value << ")";
+//      SELOGINIT;
+//      LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << value << ")";
       push_back(EntityFeature());
       back().setName(name);
       back().setValue(boost::any(value));
