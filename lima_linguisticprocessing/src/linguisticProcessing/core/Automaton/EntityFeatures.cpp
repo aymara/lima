@@ -263,6 +263,18 @@ std::ostream& operator<<(std::ostream& os, const EntityFeatures& f) {
   return os;
 }
 
+QDebug& operator<<(QDebug& os, const EntityFeatures& f) {
+  if (f.empty()) {
+      return os;
+  }
+  EntityFeatures::const_iterator it=f.begin(),it_end=f.end();
+  os << (*it).getName() << "=" << (*it).getValueString();
+  for (it++; it!=it_end; it++) {
+    os << "/" << (*it).getName() << "=" << (*it).getValueString();
+  }
+  return os;
+}
+
 
 } // end namespace
 } // end namespace

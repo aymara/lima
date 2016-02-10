@@ -124,6 +124,7 @@ public:
   EntityFeatures::iterator findLast(const std::string& featureName);
 
   friend LIMA_AUTOMATON_EXPORT std::ostream& operator<<(std::ostream& os, const EntityFeatures& f);
+  friend LIMA_AUTOMATON_EXPORT QDebug& operator<<(QDebug& os, const EntityFeatures& f);
 };
 
 #if defined(WIN32)
