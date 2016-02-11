@@ -117,7 +117,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   try
   {
     string monthsDaysFile = unitConfiguration.getParamsValueAtKey("monthsDays");
-    monthsDaysFile = resourcesPath + "/" + monthsDaysFile;
+    monthsDaysFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), monthsDaysFile.c_str()).toUtf8().constData();
     if (!readMonthDays(monthsDaysFile)) {
       SELOGINIT;
       LERROR << "Error loading monthsDays resources '" 
@@ -151,7 +151,7 @@ readMonthDays(const std::string& monthsDaysFile)
       std::vector<std::string> elements;
       split(elements,utf8line,is_any_of(MONTHSDAYS_MAIN_SEP));
       // three elements in line: (month|day|ordinal|cardinal|suffix) num list-of-strings
-      if (elements.size()!=3) {
+      if (elements.size()!=3) { 
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line;
         continue;
