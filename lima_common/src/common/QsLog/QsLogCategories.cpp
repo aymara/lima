@@ -187,7 +187,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) {
           QStringList entryList = initDir.entryList(QDir::Files);
           Q_FOREACH(QString entry, entryList)
           {
-            if (!QsLogging::Categories::instance().configure(entry))
+            if (!QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
             {
               std::cerr << "Configure Problem " << entry.toUtf8().constData() << std::endl;
               return -1;

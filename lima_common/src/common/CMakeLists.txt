@@ -38,7 +38,6 @@ target_link_libraries(lima-common
     lima-common-fsaaccess 
     lima-common-qslog 
     lima-common-xmlconfigurationfiles 
-    lima-common-factory 
     lima-common-data 
     lima-common-misc 
     lima-common-tools 
