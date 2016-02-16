@@ -54,9 +54,9 @@ class LIMA_BOW_EXPORT BinaryWriterBoWDocumentHandler : public AbstractBoWDocumen
   void openSBoWIndexingNode(const Misc::GenericDocumentProperties* properties,
                             const std::string& elementName);
   void processSBoWText(const BoWText* boWText, 
-                       bool useIterators);
+                       bool useIterators, bool useIndexIterator);
   void processProperties(const Misc::GenericDocumentProperties* properties, 
-                         bool useIterators);
+                         bool useIterators, bool useIndexIterator);
   void closeSBoWNode();
 
  private:

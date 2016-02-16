@@ -211,9 +211,9 @@ public:
                               const std::string& /*elementName*/)
     {}
     void processSBoWText(const BoWText* boWText,
-                         bool useIterators);
+                         bool useIterators, bool /*useIndexIterator*/);
     void processProperties(const Misc::GenericDocumentProperties* /*properties*/,
-                           bool /*useIterators*/)
+                           bool /*useIterators*/, bool /*useIndexIterator*/)
     {}
     void closeSBoWNode()
     {}
@@ -227,7 +227,7 @@ private:
 };
 
 void GetLexiconBoWDocumentHandler::processSBoWText(const BoWText* text,
-        bool useIterators)
+        bool useIterators, bool /*useIndexIterator*/)
 {
   LIMA_UNUSED(useIterators);
     BoWTokenIterator it(*text);
@@ -306,7 +306,7 @@ void readDocuments(ifstream& fileIn, BoWDocument* document,
                                          referenceProperties,filterCategory);
     while (! fileIn.eof())
     {
-        reader.readBoWDocumentBlock(fileIn,*document,handler,true);
+        reader.readBoWDocumentBlock(fileIn,*document,handler,true,false);
     }
 }
 

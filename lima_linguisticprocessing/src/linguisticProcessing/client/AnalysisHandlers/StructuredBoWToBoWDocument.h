@@ -55,10 +55,10 @@ class LIMA_ANALYSISHANDLERS_EXPORT StructuredBoWToBoWDocument :
                             const std::string& elementName);
 
   void processSBoWText(const Common::BagOfWords::BoWText* boWText, 
-                       bool useIterators);
+                       bool useIterators, bool useIndexIterator);
 
   void processProperties(const Common::Misc::GenericDocumentProperties* properties, 
-                         bool useIterators);
+                         bool useIterators, bool useIndexIterator);
   void closeSBoWNode();
 
  private:

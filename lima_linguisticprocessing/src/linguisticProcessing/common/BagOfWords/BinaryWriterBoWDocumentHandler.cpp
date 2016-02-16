@@ -65,7 +65,7 @@ openSBoWIndexingNode(const Misc::GenericDocumentProperties* /*properties*/,
 
 void BinaryWriterBoWDocumentHandler::
 processSBoWText(const BoWText* boWText, 
-                bool /*useIterators*/)
+                bool /*useIterators*/, bool /*useIndexIterator*/)
 {
   Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::BOW_TEXT_BLOC);
   m_writer.writeBoWText(m_outputStream,*boWText);
@@ -73,7 +73,7 @@ processSBoWText(const BoWText* boWText,
 
 void BinaryWriterBoWDocumentHandler::
 processProperties(const Misc::GenericDocumentProperties* properties, 
-                  bool /*useIterators*/)
+                  bool /*useIterators*/, bool /*useIndexIterator*/)
 {
   Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::DOCUMENT_PROPERTIES_BLOC);
   properties->write(m_outputStream);
