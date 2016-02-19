@@ -27,7 +27,7 @@
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/timeUtilsController.h"
 #include "svmtool/tagger.h"

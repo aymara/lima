@@ -419,7 +419,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {
-    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(';');
+    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(':');
     Q_FOREACH(QString resPath, resourcesPaths)
     {
       if  (QFileInfo(resPath + "/" + compoundTensesDefinitionsFile.c_str()).exists())

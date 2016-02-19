@@ -31,7 +31,7 @@
 #include "automatonCommon.h"
 #include "transitionUnit.h"
 #include "recognizerData.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/LimaString.h"
 #include "common/MediaticData/EntityType.h"
 #include "common/MediaticData/mediaticData.h"

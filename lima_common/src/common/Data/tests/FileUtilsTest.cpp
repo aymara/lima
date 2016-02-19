@@ -18,7 +18,7 @@
  */
 
 #include "FileUtilsTest.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/QsLog/QsLogCategories.h"
 
 #include <QtCore/QTemporaryFile>

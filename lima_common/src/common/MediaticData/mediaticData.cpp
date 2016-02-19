@@ -32,7 +32,7 @@
 #include "common/LimaCommon.h"
 #include "common/QsLog/QsLog.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/readwritetools.h"
 #include "common/misc/DoubleAccessObjectToIdMap.h"
 //#include "common/misc/strwstrtools.h"
@@ -213,8 +213,8 @@ void MediaticData::init(
   m_d->m_configFile=configFile;
 
   //LINFO << "initialize XMLParser";
-  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(';');
-  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(';');
+  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(':');
+  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(':');
   bool configurationFileFound = false;
   Q_FOREACH(QString confPath, configPaths)
   {

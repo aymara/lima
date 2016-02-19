@@ -23,7 +23,7 @@
 #include "FsaRwAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/FsaAccess/FsaAccessBuilderRandom16.h"
 

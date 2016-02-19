@@ -59,6 +59,45 @@ LIMA_DATA_EXPORT uint64_t countLines(std::istream& file);
  */
 LIMA_DATA_EXPORT uint64_t countLines(QFile& file);
 
+
+/**
+ * @brief Build a list of configuration directories from a list of project
+ * names and a list of paths. 
+ * 
+ * For each project name "project", try to add the dir from the environment 
+ * variable $PROJECT_CONF. If it does not exist, try 
+ * $PROJECT_DIST/share/config/project. If it does not exist either, try 
+ * /usr/share/config/project.
+ * Then add existing paths from the given list.
+ * In LIMA the projects list will be limited to the single element "lima" but 
+ * projects depending on LIMA will be able to add their own separate 
+ * configurations.
+ * 
+ * @param projects The list of project names to explore 
+ * @param paths The list of paths to look into.
+ */
+LIMA_DATA_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList& projects, 
+                                                               const QStringList& paths);
+
+/**
+ * @brief Build a list of resources directories from a list of project names
+ * and a list of paths. 
+ * 
+ * For each project name "project", try to add the dir from the environment 
+ * variable $PROJECT_RESOURCES. If it does not exist, try 
+ * $PROJECT_DIST/share/apps/project/resources. If it does not exist either, try
+ * /usr/share/apps/project/resources.
+ * Then add existing paths from the given list.
+ * In LIMA the projects list will be limited to the single element "lima" but 
+ * projects depending on LIMA will be able to add their own separate 
+ * resources.
+ * 
+ * @param projects The list of project names to explore 
+ * @param paths The list of paths to look into.
+ */
+LIMA_DATA_EXPORT QStringList buildResourcesDirectoriesList(const QStringList& projects, 
+                                                               const QStringList& paths);
+
 /**
  * Find the given file in the given paths. 
  * @param paths the list of concatenated paths to search th file in

@@ -30,7 +30,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "common/MediaProcessors/MediaProcessors.h"
 // #include "linguisticProcessing/common/linguisticData/linguisticData.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
 

@@ -26,7 +26,7 @@
   */
 
 #include "ngramMatrices.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/linguisticData/languageData.h"

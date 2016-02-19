@@ -24,7 +24,7 @@
 #include "ViterbiPosTagger.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "integerCost.h"

@@ -24,7 +24,6 @@ add_definitions( -DLIMA_DATA_EXPORTING )
 
 SET(lima-common-data_LIB_SRCS
    DataTypes.cpp
-   FileUtils.cpp
    genericDocumentProperties.cpp
    readwritetools.cpp
    strwstrtools.cpp
@@ -47,7 +46,6 @@ install(TARGETS lima-common-data DESTINATION ${LIB_INSTALL_DIR})
 install(FILES
     base64.h
     DataTypes.h
-    FileUtils.h
     genericDocumentProperties.h
     LimaString.h
     readwritetools.h

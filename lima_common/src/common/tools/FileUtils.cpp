@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
 
 namespace Lima {
 namespace Common {
@@ -71,6 +72,84 @@ uint64_t countLines(QFile& file)
   }
   file.seek(initialPosition);
   return result;
+}
+
+QStringList buildConfigurationDirectoriesList(const QStringList& projects, const QStringList& paths)
+{
+  QStringList configDirs;
+  for (const QString& project: projects)
+  {
+    QStringList confDirs = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData()).split(":");
+    for (const QString &configDir: confDirs )
+    {
+      if (QDir(configDir).exists())
+      {
+        configDirs << configDir.split(":");
+      }
+    }
+    if (confDirs.isEmpty())
+    {
+      QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/" + project;
+      if ( QDir( configDir ).exists() )
+      {
+        configDirs << configDir;
+      }
+      else
+      {
+        configDir = QString::fromUtf8("/usr/share/config/") + project;
+        if ( QDir( configDir ).exists() )
+        {
+          configDirs << configDir;
+        }
+      }
+    }
+  }
+  for (const QString& path: paths)
+  {
+    if (QDir(path).exists())
+      configDirs << path;
+  }
+  
+  return configDirs;
+}
+
+QStringList buildResourcesDirectoriesList(const QStringList& projects, const QStringList& paths)
+{
+  QStringList resourcesDirs;
+  for (const QString& project: projects)
+  {
+    QStringList resDirs = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData()).split(":");
+    for (const QString &resourcesDir: resDirs )
+    {
+      if (QDir(resourcesDir).exists())
+      {
+        resourcesDirs << resourcesDir.split(":");
+      }
+    }
+    if (resDirs.isEmpty())
+    {
+      QString resourcesDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/apps/" + project + "/resources";
+      if ( QDir( resourcesDir ).exists() )
+      {
+        resourcesDirs << resourcesDir;
+      }
+      else
+      {
+        resourcesDir = QString::fromUtf8("/usr/share/apps/") + project + "/resources";
+        if ( QDir( resourcesDir ).exists() )
+        {
+          resourcesDirs << resourcesDir;
+        }
+      }
+    }
+  }
+  for (const QString& path: paths)
+  {
+    if (QDir(path).exists())
+      resourcesDirs << path;
+  }
+  
+  return resourcesDirs;
 }
 
 QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator)
