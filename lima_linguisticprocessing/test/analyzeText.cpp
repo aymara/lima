@@ -99,7 +99,7 @@ int run(int argc,char** argv)
   QString resourcesPath = configDirs.join(":");
 
   QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories under Windows
+  // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   //   std::cerr << "Amose plugins initialized" << std::endl;
