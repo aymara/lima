@@ -415,14 +415,26 @@ void MediaticDataPrivate::initMedias(
           m_mediasSymbol[id]=*it;
 
           QString deffile= QString::fromUtf8(configParser.getModuleGroupParamValue("common","mediaDefinitionFiles",*it).c_str());
-          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(';');
-          Q_FOREACH(QString confPath, configPaths)
+          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(':');
+          bool mediaDefinitionFileFound = false;
+          for(const QString& confPath: configPaths)
           {
             if (QFileInfo(confPath + "/" + deffile).exists())
             {
-              m_mediaDefinitionFiles[id]= (confPath+"/"+deffile);
+              m_mediaDefinitionFiles[id] = (confPath+"/"+deffile);
+#ifdef DEBUG_CD
+              LDEBUG << "media definition file for id" << id << "is" << m_mediaDefinitionFiles[id];
+#endif
+              mediaDefinitionFileFound = true;
               break;
             }
+          }
+          if (!mediaDefinitionFileFound)
+          {
+            MDATALOGINIT;
+            LERROR << "No media definition file'"<<deffile<<"' has been found for media id" << id 
+                    << "in config paths:" << configPaths;
+            throw InvalidConfiguration();
           }
         }
         catch (NoSuchList& )
