@@ -19,6 +19,7 @@
 #include "AmosePluginsManager.h"
 #include "common/LimaCommon.h"
 #include "common/AbstractFactoryPattern/DynamicLibrariesManager.h"
+#include "common/tools/FileUtils.h"
 
 #include <iostream>
 #include <QFile>
@@ -26,6 +27,7 @@
 
 using namespace Lima;
 using namespace Lima::Common;
+using namespace Lima::Common::Misc;
 
 AmosePluginsManager::AmosePluginsManager()
 {
@@ -39,14 +41,13 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
-  QStringList configDirsList = configDirs.split(';');
-  if (configDirs.isEmpty())
+  QStringList configDirsList = configDirs.split(":");
+  if (configDirsList.isEmpty())
   {
     // Look for LIMA_CONF directory.
-    QString configDir = QString::fromUtf8(qgetenv("LIMA_CONF").constData()==0?"/usr/share/config/lima/":qgetenv("LIMA_CONF").constData());
-    configDirsList.push_back(configDir);
+    configDirsList = buildConfigurationDirectoriesList(QStringList() << "lima", QStringList());
   }
-  Q_FOREACH(QString configDir, configDirsList)
+  for(const QString& configDir : configDirsList)
   {
     // Deduce plugins directory.
     QString stdPluginsDir(configDir);
