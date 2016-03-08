@@ -257,6 +257,11 @@ void MediaticData::init(
     }
     if (configurationFileFound) break;
   }
+  if (!configurationFileFound)
+  {
+    MDATALOGINIT;
+    LERROR << "No configuration file has been found with" << configPath << "and" << configFile;
+  }
   //LINFO << "Mediatic data initialization finished";
 //  TimeUtils::logElapsedTime("MediaticDataInit");
 }
