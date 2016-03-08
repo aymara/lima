@@ -77,7 +77,7 @@ LIMA_DATA_EXPORT uint64_t countLines(QFile& file);
  * @param paths The list of paths to look into.
  */
 LIMA_DATA_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList& projects, 
-                                                               const QStringList& paths);
+                                                               const QStringList& paths = QStringList() );
 
 /**
  * @brief Build a list of resources directories from a list of project names
@@ -96,7 +96,7 @@ LIMA_DATA_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList
  * @param paths The list of paths to look into.
  */
 LIMA_DATA_EXPORT QStringList buildResourcesDirectoriesList(const QStringList& projects, 
-                                                               const QStringList& paths);
+                                                           const QStringList& paths = QStringList());
 
 /**
  * Find the given file in the given paths. 
