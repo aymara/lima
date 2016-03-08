@@ -30,6 +30,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/QsLog/QsLog.h"
 #include "common/QsLog/QsLogDest.h"
 #include "common/QsLog/QsLogCategories.h"
@@ -91,13 +92,19 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(":");
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = configDirs.join(":");
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   //   std::cerr << "Amose plugins initialized" << std::endl;
 
-  std::string resourcesPath;
-  std::string configDir;
+  std::string strResourcesPath;
   std::string lpConfigFile;
   std::string commonConfigFile;
   std::string clientId;
@@ -110,6 +117,7 @@ int run(int argc,char** argv)
   std::vector<std::string> vinactiveUnits;
   std::string meta;
   std::string splitMode;
+  std::string strConfigPath;
   
   
   po::options_description desc("Usage");
@@ -123,9 +131,9 @@ int run(int argc,char** argv)
    "where to write dumpers output. By default, each dumper writes its results on a file whose name is the input file with a predefined suffix  appended. This option allows to chose another suffix or to write on standard output. Its syntax  is the following: <dumper>:<destination> with <dumper> a  dumper name and destination, either the value 'stdout' or a suffix.")
   ("mm-core-client", po::value<std::string>(&clientId)->default_value("lima-coreclient"),
                                                                       "Set the linguistic processing client to use")
-  ("resources-dir", po::value<std::string>(&resourcesPath)->default_value(qgetenv("LIMA_RESOURCES").constData()==0?"":qgetenv("LIMA_RESOURCES").constData(),"$LIMA_RESOURCES"),
+  ("resources-dir", po::value<std::string>(&strResourcesPath),
                                                                                                                               "Set the directory containing the LIMA linguistic resources")
-  ("config-dir", po::value<std::string>(&configDir)->default_value(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData(),"$LIMA_CONF"),
+  ("config-dir", po::value<std::string>(&strConfigPath),
                                                                                                                   "Set the directory containing the (LIMA) configuration files")
   ("common-config-file", po::value<std::string>(&commonConfigFile)->default_value("lima-common.xml"),
                                                                                   "Set the LIMA common libraries configuration file to use")
@@ -158,13 +166,15 @@ int run(int argc,char** argv)
     std::cout << desc << std::endl;
     return SUCCESS_ID;
   }
-  if (resourcesPath.empty())
+  if (!strResourcesPath.empty())
   {
-    resourcesPath = "/usr/share/apps/lima/resources/";
+    resourcesPath = QString::fromUtf8(strResourcesPath.c_str());
+    resourcesDirs = resourcesPath.split(":");
   }
-  if (configDir.empty())
+  if (!strConfigPath.empty())
   {
-    configDir = "/usr/share/config/lima/";
+    configPath = QString::fromUtf8(strConfigPath.c_str());
+    configDirs = configPath.split(":");
   }
   std::deque<std::string> langs(languages.size());
   std::copy(languages.begin(), languages.end(), langs.begin());
@@ -246,18 +256,32 @@ int run(int argc,char** argv)
   
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
-    resourcesPath,
-    configDir,
+    resourcesPath.toUtf8().constData(),
+    configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
   
-  // initialize linguistic processing
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
-  LinguisticProcessingClientFactory::changeable().configureClientFactory(
-    clientId,
-    lpconfig,
-    langs,
-    pipelines);
+  bool clientFactoryConfigured = false;
+  Q_FOREACH(QString configDir, configDirs)
+  {
+    if (QFileInfo(configDir + "/" + lpConfigFile.c_str()).exists())
+    {
+      // initialize linguistic processing
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      LinguisticProcessingClientFactory::changeable().configureClientFactory(
+        clientId,
+        lpconfig,
+        langs,
+        pipelines);
+      clientFactoryConfigured = true;
+      break;
+    }
+  }
+  if(!clientFactoryConfigured)
+  {
+//     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(":").toStdString() << "and" << lpConfigFile << std::endl;
+    return EXIT_FAILURE;
+  }
   
   client=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
