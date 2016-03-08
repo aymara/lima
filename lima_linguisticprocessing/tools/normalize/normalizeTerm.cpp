@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
+#include "common/tools/FileUtils.h"
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
@@ -89,9 +90,16 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(":");
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = configDirs.join(":");
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   
   bool docatch = false;
   if (argc>1)
