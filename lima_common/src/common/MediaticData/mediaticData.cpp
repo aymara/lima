@@ -696,7 +696,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
                 << ": must specify file and module name" << LENDL;
           continue;
           }
-          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(';');
+          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(':');
           Q_FOREACH(QString confPath, configPaths)
           {
             if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())

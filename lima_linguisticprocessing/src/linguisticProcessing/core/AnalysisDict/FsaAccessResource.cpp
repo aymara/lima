@@ -75,7 +75,7 @@ void FsaAccessResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(';');
+    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(':');
     Q_FOREACH(QString resPath, resourcesPaths)
     {
       if  (QFileInfo(resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).exists())

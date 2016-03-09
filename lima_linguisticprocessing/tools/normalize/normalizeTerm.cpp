@@ -94,7 +94,7 @@ int run(int argc,char** argv)
   QString configPath = configDirs.join(":");
 
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
-  QString resourcesPath = configDirs.join(":");
+  QString resourcesPath = resourcesDirs.join(":");
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories

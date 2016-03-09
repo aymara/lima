@@ -268,7 +268,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     string file;
     try
     {
-      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(';');
+      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(':');
       Q_FOREACH(QString confPath, configPaths)
       {
         QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(

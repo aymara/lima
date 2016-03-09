@@ -202,13 +202,15 @@ void LanguageDataPrivate::initPropertyCode(
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system with" << resourcesPathsStd;
+  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system with resources path" << resourcesPathsStd;
   try
   {
-    QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(';');
+    QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(':');
+    bool propertyCodeFileFound = false;
+    QString propertyCodeFile = conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile").c_str();
     Q_FOREACH(QString resourcesPath, resourcesPaths)
     {
-      QString propertyFile(resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile").c_str());
+      QString propertyFile(resourcesPath + "/" + propertyCodeFile);
 #ifdef DEBUG_LP
         LDEBUG << "LanguageDataPrivate::initPropertyCode trying property file" << propertyFile;
 #endif
@@ -219,9 +221,15 @@ void LanguageDataPrivate::initPropertyCode(
         LDEBUG << "LanguageDataPrivate::initPropertyCode reading property file" << propertyFileInfo.filePath();
 #endif
         m_propCodeManager.readFromXmlFile(propertyFileInfo.filePath().toUtf8().constData());
+        propertyCodeFileFound = true;
         // Read at most one property code file for a language
         break;
       }
+    }
+    if (!propertyCodeFileFound)
+    {
+      LERROR << "No property code file"<<propertyCodeFile<<"found in paths:" << resourcesPaths;
+      throw InvalidConfiguration();
     }
   }
   catch (std::exception& e)
