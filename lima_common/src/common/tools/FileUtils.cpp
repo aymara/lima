@@ -25,7 +25,6 @@
 
 #include "FileUtils.h"
 
-#include <QFile>
 #include <QFileInfo>
 #include <QDir>
 
