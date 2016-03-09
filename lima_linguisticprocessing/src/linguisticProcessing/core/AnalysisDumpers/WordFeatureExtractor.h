@@ -50,7 +50,7 @@ public:
 
   virtual std::string 
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const=0;
+             LinguisticGraphVertex v, AnalysisContent &analysis) const=0;
   const std::string& getName() { return m_name; }
   void setName(const std::string& name) { m_name=name; }
 
@@ -112,7 +112,8 @@ public:
 
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const;
+             LinguisticGraphVertex v, 
+             AnalysisContent & ) const;
 };
 
 //----------------------------------------------------------------------
@@ -124,7 +125,9 @@ public:
 
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const;
+             LinguisticGraphVertex v,
+             AnalysisContent &
+            ) const;
 };
 
 //----------------------------------------------------------------------
@@ -136,7 +139,9 @@ public:
 
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const;
+             LinguisticGraphVertex v,
+             AnalysisContent &
+            ) const;
 private:
   const FsaStringsPool* m_sp;
 };
@@ -150,7 +155,9 @@ public:
   
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const;
+             LinguisticGraphVertex v,
+             AnalysisContent &
+            ) const;
 private:
   std::string m_propertyName;
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
@@ -166,7 +173,9 @@ public:
 
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const;
+             LinguisticGraphVertex v,
+             AnalysisContent &
+            ) const;
 };
 
 //--------------------------------------------------------
@@ -178,12 +187,9 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureSpecificEntity : public AbstractFeature
   ~FeatureSpecificEntity() {}
 
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v) const;
+             LinguisticGraphVertex v,
+             AnalysisContent &) const;
 
-  void setNEauthorized(std::map<std::string, std::string> mp);
-
-  Common::AnnotationGraphs::AnnotationData* annot;
-  std::map<std::string, std::string> m_NEauthorized; 
 
 };
 
