@@ -28,8 +28,9 @@
 
 #include "common/LimaCommon.h"
 
+#include <QFile>
+
 #include <iostream>
-#include <QtCore/QFile>
 
 namespace Lima {
 namespace Common {

@@ -25,10 +25,6 @@
 
 #include "FileUtils.h"
 
-#include <deque>
-#include <iostream>
-
-#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
@@ -162,8 +158,9 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
       return path+ "/" + fileName;
     }
   }
-  MISCLOGINIT;
-  LWARN << "findFileInPaths no" << fileName << "found in" << paths << "separated by" << separator;
+  std::cerr << "findFileInPaths no" << fileName.toUtf8().constData() 
+            << "found in" << paths.toUtf8().constData() 
+            << "separated by" << separator.toLatin1() << std::endl;
   return QString();
 }
 
