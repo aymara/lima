@@ -237,8 +237,25 @@ boost::shared_ptr< BoWToken > BoWComplexTokenPrivate::addPart(boost::shared_ptr<
   if (isHead) {
     m_head=m_parts.size()-1;
   }
-  if (tok->getPosition() < m_position) m_position = tok->getPosition();
-  if (tok->getPosition() > (m_position + m_length)) m_length = (tok->getPosition()+tok->getLength()-m_position-1);
+  uint64_t previousPosition = m_position;
+  
+  // added the first part
+  if (m_position == 0 && m_length==0) 
+  {
+    m_position = tok->getPosition();
+    m_length = tok->getLength();
+  }
+  // adding a part before the previous first part
+  else if (tok->getPosition() < m_position) 
+  {
+    m_position = tok->getPosition();
+    m_length = previousPosition - tok->getPosition() + m_length;
+  }
+  // adding a part after the current end
+  else if (tok->getPosition() > (previousPosition + m_length)) 
+  {
+    m_length = tok->getPosition() - previousPosition + tok->getLength();
+  }
   return tok;
 }
 
