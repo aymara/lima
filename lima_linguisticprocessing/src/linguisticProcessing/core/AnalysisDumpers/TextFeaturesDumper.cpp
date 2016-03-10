@@ -109,7 +109,7 @@ void TextFeaturesDumper::init(Common::XMLConfigurationFiles::GroupConfigurationS
 }
 
 LimaStatusCode TextFeaturesDumper::process(
-  AnalysisContent& analysis) const
+  AnalysisContent&  analysis) const
 {
   DUMPERLOGINIT;
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
@@ -166,7 +166,7 @@ LimaStatusCode TextFeaturesDumper::process(
        ftItr!=categoriesMapping.end();
        ftItr++)
   {
-    outputVertex(dstream->out(),anagraph,ftItr->second,metadata->getStartOffset());
+    outputVertex(dstream->out(),anagraph,ftItr->second,analysis,metadata->getStartOffset());
   }
 
   delete dstream;
@@ -175,10 +175,7 @@ LimaStatusCode TextFeaturesDumper::process(
 
 
 void TextFeaturesDumper::
-outputVertex(std::ostream& out, 
-             const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v,
-             uint64_t /*offset*/) const
+outputVertex(ostream& out, const AnalysisGraph* graph, LinguisticGraphVertex v, AnalysisContent& analysis, uint64_t offset /*offset*/) const
 {
   //TODO : use offset
   bool first=true;
@@ -190,7 +187,7 @@ outputVertex(std::ostream& out,
       out << m_sep;
     }
     // take only first morphosyntactic data
-    string str=(*it)->getValue(graph,v);
+    string str=(*it)->getValue(graph,v,analysis);
     boost::replace_all(str,m_sep,m_sepReplace);
     out << str;
   }

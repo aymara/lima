@@ -348,7 +348,18 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     annotationData->dumpFunction("SpecificEntity", new DumpSpecificEntityAnnotation());
   }
 
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  AnalysisData* rdata=analysis.getData("RecognizerData");
+  if (rdata==0)  {
+    SELOGINIT;
+    LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
+    return false;
+  }
+  RecognizerData* recoData=static_cast<RecognizerData*>(rdata);
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
+    return false;
+  }
   std::string graphId=recoData->getGraphId();
     
 //   LDEBUG << "    match is " << match;
