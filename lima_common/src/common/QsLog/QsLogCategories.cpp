@@ -58,6 +58,8 @@ Categories::Categories(QObject* parent) :
   d(new CategoriesImpl())
 {
   connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
+  QString category = "FilesReporting";
+  d->categories.insert(category,QsLogging::InfoLevel);
 }
 
 Categories::~Categories()
@@ -147,6 +149,8 @@ bool Categories::configure(const QString& fileName)
     }
     line = in.readLine();
   }
+  LOGINIT("FilesReporting");
+  LINFO << "QsLog conf file loaded:" << fileName;
   return res;
 }
 

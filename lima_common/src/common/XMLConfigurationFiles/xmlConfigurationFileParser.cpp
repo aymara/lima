@@ -113,6 +113,11 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
       LERROR << "Error parsing " << m_configurationFileName.c_str();
       throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
     }
+    {
+      LOGINIT("FilesReporting");
+      LINFO << "File parsed:" << m_configurationFileName;
+    }
+    
 }
 
 XMLConfigurationFileParserPrivate::~XMLConfigurationFileParserPrivate()
