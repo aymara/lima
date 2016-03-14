@@ -274,6 +274,8 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
+  readCommandLineArguments(argc,argv);
+  
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
   QString configPath = configDirs.join(":");
   if (!param.configDir.empty())
@@ -285,7 +287,6 @@ int run(int argc,char** argv)
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(":");
 
-  readCommandLineArguments(argc,argv);
   if (!param.resourcesDir.empty())
   {
     resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
