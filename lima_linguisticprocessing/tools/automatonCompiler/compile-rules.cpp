@@ -45,6 +45,7 @@
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/time/timeUtilsController.h"
+#include "common/tools/FileUtils.h"
 
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 #include "linguisticProcessing/core/Automaton/automatonReaderWriter.h"
