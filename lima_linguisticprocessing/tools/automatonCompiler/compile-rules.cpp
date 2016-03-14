@@ -232,41 +232,12 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
       param.inputRulesFile=s;
     }
   }
-  // if not specified, search default values in environment variables
-  if (param.resourcesDir.empty())
-  {
-    char* resourcesStr =  getenv("LIMA_RESOURCES");
-    if (resourcesStr != NULL) 
-    {
-      param.resourcesDir = resourcesStr; 
-    }
-    else 
-    { 
-      param.resourcesDir = "/usr/share/apps/lima/resources/";
-    }
-  }
-  if (param.configDir.empty())
-  {
-    char* configStr =  getenv("LIMA_CONF");
-    if (configStr != NULL) 
-    { 
-      param.configDir = configStr; 
-    }
-    else 
-    { 
-      param.configDir = "/usr/share/config/lima/";
-    }
-  }
   
   //ensure all needed parameters are set
   if (param.language.empty()) {
     cerr << "Error: missing --language=.. argument " << endl; 
     exit(1);
   }
-//   if (param.modexConfigFile.empty()) {
-//     cerr << "Error: missing --modex=.. argument " << endl; 
-//     exit(1);
-//   }
 
 }
 
@@ -305,6 +276,11 @@ int run(int argc,char** argv)
 {
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
   QString configPath = configDirs.join(":");
+  if (!param.configDir.empty())
+  {
+    configPath = QString::fromUtf8(param.configDir.c_str());
+    configDirs = configPath.split(":");
+  }
 
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(":");
@@ -314,11 +290,6 @@ int run(int argc,char** argv)
   {
     resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
     resourcesDirs = resourcesPath.split(":");
-  }
-  if (!param.configDir.empty())
-  {
-    configPath = QString::fromUtf8(param.configDir.c_str());
-    configDirs = configPath.split(":");
   }
 
   QsLogging::initQsLog(configPath);
