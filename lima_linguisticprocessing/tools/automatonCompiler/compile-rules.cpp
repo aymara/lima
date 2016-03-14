@@ -302,12 +302,29 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
-  //Lima::TimeUtilsController("run", true);
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(":");
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(":");
+
+  readCommandLineArguments(argc,argv);
+  if (!param.resourcesDir.empty())
+  {
+    resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
+    resourcesDirs = resourcesPath.split(":");
+  }
+  if (!param.configDir.empty())
+  {
+    configPath = QString::fromUtf8(param.configDir.c_str());
+    configDirs = configPath.split(":");
+  }
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   
-  readCommandLineArguments(argc,argv);
 
   deque<string> langs;
   langs.push_back(param.language);
@@ -319,8 +336,8 @@ int run(int argc,char** argv)
       LOGINIT("Automaton::Compiler");
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")...";
     MediaticData::changeable().init(
-      param.resourcesDir,
-      param.configDir,
+      resourcesPath.toUtf8().constData(),
+      configPath.toUtf8().constData(),
       param.commonConfigFile,
       langs);
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
