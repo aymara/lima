@@ -79,7 +79,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     {
       if (QDir(configDir).exists())
       {
-        configDirs << configDir.split(":");
+        configDirs << configDir;
       }
     }
     if (confDirs.isEmpty())
