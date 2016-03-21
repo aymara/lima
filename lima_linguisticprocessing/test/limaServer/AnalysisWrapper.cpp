@@ -117,8 +117,6 @@ AnalysisWrapper::AnalysisWrapper (Lima::LinguisticProcessing::AbstractLinguistic
 
 AnalysisWrapper::~AnalysisWrapper()
 {
-  CORECLIENTLOGINIT;
-  LDEBUG << "AnalysisWrapper::~AnalysisWrapper";
   delete m_d;
 }
 

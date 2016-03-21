@@ -80,8 +80,6 @@ BoWText& BoWText::operator = (const BoWText& t)
 
 BoWText::~BoWText()
 {
-  BOWLOGINIT;
-  LDEBUG << "BoWText::~BoWText()" << this;
   clear();
 }
 void BoWText::writeBoWText(ostream& stream)
