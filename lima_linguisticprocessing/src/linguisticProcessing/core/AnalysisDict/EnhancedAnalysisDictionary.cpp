@@ -92,6 +92,7 @@ EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate(
 
 EnhancedAnalysisDictionaryPrivate::~EnhancedAnalysisDictionaryPrivate()
 {
+  delete m_dicoData;
 }
 
 

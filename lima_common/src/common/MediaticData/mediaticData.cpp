@@ -1061,6 +1061,14 @@ MediaticDataPrivate::~MediaticDataPrivate()
   {
     delete it->second;
   }
+  for (auto entityType: m_entityTypes)
+  {
+    delete entityType;
+  }
+  for (auto it = m_stringsPool.begin(); it != m_stringsPool.end(); it++)
+  {
+    delete it->second;
+  }
 }
 
 const LimaString& MediaticData::getEntityTypeNameSeparator() const

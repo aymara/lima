@@ -479,6 +479,7 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     char *buf = new char [len];
     file.read(buf, len);
     t->setId(std::string(buf,len));
+    delete[] buf;
     uint64_t n=Misc::readCodedInt(file);
     Constraint c;
     for (uint64_t i(0); i<n; i++) {
