@@ -424,8 +424,6 @@ int run(int argc,char** argv)
     delete simpleStreamHandler;
   if (fullXmlSimpleStreamHandler!= 0)
     delete fullXmlSimpleStreamHandler;
-  delete Common::MediaticData::MediaticData::pchangeable();
-  delete LinguisticProcessingClientFactory::pchangeable();
   TIMELOGINIT;
   LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
   

@@ -59,15 +59,13 @@ namespace Lima
 
 namespace LinguisticProcessing
 {
-CoreLinguisticProcessingClientFactory* CoreLinguisticProcessingClientFactory::s_instance=new CoreLinguisticProcessingClientFactory();
+std::unique_ptr<CoreLinguisticProcessingClientFactory> CoreLinguisticProcessingClientFactory::s_instance=std::unique_ptr<CoreLinguisticProcessingClientFactory>(new CoreLinguisticProcessingClientFactory());
   
   
 CoreLinguisticProcessingClient::CoreLinguisticProcessingClient()
 {}
 
 CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient() {
-  delete LinguisticResources::pchangeable();
-  delete MediaProcessors::pchangeable();
 }
 
 void CoreLinguisticProcessingClient::analyze(

@@ -76,7 +76,7 @@ public:
 
 private:
   CoreLinguisticProcessingClientFactory();
-  static CoreLinguisticProcessingClientFactory* s_instance;
+  static std::unique_ptr<CoreLinguisticProcessingClientFactory> s_instance;
 
 };
 
