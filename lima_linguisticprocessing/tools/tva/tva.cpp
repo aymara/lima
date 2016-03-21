@@ -156,8 +156,6 @@ int run(int argc,char** argv)
     
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
-  AbstractLinguisticProcessingClient* client(0);
-
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
@@ -187,8 +185,7 @@ int run(int argc,char** argv)
     return EXIT_FAILURE;
   }
   
-
-  client=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  std::shared_ptr< AbstractLinguisticProcessingClient > client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
   // Set the handlers
   std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -199,7 +196,7 @@ int run(int argc,char** argv)
   BowTextHandler* bowTextHandler = new BowTextHandler();
   handlers.insert(std::make_pair("bowTextHandler", bowTextHandler));
 
-  AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir, client, handlers);
+  AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir, client.get(), handlers);
     
   QXmlSimpleReader parser;
   TestCasesHandler tch(analysisTestCaseProcessor);
@@ -268,7 +265,6 @@ int run(int argc,char** argv)
     std::cout << std::endl;
     tch.m_reportByType.clear();
   }
-  delete client;
   delete bowTextWriter;
   delete simpleStreamHandler;
   delete bowTextHandler;

@@ -145,8 +145,6 @@ int run(int argc,char** argv)
 
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
-  AbstractLinguisticProcessingClient* client(0);
-
   // initialize common
   MediaticData::changeable().init(
     resourcesPath,
@@ -161,11 +159,11 @@ int run(int argc,char** argv)
     lpconfig,
     MediaticData::single().getMedias());
 
-  client=dynamic_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  std::shared_ptr<AbstractLinguisticProcessingClient> client=std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   
   ReaderTestCaseProcessor
-    readerTestCaseProcessor(workingDir, client);
+    readerTestCaseProcessor(workingDir, client.get());
     
   QXmlSimpleReader parser;
   TestCasesHandler tch(readerTestCaseProcessor);

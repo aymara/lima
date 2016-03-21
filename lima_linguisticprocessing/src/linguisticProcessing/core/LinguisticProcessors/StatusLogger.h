@@ -61,7 +61,7 @@ public:
 
 private:
 
-  std::ostream* m_out;
+  std::unique_ptr< std::ofstream > m_out;
   std::set<std::string> m_toLog;
   std::string m_statusFile;
   uint64_t m_predTime;

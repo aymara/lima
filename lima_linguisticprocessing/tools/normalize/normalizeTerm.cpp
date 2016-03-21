@@ -193,8 +193,6 @@ int dowork(int argc,char* argv[])
     return -1;
   }
 
-  AbstractLinguisticProcessingClient* client(0);
-
   try
   {
 
@@ -215,7 +213,7 @@ int dowork(int argc,char* argv[])
       langs,
       pipelines);
 
-    client=dynamic_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+    shared_ptr <AbstractLinguisticProcessingClient > client= std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
     
     // Set the handlers
     std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -256,13 +254,12 @@ int dowork(int argc,char* argv[])
 
         // analyze it
         metaData["FileName"]=*fileItr;
-	
-	// Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
+
+        // Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
         client->analyze(contentText,metaData,pipeline,handlers);
-	// delete timer;
-	
-	
-	
+        // delete timer;
+        
+        
         // analyze resulting bowText to extract normalization
         multimap<LimaString,string> norms=extractNormalization(contentText,bowTextHandler.getBowText(),lang);
         if (norms.empty())
@@ -290,7 +287,6 @@ int dowork(int argc,char* argv[])
     throw e;
   }
 
-  delete client;
   return SUCCESS_ID;
 }
 

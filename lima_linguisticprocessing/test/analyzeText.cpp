@@ -252,8 +252,6 @@ int run(int argc,char** argv)
   
   uint64_t beginTime=TimeUtils::getCurrentTime();
   
-  AbstractLinguisticProcessingClient* client(0);
-  
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
@@ -283,7 +281,7 @@ int run(int argc,char** argv)
     return EXIT_FAILURE;
   }
   
-  client=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  std::shared_ptr< AbstractLinguisticProcessingClient > client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   // Set the handlers
   std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -412,7 +410,6 @@ int run(int argc,char** argv)
     closeHandlerOutputFile(fullxmlofs);
   }
   std::cout << std::endl;
-  delete client;
   // free handlers
   if (eventHandler != 0)
     delete eventHandler;

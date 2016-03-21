@@ -41,16 +41,19 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 class QString;
 namespace Lima {
 namespace Common {
 
+class DynamicLibrariesManagerPrivate;
 class LIMA_FACTORY_EXPORT DynamicLibrariesManager:
     public Singleton<DynamicLibrariesManager>
 {
 friend class Singleton<DynamicLibrariesManager>;
- public:
+
+public:
   ~DynamicLibrariesManager();
   
   bool isLoaded(const std::string& libName);
@@ -60,10 +63,8 @@ friend class Singleton<DynamicLibrariesManager>;
 
  private:
   DynamicLibrariesManager();
-
-  std::map<std::string,QLibrary*> m_handles;
-  // at load time, will try to load the libraries from these paths before the default ones
-  std::vector<std::string> m_supplementarySearchPath;
+  
+  std::unique_ptr<DynamicLibrariesManagerPrivate> m_d;
 };
 
 } // end namespace

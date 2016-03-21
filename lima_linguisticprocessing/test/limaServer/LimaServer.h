@@ -47,6 +47,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <memory>
 
 class QTimer;
 
@@ -80,7 +81,7 @@ private:
   QTimer* m_timer;
   
 
-  Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
+  std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
 };
 
  #endif

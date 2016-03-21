@@ -342,9 +342,9 @@ void CoreLinguisticProcessingClientFactory::configure(
   }
 }
 
-AbstractLinguisticProcessingClient* CoreLinguisticProcessingClientFactory::createClient() const
+std::shared_ptr< AbstractProcessingClient > CoreLinguisticProcessingClientFactory::createClient() const
 {
-  return new CoreLinguisticProcessingClient();
+  return std::shared_ptr< AbstractProcessingClient >(new CoreLinguisticProcessingClient());
 }
 
 

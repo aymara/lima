@@ -139,10 +139,9 @@ int run(int argc,char** argv)
 
   uint64_t beginTime=TimeUtils::getCurrentTime();
     
-  AbstractLinguisticProcessingClient* client(0);
-  
   std::map<std::string, AbstractAnalysisHandler*> handlers;
   
+  std::shared_ptr< AbstractLinguisticProcessingClient > client;
   try
   {
     // initialize common
@@ -160,7 +159,7 @@ int run(int argc,char** argv)
       langs,
       pipelines);
 
-    client=dynamic_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+    client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
   }
   catch (InvalidConfiguration& e)
   {
@@ -366,7 +365,6 @@ int run(int argc,char** argv)
     std::cout << "ERROR: unknown error." << std::endl;
     }
   }
-  delete client;
   TIMELOGINIT;
   LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
   
