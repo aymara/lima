@@ -45,17 +45,17 @@ class AbstractDocumentHandler
         //! @brief destructor
         virtual ~AbstractDocumentHandler(){};
 
-	virtual void writeDocumentsHeader(){};
-	virtual void writeDocumentsFooter(){};
-	
-	virtual void openSNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
-	    const std::string& elementName) = 0;
-	virtual void openSIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
-	    const std::string& elementName) = 0;
-	virtual void processProperties(const Lima::Common::Misc::GenericDocumentProperties* properties, bool useIterators) = 0;
-	virtual void closeSNode() = 0;	
-	virtual  void processSContent( const Lima::Common::Misc::GenericDocumentProperties* /*properties*/ ){};
-	virtual  void closeSContent(){};
+  virtual void writeDocumentsHeader(){};
+  virtual void writeDocumentsFooter(){};
+  
+  virtual void openSNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
+      const std::string& elementName) = 0;
+  virtual void openSIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
+      const std::string& elementName) = 0;
+  virtual void processProperties(const Lima::Common::Misc::GenericDocumentProperties* properties, bool useIterator, bool useIndexIterator) = 0;
+  virtual void closeSNode() = 0;  
+  virtual  void processSContent( const Lima::Common::Misc::GenericDocumentProperties* /*properties*/ ){};
+  virtual  void closeSContent(){};
 };
 
 } // namespace Lima

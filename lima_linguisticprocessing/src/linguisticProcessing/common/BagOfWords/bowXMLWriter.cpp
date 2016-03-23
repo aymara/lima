@@ -75,8 +75,8 @@ friend class BoWXMLWriter;
   void writeBoWRelation(const BoWRelation* relation);
   void writeComplexTokenParts(const BoWComplexToken* token);
   void writeBoWTokenList(const BoWText* text,
-                         const bool useIterator=false,
-                         const bool useIndexIterator=false);
+                         const bool useIterator,
+                         const bool useIndexIterator);
   void writeGenericDocumentProperties(const Misc::GenericDocumentProperties* prop);
   void writePredicateRoles(const BoWPredicate* term);
   template<typename PropertyType>
@@ -159,14 +159,16 @@ void BoWXMLWriter::closeSBoWNode() {
   m_d->decIndent();
 }
 
-void BoWXMLWriter::processSBoWText( const BoWText* boWText, bool useIterator) {
+void BoWXMLWriter::processSBoWText( const BoWText* boWText, bool useIterator,
+                         bool useIndexIterator) {
   m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( boWText->lang );
 
-  m_d->writeBoWTokenList(boWText,useIterator);
+  m_d->writeBoWTokenList(boWText,useIterator,useIndexIterator);
 }
 
 void BoWXMLWriter::processProperties( 
- const Misc::GenericDocumentProperties* properties, bool /*unused useIterators*/) {
+ const Misc::GenericDocumentProperties* properties, bool /*unused useIterators*/,
+                         bool /*useIndexIterator*/) {
   m_d->writeGenericDocumentProperties(properties);
 }
 

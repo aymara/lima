@@ -56,10 +56,6 @@ FsaAccessSpare16::FsaAccessSpare16(bool trie_direction_fwd)
 
 FsaAccessSpare16::~FsaAccessSpare16()
 {
-#ifdef DEBUG_CD
-  FSAALOGINIT;
-  LDEBUG <<  "FsaAccessSpare16::~FsaAccessSpare16()";
-#endif
 }
     
 FsaAccessIOHandler<selected_graph_types16::spareGraphType>* 

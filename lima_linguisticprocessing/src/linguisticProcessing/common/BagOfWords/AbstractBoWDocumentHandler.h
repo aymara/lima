@@ -59,8 +59,10 @@ class LIMA_BOW_EXPORT AbstractBoWDocumentHandler : public AbstractDocumentHandle
       const std::string& elementName) = 0;
    virtual void openSBoWIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
       const std::string& elementName) = 0;
-   virtual void processSBoWText(const BoWText* boWText, bool useIterators) = 0;
-//    virtual void processProperties(const Misc::GenericDocumentProperties* properties, bool useIterators) = 0;
+   virtual void processSBoWText(const BoWText* boWText, bool useIterators,
+                         bool useIndexIterator) = 0;
+   virtual void processProperties(const Misc::GenericDocumentProperties* properties, bool useIterators,
+                         bool useIndexIterator) = 0;
    virtual void closeSBoWNode() = 0;
    
 //   virtual void writeDocumentsHeader() = 0;

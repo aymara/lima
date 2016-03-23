@@ -193,7 +193,8 @@ void BoWBinaryReader::readBoWText(std::istream& file,
 void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
                      BoWDocument& document,
                      AbstractBoWDocumentHandler& handler,
-                     bool useIterator)
+                     bool useIterator,
+                     bool useIndexIterator)
 {
     BoWBlocType blocType = static_cast<BoWBlocType>( Misc::readOneByteInt(file) );
 #ifdef DEBUG_LP
@@ -230,7 +231,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
 #endif
         document.clear();
         readBoWText(file,document);
-        handler.processSBoWText(&document, useIterator);
+        handler.processSBoWText(&document, useIterator, useIndexIterator);
         break;
     }
     case NODE_PROPERTIES_BLOC:
@@ -239,7 +240,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         LDEBUG << "NODE_PROPERTIES_BLOC";
 #endif
         document.Misc::GenericDocumentProperties::read(file);
-        handler.processProperties(&document, useIterator);
+        handler.processProperties(&document, useIterator, useIndexIterator);
         break;
     }
     case END_BLOC:

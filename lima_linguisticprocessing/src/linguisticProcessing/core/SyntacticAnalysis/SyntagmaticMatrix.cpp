@@ -29,7 +29,7 @@
 #include "SyntagmaticMatrix.h"
 #include "XmlSyntagmaticMatrixFileHandler.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 
 #include <QtXml/QXmlSimpleReader>
 

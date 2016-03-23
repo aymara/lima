@@ -57,12 +57,12 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
   virtual ~BoWXMLWriter();
 
   void writeBoWText(const BoWText* document,
-                    const bool useIterator=false,
-                    const bool useIndexIterator=false);
+                    const bool useIterator,
+                    const bool useIndexIterator);
   void writeBoWToken(const BoWToken* token);
   void writeBoWDocument(const BoWDocument* document,
-                        const bool useIterator=false,
-                        const bool useIndexIterator=false);
+                        const bool useIterator,
+                        const bool useIndexIterator);
 
   // root tags for valid XML if several documents
   void writeBoWDocumentsHeader();
@@ -73,8 +73,10 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
   // Implementation of AbstractBoWXMLWriter functions
   void openSBoWNode(const Lima::Common::Misc::GenericDocumentProperties* properties, const std::string& elementName);
   void openSBoWIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties, const std::string& elementName);
-  void processSBoWText(const BoWText* boWText, bool useIterators);
-  void processProperties(const Misc::GenericDocumentProperties* properties, bool useIterators);
+  void processSBoWText(const BoWText* boWText, bool useIterators,
+                         bool useIndexIterator);
+  void processProperties(const Misc::GenericDocumentProperties* properties, bool useIterators,
+                         bool useIndexIterator);
   void closeSBoWNode();
   void writeIndexElement(const IndexElement& element);
   void setSpaces(const std::string& s);

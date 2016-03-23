@@ -32,7 +32,7 @@
 #include "common/LimaCommon.h"
 #include "common/QsLog/QsLog.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/readwritetools.h"
 #include "common/misc/DoubleAccessObjectToIdMap.h"
 //#include "common/misc/strwstrtools.h"
@@ -213,8 +213,8 @@ void MediaticData::init(
   m_d->m_configFile=configFile;
 
   //LINFO << "initialize XMLParser";
-  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(';');
-  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(';');
+  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(':');
+  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(':');
   bool configurationFileFound = false;
   Q_FOREACH(QString confPath, configPaths)
   {
@@ -256,6 +256,11 @@ void MediaticData::init(
       if (configurationFileFound) break;
     }
     if (configurationFileFound) break;
+  }
+  if (!configurationFileFound)
+  {
+    MDATALOGINIT;
+    LERROR << "No configuration file has been found with" << configPath << "and" << configFile;
   }
   //LINFO << "Mediatic data initialization finished";
 //  TimeUtils::logElapsedTime("MediaticDataInit");
@@ -410,14 +415,26 @@ void MediaticDataPrivate::initMedias(
           m_mediasSymbol[id]=*it;
 
           QString deffile= QString::fromUtf8(configParser.getModuleGroupParamValue("common","mediaDefinitionFiles",*it).c_str());
-          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(';');
-          Q_FOREACH(QString confPath, configPaths)
+          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(':');
+          bool mediaDefinitionFileFound = false;
+          for(const QString& confPath: configPaths)
           {
             if (QFileInfo(confPath + "/" + deffile).exists())
             {
-              m_mediaDefinitionFiles[id]= (confPath+"/"+deffile);
+              m_mediaDefinitionFiles[id] = (confPath+"/"+deffile);
+#ifdef DEBUG_CD
+              LDEBUG << "media definition file for id" << id << "is" << m_mediaDefinitionFiles[id];
+#endif
+              mediaDefinitionFileFound = true;
               break;
             }
+          }
+          if (!mediaDefinitionFileFound)
+          {
+            MDATALOGINIT;
+            LERROR << "No media definition file'"<<deffile<<"' has been found for media id" << id 
+                    << "in config paths:" << configPaths;
+            throw InvalidConfiguration();
           }
         }
         catch (NoSuchList& )
@@ -679,7 +696,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
                 << ": must specify file and module name" << LENDL;
           continue;
           }
-          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(';');
+          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(':');
           Q_FOREACH(QString confPath, configPaths)
           {
             if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())
@@ -1041,6 +1058,14 @@ MediaticDataPrivate::~MediaticDataPrivate()
   for (map<MediaId, MediaData*>::const_iterator it=m_mediasData.begin();
        it!=m_mediasData.end();
        it++)
+  {
+    delete it->second;
+  }
+  for (auto entityType: m_entityTypes)
+  {
+    delete entityType;
+  }
+  for (auto it = m_stringsPool.begin(); it != m_stringsPool.end(); it++)
   {
     delete it->second;
   }

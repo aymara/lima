@@ -91,7 +91,7 @@ public:
   /**
    * This function create a LinguisticProcessing client 
    */
-  virtual AbstractProcessingClient* createClient() const = 0;
+  virtual std::shared_ptr< AbstractProcessingClient > createClient() const = 0;
 
   /**
    * virtual destructor of the LinguisticProcessing client factory

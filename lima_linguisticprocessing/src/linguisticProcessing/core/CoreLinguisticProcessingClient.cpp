@@ -59,15 +59,13 @@ namespace Lima
 
 namespace LinguisticProcessing
 {
-CoreLinguisticProcessingClientFactory* CoreLinguisticProcessingClientFactory::s_instance=new CoreLinguisticProcessingClientFactory();
+std::unique_ptr<CoreLinguisticProcessingClientFactory> CoreLinguisticProcessingClientFactory::s_instance=std::unique_ptr<CoreLinguisticProcessingClientFactory>(new CoreLinguisticProcessingClientFactory());
   
   
 CoreLinguisticProcessingClient::CoreLinguisticProcessingClient()
 {}
 
 CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient() {
-  delete LinguisticResources::pchangeable();
-  delete MediaProcessors::pchangeable();
 }
 
 void CoreLinguisticProcessingClient::analyze(
@@ -268,7 +266,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     string file;
     try
     {
-      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(';');
+      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(':');
       Q_FOREACH(QString confPath, configPaths)
       {
         QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
@@ -344,9 +342,9 @@ void CoreLinguisticProcessingClientFactory::configure(
   }
 }
 
-AbstractLinguisticProcessingClient* CoreLinguisticProcessingClientFactory::createClient() const
+std::shared_ptr< AbstractProcessingClient > CoreLinguisticProcessingClientFactory::createClient() const
 {
-  return new CoreLinguisticProcessingClient();
+  return std::shared_ptr< AbstractProcessingClient >(new CoreLinguisticProcessingClient());
 }
 
 

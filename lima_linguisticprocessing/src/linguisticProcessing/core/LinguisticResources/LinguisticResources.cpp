@@ -155,7 +155,7 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
 #ifdef DEBUG_LP
         LDEBUG << "i="<< i;
 #endif
-        QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(';');
+        QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(':');
         Q_FOREACH(QString confPath, configPaths)
         {
           if  (QFileInfo(confPath + "/" + string((*it),0,i).c_str()).exists())

@@ -64,11 +64,6 @@ AccessSubWordIterator& AccessSubWordIterator::operator=(const AccessSubWordItera
 
 AccessSubWordIterator::~AccessSubWordIterator()
 {
-#ifdef DEBUG_CD
-    STRINGMAPLOGINIT;
-    LDEBUG <<  this << ": AccessSubWordIterator::~AccessSubWordIterator() "
-          ;
-#endif
   delete m_delegate;
 }
 
@@ -106,11 +101,6 @@ AccessSuperWordIterator& AccessSuperWordIterator::operator=(const AccessSuperWor
 }
 
 AccessSuperWordIterator::~AccessSuperWordIterator() {
-#ifdef DEBUG_CD
-    STRINGMAPLOGINIT;
-    LDEBUG <<  this << ": AccessSuperWordIterator::~AccessSuperWordIterator() "
-          ;
-#endif
   delete m_delegate;
 }
 

@@ -34,7 +34,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/Data/LimaString.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/misc/fsaStringsPool.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"

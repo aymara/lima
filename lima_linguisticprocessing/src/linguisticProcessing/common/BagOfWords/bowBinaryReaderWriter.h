@@ -79,7 +79,8 @@ class LIMA_BOW_EXPORT BoWBinaryReader
   void readBoWDocumentBlock(std::istream& file,
                        BoWDocument& document,
                        AbstractBoWDocumentHandler& handler, 
-                       bool useIterator=false);
+                       bool useIterator,
+                       bool useIndexIterator);
   boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file);
   void readSimpleToken(std::istream& file,
                        boost::shared_ptr< BoWToken > token);

@@ -76,7 +76,9 @@ HyphenWordAlternatives::HyphenWordAlternatives()
 {}
 
 HyphenWordAlternatives::~HyphenWordAlternatives()
-{}
+{
+  delete m_reader;
+}
 
 void HyphenWordAlternatives::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,

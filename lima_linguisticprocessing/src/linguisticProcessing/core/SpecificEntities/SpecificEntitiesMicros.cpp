@@ -65,6 +65,9 @@ init(GroupConfigurationStructure& unitConfiguration,
   const PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
 
   const map<string,deque<string> >& entities = unitConfiguration.getLists();
+  #ifdef DEBUG_LP
+  LDEBUG << "entities.size() " << entities.size();
+  #endif
   
   for (auto it=entities.begin(), it_end=entities.end(); it!=it_end; it++) {
     LimaString entityName=Common::Misc::utf8stdstring2limastring((*it).first);

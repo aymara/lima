@@ -18,6 +18,7 @@
 */
 #include "QsLogCategories.h"
 #include "common/tools/LimaFileSystemWatcher.h"
+#include "common/tools/FileUtils.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)
@@ -34,6 +35,7 @@
 #include <stdexcept>
 
 using namespace Lima;
+using namespace Lima::Common::Misc;
 
 namespace QsLogging
 {
@@ -56,6 +58,8 @@ Categories::Categories(QObject* parent) :
   d(new CategoriesImpl())
 {
   connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
+  QString category = "FilesReporting";
+  d->categories.insert(category,QsLogging::InfoLevel);
 }
 
 Categories::~Categories()
@@ -145,6 +149,8 @@ bool Categories::configure(const QString& fileName)
     }
     line = in.readLine();
   }
+  LOGINIT("FilesReporting");
+  LINFO << "QsLog conf file loaded:" << fileName;
   return res;
 }
 
@@ -160,55 +166,68 @@ Level Categories::levelFor(const QString& category) const
   return d->categories.value(category, QsLogging::TraceLevel);
 }
 
-LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) {
-  try {
-    if (configString.isEmpty())
+LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) 
+{
+  bool atLeastOneSuccessfulLoad = false;
+  QStringList configDirsList;
+  if (configString.isEmpty())
+  {
+    configDirsList = buildConfigurationDirectoriesList(QStringList()<<"lima",QStringList());
+  }
+  else
+  {
+    configDirsList = configString.split(':');
+  }
+  try 
+  {
+    while (! configDirsList.isEmpty() )
     {
-      QString initFileName = QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty() ?
-              "/usr/share/config/lima" : 
-              qgetenv("LIMA_CONF").constData())  + "/log4cpp.properties";
-      if (!QsLogging::Categories::instance().configure(initFileName))
+      QString configDir = configDirsList.last();
+      configDirsList.pop_back();
+      QDir initDir( configDir + "/log4cpp");
+      if (initDir.exists())
       {
-        std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
-        return -1;
-      }
-    }
-    else
-    {
-      QStringList configDirsList = configString.split(';');
-      while (! configDirsList.isEmpty() )
-      {
-        QString configDir = configDirsList.last();
-        configDirsList.pop_back();
-        bool somethingLoaded = false;
-        QDir initDir( configDir + "/log4cpp");
-        if (initDir.exists())
+        QStringList entryList = initDir.entryList(QDir::Files);
+        Q_FOREACH(QString entry, entryList)
         {
-          QStringList entryList = initDir.entryList(QDir::Files);
-          Q_FOREACH(QString entry, entryList)
+          if (QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
           {
-            if (!QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
-            {
-              std::cerr << "Configure Problem " << entry.toUtf8().constData() << std::endl;
-              return -1;
-            }
-            else somethingLoaded = true;
+            atLeastOneSuccessfulLoad = true;
+          }
+          else 
+          {
+            std::cerr << "Configure Problem " << entry.toUtf8().constData() << std::endl;
+            return -1;
           }
         }
-        
-        QString initFileName = configDir + "/log4cpp.properties";
-        if (!QsLogging::Categories::instance().configure(initFileName) && ! somethingLoaded)
+      }
+      
+      QString initFileName = configDir + "/log4cpp.properties";
+      if (QFileInfo::exists(initFileName))
+      {
+        if (QsLogging::Categories::instance().configure(initFileName))
+        {
+          atLeastOneSuccessfulLoad = true;
+        }
+        else
         {
           std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
           return -1;
         }
       }
     }
-} catch(...) {
-  std::cerr << "Exception during logging system configuration" << std::endl;
-  return -1;
-}
-return 0;
+  } 
+  catch(...) 
+  {
+    std::cerr << "Exception during logging system configuration" << std::endl;
+    return -1;
+  }
+  if (!atLeastOneSuccessfulLoad)
+  {
+    std::cerr << "Configure Problem no configure file has been found in" << configString.toStdString() << std::endl;
+    return -1;
+  }
+  return 0;
 }
 
 } // end namespace

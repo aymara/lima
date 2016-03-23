@@ -79,12 +79,12 @@ m_language(language)
 
 WordFeatures::~WordFeatures()
 {
-  for (WordFeatures::iterator it=begin(),it_end=end(); it!=it_end; it++) {
-    if (*it) {
-      delete (*it);
-      *it=0;
-    }
-  }
+//   for (WordFeatures::iterator it=begin(),it_end=end(); it!=it_end; it++) {
+//     if (*it) {
+//       delete (*it);
+//       *it=0;
+//     }
+//   }
 }
 
 void WordFeatures::initialize(const deque<std::string>& featureNames)
@@ -115,7 +115,8 @@ AbstractFeatureExtractor(language,complement)
 
 std::string FeaturePosition::
 getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-         LinguisticGraphVertex v) const
+         LinguisticGraphVertex v,
+         AnalysisContent & /*unused*/) const
 {
   Token* token=get(vertex_token,*(graph->getGraph()),v);
   if (token==0) {
@@ -133,7 +134,9 @@ AbstractFeatureExtractor(language,complement)
 
 std::string FeatureToken::
 getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-         LinguisticGraphVertex v) const
+         LinguisticGraphVertex v,
+         AnalysisContent & /*unused*/
+        ) const
 {
   Token* token=get(vertex_token,*(graph->getGraph()),v);
   if (token==0) {
@@ -152,7 +155,9 @@ m_sp()
 
 std::string FeatureLemma::
 getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-         LinguisticGraphVertex v) const
+         LinguisticGraphVertex v,
+         AnalysisContent & /*unused*/
+        ) const
 {
   MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
   if (data==0) {
@@ -180,7 +185,8 @@ m_propertyManager(0)
 
 std::string FeatureProperty::
 getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-         LinguisticGraphVertex v) const
+         LinguisticGraphVertex v, 
+         AnalysisContent & /*unused*/) const
 {
   MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
   if (data==0) {
@@ -203,7 +209,8 @@ AbstractFeatureExtractor(language,complement)
 
 std::string FeatureTstatus::
 getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-         LinguisticGraphVertex v) const
+         LinguisticGraphVertex v,
+         AnalysisContent & /*unused*/) const
 {
   Token* token=get(vertex_token,*(graph->getGraph()),v);
   if (token==0) {
@@ -220,70 +227,29 @@ AbstractFeatureExtractor(language,complement)
 }
 
 std::string FeatureSpecificEntity::
-getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-         LinguisticGraphVertex v) const
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
+         LinguisticGraphVertex v,
+         AnalysisContent &analysis
+        ) const
 {
-  std::string typeName("");
-  std::map<std::string, std::string>::const_iterator itMSS;
-  int isPresent;
-
-  std::set< AnnotationGraphVertex > anaVertices = annot->matches("PosGraph",v,"AnalysisGraph");
-  if (anaVertices.size()==0) {
-    return "NAN" ;
-    }
-  // note: anaVertices size should be 0 or 1
-  for (std::set< AnnotationGraphVertex >::const_iterator anaVerticesIt = anaVertices.begin();
-       anaVerticesIt != anaVertices.end(); anaVerticesIt++)
+  std::string typeName("NAN");
+  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  
+  std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
+  for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
+  {
+    if (annot->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
-      std::set< AnnotationGraphVertex > matches = annot->matches("AnalysisGraph",*anaVerticesIt,"annot");
-      for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
-	   it != matches.end(); it++)
-	{
-	  AnnotationGraphVertex vx=*it;
-	  if (annot->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
-	    {
-	      const SpecificEntityAnnotation* se =
-		annot->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
-		pointerValue<SpecificEntityAnnotation>();
-	      try {
-		LimaString str= MediaticData::single().getEntityName(se->getType());
-		typeName=Common::Misc::limastring2utf8stdstring(str);
-	      }
-	      catch (std::exception& ) {
-		DUMPERLOGINIT;
-		LERROR << "Undefined entity type " << se->getType() << LENDL;
-		LERROR << "failed to output specific entity for vertex " << v << LENDL;
-	      }
-
-	      
-	    } else {
-	    // we don't find any entity
-	      return "NAN";
-	  }
-	}
+      AnnotationGraphVertex vx=*it;
+      const SpecificEntityAnnotation* se = annot->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+      pointerValue<SpecificEntityAnnotation>();
+      
+      LimaString str= Common::MediaticData::MediaticData::single().getEntityName(se->getType());
+      typeName=Common::Misc::limastring2utf8stdstring(str);
     }
-  
-  // Test if the finded type is selected
-  isPresent=0; // by default, an unfinded entity isn't dumped
-  itMSS=m_NEauthorized.find(typeName);
-  if (itMSS!=m_NEauthorized.end()) {
-    isPresent=atoi(((*itMSS).second).c_str());
   }
-  if (isPresent) {
-    return typeName;
-  } else {
-    return "NAN";
-  }
+  return typeName;
 }
-  
-void FeatureSpecificEntity::setNEauthorized(std::map<std::string, std::string> mp) {
-  
-  m_NEauthorized = mp;
-
-}
-
-
-
 
 } // end namespace
 } // end namespace

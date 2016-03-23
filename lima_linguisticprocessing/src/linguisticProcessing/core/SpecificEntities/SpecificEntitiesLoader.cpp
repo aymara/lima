@@ -28,7 +28,7 @@
 #include "SpecificEntitiesLoader.h"
 #include "SpecificEntitiesConstraints.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/core/Automaton/recognizerMatch.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"

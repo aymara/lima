@@ -24,7 +24,7 @@
 #include "ViterbiPosTagger.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "integerCost.h"
@@ -39,7 +39,7 @@ namespace LinguisticProcessing
 namespace PosTagger
 {
 
-ViterbiPosTaggerFactory* ViterbiPosTaggerFactory::s_instance=new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID);
+std::unique_ptr< ViterbiPosTaggerFactory > ViterbiPosTaggerFactory::s_instance=std::unique_ptr< ViterbiPosTaggerFactory >(new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID));
 
 
 ViterbiPosTaggerFactory::ViterbiPosTaggerFactory(const std::string& id) :

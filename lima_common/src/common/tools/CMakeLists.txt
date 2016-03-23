@@ -29,6 +29,7 @@ qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
 SET(lima-common-tools_LIB_SRCS 
     LimaFileSystemWatcher.cpp
     LimaMainTaskRunner.cpp
+    FileUtils.cpp
   )
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -53,6 +54,7 @@ add_subdirectory(tests)
 
 ########### install files ###############
 install(FILES
+    FileUtils.h
     LimaMainTaskRunner.h
     LimaFileSystemWatcher.h
   DESTINATION include/common/tools)

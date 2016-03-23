@@ -122,7 +122,7 @@ LimaServer::LimaServer( const std::string& configDir,
     pipelines);
   
   LDEBUG << "LimaServer::LimaServer: createClient...";
-  m_analyzer=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   LDEBUG << "LimaServer::LimaServer: create QHttpServer...";
   m_server = new QHttpServer(this);
@@ -137,17 +137,6 @@ LimaServer::LimaServer( const std::string& configDir,
 
 LimaServer::~LimaServer()
 {
-  CORECLIENTLOGINIT;
-  LINFO << "LimaServer::~LimaServer";
-  // free client
-  LINFO << "LimaServer::~LimaServer: httpserver deleted!";
-  delete m_analyzer;
-  LINFO << "LimaServer::~LimaServer: m_analyzer deleted";
-  // free MediaticData ???
-  delete Common::MediaticData::MediaticData::pchangeable();
-  LINFO << "LimaServer::~LimaServer: mediaticData deleted";
-  // free linguistic processing ressources
-  delete LinguisticProcessingClientFactory::pchangeable();
 }
 
 void LimaServer::quit() {
@@ -166,7 +155,7 @@ void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
   CORECLIENTLOGINIT;
   req->storeBody();
   LDEBUG << "LimaServer::handleRequest: create AnalysisThread...";
-  AnalysisThread *thread = new AnalysisThread(m_analyzer, req, resp, m_langs, this );
+  AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
   connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   thread->start();

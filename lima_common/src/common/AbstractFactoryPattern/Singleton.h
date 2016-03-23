@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2016 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,13 +16,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
 
 #ifndef LIMA_MISC_SINGLETON_H
 #define LIMA_MISC_SINGLETON_H
+#include <memory>
 
 namespace Lima
 {
@@ -55,20 +52,20 @@ public:
 
 
 private:
-  static Object* s_instance;
+  static std::unique_ptr< Object > s_instance;
 
   Singleton(const Singleton<Object>&) {}
 };
 
 template<typename Object>
-Object* Singleton<Object>::s_instance(0);
+std::unique_ptr< Object > Singleton<Object>::s_instance(new Object());
 
 template<typename Object>
 const Object& Singleton<Object>::single()
 {
   if (s_instance==0)
   {
-    s_instance=new Object();
+    s_instance=std::unique_ptr< Object >(new Object());
   }
   return *s_instance;
 }
@@ -78,9 +75,9 @@ const Object* Singleton<Object>::psingle()
 {
   if (s_instance==0)
   {
-    s_instance=new Object();
+    s_instance=std::unique_ptr< Object >(new Object());
   }
-  return s_instance;
+  return s_instance.get();
 }
 
 template<typename Object>
@@ -88,7 +85,7 @@ Object& Singleton<Object>::changeable()
 {
   if (s_instance==0)
   {
-    s_instance=new Object();
+    s_instance=std::unique_ptr< Object >(new Object());
   }
   return *s_instance;
 }
@@ -98,9 +95,9 @@ Object* Singleton<Object>::pchangeable()
 {
   if (s_instance==0)
   {
-    s_instance=new Object();
+    s_instance=std::unique_ptr< Object >(new Object());
   }
-  return s_instance;
+  return s_instance.get();
 }
 
 } // Lima

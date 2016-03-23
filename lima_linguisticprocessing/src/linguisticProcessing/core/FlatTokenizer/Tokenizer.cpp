@@ -35,7 +35,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/Data/FileUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 #include <string>
