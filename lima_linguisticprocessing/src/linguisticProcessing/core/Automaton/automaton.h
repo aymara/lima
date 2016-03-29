@@ -342,8 +342,8 @@ public:
                               const LinguisticGraphVertex& vertex, 
                               AnalysisContent& analysis,
                               const Tstate& state,
-                              std::vector<const Transition*>& 
-                              matchingTransitions) const;
+                              std::vector<std::pair<std::deque<LinguisticGraphVertex>,const Transition*> >& matchingTransitions,
+                              const LinguisticGraphVertex& limit) const;
   
  protected:
   Tstate m_numberStates;    /**< number of states in the automaton */
@@ -366,6 +366,7 @@ public:
   bool testFromState(const Tstate firstState,
                      const LinguisticAnalysisStructure::AnalysisGraph& graph,
                      const LinguisticGraphVertex& begin,
+                     const LinguisticGraphVertex& limit,
                      AnalysisContent& analysis,
                      AutomatonMatchSet& results,
                      ConstraintCheckList& checkList,

@@ -63,11 +63,10 @@ class LIMA_AUTOMATON_EXPORT GazeteerTransition : public TransitionUnit
   TypeTransition type() const;
   bool checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& graph,
              const LinguisticGraphVertex& position,
-             const LinguisticGraphVertex& begin,
-             const LinguisticGraphVertex& end,
+             const LinguisticGraphVertex& limit,
              AnalysisContent& analysis,
              const std::vector<std::vector<LimaString> >& additionalMultiTermList,
-             std::stack<std::stack<LinguisticGraphVertex,std::vector<LinguisticGraphVertex> >,std::vector<std::stack<LinguisticGraphVertex> > >& matches
+             std::stack<std::deque<LinguisticGraphVertex>,std::vector<std::deque<LinguisticGraphVertex> > >& matches
                            ) const;
                            
   const std::set<LimaString>& wordSet() const;

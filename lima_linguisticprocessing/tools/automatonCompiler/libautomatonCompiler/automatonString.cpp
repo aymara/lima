@@ -969,7 +969,8 @@ void AutomatonString::parseUnit(const LimaString& str,
       throw AutomatonCompilerException(oss.str());
     }
     const Gazeteer& gazeteer = *it;
-    if( !gazeteer.hasMultiTermWord() && gazeteer.hasNoCategoryNorTstatus() ) {
+    //if( !gazeteer.hasMultiTermWord() && gazeteer.hasNoCategoryNorTstatus() ) {
+    if( gazeteer.hasNoCategoryNorTstatus() ) {
 #ifdef DEBUG_LP
       LDEBUG << "AutomatonString: set type(SIMPLE_GAZETEER)";
 #endif
