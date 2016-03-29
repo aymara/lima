@@ -1419,7 +1419,12 @@ return false;
 // assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
 //match.features()=recoData->getEntityFeatures();
 for (const auto& f: recoData->getEntityFeatures()) {
-   match.features().setFeature(f.getName(),f.getValue());
+  match.features().setFeature(f.getName(),f.getValue());
+  EntityFeatures::iterator featureIt = match.features().findLast(f.getName());
+  if( f.getPosition() != UNDEFPOSITION ) {
+    (*featureIt).setPosition(f.getPosition());
+    (*featureIt).setLength(f.getLength());
+  }
 }
 // must clear the stored features, once they are used (otherwise, will be kept for next entity)
 recoData->clearEntityFeatures();

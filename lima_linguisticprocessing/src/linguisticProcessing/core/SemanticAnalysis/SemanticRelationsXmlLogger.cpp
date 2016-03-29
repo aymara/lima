@@ -52,7 +52,7 @@
 //#define SEMANTICANALYSISLOGINIT  LOGINIT("LP::SemanticAnalysis")
 
 using namespace std;
-using namespace boost;
+// using namespace boost;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::Common::XMLConfigurationFiles;

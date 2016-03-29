@@ -339,14 +339,14 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   AULOGINIT;
   // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
   const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
-  std::vector<std::vector<LimaString> > additionalMultiTermList;
-  std::stack<std::stack<LinguisticGraphVertex,vector<LinguisticGraphVertex> >,vector<stack<LinguisticGraphVertex> > > triggerMatches;
   std::stack<int,std::vector<int> > third;  // empty stack using vector
   RecognizerMatch triggermatch(&graph);
   LinguisticGraphVertex right=position;
   if( gazeteerTrigger != 0 ) {
     Token* token = get(vertex_token, *(graph.getGraph()), position);
     const LimaString firstSimpleTerm = token->stringForm();
+    std::vector<std::vector<LimaString> > additionalMultiTermList;
+    std::stack<std::deque<LinguisticGraphVertex>,vector<deque<LinguisticGraphVertex> > > triggerMatches;
     /*
      * First step is to get multi-term elements whose first term mach the current position
      * and then build the list of all following terms from this selected multiterm elements
@@ -359,7 +359,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
      */
 
     gazeteerTrigger->checkMultiTerms(graph, position,
-                                     begin, end, analysis, additionalMultiTermList,
+                                     end, analysis, additionalMultiTermList,
                                      triggerMatches );
     /*
      * Last step consists in initializing triggermatch with this longuest match
@@ -369,11 +369,9 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       return 0;
     }
     else {
-      std::stack<LinguisticGraphVertex>& vertices = triggerMatches.top();
-      right=vertices.top();
-      while( !vertices.empty() ) {
-        triggermatch.addFrontVertex(vertices.top(),trigger.keep(),"trigger");
-        vertices.pop();
+      std::deque<LinguisticGraphVertex>& vertices = triggerMatches.top();
+      for( std::deque<LinguisticGraphVertex>::const_iterator vIt = vertices.begin(); vIt != vertices.end() ; vIt++ ) {
+        triggermatch.addBackVertex(*vIt,trigger.keep(),"trigger");
       }
     }
   }
@@ -386,7 +384,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   RecognizerMatch rightmatch(&graph);
 
   if (onlyOneSuccessPerType && forbiddenTypes==0) {
-    LERROR << "cannot use onlyOneSuccessPerType "
+    LERROR << "Recognizer::testSetOfRules: cannot use onlyOneSuccessPerType "
            << "when forbidden types are not allowed";
     onlyOneSuccessPerType=false;
   }
@@ -399,7 +397,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   LinguisticGraphVertex left=position;
 
 #ifdef DEBUG_LP
-  LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
+  LDEBUG << "Recognizer::testSetOfRules: testing set of rules triggered by " << trigger << " on vertex " << position;
     LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
   if (logger.isDebugEnabled()) {
    std::ostringstream oss;
@@ -420,7 +418,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
 #ifdef DEBUG_LP
     if (logger.isDebugEnabled()) {
-      LDEBUG << "testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
+      LDEBUG << "Recognizer::testSetOfRules: testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
              << currentRule->getType() << ",reapply="
              << reapplySameRule << " from " << position;
     }
@@ -523,13 +521,13 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         str = token->stringForm();
       }
       if (success) {
-        LDEBUG << "trigger " << v << "[" << str << "]:rule "
+        LDEBUG << "Recognizer::testSetOfRules: trigger " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success=" << success 
                << ",actionSuccess=" << actionSuccess;
         LDEBUG << "        matched:" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language));
       }
       else {
-        LDEBUG << "vertex " << v << "[" << str << "]:rule " 
+        LDEBUG << "Recognizer::testSetOfRules: vertex " << v << "[" << str << "]:rule " 
                << currentRule->getRuleId() << "-> success= false";
       }
     }
@@ -543,7 +541,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
-      LINFO << "execute rule " << currentRule->getRuleId()
+      LINFO << "Recognizer::testSetOfRules: execute rule " << currentRule->getRuleId()
             << " of type "<< currentRule->getType()
             << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
             << ") on vertex " << position;
@@ -554,7 +552,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
 #ifdef DEBUG_LP
         if (logger.isDebugEnabled()) {
-          LDEBUG << "Returning from testSetOfRules cause stopAtFirstSuccess ("
+          LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty (" 
             << (recoData->getNextVertices().empty()) 
             << ")";

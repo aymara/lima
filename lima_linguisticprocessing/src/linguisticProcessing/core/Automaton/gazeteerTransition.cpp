@@ -200,7 +200,7 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
       index = element.indexOf(' ', pos);
       LDEBUG << "GazeteerTransition::buildNextTermsList: pos = " << pos << ", index=" << index;
       if( index == -1 ) {
-        LDEBUG << "GazeteerTransition::buildNextTermsList: add last term " << element.mid(pos).toStdString();
+        LDEBUG << "GazeteerTransition::buildNextTermsList: push back last term " << element.mid(pos).toStdString();
         multiTerm.push_back(element.mid(pos));
         break;
       }
@@ -219,12 +219,10 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
 bool GazeteerTransition::
 checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
              const LinguisticGraphVertex& position,
-             const LinguisticGraphVertex& begin,
-             const LinguisticGraphVertex& end,
+             const LinguisticGraphVertex& limit,
              AnalysisContent& analysis,
              const std::vector<std::vector<LimaString> >& multiTermListCandidates,
-             std::stack<std::stack<LinguisticGraphVertex,std::vector<LinguisticGraphVertex> >,
-                        std::vector<std::stack<LinguisticGraphVertex> > >& matches
+             std::stack<std::deque<LinguisticGraphVertex >,std::vector<std::deque<LinguisticGraphVertex> > >& matches
     ) const {
   
                
@@ -242,9 +240,9 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
     // For each list of simple Terms, we make a deep first search in the graph
     // searchPos stores a stack of position in the graph to perform the deep first search
     ForwardSearch searchPos;
-    // the completed path is stored in a stack of vertex (initialized with position)
-    std::stack<LinguisticGraphVertex> triggerMatch;
-    triggerMatch.push(position);
+    // the completed path is stored in a deque of vertices (initialized with position)
+    std::deque<LinguisticGraphVertex> triggerMatch;
+    triggerMatch.push_back(position);
     termsIt++;
     // init search from position
     searchPos.findNextVertices(lGraph, position);
@@ -273,7 +271,7 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
           LDEBUG << "GazeteerTransition::checkMultiTerms: match with " << *termsIt;
           //  If match, push vertex in triggerMatch and initialize next step
           // Push out_edge is a better if we have to follow the path from the begining ???
-          triggerMatch.push(nextVertex);
+          triggerMatch.push_back(nextVertex);
           // stack next step to continue the search
           searchPos.findNextVertices(lGraph, nextVertex);
           termsIt++;
@@ -283,7 +281,7 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
             // we push the path in the aGraph as a solution of triggerMatch
             // Only if size of solution is greater than previous one !!
             if( matches.empty() || (triggerMatch.size() > matches.top().size()) ) {
-              LDEBUG << "GazeteerTransition::checkMultiTerms: push stack of size " << triggerMatch.size();
+              LDEBUG << "GazeteerTransition::checkMultiTerms: push (in matches) a deque of size " << triggerMatch.size();
               matches.push(triggerMatch);
             }
             // no need to go forward
