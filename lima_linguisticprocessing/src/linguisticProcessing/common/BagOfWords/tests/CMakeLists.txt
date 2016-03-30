@@ -34,7 +34,7 @@ target_link_libraries(BagOfWordsTest0
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest0 BagOfWordsTest0)
+add_test(BagOfWordsTest0 ${CMAKE_BUILD_TYPE}/BagOfWordsTest0)
 
 ########### next test ###############
 
@@ -54,7 +54,7 @@ target_link_libraries(BagOfWordsTest1
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest1 BagOfWordsTest1)
+add_test(BagOfWordsTest1 ${CMAKE_BUILD_TYPE}/BagOfWordsTest1)
 
 ########### next test ###############
 
@@ -75,7 +75,7 @@ target_link_libraries(BagOfWordsTest2
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest2 BagOfWordsTest2)
+add_test(BagOfWordsTest2 ${CMAKE_BUILD_TYPE}/BagOfWordsTest2)
 
 ########### next test ###############
 
@@ -96,5 +96,5 @@ target_link_libraries(BagOfWordsTest3
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest3 BagOfWordsTest3)
+add_test(BagOfWordsTest3 ${CMAKE_BUILD_TYPE}/BagOfWordsTest3)
 

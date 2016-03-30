@@ -41,7 +41,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
-  QStringList configDirsList = configDirs.split(":");
+  QStringList configDirsList = configDirs.split(LIMA_PATH_SEPARATOR);
   if (configDirsList.isEmpty())
   {
     // Look for LIMA_CONF directory.

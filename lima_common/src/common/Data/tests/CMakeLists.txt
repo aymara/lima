@@ -26,7 +26,7 @@ add_executable(LimaStringTest0 ${LimaStringTest0_SRCS})
 
 target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(LimaStringTest0 LimaStringTest0)
+add_test(LimaStringTest0 ${CMAKE_BUILD_TYPE}/LimaStringTest0)
 
 ########### next test ###############
 
@@ -38,7 +38,7 @@ add_executable(LimaStringTest1 ${LimaStringTest1_SRCS})
 
 target_link_libraries(LimaStringTest1 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(LimaStringTest1 LimaStringTest1)
+add_test(LimaStringTest1 ${CMAKE_BUILD_TYPE}/LimaStringTest1)
 
 ########### next test ###############
 
@@ -50,7 +50,7 @@ add_executable(LimaStringTest2 ${LimaStringTest2_SRCS})
 
 target_link_libraries(LimaStringTest2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(LimaStringTest2 LimaStringTest2)
+add_test(LimaStringTest2 ${CMAKE_BUILD_TYPE}/LimaStringTest2)
 
 
 ########### next test ###############
@@ -63,7 +63,7 @@ add_executable(LimaStringTest3 ${LimaStringTest3_SRCS})
 
 target_link_libraries(LimaStringTest3 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(LimaStringTest3 LimaStringTest3)
+add_test(LimaStringTest3 ${CMAKE_BUILD_TYPE}/LimaStringTest3)
 
 
 ########### next test ###############
@@ -76,7 +76,7 @@ add_executable(ReadWriteTools1 ${ReadWriteTools1_SRCS})
 
 target_link_libraries(ReadWriteTools1 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(ReadWriteTools1 ReadWriteTools1)
+add_test(ReadWriteTools1 ${CMAKE_BUILD_TYPE}/ReadWriteTools1)
 
 ########### next test ###############
 
@@ -88,7 +88,7 @@ add_executable(ReadWriteTools2 ${ReadWriteTools2_SRCS})
 
 target_link_libraries(ReadWriteTools2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(ReadWriteTools2 ReadWriteTools2)
+add_test(ReadWriteTools2 ${CMAKE_BUILD_TYPE}/ReadWriteTools2)
 
 ########### next test ###############
 set (FileUtilsTest0_MOC_HEADERS FileUtilsTest.h)
@@ -103,7 +103,7 @@ add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFIL
 
 target_link_libraries(FileUtilsTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(FileUtilsTest0 FileUtilsTest0)
+add_test(FileUtilsTest0 ${CMAKE_BUILD_TYPE}/FileUtilsTest0)
 set_tests_properties(FileUtilsTest0 PROPERTIES ENVIRONMENT LIMA_CONF=${CMAKE_SOURCE_DIR}/conf)
 
 

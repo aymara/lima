@@ -19,6 +19,6 @@ target_link_libraries(XMLConfigurationFilesTest0
   ${QT_LIBRARIES}
 )
 
-add_test(XMLConfigurationFilesTest0 XMLConfigurationFilesTest0)
+add_test(XMLConfigurationFilesTest0 ${CMAKE_BUILD_TYPE}/XMLConfigurationFilesTest0)
 
 

@@ -77,7 +77,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     QStringList confDirs;
     QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
     if (!projectConf.isEmpty()) 
-      confDirs << projectConf.split(":");
+      confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
     for (const QString &configDir: confDirs )
     {
       if (!configDir.isEmpty() && QDir(configDir).exists())
@@ -119,7 +119,7 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
     QStringList resDirs;
     QString projectRes = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData());
     if (!projectRes.isEmpty()) 
-      resDirs << projectRes.split(":");
+      resDirs << projectRes.split(LIMA_PATH_SEPARATOR);
     for (const QString &resourcesDir: resDirs )
     {
       if (QDir(resourcesDir).exists())

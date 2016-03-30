@@ -93,10 +93,10 @@ int main(int argc, char **argv)
 int run(int argc,char** argv)
 {
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
-  QString configPath = configDirs.join(":");
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
-  QString resourcesPath = resourcesDirs.join(":");
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
@@ -169,12 +169,12 @@ int run(int argc,char** argv)
   if (!strResourcesPath.empty())
   {
     resourcesPath = QString::fromUtf8(strResourcesPath.c_str());
-    resourcesDirs = resourcesPath.split(":");
+    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
   if (!strConfigPath.empty())
   {
     configPath = QString::fromUtf8(strConfigPath.c_str());
-    configDirs = configPath.split(":");
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
   std::deque<std::string> langs(languages.size());
   std::copy(languages.begin(), languages.end(), langs.begin());
@@ -277,7 +277,7 @@ int run(int argc,char** argv)
   }
   if(!clientFactoryConfigured)
   {
-//     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(":").toStdString() << "and" << lpConfigFile << std::endl;
+//     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
     return EXIT_FAILURE;
   }
   

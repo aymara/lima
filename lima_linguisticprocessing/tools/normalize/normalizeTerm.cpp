@@ -90,17 +90,6 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
-  QString configPath = configDirs.join(":");
-
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
-  QString resourcesPath = resourcesDirs.join(":");
-
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-  
   bool docatch = false;
   if (argc>1)
   {
@@ -133,12 +122,10 @@ int run(int argc,char** argv)
     return dowork(argc,argv);
 }
 
-
 int dowork(int argc,char* argv[])
 {
-
-  string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
-  string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+  string resourcesPathParam=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  string configPathParam=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
   string lpConfigFile=string("lima-analysis.xml");
   string commonConfigFile=string("lima-common.xml");
   string pipeline=string("normalization");
@@ -169,9 +156,9 @@ int dowork(int argc,char* argv[])
         else if ( (pos = arg.find("--common-config-file=")) != std::string::npos )
           commonConfigFile = arg.substr(pos+21);
         else if ( (pos = arg.find("--config-dir=")) != std::string::npos )
-          configDir = arg.substr(pos+13);
+          configPathParam = arg.substr(pos+13);
         else if ( (pos = arg.find("--resources-dir=")) != std::string::npos )
-          resourcesPath = arg.substr(pos+16);
+          resourcesPathParam = arg.substr(pos+16);
         else if ( (pos = arg.find("--language=")) != std::string::npos )
           langs.push_back(arg.substr(pos+11));
 //         else if ( (pos = arg.find("--pipeline=")) != std::string::npos )
@@ -193,25 +180,48 @@ int dowork(int argc,char* argv[])
     return -1;
   }
 
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  if (!configPathParam.empty())
+  {
+    configPath = QString::fromUtf8(configPathParam.c_str());
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+  }
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+  if (!resourcesPathParam.empty())
+  {
+    resourcesPath = QString::fromUtf8(resourcesPathParam.c_str());
+    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
+  }
+  
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+
   try
   {
 
     // initialize common
     MediaticData::changeable().init(
-      resourcesPath,
-      configDir,
+      resourcesPath.toUtf8().constData(),
+      configPath.toUtf8().constData(),
       commonConfigFile,
       langs);
 
     // initialize linguistic processing
     deque<string> pipelines;
     pipelines.push_back(pipeline);
-    Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+	
+    QString lpConfigFileFound = Common::Misc::findFileInPaths(configPath, lpConfigFile.c_str(), LIMA_PATH_SEPARATOR);
+
+    Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(lpConfigFileFound.toUtf8().constData());
     LinguisticProcessingClientFactory::changeable().configureClientFactory(
-      clientId,
-      lpconfig,
-      langs,
-      pipelines);
+        clientId,
+        lpconfig,
+        langs,
+        pipelines);
 
     shared_ptr <AbstractLinguisticProcessingClient > client= std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
     
@@ -239,7 +249,7 @@ int dowork(int argc,char* argv[])
       char buf[256];
       file.getline(buf,256);
       std::string line(buf);
-      while (!file.eof())
+      while (file.good())
       {
         if (line.size()==0)
         {

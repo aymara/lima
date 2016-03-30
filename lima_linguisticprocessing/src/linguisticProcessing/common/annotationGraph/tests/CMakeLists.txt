@@ -32,5 +32,5 @@ target_link_libraries(AnnotationGraphTest0
   ${QT_LIBRARIES}
 )
 
-add_test(AnnotationGraphTest0 AnnotationGraphTest0)
+add_test(AnnotationGraphTest0 ${CMAKE_BUILD_TYPE}/AnnotationGraphTest0)
 
