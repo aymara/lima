@@ -35,7 +35,7 @@ add_executable(CharChartTest0 ${CharChartTest0_SRCS})
 
 target_link_libraries(CharChartTest0 lima-common-data lima-common-qslog lima-lp-flattokenizer ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(CharChartTest0 ${CMAKE_BUILD_TYPE}/CharChartTest0 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_test(NAME CharChartTest0 COMMAND CharChartTest0 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 ########### next test ###############
 
@@ -55,4 +55,4 @@ add_executable(CharChartTestAra ${CharChartTestAra_SRCS})
 
 target_link_libraries(CharChartTestAra lima-common-data lima-common-qslog lima-lp-flattokenizer ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(CharChartTestAra ${CMAKE_BUILD_TYPE}/CharChartTestAra WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_test(NAME CharChartTestAra COMMAND CharChartTestAra WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

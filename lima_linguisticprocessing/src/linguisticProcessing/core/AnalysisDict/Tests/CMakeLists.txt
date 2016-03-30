@@ -30,7 +30,7 @@ target_link_libraries(EnhancedAnalysisDictionaryTest0
   ${QT_LIBRARIES}
 )
 
-add_test(EnhancedAnalysisDictionaryTest0 ${CMAKE_BUILD_TYPE}/EnhancedAnalysisDictionaryTest0)
+add_test(NAME EnhancedAnalysisDictionaryTest0 COMMAND EnhancedAnalysisDictionaryTest0)
 
 ########### next test ###############
 
@@ -71,7 +71,7 @@ target_link_libraries(EnhancedAnalysisDictionaryTest1
   ${QT_LIBRARIES}
 )
 
-add_test(EnhancedAnalysisDictionaryTest1 ${CMAKE_BUILD_TYPE}/EnhancedAnalysisDictionaryTest1)
+add_test(NAME EnhancedAnalysisDictionaryTest1 COMMAND EnhancedAnalysisDictionaryTest1)
 
 ########### next test ###############
 
@@ -108,5 +108,5 @@ target_link_libraries(DictionaryDataTest1
   ${QT_LIBRARIES}
 )
 
-add_test(DictionaryDataTest1 ${CMAKE_BUILD_TYPE}/DictionaryDataTest1)
+add_test(NAME DictionaryDataTest1 COMMAND DictionaryDataTest1)
 

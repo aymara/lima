@@ -10,4 +10,4 @@ add_executable(StringsPoolTest0 ${StringsPoolTest0_SRCS})
 
 target_link_libraries(StringsPoolTest0 lima-common-misc lima-common-qslog ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(StringsPoolTest0 ${CMAKE_BUILD_TYPE}/StringsPoolTest0)
+add_test(NAME StringsPoolTest0 COMMAND StringsPoolTest0)
