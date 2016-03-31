@@ -237,7 +237,6 @@ PORTO::TORRES:LOCATION:Porto Torres
 # loc.adm.reg
 #loc phys
 # est = dist (imm guide - p7) 
- 
 
 @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
 =>AppendEntityFeature(trigger,"kind")

@@ -155,7 +155,7 @@ trente et un,
 # 31 octobre prochain
 # 22 sept. 2014
 
-lundi 18 octobre, 2014 (atteste Wipolo)
+# lundi 18 octobre, 2014 (atteste Wipolo)
 @month:(@numday | t_integer>1<31 )?:[(\.? \,?)?] @numyear:DATE:
 =>NormalizeDate()
 

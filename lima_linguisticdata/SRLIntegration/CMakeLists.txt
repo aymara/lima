@@ -15,6 +15,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
+if(NOT WIN32)
+  set(LIMA_PATH_SEPARATOR ":")
+else()
+  set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
+endif()
+
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
+set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
+
 add_subdirectory(lima_conll_dependency_tag_mapping)
 
 set (DEPENDENCIES )
@@ -116,7 +125,7 @@ foreach(LANG ${LIMA_LANGUAGES})
 
     add_custom_command(
       OUTPUT VerbNet-${LANG}.bin
-      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config --debug --language=${LANG} -oVerbNet-${LANG}.bin ${_current} --modex=VerbNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules
+      COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${LANG} -oVerbNet-${LANG}.bin ${_current} --modex=VerbNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules
       DEPENDS ${_current} ${DEPENDENCIES}
 #       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM

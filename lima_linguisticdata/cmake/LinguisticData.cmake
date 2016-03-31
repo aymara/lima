@@ -22,6 +22,7 @@ else()
 endif()
 
 set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
+set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
 
 ############
 # Dictionary
@@ -702,7 +703,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
     add_custom_command(
       OUTPUT ${BINFILENAME}
-      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} --debug --language=${_lang} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
+	  COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${_lang} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
       DEPENDS ${_current} ${DEPENDENCIES}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
