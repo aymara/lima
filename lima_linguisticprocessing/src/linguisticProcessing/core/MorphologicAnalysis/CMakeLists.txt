@@ -43,6 +43,13 @@ SET(lima-lp-morphologicanalysis_LIB_SRCS
 )
 endif (ENCHANT_FOUND)
 
+if (HUNSPELL_FOUND)
+SET(lima-lp-morphologicanalysis_LIB_SRCS
+  ${lima-lp-morphologicanalysis_LIB_SRCS}
+  HunspellSpellingAlternatives.cpp
+)
+endif ()
+
 DECLARE_LIMA_PLUGIN(lima-lp-morphologicanalysis)
 
 target_link_libraries(lima-lp-morphologicanalysis

@@ -119,7 +119,6 @@ LimaStatusCode DefaultProperties::process(
   AnalysisContent& analysis) const
 {
   Lima::TimeUtilsController timer("DefaultProperties");
-  MORPHOLOGINIT;
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
@@ -144,29 +143,37 @@ LimaStatusCode DefaultProperties::process(
       // orthographic alternatives, default properties are not applied>
       if (currentData->empty())
       {
-        std::map<LimaString,std::vector<LinguisticCode> >::const_iterator it=m_defaults.find(currentToken->status().defaultKey());
-        if (it!=m_defaults.end()) {
+        auto it = m_defaults.find(currentToken->status().defaultKey());
+        if (it!=m_defaults.end()) 
+        {
           LinguisticElement elem;
-          elem.inflectedForm=currentToken->form();
-          LimaString str=currentToken->stringForm();
-          if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end()){
-            str = m_charChart->unmark(currentToken->stringForm());
+          elem.inflectedForm = currentToken->form();
+          if (!currentToken->orthographicAlternatives().empty())
+          {
+            elem.lemma = *(currentToken->orthographicAlternatives().begin());
           }
-          elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
+          else if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
+          {
+            LimaString str;
+//             elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[currentToken->stringForm()];
+//             LimaString str = m_charChart->toLower(currentToken->stringForm());
+            elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
+          }
           elem.normalizedForm=elem.lemma;
           elem.type=UNKNOWN_WORD;
           
-          for (std::vector<LinguisticCode>::const_iterator codeItr=it->second.begin();
-               codeItr!=it->second.end();
-               codeItr++)
+          for (auto codeItr=it->second.begin(); codeItr!=it->second.end();codeItr++)
           {
             elem.properties=*codeItr;
             currentData->push_back(elem);
           }
-        } else {
+        } 
+        else 
+        {
+          MORPHOLOGINIT;
           LWARN << "No default property for " 
-            << Common::Misc::limastring2utf8stdstring(currentToken->stringForm()) << ". Status : "
-            << Common::Misc::limastring2utf8stdstring(currentToken->status().defaultKey());
+            << currentToken->stringForm() << ". Status : "
+            << currentToken->status().defaultKey();
         }
       }
     }

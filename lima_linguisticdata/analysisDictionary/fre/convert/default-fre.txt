@@ -253,3 +253,8 @@ t_ordinal_integer	Aoz--mp
 t_ordinal_integer	Aoz--fp
 t_pattern	Ea
 t_fallback	Ea
+t_url	Npgms-
+t_url	Npgfs-
+t_url	Npgmp-
+t_url	Npgfp-
+t_url	Ee

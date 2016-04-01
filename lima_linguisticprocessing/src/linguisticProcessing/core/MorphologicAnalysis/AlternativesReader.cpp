@@ -159,7 +159,6 @@ void AlternativesReader::readAlternatives(
 #ifdef DEBUG_LP
       LDEBUG << "-> StringPool returned index " << idx;
 #endif
-      token.addOrthographicAlternatives(idx);
       DictionaryEntry entry=dico.getEntry(idx,unmarked);
 #ifdef DEBUG_LP
       LDEBUG << "entry.isEmpty:" << entry.isEmpty(); 
@@ -167,6 +166,7 @@ void AlternativesReader::readAlternatives(
       
       if (!entry.isEmpty())
       {
+        token.addOrthographicAlternatives(idx);
  #ifdef DEBUG_LP
        LDEBUG << "confident mode: " << m_confidentMode;
         LDEBUG << "lingInfosHandler: " << (void*)accentedHandler << "  entry.hasLingInfos:" << entry.hasLingInfos();
