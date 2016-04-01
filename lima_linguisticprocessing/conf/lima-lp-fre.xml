@@ -378,7 +378,7 @@
     </group>
     <group name="syntacticAnalyzerDepsHetero" class="SyntacticAnalyzerDepsHetero">
       <param key="rules" value="heteroSyntagmaticRelationRules"/>
-      <!--param key="selectionalPreferences" value="selectionalPreferences"/-->
+      <param key="selectionalPreferences" value="selectionalPreferences"/>
       <param key="unfold" value="true"/>
       <param key="linkSubSentences" value="true"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
@@ -916,9 +916,9 @@
     <group name="l2rDummyRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/l2rDummy-fre.bin"/>
     </group>
-    <!--group name="selectionalPreferences" class="SelectionalPreferences">
+    <group name="selectionalPreferences" class="SelectionalPreferences">
       <param key="file" value="SyntacticAnalysis/selectionalPreferences-fre.bin"/>
-    </group-->
+    </group>
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>
     </group>
