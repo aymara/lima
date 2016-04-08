@@ -93,7 +93,7 @@ LimaDBusServerPrivate::LimaDBusServerPrivate( const std::string& configDir,
     pipelines);
   
   LDEBUG << "LimaDBusServer::LimaDBusServer: createClient...";
-  m_analyzer=new AnalysisWrapper(static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId)),m_langs,p);
+  m_analyzer=new AnalysisWrapper(std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId)),m_langs,p);
 
 }
 

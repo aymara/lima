@@ -213,8 +213,8 @@ void MediaticData::init(
   m_d->m_configFile=configFile;
 
   //LINFO << "initialize XMLParser";
-  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(':');
-  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(':');
+  QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(LIMA_PATH_SEPARATOR);
+  QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(LIMA_PATH_SEPARATOR);
   bool configurationFileFound = false;
   Q_FOREACH(QString confPath, configPaths)
   {
@@ -415,7 +415,7 @@ void MediaticDataPrivate::initMedias(
           m_mediasSymbol[id]=*it;
 
           QString deffile= QString::fromUtf8(configParser.getModuleGroupParamValue("common","mediaDefinitionFiles",*it).c_str());
-          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(':');
+          QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
           bool mediaDefinitionFileFound = false;
           for(const QString& confPath: configPaths)
           {
@@ -696,7 +696,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
                 << ": must specify file and module name" << LENDL;
           continue;
           }
-          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(':');
+          QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
           Q_FOREACH(QString confPath, configPaths)
           {
             if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())
@@ -1058,6 +1058,14 @@ MediaticDataPrivate::~MediaticDataPrivate()
   for (map<MediaId, MediaData*>::const_iterator it=m_mediasData.begin();
        it!=m_mediasData.end();
        it++)
+  {
+    delete it->second;
+  }
+  for (auto entityType: m_entityTypes)
+  {
+    delete entityType;
+  }
+  for (auto it = m_stringsPool.begin(); it != m_stringsPool.end(); it++)
   {
     delete it->second;
   }

@@ -17,7 +17,7 @@ add_executable(LimaFileSystemWatcherTest0 ${LimaFileSystemWatcherTest0_SRCS} ${L
 
 target_link_libraries(LimaFileSystemWatcherTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(LimaFileSystemWatcherTest0 LimaFileSystemWatcherTest0)
+add_test(NAME LimaFileSystemWatcherTest0 COMMAND LimaFileSystemWatcherTest0)
 set_tests_properties(LimaFileSystemWatcherTest0 PROPERTIES ENVIRONMENT LIMA_CONF=${CMAKE_SOURCE_DIR}/conf)
 
 else()

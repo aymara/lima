@@ -66,7 +66,7 @@ public:
     * ClientFactory must have been configured before this method is called
     * Use configureClientFactory() method to configure.
     */
-  virtual AbstractProcessingClient* createClient(const std::string& id) const = 0;
+  virtual std::shared_ptr< AbstractProcessingClient > createClient(const std::string& id) const = 0;
 
   /**
     * @brief show registered clientId
@@ -89,7 +89,7 @@ class ProcessingClientFactoryFactory:  public Singleton<ProcessingClientFactoryF
 
 public:
     virtual ~ProcessingClientFactoryFactory() {};
-    ProcessingClientFactory* createProcessingClientFactory(const std::string& id) const ;
+    std::shared_ptr< ProcessingClientFactory > createProcessingClientFactory(const std::string& id) const ;
 private:
     ProcessingClientFactoryFactory() {};  
 };
@@ -97,8 +97,8 @@ private:
 class AbstractProcessingClientFactoryFactory:public RegistrableFactory<AbstractProcessingClientFactoryFactory>
 {
 public:
-    virtual ~AbstractProcessingClientFactoryFactory() {std::cerr << "~AbstractExtractorFactory()" << std::endl;};
-    virtual ProcessingClientFactory* createProcessingClientFactory() const = 0;
+    virtual ~AbstractProcessingClientFactoryFactory() {};
+    virtual std::shared_ptr< ProcessingClientFactory > createProcessingClientFactory() const = 0;
 protected:
     AbstractProcessingClientFactoryFactory(const std::string& id): RegistrableFactory<AbstractProcessingClientFactoryFactory>(id)
     {};

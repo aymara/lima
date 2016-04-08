@@ -57,7 +57,7 @@ void LinguisticProcessingClientFactory::configureClientFactory(
     pipelines);
 }
 
-AbstractProcessingClient* LinguisticProcessingClientFactory::createClient(
+std::shared_ptr< AbstractProcessingClient > LinguisticProcessingClientFactory::createClient(
   const std::string& id) const 
 {
   LPCLIENTFACTORYLOGINIT;
@@ -79,7 +79,7 @@ std::deque<std::string> LinguisticProcessingClientFactory::getRegisteredFactorie
 }
 
 
-LinguisticProcessingClientFactoryFactory* LinguisticProcessingClientFactoryFactory::s_instance=new LinguisticProcessingClientFactoryFactory();
+std::unique_ptr< LinguisticProcessingClientFactoryFactory > LinguisticProcessingClientFactoryFactory::s_instance=std::unique_ptr< LinguisticProcessingClientFactoryFactory >(new LinguisticProcessingClientFactoryFactory());
 
 } // LinguisticProcessing
 

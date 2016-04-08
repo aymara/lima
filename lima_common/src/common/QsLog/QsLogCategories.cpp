@@ -176,7 +176,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
   }
   else
   {
-    configDirsList = configString.split(':');
+    configDirsList = configString.split(LIMA_PATH_SEPARATOR);
   }
   try 
   {

@@ -26,5 +26,5 @@ add_executable(MediaticDataTest ${MediaticDataTest_SRCS})
 
 target_link_libraries(MediaticDataTest lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(MediaticDataTest MediaticDataTest)
+add_test(NAME MediaticDataTest COMMAND MediaticDataTest)
 

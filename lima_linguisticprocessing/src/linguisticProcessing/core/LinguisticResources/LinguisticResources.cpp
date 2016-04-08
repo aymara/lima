@@ -27,6 +27,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/Singleton.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/core/AnalysisDict/AbstractAccessResource.h"
 
 #include <QFileInfo>
@@ -155,7 +156,7 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
 #ifdef DEBUG_LP
         LDEBUG << "i="<< i;
 #endif
-        QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(':');
+        QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
         Q_FOREACH(QString confPath, configPaths)
         {
           if  (QFileInfo(confPath + "/" + string((*it),0,i).c_str()).exists())

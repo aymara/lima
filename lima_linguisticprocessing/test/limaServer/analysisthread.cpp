@@ -86,8 +86,6 @@ AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticPr
 
 AnalysisThread::~AnalysisThread()
 {
-  CORECLIENTLOGINIT;
-  LDEBUG << "AnalysisThread::~AnalysisThread";
   delete m_d;
 }
 

@@ -199,7 +199,7 @@ public:
 
 private:
   ViterbiPosTaggerFactory(const std::string& id);
-  static ViterbiPosTaggerFactory* s_instance;
+  static std::unique_ptr< ViterbiPosTaggerFactory > s_instance;
 
 };
 

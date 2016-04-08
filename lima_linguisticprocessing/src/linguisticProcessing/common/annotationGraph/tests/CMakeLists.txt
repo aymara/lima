@@ -32,5 +32,5 @@ target_link_libraries(AnnotationGraphTest0
   ${QT_LIBRARIES}
 )
 
-add_test(AnnotationGraphTest0 AnnotationGraphTest0)
+add_test(NAME AnnotationGraphTest0 COMMAND AnnotationGraphTest0)
 

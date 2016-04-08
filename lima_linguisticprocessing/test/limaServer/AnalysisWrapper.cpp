@@ -37,7 +37,6 @@
 #include <QStringList>
 #include <QPair>
 #include <boost/graph/buffer_concepts.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include <fstream>
 #include <sstream>      // std::stringstream
@@ -53,19 +52,20 @@ class AnalysisWrapperPrivate
 {
 friend class AnalysisWrapper;
 public:
-  AnalysisWrapperPrivate (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer,
+  AnalysisWrapperPrivate (std::shared_ptr< AbstractLinguisticProcessingClient > analyzer,
                         const std::set<std::string>& langs);
   ~AnalysisWrapperPrivate() {}
   
   std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId);
   void closeHandlerOutputFile(std::ostream* ofs);
 
-  boost::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
+  std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
   const std::set<std::string>& m_langs;
 };
 
-AnalysisWrapperPrivate::AnalysisWrapperPrivate(Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer,
-                    const std::set<std::string>& langs) :
+AnalysisWrapperPrivate::AnalysisWrapperPrivate(
+  std::shared_ptr< AbstractLinguisticProcessingClient > analyzer,
+  const std::set<std::string>& langs) :
     m_analyzer(analyzer),
     m_langs(langs)
 {
@@ -106,7 +106,7 @@ void AnalysisWrapperPrivate::closeHandlerOutputFile(std::ostream* ofs)
 }
 
 
-AnalysisWrapper::AnalysisWrapper (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer,
+AnalysisWrapper::AnalysisWrapper (std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > analyzer,
                   const std::set<std::string>& langs, QObject* parent ):
     QObject(parent),
     m_d(new AnalysisWrapperPrivate(analyzer,langs))
@@ -117,8 +117,6 @@ AnalysisWrapper::AnalysisWrapper (Lima::LinguisticProcessing::AbstractLinguistic
 
 AnalysisWrapper::~AnalysisWrapper()
 {
-  CORECLIENTLOGINIT;
-  LDEBUG << "AnalysisWrapper::~AnalysisWrapper";
   delete m_d;
 }
 

@@ -34,7 +34,7 @@ target_link_libraries(BagOfWordsTest0
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest0 BagOfWordsTest0)
+add_test(NAME BagOfWordsTest0 COMMAND BagOfWordsTest0)
 
 ########### next test ###############
 
@@ -54,7 +54,7 @@ target_link_libraries(BagOfWordsTest1
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest1 BagOfWordsTest1)
+add_test(NAME BagOfWordsTest1 COMMAND BagOfWordsTest1)
 
 ########### next test ###############
 
@@ -75,7 +75,7 @@ target_link_libraries(BagOfWordsTest2
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest2 BagOfWordsTest2)
+add_test(NAME BagOfWordsTest2 COMMAND BagOfWordsTest2)
 
 ########### next test ###############
 
@@ -96,5 +96,5 @@ target_link_libraries(BagOfWordsTest3
   ${QT_LIBRARIES}
 )
 
-add_test(BagOfWordsTest3 BagOfWordsTest3)
+add_test(NAME BagOfWordsTest3 COMMAND BagOfWordsTest3)
 

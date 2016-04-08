@@ -47,12 +47,13 @@ namespace LinguisticProcessing
 
 SimpleFactory<MediaProcessUnit,StatusLogger> statusLoggerFactory(STATUSLOGGER_CLASSID);
 
-StatusLogger::StatusLogger()
+StatusLogger::StatusLogger() 
 {}
 
 
 StatusLogger::~StatusLogger()
-{}
+{
+}
 
 
 void StatusLogger::init(
@@ -76,7 +77,7 @@ void StatusLogger::init(
   {
     outputFile=string("status.log");
   }
-  m_out= new ofstream(outputFile.c_str(), std::ofstream::binary);
+  m_out = std::unique_ptr< std::ofstream >(new ofstream(outputFile.c_str(), std::ofstream::binary));
   try
   {
     deque<string> tolog=unitConfiguration.getListsValueAtKey("toLog");

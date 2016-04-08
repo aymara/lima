@@ -70,13 +70,13 @@ public:
     std::deque<std::string> langs,
     std::deque<std::string> pipelines);
 
-  AbstractLinguisticProcessingClient* createClient() const;
+  std::shared_ptr< AbstractProcessingClient > createClient() const;
 
   virtual ~CoreLinguisticProcessingClientFactory();
 
 private:
   CoreLinguisticProcessingClientFactory();
-  static CoreLinguisticProcessingClientFactory* s_instance;
+  static std::unique_ptr<CoreLinguisticProcessingClientFactory> s_instance;
 
 };
 

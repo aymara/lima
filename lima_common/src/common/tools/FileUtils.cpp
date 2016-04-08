@@ -74,25 +74,28 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
   QStringList configDirs;
   for (const QString& project: projects)
   {
-    QStringList confDirs = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData()).split(":");
+    QStringList confDirs;
+    QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
+    if (!projectConf.isEmpty()) 
+      confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
     for (const QString &configDir: confDirs )
     {
-      if (QDir(configDir).exists())
+      if (!configDir.isEmpty() && QDir(configDir).exists())
       {
-        configDirs << configDir.split(":");
+        configDirs << configDir;
       }
     }
     if (confDirs.isEmpty())
     {
       QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/" + project;
-      if ( QDir( configDir ).exists() )
+      if (!configDir.isEmpty() && QDir( configDir ).exists() )
       {
         configDirs << configDir;
       }
       else
       {
         configDir = QString::fromUtf8("/usr/share/config/") + project;
-        if ( QDir( configDir ).exists() )
+        if (!configDir.isEmpty() && QDir( configDir ).exists() )
         {
           configDirs << configDir;
         }
@@ -101,7 +104,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
   }
   for (const QString& path: paths)
   {
-    if (QDir(path).exists())
+    if (!path.isEmpty() && QDir(path).exists())
       configDirs << path;
   }
   
@@ -113,12 +116,15 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
   QStringList resourcesDirs;
   for (const QString& project: projects)
   {
-    QStringList resDirs = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData()).split(":");
+    QStringList resDirs;
+    QString projectRes = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData());
+    if (!projectRes.isEmpty()) 
+      resDirs << projectRes.split(LIMA_PATH_SEPARATOR);
     for (const QString &resourcesDir: resDirs )
     {
       if (QDir(resourcesDir).exists())
       {
-        resourcesDirs << resourcesDir.split(":");
+        resourcesDirs << resourcesDir;
       }
     }
     if (resDirs.isEmpty())

@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
-#add_definitions( -DLIMA_COMMONTOOLS_EXPORTING )
+add_definitions( -DLIMA_COMMONTOOLS_EXPORTING )
 ########### next target ###############
 
 set (lima-common-tools_MOC_HEADERS
@@ -39,10 +39,6 @@ SET(lima-common-tools_LIB_SRCS
 
 endif()
 add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common-tools_MOC_OUTFILES})
-set_property(
-   TARGET lima-common-tools
-   APPEND_STRING PROPERTY COMPILE_FLAGS " -DLIMA_COMMONTOOLS_EXPORTING" 
-)
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
   ${QT_LIBRARIES})

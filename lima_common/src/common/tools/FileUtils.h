@@ -32,6 +32,12 @@
 
 #include <iostream>
 
+#ifdef WIN32
+#define LIMA_PATH_SEPARATOR ';'
+#else
+#define LIMA_PATH_SEPARATOR ':'
+#endif
+
 namespace Lima {
 namespace Common {
 namespace Misc {
@@ -46,7 +52,7 @@ namespace Misc {
  * 
  * @return the number of lines of the file
  */
-LIMA_DATA_EXPORT uint64_t countLines(std::istream& file);
+LIMA_COMMONTOOLS_EXPORT uint64_t countLines(std::istream& file);
 
 /** 
  * Count the number of lines in the given file from the current position
@@ -58,7 +64,7 @@ LIMA_DATA_EXPORT uint64_t countLines(std::istream& file);
  * 
  * @return the number of lines of the file
  */
-LIMA_DATA_EXPORT uint64_t countLines(QFile& file);
+LIMA_COMMONTOOLS_EXPORT uint64_t countLines(QFile& file);
 
 
 /**
@@ -77,7 +83,7 @@ LIMA_DATA_EXPORT uint64_t countLines(QFile& file);
  * @param projects The list of project names to explore 
  * @param paths The list of paths to look into.
  */
-LIMA_DATA_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList& projects, 
+LIMA_COMMONTOOLS_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList& projects, 
                                                                const QStringList& paths = QStringList() );
 
 /**
@@ -96,7 +102,7 @@ LIMA_DATA_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList
  * @param projects The list of project names to explore 
  * @param paths The list of paths to look into.
  */
-LIMA_DATA_EXPORT QStringList buildResourcesDirectoriesList(const QStringList& projects, 
+LIMA_COMMONTOOLS_EXPORT QStringList buildResourcesDirectoriesList(const QStringList& projects, 
                                                            const QStringList& paths = QStringList());
 
 /**
@@ -106,7 +112,7 @@ LIMA_DATA_EXPORT QStringList buildResourcesDirectoriesList(const QStringList& pr
  * @param separator the character used to split the list of paths. Defaults to semicolon
  * @return the full path of the found file if found. Empty string otherwise.
  */
-LIMA_DATA_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator = ':');
+LIMA_COMMONTOOLS_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator = LIMA_PATH_SEPARATOR);
 
 } // end namespace
 } // end namespace

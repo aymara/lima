@@ -69,10 +69,7 @@ SimpleWord::SimpleWord() :
 
 SimpleWord::~SimpleWord()
 {
-  if (m_reader==0)
-  {
-    delete m_reader;
-  }
+  delete m_reader;
 }
 
 void SimpleWord::init(

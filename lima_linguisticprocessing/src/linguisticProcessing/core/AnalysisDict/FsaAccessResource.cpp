@@ -25,6 +25,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
+#include "common/tools/FileUtils.h"
 
 #include <QReadLocker>
 #include <QWriteLocker>
@@ -75,7 +76,7 @@ void FsaAccessResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(':');
+    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(LIMA_PATH_SEPARATOR);
     Q_FOREACH(QString resPath, resourcesPaths)
     {
       if  (QFileInfo(resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).exists())

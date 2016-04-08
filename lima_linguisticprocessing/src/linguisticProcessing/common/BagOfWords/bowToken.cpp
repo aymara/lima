@@ -262,8 +262,6 @@ BoWToken* BoWToken::clone() const
 //***********************************************************************
 BoWToken::~BoWToken()
 {
-  BOWLOGINIT;
-  LDEBUG << "BoWToken::~BoWToken " << this;
   delete m_d;
 }
 

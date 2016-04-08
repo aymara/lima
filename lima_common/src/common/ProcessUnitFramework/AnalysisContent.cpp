@@ -31,22 +31,13 @@ AnalysisContent::AnalysisContent() :
 
 AnalysisContent::~AnalysisContent()
 {
-#ifdef DEBUG_CD
-  PROCESSUNITFRAMEWORKLOGINIT;
-#endif
   for (map<string,AnalysisData*>::iterator it=m_analysisData.begin();
          it!=m_analysisData.end();
          it++)
   {
-#ifdef DEBUG_CD
-    LDEBUG << "delete data " << it->first.c_str();
-#endif
     delete it->second;
     it->second=0;
   }
-#ifdef DEBUG_CD
-  LDEBUG << "AnalysisContent::~AnalysisContent all data deleted";
-#endif
 }
 
 AnalysisData* AnalysisContent::getData(

@@ -16,8 +16,13 @@ if(NOT WIN32)
   set(C_BoldMagenta "${Esc}[1;35m")
   set(C_BoldCyan    "${Esc}[1;36m")
   set(C_BoldWhite   "${Esc}[1;37m")
+  set(LIMA_PATH_SEPARATOR ":")
+else()
+  set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
 endif()
 
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
+set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
 
 ############
 # Dictionary
@@ -309,7 +314,7 @@ macro (COMPILE_RULES _lang)
   foreach(_current ${ARGN})
     add_custom_command(
       OUTPUT ${_current}.bin
-      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
+      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
       DEPENDS ${_current}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endforeach()
@@ -323,7 +328,7 @@ endmacro (COMPILE_RULES)
 macro (IDIOMATICENTITIES _lang)
   add_custom_command(
     OUTPUT idiomaticExpressions-${_lang}.bin
-    COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --language=${_lang} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
+    COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} --language=${_lang} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -698,7 +703,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
     add_custom_command(
       OUTPUT ${BINFILENAME}
-      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config --debug --language=${_lang} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
+	  COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${_lang} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
       DEPENDS ${_current} ${DEPENDENCIES}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM

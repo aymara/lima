@@ -39,7 +39,7 @@ namespace LinguisticProcessing
 namespace PosTagger
 {
 
-ViterbiPosTaggerFactory* ViterbiPosTaggerFactory::s_instance=new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID);
+std::unique_ptr< ViterbiPosTaggerFactory > ViterbiPosTaggerFactory::s_instance=std::unique_ptr< ViterbiPosTaggerFactory >(new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID));
 
 
 ViterbiPosTaggerFactory::ViterbiPosTaggerFactory(const std::string& id) :

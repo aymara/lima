@@ -54,6 +54,7 @@ configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
 LIMA_GENERIC_CONFIGENV(eng)
 LIMA_GENERIC_CONFIGENV(fre)
+SPECIFICENTITIES_GENERIC_CONFIGENV()
 
 add_subdirectory(cmake)
 add_subdirectory(scratch)

@@ -94,10 +94,10 @@ int main(int argc, char **argv)
 int run(int argc,char** argv)
 {
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
-  QString configPath = configDirs.join(":");
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
-  QString resourcesPath = resourcesDirs.join(":");
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
@@ -170,12 +170,12 @@ int run(int argc,char** argv)
   if (!strResourcesPath.empty())
   {
     resourcesPath = QString::fromUtf8(strResourcesPath.c_str());
-    resourcesDirs = resourcesPath.split(":");
+    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
   if (!strConfigPath.empty())
   {
     configPath = QString::fromUtf8(strConfigPath.c_str());
-    configDirs = configPath.split(":");
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
   std::deque<std::string> langs(languages.size());
   std::copy(languages.begin(), languages.end(), langs.begin());
@@ -253,8 +253,6 @@ int run(int argc,char** argv)
   
   uint64_t beginTime=TimeUtils::getCurrentTime();
   
-  AbstractLinguisticProcessingClient* client(0);
-  
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
@@ -280,11 +278,11 @@ int run(int argc,char** argv)
   }
   if(!clientFactoryConfigured)
   {
-//     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(":").toStdString() << "and" << lpConfigFile << std::endl;
+//     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
     return EXIT_FAILURE;
   }
   
-  client=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  std::shared_ptr< AbstractLinguisticProcessingClient > client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   // Set the handlers
   std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -419,7 +417,6 @@ int run(int argc,char** argv)
     closeHandlerOutputFile(fullxmlofs);
   }
   std::cout << std::endl;
-  delete client;
   // free handlers
   if (eventHandler != 0)
     delete eventHandler;
@@ -439,8 +436,6 @@ int run(int argc,char** argv)
     std::cout << ltrTextHandler->getLTRText();
     delete ltrTextHandler;
   }
-  delete Common::MediaticData::MediaticData::pchangeable();
-  delete LinguisticProcessingClientFactory::pchangeable();
   TIMELOGINIT;
   LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
   

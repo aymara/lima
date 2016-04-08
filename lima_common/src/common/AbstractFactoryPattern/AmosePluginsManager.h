@@ -32,6 +32,8 @@ public Singleton<AmosePluginsManager>
 {
   friend class Singleton<AmosePluginsManager>;
 public:
+  virtual ~AmosePluginsManager() {}
+  
   /** Load plugins in the plugins subdir of the semicolon separated config dirs 
    * @param configDirs semicolon separated list of config dirs. If empty, loads a default location
    */
@@ -39,7 +41,6 @@ public:
   
 private:
   AmosePluginsManager();
-  virtual ~AmosePluginsManager() {}
 
 };
 

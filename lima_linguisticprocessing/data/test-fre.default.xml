@@ -178,4 +178,49 @@
     operator="contains"
     right="ADJ"/>
 </testcase>
+<testcase id="fre.default.12" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le projet euritrack."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> euritrack est un mot inconnu tout en minuscules, doit être normalisé 'euritrack'</expl>
+  <test id="fre.default.12.1" trace=".default.xml"
+    comment="normalisation de euritrack"
+    left="XPATH#//data_structure/vertex[token/position=11]/data/unknown_word/form/@norm"
+    operator="="
+    right="euritrack"/>
+</testcase>
+<testcase id="fre.default.13" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Le projet euri100."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl> euri100 est un mot inconnu en minuscules finissant par des chiffres ; il doit être normalisé en 'euri100'</expl>
+  <test id="fre.default.13.1" trace=".default.xml"
+    comment="normalisation de euri100"
+    left="XPATH#//data_structure/vertex[token/position=11]/data/unknown_word/form/@norm"
+    operator="="
+    right="euri100"/>
+</testcase>
+<testcase id="fre.default.14" type="bloquant">
+  <call-parameters>
+    <param key="text" value="27 millions de dollars"/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <expl>Le nombre en chiffres 27 doit être normalisé en lui-même</expl>
+  <test id="fre.default.14.1" trace=".default.xml"
+      comment="27 must be normalized in itself."
+      left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@norm"
+      operator="="
+      right="27"/>
+</testcase>
 </testcases>

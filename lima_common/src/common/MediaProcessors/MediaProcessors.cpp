@@ -71,18 +71,10 @@ MediaProcessors::MediaProcessors(const MediaProcessors& mp) : Singleton<MediaPro
 
 MediaProcessors::~MediaProcessors()
 {
-#ifdef DEBUG_CD
-    PROCESSORSLOGINIT;
-
-    LDEBUG << "MediaProcessors::~MediaProcessors() delete MediaProcessors ";
-#endif
     for ( std::map<MediaId,MediaProcessUnit::Manager*>::iterator it=m_d->m_pipelineManagers.begin();
             it!=m_d->m_pipelineManagers.end();
             it++ )
     {
-#ifdef DEBUG_CD
-        LDEBUG <<  "delete " << it->first;
-#endif
         delete it->second;
         it->second=0;
     }

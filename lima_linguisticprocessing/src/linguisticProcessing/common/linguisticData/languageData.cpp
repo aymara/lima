@@ -30,6 +30,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
@@ -205,7 +206,7 @@ void LanguageDataPrivate::initPropertyCode(
   LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system with resources path" << resourcesPathsStd;
   try
   {
-    QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(':');
+    QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(LIMA_PATH_SEPARATOR);
     bool propertyCodeFileFound = false;
     QString propertyCodeFile = conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile").c_str();
     Q_FOREACH(QString resourcesPath, resourcesPaths)
@@ -427,7 +428,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {
-    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(':');
+    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
     Q_FOREACH(QString resPath, resourcesPaths)
     {
       if  (QFileInfo(resPath + "/" + compoundTensesDefinitionsFile.c_str()).exists())

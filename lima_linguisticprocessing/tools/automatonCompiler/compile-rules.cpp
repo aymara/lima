@@ -45,6 +45,7 @@
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/time/timeUtilsController.h"
+#include "common/tools/FileUtils.h"
 
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 #include "linguisticProcessing/core/Automaton/automatonReaderWriter.h"
@@ -231,41 +232,12 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
       param.inputRulesFile=s;
     }
   }
-  // if not specified, search default values in environment variables
-  if (param.resourcesDir.empty())
-  {
-    char* resourcesStr =  getenv("LIMA_RESOURCES");
-    if (resourcesStr != NULL) 
-    {
-      param.resourcesDir = resourcesStr; 
-    }
-    else 
-    { 
-      param.resourcesDir = "/usr/share/apps/lima/resources/";
-    }
-  }
-  if (param.configDir.empty())
-  {
-    char* configStr =  getenv("LIMA_CONF");
-    if (configStr != NULL) 
-    { 
-      param.configDir = configStr; 
-    }
-    else 
-    { 
-      param.configDir = "/usr/share/config/lima/";
-    }
-  }
   
   //ensure all needed parameters are set
   if (param.language.empty()) {
     cerr << "Error: missing --language=.. argument " << endl; 
     exit(1);
   }
-//   if (param.modexConfigFile.empty()) {
-//     cerr << "Error: missing --modex=.. argument " << endl; 
-//     exit(1);
-//   }
 
 }
 
@@ -302,12 +274,30 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
-  //Lima::TimeUtilsController("run", true);
+  readCommandLineArguments(argc,argv);
+  
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  if (!param.configDir.empty())
+  {
+    configPath = QString::fromUtf8(param.configDir.c_str());
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+  }
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  if (!param.resourcesDir.empty())
+  {
+    resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
+    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
+  }
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   
-  readCommandLineArguments(argc,argv);
 
   deque<string> langs;
   langs.push_back(param.language);
@@ -319,8 +309,8 @@ int run(int argc,char** argv)
       LOGINIT("Automaton::Compiler");
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")...";
     MediaticData::changeable().init(
-      param.resourcesDir,
-      param.configDir,
+      resourcesPath.toUtf8().constData(),
+      configPath.toUtf8().constData(),
       param.commonConfigFile,
       langs);
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
@@ -335,14 +325,29 @@ int run(int argc,char** argv)
     // initialize linguistic processing resources
     MediaId language = MediaticData::single().media(param.language);
     
-    XMLConfigurationFileParser lpconfig(param.configDir + "/" + param.lpConfigFile);
-    const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
-    XMLConfigurationFileParser langParser(param.configDir + "/" + langConfigFile);
-    ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
-    LinguisticResources::changeable().initLanguage(
-      language,
-      module,
-      false); // don't load mainkeys in stringpool, no use
+    bool languageInitialized = false;
+    Q_FOREACH(QString configDir, configDirs)
+    {
+      if (QFileInfo(configDir + "/" + param.lpConfigFile.c_str()).exists())
+      {
+        XMLConfigurationFileParser lpconfig((configDir + "/" + param.lpConfigFile.c_str()).toUtf8().constData());
+        const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
+        XMLConfigurationFileParser langParser((configDir + "/" + langConfigFile.c_str()).toUtf8().constData());
+        ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+        LinguisticResources::changeable().initLanguage(
+          language,
+          module,
+          false); // don't load mainkeys in stringpool, no use
+        languageInitialized = true;
+      }
+    }
+    if(!languageInitialized)
+    {
+      LOGINIT("Automaton::Compiler");
+      LERROR << "No language was configured configured with" << configDirs 
+              << "and" << param.lpConfigFile.c_str();
+      return EXIT_FAILURE;
+    }
 
     AbstractResource* resReco = LinguisticResources::single().getResource(language,"automatonCompiler");
 
@@ -352,16 +357,30 @@ int run(int argc,char** argv)
     if (! param.modexConfigFile.empty()) {
       LOGINIT("Automaton::Compiler");
       LDEBUG << "use modex file " << param.modexConfigFile;
-      XMLConfigurationFileParser modexconfig(param.configDir + "/" + param.modexConfigFile);
-      vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
-      for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+      bool modexInitialized = false;
+      Q_FOREACH(QString configDir, configDirs)
+      {
+        if (QFileInfo(configDir + "/" + param.modexConfigFile.c_str()).exists())
+        {
+          XMLConfigurationFileParser modexconfig((configDir + "/" + param.modexConfigFile.c_str()).toUtf8().constData());
+          vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
+          for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+          {
+            LOGINIT("Automaton::Compiler");
+            LDEBUG << "load library " << *it;
+            Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+          }
+          modexInitialized = true;
+        }
+      }
+      if(!modexInitialized)
       {
         LOGINIT("Automaton::Compiler");
-        LDEBUG << "load library " << *it;
-        Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+        LERROR << "No modex plugin was loaded with" << configDirs 
+                << "and" << param.modexConfigFile.c_str();
+        return EXIT_FAILURE;
       }
     }
-    
     //Recognizer reco;
     // if the rules file is in binary format and we want to print its content
     if (param.decompile)
