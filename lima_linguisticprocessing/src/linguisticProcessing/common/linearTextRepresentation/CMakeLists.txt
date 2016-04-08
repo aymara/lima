@@ -37,4 +37,5 @@ install(TARGETS lima-lp-lineartextrepresentation DESTINATION ${LIB_INSTALL_DIR})
 install(
   FILES
     ltrToken.h 
+    ltrText.h 
   DESTINATION include/linguisticProcessing/common/linearTextRepresentation)

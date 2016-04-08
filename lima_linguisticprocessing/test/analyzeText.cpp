@@ -42,6 +42,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
+#include "linguisticProcessing/client/AnalysisHandlers/LTRTextHandler.h"
 #include "linguisticProcessing/core/EventAnalysis/EventHandler.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
@@ -292,6 +293,7 @@ int run(int argc,char** argv)
   BowTextHandler* bowTextHandler = 0;
   SimpleStreamHandler* simpleStreamHandler = 0;
   SimpleStreamHandler* fullXmlSimpleStreamHandler = 0;
+  LTRTextHandler* ltrTextHandler=0;
   
   if (dumpers.find("event") != dumpers.end())
   {
@@ -317,6 +319,11 @@ int run(int argc,char** argv)
   {
     fullXmlSimpleStreamHandler = new SimpleStreamHandler();
     handlers.insert(std::make_pair("fullXmlSimpleStreamHandler", fullXmlSimpleStreamHandler));
+  }
+  if (dumpers.find("ltr") != dumpers.end())
+  {
+    ltrTextHandler= new LTRTextHandler();
+    handlers.insert(std::make_pair("ltrTextHandler", ltrTextHandler));
   }
   
   std::map<std::string,std::string> metaData;
@@ -418,12 +425,20 @@ int run(int argc,char** argv)
     delete eventHandler;
   if (bowTextWriter!= 0)
     delete bowTextWriter;
-  if (bowTextHandler!= 0)
-    delete bowTextHandler;
   if (simpleStreamHandler!= 0)
     delete simpleStreamHandler;
   if (fullXmlSimpleStreamHandler!= 0)
     delete fullXmlSimpleStreamHandler;
+  if (bowTextHandler!= 0) {
+    // not handled in output file: just print on output (this should just be used for testing)
+    std::cout << bowTextHandler->getBowText();
+    delete bowTextHandler;
+  }
+  if (ltrTextHandler!= 0) {
+    // not handled in output file: just print on output (this should just be used for testing)
+    std::cout << ltrTextHandler->getLTRText();
+    delete ltrTextHandler;
+  }
   delete Common::MediaticData::MediaticData::pchangeable();
   delete LinguisticProcessingClientFactory::pchangeable();
   TIMELOGINIT;
