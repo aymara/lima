@@ -61,6 +61,8 @@
         <item value="fullTokenXmlLoggerTokenizer"/>
         <item value="simpleWord"/>
         <item value="fullTokenXmlLoggerSimpleWord"/>
+        <item value="abbreviationSplitAlternatives"/>
+        <item value="fullTokenXmlLoggerAbbreviations"/>
         <item value="hyphenWordAlternatives"/>
         <item value="fullTokenXmlLoggerHyphen"/>
         <item value="idiomaticAlternatives"/>

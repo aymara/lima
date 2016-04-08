@@ -131,6 +131,35 @@ triangle::de Rocquencourt:ODO:
 #----------------------------------------------------------------------
 # Geopolitical entities (loc.admin)
 #----------------------------------------------------------------------
+####################################
+@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"qualifier")
+=>AppendEntityFeature(right.1,"qualifier")
+=>AppendEntityFeature(right.2,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#1.1 + 1.2 => du sud. 
+
+@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):GEO:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"qualifier")
+=>AppendEntityFeature(right.1,"qualifier")
+=>AppendEntityFeature(right.2,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#loc.adm.reg
+
+#à 3 km à l'est de la ville de Paris.
+#annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
+@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? (@AnnonceurFact|@AnnonceurGeo|@AnnonceurVille) (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):GEO:
+=>AppendEntityFeature(trigger,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+# loc.adm.reg
+#loc phys
+# est = dist (imm guide - p7) 
+
 ########################### CITY ##############################################
 
 rose:[(la)?] ville::CITY:Toulouse :
@@ -267,36 +296,6 @@ Maison:(la|La)?:Blanche:ODO:
 =>AppendEntityFeature(trigger.1,"name")
 =<ClearEntityFeatures()
 #=>NormalizeEntity()
-
-####################################
-@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"qualifier")
-=>AppendEntityFeature(right.1,"qualifier")
-=>AppendEntityFeature(right.2,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#1.1 + 1.2 => du sud. 
-
-@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):GEO:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"qualifier")
-=>AppendEntityFeature(right.1,"qualifier")
-=>AppendEntityFeature(right.2,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.adm.reg
-
-#à 3 km à l'est de la ville de Paris.
-#annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
-@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? (@AnnonceurFact|@AnnonceurGeo|@AnnonceurVille) (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):GEO:
-=>AppendEntityFeature(trigger,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-# loc.adm.reg
-#loc phys
-# est = dist (imm guide - p7) 
-
 
 #*****************************************************************************
 

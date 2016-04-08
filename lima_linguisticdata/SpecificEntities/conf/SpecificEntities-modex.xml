@@ -32,8 +32,8 @@
         <item value="DateTimeModex"/>
         <item value="NumexRecognition"/>
         <item value="OrganizationModex"/>
-        <item value="LocationModex"/>
         <item value="PersonModex"/>
+        <item value="LocationModex"/>
         <item value="EventModex"/>
         <item value="ProductModex"/>
       </list>

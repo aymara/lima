@@ -11,6 +11,7 @@
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
         <item value="fullTokenXmlLoggerTokenizer"/>
+        <item value="regexmatcher"/>
         <item value="simpleWord"/>
         <item value="fullTokenXmlLoggerSimpleWord"/>
         <item value="hyphenWordAlternatives"/>
@@ -115,6 +116,11 @@
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
       <param key="charChart" value="flatcharchart"/>
+    </group>
+    <group name="regexmatcher" class="RegexMatcher">
+      <map name="regexes">
+        <entry key="((mailto|http|ftp|https):\/\/)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+      </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>

@@ -84,7 +84,7 @@ use days.lst,months.lst,monthAbbrev.lst
 
 t_integer>1200<2100:[@in]::DATE:=>NormalizeDate()
 
-@month:[@in?]::DATE:=>NormalizeDate()
+@month:::DATE:=>NormalizeDate()
 
 #------------------------------
 # numeric forms of dates (should be recognized by tokenizer in the future)

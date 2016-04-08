@@ -39,7 +39,7 @@
           left="XPATH#//entities/entity[pos=1][len=15]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.2.2" trace=".se.xml"
+    <test id="fre.se.location.comp.2.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -59,7 +59,7 @@
           left="XPATH#//entities/entity[pos=1][len=15]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.2.2" trace=".se.xml"
+    <test id="fre.se.location.comp.2.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -79,7 +79,7 @@
           left="XPATH#//entities/entity[pos=14][len=14]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.3.2" trace=".se.xml"
+    <test id="fre.se.location.comp.3.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -99,7 +99,7 @@
           left="XPATH#//entities/entity[pos=1][len=15]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.4.2" trace=".se.xml"
+    <test id="fre.se.location.comp.4.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -119,7 +119,7 @@
           left="XPATH#//entities/entity[pos=12][len=15]/type"
           operator="="
           right="Location.CITY"/>
-    <test id="en.se.location.comp.5.2" trace=".se.xml"
+    <test id="fre.se.location.comp.5.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -139,7 +139,7 @@
           left="XPATH#//entities/entity[pos=12][len=7]/type"
           operator="="
           right="Location.CITY"/>
-    <test id="en.se.location.comp.6.2" trace=".se.xml"
+    <test id="fre.se.location.comp.6.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -159,7 +159,7 @@
           left="XPATH#//entities/entity[pos=12][len=8]/type"
           operator="="
           right="Location.CITY"/>
-    <test id="en.se.location.comp.7.2" trace=".se.xml"
+    <test id="fre.se.location.comp.7.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -179,7 +179,7 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.CITY"/>
-    <test id="en.se.location.comp.8.2" trace=".se.xml"
+    <test id="fre.se.location.comp.8.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -199,7 +199,7 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.CITY"/>
-    <!--test id="en.se.location.comp.9.2" trace=".se.xml"
+    <!--test id="fre.se.location.comp.9.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -219,7 +219,7 @@
           left="XPATH#//entities/entity[pos=14][len=13]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.10.2" trace=".se.xml"
+    <test id="fre.se.location.comp.10.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/qualifier"
           operator="="
@@ -239,7 +239,7 @@
           left="XPATH#//entities/entity[pos=27][len=26]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.11.2" trace=".se.xml"
+    <test id="fre.se.location.comp.11.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/qualifier"
           operator="="
@@ -259,12 +259,12 @@
           left="XPATH#//entities/entity[pos=26][len=22]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.12.2" trace=".se.xml"
+    <test id="fre.se.location.comp.12.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="place"/>
-   <test id="en.se.location.comp.12.3" trace=".se.xml"
+   <test id="fre.se.location.comp.12.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -288,12 +288,12 @@
           left="XPATH#//entities/entity[pos=26][len=22]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.12.2" trace=".se.xml"
+    <test id="fre.se.location.comp.12.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="place"/>
-   <test id="en.se.location.comp.12.3" trace=".se.xml"
+   <test id="fre.se.location.comp.12.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -313,17 +313,17 @@
           left="XPATH#//entities/entity[pos=11][len=20]/type"
           operator="="
           right="Location.ADDRESS"/>
-    <test id="en.se.location.comp.13.2" trace=".se.xml"
+    <test id="fre.se.location.comp.13.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/address-number"
           operator="="
           right="3"/>
-   <!--test id="en.se.location.comp.13.3" trace=".se.xml"
+   <!--test id="fre.se.location.comp.13.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="rue"/>
-  <test id="en.se.location.comp.13.3" trace=".se.xml"
+  <test id="fre.se.location.comp.13.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
@@ -343,17 +343,17 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.13.2" trace=".se.xml"
+    <test id="fre.se.location.comp.13.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/adresse-number"
           operator="="
           right="3"/>
-   <test id="en.se.location.comp.13.3" trace=".se.xml"
+   <test id="fre.se.location.comp.13.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="place"/>
-  <test id="en.se.location.comp.13.3" trace=".se.xml"
+  <test id="fre.se.location.comp.13.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
@@ -373,7 +373,7 @@
           left="XPATH#//entities/entity[pos=16][len=6]/type"
           operator="="
           right="Location.COUNTRY"/>
-    <test id="en.se.location.comp.14.2" trace=".se.xml"
+    <test id="fre.se.location.comp.14.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -393,17 +393,17 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.14.2" trace=".se.xml"
+    <test id="fre.se.location.comp.14.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/adresse-number"
           operator="="
           right="3"/>
-   <test id="en.se.location.comp.14.3" trace=".se.xml"
+   <test id="fre.se.location.comp.14.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="place"/>
-  <test id="en.se.location.comp.14.4" trace=".se.xml"
+  <test id="fre.se.location.comp.14.4" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
@@ -423,7 +423,7 @@
           left="XPATH#//entities/entity[pos=10][len=10]/type"
           operator="="
           right="Location.CITY"/>
-    <test id="en.se.location.comp.15.2" trace=".se.xml"
+    <test id="fre.se.location.comp.15.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -443,7 +443,7 @@
           left="XPATH#//entities/entity[pos=11][len=17]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.16.2" trace=".se.xml"
+    <test id="fre.se.location.comp.16.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -463,7 +463,7 @@
           left="XPATH#//entities/entity[pos=15][len=10]/type"
           operator="="
           right="Location.CITY"/>
-    <test id="en.se.location.comp.17.2" trace=".se.xml"
+    <test id="fre.se.location.comp.17.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name.nickname"
           operator="="
@@ -483,7 +483,7 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.18.2" trace=".se.xml"
+    <test id="fre.se.location.comp.18.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -503,12 +503,12 @@
           left="XPATH#//entities/entity[pos=10][len=12]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.19.2" trace=".se.xml"
+    <test id="fre.se.location.comp.19.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/qualifier"
           operator="="
           right="sud"/>
-    <!--test id="en.se.location.comp.19.3" trace=".se.xml"
+    <!--test id="fre.se.location.comp.19.3" trace=".se.xml"
           comment="composant - todo cascade"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -528,7 +528,7 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.20.2" trace=".se.xml"
+    <test id="fre.se.location.comp.20.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -548,7 +548,7 @@
           left="XPATH#//entities/entity[pos=20][len=10]/type"
           operator="="
           right="Location.COUNTRY"/>
-    <test id="en.se.location.comp.21.2" trace=".se.xml"
+    <test id="fre.se.location.comp.21.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -568,12 +568,12 @@
           left="XPATH#//entities/entity[pos=18][len=21]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.22.2" trace=".se.xml"
+    <test id="fre.se.location.comp.22.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
           right="Afrique"/>
-    <test id="en.se.location.comp.22.3" trace=".se.xml"
+    <test id="fre.se.location.comp.22.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/qualifier"
           operator="="
@@ -593,12 +593,12 @@
           left="XPATH#//entities/entity[pos=15][len=17]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.23.2" trace=".se.xml"
+    <test id="fre.se.location.comp.23.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="région"/>
-    <test id="en.se.location.comp.23.3" trace=".se.xml"
+    <test id="fre.se.location.comp.23.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -618,12 +618,12 @@
           left="XPATH#//entities/entity[pos=15][len=14]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.24.2" trace=".se.xml"
+    <test id="fre.se.location.comp.24.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="désert"/>
-    <test id="en.se.location.comp.24.3" trace=".se.xml"
+    <test id="fre.se.location.comp.24.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -643,7 +643,7 @@
           left="XPATH#//entities/entity[pos=15][len=15]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.25.2" trace=".se.xml"
+    <test id="fre.se.location.comp.25.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/qualifier"
           operator="="
@@ -663,12 +663,12 @@
           left="XPATH#//entities/entity[pos=15][len=18]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.26.2" trace=".se.xml"
+    <test id="fre.se.location.comp.26.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="canal"/>
-    <test id="en.se.location.comp.26.3" trace=".se.xml"
+    <test id="fre.se.location.comp.26.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -688,12 +688,12 @@
           left="XPATH#//entities/entity[pos=30][len=16]/type"
           operator="="
           right="Location.REGION"/>
-    <!--test id="en.se.location.comp.27.2" trace=".se.xml"
+    <!--test id="fre.se.location.comp.27.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="région"/-->
-    <test id="en.se.location.comp.27.3" trace=".se.xml"
+    <test id="fre.se.location.comp.27.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -713,12 +713,12 @@
           left="XPATH#//entities/entity[pos=15][len=21]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.28.2" trace=".se.xml"
+    <test id="fre.se.location.comp.28.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="mer"/>
-    <test id="en.se.location.comp.28.3" trace=".se.xml"
+    <test id="fre.se.location.comp.28.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -738,12 +738,12 @@
           left="XPATH#//entities/entity[pos=15][len=12]/type"
           operator="="
           right="Location.GEO"/>
-    <test id="en.se.location.comp.28-b.2" trace=".se.xml"
+    <test id="fre.se.location.comp.28-b.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="Mer"/>
-    <test id="en.se.location.comp.28-b.3" trace=".se.xml"
+    <test id="fre.se.location.comp.28-b.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -763,12 +763,12 @@
           left="XPATH#//entities/entity[pos=28][len=12]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.29.2" trace=".se.xml"
+    <test id="fre.se.location.comp.29.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="autoroute"/>
-    <test id="en.se.location.comp.29.3" trace=".se.xml"
+    <test id="fre.se.location.comp.29.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -788,12 +788,12 @@
           left="XPATH#//entities/entity[pos=14][len=24]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.30.2" trace=".se.xml"
+    <test id="fre.se.location.comp.30.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/kind"
           operator="="
           right="triangle"/>
-    <test id="en.se.location.comp.30.3" trace=".se.xml"
+    <test id="fre.se.location.comp.30.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -813,7 +813,7 @@
           left="XPATH#//entities/entity[pos=18][len=6]/type"
           operator="="
           right="Location.ODO"/>
-    <test id="en.se.location.comp.31.2" trace=".se.xml"
+    <test id="fre.se.location.comp.31.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -833,12 +833,12 @@
           left="XPATH#//entities/entity[pos=10][len=29]/type"
           operator="="
           right="Location.ADDRESS"/>
-    <test id="en.se.location.comp.32.2" trace=".se.xml"
+    <test id="fre.se.location.comp.32.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/address-number"
           operator="="
           right="15"/>
-    <test id="en.se.location.comp.32.3" trace=".se.xml"
+    <test id="fre.se.location.comp.32.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/other-adress-componant"
           operator="="
@@ -858,12 +858,12 @@
           left="XPATH#//entities/entity[pos=10][len=40]/type"
           operator="="
           right="Location.ADDRESS"/>
-    <test id="en.se.location.comp.32-b.2" trace=".se.xml"
+    <test id="fre.se.location.comp.32-b.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/address-number"
           operator="="
           right="15"/>
-    <test id="en.se.location.comp.32-b.3" trace=".se.xml"
+    <test id="fre.se.location.comp.32-b.3" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/other-adress-componant"
           operator="="
@@ -883,7 +883,7 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.33.2" trace=".se.xml"
+    <test id="fre.se.location.comp.33.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -903,7 +903,7 @@
           left="XPATH#//entities/entity[pos=17][len=8]/type"
           operator="="
           right="Location.COORDINATE"/>
-    <test id="en.se.location.comp.34.2" trace=".se.xml"
+    <test id="fre.se.location.comp.34.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -923,7 +923,7 @@
           left="XPATH#//entities/entity[pos=26][len=19]/type"
           operator="="
           right="Location.COORDINATE"/>
-    <test id="en.se.location.comp.35.2" trace=".se.xml"
+    <test id="fre.se.location.comp.35.2" trace=".se.xml"
           comment="composant - tod : il faudrait coller @ et guidedannotation"
           left="XPATH#//entities/entity/components/name"
           operator="="
@@ -943,13 +943,13 @@
           left="XPATH#//entities/entity[pos=12][len=9]/type"
           operator="="
           right="Location.LOCATION"/>
-    <test id="en.se.location.comp.36.2" trace=".se.xml"
+    <test id="fre.se.location.comp.36.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity/components/name"
           operator="="
           right="jean.dupon"/>
   </testcase!-->
-    <testcase id="en.se.location.comp.37" type="bloquant">
+    <testcase id="fre.se.location.comp.37" type="bloquant">
     <call-parameters>
       <param key="text" value="voir aussi http://www.globalpost.com"/>
       <param key="language" value="fre"/>
@@ -958,18 +958,18 @@
       </list>
     </call-parameters>
     <expl></expl>
-    <test id="en.se.location.comp.37.1" trace=".se.xml"
+    <test id="fre.se.location.comp.37.1" trace=".se.xml"
           comment="type d'entité = location.URL"
           left="XPATH#//entities/entity[pos=12][len=25]/type"
           operator="="
           right="Location.URL"/>
-    <test id="en.se.location.comp.37.2" trace=".se.xml"
+    <test id="fre.se.location.comp.37.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity[pos=12][len=25]/string"
           operator="="
           right="http://www.globalpost.com"/>
   </testcase>
-  <testcase id="en.se.location.comp.38" type="pertinent">
+  <testcase id="fre.se.location.comp.38" type="pertinent">
     <call-parameters>
       <param key="text" value="voir aussi http://www.globalpost.com/article/6637525/2015/08/27/hungary-border-fence-problems article"/>
       <param key="language" value="fre"/>
@@ -978,12 +978,12 @@
       </list>
     </call-parameters>
     <expl></expl>
-    <test id="en.se.location.comp.38.1" trace=".se.xml"
+    <test id="fre.se.location.comp.38.1" trace=".se.xml"
           comment="type d'entité = location.URL"
           left="XPATH#//entities/entity[pos=12][len=82]/type"
           operator="="
           right="Location.URL"/>
-    <test id="en.se.location.comp.38.2" trace=".se.xml"
+    <test id="fre.se.location.comp.38.2" trace=".se.xml"
           comment="composant"
           left="XPATH#//entities/entity[pos=12][len=82]/string"
           operator="="

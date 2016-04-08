@@ -466,12 +466,12 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       match.length());
 
   // take posessive tstatus from head
-  TStatus tStatus(T_NULL_CAPITAL,T_NULL_ROMAN,false,false,false,false,T_NULL_NUM,T_NULL_STATUS);
-  const TStatus& headTStatus = tokenMap[head]->status();
+  TStatus tStatus = tokenMap[head]->status();
+  const TStatus& headTStatus = tokenMap[v2]->status();
   if(headTStatus.isAlphaPossessive()) {
     tStatus.setAlphaPossessive(true);
   }
-  newToken->setStatus(tokenMap[head]->status());
+  newToken->setStatus(tStatus);
 
   if (newMorphData->empty())
   {
@@ -1430,7 +1430,12 @@ return false;
 // assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
 //match.features()=recoData->getEntityFeatures();
 for (const auto& f: recoData->getEntityFeatures()) {
-   match.features().setFeature(f.getName(),f.getValue());
+  match.features().addFeature(f.getName(),f.getValue());
+  EntityFeatures::iterator featureIt = match.features().findLast(f.getName());
+  if( f.getPosition() != UNDEFPOSITION ) {
+    (*featureIt).setPosition(f.getPosition());
+    (*featureIt).setLength(f.getLength());
+  }
 }
 // must clear the stored features, once they are used (otherwise, will be kept for next entity)
 recoData->clearEntityFeatures();
