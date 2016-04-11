@@ -72,7 +72,7 @@
   - c_M / SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
   - c_m / ALL_LOWER (T_ALPHA,T_SMALL)
   - c_5 / INTEGER (T_NUMERIC,T_INTEGER)
-  - c_hyphen|c_plus c_5 / INTEGER (T_NUMERIC)
+  - c_hyphen|c_plus c_5 / INTEGER (T_NUMERIC,T_INTEGER)
   - m_pattern m_pattern / PATTERN (T_PATTERN)
   - c_lowline / START
   - c_other / START
