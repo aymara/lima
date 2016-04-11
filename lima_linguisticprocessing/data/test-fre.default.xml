@@ -20,6 +20,16 @@
     left="XPATH#//data_structure/vertex[token/position=4]/data/unknown_word//p[@prop='MACRO']/@val"
     operator="contains"
     right="NC"/>
+  <test id="fre.default.1.3" trace=".default.xml"
+    comment="The unknown token 'marsupilami' must be normalized by itself"
+    left="XPATH#//data_structure/vertex[token/position=4]/data/unknown_word/form/@norm"
+    operator="="
+    right="marsupilami"/>
+  <test id="fre.default.1.3" trace=".default.xml"
+    comment="The unknown token 'marsupilami' must be lemmatized by itself"
+    left="XPATH#//data_structure/vertex[token/position=4]/data/unknown_word/form/@lemma"
+    operator="="
+    right="marsupilami"/>
 </testcase>
 <testcase id="fre.default.2" type="bloquant">
   <call-parameters>
@@ -87,6 +97,7 @@
     right="euritrack"/>
 </testcase>
 <testcase id="fre.default.6" type="bloquant">
+  <expl> EURITRACK est un mot inconnu, doit être normalisé 'euritrack'</expl>
   <call-parameters>
       <param key="text" value="Le projet E.U.R.I.T.R.A.C.K."/>
       <param key="language" value="fre"/>
@@ -94,7 +105,6 @@
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl> EURITRACK est un mot inconnu, doit être normalisé 'euritrack'</expl>
   <test id="fre.default.6.1" trace=".default.xml"
     comment="normalisation de EURITRACK"
     left="XPATH#//data_structure/vertex[token/position=11]/data/unknown_word/form/@norm"
