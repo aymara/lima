@@ -195,4 +195,24 @@
     operator="="
     right="3m55"/>
 </testcase>
+<testcase id="eng.default.13" type="bloquant">
+  <expl>The negative numbers in digits -27 and -25 must be normalized into themselves.</expl>
+  <call-parameters>
+    <param key="text" value="-27 millions or -25 millions."/>
+    <param key="language" value="eng"/>
+    <list key="pipelines">
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <test id="eng.default.13.1" trace=".default.xml"
+      comment="-27 must be normalized in itself."
+      left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@norm"
+      operator="="
+      right="-27"/>
+  <test id="eng.default.13.2" trace=".default.xml"
+      comment="-25 must be normalized in itself."
+      left="XPATH#//data_structure/vertex[token/position=17]/data/unknown_word/form/@norm"
+      operator="="
+      right="-25"/>
+</testcase>
 </testcases>
