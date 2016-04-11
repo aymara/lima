@@ -401,8 +401,9 @@
       <param key="charChart" value="flatcharchart"/>
       <param key="defaultPropertyFile" value="LinguisticProcessings/eng/default-eng.dat"/>
       <list name="skipUnmarkStatus">
-        <item value="t_dot_number"/>
         <item value="t_capital_1st"/>
+        <item value="t_dot_number"/>
+        <item value="t_integer"/>
       </list>
     </group>
     <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
