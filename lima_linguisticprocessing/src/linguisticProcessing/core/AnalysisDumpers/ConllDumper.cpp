@@ -187,7 +187,10 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     {
       std::string line = Lima::Common::Misc::readLine(ifs);
       QStringList strs = QString::fromUtf8(line.c_str()).split('\t');
-      m_d->m_conllLimaDepMapping.insert(strs[0],strs[1]);
+      if (strs.size() == 2)
+      {
+        m_d->m_conllLimaDepMapping.insert(strs[0],strs[1]);
+      }
     }
 
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
