@@ -64,6 +64,9 @@ namespace SemanticAnalysis {
 
 SimpleFactory<MediaProcessUnit,SemanticRoleLabelingLoader> SemanticRoleLabelingFactory(SEMANTICROLELABELINGLOADER_CLASSID);
 
+#define NBCOLSINSRLBEFOREFRAME 10
+
+
 // Conll handler
 struct ConllHandler
 {
@@ -266,11 +269,11 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
   QStringList sentenceTokens=cHandler.splitSegment(sent, m_tokenSeparator);
   QString firstSentenceToken=(*sentenceTokens.constBegin());
   int descriptorsNb = cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
-  m_verbalClassNb = descriptorsNb -11;
+  m_verbalClassNb = descriptorsNb -NBCOLSINSRLBEFOREFRAME;
   int classIndex=0;
   if (m_verbalClassNb > 0)
   {
-    LDEBUG << "ConllHandler::extractSemanticInformation" << sentenceI << " : \n" << sent ;
+    LDEBUG << "ConllHandler::extractSemanticInformation" << m_verbalClassNb << sentenceI << " : \n" << sent ;
     m_verbalClasses.clear();
     m_verbalClasses.resize(m_verbalClassNb);
     m_semanticRoles.clear();
@@ -281,14 +284,14 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
     {
       int  roleNumbers=0;
       QStringList descriptors=cHandler.splitSegment((*tokensIterator),m_descriptorSeparator);
-      if (descriptors.size()>=11+m_verbalClassNb)
+      if (descriptors.size()>=NBCOLSINSRLBEFOREFRAME+m_verbalClassNb)
       {
         int conllTokenId=descriptors[0].toInt();
         QString conllToken=descriptors[1];
-        if(descriptors[10]!="-")
+        if(descriptors[NBCOLSINSRLBEFOREFRAME]!="_")
         {
-            QString verbalClass=descriptors[10];
-            QString vClass=descriptors[10];
+            QString verbalClass=descriptors[NBCOLSINSRLBEFOREFRAME];
+            QString vClass=descriptors[NBCOLSINSRLBEFOREFRAME];
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
             if (classIndex >= m_verbalClasses.size())
             {
@@ -301,14 +304,14 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
         for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++)
         {
           LDEBUG << "ConllHandler::extractSemanticInformation descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
-          if (11+roleTargetFieldIndex >= descriptors.size())
+          if (NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex >= descriptors.size())
           {
             LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error" <<  roleTargetFieldIndex;
             break;
           }
-          if (descriptors[11+roleTargetFieldIndex]!="-")
+          if (descriptors[NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex]!="_")
           {
-            QString semanticRoleLabel=descriptors[11+roleTargetFieldIndex];
+            QString semanticRoleLabel=descriptors[NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex];
 
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI,   limaConllMapping);
             if(limaTokenId!=0)
