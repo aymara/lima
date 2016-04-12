@@ -704,7 +704,7 @@
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="srl" class="ExternalProcessUnit">
-      <param key="dumper" value="conllDumper"/>
+      <param key="dumper" value="conllDumperToFile"/>
       <param key="inputSuffix" value=".conll"/>
       <param key="outputSuffix" value=".conll.srl"/>
       <param key="command" value="(path to knowledgesrl)/src/main.py --conll_input %1 --conll_output %2"/>
@@ -780,10 +780,12 @@
     <group name="posGraphXmlDumper" class="posGraphXmlDumper">
       <param key="handler" value="xmlSimpleStreamHandler"/>
     </group>
-    <group name="conllDumper" class="ConllDumper">
+    <group name="conllDumperToFile" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
+      <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
+    </group>
+    <group name="conllDumper" class="ConllDumper">
       <param key="handler" value="simpleStreamHandler"/>
-      <!--param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/-->
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
