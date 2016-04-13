@@ -202,7 +202,9 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
 LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
+#ifdef DEBUG_LP
   LDEBUG << "ConllDumper::process";
+#endif
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
@@ -241,7 +243,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
   std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
   uint64_t nbSentences((sd->getSegments()).size());
+#ifdef DEBUG_LP
   LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
+#endif
   LinguisticGraphVertex sentenceBegin = sbItr->getFirstVertex();
   LinguisticGraphVertex sentenceEnd = sbItr->getLastVertex();
 
@@ -268,7 +272,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     std::map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
     std::map<int,LinguisticGraphVertex>segmentationMappingReverse;
 
+#ifdef DEBUG_LP
     LDEBUG << "ConllDumper::process begin - end: " << sentenceBegin << " - " << sentenceEnd;
+#endif
     //LinguisticGraphOutEdgeIt outItr,outItrEnd;
     QQueue<LinguisticGraphVertex> toVisit;
     QSet<LinguisticGraphVertex> visited;
@@ -279,32 +285,46 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
     {
       v = toVisit.dequeue();
+#ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process Vertex index : " << v;
+#endif
       visited.insert(v);
       segmentationMapping.insert(std::make_pair(v,tokenId));
       segmentationMappingReverse.insert(std::make_pair(tokenId,v));
+#ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process conll id : " << tokenId << " Lima id : " << v;
+#endif
       DependencyGraphVertex dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
       boost::tie(dit,dit_end) = boost::out_edges(dcurrent,*depGraph);
       for (; dit != dit_end; dit++)
       {
+#ifdef DEBUG_LP
         LDEBUG << "ConllDumper::process Dumping dependency edge " << (*dit).m_source << " -> " << (*dit).m_target;
+#endif
         try
         {
           CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *depGraph);
           SyntacticRelationId type = typeMap[*dit];
           std::string syntRelName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getSyntacticRelationName(type);
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process relation = " << syntRelName;
           LDEBUG << "ConllDumper::process Src  : Dep vertex= " << boost::source(*dit, *depGraph);
+#endif
           LinguisticGraphVertex src = syntacticData->tokenVertexForDepVertex(boost::source(*dit, *depGraph));
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process Src  : Morph vertex= " << src;
           LDEBUG << "ConllDumper::process Targ : Dep vertex= " << boost::target(*dit, *depGraph);
+#endif
           LinguisticGraphVertex dest = syntacticData->tokenVertexForDepVertex(boost::target(*dit, *depGraph));
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process Targ : Morph vertex= " << dest;
+#endif
           if (syntRelName!="")
           {
+#ifdef DEBUG_LP
             LDEBUG << "ConllDumper::process saving target for" << v << ":" << dest << syntRelName;
+#endif
             vertexDependencyInformations.insert(std::make_pair(v, std::make_pair(dest,syntRelName)));
           }
         }
@@ -313,8 +333,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         }
         catch (...)
         {
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process: catch others.....";
-        throw;
+#endif
+          throw;
         }
       }
       if (v == sentenceEnd)
@@ -345,7 +367,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
     // get the list of predicates for the current sentence
     QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex > predicates = m_d->collectPredicateTokens( analysis, sentenceBegin, sentenceEnd );
+#ifdef DEBUG_LP
     LDEBUG << "ConllDumper::process predicates for sentence between" << sentenceBegin << "and" << sentenceEnd << "are:" << predicates;
+#endif
+    QList< LinguisticGraphVertex > keys = predicates.keys();
 
     toVisit.enqueue(sentenceBegin);
     tokenId=0;
@@ -356,12 +381,16 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
+#ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process PosGraph token" << v;
+#endif
       if( morphoData!=0 && !morphoData->empty() && ft != 0)
       {
         const QString macro=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
         const QString micro=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
+#ifdef DEBUG_LP
         LDEBUG << "ConllDumper::process graphTag:" << micro;
+#endif
 
         std::string inflectedToken=ft->stringForm().toUtf8().constData();
         std::string lemmatizedToken;
@@ -397,12 +426,18 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         if (vertexDependencyInformations.count(v)!=0)
         {
           LinguisticGraphVertex target=vertexDependencyInformations.find(v)->second.first;
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process target saved for" << v << "is" << target;
+#endif
           targetConllId=segmentationMapping.find(target)->second;
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process conll target saved for " << tokenId << " is " << targetConllId;
+#endif
           QString relName = QString::fromUtf8(vertexDependencyInformations.find(v)->second.second.c_str());
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process the lima dependency tag for "
                  << ft->stringForm()<< " is " << relName;
+#endif
           if (m_d->m_conllLimaDepMapping.contains(relName))
           {
             conllRelName=m_d->m_conllLimaDepMapping[relName];
@@ -442,11 +477,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         if (!predicates.isEmpty())
         {
           dstream->out() << "\t";
-          LDEBUG << "ConllDumper::process output the predicate if any";
+//           LDEBUG << "ConllDumper::process output the predicate if any";
           if (!predicates.contains(v))
           {
             // No predicate for this token
-            dstream->out() << "-";
+            dstream->out() << "_";
           }
           else
           {
@@ -454,26 +489,32 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             QString predicateAnnotation = annotationData->stringAnnotation(predicates.value(v),"Predicate");
             dstream->out() << predicateAnnotation;
           }
-          // Now output the roles supported by the current PoS graph token
 
-          LDEBUG << "ConllDumper::process output the roles for the" << predicates.keys().size() << "predicates";
-          for (int i = 0; i < predicates.keys().size(); i++)
+          // Now output the roles supported by the current PoS graph token
+#ifdef DEBUG_LP
+          LDEBUG << "ConllDumper::process output the roles for the" << keys.size() << "predicates";
+#endif
+          for (int i = 0; i < keys.size(); i++)
           {
             // There will be one column for each predicate. Output the
             // separator right now
             dstream->out() << "\t";
-            AnnotationGraphVertex predicateVertex = predicates.value(predicates.keys()[i]);
+            AnnotationGraphVertex predicateVertex = predicates.value(keys[keys.size()-1-i]);
 
             std::set< AnnotationGraphVertex > vMatches = annotationData->matches("PosGraph", v, "annot");
             if (vMatches.empty())
             {
-              LDEBUG << "ConllDumper::process no node matching PoS graph vertex" << v << "in the annotation graph. Output '-'.";
-              dstream->out() << "-";
+#ifdef DEBUG_LP
+              LDEBUG << "ConllDumper::process no node matching PoS graph vertex" << v << "in the annotation graph. Output '_'.";
+#endif
+              dstream->out() << "_";
             }
             else
             {
+#ifdef DEBUG_LP
               LDEBUG << "ConllDumper::process there is"<<vMatches.size()<<"nodes matching PoS graph vertex" << v << "in the annotation graph.";
-              QString roleAnnotation = "-";
+#endif
+              QString roleAnnotation = "_";
               for (auto it = vMatches.begin(); it != vMatches.end(); it++)
               {
                 AnnotationGraphVertex vMatch = *it;
@@ -492,10 +533,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                   else
                   {
                     // Current edge does not hold a role of the current predicate
-//                     dstream->out() << "-";
+//                     dstream->out() << "_";
                   }
                 }
-                if (roleAnnotation != "-") break;
+                if (roleAnnotation != "_") break;
               }
               dstream->out() << roleAnnotation.toUtf8().constData();
             }
@@ -508,15 +549,21 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       {
         continue;
       }
+#ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process look at out edges of" << v;
+#endif
       LinguisticGraphOutEdgeIt outIter,outIterEnd;
       for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,*graph); outIter!=outIterEnd; outIter++)
       {
         LinguisticGraphVertex next = boost::target(*outIter,*graph);
+#ifdef DEBUG_LP
         LDEBUG << "ConllDumper::process looking out vertex" << next;
+#endif
         if (!visited.contains(next))
         {
+#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process enqueuing" << next;
+#endif
           visited.insert(next);
           toVisit.enqueue(next);
         }
@@ -555,7 +602,9 @@ QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> ConllDumperPrivate::coll
   while (v!=sentenceEnd && !toVisit.empty())
   {
     v = toVisit.dequeue();
+#ifdef DEBUG_LP
     LDEBUG << "ConllDumperPrivate::collectPredicateTokens vertex:" << v;
+#endif
     visited.insert(v);
 
     std::set< AnnotationGraphVertex > vMatches = annotationData->matches("PosGraph", v, "annot");
@@ -564,7 +613,9 @@ QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> ConllDumperPrivate::coll
       AnnotationGraphVertex vMatch = *it;
       if (annotationData->hasStringAnnotation(vMatch,"Predicate"))
       {
+#ifdef DEBUG_LP
         LDEBUG << "ConllDumperPrivate::collectPredicateTokens insert" << v <<    vMatch;
+#endif
         result.insert(v, vMatch);
       }
     }
