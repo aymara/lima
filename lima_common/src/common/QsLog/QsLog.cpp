@@ -168,8 +168,8 @@ void Logger::Helper::writeToLog()
    QTextStream ts(&s);
    ts << QThread::currentThread();
    const QString completeMessage(QString("%1 %2 %3 %4")
-      .arg(levelName, 5)
       .arg(QDateTime::currentDateTime().toString(fmtDateTime))
+      .arg(levelName, 5)
       .arg(s)
       .arg(buffer)
       );
