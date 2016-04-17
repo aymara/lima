@@ -147,7 +147,37 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
     return false;
 }
 
-/* Gazeteer may contains multi-term elements like  */
+bool GazeteerTransition::
+matchPath(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+        const LinguisticGraphVertex& vertex,
+        const LinguisticGraphVertex& limit,
+        SearchGraph* searchGraph,
+        AnalysisContent& analysis,
+        const LinguisticAnalysisStructure::Token* token,
+        deque<LinguisticGraphVertex>& vertices,
+        const LinguisticAnalysisStructure::MorphoSyntacticData* /*data*/) const
+{
+  // TODO: use of limit???
+  AULOGINIT;
+        const LimaString firstSimpleTerm = token->stringForm();
+        /* build multi term list in gazeteer with firstSimpleTerm as first term */
+        std::vector<std::vector<LimaString> > additionalMultiTermList;
+        buildNextTermsList( firstSimpleTerm, additionalMultiTermList );
+        /* follow graph if tokens match other terms */
+        std::stack<std::deque<LinguisticGraphVertex>,std::vector<deque<LinguisticGraphVertex> > > triggerMatches;
+        checkMultiTerms(graph, vertex, limit, searchGraph, analysis, additionalMultiTermList, triggerMatches );
+        if( triggerMatches.empty() ) {
+          LDEBUG << "GazeteerTransition::match: trans of type gazeteerTransition selected but no match";
+          return false;
+        }
+        else {
+          vertices = triggerMatches.top();
+          return true;
+        }
+        return false;
+}
+  
+  /* Gazeteer may contains multi-term elements like  */
 /* "managing director","Managing Director","managing editor","managing comitee secretary"... */
 /* From wordSet, we build a list of multiple terms, each with parameter firstSimpleTerm as first simple term */
 /* [("managing,director");("managing,Director");("managing,editor");("managing,comitee,secretary")] */
@@ -217,21 +247,21 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
 }
   
 bool GazeteerTransition::
-checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
-             const LinguisticGraphVertex& position,
-             const LinguisticGraphVertex& limit,
-             AnalysisContent& analysis,
-             const std::vector<std::vector<LimaString> >& multiTermListCandidates,
-             std::stack<std::deque<LinguisticGraphVertex >,std::vector<std::deque<LinguisticGraphVertex> > >& matches
+checkMultiTerms( const AnalysisGraph& graph,
+                 const LinguisticGraphVertex& position,
+                 const LinguisticGraphVertex& limit,
+                 Lima::LinguisticProcessing::Automaton::SearchGraph* searchGraph,
+                 Lima::AnalysisContent& analysis, const vector< vector< Lima::LimaString > >& additionalMultiTermList,
+                 stack< deque< LinguisticGraphVertex >, vector< deque< LinguisticGraphVertex > > >& matches
     ) const {
   
                
   AULOGINIT;
   LDEBUG << "GazeteerTransition::checkMultiTerms( from " << position << ")";
   // Iteration on multi-terms from gazeteer whose first term matches current token
-  std::vector<std::vector<LimaString> >::const_iterator multiTermsIt = multiTermListCandidates.begin();
-  const LinguisticGraph* lGraph = aGraph.getGraph();
-  for( ; multiTermsIt != multiTermListCandidates.end() ; multiTermsIt++ ) {
+  std::vector<std::vector<LimaString> >::const_iterator multiTermsIt = additionalMultiTermList.begin();
+  const LinguisticGraph* lGraph = graph.getGraph();
+  for( ; multiTermsIt != additionalMultiTermList.end() ; multiTermsIt++ ) {
     // iterator for simpleterms
     std::vector<LimaString>::const_iterator termsIt = (*multiTermsIt).begin();
     std::vector<LimaString>::const_iterator termsIt_end = (*multiTermsIt).end();
@@ -239,13 +269,12 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
            << *termsIt << " and " << (*multiTermsIt).size()-1 << " more...)";
     // For each list of simple Terms, we make a deep first search in the graph
     // searchPos stores a stack of position in the graph to perform the deep first search
-    ForwardSearch searchPos;
     // the completed path is stored in a deque of vertices (initialized with position)
     std::deque<LinguisticGraphVertex> triggerMatch;
     triggerMatch.push_back(position);
     termsIt++;
     // init search from position
-    searchPos.findNextVertices(lGraph, position);
+    searchGraph->findNextVertices(lGraph, position);
     // init current position
     LinguisticGraphVertex nextVertex = position;
     // if list is not exhausted
@@ -259,8 +288,8 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
     }
     else {
       // go one step ahead from curentPosition if possible
-      while ( searchPos.getNextVertex(lGraph, nextVertex )) {
-        if (nextVertex == aGraph.lastVertex() )
+      while ( searchGraph->getNextVertex(lGraph, nextVertex )) {
+        if (nextVertex == graph.lastVertex() )
           return false;
         LDEBUG << "GazeteerTransition::checkMultiTerms: progress one step forward, nextVertex=" << nextVertex;
         LDEBUG << "GazeteerTransition::checkMultiTerms: test " << *termsIt;
@@ -273,7 +302,7 @@ checkMultiTerms( const LinguisticAnalysisStructure::AnalysisGraph& aGraph,
           // Push out_edge is a better if we have to follow the path from the begining ???
           triggerMatch.push_back(nextVertex);
           // stack next step to continue the search
-          searchPos.findNextVertices(lGraph, nextVertex);
+          searchGraph->findNextVertices(lGraph, nextVertex);
           termsIt++;
           if(termsIt == termsIt_end ) {
             LDEBUG << "GazeteerTransition::checkMultiTerms: list of simple terms exhausted!";

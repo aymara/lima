@@ -241,6 +241,7 @@ bool Automaton::
 getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                        const LinguisticGraphVertex& vertex,
                        AnalysisContent& analysis,
+                       SearchGraph* searchGraph,
                        const Tstate& state,
                        std::vector<DFFSPos>& matchingTransitions,
                        const LinguisticGraphVertex& limit
@@ -266,19 +267,9 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>(&(*trans));
       // TODO:  generalize buildNextTermsList and checkMultiTerms to be able to manage backtrack and backward
       if( gtrans != 0 ) {
-        const LimaString firstSimpleTerm = token->stringForm();
-        std::vector<std::vector<LimaString> > additionalMultiTermList;
-        std::stack<std::deque<LinguisticGraphVertex>,std::vector<deque<LinguisticGraphVertex> > > triggerMatches;
-        gtrans->buildNextTermsList( firstSimpleTerm, additionalMultiTermList );
-        gtrans->checkMultiTerms(graph, vertex,
-                                     limit, analysis, additionalMultiTermList,
-                                     triggerMatches );
-        if( triggerMatches.empty() ) {
-          LDEBUG << "Automaton::getMatchingTransitions: trans of type gazeteerTransition selected but no match";
-          match=false;
-        }
-        else {
-          deque<LinguisticGraphVertex>& vertices = triggerMatches.top();
+        deque<LinguisticGraphVertex> vertices;
+        match = gtrans->matchPath(graph, vertex, limit, searchGraph, analysis, token, vertices, data);
+        if( match ) {
           newPair = DFFSPos(vertices,&(*trans));
         }
       }
@@ -520,7 +511,7 @@ push(const LinguisticGraphVertex& vertex,
 //              << state << " for vertex " << nextVertex;
       if (m_automaton.
           getMatchingTransitions(m_graph,nextVertex,analysis,
-                                 state,matchingTransitions,limit)) {
+                                 m_searchGraph,state,matchingTransitions,limit)) {
 
 /*        if (logger.isDebugEnabled()) {
           ostringstream oss;

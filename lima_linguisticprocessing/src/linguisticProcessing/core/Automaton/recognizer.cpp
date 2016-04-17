@@ -339,37 +339,15 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   AULOGINIT;
   // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
   const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
-  std::stack<int,std::vector<int> > third;  // empty stack using vector
   RecognizerMatch triggermatch(&graph);
   LinguisticGraphVertex right=position;
   if( gazeteerTrigger != 0 ) {
     Token* token = get(vertex_token, *(graph.getGraph()), position);
-    const LimaString firstSimpleTerm = token->stringForm();
-    std::vector<std::vector<LimaString> > additionalMultiTermList;
-    std::stack<std::deque<LinguisticGraphVertex>,vector<deque<LinguisticGraphVertex> > > triggerMatches;
-    /*
-     * First step is to get multi-term elements whose first term mach the current position
-     * and then build the list of all following terms from this selected multiterm elements
-     * with GazeteerTransition::buildNextTermsList()
-     */
-    gazeteerTrigger->buildNextTermsList( firstSimpleTerm, additionalMultiTermList );
-    //ForwardSearch forward0;
-    /*
-     * Second step is to check these multi-term in graph from current position and select the longuest match
-     */
-
-    gazeteerTrigger->checkMultiTerms(graph, position,
-                                     end, analysis, additionalMultiTermList,
-                                     triggerMatches );
-    /*
-     * Last step consists in initializing triggermatch with this longuest match
-     */
-    if( triggerMatches.empty() ) {
-      LDEBUG << "Recognizer::testSetOfRules: trigger of type gazeteer selected but no match";
-      return 0;
-    }
-    else {
-      std::deque<LinguisticGraphVertex>& vertices = triggerMatches.top();
+    MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), position);
+    deque<LinguisticGraphVertex> vertices;
+    ForwardSearch searchGraph;
+    bool match = gazeteerTrigger->matchPath(graph, position, end, &searchGraph, analysis, token, vertices, data);
+    if( match ) {
       for( std::deque<LinguisticGraphVertex>::const_iterator vIt = vertices.begin(); vIt != vertices.end() ; vIt++ ) {
         triggermatch.addBackVertex(*vIt,trigger.keep(),"trigger");
       }

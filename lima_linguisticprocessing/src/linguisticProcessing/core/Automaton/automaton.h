@@ -341,6 +341,7 @@ public:
   bool getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                               const LinguisticGraphVertex& vertex, 
                               AnalysisContent& analysis,
+                              SearchGraph* searchGraph,
                               const Tstate& state,
                               std::vector<std::pair<std::deque<LinguisticGraphVertex>,const Transition*> >& matchingTransitions,
                               const LinguisticGraphVertex& limit) const;
