@@ -24,11 +24,11 @@ Under Ubuntu 14.04, most of these dependencies are installed with the following 
 ```
 $ sudo apt-get install python-nltk gawk cmake qt5-default libqt5xmlpatterns5 libqt5xmlpatterns5-dev \
 qttools5-dev build-essential libboost-all-dev libenchant-dev mesa-common-dev libgl1-mesa-dev\
-libglu1-mesa-dev
+libglu1-mesa-dev libasan0
 ```
 Under Mageia, most of these dependencies are installed with the following 
 packages:
-$ sudo urpmi cmake, lib64qwt-devel, (to be completed)
+$ sudo urpmi cmake, lib64qwt-devel, libasan1 (to be completed)
 
 qhttpserver can be downloaded and installed from 
 https://github.com/aymara/qhttpserver
