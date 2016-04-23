@@ -19,9 +19,10 @@
 /************************************************************************
  *
  * @file       SemanticRoleLabelingLoader.cpp
- * @author     Clémence Filmont <clemence.filmont@cea.fr>
+ * @author     Clémence Filmont 
+ * @author     Gael de Chalendar <gael.de-chalendar@cea.fr> 
  * @date       2014
- * copyright   Copyright (C) 2014 by CEA LIST
+ * copyright   Copyright (C) 2014-2016 by CEA LIST
  ***********************************************************************/
 
 #include "SemanticRoleLabelingLoader.h"
@@ -43,6 +44,7 @@
 #include <QString>
 #include <QFile>
 
+#include <boost/range/irange.hpp>
 
 #include <utility>
 #include <iostream>
@@ -64,8 +66,9 @@ namespace SemanticAnalysis {
 
 SimpleFactory<MediaProcessUnit,SemanticRoleLabelingLoader> SemanticRoleLabelingFactory(SEMANTICROLELABELINGLOADER_CLASSID);
 
-#define NBCOLSINSRLBEFOREFRAME 10
-
+#define NBCOLSINSRLBEFOREFRAME 11
+#define CONLLTOKENSEPARATOR "\n+"
+#define CONLLFIELDSEPARATOR "\t"
 
 // Conll handler
 struct ConllHandler
@@ -213,8 +216,11 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
   {
     int sentenceIndex=it->first;
     QString sentence=it->second;
-    if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping,sentence)){
+    if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping, sentence))
+    {
+#ifdef DEBUG_LP
       LDEBUG << "SemanticRoleLabelingLoader::process there is/are " << cHandler.m_verbalClassNb << "verbal class(es) for this sentence " ;
+#endif
       for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++){
         LinguisticGraphVertex posGraphPredicateVertex=cHandler.m_verbalClasses[vClassIndex].first;
         LimaString verbalClass=cHandler.m_verbalClasses[vClassIndex].second;
@@ -224,7 +230,9 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
         annotationData->annotate(annotPredicateVertex, "Predicate", verbalClass);
 
 
+#ifdef DEBUG_LP
         LDEBUG << "SemanticRoleLabelingLoader::process: annotation vertex"<< annotPredicateVertex <<"was created for the verbal class "<< annotationData->stringAnnotation(annotPredicateVertex, "Predicate") << "and the PoS graph vertex"<<posGraphPredicateVertex;
+#endif
         std::vector <pair<LinguisticGraphVertex,QString>>::iterator semRoleIt;
         for (semRoleIt=cHandler.m_semanticRoles[vClassIndex].begin();         semRoleIt!=cHandler.m_semanticRoles[vClassIndex].end();semRoleIt++){
           LinguisticGraphVertex posGraphRoleVertex=(*semRoleIt).first;
@@ -236,7 +244,9 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
           annotationData->addMatching("PosGraph", posGraphRoleVertex, "annot", annotRoleVertex);
 
 
+#ifdef DEBUG_LP
           LDEBUG << "SemanticRoleLabelingLoader::process: annotation edge" << roleEdge << "annotated " << annotationData->stringAnnotation(roleEdge, "SemanticRole")<< "was created for" << verbalClass << " and the PoS graph vertices " << posGraphPredicateVertex << "and" << posGraphRoleVertex ;
+#endif
         }
       }
     }
@@ -250,8 +260,8 @@ ConllHandler::ConllHandler(MediaId language, AnalysisContent& analysis, Linguist
 m_language(language),
 m_analysis(analysis),
 m_graph(graph),
-m_descriptorSeparator("\t+"),
-m_tokenSeparator("\n+"),
+m_descriptorSeparator(CONLLFIELDSEPARATOR),
+m_tokenSeparator(CONLLTOKENSEPARATOR),
 m_verbalClasses(),
 m_semanticRoles(),
 m_verbalClassNb()
@@ -269,29 +279,36 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
   QStringList sentenceTokens=cHandler.splitSegment(sent, m_tokenSeparator);
   QString firstSentenceToken=(*sentenceTokens.constBegin());
   int descriptorsNb = cHandler.splitSegment(firstSentenceToken, m_descriptorSeparator).size();
-  m_verbalClassNb = descriptorsNb -NBCOLSINSRLBEFOREFRAME;
+  m_verbalClassNb = descriptorsNb - NBCOLSINSRLBEFOREFRAME - 1;
   int classIndex=0;
   if (m_verbalClassNb > 0)
   {
+#ifdef DEBUG_LP
     LDEBUG << "ConllHandler::extractSemanticInformation" << m_verbalClassNb << sentenceI << " : \n" << sent ;
+#endif
     m_verbalClasses.clear();
     m_verbalClasses.resize(m_verbalClassNb);
     m_semanticRoles.clear();
     m_semanticRoles.resize(m_verbalClassNb);
     //repeated on each token of the sentence, that is on each line
-    for (QStringList::const_iterator tokensIterator = sentenceTokens.constBegin(); tokensIterator != sentenceTokens.constEnd();
-            ++tokensIterator)
+    for (const auto & token: sentenceTokens)
     {
       int  roleNumbers=0;
-      QStringList descriptors=cHandler.splitSegment((*tokensIterator),m_descriptorSeparator);
+      QStringList descriptors=cHandler.splitSegment(token,m_descriptorSeparator);
       if (descriptors.size()>=NBCOLSINSRLBEFOREFRAME+m_verbalClassNb)
       {
         int conllTokenId=descriptors[0].toInt();
         QString conllToken=descriptors[1];
+#ifdef DEBUG_LP
+        LDEBUG << "ConllHandler::extractSemanticInformation token " << conllTokenId << conllToken;
+#endif
         if(descriptors[NBCOLSINSRLBEFOREFRAME]!="_")
         {
             QString verbalClass=descriptors[NBCOLSINSRLBEFOREFRAME];
             QString vClass=descriptors[NBCOLSINSRLBEFOREFRAME];
+#ifdef DEBUG_LP
+            LDEBUG << "ConllHandler::extractSemanticInformation verbalClass" << vClass;
+#endif
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
             if (classIndex >= m_verbalClasses.size())
             {
@@ -301,22 +318,27 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
             m_verbalClasses[classIndex]=qMakePair(limaTokenId, vClass);
             classIndex++;
         }
-        for (int roleTargetFieldIndex=0; roleTargetFieldIndex<m_verbalClassNb;roleTargetFieldIndex++)
+
+        for (auto roleTargetFieldIndex : boost::irange(0,m_verbalClassNb))
         {
-          LDEBUG << "ConllHandler::extractSemanticInformation descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
+#ifdef DEBUG_LP
+          LDEBUG << "ConllHandler::extractSemanticInformation"<<"nb descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
+#endif
           if (NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex >= descriptors.size())
           {
             LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error" <<  roleTargetFieldIndex;
             break;
           }
-          if (descriptors[NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex]!="_")
+          if (descriptors[NBCOLSINSRLBEFOREFRAME+1+roleTargetFieldIndex]!="_")
           {
-            QString semanticRoleLabel=descriptors[NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex];
+            QString semanticRoleLabel=descriptors[NBCOLSINSRLBEFOREFRAME+1+roleTargetFieldIndex];
 
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI,   limaConllMapping);
             if(limaTokenId!=0)
             {
-              LDEBUG << "ConllHandler::extractSemanticInformation The PoS graph token id matching the conll token id " << conllTokenId << " is " << limaTokenId;
+#ifdef DEBUG_LP
+              LDEBUG << "ConllHandler::extractSemanticInformation argument "<<semanticRoleLabel<<": The PoS graph token id matching the conll token id " << conllTokenId << " is " << limaTokenId;
+#endif
               std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
               if (roleTargetFieldIndex >= m_semanticRoles.size())
               {

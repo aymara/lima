@@ -18,9 +18,10 @@
 */
 /**
  * @file       SemanticRoleLabelingLoader.h
- * @author     Clémence Filmont <clemence.filmont@cea.fr>
+ * @author     Clémence Filmont
+ * @author     Gael de Chalendar <gael.de-chalendar@cea.fr> 
  * @date       2014-04-17
- * copyright   Copyright (C) 2014 by CEA LIST
+ * copyright   Copyright (C) 2014-2016 by CEA LIST
  */
 
 #ifndef SEMANTICROLELABELINGLOADER_H
@@ -38,7 +39,8 @@ class SemanticRoleLabelingLoaderPrivate;
 
 /**
  * @brief      A Semantic Role Labeling Loader class
- * @author     Clémence Filmont <clemence.filmont@cea.fr>
+ * @author     Clémence Filmont
+ * @author     Gael de Chalendar <gael.de-chalendar@cea.fr> 
  */
 class SemanticRoleLabelingLoader : public AnalysisLoader
 {
@@ -52,7 +54,7 @@ class SemanticRoleLabelingLoader : public AnalysisLoader
   LimaStatusCode process(AnalysisContent& analysis) const;
 
 private:
-  SemanticRoleLabelingLoaderPrivate* m_d;;
+  SemanticRoleLabelingLoaderPrivate* m_d;
 
 };
 

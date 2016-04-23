@@ -1404,7 +1404,7 @@ des	DETDES
 camps	NC
 d'	P
 extermination	NC
-nazis	NC
+nazis	ADJ
 était	V
 niée	VPP
 .	PONCTU_FORTE
@@ -3647,8 +3647,7 @@ stylo	NC
 MSDN	NPP
 ,	PONCT
 un	DET
-bloc	NC
-notes	NC
+bloc-notes	NC
 DevDays	NPP
 ,	PONCT
 une	DET
@@ -3711,9 +3710,7 @@ les	DET
 nouvelles	ADJ
 fonctionnalités	NC
 de	P
-Visual	NPP
-Studio	NC
-2005	NC
+Visual Studio 2005	NPP
 .	PONCTU_FORTE
 Pour	P
 conclure	VINF
@@ -5880,7 +5877,7 @@ calculé	VPP
 que	CS
 le	DET
 numéro	NC
-100 000	NC
+100 000	ADJNUM
 était	V
 l'	DET
 article	NC
@@ -7921,8 +7918,7 @@ messages	NC
 pour	P
 trouver	VINF
 des	DETDES
-mots	NC
-clés	NC
+mots-clés	NC
 correspondant	VPR
 à	P
 une	DET
@@ -9409,8 +9405,8 @@ faite	VPP
 par	P
 M.	NC
 Breton	NC
-fait	VPP
-suite à	P
+fait suite	VPP
+à	P
 la	DET
 révélation	NC
 récente	ADJ
@@ -11215,7 +11211,7 @@ rapport	NC
 estime	V
 qu'	CS
 environ	ADV
-13 940	NC
+13 940	DETNUM
 personnes	NC
 ont été	V
 exposées	VPP
@@ -12265,8 +12261,7 @@ ses	DET
 partenaires	NC
 de	P
 l'	DET
-Union	NC
-chrétienne-démocrate	NC
+Union chrétienne-démocrate	NPP
 (	PONCT
 KDU	NPP
 -	PONCT
@@ -13779,7 +13774,7 @@ paludisme	NC
 »	PONCT
 .	PONCTU_FORTE
 Près de	P
-3 000	NC
+3 000	DETNUM
 enfants	NC
 meurent	V
 chaque jour	NC
@@ -13937,11 +13932,9 @@ Toulouse	NPP
 -	PONCT
 Blagnac	NPP
 à	P
-12:22	NC
-GMT	NC
+12:22 GMT	NC
 (	PONCT
-14:22	NC
-local	NC
+14:22 local	NC
 )	PONCT
 après	P
 presque	ADV
@@ -28985,7 +28978,7 @@ d'	P
 enthousiasme	NC
 des	DETDES
 militants	NC
-labour	NC
+Labour	NPP
 pourrait	V
 néanmoins	ADV
 rendre	VINF
@@ -39362,7 +39355,7 @@ gouvernement	NC
 américain	ADJ
 une	DET
 proposition	NC
-nord-coréenne	NC
+nord-coréenne	ADJ
 jugée	VPP
 «	PONCT
 irréaliste	ADJ
@@ -39756,10 +39749,7 @@ Nord	NPP
 )	PONCT
 et	CC
 l'	DET
-Union	NC
-des	DETDES
-démocrates	NC
-chrétiens	NC
+Union des démocrates chrétiens	NPP
 (	PONCT
 UDC	NPP
 ,	PONCT
@@ -39900,8 +39890,7 @@ d'	P
 Orléans	NPP
 ,	PONCT
 le	DET
-8 mai	NC
-1429	NC
+8 mai 1429	NC
 ,	PONCT
 par	P
 les	DET
@@ -40737,7 +40726,7 @@ cette	DET
 opinion	NC
 (	PONCT
 M.	NC
-Sueur	NC
+Sueur	NPP
 se situe	V
 dans	P
 la	DET
@@ -40936,7 +40925,7 @@ Jeremy Vine	NPP
 des	DETDES
 32	ADJ
 parlementaires	NC
-travaillistes	NC
+travaillistes	ADJ
 élus	VPP
 en	P
 Écosse	NPP
@@ -71585,7 +71574,7 @@ jeudi matin	NC
 .	PONCTU_FORTE
 Une	DET
 affluence	NC
-record	NC
+record	ADJ
 est	V
 prévue	VPP
 et	CC
@@ -76915,55 +76904,6 @@ un	DET
 engagement	NC
 électoral	ADJ
 .	PONCTU_FORTE
-De plus	ADV
-,	PONCT
-il	CLS
-se réjouit	V
-que	CS
-leur	DET
-les	DET
-homosexuels	NC
-triomphe	NC
-est	V
-le	DET
-triomphe	NC
-de	P
-tous	ADJ
-,	PONCT
-leur	DET
-victoire	NC
-nous	CLO
-rend	V
-tous	PRO
-meilleurs	ADJ
-,	PONCT
-elle	CLS
-rend	V
-notre	DET
-société	NC
-meilleure	ADJ
-et	CC
-est	V
-sûr	ADJ
-que	CS
-d'	DETDE
-autres	ADJ
-pays	NC
-viendront	V
-ensuite	ADV
-,	PONCT
-poussés	VPP
-par	P
-deux	DETNUM
-forces	NC
-imparables	ADJ
-,	PONCT
-la	DET
-liberté	NC
-et	CC
-l'	DET
-égalité	NC
-.	PONCTU_FORTE
 Un	DET
 rassemblement	NC
 spontané	ADJ
@@ -77551,9 +77491,7 @@ adjacentes	ADJ
 Canning	NPP
 Road	NPP
 vers	P
-12:45	NC
-heure	NC
-locale	ADJ
+12:45 heure locale	ADJ
 (	PONCT
 11:45 UTC	NC
 )	PONCT
@@ -77686,7 +77624,7 @@ le	DET
 plus	ADV
 de	P
 troubles	NC
-possibles.	NC
+possibles.	ADJ
 alors que	CS
 la	DET
 ministre	NC
@@ -78095,11 +78033,7 @@ premier	ADJ
 tour	NC
 présidente	NC
 du	DETDU
-Mouvement	NC
-des	DETDES
-entreprises	NC
-de	P
-France	NPP
+Mouvement des entreprises de France	NPP
 (	PONCT
 MEDEF	NPP
 )	PONCT
@@ -80246,8 +80180,7 @@ publics	ADJ
 ,	PONCT
 et	CC
 le	DET
-Cabinet	NC
-Office	NC
+Cabinet Office	NPP
 a	V
 demandé	VPP
 à	P
@@ -81793,7 +81726,7 @@ que	CS
 le	DET
 câble	NC
 babord	NC
-a	V
+a frotté	V
 frotté	VPP
 contre	P
 un	DET
@@ -83478,7 +83411,7 @@ de	P
 France	NPP
 .	PONCTU_FORTE
 Environ	ADV
-50 000	NC
+50 000	DETNUM
 personnes	NC
 étaient	V
 rassemblés	VPP
@@ -86080,7 +86013,7 @@ Lords	NPP
 Environ	ADV
 11	ADJ
 soldats	NC
-Britanniques	NC
+Britanniques	ADJ
 sont	V
 accusés	VPP
 de	P
@@ -87531,6 +87464,7 @@ fait	NC
 du	DETDU
 petit	ADJ
 nombre	NC
+de	P
 personnes	NC
 décédées	VPP
 .	PONCTU_FORTE
@@ -94006,7 +93940,7 @@ embarquées	VPP
 et	CC
 à	P
 un	DET
-dispositifs	NC
+dispositif	NC
 laser	NC
 monté	VPP
 sur	P

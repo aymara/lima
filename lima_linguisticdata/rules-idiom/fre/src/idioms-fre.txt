@@ -1262,12 +1262,12 @@ D;i;D;beaucoup;de beaucoup;adverbe;
 D;i;D;biais;de biais;adverbe;
 D;i;D;bien;bien qu';conjonction de subordination;bien que
 D;i;D;bien;bien que;conjonction de subordination;bien que
-D;i;D;bord;au bord de;préposition;au bord de
-D;i;D;bord;au bord des;préposition article pluriel;au bord de
-D;i;D;bord;au bord des;préposition;au bord de
-D;i;D;bord;au bord d';préposition;au bord de
-D;i;D;bord;au bord du;préposition article;au bord de
-D;i;D;bord;au bord du;préposition;au bord de
+;;;#D;i;D;bord;au bord de;préposition;au bord de
+;;;#D;i;D;bord;au bord des;préposition article pluriel;au bord de
+;;;#D;i;D;bord;au bord des;préposition;au bord de
+;;;#D;i;D;bord;au bord d';préposition;au bord de
+;;;#D;i;D;bord;au bord du;préposition article;au bord de
+;;;#D;i;D;bord;au bord du;préposition;au bord de
 D;i;D;cas;dans tous les cas;adverbe;
 D;i;D;cela;cela dit;adverbe;
 D;i;D;champ;sur le champ;adverbe;
@@ -3773,3 +3773,6 @@ GC;;;ce;et ce;préposition;
 GC;;;ce;et ce;conjonction de coordination;
 GC;;;qualité;en qualité de;adverbe;
 GC;;;qualité;en qualité d';adverbe;
+GC;;A;clé;[S]&mot clé;nom masculin;mot-clé
+GC;;;suite;[V]&faire suite;verbe intransitif;faire suite
+GC;;A;bord;au bord;adverbe;

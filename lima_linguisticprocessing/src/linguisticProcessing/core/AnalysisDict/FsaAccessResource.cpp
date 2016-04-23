@@ -91,6 +91,12 @@ void FsaAccessResource::init(
         break;
       }
     }
+    if (!m_fsaAccess) {
+      // FIXME: In this case, the m_fsaAccess pointer is still NULL. Try to access to
+      // this ressource will crash the application.
+      LERROR << "resource file" << unitConfiguration.getParamsValueAtKey("keyFile") << "not found in path"
+        << Common::MediaticData::MediaticData::single().getResourcesPath();
+    }
   }
   catch (NoSuchParam& )
   {
