@@ -64,6 +64,7 @@ public:
   const MediaProcessUnit* m_loader;
   QString m_inputSuffix;
   QString m_outputSuffix;
+  QString m_temporaryFileMetadata;
 };
 
 KnowledgeBasedSemanticRoleLabelerPrivate::KnowledgeBasedSemanticRoleLabelerPrivate() :
@@ -121,17 +122,28 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   }
 
   try {
+    m_d->m_temporaryFileMetadata = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("temporaryFileMetadata").c_str());
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value (empty)
+  }
+
+  try {
     m_d->m_inputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    // optional parameter: keep default value
+    LERROR << "Missing 'inputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
+           << (int)language << " !";
+    throw InvalidConfiguration();
   }
 
   try {
     m_d->m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    // optional parameter: keep default value
+    LERROR << "Missing 'outputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
+           << (int)language << " !";
+    throw InvalidConfiguration();
   }
 
   QString path;
@@ -245,6 +257,16 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
+  
+  QScopedPointer<QTemporaryFile> temporaryFile;
+  if (!m_d->m_temporaryFileMetadata.isEmpty())
+  {
+    QScopedPointer<QTemporaryFile> otherTemp(new QTemporaryFile());
+    temporaryFile.swap(otherTemp);
+    temporaryFile->open();
+    metadata->setMetaData(m_d->m_temporaryFileMetadata.toUtf8().constData(), 
+                          temporaryFile->fileName().toUtf8().constData());
+  }
 
   // Use CoNLL duper to produce the input to the SRL
   LimaStatusCode returnCode(SUCCESS_ID);
@@ -254,19 +276,26 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
     return returnCode;
   }
 
-  QString fileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
-  QString inputFilename, outputFilename;
-  if (!m_d->m_inputSuffix.isEmpty())
+  QString conllInput;
+  
+  if (m_d->m_temporaryFileMetadata.isEmpty())
   {
-    inputFilename = fileName+ m_d->m_inputSuffix;
+    QString fileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
+    QString inputFilename;
+    if (!m_d->m_inputSuffix.isEmpty())
+    {
+      inputFilename = fileName+ m_d->m_inputSuffix;
+    }
+    QFile inputFile(inputFilename);
+    inputFile.open(QIODevice::ReadOnly);
+    conllInput = QString::fromUtf8(inputFile.readAll().constData());
+    inputFile.close();
   }
-  QFile inputFile(inputFilename);
-  inputFile.open(QIODevice::ReadOnly);
-  QString conllInput = QString::fromUtf8(inputFile.readAll().constData());
-  inputFile.close();
-  if (!m_d->m_outputSuffix.isEmpty())
+  else
   {
-    outputFilename = fileName + m_d->m_outputSuffix;
+    temporaryFile->open();
+    conllInput = QString::fromUtf8(temporaryFile->readAll().constData());
+    temporaryFile->close();
   }
 
   // Run the semantic role labeller
@@ -287,11 +316,26 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
     Py_Exit(1);
   }
   LDEBUG << "Python result is:" << result;
-  QFile outputFile(outputFilename);
-  outputFile.open(QIODevice::WriteOnly);
-  outputFile.write(result);
-  outputFile.close();
-  
+  if (m_d->m_temporaryFileMetadata.isEmpty())
+  {
+    QString outputFilename;
+    if (!m_d->m_outputSuffix.isEmpty())
+    {
+      QString fileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
+      outputFilename = fileName + m_d->m_outputSuffix;
+    }
+    QFile outputFile(outputFilename);
+    outputFile.open(QIODevice::WriteOnly);
+    outputFile.write(result);
+    outputFile.close();
+  }
+  else
+  {
+    temporaryFile->open();
+    temporaryFile->seek(0);
+    temporaryFile->write(result);
+    temporaryFile->close();
+  }
   // Import the CoNLL result
   returnCode=m_d->m_loader->process(analysis);
   if (returnCode!=SUCCESS_ID) {
