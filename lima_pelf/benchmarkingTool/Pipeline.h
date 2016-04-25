@@ -81,7 +81,7 @@ public:
     Qt::DropActions supportedDropActions() const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-public slots:
+public Q_SLOTS:
 
     void unitResultsChanged (PipelineUnit* pu, EvaluationResultSet* ers);
 

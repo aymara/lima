@@ -22,6 +22,7 @@ set(CMAKE_PREFIX_PATH
 )
 
 # Add definitions and flags
+add_definitions(-DQT_NO_KEYWORDS)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -lpthread")
 

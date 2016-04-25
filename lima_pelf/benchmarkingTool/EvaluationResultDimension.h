@@ -50,7 +50,7 @@ public:
 signals:
     void visibleChanged ();
 
-public slots:
+public Q_SLOTS:
 
     void updateVisibleChanged (int state);
 

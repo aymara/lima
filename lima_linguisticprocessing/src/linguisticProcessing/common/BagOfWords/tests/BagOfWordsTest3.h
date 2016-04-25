@@ -6,7 +6,7 @@
 class BagOfWordsTest3: public QObject
 {
   Q_OBJECT
-private slots:
+private Q_SLOTS:
   void initTestCase();
 
   // BoWText with a BoWTerm and a BoWToken

@@ -44,7 +44,7 @@ public:
 signals:
     void updateEntry (AbstractResourceEntry* de);
 
-public slots:
+public Q_SLOTS:
 
     void submit ();
     void checkValidity();

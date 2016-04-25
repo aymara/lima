@@ -43,7 +43,7 @@ public:
     void keyPressEvent (QKeyEvent* event);
     void contextMenuEvent (QContextMenuEvent* event);
 
-public slots:
+public Q_SLOTS:
 
     void editEntry (const QModelIndex& index);
     void createEntry ();
