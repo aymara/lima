@@ -711,6 +711,15 @@
 
       <param key="loader" value="srlLoader"/>
     </group>
+    <group name="kbsrl" class="KnowledgeBasedSemanticRoleLabeler">
+      <param key="loglevel" value="error"/>
+      <param key="path" value="path/to/aymara/knowledgesrl/src"/>
+      <param key="mode" value="VerbNet"/>
+      <param key="dumper" value="conllDumperToFile"/>
+      <param key="inputSuffix" value=".conll"/>
+      <param key="outputSuffix" value=".conll.srl"/>
+      <param key="loader" value="srlLoader"/>
+    </group>
     <group name="srlLoader" class="SemanticRoleLabelingLoader">
       <param key="inputSuffix" value=".conll.srl"/>
     </group>

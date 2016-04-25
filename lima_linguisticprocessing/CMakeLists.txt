@@ -118,6 +118,16 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
 message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
 endif()
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtNetwork_location}
+                ${QtXmlPatterns_location}
+          DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
+find_package(PythonLibs 3.4 REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+link_directories(${PYTHON_LIBRARIES})
+
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )

@@ -21,12 +21,40 @@ add_definitions(-DLIMA_SEMANTICANALYSIS_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-semanticanalysis_LIB_SRCS
-   ConstraintFunction.cpp SemanticRelationAnnotation.cpp SemanticRelationData.cpp SemanticRoleLabelingLoader.cpp LimaConllTokenIdMapping.cpp
+   ConstraintFunction.cpp 
+   KnowledgeBasedSemanticRoleLabeler.cpp
+   SemanticRelationAnnotation.cpp 
+   SemanticRelationData.cpp 
+   SemanticRoleLabelingLoader.cpp 
+   LimaConllTokenIdMapping.cpp 
+   SemanticRelationsXmlLogger.cpp
 )
 
 add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})
 
-target_link_libraries(lima-lp-semanticanalysis lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph  lima-lp-linguisticanalysisstructure lima-lp-textsegmentation lima-lp-syntacticanalysis lima-lp-automaton lima-lp-applyrecognizer
+target_link_libraries(lima-lp-semanticanalysis 
+    lima-common-factory 
+    lima-common-misc 
+    lima-common-data 
+    lima-common-fsaaccess 
+    lima-common-mediaticdata 
+    lima-common-time 
+    lima-common-factory 
+    lima-common-xmlconfigurationfiles 
+    lima-common-processunitframework 
+    lima-common-mediaprocessors 
+    lima-lp-linguisticprocessors 
+    lima-lp-linguisticresources 
+    lima-lp-annotationgraph  
+    lima-lp-linguisticanalysisstructure 
+    lima-lp-textsegmentation 
+    lima-lp-syntacticanalysis 
+    lima-lp-automaton 
+    lima-lp-applyrecognizer
+    ${optionalLibs}
+    ${Boost_LIBRARIES}
+    ${QT_LIBRARIES}
+    ${PYTHON_LIBRARY}
 )
 
 set_target_properties(lima-lp-semanticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
