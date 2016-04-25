@@ -39,7 +39,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
 
     # Options for runtime memory leaks checking
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-omit-frame-pointer" )
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer" )
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
     # factories, thus their symbols must be known even if not used by the binary
