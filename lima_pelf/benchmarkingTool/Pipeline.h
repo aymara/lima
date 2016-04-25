@@ -85,7 +85,7 @@ public Q_SLOTS:
 
     void unitResultsChanged (PipelineUnit* pu, EvaluationResultSet* ers);
 
-signals:
+Q_SIGNALS:
 
     void unitsChanged ();
     void resultsChanged ();

@@ -55,6 +55,6 @@ SpecificEntity& SpecificEntity::operator=(const SpecificEntity& se)
 void SpecificEntity::slotTriggered()
 {
   qDebug() << "SpecificEntity::slotTriggered";
-  emit triggered( this );
+  Q_EMIT triggered( this );
 }
 

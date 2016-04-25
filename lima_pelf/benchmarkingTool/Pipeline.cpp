@@ -121,7 +121,7 @@ void Pipeline::moveUnits (QModelIndexList sourceIndexes, QModelIndex targetIndex
         return;
     qDebug() << "Reordering pipeline files";
     QList<QModelIndex>::const_iterator sourceIndexIt;
-    emit layoutAboutToBeChanged();
+    Q_EMIT layoutAboutToBeChanged();
     qSort(sourceIndexes);
     QList<PipelineUnit*> movedUnits;
     int shiftSourceIndexes = 0, shiftTargetIndex = 0, targetIndexRow = targetIndex.row();
@@ -138,7 +138,7 @@ void Pipeline::moveUnits (QModelIndexList sourceIndexes, QModelIndex targetIndex
       units.insert(units.begin() + targetIndex.row() + shiftTargetIndex, movedUnit);
       shiftTargetIndex++;
     }
-    emit layoutChanged();
+    Q_EMIT layoutChanged();
     pipelineView->clearSelection();
     unitsUpdate();
     setDirty();
@@ -162,12 +162,12 @@ void Pipeline::deleteUnits (QModelIndexList unitIndexes)
 {
     qDebug() << "Removing pipeline files";
     QList<QModelIndex>::const_iterator unitIndexesIt;
-    emit layoutAboutToBeChanged();
+    Q_EMIT layoutAboutToBeChanged();
     qSort(unitIndexes);
     int shiftIndexes = 0;
     for(unitIndexesIt = unitIndexes.constBegin(); unitIndexesIt != unitIndexes.constEnd(); unitIndexesIt++)
         shiftIndexes = deleteUnit(*unitIndexesIt, shiftIndexes);
-    emit layoutChanged();
+    Q_EMIT layoutChanged();
     setDirty();
     pipelineView->clearSelection();
 }
@@ -190,12 +190,12 @@ int Pipeline::deleteUnit (QModelIndex unitIndex, int shiftIndexes)
 
 void Pipeline::clearUnits ()
 {
-    emit layoutAboutToBeChanged();
+    Q_EMIT layoutAboutToBeChanged();
     QList<PipelineUnit*>::iterator unitsIt = units.begin();
     for(; unitsIt < units.end(); unitsIt++)
         delete (*unitsIt);
     units.clear();
-    emit layoutChanged();
+    Q_EMIT layoutChanged();
     pipelineView->clearSelection();
     unitsUpdate();
     setDirty();
@@ -225,7 +225,7 @@ bool Pipeline::resetBenchmarking ()
     for(; unitsIt < units.end(); unitsIt++)
         (*unitsIt)->status = PipelineUnit::STATUS_UNPROCESSED;
     pipelineView->reset();
-    emit resultsChanged();
+    Q_EMIT resultsChanged();
     qDebug() << "Reseted pipeline files processing states";
     processing = false;
     return true;
@@ -318,7 +318,7 @@ void Pipeline::continueBenchmarking ()
         for(; unitsIt != units.end(); unitsIt++)
             if((*unitsIt)->status == PipelineUnit::STATUS_PROCESSED)
                 (*unitsIt)->status = PipelineUnit::STATUS_UNPROCESSED;
-        emit finishedBenchmarking();
+        Q_EMIT finishedBenchmarking();
     }
 }
 
@@ -334,7 +334,7 @@ void Pipeline::unitsUpdate ()
                 newResultUnits[*unitsIt] = result->resultUnits[*unitsIt];
         result->resultUnits = newResultUnits;
     }
-    emit unitsChanged();
+    Q_EMIT unitsChanged();
 }
 
 void Pipeline::unitResultsChanged (PipelineUnit* pu, EvaluationResultSet* ers)
@@ -354,7 +354,7 @@ void Pipeline::unitResultsChanged (PipelineUnit* pu, EvaluationResultSet* ers)
       qDebug() << "Pipeline::unitResultsChanged startTime"<<startTime<<" not found";
     }
     pipelineView->reset();
-    emit resultsChanged();
+    Q_EMIT resultsChanged();
     if(processing)
         continueBenchmarking();
 }

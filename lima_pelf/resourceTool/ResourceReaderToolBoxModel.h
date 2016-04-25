@@ -39,7 +39,7 @@ public:
   ResourceReaderToolBoxModel (QObject * parent = 0);
   virtual ~ResourceReaderToolBoxModel();
 
-  void emitDataInstalled (bool success) { emit dataInstalled(success); }; // ResourceReaderSimpleModel needed emit function
+  void emitDataInstalled (bool success) { Q_EMIT dataInstalled(success); }; // ResourceReaderSimpleModel needed Q_EMIT function
 
 Q_SIGNALS:
   void dataInstalled (bool success); // ResourceReaderSimpleModel needed signal

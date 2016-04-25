@@ -64,7 +64,7 @@ void ResourceEditorTableModel::addEntry (AbstractResourceEntry* de)
 {
     dataModified = true;
     availableData << de;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void ResourceEditorTableModel::deleteEntries (QModelIndexList indexList)
@@ -77,7 +77,7 @@ void ResourceEditorTableModel::deleteEntries (QModelIndexList indexList)
             entriesList << entry;
     for(int i = 0; i < entriesList.size(); i++)
         availableData.removeAll(entriesList.at(i));
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 #include "ResourceEditorTableModel.moc"

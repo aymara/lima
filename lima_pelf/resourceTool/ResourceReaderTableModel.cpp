@@ -72,7 +72,7 @@ void ResourceReaderTableModel::sortByHeader (int column, Qt::SortOrder order)
     sortedHeaderColumn = column;
     sortedHeaderOrder = order;
     qSort(availableData.begin(), availableData.end(), headerLessThan);
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 bool ResourceReaderTableModel::headerLessThan (AbstractResourceEntry* entry1, AbstractResourceEntry* entry2)

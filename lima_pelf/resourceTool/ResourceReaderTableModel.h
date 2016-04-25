@@ -52,7 +52,7 @@ public:
     void sortByHeader (int column, Qt::SortOrder order);
     static bool headerLessThan (AbstractResourceEntry* entry1, AbstractResourceEntry* entry2);
     QVariant data (const QModelIndex& index, int role) const;
-    void emitDataInstalled (bool success) { emit dataInstalled(success); }; // ResourceReaderSimpleModel needed emit function
+    void emitDataInstalled (bool success) { Q_EMIT dataInstalled(success); }; // ResourceReaderSimpleModel needed Q_EMIT function
 
 Q_SIGNALS:
 
