@@ -109,7 +109,6 @@ int run(int argc,char** argv)
   std::string lpConfigFile;
   std::string commonConfigFile;
   std::string clientId;
-  std::string cesartOutput;
   std::vector<std::string> languages;
   std::vector<std::string> dumpersv;
   std::vector<std::string> outputsv;
