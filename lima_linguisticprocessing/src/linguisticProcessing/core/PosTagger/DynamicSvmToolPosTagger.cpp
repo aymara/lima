@@ -47,7 +47,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_io.hpp>
-#include <boost/foreach.hpp>
+#include <boost/Q_FOREACH.hpp>
 
 #include <cfloat> // LDBL_MIN/MAX
 #include <cmath> // log

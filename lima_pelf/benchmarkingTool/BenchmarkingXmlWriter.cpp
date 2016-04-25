@@ -45,7 +45,7 @@ bool BenchmarkingXmlWriter::write()
   writeStartElement("pipeline");
   int unitId = 0;
   const QList<PipelineUnit*>& pipelineUnits = m_pipeline->getUnits();
-  foreach (PipelineUnit* unit, pipelineUnits)
+  Q_FOREACH (PipelineUnit* unit, pipelineUnits)
   {
     writeStartElement("unit");
     unit->fileId = ++unitId;
@@ -59,20 +59,20 @@ bool BenchmarkingXmlWriter::write()
   writeEndElement();
 
   writeStartElement("evaluations");
-  foreach (BenchmarkingResult* benchmarkingResult, m_pipeline->results)
+  Q_FOREACH (BenchmarkingResult* benchmarkingResult, m_pipeline->results)
   {
     writeStartElement("pipelineEvaluation");
     QDateTime evaluationTime = benchmarkingResult->time;
     writeAttribute("time", QString::number(evaluationTime.toTime_t()));
     writeAttribute("comments", benchmarkingResult->comment);
-    foreach (PipelineUnit* unit, pipelineUnits)
+    Q_FOREACH (PipelineUnit* unit, pipelineUnits)
     {
       if(benchmarkingResult->resultUnits.contains(unit))
       {
         writeStartElement("unitEvaluation");
         writeAttribute("unitId", QString::number(unit->fileId));
         EvaluationResultSet* unitResults = benchmarkingResult->resultUnits[unit];
-        foreach(EvaluationResult::DIMENSION_ID dimensionId, unitResults->keys())
+        Q_FOREACH(EvaluationResult::DIMENSION_ID dimensionId, unitResults->keys())
         {
           EvaluationResult* result = (*unitResults)[dimensionId];
           writeStartElement("result");

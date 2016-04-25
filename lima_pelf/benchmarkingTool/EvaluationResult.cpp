@@ -195,12 +195,12 @@ QList<EvaluationResultDimension*> EvaluationResult::getDimensionsVisible ()
 {
     QList<EvaluationResultDimension*> dimensionsVisible;
     bool masked = false;
-    foreach(EvaluationResultDimension* dimension, dimensions)
+    Q_FOREACH(EvaluationResultDimension* dimension, dimensions)
     {
         if(dimension->visibilityState == Qt::PartiallyChecked)
             masked = true;
     }
-    foreach(EvaluationResultDimension* dimension, dimensions)
+    Q_FOREACH(EvaluationResultDimension* dimension, dimensions)
     {
         int dimensionGroupId = getDimensionGroup((DIMENSION_ID)dimension->id);
         bool groupChecked = dimensionGroupId == -1 || dimensions[(DIMENSION_ID)dimensionGroupId]->visibilityState == Qt::Checked;
