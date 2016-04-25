@@ -47,7 +47,7 @@ public:
 
     EvaluationResultDimension (QString n, QString k, QColor c, int i, bool r);
 
-signals:
+Q_SIGNALS:
     void visibleChanged ();
 
 public Q_SLOTS:

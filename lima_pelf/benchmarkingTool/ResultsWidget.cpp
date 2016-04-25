@@ -114,7 +114,7 @@ void ResultsWidget::contextDelete ()
       ) == QMessageBox::Ok)
     {
         pipeline->results.remove(benchmarkingResultTime);
-        emit resultsChanged();
+        Q_EMIT resultsChanged();
     }
 }
 
@@ -122,7 +122,7 @@ void ResultsWidget::contextView ()
 {
     if(selectedIndexes().size() <= 0)
         return;
-    emit viewResult(selectedIndexes().first().row());
+    Q_EMIT viewResult(selectedIndexes().first().row());
 }
 
 

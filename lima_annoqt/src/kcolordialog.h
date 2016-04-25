@@ -226,8 +226,8 @@ class KColorSpinBox : public QSpinBox
     virtual void valueChange()
     {
       updateDisplay();
-      emit valueChanged( value() );
-      emit valueChanged( currentValueText() );
+      Q_EMIT valueChanged( value() );
+      Q_EMIT valueChanged( currentValueText() );
 }*/
 
 };

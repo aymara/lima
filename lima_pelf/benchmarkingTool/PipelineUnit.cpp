@@ -108,7 +108,7 @@ void PipelineUnit::commandFinished (int exitCode, QProcess::ExitStatus exitStatu
         resultSet->findEvaluationResults(output);
 //         qDebug() << "Finished benchmarking file " << name << ", evaluation results found, processing results output";
         status = STATUS_PROCESSED;
-        emit unitResultsChanged(this, resultSet);
+        Q_EMIT unitResultsChanged(this, resultSet);
     }
 }
 

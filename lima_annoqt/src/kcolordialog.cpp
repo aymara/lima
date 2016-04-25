@@ -383,7 +383,7 @@ void KColorCells::mouseReleaseEvent(QMouseEvent *e)
 
         d->inMouse = false;
         if (cell != -1)
-            emit colorSelected(cell , color(cell));
+            Q_EMIT colorSelected(cell , color(cell));
     }
 
     QTableWidget::mouseReleaseEvent(e);
@@ -394,7 +394,7 @@ void KColorCells::mouseDoubleClickEvent(QMouseEvent * /*e*/)
     int cell = positionToCell(d->mousePos);
 
     if (cell != -1)
-        emit colorDoubleClicked(cell , color(cell));
+        Q_EMIT colorDoubleClicked(cell , color(cell));
 }
 
 
@@ -455,7 +455,7 @@ void KColorPatch::dropEvent(QDropEvent *event)
     QColor c = KColorMimeData::fromMimeData(event->mimeData());
     if (c.isValid()) {
         setColor(c);
-        emit colorChanged(c);
+        Q_EMIT colorChanged(c);
     }
 }
 
@@ -625,12 +625,12 @@ KColorTable::KColorTablePrivate::slotShowNamedColorReadError(void)
 
 //
 // 2000-02-12 Espen Sand
-// Set the color in two steps. The setColors() slot will not emit a signal
+// Set the color in two steps. The setColors() slot will not Q_EMIT a signal
 // with the current color setting. The reason is that setColors() is used
 // by the color selector dialog on startup. In the color selector dialog
 // we normally want to display a startup color which we specify
 // when the dialog is started. The slotSetColors() slot below will
-// set the palette and then use the information to emit a signal with the
+// set the palette and then use the information to Q_EMIT a signal with the
 // new color setting. It is only used by the combobox widget.
 //
 void
@@ -729,7 +729,7 @@ KColorTable::KColorTablePrivate::slotColorCellSelected(int index , const QColor&
 {
     if (!mPalette || (index >= mPalette->count()))
         return;
-    emit q->colorSelected(mPalette->color(index), mPalette->name(index));
+    Q_EMIT q->colorSelected(mPalette->color(index), mPalette->name(index));
 }
 
 void
@@ -737,14 +737,14 @@ KColorTable::KColorTablePrivate::slotColorCellDoubleClicked(int index , const QC
 {
     if (!mPalette || (index >= mPalette->count()))
         return;
-    emit q->colorDoubleClicked(mPalette->color(index), mPalette->name(index));
+    Q_EMIT q->colorDoubleClicked(mPalette->color(index), mPalette->name(index));
 }
 
 
 void
 KColorTable::KColorTablePrivate::slotColorTextSelected(const QString &colorText)
 {
-    emit q->colorSelected(m_namedColorMap[ colorText ], colorText);
+    Q_EMIT q->colorSelected(m_namedColorMap[ colorText ], colorText);
 }
 
 
@@ -1175,7 +1175,7 @@ void KColorDialog::KColorDialogPrivate::slotDefaultColorClicked()
     } else {
         showColor(selColor, QString());
     }
-    emit q->colorSelected(selColor);
+    Q_EMIT q->colorSelected(selColor);
 }
 
 void
@@ -1465,10 +1465,10 @@ void KColorDialog::KColorDialogPrivate::_setColor(const QColor &color, const QSt
 
     showColor(selColor, name);
 
-    emit q->colorSelected(selColor);
+    Q_EMIT q->colorSelected(selColor);
 }
 
-// show but don't set into selColor, nor emit colorSelected
+// show but don't set into selColor, nor Q_EMIT colorSelected
 void KColorDialog::KColorDialogPrivate::showColor(const QColor &color, const QString &name)
 {
     bRecursion = true;

@@ -81,7 +81,7 @@ public:
     void install ();
     virtual void installFinished (int exitCode, QProcess::ExitStatus exitStatus);
     virtual void installError (QProcess::ProcessError error);
-    virtual void emitDataInstalled (bool success) = 0; // Virtual emit function (needed for class to be polymorphic)
+    virtual void emitDataInstalled (bool success) = 0; // Virtual Q_EMIT function (needed for class to be polymorphic)
 
 protected:
     QString installComand;

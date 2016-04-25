@@ -108,7 +108,7 @@ void KColorValueSelector::setChooserMode( KColorChooserMode c )
     d->_mode = c;
 
     //really needed?
-    //emit modeChanged();
+    //Q_EMIT modeChanged();
 }
 
 KColorChooserMode KColorValueSelector::chooserMode () const

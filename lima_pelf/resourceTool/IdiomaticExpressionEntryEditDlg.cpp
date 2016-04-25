@@ -87,7 +87,7 @@ void IdiomaticExpressionEntryEditDlg::submit ()
     idiomaticExpressionEntry->lemma = lemmaInp->text();
     idiomaticExpressionEntry->contextual = contextualCb->itemText(contextualCb->currentIndex());
     idiomaticExpressionEntry->displayable = true;
-    emit updateEntry(idiomaticExpressionEntry);
+    Q_EMIT updateEntry(idiomaticExpressionEntry);
 }
 
 #include "IdiomaticExpressionEntryEditDlg.moc"

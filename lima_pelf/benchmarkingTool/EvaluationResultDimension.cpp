@@ -44,7 +44,7 @@ EvaluationResultDimension::~EvaluationResultDimension()
 void EvaluationResultDimension::updateVisibleChanged (int state)
 {
     visibilityState = (Qt::CheckState)state;
-    emit visibleChanged();
+    Q_EMIT visibleChanged();
 }
 
 #include "EvaluationResultDimension.moc"

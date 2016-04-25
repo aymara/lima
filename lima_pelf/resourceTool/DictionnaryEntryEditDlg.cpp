@@ -74,7 +74,7 @@ void DictionnaryEntryEditDlg::submit ()
     dictionnaryEntry->normalization = normalizationInp->text();
     dictionnaryEntry->category = categoryCb->itemText(categoryCb->currentIndex());
     dictionnaryEntry->displayable = true;
-    emit updateEntry(dictionnaryEntry);
+    Q_EMIT updateEntry(dictionnaryEntry);
 }
 
 #include "DictionnaryEntryEditDlg.moc"

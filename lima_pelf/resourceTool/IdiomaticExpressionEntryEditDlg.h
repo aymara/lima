@@ -41,7 +41,7 @@ public:
     IdiomaticExpressionEntryEditDlg (QWidget* parent = 0);
     void init (ResourceEditorTableModel* rem, AbstractResourceEntry* are = 0);
 
-signals:
+Q_SIGNALS:
     void updateEntry (AbstractResourceEntry* de);
 
 public Q_SLOTS:

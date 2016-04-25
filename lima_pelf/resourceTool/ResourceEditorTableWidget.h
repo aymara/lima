@@ -50,7 +50,7 @@ public Q_SLOTS:
     void contextEdit ();
     void contextDelete ();
 
-signals:
+Q_SIGNALS:
 
     void editEntryDlg (AbstractResourceEntry* are = 0);
 

@@ -334,7 +334,7 @@ void KColorComboPrivate::_k_slotActivated(int index)
         internalcolor = colorList[index - 1];
     }
 
-    emit q->activated(internalcolor);
+    Q_EMIT q->activated(internalcolor);
 }
 
 void KColorComboPrivate::_k_slotHighlighted(int index)
@@ -347,7 +347,7 @@ void KColorComboPrivate::_k_slotHighlighted(int index)
         internalcolor = colorList[index - 1];
     }
 
-    emit q->highlighted(internalcolor);
+    Q_EMIT q->highlighted(internalcolor);
 }
 
 void KColorComboPrivate::addColors()

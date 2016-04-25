@@ -45,12 +45,12 @@ void ResourceEditorTableWidget::editEntry (const QModelIndex& index)
     if(entry == 0)
         return;
     retm->dataModified = true;
-    emit editEntryDlg(entry);
+    Q_EMIT editEntryDlg(entry);
 }
 
 void ResourceEditorTableWidget::createEntry ()
 {
-    emit editEntryDlg();
+    Q_EMIT editEntryDlg();
 }
 
 void ResourceEditorTableWidget::keyPressEvent (QKeyEvent* event)
