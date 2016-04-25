@@ -133,7 +133,7 @@ void Pipeline::moveUnits (QModelIndexList sourceIndexes, QModelIndex targetIndex
         if(sourceIndexRow < targetIndexRow)
             shiftTargetIndex = shiftSourceIndexes;
     }
-    foreach(PipelineUnit* movedUnit, movedUnits)
+    Q_FOREACH(PipelineUnit* movedUnit, movedUnits)
     {
       units.insert(units.begin() + targetIndex.row() + shiftTargetIndex, movedUnit);
       shiftTargetIndex++;
@@ -325,7 +325,7 @@ void Pipeline::continueBenchmarking ()
 void Pipeline::unitsUpdate ()
 {
     QMap<QDateTime, BenchmarkingResult*>::iterator resultsIt;
-    foreach (BenchmarkingResult* result, results)
+    Q_FOREACH (BenchmarkingResult* result, results)
     {
         QMap<PipelineUnit*, EvaluationResultSet*> newResultUnits;
         QList<PipelineUnit*>::iterator unitsIt = units.begin();

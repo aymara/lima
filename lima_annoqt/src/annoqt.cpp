@@ -405,7 +405,7 @@ bool Annoqt::saveFile( const QString &fileName )
 
 // std::cerr<<m_textEdit->document()->toHtml("utf-8").toUtf8().data() << std::endl;
   
-  foreach (SpecificEntity* entity, m_entities)
+  Q_FOREACH (SpecificEntity* entity, m_entities)
   {
     QString string = entity->string();
     QRegExp rxamp("&(?!amp;)");
@@ -463,7 +463,7 @@ Annoqt::~Annoqt()
 
 {
   qDebug() << "Annoqt::~Annoqt";
-  foreach (SpecificEntity* se, m_entities)
+  Q_FOREACH (SpecificEntity* se, m_entities)
   {
     delete se;
   }
@@ -801,7 +801,7 @@ void Annoqt::computeEntitiesMap()
 {
   qDebug() << "Annoqt::computeEntitiesMap";
   m_entitiesMap.clear();
-  foreach (SpecificEntity* entity, m_entities)
+  Q_FOREACH (SpecificEntity* entity, m_entities)
   {
     for (quint32 i = entity->position(); i < entity->position()+entity->length(); i++)
     {

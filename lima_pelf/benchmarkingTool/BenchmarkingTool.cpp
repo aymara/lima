@@ -128,7 +128,7 @@ void BenchmarkingTool::init ()
     pipeGraphsSplitter->restoreState(settings->value ("pipeGraphsSplitter").toByteArray());
 
     QStringList textFiles = settings->value ("textFiles").toStringList();
-    foreach (QString textFile, textFiles)
+    Q_FOREACH (QString textFile, textFiles)
     {
       recentFilesList->addItem(textFile);
     }
@@ -162,11 +162,11 @@ void BenchmarkingTool::updateErrorsWidget()
 
   QMultiMap<QString,QString> errors = utterancesWithErrors(selectedUnitTextPath);
 //   qDebug() << "BenchmarkingTool::updateErrorsWidget utterancesWithErrors:" << errors.size();
-  foreach (const QString& key, errors.keys().toSet())
+  Q_FOREACH (const QString& key, errors.keys().toSet())
   {
     QList<QString> list = errors.values(key);
     qSort(list);
-    foreach(const QString& value, list)
+    Q_FOREACH(const QString& value, list)
     {
 //       qDebug() << "add child item" << key << value;
       QTreeWidgetItem * childItem = new QTreeWidgetItem();
@@ -204,7 +204,7 @@ void BenchmarkingTool::slotErrorStatementActivated(QTreeWidgetItem* item, int co
         BenchmarkingResult* benchResult = (pipeline->results)[pipeline->startTime];
         QMap<PipelineUnit*, EvaluationResultSet*>& puResult = benchResult->resultUnits;
         qDebug() << "BenchmarkingTool::slotErrorStatementActivated " << puResult.size() << " pu results";
-        foreach(PipelineUnit* pipelineUnit, puResult.keys())
+        Q_FOREACH(PipelineUnit* pipelineUnit, puResult.keys())
         {
   //           qDebug() << "selectedUnitTextPath: " << selectedUnitTextPath << "; pipelineName: " << pipelineName;
             if (pipelineName != pipelineUnit->name) continue;
@@ -227,7 +227,7 @@ void BenchmarkingTool::slotErrorStatementActivated(QTreeWidgetItem* item, int co
     QList<QStringList> previousErrors = getErrors(pipelineName, statementId, m_previousBenchmarkingResult);
     qDebug() << "previousErrors" << pipelineName << statementId << ":" << previousErrors;
 
-    foreach (const QStringList& list, errors)
+    Q_FOREACH (const QStringList& list, errors)
     {
       if (!previousErrors.contains(list))
       {
@@ -238,7 +238,7 @@ void BenchmarkingTool::slotErrorStatementActivated(QTreeWidgetItem* item, int co
 
       }
     }
-    foreach (const QStringList& list, previousErrors)
+    Q_FOREACH (const QStringList& list, previousErrors)
     {
       if (!errors.contains(list))
       {
@@ -328,7 +328,7 @@ void BenchmarkingTool::resetEvaluationCurves ()
 //     recallQwtPlot->clear();
     evaluationResultTypeQwtCurves.clear();
     QMap<EvaluationResult::DIMENSION_ID, EvaluationResultDimension*>& dimensions = EvaluationResult::getDimensions();
-    foreach(EvaluationResult::DIMENSION_ID dimensionId, dimensions.keys())
+    Q_FOREACH(EvaluationResult::DIMENSION_ID dimensionId, dimensions.keys())
 //     dimensionsIt = dimensions.begin(); dimensionsIt != dimensions.end(); dimensionsIt++)
     {
         EvaluationResultDimension* dimension = dimensions[dimensionId];
@@ -382,7 +382,7 @@ void BenchmarkingTool::updateDimensionsWidgets ()
     QCheckBox* dimensionCheckBox;
     QLabel* dimensionLabel;
     QMap<EvaluationResult::DIMENSION_ID, EvaluationResultDimension*>& dimensions = EvaluationResult::getDimensions();
-    foreach(EvaluationResult::DIMENSION_ID dimensionId, dimensions.keys())
+    Q_FOREACH(EvaluationResult::DIMENSION_ID dimensionId, dimensions.keys())
     {
         EvaluationResultDimension* dimension = dimensions[dimensionId];
         dimensionCheckBox = new QCheckBox(this);
@@ -459,7 +459,7 @@ void BenchmarkingTool::pipelineUnitsChanged ()
     pipelineUnitDisplayCb->addItem("All pipeline units");
     const QList<PipelineUnit*>& pipelineUnits = pipeline->getUnits();
     int unitId = 0;
-    foreach(PipelineUnit* unit, pipelineUnits)
+    Q_FOREACH(PipelineUnit* unit, pipelineUnits)
     {
         pipelineUnitDisplayCb->addItem(unit->name, unitId);
         unitId++;
@@ -477,17 +477,17 @@ void BenchmarkingTool::updateResultsViews()
     if(pipelineUnitDisplayCb->currentIndex() > 0)
         selectedUnitTextPath = pipeline->getUnits()[pipelineUnitDisplayCb->currentIndex() - 1]->textPath;
     ResultsModel::selectedUnitTextPath = selectedUnitTextPath;
-    foreach(EvaluationResultDimension* dimension, dimensions)
+    Q_FOREACH(EvaluationResultDimension* dimension, dimensions)
     {
         EvaluationResult::DIMENSION_ID dimensionId = (EvaluationResult::DIMENSION_ID)dimension->id;
         int noResults = 1;
         double xFmeasure[nbRes], yFmeasure[nbRes], xPrecision[nbRes], yPrecision[nbRes], xRecall[nbRes], yRecall[nbRes];
-        foreach (BenchmarkingResult* result, pipeline->results)
+        Q_FOREACH (BenchmarkingResult* result, pipeline->results)
         {
             QMap<PipelineUnit*, EvaluationResultSet*>& puResult = result->resultUnits;
             int nbPus = 0;
             double sumFc = 0, sumFp = 0, sumCr = 0;
-            foreach (PipelineUnit* pipelineUnit, puResult.keys())
+            Q_FOREACH (PipelineUnit* pipelineUnit, puResult.keys())
             {
                 if(selectedUnitTextPath.isEmpty() || selectedUnitTextPath == pipelineUnit->textPath)
                 {
@@ -927,7 +927,7 @@ void BenchmarkingTool::slotTextFileActivated(QListWidgetItem* item)
 void BenchmarkingTool::slotRemoveTextFile()
 {
   QList<QListWidgetItem *> items = recentFilesList->selectedItems();
-  foreach(QListWidgetItem* item, items)
+  Q_FOREACH(QListWidgetItem* item, items)
   {
     recentFilesList->takeItem(recentFilesList->row(item));
   }
@@ -985,7 +985,7 @@ void BenchmarkingTool::compareWith(const QString& otherFilename)
   qDebug() << "BenchmarkingTool::compareWith";
   QMultiMap<QString,QString> utterancesSet = utterancesWithErrors(selectedUnitTextPath);
   QString utterances;
-  foreach (const QString& utt, utterancesSet.values(selectedUnitTextPath))
+  Q_FOREACH (const QString& utt, utterancesSet.values(selectedUnitTextPath))
   {
     utterances += utt + ",";
   }
@@ -1043,7 +1043,7 @@ QMultiMap<QString,QString> BenchmarkingTool::utterancesWithErrors(BenchmarkingRe
   // words if it is not the last one
   QMap<PipelineUnit*, EvaluationResultSet*> puResult = benchmarkingResult->resultUnits;
 //       qDebug() << "BenchmarkingTool::utterancesWithErrors " << puResult.size() << " pu results";
-  foreach(PipelineUnit* pipelineUnit, puResult.keys())
+  Q_FOREACH(PipelineUnit* pipelineUnit, puResult.keys())
   {
       QString pipelineName = pipelineUnit->name;
 //           qDebug() << "selectedUnitTextPath: " << selectedUnitTextPath << "; pipelineName: " << pipelineName;
@@ -1065,7 +1065,7 @@ QMultiMap<QString,QString> BenchmarkingTool::utterancesWithErrors(BenchmarkingRe
           keys.unite(QSet<QString>::fromList(fals.keys()));
           keys.unite(QSet<QString>::fromList(type.keys()));
 //               qDebug() << "utterances insert" << pipelineName << keys;
-          foreach(const QString& key, keys)
+          Q_FOREACH(const QString& key, keys)
           {
             if (!utterances.values(pipelineName).contains(key))
               utterances.insert(pipelineName,key);
@@ -1123,10 +1123,10 @@ void BenchmarkingTool::updateErrorsWidget(BenchmarkingResult* benchmarkingResult
 
 //   qDebug() << "BenchmarkingTool::updateErrorsWidget (compare) AFTER UTTERANCES WITH ERRORS";
   QMap<QString,QString> alreadyInserted;
-  foreach (const QString& key, errorUtterances.keys().toSet())
+  Q_FOREACH (const QString& key, errorUtterances.keys().toSet())
   {
 //     qDebug() << "key" << key;
-    foreach(const QString& value, errorUtterances.values(key))
+    Q_FOREACH(const QString& value, errorUtterances.values(key))
     {
 //       qDebug() << "value" << value;
       QList<QStringList> errors = getErrors(key, value, benchmarkingResult);
@@ -1134,7 +1134,7 @@ void BenchmarkingTool::updateErrorsWidget(BenchmarkingResult* benchmarkingResult
       QList<QStringList> previousErrors = getErrors(key, value, previousBenchmarkingResult);
       qDebug() << "previousErrors" << key << value << ":" << previousErrors;
 
-      foreach (const QStringList& list, errors)
+      Q_FOREACH (const QStringList& list, errors)
       {
         if (!previousErrors.contains(list) && !(alreadyInserted.contains(key) && alreadyInserted.values(key).contains(value)))
         {
@@ -1147,7 +1147,7 @@ void BenchmarkingTool::updateErrorsWidget(BenchmarkingResult* benchmarkingResult
           alreadyInserted[key] = value;
         }
       }
-      foreach (const QStringList& list, previousErrors)
+      Q_FOREACH (const QStringList& list, previousErrors)
       {
         if (!errors.contains(list) && !(alreadyInserted.contains(key) && alreadyInserted.values(key).contains(value)))
         {
@@ -1173,7 +1173,7 @@ QList<QStringList> BenchmarkingTool::getErrors(const QString& unit, const QStrin
   
   QMap<PipelineUnit*, EvaluationResultSet*>& puResult = benchResult->resultUnits;
   qDebug() << "BenchmarkingTool::getErrors" << puResult.size() << " pu results";
-  foreach(PipelineUnit* pipelineUnit, puResult.keys())
+  Q_FOREACH(PipelineUnit* pipelineUnit, puResult.keys())
   {
     QString pipelineName = pipelineUnit->name;
     qDebug() << "unit: " << unit << "; pipelineName: " << pipelineName;
