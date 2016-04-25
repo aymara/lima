@@ -69,6 +69,7 @@ class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public Me
   std::string m_outputFile;   /* < the file name for local file logging */
   std::string m_outputSuffix; /* < the suffix for local file logging */
   bool m_append;
+  QString m_temporaryFileMetadata;
   
 };
 

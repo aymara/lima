@@ -47,7 +47,8 @@ m_out(0),
 m_handlerName(),
 m_outputFile(),
 m_outputSuffix(),
-m_append(false)
+m_append(false),
+m_temporaryFileMetadata()
 {
 }
 
@@ -68,6 +69,12 @@ void AbstractTextualAnalysisDumper::init(
     m_handlerName=unitConfiguration.getParamsValueAtKey("handler");
   }
   catch (NoSuchParam& )  { }  // do nothing, optional
+
+  try 
+  {
+    m_temporaryFileMetadata = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("temporaryFileMetadata").c_str());
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value (empty)
 
   try
   {
@@ -119,6 +126,17 @@ initialize(AnalysisContent& analysis) const
     }
   }
 
+  if (! m_temporaryFileMetadata.isEmpty()) {
+#ifdef DEBUG_LP
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;
+#endif
+    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    if (metadata == 0) {
+        LERROR << "no LinguisticMetaData ! abort";
+    }
+    return new DumperStream(metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData()),m_append);
+  }
+  
   if (! m_outputFile.empty()) {
 #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;

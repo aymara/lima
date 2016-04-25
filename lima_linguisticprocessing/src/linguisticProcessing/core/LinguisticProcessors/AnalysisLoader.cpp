@@ -40,7 +40,8 @@ SimpleFactory<MediaProcessUnit,AnalysisLoader> AnalysisLoaderFactory(ANALYSISLOA
 AnalysisLoader::AnalysisLoader():
 MediaProcessUnit(),
 m_inputFileName(),
-m_inputFileExtension()
+m_inputFileExtension(),
+m_temporaryFileMetadata()
 {
 }
 
@@ -56,6 +57,13 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   LDEBUG << "Initialization";
   
   bool parameterFound(false);
+  try 
+  {
+    m_temporaryFileMetadata = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("temporaryFileMetadata").c_str());
+    parameterFound=true;
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value (empty)
+
   try {
     m_inputFileName=unitConfiguration.getParamsValueAtKey("inputFile");
     parameterFound=true;
@@ -71,7 +79,7 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   }
 
   if (! parameterFound) {
-    LERROR << "No 'inputFile' or 'inputSuffix' parameter in AnalysisLoader";
+    LERROR << "No 'inputFile' or 'inputSuffix' or 'temporaryFileMetadata' parameter in AnalysisLoader";
     throw InvalidConfiguration();
   }
 
@@ -80,7 +88,20 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
 const std::string& AnalysisLoader::getInputFile(AnalysisContent& analysis) const
 {
   static std::string inputFile("");
-  if (! m_inputFileName.empty()) {
+  if (! m_temporaryFileMetadata.isEmpty()) {
+    // get temporary filename from metadata
+    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    if (metadata == 0)
+    {
+      LOGINIT("LP::AnalysisLoader");
+      LERROR << "no LinguisticMetaData : cannot use 'temporaryFileMetadata' parameter for AnalysisLoader";
+      return inputFile;
+    }
+    
+    inputFile = metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData());
+    return inputFile;
+  }
+  else if (! m_inputFileName.empty()) {
     return m_inputFileName;
   }
   else if (! m_inputFileExtension.empty()) {

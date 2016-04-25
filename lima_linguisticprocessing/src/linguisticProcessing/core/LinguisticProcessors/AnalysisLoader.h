@@ -64,6 +64,7 @@ public:
 protected:
   std::string m_inputFileName;
   std::string m_inputFileExtension;
+  QString m_temporaryFileMetadata;
 };
 
 } // end namespace
