@@ -22,7 +22,6 @@ add_definitions(-DLIMA_SEMANTICANALYSIS_EXPORTING)
 
 SET(lima-lp-semanticanalysis_LIB_SRCS
    ConstraintFunction.cpp 
-   KnowledgeBasedSemanticRoleLabeler.cpp
    SemanticRelationAnnotation.cpp 
    SemanticRelationData.cpp 
    SemanticRoleLabelingLoader.cpp 
@@ -30,7 +29,16 @@ SET(lima-lp-semanticanalysis_LIB_SRCS
    SemanticRelationsXmlLogger.cpp
 )
 
-add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})
+if (${PYTHONLIBS_FOUND})
+  SET(lima-lp-semanticanalysis_LIB_SRCS
+    KnowledgeBasedSemanticRoleLabeler.cpp
+    ${lima-lp-semanticanalysis_LIB_SRCS}
+  )
+endif()
+DECLARE_LIMA_PLUGIN(lima-lp-semanticanalysis)
+
+#add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})
+
 
 target_link_libraries(lima-lp-semanticanalysis 
     lima-common-factory 

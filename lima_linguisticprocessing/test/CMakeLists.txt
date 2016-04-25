@@ -63,19 +63,19 @@ target_link_libraries(analyzeText
 install(TARGETS analyzeText DESTINATION bin)
 
 ########### next target ###############
+if (${PYTHONLIBS_FOUND})
+  SET(srl_SRCS
+    srl.cpp
+  )
 
-SET(srl_SRCS
-   srl.cpp
-)
+  add_executable(srl ${srl_SRCS})
+  target_link_libraries(srl
+      ${PYTHON_LIBRARY}
+      ${QT_LIBRARIES}
+  )
 
-add_executable(srl ${srl_SRCS})
-target_link_libraries(srl
-    ${PYTHON_LIBRARY}
-    ${QT_LIBRARIES}
-)
-
-install(TARGETS srl DESTINATION bin)
-
+  install(TARGETS srl DESTINATION bin)
+endif()
 ########### next target ###############
 
 # SET(threadedAnalyzeText_SRCS
