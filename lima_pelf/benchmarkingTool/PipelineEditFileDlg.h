@@ -44,7 +44,7 @@ public:
     void init (Pipeline* bp);
     void setUnit (PipelineUnit* unit, int index);
 
-public slots:
+public Q_SLOTS:
 
     void textFileBrowse ();
     void referenceFileBrowse ();

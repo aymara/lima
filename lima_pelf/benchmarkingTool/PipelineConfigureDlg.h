@@ -43,7 +43,7 @@ public:
     PipelineConfigureDlg (QWidget* parent = 0);
     void init (Pipeline* p, QString workingDir, QString analyzerCmd, QString evaluatorCmd, int cp);
 
-public slots:
+public Q_SLOTS:
 
     void workingDirBrowse ();
     void analyzerCmdBrowse ();

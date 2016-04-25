@@ -40,7 +40,7 @@ public:
     CommentEditDlg (QWidget* parent = 0);
     void init (BenchmarkingResult* br, Pipeline* p = 0);
 
-public slots:
+public Q_SLOTS:
 
     void submit ();
 

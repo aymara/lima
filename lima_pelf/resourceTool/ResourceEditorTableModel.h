@@ -42,7 +42,7 @@ public:
     void addEntry ();
     void deleteEntries (QModelIndexList indexList);
 
-public slots:
+public Q_SLOTS:
 
     void addEntry (AbstractResourceEntry* de);
 

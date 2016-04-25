@@ -125,12 +125,13 @@ TestCaseError TestCaseProcessor::evalTestCase(
       right.removeDuplicates();
 
       QSet<QString> sleft;
-      foreach (QString element, left)
+      
+      Q_FOREACH (QString element, left)
       {
         sleft.insert(element);
       }
       QSet<QString> sright;
-      foreach (QString element, right)
+      Q_FOREACH (QString element, right)
       {
         sright.insert(element);
       }

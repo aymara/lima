@@ -63,7 +63,7 @@ public:
     bool popPelfSharedMemory (QString msg);
     void logDebugMsg (QtMsgType type, const char* msg);
 
-public slots:
+public Q_SLOTS:
 
     void dictionnaryEditDlg (AbstractResourceEntry* are = 0);
     void dictionnarySearch ();
