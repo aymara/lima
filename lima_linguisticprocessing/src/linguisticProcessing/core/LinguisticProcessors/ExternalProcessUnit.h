@@ -64,11 +64,6 @@ private:
   const MediaProcessUnit* m_dumper;
   const MediaProcessUnit* m_loader;
   QString m_commandLine;
-  bool m_useTemporaryFile;
-  bool m_cleanTemporaryFile;
-  std::string m_tmpFileName;
-  AbstractTextualAnalysisHandler* m_handler;  
-  std::ofstream* m_out;
   QString m_inputSuffix;
   QString m_outputSuffix;
 };

@@ -50,8 +50,6 @@ using namespace std;
 namespace Lima {
 namespace LinguisticProcessing {
 
-#define DEFAULT_TEMPFILE "/tmp/lp_external_tmp"
-
 SimpleFactory<MediaProcessUnit,ExternalProcessUnit> ExternalProcessUnitFactory(EXTERNALPROCESSUNIT_CLASSID);
 
 ExternalProcessUnit::ExternalProcessUnit():
@@ -59,11 +57,6 @@ MediaProcessUnit(),
 m_dumper(),
 m_loader(),
 m_commandLine(),
-m_useTemporaryFile(true),
-m_cleanTemporaryFile(true),
-m_tmpFileName(DEFAULT_TEMPFILE),
-m_handler(0),
-m_out(0),
 m_inputSuffix(),
 m_outputSuffix()
 {
@@ -73,19 +66,6 @@ ExternalProcessUnit::~ExternalProcessUnit()
 {
 }
 
-//************************************************************************
-bool 
-getBooleanParameter(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-                    const std::string& param) {
-  string value=unitConfiguration.getParamsValueAtKey(param);
-  if (value == "yes" ||
-    value == "true" ||
-    value == "1") {
-    return true;
-  }
-  return false;
-}
-                   
 
 void ExternalProcessUnit::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -130,27 +110,6 @@ void ExternalProcessUnit::init(
 
   try {
     m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
-  }
-  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    // optional parameter: keep default value
-  }
-
-  try {
-    m_useTemporaryFile=getBooleanParameter(unitConfiguration,"useTmpFile");
-  }
-  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    // optional parameter: keep default value
-  }
-
-  try {
-    m_cleanTemporaryFile=getBooleanParameter(unitConfiguration,"cleanTmpFile");
-  }
-  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    // optional parameter: keep default value
-  }
-
-  try {
-    m_tmpFileName=unitConfiguration.getParamsValueAtKey("tmpFileName");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     // optional parameter: keep default value
