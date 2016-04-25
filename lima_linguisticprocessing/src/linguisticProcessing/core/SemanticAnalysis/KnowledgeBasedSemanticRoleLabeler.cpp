@@ -226,20 +226,20 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     Py_Exit(1);
   }
   
-  // Import the semanticrolelabeller module
-  PyObject* semanticrolelabeller_module = PyImport_ImportModule("semanticrolelabeller");
-  if (semanticrolelabeller_module == NULL)
+  // Import the semanticrolelabeler module
+  PyObject* semanticrolelabeler_module = PyImport_ImportModule("semanticrolelabeler");
+  if (semanticrolelabeler_module == NULL)
   {
-    LERROR << "Failed to import srl semanticrolelabeller module";
+    LERROR << "Failed to import srl semanticrolelabeler module";
     PyErr_Print();
     Py_Exit(1);
   }
   
   // Create the semantic role labeller instance
-  m_d->m_instance = PyObject_CallMethod(semanticrolelabeller_module, "SemanticRoleLabeller", "[s]", QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData());
+  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[s]", QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData());
   if (m_d->m_instance == NULL)
   {
-    LERROR << "Cannot instantiate the SemanticRoleLabeller python class";
+    LERROR << "Cannot instantiate the SemanticRoleLabeler python class";
     PyErr_Print();
     Py_Exit(1);
   }

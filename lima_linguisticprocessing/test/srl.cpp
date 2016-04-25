@@ -79,20 +79,20 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     Py_Exit(1);
   }
   
-  // Import the semanticrolelabeller module
-  PyObject* semanticrolelabeller_module = PyImport_ImportModule("semanticrolelabeller");
-  if (semanticrolelabeller_module == NULL)
+  // Import the semanticrolelabeler module
+  PyObject* semanticrolelabeler_module = PyImport_ImportModule("semanticrolelabeler");
+  if (semanticrolelabeler_module == NULL)
   {
-    std::cerr << "Failed to import srl semanticrolelabeller module" << std::endl;
+    std::cerr << "Failed to import srl semanticrolelabeler module" << std::endl;
     PyErr_Print();
     Py_Exit(1);
   }
   
   // Create the semantic role labeller instance
-  PyObject* instance = PyObject_CallMethod(semanticrolelabeller_module, "SemanticRoleLabeller", "[s]", "--log=debug");
+  PyObject* instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[s]", "--log=debug");
   if (instance == NULL)
   {
-    std::cerr << "Cannot instantiate the SemanticRoleLabeller python class" << std::endl;
+    std::cerr << "Cannot instantiate the SemanticRoleLabeler python class" << std::endl;
     PyErr_Print();
     Py_Exit(1);
   }
