@@ -137,6 +137,9 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
           DESTINATION ${LIB_INSTALL_DIR})
 endif ()
 
+find_package(PythonLibs 3.4 REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+link_directories(${PYTHON_LIBRARIES})
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )

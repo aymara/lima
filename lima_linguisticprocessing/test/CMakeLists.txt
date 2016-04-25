@@ -64,6 +64,20 @@ install(TARGETS analyzeText DESTINATION bin)
 
 ########### next target ###############
 
+SET(srl_SRCS
+   srl.cpp
+)
+
+add_executable(srl ${srl_SRCS})
+target_link_libraries(srl
+    ${PYTHON_LIBRARY}
+    ${QT_LIBRARIES}
+)
+
+install(TARGETS srl DESTINATION bin)
+
+########### next target ###############
+
 # SET(threadedAnalyzeText_SRCS
 #    threadedAnalyzeText.cpp
 # )
