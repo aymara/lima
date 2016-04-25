@@ -94,7 +94,6 @@ class ConllDumperPrivate
   std::string m_sepPOS;
   std::string m_verbTenseFlag; //Ajout
   QMap<QString, QString> m_conllLimaDepMapping;
-  std::string m_suffix;
 };
 
 
@@ -106,8 +105,7 @@ m_propertyManager(0),
 m_graph("PosGraph"),
 m_sep(" "),
 m_sepPOS("#"),
-m_conllLimaDepMapping(),
-m_suffix(".conll")
+m_conllLimaDepMapping()
 {
 }
 
@@ -164,11 +162,6 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     m_d->m_property=unitConfiguration.getParamsValueAtKey("property");
   }
   catch (NoSuchParam& ) {} // keep default value
-  try
-  {
-    m_d->m_suffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
-  }
-  catch (NoSuchParam& ) {} // keep default value
   m_d->m_propertyManager=&codeManager.getPropertyManager(m_d->m_property);
 
   m_d->m_timeManager=&codeManager.getPropertyManager("TIME");
@@ -212,6 +205,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       LERROR << "ConllDumper::process no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
+
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   if (annotationData == 0) {
       LERROR << "ConllDumper::process no AnnotationData ! abort";
