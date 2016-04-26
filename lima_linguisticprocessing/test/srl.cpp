@@ -54,8 +54,11 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
       break;
     }
   }
+#ifndef WIN32
   Py_SetProgramName(const_cast<wchar_t*>( str_program_name.toStdWString().c_str()));
-
+#else
+  Py_SetProgramName( (wchar_t*)str_program_name.unicode() );
+#endif
   
   Py_Initialize();
   

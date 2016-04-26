@@ -102,6 +102,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     m_d->m_dumper=manager->getObject(dumperName);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Missing 'dumper' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
            << (int)language << " !";
     throw InvalidConfiguration();
@@ -116,6 +117,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     m_d->m_loader = 0;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Missing 'loader' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
            << (int)language << " !";
     throw InvalidConfiguration();
@@ -132,6 +134,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     m_d->m_inputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Missing 'inputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
            << (int)language << " !";
     throw InvalidConfiguration();
@@ -141,6 +144,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     m_d->m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Missing 'outputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
            << (int)language << " !";
     throw InvalidConfiguration();
@@ -201,7 +205,11 @@ void KnowledgeBasedSemanticRoleLabeler::init(
       break;
     }
   }
+#ifndef WIN32
   Py_SetProgramName(const_cast<wchar_t*>( str_program_name.toStdWString().c_str()));
+#else
+  Py_SetProgramName( (wchar_t*)str_program_name.unicode() );
+#endif
 
   
   Py_Initialize();
@@ -211,6 +219,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   PyObject* sys_module = PyImport_ImportModule("sys");
   if (sys_module == NULL)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Failed to import the sys module";
     PyErr_Print();
   }
@@ -221,6 +230,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   PyObject* pythonpath = PySys_GetObject("path");
   if (PyList_Append(pythonpath, PyUnicode_DecodeFSDefault("/home/gael/Projets/knowledgesrl/src")) ==  -1)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Failed to append to python path";
     PyErr_Print();
     Py_Exit(1);
@@ -230,6 +240,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   PyObject* semanticrolelabeler_module = PyImport_ImportModule("semanticrolelabeler");
   if (semanticrolelabeler_module == NULL)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Failed to import srl semanticrolelabeler module";
     PyErr_Print();
     Py_Exit(1);
@@ -239,6 +250,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[s]", QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData());
   if (m_d->m_instance == NULL)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Cannot instantiate the SemanticRoleLabeler python class";
     PyErr_Print();
     Py_Exit(1);
@@ -249,13 +261,16 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   AnalysisContent& analysis) const
 {
   TimeUtilsController knowledgeBasedSemanticRoleLabelerProcessTime("KnowledgeBasedSemanticRoleLabeler");
+#ifdef DEBUG_LP
   SEMANTICANALYSISLOGINIT;
   LINFO << "start SRL process";
+#endif
   
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
-      LERROR << "no LinguisticMetaData ! abort";
-      return MISSING_DATA;
+    SEMANTICANALYSISLOGINIT;
+    LERROR << "no LinguisticMetaData ! abort";
+    return MISSING_DATA;
   }
   
   QScopedPointer<QTemporaryFile> temporaryFile;
@@ -272,6 +287,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   LimaStatusCode returnCode(SUCCESS_ID);
   returnCode=m_d->m_dumper->process(analysis);
   if (returnCode!=SUCCESS_ID) {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "KnowledgeBasedSemanticRoleLabeler: failed to dump data to temporary file";
     return returnCode;
   }
@@ -302,6 +318,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   PyObject* callResult = PyObject_CallMethod(m_d->m_instance, "annotate", "s", conllInput.toUtf8().constData());
   if (callResult == NULL)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Failed to call the annotate method";
     PyErr_Print();
     Py_Exit(1);
@@ -311,11 +328,14 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   char* result = PyUnicode_AsUTF8(callResult);
   if (result == NULL)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "Cannot convert result item to string";
     PyErr_Print();
     Py_Exit(1);
   }
+#ifdef DEBUG_LP
   LDEBUG << "Python result is:" << result;
+#endif
   if (m_d->m_temporaryFileMetadata.isEmpty())
   {
     QString outputFilename;
@@ -339,11 +359,11 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   // Import the CoNLL result
   returnCode=m_d->m_loader->process(analysis);
   if (returnCode!=SUCCESS_ID) {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "KnowledgeBasedSemanticRoleLabeler: failed to load data from temporary file";
     return returnCode;
   }
 
-  
   return returnCode;
 }
 
