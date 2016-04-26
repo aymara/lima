@@ -31,7 +31,6 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
    NullDumper.cpp
    StopList.cpp
    TextDumper.cpp
-   ConllDumper.cpp
    fullXmlDumper.cpp
    linearTextRepresentationDumper.cpp
    linearTextRepresentationLogger.cpp

@@ -19,7 +19,7 @@
 #ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSTEXTDUMPER_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSTEXTDUMPER_H
 
-#include "AnalysisDumpersExport.h"
+#include "SemanticAnalysisExport.h"
 #include "linguisticProcessing/core/LinguisticProcessors/AbstractTextualAnalysisDumper.h"
 
 namespace Lima
@@ -36,7 +36,7 @@ class ConllDumperPrivate;
 /**
 @author Gael de Chalendar
 */
-class LIMA_ANALYSISDUMPERS_EXPORT ConllDumper : public AbstractTextualAnalysisDumper
+class LIMA_SEMANTICANALYSIS_EXPORT ConllDumper : public AbstractTextualAnalysisDumper
 {
 public:
   ConllDumper();
