@@ -9,11 +9,12 @@ install:
 - echo `echo 2 | sudo update-alternatives --config gcc`
 - sudo add-apt-repository --yes ppa:kubuntu-ppa/backports
 - sudo apt-get update
-- sudo apt-get install -qq -y --force-yes cmake 
+- sudo apt-get install -qq -y --force-yes cmake npm libasan0
 - sudo add-apt-repository --yes ppa:beineri/opt-qt532
 - sudo apt-get update -qq
 - sudo apt-get install -qq -y --force-yes qt53base  qt53tools
 - sudo apt-get install -qq -y --force-yes libboost1.48-all-dev  libenchant-dev python-nltk gawk
+- sudo npm install -g json
 - sudo sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL
   = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
 - python -m nltk.downloader -d nltk_data dependency_treebank
