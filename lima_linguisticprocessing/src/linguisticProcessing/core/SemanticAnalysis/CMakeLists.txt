@@ -62,8 +62,13 @@ target_link_libraries(lima-lp-semanticanalysis
     ${optionalLibs}
     ${Boost_LIBRARIES}
     ${QT_LIBRARIES}
-    ${PYTHON_LIBRARY}
 )
+
+if (${PYTHONLIBS_FOUND})
+  target_link_libraries(lima-lp-semanticanalysis 
+      ${PYTHON_LIBRARY}
+  )
+endif()
 
 set_target_properties(lima-lp-semanticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
