@@ -29,6 +29,7 @@ install:
 - export SVMTOOL_LATEST=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp | json -a latest_version`
 - export SVMTOOL_LATEST_NAME=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp/versions/$SVMTOOL_LATEST/files | json 0.name`
 - export SVMTOOL_LATEST_PATH=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp/versions/$SVMTOOL_LATEST/files | json 0.path`
+- export SVMTOOL_LATEST_PATH=`echo $SVMTOOL_LATEST_PATH  | sed -e 's/\+/%2B/g'`
 - wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/$SVMTOOL_LATEST_PATH
 - sudo dpkg -i $SVMTOOL_LATEST_NAME
 script: mkdir dist && mkdir build && cd build && cmake -DLIMA_RESOURCES:STRING=build
