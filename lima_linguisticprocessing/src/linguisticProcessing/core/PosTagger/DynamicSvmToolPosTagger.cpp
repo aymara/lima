@@ -195,7 +195,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
   std::map<LinguisticGraphVertex, struct PathInfo > maxAncestor;
 
   /* Push every vertex coming from vertex 0 onto the "tokens to be visited" list */
-  BOOST_FOREACH(LinguisticGraphVertex vertex,
+  for(LinguisticGraphVertex vertex:
       nextTokens(analysisGraph->firstVertex(), srcGraph))
   {
     tokenQueue.push(vertex);
@@ -218,7 +218,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     /* For every ancestor of our node */
     std::set<LinguisticGraphVertex> previousTokens = getPreviousTokens(vertex, srcGraph);
     if(previousTokens.empty()) previousTokens.insert(posGraph->firstVertex());
-    BOOST_FOREACH(LinguisticGraphVertex prevVertex, previousTokens) {
+    for(LinguisticGraphVertex prevVertex: previousTokens) {
 
       std::string pos = "";
       double logCurWeight = log(1.0), w;
