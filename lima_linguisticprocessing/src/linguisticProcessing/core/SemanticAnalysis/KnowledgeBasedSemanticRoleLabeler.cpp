@@ -23,7 +23,7 @@
 #include "common/misc/Exceptions.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "linguisticProcessing/core/AnalysisDumpers/ConllDumper.h"
+#include "linguisticProcessing/core/SemanticAnalysis/ConllDumper.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
