@@ -24,7 +24,7 @@ install:
 - export QHTTPSERVER_LATEST=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/qhttpserver | json -a latest_version`
 - export QHTTPSERVER_LATEST_NAME=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/qhttpserver/versions/$QHTTPSERVER_LATEST/files | json 0.name`
 - export QHTTPSERVER_LATEST_PATH=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/qhttpserver/versions/$QHTTPSERVER_LATEST/files | json 0.path`
-- wget https://bintray.com/artifact/download/kleag/ubuntu/$QHTTPSERVER_LATEST_PATH
+- wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/$QHTTPSERVER_LATEST_PATH
 - sudo dpkg -i $QHTTPSERVER_LATEST_NAME
 - export SVMTOOL_LATEST=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp | json -a latest_version`
 - export SVMTOOL_LATEST_NAME=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp/versions/$SVMTOOL_LATEST/files | json 0.name`
