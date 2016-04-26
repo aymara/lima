@@ -18,8 +18,11 @@ install:
   = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
 - python -m nltk.downloader -d nltk_data dependency_treebank
 - cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
-- wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/_latestVersion/qhttpserver-0.0.1-Linux.deb
-- sudo dpkg -i qhttpserver-0.0.1-Linux.deb
+- export SVMTOOL_LATEST=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp | json -a latest_version`
+- export SVMTOOL_LATEST_NAME=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp/versions/$SVMTOOL_LATEST/files | json 0.name`
+- export SVMTOOL_LATEST_PATH=`curl https://api.bintray.com/packages/kleag/ubuntu-12.04/svmtool-cpp/versions/$SVMTOOL_LATEST/files | json 0.path`
+- wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/$SVMTOOL_LATEST_PATH
+- sudo dpkg -i $SVMTOOL_LATEST_NAME
 - wget https://bintray.com/artifact/download/kleag/ubuntu-12.04/_latestVersion/svmtool%2B%2B-1.1.7-Linux.deb
 - sudo dpkg -i svmtool++-1.1.7-Linux.deb
 script: mkdir dist && mkdir build && cd build && cmake -DLIMA_RESOURCES:STRING=build
