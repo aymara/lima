@@ -1,0 +1,5 @@
+set encoding=utf8
+using modex FameNet-modex.xml
+using groups FameNet
+set defaultAction=>CreateSpecificEntity()
+
