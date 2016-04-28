@@ -1,5 +1,5 @@
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#init:
+#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 environment:
   LIMA_DIST: c:\d
@@ -53,5 +53,5 @@ on_success:
   - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.-win32.exe
 
 
-on_failure:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#on_failure:
+        #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
