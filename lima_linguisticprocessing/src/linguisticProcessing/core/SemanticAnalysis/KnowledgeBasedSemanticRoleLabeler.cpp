@@ -43,6 +43,14 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::Misc;
 
+
+#define HANDLE_ERROR(Y,Z) if ( Y ) Z ;
+#define HANDLE_ERROR_EQUAL(X,Y,Z) if ( X == Y ) Z ;
+#define HANDLE_ERROR_RETURN(X,Y,Z) if ( X ) { Y ; return Z; }
+#define HANDLE_ERROR_EQUAL_RETURN(X,Y,Z,R) if ( X == Y ) { Z ; return R ; }
+#define HANDLE_ERROR_DIFFERENT(X,Y,Z) if ( X != Y ) Z ;
+#define HANDLE_ERROR_DIFFERENT_RETURN(X,Y,Z,R) if ( X != Y ) { Z ; return R ; }
+
 namespace Lima
 {
 namespace LinguisticProcessing
@@ -84,6 +92,21 @@ KnowledgeBasedSemanticRoleLabeler::~KnowledgeBasedSemanticRoleLabeler()
 {
   delete m_d;
 }
+
+auto failed_to_import_the_sys_module = []()
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "Failed to import the sys module";
+  PyErr_Print();
+};
+
+auto cannot_instantiate_the_semanticrolelabeler_python_class = []()
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "Cannot instantiate the SemanticRoleLabeler python class";
+  PyErr_Print();
+  Py_Exit(1);
+};
 
 void KnowledgeBasedSemanticRoleLabeler::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -209,12 +232,8 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   PyObject* main_module = PyImport_ImportModule("__main__");
   PyObject* main_dict = PyModule_GetDict(main_module);
   PyObject* sys_module = PyImport_ImportModule("sys");
-  if (sys_module == NULL)
-  {
-    LERROR << "Failed to import the sys module";
-    PyErr_Print();
-  }
-  PyObject* sys_dict = PyModule_GetDict(sys_module);
+  HANDLE_ERROR_EQUAL (sys_module, NULL, failed_to_import_the_sys_module() );
+
   PyDict_SetItemString(main_dict, "sys", sys_module);  
 
   // Add the path to the knowledgesrl pachkage to putho path
@@ -236,14 +255,39 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   }
   
   // Create the semantic role labeller instance
-  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[s]", QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData());
-  if (m_d->m_instance == NULL)
-  {
-    LERROR << "Cannot instantiate the SemanticRoleLabeler python class";
-    PyErr_Print();
-    Py_Exit(1);
-  }
+  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[ss]", 
+                                        QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData(), 
+                                        QString("--frame-lexicon=%1").arg(mode).toUtf8().constData());
+  HANDLE_ERROR_EQUAL(m_d->m_instance,NULL,cannot_instantiate_the_semanticrolelabeler_python_class())
 }
+
+auto metadata_equal_zero = []()
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "no LinguisticMetaData ! abort";
+};
+
+auto temporary_file_not_open = []()
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "KnowledgeBasedSemanticRoleLabeler: unable to create temporary file";
+};
+
+auto temporary_file_srl_not_open = [](QScopedPointer<QTemporaryFile>& temporaryFile)
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "KnowledgeBasedSemanticRoleLabeler: unable to open temporary file for dumping SRL CoNLL data to it"<< temporaryFile->fileName();
+  LERROR << "KnowledgeBasedSemanticRoleLabeler: keep (do not auto remove) it for debug purpose." ;
+  temporaryFile->setAutoRemove(false);
+};
+
+auto failed_to_load_data_from_temporary_file = [](QScopedPointer<QTemporaryFile>& temporaryFile)
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "KnowledgeBasedSemanticRoleLabeler: failed to load data from temporary file" << temporaryFile->fileName();
+  LERROR << "KnowledgeBasedSemanticRoleLabeler: keep (do not auto remove) it for debug purpose." << temporaryFile->fileName();
+  temporaryFile->setAutoRemove(false);
+};
 
 LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   AnalysisContent& analysis) const
@@ -253,17 +297,14 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   LINFO << "start SRL process";
   
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  if (metadata == 0) {
-      LERROR << "no LinguisticMetaData ! abort";
-      return MISSING_DATA;
-  }
+  HANDLE_ERROR_EQUAL_RETURN(metadata,0,metadata_equal_zero(),MISSING_DATA)
   
   QScopedPointer<QTemporaryFile> temporaryFile;
   if (!m_d->m_temporaryFileMetadata.isEmpty())
   {
     QScopedPointer<QTemporaryFile> otherTemp(new QTemporaryFile());
     temporaryFile.swap(otherTemp);
-    temporaryFile->open();
+    HANDLE_ERROR_RETURN(!temporaryFile->open(),temporary_file_not_open(),CANNOT_OPEN_FILE_ERROR);
     metadata->setMetaData(m_d->m_temporaryFileMetadata.toUtf8().constData(), 
                           temporaryFile->fileName().toUtf8().constData());
   }
@@ -293,7 +334,14 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   }
   else
   {
-    temporaryFile->open();
+    if (!temporaryFile->open())
+    {
+      SEMANTICANALYSISLOGINIT;
+      LERROR << "KnowledgeBasedSemanticRoleLabeler: unable to open temporary file after dumping CoNLL data to it"<< temporaryFile->fileName();
+      LERROR << "KnowledgeBasedSemanticRoleLabeler: keep (do not auto remove) it for debug purpose." ;
+      temporaryFile->setAutoRemove(false);
+      return CANNOT_OPEN_FILE_ERROR;
+    }
     conllInput = QString::fromUtf8(temporaryFile->readAll().constData());
     temporaryFile->close();
   }
@@ -331,17 +379,30 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   }
   else
   {
-    temporaryFile->open();
-    temporaryFile->seek(0);
-    temporaryFile->write(result);
+    HANDLE_ERROR_RETURN( !temporaryFile->open(), 
+                         temporary_file_srl_not_open(temporaryFile), CANNOT_OPEN_FILE_ERROR);
+    if (!temporaryFile->seek(0))
+    {
+      SEMANTICANALYSISLOGINIT;
+      LERROR << "KnowledgeBasedSemanticRoleLabeler: unable to seek to the beginning of temporary file"<< temporaryFile->fileName();
+      LERROR << "KnowledgeBasedSemanticRoleLabeler: keep (do not auto remove) it for debug purpose." ;
+      temporaryFile->setAutoRemove(false);
+      return UNKNOWN_ERROR;
+    }
+    if (temporaryFile->write(result) == -1)
+    {
+      SEMANTICANALYSISLOGINIT;
+      LERROR << "KnowledgeBasedSemanticRoleLabeler: unable to write SRL result to temporary file"<< temporaryFile->fileName();
+      LERROR << "KnowledgeBasedSemanticRoleLabeler: keep (do not auto remove) it for debug purpose." ;
+      temporaryFile->setAutoRemove(false);
+      return UNKNOWN_ERROR;
+    }
     temporaryFile->close();
   }
+  Py_DECREF(callResult);
   // Import the CoNLL result
   returnCode=m_d->m_loader->process(analysis);
-  if (returnCode!=SUCCESS_ID) {
-    LERROR << "KnowledgeBasedSemanticRoleLabeler: failed to load data from temporary file";
-    return returnCode;
-  }
+  HANDLE_ERROR_DIFFERENT_RETURN(returnCode,SUCCESS_ID,failed_to_load_data_from_temporary_file(temporaryFile),returnCode)
 
   
   return returnCode;
