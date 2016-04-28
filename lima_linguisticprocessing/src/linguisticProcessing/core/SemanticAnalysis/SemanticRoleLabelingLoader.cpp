@@ -123,6 +123,7 @@ class SemanticRoleLabelingLoaderPrivate
 
   MediaId m_language;
   std::string m_graph;
+  QString m_model;
 };
 
 
@@ -130,7 +131,8 @@ class SemanticRoleLabelingLoaderPrivate
 //***********************************************************************
 SemanticRoleLabelingLoaderPrivate::SemanticRoleLabelingLoaderPrivate():
 m_language(0),
-m_graph("PosGraph")
+m_graph("PosGraph"),
+m_model("VerbNet")
 {}
 
 SemanticRoleLabelingLoaderPrivate::~SemanticRoleLabelingLoaderPrivate()
@@ -160,6 +162,11 @@ void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfig
   try
   {
     m_d->m_graph=unitConfiguration.getParamsValueAtKey("graph");
+  }
+  catch (NoSuchParam& ) {} // keep default value
+  try
+  {
+    m_d->m_model = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model").c_str());
   }
   catch (NoSuchParam& ) {} // keep default value
 }
@@ -215,9 +222,16 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
 #ifdef DEBUG_LP
       LDEBUG << "SemanticRoleLabelingLoader::process there is/are " << cHandler.m_verbalClassNb << "verbal class(es) for this sentence " ;
 #endif
-      for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++){
+      for (int vClassIndex=0;vClassIndex<cHandler.m_verbalClassNb;vClassIndex++)
+      {
         LinguisticGraphVertex posGraphPredicateVertex=cHandler.m_verbalClasses[vClassIndex].first;
-        LimaString verbalClass=cHandler.m_verbalClasses[vClassIndex].second;
+        QStringList verbalClasses = cHandler.m_verbalClasses[vClassIndex].second.split("|");
+        for (QString& verbalClass: verbalClasses)
+        {
+          verbalClass = m_d->m_model + "." + verbalClass;
+        }
+        LimaString verbalClass= verbalClasses.join("|");
+        
 
         AnnotationGraphVertex annotPredicateVertex=annotationData->createAnnotationVertex();
         annotationData->addMatching("PosGraph", posGraphPredicateVertex, "annot", annotPredicateVertex);
@@ -230,7 +244,12 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
         std::vector <pair<LinguisticGraphVertex,QString>>::iterator semRoleIt;
         for (semRoleIt=cHandler.m_semanticRoles[vClassIndex].begin();         semRoleIt!=cHandler.m_semanticRoles[vClassIndex].end();semRoleIt++){
           LinguisticGraphVertex posGraphRoleVertex=(*semRoleIt).first;
-          LimaString semanticRole=(*semRoleIt).second;
+          QStringList semanticRoles = (*semRoleIt).second.split("|");
+          for (QString& semanticRole: semanticRoles)
+          {
+            semanticRole = m_d->m_model + "." + semanticRole;
+          }
+          LimaString semanticRole= semanticRoles.join("|");
 
           AnnotationGraphVertex annotRoleVertex=annotationData->createAnnotationVertex();
           AnnotationGraphEdge roleEdge=annotationData->createAnnotationEdge(annotPredicateVertex, annotRoleVertex);
