@@ -115,7 +115,7 @@ process(AnalysisContent& analysis) const
     SpecificEntitiesLoader::XMLHandler handler(m_language,analysis,graph);
     m_parser->setContentHandler(&handler);
     m_parser->setErrorHandler(&handler);
-    QFile file(getInputFile(analysis).c_str());
+    QFile file(getInputFile(analysis));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
       throw XMLException();
     if (!m_parser->parse( QXmlInputSource(&file)))

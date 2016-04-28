@@ -35,17 +35,42 @@ namespace LinguisticProcessing {
 
 SimpleFactory<MediaProcessUnit,AnalysisLoader> AnalysisLoaderFactory(ANALYSISLOADER_CLASSID);
 
-//***********************************************************************
-// constructors and destructors
-AnalysisLoader::AnalysisLoader():
-MediaProcessUnit(),
+class AnalysisLoaderPrivate
+{
+  friend class AnalysisLoader;
+public:
+  AnalysisLoaderPrivate();
+
+  ~AnalysisLoaderPrivate();
+
+  QString m_inputFileName;
+  QString m_inputFileExtension;
+  QString m_temporaryFileMetadata;
+};
+
+
+AnalysisLoaderPrivate::AnalysisLoaderPrivate() :
 m_inputFileName(),
 m_inputFileExtension(),
 m_temporaryFileMetadata()
 {
 }
 
-AnalysisLoader::~AnalysisLoader() {
+AnalysisLoaderPrivate::~AnalysisLoaderPrivate()
+{
+
+}
+
+//***********************************************************************
+// constructors and destructors
+AnalysisLoader::AnalysisLoader():
+MediaProcessUnit(),
+m_d(new AnalysisLoaderPrivate())
+{
+}
+
+AnalysisLoader::~AnalysisLoader() 
+{
 }
 
 //***********************************************************************
@@ -59,20 +84,20 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   bool parameterFound(false);
   try 
   {
-    m_temporaryFileMetadata = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("temporaryFileMetadata").c_str());
+    m_d->m_temporaryFileMetadata = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("temporaryFileMetadata").c_str());
     parameterFound=true;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value (empty)
 
   try {
-    m_inputFileName=unitConfiguration.getParamsValueAtKey("inputFile");
+    m_d->m_inputFileName=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputFile").c_str());
     parameterFound=true;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
   }
 
   try {
-    m_inputFileExtension=unitConfiguration.getParamsValueAtKey("inputSuffix");
+    m_d->m_inputFileExtension=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
     parameterFound=true;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
@@ -85,10 +110,10 @@ void AnalysisLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
 
 }
 
-const std::string& AnalysisLoader::getInputFile(AnalysisContent& analysis) const
+QString AnalysisLoader::getInputFile(AnalysisContent& analysis) const
 {
-  static std::string inputFile("");
-  if (! m_temporaryFileMetadata.isEmpty()) {
+  QString inputFile;
+  if (! m_d->m_temporaryFileMetadata.isEmpty()) {
     // get temporary filename from metadata
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0)
@@ -98,13 +123,13 @@ const std::string& AnalysisLoader::getInputFile(AnalysisContent& analysis) const
       return inputFile;
     }
     
-    inputFile = metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData());
+    inputFile = QString::fromUtf8(metadata->getMetaData(m_d->m_temporaryFileMetadata.toUtf8().constData()).c_str());
     return inputFile;
   }
-  else if (! m_inputFileName.empty()) {
-    return m_inputFileName;
+  else if (! m_d->m_inputFileName.isEmpty()) {
+    return m_d->m_inputFileName;
   }
-  else if (! m_inputFileExtension.empty()) {
+  else if (! m_d->m_inputFileExtension.isEmpty()) {
     // get filename from metadata
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0)
@@ -114,8 +139,8 @@ const std::string& AnalysisLoader::getInputFile(AnalysisContent& analysis) const
       return inputFile;
     }
     
-    std::string textFileName = metadata->getMetaData("FileName");
-    inputFile = textFileName + m_inputFileExtension;
+    QString textFileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
+    inputFile = textFileName + m_d->m_inputFileExtension;
     return inputFile;
   }
   LOGINIT("LP::AnalysisLoader");

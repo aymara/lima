@@ -177,20 +177,14 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   LimaConllTokenIdMapping* limaConllMapping = static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  if (metadata == 0)
-  {
-      LERROR << "no LinguisticMetaData ! abort";
-      return MISSING_DATA;
-  }
+  QString fileName = getInputFile(analysis);
   
-  QString fileName = QString::fromUtf8((metadata->getMetaData("FileName")+m_inputFileExtension).c_str());
   QFile file(fileName);
 
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    LERROR << "cannot open file" << fileName;
+    LERROR << "SemanticRoleLabelingLoader::process: cannot open file" << fileName;
     return CANNOT_OPEN_FILE_ERROR;
   }
   int sentenceNb=1;

@@ -33,6 +33,7 @@
 
 #include "LinguisticProcessorsExport.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
+#include <QSharedPointer>
 #include <iostream>
 #include <fstream>
 
@@ -41,6 +42,7 @@ namespace LinguisticProcessing {
 
 #define ANALYSISLOADER_CLASSID "AnalysisLoader"
 
+class AnalysisLoaderPrivate;
 /*
  * @brief this is the abstract class for analysis loaders, that read
  * informations from external files to insert them in the analysis
@@ -48,6 +50,7 @@ namespace LinguisticProcessing {
  */
 class LIMA_LINGUISTICPROCESSORS_EXPORT AnalysisLoader : public MediaProcessUnit
 {
+  friend class AnalysisLoaderPrivate;
 public:
   AnalysisLoader();
 
@@ -59,12 +62,10 @@ public:
 
   LimaStatusCode process(AnalysisContent& /*analysis*/) const { return SUCCESS_ID; }
 
-  const std::string& getInputFile(AnalysisContent& analysis) const;
+  QString getInputFile(AnalysisContent& analysis) const;
 
 protected:
-  std::string m_inputFileName;
-  std::string m_inputFileExtension;
-  QString m_temporaryFileMetadata;
+  QSharedPointer<AnalysisLoaderPrivate> m_d;
 };
 
 } // end namespace
