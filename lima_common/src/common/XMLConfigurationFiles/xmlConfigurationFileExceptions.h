@@ -63,8 +63,6 @@ namespace Lima {
         NoSuchModule ( const std::string &name ) : XMLConfigurationFileException ( "No such module " + name ),moduleName ( name ) {/*std::cout << "No such module " << name << std::endl;*/}
         //! @brief destructor (throw the exception)
         virtual ~NoSuchModule() throw() {}
-        //! @brief return the message error
-        const std::string what() {return ( "No such module " + moduleName );}
     private:
       NoSuchModule& operator=(const NoSuchModule&) {return *this;}
       //! @brief the name of the <i>module</i> that was not found
@@ -79,8 +77,6 @@ namespace Lima {
       //! @param name the <i>group</i> that was not found
       NoSuchGroup ( const std::string &name ) : XMLConfigurationFileException ( "No such group " + name ),groupName ( name ) {/*std::cout << "No such group " << name << std::endl;*/}
       virtual ~NoSuchGroup() throw() {}
-      //! @brief return the message error
-      const std::string what() {return ( "No such group " + groupName );}
   private:
     NoSuchGroup& operator=(const NoSuchGroup&) {return *this;}
     //! @brief the name of the <i>group</i> that was not found
@@ -95,8 +91,6 @@ namespace Lima {
     //! @param name the <i>attribute</i> that was not found
     NoSuchAttribute ( const std::string &name ) : XMLConfigurationFileException ( "No such attribute " + name ),attName ( name ) {/*std::cout << "No such attribute " << name << std::endl;*/}
     virtual ~NoSuchAttribute() throw() {}
-    //! @brief return the message error
-    const std::string what() {return ( "No such attribute " + attName );}
 private:
   NoSuchAttribute& operator=(const NoSuchAttribute&) {return *this;}
   //! @brief the name of the <i>attribute</i> that was not found
@@ -111,8 +105,6 @@ public:
   //! @param name the <i>param</i> that was not found
   NoSuchParam ( const std::string &name ) : XMLConfigurationFileException ( "No such param '" + name + "'" ),paramName ( name ) {/*std::cout << "No such param " << name << std::endl;*/}
   virtual ~NoSuchParam() throw() {}
-  //! @brief return the message error
-  const std::string what() {return ( "No such param '" + paramName + "'" );}
 private:
   NoSuchParam& operator=(const NoSuchParam&) {return *this;}
   //! @brief the name of the <i>param</i> that was not found
@@ -127,8 +119,6 @@ public:
   //! @param name the <i>list</i> that was not found
   NoSuchList ( const std::string &name ) : XMLConfigurationFileException ( "No such list " + name ),listName ( name ) {/*std::cout << "No such list " << name << std::endl;*/}
   virtual ~NoSuchList() throw() {}
-  //! @brief return the message error
-  const std::string what() {return ( "No such list " + listName );}
 private:
   NoSuchList& operator=(const NoSuchList&) {return *this;}
   //! @brief the name of the <i>list</i> that was not found
@@ -143,8 +133,6 @@ public:
   //! @param name the <i>map</i> that was not found
   NoSuchMap ( const std::string &name ) : XMLConfigurationFileException ( "No such map " + name ),mapName ( name ) {/*std::cout << "No such map " << name << std::endl;*/}
   virtual ~NoSuchMap() throw() {}
-  //! @brief return the message error
-  const std::string what() {return ( "No such map " + mapName );}
 private:
   NoSuchMap& operator=(const NoSuchMap&) {return *this;}
   //! @brief the name of the <i>map</i> that was not found
