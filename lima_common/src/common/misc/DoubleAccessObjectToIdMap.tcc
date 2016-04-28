@@ -58,7 +58,7 @@ get(const Object& val) const
 {
   typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::const_iterator it=m_accessMap.find(&val);
   if (it==m_accessMap.end()) {
-    throw LimaException();
+    throw LimaException("DoubleAccessObjectToIdMap<Object,Id>::get(val) parameter not in map.");
   }
   else {
     return (*it).second;
@@ -71,7 +71,7 @@ get(const Id& id) const
 {
   size_t i=(size_t) id;
   if (i >= m_reverseAccessMap.size()) {
-    throw LimaException();
+    throw LimaException("DoubleAccessObjectToIdMap<Object,Id>::get(id) parameter not in reverse map.");
   }
   else {
     return *(m_reverseAccessMap[i]);
@@ -115,7 +115,7 @@ operator[](const Object& val)
       return (*inserted).second;
     }
     else {
-      throw LimaException();
+      throw LimaException("DoubleAccessObjectToIdMap<Object,Id>::operator[](val) parameter not in map");
     }
   }
   else {
