@@ -1,5 +1,6 @@
 set encoding=utf8
-using modex FameNet-modex.xml
-using groups FameNet
+using modex FrameNet-modex.xml
+using groups FrameNet
 set defaultAction=>CreateSpecificEntity()
+
 
