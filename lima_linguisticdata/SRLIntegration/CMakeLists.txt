@@ -42,6 +42,17 @@ foreach(LANG ${LIMA_LANGUAGES})
     VERBATIM
   )
   add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+    COMMENT "create config env for srl rules (FrameNet-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${LANG}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -97,6 +108,15 @@ foreach(LANG ${LIMA_LANGUAGES})
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
   )
+  add_custom_target(
+    rules-${LANG}-FrameNet-configEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${LANG}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${LANG}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+  )
 
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${LANG}/code-${LANG}.xml
@@ -146,7 +166,34 @@ foreach(LANG ${LIMA_LANGUAGES})
 
 
   endif ()
+  
+  if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules)
+
+    add_custom_command(
+      OUTPUT FrameNet-${LANG}.bin
+      COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${LANG} -oFrameNet-${LANG}.bin ${_current} --modex=FrameNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules
+      DEPENDS ${_current} ${DEPENDENCIES}
+#       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      VERBATIM
+    )
+
+    add_custom_target(
+      rules-FrameNet-${LANG}-main
+      ALL
+      DEPENDS FrameNet-${LANG}.bin
+    )
+
+    # add the link between the current target and its execution environment dependencies
+    add_dependencies(rules-FrameNet-${LANG}-main rules-${LANG}-FrameNet-configEnv-main rules-${LANG}-execEnv)
+
+    add_dependencies(rules-FrameNet-${LANG}-main rules-${LANG}-FrameNet-configEnv srl-rules-${LANG}-execEnv)
+    
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/FrameNet-${LANG}.bin COMPONENT ${LANG} DESTINATION share/apps/lima/resources/SRLIntegration)
+
+
+  endif ()
+
 endforeach(LANG ${LIMA_LANGUAGES})
 
 
-install(FILES VerbNet-modex.xml COMPONENT common DESTINATION share/config/lima)
+install(FILES FrameNet-modex.xml VerbNet-modex.xml COMPONENT common DESTINATION share/config/lima)

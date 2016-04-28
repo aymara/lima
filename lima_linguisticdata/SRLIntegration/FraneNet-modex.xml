@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="entities">
+    <group name="FrameNet">
+      <list name="entityList">
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="FameNetModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="FameNetRecognition"/>
+      </list>
+    </group>
+    <group name="FameNetRecognition" class="ApplyRecognizer" > <!--lib="lima-lp-se-person"-->
+      <param key="automaton" value="FameNetRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="FameNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/FameNet-eng.bin"/>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="FameNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/FameNet-fre.bin"/>
+    </group>
+  </module>
+</modulesConfig>
