@@ -809,15 +809,14 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     MDATALOGINIT;
     LERROR << "MediaticData::getEntityType unknown entity group id " << groupId
             <<"accessing" << entityName;
-    throw LimaException();
+    throw LimaException("MediaticData::getEntityType unknown entity group id");
   }
   try {
     return EntityType(m_d->m_entityTypes[groupId]->get(entityName),groupId);
   }
-  catch(LimaException& ) {
+  catch(LimaException& e) {
     MDATALOGINIT;
-    LWARN << "Unknown entity type "
-          << entityName;
+    LWARN << "Unknown entity type " << entityName << "in group id:"<<groupId<<"; exception:" << e.what();
     throw;
   }
 }
