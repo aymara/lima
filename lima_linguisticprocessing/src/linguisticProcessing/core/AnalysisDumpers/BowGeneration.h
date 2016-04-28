@@ -123,7 +123,7 @@ public:
     bool keepAnyway = false) const;
 
   /**
-   * Builds a BoWPredicate corresoonding to a  semantic relation (an edge in the
+   * Builds a BoWPredicate corresponding to a  semantic relation (an edge in the
    * annotation graph holding a SemanticRelation annotation
    *
    * @param lgvs source linguistic graph vertex
