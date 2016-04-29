@@ -53,8 +53,6 @@ include(SystemSpecificInformations.cmake)
 message("System name is ${CMAKE_SYSTEM_NAME}")
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
-    # Options for runtime memory leaks checking
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer -fopenmp" )
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
     # factories, thus their symbols must be known even if not used by the binary
@@ -65,6 +63,16 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
     CHECK_CXX_COMPILER_FLAG(-std=c++11 HAVE_STDCPP11)
+    CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_SANITIZE_UNDEFINED)
+    CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer HAVE_NO_OMIT_FRAME_POINTER)
+
+    # NOTE: check -fsanitize=address flag failed if this flag is not set also
+    # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
+    # CHECK_CXX_COMPILER_FLAG macro).
+    set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
+    set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
+    CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
+    set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
 
     if (HAVE_STDCPP11)
       message("C++11 supported")
@@ -77,6 +85,11 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
       set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X")
     endif ()
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
+    
+    # Options for runtime memory leaks checking
+    if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
+      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
+    endif()
     
     set(LIB_INSTALL_DIR "lib")
 else ()
