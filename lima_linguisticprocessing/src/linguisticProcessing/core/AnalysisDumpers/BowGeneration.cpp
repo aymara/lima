@@ -1143,7 +1143,7 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
   QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
   if (predicateIds.size()>1)
   {
-    LERROR << "BowGenerator::createPredicate Predicate has" << predicateIds.size() << "values:" << predicateIds;
+    LDEBUG << "BowGenerator::createPredicate Predicate has" << predicateIds.size() << "values:" << predicateIds;
   }
   
   
@@ -1170,13 +1170,10 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
         // FIXME handle the ambiguous case when there is several values for each role
         const AnnotationGraphVertex semRoleVx=boost::target(*outIt, annotGraph);
         QStringList semRoleIds = annotationData->stringAnnotation(agv,semRoleVx,typeAnnot).split("|");
-
-        if (semRoleIds.size()>1)
-        {
-          LERROR << "BowGenerator::createPredicate Role has" << semRoleIds.size() << "values:" << semRoleIds;
-        }
+        Q_ASSERT(predicateIds.size() == semRoleIds.size());
         LimaString semRole = semRoleIds[i];
         LDEBUG << semRole;
+        if (semRole.isEmpty()) continue;
         try
         {
           EntityType semRoleEntity = Common::MediaticData::MediaticData::single().getEntityType(semRole);
