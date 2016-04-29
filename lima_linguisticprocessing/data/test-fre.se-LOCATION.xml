@@ -649,7 +649,7 @@
           operator="="
           right="profonde"/>
   </testcase>
-<testcase id="fre.se.location.comp.26" type="bloquant">
+<testcase id="fre.se.location.comp.26" type="pertinent">
     <call-parameters>
       <param key="text" value="Tu connais le canal Saint-Martin ?"/>
       <param key="language" value="fre"/>
