@@ -247,7 +247,8 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
           QStringList semanticRoles = (*semRoleIt).second.split("|");
           for (QString& semanticRole: semanticRoles)
           {
-            semanticRole = m_d->m_model + "." + semanticRole;
+            if (!semanticRole.isEmpty())
+              semanticRole = m_d->m_model + "." + semanticRole;
           }
           LimaString semanticRole= semanticRoles.join("|");
 
