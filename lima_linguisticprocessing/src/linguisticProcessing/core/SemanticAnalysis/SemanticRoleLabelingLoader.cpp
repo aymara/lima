@@ -338,7 +338,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
 #ifdef DEBUG_LP
           LDEBUG << "ConllHandler::extractSemanticInformation"<<"nb descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;
 #endif
-          if (NBCOLSINSRLBEFOREFRAME+roleTargetFieldIndex >= descriptors.size())
+          if (NBCOLSINSRLBEFOREFRAME+1+roleTargetFieldIndex >= descriptors.size())
           {
             LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error" <<  roleTargetFieldIndex;
             break;

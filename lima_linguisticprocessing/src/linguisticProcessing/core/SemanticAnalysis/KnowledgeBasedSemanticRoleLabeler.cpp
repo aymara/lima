@@ -299,6 +299,14 @@ auto failed_to_load_data_from_temporary_file = [](QScopedPointer<QTemporaryFile>
   temporaryFile->setAutoRemove(false);
 };
 
+auto failure_during_call_of_the_annotate_method_on = [](QString& conllInput)
+{
+  SEMANTICANALYSISLOGINIT;
+  LERROR << "Failure during call of the annotate method on" << conllInput;
+  PyErr_Print();
+  Py_Exit(1);
+};
+
 LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   AnalysisContent& analysis) const
 {
@@ -361,13 +369,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
 
   // Run the semantic role labeller
   PyObject* callResult = PyObject_CallMethod(m_d->m_instance, "annotate", "s", conllInput.toUtf8().constData());
-  if (callResult == NULL)
-  {
-    SEMANTICANALYSISLOGINIT;
-    LERROR << "Failed to call the annotate method";
-    PyErr_Print();
-    Py_Exit(1);
-  }
+  HANDLE_ERROR_EQUAL(callResult, NULL, failure_during_call_of_the_annotate_method_on(conllInput));
   
   // Display the SRL result
   char* result = PyUnicode_AsUTF8(callResult);
