@@ -201,29 +201,37 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
 
 LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 {
-  DUMPERLOGINIT;
 #ifdef DEBUG_LP
+  DUMPERLOGINIT;
   LDEBUG << "ConllDumper::process";
 #endif
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  if (metadata == 0) {
-      LERROR << "ConllDumper::process no LinguisticMetaData ! abort";
-      return MISSING_DATA;
+  LinguisticMetaData* metadata = static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  if (metadata == 0) 
+  {
+    DUMPERLOGINIT;
+    LERROR << "ConllDumper::process no LinguisticMetaData ! abort";
+    return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  if (annotationData == 0) {
-      LERROR << "ConllDumper::process no AnnotationData ! abort";
-      return MISSING_DATA;
+  if (annotationData == 0) 
+  {
+    DUMPERLOGINIT;
+    LERROR << "ConllDumper::process no AnnotationData ! abort";
+    return MISSING_DATA;
   }
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));//est de type PosGraph et non pas AnalysisGraph
-  if (tokenList==0) {
+  if (tokenList==0) 
+  {
+    DUMPERLOGINIT;
     LERROR << "ConllDumper::process graph " << m_d->m_graph << " has not been produced: check pipeline";
     return MISSING_DATA;
   }
   LinguisticGraph* graph=tokenList->getGraph();
   SegmentationData* sd=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-  if (sd==0) {
+  if (sd==0) 
+  {
+    DUMPERLOGINIT;
     LERROR << "ConllDumper::process no SentenceBoundaries! abort";
     return MISSING_DATA;
   }
@@ -241,8 +249,15 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
   std::map< LinguisticGraphVertex, std::pair<LinguisticGraphVertex, std::string> > vertexDependencyInformations;
 
-  std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
   uint64_t nbSentences((sd->getSegments()).size());
+  if (nbSentences == 0)
+  {
+    DUMPERLOGINIT;
+    LERROR << "ConllDumper::process 0 sentence to process";
+    return SUCCESS_ID;
+  }
+  
+  std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
 #ifdef DEBUG_LP
   LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
 #endif
@@ -310,9 +325,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process relation = " << syntRelName;
           LDEBUG << "ConllDumper::process Src  : Dep vertex= " << boost::source(*dit, *depGraph);
-#endif
           LinguisticGraphVertex src = syntacticData->tokenVertexForDepVertex(boost::source(*dit, *depGraph));
-#ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process Src  : Morph vertex= " << src;
           LDEBUG << "ConllDumper::process Targ : Dep vertex= " << boost::target(*dit, *depGraph);
 #endif
@@ -429,7 +442,15 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process target saved for" << v << "is" << target;
 #endif
-          targetConllId=segmentationMapping.find(target)->second;
+          if (segmentationMapping.find(target) != segmentationMapping.end())
+          {
+            targetConllId=segmentationMapping.find(target)->second;
+          }
+          else
+          {
+            DUMPERLOGINIT;
+            LERROR << "ConllDumper::process target" << target << "not found in segmantation mapping";
+          }
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process conll target saved for " << tokenId << " is " << targetConllId;
 #endif
@@ -582,13 +603,16 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> ConllDumperPrivate::collectPredicateTokens(
                                   Lima::AnalysisContent& analysis, LinguisticGraphVertex sentenceBegin, LinguisticGraphVertex sentenceEnd)
 {
+#ifdef DEBUG_LP
   DUMPERLOGINIT;
- QMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
+#endif
+  QMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
 
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (tokenList==0) {
+    DUMPERLOGINIT;
     LERROR << "graph " << m_graph << " has not been produced: check pipeline";
     return result;
   }
