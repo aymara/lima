@@ -81,7 +81,7 @@ use person.lst
 
 @FunctionTitle::@Firstname? (@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
 =>SetEntityFeature(trigger,"title")
-=>SetEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.1,"firstname")
 =>AddEntityFeature(right.2,"firstname")
 =>AppendEntityFeature(right.3,"lastname")
 =>AppendEntityFeature(right.4,"lastname")
