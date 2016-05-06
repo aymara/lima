@@ -249,10 +249,16 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   Token* token = get(vertex_token, *(graph.getGraph()), vertex);
   MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), vertex);
 
-// TODO: OME: when FastAutom OK, restore test   if (m_searchStructures[state]==0) {
-    AULOGINIT;
+#ifdef DEBUG_LP
+   AULOGINIT;
+   LDEBUG << "Automaton::getMatchingTransitions(vertex: " << vertex << ")";
 //    LDEBUG << "search structure not initialized: linear search";
+#endif
+  if (m_searchStructures[state]==0) {
     //linear search on the transitions
+#ifdef DEBUG_LP
+    LDEBUG << "Automaton::getMatchingTransitions: search structure not initialized: linear search";
+#endif
     matchingTransitions.clear();
     vector<Transition>::const_iterator
       trans=m_transitions[state].begin(),
@@ -285,12 +291,14 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       }
     }
     return (!matchingTransitions.empty());
-/* TODO: OME: restore test and alternative  }
-  else {
-    return m_searchStructures[state]->
-      findMatchingTransitions(graph,vertex,analysis,token,data,matchingTransitions);
   }
-*/
+  else {
+#ifdef DEBUG_LP
+    LDEBUG << "Automaton::getMatchingTransitions: search structure initialized find";
+#endif
+    return m_searchStructures[state]->
+      findMatchingTransitions2(graph,vertex,limit,searchGraph,analysis,token,data,matchingTransitions);
+  }
 }
 
 //**********************************************************************

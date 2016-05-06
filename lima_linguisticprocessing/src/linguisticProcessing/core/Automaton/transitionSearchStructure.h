@@ -67,6 +67,15 @@ class TransitionSearchStructure
                             const LinguisticAnalysisStructure::Token* token,
                             const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
                             std::vector<const TargetType*>& matchingSetOfRules) const;
+  uint64_t 
+    findMatchingTransitions2(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                            const LinguisticGraphVertex& vertex,
+                            const LinguisticGraphVertex& limit,
+                            SearchGraph* searchGraph,
+                            AnalysisContent& analysis,
+                            const LinguisticAnalysisStructure::Token* token,
+                            const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
+                            std::vector<std::pair<std::deque<LinguisticGraphVertex>,const TargetType*> >& matchingSetOfRules) const;
   
   // for debug only
   void printStructure(std::ostream& os) const;
@@ -76,14 +85,12 @@ class TransitionSearchStructure
   typedef std::multimap<Tpos,const TargetType*> PosMap;
   typedef std::multimap<std::pair<Tword,Tpos>,const TargetType*> LemmaMap;
   typedef std::multimap<LinguisticAnalysisStructure::TStatus,const TargetType*> TstatusMap;
-  typedef std::multimap<LimaString,const TargetType*> GazeteerMap;
   typedef std::vector<std::pair<TransitionUnit*,const TargetType*> > TransitionList;
   
   WordMap m_wordMap;
   PosMap m_posMap;
   LemmaMap m_lemmaMap;
   TstatusMap m_tstatusMap;
-  GazeteerMap m_gazeteerMap;
   TransitionList m_otherTransitions;
 
   // static members for access of macro and macro_micro
