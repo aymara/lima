@@ -42,6 +42,7 @@
 #include "setTransition.h"
 #include "deaccentuatedTransition.h"
 #include "common/MediaticData/mediaticData.h"
+#include <deque>
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -86,7 +87,6 @@ clearMaps() {
   clearTransitionSearchStructureMap(m_posMap);
   clearTransitionSearchStructureMap(m_lemmaMap);
   clearTransitionSearchStructureMap(m_tstatusMap);
-  clearTransitionSearchStructureMap(m_gazeteerMap);
   typename TransitionList::iterator 
     oit=m_otherTransitions.begin(),
     oit_end=m_otherTransitions.end();
@@ -112,7 +112,6 @@ empty() const {
   if (! m_posMap.empty() ) { return false; }
   if (! m_lemmaMap.empty() ) { return false; }
   if (! m_tstatusMap.empty() ) { return false; }
-  if (! m_gazeteerMap.empty() ) { return false; }
   if (! m_otherTransitions.empty() ) { return false; }
   return true;
 }
@@ -175,13 +174,7 @@ init(const std::vector<TargetType>& l,
       m_tstatusMap.insert(std::make_pair(t->status(),newTarget));
       break;
     }
-    case T_GAZETEER: {
-      GazeteerTransition* t=static_cast<GazeteerTransition*>(transition);
-//       LDEBUG << "TransitionSearchStructure: insert WordTransition " 
-//              << t->printValue();
-      m_gazeteerMap.insert(std::make_pair(t->alias(),newTarget));
-      break;
-    }
+    case T_GAZETEER:
     case T_STAR: 
     case T_NUM: 
     case T_AND:
@@ -223,7 +216,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 {
 #ifdef DEBUG_LP
    AULOGINIT;
-   LDEBUG << "findMatchingTransitions from vertex " << vertex;
+   LDEBUG << "TransitionSearchStructure::findMatchingTransitions from vertex " << vertex;
 #endif
   matchingTransitions.clear();
 
@@ -297,20 +290,6 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     }
   }
 
-  if (! m_gazeteerMap.empty()) {
-    typename GazeteerMap::const_iterator gazeteerTrigger=m_gazeteerMap.begin();
-    for (; gazeteerTrigger != m_gazeteerMap.end() ; gazeteerTrigger++) {
-      const GazeteerTransition* trigger = static_cast<const GazeteerTransition*>(((*gazeteerTrigger).second)->transitionUnit());
-      bool match = trigger->compare(graph,vertex,analysis,token,data);
-      if (trigger->negative()) {
-        match = (!match);
-      }
-      if (match) {
-        matchingTransitions.push_back((*gazeteerTrigger).second);
-      }
-    }
-  }
-
   if (! m_tstatusMap.empty()) {
     const LinguisticAnalysisStructure::TStatus& tstatus=token->status();
 /*    if (tstatus==0) {
@@ -345,7 +324,142 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
   return matchingTransitions.size();
 }
-  
+
+template <typename TargetType>
+uint64_t TransitionSearchStructure<TargetType>::
+    findMatchingTransitions2(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                            const LinguisticGraphVertex& vertex,
+                            const LinguisticGraphVertex& limit,
+                            SearchGraph* searchGraph,
+                            AnalysisContent& analysis,
+                            const LinguisticAnalysisStructure::Token* token,
+                            const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
+                            std::vector<std::pair<std::deque<LinguisticGraphVertex>,const TargetType*> >& matchingTransitions) const
+{
+#ifdef DEBUG_LP
+   AULOGINIT;
+   LDEBUG << "findMatchingTransitions2 from vertex " << vertex;
+#endif
+  matchingTransitions.clear();
+
+  if (! m_wordMap.empty()) {
+    // get words in token
+    std::pair<typename WordMap::const_iterator,typename WordMap::const_iterator>
+      wordRange=m_wordMap.equal_range(token->form());
+    std::deque<LinguisticGraphVertex> singleton(1,vertex);
+    for (; wordRange.first!=wordRange.second; wordRange.first++) {
+      matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,wordRange.first->second));
+    }
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator
+      it=data->begin(),
+      it_end=data->end();
+    StringsPoolIndex current=static_cast<StringsPoolIndex>(0);
+    for (; it!=it_end; it++) {
+      if (it->inflectedForm == current) continue;
+      current=it->inflectedForm;
+      wordRange=m_wordMap.equal_range(current);
+      std::deque<LinguisticGraphVertex> singleton(1,vertex);
+
+      for (; wordRange.first!=wordRange.second; wordRange.first++) {
+        matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,wordRange.first->second));
+      }
+    }
+  }
+    
+  if (! m_posMap.empty()) {
+    // get pos in data
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator  
+      it=data->begin(),
+      it_end=data->end();
+    std::deque<LinguisticGraphVertex> singleton(1,vertex);
+    for (; it!=it_end; it++) {
+
+      // match on macro+micro
+      Tpos pos(m_microAccessor->readValue((*it).properties));
+      
+      std::pair<typename PosMap::const_iterator,typename PosMap::const_iterator>
+        posRange=m_posMap.equal_range(pos);
+      for (; posRange.first!=posRange.second; posRange.first++) {
+        matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,posRange.first->second));
+      }
+
+      // match on macro only
+      Tpos posMacro(m_macroAccessor->readValue((*it).properties));
+      posRange=m_posMap.equal_range(posMacro);
+      for (; posRange.first!=posRange.second; posRange.first++) {
+        matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,posRange.first->second));
+      }
+    }
+  }
+
+  if (! m_lemmaMap.empty()) {
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator  
+      it=data->begin(),
+      it_end=data->end();
+    std::deque<LinguisticGraphVertex> singleton(1,vertex);
+    for (; it!=it_end; it++) {
+
+      // match on macro+micro
+      Tpos pos(m_microAccessor->readValue((*it).properties));
+
+      std::pair<typename LemmaMap::const_iterator,typename LemmaMap::const_iterator>
+        lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,pos));
+      for (; lemmaRange.first!=lemmaRange.second; lemmaRange.first++) {
+        matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,lemmaRange.first->second));
+      }
+
+      // match on macro only
+      Tpos posMacro(m_macroAccessor->readValue((*it).properties));
+      lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,posMacro));
+      for (; lemmaRange.first!=lemmaRange.second; lemmaRange.first++) {
+        matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,lemmaRange.first->second));
+      }
+    }
+  }
+
+  if (! m_tstatusMap.empty()) {
+    std::deque<LinguisticGraphVertex> singleton(1,vertex);
+    const LinguisticAnalysisStructure::TStatus& tstatus=token->status();
+      std::pair<typename TstatusMap::const_iterator,typename TstatusMap::const_iterator>
+        tstatusRange=m_tstatusMap.equal_range(tstatus);
+
+      for (; tstatusRange.first!=tstatusRange.second; tstatusRange.first++) {
+        matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,tstatusRange.first->second));
+      }
+  }
+
+  if (! m_otherTransitions.empty()) {
+    typename TransitionList::const_iterator
+      otherTransition=m_otherTransitions.begin(),
+      otherTransition_end=m_otherTransitions.end();
+    std::deque<LinguisticGraphVertex> noVertices;
+    std::pair<std::deque<LinguisticGraphVertex>,const Transition*>  newPair(noVertices,0);
+    for (; otherTransition!=otherTransition_end; otherTransition++) {
+      bool match=(*otherTransition).first->compare(graph,vertex,analysis,token,data);
+      const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*otherTransition).second);
+      if( gtrans != 0 ) {
+        std::deque<LinguisticGraphVertex> vertices;
+        match = gtrans->matchPath(graph, vertex, limit, searchGraph, analysis, token, vertices, data);
+        if( match ) {
+          newPair = std::pair<std::deque<LinguisticGraphVertex>,const Transition*>(vertices,(*otherTransition).second);
+        }
+      }
+      else {
+        std::deque<LinguisticGraphVertex> singleton(1,vertex);
+        newPair = std::pair<std::deque<LinguisticGraphVertex>,const Transition*>(singleton,(*otherTransition).second);
+      }
+      if ((*otherTransition).first->negative()) {
+        match = (!match);
+      }
+      if (match) {
+        matchingTransitions.push_back(newPair);
+      }
+    }
+  }
+
+  return matchingTransitions.size();
+}
+ 
 //**********************************************************************
 // output function (for debug puposes)
 //**********************************************************************
