@@ -276,12 +276,10 @@ Tstate buildAutomatonNotOptional(Automaton& a,
     // t = new GazeteerTransition(gazeteerAsVectorOfString,gazeteer.alias(),true);
     // TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger); */
     // TODO, vérifier que 
-    //     - que trigger = true, est le bon paramétrage
-    //     - que head = false est le bon paramétrage
-    //     - gérer aussi les "constraints"
+    //     - gérer les "constraints"
     TransitionUnit* t = createGazeteerTransition(gazeteerName,
                  language, initialId, activeEntityGroups,
-                 gazeteers,true,false);
+                 gazeteers,automatonString.isKept(),false);
 
     if (t != 0) {
       const std::vector<Constraint>& constraints = automatonString.getConstraints();
