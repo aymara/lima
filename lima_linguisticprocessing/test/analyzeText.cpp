@@ -437,6 +437,7 @@ int run(int argc,char** argv)
   }
   TIMELOGINIT;
   LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
+  TimeUtils::logAllCumulatedTime("et finalement...");
   
   return SUCCESS_ID;
 }
