@@ -205,7 +205,7 @@
           operator="="
           right="Penmarc'h"/-->
   </testcase>
- <testcase id="fre.se.location.comp.10" type="pertinent">
+  <testcase id="fre.se.location.comp.10" type="pertinent">
     <call-parameters>
       <param key="text" value="Connais-tu l'Italie du Sud."/>
       <param key="language" value="fre"/>
@@ -221,9 +221,39 @@
           right="Location.GEO"/>
     <test id="fre.se.location.comp.10.2" trace=".se.xml"
           comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Italie"/>
+    <test id="fre.se.location.comp.10.2" trace=".se.xml"
+          comment="composant"
           left="XPATH#//entities/entity/components/qualifier"
           operator="="
           right="du Sud"/>
+  </testcase>
+ <testcase id="fre.se.location.comp.100" type="pertinent">
+    <call-parameters>
+      <param key="text" value="le conflit au Sud Liban."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl></expl>
+    <test id="fre.se.location.comp.10.a.1" trace=".se.xml"
+          comment="type d'entité = location.GEO"
+          left="XPATH#//entities/entity[pos=15][len=9]/type"
+          operator="="
+          right="Location.GEO"/>
+    <test id="fre.se.location.comp.10.a.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/name"
+          operator="="
+          right="Liban"/>
+    <test id="fre.se.location.comp.10.a.2" trace=".se.xml"
+          comment="composant"
+          left="XPATH#//entities/entity/components/qualifier"
+          operator="="
+          right="Sud"/>
   </testcase>
  <testcase id="fre.se.location.comp.11" type="pertinent">
     <call-parameters>
