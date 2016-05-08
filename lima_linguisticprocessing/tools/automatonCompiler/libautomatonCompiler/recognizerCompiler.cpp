@@ -67,7 +67,7 @@ m_stream(0),
 m_nbRule(0)
 {
   AUCLOGINIT;
-  LINFO << "Opening recognizer compiler with file " << filename;
+  LDEBUG << "Opening recognizer compiler with file " << filename;
   m_stream=new ifstream(filename.c_str(), std::ifstream::binary);
   if (! m_stream || !m_stream->good()) {
     LERROR << "Cannot open file [" << filename << "]";
@@ -378,7 +378,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       LERROR << message.str();
     }
     */
-    LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
+    LDEBUG << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
           << ": trigger=" << *trigger;
     reco.addRule(trigger,r);
 #ifdef DEBUG_LP
@@ -537,7 +537,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
   }
 
   r->setWeight(currentRuleWeight());
-  LINFO << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
+  LDEBUG << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
         << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteer[0])<<")";
   int indexRule=reco.addRuleInStorage(r);
   
