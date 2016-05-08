@@ -27,11 +27,16 @@
     <group name="LocationModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="LocationRecognitionForLimaserver"/>
-        <item value="PostLocationRecognition"/>
+        <item value="PostLocationRecognitionForLimaserver"/>
       </list>
     </group>
     <group name="LocationRecognition" class="ApplyRecognizer">
       <param key="automaton" value="LocationRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PostLocationRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="PostLocationRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
@@ -40,8 +45,8 @@
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
-    <group name="PostLocationRecognition" class="ApplyRecognizer">
-      <param key="automaton" value="PostLocationRules"/>
+    <group name="PostLocationRecognitionForLimaserver" class="ApplyRecognizer">
+      <param key="automaton" value="PostLocationCompRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
@@ -55,6 +60,9 @@
     </group>
     <group name="PostLocationRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PostLOCATION-eng.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-eng.bin"/>
     </group>
     <group name="LocationIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">
@@ -100,6 +108,9 @@
     </group>
     <group name="PostLocationRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PostLOCATION-fre.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-fre.bin"/>
     </group>
     <group name="LocationIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">
