@@ -18,4 +18,4 @@ set (DEPENDENCIES airports.lst cities.lst greeklocations.lst countriesAndRegions
 
 SPECIFICENTITIES(main eng Location LOCATION-eng.rules LOCATION_COMP-eng.rules LOCATION_RATP-eng.rules)
 
-SPECIFICENTITIES(post eng Location PostLOCATION-eng.rules)
+SPECIFICENTITIES(post eng Location PostLOCATION-eng.rules PostLOCATION_COMP-eng.rules)
