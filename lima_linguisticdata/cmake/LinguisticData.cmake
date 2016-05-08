@@ -326,9 +326,13 @@ endmacro (COMPILE_RULES)
 # Idiomatic entities Exec Environment
 
 macro (IDIOMATICENTITIES _lang)
+  set (COMPILE_RULES_DEBUG_MODE)
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set (COMPILE_RULES_DEBUG_MODE "--debug")
+  endif ()
   add_custom_command(
     OUTPUT idiomaticExpressions-${_lang}.bin
-    COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} --language=${_lang} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
+    COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -696,6 +700,10 @@ endmacro (SPECIFICENTITIESEXECENV _lang)
 ####################
 # Specific Entities
 macro (SPECIFICENTITIES _subtarget _lang _group)
+  set (COMPILE_RULES_DEBUG_MODE)
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set (COMPILE_RULES_DEBUG_MODE "--debug")
+  endif ()
   set (BINFILENAMES)
   foreach(_current ${ARGN})
     get_filename_component(BINFILENAME ${_current} NAME_WE)
@@ -703,7 +711,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
     add_custom_command(
       OUTPUT ${BINFILENAME}
-	  COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${_lang} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
+	  COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
       DEPENDS ${_current} ${DEPENDENCIES}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
