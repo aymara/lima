@@ -832,7 +832,7 @@ readConstraintComplement(LimaString& str,
   // if given, is always last argument of the constraint
 
   AUCLOGINIT;
-  LINFO << "readConstraintComplement: [" << str << "]";
+  LDEBUG << "readConstraintComplement: [" << str << "]";
 
   // last character before ending of args ')'
   int end=str.length()-1;
