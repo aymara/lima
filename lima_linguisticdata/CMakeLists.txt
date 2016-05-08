@@ -18,6 +18,8 @@ project(LimaLinguisticData NONE)
 
 cmake_minimum_required(VERSION 2.8.3)
 
+# message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
+# set(CMAKE_VERBOSE_MAKEFILE on)
 
 #cmake_policy
 if(POLICY CMP0046)
