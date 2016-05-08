@@ -5,8 +5,13 @@ set defaultAction=>CreateSpecificEntity()
 
 use annonceurLieu.lst
 
-@AnnonceurLieu::$PREP $DET? <Location.LOCATION>:LOCATION:
-=>SetEntityFeature(trigger,"kind")
-=>AppendEntityFeature(right.3,"name")
+@PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
+
+@AnnonceurLieu::$PREP $DET? <Location.LOCATION>:ODO:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#<LOCATION>::du @PrecisionGeographique :LOCATION:
+<LOCATION>::(des|de la?|du) @PrecisionGeographique :LOCATION:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
