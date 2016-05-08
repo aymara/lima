@@ -453,6 +453,7 @@ int run(int argc,char** argv)
         {
           std::cerr << "\rWriting recognizer…";
           AutomatonWriter writer;
+          LINFO << "writer.WritingRecognizer(language:" << language << "debug:" << param.debug << ")";
           writer.writeRecognizer(reco,param.outputFile,language,param.debug);
           //reco.writeToFile(param.outputFile);
         }
