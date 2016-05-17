@@ -347,20 +347,23 @@ void IndexElementIteratorPrivate::getPositionLengthList(const std::vector<uint64
 {
   // update position/length list for structure
   // use previous elements in queue
-  std::vector<uint64_t>::const_iterator 
-    it=structure.begin(),it_end=structure.end();
-  for (std::deque<IndexElement>::const_iterator 
-         elt=m_partQueue.begin(),elt_end=m_partQueue.end();
-       elt!=elt_end; elt++) {
-    if ((*elt).getId()==*it) {
-      const PositionLengthList& p=(*elt).getPositionLengthList();
-      poslenlist.insert(poslenlist.end(),p.begin(),p.end());
-      it++;
-      if (it==it_end) {
-        break;
-      }
+  for (std::vector<uint64_t>::const_iterator it = structure.begin(); it != structure.end(); ++it) {
+    
+    QMap<QString,IndexElement>::const_iterator found = m_alreadyFoundElements.begin();
+    while (found != m_alreadyFoundElements.end() && *it != found.value().getId()) {
+      ++found;
+    }
+    
+    if (found != m_alreadyFoundElements.end()) {
+      const PositionLengthList& p = found.value().getPositionLengthList();
+      poslenlist.insert(poslenlist.end(), p.begin(), p.end());
+    }
+    else {
+      BOWLOGINIT
+      LERROR << "getPositionLengthList failure: element id " << *it << " not found";
     }
   }
+
   // sort positions
   std::sort(poslenlist.begin(),poslenlist.end());
 }
