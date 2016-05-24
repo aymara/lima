@@ -732,7 +732,7 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
   m_micro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
 
-  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
+  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("TEMPCOMP");
 #ifdef DEBUG_LP
   LDEBUG << "CreateCompoundTense::CreateCompoundTense() m_tempCompType" << m_tempCompType;
 #endif
