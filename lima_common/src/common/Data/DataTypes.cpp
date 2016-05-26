@@ -409,7 +409,7 @@ std::ostream& operator<<(ostream& os, const Node& node)
 
 QDebug& operator<<(QDebug& os, const Node& node)
 {
-  os<<"Node "<<node.get_StructId()<<" "<<node.get_NodeId()<<" "<<node.get_ContentId()<<" "<<node.indexId()<<" "<<node.descrId()<<" "<<node.get_DocName();
+  os<<"Node(structId:"<<node.get_StructId()<<", nodeId:"<<node.get_NodeId()<<", contentId:"<<node.get_ContentId()<<", indexId:"<<node.indexId()<<", descrId:"<<node.descrId()<<", docName:"<<node.get_DocName() << ")";
   return os;
 }
 
@@ -426,10 +426,10 @@ std::ostream& operator<<(ostream& os, const Structure& structure)
 QDebug& operator<<(QDebug& os, const Structure& structure)
 {
   const map<CONTENT_ID,Node>* nodes=structure.getNodes();
-  os << "Structure: " << structure.getStructId() << " ; nodes ("<<nodes->size()<<"): ";
+  os << "Structure( structId:" << structure.getStructId() << ", nodes ("<<nodes->size()<<"): ";
   for (map<CONTENT_ID,Node>::const_iterator ItrNodes = nodes->begin(); ItrNodes != nodes->end() ; ItrNodes++)
   {
-    os<<"node ("<<ItrNodes->first<<"):" << ItrNodes->second;
+    os<<"node ("<<ItrNodes->first<<":" << ItrNodes->second<<")";
   }
   return os;
 }
