@@ -1058,9 +1058,7 @@ la	DET
 nouvelle	ADJ
 suite	NC
 multimédia	ADJ
-iLife	NPP
-'	DET
-05	NC
+iLife'05	NPP
 ainsi que	CC
 Mac OS X 10.3	NPP
 ,	PONCT
@@ -15067,8 +15065,7 @@ a	V
 qualifié	VPP
 cette	DET
 annonce	NC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 absurde	ADJ
 »	PONCT
@@ -24414,8 +24411,7 @@ qui	PROREL
 tiendrait	V
 ces	DET
 estimations	NC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 officiels	ADJ
 somaliens	ADJ
@@ -33281,8 +33277,7 @@ congé	NC
 expressément	ADV
 prévue	VPP
 par	P
-l	DET
-'	PONCT
+l'	DET
 article	NC
 4	ADJ
 du	DETDU
@@ -37800,8 +37795,7 @@ effectifs	NC
 sécuritaires	ADJ
 à	P
 cause	NC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 éléments	NC
 déstructeurs	ADJ
@@ -40629,8 +40623,7 @@ dérobade	NC
 ,	PONCT
 estimant	VPR
 par exemple	ADV
-qu	CS
-'	PONCT
+qu'	CS
 «	PONCT
 il	CLS
 faut	V
@@ -40792,8 +40785,7 @@ d'	P
 abord	NC
 été	VPP
 qualifiée	VPP
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 historique	ADJ
 »	PONCT
@@ -44113,8 +44105,7 @@ objet	NC
 de	P
 luttes	NC
 qualifiées	VPP
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 âpres	ADJ
 »	PONCT
@@ -44880,8 +44871,7 @@ tribunal	NC
 en raison de	P
 son	DET
 caractère	NC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 exécutant	VPR
 »	PONCT
@@ -46664,8 +46654,7 @@ vues	NC
 ,	PONCT
 la	DET
 notion	NC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 intérêt	NC
 public	ADJ
@@ -46679,7 +46668,6 @@ remplacer	VINF
 par	P
 celle	PRO
 d'	P
-	PONCT
 «	PONCT
 intérêt	NC
 économique	ADJ
@@ -48859,8 +48847,7 @@ outre	P
 les	DET
 délais	NC
 supplémentaires	ADJ
-qu	CS
-'	PONCT
+qu'	CS
 «	PONCT
 elle	CLS
 procure	V
@@ -48881,8 +48868,7 @@ droit	NC
 à	P
 des	DETDES
 réductions	NC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 impôts	NC
 ,	PONCT
@@ -48987,8 +48973,7 @@ Inter	ADJ
 .	PONCTU_FORTE
 Soulignant	VPR
 que	CS
-l	DET
-'	PONCT
+l'	DET
 «	PONCT
 objectif	ADJ
 initial	ADJ
@@ -49027,8 +49012,7 @@ porte-parole	NC
 du	DETDU
 gouvernement	NC
 ,	PONCT
-l	DET
-'	PONCT
+l'	DET
 «	PONCT
 objectif	ADJ
 désormais	ADV
@@ -49045,8 +49029,7 @@ du	DETDU
 portail	ADJ
 »	PONCT
 afin	P
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 accueillir	VINF
 jusqu'	P
@@ -49315,13 +49298,11 @@ les	DET
 messages	NC
 informatiques	ADJ
 prouvant	VPR
-qu	CS
-'	PONCT
+qu'	CS
 «	PONCT
 ils	CLS
-n	NC
+n'	ADV
 »	PONCT
-'	PONCT
 ont	V
 pu	VPP
 faire	VINF
@@ -49346,8 +49327,7 @@ lundi	NC
 de	P
 Pentecôte	NPP
 ,	PONCT
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 un	DET
 ultime	ADJ
@@ -54339,8 +54319,7 @@ collectionneurs	NC
 privés	ADJ
 réunis	VPP
 au sein de	P
-l	DET
-'	PONCT
+l'	DET
 ADIAF	NPP
 .	PONCTU_FORTE
 Sa	DET
@@ -55838,8 +55817,7 @@ première	ADJ
 d'	P
 une	DET
 longueur	NC
-d	NC
-'	PONCT
+d'	P
 1,5 km	NC
 ,	PONCT
 située	VPP
@@ -60460,8 +60438,7 @@ de	P
 gauche	NC
 militant	NC
 pour	P
-l	DET
-'	PONCT
+l'	DET
 «	PONCT
 égalité	NC
 sociale	ADJ
@@ -62756,8 +62733,7 @@ partis	NC
 a	V
 notamment	ADV
 souligné	VPP
-qu	CS
-'	PONCT
+qu'	CS
 «	PONCT
 Angela Merkel	NPP
 a été	V
@@ -66606,8 +66582,7 @@ Il	CLS
 se réjouit	V
 également	ADV
 que	CS
-l	DET
-'	PONCT
+l'	DET
 «	PONCT
 impôt	NC
 volontaire	ADJ
@@ -67202,8 +67177,7 @@ Point	NC
 final	ADJ
 »	PONCT
 et	CC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 Obéissance	NPP
 due	VPP
@@ -67775,8 +67749,7 @@ pas	ADV
 de	P
 refugiés	NC
 mais	CC
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 immigrants	NC
 illégaux	ADJ
@@ -68178,8 +68151,7 @@ pas	ADV
 de	P
 réfugiés	NC
 mais	CC
-d	NC
-'	PONCT
+d'	P
 "	PONCT
 immigrants	NC
 illégaux	ADJ
@@ -68978,8 +68950,7 @@ ou	CC
 trois	DETNUM
 pays	NC
 »	PONCT
-d	NC
-'	PONCT
+d'	P
 «	PONCT
 égoïste	ADJ
 »	PONCT
@@ -69471,8 +69442,7 @@ en	CLO
 demandaient	V
 un	DET
 rabais	NC
-d	NC
-'	NC
+d'	P
 1,4 milliards	ADJ
 .	PONCTU_FORTE
 Jan Peter Balkenende	NPP
@@ -72609,8 +72579,7 @@ le	DET
 forum	NC
 pour	P
 promouvoir	VINF
-l	DET
-'	PONCT
+l'	DET
 édition	NC
 anglaise	ADJ
 lancé	VPP
@@ -95519,11 +95488,8 @@ est	V
 fortement	ADV
 compromise	VPP
 .	PONCTU_FORTE
-L	DET
-'	PONCT
-Armée	NC
-républicaine	ADJ
-irlandaise	ADJ
+L'	DET
+Armée républicaine irlandaise	NPP
 (	PONCT
 IRA	NPP
 )	PONCT
