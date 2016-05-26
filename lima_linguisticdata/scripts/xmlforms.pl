@@ -52,11 +52,12 @@ while (<SOURCE>)
   s/>/&gt;/g;
   if ($_ eq "") { next;}
   @data=split(/	/);
-  if (/#/)  { next;}	# pour autoriser les commentaires 
-  if (/^\s+$/)  { next;}	# pour autoriser les lignes vides 
+  s/#.*//;  # to remove end of line comments
+#   if (/#/)  { next;}  # pour autoriser les commentaires 
+  if (/^\s*$/)  { next;}	# to ignore empty lines
 
  if (scalar(@data) !=4) {
-    print "xmlform: Invalid line $_\n";
+    print "xmlform: Invalid line '$_'\n";
     next;
   }
 
