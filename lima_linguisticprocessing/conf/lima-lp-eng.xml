@@ -44,8 +44,12 @@
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerSimplify"/>
+        <item value="syntacticAnalyzerSimplifyQuotes"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
+        <item value="syntacticAnalyzerFinalize"/>
+        <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
         <!--item value="coreferencesSolving"/--> 
         <!--item value="annotDotGraphWriter"/-->
@@ -53,6 +57,7 @@
         <!--item value="corefLogger" /-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <item value="VerbNetRecognition"/>
+        <!--item value="VerbNetRecognition"/-->
         <!--item value="kbsrl"/-->
         <item value="conllDumper"/>
         <!--item value="bowDumper"/-->
@@ -469,6 +474,22 @@
       <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>
       <param key="maxChainLength" value="12"/>
+    </group>
+    <group name="syntacticAnalyzerDummy" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+        <item value="dummyRules"/>
+      </list>
+    </group>
+    <group name="syntacticAnalyzerFinalize" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+        <item value="finalizeRules"/>
+      </list>
+    </group>
+    <group name="syntacticAnalyzerSimplify" class="SyntacticAnalyzerSimplify">
+      <param key="simplifyAutomaton" value="simplifyAutomaton"/>
+    </group>
+    <group name="syntacticAnalyzerSimplifyQuotes" class="SyntacticAnalyzerSimplify">
+      <param key="simplifyAutomaton" value="simplifyAutomatonQuotes"/>
     </group>
     <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
       <param key="depGraphMaxBranchingFactor" value="100"/>
@@ -961,6 +982,18 @@
     </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/rules-eng-heterodeps.txt.bin"/>
+    </group>
+    <group name="dummyRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-dummy.txt.bin"/>
+    </group>
+    <group name="finalizeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-eng-finalize.txt.bin"/>
+    </group>
+    <group name="simplifyAutomaton" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/simplification-rules-eng.txt.bin"/>
+    </group>
+    <group name="simplifyAutomatonQuotes" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/simplification-quotes-rules-eng.txt.bin"/>
     </group>
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>
