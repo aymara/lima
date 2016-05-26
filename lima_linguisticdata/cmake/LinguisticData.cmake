@@ -358,6 +358,10 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   # Add custom command to copy files to execEnv (rules to produce them)
   # and Add destitation files to lima-execEnv target's dependencies list 
   CustomCopyFileAndAddExecEnvDependency(
+    ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+    ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+  )
+  CustomCopyFileAndAddExecEnvDependency(
     ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
     ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
   )
@@ -553,6 +557,17 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
     VERBATIM
   )
   add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+    COMMENT "create config env for specific entities rules (FrameNet-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -625,6 +640,7 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
     rules-${_lang}-${_group}-configEnv-${_subtarget}
     ALL
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
