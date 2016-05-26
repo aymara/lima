@@ -35,9 +35,9 @@
     </filtre>
     <filtre ID="FN7">
       <nom>NP</nom>
-			<categorie>NNP</categorie>
-			<categorie>NNPS</categorie>
-		</filtre>
+      <categorie>NNP</categorie>
+      <categorie>NNPS</categorie>
+    </filtre>
     <filtre ID="FN8">
       <nom>NOM-JOUR</nom>
       <categorie>NN</categorie>
@@ -272,7 +272,6 @@
     <filtre ID="FV32">
       <nom>PREP</nom>
       <categorie>IN</categorie>
-      <categorie>THATIN</categorie>
       <categorie>TO</categorie>
       <categorie>RP</categorie>
     </filtre>
