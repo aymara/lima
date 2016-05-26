@@ -51,6 +51,7 @@
 #include <map>
 #include <queue>
 #include <boost/regex.hpp>
+#include <QtCore/QStringList>
 
 //using namespace boost;
 using namespace Lima::Common::MediaticData;
@@ -96,6 +97,9 @@ CreateRelationReverseWithRelatedFactory(CreateRelationReverseWithRelatedId);
 
 Automaton::ConstraintFunctionFactory<CopyRelationsOutOfTo>
 CopyRelationsOutOfToFactory(CopyRelationsOutOfToId);
+
+Automaton::ConstraintFunctionFactory<CopyIncomingRelationsTo>
+CopyIncomingRelationsToFactory(CopyIncomingRelationsToId);
 
 Automaton::ConstraintFunctionFactory<CreateCompoundTense>
 CreateCompoundTenseFactory(CreateCompoundTenseId);
@@ -464,13 +468,14 @@ bool RemoveOutRelationFrom::operator()(const AnalysisGraph& graph,
 
 CopyRelationsOutOfTo::CopyRelationsOutOfTo(MediaId language,
                        const LimaString& complement):
-    ConstraintWithRelationComplement(language,complement)
+    Automaton::ConstraintFunction(language,complement),
+    m_relations(complement.split(","))
 {
 /*
   Critical function : comment logging message
 */
-//   SAPLOGINIT;
-//   LDEBUG << "CopyRelationsOutOfTo::CopyRelationsOutOfTo" << language << complement << m_relation;
+  SAPLOGINIT;
+  LDEBUG << "CopyRelationsOutOfTo::CopyRelationsOutOfTo" << language << complement << m_relations;
 }
 
 bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
@@ -481,8 +486,8 @@ bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
 /*
   Critical function : comment logging message
 */
-//   SAPLOGINIT;
-//   LDEBUG << "CopyRelationsOutOfTo" << v1 << v2;
+  SAPLOGINIT;
+  LDEBUG << "CopyRelationsOutOfTo" << v1 << v2;
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if ( v1 == graph.firstVertex() || v1 == graph.lastVertex()
     || v2 == graph.firstVertex() || v2 == graph.lastVertex() )
@@ -494,18 +499,79 @@ bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
   DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
   DependencyGraphOutEdgeIt it, it_end;
   boost::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
-  bool res = true;
+  bool res = false;
   for (; it != it_end; it++)
   {
-    LinguisticGraphVertex target = syntacticData->tokenVertexForDepVertex(boost::target(*it,*(syntacticData-> dependencyGraph())));
+    QString relation = QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(map[*it]).c_str());
+    LDEBUG << "CopyRelationsOutOfTo" << relation << m_relations;
+    if (m_relations.contains(relation))
+    {
+      LDEBUG << "CopyRelationsOutOfTo copying" << relation;
+      LinguisticGraphVertex target = syntacticData->tokenVertexForDepVertex(boost::target(*it,*(syntacticData-> dependencyGraph())));
 
-    res = syntacticData->relation(v2, target, map[*it]);
-    if (!res) break;
+      if (syntacticData->relation(v2, target, map[*it]))
+        res = true;
+    }
   }
 
-//   LDEBUG << "CopyRelationsOutOfTo:" << res;
-  return res;
+  LDEBUG << "CopyRelationsOutOfTo:" << res;
+  return true;
 }
+
+//**********************************************************************
+
+CopyIncomingRelationsTo::CopyIncomingRelationsTo(MediaId language,
+                       const LimaString& complement):
+    Automaton::ConstraintFunction(language,complement),
+    m_relations(complement.split(","))
+{
+/*
+  Critical function : comment logging message
+*/
+  SAPLOGINIT;
+  LDEBUG << "CopyIncomingRelationsTo::CopyIncomingRelationsTo" << language << complement << m_relations;
+}
+
+bool CopyIncomingRelationsTo::operator()(const AnalysisGraph& graph,
+                            const LinguisticGraphVertex& v1,
+                            const LinguisticGraphVertex& v2,
+                            AnalysisContent& analysis) const
+{
+/*
+  Critical function : comment logging message
+*/
+  SAPLOGINIT;
+  LDEBUG << "CopyIncomingRelationsTo" << v1 << v2;
+  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  if ( v1 == graph.firstVertex() || v1 == graph.lastVertex()
+    || v2 == graph.firstVertex() || v2 == graph.lastVertex() )
+  {
+    LDEBUG << "CopyIncomingRelationsTo: false";
+    return false;
+  }
+  EdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
+
+  DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
+  DependencyGraphInEdgeIt it, it_end;
+  boost::tie(it, it_end) = in_edges(dv1, *(syntacticData-> dependencyGraph()));
+  bool res = false;
+  for (; it != it_end; it++)
+  {
+    LinguisticGraphVertex source = syntacticData->tokenVertexForDepVertex(boost::source(*it,*(syntacticData-> dependencyGraph())));
+    QString relation = QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(map[*it]).c_str());
+    LDEBUG << "CopyIncomingRelationsTo" << relation << m_relations;
+    if (m_relations.contains(relation))
+    {
+      LDEBUG << "CopyIncomingRelationsTo copying" << relation;
+      if (syntacticData->relation(source, v2, map[*it]))
+        res = true;
+    }
+  }
+
+  LDEBUG << "CopyIncomingRelationsTo:" << res;
+  return true;
+}
+
 
 
 //**********************************************************************
@@ -1152,6 +1218,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     recoData = new RecognizerData();
     analysis.setData("RecognizerData", recoData);
   }
+#ifdef DEBUG_LP
+  LDEBUG << "CreateCompoundTense setNextVertex:" << newVertex;
+#endif
   recoData->setNextVertex(newVertex);
 
 #ifdef DEBUG_LP
