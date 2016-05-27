@@ -14,11 +14,11 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-install(FILES 
-    lima.A0.UNK  lima.A2      lima.A3.UNK  lima.AMBP  lima.M0.LR.MRG      lima.WIN
-    config-minimale.SVMT  lima.A1      lima.A2.UNK  lima.A4      lima.DICT  lima.UNK.M0.LR.MRG
-    lima.A0              lima.A1.UNK  lima.A3      lima.A4.UNK  lima.EXP   lima.UNKP
-  COMPONENT eng DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-eng)
+# install(FILES 
+#     lima.A0.UNK  lima.A2      lima.A3.UNK  lima.AMBP  lima.M0.LR.MRG      lima.WIN
+#     config-minimale.SVMT  lima.A1      lima.A2.UNK  lima.A4      lima.DICT  lima.UNK.M0.LR.MRG
+#     lima.A0              lima.A1.UNK  lima.A3      lima.A4.UNK  lima.EXP   lima.UNKP
+#   COMPONENT eng DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-eng)
 
 # To learn a new model
 # copy corpus file to work dir
