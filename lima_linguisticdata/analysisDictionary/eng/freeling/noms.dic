@@ -13184,6 +13184,8 @@ ex-wife	ex-wife		NN
 ex-wives	ex-wife		NNS
 eyeball	eyeball		NN
 eyeballs	eyeball		NNS
+eyebolt	eyebolt		NN
+eyebolts	eyebolt		NNS
 eyebrow	eyebrow		NN
 eyebrows	eyebrow		NNS
 eyecare	eyecare		NN
@@ -36045,6 +36047,8 @@ switchboard	switchboard		NN
 switchers	switcher		NNS
 switcher	switcher		NN
 switches	switch		NNS
+switchgear	switchgear		NN
+switchgears	switchgear		NNS
 switchings	switching		NNS
 switching	switching		NN
 switch-overs	switchover		NNS
