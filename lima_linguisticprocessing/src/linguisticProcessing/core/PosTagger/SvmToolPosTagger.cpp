@@ -32,10 +32,7 @@
 #include "common/time/timeUtilsController.h"
 #include "svmtool/tagger.h"
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/replace.hpp>
-
+#include <boost/algorithm/string.hpp>
 
 
 int verbose = FALSE;
@@ -90,7 +87,10 @@ void SvmToolPosTagger::init(
   string resourcesPath=MediaticData::single().getResourcesPath();  
   try
   {
-    m_model = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("model").c_str()).toUtf8().constData();
+    string modelName=unitConfiguration.getParamsValueAtKey("model");
+    // add .DICT to find the file, remove it to get the generic model name + path
+    m_model = Common::Misc::findFileInPaths(resourcesPath.c_str(), modelName.append(".DICT").c_str()).toUtf8().constData();
+    boost::replace_last(m_model,".DICT","");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
