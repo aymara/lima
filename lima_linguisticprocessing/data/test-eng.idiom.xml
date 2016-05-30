@@ -22,7 +22,7 @@
     right=""/>
   <test id="eng.idiom.1.3" trace=".idiom.xml"
     comment=" 'as soon as' a le bon lemme et la bonne categorie"
-    left="XPATH#//data_structure/vertex[token[position=9][length=10]]/data/idiomatic_expression/form[@lemma='as soon as']/property/p[@prop='MICRO'][@val='IN']"
+    left="XPATH#//data_structure/vertex[token[position=9][length=10]]/data/idiomatic_expression/form[@lemma='as soon as']/property/p[@prop='MICRO'][@val='SCONJ']"
     operator="exists"
     right=""/>
   <test id="eng.idiom.1.4" trace=".idiom.xml"
@@ -62,7 +62,7 @@
     right=""/>
   <test id="eng.idiom.2.3" trace=".idiom.xml"
     comment=" 'wheter or not' a le bon lemme et la bonne categorie"
-    left="XPATH#//data_structure/vertex[token[position=11][length=14]]/data/idiomatic_expression/form[@lemma='whether or not']/property/p[@prop='MICRO'][@val='IN']"
+    left="XPATH#//data_structure/vertex[token[position=11][length=14]]/data/idiomatic_expression/form[@lemma='whether or not']/property/p[@prop='MICRO'][@val='SCONJ']"
     operator="exists"
     right=""/>
   <!--test id="eng.idiom.2.4" trace=".idiom.xml"
@@ -177,7 +177,7 @@
     right=""/>
   <test id="eng.idiom.6.3" trace=".idiom.xml"
     comment=" 'as soon as' a le bon lemme et la bonne categorie"
-    left="XPATH#//data_structure/vertex[token[position=1][length=10]]/data/idiomatic_expression/form[@lemma='as soon as']/property/p[@prop='MICRO'][@val='IN']"
+    left="XPATH#//data_structure/vertex[token[position=1][length=10]]/data/idiomatic_expression/form[@lemma='as soon as']/property/p[@prop='MICRO'][@val='SCONJ']"
     operator="exists"
     right=""/>
   <test id="eng.idiom.6.4" trace=".idiom.xml"
@@ -217,7 +217,7 @@
     right=""/>
   <test id="eng.idiom.7.3" trace=".idiom.xml"
     comment=" 'wheter or not' a le bon lemme et la bonne categorie"
-    left="XPATH#//data_structure/vertex[token[position=1][length=14]]/data/idiomatic_expression/form[@lemma='whether or not']/property/p[@prop='MICRO'][@val='IN']"
+    left="XPATH#//data_structure/vertex[token[position=1][length=14]]/data/idiomatic_expression/form[@lemma='whether or not']/property/p[@prop='MICRO'][@val='SCONJ']"
     operator="exists"
     right=""/>
   <!--test id="eng.idiom.7.4" trace=".idiom.xml"
