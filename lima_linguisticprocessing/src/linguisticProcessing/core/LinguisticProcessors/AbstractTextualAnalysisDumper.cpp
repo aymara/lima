@@ -128,7 +128,7 @@ initialize(AnalysisContent& analysis) const
 
   if (! m_temporaryFileMetadata.isEmpty()) {
 #ifdef DEBUG_LP
-    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with temporary file metadata";
 #endif
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
