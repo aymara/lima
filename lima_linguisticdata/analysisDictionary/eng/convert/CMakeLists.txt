@@ -24,13 +24,15 @@
 set(ENV{LC_ALL} "C")
 
 file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic)
+# to add wordnet entries
+#file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic ${CMAKE_CURRENT_SOURCE_DIR}/../wordnet/*.dic)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt
-    COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt
+    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt.tmp
+    COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
