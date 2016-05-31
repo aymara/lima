@@ -137,14 +137,14 @@ void BoWBinaryReader::readHeader(std::istream& file)
    
 #ifdef DEBUG_LP
     BOWLOGINIT;
-    LDEBUG << "BoWBinaryReader::readHeader type mapping is";
+    LDEBUG << "BoWBinaryReader::readHeader type mapping is (shown if logger = TRACE)";
     std::ostringstream oss;
     for (std::map<MediaticData::EntityType,MediaticData::EntityType>::const_iterator
             it=m_d->m_entityTypeMapping.begin(),it_end=m_d->m_entityTypeMapping.end();
             it!=it_end; it++) {
         oss << (*it).first << " -> " << (*it).second << std::endl;
     }
-    LDEBUG << oss.str();
+    LTRACE << oss.str();
     LDEBUG << "BoWBinaryReader::readHeader end file at: " << file.tellg();
 #endif
 

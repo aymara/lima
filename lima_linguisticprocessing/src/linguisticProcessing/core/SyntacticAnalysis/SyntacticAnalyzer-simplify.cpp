@@ -66,6 +66,8 @@ void SyntacticAnalyzerSimplify::init(
   Manager* manager)
 
 {
+  SASLOGINIT;
+  LINFO << "SyntacticAnalyzerSimplify::init";
   m_language=manager->getInitializationParameters().media;
   std::string rules=unitConfiguration.getParamsValueAtKey("simplifyAutomaton");
   m_recognizer = static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,rules));
@@ -76,7 +78,7 @@ LimaStatusCode SyntacticAnalyzerSimplify::process(
 {
   Lima::TimeUtilsController timer("SyntacticAnalysis");
   SASLOGINIT;
-  LINFO << "start syntactic analysis - subsentences simplification";
+  LINFO << "SyntacticAnalyzerSimplify::process";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)

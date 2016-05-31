@@ -22,11 +22,37 @@ using groups LinguisticProcessing
 #----------------------------------------------------------------------
 use categoriesClassesDeclaration-eng.txt
 
-@Tout:@Tout ($PONCTU)?::SYNTACTIC_RELATION:
-+!GovernorOf(left.1,"ANY")
-+SecondUngovernedBy(trigger.1,left.1,"ANY")
-+SecondUngovernedBy(left.1,trigger.1,"ANY")
-+CreateRelationBetween(left.1,trigger.1,"Dummy")
+@Tout:(@Tout){0-n} @Tout:@Tout:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.2,"ANY")
++SecondUngovernedBy(left.2,trigger.1,"ANY")
++CreateRelationBetween(left.2,trigger.1,"Dummy")
++CreateRelationBetween(trigger.1,right.1,"Dummy")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
+
+
+@Tout:(@Tout){0-n} @Tout:@Tout:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++GovernedBy(trigger.1,"Dummy")
++CreateRelationBetween(left.2,trigger.1,"Dummy")
++CreateRelationBetween(trigger.1,right.1,"Dummy")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+
+
+@Tout:(@Tout){0-n} @Tout::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.2,"ANY")
++SecondUngovernedBy(left.2,trigger.1,"ANY")
++CreateRelationBetween(left.2,trigger.1,"Dummy")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
 

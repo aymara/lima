@@ -1078,6 +1078,7 @@ amateurs	amateur		NNS
 amazement	amazement		NN
 ambassador	ambassador		NN
 ambassadors	ambassador		NNS
+amber	amber		NN
 ambiance	ambiance		NN
 ambiances	ambiance		NNS
 ambience	ambience		NN
@@ -3776,6 +3777,7 @@ bleaches	bleach		NNS
 bleakness	bleakness		NN
 bleat	bleat		NN
 bleats	bleat		NNS
+bleed	bleed		NN
 bleeder	bleeder		NN
 bleeders	bleeder		NNS
 bleeding	bleeding		NN
@@ -10773,7 +10775,7 @@ dispersions	dispersion		NNS
 displacement	displacement		NN
 displacements	displacement		NNS
 display	display		NN
-displays	display		NNS
+#displays	display		NNS
 displeasure	displeasure		NN
 disposable	disposable		NN
 disposables	disposable		NNS

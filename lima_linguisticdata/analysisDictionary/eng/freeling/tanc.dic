@@ -16,7 +16,7 @@ after	after		IN
 against	against		IN
 # ahead	ahead		RP
 albeit	albeit		IN
-all	all		PRP
+all	all		RB
 all	all		PDT
 all	all		DT
 along	along		IN
@@ -215,7 +215,7 @@ than	than		IN
 that	that		THATWDT
 #that    that            PRP
 that	that		THATPRP
-that	that		THATIN
+that	that		SCONJ
 #that	that		IN
 #that	that		DT
 that	that		THATDT

@@ -5,15 +5,13 @@
 set encoding=utf8
 set entityTypes=SyntacticRelations
 
-@Tout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$CONJ,$DIVERS)
+@Tout=($ADJ,$ADV,$CONJ,$DET,$DIVERS,$INTERJ,$NC,$NOMBRE,$NP,$PREP,$PRON,$PONCTU,$V)
 
-@VraimentTout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
+@NotNoun=($V,$PRON,$DET,$ADJ,$ADV,$PREP,$PONCTU,$INTERJ,$CONJ,$DIVERS)
 
 @NomPropre=($NP-NNP,$NP-NNPS)
 
-@Adjectif=($ADJ)
-
-@Prep=($PREP-IN)
+@Adj=($ADJ)
 
 @Pron=($PRON)
 
@@ -30,19 +28,13 @@ set entityTypes=SyntacticRelations
 @DetNum=($NOMBRE-CD)
 
 @Prep=($PREP)
-@PrepComp=($PREP-IN,$PREP-THATIN)
+@PrepComp=($PREP-IN)
 
 @PronPers=($PRON-PRP)
 
-@PrepGVInf=($PREP-TO)
-
-@CompDuNomTrig=($PREP)
-
 @Verbe=($V)
 
-@InfinitiveVerb=($V-VB)
-
-@Aux=(am,is,are,was,were,have,has,had,will)
+@Aux=(am,is,are,was,were,have,has,had,will,have_been,has_been)
 
 @AuxModal=($V-MD)
 
@@ -53,7 +45,7 @@ set entityTypes=SyntacticRelations
 @Ing=($V-VBG)
 
 
-@AuxParticipe=($V-VBN)
+@BaseFormVerb=($V-VB)
 @PastTense=($V-VBD)
 @PastParticiple=($V-VBN)
 @Copule=(am,is,are,was,were,become,get,feel,seem)
@@ -62,10 +54,7 @@ set entityTypes=SyntacticRelations
 @CopulePlusInfinitif=(seem$V,appear$V,become$V)
 @Participe=($V-VBN,$V-VBG)
 @TensedVerb=($V-VB,$V-VBD,$V-VBP,$V-VBZ)
-@BaseFormVerb=($V-VB)
 
-
-@Inc=($DIVERS-UNK)
 
 # A verifier (copie du francais)
 @SujVOther=($DET,
@@ -80,23 +69,13 @@ $ADJ,$ADV,$PREP,$PONCTU,
 $INTERJ,$CONJ,$V-MD)
 
 
-
-
 # Possessive pronoun
 @PronPoss=($PRON-PRP$)
 
-@PronRefl=($PRON)
-
-@PronRelS=($PRON)
-
 @Neg=($ADV-NOT)
 
-
-@Virg=(\,)
-
 @ConjCoord=($CONJ-CC)
-
-@ConjSubord=($PREP-IN)
+@SubordConj=($CONJ-SCONJ)
 
 @Sent=($PONCTU-SENT)
 
