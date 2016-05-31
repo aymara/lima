@@ -24,18 +24,38 @@ using groups LinguisticProcessing
 #----------------------------------------------------------------------
 use categoriesClassesDeclaration-eng.txt
 
-@Substantif:@PronPoss (@Adjectif|@Substantif){0-n}:@AfterNominalChunk:SYNTACTIC_RELATION:
-+SecondUngovernedBy(left.1,trigger.1,"DETSUB")
-+CreateRelationBetween(left.1,trigger.1,"DETSUB")
+#----------------------------------------------------------------------
+# sub-automatons
+#----------------------------------------------------------------------
+
+# noun group size=3
+# head is at position 3
+define subautomaton NounGroup {
+ pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Participe|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
+}
+
+# prep group size=2
+# head is at position 2.3
+define subautomaton PrepGroup {
+ pattern=@PrepComp %NounGroup
+}
+
+#----------------------------------------------------------------------
+# 
+#----------------------------------------------------------------------
+
+@Substantif:@PronPoss (@Adj|@Substantif){0-n}:@AfterNominalChunk:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"det")
++CreateRelationBetween(left.1,trigger.1,"det")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
 #----------------------------------------------------------------------
 # 1. Relation entre adjectif prenominal et substantif : AdjPrenSub
-#   @Adjectif*  (@Adjectif|@Substantif) @Substantif
+#   @Adj*  (@Adj|@Substantif) @Substantif
 # "a green car"
 # ADJPRENSUB :    green[12|12]{27/70}     -> car[11|11]{23/37}
-#   @Substantif*  (@Adjectif|@Substantif) @Substantif
+#   @Substantif*  (@Adj|@Substantif) @Substantif
 # "a police car"
 # ADJPRENSUB :    police[12|12]{27/70}     -> car[11|11]{23/37}
 #----------------------------------------------------------------------
@@ -59,21 +79,21 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 
-@Substantif::(@Substantif|@Adjectif){1-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::(@Substantif|@Adj){1-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Substantif::(@Substantif|@Adjectif){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::(@Substantif|@Adj){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Ing::(@Substantif|@Adjectif){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Ing::(@Substantif|@Adj){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
@@ -98,7 +118,7 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 # Deux noms juxtaposes. En dernier pour essayer de creer les autre relations
 # avant et donc generer moins de bruit
 #----------------------------------------------------------------------
-#-@Substantif::(@Adjectif){0-n} @Substantif:SYNTACTIC_RELATION:
+#-@Substantif::(@Adj){0-n} @Substantif:SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,right.2,"ANY")
 #-+CreateRelationBetween(trigger.1,right.2,"COMPDUNOM")
 
@@ -118,5 +138,38 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 @Prep:@Sent:@Substantif $V-VBD @Comma:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.2,right.1,"ANY")
 +CreateRelationBetween(right.2,right.1,"SUBADJPOST")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# Relation between a determiner and its noun with a numeric modifier that would be nummod in UD
+#----------------------------------------------------------------------
+@DetDef::@DetNum @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.2,"ANY")
++SecondUngovernedBy(right.1,right.2,"ANY")
++CreateRelationBetween(trigger.1,right.2,"det")
++CreateRelationBetween(right.1,right.2,"MOD_N")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@DetNum::@Substantif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"det")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+@DetNum::%NounGroup:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,right.1.3,"ANY")
++CreateRelationBetween(trigger.1,right.1.3,"det")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@Substantif::@DetNum:SYNTACTIC_RELATION:
++!GovernorOf(right.1,"ANY")
++SecondUngovernedBy(right.1,trigger.1,"ANY")
++CreateRelationBetween(right.1,trigger.1,"MOD_N")
 =>AddRelationInGraph()
 =<ClearStoredRelations()

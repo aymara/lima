@@ -57,6 +57,7 @@ namespace SyntacticAnalysis {
 #define CreateRelationWithRelatedId "CreateRelationWithRelated"
 #define CreateRelationReverseWithRelatedId "CreateRelationReverseWithRelated"
 #define CopyRelationsOutOfToId "CopyRelationsOutOfTo"
+#define CopyIncomingRelationsToId "CopyIncomingRelationsTo"
 #define CreateCompoundTenseId "CreateCompoundTense"
 #define CreateEasyCompoundTenseId "CreateEasyCompoundTense"
 #define FindRelationFromId "FindRelationFrom"
@@ -243,6 +244,10 @@ protected:
  * @brief This constraint add in the relations buffer the relations of the given
  * type from the targets of relations out of v2 of the given types to v1.
  *
+ * It allows to draw a relation (of type the last element in the complement 
+ * list) from the target (v1) of the given relations (all except the last in the 
+ * complement list) to the trigger.
+ * 
  * The complement must be of the form:
  * "rel2|…|reln,rel1"
  * with rel1 the type of the relation to create and rel2, …, reln the types of
@@ -286,9 +291,9 @@ private:
 };
 
 /**
- *@brief Copy all relations out of v1 t relations out of v2. Targets and types are kept.
+ *@brief Copy all relations out of v1 to relations out of v2. Targets and types are kept.
  */
-class LIMA_SYNTACTICANALYSIS_EXPORT CopyRelationsOutOfTo : public ConstraintWithRelationComplement
+class LIMA_SYNTACTICANALYSIS_EXPORT CopyRelationsOutOfTo : public Automaton::ConstraintFunction
 {
 public:
   explicit CopyRelationsOutOfTo(MediaId language,
@@ -300,6 +305,31 @@ public:
                   AnalysisContent& analysis) const;
 
 private:
+  QStringList m_relations;
+};
+
+/**
+ *@brief Copy all relations incoming to v1 to relations incoming to of v2. Targets and types are kept.
+ * 
+ * Used to recopy relations 
+ *  - pointing to the first member of a coordination (target of COORD1) to the second member 
+ *    (target of COORD2) or
+ *  - pointing to the second member of a coordination (target of COORD2) to the first member 
+ *    (target of COORD1)
+ */
+class LIMA_SYNTACTICANALYSIS_EXPORT CopyIncomingRelationsTo : public Automaton::ConstraintFunction
+{
+public:
+  explicit CopyIncomingRelationsTo(MediaId language,
+                                   const LimaString& complement=LimaString());
+  ~CopyIncomingRelationsTo() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                  const LinguisticGraphVertex& v1,
+                  const LinguisticGraphVertex& v2,
+                  AnalysisContent& analysis) const;
+
+private:
+  QStringList m_relations;
 };
 
 /** @brief This constraint creates a aux relation between its two

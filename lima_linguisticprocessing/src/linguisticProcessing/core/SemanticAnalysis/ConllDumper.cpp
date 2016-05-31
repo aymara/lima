@@ -444,7 +444,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           else
           {
             DUMPERLOGINIT;
-            LERROR << "ConllDumper::process target" << target << "not found in segmantation mapping";
+            LERROR << "ConllDumper::process target" << target << "not found in segmentation mapping";
           }
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process conll target saved for " << tokenId << " is " << targetConllId;

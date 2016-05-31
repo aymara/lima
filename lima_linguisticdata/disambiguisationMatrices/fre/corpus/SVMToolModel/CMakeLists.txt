@@ -14,9 +14,66 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-install(FILES 
-    lic2m.A1.UNK  lic2m.A3.UNK  lic2m.DICT       lic2m.M1.RL.MRG  lic2m.UNK.M0.LR.MRG  lic2m.UNK.M2.RL.MRG
-    lic2m.A0        lic2m.A2      lic2m.A4      lic2m.EXP        lic2m.M2.LR.MRG  lic2m.UNK.M0.RL.MRG  lic2m.UNK.M4.LR.MRG
-    lic2m.A0.UNK    lic2m.A2.UNK  lic2m.A4.UNK  lic2m.M0.LR.MRG  lic2m.M2.RL.MRG  lic2m.UNK.M1.RL.MRG  lic2m.UNKP
-    lic2m.A1        lic2m.A3      lic2m.AMBP    lic2m.M0.RL.MRG  lic2m.M4.LR.MRG  lic2m.UNK.M2.LR.MRG  lic2m.WIN
-  COMPONENT fre DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-fre)
+find_program (SVMT_LEARN SVMTlearn)
+find_program (SVM_LIGHT_PROGRAM svm_learn)
+
+if ( ${SVMT_LEARN} STREQUAL "SVMT_LEARN-NOTFOUND" )
+
+  message("SVMTlearn not found. fre SVMTool model will not build.")
+  
+elseif ( ${SVM_LIGHT_PROGRAM} STREQUAL "SVM_LIGHT_PROGRAM-NOTFOUND" )
+
+  message("svm_light not found. fre SVMTool model will not build.")
+  
+else ()
+  message("SVMTlearn is ${SVMT_LEARN}.")
+  message("svm_light is ${SVM_LIGHT_PROGRAM}.")
+  
+  get_filename_component(SVM_LIGHT ${SVM_LIGHT_PROGRAM} DIRECTORY)
+  
+  configure_file(config-minimale.SVMT config-minimale.SVMT @ONLY)
+
+  # Create a file allowing LIMA to find the resource dir
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/lima "")
+
+  add_custom_command(
+      OUTPUT lima.A0.UNK
+      COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" -e "s@'@e@g" ${CMAKE_CURRENT_SOURCE_DIR}/../corpus_fre.txt > corpus_fre.txt
+      COMMAND ${SVMT_LEARN} config-minimale.SVMT
+      DEPENDS 
+        config-minimale.SVMT
+      COMMENT "Compiles fre SVMTool model"
+      VERBATIM
+    )
+
+    add_custom_target(
+      svmtoolmodelfre
+      ALL
+      DEPENDS lima.A0.UNK
+    )
+
+  install(
+    FILES 
+      ${CMAKE_CURRENT_BINARY_DIR}/config-minimale.SVMT  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0              
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1     
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.AMBP  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.DICT  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.EXP   
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.M0.LR.MRG      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNKP
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.WIN
+    COMPONENT fre 
+    DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-fre)
+
+endif()

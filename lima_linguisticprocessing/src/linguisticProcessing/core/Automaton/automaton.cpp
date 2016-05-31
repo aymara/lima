@@ -270,7 +270,7 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       DFFSPos  newPair(noVertices,0);
 
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
-      const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>(&(*trans));
+      const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*trans).transitionUnit());
       // TODO:  generalize buildNextTermsList and checkMultiTerms to be able to manage backtrack and backward
       if( gtrans != 0 ) {
         deque<LinguisticGraphVertex> vertices;

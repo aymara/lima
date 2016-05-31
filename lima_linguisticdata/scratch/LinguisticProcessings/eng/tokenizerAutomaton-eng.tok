@@ -86,6 +86,7 @@
   - c_grave / GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line / DELIMITER (T_WORD_BRK)
   - c_del2|c_dot c_par c_par / DELIMITER (T_PARAGRAPH_BRK)
+  - c_dot c_b c_dot / DELIMITER (T_WORD_BRK)
   - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
   - c_lowline / ALPHA
@@ -104,6 +105,8 @@
 (DELIMITER) {
   - m_eof = END
   - c_grave = GRAVE (T_WORD_BRK)
+  - c_b c_dot > DELIMITER
+  - c_dot c_b > DELIMITER
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|m_line = DELIMITER (T_WORD_BRK)
   - c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - c_par = IGNORE (T_SENTENCE_BRK)
