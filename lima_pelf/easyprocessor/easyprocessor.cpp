@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     lpconfig,
     MediaticData::single().getMedias());
 
-  std::shared_ptr< AbstractProcessingClient > client = LinguisticProcessingClientFactory::single().createClient(clientId);
+  std::shared_ptr< AbstractProcessingClient > client = std::shared_ptr< AbstractProcessingClient >(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   // read easy configfile
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser easyconfig(configDir + "/" + easyConfigFile);

@@ -126,7 +126,7 @@
   <concat>
     <c form="was">
       <i l="was" n="be">
-        <p v="VBDZ"/>
+        <p v="VBD"/>
       </i>
     </c>
     <c form="n't">
@@ -140,7 +140,7 @@
   <concat>
     <c form="were">
       <i l="were" n="be">
-        <p v="VBDR"/>
+        <p v="VBD"/>
       </i>
     </c>
     <c form="n't">
@@ -252,7 +252,7 @@
   <concat>
     <c form="had">
       <i l="had" n="have">
-        <p v="VHD"/>
+        <p v="VBD"/>
       </i>
     </c>
     <c form="n't">
@@ -280,7 +280,7 @@
   <concat>
     <c form="does">
       <i l="does" n="do">
-        <p v="VDZ"/>
+        <p v="VBZ"/>
       </i>
     </c>
     <c form="n't">
@@ -294,7 +294,7 @@
   <concat>
     <c form="did">
       <i l="did" n="do">
-        <p v="VDD"/>
+        <p v="VBD"/>
       </i>
     </c>
     <c form="n't">
@@ -708,8 +708,8 @@
   <concat>
     <c form="that">
       <i l="that">
-        <p v="CST"/>
-        <p v="DD1"/>
+        <p v="THATWDT"/>
+        <p v="THATPRP"/>
       </i>
     </c>
     <c form="'s">

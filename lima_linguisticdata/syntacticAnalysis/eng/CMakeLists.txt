@@ -27,5 +27,8 @@ set(ENG_RULES_FILES
   rules-eng-pleonasticPronouns.txt
   rules-eng-heterodeps.txt
   rules-eng-dummy.txt
+  rules-eng-finalize.txt
+  simplification-rules-eng.txt
+  simplification-quotes-rules-eng.txt
 )
 COMPILE_SA_RULES_WRAPPER (eng ${ENG_RULES_FILES})

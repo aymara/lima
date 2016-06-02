@@ -244,12 +244,17 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>TEMPCOMP</expl>
-<test id="eng.sa.16.1" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass1.txt. La relation TEMPCOMP doit exister entre 'has' et 'visited', d'ou l'existence de la forme has_visited"
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has_visited']" 
-    operator="exists"
-    right="" />
+  <expl>Compound tense handled using an 'aux' dependency between the auxiliary and the past participle.</expl>
+  <test id="eng.sa.16.1" trace=".sa.xml"
+      comment="rules-eng-homodeps-pass1.txt. There must be an 'aux' dependency between 'has' and 'visited'"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has']/dependents/dep[@t='aux']" 
+      operator="exists"
+      right="" />
+  <test id="eng.sa.16.2" trace=".sa.xml"
+      comment="rules-eng-homodeps-pass1.txt. There must be an 'aux' dependency between 'has' and 'visited'"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has']/dependents/dep/@v" 
+      operator="="
+      right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='visited']/@id" />
 </testcase>
 <testcase id="eng.sa.17" type="bloquant">
   <call-parameters>
@@ -260,12 +265,17 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>TEMPCOMP</expl>
-<test id="eng.sa.17.1" trace=".sa.xml"
-      comment=" rules-eng-homodeps-pass1.txt. La relation TEMPCOMP doit exister entre 'has' et 'visited', d'ou l'existence de la forme has_visited "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has_visited']" 
-    operator="exists"
-    right="" />
+  <expl>Compound tense handled using an 'aux' dependency between the auxiliary and the past participle, even with an adverbial modifier.</expl>
+  <test id="eng.sa.17.1" trace=".sa.xml"
+      comment="rules-eng-homodeps-pass1.txt. There must be an 'aux' dependency between 'has' and 'visited'"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has']/dependents/dep[@t='aux']" 
+      operator="exists"
+      right="" />
+  <test id="eng.sa.17.2" trace=".sa.xml"
+      comment="rules-eng-homodeps-pass1.txt. There must be an 'aux' dependency between 'has' and 'visited'"
+      left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='has']/dependents/dep/@v" 
+      operator="="
+      right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='visited']/@id" />
 </testcase>
 <testcase id="eng.sa.18" type="bloquant">
   <!-- Warning: "has accepted" should be handled as a compound tense -->

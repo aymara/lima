@@ -12,7 +12,8 @@
 ###########################################################
 
 set encoding=utf8
-set entityTypes=SyntacticSimplification
+using modex lima-analysis.xml
+using groups LinguisticProcessing
 
 #----------------------------------------------------------------------
 # microcategories classes
@@ -20,25 +21,12 @@ set entityTypes=SyntacticSimplification
 use categoriesClassesDeclaration-eng.txt
 
 #----------------------------------------------------------------------
-# Supprime subordonnee simple dans "Le chat qui regarde la souris est très beau."
-#----------------------------------------------------------------------
-@PronRelS::@Verbe @Determinant @Substantif @Verbe:SubSent:
-+SubsentenceBounds(trigger.1,right.3,"SubordRel")
-=>Simplify()
-=<ClearStoredSubsentences()
-
-#----------------------------------------------------------------------
 # Supprime un groupe non recursif entre parentheses : 
 # " Le chien (oui, oui, le chien) de la voisine "
 #----------------------------------------------------------------------
-\(::(^$PONCTU-PONCTU_PARENTHESE){0-n} \):SubSent:
+\(::(^$PONCTU-CPAR){0-n} \):SYNTACTIC_RELATION:
 +SubsentenceBounds(trigger.1,right.2,"Parent")
 =>Simplify()
 =<ClearStoredSubsentences()
 
-PONCTU_DIALOGUE::(^PONCTU_DIALOGUE){0-n} PONCTU_DIALOGUE:SubSent:
-+SubsentenceBounds(trigger.1,"Quotes")
-+SubsentenceBounds(right.2,"Quotes")
-=>Simplify()
-=<ClearStoredSubsentences()
 

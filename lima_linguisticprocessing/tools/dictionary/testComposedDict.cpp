@@ -66,6 +66,7 @@ typedef struct ParamStruct
   std::string defaultDataFileName;
   std::string key;
   std::string keyFile;
+  std::string limaConfigFile;
   int offset;
   bool superword;
   bool withDebug;
@@ -122,6 +123,7 @@ int run(int argc,char** argv)
                   std::string(""),
                   std::string(""),
                   std::string(""),
+                  std::string(""),
                   -1,
                   false,
                   false
@@ -139,6 +141,10 @@ int run(int argc,char** argv)
     if ( (pos = arg.find("--language=")) != std::string::npos )
     {
       param.language = arg.substr(pos+11);
+    }
+    else if ( (pos = arg.find("--limaConfigFile=")) != std::string::npos )
+    {
+      param.limaConfigFile = arg.substr(pos+17);
     }
     else if ( (pos = arg.find("--dicoId=")) != std::string::npos )
     {
@@ -207,7 +213,10 @@ int run(int argc,char** argv)
     QString file;
     try
     {
-      QString configurationFile = Common::Misc::findFileInPaths(configPath, QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigFile().c_str()));
+      QString configurationFile = Common::Misc::findFileInPaths(configPath, QString::fromUtf8("lima-analysis.xml"));
+      if (! param.limaConfigFile.empty()) {
+        configurationFile=QString::fromUtf8(param.limaConfigFile.c_str());
+      }
       Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configurationFile.toUtf8().constData());
       file = Common::Misc::findFileInPaths(configPath, QString::fromUtf8( configuration.getModuleGroupParamValue(
              "lima-coreclient",

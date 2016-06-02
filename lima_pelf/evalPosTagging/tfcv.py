@@ -204,8 +204,7 @@ def checkConfig(conf):
   method = 'none'
 
   with open(conf) as f:
-    for i in xrange(70):
-      line = f.readline()
+    for line in f:
       if line.strip() == '<item value="textDumper"/>': foundDumper = True
       elif line.strip() == '<item value="viterbiPostagger-freq"/>': method = 'viterbi'
       elif line.strip() == '<item value="SvmToolPosTagger"/>': method = 'svmtool'
