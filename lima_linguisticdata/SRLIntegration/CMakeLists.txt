@@ -162,7 +162,7 @@ foreach(LANG ${LIMA_LANGUAGES})
 
     add_custom_command(
       OUTPUT FrameNet-${LANG}.bin
-      COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${LANG} -oFrameNet-${LANG}.bin ${_current} --modex=FrameNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules
+      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${CMAKE_BINARY_DIR}/execEnv/config --language=${LANG} -oFrameNet-${LANG}.bin ${_current} --modex=FrameNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules
       DEPENDS ${_current} ${DEPENDENCIES}
 #       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM

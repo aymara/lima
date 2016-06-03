@@ -29,11 +29,11 @@
 #include "SemanticRelationAnnotation.h"
 #include "SemanticAnnotation.h"
 
-// #include "common/linguisticData/linguisticData.h"
-#include "common/misc/strwstrtools.h"
-#include "common/misc/traceUtils.h"
+#include "common/MediaticData/mediaticData.h"
+#include "common/Data/strwstrtools.h"
+#include "common/time/traceUtils.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/annotationGraph/AnnotationData.h"
+//#include "common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
@@ -52,7 +52,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace SemanticAnalysis {
 
-SimpleFactory<LinguisticProcessUnit,SemanticRelationsXmlLogger> 
+SimpleFactory<MediaProcessUnit,SemanticRelationsXmlLogger> 
 semanticRelationsXmlLoggerFactory(SEMANTICRELATIONSXMLLOGGER_CLASSID);
 
 SemanticRelationsXmlLogger::SemanticRelationsXmlLogger() :
@@ -72,7 +72,7 @@ void SemanticRelationsXmlLogger::init(
 {
   AbstractLinguisticLogger::init(unitConfiguration,manager);
 
-  m_language=manager->getInitializationParameters().language;
+  m_language=manager->getInitializationParameters().media;
 
   try
   {
@@ -152,13 +152,13 @@ process(AnalysisContent& analysis) const
   for (; itv != itv_end; itv++)
   {
     LDEBUG << "SemanticRelationsXmlLogger on annotation vertex " << *itv;
-    if (annotationData->hasAnnotation(*itv,Common::Misc::utf8stdstring2limastring("SemanticAnnotation")))
+    if (annotationData->hasAnnotation(*itv,("SemanticAnnotation")))
     {
 //       LDEBUG << "    it has SemanticRelationAnnotation";
       const SemanticAnnotation* annot = 0;
       try
       {
-        annot = annotationData->annotation(*itv,Common::Misc::utf8stdstring2limastring("SemanticAnnotation"))
+        annot = annotationData->annotation(*itv,("SemanticAnnotation"))
           .pointerValue<SemanticAnnotation>();
       }
       catch (const boost::bad_any_cast& e)
@@ -182,14 +182,14 @@ process(AnalysisContent& analysis) const
   for (; it != it_end; it++) {
     LDEBUG << "SemanticRelationsXmlLogger on annotation edge " 
            << source(*it,annotGraph) << "->" << target(*it,annotationData->getGraph());
-    if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation")))
+    if (annotationData->hasAnnotation(*it,("SemanticRelation")))
     {
       SEMLOGINIT;
       LDEBUG << "found semantic relation";
       const SemanticRelationAnnotation* annot = 0;
       try
       {
-        annot = annotationData->annotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation"))
+        annot = annotationData->annotation(*it,("SemanticRelation"))
           .pointerValue<SemanticRelationAnnotation>();
       }
       catch (const boost::bad_any_cast& e)
@@ -247,9 +247,8 @@ vertexStringForSemanticAnnotation(const std::string& vertexRole,
   // otherwise, its type is "token"
   std::string type("token");
 
-  std::set< uint32_t > matches = annotationData->matches(m_graph,v,"annot");
-  for (std::set< uint32_t >::const_iterator it = matches.begin();
-       it != matches.end(); it++)
+  auto matches = annotationData->matches(m_graph,v,"annot");
+  for (auto it = matches.begin(); it != matches.end(); it++)
   {
     if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SpecificEntity"))) {
       const SpecificEntityAnnotation* annot = 0;
@@ -262,7 +261,7 @@ vertexStringForSemanticAnnotation(const std::string& vertexRole,
         LERROR << "This annotation is not a SemanticAnnotation";
         continue;
       }
-      type=Common::Misc::limastring2utf8stdstring(Common::LinguisticData::LinguisticData::single().getEntityName(annot->getType()));
+      type=Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(annot->getType()));
       break;
     }
   }

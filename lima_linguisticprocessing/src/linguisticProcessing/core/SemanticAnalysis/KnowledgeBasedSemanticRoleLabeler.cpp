@@ -29,7 +29,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/tools/FileUtils.h"
+//#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 

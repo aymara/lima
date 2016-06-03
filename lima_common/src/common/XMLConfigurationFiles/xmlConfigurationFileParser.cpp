@@ -176,21 +176,21 @@ string& XMLConfigurationFileParser::getModuleGroupParamValue(const string& modul
     }
     catch(NoSuchModule& nsm)
     {
-      std::cerr << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsm.what().c_str() << " " << m_d->m_configurationFileName.c_str();
+      std::cerr << nsm.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
+      LWARN << nsm.what() << " " << m_d->m_configurationFileName.c_str();
         //not LERROR because user may want the module to be optional -> no error
         throw;
     }
     catch(NoSuchGroup& nsg)
     {
-      std::cerr << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsg.what().c_str() << " " << m_d->m_configurationFileName.c_str();
+      std::cerr << nsg.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
+      LWARN << nsg.what() << " " << m_d->m_configurationFileName.c_str();
         throw;
     }
     catch(NoSuchParam& nsp)
     {
-      std::cerr << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsp.what().c_str() << " " << m_d->m_configurationFileName.c_str();
+      std::cerr << nsp.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
+      LWARN << nsp.what() << " " << m_d->m_configurationFileName.c_str();
         throw;
     }
     catch(...)
