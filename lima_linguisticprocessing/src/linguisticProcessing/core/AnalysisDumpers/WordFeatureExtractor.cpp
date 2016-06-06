@@ -64,6 +64,7 @@ FeatureExtractorFactory<FeatureProperty> FeaturePropertyFactory(FeatureProperty_
 FeatureExtractorFactory<FeatureTstatus> FeatureTstatusFactory(FeatureTstatus_ID);
 FeatureExtractorFactory<FeatureSpecificEntity> FeatureSpecificEntityFactory(FeatureSpecificEntity_ID);
 FeatureExtractorFactory<FeatureLemmaSpecificEntity> FeatureLemmaSpecificEntityFactory(FeatureLemmaSpecificEntity_ID);
+FeatureExtractorFactory<FeatureStoreInData> FeatureStoreInDataFactory(FeatureStoreInData_ID);
 
 //***********************************************************************
 // Feature list
@@ -292,6 +293,27 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
   }
   
   return typeName;
+}
+
+//***********************************************************************
+FeatureStoreInData::FeatureStoreInData(MediaId language, const std::string& complement):
+AbstractFeatureExtractor(language,complement)
+{
+}
+
+std::string FeatureStoreInData::
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
+         LinguisticGraphVertex v,
+         AnalysisContent &analysis) const
+{
+  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  Token* token=get(vertex_token,*(graph->getGraph()),v);
+  if (token==0) {
+    return "";
+  }
+  ostringstream oss;
+  oss << token->position() ;
+  return oss.str();
 }
 
 } // end namespace

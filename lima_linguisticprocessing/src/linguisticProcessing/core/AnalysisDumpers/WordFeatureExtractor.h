@@ -204,6 +204,18 @@ public:
                        AnalysisContent &) const;
 };
 
+//--------------------------------------------------------
+#define FeatureStoreInData_ID "storeInData"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureStoreInData : public AbstractFeatureExtractor
+{
+public:
+  FeatureStoreInData(MediaId language, const std::string& complement="");
+  ~FeatureStoreInData() {}
+  
+  std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+                       LinguisticGraphVertex v,
+                       AnalysisContent &) const;
+};
 
 } // end namespace
 } // end namespace
