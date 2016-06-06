@@ -418,7 +418,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     LDEBUG << "CreateSpecificEntity, use micros from config file ";
 #endif
     // use micros given in the config file : get the specific resource
-    // (specific to modex) 
+    // (specific to modex) AddEntityFeature
     // WARN : some hard coded stuff here in resource names
     EntityType seType=match.getType();
     if  (seType.getGroupId() == 0)

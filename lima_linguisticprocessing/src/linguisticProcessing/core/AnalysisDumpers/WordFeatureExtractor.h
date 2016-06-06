@@ -189,8 +189,19 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureSpecificEntity : public AbstractFeature
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &) const;
+};
 
-
+//--------------------------------------------------------
+#define FeatureLemmaSpecificEntity_ID "lemmaSpecificEntity"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureLemmaSpecificEntity : public AbstractFeatureExtractor
+{
+public:
+  FeatureLemmaSpecificEntity(MediaId language, const std::string& complement="");
+  ~FeatureLemmaSpecificEntity() {}
+  
+  std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+                       LinguisticGraphVertex v,
+                       AnalysisContent &) const;
 };
 
 

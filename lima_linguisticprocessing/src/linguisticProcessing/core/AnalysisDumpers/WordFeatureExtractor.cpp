@@ -63,6 +63,7 @@ FeatureExtractorFactory<FeatureLemma> FeatureLemmaFactory(FeatureLemma_ID);
 FeatureExtractorFactory<FeatureProperty> FeaturePropertyFactory(FeatureProperty_ID);
 FeatureExtractorFactory<FeatureTstatus> FeatureTstatusFactory(FeatureTstatus_ID);
 FeatureExtractorFactory<FeatureSpecificEntity> FeatureSpecificEntityFactory(FeatureSpecificEntity_ID);
+FeatureExtractorFactory<FeatureLemmaSpecificEntity> FeatureLemmaSpecificEntityFactory(FeatureLemmaSpecificEntity_ID);
 
 //***********************************************************************
 // Feature list
@@ -248,6 +249,48 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
       typeName=Common::Misc::limastring2utf8stdstring(str);
     }
   }
+  return typeName;
+}
+
+//***********************************************************************
+FeatureLemmaSpecificEntity::FeatureLemmaSpecificEntity(MediaId language, const std::string& complement):
+AbstractFeatureExtractor(language,complement)
+{
+}
+
+std::string FeatureLemmaSpecificEntity::
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
+         LinguisticGraphVertex v,
+         AnalysisContent &analysis
+) const
+{
+  
+  std::string typeName("NAN");
+  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  
+  std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
+  for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
+  {
+    if (annot->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+    {
+      AnnotationGraphVertex vx=*it;
+      const SpecificEntityAnnotation* se = annot->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+      pointerValue<SpecificEntityAnnotation>();
+      
+      LimaString str= Common::MediaticData::MediaticData::single().getEntityName(se->getType());
+      typeName=Common::Misc::limastring2utf8stdstring(str);
+    }
+  }
+  
+  if (typeName == "NAN") {
+    MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
+    // take first
+    for (MorphoSyntacticData::const_iterator it=data->begin(),it_end=data->end();it!=it_end;it++) {
+      typeName = Common::Misc::limastring2utf8stdstring((*&(Common::MediaticData::MediaticData::single().stringsPool(m_language)))[(*it).normalizedForm]);
+      break;
+    }
+  }
+  
   return typeName;
 }
 
