@@ -265,8 +265,7 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
          AnalysisContent &analysis
 ) const
 {
-  
-  std::string typeName("NAN");
+  std::string mxvalue("NAN");
   Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
   
   std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
@@ -279,20 +278,25 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
       pointerValue<SpecificEntityAnnotation>();
       
       LimaString str= Common::MediaticData::MediaticData::single().getEntityName(se->getType());
-      typeName=Common::Misc::limastring2utf8stdstring(str);
+      mxvalue=Common::Misc::limastring2utf8stdstring(str);
     }
   }
-  
-  if (typeName == "NAN") {
+  // replace NAN values by lemmas
+  if (mxvalue == "NAN") {
     MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
     // take first
     for (MorphoSyntacticData::const_iterator it=data->begin(),it_end=data->end();it!=it_end;it++) {
-      typeName = Common::Misc::limastring2utf8stdstring((*&(Common::MediaticData::MediaticData::single().stringsPool(m_language)))[(*it).normalizedForm]);
+      mxvalue = Common::Misc::limastring2utf8stdstring((*&(Common::MediaticData::MediaticData::single().stringsPool(m_language)))[(*it).normalizedForm]);
       break;
     }
   }
+  // replace empty lemma values by tokens
+  if (mxvalue == "" ) {
+    Token* token=get(vertex_token,*(graph->getGraph()),v);
+    mxvalue = Common::Misc::limastring2utf8stdstring(token->stringForm());
+  }
   
-  return typeName;
+  return mxvalue;
 }
 
 //***********************************************************************
