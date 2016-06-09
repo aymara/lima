@@ -355,7 +355,10 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   }
 
   // Run the semantic role labeller
-  PyObject* callResult = PyObject_CallMethod(m_d->m_instance, "annotate", "s", conllInput.toUtf8().constData());
+  PyObject* callResult = PyObject_CallMethod(m_d->m_instance, "annotate", "ss",
+                                             conllInput.toUtf8().constData(),
+                                             metadata->getMetaData("Lang").c_str()
+                                            );
   HANDLE_ERROR_EQUAL(callResult, NULL, failure_during_call_of_the_annotate_method_on(conllInput));
   
   // Display the SRL result
