@@ -142,7 +142,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT dicocompletstd.txt
-    COMMAND c:\\msys64\\usr\\bin\\sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
+    COMMAND sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
     DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
     COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
     VERBATIM
@@ -171,19 +171,19 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     VERBATIM
   )
 else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
     OUTPUT dico.xml
-    COMMAND c:\\msys64\\usr\\bin\\echo "<dictionary>" > dico.xml.tmp
+    COMMAND echo ^<dictionary^> > dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
+    COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
+    COMMAND echo ^</dictionary^> >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
     COMMENT "produce XML dico"
-    VERBATIM
   )
 endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
@@ -229,8 +229,7 @@ else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
     COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
-    COMMAND c:\\msys64\\usr\\bin\\sort -T . -u keys > keys.sorted
-    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix keys.sorted
+    COMMAND sort -T . -u keys > keys.sorted
     COMMAND testDict16 --charSize=2 --listOfWords=keys.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output
     COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
@@ -276,8 +275,7 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
-    COMMAND c:\\msys64\\usr\\bin\\cat ${_succession_categs} | c:\\msys64\\usr\\bin\\sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix unigramMatrix-${_lang}.dat
+    COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
     COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
     COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat

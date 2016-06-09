@@ -63,6 +63,8 @@ FeatureExtractorFactory<FeatureLemma> FeatureLemmaFactory(FeatureLemma_ID);
 FeatureExtractorFactory<FeatureProperty> FeaturePropertyFactory(FeatureProperty_ID);
 FeatureExtractorFactory<FeatureTstatus> FeatureTstatusFactory(FeatureTstatus_ID);
 FeatureExtractorFactory<FeatureSpecificEntity> FeatureSpecificEntityFactory(FeatureSpecificEntity_ID);
+FeatureExtractorFactory<FeatureLemmaSpecificEntity> FeatureLemmaSpecificEntityFactory(FeatureLemmaSpecificEntity_ID);
+FeatureExtractorFactory<FeatureStoreInData> FeatureStoreInDataFactory(FeatureStoreInData_ID);
 
 //***********************************************************************
 // Feature list
@@ -249,6 +251,73 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
     }
   }
   return typeName;
+}
+
+//***********************************************************************
+FeatureLemmaSpecificEntity::FeatureLemmaSpecificEntity(MediaId language, const std::string& complement):
+AbstractFeatureExtractor(language,complement)
+{
+}
+
+std::string FeatureLemmaSpecificEntity::
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
+         LinguisticGraphVertex v,
+         AnalysisContent &analysis
+) const
+{
+  std::string mxvalue("NAN");
+  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  
+  std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
+  for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
+  {
+    if (annot->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+    {
+      AnnotationGraphVertex vx=*it;
+      const SpecificEntityAnnotation* se = annot->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+      pointerValue<SpecificEntityAnnotation>();
+      
+      LimaString str= Common::MediaticData::MediaticData::single().getEntityName(se->getType());
+      mxvalue=Common::Misc::limastring2utf8stdstring(str);
+    }
+  }
+  // replace NAN values by lemmas
+  if (mxvalue == "NAN") {
+    MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
+    // take first
+    for (MorphoSyntacticData::const_iterator it=data->begin(),it_end=data->end();it!=it_end;it++) {
+      mxvalue = Common::Misc::limastring2utf8stdstring((*&(Common::MediaticData::MediaticData::single().stringsPool(m_language)))[(*it).normalizedForm]);
+      break;
+    }
+  }
+  // replace empty lemma values by tokens
+  if (mxvalue == "" ) {
+    Token* token=get(vertex_token,*(graph->getGraph()),v);
+    mxvalue = Common::Misc::limastring2utf8stdstring(token->stringForm());
+  }
+  
+  return mxvalue;
+}
+
+//***********************************************************************
+FeatureStoreInData::FeatureStoreInData(MediaId language, const std::string& complement):
+AbstractFeatureExtractor(language,complement)
+{
+}
+
+std::string FeatureStoreInData::
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
+         LinguisticGraphVertex v,
+         AnalysisContent &analysis) const
+{
+  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  Token* token=get(vertex_token,*(graph->getGraph()),v);
+  if (token==0) {
+    return "";
+  }
+  ostringstream oss;
+  oss << token->position() ;
+  return oss.str();
 }
 
 } // end namespace

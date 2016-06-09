@@ -43,17 +43,18 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     VERBATIM
   )
 else()
+  # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
     OUTPUT dico.xml
-    COMMAND c:\\msys64\\usr\\bin\\echo "<dictionary>" > dico.xml.tmp
+    COMMAND echo ^<dictionary^> > dico.xml.tmp
 
   # Continuation of [1] above
   #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
-    COMMAND c:\\msys64\\usr\\bin\\cat ${dicoFiles} > lefff-ext-lima.dic
+    COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
 
-    COMMAND c:\\msys64\\usr\\bin\\sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
+    COMMAND sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
+    COMMAND echo ^</dictionary^> >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
@@ -61,7 +62,6 @@ else()
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${dicoFiles}
     COMMENT "produce XML dico"
-    VERBATIM
   )
 endif()
 

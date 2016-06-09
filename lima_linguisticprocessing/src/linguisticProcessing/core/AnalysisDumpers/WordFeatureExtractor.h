@@ -189,10 +189,33 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureSpecificEntity : public AbstractFeature
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &) const;
-
-
 };
 
+//--------------------------------------------------------
+#define FeatureLemmaSpecificEntity_ID "lemmaSpecificEntity"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureLemmaSpecificEntity : public AbstractFeatureExtractor
+{
+public:
+  FeatureLemmaSpecificEntity(MediaId language, const std::string& complement="");
+  ~FeatureLemmaSpecificEntity() {}
+  
+  std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+                       LinguisticGraphVertex v,
+                       AnalysisContent &) const;
+};
+
+//--------------------------------------------------------
+#define FeatureStoreInData_ID "storeInData"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureStoreInData : public AbstractFeatureExtractor
+{
+public:
+  FeatureStoreInData(MediaId language, const std::string& complement="");
+  ~FeatureStoreInData() {}
+  
+  std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+                       LinguisticGraphVertex v,
+                       AnalysisContent &) const;
+};
 
 } // end namespace
 } // end namespace
