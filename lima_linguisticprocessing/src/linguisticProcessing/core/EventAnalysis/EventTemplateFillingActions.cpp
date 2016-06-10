@@ -139,7 +139,8 @@ Automaton::ConstraintFunction(language,complement)
 {
 }
 
-bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
+bool CreateEventTemplate::operator()(Automaton::RecognizerMatch& match,
+                                     AnalysisContent& analysis) const
 {
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
@@ -151,6 +152,8 @@ bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
   LDEBUG << "CreateEventTemplate";
   
   // validate current template by creating a new empty template which will be new current template
+  string eventType=Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(match.getType()));
+  eventData->back().setType(eventType);
   eventData->addTemplate();
   return true;
 }

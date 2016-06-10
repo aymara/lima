@@ -70,9 +70,10 @@ public:
   CreateEventTemplate(MediaId language,
                       const LimaString& complement);
   ~CreateEventTemplate() {}
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(Automaton::RecognizerMatch& match,
+                  AnalysisContent& analysis) const;
   
-  //bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() { return true; }
 private:
 };
 
