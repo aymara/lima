@@ -112,6 +112,9 @@ void LTR_Text::binaryWriteOn(std::ostream& os) const {
 
     uint64_t tokenCounter = 0;
     writeCodedInt(os, this->size());
+    if (this->size()==0) {
+      return;
+    }
     SENTENCE_BOUNDS_T:: const_iterator itSb = m_sentenceBounds.begin();
     writeCodedInt(os, *itSb);
     for (LTR_Text::const_iterator itTok = this->begin();
