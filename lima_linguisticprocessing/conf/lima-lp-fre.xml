@@ -1,9 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
+  <module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/entities"/>
+      </list>
+    </group>
+  </module>
   <module name="Processors">
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="VerbNet-modex.xml/Processors"/>
+        <item value="FrameNet-modex.xml/Processors"/>
+        <!--item value="UMLS-modex.xml/Processors"/-->
       </list>
     </group>
 
@@ -28,7 +38,8 @@
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
-        <item value="SpecificEntitiesModex"/>
+        <!--item value="SpecificEntitiesModex"/-->
+        <!--item value="UMLSRecognition"/-->
         <!--item value="specificEntitiesXmlLogger"/-->
         <item value="viterbiPostagger-freq"/>
         <!--item value="SvmToolPosTagger"/-->
@@ -38,7 +49,7 @@
         <!--item value="dotGraphWriter"/-->
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
@@ -50,7 +61,7 @@
         <item value="syntacticAnalyzerDepsHetero"/>
         <!--item value="syntacticAnalyzerDummy"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
-        <!--item value="dotDepGraphWriter"/-->
+        <item value="dotDepGraphWriter"/>
         <!--item value="dotGraphWriterAfterSA"/-->
         <!--item value="coreferencesSolving"/-->
         <!--item value="wordSenseDisambiguation"/-->
@@ -59,11 +70,15 @@
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger"/-->
         <!--item value="geoDumper"/-->
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <!--item value="VerbNetRecognition"/-->
+        <item value="FrameNetRecognition"/>
+        <item value="srl"/>
+        <item value="conllDumper"/>
         <!--item value="bowDumper"/-->
         <!--item value="posGraphXmlDumper"/-->
         <!--item value="fullXmlDumper"/-->
         <!--item value="simpleXmlDumper"/-->
-        <item value="conllDumper"/>
         <!--item value="textDumper"/-->
         <!--item value="NullDumper"/-->
       </list>
@@ -74,17 +89,8 @@
     </group> 
     <group name="limaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModexForLimaserver"/>
-        <item value="specificEntitiesXmlLoggerForLimaserver"/>
-        <!--item value="viterbiPostagger-int-none"/-->
-        <!--item value="limaserverHandler"/-->
       </list>
-    </group>
+    </group> 
     <group name="easy" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -118,7 +124,7 @@
         <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="bowTextHandler"/>
+        <item value="bowDumperXml"/>
       </list>
     </group>
     <group name="indexer" class="ProcessUnitPipeline" >
@@ -147,7 +153,7 @@
         <item value="SpecificEntitiesModex"/>
         <item value="viterbiPostagger-int-none"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="bowTextHandler"/>
       </list>
@@ -182,23 +188,23 @@
       <param key="Resolve Definites" value="0" />
       <param key="Resolve non third person pronouns" value="0" />
       <map name="MacroCategories">
-        <entry key="PronMacroCategory" value="PRON"/>
-        <entry key="VerbMacroCategory" value="V" />
-        <entry key="PrepMacroCategory" value="PREP" />
-        <entry key="NomCommunMacroCategory" value="NC" />
-        <entry key="NomPropreMacroCategory" value="NP" />
+        <entry key="PronMacroCategory" value="L_PRON"/>
+        <entry key="VerbMacroCategory" value="L_V" />
+        <entry key="PrepMacroCategory" value="L_PREP" />
+        <entry key="NomCommunMacroCategory" value="L_NC" />
+        <entry key="NomPropreMacroCategory" value="L_NP" />
       </map>
       <list name="LexicalAnaphora">
         <item value="CLR"/>
       </list>
       <list name="UndefinitePronouns">
-        <!--item value="PRON_INDEFINI"/>
-        <item value="PRON_INDEFINI_VAL_NEG"/-->
+        <!--item value="L_PRON_INDEFINI"/>
+        <item value="L_PRON_INDEFINI_VAL_NEG"/-->
       </list>
       <list name="PossessivePronouns">
-        <!--item value="PRON_POSSESSIF_SUJET" />
-        <item value="PRON_POSSESSIF_COD" />
-        <item value="PRON_POSSESSIF_COI" /-->
+        <!--item value="L_PRON_POSSESSIF_SUJET" />
+        <item value="L_PRON_POSSESSIF_COD" />
+        <item value="L_PRON_POSSESSIF_COI" /-->
       </list>
       <list name="PrepRelation">
         <item value="PREPSUB"/>
@@ -318,12 +324,12 @@
       <param key="graph" value="PosGraph"/>
       <param key="fieldClass" value="CLASS_3"/>
       <map name="Trigger">
-        <!--entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="PONCTU_PARAGRAPHE" unlessFirstToken="YES"/-->
+        <!--entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="L_PONCTU_PARAGRAPHE" unlessFirstToken="YES"/-->
         <entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="" unlessFirstToken="YES"/>
         <entry key="NP" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
       </map>
       <map name="EndWord">
-        <!--entry key="PONCTU_PARAGRAPHE" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/-->
+        <!--entry key="L_PONCTU_PARAGRAPHE" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/-->
         <entry key="T_COMMA_NUMBER" value="Status" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
       </map>
     </group>
@@ -355,7 +361,7 @@
     </group>
     <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
       <list name="defaultCategories">
-        <item value="NP NP"/>
+        <item value="L_NP NP"/>
       </list>
     </group>
     <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
@@ -410,10 +416,10 @@
       <param key="maxChainsNbByVertex" value="30"/>
       <param key="maxChainLength" value="12"/>
     </group>
-    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
+    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an 
     experimental module used to test if LIMA analysis works without nominal and
     verbal. It allows also to build compounds using verbs and heterosyntagmatic
-    dependencies. For that, one have to add adequate relations in
+    dependencies. For that, one have to add adequate relations in 
     CompoundRelations in mm-common. -->
     <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
       <param key="chainMatrix" value="chainMatrix"/>
@@ -426,11 +432,11 @@
     </group>
     <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
       <list name="actions">
-          <item value="pass0HomoSyntagmaticRelationRules"/>
-          <item value="pass1HomoSyntagmaticRelationRules"/>
-          <item value="pass2HomoSyntagmaticRelationRules"/>
-          <item value="pleonasticPronouns"/>
-          <item value="compoundTensesRules"/>
+        <item value="pass0HomoSyntagmaticRelationRules"/>
+        <item value="pass1HomoSyntagmaticRelationRules"/>
+        <item value="pass2HomoSyntagmaticRelationRules"/>
+        <item value="pleonasticPronouns"/>
+        <item value="compoundTensesRules"/>
       </list>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
@@ -485,7 +491,16 @@
         <item value="l2rDummyRules"/>
       </list>
     </group>
-    <!-- ******************************************
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+    </group>
+<!-- ******************************************
   Definition of loggers
 *********************************************** -->
     <group name="beginStatusLogger" class="StatusLogger">
@@ -619,18 +634,18 @@
       <param key="useEmptyMacro" value="no"/>
       <param key="useEmptyMicro" value="no"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
       <list name="selectedDependency">
         <item value="ADJPRENSUB"/>
@@ -646,9 +661,41 @@
         <item value="SUJ_V"/>
       </list>
     </group>
-<!-- ******************************************
+    <group name="srl" class="ExternalProcessUnit">
+      <param key="dumper" value="conllDumperToFile"/>
+      <param key="inputSuffix" value=".conll"/>
+      <param key="outputSuffix" value=".conll.srl"/>
+      <param key="command" value="/home/gael/Projets/knowledgesrl/src/main.py --language=fre --frame-lexicon=FrameNet --conll_input %1 --conll_output %2 --log=debug"/>
+      
+      <param key="loader" value="srlLoader"/>
+    </group>
+    <group name="kbsrl" class="KnowledgeBasedSemanticRoleLabeler">
+      <param key="loglevel" value="info"/>
+      <param key="path" value="/home/gael/Projets/knowledgesrl/src"/>
+      <param key="mode" value="VerbNet"/>
+      <param key="dumper" value="conllDumperToFile"/>
+      <param key="temporaryFileMetadata" value="srlTemporary"/>
+      <param key="inputSuffix" value=".conll"/>
+      <param key="outputSuffix" value=".conll.srl"/>
+      <!--  - -passivize - -argument-identification - -heuristic-rules -->
+      <param key="loader" value="srlLoader"/>
+    </group>
+    <group name="srlLoader" class="SemanticRoleLabelingLoader">
+      <param key="model" value="VerbNet"/>
+      <param key="temporaryFileMetadata" value="srlTemporary"/>
+      <param key="inputSuffix" value=".conll.srl"/>
+    </group>
+    <!-- ******************************************
   Definition of dumpers
 *********************************************** -->
+    <group name="conllDumperToFile" class="ConllDumper">
+      <param key="outputSuffix" value=".conll"/>
+      <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
+    </group>
+    <group name="conllDumper" class="ConllDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <!--param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/-->
+    </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>
       <param key="stopList" value="stopList"/>
@@ -656,18 +703,39 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="bowDumperXml" class="BowDumper">
+      <param key="handler" value="xmlDocumentHandler"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
+      </map>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="bowTextHandler" class="BowDumper">
@@ -677,18 +745,18 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="textQueryHandler" class="BowDumper">
@@ -699,18 +767,18 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="bowDocumentDumper" class="BowDumper">
@@ -720,18 +788,18 @@
       <param key="useEmptyMacro" value="false"/>
       <param key="useEmptyMicro" value="false"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="bowTextDumper" class="BowDumper">
@@ -741,18 +809,18 @@
       <param key="useEmptyMacro" value="false"/>
       <param key="useEmptyMicro" value="false"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="geoDumper" class="GeoDumper">
@@ -773,18 +841,18 @@
       <param key="useEmptyMacro" value="false"/>
       <param key="useEmptyMicro" value="false"/>
       <map name="NEmacroCategories">
-        <entry key="DateTime.DATE" value="NC"/>
-        <entry key="Numex.NUMBER" value="NC"/>
-        <entry key="Numex.UNIT" value="NC"/>
-        <entry key="Numex.NUMEX" value="NC"/>
-        <entry key="Organization.ORGANIZATION" value="NP"/>
-        <entry key="Location.LOCATION" value="NP"/>
-        <entry key="Person.PERSON" value="NP"/>
-        <entry key="Product.PRODUCT" value="NP"/>
-        <entry key="Event.EVENT" value="NP"/>
+        <entry key="DateTime.DATE" value="L_NC"/>
+        <entry key="Numex.NUMBER" value="L_NC"/>
+        <entry key="Numex.UNIT" value="L_NC"/>
+        <entry key="Numex.NUMEX" value="L_NC"/>
+        <entry key="Organization.ORGANIZATION" value="L_NP"/>
+        <entry key="Location.LOCATION" value="L_NP"/>
+        <entry key="Person.PERSON" value="L_NP"/>
+        <entry key="Product.PRODUCT" value="L_NP"/>
+        <entry key="Event.EVENT" value="L_NP"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="L_NP"/>
+      <param key="commonNounCategory" value="L_NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="fullXmlDumper" class="FullXmlDumper">
@@ -792,10 +860,6 @@
     </group>
     <group name="posGraphXmlDumper" class="posGraphXmlDumper">
       <param key="handler" value="xmlSimpleStreamHandler"/>
-    </group>
-    <group name="conllDumper" class="ConllDumper">
-      <param key="outputSuffix" value=".conll"/>
-      <param key="handler" value="simpleStreamHandler"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
@@ -908,6 +972,9 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-fre"/>
+        <item value="VerbNet-modex.xml/resources-fre"/>
+        <item value="FrameNet-modex.xml/resources-fre"/>
+        <!--item value="UMLS-modex.xml/resources-fre"/-->
       </list>
     </group>
 
