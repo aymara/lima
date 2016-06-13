@@ -136,11 +136,13 @@
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <item value="SpecificEntitiesModex"/>
+        <!--item value="UMLSRecognition"/-->
         <item value="viterbiPostagger-freq"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="bowDumper"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="bowDumperXml"/>
       </list>
     </group>
     <group name="normalization" class="ProcessUnitPipeline" >
