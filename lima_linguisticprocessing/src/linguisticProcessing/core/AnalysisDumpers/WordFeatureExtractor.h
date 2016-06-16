@@ -205,12 +205,12 @@ public:
 };
 
 //--------------------------------------------------------
-#define FeatureStoreInData_ID "storeInData"
-class LIMA_ANALYSISDUMPERS_EXPORT FeatureStoreInData : public AbstractFeatureExtractor
+#define FeatureStoredData_ID "storedData"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureStoredData : public AbstractFeatureExtractor
 {
 public:
-  FeatureStoreInData(MediaId language, const std::string& complement="");
-  ~FeatureStoreInData() {}
+  FeatureStoredData(MediaId language, const std::string& complement="");
+  ~FeatureStoredData() {}
   
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,

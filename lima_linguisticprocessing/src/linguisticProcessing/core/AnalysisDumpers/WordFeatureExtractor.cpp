@@ -64,7 +64,7 @@ FeatureExtractorFactory<FeatureProperty> FeaturePropertyFactory(FeatureProperty_
 FeatureExtractorFactory<FeatureTstatus> FeatureTstatusFactory(FeatureTstatus_ID);
 FeatureExtractorFactory<FeatureSpecificEntity> FeatureSpecificEntityFactory(FeatureSpecificEntity_ID);
 FeatureExtractorFactory<FeatureLemmaSpecificEntity> FeatureLemmaSpecificEntityFactory(FeatureLemmaSpecificEntity_ID);
-FeatureExtractorFactory<FeatureStoreInData> FeatureStoreInDataFactory(FeatureStoreInData_ID);
+FeatureExtractorFactory<FeatureStoredData> FeatureStoredDataFactory(FeatureStoredData_ID);
 
 //***********************************************************************
 // Feature list
@@ -300,12 +300,12 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
 }
 
 //***********************************************************************
-FeatureStoreInData::FeatureStoreInData(MediaId language, const std::string& complement):
+FeatureStoredData::FeatureStoredData(MediaId language, const std::string& complement):
 AbstractFeatureExtractor(language,complement)
 {
 }
 
-std::string FeatureStoreInData::
+std::string FeatureStoredData::
 getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
          LinguisticGraphVertex v,
          AnalysisContent &analysis) const
