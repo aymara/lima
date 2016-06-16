@@ -14,9 +14,8 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-add_subdirectory(eng)
-add_subdirectory(fre)
-add_subdirectory(por)
-add_subdirectory(StopLists)
-
 ########### install files ###############
+install(FILES
+  tokenizerAutomaton-por.tok
+  tokenizerAutomaton-por.chars.tok
+COMPONENT por DESTINATION share/apps/lima/resources/LinguisticProcessings/por)
