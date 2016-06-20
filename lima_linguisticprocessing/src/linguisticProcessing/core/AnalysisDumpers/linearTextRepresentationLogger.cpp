@@ -129,8 +129,8 @@ LimaStatusCode LinearTextRepresentationLogger::process(
     // get sentence boundaries
     SegmentationData* sb = dynamic_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
     if (sb == 0) {
-        LERROR << "no SentenceBounds ! abort";
-        return MISSING_DATA;
+      LDEBUG << "LinearTextRepresentationDumper::process: no SentenceBounds available: ignored";
+      // sentence bounds ignored: null pointer passed to LTRTextBuilder will be handled there
     }
     // build LTRText
     LTR_Text textRep;
@@ -138,6 +138,7 @@ LimaStatusCode LinearTextRepresentationLogger::process(
     builder.buildLTRTextFrom(
         *(anaGraph->getGraph()),
         sb,
+        anaGraph->firstVertex(),
         anaGraph->lastVertex(),
         &textRep,
         metadata->getStartOffset());
