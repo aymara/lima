@@ -238,9 +238,9 @@ uint64_t IndexElement::getId() const { return m_d->m_id; }
 
 Lima::Common::BagOfWords::BoWType IndexElement::getType() const { return m_d->m_type; }
 
-bool IndexElement::isSimpleTerm() const { return m_d->m_type == BOW_TOKEN; }
+bool IndexElement::isSimpleTerm() const { return m_d->m_type == BOW_TOKEN || (m_d->m_type == BOW_NAMEDENTITY && m_d->m_structure.empty()); }
 
-bool IndexElement::isComposedTerm() const { return m_d->m_type == BOW_TERM; }
+bool IndexElement::isComposedTerm() const { return m_d->m_type == BOW_TERM || (m_d->m_type == BOW_NAMEDENTITY && ! m_d->m_structure.empty());; }
 
 bool IndexElement::isPredicate() const { return m_d->m_type == BOW_PREDICATE; }
 
