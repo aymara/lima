@@ -46,4 +46,14 @@
       </list>
     </group>
   </module>
+  <module name="resources-por">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-por.bin"/>
+    </group> 
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="N"/>
+      </list>
+    </group>
+  </module>
 </modulesConfig>

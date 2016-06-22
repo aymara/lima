@@ -82,6 +82,9 @@
       <list name="Location.COUNTRY">
         <item value="NNP"/>
       </list>
+      <list name="Location.BUILDING">
+        <item value="NNP"/>
+      </list>
       <list name="Location.GEO">
         <item value="NNP"/>
       </list>
@@ -151,6 +154,57 @@
       </list>
       <list name="Location.ADDRESS">
         <item value="NC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-por.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-por.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-por.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-por.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="N"/>
+      </list>
+      <list name="Location.URL">
+        <item value="N"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="N"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="N"/>
       </list>
     </group>
   </module>

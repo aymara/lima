@@ -79,4 +79,17 @@
       </list>
     </group>
   </module>
+  <module name="resources-por">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-por"/>
+        <item value="DateTime-modex.xml/resources-por"/>
+        <item value="Organization-modex.xml/resources-por"/>
+        <item value="Location-modex.xml/resources-por"/>
+        <item value="Person-modex.xml/resources-por"/>
+        <item value="Event-modex.xml/resources-por"/>
+        <item value="Product-modex.xml/resources-por"/>
+      </list>
+    </group>
+  </module>
 </modulesConfig>

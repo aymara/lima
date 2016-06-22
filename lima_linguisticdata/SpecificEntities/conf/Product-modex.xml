@@ -49,4 +49,19 @@
       </list>
     </group>
   </module>
+  <module name="resources-por">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-por.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="NPROP"/>
+      </list>
+    </group>
+  </module>
 </modulesConfig>

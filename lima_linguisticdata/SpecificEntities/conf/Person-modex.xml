@@ -97,4 +97,33 @@
       </list>
     </group>
   </module>
+  <module name="resources-por">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-por.bin"/>
+    </group>
+    <group name="PersonCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON_COMP-por.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-por.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="NPROP"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="NPROP"/>
+      </list>
+    </group>
+  </module>
 </modulesConfig>
