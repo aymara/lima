@@ -5,6 +5,7 @@
       <list name="languages">
         <item value="fre"/>
         <item value="eng"/>
+        <item value="por"/>
       </list>
       <list name="pipelines">
         <item value="limaserver"/>
