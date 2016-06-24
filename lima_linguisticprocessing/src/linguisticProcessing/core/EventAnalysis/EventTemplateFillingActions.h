@@ -70,11 +70,10 @@ public:
   CreateEventTemplate(MediaId language,
                       const LimaString& complement);
   ~CreateEventTemplate() {}
-  bool operator()(Automaton::RecognizerMatch& match,
-                  AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const;
   
-  bool actionNeedsRecognizedExpression() { return true; }
 private:
+  std::string m_eventType;
 };
 
 class LIMA_EVENTANALISYS_EXPORT ClearEventTemplate : public Automaton::ConstraintFunction
