@@ -19,55 +19,55 @@
 #   listesfermees_prenoms_en.txt
 # )
 #
-# CONVERT(eng ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt)
+# CONVERT(por ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt)
 
 set(ENV{LC_ALL} "C")
 
-file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic)
+file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../delaf/*.txt)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
-    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
+    OUTPUT dico.xml  DelafPB.txt default-por.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt
-    COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
+    COMMAND cat ${dicoFiles} > DelafPB.txt
+    COMMAND LC_ALL="C" sort -u -o DelafPB.txt DelafPB.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl DelafPB.txt dico.xml.tmp
+  # COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
-    COMMENT "produce eng XML dico under Linux"
+    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
+    COMMENT "produce por XML dico under Linux"
     VERBATIM
   )
 else()
   add_custom_command(
-    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
+    OUTPUT dico.xml  DelafPB.txt default-por.dat
     COMMAND c:\\msys64\\usr\\bin\\echo "<dictionary>" > dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\cat ${dicoFiles} > freeling-ext-lima.txt
-    COMMAND c:\\msys64\\usr\\bin\\sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
+    COMMAND c:\\msys64\\usr\\bin\\cat ${dicoFiles} > DelafPB.txt
+    COMMAND c:\\msys64\\usr\\bin\\sort -u -o DelafPB.txt DelafPB.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl DelafPB.txt dico.xml.tmp
+  # COMMAND c:\\msys64\\usr\\bin\\cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
-    COMMENT "produce eng XML dico under Windows"
+    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
+    COMMENT "produce por XML dico under Windows"
     VERBATIM
   )
 endif()
 
 add_custom_target(
-  dicoxmleng
+  dicoxmlpor
   ALL
   DEPENDS dico.xml
 )
-add_dependencies(dicoxmleng codeeng )
+add_dependencies(dicoxmlpor codepor )
 
 add_custom_target(
-  converteng
+  convertpor
   ALL
 )
-add_dependencies(converteng dicoxmleng )
+add_dependencies(convertpor dicoxmlpor )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat COMPONENT eng DESTINATION share/apps/lima/resources/LinguisticProcessings/eng)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-por.dat COMPONENT por DESTINATION share/apps/lima/resources/LinguisticProcessings/por)
