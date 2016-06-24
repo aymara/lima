@@ -1,0 +1,79 @@
+ <?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="MediaData">
+        <group name="Class">
+            <param key="class" value="LanguageData"/>
+        </group>
+  </module>
+  <module name="LinguisticData">
+    <group name="Categories">
+        <list name="sentenceBreakMicros">
+          <item value="PONCTU_FORTE"/>
+          <!--item value="PONCTU_MISE_EN_EVIDENCE"/-->
+          <!-- certains mots au milieu de phrases sont entre guillemets... -->
+        </list>
+      <param key = "PropertyCodeFile" value = "LinguisticProcessings/eng/code-por.xml" />
+      <list name="emptyMacro">
+        <item value="NONE_1" />
+        <item value="DET" />
+        <item value="PRON" />
+        <item value="ADV" />
+        <item value="PREP" />
+        <item value="CONJ" />
+        <item value="PONCTU" />
+        <item value="INTERJ" />
+      </list>
+      <list name="emptyMicro">
+        <item value="ART"/>
+        <item value="PROADJ"/>
+        <item value="PRO-KS"/>
+        <item value="PROPESS"/>
+        <item value="PROSUB"/>
+        <item value="ADV"/>
+        <item value="ADV-KS"/>
+        <item value="PDEN"/>
+        <item value="PREP"/>
+        <item value="PREP+ADV"/>
+        <item value="PREP+ART"/>
+        <item value="PREP+PROADJ"/>
+        <item value="PREP+PRO-KS"/>
+        <item value="PREP+PROPESS"/>
+        <item value="PREP+PROSUB"/>
+        <item value="UNK"/>
+        <item value="KC"/>
+        <item value="KS"/>
+        <item value="PU"/>
+        <item value="IN"/>
+      </list>
+        <list name="conjugatedVerbs" >
+          <item value="V"/>
+          <item value="PCP"/>
+        </list>
+        
+        <list name="propositionIntroductors" >
+        </list>
+        
+    </group>
+    <group name="SyntacticRelations">
+      <list name="relationList">
+      </list>
+    </group>
+    
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-eng.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+      </list>
+      
+      <list name="VerbalHomoSyntagmaticRelations">
+        <item value="PrepInf"/>
+      </list>
+      
+      <list name="NounPhraseHeadCategs">
+      </list>
+      
+      <list name="DefiniteCategs">
+      </list>
+      
+    </group>
+  </module>
+</modulesConfig>
