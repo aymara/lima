@@ -18,11 +18,11 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
-        <item value="SpecificEntitiesModex"/>
+        <!--item value="SpecificEntitiesModex"/-->
         <!--item value="specificEntitiesXmlLogger"/-->
         <item value="viterbiPostagger-freq"/>
         <!--item value="SvmToolPosTagger"/-->
@@ -32,8 +32,8 @@
         <!--item value="dotGraphWriter"/-->
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
         <!--item value="syntacticAnalyzerSimplifyFirst"/-->
@@ -41,7 +41,7 @@
         <!--item value="syntacticAnalyzerSimplifyCoord"/-->
         <!--item value="syntacticAnalyzerSimplifyLast"/-->
         <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
-        <item value="syntacticAnalyzerDepsHetero"/>
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="syntacticAnalyzerDummy"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -293,18 +293,18 @@
       <param key="trigramFile" value="Disambiguation/trigramMatrix-por.dat"/>
       <param key="bigramFile" value="Disambiguation/bigramMatrix-por.dat"/>
       <param key="costFunction" value="FrequencyCost"/>
-      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <param key="defaultCategory" value="PU"/>
       <list name="stopCategories">
-        <item value="PONCTU_FORTE" />
+        <item value="PU" />
       </list>
     </group>
     <group name="viterbiPostagger-int" class="ViterbiPosTagger">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-por.dat"/>
       <param key="bigramFile" value="Disambiguation/bigramMatrix-por.dat"/>
       <param key="costFunction" value="IntegerCost"/>
-      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <param key="defaultCategory" value="PU"/>
       <list name="stopCategories">
-        <item value="PONCTU_FORTE" />
+        <item value="PU" />
       </list>
     </group>
     <group name="viterbiPostagger-int-none" class="ViterbiPosTagger">
@@ -313,27 +313,27 @@
       <param key="costFunction" value="IntegerCost"/>
       <param key="defaultCategory" value="NONE_1"/>
       <list name="stopCategories">
-        <item value="PONCTU_FORTE" />
+        <item value="PU" />
       </list>
     </group>
     <group name="SvmToolPosTagger" class="SvmToolPosTagger">
       <param key="model" value="Disambiguation/SVMToolModel-por/lima"/>
-      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <param key="defaultCategory" value="PU"/>
       <list name="stopCategories">
-        <item value="PONCTU_FORTE" />
+        <item value="PU" />
       </list>
     </group>
     <group name="DynamicSvmToolPosTagger" class="DynamicSvmToolPosTagger">
       <param key="model" value="Disambiguation/SVMToolModel-por/lima"/>
-      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <param key="defaultCategory" value="PU"/>
       <list name="stopCategories">
-        <item value="PONCTU_FORTE" />
+        <item value="PU" />
       </list>
     </group>
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
       <list name="micros">
-        <item value="PONCTU_FORTE" />  
+        <item value="PU" />  
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">

@@ -1,4 +1,4 @@
- <?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
   <module name="MediaData">
         <group name="Class">
@@ -12,7 +12,7 @@
           <!--item value="PONCTU_MISE_EN_EVIDENCE"/-->
           <!-- certains mots au milieu de phrases sont entre guillemets... -->
         </list>
-      <param key = "PropertyCodeFile" value = "LinguisticProcessings/eng/code-por.xml" />
+      <param key = "PropertyCodeFile" value = "LinguisticProcessings/por/code-por.xml" />
       <list name="emptyMacro">
         <item value="NONE_1" />
         <item value="DET" />
