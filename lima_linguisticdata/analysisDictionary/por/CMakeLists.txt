@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
 add_subdirectory(code)
 add_subdirectory(convert)
 add_subdirectory(compile)

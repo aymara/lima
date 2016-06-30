@@ -216,6 +216,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
+<code key="CUR">
+  <field key="MICRO" value="CUR"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="IN">
   <field key="MICRO" value="IN"/>
   <field key="GENDER" value=""/>
@@ -344,6 +352,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
+<code key="NPROP">
+  <field key="MICRO" value="NPROP"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="NPROP:fp">
   <field key="MICRO" value="NPROP"/>
   <field key="GENDER" value="FEM"/>
@@ -372,6 +388,14 @@
   <field key="MICRO" value="NPROP"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="NUM">
+  <field key="MICRO" value="NUM"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
@@ -1560,6 +1584,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value="SUPERL"/>
 </code>
+<code key="PU">
+  <field key="MICRO" value="PU"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="V:C1p">
   <field key="MICRO" value="V"/>
   <field key="GENDER" value=""/>
@@ -2036,6 +2068,14 @@
   <field key="MICRO" value="V"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value="PLUR"/>
+  <field key="PERSON" value="3"/>
+  <field key="TIME" value="FUT_SUBJ"/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="V:U3s">
+  <field key="MICRO" value="V"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value="SING"/>
   <field key="PERSON" value="3"/>
   <field key="TIME" value="FUT_SUBJ"/>
   <field key="SYNTAX" value=""/>
