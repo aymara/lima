@@ -82,9 +82,16 @@ while getopts ":m:p:r:v:G:" o; do
 done
 shift $((OPTIND-1))
 
-current_branch=`git rev-parse --abbrev-ref HEAD`
-current_revision=`git rev-parse --short HEAD`
-current_timestamp=`git show -s --format=%ct HEAD`
+if type git && git rev-parse --git-dir; then
+    current_branch=`git rev-parse --abbrev-ref HEAD`
+    current_revision=`git rev-parse --short HEAD`
+    current_timestamp=`git show -s --format=%ct HEAD`
+else
+    # use default values
+    current_branch="default"
+    current_revision="default"
+    current_timestamp=1
+fi
 current_project=`basename $PWD`
 current_project_name="`head -n1 CMakeLists.txt`"
 build_prefix=$LIMA_BUILD_DIR/$current_branch
