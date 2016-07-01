@@ -100,18 +100,18 @@ void AnalysisThread::startAnalysis()
 {
   CORECLIENTLOGINIT;
   LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
-  if (m_d->m_request->methodString() == "HTTP_GET" && m_d->m_request->url().path() == "/extractEN")
+  if (m_d->m_request->methodString() == "HTTP_GET" && m_d->m_request->url().path() == "/analyzeText")
   {
     QString language, pipeline, text;
     QPair<QString, QString> item;
     std::map<std::string,std::string> metaData;
     std::set<std::string> inactiveUnits;
     
-    LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_GET)";
+    LDEBUG << "AnalysisThread::startAnalysis: process analyzeText request (mode HTTP_GET)";
     
     std::map<std::string, AbstractAnalysisHandler*> handlers;
     LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
-    handlers.insert(std::make_pair("se", seLogWriter));
+    handlers.insert(std::make_pair("simpleStreamHandler", seLogWriter));
 
     // OME?? Dont forget to delete it!!!
     std::ostringstream* oss = new std::ostringstream();
@@ -149,10 +149,22 @@ void AnalysisThread::startAnalysis()
       LDEBUG << "Analyzing" << language << text;
       std::ostringstream ots;
       std::string pipe = pipeline.toUtf8().data();
-      pipe = "limaserver";
+      if (pipe.empty()) pipe = "limaserver";
+      if (logger.isDebugEnabled()) {
+        std::ostringstream msg;
+        msg << "AnalysisThread::startAnalysis: analyze( [" << QStringRef(&text,0,20).toUtf8().data();
+        msg << "...], metadata=[";
+        for (const auto d: metaData) { msg << " " << d.first << "=>" << d.second; }
+        msg << "], pipeline=" << pipe << ", handlers=[";
+        for (const auto h: handlers) { msg << " " << h.first << "=>" << h.second; }
+        msg << " ], inactiveUnits=";
+        for (const auto u: inactiveUnits) { msg << u << ","; }
+        LDEBUG << msg.str();
+      }
       m_d->m_analyzer->analyze(text,metaData, pipe, handlers, inactiveUnits);
 
-      std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
+      std::string resultString;
+      //("<?xml version='1.0' encoding='UTF-8'?>");
       resultString.append(oss->str());
       LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
 
@@ -176,9 +188,9 @@ void AnalysisThread::startAnalysis()
     delete oss; oss = 0;
   }
   // commande HTTP_POST
-  else if (m_d->m_request->methodString() == "HTTP_POST" && m_d->m_request->url().path() == "/extractEN")
+  else if (m_d->m_request->methodString() == "HTTP_POST" && m_d->m_request->url().path() == "/analyzeText")
   {
-    LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
+    LDEBUG << "AnalysisThread::startAnalysis: process analyzeText request (mode HTTP_POST)";
 
     QString language, pipeline, text_QS;
     std::string text_s;
@@ -205,7 +217,7 @@ void AnalysisThread::startAnalysis()
 
     std::map<std::string, AbstractAnalysisHandler*> handlers;
     LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
-    handlers.insert(std::make_pair("se", seLogWriter));
+    handlers.insert(std::make_pair("simpleStreamHandler", seLogWriter));
     std::ostringstream* oss = new std::ostringstream();
     seLogWriter->setOut(oss);
    
@@ -230,9 +242,22 @@ void AnalysisThread::startAnalysis()
       std::string pipe = pipeline.toUtf8().data();
       text_QS = Misc::utf8stdstring2limastring(text_s);
 
+      if (logger.isDebugEnabled()) {
+        std::ostringstream msg;
+        msg << "AnalysisThread::startAnalysis: analyze( [" << QStringRef(&text_QS,0,20).toUtf8().data();
+        msg << "...], metadata=[";
+        for (const auto d: metaData) { msg << " " << d.first << "=>" << d.second; }
+        msg << "], pipeline=" << pipe << ", handlers=[";
+        for (const auto h: handlers) { msg << " " << h.first << "=>" << h.second; }
+        msg << " ], inactiveUnits=";
+        for (const auto u: inactiveUnits) { msg << u << ","; }
+        LDEBUG << msg.str();
+      }
+
       m_d->m_analyzer->analyze(text_QS,metaData, pipe, handlers, inactiveUnits);
 
-      std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
+      std::string resultString;
+      //("<?xml version='1.0' encoding='UTF-8'?>");
       resultString.append(oss->str());
       LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
 
