@@ -2228,4 +2228,9 @@
       <param key="rules" value="SRLIntegration/FrameNet-fre.bin"/>
     </group>
   </module>
+  <module name="resources-fre">
+    <group name="FrameNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/FrameNet-por.bin"/>
+    </group>
+  </module>
 </modulesConfig>
