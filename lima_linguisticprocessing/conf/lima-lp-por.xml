@@ -18,7 +18,7 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
-        <!--item value="idiomaticAlternatives"/-->
+        <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
