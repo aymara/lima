@@ -1,0 +1,105 @@
+#######################################################
+# Declaration of micro categories classes for por
+#######################################################
+
+set encoding=utf8
+set entityTypes=SyntacticRelations
+
+@Tout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$CONJ,$DIVERS)
+
+@VraimentTout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
+
+@NomPropre=($NP-NPROP)
+
+@Adjectif=($ADJ)
+
+@Prep=($PREP)
+
+@Pron=($PRON)
+
+@Adverb=($ADV)
+# AdvTempComp=($ADV-RB)
+# Neg=($ADV-NOT)
+
+@Substantif=($NC,$NP)
+
+@Determinant=($DET)
+@DetDef=(o,a,os,as,ao,à,aos,às,do,da,dos,das,no,na,nos,nas,pelo,pela,pelos,pelas)
+@DetIndef=(um,uma,uns,umas,num,numa,nuns,numas,dum,duma,duns,dumas)
+@DetInt=(qual,quais,o que,que,quem,onde,por que,quanto,quanta,quantos,quantas,como,cadê)
+@DetNum=($NOMBRE-NUM)
+
+@Prep=($PREP)
+# PrepComp=($PREP-IN,$PREP-THATIN)
+
+@PronPers=($PRON-PROPESS)
+
+# PrepGVInf=($PREP-TO)
+
+# CompDuNomTrig=($PREP)
+
+@Verbe=($V)
+
+@InfinitiveVerb=($V-V:W)
+
+@Aux=(tenho,tens,tem,temos,tendes,têm,hei,hás,há,havemos,haveis,hão)
+
+@AuxModal=($V-MD)
+
+@Ing=($V-VBG)
+
+
+@AuxParticipe=($V-VBN)
+@PastTense=($V-VBD)
+@PastParticiple=($V-VBN)
+@Copule=(am,is,are,was,were,become,get,feel,seem)
+# liste des verbes copule pouvant être suivi d'un infinitif
+# (sous-liste des verbes copule du dictionnaire)
+@CopulePlusInfinitif=(seem$V,appear$V,become$V)
+@Participe=($V-VBN,$V-VBG)
+@TensedVerb=($V-VB,$V-VBD,$V-VBP,$V-VBZ)
+@BaseFormVerb=($V-VB)
+
+
+@Inc=($DIVERS-UNK)
+
+# A verifier (copie du francais)
+@SujVOther=($DET,
+$ADJ,$ADV,
+$PREP,$PONCTU,
+$INTERJ,
+$CONJ-CC)
+
+# A verifier (copie du francais)
+@NotVerbPrincipal=($NC,$NP,$PRON,$DET,
+$ADJ,$ADV,$PREP,$PONCTU,
+$INTERJ,$CONJ,$V-MD)
+
+
+
+
+# Possessive pronoun
+@PronPoss=($PRON-PRP$)
+
+@PronRefl=($PRON)
+
+@PronRelS=($PRON)
+
+@Neg=($ADV-NOT)
+
+
+@Virg=(\,)
+
+@ConjCoord=($CONJ-CC)
+
+@ConjSubord=($PREP-IN)
+
+@Sent=($PONCTU-SENT)
+
+@Comma=(\,)
+
+@AfterNominalChunk=($DET,$PREP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
+@OpenQuot=($PONCTU-OQU,$PONCTU-QUOT,$PONCTU-OPAR)
+
+@ClosQuot=($PONCTU-QUOT,$PONCTU-CPAR)
+
