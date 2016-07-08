@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+PP<?xml version='1.0' encoding='UTF-8'?>
 <codes>
 <code key="ADJ">
   <field key="MICRO" value="ADJ"/>
@@ -1585,6 +1585,14 @@
   <field key="SYNTAX" value="SUPERL"/>
 </code>
 <code key="PU">
+  <field key="MICRO" value="PU"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="PU+FORTE">
   <field key="MICRO" value="PU"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>

@@ -124,6 +124,7 @@ V               Verbo
     </subvalues>
     <subvalues value="PONCTU">
       <value name="PU"/>
+      <value name="PU+FORTE"/>
     </subvalues>
     <subvalues value="PREP">
       <value name="PREP"/>

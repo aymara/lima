@@ -17,8 +17,8 @@ t_cardinal_roman	NUM
 t_ordinal_roman	N
 t_ordinal_roman	NUM
 t_pattern	PU
-t_paragraph_brk	PU
-t_sentence_brk	PU
+t_paragraph_brk	PU+FORTE
+t_sentence_brk	PU+FORTE
 t_word_brk	PU
 t_small	N
 t_url	N
