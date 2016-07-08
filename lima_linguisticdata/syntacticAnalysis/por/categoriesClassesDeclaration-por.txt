@@ -9,6 +9,8 @@ set entityTypes=SyntacticRelations
 
 @VraimentTout=($DET,$NC,$PREP,$ADJ,$NP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
 
+@NomCommun=($NC-N)
+
 @NomPropre=($NP-NPROP)
 
 @Adjectif=($ADJ)
@@ -40,25 +42,23 @@ set entityTypes=SyntacticRelations
 
 @Verbe=($V)
 
-@InfinitiveVerb=($V-V:W)
+# InfinitiveVerb=($V)
 
 @Aux=(tenho,tens,tem,temos,tendes,têm,hei,hás,há,havemos,haveis,hão)
 
-@AuxModal=($V-MD)
-
-@Ing=($V-VBG)
+# AuxModal=($V-MD)
 
 
-@AuxParticipe=($V-VBN)
-@PastTense=($V-VBD)
-@PastParticiple=($V-VBN)
-@Copule=(am,is,are,was,were,become,get,feel,seem)
+@AuxParticipe=($V-PCP)
+# PastTense=($V)
+@PastParticiple=($V-PCP)
+@Copule=(sou,és,é,somos,sois,são,estou,estás,está,estamos,estais,estão)
 # liste des verbes copule pouvant être suivi d'un infinitif
 # (sous-liste des verbes copule du dictionnaire)
-@CopulePlusInfinitif=(seem$V,appear$V,become$V)
-@Participe=($V-VBN,$V-VBG)
-@TensedVerb=($V-VB,$V-VBD,$V-VBP,$V-VBZ)
-@BaseFormVerb=($V-VB)
+# CopulePlusInfinitif=(seem$V,appear$V,become$V)
+@Participe=($V-PCP)
+# TensedVerb=($V)
+# BaseFormVerb=($V)
 
 
 @Inc=($DIVERS-UNK)
@@ -68,38 +68,38 @@ set entityTypes=SyntacticRelations
 $ADJ,$ADV,
 $PREP,$PONCTU,
 $INTERJ,
-$CONJ-CC)
+$CONJ-KC)
 
 # A verifier (copie du francais)
 @NotVerbPrincipal=($NC,$NP,$PRON,$DET,
 $ADJ,$ADV,$PREP,$PONCTU,
-$INTERJ,$CONJ,$V-MD)
+$INTERJ,$CONJ)
 
 
 
 
 # Possessive pronoun
-@PronPoss=($PRON-PRP$)
+@PronPoss=($PRON-PROPESS)
 
 @PronRefl=($PRON)
 
 @PronRelS=($PRON)
 
-@Neg=($ADV-NOT)
+# Neg=($ADV-NOT)
 
 
 @Virg=(\,)
 
-@ConjCoord=($CONJ-CC)
+@ConjCoord=($CONJ-KC)
 
-@ConjSubord=($PREP-IN)
+@ConjSubord=($PREP-KS)
 
-@Sent=($PONCTU-SENT)
+@Sent=($PONCTU-PU+FORTE)
 
 @Comma=(\,)
 
 @AfterNominalChunk=($DET,$PREP,$PRON,$ADV,$V,$CONJ,$DIVERS,$PONCTU)
-@OpenQuot=($PONCTU-OQU,$PONCTU-QUOT,$PONCTU-OPAR)
+# OpenQuot=($PONCTU-OQU,$PONCTU-QUOT,$PONCTU-OPAR)
 
-@ClosQuot=($PONCTU-QUOT,$PONCTU-CPAR)
+# ClosQuot=($PONCTU-QUOT,$PONCTU-CPAR)
 
