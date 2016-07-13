@@ -18,11 +18,11 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
-        <!--item value="SpecificEntitiesModex"/-->
+        <item value="SpecificEntitiesModex"/>
         <!--item value="specificEntitiesXmlLogger"/-->
         <item value="viterbiPostagger-freq"/>
         <!--item value="SvmToolPosTagger"/-->
@@ -32,8 +32,8 @@
         <!--item value="dotGraphWriter"/-->
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <!--item value="syntacticAnalyzerChains"/-->
-        <!--item value="syntacticAnalyzerDeps"/-->
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
         <!--item value="syntacticAnalyzerSimplifyFirst"/-->
@@ -41,7 +41,7 @@
         <!--item value="syntacticAnalyzerSimplifyCoord"/-->
         <!--item value="syntacticAnalyzerSimplifyLast"/-->
         <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
-        <!--item value="syntacticAnalyzerDepsHetero"/-->
+        <item value="syntacticAnalyzerDepsHetero"/>
         <!--item value="syntacticAnalyzerDummy"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -67,7 +67,7 @@
         <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
         <item value="SpecificEntitiesModexForLimaserver"/>
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
@@ -80,7 +80,7 @@
         <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
         <item value="SpecificEntitiesModex"/>
         <item value="dotGraphWriter-beforepos"/>
