@@ -20,7 +20,7 @@ add_subdirectory(corpus)
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT succession_categs_retag.txt
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt | gawk -F "\\t" "{print $2}" > succession_categs_retag.txt
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
     COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt 
 
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt
@@ -30,17 +30,17 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else ()
   add_custom_command(
     OUTPUT succession_categs_retag.txt
-    COMMAND c:\\msys64\\usr\\bin\\gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_por_merge.txt
-    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix -n ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt macmorpho.conll.txt
+  # COMMAND c:\\msys64\\usr\\bin\\gawk -F "	" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_por_merge.txt
+    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix -n ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt
     COMMAND C:\\MinGW\\msys\\1.0\\bin\\patch -p 0 corpus_por_merge.txt macmorpho.conll.txt | cat
   #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos corpus_por_merge.txt
   #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/ptb.pos corpus_por_merge.txt
   #   COMMAND gawk -F " " 'BEGIN {OFS = FS} {print $1"  "$2}' ${DP_FILES} > corpus_por_merge.txt
   #   COMMAND cat ${DP_FILES} > corpus_por_merge.txt
-    COMMAND c:\\msys64\\usr\\bin\\cat corpus_por_merge.txt | gawk -F "  " "{print $2}" > succession_categs_retag.txt
+    COMMAND c:\\msys64\\usr\\bin\\cat corpus_por_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
 
   #   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt $ENV{NLTK_PTB_DP_FILE}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt
     COMMENT "produce por categs succession"
     VERBATIM
   )
