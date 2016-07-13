@@ -14,7 +14,7 @@ set entityTypes=SyntacticSimplification
 #----------------------------------------------------------------------
 # microcategories classes
 #----------------------------------------------------------------------
-use categoriesClassesDeclaration-eng.txt
+use categoriesClassesDeclaration-por.txt
 
 #----------------------------------------------------------------------
 # Supprime subordonnee simple dans "Le chat qui regarde la souris est très beau."
