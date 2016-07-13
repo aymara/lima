@@ -1,0 +1,100 @@
+##############################################################################
+#                                                                            #
+# rules for the recognition of portuguese pleonastic pronouns                #
+# this file uses the syntax for the declarations of automatons by Romaric    #
+# Besancon (Cf. his 2003/03/11 document)                                     #
+#                                                                            #
+# $Id: rules-por-pleonasticPronouns.txt                                      #
+#                                                                            #
+##############################################################################
+# expression des positions dans les contraintes: first current next last
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+
+use categoriesClassesDeclaration-por.txt
+
+@AdjectifModal=(necessário,desnecessário,possível,impossível,seguro,inseguro,certo,certa,certos,certas,incerto,provável,improvável,importante,bom,boa,bons,boas,má,maus,más,útil,inútil,aconselhável,desaconselhável,desaconselhado,conveniente,inconveniente,suficiente,insuficiente,económico,económica,económicos,económicas,fácil,desejável,indesejável,indesejáveis,difícil,difíceis,legal,legais,ilegal,ilegais,verdadeiro,falso,justo,justa,justos,justas,errado,errada,errados,erradas,caro,cara,caros,caras,barato,barata,baratos,baratas,comum,comuns,raro,rara,raros,raras,duro,dura,duros,duras)
+
+@VerbeCognitif=(recomendado,recomendada,recomendados,recomendadas,pensado,acreditado,acreditados,acreditada,acreditadas,conhecido,conhecida,conhecidos,conhecidas,antecipado,antecipada,antecipados,antecipadas,assumido,assumida,assumidos,assumidas,esperado,esperada,esperados,esperadas,dito,dita,ditos,ditas)
+
+@VerbeLogique=(parece,aparece,significa,segue)
+
+@PleoPron=($PRON-PRP)
+
+# @Is=(is,'s,is not,isn't,be,been)
+
+@AdjectifModal:@PleoPron @Is:, (@Tout){1-n} , de:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+@AdjectifModal:@PleoPron @Is:that:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@AdjectifModal:@PleoPron @Is:(for $NC){0-n} to:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@AdjectifModal:@PleoPron @Is:(for $NP){0-n} to:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@AdjectifModal:@PleoPron @Is:(for $PRON){0-n} to:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@VerbeCognitif:@PleoPron @Is:that:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@VerbeCognitif:@PleoPron @Is:to:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,left.2,"Pleon")
++CreateRelationBetween(left.1,left.2,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@VerbeLogique:@PleoPron:that{0-1}:SYNTACTIC_RELATION:
++SecondUngovernedBy(left.1,trigger.1,"Pleon")
++CreateRelationBetween(left.1,trigger.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PleoPron::@Is time to:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PleoPron::@Is thanks to:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PleoPron::@Is why:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@PleoPron::@Is because:SYNTACTIC_RELATION:
++SecondUngovernedBy(trigger.1,right.1,"Pleon")
++CreateRelationBetween(trigger.1,right.1,"Pleon")
+=>AddRelationInGraph()
+=<ClearStoredRelations()

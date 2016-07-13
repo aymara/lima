@@ -1,0 +1,41 @@
+###########################################################
+#
+# rules for the recognition of french subsentences 
+# this file uses the syntax for the declarations of automatons by Romaric
+# Besancon (Cf. his 2003/03/11 document)
+#
+# $Id$
+#
+###########################################################
+
+set encoding=utf8
+set entityTypes=SyntacticSimplification
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-eng.txt
+
+#----------------------------------------------------------------------
+# Supprime subordonnee simple dans "Le chat qui regarde la souris est très beau."
+#----------------------------------------------------------------------
+@PronRelS::@Verbe @Determinant @Substantif @Verbe:SubSent:
++SubsentenceBounds(trigger.1,right.3,"SubordRel")
+=>Simplify()
+=<ClearStoredSubsentences()
+
+#----------------------------------------------------------------------
+# Supprime un groupe non recursif entre parentheses : 
+# " Le chien (oui, oui, le chien) de la voisine "
+#----------------------------------------------------------------------
+\(::(^$PONCTU-PONCTU_PARENTHESE){0-n} \):SubSent:
++SubsentenceBounds(trigger.1,right.2,"Parent")
+=>Simplify()
+=<ClearStoredSubsentences()
+
+PONCTU_DIALOGUE::(^PONCTU_DIALOGUE){0-n} PONCTU_DIALOGUE:SubSent:
++SubsentenceBounds(trigger.1,"Quotes")
++SubsentenceBounds(right.2,"Quotes")
+=>Simplify()
+=<ClearStoredSubsentences()
+

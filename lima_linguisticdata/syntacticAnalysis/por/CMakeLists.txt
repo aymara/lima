@@ -29,4 +29,4 @@
 #  rules-por-heterodeps.txt
 #  rules-por-dummy.txt
 #)
-# COMPILE_SA_RULES_WRAPPER (por ${ENG_RULES_FILES})
+# COMPILE_SA_RULES_WRAPPER (por ${POR_RULES_FILES})
