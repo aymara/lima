@@ -14,19 +14,20 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-# file (GLOB SYMBOLICCODESENG ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/symbolicCode*-por.xml)
 
-# add_custom_command(
-#  OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
-#  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por
-#  COMMAND ${CMAKE_COMMAND} -E copy 
-#    ${CMAKE_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml
-#    ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
-#  DEPENDS
-#    ${CMAKE_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml
-#  COMMENT "create exec env for por idiomatic expressions rules"
-#  VERBATIM
-# )
+file (GLOB SYMBOLICCODESENG ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/symbolicCode*-por.xml)
+
+add_custom_command(
+  OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por
+  COMMAND ${CMAKE_COMMAND} -E copy 
+    ${CMAKE_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml
+    ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml
+  COMMENT "create exec env for por idiomatic expressions rules"
+  VERBATIM
+)
 
 # add_custom_command(
 #  OUTPUT idiomaticExpressions-por.rules
