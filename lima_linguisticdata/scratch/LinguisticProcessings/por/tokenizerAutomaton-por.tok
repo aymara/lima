@@ -175,7 +175,7 @@
   - c_b = IGNORE
   - c_hyphen c_M > LOWER_UPPER (T_HYPHEN_WORD)
   - c_hyphen c_m > ALL_LOWER (T_HYPHEN_WORD)
-  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_ALPHA,T_SMALL)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_all > START
   - m_eof = END

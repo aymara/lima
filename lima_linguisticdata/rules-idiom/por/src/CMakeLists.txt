@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
-file (GLOB SYMBOLICCODESENG ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/symbolicCode*-por.xml)
+file (GLOB SYMBOLICCODESPOR ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/symbolicCode*-por.xml)
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
@@ -29,22 +29,22 @@ add_custom_command(
   VERBATIM
 )
 
-# add_custom_command(
-#  OUTPUT idiomaticExpressions-por.rules
-#  COMMAND ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-por.txt > idioms-por.grace
-#  COMMAND ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml ${SYMBOLICCODESENG} idioms-# por.grace > idiomaticExpressions-por.rules
-#  DEPENDS
-#    ${CMAKE_CURRENT_SOURCE_DIR}/idioms-por.txt
-#    ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
-#    ${SYMBOLICCODESENG}
-#  COMMENT "create por idiomatic expressions rules"
-#  VERBATIM
-# )
+add_custom_command(
+ OUTPUT idiomaticExpressions-por.rules
+ COMMAND ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-por.txt > idioms-por.grace
+ COMMAND ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml ${SYMBOLICCODESPOR} idioms-por.grace > idiomaticExpressions-por.rules
+ DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/idioms-por.txt
+   ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
+   ${SYMBOLICCODESPOR}
+ COMMENT "create por idiomatic expressions rules"
+ VERBATIM
+)
 
-# add_custom_target(
-#   rules-por
-#   ALL
-#   DEPENDS idiomaticExpressions-por.rules
-# )
+add_custom_target(
+  rules-por
+  ALL
+  DEPENDS idiomaticExpressions-por.rules
+)
 
-# IDIOMATICENTITIES(por)
+IDIOMATICENTITIES(por)
