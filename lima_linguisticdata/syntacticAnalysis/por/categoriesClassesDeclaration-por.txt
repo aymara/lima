@@ -21,7 +21,7 @@ set entityTypes=SyntacticRelations
 
 @Adverb=($ADV)
 # AdvTempComp=($ADV-RB)
-# Neg=($ADV-NOT)
+@Neg=(não)
 
 @Substantif=($NC,$NP)
 
@@ -32,7 +32,7 @@ set entityTypes=SyntacticRelations
 @DetNum=($NOMBRE-NUM)
 
 @Prep=($PREP)
-# PrepComp=($PREP-IN,$PREP-THATIN)
+@PrepComp=($PREP)
 
 @PronPers=($PRON-PROPESS)
 
@@ -46,7 +46,7 @@ set entityTypes=SyntacticRelations
 
 @Aux=(tenho,tens,tem,temos,tendes,têm,hei,hás,há,havemos,haveis,hão)
 
-# AuxModal=($V-MD)
+@AuxModal=(posso,podes,pode,podemos,podeis,podem,devo,deves,deve,devemos,deveis,devem)
 
 
 @AuxParticipe=($V-PCP)
@@ -57,7 +57,7 @@ set entityTypes=SyntacticRelations
 # (sous-liste des verbes copule du dictionnaire)
 # CopulePlusInfinitif=(seem$V,appear$V,become$V)
 @Participe=($V-PCP)
-# TensedVerb=($V)
+@TensedVerb=($V)
 # BaseFormVerb=($V)
 
 
@@ -92,7 +92,7 @@ $INTERJ,$CONJ)
 
 @ConjCoord=($CONJ-KC)
 
-@ConjSubord=($PREP-KS)
+@ConjSubord=($CONJ-KS)
 
 @Sent=($PONCTU-PU+FORTE)
 

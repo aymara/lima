@@ -76,13 +76,13 @@ use categoriesClassesDeclaration-por.txt
 
 # Compound tense with passive marker
 # ex: he/John/the cat will really be catched by/when …
-@AuxModal::(@Adverb){0-2} @BaseFormVerb (@TensedVerb|@PastParticiple):SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"CPL_V")
-+SecondUngovernedBy(trigger.1,right.3,"ANY")
-+CreateRelationBetween(trigger.1,right.3,"aux")
-+CreateRelationBetween(right.2,right.3,"auxpass")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@AuxModal::(@Adverb){0-2} @BaseFormVerb (@TensedVerb|@PastParticiple):SYNTACTIC_RELATION:
+#+!GovernorOf(trigger.1,"CPL_V")
+#+SecondUngovernedBy(trigger.1,right.3,"ANY")
+#+CreateRelationBetween(trigger.1,right.3,"aux")
+#+CreateRelationBetween(right.2,right.3,"auxpass")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
 # Simple tense with passive marker
 # ex: he/John/the cat will really be catched by/when …
@@ -95,11 +95,11 @@ use categoriesClassesDeclaration-por.txt
 
 # Simple tense with modal
 # ex: he/John/the cat must really catch…
-@AuxModal::(@Adverb){0-2} @BaseFormVerb:SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"ANY")
-+CreateRelationBetween(trigger.1,right.2,"aux")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@AuxModal::(@Adverb){0-2} @BaseFormVerb:SYNTACTIC_RELATION:
+#+!GovernorOf(trigger.1,"ANY")
+#+CreateRelationBetween(trigger.1,right.2,"aux")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
 
 
@@ -186,17 +186,6 @@ $ADJ::@ConjCoord $ADV{0-2} $ADJ:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.3,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
-
-# cas ou le nom est une nominalisation en -ing
-@Adjectif::(((@Comma)? (@Adverb){0-3} (@Adjectif)){0-2} (@ConjCoord (@Adverb){0-3} (@Adjectif))?)? (@Substantif){0-n} @Ing:SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"ADJPRENSUB")
-+!GovernorOf(right.3,"ADJPRENSUB")
-+SecondUngovernedBy(trigger.1,right.3,"ANY")
-+CreateRelationBetween(trigger.1,right.3,"ADJPRENSUB")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-
 
 #----------------------------------------------------------------------
 # Relation entre determinant interrogatif et nom: DetIntSub
@@ -307,9 +296,9 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # Simplified COMPDUNOM rule for tests
-#@Prep:@Substantif:@Substantif:SYNTACTIC_RELATION:
-#+SecondUngovernedBy(right.1,left.1,"ANY")
-#+CreateRelationBetween(right.1,left.1,"COMPDUNOM")
+# @Prep:@Substantif:@Substantif:SYNTACTIC_RELATION:
+# +SecondUngovernedBy(right.1,left.1,"ANY")
+# +CreateRelationBetween(right.1,left.1,"COMPDUNOM")
 
 #----------------------------------------------------------------------
 # 5. adjective complementer relation: CompAdjectif
@@ -348,11 +337,6 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # is it appearing to become difficult...
 # TEMPCOMP :      is_appearing[6|6]{28/94}        -> appearing[5|5]{28/96}
 #----------------------------------------------------------------------
-#@Is::(@AdvTempComp|@Neg){0-2} @Ing:SYNTACTIC_RELATION:
-#+CreateCompoundTense(right.2,right.1,"V;VERBE_GENERAL_BASE;PRES")
-#=>AddRelationInGraph()
-#=<ClearStoredRelations()
-
 #@Participe:@Is (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
 #+CreateCompoundTense(trigger.1,left.1,"V;VERBE_GENERAPARTICIPE_PASSE;PRES")
 #=>AddRelationInGraph()
@@ -531,16 +515,16 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation between auxiliary and past participle
 #----------------------------------------------------------------------
-@Aux::@Pron? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"ANY")
-+CreateRelationBetween(trigger.1,right.3,"aux")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@Aux::@Pron? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
+#+!GovernorOf(trigger.1,"ANY")
+#+CreateRelationBetween(trigger.1,right.3,"aux")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
-@PastParticiple:@Aux @Pron? (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
-+CreateCompoundTense(trigger.1,left.1,"V;VB;")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@PastParticiple:@Aux @Pron? (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
+#+CreateCompoundTense(trigger.1,left.1,"V;VB;")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
 
 #----------------------------------------------------------------------
@@ -560,22 +544,22 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # He was easy to see
 # PrepInf :      to[4|4]{36/153} -> see[3|3]{28/101}
 #----------------------------------------------------------------------
-to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
-+SecondUngovernedBy(trigger.1,right.5,"ANY")
-+CreateRelationBetween(trigger.1,right.5,"PrepInf")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
+#+SecondUngovernedBy(trigger.1,right.5,"ANY")
+#+CreateRelationBetween(trigger.1,right.5,"PrepInf")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
 #----------------------------------------------------------------------
 # Relation between an adverb and an infinitive verb
 # He wanted to quickly sell his apartment but could not find a taker
 # AdvVerbe :      quickly -> sell
 #----------------------------------------------------------------------
-@Adverb::(@Neg)? @BaseFormVerb:SYNTACTIC_RELATION:
-+SecondUngovernedBy(trigger.1,right.2,"ANY")
-+CreateRelationBetween(trigger.1,right.2,"AdvVerbe")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@Adverb::(@Neg)? @BaseFormVerb:SYNTACTIC_RELATION:
+#+SecondUngovernedBy(trigger.1,right.2,"ANY")
+#+CreateRelationBetween(trigger.1,right.2,"AdvVerbe")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
 #----------------------------------------------------------------------
 # Relation between an adverb and a past tenst verb

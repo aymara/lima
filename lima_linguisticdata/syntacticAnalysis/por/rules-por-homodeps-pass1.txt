@@ -50,7 +50,7 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Substantif::(@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::@Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +!GovernorOf(right.1,"SUBSUBJUX")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
@@ -59,27 +59,19 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 
-@Substantif::(@Substantif|@Adjectif){1-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::(@Substantif|@Adjectif){1-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Substantif::(@Substantif|@Adjectif){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
+@Substantif::(@Substantif|@Adjectif){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
-
-@Ing::(@Substantif|@Adjectif){0-n} (@Substantif|@Ing):SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"ADJPRENSUB")
-+SecondUngovernedBy(trigger.1,right.2,"ANY")
-+CreateRelationBetween(trigger.1,right.2,"ADJPRENSUB")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
 
 #--------------
 # Relation entre les elements d'un nom propre
