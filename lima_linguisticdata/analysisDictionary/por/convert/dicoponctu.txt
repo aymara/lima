@@ -1,22 +1,22 @@
-`	PU
--	PU
-,	PU
-;	PU+FORTE
-:	PU+FORTE
-!	PU+FORTE
-?	PU+FORTE
-/	PU
-\	PU
-...	PU
-.	PU+FORTE
-'	PU
-"	PU
-((	PU
-(	PU
-))	PU
-)	PU
-[	PU
-]	PU
-_	PU
-{	PU
-}	PU
+`	`		PU
+-	-		PU
+,	,		PU
+;	;		PU+FORTE
+:	:		PU+FORTE
+!	!		PU+FORTE
+?	?		PU+FORTE
+/	/		PU
+\	\		PU
+...	...		PU
+.	.		PU+FORTE
+'	'		PU
+"	"		PU
+((	((		PU
+(	(		PU
+))	))		PU
+)	)		PU
+[	[		PU
+]	]		PU
+_	_		PU
+{	{		PU
+}	}		PU

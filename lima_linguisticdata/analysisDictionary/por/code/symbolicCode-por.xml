@@ -1593,7 +1593,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="PU+FORTE">
-  <field key="MICRO" value="PU"/>
+  <field key="MICRO" value="PU+FORTE"/> 
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>

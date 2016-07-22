@@ -31,6 +31,9 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND echo "<dictionary>" > dico.xml.tmp
     COMMAND cat ${dicoFiles} > DelafPB.txt
     COMMAND LC_ALL="C" sort -u -o DelafPB.txt DelafPB.txt
+
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
+
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl DelafPB.txt dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
