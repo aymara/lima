@@ -21,19 +21,19 @@
         <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
-        <!--item value="dotGraphWriter-beforepos"/-->
-        <item value="SpecificEntitiesModex"/>
+        <item value="dotGraphWriter-beforepos"/>
+        <!--item value="SpecificEntitiesModex"/-->
         <!--item value="specificEntitiesXmlLogger"/-->
         <item value="viterbiPostagger-freq"/>
         <!--item value="SvmToolPosTagger"/-->
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
         <!--item value="geoEntities"/-->
-        <!--item value="dotGraphWriter"/-->
+        <item value="dotGraphWriter"/>
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
         <!--item value="syntacticAnalyzerSimplifyFirst"/-->
@@ -41,7 +41,7 @@
         <!--item value="syntacticAnalyzerSimplifyCoord"/-->
         <!--item value="syntacticAnalyzerSimplifyLast"/-->
         <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
-        <item value="syntacticAnalyzerDepsHetero"/>
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="syntacticAnalyzerDummy"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -69,8 +69,8 @@
         <item value="hyphenWordAlternatives"/>
         <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModexForLimaserver"/>
-        <item value="specificEntitiesXmlLoggerForLimaserver"/>
+        <!--item value="SpecificEntitiesModexForLimaserver"/-->
+        <!--item value="specificEntitiesXmlLoggerForLimaserver"/-->
         <!--item value="viterbiPostagger-int-none"/-->
         <!--item value="limaserverHandler"/-->
       </list>
@@ -82,16 +82,16 @@
         <item value="hyphenWordAlternatives"/>
         <!--item value="idiomaticAlternatives"/-->
         <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
+        <!--item value="SpecificEntitiesModex"/-->
         <item value="dotGraphWriter-beforepos"/>
         <item value="viterbiPostagger-freq"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
         <!--<item value="syntacticAnalyzerSimplifyFirst"/>
         <item value="syntacticAnalyzerSimplify"/>
         <item value="syntacticAnalyzerSimplifyLast"/>-->
-        <item value="syntacticAnalyzerDepsHetero"/>
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
         <item value="dotDepGraphWriter"/>
         <item value="easyXmlDumper"/>
       </list>
@@ -333,7 +333,7 @@
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
       <list name="micros">
-        <item value="PU" />  
+        <item value="PU+FORTE" />  
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
