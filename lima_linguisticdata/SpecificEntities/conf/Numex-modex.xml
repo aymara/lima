@@ -124,7 +124,7 @@
       <list name="NumberMicros">
         <item value="NC"/>
         <item value="DET"/>
-        <item value="PRON"/>
+        <item value="PRO"/>
         <item value="ADJ"/>
       </list>
       <list name="UnitMicros">
