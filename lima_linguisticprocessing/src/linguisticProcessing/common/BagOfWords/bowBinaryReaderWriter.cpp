@@ -341,6 +341,13 @@ void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
 #ifdef DEBUG_LP
   LDEBUG << "BoWBinaryReader::readSimpleToken read infl: " << inflectedForm;
 #endif
+  if (lemma.isEmpty()) 
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::readSimpleToken empty lemma, using inflected form instead:" << inflectedForm;
+#endif
+    lemma = inflectedForm;
+  }
   LinguisticCode category;
   uint64_t position,length;
   category=static_cast<LinguisticCode>(Misc::readCodedInt(file));
@@ -604,9 +611,22 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 {
 #ifdef DEBUG_LP
   BOWLOGINIT;
-  LDEBUG << "BoWBinaryWriter::writeSimpleToken write lemma: " << &file << token->getLemma();
+  LDEBUG << "BoWBinaryWriter::writeSimpleToken write lemma:" << &file << token->getLemma();
 #endif
-  Misc::writeUTF8StringField(file,token->getLemma());
+  if (!token->getLemma().isEmpty())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken non-empty lemma";
+#endif
+    Misc::writeUTF8StringField(file,token->getLemma());
+  }
+  else
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken empty lemma, writing inflected form instead:" << token->getInflectedForm();
+#endif
+    Misc::writeUTF8StringField(file,token->getInflectedForm());
+  }
 #ifdef DEBUG_LP
   LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
 #endif
