@@ -319,7 +319,7 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
        bowItr!=bowText.end();
        bowItr++)
   {
-    if ((*bowItr)->getType() != BOW_PREDICATE)
+    if ((*bowItr)->getType() != BoWType::BOW_PREDICATE)
     {
       pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(&**bowItr));
       //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
@@ -340,7 +340,7 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
 pair<int,int> getStartEnd(const BoWToken* tok)
 {
   pair<int,int> res;
-  if (tok->getType()==BOW_TOKEN)
+  if (tok->getType()==BoWType::BOW_TOKEN)
   {
     res.first=tok->getPosition();
     res.second=tok->getPosition()+tok->getLength();

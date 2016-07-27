@@ -284,19 +284,19 @@ boost::shared_ptr< AbstractBoWElement > BoWBinaryReaderPrivate::readBoWToken( st
 #endif
   boost::shared_ptr< AbstractBoWElement > token;
   switch (type)  {
-  case BOW_TOKEN: {
+  case BoWType::BOW_TOKEN: {
       token=boost::shared_ptr< BoWToken >( new BoWToken);
       readSimpleToken(file, boost::dynamic_pointer_cast<BoWToken>(token));
       break;
   }
-  case BOW_TERM: {
+  case BoWType::BOW_TERM: {
       token=boost::shared_ptr< BoWTerm >(new BoWTerm);
       //     LDEBUG << "BoWToken: calling read(file) on term";
       readSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
       readComplexTokenParts(file,boost::dynamic_pointer_cast<BoWComplexToken>(token));
       break;
   }
-  case BOW_NAMEDENTITY: {
+  case BoWType::BOW_NAMEDENTITY: {
       token=boost::shared_ptr< BoWNamedEntity >(new BoWNamedEntity);
 //         LDEBUG << "BoWToken: calling read(file) on NE";
       readSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
@@ -304,7 +304,7 @@ boost::shared_ptr< AbstractBoWElement > BoWBinaryReaderPrivate::readBoWToken( st
       readNamedEntityProperties(file,boost::dynamic_pointer_cast<BoWNamedEntity>(token));
       break;
   }
-  case BOW_PREDICATE:{
+  case BoWType::BOW_PREDICATE:{
       token=boost::shared_ptr< BoWPredicate >(new BoWPredicate);
       readPredicate(file,boost::dynamic_pointer_cast<BoWPredicate>(token));
       break;
@@ -564,25 +564,25 @@ void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const boost::sha
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeBoWToken token type is " << token->getType() << &file;
 #endif
-  Misc::writeOneByteInt(file,token->getType());
+  Misc::writeOneByteInt(file,toInt(token->getType()));
   switch (token->getType()) {
-    case BOW_TOKEN: {
+    case BoWType::BOW_TOKEN: {
         writeSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
         break;
     }
-    case BOW_TERM: {
+    case BoWType::BOW_TERM: {
         writeSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
         writeComplexTokenParts(file,boost::dynamic_pointer_cast<BoWComplexToken>(token));
         break;
     }
-    case BOW_NAMEDENTITY: {
+    case BoWType::BOW_NAMEDENTITY: {
         boost::shared_ptr< BoWNamedEntity > ne=boost::dynamic_pointer_cast<BoWNamedEntity>(token);
         writeSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
         writeComplexTokenParts(file,ne);
         writeNamedEntityProperties(file,ne);
         break;
     }
-    case BOW_PREDICATE:{
+    case BoWType::BOW_PREDICATE:{
         writePredicate(file,boost::dynamic_pointer_cast<BoWPredicate>(token));
       break;
     }

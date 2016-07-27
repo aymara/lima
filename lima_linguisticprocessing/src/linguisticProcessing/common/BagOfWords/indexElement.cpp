@@ -82,7 +82,7 @@ class IndexElementPrivate
 
 IndexElementPrivate::IndexElementPrivate():
 m_id(0),
-m_type(BOW_NOTYPE),
+m_type(BoWType::BOW_NOTYPE),
 m_word(),
 m_category(0),
 m_position(0),
@@ -238,11 +238,11 @@ uint64_t IndexElement::getId() const { return m_d->m_id; }
 
 Lima::Common::BagOfWords::BoWType IndexElement::getType() const { return m_d->m_type; }
 
-bool IndexElement::isSimpleTerm() const { return m_d->m_type == BOW_TOKEN || (m_d->m_type == BOW_NAMEDENTITY && m_d->m_structure.empty()); }
+bool IndexElement::isSimpleTerm() const { return m_d->m_type == BoWType::BOW_TOKEN || (m_d->m_type == BoWType::BOW_NAMEDENTITY && m_d->m_structure.empty()); }
 
-bool IndexElement::isComposedTerm() const { return m_d->m_type == BOW_TERM || (m_d->m_type == BOW_NAMEDENTITY && ! m_d->m_structure.empty());; }
+bool IndexElement::isComposedTerm() const { return m_d->m_type == BoWType::BOW_TERM || (m_d->m_type == BoWType::BOW_NAMEDENTITY && ! m_d->m_structure.empty()); }
 
-bool IndexElement::isPredicate() const { return m_d->m_type == BOW_PREDICATE; }
+bool IndexElement::isPredicate() const { return m_d->m_type == BoWType::BOW_PREDICATE; }
 
 const LimaString& IndexElement::getSimpleTerm() const { return m_d->m_word; }
 
@@ -252,7 +252,7 @@ uint64_t IndexElement::getPosition() const { return m_d->m_position; }
 
 uint64_t IndexElement::getLength() const { return m_d->m_length; }
 
-bool IndexElement::isNamedEntity() const { return m_d->m_type == BOW_NAMEDENTITY; }
+bool IndexElement::isNamedEntity() const { return m_d->m_type == BoWType::BOW_NAMEDENTITY; }
 
 const Common::MediaticData::EntityType& IndexElement::getNamedEntityType() const { return m_d->m_neType; }
 

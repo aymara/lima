@@ -361,10 +361,10 @@ void BoWXMLWriterPrivate::writeIndexElement(
        << "\" length=\"" << element.getLength() << "\"";
     if (element.isNamedEntity()) {
       m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
-      m_outputStream << " type=\"" << BOW_NAMEDENTITY << "\"";
+      m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
     }
     else {
-      m_outputStream << " type=\"" << BOW_TOKEN << "\"";
+      m_outputStream << " type=\"" << BoWType::BOW_TOKEN << "\"";
     }
     m_outputStream << "/>" << endl;
     return;
@@ -373,10 +373,10 @@ void BoWXMLWriterPrivate::writeIndexElement(
   // compound
   if (element.isNamedEntity()) {
     m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
-    m_outputStream << " type=\"" << BOW_NAMEDENTITY << "\"";
+    m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
   }
   else {
-    m_outputStream << " type=\"" << BOW_TERM << "\"";
+    m_outputStream << " type=\"" << BoWType::BOW_TERM << "\"";
   }
   m_outputStream << ">" << endl
      << m_spaces << "  <structure>" << endl;
@@ -405,7 +405,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
   m_currentTokId++;
   const BoWToken* tok = 0;
   switch(token->getType()) {
-  case BOW_TOKEN: {
+  case BoWType::BOW_TOKEN: {
     tok = static_cast<const BoWToken*>(token);
     std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(tok->getCategory()));
 
@@ -418,7 +418,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "/>" << std::endl;
     break;
   }
-  case BOW_PREDICATE: {
+  case BoWType::BOW_PREDICATE: {
     const BoWPredicate* term=static_cast<const BoWPredicate*>(token);
     m_outputStream <<m_spaces << "<bowPredicate "
        << "id=\"" << m_currentTokId
@@ -432,7 +432,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "</bowPredicate>" << std::endl;
     break;
   }
-  case BOW_TERM: {
+  case BoWType::BOW_TERM: {
     const BoWTerm* term=static_cast<const BoWTerm*>(token);
     std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(term->getCategory()));
 
@@ -449,7 +449,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "</bowTerm>" << std::endl;
     break;
   }
-  case BOW_NAMEDENTITY: {
+  case BoWType::BOW_NAMEDENTITY: {
     const BoWNamedEntity* ne=static_cast<const BoWNamedEntity*>(token);
     std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(ne->getCategory()));
 

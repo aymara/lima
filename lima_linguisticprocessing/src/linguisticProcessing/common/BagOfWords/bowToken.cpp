@@ -52,6 +52,17 @@ namespace Common
 namespace BagOfWords
 {
 
+uint8_t toInt(const BoWType& bt)
+{
+  if (bt == BoWType::BOW_NOTYPE) return 0;
+  else if (bt == BoWType::BOW_TOKEN) return 1;
+  else if (bt == BoWType::BOW_TERM) return 2;
+  else if (bt == BoWType::BOW_NAMEDENTITY) return 3;
+  else if (bt == BoWType::BOW_PREDICATE) return 4;
+  else  return std::numeric_limits<uint8_t>::max();
+}
+
+
 #define DEFAULT_SEPARATOR L'#'
 #define DEFAULT_COMPOUND_SEPARATOR L'_'
 
@@ -285,7 +296,7 @@ void BoWToken::setCategory(LinguisticCode c)  {m_d->m_category = c;};
 void BoWToken::setPosition(const uint64_t pos){m_d->m_position = pos;};
 void BoWToken::setLength(const uint64_t len)  {m_d->m_length = len;};
 
-BoWType BoWToken::getType() const { return BOW_TOKEN; }
+BoWType BoWToken::getType() const { return BoWType::BOW_TOKEN; }
 
 uint64_t BoWToken::getVertex() const {return m_d->m_vertex;}
 void BoWToken::setVertex(uint64_t vertex) {m_d->m_vertex = vertex;}
@@ -382,7 +393,7 @@ Common::Misc::PositionLengthList BoWToken::getPositionLengthList() const
 
 bool BoWToken::operator==(const BoWToken& t) const
 {
-  if ((getType()==BOW_NAMEDENTITY) && (t.getType()==BOW_NAMEDENTITY))
+  if ((getType()==BoWType::BOW_NAMEDENTITY) && (t.getType()==BoWType::BOW_NAMEDENTITY))
   {
     const BoWNamedEntity* n1=dynamic_cast<const BoWNamedEntity*>(this);
     const BoWNamedEntity* n2=dynamic_cast<const BoWNamedEntity*>(&t);

@@ -191,13 +191,13 @@ boost::shared_ptr< AbstractBoWElement > BoWTokenIterator::getElement() {
     }
     else {
       switch ((*m_d->m_iterator)->getType()) {
-      case BOW_PREDICATE:
-      case BOW_TOKEN: {
+      case BoWType::BOW_PREDICATE:
+      case BoWType::BOW_TOKEN: {
         return *m_d->m_iterator;
         break;
       }
-      case BOW_TERM:
-      case BOW_NAMEDENTITY: {
+      case BoWType::BOW_TERM:
+      case BoWType::BOW_NAMEDENTITY: {
         // element itself will be stored in queue as part
         m_d->storePartsInQueue(boost::dynamic_pointer_cast< BoWToken >(*m_d->m_iterator));
         return m_d->m_partQueue.front().getBoWToken();
@@ -282,7 +282,7 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWToken
     return false;
   }
 //   addInPartQueue(token,false);
-  if (token->getType()==BOW_NAMEDENTITY
+  if (token->getType()==BoWType::BOW_NAMEDENTITY
     && m_iterateThroughNamedEntitiesParts==DO_NOT_ITERATE_THROUGH_NAMEDENTITIES_PARTS)
   {
     PartTokens pt;
@@ -292,14 +292,14 @@ bool BoWTokenIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWToken
   }
   
   switch (token->getType()) {
-  case BOW_TOKEN: {
+  case BoWType::BOW_TOKEN: {
     // push simple token in parts 
     partTokens.push_back(PartTokens());
     partTokens.back().push_back(token);
     break;
   }
-  case BOW_TERM:
-  case BOW_NAMEDENTITY: {
+  case BoWType::BOW_TERM:
+  case BoWType::BOW_NAMEDENTITY: {
     boost::shared_ptr< BoWComplexToken > complexToken=boost::dynamic_pointer_cast<BoWComplexToken>(token);
 
     if (complexToken->size() == 1) { 

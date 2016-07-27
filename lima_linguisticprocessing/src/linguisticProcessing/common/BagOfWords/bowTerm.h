@@ -65,7 +65,7 @@ class LIMA_BOW_EXPORT BoWTerm : public BoWComplexToken
 
   BoWTerm& operator=(const BoWTerm&);
 
-  virtual BoWType getType() const { return BOW_TERM; }
+  virtual BoWType getType() const { return BoWType::BOW_TERM; }
 
   /** get a string of the BoWToken for output function */
   virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
