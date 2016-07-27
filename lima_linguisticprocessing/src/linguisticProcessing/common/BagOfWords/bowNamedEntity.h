@@ -76,7 +76,7 @@ public:
   void setFeature(const std::string& attribute,
                   const LimaString& value); 
   
-  virtual BoWType getType() const { return BOW_NAMEDENTITY; }
+  virtual BoWType getType() const { return BoWType::BOW_NAMEDENTITY; }
 
   /**
    * get a string of the features, of the kind :

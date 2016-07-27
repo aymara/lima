@@ -165,12 +165,12 @@ LimaString getStringDecomp(boost::shared_ptr< BoWToken > token) {
     std::deque< BoWComplexToken::Part >::const_iterator it, it_end;
     boost::shared_ptr< BoWComplexToken> complexToken;
     switch (token->getType()) {
-    case BOW_TOKEN:
+    case BoWType::BOW_TOKEN:
         //cerr << "token is a simple token -> " << token->getString() << endl;
         return token->getString();
         break;
-    case BOW_TERM:
-    case BOW_NAMEDENTITY:
+    case BoWType::BOW_TERM:
+    case BoWType::BOW_NAMEDENTITY:
         //cerr << "token is a complex token" << endl;
         complexToken=boost::dynamic_pointer_cast<BoWComplexToken>(token);
         it=complexToken->getParts().begin(); it_end=complexToken->getParts().end();
