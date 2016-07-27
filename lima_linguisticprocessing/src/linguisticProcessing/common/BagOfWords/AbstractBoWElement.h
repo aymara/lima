@@ -50,7 +50,7 @@ namespace BagOfWords {
 #ifndef WIN32
 enum class BoWType : unsigned short {
 #else
-public enum class BoWType : unsigned short {
+enum BoWType {
 #endif
   BOW_NOTYPE,                   /**< the AbstractBoWElement is an abstract one that 
                                       should not be instanciated */
