@@ -70,7 +70,7 @@ public:
     * Use the 'class' parameter of unitConfiguration to select the factory to 
     * which delegate the creation of the object.
     */
-  const Factory* getFactory(const std::string& classId) const;
+    const std::shared_ptr<Factory> getFactory(const std::string& classId) const;
 
   /**
     * @brief create an Object using the appropriate registered factory.
@@ -83,7 +83,7 @@ public:
     * Use the 'class' parameter of unitConfiguration to select the factory to 
     * which delegate the creation of the object.
     */
-  Factory* getFactory(const std::string& classId);
+    std::shared_ptr<Factory> getFactory(const std::string& classId);
   
   /**
     * @brief register a factory with an id
@@ -109,7 +109,7 @@ private:
   static MainFactory<Factory>* s_instance; // use this! always points to the same object
   static MainFactory<Factory> s_instance_one_per_dll; // only used in initialisation
   
-  typedef std::map<std::string,void*> FactoryMap;
+  typedef std::map< std::string, std::shared_ptr<void*> > FactoryMap;
   typedef typename FactoryMap::const_iterator FactoryMapCItr;
 
 };
@@ -230,7 +230,7 @@ MainFactory<Factory>::~MainFactory()
 
 
 template<typename Factory>
-const Factory* MainFactory<Factory>::getFactory(const std::string& classId) const
+const std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId) const
 {
   FactoryMapCItr factItr=MainFactoriesMap::mainFactoriesMap().find(classId);
   if (factItr==MainFactoriesMap::mainFactoriesMap().end())
@@ -245,11 +245,11 @@ const Factory* MainFactory<Factory>::getFactory(const std::string& classId) cons
 #ifdef DEBUG_FACTORIES
   std::cerr << "MainFactory<Factory>::getFactory("<<classId<< ") got " << ((Factory*)factItr->second) << std::endl;
 #endif
-  return (Factory*)factItr->second;
+  return factItr->second;
 }
 
 template<typename Factory>
-Factory* MainFactory<Factory>::getFactory(const std::string& classId)
+std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId)
 {
   FactoryMapCItr factItr=MainFactoriesMap::mainFactoriesMap().find(classId);
   if (factItr==MainFactoriesMap::mainFactoriesMap().end())
@@ -265,7 +265,7 @@ Factory* MainFactory<Factory>::getFactory(const std::string& classId)
 #ifdef DEBUG_FACTORIES
   std::cerr << "MainFactory<Factory>::getFactory("<<classId<< ") got " << ((Factory*)factItr->second) << std::endl;
 #endif
-  return (Factory*)factItr->second;
+  return factItr->second;
 }
 
 template<typename Factory>
@@ -283,7 +283,7 @@ void MainFactory<Factory>::registerFactory(
   }
   else
   {
-    MainFactoriesMap::mainFactoriesMap()[classId]=fact;
+    MainFactoriesMap::mainFactoriesMap()[classId]=std::shared_ptr<Factory>(fact);
   }
 }
 
