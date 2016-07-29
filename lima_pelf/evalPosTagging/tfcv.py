@@ -18,8 +18,8 @@ from re import search
 
 # Variables definition
 SCRIPTS_PATH = "@SCRIPTS_PATH@"
-MATRIX_PATH  = environ.get("LIMA_RESOURCES")+"/Disambiguation/"
-PELF_BIN_PATH = environ.get("LIMA_DIST")+"/share/apps/lima/scripts/"
+MATRIX_PATH  = environ.get("LIMA_RESOURCES","/Disambiguation/")
+PELF_BIN_PATH = environ.get("LIMA_DIST","/share/apps/lima/scripts/")
 
 # svn blame material:
 # let's use global variables for those infos because:
@@ -45,7 +45,7 @@ def TenPcSample(path,sep):
         lines = 0
         lines = sum(1 for line in c)
         partition_size = (lines/numfold)
-    print "*** Sample of "+path+" "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") ongoing ..."
+    print ("*** Sample of "+path+" "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") sep:'{}' ongoing ...").format(sep)
     num = range(1,numfold+1)
     with open(path,'r') as corpus:
         cnt = 1
@@ -57,7 +57,7 @@ def TenPcSample(path,sep):
                 s.close()
                 num = num[1:]
                 if num:
-                  s = open(results + "/%d/10pc.tfcv" % num[0], 'w')
+                    s = open(results + "/%d/10pc.tfcv" % num[0], 'w')
 
 def SVMFormat():
     for i in range(1,numfold+1):
@@ -73,7 +73,7 @@ def NinetyPcSample():
         for j in range(1,numfold+1):
             if j!=i:
                 if path.isfile(results + "/%d/10pc.tfcv" % j):
-                  system("cat %(results)s/%(j)d/10pc.tfcv >> %(results)s/%(i)d/90pc.tfcv " % {"results" : results, "j": j, "i": i})
+                    system("cat %(results)s/%(j)d/10pc.tfcv >> %(results)s/%(i)d/90pc.tfcv " % {"results" : results, "j": j, "i": i})
                 else:
                     sys.stderr.write("Error: no file %s/%d/10pc.tfcv\n"%(results,j));
                     exit(1);
@@ -156,27 +156,27 @@ def AnalyzeTextAllSVMT(init_conf, conf_path):
     to the complementary partition (90%).
     """
     try:
-      system("ln -sf %s $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL" % (getcwd()))
+        system("ln -sf %s $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL" % (getcwd()))
     except OSError:
-      pass
+        pass
 
 
     try: 
-      for i in range(1,numfold+1):
-        wd  = getcwd() + "/" + results + "/" + str(i)
-        print "    ==== SVMTool analysis for sample %i"%i
-        system("sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path)
-        #print "sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path
-        print wd
-        chdir(wd)
-        system("analyzeText -l %s 10pc.brut"%lang)
-        print "analyzeText -l %s 10pc.brut"%lang
-        system("sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path)
-        #print "sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path
-        chdir("../..")
+        for i in range(1,numfold+1):
+            wd  = getcwd() + "/" + results + "/" + str(i)
+            print "    ==== SVMTool analysis for sample %i"%i
+            system("sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path)
+            #print "sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path
+            print wd
+            chdir(wd)
+            system("analyzeText -l %s 10pc.brut"%lang)
+            print "analyzeText -l %s 10pc.brut"%lang
+            system("sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path)
+            #print "sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path
+            chdir("../..")
     except:
-      system("rm -rf $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL/" + results)
-      raise Exception("Erreur d'évaluation")
+        system("rm -rf $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL/" + results)
+        raise Exception("Erreur d'évaluation")
 
 
 def FormaterPourAlignement(sep):
@@ -200,22 +200,22 @@ def Aligner():
         chdir("../..")
 
 def checkConfig(conf):
-  foundDumper = False
-  method = 'none'
+    foundDumper = False
+    method = 'none'
 
-  with open(conf) as f:
-    for i in xrange(70):
-      line = f.readline()
-      if line.strip() == '<item value="textDumper"/>': foundDumper = True
-      elif line.strip() == '<item value="viterbiPostagger-freq"/>': method = 'viterbi'
-      elif line.strip() == '<item value="SvmToolPosTagger"/>': method = 'svmtool'
-      elif line.strip() == '<item value="DynamicSvmToolPosTagger"/>': method = 'dynsvmtool'
+    with open(conf) as f:
+        for i in xrange(70):
+            line = f.readline()
+            if line.strip() == '<item value="textDumper"/>': foundDumper = True
+            elif line.strip() == '<item value="viterbiPostagger-freq"/>': method = 'viterbi'
+            elif line.strip() == '<item value="SvmToolPosTagger"/>': method = 'svmtool'
+            elif line.strip() == '<item value="DynamicSvmToolPosTagger"/>': method = 'dynsvmtool'
 
-  if not foundDumper:
-    sys.exit(" ******* TextDumper seems to not being activated! Stop... *******")
-  elif method == 'none':
-    raise Exception('No method found, was expecting Viterbi of SvmTool')
-  else: return method
+    if not foundDumper:
+        sys.exit(" ******* TextDumper seems to not being activated! Stop... *******")
+    elif method == 'none':
+        raise Exception('No method found, was expecting Viterbi of SvmTool')
+    else: return method
 
                 
 def makeTree():
@@ -230,7 +230,7 @@ def makeTree():
             pass # ignored
 
 def trained(lang, tagger):
-  return exists('training-sets/training.%s.%s' %(lang, tagger)) 
+    return exists('training-sets/training.%s.%s' %(lang, tagger)) 
         
 
 def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
@@ -271,8 +271,8 @@ Data produced are available in results.%s.%s
             SVMFormat()
             TrainSVMT(conf, svmli, svmle)
         elif (tagger=='viterbi'):    
-          print "Disamb_matrices(SCRIPTS_PATH)"
-          Disamb_matrices(SCRIPTS_PATH)
+            print "Disamb_matrices(SCRIPTS_PATH)"
+            Disamb_matrices(SCRIPTS_PATH)
         # copy training data in another folder for later use
         system("mv " + results + " " + "training-sets/training.%s.%s" % (lang, tagger))
 

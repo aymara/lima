@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH=/home/sid-ahmed/Lima/lima/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$PATH
+
 if (($#==0)); then 
     echo usage: launch_eval.sh lang1 lang2 ...
 fi
@@ -26,7 +28,7 @@ function readMethod() {
 
   if [ -n "$svmtool" ]; then
     echo "svmtool"
-  elif [ -n "$viterbi" ]; then
+  elif [ -n "$viterbi" ]; then 
     echo "viterbi"
   elif [ -n "$dynsvmtool" ]; then
     echo "dynsvmtool"
@@ -38,8 +40,9 @@ function readMethod() {
 for lang in $*; do
     addOption=""
     case $lang in
-        fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale-fre.SVMT ;;
         eng) addOption="-s . -n $nbParts"; corpus=$LIMA_RESOURCES/Disambiguation/corpus_eng_merge.txt conf=config-minimale-eng.SVMT;;
+        fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale-fre.SVMT ;;
+        por) addOption="-s PU+FORTE -n $nbParts"; corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt; conf=config-minimale-por.SVMT ;;
     esac
     method=$(readMethod $lang)
     echo "treating $lang.$method... (see ${lang}.${method}.log)"
@@ -47,7 +50,7 @@ for lang in $*; do
     rm -Rf results.$lang.$method
 
 
-    $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn
+    echo "$EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn"
     if  [[ $? -ne 0 ]]; then
       echo "tfcv error, exiting"
       exit 1

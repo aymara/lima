@@ -42,5 +42,6 @@ install(FILES
 install(FILES
     conf/config-minimale-eng.SVMT
     conf/config-minimale-fre.SVMT
+    conf/config-minimale-por.SVMT
   PERMISSIONS OWNER_READ  OWNER_WRITE   GROUP_READ WORLD_READ
   DESTINATION share/config/lima)
