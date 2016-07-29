@@ -61,7 +61,7 @@ enum BoWType {
                                       relation, template or semantic frame */
 };
 
-uint8_t toInt(const BoWType& bt);
+LIMA_BOW_EXPORT uint8_t toInt(const BoWType& bt);
 
 template <typename T>
 T& operator<<(T& qd, const BoWType& bt) 
