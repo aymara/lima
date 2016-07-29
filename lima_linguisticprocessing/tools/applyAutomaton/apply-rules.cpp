@@ -225,12 +225,12 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     }
   }
   if (param.resourcesPath.empty()) {
-    char* resourcesStr =  getenv("LIMA_RESOURCES");
+    const char* resourcesStr =  qgetenv("LIMA_RESOURCES").constData();
     if (resourcesStr != NULL) { param.resourcesPath = resourcesStr; }
     else { cerr << "$LIMA_RESOURCES not defined" << endl; exit(1); }
   }
   if (param.configDir.empty()) {
-    char* configStr =  getenv("LIMA_CONF");
+    const char* configStr =  qgetenv("LIMA_CONF").constData();
     if (configStr != NULL) { param.configDir = configStr; }
     else { cerr << "$LIMA_CONF not defined" << endl; exit(1); }
   }

@@ -190,8 +190,8 @@ int run(int argc,char** argv)
   }
 
 
-  std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
-  std::string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+  std::string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+  std::string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
   std::string commonConfigFile="/lima-common.xml";
   deque<string> langs;
   langs.push_back(param.language);

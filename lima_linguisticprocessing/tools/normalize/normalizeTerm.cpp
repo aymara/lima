@@ -124,8 +124,8 @@ int run(int argc,char** argv)
 
 int dowork(int argc,char* argv[])
 {
-  string resourcesPathParam=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
-  string configPathParam=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+  string resourcesPathParam=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+  string configPathParam=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
   string lpConfigFile=string("lima-analysis.xml");
   string commonConfigFile=string("lima-common.xml");
   string pipeline=string("normalization");
