@@ -177,7 +177,7 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
     }
 
 //     std::cerr << "class id(2) is '" << classId.c_str() << "' !" << std::endl;
-    const InitializableObjectFactory<Object>* fact=InitializableObjectFactory<Object>::getFactory(classId);
+    const std::shared_ptr<InitializableObjectFactory<Object>> fact=InitializableObjectFactory<Object>::getFactory(classId);
     obj=fact->create(gconf,this);
   }
   catch (Common::XMLConfigurationFiles::NoSuchGroup& )

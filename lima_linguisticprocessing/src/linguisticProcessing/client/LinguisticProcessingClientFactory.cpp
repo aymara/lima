@@ -42,7 +42,7 @@ void LinguisticProcessingClientFactory::configureClientFactory(
 {
   LPCLIENTFACTORYLOGINIT;
   LINFO << "LinguisticProcessingClientFactory::configureClientFactory" << id;
-  AbstractLinguisticProcessingClientFactory* factory=
+  std::shared_ptr<AbstractLinguisticProcessingClientFactory> factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
     LERROR << "No factory defined for client '" << id << "' !";
@@ -62,7 +62,7 @@ std::shared_ptr< AbstractProcessingClient > LinguisticProcessingClientFactory::c
 {
   LPCLIENTFACTORYLOGINIT;
   LINFO << "Create client '" << id << "'";
-  const AbstractLinguisticProcessingClientFactory* factory=
+  const std::shared_ptr<AbstractLinguisticProcessingClientFactory> factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
     LERROR << "No factory defined for client '" << id << "' !";
