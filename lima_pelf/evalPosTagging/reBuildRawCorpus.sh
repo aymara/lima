@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Usage : ./reBuildRawCorpus.sh tagged_corpus
 #

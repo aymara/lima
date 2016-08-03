@@ -87,7 +87,7 @@ def Tagged2raw():
     """
     print "*** Producing raw equivalent of test partitions ..."
     for i in range(1,numfold+1):
-        system("%(path)s/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
+        system("%(path)s/share/apps/lima/scripts/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
             % {"path" : PELF_BIN_PATH, "lang" : lang, "results": results, "i": i})
 
 def Disamb_matrices(scripts_path):
