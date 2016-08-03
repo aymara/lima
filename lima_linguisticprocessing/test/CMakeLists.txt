@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
-include_directories($ENV{LIMA_EXTERNALS}}/include)
+include_directories($ENV{LIMA_EXTERNALS}/include)
 
 # QHttpServer is necessary for limaserver HTTP server
 find_package(QHttpServer QUIET)
