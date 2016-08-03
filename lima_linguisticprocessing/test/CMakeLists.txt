@@ -16,10 +16,19 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
 include_directories($ENV{LIMA_EXTERNALS}}/include)
+
+# QHttpServer is necessary for limaserver HTTP server
+find_package(QHttpServer QUIET)
+if (QHTTPSERVER_FOUND)
+  message("QHttpServer found : Lima HTTP server will be built")
+else()
+  message("QHttpServer NOT found : Lima HTTP server will NOT be built")
+endif()
+
 add_subdirectory(testAnnotationGraphs)
 add_subdirectory(perlTCPClientServer)
 if (QHTTPSERVER_FOUND)
-add_subdirectory(limaServer)
+  add_subdirectory(limaServer)
 endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )

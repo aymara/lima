@@ -195,17 +195,6 @@ else (ENCHANT_FOUND)
   message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
 endif (ENCHANT_FOUND)
 
-# QHttpServer is necessary for limaserver HTTP server
-find_package(QHttpServer QUIET)
-if (NOT QHTTPSERVER_FOUND)
-  message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
-else(NOT QHTTPSERVER_FOUND)
-  message(STATUS "Found QHttpServer. lima HTTP server will be built")
-  include_directories($ENV{LIMA_EXTERNALS}/include)
-  link_directories($ENV{LIMA_EXTERNALS}/lib)
-endif (NOT QHTTPSERVER_FOUND)
-
-
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
 IF(LIMACOMMON_FOUND)
   include_directories( ${LIMACOMMON_INCLUDE_DIR})

@@ -41,7 +41,7 @@ add_executable(limaserver ${limaserver_SRCS} ${limaserver_MOC_OUTFILES})
 target_link_libraries(limaserver
     lima-common
     lima-linguisticprocessing
-    ${QHTTPSERVER_NAMES}
+    ${QHTTPSERVER_LIBRARY_LIB}
     ${QT_LIBRARIES}
     ${Boost_LIBRARIES})
 
@@ -100,9 +100,9 @@ add_executable(limadbusserver ${limadbusserver_SRCS} ${limadbusserver_MOC_OUTFIL
 target_link_libraries(limadbusserver
     lima-common
     lima-linguisticprocessing
+	${QHTTPSERVER_LIBRARY_LIB}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
-    ${QHTTPSERVER_NAMES})
+    ${QT_LIBRARIES})
 
 install(TARGETS limadbusserver DESTINATION bin)
 endif()
