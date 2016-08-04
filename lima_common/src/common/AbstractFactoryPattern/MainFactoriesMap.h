@@ -26,12 +26,14 @@
 
 // LIMA_FACTORY_EXPORT int initMainFactoriesMap();
 
+typedef std::map<std::string, void*> FactoryMap;
+
 class LIMA_FACTORY_EXPORT MainFactoriesMap {
 public:
-  static std::map<std::string,void*>& mainFactoriesMap();
+  static FactoryMap& mainFactoriesMap();
 private:
-  static std::map<std::string,void*>* s_mainFactoriesMap;
-  static std::map<std::string,void*> s_mainFactoriesMap_one_by_dll;
+  static FactoryMap* s_mainFactoriesMap;
+  static FactoryMap s_mainFactoriesMap_one_by_dll;
   
   MainFactoriesMap();
   virtual ~MainFactoriesMap() {delete s_mainFactoriesMap;}

@@ -28,15 +28,15 @@
 //   return 0;
 // }
 
-std::map<std::string,void*>* MainFactoriesMap::s_mainFactoriesMap = 0;
-std::map<std::string,void*> MainFactoriesMap::s_mainFactoriesMap_one_by_dll;
+FactoryMap* MainFactoriesMap::s_mainFactoriesMap = 0;
+FactoryMap MainFactoriesMap::s_mainFactoriesMap_one_by_dll;
 
 MainFactoriesMap::MainFactoriesMap()
 {
   std::cerr << "MainFactoriesMap constructor" << std::endl;
 }
 
-std::map<std::string,void*>& MainFactoriesMap::mainFactoriesMap()
+FactoryMap& MainFactoriesMap::mainFactoriesMap()
 {
   //std::cerr << "MainFactoriesMap accessor" << std::endl;
   if (s_mainFactoriesMap == 0)

@@ -105,12 +105,15 @@ public:
 
 private:
 
+  // Wordaround to return a shared pointer from a void* pointer : to keep main map
+  // valid, do not delete shared pointer
+  inline static void deleter(Factory *) { }
+  
+private:
+
   MainFactory();
   static MainFactory<Factory>* s_instance; // use this! always points to the same object
   static MainFactory<Factory> s_instance_one_per_dll; // only used in initialisation
-  
-  typedef std::map< std::string, std::shared_ptr<void*> > FactoryMap;
-  typedef typename FactoryMap::const_iterator FactoryMapCItr;
 
 };
 
@@ -130,7 +133,7 @@ T *set_the_global(T *candidate)
 #ifdef DEBUG_FACTORIES
     std::cerr << "set_the_global: " << typeid(*candidate).name() << std::endl;
 #endif
-    std::map<std::string,void*>::iterator r = MainFactoriesMap::mainFactoriesMap().find(std::string(typeid(*candidate).name()));
+    FactoryMap::iterator r = MainFactoriesMap::mainFactoriesMap().find(std::string(typeid(*candidate).name()));
     if(r == MainFactoriesMap::mainFactoriesMap().end()) {
       MainFactoriesMap::mainFactoriesMap().insert(std::make_pair(std::string(typeid(*candidate).name()),(void*)candidate));
 #ifdef DEBUG_FACTORIES
@@ -219,11 +222,15 @@ void MainFactory<Factory>::cleanup()
 template<typename Factory>
 MainFactory<Factory>::~MainFactory()
 {
-/*  for (FactoryMapCItr factItr=MainFactoriesMap::mainFactoriesMap().begin();
-       factItr!=MainFactoriesMap::mainFactoriesMap().end();
-       factItr++)
-  {
-    delete (Factory*)factItr->second;
+  FactoryMap::iterator it = MainFactoriesMap::mainFactoriesMap().begin();
+  while (it != MainFactoriesMap::mainFactoriesMap().end()) {
+    void * p = it->second;
+    it = MainFactoriesMap::mainFactoriesMap().erase(it);
+	delete p;
+  }
+/*  for (FactoryMap::iterator it = MainFactoriesMap::mainFactoriesMap().begin();
+      it != MainFactoriesMap::mainFactoriesMap().end(); ++it) {
+    delete static_cast<Factory*>(it->second);
   }
   MainFactoriesMap::mainFactoriesMap().clear();*/
 }
@@ -232,7 +239,7 @@ MainFactory<Factory>::~MainFactory()
 template<typename Factory>
 const std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId) const
 {
-  FactoryMapCItr factItr=MainFactoriesMap::mainFactoriesMap().find(classId);
+  FactoryMap::const_iterator factItr = MainFactoriesMap::mainFactoriesMap().find(classId);
   if (factItr==MainFactoriesMap::mainFactoriesMap().end())
   {
     std::cerr << "1: No AbstractFactory for classId '" << classId << "' ! " << std::endl;
@@ -245,13 +252,13 @@ const std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::strin
 #ifdef DEBUG_FACTORIES
   std::cerr << "MainFactory<Factory>::getFactory("<<classId<< ") got " << ((Factory*)factItr->second) << std::endl;
 #endif
-  return factItr->second;
+  return std::shared_ptr<Factory>(static_cast<Factory*>(factItr->second), deleter);
 }
 
 template<typename Factory>
 std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId)
 {
-  FactoryMapCItr factItr=MainFactoriesMap::mainFactoriesMap().find(classId);
+  FactoryMap::const_iterator factItr = MainFactoriesMap::mainFactoriesMap().find(classId);
   if (factItr==MainFactoriesMap::mainFactoriesMap().end())
   {
     std::cerr << "2: No AbstractFactory for classId '" << classId << "' ! " << std::endl;
@@ -265,7 +272,7 @@ std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& cla
 #ifdef DEBUG_FACTORIES
   std::cerr << "MainFactory<Factory>::getFactory("<<classId<< ") got " << ((Factory*)factItr->second) << std::endl;
 #endif
-  return factItr->second;
+  return std::shared_ptr<Factory>(static_cast<Factory*>(factItr->second), deleter);
 }
 
 template<typename Factory>
@@ -283,7 +290,7 @@ void MainFactory<Factory>::registerFactory(
   }
   else
   {
-    MainFactoriesMap::mainFactoriesMap()[classId]=std::shared_ptr<Factory>(fact);
+    MainFactoriesMap::mainFactoriesMap()[classId]=fact;
   }
 }
 
@@ -291,7 +298,7 @@ template<typename Factory>
 std::deque<std::string> MainFactory<Factory>::getRegisteredFactories() const
 {
   std::deque<std::string> result;
-  for (FactoryMapCItr factItr=MainFactoriesMap::mainFactoriesMap().begin();
+  for (FactoryMap::const_iterator factItr=MainFactoriesMap::mainFactoriesMap().begin();
        factItr!=MainFactoriesMap::mainFactoriesMap().end();
        factItr++)
   {
