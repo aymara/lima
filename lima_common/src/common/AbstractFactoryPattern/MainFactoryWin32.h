@@ -105,8 +105,8 @@ public:
 
 private:
 
-  // Wordaround to return a shared pointer from a void* pointer : to keep main map
-  // valid, do not delete shared pointer
+  // FIXME: Wordaround to return a shared pointer from a void* pointer : to keep main map
+  // valid, do not delete shared pointer.
   inline static void deleter(Factory *) { }
   
 private:
@@ -222,17 +222,7 @@ void MainFactory<Factory>::cleanup()
 template<typename Factory>
 MainFactory<Factory>::~MainFactory()
 {
-  FactoryMap::iterator it = MainFactoriesMap::mainFactoriesMap().begin();
-  while (it != MainFactoriesMap::mainFactoriesMap().end()) {
-    void * p = it->second;
-    it = MainFactoriesMap::mainFactoriesMap().erase(it);
-	delete p;
-  }
-/*  for (FactoryMap::iterator it = MainFactoriesMap::mainFactoriesMap().begin();
-      it != MainFactoriesMap::mainFactoriesMap().end(); ++it) {
-    delete static_cast<Factory*>(it->second);
-  }
-  MainFactoriesMap::mainFactoriesMap().clear();*/
+
 }
 
 
