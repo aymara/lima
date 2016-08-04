@@ -12,14 +12,14 @@
 from optparse import OptionParser
 import sys
 from os import path,system, listdir, chdir, getcwd, remove, mkdir, environ
-from os.path import getsize, exists
+from os.path import getsize, exists, join
 from shutil import copy, rmtree
 from re import search
 
 # Variables definition
 SCRIPTS_PATH = "@SCRIPTS_PATH@"
 MATRIX_PATH  = environ.get("LIMA_RESOURCES","/Disambiguation/")
-PELF_BIN_PATH = environ.get("LIMA_DIST","/share/apps/lima/scripts/")
+PELF_BIN_PATH = path.join(environ.get("LIMA_DIST", "/usr/local"), "share/apps/lima/scripts")
 
 # svn blame material:
 # let's use global variables for those infos because:
@@ -87,7 +87,7 @@ def Tagged2raw():
     """
     print "*** Producing raw equivalent of test partitions ..."
     for i in range(1,numfold+1):
-        system("%(path)s/share/apps/lima/scripts/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
+        system("%(path)s/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
             % {"path" : PELF_BIN_PATH, "lang" : lang, "results": results, "i": i})
 
 def Disamb_matrices(scripts_path):
@@ -196,7 +196,7 @@ def Aligner():
     for i in range(1,numfold+1): 
         chdir(results + "/" + str(i))
         print "\n\n ALIGNEMENT PARTITION "+str(i) + " - " + getcwd()
-        system("%(path)s//aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log" % { "path" : PELF_BIN_PATH } )
+        system("%(path)s/aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log" % { "path" : PELF_BIN_PATH } )
         chdir("../..")
 
 def checkConfig(conf):
