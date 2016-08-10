@@ -153,10 +153,7 @@ LimaStatusCode DefaultProperties::process(
           }
           else if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
           {
-            LimaString str;
-//             elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[currentToken->stringForm()];
-//             LimaString str = m_charChart->toLower(currentToken->stringForm());
-            elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
+            elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[currentToken->stringForm()];
           }
           elem.normalizedForm=elem.lemma;
           elem.type=UNKNOWN_WORD;

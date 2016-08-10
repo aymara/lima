@@ -233,6 +233,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
       const AnnotationData* annotationData,
       std::set< LinguisticGraphVertex >& visited) const
 {
+  
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::buildTermFor annot:" << vx << "; pointing on annot:"<<tgt;
@@ -588,6 +589,8 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   LDEBUG << "BowGenerator::createAbstractBoWElement " << v << " has " << anaVertices.size() << " matching vertices in analysis graph";
 #endif
 
+  bool createdSpecificEntity(false);
+  
   // note: anaVertices size should be 0 or 1
   for ( AnnotationGraphVertex anaVertex : anaVertices)
   {
@@ -611,6 +614,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
           se->setVertex(v);
           abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),se));
 //           visited.insert(v);
+          createdSpecificEntity=true;
           break;
         }
       }
@@ -717,7 +721,14 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 
   std::set<std::pair<StringsPoolIndex,LinguisticCode> > alreadyCreated;
   std::pair<StringsPoolIndex,LinguisticCode> predNormCode = std::make_pair(StringsPoolIndex(0),LinguisticCode(0));
-
+  
+  if (createdSpecificEntity) {
+    // a specific entity has been created on the analysis graph: do not output a token
+    // (RB: do that here so that the vertex on the posgraph can also be analyzed: should test is this is 
+    // needed or if we only need to place the return just after the creation of the named entity)
+    return abstractBowEl;
+  }
+  
   if (data!=0)
   {
     for (auto it=data->begin(); it!=data->end(); it++)
