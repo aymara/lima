@@ -50,7 +50,7 @@ for lang in $*; do
     rm -Rf results.$lang.$method
 
 
-    echo "$EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn"
+    `$EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn`
     if  [[ $? -ne 0 ]]; then
       echo "tfcv error, exiting"
       exit 1
