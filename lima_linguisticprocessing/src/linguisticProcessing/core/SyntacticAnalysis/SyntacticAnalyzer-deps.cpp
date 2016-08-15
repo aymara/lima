@@ -28,7 +28,6 @@
 
 #include "SyntacticAnalyzer-deps.h"
 
-#include "PhoenixGraphHomoDepsVisitor.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/ChainIdStruct.h"
@@ -177,21 +176,17 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
 #ifdef DEBUG_LP
         LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence;
 #endif
-        try
-        {
-          recognizer->apply(*anagraph,
-                            beginSentence,
-                            endSentence,
-                            analysis,
-                            result,
-                            true, // test all vertices=true
-                            false,// stop at first success=false
-                            false,  // only one success per type=true
-                            false, // return at first success=false
-                            m_applySameRuleWhileSuccess // depends on config file
-                            );
-        }
-        catch (const PhoenixGraphHomoDepsVisitor::StartFinishedException& e) {}
+        recognizer->apply(*anagraph,
+                          beginSentence,
+                          endSentence,
+                          analysis,
+                          result,
+                          true, // test all vertices=true
+                          false,// stop at first success=false
+                          false,  // only one success per type=true
+                          false, // return at first success=false
+                          m_applySameRuleWhileSuccess // depends on config file
+                          );
       }
     }
 

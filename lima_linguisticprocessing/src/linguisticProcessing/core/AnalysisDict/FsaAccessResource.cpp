@@ -47,6 +47,8 @@ namespace LinguisticProcessing
 namespace AnalysisDict
 {
 
+#define FSAACCESSRESSOURCE_CLASSID "FsaAccess"
+
 SimpleFactory<AbstractResource,FsaAccessResource> fsaAccessResourceFactory(FSAACCESSRESSOURCE_CLASSID);
 
 FsaAccessResource::FsaAccessResource(QObject* parent)

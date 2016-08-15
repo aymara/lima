@@ -82,10 +82,10 @@ void FsaRwAccessResource::init(
   }
 }
 
-/*
+
 AbstractAccessByString* FsaRwAccessResource::getAccessByString() const
   { return m_fsaAccess;}
-*/
+
 
 AbstractModifierOnAccessByString* FsaRwAccessResource::getRwAccessByString() const
   { return m_fsaRwAccess;}

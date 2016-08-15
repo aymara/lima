@@ -49,6 +49,8 @@ public:
     m_isMainKeys(false)
   {};
 
+  virtual ~AbstractAccessResource() {};
+  
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) = 0;

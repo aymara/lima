@@ -47,18 +47,21 @@ class  ConceptModifier
 {
 public:
   
-  ConceptModifier();
+  ConceptModifier() {}
   ConceptModifier(const StringsPoolIndex& realization,
-                          const Common::MediaticData::ConceptType& type 
+                  const Common::MediaticData::ConceptType& type 
                               = std::numeric_limits< Common::MediaticData::ConceptType >::max(),
-                          const std::vector< uint64_t >& references
-                          = std::vector< uint64_t>());
+                  const std::vector< uint64_t >& references
+                              = std::vector< uint64_t>()) : 
+      m_realization(realization), 
+      m_conceptType(type),
+      m_referencedAnnotations(references) {}
   
-  virtual ~ConceptModifier();
+  virtual ~ConceptModifier() {}
   
   
   /** @brief The functions that dumps a ConceptModifier on an output stream */
-  void dump(std::ostream& os,const FsaStringsPool& sp) const;
+  void dump(std::ostream& os,const FsaStringsPool& sp) const {}
 
   inline StringsPoolIndex getRealization() const;
 //   inline void setRealization(StringsPoolIndex realization);
@@ -121,7 +124,7 @@ public:
   
   virtual int dump(
       std::ostream& os, 
-      Common::AnnotationGraphs::GenericAnnotation& ga) const;
+      Common::AnnotationGraphs::GenericAnnotation& ga) const {}
       
 private:
   const FsaStringsPool& m_sp;
