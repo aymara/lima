@@ -656,11 +656,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   // 4 specifier le noeud suivant a utiliser dans la recherche :
   // - nouveau noeud si l'expression reconnue etait composee de plusieurs noeuds
   // - les fils du nouveau noeud sinon (pour eviter les bouclages)
-  if (annot.m_vertices.size() > 1)
+  // correction 08/2016 : always restart rules application from following vertices 
+  // to avoid unexpected behaviors (see issues #44 and #45)
+  /*if (annot.m_vertices.size() > 1)
   {
     recoData->setNextVertex(newVertex);
   }
-  else
+  else*/
   {
     LinguisticGraphOutEdgeIt outItr,outItrEnd;
     boost::tie(outItr,outItrEnd) = out_edges(newVertex,*lingGraph);
