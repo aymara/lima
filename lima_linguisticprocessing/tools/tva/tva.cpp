@@ -90,8 +90,6 @@ int run(int argc,char** argv)
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-  QsLogging::initQsLog(configPath);
-  
   std::string strConfigPath;
   std::string strResourcesPath;
   std::string lpConfigFile=std::string("lima-lp-tva.xml");
@@ -151,6 +149,7 @@ int run(int argc,char** argv)
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
 
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
