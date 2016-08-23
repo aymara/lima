@@ -91,9 +91,6 @@ int run(int argc,char** argv)
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   
   std::string strConfigPath;
   std::string strResourcesPath;
@@ -153,6 +150,10 @@ int run(int argc,char** argv)
     configPath = QString::fromUtf8(strConfigPath.c_str());
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
+
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
     
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
