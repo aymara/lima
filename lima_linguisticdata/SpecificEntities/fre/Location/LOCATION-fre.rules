@@ -157,59 +157,6 @@ Elysée:::LOCATION:Élysée
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#******************************
-# regles avec normalisation
-# Penmarc'| Penmarch => Penmarc'h
-Penmarc'::h:LOCATION:Penmarc'h
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=<ClearEntityFeatures()
-Penmarch:::LOCATION:Penmarc'h
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=<ClearEntityFeatures()
-#******************************
-
-# regle avec normalisation
-Loire::Atlantique:LOCATION:Loire-atlantique
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-
-Plaine:La:(St|Saint) Denis:LOCATION:
-=>SetEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#quartier
-
-Bolline:La::LOCATION:
-=>SetEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#quartier
-
-#regle avec normalisation
-Charm::el Cheikh:LOCATION:Charm el-Cheikh
-=>SetEntityFeature(trigger,right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-Cap::Canaveral:LOCATION:
-=>SetEntityFeature(trigger,right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-# regle avec normalisation
-PORTO::TORRES:LOCATION:Porto Torres
-=>SetEntityFeature(trigger,right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
 @Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):LOCATION:
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"qualifier")

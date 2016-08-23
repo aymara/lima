@@ -51,21 +51,6 @@ suburbs,
 dioceses,
 district)
 
-@Months=(
-January,
-February,
-March,
-April,
-May,
-June,
-July,
-August,
-September,
-November,
-October,
-December
-)
-
 #----------------------------------------------------------------------
 # recognition of web adresses
 #----------------------------------------------------------------------
@@ -458,30 +443,6 @@ Southwestern, Northwestern, Southeastern, Northeastern
 #=>NormalizeEntity()
 
 include ../Person/firstname.lst
-
-[in]::@Months:NOT_LOCATION:
-[in]::<DateTime.DATE>:NOT_LOCATION:
-
-# 20120716, GC:
-# hack to avoid references to people's work as location like in " in Yaffa Ganz' story ".
-# Here, the possessive marker, which is not included in the token is used to avoid the
-# location interpretation
-[in]::(@Capitalized){1-3} ':NOT_LOCATION:
-
-[in]::t_capital_1st{1-3}:GEO:
-=>AppendEntityFeature(right,"name")
-=<ClearEntityFeatures()
-=>NormalizeEntity()
-
-# a list of known locations
-include location.rules
-
-# to bypass errors in analysis
-U.S::.:COUNTRY:U.S.
-=>SetEntityFeature(trigger,right,"name")
-=<ClearEntityFeatures()
-=>NormalizeEntity()
-#todo je ne sais pas
 
 @nearKey=(
 in,
