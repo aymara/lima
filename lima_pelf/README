@@ -36,6 +36,8 @@ this application template.
 - Qt version might be 4 or higher
 - cmake (http://www.cmake.org/) version 2.1 or 2.2 in your PATH
 - uuidgen
+- R-base
+- texlive, texlive-lang-french, texlive-latex-extra (for supertabular.sty)
 -----------------------------------------------
 
 -----------------------------------------------
