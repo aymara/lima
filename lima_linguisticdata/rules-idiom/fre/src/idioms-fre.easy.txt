@@ -1437,7 +1437,7 @@ GC;;A;dès;dès avant;adverbe;
 GC;;A;dès;dès après;adverbe;
 GC;;A;jour;au jour le jour;adjectif;au jour le jour
 GC;;A;commission;commission européenne;nom propre féminin;Commission européenne
-GC;;A;union;union européenne;nom propre féminin;Union européenne
+#GC;;A;union;union européenne;nom propre féminin;Union européenne
 GC;;A;côté;du côté d';préposition;du côté de
 GC;;A;côté;du côté de;préposition;du côté de
 GC;;A;côté;du côté des;préposition article pluriel;du côté de
