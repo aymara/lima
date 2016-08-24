@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -o nounset
+set -o errexit
+set -o pipefail
+
 export PATH=/home/sid-ahmed/Lima/lima/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$PATH
 
 if (($#==0)); then 
@@ -64,6 +68,8 @@ for lang in $*; do
     echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"` 
 
     mkdir -p results.$lang.$method/data
+#     echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
     $EVAL_PATH/problemesAlignement.sh $lang $method
-    $EVAL_PATH/detailed-res.sh $nbParts $lang >& /dev/null
+#     echo "$EVAL_PATH/detailed-res.sh $nbParts $lang"
+    $EVAL_PATH/detailed-res.sh $nbParts $lang 
 done

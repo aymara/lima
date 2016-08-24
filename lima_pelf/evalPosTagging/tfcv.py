@@ -17,7 +17,7 @@ from shutil import copy, rmtree
 from re import search
 
 # Variables definition
-SCRIPTS_PATH = "@SCRIPTS_PATH@"
+SCRIPTS_PATH = "/home/sid-ahmed/Lima/lima/lima_pelf/../lima_linguisticdata/scripts"
 MATRIX_PATH  = environ.get("LIMA_RESOURCES","/Disambiguation/")
 PELF_BIN_PATH = path.join(environ.get("LIMA_DIST", "/usr/local"), "share/apps/lima/scripts")
 
