@@ -19,7 +19,7 @@ from re import search
 # Variables definition
 SCRIPTS_PATH = "@SCRIPTS_PATH@"
 MATRIX_PATH  = environ.get("LIMA_RESOURCES")+"/Disambiguation/"
-PELF_BIN_PATH = environ.get("LIMA_DIST")+"/share/apps/lima/scripts/"
+PELF_BIN_PATH = path.join(environ.get("LIMA_DIST", "/usr/local"), "share/apps/lima/scripts")
 
 # svn blame material:
 # let's use global variables for those infos because:

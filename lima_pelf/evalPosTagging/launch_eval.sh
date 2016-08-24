@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -o nounset
+set -o errexit
+set -o pipefail
+
 if (($#==0)); then 
     echo usage: launch_eval.sh lang1 lang2 ...
 fi
@@ -61,6 +65,8 @@ for lang in $*; do
     echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"` 
 
     mkdir -p results.$lang.$method/data
+#     echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
     $EVAL_PATH/problemesAlignement.sh $lang $method
-    $EVAL_PATH/detailed-res.sh $nbParts $lang >& /dev/null
+#     echo "$EVAL_PATH/detailed-res.sh $nbParts $lang"
+    $EVAL_PATH/detailed-res.sh $nbParts $lang 
 done
