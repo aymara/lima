@@ -182,7 +182,7 @@ getIntParameter(const std::string& key) {
 }
 double GroupConfigurationStructure::
 getDoubleParameter(const std::string& key) {
-  return atof(getParamsValueAtKey(key).c_str());
+  return QString::fromUtf8(getParamsValueAtKey(key).c_str()).toDouble();
 }
 std::string GroupConfigurationStructure::
 getStringParameter(const std::string& key) {
