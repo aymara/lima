@@ -64,8 +64,12 @@ include carMakers.rules
 
 #------------------------------
 # contextual rules for organizations
+@leadershipOrganizationPart=(patron,dirigeant,dirigeants,courtier,responsable,responsables,direction,directeur,directrice,reprise,président,vice-président)
+@activitiesOrganizationPart=(faillite,ruine,banqueroute,reprise,affaire,activité,activités)
 
 [filiale]::[$ADJ?] [(de|d\')] @OrganizationNamePart{1-2}:ORGANIZATION:
+[@activitiesOrganizationPart]::[$ADJ?] [(de|d\')] @OrganizationNamePart:ORGANIZATION:
+[@leadershipOrganizationPart]::[$ADJ?] [(de|d\')] @OrganizationNamePart:ORGANIZATION:
 
 [@AnnonceurOrg]::@OrganizationNamePart (@OrganizationNamePart?):ORGANIZATION:
 

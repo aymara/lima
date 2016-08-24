@@ -30,6 +30,7 @@ use person.lst
 #[$PREP]::(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
 #[$PREP]:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+#[(@Title|@FunctionTitle)]::[@PersonNamePart]:PERSON:=>NormalizePersonName()
 
 #[$PREP]::(@PersonNamePart){0-2} [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
@@ -76,6 +77,8 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 # a list of known persons (single entities)
 
 @person:::PERSON:=>NormalizePersonName()
+
+include persons.rules
 
 #------------------------------
 # firstname without name ?
