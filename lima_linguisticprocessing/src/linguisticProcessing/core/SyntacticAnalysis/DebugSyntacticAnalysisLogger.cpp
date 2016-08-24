@@ -154,6 +154,18 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
+  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  if (tokenList == 0) {
+      SALOGINIT;
+      LERROR << "no AnalysisGraph ! abort";
+      return MISSING_DATA;
+  }
+  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  if (syntacticData == 0) {
+      SALOGINIT;
+      LERROR << "no SyntacticData ! abort";
+      return MISSING_DATA;
+  }
 
   std::ofstream ofs;
   if (!openLogFile(ofs,metadata->getMetaData("FileName"))) {
@@ -161,10 +173,8 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
       LERROR << "DebugSyntacticAnalysisLogger::Cannot open log file";
       return CANNOT_OPEN_FILE_ERROR;
   }
-
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   //ofs << endl << "Printing syntactic analysis result :" << endl;
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+
   //cout << endl;
   if (m_displayChains) {
     LDEBUG << "call of displayChains";
