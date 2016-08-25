@@ -128,8 +128,7 @@ def AnalyzeTextAll(matrix_path):
         print "in " + getcwd()
         ret = system("analyzeText -l %s 10pc.brut -o text:.out "%lang)
         chdir("../..")
-        #if ret is not 0:
-          #raise Exception('analyzeText failure')
+        if ret is not 0: raise Exception('analyzeText failure')
 
 def TrainSVMT(conf, svmli, svmle):
     """
@@ -238,7 +237,11 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
     lang = lang_
     # Configuration LIMA
     initial_config = "Disambiguation/SVMToolModel-"+lang+"/lima"
-    conf_path      = environ.get("LIMA_CONF") + "/lima-lp-"+lang+".xml"
+    conf_path = ""
+    for apath in environ.get("LIMA_CONF").split(':'):
+        conf_path = apath + "/lima-lp-"+lang+".xml"
+        if path.isfile(conf_path):
+            break
     tagger = checkConfig(conf_path)
     print "and the tagger is %s!" % tagger
     # set up the global variables

@@ -25,10 +25,31 @@ svm_learn="SVMTlearn"
 rm -Rf training-sets
 mkdir -p training-sets
 
+function findFileInPaths()
+{
+  local paths=$1
+  local fileName=$2
+  local separator=$3
+ 
+  pathsList=$(echo $paths | tr "$separator" "\n")
+  for path in $pathsList
+  do
+    if [ -e "$path/$fileName" ]
+    then
+      echo "$path/$fileName"
+      return 0
+    fi
+  done
+  echo ""
+}
+
+
 function readMethod() {
-  dynsvmtool=`head -n 70 $LIMA_CONF/lima-lp-$1.xml | grep '"DynamicSvmToolPosTagger"/>'`
-  svmtool=`head -n 70 $LIMA_CONF/lima-lp-$1.xml | grep '"SvmToolPosTagger"/>'`
-  viterbi=`head -n 70 $LIMA_CONF/lima-lp-$1.xml | grep '"viterbiPostagger-freq"/>'`
+  lpFile=$(findFileInPaths $LIMA_CONF lima-lp-$1.xml ":")
+  echo "lpFile is $lpFile"
+  dynsvmtool=`head -n 70 $lpFile | grep '"DynamicSvmToolPosTagger"/>'`
+  svmtool=`head -n 70 $lpFile | grep '"SvmToolPosTagger"/>'`
+  viterbi=`head -n 70 $lpFile | grep '"viterbiPostagger-freq"/>'`
 
   if [ -n "$svmtool" ]; then
     echo "svmtool"
