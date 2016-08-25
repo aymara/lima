@@ -43,8 +43,8 @@
         <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="syntacticAnalyzerDummy"/-->
-        <item value="debugSyntacticAnalysisLogger-deps"/>
-        <item value="dotDepGraphWriter"/>
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <!--item value="dotDepGraphWriter"/-->
         <!--item value="dotGraphWriterAfterSA"/-->
         <!--item value="coreferencesSolving"/-->
         <!--item value="wordSenseDisambiguation"/-->
