@@ -44,5 +44,4 @@ install(FILES
     structureHandler.h
     contentHandler.h
     contentHandler.tcc
-    AbstractXmlDocumentHandler.h
   DESTINATION include/common/Handler)

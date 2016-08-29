@@ -24,7 +24,6 @@
 
 #include "common/MediaticData/mediaticData.h"
 #include "common/Data/strwstrtools.h"
-#include "common/Handler/AbstractXmlDocumentHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
  #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextHandler.h"
