@@ -893,7 +893,7 @@ $NC::, $DET ($ADV|$ADJ){0-2} $NC ,:SYNTACTIC_RELATION:
 +CreateRelationBetween(left.2,trigger.1,"COORD2")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
- 
+
 
 #----------------------------------------------------------------------
 # Long distance adverbial clause modifier
