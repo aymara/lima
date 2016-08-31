@@ -36,9 +36,11 @@ AmosePluginsManager::AmosePluginsManager()
 
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
-//   ABSTRACTFACTORYPATTERNLOGINIT;
-//   LINFO << "AmosePluginsManager::loadPlugins";
-//   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
+#ifdef DEBUG_CD
+  ABSTRACTFACTORYPATTERNLOGINIT;
+  LINFO << "AmosePluginsManager::loadPlugins";
+#endif
+  //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
   QStringList configDirsList = configDirs.split(LIMA_PATH_SEPARATOR);
@@ -58,9 +60,9 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-//   #ifdef DEBUG_CD
-//     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
-//   #endif
+  #ifdef DEBUG_CD
+    LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
+  #endif
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly)) {
@@ -78,9 +80,9 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         // Allow empty and comment lines.
         if ( !line.isEmpty() && !line.startsWith('#') )
         {
-//   #ifdef DEBUG_CD
-//           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
-//   #endif
+  #ifdef DEBUG_CD
+          LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
+  #endif
           DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str());
         }
       }
