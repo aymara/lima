@@ -71,6 +71,7 @@ uint64_t countLines(QFile& file)
 
 QStringList buildConfigurationDirectoriesList(const QStringList& projects, const QStringList& paths)
 {
+//   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
   for (const QString& project: projects)
   {
@@ -82,7 +83,10 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     {
       if (!configDir.isEmpty() && QDir(configDir).exists())
       {
-        configDirs << configDir;
+        if (!configDirs.contains(configDir))
+        {
+          configDirs << configDir;
+        }
       }
     }
     if (confDirs.isEmpty())
@@ -90,14 +94,44 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/" + project;
       if (!configDir.isEmpty() && QDir( configDir ).exists() )
       {
-        configDirs << configDir;
+        if (!configDirs.contains(configDir))
+        {
+          configDirs << configDir;
+        }
       }
       else
       {
         configDir = QString::fromUtf8("/usr/share/config/") + project;
         if (!configDir.isEmpty() && QDir( configDir ).exists() )
         {
+          if (!configDirs.contains(configDir))
+          {
+            configDirs << configDir;
+          }
+        }
+      }
+    }
+    
+    // If current project is not lima, try to add a lima config dir for this project
+    if (project != "lima")
+    {
+      QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/lima";
+      if (!configDir.isEmpty() && QDir( configDir ).exists())
+      {
+        if (!configDirs.contains(configDir))
+        {
           configDirs << configDir;
+        }
+      }
+      else
+      {
+        configDir = QString::fromUtf8("/usr/share/config/lima") ;
+        if (!configDir.isEmpty() && QDir( configDir ).exists() )
+        {
+          if (!configDirs.contains(configDir))
+          {
+            configDirs << configDir;
+          }
         }
       }
     }
@@ -107,12 +141,14 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     if (!path.isEmpty() && QDir(path).exists())
       configDirs << path;
   }
-  
+
+//   qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 
 QStringList buildResourcesDirectoriesList(const QStringList& projects, const QStringList& paths)
 {
+//   qDebug() << "buildResourcesDirectoriesList" << projects << paths;
   QStringList resourcesDirs;
   for (const QString& project: projects)
   {
@@ -143,6 +179,30 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
         }
       }
     }
+    // If current project is not lima, try to add a lima resources dir for this project
+    if (project != "lima")
+    {
+      QString resourcesDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/apps/lima/resources";
+      if ( QDir( resourcesDir ).exists() )
+      {
+        if (!resourcesDirs.contains(resourcesDir))
+        {
+          resourcesDirs << resourcesDir;
+        }
+      }
+      else
+      {
+        resourcesDir = QString::fromUtf8("/usr/share/apps/lima/resources");
+        if ( QDir( resourcesDir ).exists() )
+        {
+          if (!resourcesDirs.contains(resourcesDir))
+          {
+            resourcesDirs << resourcesDir;
+          }
+        }
+      }
+    }
+
   }
   for (const QString& path: paths)
   {
@@ -150,6 +210,7 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
       resourcesDirs << path;
   }
   
+//   qDebug() << "buildResourcesDirectoriesList result:" << resourcesDirs;
   return resourcesDirs;
 }
 
