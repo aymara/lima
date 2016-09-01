@@ -44,6 +44,7 @@
         <item value="KS"/>
         <item value="PU"/>
         <item value="IN"/>
+	<item value="CUR"/>
       </list>
         <list name="conjugatedVerbs" >
           <item value="V"/>
