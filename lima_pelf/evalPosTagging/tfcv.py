@@ -18,7 +18,9 @@ from re import search
 
 # Variables definition
 SCRIPTS_PATH = "/home/sid-ahmed/Lima/lima/lima_pelf/../lima_linguisticdata/scripts"
-MATRIX_PATH  = environ.get("LIMA_RESOURCES","/Disambiguation/")
+MATRIX_PATH  = path.join(environ.get("LIMA_RESOURCES", "/usr/local"), "Disambiguation")
+print("MATRIX_PATH={}".format(MATRIX_PATH))
+
 PELF_BIN_PATH = path.join(environ.get("LIMA_DIST", "/usr/local"), "share/apps/lima/scripts")
 
 # svn blame material:
@@ -126,7 +128,7 @@ def AnalyzeTextAll(matrix_path):
         copy("matrices/unigramMatrix-%s.dat"%lang, matrix_path)
         copy("matrices/priorUnigramMatrix-%s.dat"%lang, matrix_path)
         print "in " + getcwd()
-        ret = system("analyzeText -l %s 10pc.brut -o text:.out "%lang)
+        ret = system("analyzeText -l %s 10pc.brut -o text:.out "%lang) 
         chdir("../..")
         if ret is not 0: raise Exception('analyzeText failure')
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -o nounset
+set -o errexit
+set -o pipefail
+
 if (($#==0)); then 
     echo usage: problemesAlignement.sh langue method
 fi
