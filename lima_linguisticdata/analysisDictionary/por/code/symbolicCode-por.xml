@@ -184,6 +184,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
+<code key="ART">
+  <field key="MICRO" value="ART"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="ART:fp">
   <field key="MICRO" value="ART"/>
   <field key="GENDER" value="FEM"/>
@@ -528,6 +536,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value="ORDIN"/>
 </code>
+<code key="PCP">
+  <field key="MICRO" value="PCP"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="PDEN">
   <field key="MICRO" value="PDEN"/>
   <field key="GENDER" value=""/>
@@ -546,6 +562,14 @@
 </code>
 <code key="PREP+ADV">
   <field key="MICRO" value="PREP+ADV"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="PREP+ART">
+  <field key="MICRO" value="PREP+ART"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
@@ -584,6 +608,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
+<code key="PREP+PROADJ">
+  <field key="MICRO" value="PREP+PROADJ"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="PREP+PROADJ:fp">
   <field key="MICRO" value="PREP+PROADJ"/>
   <field key="GENDER" value="FEM"/>
@@ -612,6 +644,22 @@
   <field key="MICRO" value="PREP+PROADJ"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="PREP+PRO-KS">
+  <field key="MICRO" value="PREP+PRO-KS"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="PREP+PROPESS">
+  <field key="MICRO" value="PREP+PROPESS"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
@@ -780,6 +828,14 @@
   <field key="MICRO" value="PREP+PROSUB"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="PROADJ">
+  <field key="MICRO" value="PROADJ"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
@@ -976,6 +1032,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value="SUPERL"/>
 </code>
+<code key="PRO-KS">
+  <field key="MICRO" value="PRO-KS"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="PRO-KS:fp">
   <field key="MICRO" value="PRO-KS"/>
   <field key="GENDER" value="FEM"/>
@@ -1004,6 +1068,14 @@
   <field key="MICRO" value="PRO-KS"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="PROPESS">
+  <field key="MICRO" value="PROPESS"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
@@ -1520,6 +1592,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value="REFLEX"/>
 </code>
+<code key="PROSUB">
+  <field key="MICRO" value="PROSUB"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="PROSUB:fp">
   <field key="MICRO" value="PROSUB"/>
   <field key="GENDER" value="FEM"/>
@@ -1594,6 +1674,14 @@
 </code>
 <code key="PU+FORTE">
   <field key="MICRO" value="PU+FORTE"/> 
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="V">
+  <field key="MICRO" value="V"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>

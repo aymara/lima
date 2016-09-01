@@ -107,7 +107,7 @@ V               Verbo
     </subvalues>
     <subvalues value="DIVERS">
       <!--value name="POS"/-->
-      <value name="CUR"/>
+      <!--value name="CUR"/-->
       <value name="UNK"/>
     </subvalues>
     <subvalues value="INTERJ">
@@ -115,6 +115,7 @@ V               Verbo
     </subvalues>
     <subvalues value="NC">
       <value name="N"/>
+      <value name="CUR"/>
     </subvalues>
     <subvalues value="NOMBRE">
       <value name="NUM"/>
