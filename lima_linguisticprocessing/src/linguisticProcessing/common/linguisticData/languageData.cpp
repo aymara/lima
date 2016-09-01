@@ -182,7 +182,7 @@ void  LanguageData::initialize(
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageData::initialize " << lang << " " << resourcesPath;
+  LINFO << "LanguageData::initialize lang:" << lang << "; resourcesPath:" << resourcesPath;
   MediaData::initialize(lang, resourcesPath, conf);
   m_d->m_language = lang;
   m_d->initPropertyCode(resourcesPath,conf);
