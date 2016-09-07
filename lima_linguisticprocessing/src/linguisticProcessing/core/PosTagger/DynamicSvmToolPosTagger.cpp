@@ -218,8 +218,9 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     /* For every ancestor of our node */
     std::set<LinguisticGraphVertex> previousTokens = getPreviousTokens(vertex, srcGraph);
     if(previousTokens.empty()) previousTokens.insert(posGraph->firstVertex());
-    for(LinguisticGraphVertex prevVertex: previousTokens) {
-
+    for (auto it = previousTokens.begin(); it != previousTokens.end(); ++it) {
+      LinguisticGraphVertex prevVertex = *it;
+      
       std::string pos = "";
       double logCurWeight = log(1.0), w;
       if (vertex != 1) {

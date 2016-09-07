@@ -46,11 +46,12 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
    */
   QString str_program_name;
   QString pathEnv = QString::fromUtf8(qgetenv("PATH").constData());
-  for (const auto & path: pathEnv.split(QRegExp("[;:]")))
+  QStringList paths = pathEnv.split(QRegExp("[;:]"));
+  for (auto it = paths.begin(); it != paths.end(); ++it)
   {
-    if (QFile::exists(path + "/python" ))
+    if (QFile::exists(*it + "/python" ))
     {
-      str_program_name = path + "/python";
+      str_program_name = *it + "/python";
       break;
     }
   }

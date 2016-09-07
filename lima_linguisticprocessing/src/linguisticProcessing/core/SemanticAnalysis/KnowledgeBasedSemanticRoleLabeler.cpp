@@ -221,8 +221,10 @@ void KnowledgeBasedSemanticRoleLabeler::init(
    */
   QString str_program_name;
   QString pathEnv = QString::fromUtf8(qgetenv("PATH").constData());
-  for (const auto & path: pathEnv.split(QRegExp("[;:]")))
+  QStringList paths = pathEnv.split(QRegExp("[;:]"));
+  for (auto it = paths.begin(); it != paths.end(); ++it)
   {
+    const auto & path = *it;
     if (QFile::exists(path + "/python" ))
     {
       str_program_name = path + "/python";
