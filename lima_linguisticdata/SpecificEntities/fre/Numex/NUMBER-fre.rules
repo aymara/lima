@@ -198,6 +198,36 @@ LE:::NOT_NUMBER:
 # In sport scores like "1 - 1", each integer is a number and the - is not a minus sign
 @NumForm:[@NumForm] [(+|-)]::NUMBER:=>NormalizeNumber()
 
+
+@Decimal=(t_comma_number,t_dot_number)
+@SmallDecimalGroup=(t_integer<100)
+@IntegerGroup=(t_integer>99<1000)
+@LargeNumber=(t_integer>1000)
+
+### Numbers in digits
+
+# 1 234.5
+# 12 345.6
+# 12 345 678.9
+# but also errors like: 12 345 6.7
+@SmallDecimalGroup:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
+# 123 456.7
+@IntegerGroup:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
+# 12
+@SmallDecimalGroup:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
+# 12345
+# 1234 millions
+@LargeNumber:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
+
+# 12.3
+# 123.4
+# 12345.6
+@Decimal:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
 @NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
-@Number:(+|-)?:@Number{0-3} \%?:NUMBER:=>NormalizeNumber()
+@Number:(+|-)?:@Number{0-5} @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 @OrdNumber:(+|-)?:\%?:NUMBER:=>NormalizeNumber()
