@@ -601,7 +601,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
     for (auto matchVertex = matches.begin(); matchVertex != matches.end(); ++matchVertex)
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << matchVertex;
+      LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << *matchVertex;
 #endif
       if (annotationData->hasAnnotation(*matchVertex, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
