@@ -141,7 +141,7 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
   pwd &&
-  cmake --build . --config Release
+  cmake --build . --config $cmake_mode
   """
   make_test=""
   make_install=""""
