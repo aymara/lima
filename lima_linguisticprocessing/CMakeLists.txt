@@ -129,6 +129,14 @@ set(CMAKE_PREFIX_PATH
 
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml XmlPatterns Network Test)
+
+# Search Qt5 optional components
+find_package(Qt5 COMPONENTS DBus)
+if (Qt5DBus_FOUND)
+  set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
+  set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
+endif()
+
 include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")

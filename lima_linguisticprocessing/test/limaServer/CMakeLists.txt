@@ -1,7 +1,4 @@
 
-# Search Qt5 library
-find_package(Qt5 COMPONENTS DBus)
-
 # find_package(QHttpServer QUIET)
 # if (NOT QHTTPSERVER_FOUND)
 #   message(STATUS "QHttpServer Not found...")
@@ -70,9 +67,6 @@ install(TARGETS limaserver DESTINATION bin)
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 else ()
-
-  set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
-  set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
 
 SET(limadbusserver_SRCS
   LimaDBusServer.cpp
