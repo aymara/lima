@@ -73,19 +73,20 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
 {
 //   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
-  for (const QString& project: projects)
+  for (auto it = projects.begin(); it != projects.end(); ++it)
   {
+    QString project = *it;
     QStringList confDirs;
     QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
     if (!projectConf.isEmpty()) 
       confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
-    for (const QString &configDir: confDirs )
+    for (auto configDir = confDirs.begin(); configDir != confDirs.end(); ++configDir)
     {
-      if (!configDir.isEmpty() && QDir(configDir).exists())
+      if (!configDir->isEmpty() && QDir(*configDir).exists())
       {
-        if (!configDirs.contains(configDir))
+        if (!configDirs.contains(*configDir))
         {
-          configDirs << configDir;
+          configDirs << *configDir;
         }
       }
     }
