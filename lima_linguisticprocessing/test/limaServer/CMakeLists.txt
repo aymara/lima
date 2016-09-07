@@ -1,6 +1,6 @@
 
 # Search Qt5 library
-find_package(Qt5 QUIET DBus)
+find_package(Qt5 COMPONENTS DBus)
 
 # find_package(QHttpServer QUIET)
 # if (NOT QHTTPSERVER_FOUND)
