@@ -11,7 +11,7 @@ macro (CompileLimaSubproject _project _dependsOn )
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     set(_TEST_COMMAND make test)
   else()
-    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config Release)
+    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
   endif()
   
   ## Add external project
@@ -42,7 +42,7 @@ macro (CompileLimaSubproject _project _dependsOn )
       )
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ExternalProject_Add_Step(${_project} packaging
-    COMMAND cmake --build . --target PACKAGE --config Release
+    COMMAND cmake --build . --target PACKAGE --config ${CMAKE_BUILD_TYPE}
     COMMENT "Packaging ${_project}"
     WORKING_DIRECTORY <BINARY_DIR>
     DEPENDEES INSTALL
