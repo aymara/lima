@@ -678,7 +678,7 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
   }
   case SEQUENCE: { 
     for (vector<AutomatonString>::iterator part=m_parts.begin();
-         part != m_parts.end(); part++) {
+         part != m_parts.end();) {
       if ((*part).isSequence()) {
         (*part).removeArtificialSequences(true);
 #ifdef DEBUG_LP
@@ -709,16 +709,17 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
         LDEBUG << "sequence is artificial: " << (*part).getString();
 #endif
         // insert elements one by one (otherwise, loose the iterator)
-        for (uint64_t i(0); i<(*part).getParts().size(); i++) {
-          part=m_parts.insert(part,(*part).getParts()[i]);
-          part++;
-        }
-//         LDEBUG << "has inserted parts    : " << getString();
-//         LDEBUG << "trying to remove      : " << (*part).getString();
-        part=m_parts.erase(part); 
-//         LDEBUG << "has erased artificial : " << getString();
-        part--; // erase returns iterator following the one erased
+		AutomatonString str = *part;
+		part = m_parts.erase(part);
+		const std::vector<AutomatonString>& parts = str.getParts();
+		for (std::vector<AutomatonString>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+			part = m_parts.insert(part, *it);
+			++part;
+		}
       }
+	  else {
+		  ++part;
+	  }
 //       else if (inSubPart) {
 //         LDEBUG << "sequence is NOT artificial: " << (*part).getString();
 //       }
