@@ -340,7 +340,8 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
 #endif
           if (NBCOLSINSRLBEFOREFRAME+1+roleTargetFieldIndex >= descriptors.size())
           {
-            LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error" <<  roleTargetFieldIndex;
+            LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error descriptors" <<  NBCOLSINSRLBEFOREFRAME+1+roleTargetFieldIndex << descriptors.size();
+            LERROR <<  "ConllHandler::extractSemanticInformation token:" <<  token;
             break;
           }
           if (descriptors[NBCOLSINSRLBEFOREFRAME+1+roleTargetFieldIndex]!="_")
@@ -356,7 +357,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
               std::vector<std::pair<LinguisticGraphVertex,QString>> sRoles;
               if (roleTargetFieldIndex >= m_semanticRoles.size())
               {
-                LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error 2" <<  roleTargetFieldIndex;
+                LERROR <<  "ConllHandler::extractSemanticInformation roleTargetFieldIndex error semantic roles" <<  roleTargetFieldIndex << m_semanticRoles.size();
                 break;
               }
               m_semanticRoles[roleTargetFieldIndex].push_back(make_pair(limaTokenId,semanticRoleLabel));

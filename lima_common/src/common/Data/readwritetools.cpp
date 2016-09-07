@@ -27,6 +27,7 @@
  ***********************************************************************/
 
 #include "readwritetools.h"
+#include "strwstrtools.h"
 #include <deque>
 #include <QDebug>
 #include <QFile>
@@ -83,6 +84,23 @@ uint8_t readOneByteInt(std::istream& file) {
 void writeOneByteInt(std::ostream& file, const uint8_t number) {
   file.put((char)number);
   file.flush();
+}
+
+
+//**********************************************************************
+double readDouble(std::istream& file)
+{
+  LimaString str;
+  readUTF8StringField(file, str);
+  return str.toDouble();
+}
+
+void writeDouble(std::ostream& file, const double number)
+{
+  LimaString str;
+  QTextStream qts(&str);
+  qts << number;
+  writeUTF8StringField(file, str);
 }
 
 } // end namespace

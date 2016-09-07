@@ -86,6 +86,27 @@ LIMA_DATA_EXPORT void writeOneByteInt(std::ostream& file, const uint8_t number);
 
 //@}
 
+//@{ functions for reading/writing doubles portably
+
+/** 
+ * read a double in a file
+ * 
+ * @param file the file from which to read
+ * 
+ * @return the double read
+ */
+LIMA_DATA_EXPORT double readDouble(std::istream& file);
+
+/** 
+ *  write a double in a file
+ * 
+ * @param file the file to write in
+ * @param number the double to write
+ */
+LIMA_DATA_EXPORT void writeDouble(std::ostream& file, const double number);
+
+//@}
+
 } // end namespace
 } // end namespace
 } // end namespace

@@ -33,7 +33,6 @@
 #include "posTransition.h"
 #include "wordTransition.h"
 #include "lemmaTransition.h"
-#include "numericTransition.h"
 #include "epsilonTransition.h"
 #include "gazeteerTransition.h"
 #include "starTransition.h"

@@ -162,6 +162,8 @@ const LimaChar CHAR_NOKEEP_CLOSE_TR(']');
 //#define STRING_NUM_NAME_TR Common::Misc::utf8stdstring2limastring("$NUM")
 const LimaString STRING_NUM_NAME_TR=Common::Misc::utf8stdstring2limastring("T_Ni"); // for compatibility with TSTATUS notation
 const LimaString STRING_NUM_NAME_TR2=Common::Misc::utf8stdstring2limastring("t_integer"); // for compatibility with TSTATUS notation
+const LimaString STRING_DOTNUM_NAME_TR=Common::Misc::utf8stdstring2limastring("t_dot_number"); 
+const LimaString STRING_COMMANUM_NAME_TR=Common::Misc::utf8stdstring2limastring("t_comma_number"); 
 // const uint64_t LENGTH_NUM_NAME_TR=STRING_NUM_NAME_TR.size(); //to avoid re-computing it
 const LimaChar CHAR_NUM_EQUAL_TR('=');
 const LimaChar CHAR_NUM_GE_TR('>');

@@ -23,8 +23,8 @@ m_mainEvent(false)
 EventTemplate::EventTemplate(const std::string type):
 m_template(),
 m_weight(0.0),
-m_type(type),
-m_mainEvent(false)
+m_mainEvent(false),
+m_type(type)
 {
 }
 EventTemplate::~EventTemplate() {

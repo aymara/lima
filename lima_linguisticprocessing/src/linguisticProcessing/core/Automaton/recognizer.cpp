@@ -336,7 +336,9 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                         bool stopAtFirstSuccess,
                                         bool onlyOneSuccessPerType,
                                         bool applySameRuleWhileSuccess) const {
+#ifdef DEBUG_LP
   AULOGINIT;
+#endif
   // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
   const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
   RecognizerMatch triggermatch(&graph);
@@ -519,6 +521,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
+      
+      AULOGINIT;
       LINFO << "Recognizer::testSetOfRules: execute rule " << currentRule->getRuleId()
             << " of type "<< currentRule->getType()
             << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())

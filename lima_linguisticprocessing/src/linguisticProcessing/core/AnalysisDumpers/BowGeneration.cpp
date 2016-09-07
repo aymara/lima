@@ -1173,16 +1173,19 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
 #ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< predicate << " is/are ";
 #endif
-      AnnotationGraph annotGraph=annotationData->getGraph();
+      const AnnotationGraph& annotGraph=annotationData->getGraph();
       AnnotationGraphOutEdgeIt outIt, outIt_end;
       boost::tie(outIt, outIt_end) = boost::out_edges(agv, annotationData->getGraph());
       QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > roles;
-      const LimaString typeAnnot="SemanticRole";
+      static const LimaString typeAnnot="SemanticRole";
       for (; outIt != outIt_end; outIt++)
       {
         // FIXME handle the ambiguous case when there is several values for each role
         const AnnotationGraphVertex semRoleVx=boost::target(*outIt, annotGraph);
         QStringList semRoleIds = annotationData->stringAnnotation(agv,semRoleVx,typeAnnot).split("|");
+#ifdef DEBUG_LP
+        LDEBUG << "BowGenerator::createPredicate            "<< semRoleIds;
+#endif
         if (predicateIds.size() != semRoleIds.size())
         {
           DUMPERLOGINIT;

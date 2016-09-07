@@ -122,8 +122,8 @@ public:
                   AnalysisContent& analysis) const;
 
 private:
-  uint64_t m_min;
-  uint64_t m_max;
+  double m_min;
+  double m_max;
 };
 
 /**
@@ -141,8 +141,8 @@ public:
 
 private:
   MediaId m_language;
-  uint64_t m_min;
-  uint64_t m_max;
+  double m_min;
+  double m_max;
 };
 
 } // end namespace

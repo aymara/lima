@@ -268,18 +268,18 @@ LengthInInterval(MediaId language,
 {
   //complement contains min and max values for length of the token
   //(max value is optional)
-  std::string str=Common::Misc::limastring2utf8stdstring(complement);
+  //std::string str=Common::Misc::limastring2utf8stdstring(complement);
   //uint64_t i=str.find(","); portage 32 64
-  std::string::size_type i=str.find(",");
-  if (i==string::npos)
+  auto i=complement.indexOf(",");
+  if (i==-1)
   {
-    m_min=atoi(str.c_str());
+    m_min=complement.toDouble();
     m_max=m_min;
   }
   else
   {
-    m_min=atoi(string(str,0,i).c_str());
-    m_max=atoi(string(str,i+1).c_str());
+    m_min=complement.left(i).toDouble();
+    m_max=complement.right(complement.size()-i).toDouble();
   }
 }
 
@@ -296,7 +296,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     return false;
   }
 
-  uint64_t length=token->length();
+  double length=token->length();
 
   //   AULOGINIT;
   //   LDEBUG << "testing length of token " << *token
@@ -317,27 +317,27 @@ NumericValueInInterval(MediaId language,
 {
   //complement contains min and max values for length of the token
   //(max value is optional)
-  std::string str=Common::Misc::limastring2utf8stdstring(complement);
-  std::string::size_type i=str.find(",");
-  if (i==std::string::npos)
+//   std::string str=Common::Misc::limastring2utf8stdstring(complement);
+  auto i=complement.indexOf(",");
+  if (i==-1)
   {
-    m_min=atoi(str.c_str());
+    m_min=complement.toDouble();
     m_max=m_min;
   }
   else
   {
-    string minString(str,0,i), maxString(str,i+1);
-    if (minString.empty()) {
+    LimaString minString(complement.left(i)), maxString(complement.right(complement.size()-i));
+    if (minString.isEmpty()) {
       m_min=0;
     }
     else {
-      m_min=atoi(minString.c_str());
+      m_min=minString.toDouble();
     }
-    if (maxString.empty()) {
+    if (maxString.isEmpty()) {
       m_max=0;
     }
     else {
-      m_max=atoi(maxString.c_str());
+      m_max=maxString.toDouble();
     }
   }
 }
@@ -355,11 +355,13 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     return false;
   }
 
-  uint64_t numValue(0);
+  double numValue(0);
 
   const TStatus& status=token->status();
-  if (status.getNumeric() == T_INTEGER) {
-    numValue=token->stringForm().toULong();
+  if (status.getNumeric() == T_INTEGER
+    || status.getNumeric() == T_DOT_NUMBER
+    || status.getNumeric() == T_COMMA_NUMBER) {
+    numValue=token->stringForm().toDouble();
   }
   else {
     // get the normalized form : contains the numeric form
@@ -367,7 +369,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     MorphoSyntacticData* data = get(vertex_data,*(graph.getGraph()),v);
     for (MorphoSyntacticData::const_iterator  it=data->begin(),
            it_end=data->end(); it!=it_end; it++) {
-      numValue=Common::MediaticData::MediaticData::single().stringsPool(m_language)[(*it).normalizedForm].toULong();
+      numValue=Common::MediaticData::MediaticData::single().stringsPool(m_language)[(*it).normalizedForm].toDouble();
       if (numValue!=0) {
         break;
       }

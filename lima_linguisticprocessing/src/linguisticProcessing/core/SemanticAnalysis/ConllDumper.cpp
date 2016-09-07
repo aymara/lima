@@ -215,7 +215,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     LERROR << "ConllDumper::process no AnnotationData ! abort";
     return MISSING_DATA;
   }
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));//est de type PosGraph et non pas AnalysisGraph
+  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));
   if (tokenList==0) 
   {
     DUMPERLOGINIT;
@@ -223,13 +223,24 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
   LinguisticGraph* graph=tokenList->getGraph();
-  SegmentationData* sd=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-  if (sd==0) 
+  SegmentationData* sentenceBoundaries=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  if (sentenceBoundaries==0) 
   {
     DUMPERLOGINIT;
     LERROR << "ConllDumper::process no SentenceBoundaries! abort";
     return MISSING_DATA;
   }
+  uint64_t nbSentences((sentenceBoundaries->getSegments()).size());
+  if (nbSentences == 0)
+  {
+    DUMPERLOGINIT;
+    LERROR << "ConllDumper::process 0 sentence to process";
+    return SUCCESS_ID;
+  }
+#ifdef DEBUG_LP
+  LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
+#endif
+
 
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
@@ -240,31 +251,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   }
   const DependencyGraph* depGraph = syntacticData-> dependencyGraph();
 
-  QScopedPointer<DumperStream> dstream(initialize(analysis));
-
-  std::map< LinguisticGraphVertex, std::pair<LinguisticGraphVertex, std::string> > vertexDependencyInformations;
-
-  uint64_t nbSentences((sd->getSegments()).size());
-  if (nbSentences == 0)
-  {
-    DUMPERLOGINIT;
-    LERROR << "ConllDumper::process 0 sentence to process";
-    return SUCCESS_ID;
-  }
-  
-  std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
-#ifdef DEBUG_LP
-  LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
-#endif
-  LinguisticGraphVertex sentenceBegin = sbItr->getFirstVertex();
-  LinguisticGraphVertex sentenceEnd = sbItr->getLastVertex();
-
-
-    const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_d->m_language);
-//   for (auto im=m_d->m_conllLimaDepMapping.begin();im!=m_d->m_conllLimaDepMapping.end();im++)
-//   {
-//     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
-//   }
+  const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_d->m_language);
 
   LimaConllTokenIdMapping* limaConllTokenIdMapping = static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
   if (limaConllTokenIdMapping == 0)
@@ -272,13 +259,20 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     limaConllTokenIdMapping = new LimaConllTokenIdMapping();
     analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   }
+
+  QScopedPointer<DumperStream> dstream(initialize(analysis));
+
+  std::map< LinguisticGraphVertex, std::pair<LinguisticGraphVertex, std::string> > vertexDependencyInformations;
+
+  std::vector<Segment>::iterator sbItr=(sentenceBoundaries->getSegments().begin());
+
   int sentenceNb=0;
 
-  while (sbItr != sd->getSegments().end() ) //for each sentence
+  while (sbItr != sentenceBoundaries->getSegments().end() ) //for each sentence
   {
     sentenceNb++;
-    sentenceBegin=sbItr->getFirstVertex();
-    sentenceEnd=sbItr->getLastVertex();
+    LinguisticGraphVertex sentenceBegin=sbItr->getFirstVertex();
+    LinguisticGraphVertex sentenceEnd=sbItr->getLastVertex();
     std::map<LinguisticGraphVertex,int>segmentationMapping;//mapping the two types of segmentations (Lima and conll)
     std::map<int,LinguisticGraphVertex>segmentationMappingReverse;
 

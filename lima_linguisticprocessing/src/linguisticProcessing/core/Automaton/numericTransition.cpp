@@ -41,7 +41,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace Automaton {
 
-const uint64_t NumericTransition::noValue = std::numeric_limits< uint64_t >::max();
+const double NumericTransition::noValue = std::numeric_limits< double >::max();
 
 /***********************************************************************/
 // constructors
@@ -49,9 +49,9 @@ const uint64_t NumericTransition::noValue = std::numeric_limits< uint64_t >::max
 NumericTransition::NumericTransition():
   TransitionUnit(),m_value(noValue),m_min(noValue),m_max(noValue) {}
   
-NumericTransition::NumericTransition(uint64_t val, 
-                     uint64_t min, 
-                     uint64_t max,
+NumericTransition::NumericTransition(double val, 
+                     double min, 
+                     double max,
                      bool keep):
   TransitionUnit(keep),
   m_value(val),
@@ -97,7 +97,7 @@ bool NumericTransition::operator== (const TransitionUnit& tright) const {
   return false; 
 }
 
-bool NumericTransition::operator== (const uint64_t& numValue) const {
+bool NumericTransition::operator== (const double& numValue) const {
   if (isInterval()) {
     if (m_min == noValue) {
       return ( numValue <= m_max);
@@ -123,10 +123,12 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
 {
 
   const TStatus& status = token->status();
-  if (status.getNumeric() != T_INTEGER) {
+  if (status.getNumeric() != T_INTEGER 
+    && status.getNumeric() != T_COMMA_NUMBER 
+    && status.getNumeric() != T_DOT_NUMBER ) {
     return false;
   }
-  uint64_t numValue(token->stringForm().toULong());
+  double numValue(token->stringForm().toDouble());
   return (*this == numValue);
 }
 

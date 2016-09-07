@@ -124,7 +124,7 @@ public:
   
   virtual int dump(
       std::ostream& os, 
-      Common::AnnotationGraphs::GenericAnnotation& ga) const {}
+      Common::AnnotationGraphs::GenericAnnotation& ga) const {return SUCCESS_ID;}
       
 private:
   const FsaStringsPool& m_sp;

@@ -3,10 +3,10 @@ using modex Numex-modex.xml
 using groups Numex
 set defaultAction=>CreateSpecificEntity()
 
+
 @NumForm=(t_comma_number,t_dot_number,t_integer)
 
 @Number=(
-t_comma_number,t_dot_number,t_integer,
 deux$NC,
 trois$NC,
 quatre$NC,
@@ -196,8 +196,38 @@ LE:::NOT_NUMBER:
 
 
 # In sport scores like "1 - 1", each integer is a number and the - is not a minus sign
-@NumForm:[@NumForm] [(+|-)]::NUMBER:=>NormalizeNumber()
+#@NumForm:[@NumForm] [(+|-)]::NUMBER:=>NormalizeNumber()
 
-@NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
-@Number:(+|-)?:@Number{0-3} \%?:NUMBER:=>NormalizeNumber()
+
+
+@Decimal=(t_comma_number,t_dot_number)
+@FinalDecimalGroup=(t_comma_number>100<1000,t_dot_number>100<1000)
+@SmallDecimalGroup=(t_comma_number<100,t_dot_number<100,t_integer<100)
+@IntegerGroup=(t_integer>99<1000)
+@IntegerInitialGroup=(t_integer<100)
+@LargeNumber=(t_comma_number>1000,t_dot_number>1000,t_integer>1000)
+
+### Numbers in digits
+
+# 1 234.5
+# 12 345.6
+@IntegerInitialGroup:(+|-)?:@IntegerGroup{0-3} @FinalDecimalGroup @ChiffreAines?:NUMBER:=>NormalizeNumber()
+
+# 123 456.7
+@IntegerGroup:(+|-)?:@IntegerGroup{0-3} @FinalDecimalGroup @ChiffreAines?:NUMBER:=>NormalizeNumber()
+
+# 12
+# 12.3
+# 123.4
+@SmallDecimalGroup:(+|-)?:@ChiffreAines?:NUMBER:=>NormalizeNumber()
+
+# 12345
+# 12345.6
+# 1234 millions
+@LargeNumber:(+|-)?:@ChiffreAines?:NUMBER:=>NormalizeNumber()
+### Other numbers
+
+#@NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
+#@Number:(+|-)?:@Number{0-3} \%?:NUMBER:=>NormalizeNumber()
 @OrdNumber:(+|-)?:\%?:NUMBER:=>NormalizeNumber()
+

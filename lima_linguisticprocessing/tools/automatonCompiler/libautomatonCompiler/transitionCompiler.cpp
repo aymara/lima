@@ -220,24 +220,32 @@ TransitionUnit* createTransition(const LimaString str,
     isNumeric=true;
     transitionKeySize=STRING_NUM_NAME_TR2.size();
   }
+  else if (s.indexOf(STRING_DOTNUM_NAME_TR) == 0 && s != STRING_DOTNUM_NAME_TR) {
+    isNumeric=true;
+    transitionKeySize=STRING_DOTNUM_NAME_TR.size();
+  }
+  else if (s.indexOf(STRING_COMMANUM_NAME_TR) == 0 && s != STRING_COMMANUM_NAME_TR) {
+    isNumeric=true;
+    transitionKeySize=STRING_COMMANUM_NAME_TR.size();
+  }
   if (isNumeric) {
-    uint64_t val(NumericTransition::noValue);
-    uint64_t min(NumericTransition::noValue);
-    uint64_t max(NumericTransition::noValue);
+    double val(NumericTransition::noValue);
+    double min(NumericTransition::noValue);
+    double max(NumericTransition::noValue);
     if (s[transitionKeySize] == CHAR_NUM_EQUAL_TR)
     {
-      val=s.mid(transitionKeySize+1).toULong();
+      val=s.mid(transitionKeySize+1).toDouble();
     }
     else if (s[transitionKeySize] == CHAR_NUM_LE_TR)
     {
       //int i(s.find(CHAR_NUM_GE_TR,LENGTH_NUM_NAME_TR+1));
       int i(s.indexOf(CHAR_NUM_GE_TR,transitionKeySize+1));
       if (i==-1) {
-        max=s.mid(transitionKeySize+1).toULong();
+        max=s.mid(transitionKeySize+1).toDouble();
       }
       else {
-        max=s.mid(transitionKeySize+1, i-transitionKeySize-1).toULong();
-        min=s.mid(i+1).toULong();
+        max=s.mid(transitionKeySize+1, i-transitionKeySize-1).toDouble();
+        min=s.mid(i+1).toDouble();
       }
     }
     else if (s[transitionKeySize] == CHAR_NUM_GE_TR)
@@ -245,12 +253,12 @@ TransitionUnit* createTransition(const LimaString str,
       //int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,LENGTH_NUM_NAME_TR+1));
       int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,transitionKeySize+1));
       if (i==-1) {
-        min=s.mid(transitionKeySize+1).toULong();
+        min=s.mid(transitionKeySize+1).toDouble();
       }
       else {
         min=s.mid(transitionKeySize+1,
-                  i-transitionKeySize-1).toULong();
-        max=s.mid(i+1).toULong();
+                  i-transitionKeySize-1).toDouble();
+        max=s.mid(i+1).toDouble();
       }
     }
 

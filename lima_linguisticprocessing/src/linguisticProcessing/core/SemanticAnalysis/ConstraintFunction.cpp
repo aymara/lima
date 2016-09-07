@@ -130,9 +130,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
   {
     semanticData=new SemanticRelationData();
     analysis.setData("SemanticRelationData",semanticData);
-    
   }
-  
+
   return semanticData->relation(vertex1,vertex2,m_semanticRelationType);
 
 }

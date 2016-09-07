@@ -41,6 +41,7 @@ using namespace std;
 using namespace Lima::LinguisticProcessing::AnalysisDumpers;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::XMLConfigurationFiles;
+using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
 
 
@@ -266,10 +267,12 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   }
   
   // Create the semantic role labeller instance
-  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]", 
+  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, 
+                                        "SemanticRoleLabeler", 
+                                        "[sss]", 
                                         QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData(), 
                                         QString("--frame-lexicon=%1").arg(mode).toUtf8().constData(), 
-                                        QString("--language=%1").arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
+                                        QString("--language=%1").arg(MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
   HANDLE_ERROR_EQUAL(m_d->m_instance,NULL,cannot_instantiate_the_semanticrolelabeler_python_class())
 }
 
@@ -309,8 +312,7 @@ auto failure_during_call_of_the_annotate_method_on = [](QString& conllInput)
   Py_Exit(1);
 };
 
-LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
-  AnalysisContent& analysis) const
+LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(AnalysisContent& analysis) const
 {
   TimeUtilsController knowledgeBasedSemanticRoleLabelerProcessTime("KnowledgeBasedSemanticRoleLabeler");
 #ifdef DEBUG_LP
@@ -369,7 +371,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
 #ifdef DEBUG_LP
     temporaryFile->setAutoRemove(false);
     SEMANTICANALYSISLOGINIT;
-    LDEBUG << "KnowledgeBasedSemanticRoleLabeler: keeping temporary file after dumping CoNLL data to it for debugging"<< temporaryFile->fileName();
+    LERROR << "KnowledgeBasedSemanticRoleLabeler: keeping temporary file after dumping CoNLL data to it for debugging"<< temporaryFile->fileName();
 #endif
     temporaryFile->close();
   }
@@ -382,14 +384,19 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   HANDLE_ERROR_EQUAL(callResult, NULL, failure_during_call_of_the_annotate_method_on(conllInput));
   
   // Display the SRL result
-  char* result = PyUnicode_AsUTF8(callResult);
-  if (result == NULL)
+  PyObject* resultObj = PyUnicode_AsUTF8String(callResult);
+  if (resultObj == NULL)
   {
     SEMANTICANALYSISLOGINIT;
     LERROR << "Cannot convert result item to string";
+    Py_DECREF(callResult);
     PyErr_Print();
     Py_Exit(1);
   }
+  QString result = QString::fromUtf8(PyBytes_AsString(resultObj));
+  Py_DECREF(resultObj);
+  Py_DECREF(callResult);
+  
 #ifdef DEBUG_LP
   LDEBUG << "Python result is:" << result;
 #endif
@@ -403,7 +410,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
     }
     QFile outputFile(outputFilename);
     outputFile.open(QIODevice::WriteOnly);
-    outputFile.write(result);
+    outputFile.write(result.toUtf8().constData());
     outputFile.close();
   }
   else
@@ -418,7 +425,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
       temporaryFile->setAutoRemove(false);
       return UNKNOWN_ERROR;
     }
-    if (temporaryFile->write(result) == -1)
+    if (temporaryFile->write(result.toUtf8().constData()) == -1)
     {
       SEMANTICANALYSISLOGINIT;
       LERROR << "KnowledgeBasedSemanticRoleLabeler: unable to write SRL result to temporary file"<< temporaryFile->fileName();
@@ -428,7 +435,6 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
     }
     temporaryFile->close();
   }
-  Py_DECREF(callResult);
   // Import the CoNLL result
   returnCode=m_d->m_loader->process(analysis);
   HANDLE_ERROR_DIFFERENT_RETURN(returnCode,SUCCESS_ID,failed_to_load_data_from_temporary_file(temporaryFile),returnCode)

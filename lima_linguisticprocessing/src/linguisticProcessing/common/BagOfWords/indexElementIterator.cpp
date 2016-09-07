@@ -260,6 +260,8 @@ IndexElement IndexElementIterator::getElement()
         case BoWType::BOW_PREDICATE:
         {
           predicate = boost::dynamic_pointer_cast<BoWPredicate>((*m_d->m_iterator));
+          // FIXME write the storePartsInQueue function for predicates
+//           m_d->storePartsInQueue(predicate);
           uint64_t id=m_d->m_idGenerator->getId(predicate->getString());
           return IndexElement(id,
                               predicate->getType(),
@@ -457,6 +459,8 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
       break;
     case BoWType::BOW_TERM:
     case BoWType::BOW_PREDICATE:
+      neType=boost::dynamic_pointer_cast<BoWPredicate>(token)->getPredicateType();
+      break;
     case BoWType::BOW_NOTYPE:
     default:;
   }

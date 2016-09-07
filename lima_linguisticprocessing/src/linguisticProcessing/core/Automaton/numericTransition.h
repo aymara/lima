@@ -48,7 +48,7 @@ class LIMA_AUTOMATON_EXPORT NumericTransition : public TransitionUnit
 {
  public:
   NumericTransition(); 
-  NumericTransition(uint64_t, uint64_t, uint64_t, bool keep=true); 
+  NumericTransition(double, double, double, bool keep=true); 
   NumericTransition(const NumericTransition&);
   virtual ~NumericTransition();
   NumericTransition& operator = (const NumericTransition&);
@@ -58,7 +58,7 @@ class LIMA_AUTOMATON_EXPORT NumericTransition : public TransitionUnit
 
   std::string printValue() const;
   bool operator== (const TransitionUnit&) const;
-  bool operator== (const uint64_t&) const;
+  bool operator== (const double&) const;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
@@ -68,34 +68,34 @@ class LIMA_AUTOMATON_EXPORT NumericTransition : public TransitionUnit
   
   TypeTransition type() const;
 
-  uint64_t value() const;
-  uint64_t min() const;
-  uint64_t max() const;
-  void setValue(uint64_t);
-  void setMin(uint64_t);
-  void setMax(uint64_t);
-  void setMinMax(uint64_t, uint64_t);
+  double value() const;
+  double min() const;
+  double max() const;
+  void setValue(double);
+  void setMin(double);
+  void setMax(double);
+  void setMinMax(double, double);
   bool isInterval() const;
 
-  static const uint64_t noValue ;
+  static const double noValue ;
   
  private:
-  uint64_t m_value;
-  uint64_t m_min; 
-  uint64_t m_max;
+  double m_value;
+  double m_min; 
+  double m_max;
 };
 
 /***********************************************************************/
 // inline access functions
 /***********************************************************************/
-inline uint64_t NumericTransition::value() const { return m_value; }
-inline uint64_t NumericTransition::min() const { return m_min; }
-inline uint64_t NumericTransition::max() const { return m_max; }
-inline void NumericTransition::setValue(uint64_t val) { m_value = val; }
-inline void NumericTransition::setMin(uint64_t min) { m_min = min; }
-inline void NumericTransition::setMax(uint64_t max) { m_max = max; }
-inline void NumericTransition::setMinMax(uint64_t min,
-                     uint64_t max) {
+inline double NumericTransition::value() const { return m_value; }
+inline double NumericTransition::min() const { return m_min; }
+inline double NumericTransition::max() const { return m_max; }
+inline void NumericTransition::setValue(double val) { m_value = val; }
+inline void NumericTransition::setMin(double min) { m_min = min; }
+inline void NumericTransition::setMax(double max) { m_max = max; }
+inline void NumericTransition::setMinMax(double min,
+                     double max) {
   m_min = min;
   m_max = max; }
 

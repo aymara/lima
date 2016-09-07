@@ -71,8 +71,8 @@ void writeTypeTransition(std::ofstream& file, const TypeTransition t) {
   Common::Misc::writeCodedInt(file,t);
 }
 
-
-#define RECOGNIZER_VERSION "1.30"
+// from 1.30 to 1.40: NumericTransition become doubles instead of integers
+#define RECOGNIZER_VERSION "1.40"
 #define RECOGNIZER_DEBUG_VERSION ".debug"
 
 //----------------------------------------------------------------------
@@ -355,10 +355,14 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     t=new WordTransition(s);
     break; }
   case T_NUM: {
-    uint64_t val=Misc::readCodedInt(file);
-    uint64_t min=Misc::readCodedInt(file);
-    uint64_t max=Misc::readCodedInt(file);
+    double val=Misc::readDouble(file);
+    double min=Misc::readDouble(file);
+    double max=Misc::readDouble(file);
     t=new NumericTransition(val,min,max);
+#ifdef DEBUG_LP
+  AULOGINIT;
+  LDEBUG << "AutomatonReader::readTransitionUnit T_NUM" << val << min << max;
+#endif
     break; }
   case T_POS: {
     const Common::PropertyCode::PropertyAccessor* macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
@@ -697,9 +701,9 @@ writeTransitionUnit(std::ofstream& file,
   }
   case T_NUM: {
     NumericTransition* t=static_cast<NumericTransition*>(transition);
-    Misc::writeCodedInt(file,t->value());
-    Misc::writeCodedInt(file,t->min());
-    Misc::writeCodedInt(file,t->max());
+    Misc::writeDouble(file,t->value());
+    Misc::writeDouble(file,t->min());
+    Misc::writeDouble(file,t->max());
     break;
   }
   case T_TSTATUS: {
