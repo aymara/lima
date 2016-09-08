@@ -682,22 +682,22 @@ left="XPATH#//specific_entities/specific_entity[position=28][length=12]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<!--<testcase id="fre.sebp.17" type="informatif">
-<call-parameters>
-<param key="text" value="on est le 25"/>
-<param key="language" value="fre"/>
-<list key="pipelines">
-<item value="query"/>
-<item value="indexer"/>
-</list>
-</call-parameters>
-<expl>TIMEX : 25</expl>
-<test id="fre.sebp.17.1" trace=".se.xml"
-comment="date jour"
-left="XPATH#//specific_entities/specific_entity[position=11]/type"
-operator="="
-right="DateTime.DATE"/>
-</testcase>-->
+<testcase id="fre.sebp.17" type="informatif">
+  <expl>TIMEX : 25</expl>
+  <call-parameters>
+    <param key="text" value="on est le 25"/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="query"/>
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <test id="fre.sebp.17.1" trace=".se.xml"
+        comment="date jour"
+        left="XPATH#//specific_entities/specific_entity[position=11]/type"
+        operator="="
+        right="DateTime.DATE"/>
+</testcase>
 <testcase id="fre.sebp.18" type="bloquant">
 <call-parameters>
 <param key="text" value="on est le mercredi 26"/>
@@ -1000,12 +1000,12 @@ right="Numex.NUMEX"/>
 comment="pourcentage"
 left="XPATH#//specific_entities/specific_entity[position=37][length=4]/type"
 operator="="
-right="Numex.NUMEX"/>
+right="Numex.NUMBER"/>
 <test id="fre.sebp.35.2" trace=".se.xml"
 comment="nombre mixte chiffres avec virgule/lettres"
 left="XPATH#//specific_entities/specific_entity[position=44][length=15]/type"
 operator="="
-right="Numex.NUMEX"/>
+right="Numex.NUMBER"/>
 </testcase>
 
 <!--==================== tests PRODUCT ====================-->
@@ -1043,5 +1043,34 @@ operator="="
   operator="="
     right="Numex.NUMEX"/>
   </testcase>
+
+<testcase id="fre.se.numex.61" type="bloquant">
+  <expl>NUMEX: test consecutive numbers. See issue #50 on github</expl>
+  <call-parameters>
+    <param key="text" value="1234 3.2 4,5"/>
+    <param key="language" value="fre"/>
+    <list key="pipelines">
+      <item value="query"/>
+      <item value="indexer"/>
+    </list>
+  </call-parameters>
+  <test id="fre.se.numex.61.1" trace=".se.xml" 
+        comment="First number: long integer with no spaces"
+        left="XPATH#//specific_entities/specific_entity[position=1][length=4]/type"
+        operator="="
+        right="Numex.NUMBER"/>
+  <test id="fre.se.numex.61.2" trace=".se.xml" 
+        comment="Second number: real number with dot for separating decimal part (eng convention)"
+        left="XPATH#//specific_entities/specific_entity[position=6][length=3]/type"
+        operator="="
+        right="Numex.NUMBER"/>
+  <test id="fre.se.numex.61.3" trace=".se.xml" 
+        comment="Third number: real number with comma for separating decimal part (fre convention)"
+        left="XPATH#//specific_entities/specific_entity[position=10][length=3]/type"
+        operator="="
+        right="Numex.NUMBER"/>
+</testcase>
+
 </testcases>
+
 
