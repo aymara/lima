@@ -30,14 +30,14 @@ October,
 December
 )
 
-[in]::@Months:NOT_LOCATION:
-[in]::<DateTime.DATE>:NOT_LOCATION:
+[in]::@Months:NOT_GEO:
+[in]::<DateTime.DATE>:NOT_GEO:
 
 # 20120716, GC:
 # hack to avoid references to people's work as location like in " in Yaffa Ganz' story ".
 # Here, the possessive marker, which is not included in the token is used to avoid the
 # location interpretation
-[in]::(@Capitalized){1-3} ':NOT_LOCATION:
+[in]::(@Capitalized){1-3} ':NOT_GEO:
 
 [in]::t_capital_1st{1-3}:GEO:
 =>AppendEntityFeature(right,"name")
