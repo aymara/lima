@@ -176,7 +176,7 @@ void BoWXMLWriter::writeBoWText(
                                 const BoWText* text,
                                 const bool useIterator,
                                 const bool useIndexIterator) {
-  //m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
+  m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
 
   m_d->m_spaces="";
   m_d->m_outputStream <<"<bowText>" << std::endl;
