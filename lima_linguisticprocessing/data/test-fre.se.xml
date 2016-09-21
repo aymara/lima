@@ -133,9 +133,9 @@
         <item value="indexer"/>
       </list>
     </call-parameters>
-    <expl>Paris</expl>
+    <expl>Location with trigger, the trigger is not in the entity.</expl>
     <test id="fre.se.63.1" trace=".se.xml"
-          comment="lieu avec annonceur, l'annonceur n'est pas dans la frontière "
+          comment="The entity is restricted to the five letters word 'Paris'."
           left="XPATH#//specific_entities/specific_entity[position=13][length=5]/type"
           operator="="
           right="Location.LOCATION"/>
