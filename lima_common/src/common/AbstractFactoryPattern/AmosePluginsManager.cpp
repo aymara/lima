@@ -55,6 +55,10 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
+#ifdef DEBUG_CD
+    ABSTRACTFACTORYPATTERNLOGINIT;
+    LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
+#endif
     
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
