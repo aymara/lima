@@ -4,6 +4,7 @@ noun	NN
 proper noun	NNP
 separable transitive verb	VB
 preposition	IN
+TO	TO
 adverb	RB
 subordinating conjunction	SCONJ
 IN	IN
@@ -15,3 +16,4 @@ locative adverb	RB
 interrogative adverb	RB
 UH	UH
 DT	DT
+PDT	PDT
