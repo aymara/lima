@@ -2,6 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
   <!--==================== tests LOCATION ====================-->
+  <!-- @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: -->
   <testcase id="fre.se.36" type="pertinent">
     <call-parameters>
       <param key="text" value="au Quai d'Orsay"/>
@@ -18,6 +19,8 @@
           operator="="
           right="Location.LOCATION"/>
   </testcase>
+  <!-- même règle: 
+  @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: -->
   <testcase id="fre.se.37" type="bloquant">
     <call-parameters>
       <param key="text" value="le tunnel du Mont-Blanc"/>
@@ -34,6 +37,8 @@
           operator="="
           right="Location.LOCATION"/>
   </testcase>
+  <!-- même règle: 
+  @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: -->
   <testcase id="fre.se.38" type="pertinent">
     <call-parameters>
       <param key="text" value="la porte de la Chapelle"/>
@@ -50,6 +55,7 @@
           operator="="
           right="Location.LOCATION"/>
   </testcase>
+  <!-- pas de règle déclnchée, OK! -->
   <testcase id="fre.se.39" type="bloquant">
     <call-parameters>
       <param key="text" value="au cours d'un entretien"/>
@@ -66,6 +72,7 @@
           operator="notexists"
           right=""/>
   </testcase>
+  <!-- pas de règle déclnchée, OK! -->
   <testcase id="fre.se.40" type="pertinent">
     <call-parameters>
       <param key="text" value="la mise en place d'un dispositif"/>
@@ -82,6 +89,7 @@
           operator="notexists"
           right=""/>
   </testcase>
+  <!-- pas de règle déclnchée, OK! -->
   <testcase id="fre.se.41" type="pertinent">
     <call-parameters>
       <param key="text" value="un cours de 12 euros"/>
@@ -98,6 +106,7 @@
           operator="notexists"
           right=""/>
   </testcase>
+  <!-- pas de règle déclnchée, OK! -->
   <testcase id="fre.se.42" type="pertinent">
     <call-parameters>
       <param key="text" value="un cours de 18,97 euros"/>
@@ -114,8 +123,26 @@
           operator="notexists"
           right=""/>
   </testcase>
+  <!-- [ville$NC]::[($ADJ)?] [(de|du|d'|de $DET)] (@Regions|@Countries|@Cities|$NP):LOCATION: -->
+  <testcase id="fre.se.63" type="bloquant">
+    <call-parameters>
+      <param key="text" value="la ville de Paris"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+    <expl>Paris</expl>
+    <test id="fre.se.63.1" trace=".se.xml"
+          comment="lieu avec annonceur, l'annonceur n'est pas dans la frontière "
+          left="XPATH#//specific_entities/specific_entity[position=13][length=5]/type"
+          operator="="
+          right="Location.LOCATION"/>
+  </testcase>
 
   <!--==================== tests PERSON ====================-->
+  <!-- @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName() -->
   <testcase id="fre.se.43" type="pertinent">
     <call-parameters>
       <param key="text" value="Jacques Chirac va à la cantine."/>
@@ -132,6 +159,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase>
+  <!-- @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName() -->
   <testcase id="fre.se.44" type="pertinent">
     <call-parameters>
       <param key="text" value="Jacques Bsdufof va à la cantine."/>
@@ -148,6 +176,8 @@
           operator="="
           right="Person.PERSON"/>
   </testcase>
+  <!-- variante avec condition d'arrêt -->
+  <!-- @Firstname:[(@Title|@FunctionTitle)?]:(@Initial|t_abbrev)? (@particule? @PersonNamePart) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName() -->
   <testcase id="fre.se.45" type="pertinent">
     <call-parameters>
       <param key="text" value="Jacques Porte va à la cantine."/>
@@ -164,6 +194,8 @@
           operator="="
           right="Person.PERSON"/>
   </testcase>
+  <!-- @PersonNamePart:[@TitlePlural]:(@PersonNamePart){0-2} [et]:PERSON: -->
+  <!-- @PersonNamePart:[(@TitlePlural (@PersonNamePart){0-2} et)]:(@PersonNamePart){0-2}:PERSON: -->
   <testcase id="fre.se.46" type="pertinent">
     <call-parameters>
       <param key="text" value="MM. Sfar et Blain vont à la cantine."/>
@@ -185,6 +217,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase>
+  <!-- @PersonNamePart:(@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName() -->
   <testcase id="fre.se.47" type="pertinent">
     <call-parameters>
       <param key="text" value="&quot;ah bon&quot;, déclare Sanjiv Sidhu, président d' i2 Technologies."/>
@@ -202,6 +235,8 @@
           right="Person.PERSON"/>
   </testcase>
   <!--==================== tests ORGANIZATION ====================-->
+  <!-- [@AnnonceurOrg]::@OrganizationNamePart (@OrganizationNamePart?):ORGANIZATION: -->
+  <!-- [filiale]::[$ADJ?] [(de|d\')] @OrganizationNamePart{1-2}:ORGANIZATION: -->
   <testcase id="fre.se.48" type="pertinent">
     <call-parameters>
       <param key="text" value="le groupe DFDHK est une filiale de Stromtap"/>
@@ -228,6 +263,9 @@
   <!--==================== tests EVENT ====================-->
   
   <!--==================== tests de règles ====================-->
+  <!-- @Cities:::LOCATION: -->
+  <!-- @PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):LOCATION: -->
+  <!-- @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: -->
     <testcase id="fre.se.49" type="bloquant">
     <call-parameters>
       <param key="text" value="Paris se trouve au nord de Marseille."/>
@@ -265,7 +303,8 @@
           operator="="
           right="Location.LOCATION"/>
   </testcase>
-     <testcase id="fre.se.51" type="informatif">
+  <!--  @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION:  -->
+  <testcase id="fre.se.51" type="informatif">
     <call-parameters>
       <param key="text" value="Le théâtre Marigny accueille en ce moment &quot;Shirley et Dino&quot;."/>
       <param key="language" value="fre"/>
@@ -281,6 +320,8 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
+  <!-- bourse::de @SECities:ORGANIZATION: -->
+  <!-- @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName() -->
   <testcase id="fre.se.52" type="bloquant">
     <call-parameters>
       <param key="text" value="Jean Pierre Gaillard à la Bourse de Paris."/>
