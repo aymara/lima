@@ -188,7 +188,7 @@
   - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
-  - c_m > LOWER_1ST_UPPER
+  - c_m|c_currency > LOWER_1ST_UPPER
   - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
   - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_quote c_Mm > APOS

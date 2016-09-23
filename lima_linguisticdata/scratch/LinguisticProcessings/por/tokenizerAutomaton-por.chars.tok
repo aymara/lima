@@ -12,6 +12,7 @@ c_quote < c_del : Word delimitor, possessive ;
 c_fraction < c_del : Fraction sign ;
 c_percent < c_del : Percent sign ;
 c_del1 < c_del : Word delimitor, word itself ;
+c_currency < c_del1 : Currency sign ;
 c_plus < c_del1 : plus sign ;
 c_del2 < c_del : Sentence delimitor, word itself ;
 c_Mm < c_all : Letter ;
@@ -51,7 +52,7 @@ chars {
 0021, EXCLAMATION MARK, c_del2 ;
 0022, QUOTATION MARK, c_del1 ;
 0023, NUMBER SIGN, c_del1 ;
-0024, DOLLAR SIGN, c_del1 ;
+0024, DOLLAR SIGN, c_currency ;
 0025, PERCENT SIGN, c_percent ;
 0026, AMPERSAND, c_del1 ;
 0027, APOSTROPHE, c_quote ;
@@ -148,10 +149,10 @@ chars {
 009C, STRING_TERMINATOR, c_del ;
 00A0, NO-BREAK SPACE, c_b ;
 00A1, INVERTED EXCLAMATION MARK, c_del2 ;
-00A2, CENT SIGN, c_del1 ;
-00A3, POUND SIGN, c_del1 ;
-00A4, CURRENCY SIGN, c_other ;
-00A5, YEN SIGN, c_del1 ;
+00A2, CENT SIGN, c_currency ;
+00A3, POUND SIGN, c_currency ;
+00A4, CURRENCY SIGN, c_currency ;
+00A5, YEN SIGN, c_currency ;
 00A6, BROKEN BAR, c_del1 ;
 00A7, SECTION SIGN, c_del1 ;
 00A8, DIAERESIS, c_other ;
@@ -265,6 +266,6 @@ chars {
 2011, NON-BREAKING HYPHEN, c_hyphen ;
 201C, LEFT DOUBLE QUOTATION MARK, c_quote ;
 201D, RIGHT DOUBLE QUOTATION MARK, c_quote ;
-20AC, EURO SIGN, c_del1 ;
+20AC, EURO SIGN, c_currency ;
 2122, TRADE MARK SIGN, c_del1
 }
