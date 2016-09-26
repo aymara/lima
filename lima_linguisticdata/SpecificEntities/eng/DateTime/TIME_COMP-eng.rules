@@ -16,7 +16,7 @@ pm,p . m .,p . m.,p.m.,PM,P . M .,P . M.,P M
 t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =>SetEntityFeature(trigger,"hour:int")
 =>SetEntityFeature(right.2,"minute:int")
-=>SetEntityFeature(right.3.2,"minute:int")
+=>SetEntityFeature(right.3.2,"second:int")
 =>SetEntityFeature(right.4,"ampm")
 =>SetEntityFeature(right.5,"timezone")
 =>NormalizeEntity()
