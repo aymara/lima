@@ -186,7 +186,32 @@ LimaStatusCode BowDumper::process(
   bowText.lang=metadata->getMetaData("Lang");
   buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
 
-  BoWBinaryWriter writer(handler->shiftFrom());
+  // Exclude from the shift list XML entities preceding the offset and 
+  // readjust positions regarding the beginning of the node being analyzed
+  uint64_t offset = metadata->getStartOffset();
+  QMap<uint64_t, uint64_t> localShiftFrom;
+  const auto& globalShiftFrom = handler->shiftFrom();
+  if (!globalShiftFrom.isEmpty())
+  {
+    uint64_t diff = 0;
+    // start first loop at second position
+    auto it=globalShiftFrom.constBegin()+1;
+    for (; it!=globalShiftFrom.constEnd(); ++it)
+    {
+      if (it.key()+(it-1).value() >= offset)
+        break;
+      diff = it.value();
+    }
+    // rewind by one to not miss the first entity and then 
+    // continue from where we stoped the shift corrections
+    for (it = it -1; it!=globalShiftFrom.constEnd(); ++it)
+      if (it.value() > diff)
+      {
+        // empirical correction but seems to work
+        localShiftFrom.insert(it.key()+diff, it.value()-diff); 
+      }
+  }
+  BoWBinaryWriter writer(localShiftFrom);
   DumperStream* dstream=initialize(analysis);
 
 #ifdef DEBUG_LP
