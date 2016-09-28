@@ -632,6 +632,60 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 #endif
   Misc::writeUTF8StringField(file,token->getInflectedForm());
   Misc::writeCodedInt(file,token->getCategory());
+#define CORRECTION
+#ifdef CORRECTION             //<-----------------------------------------------------------------------------------------------
+
+  auto beg = token->getPosition();
+  auto end = token->getLength() + beg;
+  //::std::cout << "beg: " << beg << "   end: " << end << ::std::endl;
+
+  if (m_shiftFrom.empty())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is empty";
+#endif
+  }
+  else
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin" << beg;
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end" << end;
+#endif
+    auto const it1 = m_shiftFrom.lowerBound(beg-1);
+    if (it1 == m_shiftFrom.constBegin())
+    {
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: NO shift";
+#endif
+    }
+    else
+    { 
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: shift by" << (it1-1).value();
+#endif
+      beg += (it1-1).value();
+    }
+    auto const it2 = m_shiftFrom.lowerBound(end-1);
+    if (it2 == m_shiftFrom.constBegin())
+    {
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: NO shift";
+#endif
+    }
+    else
+    { 
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: shift by" << (it2-1).value();
+#endif
+      end += (it2-1).value();
+    }
+  }
+
+  Misc::writeCodedInt(file, beg-1);
+  Misc::writeCodedInt(file, end-beg);
+
+#else
+// code d'origine
   if (m_shiftFrom.empty())
   {
 #ifdef DEBUG_LP
@@ -661,6 +715,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
     }
   }
   Misc::writeCodedInt(file,token->getLength());
+#endif
 }
 
 void BoWBinaryWriter::writePredicate(std::ostream& file,
