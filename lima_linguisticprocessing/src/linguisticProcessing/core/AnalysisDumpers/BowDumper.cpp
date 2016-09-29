@@ -191,6 +191,10 @@ LimaStatusCode BowDumper::process(
   uint64_t offset = metadata->getStartOffset();
   QMap<uint64_t, uint64_t> localShiftFrom;
   const auto& globalShiftFrom = handler->shiftFrom();
+#ifdef DEBUG_LP
+  LDEBUG << "BowDumper::process offset:" << offset;
+  LDEBUG << "BowDumper::process globalShiftFrom:" << globalShiftFrom;
+#endif
   if (!globalShiftFrom.isEmpty())
   {
     uint64_t diff = 0;
@@ -198,24 +202,42 @@ LimaStatusCode BowDumper::process(
     auto it=globalShiftFrom.constBegin()+1;
     for (; it!=globalShiftFrom.constEnd(); ++it)
     {
+#ifdef DEBUG_LP
+      LDEBUG << "BowDumper::process it.key():"<<it.key()
+              <<"; (it-1).value():"<<(it-1).value()
+              <<"; offset:"<<offset<<"; diff:"<<diff;
+#endif
       if (it.key()+(it-1).value() >= offset)
         break;
       diff = it.value();
     }
+#ifdef DEBUG_LP
+    LDEBUG << "BowDumper::process after shiftFrom loop, diff is:" << diff;
+#endif
     // rewind by one to not miss the first entity and then 
     // continue from where we stoped the shift corrections
     for (it = it -1; it!=globalShiftFrom.constEnd(); ++it)
-      if (it.value() > diff)
+    {
+#ifdef DEBUG_LP
+      LDEBUG << "BowDumper::process it.key():"<<it.key()
+              <<"; it.value():"<<it.value()
+              <<"; offset:"<<offset<<"; diff:"<<diff;
+#endif
+      if (it.key()+diff >= offset && it.value() > diff)
       {
         // empirical correction but seems to work
         localShiftFrom.insert(it.key()+diff, it.value()-diff); 
       }
+    }
   }
+#ifdef DEBUG_LP
+  LDEBUG << "BowDumper::process localShiftFrom:" << localShiftFrom;
+#endif
   BoWBinaryWriter writer(localShiftFrom);
   DumperStream* dstream=initialize(analysis);
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
+  LDEBUG << "BowDumper::process writing BoW text on" << dstream->out();
 #endif
   writer.writeBoWText(dstream->out(),bowText);
   delete dstream;
