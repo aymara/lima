@@ -394,7 +394,7 @@ displayRelationsDistanceOfArguments(const SyntacticData& data,
     }
     else {
       // can be equal (l', n'...) or
-      // negative (TEMPCOMP -> length of auxiliary has changed)
+      // negative (aux -> length of auxiliary has changed)
       out << 0;
     }
     out << endl;
@@ -467,7 +467,7 @@ void SyntacticAnalysisTools::displayRelationsXMLFormat(const SyntacticData& data
     }
     else {
       // can be equal (l', n'...) or
-      // negative (TEMPCOMP -> length of auxiliary has changed)
+      // negative (aux -> length of auxiliary has changed)
       pathDistance = 0;
     }
     xmlStream << "<syntactic_relation label=\"" << relLabel << "\"" << " dist=\"" <<  pathDistance<< "\">"

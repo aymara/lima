@@ -717,6 +717,10 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
 //         LDEBUG << "trying to remove      : " << (*part).getString();
         part=m_parts.erase(part); 
 //         LDEBUG << "has erased artificial : " << getString();
+#ifdef ANTINNO_BUGFIX
+        // spécique lib std microsoft
+        if (part != m_parts.begin())
+#endif
         part--; // erase returns iterator following the one erased
       }
 //       else if (inSubPart) {
@@ -968,10 +972,26 @@ void AutomatonString::parseUnit(const LimaString& str,
       oss << "unknown class " << Common::Misc::limastring2utf8stdstring(str.mid(newBegin+1,newSize-1));
       throw AutomatonCompilerException(oss.str());
     }
-    // copy only type, parts and unit (other are set by modifiers)
-    setType((*it).getAutomatonString().getType());
-    m_parts=(*it).getAutomatonString().getParts();
-    m_unit=(*it).getAutomatonString().getUnitString();
+    const Gazeteer& gazeteer = *it;
+    //if( !gazeteer.hasMultiTermWord() && gazeteer.hasNoCategoryNorTstatus() ) {
+    if( gazeteer.hasNoCategoryNorTstatus() ) {
+#ifdef DEBUG_LP
+      LDEBUG << "AutomatonString: set type(SIMPLE_GAZETEER)";
+#endif
+      setType(SIMPLE_GAZETEER);
+      // m_parts is empty!;
+      // m_unit=gazeteer.getName();
+      m_unit=str.mid(newBegin,newSize);
+    }
+    else {
+      // copy only type, parts and unit (other are set by modifiers)
+#ifdef DEBUG_LP
+      LDEBUG << "AutomatonString: set type(" << (*it).getAutomatonString().getType() << ")"; 
+#endif
+      setType((*it).getAutomatonString().getType());
+      m_parts=(*it).getAutomatonString().getParts();
+      m_unit=(*it).getAutomatonString().getUnitString();
+    }
   }
   else if (str[newBegin] == CHAR_BEGIN_NAMESUB) {
 #ifdef DEBUG_LP
@@ -1060,6 +1080,9 @@ LimaString AutomatonString::getString() const {
 //   AUCLOGINIT;
   switch(m_type) {
   case UNIT: {
+    return applyModifiers(m_unit);
+  }
+  case SIMPLE_GAZETEER: {
     return applyModifiers(m_unit);
   }
   case SEQUENCE: {

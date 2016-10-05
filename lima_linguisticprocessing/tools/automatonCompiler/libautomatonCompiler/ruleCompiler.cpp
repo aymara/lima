@@ -105,7 +105,7 @@ LimaString initRule(Rule& r,
   try {
   // Lima::TimeUtilsController* ctrl8  = new Lima::TimeUtilsController("setLeftAutomaton", true);
     r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(), 
-                                                         language,
+                                                         language,gazeteers,
                                                          BACKWARDSEARCH,
                                                          activeEntityGroups));
   // delete ctrl8;
@@ -119,7 +119,7 @@ LimaString initRule(Rule& r,
   try {
     // Lima::TimeUtilsController* ctrl9  = new Lima::TimeUtilsController("setRightAutomaton", true);
     r.setRightAutomaton(AutomatonCompiler::buildAutomaton(s.getRight(),
-                                                          language,
+                                                          language,gazeteers,
                                                           FORWARDSEARCH,
                                                           activeEntityGroups));
     // delete ctrl9;

@@ -27,6 +27,7 @@
   */
 
 #include "SelectionalPreferences.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
@@ -66,7 +67,7 @@ void SelectionalPreferences::init(
   
   try {
     std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    std::string preferencesFileName=resourcePath + "/" + unitConfiguration.getParamsValueAtKey("file");
+    std::string preferencesFileName = Common::Misc::findFileInPaths(resourcePath.c_str(), unitConfiguration.getParamsValueAtKey("file").c_str()).toUtf8().constData();
     loadFromFile(preferencesFileName);
   
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
@@ -93,8 +94,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
     return;
   }
   
-  std::string line;
-  getline(ifl, line);
+  std::string line = Lima::Common::Misc::readLine(ifl);
   Common::Misc::chomp(line);
   linesCounter++;
   while (ifl.good() && !ifl.eof())
@@ -158,7 +158,7 @@ void SelectionalPreferences::loadFromFile(const std::string& fileName)
       boost::tuple< std::string, LinguisticCode, std::string, std::string, LinguisticCode > tuple(target,targetMacro,dependency,source,soureceMacro);
       m_preferences.insert(std::make_pair(tuple, probability));
     }
-    getline(ifl, line);
+    line = Lima::Common::Misc::readLine(ifl);
     Common::Misc::chomp(line);
     linesCounter++;
   }

@@ -31,6 +31,10 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef ANTINNO_SPECIFIC
+// FWI 31/10/2013 : ajout #include "antinno.ResourcesIdent.h"
+#include "antinno.ResourcesIdent.h"
+#endif
 
 using namespace std;
 
@@ -96,6 +100,19 @@ void DictionaryData::loadBinaryFile(const std::string& file)
 
   // parseEntries
   unsigned char* p=m_data;
+
+#ifdef ANTINNO_SPECIFIC
+  // FWI 31/10/2013 : ajout code de lecture de l'entête "Ant" (copie code JYS de S2)
+  //JYS 01/03/11 Affiche l'identification Antinno si elle est presente, sinon ne fait rien
+  if (string((char*)p, 3) == "Ant") {
+    p +=3;
+    const std::size_t antLen = p[0] + p[1]*0x100 + p[2]*0x10000 + p[3]*0x1000000;
+    p +=4;
+    LINFO << "\n" + file + "\n" + ::antinno::ResourcesIdent((char*)p, antLen).toHumanReadableString();
+    p += antLen;
+  } //JYS 01/03/11
+  #endif
+
   uint64_t nbEntries=readCodedInt(p);
   m_entriesAddr.resize(nbEntries);
   uint64_t read;

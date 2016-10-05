@@ -22,6 +22,7 @@
 #define ANALYSISWRAPPER_H
 
 #include <set>
+#include <memory>
 #include <QtCore/QThread>
 #include <QtCore/QString>
 
@@ -45,8 +46,9 @@ class AnalysisWrapper : public QObject
 {
   Q_OBJECT
 public:
-    AnalysisWrapper (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer,
-                  const std::set<std::string>& langs, QObject* parent = 0 );
+    AnalysisWrapper (
+        std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > analyzer,
+        const std::set<std::string>& langs, QObject* parent = 0 );
     virtual ~AnalysisWrapper();
     
   QString analyze(const QString& text, const QString& language, const QString& pipeline);

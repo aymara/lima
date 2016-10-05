@@ -86,8 +86,6 @@ public:
 
     void initMediaData(MediaId med);
 
-    void initXMLParser();
-
     const FsaStringsPool& stringsPool(MediaId med) const;
     FsaStringsPool& stringsPool(MediaId med);
 

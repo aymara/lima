@@ -33,6 +33,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
 
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 
 #include <string>
@@ -150,9 +151,8 @@ void CharChart::init(
   MediaId language=manager->getInitializationParameters().language;
 
   try {
-    std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    std::string charChartFileName=resourcePath + "/" + unitConfiguration.getParamsValueAtKey("charFile");
-    loadFromFile(charChartFileName);
+    QString charChartFileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("charFile").c_str());
+    loadFromFile(charChartFileName.toUtf8().constData());
 
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

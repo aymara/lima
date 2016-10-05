@@ -19,23 +19,27 @@
 /**
   * @file               LimaString.cpp
   * @date               Created on  : Thu Oct 9, 2003
-  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
-
+  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr> \n
   *                     Copyright (c) 2003-2012 by CEA LIST
   * @version            $Id$
   */
 
 #include "LimaString.h"
 
-
 namespace Lima {
-
+#ifdef ANTINNO_SPECIFIC
+// FWI 19/05/2016 : supprimé car défini dans LimaCommon.h
+//  std::ostream& operator<<(std::ostream &os, const LimaString& s)
+//  {
+//    os << s.toUtf8().data();
+//    return os;
+//  }
+#else
   std::ostream& operator<<(std::ostream &os, const LimaString& s)
   {
     os << s.toUtf8().data();
     return os;
   }
-  
-  
+#endif
   
 } // closing namespace Lima

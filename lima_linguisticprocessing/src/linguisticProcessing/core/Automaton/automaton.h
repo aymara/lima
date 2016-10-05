@@ -35,6 +35,9 @@
 #include "AutomatonExport.h"
 #include "transitionUnit.h"
 #include "searchGraph.h"
+#ifdef ANTINNO_SPECIFIC
+#include "gazeteerTransition.h"
+#endif
 #include "transition.h"
 #include "transitionSearchStructure.h"
 #include "recognizerMatch.h"
@@ -341,9 +344,10 @@ public:
   bool getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                               const LinguisticGraphVertex& vertex, 
                               AnalysisContent& analysis,
+                              SearchGraph* searchGraph,
                               const Tstate& state,
-                              std::vector<const Transition*>& 
-                              matchingTransitions) const;
+                              std::vector<std::pair<std::deque<LinguisticGraphVertex>,const Transition*> >& matchingTransitions,
+                              const LinguisticGraphVertex& limit) const;
   
  protected:
   Tstate m_numberStates;    /**< number of states in the automaton */
@@ -366,6 +370,7 @@ public:
   bool testFromState(const Tstate firstState,
                      const LinguisticAnalysisStructure::AnalysisGraph& graph,
                      const LinguisticGraphVertex& begin,
+                     const LinguisticGraphVertex& limit,
                      AnalysisContent& analysis,
                      AutomatonMatchSet& results,
                      ConstraintCheckList& checkList,

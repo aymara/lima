@@ -83,7 +83,7 @@ void BowDocumentHandler::endDocument()
     // read Part( istream, AbstractBoWXMLWriter writer, bool useIterator)
     // do not use iterator, 
     // std::cout is unused
-    reader.readBoWDocumentBlock(in, *document, structuredBowHandler, false);
+    reader.readBoWDocumentBlock(in, *document, structuredBowHandler, false, false);
   }
 
   delete m_bowstream;

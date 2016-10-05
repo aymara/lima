@@ -24,9 +24,15 @@ using namespace std;
 
 namespace Lima
 {
-
-AnalysisContent::AnalysisContent() :
+AnalysisContent::AnalysisContent(
+#ifdef ANTINNO_SPECIFIC
+  Lima::StopAnalyze const& sa
+#endif
+  ) :
     m_analysisData()
+#ifdef ANTINNO_SPECIFIC
+      , _stopAnalyze(sa)
+#endif
 {}
 
 AnalysisContent::~AnalysisContent()
@@ -48,6 +54,12 @@ AnalysisContent::~AnalysisContent()
   LDEBUG << "AnalysisContent::~AnalysisContent all data deleted";
 #endif
 }
+#ifdef ANTINNO_SPECIFIC
+StopAnalyze const& AnalysisContent::stopAnalyze() const
+{
+  return _stopAnalyze;
+}
+#endif
 
 AnalysisData* AnalysisContent::getData(
   const std::string& id)

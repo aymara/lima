@@ -19,6 +19,7 @@
 #include "AmosePluginsManager.h"
 #include "common/LimaCommon.h"
 #include "common/AbstractFactoryPattern/DynamicLibrariesManager.h"
+#include "common/tools/FileUtils.h"
 
 #include <iostream>
 #include <QFile>
@@ -26,47 +27,66 @@
 
 using namespace Lima;
 using namespace Lima::Common;
+using namespace Lima::Common::Misc;
 
 AmosePluginsManager::AmosePluginsManager()
 {
   loadPlugins();
 }
 
-bool AmosePluginsManager::loadPlugins()
+bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
-  ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "AmosePluginsManager::loadPlugins";
+//   ABSTRACTFACTORYPATTERNLOGINIT;
+//   LINFO << "AmosePluginsManager::loadPlugins";
 //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
-  QDir pluginsDir(QString::fromUtf8(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData()) + "/plugins");
-  QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
-  Q_FOREACH(QString pluginsFile, pluginsFiles)
+  
+  QStringList configDirsList = configDirs.split(LIMA_PATH_SEPARATOR);
+  if (configDirsList.isEmpty())
   {
-#ifdef DEBUG_CD
-   LDEBUG << "AmosePluginsManager::loadPlugins loding plugins file " << pluginsFile.toUtf8().data();
-#endif
-    QFile file(pluginsDir.path() + "/" + pluginsFile);
-    if (!file.open(QIODevice::ReadOnly))
-      return false;
-    // for each entry, call load library
-    while (!file.atEnd()) 
-    {
-      QByteArray line = file.readLine();
-      if (line.endsWith('\n')) line.chop(1);
-      // Allows empty and comment lines
-      if ( !line.isEmpty() && !line.startsWith('#') )
-      {
-#ifdef WIN32
-        QString strline = QString(line.data()).trimmed() + ".dll";
-        QString library_path=QString::fromUtf8(qgetenv("LD_LIBRARY_PATH").constData()==0?"c:\amose\lib":qgetenv("LD_LIBRARY_PATH").constData());
-        DynamicLibrariesManager::changeable().addSearchPathes( library_path.toUtf8().data());
+    // Look for LIMA_CONF directory.
+    configDirsList = buildConfigurationDirectoriesList(QStringList() << "lima", QStringList());
+  }
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH(const QString& configDir, configDirsList)
 #else
-        QString strline = QString("lib") + line.data() + ".so";
+  for(const QString& configDir : configDirsList)
 #endif
-#ifdef DEBUG_CD
-        LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.data() << "'";
-#endif
-        DynamicLibrariesManager::changeable().loadLibrary(line.data());
+  {
+    // Deduce plugins directory.
+    QString stdPluginsDir(configDir);
+    stdPluginsDir.append("/plugins");
+    QDir pluginsDir(stdPluginsDir);
+    
+    // For each file under plugins directory, read plugins names and deduce shared libraries to load.
+    QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
+    Q_FOREACH(QString pluginsFile, pluginsFiles)
+    {
+//   #ifdef DEBUG_CD
+//     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
+//   #endif
+      // Open plugin file.
+      QFile file(pluginsDir.path() + "/" + pluginsFile);
+      if (!file.open(QIODevice::ReadOnly)) {
+        ABSTRACTFACTORYPATTERNLOGINIT;
+        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " << pluginsFile.toUtf8().data();
+        return false;
+      }
+      
+      // For each entry, call load library
+      while (!file.atEnd()) 
+      {
+        // Remove whitespace characters from the start and the end.
+        QString line = QString(file.readLine()).trimmed();
+        
+        // Allow empty and comment lines.
+        if ( !line.isEmpty() && !line.startsWith('#') )
+        {
+//   #ifdef DEBUG_CD
+//           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
+//   #endif
+          DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str());
+        }
       }
     }
   }

@@ -33,6 +33,7 @@
 
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
@@ -73,8 +74,8 @@ void DefaultProperties::init(
   std::deque<std::string> skipUnmarkStatus;
   try
   {
-    string file=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("defaultPropertyFile");
-    readDefaultsFromFile(file);
+    QString file = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),  unitConfiguration.getParamsValueAtKey("defaultPropertyFile").c_str());
+    readDefaultsFromFile(file.toUtf8().constData());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -118,6 +119,7 @@ LimaStatusCode DefaultProperties::process(
   AnalysisContent& analysis) const
 {
   Lima::TimeUtilsController timer("DefaultProperties");
+  MORPHOLOGINIT;
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
@@ -142,34 +144,29 @@ LimaStatusCode DefaultProperties::process(
       // orthographic alternatives, default properties are not applied>
       if (currentData->empty())
       {
-        auto it = m_defaults.find(currentToken->status().defaultKey());
-        if (it!=m_defaults.end()) 
-        {
+        std::map<LimaString,std::vector<LinguisticCode> >::const_iterator it=m_defaults.find(currentToken->status().defaultKey());
+        if (it!=m_defaults.end()) {
           LinguisticElement elem;
-          elem.inflectedForm = currentToken->form();
-          if (!currentToken->orthographicAlternatives().empty())
-          {
-            elem.lemma = *(currentToken->orthographicAlternatives().begin());
+          elem.inflectedForm=currentToken->form();
+          LimaString str=currentToken->stringForm();
+          if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end()){
+            str = m_charChart->unmark(currentToken->stringForm());
           }
-          else if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
-          {
-            elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[currentToken->stringForm()];
-          }
+          elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
           elem.normalizedForm=elem.lemma;
           elem.type=UNKNOWN_WORD;
           
-          for (auto codeItr=it->second.begin(); codeItr!=it->second.end();codeItr++)
+          for (std::vector<LinguisticCode>::const_iterator codeItr=it->second.begin();
+               codeItr!=it->second.end();
+               codeItr++)
           {
             elem.properties=*codeItr;
             currentData->push_back(elem);
           }
-        } 
-        else 
-        {
-          MORPHOLOGINIT;
+        } else {
           LWARN << "No default property for " 
-            << currentToken->stringForm() << ". Status : "
-            << currentToken->status().defaultKey();
+            << Common::Misc::limastring2utf8stdstring(currentToken->stringForm()) << ". Status : "
+            << Common::Misc::limastring2utf8stdstring(currentToken->status().defaultKey());
         }
       }
     }
@@ -193,7 +190,7 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
   string type;
   LinguisticCode props;
   while (fin.good() && !fin.eof()) {
-    getline(fin,line);
+    line = Lima::Common::Misc::readLine(fin);
     if (line.size()>0) {
       istringstream is(line);
       is >> type;

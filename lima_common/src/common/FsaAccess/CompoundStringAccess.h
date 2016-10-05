@@ -114,10 +114,6 @@ CompoundStringAccess<SimpleAccessByString>::CompoundStringAccess( bool trie_dire
 template <typename SimpleAccessByString>
 CompoundStringAccess<SimpleAccessByString>::~CompoundStringAccess()
 {
-#ifdef DEBUG_CD
-  COMPSTRACCESSLOGINIT;
-  LDEBUG <<  "CompoundStringAccess::~CompoundStringAccess()";
-#endif
 }
     
 template <typename SimpleAccessByString>

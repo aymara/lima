@@ -40,33 +40,6 @@ namespace LinguisticProcessing
 namespace LinguisticAnalysisStructure
 {
 
-LinguisticElement::LinguisticElement() :
-  inflectedForm(0),
-  lemma(0),
-  normalizedForm(0),
-  properties(0),
-  type(NO_MORPHOSYNTACTICTYPE)
-
-{
-}
-LinguisticElement::LinguisticElement(const  LinguisticElement& le) :
-  inflectedForm(le.inflectedForm),
-  lemma(le.lemma),
-  normalizedForm(le.normalizedForm),
-  properties(le.properties),
-  type(le.type)
-{
-}
-LinguisticElement& LinguisticElement::operator=(const LinguisticElement& le)
-{
-  inflectedForm = le.inflectedForm;
-  lemma = le.lemma;
-  normalizedForm = le.normalizedForm;
-  properties = le.properties;
-  type = le.type;
-  return *this;
-}
-
 bool LinguisticElement::operator==(const LinguisticElement& le) const
 {
   return ((properties==le.properties) &&

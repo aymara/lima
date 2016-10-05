@@ -38,9 +38,16 @@
 
 #include "QsLog_export.h"
 
+#ifdef ANTINNO_SPECIFIC
+#include <sstream>
+#include <boost/smart_ptr.hpp>
+#endif
+
 
 namespace QsLogging
 {
+
+ 
 enum Level
 {
    TraceLevel = 0,
@@ -127,6 +134,61 @@ private:
 };
 
 LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str );
+
+
+
+
+
+
+#ifdef ANTINNO_SPECIFIC
+
+namespace antinno {
+
+typedef ::std::string CategoryId;
+
+enum LIMA_COMMONQSLOG_EXPORT Level // identiques à ceux de log4cpp
+{
+  emerg = 0, fatal = 0, alert = 100, crit = 200, error = 300, warn = 400, notice = 500, info = 600, debug = 700
+};
+
+class LIMA_COMMONQSLOG_EXPORT ILog
+{
+public:
+  virtual void configure(::std::string const& configFilePath) = 0;
+  virtual bool canWrite(CategoryId const& id, Level level) const = 0;
+  virtual void writeRecord(CategoryId const& id, Level level, char const* pNullTerminatedUtf8String) = 0;
+};
+
+
+class LIMA_COMMONQSLOG_EXPORT Log4cpp : public ILog
+{
+public:
+  Log4cpp();
+  void configure(::std::string const& configFilePath);
+  bool canWrite(CategoryId const& id, Level level) const;
+  void writeRecord(CategoryId const& id, Level level, char const* pNullTerminatedUtf8String);
+};
+
+extern LIMA_COMMONQSLOG_EXPORT ::boost::shared_ptr<ILog> log;
+
+class LIMA_COMMONQSLOG_EXPORT LogHelper
+{
+public:
+  explicit LogHelper(QsLogging::Level logLevel, const QString& zone);
+  ~LogHelper();
+  ::std::ostream& stream();
+private:
+  QsLogging::Level const _level;
+  ::std::ostringstream _stream;
+  ::std::string const _zone;
+};
+
+}
+#endif  
+
+
+
+
 
 } // end namespace
 

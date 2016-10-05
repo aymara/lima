@@ -18,6 +18,7 @@
 */
 #include "common/LimaCommon.h"
 
+/* FWI 22/02/2016 déplacé dans le .h
 #ifdef WIN32
 
 #ifdef LIMA_COMMON_EXPORTING
@@ -32,7 +33,46 @@
 #define LIMA_COMMON_EXPORT
 
 #endif
+*/
 
+#include <fstream>
+#include <qthread.h>
+
+#ifdef ANTINNO_SPECIFIC
+namespace Lima
+{
+#ifdef _DEBUG
+StopAnalyze::StopAnalyze(bool v) : _v(v)
+{
+}
+StopAnalyze::StopAnalyze(StopAnalyze const& o) : _v(o._v)
+{
+}
+StopAnalyze::operator bool() const
+{
+  return _v;
+}
+StopAnalyze& StopAnalyze::operator=(StopAnalyze const& o)
+{
+  _v = o._v;
+  return *this;
+}
+bool StopAnalyze::operator==(StopAnalyze const& o)
+{
+  return _v == o._v;
+}
+bool StopAnalyze::operator!=(StopAnalyze const& o)
+{
+  return _v != o._v;
+}
+#else
+//  nothing
+#endif
+
+StopAnalyze defaultStopAnalyze(false);
+
+}
+#endif
 
 namespace Lima
 {

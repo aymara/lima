@@ -211,6 +211,13 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
       v != m_graph->lastVertex()) {
     if ((*i).isKept()) {
       Token* t = get(vertex_token,*(m_graph->getGraph()),v);
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      LOGINIT("LP::Automaton");
+      LDEBUG << "RecognizerMatch::getNormalizedString(...) token.form(): " << t->form();
+      LDEBUG << "RecognizerMatch::getNormalizedString(...) token.stringForm(): " << t->stringForm();
+#endif
+#endif
 
       if (t->status().isAlphaHyphen()) {
         firstHyphenPassed = true;
@@ -222,6 +229,12 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
       }
       else {
         // take first norm
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      LOGINIT("LP::Automaton");
+      LDEBUG << "RecognizerMatch::getNormalizedString(...) data->front().normalizedForm: " << data->front().normalizedForm;
+#endif
+#endif
         str += sp[data->front().normalizedForm];
       }
       currentPosition=t->position()+t->length();
@@ -291,6 +304,9 @@ isOverlapping(const RecognizerMatch& otherMatch) const {
 //**********************************************************************
 void RecognizerMatch::addBackVertex(const LinguisticGraphVertex& v,
                                     bool isKept, const LimaString& ruleElementId ) {
+  AULOGINIT;
+  LDEBUG << "RecognizerMatch:addBackVertex(v:" << v << ", isKept:" << isKept << ", ruleElmtId:" << ruleElementId << ")";
+
   push_back(MatchElement(v,isKept, ruleElementId));
 }
   
@@ -303,6 +319,8 @@ void RecognizerMatch::popBackVertex() {
 
 void RecognizerMatch::addFrontVertex(const LinguisticGraphVertex& v,
                                      bool isKept, const LimaString& ruleElementId) {
+  AULOGINIT;
+  LDEBUG << "RecognizerMatch:addFrontVertex(v:" << v << ", isKept:" << isKept << ", ruleElmtId:" << ruleElementId << ")";
   insert(begin(),MatchElement(v,isKept,ruleElementId));
 }
 
@@ -314,10 +332,16 @@ void RecognizerMatch::popFrontVertex() {
 }
 
 void RecognizerMatch::addBack(const RecognizerMatch& l) {
+  if( l.getHead() != 0 ){
+    setHead(l.getHead());
+  }
   insert(end(),l.begin(),l.end());
 }
   
 void RecognizerMatch::addFront(const RecognizerMatch& l) {
+  if( l.getHead() != 0 ){
+    setHead(l.getHead());
+  }
   insert(begin(),l.begin(),l.end());
 }
 

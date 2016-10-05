@@ -27,6 +27,7 @@
 #include "AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
@@ -85,9 +86,9 @@ void MultiLevelAnalysisDictionary::init(
         hasMainKeys=true;
         m_mainKeySize=ldico.keys->getSize();
       }
-      string dataFile=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + *dataIt;
+      QString dataFile = Common::Misc::findFileInPaths( Common::MediaticData::MediaticData::single().getResourcesPath().c_str(), (*dataIt).c_str());
       ldico.data=new DictionaryData();
-      ldico.data->loadBinaryFile(dataFile);
+      ldico.data->loadBinaryFile(dataFile.toUtf8().constData());
       m_dicos.push_back(ldico);
       keyIt++;
       dataIt++;

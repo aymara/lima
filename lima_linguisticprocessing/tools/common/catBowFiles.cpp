@@ -102,7 +102,7 @@ void readAndWriteBoWDocuments(ifstream& fileIn,
   BinaryWriterBoWDocumentHandler writer(fileOut);
   while (! fileIn.eof()) {
     document->reinit();
-    reader.readBoWDocumentBlock(fileIn, *document, writer, false);
+    reader.readBoWDocumentBlock(fileIn, *document, writer, false, false);
   }
 }
 

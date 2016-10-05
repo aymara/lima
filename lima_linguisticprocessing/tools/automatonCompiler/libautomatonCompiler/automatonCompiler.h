@@ -46,6 +46,7 @@ namespace AutomatonCompiler {
   // use directly automaton string
   LIMA_AUTOMATONCOMPILER_EXPORT Automaton buildAutomaton(const AutomatonString& automatonString,
                            MediaId language,
+                           const std::vector<Gazeteer>& gazeteers,
                            SearchGraphSense sense,
                            const std::vector<LimaString>& activeEntityGroups);
 
@@ -53,12 +54,14 @@ namespace AutomatonCompiler {
                         const AutomatonString& automatonString, 
                         const Tstate& initialState, const std::string& currentId,
                         MediaId language,
+                        const std::vector<Gazeteer>& gazeteers,
                         const std::vector<LimaString>& activeEntityGroups);
   
   LIMA_AUTOMATONCOMPILER_EXPORT Tstate buildAutomatonNotOptional(Automaton& a,
                                    const AutomatonString& automatonString, 
                                    const Tstate& initialState, const std::string& currentId,
                                    MediaId language,
+                                   const std::vector<Gazeteer>& gazeteers,
                                    const std::vector<LimaString>& activeEntityGroups);
 } // end namespace
 } // end namespace

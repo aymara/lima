@@ -273,8 +273,6 @@ BoWToken* BoWToken::clone() const
 //***********************************************************************
 BoWToken::~BoWToken()
 {
-  BOWLOGINIT;
-  LDEBUG << "BoWToken::~BoWToken " << this;
   delete m_d;
 }
 
@@ -339,10 +337,10 @@ LimaString BoWToken::getString(void) const
 
   if (m_d->m_useOnlyLemma)
   {
-//#ifdef DEBUG_LP
-    LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'true'";
-    LDEBUG << "BoWToken::getString: getLemma()=" << getLemma();
-//#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'true'";
+//     LDEBUG << "BoWToken::getString: getLemma()=" << getLemma();
+// #endif
     return getLemma();
   }
   else
@@ -350,13 +348,13 @@ LimaString BoWToken::getString(void) const
     ostringstream cat;
     cat << m_d->m_category;
 //#ifdef DEBUG_LP
-    LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'false'";
+//     LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'false'";
 //#endif
 /*    ostringstream len;
     len << m_length;
     return m_lemma + m_separator + LimaString(cat.str()) + m_separator + LimaString(len.str());*/
 //#ifdef DEBUG_LP
-    LDEBUG << "BoWToken::getString: getLemma()=" << getLemma() << ", cat=" << Misc::utf8stdstring2limastring(cat.str() );
+//     LDEBUG << "BoWToken::getString: getLemma()=" << getLemma() << ", cat=" << Misc::utf8stdstring2limastring(cat.str() );
 //#endif
     return getLemma() + m_d->m_separator + Misc::utf8stdstring2limastring(cat.str());
   }

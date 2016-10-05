@@ -49,15 +49,23 @@ public:
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-               const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
-  ;
+#ifdef ANTINNO_SPECIFIC
+               const std::set<std::string>& inactiveUnits = std::set<std::string>(), Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const
+#else
+			         const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
+#endif
+;
 
   void analyze(const std::string& texte,
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+#ifdef ANTINNO_SPECIFIC
+               const std::set<std::string>& inactiveUnits = std::set<std::string>(), Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const
+#else
                const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
-  ;
+#endif
+;
 };
 
 class CoreLinguisticProcessingClientFactory : public AbstractLinguisticProcessingClientFactory
@@ -70,13 +78,13 @@ public:
     std::deque<std::string> langs,
     std::deque<std::string> pipelines);
 
-  AbstractLinguisticProcessingClient* createClient() const;
+  std::shared_ptr< AbstractProcessingClient > createClient() const;
 
   virtual ~CoreLinguisticProcessingClientFactory();
 
 private:
   CoreLinguisticProcessingClientFactory();
-  static CoreLinguisticProcessingClientFactory* s_instance;
+  static std::unique_ptr<CoreLinguisticProcessingClientFactory> s_instance;
 
 };
 

@@ -29,6 +29,7 @@
 #include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "boost/algorithm/string/split.hpp"
 #include "boost/algorithm/string/classification.hpp"
@@ -56,9 +57,13 @@ MONTHSDAYS_MONTH_ID=std::string("m");
 const std::string NormalizeDateTimeResources::
 MONTHSDAYS_DAY_ID=std::string("d");
 const std::string NormalizeDateTimeResources::
-MONTHSDAYS_ORDINAL_ID=std::string("o");
+WORD_CARDINAL_ID=std::string("c");
 const std::string NormalizeDateTimeResources::
-MONTHSDAYS_SUFFIX_ID=std::string("s");
+WORD_CARDINAL_SEPARATOR_ID=std::string("s");
+const std::string NormalizeDateTimeResources::
+WORD_ORDINAL_SUFFIX_ID=std::string("w");
+const std::string NormalizeDateTimeResources::
+NUMBER_ORDINAL_SUFFIX_ID=std::string("n");
 
 
 NormalizeDateTimeResources::NormalizeDateTimeResources():
@@ -89,7 +94,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   try
   {
     tzDbFile = unitConfiguration.getParamsValueAtKey("timezoneDatabase");
-    tzDbFile = resourcesPath + "/" + tzDbFile;
+    tzDbFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), tzDbFile.c_str()).toUtf8().constData();
 //     m_timezoneDatabase = new boost::local_time::tz_database();
 //     m_timezoneDatabase->load_from_file(tzDbFile);
   }
@@ -112,7 +117,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   try
   {
     string monthsDaysFile = unitConfiguration.getParamsValueAtKey("monthsDays");
-    monthsDaysFile = resourcesPath + "/" + monthsDaysFile;
+    monthsDaysFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), monthsDaysFile.c_str()).toUtf8().constData();
     if (!readMonthDays(monthsDaysFile)) {
       SELOGINIT;
       LERROR << "Error loading monthsDays resources '" 
@@ -132,6 +137,7 @@ bool NormalizeDateTimeResources::
 readMonthDays(const std::string& monthsDaysFile) 
 {
 
+  m_wordCardinalSeparator[Common::Misc::utf8stdstring2limastring(" ")]=0;
   ifstream file(monthsDaysFile.c_str(), std::ifstream::binary);
   if (!file.good()) {
     return false;
@@ -139,13 +145,13 @@ readMonthDays(const std::string& monthsDaysFile)
   string utf8line;
   LimaString line;
   while (file.good()) {
-    getline(file,utf8line);
+    utf8line = Lima::Common::Misc::readLine(file);
     if (!utf8line.empty()) {
       line=Common::Misc::utf8stdstring2limastring(utf8line);
       std::vector<std::string> elements;
       split(elements,utf8line,is_any_of(MONTHSDAYS_MAIN_SEP));
-      // three elements in line: (month|day|ordinal|suffix) num list,of,strings
-      if (elements.size()!=3) {
+      // three elements in line: (month|day|ordinal|cardinal|suffix) num list-of-strings
+      if (elements.size()!=3) { 
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line;
         continue;
@@ -153,12 +159,14 @@ readMonthDays(const std::string& monthsDaysFile)
       map<LimaString,unsigned short>* names(0);
       if (elements[0] == MONTHSDAYS_MONTH_ID) { names=&m_months; }
       else if (elements[0] == MONTHSDAYS_DAY_ID) { names=&m_days; }
-      else if (elements[0] == MONTHSDAYS_ORDINAL_ID) { names=&m_ordinal; }
-      else if (elements[0] == MONTHSDAYS_SUFFIX_ID) { names=&m_ordinalSuffixes; }
+      else if (elements[0] == WORD_CARDINAL_SEPARATOR_ID) { names=&m_wordCardinalSeparator; }
+      else if (elements[0] == WORD_CARDINAL_ID) { names=&m_wordCardinal; }
+      else if (elements[0] == WORD_ORDINAL_SUFFIX_ID) { names=&m_wordOrdinalSuffixes; }
+      else if (elements[0] == NUMBER_ORDINAL_SUFFIX_ID) { names=&m_numberOrdinalSuffixes; }
       else {
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line 
-              << ": first element must be 'm' 'd', 'o' or 's'";
+              << ": first element must be 'm' 'd', 'c', 'w', 'n' or 's'";
         continue;
       }
 
@@ -208,29 +216,87 @@ getDayNumber(const LimaString& dayName) const
 }
 
 unsigned short NormalizeDateTimeResources::
-getDayNumberFromWordOrdinal(const LimaString& dayName) const
+getValueFromWordCardinalOrOrdinal(const LimaString& dayName) const
 {
-  map<LimaString,unsigned short>::const_iterator 
-    it=m_ordinal.find(dayName);
-  if (it==m_ordinal.end()) {
-    return NormalizeDateTimeResources::no_day;
+  SELOGINIT;
+  unsigned short day(0);
+  // trim suffix first, second or th, or (ème, ième, ieme, eme)
+  LimaString numberAsString(dayName);
+  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal() numberAsString=" 
+         << numberAsString;
+  map<LimaString,unsigned short>::const_iterator suffixIt=m_wordOrdinalSuffixes.begin();
+  for( ; suffixIt!=m_wordOrdinalSuffixes.end() ; suffixIt++ )
+  {
+    const LimaString& suffix = (*suffixIt).first;
+    int index = dayName.indexOf(suffix, 0, Qt::CaseInsensitive);
+    if (index >= 0) {
+      numberAsString = LimaString(dayName.constData(),index);
+      day += (*suffixIt).second;
+      break;
+    }
   }
-  return (*it).second;
+  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: after trim numberAsString=" 
+         << numberAsString << ", day=" << day;
+  if( numberAsString.isEmpty() )
+    return day;
+  // compute value from left to right
+  int parsingPosition(0);
+  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: parsingPosition=" << parsingPosition;
+  for( ; ; )
+  {
+    int index(-1);
+    // identify component of number
+    map<LimaString,unsigned short>::const_iterator cardinalIt=m_wordCardinal.begin();
+    for( ; cardinalIt!=m_wordCardinal.end() ; cardinalIt++ )
+    {
+      const LimaString& word = (*cardinalIt).first;
+      int index = numberAsString.indexOf(word, parsingPosition, Qt::CaseInsensitive);
+      if (index >= 0) {
+	day += (*cardinalIt).second;
+	parsingPosition += word.length();
+	LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: found" 
+               << word << ", day=" << day << ", parsingPosition=" << parsingPosition;
+	break;
+      }
+    }
+    // skip separator
+    int skipIndex(-1);
+    do
+    {
+      map<LimaString,unsigned short>::const_iterator separatorIt=m_wordCardinalSeparator.begin();
+      for( ; separatorIt!=m_wordCardinalSeparator.end() ; separatorIt++ )
+      {
+	const LimaString& separator = (*separatorIt).first;
+	int skipIndex = numberAsString.indexOf(separator, parsingPosition, Qt::CaseInsensitive);
+	if (skipIndex == 0) {
+	  parsingPosition += separator.length();
+	  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: found" 
+                 << separator << ", day=" << day << ", parsingPosition=" << parsingPosition;
+	  break;
+	}
+      }
+    } while( skipIndex == 0 );
+    if( index == -1 )
+      break;
+  }
+  return day;
 }
 
 unsigned short NormalizeDateTimeResources::
-getCardinalFromNumberOrdinal(const LimaString& dayName) const
+getValueFromNumberOrdinal(const LimaString& dayName) const
 {
-  // try to extract number as int from string <number><ordinalSuffix>
-  map<LimaString,unsigned short>::const_iterator it=m_ordinalSuffixes.begin();
-  for( ; it!=m_ordinalSuffixes.end() ; it++ )
+  // try to extract number as int from string <number><ordinalSuffix> like 4th, 22nd, 1st or 17
+  map<LimaString,unsigned short>::const_iterator it=m_numberOrdinalSuffixes.begin();
+  for( ; it!=m_numberOrdinalSuffixes.end() ; it++ )
   {
+    // try to trim suffix th, nd, st or rd
     const LimaString& suffix = (*it).first;
     int index = dayName.indexOf(suffix, 0, Qt::CaseInsensitive);
-    if (index < 0)
-      continue;
-    LimaString numberAsString(dayName.constData(),index);
+    LimaString numberAsString(dayName);
+    if (index > 0)
+      numberAsString = LimaString(dayName.constData(),index);
     bool ok(false);
+    // try to convert trimmed string to int
     unsigned short day = numberAsString.toUShort(&ok);
     if( ok) 
       return day;

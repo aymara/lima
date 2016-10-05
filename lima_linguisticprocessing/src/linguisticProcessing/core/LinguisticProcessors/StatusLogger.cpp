@@ -29,6 +29,7 @@
 #include "LinguisticMetaData.h"
 #include "LimaStringText.h"
 
+#include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/time/traceUtils.h"
@@ -46,12 +47,13 @@ namespace LinguisticProcessing
 
 SimpleFactory<MediaProcessUnit,StatusLogger> statusLoggerFactory(STATUSLOGGER_CLASSID);
 
-StatusLogger::StatusLogger()
+StatusLogger::StatusLogger() 
 {}
 
 
 StatusLogger::~StatusLogger()
-{}
+{
+}
 
 
 void StatusLogger::init(
@@ -75,7 +77,7 @@ void StatusLogger::init(
   {
     outputFile=string("status.log");
   }
-  m_out= new ofstream(outputFile.c_str(), std::ofstream::binary);
+  m_out = std::unique_ptr< std::ofstream >(new ofstream(outputFile.c_str(), std::ofstream::binary));
   try
   {
     deque<string> tolog=unitConfiguration.getListsValueAtKey("toLog");
@@ -118,7 +120,7 @@ LimaStatusCode StatusLogger::process(
   string line;
   while (!statusIn.eof())
   {
-    getline(statusIn,line);
+    line = Lima::Common::Misc::readLine(statusIn);
     size_t index=line.find(":");
     string key=line.substr(0,index);
     if (m_toLog.find(key)!=m_toLog.end())

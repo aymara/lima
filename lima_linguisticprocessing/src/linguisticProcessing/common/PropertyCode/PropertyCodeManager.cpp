@@ -24,6 +24,8 @@
 #include "PropertyCodeManager.h"
 #include "XMLPropertyHandler.h"
 #include "SymbolicCodeXMLHandler.h"
+// FWI 25/02/2015 inclusion pour bénéficier de operator<<(osstream&, QString)
+#include "common/Data/LimaString.h"
 
 
 #include <math.h>
@@ -55,16 +57,9 @@ PropertyCodeManager::PropertyCodeManager()
 void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 {
   PROPERTYCODELOGINIT;
-  
-  // check that file exists
-  {
-    ifstream fin(filename.c_str(), std::ifstream::binary);
-    if (!fin.good()) {
-      LERROR << "invalid XMLPropertyCode file " << filename;
-      throw InvalidConfiguration();
-    }
-    fin.close();
-  }
+#ifdef DEBUG_LP
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile" << filename;
+#endif
   
 #ifdef DEBUG_LP
   LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";

@@ -77,8 +77,19 @@ namespace MorphologicAnalysis
 SimpleFactory<MediaProcessUnit,AbbreviationSplitAlternatives> abbreviationSplitAlternativesFactory(ABBREVIATIONSPLITALTERNATIVESFACTORY_CLASSID);
 
 AbbreviationSplitAlternatives::AbbreviationSplitAlternatives() :
-  m_reader(0)
-{}
+m_tokenizer(0),
+m_dictionary(0),
+m_abbreviations(),
+m_language(),
+m_confidentMode(true),
+m_reader(0),
+m_charSplitRegexp()
+{
+  // default split regexp: split on simple quote or UTF-8 right quotation mark
+  LimaString quotes=Common::Misc::utf8stdstring2limastring("['’]");
+  m_charSplitRegexp=QRegExp(quotes);
+  
+}
 
 AbbreviationSplitAlternatives::~AbbreviationSplitAlternatives()
 {
@@ -156,6 +167,19 @@ void AbbreviationSplitAlternatives::init(
     LWARN << "use default value : 'true'";
     m_confidentMode=true;
   }
+
+  try
+  {
+    string charSplit=unitConfiguration.getParamsValueAtKey("charSplitRegexp");
+    m_charSplitRegexp=QRegExp(Common::Misc::utf8stdstring2limastring(charSplit));
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    LWARN << "no param 'confidentMode' in AbbreviationSplitAlternatives group for language " << (int) m_language;
+    LWARN << "use default value : 'true'";
+    m_confidentMode=true;
+  }
+  
   FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
   m_reader=new AlternativesReader(m_confidentMode,true,true,true,charChart,sp);
 
@@ -168,6 +192,9 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives";
 
+#ifdef ANTINNO_SPECIFIC
+  auto const& stopAnalyze = analysis.stopAnalyze();
+#endif
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
 
@@ -193,6 +220,14 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
     boost::tie(it, it_end) = vertices(*graph);
     for (; it != it_end; it++)
     {
+#ifdef ANTINNO_SPECIFIC
+		  if (stopAnalyze)
+		  {
+        MORPHOLOGINIT
+			  LERROR << "Analyze too long. Stopped in AbbreviationSplitAlternatives";
+			  return TIME_OVERFLOW;
+		  }
+#endif
       MorphoSyntacticData* currentData = dataMap[*it];
       if (currentData == 0) continue;
       Token* currentToken= tokenMap[*it];
@@ -268,8 +303,12 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   const LimaString& ft = ftok->stringForm();
   LDEBUG << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft);
   
-  int aposPos = ft.indexOf(Common::Misc::utf8stdstring2limastring("'"), 0);
-  if (aposPos==-1 || aposPos==0) return false;
+  //int aposPos = ft.indexOf(Common::Misc::utf8stdstring2limastring("'"), 0);
+  int aposPos = ft.indexOf(m_charSplitRegexp, 0);
+  //LDEBUG << "AbbreviationSplitAlternatives: split chars found at " << aposPos;
+  if (aposPos==-1 || aposPos==0) {
+    return false;
+  }
   LimaString beforeAbbrev(ft.left(aposPos-1));
 
   std::vector< LimaString >::const_iterator itAbb = m_abbreviations.begin();
@@ -407,7 +446,8 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   const LimaString& ft = ftok->stringForm();
   LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft);
   
-  int aposPos = ft.indexOf(LimaChar('\''), 0);
+  //int aposPos = ft.indexOf(LimaChar('\''), 0);
+  int aposPos = ft.indexOf(m_charSplitRegexp, 0);
   if (aposPos==-1 || aposPos==0) return false;
   LimaString possessivedWord(ft.left(aposPos));
   LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor possesive word: " << Common::Misc::limastring2utf8stdstring(possessivedWord);

@@ -59,8 +59,8 @@ class LIMA_SPECIFICENTITIES_EXPORT NormalizeDateTimeResources : public AbstractR
 //   const boost::local_time::tz_database& getTimezoneDatabase() const;
   unsigned short getMonthNumber(const LimaString& monthName) const;
   unsigned short getDayNumber(const LimaString& dayName) const;
-  unsigned short getCardinalFromNumberOrdinal(const LimaString& dayName) const;
-  unsigned short getDayNumberFromWordOrdinal(const LimaString& dayName) const;
+  unsigned short getValueFromWordCardinalOrOrdinal(const LimaString& dayName) const;
+  unsigned short getValueFromNumberOrdinal(const LimaString& dayName) const;
 
   static const unsigned short no_month=static_cast<unsigned short>(-1);
   static const unsigned short no_day=static_cast<unsigned short>(-1);
@@ -70,8 +70,10 @@ class LIMA_SPECIFICENTITIES_EXPORT NormalizeDateTimeResources : public AbstractR
 //   boost::local_time::tz_database* m_timezoneDatabase;
   std::map<LimaString,unsigned short> m_months;
   std::map<LimaString,unsigned short> m_days;
-  std::map<LimaString,unsigned short> m_ordinal;
-  std::map<LimaString,unsigned short> m_ordinalSuffixes;
+  std::map<LimaString,unsigned short> m_wordCardinal;
+  std::map<LimaString,unsigned short> m_wordCardinalSeparator;
+  std::map<LimaString,unsigned short> m_wordOrdinalSuffixes;
+  std::map<LimaString,unsigned short> m_numberOrdinalSuffixes;
 
   // private member functions
   bool readMonthDays(const std::string& monthsDaysFile);
@@ -81,8 +83,10 @@ class LIMA_SPECIFICENTITIES_EXPORT NormalizeDateTimeResources : public AbstractR
   static const std::string MONTHSDAYS_NAMELIST_SEP; 
   static const std::string MONTHSDAYS_MONTH_ID; 
   static const std::string MONTHSDAYS_DAY_ID; 
-  static const std::string MONTHSDAYS_ORDINAL_ID;
-  static const std::string MONTHSDAYS_SUFFIX_ID;
+  static const std::string WORD_CARDINAL_ID;
+  static const std::string WORD_CARDINAL_SEPARATOR_ID;
+  static const std::string WORD_ORDINAL_SUFFIX_ID;
+  static const std::string NUMBER_ORDINAL_SUFFIX_ID;
 
 };
 

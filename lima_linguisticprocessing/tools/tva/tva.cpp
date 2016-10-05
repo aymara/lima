@@ -32,6 +32,7 @@
 #include "common/MediaticData/mediaticData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
+#include "common/tools/FileUtils.h"
 
 #include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
@@ -45,6 +46,7 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 // #endif
 
+using namespace Lima::Common::Misc;
 using namespace Lima::Common::TGV;
 using namespace Lima::AnalysisValidation;
 using namespace Lima::LinguisticProcessing;
@@ -82,12 +84,19 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   
-  std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":std::string(getenv("LIMA_RESOURCES"));
-  std::string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":std::string(getenv("LIMA_CONF"));
+  std::string strConfigPath;
+  std::string strResourcesPath;
   std::string lpConfigFile=std::string("lima-lp-tva.xml");
   std::string commonConfigFile=std::string("lima-common.xml");
   std::string clientId=std::string("lima-coreclient");
@@ -112,9 +121,9 @@ int run(int argc,char** argv)
         else if ( (pos = arg.find("--common-config-file=")) != std::string::npos )
           commonConfigFile = arg.substr(pos+21);
         else if ( (pos = arg.find("--config-dir=")) != std::string::npos )
-          configDir = arg.substr(pos+13);
+          strConfigPath = arg.substr(pos+13);
         else if ( (pos = arg.find("--resources-dir=")) != std::string::npos )
-          resourcesPath = arg.substr(pos+16);
+          strResourcesPath = arg.substr(pos+16);
         else if ( (pos = arg.find("--client=")) != std::string::npos )
           clientId=arg.substr(pos+9);
         else if ( (pos = arg.find("--working-dir=")) != std::string::npos )
@@ -134,27 +143,49 @@ int run(int argc,char** argv)
     std::cerr << "No language specified. Aborting." << std::endl;
     return 1;
   }
+  if (!strResourcesPath.empty())
+  {
+    resourcesPath = QString::fromUtf8(strResourcesPath.c_str());
+    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
+  }
+  if (!strConfigPath.empty())
+  {
+    configPath = QString::fromUtf8(strConfigPath.c_str());
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+  }
     
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
-  AbstractLinguisticProcessingClient* client(0);
-
   // initialize common
-  MediaticData::changeable().init(
-    resourcesPath,
-    configDir,
+  Common::MediaticData::MediaticData::changeable().init(
+    resourcesPath.toUtf8().constData(),
+    configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
-
-  // initialize linguistic processing
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
-  LinguisticProcessingClientFactory::changeable().configureClientFactory(
-    clientId,
-    lpconfig,
-    langs,
-    pipelines);
-
-  client=static_cast<AbstractLinguisticProcessingClient*>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  
+  bool clientFactoryConfigured = false;
+  Q_FOREACH(QString configDir, configDirs)
+  {
+    if (QFileInfo(configDir + "/" + lpConfigFile.c_str()).exists())
+    {
+      // initialize linguistic processing
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      LinguisticProcessingClientFactory::changeable().configureClientFactory(
+        clientId,
+        lpconfig,
+        langs,
+        pipelines);
+      clientFactoryConfigured = true;
+      break;
+    }
+  }
+  if(!clientFactoryConfigured)
+  {
+    std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
+    return EXIT_FAILURE;
+  }
+  
+  std::shared_ptr< AbstractLinguisticProcessingClient > client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
   // Set the handlers
   std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -165,7 +196,7 @@ int run(int argc,char** argv)
   BowTextHandler* bowTextHandler = new BowTextHandler();
   handlers.insert(std::make_pair("bowTextHandler", bowTextHandler));
 
-  AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir, client, handlers);
+  AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir, client.get(), handlers);
     
   QXmlSimpleReader parser;
   TestCasesHandler tch(analysisTestCaseProcessor);
@@ -234,7 +265,6 @@ int run(int argc,char** argv)
     std::cout << std::endl;
     tch.m_reportByType.clear();
   }
-  delete client;
   delete bowTextWriter;
   delete simpleStreamHandler;
   delete bowTextHandler;

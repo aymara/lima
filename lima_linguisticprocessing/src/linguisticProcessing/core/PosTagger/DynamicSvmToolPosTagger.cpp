@@ -25,6 +25,7 @@
 
 
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/traceUtils.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
@@ -46,7 +47,9 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_io.hpp>
+#ifdef ANTINNO_SPECIFIC
 #include <boost/foreach.hpp>
+#endif
 
 #include <cfloat> // LDBL_MIN/MAX
 #include <cmath> // log
@@ -148,7 +151,7 @@ void DynamicSvmToolPosTagger::init(
 
   // Creates the tagger we use
   erCompRegExp();
-  t = new tagger(resourcesPath + "/" + model);
+  t = new tagger(Common::Misc::findFileInPaths(resourcesPath.c_str(), model.c_str()).toUtf8().constData());
   t->taggerLoadModelsForTagging();
   t->taggerShowComments();
   t->taggerActiveShowScoresFlag();
@@ -195,8 +198,13 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
   std::map<LinguisticGraphVertex, struct PathInfo > maxAncestor;
 
   /* Push every vertex coming from vertex 0 onto the "tokens to be visited" list */
+#ifdef ANTINNO_SPECIFIC
   BOOST_FOREACH(LinguisticGraphVertex vertex,
-      nextTokens(analysisGraph->firstVertex(), srcGraph))
+    nextTokens(analysisGraph->firstVertex(), srcGraph))
+#else
+  for(LinguisticGraphVertex vertex:
+    nextTokens(analysisGraph->firstVertex(), srcGraph))
+#endif
   {
     tokenQueue.push(vertex);
   }
@@ -218,7 +226,11 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     /* For every ancestor of our node */
     std::set<LinguisticGraphVertex> previousTokens = getPreviousTokens(vertex, srcGraph);
     if(previousTokens.empty()) previousTokens.insert(posGraph->firstVertex());
+#ifdef ANTINNO_SPECIFIC
     BOOST_FOREACH(LinguisticGraphVertex prevVertex, previousTokens) {
+#else
+    for(LinguisticGraphVertex prevVertex: previousTokens) {
+#endif
 
       std::string pos = "";
       double logCurWeight = log(1.0), w;

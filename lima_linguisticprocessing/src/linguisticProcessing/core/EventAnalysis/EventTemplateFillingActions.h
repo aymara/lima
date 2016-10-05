@@ -72,8 +72,8 @@ public:
   ~CreateEventTemplate() {}
   bool operator()(AnalysisContent& analysis) const;
   
-  //bool actionNeedsRecognizedExpression() { return true; }
 private:
+  std::string m_eventType;
 };
 
 class LIMA_EVENTANALISYS_EXPORT ClearEventTemplate : public Automaton::ConstraintFunction

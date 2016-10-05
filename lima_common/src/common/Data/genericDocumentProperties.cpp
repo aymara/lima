@@ -334,47 +334,62 @@ void GenericDocumentProperties::read(std::istream& file) {
   m_d->m_multipleStringValues.clear();
   m_d->m_multipleWeightedPropValues.clear();
 
-//   BOWLOGINIT;
-
+#ifdef DEBUG_CD
+  BOWLOGINIT;
+#endif
   // read integer properties
   file.read((char*) &size, sizeof(uint32_t));
-//   LDEBUG << "read size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "read size " << size;
+#endif
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
     uint64_t val;
     file.read((char*) &val, sizeof(uint64_t));
-//     LDEBUG << "read int " << val << " as value of " << name.c_str();
+#ifdef DEBUG_CD
+    LDEBUG << "read int " << val << " as value of " << name.c_str();
+#endif
     m_d->m_intValues.insert(std::pair<std::string,uint64_t>(name,val));
   }
   
   // read string properties
   file.read((char*) &size, sizeof(uint32_t));
-//   LDEBUG << "read size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "read size " << size;
+#endif
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
     string str;
     Misc::readStringField(file,str);
-//     LDEBUG << "read string " << str.c_str() << " as value of " << name.c_str();
+#ifdef DEBUG_CD
+    LDEBUG << "read string " << str.c_str() << " as value of " << name.c_str();
+#endif
     m_d->m_stringValues.insert(std::pair<std::string,std::string>(name,str) );
   }
 
   // read date properties
   file.read((char*) &size, sizeof(uint32_t));
-//   LDEBUG << "read size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "read size " << size;
+#endif
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
     QDate d=m_d->readDate(file);
     string strDate=d.toString().toUtf8().data();
-//     LDEBUG << "read date " << strDate.c_str() << " as value of " << name.c_str();
+#ifdef DEBUG_CD
+    LDEBUG << "read date " << strDate.c_str() << " as value of " << name.c_str();
+#endif
     m_d->m_dateValues.insert(std::pair<std::string,QDate>(name,d));
   }
 
   // read date interval properties
   file.read((char*) &size, sizeof(uint32_t));
-//   LDEBUG << "read size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "read size " << size;
+#endif
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
@@ -382,14 +397,18 @@ void GenericDocumentProperties::read(std::istream& file) {
     QDate endD=m_d->readDate(file);
     string strStartDate=startD.toString().toUtf8().data();
     string strEndDate=endD.toString().toUtf8().data();
-//     LDEBUG << "read interval [" << strStartDate.c_str() << "," << strEndDate.c_str() << " as value of " << name.c_str();
+#ifdef DEBUG_CD
+    LDEBUG << "read interval [" << strStartDate.c_str() << "," << strEndDate.c_str() << " as value of " << name.c_str();
+#endif
     std::pair<QDate,QDate> interval(startD,endD);
     m_d->m_dateIntervalValues.insert(std::pair<std::string,std::pair<QDate,QDate> >(name,interval));
   }
 
   // read multi-valued string properties
   file.read((char*) &size, sizeof(uint32_t));
-//   LDEBUG << "read size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "read size " << size;
+#endif
   for (uint32_t i(0); i<size; i++) {
     string name;
     Misc::readStringField(file,name);
@@ -399,7 +418,9 @@ void GenericDocumentProperties::read(std::istream& file) {
     for (uint32_t j(0); j<sizeMultipleValues; j++) {
       string str;
       Misc::readStringField(file,str);
-//       LDEBUG << "read string " << str.c_str();
+#ifdef DEBUG_CD
+      LDEBUG << "read string " << str.c_str();
+#endif
       val.push_back(str);
     }
     m_d->m_multipleStringValues.insert(std::pair<std::string,std::vector<std::string> >(name,val) );

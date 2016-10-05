@@ -489,7 +489,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       {
         relationsToFollow.insert("SujInv");
         relationsToFollow.insert("TIl");
-        // relationsToFollow.insert("TEMPCOMP");
+        // relationsToFollow.insert("aux");
         newGrp = createGroupe(forme, relationsToFollow, "NV");
         if(newGrp == 0)
         {
@@ -536,7 +536,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       else if ( forme->micro == "ADV" && forme->hasOutRelation("AdvSub") )
       {
         relationsToFollow.insert("AdvSub");
-        // relationsToFollow.insert("TEMPCOMP");
+        // relationsToFollow.insert("aux");
         newGrp = createGroupe(forme, relationsToFollow, "GP");
         if (newGrp == 0)
         {
@@ -565,7 +565,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       else if ( forme->micro == "NC" && forme->hasInRelation("SUBSUBJUX") )
       {
         relationsToFollow.insert("SUBSUBJUX");
-        // relationsToFollow.insert("TEMPCOMP");
+        // relationsToFollow.insert("aux");
         newGrp = createGroupe(forme, relationsToFollow, "GN", true);
       }
       else if ( forme->micro == "PROREL" )
@@ -644,7 +644,7 @@ void ConstituantAndRelationExtractor::constructionDesGroupes()
       {
         relationsToFollow.insert("PronReflVerbe");
         relationsToFollow.insert("AuxCplPrev");
-        // relationsToFollow.insert("TEMPCOMP");
+        // relationsToFollow.insert("aux");
         newGrp = createGroupe(forme, relationsToFollow, "NV");
       }
       else if ( forme->micro == "PROREL" )

@@ -70,6 +70,7 @@ private:
   void outputVertex(std::ostream& out, 
                     const LinguisticAnalysisStructure::AnalysisGraph* graph,
                     LinguisticGraphVertex v,
+                    AnalysisContent& analysis,
                     uint64_t offset=0) const;
 };
 

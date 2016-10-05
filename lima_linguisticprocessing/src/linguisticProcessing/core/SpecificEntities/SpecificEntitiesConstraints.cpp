@@ -55,17 +55,20 @@ namespace SpecificEntities
 {
 
 // factories for constraint functions defined in this file
-ConstraintFunctionFactory<isASpecificEntity>
-isASpecificEntityFactory(isASpecificEntityId);
+ConstraintFunctionFactory<isAlphaPossessive>
+  isAlphaPossessiveFactory(isAlphaPossessiveId);
 
-ConstraintFunctionFactory<isInSameSpecificEntity>
-  isInSameSpecificEntityFactory(isInSameSpecificEntityId);
+ConstraintFunctionFactory<isASpecificEntity>
+  isASpecificEntityFactory(isASpecificEntityId);
 
 ConstraintFunctionFactory<CreateSpecificEntity>
   CreateSpecificEntityFactory(CreateSpecificEntityId);
 
 ConstraintFunctionFactory<SetEntityFeature>
   SetEntityFeatureFactory(SetEntityFeatureId);
+
+ConstraintFunctionFactory<AddEntityFeatureAsEntity>
+  AddEntityFeatureAsEntityFactory(AddEntityFeatureAsEntityId);
 
 ConstraintFunctionFactory<AddEntityFeature>
   AddEntityFeatureFactory(AddEntityFeatureId);
@@ -78,6 +81,25 @@ ConstraintFunctionFactory<ClearEntityFeatures>
 
 ConstraintFunctionFactory<NormalizeEntity>
   NormalizeEntityFactory(NormalizeEntityId);
+
+
+isAlphaPossessive::
+isAlphaPossessive(MediaId language,
+                  const LimaString& complement):
+ConstraintFunction(language,complement)
+{
+}
+
+bool isAlphaPossessive::operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                                   const LinguisticGraphVertex& v,
+                                   AnalysisContent& /*analysis*/) const
+{
+  LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
+//  Token* token=get(vertex_token,*(graph.getGraph()),v);
+  VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
+  const TStatus& status = tokenMap[v]->status();
+  return( status.isAlphaPossessive() );
+}
 
 
 isASpecificEntity::
@@ -141,103 +163,6 @@ bool isASpecificEntity::operator()(const LinguisticAnalysisStructure::AnalysisGr
   }
   return false;
 }
-
-isInSameSpecificEntity::
-  isInSameSpecificEntity(MediaId language,
-                         const LimaString& complement):
-  ConstraintFunction(language,complement),
-  m_type()
-{
-  if (! complement.isEmpty()) {
-    m_type=Common::MediaticData::MediaticData::single().getEntityType(complement);
-  }
-}
-
-/** @brief Tests if the two given vertices are in the same specific entity
-  *
-  * There is several cases:
-  *   - va1 and va2 are SE vertices : true iff va1 == va2
-  *   - va1 and va2 are standard vertices : true iff there is an outgoing edge
-  *     in the annotation graph annotated with "belongstose" from each of them
-  *     and toward the same vertex
-  *   - va1 (va2) is a SE vertex and there is an outgoing edge in the annotation
-  *     graph annotated with "belongstose" from va2 (va1) to va1 (va2).
-  *
-  * In all the cases, va1 and va2 are the uniq "morphannot" matches of v1 and v2
-  *
-  * @note This method handles only the first level of SE: if a SE is recursively
-  * included in a second one, morph vertices from the first one and from the
-  * the second one (not in the first one) will NOT be considered as being in the
-  * same specific entity.
-  * @note It is considered that a morph vertex can be directly in only one SE.
-  * So, its annotation vertex will have at most one "belongstose" annotated
-  * outgoing edge.
-  */
-bool isInSameSpecificEntity::operator()(
-           const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
-           const LinguisticGraphVertex& v1,
-           const LinguisticGraphVertex& v2,
-           AnalysisContent& analysis) const
-{
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
-  AnnotationGraphVertex va1 = *(annotationData->matches(recoData->getGraphId(), v1, "annot").begin());
-  AnnotationGraphVertex va2 = *(annotationData->matches(recoData->getGraphId(), v2, "annot").begin());
-
-  if ( (va1 == va2) && annotationData->hasAnnotation(va1, Common::Misc::utf8stdstring2limastring("SpecificEntity")) )
-  { // first case
-    return true;
-  }
-  AnnotationGraphVertex vase = std::numeric_limits<uint64_t>::max();
-  AnnotationGraphVertex va = std::numeric_limits<uint64_t>::max();
-  if (annotationData->hasAnnotation(va1, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
-  {
-    vase = va1;
-    va = va2;
-  }
-  else if (annotationData->hasAnnotation(va2, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
-  {
-    vase = va2;
-    va = va1;
-  }
-  if (vase == std::numeric_limits<uint64_t>::max())
-  { // second case
-    AnnotationGraphOutEdgeIt it1, it1_end;
-    AnnotationGraphVertex se1 = std::numeric_limits<uint64_t>::max();
-    boost::tie(it1, it1_end) = out_edges(va1, annotationData->getGraph());
-    for (; it1 != it1_end; it1++)
-    {
-      if ( annotationData->intAnnotation((*it1), Common::Misc::utf8stdstring2limastring("belongstose"))==1)
-      {
-        se1 = target(*it1, annotationData->getGraph());
-        break;
-      }
-    }
-    if (se1 == std::numeric_limits<uint64_t>::max())
-    {
-      return false;
-    }
-    AnnotationGraphVertex se2 = std::numeric_limits<uint64_t>::max();
-    AnnotationGraphOutEdgeIt it2, it2_end;
-    boost::tie(it2, it2_end) = out_edges(va2, annotationData->getGraph());
-    for (; it2 != it2_end; it2++)
-    {
-      if ( annotationData->intAnnotation((*it2), Common::Misc::utf8stdstring2limastring("belongstose"))==1)
-      {
-        se2 = target(*it2, annotationData->getGraph());
-        break;
-      }
-    }
-    return (se1 == se2);
-  }
-  else
-  { // third case
-    bool ok; AnnotationGraphEdge e;
-    boost::tie(e, ok) = edge(va,vase,annotationData->getGraph());
-    return (ok && (annotationData->intAnnotation(e, Common::Misc::utf8stdstring2limastring("belongstose"))==1));
-  }
-}
-
 
 
 CreateSpecificEntity::CreateSpecificEntity(MediaId language,
@@ -423,7 +348,18 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     annotationData->dumpFunction("SpecificEntity", new DumpSpecificEntityAnnotation());
   }
 
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  AnalysisData* rdata=analysis.getData("RecognizerData");
+  if (rdata==0)  {
+    SELOGINIT;
+    LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
+    return false;
+  }
+  RecognizerData* recoData=static_cast<RecognizerData*>(rdata);
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
+    return false;
+  }
   std::string graphId=recoData->getGraphId();
     
 //   LDEBUG << "    match is " << match;
@@ -443,7 +379,14 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
   VertexDataPropertyMap dataMap = get(vertex_data, *lingGraph);
 
-  const MorphoSyntacticData* dataHead = dataMap[annot.getHead()];
+  LinguisticGraphVertex head = annot.getHead();
+  if( head == 0 ) {
+    // take status of last element in match for eng
+    head = v2;
+    // or take status of first element in match (in fre?)
+    // head = v1;
+  }
+  const MorphoSyntacticData* dataHead = dataMap[head];
 
   // Preparer le Token et le MorphoSyntacticData pour le nouveau noeud. Construits
   // a partir des infos de l'entitee nommee
@@ -475,7 +418,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     LDEBUG << "CreateSpecificEntity, use micros from config file ";
 #endif
     // use micros given in the config file : get the specific resource
-    // (specific to modex) 
+    // (specific to modex) AddEntityFeature
     // WARN : some hard coded stuff here in resource names
     EntityType seType=match.getType();
     if  (seType.getGroupId() == 0)
@@ -522,11 +465,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
       match.positionBegin(),
       match.length());
 
-  // always take status from first element in match
-  //if (match.size() == 1)
-  //{
-  newToken->setStatus(tokenMap[v1]->status());
-  //}  
+  // take posessive tstatus from head
+  TStatus tStatus = tokenMap[head]->status();
+  const TStatus& headTStatus = tokenMap[v2]->status();
+  if(headTStatus.isAlphaPossessive()) {
+    tStatus.setAlphaPossessive(true);
+  }
+  newToken->setStatus(tStatus);
 
   if (newMorphData->empty())
   {
@@ -577,8 +522,14 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
     else
     {
-      AnnotationGraphVertex src = *(matches.begin());
-      annotationData->annotate( src, agv, Common::Misc::utf8stdstring2limastring("belongstose"), 1);
+      if( recoData->hasVertexAsEmbededEntity((*matchIt).m_elem.first) )
+      {
+#ifdef DEBUG_LP
+        LDEBUG << "CreateSpecificEntity::operator(): vertex " << *(matches.begin()) << " is embeded";
+#endif
+        AnnotationGraphVertex src = *(matches.begin());
+        annotationData->annotate( agv, src, Common::Misc::utf8stdstring2limastring("holds"), 1);
+      }
     }
   }
 
@@ -902,9 +853,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& vertex,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "SetEntityFeature:: (one argument) start... ";
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
+#endif
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
@@ -924,7 +877,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   switch (m_featureType) {
     case QVariant::String:
+#ifdef DEBUG_LP
       LDEBUG << "SetEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue<< ")";
+#endif
       recoData->setEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
@@ -957,15 +912,18 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            const LinguisticGraphVertex& v2,
            AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
 //  LERROR << "SetEntityFeature:: Error: version with two vertices parameters is not implemented";
 //  return false;
   LDEBUG << "SetEntityFeature:: (two arguments) start... ";
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", v1:" << v1 << ", v2:" << v2 << ")";
+#endif
   
   // get RecognizerData: the data in which the features are stored
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData==0) {
+    SELOGINIT;
     LERROR << "SetEntityFeature:: Error: missing RecognizerData";
     return false;
   }
@@ -1000,7 +958,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         }
       }
     }
-    if( nbEdges > 1 )  {
+    if( nbEdges > 1 ) {
+      SELOGINIT;
       LWARN << "SetEntityFeature:: Warning: ambiguïties in graph";
     }
 
@@ -1038,6 +997,54 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     featureIt->setPosition(pos);
     featureIt->setLength(len);
   }
+  return true;
+}
+
+//----------------------------------------------------------------------------------------
+// AddEntityFeatureAsEntity : assert the the vertex is a named entity.
+// Add it to the list of components as an embeded entity (the list is used to create the link
+// "holds" between the annotation of the embeded and the embedding entity.
+// Remember the embedding entity is no yet created.
+
+AddEntityFeatureAsEntity::AddEntityFeatureAsEntity(MediaId language,
+                                   const LimaString& complement):
+ConstraintFunction(language,complement),
+m_featureName(""),
+m_featureType(QVariant::UserType)
+{
+  if (complement.size()) {
+    QStringList complementElements = complement.split(":");
+    m_featureName=complementElements.front().toUtf8().constData();
+    complementElements.pop_front();
+    if (!complementElements.empty()) {
+#ifdef DEBUG_LP
+      SELOGINIT;
+      LERROR << "AddEntityFeatureAsEntity::AddEntityFeatureAsEntity(): no type specification authorized for the feature ("
+             << complementElements << ") the feature type is the type of the entity";
+#endif
+    }
+  }
+}
+
+bool AddEntityFeatureAsEntity::
+operator()(const LinguisticAnalysisStructure::AnalysisGraph& /* unused graph */,
+           const LinguisticGraphVertex& vertex,
+           AnalysisContent& analysis) const
+{
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "AddEntityFeatureAsEntity:: (one argument) start... ";
+  LDEBUG << "AddEntityFeatureAsEntity::(feature:" << m_featureName << ", vertex:" << vertex << ")";
+#endif
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData==0) {
+    SELOGINIT;
+    LERROR << "AddEntityFeatureAsEntity:: Error: missing RecognizerData";
+    return false;
+  }
+  // add the vertex to the list of embeded named entities
+  recoData->addVertexAsEmbededEntity(vertex);
   return true;
 }
 
@@ -1420,8 +1427,20 @@ SELOGINIT;
 LERROR << "NormalizeEntity:: Error: missing RecognizerData";
 return false;
 }
-// assign stored features to RecognizerMatch features
-match.features()=recoData->getEntityFeatures();
+// assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
+//match.features()=recoData->getEntityFeatures();
+#ifdef ANTINNO_SPECIFIC
+Q_FOREACH (const auto& f, recoData->getEntityFeatures()) {
+#else
+for (const auto& f: recoData->getEntityFeatures()) {
+#endif
+  match.features().addFeature(f.getName(),f.getValue());
+  EntityFeatures::iterator featureIt = match.features().findLast(f.getName());
+  if( f.getPosition() != UNDEFPOSITION ) {
+    (*featureIt).setPosition(f.getPosition());
+    (*featureIt).setLength(f.getLength());
+  }
+}
 // must clear the stored features, once they are used (otherwise, will be kept for next entity)
 recoData->clearEntityFeatures();
 return true;

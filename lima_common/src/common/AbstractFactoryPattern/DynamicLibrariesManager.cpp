@@ -31,63 +31,78 @@
 #include <iostream>
 #include<QString>
 #include<QStringList>
-#include<QRegularExpression>
+#ifdef ANTINNO_SPECIFIC
+// FWI 17/08/2015 : désactivé car n'existe pas dans QT4
+#else
+#include <QRegularExpression>
+#endif
 
 using namespace std;
 
 namespace Lima {
 namespace Common {
 
-DynamicLibrariesManager::DynamicLibrariesManager() 
+class DynamicLibrariesManagerPrivate
+{
+friend class DynamicLibrariesManager;
+  DynamicLibrariesManagerPrivate();
+
+  std::map<std::string, std::shared_ptr< QLibrary > > m_handles;
+  // at load time, will try to load the libraries from these paths before the default ones
+  std::vector<std::string> m_supplementarySearchPath;
+};
+
+DynamicLibrariesManagerPrivate::DynamicLibrariesManagerPrivate() :
+    m_handles(),
+    m_supplementarySearchPath()
+{
+}
+
+  
+DynamicLibrariesManager::DynamicLibrariesManager() : m_d(new DynamicLibrariesManagerPrivate())
 {
 }
 
 DynamicLibrariesManager::~DynamicLibrariesManager() 
 {
-  for (std::map<std::string,QLibrary*>::iterator
-         it=m_handles.begin(),it_end=m_handles.end(); it!=it_end; it++) 
-  {
-    delete (*it).second;
-  }
 }
 
 bool DynamicLibrariesManager::
 isLoaded(const std::string& libName)
 {
-  std::map<std::string,QLibrary*>::const_iterator
-    it=m_handles.find(libName);
-  return (it!=m_handles.end());
+  auto it=m_d->m_handles.find(libName);
+  return (it!=m_d->m_handles.end());
 }
 
-bool DynamicLibrariesManager::
-loadLibrary(const std::string& libName)
+bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 {
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
   LDEBUG <<"DynamicLibrariesManager::loadLibrary() -- "<<"libName="<<libName ;
 #endif
-  std::map<std::string,QLibrary*>::const_iterator
-    it=m_handles.find(libName);
-  if (it!=m_handles.end()) {
+  auto it=m_d->m_handles.find(libName);
+  if (it!=m_d->m_handles.end()) {
 #ifdef DEBUG_CD
-    LWARN << "DEBUG_CD: trying to reload dynamic library " << libName.c_str();
+    LDEBUG << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library" << libName.c_str();
+    return false;
 #endif
   }
 
-  QLibrary* libhandle = 0;
+  std::shared_ptr< QLibrary > libhandle;
   // try supplementary search path
-  for (std::vector<std::string>::const_iterator it = m_supplementarySearchPath.begin(); it != m_supplementarySearchPath.end(); it++)
+  for (auto it = m_d->m_supplementarySearchPath.begin(); it != m_d->m_supplementarySearchPath.end(); it++)
   {
 #ifdef DEBUG_FACTORIES
     LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
 #endif
-    libhandle = new QLibrary( ((*it)+"/"+libName).c_str() );
+    libhandle = std::shared_ptr< QLibrary >(new QLibrary( ((*it)+"/"+libName).c_str() ));
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
-      m_handles.insert(std::make_pair(libName,libhandle));
+      m_d->m_handles.insert(std::make_pair(libName,libhandle));
 #ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded";
+    LDEBUG << "the library " << libName.c_str() << " was loaded from supplementary search path";
+    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
 #endif
       return true;
     }
@@ -96,8 +111,6 @@ loadLibrary(const std::string& libName)
 //      if ( QLibrary::isLibrary(((*it)+"/"+libName).c_str()) )
       ABSTRACTFACTORYPATTERNLOGINIT;
       LERROR <<"DynamicLibrariesManager::loadLibrary() -- "<<"Failed to open lib " << libhandle->errorString().toUtf8().data();
-      delete libhandle;
-      libhandle = 0;
     }
   }
   // now try system default search path
@@ -106,13 +119,14 @@ loadLibrary(const std::string& libName)
 #ifdef DEBUG_FACTORIES
     LINFO << "Trying " << libName.c_str();
 #endif
-    libhandle = new QLibrary( libName.c_str() );
+    libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
-      m_handles.insert(std::make_pair(libName,libhandle));
+      m_d->m_handles.insert(std::make_pair(libName,libhandle));
 #ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded";
+    LDEBUG << "the library " << libName.c_str() << " was loaded from system default search path";
+    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
 #endif
       return true;
     }
@@ -120,13 +134,11 @@ loadLibrary(const std::string& libName)
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
       LINFO <<"DynamicLibrariesManager::loadLibrary() -- "<< "Failed to open lib " << libhandle->errorString().toUtf8().data();
-      delete libhandle;
-      libhandle = 0;
       return false;
     }
   }
   else {
-    m_handles[libName]=libhandle;
+    m_d->m_handles[libName]=libhandle;
 #ifdef DEBUG_CD
     LDEBUG << "the library " << libName.c_str() << " was loaded";
 #endif
@@ -137,7 +149,7 @@ loadLibrary(const std::string& libName)
 void DynamicLibrariesManager::
 addSearchPath(const std::string& searchPath)
 {
-  if(std::find(m_supplementarySearchPath.begin(), m_supplementarySearchPath.end(), searchPath)!=m_supplementarySearchPath.end()){
+  if(std::find(m_d->m_supplementarySearchPath.begin(), m_d->m_supplementarySearchPath.end(), searchPath)!=m_d->m_supplementarySearchPath.end()){
     return;
   }
 #ifdef DEBUG_CD
@@ -145,7 +157,7 @@ addSearchPath(const std::string& searchPath)
     LINFO << "adding search path '"<<searchPath.c_str()<<"'";
     std::cout<< "adding search path '"<<searchPath.c_str()<<"'" << std::endl;
 #endif
-    m_supplementarySearchPath.push_back(searchPath);
+    m_d->m_supplementarySearchPath.push_back(searchPath);
   
 }
 
@@ -155,7 +167,12 @@ addSearchPathes(QString searchPathes)
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
 #endif
+#ifdef ANTINNO_SPECIFIC
+  // FWI 17/08/2015 : ligne modifiée car QRegularExpression n'existe pas dans QT4
+  QStringList list = searchPathes.replace("\\","/").split(";", QString::SkipEmptyParts);
+#else
   QStringList list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"), QString::SkipEmptyParts);
+#endif
   for(QStringList::iterator it = list.begin();
         it!=list.end();++it) {
       QString searchPath = *it;

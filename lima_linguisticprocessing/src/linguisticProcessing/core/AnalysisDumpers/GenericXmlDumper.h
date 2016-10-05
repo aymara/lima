@@ -107,6 +107,7 @@ protected:
                  const SyntacticAnalysis::SyntacticData* syntacticData) const;
   
   void xmlOutputVertices(std::ostream& out,
+                         AnalysisContent& analysis,
                          LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                          LinguisticAnalysisStructure::AnalysisGraph* posgraph,
                          const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -117,6 +118,7 @@ protected:
                          const uint64_t offset) const;
 
   void xmlOutputVertex(std::ostream& out, 
+                       AnalysisContent& analysis,
                        LinguisticGraphVertex v,
                        LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                        LinguisticAnalysisStructure::AnalysisGraph* posgraph,
@@ -127,10 +129,7 @@ protected:
                        std::set<LinguisticGraphVertex>& visited,
                        std::set<LinguisticGraphVertex>& alreadyStoredVertices) const;
 
-  void xmlOutputVertexInfos(std::ostream& out, 
-                            LinguisticGraphVertex v,
-                            LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                            uint64_t offset) const;
+  void xmlOutputVertexInfos(std::ostream& out, Lima::AnalysisContent& analysis, LinguisticGraphVertex v, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* graph, uint64_t offset) const;
 
   void xmlOutputBoWInfos(std::ostream& out, 
                          Common::BagOfWords::AbstractBoWElement* token,
@@ -149,6 +148,7 @@ protected:
                       const Common::AnnotationGraphs::AnnotationData* annotationData) const;
                             
   bool xmlOutputSpecificEntity(std::ostream& out, 
+                               AnalysisContent& analysis,
                                const SpecificEntities::SpecificEntityAnnotation* se,
                                LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                                const FsaStringsPool& sp,
@@ -170,7 +170,9 @@ protected:
                 uint64_t offset,
                 std::set<LinguisticGraphVertex>& visited) const;
 
-  void xmlOutputCompound(std::ostream& out, boost::shared_ptr<Lima::Common::BagOfWords::AbstractBoWElement> token, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* anagraph, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* posgraph, const Lima::Common::AnnotationGraphs::AnnotationData* annotationData, const Lima::FsaStringsPool& sp, uint64_t offset) const;
+  void xmlOutputCompound(std::ostream& out, 
+                         AnalysisContent& analysis,
+                         boost::shared_ptr<Lima::Common::BagOfWords::AbstractBoWElement> token, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* anagraph, Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* posgraph, const Lima::Common::AnnotationGraphs::AnnotationData* annotationData, const Lima::FsaStringsPool& sp, uint64_t offset) const;
                                
   /*void xmlOutputVertexInfos(std::ostream& out, 
                             const LinguisticAnalysisStructure::Token* ft,

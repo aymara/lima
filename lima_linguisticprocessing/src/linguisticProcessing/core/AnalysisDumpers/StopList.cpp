@@ -24,6 +24,7 @@
 #include "StopList.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
@@ -63,10 +64,10 @@ void StopList::init(
   LIMA_UNUSED(manager);
   DUMPERLOGINIT;
   const string& resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
-  string stopListFileName;
+  QString stopListFileName;
   try
   {
-    stopListFileName=resourcesPath+"/"+unitConfiguration.getParamsValueAtKey("file");
+    stopListFileName = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("file").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -74,7 +75,7 @@ void StopList::init(
     throw InvalidConfiguration();
   }
 
-  std::ifstream stopListFile(stopListFileName.c_str(), std::ifstream::binary);
+  std::ifstream stopListFile(stopListFileName.toUtf8().constData(), std::ifstream::binary);
   if (!stopListFile) {
     LERROR << "invalid file " << stopListFileName;
     throw InvalidConfiguration();

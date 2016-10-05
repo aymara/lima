@@ -25,6 +25,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
+#include "common/tools/FileUtils.h"
 
 #include <QReadLocker>
 #include <QWriteLocker>
@@ -75,21 +76,77 @@ void FsaAccessResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    string keyfile=Common::MediaticData::MediaticData::single().getResourcesPath() + "/" + unitConfiguration.getParamsValueAtKey("keyFile");
-    FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
-    resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
-    QWriteLocker locker(&m_lock);
-    LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-    fsaAccess->read(keyfile);
-    m_fsaAccess=fsaAccess;
+    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(LIMA_PATH_SEPARATOR);
+    Q_FOREACH(QString resPath, resourcesPaths)
+    {
+      if  (QFileInfo(resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).exists())
+      {
+        string keyfile= (resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).toUtf8().constData();
+	      FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+	      resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
+	      QWriteLocker locker(&m_lock);
+#ifdef ANTINNO_SPECIFIC
+	      // FWI 31/10/2013 : ajout code de lecture de l'entête "Ant" (copie code JYS de S2)
+	      //JYS 09/01/11 Saute l'identification Antinno si elle est presente, sinon ne fait rien
+	      //fsaAccess->read(keyfile);
+	      ifstream fileIn(keyfile.c_str(), ios::in | ios::binary);
+	      if (!fileIn.good()) {
+	        LERROR << "cannot open file " << keyfile;
+	        throw InvalidConfiguration();
+	      }
+	      char magicNumber[3];
+	      fileIn.read(magicNumber, 3);
+	      if (string(magicNumber, 3) == "Ant")
+        {
+	        unsigned char intLe[4];	//UNSIGNED obligatoire
+	        fileIn.read((char*)intLe, 4);
+	        const std::size_t antLen = intLe[0] + intLe[1]*0x100 + intLe[2]*0x10000 + intLe[3]*0x1000000; 
+	        const std::size_t pos = fileIn.tellg();
+	        fileIn.seekg(pos+antLen, ios::beg);           //saute l'identification Antinno
+	      }
+	      else
+          fileIn.seekg(0, ios::beg);         //pas un fichier repere par Antinno
+	      fsaAccess->read(fileIn);
+	      //JYS 09/01/11
+        LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
+#else
+        LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
+        fsaAccess->read(keyfile);
+#endif
+        m_fsaAccess=fsaAccess;
+        break;
+      }
+    }
+    if (!m_fsaAccess) {
+      LERROR << "resource file" << unitConfiguration.getParamsValueAtKey("keyFile") << "not found in path"
+        << Common::MediaticData::MediaticData::single().getResourcesPath();
+    }
+
+
   }
   catch (NoSuchParam& )
   {
+#ifdef ANTINNO_SPECIFIC
+    ::std::ostringstream oss;
+    oss << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
+    throw InvalidConfiguration(oss.str());
+#else
     LERROR << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration();
+#endif
   }
   catch (AccessByStringNotInitialized& )
   {
+#ifdef ANTINNO_SPECIFIC
+    ::std::ostringstream oss;
+    oss << "keyfile "
+           << Common::MediaticData::MediaticData::single().getResourcesPath()
+           << "/"
+           << unitConfiguration.getParamsValueAtKey("keyFile")
+           << " no found for language " 
+           << (int)  manager->getInitializationParameters().language;
+    throw InvalidConfiguration(oss.str());
+#else
     LERROR << "keyfile "
            << Common::MediaticData::MediaticData::single().getResourcesPath()
            << "/"
@@ -97,6 +154,7 @@ void FsaAccessResource::init(
            << " no found for language " 
            << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration();
+#endif
   }
 }
 

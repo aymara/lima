@@ -135,7 +135,9 @@ void EventTemplateDataXmlLogger::outputEventData(std::ostream& out,
       i++;
       out << "  <event id=\"" << i << "\"" 
           << " w=\"" << (*it).getWeight() << "\""
-          << " main=\"" << (*it).isMainEvent() << "\">" << endl;
+          << " main=\"" << (*it).isMainEvent() << "\""
+          << " type=\"" << (*it).getType() << "\">"
+          << endl;
       int j=0;
       out << "    <entities>" << endl;
       for(map<string,EventTemplateElement>::const_iterator it1= templateElements.begin(); it1!= templateElements.end();it1++)

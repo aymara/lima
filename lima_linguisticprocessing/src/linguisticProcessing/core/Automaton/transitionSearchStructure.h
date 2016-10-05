@@ -37,6 +37,9 @@
 #include "transitionUnit.h"
 #include "automatonCommon.h"
 #include <queue>
+#ifdef ANTINNO_SPECIFIC
+#include "searchGraph.h"
+#endif
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -67,6 +70,15 @@ class TransitionSearchStructure
                             const LinguisticAnalysisStructure::Token* token,
                             const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
                             std::vector<const TargetType*>& matchingSetOfRules) const;
+  uint64_t 
+    findMatchingTransitions2(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                            const LinguisticGraphVertex& vertex,
+                            const LinguisticGraphVertex& limit,
+                            SearchGraph* searchGraph,
+                            AnalysisContent& analysis,
+                            const LinguisticAnalysisStructure::Token* token,
+                            const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
+                            std::vector<std::pair<std::deque<LinguisticGraphVertex>,const TargetType*> >& matchingSetOfRules) const;
   
   // for debug only
   void printStructure(std::ostream& os) const;

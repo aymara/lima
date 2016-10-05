@@ -271,6 +271,11 @@ void StringsPoolPrivate::clear()
 // reinit from pos to the end
 void StringsPoolPrivate::clear(const uint64_t pos)
 {
+    // reinitialize hashPool
+	// WARNING: The m_hashPool hash table contains the same pointer as the m_vecPool
+	// vector. So, override its content BEFORE free memory to avoid crash (on Windows)
+    m_hashPool=m_resourcesHashPool;
+
 //    STRPOOLLOGINIT;
 //    LDEBUG << "clearing StringsPool";
     uint64_t i(pos),size(m_vecPool.size());
@@ -280,8 +285,6 @@ void StringsPoolPrivate::clear(const uint64_t pos)
         m_vecPool[i] = 0;
     }
     m_vecPool.resize(pos);
-    // reinitialize hashPool
-    m_hashPool=m_resourcesHashPool;
 }
 
 #ifndef WIN32

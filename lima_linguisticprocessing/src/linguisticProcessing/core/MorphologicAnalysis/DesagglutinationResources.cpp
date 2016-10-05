@@ -28,6 +28,7 @@
 
 #include "DesagglutinationResources.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
@@ -61,8 +62,8 @@ void DesagglutinationResources::init(
   string resourcesPath=MediaticData::single().getResourcesPath();
   try
   {
-    string file=resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("categoriesMappingFile");
-    loadMicroCategoriesMappingFromFile(file);
+    QString file = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("categoriesMappingFile").c_str());
+    loadMicroCategoriesMappingFromFile(file.toUtf8().constData());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -71,8 +72,8 @@ void DesagglutinationResources::init(
   }
   try
   {
-    string file=resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("delimiterFile");
-    loadDelimitersFromFile(file);
+    QString file=Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("delimiterFile").c_str());
+    loadDelimitersFromFile(file.toUtf8().constData());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

@@ -31,6 +31,7 @@
 #include "automatonCommon.h"
 #include "transitionUnit.h"
 #include "recognizerData.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/LimaString.h"
 #include "common/MediaticData/EntityType.h"
 #include "common/MediaticData/mediaticData.h"
@@ -43,6 +44,7 @@
 #include <vector>
 #include <queue>
 #include <map>
+#include <stack>
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -152,15 +154,15 @@ void Recognizer::init(
   string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
   try
   {
-    string rulesFile = unitConfiguration.getParamsValueAtKey("rules");
-    if (rulesFile != "")
+    QString rulesFile = unitConfiguration.getParamsValueAtKey("rules").c_str();
+    if (!rulesFile.isEmpty())
     {
-      m_filename=rulesFile;
-      rulesFile = resourcesPath + "/" + rulesFile;
+      m_filename=rulesFile.toUtf8().constData();
+      rulesFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), rulesFile);
 //       LDEBUG << "read recognizer from file : " << rulesFile;
       //readFromFile(rulesFile);
       AutomatonReader reader;
-      reader.readRecognizer(rulesFile,*this);
+      reader.readRecognizer(rulesFile.toUtf8().constData(),*this);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
@@ -334,12 +336,33 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                         bool stopAtFirstSuccess,
                                         bool onlyOneSuccessPerType,
                                         bool applySameRuleWhileSuccess) const {
+  AULOGINIT;
+  // If the trigger is defined with a gazeteer, we must check the case of multi-term elements in the gazeteer
+  const GazeteerTransition* gazeteerTrigger = dynamic_cast<const GazeteerTransition*>(&trigger);
+  RecognizerMatch triggermatch(&graph);
+  LinguisticGraphVertex right=position;
+  if( gazeteerTrigger != 0 ) {
+    Token* token = get(vertex_token, *(graph.getGraph()), position);
+    MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), position);
+    deque<LinguisticGraphVertex> vertices;
+    ForwardSearch searchGraph;
+    bool match = gazeteerTrigger->matchPath(graph, position, end, &searchGraph, analysis, token, vertices, data);
+    if( match ) {
+      for( std::deque<LinguisticGraphVertex>::const_iterator vIt = vertices.begin(); vIt != vertices.end() ; vIt++ ) {
+        triggermatch.addBackVertex(*vIt,trigger.keep(),"trigger");
+      }
+    }
+  }
+  else {
+    triggermatch.addBackVertex(position,trigger.keep(),"trigger");
+    right=position;
+  }
+
   RecognizerMatch leftmatch(&graph);
   RecognizerMatch rightmatch(&graph);
 
   if (onlyOneSuccessPerType && forbiddenTypes==0) {
-    AULOGINIT;
-    LERROR << "cannot use onlyOneSuccessPerType "
+    LERROR << "Recognizer::testSetOfRules: cannot use onlyOneSuccessPerType "
            << "when forbidden types are not allowed";
     onlyOneSuccessPerType=false;
   }
@@ -350,12 +373,9 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   // left context is same LinguisticAnalysisStructure::AnalysisGraph as current (current is in fact
   // between the current token and the previous one)
   LinguisticGraphVertex left=position;
-  LinguisticGraphVertex right=position;
-  //LinguisticGraphVertex right=position.forward();
 
 #ifdef DEBUG_LP
-  AULOGINIT;
-  LDEBUG << "testing set of rules triggered by " << trigger << " on vertex " << position;
+  LDEBUG << "Recognizer::testSetOfRules: testing set of rules triggered by " << trigger << " on vertex " << position;
     LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
   if (logger.isDebugEnabled()) {
    std::ostringstream oss;
@@ -369,6 +389,10 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   bool reapplySameRule(false);
 
   SetOfRules::const_iterator
+ #ifdef ANTINNO_BUGFIX
+    // FWI 19/12/2013 : ajout définition de "rule_begin"
+    rule_begin=rules.begin(),
+#endif
     rule=rules.begin(),
     rule_end=rules.end();
   for (; rule!=rule_end; rule++) {
@@ -376,7 +400,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
 #ifdef DEBUG_LP
     if (logger.isDebugEnabled()) {
-      LDEBUG << "testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
+      LDEBUG << "Recognizer::testSetOfRules: testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
              << currentRule->getType() << ",reapply="
              << reapplySameRule << " from " << position;
     }
@@ -432,17 +456,26 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     if (success) {
       // build complete match
-
+ 
       match=new RecognizerMatch(leftmatch);
-      match->addBackVertex(position,trigger.keep(), "trigger");
+      if (leftmatch.getHead() != 0) {
+        match->setHead(leftmatch.getHead());
+      }
+
+      // TODO: add node of gazeteerTrigger
+      //match->addBackVertex(position,trigger.keep(), "trigger");
+      /*
+      RecognizerMatch::const_iterator triggerMatchIt = triggermatch.begin();
+      for( ; triggerMatchIt != triggermatch.end(); triggerMatchIt++) {
+        match->addBackVertex(*triggerMatchIt,trigger.keep(), "trigger");
+      }
+      */
+      match->addBack(triggermatch);
       match->addBack(rightmatch);
       // remove elements not kept at begin and end of the expression
       match->removeUnkeptAtExtremity();
 
       // check if trigger is head
-      if (trigger.head()) {
-        match->setHead(position);
-      }
       match->setType(currentRule->getType());
       match->setLinguisticProperties(currentRule->getLinguisticProperties());
       match->setContextual(currentRule->contextual());
@@ -454,8 +487,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     //LDEBUG << "Recognizer: executing actions: ";
     bool actionSuccess = true;
     if (!currentRule->negative()) {
-      // std::cerr << "execute rule " << currentRule->getRuleId() << " of type "
-      //       << currentRule->getType() << " on vertex " << position << std::endl;
       actionSuccess = currentRule->executeActions(graph, analysis,
                                                   constraintCheckList,
                                                   success,
@@ -472,13 +503,13 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         str = token->stringForm();
       }
       if (success) {
-        LDEBUG << "trigger " << v << "[" << str << "]:rule "
+        LDEBUG << "Recognizer::testSetOfRules: trigger " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success=" << success 
                << ",actionSuccess=" << actionSuccess;
         LDEBUG << "        matched:" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language));
       }
       else {
-        LDEBUG << "vertex " << v << "[" << str << "]:rule " 
+        LDEBUG << "Recognizer::testSetOfRules: vertex " << v << "[" << str << "]:rule " 
                << currentRule->getRuleId() << "-> success= false";
       }
     }
@@ -492,7 +523,10 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
         continue;
       }
-
+      LINFO << "Recognizer::testSetOfRules: execute rule " << currentRule->getRuleId()
+            << " of type "<< currentRule->getType()
+            << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
+            << ") on vertex " << position;
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
       if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);
@@ -500,7 +534,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         match=0;
 #ifdef DEBUG_LP
         if (logger.isDebugEnabled()) {
-          LDEBUG << "Returning from testSetOfRules cause stopAtFirstSuccess ("
+          LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty (" 
             << (recoData->getNextVertices().empty()) 
             << ")";
@@ -526,7 +560,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
             }*/
           }
           // reapply same rule
-          rule--;
+ #ifdef ANTINNO_BUGFIX
+          // FWI 19/12/2013 : ajout test pour ne faire le -- que si nécessaire
+          if (rule != rule_begin)
+#endif
+            rule--;
+
           reapplySameRule=true;
         }
 
@@ -563,14 +602,30 @@ void Recognizer::
 setNormalizedForm(const LimaString& norm,
                   RecognizerMatch& match) const
 {
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+  AULOGINIT
+#endif
+#endif
+
   match.features().clear();
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   if (norm.isEmpty()) {
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+    LDEBUG << "Recognizer::setNormalizedForm(norm=""): match.getNormalizedString(sp)= " << match.getNormalizedString(sp);
+#endif
+#endif
     // use surface form of the expression as normalized form 
     match.features().setFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
   }
   else {
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+    LDEBUG << "Recognizer::setNormalizedForm(norm): norm= " << norm;
+#endif
+#endif
     match.features().setFeature(DEFAULT_ATTRIBUTE,norm);
   }
 }
@@ -622,7 +677,9 @@ uint64_t Recognizer::
         bool returnAtFirstSuccess,
         bool applySameRuleWhileSuccess) const 
 {
-
+#ifdef ANTINNO_SPECIFIC
+  auto const& stopAnalyze = analysis.stopAnalyze();
+#endif
   if (returnAtFirstSuccess) {
     stopAtFirstSuccess=true; // implied by the other
   }
@@ -675,6 +732,16 @@ uint64_t Recognizer::
     if (currentVertex != graph.firstVertex()) {
 #ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
+#endif
+#ifdef ANTINNO_SPECIFIC
+      if (stopAnalyze)
+		  {
+#if !defined DEBUG_LP
+        AULOGINIT;
+#endif
+			  LERROR << "Stopped in Recognizer";
+			  return 0;
+		  }
 #endif
       success = testOnVertex(graph,currentVertex,
                              upstreamBound,downstreamBound,

@@ -82,29 +82,14 @@ void EnchantSpellingAlternatives::init(
   Manager* manager)
 {
   MORPHOLOGINIT;
-  LDEBUG << "EnchantSpellingAlternatives::init";
   m_d->m_language = manager->getInitializationParameters().media;
   try
   {
-    // By default, the spellchecking dictionary is the system one for the current language
-    std::string spellDico = Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language).substr(0,2);
-    try
-    {
-      // try to get a specific spellchecking dictionary name from the config file
-      spellDico = unitConfiguration.getParamsValueAtKey("spellcheckDictionary");
-    }
-    catch (NoSuchParam& )
-    {
-    }
-//     LDEBUG << "EnchantSpellingAlternatives::init requesting Enchant spellcheck dictionary" << Common::MediaticData::MediaticData::changeable().getResourcesPath()+"/Spellchecking/" << spellDico;
-//     enchant::Broker::instance()->set_param("enchant.myspell.dictionary.path",Common::MediaticData::MediaticData::changeable().getResourcesPath()+"/Spellchecking/");
-    LDEBUG << "EnchantSpellingAlternatives::init requesting Enchant spellcheck dictionary" << spellDico;
-    m_d->m_enchantDictionary = enchant::Broker::instance()->request_dict(spellDico);
+    m_d->m_enchantDictionary = enchant::Broker::instance()->request_dict(Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language).substr(0,2));
   }
   catch (enchant::Exception& e)
   {
-    MORPHOLOGINIT;
-    LERROR << "Cannot get Enchant dictionary for language" << Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language)<<  ":" << e.what();
+    LERROR << "Cannot get Enchant dictionary for language" << Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language);
     throw LimaException();
   }
   try
@@ -180,28 +165,26 @@ void EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives(
     // FIXME Conditions below could be process unit parameters
     if ( correction.size() > 1 && correction != tokenStr )
     {
-      LDEBUG << "EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives trying to correct" << tokenStr << "into" << correction;
-      DictionaryEntry entry (m_dictionary->getEntry(correction));
+      DictionaryEntry* entry = new DictionaryEntry(m_dictionary->getEntry(correction));
       MorphoSyntacticDataHandler lingInfosHandler(*tokenData, SPELLING_ALTERNATIVE);
       
       
-//       if (!entry.isEmpty())
+      if (!entry->isEmpty())
       {
         LINFO << "EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives correcting" << tokenStr << "into" << correction;
         // add orthographic alternative to Token;
         StringsPoolIndex idx=sp[correction];
         token->addOrthographicAlternatives(idx);
         
-        if (entry.hasLingInfos())
+        if (entry->hasLingInfos())
         {
-          entry.parseLingInfos(&lingInfosHandler);
+          entry->parseLingInfos(&lingInfosHandler);
         }
       } 
-//       else 
-//       {
-//         LDEBUG << "EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives correction" << correction << "not found in the dictionary";
-//         delete entry;
-//       }
+      else 
+      {
+        delete entry;
+      }
     }
   }
 }

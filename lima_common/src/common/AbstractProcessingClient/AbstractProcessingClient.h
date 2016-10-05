@@ -32,7 +32,12 @@ namespace Lima
 class AbstractProcessingClient
 {
 public:
-
+#ifdef ANTINNO_SPECIFIC
+  // FWI 13/03/2015 : jout 3 méthodes sinon erreur de link
+  AbstractProcessingClient() {}
+  AbstractProcessingClient(AbstractProcessingClient const&) {}
+  AbstractProcessingClient& operator=(AbstractProcessingClient const&) { return *this; }
+#endif
     //! @brief Define the destructor virtual to ensure concrete client destructors to be called
     virtual ~AbstractProcessingClient() {}
 
@@ -47,7 +52,12 @@ public:
                          const std::map<std::string,std::string>& metaData,
                          const std::string& pipeline,
                          const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+#ifdef ANTINNO_SPECIFIC
+                         const std::set<std::string>& inactiveUnits = std::set<std::string>(),
+                         Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const = 0;
+#else
                          const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
+#endif
 
 };
 
@@ -91,7 +101,7 @@ public:
   /**
    * This function create a LinguisticProcessing client 
    */
-  virtual AbstractProcessingClient* createClient() const = 0;
+  virtual std::shared_ptr< AbstractProcessingClient > createClient() const = 0;
 
   /**
    * virtual destructor of the LinguisticProcessing client factory

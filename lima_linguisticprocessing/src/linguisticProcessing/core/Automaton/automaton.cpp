@@ -33,6 +33,9 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <vector>
+#include <stack>
+#include <utility>
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -48,6 +51,9 @@ namespace Automaton {
 #define DEFAULT_MAXTRANSITIONSEXPLORED 1000
 #define DEFAULT_MAXNBRESULTS 50
 #define DEFAULT_MAXRESULTSIZE 200
+
+// a structure to store the position of the search in the automaton
+typedef std::pair<std::deque<LinguisticGraphVertex>,const Transition*> DFFSPos;
 
 AutomatonControlParams::AutomatonControlParams():
 m_maxDepthStack(DEFAULT_MAXDEPTHSTACK),
@@ -233,18 +239,26 @@ void Automaton::initializeSearchStructures(MediaId language) {
 
 bool Automaton::
 getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
-                       const LinguisticGraphVertex& vertex, 
+                       const LinguisticGraphVertex& vertex,
                        AnalysisContent& analysis,
+                       SearchGraph* searchGraph,
                        const Tstate& state,
-                       std::vector<const Transition*>& 
-                       matchingTransitions) const {
+                       std::vector<DFFSPos>& matchingTransitions,
+                       const LinguisticGraphVertex& limit
+                      ) const {
   Token* token = get(vertex_token, *(graph.getGraph()), vertex);
   MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), vertex);
 
-  if (m_searchStructures[state]==0) {
-//    AULOGINIT;
+#ifdef DEBUG_LP
+   AULOGINIT;
+   LDEBUG << "Automaton::getMatchingTransitions(vertex: " << vertex << ")";
 //    LDEBUG << "search structure not initialized: linear search";
+#endif
+  if (m_searchStructures[state]==0) {
     //linear search on the transitions
+#ifdef DEBUG_LP
+    LDEBUG << "Automaton::getMatchingTransitions: search structure not initialized: linear search";
+#endif
     matchingTransitions.clear();
     vector<Transition>::const_iterator
       trans=m_transitions[state].begin(),
@@ -252,19 +266,42 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
     for (; trans!=trans_end; trans++) {
 //       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex;
+      deque<LinguisticGraphVertex> noVertices;
+#ifdef ANTINNO_SPECIFIC
+      DFFSPos  newPair(noVertices,nullptr);
+#else
+      DFFSPos  newPair(noVertices,0);
+#endif
+
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
+      const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*trans).transitionUnit());
+      // TODO:  generalize buildNextTermsList and checkMultiTerms to be able to manage backtrack and backward
+      if( gtrans != 0 ) {
+        deque<LinguisticGraphVertex> vertices;
+        match = gtrans->matchPath(graph, vertex, limit, searchGraph, analysis, token, vertices, data);
+        if( match ) {
+          newPair = DFFSPos(vertices,&(*trans));
+        }
+      }
+      else {
+        deque<LinguisticGraphVertex> singleton(1,vertex);
+        newPair = DFFSPos(singleton,&(*trans));
+      }
       if ((*trans).transitionUnit()->negative()) {
         match = (!match);
       }
       if (match) {
-        matchingTransitions.push_back(&(*trans));
+        matchingTransitions.push_back(newPair);
       }
     }
     return (!matchingTransitions.empty());
   }
   else {
+#ifdef DEBUG_LP
+    LDEBUG << "Automaton::getMatchingTransitions: search structure initialized find";
+#endif
     return m_searchStructures[state]->
-      findMatchingTransitions(graph,vertex,analysis,token,data,matchingTransitions);
+      findMatchingTransitions2(graph,vertex,limit,searchGraph,analysis,token,data,matchingTransitions);
   }
 }
 
@@ -311,6 +348,7 @@ operator()(const AutomatonMatch& r1,
 
 // internal definition of a utility class: 
 // stack for DFS test function 
+
 class Automaton::DFSStack {
 public:
   DFSStack(const Automaton& a,
@@ -333,24 +371,25 @@ public:
   bool isEndVertex(const LinguisticGraphVertex& v) const 
   { return (v==m_searchGraph->endOfGraph(m_graph)); }
 
-  std::pair<LinguisticGraphVertex,const Transition*> top();
-  void popVertex();
+  // std::pair<LinguisticGraphVertex,const Transition*> top();
+  DFFSPos  top();
+  /* TODO: usefull?
+   * void popVertex();
+   */
   bool pop();
   bool push(const LinguisticGraphVertex& vertex,
             const Tstate& state,
-            AnalysisContent& analysis);
+            AnalysisContent& analysis,
+            const LinguisticGraphVertex& limit);
 private:
   struct DFSStackElement {
-    DFSStackElement(LinguisticGraphVertex v,
-                    const std::vector<const Transition*>& t):
-      m_vertex(v),
-      m_transitions(t),
-      m_transition(t.begin()) 
+    DFSStackElement( std::vector<DFFSPos>& matchingTransitions):
+      m_transitions(matchingTransitions),
+      m_transition(matchingTransitions.begin()) 
     {
     }
 
     DFSStackElement(const DFSStackElement& elt):
-      m_vertex(elt.m_vertex),
       m_transitions(elt.m_transitions),
       m_transition(m_transitions.begin()) 
     {
@@ -358,9 +397,10 @@ private:
 
     ~DFSStackElement() {}
 
-    LinguisticGraphVertex m_vertex;
-    std::vector<const Transition*> m_transitions;
-    std::vector<const Transition*>::const_iterator m_transition;
+    std::vector<DFFSPos > m_transitions;
+    //std::vector<std::pair<LinguisticGraphVertex, const Transition*> > m_transitions;
+    std::vector<DFFSPos>::const_iterator m_transition;
+    //std::vector<std::pair<LinguisticGraphVertex, const Transition*> >::const_iterator m_transition;
   };
   std::vector<DFSStackElement> m_stack;
   const Automaton& m_automaton;
@@ -369,16 +409,15 @@ private:
   LinguisticGraphVertex m_limit;
 };
 
-std::pair<LinguisticGraphVertex,const Transition*> 
-Automaton::DFSStack::top() {
+//std::pair<LinguisticGraphVertex,const Transition*>
+DFFSPos Automaton::DFSStack::top() {
 //   AULOGINIT;
 //   LDEBUG << "Automaton:DFSSTack: top "
 //          << "transition=" << *(m_stack.back().m_transition)
 //          << ";transitionUnit=" 
 //          << (*(m_stack.back().m_transition))->transitionUnit()
 //         ;
-  return make_pair(m_stack.back().m_vertex,
-                   *(m_stack.back().m_transition));
+  return *(m_stack.back().m_transition);
 }
 
 bool Automaton::DFSStack::pop() {
@@ -395,14 +434,68 @@ bool Automaton::DFSStack::pop() {
   return false;
 }
 
-void Automaton::DFSStack::popVertex() {
+/* TODO usefull?
+ * void Automaton::DFSStack::popVertex() {
   m_stack.pop_back();
 }
+*/
+/*
+ * fill the stack with pairs (nextV,matchingTransition)
+ * nextV is one of the successor nodes in the graph
+ * The function look for possible transition from state
+ * and select matchingTransition  = set of transition which succeed with nextV
+ */
+/*
+ * Pour remplir la pile, on itére sur les outVertex,
+ * puis pour chaque vertex, on regarde quelles transitions obtiennent un succès
+ * Cela ressemble à l'initialisation d'un mode largeur d'abord...
+ * En fait, c'est simplement pour limiter la taille de la structure de données qui gère le contexte de parcours.
+ * Le parcours se fait en profondeur d'abord (DFS Deep First Search)
+ * conforme au nom de la pile DFSStack.
+ * 
+ * Le parcours se fait en profondeur d'abord sur le graphe d'analyse, limité sur plusieurs aspects:
+ *  - les limites du graphe (begin, end), c'est à dire les noeuds 0 et 1 qui terminent le treillis.
+ *    (si le parcours se fait en avant, limit = end, si le parcours se fait en arière, limit = begin)
+ *  - la profondeur de la pile (pour éviter des traitements trop longs et des dépassements de pile sur
+ *    des textes 'pathologiques', ex: des texts issus de tableaux)
+ *  - le nombre de backtrack???
+ * L'unité d'avancement dans ce parcours est le passage d'un noeud à l'un des noeuds successeurs
+ * dans le graphe d'analyse. De même dans les opérations de backtrack, on revient sur une étape de
+ * ce parcours.
+ * Si on souhaite intégrer les transitions de type GazetteerTransition, il faut pouvoir
+ * gérer une unité d'avancement différente: il faut envisager l'avancement sur plusieurs noeuds
+ * successifs du graphe lorsqu'il y a un match d'un élément multi-terme du gazetteer. De même le
+ * backtrack doit se faire jusqu'au point d'avancement précédent donc revenir en arrière sur
+ * plusieurs noeuds.
+ * Une pile sert à gérer le point d'avancement dans le parcours.
+ * Actuellement, pour remplir la pile, on itére sur les 'out vertex' puis pour chaque vertex, on regarde
+ * quelles transitions obtiennent un succès. Cela ne convient plus car on ne couvre pas le cas des noeuds
+ * atteints par les éléments multi-termes des gazeteer.
+ * En effet, pour une paire (out vertex, transition) qui décrit une possibilité d'avancement, l'exécution de
+ * la transition va nous faire avancer au delà du noeud 'out vertex' dans le cas des multi-terme.
+ * Toutes les transitions ne font pas atteindre le même noeud.
+ * On est donc obligé de modifier la structure de données de la pile qui gére le contexte de parcours et le
+ * backtrack.
+ * Changement:
 
+ * On modifie seulement Automaton::getMatchingTransitions et la structure Automaton::DFSStack.
+ * On considère que nextVertex est la direction dans laquelle on va, mais la transition peut mener plus loin.
+ * On modifie DFSStackElement de la façon suivante:
+ * DFSStackElement contenait un noeud (out vertex) et une collection (vector) de transitions possibles
+ * DFSStackElement contient maintenant une collection (vector) de paires (séquence de noeud parcourus pendant la transition, transition possible)
+ *   (stack<noeud>, transition), ainsi qu'un itérateur sur cette liste.
+ * stack<noeud> est le chemin dans le graphe (commençant par nextVertex) correspondant à l'exécution de la transition.
+ *  
+ * Attention aux paramètres begin,end de la fonction checkMultiTerms
+ * La fonction checkMultiTerms a été écrite pour avec les limitations suivantes: sens forward seulement, pas de
+ * prise en compte de multiples arêtes à partir d'un noeud.
+ * 
+ */
 bool Automaton::DFSStack::
 push(const LinguisticGraphVertex& vertex,
      const Tstate& state,
-     AnalysisContent& analysis) {
+     AnalysisContent& analysis,
+     const LinguisticGraphVertex& limit) {
 
 /*  AULOGINIT;
   LDEBUG << "Automaton:DFSSTack: pushing " << vertex
@@ -425,12 +518,13 @@ push(const LinguisticGraphVertex& vertex,
   LinguisticGraphVertex nextVertex;
   while (m_searchGraph->getNextVertex(m_graph.getGraph(),nextVertex)) {
     if (! isEndVertex(nextVertex)) {
-      std::vector<const Transition*> matchingTransitions(0);
+      std::vector<DFFSPos> matchingTransitions(0);
 //       LDEBUG << "Automaton:get matching transitions from state "
 //              << state << " for vertex " << nextVertex;
       if (m_automaton.
           getMatchingTransitions(m_graph,nextVertex,analysis,
-                                 state,matchingTransitions)) {
+                                 m_searchGraph,state,matchingTransitions,limit)) {
+
 /*        if (logger.isDebugEnabled()) {
           ostringstream oss;
           std::vector<const Transition*>::const_iterator 
@@ -442,7 +536,7 @@ push(const LinguisticGraphVertex& vertex,
           }
           LDEBUG << oss.str();
         }*/
-        tmpStack.push_back(DFSStackElement(nextVertex,matchingTransitions));
+        tmpStack.push_back(DFSStackElement(matchingTransitions));
       }
 /*      else {
         LDEBUG << "Automaton:DFSSTack: => no matching transitions" 
@@ -526,7 +620,7 @@ getAllMatches(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                                 &forward,
                                 limit);
     success = testFromState(initialState, graph, 
-                            begin, analysis,
+                            begin, limit, analysis,
                             results, 
                             checkList, 
                             forwardSearchStack,
@@ -541,7 +635,7 @@ getAllMatches(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                                  &backward,
                                  limit);
     success = testFromState(initialState, graph, 
-                            begin, analysis,
+                            begin, limit, analysis,
                             results, 
                             checkList, 
                             backwardSearchStack,
@@ -557,6 +651,7 @@ getAllMatches(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 bool Automaton::testFromState(const Tstate firstState,
                               const LinguisticAnalysisStructure::AnalysisGraph& graph,
                               const LinguisticGraphVertex& beginVertex,
+                              const LinguisticGraphVertex& limitVertex,
                               AnalysisContent& analysis,
                               AutomatonMatchSet& results,
                               ConstraintCheckList& checkList,
@@ -569,7 +664,7 @@ bool Automaton::testFromState(const Tstate firstState,
   // store in stack pairs of (automaton transition/graph vertex)
   // (store combinatory of all possible pairs, but if store only
   // matching pairs, problems with ConstraintCheckList
-
+                                
   RecognizerMatch currentMatch(&graph);
 
   // check initial state
@@ -582,16 +677,18 @@ bool Automaton::testFromState(const Tstate firstState,
     return (!results.empty());
   }
 
-  // begin is the vertex that matched the trigger: 
-  // push following vertices 
+  // beginVertex is the vertex that matched the trigger
+  // initialize the stack with pairs (stack of vertex with nextV as first element,matchingTransition)
+  // nextV is one of the successor nodes in the graph and matchingTransition(nextV) succeeds
 //   LDEBUG << "pushing";
-  S.push(beginVertex,firstState,analysis);
+  S.push(beginVertex,firstState,analysis,limitVertex);
   
   LinguisticGraphVertex vertex;
   const Transition* transition(0);
   uint64_t nbIter(0);
   bool backtrack(false);
 
+  // contexte de backtrack 
   vector<uint64_t> backtrackDepth;
   backtrackDepth.push_back(0);
 
@@ -602,18 +699,19 @@ bool Automaton::testFromState(const Tstate firstState,
 //     LDEBUG << "in iteration " << nbIter;
     if (S.size() > controlParams.getMaxDepthStack()) {
       AULOGINIT;
-      LWARN << "MaxDepthStack exceeded in automaton search: ignore rest of search" 
-           ;
+      LWARN << "MaxDepthStack exceeded in automaton search: ignore rest of search";
       return (!results.empty());
     }
     if (nbIter > controlParams.getMaxTransitionsExplored()) {
       AULOGINIT;
-      LWARN << "MaxTransitionsExplored exceeded in automaton search: ignore rest of search" 
-           ;
+      LWARN << "MaxTransitionsExplored exceeded in automaton search: ignore rest of search";
       return (!results.empty());
     }
     
-    boost::tie(vertex,transition)=S.top();
+    // boost::tie(vertex,transition)=S.top();
+    DFFSPos const & dffsPos = S.top();
+    vertex = dffsPos.first.front();
+    transition = dffsPos.second;
     if (backtrack) {
       // in backtrack : pop_back current match until the vertex 
       // for which we are testing a new matching transition
@@ -658,12 +756,17 @@ bool Automaton::testFromState(const Tstate firstState,
 //     }
 
     //if (trans->match(graph,vertex,analysis,checkList)) {
+    // TODO: call checkConstraints for every vertex in the deque?
     if (trans->checkConstraints(graph,vertex,analysis,checkList)) {
       
 //       LDEBUG << "Automaton: -> match found";
       // update current match
       LimaString transId = LimaString::fromUtf8( trans->getId().c_str() );
-      currentMatch.addBackVertex(vertex,trans->keep(), transId);
+      // OME: call for the complete stack  currentMatch.addBackVertex(vertex,trans->keep(), transId);
+      std::deque<LinguisticGraphVertex>::const_iterator vIt = dffsPos.first.begin();
+      for( ; vIt != dffsPos.first.end() ; vIt++ ) {
+        currentMatch.addBackVertex(*vIt,trans->keep(), transId);
+      }
 /*      LDEBUG << "Automaton: -> vertex (" << vertex 
              << ",keep=" << trans->keep() 
              << ") added in result, currentMatch="
@@ -717,7 +820,7 @@ bool Automaton::testFromState(const Tstate firstState,
       }
 
       // push next vertices
-      if (!S.push(vertex,nextState,analysis)) {
+      if (!S.push(vertex,nextState,analysis,limitVertex)) {
         backtrack=true;
       }
     }

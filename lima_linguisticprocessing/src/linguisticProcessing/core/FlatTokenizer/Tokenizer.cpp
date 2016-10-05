@@ -35,6 +35,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 #include <string>
@@ -111,10 +112,9 @@ void Tokenizer::init(
 
   try
   {
-    string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    string fileName=resourcesPath +"/"+unitConfiguration.getParamsValueAtKey("automatonFile");
+    QString fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("automatonFile").c_str());
     m_d->_automaton.setCharChart(m_d->_charChart);
-    m_d->_automaton.loadFromFile(fileName);
+    m_d->_automaton.loadFromFile(fileName.toUtf8().constData());
   }
   catch (NoSuchParam& )
   {

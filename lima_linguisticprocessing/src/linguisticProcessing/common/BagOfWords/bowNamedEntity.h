@@ -84,7 +84,7 @@ public:
    */
   std::string getFeaturesUTF8String(void) const;
   /** get a string of the BoWToken for output function */
-  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager) const;
+  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
   virtual std::string getIdUTF8String(void) const;
   
   /**

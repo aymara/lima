@@ -183,7 +183,6 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
   LinguisticGraph* graph=anagraph->getGraph();
   std::queue<LinguisticGraphVertex> toVisit;
   VertexTokenPropertyMap tokenMap=get(vertex_token,*graph);
-  VertexDataPropertyMap DataMap=get(vertex_data,*graph);
   std::set<LinguisticGraphVertex> visited;
 
   try

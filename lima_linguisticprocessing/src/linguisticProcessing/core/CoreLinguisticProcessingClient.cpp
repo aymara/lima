@@ -33,6 +33,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/timeUtilsController.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "common/MediaProcessors/MediaProcessors.h"
@@ -42,6 +43,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <QtCore/QDate>
+#include <QtCore/QFileInfo>
 
 uint64_t t1;
 
@@ -58,15 +60,13 @@ namespace Lima
 
 namespace LinguisticProcessing
 {
-CoreLinguisticProcessingClientFactory* CoreLinguisticProcessingClientFactory::s_instance=new CoreLinguisticProcessingClientFactory();
+std::unique_ptr<CoreLinguisticProcessingClientFactory> CoreLinguisticProcessingClientFactory::s_instance=std::unique_ptr<CoreLinguisticProcessingClientFactory>(new CoreLinguisticProcessingClientFactory());
   
   
 CoreLinguisticProcessingClient::CoreLinguisticProcessingClient()
 {}
 
 CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient() {
-  delete LinguisticResources::pchangeable();
-  delete MediaProcessors::pchangeable();
 }
 
 void CoreLinguisticProcessingClient::analyze(
@@ -74,12 +74,19 @@ void CoreLinguisticProcessingClient::analyze(
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+#ifdef ANTINNO_SPECIFIC
+    const std::set<std::string>& inactiveUnits, StopAnalyze const& stopAnalyze) const
+#else
     const std::set<std::string>& inactiveUnits) const
-
+#endif
 {
   LimaString limatexte=Common::Misc::utf8stdstring2limastring(texte);
-  
+#ifdef ANTINNO_SPECIFIC
+  analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits, stopAnalyze);
+#else
   analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits);
+#endif
+
 }
 
 void CoreLinguisticProcessingClient::analyze(
@@ -87,13 +94,21 @@ void CoreLinguisticProcessingClient::analyze(
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+#ifdef ANTINNO_SPECIFIC
+    const std::set<std::string>& inactiveUnits, StopAnalyze const& stopAnalyze) const
+#else
     const std::set<std::string>& inactiveUnits) const
+#endif
 
 {
   Lima::TimeUtilsController timer("CoreLinguisticProcessingClient::analyze");
   CORECLIENTLOGINIT;
   // create analysis content
+#ifdef ANTINNO_SPECIFIC
+  AnalysisContent analysis(stopAnalyze);
+#else
   AnalysisContent analysis;
+#endif
   LinguisticMetaData* metadataholder=new LinguisticMetaData(); // will be destroyed in AnalysisContent destructor
   analysis.setData("LinguisticMetaData",metadataholder);
 
@@ -258,7 +273,6 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
   }
 
-  string configPath=Common::MediaticData::MediaticData::single().getConfigPath();
   for (deque<string>::const_iterator langItr=langToload.begin();
        langItr!=langToload.end();
        langItr++)
@@ -268,17 +282,30 @@ void CoreLinguisticProcessingClientFactory::configure(
     string file;
     try
     {
-      file=configPath + "/" + configuration.getModuleGroupParamValue(
+      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+      Q_FOREACH(QString confPath, configPaths)
+      {
+        QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
-             *langItr);
+             *langItr).c_str());
+        if  (QFileInfo(confPath + "/" + mediaProcessingDefinitionFile).exists())
+        {
+          file= (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
+          break;
+        }
+      }
     }
     catch (NoSuchParam& )
     {
       LERROR << "no language definition file for language " << *langItr;
       throw InvalidConfiguration("no language definition file for language ");
     }
-
+    if (file.empty())
+    {
+      LERROR << "no language definition file for language " << *langItr;
+      throw InvalidConfiguration("no language definition file for language ");
+    }
     XMLConfigurationFileParser langParser(file);
 
     //initialize SpecificEntities 
@@ -331,9 +358,9 @@ void CoreLinguisticProcessingClientFactory::configure(
   }
 }
 
-AbstractLinguisticProcessingClient* CoreLinguisticProcessingClientFactory::createClient() const
+std::shared_ptr< AbstractProcessingClient > CoreLinguisticProcessingClientFactory::createClient() const
 {
-  return new CoreLinguisticProcessingClient();
+  return std::shared_ptr< AbstractProcessingClient >(new CoreLinguisticProcessingClient());
 }
 
 

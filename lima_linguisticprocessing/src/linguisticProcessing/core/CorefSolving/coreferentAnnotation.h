@@ -113,7 +113,7 @@ typedef std::map< CoreferentAnnotation*,std::map <CoreferentAnnotation*,float> >
   inline void morphVertex(LinguisticGraphVertex v);
   inline void av(AnnotationGraphVertex av);
   inline void newerRef(CoreferentAnnotation* newerRef);
-  inline void dump(std::ostream& os);
+  void dump( std::ostream& os, const Lima::Common::AnnotationGraphs::AnnotationData* ad ) const;
   inline bool hasNewerRef(/*std::deque<Vertices>* npCandidates*/);
 
   /** general test functions */
@@ -514,10 +514,6 @@ inline void CoreferentAnnotation::newerRef(CoreferentAnnotation* newerRef)
 {
   m_newerRef = newerRef;
 }
-inline void CoreferentAnnotation::dump(std::ostream& os)
-{
-  os << "#" << m_id << ";" << m_categ<< ";" << /*"V:" << m_morphVertex <<*/ "\n";
-}
 inline bool CoreferentAnnotation::hasNewerRef()
 {
 return (newerRef()!=this);
@@ -537,8 +533,13 @@ return (newerRef()!=this);
   */
 class DumpCoreferent : public Common::AnnotationGraphs::AnnotationData::Dumper
 {
-  public:
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+public:
+  DumpCoreferent(const Lima::Common::AnnotationGraphs::AnnotationData* ad);
+  virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+
+private:
+  const Lima::Common::AnnotationGraphs::AnnotationData* m_ad;
+
 };
 
 

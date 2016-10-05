@@ -18,6 +18,7 @@
 */
 #include "QsLogCategories.h"
 #include "common/tools/LimaFileSystemWatcher.h"
+#include "common/tools/FileUtils.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)
@@ -34,6 +35,7 @@
 #include <stdexcept>
 
 using namespace Lima;
+using namespace Lima::Common::Misc;
 
 namespace QsLogging
 {
@@ -56,6 +58,12 @@ Categories::Categories(QObject* parent) :
   d(new CategoriesImpl())
 {
   connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
+  QString category = "FilesReporting";
+#ifdef DEBUG_CD
+  d->categories.insert(category,QsLogging::InfoLevel);
+#else
+  d->categories.insert(category,QsLogging::ErrorLevel);
+#endif
 }
 
 Categories::~Categories()
@@ -77,22 +85,22 @@ bool Categories::configure(const QString& fileName)
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
 
-  if (configDir.exists("log4cpp"))
-  {
-    QString log4cppSubdirName = configDir.filePath("log4cpp");
-    QFileInfo log4cppSubdirInfo(log4cppSubdirName);
-    if (log4cppSubdirInfo.isDir())
-    {
-      QStringList nameFilters;
-      nameFilters << "log4cpp.*.properties";
-      QDir log4cppSubdir(log4cppSubdirName);
-      QFileInfoList configFiles = log4cppSubdir.entryInfoList(nameFilters);
-      Q_FOREACH(QFileInfo configFile, configFiles)
-      {
-        configure(configFile.absoluteFilePath());
-      }
-    }
-  }
+//   if (configDir.exists("log4cpp"))
+//   {
+//     QString log4cppSubdirName = configDir.filePath("log4cpp");
+//     QFileInfo log4cppSubdirInfo(log4cppSubdirName);
+//     if (log4cppSubdirInfo.isDir())
+//     {
+//       QStringList nameFilters;
+//       nameFilters << "log4cpp.*.properties";
+//       QDir log4cppSubdir(log4cppSubdirName);
+//       QFileInfoList configFiles = log4cppSubdir.entryInfoList(nameFilters);
+//       Q_FOREACH(QFileInfo configFile, configFiles)
+//       {
+//         configure(configFile.absoluteFilePath());
+//       }
+//     }
+//   }
 
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -145,6 +153,8 @@ bool Categories::configure(const QString& fileName)
     }
     line = in.readLine();
   }
+  LOGINIT("FilesReporting");
+  LINFO << "QsLog conf file loaded:" << fileName;
   return res;
 }
 
@@ -160,23 +170,71 @@ Level Categories::levelFor(const QString& category) const
   return d->categories.value(category, QsLogging::TraceLevel);
 }
 
-LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configDir) {
-  try {
-    QString initFileName = (configDir.isEmpty() ? 
-        QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty() ?
-            "/usr/share/config/lima" : 
-            qgetenv("LIMA_CONF").constData()) : 
-        configDir ) + "/log4cpp.properties";
-    if (!QsLogging::Categories::instance().configure(initFileName))
+LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) 
+{
+  bool atLeastOneSuccessfulLoad = false;
+  QStringList configDirsList;
+  if (configString.isEmpty())
+  {
+    configDirsList = buildConfigurationDirectoriesList(QStringList()<<"lima",QStringList());
+  }
+  else
+  {
+    configDirsList = configString.split(LIMA_PATH_SEPARATOR);
+  }
+  try 
+  {
+    while (! configDirsList.isEmpty() )
     {
+      QString configDir = configDirsList.last();
+      configDirsList.pop_back();
+      QDir initDir( configDir + "/log4cpp");
+      if (initDir.exists())
+      {
+        QStringList entryList = initDir.entryList(QDir::Files);
+        Q_FOREACH(QString entry, entryList)
+        {
+          if (QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
+          {
+            atLeastOneSuccessfulLoad = true;
+          }
+          else 
+          {
+            std::cerr << "Configure Problem " << entry.toUtf8().constData() << std::endl;
+            return -1;
+          }
+        }
+      }
+      QString initFileName = configDir + "/log4cpp.properties";
+#ifdef ANTINNO_BUGFIX
+      // QFileInfo::exists(...) ne fonctionne pas avec qt 4.8
+      if (QFileInfo(initFileName).exists())
+#else
+      if (QFileInfo::exists(initFileName))
+#endif
+      {
+        if (QsLogging::Categories::instance().configure(initFileName))
+    {
+          atLeastOneSuccessfulLoad = true;
+        }
+        else
+        {
       std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
       return -1;
+        }
+      }
     }
-    //    }
-} catch(...) {
+  } 
+  catch(...) 
+  {
   std::cerr << "Exception during logging system configuration" << std::endl;
   return -1;
 }
+  if (!atLeastOneSuccessfulLoad)
+  {
+    std::cerr << "Configure Problem no configure file has been found in" << configString.toStdString() << std::endl;
+    return -1;
+  }
 return 0;
 }
 

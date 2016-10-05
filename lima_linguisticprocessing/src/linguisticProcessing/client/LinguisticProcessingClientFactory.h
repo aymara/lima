@@ -67,7 +67,7 @@ public:
     * ClientFactory must have been configured before this method is called
     * Use configureClientFactory() method to configure.
     */
-  AbstractProcessingClient* createClient(const std::string& id) const;
+  std::shared_ptr< AbstractProcessingClient > createClient(const std::string& id) const;
 
   /**
     * @brief show registered clientId
@@ -86,14 +86,14 @@ class LIMA_LINGUISTICPROCESSIONGCLIENT_EXPORT LinguisticProcessingClientFactoryF
   public:
   ~LinguisticProcessingClientFactoryFactory(){};
   
-  ProcessingClientFactory* createProcessingClientFactory() const
+  std::shared_ptr< ProcessingClientFactory > createProcessingClientFactory() const
   {
-      return new LinguisticProcessingClientFactory();
+      return std::shared_ptr< ProcessingClientFactory >(new LinguisticProcessingClientFactory());
   }
   
   private:
   LinguisticProcessingClientFactoryFactory():AbstractProcessingClientFactoryFactory("lpFactory"){};
-  static LinguisticProcessingClientFactoryFactory* s_instance;
+  static std::unique_ptr< LinguisticProcessingClientFactoryFactory > s_instance;
 };
 
 

@@ -51,13 +51,18 @@ namespace Automaton {
 Gazeteer::Gazeteer():
 std::vector<LimaString>(0),
 m_alias(),
-m_automatonString() {
+m_automatonString(),
+m_hasMultiTermWord(false),
+m_hasNoCategoryNorTstatus(true)
+{
 }
 
 Gazeteer::Gazeteer(const Gazeteer& g):
 std::vector<LimaString>(g),
 m_alias(g.m_alias),
-m_automatonString(g.m_automatonString)
+m_automatonString(g.m_automatonString),
+m_hasMultiTermWord(g.m_hasMultiTermWord),
+m_hasNoCategoryNorTstatus(g.m_hasNoCategoryNorTstatus)
 {
 }
 
@@ -75,6 +80,8 @@ Gazeteer& Gazeteer::operator = (const Gazeteer& g) {
     std::vector<LimaString>::operator=(g);
     m_alias = g.alias();
     m_automatonString=g.m_automatonString;
+    m_hasMultiTermWord=g.m_hasMultiTermWord;
+    m_hasNoCategoryNorTstatus=g.m_hasNoCategoryNorTstatus;
   }
   return (*this);
 }
@@ -87,6 +94,23 @@ Gazeteer& Gazeteer::add(const Gazeteer& g) {
   return *this;
 }
 /***********************************************************************/
+
+/***********************************************************************/
+// add a word in the inherited  std::vector<LimaString>
+// check if word is simple word (no category, no Tstatus)
+/***********************************************************************/
+void Gazeteer::addWord(const LimaString& s) {
+  if( (s.startsWith(STRING_TSTATUS_TR))
+   || (s.startsWith(STRING_TSTATUS_TR_small))
+   || (s.contains(CHAR_POS_TR)) )
+  {
+    resetCategoryOrTstatusFlag();
+  }
+  if( s.contains(CHAR_SEP_RE) )  {
+    setHasMultiTermWordFlag();
+  }
+  push_back(s);
+}
 
 
 /***********************************************************************/

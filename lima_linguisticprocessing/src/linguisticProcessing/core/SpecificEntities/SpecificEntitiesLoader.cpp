@@ -28,6 +28,7 @@
 #include "SpecificEntitiesLoader.h"
 #include "SpecificEntitiesConstraints.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/core/Automaton/recognizerMatch.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
@@ -77,8 +78,8 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     deque<string> modex=unitConfiguration.getListsValueAtKey("modex");
     for (deque<string>::const_iterator it=modex.begin(),it_end=modex.end();it!=it_end;it++) {
       LDEBUG << "loader: initialize modex " << *it;
-      string filename=Common::MediaticData::MediaticData::single().getConfigPath()+"/"+*it;
-      Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename);
+      QString filename = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),(*it).c_str());
+      Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename.toUtf8().constData());
       Common::MediaticData::MediaticData::changeable().initEntityTypes(parser);
     }
   }
@@ -114,7 +115,11 @@ process(AnalysisContent& analysis) const
     SpecificEntitiesLoader::XMLHandler handler(m_language,analysis,graph);
     m_parser->setContentHandler(&handler);
     m_parser->setErrorHandler(&handler);
+#ifdef ANTINNO_SPECIFIC
     QFile file(getInputFile(analysis).c_str());
+#else
+    QFile file(getInputFile(analysis));
+#endif
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
       throw XMLException();
     if (!m_parser->parse( QXmlInputSource(&file)))

@@ -51,6 +51,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateData : public AnalysisData, public 
   void addTemplate();
   void addElementInCurrentTemplate(const std::string& role, const EventTemplateElement& elt);
   void clearCurrentTemplate();
+  void setTypeInCurrentTemplate(const std::string&);
 
   Events* convertToEvents(const Common::AnnotationGraphs::AnnotationData* annotationData) const;
   

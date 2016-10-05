@@ -46,6 +46,7 @@
 #include "setTransition.h"
 #include "deaccentuatedTransition.h"
 #include "entityTransition.h"
+#include "entityGroupTransition.h"
 
 #include "common/Data/readwritetools.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/TStatus.h"
@@ -71,7 +72,12 @@ void writeTypeTransition(std::ofstream& file, const TypeTransition t) {
 }
 
 
+#ifdef ANTINNO_SPECIFIC
 #define RECOGNIZER_VERSION "1.20"
+#else
+#define RECOGNIZER_VERSION "1.30"
+#endif
+
 #define RECOGNIZER_DEBUG_VERSION ".debug"
 
 //----------------------------------------------------------------------
@@ -396,6 +402,18 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     t=new TStatusTransition(status);
     break;
   }
+  case T_GAZETEER: {
+    // read alias
+    LimaString alias;
+    Misc::readUTF8StringField(file,alias);
+    // read set of words
+    std::vector<LimaString> wordVector;
+    readWordVector(file,wordVector);
+    // read keep
+    int keepVal = Misc::readCodedInt(file);
+    // create transition
+    t=new GazeteerTransition(wordVector, alias, keepVal == 1); 
+    break; }
   case T_AND: {
     uint64_t size=Misc::readCodedInt(file);
     vector<TransitionUnit*> tmp(size);
@@ -441,6 +459,12 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     t=new EntityTransition(m_entityTypeMapping[EntityType(typeId,groupId)]);
     break; 
   }
+  case T_ENTITY_GROUP: {
+    EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
+    // use entityGroup mapping
+    t=new EntityGroupTransition(m_entityGroupMapping[groupId]);
+    break; 
+  }
   default: {
     AULOGINIT;
     LERROR << "Undefined type of transition: " << codeTrans;
@@ -460,6 +484,7 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     char *buf = new char [len];
     file.read(buf, len);
     t->setId(std::string(buf,len));
+    delete[] buf;
     uint64_t n=Misc::readCodedInt(file);
     Constraint c;
     for (uint64_t i(0); i<n; i++) {
@@ -665,6 +690,16 @@ writeTransitionUnit(std::ofstream& file,
     writeTpos(file,t->partOfSpeech());
     break;
   }
+  case T_GAZETEER: {
+    GazeteerTransition* t=static_cast<GazeteerTransition*>(transition);
+    Misc::writeUTF8StringField(file,t->alias());
+    writeWordSet(file,t->wordSet());
+    if( t->keep() )
+      Misc::writeCodedInt(file,1); 
+    else
+      Misc::writeCodedInt(file,0); 
+    break;
+  }
   case T_NUM: {
     NumericTransition* t=static_cast<NumericTransition*>(transition);
     Misc::writeCodedInt(file,t->value());
@@ -723,6 +758,12 @@ writeTransitionUnit(std::ofstream& file,
     Misc::writeUTF8StringField(file,t->getDeaccentuatedForm());
     MediaId lang=t->getLanguage();
     file.write((char*) &lang,sizeof(unsigned char));
+    break;
+  }
+  case T_ENTITY_GROUP: {
+    EntityGroupTransition* t=static_cast<EntityGroupTransition*>(transition);
+    EntityGroupId entityGroupId=t->entityGroupId();
+    Misc::writeCodedInt(file,entityGroupId);
     break;
   }
   case T_ENTITY: {

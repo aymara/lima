@@ -30,11 +30,13 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
 #include <string>
 #include <fstream>
+#include <QtCore>
 
 using namespace std;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -197,18 +199,39 @@ void  LanguageData::initialize(
 }
 
 void LanguageDataPrivate::initPropertyCode(
-  const std::string& resourcesPath,
+  const std::string& resourcesPathsStd,
   XMLConfigurationFileParser& conf)
 {
   LDATALOGINIT;
-  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system";
+  LINFO << "LanguageDataPrivate::initPropertyCode initializes the property coding system with resources path" << resourcesPathsStd;
   try
   {
-    std::string propertyFile=resourcesPath + "/" + conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile");
+    QStringList resourcesPaths= QString::fromUtf8(resourcesPathsStd.c_str()).split(LIMA_PATH_SEPARATOR);
+    bool propertyCodeFileFound = false;
+    QString propertyCodeFile = conf.getModuleGroupParamValue("LinguisticData","Categories","PropertyCodeFile").c_str();
+    Q_FOREACH(QString resourcesPath, resourcesPaths)
+    {
+      QString propertyFile(resourcesPath + "/" + propertyCodeFile);
 #ifdef DEBUG_LP
-    LDEBUG << "LanguageDataPrivate::initPropertyCode propertyFile is:" << propertyFile;
+        LDEBUG << "LanguageDataPrivate::initPropertyCode trying property file" << propertyFile;
 #endif
-    m_propCodeManager.readFromXmlFile(propertyFile);
+      QFileInfo propertyFileInfo(propertyFile);
+      if (propertyFileInfo.exists())
+      {
+#ifdef DEBUG_LP
+        LDEBUG << "LanguageDataPrivate::initPropertyCode reading property file" << propertyFileInfo.filePath();
+#endif
+        m_propCodeManager.readFromXmlFile(propertyFileInfo.filePath().toUtf8().constData());
+        propertyCodeFileFound = true;
+        // Read at most one property code file for a language
+        break;
+      }
+    }
+    if (!propertyCodeFileFound)
+    {
+      LERROR << "No property code file"<<propertyCodeFile<<"found in paths:" << resourcesPaths;
+      throw InvalidConfiguration();
+    }
   }
   catch (std::exception& e)
   {
@@ -405,7 +428,15 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {
-    compoundTensesDefinitionsFile = resourcesPath + std::string("/") + compoundTensesDefinitionsFile;
+    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
+    Q_FOREACH(QString resPath, resourcesPaths)
+    {
+      if  (QFileInfo(resPath + "/" + compoundTensesDefinitionsFile.c_str()).exists())
+      {
+        compoundTensesDefinitionsFile = (resPath + "/" + compoundTensesDefinitionsFile.c_str()).toUtf8().constData();
+        break;
+      }
+    }
   }
 
   std::ifstream ifl(compoundTensesDefinitionsFile.c_str(), std::ifstream::binary);
@@ -417,8 +448,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
     return;
   }
 
-  std::string line;
-  getline(ifl, line);
+  std::string line = Lima::Common::Misc::readLine(ifl);
   Misc::chomp(line);
   linesCounter++;
   while (ifl.good() && !ifl.eof())
@@ -452,7 +482,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 
       m_compoundTenseDefiniton.insert(std::make_pair( std::make_pair(mode, auxTense), compoundTense));
     }
-    getline(ifl, line);
+    line = Lima::Common::Misc::readLine(ifl);
     Misc::chomp(line);
     linesCounter++;
   }
@@ -627,6 +657,8 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
 #endif
     return (*it).second;
   }
+  LDATALOGINIT;
+  LERROR << "LanguageData::getSyntacticRelationId NOT found" << name << "!" ;
   return 0;
 }
 

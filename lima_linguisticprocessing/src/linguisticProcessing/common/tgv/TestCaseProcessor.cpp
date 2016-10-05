@@ -35,6 +35,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
 
+#ifdef ANTINNO_SPECIFIC
+#else
 std::ostream& operator<<(std::ostream& oss, const QStringList& qsl)
 {
   oss << "{";
@@ -45,6 +47,7 @@ std::ostream& operator<<(std::ostream& oss, const QStringList& qsl)
   oss << "}";
   return oss;
 }
+#endif
 
 namespace Lima
 {

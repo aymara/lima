@@ -57,10 +57,6 @@ enum MorphoSyntacticType {
 };
 
 struct LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT LinguisticElement {
-  LinguisticElement();
-  LinguisticElement(const  LinguisticElement& le);
-  LinguisticElement& operator=(const LinguisticElement& le);
-  
   StringsPoolIndex inflectedForm;
   StringsPoolIndex lemma;
   StringsPoolIndex normalizedForm;

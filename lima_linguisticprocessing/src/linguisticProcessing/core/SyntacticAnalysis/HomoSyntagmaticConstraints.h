@@ -332,7 +332,7 @@ private:
   QStringList m_relations;
 };
 
-/** @brief This constraint creates a TEMPCOMP relation between its two
+/** @brief This constraint creates a aux relation between its two
  * parameters
  *
  * @todo It was originaly supposed to replace the two vertices (auxiliary and

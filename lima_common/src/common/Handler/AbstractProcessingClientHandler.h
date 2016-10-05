@@ -31,7 +31,7 @@ class AbstractProcessingClientHandler
   public:
     virtual ~AbstractProcessingClientHandler() {}
     
-    inline virtual void setAnalysisClient(const std::string& clientId, AbstractProcessingClient* client)
+    inline virtual void setAnalysisClient(const std::string& clientId, std::shared_ptr< AbstractProcessingClient > client)
     {
         if (m_clients.find(clientId)!=m_clients.end())
         {
@@ -43,7 +43,7 @@ class AbstractProcessingClientHandler
         m_clients.insert(std::make_pair(clientId, client));
     }
     
-    inline virtual AbstractProcessingClient* getAnalysisClient(const std::string& clientId)
+    inline virtual std::shared_ptr< AbstractProcessingClient > getAnalysisClient(const std::string& clientId)
     {
         if (m_clients.find(clientId)==m_clients.end())
         {
@@ -56,19 +56,28 @@ class AbstractProcessingClientHandler
 	  return m_clients[clientId];
     }    
     
-    inline virtual std::map<std::string, AbstractProcessingClient*> getAnalysisClients() const {return m_clients;};
-    inline virtual void setAnalysisClients(std::map<std::string, AbstractProcessingClient*> clients){m_clients=clients;};   
+    inline virtual std::map<std::string, std::shared_ptr< AbstractProcessingClient > > getAnalysisClients() const {return m_clients;};
+    inline virtual void setAnalysisClients(std::map<std::string, std::shared_ptr< AbstractProcessingClient > > clients){m_clients=clients;};   
     
    virtual void handleProc(	 const std::string& tagName,
 			 const std::string& content,
                          const std::map<std::string,std::string>& metaData,
                          const std::string& pipeline,
 			  const std::map<std::string, AbstractAnalysisHandler*>& handlers = std::map<std::string, AbstractAnalysisHandler*>(),
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>())
+                         const std::set<std::string>& inactiveUnits = std::set<std::string>()
+#ifdef ANTINNO_SPECIFIC
+                         , Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze
+#endif
+                         )
 	{
     ABSTRACTPROCESSINGCLIENTLOGINIT;
-    LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName) <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
-	  getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits);
+#ifdef ANTINNO_SPECIFIC
+    LDEBUG << "handleProc("<<tagName<<") gets " << getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
+    getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits, stopAnalyze);
+#else
+    LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
+    getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits);
+#endif
 	}
 
 //   inline virtual void setAnalysisHandler(const std::string& handlerId, AbstractAnalysisHandler* handler)
@@ -83,7 +92,7 @@ class AbstractProcessingClientHandler
 
   private:
   //! @brief list of handlers available
-  std::map<std::string, AbstractProcessingClient*> m_clients;
+  std::map<std::string, std::shared_ptr< AbstractProcessingClient > > m_clients;
 };
 
 }

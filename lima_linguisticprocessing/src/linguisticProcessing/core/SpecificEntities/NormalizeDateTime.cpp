@@ -264,12 +264,13 @@ updateCurrentDate(AnalysisContent& analysis,
 unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) const
 {
   SELOGINIT;
-  // try first conversion of type "premier" -> 1
-  unsigned short day =  m_resources->getCardinalFromNumberOrdinal(numdayString);
+  // try to extract number as int from string <number><ordinalSuffix> like 4th, 22nd, 1st or <number> like 17
+  unsigned short day =  m_resources->getValueFromNumberOrdinal(numdayString);
   LDEBUG << "NormalizeDate::getDayFromString: testConversion 1 of " << numdayString << "1 day=" << day;
+  // try first conversion of type "premier" -> 1
   // then try conversion of type "10th" -> 10
   if( day == NormalizeDateTimeResources::no_day ) {
-    day =  m_resources->getDayNumberFromWordOrdinal(numdayString);
+    day =  m_resources->getValueFromWordCardinalOrOrdinal(numdayString);
     LDEBUG << "NormalizeDate::getDayFromString: testConversion 2 of " << numdayString << "1 day=" << day;
   }
   // then try conversion of type "10" -> 10
@@ -450,13 +451,23 @@ operator()(RecognizerMatch& m,
           // set interval
           QDate firstDayOfMonth(year,month,1);
 #ifdef DEBUG_LP
-          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
+#ifdef ANTINNO_SPECIFIC
+          // FWI 21/09/2015 modifié temporairement
+          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << "????";
+#else
+		  LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
+#endif
 #endif
           m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
           if (month_end==0) {
             QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
 #ifdef DEBUG_LP
-          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
+#ifdef ANTINNO_SPECIFIC
+          // FWI 21/09/2015 modifié temporairement
+          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << "????";
+#else
+		  LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
+#endif
 #endif
             m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
           }
@@ -533,7 +544,9 @@ operator()(RecognizerMatch& m,
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
   }
   
-  QString dateSpan = QString::number(year);
+  QString dateSpan = "XXXX";
+  if( year != 0 )
+    dateSpan = QString::number(year);
 #ifdef DEBUG_LP
   LDEBUG << "NormalizeDate operator(): year: dateSpan=" << dateSpan;
 #endif

@@ -93,10 +93,6 @@ BoWDocument::BoWDocument(const BoWDocument& d):
 //***********************************************************************
 BoWDocument::~BoWDocument()
 {
-#ifdef DEBUG_LP
-  BOWLOGINIT;
-  LDEBUG << "BoWDocument::~BoWDocument" << this;
-#endif
   clear();
 }
 

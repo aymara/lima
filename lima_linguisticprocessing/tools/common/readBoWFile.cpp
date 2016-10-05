@@ -262,7 +262,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       TextWriterBoWDocumentHandler writer(cout);
       while (! fileIn.eof())
       {
-        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator);
+        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       break;
     }
@@ -272,7 +272,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       writer.writeBoWDocumentsHeader();
       while (! fileIn.eof())
       {
-        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator);
+        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       writer.writeBoWDocumentsFooter();
     }
@@ -281,7 +281,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       SBoWStatWriter writer;
       while (! fileIn.eof())
       {
-        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator);
+        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       cout << writer << endl;
       break;

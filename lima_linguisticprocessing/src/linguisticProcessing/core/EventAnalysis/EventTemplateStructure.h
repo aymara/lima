@@ -1,21 +1,3 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateStructure.h
@@ -49,15 +31,18 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateStructure
   ~EventTemplateStructure();
   
   void setName(const std::string& name) { m_name=name; }
+  void setMention(const std::string& name) { m_mention=name; }
   void addTemplateElement(const std::string& role, const std::string entityType);
   
   const std::string& getName(void) const { return m_name; }
+  const std::string& getMention(void) const { return m_mention; }
   const std::map<std::string,Common::MediaticData::EntityType>& getStructure(void) const
   { return m_structure; }
 
  private:
   std::string m_name;
   std::map<std::string,Common::MediaticData::EntityType> m_structure;
+  std::string m_mention;
 };
 
 } // end namespace

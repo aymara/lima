@@ -32,7 +32,7 @@
 #define LIMA_ABSTRACTFACTORYPATTERNEXPORT_H
 
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 
 #ifdef WIN32
 

@@ -27,6 +27,7 @@
 
 #include "transitionCompiler.h"
 #include "ruleFormat.h"
+#include "gazeteer.h"
 #include "tstring.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/TStatus.h"
@@ -34,12 +35,15 @@
 #include "linguisticProcessing/core/Automaton/wordTransition.h"
 #include "linguisticProcessing/core/Automaton/posTransition.h"
 #include "linguisticProcessing/core/Automaton/lemmaTransition.h"
+#include "linguisticProcessing/core/Automaton/gazeteerTransition.h"
 #include "linguisticProcessing/core/Automaton/starTransition.h"
 #include "linguisticProcessing/core/Automaton/entityTransition.h"
+#include "linguisticProcessing/core/Automaton/entityGroupTransition.h"
 #include "linguisticProcessing/core/Automaton/tstatusTransition.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
+
 
 using namespace std;
 using namespace Lima::Common;
@@ -65,6 +69,43 @@ TStatusTransition* createDefaultTStatusTransition(const LimaString& str,
 // creates a transition from a entry string, depending on the syntax
 // defined in the previous macros
 //
+// TODO: unify different Factory for Transition ...
+TransitionUnit*
+  createGazeteerTransition(const LimaString& gazeteerName,
+                 MediaId language, const std::string& id,
+                 const std::vector<LimaString>& activeEntityGroups,
+                 const vector<Gazeteer>& gazeteers,
+                 const bool keep,
+                 const bool head)
+{
+  int gazeteerIndex;
+  for (gazeteerIndex=0; gazeteerIndex<gazeteers.size(); gazeteerIndex++) {
+    if (gazeteers[gazeteerIndex].alias() == gazeteerName) {
+      break;
+    }
+  }
+  if ( gazeteerIndex >= gazeteers.size() || gazeteers[gazeteerIndex].size() == 0 ) {
+    AUCLOGINIT;
+    string str=Misc::limastring2utf8stdstring(gazeteerName);
+    if (gazeteerIndex<gazeteers.size()) {
+      LERROR << "empty class as trigger [" << str << "]";
+    }
+    else {
+     LERROR << "Unrecognized class as trigger [" << str << "]";
+    }
+    return 0;
+  }
+  const Gazeteer& gazeteer = gazeteers[gazeteerIndex];
+  const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
+  // TODO bool negative = automatonString.isNegative()??, Est-ce qu'on autorise un trigger avec une négation?
+  bool negative(false);
+  TransitionUnit* t = new GazeteerTransition(gazeteerAsVectorOfString, gazeteerName, keep); 
+  t->setNegative(negative);
+  t->setHead(head);
+  t->setId(id);
+  return t;
+}
+
 TransitionUnit*
 createTransition(const AutomatonString& automatonString,
                  MediaId language, const std::string& id,
@@ -83,7 +124,9 @@ TransitionUnit* createTransition(const LimaString str,
                                  const std::vector<LimaString>& activeEntityGroups,
                                  const bool keep,
                                  const bool neg,
-                                 const std::vector<Constraint>& constraints) 
+                                 const std::vector<Constraint>& constraints,
+                                 const std::vector<LimaString>& gazeteerAsVectorOfString
+                                 ) 
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
@@ -99,7 +142,7 @@ TransitionUnit* createTransition(const LimaString str,
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
 
 #ifdef DEBUG_LP
-  LDEBUG << "creating transition from string [" 
+  LDEBUG << "createTransition: creating transition from string [" 
          << Common::Misc::limastring2utf8stdstring(str)
          << "] with id" << id;
 #endif
@@ -143,7 +186,7 @@ TransitionUnit* createTransition(const LimaString str,
   if (s[0] == CHAR_NOKEEP_OPEN_TR) {
     if (s[s.length()-1] != CHAR_NOKEEP_CLOSE_TR) {
       AUCLOGINIT;
-      LERROR << "confused by no_keep format (maybe incomplete) :"
+      LERROR << "createTransition: confused by no_keep format (maybe incomplete) :"
              << Common::Misc::limastring2utf8stdstring(str);
     }
     else {
@@ -239,6 +282,14 @@ TransitionUnit* createTransition(const LimaString str,
     t = createDefaultTStatusTransition(s,LENGTH_TSTATUS_TR);
   }
   // ----------------------------------------------------------------------
+  // GazeteerTransition: form belongs to gazeteer
+  /*
+  else if (s.indexOf(CHAR_BEGIN_NAMEGAZ,0) == 0) {
+    // name of gazeteer already identified!
+    t = new GazeteerTransition(gazeteerAsVectorOfString,alias,keep);
+  }
+  */
+  // ----------------------------------------------------------------------
   // * transition
   else if (s == STRING_ANY_TR) {
     t = new StarTransition();
@@ -246,14 +297,24 @@ TransitionUnit* createTransition(const LimaString str,
   // ----------------------------------------------------------------------
   // entity transition
   else if (s.size()>=2 && s[0]==CHAR_BEGIN_ENTITY && s[s.size()-1]==CHAR_END_ENTITY) {
-    Common::MediaticData::EntityType type=
-      resolveEntityName(s.mid(1,s.size()-2),activeEntityGroups);
+    LimaString entityName(s.mid(1,s.size()-2));
+    Common::MediaticData::EntityType type=resolveEntityName(entityName,activeEntityGroups);
     if (type.isNull()) {
-      AUCLOGINIT;
-      LERROR << "cannot resolve entity name " 
-             << Common::Misc::limastring2utf8stdstring(s);
+      Common::MediaticData::EntityGroupId groupId = resolveGroupName(entityName,activeEntityGroups);
+      if( groupId == 0) {
+        AUCLOGINIT;
+        LERROR << "createTransition: cannot resolve entity name " 
+               << Common::Misc::limastring2utf8stdstring(s);
+      }
+      else {
+        AUCLOGINIT;
+        LDEBUG << "createTransition: create EntityGroupTransition(" << groupId << ")";
+        t=new EntityGroupTransition(groupId);
+      }
     }
     else {
+      AUCLOGINIT;
+      LDEBUG << "createTransition: create EntityTransition(" << type << ")";
       t=new EntityTransition(type);
     }
   }
@@ -285,27 +346,67 @@ TransitionUnit* createTransition(const LimaString str,
 
 //**********************************************************************
 //
+Common::MediaticData::EntityGroupId
+resolveGroupName(const LimaString s,
+                  const std::vector<LimaString>& activeEntityGroups)
+{
+#ifdef DEBUG_LP
+  AUCLOGINIT;
+  LDEBUG << "resolveGroupName: try to resolve group name " 
+         << Common::Misc::limastring2utf8stdstring(s);
+#endif
+  Common::MediaticData::EntityGroupId foundGroup;
+  try {
+    LimaString groupName=s;
+#ifdef DEBUG_LP
+    LDEBUG << "resolveGroupName: try group name " << Common::Misc::limastring2utf8stdstring(s);
+#endif
+    foundGroup = Common::MediaticData::MediaticData::single().getEntityGroupId(groupName);
+    // group is among active groups
+#ifdef DEBUG_LP
+    LDEBUG << "resolveGroupName: foundGroup" << foundGroup;
+#endif
+    for (vector<LimaString>::const_iterator it=activeEntityGroups.begin(),
+       it_end=activeEntityGroups.end(); it!=it_end; it++) {
+      if( groupName == *it ) {
+        return foundGroup;
+      }
+      AUCLOGINIT;
+      LERROR << "resolveGroupName: group " << Common::Misc::limastring2utf8stdstring(s) << " not active";
+      return foundGroup;
+    }
+  }
+  catch (LimaException& e) {
+      AUCLOGINIT;
+      LERROR << "resolveGroupName: cannot resolve group for " 
+             << Common::Misc::limastring2utf8stdstring(s);
+  }
+  return foundGroup;
+}
+
+//**********************************************************************
+//
 Common::MediaticData::EntityType
 resolveEntityName(const LimaString s,
                   const std::vector<LimaString>& activeEntityGroups)
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
-  LDEBUG << "TransitionCompiler: try to resolve entity name " 
+  LDEBUG << "resolveEntityName: try to resolve entity name " 
          << Common::Misc::limastring2utf8stdstring(s);
 #endif
   
   // test if word is a known entity name => in this case, entity transition
   if (s.indexOf(Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator())!=-1) {
 #ifdef DEBUG_LP
-    LDEBUG << "TransitionCompiler: entity name is complete";
+    LDEBUG << "resolveEntityName: entity name is complete";
 #endif
     try {
       return Common::MediaticData::MediaticData::single().getEntityType(s);
     }
     catch (LimaException& e) {
       AUCLOGINIT;
-      LERROR << "unknown entity " << s;
+      LERROR << "resolveEntityName: unknown entity " << s;
     }
   }
   else { // try to find this entity in active groups
@@ -315,14 +416,14 @@ resolveEntityName(const LimaString s,
       try {
         LimaString entityName=(*it)+Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator()+s;
 #ifdef DEBUG_LP
-        LDEBUG << "TransitionCompiler: try entity name " << Common::Misc::limastring2utf8stdstring(entityName);
+        LDEBUG << "resolveEntityName: try entity name " << Common::Misc::limastring2utf8stdstring(entityName);
 #endif
         Common::MediaticData::EntityType findType=
           Common::MediaticData::MediaticData::single().getEntityType(entityName);
         if (!type.isNull()) {
           // there is ambiguity
           AUCLOGINIT;
-          LERROR << "cannot resolve entity group for entity " 
+          LERROR << "resolveEntityName: cannot resolve entity group for entity " 
                  << Common::Misc::limastring2utf8stdstring(s)
                  << " (at least two groups contain this entity)";
         }
@@ -333,14 +434,14 @@ resolveEntityName(const LimaString s,
       catch (LimaException& e) { 
         // not in this group: do nothing (continue search)
 #ifdef DEBUG_LP
-        LDEBUG << "entity " << Common::Misc::limastring2utf8stdstring(s)
+        LDEBUG << "resolveEntityName: entity " << Common::Misc::limastring2utf8stdstring(s)
                << " not in group " << Common::Misc::limastring2utf8stdstring(*it);
 #endif
       }
     }
-    if (type.isNull()) {
+    if (type.isNull()) { // try to interpret s as group
       AUCLOGINIT;
-      LERROR << "cannot resolve entity group for entity " 
+      LERROR << "resolveEntityName: cannot resolve entity group for entity " 
              << Common::Misc::limastring2utf8stdstring(s)
              << " (no active group contains this entity)";
     }
@@ -411,7 +512,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
       //search for separator '_'
       int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO_STRING,0));
       if (sep != -1 && string(s,0,sep) == "L") {
-        // '_' found after L (L_NC)
+        // '_' found after L (NC)
         sep=findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO_STRING,sep+1);
       }
       if (sep == -1) { // only macro

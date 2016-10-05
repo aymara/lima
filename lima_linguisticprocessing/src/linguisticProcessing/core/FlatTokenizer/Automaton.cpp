@@ -34,6 +34,7 @@
 #include "State.h"
 
 #include "common/misc/Exceptions.h"
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 
@@ -77,10 +78,8 @@ void Automaton::init(
   MediaId language=manager->getInitializationParameters().language;
 
   try {
-    std::string resourcePath=Common::MediaticData::MediaticData::single().getResourcesPath();
-    std::string charChartFileName=resourcePath + "/" + unitConfiguration.getParamsValueAtKey("automatonFile");
-    loadFromFile(charChartFileName);
-
+    QString charChartFileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("automatonFile").c_str());
+    loadFromFile(charChartFileName.toUtf8().constData());
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LERROR << "no parameter 'automatonFile' in tokenizer group for language " << (int) language << " !";

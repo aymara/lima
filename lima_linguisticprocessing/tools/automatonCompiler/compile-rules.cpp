@@ -45,6 +45,7 @@
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/time/timeUtilsController.h"
+#include "common/tools/FileUtils.h"
 
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 #include "linguisticProcessing/core/Automaton/automatonReaderWriter.h"
@@ -231,41 +232,12 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
       param.inputRulesFile=s;
     }
   }
-  // if not specified, search default values in environment variables
-  if (param.resourcesDir.empty())
-  {
-    char* resourcesStr =  getenv("LIMA_RESOURCES");
-    if (resourcesStr != NULL) 
-    {
-      param.resourcesDir = resourcesStr; 
-    }
-    else 
-    { 
-      param.resourcesDir = "/usr/share/apps/lima/resources/";
-    }
-  }
-  if (param.configDir.empty())
-  {
-    char* configStr =  getenv("LIMA_CONF");
-    if (configStr != NULL) 
-    { 
-      param.configDir = configStr; 
-    }
-    else 
-    { 
-      param.configDir = "/usr/share/config/lima/";
-    }
-  }
   
   //ensure all needed parameters are set
   if (param.language.empty()) {
     cerr << "Error: missing --language=.. argument " << endl; 
     exit(1);
   }
-//   if (param.modexConfigFile.empty()) {
-//     cerr << "Error: missing --modex=.. argument " << endl; 
-//     exit(1);
-//   }
 
 }
 
@@ -275,7 +247,11 @@ std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& pars
 //  M A I N
 //****************************************************************************
 #include "common/tools/LimaMainTaskRunner.h"
+#ifdef ANTINNO_SPECIFIC
+#include "common/AbstractFactoryPattern/antinno.LibraryLoader.class.h"
+#else
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#endif
 #include <QtCore/QTimer>
 
 int run(int aargc,char** aargv);
@@ -302,12 +278,81 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
-  //Lima::TimeUtilsController("run", true);
+  readCommandLineArguments(argc,argv);
+  
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  if (!param.configDir.empty())
+  {
+    configPath = QString::fromUtf8(param.configDir.c_str());
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+  }
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  if (!param.resourcesDir.empty())
+  {
+    resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
+    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
+  }
+#ifdef ANTINNO_SPECIFIC
+  
+
+
+
+  {
+    std::string configDir;
+    
+	if (param.configDir.empty())
+	{		
+		if ((::std::getenv("AMOSE_CONF")) == NULL)
+		{
+		  std::cerr << "No environment variable \"AMOSE_CONF\" set or variable is empty" << std::endl;
+		  return EXIT_FAILURE;
+		}
+		else
+		{
+			configDir = ::std::getenv("AMOSE_CONF");
+		}
+	}
+	else
+	{
+		configDir = param.configDir;
+	}
+    
+	try
+    {
+      ::std::string const file = configDir + "/plugins.txt";
+      Lima::antinno::LibraryLoader().loadFromFile(file);
+    }
+    catch (::std::exception const& ex)
+    {
+      std::cerr << "Exception during plugins loading. " << ex.what() << std::endl;
+      return EXIT_FAILURE;
+    }
+
+	  ::std::string const log4cppFilePath = configDir + "/log4cpp.properties";
+    ::boost::shared_ptr<QsLogging::antinno::ILog> pLog1(new QsLogging::antinno::Log4cpp());
+    pLog1->configure(log4cppFilePath);
+    //QsLogging::antinno::log = pLog1;
+    QsLogging::antinno::log = pLog1;
+    if (!QsLogging::Categories::instance().configure(log4cppFilePath.data()))
+    {
+      std::cerr << "Configure Problem " << log4cppFilePath << std::endl;
+      return EXIT_FAILURE;
+    }
+    
+   ::std::cout << "Plugins initialized" << ::std::endl;
+  }
+#else
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+#endif
   
-  readCommandLineArguments(argc,argv);
+
 
   deque<string> langs;
   langs.push_back(param.language);
@@ -319,8 +364,8 @@ int run(int argc,char** argv)
       LOGINIT("Automaton::Compiler");
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")...";
     MediaticData::changeable().init(
-      param.resourcesDir,
-      param.configDir,
+      resourcesPath.toUtf8().constData(),
+      configPath.toUtf8().constData(),
       param.commonConfigFile,
       langs);
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
@@ -335,14 +380,29 @@ int run(int argc,char** argv)
     // initialize linguistic processing resources
     MediaId language = MediaticData::single().media(param.language);
     
-    XMLConfigurationFileParser lpconfig(param.configDir + "/" + param.lpConfigFile);
-    const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
-    XMLConfigurationFileParser langParser(param.configDir + "/" + langConfigFile);
-    ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
-    LinguisticResources::changeable().initLanguage(
-      language,
-      module,
-      false); // don't load mainkeys in stringpool, no use
+    bool languageInitialized = false;
+    Q_FOREACH(QString configDir, configDirs)
+    {
+      if (QFileInfo(configDir + "/" + param.lpConfigFile.c_str()).exists())
+      {
+        XMLConfigurationFileParser lpconfig((configDir + "/" + param.lpConfigFile.c_str()).toUtf8().constData());
+        const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
+        XMLConfigurationFileParser langParser((configDir + "/" + langConfigFile.c_str()).toUtf8().constData());
+        ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+        LinguisticResources::changeable().initLanguage(
+          language,
+          module,
+          false); // don't load mainkeys in stringpool, no use
+        languageInitialized = true;
+      }
+    }
+    if(!languageInitialized)
+    {
+      LOGINIT("Automaton::Compiler");
+      LERROR << "No language was configured configured with" << configDirs 
+              << "and" << param.lpConfigFile.c_str();
+      return EXIT_FAILURE;
+    }
 
     AbstractResource* resReco = LinguisticResources::single().getResource(language,"automatonCompiler");
 
@@ -352,16 +412,30 @@ int run(int argc,char** argv)
     if (! param.modexConfigFile.empty()) {
       LOGINIT("Automaton::Compiler");
       LDEBUG << "use modex file " << param.modexConfigFile;
-      XMLConfigurationFileParser modexconfig(param.configDir + "/" + param.modexConfigFile);
-      vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
-      for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+      bool modexInitialized = false;
+      Q_FOREACH(QString configDir, configDirs)
+      {
+        if (QFileInfo(configDir + "/" + param.modexConfigFile.c_str()).exists())
+        {
+          XMLConfigurationFileParser modexconfig((configDir + "/" + param.modexConfigFile.c_str()).toUtf8().constData());
+          vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
+          for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+          {
+            LOGINIT("Automaton::Compiler");
+            LDEBUG << "load library " << *it;
+            Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+          }
+          modexInitialized = true;
+        }
+      }
+      if(!modexInitialized)
       {
         LOGINIT("Automaton::Compiler");
-        LDEBUG << "load library " << *it;
-        Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+        LERROR << "No modex plugin was loaded with" << configDirs 
+                << "and" << param.modexConfigFile.c_str();
+        return EXIT_FAILURE;
       }
     }
-    
     //Recognizer reco;
     // if the rules file is in binary format and we want to print its content
     if (param.decompile)
@@ -390,7 +464,7 @@ int run(int argc,char** argv)
       {
         // Lima::TimeUtilsController *ctrl2 = new Lima::TimeUtilsController("read file and build recognizer", true);
 	// Lima::TimeUtilsController("read file and build recognizer", true);
-        std::cerr << "\rBuilding recognizerâ€¦";
+        std::cerr << "\rBuilding recognizer…";
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
         RecognizerCompiler compiler(param.inputRulesFile);
         compiler.buildRecognizer(reco,language);
@@ -432,8 +506,9 @@ int run(int argc,char** argv)
       {
         if (! param.outputFile.empty())
         {
-          std::cerr << "\rWriting recognizerâ€¦";
+          std::cerr << "\rWriting recognizer…";
           AutomatonWriter writer;
+          LINFO << "writer.WritingRecognizer(language:" << language << "debug:" << param.debug << ")";
           writer.writeRecognizer(reco,param.outputFile,language,param.debug);
           //reco.writeToFile(param.outputFile);
         }

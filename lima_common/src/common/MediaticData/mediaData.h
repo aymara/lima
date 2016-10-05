@@ -31,7 +31,7 @@
 #include <stdint.h> //uint32_t
 #endif
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <boost/cstdint.hpp>
 
 namespace Lima
@@ -47,6 +47,15 @@ namespace MediaticData
 #define MEDIADATA_CLASSID "MediaData"
 
 BOOST_STRONG_TYPEDEF(boost::uint32_t, ConceptType);
+#ifdef ANTINNO_SPECIFIC
+// FWI 25/05/2016 : on spécialise max() pour le type ConceptType sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
+}}}
+namespace std {
+  template <> Lima::Common::MediaticData::ConceptType numeric_limits<Lima::Common::MediaticData::ConceptType>::max()
+  { return Lima::Common::MediaticData::ConceptType(::std::numeric_limits<boost::uint32_t>::max()); }
+}
+namespace Lima { namespace Common { namespace MediaticData{
+#endif
 
 class MediaDataPrivate;
 /**

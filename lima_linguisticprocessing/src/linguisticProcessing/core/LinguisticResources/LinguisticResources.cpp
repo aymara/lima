@@ -27,7 +27,10 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/Singleton.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/core/AnalysisDict/AbstractAccessResource.h"
+
+#include <QFileInfo>
 
 using namespace std;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -153,8 +156,21 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
 #ifdef DEBUG_LP
         LDEBUG << "i="<< i;
 #endif
-        fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
-          "/"+string((*it),0,i);
+        QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+        Q_FOREACH(QString confPath, configPaths)
+        {
+          if  (QFileInfo(confPath + "/" + string((*it),0,i).c_str()).exists())
+          {
+
+            fileName = (confPath + "/" + string((*it),0,i).c_str()).toUtf8().constData();
+            break;
+          }
+        }
+        if (fileName.empty())
+        {
+          LERROR << "No resources" << *it << "found in" << Common::MediaticData::MediaticData::single().getConfigPath();
+          continue;
+        }
         moduleName=string((*it),i+1);
         LINFO << "includeResources filename="<< fileName << "moduleName="<< moduleName;
         XMLConfigurationFileParser parser(fileName);

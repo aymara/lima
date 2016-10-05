@@ -370,6 +370,7 @@ xmlOutput(std::ostream& out,
   {
     // no sentence bounds : dump all text at once
     xmlOutputVertices(out,
+                      analysis,
                       anagraph,
                       posgraph,
                       annotationData,
@@ -394,12 +395,13 @@ xmlOutput(std::ostream& out,
       // if (sentenceEnd==posgraph->lastVertex()) {
       //   continue;
       // }
-      
+
       LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd;
       LDEBUG << "dump simple terms for this sentence";
       
       ostringstream oss;
       xmlOutputVertices(oss,
+                        analysis,
                         anagraph,
                         posgraph,
                         annotationData,
@@ -424,6 +426,7 @@ xmlOutput(std::ostream& out,
 
 void GenericXmlDumper::
 xmlOutputVertices(std::ostream& out,
+                  AnalysisContent& analysis,
                   AnalysisGraph* anagraph,
                   AnalysisGraph* posgraph,
                   const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -509,7 +512,7 @@ xmlOutputVertices(std::ostream& out,
         continue;
       }*/
       ostringstream oss;
-      xmlOutputVertex(oss,(*d),anagraph,posgraph,annotationData,syntacticData,
+      xmlOutputVertex(oss,analysis,(*d),anagraph,posgraph,annotationData,syntacticData,
                       sp,offset,visited,alreadyStoredVertices);
       uint64_t pos=(*it).first->position();
       xmlOutputs[pos].push_back(oss.str());
@@ -526,6 +529,7 @@ xmlOutputVertices(std::ostream& out,
 
 void GenericXmlDumper::
 xmlOutputVertex(std::ostream& out, 
+                AnalysisContent& analysis,
                 LinguisticGraphVertex v,
                 AnalysisGraph* anagraph,
                 AnalysisGraph* posgraph,
@@ -545,7 +549,7 @@ xmlOutputVertex(std::ostream& out,
   se=checkSpecificEntity(v,anagraph,posgraph,annotationData);
   if (se.first!=0) {
     LDEBUG << "GenericXmlDumper: -- is a specific entity ";
-    if (xmlOutputSpecificEntity(out,se.first,se.second,sp,offset)) {
+    if (xmlOutputSpecificEntity(out,analysis,se.first,se.second,sp,offset)) {
       return;
     }
     else {
@@ -561,7 +565,7 @@ xmlOutputVertex(std::ostream& out,
     if (compoundTokens.size()!=0) {
       for (auto it=compoundTokens.begin(), it_end=compoundTokens.end();it!=it_end;it++) {
         
-        xmlOutputCompound(out,(*it),anagraph,posgraph,annotationData,sp,offset);
+        xmlOutputCompound(out,analysis,(*it),anagraph,posgraph,annotationData,sp,offset);
         std::set<uint64_t> bowTokenVertices = (*it)->getVertices();
         alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
       }
@@ -571,7 +575,7 @@ xmlOutputVertex(std::ostream& out,
   LDEBUG << "GenericXmlDumper: -- is simple word ";
   // if not a specific entity nor a compound, output simple word infos
   if (m_outputWords) {
-    xmlOutputVertexInfos(out, v, posgraph, offset);
+    xmlOutputVertexInfos(out, analysis, v, posgraph, offset);
   }
 }
 
@@ -622,6 +626,7 @@ GenericXmlDumper::checkSpecificEntity(LinguisticGraphVertex v,
 
 bool GenericXmlDumper::
 xmlOutputSpecificEntity(std::ostream& out,
+                        AnalysisContent& analysis,
                         const SpecificEntities::SpecificEntityAnnotation* se,
                         LinguisticAnalysisStructure::AnalysisGraph* graph,
                         const FsaStringsPool& sp,
@@ -641,7 +646,7 @@ xmlOutputSpecificEntity(std::ostream& out,
       string value=xmlString(specificEntityFeature(se,m_featureNames[i],sp,offset));
       if (value.empty()) {
         // otherwise, get features from head
-        value=xmlString(m_features[i]->getValue(graph,se->getHead()));
+        value=xmlString(m_features[i]->getValue(graph,se->getHead(),analysis));
       }
       out << " " << m_featureTags[i] << "=\"" << value << "\"";
     }
@@ -653,7 +658,7 @@ xmlOutputSpecificEntity(std::ostream& out,
       for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
            m != se->m_vertices.end(); m++)
       {
-        xmlOutputVertexInfos(out,(*m),graph,offset);
+        xmlOutputVertexInfos(out,analysis,(*m),graph,offset);
       }
       out << "</" << m_specificEntityTag << ">" << endl;
     }
@@ -667,7 +672,7 @@ xmlOutputSpecificEntity(std::ostream& out,
     for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
          m != se->m_vertices.end(); m++)
     {
-      xmlOutputVertexInfos(out,(*m),graph,offset);
+      xmlOutputVertexInfos(out,analysis,(*m),graph,offset);
     }
   }
   
@@ -732,6 +737,7 @@ checkCompound(LinguisticGraphVertex v,
 
 void GenericXmlDumper::
 xmlOutputCompound(std::ostream& out, 
+                  AnalysisContent& analysis,
                   boost::shared_ptr<Common::BagOfWords::AbstractBoWElement> token,
                   LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                   LinguisticAnalysisStructure::AnalysisGraph* posgraph,
@@ -775,7 +781,7 @@ xmlOutputCompound(std::ostream& out,
         while (! bit.isAtEnd()) {
           boost::shared_ptr< AbstractBoWElement > tok=bit.getElement();
           LDEBUG << "next token=" << tok->getOutputUTF8String();
-          xmlOutputCompound(out,tok,anagraph,posgraph,annotationData,sp,offset);
+          xmlOutputCompound(out,analysis,tok,anagraph,posgraph,annotationData,sp,offset);
           bit++;
         }
       }
@@ -784,7 +790,7 @@ xmlOutputCompound(std::ostream& out,
         boost::shared_ptr< BoWTerm > term=boost::dynamic_pointer_cast<BoWTerm>(token);
         const std::deque< BoWComplexToken::Part >& parts=term->getParts();
         for (auto p=parts.begin(),p_end=parts.end();p!=p_end;p++) {
-          xmlOutputCompound(out,(*p).getBoWToken(),anagraph,posgraph,annotationData,sp,offset);
+          xmlOutputCompound(out,analysis,(*p).getBoWToken(),anagraph,posgraph,annotationData,sp,offset);
         }
       }
 
@@ -804,7 +810,7 @@ xmlOutputCompound(std::ostream& out,
         LERROR << "GenericXmlDumper: for vertex " << v << ": specific entity not found";
         }
         else {
-          xmlOutputSpecificEntity(out,se.first,se.second,sp,offset);
+          xmlOutputSpecificEntity(out,analysis,se.first,se.second,sp,offset);
         }
       }
       break;
@@ -813,7 +819,7 @@ xmlOutputCompound(std::ostream& out,
       if  (m_outputCompoundParts) {
         LinguisticGraphVertex v=boost::dynamic_pointer_cast<BoWToken>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWToken of vertex " << v;
-        xmlOutputVertexInfos(out,v,posgraph,offset);
+        xmlOutputVertexInfos(out,analysis,v,posgraph,offset);
       }
       break;
     }
@@ -826,6 +832,7 @@ xmlOutputCompound(std::ostream& out,
 }
 
 void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out, 
+                                            AnalysisContent& analysis,
                                            LinguisticGraphVertex v,
                                            LinguisticAnalysisStructure::AnalysisGraph* graph,
                                            uint64_t offset) const
@@ -835,14 +842,14 @@ void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out,
     std::string value;
     // for position, correct with offset : hard coded name
     if (m_features[i]->getName()=="position") {
-      unsigned int pos=atoi(m_features[i]->getValue(graph,v).c_str());
+      unsigned int pos=atoi(m_features[i]->getValue(graph,v,analysis).c_str());
       pos+=offset;
       ostringstream oss;
       oss << pos;
       value=oss.str();
     }
     else {
-      value=xmlString(m_features[i]->getValue(graph,v));
+      value=xmlString(m_features[i]->getValue(graph,v,analysis));
     }
     out << " " << m_featureTags[i] << "=\"" << value << "\"";
   }

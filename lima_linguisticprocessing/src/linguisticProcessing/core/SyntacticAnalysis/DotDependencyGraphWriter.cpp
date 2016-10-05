@@ -350,7 +350,7 @@ void DotDependencyGraphWriter::write_graphviz(
       }
       
       os << v << " -> " << next << " ";
-      LDEBUG << "PosTaggingDepGraphEdgeWriter for "<<v<<" -> " << next;
+      LTRACE << "PosTaggingDepGraphEdgeWriter for "<<v<<" -> " << next;
       PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>(&lposgraph,m_language,depGraph,syntacticData)(os,*outItr);
           
     }

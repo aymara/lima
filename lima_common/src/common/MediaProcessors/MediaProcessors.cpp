@@ -29,6 +29,7 @@
 #include "common/XMLConfigurationFiles/moduleConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/tools/FileUtils.h"
 #include <iostream>
 
 
@@ -70,18 +71,10 @@ MediaProcessors::MediaProcessors(const MediaProcessors& mp) : Singleton<MediaPro
 
 MediaProcessors::~MediaProcessors()
 {
-#ifdef DEBUG_CD
-    PROCESSORSLOGINIT;
-
-    LDEBUG << "MediaProcessors::~MediaProcessors() delete MediaProcessors ";
-#endif
     for ( std::map<MediaId,MediaProcessUnit::Manager*>::iterator it=m_d->m_pipelineManagers.begin();
             it!=m_d->m_pipelineManagers.end();
             it++ )
     {
-#ifdef DEBUG_CD
-        LDEBUG <<  "delete " << it->first;
-#endif
         delete it->second;
         it->second=0;
     }
@@ -180,6 +173,10 @@ void MediaProcessors::initPipelines (
             {
                 std::cout << "no pipeline '" << *pipItr << "' for media " << mediaStr << std::endl;
                 //         continue;
+#ifdef ANTINNO_BUGFIX
+                // FWI 26/04/2016 : activation du "continue" sinon entryItr->second provoque une erreur détectée seulement en mode debug
+                continue;
+#endif
             }
             const MediaProcessUnit* pu=mapItr->second->getObject ( entryItr->second );
             const MediaProcessUnitPipeline* pipeline=static_cast<const MediaProcessUnitPipeline*> ( pu );
@@ -252,8 +249,7 @@ includeProcessors(Common::XMLConfigurationFiles::ModuleConfigurationStructure& m
             try {
                 //PROCESSORSLOGINIT;
                 //LDEBUG << "i="<< i;
-                fileName=Common::MediaticData::MediaticData::single().getConfigPath()+
-                         "/"+string((*it),0,i);
+                fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),string((*it),0,i).c_str()).toUtf8().constData();
                 //LDEBUG << "filename="<< fileName;
                 moduleName=string((*it),i+1);
                 //LDEBUG << "moduleName="<< moduleName;

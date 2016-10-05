@@ -64,23 +64,23 @@ init(GroupConfigurationStructure& unitConfiguration,
   MediaId language=manager->getInitializationParameters().language;
   const PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
 
-  const map<string,deque<string> >& entities=
-    unitConfiguration.getLists();
+  const map<string,deque<string> >& entities = unitConfiguration.getLists();
+  #ifdef DEBUG_LP
+  LDEBUG << "entities.size() " << entities.size();
+  #endif
   
-  for (map<string,deque<string> >::const_iterator it=entities.begin(),
-         it_end=entities.end(); it!=it_end; it++) {
+  for (auto it=entities.begin(), it_end=entities.end(); it!=it_end; it++) {
     LimaString entityName=Common::Misc::utf8stdstring2limastring((*it).first);
 #ifdef DEBUG_LP
     LDEBUG << "Adding categories to entity " << entityName;
 #endif
     try {
       EntityType type=static_cast<const Common::MediaticData::MediaticData&>(MediaticData::single()).getEntityType(entityName);
-      for (deque<string>::const_iterator micro=(*it).second.begin(),
-             micro_end=(*it).second.end(); micro!=micro_end; micro++) {
+      for (auto micro=(*it).second.begin(), micro_end=(*it).second.end(); micro!=micro_end; micro++) {
         LinguisticCode code = microManager.getPropertyValue(*micro);
         if (code == 0) {
           SELOGINIT;
-          LERROR << "SpecificEntitiesMicros::init on entity" << entityName << "," << *micro << "linguistic code is not defined";
+          LERROR << "SpecificEntitiesMicros::init on entity" << entityName << "," << *micro << "linguistic code is not defined for language" << MediaticData::single().getMediaId(language);
         }
         else {
 #ifdef DEBUG_LP

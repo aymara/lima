@@ -24,6 +24,7 @@
 #include "ViterbiPosTagger.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "integerCost.h"
@@ -38,7 +39,7 @@ namespace LinguisticProcessing
 namespace PosTagger
 {
 
-ViterbiPosTaggerFactory* ViterbiPosTaggerFactory::s_instance=new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID);
+std::unique_ptr< ViterbiPosTaggerFactory > ViterbiPosTaggerFactory::s_instance=std::unique_ptr< ViterbiPosTaggerFactory >(new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID));
 
 
 ViterbiPosTaggerFactory::ViterbiPosTaggerFactory(const std::string& id) :
@@ -73,8 +74,8 @@ MediaProcessUnit* ViterbiPosTaggerFactory::create(
   string resourcesPath=MediaticData::single().getResourcesPath();
   try
   {
-    trigramsFile=resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("trigramFile");
-    bigramsFile=resourcesPath + "/" + unitConfiguration.getParamsValueAtKey("bigramFile");
+    trigramsFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("trigramFile").c_str()).toUtf8().constData();
+    bigramsFile=Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("bigramFile").c_str()).toUtf8().constData();
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

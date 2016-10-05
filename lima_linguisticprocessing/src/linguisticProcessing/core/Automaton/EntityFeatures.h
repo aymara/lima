@@ -124,19 +124,32 @@ public:
   EntityFeatures::iterator findLast(const std::string& featureName);
 
   friend LIMA_AUTOMATON_EXPORT std::ostream& operator<<(std::ostream& os, const EntityFeatures& f);
+  friend LIMA_AUTOMATON_EXPORT QDebug& operator<<(QDebug& os, const EntityFeatures& f);
 };
+
+#if defined(WIN32)
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<int>(const std::string&, const int& );
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<double>(const std::string&, const double& );
+  extern template LIMA_AUTOMATON_EXPORT void EntityFeatures::appendFeature<QString>(const std::string&, const QString& );
+#endif
 
 template<typename ValueType>
   void EntityFeatures::setFeature(const std::string& name,
                   const ValueType& value)
     {
-      SELOGINIT;
-      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << value << ")";
+//      SELOGINIT;
+//      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << value << ")";
       // if feature with same name already exists, overwrite it
       EntityFeatures::iterator it=find(name);
       if (it!=end()) {
 //      if( (it!=end()) && (name==DEFAULT_ATTRIBUTE) ){
         (*it).setValue(boost::any(value));
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      SELOGINIT;
+      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << (*it).getValueString() << ")";
+#endif
+#endif
       }
       else {
         //push empy feature and set values to avoid two copies
@@ -144,18 +157,30 @@ template<typename ValueType>
         push_back(EntityFeature());
         back().setName(name);
         back().setValue(boost::any(value));
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      SELOGINIT;
+      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << back().getValueString() << ")";
+#endif
+#endif
       }
     }
 template<typename ValueType>
   void EntityFeatures::addFeature(const std::string& name,
                   const ValueType& value)
     {
-      SELOGINIT;
-      LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << value << ")";
+//      SELOGINIT;
+//      LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << value << ")";
       push_back(EntityFeature());
       back().setName(name);
       back().setValue(boost::any(value));
-    }
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      SELOGINIT;
+      LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << back().getValueString() << ")";
+#endif
+#endif
+  }
 /*
 template<typename ValueType>
   void EntityFeatures::appendFeature(const std::string& name,

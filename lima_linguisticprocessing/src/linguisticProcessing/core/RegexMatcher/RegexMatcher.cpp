@@ -107,7 +107,6 @@ void RegexMatcher::init(
 
   try
   {
-    string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
     std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("regexes");
     for (std::map <std::string, std::string >::const_iterator it = regexes.begin(); it != regexes.end(); it++)
     {

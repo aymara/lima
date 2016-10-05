@@ -74,7 +74,7 @@ openSBoWIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* proper
 
 void StructuredBoWToBoWDocument::
 processSBoWText(const BoWText* boWText, 
-                bool /*unused useIterators*/)
+                bool /*unused useIterators*/, bool useIndexIterator)
 {
   if (! m_inIndexingNode.empty() && 
       m_inIndexingNode.back() && 
@@ -89,7 +89,7 @@ processSBoWText(const BoWText* boWText,
 
 void StructuredBoWToBoWDocument::
 processProperties(const Common::Misc::GenericDocumentProperties* properties, 
-                  bool /*unused useIterators*/)
+                  bool /*unused useIterators*/, bool /*useIndexIterator*/)
 {
   if (m_inIndexingNode.back()) {
     addProperties(*m_currentDocument,properties);

@@ -238,9 +238,9 @@ uint64_t IndexElement::getId() const { return m_d->m_id; }
 
 Lima::Common::BagOfWords::BoWType IndexElement::getType() const { return m_d->m_type; }
 
-bool IndexElement::isSimpleTerm() const { return m_d->m_type == BoWType::BOW_TOKEN; }
+bool IndexElement::isSimpleTerm() const { return m_d->m_type == BoWType::BOW_TOKEN || (m_d->m_type == BoWType::BOW_NAMEDENTITY && m_d->m_structure.empty()); }
 
-bool IndexElement::isComposedTerm() const { return m_d->m_type == BoWType::BOW_TERM; }
+bool IndexElement::isComposedTerm() const { return m_d->m_type == BoWType::BOW_TERM || (m_d->m_type == BoWType::BOW_NAMEDENTITY && ! m_d->m_structure.empty()); }
 
 bool IndexElement::isPredicate() const { return m_d->m_type == BoWType::BOW_PREDICATE; }
 
@@ -348,9 +348,14 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
   os << "[IndexElement" << elt.m_d->m_id << "," << elt.m_d->m_type ;
   if (elt.isSimpleTerm()) {
   os << ":" << Common::Misc::limastring2utf8stdstring(elt.m_d->m_word);
+#ifdef ANTINNO_SPECIFIC
+  // affichage systématique
+  os << "/" << elt.m_d->m_category;
+#else
     if (elt.m_d->m_category != 0) {
       os << "/" << elt.m_d->m_category;
     }
+#endif
     os << "/" << elt.m_d->m_position;
     os << "," << elt.m_d->m_length;
   }
@@ -366,9 +371,12 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
         os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
         i++;
       }
+	  os << "]";
     }
-    os << "/";
-    ::operator<<(os,elt.m_d->m_poslenlist);
+    // FWI 20/02/2015
+    //os << "/";
+    //::operator<<(os,elt.m_d->m_poslenlist);
+    os << "/" << elt.m_d->m_poslenlist;
   }
   if (! elt.m_d->m_neType.isNull()) {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType).toUtf8().constData() << ")";
@@ -434,8 +442,10 @@ QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
         i++;
       }
     }
-    os << "/";
-    ::operator<<(os,elt.m_d->m_poslenlist);
+    // FWI 20/02/2015
+    //os << "/";
+    //::operator<<(os,elt.m_d->m_poslenlist);
+    os << "/" << elt.m_d->m_poslenlist;
   }
   if (! elt.m_d->m_neType.isNull()) {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";

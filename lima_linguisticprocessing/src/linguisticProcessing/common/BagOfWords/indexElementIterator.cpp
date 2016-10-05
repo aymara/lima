@@ -551,8 +551,15 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
   BOWLOGINIT;
 #endif
   QStringList structureKey;
-  for (auto element: structure) {
+#ifdef ANTINNO_SPECIFIC
+  // Modif NAN pour que ça compile sous Visual 2010
+  for (auto itElement=structure.begin(),it_end=structure.end(); itElement!=it_end; itElement++) {
+    structureKey << QString::number(*itElement);
+#else
+  for (auto element: structure) { 
     structureKey << QString::number(element);
+#endif
+
   }
 #ifdef DEBUG_CD
   LDEBUG << "addCombinedPartsInQueue: nb parts=" << partIdsRels.size() 
@@ -610,7 +617,11 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
   }
 
   // add possible at end of structure and recursive call
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH (auto it,partIdsRels[current].first) {
+#else
   for (auto it:partIdsRels[current].first) {
+#endif
     structure.push_back(it);
     relations.push_back(partIdsRels[current].second);
     if (!addCombinedPartsInQueue(type, partIdsRels,head,neType,ids_rel,structure,relations,current+1)) {

@@ -211,9 +211,9 @@ public:
                               const std::string& /*elementName*/)
     {}
     void processSBoWText(const BoWText* boWText,
-                         bool useIterators);
+                         bool useIterators, bool /*useIndexIterator*/);
     void processProperties(const Misc::GenericDocumentProperties* /*properties*/,
-                           bool /*useIterators*/)
+                           bool /*useIterators*/, bool /*useIndexIterator*/)
     {}
     void closeSBoWNode()
     {}
@@ -227,7 +227,7 @@ private:
 };
 
 void GetLexiconBoWDocumentHandler::processSBoWText(const BoWText* text,
-        bool useIterators)
+        bool useIterators, bool /*useIndexIterator*/)
 {
   LIMA_UNUSED(useIterators);
     BoWTokenIterator it(*text);
@@ -306,7 +306,7 @@ void readDocuments(ifstream& fileIn, BoWDocument* document,
                                          referenceProperties,filterCategory);
     while (! fileIn.eof())
     {
-        reader.readBoWDocumentBlock(fileIn,*document,handler,true);
+        reader.readBoWDocumentBlock(fileIn,*document,handler,true,false);
     }
 }
 
@@ -358,8 +358,8 @@ int run(int argc,char** argv)
     }
 
 
-    string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
-    string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+    string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+    string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
 
     if ( (!param.language.size()) && (!param.codeFile.size()) ) {
         cerr << "no codefile nor language specified !" << endl;

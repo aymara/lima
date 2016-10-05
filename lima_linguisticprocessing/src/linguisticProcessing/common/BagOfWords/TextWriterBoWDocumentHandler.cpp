@@ -29,6 +29,8 @@
 #include "bowTokenIterator.h"
 #include "bowToken.h"
 #include "bowText.h"
+#include "indexElementIterator.h"
+#include "indexElement.h"
 
 #include "common/Data/genericDocumentProperties.h"
 
@@ -42,6 +44,8 @@ class TextWriterBoWDocumentHandlerPrivate
   
   TextWriterBoWDocumentHandlerPrivate(std::ostream& os);
   ~TextWriterBoWDocumentHandlerPrivate();
+  
+  void writeIndexElement(const IndexElement& element);
 
   std::ostream& m_outputStream;
 
@@ -84,12 +88,20 @@ openSBoWIndexingNode(const Misc::GenericDocumentProperties* properties,
 
 void TextWriterBoWDocumentHandler::
 processSBoWText(const BoWText* boWText, 
-                bool useIterators)
+                bool useIterators, bool useIndexIterator)
 {
   if (useIterators) {
     BoWTokenIterator it(*boWText);
     while (! it.isAtEnd()) {
       m_d->m_outputStream << it.getElement();
+      it++;
+    }
+  }
+  else if (useIndexIterator) {
+    IndexElementIterator it(*boWText);
+    while (! it.isAtEnd())
+    { 
+      m_d->writeIndexElement(it.getElement());
       it++;
     }
   }
@@ -100,7 +112,7 @@ processSBoWText(const BoWText* boWText,
 
 void TextWriterBoWDocumentHandler::
 processProperties(const Misc::GenericDocumentProperties* /*properties*/, 
-                  bool /*useIterators*/)
+                  bool /*useIterators*/, bool /*useIndexIterator*/)
 {
   //os << *properties;
 }
@@ -108,6 +120,54 @@ processProperties(const Misc::GenericDocumentProperties* /*properties*/,
 void TextWriterBoWDocumentHandler::
 closeSBoWNode()
 {
+}
+
+void TextWriterBoWDocumentHandlerPrivate::writeIndexElement(
+                  const IndexElement& element) {
+//   m_outputStream << "<term "
+//      << "id=\"" << element.getId() << "\"";
+//   if (element.empty()) {
+//     m_outputStream << "/>" << endl;
+//     return;
+//   }
+//   if (element.isSimpleTerm()) {
+//     std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(element.getCategory()));
+// 
+//     m_outputStream << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(element.getSimpleTerm()))
+//        << "\" category=\"" << cat
+//        << "\" position=\"" << element.getPosition()
+//        << "\" length=\"" << element.getLength() << "\"";
+//     if (element.isNamedEntity()) {
+//       m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
+//       m_outputStream << " type=\"" << BOW_NAMEDENTITY << "\"";
+//     }
+//     else {
+//       m_outputStream << " type=\"" << BOW_TOKEN << "\"";
+//     }
+//     m_outputStream << "/>" << endl;
+//     return;
+//   }
+//   
+//   // compound
+//   if (element.isNamedEntity()) {
+//     m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
+//     m_outputStream << " type=\"" << BOW_NAMEDENTITY << "\"";
+//   }
+//   else {
+//     m_outputStream << " type=\"" << BOW_TERM << "\"";
+//   }
+//   m_outputStream << ">" << endl
+//      << "  <structure>" << endl;
+//   
+//   for (uint64_t i(0),size=element.getStructure().size(); i<size; i++) {
+//     m_outputStream << "    <termRef id=\""
+//        << element.getStructure()[i]
+//        << "\" rel=\"" << element.getRelations()[i] 
+//        << "\"/>" << endl;
+//     
+//   }
+//   m_outputStream << "  </structure>" << endl
+//      << "</term>" << endl;
 }
 
 
