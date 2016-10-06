@@ -596,10 +596,30 @@
     </call-parameters>
   <expl>contexte similaire au test avec date</expl>
   <test id="eng.tok.34.1" trace=".tokenizer.xml"
-    comment="Après Tokenizer  - token 2h34m45 alphanumeric"
-    left="XPATH#//data_structure/vertex/token[position=4][length=7]/t_status/t_default"
+    comment="Après Tokenizer  - 2 integer"
+    left="XPATH#//data_structure/vertex/token[position=4][length=1]/t_status/t_default"
     operator="="
-    right="t_alphanumeric"/>
+    right="t_integer"/>
+  <test id="eng.tok.34.2" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - 34: integer"
+    left="XPATH#//data_structure/vertex/token[position=6][length=2]/t_status/t_default"
+    operator="="
+    right="t_integer"/>
+  <test id="eng.tok.34.3" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - 45: integer"
+    left="XPATH#//data_structure/vertex/token[position=9][length=2]/t_status/t_default"
+    operator="="
+    right="t_integer"/>
+  <test id="eng.tok.34.4" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - : WORDBREAK"
+    left="XPATH#//data_structure/vertex/token[position=5][length=1]/t_status/t_default"
+    operator="="
+    right="t_word_brk"/>
+  <test id="eng.tok.34.5" trace=".tokenizer.xml"
+    comment="Après Tokenizer  - : WORDBREAK"
+    left="XPATH#//data_structure/vertex/token[position=8][length=1]/t_status/t_default"
+    operator="="
+    right="t_word_brk"/>
 </testcase>
 <testcase id="eng.tok.35" type="pertinent">
   <call-parameters>

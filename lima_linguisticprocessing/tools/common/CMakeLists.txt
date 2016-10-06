@@ -202,7 +202,29 @@ SET(testContentDict16_SRCS
 
 add_executable(testContentDict16 ${testContentDict16_SRCS})
 
-target_link_libraries(testContentDict16 lima-lp-client lima-lp-linguisticprocessing-core lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-common-processunitframework lima-lp-linguisticdata lima-common-mediaticdata lima-common-factory lima-common-xmlconfigurationfiles lima-common-fsaaccess lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data lima-lp-propertycode ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
+target_link_libraries(testContentDict16 
+    lima-common-data 
+    lima-common-factory 
+    lima-common-fsaaccess 
+    lima-common-mediaprocessors 
+    lima-common-mediaticdata 
+    lima-common-misc 
+    lima-common-processunitframework 
+    lima-common-qslog  
+    lima-common-tools 
+    lima-common-xmlconfigurationfiles 
+    lima-lp-analysisdict
+    lima-lp-client 
+    lima-lp-linguisticdata 
+    lima-lp-linguisticprocessing-core 
+    lima-lp-linguisticprocessors 
+    lima-lp-linguisticresources 
+    lima-lp-misc 
+    lima-lp-propertycode 
+    ${Boost_LIBRARIES}  
+    ${QT_LIBRARIES} 
+    ${optionalLibs}
+)
 
 install(TARGETS testContentDict16 DESTINATION bin)
 
@@ -239,10 +261,20 @@ SET(testReadLexicon_SRCS
 
 add_executable(testReadLexicon ${testReadLexicon_SRCS})
 
-target_link_libraries(testReadLexicon lima-common-factory lima-common-misc lima-common-tools
+target_link_libraries(testReadLexicon 
+    lima-common-data 
+    lima-common-factory 
+    lima-common-fsaaccess 
+    lima-common-misc 
+    lima-common-qslog  
+    lima-common-tools
 #   lima-lp-misc
-lima-lp-linguisticresources
-  lima-common-data lima-common-fsaaccess ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
+    lima-lp-analysisdict
+    lima-lp-linguisticresources
+    ${Boost_LIBRARIES}  
+    ${QT_LIBRARIES} 
+    ${optionalLibs}
+)
 
 install(TARGETS testReadLexicon DESTINATION bin)
 

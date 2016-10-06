@@ -1,0 +1,14 @@
+# sub-automatons
+
+# noun group size=3
+# head is at position 3
+define subautomaton NounGroup {
+ pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Participe|@DetNum|@PrepComp){0-n} @Substantif
+}
+
+# prep group size=2
+# head is at position 2.3
+define subautomaton PrepGroup {
+ pattern=@PrepComp %NounGroup
+}
+

@@ -47,7 +47,11 @@ namespace BagOfWords {
 /**
  * enum to characterize the type of the AbstractBoWElement
  */
-typedef enum {
+#ifndef WIN32
+enum class BoWType : unsigned short {
+#else
+enum BoWType {
+#endif
   BOW_NOTYPE,                   /**< the AbstractBoWElement is an abstract one that 
                                       should not be instanciated */
   BOW_TOKEN,                    /**< the AbstractBoWElement is a simple token */
@@ -55,7 +59,21 @@ typedef enum {
   BOW_NAMEDENTITY,              /**< the AbstractBoWElement is a named entity */
   BOW_PREDICATE,                /**< the AbstractBoWElement is a predicate (n-ary 
                                       relation, template or semantic frame */
-} BoWType;
+};
+
+LIMA_BOW_EXPORT uint8_t toInt(const BoWType& bt);
+
+template <typename T>
+T& operator<<(T& qd, const BoWType& bt) 
+{
+  if (bt == BoWType::BOW_NOTYPE) qd << "BOW_NOTYPE";
+  else if (bt == BoWType::BOW_TOKEN) qd << "BOW_TOKEN";
+  else if (bt == BoWType::BOW_TERM) qd << "BOW_TERM";
+  else if (bt == BoWType::BOW_NAMEDENTITY) qd << "BOW_NAMEDENTITY";
+  else if (bt == BoWType::BOW_PREDICATE) qd << "BOW_PREDICATE";
+  else  qd << "UNDEFINED";
+  return qd;
+};
 
 /**
  * This class is the abstract base class of all elements that can be stored in 
@@ -79,7 +97,7 @@ public:
    *  a predicate, 1 for a simple token, n for complex tokens */
   virtual uint64_t size(void) const = 0;
 
-  virtual BoWType getType() const {return BOW_NOTYPE;}
+  virtual BoWType getType() const {return BoWType::BOW_NOTYPE;}
 
   virtual Lima::LimaString getString(void) const = 0;
 

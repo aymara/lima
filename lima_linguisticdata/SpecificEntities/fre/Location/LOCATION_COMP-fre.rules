@@ -162,7 +162,7 @@ triangle::de Rocquencourt:ODO:
 
 ########################### CITY ##############################################
 
-rose:[(la)?] ville::CITY:Toulouse :
+rose:[(la)?] ville::CITY:Toulouse
 =>AppendEntityFeature(left.2,"name.nickname")
 =>AppendEntityFeature(trigger,"name.nickname")
 =>NormalizeEntity()

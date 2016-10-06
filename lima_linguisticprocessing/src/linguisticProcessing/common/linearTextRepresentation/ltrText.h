@@ -87,6 +87,14 @@ public:  // -- methods
     LTR_Text(const LTR_Text& text);
     //}@
 
+    /** @brief clear */
+    // redefines the clear from base vector class to clear also sentence boundaries
+    void clear() {
+      std::vector<LTR_Token*>::clear();
+      m_sentenceBounds.clear();
+      m_namedEntities.clear();
+    }
+    
     /** @name  accessing */
     //@{
     SENTS_CONST_ITER_T beginSentenceBounds() const {

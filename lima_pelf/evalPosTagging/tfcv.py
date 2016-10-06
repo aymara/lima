@@ -19,12 +19,11 @@ import subprocess
 import os
 
 # Variables definition
-SCRIPTS_PATH = "/home/sid-ahmed/Lima/lima/lima_pelf/../lima_linguisticdata/scripts"
+SCRIPTS_PATH = "@SCRIPTS_PATH@"
 MATRIX_PATH  = path.join(environ.get("LIMA_RESOURCES", "/usr/local"), "Disambiguation")
 print("MATRIX_PATH={}".format(MATRIX_PATH))
-MAX_PROCESSES = 8
-
 PELF_BIN_PATH = path.join(environ.get("LIMA_DIST", "/usr/local"), "share/apps/lima/scripts")
+MAX_PROCESSES = 8
 
 # svn blame material:
 # let's use global variables for those infos because:

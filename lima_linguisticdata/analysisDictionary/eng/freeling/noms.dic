@@ -1078,6 +1078,7 @@ amateurs	amateur		NNS
 amazement	amazement		NN
 ambassador	ambassador		NN
 ambassadors	ambassador		NNS
+amber	amber		NN
 ambiance	ambiance		NN
 ambiances	ambiance		NNS
 ambience	ambience		NN
@@ -3776,6 +3777,7 @@ bleaches	bleach		NNS
 bleakness	bleakness		NN
 bleat	bleat		NN
 bleats	bleat		NNS
+bleed	bleed		NN
 bleeder	bleeder		NN
 bleeders	bleeder		NNS
 bleeding	bleeding		NN
@@ -10773,7 +10775,7 @@ dispersions	dispersion		NNS
 displacement	displacement		NN
 displacements	displacement		NNS
 display	display		NN
-displays	display		NNS
+#displays	display		NNS
 displeasure	displeasure		NN
 disposable	disposable		NN
 disposables	disposable		NNS
@@ -13184,6 +13186,8 @@ ex-wife	ex-wife		NN
 ex-wives	ex-wife		NNS
 eyeball	eyeball		NN
 eyeballs	eyeball		NNS
+eyebolt	eyebolt		NN
+eyebolts	eyebolt		NNS
 eyebrow	eyebrow		NN
 eyebrows	eyebrow		NNS
 eyecare	eyecare		NN
@@ -13882,9 +13886,9 @@ finitude	finitude		NN
 fink	fink		NN
 finks	fink		NNS
 fins	fin		NNS
-fire-arm	fire-arm		NN
+fire-arm	firearm		NN
 firearm	firearm		NN
-fire-arms	fire-arm		NNS
+fire-arms	firearm		NNS
 firearms	firearm		NNS
 fireball	fireball		NN
 fireballs	fireball		NNS
@@ -13894,9 +13898,9 @@ fireclay	fireclay		NN
 firecracker	firecracker		NN
 firecrackers	firecracker		NNS
 firedamp	firedamp		NN
-fire-fighter	fire-fighter		NN
+fire-fighter	firefighter		NN
 firefighter	firefighter		NN
-fire-fighters	fire-fighter		NNS
+fire-fighters	firefighter		NNS
 firefighters	firefighter		NNS
 fire-fighting	fire-fighting		NN
 fire	fire		NN
@@ -36045,6 +36049,8 @@ switchboard	switchboard		NN
 switchers	switcher		NNS
 switcher	switcher		NN
 switches	switch		NNS
+switchgear	switchgear		NN
+switchgears	switchgear		NNS
 switchings	switching		NNS
 switching	switching		NN
 switch-overs	switchover		NNS

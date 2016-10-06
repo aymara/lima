@@ -175,7 +175,7 @@ void CorefSolver::init(
          it!=salience.end();
          it++)
     { 
-       m_salienceWeights[it->first]=atof((it->second).c_str());
+       m_salienceWeights[it->first]=QString::fromUtf8(it->second.c_str()).toDouble();
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchMap& )

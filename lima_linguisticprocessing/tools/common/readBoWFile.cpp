@@ -35,6 +35,8 @@
 #include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/indexElement.h"
+#include "common/MediaticData/mediaticData.h"
+#include "common/tools/FileUtils.h"
 
 #include <QtCore/QCoreApplication>
 
@@ -52,6 +54,7 @@ using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::BagOfWords;
+using namespace Lima::Common::Misc;
 
 //****************************************************************************
 // declarations
@@ -322,10 +325,20 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "amose" << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "amose" << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+
   
+  std::string commonConfigFile = "lima-common.xml";
+  std::deque<std::string> langs;
   if (argc<1) {    cerr << USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
   if (param.help) { cerr << HELP; exit(1); }
@@ -340,6 +353,15 @@ int run(int argc,char** argv)
     cerr << "cannot open input file [" << param.inputFile << "]" << endl;
     exit(1);
   }
+  
+  // initialize common
+  Lima::Common::MediaticData::MediaticData::changeable().init(
+          resourcesPath.toUtf8().constData(),
+          configPath.toUtf8().constData(),
+          commonConfigFile,
+          langs);
+
+
   BoWBinaryReader reader;
   try
   {

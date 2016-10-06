@@ -25,6 +25,7 @@
 #include <QTimer>
 
 #include "common/LimaCommon.h"
+#include "common/tools/FileUtils.h"
 #include "common/QsLog/QsLogCategories.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
@@ -43,9 +44,13 @@ namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {
+  QStringList configDirs = Misc::buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
   QCoreApplication app(argc, argv);
-  QsLogging::initQsLog();
+  QsLogging::initQsLog(configPath);
   Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
   std::cerr << "Amose plugins initialized" << std::endl;
   QsLogging::initQsLog();
 

@@ -83,7 +83,7 @@ void CoreLinguisticProcessingClient::analyze(
 }
 
 void CoreLinguisticProcessingClient::analyze(
-    const LimaString& texte,
+    const LimaString& text,
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
@@ -92,13 +92,20 @@ void CoreLinguisticProcessingClient::analyze(
 {
   Lima::TimeUtilsController timer("CoreLinguisticProcessingClient::analyze");
   CORECLIENTLOGINIT;
+  
+  if (text.isEmpty())
+  {
+    LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
+    return;
+  }
+  
   // create analysis content
   AnalysisContent analysis;
   LinguisticMetaData* metadataholder=new LinguisticMetaData(); // will be destroyed in AnalysisContent destructor
   analysis.setData("LinguisticMetaData",metadataholder);
 
   metadataholder->setMetaData(metaData);
-  LimaStringText* lstexte=new LimaStringText(texte);
+  LimaStringText* lstexte=new LimaStringText(text);
   analysis.setData("Text",lstexte);
   
   LINFO << "CoreLinguisticProcessingClient::analyze(";
@@ -176,7 +183,7 @@ void CoreLinguisticProcessingClient::analyze(
   LINFO  << "analyze file is: '" << fileName << "'";
   LINFO  << "analyze pipeline is '" << pipelineId << "'";
   LINFO  << "analyze language is '" << lang << "'";
-  LDEBUG << "texte : " << texte;
+  LDEBUG << "texte : " << text;
   //LDEBUG << "texte : " << Common::Misc::limastring2utf8stdstring(texte);
 
   MediaId langId=MediaticData::single().getMediaId(lang);

@@ -748,12 +748,12 @@ xmlOutputCompound(std::ostream& out,
   DUMPERLOGINIT;
   LDEBUG << "GenericXmlDumper: output BoWToken [" << token->getOutputUTF8String() << "]";
   switch (token->getType()) {
-    case BOW_PREDICATE:{
+    case BoWType::BOW_PREDICATE:{
       // FIXME To implement
-      LERROR << "GenericXmlDumper: BOW_PREDICATE support not implemented";
+      LERROR << "GenericXmlDumper: BoWType::BOW_PREDICATE support not implemented";
       break;
     }
-    case BOW_TERM: {
+    case BoWType::BOW_TERM: {
       LDEBUG << "GenericXmlDumper: output BoWTerm";
       // compound informations
       out << "<" << m_compoundTag;
@@ -799,7 +799,7 @@ xmlOutputCompound(std::ostream& out,
       }
       break;
     }
-    case BOW_NAMEDENTITY: {
+    case BoWType::BOW_NAMEDENTITY: {
       if (m_outputCompoundParts) {
         LinguisticGraphVertex v=boost::dynamic_pointer_cast<BoWNamedEntity>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWNamedEntity of vertex " << v;
@@ -815,7 +815,7 @@ xmlOutputCompound(std::ostream& out,
       }
       break;
     }
-    case BOW_TOKEN: {
+    case BoWType::BOW_TOKEN: {
       if  (m_outputCompoundParts) {
         LinguisticGraphVertex v=boost::dynamic_pointer_cast<BoWToken>(token)->getVertex();
         LDEBUG << "GenericXmlDumper: output BoWToken of vertex " << v;
@@ -825,7 +825,7 @@ xmlOutputCompound(std::ostream& out,
     }
     default: {
       DUMPERLOGINIT;
-      LERROR << "GenericXmlDumper: Error: BowToken has type BOW_NOTYPE";
+      LERROR << "GenericXmlDumper: Error: BowToken has type BoWType::BOW_NOTYPE";
       
     }
   }

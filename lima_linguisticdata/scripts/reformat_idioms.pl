@@ -74,8 +74,10 @@ print "set defaultAction=>CreateIdiomaticAlternative()\n\n";
 my $line=0;
 while (<>) 
 {
+    chomp; # Remove end of line/carriage return character
+    s/#.*//;  # Remove end of line comment
+    next if ($_ =~ /^\s*$/); # ignore empty lines
     $line++;
-    chop;
     my ($null1,$null2,$contextual,$trigger,$automaton,$partOfSpeech,$lemma)
       = split(';');
     # split automaton in right and left part

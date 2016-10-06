@@ -34,7 +34,7 @@ void BagOfWordsTest2::test_indexElementDefaultConstructor()
 //     IndexElement();
   IndexElement el;
   QVERIFY(el.getId() == 0);
-  QVERIFY(el.getType() == BOW_NOTYPE);
+  QVERIFY(el.getType() == BoWType::BOW_NOTYPE);
   QVERIFY(el.getSimpleTerm() == "");
   QVERIFY(el.getCategory() == 0);
   QVERIFY(el.getPosition() == 0);
@@ -60,7 +60,7 @@ void BagOfWordsTest2::test_indexElementConstructor1()
 //                const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
 //                const uint64_t reType=0);
   uint64_t id = 1;
-  BoWType type = BOW_TOKEN;
+  BoWType type = BoWType::BOW_TOKEN;
   QString word = QString::fromUtf8("word");
   uint64_t cat = 0;
   uint64_t position = 0;
@@ -69,7 +69,7 @@ void BagOfWordsTest2::test_indexElementConstructor1()
 
   IndexElement el(id,type,word,cat,position,length,neType);
   QVERIFY(el.getId() == id);
-  QVERIFY(el.getType() == BOW_TOKEN);
+  QVERIFY(el.getType() == BoWType::BOW_TOKEN);
   QVERIFY(el.getSimpleTerm() == word);
   QVERIFY(el.getCategory() == cat);
   QVERIFY(el.getPosition() == position);
@@ -93,14 +93,14 @@ void BagOfWordsTest2::test_indexElementConstructor2()
 //                const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType(),
 //                const uint64_t reType=0);
   uint64_t id = 2;
-  BoWType type = BOW_TERM;
+  BoWType type = BoWType::BOW_TERM;
   std::vector<uint64_t> structure;
   std::vector<uint64_t> relations;
   EntityType neType = EntityType();
 
   IndexElement el(id,type,structure,relations,neType);
   QVERIFY(el.getId() == id);
-  QVERIFY(el.getType() == BOW_TERM);
+  QVERIFY(el.getType() == BoWType::BOW_TERM);
   QVERIFY(el.getSimpleTerm().isEmpty());
   QVERIFY(el.getCategory() == 0);
   QVERIFY(el.getPosition() == 0);
@@ -119,7 +119,7 @@ void BagOfWordsTest2::test_indexElementCopyConstructor()
   qDebug() << "BagOfWordsTest2::test_indexElementCopyConstructor";
 //   IndexElement(const IndexElement& ie);
   uint64_t id = 1;
-  BoWType type = BOW_TOKEN;
+  BoWType type = BoWType::BOW_TOKEN;
   QString word = QString::fromUtf8("word");
   uint64_t cat = 0;
   uint64_t position = 0;
@@ -147,7 +147,7 @@ void BagOfWordsTest2::test_indexElementCopyConstructor()
   delete el; el = 0;
   // Test members after deleting original objects
   QVERIFY(el_copy.getId() == 1);
-  QVERIFY(el_copy.getType() == BOW_TOKEN);
+  QVERIFY(el_copy.getType() == BoWType::BOW_TOKEN);
   QVERIFY(el_copy.getSimpleTerm() == "word");
   QVERIFY(el_copy.getCategory() == 0);
   QVERIFY(el_copy.getPosition() == 0);
@@ -166,7 +166,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   qDebug() << "BagOfWordsTest2::test_indexElementCopyConstructor";
 //   IndexElement(const IndexElement& ie);
   uint64_t id = 1;
-  BoWType type = BOW_TOKEN;
+  BoWType type = BoWType::BOW_TOKEN;
   QString word = QString::fromUtf8("word");
   uint64_t cat = 0;
   uint64_t position = 0;
@@ -175,7 +175,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   IndexElement* el = new IndexElement(id,type,word,cat,position,length,neType);
 
   uint64_t id2 = 2;
-  BoWType type2 = BOW_TERM;
+  BoWType type2 = BoWType::BOW_TERM;
   QString word2 = QString::fromUtf8("other");
   uint64_t cat2 = 1;
   uint64_t position2 = 10;
@@ -202,7 +202,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   delete el; el = 0;
   // Test members after deleting original objects
   QVERIFY(el2.getId() == 1);
-  QVERIFY(el2.getType() == BOW_TOKEN);
+  QVERIFY(el2.getType() == BoWType::BOW_TOKEN);
   QVERIFY(el2.getSimpleTerm() == "word");
   QVERIFY(el2.getCategory() == 0);
   QVERIFY(el2.getPosition() == 0);

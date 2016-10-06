@@ -86,6 +86,7 @@ private:
     MediaId m_language;
     bool m_confidentMode;
     AlternativesReader* m_reader;
+    QRegExp m_charSplitRegexp;
     
     bool makeConcatenatedAbbreviationSplitAlternativeFor(
         LinguisticGraphVertex splitted,

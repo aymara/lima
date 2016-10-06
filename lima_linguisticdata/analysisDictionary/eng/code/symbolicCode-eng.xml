@@ -128,8 +128,8 @@
 		<field key="TIME" value=""/>
 		<field key="SYNTAX" value=""/>
 	</code>
-	<code key="THATIN">
-		<field key="MICRO" value="THATIN"/>
+	<code key="SCONJ">
+		<field key="MICRO" value="SCONJ"/>
 		<field key="GENDER" value=""/>
 		<field key="NUMBER" value=""/>
 		<field key="PERSON" value=""/>

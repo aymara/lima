@@ -183,9 +183,9 @@ int run(int argc,char** argv)
 
 void testAccessMethod(const Param& param )
 {
-  string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
+  string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
   string commonConfigFile=string("lima-common.xml");
-  string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+  string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
 
   AbstractAccessByString* accessMethod(0);
   if (param.accessMethod == "fsa")

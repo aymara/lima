@@ -35,8 +35,8 @@ build_script:
 on_success:
   - ps: ls c:/d/share/apps/lima/tests
   - ps: pushd c:/d/share/apps/lima/tests
-  - ps: tva --language=eng test-eng.tokenizer.xml test-eng.simpleword.xml test-eng.idiom.xml test-eng.abbrev.xml test-eng.hyphen.xml test-eng.default.xml test-eng.se-PERSON.xml test-eng.se-DATE.xml test-eng.se-EMBEDED.xml test-eng.se-ORGANISATION.xml test-eng.se.xml test-eng.se-LOCATION.xml test-eng.disambiguated.xml test-eng.sa.xml 2>&1 | tee tva-eng.log
-  - ps: tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log
+  - ps: ( tva --language=eng test-eng.tokenizer.xml test-eng.simpleword.xml test-eng.idiom.xml test-eng.abbrev.xml test-eng.hyphen.xml test-eng.default.xml test-eng.se-PERSON.xml test-eng.se-DATE.xml test-eng.se-EMBEDED.xml test-eng.se-ORGANISATION.xml test-eng.se.xml test-eng.se-LOCATION.xml test-eng.disambiguated.xml test-eng.sa.xml 2>&1 | tee tva-eng.log ) -or $true
+  - ps: ( tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log ) -or $true
   - ps: popd
 
   - ps: $user = "kleag"

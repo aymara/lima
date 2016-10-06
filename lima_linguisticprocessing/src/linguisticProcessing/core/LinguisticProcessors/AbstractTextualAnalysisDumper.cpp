@@ -128,18 +128,21 @@ initialize(AnalysisContent& analysis) const
 
   if (! m_temporaryFileMetadata.isEmpty()) {
 #ifdef DEBUG_LP
-    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with temporary file metadata";
 #endif
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
         LERROR << "no LinguisticMetaData ! abort";
     }
+#ifdef DEBUG_LP
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with metadata value"<< metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData());
+#endif
     return new DumperStream(metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData()),m_append);
   }
   
   if (! m_outputFile.empty()) {
 #ifdef DEBUG_LP
-    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file "<< m_outputFile;
+    LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file"<< m_outputFile << m_append;
 #endif
     return new DumperStream(m_outputFile,m_append);
   }

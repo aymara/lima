@@ -78,10 +78,28 @@ LTRTextBuilder::LTRTextBuilder(
 void LTRTextBuilder::buildLTRTextFrom(
     const LinguisticGraph& graph,
     SegmentationData* sb,
+    const LinguisticGraphVertex& graphFirstVertex,
     const LinguisticGraphVertex& graphLastVertex,
     LTR_Text* textRep,
     uint64_t offset) {
 
+  if (sb==0) {
+    // no segmentation data: add tokens from all text
+    uint64_t tokenCounter = 0;
+    this->addTokensToLTRTextFrom(
+      graph,
+      graphFirstVertex, // from first vertex
+      graphLastVertex,  // to last vertex
+      graphLastVertex,
+      textRep,
+      offset,
+      &tokenCounter);
+    // add a global sentence boundary (thay covers all the text)
+    DUMPERLOGINIT;
+    LDEBUG << "LTR: add sentence bound at token" << tokenCounter;
+    textRep->addSentenceBound(tokenCounter); 
+  }
+  else {
     // ??OME2 SegmentationData::iterator sbIt = sb->begin();    
     std::vector<Segment>::iterator sbIt = (sb->getSegments()).begin();    
     uint64_t tokenCounter = 0;
@@ -91,8 +109,8 @@ void LTRTextBuilder::buildLTRTextFrom(
       LinguisticGraphVertex sentenceEnd = sbIt->getLastVertex();
         this->addTokensToLTRTextFrom(
             graph,
-            sentenceBegin,
-            sentenceEnd,
+            sentenceBegin, // from sentence beginning
+            sentenceEnd,   // to sentence end
             graphLastVertex,
             textRep,
             offset,
@@ -100,6 +118,7 @@ void LTRTextBuilder::buildLTRTextFrom(
         textRep->addSentenceBound(tokenCounter);
         sbIt ++;
     }
+  }
 }
 
 void LTRTextBuilder::addTokensToLTRTextFrom(

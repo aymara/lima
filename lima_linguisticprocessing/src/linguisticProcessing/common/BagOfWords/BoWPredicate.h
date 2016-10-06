@@ -65,7 +65,7 @@ public:
   MediaticData::EntityType getPredicateType(void) const;
   void setPredicateType(const MediaticData::EntityType&);
 
-  virtual BoWType getType() const { return BOW_PREDICATE; }
+  virtual BoWType getType() const { return BoWType::BOW_PREDICATE; }
 
   virtual Lima::LimaString getString(void) const;
 

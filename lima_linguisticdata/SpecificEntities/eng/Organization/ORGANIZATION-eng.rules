@@ -25,12 +25,12 @@ use ../Location/cities.lst,../Location/states.lst,../Location/countriesAndRegion
 # location based organization
 @locationOrg=(
 University,
-International\ University,
-Supreme\ Court,
-Circuit\ Court,
+International University,
+Supreme Court,
+Circuit Court,
 Prison,
 Police,
-Police\ Department
+Police Department
 )
 
 @conjunctions=(

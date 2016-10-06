@@ -47,7 +47,24 @@ SET(lima-lp-syntacticanalysis_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-syntacticanalysis)
 
-target_link_libraries(lima-lp-syntacticanalysis lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-linguisticanalysisstructure lima-lp-textsegmentation lima-lp-postagger lima-lp-automaton lima-lp-bagofwords
+target_link_libraries(lima-lp-syntacticanalysis 
+    lima-common-data 
+    lima-common-fsaaccess 
+    lima-common-misc 
+    lima-common-factory 
+    lima-common-mediaprocessors 
+    lima-common-mediaticdata 
+    lima-common-processunitframework 
+    lima-common-time 
+    lima-common-xmlconfigurationfiles 
+    lima-lp-annotationgraph 
+    lima-lp-automaton 
+    lima-lp-bagofwords
+    lima-lp-linguisticanalysisstructure 
+    lima-lp-linguisticprocessors 
+    lima-lp-linguisticresources 
+    lima-lp-postagger 
+    lima-lp-textsegmentation 
 )
 
 set_target_properties(lima-lp-syntacticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -56,4 +73,27 @@ install(TARGETS lima-lp-syntacticanalysis DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
-install(FILES  SyntacticRelationsLogger.h   SyntacticAnalyzer-deps.h   XmlSyntagmaticMatrixFileExceptions.h    HomoSyntagmaticConstraints.h    SyntacticAnalyzer-simplify.h SyntacticAnalyzer-disamb.h   SimplificationData.h SyntagmaticMatrix.h    SyntacticAnalyzer-chains.h    PhoenixGraphHomoDepsVisitor.h   DebugSyntacticAnalysisLogger.h ChainsDisambiguator.h    SyntacticAnalysisXmlLogger.h SyntacticAnalysisTools.h   DotDependencyGraphWriter.tcc TokenFilter.h    SyntacticAnalyzer-hetero.h SyntacticData.h    DependencyGraph.h SimplificationConstraints.h   DotDependencyGraphWriter.h XmlSyntagmaticMatrixFileHandler.h CoordinationConstraints.h  SyntacticAnalysisExport.h DESTINATION include/linguisticProcessing/core/SyntacticAnalysis)
+install(FILES  SyntacticRelationsLogger.h   
+    ChainsDisambiguator.h    
+    CoordinationConstraints.h  
+    DebugSyntacticAnalysisLogger.h 
+    DependencyGraph.h 
+    DotDependencyGraphWriter.h 
+    DotDependencyGraphWriter.tcc 
+    HomoSyntagmaticConstraints.h    
+    SimplificationConstraints.h   
+    SimplificationData.h 
+    SyntacticAnalyzer-chains.h 
+    SyntacticAnalyzer-deps.h   
+    SyntacticAnalyzer-disamb.h   
+    SyntacticAnalyzer-hetero.h 
+    SyntacticAnalyzer-simplify.h 
+    SyntacticAnalysisExport.h 
+    SyntacticAnalysisTools.h   
+    SyntacticAnalysisXmlLogger.h 
+    SyntacticData.h    
+    SyntagmaticMatrix.h    
+    TokenFilter.h    
+    XmlSyntagmaticMatrixFileExceptions.h    
+    XmlSyntagmaticMatrixFileHandler.h 
+  DESTINATION include/linguisticProcessing/core/SyntacticAnalysis)

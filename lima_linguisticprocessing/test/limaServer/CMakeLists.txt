@@ -64,7 +64,7 @@ install(TARGETS limaserver DESTINATION bin)
 # install(TARGETS testQHttpServer DESTINATION bin)
 
 ########### next target ###############
-if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
+if (NOT Qt5DBus_FOUND)
   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 else ()
 

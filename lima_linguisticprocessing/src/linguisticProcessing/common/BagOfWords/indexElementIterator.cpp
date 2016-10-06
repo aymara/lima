@@ -208,7 +208,7 @@ IndexElement IndexElementIterator::getElement()
       
       switch ((*m_d->m_iterator)->getType())
       {
-        case BOW_TOKEN:
+        case BoWType::BOW_TOKEN:
         {
 #ifdef DEBUG_CD
           LDEBUG  << "IndexElementIterator::getElement simple token:" << token->getIdUTF8String();
@@ -226,7 +226,7 @@ IndexElement IndexElementIterator::getElement()
           }
           return m_d->m_alreadyFoundElements[QString::fromUtf8(token->getIdUTF8String().c_str())];
         }
-        case BOW_TERM:
+        case BoWType::BOW_TERM:
 #ifdef DEBUG_CD
           LDEBUG  << "IndexElementIterator::getElement term:" << token->getIdUTF8String();
 #endif
@@ -244,7 +244,7 @@ IndexElement IndexElementIterator::getElement()
           m_d->m_alreadyFoundElements.insert(QString::fromUtf8(token->getIdUTF8String().c_str()),m_d->m_partQueue.front());
           return m_d->m_partQueue.front();
           
-        case BOW_NAMEDENTITY:
+        case BoWType::BOW_NAMEDENTITY:
 #ifdef DEBUG_CD
           LDEBUG  << "IndexElementIterator::getElement named entity:" << boost::dynamic_pointer_cast<BoWNamedEntity>(*m_d->m_iterator)->getIdUTF8String() ;//<< Lima::Common::MediaticData::MediaticData::single().getEntityName(static_cast<BoWNamedEntity*>((*m_d->m_iterator))->getNamedEntityType());
           // element itself will be stored in queue as part
@@ -257,7 +257,7 @@ IndexElement IndexElementIterator::getElement()
           return m_d->m_partQueue.front();
           
         // FIXME Change the handling of predicates to take into account their complex structure nature
-        case BOW_PREDICATE:
+        case BoWType::BOW_PREDICATE:
         {
           predicate = boost::dynamic_pointer_cast<BoWPredicate>((*m_d->m_iterator));
           uint64_t id=m_d->m_idGenerator->getId(predicate->getString());
@@ -270,7 +270,7 @@ IndexElement IndexElementIterator::getElement()
                               predicate->getPredicateType()
                             );
         }
-        case BOW_NOTYPE:
+        case BoWType::BOW_NOTYPE:
           return IndexElement();
       }
     }
@@ -347,20 +347,23 @@ void IndexElementIteratorPrivate::getPositionLengthList(const std::vector<uint64
 {
   // update position/length list for structure
   // use previous elements in queue
-  std::vector<uint64_t>::const_iterator 
-    it=structure.begin(),it_end=structure.end();
-  for (std::deque<IndexElement>::const_iterator 
-         elt=m_partQueue.begin(),elt_end=m_partQueue.end();
-       elt!=elt_end; elt++) {
-    if ((*elt).getId()==*it) {
-      const PositionLengthList& p=(*elt).getPositionLengthList();
-      poslenlist.insert(poslenlist.end(),p.begin(),p.end());
-      it++;
-      if (it==it_end) {
-        break;
-      }
+  for (std::vector<uint64_t>::const_iterator it = structure.begin(); it != structure.end(); ++it) {
+    
+    QMap<QString,IndexElement>::const_iterator found = m_alreadyFoundElements.begin();
+    while (found != m_alreadyFoundElements.end() && *it != found.value().getId()) {
+      ++found;
+    }
+    
+    if (found != m_alreadyFoundElements.end()) {
+      const PositionLengthList& p = found.value().getPositionLengthList();
+      poslenlist.insert(poslenlist.end(), p.begin(), p.end());
+    }
+    else {
+      BOWLOGINIT
+      LERROR << "getPositionLengthList failure: element id " << *it << " not found";
     }
   }
+
   // sort positions
   std::sort(poslenlist.begin(),poslenlist.end());
 }
@@ -421,7 +424,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
   bool result = false;
   switch (token->getType())
   {
-    case BOW_TOKEN:
+    case BoWType::BOW_TOKEN:
     {
 #ifdef DEBUG_CD
       LDEBUG  << "IndexElementIteratorPrivate::addPartElementsInQueue simple token:" << token->getIdUTF8String();
@@ -449,12 +452,12 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
       ids_rel=make_pair(vector<uint64_t>(1,m_alreadyFoundElements[QString::fromUtf8(token->getIdUTF8String().c_str())].getId()),rel);
       return result;
     }
-    case BOW_NAMEDENTITY: 
+    case BoWType::BOW_NAMEDENTITY: 
       neType=boost::dynamic_pointer_cast<BoWNamedEntity>(token)->getNamedEntityType();
       break;
-    case BOW_TERM:
-    case BOW_PREDICATE:
-    case BOW_NOTYPE:
+    case BoWType::BOW_TERM:
+    case BoWType::BOW_PREDICATE:
+    case BoWType::BOW_NOTYPE:
     default:;
   }
 
@@ -548,8 +551,8 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
   BOWLOGINIT;
 #endif
   QStringList structureKey;
-  for (auto element: structure) {
-    structureKey << QString::number(element);
+  for (auto it = structure.begin(); it != structure.end(); ++it) {
+    structureKey << QString::number(*it);
   }
 #ifdef DEBUG_CD
   LDEBUG << "addCombinedPartsInQueue: nb parts=" << partIdsRels.size() 
@@ -607,8 +610,8 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
   }
 
   // add possible at end of structure and recursive call
-  for (auto it:partIdsRels[current].first) {
-    structure.push_back(it);
+  for (auto it = partIdsRels[current].first.begin(); it != partIdsRels[current].first.end(); ++it) {
+    structure.push_back(*it);
     relations.push_back(partIdsRels[current].second);
     if (!addCombinedPartsInQueue(type, partIdsRels,head,neType,ids_rel,structure,relations,current+1)) {
 #ifdef DEBUG_CD

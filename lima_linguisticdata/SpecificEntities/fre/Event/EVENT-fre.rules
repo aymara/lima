@@ -33,6 +33,7 @@ Francofolies:::EVENT:
 Gay::Pride:EVENT:
 Solidays:::EVENT:
 Golden::Globes:EVENT:Gloden Globes
+Golden::Globe:EVENT:Gloden Globes
 Academy::Awards:EVENT:Academy Awards
 cérémonie::des (oscars|Oscars):EVENT:Academy Awards
 

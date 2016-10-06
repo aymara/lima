@@ -46,12 +46,13 @@ public:
     FsaRwAccessResource();
 
     virtual ~FsaRwAccessResource();
+    
     void init(
      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
      Manager* manager);
 
     virtual Common::AbstractModifierOnAccessByString* getRwAccessByString() const;
-//    virtual Common::AbstractAccessByString* getAccessByString() const;
+    virtual Common::AbstractAccessByString* getAccessByString() const;
 
 private:
   Common::AbstractModifierOnAccessByString* m_fsaRwAccess;

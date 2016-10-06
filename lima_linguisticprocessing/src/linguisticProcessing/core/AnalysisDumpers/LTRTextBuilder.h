@@ -87,9 +87,18 @@ public:
     LTRTextBuilder(
     const MediaId& language,
         StopList* stopList);
+    /** @brief build a LTRText representation of the analyzed text
+     * @param graph the linguistic graph containing the analyzed text
+     * @param sb a pointer on the sentence boundaries segmentation data: if zero, sentence boundaries are ignored, all text is treated as a single segment
+     * @param graphFirstVertex the first vertex of the text in the linguistic graph (needed when sb==0)
+     * @param graphLastVertex the last vertex of the text in the linguistic graph (for last segment)
+     * @param textRep the LTRText built 
+     * @param offset the offset of the text in the document (to have a global correct position)
+     */
     void buildLTRTextFrom(
         const LinguisticGraph& graph,
         Lima::LinguisticProcessing::SegmentationData* sb,
+        const LinguisticGraphVertex& graphFirstVertex,
         const LinguisticGraphVertex& graphLastVertex,
         Lima::Common::BagOfWords::LTR_Text* textRep,
         uint64_t offset);

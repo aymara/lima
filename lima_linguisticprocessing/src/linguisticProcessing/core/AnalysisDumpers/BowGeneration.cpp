@@ -233,6 +233,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
       const AnnotationData* annotationData,
       std::set< LinguisticGraphVertex >& visited) const
 {
+  
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::buildTermFor annot:" << vx << "; pointing on annot:"<<tgt;
@@ -588,21 +589,23 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   LDEBUG << "BowGenerator::createAbstractBoWElement " << v << " has " << anaVertices.size() << " matching vertices in analysis graph";
 #endif
 
+  bool createdSpecificEntity(false);
+  
   // note: anaVertices size should be 0 or 1
-  for ( AnnotationGraphVertex anaVertex : anaVertices)
+  for (auto anaVertex = anaVertices.begin(); anaVertex != anaVertices.end(); ++anaVertex)
   {
 #ifdef DEBUG_LP
-   LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << anaVertex;
+   LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << *anaVertex;
 #endif
-    std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
-    for (AnnotationGraphVertex matchVertex: matches)
+    std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVertex,"annot");
+    for (auto matchVertex = matches.begin(); matchVertex != matches.end(); ++matchVertex)
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << matchVertex;
+      LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << *matchVertex;
 #endif
-      if (annotationData->hasAnnotation(matchVertex, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+      if (annotationData->hasAnnotation(*matchVertex, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
-        boost::shared_ptr< BoWToken  > se = createSpecificEntity(v,matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
+        boost::shared_ptr< BoWToken  > se = createSpecificEntity(v,*matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
         if (se != 0)
         {
 #ifdef DEBUG_LP
@@ -611,6 +614,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
           se->setVertex(v);
           abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),se));
 //           visited.insert(v);
+          createdSpecificEntity=true;
           break;
         }
       }
@@ -626,8 +630,9 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 #ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement there are " << matches.size() << " annotation graph vertices matching the current PsGraph vertex " << v;
 #endif
-  for (AnnotationGraphVertex vx: matches)
+  for (auto it = matches.begin(); it != matches.end(); ++it)
   {
+    AnnotationGraphVertex vx = *it;
 #ifdef DEBUG_LP
     LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << vx;
 #endif
@@ -670,9 +675,9 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       bool toKeep = true;
       if (data!=0)
       {
-        for (const auto& elem: *data)
+        for (auto elem = data->begin(); elem != data->end(); ++elem)
         {
-          if (!keepAnyway && !shouldBeKept(elem))
+          if (!keepAnyway && !shouldBeKept(*elem))
           {
             toKeep = false;
             break;
@@ -681,14 +686,15 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       }
       if (toKeep)
       {
-        for (boost::shared_ptr< BoWPredicate >& bP: createPredicate(v, vx, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway))
+		auto pred = createPredicate(v, vx, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
+        for (auto bP = pred.begin(); bP != pred.end(); ++bP)
         {
-          if (bP!=0)
+          if (*bP!=0)
           {
   #ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate" ;
   #endif
-            abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),bP));
+            abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),*bP));
       //         visited.insert(v);
   //           return abstractBowEl;
           }
@@ -717,7 +723,14 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 
   std::set<std::pair<StringsPoolIndex,LinguisticCode> > alreadyCreated;
   std::pair<StringsPoolIndex,LinguisticCode> predNormCode = std::make_pair(StringsPoolIndex(0),LinguisticCode(0));
-
+  
+  if (createdSpecificEntity) {
+    // a specific entity has been created on the analysis graph: do not output a token
+    // (RB: do that here so that the vertex on the posgraph can also be analyzed: should test is this is 
+    // needed or if we only need to place the return just after the creation of the named entity)
+    return abstractBowEl;
+  }
+  
   if (data!=0)
   {
     for (auto it=data->begin(); it!=data->end(); it++)
@@ -1131,8 +1144,8 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
 QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
     const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv, const AnnotationData* annotationData, const LinguisticGraph& anagraph, const LinguisticGraph& posgraph, const uint64_t offset, std::set< LinguisticGraphVertex >& visited, bool keepAnyway) const
 {
-  DUMPERLOGINIT;
 #ifdef DEBUG_LP
+  DUMPERLOGINIT;
   LDEBUG << "BowGenerator::createPredicate ling:" << lgv << "; annot:" << agv;
 #endif
   QList< boost::shared_ptr< BoWPredicate > > result;
@@ -1141,10 +1154,12 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
 
   // FIXME handle the ambiguous case when there is several class values for the predicate
   QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
+#ifdef DEBUG_LP
   if (predicateIds.size()>1)
   {
     LDEBUG << "BowGenerator::createPredicate Predicate has" << predicateIds.size() << "values:" << predicateIds;
   }
+#endif
   
   
   // FIXED replace the hardcoded VerbNet by a value from configuration
@@ -1157,9 +1172,9 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
     try
     {
       EntityType predicateEntity= Common::MediaticData::MediaticData::single().getEntityType(predicate);
-  #ifdef DEBUG_LP
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< predicate << " is/are ";
-  #endif
+#endif
       AnnotationGraph annotGraph=annotationData->getGraph();
       AnnotationGraphOutEdgeIt outIt, outIt_end;
       boost::tie(outIt, outIt_end) = boost::out_edges(agv, annotationData->getGraph());
@@ -1170,9 +1185,18 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
         // FIXME handle the ambiguous case when there is several values for each role
         const AnnotationGraphVertex semRoleVx=boost::target(*outIt, annotGraph);
         QStringList semRoleIds = annotationData->stringAnnotation(agv,semRoleVx,typeAnnot).split("|");
+        if (predicateIds.size() != semRoleIds.size())
+        {
+          DUMPERLOGINIT;
+          LERROR << "BowGenerator::createPredicate predicateIds and semRoleIds sizes are different:" << predicateIds.size() << "and" << semRoleIds.size();
+          LERROR << "BowGenerator::createPredicate abort this predicate creation";
+          return result;
+        }
         Q_ASSERT(predicateIds.size() == semRoleIds.size());
         LimaString semRole = semRoleIds[i];
+#ifdef DEBUG_LP
         LDEBUG << semRole;
+#endif
         if (semRole.isEmpty()) continue;
         try
         {
@@ -1183,16 +1207,17 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
             LinguisticGraphVertex posGraphSemRoleVertex = *(posGraphSemRoleVertices.begin());
             if (posGraphSemRoleVertex == lgv)
             {
+              DUMPERLOGINIT;
               LERROR << "BowGenerator::createPredicate role vertex is the same as the trigger vertex. Abort this role.";
               continue;
             }
-  #ifdef DEBUG_LP
+#ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex" << posGraphSemRoleVertex;
-  #endif
+#endif
             std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
-  #ifdef DEBUG_LP
+#ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
-  #endif
+#endif
   //               if (semRoleTokens[0].second!="")
             if (!semRoleTokens.empty())
             {
@@ -1201,13 +1226,14 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
           }
           else
           {
-  #ifdef DEBUG_LP
+#ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
-  #endif
+#endif
           }
         }
         catch (const Lima::LimaException& e)
         {
+          DUMPERLOGINIT;
           LERROR << "BowGenerator::createPredicate Unknown semantic role" << semRole << ";" << e.what();
         }
       }
@@ -1216,7 +1242,9 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
       bowP->setLength(token->length());
       bowP->setPredicateType(predicateEntity);
       Common::MediaticData::EntityType pEntityType=bowP->getPredicateType();
+#ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createPredicate Created a Predicate for the verbal class " << Common::MediaticData::MediaticData::single().getEntityName(pEntityType);
+#endif
       if (!roles.empty())
       {
         bowP->setRoles(roles);
@@ -1228,9 +1256,9 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
           if (outputRoles != 0)
           {
             LimaString roleLabel=Common::MediaticData::MediaticData::single().getEntityName(it.key());
-  #ifdef DEBUG_LP
+#ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createPredicate Associated "<< QString::fromUtf8(outputRoles->getOutputUTF8String().c_str()) << " to it" << "via the semantic role label "<< roleLabel ;
-  #endif
+#endif
           }
         }
       }
@@ -1238,6 +1266,7 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
     }
     catch (const Lima::LimaException& e)
     {
+      DUMPERLOGINIT;
       LERROR << "BowGenerator::createPredicate Unknown predicate" << predicate << ";" << e.what();
       return QList< boost::shared_ptr< BoWPredicate > >();
     }

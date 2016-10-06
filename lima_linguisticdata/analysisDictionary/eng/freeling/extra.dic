@@ -30,7 +30,7 @@ january	January		NNP
 february	February		NNP
 march	March		NNP
 april	April		NNP
-may	May		NNP
+#may	May		NNP
 june	June		NNP
 july	July		NNP
 august	August		NNP

@@ -59,7 +59,11 @@ Categories::Categories(QObject* parent) :
 {
   connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
   QString category = "FilesReporting";
+#ifdef DEBUG_CD
   d->categories.insert(category,QsLogging::InfoLevel);
+#else
+  d->categories.insert(category,QsLogging::ErrorLevel);
+#endif
 }
 
 Categories::~Categories()

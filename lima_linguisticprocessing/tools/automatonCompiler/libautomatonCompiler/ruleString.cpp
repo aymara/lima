@@ -118,6 +118,7 @@ m_actionsWithOneArgument()
   else {
     m_norm=str.mid(position+1,next-position-1);
   }
+  removeEscapeCharacters(m_norm);
 #ifdef DEBUG_LP
   LDEBUG << "norm=" << Common::Misc::limastring2utf8stdstring(m_norm);
 #endif

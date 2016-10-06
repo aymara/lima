@@ -48,7 +48,7 @@
         <item value="OPAR"/>
         <item value="CPAR"/>
         <item value="IN"/>
-        <item value="THATIN"/>
+        <item value="SCONJ"/>
         <item value="ABOUTIN"/>
         <item value="TO"/>
         <item value="EX"/>
@@ -72,12 +72,12 @@
             <item value="CC" />
             <item value="IN" />
             <item value="THATDT" />
-            <item value="THATIN" />
+            <item value="SCONJ" />
         </list>
     </group>
     <group name="SyntacticRelations">
       <list name="relationList">
-        <item value="acl"/>
+        <item value="acl"/> <!-- See Universal Dependencies-->
         <item value="acl:relcl"/>
         <item value="ADJPRENSUB"/>
         <item value="ADJSUB"/>
@@ -89,8 +89,8 @@
         <item value="AdvVerbe"/>
         <item value="APPOS"/>
         <item value="ATB_S"/>
-        <item value="aux"/>
-        <item value="auxpass"/>
+        <item value="aux"/> <!-- See Universal Dependencies-->
+        <item value="auxpass"/> <!-- See Universal Dependencies-->
         <item value="CodPrev"/>
         <item value="COD_V"/>
         <item value="CoiPrev"/>
@@ -99,7 +99,6 @@
         <item value="COMPADV2"/>
         <item value="COMPDUNOM"/>
         <item value="COMPDUNOM2"/>
-        <item value="COMPL"/>
         <item value="COORD1"/>
         <item value="COORD2"/>
         <item value="CPLV_V"/>
@@ -107,20 +106,21 @@
         <item value="DetAdj"/>
         <item value="DETADJ"/>
         <item value="DetIntSub"/>
-        <item value="det"/>
-        <item value="DETSUB"/>
+        <item value="det"/> <!-- See Universal Dependencies-->
         <item value="DetSubNum"/>
         <item value="Dummy"/>
         <item value="JUXT"/>
+        <item value="mark"/> <!-- See Universal Dependencies-->
         <item value="MOD_A"/>
         <item value="MOD_N"/>
         <item value="MOD_V"/>
         <item value="Neg"/>
         <item value="PrepInf"/>
+        <item value="Quotes"/>
         <item value="SUBADJPOST"/>
         <item value="SUBADJPOST2"/>
         <item value="SUBSUBJUX"/>
-        <item value="TEMPCOMP"/>
+        <item value="Parent"/>
         <item value="Pleon"/>
         <item value="PrepAdv"/>
         <item value="PrepDetInt"/>

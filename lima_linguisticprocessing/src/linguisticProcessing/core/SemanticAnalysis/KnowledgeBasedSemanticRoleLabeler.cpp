@@ -153,30 +153,29 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     // optional parameter: keep default value (empty)
   }
 
-  try {
-    m_d->m_inputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
-  }
-  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    SEMANTICANALYSISLOGINIT;
-    LERROR << "Missing 'inputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
-           << (int)language << " !";
-    throw InvalidConfiguration();
-  }
+  if (m_d->m_temporaryFileMetadata.isEmpty())
+  {
+    try {
+      m_d->m_inputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("inputSuffix").c_str());
+    }
+    catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+      SEMANTICANALYSISLOGINIT;
+      LERROR << "Missing 'inputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
+            << (int)language << " !";
+      throw InvalidConfiguration();
+    }
 
-  try {
-    m_d->m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
+    try {
+      m_d->m_outputSuffix=QString::fromUtf8(unitConfiguration.getParamsValueAtKey("outputSuffix").c_str());
+    }
+    catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+      SEMANTICANALYSISLOGINIT;
+      LERROR << "Missing 'outputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
+            << (int)language << " !";
+      throw InvalidConfiguration();
+    }
   }
-  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    SEMANTICANALYSISLOGINIT;
-    LERROR << "Missing 'outputSuffix' parameter in KnowledgeBasedSemanticRoleLabeler group for language "
-           << (int)language << " !";
-    throw InvalidConfiguration();
-  }
-
-  QString path;
-  QString mode = "VerbNet";
   QString kbsrlLogLevel = "error";
-	
   try
   {
     kbsrlLogLevel = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("loglevel").c_str());
@@ -186,6 +185,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     // keep default
   }
 
+  QString path;
   try
   {
     path = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("path").c_str());
@@ -197,6 +197,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     throw InvalidConfiguration();
   }
 
+  QString mode = "VerbNet";
   try
   {
     mode = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("mode").c_str());
@@ -220,8 +221,10 @@ void KnowledgeBasedSemanticRoleLabeler::init(
    */
   QString str_program_name;
   QString pathEnv = QString::fromUtf8(qgetenv("PATH").constData());
-  for (const auto & path: pathEnv.split(QRegExp("[;:]")))
+  QStringList paths = pathEnv.split(QRegExp("[;:]"));
+  for (auto it = paths.begin(); it != paths.end(); ++it)
   {
+    const auto & path = *it;
     if (QFile::exists(path + "/python" ))
     {
       str_program_name = path + "/python";
@@ -246,7 +249,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
 
   // Add the path to the knowledgesrl pachkage to putho path
   PyObject* pythonpath = PySys_GetObject("path");
-  if (PyList_Append(pythonpath, PyUnicode_DecodeFSDefault("/home/gael/Projets/knowledgesrl/src")) ==  -1)
+  if (PyList_Append(pythonpath, PyUnicode_DecodeFSDefault(path.toUtf8().constData())) ==  -1)
   {
     SEMANTICANALYSISLOGINIT;
     LERROR << "Failed to append to python path";
@@ -259,15 +262,16 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   if (semanticrolelabeler_module == NULL)
   {
     SEMANTICANALYSISLOGINIT;
-    LERROR << "Failed to import srl semanticrolelabeler module";
+    LERROR << "KnowledgeBasedSemanticRoleLabeler::init"<< __FILE__ << __LINE__ << ": Failed to import srl semanticrolelabeler module";
     PyErr_Print();
     Py_Exit(1);
   }
   
   // Create the semantic role labeller instance
-  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[ss]", 
+  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]", 
                                         QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData(), 
-                                        QString("--frame-lexicon=%1").arg(mode).toUtf8().constData());
+                                        QString("--frame-lexicon=%1").arg(mode).toUtf8().constData(), 
+                                        QString("--language=%1").arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
   HANDLE_ERROR_EQUAL(m_d->m_instance,NULL,cannot_instantiate_the_semanticrolelabeler_python_class())
 }
 
@@ -364,11 +368,19 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
       return CANNOT_OPEN_FILE_ERROR;
     }
     conllInput = QString::fromUtf8(temporaryFile->readAll().constData());
+#ifdef DEBUG_LP
+    temporaryFile->setAutoRemove(false);
+    SEMANTICANALYSISLOGINIT;
+    LDEBUG << "KnowledgeBasedSemanticRoleLabeler: keeping temporary file after dumping CoNLL data to it for debugging"<< temporaryFile->fileName();
+#endif
     temporaryFile->close();
   }
 
   // Run the semantic role labeller
-  PyObject* callResult = PyObject_CallMethod(m_d->m_instance, "annotate", "s", conllInput.toUtf8().constData());
+  PyObject* callResult = PyObject_CallMethod(m_d->m_instance, "annotate", "ss",
+                                             conllInput.toUtf8().constData(),
+                                             metadata->getMetaData("Lang").c_str()
+                                            );
   HANDLE_ERROR_EQUAL(callResult, NULL, failure_during_call_of_the_annotate_method_on(conllInput));
   
   // Display the SRL result

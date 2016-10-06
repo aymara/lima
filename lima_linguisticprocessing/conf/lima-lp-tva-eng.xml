@@ -265,6 +265,7 @@
     <group name="specificEntitiesXmlLogger" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".se.xml"/>
       <param key="graph" value="AnalysisGraph"/>
+      <param key="followGraph" value="true"/>
     </group>
     <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".se.xml"/>

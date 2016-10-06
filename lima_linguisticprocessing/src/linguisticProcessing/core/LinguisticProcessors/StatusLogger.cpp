@@ -118,7 +118,7 @@ LimaStatusCode StatusLogger::process(
 
   ifstream statusIn(m_statusFile.c_str(),ios::in | std::ifstream::binary);
   string line;
-  while (!statusIn.eof())
+  while (statusIn.good())
   {
     line = Lima::Common::Misc::readLine(statusIn);
     size_t index=line.find(":");

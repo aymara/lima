@@ -30,15 +30,9 @@
 
 namespace Lima {
 
-namespace Common {
-  class AbstractAccessByString;
-}
-
 namespace LinguisticProcessing {
 
 namespace AnalysisDict {
-
-#define FSAACCESSRESSOURCE_CLASSID "FsaAccess"
 
 /**
 @author Benoit Mathieu

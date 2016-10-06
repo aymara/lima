@@ -12,7 +12,7 @@ set defaultAction=>CreateSpecificEntity()
 mph,volt,volts,
 ounce,ounces,tablespoon,tablespoons,cup,cups,
 teaspoon,teaspoons,calorie,calories,pint,pints,
-g,mg,gram,grams,ton,tons,tonne,tonnes,degree,degrees,
+g,mg,gram,grams,ton,tons,tonne,tonnes,°,degree,degrees,
 cent,cents,dollar,dollars,euro,euros,
 yen,
 inch,inches,feet,foot,yard,yards,acre,acres,

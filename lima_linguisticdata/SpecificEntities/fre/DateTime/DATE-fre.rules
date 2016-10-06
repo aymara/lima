@@ -9,7 +9,7 @@ mercredi,Mercredi,MERCREDI,mercred,mer,mercre,Mercred,Mer,Mercred,MERCRED,MER,ME
 jeudi,Jeudi,JEUDI,jeu,jeud,Jeu,Jeud,JEU,JEUD,
 vendredi,Vendredi,VENDREDI,ven,vendred,Ven,Vendred,VEN,VENDRED,
 samedi,Samedi,SAMEDI,sam,samed,SAM,Samed,SAM,SAMED,
-dimanche,Dimanche,DIMANCHEdim,dimanch,di,Dim,Dimanch,Di,DIM,DIMANCH,DI);
+dimanche,Dimanche,DIMANCHE,dim,dimanch,di,Dim,Dimanch,Di,DIM,DIMANCH,DI);
 
 @dayNoAbbrev=(lundi,Lundi,LUNDI,
 mardi,Mardi,MARDI,
@@ -33,7 +33,7 @@ novembre,NOVEMBRE,Novembre,nov,NOV,Nov,
 décembre,DECEMBRE,Décembre,déc,dec);
 
 @monthAbbrev=(janv,Janv,JANV,
-fév,FEV,Fév,
+fév,FEV,Fév,févr,Févr,FEVR,
 mar,Mar,MAR,
 avr,
 juil,Juil,JUIL,
@@ -57,7 +57,7 @@ décembre,DECEMBRE,Décembre);
 
 @numday=(
 premier,
-1er,O
+1er,O,
 deux,
 trois,
 quatre,
@@ -104,8 +104,9 @@ trente et un,
 @numyear=(t_integer>1700<2050,t_integer>1<99)
 @numyear4=(t_integer>1700<2050)
 
-# lundi 22 mai 1968 | lundi, 4 sepetembre 2014 | lundi 18 octobre, 2014 | Mer. 28 février 2015
-@day::\.? ,? (@numday|t_integer>1<31) (@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
+# lundi 22 mai 1968 | lundi, 4 sepetembre 2014 | lundi 18 octobre, 2014 | Mer. 28 février 2015,  mercredi 26 févr, mercredi 26 févr. 
+//@monthAbbrev|@monthAbbrev \.? = Warning, need to use the both annotations. 
+@day::\.? ,? (@numday|t_integer>1<31) (@monthAbbrev|@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
 =>NormalizeDate()
 
 @day::\.? ,? t_date:DATE:

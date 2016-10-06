@@ -73,6 +73,10 @@
   WP$ - Possessive wh-pronoun (prolog version WP-S)
   WRB - Wh-adverb
     -->
+  <!--
+  Adaptation to LIMA inspired from Universal Dependencies
+  - add a SCONJ micro
+  -->
   <subproperty name="MICRO" parent="MACRO">
     <subvalues value="ADJ">
       <value name="JJ"/>
@@ -91,6 +95,7 @@
     </subvalues>
     <subvalues value="CONJ">
       <value name="CC"/>
+      <value name="SCONJ"/> <!-- See Universal Dependencies -->
     </subvalues>
     <subvalues value="DET">
       <value name="DT"/>
@@ -131,7 +136,6 @@
     </subvalues>
     <subvalues value="PREP">
       <value name="IN"/>
-      <value name="THATIN"/>
       <value name="ABOUTIN"/>
       <value name="TO"/>
       <!--value name="RP"/-->

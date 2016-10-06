@@ -267,10 +267,10 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     for (; trans!=trans_end; trans++) {
 //       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex;
       deque<LinguisticGraphVertex> noVertices;
-      DFFSPos  newPair(noVertices,0);
+      DFFSPos  newPair(noVertices,nullptr);
 
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
-      const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>(&(*trans));
+      const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*trans).transitionUnit());
       // TODO:  generalize buildNextTermsList and checkMultiTerms to be able to manage backtrack and backward
       if( gtrans != 0 ) {
         deque<LinguisticGraphVertex> vertices;
@@ -680,7 +680,7 @@ bool Automaton::testFromState(const Tstate firstState,
   S.push(beginVertex,firstState,analysis,limitVertex);
   
   LinguisticGraphVertex vertex;
-  const Transition* transition(0);
+  const Transition* transition(nullptr);
   uint64_t nbIter(0);
   bool backtrack(false);
 

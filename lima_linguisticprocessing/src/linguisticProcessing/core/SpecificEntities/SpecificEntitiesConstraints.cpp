@@ -418,7 +418,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     LDEBUG << "CreateSpecificEntity, use micros from config file ";
 #endif
     // use micros given in the config file : get the specific resource
-    // (specific to modex) 
+    // (specific to modex) AddEntityFeature
     // WARN : some hard coded stuff here in resource names
     EntityType seType=match.getType();
     if  (seType.getGroupId() == 0)
@@ -656,11 +656,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   // 4 specifier le noeud suivant a utiliser dans la recherche :
   // - nouveau noeud si l'expression reconnue etait composee de plusieurs noeuds
   // - les fils du nouveau noeud sinon (pour eviter les bouclages)
-  if (annot.m_vertices.size() > 1)
+  // correction 08/2016 : always restart rules application from following vertices 
+  // to avoid unexpected behaviors (see issues #44 and #45)
+  /*if (annot.m_vertices.size() > 1)
   {
     recoData->setNextVertex(newVertex);
   }
-  else
+  else*/
   {
     LinguisticGraphOutEdgeIt outItr,outItrEnd;
     boost::tie(outItr,outItrEnd) = out_edges(newVertex,*lingGraph);
@@ -1429,12 +1431,13 @@ return false;
 }
 // assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
 //match.features()=recoData->getEntityFeatures();
-for (const auto& f: recoData->getEntityFeatures()) {
-  match.features().addFeature(f.getName(),f.getValue());
-  EntityFeatures::iterator featureIt = match.features().findLast(f.getName());
-  if( f.getPosition() != UNDEFPOSITION ) {
-    (*featureIt).setPosition(f.getPosition());
-    (*featureIt).setLength(f.getLength());
+auto features = recoData->getEntityFeatures();
+for (auto it = features.begin(); it != features.end(); ++it) {
+  match.features().addFeature(it->getName(),it->getValue());
+  EntityFeatures::iterator featureIt = match.features().findLast(it->getName());
+  if( it->getPosition() != UNDEFPOSITION ) {
+    (*featureIt).setPosition(it->getPosition());
+    (*featureIt).setLength(it->getLength());
   }
 }
 // must clear the stored features, once they are used (otherwise, will be kept for next entity)

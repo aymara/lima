@@ -1,0 +1,58 @@
+set encoding=utf8
+using modex Location-modex.xml
+using groups Location
+set defaultAction=>CreateSpecificEntity()
+
+# règles avec normalisation placées avant les autres règles pour que 
+# certaines formes soient bien prises dans les listes (e.g. @Cities)
+
+#****************************** regle avec normalisation
+
+# Penmarc'| Penmarch => Penmarc'h
+Penmarc'::h:GEO:Penmarc'h
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+
+Penmarch:::GEO:Penmarc'h
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+
+Loire::Atlantique:REGION:Loire-atlantique
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Charm::el Cheikh:COUNTRY:Charm el-Cheikh
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#****************************** regle pour noms composés
+# put them in gazeteer??
+
+Cap::Canaveral:GEO:
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Plaine:La:(St|Saint) Denis:CITY:
+=>SetEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Bolline:La::CITY:
+=>SetEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#quartier
+
+PORTO::TORRES:CITY:Porto Torres
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()

@@ -1,4 +1,4 @@
-######################################################################
+#----------------------------------------------------------------------
 #                                                                    #
 # rules for the recognition of english heterosyntagmatic relations   #
 # this file uses the syntax for the declarations of automatons by    #
@@ -6,7 +6,7 @@
 # Created on Mon oct 4 2004                                          #
 # by Romaric Besancon                                                #
 # modified by Claire Mouton, Gael de Chalendar, etc.                 #
-######################################################################
+#----------------------------------------------------------------------
 # NOTE:for heterosyntagmatic relations, the recognizer with the
 # following parameters :
 # test all vertices: true
@@ -24,30 +24,39 @@ using groups LinguisticProcessing
 #----------------------------------------------------------------------
 use categoriesClassesDeclaration-eng.txt
 
-######################################################################
+
+#----------------------------------------------------------------------
 # sub-automatons
 
-# noun group size=4
-# head is at position 4
+# noun group size=3
+# head is at position 3
 define subautomaton NounGroup {
- pattern=$DET? ($ADV{0-2} $ADJ|$NC|$NP|$CONJ-CC){0-n} @Substantif
+ pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Participe|@DetNum|@PrepComp){0-n} @Substantif
 }
 
-# prep group size=5
-# head is at position 4
+# prep group size=2
+# head is at position 2.3
 define subautomaton PrepGroup {
- pattern=$PREP %NounGroup
+ pattern=@PrepComp %NounGroup
 }
 
 
-
-######################################################################
+#----------------------------------------------------------------------
 # relation sujet/verbe
 # SUJ_V
 
 # !!! Attention à l'ordre des règles: les règles sont réordonnées en fonction
 # !!! des triggers communs *ET* les triggers sont comparés en tenant compte
 # !!! de leurs contraintes => triggers égaux si contraintes égales
+
+# Past perfect
+@Aux:%NounGroup (@DetNum (@ConjCoord @DetNum)?)?:(@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
++!GovernorOf(left.1.3,"ANY")
++SecondUngovernedBy(left.1.3,right.2,"ANY")
++CreateRelationBetween(left.1.3,right.2,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
 
 # relatives
 # si après conjonction ou virgule, le précédent ne doit pas être complément de nom
@@ -60,7 +69,7 @@ define subautomaton PrepGroup {
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-# a pronoun at  the end of an enumeration
+# a pronoun at the end of an enumeration
 @TensedVerb:($NC|$NP) %NounGroup ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @Pron (@PronPers){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +SecondUngovernedBy(left.6,trigger.1,"ANY")
@@ -69,7 +78,7 @@ define subautomaton PrepGroup {
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-# a pronoun at  the end of an enumeration
+# a pronoun at the end of an enumeration
 @TensedVerb:($NC|$NP) %NounGroup ($NC|$NP) %NounGroup ($NC|$NP) ($ADV? $ADJ)? (,|,? $CONJ-CC) @Pron  (@PronPers){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
 +SecondUngovernedBy(left.8,trigger.1,"ANY")
@@ -87,10 +96,6 @@ define subautomaton PrepGroup {
 =<ClearStoredRelations()
 
 
-@NotNoun=($V,$PRON,$DET,
-$ADJ,$ADV,$PREP,$PONCTU,
-$INTERJ,$CONJ)
-
 # subject is proper noun
 @TensedVerb:$NP [(@NotNoun){0-n}]::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"COMPDUNOM")
@@ -102,7 +107,7 @@ $INTERJ,$CONJ)
 =<ClearStoredRelations()
 
 # compound tense with double quotes around the subject which is a noun group
-@Copule:@OpenQuot %NounGroup (@Adjectif){0-n} @ClosQuot:(@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
+@Copule:@OpenQuot %NounGroup (@Adj){0-n} @ClosQuot:(@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"ANY")
 +SecondUngovernedBy(left.2.3,right.2,"ANY")
 +CreateRelationBetween(left.2.3,right.2,"SUJ_V")
@@ -110,10 +115,10 @@ $INTERJ,$CONJ)
 =<ClearStoredRelations()
 
 # compound tense
-@Copule:%NounGroup:(@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
-+!GovernorOf(left.1,"ANY")
-+SecondUngovernedBy(left.3,right.2,"ANY")
-+CreateRelationBetween(left.3,right.2,"SUJ_V")
+@Copule:%NounGroup (@DetNum (@ConjCoord @DetNum)?)?:(@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
++!GovernorOf(left.1.3,"ANY")
++SecondUngovernedBy(left.1.3,right.2,"ANY")
++CreateRelationBetween(left.1.3,right.2,"SUJ_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
@@ -124,6 +129,14 @@ $INTERJ,$CONJ)
 +!GovernorOf(trigger.1,"CPL_V")
 +SecondUngovernedBy(left.1,right.3,"ANY")
 +CreateRelationBetween(left.1,right.3,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# present continuous
+@Copule:%NounGroup (@DetNum (@ConjCoord @DetNum)?)?:(@Adverb){0-2} @Ing:SYNTACTIC_RELATION:
++!GovernorOf(left.1.3,"ANY")
++SecondUngovernedBy(left.1.3,right.2,"ANY")
++CreateRelationBetween(left.1.3,right.2,"SUJ_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
@@ -200,7 +213,7 @@ $INTERJ,$CONJ)
 # cas ou le superlatif est utilisé comme un nom
 # "The oldest of my cousins is at home this week."
 #----------------------------------------------------------------------
-$ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif @Verbe:SYNTACTIC_RELATION:
+$ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif @Verbe:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
 +CreateRelationBetween(trigger.1,right.5,"SUJ_V")
 =>AddRelationInGraph()
@@ -210,21 +223,56 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 # simplest case
 # "He eats."
 #----------------------------------------------------------------------
-@TensedVerb:@Pron::SYNTACTIC_RELATION:
+@TensedVerb:@Pron (@Adverb){0-3}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"ANY")
 +CreateRelationBetween(left.1,trigger.1,"SUJ_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-######################################################################
+#----------------------------------------------------------------------
+# simplest case
+# "The cat eats."
+#----------------------------------------------------------------------
+@TensedVerb:@Substantif (@Adverb){0-3}::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
+# simplest case
+# "The cat of the neighbours eats."
+#----------------------------------------------------------------------
+@TensedVerb:@Substantif (@NotVerbPrincipal){0-n} @Substantif ,?::SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++!SecondUngovernedBy(left.3,left.1,"COMPDUNOM")
++CreateRelationBetween(left.1,trigger.1,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@Substantif::(@NotVerbPrincipal){0-n} @Substantif ,? @TensedVerb:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++CreateRelationBetween(trigger.1,right.4,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# Using the following of relations up to the head
+@TensedVerb:@Substantif (@Adverb){0-3}::SYNTACTIC_RELATION:
++GovernorOf(left.1,"COMPDUNOM")
++CreateRelationReverseWithRelated(trigger.1,left.1,"COMPDUNOM,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
 # relation attribut du sujet
 # ATB_S
 
-# @Adjectif:(@Copule|être$V) ($ADV){0-2}::SYNTACTIC_RELATION:
+# @Adj:(@Copule|être$V) ($ADV){0-2}::SYNTACTIC_RELATION:
 # +CreateRelationBetween(trigger.1,left.1,"ATB_S")
 # =>AddRelationInGraph()
 
-@Adjectif:@Copule ($ADV){0-2}::SYNTACTIC_RELATION:
+@Adj:@Copule ($ADV){0-2}::SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ATB_S")
 +CreateRelationBetween(trigger.1,left.1,"ATB_S")
 =>AddRelationInGraph()
@@ -276,14 +324,14 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =<ClearStoredRelations()
 
 
-######################################################
+#----------------------------------------------------------------------
 # object verb relation
 # double complements
-######################################################
+#----------------------------------------------------------------------
 
 # He gives him a book.
 
-@TensedVerb::$PRON @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::$PRON @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.4,"ADJPRENSUB")
 +CreateRelationBetween(right.1,trigger.1,"CPL_V")
 +CreateRelationBetween(right.4,trigger.1,"COD_V")
@@ -293,7 +341,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # He gives the boy a book.
 
-@TensedVerb::@Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::@Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.3,"ADJPRENSUB")
 +!GovernorOf(right.6,"ADJPRENSUB")
 +CreateRelationBetween(right.3,trigger.1,"CPL_V")
@@ -304,7 +352,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # He gives a book to him.
 
-@TensedVerb::@Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif to $PRON:SYNTACTIC_RELATION:
+@TensedVerb::@Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif to $PRON:SYNTACTIC_RELATION:
 +!GovernorOf(right.3,"ADJPRENSUB")
 +CreateRelationBetween(right.3,trigger.1,"COD_V")
 +CreateRelationBetween(right.5,trigger.1,"CPL_V")
@@ -321,7 +369,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # He gives a book to his friend.
 
-@TensedVerb::@Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif to @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::@Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif to @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.3,"ADJPRENSUB")
 +!GovernorOf(right.7,"ADJPRENSUB")
 +CreateRelationBetween(right.3,trigger.1,"COD_V")
@@ -331,17 +379,17 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # He gives it to his friend.
 
-@TensedVerb::$PRON to @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::$PRON to @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.5,"ADJPRENSUB")
 +CreateRelationBetween(right.1,trigger.1,"COD_V")
 +CreateRelationBetween(right.5,trigger.1,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
-##################################################
+#----------------------------------------------------------------------
 
 
 
-######################################################################
+#----------------------------------------------------------------------
 # object verb relation
 # COD_V
 
@@ -360,34 +408,8 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-# problème de "du/des" : il n'a que la catégorie DET_ARTICLE_CONTRACTE
-# (je bois du champagne -> COD)
-# (je tombe du train -> COI)
-# on teste la transitivité du verbe
-
-# avec MOD_V en plus
-# @TensedVerb::$DET-DET_ARTICLE_CONTRACTE ($ADV{0-2} $ADJ){0-2} $NC @PrepCirconstantielle $DET? ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
-# +CreateRelationBetween(right.3,trigger.1,"COD_V")
-# +CreateRelationBetween(right.7,trigger.1,"CPL_V")
-# +LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS,eng")
-# =>AddRelationInGraph()
-# =<ClearStoredRelations()
-
-# @TensedVerb::$DET-DET_ARTICLE_CONTRACTE ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
-# +CreateRelationBetween(right.3,trigger.1,"COD_V")
-# +LinguisticPropertyIs(trigger.1,"SYNTAX,TRANS,eng")
-# =>AddRelationInGraph()
-# =<ClearStoredRelations()
-
-# cas simple + MOD_V
-# @TensedVerb::$ADV{0-2} @Determinant? ($ADV{0-2} $ADJ){0-2} $NC @PrepCirconstantielle $DET? ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
-# +CreateRelationBetween(right.4,trigger.1,"COD_V")
-# +CreateRelationBetween(right.8,trigger.1,"MOD_V")
-# =>AddRelationInGraph()
-# =<ClearStoredRelations()
-
 # simple case 
-@TensedVerb::$ADV{0-2} @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::$ADV{0-2} @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.4,"ANY")
 +!GovernedBy(trigger.1,"COD_V")
 +CreateRelationBetween(right.4,trigger.1,"COD_V")
@@ -395,14 +417,14 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =<ClearStoredRelations()
 
 # simple case with a number as determiner 
-@TensedVerb::$ADV{0-2} @DetNum? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::$ADV{0-2} @DetNum? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.4,"ANY")
 +!GovernedBy(trigger.1,"COD_V")
 +CreateRelationBetween(right.4,trigger.1,"COD_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@TensedVerb::$ADV{0-2} @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::$ADV{0-2} @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.4,"ANY")
 +!GovernedBy(trigger.1,"COD_V")
 +CreateRelationBetween(right.4,trigger.1,"COD_V")
@@ -419,9 +441,9 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-@TensedVerb::$ADV{0-2} @BaseFormVerb:SYNTACTIC_RELATION:
+@TensedVerb::$ADV{0-2} (@BaseFormVerb|@PastParticiple):SYNTACTIC_RELATION:
 +!GovernedBy(trigger.1,"COD_V")
-+!GovernorOf(right.2,"TEMPCOMP")
++!GovernedBy(right.2,"auxpass")
 +!GovernorOf(trigger.1,"aux")
 +SecondUngovernedBy(right.2,trigger.1,"ATB_S")
 +CreateRelationBetween(right.2,trigger.1,"COD_V")
@@ -430,7 +452,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # complement en incise (vraisemblablement circonstantiel) +
 # COD
-@TensedVerb::, ($PREP)? @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} $NC , $DET? ($ADV{0-2} $ADJ){0-2} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::, ($PREP)? @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} $NC , $DET? ($ADV{0-2} $ADJ){0-2} @Substantif:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.5,trigger.1,"CPL_V")
 +CreateRelationBetween(right.9,trigger.1,"COD_V")
 =>AddRelationInGraph()
@@ -438,7 +460,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # adverbe en incise  +COD
 #
-@TensedVerb::, $ADV{0-2} $ADV , @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::, $ADV{0-2} $ADV , @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.3,"ADVADV")
 +CreateRelationBetween(right.3,trigger.1,"MOD_V")
 +CreateRelationBetween(right.7,trigger.1,"COD_V")
@@ -447,7 +469,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # adverbe en incise  +COI
 #
-@TensedVerb::, $ADV{0-2} $ADV , $PREP $DET? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::, $ADV{0-2} $ADV , $PREP $DET? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.3,"ADVADV")
 +CreateRelationBetween(right.3,trigger.1,"MOD_V")
 +CreateRelationBetween(right.8,trigger.1,"CPL_V")
@@ -457,23 +479,43 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 # complement en incise (vraisemblablement circonstantiel) +
 # COD
-@TensedVerb::, ($PREP) @Determinant? ($ADV{0-2} $ADJ){0-2} $NC , $DET? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::, ($PREP) @Determinant? ($ADV{0-2} $ADJ){0-2} $NC , $DET? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.5,trigger.1,"CPL_V")
 +CreateRelationBetween(right.9,trigger.1,"COD_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
+# subordinate clause
+# in Universal Dependencies, it would be ccomp (with mark between that and the 
+# second verb)
+@TensedVerb::@SubordConj %NounGroup (@Adverb){0-3} @TensedVerb:SYNTACTIC_RELATION:
++CreateRelationBetween(right.4,trigger.1,"COD_V")
++CreateRelationBetween(right.1,right.4,"mark")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+# subordinate clause without its own subject
+# in Universal Dependencies, the first COD_V would be xcomp
+# and the second one woud be ccomp
+@Ing:@TensedVerb:@SubordConj %NounGroup (@Adverb){0-3} @TensedVerb:SYNTACTIC_RELATION:
++CreateRelationBetween(trigger.1,left.1,"COD_V")
++CreateRelationBetween(right.4,trigger.1,"COD_V")
++CreateRelationBetween(right.1,right.4,"mark")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
 # complement COI suivi d'un COD
 # il donne a Pierre un livre
 
-#@TensedVerb::($PREP) @Determinant? #($ADV{0-2} (@Adjectif|@Substantif)){0-n} #($NC|$NP) $DET? ($ADV{0-2} #(@Adjectif|@Substantif)){0-n} #@Substantif:SYNTACTIC_RELATION:
+#@TensedVerb::($PREP) @Determinant? #($ADV{0-2} (@Adj|@Substantif)){0-n} #($NC|$NP) $DET? ($ADV{0-2} #(@Adj|@Substantif)){0-n} #@Substantif:SYNTACTIC_RELATION:
 #+CreateRelationBetween(right.4,trigger.1,"CPL_V")
 #+CreateRelationBetween(right.7,trigger.1,"COD_V")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
 
-@TensedVerb::($PREP) @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} ($NC|$NP|$PRON) @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::($PREP) @Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} ($NC|$NP|$PRON) @Substantif:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.4,trigger.1,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
@@ -491,19 +533,19 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 # ex: X can handle spot welding, material handling and assembly
 # with the head of each complement being a noun or a verb in ing, or a pronoun
 
-@Ing:@TensedVerb (@Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing|$PRON)){0-n} ,){0-n} @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing|$PRON)){0-n}::SYNTACTIC_RELATION:
+@Ing:@TensedVerb (@Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing|$PRON)){0-n} ,){0-n} @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing|$PRON)){0-n}::SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,left.1,"COD_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Ing:@TensedVerb @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n} (, @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n}){0-n} ,? and @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n}::SYNTACTIC_RELATION:
+@Ing:@TensedVerb @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n} (, @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n}){0-n} ,? and @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n}::SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,left.1,"COD_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Substantif:@TensedVerb (@Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n} ,){0-n} @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n}::SYNTACTIC_RELATION:
+@Substantif:@TensedVerb (@Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n} ,){0-n} @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n}::SYNTACTIC_RELATION:
 +!GovernedBy(left.1,"COD_V")
 +!GovernorOf(trigger.1,"ANY")
 +!GovernorOf(left.1,"SUBADJPOST")
@@ -511,7 +553,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Substantif:@TensedVerb @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n} (, @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n}){0-n} ,? and @Determinant? ($ADV{0-2} (@Adjectif|@Substantif|@Ing)){0-n}::SYNTACTIC_RELATION:
+@Substantif:@TensedVerb @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n} (, @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n}){0-n} ,? and @Determinant? ($ADV{0-2} (@Adj|@Substantif|@Ing)){0-n}::SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +!GovernorOf(left.1,"SUBADJPOST")
 +CreateRelationBetween(trigger.1,left.1,"COD_V")
@@ -555,12 +597,20 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-######################################################################
+@BaseFormVerb::@Adverb{0-3} @Adj:SYNTACTIC_RELATION:
++!GovernorOf(right.2,"ANY")
++GovernedBy(trigger.1,"auxpass")
++CreateRelationBetween(right.2,trigger.1,"COD_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+#----------------------------------------------------------------------
 # relation verbe/agent(voie passive) (complément d'agent)
 # CAgent_V
 
 
-#by:VERBE_GENERAPASSIF:@Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
+#by:VERBE_GENERAPASSIF:@Determinant? ($ADV{0-2} (@Adj|@Substantif)){0-n} @Substantif:SYNTACTIC_RELATION:
 #+SecondUngovernedBy(left.1,right.3,"ANY")
 #+CreateRelationBetween(left.1,right.3,"CAgent_V")
 #=>AddRelationInGraph()
@@ -573,7 +623,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-######################################################################
+#----------------------------------------------------------------------
 # relation verbe/complement (COI+circonstantielles)
 # CPL_V, CPL_V
 
@@ -583,13 +633,6 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 
 @TensedVerb::$ADV? to $ADV? @BaseFormVerb:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.4,trigger.1,"CPLV_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-@BaseFormVerb::%NounGroup:SYNTACTIC_RELATION:
-+!GovernorOf(right.3,"ANY")
-+GovernedBy(trigger.1,"PrepInf")
-+CreateRelationBetween(right.3,trigger.1,"COD_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
@@ -612,14 +655,14 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@TensedVerb::@Comma? @Adverb{0-2} @Comma? @Prep $DET? (@Adverb{0-2} ($ADJ|@Substantif)){0-2} @Substantif:SYNTACTIC_RELATION:
+@TensedVerb::@Comma? @Adverb{0-2} @Comma? @PrepComp $DET? (@Adverb{0-2} ($ADJ|@Substantif)){0-2} @Substantif:SYNTACTIC_RELATION:
 +!GovernorOf(right.7,"ANY")
 +CreateRelationBetween(right.7,trigger.1,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
 # simple COI
-@TensedVerb::$ADV{0-2} $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
+@TensedVerb::$ADV{0-2} @PrepComp $DET? ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.5,trigger.1,"CPL_V")
 +SecondUngovernedBy(right.5,trigger.1,"MOD_V")
 +CreateRelationBetween(right.5,trigger.1,"CPL_V")
@@ -627,9 +670,7 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =<ClearStoredRelations()
 
 # simple COI avec pronom
-@PronPostV=($PRON-PRP)
-
-@TensedVerb::$ADV{0-2} $PREP @PronPostV:SYNTACTIC_RELATION:
+@TensedVerb::$ADV{0-2} @PrepComp @PronPers:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.3,trigger.1,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
@@ -651,30 +692,18 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-# problème de "du/des" : il n'a que la catégorie DET_ARTICLE_CONTRACTE
-# (je bois du champagne -> COD)
-# (je tombe du train -> COI)
-# on teste la transitivité du verbe
-
-# @TensedVerb::$DET-DET_ARTICLE_CONTRACTE ($ADV{0-2} $ADJ){0-2} $NC:SYNTACTIC_RELATION:
-# +LinguisticPropertyIs(trigger.1,"SYNTAX,INTRANS,eng")
-# +SecondUngovernedBy(right.3,trigger.1,"COD_V")
-# +CreateRelationBetween(right.3,trigger.1,"CPL_V")
-# =>AddRelationInGraph()
-# =<ClearStoredRelations()
-
 # group prépositionnel non rattaché à un nom ou un verbe => rattaché
 # au premier verbe qui suit
 
 # cas temps composé
-$PREP::($DET)? (($ADV){0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrincipal){0-n} @BaseFormVerb  ($ADV){0-2} @PastParticiple:SYNTACTIC_RELATION:
+@PrepComp::($DET)? (($ADV){0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrincipal){0-n} @BaseFormVerb  ($ADV){0-2} @PastParticiple:SYNTACTIC_RELATION:
 +!GovernorOf(right.4,"ANY")
 +CreateRelationBetween(right.4,right.8,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
 # cas temps simple
-@TensedVerb:$PREP ($DET)? ($ADV{0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrincipal){0-n}::SYNTACTIC_RELATION:
+@TensedVerb:@PrepComp ($DET)? ($ADV{0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbPrincipal){0-n}::SYNTACTIC_RELATION:
 +!GovernorOf(left.5,"ANY")
 +!GovernorOf(trigger.1,"auxpass")
 +!GovernedBy(left.5,"SUBADJPOST")
@@ -686,20 +715,23 @@ $PREP::($DET)? (($ADV){0-2} $ADJ){0-2} (@Substantif){0-n} @Substantif (@NotVerbP
 # non rattaché à un element precent => rattache
 # le premier verbe qui suit au premier verbe suivant
 
-$PREP-IN::(@NotVerbPrincipal){0-n} @TensedVerb  $ADV{0-2} @TensedVerb (@NotVerbPrincipal){0-n} @TensedVerb:SYNTACTIC_RELATION:
+@PrepComp::(@NotVerbPrincipal){0-n} @TensedVerb  $ADV{0-2} @TensedVerb (@NotVerbPrincipal){0-n} @TensedVerb:SYNTACTIC_RELATION:
 +!GovernorOf(right.4,"ANY")
 +CreateRelationBetween(right.4,right.6,"CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-# cas temps simple
-$PREP-IN::(@NotVerbPrincipal){0-n} @TensedVerb (@NotVerbPrincipal){0-n} @TensedVerb:SYNTACTIC_RELATION:
-+!GovernorOf(right.2,"ANY")
-+CreateRelationBetween(right.2,right.4,"CPL_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+# covers too much. For example: create relation CPL_V between "considers" and "remain" in:
+# "in the table considers that all spoilers remain"
+# with "in" being the trigger
+# simple tense case
+#@PrepComp::(@NotVerbPrincipal){0-n} @TensedVerb (@NotVerbPrincipal){0-n} @TensedVerb:SYNTACTIC_RELATION:
+#+!GovernorOf(right.2,"ANY")
+#+CreateRelationBetween(right.2,right.4,"CPL_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
-@TensedVerb:$NC ($ADV? $ADJ)? ,? $PREP? @Pron (@PronPers){0-2}::SYNTACTIC_RELATION:
+@TensedVerb:$NC ($ADV? $ADJ)? ,? @PrepComp? @Pron (@PronPers){0-2}::SYNTACTIC_RELATION:
 +CreateRelationBetween(left.5,trigger.1,"CPL_V")
 +CreateRelationBetween(trigger.1,left.1,"MOD_N")
 =>AddRelationInGraph()
@@ -728,93 +760,7 @@ $PREP-IN::(@NotVerbPrincipal){0-n} @TensedVerb (@NotVerbPrincipal){0-n} @TensedV
 =<ClearStoredRelations()
 
 
-
-######################################################################
-# relation complementeur 
-# COMPL
-
-# avec incise d'un groupe nominal (temps compose)
-$PREP-IN:@TensedVerb ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerb @Participe:SYNTACTIC_RELATION:
-+!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.3,left.1,"COD_V")
-+CreateRelationBetween(left.6,left.1,"MOD_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# idem temps simple
-$PREP-IN:@TensedVerb ($ADV){0-n} , $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerb:SYNTACTIC_RELATION:
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.2,left.1,"COD_V")
-+CreateRelationBetween(left.6,left.1,"MOD_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# avec incise d'un groupe prepositionnel (temps compose)
-$PREP-IN:@TensedVerb $ADV{0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerb  @Participe:SYNTACTIC_RELATION:
-+!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.3,left.1,"COD_V")
-+CreateRelationBetween(left.7,left.1,"CPL_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# idem temps simple
-$PREP-IN:@TensedVerb ($ADV){0-n} , $PREP $DET? ($ADV{0-2} $ADJ){0-2} $NC ($ADV{0-2} $ADJ){0-2} ,:(^$V){0-n} @TensedVerb:SYNTACTIC_RELATION:
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.2,left.1,"COD_V")
-+CreateRelationBetween(left.7,left.1,"CPL_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# subordonnee completive COD "je pense qu'il viendra" (temps compose)
-$PREP-IN:@TensedVerb ($ADV){0-n}:(^$V){0-n} @TensedVerb @Participe:SYNTACTIC_RELATION:
-+!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.3,left.1,"COD_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# idem temps simple
-$PREP-IN:@TensedVerb ($ADV){0-n}:(^$V){0-n} @TensedVerb:SYNTACTIC_RELATION:
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.2,left.1,"COD_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# subordonnee complément de nom "l'idée qu'il arrive en retard" (temps compose)
-$PREP-IN:$NC:(^$V){0-n} @TensedVerb @Participe:SYNTACTIC_RELATION:
-+!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.3,left.1,"MOD_N")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# idem temps simple
-$PREP-IN:$NC:(^$V){0-n} @TensedVerb:SYNTACTIC_RELATION:
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.2,left.1,"MOD_N")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-
-# subordonnee complément d'adjectif "elle est fière qu'il réussisse" (temps compose)
-$PREP-IN:$ADJ:(^$V){0-n} @TensedVerb @Participe:SYNTACTIC_RELATION:
-+!SecondUngovernedBy(right.2,right.3,"TEMPCOMP")
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.3,left.1,"MOD_A")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-# idem temps simple
-$PREP-IN:$ADJ:(^$V){0-n} @TensedVerb:SYNTACTIC_RELATION:
-+CreateRelationBetween(trigger.1,right.2,"COMPL")
-+CreateRelationBetween(right.2,left.1,"MOD_A")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
-
-######################################################################
+#----------------------------------------------------------------------
 # relation modifieur nom : complément qui 
 # est une chaine verbale ("envie de changer")
 # les autre modifieurs de noms --adjectifs,compléments de nom-- sont 
@@ -822,22 +768,22 @@ $PREP-IN:$ADJ:(^$V){0-n} @TensedVerb:SYNTACTIC_RELATION:
 # les relatives sont traitées avec les sujets
 # MOD_N
 
-$NC::$PREP @BaseFormVerb:SYNTACTIC_RELATION:
+$NC::$PREP-TO @BaseFormVerb:SYNTACTIC_RELATION:
 +CreateRelationBetween(right.2,trigger.1,"MOD_N")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-######################################################################
+#----------------------------------------------------------------------
 # relation modifieur adjectif (fière qu'il ait réussi)
 # MOD_A -> traité avec les COMPL
 
-######################################################################
+#----------------------------------------------------------------------
 # relation de coordination 
 # COORD1 et COORD2 -> les deux éléments de la coordination,
 # chacun en relation avec le coordinant
 
 # coordination de noms
-@ConjCoord:($NC|$PRON) ($ADV|$ADJ){0-2}:$DET? ($ADV|$ADJ){0-2} ($NC|$PRON):SYNTACTIC_RELATION:
+@ConjCoord:($NC|$PRON) ($ADV|$ADJ){0-2}:($DET|@DetNum)? ($ADV|$ADJ){0-2} ($NC|$PRON):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"COORD1")
 +!GovernorOf(trigger.1,"COORD2")
 +!GovernorOf(left.1,"COMPDUNOM")
@@ -847,7 +793,7 @@ $NC::$PREP @BaseFormVerb:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # coordination de noms un peu plus complexe
-@ConjCoord:(@Substantif|$PRON) from ($ADV|$ADJ){0-2} @Substantif to ($ADV|$ADJ){0-2} @Substantif:$DET? ($ADV|$ADJ){0-2} (@Substantif|$PRON):SYNTACTIC_RELATION:
+@ConjCoord:(@Substantif|$PRON) from ($ADV|$ADJ){0-2} @Substantif to ($ADV|$ADJ){0-2} @Substantif:($DET|@DetNum)? ($ADV|$ADJ){0-2} (@Substantif|$PRON):SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"COORD1")
 +!GovernorOf(trigger.1,"COORD2")
 +!GovernorOf(trigger.1,"COMPDUNOM")
@@ -888,11 +834,11 @@ $NC::$PREP @BaseFormVerb:SYNTACTIC_RELATION:
 
 # coordination de verbes => plus difficile
 
-#verbe direct apres le et
+#verbe direct apres le et"COMP
 @ConjCoord:@TensedVerb (@NotVerbPrincipal){0-n}:@TensedVerb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"COORD1")
 +!GovernorOf(trigger.1,"COORD2")
-+CreateRelationBetween(trigger.1,left.2,"COORD1")
++CreateRelationBetween(trigger.1,left.1,"COORD1")
 +CreateRelationBetween(trigger.1,right.1,"COORD2")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
@@ -906,7 +852,7 @@ $NC::$PREP @BaseFormVerb:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-######################################################################
+#----------------------------------------------------------------------
 # APP
 
 $NC::, $DET ($ADV|$ADJ){0-2} $NC ,:SYNTACTIC_RELATION:
@@ -914,18 +860,30 @@ $NC::, $DET ($ADV|$ADJ){0-2} $NC ,:SYNTACTIC_RELATION:
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-######################################################################
+#----------------------------------------------------------------------
 # acl
 
+@PastParticiple:@Substantif %PrepGroup:@Prep?:SYNTACTIC_RELATION:
++!GovernorOf(left.1,"ANY")
++CreateRelationBetween(trigger.1,left.1,"acl")
++CreateRelationReverseWithRelated(trigger.1,right.1,"PREPSUB,CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
 @PastParticiple:@Substantif:@Prep?:SYNTACTIC_RELATION:
-+SecondUngovernedBy(left.1,trigger.1,"ANY")
++!GovernorOf(left.1,"ANY")
 +CreateRelationBetween(trigger.1,left.1,"acl")
 +CreateRelationReverseWithRelated(trigger.1,right.1,"PREPSUB,CPL_V")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
 
-######################################################################
+@TensedVerb:@PastParticiple %PrepGroup::SYNTACTIC_RELATION:
++CreateRelationReverseWithRelated(trigger.1,left.1,"acl,SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#----------------------------------------------------------------------
 # Long distance conjunction
 @TensedVerb:(@Participe|@TensedVerb) @ConjCoord %NounGroup @AuxModal?::SYNTACTIC_RELATION:
 +!GovernorOf(left.2,"ANY")
@@ -937,14 +895,24 @@ $NC::, $DET ($ADV|$ADJ){0-2} $NC ,:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 
-######################################################################
+#----------------------------------------------------------------------
 # Long distance adverbial clause modifier
-@Verbe:@Adverb @Comma (@NotVerbPrincipal|@BaseFormVerb){0-n}::SYNTACTIC_RELATION:
+@Verbe:@Adverb @Comma (@NotVerbPrincipal|@BaseFormVerb|@Aux){0-n}::SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"ANY")
-+GovernedBy(trigger.1,"SUJ_V")
 +CreateRelationBetween(left.1,trigger.1,"AdvVerbe")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
+
+#----------------------------------------------------------------------
+@PastParticiple:@PastParticiple @PrepComp:@Substantif:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++!GovernorOf(left.2,"ANY")
++!GovernorOf(right.1,"ANY")
++CreateRelationBetween(trigger.1,right.1,"ADJPRENSUB")
++CreateRelationBetween(left.2,right.1,"PREPSUB")
++CreateRelationBetween(right.1,left.1,"CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
 
 

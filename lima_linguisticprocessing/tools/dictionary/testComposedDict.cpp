@@ -66,6 +66,7 @@ typedef struct ParamStruct
   std::string defaultDataFileName;
   std::string key;
   std::string keyFile;
+  std::string limaConfigFile;
   int offset;
   bool superword;
   bool withDebug;
@@ -122,6 +123,7 @@ int run(int argc,char** argv)
                   std::string(""),
                   std::string(""),
                   std::string(""),
+                  std::string(""),
                   -1,
                   false,
                   false
@@ -139,6 +141,10 @@ int run(int argc,char** argv)
     if ( (pos = arg.find("--language=")) != std::string::npos )
     {
       param.language = arg.substr(pos+11);
+    }
+    else if ( (pos = arg.find("--limaConfigFile=")) != std::string::npos )
+    {
+      param.limaConfigFile = arg.substr(pos+17);
     }
     else if ( (pos = arg.find("--dicoId=")) != std::string::npos )
     {
@@ -184,8 +190,8 @@ int run(int argc,char** argv)
   }
 
 
-  std::string resourcesPath=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
-  std::string configDir=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+  std::string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+  std::string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
   std::string commonConfigFile="/lima-common.xml";
   deque<string> langs;
   langs.push_back(param.language);
@@ -207,7 +213,10 @@ int run(int argc,char** argv)
     QString file;
     try
     {
-      QString configurationFile = Common::Misc::findFileInPaths(configPath, QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigFile().c_str()));
+      QString configurationFile = Common::Misc::findFileInPaths(configPath, QString::fromUtf8("lima-analysis.xml"));
+      if (! param.limaConfigFile.empty()) {
+        configurationFile=QString::fromUtf8(param.limaConfigFile.c_str());
+      }
       Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configurationFile.toUtf8().constData());
       file = Common::Misc::findFileInPaths(configPath, QString::fromUtf8( configuration.getModuleGroupParamValue(
              "lima-coreclient",

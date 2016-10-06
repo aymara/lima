@@ -135,8 +135,13 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
 //----------------------------------------------------------------------
 CreateEventTemplate::CreateEventTemplate(MediaId language,
                                          const LimaString& complement):
-Automaton::ConstraintFunction(language,complement)
+Automaton::ConstraintFunction(language,complement),
+m_eventType()
 {
+  LOGINIT("LP::EventAnalysis");
+  LDEBUG << "Complement " << complement << LENDL;
+  m_eventType=Common::Misc::limastring2utf8stdstring(complement);
+  LDEBUG << "m_event_type " << m_eventType << LENDL;
 }
 
 bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
@@ -151,6 +156,9 @@ bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
   LDEBUG << "CreateEventTemplate";
   
   // validate current template by creating a new empty template which will be new current template
+  LDEBUG << "setTypeInCurrentTemplate" << m_eventType<<LENDL;
+  eventData->setTypeInCurrentTemplate(m_eventType);
+
   eventData->addTemplate();
   return true;
 }

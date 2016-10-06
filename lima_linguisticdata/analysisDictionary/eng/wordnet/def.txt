@@ -1,0 +1,3 @@
+verbe;VB;verbe-model.txt;verbe-table.txt
+adj;JJ;adjectif-model.txt;adjectif-table.txt
+nom;NN;nom-model.txt;nom-table.txt

@@ -11,7 +11,7 @@ CD - Cardinal number
 DT - Determiner
 EX - Existential there
 FW - Foreign word
-IN - Preposition or subordinating conjunction
+IN - Preposition 
 JJ - Adjective
 JJR - Adjective, comparative
 JJS - Adjective, superlative
@@ -47,8 +47,8 @@ NOT
 
 ABOUTIN
 ABOUTRB
+SCONJ - subordinating conjunction
 THATDT
-THATIN
 THATPRP
 THATRB
 THATWDT

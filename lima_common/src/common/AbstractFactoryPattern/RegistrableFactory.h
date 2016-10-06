@@ -53,7 +53,7 @@ public:
    * @param id Id of Factory to get
    * @return Factory*
    */
-  static Factory* getFactory(const std::string& id);
+  static std::shared_ptr<Factory> getFactory(const std::string& id);
 
   /**
    * @brief get the list of factories registered
@@ -81,9 +81,9 @@ template<typename Factory>
 RegistrableFactory<Factory>::~RegistrableFactory() {}
 
 template<typename Factory>
-Factory* RegistrableFactory<Factory>::getFactory(const std::string& id)
+std::shared_ptr<Factory> RegistrableFactory<Factory>::getFactory(const std::string& id)
 {
-  return static_cast<Factory*>(MainFactory< RegistrableFactory<Factory> >::changeable().getFactory(id));
+  return std::dynamic_pointer_cast<Factory>(MainFactory< RegistrableFactory<Factory> >::changeable().getFactory(id));
 }
 
 template<typename Factory>

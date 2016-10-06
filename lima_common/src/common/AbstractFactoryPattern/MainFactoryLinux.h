@@ -68,7 +68,7 @@ namespace Lima
      * Use the 'class' parameter of unitConfiguration to select the factory to
      * which delegate the creation of the object.
      */
-    const Factory* getFactory(const std::string& classId) const;
+    const std::shared_ptr<Factory> getFactory(const std::string& classId) const;
     
     /**
      * @brief create an Object using the appropriate registered factory.
@@ -81,7 +81,7 @@ namespace Lima
      * Use the 'class' parameter of unitConfiguration to select the factory to
      * which delegate the creation of the object.
      */
-    Factory* getFactory(const std::string& classId);
+    std::shared_ptr<Factory> getFactory(const std::string& classId);
     
     /**
      * @brief register a factory with an id
@@ -106,7 +106,7 @@ namespace Lima
     MainFactory();
     static MainFactory<Factory>* s_instance;
     
-    typedef std::map<std::string,Factory*> FactoryMap;
+    typedef std::map<std::string,std::shared_ptr<Factory>> FactoryMap;
     typedef typename FactoryMap::const_iterator FactoryMapCItr;
     FactoryMap m_factories;
     
@@ -149,18 +149,11 @@ namespace Lima
   template<typename Factory>
   MainFactory<Factory>::~MainFactory()
   {
-    for (FactoryMapCItr factItr=m_factories.begin();
-         factItr!=m_factories.end();
-    factItr++)
-         {
-           delete factItr->second;
-         }
-         m_factories.clear();
   }
   
   
   template<typename Factory>
-  const Factory* MainFactory<Factory>::getFactory(const std::string& classId) const
+  const std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId) const
   {
     FactoryMapCItr factItr=m_factories.find(classId);
     if (factItr==m_factories.end())
@@ -176,7 +169,7 @@ namespace Lima
   }
   
   template<typename Factory>
-  Factory* MainFactory<Factory>::getFactory(const std::string& classId)
+  std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId)
   {
     FactoryMapCItr factItr=m_factories.find(classId);
     if (factItr==m_factories.end())
@@ -204,7 +197,7 @@ namespace Lima
     }
     else
     {
-      m_factories[classId]=fact;
+      m_factories[classId]= std::shared_ptr<Factory>(fact);
     }
   }
   

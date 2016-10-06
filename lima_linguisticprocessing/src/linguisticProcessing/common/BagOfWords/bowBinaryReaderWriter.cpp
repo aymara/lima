@@ -137,14 +137,14 @@ void BoWBinaryReader::readHeader(std::istream& file)
    
 #ifdef DEBUG_LP
     BOWLOGINIT;
-    LDEBUG << "BoWBinaryReader::readHeader type mapping is";
+    LDEBUG << "BoWBinaryReader::readHeader type mapping is (shown if logger = TRACE)";
     std::ostringstream oss;
     for (std::map<MediaticData::EntityType,MediaticData::EntityType>::const_iterator
             it=m_d->m_entityTypeMapping.begin(),it_end=m_d->m_entityTypeMapping.end();
             it!=it_end; it++) {
         oss << (*it).first << " -> " << (*it).second << std::endl;
     }
-    LDEBUG << oss.str();
+    LTRACE << oss.str();
     LDEBUG << "BoWBinaryReader::readHeader end file at: " << file.tellg();
 #endif
 
@@ -284,19 +284,19 @@ boost::shared_ptr< AbstractBoWElement > BoWBinaryReaderPrivate::readBoWToken( st
 #endif
   boost::shared_ptr< AbstractBoWElement > token;
   switch (type)  {
-  case BOW_TOKEN: {
+  case BoWType::BOW_TOKEN: {
       token=boost::shared_ptr< BoWToken >( new BoWToken);
       readSimpleToken(file, boost::dynamic_pointer_cast<BoWToken>(token));
       break;
   }
-  case BOW_TERM: {
+  case BoWType::BOW_TERM: {
       token=boost::shared_ptr< BoWTerm >(new BoWTerm);
       //     LDEBUG << "BoWToken: calling read(file) on term";
       readSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
       readComplexTokenParts(file,boost::dynamic_pointer_cast<BoWComplexToken>(token));
       break;
   }
-  case BOW_NAMEDENTITY: {
+  case BoWType::BOW_NAMEDENTITY: {
       token=boost::shared_ptr< BoWNamedEntity >(new BoWNamedEntity);
 //         LDEBUG << "BoWToken: calling read(file) on NE";
       readSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
@@ -304,7 +304,7 @@ boost::shared_ptr< AbstractBoWElement > BoWBinaryReaderPrivate::readBoWToken( st
       readNamedEntityProperties(file,boost::dynamic_pointer_cast<BoWNamedEntity>(token));
       break;
   }
-  case BOW_PREDICATE:{
+  case BoWType::BOW_PREDICATE:{
       token=boost::shared_ptr< BoWPredicate >(new BoWPredicate);
       readPredicate(file,boost::dynamic_pointer_cast<BoWPredicate>(token));
       break;
@@ -564,25 +564,25 @@ void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const boost::sha
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriter::writeBoWToken token type is " << token->getType() << &file;
 #endif
-  Misc::writeOneByteInt(file,token->getType());
+  Misc::writeOneByteInt(file,toInt(token->getType()));
   switch (token->getType()) {
-    case BOW_TOKEN: {
+    case BoWType::BOW_TOKEN: {
         writeSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
         break;
     }
-    case BOW_TERM: {
+    case BoWType::BOW_TERM: {
         writeSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
         writeComplexTokenParts(file,boost::dynamic_pointer_cast<BoWComplexToken>(token));
         break;
     }
-    case BOW_NAMEDENTITY: {
+    case BoWType::BOW_NAMEDENTITY: {
         boost::shared_ptr< BoWNamedEntity > ne=boost::dynamic_pointer_cast<BoWNamedEntity>(token);
         writeSimpleToken(file,boost::dynamic_pointer_cast<BoWToken>(token));
         writeComplexTokenParts(file,ne);
         writeNamedEntityProperties(file,ne);
         break;
     }
-    case BOW_PREDICATE:{
+    case BoWType::BOW_PREDICATE:{
         writePredicate(file,boost::dynamic_pointer_cast<BoWPredicate>(token));
       break;
     }
@@ -613,35 +613,54 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 #endif
   Misc::writeUTF8StringField(file,token->getInflectedForm());
   Misc::writeCodedInt(file,token->getCategory());
+
+  auto beg = token->getPosition();
+  auto end = token->getLength() + beg;
+
   if (m_shiftFrom.empty())
   {
 #ifdef DEBUG_LP
     LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is empty";
 #endif
-    Misc::writeCodedInt(file,token->getPosition()-1);
   }
-  else 
+  else
   {
 #ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from" << token->getPosition();
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin" << beg;
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end" << end;
 #endif
-    QMap<uint64_t,uint64_t>::const_iterator it = m_shiftFrom.lowerBound(token->getPosition()-1);
-    if (it == m_shiftFrom.constBegin())
+    auto const shiftForBeginIt = m_shiftFrom.lowerBound(beg-1);
+    if (shiftForBeginIt == m_shiftFrom.constBegin())
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom NO shift";
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: NO shift";
 #endif
-      Misc::writeCodedInt(file,token->getPosition()-1);
     }
     else
+    { 
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: shift by" << (shiftForBeginIt-1).value();
+#endif
+      beg += (shiftForBeginIt-1).value();
+    }
+    auto const shiftForEndIt = m_shiftFrom.lowerBound(end-1);
+    if (shiftForEndIt == m_shiftFrom.constBegin())
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom shift by" << (it-1).value();
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: NO shift";
 #endif
-      Misc::writeCodedInt(file,token->getPosition()+ (it-1).value()-1);
+    }
+    else
+    { 
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: shift by" << (shiftForEndIt-1).value();
+#endif
+      end += (shiftForEndIt-1).value();
     }
   }
-  Misc::writeCodedInt(file,token->getLength());
+
+  Misc::writeCodedInt(file, beg-1);
+  Misc::writeCodedInt(file, end-beg);
 }
 
 void BoWBinaryWriter::writePredicate(std::ostream& file,

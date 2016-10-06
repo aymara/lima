@@ -323,8 +323,11 @@ checkMultiTerms( const AnalysisGraph& graph,
     else {
       // go one step ahead from curentPosition if possible
       while ( searchGraph->getNextVertex(lGraph, nextVertex )) {
-        if (nextVertex == graph.lastVertex() )
-          return false;
+        const LinguisticGraphVertex& firstVertex = graph.firstVertex(), 
+                lastVertex = graph.lastVertex();
+        if (nextVertex == lastVertex || nextVertex == firstVertex)
+//          return false;
+          break;
 #ifdef DEBUG_LP
         LDEBUG << "GazeteerTransition::checkMultiTerms: progress one step forward, nextVertex=" << nextVertex;
         LDEBUG << "GazeteerTransition::checkMultiTerms: test " << *termsIt;

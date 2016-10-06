@@ -19,7 +19,7 @@ using groups LinguisticProcessing
 
 use categoriesClassesDeclaration-eng.txt
 
-@AdjectifModal=(necessary,unnecessary,possible,impossible,certain,uncertain,likely,unlikely,important,good,bad,useful,unuseful,useless,advisable,unadvisable,convenient,unconvenient,inconvenient,sufficient,unsufficient,insufficient,economical,easy,desirable,undesirable,difficult,legal,illegal,true,false,right,wrong,expensive,cheap,common,rare,hard)
+@AdjModal=(necessary,unnecessary,possible,impossible,certain,uncertain,likely,unlikely,important,good,bad,useful,unuseful,useless,advisable,unadvisable,convenient,unconvenient,inconvenient,sufficient,unsufficient,insufficient,economical,easy,desirable,undesirable,difficult,legal,illegal,true,false,right,wrong,expensive,cheap,common,rare,hard)
 
 @VerbeCognitif=(recommended,thought,believed,known,anticipated,assumed,expected,said)
 
@@ -29,32 +29,32 @@ use categoriesClassesDeclaration-eng.txt
 
 @Is=(is,'s,is not,isn't,be,been)
 
-@AdjectifModal:@PleoPron @Is:, (@Tout){1-n} , de:SYNTACTIC_RELATION:
+@AdjModal:@PleoPron @Is:, (@Tout){1-n} , de:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
 
-@AdjectifModal:@PleoPron @Is:that:SYNTACTIC_RELATION:
+@AdjModal:@PleoPron @Is:that:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@AdjectifModal:@PleoPron @Is:(for $NC){0-n} to:SYNTACTIC_RELATION:
+@AdjModal:@PleoPron @Is:(for $NC){0-n} to:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@AdjectifModal:@PleoPron @Is:(for $NP){0-n} to:SYNTACTIC_RELATION:
+@AdjModal:@PleoPron @Is:(for $NP){0-n} to:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@AdjectifModal:@PleoPron @Is:(for $PRON){0-n} to:SYNTACTIC_RELATION:
+@AdjModal:@PleoPron @Is:(for $PRON){0-n} to:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()

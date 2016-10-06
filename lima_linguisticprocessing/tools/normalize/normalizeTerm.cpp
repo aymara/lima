@@ -124,8 +124,8 @@ int run(int argc,char** argv)
 
 int dowork(int argc,char* argv[])
 {
-  string resourcesPathParam=getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":string(getenv("LIMA_RESOURCES"));
-  string configPathParam=getenv("LIMA_CONF")==0?"/usr/share/config/lima":string(getenv("LIMA_CONF"));
+  string resourcesPathParam=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+  string configPathParam=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
   string lpConfigFile=string("lima-analysis.xml");
   string commonConfigFile=string("lima-common.xml");
   string pipeline=string("normalization");
@@ -241,11 +241,11 @@ int dowork(int argc,char* argv[])
       // open the output file
       ostringstream os;
       os << *fileItr << ".norm";
-      ofstream fout(os.str().c_str(), std::ofstream::binary);
+      ofstream fout(os.str().c_str());
 
       // loading of the input file
       TimeUtils::updateCurrentTime();
-      std::ifstream file(fileItr->c_str(), std::ifstream::binary);
+      std::ifstream file(fileItr->c_str());
       char buf[256];
       file.getline(buf,256);
       std::string line(buf);
@@ -319,7 +319,7 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
        bowItr!=bowText.end();
        bowItr++)
   {
-    if ((*bowItr)->getType() != BOW_PREDICATE)
+    if ((*bowItr)->getType() != BoWType::BOW_PREDICATE)
     {
       pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(&**bowItr));
       //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
@@ -340,7 +340,7 @@ multimap<LimaString,string> extractNormalization(const LimaString& source,const 
 pair<int,int> getStartEnd(const BoWToken* tok)
 {
   pair<int,int> res;
-  if (tok->getType()==BOW_TOKEN)
+  if (tok->getType()==BoWType::BOW_TOKEN)
   {
     res.first=tok->getPosition();
     res.second=tok->getPosition()+tok->getLength();

@@ -2510,8 +2510,8 @@ F;;A;tête;en tête des;préposition;en tête de
 F;;A;tête;en tête d';préposition;en tête de
 F;;A;tête;en tête du;préposition;en tête de
 F;;A;tournemain;en un tournemain;adverbe;
-F;;A;Union;Union européenne;nom propre féminin;
-F;;A;&Union;&Union européenne;nom propre féminin;C.E.E.
+#F;;A;Union;Union européenne;nom propre féminin;
+#F;;A;&Union;&Union européenne;nom propre féminin;C.E.E.
 F;;A;Union;Union Jack;nom propre masculin;
 F;;A;va;à tout va;adverbe;
 F;;A;[V]&accommoder;s' (pp) [V]&accommoder;verbe pronominal;s'accommoder
@@ -2787,7 +2787,7 @@ GC;;A;tel;A tel point que;conjonction de subordination;à tel point que
 GC;;A;tel;à tel point que;conjonction de subordination;à tel point que
 GC;;A;tel;À tel point que;conjonction de subordination;à tel point que
 GC;;A;tout;tout autre;adjectif;
-GC;;A;union;union européenne;nom propre féminin;Union européenne
+#GC;;A;union;union européenne;nom propre féminin;Union européenne
 GC;;A;université;université d' été;nom féminin;université d'été
 GC;;A;valeurs;valeurs vedettes;nom féminin pluriel;valeur vedette
 GC;;A;valeur;valeur vedette;nom féminin;valeur vedette

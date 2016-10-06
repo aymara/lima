@@ -34,17 +34,16 @@ namespace AnalysisDict {
 /**
 @author Olivier Mesnard
 */
-//class AbstractRwAccessResource : public AbstractAccessResource
 class AbstractRwAccessResource : public AbstractAccessResource
 {
 public:
-/*
+
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
       Manager* manager) = 0;
     
     virtual Common::AbstractAccessByString* getAccessByString() const = 0;
-*/ 
+ 
     virtual Common::AbstractModifierOnAccessByString* getRwAccessByString() const = 0;
 
 };
