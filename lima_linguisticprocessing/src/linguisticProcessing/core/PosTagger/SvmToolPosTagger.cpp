@@ -90,7 +90,8 @@ void SvmToolPosTagger::init(
   string resourcesPath=MediaticData::single().getResourcesPath();  
   try
   {
-    m_model = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("model").c_str()).toUtf8().constData();
+    m_model = Common::Misc::findFileInPaths(resourcesPath.c_str(), (unitConfiguration.getParamsValueAtKey("model")+".DICT").c_str()).toUtf8().constData();
+    m_model = QString::fromUtf8(m_model.c_str()).replace(".DICT","").toUtf8().constData();
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
