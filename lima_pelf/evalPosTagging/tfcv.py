@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # kate: encoding utf-8;
 
@@ -11,15 +11,18 @@
 
 from optparse import OptionParser
 import sys
-from os import path,system, listdir, chdir, getcwd, remove, mkdir, environ
+from os import path,system, listdir, chdir, getcwd, mkdir, environ
 from os.path import getsize, exists, join
-from shutil import copy, rmtree
+from shutil import copy, copytree, rmtree
 from re import search
+import subprocess
+import os
 
 # Variables definition
 SCRIPTS_PATH = "/home/sid-ahmed/Lima/lima/lima_pelf/../lima_linguisticdata/scripts"
 MATRIX_PATH  = path.join(environ.get("LIMA_RESOURCES", "/usr/local"), "Disambiguation")
 print("MATRIX_PATH={}".format(MATRIX_PATH))
+MAX_PROCESSES = 8
 
 PELF_BIN_PATH = path.join(environ.get("LIMA_DIST", "/usr/local"), "share/apps/lima/scripts")
 
@@ -47,7 +50,7 @@ def TenPcSample(path,sep):
         lines = 0
         lines = sum(1 for line in c)
         partition_size = (lines/numfold)
-    print ("*** Sample of "+path+" "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") sep:'{}' ongoing ...").format(sep)
+    print("*** Sample of "+path+" "+str(100/numfold)+"% ("+str(partition_size)+"/"+str(lines)+") sep:'{}' ongoing ...".format(sep))
     num = range(1,numfold+1)
     with open(path,'r') as corpus:
         cnt = 1
@@ -70,7 +73,7 @@ def NinetyPcSample():
     Build the complement of the 10% partitions produced by TenPcSample(path). 
     Organizes samples in numbered folders in results.<lang>.<tagger>
     """
-    print "*** Sample "+str(100-100/numfold)+"% ongoing ..."
+    print("*** Sample "+str(100-100/numfold)+"% ongoing ...")
     for i in range(1,numfold+1):
         for j in range(1,numfold+1):
             if j!=i:
@@ -87,17 +90,39 @@ def Tagged2raw():
     produced by TenPcSample(path).
     Organizes samples in numbered folders in results.<lang>.<tagger>
     """
-    print "*** Producing raw equivalent of test partitions ..."
+    
+    processes = set()
+    max_processes = MAX_PROCESSES
+    print("*** Producing raw equivalent of test partitions ...")
     for i in range(1,numfold+1):
-        system("%(path)s/reBuildRawCorpus.sh %(lang)s %(results)s/%(i)d/10pc.tfcv > %(results)s/%(i)d/10pc.brut" 
-            % {"path" : PELF_BIN_PATH, "lang" : lang, "results": results, "i": i})
+        with open('{}/{}/10pc.brut'.format(results,i), "w") as outfile:
+            processes.add(subprocess.Popen(
+                ['{}/reBuildRawCorpus.sh'.format(PELF_BIN_PATH), lang, 
+                 '{}/{}/10pc.tfcv'.format(results,i)], 
+                stdout=outfile))
+        if len(processes) >= max_processes:
+            os.wait()
+            for p in processes:
+                if p.poll() is not None and p.returncode is not 0:
+                    raise Exception('reBuildRawCorpus', 'reBuildRawCorpus did not return 0'.format())
+            processes.difference_update([
+                p for p in processes if p.poll() is not None])
+
+    while processes:
+        os.wait()
+        for p in processes:
+            if p.poll() is not None and p.returncode is not 0:
+                raise Exception('reBuildRawCorpus', 'reBuildRawCorpus did not return 0')
+        processes.difference_update([
+            p for p in processes if p.poll() is not None])
+
 
 def Disamb_matrices(scripts_path):
     """
     Computes the new disambiguation matrices for each 90% sample of the gold corpus.
     Organizes results in numbered folders in results.<lang>.<tagger>
     """
-    print "*** Computing matrices..."
+    print("*** Computing matrices...")
     for i in range(1,numfold+1):
         chdir(results + "/" + str(i))
         try:
@@ -120,35 +145,60 @@ def AnalyzeTextAll(matrix_path):
     Tag the test  corpus (10%) with the POS-tagger trained with 
     the matrices computed from the test complement (90%).
     """
+    processes = set()
+    max_processes = MAX_PROCESSES
     for i in range(1,numfold+1):
-        print "    ==== ANALYSING SAMPLE %d"%i
-        chdir(results + "/" + str(i))
-        copy("matrices/bigramMatrix-%s.dat"%lang, matrix_path)
-        copy("matrices/trigramMatrix-%s.dat"%lang, matrix_path)
-        copy("matrices/unigramMatrix-%s.dat"%lang, matrix_path)
-        copy("matrices/priorUnigramMatrix-%s.dat"%lang, matrix_path)
-        print "in " + getcwd()
-        ret = system("analyzeText -l %s 10pc.brut -o text:.out "%lang) 
-        chdir("../..")
-        if ret is not 0: raise Exception('analyzeText failure')
+        print("    ==== ANALYSING SAMPLE %d"%i)
+        my_env = os.environ.copy()
+        my_env["LIMA_RESOURCES"] = results + "/" + str(i)+"matrices/:" + my_env["LIMA_RESOURCES"]
+        processes.add(subprocess.Popen(
+            ['analyzeText', '-l', lang, '10pc.brut', '-o', 'text:.out'], 
+            cwd=results + "/" + str(i)), env = my_env)
+        if len(processes) >= max_processes:
+            os.wait()
+            for p in processes:
+                if p.poll() is not None and p.returncode is not 0:
+                    raise Exception('analyzeText', 'analyzeText did not return 0'.format())
+            processes.difference_update([
+                p for p in processes if p.poll() is not None])
+
+    while processes:
+        os.wait()
+        for p in processes:
+            if p.poll() is not None and p.returncode is not 0:
+                raise Exception('analyzeText', 'analyzeText did not return 0')
+        processes.difference_update([
+            p for p in processes if p.poll() is not None])
 
 def TrainSVMT(conf, svmli, svmle):
     """
     Produces models for each sample.
     """
+    processes = set()
+    max_processes = MAX_PROCESSES
     for i in range(1,numfold+1):
         wd=getcwd()+"/"+results+"/" + str(i)
         str_wd    = wd.replace("/", "\/")
         str_svmli = svmli.replace("/", "\/")
-        print "\n---  Treat sample n° "+str(i)+"  --- "
+        print("\n---  Treat sample n° "+str(i)+"  --- ")
         system("sed -e 's/%SAMPLE-PATH%/"+str_wd+"/g' -e 's/%SVM-DIR%/"+str_svmli+"/g' "+conf+" > "+wd+"/config.svmt")
-        print "\t**Learning model..."
-        chdir(results + "/" + str(i))
-        svmlestring = "%s %s/config.svmt"%(svmle,wd) 
-        print svmlestring
-        ret = system(svmlestring)
-        if ret is not 0: raise Exception('svmtrain', 'svmle did not return 0')
-        chdir("../..")
+        svmlestring = "{}/config.svmt".format(wd) 
+        print("\t**Learning model... {} {}".format(svmle, svmlestring))
+        processes.add(subprocess.Popen([svmle, svmlestring], cwd=wd))
+        if len(processes) >= max_processes:
+            os.wait()
+            for p in processes:
+                if p.poll() is not None and p.returncode is not 0:
+                    raise Exception(svmle, 'svmle did not return 0')
+            processes.difference_update([
+                p for p in processes if p.poll() is not None])
+    while processes:
+        os.wait()
+        for p in processes:
+            if p.poll() is not None and p.returncode is not 0:
+                raise Exception(svmle, 'svmle did not return 0')
+        processes.difference_update([
+            p for p in processes if p.poll() is not None])
 
 
 def AnalyzeTextAllSVMT(init_conf, conf_path):
@@ -156,28 +206,47 @@ def AnalyzeTextAllSVMT(init_conf, conf_path):
     Tag the test corpus (10%) with the models obtained after applying SVMTlearn 
     to the complementary partition (90%).
     """
-    try:
-        system("ln -sf %s $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL" % (getcwd()))
-    except OSError:
-        pass
 
-
+    processes = set()
+    max_processes = MAX_PROCESSES
     try: 
         for i in range(1,numfold+1):
+            print("    ==== SVMTool analysis for sample {}: {}, {}".format(i,init_conf,conf_path))
             wd  = getcwd() + "/" + results + "/" + str(i)
-            print "    ==== SVMTool analysis for sample %i"%i
-            system("sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path)
-            #print "sed -i 's,"+init_conf+",Disambiguation/SVMToolModel-EVAL/"+ results + "/" + str(i)+"/lima,g' "+conf_path
-            print wd
-            chdir(wd)
-            system("analyzeText -l %s 10pc.brut"%lang)
-            print "analyzeText -l %s 10pc.brut"%lang
-            system("sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path)
-            #print "sed -i 's,Disambiguation/SVMToolModel-EVAL/" + results + "/" + str(i)+"/lima,"+init_conf+",g' "+conf_path
-            chdir("../..")
+            local_conf_dir = '{}/conf'.format(wd)
+            local_conf_path = '{}/lima-lp-{}.xml'.format(local_conf_dir,lang)
+            os.makedirs(local_conf_dir, exist_ok=True)
+            copy(conf_path,local_conf_path)
+            system("sed -i 's,"+init_conf+",lima,g' "+local_conf_path)
+
+            #system("analyzeText -l %s 10pc.brut"%lang)
+            print("subprocess for analyzeText -l {} 10pc.brut from {}".format(lang,wd))
+            my_env = os.environ.copy()
+            my_env['LIMA_CONF'] = '{}:{}'.format(local_conf_dir, my_env['LIMA_CONF'])
+            my_env["LIMA_RESOURCES"] = '{}:{}'.format(wd, my_env["LIMA_RESOURCES"])
+            print("LIMA_CONF: {}".format(my_env['LIMA_CONF']))
+            print("LIMA_RESOURCES: {}".format(my_env['LIMA_RESOURCES']))
+            processes.add(subprocess.Popen(['analyzeText', '-d', 'text', '-o', 'text:.out', '-l', lang, '10pc.brut'], 
+                                           cwd=wd, 
+                                           env=my_env))
+            if len(processes) >= max_processes:
+                os.wait()
+                for p in processes:
+                    if p.poll() is not None and p.returncode is not 0:
+                        raise Exception('analyzeText', 'analyzeText did not return 0')
+                processes.difference_update([
+                    p for p in processes if p.poll() is not None])
+        while processes:
+            os.wait()
+            for p in processes:
+                if p.poll() is not None and p.returncode is not 0:
+                    raise Exception('analyzeText', 'analyzeText did not return 0')
+            processes.difference_update([
+                p for p in processes if p.poll() is not None])
+
     except:
-        system("rm -rf $LIMA_RESOURCES/Disambiguation/SVMToolModel-EVAL/" + results)
-        raise Exception("Erreur d'évaluation")
+        print("Erreur d'évaluation")
+        raise
 
 
 def FormaterPourAlignement(sep):
@@ -187,7 +256,7 @@ def FormaterPourAlignement(sep):
     """
     for i in range(1,numfold+1):
         chdir(results + "/" + str(i))
-        print getcwd()
+        print(getcwd())
         system("gawk -F'|' '{print $2\"\t\"$3}' 10pc.brut.out|sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tL_NO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv")
         system("sed 's/ /_/g' 10pc.tfcv > gold.tfcv")
         chdir("../..")
@@ -196,7 +265,7 @@ def FormaterPourAlignement(sep):
 def Aligner():
     for i in range(1,numfold+1): 
         chdir(results + "/" + str(i))
-        print "\n\n ALIGNEMENT PARTITION "+str(i) + " - " + getcwd()
+        print("\n\n ALIGNEMENT PARTITION "+str(i) + " - " + getcwd())
         system("%(path)s/aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log" % { "path" : PELF_BIN_PATH } )
         chdir("../..")
 
@@ -205,7 +274,7 @@ def checkConfig(conf):
     method = 'none'
 
     with open(conf) as f:
-        for i in xrange(70):
+        for i in range(70):
             line = f.readline()
             if line.strip() == '<item value="textDumper"/>': foundDumper = True
             elif line.strip() == '<item value="viterbiPostagger-freq"/>': method = 'viterbi'
@@ -245,7 +314,7 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
         if path.isfile(conf_path):
             break
     tagger = checkConfig(conf_path)
-    print "and the tagger is %s!" % tagger
+    print("and the tagger is %s!" % tagger)
     # set up the global variables
     results = "results.%s.%s" % (lang, tagger)
     
@@ -256,18 +325,18 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
             pass
 
     if forceTrain or not trained(lang, tagger):
-        print "TRAINING !"
+        print("TRAINING !")
         try: rmtree(results)
         except: pass
-        print """ \n
+        print(""" \n
         ==================================================
         ====         PoS-tagger Evaluation         ====
         ==================================================
         
 Data produced are available in results.%s.%s      
-        """%(lang,tagger)
-        print " ******* CORPUS USED: "+corpus+" *******  \n"
-        print " ******* SEPARATOR: "+sep+" *******  \n"
+        """%(lang,tagger))
+        print(" ******* CORPUS USED: "+corpus+" *******  \n")
+        print(" ******* SEPARATOR: "+sep+" *******  \n")
         makeTree()
         TenPcSample(corpus,sep)
         NinetyPcSample()
@@ -276,14 +345,16 @@ Data produced are available in results.%s.%s
             SVMFormat()
             TrainSVMT(conf, svmli, svmle)
         elif (tagger=='viterbi'):    
-            print "Disamb_matrices(SCRIPTS_PATH)"
+            print("Disamb_matrices(SCRIPTS_PATH)")
             Disamb_matrices(SCRIPTS_PATH)
         # copy training data in another folder for later use
-        system("mv " + results + " " + "training-sets/training.%s.%s" % (lang, tagger))
+        try:
+            copytree(results, "training-sets/training.%s.%s" % (lang, tagger))
+        except:
+            pass
 
-    print "EVALUATION !"
-    system("mkdir -p %s" % results)
-    system("cp -r training-sets/training.%s.%s/*" % (lang, tagger) + " " + results)
+    print("EVALUATION !")
+    os.makedirs(results, exist_ok=True)
     if (tagger=='svmtool' or tagger=='dynsvmtool'):
         AnalyzeTextAllSVMT(initial_config, conf_path)
     elif (tagger=='viterbi'):    
@@ -301,8 +372,8 @@ parser.add_option("-s", "--sep", dest="sep",action="store", default='PONCTU_FORT
 parser.add_option("-n", "--numfold", dest="numfold",action="store", default='10', help="nombre de partitions")
 
 (options, args) = parser.parse_args()
-print args
+print(args)
 
 numfold = int(options.numfold)
-print " ******* NUMFOLD: %s *******  \n" % numfold
+print(" ******* NUMFOLD: %s *******  \n" % numfold)
 main(args[0], args[1], args[2], args[3], options.sep, options.lang, options.clean, options.forceTrain)
