@@ -15541,13 +15541,7 @@ l'	DET
 association	NC
 de	P
 consommateurs	NC
-Union	NC
-fédérale	ADJ
-des	DETDES
-consommateurs	NC
--	PONCT
-Que	PROWH
-choisir	VINF
+Union fédérale des consommateurs - Que choisir	NPP
 ,	PONCT
 ce	PRO
 qui	PROREL
@@ -30915,7 +30909,7 @@ même	ADV
 pas	ADV
 savoir	VINF
 à	P
-quoi	PROWH
+quoi	PROREL
 ressemblent	V
 les	DET
 explosifs	NC
@@ -30928,7 +30922,7 @@ M.	NC
 Nichols	NPP
 ni	CC
 à	P
-quoi	PROWH
+quoi	PROREL
 ils	CLS
 peuvent	V
 servir	VINF
@@ -87303,7 +87297,7 @@ savait	V
 qui	PROREL
 priait	V
 pour	P
-quoi	PROWH
+quoi	PROREL
 .	PONCTU_FORTE
 Néanmoins	ADV
 ,	PONCT
@@ -89101,7 +89095,7 @@ n'	ADV
 avaient	V
 plus	ADV
 de	P
-quoi	PROWH
+quoi	PROREL
 se	CLR
 nourrir	VINF
 .	PONCTU_FORTE
@@ -91275,7 +91269,7 @@ rumeur	NC
 à	P
 circulée	NC
 selon	P
-quoi	PROWH
+quoi	PROREL
 Danone	NPP
 pourrait	V
 être	VINF
