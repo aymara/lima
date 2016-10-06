@@ -223,6 +223,10 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   {
     if (QFileInfo(path+ "/" + fileName).exists())
     {
+      {
+        LOGINIT("FilesReporting");
+        LDEBUG << "File found:" << path+ "/" + fileName;
+      }
       return path+ "/" + fileName;
     }
   }
