@@ -108,6 +108,8 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       configDirs << path;
   }
   
+  LOGINIT("FilesReporting");
+  LINFO << "Config directories are:" << configDirs;
   return configDirs;
 }
 
@@ -150,6 +152,8 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
       resourcesDirs << path;
   }
   
+  LOGINIT("FilesReporting");
+  LINFO << "Resources directories are:" << resourcesDirs;
   return resourcesDirs;
 }
 
@@ -160,6 +164,10 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   {
     if (QFileInfo(path+ "/" + fileName).exists())
     {
+      {
+        LOGINIT("FilesReporting");
+        LDEBUG << "File found:" << path+ "/" + fileName;
+      }
       return path+ "/" + fileName;
     }
   }
