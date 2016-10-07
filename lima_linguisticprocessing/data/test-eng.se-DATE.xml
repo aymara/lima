@@ -490,6 +490,21 @@
           left="XPATH#//entities/entity[pos=49][len=8]/type"
           operator="="
           right="DateTime.TIME"/>
+    <test id="eng.se.TIME.1.2" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=49][len=2]/components/hour"
+          operator="="
+          right="09"/>
+    <test id="eng.se.TIME.1.3" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=52][len=2]/components/minute"
+          operator="="
+          right="01"/>
+    <test id="eng.se.TIME.1.4" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=55][len=2]/components/hour"
+          operator="="
+          right="12"/>
   </testcase>
   <!--==================== tests NUMEX ====================-->
   <!--testcase id="eng.se.timex.5" type="bloquant">
