@@ -79,7 +79,7 @@ PosTransition& PosTransition::operator = (const PosTransition& t) {
 
 std::string PosTransition::printValue() const {
   ostringstream oss;
-  oss << "POS:$" << m_pos;
+  oss << "posT_$" << m_pos;
   return oss.str();
 }
 

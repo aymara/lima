@@ -79,7 +79,7 @@ inline TypeTransition EpsilonTransition::type() const { return T_EPSILON; }
 
 
 inline std::string EpsilonTransition::printValue() const { 
-  return "__epsilon__";
+  return "epsilonT";
 } 
 
 

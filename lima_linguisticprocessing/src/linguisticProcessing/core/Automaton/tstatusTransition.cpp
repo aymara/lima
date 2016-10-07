@@ -72,6 +72,7 @@ TStatusTransition& TStatusTransition::operator = (const TStatusTransition& t) {
 
 std::string TStatusTransition::printValue() const { 
   ostringstream oss;
+  oss << "tsatusT_";
   switch (m_status.getStatus()) {
   case T_ALPHA : {
     oss << "T_alpha";

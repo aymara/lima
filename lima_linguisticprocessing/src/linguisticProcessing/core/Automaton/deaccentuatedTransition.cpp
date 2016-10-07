@@ -111,7 +111,9 @@ TypeTransition DeaccentuatedTransition::type() const {
 }
   
 std::string DeaccentuatedTransition::printValue() const {
-  return string("~")+Common::Misc::limastring2utf8stdstring(m_deaccentuatedForm);
+  ostringstream oss;
+  oss << "deaccentT~" << Common::Misc::limastring2utf8stdstring(m_deaccentuatedForm);
+  return oss.str();
 }
 
 bool DeaccentuatedTransition::operator== (const TransitionUnit& t) const {

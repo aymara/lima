@@ -98,7 +98,7 @@ void AndTransition::copy(const AndTransition& t) {
 
 std::string AndTransition::printValue() const {
   ostringstream oss;
-  oss << "AND:";
+  oss << "andT:";
   if (m_transitions.empty()) {
     return oss.str();
   }

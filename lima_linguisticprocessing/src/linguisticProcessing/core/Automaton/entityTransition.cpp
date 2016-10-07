@@ -64,7 +64,7 @@ EntityTransition::~EntityTransition() {}
 
 std::string EntityTransition::printValue() const {
   ostringstream oss;
-  oss << "ENTITY_" << m_entityType;
+  oss << "entityT_" << m_entityType;
   return oss.str();
 }
 

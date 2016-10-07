@@ -108,10 +108,12 @@ createConstraintFunction(const std::string& id,
     getFactory(id)->create(language,complement);
   m_constraintMap.insert(make_pair(id,newConstraint));
 
-//   AULOGINIT;
-//   LDEBUG << "createConstraintFunction: "<< id
-//          << "," << complement << "->" << newConstraint
-//         ;
+#ifdef DEBUG_LP
+   AULOGINIT;
+   LDEBUG << "ConstraintFunctionManager::createConstraintFunction( id:"<< id
+          << ", language:" << language << ",complement:" << complement << ")->" << newConstraint
+         ;
+#endif
 
   return newConstraint;
 }
