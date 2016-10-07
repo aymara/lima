@@ -107,7 +107,8 @@ LimaString initRule(Rule& r,
     r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(), 
                                                          language,gazeteers,
                                                          BACKWARDSEARCH,
-                                                         activeEntityGroups));
+                                                         activeEntityGroups,
+                                                         r.getActionsWithOneArgument()));
   // delete ctrl8;
   }
   catch (AutomatonCompilerException& e) {
@@ -121,7 +122,9 @@ LimaString initRule(Rule& r,
     r.setRightAutomaton(AutomatonCompiler::buildAutomaton(s.getRight(),
                                                           language,gazeteers,
                                                           FORWARDSEARCH,
-                                                          activeEntityGroups));
+                                                          activeEntityGroups,
+                                                         r.getActionsWithOneArgument()));
+    LDEBUG << "RuleCompiler:initRule: r.rightAutomaton = " << r.rightAutomaton();
     // delete ctrl9;
   }
   catch (AutomatonCompilerException& e) {

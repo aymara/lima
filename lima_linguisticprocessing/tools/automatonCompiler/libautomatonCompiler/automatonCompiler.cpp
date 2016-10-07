@@ -52,7 +52,8 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
                          MediaId language, 
                          const std::vector<Gazeteer>& gazeteers,
                          SearchGraphSense sense,
-                         const std::vector<LimaString>& activeEntityGroups) {
+                         const std::vector<LimaString>& activeEntityGroups,
+                         const std::vector<std::pair<LimaString,Constraint> >& actionsWithOneArgument) {
   AUCLOGINIT;
   // Lima::TimeUtilsController* ctrlA  = new Lima::TimeUtilsController("buildAutomaton", true);
   std::string currentId(automatonString.getId());
@@ -84,6 +85,7 @@ Automaton buildAutomaton(const AutomatonString& automatonString,
       a=a.reverse();
       // LDEBUG << "reverse automaton=" << a;
     }
+    a.setActionHash(actionsWithOneArgument);
     
     // make it deterministic
     // Lima::TimeUtilsController* ctrlASubset  = new Lima::TimeUtilsController("subsets", true);
@@ -243,6 +245,9 @@ Tstate buildAutomatonNotOptional(Automaton& a,
     LDEBUG << "buildAutomatonNotOptional: createSimpleTransition from " << automatonString.getString();
 #endif
     t = createTransition(automatonString,language,initialId,activeEntityGroups);
+#ifdef DEBUG_LP
+    LDEBUG << "buildAutomatonNotOptional: transition=" << *t;
+#endif
     if (t != 0) {
       Tstate finalState = a.addState();
       a.addTransition(initialState, finalState, t);
