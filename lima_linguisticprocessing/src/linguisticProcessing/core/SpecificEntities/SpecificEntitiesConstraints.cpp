@@ -885,6 +885,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       recoData->setEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
+#ifdef DEBUG_LP
+      LDEBUG << "SetEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue.toInt() << ")";
+#endif
       recoData->setEntityFeature(m_featureName,featureValue.toInt());  
       break;
       
