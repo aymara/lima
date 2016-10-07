@@ -223,6 +223,10 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   {
     if (QFileInfo(path+ "/" + fileName).exists())
     {
+#ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+      LOGINIT("FilesReporting");
+      LDEBUG << "File found:" << path+ "/" + fileName;
+#endif
       return path+ "/" + fileName;
     }
   }

@@ -221,14 +221,17 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
       LinguisticGraphVertex end,
       StepDataVector& stepData) const
 {
-//     PTLOGINIT;
-//     DEBUG << "initializeStepDataFromGraph ...";
-
+#ifdef DEBUG_LP
+    PTLOGINIT;
+    LDEBUG << "initializeStepDataFromGraph ...";
+#endif
     CVertexDataPropertyMap dataMap=get(vertex_data,*srcgraph);
 
     // fill info for start vertex
     // start vertex has index 0
-//    LDEBUG << "index 0 : first vx : " << start;
+#ifdef DEBUG_LP
+    LDEBUG << "index 0 : first vx : " << start;
+#endif
     stepData.push_back(StepData());
     StepData& sd=stepData.back();
     sd.m_srcVertex=start;
@@ -259,7 +262,9 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
 
       // build StepData
       uint64_t currentIndex=stepData.size();
-//      LDEBUG << "index " << currentIndex << " : vx " << current;
+#ifdef DEBUG_LP
+      LDEBUG << "index " << currentIndex << " : vx " << current;
+#endif
       stepData.push_back(StepData());
       StepData& sd=stepData.back();
       sd.m_srcVertex=current;
@@ -309,9 +314,10 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
 template<typename Cost,typename CostFunction>
 void ViterbiPosTagger<Cost,CostFunction>::performViterbiOnStepData(StepDataVector& stepData) const
 {
-//  PTLOGINIT;
-//  LINFO << "performViterbiOnStepData";
-
+#ifdef DEBUG_LP
+  PTLOGINIT;
+  LINFO << "performViterbiOnStepData";
+#endif
   // 1. foreach node of our lattice
   StepDataVectorItr stepItr=stepData.begin();
   stepItr++;
@@ -379,16 +385,19 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
   StepDataVector& stepData,
   Common::AnnotationGraphs::AnnotationData* annotationData) const
 {
-//     PTLOGINIT;
-//     LDEBUG << "reportPathsInGraph";
-
+#ifdef DEBUG_LP
+    PTLOGINIT;
+    LDEBUG << "reportPathsInGraph";
+#endif
 
     std::map<TargetVertexId,LinguisticGraphVertex> vertexMapping;
     typedef typename std::map<TargetVertexId,LinguisticGraphVertex>::iterator VertexMappingItr;
 
     std::queue<std::pair<LinguisticGraphVertex,PredData>,std::list< std::pair<LinguisticGraphVertex,PredData> > > toProcess;
     LinguisticGraphVertex endVertex=add_vertex(*resultgraph);
-//    LDEBUG << "add end vertex " << endVertex;
+#ifdef DEBUG_LP
+    LDEBUG << "add end vertex " << endVertex;
+#endif
     {
 
       {
@@ -413,25 +422,35 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
         }
 
         // keep only better path to end;
-//        LDEBUG << "search best cost";
+#ifdef DEBUG_LP
+        LDEBUG << "search best cost";
+#endif
         Cost minCost=m_costFunction.getMaximumCost();
         for (PredDataVectorItr predDataItr=microItr->second.begin();
             predDataItr!=microItr->second.end();
             predDataItr++)
         {
           if (predDataItr->m_cost < minCost) {
-//            LDEBUG << "found better cost for categ " << predDataItr->m_predMicro;
+#ifdef DEBUG_LP
+            LDEBUG << "found better cost for categ " << predDataItr->m_predMicro;
+#endif
             minCost=predDataItr->m_cost;
           }
         }
-//        LDEBUG << "mincost = " << minCost;
+#ifdef DEBUG_LP
+        LDEBUG << "mincost = " /*<< minCost*/;
+#endif
         for (PredDataVectorItr predDataItr=microItr->second.begin();
             predDataItr!=microItr->second.end();
             predDataItr++)
         {
-//          LDEBUG << "compare with " << predDataItr->m_cost;
+#ifdef DEBUG_LP
+          LDEBUG << "compare with " /*<< predDataItr->m_cost*/;
+#endif
           if (predDataItr->m_cost == minCost) {
-//            LDEBUG << "add pred from categ " << predDataItr->m_predMicro;
+#ifdef DEBUG_LP
+            LDEBUG << "add pred from categ " << predDataItr->m_predMicro;
+#endif
             toProcess.push(std::make_pair(endVertex,*predDataItr));
           }
         }
@@ -442,12 +461,16 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
     {
         PredData& current=toProcess.front().second;
         LinguisticGraphVertex succVertex=toProcess.front().first;
-//        LDEBUG << "process index " << current.m_predIndex << " and categ " << current.m_predMicro;
+#ifdef DEBUG_LP
+        LDEBUG << "process index " << current.m_predIndex << " and categ " << current.m_predMicro;
+#endif
 
         if (current.m_predIndex==0) {
           // nothing to build, just connect it
           add_edge(startVertex,succVertex,*resultgraph);
-//          LDEBUG << "just add link " << startVertex << " -> " << succVertex;
+#ifdef DEBUG_LP
+          LDEBUG << "just add link " << startVertex << " -> " << succVertex;
+#endif
         } else {
 
           StepData& currentStep=stepData[current.m_predIndex];
@@ -461,12 +484,16 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
           VertexMappingItr tgtVxItr=vertexMapping.find(tvi);
           if (tgtVxItr==vertexMapping.end())
           {
-//            std::ostringstream os;
-//            copy(tvi.m_preds.begin(),tvi.m_preds.end(),std::ostream_iterator<LinguisticCode>(os,","));
-//            LDEBUG << "TargetVertexID source " << tvi.m_sourceVx << ", categ " << tvi.m_categ << " | pred categs " << os.str() << " is not graph. add it";
+#ifdef DEBUG_LP
+           std::ostringstream os;
+           copy(tvi.m_preds.begin(),tvi.m_preds.end(),std::ostream_iterator<LinguisticCode>(os,","));
+            LDEBUG << "TargetVertexID source " << tvi.m_sourceVx << ", categ " << tvi.m_categ << " | pred categs " << os.str() << " is not graph. add it";
+#endif
             // if not exists create an register it
             LinguisticGraphVertex newVx=add_vertex(*resultgraph);
-//            LDEBUG << "create vertex " << newVx;
+#ifdef DEBUG_LP
+            LDEBUG << "create vertex " << newVx;
+#endif
             std::pair<
               VertexMappingItr,
               bool> insertStatus=vertexMapping.insert(std::make_pair(tvi,newVx));
@@ -507,7 +534,9 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
               } else if (*predPredMicroItr > pdsItr->m_predMicro) {
                 pdsItr++;
               } else {
-//                LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex << " micro " << pdsItr->m_predMicro;
+#ifdef DEBUG_LP
+                LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex << " micro " << pdsItr->m_predMicro;
+#endif
                 toProcess.push(std::make_pair(tgtVxItr->second,*pdsItr));
                 pdsItr++;
                 predPredMicroItr++;
@@ -517,7 +546,9 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
           }
 
           // link to pred
-//          LDEBUG << "add link " << tgtVxItr->second << " -> " << succVertex;
+#ifdef DEBUG_LP
+          LDEBUG << "add link " << tgtVxItr->second << " -> " << succVertex;
+#endif
           add_edge(tgtVxItr->second,succVertex,*resultgraph);
 
         }
@@ -525,7 +556,9 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
         toProcess.pop();
     }
 
-//     LDEBUG << "end reporting paths";
+#ifdef DEBUG_LP
+    LDEBUG << "end reporting paths";
+#endif
     return endVertex;
 }
 

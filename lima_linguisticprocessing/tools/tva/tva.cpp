@@ -268,7 +268,7 @@ int run(int argc,char** argv)
   delete bowTextWriter;
   delete simpleStreamHandler;
   delete bowTextHandler;
-  return 0;
+  return exitCode(tch);
 }
 
 
