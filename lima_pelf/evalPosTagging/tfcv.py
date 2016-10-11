@@ -273,7 +273,7 @@ def checkConfig(conf):
     method = 'none'
 
     with open(conf) as f:
-        for i in range(70):
+        for i in range(80):
             line = f.readline()
             if line.strip() == '<item value="textDumper"/>': foundDumper = True
             elif line.strip() == '<item value="viterbiPostagger-freq"/>': method = 'viterbi'
