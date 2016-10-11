@@ -663,8 +663,9 @@ tout comme	P
 sa	DET
 présence	NC
 dans	P
-de	P
+le	DET
 nom	NC
+de	P
 l'	DET
 Airbus	NC
 A380	NPP
@@ -899,7 +900,7 @@ graveur	NC
 SuperDrive 8x	NPP
 CD	NC
 /	PONCT
-DVD	NPP
+DVD	NC
 ,	PONCT
 et	CC
 au niveau de	P
@@ -2216,7 +2217,7 @@ Hunt	NPP
 restera	V
 en	P
 retrait	NC
-jusqu'au	DET
+jusqu'au	P+D
 début	NC
 du	DETDU
 mois	NC
@@ -3309,7 +3310,8 @@ a	V
 nommé	VPP
 l'	DET
 ancien	ADJ
-Premier ministre Kourmankev Bakiev	NPP
+Premier ministre	NC
+Kourmankev Bakiev	NPP
 ,	PONCT
 président	NC
 et	CC
@@ -3321,8 +3323,7 @@ L'	DET
 ancien	ADJ
 président	NC
 ,	PONCT
-Askar	NPP
-Akaïev	NPP
+Askar Akaïev	NPP
 ,	PONCT
 aurait	V
 fui	VPP
@@ -4189,7 +4190,7 @@ pierres	NC
 qui	PROREL
 ont	V
 brisé	VPP
-plusieurs	DETNUM
+plusieurs	ADJ
 vitres	NC
 ,	PONCT
 en dépit de	P
@@ -4249,7 +4250,7 @@ des	DETDES
 produits	NC
 japonais	ADJ
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 milliers	NC
 de	P
 personnes	NC
@@ -4974,8 +4975,7 @@ contre	P
 les	DET
 «	PONCT
 ratonnades	ADJ
-anti	PREF
--	PONCT
+anti-	PREF
 Blancs	NPP
 »	PONCT
 est	V
@@ -5247,8 +5247,7 @@ appeler	VINF
 des	DETDES
 «	PONCT
 ratonnades	ADJ
-anti	PREF
--	PONCT
+anti-	PREF
 blancs	NC
 »	PONCT
 .	PONCTU_FORTE
@@ -5815,7 +5814,7 @@ une	DET
 course	NC
 mémorable	ADJ
 entre	P
-plusieurs	DETNUM
+plusieurs	ADJ
 wikipédiens	NC
 ,	PONCT
 sauvegardant	VPR
@@ -6642,8 +6641,7 @@ divers	DET
 groupes	NC
 de	P
 manifestants	NC
-pro	PREF
--	PONCT
+pro-	PREF
 Guttiérez	NPP
 convergeaient	V
 vers	P
@@ -6657,8 +6655,7 @@ les	DET
 moyens	NC
 aux	P+D
 manifestants	NC
-anti	PREF
--	PONCT
+anti-	PREF
 Guttiérez	NPP
 et	CC
 ,	PONCT
@@ -6887,7 +6884,7 @@ président	NC
 ,	PONCT
 accompagné	VPP
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 militaires	NC
 de	P
 haut	ADJ
@@ -7054,8 +7051,7 @@ M.	NC
 Guttiérez	NPP
 semble	V
 avoir	VINF
-de	P
-nouveau	NC
+de nouveau	ADV
 pu	VPP
 prendre	VINF
 la	DET
@@ -7694,8 +7690,7 @@ prinicpalement	ADV
 par	P
 les	DET
 manifestations	NC
-anti	PREF
--	PONCT
+anti-	PREF
 japonaises	ADJ
 de	P
 la	DET
@@ -8258,8 +8253,7 @@ sont	V
 :	PONCT
 celui	PRO
 de	P
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 (	PONCT
 RPT	NPP
 )	PONCT
@@ -8569,7 +8563,7 @@ sont	V
 accrues	VPP
 ces derniers jours	ADV
 faisant	VPR
-plusieurs	DETNUM
+plusieurs	ADJ
 morts	NC
 .	PONCTU_FORTE
 Depuis	P
@@ -8830,8 +8824,7 @@ après	P
 le	DET
 départ	NC
 de	P
-Jörg	NPP
-Haider	NPP
+Jörg Haider	NPP
 et	CC
 d'	P
 une	DET
@@ -9016,7 +9009,7 @@ que	PROREL
 «	PONCT
 le	DET
 vieux	ADJ
-FPÖ	NC
+FPÖ	NPP
 »	PONCT
 était	V
 parti	VPP
@@ -10557,8 +10550,7 @@ pour	P
 le	DET
 successeur	NC
 de	P
-Eyadéma	NPP
-Gnassingbé	NPP
+Eyadéma Gnassingbé	NPP
 ,	PONCT
 décédé	VPP
 cet	DET
@@ -10577,8 +10569,7 @@ s'	CLR
 retiré	VPP
 vendredi	NC
 :	PONCT
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 (	PONCT
 Rassemblement	NPP
 du	DETDU
@@ -10588,8 +10579,7 @@ togolais	ADJ
 ,	PONCT
 fils	NC
 d'	P
-Eyadéma	NPP
-Gnassingbé	NPP
+Eyadéma Gnassingbé	NPP
 qui	PROREL
 est	V
 considéré	VPP
@@ -10651,7 +10641,7 @@ Emmanuel Bob Akitani	NPP
 ,	PONCT
 le	DET
 principal	ADJ
-rivale	NC
+rival	NC
 de	P
 Gnassingbé	NPP
 .	PONCTU_FORTE
@@ -10681,8 +10671,7 @@ UFC	NPP
 ,	PONCT
 accusant	VPR
 notamment	ADV
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 de	P
 fraudes	NC
 électorales	ADJ
@@ -12452,7 +12441,7 @@ mois	NC
 de	P
 juin 2006	NC
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 observateurs	NC
 de	P
 la	DET
@@ -14533,8 +14522,7 @@ la	DET
 victoire	NC
 officielle	ADJ
 de	P
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 fils	NC
 du	DETDU
 général	NC
@@ -15450,7 +15438,7 @@ sur	P
 supports	NC
 numériques	ADJ
 (	PONCT
-DVD	NPP
+DVD	NC
 )	PONCT
 rendaient	V
 inopérant	VPR
@@ -15498,7 +15486,7 @@ d'	P
 un	DET
 lecteur	NC
 de	P
-DVD	NPP
+DVD	NC
 ,	PONCT
 une	DET
 cope	NC
@@ -15518,7 +15506,7 @@ présence	NC
 ,	PONCT
 dans	P
 le	DET
-DVD	NPP
+DVD	NC
 lui-même	PRO
 ,	PONCT
 d'	P
@@ -15861,8 +15849,7 @@ peuple	NC
 à	P
 se soulever	VINF
 contre	P
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 officiellement	ADV
 déclaré	VPP
 vainqueur	NC
@@ -16296,7 +16283,7 @@ l'	DET
 occasion	NC
 ,	PONCT
 à	P
-plusieurs	DETNUM
+plusieurs	ADJ
 gouvernements	NC
 d'	P
 union	NC
@@ -16617,7 +16604,7 @@ M.	NC
 Berlusconi	NPP
 ,	PONCT
 persuadé	VPP
-que	ADV
+que	CS
 si	CS
 les	DET
 partis	NC
@@ -18786,13 +18773,11 @@ validé	VPP
 l'	DET
 élection	NC
 où	PROREL
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 ,	PONCT
 fils	NC
 d'	P
-Éyadéma	NPP
-Gnassingbé	NPP
+Éyadéma Gnassingbé	NPP
 dictateur	NC
 mort	ADJ
 cet	DET
@@ -18835,8 +18820,7 @@ propos	NC
 font état	V
 d'	P
 exactions	NC
-anti	PREF
--	PONCT
+anti-	PREF
 africaines	ADJ
 commises	VPP
 par	P
@@ -19019,8 +19003,7 @@ son	DET
 père	NC
 ,	PONCT
 le	DET
-prince	NC
-consort	V
+prince consort	NC
 Bernhard	NPP
 ,	PONCT
 on	CLS
@@ -19161,8 +19144,7 @@ sa	DET
 mère	NC
 ,	PONCT
 l'	DET
-ex	PREF
--	PONCT
+ex-	PREF
 reine	NC
 Juliana	NPP
 ,	PONCT
@@ -19832,7 +19814,7 @@ le	DET
 funérarium	NC
 de	P
 Melbourne	NPP
-jusqu'au	DET
+jusqu'au	P+D
 cimetière	NC
 ,	PONCT
 par	P
@@ -20377,7 +20359,7 @@ au	P+D
 sud de Bagdad	NPP
 ,	PONCT
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 personnes	NC
 soupçonnées	VPP
 d'	P
@@ -21473,7 +21455,7 @@ La	DET
 conférence	NC
 se	CLR
 poursuivra	V
-jusqu'au	DET
+jusqu'au	P+D
 27 mai	NC
 .	PONCTU_FORTE
 Le	DET
@@ -21816,8 +21798,7 @@ surprise	NC
 ,	PONCT
 c'	CLS
 est	V
-Jörg	NPP
-Haider	NPP
+Jörg Haider	NPP
 ,	PONCT
 gouverneur	NC
 (	PONCT
@@ -21829,9 +21810,9 @@ et	CC
 ancien	ADJ
 président	NC
 du	DETDU
-Freiheitliche	NPP
-Partei	NPP
-Österreichs	NPP
+Freiheitliche	ET
+Partei	ET
+Österreichs	ET
 (	PONCT
 FPÖ	NPP
 ,	PONCT
@@ -22040,12 +22021,11 @@ rester	VINF
 au	P+D
 FPÖ	NPP
 .	PONCTU_FORTE
-Jörg	NPP
-Haider	NPP
+Jörg Haider	NPP
 ,	PONCT
 gouverneur	NC
 (	PONCT
-Landeshauptmann	NPP
+Landeshauptmann	ET
 )	PONCT
 de	P
 Carinthie	NPP
@@ -22230,7 +22210,7 @@ La	DET
 crise	NC
 couvait	V
 depuis	P
-plusieurs	DETNUM
+plusieurs	ADJ
 semaines	NC
 au sein du	P
 parti	NC
@@ -22330,7 +22310,7 @@ autrichien	ADJ
 Österreichische	NPP
 Volkspartei	NPP
 )	PONCT
-jusqu'au	DET
+jusqu'au	P+D
 terme	NC
 de	P
 l'	DET
@@ -23389,7 +23369,7 @@ navigateur	NC
 numérotée	ADJ
 1.0	NC
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 mises	NC
 à	P
 jour	NC
@@ -24676,11 +24656,11 @@ Allemagne	NPP
 et	CC
 des	DETDES
 tensions	NC
-euro	PREF
--	PONCT
+euro-	PREF
 iraniennes	ADJ
 .	PONCTU_FORTE
-M.Assefi	NPP
+M.	NC
+Assefi	NPP
 avait	V
 pourtant	ADV
 assuré	VPP
@@ -25432,8 +25412,7 @@ FOREIGN	ET
 ,	PONCT
 FOREIGN	ET
 .	PONCTU_FORTE
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 ,	PONCT
 fils	NC
 du	DETDU
@@ -25491,8 +25470,7 @@ des	DETDES
 suffrages	NC
 exprimés	VPP
 .	PONCTU_FORTE
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 pourra	V
 maintenant	ADV
 prêter	VINF
@@ -25599,8 +25577,7 @@ d'	P
 législative	ADJ
 et	CC
 présidentielle	ADJ
-dans	P
-endéans	P
+dans endéans	P
 six mois	NC
 .	PONCTU_FORTE
 M.	NC
@@ -25627,8 +25604,7 @@ voit	V
 la	DET
 victoire	NC
 de	P
-Faure	NPP
-Gnassingbé	NPP
+Faure Gnassingbé	NPP
 comme	P
 «	PONCT
 la	DET
@@ -25916,8 +25892,7 @@ est	V
 le	DET
 deuxième	ADJ
 attentat	NC
-anti	PREF
--	PONCT
+anti-	PREF
 kurde	V
 en	P
 quatre jours	NC
@@ -26701,7 +26676,7 @@ Afrique	NPP
 -	PONCT
 trois fois	NC
 plus	ADV
-que	CS
+que	ADV
 l'	DET
 infection	NC
 due	VPP
@@ -26749,7 +26724,7 @@ antipaludique	ADJ
 FOREIGN	ET
 ,	PONCT
 FOREIGN	ET
-put	V
+FOREIGN	ET
 FOREIGN	ET
 )	PONCT
 .	PONCTU_FORTE
@@ -26785,7 +26760,7 @@ Afrique	NPP
 -	PONCT
 trois fois	NC
 plus	ADV
-que	CS
+que	ADV
 l'	DET
 infection	NC
 due	VPP
@@ -26834,7 +26809,7 @@ antipaludique	ADJ
 FOREIGN	ET
 ,	PONCT
 FOREIGN	ET
-put	V
+FOREIGN	ET
 FOREIGN	ET
 )	PONCT
 .	PONCTU_FORTE
@@ -27779,8 +27754,8 @@ par	P
 dérision	NC
 ,	PONCT
 FOREIGN	ET
-make	NC
-a	V
+FOREIGN	ET
+FOREIGN	ET
 FOREIGN	ET
 (	PONCT
 le	DET
@@ -28097,7 +28072,7 @@ baleine	NC
 ,	PONCT
 s'interposèrent	V
 dans	P
-de	P
+de	DETDE
 frêles	NC
 embarcations	VPP
 entre	P
@@ -28151,7 +28126,7 @@ devait	V
 être	VINF
 suivi	VPP
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 autres	ADJ
 récits	NC
 ,	PONCT
@@ -28908,7 +28883,8 @@ troisième	ADJ
 mandat	NC
 consécutif	ADJ
 de	P
-M.Blair	NPP
+M.	NC
+Blair	NPP
 établirait	V
 un	DET
 record	NC
@@ -28983,7 +28959,7 @@ que	CS
 prévu	VPP
 .	PONCTU_FORTE
 Vigilant	ADJ
-jusqu'au	DET
+jusqu'au	P+D
 bout	NC
 ,	PONCT
 Tony Blair	NPP
@@ -29122,7 +29098,8 @@ notablement	ADV
 de	P
 celle	PRO
 de	P
-M.Howard	NPP
+M.	NC
+Howard	NPP
 ,	PONCT
 candidat	NC
 conservateur	ADJ
@@ -31134,7 +31111,7 @@ l'	DET
 Énergie	NC
 nucléaire	ADJ
 (	PONCT
-jusqu'au	DET
+jusqu'au	P+D
 28 mars 2001	NC
 )	PONCT
 sous	P
@@ -31744,7 +31721,8 @@ C'	CLS
 est	V
 ainsi	ADV
 que	CS
-M.Blair	NPP
+M.	NC
+Blair	NPP
 pourra	V
 toujours	ADV
 compter	VINF
@@ -31820,7 +31798,8 @@ autres	ADJ
 partis	NC
 régionaux	ADJ
 .	PONCTU_FORTE
-M.Howard	NPP
+M.	NC
+Howard	NPP
 a	V
 rapidement	ADV
 reconnu	VPP
@@ -32035,7 +32014,8 @@ Malgré	P
 la	DET
 victoire	NC
 de	P
-M.Blair	NPP
+M.	NC
+Blair	NPP
 ,	PONCT
 son	DET
 prochain	ADJ
@@ -33246,7 +33226,7 @@ pas	ADV
 moins	ADV
 participé	VPP
 à	P
-plusieurs	DETNUM
+plusieurs	ADJ
 réunions	NC
 publiques	ADJ
 en faveur du	P
@@ -33837,7 +33817,7 @@ médicales	ADJ
 Jeudi	NC
 déjà	ADV
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 attentats	NC
 et	CC
 executions	NC
@@ -34489,7 +34469,7 @@ On	CLS
 peut	V
 donc	ADV
 supposer	VINF
-que	ADV
+que	CS
 ,	PONCT
 du	DETDU
 temps	NC
@@ -35173,7 +35153,7 @@ les	DET
 travaux	NC
 doivent	V
 durer	VINF
-jusqu'au	DET
+jusqu'au	P+D
 27 mai	NC
 ,	PONCT
 Mohammed ElBaradei	NPP
@@ -37377,8 +37357,7 @@ Union	NC
 du	DETDU
 Myanmar	NPP
 (	PONCT
-ex	PREF
--	PONCT
+ex-	PREF
 Birmanie	NPP
 )	PONCT
 .	PONCTU_FORTE
@@ -37739,7 +37718,7 @@ toutes	ADJ
 des	DETDES
 femmes	NC
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 autres	ADJ
 attentats	NC
 ,	PONCT
@@ -38968,8 +38947,7 @@ israélienne	ADJ
 ,	PONCT
 à	P
 se faire	VINF
-de	P
-nouveau	NC
+de nouveau	ADV
 admettre	VINF
 à l'intérieur du	P
 siège	NC
@@ -39151,8 +39129,7 @@ causer	VINF
 aux	P+D
 oléoducs	NC
 .	PONCTU_FORTE
-Condoleeza	NPP
-Rice	NPP
+Condoleezza Rice	NPP
 avait	V
 déjà	ADV
 proposé	VPP
@@ -39355,8 +39332,7 @@ des	DETDES
 excuses	NC
 secrètes	ADJ
 de	P
-Condoleeza	NPP
-Rice	NPP
+Condoleezza Rice	NPP
 pour	P
 sa	DET
 déclaration	NC
@@ -39556,7 +39532,8 @@ l'	DET
 isolation	NC
 totale	ADJ
 .	PONCTU_FORTE
-M.McClellan	NPP
+M.	NC
+McClellan	NPP
 a	V
 conseillé	VPP
 à	P
@@ -40354,7 +40331,7 @@ de	P
 Bruxelles	NPP
 »	PONCT
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 opposants	NC
 au	P+D
 projet	NC
@@ -41518,7 +41495,7 @@ entre	P
 MM.	NC
 En outre	ADV
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 membres	NC
 du	DETDU
 Cabinet	NC
@@ -41563,7 +41540,7 @@ Premier ministre	NC
 restera	V
 en	P
 poste	NC
-jusqu'au	DET
+jusqu'au	P+D
 moment	NC
 approprié	ADJ
 pour	P
@@ -41642,7 +41619,7 @@ que	CS
 M.	NC
 Blair	NPP
 irait	V
-jusqu'au	DET
+jusqu'au	P+D
 terme	NC
 de	P
 son	DET
@@ -43805,7 +43782,7 @@ Il	CLS
 faut	V
 enfin	ADV
 noter	VINF
-que	ADV
+que	CS
 si	CS
 Reuters	NPP
 présente	V
@@ -44200,7 +44177,7 @@ les	DET
 travaux	NC
 doivent	V
 durer	VINF
-jusqu'au	DET
+jusqu'au	P+D
 27 mai	NC
 .	PONCTU_FORTE
 Cette	DET
@@ -44799,7 +44776,7 @@ FOREIGN	ET
 qui	PROREL
 avait	V
 démontré	VPP
-que	ADV
+que	CS
 de	DETDE
 nombreux	ADJ
 cas	NC
@@ -45118,7 +45095,7 @@ diriger	VINF
 le	DET
 district	NC
 fédéral	ADJ
-jusqu'au	DET
+jusqu'au	P+D
 31 juillet	NC
 prochain	ADJ
 .	PONCTU_FORTE
@@ -45452,8 +45429,7 @@ la	DET
 culture	NC
 de	P
 semences	NC
-anti	PREF
--	PONCT
+anti-	PREF
 OGM	NPP
 sur	P
 le	DET
@@ -45585,8 +45561,7 @@ annulation	NC
 des	DETDES
 sept	ADJNUM
 arrêtés	VPP
-anti	PREF
--	PONCT
+anti-	PREF
 OGM	NPP
 ,	PONCT
 qui	PROREL
@@ -45745,8 +45720,7 @@ file	NC
 de	P
 la	DET
 contestation	NC
-anti	PREF
--	PONCT
+anti-	PREF
 OGM	NPP
 ,	PONCT
 José Bové	NPP
@@ -45783,7 +45757,7 @@ de	P
 parcelles	NC
 réparties	VPP
 dans	P
-plusieurs	DETNUM
+plusieurs	ADJ
 régions	NC
 de	P
 France	NPP
@@ -46074,8 +46048,7 @@ Depuis	P
 la	DET
 déclaration	NC
 de	P
-Condoleeza	NPP
-Rice	NPP
+Condoleezza Rice	NPP
 qui	PROREL
 avait	V
 nommé	VPP
@@ -46101,7 +46074,8 @@ nombreuses	ADJ
 allant	VPR
 jusqu'à	P
 traiter	VINF
-M.Bush	NPP
+M.	NC
+Bush	NPP
 d'	P
 homme	NC
 manquant	VPR
@@ -47774,14 +47748,13 @@ ces	DET
 dernières	ADJ
 semaines	NC
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 juristes	NC
 et	CC
 politiciens	NC
 (	PONCT
 comme	P
-Jörg	NPP
-Haider	NPP
+Jörg Haider	NPP
 ,	PONCT
 BZÖ	NPP
 )	PONCT
@@ -48329,7 +48302,8 @@ période	NC
 d'	P
 incertitude	NC
 ,	PONCT
-M.Blair	NPP
+M.	NC
+Blair	NPP
 ayant	VPR
 déclaré	VPP
 fin mai	NC
@@ -49022,8 +48996,7 @@ du	DETDU
 «	PONCT
 portail	ADJ
 »	PONCT
-afin	P
-d'	P
+afin d'	P
 «	PONCT
 accueillir	VINF
 jusqu'	P
@@ -49055,7 +49028,7 @@ les	DET
 Français	NC
 ont	V
 attendu	VPP
-jusqu'au	DET
+jusqu'au	P+D
 dernier	ADJ
 moment	NC
 pour	P
@@ -50249,7 +50222,8 @@ inévitablement	ADV
 le	DET
 même	ADJ
 ,	PONCT
-M.Gül	NPP
+M.	NC
+Gül	NPP
 ,	PONCT
 ministre	NC
 des	DETDES
@@ -50395,8 +50369,7 @@ Siméon de Saxe-Cobourg	NPP
 -	PONCT
 Gotha	NPP
 (	PONCT
-ex	PREF
--	PONCT
+ex-	PREF
 tsar	NC
 des	DETDES
 Bulgares	NC
@@ -50426,8 +50399,7 @@ bulgare	ADJ
 (	PONCT
 PSB	NPP
 ,	PONCT
-ex	PREF
--	PONCT
+ex-	PREF
 communiste	ADJ
 )	PONCT
 ,	PONCT
@@ -50495,8 +50467,7 @@ Géorgie	NPP
 ,	PONCT
 petite	ADJ
 république	NC
-ex	PREF
--	PONCT
+ex-	PREF
 soviétique	ADJ
 située	VPP
 dans	P
@@ -50966,8 +50937,7 @@ OTAN	NPP
 Dans	P
 le	DET
 processus	NC
-anti	PREF
--	PONCT
+anti-	PREF
 sessioniste	ADJ
 et	CC
 de	P
@@ -51464,7 +51434,7 @@ de	P
 l'	DET
 archidiocèse	NC
 ,	PONCT
-jusqu'au	DET
+jusqu'au	P+D
 1er juillet 1986	NC
 ,	PONCT
 date	NC
@@ -51532,8 +51502,7 @@ foi	NC
 Membre	NC
 de	P
 l'	DET
-ex	PREF
--	PONCT
+ex-	PREF
 Saint-Office	NPP
 depuis	P
 cinq ans	NC
@@ -52555,7 +52524,7 @@ Certaines	DET
 voix	NC
 s' élevées	VPP
 étaient	V
-jusqu'au	DET
+jusqu'au	P+D
 sein	NC
 de	P
 l'	DET
@@ -52750,8 +52719,7 @@ Fabien Barthez	NPP
 devra	V
 finalement	ADV
 purger	VINF
-près	P
-de	P
+près de	P
 six mois	NC
 se	CLR
 suspension	NC
@@ -52810,7 +52778,7 @@ a	V
 donc	ADV
 suspendu	VPP
 Fabien Barthez	NPP
-jusqu'au	DET
+jusqu'au	P+D
 31 décembre 2005	NC
 mais	CC
 elle	CLS
@@ -53432,7 +53400,7 @@ mois	NC
 d'	P
 avril	NC
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 enquêtes	NC
 de	P
 divers	DET
@@ -53453,8 +53421,7 @@ publiée	VPP
 aujourd'hui	ADV
 indiquerait	V
 donc	ADV
-de	P
-nouveau	NC
+de nouveau	ADV
 un	DET
 possible	ADJ
 retournement	NC
@@ -53930,7 +53897,7 @@ la	DET
 Chine	NPP
 ,	PONCT
 et	CC
-plusieurs	DETNUM
+plusieurs	ADJ
 ministres	NC
 de	P
 l'	DET
@@ -54578,7 +54545,8 @@ parquet	NC
 de	P
 Paris	NPP
 .	PONCTU_FORTE
-M.Talamoni	NPP
+M.	NC
+Talamoni	NPP
 (	PONCT
 Unione	NPP
 naziunale	ADJ
@@ -54697,7 +54665,8 @@ comparaissaient	V
 22	DET
 personnes	NC
 ,	PONCT
-M.Pieri	NPP
+M.	NC
+Pieri	NPP
 a été	V
 désigné	VPP
 comme	P
@@ -54781,7 +54750,8 @@ racket	ADJ
 »	PONCT
 instauré	VPP
 par	P
-M.Pieri	NPP
+M.	NC
+Pieri	NPP
 n'	ADV
 allait	V
 pas	ADV
@@ -54877,7 +54847,7 @@ publié	VPP
 ,	PONCT
 vendredi 20 mai 2005	NC
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 photos	NC
 de	P
 l'	DET
@@ -55141,7 +55111,7 @@ publication	NC
 elle-même	PRO
 ,	PONCT
 que	CS
-plusieurs	DETNUM
+plusieurs	ADJ
 dispositions	NC
 des	DETDES
 conventions	NC
@@ -55916,7 +55886,7 @@ réaliser	VINF
 d'ici à	ADV
 2010	NC
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 sondages	NC
 récents	ADJ
 indiquent	V
@@ -56535,7 +56505,7 @@ de	P
 spéctaculaire	ADJ
 »	PONCT
 par	P
-plusieurs	DETNUM
+plusieurs	ADJ
 scientifiques	ADJ
 américains	NC
 ,	PONCT
@@ -56596,8 +56566,7 @@ attentat	NC
 de	P
 Luis Posada Carriles	NPP
 ,	PONCT
-ex	PREF
--	PONCT
+ex-	PREF
 agent	NC
 de	P
 la	DET
@@ -56629,7 +56598,8 @@ les	DET
 américains	NC
 donneraient	V
 à	P
-M.Posalda	NPP
+M.	NC
+Posalda	NPP
 ,	PONCT
 qui	PROREL
 est	V
@@ -58037,8 +58007,7 @@ mongol	NC
 Хувьсгалт	NPP
 Нам	NPP
 ,	PONCT
-ex	PREF
--	PONCT
+ex-	PREF
 communiste	ADJ
 )	PONCT
 .	PONCTU_FORTE
@@ -58139,8 +58108,7 @@ l'	DET
 image	NC
 de	P
 l'	DET
-ex	PREF
--	PONCT
+ex-	PREF
 parti	NC
 communiste	ADJ
 ,	PONCT
@@ -58185,7 +58153,7 @@ et	CC
 l'	CLO
 avait	V
 occupé	VPP
-jusqu'au	DET
+jusqu'au	P+D
 20 août 2004	NC
 ,	PONCT
 date	NC
@@ -59634,8 +59602,7 @@ américaine	ADJ
 a	V
 arrêté	VPP
 l'	DET
-anti	PREF
--	PONCT
+anti-	PREF
 castriste	NC
 pour	P
 entrée	NC
@@ -60095,7 +60062,7 @@ coupure	NC
 qui	PROREL
 a	V
 laissé	VPP
-plusieurs	DETNUM
+plusieurs	ADJ
 services	NC
 sans	P
 courant	NC
@@ -60120,7 +60087,7 @@ conséquences	NC
 critiques	ADJ
 »	PONCT
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 usines	NC
 ont	V
 également	ADV
@@ -60713,7 +60680,7 @@ général	ADJ
 de	P
 l'	DET
 organisation	NC
-jusqu'au	DET
+jusqu'au	P+D
 1er septembre 2005	NC
 .	PONCTU_FORTE
 Nommé	VPP
@@ -60784,7 +60751,8 @@ Quatar	NPP
 )	PONCT
 .	PONCTU_FORTE
 Selon	P
-M.Lamy	NPP
+M.	NC
+Lamy	NPP
 «	PONCT
 la	DET
 conclusion	NC
@@ -60884,7 +60852,8 @@ autant	ADV
 plus	ADV
 important	ADJ
 que	CS
-M.Lamy	NPP
+M.	NC
+Lamy	NPP
 a	V
 souhaité	VPP
 impliquer	VINF
@@ -61148,7 +61117,8 @@ des	DETDES
 empreintes	NC
 appartenant	VPR
 à	P
-M.Ismaïlov	NPP
+M.	NC
+Ismaïlov	NPP
 ,	PONCT
 tandis que	CS
 celles	PRO
@@ -63089,7 +63059,7 @@ des	DETDES
 vitrines	NC
 brisées	VPP
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 blessés	NC
 et	CC
 37	DET
@@ -63196,7 +63166,7 @@ mois	NC
 de	P
 mai	NC
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 événements	NC
 ont	V
 ravivé	VPP
@@ -63600,7 +63570,7 @@ durant	P
 la	DET
 campagne	NC
 ,	PONCT
-jusqu'au	DET
+jusqu'au	P+D
 derniers	ADJ
 jours	NC
 ,	PONCT
@@ -63793,7 +63763,7 @@ l'	DET
 informateur	NC
 surnommé	VPP
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 (	PONCT
@@ -63936,7 +63906,7 @@ avec	P
 une	DET
 mystérieuse	ADJ
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 2	ADJ
@@ -64026,7 +63996,7 @@ le	DET
 nom	NC
 de	P
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 qu'	CS
@@ -64180,7 +64150,7 @@ W.	NC
 Mark Felt	NPP
 était	V
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 ,	PONCT
@@ -64316,7 +64286,7 @@ l'	DET
 attitude	NC
 de	P
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 et	CC
@@ -64418,7 +64388,7 @@ L'	DET
 identité	NC
 de	P
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 était	V
@@ -64476,7 +64446,7 @@ l'	DET
 identité	NC
 de	P
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 à	P
@@ -64613,7 +64583,7 @@ l'	DET
 identité	NC
 de	P
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 ne	ADV
@@ -64672,7 +64642,7 @@ l'	DET
 identité	NC
 de	P
 «	PONCT
-Gorge	NPP
+Gorge	NC
 profonde	ADJ
 »	PONCT
 a	V
@@ -66712,8 +66682,7 @@ a	V
 indiqué	VPP
 que	CS
 l'	DET
-ex	PREF
--	PONCT
+ex-	PREF
 otage	NC
 était	V
 en	P
@@ -66733,8 +66702,7 @@ aux	P+D
 proches	NC
 de	P
 l'	DET
-ex	PREF
--	PONCT
+ex-	PREF
 otage	NC
 samedi après-midi	NC
 vers	P
@@ -66850,7 +66818,8 @@ des	DETDES
 affaires	NC
 étrangères	ADJ
 ,	PONCT
-M.Douste-Blazy	NPP
+M.	NC
+Douste-Blazy	NPP
 .	PONCTU_FORTE
 Il	CLS
 s'agirait	V
@@ -67017,7 +66986,8 @@ fraude	NC
 .	PONCTU_FORTE
 De plus	ADV
 ,	PONCT
-M.Zuma	NPP
+M.	NC
+Zuma	NPP
 avait été	V
 déjà	ADV
 condamné	VPP
@@ -68032,7 +68002,7 @@ rwandais	ADJ
 ,	PONCT
 qui	PROREL
 fuyaient	V
-jusqu'au	DET
+jusqu'au	P+D
 Burundi	NPP
 voisin	ADJ
 durant	P
@@ -68207,8 +68177,7 @@ rejeter	VINF
 des	DETDES
 personnes	NC
 sans	P
-d'	P
-abord	NC
+d'abord	ADV
 avoir	VINF
 pu	VPP
 évaluer	VINF
@@ -68480,7 +68449,8 @@ vote	NC
 ,	PONCT
 suivi	VPP
 de	P
-M.Ghalibaf	NPP
+M.	NC
+Ghalibaf	NPP
 (	PONCT
 ancien	ADJ
 chef	NC
@@ -68511,7 +68481,8 @@ Le	DET
 réformateur	ADJ
 favori	NC
 est	V
-M.Moïn	NPP
+M.	NC
+Moïn	NPP
 ,	PONCT
 proche	ADJ
 du	DETDU
@@ -68527,7 +68498,8 @@ de	P
 des	DETDES
 électeurs	NC
 .	PONCTU_FORTE
-M.Rafsandjani	NPP
+M.	NC
+Rafsandjani	NPP
 ,	PONCT
 candidat	NC
 qui	PROREL
@@ -68633,7 +68605,7 @@ a été	V
 finalement	ADV
 élevée	VPP
 ;	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 sources	NC
 confirment	V
 qu'	CS
@@ -68757,7 +68729,8 @@ connues	VPP
 que	CS
 samedi	NC
 .	PONCTU_FORTE
-M.Bush	NPP
+M.	NC
+Bush	NPP
 avait	V
 justement	ADV
 déclaré	VPP
@@ -68932,7 +68905,8 @@ l'	DET
 du	DETDU
 Conseil	NC
 .	PONCTU_FORTE
-M.Chirac	NPP
+M.	NC
+Chirac	NPP
 a	V
 qualifé	VPP
 le	DET
@@ -69043,7 +69017,8 @@ avais	V
 honte	NC
 .	PONCTU_FORTE
 ,	PONCT
-M.Schröder	NPP
+M.	NC
+Schröder	NPP
 ,	PONCT
 au-dela de	P
 la	DET
@@ -69137,7 +69112,8 @@ la	DET
 contribution	NC
 britannique	ADJ
 .	PONCTU_FORTE
-M.Blair	NPP
+M.	NC
+Blair	NPP
 s' opposé	VPP
 était	V
 fermement	ADV
@@ -69189,7 +69165,7 @@ britannique	ADJ
 avait	V
 en effet	ADV
 refusé	VPP
-plusieurs	DETNUM
+plusieurs	ADJ
 propositions	NC
 de	P
 compromis	NC
@@ -69229,7 +69205,6 @@ augmenter	VINF
 jusqu'à	P
 5,5 milliards	NC
 en	P
-jusqu'en	P
 2008	NC
 .	PONCTU_FORTE
 La	DET
@@ -69286,7 +69261,8 @@ l'	DET
 étranger	NC
 Jack Straw	NPP
 .	PONCTU_FORTE
-M.Juncker	NPP
+M.	NC
+Juncker	NPP
 avait	V
 également	ADV
 proposé	VPP
@@ -69476,7 +69452,7 @@ pourquoi	ADVWH
 ils	CLS
 payaient	V
 plus	ADV
-que	CS
+que	ADV
 la	DET
 France	NPP
 »	PONCT
@@ -69522,7 +69498,8 @@ inattendu	ADJ
 de	P
 Tony Blair	NPP
 ,	PONCT
-M.Zapatero	NPP
+M.	NC
+Zapatero	NPP
 ,	PONCT
 premier ministre	NC
 espagnol	ADJ
@@ -69569,7 +69546,8 @@ que	CS
 les	DET
 propositions	NC
 de	P
-M.Juncker	NPP
+M.	NC
+Juncker	NPP
 donnaient	V
 des	DETDES
 «	PONCT
@@ -69615,7 +69593,8 @@ devra	V
 trouvé	VPP
 ,	PONCT
 alors que	CS
-M.Juncker	NPP
+M.	NC
+Juncker	NPP
 ,	PONCT
 visiblement	ADV
 énervé	VPP
@@ -69936,7 +69915,8 @@ son	DET
 succès	NC
 ,	PONCT
 accusent	V
-M.Karroubi	NPP
+M.	NC
+Karroubi	NPP
 d'	P
 avoir	VINF
 réduit	VPP
@@ -69953,7 +69933,7 @@ boycott	NC
 ,	PONCT
 préconisé	VPP
 par	P
-plusieurs	DETNUM
+plusieurs	ADJ
 organisation	NC
 démocratiques	ADJ
 et	CC
@@ -70381,8 +70361,7 @@ république	NC
 (	PONCT
 Ahmet Necdet Sezer	NPP
 ,	PONCT
-pro	PREF
--	PONCT
+pro-	PREF
 laïque	ADJ
 )	PONCT
 et	CC
@@ -71025,8 +71004,7 @@ Des	DETDES
 heurts	NC
 se produits	VPP
 sont	V
-de	P
-nouveau	NC
+de nouveau	ADV
 pendant	P
 l'	DET
 enterrement	NC
@@ -71105,8 +71083,7 @@ démocratie	NC
 ou	CC
 DEP	NPP
 ,	PONCT
-pro	PREF
--	PONCT
+pro-	PREF
 kurde	NC
 )	PONCT
 Selim Sadak	NPP
@@ -71132,7 +71109,7 @@ occidentaux	ADJ
 et	CC
 notamment	ADV
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 ONG	NPP
 .	PONCTU_FORTE
 Le	DET
@@ -71271,8 +71248,7 @@ rétablir	VINF
 l'	DET
 ordre	NC
 .	PONCTU_FORTE
-Condoleeza	NPP
-Rice	NPP
+Condoleezza Rice	NPP
 ,	PONCT
 secrétaire	NC
 d'	P
@@ -71798,7 +71774,8 @@ environ	ADV
 de	P
 votants	NC
 .	PONCTU_FORTE
-M.Rafsandjani	NPP
+M.	NC
+Rafsandjani	NPP
 avait	V
 déjà	ADV
 reconnu	VPP
@@ -72027,7 +72004,8 @@ recommandé	VPP
 aux	P+D
 partisans	NC
 de	P
-M.Rafsandjani	NPP
+M.	NC
+Rafsandjani	NPP
 de	P
 faire preuve	VINF
 de	P
@@ -72066,7 +72044,8 @@ de	DETDE
 nombreux	ADJ
 observateurs	NC
 que	CS
-M.Rafsandjani	NPP
+M.	NC
+Rafsandjani	NPP
 avait	V
 dépéché	VPP
 sur	P
@@ -72151,8 +72130,7 @@ de	P
 libéralisation	NC
 politique	ADJ
 .	PONCTU_FORTE
-Condoleeza	NPP
-Rice	NPP
+Condoleezza Rice	NPP
 avait	V
 déjà	ADV
 affirmé	VPP
@@ -72295,7 +72273,8 @@ Révolution	NC
 de	P
 1979	NC
 .	PONCTU_FORTE
-M.Ahmadinejad	NPP
+M.	NC
+Ahmadinejad	NPP
 prendra	V
 officiellement	ADV
 ses	DET
@@ -72601,7 +72580,7 @@ meeting	NC
 ,	PONCT
 sponsorisé	VPP
 par	P
-plusieurs	DETNUM
+plusieurs	ADJ
 grandes	ADJ
 firmes	NC
 coréennes	ADJ
@@ -72960,7 +72939,8 @@ Après	P
 le	DET
 discours	NC
 de	P
-M.Oh	NPP
+M.	NC
+Oh	NPP
 ,	PONCT
 Chin	NPP
 Dae	NPP
@@ -72996,7 +72976,7 @@ coréen	ADJ
 .	PONCTU_FORTE
 Finalement	ADV
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 citoyens	NC
 -	PONCT
 reporters	NC
@@ -73375,7 +73355,7 @@ de	DETDE
 nombreuses	ADJ
 copies	NC
 de	P
-DVD	NPP
+DVD	NC
 promotionnel	ADJ
 mis	VPP
 à	P
@@ -73430,7 +73410,7 @@ CNC	NPP
 la	DET
 location	NC
 de	P
-DVD	NPP
+DVD	NC
 et	CC
 de	P
 vidéos	NC
@@ -73632,7 +73612,7 @@ on	CLS
 faire	VINF
 sortir	VINF
 le	DET
-DVD	NPP
+DVD	NC
 avant	P
 la	DET
 diffusion	NC
@@ -74697,7 +74677,7 @@ des	DETDES
 films	NC
 sortis	VPP
 depuis	P
-plusieurs	DETNUM
+plusieurs	ADJ
 semaines	NC
 ont	V
 également	ADV
@@ -75348,7 +75328,8 @@ progresser	VINF
 un peu plus	ADV
 ce	PRO
 que	PROREL
-M.Barrot	NPP
+M.	NC
+Barrot	NPP
 appelle	V
 déjà	ADV
 le	DET
@@ -75852,7 +75833,7 @@ de	P
 7€	NC
 par	P
 mois	NC
-jusqu'au	DET
+jusqu'au	P+D
 31 décembre	NC
 et	CC
 12€	NC
@@ -76140,7 +76121,7 @@ Maures	NPP
 avaient été	V
 ravagés	VPP
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 Américains	NC
 qui	PROREL
 avaient été	V
@@ -76198,8 +76179,7 @@ en	P
 Iran	NPP
 .	PONCTU_FORTE
 Quatre	DET
-ex	PREF
--	PONCT
+ex-	PREF
 otages	NC
 ,	PONCT
 dont	PROREL
@@ -76233,7 +76213,8 @@ l'	DET
 Occident	NPP
 :	PONCT
 selon	P
-M.Scott	NPP
+M.	NC
+Scott	NPP
 il	CLS
 aurait	V
 traité	VPP
@@ -76296,7 +76277,8 @@ après	P
 la	DET
 révolution	NC
 ,	PONCT
-M.Simpson	NPP
+M.	NC
+Simpson	NPP
 dit	V
 ne	ADV
 pas	ADV
@@ -76323,8 +76305,7 @@ le	DET
 témoignage	NC
 de	P
 certains	DETNUM
-ex	PREF
--	PONCT
+ex-	PREF
 otages	NC
 ,	PONCT
 le	DET
@@ -76343,7 +76324,7 @@ on	CLS
 peut	V
 apercevoir	VINF
 sur	P
-plusieurs	DETNUM
+plusieurs	ADJ
 photos	NC
 Associated Press	NPP
 de	P
@@ -76353,8 +76334,7 @@ l'	DET
 De	DET
 nombreux	ADJ
 autres	ADJ
-ex	PREF
--	PONCT
+ex-	PREF
 otages	NC
 ont	V
 ansi	VPP
@@ -76368,7 +76348,8 @@ ils	CLS
 incapables	ADJ
 d'	P
 identifier	VINF
-M.Ahmadinejad	NPP
+M.	NC
+Ahmadinejad	NPP
 comme	P
 ancien	ADJ
 terroriste	NC
@@ -76485,7 +76466,7 @@ affaire	NC
 Les	DET
 déclarations	NC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 anciens	ADJ
 otages	NC
 américains	ADJ
@@ -76814,7 +76795,8 @@ depuis peu	ADV
 le	DET
 Canada	NPP
 .	PONCTU_FORTE
-M.Zapatero	NPP
+M.	NC
+Zapatero	NPP
 ,	PONCT
 premier ministre	NC
 espagnol	ADJ
@@ -77003,7 +76985,8 @@ personnes	NC
 de même	ADV
 sexe	NC
 .	PONCTU_FORTE
-M.Rajoy	NPP
+M.	NC
+Rajoy	NPP
 ,	PONCT
 chef	NC
 du	DETDU
@@ -77205,7 +77188,7 @@ de	P
 la	DET
 comète	NC
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 satellites	NC
 d'	P
 observation	NC
@@ -78222,7 +78205,8 @@ ministre	NC
 du	DETDU
 travail	NC
 (	PONCT
-M.Borloo	NPP
+M.	NC
+Borloo	NPP
 )	PONCT
 avec	P
 l'	DET
@@ -78559,7 +78543,6 @@ candidature	NC
 africaine	ADJ
 en	P
 lui	CLO
-lui	CLO
 promettant	VPR
 non	ADV
 seulement	ADV
@@ -78591,7 +78574,8 @@ limite	NC
 du	DETDU
 correct	ADJ
 selon	P
-M.Huchon	NPP
+M.	NC
+Huchon	NPP
 ,	PONCT
 président	NC
 de	P
@@ -78781,8 +78765,7 @@ Logiciels	NC
 tout comme	P
 des	DETDES
 amendements	NC
-anti	PREF
--	PONCT
+anti-	PREF
 brevets	NC
 .	PONCTU_FORTE
 La	DET
@@ -78913,13 +78896,13 @@ amendements	NC
 très	ADV
 restrictifs	ADJ
 et	CC
-anti	PREF
--	PONCT
+anti-	PREF
 brevets	NC
 proposés	VPP
 notamment	ADV
 par	P
-M.Rocard	NPP
+M.	NC
+Rocard	NPP
 (	PONCT
 PS	NPP
 )	PONCT
@@ -78936,8 +78919,7 @@ plaisir	NC
 de	P
 certains	DETNUM
 lobbyistes	NC
-pro	PREF
--	PONCT
+pro-	PREF
 brevets	NC
 qui	PROREL
 pourront	V
@@ -78963,13 +78945,12 @@ EICTA	NPP
 European Information & Communications Technology Industry Association	NPP
 qui	PROREL
 rassemble	V
-plusieurs	DETNUM
+plusieurs	ADJ
 géants	NC
 de	P
 l'	DET
 informatique	NC
-pro	PREF
--	PONCT
+pro-	PREF
 brevets	NC
 (	PONCT
 Alcatel	NPP
@@ -79131,8 +79112,7 @@ il	CLS
 provoquait	V
 .	PONCTU_FORTE
 L'	DET
-ex	PREF
--	PONCT
+ex-	PREF
 dictateur	NC
 chilien	ADJ
 Augusto Pinochet	NPP
@@ -79283,7 +79263,8 @@ sept	ADJNUM
 dernières	ADJ
 années	NC
 .	PONCTU_FORTE
-M.Pinochet	NPP
+M.	NC
+Pinochet	NPP
 ,	PONCT
 qui	PROREL
 vient	V
@@ -79717,7 +79698,7 @@ un	DET
 état	NC
 sévère	ADJ
 et	CC
-plusieurs	DETNUM
+plusieurs	ADJ
 autres	PRO
 avec	P
 des	DETDES
@@ -79744,8 +79725,7 @@ la	DET
 tête	NC
 et	CC
 problèmes	NC
-cardio	PREF
--	PONCT
+cardio-	PREF
 respiratoires	ADJ
 .	PONCTU_FORTE
 À	P
@@ -80604,7 +80584,7 @@ Saint-Honoré	NPP
 est	V
 surveillée	VPP
 par	P
-plusieurs	DETNUM
+plusieurs	ADJ
 policiers	NC
 et	CC
 militaires	NC
@@ -80636,9 +80616,7 @@ presse	NC
 du	DETDU
 cabinet	NC
 de	P
-Son	DET
-Altesse	NC
-Sérénissime	NPP
+Son Altesse Sérénissime	NC
 le	DET
 Prince Albert II	NPP
 à	P
@@ -82150,7 +82128,8 @@ Lors de	P
 cette	DET
 rencontre	NC
 ,	PONCT
-M.Gwan	NPP
+M.	NC
+Gwan	NPP
 aurait	V
 même	ADV
 fixé	VPP
@@ -82219,8 +82198,7 @@ parts	NC
 ,	PONCT
 intervient	V
 alors que	CS
-Condoleeza	NPP
-Rice	NPP
+Condoleezza Rice	NPP
 ,	PONCT
 secréataire	NC
 d'	P
@@ -82293,7 +82271,8 @@ gouvernement	NC
 nord-coréen	ADJ
 et	CC
 en particulier	ADV
-M.Kim	NPP
+M.	NC
+Kim	NPP
 ,	PONCT
 son	DET
 leader	NC
@@ -82747,7 +82726,8 @@ lancé	VPP
 aux	P+D
 journalistes	NC
 .	PONCTU_FORTE
-M.Barroso	NPP
+M.	NC
+Barroso	NPP
 quant à	P
 lui	PRO
 ,	PONCT
@@ -83103,7 +83083,8 @@ capital	NC
 de	P
 GDF	NPP
 ,	PONCT
-M.Breton	NPP
+M.	NC
+Breton	NPP
 prommet	V
 poursuivre	VINF
 en	P
@@ -83137,7 +83118,7 @@ réservée	VPP
 aux	P+D
 salariés	NC
 .	PONCTU_FORTE
-Plusieurs	DET
+plusieurs	ADJ
 syndicats	NC
 et	CC
 partis	NC
@@ -83429,7 +83410,7 @@ chants	NC
 bosniaques	ADJ
 et	CC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 discours	NC
 ,	PONCT
 610	DET
@@ -83866,7 +83847,7 @@ conséquence	NC
 ,	PONCT
 et	CC
 aussi	ADV
-plusieurs	DETNUM
+plusieurs	ADJ
 techniques	NC
 visant	VPR
 à	P
@@ -86959,7 +86940,8 @@ affaire	NC
 .	PONCTU_FORTE
 Ainsi	ADV
 ,	PONCT
-M.Dutreil	NPP
+M.	NC
+Dutreil	NPP
 ,	PONCT
 ministre	NC
 délégué	ADJ
@@ -87850,7 +87832,8 @@ d'	P
 hiver	NC
 ,	PONCT
 selon	P
-M.Whitby	NPP
+M.	NC
+Whitby	NPP
 http://news.bbc.co.uk/2/hi/uk_news/4706913.stm	NC
 .	PONCTU_FORTE
 Parallèlement	ADV
@@ -88193,7 +88176,7 @@ d'ici	ADV
 2008	NC
 .	PONCTU_FORTE
 Mais	CC
-plusieurs	DETNUM
+plusieurs	ADJ
 économistes	NC
 mettent	V
 en	P
@@ -88284,8 +88267,7 @@ juge	V
 avoir	VINF
 un	DET
 ton	NC
-pro	PREF
--	PONCT
+pro-	PREF
 opposition	NC
 et	CC
 d'	P
@@ -88456,7 +88438,7 @@ est	V
 le	DET
 théâtre	NC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 attentats	NC
 visant	VPR
 les	DET
@@ -88529,7 +88511,7 @@ ont été	V
 arrêtées	VPP
 ,	PONCT
 dont	PROREL
-plusieurs	DETNUM
+plusieurs	ADJ
 cadres	NC
 de	P
 l'	DET
@@ -89753,7 +89735,7 @@ il	CLS
 en	CLO
 reste	V
 toujours	ADV
-plusieurs	DETNUM
+plusieurs	ADJ
 autres	ADJ
 incarcérés	NC
 .	PONCTU_FORTE
@@ -89785,7 +89767,7 @@ contre	P
 la	DET
 détention	NC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 opposants	NC
 politiques	ADJ
 depuis	P
@@ -89830,7 +89812,7 @@ détention	NC
 .	PONCTU_FORTE
 Souffrant	ADJ
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 problèmes	NC
 de	P
 santé	NC
@@ -90470,8 +90452,7 @@ membres	NC
 de	P
 la	DET
 brigade	NC
-anti	PREF
--	PONCT
+anti-	PREF
 criminalité	NC
 (	PONCT
 BAC	NC
@@ -91247,7 +91228,7 @@ actuellement	ADV
 la	DET
 Une	NC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 journaux	NC
 et	CC
 radios	NC
@@ -92387,7 +92368,8 @@ côté	NC
 il	CLS
 ne	ADV
 faut	V
-que	ADV
+pas	ADV
+que	CS
 les	DET
 moteurs	NC
 s'arrêtent	V
@@ -93281,7 +93263,7 @@ cite	V
 le	DET
 cas	NC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 femmes	NC
 ,	PONCT
 militantes	ADJ
@@ -93969,7 +93951,7 @@ de	P
 la	DET
 navette	NC
 ,	PONCT
-plusieurs	DETNUM
+plusieurs	ADJ
 morceaux	NC
 se détachent	V
 .	PONCTU_FORTE
@@ -94862,7 +94844,7 @@ Suite à	P
 l'	DET
 éjection	NC
 de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 débris	NC
 ,	PONCT
 dont	PROREL
@@ -95214,7 +95196,7 @@ Le	DET
 29 juillet	NC
 ,	PONCT
 à l'aide de	P
-plusieurs	DETNUM
+plusieurs	ADJ
 équipements	NC
 créés	VPP
 à	P
@@ -95371,7 +95353,7 @@ Or	CC
 il	CLS
 reste	V
 encore	ADV
-plusieurs	DETNUM
+plusieurs	ADJ
 modules	NC
 à	P
 lancer	VINF
@@ -95532,13 +95514,13 @@ appel	NC
 ,	PONCT
 lancé	VPP
 par	P
-plusieurs	DETNUM
+plusieurs	ADJ
 média	NC
 ,	PONCT
 entre	P
 autres	ADJ
 sur	P
-DVD	NPP
+DVD	NC
 fait	VPP
 suite à	P
 un	DET
@@ -95699,7 +95681,7 @@ pourtant	ADV
 réussi	VPP
 ,	PONCT
 grâce à	P
-plusieurs	DETNUM
+plusieurs	ADJ
 grenades	NC
 lacrymogènes	ADJ
 à	P
@@ -96497,7 +96479,8 @@ planète	NC
 part	NC
 entière	ADJ
 .	PONCTU_FORTE
-M.Brown	NPP
+M.	NC
+Brown	NPP
 estime	V
 que	CS
 l'	DET
@@ -96953,7 +96936,7 @@ sont	V
 encore	ADV
 inconnues	NC
 et	CC
-plusieurs	DETNUM
+plusieurs	ADJ
 hypothèses	NC
 sont	V
 avancées	VPP
@@ -97289,7 +97272,8 @@ conservateurs	NC
 En	P
 réalité	NC
 ,	PONCT
-M.Bush	NPP
+M.	NC
+Bush	NPP
 a	V
 profité	VPP
 d'	P
@@ -97396,7 +97380,8 @@ recess	V
 appointment	ADV
 .	PONCTU_FORTE
 Même si	CS
-M.Bush	NPP
+M.	NC
+Bush	NPP
 a	V
 réussi	VPP
 à	P
@@ -97407,7 +97392,8 @@ qu'	PROREL
 il	CLS
 souhaitait	V
 ,	PONCT
-M.Bolton	NPP
+M.	NC
+Bolton	NPP
 arrive	V
 tout de même	ADV
 en	P

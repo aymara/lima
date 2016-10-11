@@ -34,3 +34,8 @@ add_custom_target(
 DISAMBMATRICES(fre succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl U,ET,PREF,NPP,PONCT,CC,CS)
 
 add_dependencies(trigrammatrix-fre categs-fre)
+
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/corpus_fre_merge.txt
+  DESTINATION share/apps/lima/resources/Disambiguation
+)

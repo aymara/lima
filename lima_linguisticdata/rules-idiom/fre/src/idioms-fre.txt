@@ -545,8 +545,8 @@ D;;A;[S]mère;[S]&maison [S]mère;nom féminin;
 D;;A;[S]mère;[S]&maison [S]mère;nom féminin;maison mère
 D;;A;[S]&métrage;[J]long [S]&métrage;nom masculin;
 D;;A;[S]&métrage;[J]long [S]&métrage;nom masculin;long métrage
-D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;
-D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;Premier Ministre
+D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;premier ministre
+D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;premier ministre
 D;;A;[S]mouche;[S]&poids [S]mouche;nom masculin;
 D;;A;[S]mouche;[S]&poids [S]mouche;nom masculin;poids mouche
 D;;A;soit-il;ainsi soit-il;interjection;
@@ -2873,6 +2873,7 @@ I;;A;entremise;par l' entremise du;préposition;par l'entremise de
 I;;A;évêque;pont l' évêque;nom masculin;pont-l'évêque
 I;;A;évêque;pont-l' évêque;nom masculin;pont-l'évêque
 I;;A;facto;ipso facto;adverbe;
+GC;;A;consort;[S]&prince consort;nom masculin;
 I;;A;Galles;[S]&prince de Galles;nom masculin;
 I;;A;Galles;[S]&prince de Galles;nom masculin;prince de Galles
 I;;A;homo;ecce homo;nom masculin;
@@ -3776,3 +3777,5 @@ GC;;;qualité;en qualité d';adverbe;
 GC;;A;clé;[S]&mot clé;nom masculin;mot-clé
 GC;;;suite;[V]&faire suite;verbe intransitif;faire suite
 GC;;A;bord;au bord;adverbe;
+GC;;Sérénissime;Son Altesse Sérénissime;nom masculin;
+GC;;endéans;dans endéans;préposition;

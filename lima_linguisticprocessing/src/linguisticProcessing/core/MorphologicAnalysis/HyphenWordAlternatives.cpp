@@ -276,8 +276,15 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
       DictionaryEntry dicoEntry(m_dictionary->getEntry(newTokHyphen));
       if (!dicoEntry.isEmpty() && dicoEntry.hasLingInfos())
       {
+        FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
+        Token* newFT2=new Token((*sp)[newTokHyphen],newTokHyphen,newFT->position(),newFT->length()+1);
+        tokenMap[newVertex]=newFT2;
+        delete newFT;
+        newFT = newFT2;
         dicoEntry.parseLingInfos(&handler);
-      } else {
+      } 
+      else 
+      {
         m_reader->readAlternatives(
           *newFT,
           *m_dictionary,
