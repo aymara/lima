@@ -35,12 +35,18 @@ for lang in $*; do
     addOption=""
     case $lang in
         eng) 
-            addOption="-s . -n $nbParts"; 
-            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":")
-            corpus=$corpusFile 
+            addOption="-s . -n $nbParts"
+            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":") 
+            corpus=$corpusFile  
             conf=config-minimale-eng.SVMT;;
-        fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale-fre.SVMT ;;
-        por) addOption="-s PU+FORTE -n $nbParts"; corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt; conf=config-minimale-por.SVMT ;;
+        fre)             
+            addOption="-n $nbParts"
+            corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")  
+            conf=config-minimale-fre.SVMT ;;
+        por) 
+            addOption="-s PU+FORTE -n $nbParts"
+            corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
+            conf=config-minimale-por.SVMT ;;
         notrain) notrain=true ;;
     esac
     method=$(readMethod $lang)
