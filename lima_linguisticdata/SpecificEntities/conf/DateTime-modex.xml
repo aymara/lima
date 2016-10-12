@@ -109,6 +109,8 @@
     <group name="DateTimeMicros" class="SpecificEntitiesMicros">
       <list name="DateTime.DATE">
         <item value="NC"/>
+        <!--item value="ADJNUM"/-->
+        <item value="ADJ"/>
       </list>
       <list name="DateTime.TIME">
         <item value="NC"/>

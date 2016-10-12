@@ -51,7 +51,7 @@
     <subvalues value="ADJ">
       <value name="ADJ"/>
       <value name="ADJWH"/>
-      <value name="ADJNUM"/>
+      <!--value name="ADJNUM"/-->
     </subvalues>
     <subvalues value="ADV">
       <value name="ADV"/>

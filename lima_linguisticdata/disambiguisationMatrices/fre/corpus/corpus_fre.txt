@@ -607,7 +607,7 @@ doivent	V
 être	VINF
 livrés	VPP
 à	P
-6	DET
+6	DETNUM
 compagnies	NC
 aériennes	ADJ
 -	PONCT
@@ -709,16 +709,16 @@ Il	CLS
 pourra	V
 embarquer	VINF
 entre	P
-200	DET
+200	DETNUM
 et	CC
-300	DET
+300	DETNUM
 passagers	NC
 et	CC
 son	DET
 autonomie	NC
 sera	V
 de	P
-3500	DET
+3500	DETNUM
 à	P
 8500 miles	NC
 nautiques	ADJ
@@ -897,10 +897,7 @@ vive	ADJ
 ,	PONCT
 un	DET
 graveur	NC
-SuperDrive 8x	NPP
-CD	NC
-/	PONCT
-DVD	NC
+SuperDrive 8x CD / DVD	NC
 ,	PONCT
 et	CC
 au niveau de	P
@@ -939,12 +936,10 @@ technologies	NC
 ,	PONCT
 TrackPad	NPP
 et	CC
-Sudden	NPP
-Motion	NC
-Sensor	NPP
+Sudden Motion Sensor	NPP
 .	PONCTU_FORTE
 La	DET
-première	ADJ
+première	NC
 ,	PONCT
 TrackPad	NPP
 est	V
@@ -970,12 +965,10 @@ animation	NC
 ,	PONCT
 et	CC
 la	DET
-seconde	ADJ
+seconde	NC
 ,	PONCT
 le	DET
-Sudden	NPP
-Motion	NC
-Sensor	NPP
+Sudden Motion Sensor	NPP
 permet	V
 de	P
 protéger	VINF
@@ -996,9 +989,9 @@ trois	DETNUM
 versions	NC
 ,	PONCT
 de	P
-12	ADJ
+12	NC
 ,	PONCT
-15	ADJ
+15	NC
 ou	CC
 17 pouces	NC
 .	PONCTU_FORTE
@@ -1040,11 +1033,7 @@ d'	P
 une	DET
 carte	NC
 graphique	ADJ
-ATI	NPP
-Radeon	NPP
-9700	DET
-Mobility	NPP
-64 Mo	NC
+ATI Radeon 9700 Mobility	 64 Mo	NPP
 (	PONCT
 disponible	ADJ
 en	P
@@ -1064,9 +1053,7 @@ ainsi que	CC
 Mac OS X 10.3	NPP
 ,	PONCT
 à partir de	P
-1.529	NC
-,	PONCT
-00 €	NC
+1.529,00 €	NC
 MSN	NPP
 ,	PONCT
 filiale	NC
@@ -1081,8 +1068,7 @@ le	DET
 lancement	NC
 officiel	ADJ
 de	P
-MSN	NPP
-Search	NPP
+MSN Search	NPP
 ,	PONCT
 son	DET
 tout	NC
@@ -1192,8 +1178,7 @@ moteur	NC
 de	P
 recherche	NC
 ,	PONCT
-entre	P
-autres	ADJ
+entre autres	ADV
 ,	PONCT
 et	CC
 également	ADV
@@ -1266,7 +1251,7 @@ ses	DET
 portes	NC
 aujourd'hui	ADV
 .	PONCTU_FORTE
-Huit	DET
+Huit	DETNUM
 nouveautés	NC
 significatives	ADJ
 vont	V
@@ -1648,13 +1633,13 @@ de	P
 mer de Beyrouth	NPP
 a	V
 tué	VPP
-15	DET
+15	DETNUM
 personnes	NC
 et	CC
 en	CLO
 a	V
 blessé	VPP
-137	DET
+137	DETNUM
 autres	ADJ
 ,	PONCT
 dont	PROREL
@@ -1736,7 +1721,7 @@ alentours	NC
 Le	DET
 «	PONCT
 bébé	NC
-81	DET
+81	ADJ
 »	PONCT
 ,	PONCT
 un	DET
@@ -1791,7 +1776,7 @@ de	P
 228 000	DET
 personnes	NC
 .	PONCTU_FORTE
-Huit	DET
+Huit	DETNUM
 autres	ADJ
 familles	NC
 l'	CLO
@@ -2099,8 +2084,7 @@ ministre	NC
 ,	PONCT
 la	DET
 "	PONCT
-Chief	NPP
-Justice	NC
+Chief Justice	NPP
 "	PONCT
 de	P
 la	DET
@@ -2122,7 +2106,7 @@ Wilson	NPP
 a été	V
 élue	VPP
 avec	P
-64	DET
+64	DETNUM
 voix	NC
 contre	P
 Clem	NPP
@@ -2136,7 +2120,7 @@ National	ADJ
 qui	PROREL
 a	V
 reçu	VPP
-37	DET
+37	DETNUM
 voix	NC
 ,	PONCT
 et	CC
@@ -2185,7 +2169,7 @@ de	P
 consultation	NC
 de la part de	P
 la	DET
-Première	ADJ
+première	ADJ
 Ministre	NC
 ,	PONCT
 Helen Clark	NPP
@@ -2249,9 +2233,7 @@ des	DETDES
 Nations Unies	NPP
 sur	P
 le	DET
-VIH	NPP
-/	PONCT
-SIDA	NPP
+VIH/SIDA	NPP
 publie	V
 un	DET
 nouveau	ADJ
@@ -2264,7 +2246,7 @@ SIDA	NC
 en	P
 Afrique	NPP
 :	PONCT
-Trois	DET
+Trois	DETNUM
 scénarios	NC
 pour	P
 l'	DET
@@ -2292,7 +2274,7 @@ Afrique	NPP
 pourrait	V
 évoluer	VINF
 au cours des	P
-20	ADJ
+20	DETNUM
 prochaines	ADJ
 années	NC
 en fonction des	P+D
@@ -2330,7 +2312,7 @@ pourraient	V
 être	VINF
 évitées	VPP
 au cours des	P
-20	ADJ
+20	DETNUM
 prochaines	ADJ
 années	NC
 »	PONCT
@@ -2422,7 +2404,7 @@ Afrique	NPP
 sont	V
 comtaminés	VPP
 pour	P
-10	DET
+10	DETNUM
 hommes	NC
 ,	PONCT
 la	DET
@@ -2435,7 +2417,7 @@ chez	P
 les	DET
 jeunes	NC
 de	P
-15	DET
+15	DETNUM
 à	P
 24 ans	NC
 .	PONCTU_FORTE
@@ -2549,7 +2531,7 @@ connu	VPP
 la	DET
 disparition	NC
 de	P
-deux	DET
+deux	DETNUM
 de	P
 ses	DET
 dirigents	NC
@@ -2909,7 +2891,7 @@ pour	P
 l'	DET
 instant	NC
 au moins	ADV
-381	DET
+381	DETNUM
 personnes	NC
 blessées	VPP
 par	P
@@ -3199,7 +3181,7 @@ investir	VINF
 les	DET
 bureaux	NC
 de	P
-certains	DETNUM
+certains	DETDES
 ministres	NC
 situés	VPP
 sur	P
@@ -3253,7 +3235,7 @@ agitation	NC
 dure	ADJ
 depuis	P
 près de	P
-3	DET
+3	DETNUM
 semaines	NC
 .	PONCTU_FORTE
 Plus	ADV
@@ -3424,7 +3406,7 @@ La Plaine St Denis	NPP
 .	PONCTU_FORTE
 Dans	P
 le	DET
-premier	ADJ
+premier	NC
 et	CC
 le	DET
 plus	ADV
@@ -3465,7 +3447,7 @@ un	DET
 rythme	NC
 plutôt	ADV
 soutenu	ADJ
-quelques	DET
+quelques	DETDES
 piques	NC
 lancées	VPP
 à	P
@@ -3481,7 +3463,7 @@ méchanceté	NC
 .	PONCTU_FORTE
 Dans	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 autres	ADJ
 hangars	NC
 ,	PONCT
@@ -3524,7 +3506,7 @@ bière	NC
 .	PONCTU_FORTE
 Bien sûr	ADV
 ,	PONCT
-quelques	DET
+quelques	DETDES
 sociétés	NC
 de	P
 l'	DET
@@ -4008,8 +3990,7 @@ et	CC
 d'	P
 expression	NC
 ,	PONCT
-entre	P
-autres	ADJ
+entre autres	ADV
 .	PONCTU_FORTE
 Conclusions	NC
 et	CC
@@ -4041,11 +4022,11 @@ présente	V
 des	DETDES
 recommandations	NC
 .	PONCTU_FORTE
-Sept	DET
+Sept	DETNUM
 personnes	NC
 (	PONCT
 au moins	ADV
-18	ADJ
+18	NC
 ,	PONCT
 selon	P
 certaines	ADJ
@@ -4235,7 +4216,7 @@ des	DETDES
 pierres	NC
 ,	PONCT
 brisant	VPR
-quelques	DET
+quelques	DETDES
 vitres	NC
 ,	PONCT
 brûlant	ADJ
@@ -4679,8 +4660,7 @@ notamment	ADV
 sur	P
 l'	DET
 article	NC
-ORS	NPP
-106.010	NC
+ORS 106.010	NC
 ,	PONCT
 qui	PROREL
 stipule	V
@@ -4741,13 +4721,13 @@ action	NC
 intentée	VPP
 par	P
 les	DET
-neuf	ADJNUM
+neuf	ADJ
 couples	NC
 de même	ADV
 sexe	NC
 ,	PONCT
 les	DET
-deux	ADJNUM
+deux	ADJ
 associations	NC
 et	CC
 le	DET
@@ -5005,8 +4985,7 @@ mouvement	NC
 sioniste	ADJ
 de	P
 gauche	NC
-Hachomer	NPP
-Hatzaïr	NPP
+Hachomer Hatzaïr	NPP
 et	CC
 la	DET
 radio	NC
@@ -5079,10 +5058,9 @@ diffusé	VPP
 sur	P
 le	DET
 site	NC
-Web	NPP
+Web	NC
 d'	P
-Hachomer	NPP
-Hatzaïr	NPP
+Hachomer Hatzaïr	NPP
 ,	PONCT
 est	V
 signé	VPP
@@ -5113,7 +5091,7 @@ initiateurs	NC
 de	P
 texte	NC
 ,	PONCT
-1 000	DET
+1 000	DETNUM
 lycéens	NC
 .	PONCTU_FORTE
 La	DET
@@ -5145,10 +5123,9 @@ publié	VPP
 par	P
 le	DET
 site	NC
-Web	NPP
+Web	NC
 d'	P
-Hachomer	NPP
-Hatzaïr	NPP
+Hachomer Hatzaïr	NPP
 :	PONCT
 Il	CLS
 y	CLO
@@ -5163,7 +5140,7 @@ jour	NC
 le	DET
 26 mars 2003	NC
 ,	PONCT
-quelques	DET
+quelques	DETDES
 uns	PRO
 d'	P
 entre	P
@@ -5174,12 +5151,11 @@ cri	NC
 d'	P
 alarme	NC
 .	PONCTU_FORTE
-Quatre	DET
+Quatre	DETNUM
 jeunes	NC
 du	DETDU
 mouvement	NC
-Hachomer	NPP
-Hatzaïr	NPP
+Hachomer Hatzaïr	NPP
 venaient	V
 de	P
 se faire	VINF
@@ -5524,14 +5500,13 @@ Source	NC
 :	PONCT
 Le Nouvel Observateur	NPP
 Sites	NC
-Web	NPP
+Web	NC
 de	P
 la	DET
 branche	NC
 française	ADJ
 de	P
-Hachomer	NPP
-Hatzaïr	NPP
+Hachomer Hatzaïr	NPP
 ,	PONCT
 du	DETDU
 Monde	NPP
@@ -5787,7 +5762,7 @@ projet	NC
 francophone	ADJ
 est	V
 le	DET
-quatrième	ADJ
+quatrième	NC
 à	P
 dépasser	VINF
 les	DET
@@ -5874,7 +5849,7 @@ calculé	VPP
 que	CS
 le	DET
 numéro	NC
-100 000	ADJNUM
+100 000	ADJ
 était	V
 l'	DET
 article	NC
@@ -5963,7 +5938,7 @@ UDC	NPP
 parti	VPP
 dans	P
 lequel	PROREL
-4	DET
+4	DETNUM
 ministres	NC
 avaient	V
 démissionnés	VPP
@@ -6232,7 +6207,7 @@ juge	NC
 Khaled Kabbani	NPP
 .	PONCTU_FORTE
 Ces	DET
-deux	ADJNUM
+deux	ADJ
 ministres	NC
 ,	PONCT
 considérés	VPP
@@ -6393,11 +6368,11 @@ de	P
 débats	NC
 ,	PONCT
 par	P
-60	DET
+60	DETNUM
 voix	NC
 sur	P
 les	DET
-62	DET
+62	DETNUM
 congressistes	NC
 (	PONCT
 sur	P
@@ -6455,7 +6430,7 @@ président	NC
 déchu	VPP
 avait	V
 destitué	VPP
-27	ADJ
+27	NC
 des	DETDES
 31	ADJ
 membres	NC
@@ -7202,7 +7177,7 @@ L'	DET
 explosion	NC
 a	V
 tué	VPP
-2	DET
+2	DETNUM
 policiers	NC
 et	CC
 en	CLO
@@ -7328,7 +7303,7 @@ le	DET
 communiqué	NC
 diffusé	VPP
 par	P
-Internet	NPP
+Internet	NC
 n'	ADV
 a été	V
 pas encore	ADV
@@ -7456,7 +7431,7 @@ personnel	NC
 grèviste	ADJ
 pendant	P
 ces	DET
-deux	ADJNUM
+deux	ADJ
 semaines	NC
 et	CC
 demie	NC
@@ -7465,8 +7440,7 @@ grève	NC
 restait	V
 limité	ADJ
 (	PONCT
-8	DET
-%	NC
+8 %	NC
 environ	ADV
 )	PONCT
 ,	PONCT
@@ -7604,9 +7578,9 @@ japonais	ADJ
 pendant	P
 les	DET
 années	NC
-trente	ADJNUM
+trente	ADJ
 et	CC
-quarante	ADJNUM
+quarante	ADJ
 .	PONCTU_FORTE
 Ces	DET
 excuses	NC
@@ -7826,7 +7800,7 @@ Français	NC
 La	DET
 traduction	NC
 en	P
-144	DET
+144	DETNUM
 autres	ADJ
 langues	NC
 devrait	V
@@ -7890,7 +7864,7 @@ service	NC
 .	PONCTU_FORTE
 Néanmoins	ADV
 ,	PONCT
-certains	DETNUM
+certains	DETDES
 détracteurs	NC
 du	DETDU
 service	NC
@@ -7929,7 +7903,7 @@ vie	NC
 privée	ADJ
 .	PONCTU_FORTE
 Les	DET
-treize	ADJNUM
+treize	ADJ
 langues	NC
 disponibles	ADJ
 actuellement	ADV
@@ -7978,7 +7952,7 @@ possible	NC
 afin de	P
 libérer	VINF
 les	DET
-trois	ADJNUM
+trois	ADJ
 journalistes	NC
 roumains	ADJ
 enlevés	VPP
@@ -7987,7 +7961,7 @@ Irak	NPP
 il	CLS
 y	CLO
 a	V
-quelques	DET
+quelques	DETDES
 semaines	NC
 ,	PONCT
 après que	CS
@@ -8034,7 +8008,7 @@ les	DET
 quatre jours	NC
 .	PONCTU_FORTE
 Avec	P
-850	DET
+850	DETNUM
 soldats	NC
 ,	PONCT
 la	DET
@@ -8179,7 +8153,7 @@ possible	NC
 pour	P
 sauver	VINF
 les	DET
-trois	ADJNUM
+trois	ADJ
 journalistes	NC
 .	PONCTU_FORTE
 "	PONCT
@@ -8246,7 +8220,7 @@ du	DETDU
 général	NC
 Eyadéma Gnassingbé	NPP
 .	PONCTU_FORTE
-Trois	DET
+Trois	DETNUM
 candidats	NC
 se présentés	VPP
 sont	V
@@ -8510,7 +8484,7 @@ craignent	V
 une	DET
 autoproclamation	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 candidats	NC
 principaux	ADJ
 et	CC
@@ -8590,7 +8564,7 @@ son	DET
 troisième	ADJ
 gouvernement	NC
 .	PONCTU_FORTE
-Six	DET
+Six	DETNUM
 nouveaux	ADJ
 ministres	NC
 entrent	V
@@ -8758,7 +8732,7 @@ FI	NPP
 )	PONCT
 .	PONCTU_FORTE
 Les	DET
-trois	ADJNUM
+trois	ADJ
 ministres	NC
 de	P
 la	DET
@@ -8818,7 +8792,7 @@ défaite	NC
 aux	P+D
 régionales	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 semaines	NC
 après	P
 le	DET
@@ -8878,7 +8852,7 @@ Salzbourg	NPP
 en	P
 présence	NC
 de	P
-431	DET
+431	DETNUM
 délégués	NC
 .	PONCTU_FORTE
 Heinz-Christian Strache	NPP
@@ -8911,7 +8885,7 @@ suffrages	NC
 exprimés	VPP
 .	PONCTU_FORTE
 Porté	VPP
-quelques	DET
+quelques	DETDES
 instants	NC
 en	P
 triomphe	NC
@@ -8939,9 +8913,9 @@ forte	ADJ
 connotation	NC
 anti-européenne	ADJ
 et	CC
-réglant	ADJ
+réglant	VPR
 immédiatement	ADV
-quelques	DET
+quelques	DETDES
 comptes	NC
 avec	P
 la	DET
@@ -9138,7 +9112,7 @@ de	P
 Wolfgang Schüssel	NPP
 et	CC
 de	P
-13	DET
+13	DETNUM
 députés	NC
 ,	PONCT
 ne	ADV
@@ -9156,7 +9130,7 @@ passés	VPP
 au	P+D
 BZÖ	NPP
 et	CC
-5	ADJ
+5	NC
 restant	VPR
 encore	ADV
 dans	P
@@ -9322,7 +9296,7 @@ presse	NC
 française	ADJ
 de	P
 droite	NC
-comme	P
+comme	CC
 de	P
 gauche	NC
 pour	P
@@ -9896,7 +9870,7 @@ annulée	VPP
 »	PONCT
 .	PONCTU_FORTE
 Les	DET
-deux	ADJNUM
+deux	ADJ
 contractants	NC
 ont	V
 aussitôt	ADV
@@ -10451,17 +10425,17 @@ la	DET
 coalition	NC
 gouvernementale	ADJ
 (	PONCT
-101	DET
+101	DETNUM
 sièges	NC
 -	PONCT
 dont	PROREL
-70	ADJ
+70	NC
 pour	P
 le	DET
 ČSSD	NPP
 -	PONCT
 sur	P
-200	DET
+200	NC
 à	P
 la	DET
 Chambre	NC
@@ -10556,14 +10530,14 @@ décédé	VPP
 cet	DET
 hiver	NC
 .	PONCTU_FORTE
-Trois	DET
+Trois	DETNUM
 candidats	NC
 étaient	V
 en	P
 lice	NC
 ,	PONCT
 un	DET
-quatrième	ADJ
+quatrième	NC
 s'	CLR
 étant	VPR
 retiré	VPP
@@ -10615,7 +10589,7 @@ organiser	VINF
 des	DETDES
 élections	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 candidats	NC
 de	P
 l'	DET
@@ -10754,7 +10728,7 @@ est	V
 l'	DET
 autoproclamation	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 candidats	NC
 qui	PROREL
 ménerait	V
@@ -10819,7 +10793,7 @@ qui	PROREL
 doit	V
 se dérouler	VINF
 du	DETDU
-11	ADJ
+11	NC
 au	P+D
 22 mai 2005	NC
 ,	PONCT
@@ -11035,7 +11009,7 @@ on	CLS
 devrait	V
 compter	VINF
 au moins	ADV
-530	DET
+530	DETNUM
 nouveaux	ADJ
 cas	NC
 de	P
@@ -11154,7 +11128,7 @@ Outre	P
 cette	DET
 explosion	NC
 ,	PONCT
-66	DET
+66	DETNUM
 essais	NC
 nucléaires	ADJ
 aériens	ADJ
@@ -11244,7 +11218,7 @@ années	NC
 venir	VINF
 ,	PONCT
 au moins	ADV
-530	DET
+530	DETNUM
 nouveaux	ADJ
 cas	NC
 concernant	VPR
@@ -11574,7 +11548,7 @@ de	P
 seulement	ADV
 .	PONCTU_FORTE
 Les	DET
-deux	ADJNUM
+deux	ADJ
 principaux	ADJ
 partis	NC
 néerlandais	ADJ
@@ -11954,7 +11928,7 @@ la	DET
 majorité	NC
 absolue	ADJ
 avec	P
-24	DET
+24	DETNUM
 sièges	NC
 sur	P
 50	NC
@@ -12102,7 +12076,7 @@ la	DET
 réunification	NC
 souhaitée	VPP
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 parties	NC
 de	P
 l'	DET
@@ -12324,18 +12298,18 @@ le	DET
 gouvernement	NC
 devrait	V
 comprendre	VINF
-12	DET
+12	DETNUM
 membres	NC
 du	DETDU
 parti	NC
 social-démocrate	ADJ
 ,	PONCT
-3	ADJ
+3	DETNUM
 chrétiens	NC
 -	PONCT
 démocrates	NC
 et	CC
-3	DET
+3	DETNUM
 libéraux	NC
 ,	PONCT
 l'	DET
@@ -12405,7 +12379,7 @@ n'	ADV
 est	V
 que	ADV
 de	P
-101	DET
+101	DETNUM
 députés	NC
 sur	P
 200	PRO
@@ -12698,7 +12672,7 @@ Union européenne	NPP
 portant	VPR
 ainsi	ADV
 à	P
-27	ADJ
+27	NC
 l'	DET
 effectif	NC
 des	DETDES
@@ -12715,7 +12689,7 @@ ou	CC
 l'	DET
 autre	PRO
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 pays	NC
 pourrait	V
 toutefois	ADV
@@ -12735,7 +12709,7 @@ l'	DET
 Union	NC
 et	CC
 les	DET
-deux	ADJNUM
+deux	ADJ
 pays	NC
 durant	P
 les	DET
@@ -12932,7 +12906,7 @@ a été	V
 pas	ADV
 trouvé	VPP
 .	PONCTU_FORTE
-Quatre	DET
+Quatre	DETNUM
 cas	NC
 de	P
 poliomyélite	NC
@@ -13459,7 +13433,7 @@ accessible	ADJ
 sur	P
 le	DET
 site	NC
-Web	NPP
+Web	NC
 de	P
 la	DET
 chaîne	NC
@@ -13870,7 +13844,7 @@ commercial	ADJ
 jamais	ADV
 construit	VPP
 (	PONCT
-421	DET
+421	DETNUM
 tonnes	NC
 )	PONCT
 ,	PONCT
@@ -14109,7 +14083,7 @@ basé	VPP
 Schirmeck	NPP
 a	V
 licencié	VPP
-9	DET
+9	DETNUM
 personnes	NC
 et	CC
 leurs	DET
@@ -14414,7 +14388,7 @@ Allen	NPP
 voulait	V
 aussi	ADV
 interdire	VINF
-certains	DETNUM
+certains	DETDES
 livres	NC
 de	P
 Shakespeare	NPP
@@ -14456,14 +14430,14 @@ du	DETDU
 livre	NC
 2005	ADJ
 -	PONCT
-2006	NC
+2006	ADJ
 .	PONCTU_FORTE
 Elle	CLS
 succéde	V
 à	P
 Madrid	NPP
 (	PONCT
-2001	ADJ
+2001	NC
 )	PONCT
 ,	PONCT
 Alexandrie	NPP
@@ -14641,7 +14615,7 @@ déjà	ADV
 l'	CLO
 observer	VINF
 dans	P
-certains	DETNUM
+certains	DETDES
 quartiers	NC
 de	P
 Lomé	NPP
@@ -14704,7 +14678,7 @@ se prononcer	VINF
 pour	P
 un	PRO
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 candidats	NC
 .	PONCTU_FORTE
 Ils	CLS
@@ -14750,7 +14724,7 @@ de	P
 à	P
 534 %	NC
 au cours des	P
-trois	ADJNUM
+trois	ADJ
 premiers	ADJ
 mois	NC
 suivant	P
@@ -14944,13 +14918,13 @@ la	DET
 Constitution	NC
 européenne	ADJ
 avec	P
-311	DET
+311	DETNUM
 voix	NC
 sur	P
 un	DET
 total	NC
 de	P
-330	DET
+330	NC
 .	PONCTU_FORTE
 Ce	DET
 résultat	NC
@@ -15012,7 +14986,7 @@ collaborateur	NC
 de	P
 Jean-Paul II	NPP
 s'	CLR
-occupant	NC
+occupant	VPR
 des	DETDES
 pèlerins	NC
 polonais	ADJ
@@ -15452,13 +15426,9 @@ prévu	VPP
 dans	P
 les	DET
 articles	NC
-L122	NPP
--	PONCT
-5	ADJ
+L122-5	ADJ
 et	CC
-L211	NPP
--	PONCT
-3	NC
+L211-3	ADJ
 du	DETDU
 Code	NC
 de	P
@@ -15564,7 +15534,7 @@ Paris	NPP
 avait	V
 débouté	VPP
 les	DET
-deux	ADJNUM
+deux	ADJ
 plaignants	NC
 (	PONCT
 le	DET
@@ -15647,17 +15617,11 @@ française	ADJ
 en particulier	ADV
 les	DET
 articles	NC
-L122	NPP
--	PONCT
-5	NC
+L122-5	ADJ
 ,	PONCT
-L311	NPP
--	PONCT
-1	ADJ
+L311-1	ADJ
 et	CC
-L311	NPP
--	PONCT
-4	NC
+L311-4	ADJ
 du	DETDU
 Code	NC
 de	P
@@ -15669,9 +15633,7 @@ et	CC
 la	DET
 directive	NC
 européenne	ADJ
-2001/29	ADJ
-/	PONCT
-CE	NC
+2001/29/CE	NC
 du	DETDU
 22 mai 2001	NC
 relative	ADJ
@@ -15679,7 +15641,7 @@ relative	ADJ
 l'	DET
 harmonisation	NC
 de	P
-certains	DETNUM
+certains	DETDES
 aspects	NC
 du	DETDU
 droit	NC
@@ -15879,10 +15841,10 @@ dimanche dernier	NC
 on	CLS
 déplore	V
 au moins	ADV
-22	ADJ
+22	DETNUM
 victimes	NC
 et	CC
-3000	DET
+3000	DETNUM
 réfugiés	NC
 au	P+D
 Bénin	NPP
@@ -16420,10 +16382,10 @@ nouveau	ADJ
 gouvernement	NC
 avait	V
 obtenu	VPP
-334	DET
+334	DETNUM
 voix	NC
 contre	P
-240	DET
+240	NC
 .	PONCTU_FORTE
 Le	DET
 second	ADJ
@@ -16443,7 +16405,7 @@ cabinet	NC
 Berlusconi	NPP
 a	V
 obtenu	VPP
-170	DET
+170	DETNUM
 voix	NC
 contre	P
 117	PRO
@@ -16622,7 +16584,7 @@ libertés	NC
 perdont	V
 les	DET
 élections	NC
-s'	CLR
+s'	CS
 ils	CLS
 se présentent	V
 en	P
@@ -16791,7 +16753,7 @@ non	ADV
 gauche	NC
 recule	V
 de	P
-63	DET
+63	NC
 à	P
 51 %	NC
 ,	PONCT
@@ -16834,7 +16796,7 @@ Sofres	NPP
 a été	V
 réalisé	VPP
 les	DET
-27	ADJ
+27	NC
 et	CC
 28 avril	NC
 à	P
@@ -16849,7 +16811,7 @@ méthode	NC
 des	DETDES
 quotas	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 sondages	NC
 précédents	ADJ
 (	PONCT
@@ -16863,7 +16825,7 @@ enregistré	VPP
 une	DET
 baisse	NC
 de	P
-3	DET
+3	NC
 à	P
 4 points	NC
 du	DETDU
@@ -16891,9 +16853,7 @@ de	P
 la	DET
 BBC	NPP
 (	PONCT
-BBC	NPP
-Radio	NC
-4	ADJ
+BBC Radio 4	NPP
 )	PONCT
 vendredi 29 avril	NC
 ,	PONCT
@@ -17140,7 +17100,7 @@ de	P
 Maastricht	NPP
 puis	CC
 en	P
-2001	ADJ
+2001	NC
 avec	P
 les	DET
 électeurs	NC
@@ -18003,7 +17963,7 @@ par	P
 une	DET
 majorité	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 tiers	NC
 ,	PONCT
 lors d'	P
@@ -18019,7 +17979,7 @@ députés	NC
 Camera	NPP
 Deputaţilor	NPP
 ,	PONCT
-332	DET
+332	DETNUM
 sièges	NC
 )	PONCT
 et	CC
@@ -18028,7 +17988,7 @@ Sénat	NPP
 (	PONCT
 Senat	NPP
 ,	PONCT
-137	DET
+137	DETNUM
 sièges	NC
 )	PONCT
 .	PONCTU_FORTE
@@ -19208,7 +19168,7 @@ monarchie	NC
 britannique	ADJ
 dans	P
 les	DET
-quinze	ADJNUM
+quinze	ADJ
 dernières	ADJ
 années	NC
 ,	PONCT
@@ -19433,16 +19393,14 @@ ce vendredi	NC
 à	P
 La Haye	NPP
 (	PONCT
-200	DET
-000	DET
+200 000	DETNUM
 personnes	NC
 )	PONCT
 et	CC
 à	P
 Utrecht	NPP
 (	PONCT
-350	DET
-000	DET
+350 000	DETNUM
 personnes	NC
 )	PONCT
 .	PONCTU_FORTE
@@ -19465,7 +19423,7 @@ de	P
 dialogue	NC
 dans	P
 les	DET
-douze	ADJNUM
+douze	ADJ
 provinces	NC
 du	DETDU
 royaume	NC
@@ -19560,10 +19518,10 @@ le	DET
 coup	NC
 ,	PONCT
 faisant	VPR
-7	DET
+7	DETNUM
 blessés	NC
 dont	PROREL
-4	DET
+4	DETNUM
 touristes	NC
 étrangers	ADJ
 .	PONCTU_FORTE
@@ -19766,8 +19724,7 @@ selon	P
 lui	PRO
 d'	P
 économiser	VINF
-90	DET
-kg	NC
+90 kg	NC
 de	P
 gaz	NC
 pour	P
@@ -19820,9 +19777,9 @@ cimetière	NC
 par	P
 groupes	NC
 de	P
-10	DET
+10	NC
 à	P
-15	DET
+15	DETNUM
 corps	NC
 .	PONCTU_FORTE
 Une	DET
@@ -20149,7 +20106,7 @@ commune	ADJ
 selon	P
 laquelle	PROREL
 les	DET
-deux	ADJNUM
+deux	ADJ
 parties	NC
 convenaient	V
 de	P
@@ -20162,7 +20119,7 @@ des	DETDES
 hostilités	NC
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 territoires	NC
 et	CC
 d'	P
@@ -20541,13 +20498,13 @@ de	P
 personnes	NC
 arrêtées	ADJ
 (	PONCT
-5	ADJ
+5	NC
 ,	PONCT
-6	ADJ
+6	NC
 ,	PONCT
-11	ADJ
+11	NC
 ou	CC
-12	ADJ
+12	NC
 )	PONCT
 et	CC
 sur	P
@@ -20622,7 +20579,7 @@ samedi 30 avril	NC
 un	DET
 rapport	NC
 de	P
-42	DET
+42	DETNUM
 pages	NC
 donnant	VPR
 leur	DET
@@ -20869,7 +20826,7 @@ militaires	ADJ
 américains	ADJ
 ,	PONCT
 les	DET
-deux	ADJNUM
+deux	ADJ
 délégués	NC
 italiens	ADJ
 refusant	VPR
@@ -20925,8 +20882,7 @@ Il	CLS
 évalue	V
 en outre	ADV
 à	P
-80	DET
-km/h	NC
+80 km/h	NC
 la	DET
 vitesse	NC
 du	DETDU
@@ -21165,7 +21121,7 @@ points	NC
 sur	P
 lesquels	PROREL
 les	DET
-deux	ADJNUM
+deux	ADJ
 parties	NC
 ont	V
 observé	VPP
@@ -21231,13 +21187,11 @@ lundi	NC
 à	P
 18 h	NC
 (	PONCT
-16	DET
-h	NC
-GMT	NPP
+16 h GMT	NPP
 )	PONCT
 »	PONCT
 .	PONCTU_FORTE
-1	DET
+1	DETNUM
 M.	NC
 Calderoli	NPP
 ,	PONCT
@@ -21429,7 +21383,7 @@ de	P
 ce	DET
 texte	NC
 »	PONCT
-1	ADJ
+1	NC
 .	PONCTU_FORTE
 La	DET
 réexamination	NC
@@ -21462,7 +21416,7 @@ Le	DET
 TNP	NPP
 différencie	V
 les	DET
-cinq	ADJNUM
+cinq	ADJ
 puissances	NC
 nucléaires	ADJ
 officielles	ADJ
@@ -21680,7 +21634,7 @@ des	DETDES
 distensions	NC
 entre	P
 les	DET
-cinq	ADJNUM
+cinq	ADJ
 possédant	VPR
 des	DETDES
 armes	NC
@@ -21745,7 +21699,7 @@ alloué	VPP
 au	P+D
 nucléaire	NC
 de	P
-55	DET
+55	NC
 à	P
 20%	NC
 en	P
@@ -21847,7 +21801,7 @@ une	DET
 abstention	NC
 )	PONCT
 des	DETDES
-564	DET
+564	ADJ
 délégués	NC
 présents	ADJ
 .	PONCTU_FORTE
@@ -21966,7 +21920,7 @@ des	DETDES
 voix	NC
 .	PONCTU_FORTE
 Les	DET
-six	ADJNUM
+six	ADJ
 ministres	NC
 auparavant	ADV
 membres	NC
@@ -21992,7 +21946,7 @@ cette	DET
 en	P
 2002	NC
 ,	PONCT
-six	ADJNUM
+six	ADJ
 sont	V
 acquis	VPP
 avec	P
@@ -22105,7 +22059,7 @@ parti	NC
 ,	PONCT
 par	P
 les	DET
-six	ADJNUM
+six	ADJ
 ministres	NC
 FPÖ	NPP
 du	DETDU
@@ -22166,7 +22120,7 @@ parlementaire	ADJ
 fédéral	ADJ
 FPÖ	NPP
 (	PONCT
-13	DET
+13	DETNUM
 députés	NC
 élus	ADJ
 sous	P
@@ -22915,7 +22869,7 @@ de	P
 la	DET
 détention	NC
 de	P
-175	DET
+175	DETNUM
 détenus	NC
 politiques	ADJ
 .	PONCTU_FORTE
@@ -23017,7 +22971,7 @@ organisée	VPP
 à	P
 Dakar	NPP
 du	DETDU
-1	ADJ
+1	NC
 au	P+D
 3 mai 2005	NC
 .	PONCTU_FORTE
@@ -23035,8 +22989,7 @@ Koïchiro	NPP
 Matsuura	NPP
 a	V
 ,	PONCT
-entre	P
-autres	ADJ
+entre autres	ADV
 ,	PONCT
 rappelé	VPP
 l'	DET
@@ -23162,7 +23115,7 @@ bougé	VPP
 La	DET
 France	NPP
 connaît	V
-4	DET
+4	DETNUM
 saisons	NC
 en termes d'	P
 habillement	NC
@@ -23257,7 +23210,7 @@ France	NPP
 Firefox	NPP
 ,	PONCT
 navigateur	NC
-Web	NPP
+Web	NC
 open source	ADJ
 sous	P
 licence	NC
@@ -23516,9 +23469,9 @@ tandis que	CS
 la	DET
 part	NC
 de	P
-marché de Microsoft	NPP
-Internet	NPP
-Explorer	NPP
+marché	NC
+de	P
+Microsoft Internet Explorer	NPP
 ,	PONCT
 qui	PROREL
 a	V
@@ -23562,7 +23515,7 @@ effritée	VPP
 ,	PONCT
 pour	P
 la	DET
-première	ADJ
+première	NC
 ,	PONCT
 ou	CC
 sévèrement	ADV
@@ -23570,7 +23523,7 @@ sévèrement	ADV
 ,	PONCT
 pour	P
 la	DET
-seconde	ADJ
+seconde	NC
 )	PONCT
 .	PONCTU_FORTE
 D'	DET
@@ -23601,8 +23554,7 @@ de	P
 juin	NC
 ,	PONCT
 tandis qu'	CS
-Internet	NPP
-Explorer	NPP
+Internet Explorer	NPP
 réunirait	V
 toujours	ADV
 ,	PONCT
@@ -23619,7 +23571,7 @@ personnes	NC
 surfant	VPR
 sur	P
 le	DET
-Web	NPP
+Web	NC
 .	PONCTU_FORTE
 Le	DET
 gouvernement	NC
@@ -23722,7 +23674,7 @@ absence	NC
 de	P
 faute	NC
 de la part des	P+D
-douze	ADJNUM
+douze	ADJ
 militaires	NC
 américains	ADJ
 impliqués	VPP
@@ -23777,7 +23729,7 @@ italienne	ADJ
 ,	PONCT
 dont	PROREL
 les	DET
-deux	ADJNUM
+deux	ADJ
 enquêteurs	NC
 dépéchés	VPP
 sur	P
@@ -23816,7 +23768,7 @@ Américains	NC
 Les	DET
 observations	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 experts	NC
 italiens	ADJ
 ,	PONCT
@@ -23854,7 +23806,7 @@ d'	P
 une	DET
 longueur	NC
 de	P
-67	DET
+67	DETNUM
 pages	NC
 ,	PONCT
 contredit	V
@@ -23877,7 +23829,7 @@ américain	ADJ
 publié	VPP
 sur	P
 le	DET
-Web	NPP
+Web	NC
 dans	P
 une	DET
 version	NC
@@ -23892,7 +23844,7 @@ protéger	VINF
 l'	DET
 identité	NC
 des	DETDES
-douze	ADJNUM
+douze	ADJ
 militaires	NC
 américains	ADJ
 mis en cause	V
@@ -24266,7 +24218,7 @@ importantes	ADJ
 L'	DET
 une	PRO
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 grandes	ADJ
 fédérations	NC
 françaises	ADJ
@@ -24344,17 +24296,15 @@ sont	V
 très	ADV
 variables	ADJ
 .	PONCTU_FORTE
-Sify	NPP
-News	NPP
-parles	V
+Sify News	NPP
+parle	V
 de	P
-15	DET
+15	DETNUM
 morts	NC
 et	CC
 de	P
-près	P
-de	P
-40	DET
+près de	ADV
+40	DETNUM
 blessés	NC
 ,	PONCT
 tandis que	CS
@@ -24366,7 +24316,7 @@ nettement	ADV
 plus	ADV
 élevés	ADJ
 :	PONCT
-27	DET
+27	DETNUM
 morts	NC
 et	CC
 des	DETDES
@@ -24524,7 +24474,7 @@ locaux	ADJ
 qui	PROREL
 se livrés	VPP
 sont	V
-depuis	P
+depuis	ADV
 à	P
 une	DET
 guerre	NC
@@ -24849,8 +24799,7 @@ par	P
 M.	NC
 Sharon	NPP
 .	PONCTU_FORTE
-Avant	P
-de	P
+Avant de	P
 devenir	VINF
 une	DET
 personnalité	NC
@@ -25044,11 +24993,11 @@ Union	NC
 soviétique	ADJ
 ,	PONCT
 obtenant	VPR
-7	DET
+7	DETNUM
 sièges	NC
 (	PONCT
 sur	P
-120	DET
+120	NC
 )	PONCT
 à	P
 la	DET
@@ -25128,7 +25077,7 @@ dépassé	VPP
 des	DETDES
 voix	NC
 (	PONCT
-2	DET
+2	DETNUM
 sièges	NC
 à	P
 la	DET
@@ -25656,11 +25605,10 @@ Il	CLS
 y	CLO
 aurait	V
 eu	VPP
-de	P
 entre	P
-50	DET
+50	DETNUM
 et	CC
-100	DET
+100	DETNUM
 morts	NC
 selon	P
 les	DET
@@ -25723,7 +25671,7 @@ considéré	VPP
 comme	P
 étant	VPR
 numéro	NC
-trois	ADJNUM
+trois	ADJ
 d'	P
 Al-Quaida	NPP
 avait été	V
@@ -25796,7 +25744,7 @@ comme	P
 l'	DET
 organisateur	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 tentatives	NC
 d'	P
 attentats	NC
@@ -25871,14 +25819,14 @@ suicide	NC
 a	V
 tué	VPP
 environ	ADV
-50	DET
+50	DETNUM
 personnes	NC
 et	CC
 en	CLO
 a	V
 blessé	VPP
 au moins	ADV
-150	ADJ
+150	DETNUM
 à	P
 Erbil	NPP
 ,	PONCT
@@ -25909,10 +25857,10 @@ qui	PROREL
 a	V
 fait	VPP
 au moins	ADV
-25	DET
+25	DETNUM
 morts	NC
 et	CC
-30	DET
+30	DETNUM
 blessés	NC
 .	PONCTU_FORTE
 Il	CLS
@@ -26144,7 +26092,7 @@ du	DETDU
 communiqué	NC
 commun	ADJ
 des	DETDES
-quatre	ADJNUM
+quatre	ADJ
 syndicats	NC
 enseignants	NC
 Le	DET
@@ -26391,8 +26339,7 @@ là	ADV
 ,	PONCT
 estimant	VPR
 ,	PONCT
-entre	P
-autres	ADJ
+entre autres	ADV
 ,	PONCT
 que	CS
 les	DET
@@ -26430,11 +26377,7 @@ prévue	VPP
 par	P
 l'	DET
 article	NC
-L	NPP
--	PONCT
-212	DET
--	PONCT
-16	NC
+L-212-16	NC
 du	DETDU
 code	NC
 du	DETDU
@@ -26550,7 +26493,7 @@ dans	P
 une	DET
 fourchette	NC
 de	P
-350	DET
+350	NC
 à	P
 500 millions	DET
 de	P
@@ -26855,7 +26798,7 @@ la	DET
 pandémie	NC
 dans	P
 les	DET
-82	DET
+82	ADJ
 pays	NC
 où	PROREL
 elle	CLS
@@ -26890,7 +26833,7 @@ contre	P
 la	DET
 maladie	NC
 .	PONCTU_FORTE
-1	DET
+1	NC
 FOREIGN	ET
 (	PONCT
 RBM	NPP
@@ -27260,7 +27203,7 @@ Georges Feydeau	NPP
 Elle	CLS
 tint	V
 également	ADV
-quelques	DET
+quelques	DETDES
 rôles	NC
 remarqués	VPP
 en dehors du	P+D
@@ -27411,8 +27354,7 @@ de	P
 Clélia	NPP
 )	PONCT
 et	CC
-Adorables	NPP
-créatures	NC
+Adorables créatures	NPP
 (	PONCT
 1952	NC
 )	PONCT
@@ -27427,8 +27369,7 @@ elle	CLS
 avait	V
 fait	VPP
 ,	PONCT
-entre	P
-autres	ADJ
+entre autres	ADV
 ,	PONCT
 des	DETDES
 apparitions	NC
@@ -27871,7 +27812,7 @@ Alaska	NPP
 .	PONCTU_FORTE
 Bob Hunter	NPP
 et	CC
-11	ADJ
+11	DETNUM
 de	P
 ses	DET
 amis	NC
@@ -28226,7 +28167,7 @@ de	P
 Vancouver	NPP
 .	PONCTU_FORTE
 En	P
-2001	ADJ
+2001	NC
 ,	PONCT
 il	CLS
 s' présenté	VPP
@@ -28710,7 +28651,7 @@ France	NPP
 en	P
 Allemagne	NPP
 ,	PONCT
-tout comme	P
+tout comme	CC
 en	P
 Irlande	NPP
 ,	PONCT
@@ -28990,14 +28931,14 @@ tory	ADJ
 conservateur	ADJ
 ,	PONCT
 la	DET
-première	ADJ
+première	NC
 est	V
 de	P
 voter	VINF
 tory	ADV
 ,	PONCT
 la	DET
-deuxième	ADJ
+deuxième	NC
 est	V
 de	P
 rester	VINF
@@ -29006,7 +28947,7 @@ la	DET
 maison	NC
 ,	PONCT
 la	DET
-troisième	ADJ
+troisième	NC
 est	V
 de	P
 voter	VINF
@@ -29125,8 +29066,7 @@ et	CC
 la	DET
 criminalité	NC
 ,	PONCT
-tout	ADV
-comme	P
+tout comme	CC
 sur	P
 le	DET
 manque	NC
@@ -30037,9 +29977,7 @@ de	P
 ses	DET
 vœux	NC
 .	PONCTU_FORTE
-Quelle	DETWH
-que	PROREL
-soit	VS
+Quelle que soit	P
 l'	DET
 issue	NC
 de	P
@@ -30139,7 +30077,7 @@ eu lieu	VPP
 le	DET
 23 décembre 2004	NC
 dans	P
-26	DET
+26	DETNUM
 localités	NC
 de	P
 Cisjordanie	NPP
@@ -30152,7 +30090,7 @@ phase	NC
 le	DET
 16 janvier 2005	NC
 dans	P
-10	DET
+10	DETNUM
 localités	NC
 de	P
 la	DET
@@ -30179,7 +30117,7 @@ plus	ADV
 ,	PONCT
 répartis	VPP
 dans	P
-76	DET
+76	DETNUM
 circonscriptions	NC
 de	P
 Cisjordanie	NPP
@@ -30195,7 +30133,7 @@ et	CC
 Salfit	NPP
 )	PONCT
 et	CC
-8	ADJ
+8	DETNUM
 dans	P
 la	DET
 bande	NC
@@ -30216,7 +30154,7 @@ Lahya	NPP
 candidats	NC
 -	PONCT
 dont	PROREL
-399	DET
+399	DETNUM
 femmes	NC
 -	PONCT
 concourrent	V
@@ -30226,13 +30164,13 @@ scrutin	NC
 destiné	VPP
 à	P
 élire	VINF
-906	DET
+906	DETNUM
 conseillers	NC
 municipaux	ADJ
 .	PONCTU_FORTE
 Hormis	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 scrutins	NC
 partiels	ADJ
 de	P
@@ -30466,7 +30404,7 @@ mouvement	NC
 islamiste	ADJ
 avait	V
 remporté	VPP
-75	ADJ
+75	NC
 des	DETDES
 118	ADJ
 sièges	NC
@@ -30474,12 +30412,12 @@ sièges	NC
 pourvoir	VINF
 ,	PONCT
 le	DET
-Ftah	NPP
+Fatah	NPP
 n'	ADV
 en	CLO
 gagnant	VPR
 que	CS
-39	ADJ
+39	NC
 et	CC
 les	DET
 4	NC
@@ -30498,7 +30436,7 @@ pris	VPP
 le	DET
 contrôle	NC
 de	P
-7	DET
+7	DETNUM
 conseils	NC
 municipaux	ADJ
 dans	P
@@ -30549,7 +30487,7 @@ plus	ADV
 probablement	ADV
 ,	PONCT
 les	DET
-deux	ADJNUM
+deux	ADJ
 formations	NC
 y	CLO
 avaient	V
@@ -30808,7 +30746,7 @@ l'	DET
 Alfred P. Murrah	NPP
 Building	NPP
 où	PROREL
-168	DET
+168	DETNUM
 personnes	NC
 trouvèrent	V
 la	DET
@@ -31036,7 +30974,7 @@ M.	NC
 Rohrabacher	NPP
 réfléchit	V
 depuis	P
-quelques	DET
+quelques	DETDES
 temps	NC
 déjà	ADV
 sur	P
@@ -31414,9 +31352,7 @@ d'	P
 extradition	NC
 simplifiée	ADJ
 .	PONCTU_FORTE
-Bien	ADV
-avant	P
-de	P
+Bien avant de	P
 devenir	VINF
 ministre	NC
 ,	PONCT
@@ -31591,7 +31527,7 @@ au	P+D
 Royaume-Uni	NPP
 ,	PONCT
 une	DET
-première	ADJ
+première	NC
 pour	P
 un	DET
 Premier ministre	NC
@@ -31613,9 +31549,7 @@ des	DETDES
 suffrages	NC
 exprimés	VPP
 (	PONCT
--	P
-5	DET
-%	NC
+-5 %	NC
 )	PONCT
 .	PONCTU_FORTE
 Les	DET
@@ -31635,9 +31569,7 @@ libéraux	NC
 démocrates	NC
 22%	NC
 (	PONCT
-+	P
-4	DET
-%	NC
++4 %	NC
 )	PONCT
 .	PONCTU_FORTE
 Les	DET
@@ -31731,14 +31663,14 @@ une	DET
 majorité	NC
 absolue	ADJ
 de	P
-355	DET
+355	DETNUM
 députés	NC
 (	PONCT
 -	P
 47	NC
 )	PONCT
 sur	P
-646	DET
+646	DETNUM
 sièges	NC
 .	PONCTU_FORTE
 Les	DET
@@ -31749,7 +31681,7 @@ conservateurs	NC
 de	P
 Michael Howard	NPP
 auront	V
-197	DET
+197	DETNUM
 MPs	NC
 (	PONCT
 FOREIGN	ET
@@ -31757,8 +31689,7 @@ ou	CC
 députés	NC
 )	PONCT
 (	PONCT
-+	ADV
-33	ADJ
++33	NC
 )	PONCT
 et	CC
 les	DET
@@ -31767,13 +31698,13 @@ libéraux	NC
 démocrates	NC
 progressent	V
 de	P
-51	DET
+51	NC
 à	P
-62	DET
+62	DETNUM
 sièges	NC
 .	PONCTU_FORTE
 Les	DET
-treize	ADJNUM
+treize	ADJ
 sièges	NC
 restants	ADJ
 sont	V
@@ -31882,7 +31813,7 @@ de	P
 1997	NC
 et	CC
 de	P
-2001	ADJ
+2001	NC
 .	PONCTU_FORTE
 Le	DET
 leader	NC
@@ -32213,7 +32144,7 @@ et	CC
 demi	NC
 ,	PONCT
 selon	P
-certains	DETNUM
+certains	DETDES
 politologues	NC
 .	PONCTU_FORTE
 L'	DET
@@ -32245,10 +32176,7 @@ succession	NC
 de	P
 Tony Blair	NPP
 au	P+D
-10	ADJ
-,	PONCT
-Downing	NPP
-Street	NPP
+10, Downing Street	NPP
 .	PONCTU_FORTE
 Le	DET
 Royaume-Uni	NPP
@@ -32328,7 +32256,7 @@ pour	P
 le	DET
 Fatah	NPP
 ,	PONCT
-28	ADJ
+28	NC
 pour	P
 le	DET
 Hamas	NPP
@@ -32394,10 +32322,10 @@ la majorité des	DET
 suffrages	NC
 et	CC
 contrôlons	V
-46	DET
+46	DETNUM
 municipalités	NC
 sur	P
-78	DET
+78	NC
 qui	PROREL
 étaient	V
 en	P
@@ -32482,7 +32410,7 @@ L'	DET
 ,	PONCT
 qui	PROREL
 concernait	V
-84	DET
+84	DETNUM
 circonscriptions	NC
 à	P
 Gaza	NPP
@@ -32492,7 +32420,7 @@ Cisjordanie	NPP
 ,	PONCT
 à	P
 mobilisé	ADJ
-2700	DET
+2700	DETNUM
 policers	NC
 pour	P
 garantir	VINF
@@ -32507,7 +32435,7 @@ vote	NC
 Les	DET
 candidats	NC
 aux	P+D
-906	DET
+906	DETNUM
 postes	NC
 de	P
 conseiller	NC
@@ -32519,10 +32447,10 @@ de	P
 2 519	NC
 -	PONCT
 dont	PROREL
-399	DET
+399	DETNUM
 femmes	NC
 .	PONCTU_FORTE
-80	DET
+80	DETNUM
 élus	NC
 européens	ADJ
 ,	PONCT
@@ -32694,7 +32622,7 @@ la	DET
 participation	NC
 de	P
 ces	DET
-deux	ADJNUM
+deux	ADJ
 «	PONCT
 Sages	ADJ
 »	PONCT
@@ -33236,7 +33164,7 @@ non	ADV
 au	P+D
 référendum	NC
 .	PONCTU_FORTE
-1	ADJ
+1	NC
 Certains	DET
 juristes	NC
 font	V
@@ -33256,11 +33184,8 @@ article	NC
 4	ADJ
 du	DETDU
 décret	NC
-n	NC
-°	NC
-59	DET
--	PONCT
-1292	NC
+n°	NC
+59-1292	NC
 du	DETDU
 13 novembre 1959	NC
 sur	P
@@ -33424,7 +33349,7 @@ officiel	ADJ
 était	V
 compliqué	VPP
 par	P
-quelques	DET
+quelques	DETDES
 péripéties	NC
 politiques	ADJ
 récentes	ADJ
@@ -33644,7 +33569,7 @@ Kwaśniewski	NPP
 ,	PONCT
 informé	VPP
 depuis	P
-quelques	DET
+quelques	DETDES
 temps	NC
 des	DETDES
 intentions	NC
@@ -33683,7 +33608,7 @@ Europe	NPP
 ,	PONCT
 se réunissant	VPR
 les	DET
-16	ADJ
+16	NC
 et	CC
 17 mai	NC
 à	P
@@ -33717,14 +33642,14 @@ date	NC
 des	DETDES
 élections législatives	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 attentats	NC
 kamikaze	ADJ
 sanglants	ADJ
 ont	V
 fait	VPP
 au moins	ADV
-70	DET
+70	DETNUM
 morts	NC
 dans	P
 la	DET
@@ -33757,7 +33682,7 @@ car	NC
 de	P
 policiers	NC
 .	PONCTU_FORTE
-Huit	DET
+Huit	DETNUM
 policiers	NC
 et	CC
 quatre	DETNUM
@@ -33781,9 +33706,7 @@ tard	ADV
 vers	P
 15 heures	NC
 (	PONCT
-10	DET
-heures	NC
-GMT	NPP
+10 heures GMT	NPP
 )	PONCT
 ,	PONCT
 dans	P
@@ -33806,7 +33729,7 @@ marché	NC
 ,	PONCT
 faisant	VPR
 au moins	ADV
-58	ADJ
+58	DETNUM
 morts	NC
 ,	PONCT
 selon	P
@@ -33833,7 +33756,7 @@ l'	DET
 Irak	NPP
 ,	PONCT
 tuant	VPR
-32	DET
+32	DETNUM
 personnes	NC
 .	PONCTU_FORTE
 Depuis	P
@@ -33852,7 +33775,7 @@ a	V
 une	DET
 semaine	NC
 ,	PONCT
-250	DET
+250	DETNUM
 personnes	NC
 au moins	ADV
 ont été	V
@@ -34277,7 +34200,7 @@ Limousine	NPP
 »	PONCT
 ,	PONCT
 avec	P
-5	DET
+5	DETNUM
 portes	NC
 et	CC
 ayant	VPR
@@ -34578,7 +34501,7 @@ d'	P
 Edison	NPP
 ,	PONCT
 numéro	NC
-deux	ADJNUM
+deux	ADJ
 de	P
 l'	DET
 électricité	NC
@@ -34627,7 +34550,7 @@ Edison	NPP
 .	PONCTU_FORTE
 Mais	CC
 depuis	ADV
-2001	ADJ
+2001	NC
 ,	PONCT
 le	DET
 gouvernement	NC
@@ -34949,8 +34872,7 @@ prenant en charge	VPR
 la	DET
 moitié	NC
 (	PONCT
-40	DET
-%	NC
+40 %	NC
 )	PONCT
 de	P
 l'	DET
@@ -34961,8 +34883,7 @@ de	P
 l'	DET
 IEB	NPP
 (	PONCT
-80	DET
-%	NC
+80 %	NC
 )	PONCT
 ,	PONCT
 détenue	VPP
@@ -35075,7 +34996,7 @@ troisième	ADJ
 gouvernement	NC
 .	PONCTU_FORTE
 Sur	P
-23	DET
+23	DETNUM
 membres	NC
 du	DETDU
 gouvernement	NC
@@ -35269,7 +35190,7 @@ politique	NC
 de	P
 "	PONCT
 tolérance	NC
-zéro	ADJNUM
+zéro	ADJ
 "	PONCT
 à l'égard de	P
 tout	DET
@@ -35444,8 +35365,7 @@ devait	V
 composé	VPP
 d'	P
 environ	ADV
-22	DET
-kg	NC
+22 kg	NC
 d'	P
 explosifs	NC
 ,	PONCT
@@ -35493,7 +35413,7 @@ une	DET
 touriste	NC
 srilankaise	ADJ
 et	CC
-seize	ADJNUM
+seize	ADJ
 blessés	NC
 ,	PONCT
 a	V
@@ -35747,7 +35667,7 @@ personne	NC
 un	DET
 total	NC
 de	P
-22	DET
+22	DETNUM
 blessés	NC
 dont	PROREL
 5	PRO
@@ -35795,14 +35715,13 @@ explosifs	NC
 sont	V
 allées	NC
 de	P
-20	DET
+20	NC
 à	P
-25	DET
-kg	NC
+25 kg	NC
 en	P
 passant	NC
 par	P
-22	DET
+22	NC
 ...	PONCT
 Une	DET
 grande	ADJ
@@ -36689,7 +36608,7 @@ prôné	VPP
 la	DET
 «	PONCT
 tolérance	NC
-zéro	ADJNUM
+zéro	ADJ
 »	PONCT
 face aux	P+D
 pays	NC
@@ -36866,8 +36785,7 @@ et	CC
 la	DET
 Russie	NPP
 .	PONCTU_FORTE
-Afin	P
-de	P
+Afin de	P
 débloquer	VINF
 la	DET
 situation	NC
@@ -37212,7 +37130,7 @@ ce	DET
 genre	NC
 avait	V
 tué	VPP
-28	DET
+28	DETNUM
 passagers	NC
 dans	P
 un	DET
@@ -37338,7 +37256,7 @@ la	DET
 MS-13 National Gang Task Force	NPP
 »	PONCT
 .	PONCTU_FORTE
-Trois	DET
+Trois	DETNUM
 attentats	NC
 meurtriers	ADJ
 ont été	V
@@ -37376,11 +37294,11 @@ Myanmar	NPP
 a	V
 fait état	VPP
 de	P
-11	DET
+11	DETNUM
 morts	NC
 et	CC
 de	P
-162	DET
+162	DETNUM
 blessés	NC
 ,	PONCT
 tandis que	CS
@@ -37421,18 +37339,13 @@ commerciaux	ADJ
 très	ADV
 fréquentés	ADJ
 (	PONCT
-Junction	NPP
--	PONCT
-8	ADJ
-City	NPP
-Mart	NPP
+Junction-8 City Mart	NPP
 et	CC
 Dagon Center	NPP
 )	PONCT
 ainsi qu'	CC
 au	P+D
-Yangon	NPP
-Trade Center	NPP
+Yangon Trade Center	NPP
 (	PONCT
 où	PROREL
 se tenait	V
@@ -37526,7 +37439,7 @@ au	P+D
 régime	NC
 .	PONCTU_FORTE
 Les	DET
-trois	ADJNUM
+trois	ADJ
 mouvements	NC
 de	P
 guérilla	NC
@@ -37708,10 +37621,10 @@ selon	P
 les	DET
 autorités	NC
 ,	PONCT
-2	DET
+2	DETNUM
 morts	NC
 et	CC
-13	DET
+13	DETNUM
 blessés	NC
 ,	PONCT
 toutes	ADJ
@@ -37962,7 +37875,7 @@ une	DET
 au	P+D
 lieu	NC
 de	P
-6	DET
+6	NC
 dans	P
 la	DET
 précédente	ADJ
@@ -38221,10 +38134,10 @@ le	DET
 ,	PONCT
 avant de	P
 s'entretenir	VINF
-quelques	DET
+quelques	DETDES
 instants	NC
 avec	P
-quelques	DET
+quelques	DETDES
 personnalités	NC
 politiques	ADJ
 venues	VPP
@@ -38436,14 +38349,14 @@ veille	NC
 ,	PONCT
 à l'issue de	P
 laquelle	PROREL
-13	DET
+13	DETNUM
 évêques	NC
 (	PONCT
 sur	P
 17	NC
 )	PONCT
 et	CC
-25	DET
+25	DETNUM
 archimandrites	NC
 ont	V
 contresigné	VPP
@@ -38654,7 +38567,7 @@ patriarche	NC
 ,	PONCT
 élu	VPP
 en	P
-2001	ADJ
+2001	NC
 ,	PONCT
 jusqu'en	P
 2004	NC
@@ -38912,7 +38825,7 @@ serait	V
 une	DET
 majorité	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 tiers	NC
 des	DETDES
 dignitaires	NC
@@ -38956,7 +38869,7 @@ patriarcat	NC
 ,	PONCT
 où	PROREL
 les	DET
-deux	ADJNUM
+deux	ADJ
 camps	NC
 campent	V
 ,	PONCT
@@ -39004,7 +38917,7 @@ d'	P
 immeubles	NC
 dans	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 parties	NC
 de	P
 Jérusalem	NPP
@@ -39678,7 +39591,7 @@ Berlusconi	NPP
 devait	V
 fédérer	VINF
 les	DET
-quatre	ADJNUM
+quatre	ADJ
 partis	NC
 actuellement	ADV
 présents	ADJ
@@ -39931,7 +39844,7 @@ place	NC
 d'	P
 honneur	NC
 lors des	P+D
-cinq	ADJNUM
+cinq	ADJ
 manifestations	NC
 par	P
 lesquelles	PROREL
@@ -40800,7 +40713,7 @@ plus	ADV
 que	CS
 prévue	VPP
 (	PONCT
-66	DET
+66	DETNUM
 sièges	NC
 au-dessus de	P
 la	DET
@@ -40813,7 +40726,7 @@ sur	P
 au	P+D
 lieu	NC
 de	P
-161	DET
+161	DETNUM
 sièges	NC
 dans	P
 la	DET
@@ -40845,9 +40758,7 @@ et	CC
 par conséquent	ADV
 ,	PONCT
 au	P+D
-10	ADJ
-Downing	NPP
-Street	NPP
+10 Downing Street	NPP
 (	PONCT
 résidence	NC
 du	DETDU
@@ -40910,7 +40821,7 @@ entretiens	NC
 il	CLS
 ressort	V
 que	CS
-16	ADJ
+16	NC
 des	DETDES
 32	ADJ
 parlementaires	NC
@@ -40944,7 +40855,7 @@ un an	NC
 tandis que	CS
 les	DET
 12	ADJ
-autres	ADJ
+autres	NC
 escompteraient	V
 un	DET
 délai	NC
@@ -40953,7 +40864,7 @@ dépassant	VPR
 pas	ADV
 deux ans	NC
 .	PONCTU_FORTE
-20	DET
+20	DETNUM
 parlementaires	NC
 (	PONCT
 sur	P
@@ -40992,7 +40903,7 @@ Finances	NC
 )	PONCT
 ,	PONCT
 tandis que	CS
-2	ADJ
+2	NC
 ont	V
 préféré	VPP
 ne	ADV
@@ -41103,7 +41014,7 @@ Affaires	NC
 de	P
 1997	NC
 à	P
-2001	ADJ
+2001	NC
 puis	CC
 leader	NC
 de	P
@@ -41115,7 +41026,7 @@ et	CC
 Lord	NPP
 FOREIGN	ET
 de	P
-2001	ADJ
+2001	NC
 jusqu'à	P
 sa	DET
 démission	NC
@@ -41712,7 +41623,7 @@ se risque	V
 penser	VINF
 que	CS
 les	DET
-deux	ADJNUM
+deux	ADJ
 camps	NC
 pourraient	V
 chercher	VINF
@@ -41740,7 +41651,7 @@ différer	VINF
 la	DET
 libération	NC
 de	P
-400	DET
+400	DETNUM
 prisonniers	NC
 palestiniens	ADJ
 ,	PONCT
@@ -42009,7 +41920,7 @@ prévoyait	V
 la	DET
 libération	NC
 de	P
-900	DET
+900	DETNUM
 prisonniers	NC
 -	PONCT
 dont	PROREL
@@ -42361,7 +42272,7 @@ mais	CC
 également	ADV
 pour	P
 désigner	VINF
-85	DET
+85	DETNUM
 sièges	NC
 restants	ADJ
 à	P
@@ -42488,7 +42399,7 @@ position	NC
 avec	P
 16 %	NC
 .	PONCTU_FORTE
-Huit	DET
+Huit	DETNUM
 autres	ADJ
 candidats	NC
 s' partagés	VPP
@@ -43029,7 +42940,7 @@ peu de	DET
 plutonium	NC
 dissous	VPP
 dans	P
-de	P
+de	DETDE
 l'	DET
 acide	ADJ
 nitrique	NC
@@ -43186,7 +43097,7 @@ seul	ADJ
 pour	P
 produire	VINF
 au moins	ADV
-dix	ADJNUM
+dix	ADJ
 bombes	NC
 nucléaires	ADJ
 ,	PONCT
@@ -43356,7 +43267,7 @@ notamment	ADV
 logistique	NC
 prochainement	ADV
 .	PONCTU_FORTE
-Cinq	DET
+Cinq	DETNUM
 chefs	NC
 d'	P
 entreprise	NC
@@ -43495,7 +43406,7 @@ générale	ADJ
 ,	PONCT
 où	PROREL
 voteront	V
-561	DET
+561	DETNUM
 personnes	NC
 qualifiées	VPP
 de	P
@@ -43505,7 +43416,7 @@ actifs	ADJ
 »	PONCT
 .	PONCTU_FORTE
 Les	DET
-cinq	ADJNUM
+cinq	ADJ
 candidats	NC
 sont	V
 ,	PONCT
@@ -44081,7 +43992,7 @@ d'	P
 âpres	ADJ
 »	PONCT
 par	P
-certains	DETNUM
+certains	DETDES
 observateurs	NC
 ,	PONCT
 entre	P
@@ -44422,7 +44333,7 @@ des	DETDES
 Nations unies	NPP
 par	P
 les	DET
-trois	ADJNUM
+trois	ADJ
 pays	NC
 de	P
 la	DET
@@ -44689,7 +44600,7 @@ Iran	NPP
 FOREIGN	ET
 )	PONCT
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 responsables	NC
 de	P
 Radio	NC
@@ -45509,7 +45420,7 @@ labellisées	ADJ
 »	PONCT
 .	PONCTU_FORTE
 Les	DET
-sept	ADJNUM
+sept	ADJ
 communes	NC
 ont	V
 confié	VPP
@@ -45559,7 +45470,7 @@ préconisé	VPP
 l'	DET
 annulation	NC
 des	DETDES
-sept	ADJNUM
+sept	ADJ
 arrêtés	VPP
 anti-	PREF
 OGM	NPP
@@ -45591,7 +45502,7 @@ OGM	NPP
 L'	DET
 avocate	NC
 des	DETDES
-sept	ADJNUM
+sept	ADJ
 communes	NC
 a	V
 ,	PONCT
@@ -45671,7 +45582,7 @@ consultation	NC
 nationale	ADJ
 effectuée	VPP
 du	DETDU
-4	ADJ
+4	NC
 au	P+D
 18 avril	NC
 ,	PONCT
@@ -45684,7 +45595,7 @@ année	NC
 une	DET
 autorisation	NC
 pour	P
-11	DET
+11	DETNUM
 nouveaux	ADJ
 essais	NC
 de	P
@@ -45966,7 +45877,7 @@ La	DET
 Corée du Sud	NPP
 est	V
 la	DET
-première	ADJ
+première	NC
 à	P
 s'inquiéter	VINF
 de	P
@@ -45982,7 +45893,7 @@ des	DETDES
 mots	NC
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 parties	NC
 .	PONCTU_FORTE
 Étant	VPR
@@ -46158,7 +46069,7 @@ la	DET
 même	ADJ
 date	NC
 ,	PONCT
-50	DET
+50	DETNUM
 grévistes	NC
 de	P
 la	DET
@@ -46211,7 +46122,7 @@ par	P
 crainte	NC
 d'	P
 avoir	VINF
-50	DET
+50	DETNUM
 morts	NC
 sur	P
 les	DET
@@ -46966,8 +46877,7 @@ déplacé	VPP
 à	P
 Dijon	NPP
 .	PONCTU_FORTE
-Neuf	DET
-Telecom	NPP
+Neuf Telecom	NPP
 et	CC
 Cegetel	NPP
 ont	V
@@ -46977,7 +46887,7 @@ fusion	NC
 mercredi 11 mai	NC
 .	PONCTU_FORTE
 Les	DET
-deux	ADJNUM
+deux	ADJ
 sociétés	NC
 de	P
 télécommunications	NC
@@ -47003,7 +46913,7 @@ de	P
 la	DET
 discordance	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 partenaires	NC
 sur	P
 le	DET
@@ -47018,15 +46928,13 @@ la	DET
 nouvelle	ADJ
 société	NC
 .	PONCTU_FORTE
-Neuf	DET
-Telecom	NPP
+Neuf Telecom	NPP
 prendra	V
 la	DET
 majeure	ADJ
 partie	NC
 de	P
-Neuf	DET
-Cegetel	NC
+Neuf Cegetel	NPP
 ,	PONCT
 ses	DET
 actionnaires	NC
@@ -47104,7 +47012,7 @@ l'	DET
 actuel	ADJ
 PDG	NC
 de	P
-Neuf	DET
+Neuf	NPP
 ,	PONCT
 Jacques Veyrat	NPP
 ,	PONCT
@@ -47112,15 +47020,14 @@ prendra	V
 la	DET
 tête	NC
 de	P
-Neuf	DET
-Cegetel	NC
+Neuf Cegetel	NPP
 .	PONCTU_FORTE
 La	DET
 fusion	NC
 presente	ADJ
 pour	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 partenaires	NC
 des	DETDES
 avantages	NC
@@ -47134,7 +47041,7 @@ Pouvant	VPR
 s'appuyer	VINF
 sur	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 infrastructures	NC
 ADSL	NPP
 qui	PROREL
@@ -47215,8 +47122,7 @@ fixe	ADJ
 en	P
 France	NPP
 .	PONCTU_FORTE
-Neuf	DET
-Cegetel	NC
+Neuf Cegetel	NPP
 pourra	V
 également	ADV
 compter	VINF
@@ -47251,7 +47157,7 @@ redoutent	V
 la	DET
 suppression	NC
 de	P
-1000	DET
+1000	DETNUM
 emplois	NC
 (	PONCT
 sur	P
@@ -47261,7 +47167,7 @@ sur	P
 Les	DET
 pertes	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 opérateurs	NC
 séparément	ADV
 constituent	V
@@ -47271,8 +47177,7 @@ l'	DET
 année	NC
 passée	ADJ
 ;	PONCT
-Neuf	DET
-Cegetel	NC
+Neuf Cegetel	NPP
 prévoit	V
 l'	DET
 inversion	NC
@@ -47297,8 +47202,7 @@ opérateurs	NC
 étrangers	ADJ
 historiques	ADJ
 (	PONCT
-Club	NC
-Internet	NPP
+Club Internet	NPP
 de	P
 la	DET
 Deutsche Telekom	NPP
@@ -47318,9 +47222,7 @@ marché	NC
 constamment	ADV
 croissant	ADJ
 (	PONCT
-+	ADV
-100	DET
-%	NC
++100 %	NC
 l'	DET
 année	NC
 passée	ADJ
@@ -47475,7 +47377,7 @@ France	NPP
 En effet	ADV
 ,	PONCT
 entre	P
-6	DET
+6	NC
 et	CC
 12 %	NC
 de	P
@@ -47640,7 +47542,7 @@ moins	ADV
 une	DET
 voix	NC
 (	PONCT
-182	DET
+182	DETNUM
 voix	NC
 sur	P
 183	NC
@@ -48178,7 +48080,7 @@ des	DETDES
 groupes	NC
 catholiques	ADJ
 .	PONCTU_FORTE
-22	DET
+22	DETNUM
 personnes	NC
 ,	PONCT
 pour la plupart	ADV
@@ -48384,17 +48286,17 @@ par	P
 une	DET
 majorité	NC
 de	P
-569	DET
+569	NC
 «	PONCT
 oui	ADV
 »	PONCT
 contre	P
-23	DET
+23	NC
 «	PONCT
 non	ADV
 »	PONCT
 et	CC
-2	ADJ
+2	DETNUM
 abstentions	NC
 .	PONCTU_FORTE
 La	DET
@@ -48402,10 +48304,10 @@ majorité	NC
 requise	ADJ
 était	V
 de	P
-396	DET
+396	NC
 soit	CC
 les	DET
-deux	ADJNUM
+deux	ADJ
 tiers	NC
 de	P
 l'	DET
@@ -48793,7 +48695,7 @@ déclarer	VINF
 leurs	DET
 revenus	NC
 par	P
-Internet	NPP
+Internet	NC
 jusqu'à	P
 minuit	NC
 ,	PONCT
@@ -49624,7 +49526,7 @@ plusieurs années	NC
 parlementaire	NC
 dans	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 chambres	NC
 du	DETDU
 parlement	NC
@@ -49713,7 +49615,7 @@ la	DET
 ratification	NC
 était	V
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 cinquièmes	NC
 ,	PONCT
 le	DET
@@ -49722,24 +49624,24 @@ a été	V
 acquis	VPP
 ,	PONCT
 sur	P
-147	DET
+147	DETNUM
 députés	NC
 présents	ADJ
 ,	PONCT
 par	P
-116	DET
+116	DETNUM
 voix	NC
 «	PONCT
 pour	P
 »	PONCT
 et	CC
-27	DET
+27	NC
 «	PONCT
 contre	P
 »	PONCT
 ,	PONCT
 tandis que	CS
-4	DET
+4	DETNUM
 députés	NC
 se abstenus	VPP
 sont	V
@@ -49904,7 +49806,7 @@ de	P
 musique	NC
 Eddie Barclay	NPP
 (	PONCT
-84	DET
+84	DETNUM
 ans	NC
 )	PONCT
 est	V
@@ -49932,7 +49834,7 @@ Paré	VPP
 il	CLS
 y	CLO
 a	V
-2	DET
+2	DETNUM
 semaines	NC
 .	PONCTU_FORTE
 Ce	DET
@@ -49959,7 +49861,7 @@ victimes	NC
 La	DET
 plupart	NC
 (	PONCT
-10	DET
+10	DETNUM
 millions	NC
 de	P
 personnes	NC
@@ -50326,14 +50228,14 @@ acquis	VPP
 la	DET
 quasi-unanimité	NC
 des	DETDES
-234	DET
+234	DETNUM
 députés	NC
 présents	ADJ
 ,	PONCT
-230	ADJ
+230	NC
 (	PONCT
 ou	CC
-231	DET
+231	NC
 selon	P
 les	DET
 sources	NC
@@ -50344,7 +50246,7 @@ voté	VPP
 pour	P
 »	PONCT
 ,	PONCT
-1	DET
+1	NC
 «	PONCT
 contre	P
 »	PONCT
@@ -50456,7 +50358,7 @@ une	DET
 proportion	NC
 dépassant	VPR
 les	DET
-deux	ADJNUM
+deux	ADJ
 tiers	NC
 .	PONCTU_FORTE
 Le	DET
@@ -50511,7 +50413,7 @@ comme	P
 «	PONCT
 hors-la-loi	NC
 »	PONCT
-deux	ADJNUM
+deux	ADJ
 bases	NC
 militaires	ADJ
 russes	ADJ
@@ -50577,7 +50479,7 @@ ou	CC
 au	P+D
 départ	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 cantonnements	NC
 .	PONCTU_FORTE
 La	DET
@@ -50626,7 +50528,7 @@ la	DET
 présence	NC
 de	P
 ces	DET
-deux	ADJNUM
+deux	ADJ
 bases	NC
 .	PONCTU_FORTE
 La	DET
@@ -50645,7 +50547,7 @@ l'	DET
 définitive	ADJ
 de	P
 ces	DET
-deux	ADJNUM
+deux	ADJ
 bases	NC
 ,	PONCT
 processus	NC
@@ -50674,7 +50576,7 @@ Europe	NPP
 OSCE	NPP
 )	PONCT
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 bases	NC
 militaires	ADJ
 russes	ADJ
@@ -50736,7 +50638,7 @@ d'	P
 Condoleezza Rice	NPP
 ,	PONCT
 les	DET
-8	ADJ
+8	NC
 et	CC
 9 mai	NC
 derniers	ADJ
@@ -50962,7 +50864,7 @@ et	CC
 de	P
 deux	PRO
 des	DETDES
-trois	ADJNUM
+trois	ADJ
 principaux	ADJ
 partis	NC
 politiques	ADJ
@@ -51011,7 +50913,7 @@ vols	NC
 directs	ADJ
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 pays	NC
 pour	P
 2006	NC
@@ -51059,7 +50961,7 @@ les	DET
 échange	NC
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 rives	NC
 du	DETDU
 détroit	NC
@@ -51186,7 +51088,7 @@ en	P
 Chine	NPP
 .	PONCTU_FORTE
 Ces	DET
-deux	ADJNUM
+deux	ADJ
 partis	NC
 ont	V
 d'ailleurs	ADV
@@ -51738,7 +51640,7 @@ mal	ADV
 informées	VPP
 parues	VPP
 dans	P
-quelques	DET
+quelques	DETDES
 médias	NC
 ,	PONCT
 William Joseph Levada	NPP
@@ -51792,7 +51694,7 @@ parfois	ADV
 qualifiée	ADJ
 ,	PONCT
 par	P
-certains	DETNUM
+certains	DETDES
 thuriféraires	NC
 ,	PONCT
 de	P
@@ -51908,7 +51810,7 @@ prédécesseur	NC
 ,	PONCT
 notamment	ADV
 en ce qui concerne	P
-certains	DETNUM
+certains	DETDES
 problèmes	NC
 sociaux	ADJ
 «	PONCT
@@ -51952,8 +51854,7 @@ Jean-Paul II	NPP
 certains	ADJ
 le	CLO
 qualifient	V
-entre	P
-autres	ADJ
+entre autres	ADV
 de	P
 «	PONCT
 gardien	NC
@@ -52054,7 +51955,7 @@ composant	VPR
 l'	DET
 assemblée	NC
 ,	PONCT
-101	DET
+101	NC
 ont	V
 voté	VPP
 la	DET
@@ -52072,7 +51973,7 @@ majorité	NC
 parlementaire	ADJ
 ,	PONCT
 tandis que	CS
-99	DET
+99	NC
 votaient	NC
 contre	P
 .	PONCTU_FORTE
@@ -52452,7 +52353,7 @@ le	DET
 ,	PONCT
 soit	CC
 respectivement	ADV
-11	ADJ
+11	NC
 et	CC
 21 ans	NC
 après	P
@@ -52667,7 +52568,7 @@ personnelle	ADJ
 .	PONCTU_FORTE
 De même	ADV
 ,	PONCT
-certains	DETNUM
+certains	DETDES
 observateurs	NC
 font	V
 remarquer	VINF
@@ -52869,7 +52770,7 @@ Il	CLS
 manquera	V
 donc	ADV
 les	DET
-quatre	ADJNUM
+quatre	ADJ
 derniers	ADJ
 matchs	NC
 des	DETDES
@@ -53125,7 +53026,7 @@ consultation	NC
 .	PONCTU_FORTE
 Sur	P
 les	DET
-858	DET
+858	DETNUM
 personnes	NC
 inscrites	ADJ
 sur	P
@@ -53137,7 +53038,7 @@ interrogées	VPP
 par	P
 téléphone	NC
 les	DET
-12	ADJ
+12	NC
 et	CC
 13 mai	NC
 ,	PONCT
@@ -53324,7 +53225,7 @@ institut	NC
 ,	PONCT
 réalisé	VPP
 les	DET
-3	ADJ
+3	NC
 et	CC
 4 mai	NC
 et	CC
@@ -53722,7 +53623,7 @@ avaient été	V
 perdus	VPP
 ,	PONCT
 et	CC
-18	DET
+18	DETNUM
 usines	NC
 fermées	ADJ
 dans	P
@@ -53949,9 +53850,9 @@ Patty Schnyder	NPP
 -	PONCT
 3	ADJ
 ,	PONCT
-6	DET
+6	ADJ
 -	PONCT
-4	NC
+4	ADJ
 au	P+D
 tournoi	NC
 italien	ADJ
@@ -54034,9 +53935,9 @@ break	NC
 pour	P
 revenir	VINF
 à	P
-4	DET
+4	ADJ
 -	PONCT
-4	NC
+4	ADJ
 et	CC
 ayant	VPR
 défendu	VPP
@@ -54225,8 +54126,7 @@ estimait	V
 arrivé	VPP
 à	P
 un	DET
-quasi	ADV
--	PONCT
+quasi-	PRE
 accord	NC
 sur	P
 le	DET
@@ -54631,7 +54531,7 @@ pendant	P
 dix ans	NC
 ,	PONCT
 entre	P
-93	DET
+93	NC
 et	CC
 2003	NC
 .	PONCTU_FORTE
@@ -54662,7 +54562,7 @@ dossier	NC
 épineux	ADJ
 où	PROREL
 comparaissaient	V
-22	DET
+22	DETNUM
 personnes	NC
 ,	PONCT
 M.	NC
@@ -55696,7 +55596,7 @@ de	P
 bicyclettes	NC
 disponibles	ADJ
 dans	P
-70	DET
+70	DETNUM
 stations	NC
 réparties	VPP
 sur	P
@@ -55747,7 +55647,7 @@ celui	PRO
 des	DETDES
 stations	NC
 à	P
-200	DET
+200	NC
 dans	P
 le	DET
 courant	NC
@@ -55776,7 +55676,7 @@ cyclables	ADJ
 sécurisées	VPP
 ,	PONCT
 la	DET
-première	ADJ
+première	NC
 ,	PONCT
 d'	P
 une	DET
@@ -55820,7 +55720,7 @@ de	P
 Vaise	NPP
 ,	PONCT
 la	DET
-seconde	ADJ
+seconde	NC
 ,	PONCT
 d'	P
 une	DET
@@ -55918,7 +55818,7 @@ le	DET
 prochain	ADJ
 ,	PONCT
 le	DET
-premier	ADJ
+premier	NC
 jamais	ADV
 organisé	VPP
 aux	P+D
@@ -55941,7 +55841,7 @@ néerlandais	ADJ
 les	DET
 leaders	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 plus	ADV
 grands	ADJ
 partis	NC
@@ -55988,7 +55888,7 @@ auprès d'	P
 un	DET
 échantillon	NC
 de	P
-600	DET
+600	DETNUM
 personnes	NC
 ,	PONCT
 pour	P
@@ -56252,12 +56152,12 @@ de	P
 clonage	NC
 thérapeutique	ADJ
 de	P
-250	DET
+250	NC
 en	P
 moyenne	NC
 à	P
 environ	ADV
-17	ADJ
+17	NC
 ,	PONCT
 ce	PRO
 qui	PROREL
@@ -56285,7 +56185,7 @@ même	ADV
 une	DET
 chance	NC
 sur	P
-quatorze	ADJNUM
+quatorze	ADJ
 de	P
 parvenir	VINF
 au	P+D
@@ -56391,12 +56291,12 @@ FOREIGN	ET
 )	PONCT
 .	PONCTU_FORTE
 Les	DET
-onze	ADJNUM
+onze	ADJ
 patients	NC
 ,	PONCT
 agés	VPP
 entre	P
-2	DET
+2	NC
 et	CC
 52 ans	NC
 et	CC
@@ -56479,7 +56379,7 @@ avoir lieu	VINF
 pour le moment	ADV
 que	CS
 dans	P
-quelques	DET
+quelques	DETDES
 pays	NC
 qui	PROREL
 l'	CLO
@@ -56577,7 +56477,7 @@ un	DET
 avion	NC
 cubain	ADJ
 faisant	VPR
-73	DET
+73	DETNUM
 morts	NC
 en	P
 1976	NC
@@ -57232,7 +57132,7 @@ de	P
 personnes	NC
 dispersées	VPP
 dans	P
-près de	P
+près de	ADV
 4 000	NC
 villages	NC
 .	PONCTU_FORTE
@@ -57636,14 +57536,12 @@ tandis que	CS
 leurs	DET
 partenaires	NC
 de	P
-Bündnis	NPP
-90	NC
+Bündnis 90	NPP
 /	PONCT
 FOREIGN	ET
 (	PONCT
 «	PONCT
-Alliance	NC
-90	ADJ
+Alliance 90	NPP
 /	PONCT
 Les Verts	NPP
 »	PONCT
@@ -57741,12 +57639,12 @@ Landtag	NPP
 a été	V
 diminué	VPP
 de	P
-229	DET
+229	DETNUM
 sièges	NC
 en	P
 2000	NC
 à	P
-181	DET
+181	DETNUM
 sièges	NC
 en	P
 2005	NC
@@ -58067,7 +57965,7 @@ candidats	NC
 ayant	VPR
 respectivement	ADV
 recueilli	VPP
-14	ADJ
+14	NC
 et	CC
 11 %	NC
 des	DETDES
@@ -58413,7 +58311,7 @@ rassemblant	VPR
 des	DETDES
 représentants	NC
 de	P
-14	DET
+14	DETNUM
 Églises	NC
 orthodoxes	ADJ
 se réunit	V
@@ -58786,7 +58684,7 @@ considéré	VPP
 comme	P
 «	PONCT
 le	DET
-premier	ADJ
+premier	NC
 entre	P
 ses	DET
 pairs	NC
@@ -58890,7 +58788,7 @@ sauver	VINF
 les	DET
 apparences	NC
 .	PONCTU_FORTE
-1	ADJ
+1	NC
 Ne	ADV
 pas	ADV
 confondre	VINF
@@ -58961,7 +58859,7 @@ l'	DET
 du	DETDU
 17 juin	NC
 prochain	ADJ
-deux	ADJNUM
+deux	ADJ
 candidats	NC
 qualifiés	ADJ
 de	P
@@ -59187,8 +59085,7 @@ ont été	V
 pas	ADV
 retenues	VPP
 (	PONCT
-1	ADJ
-014	DET
+1 014	DET
 dossiers	NC
 avaient été	V
 présentés	VPP
@@ -59222,7 +59119,7 @@ on	CLS
 peut	V
 citer	VINF
 :	PONCT
-Trois	DET
+Trois	DETNUM
 sondages	NC
 récents	ADJ
 ,	PONCT
@@ -59315,8 +59212,7 @@ le	DET
 29 mai	NC
 prochain	ADJ
 (	PONCT
-67	DET
-%	NC
+67 %	NC
 )	PONCT
 ,	PONCT
 mais	CC
@@ -59388,7 +59284,7 @@ des	DETDES
 quotas	NC
 )	PONCT
 de	P
-850	DET
+850	DETNUM
 personnes	NC
 ,	PONCT
 entre	P
@@ -59459,8 +59355,7 @@ de	P
 l'	DET
 UMP	NPP
 (	PONCT
-67	DET
-%	NC
+67 %	NC
 )	PONCT
 et	CC
 chez	P
@@ -59470,8 +59365,7 @@ de	P
 l'	DET
 UDF	NPP
 (	PONCT
-74	DET
-%	NC
+74 %	NC
 )	PONCT
 .	PONCTU_FORTE
 Une	DET
@@ -59575,7 +59469,7 @@ avait	V
 fait	VPP
 plus	ADV
 de	P
-70	DET
+70	DETNUM
 morts	NC
 en	P
 1976	NC
@@ -59931,7 +59825,7 @@ entraîné	VPP
 l'	DET
 arrêt	NC
 de	P
-43	DET
+43	DETNUM
 métros	NC
 dans	P
 la	DET
@@ -60244,7 +60138,7 @@ d'	P
 étant	VPR
 bloqués	VPP
 ,	PONCT
-certains	DETNUM
+certains	DETDES
 témoignages	NC
 indiquent	V
 que	CS
@@ -60769,10 +60663,10 @@ numéro	NC
 un	DET
 ,	PONCT
 numéro	NC
-deux	ADJNUM
+deux	ADJ
 et	CC
 numéro	NC
-trois	ADJNUM
+trois	ADJ
 »	PONCT
 .	PONCTU_FORTE
 Dans	P
@@ -60812,7 +60706,7 @@ OMC	NPP
 et	CC
 surtout	ADV
 par	P
-certains	DETNUM
+certains	DETDES
 pays	NC
 «	PONCT
 émergents	ADJ
@@ -60931,7 +60825,7 @@ cette	DET
 licence	NC
 est	V
 la	DET
-première	ADJ
+première	NC
 conforme	ADJ
 au	P+D
 droit	NC
@@ -60956,7 +60850,7 @@ accessible	ADJ
 sous	P
 www.cecill.info	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 ressortissants	NC
 Tchétchènes	NPP
 ont été	V
@@ -60999,8 +60893,7 @@ Schiedam	NPP
 (	PONCT
 Pays-Bas	NPP
 )	PONCT
-mi-avril	NC
-2005	ADJ
+mi-avril 2005	NC
 .	PONCTU_FORTE
 L'	DET
 autre	ADJ
@@ -61140,7 +61033,7 @@ néerlandaise	ADJ
 aurait	V
 obtenu	VPP
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 hommes	NC
 des	DETDES
 informations	NC
@@ -61163,7 +61056,7 @@ en	CLO
 révéler	VINF
 plus	ADV
 .	PONCTU_FORTE
-Sept	DET
+Sept	DETNUM
 États	NC
 membres	NC
 de	P
@@ -61300,8 +61193,7 @@ seront	V
 renforcés	VPP
 ,	PONCT
 permettant	VPR
-entre	P
-autres	ADJ
+entre autres	ADV
 la	DET
 présence	NC
 de	P
@@ -61385,7 +61277,7 @@ aux	P+D
 positions	NC
 antagonistes	ADJ
 des	DETDES
-cinq	ADJNUM
+cinq	ADJ
 possédant	VPR
 officiellemnt	VS
 l'	DET
@@ -61443,7 +61335,7 @@ pour	P
 le	DET
 désarmement	NC
 des	DETDES
-cinq	ADJNUM
+cinq	ADJ
 puissances	NC
 officielles	ADJ
 .	PONCTU_FORTE
@@ -61809,7 +61701,7 @@ touchées	VPP
 .	PONCTU_FORTE
 Selon	P
 les	DET
-376	DET
+376	ADJ
 ostréiculteurs	NC
 de	P
 la	DET
@@ -61872,7 +61764,7 @@ le	DET
 désespoir	NC
 pourrait	V
 pousser	VINF
-certains	DETNUM
+certains	DETDES
 à	P
 commettre	VINF
 dans	P
@@ -61887,7 +61779,7 @@ des	DETDES
 incidents	NC
 violents	ADJ
 opposaient	V
-certains	DETNUM
+certains	DETDES
 ostréiculteurs	NC
 exaspérés	ADJ
 et	CC
@@ -61945,9 +61837,9 @@ tirs	NC
 aux	P+D
 buts	NC
 (	PONCT
-3	DET
+3	ADJ
 -	PONCT
-2	NC
+2	ADJ
 )	PONCT
 .	PONCTU_FORTE
 Liverpool	NPP
@@ -61958,9 +61850,9 @@ la	DET
 prestigieuse	ADJ
 coupe	NC
 avec	P
-6	DET
+6	ADJ
 -	PONCT
-5	NC
+5	ADJ
 contre	P
 le	DET
 club	NC
@@ -62029,7 +61921,7 @@ impossibilité	NC
 de	P
 départager	VINF
 les	DET
-deux	ADJNUM
+deux	ADJ
 équipes	NC
 dans	P
 les	DET
@@ -62292,7 +62184,7 @@ le	DET
 vote	NC
 .	PONCTU_FORTE
 Alors que	CS
-certains	DETNUM
+certains	DETDES
 pays	NC
 trouvent	V
 ce	DET
@@ -62314,8 +62206,7 @@ ce	DET
 vote	NC
 massif	ADJ
 (	PONCT
-70	DET
-%	NC
+70 %	NC
 de	P
 participation	NC
 )	PONCT
@@ -62580,8 +62471,7 @@ verte	ADJ
 (	PONCT
 SPD	NPP
 +	P
-Bündnis	NPP
-90	NC
+Bündnis 90	NPP
 /	PONCT
 FOREIGN	ET
 )	PONCT
@@ -62691,7 +62581,7 @@ des	DETDES
 instances	NC
 dirigeantes	ADJ
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 partis	NC
 ,	PONCT
 a	V
@@ -62721,7 +62611,7 @@ soutien	NC
 entiers	ADJ
 »	PONCT
 au sein des	P
-deux	ADJNUM
+deux	ADJ
 partis	NC
 FOREIGN	ET
 .	PONCTU_FORTE
@@ -62819,7 +62709,7 @@ Allemagne	NPP
 »	PONCT
 .	PONCTU_FORTE
 Les	DET
-deux	ADJNUM
+deux	ADJ
 partis	NC
 rendront	V
 publics	ADJ
@@ -62988,7 +62878,7 @@ pendant	P
 sept années	NC
 sur	P
 les	DET
-seize	ADJNUM
+seize	ADJ
 du	DETDU
 gouvernement	NC
 Kohl	NPP
@@ -63062,7 +62952,7 @@ brisées	VPP
 plusieurs	ADJ
 blessés	NC
 et	CC
-37	DET
+37	DETNUM
 personnes	NC
 en	P
 garde	NC
@@ -63094,7 +62984,7 @@ par	P
 arme	NC
 blanche	ADJ
 et	CC
-deux	ADJNUM
+deux	ADJ
 par	P
 des	DETDES
 tessons	NC
@@ -63144,7 +63034,7 @@ faits	NC
 Les	DET
 appartements	NC
 de	P
-certains	DETNUM
+certains	DETDES
 immeubles	NC
 communiquent	V
 entre	P
@@ -63325,17 +63215,17 @@ en	P
 trois	DETNUM
 manches	NC
 :	PONCT
-6	DET
+6	ADJ
 -	PONCT
-1	NC
+1	ADJ
 ,	PONCT
-1	DET
+1	ADJ
 -	PONCT
-6	NC
+6	ADJ
 ,	PONCT
-6	DET
+6	ADJ
 -	PONCT
-4	NC
+4	ADJ
 .	PONCTU_FORTE
 Après	P
 le	DET
@@ -63352,7 +63242,7 @@ su	VPP
 facilement	ADV
 s'imposer	VINF
 au	P+D
-second	ADJ
+second	NC
 ,	PONCT
 avant de	P
 passer	VINF
@@ -63506,7 +63396,7 @@ vote	NC
 l'	DET
 une	PRO
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 cases	NC
 «	PONCT
 Voor	NPP
@@ -63855,7 +63745,7 @@ matériel	NC
 d'	P
 écoute	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 journalistes	NC
 du	DETDU
 Washington	NPP
@@ -63959,7 +63849,7 @@ personnes	NC
 ,	PONCT
 à savoir	CC
 les	DET
-deux	ADJNUM
+deux	ADJ
 journalistes	NC
 du	DETDU
 Washington	NPP
@@ -64725,7 +64615,7 @@ reçu	VPP
 ,	PONCT
 provisoirement	ADV
 ,	PONCT
-68	DET
+68	DETNUM
 surenchères	NC
 successives	ADJ
 jusqu'à	P
@@ -64909,7 +64799,7 @@ prévu	VPP
 trois mois	NC
 après	P
 le	DET
-premier	ADJ
+premier	NC
 .	PONCTU_FORTE
 Les	DET
 électeurs	NC
@@ -65240,7 +65130,7 @@ exclure	VINF
 .	PONCTU_FORTE
 Voir	VINF
 les	DET
-trois	ADJNUM
+trois	ADJ
 sources	NC
 :	PONCT
 au	P+D
@@ -65329,8 +65219,7 @@ en	P
 matière	NC
 policière	ADJ
 prévoyant	VPR
-entre	P
-autres	ADJ
+entre autres	ADV
 une	DET
 mise	NC
 en	P
@@ -65550,7 +65439,7 @@ suisses	ADJ
 ont	V
 voté	VPP
 en faveur des	P+D
-deux	ADJNUM
+deux	ADJ
 textes	NC
 qui	PROREL
 leur	CLO
@@ -65558,7 +65447,7 @@ leur	CLO
 soumis	VPP
 ,	PONCT
 lors des	P+D
-deux	ADJNUM
+deux	ADJ
 votations	NC
 populaires	ADJ
 (	PONCT
@@ -65654,12 +65543,12 @@ auprès des	P+D
 électeurs	NC
 et	CC
 dans	P
-13	DET
+13	DETNUM
 cantons	NC
 (	PONCT
 décompte	NC
 sur	P
-23	DET
+23	DETNUM
 cantons	NC
 )	PONCT
 ,	PONCT
@@ -65780,14 +65669,14 @@ auprès des	P+D
 électeurs	NC
 et	CC
 dans	P
-16	DET
+16	DETNUM
 cantons	NC
 et	CC
 demi	NC
 (	PONCT
 décompte	NC
 sur	P
-23	DET
+23	DETNUM
 cantons	NC
 )	PONCT
 ,	PONCT
@@ -65835,7 +65724,7 @@ blessés	NC
 ni	CC
 dégâts matériels	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 appels	NC
 anonymes	ADJ
 provenant	VPR
@@ -65860,7 +65749,7 @@ l'	DET
 attaque	NC
 ;	PONCT
 le	DET
-premier	ADJ
+premier	NC
 au	P+D
 quotidien	NC
 nationaliste	ADJ
@@ -65881,7 +65770,7 @@ ETA	NPP
 )	PONCT
 ,	PONCT
 le	DET
-second	ADJ
+second	NC
 au	P+D
 dépanneur	NC
 automobile	ADJ
@@ -66007,7 +65896,7 @@ Air	NC
 Nostrum	NPP
 a	V
 annulé	VPP
-quatre	ADJNUM
+quatre	ADJ
 de	P
 ses	DET
 vols	NC
@@ -66265,7 +66154,7 @@ les	DET
 ministres	NC
 représentant	VPR
 les	DET
-huit	ADJNUM
+huit	ADJ
 grandes	ADJ
 puissances	NC
 étaient	V
@@ -66281,7 +66170,7 @@ de	P
 la	DET
 dette	NC
 de	P
-certains	DETNUM
+certains	DETDES
 pays	NC
 pauvres	ADJ
 .	PONCTU_FORTE
@@ -66342,8 +66231,7 @@ Bénin	NPP
 ,	PONCT
 Bolivie	NPP
 ,	PONCT
-Burkina	NPP
-Faso	NC
+Burkina Faso	NPP
 ,	PONCT
 Éthiopie	NPP
 ,	PONCT
@@ -66425,7 +66313,7 @@ ministre	NC
 des	DETDES
 finances	NC
 FOREIGN	ET
-100	DET
+100	NC
 FOREIGN	ET
 )	PONCT
 et	CC
@@ -67248,7 +67136,7 @@ discussion	NC
 MSN	NPP
 pour	P
 rejeter	VINF
-certains	DETNUM
+certains	DETDES
 mots	NC
 jugés	VPP
 contentieux	NC
@@ -67629,7 +67517,7 @@ des	DETDES
 camps	NC
 ,	PONCT
 bien que	CS
-quelques	DET
+quelques	DETDES
 personnes	NC
 ont	V
 sauté	VPP
@@ -67679,7 +67567,7 @@ Le	DET
 campement	NC
 contiendrait	V
 près de	P
-6000	DET
+6000	DETNUM
 refugiés	NC
 depuis	P
 la	DET
@@ -67963,14 +67851,14 @@ Songore	NPP
 Il	CLS
 y	CLO
 a	V
-8000	ADJ
-refugiés	VPP
-Rwandais	NPP
+8000	DETNUM
+refugiés	NC
+Rwandais	ADJ
 au	P+D
 Burundi	NPP
 et	CC
 près de	P
-7000	DET
+7000	DETNUM
 Burundais	NC
 au	P+D
 Rwanda	NPP
@@ -68031,7 +67919,7 @@ des	DETDES
 camps	NC
 ,	PONCT
 bien que	CS
-quelques	DET
+quelques	DETDES
 personnes	NC
 aient	VS
 sauté	VPP
@@ -68081,7 +67969,7 @@ Le	DET
 campement	NC
 contiendrait	V
 près de	P
-6000	DET
+6000	DETNUM
 refugiés	NC
 depuis	P
 la	DET
@@ -68319,7 +68207,7 @@ majeures	ADJ
 prises	VPP
 par	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 nations	NC
 dans	P
 l'	DET
@@ -68355,14 +68243,14 @@ Songore	NPP
 Il	CLS
 y	CLO
 aurait	V
-8000	ADJ
-refugiés	VPP
-Rwandais	NPP
+8000	DETNUM
+refugiés	NC
+Rwandais	ADJ
 au	P+D
 Burundi	NPP
 et	CC
 près de	P
-7000	DET
+7000	DETNUM
 Burundais	NC
 au	P+D
 Rwanda	NPP
@@ -68385,7 +68273,7 @@ succèdera	V
 à	P
 Mohammed Khatami	NPP
 .	PONCTU_FORTE
-Sept	DET
+Sept	DETNUM
 candidats	NC
 sont	V
 en	P
@@ -68546,7 +68434,7 @@ des	DETDES
 relations	NC
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 nations	NC
 .	PONCTU_FORTE
 Le	DET
@@ -68701,7 +68589,7 @@ des	DETDES
 votants	NC
 .	PONCTU_FORTE
 Les	DET
-deux	ADJNUM
+deux	ADJ
 candidats	NC
 ayant	VPR
 le	DET
@@ -68953,7 +68841,7 @@ Allemagne	NPP
 en	P
 voyant	VPR
 les	DET
-dix	ADJNUM
+dix	ADJ
 nouveaux	ADJ
 entrants	NC
 prêts	ADJ
@@ -69182,7 +69070,7 @@ la	DET
 France	NPP
 .	PONCTU_FORTE
 La	DET
-première	ADJ
+première	NC
 avait	V
 consisté	VPP
 en	P
@@ -69799,10 +69687,9 @@ atteindrait	V
 moins	ADV
 qu'	CS
 en	P
-2001	ADJ
+2001	NC
 (	PONCT
-67	DET
-%	NC
+67 %	NC
 )	PONCT
 mais	CC
 beaucoup	ADV
@@ -70067,10 +69954,10 @@ acquereur	NC
 pour	P
 plus	ADV
 de	P
-250	DET
+250	DETNUM
 avions	NC
 dont	PROREL
-100	DET
+100	DETNUM
 Airbus A320	NPP
 commandés	VPP
 par	P
@@ -70097,7 +69984,7 @@ low	NC
 -	PONCT
 cost	NC
 de	P
-5	DET
+5	DETNUM
 Airbus	NC
 A380	NPP
 .	PONCTU_FORTE
@@ -70306,7 +70193,7 @@ parti	NC
 l'	DET
 ANAP	NPP
 aux	P+D
-356	DET
+356	DETNUM
 voix	NC
 de	P
 l'	DET
@@ -70324,7 +70211,7 @@ afin de	P
 modifier	VINF
 l'	DET
 article	NC
-131	DET
+131	ADJ
 de	P
 la	DET
 Constitution	NC
@@ -70459,7 +70346,7 @@ parlement	NC
 soit	CC
 369	PRO
 des	DETDES
-550	DET
+550	DETNUM
 sièges	NC
 que	PROREL
 compte	V
@@ -70484,7 +70371,7 @@ du	DETDU
 parlement	NC
 (	PONCT
 soit	CC
-330	DET
+330	DETNUM
 sièges	NC
 )	PONCT
 suffit	V
@@ -70508,7 +70395,7 @@ l'	DET
 AKP	NPP
 (	PONCT
 avec	P
-363	DET
+363	DETNUM
 sièges	NC
 )	PONCT
 et	CC
@@ -70522,7 +70409,7 @@ de	P
 gauche	NC
 laïque	ADJ
 avec	P
-178	DET
+178	DETNUM
 sièges	NC
 étaient	V
 représentés	VPP
@@ -70530,7 +70417,7 @@ au	P+D
 parlement	NC
 ,	PONCT
 en plus de	P
-9	DET
+9	DETNUM
 députés	NC
 sans	P
 étiquette	NC
@@ -70789,7 +70676,7 @@ déjà	ADV
 primé	VPP
 pour	P
 ses	DET
-deux	ADJNUM
+deux	ADJ
 premiers	ADJ
 romans	NC
 :	PONCT
@@ -70968,7 +70855,7 @@ Après	P
 l'	DET
 enterrement	NC
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 membres	NC
 du	DETDU
 PKK	NPP
@@ -71015,7 +70902,7 @@ Vahdettin	NPP
 La	DET
 foule	NC
 de	P
-3000	DET
+3000	DETNUM
 personnes	NC
 qui	PROREL
 accompagnait	V
@@ -71213,8 +71100,7 @@ rendu	VPP
 au moins	ADV
 200 000	ADJ
 (	PONCT
-275	DET
-000	NC
+275 000	NC
 selon	P
 l'	DET
 ONU	NPP
@@ -71261,17 +71147,11 @@ tragique	ADJ
 tragical	ADJ
 situation	NC
 .	PONCTU_FORTE
-Deux cents	DET
+Deux cents	DETNUM
 ONG	NPP
 tel	ADJ
 Amnesty International	NPP
-http://web.amnesty.org	NC
-/	PONCT
-library	NPP
-/	PONCT
-Index	NPP
-/	PONCT
-ENGAFR460172005	NPP
+http://web.amnesty.org/library/Index/ENGAFR460172005	NPP
 dénoncaient	V
 dans	P
 un	DET
@@ -72074,7 +71954,7 @@ nombreuses	ADJ
 plaintes	NC
 (	PONCT
 environ	ADV
-300	ADJ
+300	NC
 dans	P
 la	DET
 capitale	NC
@@ -72334,8 +72214,7 @@ important	ADJ
 plan	NC
 marketing	NC
 de la part de	P
-Sony	NPP
-pictures	NC
+Sony Pictures	NPP
 (	PONCT
 le	DET
 producteur	NC
@@ -72445,14 +72324,14 @@ secrets	ADJ
 .	PONCTU_FORTE
 Plus	ADV
 de	P
-300	DET
+300	DETNUM
 citoyens	NC
 -	PONCT
 reporters	NC
 FOREIGN	ET
 venant	VPR
 des	DETDES
-quatre	ADJNUM
+quatre	ADJ
 coins	NC
 du	DETDU
 monde	NC
@@ -72477,7 +72356,7 @@ un	DET
 meeting	NC
 OhmyNews International Citizen Reporters' Forum	NPP
 du	DETDU
-23	ADJ
+23	NC
 au	P+D
 26 juin	NC
 .	PONCTU_FORTE
@@ -72685,8 +72564,7 @@ technologie	NC
 de	P
 Séoul	NPP
 et	CC
-entre	P
-autres	ADJ
+entre autres	ADV
 une	DET
 présentation	NC
 de	P
@@ -73031,8 +72909,7 @@ participant	NC
 à	P
 OhmyNews	NPP
 (	PONCT
-11	DET
-ans	NC
+11 ans	NC
 )	PONCT
 qui	PROREL
 a	V
@@ -73142,8 +73019,8 @@ avec	P
 le	DET
 fondateur	NC
 d'	P
-OhmyNews Oh Yeon	NPP
-Ho	NPP
+OhmyNews	NPP
+Oh Yeon Ho	NPP
 .	PONCTU_FORTE
 Le	DET
 piratage	NC
@@ -73201,7 +73078,7 @@ La	DET
 Revanche	NC
 des	DETDES
 Siths	NPP
-au cours des	P
+au cours des	P+D
 2	ADJ
 derniers	ADJ
 mois	NC
@@ -73490,7 +73367,7 @@ de	P
 films	NC
 ont	V
 entre	P
-15	DET
+15	NC
 et	CC
 24 ans	NC
 ,	PONCT
@@ -73895,7 +73772,7 @@ jeune	ADJ
 Sergueï	NPP
 Stanichev	NPP
 (	PONCT
-39	DET
+39	DETNUM
 ans	NC
 )	PONCT
 ,	PONCT
@@ -73907,9 +73784,9 @@ obtenu	VPP
 des	DETDES
 suffrages	NC
 et	CC
-82	DET
+82	NC
 des	DETDES
-240	DET
+240	DETNUM
 sièges	NC
 au	P+D
 Parlement	NC
@@ -73961,7 +73838,7 @@ obtenu	VPP
 que	CS
 12,68%	NC
 et	CC
-34	DET
+34	DETNUM
 sièges	NC
 ,	PONCT
 ce	PRO
@@ -74010,11 +73887,11 @@ il	CLS
 peut	V
 compter	VINF
 sur	P
-53	DET
+53	DETNUM
 sièges	NC
 .	PONCTU_FORTE
 Les	DET
-deux	ADJNUM
+deux	ADJ
 suprises	NC
 de	P
 ces	DET
@@ -74027,7 +73904,7 @@ participation	NC
 (	PONCT
 -10,7 points	NC
 par rapport à	P
-2001	ADJ
+2001	NC
 )	PONCT
 et	CC
 la	DET
@@ -74039,7 +73916,7 @@ Ataka	NPP
 avec	P
 8,16%	NC
 et	CC
-21	DET
+21	DETNUM
 sièges	NC
 ,	PONCT
 ce	PRO
@@ -74071,7 +73948,7 @@ obtient	V
 des	DETDES
 suffrages	NC
 et	CC
-20	DET
+20	DETNUM
 sièges	NC
 .	PONCTU_FORTE
 Elle	CLS
@@ -74088,7 +73965,7 @@ forte	ADJ
 (	PONCT
 6,45%	NC
 et	CC
-17	DET
+17	DETNUM
 sièges	NC
 )	PONCT
 et	CC
@@ -74100,7 +73977,7 @@ bulgare	ADJ
 (	PONCT
 5,20%	NC
 et	CC
-13	DET
+13	DETNUM
 sièges	NC
 )	PONCT
 .	PONCTU_FORTE
@@ -74620,9 +74497,7 @@ celles	PRO
 de	P
 2003	NC
 (	PONCT
-+	P
-7	DET
-%	NC
++7 %	NC
 )	PONCT
 .	PONCTU_FORTE
 La	DET
@@ -74747,9 +74622,7 @@ le	DET
 mariage	NC
 civil	ADJ
 ou	CC
-C	NC
--	PONCT
-38	DET
+C-38	NC
 )	PONCT
 légalisant	VPR
 le	DET
@@ -74805,7 +74678,7 @@ vote	NC
 extrêmement	ADV
 serré	ADJ
 (	PONCT
-158	DET
+158	NC
 pour	P
 et	CC
 133	PRO
@@ -75271,7 +75144,7 @@ L'	DET
 offre	NC
 conjointe	ADJ
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 géants	NC
 fait	VPP
 suite à	P
@@ -75280,7 +75153,7 @@ précédente	ADJ
 compétition	NC
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 géants	NC
 prêts	ADJ
 à	P
@@ -75413,7 +75286,7 @@ France	NPP
 écartelée	VPP
 par	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 consortiums	NC
 (	PONCT
 à cause d'	P
@@ -75428,7 +75301,7 @@ concurrents	NC
 ,	PONCT
 était	V
 la	DET
-première	ADJ
+première	NC
 à	P
 demander	VINF
 aux	P+D
@@ -75548,7 +75421,7 @@ qui	PROREL
 pourrait	V
 ,	PONCT
 selon	P
-certains	DETNUM
+certains	DETDES
 analystes	NC
 ,	PONCT
 engendrer	VINF
@@ -75559,7 +75432,7 @@ emplois	NC
 ,	PONCT
 s'élèvera	V
 entre	P
-2	DET
+2	NC
 et	CC
 2,5 milliards d'euros	NC
 en	P
@@ -75742,7 +75615,7 @@ archives	NC
 de	P
 Wikipédia	NPP
 dans	P
-quelques	DET
+quelques	DETDES
 éditions	NC
 CD	NC
 de	P
@@ -75810,13 +75683,10 @@ propose	V
 une	DET
 offre	NC
 de	P
-17	ADJ
+17	DETNUM
 chaînes	NC
 accessibles	ADJ
-24 h	NC
-/	P
-24	DET
-h	NC
+24h/24h	ADV
 ,	PONCT
 en	P
 partenariat	NC
@@ -75847,7 +75717,7 @@ en	P
 reste	NC
 ,	PONCT
 avec	P
-42	DET
+42	DETNUM
 chaines	NC
 et	CC
 85%	NC
@@ -75893,7 +75763,7 @@ pour	P
 6 heures	NC
 bien que	CS
 les	DET
-trois	ADJNUM
+trois	ADJ
 forfait	NC
 propose	V
 la	DET
@@ -75983,7 +75853,7 @@ et	CC
 pas	ADV
 moins	ADV
 de	P
-320	DET
+320	DETNUM
 pompiers	NC
 on	CLS
 été	VPP
@@ -76061,8 +75931,7 @@ ouest	NC
 de	P
 40	NC
 à	P
-50	DET
-km/h	NC
+50 km/h	NC
 .	PONCTU_FORTE
 Une	DET
 enquête	NC
@@ -76178,7 +76047,7 @@ américaine	ADJ
 en	P
 Iran	NPP
 .	PONCTU_FORTE
-Quatre	DET
+Quatre	DETNUM
 ex-	PREF
 otages	NC
 ,	PONCT
@@ -76304,7 +76173,7 @@ Malgré	P
 le	DET
 témoignage	NC
 de	P
-certains	DETNUM
+certains	DETDES
 ex-	PREF
 otages	NC
 ,	PONCT
@@ -76541,7 +76410,7 @@ avons	V
 pas	ADV
 oublié	VPP
 que	CS
-51	DET
+51	NC
 de	P
 nos	DET
 diplomates	NC
@@ -76562,7 +76431,7 @@ FOREIGN	ET
 FOREIGN	ET
 -	PONCT
 FOREIGN	ET
-51	DET
+51	NC
 FOREIGN	ET
 ,	PONCT
 FOREIGN	ET
@@ -76596,7 +76465,7 @@ Dagestan	NPP
 ,	PONCT
 a	V
 tué	VPP
-10	DET
+10	DETNUM
 soldats	NC
 et	CC
 en	CLO
@@ -76606,7 +76475,7 @@ blessé	VPP
 autres	PRO
 ce vendredi	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 bombes	NC
 avaient été	V
 déposées	VPP
@@ -76701,14 +76570,14 @@ adopter	VINF
 des	DETDES
 enfants	NC
 avec	P
-187	DET
+187	DETNUM
 voix	NC
 pour	P
 ,	PONCT
-147	DET
+147	NC
 contre	P
 et	CC
-4	DET
+4	DETNUM
 abstentions	NC
 .	PONCTU_FORTE
 La	DET
@@ -77344,13 +77213,13 @@ lundi 4 juillet 2005	NC
 .	PONCTU_FORTE
 Plus	ADV
 de	P
-20	DET
+20	DETNUM
 personnes	NC
 ont été	V
 blessées	VPP
 ,	PONCT
 et	CC
-4	DET
+4	DETNUM
 agents	NC
 de	P
 police	NC
@@ -77368,7 +77237,7 @@ l'	DET
 ordre	NC
 ont	V
 interpellé	VPP
-90	DET
+90	DETNUM
 personnes	NC
 et	CC
 les	CLO
@@ -77456,7 +77325,7 @@ dans	P
 la	DET
 soirée	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 membres	NC
 écologistes	ADJ
 du	DETDU
@@ -77465,8 +77334,7 @@ Parlement	NPP
 ,	PONCT
 Mark Ballard	NPP
 et	CC
-Shiona	NPP
-Baird	NPP
+Shiona Baird	NPP
 ,	PONCT
 se retrouvés	VPP
 sont	V
@@ -77487,7 +77355,7 @@ l'	DET
 ordre	NC
 .	PONCTU_FORTE
 Le	DET
-premier	ADJ
+premier	NC
 a	V
 déclaré	VPP
 aux	P+D
@@ -77673,8 +77541,7 @@ mardi	NC
 sur	P
 la	DET
 radio	NC
-Europe	NPP
-1	ADJ
+Europe 1	NPP
 la	DET
 mise en place	NC
 d'	P
@@ -77824,7 +77691,7 @@ de	P
 l'	DET
 émission	NC
 Les	DET
-quatre	ADJNUM
+quatre	ADJ
 vérités	NC
 sur	P
 France 2	NPP
@@ -77870,7 +77737,7 @@ n'	ADV
 hésiterai	V
 pas	ADV
 une	DET
-seconde	ADJ
+seconde	NC
 ,	PONCT
 et	CC
 j'	CLS
@@ -77966,7 +77833,7 @@ Laurence Parisot	NPP
 l'	DET
 une	PRO
 des	DETDES
-trois	ADJNUM
+trois	ADJ
 candidats	NC
 en	P
 lice	NC
@@ -78010,16 +77877,16 @@ du	DETDU
 patronat	NC
 .	PONCTU_FORTE
 Avec	P
-271	DET
+271	DETNUM
 voix	NC
 sur	P
-506	ADJ
+506	DETNUM
 ,	PONCT
 elle	CLS
 devance	V
 largement	ADV
 ses	DET
-deux	ADJNUM
+deux	ADJ
 concurrents	NC
 encore	ADV
 présents	ADJ
@@ -78041,11 +77908,11 @@ Ainsi	ADV
 ,	PONCT
 Yvon Jacob	NPP
 obtient	V
-150	DET
+150	DETNUM
 voix	NC
 et	CC
 Hugues-Arnaud Mayer	NPP
-85	DET
+85	NC
 .	PONCTU_FORTE
 Mme	NC
 Parisot	NPP
@@ -78248,7 +78115,7 @@ ainsi	ADV
 ecarté	VPP
 ainsi	ADV
 les	DET
-quatre	ADJNUM
+quatre	ADJ
 autres	ADJ
 villes	NC
 encore	ADV
@@ -78284,7 +78151,7 @@ les	DET
 votes	NC
 départageant	VPR
 les	DET
-cinq	ADJNUM
+cinq	ADJ
 villes	NC
 candidates	NC
 .	PONCTU_FORTE
@@ -78363,7 +78230,7 @@ ont été	V
 nombreuses	ADJ
 ,	PONCT
 des	DETDES
-deux	ADJNUM
+deux	ADJ
 cotés	VPP
 de	P
 la	DET
@@ -78776,7 +78643,7 @@ harmoniser	VINF
 les	DET
 pratiques	NC
 de	P
-certains	DETNUM
+certains	DETDES
 États	NC
 membres	NC
 auprès de	P
@@ -78795,13 +78662,13 @@ instaurer	VINF
 un	DET
 brevet	NC
 pour	P
-certains	DETNUM
+certains	DETDES
 types	NC
 de	P
 logiciels	NC
 incorporés	VPP
 dans	P
-certains	DETNUM
+certains	DETDES
 produits	NC
 ,	PONCT
 tels	ADJ
@@ -78849,7 +78716,7 @@ claire	ADJ
 ;	PONCT
 ainsi	ADV
 seuls	ADJ
-14	DET
+14	DETNUM
 eurodéputés	NC
 sur	P
 680	PRO
@@ -78917,7 +78784,7 @@ au	P+D
 grand	ADJ
 plaisir	NC
 de	P
-certains	DETNUM
+certains	DETDES
 lobbyistes	NC
 pro-	PREF
 brevets	NC
@@ -79117,7 +78984,7 @@ dictateur	NC
 chilien	ADJ
 Augusto Pinochet	NPP
 (	PONCT
-89	DET
+89	DETNUM
 ans	NC
 )	PONCT
 pourrait	V
@@ -79140,7 +79007,7 @@ affaire	NC
 d'	P
 execution	NC
 de	P
-115	DET
+115	DETNUM
 membres	NC
 du	DETDU
 Mouvement	NC
@@ -79244,13 +79111,13 @@ aux	P+D
 États-Unis	NPP
 .	PONCTU_FORTE
 Ces	DET
-deux	ADJNUM
+deux	ADJ
 levées	NC
 d'	P
 immunités	NC
 font	V
 suite à	P
-300	DET
+300	DETNUM
 demandes	NC
 qui	PROREL
 demandaient	V
@@ -79259,7 +79126,7 @@ levée	NC
 d'	P
 immunité	NC
 ces	DET
-sept	ADJNUM
+sept	ADJ
 dernières	ADJ
 années	NC
 .	PONCTU_FORTE
@@ -79301,7 +79168,7 @@ de	P
 Scotland Yard	NPP
 fait état	VPP
 de	P
-49	DET
+49	DETNUM
 morts	NC
 et	CC
 de	P
@@ -79317,11 +79184,11 @@ donné	VPP
 un	DET
 chiffre	NC
 de	P
-345	DET
+345	DETNUM
 blessés	NC
 ,	PONCT
 dont	PROREL
-45	DET
+45	DETNUM
 graves	ADJ
 ,	PONCT
 Nicolas Sarkozy	NPP
@@ -79336,7 +79203,7 @@ il	CLS
 y	CLO
 avait	V
 au moins	ADV
-50	DET
+50	DETNUM
 morts	NC
 et	CC
 50	NC
@@ -79510,9 +79377,7 @@ un	DET
 autre	ADJ
 incident	NC
 à	P
-Egware	NPP
-Road	NPP
-Station	NC
+Egware Road Station	NPP
 »	PONCT
 et	CC
 un	DET
@@ -79540,9 +79405,7 @@ blessés	NC
 à	P
 Aldgate	NPP
 .	PONCTU_FORTE
-BBC	NPP
-News	NPP
-24	ADJ
+BBC News 24	NPP
 ,	PONCT
 quant à	P
 elle	PRO
@@ -79683,7 +79546,7 @@ une	DET
 dépêche	NPP
 selon	P
 laquelle	PROREL
-4	DET
+4	DETNUM
 patients	NC
 ont été	V
 admis	VPP
@@ -79692,7 +79555,7 @@ un	DET
 état	NC
 critique	ADJ
 ,	PONCT
-8	ADJ
+8	NC
 dans	P
 un	DET
 état	NC
@@ -79740,13 +79603,13 @@ il	CLS
 y	CLO
 aurait	V
 eu	VPP
-7	DET
+7	DETNUM
 explosions	NC
 dans	P
 la	DET
 ville	NC
 ,	PONCT
-3	ADJ
+3	NC
 dans	P
 le	DET
 métro	NC
@@ -79803,8 +79666,7 @@ Londres	NPP
 selon	P
 la	DET
 chaîne	NC
-Sky	NPP
-TV	NC
+Sky TV	NPP
 ,	PONCT
 les	DET
 attentats	NC
@@ -79813,7 +79675,7 @@ Londres	NPP
 ont	V
 fait	VPP
 au moins	ADV
-45	DET
+45	DETNUM
 morts	NC
 et	CC
 un	DET
@@ -80016,8 +79878,8 @@ bus	NC
 de	P
 la	DET
 «	PONCT
-Zone	V
-1	DET
+Zone	NC
+1	ADJ
 »	PONCT
 a été	V
 suspendu	VPP
@@ -80555,7 +80417,7 @@ qui	PROREL
 effectuent	V
 plus	ADV
 de	P
-100	DET
+100	DETNUM
 vols	NC
 par	P
 jour	NC
@@ -80774,7 +80636,7 @@ la	DET
 gendarmerie	NC
 et	CC
 de	P
-quelques	DET
+quelques	DETDES
 sapeurs-pompiers	NC
 .	PONCTU_FORTE
 La	DET
@@ -80791,7 +80653,7 @@ très	ADV
 haute	ADJ
 surveillance	NC
 :	PONCT
-15	DET
+15	DETNUM
 fonctionnaires	NC
 de	P
 police	NC
@@ -80826,7 +80688,7 @@ chefs	NC
 d'	P
 état	NC
 des	DETDES
-huit	ADJNUM
+huit	ADJ
 puissances	NC
 économiques	ADJ
 et	CC
@@ -80961,7 +80823,7 @@ pas	ADV
 réussi	VPP
 .	PONCTU_FORTE
 Les	DET
-huit	ADJNUM
+huit	ADJ
 puissants	NC
 ont	V
 adopté	VPP
@@ -80987,8 +80849,7 @@ Chaque année	NC
 ,	PONCT
 50 milliards de dollars	NC
 (	PONCT
-42	DET
-milliards d'euros	NC
+42 milliards d'euros	NC
 )	PONCT
 seront	V
 additionnés	VPP
@@ -81057,8 +80918,7 @@ de	P
 cette	DET
 aide	NC
 (	PONCT
-21	DET
-milliards d'euros	NC
+21 milliards d'euros	NC
 )	PONCT
 sera	V
 reversée	VPP
@@ -81069,7 +80929,7 @@ qui	PROREL
 pourraient	V
 ,	PONCT
 selon	P
-certains	DETNUM
+certains	DETDES
 analystes	NC
 ,	PONCT
 avoir	VINF
@@ -81270,7 +81130,7 @@ de	P
 la	DET
 dette	NC
 de	P
-18	DET
+18	DETNUM
 pays	NC
 très	ADV
 pauvres	ADJ
@@ -81347,8 +81207,7 @@ G8	NC
 a	V
 chuchoté	VPP
 FOREIGN	ET
-http://www.whiteband.org/specialIssues/G8/gcapnews.2005-07-08.292	NC
-/	PONCT
+http://www.whiteband.org/specialIssues/G8/gcapnews.2005-07-08.292/	NC
 en	P
 .	PONCTU_FORTE
 Le	DET
@@ -81627,7 +81486,7 @@ renflouement	NC
 les	DET
 proches	NC
 des	DETDES
-cinq	ADJNUM
+cinq	ADJ
 disparus	NC
 affirment	V
 que	CS
@@ -81674,7 +81533,7 @@ un	DET
 objet	NC
 metallique	ADJ
 entre	P
-40	DET
+40	NC
 et	CC
 60 mètres	NC
 de	P
@@ -81880,7 +81739,7 @@ environ	ADV
 25 milliards d'euros	NC
 (	PONCT
 contre	P
-21	DET
+21	NC
 jeudi matin	NC
 )	PONCT
 .	PONCTU_FORTE
@@ -82145,7 +82004,7 @@ reprise	NC
 des	DETDES
 discussions	NC
 des	DETDES
-six	ADJNUM
+six	ADJ
 nations	NC
 (	PONCT
 Corée du Nord	NPP
@@ -82326,7 +82185,7 @@ efficacité	NC
 très	ADV
 limitée	VPP
 lors des	P+D
-trois	ADJNUM
+trois	ADJ
 dernières	ADJ
 rencontres	NC
 .	PONCTU_FORTE
@@ -82523,7 +82382,7 @@ la	DET
 Constitution	NC
 et	CC
 le	DET
-second	ADJ
+second	NC
 (	PONCT
 après	P
 l'	DET
@@ -82613,7 +82472,7 @@ majoritairement	ADV
 non	ADV
 alors qu'	CS
 à part	ADV
-deux	ADJNUM
+deux	ADJ
 petites	ADJ
 communes	NC
 le	DET
@@ -82751,7 +82610,7 @@ majorité	NC
 des	DETDES
 États	NC
 membres	ADJ
-13	ADJ
+13	NC
 sur	P
 25	NC
 considère	V
@@ -83413,7 +83272,7 @@ de	P
 plusieurs	ADJ
 discours	NC
 ,	PONCT
-610	DET
+610	DETNUM
 corps	NC
 découverts	NC
 dernièrement	ADV
@@ -83526,7 +83385,7 @@ une	DET
 honte	NC
 que	CS
 les	DET
-deux	ADJNUM
+deux	ADJ
 principaux	ADJ
 responsables	NC
 du	DETDU
@@ -83784,7 +83643,7 @@ navette	NC
 .	PONCTU_FORTE
 De plus	ADV
 ,	PONCT
-41	DET
+41	DETNUM
 améliorations	NC
 techniques	ADJ
 majeures	ADJ
@@ -84147,8 +84006,10 @@ pensée	NC
 des	DETDES
 Monégasques	NC
 pour	P
-Rainier III. Après	NPP
-3	DET
+Rainier III	NPP
+.	PONCTU_FORTE
+Après	ADV
+3	DETNUM
 prières	NC
 de	P
 Mgr	NC
@@ -84383,7 +84244,7 @@ le	DET
 en grande partie	ADV
 ,	PONCT
 selon	P
-certains	DETNUM
+certains	DETDES
 observateurs	NC
 ,	PONCT
 pour	P
@@ -84670,7 +84531,7 @@ date	NC
 la	DET
 fenêtre	NC
 du	DETDU
-9	ADJ
+9	NC
 au	P+D
 24 septembre	NC
 pourra	V
@@ -84836,7 +84697,7 @@ décoller	VINF
 ,	PONCT
 alors que	CS
 les	DET
-46	DET
+46	ADJ
 passagers	NC
 restants	ADJ
 se plaints	VPP
@@ -84876,7 +84737,7 @@ a	V
 décollé	VPP
 avec	P
 seulement	ADV
-66	DET
+66	DETNUM
 personnes	NC
 (	PONCT
 ou	CC
@@ -85319,7 +85180,7 @@ significatif	ADJ
 des	DETDES
 risques	NC
 de	P
-certains	DETNUM
+certains	DETDES
 cancer	NC
 lors de	P
 la	DET
@@ -85565,7 +85426,7 @@ L'	DET
 opération	NC
 rapportera	V
 entre	P
-11	DET
+11	NC
 et	CC
 13 milliards d'euros	NC
 à	P
@@ -85608,7 +85469,7 @@ milliard d'euros	NC
 ainsi	ADV
 ,	PONCT
 en	P
-20	DET
+20	NC
 à	P
 25 ans	NC
 ,	PONCT
@@ -85853,10 +85714,10 @@ le	DET
 sort	NC
 des	DETDES
 quelques	ADJ
-1000	DET
+1000	DETNUM
 employés	NC
 et	CC
-600	DET
+600	DETNUM
 démonstrateurs	NC
 employés	VPP
 auparavant	ADV
@@ -85871,7 +85732,7 @@ a	V
 pour sa part	ADV
 indiqué	VPP
 que	CS
-450	DET
+450	DETNUM
 salariés	NC
 (	PONCT
 sécurité	NC
@@ -85922,7 +85783,7 @@ leurs	DET
 firmes	NC
 respectives	ADJ
 .	PONCTU_FORTE
-Trois	DET
+Trois	DETNUM
 soldats	NC
 anglais	ADJ
 vont	V
@@ -85955,7 +85816,7 @@ des	DETDES
 Lords	NPP
 .	PONCTU_FORTE
 Environ	ADV
-11	ADJ
+11	DETNUM
 soldats	NC
 Britanniques	ADJ
 sont	V
@@ -85974,7 +85835,7 @@ Sept	NPP
 ,	PONCT
 incluant	VPR
 les	DET
-trois	ADJNUM
+trois	ADJ
 accusés	NC
 de	P
 crimes	NC
@@ -86037,23 +85898,21 @@ peu	ADV
 après	ADV
 .	PONCTU_FORTE
 Les	DET
-trois	ADJNUM
+trois	ADJ
 autres	ADJ
 (	PONCT
-Caporal	NPP
+Caporal	NC
 Donald Payne	NPP
 ,	PONCT
-34	DET
+34	NC
 ;	PONCT
-Sous	NC
--	PONCT
-Corporal	NPP
+Sous-Corporal	NC
 Wayne Crowcroft	NPP
 ,	PONCT
-21	ADJ
+21	NC
 ;	PONCT
 et	CC
-Private	NPP
+Private	NC
 Darren Fallon	NPP
 ,	PONCT
 22 ans	NC
@@ -86065,7 +85924,7 @@ la	DET
 cour	NC
 internationale	ADJ
 en	P
-2001	ADJ
+2001	NC
 .	PONCTU_FORTE
 Ils	CLS
 viennent	V
@@ -86253,7 +86112,7 @@ Mark Davies	NPP
 36 ans	NC
 ,	PONCT
 les	DET
-deux	ADJNUM
+deux	ADJ
 du	DETDU
 FOREIGN	ET
 ,	PONCT
@@ -86274,7 +86133,7 @@ de	P
 .	PONCTU_FORTE
 Tous	ADJ
 les	DET
-quatre	ADJNUM
+quatre	ADJ
 sont	V
 accusés	VPP
 de	P
@@ -86517,7 +86376,7 @@ mois	NC
 -	PONCT
 ci	ADV
 ,	PONCT
-quelques	DET
+quelques	DETDES
 anciens	ADJ
 de	P
 La	DET
@@ -86741,8 +86600,7 @@ moitié	NC
 des	DETDES
 morts	NC
 (	PONCT
-53	DET
-%	NC
+53 %	NC
 ,	PONCT
 13,178	DET
 )	PONCT
@@ -86813,7 +86671,7 @@ de la part de	P
 PepsiCo	NPP
 ,	PONCT
 numéro	NC
-trois	ADJNUM
+trois	ADJ
 mondial	ADJ
 de	P
 la	DET
@@ -86971,7 +86829,7 @@ produits	NC
 laitiers	ADJ
 et	CC
 numéro	NC
-deux	ADJNUM
+deux	ADJ
 des	DETDES
 eaux	NC
 et	CC
@@ -87158,7 +87016,7 @@ effectué	VPP
 une	DET
 étude	NC
 sur	P
-748	DET
+748	DETNUM
 patients	NC
 qui	PROREL
 suivaient	V
@@ -87377,7 +87235,7 @@ manière	NC
 égale	ADJ
 ,	PONCT
 seuls	ADJ
-7	DET
+7	DETNUM
 patients	NC
 qui	PROREL
 reçurent	V
@@ -87387,7 +87245,7 @@ MIT	NPP
 moururent	V
 ,	PONCT
 et	CC
-20	DET
+20	DETNUM
 patients	NC
 qui	PROREL
 ne	ADV
@@ -87437,7 +87295,7 @@ mitigés	ADJ
 mixed	ADJ
 .	PONCTU_FORTE
 Bien que	CS
-certains	DETNUM
+certains	DETDES
 groupes	NC
 religieux	ADJ
 ont	V
@@ -87546,7 +87404,7 @@ par	P
 une	DET
 équipe	NC
 de	P
-16	DET
+16	DETNUM
 chercheurs	NC
 de	P
 la	DET
@@ -87569,7 +87427,7 @@ VAMC	NPP
 ,	PONCT
 et	CC
 de	P
-7	DET
+7	DETNUM
 autres	ADJ
 académies	NC
 médicales	ADJ
@@ -87577,7 +87435,7 @@ médicales	ADJ
 -	PONCT
 Uniennes	NPP
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 semaines	NC
 après	P
 les	DET
@@ -87624,7 +87482,7 @@ a été	V
 ciblé	ADJ
 .	PONCTU_FORTE
 Les	DET
-quatre	ADJNUM
+quatre	ADJ
 bombes	NC
 n'	ADV
 ont	V
@@ -87873,7 +87731,7 @@ hommes	NC
 ,	PONCT
 âgés	ADJ
 entre	P
-18	DET
+18	NC
 et	CC
 40 ans	NC
 ,	PONCT
@@ -88328,7 +88186,7 @@ de	P
 Robert Mugabe	NPP
 ,	PONCT
 plus	ADV
-500	ADJ
+500	DETNUM
 fermiers	NC
 blancs	ADJ
 ont été	V
@@ -88378,7 +88236,7 @@ Charm el-Cheikh	NPP
 ,	PONCT
 faisant	VPR
 au moins	ADV
-88	DET
+88	DETNUM
 morts	NC
 et	CC
 200	NC
@@ -88460,7 +88318,7 @@ coûté	VPP
 la	DET
 vie	NC
 à	P
-34	DET
+34	DETNUM
 personnes	NC
 dans	P
 un	DET
@@ -88504,7 +88362,7 @@ total	NC
 ,	PONCT
 ce	CLS
 sont	V
-18	DET
+18	DETNUM
 personnes	NC
 qui	PROREL
 ont été	V
@@ -88581,7 +88439,7 @@ de	P
 En	P
 tout	ADV
 ,	PONCT
-74	DET
+74	DETNUM
 autres	ADJ
 personnes	NC
 ont été	V
@@ -88592,7 +88450,7 @@ peines	NC
 qui	PROREL
 allaient	V
 de	P
-6	DET
+6	NC
 à	P
 28 ans	NC
 de	P
@@ -89450,7 +89308,7 @@ plus	ADV
 de	P
 trente	DETNUM
 (	PONCT
-39	DET
+39	NC
 selon	P
 lAFP	NPP
 )	PONCT
@@ -89476,9 +89334,9 @@ a	V
 presque	ADV
 doublé	VPP
 (	PONCT
-35	DET
+35	NC
 à	P
-65	DET
+65	DETNUM
 rials	NC
 )	PONCT
 alors que	CS
@@ -89487,9 +89345,9 @@ gazole	NC
 en particulier	ADV
 s'envolait	V
 (	PONCT
-17	DET
+17	NC
 à	P
-45	DET
+45	DETNUM
 rials	NC
 )	PONCT
 après que	CS
@@ -91530,10 +91388,10 @@ remplie	VPP
 d'	P
 écrous	NC
 faisant	VPR
-8	DET
+8	DETNUM
 morts	NC
 et	CC
-117	DET
+117	DETNUM
 blessés	NC
 .	PONCTU_FORTE
 À	P
@@ -91941,37 +91799,22 @@ au	P+D
 nage	NC
 libre	ADJ
 en	P
-4 minutes	NC
-6 secondes	NC
-et	CC
-44	ADJ
-centièmes	NC
+4 minutes 6 secondes et 44 centièmes	NC
 .	PONCTU_FORTE
 Devançant	VPR
 ainsi	ADV
 la	DET
 japonaise	ADJ
-Ai	NC
-Shibata	NPP
+Ai Shibata	NPP
 (	PONCT
-4	DET
-minutes	NC
-6 seconde	NC
-et	CC
-74	DET
-centièmes	NC
+4 minutes 6 seconde et 74 centièmes	NC
 )	PONCT
 et	CC
 la	DET
 britannique	NC
 Caitlin McLatchey	NPP
 (	PONCT
-4	DET
-minutes	NC
-7 secondes	NC
-et	CC
-25	ADJ
-centièmes	NC
+4 minutes 7 secondes et 25 centièmes	NC
 )	PONCT
 .	PONCTU_FORTE
 Le	DET
@@ -92101,7 +91944,7 @@ exceptionnelle	ADJ
 où	PROREL
 elle	CLS
 était	V
-arrivé	VPP
+arrivée	VPP
 huitième	ADJ
 ,	PONCT
 après	P
@@ -92249,7 +92092,7 @@ la	DET
 mission	NC
 STS	NPP
 -	PONCT
-114	DET
+114	NC
 est	NC
 prévue	VPP
 pour	P
@@ -92340,7 +92183,7 @@ les	DET
 ordinateurs	NC
 coupent	V
 les	DET
-trois	ADJNUM
+trois	ADJ
 moteurs	NC
 de	P
 la	DET
@@ -92429,7 +92272,7 @@ doublés	VPP
 ,	PONCT
 voir	VINF
 pour	P
-certains	DETNUM
+certains	DETDES
 triplés	NC
 )	PONCT
 ,	PONCT
@@ -92476,7 +92319,7 @@ recherche	NC
 et	CC
 avoir	VINF
 éliminé	VPP
-161	DET
+161	DETNUM
 causes	NC
 possibles	ADJ
 d'	P
@@ -92583,7 +92426,7 @@ de	P
 l'	DET
 ISS	NPP
 Les	DET
-sept	ADJNUM
+sept	ADJ
 membres	NC
 d'	P
 équipages	NC
@@ -92788,7 +92631,7 @@ la	DET
 navette	NC
 ne	ADV
 dépasse	V
-15	ADJ
+15	NC
 ,	PONCT
 alors qu'	CS
 avant	P
@@ -92798,7 +92641,7 @@ de	P
 Columbia	NPP
 il	CLS
 restait	V
-28	DET
+28	DETNUM
 vols	NC
 à	P
 effectuer	VINF
@@ -92868,7 +92711,7 @@ ou	CC
 la	DET
 conservation	NC
 de	P
-certains	DETNUM
+certains	DETDES
 modules	NC
 devrait	V
 être	VINF
@@ -92996,8 +92839,7 @@ enquête	NC
 ,	PONCT
 qui	PROREL
 sont	V
-entre	P
-autres	ADJ
+entre autres	ADV
 :	PONCT
 Le	DET
 coût	NC
@@ -93313,7 +93155,7 @@ causes	NC
 qui	PROREL
 peut	V
 pousser	VINF
-certains	DETNUM
+certains	DETDES
 irakiens	ADJ
 à	P
 rejoindre	VINF
@@ -93361,8 +93203,7 @@ cadre	NC
 ,	PONCT
 elle	CLS
 relève	V
-entre	P
-autres	ADJ
+entre autres	ADV
 l'	DET
 utilisation	NC
 de	P
@@ -93374,7 +93215,7 @@ des	DETDES
 zones	NC
 résidentiels	ADJ
 .	PONCTU_FORTE
-Quatre	DET
+Quatre	DETNUM
 suspects	NC
 ont été	V
 interpellés	VPP
@@ -93477,7 +93318,7 @@ après	P
 la	DET
 descente	NC
 .	PONCTU_FORTE
-Deux	DET
+Deux	DETNUM
 autres	ADJ
 suspects	NC
 ont été	V
@@ -93489,7 +93330,7 @@ dans	P
 la	DET
 nuit	NC
 du	DETDU
-26	ADJ
+26	NC
 au	P+D
 27 juillet	NC
 .	PONCTU_FORTE
@@ -94044,7 +93885,7 @@ la	DET
 mission	NC
 STS	NPP
 -	PONCT
-114	DET
+114	NC
 s'achèvera	V
 le	DET
 7 août	NC
@@ -94272,7 +94113,7 @@ droit	NC
 de	P
 sortir	VINF
 que	CS
-certains	DETNUM
+certains	DETDES
 dimanches	NC
 pour	P
 aller	VINF
@@ -94400,7 +94241,7 @@ instance	NC
 d'	P
 emprisonnement	NC
 dont	PROREL
-sept	ADJNUM
+sept	ADJ
 avec	P
 sursis	NC
 ,	PONCT
@@ -94571,7 +94412,7 @@ Après	P
 délibération	NC
 ,	PONCT
 les	DET
-sept	ADJNUM
+sept	ADJ
 juges	NC
 ont	V
 déclaré	VPP
@@ -94873,7 +94714,7 @@ navette	NC
 Columbia	NPP
 avec	P
 ses	DET
-sept	ADJNUM
+sept	ADJ
 membres	NC
 d'	P
 équipage	NC
@@ -95300,7 +95141,7 @@ de	P
 Columbia	NPP
 il	CLS
 restait	V
-28	DET
+28	DETNUM
 lancements	NC
 à	P
 effectuer	VINF
@@ -95312,7 +95153,7 @@ ramené	VPP
 ce	DET
 nombre	NC
 à	P
-15	DET
+15	NC
 à la suite de	P
 la	DET
 catastrophe	NC
@@ -95517,8 +95358,7 @@ par	P
 plusieurs	ADJ
 média	NC
 ,	PONCT
-entre	P
-autres	ADJ
+entre autres	ADV
 sur	P
 DVD	NC
 fait	VPP
@@ -95622,7 +95462,7 @@ sous	P
 les	DET
 verrous	NC
 les	DET
-trois	ADJNUM
+trois	ADJ
 terroristes	NC
 restants	ADJ
 .	PONCTU_FORTE
@@ -95687,7 +95527,7 @@ lacrymogènes	ADJ
 à	P
 extraire	VINF
 les	DET
-deux	ADJNUM
+deux	ADJ
 hommes	NC
 sans	P
 effusion	NC
@@ -95759,7 +95599,7 @@ rapidement	ADV
 acceptée	ADJ
 et	CC
 les	DET
-quatre	ADJNUM
+quatre	ADJ
 hommes	NC
 les	DET
 plus	ADV
@@ -95781,7 +95621,7 @@ Le	DET
 vol	NC
 STS	NPP
 -	PONCT
-114	DET
+114	NC
 de	P
 la	DET
 NASA	NPP
@@ -95913,7 +95753,7 @@ remplacement	NC
 d'	P
 un	DET
 des	DETDES
-quatre	ADJNUM
+quatre	ADJ
 gyroscope	NC
 de	P
 l'	DET
@@ -96076,7 +95916,7 @@ assez	ADV
 tendu	VPP
 entre	P
 les	DET
-deux	ADJNUM
+deux	ADJ
 pays	NC
 ,	PONCT
 puisque	CS
@@ -96092,7 +95932,7 @@ les	DET
 USA	NPP
 avait	V
 émis	VPP
-quelques	DET
+quelques	DETDES
 critiques	NC
 envers	P
 le	DET
@@ -96189,7 +96029,7 @@ des	DETDES
 USA	NPP
 dans	P
 ces	DET
-deux	ADJNUM
+deux	ADJ
 pays	NC
 est	V
 l'	DET
@@ -96316,8 +96156,7 @@ taille	NC
 de	P
 Pluton	NPP
 (	PONCT
-2600	DET
-kilomètres	NC
+2600 kilomètres	NC
 de	P
 diamètre	NC
 )	PONCT
@@ -96439,7 +96278,7 @@ expression	NC
 planète	NC
 .	PONCTU_FORTE
 Alors que	CS
-certains	DETNUM
+certains	DETDES
 puristes	NC
 parlent	V
 de	P
@@ -96509,7 +96348,7 @@ ce	PRO
 qui	PROREL
 est	V
 une	DET
-première	ADJ
+première	NC
 pour	P
 un	DET
 objet	NC
@@ -96628,7 +96467,7 @@ Sultan	NC
 ben	ADJ
 Abdel Aziz	NPP
 (	PONCT
-77	DET
+77	DETNUM
 ans	NC
 )	PONCT
 serait	V
@@ -96885,7 +96724,7 @@ le	DET
 1er août	NC
 .	PONCTU_FORTE
 Seulement	ADV
-43	DET
+43	DETNUM
 blessés	NC
 légers	ADJ
 suite à	P
@@ -96921,7 +96760,7 @@ Air France	NPP
 s' écrasé	VPP
 est	V
 avec	P
-309	DET
+309	DETNUM
 personnes	NC
 à	P
 son	DET
@@ -96987,7 +96826,7 @@ est	V
 maintenant	ADV
 sûr	ADJ
 que	CS
-43	DET
+43	DETNUM
 personnes	NC
 souffrent	V
 de	P
@@ -97005,10 +96844,10 @@ hôpital	NC
 Il	CLS
 y	CLO
 avait	V
-297	DET
+297	DETNUM
 passagers	NC
 et	CC
-12	DET
+12	DETNUM
 stewarts	NC
 à	P
 bord	NC
@@ -97042,7 +96881,7 @@ enlevés	VPP
 le	DET
 mardi 2 août	NC
 par	P
-5	DET
+5	DETNUM
 hommes	NC
 à	P
 bord	NC
@@ -97517,7 +97356,7 @@ le	DET
 bras	NC
 robotisé	VPP
 Canadarm	NPP
-2	NC
+2	ADJ
 de	P
 la	DET
 Station	NC
@@ -97536,7 +97375,7 @@ solidement	ADV
 attaché	VPP
 .	PONCTU_FORTE
 Grâce aux	DET
-deux	ADJNUM
+deux	ADJ
 caméras	NC
 fixés	VPP
 sur	P
@@ -97560,7 +97399,7 @@ ont	V
 déterminés	VPP
 que	CS
 les	DET
-deux	ADJNUM
+deux	ADJ
 joints	NC
 retirés	VPP
 dépassaient	V
@@ -97583,7 +97422,7 @@ beaucoup	ADV
 plus	ADV
 pour	P
 le	DET
-premier	ADJ
+premier	NC
 que	CS
 ce	PRO
 qui	PROREL
@@ -97658,7 +97497,7 @@ démocratie	NC
 ,	PONCT
 composé	VPP
 de	P
-17	DET
+17	DETNUM
 membres	NC
 ,	PONCT
 a	V
@@ -97885,7 +97724,7 @@ sont	V
 restés	VPP
 silencieux	ADJ
 .	PONCTU_FORTE
-Trois	DET
+Trois	DETNUM
 coups	NC
 d'	P
 État	NC

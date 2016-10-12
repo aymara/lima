@@ -98,10 +98,11 @@
     </group>
     <group name="NumexMicros" class="SpecificEntitiesMicros">
       <list name="Numex.NUMBER">
-        <item value="NC"/>
-        <item value="DET"/>
-        <item value="PRO"/>
+        <!--item value="ADJNUM"/-->
         <item value="ADJ"/>
+        <item value="DETNUM"/>
+        <item value="NC"/>
+        <item value="PRO"/>
       </list>
       <list name="Numex.UNIT">
         <item value="NC"/>
