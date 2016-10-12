@@ -67,7 +67,7 @@
       <value name="DETDES"/>
       <value name="DETDU"/>
       <value name="DETWH"/>
-      <value name="DETNUM"/>
+      <!--value name="DETNUM"/-->
     </subvalues>
     <subvalues value="DIVERS">
       <value name="U"/>

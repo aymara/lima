@@ -100,9 +100,9 @@
       <list name="Numex.NUMBER">
         <!--item value="ADJNUM"/-->
         <item value="ADJ"/>
-        <item value="DETNUM"/>
+        <item value="DET"/>
         <item value="NC"/>
-        <item value="PRO"/>
+        <!--item value="PRO"/-->
       </list>
       <list name="Numex.UNIT">
         <item value="NC"/>

@@ -9912,14 +9912,14 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="DETNUM">
+<!--code key="DETNUM">
 	<field key="MICRO" value="DETNUM"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
-</code>
+</code-->
 <code key="Dai">
 	<field key="MICRO" value="DET"/>
 	<field key="GENDER" value=""/>
