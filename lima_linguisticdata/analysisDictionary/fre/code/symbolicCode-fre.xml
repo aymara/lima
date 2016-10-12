@@ -9912,14 +9912,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<!--code key="DETNUM">
-	<field key="MICRO" value="DETNUM"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code-->
 <code key="Dai">
 	<field key="MICRO" value="DET"/>
 	<field key="GENDER" value=""/>
@@ -10080,14 +10072,6 @@
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
 </code>
-<!--code key="ADJNUM">
-	<field key="MICRO" value="ADJNUM"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code-->
 <code key="Afha---">
   <field key="MICRO" value="ADJ"/>
   <field key="GENDER" value=""/>
