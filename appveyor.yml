@@ -8,7 +8,7 @@ environment:
   QTDIR: 'C:\Qt\5.5\msvc2013_64'
   BOOST_ROOT: 'C:\Libraries\boost'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
-  PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;%PATH%'
+  PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
