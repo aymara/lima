@@ -64,8 +64,8 @@
         <!--item value="geoDumper"/-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <!--item value="VerbNetRecognition"/-->
-        <item value="FrameNetRecognition"/>
-        <item value="srl"/>
+        <!--item value="FrameNetRecognition"/-->
+        <!--item value="kbsrl"/-->
         <item value="conllDumper"/>
         <!--item value="bowDumper"/-->
         <!--item value="posGraphXmlDumper"/-->
