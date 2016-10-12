@@ -3782,3 +3782,7 @@ GC;;endéans;dans endéans;préposition;
 GC;;entre;entre autres;adverbe;
 GC;;quelle;quelle que soit;préposition;quel que soit
 GC;;quel;quelle que soit;préposition;quel que soit
+GC;;entre;d' entre;préposition;d'entre
+GC;;contre;par contre;adverbe;
+GC;;certain;un certain nombre;pronom général;
+GC;;chez;de chez;préposition;

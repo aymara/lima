@@ -189,7 +189,7 @@ cœurs	NC
 dans	P
 les	DET
 rires	NC
-comme	P
+comme	CC
 dans	P
 les	DET
 larmes	NC
@@ -1033,7 +1033,7 @@ d'	P
 une	DET
 carte	NC
 graphique	ADJ
-ATI Radeon 9700 Mobility	 64 Mo	NPP
+ATI Radeon 9700 Mobility 64 Mo	NPP
 (	PONCT
 disponible	ADJ
 en	P
@@ -2152,7 +2152,7 @@ opposition	NC
 mais	CC
 cette fois	ADV
 ,	PONCT
-d'	DETDE
+d'	DET
 autres	ADJ
 candidats	NC
 se levés	VPP
@@ -2557,7 +2557,7 @@ jusqu'à	P
 aujourd'hui	ADV
 illustré	VPP
 par	P
-de	DETDE
+de	DET
 nombreux	ADJ
 attentats	NC
 contre	P
@@ -3429,8 +3429,7 @@ live	NC
 par	P
 des	DET
 développeurs	NC
-de	P
-chez	P
+de chez	P
 Microsoft	NPP
 .	PONCTU_FORTE
 On	CLS
@@ -6444,7 +6443,7 @@ pour	P
 les	CLO
 remplacer	VINF
 par	P
-de	DETDE
+de	DET
 nouveaux	ADJ
 membres	NC
 supposés	ADJ
@@ -9855,7 +9854,7 @@ ocassion	NC
 n'	ADV
 a	V
 pas	ADV
-d'	DETDE
+d'	DET
 existence	NC
 juridique	ADJ
 »	PONCT
@@ -10472,7 +10471,7 @@ bouleversements	NC
 ni	CC
 à	P
 lancer	VINF
-de	DETDE
+de	DET
 grands	ADJ
 chantiers	NC
 en dehors de	P
@@ -10974,7 +10973,7 @@ prévu	VPP
 de	P
 procéder	VINF
 à	P
-de	DETDE
+de	DET
 nouvelles	ADJ
 auditions	NC
 dans	P
@@ -13062,7 +13061,7 @@ a été	V
 estimée	VPP
 injurieuse	ADJ
 par	P
-de	DETDE
+de	DET
 nombreux	ADJ
 observateurs	NC
 .	PONCTU_FORTE
@@ -13396,7 +13395,7 @@ visant	VPR
 à	P
 empêcher	VINF
 que	CS
-de	DETDE
+de	DET
 telles	ADJ
 diffamations	NC
 et	CC
@@ -14218,7 +14217,7 @@ nous	CLS
 avons	V
 également	ADV
 recherché	VPP
-d'	DETDE
+d'	DET
 autres	ADJ
 solutions	NC
 auprès des	P+D
@@ -14752,7 +14751,7 @@ Europe	NPP
 mais	CC
 aussi	ADV
 dans	P
-de	DETDE
+de	DET
 nombreux	ADJ
 pays	NC
 extérieurs	ADJ
@@ -17269,7 +17268,7 @@ a	V
 indiqué	VPP
 ,	PONCT
 à	P
-de	DETDE
+de	DET
 nombreuses	ADJ
 reprises	NC
 ,	PONCT
@@ -17468,7 +17467,7 @@ cet	DET
 entretien	NC
 ,	PONCT
 sur	P
-d'	DETDE
+d'	DET
 autres	ADJ
 sujets	NC
 d'	P
@@ -18447,7 +18446,7 @@ conduire	VINF
 à	P
 prendre	VINF
 rapidement	ADV
-de	DETDE
+de	DET
 nouvelles	ADJ
 décisions	NC
 .	PONCTU_FORTE
@@ -18514,7 +18513,7 @@ roi	NC
 a	V
 justement	ADV
 signé	VPP
-de	DETDE
+de	DET
 nouveaux	ADJ
 décrets	NC
 ,	PONCT
@@ -18841,7 +18840,7 @@ problèmes	NC
 au	P+D
 Bénin	NPP
 ;	PONCT
-de	DETDE
+de	DET
 nombreuses	ADJ
 OGN	NC
 sont	V
@@ -19374,7 +19373,7 @@ de	P
 grande	ADJ
 envergure	NC
 dans	P
-de	DETDE
+de	DET
 nombreux	ADJ
 quartiers	NC
 de	P
@@ -19867,7 +19866,7 @@ tout	ADV
 en	P
 reconnaissant	VPR
 que	CS
-d'	DETDE
+d'	DET
 autres	PRO
 peuvent	V
 préférer	VINF
@@ -22104,7 +22103,7 @@ du	DETDU
 FPÖ	NPP
 )	PONCT
 ,	PONCT
-de	DETDE
+de	DET
 nombreux	ADJ
 cadres	NC
 et	CC
@@ -24727,7 +24726,7 @@ avait	V
 fait	VPP
 connaître	VINF
 depuis	P
-de	DETDE
+de	DET
 nombreux	ADJ
 mois	NC
 son	DET
@@ -24903,7 +24902,7 @@ en	P
 juillet 1978	NC
 ,	PONCT
 sur	P
-de	DETDE
+de	DET
 fausses	ADJ
 preuves	NC
 ,	PONCT
@@ -25036,7 +25035,7 @@ pas	ADV
 empêché	VPP
 ,	PONCT
 malgré	P
-de	DETDE
+de	DET
 nombreux	ADJ
 désaccords	NC
 ,	PONCT
@@ -25124,7 +25123,7 @@ M.	NC
 Chtcharanski	NPP
 ,	PONCT
 comme	P
-d'	DETDE
+d'	DET
 autres	ADJ
 opposants	NC
 internes	ADJ
@@ -26131,7 +26130,7 @@ qui	PROREL
 n'	ADV
 apporte	V
 pas	ADV
-de	DETDE
+de	DET
 véritable	ADJ
 solution	NC
 aux	P+D
@@ -26179,7 +26178,7 @@ solidarité	NC
 .	PONCTU_FORTE
 Celle-ci	PRO
 appelle	V
-d'	DETDE
+d'	DET
 autres	ADJ
 réponses	NC
 basées	VPP
@@ -28013,7 +28012,7 @@ baleine	NC
 ,	PONCT
 s'interposèrent	V
 dans	P
-de	DETDE
+de	DET
 frêles	NC
 embarcations	VPP
 entre	P
@@ -28354,7 +28353,7 @@ ne	ADV
 se déplacent	V
 pas	ADV
 dans	P
-d'	DETDE
+d'	DET
 autres	ADJ
 pays	NC
 .	PONCTU_FORTE
@@ -29992,7 +29991,7 @@ en tout cas	ADV
 l'	DET
 apparition	NC
 à	P
-de	DETDE
+de	DET
 nombreux	ADJ
 endroits	NC
 de	P
@@ -32346,7 +32345,7 @@ qui	PROREL
 se imposés	VPP
 sont	V
 dans	P
-d'	DETDE
+d'	DET
 autres	ADJ
 mairies	NC
 »	PONCT
@@ -36542,7 +36541,7 @@ gouvernement	NC
 ne	ADV
 possède	V
 pas	ADV
-de	DETDE
+de	DET
 nouvelles	ADJ
 informations	NC
 concernant	P
@@ -37229,7 +37228,7 @@ il	CLS
 parvient	V
 à	P
 enrôler	VINF
-de	DETDE
+de	DET
 nouveaux	ADJ
 immigrés	NC
 clandestins	ADJ
@@ -39494,7 +39493,7 @@ vendredi	NC
 par	P
 NYT	NPP
 que	CS
-de	DETDE
+de	DET
 nouvelles	ADJ
 images	NC
 satellites	NC
@@ -40734,7 +40733,7 @@ précédente	ADJ
 législature	NC
 )	PONCT
 conduit	V
-de	DETDE
+de	DET
 nombreux	ADJ
 parlementaires	NC
 et	CC
@@ -40841,8 +40840,7 @@ M.	NC
 Blair	NPP
 ,	PONCT
 4	NC
-d'	P
-entre	P
+d'entre	P
 eux	PRO
 espérant	VPR
 ce	DET
@@ -40911,7 +40909,7 @@ pas	ADV
 se prononcer	VINF
 tant	ADV
 que	CS
-d'	DETDE
+d'	DET
 autres	ADJ
 candidats	NC
 à	P
@@ -41956,7 +41954,7 @@ des	DET
 combattants	NC
 incarcérés	ADJ
 depuis	P
-de	DETDE
+de	DET
 nombreuses	ADJ
 années	NC
 .	PONCTU_FORTE
@@ -42940,7 +42938,7 @@ peu de	DET
 plutonium	NC
 dissous	VPP
 dans	P
-de	DETDE
+de	DET
 l'	DET
 acide	ADJ
 nitrique	NC
@@ -43710,7 +43708,7 @@ de	P
 favori	NC
 »	PONCT
 ,	PONCT
-d'	DETDE
+d'	DET
 autres	ADJ
 voix	NC
 signalent	V
@@ -44688,7 +44686,7 @@ qui	PROREL
 avait	V
 démontré	VPP
 que	CS
-de	DETDE
+de	DET
 nombreux	ADJ
 cas	NC
 de	P
@@ -47816,7 +47814,7 @@ n'	ADV
 y	CLO
 reconnaissant	VPR
 pas	ADV
-de	DETDE
+de	DET
 «	PONCT
 néolibéralisme	NC
 .	PONCTU_FORTE
@@ -52255,7 +52253,7 @@ en	P
 canonisation	NC
 peuvent	V
 durer	VINF
-de	DETDE
+de	DET
 nombreuses	ADJ
 années	NC
 .	PONCTU_FORTE
@@ -53766,7 +53764,7 @@ dit	VPP
 réfléchir	VINF
 »	PONCT
 sur	P
-d'	DETDE
+d'	DET
 éventuelles	ADJ
 mesures	NC
 de	P
@@ -56363,7 +56361,7 @@ controversées	ADJ
 et	CC
 interdites	ADJ
 dans	P
-de	DETDE
+de	DET
 nombreux	ADJ
 pays	NC
 (	PONCT
@@ -58202,7 +58200,7 @@ soutenue	ADJ
 doit	V
 faire face	VINF
 à	P
-de	DETDE
+de	DET
 graves	ADJ
 problèmes	NC
 sociaux	ADJ
@@ -58750,7 +58748,7 @@ pourraient	V
 être	VINF
 enflammées	VPP
 ,	PONCT
-d'	DETDE
+d'	DET
 autres	ADJ
 avançant	VPR
 la	DET
@@ -60496,7 +60494,7 @@ intéressante	ADJ
 mais	CC
 irréalisable	ADJ
 dans	P
-de	DETDE
+de	DET
 courts	ADJ
 délais	NC
 FOREIGN	ET
@@ -60986,7 +60984,7 @@ des	DET
 liens	NC
 étroits	ADJ
 avec	P
-d'	DETDE
+d'	DET
 autres	ADJ
 islamistes	NC
 (	PONCT
@@ -61258,7 +61256,7 @@ n'	ADV
 y	CLO
 aura	V
 pas	ADV
-d'	DETDE
+d'	DET
 accord	NC
 consensuel	ADJ
 entre	P
@@ -61390,7 +61388,7 @@ arme	NC
 nucléaire	ADJ
 ,	PONCT
 tandis que	CS
-d'	DETDE
+d'	DET
 autres	ADJ
 nations	NC
 désiraient	V
@@ -63805,7 +63803,7 @@ sans	P
 jamais	ADV
 en	P
 recevoir	VINF
-de	DETDE
+de	DET
 vraies	ADJ
 révélations	NC
 ,	PONCT
@@ -64063,7 +64061,7 @@ indiquent	V
 les	DET
 archives	NC
 ,	PONCT
-de	DETDE
+de	DET
 nombreuses	ADJ
 autres	ADJ
 sources	NC
@@ -68285,7 +68283,7 @@ tour	NC
 très	ADV
 serré	ADJ
 selon	P
-de	DETDE
+de	DET
 récents	ADJ
 sondages	NC
 .	PONCTU_FORTE
@@ -68459,7 +68457,7 @@ culture	NC
 interventions	NC
 violentes	ADJ
 contre	P
-de	DETDE
+de	DET
 jeunes	ADJ
 manifestants	NC
 ne	ADV
@@ -69321,7 +69319,7 @@ crise	NC
 mais	CC
 simplement	ADV
 dans	P
-de	DETDE
+de	DET
 «	PONCT
 grosses	ADJ
 difficultés	NC
@@ -71540,7 +71538,7 @@ du	DETDU
 week-end	NC
 ,	PONCT
 faisant	VPR
-de	DETDE
+de	DET
 nombreuses	ADJ
 interventions	NC
 anticipatoires	ADJ
@@ -71908,7 +71906,7 @@ maire	NC
 de	P
 Téhéran	NPP
 par	P
-de	DETDE
+de	DET
 nombreuses	ADJ
 accusations	NC
 portant	VPR
@@ -71920,7 +71918,7 @@ scrutin	NC
 ,	PONCT
 soulignant	VPR
 que	CS
-de	DETDE
+de	DET
 nombreux	ADJ
 observateurs	NC
 que	CS
@@ -72229,7 +72227,7 @@ en	P
 France	NPP
 .	PONCTU_FORTE
 Après	P
-de	DETDE
+de	DET
 nombreuses	ADJ
 discordes	NC
 sur	P
@@ -73228,7 +73226,7 @@ caméscope	NC
 on	CLS
 trouve	V
 également	ADV
-de	DETDE
+de	DET
 nombreuses	ADJ
 copies	NC
 de	P
@@ -74417,7 +74415,7 @@ l'	DET
 été 2003	NC
 ,	PONCT
 c'est pourquoi	ADV
-de	DETDE
+de	DET
 nombreux	ADJ
 départements	NC
 français	ADJ
@@ -74771,7 +74769,7 @@ au	P+D
 Canada	NPP
 ,	PONCT
 d'après	P
-de	DETDE
+de	DET
 récentes	ADJ
 prévisions	NC
 .	PONCTU_FORTE
@@ -76314,7 +76312,7 @@ disait	V
 ne	ADV
 pas	ADV
 avoir	VINF
-d'	DETDE
+d'	DET
 informations	NC
 ,	PONCT
 son	DET
@@ -76340,7 +76338,7 @@ anciens	ADJ
 otages	NC
 américains	ADJ
 soulèvent	V
-de	DETDE
+de	DET
 nombreuses	ADJ
 questions	NC
 sur	P
@@ -78749,7 +78747,7 @@ dans	P
 leur	DET
 recherche	NC
 ,	PONCT
-d'	DETDE
+d'	DET
 autres	PRO
 craignant	VPR
 des	DET
@@ -79538,7 +79536,7 @@ Moorgate	NPP
 ,	PONCT
 l'	DET
 hôpital	NC
-de	DETDE
+de	DET
 St Mary	NPP
 a	V
 émis	VPP
@@ -80937,7 +80935,7 @@ des	DET
 problèmes	NC
 pour	P
 absorber	VINF
-de	DETDE
+de	DET
 telles	ADJ
 sommes	NC
 ,	PONCT
@@ -82262,7 +82260,7 @@ avant	P
 cet	DET
 incident	NC
 ,	PONCT
-de	DETDE
+de	DET
 nombreuses	ADJ
 alertes	NC
 furent	V
@@ -83787,7 +83785,7 @@ dans le cas d'	P
 un	DET
 problème	NC
 ,	PONCT
-de	DETDE
+de	DET
 nouvelles	ADJ
 procédures	NC
 de	P
@@ -84813,7 +84811,7 @@ Le	DET
 tour-opérateur	NC
 se défend	V
 pourtant	ADV
-de	DETDE
+de	DET
 telles	ADJ
 accusations	NC
 ,	PONCT
@@ -85037,7 +85035,7 @@ dans	P
 un	DET
 pays	NC
 où	PROREL
-de	DETDE
+de	DET
 nombreux	ADJ
 métiers	NC
 sont	V
@@ -85771,8 +85769,7 @@ Le	DET
 sort	NC
 des	DET
 démonstrateurs	NC
-par	P
-contre	P
+par contre	ADV
 est	V
 entièrement	ADV
 entre	P
@@ -86149,7 +86146,7 @@ que	CS
 de	P
 violences	NC
 sur	P
-d'	DETDE
+d'	DET
 autres	ADJ
 détenus	NC
 )	PONCT
@@ -86360,7 +86357,7 @@ a été	V
 cependant	ADV
 critiquée	VPP
 par	P
-d'	DETDE
+d'	DET
 anciens	ADJ
 chefs	NC
 du	DETDU
@@ -86476,7 +86473,7 @@ allons	V
 en	P
 prison	NC
 ,	PONCT
-d'	DETDE
+d'	DET
 autres	ADJ
 viendront	V
 avec	P
@@ -87357,7 +87354,7 @@ qu'	PROREL
 ils	CLS
 proposent	V
 pour	P
-de	DETDE
+de	DET
 tels	ADJ
 effets	NC
 sont	V
@@ -87383,7 +87380,7 @@ qu'	PROREL
 ils	CLS
 proposent	V
 pour	P
-de	DETDE
+de	DET
 tels	ADJ
 effets	NC
 sont	V
@@ -87928,7 +87925,7 @@ pays	NC
 et	CC
 qui	PROREL
 pousse	V
-de	DETDE
+de	DET
 nombreux	ADJ
 Zimbabwéens	NC
 à	P
@@ -87958,9 +87955,7 @@ opposition	NC
 )	PONCT
 ,	PONCT
 dont	PROREL
-un	DET
-certain	ADJ
-nombre	NC
+un certain nombre	PRO
 d'	P
 entre	P
 -	PONCT
@@ -88860,8 +88855,7 @@ se déclarent	V
 catholiques	ADJ
 et	CC
 47,7%	NC
-d'	P
-entre	P
+d' entre	P
 eux	PRO
 pratiquants	ADJ
 .	PONCTU_FORTE
@@ -89951,7 +89945,7 @@ perdre	VINF
 la	DET
 vie	NC
 dans	P
-de	DETDE
+de	DET
 telles	ADJ
 circonstances	NC
 est	V
@@ -90725,7 +90719,7 @@ en	P
 Israël	NPP
 et	CC
 dans	P
-d'	DETDE
+d'	DET
 autres	ADJ
 pays	NC
 frappés	VPP
@@ -90870,7 +90864,7 @@ est	V
 très	ADV
 critiquée	VPP
 par	P
-de	DETDE
+de	DET
 nombreuses	ADJ
 organisations	NC
 non	ADV
@@ -90982,7 +90976,7 @@ Cette	DET
 commission	NC
 a	V
 visité	VPP
-de	DETDE
+de	DET
 nombreux	ADJ
 centres	NC
 de	P
@@ -91634,7 +91628,7 @@ qui	PROREL
 risqueraient	V
 de	P
 subir	VINF
-de	DETDE
+de	DET
 mauvais	ADJ
 traitements	NC
 .	PONCTU_FORTE
@@ -91714,7 +91708,7 @@ en	CLO
 finit	V
 pas	ADV
 ,	PONCT
-de	DETDE
+de	DET
 nombreuses	ADJ
 victimes	NC
 des	DET
@@ -96112,10 +96106,9 @@ de	P
 divulguer	VINF
 la	DET
 trouvaille	NC
-avant	P
-d'	P
+avant d'	P
 avoir	VINF
-de	DETDE
+de	DET
 plus	ADV
 amples	ADJ
 informations	NC
