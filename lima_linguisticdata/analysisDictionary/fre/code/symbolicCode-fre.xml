@@ -345,7 +345,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="Da--mpi">
-  <field key="MICRO" value="DETDES"/>
+  <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -353,7 +353,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="Dv--fpi">
-  <field key="MICRO" value="DETDES"/>
+  <field key="MICRO" value="DET"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -361,7 +361,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="Dv--mpi">
-  <field key="MICRO" value="DETDES"/>
+  <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
