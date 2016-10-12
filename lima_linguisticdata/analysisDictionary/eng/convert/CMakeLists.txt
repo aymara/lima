@@ -47,8 +47,8 @@ else()
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
     COMMAND echo ^<dictionary^> > dico.xml.tmp
-    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt
-    COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt
+    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt.tmp
+    COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
