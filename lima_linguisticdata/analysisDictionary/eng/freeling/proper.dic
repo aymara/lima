@@ -76,6 +76,7 @@ Biscayne	Biscayne		NNP
 Blanc	Blanc		NNP
 Blancs	Blancs		NNP
 BMP	BMP		NNP
+Board	Board		NNP
 Boca	Boca		NNP
 Bodner	Bodner		NNP
 Boeing	Boeing		NNP
@@ -136,6 +137,7 @@ Centerbank	Centerbank		NNP
 CEO	CEO		NNP
 Chabrol	Chabrol		NNP
 Chadha	Chadha		NNP
+Chairman	Chairman	NNP
 Chaplin	Chaplin		NNP
 Chardonnay	Chardonnay		NNP
 Charlemagne	Charlemagne		NNP
@@ -174,9 +176,11 @@ Colorliner	Colorliner		NNP
 Columbia	Columbia		NNP
 Columbus	Columbus		NNP
 Comtes	Comtes		NNP
+Congress	Congress		NNP
 Coniston	Coniston		NNP
 Conn.	Conn.		NNP
 Connecticut	Connecticut		NNP
+Constitution	Constitution		NNP
 Contel	Contel		NNP
 Conti	Conti		NNP
 Coors	Coors		NNP
@@ -292,6 +296,7 @@ F.H.	F.H.		NNP
 Finland	Finland		NNP
 Finmeccanica	Finmeccanica		NNP
 Firestone	Firestone		NNP
+Ford	Ford		NNP
 Fla.	Fla.		NNP
 Florida	Florida		NNP
 Florio	Florio		NNP
@@ -439,6 +444,7 @@ Joni	Joni		NNP
 J.P.	J.P.		NNP
 Jr.	Jr.		NNP
 Jr	Jr		NNP
+Judge	Judge		NNP
 Judie	Judie		NNP
 July	July		NNP
 June	June		NNP
@@ -693,6 +699,7 @@ Poland	Poland		NNP
 Poore	Poore		NNP
 Portugal	Portugal		NNP
 Pratt	Pratt		NNP
+President	President		NNP
 Preston	Preston		NNP
 Pretoria	Pretoria		NNP
 Primerica	Primerica		NNP
@@ -863,6 +870,7 @@ Toronto	Toronto		NNP
 Torrington	Torrington		NNP
 Transamerica	Transamerica		NNP
 Travelers's	Travelers's		NNP
+Treasury	Treasury		NNP
 Tribune	Tribune		NNP
 Triton	Triton		NNP
 Trockenbeerenauslesen	Trockenbeerenauslesen		NNP
