@@ -1,19 +1,17 @@
-inseperable transitive verb	VB
-intransitive verb	VB
-noun	NN
-proper noun	NNP
-separable transitive verb	VB
-preposition	IN
-TO	TO
-adverb	RB
-subordinating conjunction	SCONJ
+adjective	ADJ
+adverb	ADV
+DET	DET
 IN	IN
-pronoun	PRP
-adjective	JJ
-JJR	JJR
-temporal adverb	RB
-locative adverb	RB
-interrogative adverb	RB
+inseperable transitive verb	VB
+interrogative adverb	ADV
+intransitive verb	VB
+locative adverb	ADV
+noun	NOUN
+preposition	IN
+pronoun	PRON
+proper noun	PROPN
+separable transitive verb	VB
+subordinating conjunction	SCONJ
+temporal adverb	ADV
+TO	TO
 UH	UH
-DT	DT
-PDT	PDT

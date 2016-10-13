@@ -18,6 +18,10 @@ add_subdirectory(corpus)
 
 # file(GLOB DP_FILES $ENV{NLTK_PTB_DP_DIR}/*.dp)
 
+if (NOT DEFINED ENV{NLTK_PTB_DP_FILE})
+  message( FATAL_ERROR "Envirorment variable NLTK_PTB_DP_FILE must be defined.")
+endif()
+
 add_custom_command(
   OUTPUT succession_categs_retag.txt
   COMMAND gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt

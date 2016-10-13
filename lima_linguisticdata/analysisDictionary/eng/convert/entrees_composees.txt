@@ -2,7 +2,7 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'m">
@@ -16,7 +16,7 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -33,7 +33,7 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'re">
@@ -47,7 +47,7 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
@@ -64,7 +64,7 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
@@ -81,7 +81,7 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
@@ -98,7 +98,7 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'re">
@@ -168,7 +168,7 @@
   <concat>
     <c form="I">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
@@ -182,7 +182,7 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
@@ -196,7 +196,7 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
@@ -210,7 +210,7 @@
   <concat>
     <c form="they">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
@@ -462,7 +462,7 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -479,7 +479,7 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -496,7 +496,7 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -513,7 +513,7 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -530,7 +530,7 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -547,7 +547,7 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -564,7 +564,7 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
@@ -581,7 +581,7 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'re">
@@ -595,7 +595,7 @@
   <concat>
     <c form="I">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -609,7 +609,7 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -626,7 +626,7 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -643,7 +643,7 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -660,7 +660,7 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -674,7 +674,7 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -691,7 +691,7 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
@@ -708,8 +708,8 @@
   <concat>
     <c form="that">
       <i l="that">
-        <p v="THATWDT"/>
-        <p v="THATPRP"/>
+        <p v="DET"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
@@ -723,7 +723,7 @@
   <concat>
     <c form="there">
       <i>
-        <p v="EX"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">

@@ -35,7 +35,7 @@
     </group>
     <group name="EventMicros" class="SpecificEntitiesMicros">
       <list name="Event.EVENT">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
     </group>
   </module>

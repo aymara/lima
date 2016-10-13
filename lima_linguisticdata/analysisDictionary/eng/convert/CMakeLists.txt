@@ -14,12 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-# set(ADDED_LIST_FILES
-#   listesfermees.txt
-#   listesfermees_prenoms_en.txt
-# )
 #
-# CONVERT(eng ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt)
 
 set(ENV{LC_ALL} "C")
 

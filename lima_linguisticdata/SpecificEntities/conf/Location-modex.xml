@@ -89,35 +89,34 @@
     </group>
     <group name="LocationMicros" class="SpecificEntitiesMicros">
       <list name="Location.LOCATION">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="Location.CITY">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="Location.REGION">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="Location.COUNTRY">
-        <item value="NNP"/>
-        <item value="NNPS"/>
+        <item value="PROPN"/>
       </list>
       <list name="Location.BUILDING">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="Location.GEO">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="Location.ODO">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
       <list name="Location.URL">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
       <list name="Location.COORDINATE">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
       <list name="Location.ADDRESS">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
     </group>
   </module>

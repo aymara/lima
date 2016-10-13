@@ -25,7 +25,7 @@ use categoriesClassesDeclaration-eng.txt
 
 @VerbeLogique=(seems,appears,means,follows)
 
-@PleoPron=($PRON-PRP)
+@PleoPron=($PRON)
 
 @Is=(is,'s,is not,isn't,be,been)
 

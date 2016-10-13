@@ -79,18 +79,10 @@
   -->
   <subproperty name="MICRO" parent="MACRO">
     <subvalues value="ADJ">
-      <value name="JJ"/>
-      <value name="JJR"/>
-      <value name="JJS"/>
+      <value name="ADJ"/>
     </subvalues>
     <subvalues value="ADV">
-      <value name="RB"/>
-      <value name="ABOUTRB"/>
-      <value name="THATRB"/>
-      <value name="THERERB"/>
-      <value name="RBR"/>
-      <value name="RBS"/>
-      <value name="WRB"/>
+      <value name="ADV"/>
       <value name="NOT"/>
     </subvalues>
     <subvalues value="CONJ">
@@ -98,11 +90,7 @@
       <value name="SCONJ"/> <!-- See Universal Dependencies -->
     </subvalues>
     <subvalues value="DET">
-      <value name="DT"/>
-      <value name="THATDT"/>
-      <value name="PDT"/>
-      <value name="THATWDT"/>
-      <value name="WDT"/>
+      <value name="DET"/>
     </subvalues>
     <subvalues value="DIVERS">
       <!--value name="POS"/-->
@@ -114,15 +102,13 @@
       <value name="UH"/>
     </subvalues>
     <subvalues value="NC">
-      <value name="NN"/>
-      <value name="NNS"/>
+      <value name="NOUN"/>
     </subvalues>
     <subvalues value="NOMBRE">
-      <value name="CD"/>
+      <value name="NUM"/>
     </subvalues>
     <subvalues value="NP">
-      <value name="NNP"/>
-      <value name="NNPS"/>
+      <value name="PROPN"/>
     </subvalues>
     <subvalues value="PONCTU">
       <value name="OQU"/>
@@ -136,17 +122,11 @@
     </subvalues>
     <subvalues value="PREP">
       <value name="IN"/>
-      <value name="ABOUTIN"/>
       <value name="TO"/>
       <!--value name="RP"/-->
     </subvalues>
     <subvalues value="PRON">
-      <value name="EX"/>
-      <value name="PRP"/>
-      <value name="THATPRP"/>
-      <value name="PRP$"/>
-      <value name="WP"/>
-      <value name="WP$"/>
+      <value name="PRON"/>
     </subvalues>
     <subvalues value="V">
       <value name="MD"/>

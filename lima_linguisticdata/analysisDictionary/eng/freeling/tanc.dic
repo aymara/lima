@@ -1,13 +1,13 @@
-y'all	y'all		PRP
+y'all	y'all		PRON
 'cause	because		IN
 t'	t'		IN
-'em	them		PRP
+'em	them		PRON
 'n'	and		CC
 #'s	's		POS
 'til	until		IN
-a	a		DT
+a	a		DET
 aboard	aboard		IN
-about	about		ABOUTIN
+about	about		IN
 # about	about		RP
 above	above		IN
 # across	across		RP
@@ -16,9 +16,9 @@ after	after		IN
 against	against		IN
 # ahead	ahead		RP
 albeit	albeit		IN
-all	all		RB
-all	all		PDT
-all	all		DT
+all	all		ADV
+all	all		DET
+all	all		DET
 along	along		IN
 # along	along		RP
 alongside	alongside		IN
@@ -27,17 +27,17 @@ amid	amid		IN
 amidst	amidst		IN
 among	among		IN
 amongst	amongst		IN
-an	a		DT
+an	a		DET
 &	and		CC
 and	and		CC
 and\/or	and\/or		CC
-another	another		DT
-another	another		PRP
-any	any		DT
-any	any		PRP
-anybody	anybody		PRP
-anyone	anyone		PRP
-anything	anything		PRP
+another	another		DET
+another	another		PRON
+any	any		DET
+any	any		PRON
+anybody	anybody		PRON
+anyone	anyone		PRON
+anything	anything		PRON
 # apart	apart		RP
 # around	around		RP
 around	around		IN
@@ -48,7 +48,7 @@ astride	astride		IN
 # at	at		RP
 at	at		IN
 atop	atop		IN
-atop	atop		RB
+atop	atop		ADV
 # away	away		RP
 # back	back		RP
 because	because		IN
@@ -59,15 +59,15 @@ below	below		IN
 beneath	beneath		IN
 beside	beside		IN
 besides	besides		IN
-besides	besides		RB
+besides	besides		ADV
 between	between		IN
 betwixt	betwixt		IN
 beyond	beyond		IN
-both	both		DT
-both	both		PRP
+both	both		DET
+both	both		PRON
 both	both		CC
-both	both		PDT
-both	both		RB
+both	both		DET
+both	both		ADV
 # removed as very noisy but	but		IN
 but	but		CC
 # by	by		RP
@@ -78,93 +78,93 @@ despite	despite		IN
 down	down		IN
 # down	down		RP
 during	during		IN
-each	each		RB
-each	each		PRP
-each	each		DT
-either	either		DT
-either	either		PRP
+each	each		ADV
+each	each		PRON
+each	each		DET
+either	either		DET
+either	either		PRON
 either	either		CC
-every	every		DT
-everybody	everybody		PRP
-everything	everything		PRP
+every	every		DET
+everybody	everybody		PRON
+everything	everything		PRON
 except	except		IN
 except	except		CC
-#few	few		DT
-few	few		PRP
-fewer	few		PRP
-fewest	few		PRP
+#few	few		DET
+few	few		PRON
+fewer	few		PRON
+fewest	few		PRON
 # #for	for		RP
 for	for		IN
-former	former		PRP
+former	former		PRON
 # forward	forward		RP
 from	from		IN
-good	good		RB
-half	half		PDT
-half	half		DT
-he	he		PRP
-her	her		PRP$
-her	her		PRP
-hers	hers		PRP$
-herself	herself		PRP
-him	him		PRP
-himself	himself		PRP
-his	his		PRP$
-#his	his		PRP
-how	how		WRB
-however	however		WRB
-i	i		PRP
+good	good		ADV
+half	half		DET
+half	half		DET
+he	he		PRON
+her	her		PRON
+her	her		PRON
+hers	hers		PRON
+herself	herself		PRON
+him	him		PRON
+himself	himself		PRON
+his	his		PRON
+#his	his		PRON
+how	how		ADV
+however	however		ADV
+I	I		PRON
 if	if		IN
 # #in	in		RP
 in	in		IN
 #including	including		IN
 inside	inside		IN
-inside	inside		RB
+inside	inside		ADV
 into	into		IN
-it	it		PRP
-its	its		PRP$
-#its	its		PRP
-itself	itself		PRP
-latter	latter		PRP
-least	little		PRP
-#less	little		PRP
+it	it		PRON
+its	its		PRON
+#its	its		PRON
+itself	itself		PRON
+latter	latter		PRON
+least	little		PRON
+#less	little		PRON
 #less	less		CC
 #less	less		IN
 lest	lest		IN
 like	like		IN
-little	little		PRP
-little	little		DT
-#many	many		DT
-many	many		PRP
-me	me		PRP
-mine	mine		PRP$
+little	little		PRON
+little	little		DET
+#many	many		DET
+many	many		PRON
+me	me		PRON
+mine	mine		PRON
 minus	minus		IN
 minus	minus		CC
- #more	many		DT
-# more	many		PRP
-# most	many		DT
-# most	many		PRP
-# my	my		PRP
-my	my		PRP$
-myself	myself		PRP
+ #more	many		DET
+# more	many		PRON
+# most	many		DET
+# most	many		PRON
+# my	my		PRON
+my	my		PRON
+myself	myself		PRON
 na	na		TO
-nary	nary		PDT
+nary	nary		DET
 near	near		IN
 nearer	near		IN
-nearer	near		RBR
+nearer	near		ADV
 nearest	near		IN
-nearest	near		RBS
+nearest	near		ADV
 neath	neath		IN
 neither	neither		CC
-neither	neither		PRP
-neither	neither		DT
-next	next		PRP
+neither	neither		PRON
+neither	neither		DET
+next	next		PRON
 next	next		IN
-no	no		DT
-nobody	nobody		PRP
-none	none		PRP
+no	no		DET
+nobody	nobody		PRON
+none	none		PRON
 nor	nor		CC
-nothing	nothing		RB
-nothing	nothing		PRP
+nothing	nothing		ADV
+nothing	nothing		PRON
 notwithstanding	notwithstanding		IN
 # # of	of		RP
 of	of		IN
@@ -173,16 +173,16 @@ off	off		IN
 # # on	on		RP
 on	on		IN
 once	once		IN
-oneself	oneself		PRP
-only	only		RB
+oneself	oneself		PRON
+only	only		ADV
 onto	onto		IN
-onto	onto		RB
+onto	onto		ADV
 or	or		CC
-our	our		PRP$
-#our	our		PRP
-ours	ours		PRP$
-ours	ours		PRP
-ourselves	ourselves		PRP
+our	our		PRON
+#our	our		PRON
+ours	ours		PRON
+ours	ours		PRON
+ourselves	ourselves		PRON
 # out	out		RP
 out	out		IN
 outside	outside		IN
@@ -192,49 +192,44 @@ over	over		IN
 past	past		IN
 pending	pending		IN
 per	per		IN
-plenty	plenty		PRP
+plenty	plenty		PRON
 plus	plus		IN
 plus	plus		CC
 qua	qua		IN
-quite	quite		PDT
+quite	quite		DET
 #s'	's		POS
 save	save		IN
-several	several		DT
-several	several		PRP
-she	she		PRP
+several	several		DET
+several	several		PRON
+she	she		PRON
 since	since		IN
 so	so		IN
 so	so		CC
-some	some		PRP
-some	some		DT
-somebody	somebody		PRP
-something	something		PRP
-such	such		PDT
+some	some		PRON
+some	some		DET
+somebody	somebody		PRON
+something	something		PRON
+such	such		DET
 than	than		IN
-#that    that            WDT
-that	that		THATWDT
-#that    that            PRP
-that	that		THATPRP
 that	that		SCONJ
 #that	that		IN
-#that	that		DT
-that	that		THATDT
-# that	that		WP
-the	the		DT
-their	their		PRP$
-#their	their		PRP
-theirs	theirs		PRP$
-theirs	theirs		PRP
-them	them		PRP
-themselves	themselves		PRP
-there	there		EX
-these	these		PRP
-these	these		DT
-they	they		PRP
-this	this		PRP
-this	this		DT
-those	those		DT
-those	those		PRP
+that	that		DET
+that	that		PRON
+the	the		DET
+their	their		PRON
+#their	their		PRON
+theirs	theirs		PRON
+theirs	theirs		PRON
+them	them		PRON
+themselves	themselves		PRON
+there	there		PRON
+these	these		PRON
+these	these		DET
+they	they		PRON
+this	this		PRON
+this	this		DET
+those	those		DET
+those	those		PRON
 though	though		IN
 through	through		IN
 # through	through		RP
@@ -258,50 +253,48 @@ unto	unto		IN
 up	up		IN
 upon	upon		IN
 # upon	upon		RP
-us	us		PRP
+us	us		PRON
 v.	v.		IN
 versus	versus		CC
 versus	versus		IN
 via	via		IN
 vis-a-vis	vis-a-vis		IN
-we	we		PRP
-well	good		RBR
-what	what		WP
-what	what		WDT
-whatever	whatever		WDT
-whatever	whatever		WP
+we	we		PRON
+well	good		ADV
+what	what		PRON
+what	what		PRON
+whatever	whatever		PRON
+whatever	whatever		PRON
 # removed as very noisy when	when		IN
-when	when		CC
-when	when		WRB
-whence	whence		WRB
-whenever	whenever		WRB
-where	where		WRB
+when	when		ADV
+whenever	whenever		ADV
+where	where		ADV
 whereas	whereas		IN
-whereby	whereby		WRB
-wherein	wherein		WRB
+whereby	whereby		ADV
+wherein	wherein		ADV
 whereupon	whereupon		IN
-wherever	wherever		WRB
+wherever	wherever		ADV
 whether	whether		CC
 whether	whether		IN
-which	which		WDT
-#which	which		WP
-whichever	whichever		WDT
+which	which		PRON
+#which	which		PRON
+whichever	whichever		PRON
 while	while		IN
 whilst	whilst		IN
-who	who		WP
-whoever	whoever		WP
-whom	whom		WP
-whose	whose		WP$
-why	why		WRB
+who	who		PRON
+whoever	whoever		PRON
+whom	whom		PRON
+whose	whose		PRON
+why	why		ADV
 with	with		IN
 # #with	with		RP
 within	within		IN
 without	without		IN
-ya	you		PRP
+ya	you		PRON
 yet	yet		CC
-you	you		PRP
-your	your		PRP$
-#your	your		PRP
-yours	yours		PRP$
-yourself	yourself		PRP
-yourselves	yourselves		PRP
+you	you		PRON
+your	your		PRON
+#your	your		PRON
+yours	yours		PRON
+yourself	yourself		PRON
+yourselves	yourselves		PRON

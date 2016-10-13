@@ -64,10 +64,10 @@
     </group>
     <group name="DateTimeMicros" class="SpecificEntitiesMicros">
       <list name="DateTime.DATE">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="DateTime.TIME">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
     </group>
     <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
@@ -80,10 +80,10 @@
         <item value="DayMicros"/>
       </list>
       <list name="MonthMicros">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
       <list name="DayMicros">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
     </group>
   </module>

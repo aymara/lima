@@ -522,7 +522,7 @@ if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
 # ???? Quickly on the road ????
 # 
 #----------------------------------------------------------------------
-# @PrepComp:$ADV-RB:@Determinant (@Adverb|@Adj){0-n} @Substantif:SYNTACTIC_RELATION:
+# @PrepComp:$ADV:@Determinant (@Adverb|@Adj){0-n} @Substantif:SYNTACTIC_RELATION:
 # +SecondUngovernedBy(right.3,left.1,"ANY")
 # +CreateRelationBetween(right.3,left.1)
 
@@ -569,7 +569,7 @@ if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
 
 # introduced same rule triggered by general adverb
 # (for EASY evaluation)
-# i$ADV-RB::@Adverb:SYNTACTIC_RELATION:
+# i$ADV::@Adverb:SYNTACTIC_RELATION:
 # i+!GovernorOf(trigger.1,"ANY")
 # i+SecondUngovernedBy(trigger.1,right.1,"ANY")
 # i+CreateRelationBetween(trigger.1,right.1,"ADVADV")

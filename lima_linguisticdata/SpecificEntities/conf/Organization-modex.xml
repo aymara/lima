@@ -43,7 +43,7 @@
     </group>
     <group name="OrganizationMicros" class="SpecificEntitiesMicros">
       <list name="Organization.ORGANIZATION">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
     </group>
   </module>

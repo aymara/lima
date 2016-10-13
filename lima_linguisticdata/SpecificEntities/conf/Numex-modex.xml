@@ -52,14 +52,14 @@
     </group>
     <group name="NumexMicros" class="SpecificEntitiesMicros">
       <list name="Numex.NUMBER">
-        <item value="CD"/>
+        <item value="NUM"/>
       </list>
       <list name="Numex.UNIT">
-        <item value="NN"/>
-        <item value="NNS"/>
+        <item value="NOUN"/>
+        <item value="NOUN"/>
       </list>
       <list name="Numex.NUMEX">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
     </group>
     <group name="microsForNumberNormalization" class="MicrosForNormalization">
@@ -69,10 +69,10 @@
         <item value="ConjCoordMicros"/>
       </list>
       <list name="NumberMicros">
-        <item value="CD"/>
+        <item value="NUM"/>
       </list>
       <list name="UnitMicros">
-        <item value="NN"/>
+        <item value="NOUN"/>
       </list>
       <list name="ConjCoordMicros">
         <item value="CC"/>

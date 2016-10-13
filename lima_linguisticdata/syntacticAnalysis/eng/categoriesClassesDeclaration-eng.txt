@@ -21,16 +21,16 @@ set entityTypes=SyntacticRelations
 
 @Substantif=($NC,$NP)
 
-@Determinant=($DET-DT,$DET-THATDT)
+@Determinant=($DET)
 @DetDef=(the)
 @DetIndef=(a,an)
-@DetInt=($DET-WDT)
+@DetInt=($DET)
 @DetNum=($NOMBRE-CD)
 
 @Prep=($PREP)
 @PrepComp=($PREP-IN)
 
-@PronPers=($PRON-PRP)
+@PronPers=($PRON)
 
 @Verbe=($V)
 
@@ -70,7 +70,7 @@ $INTERJ,$CONJ,$V-MD)
 
 
 # Possessive pronoun
-@PronPoss=($PRON-PRP$)
+@PronPoss=($PRON)
 
 @Neg=($ADV-NOT)
 

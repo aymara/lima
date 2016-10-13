@@ -30,7 +30,7 @@
     </group>
     <group name="ProductMicros" class="SpecificEntitiesMicros">
       <list name="Product.PRODUCT">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
     </group>
   </module>
