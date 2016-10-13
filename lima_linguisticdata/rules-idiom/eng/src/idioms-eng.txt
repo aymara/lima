@@ -4232,3 +4232,4 @@ GC;;A;much;how much;adverb;how much;
 GC;;A;all;all of a sudden;adverb;all of a sudden;
 GC;;;all;all of;DT;all of;
 GC;;;all;all of;PDT;all of;
+GC;;A;cabernet;cabernet sauvignon;noun;

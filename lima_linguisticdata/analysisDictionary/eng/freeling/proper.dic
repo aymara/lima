@@ -687,6 +687,7 @@ Petrus	Petrus		NNP
 PhacoFlex	PhacoFlex		NNP
 Phelan	Phelan		NNP
 Philadelphia	Philadelphia		NNP
+Philippines	Philippines		NNPS
 Phipps	Phipps		NNP
 Pickens	Pickens		NNP
 Pinocchio	Pinocchio		NNP
@@ -805,6 +806,8 @@ Sonnett	Sonnett		NNP
 Sony	Sony		NNP
 Sotheby's	Sotheby's		NNP
 Souper	Souper		NNP
+Soviet	Soviet		NNP
+Soviets	Soviet		NNPS
 Spain	Spain		NNP
 S.p.A.	S.p.A.		NNP
 Spiegel	Spiegel		NNP
@@ -908,6 +911,7 @@ Vinken	Vinken		NNP
 Virginia	Virginia		NNP
 Vitulli	Vitulli		NNP
 VOA	VOA		NNP
+Voice	Voice		NNP
 Vos	Vos		NNP
 Waertsilae	Waertsilae		NNP
 WAFA	WAFA		NNP

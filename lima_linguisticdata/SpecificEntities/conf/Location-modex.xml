@@ -99,6 +99,7 @@
       </list>
       <list name="Location.COUNTRY">
         <item value="NNP"/>
+        <item value="NNPS"/>
       </list>
       <list name="Location.BUILDING">
         <item value="NNP"/>
