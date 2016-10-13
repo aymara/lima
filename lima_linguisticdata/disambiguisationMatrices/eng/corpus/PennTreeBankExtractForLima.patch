@@ -4324,10 +4324,12 @@
 < ,	,
 ---
 > ,	COMMA
-5290c4845
+5290,5291c4845,4846
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 5295,5296c4850
 < Taipei	NNP
 < 's	POS
@@ -4711,12 +4713,14 @@
 ---
 > .	SENT
 > )	CPAR
-5827,5828c5359,5360
+5827,5829c5359,5361
 < 1977	CD
 < .	.
+< That	DT
 ---
 > 1977	NNP
 > .	SENT
+> That	THATDT
 5832,5834c5364,5365
 < Apple	NNP
 < II	NNP
@@ -5030,13 +5034,15 @@
 < 's	POS
 ---
 > Moleculon's	NNP
-6184,6186c5693,5694
+6184,6187c5693,5695
 < 19	CD
 < %	NN
 < .	.
+< That	DT
 ---
 > 19 %	NNP
 > .	SENT
+> That	THATDT
 6189c5697
 < ,	,
 ---
@@ -5721,10 +5727,12 @@
 ---
 > ,	COMMA
 > $ 570 million	NN
-7095c6543
+7095,7096c6543,6544
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 7099,7100c6547
 < put	VBN
 < together	RP
@@ -6695,10 +6703,12 @@
 < ;	:
 ---
 > ;	COLON
-8394c7770
+8394,8395c7770,7771
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 8407c7783
 < .	.
 ---
@@ -11198,12 +11208,14 @@
 < away	RP
 ---
 > take away	VB
-14074,14075c13164,13165
+14074,14076c13164,13166
 < .	.
 < ''	''
+< That	DT
 ---
 > .	SENT
 > "	QUOT
+> That	THATDT
 14078c13168
 < --	:
 ---
@@ -11528,12 +11540,14 @@
 < ,	,
 ---
 > ,	COMMA
-14534,14535c13610,13611
+14534,14536c13610,13612
 < ,	,
 < ``	``
+< That	DT
 ---
 > ,	COMMA
 > ``	OQU
+> That	THATDT
 14541c13617
 < -LCB-	-LRB-
 ---
@@ -14316,12 +14330,14 @@
 < ,	,
 ---
 > ,	COMMA
-18143,18144c17025,17026
+18143,18145c17025,17027
 < .	.
 < ``	``
+< That	DT
 ---
 > .	SENT
 > ``	OQU
+> That	THATDT
 18151c17033
 < that	IN
 ---
@@ -22163,16 +22179,16 @@
 > about	ABOUTRB
 > $ 130 million	NN
 > ,	COMMA
-27692c25963
+27692,27697c25963,25966
 < .	.
----
-> .	SENT
-27694,27697c25965,25966
+< That	DT
 < $	$
 < 130	CD
 < million	CD
 < ,	,
 ---
+> .	SENT
+> That	THATDT
 > $ 130 million	NN
 > ,	COMMA
 27701,27702c25970,25971
@@ -27507,12 +27523,14 @@
 ---
 > .	SENT
 > ``	OQU
-34241,34242c32052,32053
+34241,34243c32052,32054
 < .	.
 < ''	''
+< That	DT
 ---
 > .	SENT
 > "	QUOT
+> That	THATDT
 34246,34247c32057
 < sorting	VBG
 < out	RP
@@ -29376,10 +29394,12 @@
 < that	WDT
 ---
 > that	THATWDT
-36546c34240
+36546,36547c34240,34241
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 36549,36550c34243
 < pay	VB
 < off	RP
@@ -30669,10 +30689,12 @@
 < program-trading	JJ
 ---
 > program trading	NN
-38051c35695
+38051,38052c35695,35696
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 38055c35699
 < Rep.	NNP
 ---
@@ -32199,10 +32221,12 @@
 ---
 > stock	NN
 > market	NN
-39925c37526
+39925,39926c37526,37527
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 39934c37535
 < ,	,
 ---
@@ -32375,10 +32399,12 @@
 < that	DT
 ---
 > that	THATDT
-40126c37711
+40126,40127c37711,37712
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 40130c37715
 < n't	RB
 ---
@@ -40038,12 +40064,14 @@
 < such	JJ
 ---
 > such	DT
-49356,49357c46304,46305
+49356,49358c46304,46306
 < .	.
 < ''	''
+< That	DT
 ---
 > .	SENT
 > "	QUOT
+> That	THATDT
 49362,49364c46310,46311
 < April	NNP
 < 1987	CD
@@ -43639,7 +43667,7 @@
 < .	.
 ---
 > .	SENT
-54019,54072c50689,50690
+54019,54062c50689,50690
 < :	:
 < 8	CD
 < 3\/4	CD
@@ -43684,7 +43712,10 @@
 < 8	CD
 < 1\/2	CD
 < %	NN
-< to	TO
+---
+> :	COLON
+> 8 3/4 %	NN
+54064,54079c50692,50719
 < 8	CD
 < 7\/16	CD
 < %	NN
@@ -43694,10 +43725,7 @@
 < 8	CD
 < 1\/2	CD
 < %	NN
----
-> :	COLON
-> 8 3/4 %	NN
-54074,54079c50692,50719
+< to	TO
 < 8	CD
 < 3\/8	CD
 < %	NN
@@ -48980,10 +49008,12 @@
 < Exchange	NNP
 ---
 > New York Stock Exchange	NNP
-60960c57224
+60960,60961c57224,57225
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 60969c57233
 < .	.
 ---
@@ -51146,10 +51176,12 @@
 ---
 > 5 %	NN
 > ,	COMMA
-63751c59891
+63751,63752c59891,59892
 < ?	.
+< That	DT
 ---
 > ?	SENT
+> That	THATDT
 63765c59905
 < .	.
 ---
@@ -62100,10 +62132,12 @@
 > utilities'	NNS
 > sulfur	NN
 > dioxide	NN
-76763c71904
+76763,76764c71904,71905
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 76783c71924
 < .	.
 ---
@@ -64244,19 +64278,17 @@
 < 1988	CD
 ---
 > 1988	NNP
-79311,79315c74286,74292
+79311,79312c74286,74289
 < fixed-price	JJ
 < weapons-modernization	JJ
-< development	NN
-< program	NN
-< --	:
 ---
 > fixed	VBN
 > price	NN
 > weapons	NNS
 > modernization	NN
-> development	NN
-> program	NN
+79315c74292
+< --	:
+---
 > --	COLON
 79318c74295,74297
 < C-130	NN
@@ -64422,10 +64454,12 @@
 > 40	CD
 > -	COLON
 > megabyte	NN
-79472c74435
+79472,79473c74435,74436
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 79478,79481c74441,74443
 < about	IN
 < $	$
@@ -65277,10 +65311,12 @@
 < Union	NNP
 ---
 > Soviet Union	NNP
-80608c75531
+80608,80609c75531,75532
 < .	.
+< That	DT
 ---
 > .	SENT
+> That	THATDT
 80612c75535
 < ,	,
 ---
@@ -68543,13 +68579,15 @@
 < ,	,
 ---
 > ,	COMMA
-84200,84202c78834,78835
+84200,84203c78834,78836
 < $	$
 < 500,000	CD
 < .	.
+< That	DT
 ---
 > $ 500,000	NN
 > .	SENT
+> That	THATDT
 84214,84215c78847
 < $	$
 < 2	CD
