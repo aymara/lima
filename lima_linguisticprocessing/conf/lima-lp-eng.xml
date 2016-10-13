@@ -56,7 +56,7 @@
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
+        <!--item value="VerbNetRecognition"/-->
         <!--item value="VerbNetRecognition"/-->
         <!--item value="kbsrl"/-->
         <item value="conllDumper"/>
