@@ -99,7 +99,7 @@
       <value name="UNK"/>
     </subvalues>
     <subvalues value="INTERJ">
-      <value name="UH"/>
+      <value name="INTJ"/>
     </subvalues>
     <subvalues value="NC">
       <value name="NOUN"/>
@@ -129,13 +129,8 @@
       <value name="PRON"/>
     </subvalues>
     <subvalues value="V">
-      <value name="MD"/>
-      <value name="VB"/>
-      <value name="VBD"/>
-      <value name="VBG"/>
-      <value name="VBN"/>
-      <value name="VBP"/>
-      <value name="VBZ"/>
+      <value name="AUX"/>
+      <value name="VERB"/>
     </subvalues>
   </subproperty>
 </Linguistic_codes>

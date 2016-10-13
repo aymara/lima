@@ -128,8 +128,8 @@
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
   </code>
-  <code key="MD">
-    <field key="MICRO" value="MD"/>
+  <code key="AUX">
+    <field key="MICRO" value="AUX"/>
     <field key="GENDER" value=""/>
     <field key="NUMBER" value=""/>
     <field key="PERSON" value=""/>
@@ -184,8 +184,8 @@
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
   </code>
-	<code key="UH">
-		<field key="MICRO" value="UH"/>
+	<code key="INTJ">
+		<field key="MICRO" value="INTJ"/>
 		<field key="GENDER" value=""/>
 		<field key="NUMBER" value=""/>
 		<field key="PERSON" value=""/>
@@ -200,48 +200,8 @@
 		<field key="TIME" value=""/>
 		<field key="SYNTAX" value=""/>
 	</code>
-	<code key="VB">
-    <field key="MICRO" value="VB"/>
-    <field key="GENDER" value=""/>
-    <field key="NUMBER" value=""/>
-    <field key="PERSON" value=""/>
-    <field key="TIME" value=""/>
-    <field key="SYNTAX" value=""/>
-  </code>
-  <code key="VBD">
-    <field key="MICRO" value="VBD"/>
-    <field key="GENDER" value=""/>
-    <field key="NUMBER" value=""/>
-    <field key="PERSON" value=""/>
-    <field key="TIME" value=""/>
-    <field key="SYNTAX" value=""/>
-  </code>
-  <code key="VBG">
-    <field key="MICRO" value="VBG"/>
-    <field key="GENDER" value=""/>
-    <field key="NUMBER" value=""/>
-    <field key="PERSON" value=""/>
-    <field key="TIME" value=""/>
-    <field key="SYNTAX" value=""/>
-  </code>
-  <code key="VBN">
-    <field key="MICRO" value="VBN"/>
-    <field key="GENDER" value=""/>
-    <field key="NUMBER" value=""/>
-    <field key="PERSON" value=""/>
-    <field key="TIME" value=""/>
-    <field key="SYNTAX" value=""/>
-  </code>
-  <code key="VBP">
-    <field key="MICRO" value="VBP"/>
-    <field key="GENDER" value=""/>
-    <field key="NUMBER" value=""/>
-    <field key="PERSON" value=""/>
-    <field key="TIME" value=""/>
-    <field key="SYNTAX" value=""/>
-  </code>
-  <code key="VBZ">
-    <field key="MICRO" value="VBZ"/>
+  <code key="VERB">
+    <field key="MICRO" value="VERB"/>
     <field key="GENDER" value=""/>
     <field key="NUMBER" value=""/>
     <field key="PERSON" value=""/>
