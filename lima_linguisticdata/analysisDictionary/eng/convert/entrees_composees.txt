@@ -7,7 +7,7 @@
     </c>
     <c form="'m">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -38,7 +38,7 @@
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -103,7 +103,7 @@
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -117,7 +117,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -126,12 +126,12 @@
   <concat>
     <c form="was">
       <i l="was" n="be">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -140,12 +140,12 @@
   <concat>
     <c form="were">
       <i l="were" n="be">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -154,12 +154,12 @@
   <concat>
     <c form="are">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -229,7 +229,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -243,7 +243,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -252,12 +252,12 @@
   <concat>
     <c form="had">
       <i l="had" n="have">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -266,12 +266,12 @@
   <concat>
     <c form="do">
       <i>
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -285,7 +285,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -294,12 +294,12 @@
   <concat>
     <c form="did">
       <i l="did" n="do">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -313,7 +313,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -327,7 +327,7 @@
     </c>
     <c form="not">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -341,7 +341,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -355,7 +355,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -369,7 +369,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -383,7 +383,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -397,7 +397,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -411,7 +411,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -425,7 +425,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -439,7 +439,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -453,7 +453,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -586,7 +586,7 @@
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>

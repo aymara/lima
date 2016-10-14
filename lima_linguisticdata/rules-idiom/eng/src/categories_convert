@@ -1,17 +1,17 @@
 adjective	ADJ
 adverb	ADV
 DET	DET
-IN	IN
-inseperable transitive verb	VB
+IN	ADP
+inseperable transitive verb	VERB
 interrogative adverb	ADV
-intransitive verb	VB
+intransitive verb	VERB
 locative adverb	ADV
 noun	NOUN
-preposition	IN
+preposition	ADP
 pronoun	PRON
 proper noun	PROPN
-separable transitive verb	VB
+separable transitive verb	VERB
 subordinating conjunction	SCONJ
 temporal adverb	ADV
-TO	TO
-UH	UH
+TO	PART
+UH	INTJ

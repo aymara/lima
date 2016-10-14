@@ -160,7 +160,7 @@ Communist	Communist		ADJ
 compelling	compelling		ADJ
 complained	complained		VERB
 completed	completed		VERB
-complicated	complicated		IN
+complicated	complicated		ADP
 complicated	complicated		ADJ
 composting	composting		NOUN
 computerized	computerized		ADJ
@@ -305,7 +305,7 @@ failing	failing		VERB
 falls	falls		VERB
 faltered	faltered		VERB
 famed	famed		ADJ
-far	far		IN
+far	far		ADP
 fashioned	fashioned		VERB
 fashioned	fashioned		VERB
 fattened	fattened		VERB
@@ -955,7 +955,7 @@ worries	worries		NOUN
 worries	worries		VERB
 worsening	worsening		NOUN
 worse	worse		ADJ
-worth	worth		IN
+worth	worth		ADP
 wrenching	wrenching		ADJ
 yielding	yielding		ADJ
 yielding	yielding		NOUN

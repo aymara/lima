@@ -1,5 +1,5 @@
-n't	not		NOT
-nt	not		NOT
+n't	PART		PART
+nt	PART		PART
 east	east		ADV
 north	north		ADV
 aback	aback		ADV
@@ -216,8 +216,8 @@ northeast	northeast		ADV
 northward	northward		ADV
 northwards	northwards		ADV
 northwest	northwest		ADV
-not	not		NOT
-notwithstanding	notwithstanding		ADV
+not	PART		PART
+notwithstanding	PARTwithstanding		ADV
 now	now		ADV
 nowadays	nowadays		ADV
 nowhere	nowhere		ADV
@@ -557,8 +557,8 @@ newly	newly		ADV
 newsweekly	newsweekly		ADV
 noncompetitively	noncompetitively		ADV
 normally	normally		ADV
-notably	notably		ADV
-notably	notably		ADV
+notably	PARTably		ADV
+notably	PARTably		ADV
 obviously	obviously		ADV
 occasionally	occasionally		ADV
 occasionally	occasionally		ADV

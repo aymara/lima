@@ -34,48 +34,7 @@
     <value name="DIVERS"/>
   </property>
   <!--
-  Penn TreeBank tags from http://bulba.sdsu.edu/jeanette/thesis/PennTags.html
-  
-  CC - Coordinating conjunction
-  CD - Cardinal number
-  DT - Determiner
-  EX - Existential there
-  FW - Foreign word
-  IN - Preposition or subordinating conjunction
-  JJ - Adjective
-  JJR - Adjective, comparative
-  JJS - Adjective, superlative
-  LS - List item marker
-  MD - Modal
-  NN - Noun, singular or mass
-  NNS - Noun, plural
-  NNP - Proper noun, singular
-  NNPS - Proper noun, plural
-  PDT - Predeterminer
-  POS - Possessive ending
-  PRP - Personal pronoun
-  PRP$ - Possessive pronoun (prolog version PRP-S)
-  RB - Adverb
-  RBR - Adverb, comparative
-  RBS - Adverb, superlative
-  RP - Particle
-  SYM - Symbol
-  TO - to
-  UH - Interjection
-  VB - Verb, base form
-  VBD - Verb, past tense
-  VBG - Verb, gerund or present participle
-  VBN - Verb, past participle
-  VBP - Verb, non-3rd person singular present
-  VBZ - Verb, 3rd person singular present
-  WDT - Wh-determiner
-  WP - Wh-pronoun
-  WP$ - Possessive wh-pronoun (prolog version WP-S)
-  WRB - Wh-adverb
-    -->
-  <!--
-  Adaptation to LIMA inspired from Universal Dependencies
-  - add a SCONJ micro
+    Universal Dependencies adaptated to LIMA
   -->
   <subproperty name="MICRO" parent="MACRO">
     <subvalues value="ADJ">
@@ -83,10 +42,10 @@
     </subvalues>
     <subvalues value="ADV">
       <value name="ADV"/>
-      <value name="NOT"/>
+      <value name="PART"/>
     </subvalues>
     <subvalues value="CONJ">
-      <value name="CC"/>
+      <value name="CONJ"/>
       <value name="SCONJ"/> <!-- See Universal Dependencies -->
     </subvalues>
     <subvalues value="DET">
@@ -94,7 +53,7 @@
     </subvalues>
     <subvalues value="DIVERS">
       <!--value name="POS"/-->
-      <value name="FW"/>
+      <value name="X"/>
       <value name="SYM"/>
       <value name="UNK"/>
     </subvalues>
@@ -121,9 +80,7 @@
       <value name="CUR"/>
     </subvalues>
     <subvalues value="PREP">
-      <value name="IN"/>
-      <value name="TO"/>
-      <!--value name="RP"/-->
+      <value name="ADP"/>
     </subvalues>
     <subvalues value="PRON">
       <value name="PRON"/>

@@ -89,11 +89,11 @@ hearted	hearted		NOUN
 heebie	heebie		NOUN
 High-grade	High-grade		ADJ
 hoopla	hoopla		NOUN
-@	@		IN
-Index-arbitrage	Index-arbitrage		NOUN
-Ind	Ind		NUM
-insurgents	insurgents		NOUN
-intertitles	intertitles		NOUN
+@	@		ADP
+Index-arbitrage	ADPdex-arbitrage		NOUN
+Ind	ADPd		NUM
+insurgents	ADPsurgents		NOUN
+intertitles	ADPtertitles		NOUN
 iota	iota		NOUN
 IOUs	IOUs		NOUN
 IRAs	IRAs		NOUN
@@ -327,8 +327,8 @@ Uptick	Uptick		NOUN
 uptick	uptick		VERB
 Uzi-model	Uzi-model		ADJ
 viewership	viewership		NOUN
-vs.	vs.		CC
-vs.	vs.		IN
+vs.	vs.		CONJ
+vs.	vs.		ADP
 waif	waif		NOUN
 Washington-based	Washington-based		ADJ
 weaker	weaker		ADJ

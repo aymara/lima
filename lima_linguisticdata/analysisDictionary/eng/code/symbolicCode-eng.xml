@@ -72,8 +72,8 @@
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
   </code>
-  <code key="CC">
-    <field key="MICRO" value="CC"/>
+  <code key="CONJ">
+    <field key="MICRO" value="CONJ"/>
     <field key="GENDER" value=""/>
     <field key="NUMBER" value=""/>
     <field key="PERSON" value=""/>
@@ -96,16 +96,16 @@
 		<field key="TIME" value=""/>
 		<field key="SYNTAX" value=""/>
 	</code>
-  <code key="FW">
-    <field key="MICRO" value="FW"/>
+  <code key="X">
+    <field key="MICRO" value="X"/>
     <field key="GENDER" value=""/>
     <field key="NUMBER" value=""/>
     <field key="PERSON" value=""/>
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
   </code>
-	<code key="IN">
-		<field key="MICRO" value="IN"/>
+	<code key="ADP">
+		<field key="MICRO" value="ADP"/>
 		<field key="GENDER" value=""/>
 		<field key="NUMBER" value=""/>
 		<field key="PERSON" value=""/>
@@ -160,8 +160,8 @@
 		<field key="TIME" value=""/>
 		<field key="SYNTAX" value=""/>
 	</code>
-	<code key="NOT">
-		<field key="MICRO" value="NOT"/>
+	<code key="PART">
+		<field key="MICRO" value="PART"/>
 		<field key="GENDER" value=""/>
 		<field key="NUMBER" value=""/>
 		<field key="PERSON" value=""/>

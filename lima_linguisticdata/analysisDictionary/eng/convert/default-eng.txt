@@ -9,7 +9,7 @@ t_acronym	PROPN
 t_acronym	PROPN
 t_capital_1st	PROPN
 t_capital_1st	PROPN
-t_capital_1st	FW
+t_capital_1st	X
 t_capital	PROPN
 t_capital	PROPN
 t_comma_number	NUM
@@ -25,7 +25,7 @@ t_pattern	COLON
 t_sentence_brk	SENT
 t_small	NOUN
 t_small	NOUN
-t_small	FW
+t_small	X
 t_url	NOUN
 t_word_brk	COMMA
 t_date		NUM
