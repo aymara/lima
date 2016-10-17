@@ -266,7 +266,6 @@ unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) c
 #ifdef DEBUG_LP
   SELOGINIT;
 #endif
-  SELOGINIT;
   // try to extract number as int from string <number><ordinalSuffix> like 4th, 22nd, 1st or <number> like 17
   unsigned short day =  m_resources->getValueFromNumberOrdinal(numdayString);
 #ifdef DEBUG_LP
