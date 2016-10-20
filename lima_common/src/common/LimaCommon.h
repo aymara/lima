@@ -325,42 +325,31 @@ enum LimaStatusCode {
 #endif
 };
 
-#ifdef ANTINNO_SPECIFIC
 BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)
-#endif
 
 
 BOOST_STRONG_TYPEDEF(uint32_t, LinguisticCode);
-#ifdef ANTINNO_SPECIFIC
-// FWI 25/05/2016 : on spécialise max() pour le type LinguisticCode sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
 }
 namespace std {
   template <> Lima::LinguisticCode numeric_limits<Lima::LinguisticCode>::max() { return Lima::LinguisticCode(::std::numeric_limits<uint32_t>::max()); }
 }
 namespace Lima {
-#endif
 
 BOOST_STRONG_TYPEDEF(char, NoParameters);
-#ifdef ANTINNO_SPECIFIC
-// FWI 25/05/2016 : on spécialise max() pour le type LinguisticCode sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
 }
 namespace std {
   template <> Lima::NoParameters numeric_limits<Lima::NoParameters>::max() { return Lima::NoParameters(::std::numeric_limits<char>::max()); }
 }
 namespace Lima {
-#endif
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()
 
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
-#ifdef ANTINNO_SPECIFIC
-// FWI 25/05/2016 : on spécialise max() pour le type MediaId sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
 }
 namespace std {
   template <> Lima::MediaId numeric_limits<Lima::MediaId>::max() { return Lima::MediaId(::std::numeric_limits<uint8_t>::max()); }
 }
 namespace Lima {
-#endif
 
 class LimaException : public std::exception
 {
