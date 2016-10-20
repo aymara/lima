@@ -197,10 +197,6 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
                      bool useIndexIterator)
 {
     BoWBlocType blocType = static_cast<BoWBlocType>( Misc::readOneByteInt(file) );
-#ifdef ANTINNO_BUGFIX
-    if (file.eof())
-      return;
-#endif
 #ifdef DEBUG_LP
     BOWLOGINIT;
     LDEBUG << "BoWBinaryReader::readBoWDocumentBlock: read blocType" << blocType;
