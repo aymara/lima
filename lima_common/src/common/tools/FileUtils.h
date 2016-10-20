@@ -34,7 +34,7 @@
 #include <iostream>
 
 #ifdef WIN32
-#define LIMA_PATH_SEPARATOR ';'
+static QChar const LIMA_PATH_SEPARATOR(';');
 #else
 #define LIMA_PATH_SEPARATOR ':'
 #endif
