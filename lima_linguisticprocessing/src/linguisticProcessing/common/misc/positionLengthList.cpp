@@ -32,6 +32,10 @@
 
 using namespace std;
 
+namespace Lima {
+namespace Common {
+namespace Misc {
+
 QTextStream& operator << (QTextStream& os,
                            const Lima::Common::Misc::PositionLengthList& p)
 {
@@ -82,3 +86,5 @@ QDebug& operator << (QDebug& os,
   }
   return os;
 }
+
+}}}
