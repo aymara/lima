@@ -1427,6 +1427,11 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
 #endif
+
+#ifdef DEBUG_LP
+        LDEBUG << "BowGenerator: createNEParts(...)";
+#endif
+
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
@@ -1518,6 +1523,10 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
       const Token* token = get(vertex_token, graph, *m);
       const MorphoSyntacticData* data = get(vertex_data, graph, *m);
 
+#ifdef DEBUG_LP
+      LDEBUG << "BowGenerator: createNEParts(...) token->form(): " << token->form();
+#endif
+
       if (data!=0 && !data->empty())
       {
         const LinguisticElement& elem=*(data->begin());
@@ -1545,6 +1554,11 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
                         category,
                         token->position(),
                         token->length()));
+#ifdef DEBUG_LP
+        LDEBUG << "BowGenerator: token->stringForm(): " << token->stringForm();
+        LDEBUG << "BowGenerator: sp[/*elem.normalizedForm*/ " << elem.normalizedForm << "]: \"" << sp[elem.normalizedForm] << "\"";
+#endif
+
       }
     }
   }

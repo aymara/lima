@@ -47,9 +47,13 @@ m_normalizedForm(0),
 m_position(entity.positionBegin()),
 m_length(entity.length())
 {
+  LOGINIT("LP::Automaton");
+  LDEBUG << "entity.features(): " << entity.features();
   Automaton::EntityFeatures::const_iterator 
     f=entity.features().find(DEFAULT_ATTRIBUTE);
   if (f!=entity.features().end()) {
+    LOGINIT("LP::Automaton");
+    LDEBUG << "entity.features()[\"value\"]: " << boost::any_cast<const LimaString&>((*f).getValue());
     m_normalizedForm=sp[boost::any_cast<const LimaString&>((*f).getValue())];
   }
 
