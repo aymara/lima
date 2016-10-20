@@ -345,6 +345,13 @@ void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
 #ifdef DEBUG_LP
   LDEBUG << "BoWBinaryReader::readSimpleToken read infl: " << inflectedForm;
 #endif
+  if (lemma.isEmpty()) 
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::readSimpleToken empty lemma, using inflected form instead:" << inflectedForm;
+#endif
+    lemma = inflectedForm;
+  }
   LinguisticCode category;
   uint64_t position,length;
   category=static_cast<LinguisticCode>(Misc::readCodedInt(file));
