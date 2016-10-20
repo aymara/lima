@@ -247,11 +247,7 @@ std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& pars
 //  M A I N
 //****************************************************************************
 #include "common/tools/LimaMainTaskRunner.h"
-#ifdef ANTINNO_SPECIFIC
 #include "common/AbstractFactoryPattern/antinno.LibraryLoader.class.h"
-#else
-#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-#endif
 #include <QtCore/QTimer>
 
 int run(int aargc,char** aargv);
@@ -296,7 +292,6 @@ int run(int argc,char** argv)
     resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
     resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
-#ifdef ANTINNO_SPECIFIC
   
 
 
@@ -345,12 +340,6 @@ int run(int argc,char** argv)
     
    ::std::cout << "Plugins initialized" << ::std::endl;
   }
-#else
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-#endif
   
 
   deque<string> langs;

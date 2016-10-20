@@ -39,9 +39,7 @@
 #include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 
-#ifdef ANTINNO_SPECIFIC
 #include "common/AbstractFactoryPattern/antinno.LibraryLoader.class.h"
-#endif
 
 using namespace std;
 using namespace Lima;
@@ -108,7 +106,6 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-#ifdef ANTINNO_SPECIFIC
   
   
   {
@@ -144,11 +141,6 @@ int run(int argc,char** argv)
     
    ::std::cout << "Plugins initialized" << ::std::endl;
   }
-#else
-  QsLogging::initQsLog();
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-#endif
   
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
