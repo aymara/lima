@@ -29,6 +29,7 @@
 #include "common/LimaCommon.h"
 
 #include <QFile>
+#include <QStringList>
 
 #include <iostream>
 
