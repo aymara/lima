@@ -31,11 +31,6 @@
 #include <iostream>
 #include<QString>
 #include<QStringList>
-#ifdef ANTINNO_SPECIFIC
-// FWI 17/08/2015 : désactivé car n'existe pas dans QT4
-#else
-#include<QRegularExpression>
-#endif
 
 using namespace std;
 
@@ -167,12 +162,7 @@ addSearchPathes(QString searchPathes)
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
 #endif
-#ifdef ANTINNO_SPECIFIC
-  // FWI 17/08/2015 : ligne modifiée car QRegularExpression n'existe pas dans QT4
   QStringList list = searchPathes.replace("\\","/").split(";", QString::SkipEmptyParts);
-#else
-  QStringList list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"), QString::SkipEmptyParts);
-#endif
   for(QStringList::iterator it = list.begin();
         it!=list.end();++it) {
       QString searchPath = *it;
