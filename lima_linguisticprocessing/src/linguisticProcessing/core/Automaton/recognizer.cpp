@@ -389,10 +389,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   bool reapplySameRule(false);
 
   SetOfRules::const_iterator
- #ifdef ANTINNO_BUGFIX
-    // FWI 19/12/2013 : ajout définition de "rule_begin"
     rule_begin=rules.begin(),
-#endif
     rule=rules.begin(),
     rule_end=rules.end();
   for (; rule!=rule_end; rule++) {
@@ -560,13 +557,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
             }*/
           }
           // reapply same rule
-#ifdef ANTINNO_BUGFIX
-          // FWI 19/12/2013 : ajout test pour ne faire le -- que si nécessaire
           if (rule != rule_begin)
             rule--;
-#else
-          rule--;
-#endif
           reapplySameRule=true;
         }
 
