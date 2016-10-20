@@ -54,8 +54,6 @@ namespace Lima {
   class LIMA_TIME_EXPORT TimeUtils
   {
   public:
-#ifdef ANTINNO_SPECIFIC
-    // FWI 04/11/2015 ajout classe
     struct Data
     {
       uint64_t first;
@@ -63,8 +61,6 @@ namespace Lima {
       uint64_t count;
     };
     TimeUtils();
-#endif
-    TimeUtils() {}
     ~TimeUtils() {}
     
     /**
@@ -74,10 +70,7 @@ namespace Lima {
      */
     //   static void updateCurrentTime( const std::string& taskCategory = std::string("") );
     static void updateCurrentTime( const std::string& taskCategory = std::string("") );
-#ifdef ANTINNO_SPECIFIC
-    // FWI 03/11/24 nouvelle méthode
     static void restart( const std::string& taskCategory = std::string("") );
-#endif
     
     //   static void setCurrentTime(uint64_t time);
     static void setCurrentTime(uint64_t time, const std::string& taskCategory = std::string(""));
@@ -125,12 +118,7 @@ namespace Lima {
     private:
       /** last current time stored */
       //   static uint64_t currentTime;
-#ifdef ANTINNO_SPECIFIC
-      // FWI 04/11/2015 remplacement de pair par Data
       static std::map<std::string, Data> m_cumulatedTime;
-#else
-      static std::map<std::string , std::pair<uint64_t,uint64_t> > m_cumulatedTime;
-#endif
       static QMutex m_mutex;
     };
     

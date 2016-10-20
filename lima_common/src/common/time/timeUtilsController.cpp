@@ -41,12 +41,7 @@ TimeUtilsController::~TimeUtilsController() {
   uint64_t delta = TimeUtils::elapsedTime(m_topic);
   if (m_logElapsedTime) {
     TIMELOGINIT;
-#ifdef ANTINNO_SPECIFIC
-    // FWI 09/11/2015 gestion temps en microsecondes sous windows
     LINFO << m_topic << " (  ): " << delta << " us";
-#else
-    LINFO << m_topic << " (  ): " << delta << " ms";
-#endif
   }
 }
   
