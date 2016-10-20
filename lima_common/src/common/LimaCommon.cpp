@@ -18,23 +18,6 @@
 */
 #include "common/LimaCommon.h"
 
-#ifndef ANTINNO_SPECIFIC
-//FWI 22/02/2016 déplacé dans le .h
-#ifdef WIN32
-
-#ifdef LIMA_COMMON_EXPORTING
-#define LIMA_COMMON_EXPORT    __declspec(dllexport)
-#else
-#define LIMA_COMMON_EXPORT    __declspec(dllimport)
-#endif
-
-
-#else // Not WIN32
-
-#define LIMA_COMMON_EXPORT
-
-#endif
-#endif
 
 namespace Lima
 {

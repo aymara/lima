@@ -500,7 +500,6 @@ void DictTester<dictType>::write( void ) {
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
-#ifdef ANTINNO_SPECIFIC
   {
     ::std::string const configDir = ::std::getenv("AMOSE_CONF");
     if (configDir.empty())
@@ -513,9 +512,6 @@ int main(int argc, char *argv[])
     pLog1->configure(log4cppFilePath);
     QsLogging::antinno::log = pLog1;
   }
-#else
-  QsLogging::initQsLog();
-#endif
   
   cerr << argv[0] << " begin..." << endl << "  command line: ";
   for (int i = 0; i < argc; i++)

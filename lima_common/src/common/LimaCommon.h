@@ -149,8 +149,6 @@ typedef unsigned __int64 uint64_t;
 #include <common/QsLog/QsLog.h>
 #include <common/QsLog/QsLogCategories.h>
 #include "common/QsLog/QsLogDest.h"
-#ifdef ANTINNO_SPECIFIC
-// FWI 19/05/2016 ajout 2 includes
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
@@ -210,17 +208,7 @@ namespace Lima
   if ( logger.loggingLevel() <= QsLogging::FatalLevel ) \
      QsLogging::antinno::LogHelper(QsLogging::FatalLevel, logger.zone()).stream()
 
-#else
 
-#define LTRACE QLOG_TRACE()
-#define LDEBUG QLOG_DEBUG()
-#define LINFO QLOG_INFO()
-#define LNOTICE QLOG_INFO()
-#define LWARN QLOG_WARN()
-#define LERROR QLOG_ERROR()
-#define LFATAL QLOG_FATAL()
-
-#endif
 
 // #define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance(X); 
 // logger.setLoggingLevel( QsLogging::Categories::instance().levelFor( X ) );
@@ -255,8 +243,6 @@ public:
 
 //QsLogging::DestinationPtr debugDestination(  QsLogging::DestinationFactory::MakeDebugOutputDestination() );
 //logger.addDestination(debugDestination.get());
-#ifdef ANTINNO_SPECIFIC
-// FWI 07/10/2015 ajout pour les logger
 static std::ostream& operator<<(std::ostream &os, const QString& s)
 {
   os << s.toUtf8().constData();
@@ -273,7 +259,6 @@ static ::std::ostream& operator<<(::std::ostream& out, QStringList const& o)
   }
   return out;
 }
-#endif
 
 
 

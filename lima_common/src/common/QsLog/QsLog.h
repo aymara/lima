@@ -38,10 +38,8 @@
 
 #include "QsLog_export.h"
 
-#ifdef ANTINNO_SPECIFIC
 #include <sstream>
 #include <boost/smart_ptr.hpp>
-#endif
 
 
 namespace QsLogging
@@ -138,7 +136,6 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 
 
 
-#ifdef ANTINNO_SPECIFIC
 
 namespace antinno {
 
@@ -182,7 +179,6 @@ private:
 };
 
 }
-#endif  
 
 
 

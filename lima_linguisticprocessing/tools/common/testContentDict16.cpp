@@ -49,12 +49,6 @@ using namespace std;
 
 #include <QtCore/QCoreApplication>
 
-#ifdef ANTINNO_SPECIFIC
-#define ANTINNO_SPECIFIC_LOG
-#endif
-
-#ifdef ANTINNO_SPECIFIC_LOG
-// FWI 12/05/2015 utilisation de composants d's3
 #include "antinno.s3.config.h"
 #include "antinno.s3.fs.File.class.h"
 #include "antinno.s3.fs.Directory.class.h"
@@ -62,7 +56,6 @@ using namespace std;
 #include "antinno.s3.log.Log4cpp.class.h"
 #if defined WIN32
 #include "windows.h"
-#endif
 #endif
 
 //#include "common/linguisticData/linguisticData.h"
@@ -115,11 +108,6 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-#ifndef ANTINNO_SPECIFIC_LOG
-  QsLogging::initQsLog();
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-#else
   LoadLibrary("antinno.s3lib.dll");
   
   static ::antinno::s3::log::Log4cpp log1;
@@ -144,7 +132,6 @@ int run(int argc,char** argv)
       return EXIT_FAILURE;
     }
   }
-#endif
   cerr << "testContentDict16 begin..." << endl;
 
   setlocale(LC_ALL, "");

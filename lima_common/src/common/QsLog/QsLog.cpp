@@ -35,11 +35,9 @@
 #include <stdexcept>
 
 
-#ifdef ANTINNO_SPECIFIC
 #include <log4cpp/Category.hh>
 #include <log4cpp/PropertyConfigurator.hh>
 #include <boost/smart_ptr.hpp>
-#endif
 
 LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str )
 {
@@ -50,7 +48,6 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 namespace QsLogging
 {
 
-#ifdef ANTINNO_SPECIFIC
 
 namespace antinno {
 
@@ -110,7 +107,6 @@ LogHelper::~LogHelper()
 }
 
 }
-#endif
 
 typedef QList<Destination*> DestinationList;
 
