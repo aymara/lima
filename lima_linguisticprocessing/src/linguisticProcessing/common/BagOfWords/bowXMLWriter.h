@@ -53,6 +53,7 @@ class IndexElement;
 class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
 {
  public:
+   BoWXMLWriter(std::ostream& os, Lima::MediaId const& language);
   BoWXMLWriter(std::ostream& os); 
   virtual ~BoWXMLWriter();
 

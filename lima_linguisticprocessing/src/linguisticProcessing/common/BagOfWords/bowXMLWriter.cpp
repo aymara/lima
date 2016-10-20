@@ -57,6 +57,7 @@ class BoWXMLWriterPrivate
 friend class BoWXMLWriter;
 
   BoWXMLWriterPrivate(std::ostream& os);
+  BoWXMLWriterPrivate(std::ostream& os, Lima::MediaId const& language);
   virtual ~BoWXMLWriterPrivate();
 
 
@@ -107,6 +108,14 @@ m_language(0)
 {
 }
 
+BoWXMLWriterPrivate::BoWXMLWriterPrivate(std::ostream& os, Lima::MediaId const& language):
+m_outputStream(os),
+m_currentTokId(0),
+m_spaces(""),
+m_language(language)
+{
+}
+
 BoWXMLWriterPrivate::~BoWXMLWriterPrivate()
 {
 }
@@ -116,6 +125,11 @@ BoWXMLWriterPrivate::~BoWXMLWriterPrivate()
 //**********************************************************************
 BoWXMLWriter::BoWXMLWriter(std::ostream& os):
     m_d(new BoWXMLWriterPrivate(os))
+{
+}
+
+BoWXMLWriter::BoWXMLWriter(std::ostream& os, Lima::MediaId const& language):
+m_d(new BoWXMLWriterPrivate(os, language))
 {
 }
 
