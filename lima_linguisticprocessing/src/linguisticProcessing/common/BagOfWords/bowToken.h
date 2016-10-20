@@ -158,17 +158,9 @@ public:
    */
   virtual void addToPosition(const uint64_t offset);
 
-#ifdef ANTINNO_SPECIFIC
   friend LIMA_BOW_EXPORT ::std::ostream& ::Lima::Common::Misc::operator << (::std::ostream& os,
-#else
-  friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream& os,
-#endif
                                                     const Common::Misc::PositionLengthList& p);
-#ifdef ANTINNO_SPECIFIC
   friend LIMA_BOW_EXPORT QDebug& ::Lima::Common::Misc::operator << (QDebug& os,
-#else
-  friend LIMA_BOW_EXPORT QDebug& operator << (QDebug& os,
-#endif
                                                     const Common::Misc::PositionLengthList& p);
   
   static void setUseOnlyLemma(const bool b);

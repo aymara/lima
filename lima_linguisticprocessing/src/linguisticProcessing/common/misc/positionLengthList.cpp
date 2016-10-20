@@ -32,12 +32,9 @@
 
 using namespace std;
 
-#ifdef ANTINNO_SPECIFIC
-// FWI 10/01/2014 : déclarations déplacée dans le namespace Misc
 namespace Lima {
 namespace Common {
 namespace Misc {
-#endif
 
 QTextStream& operator << (QTextStream& os,
                            const Lima::Common::Misc::PositionLengthList& p)
@@ -90,6 +87,4 @@ QDebug& operator << (QDebug& os,
   return os;
 }
 
-#ifdef ANTINNO_SPECIFIC
 }}}
-#endif
