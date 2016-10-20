@@ -119,6 +119,7 @@ void SyntacticAnalyzerChains::init(
 LimaStatusCode SyntacticAnalyzerChains::process(
   AnalysisContent& analysis) const
 {
+  auto const& stopAnalyze = analysis.stopAnalyze();
   Lima::TimeUtilsController timer("SyntacticAnalysis");
   SACLOGINIT;
   LINFO << "start syntactic analysis - chains";
@@ -169,13 +170,35 @@ LimaStatusCode SyntacticAnalyzerChains::process(
 //     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
     LinguisticGraphVertex current, next;
     current = beginSentence; next = current;
+
+    if (stopAnalyze)
+	  {
+		  LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+		  return TIME_OVERFLOW;
+	  }
     while (next != endSentence)
     {
+		  if (stopAnalyze)
+		  {
+			  LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+			  return TIME_OVERFLOW;
+		  }
 //       LDEBUG << "nextChainsBreak";
       next = anagraph->nextMainPathVertex(current,*m_macroAccessor,ponctuMacroFilter,endSentence);
+
+		  if (stopAnalyze)
+		  {
+			  LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+			  return TIME_OVERFLOW;
+		  }
 //       LDEBUG << "analyze chain from " << current << " to " << next;
 //       LDEBUG << "identify chains";
-      identifyChains(syntacticData,current,next,chainId);
+      identifyChains(syntacticData,current,next,chainId,stopAnalyze);
+      if (stopAnalyze)
+      {
+        LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+        return TIME_OVERFLOW;
+      }
       current = next;
     }
     beginSentence=endSentence;
@@ -189,7 +212,8 @@ LimaStatusCode SyntacticAnalyzerChains::process(
 void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
                                        const LinguisticGraphVertex& start,
                                        const LinguisticGraphVertex& stop,
-                                       uint64_t& startChainId) const
+                                       uint64_t& startChainId,
+                                       StopAnalyze const& stopAnalyze) const
 {
 //   SACLOGINIT;
 //   LDEBUG << "Searching chains from/to (morph): " << start << "/" << stop;
@@ -215,6 +239,12 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 
   while (! ( tank.empty() && nextVxs.empty()) )
   {
+    if (stopAnalyze)
+    {
+      SACLOGINIT;
+      LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+      return;
+    }
 //     LDEBUG << "LOOP";
     if (pile.size() >= m_maxChainLength)
     {
@@ -234,6 +264,14 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 //         LDEBUG << "Initializing for the sons of " << lastChainVx;
         for (; it != it_end; it++)
         {
+          if (stopAnalyze)
+          {
+#ifdef DEBUG_LP
+            SACLOGINIT
+            LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+#endif
+            return;
+          }
 //           LDEBUG << "Looking at an out edge of the chain's last vertex : " << *it;
           LinguisticGraphVertex nextVx = target(*it, *(data->graph()));
           if (alreadyFinished.find(nextVx) == alreadyFinished.end())
@@ -261,6 +299,12 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
       nextVxs.pop_back();
       while (alreadyFinished.find(nextVx) != alreadyFinished.end())
       {
+        if (stopAnalyze)
+        {
+          SACLOGINIT;
+          LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+          return;
+        }
         if (nextVxs.empty())
         {
 //           LDEBUG << "Nothing more to work on: returning";
@@ -318,6 +362,12 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
         boost::tie(it, it_end) = out_edges(nextVx, *(data->graph()));
         for (; it != it_end; it++)
         {
+          if (stopAnalyze)
+          {
+            SACLOGINIT;
+            LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+            return;
+          }
 //           LDEBUG << "Looking at the next vertex out edge: " << *it;
           LinguisticGraphVertex nextNext = target(*it, *(data->graph()));
           if (nextNext != last)
@@ -441,6 +491,12 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
         }
         else
         {
+          if (stopAnalyze)
+          {
+            SACLOGINIT;
+            LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+            return;
+          }
 //           LDEBUG << father << " -> " << currentSon << " NOT in the matrix";
           LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data, pile, currentType);
           if (lastChainVx!=first) 
@@ -456,6 +512,12 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 //               LDEBUG << "Initializing for the sons of " << lastChainVx << " after unstacking";
               for (; it != it_end; it++)
               {
+                if (stopAnalyze)
+                {
+                  SACLOGINIT;
+                  LERROR << "Analyze too long. Stopped in SyntacticAnalyzerChains";
+                  return;
+                }
 //                 LDEBUG << "Looking at an out edge of the chain's last vertex : " << *it;
                 LinguisticGraphVertex nextVx = target(*it, *(data->graph()));
                 if (alreadyFinished.find(nextVx) == alreadyFinished.end())

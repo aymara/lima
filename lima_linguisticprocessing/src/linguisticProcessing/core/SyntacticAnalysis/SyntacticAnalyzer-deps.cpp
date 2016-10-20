@@ -114,6 +114,8 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
   SAPLOGINIT;
   LINFO << "start syntactic analysis - dependence relations search";
 
+  auto const& stopAnalyze = analysis.stopAnalyze();
+
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
@@ -187,6 +189,11 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
                           false, // return at first success=false
                           m_applySameRuleWhileSuccess // depends on config file
                           );
+        if (stopAnalyze)
+        {
+          LERROR << "Analyze too long. Stopped SyntacticAnalyzerDeps ";
+          return TIME_OVERFLOW;
+        }
       }
     }
 

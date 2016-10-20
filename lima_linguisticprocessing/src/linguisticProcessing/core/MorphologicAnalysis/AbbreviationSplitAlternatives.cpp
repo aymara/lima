@@ -192,6 +192,7 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives";
 
+  auto const& stopAnalyze = analysis.stopAnalyze();
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
 
@@ -217,6 +218,12 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
     boost::tie(it, it_end) = vertices(*graph);
     for (; it != it_end; it++)
     {
+		  if (stopAnalyze)
+		  {
+        MORPHOLOGINIT
+			  LERROR << "Analyze too long. Stopped in AbbreviationSplitAlternatives";
+			  return TIME_OVERFLOW;
+		  }
       MorphoSyntacticData* currentData = dataMap[*it];
       if (currentData == 0) continue;
       Token* currentToken= tokenMap[*it];

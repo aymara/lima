@@ -25,8 +25,9 @@ using namespace std;
 namespace Lima
 {
 
-AnalysisContent::AnalysisContent() :
-    m_analysisData()
+AnalysisContent::AnalysisContent(Lima::StopAnalyze const& sa) :
+    m_analysisData(),
+    _stopAnalyze(sa)
 {}
 
 AnalysisContent::~AnalysisContent()
@@ -38,6 +39,10 @@ AnalysisContent::~AnalysisContent()
     delete it->second;
     it->second=0;
   }
+}
+StopAnalyze const& AnalysisContent::stopAnalyze() const
+{
+  return _stopAnalyze;
 }
 
 AnalysisData* AnalysisContent::getData(

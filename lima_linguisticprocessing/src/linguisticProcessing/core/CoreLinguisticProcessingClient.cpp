@@ -74,12 +74,11 @@ void CoreLinguisticProcessingClient::analyze(
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-    const std::set<std::string>& inactiveUnits) const
-
+    const std::set<std::string>& inactiveUnits,
+    StopAnalyze const& stopAnalyze) const
 {
   LimaString limatexte=Common::Misc::utf8stdstring2limastring(texte);
-  
-  analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits);
+  analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits, stopAnalyze);
 }
 
 void CoreLinguisticProcessingClient::analyze(
@@ -87,8 +86,8 @@ void CoreLinguisticProcessingClient::analyze(
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-    const std::set<std::string>& inactiveUnits) const
-
+    const std::set<std::string>& inactiveUnits,
+    StopAnalyze const& stopAnalyze) const
 {
   Lima::TimeUtilsController timer("CoreLinguisticProcessingClient::analyze");
   CORECLIENTLOGINIT;
@@ -100,7 +99,7 @@ void CoreLinguisticProcessingClient::analyze(
   }
   
   // create analysis content
-  AnalysisContent analysis;
+  AnalysisContent analysis(stopAnalyze);
   LinguisticMetaData* metadataholder=new LinguisticMetaData(); // will be destroyed in AnalysisContent destructor
   analysis.setData("LinguisticMetaData",metadataholder);
 

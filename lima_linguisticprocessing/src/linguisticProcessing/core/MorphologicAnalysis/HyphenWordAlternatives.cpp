@@ -152,6 +152,7 @@ LimaStatusCode HyphenWordAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process HyphenWordAlternatives";
 
+  auto const& stopAnalyze = analysis.stopAnalyze();
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
@@ -176,6 +177,11 @@ LimaStatusCode HyphenWordAlternatives::process(
     boost::tie(it, it_end) = vertices(*graph);
     for (; it != it_end; it++)
     {
+      if (stopAnalyze)
+		  {
+			  LERROR << "Analyze too long. Stopped in HyphenWordAlternatives";
+			  return TIME_OVERFLOW;
+		  }
       MorphoSyntacticData* currentToken = dataMap[*it];
       Token* tok= tokenMap[*it];
       if (currentToken==0) continue;

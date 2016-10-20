@@ -664,6 +664,7 @@ uint64_t Recognizer::
         bool returnAtFirstSuccess,
         bool applySameRuleWhileSuccess) const 
 {
+  auto const& stopAnalyze = analysis.stopAnalyze();
 
   if (returnAtFirstSuccess) {
     stopAtFirstSuccess=true; // implied by the other
@@ -718,6 +719,14 @@ uint64_t Recognizer::
 #ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
 #endif
+      if (stopAnalyze)
+		  {
+#if !defined DEBUG_LP
+        AULOGINIT;
+#endif
+			  LERROR << "Stopped in Recognizer";
+			  return 0;
+		  }
       success = testOnVertex(graph,currentVertex,
                              upstreamBound,downstreamBound,
                              analysis,result,

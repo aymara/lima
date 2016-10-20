@@ -64,7 +64,8 @@ class AbstractProcessingClientHandler
                          const std::map<std::string,std::string>& metaData,
                          const std::string& pipeline,
 			  const std::map<std::string, AbstractAnalysisHandler*>& handlers = std::map<std::string, AbstractAnalysisHandler*>(),
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>())
+                         const std::set<std::string>& inactiveUnits = std::set<std::string>(),
+                         Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze)
 	{
     ABSTRACTPROCESSINGCLIENTLOGINIT;
     LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();

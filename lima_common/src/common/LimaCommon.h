@@ -150,6 +150,26 @@ typedef unsigned __int64 uint64_t;
 #include <common/QsLog/QsLogCategories.h>
 #include "common/QsLog/QsLogDest.h"
 
+namespace Lima
+{
+#ifdef _DEBUG
+  class LIMA_COMMON_EXPORT StopAnalyze
+  {
+    bool _v;
+  public:
+    StopAnalyze(bool v);
+    StopAnalyze(StopAnalyze const&);
+    operator bool() const;
+    StopAnalyze& operator=(StopAnalyze const& o);
+    bool operator==(StopAnalyze const& o);
+    bool operator!=(StopAnalyze const& o);
+  };
+#else
+  typedef bool LIMA_COMMON_EXPORT StopAnalyze;
+#endif
+  extern LIMA_COMMON_EXPORT StopAnalyze defaultStopAnalyze;
+}
+
 #define LTRACE QLOG_TRACE()
 #define LDEBUG QLOG_DEBUG()
 #define LINFO QLOG_INFO()
@@ -236,7 +256,8 @@ enum LimaStatusCode {
     UNKNOWN_ERROR,
     UNSUPPORTED_LANGUAGE,
     INVALID_CONFIGURATION,
-    MISSING_DATA
+    MISSING_DATA,
+    TIME_OVERFLOW
 };
 
 BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)

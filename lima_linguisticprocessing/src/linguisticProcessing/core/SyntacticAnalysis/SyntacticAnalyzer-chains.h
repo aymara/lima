@@ -118,7 +118,9 @@ public:
   void identifyChains(SyntacticData* data,
                       const LinguisticGraphVertex& s,
                       const LinguisticGraphVertex& t,
-                      uint64_t& startChainId) const;
+                      uint64_t& startChainId,
+                      StopAnalyze const& stopAnalyze = defaultStopAnalyze) const;
+											
 
 
   /**
