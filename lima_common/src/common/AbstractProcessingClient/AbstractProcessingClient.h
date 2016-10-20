@@ -32,12 +32,9 @@ namespace Lima
 class AbstractProcessingClient
 {
 public:
-#ifdef ANTINNO_SPECIFIC
-  // FWI 13/03/2015 : jout 3 méthodes sinon erreur de link
   AbstractProcessingClient() {}
   AbstractProcessingClient(AbstractProcessingClient const&) {}
   AbstractProcessingClient& operator=(AbstractProcessingClient const&) { return *this; }
-#endif
     //! @brief Define the destructor virtual to ensure concrete client destructors to be called
     virtual ~AbstractProcessingClient() {}
 
