@@ -74,20 +74,11 @@ void CoreLinguisticProcessingClient::analyze(
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-#ifdef ANTINNO_SPECIFIC
     const std::set<std::string>& inactiveUnits,
     StopAnalyze const& stopAnalyze) const
-#else
-    const std::set<std::string>& inactiveUnits) const
-#endif
 {
   LimaString limatexte=Common::Misc::utf8stdstring2limastring(texte);
-#ifdef ANTINNO_SPECIFIC
   analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits, stopAnalyze);
-#else
-  analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits);
-#endif
-
 }
 
 void CoreLinguisticProcessingClient::analyze(
@@ -95,13 +86,8 @@ void CoreLinguisticProcessingClient::analyze(
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-#ifdef ANTINNO_SPECIFIC
     const std::set<std::string>& inactiveUnits,
     StopAnalyze const& stopAnalyze) const
-#else
-    const std::set<std::string>& inactiveUnits) const
-#endif
-
 {
   Lima::TimeUtilsController timer("CoreLinguisticProcessingClient::analyze");
   CORECLIENTLOGINIT;
@@ -113,11 +99,7 @@ void CoreLinguisticProcessingClient::analyze(
   }
   
   // create analysis content
-#ifdef ANTINNO_SPECIFIC
   AnalysisContent analysis(stopAnalyze);
-#else
-  AnalysisContent analysis;
-#endif
   LinguisticMetaData* metadataholder=new LinguisticMetaData(); // will be destroyed in AnalysisContent destructor
   analysis.setData("LinguisticMetaData",metadataholder);
 

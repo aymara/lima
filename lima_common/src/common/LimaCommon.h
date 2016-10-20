@@ -319,10 +319,7 @@ enum LimaStatusCode {
     UNSUPPORTED_LANGUAGE,
     INVALID_CONFIGURATION,
     MISSING_DATA
-#ifdef ANTINNO_SPECIFIC
-    // FWI 22/02/2016 ajout TIME_OVERFLOW pour stopAnalyze
     ,TIME_OVERFLOW
-#endif
 };
 
 BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)

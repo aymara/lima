@@ -128,9 +128,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
     return MISSING_DATA;
   }
 
-#ifdef ANTINNO_SPECIFIC
   auto const& stopAnalyze = analysis.stopAnalyze();
-#endif
 
   LinguisticGraphVertex lastVx=anagraph->lastVertex();
   LinguisticGraphVertex beginSentence=anagraph->firstVertex();
@@ -144,13 +142,11 @@ LimaStatusCode SentenceBoundariesFinder::process(
   if (m_boundaryValues.empty()) {
     while (beginSentence!=lastVx)
     {
-#ifdef ANTINNO_SPECIFIC
       if (stopAnalyze)
       {
         LERROR << "Analyze too long. Stopped in SentenceBoundariesFinder";
         return TIME_OVERFLOW;
       }
-#endif
       LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
 #ifdef DEBUG_LP
       LDEBUG << "found endSentence at " << endSentence;
@@ -165,13 +161,11 @@ LimaStatusCode SentenceBoundariesFinder::process(
     LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
     while (endSentence!=lastVx)
     {
-#ifdef ANTINNO_SPECIFIC
       if (stopAnalyze)
       {
         LERROR << "Analyze too long. Stopped in SentenceBoundariesFinder";
         return TIME_OVERFLOW;
       }
-#endif
       Token* t=get(vertex_token,*(anagraph->getGraph()),endSentence);
 #ifdef DEBUG_LP
       if (t!=0) {
@@ -183,13 +177,11 @@ LimaStatusCode SentenceBoundariesFinder::process(
       }
 #endif
       if (t==0 || m_boundaryValues.find(t->stringForm())!=m_boundaryValues.end()) {
-#ifdef ANTINNO_SPECIFIC
         if (stopAnalyze)
         {
           LERROR << "Analyze too long. Stopped in SentenceBoundariesFinder";
           return TIME_OVERFLOW;
         }
-#endif
         sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
         beginSentence=endSentence;
       }

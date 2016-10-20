@@ -670,9 +670,7 @@ uint64_t Recognizer::
         bool returnAtFirstSuccess,
         bool applySameRuleWhileSuccess) const 
 {
-#ifdef ANTINNO_SPECIFIC
   auto const& stopAnalyze = analysis.stopAnalyze();
-#endif
 
   if (returnAtFirstSuccess) {
     stopAtFirstSuccess=true; // implied by the other
@@ -727,7 +725,6 @@ uint64_t Recognizer::
 #ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
 #endif
-#ifdef ANTINNO_SPECIFIC
       if (stopAnalyze)
 		  {
 #if !defined DEBUG_LP
@@ -736,7 +733,6 @@ uint64_t Recognizer::
 			  LERROR << "Stopped in Recognizer";
 			  return 0;
 		  }
-#endif
       success = testOnVertex(graph,currentVertex,
                              upstreamBound,downstreamBound,
                              analysis,result,

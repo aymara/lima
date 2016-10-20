@@ -36,7 +36,6 @@
 #endif
 #endif
 
-#ifdef ANTINNO_SPECIFIC
 namespace Lima
 {
 #ifdef _DEBUG
@@ -70,7 +69,6 @@ bool StopAnalyze::operator!=(StopAnalyze const& o)
 StopAnalyze defaultStopAnalyze(false);
 
 }
-#endif
 
 namespace Lima
 {

@@ -144,9 +144,7 @@ LimaStatusCode SimpleWord::process(
   MORPHOLOGINIT;
   LINFO << "starting process SimpleWord";
 
-#ifdef ANTINNO_SPECIFIC
   auto const& stopAnalyze = analysis.stopAnalyze();
-#endif
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
 
@@ -157,13 +155,11 @@ LimaStatusCode SimpleWord::process(
   boost::tie(it,itEnd)=vertices(*g);
   for (;it!=itEnd;it++)
   {
-#ifdef ANTINNO_SPECIFIC
     if (stopAnalyze)
 	  {
 		  LERROR << "Analyze too long. Stopped in SimpleWord";
 		  return TIME_OVERFLOW;
 	  }
-#endif
     Token* currentToken=tokenMap[*it];
     if (currentToken!=0)
     {

@@ -118,12 +118,8 @@ public:
   void identifyChains(SyntacticData* data,
                       const LinguisticGraphVertex& s,
                       const LinguisticGraphVertex& t,
-#ifdef ANTINNO_SPECIFIC
                       uint64_t& startChainId,
                       StopAnalyze const& stopAnalyze = defaultStopAnalyze) const;
-#else
-                      uint64_t& startChainId) const;
-#endif
 											
 
 

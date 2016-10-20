@@ -49,11 +49,7 @@ class LIMA_PROCESSUNITFRAMEWORK_EXPORT AnalysisContent
 {
 public:
   
-#ifdef ANTINNO_SPECIFIC
   AnalysisContent(Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze);
-#else
-  AnalysisContent();
-#endif
   
   /**
    * Destroy all AnalysisData in AnalysisContent
@@ -106,15 +102,11 @@ public:
    */
   void releaseData(const std::string& id);
 
-#ifdef ANTINNO_SPECIFIC
   StopAnalyze const& stopAnalyze() const;
-#endif
   private:
 
   std::map<std::string,AnalysisData*> m_analysisData;
-#ifdef ANTINNO_SPECIFIC
   Lima::StopAnalyze const& _stopAnalyze;
-#endif
   
 };
 

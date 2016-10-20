@@ -64,21 +64,12 @@ class AbstractProcessingClientHandler
                          const std::map<std::string,std::string>& metaData,
                          const std::string& pipeline,
 			  const std::map<std::string, AbstractAnalysisHandler*>& handlers = std::map<std::string, AbstractAnalysisHandler*>(),
-#ifdef ANTINNO_SPECIFIC
                          const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-                         Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze
-#else
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>())
-#endif
+                         Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze)
 	{
     ABSTRACTPROCESSINGCLIENTLOGINIT;
-#ifdef ANTINNO_SPECIFIC
     LDEBUG << "handleProc("<<tagName<<") gets " << getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
     getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits, stopAnalyze);
-#else
-    LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
-	  getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits);
-#endif
 	}
 
 //   inline virtual void setAnalysisHandler(const std::string& handlerId, AbstractAnalysisHandler* handler)
