@@ -172,7 +172,7 @@ void MediaProcessors::initPipelines (
             if ( entryItr==pipelineMapping.end() )
             {
                 std::cout << "no pipeline '" << *pipItr << "' for media " << mediaStr << std::endl;
-                //         continue;
+                continue;
             }
             const MediaProcessUnit* pu=mapItr->second->getObject ( entryItr->second );
             const MediaProcessUnitPipeline* pipeline=static_cast<const MediaProcessUnitPipeline*> ( pu );
