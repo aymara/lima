@@ -265,10 +265,8 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         break;
     }
     default:;
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
       LERROR << "MultimediaBinaryReaderIndexer::readMultimediaDocumentBlock: unmanaged block type " << blocType;
-#endif
 #endif
     }
 }

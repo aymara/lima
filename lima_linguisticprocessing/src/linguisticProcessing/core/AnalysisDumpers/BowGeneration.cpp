@@ -1432,10 +1432,8 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
   DUMPERLOGINIT;
 #endif
 
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
         LDEBUG << "BowGenerator: createNEParts(...)";
-#endif
 #endif
 
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);
@@ -1529,10 +1527,8 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
       const Token* token = get(vertex_token, graph, *m);
       const MorphoSyntacticData* data = get(vertex_data, graph, *m);
 
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
       LDEBUG << "BowGenerator: createNEParts(...) token->form(): " << token->form();
-#endif
 #endif
 
       if (data!=0 && !data->empty())
@@ -1562,11 +1558,9 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
                         category,
                         token->position(),
                         token->length()));
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
         LDEBUG << "BowGenerator: token->stringForm(): " << token->stringForm();
         LDEBUG << "BowGenerator: sp[/*elem.normalizedForm*/ " << elem.normalizedForm << "]: \"" << sp[elem.normalizedForm] << "\"";
-#endif
 #endif
 
       }

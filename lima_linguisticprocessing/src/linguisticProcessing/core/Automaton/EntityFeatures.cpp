@@ -75,12 +75,10 @@ bool EntityFeature::operator==(const EntityFeature& f) const
     return (boost::any_cast<string>(m_value)==boost::any_cast<string>(f.m_value));
   } 
   if (type==typeid(LimaString)) {
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
     SELOGINIT
     LDEBUG << "EntityFeature::operator==(EntityFeature& f): f.value: " << boost::any_cast<LimaString>(f.m_value);
     LDEBUG << "EntityFeature::operator==(EntityFeature& f): this.value: " << boost::any_cast<LimaString>(m_value);
-#endif
 #endif
     return (boost::any_cast<LimaString>(m_value)==boost::any_cast<LimaString>(f.m_value));
   } 

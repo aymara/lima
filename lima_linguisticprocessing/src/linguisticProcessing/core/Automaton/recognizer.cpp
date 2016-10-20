@@ -595,29 +595,23 @@ void Recognizer::
 setNormalizedForm(const LimaString& norm,
                   RecognizerMatch& match) const
 {
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
   AULOGINIT
-#endif
 #endif
 
   match.features().clear();
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   if (norm.isEmpty()) {
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
     LDEBUG << "Recognizer::setNormalizedForm(norm=""): match.getNormalizedString(sp)= " << match.getNormalizedString(sp);
-#endif
 #endif
     // use surface form of the expression as normalized form 
     match.features().setFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
   }
   else {
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
     LDEBUG << "Recognizer::setNormalizedForm(norm): norm= " << norm;
-#endif
 #endif
     match.features().setFeature(DEFAULT_ATTRIBUTE,norm);
   }

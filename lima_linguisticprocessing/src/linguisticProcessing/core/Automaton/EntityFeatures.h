@@ -144,11 +144,9 @@ template<typename ValueType>
       if (it!=end()) {
 //      if( (it!=end()) && (name==DEFAULT_ATTRIBUTE) ){
         (*it).setValue(boost::any(value));
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
       SELOGINIT;
       LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << (*it).getValueString() << ")";
-#endif
 #endif
       }
       else {
@@ -157,11 +155,9 @@ template<typename ValueType>
         push_back(EntityFeature());
         back().setName(name);
         back().setValue(boost::any(value));
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
       SELOGINIT;
       LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << back().getValueString() << ")";
-#endif
 #endif
       }
     }
@@ -174,11 +170,9 @@ template<typename ValueType>
       push_back(EntityFeature());
       back().setName(name);
       back().setValue(boost::any(value));
-#ifdef ANTINNO_SPECIFIC
 #ifdef DEBUG_LP
       SELOGINIT;
       LDEBUG << "EntityFeatures::<ValueType>addFeature(" << name << "," << back().getValueString() << ")";
-#endif
 #endif
     }
 /*
