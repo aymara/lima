@@ -57,11 +57,7 @@ class BoWXMLWriterPrivate
 friend class BoWXMLWriter;
 
   BoWXMLWriterPrivate(std::ostream& os);
-// FWI 08/09/2015 : ajout de la langue en paramètre
-#ifdef ANTINNO_SPECIFIC
   BoWXMLWriterPrivate(std::ostream& os, Lima::MediaId const& language);
-#else
-#endif
   virtual ~BoWXMLWriterPrivate();
 
 
@@ -112,8 +108,6 @@ m_language(0)
 {
 }
 
-// FWI 08/09/2015 : ajout de la langue en paramètre
-#ifdef ANTINNO_SPECIFIC
 BoWXMLWriterPrivate::BoWXMLWriterPrivate(std::ostream& os, Lima::MediaId const& language):
 m_outputStream(os),
 m_currentTokId(0),
@@ -121,8 +115,6 @@ m_spaces(""),
 m_language(language)
 {
 }
-#else
-#endif
 
 BoWXMLWriterPrivate::~BoWXMLWriterPrivate()
 {
@@ -136,14 +128,10 @@ BoWXMLWriter::BoWXMLWriter(std::ostream& os):
 {
 }
 
-// FWI 08/09/2015 : ajout de la langue en paramètre
-#ifdef ANTINNO_SPECIFIC
 BoWXMLWriter::BoWXMLWriter(std::ostream& os, Lima::MediaId const& language):
 m_d(new BoWXMLWriterPrivate(os, language))
 {
 }
-#else
-#endif
 
 BoWXMLWriter::~BoWXMLWriter()
 {
