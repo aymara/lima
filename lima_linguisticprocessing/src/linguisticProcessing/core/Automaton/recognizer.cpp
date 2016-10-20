@@ -389,6 +389,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
   bool reapplySameRule(false);
 
   SetOfRules::const_iterator
+    rule_begin=rules.begin(),
     rule=rules.begin(),
     rule_end=rules.end();
   for (; rule!=rule_end; rule++) {
@@ -556,7 +557,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
             }*/
           }
           // reapply same rule
-          rule--;
+          if (rule != rule_begin)
+            rule--;
           reapplySameRule=true;
         }
 
@@ -593,14 +595,30 @@ void Recognizer::
 setNormalizedForm(const LimaString& norm,
                   RecognizerMatch& match) const
 {
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+  AULOGINIT
+#endif
+#endif
+
   match.features().clear();
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   if (norm.isEmpty()) {
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+    LDEBUG << "Recognizer::setNormalizedForm(norm=""): match.getNormalizedString(sp)= " << match.getNormalizedString(sp);
+#endif
+#endif
     // use surface form of the expression as normalized form 
     match.features().setFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
   }
   else {
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+    LDEBUG << "Recognizer::setNormalizedForm(norm): norm= " << norm;
+#endif
+#endif
     match.features().setFeature(DEFAULT_ATTRIBUTE,norm);
   }
 }
@@ -652,6 +670,9 @@ uint64_t Recognizer::
         bool returnAtFirstSuccess,
         bool applySameRuleWhileSuccess) const 
 {
+#ifdef ANTINNO_SPECIFIC
+  auto const& stopAnalyze = analysis.stopAnalyze();
+#endif
 
   if (returnAtFirstSuccess) {
     stopAtFirstSuccess=true; // implied by the other
@@ -705,6 +726,16 @@ uint64_t Recognizer::
     if (currentVertex != graph.firstVertex()) {
 #ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
+#endif
+#ifdef ANTINNO_SPECIFIC
+      if (stopAnalyze)
+		  {
+#if !defined DEBUG_LP
+        AULOGINIT;
+#endif
+			  LERROR << "Stopped in Recognizer";
+			  return 0;
+		  }
 #endif
       success = testOnVertex(graph,currentVertex,
                              upstreamBound,downstreamBound,
