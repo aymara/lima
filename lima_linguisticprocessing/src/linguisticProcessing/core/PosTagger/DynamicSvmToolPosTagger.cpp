@@ -47,9 +47,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_io.hpp>
-#ifdef ANTINNO_SPECIFIC
-#include <boost/foreach.hpp>
-#endif
 
 #include <cfloat> // LDBL_MIN/MAX
 #include <cmath> // log
@@ -198,13 +195,8 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
   std::map<LinguisticGraphVertex, struct PathInfo > maxAncestor;
 
   /* Push every vertex coming from vertex 0 onto the "tokens to be visited" list */
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(LinguisticGraphVertex vertex,
-    nextTokens(analysisGraph->firstVertex(), srcGraph))
-#else
   for(LinguisticGraphVertex vertex:
       nextTokens(analysisGraph->firstVertex(), srcGraph))
-#endif
   {
     tokenQueue.push(vertex);
   }
@@ -226,11 +218,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     /* For every ancestor of our node */
     std::set<LinguisticGraphVertex> previousTokens = getPreviousTokens(vertex, srcGraph);
     if(previousTokens.empty()) previousTokens.insert(posGraph->firstVertex());
-#ifdef ANTINNO_SPECIFIC
-    BOOST_FOREACH(LinguisticGraphVertex prevVertex, previousTokens) {
-#else
     for (auto it = previousTokens.begin(); it != previousTokens.end(); ++it) {
-#endif
       LinguisticGraphVertex prevVertex = *it;
       
       std::string pos = "";

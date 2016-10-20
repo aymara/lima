@@ -24,9 +24,6 @@
  ***********************************************************************/
 
 #include "FileUtils.h"
-#ifdef ANTINNO_SPECIFIC
-#include <boost/foreach.hpp>
-#endif
 #include <QFileInfo>
 #include <QDir>
 
@@ -75,22 +72,14 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
 {
 //   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(const QString& project, projects)
-#else
   for (auto it = projects.begin(); it != projects.end(); ++it)
-#endif
   {
     QString project = *it;
     QStringList confDirs;
     QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
     if (!projectConf.isEmpty()) 
       confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(const QString &configDir, confDirs)
-#else
     for (auto configDir = confDirs.begin(); configDir != confDirs.end(); ++configDir)
-#endif
     {
       if (!configDir->isEmpty() && QDir(*configDir).exists())
       {
@@ -147,11 +136,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       }
     }
   }
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(const QString& path, paths)
-#else
   for (auto path = paths.begin(); path != paths.end(); ++path)
-#endif
   {
     if (!path->isEmpty() && QDir(*path).exists())
       configDirs << *path;
@@ -165,22 +150,14 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
 {
 //   qDebug() << "buildResourcesDirectoriesList" << projects << paths;
   QStringList resourcesDirs;
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(const QString& project, projects)
-#else
   for (auto it = projects.begin(); it != projects.end(); ++it)
-#endif
   {
     QString project = *it;
     QStringList resDirs;
     QString projectRes = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData());
     if (!projectRes.isEmpty()) 
       resDirs << projectRes.split(LIMA_PATH_SEPARATOR);
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(const QString &resourcesDir, resDirs)
-#else
     for (auto resourcesDir = resDirs.begin(); resourcesDir != resDirs.end(); ++resourcesDir)
-#endif
     {
       if (QDir(*resourcesDir).exists())
       {
@@ -228,11 +205,7 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
     }
 
   }
-#ifdef ANTINNO_SPECIFIC
-  BOOST_FOREACH(const QString& path, paths)
-#else
   for (auto path = paths.begin(); path != paths.end(); ++path)
-#endif
   {
     if (!path->isEmpty() && QDir(*path).exists())
       resourcesDirs << *path;
