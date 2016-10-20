@@ -64,12 +64,9 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
-#ifdef ANTINNO_SPECIFIC
-// FWI 18/02/2014 : ajout 2 undef
 #ifdef WIN32
 #undef max
 #undef min
-#endif
 #endif
 
 using namespace std;
