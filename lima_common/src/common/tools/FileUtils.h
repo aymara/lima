@@ -29,10 +29,7 @@
 #include "common/LimaCommon.h"
 
 #include <QFile>
-#ifdef ANTINNO_BUGFIX
-// nécessaire sinon le compilateur dit que QStringList n'a pas de constructeur...
 #include <QStringList>
-#endif
 
 #include <iostream>
 
