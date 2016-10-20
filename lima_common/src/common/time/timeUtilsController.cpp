@@ -41,7 +41,7 @@ TimeUtilsController::~TimeUtilsController() {
   uint64_t delta = TimeUtils::elapsedTime(m_topic);
   if (m_logElapsedTime) {
     TIMELOGINIT;
-    LINFO << m_topic << " (  ): " << delta << " ms";
+    LINFO << m_topic << " (  ): " << delta << " us";
   }
 }
   

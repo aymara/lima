@@ -54,7 +54,13 @@ namespace Lima {
   class LIMA_TIME_EXPORT TimeUtils
   {
   public:
-    TimeUtils() {}
+    struct Data
+    {
+      uint64_t first;
+      uint64_t second;
+      uint64_t count;
+    };
+    TimeUtils();
     ~TimeUtils() {}
     
     /**
@@ -64,6 +70,7 @@ namespace Lima {
      */
     //   static void updateCurrentTime( const std::string& taskCategory = std::string("") );
     static void updateCurrentTime( const std::string& taskCategory = std::string("") );
+    static void restart( const std::string& taskCategory = std::string("") );
     
     //   static void setCurrentTime(uint64_t time);
     static void setCurrentTime(uint64_t time, const std::string& taskCategory = std::string(""));
@@ -111,7 +118,7 @@ namespace Lima {
     private:
       /** last current time stored */
       //   static uint64_t currentTime;
-      static std::map<std::string , std::pair<uint64_t,uint64_t> > m_cumulatedTime;
+      static std::map<std::string, Data> m_cumulatedTime;
       static QMutex m_mutex;
     };
     
