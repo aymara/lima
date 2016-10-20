@@ -370,27 +370,46 @@ void BoWXMLWriterPrivate::writeIndexElement(
     std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(element.getCategory()));
 
     m_outputStream << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(element.getSimpleTerm()))
-       << "\" category=\"" << cat
+       << "\" category=\"" << element.getCategory()
+       << "\" categoryString=\"" << cat // uniquement pour info
        << "\" position=\"" << element.getPosition()
        << "\" length=\"" << element.getLength() << "\"";
     if (element.isNamedEntity()) {
-      m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
-      m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
+      string const neTypeAsString = Common::Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType()));
+      m_outputStream << " neType=\"" << element.getNamedEntityType()/*xmlString(neTypeAsString)*/ << "\"";
+      m_outputStream << " neTypeString=\"" << xmlString(neTypeAsString) << "\"";
+      m_outputStream << " type=\"" << static_cast<int>(BoWType::BOW_NAMEDENTITY) << "\"";
+      m_outputStream << " typeString=\"" << BoWType::BOW_NAMEDENTITY << "\"";
     }
     else {
-      m_outputStream << " type=\"" << BoWType::BOW_TOKEN << "\"";
+      m_outputStream << " type=\"" << static_cast<int>(BoWType::BOW_TOKEN) << "\"";
+      m_outputStream << " typeString=\"" << BoWType::BOW_TOKEN << "\"";
     }
     m_outputStream << "/>" << endl;
     return;
   }
   
   // compound
+
+  std::string  const cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(element.getCategory()));
+  m_outputStream
+    << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(element.getSimpleTerm())) << "\""
+    << " category=\"" << element.getCategory() << "\""
+    << " categoryString=\"" << xmlString(cat) << "\"" /* uniquement pour info */
+    << " position=\"" << element.getPosition() << "\""
+    << " length=\"" << element.getLength() << "\"";
+
   if (element.isNamedEntity()) {
-    m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
-    m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
+    
+    string const neTypeAsString = Common::Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType()));
+    m_outputStream << " neType=\"" << element.getNamedEntityType() /*xmlString(neTypeAsString)*/ << "\"";
+    m_outputStream << " neType=\"" << xmlString(neTypeAsString) << "\"";
+    m_outputStream << " type=\"" << static_cast<int>(BoWType::BOW_NAMEDENTITY) << "\"";
+    m_outputStream << " typeString=\"" << BoWType::BOW_NAMEDENTITY << "\"";
   }
   else {
-    m_outputStream << " type=\"" << BoWType::BOW_TERM << "\"";
+    m_outputStream << " type=\"" << static_cast<int>(BoWType::BOW_TERM) << "\"";
+    m_outputStream << " typeString=\"" << BoWType::BOW_TERM << "\"";
   }
   m_outputStream << ">" << endl
      << m_spaces << "  <structure>" << endl;
@@ -426,7 +445,8 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "<bowToken "
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(tok->getLemma()))
-       << "\" category=\"" << cat
+       << "\" category=\"" << tok->getCategory()
+       << "\" categoryString=\"" << xmlString(cat) // uniquement pour info
        <<"\" position=\"" << tok->getPosition() 
        << "\" length=\"" << tok->getLength() << "\"" 
        << "/>" << std::endl;
@@ -453,7 +473,8 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "<bowTerm "
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(term->getLemma()))
-       << "\" category=\"" << cat
+       << "\" category=\"" << term->getCategory()
+       << "\" categoryString=\"" << xmlString(cat) // uniquement pour info
        <<"\" position=\"" << term->getPosition()
        << "\" length=\"" << term->getLength() << "\""
        << ">" << std::endl;
@@ -470,7 +491,8 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "<bowNamedEntity "
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(ne->getLemma()))
-       << "\" category=\"" << cat
+       << "\" category=\"" << ne->getCategory()
+       << "\" categoryString=\"" << xmlString(cat) // uniquement pour info
        <<"\" position=\"" << ne->getPosition() 
        << "\" length=\"" << ne->getLength() 
        << "\" type=\""  
