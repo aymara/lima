@@ -149,6 +149,68 @@ typedef unsigned __int64 uint64_t;
 #include <common/QsLog/QsLog.h>
 #include <common/QsLog/QsLogCategories.h>
 #include "common/QsLog/QsLogDest.h"
+#ifdef ANTINNO_SPECIFIC
+// FWI 19/05/2016 ajout 2 includes
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+
+#ifdef WIN32
+
+#ifdef LIMA_COMMON_EXPORTING
+#define LIMA_COMMON_EXPORT    __declspec(dllexport)
+#else
+#define LIMA_COMMON_EXPORT    __declspec(dllimport)
+#endif
+
+
+#else // Not WIN32
+
+#define LIMA_COMMON_EXPORT
+
+#endif
+namespace Lima
+{
+#ifdef _DEBUG
+  class LIMA_COMMON_EXPORT StopAnalyze
+  {
+    bool _v;
+  public:
+    StopAnalyze(bool v);
+    StopAnalyze(StopAnalyze const&);
+    operator bool() const;
+    StopAnalyze& operator=(StopAnalyze const& o);
+    bool operator==(StopAnalyze const& o);
+    bool operator!=(StopAnalyze const& o);
+  };
+#else
+  typedef bool LIMA_COMMON_EXPORT StopAnalyze;
+#endif
+  extern LIMA_COMMON_EXPORT StopAnalyze defaultStopAnalyze;
+}
+
+#define LTRACE \
+  if ( logger.loggingLevel() <= QsLogging::TraceLevel ) \
+    QsLogging::antinno::LogHelper(QsLogging::TraceLevel, logger.zone()).stream()
+#define LDEBUG \
+  if ( logger.loggingLevel() <= QsLogging::DebugLevel ) \
+     QsLogging::antinno::LogHelper(QsLogging::DebugLevel, logger.zone()).stream()
+#define LINFO \
+  if ( logger.loggingLevel() <= QsLogging::InfoLevel ) \
+     QsLogging::antinno::LogHelper(QsLogging::InfoLevel, logger.zone()).stream()
+#define LNOTICE \
+  if ( logger.loggingLevel() <= QsLogging::InfoLevel ) \
+     QsLogging::antinno::LogHelper(QsLogging::InfoLevel, logger.zone()).stream()
+#define LWARN \
+  if ( logger.loggingLevel() <= QsLogging::WarnLevel ) \
+     QsLogging::antinno::LogHelper(QsLogging::WarnLevel, logger.zone()).stream()
+#define LERROR \
+  if ( logger.loggingLevel() <= QsLogging::ErrorLevel ) \
+     QsLogging::antinno::LogHelper(QsLogging::ErrorLevel, logger.zone()).stream()
+#define LFATAL \
+  if ( logger.loggingLevel() <= QsLogging::FatalLevel ) \
+     QsLogging::antinno::LogHelper(QsLogging::FatalLevel, logger.zone()).stream()
+
+#else
 
 #define LTRACE QLOG_TRACE()
 #define LDEBUG QLOG_DEBUG()
@@ -157,6 +219,8 @@ typedef unsigned __int64 uint64_t;
 #define LWARN QLOG_WARN()
 #define LERROR QLOG_ERROR()
 #define LFATAL QLOG_FATAL()
+
+#endif
 
 // #define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance(X); 
 // logger.setLoggingLevel( QsLogging::Categories::instance().levelFor( X ) );
@@ -191,6 +255,26 @@ public:
 
 //QsLogging::DestinationPtr debugDestination(  QsLogging::DestinationFactory::MakeDebugOutputDestination() );
 //logger.addDestination(debugDestination.get());
+#ifdef ANTINNO_SPECIFIC
+// FWI 07/10/2015 ajout pour les logger
+static std::ostream& operator<<(std::ostream &os, const QString& s)
+{
+  os << s.toUtf8().constData();
+  return os;
+}
+
+static ::std::ostream& operator<<(::std::ostream& out, QStringList const& o)
+{
+  bool isFirst = true;
+  for(auto it=o.constBegin(); it!=o.constEnd(); ++it)
+  {
+    out << (isFirst?L"":L",") << *it;
+    isFirst = false;
+  }
+  return out;
+}
+#endif
+
 
 
 #define LENDL ". Note: LENDL is deprecated. It will be removed from a future release."
@@ -235,14 +319,48 @@ enum LimaStatusCode {
     UNSUPPORTED_LANGUAGE,
     INVALID_CONFIGURATION,
     MISSING_DATA
+#ifdef ANTINNO_SPECIFIC
+    // FWI 22/02/2016 ajout TIME_OVERFLOW pour stopAnalyze
+    ,TIME_OVERFLOW
+#endif
 };
 
+#ifdef ANTINNO_SPECIFIC
+BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)
+#endif
+
+
 BOOST_STRONG_TYPEDEF(uint32_t, LinguisticCode);
+#ifdef ANTINNO_SPECIFIC
+// FWI 25/05/2016 : on spécialise max() pour le type LinguisticCode sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
+}
+namespace std {
+  template <> Lima::LinguisticCode numeric_limits<Lima::LinguisticCode>::max() { return Lima::LinguisticCode(::std::numeric_limits<uint32_t>::max()); }
+}
+namespace Lima {
+#endif
+
 BOOST_STRONG_TYPEDEF(char, NoParameters);
+#ifdef ANTINNO_SPECIFIC
+// FWI 25/05/2016 : on spécialise max() pour le type LinguisticCode sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
+}
+namespace std {
+  template <> Lima::NoParameters numeric_limits<Lima::NoParameters>::max() { return Lima::NoParameters(::std::numeric_limits<char>::max()); }
+}
+namespace Lima {
+#endif
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()
 
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
+#ifdef ANTINNO_SPECIFIC
+// FWI 25/05/2016 : on spécialise max() pour le type MediaId sinon le max() d'origine renvoit 0 (ce qui est un bug de la lib std)
+}
+namespace std {
+  template <> Lima::MediaId numeric_limits<Lima::MediaId>::max() { return Lima::MediaId(::std::numeric_limits<uint8_t>::max()); }
+}
+namespace Lima {
+#endif
 
 class LimaException : public std::exception
 {

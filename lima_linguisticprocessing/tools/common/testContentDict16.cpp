@@ -49,6 +49,22 @@ using namespace std;
 
 #include <QtCore/QCoreApplication>
 
+#ifdef ANTINNO_SPECIFIC
+#define ANTINNO_SPECIFIC_LOG
+#endif
+
+#ifdef ANTINNO_SPECIFIC_LOG
+// FWI 12/05/2015 utilisation de composants d's3
+#include "antinno.s3.config.h"
+#include "antinno.s3.fs.File.class.h"
+#include "antinno.s3.fs.Directory.class.h"
+#include "antinno.s3.fs.FileName.class.h"
+#include "antinno.s3.log.Log4cpp.class.h"
+#if defined WIN32
+#include "windows.h"
+#endif
+#endif
+
 //#include "common/linguisticData/linguisticData.h"
 
 using namespace Lima;
@@ -99,10 +115,36 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
+#ifndef ANTINNO_SPECIFIC_LOG
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+#else
+  LoadLibrary("antinno.s3lib.dll");
   
+  static ::antinno::s3::log::Log4cpp log1;
+  {
+    
+    using namespace ::antinno;
+    QString const c = ::std::getenv("AMOSE_CONF");
+    if (c.isEmpty())
+    {
+      std::cerr << "No environment variable \"AMOSE_CONF\" set or variable is empty" << std::endl;
+      return EXIT_FAILURE;
+    }
+    
+    QString log4cppFilePath = c + "/" + "AntTextIndexer.log4cpp";
+    s3::fs::File const log4cppFile((s3::fs::Path(::boost::locale::conv::utf_to_utf<s3::Utf16Char>(log4cppFilePath.toUtf8().constData()).c_str())));
+    //::std::wcout << log4cppFile << ::std::endl;
+    log1.configure(log4cppFile);
+    ::antinno::s3::global.log(log1);
+    if (!QsLogging::Categories::instance().configure(log4cppFilePath.toAscii().constData()))
+    {
+      std::cerr << "Configure Problem " << log4cppFilePath.toAscii().constData() << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+#endif
   cerr << "testContentDict16 begin..." << endl;
 
   setlocale(LC_ALL, "");

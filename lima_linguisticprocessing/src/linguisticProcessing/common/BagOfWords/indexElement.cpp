@@ -348,9 +348,14 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
   os << "[IndexElement" << elt.m_d->m_id << "," << elt.m_d->m_type ;
   if (elt.isSimpleTerm()) {
   os << ":" << Common::Misc::limastring2utf8stdstring(elt.m_d->m_word);
+#ifdef ANTINNO_SPECIFIC
+  // affichage systématique
+  os << "/" << elt.m_d->m_category;
+#else
     if (elt.m_d->m_category != 0) {
       os << "/" << elt.m_d->m_category;
     }
+#endif
     os << "/" << elt.m_d->m_position;
     os << "," << elt.m_d->m_length;
   }

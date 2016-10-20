@@ -186,6 +186,31 @@ LimaStatusCode BowDumper::process(
   bowText.lang=metadata->getMetaData("Lang");
   buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
 
+#ifdef ANTINNO_SPECIFIC
+  // on exclus de la liste les entités xml qui précèdent l'offset et on recalle les positions par rapport au début du noeud en cours d'analyse
+  uint64_t offset = metadata->getStartOffset();
+  QMap<uint64_t, uint64_t> shiftFrom;
+  auto const& m = handler->shiftFrom();
+  if (!m.isEmpty())
+  {
+    uint64_t diff = 0;
+    for (auto it=m.constBegin()+1; it!=m.constEnd(); ++it)
+    {
+      //::std::cout << it.key() << " " << it.value() << " " << (it-1).value() << " " << offset << ::std::endl;
+      if (it.key()+(it-1).value() >= offset)
+        break;
+      diff = it.value();
+      //::std::cout << "diff: " << diff << ::std::endl;
+    }
+    for (auto it=m.constBegin(); it!=m.constEnd(); ++it)
+      if (it.value() > diff)
+      {
+        shiftFrom.insert(it.key()+diff, it.value()-diff); // empirique mais ça a l'air de marcher
+        //::std::cout << "it.key()+diff: " << it.key()+diff << "it.value()-diff: " << it.value()-diff << ::std::endl;
+      }
+  }
+  BoWBinaryWriter writer(shiftFrom);
+#else
   // Exclude from the shift list XML entities preceding the offset and 
   // readjust positions regarding the beginning of the node being analyzed
   uint64_t offset = metadata->getStartOffset();
@@ -234,6 +259,7 @@ LimaStatusCode BowDumper::process(
   LDEBUG << "BowDumper::process localShiftFrom:" << localShiftFrom;
 #endif
   BoWBinaryWriter writer(localShiftFrom);
+#endif
   DumperStream* dstream=initialize(analysis);
 
 #ifdef DEBUG_LP

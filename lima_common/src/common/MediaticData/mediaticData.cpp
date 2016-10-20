@@ -417,7 +417,11 @@ void MediaticDataPrivate::initMedias(
           QString deffile= QString::fromUtf8(configParser.getModuleGroupParamValue("common","mediaDefinitionFiles",*it).c_str());
           QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
           bool mediaDefinitionFileFound = false;
+#ifdef ANTINNO_SPECIFIC
+          Q_FOREACH(const QString& confPath, configPaths)
+#else
           for(auto confPath = configPaths.begin(); confPath != configPaths.end(); ++confPath)
+#endif
           {
             if (QFileInfo(*confPath + "/" + deffile).exists())
             {
@@ -1060,7 +1064,11 @@ MediaticDataPrivate::~MediaticDataPrivate()
   {
     delete it->second;
   }
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH(auto entityType, m_entityTypes)
+#else
   for (auto it = m_entityTypes.begin(); it != m_entityTypes.end(); it++)
+#endif
   {
     delete *it;
   }

@@ -77,6 +77,15 @@ void ConcatenatedDataHandler::foundComponent(uint64_t position, uint64_t length,
   }
   concatenated.push_back(componentVertex);
   
+#ifdef ANTINNO_SPECIFIC
+  // FWI 04/04/2016
+  // plantage de l'indexeur sauf si les 4 lignes suivantes sont commentées
+  // apparement le fait de détruire *this plante nt.dll sans que la cause soit évidente
+  // pour test : voir le doc "constitution 2011" en ARA sur la machine "lirac"
+  // sur ma machine ça ne plante pas systématiquement...
+  // A noter : désactiver le paramètre "parseConcatenated" dans SimpleWord permet de courtcircuiter le problème
+  // -> à investiguer
+#endif
   m_currentToken=new Token(form,(*m_stringsPool)[form],m_srcToken->position()+position,length,m_srcToken->status());
   put(vertex_token,*m_graph,componentVertex,m_currentToken);
   m_currentData=new MorphoSyntacticData();

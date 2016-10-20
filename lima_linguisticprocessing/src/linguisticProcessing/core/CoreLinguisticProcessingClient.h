@@ -49,15 +49,25 @@ public:
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+#ifdef ANTINNO_SPECIFIC
+               const std::set<std::string>& inactiveUnits = std::set<std::string>(),
+               Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const;
+#else
                const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
   ;
+#endif
 
   void analyze(const std::string& texte,
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+#ifdef ANTINNO_SPECIFIC
+               const std::set<std::string>& inactiveUnits = std::set<std::string>(),
+               Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const;
+#else
                const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
   ;
+#endif
 };
 
 class CoreLinguisticProcessingClientFactory : public AbstractLinguisticProcessingClientFactory

@@ -109,7 +109,11 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
     SegmentationResultsLoader::XMLHandler handler(segmData,graph);
     m_parser->setContentHandler(&handler);
     m_parser->setErrorHandler(&handler);
+#ifdef ANTINNO_SPECIFIC
+    QFile file(getInputFile(analysis).c_str());
+#else
     QFile file(getInputFile(analysis));
+#endif
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
       throw XMLException();
     if (!m_parser->parse( QXmlInputSource(&file)))

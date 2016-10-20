@@ -716,6 +716,11 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
 			part = m_parts.insert(part, *it);
 			++part;
 		}
+// !!! Too many changes to merge this part
+#ifdef ANTINNO_BUGFIX
+        // spécique lib std microsoft
+        if (part != m_parts.begin())
+#endif
       }
 	  else {
 		  ++part;

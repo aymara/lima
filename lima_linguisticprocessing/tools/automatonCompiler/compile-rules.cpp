@@ -247,7 +247,11 @@ std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& pars
 //  M A I N
 //****************************************************************************
 #include "common/tools/LimaMainTaskRunner.h"
+#ifdef ANTINNO_SPECIFIC
+#include "common/AbstractFactoryPattern/antinno.LibraryLoader.class.h"
+#else
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#endif
 #include <QtCore/QTimer>
 
 int run(int aargc,char** aargv);
@@ -292,11 +296,61 @@ int run(int argc,char** argv)
     resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
     resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
+#ifdef ANTINNO_SPECIFIC
+  
 
+
+
+  {
+    std::string configDir;
+    
+	if (param.configDir.empty())
+	{		
+		if ((::std::getenv("AMOSE_CONF")) == NULL)
+		{
+		  std::cerr << "No environment variable \"AMOSE_CONF\" set or variable is empty" << std::endl;
+		  return EXIT_FAILURE;
+		}
+		else
+		{
+			configDir = ::std::getenv("AMOSE_CONF");
+		}
+	}
+	else
+	{
+		configDir = param.configDir;
+	}
+    
+	try
+    {
+      ::std::string const file = configDir + "/plugins.txt";
+      Lima::antinno::LibraryLoader().loadFromFile(file);
+    }
+    catch (::std::exception const& ex)
+    {
+      std::cerr << "Exception during plugins loading. " << ex.what() << std::endl;
+      return EXIT_FAILURE;
+    }
+
+	  ::std::string const log4cppFilePath = configDir + "/log4cpp.properties";
+    ::boost::shared_ptr<QsLogging::antinno::ILog> pLog1(new QsLogging::antinno::Log4cpp());
+    pLog1->configure(log4cppFilePath);
+    //QsLogging::antinno::log = pLog1;
+    QsLogging::antinno::log = pLog1;
+    if (!QsLogging::Categories::instance().configure(log4cppFilePath.data()))
+    {
+      std::cerr << "Configure Problem " << log4cppFilePath << std::endl;
+      return EXIT_FAILURE;
+    }
+    
+   ::std::cout << "Plugins initialized" << ::std::endl;
+  }
+#else
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+#endif
   
 
   deque<string> langs;

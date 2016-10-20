@@ -592,13 +592,25 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   bool createdSpecificEntity(false);
   
   // note: anaVertices size should be 0 or 1
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH ( AnnotationGraphVertex anaVertex, anaVertices)
+#else
   for (auto anaVertex = anaVertices.begin(); anaVertex != anaVertices.end(); ++anaVertex)
+#endif
   {
 #ifdef DEBUG_LP
+#ifdef ANTINNO_SPECIFIC
+    LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << anaVertex << " ----------------------------"; 
+#else
    LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << *anaVertex;
 #endif
+#endif
     std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVertex,"annot");
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH (AnnotationGraphVertex matchVertex, matches)
+#else
     for (auto matchVertex = matches.begin(); matchVertex != matches.end(); ++matchVertex)
+#endif
     {
 #ifdef DEBUG_LP
       LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << *matchVertex;
@@ -630,7 +642,11 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 #ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement there are " << matches.size() << " annotation graph vertices matching the current PsGraph vertex " << v;
 #endif
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH (AnnotationGraphVertex vx, matches)
+#else
   for (auto it = matches.begin(); it != matches.end(); ++it)
+#endif
   {
     AnnotationGraphVertex vx = *it;
 #ifdef DEBUG_LP
@@ -675,7 +691,11 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       bool toKeep = true;
       if (data!=0)
       {
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH (const auto& elem, *data)
+#else
         for (auto elem = data->begin(); elem != data->end(); ++elem)
+#endif
         {
           if (!keepAnyway && !shouldBeKept(*elem))
           {
@@ -687,7 +707,11 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       if (toKeep)
       {
 		auto pred = createPredicate(v, vx, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH (boost::shared_ptr< BoWPredicate> bP, createPredicate(v, vx, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway))
+#else
         for (auto bP = pred.begin(); bP != pred.end(); ++bP)
+ #endif
         {
           if (*bP!=0)
           {
@@ -1427,6 +1451,13 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
 #endif
+
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+        LDEBUG << "BowGenerator: createNEParts(...)";
+#endif
+#endif
+
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
@@ -1518,6 +1549,12 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
       const Token* token = get(vertex_token, graph, *m);
       const MorphoSyntacticData* data = get(vertex_data, graph, *m);
 
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      LDEBUG << "BowGenerator: createNEParts(...) token->form(): " << token->form();
+#endif
+#endif
+
       if (data!=0 && !data->empty())
       {
         const LinguisticElement& elem=*(data->begin());
@@ -1545,6 +1582,13 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
                         category,
                         token->position(),
                         token->length()));
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+        LDEBUG << "BowGenerator: token->stringForm(): " << token->stringForm();
+        LDEBUG << "BowGenerator: sp[/*elem.normalizedForm*/ " << elem.normalizedForm << "]: \"" << sp[elem.normalizedForm] << "\"";
+#endif
+#endif
+
       }
     }
   }

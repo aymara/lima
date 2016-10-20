@@ -71,7 +71,33 @@ void FsaRwAccessResource::init(
   {
     QString keyfile = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(), unitConfiguration.getParamsValueAtKey("keyFile").c_str());
     fsaAccess=new FsaAccess::FsaAccessBuilderRandom16();
+
+#ifdef ANTINNO_SPECIFIC
+    // FWI 31/10/2013 : ajout code de lecture de l'entête "Ant" (copie code JYS de S2)
+    //JYS 09/01/11 Saute l'identification Antinno si elle est presente, sinon ne fait rien
+	  auto* const pFileName = keyfile.toUtf8().constData();
+    ifstream fileIn(pFileName, ios::in | ios::binary);
+    if (!fileIn.good()) {
+      LERROR << "cannot open file " << pFileName;
+      throw InvalidConfiguration();
+    }
+    char magicNumber[3];
+    fileIn.read(magicNumber, 3);
+    if (string(magicNumber, 3) == "Ant") {
+      unsigned char intLe[4];	//UNSIGNED obligatoire
+      fileIn.read((char*)intLe, 4);
+      const std::size_t antLen = intLe[0] + intLe[1]*0x100 + intLe[2]*0x10000 + intLe[3]*0x1000000; 
+      std::streamoff pos = fileIn.tellg();
+      fileIn.seekg(pos+antLen, ios::beg);           //saute l'identification Antinno
+    }
+    else fileIn.seekg(0, ios::beg);         //pas un fichier repere par Antinno
+    fsaAccess->read(fileIn);
+    //JYS 09/01/11 
+#else
     fsaAccess->read(keyfile.toUtf8().constData());
+#endif
+
+
     m_fsaAccess=fsaAccess;
     m_fsaRwAccess=fsaAccess;
   }

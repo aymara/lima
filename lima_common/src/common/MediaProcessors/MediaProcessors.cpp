@@ -173,6 +173,10 @@ void MediaProcessors::initPipelines (
             {
                 std::cout << "no pipeline '" << *pipItr << "' for media " << mediaStr << std::endl;
                 //         continue;
+#ifdef ANTINNO_BUGFIX
+                // FWI 26/04/2016 : activation du "continue" sinon entryItr->second provoque une erreur détectée seulement en mode debug
+                continue;
+#endif
             }
             const MediaProcessUnit* pu=mapItr->second->getObject ( entryItr->second );
             const MediaProcessUnitPipeline* pipeline=static_cast<const MediaProcessUnitPipeline*> ( pu );

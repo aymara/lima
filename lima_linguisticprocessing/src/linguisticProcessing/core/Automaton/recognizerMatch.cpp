@@ -211,6 +211,13 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
       v != m_graph->lastVertex()) {
     if ((*i).isKept()) {
       Token* t = get(vertex_token,*(m_graph->getGraph()),v);
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      LOGINIT("LP::Automaton");
+      LDEBUG << "RecognizerMatch::getNormalizedString(...) token.form(): " << t->form();
+      LDEBUG << "RecognizerMatch::getNormalizedString(...) token.stringForm(): " << t->stringForm();
+#endif
+#endif
 
       if (t->status().isAlphaHyphen()) {
         firstHyphenPassed = true;
@@ -222,6 +229,12 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
       }
       else {
         // take first norm
+#ifdef ANTINNO_SPECIFIC
+#ifdef DEBUG_LP
+      LOGINIT("LP::Automaton");
+      LDEBUG << "RecognizerMatch::getNormalizedString(...) data->front().normalizedForm: " << data->front().normalizedForm;
+#endif
+#endif
         str += sp[data->front().normalizedForm];
       }
       currentPosition=t->position()+t->length();

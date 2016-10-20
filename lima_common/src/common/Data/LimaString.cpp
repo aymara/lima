@@ -30,11 +30,20 @@
 
 namespace Lima {
 
+#ifdef ANTINNO_SPECIFIC
+// FWI 19/05/2016 : supprimé car défini dans LimaCommon.h
+//  std::ostream& operator<<(std::ostream &os, const LimaString& s)
+//  {
+//    os << s.toUtf8().data();
+//    return os;
+//  }
+#else
   std::ostream& operator<<(std::ostream &os, const LimaString& s)
   {
     os << s.toUtf8().data();
     return os;
   }
+#endif
   
   
   

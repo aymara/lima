@@ -207,7 +207,12 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       }
       
       QString initFileName = configDir + "/log4cpp.properties";
+#ifdef ANTINNO_BUGFIX
+      // QFileInfo::exists(...) ne fonctionne pas avec qt 4.8
+      if (QFileInfo(initFileName).exists())
+#else
       if (QFileInfo::exists(initFileName))
+#endif
       {
         if (QsLogging::Categories::instance().configure(initFileName))
         {

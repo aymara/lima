@@ -53,6 +53,11 @@ class IndexElement;
 class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
 {
  public:
+// FWI 08/09/2015 : ajout de la langue en paramètre optionnel
+#ifdef ANTINNO_SPECIFIC
+   BoWXMLWriter(std::ostream& os, Lima::MediaId const& language);
+#else
+#endif
   BoWXMLWriter(std::ostream& os); 
   virtual ~BoWXMLWriter();
 

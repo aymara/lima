@@ -29,26 +29,101 @@
 #include "traceUtils.h"
 #include <QDateTime>
 
+#ifdef ANTINNO_SPECIFIC
+// FWI 28/10/2015 modifs pour utiliser une horloge plus précise (en us au lieu de ms) sous windows
+// + ajout d'un compteur
+
+#ifdef WIN32
+#include "Windows.h"
+#include <iomanip>
+
+
+LARGE_INTEGER m_f;
+static bool m_freqInit = false;
+
+namespace 
+{
+  uint64_t _winTime()
+  {
+    LARGE_INTEGER i;
+	if (m_freqInit == false)
+	{
+		QueryPerformanceFrequency(&m_f);
+		m_freqInit = true;
+	}
+    QueryPerformanceCounter(&i);
+    
+    return (i.QuadPart * 1000000) / m_f.QuadPart; // microseconds   
+  }
+}
+#else
+#error no implementation for non-win32 systems
+#endif
+#endif
+
+
 namespace Lima {
 
 //**********************************************************************
 //initialization of static members
 //**********************************************************************
 // uint64_t TimeUtils::currentTime={0,0};
+#ifdef ANTINNO_SPECIFIC
+std::map<std::string, TimeUtils::Data> TimeUtils::m_cumulatedTime = std::map<std::string, TimeUtils::Data>();
+#else
 std::map<std::string , std::pair<uint64_t,uint64_t> > TimeUtils::m_cumulatedTime =
   std::map<std::string , std::pair<uint64_t,uint64_t> >();
+#endif
 QMutex TimeUtils::m_mutex;
 
+
+#ifdef ANTINNO_SPECIFIC
+TimeUtils::TimeUtils() 
+{
+}
+#endif
 //**********************************************************************
 // member functions
 //**********************************************************************
 uint64_t TimeUtils::getCurrentTime() { 
+#ifdef ANTINNO_SPECIFIC
+#ifdef WIN32
+  return _winTime(); 
+#else
+#error no implementation for non-win32 systems
+#endif
+#else
   return QDateTime::currentMSecsSinceEpoch();
+#endif
 }
+#ifdef ANTINNO_SPECIFIC
+// FWI 03/11/24 nouvelle méthode pour remettre à zéro le cumul
+void TimeUtils::restart( const std::string& taskCategory)
+{
+  QMutexLocker locker(&m_mutex);
+#ifdef WIN32
+  m_cumulatedTime[taskCategory].first = _winTime(); 
+  //cout << "updateCurrentTime=" << m_cumulatedTime[taskCategory].first << ::std::endl;
+#else
+  m_cumulatedTime[taskCategory].first = QDateTime::currentMSecsSinceEpoch();
+#endif
+  m_cumulatedTime[taskCategory].second = 0;
+  m_cumulatedTime[taskCategory].count = 0;
+}
+#endif
 
 void TimeUtils::updateCurrentTime( const std::string& taskCategory ) {
   QMutexLocker locker(&m_mutex);
+#ifdef ANTINNO_SPECIFIC
+#ifdef WIN32
+  m_cumulatedTime[taskCategory].first = _winTime();  
+  //cout << "updateCurrentTime=" << m_cumulatedTime[taskCategory].first << ::std::endl;
+#else
+#error no implementation for non-win32 systems
+#endif
+#else
   m_cumulatedTime[taskCategory].first = QDateTime::currentMSecsSinceEpoch();
+#endif
 }
 
 // void TimeUtils::updateCurrentTime() {
@@ -67,10 +142,29 @@ uint64_t TimeUtils::diffTime(const uint64_t& begin,
 }
 
 uint64_t TimeUtils::elapsedTime(const std::string& taskCategory) {
+#ifdef ANTINNO_SPECIFIC
+#ifdef WIN32
+  uint64_t newTime = _winTime();   
+#else
+#error no implementation for non-win32 systems
+#endif
+#else
   uint64_t newTime = QDateTime::currentMSecsSinceEpoch();
+#endif
+#ifdef ANTINNO_SPECIFIC
+#ifdef WIN32
+  uint64_t delta = newTime - m_cumulatedTime[taskCategory].first;
+#else
+#error no implementation for non-win32 systems
+#endif
+#else
   uint64_t delta = diffTime(m_cumulatedTime[taskCategory].first,newTime);
+#endif
   m_cumulatedTime[taskCategory].second += delta;
   m_cumulatedTime[taskCategory].first = newTime;
+#ifdef ANTINNO_SPECIFIC
+  ++m_cumulatedTime[taskCategory].count;
+  #endif
   return delta;
 }
 
@@ -80,7 +174,11 @@ uint64_t TimeUtils::elapsedTime(const std::string& taskCategory) {
 void TimeUtils::logElapsedTime(const std::string& mess,
                                const std::string& taskCategory) {
   TIMELOGINIT;
+#ifdef ANTINNO_SPECIFIC
+  LINFO << mess << "(" << taskCategory << "): " << TimeUtils::elapsedTime(taskCategory) << " us";
+#else
   LINFO << mess << "(" << taskCategory << "): " << TimeUtils::elapsedTime(taskCategory) << " ms";
+#endif
 }
 
 /**
@@ -89,15 +187,27 @@ void TimeUtils::logElapsedTime(const std::string& mess,
 void TimeUtils::logCumulatedTime(const std::string& mess,
                                const std::string& taskCategory) {
   TIMELOGINIT;
+#ifdef ANTINNO_SPECIFIC
+  LINFO << std::setfill('0') << std::setw(9) << m_cumulatedTime[taskCategory].second << " us"
+    << " count : " << std::setfill('0') << std::setw(6) << m_cumulatedTime[taskCategory].count << ": " << mess;
+#else
   LINFO << mess << ": " << m_cumulatedTime[taskCategory].second << " ms";
+#endif
 }
 
 void TimeUtils::logAllCumulatedTime(const std::string& mess) {
   TIMELOGINIT;
   LINFO << mess << ": ";
+
+#ifdef ANTINNO_SPECIFIC
+  for( std::map<std::string, Data>::const_iterator it = m_cumulatedTime.begin() ; 
+	   it != m_cumulatedTime.end() ; it++ ) {
+	LINFO << it->first << ":" << it->second.second << " us" << " count: " << it->second.count;
+#else
   for( std::map<std::string , std::pair<uint64_t,uint64_t> >::const_iterator it = m_cumulatedTime.begin() ; 
 	   it != m_cumulatedTime.end() ; it++ ) {
 	LINFO << it->first << ":" << it->second.second << " ms" ;
+#endif
   }
 }
 

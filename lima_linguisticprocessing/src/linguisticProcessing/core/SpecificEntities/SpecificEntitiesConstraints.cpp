@@ -1435,7 +1435,11 @@ return false;
 // assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
 //match.features()=recoData->getEntityFeatures();
 auto features = recoData->getEntityFeatures();
+#ifdef ANTINNO_SPECIFIC
+Q_FOREACH (const auto& f, recoData->getEntityFeatures()) {
+#else
 for (auto it = features.begin(); it != features.end(); ++it) {
+#endif
   match.features().addFeature(it->getName(),it->getValue());
   EntityFeatures::iterator featureIt = match.features().findLast(it->getName());
   if( it->getPosition() != UNDEFPOSITION ) {

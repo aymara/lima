@@ -459,13 +459,23 @@ operator()(RecognizerMatch& m,
           // set interval
           QDate firstDayOfMonth(year,month,1);
 #ifdef DEBUG_LP
+#ifdef ANTINNO_SPECIFIC
+          // FWI 21/09/2015 modifié temporairement
+          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << "????";
+#else
           LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
+#endif
 #endif
           m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
           if (month_end==0) {
             QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
 #ifdef DEBUG_LP
+#ifdef ANTINNO_SPECIFIC
+          // FWI 21/09/2015 modifié temporairement
+          LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << "????";
+#else
           LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_end=" << date_end;
+#endif
 #endif
             m.features().setFeature(DATE_END_FEATURE_NAME,date_end);
           }

@@ -34,6 +34,13 @@
 #include <cstdlib>
 #include <stdexcept>
 
+
+#ifdef ANTINNO_SPECIFIC
+#include <log4cpp/Category.hh>
+#include <log4cpp/PropertyConfigurator.hh>
+#include <boost/smart_ptr.hpp>
+#endif
+
 LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str )
 {
   qd << str.c_str();
@@ -42,6 +49,69 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 
 namespace QsLogging
 {
+
+#ifdef ANTINNO_SPECIFIC
+
+namespace antinno {
+
+::boost::shared_ptr<ILog> log;
+
+
+
+
+Log4cpp::Log4cpp()
+{
+}
+void Log4cpp::configure(::std::string const& configFilePath)
+{
+	::log4cpp::PropertyConfigurator::configure(configFilePath);
+  // todo : récupérer le vrai msg de l'erreur
+	if (!::log4cpp::Appender::reopenAll())
+  {
+    ::std::ostringstream oss;
+    oss << "log4cpp::Appender::reopenAll() return false. Maybe a problem with file " << configFilePath;
+    throw ::std::exception(oss.str().data());
+  }
+}
+bool Log4cpp::canWrite(CategoryId const& id, Level level) const
+{
+  return ::log4cpp::Category::getInstance(id).isPriorityEnabled(level);
+}
+void Log4cpp::writeRecord(CategoryId const& id, Level level, char const* pNullTerminatedUtf8String)
+{
+  ::log4cpp::Category::getInstance(id) << level << pNullTerminatedUtf8String;
+}
+
+
+
+
+
+LogHelper::LogHelper(QsLogging::Level l, const QString& zone)
+  :_zone(zone.toStdString()), _level(l)
+{
+}
+::std::ostream& LogHelper::stream()
+{
+  return _stream;
+}
+LogHelper::~LogHelper()
+{
+  auto l = info;
+  switch(_level)
+  {
+    case QsLogging::TraceLevel: l = debug; break;
+    case QsLogging::DebugLevel: l = debug; break;
+    case QsLogging::InfoLevel: l = info; break;
+    case QsLogging::WarnLevel: l = warn; break;
+    case QsLogging::ErrorLevel: l = error; break;
+    case QsLogging::FatalLevel: l = fatal; break;
+  }
+  log->writeRecord(CategoryId(_zone.c_str()), l, _stream.str().c_str());
+}
+
+}
+#endif
+
 typedef QList<Destination*> DestinationList;
 
 static const char TraceString[] = "TRACE";

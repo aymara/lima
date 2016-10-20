@@ -49,7 +49,11 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     // Look for LIMA_CONF directory.
     configDirsList = buildConfigurationDirectoriesList(QStringList() << "lima", QStringList());
   }
+#ifdef ANTINNO_SPECIFIC
+  Q_FOREACH(const QString& configDir, configDirsList)
+#else
   for(auto it = configDirsList.begin(); it != configDirsList.end(); ++it)
+#endif
   {
     // Deduce plugins directory.
     QString stdPluginsDir(*it);

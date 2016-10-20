@@ -25,8 +25,15 @@ using namespace std;
 namespace Lima
 {
 
+#ifdef ANTINNO_SPECIFIC
+AnalysisContent::AnalysisContent(Lima::StopAnalyze const& sa) :
+#else
 AnalysisContent::AnalysisContent() :
+#endif
     m_analysisData()
+#ifdef ANTINNO_SPECIFIC
+      , _stopAnalyze(sa)
+#endif
 {}
 
 AnalysisContent::~AnalysisContent()
@@ -39,6 +46,12 @@ AnalysisContent::~AnalysisContent()
     it->second=0;
   }
 }
+#ifdef ANTINNO_SPECIFIC
+StopAnalyze const& AnalysisContent::stopAnalyze() const
+{
+  return _stopAnalyze;
+}
+#endif
 
 AnalysisData* AnalysisContent::getData(
   const std::string& id)

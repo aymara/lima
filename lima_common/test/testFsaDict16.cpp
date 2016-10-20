@@ -64,6 +64,14 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
+#ifdef ANTINNO_SPECIFIC
+// FWI 18/02/2014 : ajout 2 undef
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+#endif
+
 using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
@@ -492,7 +500,22 @@ void DictTester<dictType>::write( void ) {
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
+#ifdef ANTINNO_SPECIFIC
+  {
+    ::std::string const configDir = ::std::getenv("AMOSE_CONF");
+    if (configDir.empty())
+    {
+      std::cerr << "No environment variable \"AMOSE_CONF\" set or variable is empty" << std::endl;
+      return EXIT_FAILURE;
+    }
+    ::std::string const log4cppFilePath = configDir + "/log4cpp.properties";
+    ::boost::shared_ptr<QsLogging::antinno::ILog> pLog1(new QsLogging::antinno::Log4cpp());
+    pLog1->configure(log4cppFilePath);
+    QsLogging::antinno::log = pLog1;
+  }
+#else
   QsLogging::initQsLog();
+#endif
   
   cerr << argv[0] << " begin..." << endl << "  command line: ";
   for (int i = 0; i < argc; i++)

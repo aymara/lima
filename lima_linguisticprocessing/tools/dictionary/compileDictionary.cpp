@@ -39,6 +39,10 @@
 #include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 
+#ifdef ANTINNO_SPECIFIC
+#include "common/AbstractFactoryPattern/antinno.LibraryLoader.class.h"
+#endif
+
 using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
@@ -104,9 +108,47 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
+#ifdef ANTINNO_SPECIFIC
+  
+  
+  {
+    
+    
+    ::std::string const configDir = ::std::getenv("AMOSE_CONF");
+    if (configDir.empty())
+    {
+      std::cerr << "No environment variable \"AMOSE_CONF\" set or variable is empty" << std::endl;
+      return EXIT_FAILURE;
+    }
+    
+	try
+    {
+      ::std::string const file = configDir + "/plugins.txt";
+      Lima::antinno::LibraryLoader().loadFromFile(file);
+    }
+    catch (::std::exception const& ex)
+    {
+      std::cerr << "Exception during plugins loading. " << ex.what() << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    ::std::string const log4cppFilePath = configDir + "/log4cpp.properties";
+    ::boost::shared_ptr<QsLogging::antinno::ILog> pLog1(new QsLogging::antinno::Log4cpp());
+    pLog1->configure(log4cppFilePath);
+    QsLogging::antinno::log = pLog1;
+    if (!QsLogging::Categories::instance().configure(log4cppFilePath.data()))
+    {
+      std::cerr << "Configure Problem " << log4cppFilePath << std::endl;
+      return EXIT_FAILURE;
+    }
+    
+   ::std::cout << "Plugins initialized" << ::std::endl;
+  }
+#else
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
+#endif
   
   setlocale(LC_ALL,"fr_FR.UTF-8");
 

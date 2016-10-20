@@ -29,11 +29,20 @@
 #include "common/LimaCommon.h"
 
 #include <QFile>
+#ifdef ANTINNO_BUGFIX
+// nécessaire sinon le compilateur dit que QStringList n'a pas de constructeur...
+#include <QStringList>
+#endif
 
 #include <iostream>
 
 #ifdef WIN32
+#ifdef ANTINNO_SPECIFIC
+// nécessaire sinon on a une erreur c2664 : impossible de convertir de 'char' à 'Qstring' dans 'QString::join'
+static QChar const LIMA_PATH_SEPARATOR(';');
+#else
 #define LIMA_PATH_SEPARATOR ';'
+#endif
 #else
 #define LIMA_PATH_SEPARATOR ':'
 #endif
