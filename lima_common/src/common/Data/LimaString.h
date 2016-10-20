@@ -36,12 +36,6 @@ namespace Lima
 {
   typedef QChar LimaChar;
   typedef QString LimaString;
-#ifdef ANTINNO_SPECIFIC
-  // FWI 19/05/2016 : supprimé car défini dans LimaCommon.h
-  //LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const LimaString& s);
-#else
-LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const LimaString& s);
-#endif
 
 } // closing namespace Lima
 
