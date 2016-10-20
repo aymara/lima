@@ -207,7 +207,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       }
       
       QString initFileName = configDir + "/log4cpp.properties";
-      if (QFileInfo::exists(initFileName))
+      if (QFileInfo(initFileName).exists())
       {
         if (QsLogging::Categories::instance().configure(initFileName))
         {
