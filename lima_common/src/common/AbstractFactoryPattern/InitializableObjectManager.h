@@ -163,7 +163,7 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
     }
     catch (Common::XMLConfigurationFiles::NoSuchAttribute& )
     {
-      std::cerr << "no class attribute in unitConfiguration !" << std::endl;
+      std::cerr << "no class attribute in unitConfiguration "<< id << std::endl;
       throw InvalidConfiguration("no class attribute in unitConfiguration !");
     }
     if (classId.empty())
