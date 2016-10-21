@@ -37,9 +37,7 @@
 #include "transitionUnit.h"
 #include "automatonCommon.h"
 #include <queue>
-#ifdef ANTINNO_SPECIFIC
 #include "searchGraph.h"
-#endif
 
 namespace Lima {
 namespace LinguisticProcessing {

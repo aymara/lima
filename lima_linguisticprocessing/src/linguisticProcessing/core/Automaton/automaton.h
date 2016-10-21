@@ -35,9 +35,7 @@
 #include "AutomatonExport.h"
 #include "transitionUnit.h"
 #include "searchGraph.h"
-#ifdef ANTINNO_SPECIFIC
 #include "gazeteerTransition.h"
-#endif
 #include "transition.h"
 #include "transitionSearchStructure.h"
 #include "recognizerMatch.h"
