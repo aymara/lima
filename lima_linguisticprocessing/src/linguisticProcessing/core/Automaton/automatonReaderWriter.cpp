@@ -72,11 +72,7 @@ void writeTypeTransition(std::ofstream& file, const TypeTransition t) {
 }
 
 
-#ifdef ANTINNO_SPECIFIC
 #define RECOGNIZER_VERSION "1.20"
-#else
-#define RECOGNIZER_VERSION "1.30"
-#endif
 
 #define RECOGNIZER_DEBUG_VERSION ".debug"
 
