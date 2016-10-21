@@ -88,7 +88,6 @@ void FsaAccessResource::init(
         resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
         QWriteLocker locker(&m_lock);
         LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-        fsaAccess->read(keyfile);
         m_fsaAccess=fsaAccess;
         break;
       }
@@ -102,18 +101,20 @@ void FsaAccessResource::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
-    throw InvalidConfiguration();
+    ::std::ostringstream oss;
+    oss << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
+    throw InvalidConfiguration(oss.str());
   }
   catch (AccessByStringNotInitialized& )
   {
-    LERROR << "keyfile "
+    ::std::ostringstream oss;
+    oss << "keyfile "
            << Common::MediaticData::MediaticData::single().getResourcesPath()
            << "/"
            << unitConfiguration.getParamsValueAtKey("keyFile")
            << " no found for language " 
            << (int)  manager->getInitializationParameters().language;
-    throw InvalidConfiguration();
+    throw InvalidConfiguration(oss.str());
   }
 }
 
