@@ -120,18 +120,12 @@ void FsaAccessResource::init(
   }
   catch (NoSuchParam& )
   {
-#ifdef ANTINNO_SPECIFIC
     ::std::ostringstream oss;
     oss << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration(oss.str());
-#else
-    LERROR << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
-    throw InvalidConfiguration();
-#endif
   }
   catch (AccessByStringNotInitialized& )
   {
-#ifdef ANTINNO_SPECIFIC
     ::std::ostringstream oss;
     oss << "keyfile "
            << Common::MediaticData::MediaticData::single().getResourcesPath()
@@ -140,15 +134,6 @@ void FsaAccessResource::init(
            << " no found for language " 
            << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration(oss.str());
-#else
-    LERROR << "keyfile "
-           << Common::MediaticData::MediaticData::single().getResourcesPath()
-           << "/"
-           << unitConfiguration.getParamsValueAtKey("keyFile")
-           << " no found for language " 
-           << (int)  manager->getInitializationParameters().language;
-    throw InvalidConfiguration();
-#endif
   }
 }
 
