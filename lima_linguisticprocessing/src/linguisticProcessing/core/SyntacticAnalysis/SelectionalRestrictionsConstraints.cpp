@@ -169,12 +169,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   {
     SAPLOGINIT;
     LERROR << "no graph 'PosGraph' available !";
-#ifdef ANTINNO_SPECIFIC
-    // FWI 26/06/2016 doit retourner un booléen
     return false;
-  #else
-    return MISSING_DATA;
-#endif
   }
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(posgraph->getGraph());
   //   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
