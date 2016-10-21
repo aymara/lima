@@ -87,10 +87,6 @@ void FsaAccessResource::init(
         FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
         resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
         QWriteLocker locker(&m_lock);
-#ifdef ANTINNO_SPECIFIC
-	      // FWI 31/10/2013 : ajout code de lecture de l'entête "Ant" (copie code JYS de S2)
-	      //JYS 09/01/11 Saute l'identification Antinno si elle est presente, sinon ne fait rien
-	      //fsaAccess->read(keyfile);
 	      ifstream fileIn(keyfile.c_str(), ios::in | ios::binary);
 	      if (!fileIn.good()) {
 	        LERROR << "cannot open file " << keyfile;
@@ -111,10 +107,6 @@ void FsaAccessResource::init(
 	      fsaAccess->read(fileIn);
 	      //JYS 09/01/11
         LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-#else
-        LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-        fsaAccess->read(keyfile);
-#endif
         m_fsaAccess=fsaAccess;
         break;
       }
