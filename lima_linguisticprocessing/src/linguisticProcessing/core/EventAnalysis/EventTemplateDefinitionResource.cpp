@@ -37,12 +37,7 @@ EventTemplateDefinitionResource::~EventTemplateDefinitionResource() {
 
 const std::string& EventTemplateDefinitionResource::getMention (const std::string name) const
 {
-#ifdef ANTINNO_SPECIFIC
-  // pour éviter erreur c4172
   static std::string const mention="";
-#else
-  std::string mention="";
-#endif
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
@@ -55,12 +50,7 @@ const std::string& EventTemplateDefinitionResource::getMention (const std::strin
 
 const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefinitionResource::getStructure (const std::string name) const
 {
-#ifdef ANTINNO_SPECIFIC
-  // pour éviter erreur c4172
   static std::map<std::string,Common::MediaticData::EntityType> const structure;
-#else
-  std::map<std::string,Common::MediaticData::EntityType> structure;
-#endif
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
