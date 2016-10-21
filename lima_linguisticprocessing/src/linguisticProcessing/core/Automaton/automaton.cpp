@@ -269,11 +269,7 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     for (; trans!=trans_end; trans++) {
 //       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex;
       deque<LinguisticGraphVertex> noVertices;
-#ifdef ANTINNO_SPECIFIC
       DFFSPos  newPair(noVertices,nullptr);
-#else
-      DFFSPos  newPair(noVertices,nullptr);
-#endif
 
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
       const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*trans).transitionUnit());
