@@ -35,19 +35,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
 
-#ifdef ANTINNO_SPECIFIC
-#else
-std::ostream& operator<<(std::ostream& oss, const QStringList& qsl)
-{
-  oss << "{";
-  Q_FOREACH(QString s, qsl)
-  {
-    oss << s.toUtf8().data() << ",";
-  }
-  oss << "}";
-  return oss;
-}
-#endif
 
 namespace Lima
 {
