@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "antinno.ResourcesIdent.h"
 
 using namespace std;
 
@@ -96,6 +97,15 @@ void DictionaryData::loadBinaryFile(const std::string& file)
 
   // parseEntries
   unsigned char* p=m_data;
+
+  if (string((char*)p, 3) == "Ant") {
+    p +=3;
+    const std::size_t antLen = p[0] + p[1]*0x100 + p[2]*0x10000 + p[3]*0x1000000;
+    p +=4;
+    LINFO << "\n" + file + "\n" + ::antinno::ResourcesIdent((char*)p, antLen).toHumanReadableString();
+    p += antLen;
+  } //JYS 01/03/11
+
   uint64_t nbEntries=readCodedInt(p);
   m_entriesAddr.resize(nbEntries);
   uint64_t read;
