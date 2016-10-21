@@ -595,11 +595,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   for (auto anaVertex = anaVertices.begin(); anaVertex != anaVertices.end(); ++anaVertex)
   {
 #ifdef DEBUG_LP
-#ifdef ANTINNO_SPECIFIC
     LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << anaVertex << " ----------------------------"; 
-#else
-   LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << *anaVertex;
-#endif
 #endif
     std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVertex,"annot");
     for (auto matchVertex = matches.begin(); matchVertex != matches.end(); ++matchVertex)
