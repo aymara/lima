@@ -131,6 +131,7 @@ void LTRTextBuilder::addTokensToLTRTextFrom(
     uint64_t* tokenCounter) {
 
     DUMPERLOGINIT;
+    LDEBUG << "LTRTextBuilder::addTokensToLTRTextFrom" << firstVertex << "-" << lastVertex << "/" << graphLastVertex;
     m_verticesToExplore.clear();
     m_exploredVertices.clear();
     this->exploreVerticesFrom(firstVertex, graphLastVertex, graph);
