@@ -624,9 +624,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   Misc::writeUTF8StringField(file,token->getInflectedForm());
   Misc::writeCodedInt(file,token->getCategory());
 
-#ifdef ANTINNO_SPECIFIC
 
-  // FWI 04/08/2016 : correction de length qui ne tient pas compte des entitées xml dans le lemme
   auto beg = token->getPosition();
   auto end = token->getLength() + beg;
   //::std::cout << "beg: " << beg << "   end: " << end << ::std::endl;
@@ -676,55 +674,6 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   Misc::writeCodedInt(file, beg-1);
   Misc::writeCodedInt(file, end-beg);
 
-#else
-  auto beg = token->getPosition();
-  auto end = token->getLength() + beg;
-
-  if (m_shiftFrom.empty())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is empty";
-#endif
-  }
-  else
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin" << beg;
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end" << end;
-#endif
-    auto const shiftForBeginIt = m_shiftFrom.lowerBound(beg-1);
-    if (shiftForBeginIt == m_shiftFrom.constBegin())
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: NO shift";
-#endif
-    }
-    else
-    { 
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: shift by" << (shiftForBeginIt-1).value();
-#endif
-      beg += (shiftForBeginIt-1).value();
-    }
-    auto const shiftForEndIt = m_shiftFrom.lowerBound(end-1);
-    if (shiftForEndIt == m_shiftFrom.constBegin())
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: NO shift";
-#endif
-    }
-    else
-    { 
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: shift by" << (shiftForEndIt-1).value();
-#endif
-      end += (shiftForEndIt-1).value();
-    }
-  }
-
-  Misc::writeCodedInt(file, beg-1);
-  Misc::writeCodedInt(file, end-beg);
-#endif
 }
 
 void BoWBinaryWriter::writePredicate(std::ostream& file,
