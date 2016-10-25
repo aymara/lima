@@ -34,9 +34,9 @@
 #include <iostream>
 
 #ifdef WIN32
-static QChar const LIMA_PATH_SEPARATOR(';');
+#define LIMA_PATH_SEPARATOR QChar(';')
 #else
-#define LIMA_PATH_SEPARATOR ':'
+#define LIMA_PATH_SEPARATOR QChar(':')
 #endif
 
 namespace Lima {
