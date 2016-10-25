@@ -1429,7 +1429,7 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
 #endif
 
 #ifdef DEBUG_LP
-        LDEBUG << "BowGenerator: createNEParts(...)";
+  LDEBUG << "BowGenerator: createNEParts(...)";
 #endif
 
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);

@@ -212,7 +212,7 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
     if ((*i).isKept()) {
       Token* t = get(vertex_token,*(m_graph->getGraph()),v);
 #ifdef DEBUG_LP
-      LOGINIT("LP::Automaton");
+      AULOGINIT;
       LDEBUG << "RecognizerMatch::getNormalizedString(...) token.form(): " << t->form();
       LDEBUG << "RecognizerMatch::getNormalizedString(...) token.stringForm(): " << t->stringForm();
 #endif
@@ -228,8 +228,8 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
       else {
         // take first norm
 #ifdef DEBUG_LP
-      LOGINIT("LP::Automaton");
-      LDEBUG << "RecognizerMatch::getNormalizedString(...) data->front().normalizedForm: " << data->front().normalizedForm;
+        AULOGINIT;
+        LDEBUG << "RecognizerMatch::getNormalizedString(...) data->front().normalizedForm: " << data->front().normalizedForm;
 #endif
         str += sp[data->front().normalizedForm];
       }

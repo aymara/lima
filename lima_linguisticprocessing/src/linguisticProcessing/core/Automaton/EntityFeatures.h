@@ -145,8 +145,8 @@ template<typename ValueType>
 //      if( (it!=end()) && (name==DEFAULT_ATTRIBUTE) ){
         (*it).setValue(boost::any(value));
 #ifdef DEBUG_LP
-      SELOGINIT;
-      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << (*it).getValueString() << ")";
+        SELOGINIT;
+        LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << (*it).getValueString() << ")";
 #endif
       }
       else {
@@ -156,8 +156,8 @@ template<typename ValueType>
         back().setName(name);
         back().setValue(boost::any(value));
 #ifdef DEBUG_LP
-      SELOGINIT;
-      LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << back().getValueString() << ")";
+        SELOGINIT;
+        LDEBUG << "EntityFeatures::<ValueType>setFeature(" << name << "," << back().getValueString() << ")";
 #endif
       }
     }
