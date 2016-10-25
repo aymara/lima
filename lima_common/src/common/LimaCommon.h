@@ -227,6 +227,8 @@ QDebug&  operator<< (QDebug&  qd, const std::string& str );
 namespace Lima
 {
 
+#define UNDEFLANG std::numeric_limits<uint8_t>::max()
+
 enum LimaStatusCode {
     SUCCESS_ID,
     CANNOT_OPEN_FILE_ERROR,
@@ -238,30 +240,9 @@ enum LimaStatusCode {
 };
 
 BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)
-
-
 BOOST_STRONG_TYPEDEF(uint32_t, LinguisticCode);
-}
-namespace std {
-  template <> Lima::LinguisticCode numeric_limits<Lima::LinguisticCode>::max() { return Lima::LinguisticCode(::std::numeric_limits<uint32_t>::max()); }
-}
-namespace Lima {
-
 BOOST_STRONG_TYPEDEF(char, NoParameters);
-}
-namespace std {
-  template <> Lima::NoParameters numeric_limits<Lima::NoParameters>::max() { return Lima::NoParameters(::std::numeric_limits<char>::max()); }
-}
-namespace Lima {
-
-#define UNDEFLANG std::numeric_limits<uint8_t>::max()
-
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
-}
-namespace std {
-  template <> Lima::MediaId numeric_limits<Lima::MediaId>::max() { return Lima::MediaId(::std::numeric_limits<uint8_t>::max()); }
-}
-namespace Lima {
 
 class LimaException : public std::exception
 {
@@ -383,5 +364,12 @@ private:
 
 
 } // closing namespace Lima
+
+// Specialize BOOST_STRONG_TYPE limits
+namespace std {
+  template <> inline Lima::LinguisticCode numeric_limits<Lima::LinguisticCode>::max() { return Lima::LinguisticCode(::std::numeric_limits<uint32_t>::max()); }
+  template <> inline Lima::NoParameters numeric_limits<Lima::NoParameters>::max() { return Lima::NoParameters(::std::numeric_limits<char>::max()); }
+  template <> inline Lima::MediaId numeric_limits<Lima::MediaId>::max() { return Lima::MediaId(::std::numeric_limits<uint8_t>::max()); }
+}
 
 #endif // LIMA_MMCOMMONS_H

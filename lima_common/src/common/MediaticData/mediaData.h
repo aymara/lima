@@ -47,12 +47,6 @@ namespace MediaticData
 #define MEDIADATA_CLASSID "MediaData"
 
 BOOST_STRONG_TYPEDEF(boost::uint32_t, ConceptType);
-}}}
-namespace std {
-  template <> Lima::Common::MediaticData::ConceptType numeric_limits<Lima::Common::MediaticData::ConceptType>::max()
-  { return Lima::Common::MediaticData::ConceptType(::std::numeric_limits<boost::uint32_t>::max()); }
-}
-namespace Lima { namespace Common { namespace MediaticData{
 
 class MediaDataPrivate;
 /**
@@ -108,5 +102,12 @@ private:
 } // MediaticData
 } // Common
 } // Lima
+
+// Specialize BOOST_STRONG_TYPE limits
+namespace std {
+  template <> inline Lima::Common::MediaticData::ConceptType numeric_limits<Lima::Common::MediaticData::ConceptType>::max() {
+    return Lima::Common::MediaticData::ConceptType(::std::numeric_limits<boost::uint32_t>::max());
+  }
+}
 
 #endif
