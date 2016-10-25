@@ -43,12 +43,6 @@ namespace Misc {
   BOOST_STRONG_TYPEDEF(uint64_t, Length)
   typedef std::vector<std::pair<Position, Length> > PositionLengthList;
 
-} // namespace Misc
-} // namespace Common
-} // namespace Lima
-namespace Lima {
-namespace Common {
-namespace Misc {
 LIMA_LPMISC_EXPORT QTextStream& operator << (QTextStream& os, const PositionLengthList& p);
 LIMA_LPMISC_EXPORT std::ostream& operator << (std::ostream& os, const PositionLengthList& p);
 LIMA_LPMISC_EXPORT QDebug& operator << (QDebug& os, const PositionLengthList& p);

@@ -368,7 +368,7 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
       }
     }
     os << "/";
-    ::operator<<(os,elt.m_d->m_poslenlist);
+    os << elt.m_d->m_poslenlist;
   }
   if (! elt.m_d->m_neType.isNull()) {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType).toUtf8().constData() << ")";
@@ -435,7 +435,7 @@ QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
       }
     }
     os << "/";
-    ::operator<<(os,elt.m_d->m_poslenlist);
+    os << elt.m_d->m_poslenlist;
   }
   if (! elt.m_d->m_neType.isNull()) {
     os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";

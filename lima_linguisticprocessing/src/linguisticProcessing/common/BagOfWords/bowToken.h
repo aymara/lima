@@ -158,9 +158,9 @@ public:
    */
   virtual void addToPosition(const uint64_t offset);
 
-  friend LIMA_BOW_EXPORT ::std::ostream& ::Lima::Common::Misc::operator << (::std::ostream& os,
+  friend LIMA_BOW_EXPORT std::ostream& Lima::Common::Misc::operator << (std::ostream& os,
                                                     const Common::Misc::PositionLengthList& p);
-  friend LIMA_BOW_EXPORT QDebug& ::Lima::Common::Misc::operator << (QDebug& os,
+  friend LIMA_BOW_EXPORT QDebug& Lima::Common::Misc::operator << (QDebug& os,
                                                     const Common::Misc::PositionLengthList& p);
   
   static void setUseOnlyLemma(const bool b);
