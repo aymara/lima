@@ -88,6 +88,7 @@ void FsaAccessResource::init(
         resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
         QWriteLocker locker(&m_lock);
         LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
+        fsaAccess->read(keyfile);
         m_fsaAccess=fsaAccess;
         break;
       }
