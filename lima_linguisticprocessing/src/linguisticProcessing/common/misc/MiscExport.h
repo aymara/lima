@@ -20,53 +20,25 @@
  *   Copyright (C) 2004-2012 by CEA LIST                               *
  *                                                                         *
  ***************************************************************************/
-#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICTFSAACCESSRESOURCE_H
-#define LIMA_LINGUISTICPROCESSING_ANALYSISDICTFSAACCESSRESOURCE_H
 
-#include "AnalysisDictExport.h"
-#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
+#include <common/LimaCommon.h>
 
-#include <QReadWriteLock>
+#ifndef LIMA_MISCEXPORT_H
+#define LIMA_MISCEXPORT_H
 
-namespace Lima {
+#ifdef WIN32
 
-namespace LinguisticProcessing {
-
-namespace AnalysisDict {
-
-/**
-@author Benoit Mathieu
-*/
-class LIMA_ANALYSISDICT_EXPORT FsaAccessResource : public AbstractAccessResource
-{
-  Q_OBJECT
-public:
-    FsaAccessResource(QObject* parent = 0);
-
-    virtual ~FsaAccessResource();
-
-    virtual void init(
-      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager);
-    
-    virtual Common::AbstractAccessByString* getAccessByString() const;
-    
-private Q_SLOTS:
-  void accessFileChanged ( const QString & path );
+#ifdef LIMA_MISC_EXPORTING
+   #define LIMA_MISC_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_MISC_EXPORT    __declspec(dllimport)
+#endif
 
 
-protected:
-  Common::AbstractAccessByString* m_fsaAccess;
+#else // Not WIN32
 
-private:
-  // A read/write locker to prevent accessing m_dicoData during its loading
-  QReadWriteLock m_lock;
-};
+#define LIMA_MISC_EXPORT
 
-}
-
-}
-
-}
+#endif
 
 #endif

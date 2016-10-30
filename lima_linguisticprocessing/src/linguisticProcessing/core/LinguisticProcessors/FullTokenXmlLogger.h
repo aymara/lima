@@ -28,7 +28,7 @@
 #ifndef LIMA_LINGUISTICPROCESSING_FTXMLLOGGER_H
 #define LIMA_LINGUISTICPROCESSING_FTXMLLOGGER_H
 
-#include "LinguisticAnalysisStructureExport.h"
+#include "LinguisticProcessorsExport.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
@@ -42,7 +42,7 @@ namespace LinguisticAnalysisStructure
 
 #define FULLTOKENXMLLOGGER_CLASSID "FullTokenXmlLogger"
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT FullTokenXmlLogger : public AbstractLinguisticLogger
+class LIMA_LINGUISTICPROCESSORS_EXPORT FullTokenXmlLogger : public AbstractLinguisticLogger
 {
 
 public:

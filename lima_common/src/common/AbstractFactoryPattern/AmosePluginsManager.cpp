@@ -31,14 +31,14 @@ using namespace Lima::Common::Misc;
 
 AmosePluginsManager::AmosePluginsManager()
 {
-  loadPlugins();
+//   loadPlugins();
 }
 
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "AmosePluginsManager::loadPlugins";
+  LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
 #endif
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
@@ -65,13 +65,15 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
 #ifdef DEBUG_CD
-     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
+     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " 
+            << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
 #endif
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly)) {
         ABSTRACTFACTORYPATTERNLOGINIT;
-        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " << pluginsFile.toUtf8().data();
+        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " 
+                << pluginsFile.toUtf8().data();
         return false;
       }
       

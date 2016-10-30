@@ -25,7 +25,7 @@ add_executable(easyprocessor ${easyprocessor_SRCS})
 target_link_libraries(easyprocessor
     lima-common-processunitframework 
     lima-common-fsaaccess 
-    lima-common-qslog 
+    lima-common-tools 
     lima-common-xmlconfigurationfiles 
     lima-common-factory 
     lima-common-data 

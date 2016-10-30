@@ -24,7 +24,7 @@ SET(normalizeTerm_SRCS
 
 add_executable(normalizeTerm ${normalizeTerm_SRCS})
 
-target_link_libraries(normalizeTerm lima-lp-client lima-lp-linguisticprocessing-core lima-common-datahandler lima-lp-analysisdict lima-lp-linguisticanalysisstructure lima-lp-annotationgraph lima-lp-analysishandlers lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-flattokenizer lima-common-fsaaccess lima-common-factory lima-common-misc lima-common-tools ${Boost_LIBRARIES} lima-common-data  ${QT_LIBRARIES} lima-common-qslog lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework lima-lp-textsegmentation lima-common-factory lima-common-xmlconfigurationfiles ${optionalLibs})
+target_link_libraries(normalizeTerm lima-linguisticprocessing)
 
 install(TARGETS normalizeTerm DESTINATION bin)
 
@@ -37,7 +37,7 @@ SET(desaccent_SRCS
 
 add_executable(desaccent ${desaccent_SRCS})
 
-target_link_libraries(desaccent lima-lp-client lima-lp-linguisticprocessing-core lima-common-datahandler  lima-lp-analysisdict lima-lp-linguisticanalysisstructure lima-lp-annotationgraph lima-lp-analysishandlers lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-flattokenizer lima-common-fsaaccess lima-common-factory lima-common-misc lima-common-tools ${Boost_LIBRARIES} lima-common-data  ${QT_LIBRARIES} lima-common-qslog lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework lima-lp-textsegmentation lima-common-factory lima-common-xmlconfigurationfiles ${optionalLibs})
+target_link_libraries(desaccent lima-linguisticprocessing)
 
 install(TARGETS desaccent DESTINATION bin)
 

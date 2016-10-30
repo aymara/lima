@@ -21,10 +21,12 @@
  *                                                                         *
  ***************************************************************************/
 #include "MultiLevelAnalysisDictionaryEntry.h"
-#include <linguisticProcessing/core/FlatTokenizer/SpiritCharChartParser.hpp>
 
+#include "linguisticProcessing/core/FlatTokenizer/SpiritCharChartParser.hpp"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
+
 #include "common/Data/strwstrtools.h"
+
 #include <vector>
 #include <limits>
 #include <iostream>

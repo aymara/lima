@@ -152,7 +152,11 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
       std::cerr << "no class attribute in unitConfiguration !" << std::endl;
       throw InvalidConfiguration("no class attribute in unitConfiguration !");
     }
-
+    if (classId.empty())
+    {
+      std::cerr << "Empty class attribute in unitConfiguration " << id << "/class"  << std::endl;
+      throw InvalidConfiguration("Empty class attribute in unitConfiguration!");
+    }
     try
     {
       std::string libs=gconf.getAttribute("lib");

@@ -21,9 +21,9 @@ add_definitions(-DLIMA_LINGUISTICPROCESSORS_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-linguisticprocessors_LIB_SRCS
+   FullTokenXmlLogger.cpp 
    StatusLogger.cpp
    LinguisticMetaData.cpp
-   AbstractLinguisticLogger.cpp
 #    HandlerStreamBuf.cpp
 #    DumperStream.cpp
 #    AbstractAnalysisDumper.cpp
@@ -35,33 +35,30 @@ SET(lima-lp-linguisticprocessors_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticprocessors)
 
 target_link_libraries(lima-lp-linguisticprocessors
-  lima-common-data
-  lima-common-factory
-  lima-common-mediaprocessors
-  lima-common-processunitframework
-  lima-common-qslog
-  lima-common-time
-  lima-common-xmlconfigurationfiles
+  lima-lp-misc
+  lima-lp-analysishandlers
+  lima-lp-annotationgraph
+  lima-lp-linguisticresources
+  lima-lp-linguisticanalysisstructure
+  lima-common
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES})
 
-set_target_properties(lima-lp-linguisticprocessors PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
+set_target_properties(lima-lp-linguisticprocessors PROPERTIES 
+  VERSION ${LIMA_LP_LIB_VERSION} 
+  SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-lp-linguisticprocessors DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
 install(FILES 
+  AbstractTextualAnalysisDumper.h
+  AnalysisLoader.h
+  ExternalProcessUnit.h 
+  FullTokenXmlLogger.h 
   LinguisticAnalysisDumper.h 
   LinguisticMetaData.h 
-  AbstractLinguisticLogger.h 
-  LimaStringText.h 
-  StatusLogger.h 
-  ExternalProcessUnit.h 
-  AnalysisLoader.h
-#   HandlerStreamBuf.h
-#   DumperStream.h
-#   AbstractAnalysisDumper.h
-  AbstractTextualAnalysisDumper.h
   LinguisticProcessorsExport.h
+  StatusLogger.h 
   DESTINATION include/linguisticProcessing/core/LinguisticProcessors)

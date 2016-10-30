@@ -38,11 +38,8 @@ add_library(lima-lp-analysishandlers SHARED ${lima-lp-analysishandlers_LIB_SRCS}
 target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources
   lima-lp-lineartextrepresentation
-  lima-common-xmlconfigurationfiles
-  lima-common-processunitframework
-  lima-common-datahandler
   lima-lp-bagofwords
-  lima-common-factory
+  lima-common
 )
 
 set_target_properties(lima-lp-analysishandlers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

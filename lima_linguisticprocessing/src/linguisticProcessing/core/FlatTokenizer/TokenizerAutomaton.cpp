@@ -23,13 +23,13 @@
 //
 // TokenizerAutomaton is the main program of TokenizerAutomaton stuff.
 
-#include "linguisticProcessing/core/FlatTokenizer/TokenizerAutomaton.h"
+#include "TokenizerAutomaton.h"
 
-#include "linguisticProcessing/core/FlatTokenizer/Automaton.h"
-#include "linguisticProcessing/core/FlatTokenizer/State.h"
-#include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
+#include "Automaton.h"
+#include "State.h"
+#include "CharChart.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"

@@ -21,7 +21,6 @@ add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 ########### next target ###############
 set (lima-lp-analysisdict_MOC_HEADERS
   EnhancedAnalysisDictionary.h
-  AbstractAccessResource.h
   FsaAccessResource.h
 )
 
@@ -38,17 +37,9 @@ SET(lima-lp-analysisdict_LIB_SRCS
 add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS} ${lima-lp-analysisdict_MOC_OUTFILES})
 
 target_link_libraries(lima-lp-analysisdict
-  lima-common-factory
-  lima-common-misc
-  lima-common-data
-  lima-common-fsaaccess
-  lima-common-mediaticdata
-  lima-common-time
-  lima-common-xmlconfigurationfiles
-  lima-common-processunitframework
-  lima-common-mediaprocessors
-  lima-lp-linguisticprocessors
+  lima-lp-flattokenizer
   lima-lp-linguisticresources
+  lima-common
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
@@ -59,12 +50,20 @@ install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
-install(FILES  AbstractAccessResource.h FsaAccessResource.h
-  AbstractDictionaryEntry.h AbstractDictionaryEntryHandler.h AbstractDictionaryEntry.tcc
-  DictionaryData.h EnhancedAnalysisDictionary.h EnhancedAnalysisDictionaryEntry.h
-  EnhancedAnalysisDictionaryIterator.h MultiLevelAnalysisDictionary.h MultiLevelAnalysisDictionaryEntry.h
+install(FILES
+  FsaAccessResource.h
+  AbstractDictionaryEntry.h 
+  AbstractDictionaryEntryHandler.h 
+  AbstractDictionaryEntry.tcc
+  DictionaryData.h 
+  EnhancedAnalysisDictionary.h 
+  EnhancedAnalysisDictionaryEntry.h
+  EnhancedAnalysisDictionaryIterator.h 
+  MultiLevelAnalysisDictionary.h 
+  MultiLevelAnalysisDictionaryEntry.h
   MultiLevelAnalysisDictionaryIterators.h
-  AbstractAnalysisDictionary.h AnalysisDictionaryIterators.h
+  AbstractAnalysisDictionary.h 
+  AnalysisDictionaryIterators.h
   AnalysisDictExport.h
 DESTINATION include/linguisticProcessing/core/AnalysisDict)
 

@@ -27,16 +27,15 @@
 
 #include "ExternalProcessUnit.h"
 
-#include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "LinguisticMetaData.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
-#include "common/time/traceUtils.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "common/time/traceUtils.h"
 
 //#include "boost/process.hpp"
 #include <QtCore/QProcess>

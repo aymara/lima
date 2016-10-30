@@ -85,7 +85,6 @@ void FullTokenXmlLogger::init(
 LimaStatusCode FullTokenXmlLogger::process(
   AnalysisContent& analysis) const
 {
-  TimeUtils::updateCurrentTime();
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
@@ -104,7 +103,6 @@ LimaStatusCode FullTokenXmlLogger::process(
 
   dump(fout, *tokenList);
   fout.close();
-  TimeUtils::logElapsedTime("FullTokenXmlLogger");
   return SUCCESS_ID;
 }
 

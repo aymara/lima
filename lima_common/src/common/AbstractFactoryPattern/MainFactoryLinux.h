@@ -155,13 +155,18 @@ namespace Lima
   template<typename Factory>
   const std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId) const
   {
+    if (classId.empty())
+    {
+      std::cerr << "Trying to access to factory with empty name!" << std::endl;
+      throw InvalidConfiguration();
+    }
     FactoryMapCItr factItr=m_factories.find(classId);
     if (factItr==m_factories.end())
     {
       std::cerr << "1: No AbstractFactory for classId '" << classId << "' ! " << std::endl;
       std::cerr << "   Should be initialized at library loading time." << std::endl;
       std::cerr << "   Maybe you forgot to link with the library defining this classId ?" << std::endl;
-      std::cerr << "   Or, under MS Windows, you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
+      std::cerr << "   Or you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
       std::cerr << "   DECLARE_LIMA_PLUGIN, instead of add_library ?" << std::endl;
       throw InvalidConfiguration();
     }
@@ -171,13 +176,18 @@ namespace Lima
   template<typename Factory>
   std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId)
   {
+    if (classId.empty())
+    {
+      std::cerr << "Trying to access to factory with empty name!" << std::endl;
+      throw InvalidConfiguration();
+    }
     FactoryMapCItr factItr=m_factories.find(classId);
     if (factItr==m_factories.end())
     {
       std::cerr << "2: No AbstractFactory for classId '" << classId << "' ! " << std::endl;
       std::cerr << "   Should be initialized at library loading time." << std::endl;
       std::cerr << "   Maybe you forgot to link with the library defining this classId ?" << std::endl;
-      std::cerr << "   Or, under MS Windows, you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
+      std::cerr << "   Or you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
       std::cerr << "   DECLARE_LIMA_PLUGIN, instead of add_library ?" << std::endl;
       throw InvalidConfiguration();
     }

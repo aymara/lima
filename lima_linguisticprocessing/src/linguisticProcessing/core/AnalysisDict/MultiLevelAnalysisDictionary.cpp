@@ -24,12 +24,12 @@
 #include "MultiLevelAnalysisDictionaryEntry.h"
 #include "MultiLevelAnalysisDictionaryIterators.h"
 
-#include "AbstractAccessResource.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
+#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
-#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <iostream>
 

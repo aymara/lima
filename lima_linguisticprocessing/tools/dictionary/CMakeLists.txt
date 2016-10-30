@@ -21,21 +21,11 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 SET(sortutf16_SRCS
   sortutf16.cpp
-  )
+)
 
 add_executable(sortutf16 ${sortutf16_SRCS})
 
-target_link_libraries(
-  sortutf16
-  lima-common-factory
-  lima-common-misc lima-common-tools
-  lima-common-qslog
-  lima-common-data
-  lima-lp-misc
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-  ${optionalLibs}
-  )
+target_link_libraries(sortutf16 lima-linguisticprocessing)
 
 install(TARGETS sortutf16 DESTINATION bin)
 
@@ -45,35 +35,11 @@ install(TARGETS sortutf16 DESTINATION bin)
 SET(composedDict_SRCS
   testComposedDict.cpp
   DictionaryEntryLogger.cpp
-  )
+)
 
 add_executable(composedDict ${composedDict_SRCS})
 
-target_link_libraries(
-  composedDict
-  lima-common-qslog
-  lima-lp-analysisdict
-  lima-lp-propertycode
-  lima-lp-linguisticdata
-  lima-lp-misc
-  lima-lp-linguisticresources
-  lima-common-fsaaccess
-  lima-common-factory
-  lima-common-misc lima-common-tools
-  lima-common-data
-  lima-common-mediaticdata
-  lima-common-xmlconfigurationfiles
-  lima-lp-client
-  lima-lp-linguisticprocessing-core
-  lima-common-mediaprocessors
-  lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
-  lima-common-processunitframework
-  lima-common-qslog
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-  ${optionalLibs}
-)
+target_link_libraries(composedDict lima-linguisticprocessing)
 
 install(TARGETS composedDict DESTINATION bin)
 
@@ -84,29 +50,11 @@ SET(compile-dictionary_SRCS
   compileDictionary.cpp
   KeysLogger.cpp
   DictionaryHandler.cpp
-  )
+)
 
 add_executable(compile-dictionary ${compile-dictionary_SRCS})
 
-target_link_libraries(
- compile-dictionary
-  lima-lp-linguisticanalysisstructure
-  lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
-  lima-lp-flattokenizer
-  lima-common-fsaaccess
- ${Boost_LIBRARIES}
-  lima-lp-annotationgraph
-   ${QT_LIBRARIES} lima-common-qslog lima-lp-linguisticdata
-   ${optionalLibs} lima-common-factory lima-common-misc lima-common-tools
-  lima-common-processunitframework
-  lima-lp-propertycode
-  lima-common-xmlconfigurationfiles
-  lima-common-data
-  lima-common-mediaticdata
-  lima-common-mediaprocessors
-  lima-lp-analysisdict
-  )
+target_link_libraries(compile-dictionary lima-linguisticprocessing)
 
 install(TARGETS compile-dictionary DESTINATION bin)
 
@@ -115,26 +63,10 @@ install(TARGETS compile-dictionary DESTINATION bin)
 
 SET(check-dictionary_SRCS
   checkDictionary.cpp BasicHandler.cpp
-  )
+)
 
 add_executable(check-dictionary ${check-dictionary_SRCS})
 
-target_link_libraries(check-dictionary
-  lima-lp-analysisdict
-  lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
-  lima-common-fsaaccess
- ${Boost_LIBRARIES}
-   ${QT_LIBRARIES} lima-common-qslog
-  lima-lp-linguisticdata
-  lima-common-factory lima-common-misc lima-common-tools
-  lima-common-mediaticdata
-  lima-common-mediaprocessors
-  lima-common-data
-  lima-common-processunitframework
-  lima-lp-propertycode
-  lima-common-xmlconfigurationfiles
- ${optionalLibs}
-)
+target_link_libraries(check-dictionary lima-linguisticprocessing)
 
 install(TARGETS check-dictionary DESTINATION bin)
