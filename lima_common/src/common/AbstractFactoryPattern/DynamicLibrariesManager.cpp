@@ -31,7 +31,6 @@
 #include <iostream>
 #include<QString>
 #include<QStringList>
-#include<QRegularExpression>
 
 using namespace std;
 
@@ -156,24 +155,6 @@ addSearchPath(const std::string& searchPath)
     m_d->m_supplementarySearchPath.push_back(searchPath);
   
 }
-
-void DynamicLibrariesManager::
-addSearchPathes(QString searchPathes)
-{
-#ifdef DEBUG_CD
-  ABSTRACTFACTORYPATTERNLOGINIT;
-#endif
-  QStringList list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"), QString::SkipEmptyParts);
-  for(QStringList::iterator it = list.begin();
-        it!=list.end();++it) {
-      QString searchPath = *it;
-#ifdef DEBUG_CD
-      LINFO << "DynamicLibrariesManager::addSearchPathes() -- " <<"adding:"<<searchPath.toUtf8().data();
-#endif
-      this->addSearchPath(searchPath.toUtf8().data());
-    }
-}
-
 
 } // end namespace
 } // end namespace
