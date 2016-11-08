@@ -67,9 +67,12 @@ if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
 endif()
 
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
-
-CompileLimaSubproject(lima_annoqt lima_common)
+# FIXME: Qt5 supported only (Qt4 not supported)
+find_package(Qt5 COMPONENTS Core)
+if (Qt5_FOUND)
+  CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+  CompileLimaSubproject(lima_annoqt lima_common)
+endif (Qt5_FOUND)
 
 install(FILES)
 
