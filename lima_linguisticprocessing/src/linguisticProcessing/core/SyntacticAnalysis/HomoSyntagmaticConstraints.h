@@ -40,6 +40,7 @@
 #include "linguisticProcessing/common/linguisticData/languageData.h"
 #include "linguisticProcessing/core/Automaton/constraintFunction.h"
 #include <iostream>
+#include <QStringList>
 
 namespace Lima {
 namespace LinguisticProcessing {

@@ -37,6 +37,8 @@
 #include <limits.h>
 #include <algorithm>
 
+#include <QStringList>
+
 using namespace std;
 using namespace Lima::Common::Misc;
 

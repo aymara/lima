@@ -50,6 +50,8 @@
 #include "linguisticProcessing/core/AnalysisDict/AbstractAnalysisDictionary.h"
 #include "AlternativesReader.h"
 
+#include <QRegExp>
+
 namespace Lima {
   namespace Common {
     namespace AnnotationGraphs {
