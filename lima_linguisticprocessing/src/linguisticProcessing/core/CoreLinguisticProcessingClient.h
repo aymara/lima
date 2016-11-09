@@ -50,14 +50,14 @@ public:
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-               Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const;
+               Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const;
 
   void analyze(const std::string& texte,
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-               Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const;
+               Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const;
 };
 
 class CoreLinguisticProcessingClientFactory : public AbstractLinguisticProcessingClientFactory

@@ -89,7 +89,7 @@ public:
                        const std::string& pipeline,
                        const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                        const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-                       Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const = 0;
+                       Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const = 0;
 
   /**
     * This function is the same as the previous one but takes a text
@@ -101,7 +101,7 @@ public:
                        const std::string& pipeline,
                        const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                        const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-                       Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze) const = 0;
+                       Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const = 0;
 };
 
 /**

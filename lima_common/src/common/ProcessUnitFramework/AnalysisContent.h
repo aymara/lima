@@ -49,7 +49,7 @@ class LIMA_PROCESSUNITFRAMEWORK_EXPORT AnalysisContent
 {
 public:
   
-  AnalysisContent(Lima::StopAnalyze const& stopAnalyze = Lima::defaultStopAnalyze);
+  AnalysisContent(Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT);
   
   /**
    * Destroy all AnalysisData in AnalysisContent

@@ -60,6 +60,11 @@ typedef unsigned __int64 uint64_t;
 
 #ifdef WIN32
 
+#ifdef LIMA_COMMON_EXPORTING
+   #define LIMA_COMMON_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_COMMON_EXPORT    __declspec(dllimport)
+#endif
 
 #ifdef LIMA_DATA_EXPORTING
    #define LIMA_DATA_EXPORT    __declspec(dllexport)
@@ -123,6 +128,7 @@ typedef unsigned __int64 uint64_t;
 
 #else // Not WIN32
 
+#define LIMA_COMMON_EXPORT
 #define LIMA_DATA_EXPORT
 #define LIMA_DATAHANDLER_EXPORT
 #define LIMA_FSAACCESS_EXPORT
@@ -149,26 +155,6 @@ typedef unsigned __int64 uint64_t;
 #include <common/QsLog/QsLog.h>
 #include <common/QsLog/QsLogCategories.h>
 #include "common/QsLog/QsLogDest.h"
-
-namespace Lima
-{
-#ifdef _DEBUG
-  class LIMA_COMMON_EXPORT StopAnalyze
-  {
-    bool _v;
-  public:
-    StopAnalyze(bool v);
-    StopAnalyze(StopAnalyze const&);
-    operator bool() const;
-    StopAnalyze& operator=(StopAnalyze const& o);
-    bool operator==(StopAnalyze const& o);
-    bool operator!=(StopAnalyze const& o);
-  };
-#else
-  typedef bool LIMA_COMMON_EXPORT StopAnalyze;
-#endif
-  extern LIMA_COMMON_EXPORT StopAnalyze defaultStopAnalyze;
-}
 
 #define LTRACE QLOG_TRACE()
 #define LDEBUG QLOG_DEBUG()
@@ -248,6 +234,7 @@ namespace Lima
 {
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()
+#define STOP_ANALYZE_DEFAULT StopAnalyze(false)
 
 enum LimaStatusCode {
     SUCCESS_ID,
@@ -264,6 +251,7 @@ BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)
 BOOST_STRONG_TYPEDEF(uint32_t, LinguisticCode);
 BOOST_STRONG_TYPEDEF(char, NoParameters);
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
+BOOST_STRONG_TYPEDEF(bool, StopAnalyze);
 
 class LimaException : public std::exception
 {
