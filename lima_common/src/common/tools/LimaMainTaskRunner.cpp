@@ -24,6 +24,7 @@ namespace Lima {
 
 LimaMainTaskRunner::LimaMainTaskRunner(int aargc,char** aargv,int (*afoo)(int, char**), QObject *parent) :
     QObject(parent),
+    argc(aargc),
     argv(aargv), foo(afoo),
     result(0)
 {
