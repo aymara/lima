@@ -326,21 +326,38 @@ int run(int argc,char** argv)
     MediaId language = MediaticData::single().media(param.language);
     
     bool languageInitialized = false;
+    string langConfFilename;
+    QString lpConfFile,langConfFile;
+    bool foundLp(false);
+    // lpconfig file (lima-analsysis.xml) and language config file (e.g. mm-lp-ger.xml) may not be in the same directory
     Q_FOREACH(QString configDir, configDirs)
     {
-      if (QFileInfo(configDir + "/" + param.lpConfigFile.c_str()).exists())
+      lpConfFile=configDir + "/" + param.lpConfigFile.c_str();
+      if (QFileInfo(lpConfFile).exists())
       {
-        XMLConfigurationFileParser lpconfig((configDir + "/" + param.lpConfigFile.c_str()).toUtf8().constData());
-        const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
-        XMLConfigurationFileParser langParser((configDir + "/" + langConfigFile.c_str()).toUtf8().constData());
-        ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
-        LinguisticResources::changeable().initLanguage(
-          language,
-          module,
-          false); // don't load mainkeys in stringpool, no use
-        languageInitialized = true;
+        foundLp=true;
+        XMLConfigurationFileParser lpconfig(lpConfFile.toUtf8().constData());
+        langConfFilename=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
+        break;
       }
     }
+    if (foundLp) {
+      Q_FOREACH(QString configDir, configDirs)
+      {
+        langConfFile=configDir + "/" + langConfFilename.c_str();
+        if (QFileInfo(langConfFile).exists())
+        {
+          XMLConfigurationFileParser langParser(langConfFile.toUtf8().constData());
+          ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+          LinguisticResources::changeable().initLanguage(
+            language,
+            module,
+            false); // don't load mainkeys in stringpool, no use
+          languageInitialized = true;
+        }
+      }
+    }
+    
     if(!languageInitialized)
     {
       LOGINIT("Automaton::Compiler");
