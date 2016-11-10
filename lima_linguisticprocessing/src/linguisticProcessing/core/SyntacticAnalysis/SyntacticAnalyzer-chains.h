@@ -119,7 +119,7 @@ public:
                       const LinguisticGraphVertex& s,
                       const LinguisticGraphVertex& t,
                       uint64_t& startChainId,
-                      StopAnalyze const& stopAnalyze = defaultStopAnalyze) const;
+                      StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const;
 											
 
 
