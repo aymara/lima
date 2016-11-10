@@ -60,6 +60,8 @@ public:
     LimaMainTaskRunner(int aargc,char** aargv,int (*foo)(int, char**),  QObject *parent = 0);
     virtual ~LimaMainTaskRunner() {}
 
+    inline int lastResult() const { return result; }
+
 public Q_SLOTS:
     void run();
 
@@ -70,6 +72,7 @@ private:
   int argc;
   char** argv;
   int (*foo)(int, char**);
+  int result;
 };
 
 }

@@ -24,15 +24,15 @@ namespace Lima {
 
 LimaMainTaskRunner::LimaMainTaskRunner(int aargc,char** aargv,int (*afoo)(int, char**), QObject *parent) :
     QObject(parent),
-    argc(aargc),
-    argv(aargv), foo(afoo)
+    argv(aargv), foo(afoo),
+    result(0)
 {
 //   qDebug() << "LimaMainTaskRunner::LimaMainTaskRunner" <<argc << *argv;
 }
 
 void LimaMainTaskRunner::run()
 {
-  int result = foo(argc, argv);
+  result = foo(argc, argv);
   Q_EMIT finished(result);
 }
 

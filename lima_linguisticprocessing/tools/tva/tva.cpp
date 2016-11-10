@@ -72,12 +72,14 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, &LimaMainTaskRunner::finished, &a, &QCoreApplication::exit);
+  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
-  return a.exec();
+  a.exec();
+
+  return task->lastResult();
 
 }
 
