@@ -32,6 +32,10 @@
 // #ifdef WIN32
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 // #endif
+
+#include <boost/algorithm/string.hpp>
+#include <fstream>
+
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -101,9 +105,25 @@ int main(int argc, char **argv)
   // Parse configuration file of lima server
   // options in command line supercede options in configuration file
   // port
-  std::string fileName(configDir);
-  fileName.append("/").append(limaServerConfigFile);
-  XMLConfigurationFileParser configLimaServer(fileName);
+  // find config file: configDir possibly contains several paths
+  std::string cfile;
+  std::vector<std::string> dirs;
+  boost::split(dirs,configDir,std::bind1st(std::equal_to<char>(), LIMA_PATH_SEPARATOR));
+  bool foundConfigFile(false);
+  for (const auto& d: dirs) {
+    cfile=d + "/" + limaServerConfigFile;
+    // check file existence trying to open it
+    std::ifstream filein(cfile.c_str());
+    if (filein.good()) {
+      foundConfigFile=true;
+      break;
+    }
+  }
+  if (! foundConfigFile) {
+    std::cerr << "Error: failed to find configuration file " << limaServerConfigFile << " in path " << configDir << std::endl;
+    return EXIT_FAILURE;
+  }
+  XMLConfigurationFileParser configLimaServer(cfile);
   quint16 port = DEFAULT_PORT;
   std::cout << "main: before, port = " << port << std::endl;
   if (varMap.count("port")) {

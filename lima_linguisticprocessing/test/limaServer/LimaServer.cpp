@@ -45,12 +45,14 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 // #endif
 
+#include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/traceUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
+
 
 // definition of logger
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
@@ -68,7 +70,9 @@
 #include <QCoreApplication>
 #include <QTimer>
 
+#include <fstream>
 #include <stdlib.h>
+#include <boost/algorithm/string.hpp>
 #include <boost/graph/buffer_concepts.hpp>
 
 using namespace Lima;
@@ -112,7 +116,25 @@ LimaServer::LimaServer( const std::string& configDir,
   // initialize linguistic processing
   std::string clientId("lima-coreclient");
   std::string lpConfigFile("lima-analysis.xml");
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+  // find config file: configDir possibly contains several paths
+  std::string cfile;
+  std::vector<std::string> dirs;
+  boost::split(dirs,configDir,std::bind1st(std::equal_to<char>(), LIMA_PATH_SEPARATOR));
+  bool foundConfigFile(false);
+  for (const auto& d: dirs) {
+    cfile=d + "/" + lpConfigFile;
+    // check file existence trying to open it
+    std::ifstream filein(cfile.c_str());
+    if (filein.good()) {
+      foundConfigFile=true;
+      break;
+    }
+  }
+  if (! foundConfigFile) {
+    LERROR << "Error: failed to find configuration file" << lpConfigFile << "in path" << configDir;
+    return;
+  }
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(cfile);
 
   LDEBUG << "LimaServer::LimaServer: configureClientFactory...";
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
