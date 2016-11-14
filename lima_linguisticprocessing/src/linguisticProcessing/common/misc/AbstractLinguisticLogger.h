@@ -42,7 +42,7 @@ namespace LinguisticProcessing {
  * contains some common informations such as : output suffix, 
  * files in append mode etc...
  */
-class LIMA_MISC_EXPORT AbstractLinguisticLogger : public MediaProcessUnit
+class LIMA_LPMISC_EXPORT AbstractLinguisticLogger : public MediaProcessUnit
 {
 public:
   AbstractLinguisticLogger(const std::string& defaultSuffix=".log");
