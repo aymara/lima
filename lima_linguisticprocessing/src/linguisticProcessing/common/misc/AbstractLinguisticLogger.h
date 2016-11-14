@@ -31,7 +31,7 @@
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSORS_ABSTRACTLINGUISTICLOGGER_H
 #define LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSORS_ABSTRACTLINGUISTICLOGGER_H
 
-#include "MiscExport.h"
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 
 namespace Lima {
