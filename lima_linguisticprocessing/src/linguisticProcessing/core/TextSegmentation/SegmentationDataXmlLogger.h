@@ -32,7 +32,7 @@
 #define SEGMENTATIONDATAXMLLOGGER_H
 
 #include "TextSegmentationExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima {
 namespace LinguisticProcessing {

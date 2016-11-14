@@ -25,7 +25,7 @@
 
 #include "CorefSolvingExport.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"

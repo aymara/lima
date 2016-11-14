@@ -19,7 +19,7 @@
 #ifndef SYNTACTICRELATIONSLOGGER_H
 #define SYNTACTICRELATIONSLOGGER_H
 
-// #include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+// #include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "SyntacticAnalysisExport.h"
 #include "linguisticProcessing/core/LinguisticProcessors/AbstractTextualAnalysisDumper.h"
 

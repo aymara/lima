@@ -34,7 +34,7 @@
 #define RECOGNIZERRESULTLOGGER_H
 
 #include "ApplyRecognizerExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
