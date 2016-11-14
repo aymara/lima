@@ -20,6 +20,7 @@ add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 
 ########### next target ###############
 set (lima-lp-analysisdict_MOC_HEADERS
+  AbstractAnalysisDictionary.h
   EnhancedAnalysisDictionary.h
   FsaAccessResource.h
 )

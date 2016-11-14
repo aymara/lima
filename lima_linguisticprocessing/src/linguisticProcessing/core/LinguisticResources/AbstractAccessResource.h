@@ -39,7 +39,7 @@ namespace AnalysisDict
 /**
 @author Benoit Mathieu
 */
-class AbstractAccessResource : public AbstractResource
+class LIMA_LINGUISTICRESOURCES_EXPORT AbstractAccessResource : public AbstractResource
 {
   Q_OBJECT
 public:
