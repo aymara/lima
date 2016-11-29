@@ -234,7 +234,7 @@ namespace Lima
 {
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()
-#define STOP_ANALYZE_DEFAULT StopAnalyze(false)
+#define STOP_ANALYZE_DEFAULT Lima::StopAnalyze(false)
 
 enum LimaStatusCode {
     SUCCESS_ID,
