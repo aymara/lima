@@ -391,7 +391,11 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   // Preparer le Token et le MorphoSyntacticData pour le nouveau noeud. Construits
   // a partir des infos de l'entitee nommee
   StringsPoolIndex seFlex = annot.getString();
-  StringsPoolIndex seLemma = annot.getNormalizedString();
+  // !!! RB: use normalized form for lemma : better for cascading rules, since its easier to write rules that
+  // match the expected normalized form given in a previous rule than rules that match the lemma, which is computed by LIMA
+  // @todo : check the impact of this change
+  //StringsPoolIndex seLemma = annot.getNormalizedString();
+  StringsPoolIndex seLemma = annot.getNormalizedForm();
   StringsPoolIndex seNorm = annot.getNormalizedForm();
 
 //   LDEBUG << "    Creating LinguisticElement";
