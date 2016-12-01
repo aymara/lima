@@ -469,11 +469,21 @@ void MediaticData::initMediaData(MediaId med)
 #ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Class: " << parser.getModuleGroupParamValue("MediaData","Class","class").c_str();
 #endif
-  MediaData* ldata = MediaData::Factory::getFactory(parser.getModuleGroupParamValue("MediaData","Class","class"))->create(parser.getModuleGroupConfiguration("MediaData","Class"),0);
+  std::string& param = parser.getModuleGroupParamValue("MediaData","Class","class");
+  if (!param.empty())
+  {
+    MediaData* ldata = MediaData::Factory::getFactory(param)->create(parser.getModuleGroupConfiguration("MediaData","Class"),0);
 
-//   MediaData* ldata=new MediaData();
-  m_d->m_mediasData[med]=ldata;
-  ldata->initialize(med,m_d->m_resourcesPath,parser);
+    //   MediaData* ldata=new MediaData();
+    m_d->m_mediasData[med]=ldata;
+    ldata->initialize(med,m_d->m_resourcesPath,parser);
+  }
+  else
+  {
+    MDATALOGINIT;
+    LERROR << "Empty class name for MediaData/Class/class for media" << med;
+    throw InvalidConfiguration();
+  }
 }
 
 

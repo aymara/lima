@@ -28,7 +28,7 @@
 #define LIMA_LINGUISTICPROCESSING_SYNTACTICANALYSIS_DEBUGSYNTACTICANALYSISLOGGER_H
 
 #include "SyntacticAnalysisExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima
 {

@@ -24,40 +24,38 @@ add_definitions( -DLIMA_LP_EXPORTING )
 
 add_library(lima-linguisticprocessing SHARED LinguisticProcessingCommon.cpp)
 target_link_libraries(lima-linguisticprocessing
-lima-lp-annotationgraph
-lima-lp-lineartextrepresentation
-lima-lp-misc
-lima-lp-tgv
-lima-lp-linguisticdata
-lima-lp-bagofwords
-lima-lp-propertycode
-lima-lp-regexmatcher
-lima-lp-wordsensetagger
-lima-lp-linguisticprocessing-core
-lima-lp-analysisdict
-lima-lp-eventanalyzer
-lima-lp-corefsolver
-lima-lp-se-number
-lima-lp-se-datetime
-lima-lp-se-person
-lima-lp-specificentities
-lima-lp-syntacticanalysis
-lima-lp-morphologicanalysis
-lima-lp-dictionary
-lima-lp-easyxmldumper
-lima-lp-analysisdumpers
-lima-lp-textsegmentation
-lima-lp-linguisticanalysisstructure
-lima-lp-semanticanalysis
-lima-lp-linguisticresources
-lima-lp-entitytracker
-lima-lp-flattokenizer
-lima-lp-applyrecognizer
-lima-lp-linguisticprocessors
-lima-lp-postagger
-lima-lp-automaton
-lima-lp-analysishandlers
-lima-lp-client
+  lima-lp-annotationgraph
+  lima-lp-lineartextrepresentation
+  lima-lp-misc
+  lima-lp-tgv
+  lima-lp-linguisticdata
+  lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-regexmatcher
+  lima-lp-wordsensetagger
+  lima-lp-linguisticprocessing-core
+  lima-lp-analysisdict
+  lima-lp-eventanalyzer
+  lima-lp-corefsolver
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-morphologicanalysis
+  lima-lp-dictionary
+  lima-lp-easyxmldumper
+  lima-lp-analysisdumpers
+  lima-lp-textsegmentation
+  lima-lp-linguisticanalysisstructure
+  lima-lp-semanticanalysis
+  lima-lp-linguisticresources
+  lima-lp-entitytracker
+  lima-lp-flattokenizer
+  lima-lp-applyrecognizer
+  lima-lp-linguisticprocessors
+  lima-lp-postagger
+  lima-lp-automaton
+  lima-lp-analysishandlers
+  lima-lp-client
+  lima-common
 )
 
 if(NOT ${SYSTEM_NAME} STREQUAL "Windows")

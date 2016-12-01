@@ -53,7 +53,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
 #include "common/MediaProcessors/MediaProcessors.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 

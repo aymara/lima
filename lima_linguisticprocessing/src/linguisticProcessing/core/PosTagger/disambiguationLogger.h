@@ -28,7 +28,7 @@
 #define LIMA_POSTAGGER_DISAMBIGUATIONLOGGER_H
 
 #include "PosTaggerExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
 

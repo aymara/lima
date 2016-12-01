@@ -17,9 +17,12 @@
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 add_definitions( -DLIMA_COMMONTOOLS_EXPORTING )
+add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
+
 ########### next target ###############
 
 set (lima-common-tools_MOC_HEADERS
+    ../QsLog/QsLogCategories.h
     LimaFileSystemWatcher.h
     LimaFileSystemWatcher_p.h
     LimaMainTaskRunner.h)
@@ -27,6 +30,10 @@ set (lima-common-tools_MOC_HEADERS
 qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
 
 SET(lima-common-tools_LIB_SRCS 
+    ../QsLog/QsLog.cpp
+    ../QsLog/QsDebugOutput.cpp
+    ../QsLog/QsLogDest.cpp
+    ../QsLog/QsLogCategories.cpp
     LimaFileSystemWatcher.cpp
     LimaMainTaskRunner.cpp
     FileUtils.cpp
@@ -41,7 +48,8 @@ endif()
 add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common-tools_MOC_OUTFILES})
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
-  ${QT_LIBRARIES})
+  ${QT_LIBRARIES}
+)
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-tools DESTINATION ${LIB_INSTALL_DIR})

@@ -24,7 +24,7 @@ namespace Lima
 namespace Common
 {
 
-LIMA_COMMON_EXPORT void fakeSymbolFoWindowsLinking() {}
+LIMA_COMMON_EXPORT void fakeSymbolForWindowsLinking() {}
 
 }
 }

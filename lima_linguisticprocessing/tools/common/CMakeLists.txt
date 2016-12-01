@@ -24,7 +24,12 @@ SET(testTgv_SRCS
 
 add_executable(testTgv ${testTgv_SRCS})
 
-target_link_libraries(testTgv lima-lp-tgv lima-lp-linguisticprocessing-core lima-lp-analysishandlers lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-easyxmldumper lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-eventanalyzer lima-lp-specificentities lima-lp-syntacticanalysis lima-common-datahandler lima-common-fsaaccess ${Boost_LIBRARIES} lima-common-data lima-common-factory lima-common-misc lima-common-tools lima-common-datahandler  ${QT_LIBRARIES} lima-common-qslog lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework lima-common-factory lima-common-xmlconfigurationfiles lima-lp-client lima-lp-linguisticanalysisstructure lima-lp-analysisdict lima-lp-corefsolver lima-lp-annotationgraph lima-lp-flattokenizer lima-lp-semanticanalysis ${optionalLibs} ${LIBXML2_LIBRARIES})
+target_link_libraries(testTgv 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs} 
+)
 
 install(TARGETS testTgv DESTINATION bin)
 
@@ -36,7 +41,11 @@ SET(catBowFiles_SRCS
 
 add_executable(catBowFiles ${catBowFiles_SRCS})
 
-target_link_libraries(catBowFiles lima-lp-bagofwords lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata  lima-lp-linguisticdata lima-common-factory lima-common-xmlconfigurationfiles lima-lp-propertycode ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES} lima-common-mediaticdata    ${optionalLibs})
+target_link_libraries(catBowFiles 
+  lima-linguisticprocessing
+  ${QT_LIBRARIES} 
+  ${Boost_LIBRARIES} 
+  ${optionalLibs})
 
 install(TARGETS catBowFiles DESTINATION bin)
 
@@ -48,7 +57,12 @@ SET(readBowFile_SRCS
 
 add_executable(readBowFile ${readBowFile_SRCS})
 
-target_link_libraries(readBowFile lima-lp-linguisticprocessing-core lima-lp-analysishandlers lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-easyxmldumper lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-eventanalyzer lima-lp-specificentities lima-lp-syntacticanalysis lima-common-datahandler lima-common-fsaaccess  lima-common-data lima-common-factory lima-common-misc lima-common-tools lima-common-datahandler lima-common-qslog lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework  lima-common-qslog lima-common-factory lima-common-xmlconfigurationfiles lima-lp-client lima-lp-linguisticanalysisstructure lima-lp-analysisdict lima-lp-corefsolver lima-lp-annotationgraph lima-lp-flattokenizer lima-lp-semanticanalysis ${optionalLibs} ${QT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(readBowFile 
+  lima-linguisticprocessing
+  ${optionalLibs} 
+  ${QT_LIBRARIES} 
+  ${Boost_LIBRARIES}
+)
 
 install(TARGETS readBowFile DESTINATION bin)
 
@@ -60,7 +74,12 @@ SET(readLtrFile_SRCS
 
 add_executable(readLtrFile ${readLtrFile_SRCS})
 
-target_link_libraries(readLtrFile lima-lp-lineartextrepresentation lima-lp-linguisticprocessing-core lima-lp-analysishandlers lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-easyxmldumper lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-eventanalyzer lima-lp-specificentities lima-lp-syntacticanalysis lima-common-datahandler lima-common-fsaaccess ${Boost_LIBRARIES} lima-common-data lima-common-factory lima-common-misc lima-common-tools lima-common-datahandler  ${QT_LIBRARIES} lima-common-qslog lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework ${QT_LIBRARIES} lima-common-qslog lima-common-factory lima-common-xmlconfigurationfiles lima-lp-client lima-lp-linguisticanalysisstructure lima-lp-analysisdict lima-lp-corefsolver lima-lp-annotationgraph lima-lp-flattokenizer lima-lp-semanticanalysis ${optionalLibs})
+target_link_libraries(readLtrFile 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
 
 install(TARGETS readLtrFile DESTINATION bin)
 
@@ -72,52 +91,14 @@ SET(getLexiconFromBoW_SRCS
 
 add_executable(getLexiconFromBoW ${getLexiconFromBoW_SRCS})
 
-target_link_libraries(getLexiconFromBoW lima-lp-bagofwords lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-lp-linguisticdata lima-common-factory lima-common-xmlconfigurationfiles lima-lp-propertycode  ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES}  ${optionalLibs})
+target_link_libraries(getLexiconFromBoW 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
 
 install(TARGETS getLexiconFromBoW DESTINATION bin)
-
-########### next target ###############
-
-SET(convertToUtf8_SRCS
-   convertToUtf8.cpp
-)
-
-add_executable(convertToUtf8 ${convertToUtf8_SRCS})
-
-target_link_libraries(convertToUtf8 lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog ${optionalLibs})
-
-install(TARGETS convertToUtf8 DESTINATION bin)
-
-########### next target ###############
-
-SET(testAbstractFactoryPattern_SRCS
-   testAbstractFactoryPattern.cpp
-)
-
-add_executable(testAbstractFactoryPattern ${testAbstractFactoryPattern_SRCS})
-
-target_link_libraries(testAbstractFactoryPattern lima-common-factory lima-common-factory lima-common-xmlconfigurationfiles lima-common-factory lima-common-misc lima-common-tools
-#   lima-lp-misc
-  lima-common-data ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs}
-  )
-
-install(TARGETS testAbstractFactoryPattern DESTINATION bin)
-
-
-########### next target ###############
-
-SET(testAccessMethod_SRCS
-   testAccessMethod.cpp
-)
-
-add_executable(testAccessMethod ${testAccessMethod_SRCS})
-
-target_link_libraries(testAccessMethod lima-common-factory lima-common-misc lima-common-tools
-#   lima-lp-misc
-  lima-common-data
-  lima-common-fsaaccess ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
-
-install(TARGETS testAccessMethod DESTINATION bin)
 
 ########### next target ###############
 
@@ -128,12 +109,7 @@ SET(parseXMLPropertyFile_SRCS
 add_executable(parseXMLPropertyFile ${parseXMLPropertyFile_SRCS})
 
 target_link_libraries(parseXMLPropertyFile 
-  lima-common-data
-  lima-common-factory 
-  lima-common-misc 
-  lima-common-qslog  
-  lima-common-tools
-  lima-lp-propertycode 
+  lima-linguisticprocessing
   ${Boost_LIBRARIES}  
   ${QT_LIBRARIES} 
   ${optionalLibs}
@@ -149,23 +125,14 @@ SET(convertSymbolicCodes_SRCS
 
 add_executable(convertSymbolicCodes ${convertSymbolicCodes_SRCS})
 
-target_link_libraries(convertSymbolicCodes lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data lima-lp-propertycode ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
-
-install(TARGETS convertSymbolicCodes DESTINATION bin)
-
-########### next target ###############
-
-SET(testProcessUnitFramework_SRCS
-   testProcessUnitFramework.cpp
+target_link_libraries(convertSymbolicCodes 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
 )
 
-add_executable(testProcessUnitFramework ${testProcessUnitFramework_SRCS})
-
-target_link_libraries(testProcessUnitFramework lima-common-factory lima-common-factory lima-common-xmlconfigurationfiles lima-common-factory lima-common-misc lima-common-tools
-#   lima-lp-misc
-  lima-common-data lima-common-processunitframework  ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES}  ${optionalLibs})
-
-install(TARGETS testProcessUnitFramework DESTINATION bin)
+install(TARGETS convertSymbolicCodes DESTINATION bin)
 
 ########### next target ###############
 
@@ -175,23 +142,14 @@ SET(readLinguisticData_SRCS
 
 add_executable(readLinguisticData ${readLinguisticData_SRCS})
 
-target_link_libraries(readLinguisticData lima-lp-linguisticdata lima-common-mediaticdata lima-common-factory lima-common-xmlconfigurationfiles lima-lp-propertycode lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog ${optionalLibs})
-
-install(TARGETS readLinguisticData DESTINATION bin)
-
-########### next target ###############
-
-SET(parseXMLFile_SRCS
-   parseXMLFile.cpp
+target_link_libraries(readLinguisticData 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
 )
 
-add_executable(parseXMLFile ${parseXMLFile_SRCS})
-
-target_link_libraries(parseXMLFile lima-common-factory lima-common-xmlconfigurationfiles lima-common-factory lima-common-misc lima-common-tools
-#   lima-lp-misc
-  lima-common-data ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog ${optionalLibs})
-
-install(TARGETS parseXMLFile DESTINATION bin)
+install(TARGETS readLinguisticData DESTINATION bin)
 
 
 ########### next target ###############
@@ -203,27 +161,10 @@ SET(testContentDict16_SRCS
 add_executable(testContentDict16 ${testContentDict16_SRCS})
 
 target_link_libraries(testContentDict16 
-    lima-common-data 
-    lima-common-factory 
-    lima-common-fsaaccess 
-    lima-common-mediaprocessors 
-    lima-common-mediaticdata 
-    lima-common-misc 
-    lima-common-processunitframework 
-    lima-common-qslog  
-    lima-common-tools 
-    lima-common-xmlconfigurationfiles 
-    lima-lp-analysisdict
-    lima-lp-client 
-    lima-lp-linguisticdata 
-    lima-lp-linguisticprocessing-core 
-    lima-lp-linguisticprocessors 
-    lima-lp-linguisticresources 
-    lima-lp-misc 
-    lima-lp-propertycode 
-    ${Boost_LIBRARIES}  
-    ${QT_LIBRARIES} 
-    ${optionalLibs}
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
 )
 
 install(TARGETS testContentDict16 DESTINATION bin)
@@ -237,7 +178,12 @@ SET(convertXmlToSBoW_SRCS
 
 add_executable(convertXmlToSBoW ${convertXmlToSBoW_SRCS})
 
-target_link_libraries(convertXmlToSBoW lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data lima-common-fsaaccess lima-lp-bagofwords lima-common-mediaticdata lima-lp-linguisticdata lima-common-factory lima-common-xmlconfigurationfiles lima-lp-propertycode ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog ${optionalLibs})
+target_link_libraries(convertXmlToSBoW 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
 
 install(TARGETS convertXmlToSBoW DESTINATION bin)
 
@@ -249,7 +195,12 @@ SET(buildCompoundsDict_SRCS
 
 add_executable(buildCompoundsDict ${buildCompoundsDict_SRCS})
 
-target_link_libraries(buildCompoundsDict lima-common-factory lima-common-misc lima-common-tools lima-lp-misc lima-common-data lima-common-mediaticdata lima-lp-linguisticdata lima-common-factory lima-common-xmlconfigurationfiles lima-lp-propertycode lima-common-fsaaccess ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
+target_link_libraries(buildCompoundsDict 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
 
 install(TARGETS buildCompoundsDict DESTINATION bin)
 
@@ -262,18 +213,10 @@ SET(testReadLexicon_SRCS
 add_executable(testReadLexicon ${testReadLexicon_SRCS})
 
 target_link_libraries(testReadLexicon 
-    lima-common-data 
-    lima-common-factory 
-    lima-common-fsaaccess 
-    lima-common-misc 
-    lima-common-qslog  
-    lima-common-tools
-#   lima-lp-misc
-    lima-lp-analysisdict
-    lima-lp-linguisticresources
-    ${Boost_LIBRARIES}  
-    ${QT_LIBRARIES} 
-    ${optionalLibs}
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
 )
 
 install(TARGETS testReadLexicon DESTINATION bin)
@@ -286,8 +229,12 @@ SET(testPropManager_SRCS
 
 add_executable(testPropManager ${testPropManager_SRCS})
 
-target_link_libraries(testPropManager lima-common-factory lima-common-misc lima-common-tools lima-common-mediaticdata lima-lp-linguisticdata
-  lima-common-data lima-common-fsaaccess ${Boost_LIBRARIES}  ${QT_LIBRARIES} lima-common-qslog  ${optionalLibs})
+target_link_libraries(testPropManager 
+  lima-linguisticprocessing
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
 
 install(TARGETS testPropManager DESTINATION bin)
 

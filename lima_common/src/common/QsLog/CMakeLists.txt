@@ -18,32 +18,36 @@
 # WARNING: should include src BEFORE to prevent to use ${DIST_LIMA} header files
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 
-add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
-
-########### next target ###############
-
-set (lima-common-qslog_MOC_HEADERS
-    QsLogCategories.h
-)
+# NOTE: lima-common-qslog code has been included in lima-common-tools
+#       to solve a circular dependency problem
 
 
-qt5_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
-
-
-SET(lima-common-qslog_LIB_SRCS
-    QsLog.cpp
-    QsDebugOutput.cpp
-    QsLogDest.cpp
-    QsLogCategories.cpp
-   )
-
-add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
-target_link_libraries(lima-common-qslog 
-  lima-common-tools
-  ${QT_LIBRARIES}
-)
-set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-qslog DESTINATION ${LIB_INSTALL_DIR})
+# add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
+# 
+# ########### next target ###############
+# 
+# set (lima-common-qslog_MOC_HEADERS
+#     QsLogCategories.h
+# )
+# 
+# 
+# qt5_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
+# 
+# 
+# SET(lima-common-qslog_LIB_SRCS
+#     QsLog.cpp
+#     QsDebugOutput.cpp
+#     QsLogDest.cpp
+#     QsLogCategories.cpp
+#    )
+# 
+# add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
+# target_link_libraries(lima-common-qslog 
+#   lima-common-qslog
+#   ${QT_LIBRARIES}
+# )
+# set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+# install(TARGETS lima-common-qslog DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 

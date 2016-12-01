@@ -18,6 +18,17 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/. ${CMAKE_SOURCE_DIR}/src ${CMAKE
 
 ########### next target ###############
 
+SET(showinttypessizes_SRCS
+   showinttypessizes.cpp
+)
+
+add_executable(showinttypessizes ${showinttypessizes_SRCS})
+target_link_libraries(showinttypessizes)
+
+install(TARGETS showinttypessizes DESTINATION bin)
+
+########### next target ###############
+
 SET(testDict16_SRCS
    testFsaDict16.cpp
 )
@@ -25,12 +36,7 @@ SET(testDict16_SRCS
 add_executable(testDict16 ${testDict16_SRCS})
 
 target_link_libraries(testDict16
-	  lima-common
-	  #  lima-common-fsaaccess
-	  #  lima-common-misc
-	  #  lima-common-data
-#  lima-common-time
-#  lima-common-qslog
+  lima-common
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
@@ -48,16 +54,80 @@ add_executable(testLexicon ${testLexicon_SRCS})
 message("QT_LIBRARIES are ${QT_LIBRARIES}")
 
 target_link_libraries(testLexicon
-  lima-common-fsaaccess
-  lima-common-misc
-  lima-common-data
-  lima-common-time
-  lima-common-qslog
+  lima-common
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
 
 install(TARGETS testLexicon DESTINATION bin)
 
+
+########### next target ###############
+
+SET(testAccessMethod_SRCS
+   testAccessMethod.cpp
+)
+
+add_executable(testAccessMethod ${testAccessMethod_SRCS})
+
+target_link_libraries(testAccessMethod 
+  lima-common
+  ${Boost_LIBRARIES}
+  ${QT_LIBRARIES}
+  ${optionalLibs}
+)
+
+install(TARGETS testAccessMethod DESTINATION bin)
+
+########### next target ###############
+
+SET(parseXMLFile_SRCS
+   parseXMLFile.cpp
+)
+
+add_executable(parseXMLFile ${parseXMLFile_SRCS})
+
+target_link_libraries(parseXMLFile 
+  lima-common
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
+
+install(TARGETS parseXMLFile DESTINATION bin)
+
+########### next target ###############
+
+SET(testAbstractFactoryPattern_SRCS
+   testAbstractFactoryPattern.cpp
+)
+
+add_executable(testAbstractFactoryPattern ${testAbstractFactoryPattern_SRCS})
+
+target_link_libraries(testAbstractFactoryPattern 
+  lima-common
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+  )
+
+install(TARGETS testAbstractFactoryPattern DESTINATION bin)
+
+########### next target ###############
+
+SET(testProcessUnitFramework_SRCS
+   testProcessUnitFramework.cpp
+)
+
+add_executable(testProcessUnitFramework ${testProcessUnitFramework_SRCS})
+
+target_link_libraries(testProcessUnitFramework 
+  lima-common
+  ${Boost_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${optionalLibs}
+)
+
+install(TARGETS testProcessUnitFramework DESTINATION bin)
 
 ########### install files ###############

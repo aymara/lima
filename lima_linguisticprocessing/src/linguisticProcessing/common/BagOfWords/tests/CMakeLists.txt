@@ -24,15 +24,7 @@ SET(BagOfWordsTest0_SRCS
 
 add_executable(BagOfWordsTest0 ${BagOfWordsTest0_SRCS})
 
-target_link_libraries(BagOfWordsTest0
-  lima-common-data
-  lima-common-qslog
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-linguisticdata
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-)
+target_link_libraries(BagOfWordsTest0 lima-linguisticprocessing)
 
 add_test(NAME BagOfWordsTest0 COMMAND BagOfWordsTest0)
 
@@ -44,15 +36,7 @@ SET(BagOfWordsTest1_SRCS
 
 add_executable(BagOfWordsTest1 ${BagOfWordsTest1_SRCS})
 
-target_link_libraries(BagOfWordsTest1
-  lima-common-data
-  lima-common-qslog
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-linguisticdata
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-)
+target_link_libraries(BagOfWordsTest1 lima-linguisticprocessing)
 
 add_test(NAME BagOfWordsTest1 COMMAND BagOfWordsTest1)
 
@@ -64,16 +48,7 @@ set (BagOfWordsTest2_MOC_HEADERS BagOfWordsTest2.h)
 qt5_wrap_cpp (BagOfWordsTest2_MOC_OUTFILES ${BagOfWordsTest2_MOC_HEADERS})
 
 add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS} ${BagOfWordsTest2_MOC_OUTFILES})
-target_link_libraries(BagOfWordsTest2
-  lima-common-data
-  lima-common-mediaticdata
-  lima-common-qslog
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-linguisticdata
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-)
+target_link_libraries(BagOfWordsTest2 lima-linguisticprocessing)
 
 add_test(NAME BagOfWordsTest2 COMMAND BagOfWordsTest2)
 
@@ -85,16 +60,7 @@ set (BagOfWordsTest3_MOC_HEADERS BagOfWordsTest3.h)
 qt5_wrap_cpp (BagOfWordsTest3_MOC_OUTFILES ${BagOfWordsTest3_MOC_HEADERS})
 
 add_executable(BagOfWordsTest3 ${BagOfWordsTest3_SRCS} ${BagOfWordsTest3_MOC_OUTFILES})
-target_link_libraries(BagOfWordsTest3
-  lima-common-data
-  lima-common-mediaticdata
-  lima-common-qslog
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-linguisticdata
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-)
+target_link_libraries(BagOfWordsTest3 lima-linguisticprocessing)
 
 add_test(NAME BagOfWordsTest3 COMMAND BagOfWordsTest3)
 

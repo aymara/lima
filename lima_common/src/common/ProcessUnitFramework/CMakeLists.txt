@@ -27,9 +27,14 @@ SET(lima-common-processunitframework_LIB_SRCS
 
 add_library(lima-common-processunitframework SHARED ${lima-common-processunitframework_LIB_SRCS})
 
-target_link_libraries(lima-common-processunitframework lima-common-qslog lima-common-data ${QT_LIBRARIES})
+target_link_libraries(lima-common-processunitframework 
+  lima-common-data 
+)
 
-set_target_properties(lima-common-processunitframework PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+set_target_properties(lima-common-processunitframework PROPERTIES 
+  VERSION ${LIMA_COMMON_LIB_VERSION} 
+  SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+  
 install(TARGETS lima-common-processunitframework DESTINATION ${LIB_INSTALL_DIR})
 
 

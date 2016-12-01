@@ -37,7 +37,7 @@
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "common/MediaProcessors/MediaProcessors.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "common/MediaProcessors/MediaProcessUnitPipeline.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"

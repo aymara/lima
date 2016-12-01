@@ -44,8 +44,8 @@ SET(lima-lp-bagofwords_LIB_SRCS
 add_library(lima-lp-bagofwords SHARED ${lima-lp-bagofwords_LIB_SRCS})
 
 target_link_libraries(lima-lp-bagofwords 
-lima-lp-linguisticdata
-lima-lp-misc lima-lp-propertycode lima-common-data lima-common-mediaticdata lima-common-fsaaccess ${QT_LIBRARIES} lima-common-qslog ${Boost_LIBRARIES})
+  lima-lp-linguisticdata
+)
 
 set_target_properties(lima-lp-bagofwords PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 

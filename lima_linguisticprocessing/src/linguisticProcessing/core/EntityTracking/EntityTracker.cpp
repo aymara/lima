@@ -27,7 +27,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "CoreferenceEngine.h"
 #include "CoreferenceData.h"
 

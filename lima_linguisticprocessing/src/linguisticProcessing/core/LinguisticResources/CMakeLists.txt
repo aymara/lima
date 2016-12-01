@@ -20,6 +20,7 @@ add_definitions(-DLIMA_LINGUISTICRESOURCES_EXPORTING)
 ########### next target ###############
 set (lima-lp-linguisticresources_MOC_HEADERS
   AbstractResource.h
+  AbstractAccessResource.h
 )
 
 qt5_wrap_cpp (lima-lp-linguisticresources_MOC_OUTFILES ${lima-lp-linguisticresources_MOC_HEADERS})
@@ -33,16 +34,19 @@ SET(lima-lp-linguisticresources_LIB_SRCS
 add_library(lima-lp-linguisticresources SHARED ${lima-lp-linguisticresources_LIB_SRCS} ${lima-lp-linguisticresources_MOC_OUTFILES})
 
 target_link_libraries(lima-lp-linguisticresources 
-    lima-common-data 
-    lima-common-factory 
-    lima-common-mediaticdata 
-    lima-common-mediaprocessors 
-    lima-common-misc 
-    lima-common-processunitframework 
-    lima-common-time 
-    lima-common-tools 
-    lima-common-xmlconfigurationfiles 
-    lima-lp-linguisticprocessors
+  lima-common-mediaprocessors 
+  lima-common-mediaticdata 
+  lima-common-processunitframework
+  lima-common-fsaaccess 
+  lima-common-factory 
+  lima-common-xmlconfigurationfiles 
+  lima-common-misc
+  lima-common-time 
+  lima-common-datahandler
+  lima-common-data 
+  lima-common-tools
+  ${QT_LIBRARIES}
+  ${Boost_LIBRARIES}
 )
 
 set_target_properties(lima-lp-linguisticresources PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

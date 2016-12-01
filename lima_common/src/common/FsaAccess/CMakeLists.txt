@@ -36,7 +36,9 @@ SET(lima-common-fsaaccess_LIB_SRCS
 
 add_library(lima-common-fsaaccess SHARED ${lima-common-fsaaccess_LIB_SRCS})
 
-target_link_libraries(lima-common-fsaaccess lima-common-data lima-common-misc)
+target_link_libraries(lima-common-fsaaccess 
+  lima-common-misc
+)
 
 set_target_properties(lima-common-fsaaccess PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-fsaaccess DESTINATION ${LIB_INSTALL_DIR})

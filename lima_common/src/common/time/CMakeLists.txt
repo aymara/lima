@@ -28,7 +28,9 @@ SET(lima-common-time_LIB_SRCS
 
 add_library(lima-common-time SHARED ${lima-common-time_LIB_SRCS})
 
-target_link_libraries(lima-common-time lima-common-qslog lima-common-data ${QT_LIBRARIES})
+target_link_libraries(lima-common-time 
+  lima-common-data 
+)
 
 set_target_properties(lima-common-time PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-time DESTINATION ${LIB_INSTALL_DIR})

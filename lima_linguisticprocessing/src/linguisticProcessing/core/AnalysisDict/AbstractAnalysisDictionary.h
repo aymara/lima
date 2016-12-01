@@ -43,7 +43,7 @@ namespace AnalysisDict
 /**
 * @brief interface for analysis dictionary
 */
-class AbstractAnalysisDictionary : public AbstractResource
+class LIMA_ANALYSISDICT_EXPORT AbstractAnalysisDictionary : public AbstractResource
 {
 public:
 
