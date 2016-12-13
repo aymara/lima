@@ -360,7 +360,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
        << "\" position=\"" << element.getPosition()
        << "\" length=\"" << element.getLength() << "\"";
     if (element.isNamedEntity()) {
-      m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
+      m_outputStream << " neType=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType())) << "\"";
       m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
     }
     else {
@@ -372,7 +372,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
   
   // compound
   if (element.isNamedEntity()) {
-    m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
+    m_outputStream << " neType=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType())) << "\"";
     m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
   }
   else {
