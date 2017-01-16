@@ -53,7 +53,6 @@ class FsaStringsPoolPrivate
   Common::AbstractAccessByString* m_mainKeys;
   StringsPoolIndex m_mainKeySize;
   StringsPool m_additionalPool;
-  std::vector<LimaString>* m_cache;
   QMutex m_mutex;
 };
 
@@ -61,7 +60,6 @@ FsaStringsPoolPrivate::FsaStringsPoolPrivate():
     m_mainKeys(0),
     m_mainKeySize(0),
     m_additionalPool(),
-    m_cache(0),
     m_mutex()
 {}
 
@@ -72,7 +70,7 @@ FsaStringsPoolPrivate::FsaStringsPoolPrivate(const FsaStringsPool& /*unused p*/)
 
 FsaStringsPoolPrivate::~FsaStringsPoolPrivate()
 {
-  delete m_cache;
+
 }
 
 FsaStringsPool::FsaStringsPool():
@@ -110,7 +108,6 @@ void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)
 
   m_d->m_mainKeys=mainKeys;
   m_d->m_mainKeySize=m_d->m_mainKeys->getSize();
-  m_d->m_cache=new std::vector<LimaString>(m_d->m_mainKeySize,LimaString());
 }
 
 
@@ -121,35 +118,22 @@ StringsPoolIndex FsaStringsPool::operator[](const LimaString& str)
     StringsPoolIndex res= static_cast<StringsPoolIndex>(m_d->m_mainKeys->getIndex(str));
     if (res!=static_cast<StringsPoolIndex>(0))
     {
-      QMutexLocker lock(&m_d->m_mutex);
-      LimaString& cachedStr=(*m_d->m_cache)[res];
-      if (cachedStr.size()==0)
-      {
-        cachedStr=str;
-      }
       return res;
     }
   }
   return static_cast<StringsPoolIndex>(m_d->m_mainKeySize + m_d->m_additionalPool[str]);
 }
 
-const LimaString& FsaStringsPool::operator[](const StringsPoolIndex ind) const
+LimaString FsaStringsPool::operator[](const StringsPoolIndex ind) const
 {
   //    STRPOOLLOGINIT;
   //    LDEBUG << "const FsaStringsPool[" << ind << "]" ;
   if (ind < m_d->m_mainKeySize)
   {
     QMutexLocker lock(&m_d->m_mutex);
-    LimaString& str=(*m_d->m_cache)[ind];
     if (ind == 0)
-    {
-      return str;
-    }
-    if (str.size()==0)
-    {
-      str= LimaString(m_d->m_mainKeys->getSpelling(ind));
-    }
-    return str;
+      return LimaString();
+    return m_d->m_mainKeys->getSpelling(ind);
   }
   return m_d->m_additionalPool[static_cast<StringsPoolIndex>(ind - m_d->m_mainKeySize)];
 }

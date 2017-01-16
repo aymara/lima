@@ -49,7 +49,7 @@ public:
     virtual ~FsaStringsPool();
 
     StringsPoolIndex operator[](const LimaString& str);
-    const LimaString& operator[](const StringsPoolIndex ind) const;
+    LimaString operator[](const StringsPoolIndex ind) const;
     
     /*
     * @TODO create a distinct FsaStringsPool
