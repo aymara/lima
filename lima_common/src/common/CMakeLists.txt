@@ -44,6 +44,17 @@ install(TARGETS lima-common DESTINATION ${LIB_INSTALL_DIR})
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
+configure_file (
+  "LimaVersion.h.in"
+  "LimaVersion.h"
+  @ONLY
+  )
+ 
 
 ########### install files ###############
-install(FILES LimaCommon.h DESTINATION include/common)
+
+install(FILES 
+    LimaCommon.h
+    ${CMAKE_CURRENT_BINARY_DIR}/LimaVersion.h
+  DESTINATION include/common
+)

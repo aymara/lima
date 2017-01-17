@@ -24,6 +24,7 @@
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
+#include "common/LimaVersion.h"
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
@@ -74,6 +75,8 @@ int run(int aargc,char** aargv);
 int main(int argc, char **argv)
 {
   QCoreApplication a(argc, argv);
+  QCoreApplication::setApplicationName("analyzeText");
+  QCoreApplication::setApplicationVersion(LIMA_VERSION);
 
   // Task parented to the application so that it
   // will be deleted by the application.
@@ -123,6 +126,7 @@ int run(int argc,char** argv)
   po::options_description desc("Usage");
   desc.add_options()
   ("help,h", "Display this help message")
+  ("version,v", QString::fromUtf8("Shows LIMA version: %1.").arg(LIMA_VERSION).toUtf8().constData())
   ("language,l", po::value< std::vector<std::string> >(&languages),
    "supported languages trigrams")
   ("dumper,d", po::value< std::vector<std::string> >(&dumpersv),
@@ -154,18 +158,28 @@ int run(int argc,char** argv)
   p.add("input-file", -1);
   
   po::variables_map vm;
-  try {
+  try 
+  {
     po::store(po::command_line_parser(argc, argv).
     options(desc).positional(p).run(), vm);
     po::notify(vm);
-  } catch (const boost::program_options::unknown_option& e) {
+  }
+  catch (const boost::program_options::unknown_option& e) 
+  {
     std::cerr << e.what() << std::endl;
     return 1;
   }
-  if (vm.count("help")) {
+  if (vm.count("help")) 
+  {
     std::cout << desc << std::endl;
     return SUCCESS_ID;
   }
+  else if (vm.count("version"))
+  {
+    std::cout << LIMA_VERSION << std::endl;
+    return SUCCESS_ID;
+  }
+
   if (!strResourcesPath.empty())
   {
     resourcesPath = QString::fromUtf8(strResourcesPath.c_str());
