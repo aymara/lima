@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 enable_testing()
 
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 
 
 cmake_policy(SET CMP0017 NEW)

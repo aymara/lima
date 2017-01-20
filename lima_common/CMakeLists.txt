@@ -32,7 +32,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES
 set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
+
 
 message("System name is ${CMAKE_SYSTEM_NAME}")
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))

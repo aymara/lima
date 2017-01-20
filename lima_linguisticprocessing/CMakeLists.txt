@@ -48,7 +48,7 @@ endmacro (DECLARE_LIMA_PLUGIN)
 
 enable_testing()
 
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 
 message("System name is ${CMAKE_SYSTEM_NAME}")
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
