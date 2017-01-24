@@ -5,6 +5,9 @@ enable_testing()
 
 include(ExternalProject)
 
+option(WITH_ASAN "Enable address sanitizer" OFF)
+
+
 macro (CompileLimaSubproject _project _dependsOn )
 
   ## Define test command.
@@ -24,7 +27,7 @@ macro (CompileLimaSubproject _project _dependsOn )
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" -DBoost_DEBUG=ON
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" -DBoost_DEBUG=ON -DWITH_ASAN=${WITH_ASAN}
   )
 
   ## Add specified dependencies

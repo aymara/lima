@@ -26,6 +26,8 @@ endif()
 # -DCMAKE_INSTALL_PREFIX="c:mose" -DCMAKE_BUILD_TYPE=Release
 # -DCMAKE_INSTALL_PREFIX="c:mose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
+option(WITH_ASAN "Enable address sanitizer" OFF)
+
 # In debug mode, adds the -DDEBUG_CD to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES" )
@@ -51,14 +53,6 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_SANITIZE_UNDEFINED)
     CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer HAVE_NO_OMIT_FRAME_POINTER)
 
-    # NOTE: check -fsanitize=address flag failed if this flag is not set also
-    # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
-    # CHECK_CXX_COMPILER_FLAG macro).
-    set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-    set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
-    CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
-    set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
- 
     if (HAVE_STDCPP0X)
       message("C++0x supported")
       set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
@@ -75,10 +69,19 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     endif (HAVE_STDCPP11)
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
 
-    # Options for runtime memory leaks checking
-    if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
-      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
-    endif()
+    if (WITH_ASAN)
+      # NOTE: check -fsanitize=address flag failed if this flag is not set also
+      # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
+      # CHECK_CXX_COMPILER_FLAG macro).
+      set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
+      set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
+      CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
+      set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
+      # Options for runtime memory leaks checking
+      if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
+      endif()
+    endif ()
 
     set(LIB_INSTALL_DIR "lib")
 else ()

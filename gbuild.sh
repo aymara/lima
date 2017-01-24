@@ -47,6 +47,7 @@ version="val"
 resources="build"
 parallel="true"
 CMAKE_GENERATOR="Unix"
+WITH_ASAN="OFF"
 
 while getopts ":m:p:r:v:G:" o; do
     case "${o}" in
@@ -119,8 +120,10 @@ fi
 # export VERBOSE=1
 if [[ $mode == "release" ]]; then
 cmake_mode="Release"
+WITH_ASAN="OFF"
 else
 cmake_mode="Debug"
+WITH_ASAN="ON"
 fi
 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
@@ -163,8 +166,9 @@ else
   pushd $build_prefix/$mode/$current_project
 fi
 
+
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DWITH_ASAN=$WITH_ASAN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 echo "Running command:"
 echo "$make_cmd"
