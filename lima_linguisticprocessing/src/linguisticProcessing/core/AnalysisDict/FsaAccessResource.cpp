@@ -24,6 +24,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/misc/ResourcesIdent.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 #include "common/tools/FileUtils.h"
 
@@ -94,16 +95,16 @@ void FsaAccessResource::init(
 	      }
 	      char magicNumber[3];
 	      fileIn.read(magicNumber, 3);
-	      if (string(magicNumber, 3) == "Ant")
+	      if (string(magicNumber, 3) == RESOURCESIDENT_STRING)
         {
 	        unsigned char intLe[4];	//UNSIGNED obligatoire
 	        fileIn.read((char*)intLe, 4);
 	        const std::size_t antLen = intLe[0] + intLe[1]*0x100 + intLe[2]*0x10000 + intLe[3]*0x1000000; 
 	        const std::size_t pos = fileIn.tellg();
-	        fileIn.seekg(pos+antLen, ios::beg);           //saute l'identification Antinno
+	        fileIn.seekg(pos+antLen, ios::beg);
 	      }
 	      else
-          fileIn.seekg(0, ios::beg);         //pas un fichier repere par Antinno
+          fileIn.seekg(0, ios::beg);
 	      fsaAccess->read(fileIn);
 	      //JYS 09/01/11
         LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());

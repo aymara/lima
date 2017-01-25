@@ -25,6 +25,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/misc/ResourcesIdent.h"
 #include "common/FsaAccess/FsaAccessBuilderRandom16.h"
 
 using namespace Lima::Common::XMLConfigurationFiles;
@@ -80,7 +81,7 @@ void FsaRwAccessResource::init(
     }
     char magicNumber[3];
     fileIn.read(magicNumber, 3);
-    if (string(magicNumber, 3) == "Ant") {
+    if (string(magicNumber, 3) == RESOURCESIDENT_STRING) {
       unsigned char intLe[4];	//UNSIGNED obligatoire
       fileIn.read((char*)intLe, 4);
       const std::size_t antLen = intLe[0] + intLe[1]*0x100 + intLe[2]*0x10000 + intLe[3]*0x1000000; 

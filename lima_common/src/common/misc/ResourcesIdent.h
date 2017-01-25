@@ -1,15 +1,20 @@
-
-#ifndef ghdghscjenicfhermfuchhmfmaixfxdsqksdogqùjefqojxefoejkg
-#define ghdghscjenicfhermfuchhmfmaixfxdsqksdogqùjefqojxefoejkg
-
 /*
-Code copié de AntResourcesIdent.h
+    Copyright 2002-2013 CEA LIST
 
-Sans doute à améliorer
+    This file is part of LIMA.
 
-FW 30/10/2013
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 //
 // C++ Implementation : AntResourcesIdent
@@ -21,11 +26,19 @@ FW 30/10/2013
 // Copyright: See COPYING file that comes with this distribution
 //
 ////////////////////////////////////////////////////////////
+
+#ifndef RESOURCESIDENT_H
+#define RESOURCESIDENT_H
+
 #include <sstream>
 #include <time.h>
 #include <string>
 
-namespace antinno {
+#define RESOURCESIDENT_STRING "RID"
+
+namespace Lima {
+namespace Common {
+namespace Misc {
   
 //brief This class extracts identifiers from binary resources files
 
@@ -96,6 +109,8 @@ private:
   //------------------------------------------------------------------------------------------------------------------------------
 }; // end class
 
-} // end namespace
+} // namespace Misc
+} // namespace Commmon
+} // namespace Lima
 
 #endif
