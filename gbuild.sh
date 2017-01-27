@@ -119,11 +119,11 @@ fi
 
 # export VERBOSE=1
 if [[ $mode == "release" ]]; then
-cmake_mode="Release"
-WITH_ASAN="OFF"
+  cmake_mode="Release"
+  WITH_ASAN="OFF"
 else
-cmake_mode="Debug"
-WITH_ASAN="ON"
+  cmake_mode="Debug"
+  WITH_ASAN="ON"
 fi
 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
