@@ -99,9 +99,9 @@ build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
 if [[ $version = "rev" ]]; then
-release="$current_timestamp-$current_revision"
+  release="$current_timestamp-$current_revision"
 else
-release="0"
+  release="0"
 fi
 
 if [[ $parallel = "true" ]]; then
