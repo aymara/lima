@@ -183,6 +183,17 @@ then
   result=$?
 fi
 
+if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
+then
+  install -d $LIMA_DIST/share/apps/lima/packages
+  if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
+    install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
+  fi
+  if compgen -G "*/src/*-build/*.deb" > /dev/null; then
+    install */src/*-build/*.deb $LIMA_DIST/share/apps/lima/packages
+  fi
+fi
+
 popd
 
 exit $result
