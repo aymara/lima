@@ -237,7 +237,7 @@ LimaStatusCode BowDumper::process(
   DumperStream* dstream=initialize(analysis);
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on" << dstream->out();
+  LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
 #endif
   writer.writeBoWText(dstream->out(),bowText);
   delete dstream;
