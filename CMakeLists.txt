@@ -7,6 +7,11 @@ include(ExternalProject)
 
 option(WITH_ASAN "Enable address sanitizer" OFF)
 
+if (NOT ("x${CMAKE_SYSTEM_NAME}" STREQUAL "xWindows"))
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=generic -march=x86-64")
+    endif()
+endif()
 
 macro (CompileLimaSubproject _project _dependsOn )
 
@@ -27,7 +32,12 @@ macro (CompileLimaSubproject _project _dependsOn )
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" -DBoost_DEBUG=ON -DWITH_ASAN=${WITH_ASAN}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} 
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
+        -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 
+        -DBoost_DEBUG=ON -DWITH_ASAN:BOOL=${WITH_ASAN} 
+        -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
+
   )
 
   ## Add specified dependencies
