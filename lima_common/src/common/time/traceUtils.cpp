@@ -29,34 +29,11 @@
 #include "traceUtils.h"
 #include <QDateTime>
 
-
 #ifdef WIN32
-#include "Windows.h"
-#include <iomanip>
-
-
-LARGE_INTEGER m_f;
-static bool m_freqInit = false;
-
-namespace 
-{
-  uint64_t _winTime()
-  {
-    LARGE_INTEGER i;
-	if (m_freqInit == false)
-	{
-		QueryPerformanceFrequency(&m_f);
-		m_freqInit = true;
-	}
-    QueryPerformanceCounter(&i);
-    
-    return (i.QuadPart * 1000000) / m_f.QuadPart; // microseconds   
-  }
-}
-#else
-#error no implementation for non-win32 systems
+#include <Windows.h>
+#else // linux
+#include <time.h>
 #endif
-
 
 namespace Lima {
 
@@ -67,42 +44,42 @@ namespace Lima {
 std::map<std::string, TimeUtils::Data> TimeUtils::m_cumulatedTime = std::map<std::string, TimeUtils::Data>();
 QMutex TimeUtils::m_mutex;
 
-
-TimeUtils::TimeUtils() 
-{
-}
 //**********************************************************************
 // member functions
 //**********************************************************************
+TimeUtils::TimeUtils() 
+{
+}
+
 uint64_t TimeUtils::getCurrentTime() { 
+  // This function is platform dependent
 #ifdef WIN32
-  return _winTime(); 
-#else
-#error no implementation for non-win32 systems
+  static LARGE_INTEGER frequency;
+  if (frequency.QuadPart == 0) {
+    QueryPerformanceFrequency(&frequency);
+  }
+  LARGE_INTEGER now;
+  QueryPerformanceCounter(&now);
+  return 1000000 * now.QuadPart / frequency.QuadPart; // microseconds
+#else // linux
+  struct timespec now;
+  clock_gettime(CLOCK_MONOTONIC, &now);
+  return 1000000 * now.tv_sec + now.tv_nsec / 1000; // microseconds
 #endif
 }
+
 // FWI 03/11/24 nouvelle méthode pour remettre à zéro le cumul
 void TimeUtils::restart( const std::string& taskCategory)
 {
   QMutexLocker locker(&m_mutex);
-#ifdef WIN32
-  m_cumulatedTime[taskCategory].first = _winTime(); 
-  //cout << "updateCurrentTime=" << m_cumulatedTime[taskCategory].first << ::std::endl;
-#else
-  m_cumulatedTime[taskCategory].first = QDateTime::currentMSecsSinceEpoch();
-#endif
+  m_cumulatedTime[taskCategory].first = getCurrentTime();
   m_cumulatedTime[taskCategory].second = 0;
   m_cumulatedTime[taskCategory].count = 0;
 }
 
 void TimeUtils::updateCurrentTime( const std::string& taskCategory ) {
   QMutexLocker locker(&m_mutex);
-#ifdef WIN32
-  m_cumulatedTime[taskCategory].first = _winTime();  
-  //cout << "updateCurrentTime=" << m_cumulatedTime[taskCategory].first << ::std::endl;
-#else
-#error no implementation for non-win32 systems
-#endif
+  m_cumulatedTime[taskCategory].first = getCurrentTime();
 }
 
 // void TimeUtils::updateCurrentTime() {
@@ -121,16 +98,8 @@ uint64_t TimeUtils::diffTime(const uint64_t& begin,
 }
 
 uint64_t TimeUtils::elapsedTime(const std::string& taskCategory) {
-#ifdef WIN32
-  uint64_t newTime = _winTime();   
-#else
-#error no implementation for non-win32 systems
-#endif
-#ifdef WIN32
-  uint64_t delta = newTime - m_cumulatedTime[taskCategory].first;
-#else
-#error no implementation for non-win32 systems
-#endif
+  uint64_t newTime = getCurrentTime();
+  uint64_t delta = diffTime(m_cumulatedTime[taskCategory].first,newTime);
   m_cumulatedTime[taskCategory].second += delta;
   m_cumulatedTime[taskCategory].first = newTime;
   ++m_cumulatedTime[taskCategory].count;
@@ -152,8 +121,8 @@ void TimeUtils::logElapsedTime(const std::string& mess,
 void TimeUtils::logCumulatedTime(const std::string& mess,
                                const std::string& taskCategory) {
   TIMELOGINIT;
-  LINFO << std::setfill('0') << std::setw(9) << m_cumulatedTime[taskCategory].second << " us"
-    << " count : " << std::setfill('0') << std::setw(6) << m_cumulatedTime[taskCategory].count << ": " << mess;
+  LINFO << m_cumulatedTime[taskCategory].second << " us"
+    << " count: " << m_cumulatedTime[taskCategory].count << ": " << mess;
 }
 
 void TimeUtils::logAllCumulatedTime(const std::string& mess) {
@@ -162,7 +131,7 @@ void TimeUtils::logAllCumulatedTime(const std::string& mess) {
 
   for( std::map<std::string, Data>::const_iterator it = m_cumulatedTime.begin() ; 
 	   it != m_cumulatedTime.end() ; it++ ) {
-	LINFO << it->first << ":" << it->second.second << " us" << " count: " << it->second.count;
+	  LINFO << it->first << ":" << it->second.second << " us" << " count: " << it->second.count;
   }
 }
 

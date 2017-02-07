@@ -56,6 +56,7 @@ namespace Lima {
   public:
     struct Data
     {
+      Data() : first(0), second(0), count(0) { }
       uint64_t first;
       uint64_t second;
       uint64_t count;
