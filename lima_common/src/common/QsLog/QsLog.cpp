@@ -34,6 +34,11 @@
 #include <cstdlib>
 #include <stdexcept>
 
+#ifdef USE_LOG4CPP
+#include "log4cpp/Category.hh"
+#include "log4cpp/Priority.hh"
+#endif
+
 LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str )
 {
   qd << str.c_str();
@@ -53,6 +58,17 @@ static const char FatalString[] = "FATAL";
 
 // not using Qt::ISODate because we need the milliseconds too
 static const QString fmtDateTime("yyyy-MM-ddThh:mm:ss.zzz");
+
+#ifdef USE_LOG4CPP
+static log4cpp::Priority::PriorityLevel levelToPriority[] = {
+  log4cpp::Priority::NOTSET, // TraceLevel
+  log4cpp::Priority::DEBUG, // DebugLevel
+  log4cpp::Priority::INFO, // InfoLevel
+  log4cpp::Priority::WARN, // WarnLevel
+  log4cpp::Priority::ERROR, // ErrorLevel
+  log4cpp::Priority::FATAL // FatalLevel
+};
+#endif
 
 static const char* LevelToText(Level theLevel)
 {
@@ -102,6 +118,21 @@ Logger::~Logger()
    delete d;
 }
 
+Logger& Logger::instance(const QString& zone)
+{
+  static QMap<QString,Logger*> staticLog;
+  QMap<QString,Logger*>::iterator it = staticLog.find(zone);
+  if (it == staticLog.end())
+  {
+    Logger* logger = new Logger(zone);
+#ifndef USE_LOG4CPP
+    logger->addDestination(new DebugOutputDestination());
+#endif
+    return **staticLog.insert(zone, logger);
+  }
+  return **it;
+}
+
 void Logger::addDestination(Destination* destination)
 {
    assert(destination);
@@ -111,6 +142,10 @@ void Logger::addDestination(Destination* destination)
 void Logger::setLoggingLevel(Level newLevel)
 {
    d->level = newLevel;
+#ifdef USE_LOG4CPP
+  log4cpp::Category & cat = log4cpp::Category::getInstance(d->zone.toStdString());
+  cat.setPriority(levelToPriority[newLevel]);
+#endif
 }
 
 Level Logger::loggingLevel() const
@@ -163,6 +198,10 @@ const QString& Logger::zone() const
 //! creates the complete log message and passes it to the logger
 void Logger::Helper::writeToLog()
 {
+#ifdef USE_LOG4CPP
+  log4cpp::Category & cat = log4cpp::Category::getInstance(zone.toStdString());
+  cat.log(levelToPriority[level], buffer.toStdString());
+#else
    const char* const levelName = LevelToText(level);
    QString s;
    QTextStream ts(&s);
@@ -177,6 +216,7 @@ void Logger::Helper::writeToLog()
    Logger& logger = Logger::instance(zone);
    QMutexLocker lock(&logger.d->logMutex);
    logger.write(completeMessage);
+#endif
 }
 
 Logger::Helper::~Helper()

@@ -58,18 +58,7 @@ class LIMA_COMMONQSLOG_EXPORT Logger
 {
   friend class LoggerImpl;
 public:
-   static Logger& instance(const QString& zone="")
-   {
-      static QMap<QString,Logger*> staticLog;
-      QMap<QString,Logger*>::iterator it = staticLog.find(zone);
-      if (it == staticLog.end())
-      {
-        Logger* logger = new Logger(zone);
-        logger->addDestination(new DebugOutputDestination());
-        return **staticLog.insert(zone, logger);
-      }
-      return **it;
-   }
+   static Logger& instance(const QString& zone="");
 
    //! Adds a log message destination. Don't add null destinations.
    void addDestination(Destination* destination);

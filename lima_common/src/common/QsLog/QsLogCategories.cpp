@@ -34,6 +34,12 @@
 #include <cstdlib>
 #include <stdexcept>
 
+#ifdef USE_LOG4CPP
+#include <log4cpp/Category.hh>
+#include <log4cpp/Priority.hh>
+#include <log4cpp/PropertyConfigurator.hh>
+#endif
+
 using namespace Lima;
 using namespace Lima::Common::Misc;
 
@@ -81,6 +87,10 @@ void Categories::configureFileChanged ( const QString & path )
 
 bool Categories::configure(const QString& fileName)
 {
+#ifdef USE_LOG4CPP
+  log4cpp::PropertyConfigurator::configure(fileName.toStdString());
+  return true;
+#else
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
@@ -156,10 +166,30 @@ bool Categories::configure(const QString& fileName)
   LOGINIT("FilesReporting");
   LINFO << "QsLog conf file loaded:" << fileName;
   return res;
+#endif
 }
 
 Level Categories::levelFor(const QString& category) const
 {
+#ifdef USE_LOG4CPP
+  log4cpp::Category & cat = log4cpp::Category::getInstance(category.toStdString());
+  switch (cat.getPriority()) {
+  case log4cpp::Priority::NOTSET:
+    return QsLogging::TraceLevel;
+  case log4cpp::Priority::DEBUG:
+    return QsLogging::DebugLevel;
+  case log4cpp::Priority::INFO:
+    return QsLogging::InfoLevel;
+  case log4cpp::Priority::WARN:
+    return QsLogging::WarnLevel;
+  case log4cpp::Priority::ERROR:
+    return QsLogging::ErrorLevel;
+  case log4cpp::Priority::FATAL:
+    return QsLogging::FatalLevel;
+  default:
+    return QsLogging::TraceLevel;
+  }
+#else
 #ifdef DEBUG_CD
   // Do not compile this costly check in release
   if (!d->categories.contains(category))
@@ -168,6 +198,7 @@ Level Categories::levelFor(const QString& category) const
   }
 #endif
   return d->categories.value(category, QsLogging::TraceLevel);
+#endif
 }
 
 LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) 

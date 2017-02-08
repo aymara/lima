@@ -19,6 +19,15 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions( -DLIMA_COMMONTOOLS_EXPORTING )
 add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
 
+find_package(log4cpp)
+if (LOG4CPP_FOUND)
+  message(STATUS "Use log4cpp logger")
+  include_directories(${LOG4CPP_INCLUDE_DIRS})
+  add_definitions(-DUSE_LOG4CPP)
+else ()
+  message(STATUS "Use default logger")
+endif()
+
 ########### next target ###############
 
 set (lima-common-tools_MOC_HEADERS
@@ -49,6 +58,7 @@ add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
   ${QT_LIBRARIES}
+  ${LOG4CPP_LIBRARIES}
 )
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
