@@ -36,6 +36,8 @@
 #include "common/tools/FileUtils.h"
 #include "common/Data/strwstrtools.h"
 
+#include <QtGlobal>
+
 #include <string>
 #include <algorithm>
 #include <fstream>
@@ -59,6 +61,10 @@ CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(),
     m_unicodeCategories(),
     m_unicodeCategories2LimaClasses()
 {
+#if QT_VERSION < 0x050000
+  m_unicodeCategories
+  << "NoCategory";
+#endif
   m_unicodeCategories
   << "Mark_NonSpacing"
   << "Mark_SpacingCombining"
