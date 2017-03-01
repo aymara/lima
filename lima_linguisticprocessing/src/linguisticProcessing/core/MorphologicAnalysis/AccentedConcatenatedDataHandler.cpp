@@ -56,7 +56,7 @@ AccentedConcatenatedDataHandler::AccentedConcatenatedDataHandler(LinguisticGraph
   
   std::vector<unsigned char> mapping;
   LimaString desacc=m_charChart->unmarkWithMapping(m_srcStr,mapping);
-  m_unmarkToTextMapping.resize(mapping.size()+1);
+  m_unmarkToTextMapping.resize(desacc.size()+1);
   unsigned char i=0;
   for (std::vector<unsigned char>::const_iterator it=mapping.begin();
        it!=mapping.end();
