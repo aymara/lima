@@ -36,10 +36,8 @@ AmosePluginsManager::AmosePluginsManager()
 
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
-#ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
   LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
-#endif
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
@@ -55,19 +53,15 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
-#ifdef DEBUG_CD
     ABSTRACTFACTORYPATTERNLOGINIT;
     LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
-#endif
     
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-#ifdef DEBUG_CD
      LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " 
             << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
-#endif
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly)) {
