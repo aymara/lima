@@ -67,10 +67,19 @@ You need to set up a few environment variables. For this purpose, you can
 source the setenv-lima.sh script from the root of **the LIMA git repository** (please check 
 values before):
 ```bash
-$ source ./setenv-lima.sh
+$ source ./setenv-lima.sh -m release
 ```
 
-Alternatively, you can define them manually:
+Finally, from the LIMA repository root, run:
+```bash
+$ ./gbuild.sh -m release
+```
+
+This builds LIMA in release mode, assuring the best performance. To report bugs for example, you should build LIMA in debug mode. To do so, just omit the `-m release` option when invoking `setenv-lima.sh` and `gbuild.sh`. 
+
+Alternatively, you can 
+
+1. define the following environment variables manually:
 
 `LIMA_DIST`             binaries and libraries
 `LIMA_EXTERNALS`        dependencies
@@ -79,16 +88,14 @@ Alternatively, you can define them manually:
 `LINGUISTIC_DATA_ROOT`  path to the lima_linguisticdata project root
 `NLTK_PTB_DP_FILE`      path to the Penn treebank extract from NLTK (see below)
 
-Then set PATH and LD_LIBRARY_PATH:
+2. set `PATH` and `LD_LIBRARY_PATH`:
+
+```
 export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$PATH
 export LD_LIBRARY_PATH=$LIMA_EXTERNALS/lib:$LIMA_DIST/lib
-
-Finally, from the LIMA repository root, run:
-```bash
-$ ./gbuild.sh -m release
 ```
 
-This builds LIMA in release mode, assuring the best performance. To report bugs for example, you should build LIMA in debug mode. To do so, just omit the `-m release` option when invoking `gbuild.sh`. 
+3. run `gbuild.sh` 
 
 ## Build troubleshoutings
 
