@@ -24,7 +24,7 @@
 #define ENTITYTRACKERXMLLOGGER_H
 
 #include "EntityTrackingExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima
 {

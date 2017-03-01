@@ -22,7 +22,6 @@ add_subdirectory(evalCoref)
 add_subdirectory(normalize)
 # add_subdirectory(lima-lp-tgv) # --> src/linguisticProcessing/common/lima-lp-tgv
 add_subdirectory(tva)
-add_subdirectory(tvr)
 
 include_directories(${CMAKE_SOURCE_DIR}/src )
 

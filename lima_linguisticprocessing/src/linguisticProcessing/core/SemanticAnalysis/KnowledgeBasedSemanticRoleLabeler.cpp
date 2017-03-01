@@ -25,7 +25,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/SemanticAnalysis/ConllDumper.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
@@ -222,8 +222,10 @@ void KnowledgeBasedSemanticRoleLabeler::init(
    */
   QString str_program_name;
   QString pathEnv = QString::fromUtf8(qgetenv("PATH").constData());
-  for (const auto & path: pathEnv.split(QRegExp("[;:]")))
+  QStringList paths = pathEnv.split(QRegExp("[;:]"));
+  for (auto it = paths.begin(); it != paths.end(); ++it)
   {
+    const auto & path = *it;
     if (QFile::exists(path + "/python" ))
     {
       str_program_name = path + "/python";

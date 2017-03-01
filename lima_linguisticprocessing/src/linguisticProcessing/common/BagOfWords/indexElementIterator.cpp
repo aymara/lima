@@ -555,8 +555,8 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
   BOWLOGINIT;
 #endif
   QStringList structureKey;
-  for (auto element: structure) {
-    structureKey << QString::number(element);
+  for (auto it = structure.begin(); it != structure.end(); ++it) {
+    structureKey << QString::number(*it);
   }
 #ifdef DEBUG_CD
   LDEBUG << "addCombinedPartsInQueue: nb parts=" << partIdsRels.size() 
@@ -614,8 +614,8 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
   }
 
   // add possible at end of structure and recursive call
-  for (auto it:partIdsRels[current].first) {
-    structure.push_back(it);
+  for (auto it = partIdsRels[current].first.begin(); it != partIdsRels[current].first.end(); ++it) {
+    structure.push_back(*it);
     relations.push_back(partIdsRels[current].second);
     if (!addCombinedPartsInQueue(type, partIdsRels,head,neType,ids_rel,structure,relations,current+1)) {
 #ifdef DEBUG_CD

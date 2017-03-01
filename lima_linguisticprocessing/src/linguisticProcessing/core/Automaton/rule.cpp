@@ -338,10 +338,10 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
 // output
 ostream& operator << (ostream& os, const Rule& r) {
   os << r.getRuleId() << ":" << endl;
-  os << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
+  os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
   os << "left=" << endl << r.leftAutomaton();
   os << "right=" << endl << r.rightAutomaton();
-  os << r.getType()<< ";" << r.getLinguisticProperties() << endl;
+  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << endl;
@@ -354,10 +354,10 @@ ostream& operator << (ostream& os, const Rule& r) {
 }
 QDebug& operator << (QDebug& os, const Rule& r) {
   os << r.getRuleId() << ":" << endl;
-  os << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
+  os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
   os << "left=" << endl << r.leftAutomaton();
   os << "right=" << endl << r.rightAutomaton();
-  os << r.getType()<< ";" << r.getLinguisticProperties() << endl;
+  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << endl;

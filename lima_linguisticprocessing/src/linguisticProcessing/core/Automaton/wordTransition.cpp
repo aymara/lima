@@ -78,7 +78,7 @@ std::string WordTransition::printValue() const {
 //   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(0);
 //   LimaString s = sp[(StringsPoolIndex)m_word];
 //   oss << Common::Misc::limastring2utf8stdstring(s);
-  oss << m_word;
+  oss << "wordT:'" << m_word << "'";
   return oss.str();
 }
 

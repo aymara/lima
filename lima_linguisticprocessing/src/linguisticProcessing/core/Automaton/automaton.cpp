@@ -36,6 +36,8 @@
 #include <vector>
 #include <stack>
 #include <utility>
+#include <QCryptographicHash>
+
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -267,7 +269,7 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     for (; trans!=trans_end; trans++) {
 //       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex;
       deque<LinguisticGraphVertex> noVertices;
-      DFFSPos  newPair(noVertices,0);
+      DFFSPos  newPair(noVertices,nullptr);
 
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
       const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*trans).transitionUnit());
@@ -680,7 +682,7 @@ bool Automaton::testFromState(const Tstate firstState,
   S.push(beginVertex,firstState,analysis,limitVertex);
   
   LinguisticGraphVertex vertex;
-  const Transition* transition(0);
+  const Transition* transition(nullptr);
   uint64_t nbIter(0);
   bool backtrack(false);
 
@@ -865,6 +867,19 @@ bool Automaton::addTransition(Tstate initialState,
       }
     }
     transitions.insert(it,Transition(transition,finalState));
+#ifdef DEBUG_LP
+    AULOGINIT;
+    it=transitions.begin(),
+    it_end=transitions.end();
+    for (; it!=it_end; it++) {
+      if (!(*it).transitionUnit()->isEpsilonTransition()) {
+        break;
+      }
+    }
+   LDEBUG << "Automaton::addTransition( " << (*it).transitionUnit() << ")";
+#endif
+    
+    
 //     transitions.insert(transitions.begin(),Transition(transition,finalState));
   }
   
@@ -951,17 +966,17 @@ Automaton Automaton::subsets() const {
   Automaton::SubSet currentSubset;
   Automaton detFA;
 
-//   AULOGINIT;
-  
   alphabet=collectTransitions();
-//   if (logger.isDebugEnabled()) {
-//     ostringstream oss;
-//     oss << "alphabet=";
-//     for (uint64_t i(0); i<alphabet.size(); i++) {
-//       oss << *(alphabet[i]) << " ";
-//     }
-//     LDEBUG << oss.str();
-//   }
+#ifdef DEBUG_LP
+  AULOGINIT;
+  LDEBUG << "Automaton::subsets():\n";
+  ostringstream oss;
+  oss << "alphabet=";
+  for (uint64_t i(0); i<alphabet.size(); i++) {
+    oss << *(alphabet[i]) << "\n";
+  }
+  LDEBUG << oss.str();
+#endif
 
   detFA.addState();
   //initial state is possibly final
@@ -1021,6 +1036,48 @@ Automaton Automaton::subsets() const {
   
   detFA.setDeterministic(true);
   return detFA;
+}
+
+
+ void Automaton::setActionHash(const std::vector<std::pair<LimaString,Constraint> >& actionsWithOneArgument){
+   // Enumerate all transitions of automate
+   for (uint64_t i(0); i<m_numberStates; i++) {
+     for (uint64_t j(0); j<m_transitions[i].size(); j++) {
+       TransitionUnit& t = *(m_transitions[i][j].transitionUnit());
+       if (t.isEpsilonTransition()) { continue; }
+       // Enumerate all constraints of type action
+       std::vector<std::pair<LimaString,Constraint> >::const_iterator constraintIt = actionsWithOneArgument.begin();
+ #ifdef DEBUG_LP
+         AULOGINIT;
+         LDEBUG << "Automaton::setActionHash: compute hash for " << t;
+#endif
+       for( ; constraintIt != actionsWithOneArgument.end() ; constraintIt++ ) {
+         // if id of transition and first argument of constraint have same value
+         // means there is an action triggered by this transition
+         std::string elementId = (constraintIt->first).toStdString();
+ #ifdef DEBUG_LP
+         LDEBUG << "Automaton::setActionHash: compare to " << elementId;
+#endif
+         if( !(elementId.compare(t.getId())) )
+         {
+           // build a hash with the name of the constraint and complement (second argument)
+           // like SetEntityFeature(hour::int)
+           // TODO: do not know how to get the name of the constraint 
+           ConstraintFunction* constraintFunc = (constraintIt->second).functionAddr();
+           const LimaString complement =  constraintFunc->getComplementString();
+           LimaString signature = complement;
+           QCryptographicHash hashFunctor(QCryptographicHash::Md5);
+           hashFunctor.addData(signature.toUtf8());
+           QString hashValue = QString(hashFunctor.result());
+           // put this hash as identifier of action triggered by the transition
+           t.setActionHash(hashValue.toStdString());
+ #ifdef DEBUG_LP
+           LDEBUG << "Automaton::setActionHash: set hash to " << hashValue;
+#endif
+         }
+       }
+     }
+   }
 }
 
 // get all the transitions that appear in the automaton
@@ -1160,9 +1217,9 @@ ostream& operator << (ostream& os, const Automaton& a) {
     if (a.isFinalState(i)) { os << i << " [final]" << endl; }
     for (uint64_t j(0); j<a.m_transitions[i].size(); j++) {
       os << i << " -> " << a.m_transitions[i][j].nextState()
-      << " [label=\""
+      << "["
       << *(a.m_transitions[i][j].transitionUnit())
-      << "\"]" << endl;
+      << "]" << endl;
     }
   }
   
@@ -1179,9 +1236,9 @@ QDebug& operator << (QDebug& os, const Automaton& a) {
     if (a.isFinalState(i)) { os << i << " [final]" << endl; }
     for (uint64_t j(0); j<a.m_transitions[i].size(); j++) {
       os << i << " -> " << a.m_transitions[i][j].nextState()
-      << " [label=\""
+      << " ["
       << *(a.m_transitions[i][j].transitionUnit())
-      << "\"]" << endl;
+      << "]" << endl;
     }
   }
   

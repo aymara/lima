@@ -229,5 +229,6 @@ LE:::NOT_NUMBER:
 
 #@NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
 #@Number:(+|-)?:@Number{0-3} \%?:NUMBER:=>NormalizeNumber()
+
 @OrdNumber:(+|-)?:\%?:NUMBER:=>NormalizeNumber()
 

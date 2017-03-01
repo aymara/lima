@@ -613,35 +613,54 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 #endif
   Misc::writeUTF8StringField(file,token->getInflectedForm());
   Misc::writeCodedInt(file,token->getCategory());
+
+  auto beg = token->getPosition();
+  auto end = token->getLength() + beg;
+
   if (m_shiftFrom.empty())
   {
 #ifdef DEBUG_LP
     LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is empty";
 #endif
-    Misc::writeCodedInt(file,token->getPosition()-1);
   }
-  else 
+  else
   {
 #ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from" << token->getPosition();
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin" << beg;
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end" << end;
 #endif
-    QMap<uint64_t,uint64_t>::const_iterator it = m_shiftFrom.lowerBound(token->getPosition()-1);
-    if (it == m_shiftFrom.constBegin())
+    auto const shiftForBeginIt = m_shiftFrom.lowerBound(beg-1);
+    if (shiftForBeginIt == m_shiftFrom.constBegin())
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom NO shift";
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: NO shift";
 #endif
-      Misc::writeCodedInt(file,token->getPosition()-1);
     }
     else
+    { 
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: shift by" << (shiftForBeginIt-1).value();
+#endif
+      beg += (shiftForBeginIt-1).value();
+    }
+    auto const shiftForEndIt = m_shiftFrom.lowerBound(end-1);
+    if (shiftForEndIt == m_shiftFrom.constBegin())
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom shift by" << (it-1).value();
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: NO shift";
 #endif
-      Misc::writeCodedInt(file,token->getPosition()+ (it-1).value()-1);
+    }
+    else
+    { 
+#ifdef DEBUG_LP
+      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: shift by" << (shiftForEndIt-1).value();
+#endif
+      end += (shiftForEndIt-1).value();
     }
   }
-  Misc::writeCodedInt(file,token->getLength());
+
+  Misc::writeCodedInt(file, beg-1);
+  Misc::writeCodedInt(file, end-beg);
 }
 
 void BoWBinaryWriter::writePredicate(std::ostream& file,

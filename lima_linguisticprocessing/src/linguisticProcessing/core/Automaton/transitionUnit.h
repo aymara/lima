@@ -82,6 +82,8 @@ class LIMA_AUTOMATON_EXPORT TransitionUnit
   void setHead(const bool);
   const std::string& getId() const;
   void setId(const std::string& id);
+  const std::string& getActionHash() const;
+  void setActionHash(const std::string& actionHash);
 
   const Constraint& constraint(const uint64_t) const;
   uint64_t numberOfConstraints() const;
@@ -132,6 +134,9 @@ class LIMA_AUTOMATON_EXPORT TransitionUnit
   bool m_negative;  // indicates if the transition is negative
   bool m_head;
   std::string m_id;   // id of transition = ruleElementId
+  // Hash of set of constraints of type action like (XXXEntityFeature). Usefull to differentiate 
+  // transition during optimzation step automatonCompiler.
+  std::string m_actionHash;
   std::vector<Constraint> m_constraints;
 };
 
@@ -147,6 +152,8 @@ inline bool TransitionUnit::isHead() const { return m_head; }
 inline void TransitionUnit::setHead(const bool h) { m_head = h; }
 inline const std::string& TransitionUnit::getId() const { return m_id; }
 inline void TransitionUnit::setId(const std::string& id) { m_id = id; }
+inline const std::string& TransitionUnit::getActionHash() const { return m_actionHash;}
+inline void TransitionUnit::setActionHash(const std::string& actionHash) { m_actionHash = actionHash;}
 
 inline const Constraint& TransitionUnit::constraint(const uint64_t i) const {
   return m_constraints[i];

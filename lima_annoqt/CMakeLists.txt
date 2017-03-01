@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 enable_testing()
 
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/modules ${CMAKE_INSTALL_PREFIX})
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)

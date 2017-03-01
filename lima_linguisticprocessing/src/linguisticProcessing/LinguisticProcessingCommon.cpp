@@ -39,7 +39,7 @@ namespace Lima
   namespace LinguisticProcessing
   {
     
-    LIMA_LP_EXPORT void fakeSymbolFoWindowsLinking() {}
+    LIMA_LP_EXPORT void fakeSymbolForWindowsLinking() {}
     
   }
 }

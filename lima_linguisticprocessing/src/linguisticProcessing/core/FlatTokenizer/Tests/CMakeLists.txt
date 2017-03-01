@@ -33,13 +33,7 @@ file(COPY testcharchart.chars.tok DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(CharChartTest0 ${CharChartTest0_SRCS})
 
-target_link_libraries(CharChartTest0 
-    lima-common-data 
-    lima-common-qslog 
-    lima-lp-analysisdict
-    lima-lp-flattokenizer 
-    ${Boost_LIBRARIES} 
-    ${QT_LIBRARIES})
+target_link_libraries(CharChartTest0 lima-linguisticprocessing)
 
 add_test(NAME CharChartTest0 COMMAND CharChartTest0 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -59,13 +53,6 @@ file(COPY testcharchart-ara.chars.tok DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(CharChartTestAra ${CharChartTestAra_SRCS})
 
-target_link_libraries(CharChartTestAra 
-    lima-common-data 
-    lima-common-qslog 
-    lima-lp-analysisdict
-    lima-lp-flattokenizer 
-    ${Boost_LIBRARIES} 
-    ${QT_LIBRARIES}
-)
+target_link_libraries(CharChartTestAra lima-linguisticprocessing)
 
 add_test(NAME CharChartTestAra COMMAND CharChartTestAra WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

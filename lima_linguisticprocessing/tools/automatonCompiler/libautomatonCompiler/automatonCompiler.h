@@ -48,7 +48,8 @@ namespace AutomatonCompiler {
                            MediaId language,
                            const std::vector<Gazeteer>& gazeteers,
                            SearchGraphSense sense,
-                           const std::vector<LimaString>& activeEntityGroups);
+                           const std::vector<LimaString>& activeEntityGroups,
+                         const std::vector<std::pair<LimaString,Constraint> >& actionsWithOneArgument);
 
   LIMA_AUTOMATONCOMPILER_EXPORT Tstate buildAutomaton(Automaton& a,
                         const AutomatonString& automatonString, 

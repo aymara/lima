@@ -48,7 +48,6 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-analysisdumpers)
 
 target_link_libraries(lima-lp-analysisdumpers
-  lima-common
   lima-lp-linguisticprocessors
   lima-lp-linguisticresources
   lima-lp-annotationgraph
@@ -58,6 +57,7 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-lineartextrepresentation
   lima-lp-textsegmentation
   lima-lp-semanticanalysis
+  lima-common
 )
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

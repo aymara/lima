@@ -23,12 +23,12 @@
 
 #include "LinguisticResources.h"
 
+#include "AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/moduleConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/Singleton.h"
 #include "common/tools/FileUtils.h"
-#include "linguisticProcessing/core/AnalysisDict/AbstractAccessResource.h"
 
 #include <QFileInfo>
 

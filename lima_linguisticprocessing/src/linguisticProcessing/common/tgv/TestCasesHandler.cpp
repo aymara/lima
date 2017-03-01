@@ -34,8 +34,12 @@ namespace Common
 {
 namespace TGV
 {
+
+char const * const FATAL_ERROR_TYPE = "bloquant";
+int const EXIT_FATAL_ERROR = 64;
+
 TestCasesHandler::TestCasesHandler( TestCaseProcessor& processor)
-  : m_reportByType(), m_processor(processor) {
+  : m_reportByType(), m_processor(processor), m_hasFatalError(false) {
 }
 
 TestCasesHandler::~TestCasesHandler() {
@@ -199,6 +203,9 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
       if (e())
       {
         std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): " << std::endl << e.what() << std::endl;
+         if (currentTestCase.type == FATAL_ERROR_TYPE) {
+          m_hasFatalError = true;
+        }
         if (e() == TestCaseError::TestCaseFailed)
         {
           if (e.isConditional())
@@ -245,6 +252,11 @@ std::string TestCasesHandler::getName(const QString& localName,
 std::string TestCasesHandler::attributeValue(const QString& attr, const QXmlAttributes& attrs) const
 {
   return Common::Misc::limastring2utf8stdstring( attrs.value(attr) );
+}
+
+int exitCode(TestCasesHandler const & tch)
+{
+  return tch.hasFatalError() ? EXIT_FATAL_ERROR : EXIT_SUCCESS;
 }
 
 } // TGV

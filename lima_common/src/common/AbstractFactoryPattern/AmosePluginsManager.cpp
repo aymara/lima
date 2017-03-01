@@ -31,15 +31,13 @@ using namespace Lima::Common::Misc;
 
 AmosePluginsManager::AmosePluginsManager()
 {
-  loadPlugins();
+//   loadPlugins();
 }
 
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
-#ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "AmosePluginsManager::loadPlugins";
-#endif
+  LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
@@ -49,25 +47,27 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     // Look for LIMA_CONF directory.
     configDirsList = buildConfigurationDirectoriesList(QStringList() << "lima", QStringList());
   }
-  for(const QString& configDir : configDirsList)
+  for(auto it = configDirsList.begin(); it != configDirsList.end(); ++it)
   {
     // Deduce plugins directory.
-    QString stdPluginsDir(configDir);
+    QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
+    ABSTRACTFACTORYPATTERNLOGINIT;
+    LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
     
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-  #ifdef DEBUG_CD
-    LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
-  #endif
+     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " 
+            << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly)) {
         ABSTRACTFACTORYPATTERNLOGINIT;
-        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " << pluginsFile.toUtf8().data();
+        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " 
+                << pluginsFile.toUtf8().data();
         return false;
       }
       
@@ -80,9 +80,9 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         // Allow empty and comment lines.
         if ( !line.isEmpty() && !line.startsWith('#') )
         {
-  #ifdef DEBUG_CD
-          LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
-  #endif
+#ifdef DEBUG_CD
+           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
+#endif
           DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str());
         }
       }

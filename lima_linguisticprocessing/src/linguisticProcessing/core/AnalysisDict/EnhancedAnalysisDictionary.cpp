@@ -18,7 +18,7 @@
 */
 #include "EnhancedAnalysisDictionary.h"
 #include "EnhancedAnalysisDictionaryIterator.h"
-#include "AbstractAccessResource.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"

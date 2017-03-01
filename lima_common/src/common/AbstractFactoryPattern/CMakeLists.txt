@@ -18,15 +18,22 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### next target ###############
 add_definitions( -DLIMA_FACTORY_EXPORTING )
+
 SET(lima-common-factory_LIB_SRCS
   MainFactoriesMap.cpp
   AmosePluginsManager.cpp
   DynamicLibrariesManager.cpp
 )
+
 add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
-target_link_libraries(lima-common-factory lima-common-qslog ${BOOST_LIBRARIES} ${QT_LIBRARIES})
-set_target_properties(lima-common-factory PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-factory DESTINATION ${LIB_INSTALL_DIR})
+
+target_link_libraries(lima-common-factory lima-common-tools)
+
+set_target_properties(lima-common-factory PROPERTIES 
+  VERSION ${LIMA_COMMON_LIB_VERSION} 
+  SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+
+  install(TARGETS lima-common-factory DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

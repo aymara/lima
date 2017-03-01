@@ -16,11 +16,12 @@ pm,p . m .,p . m.,p.m.,PM,P . M .,P . M.,P M
 t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =>SetEntityFeature(trigger,"hour:int")
 =>SetEntityFeature(right.2,"minute:int")
-=>SetEntityFeature(right.3.2,"minute:int")
+=>SetEntityFeature(right.3.2,"second:int")
 =>SetEntityFeature(right.4,"ampm")
 =>SetEntityFeature(right.5,"timezone")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+=>NormalizeUTCTime()
 
 @Number=($NOMBRE)
 
@@ -29,6 +30,7 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =>SetEntityFeature(trigger,"hour:int")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+=>NormalizeUTCTime()
 
 # half past ten
 # ten to twelve
@@ -41,6 +43,7 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =>SetEntityFeature(left.3,"hourmodpos")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+=>NormalizeUTCTime()
 
 # seven thirty tomorrow
 <NUMBER>::<NUMBER>? @TimeKey:TIME:
@@ -48,6 +51,7 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =>SetEntityFeature(right.1,"minute:int")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+=>NormalizeUTCTime()
 
 <NUMBER>:[at?]:@AM_PM @TimeZone?:TIME:
 =>SetEntityFeature(trigger,"hour:int")
@@ -55,16 +59,25 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =>SetEntityFeature(right.2,"timezone")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+=>NormalizeUTCTime()
 
 #------------------------------
 # periods of time
 # (maybe should be numbers with units)
 
-# special case of ages -> TIME also ?
 
-t_integer::[-?] (year-old|month-old):TIME:
+# TODO: special case of ages -> DATE also ?
+# t_integer::[-?] (year-old|month-old):DATE:
+# =>SetEntityFeature(trigger,"year:int")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+# =>NormalizeUTCTime()
 
-t_integer::t_fraction? [-?] (years|months) old:TIME:
+# t_integer::t_fraction? [-?] (years|months) old:DATE:
+# =>SetEntityFeature(trigger,"year:int")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+# =>NormalizeUTCTime()
 
 #@TimeUnit=(hour,hours,minute,minutes,mins,second,seconds,secs,
 #day,days,night,nights,week,weeks,month,months,year,years,decade,decades,

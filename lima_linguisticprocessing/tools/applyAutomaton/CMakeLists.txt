@@ -55,7 +55,7 @@ target_link_libraries(apply-rules
   lima-common-fsaaccess 
   lima-common-processunitframework
   lima-common-xmlconfigurationfiles
- ${QT_LIBRARIES} lima-common-qslog
+ ${QT_LIBRARIES} lima-common-tools
  ${Boost_REGEX}
   ${Boost_LIBRARIES} #wsock32
  ${optionalLibs}

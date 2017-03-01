@@ -42,6 +42,11 @@ void LinguisticProcessingClientFactory::configureClientFactory(
 {
   LPCLIENTFACTORYLOGINIT;
   LINFO << "LinguisticProcessingClientFactory::configureClientFactory" << id;
+  if (id.empty())
+  {
+    LERROR << "LinguisticProcessingClientFactory::configureClientFactory Trying to access to factory with empty name!";
+    throw LinguisticProcessingException();
+  }
   std::shared_ptr<AbstractLinguisticProcessingClientFactory> factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
@@ -62,6 +67,11 @@ std::shared_ptr< AbstractProcessingClient > LinguisticProcessingClientFactory::c
 {
   LPCLIENTFACTORYLOGINIT;
   LINFO << "Create client '" << id << "'";
+  if (id.empty())
+  {
+    LERROR << "LinguisticProcessingClientFactory::createClient Trying to create client with empty name!";
+    throw LinguisticProcessingException();
+  }
   const std::shared_ptr<AbstractLinguisticProcessingClientFactory> factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {

@@ -263,21 +263,29 @@ updateCurrentDate(AnalysisContent& analysis,
 
 unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
+#endif
   // try to extract number as int from string <number><ordinalSuffix> like 4th, 22nd, 1st or <number> like 17
   unsigned short day =  m_resources->getValueFromNumberOrdinal(numdayString);
+#ifdef DEBUG_LP
   LDEBUG << "NormalizeDate::getDayFromString: testConversion 1 of " << numdayString << "1 day=" << day;
+#endif
   // try first conversion of type "premier" -> 1
   // then try conversion of type "10th" -> 10
   if( day == NormalizeDateTimeResources::no_day ) {
     day =  m_resources->getValueFromWordCardinalOrOrdinal(numdayString);
+#ifdef DEBUG_LP
     LDEBUG << "NormalizeDate::getDayFromString: testConversion 2 of " << numdayString << "1 day=" << day;
+#endif
   }
   // then try conversion of type "10" -> 10
   if( day == NormalizeDateTimeResources::no_day ) {
     bool ok;
     day = numdayString.toUShort(&ok);
+#ifdef DEBUG_LP
     LDEBUG << "NormalizeDate::getDayFromString: testConversion 3 of " << numdayString << "1 day=" << day;
+#endif
     if( !ok )
       day = NormalizeDateTimeResources::no_day;
   }
@@ -770,6 +778,10 @@ m_referenceData()
 QTime NormalizeTime::
 getTimeDuration(const RecognizerMatch& m) const
 {
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "NormalizeTime::getTimeDuration...";
+#endif
   QTime timeDuration;
   
   unsigned short hou(0),min(0),sec(0);
@@ -797,6 +809,10 @@ getTimeDuration(const RecognizerMatch& m) const
       sec = (*m.features().find("second")).getValueLimaString().toUShort();
     }
   }
+
+#ifdef DEBUG_LP
+  LDEBUG << "NormalizeTime::getTimeDuration h=" << hou << ",m=" << min << ",s" << sec;
+#endif
 
   if (m.features().find("time") != m.features().end()) {
     std::string timeString=(*m.features().find("time")).getValueLimaString().toUtf8().constData();
@@ -893,6 +909,7 @@ operator()(RecognizerMatch& m,
       if (!utc.isValid()) {
         SELOGINIT;
         LWARN << "failed to normalize time: ";
+        LDEBUG << "NormalizeLocalTime::operator(): m.getString()=" << m.getString();
         m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
       }
       else {
@@ -923,11 +940,18 @@ operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const 
 {
   // do not use a reference location, time is supposed to be UTC already
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "NormalizeUTCTime::operator()...";
+#endif
 
   // get reference date
   QDate referenceDate;
   if (! getReferenceData().getReferenceDate(analysis,referenceDate)) {
     m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
+#ifdef DEBUG_LP
+    LDEBUG << "NormalizeUTCTime::operator: setFeature(TIMESTRING_FEATURE_NAME=" << m.getString();
+#endif
     return true;
   }
   

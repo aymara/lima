@@ -176,7 +176,7 @@ void BoWXMLWriter::writeBoWText(
                                 const BoWText* text,
                                 const bool useIterator,
                                 const bool useIndexIterator) {
-  //m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
+  m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
 
   m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
   m_d->m_spaces="";
@@ -361,7 +361,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
        << "\" position=\"" << element.getPosition()
        << "\" length=\"" << element.getLength() << "\"";
     if (element.isNamedEntity()) {
-      m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
+      m_outputStream << " neType=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType())) << "\"";
       m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
     }
     else {
@@ -373,7 +373,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
   
   // compound
   if (element.isNamedEntity()) {
-    m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
+    m_outputStream << " neType=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType())) << "\"";
     m_outputStream << " type=\"" << BoWType::BOW_NAMEDENTITY << "\"";
   }
   else {

@@ -90,11 +90,6 @@ int run(int argc,char** argv)
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-  
   std::string strConfigPath;
   std::string strResourcesPath;
   std::string lpConfigFile=std::string("lima-lp-tva.xml");
@@ -153,6 +148,11 @@ int run(int argc,char** argv)
     configPath = QString::fromUtf8(strConfigPath.c_str());
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
     
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
@@ -268,7 +268,7 @@ int run(int argc,char** argv)
   delete bowTextWriter;
   delete simpleStreamHandler;
   delete bowTextHandler;
-  return 0;
+  return exitCode(tch);
 }
 
 

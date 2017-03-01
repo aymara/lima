@@ -31,7 +31,7 @@ enable_testing()
 
 include(Languages.cmake)
 include(cmake/LinguisticData.cmake)
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 # for add_component macro (require 2.8.5)
 include(CPackComponent)
 

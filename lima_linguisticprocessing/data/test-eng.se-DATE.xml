@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--==================== tests DATE ====================-->
 <testcases>
   <testcase id="eng.se.DATE.1" type="bloquant">
     <call-parameters>
@@ -366,20 +367,6 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.5" type="bloquant">
-    <call-parameters>
-      <param key="text" value="The results also show that there was a deterioration after 6 months."/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.timex.5.1" trace=".se.xml"
-          comment="6 months are a numex and not a timex. this is a measure of an amount of time."
-          left="XPATH#//specific_entities/specific_entity[position=60][length=8]/type"
-          operator="="
-          right="Numex.NUMEX"/>
-  </testcase-->
   <!--testcase id="eng.se.timex.6" type="bloquant">
     <call-parameters>
       <param key="text" value="The 75th annual Academy Awards ceremony is scheduled for March 23, 2003."/>
@@ -488,7 +475,77 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
+  <!--==================== tests TIME ====================-->
+  <!-- règle 08:43:08 -->
+    <testcase id="eng.se.TIME.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="a significant explosion had happened just after 09:01:12 (14:00 GMT)"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.TIME.1.1" trace=".se.xml"
+          comment="first "
+          left="XPATH#//entities/entity[pos=49][len=8]/type"
+          operator="="
+          right="DateTime.TIME"/>
+    <!--test id="eng.se.TIME.1.2" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=49]/components/hour"
+          operator="="
+          right="09"/-->
+    <test id="eng.se.TIME.1.2" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=49]/components/hour"
+          operator="="
+          right="9"/>
+    <test id="eng.se.TIME.1.3" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=49]/components/minute"
+          operator="="
+          right="1"/>
+    <test id="eng.se.TIME.1.4" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=49]/components/second"
+          operator="="
+          right="12"/>
+  </testcase>
+  <!-- règle <NUMBER>::o'clock:TIME -->
+    <testcase id="eng.se.TIME.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="I seat myself by the stand at 7 o'clock this evening"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.TIME.2.1" trace=".se.xml"
+          comment="first "
+          left="XPATH#//entities/entity[pos=31][len=9]/type"
+          operator="="
+          right="DateTime.TIME"/>
+    <test id="eng.se.TIME.2.2" trace=".se.xml"
+          comment="hour"
+          left="XPATH#//entities/entity[pos=31]/components/hour"
+          operator="="
+          right="7"/>
+  </testcase>
   <!--==================== tests NUMEX ====================-->
+  <!--testcase id="eng.se.timex.5" type="bloquant">
+    <call-parameters>
+      <param key="text" value="The results also show that there was a deterioration after 6 months."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.timex.5.1" trace=".se.xml"
+          comment="6 months are a numex and not a timex. this is a measure of an amount of time."
+          left="XPATH#//specific_entities/specific_entity[position=60][length=8]/type"
+          operator="="
+          right="Numex.NUMEX"/>
+  </testcase-->
   <!--testcase id="eng.se.numex.1" type="bloquant">
     <call-parameters>
       <param key="text" value="he won 8000 dollars"/>

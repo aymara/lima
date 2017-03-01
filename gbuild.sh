@@ -47,6 +47,7 @@ version="val"
 resources="build"
 parallel="true"
 CMAKE_GENERATOR="Unix"
+WITH_ASAN="OFF"
 
 while getopts ":m:p:r:v:G:" o; do
     case "${o}" in
@@ -98,9 +99,9 @@ build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
 if [[ $version = "rev" ]]; then
-release="$current_timestamp-$current_revision"
+  release="$current_timestamp-$current_revision"
 else
-release="0"
+  release="0"
 fi
 
 if [[ $parallel = "true" ]]; then
@@ -118,9 +119,11 @@ fi
 
 # export VERBOSE=1
 if [[ $mode == "release" ]]; then
-cmake_mode="Release"
+  cmake_mode="Release"
+  WITH_ASAN="OFF"
 else
-cmake_mode="Debug"
+  cmake_mode="Debug"
+  WITH_ASAN="ON"
 fi
 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
@@ -141,7 +144,7 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
   pwd &&
-  cmake --build . --config Release
+  cmake --build . --config $cmake_mode
   """
   make_test=""
   make_install=""""
@@ -163,8 +166,9 @@ else
   pushd $build_prefix/$mode/$current_project
 fi
 
+
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DWITH_ASAN=$WITH_ASAN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 echo "Running command:"
 echo "$make_cmd"
@@ -177,6 +181,17 @@ if [ "x$current_project_name" != "xproject(Lima)" ];
 then
   eval $make_test && eval $make_install
   result=$?
+fi
+
+if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
+then
+  install -d $LIMA_DIST/share/apps/lima/packages
+  if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
+    install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
+  fi
+  if compgen -G "*/src/*-build/*.deb" > /dev/null; then
+    install */src/*-build/*.deb $LIMA_DIST/share/apps/lima/packages
+  fi
 fi
 
 popd

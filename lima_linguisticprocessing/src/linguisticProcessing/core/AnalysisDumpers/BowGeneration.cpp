@@ -592,20 +592,20 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   bool createdSpecificEntity(false);
   
   // note: anaVertices size should be 0 or 1
-  for ( AnnotationGraphVertex anaVertex : anaVertices)
+  for (auto anaVertex = anaVertices.begin(); anaVertex != anaVertices.end(); ++anaVertex)
   {
 #ifdef DEBUG_LP
-   LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << anaVertex;
+   LDEBUG << "BowGenerator::createAbstractBoWElement Looking at analysis graph vertex " << *anaVertex;
 #endif
-    std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
-    for (AnnotationGraphVertex matchVertex: matches)
+    std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",*anaVertex,"annot");
+    for (auto matchVertex = matches.begin(); matchVertex != matches.end(); ++matchVertex)
     {
 #ifdef DEBUG_LP
-      LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << matchVertex;
+      LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << *matchVertex;
 #endif
-      if (annotationData->hasAnnotation(matchVertex, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+      if (annotationData->hasAnnotation(*matchVertex, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
-        boost::shared_ptr< BoWToken  > se = createSpecificEntity(v,matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
+        boost::shared_ptr< BoWToken  > se = createSpecificEntity(v,*matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
         if (se != 0)
         {
 #ifdef DEBUG_LP
@@ -630,8 +630,9 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 #ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement there are " << matches.size() << " annotation graph vertices matching the current PsGraph vertex " << v;
 #endif
-  for (AnnotationGraphVertex vx: matches)
+  for (auto it = matches.begin(); it != matches.end(); ++it)
   {
+    AnnotationGraphVertex vx = *it;
 #ifdef DEBUG_LP
     LDEBUG << "BowGenerator::createAbstractBoWElement Looking at annotation graph vertex " << vx;
 #endif
@@ -674,9 +675,9 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       bool toKeep = true;
       if (data!=0)
       {
-        for (const auto& elem: *data)
+        for (auto elem = data->begin(); elem != data->end(); ++elem)
         {
-          if (!keepAnyway && !shouldBeKept(elem))
+          if (!keepAnyway && !shouldBeKept(*elem))
           {
             toKeep = false;
             break;
@@ -685,14 +686,15 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       }
       if (toKeep)
       {
-        for (boost::shared_ptr< BoWPredicate >& bP: createPredicate(v, vx, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway))
+		auto pred = createPredicate(v, vx, annotationData, anagraph, posgraph, offsetBegin, visited, keepAnyway);
+        for (auto bP = pred.begin(); bP != pred.end(); ++bP)
         {
-          if (bP!=0)
+          if (*bP!=0)
           {
   #ifdef DEBUG_LP
             LDEBUG << "BowGenerator::createAbstractBoWElement created a predicate" ;
   #endif
-            abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),bP));
+            abstractBowEl.push_back(std::make_pair(boost::shared_ptr< BoWRelation >(),*bP));
       //         visited.insert(v);
   //           return abstractBowEl;
           }

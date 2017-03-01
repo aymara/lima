@@ -409,7 +409,10 @@ std::ostream& operator<<(ostream& os, const Node& node)
 
 QDebug& operator<<(QDebug& os, const Node& node)
 {
-  os<<"Node(structId:"<<node.get_StructId()<<", nodeId:"<<node.get_NodeId()<<", contentId:"<<node.get_ContentId()<<", indexId:"<<node.indexId()<<", descrId:"<<node.descrId()<<", docName:"<<node.get_DocName() << ")";
+  os << "Node(structId:" << node.get_StructId() << ", nodeId:" << node.get_NodeId() 
+     << ", contentId:" << node.get_ContentId() << ", indexId:" << node.indexId() << ", descrId:" 
+     << node.descrId() << ", docName:" << node.get_DocName() << ", nodeStart:" << node.nodeStart() 
+     << ", nodeEnd:" << node.nodeEnd() << ", nodeLength:" << node.nodeLength() << ")";
   return os;
 }
 

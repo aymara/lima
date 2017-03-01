@@ -24,7 +24,7 @@
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICTFSAACCESSRESOURCE_H
 
 #include "AnalysisDictExport.h"
-#include "AbstractAccessResource.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 
 #include <QReadWriteLock>
 

@@ -24,7 +24,7 @@
 #define LIMA_LINGUISTICPROCESSING_POSTAGGERDISAMBIGUATEDGRAPHXMLLOGGER_H
 
 #include "PosTaggerExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
 
 namespace Lima

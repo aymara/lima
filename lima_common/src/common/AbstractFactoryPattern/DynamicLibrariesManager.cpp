@@ -17,12 +17,9 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
  * @file       DynamicLibrariesManager.cpp
- * @author      (romaric.besancon@cea.fr)
+ * @author     Romaric Besancon <romaric.besancon@cea.fr>
  * @date       Wed Feb  6 2008
- * copyright   Copyright (C) 2008-2012 by CEA LIST
- * 
  ***********************************************************************/
 
 #include "DynamicLibrariesManager.h"
@@ -44,7 +41,8 @@ friend class DynamicLibrariesManager;
   DynamicLibrariesManagerPrivate();
 
   std::map<std::string, std::shared_ptr< QLibrary > > m_handles;
-  // at load time, will try to load the libraries from these paths before the default ones
+  // at load time, will try to load the libraries 
+  // from these paths before the default ones
   std::vector<std::string> m_supplementarySearchPath;
 };
 
@@ -55,7 +53,8 @@ DynamicLibrariesManagerPrivate::DynamicLibrariesManagerPrivate() :
 }
 
   
-DynamicLibrariesManager::DynamicLibrariesManager() : m_d(new DynamicLibrariesManagerPrivate())
+DynamicLibrariesManager::DynamicLibrariesManager() : 
+    m_d(new DynamicLibrariesManagerPrivate())
 {
 }
 
@@ -77,36 +76,41 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   LDEBUG <<"DynamicLibrariesManager::loadLibrary() -- "<<"libName="<<libName ;
 #endif
   auto it=m_d->m_handles.find(libName);
-  if (it!=m_d->m_handles.end()) {
+  if (it != m_d->m_handles.end()) 
+  {
 #ifdef DEBUG_CD
-    LDEBUG << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library" << libName.c_str();
+    LDEBUG << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library" 
+            << libName.c_str();
     return false;
 #endif
   }
 
   std::shared_ptr< QLibrary > libhandle;
   // try supplementary search path
-  for (auto it = m_d->m_supplementarySearchPath.begin(); it != m_d->m_supplementarySearchPath.end(); it++)
+  for (auto it = m_d->m_supplementarySearchPath.begin(); 
+       it != m_d->m_supplementarySearchPath.end(); it++)
   {
 #ifdef DEBUG_FACTORIES
     LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
 #endif
-    libhandle = std::shared_ptr< QLibrary >(new QLibrary( ((*it)+"/"+libName).c_str() ));
-    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
+    libhandle = std::shared_ptr<QLibrary>(new QLibrary( ((*it)+"/"+libName).c_str() ));
+    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
+                          | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
 #ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded from supplementary search path";
-    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
+      LDEBUG << "the library " << libName.c_str() 
+              << " was loaded from supplementary search path";
+      LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
 #endif
       return true;
     }
     else
     {
-//      if ( QLibrary::isLibrary(((*it)+"/"+libName).c_str()) )
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "<<"Failed to open lib " << libhandle->errorString().toUtf8().data();
+      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "
+              <<"Failed to open lib " << libhandle->errorString();
     }
   }
   // now try system default search path
@@ -116,24 +120,27 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     LINFO << "Trying " << libName.c_str();
 #endif
     libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
-    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
+    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
+                          | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
 #ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded from system default search path";
-    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
+      LDEBUG << "the library " << libName.c_str() 
+              << " was loaded from system default search path";
+      LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
 #endif
       return true;
     }
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LINFO <<"DynamicLibrariesManager::loadLibrary() -- "<< "Failed to open lib " << libhandle->errorString().toUtf8().data();
+      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "<< "Failed to open lib " << libhandle->errorString();
       return false;
     }
   }
-  else {
+  else 
+  {
     m_d->m_handles[libName]=libhandle;
 #ifdef DEBUG_CD
     LDEBUG << "the library " << libName.c_str() << " was loaded";
@@ -142,36 +149,40 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   }
 }
 
-void DynamicLibrariesManager::
-addSearchPath(const std::string& searchPath)
+void DynamicLibrariesManager::addSearchPath(const std::string& searchPath)
 {
-  if(std::find(m_d->m_supplementarySearchPath.begin(), m_d->m_supplementarySearchPath.end(), searchPath)!=m_d->m_supplementarySearchPath.end()){
+  if( std::find(
+                m_d->m_supplementarySearchPath.begin(), 
+                m_d->m_supplementarySearchPath.end(), searchPath) 
+      != m_d->m_supplementarySearchPath.end())
+  {
     return;
   }
 #ifdef DEBUG_CD
-    ABSTRACTFACTORYPATTERNLOGINIT;
-    LINFO << "adding search path '"<<searchPath.c_str()<<"'";
-    std::cout<< "adding search path '"<<searchPath.c_str()<<"'" << std::endl;
+  ABSTRACTFACTORYPATTERNLOGINIT;
+  LINFO << "adding search path '"<<searchPath.c_str()<<"'";
+  std::cout<< "adding search path '"<<searchPath.c_str()<<"'" << std::endl;
 #endif
-    m_d->m_supplementarySearchPath.push_back(searchPath);
-  
+  m_d->m_supplementarySearchPath.push_back(searchPath);
 }
 
-void DynamicLibrariesManager::
-addSearchPathes(QString searchPathes)
+void DynamicLibrariesManager::addSearchPathes(QString searchPathes)
 {
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
 #endif
-  QStringList list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"), QString::SkipEmptyParts);
-  for(QStringList::iterator it = list.begin();
-        it!=list.end();++it) {
-      QString searchPath = *it;
+  QStringList list = searchPathes.replace("\\","/")
+                                    .split(QRegularExpression("[;]"), 
+                                          QString::SkipEmptyParts);
+  for(auto it = list.begin(); it!=list.end();++it) 
+  {
+    QString searchPath = *it;
 #ifdef DEBUG_CD
-      LINFO << "DynamicLibrariesManager::addSearchPathes() -- " <<"adding:"<<searchPath.toUtf8().data();
+    LINFO << "DynamicLibrariesManager::addSearchPathes() -- " 
+          << "adding:" << searchPath.toUtf8().data();
 #endif
-      this->addSearchPath(searchPath.toUtf8().data());
-    }
+    this->addSearchPath(searchPath.toUtf8().data());
+  }
 }
 
 

@@ -198,6 +198,11 @@ public:
   void reinit();
 
   /** 
+   * set a property hashcode to each transition which represent the constraint(s?) of type action attached to it
+   * 
+   */
+   void setActionHash(const std::vector<std::pair<LimaString,Constraint> >& actionsWithOneArgument);
+  /** 
    * @{ types defined to store the result (or results of the application
    * of the automaton on a graph
    */

@@ -128,7 +128,7 @@ std::string LemmaTransition::printValue() const {
 /*  const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(0);
   LimaString s = sp[(StringsPoolIndex)m_lemma];
   oss << s << "|$" << m_pos;*/
-  oss << m_lemma << "|$" << m_pos;
+  oss << "lemmaT'" << m_lemma << "'$" << m_pos;
   return oss.str();
 }
 

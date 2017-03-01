@@ -94,5 +94,3 @@ SimpleFactory<MediaData,MediaData> mediaDataFactory ( MEDIADATA_CLASSID );
 } // MediaticData
 } // Common
 } // Lima
-
-// MediaData::Factory::getFactory("MediaData")::create(unitConfiguration,manager);

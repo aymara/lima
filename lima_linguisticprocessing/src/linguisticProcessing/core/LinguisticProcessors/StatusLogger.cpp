@@ -27,7 +27,7 @@
  ***************************************************************************/
 #include "StatusLogger.h"
 #include "LinguisticMetaData.h"
-#include "LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 
 #include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
@@ -118,7 +118,7 @@ LimaStatusCode StatusLogger::process(
 
   ifstream statusIn(m_statusFile.c_str(),ios::in | std::ifstream::binary);
   string line;
-  while (!statusIn.eof())
+  while (statusIn.good())
   {
     line = Lima::Common::Misc::readLine(statusIn);
     size_t index=line.find(":");

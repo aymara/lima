@@ -226,9 +226,9 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
       {
         LinguisticGraphVertex posGraphPredicateVertex=cHandler.m_verbalClasses[vClassIndex].first;
         QStringList verbalClasses = cHandler.m_verbalClasses[vClassIndex].second.split("|");
-        for (QString& verbalClass: verbalClasses)
+        for (auto verbalClass = verbalClasses.begin(); verbalClass != verbalClasses.end(); ++verbalClass)
         {
-          verbalClass = m_d->m_model + "." + verbalClass;
+          *verbalClass = m_d->m_model + "." + *verbalClass;
         }
         LimaString verbalClass= verbalClasses.join("|");
         
@@ -245,10 +245,10 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
         for (semRoleIt=cHandler.m_semanticRoles[vClassIndex].begin();         semRoleIt!=cHandler.m_semanticRoles[vClassIndex].end();semRoleIt++){
           LinguisticGraphVertex posGraphRoleVertex=(*semRoleIt).first;
           QStringList semanticRoles = (*semRoleIt).second.split("|");
-          for (QString& semanticRole: semanticRoles)
+          for (auto semanticRole = semanticRoles.begin(); semanticRole != semanticRoles.end(); ++semanticRole)
           {
-            if (!semanticRole.isEmpty())
-              semanticRole = m_d->m_model + "." + semanticRole;
+            if (!semanticRole->isEmpty())
+              *semanticRole = m_d->m_model + "." + *semanticRole;
           }
           LimaString semanticRole= semanticRoles.join("|");
 
@@ -305,10 +305,10 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
     m_semanticRoles.clear();
     m_semanticRoles.resize(m_verbalClassNb);
     //repeated on each token of the sentence, that is on each line
-    for (const auto & token: sentenceTokens)
+    for (auto it = sentenceTokens.begin(); it != sentenceTokens.end(); ++it)
     {
       int  roleNumbers=0;
-      QStringList descriptors=cHandler.splitSegment(token,m_descriptorSeparator);
+      QStringList descriptors=cHandler.splitSegment(*it,m_descriptorSeparator);
       if (descriptors.size()>=NBCOLSINSRLBEFOREFRAME+m_verbalClassNb)
       {
         int conllTokenId=descriptors[0].toInt();
@@ -333,7 +333,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
             classIndex++;
         }
 
-        for (auto roleTargetFieldIndex : boost::irange(0,m_verbalClassNb))
+        for (int roleTargetFieldIndex = 0; roleTargetFieldIndex<m_verbalClassNb; ++roleTargetFieldIndex)
         {
 #ifdef DEBUG_LP
           LDEBUG << "ConllHandler::extractSemanticInformation"<<"nb descriptors and roleTargetFieldIndex" << descriptors.size() << roleTargetFieldIndex ;

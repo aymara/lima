@@ -78,6 +78,7 @@ void writeCodedInt(std::ostream& file, const uint64_t number)
 uint8_t readOneByteInt(std::istream& file) {
   uint8_t c;
   file.read((char*)&c, 1);
+  file.peek(); // Try to read next byte to force update end-of-file flag on windows
   return c;
 }
 

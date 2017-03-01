@@ -54,6 +54,7 @@ public:
   
   bool startDocument();
   
+  inline bool hasFatalError() const { return m_hasFatalError; }
   
   
   struct TestReport {
@@ -87,8 +88,13 @@ private:
   bool m_inMap;
   std::string m_listKey;
   std::string m_mapKey;
+  
+  bool m_hasFatalError;
 };
 
+// This utility function return a user-defined exit code (64) if a "bloquant"
+// test failed.
+LIMA_TGV_EXPORT int exitCode(TestCasesHandler const & tch);
 
 } // TGV
 } // Common

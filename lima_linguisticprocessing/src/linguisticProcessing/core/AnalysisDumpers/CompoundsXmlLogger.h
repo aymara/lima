@@ -24,7 +24,7 @@
 #define COMPOUNDSXMLLOGGERSPECIFICENTITIESXMLLOGGER_H
 
 #include "AnalysisDumpersExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"

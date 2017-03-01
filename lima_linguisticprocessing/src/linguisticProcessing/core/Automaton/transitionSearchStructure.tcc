@@ -432,7 +432,7 @@ uint64_t TransitionSearchStructure<TargetType>::
       otherTransition=m_otherTransitions.begin(),
       otherTransition_end=m_otherTransitions.end();
     std::deque<LinguisticGraphVertex> noVertices;
-    std::pair<std::deque<LinguisticGraphVertex>,const Transition*>  newPair(noVertices,0);
+    std::pair<std::deque<LinguisticGraphVertex>,const Transition*>  newPair(noVertices,nullptr);
     for (; otherTransition!=otherTransition_end; otherTransition++) {
       bool match=(*otherTransition).first->compare(graph,vertex,analysis,token,data);
       const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*otherTransition).second);

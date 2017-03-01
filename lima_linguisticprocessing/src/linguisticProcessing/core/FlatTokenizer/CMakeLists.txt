@@ -40,21 +40,11 @@ SET(lima-lp-flattokenizer_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-flattokenizer)
 
 target_link_libraries(lima-lp-flattokenizer 
-    lima-common-factory 
-    lima-common-fsaaccess 
-    lima-common-data 
-    lima-common-mediaprocessors 
-    lima-common-mediaticdata 
-    lima-common-misc 
-    lima-common-processunitframework 
-    lima-common-qslog
-    lima-common-time 
-    lima-common-tools 
-    lima-common-xmlconfigurationfiles 
-    lima-lp-linguisticprocessors 
+    lima-lp-linguisticdata
     lima-lp-linguisticresources 
     lima-lp-annotationgraph 
     lima-lp-linguisticanalysisstructure 
+    lima-common
     ${Boost_LIBRARIES} 
     ${QT_LIBRARIES} 
 )

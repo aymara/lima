@@ -27,14 +27,25 @@ SET(lima-lp-linguisticanalysisstructure_LIB_SRCS
    TStatus.cpp
    MorphoSyntacticData.cpp 
    AnalysisGraph.cpp 
-   FullTokenXmlLogger.cpp 
    MorphoSyntacticDataUtils.cpp 
    AgglutinatedToken.cpp 
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticanalysisstructure)
 
-target_link_libraries(lima-lp-linguisticanalysisstructure lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph
+target_link_libraries(lima-lp-linguisticanalysisstructure 
+  lima-lp-annotationgraph
+  lima-common-mediaprocessors 
+  lima-common-mediaticdata 
+  lima-common-processunitframework
+  lima-common-fsaaccess 
+  lima-common-factory 
+  lima-common-xmlconfigurationfiles 
+  lima-common-misc
+  lima-common-time 
+  lima-common-datahandler
+  lima-common-data 
+  lima-common-tools
 )
 
 set_target_properties(lima-lp-linguisticanalysisstructure PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -50,7 +61,6 @@ install(FILES
   MorphoSyntacticData.h 
   LinguisticGraph.h 
   AnalysisGraph.h 
-  FullTokenXmlLogger.h 
   MorphoSyntacticDataUtils.h 
   ChainIdStruct.h 
   AgglutinatedToken.h

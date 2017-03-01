@@ -73,19 +73,20 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
 {
 //   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
-  for (const QString& project: projects)
+  for (auto it = projects.begin(); it != projects.end(); ++it)
   {
+    QString project = *it;
     QStringList confDirs;
     QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
     if (!projectConf.isEmpty()) 
       confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
-    for (const QString &configDir: confDirs )
+    for (auto configDir = confDirs.begin(); configDir != confDirs.end(); ++configDir)
     {
-      if (!configDir.isEmpty() && QDir(configDir).exists())
+      if (!configDir->isEmpty() && QDir(*configDir).exists())
       {
-        if (!configDirs.contains(configDir))
+        if (!configDirs.contains(*configDir))
         {
-          configDirs << configDir;
+          configDirs << *configDir;
         }
       }
     }
@@ -136,10 +137,10 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       }
     }
   }
-  for (const QString& path: paths)
+  for (auto path = paths.begin(); path != paths.end(); ++path)
   {
-    if (!path.isEmpty() && QDir(path).exists())
-      configDirs << path;
+    if (!path->isEmpty() && QDir(*path).exists())
+      configDirs << *path;
   }
 
 //   qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
@@ -150,17 +151,18 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
 {
 //   qDebug() << "buildResourcesDirectoriesList" << projects << paths;
   QStringList resourcesDirs;
-  for (const QString& project: projects)
+  for (auto it = projects.begin(); it != projects.end(); ++it)
   {
+    QString project = *it;
     QStringList resDirs;
     QString projectRes = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData());
     if (!projectRes.isEmpty()) 
       resDirs << projectRes.split(LIMA_PATH_SEPARATOR);
-    for (const QString &resourcesDir: resDirs )
+    for (auto resourcesDir = resDirs.begin(); resourcesDir != resDirs.end(); ++resourcesDir)
     {
-      if (QDir(resourcesDir).exists())
+      if (QDir(*resourcesDir).exists())
       {
-        resourcesDirs << resourcesDir;
+        resourcesDirs << *resourcesDir;
       }
     }
     if (resDirs.isEmpty())
@@ -204,10 +206,10 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
     }
 
   }
-  for (const QString& path: paths)
+  for (auto path = paths.begin(); path != paths.end(); ++path)
   {
-    if (QDir(path).exists())
-      resourcesDirs << path;
+    if (!path->isEmpty() && QDir(*path).exists())
+      resourcesDirs << *path;
   }
   
 //   qDebug() << "buildResourcesDirectoriesList result:" << resourcesDirs;
@@ -221,6 +223,10 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   {
     if (QFileInfo(path+ "/" + fileName).exists())
     {
+#ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+      LOGINIT("FilesReporting");
+      LDEBUG << "File found:" << path+ "/" + fileName;
+#endif
       return path+ "/" + fileName;
     }
   }

@@ -74,7 +74,7 @@ set entityTypes=SyntacticRelations
 #pour peut servir pour complement du nom ou pour complément circonstanciel...
 
 
-@PrepComp=($PREP-P,$PREP-P+D,$DET-DETDU)
+@PrepComp=($PREP-P,$PREP-P+D,$DET-DETDU,$DET-DETDES)
 
 @PrepGVInf=($PREP-P)
 

@@ -88,7 +88,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
 }
 
 std::string StarTransition::printValue() const { 
-  return "*"; 
+  return "starT"; 
 }
 
 } // namespace end
