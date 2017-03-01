@@ -84,7 +84,11 @@ export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$PATH
 export LD_LIBRARY_PATH=$LIMA_EXTERNALS/lib:$LIMA_DIST/lib
 
 Finally, from the LIMA repository root, run:
- $ ./gbuild.sh
+```bash
+$ ./gbuild.sh -m release
+```
+
+This builds LIMA in release mode, assuring the best performance. To report bugs for example, you should build LIMA in debug mode. To do so, just omit the `-m release` option when invoking `gbuild.sh`. 
 
 ## Build troubleshoutings
 
@@ -93,3 +97,5 @@ AND cmake fails on lima_linguisticprocessings indicating it found your boost
 version headers but it uses the system libraries, add the following definition 
 at the beginning of the root CMakeLists.txt of each subproject : 
 set(Boost_NO_SYSTEM_PATHS ON)
+* If some packages are not found at configure time (when running cmake), double check the dependencies packages you have installed. If it's OK, maybe we missed to indicate a dependency. Then, don't hesitate to open an issue. Or submit a merge request that solves the problem.
+
