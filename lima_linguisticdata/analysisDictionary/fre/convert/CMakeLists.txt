@@ -36,7 +36,6 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${dicoFiles}
     COMMENT "produce XML dico"
@@ -58,7 +57,6 @@ else()
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt 
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${dicoFiles}
     COMMENT "produce XML dico"
