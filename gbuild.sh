@@ -49,8 +49,11 @@ parallel="true"
 CMAKE_GENERATOR="Unix"
 WITH_ASAN="OFF"
 
-while getopts ":m:p:r:v:G:" o; do
+while getopts ":m:p:r:v:G:a:" o; do
     case "${o}" in
+        a)
+            WITH_ASAN=${OPTARG}
+            ;;
         m)
             mode=${OPTARG}
             [[ "$mode" == "debug" || "$mode" == "release" ]] || usage
@@ -120,10 +123,8 @@ fi
 # export VERBOSE=1
 if [[ $mode == "release" ]]; then
   cmake_mode="Release"
-  WITH_ASAN="OFF"
 else
   cmake_mode="Debug"
-  WITH_ASAN="ON"
 fi
 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
