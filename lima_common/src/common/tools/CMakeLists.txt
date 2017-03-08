@@ -61,4 +61,6 @@ install(FILES
     FileUtils.h
     LimaMainTaskRunner.h
     LimaFileSystemWatcher.h
-  DESTINATION include/common/tools)
+  DESTINATION include/common/tools
+  COMPONENT devel
+)

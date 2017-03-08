@@ -52,21 +52,23 @@ install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 install(FILES
-  FsaAccessResource.h
-  AbstractDictionaryEntry.h 
-  AbstractDictionaryEntryHandler.h 
-  AbstractDictionaryEntry.tcc
-  DictionaryData.h 
-  EnhancedAnalysisDictionary.h 
-  EnhancedAnalysisDictionaryEntry.h
-  EnhancedAnalysisDictionaryIterator.h 
-  MultiLevelAnalysisDictionary.h 
-  MultiLevelAnalysisDictionaryEntry.h
-  MultiLevelAnalysisDictionaryIterators.h
-  AbstractAnalysisDictionary.h 
-  AnalysisDictionaryIterators.h
-  AnalysisDictExport.h
-DESTINATION include/linguisticProcessing/core/AnalysisDict)
+    FsaAccessResource.h
+    AbstractDictionaryEntry.h 
+    AbstractDictionaryEntryHandler.h 
+    AbstractDictionaryEntry.tcc
+    DictionaryData.h 
+    EnhancedAnalysisDictionary.h 
+    EnhancedAnalysisDictionaryEntry.h
+    EnhancedAnalysisDictionaryIterator.h 
+    MultiLevelAnalysisDictionary.h 
+    MultiLevelAnalysisDictionaryEntry.h
+    MultiLevelAnalysisDictionaryIterators.h
+    AbstractAnalysisDictionary.h 
+    AnalysisDictionaryIterators.h
+    AnalysisDictExport.h
+  DESTINATION include/linguisticProcessing/core/AnalysisDict
+  COMPONENT devel
+)
 
 # FIND_PACKAGE(LIMALDATA PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
 # IF(LIMALDATA_FOUND)

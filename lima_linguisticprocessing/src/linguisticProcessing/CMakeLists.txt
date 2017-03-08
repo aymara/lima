@@ -69,4 +69,8 @@ install(TARGETS lima-linguisticprocessing DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
-install(FILES LinguisticProcessingCommon.h DESTINATION include/linguisticProcessing)
+install(FILES 
+    LinguisticProcessingCommon.h 
+  DESTINATION include/linguisticProcessing
+  COMPONENT devel
+)

@@ -69,4 +69,6 @@ install(FILES
     QsDebugOutput.h
     QsLogDest.h
     QsLogCategories.h
-  DESTINATION include/common/QsLog)
+  DESTINATION include/common/QsLog
+  COMPONENT devel
+)

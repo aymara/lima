@@ -62,4 +62,6 @@ install(FILES
     depth_first_searchnowarn.hpp
     NodeRefListnowarn.hpp
     linenoise.h
-  DESTINATION include/common/misc)
+  DESTINATION include/common/misc
+  COMPONENT devel
+)

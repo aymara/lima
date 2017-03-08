@@ -41,7 +41,9 @@ install(FILES
     AnnotationData.h
     AnnotationGraph.h
     AnnotationGraphWriter.h
-  DESTINATION include/linguisticProcessing/common/annotationGraph/)
+  DESTINATION include/linguisticProcessing/common/annotationGraph/
+  COMPONENT devel
+)
 
 
 

@@ -44,4 +44,6 @@ install(FILES
     AnalysisContent.h
     ProcessUnitPipeline.h
     ProcessUnitPipeline.tcc
-  DESTINATION include/common/ProcessUnitFramework)
+  DESTINATION include/common/ProcessUnitFramework
+  COMPONENT devel
+)

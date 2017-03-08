@@ -44,4 +44,6 @@ install(FILES
     structureHandler.h
     contentHandler.h
     contentHandler.tcc
-  DESTINATION include/common/Handler)
+  DESTINATION include/common/Handler
+  COMPONENT devel
+)

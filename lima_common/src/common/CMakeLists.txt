@@ -57,4 +57,5 @@ install(FILES
     LimaCommon.h
     ${CMAKE_CURRENT_BINARY_DIR}/LimaVersion.h
   DESTINATION include/common
+  COMPONENT devel
 )

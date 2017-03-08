@@ -60,7 +60,9 @@ install(TARGETS lima-lp-linguisticprocessing-core DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 install(FILES
-  CoreLinguisticProcessingClient.h
-  CoreLinguisticProcessingClientExport.h
-  DESTINATION include/linguisticProcessing/core)
+    CoreLinguisticProcessingClient.h
+    CoreLinguisticProcessingClientExport.h
+  DESTINATION include/linguisticProcessing/core
+  COMPONENT devel
+)
 

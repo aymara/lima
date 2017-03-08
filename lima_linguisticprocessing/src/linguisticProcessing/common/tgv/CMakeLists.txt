@@ -53,8 +53,10 @@ install(TARGETS lima-lp-tgv DESTINATION ${LIB_INSTALL_DIR})
 ########### install files ###############
 
 install(FILES
-  TestCase.h
-  TestCaseProcessor.hpp
-  TestCaseError.hpp
-  TestCasesHandler.h
-  DESTINATION include/linguisticProcessing/common/tgv)
+    TestCase.h
+    TestCaseProcessor.hpp
+    TestCaseError.hpp
+    TestCasesHandler.h
+  DESTINATION include/linguisticProcessing/common/tgv
+  COMPONENT devel
+)

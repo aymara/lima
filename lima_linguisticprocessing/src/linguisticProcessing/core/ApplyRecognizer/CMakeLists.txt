@@ -39,7 +39,9 @@ install(TARGETS lima-lp-applyrecognizer DESTINATION ${LIB_INSTALL_DIR})
 ########### install files ###############
 
 install(FILES
-  applyRecognizer.h
-  applyRecognizerActions.h
-  recognizerResultLogger.h
-DESTINATION include/linguisticProcessing/core/ApplyRecognizer)
+    applyRecognizer.h
+    applyRecognizerActions.h
+    recognizerResultLogger.h
+  DESTINATION include/linguisticProcessing/core/ApplyRecognizer
+  COMPONENT devel
+)

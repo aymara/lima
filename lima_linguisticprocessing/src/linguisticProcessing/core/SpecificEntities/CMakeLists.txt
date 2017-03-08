@@ -86,15 +86,17 @@ install(TARGETS lima-lp-se-person DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 install(FILES  
-  NormalizeDateTimeResources.h    
-  NormalizationUtils.h 
-  NormalizeNumber.h    
-  SpecificEntitiesXmlLogger.h 
-  NormalizeDateTime.h   
-  SpecificEntitiesConstraints.h 
-  SpecificEntitiesRecognizer.h 
-  NormalizePersonName.h 
-  NormalizePerson.h 
-  SpecificEntitiesLoader.h
-  SpecificEntitiesExport.h
-  DESTINATION include/linguisticProcessing/core/SpecificEntities)
+    NormalizeDateTimeResources.h    
+    NormalizationUtils.h 
+    NormalizeNumber.h    
+    SpecificEntitiesXmlLogger.h 
+    NormalizeDateTime.h   
+    SpecificEntitiesConstraints.h 
+    SpecificEntitiesRecognizer.h 
+    NormalizePersonName.h 
+    NormalizePerson.h 
+    SpecificEntitiesLoader.h
+    SpecificEntitiesExport.h
+  DESTINATION include/linguisticProcessing/core/SpecificEntities
+  COMPONENT devel
+)

@@ -47,7 +47,9 @@ install(FILES
     xmlConfigurationFileExceptions.h
     moduleConfigurationStructure.h
     itemWithAttributes.h
-  DESTINATION include/common/XMLConfigurationFiles)
+  DESTINATION include/common/XMLConfigurationFiles
+  COMPONENT devel
+)
 
 
 

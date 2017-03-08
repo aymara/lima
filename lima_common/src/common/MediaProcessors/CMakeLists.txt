@@ -49,4 +49,6 @@ install(FILES
     HandlerStreamBuf.h
     DumperStream.h
 #     AbstractAnalysisDumper.h
-  DESTINATION include/common/MediaProcessors)
+  DESTINATION include/common/MediaProcessors
+  COMPONENT devel
+)

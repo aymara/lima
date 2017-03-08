@@ -61,4 +61,6 @@ install(FILES
     LTRTextHandler.h
     FakeHandler.h
 #     StructuredBoWToBoWDocument.h
-  DESTINATION include/linguisticProcessing/client/AnalysisHandlers)
+  DESTINATION include/linguisticProcessing/client/AnalysisHandlers
+  COMPONENT devel
+)
