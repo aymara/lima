@@ -41,10 +41,10 @@ after_success:
 - tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml
   test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml
   2>&1 | tee tva-fre.log
-- curl -T -ukleag:$BINTRAYKEY /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-2.1.$release.deb
+- curl -ukleag:$BINTRAYKEY -T /home/travis/build/aymara/lima/build/lima_common-prefix/src/lima_common-build/limacommon-2.1.$release.deb
   https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.1.$release.deb
-- curl -T -ukleag:$BINTRAYKEY /home/travis/build/aymara/lima/build/lima_linguisticprocessing-prefix/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.$release.deb https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.1.$release.deb
-- curl -T -ukleag:$BINTRAYKEY /home/travis/build/aymara/lima/build/lima_linguisticdata-prefix/src/lima_linguisticdata-build/limalinguisticdata-2.1.$release.deb
+- curl -ukleag:$BINTRAYKEY -T /home/travis/build/aymara/lima/build/lima_linguisticprocessing-prefix/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.$release.deb https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.1.$release.deb
+- curl  -ukleag:$BINTRAYKEY -T/home/travis/build/aymara/lima/build/lima_linguisticdata-prefix/src/lima_linguisticdata-build/limalinguisticdata-2.1.$release.deb
   https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$release.deb
 - curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER/publish
 - curl -XGET https://bintray.com/kleag/ubuntu-12.04/lima/$TRAVIS_JOB_NUMBER
