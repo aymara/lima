@@ -27,6 +27,7 @@ Synopsis: $0 [OPTIONS]
 Options default values are in parentheses.
 
   -m mode       <(debug)|release> compile mode
+  -n arch       <(generic)|native> target architecture mode
   -p boolean    <(true)|false> will build in parallel (make -jn) if true. 
                 Necessary to be able to build with no parallelism as  it currently fail on 
                 some machines.
@@ -43,16 +44,26 @@ exit 1
 [ -z "$LIMA_DIST" ] && echo "Need to set LIMA_DIST" && exit 1;
 
 mode="debug"
+arch="generic"
 version="val"
 resources="build"
 parallel="true"
 CMAKE_GENERATOR="Unix"
+WITH_ASAN="OFF"
+WITH_ARCH="OFF"
 
-while getopts ":m:p:r:v:G:" o; do
+while getopts ":m:n:p:r:v:G:a:" o; do
     case "${o}" in
+        a)
+            WITH_ASAN=${OPTARG}
+            ;;
         m)
             mode=${OPTARG}
             [[ "$mode" == "debug" || "$mode" == "release" ]] || usage
+            ;;
+        n)
+            arch=${OPTARG}
+            [[ "x$arch" == "xnative" || "x$arch" == "xgeneric" ]] || usage
             ;;
         G)
           CMAKE_GENERATOR=${OPTARG}
@@ -98,9 +109,9 @@ build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
 if [[ $version = "rev" ]]; then
-release="$current_timestamp-$current_revision"
+  release="$current_timestamp-$current_revision"
 else
-release="0"
+  release="0"
 fi
 
 if [[ $parallel = "true" ]]; then
@@ -118,9 +129,15 @@ fi
 
 # export VERBOSE=1
 if [[ $mode == "release" ]]; then
-cmake_mode="Release"
+  cmake_mode="Release"
 else
-cmake_mode="Debug"
+  cmake_mode="Debug"
+fi
+
+if [[ $arch == "native" ]]; then
+  WITH_ARCH="ON"
+else
+  WITH_ARCH="OFF"
 fi
 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
@@ -163,8 +180,9 @@ else
   pushd $build_prefix/$mode/$current_project
 fi
 
+
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 echo "Running command:"
 echo "$make_cmd"
@@ -177,6 +195,17 @@ if [ "x$current_project_name" != "xproject(Lima)" ];
 then
   eval $make_test && eval $make_install
   result=$?
+fi
+
+if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
+then
+  install -d $LIMA_DIST/share/apps/lima/packages
+  if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
+    install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
+  fi
+  if compgen -G "*/src/*-build/*.deb" > /dev/null; then
+    install */src/*-build/*.deb $LIMA_DIST/share/apps/lima/packages
+  fi
 fi
 
 popd

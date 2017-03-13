@@ -48,4 +48,6 @@ install(FILES
     LimaString.h
     readwritetools.h
     strwstrtools.h
-  DESTINATION include/common/Data)
+  DESTINATION include/common/Data
+  COMPONENT devel
+)

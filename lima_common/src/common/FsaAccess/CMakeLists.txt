@@ -62,4 +62,6 @@ install(FILES
     FsaAccessBuilder16.h
     FsaExceptions.h
     AbstractLexiconIdGenerator.h
- DESTINATION include/common/FsaAccess)
+  DESTINATION include/common/FsaAccess
+  COMPONENT devel
+)

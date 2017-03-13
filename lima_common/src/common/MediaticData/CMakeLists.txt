@@ -44,4 +44,6 @@ install(FILES
     EntityType.h
     mediaData.h
     mediaticData.h
-  DESTINATION include/common/MediaticData)
+  DESTINATION include/common/MediaticData
+  COMPONENT devel
+)

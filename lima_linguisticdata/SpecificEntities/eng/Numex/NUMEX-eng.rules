@@ -6,9 +6,8 @@ set defaultAction=>CreateSpecificEntity()
 # currency before number
 $PONCTU-CUR::<NUMBER>:NUMEX:=>NormalizeNumber()
 
-<NUMBER>::(-)? (\%|per cent|percent|(of? (metric)? <UNIT>)):NUMEX:=>NormalizeNumber()
-
-
+# signs +- only before % 
+<NUMBER>:(\+|-)?:(-)? (\%|per cent|percent|(of? (metric)? <UNIT>)):NUMEX:=>NormalizeNumber()
 
 
 # handle one before units

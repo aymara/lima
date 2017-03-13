@@ -53,12 +53,14 @@ install(TARGETS lima-lp-linguisticprocessors DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 install(FILES 
-  AbstractTextualAnalysisDumper.h
-  AnalysisLoader.h
-  ExternalProcessUnit.h 
-  FullTokenXmlLogger.h 
-  LinguisticAnalysisDumper.h 
-  LinguisticMetaData.h 
-  LinguisticProcessorsExport.h
-  StatusLogger.h 
-  DESTINATION include/linguisticProcessing/core/LinguisticProcessors)
+    AbstractTextualAnalysisDumper.h
+    AnalysisLoader.h
+    ExternalProcessUnit.h 
+    FullTokenXmlLogger.h 
+    LinguisticAnalysisDumper.h 
+    LinguisticMetaData.h 
+    LinguisticProcessorsExport.h
+    StatusLogger.h 
+  DESTINATION include/linguisticProcessing/core/LinguisticProcessors
+  COMPONENT devel
+)

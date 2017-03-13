@@ -55,13 +55,15 @@ install(TARGETS lima-lp-linguisticanalysisstructure DESTINATION ${LIB_INSTALL_DI
 
 ########### install files ###############
 install(FILES  
-  LinguisticAnalysisStructureExport.h
-  TStatus.h 
-  Token.h 
-  MorphoSyntacticData.h 
-  LinguisticGraph.h 
-  AnalysisGraph.h 
-  MorphoSyntacticDataUtils.h 
-  ChainIdStruct.h 
-  AgglutinatedToken.h
-  DESTINATION include/linguisticProcessing/core/LinguisticAnalysisStructure)
+    LinguisticAnalysisStructureExport.h
+    TStatus.h 
+    Token.h 
+    MorphoSyntacticData.h 
+    LinguisticGraph.h 
+    AnalysisGraph.h 
+    MorphoSyntacticDataUtils.h 
+    ChainIdStruct.h 
+    AgglutinatedToken.h
+  DESTINATION include/linguisticProcessing/core/LinguisticAnalysisStructure
+  COMPONENT devel
+)

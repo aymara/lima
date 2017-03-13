@@ -9940,7 +9940,7 @@ volonté	NC
 de	P
 voir	VINF
 «	PONCT
-tout le monde	CLS
+tout le monde	CLO
 avoir	VINF
 droit	NC
 à	P

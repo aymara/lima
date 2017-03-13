@@ -96,4 +96,6 @@ install(FILES  SyntacticRelationsLogger.h
     TokenFilter.h    
     XmlSyntagmaticMatrixFileExceptions.h    
     XmlSyntagmaticMatrixFileHandler.h 
-  DESTINATION include/linguisticProcessing/core/SyntacticAnalysis)
+  DESTINATION include/linguisticProcessing/core/SyntacticAnalysis
+  COMPONENT devel
+)

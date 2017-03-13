@@ -75,22 +75,24 @@ install(TARGETS lima-lp-eventanalyzer DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 install(FILES
-EventAnalysisExport.h
-EventAnalyzer.h
-Events.h
-EventDumper.h
-EventParagraph.h
-Paragraph.h
-EventHandler.h
-Event.h
-Entity.h
-EventXmlLogger.h
-EventSegmentation.h
-SimpleEventBuilder.h
-EventTemplateData.h
-EventTemplate.h
-EventTemplateElement.h
-EventTemplateDefinitionResource.h
-EventTemplateStructure.h
-EventData.h
-DESTINATION include/linguisticProcessing/core/EventAnalysis)
+    EventAnalysisExport.h
+    EventAnalyzer.h
+    Events.h
+    EventDumper.h
+    EventParagraph.h
+    Paragraph.h
+    EventHandler.h
+    Event.h
+    Entity.h
+    EventXmlLogger.h
+    EventSegmentation.h
+    SimpleEventBuilder.h
+    EventTemplateData.h
+    EventTemplate.h
+    EventTemplateElement.h
+    EventTemplateDefinitionResource.h
+    EventTemplateStructure.h
+    EventData.h
+  DESTINATION include/linguisticProcessing/core/EventAnalysis
+  COMPONENT devel
+)

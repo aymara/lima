@@ -510,7 +510,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
 //             std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(compound->getCategory());
 
             QVector<LimaString> compounds;
-            naturalCompoundTokenString(&*boost::dynamic_pointer_cast< Common::BagOfWords::BoWTerm >(compound), compounds);
+            naturalCompoundTokenString(boost::dynamic_pointer_cast< Common::BagOfWords::BoWTerm >(compound).get(), compounds);
             Q_FOREACH(const LimaString& compoundString, compounds)
             {
 //               qDebug() << "naturalCompoundTokenString :" << compoundString;

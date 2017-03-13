@@ -79,9 +79,11 @@ install(TARGETS lima-lp-semanticanalysis DESTINATION ${LIB_INSTALL_DIR})
 ########### install files ###############
 
 install(FILES  
-SemanticAnnotation.h 
-SemanticRelationAnnotation.h 
-SemanticRelationData.h 
-SemanticRelationsXmlLogger.h 
-SemanticAnalysisExport.h
-DESTINATION include/linguisticProcessing/core/SemanticAnalysis)
+    SemanticAnnotation.h 
+    SemanticRelationAnnotation.h 
+    SemanticRelationData.h 
+    SemanticRelationsXmlLogger.h 
+    SemanticAnalysisExport.h
+  DESTINATION include/linguisticProcessing/core/SemanticAnalysis
+  COMPONENT devel
+)

@@ -26,13 +26,16 @@ endif()
 # -DCMAKE_INSTALL_PREFIX="c:mose" -DCMAKE_BUILD_TYPE=Release
 # -DCMAKE_INSTALL_PREFIX="c:mose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
+option(WITH_ASAN "Enable address sanitizer" OFF)
+
 # In debug mode, adds the -DDEBUG_CD to the compiler command line.
 # Allows to build with conditionally built debug output
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES" )
 set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
+
 
 message("System name is ${CMAKE_SYSTEM_NAME}")
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -50,14 +53,6 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_SANITIZE_UNDEFINED)
     CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer HAVE_NO_OMIT_FRAME_POINTER)
 
-    # NOTE: check -fsanitize=address flag failed if this flag is not set also
-    # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
-    # CHECK_CXX_COMPILER_FLAG macro).
-    set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-    set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
-    CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
-    set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
- 
     if (HAVE_STDCPP0X)
       message("C++0x supported")
       set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
@@ -74,10 +69,19 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     endif (HAVE_STDCPP11)
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
 
-    # Options for runtime memory leaks checking
-    if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
-      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
-    endif()
+    if (WITH_ASAN)
+      # NOTE: check -fsanitize=address flag failed if this flag is not set also
+      # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
+      # CHECK_CXX_COMPILER_FLAG macro).
+      set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
+      set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
+      CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
+      set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
+      # Options for runtime memory leaks checking
+      if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
+      endif()
+    endif ()
 
     set(LIB_INSTALL_DIR "lib")
 else ()
@@ -182,7 +186,7 @@ endif(DOXYGEN_FOUND)
 ########### packaging ###############
 include(InstallRequiredSystemLibraries)
 
-set(CPACK_MONOLITHIC_INSTALL 1)
+# set(CPACK_MONOLITHIC_INSTALL 1)
 set(CPACK_PACKAGE_NAME "limacommon")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Common libraries")
 set(CPACK_PACKAGE_VENDOR "CEA LIST")
@@ -192,13 +196,24 @@ SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
+SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
+
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+
+# set of commands to define component based packaging
+# notify cpack of component all names
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
+SET(CPACK_COMPONENTS_ALL devel runtime)
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+
 SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
 SET(CPACK_NSIS_MODIFY_PATH "ON")
 SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
 SET(CPACK_SOURCE_STRIP_FILES "")
 if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
-  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  set(CPACK_DEBIAN_runtime_PACKAGE_SHLIBDEPS ON)
 endif()
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
 

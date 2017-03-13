@@ -20,4 +20,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 ########### install files ###############
 install(FILES
     AbstractProcessingClient.h
-  DESTINATION include/common/AbstractProcessingClient/)
+  DESTINATION include/common/AbstractProcessingClient/
+  COMPONENT devel
+)

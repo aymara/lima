@@ -63,4 +63,6 @@ install(FILES
     NodeRefListnowarn.hpp
     linenoise.h
     ResourcesIdent.h
-  DESTINATION include/common/misc)
+  DESTINATION include/common/misc
+  COMPONENT devel
+)

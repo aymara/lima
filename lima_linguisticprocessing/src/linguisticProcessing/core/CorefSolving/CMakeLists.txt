@@ -36,4 +36,10 @@ install(TARGETS lima-lp-corefsolver DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
-install(FILES  coreferentAnnotation.h CorefSolvingXmlLogger.h CorefSolvingNormalizedXmlLogger.h DESTINATION include/linguisticProcessing/core/CorefSolving)
+install(FILES  
+    coreferentAnnotation.h 
+    CorefSolvingXmlLogger.h 
+    CorefSolvingNormalizedXmlLogger.h 
+  DESTINATION include/linguisticProcessing/core/CorefSolving
+  COMPONENT devel
+)

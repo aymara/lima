@@ -152,6 +152,9 @@ int run(int argc,char** argv)
   {
     *out << it->first << ";" << it->second << ";" << endl;
   }
+  if ((param.outputFile != "") && (out != 0)) {
+    delete out;
+  }
   return 0;
 }
 

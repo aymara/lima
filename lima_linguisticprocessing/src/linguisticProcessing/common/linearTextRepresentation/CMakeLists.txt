@@ -38,4 +38,6 @@ install(
   FILES
     ltrToken.h 
     ltrText.h 
-  DESTINATION include/linguisticProcessing/common/linearTextRepresentation)
+  DESTINATION include/linguisticProcessing/common/linearTextRepresentation
+  COMPONENT devel
+)

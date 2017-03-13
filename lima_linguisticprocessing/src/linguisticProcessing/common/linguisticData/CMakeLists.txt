@@ -39,4 +39,6 @@ install(TARGETS lima-lp-linguisticdata DESTINATION ${LIB_INSTALL_DIR})
 install(FILES
     languageData.h
     LimaStringText.h 
-  DESTINATION include/linguisticProcessing/common/linguisticData)
+  DESTINATION include/linguisticProcessing/common/linguisticData
+  COMPONENT devel
+)

@@ -41,4 +41,6 @@ install(FILES
     AbstractLinguisticProcessingClient.h 
     LinguisticProcessingException.h
     LinguisticProcessingClientFactory.h
-  DESTINATION include/linguisticProcessing/client)
+  DESTINATION include/linguisticProcessing/client
+  COMPONENT devel
+)

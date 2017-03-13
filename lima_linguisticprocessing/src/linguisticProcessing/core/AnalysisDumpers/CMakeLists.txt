@@ -83,4 +83,6 @@ install(FILES
     DepTripletLogger.h
     BowGeneration.h
     CompoundsXmlLogger.h
-DESTINATION include/linguisticProcessing/core/AnalysisDumpers)
+  DESTINATION include/linguisticProcessing/core/AnalysisDumpers
+  COMPONENT devel
+)

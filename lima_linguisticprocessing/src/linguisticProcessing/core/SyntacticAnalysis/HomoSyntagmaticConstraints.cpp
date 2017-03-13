@@ -1260,8 +1260,10 @@ EnforcePropertiesConstraints::EnforcePropertiesConstraints(
   const LimaString& complement):
   ConstraintFunction(language,complement), m_language(language)
 {
-//   SAPLOGINIT;
-//   LDEBUG << "Initializing EnforcePropertiesConstraints";
+#ifdef DEBUG_LP
+  SAPLOGINIT;
+  LDEBUG << "Initializing EnforcePropertiesConstraints";
+#endif
     boost::regex linere("[^,]+");
   std::string str=Common::Misc::limastring2utf8stdstring(complement);
   std::string::const_iterator start, end;
@@ -1271,7 +1273,9 @@ EnforcePropertiesConstraints::EnforcePropertiesConstraints(
   while (regex_search(start, end, what, linere))
   {
     std::string category(what[0].first, what[0].second);
-//     LDEBUG << "   adding category: " << category;
+#ifdef DEBUG_LP
+    LDEBUG << "   adding category: " << category;
+#endif
     const Common::PropertyCode::PropertyAccessor* categ = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor(category));
     if (categ!=0)
     {
@@ -1290,9 +1294,11 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   Critical function : comment logging message
 */
 
-//  SAPLOGINIT;
-//  LDEBUG << "testing EnforcePropertiesConstraints for "
-//    << v1 << " and " << v2;
+#ifdef DEBUG_LP
+ SAPLOGINIT;
+ LDEBUG << "testing EnforcePropertiesConstraints for "
+   << v1 << " and " << v2;
+#endif
   bool result = true;
 
   // cannot use AnalysisGraph because it is const -> use AnalysisContent
@@ -1311,32 +1317,48 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   {
     std::set< LinguisticCode > categ1 = data1->allValues(**categ);
     std::set< LinguisticCode > categ2 = data2->allValues(**categ);
-//    LDEBUG << "    on property " << (*categ)->getPropertyName() << ", there is " << categ1.size() << " and " << categ2.size() << " values";
+#ifdef DEBUG_LP
+   LDEBUG << "    on property " << (*categ)->getPropertyName() << ", there is " << categ1.size() << " and " << categ2.size() << " values";
+#endif
     if (categ1.size()!=0 && categ2.size()!=0)
     {
+#ifdef DEBUG_LP
       for (std::set< LinguisticCode >::iterator it=categ1.begin();it!=categ1.end();it++)
       {
         std::string str1 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
-//        LDEBUG << "    categ1 " << str1;
+       LDEBUG << "    categ1 " << str1;
       }
       for (std::set< LinguisticCode >::iterator it=categ2.begin();it!=categ2.end();it++)
       {
         std::string str2 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
-//        LDEBUG << "    categ2 " << str2;
+       LDEBUG << "    categ2 " << str2;
       }
+#endif
       std::set< LinguisticCode > common;
       std::set_intersection(categ1.begin(), categ1.end(),
                             categ2.begin(), categ2.end(),
                             std::insert_iterator< std::set< LinguisticCode> >(common, common.end()));
       ExcludePropertyPredicate epp(*categ,common);
-//      LDEBUG << "      sizes before erase: " << data1->size() << " / " << data2->size();
-      data1->erase(remove_if(data1->begin(),data1->end(),epp),data1->end());
-      data2->erase(remove_if(data2->begin(),data2->end(),epp),data2->end());
-//      LDEBUG << "      sizes after  erase: " << data1->size() << " / " << data2->size();
-      if (data1->empty() || data2->empty()) {
+#ifdef DEBUG_LP
+     LDEBUG << "      sizes before erase: " << data1->size() << " / " << data2->size();
+#endif
+      MorphoSyntacticData data1Copy = *data1;
+      data1->erase(std::remove_if(data1->begin(),data1->end(),epp),data1->end());
+      if (data1->empty() ) {
+        *data1 = data1Copy;
         result = false;
         break;
       }
+      MorphoSyntacticData data2Copy = *data2;
+      data2->erase(std::remove_if(data2->begin(),data2->end(),epp),data2->end());
+      if (data2->empty()) {
+        *data2 = data2Copy;
+        result = false;
+        break;
+      }
+#ifdef DEBUG_LP
+     LDEBUG << "      sizes after  erase: " << data1->size() << " / " << data2->size();
+#endif
     }
   }
 
@@ -1348,11 +1370,13 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
     LINFO << " but returns true: constraints checking "
     << "should have been done with agreement constraints";
   }
-//  else
-//  {
-//    LDEBUG << "EnforcePropertiesConstraints: "
-//    << (result?"true":"false");
-//  }
+#ifdef DEBUG_LP
+ else
+ {
+   LDEBUG << "EnforcePropertiesConstraints: "
+   << (result?"true":"false");
+ }
+#endif
   return true;
 }
 

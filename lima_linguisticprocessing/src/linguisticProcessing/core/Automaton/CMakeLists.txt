@@ -101,4 +101,6 @@ install(FILES
     gazeteerTransition.h
     SpecificEntityAnnotation.h
     recognizerData.h
-  DESTINATION include/linguisticProcessing/core/Automaton)
+  DESTINATION include/linguisticProcessing/core/Automaton
+  COMPONENT devel
+)

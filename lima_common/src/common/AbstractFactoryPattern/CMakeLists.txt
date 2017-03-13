@@ -53,4 +53,6 @@ install(FILES
     ProcessingClientFactory.h
     MainFactoriesMap.h
     DynamicLibrariesManager.h
-  DESTINATION include/common/AbstractFactoryPattern)
+  DESTINATION include/common/AbstractFactoryPattern
+  COMPONENT devel
+  )

@@ -74,7 +74,9 @@ install(FILES
     BoWRelation.h
     bowTokenIterator.h
     indexElement.h
-  DESTINATION include/linguisticProcessing/common/BagOfWords)
+  DESTINATION include/linguisticProcessing/common/BagOfWords
+  COMPONENT devel
+)
 
 
 

@@ -80,8 +80,11 @@ install(TARGETS limacharchartparser DESTINATION bin)
 
 ########### install files ###############
 install(FILES
-  CharChart.h FlatTokenizerExport.h
-DESTINATION include/linguisticProcessing/core/FlatTokenizer)
+    CharChart.h 
+    FlatTokenizerExport.h
+  DESTINATION include/linguisticProcessing/core/FlatTokenizer
+  COMPONENT devel
+)
 
 
 add_subdirectory(Tests)

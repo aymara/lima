@@ -51,14 +51,16 @@ install(TARGETS lima-lp-textsegmentation DESTINATION ${LIB_INSTALL_DIR})
 ########### install files ###############
 
 install(FILES 
-  SegmentationData.h 
-  SegmentationDataXmlLogger.h 
-  SegmentationResultsLoader.h 
-  SegmentFeatureExtractor.h
-  SegmentFeaturesDumper.h
-  SentenceBoundariesFinder.h
-  ParagraphBoundariesFinder.h
-  SentenceBoundariesXmlLogger.h
-  TemporalSegmentationFeatures.h
-  TextSegmentationExport.h
-  DESTINATION include/linguisticProcessing/core/TextSegmentation)
+    SegmentationData.h 
+    SegmentationDataXmlLogger.h 
+    SegmentationResultsLoader.h 
+    SegmentFeatureExtractor.h
+    SegmentFeaturesDumper.h
+    SentenceBoundariesFinder.h
+    ParagraphBoundariesFinder.h
+    SentenceBoundariesXmlLogger.h
+    TemporalSegmentationFeatures.h
+    TextSegmentationExport.h
+  DESTINATION include/linguisticProcessing/core/TextSegmentation
+  COMPONENT devel
+)

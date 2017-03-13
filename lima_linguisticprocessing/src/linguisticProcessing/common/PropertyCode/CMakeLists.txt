@@ -59,4 +59,6 @@ install(FILES
     PropertyAccessor.h
     SymbolicCodeXMLHandler.h
     XMLPropertyHandler.h
-  DESTINATION include/linguisticProcessing/common/PropertyCode)
+  DESTINATION include/linguisticProcessing/common/PropertyCode
+  COMPONENT devel
+)

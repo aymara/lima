@@ -53,4 +53,6 @@ install(TARGETS lima-lp-misc DESTINATION ${LIB_INSTALL_DIR})
 install(FILES
     AbstractLinguisticLogger.h 
     positionLengthList.h
-  DESTINATION include/linguisticProcessing/common/misc)
+  DESTINATION include/linguisticProcessing/common/misc
+  COMPONENT devel
+)

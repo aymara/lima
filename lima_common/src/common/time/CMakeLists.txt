@@ -41,7 +41,9 @@ install(FILES
     PortableGetTimeOfDay.h
     traceUtils.h
     timeUtilsController.h
-  DESTINATION include/common/time)
+  DESTINATION include/common/time
+  COMPONENT devel
+)
 
 
 
