@@ -140,7 +140,7 @@ bool ResourceTool::xmlFileInit (QString xmlFilePath)
       commandsRoot = getenv("LIMA_DIST");
       if (commandsRoot.isEmpty())
       {
-        commandsRoot = QString("/usr");
+        commandsRoot = QLatin1String("/usr");
       }
     }
     commandsRoot += "/share/apps/pelf/commands";

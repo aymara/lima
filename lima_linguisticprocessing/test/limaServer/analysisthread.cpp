@@ -217,7 +217,7 @@ void AnalysisThread::startAnalysis()
     else if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
     {
       m_d->m_response->writeHead(400);
-      QString errorMessage = QString("Language %1 no initialized").arg(language);
+      QString errorMessage = QString(QLatin1String("Language %1 no initialized")).arg(language);
 //  errorMessage << "language " << language " is no initialized"));
       m_d->m_response->end(errorMessage.toUtf8());
     }

@@ -269,9 +269,9 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   
   // Create the semantic role labeller instance
   m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]", 
-                                        QString("--log=%1").arg(kbsrlLogLevel).toUtf8().constData(), 
-                                        QString("--frame-lexicon=%1").arg(mode).toUtf8().constData(), 
-                                        QString("--language=%1").arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
+                                        QString(QLatin1String("--log=%1")).arg(kbsrlLogLevel).toUtf8().constData(), 
+                                        QString(QLatin1String("--frame-lexicon=%1")).arg(mode).toUtf8().constData(), 
+                                        QString(QLatin1String("--language=%1")).arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
   HANDLE_ERROR_EQUAL(m_d->m_instance,NULL,cannot_instantiate_the_semanticrolelabeler_python_class())
 }
 

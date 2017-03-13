@@ -54,7 +54,7 @@ KColorCollectionPrivate::KColorCollectionPrivate(const QString &_name)
 {
     if (name.isEmpty()) return;
 
-QString filename = QString(":/")+name;
+QString filename = QLatin1String(":/")+name;
 //KStandardDirs::locate("config", "colors/"+name);
   if (filename.isEmpty()) return;
 

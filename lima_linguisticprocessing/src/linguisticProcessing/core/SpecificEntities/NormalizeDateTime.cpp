@@ -557,7 +557,7 @@ operator()(RecognizerMatch& m,
   }
   else {
     // dateSpan.append(QString::number(month));
-    QString monthString = QString("%1").arg(month, 2, 10, QLatin1Char('0'));
+    QString monthString = QString(QLatin1String("%1")).arg(month, 2, 10, QLatin1Char('0'));
     dateSpan.append(monthString);
 #ifdef DEBUG_LP
     LDEBUG << "NormalizeDate operator(): year + month dateSpan=" << dateSpan;
@@ -571,7 +571,7 @@ operator()(RecognizerMatch& m,
     }
     else {
       // QString QString::arg(int integerVar, int fieldWidth = 0, int base = 10, const QChar & fillChar = QLatin1Char( ' ' )) const
-      QString dayString = QString("%1").arg(day, 2, 10, QLatin1Char('0'));
+      QString dayString = QString(QLatin1String("%1")).arg(day, 2, 10, QLatin1Char('0'));
       dateSpan.append(dayString);
 #ifdef DEBUG_LP
       LDEBUG << "NormalizeDate operator(): year + month + day dateSpan=" << dateSpan;

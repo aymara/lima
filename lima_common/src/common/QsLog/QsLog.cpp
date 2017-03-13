@@ -167,7 +167,7 @@ void Logger::Helper::writeToLog()
    QString s;
    QTextStream ts(&s);
    ts << QThread::currentThread();
-   const QString completeMessage(QString("%1 %2 %3 %4")
+   const QString completeMessage(QString(QLatin1String("%1 %2 %3 %4"))
       .arg(QDateTime::currentDateTime().toString(fmtDateTime))
       .arg(levelName, 5)
       .arg(s)

@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     QLOG_INFO() << "Program started";
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
 
-    QLOG_TRACE() << "Here's a" << QString("trace") << "message";
+    QLOG_TRACE() << "Here's a" << QLatin1String("trace") << "message";
     QLOG_DEBUG() << "Here's a" << static_cast<int>(QsLogging::DebugLevel) << "message";
     QLOG_WARN()  << "Uh-oh!";
     qDebug() << "This message won't be picked up by the logger";

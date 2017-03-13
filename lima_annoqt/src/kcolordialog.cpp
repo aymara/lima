@@ -549,7 +549,7 @@ void KColorTable::readNamedColor(void)
       return; // Strings already present
   }
 
-  QString filename = QString(":/rgb.txt");
+  QString filename = QLatin1String(":/rgb.txt");
   if (filename.isEmpty()) return;
 
   QFile paletteFile(filename);
