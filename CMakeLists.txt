@@ -6,10 +6,19 @@ enable_testing()
 include(ExternalProject)
 
 option(WITH_ASAN "Enable address sanitizer" OFF)
+message("WITH_ASAN=${WITH_ASAN}")
+option(WITH_ARCH "Enable architecture optimizations" OFF)
+message("WITH_ARCH=${WITH_ARCH}")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
 
 if (NOT ("x${CMAKE_SYSTEM_NAME}" STREQUAL "xWindows"))
     if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=generic -march=x86-64")
+      if (WITH_ARCH)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -O2")
+      else()
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=generic -march=x86-64")
+      endif()
     endif()
 endif()
 
