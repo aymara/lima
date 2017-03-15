@@ -23,10 +23,8 @@ cmake_policy(SET CMP0020 OLD)
 endif()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
-# -DCMAKE_INSTALL_PREFIX="c:mose" -DCMAKE_BUILD_TYPE=Release
-# -DCMAKE_INSTALL_PREFIX="c:mose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
-
-option(WITH_ASAN "Enable address sanitizer" OFF)
+# -DCMAKE_INSTALL_PREFIX="c:/amose" -DCMAKE_BUILD_TYPE=Release
+# -DCMAKE_INSTALL_PREFIX="c:/amose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 # In debug mode, adds the -DDEBUG_CD to the compiler command line.
 # Allows to build with conditionally built debug output
@@ -35,69 +33,9 @@ set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
 include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
-
-
 message("System name is ${CMAKE_SYSTEM_NAME}")
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    message("Linux flags")
 
-    # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
-    # factories, thus their symbols must be known even if not used by the binary
-    set(CMAKE_EXE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
-    CHECK_CXX_COMPILER_FLAG(-std=c++11 HAVE_STDCPP11)
-    CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_SANITIZE_UNDEFINED)
-    CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer HAVE_NO_OMIT_FRAME_POINTER)
-
-    if (HAVE_STDCPP0X)
-      message("C++0x supported")
-      set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-    else (HAVE_STDCPP0X)
-      message("C++0x NOT supported")
-      set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
-    endif (HAVE_STDCPP0X)
-    if (HAVE_STDCPP11)
-      message("C++11 supported")
-      set(CMAKE_CXX_FLAGS "-std=c++11 -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-    else (HAVE_STDCPP11)
-      message("C++11 NOT supported")
-      set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
-    endif (HAVE_STDCPP11)
-    set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
-
-    if (WITH_ASAN)
-      # NOTE: check -fsanitize=address flag failed if this flag is not set also
-      # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
-      # CHECK_CXX_COMPILER_FLAG macro).
-      set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-      set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
-      CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
-      set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
-      # Options for runtime memory leaks checking
-      if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
-      endif()
-    endif ()
-
-    set(LIB_INSTALL_DIR "lib")
-else ()
-  message("Windows flags")
-  add_definitions(-D WIN32)
-  
-  # By default, do not warn when built on machines using only VS Express:
-  if(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
-  endif()
-  set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
-
-  set(LIB_INSTALL_DIR "bin")
-endif ()
-
+include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
 
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
