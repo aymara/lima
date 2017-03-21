@@ -76,6 +76,7 @@ m_nbRule(0)
 }
 
 RecognizerCompiler::~RecognizerCompiler() {
+  delete m_stream;
 }
 
 //**********************************************************************
@@ -389,6 +390,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     delete trigger;
   }
   m_stream->close();
+  delete m_stream; m_stream = 0;
   if (!filename.empty()) {
     m_stream=tmpStream;
     m_filename=tmpFilename;
