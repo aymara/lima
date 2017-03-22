@@ -58,8 +58,11 @@ add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
   ${QT_LIBRARIES}
-  ${LOG4CPP_LIBRARIES}
 )
+
+if (LOG4CPP_FOUND)
+  target_link_libraries(lima-common-tools  ${LOG4CPP_LIBRARIES})
+endif()
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-tools DESTINATION ${LIB_INSTALL_DIR})
