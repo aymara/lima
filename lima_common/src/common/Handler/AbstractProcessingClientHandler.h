@@ -69,7 +69,7 @@ class AbstractProcessingClientHandler
 	{
     ABSTRACTPROCESSINGCLIENTLOGINIT;
     LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
-	  getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits);
+	  getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits,stopAnalyze);
 	}
 
 //   inline virtual void setAnalysisHandler(const std::string& handlerId, AbstractAnalysisHandler* handler)
