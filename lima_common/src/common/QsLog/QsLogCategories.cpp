@@ -253,8 +253,8 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
         }
       }
     }
-  } 
 #ifndef DEBUG_CD
+  } 
   catch(...) 
   {
     std::cerr << "Exception during logging system configuration" << std::endl;
