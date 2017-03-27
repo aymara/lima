@@ -213,8 +213,10 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
   {
     configDirsList = configString.split(LIMA_PATH_SEPARATOR);
   }
+#ifndef DEBUG_CD
   try 
   {
+#endif
     while (! configDirsList.isEmpty() )
     {
       QString configDir = configDirsList.last();
@@ -252,11 +254,13 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       }
     }
   } 
+#ifndef DEBUG_CD
   catch(...) 
   {
     std::cerr << "Exception during logging system configuration" << std::endl;
     return -1;
   }
+#endif
   if (!atLeastOneSuccessfulLoad)
   {
     std::cerr << "Configure Problem no configure file has been found in" << configString.toStdString() << std::endl;
