@@ -95,10 +95,9 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-#ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded from supplementary search path";
-    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
-#endif
+      ABSTRACTFACTORYPATTERNLOGINIT;
+      LDEBUG << "the library " << libName.c_str() << " was loaded from supplementary search path";
+      LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
       return true;
     }
     else
@@ -119,10 +118,9 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-#ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded from system default search path";
-    LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
-#endif
+      ABSTRACTFACTORYPATTERNLOGINIT;
+      LDEBUG << "the library " << libName.c_str() << " was loaded from system default search path";
+      LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
       return true;
     }
     else
@@ -134,9 +132,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   }
   else {
     m_d->m_handles[libName]=libhandle;
-#ifdef DEBUG_CD
+    ABSTRACTFACTORYPATTERNLOGINIT;
     LDEBUG << "the library " << libName.c_str() << " was loaded";
-#endif
     return true;
   }
 }
