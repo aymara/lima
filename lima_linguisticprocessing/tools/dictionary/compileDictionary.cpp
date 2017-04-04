@@ -180,8 +180,8 @@ int run(int argc,char** argv)
     cerr << "please specify CharChart file with --charChart=<file> option" << endl;
     exit(0);
   }
-  CharChart* charChart = new CharChart();
-  charChart->loadFromFile(param.charChart);
+  CharChart charChart;
+  charChart.loadFromFile(param.charChart);
 
   try
   {
@@ -209,7 +209,7 @@ int run(int argc,char** argv)
       cerr << "can't open file " << param.extractKeys << endl;
       exit(-1);
     }
-    KeysLogger keysLogger(fout,charChart,param.reverseKeys);
+    KeysLogger keysLogger(fout,&charChart,param.reverseKeys);
 
     cerr << "parse input file : " << param.input << endl;
     try
@@ -274,7 +274,7 @@ int run(int argc,char** argv)
     cerr << access->getSize() << " keys loaded" << endl;
     
     cerr << "parse input file : " << param.input << endl;
-    DictionaryCompiler handler(charChart,access,conversionMap,param.reverseKeys);
+    DictionaryCompiler handler(&charChart,access,conversionMap,param.reverseKeys);
 
     QXmlSimpleReader parser;
 //     parser->setValidationScheme(SAXParser::Val_Auto);

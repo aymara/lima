@@ -168,6 +168,7 @@ void FsaAccessBuilder16::addWord( const LimaString & newWord ){
 
   replaceOrRegister(prefix_leaf);
   addSuffix( prefix_leaf, prefixIt );
+  delete prefixIt;
 }
 
 void FsaAccessBuilder16::replaceOrRegister( dicoVertex candidateState ) {

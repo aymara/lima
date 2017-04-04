@@ -76,7 +76,11 @@ DictionaryCompiler::DictionaryCompiler(
   m_strCache.resize(5,make_pair(LimaString(),0));
 }
 
-DictionaryCompiler::~DictionaryCompiler() {}
+DictionaryCompiler::~DictionaryCompiler() 
+{
+  delete[] m_codedintbuf;
+  delete[] m_charbuf;
+}
 
 bool DictionaryCompiler::startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes)
 {
