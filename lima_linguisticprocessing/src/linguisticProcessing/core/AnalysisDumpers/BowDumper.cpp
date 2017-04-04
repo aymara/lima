@@ -450,6 +450,7 @@ void BowDumper::addVerticesToBoWText(
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
               
+#ifdef DEBUG_LP
               std::ostringstream oss;
               //std::set<uint32_t>::const_iterator asvit, asvit_end;
               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
@@ -458,7 +459,6 @@ void BowDumper::addVerticesToBoWText(
               {
                 oss << *asvit << ", ";
               }
-#ifdef DEBUG_LP
               LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << oss.str();
 #endif
             }
@@ -520,6 +520,7 @@ void BowDumper::addVerticesToBoWText(
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
             
+#ifdef DEBUG_LP
               std::ostringstream oss;
               //std::set<uint32_t>::const_iterator asvit, asvit_end;
               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
@@ -528,7 +529,6 @@ void BowDumper::addVerticesToBoWText(
               {
                 oss << *asvit << ", ";
               }
-#ifdef DEBUG_LP
               LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << oss.str();
 #endif
             }
