@@ -300,9 +300,10 @@ isOverlapping(const RecognizerMatch& otherMatch) const {
 //**********************************************************************
 void RecognizerMatch::addBackVertex(const LinguisticGraphVertex& v,
                                     bool isKept, const LimaString& ruleElementId ) {
+#ifdef DEBUG_LP
   AULOGINIT;
   LDEBUG << "RecognizerMatch:addBackVertex(v:" << v << ", isKept:" << isKept << ", ruleElmtId:" << ruleElementId << ")";
-
+#endif
   push_back(MatchElement(v,isKept, ruleElementId));
 }
   
@@ -315,8 +316,10 @@ void RecognizerMatch::popBackVertex() {
 
 void RecognizerMatch::addFrontVertex(const LinguisticGraphVertex& v,
                                      bool isKept, const LimaString& ruleElementId) {
+#ifdef DEBUG_LP
   AULOGINIT;
   LDEBUG << "RecognizerMatch:addFrontVertex(v:" << v << ", isKept:" << isKept << ", ruleElmtId:" << ruleElementId << ")";
+#endif
   insert(begin(),MatchElement(v,isKept,ruleElementId));
 }
 
