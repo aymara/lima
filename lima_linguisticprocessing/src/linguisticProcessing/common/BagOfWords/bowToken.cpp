@@ -187,15 +187,19 @@ BoWTokenPrivate::~BoWTokenPrivate()
 BoWToken::BoWToken(BoWTokenPrivate& d) :
     m_d(&d)
 {
+#ifdef DEBUG_LP
     BOWLOGINIT;
     LDEBUG << "BoWToken::BoWToken(BoWTokenPrivate): " << (*this) << " - " << this;
+#endif
 }
 
 BoWToken::BoWToken() :
     m_d(new BoWTokenPrivate())
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWToken::BoWToken()" << this;
+#endif
 }
 
 BoWToken::BoWToken(const LimaString& lemma,
@@ -205,21 +209,27 @@ BoWToken::BoWToken(const LimaString& lemma,
     m_d(new BoWTokenPrivate(lemma, category, position, length))
 {
   m_d->convertSpaces();
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "Creating BoWToken : " << (*this) << " - " << this;
+#endif
 }
 
 BoWToken::BoWToken(const BoWToken& tok) :
     m_d(new BoWTokenPrivate(tok))
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWToken::BoWToken(BoWToken) : " << tok << " - " << &tok << " ; new one is: " << this;
+#endif
 }
 
 BoWToken& BoWToken::operator=(const BoWToken& tok)
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWToken::operator=(BoWToken) : " << tok << " - " << &tok << " ; new one is: " << this;
+#endif
   *m_d = *tok.m_d;
   return *this;
 }
@@ -234,8 +244,10 @@ BoWToken::BoWToken(const LimaString& str,
                    const uint64_t length):
     m_d(new BoWTokenPrivate(str, position, length))
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWToken::BoWToken" <<  this << str << position << length;
+#endif
   //uint64_t i(str.find(m_separator));
   // uint64_t i(str.find(m_separator));
   int i(str.indexOf(m_d->m_separator));
@@ -256,8 +268,10 @@ BoWToken::BoWToken(const LimaString& str,
 
 BoWToken* BoWToken::clone() const
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWToken::clone " << this;
+#endif
   return new BoWToken(*(new BoWTokenPrivate(static_cast<BoWTokenPrivate&>(*(this->m_d)))));
 }
 
@@ -332,7 +346,7 @@ void BoWToken::addToPosition(const uint64_t offset) {
 LimaString BoWToken::getString(void) const
 {
 //#ifdef DEBUG_LP
-      BOWLOGINIT;
+//       BOWLOGINIT;
 //#endif
 
   if (m_d->m_useOnlyLemma)
