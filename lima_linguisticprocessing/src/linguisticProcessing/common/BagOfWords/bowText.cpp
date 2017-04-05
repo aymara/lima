@@ -102,7 +102,9 @@ void BoWText::clear() {
 #endif
   for (auto it = begin(); it != end(); it++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "BoWText::clear clearing" << &(**it);
+#endif
     (*it)->clear();
   }
   std::vector< boost::shared_ptr<  AbstractBoWElement > >::clear();
