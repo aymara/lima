@@ -37,7 +37,7 @@ EventTemplateDefinitionResource::~EventTemplateDefinitionResource() {
 
 const std::string& EventTemplateDefinitionResource::getMention (const std::string name) const
 {
-  std::string mention="";
+  static std::string mention="";
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
@@ -50,7 +50,7 @@ const std::string& EventTemplateDefinitionResource::getMention (const std::strin
 
 const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefinitionResource::getStructure (const std::string name) const
 {
-  std::map<std::string,Common::MediaticData::EntityType> structure;
+  static std::map<std::string,Common::MediaticData::EntityType> structure;
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
