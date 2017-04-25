@@ -200,9 +200,10 @@ int dowork(int argc,char* argv[])
   Lima::AmosePluginsManager::single();
   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
 
+#ifndef DEBUG_LP
   try
   {
-
+#endif
     // initialize common
     MediaticData::changeable().init(
       resourcesPath.toUtf8().constData(),
@@ -291,12 +292,13 @@ int dowork(int argc,char* argv[])
         line=string(buf);
       }
     }
+#ifndef DEBUG_LP
   }
   catch (InvalidConfiguration& e)
   {
     throw e;
   }
-
+#endif
   return SUCCESS_ID;
 }
 
