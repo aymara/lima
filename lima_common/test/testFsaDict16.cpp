@@ -114,7 +114,7 @@ int getProcStat( const std::string& toLog ) {
 
   ifstream statusIn(statusFile.c_str(),ios::in | std::ifstream::binary);
   string line;
-  int val;
+  int val = 0;
   while (!statusIn.eof())
   {
     getline(statusIn,line);
@@ -333,7 +333,7 @@ void DictTester<dictType>::testIndex(
       }
       else {
 //        std::cerr << "check " << index << "!=" << index0+1 << std::endl;
-        assert( index == index0+1 );
+        Q_ASSERT( index == index0+1 );
         index0 = index;
       }
     }

@@ -235,7 +235,9 @@ void FsaAccessBuilder16::merge( dicoVertex inRegister,
 #endif
   // find in transition parentState -> tempstate
   std::pair<dicoEdgeType, bool> trans = edge(parentState, tempState, m_graph);
-  assert( trans.second );
+#ifdef DEBUG_CD
+  Q_ASSERT( trans.second );
+#endif
   // forward this transition to inRegister
   if( trans.second ) {
 #ifdef DEBUG_CD
@@ -243,7 +245,14 @@ void FsaAccessBuilder16::merge( dicoVertex inRegister,
  #endif
     
     std::pair<dicoEdgeType, bool> res = add_edge(parentState, inRegister, m_graph);
-    assert( res.second );
+    if (!res.second)
+    {
+      FSAALOGINIT;
+      LERROR << "FsaAccessBuilder16::merge failed to add edge to the graph";
+    }
+#ifdef DEBUG_CD
+    Q_ASSERT( res.second );
+#endif
   }
 
   // delete tempstate

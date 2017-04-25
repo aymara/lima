@@ -147,7 +147,11 @@ LimaString BinaryEntry::getUtf8String(unsigned char*& ptr) const {
         else if (first < 0xDF)                // 11 bits available
             utf16String[j++] = LimaChar(((first.unicode()<<6)+(*ptr++&0x3F))&0x000007FF);
         else if (first < 0xEF)                // 16 bits available
-            utf16String[j++] = LimaChar(((first.unicode()<<12)+((*ptr++&0x3F)<<6)+(*ptr++&0x3F))&0x0000FFFF);
+        {
+            auto firstOffset = (*ptr++&0x3F)<<6;
+            auto secondOffset = (*ptr++&0x3F);
+            utf16String[j++] = LimaChar(((first.unicode()<<12)+firstOffset+secondOffset)&0x0000FFFF);
+        }
         else
             throw BoundsErrorException();
     }
