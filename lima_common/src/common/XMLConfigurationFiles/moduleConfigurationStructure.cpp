@@ -157,8 +157,8 @@ void ModuleConfigurationStructure::addItemInListNamedForGroup(const std::string&
 
 void ModuleConfigurationStructure::addGroupNamed(const string& groupName)
 {
-  XMLCFGLOGINIT;
 #ifdef DEBUG_CD
+  XMLCFGLOGINIT;
   LDEBUG << "ModuleConfigurationStructure::addGroupNamed " << this << " " << groupName.c_str();
 #endif
   if (find(groupName) == end())
