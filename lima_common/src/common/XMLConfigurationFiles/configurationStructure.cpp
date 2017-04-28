@@ -43,6 +43,17 @@ namespace XMLConfigurationFiles
 ConfigurationStructure::ConfigurationStructure() : std::map< std::string, ModuleConfigurationStructure >()
 {}
 
+ConfigurationStructure::ConfigurationStructure(const ConfigurationStructure& config) :
+    std::map< std::string, ModuleConfigurationStructure >(config)
+{
+}
+
+ConfigurationStructure& ConfigurationStructure::operator=(const ConfigurationStructure& config)
+{
+  std::map< std::string, ModuleConfigurationStructure >::operator=(config);
+  return *this;
+}
+
 ConfigurationStructure::~ConfigurationStructure()
 {}
 

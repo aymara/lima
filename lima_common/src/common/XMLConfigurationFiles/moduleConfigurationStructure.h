@@ -54,6 +54,7 @@ public:
     ModuleConfigurationStructure();
     ModuleConfigurationStructure(const std::string& name);
     ModuleConfigurationStructure(const ModuleConfigurationStructure& mod);
+    ModuleConfigurationStructure& operator=(const ModuleConfigurationStructure& mod);
     virtual ~ModuleConfigurationStructure();
 
     const std::string& getName() const;
@@ -76,7 +77,6 @@ public:
     friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream &os, const ModuleConfigurationStructure& dmcs);
 
 private :
-  ModuleConfigurationStructure& operator=(const ModuleConfigurationStructure& mod);
   ModuleConfigurationStructurePrivate* m_d;
 };
 

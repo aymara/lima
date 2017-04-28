@@ -72,7 +72,7 @@ class GroupConfigurationStructurePrivate
   GroupConfigurationStructurePrivate(const std::string& name);
   GroupConfigurationStructurePrivate(const GroupConfigurationStructurePrivate& group);
   GroupConfigurationStructurePrivate& operator=(const GroupConfigurationStructurePrivate& group);
-  virtual ~GroupConfigurationStructurePrivate();
+  ~GroupConfigurationStructurePrivate();
 
   MSS m_params;
   MSDS m_lists;
