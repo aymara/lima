@@ -735,95 +735,104 @@ expandSubAutomatonsInRule(LimaString& s,
 #endif
 }
 
-bool RecognizerCompiler::
-checkRule(const Rule& rule,
-          const TransitionUnit* trigger,
-          MediaId language,
-          std::ostringstream& message) const 
-{
-  // check if rule may produce an element that might be trigger 
-  // of same rule => should cause infinite loop
-
-  // happen only if both left and right contexts can be empty
-  // and an action is attached to the rule
-  if (rule.leftAutomaton().isFinalState(0) &&
-      rule.rightAutomaton().isFinalState(0) && 
-      !rule.getActions().empty()) {
-
-    switch (trigger->type()) {
-    case T_STAR: {
-      message << "line " << m_lineNumber 
-              << ": rule may cause infinite loops (star trigger on a rule that may recognize only one token)";
-      return false;
-    }
-    case T_WORD: {
-      LimaString str;
-      if (rule.getNormalizedForm().isEmpty()) {
-        message << "line " << m_lineNumber 
-                << ": rule may cause infinite loops (word trigger on a rule that may recognize only one token and has no normalized form)";
-        return false;
-      }
-      else {
-        FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
-        StringsPoolIndex index=sp[rule.getNormalizedForm()];
-        if (index == static_cast<const WordTransition*>(trigger)->word()) {
-          message << "line " << m_lineNumber 
-                  << ": rule may cause infinite loops (word trigger on a rule that may recognize only one token and whose normalized form is same as the trigger)";
-          return false;
-        }
-      }
-      return true;
-    }
-    case T_POS: {
-      LinguisticCode pos=rule.getLinguisticProperties();
-      if (pos!=static_cast<LinguisticCode>(0)) {
-        if (static_cast<const PosTransition*>(trigger)->comparePos(pos)) {
-          message << "line " << m_lineNumber 
-                  << ": rule may cause infinite loops "
-                  << "(pos trigger on a rule that may recognize only one token, whose result POS is same as trigger)";
-          return false;
-        }
-        return true;
-      }
-      return true;
-    }
-    case T_LEMMA: {
-      message << "line " << m_lineNumber 
-              << ": rule may cause infinite loops "
-              << ": (lemma trigger on a rule that may recognize only one token, whose result may match the trigger)";
-      return true;
-    }
-    case T_GAZETEER: {
-      return true;
-    }
-    case T_NUM: {
-      return true;
-    }
-    case T_TSTATUS: {
-      message << "line " << m_lineNumber 
-              << ": rule may cause infinite loops "
-              << ": tstatus trigger on a rule that may recognize only one token";
-      return false;
-    }
-    case T_ENTITY: {
-      if (static_cast<const EntityTransition*>(trigger)->entityType() == rule.getType()) {
-        message << "line " << m_lineNumber 
-                << ": rule may cause infinite loops "
-                << ": (entity trigger on a rule of same entity type that may recognize only one token)";
-        return false;
-      }
-      return true;
-    }
-    case T_AND:
-    case T_SET:
-    case T_DEACCENTUATED:
-    case T_EPSILON:
-      // these transitions are not used
-      return true;
-    }
-  }
-  return true;
-}
+// bool RecognizerCompiler::
+// checkRule(const Rule& rule,
+//           const TransitionUnit* trigger,
+//           MediaId language,
+//           std::ostringstream& message) const 
+// {
+//   // check if rule may produce an element that might be trigger 
+//   // of same rule => should cause infinite loop
+// 
+//   // happen only if both left and right contexts can be empty
+//   // and an action is attached to the rule
+//   if (rule.leftAutomaton().isFinalState(0) &&
+//       rule.rightAutomaton().isFinalState(0) && 
+//       !rule.getActions().empty()) {
+// 
+//     switch (trigger->type()) {
+//     case T_STAR: {
+//       message << "line " << m_lineNumber 
+//               << ": rule may cause infinite loops (star trigger on a rule that may recognize only one token)";
+//       return false;
+//     }
+//     case T_WORD: {
+//       LimaString str;
+//       if (rule.getNormalizedForm().isEmpty()) {
+//         message << "line " << m_lineNumber 
+//                 << ": rule may cause infinite loops (word trigger on a rule that may recognize only one token and has no normalized form)";
+//         return false;
+//       }
+//       else {
+//         FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
+//         StringsPoolIndex index=sp[rule.getNormalizedForm()];
+//         if (index == static_cast<const WordTransition*>(trigger)->word()) {
+//           message << "line " << m_lineNumber 
+//                   << ": rule may cause infinite loops (word trigger on a rule that may recognize only one token and whose normalized form is same as the trigger)";
+//           return false;
+//         }
+//       }
+//       return true;
+//     }
+//     case T_POS: {
+//       LinguisticCode pos=rule.getLinguisticProperties();
+//       if (pos!=static_cast<LinguisticCode>(0)) {
+//         if (static_cast<const PosTransition*>(trigger)->comparePos(pos)) {
+//           message << "line " << m_lineNumber 
+//                   << ": rule may cause infinite loops "
+//                   << "(pos trigger on a rule that may recognize only one token, whose result POS is same as trigger)";
+//           return false;
+//         }
+//         return true;
+//       }
+//       return true;
+//     }
+//     case T_LEMMA: {
+//       message << "line " << m_lineNumber 
+//               << ": rule may cause infinite loops "
+//               << ": (lemma trigger on a rule that may recognize only one token, whose result may match the trigger)";
+//       return true;
+//     }
+//     case T_GAZETEER: {
+//       return true;
+//     }
+//     case T_NUM: {
+//       return true;
+//     }
+//     case T_TSTATUS: {
+//       message << "line " << m_lineNumber 
+//               << ": rule may cause infinite loops "
+//               << ": tstatus trigger on a rule that may recognize only one token";
+//       return false;
+//     }
+//     case T_ENTITY: {
+//       if (static_cast<const EntityTransition*>(trigger)->entityType() == rule.getType()) {
+//         message << "line " << m_lineNumber 
+//                 << ": rule may cause infinite loops "
+//                 << ": (entity trigger on a rule of same entity type that may recognize only one token)";
+//         return false;
+//       }
+//       return true;
+//     }
+//     case T_ENTITY GROUP: {
+//       if (static_cast<const EntityTransition*>(trigger)->entityType().getGroupId() == rule.getType().getGroupId()) {
+//         message << "line " << m_lineNumber 
+//                 << ": rule may cause infinite loops "
+//                 << ": (entity trigger on a rule of same entity group type that may recognize only one token)";
+//         return false;
+//       }
+//       return true;
+//     }
+//     case T_AND:
+//     case T_SET:
+//     case T_DEACCENTUATED:
+//     case T_EPSILON:
+//       // these transitions are not used
+//       return true;
+//     }
+//   }
+//   return true;
+// }
 
 LimaString RecognizerCompiler::
 peekConstraints(std::ifstream& file) {
