@@ -14,7 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-include_directories(${CMAKE_SOURCE_DIR}/src )
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 
 add_definitions( -DLIMA_PROCESSUNITFRAMEWORK_EXPORTING )
