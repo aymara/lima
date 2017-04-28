@@ -76,6 +76,7 @@ void StructuredBoWToBoWDocument::
 processSBoWText(const BoWText* boWText, 
                 bool /*unused useIterators*/, bool useIndexIterator)
 {
+  LIMA_UNUSED(useIndexIterator)
   if (! m_inIndexingNode.empty() && 
       m_inIndexingNode.back() && 
       boWText!=0) {

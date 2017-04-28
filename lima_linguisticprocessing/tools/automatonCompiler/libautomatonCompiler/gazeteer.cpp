@@ -51,18 +51,18 @@ namespace Automaton {
 Gazeteer::Gazeteer():
 std::vector<LimaString>(0),
 m_alias(),
-m_automatonString(),
 m_hasMultiTermWord(false),
-m_hasNoCategoryNorTstatus(true)
+m_hasNoCategoryNorTstatus(true),
+m_automatonString()
 {
 }
 
 Gazeteer::Gazeteer(const Gazeteer& g):
 std::vector<LimaString>(g),
 m_alias(g.m_alias),
-m_automatonString(g.m_automatonString),
 m_hasMultiTermWord(g.m_hasMultiTermWord),
-m_hasNoCategoryNorTstatus(g.m_hasNoCategoryNorTstatus)
+m_hasNoCategoryNorTstatus(g.m_hasNoCategoryNorTstatus),
+m_automatonString(g.m_automatonString)
 {
 }
 
