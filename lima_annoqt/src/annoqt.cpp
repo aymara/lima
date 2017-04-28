@@ -784,9 +784,14 @@ void Annoqt::slotGoto()
 {
   qDebug() << "Annoqt::slotGoto";
   bool ok;
-  int offset = QInputDialog::getInteger(this, tr("Jump to input"),
-                                        tr("Go to:"), 0, 0, m_textEdit->document()->toPlainText().size(),
-                                          1,&ok);
+  int offset = QInputDialog::getInt(this, 
+                                    tr("Jump to input"),
+                                    tr("Go to:"), 
+                                    0, 
+                                    0, 
+                                    m_textEdit->document()->toPlainText().size(),
+                                    1,
+                                    &ok);
   if (ok)
   {
     QTextCursor cursor = m_textEdit->textCursor ();
