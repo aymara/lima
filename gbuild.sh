@@ -26,6 +26,7 @@ Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
 
+  -a asan       <(OFF)|ON> compile with adress sanitizer
   -m mode       <(debug)|release> compile mode
   -n arch       <(generic)|native> target architecture mode
   -p boolean    <(true)|false> will build in parallel (make -jn) if true. 
@@ -56,6 +57,7 @@ while getopts ":m:n:p:r:v:G:a:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
+            [[ "$WITH_ASAN" == "ON" || "$WITH_ASAN" == "OFF" ]] || usage
             ;;
         m)
             mode=${OPTARG}
