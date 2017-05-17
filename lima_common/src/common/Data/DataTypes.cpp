@@ -35,9 +35,13 @@ public:
   virtual ~NodePrivate();
   NodePrivate(const NodePrivate& n);
   NodePrivate& operator=(const NodePrivate& n);
-
+#ifdef ANTINNO_SPECIFIC
+  NodePrivate(NodePrivate&& n);
+  NodePrivate& operator=(NodePrivate&& n);
+  NodePrivate ( const std::string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int32_t indexid , std::string const& uri, std::string const& nodeMedia, std::string const& nodeType, std::string const& descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent );
+#else
   NodePrivate ( const std::string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int32_t indexid , std::string uri, std::string nodeMedia, std::string nodeType, std::string descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent );
-
+#endif
   //! @brief identifiant de structure
   STRUCT_ID m_structId;
   // OME Pour test
@@ -108,8 +112,54 @@ NodePrivate& NodePrivate::operator=(const NodePrivate& n)
 
   return *this;
 }
+#ifdef ANTINNO_SPECIFIC
+NodePrivate::NodePrivate(NodePrivate&& n)
+{
+  m_docName = ::std::move(n.m_docName);
+  m_structId = n.m_structId;
+  m_contentId = n.m_contentId;
+  m_nodeId = n.m_nodeId;
+  m_uri = ::std::move(n.m_uri);
+  m_nodeMedia = ::std::move(n.m_nodeMedia);
+  m_nodeType = ::std::move(n.m_nodeType);
+  m_isRoot = n.m_isRoot;
+  m_isLeaf = n.m_isLeaf;
+  m_isFile = n.m_isFile;
+  m_isMultimedia = n.m_isMultimedia;
+  m_nodeStart = n.m_nodeStart;
+  m_nodeEnd = n.m_nodeEnd;
+  m_nodeLength = n.m_nodeLength;
+  m_nodeParent = n.m_nodeParent;
+  m_descrId = ::std::move(n.m_descrId);
+  m_indexId = n.m_indexId;
+}
 
+NodePrivate& NodePrivate::operator=(NodePrivate&& n)
+{
+  m_docName = ::std::move(n.m_docName);
+  m_structId = n.m_structId;
+  m_contentId = n.m_contentId;
+  m_nodeId = n.m_nodeId;
+  m_uri = ::std::move(n.m_uri);
+  m_nodeMedia = ::std::move(n.m_nodeMedia);
+  m_nodeType = ::std::move(n.m_nodeType);
+  m_isRoot = n.m_isRoot;
+  m_isLeaf = n.m_isLeaf;
+  m_isFile = n.m_isFile;
+  m_isMultimedia = n.m_isMultimedia;
+  m_nodeStart = n.m_nodeStart;
+  m_nodeEnd = n.m_nodeEnd;
+  m_nodeLength = n.m_nodeLength;
+  m_nodeParent = n.m_nodeParent;
+  m_descrId = ::std::move(n.m_descrId);
+  m_indexId = n.m_indexId;
+  
+  return *this;
+}
+NodePrivate::NodePrivate ( const string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int32_t indexid, string const& uri, string const& nodeMedia, string const& nodeType, string const& descrId, bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent )
+#else
 NodePrivate::NodePrivate ( const string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int32_t indexid, string uri, string nodeMedia, string nodeType, string descrId, bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent )
+#endif
 {
   m_docName = docName;
   m_structId = structId;
@@ -143,12 +193,36 @@ Node &Node::operator=(const Node& n)
   return *this;
 }
 
+#ifdef ANTINNO_SPECIFIC
+Node::Node(Node&& n) : m_d(n.m_d)
+{
+  n.m_d = nullptr;
+}
+Node &Node::operator=(Node&& n)
+{
+  if (this != &n)
+  {
+    delete m_d;
+    m_d = n.m_d;
+    n.m_d = nullptr;
+  }
+  return *this;
+}
+#endif
 
+#ifdef ANTINNO_SPECIFIC
+Node::Node ( const std::string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int indexid , std::string const& uri, std::string const& nodeMedia, std::string const& nodeType, std::string const& descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent ) : m_d(new NodePrivate(docName,structId, nodeId, contentId, indexid , uri, nodeMedia, nodeType, descrId , isRoot, isLeaf, isFile, isMultimedia, nodeStart, nodeEnd, nodeLength, nodeParent))
+#else
 Node::Node ( const std::string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int indexid , std::string uri, std::string nodeMedia, std::string nodeType, std::string descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent ) : m_d(new NodePrivate(docName,structId, nodeId, contentId, indexid , uri, nodeMedia, nodeType, descrId , isRoot, isLeaf, isFile, isMultimedia, nodeStart, nodeEnd, nodeLength, nodeParent))
+#endif
 {
 }
 
+#ifdef ANTINNO_SPECIFIC
+std::string const& Node::get_DocName() const {
+#else
 std::string Node::get_DocName() const {
+#endif
   return m_d->m_docName;
 };
 void  Node::set_DocName ( const std::string& docName ) {
@@ -276,6 +350,11 @@ public:
   StructurePrivate(const StructurePrivate& sp);
   StructurePrivate ( STRUCT_ID structID );
   StructurePrivate& operator= ( const StructurePrivate& sp );
+
+#ifdef ANTINNO_SPECIFIC
+  StructurePrivate(StructurePrivate&& sp);
+  StructurePrivate& operator= ( StructurePrivate&& sp );
+#endif
   
     //! @brief destructeur: delete des 'Nodes' de contenu
     ~StructurePrivate();
@@ -300,6 +379,21 @@ StructurePrivate& StructurePrivate::operator=(const StructurePrivate& sp)
   m_structId = sp.m_structId;
   return *this;
 }
+#ifdef ANTINNO_SPECIFIC
+StructurePrivate::StructurePrivate(StructurePrivate&& sp) :
+m_nodes(::std::move(sp.m_nodes)), m_structId(sp.m_structId)
+{
+}
+StructurePrivate& StructurePrivate::operator=(StructurePrivate&& sp)
+{
+  if (this != &sp)
+  {
+    m_nodes = ::std::move(sp.m_nodes);
+    m_structId = sp.m_structId;
+  }
+  return *this;
+}
+#endif
 
 StructurePrivate::StructurePrivate ( STRUCT_ID structID ) : m_structId(structID)
 {
@@ -321,6 +415,23 @@ Structure::Structure ( const Structure& s )  : m_d(new StructurePrivate(*s.m_d))
 {
 }
 
+#ifdef ANTINNO_SPECIFIC
+Structure& Structure::operator=(Structure&& s )
+{
+  if (this != &s)
+  {
+    delete m_d;
+    m_d = s.m_d;
+    s.m_d = nullptr;
+  }
+  return *this;
+}
+Structure::Structure (Structure&& s )  : m_d(s.m_d)
+{
+  s.m_d = nullptr;
+}
+#endif
+
 Structure& Structure::operator=( const Structure& s )
 {
   if (m_d!=0) {
@@ -333,13 +444,21 @@ Structure& Structure::operator=( const Structure& s )
 //! @brief destructeur: delete des 'Nodes' de contenu
 Structure::~Structure()
 {
+  
     delete m_d;
+    
 }
 
 void Structure::addNode (const Node& node )
 {
   m_d->m_nodes[node.get_ContentId()]=node;
 }
+#ifdef ANTINNO_SPECIFIC
+void Structure::addNode (Node&& node )
+{
+  m_d->m_nodes.insert(::std::make_pair(node.get_ContentId(), ::std::move(node)));
+}
+#endif
 
 void Structure::addNode ( CONTENT_ID ContentId, const Node& node )
 {
@@ -409,10 +528,7 @@ std::ostream& operator<<(ostream& os, const Node& node)
 
 QDebug& operator<<(QDebug& os, const Node& node)
 {
-  os << "Node(structId:" << node.get_StructId() << ", nodeId:" << node.get_NodeId() 
-     << ", contentId:" << node.get_ContentId() << ", indexId:" << node.indexId() << ", descrId:" 
-     << node.descrId() << ", docName:" << node.get_DocName() << ", nodeStart:" << node.nodeStart() 
-     << ", nodeEnd:" << node.nodeEnd() << ", nodeLength:" << node.nodeLength() << ")";
+  os<<"Node(structId:"<<node.get_StructId()<<", nodeId:"<<node.get_NodeId()<<", contentId:"<<node.get_ContentId()<<", indexId:"<<node.indexId()<<", descrId:"<<node.descrId()<<", docName:"<<node.get_DocName() << ")";
   return os;
 }
 
