@@ -84,7 +84,11 @@ protected:
   std::string m_handler;
 
   private:
+#ifdef ANTINNO_SPECIFIC
+    Lima::LimaStatusCode buildBoWText(Lima::StopAnalyze const&,
+#else
     void buildBoWText(
+#endif
       const Common::AnnotationGraphs::AnnotationData* annotationData,
       const SyntacticAnalysis::SyntacticData* syntacticData,
       Common::BagOfWords::BoWText& bowText,
@@ -92,7 +96,11 @@ protected:
       LinguisticAnalysisStructure::AnalysisGraph* anagraph,
       LinguisticAnalysisStructure::AnalysisGraph* posgraph) const;
 
+#ifdef ANTINNO_SPECIFIC
+  Lima::LimaStatusCode addVerticesToBoWText(Lima::StopAnalyze const&,
+#else
   void addVerticesToBoWText(
+#endif
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     LinguisticAnalysisStructure::AnalysisGraph* anagraph,
     LinguisticAnalysisStructure::AnalysisGraph* posgraph,
