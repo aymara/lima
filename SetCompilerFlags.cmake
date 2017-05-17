@@ -16,9 +16,22 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
 option(WITH_ASAN "Enable address sanitizer" OFF)
+message("WITH_ASAN=${WITH_ASAN}")
+option(WITH_ARCH "Enable architecture optimizations" OFF)
+message("WITH_ARCH=${WITH_ARCH}")
+
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer -g")
+
+    if (WITH_ARCH)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+    else()
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic -msse4.2")
+    endif()
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
     # factories, thus their symbols must be known even if not used by the binary
@@ -35,20 +48,16 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer")
     endif()
 
-    if (HAVE_STDCPP0X)
-      message("C++0x supported")
-      set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-    else (HAVE_STDCPP0X)
-      message("C++0x NOT supported")
-      set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
-    endif (HAVE_STDCPP0X)
     if (HAVE_STDCPP11)
       message("C++11 supported")
       set(CMAKE_CXX_FLAGS "-std=c++11 -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-    else (HAVE_STDCPP11)
-      message("C++11 NOT supported")
+    elseif (HAVE_STDCPP0X)
+      message("C++0x supported")
+      set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
+    else ()
+      message("C++0x NOT supported")
       set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
-    endif (HAVE_STDCPP11)
+    endif ()
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
 
     if (WITH_ASAN)

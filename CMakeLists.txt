@@ -5,22 +5,7 @@ enable_testing()
 
 include(ExternalProject)
 
-option(WITH_ASAN "Enable address sanitizer" OFF)
-message("WITH_ASAN=${WITH_ASAN}")
-option(WITH_ARCH "Enable architecture optimizations" OFF)
-message("WITH_ARCH=${WITH_ARCH}")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
-
-if (NOT ("x${CMAKE_SYSTEM_NAME}" STREQUAL "xWindows"))
-    if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease")
-      if (WITH_ARCH)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-      else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic -march=avx")
-      endif()
-    endif()
-endif()
+include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
 
 macro (CompileLimaSubproject _project _dependsOn )
 
@@ -45,6 +30,10 @@ macro (CompileLimaSubproject _project _dependsOn )
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
         -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 
         -DBoost_DEBUG=ON -DWITH_ASAN:BOOL=${WITH_ASAN} 
+        -DWITH_ASAN:BOOL=${WITH_ASAN} 
+        -DWITH_ARCH:BOOL=${WITH_ARCH} 
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
         -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
 
   )
@@ -95,31 +84,3 @@ CompileLimaSubproject(lima_annoqt lima_common)
 
 install(FILES)
 
-# ########### packaging ###############
-# include(SystemSpecificInformations.cmake)
-# include(InstallRequiredSystemLibraries)
-#
-# set(CPACK_MONOLITHIC_INSTALL 1)
-# set(CPACK_PACKAGE_NAME "lima")
-# set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lima root package")
-# set(CPACK_PACKAGE_VENDOR "CEA LIST")
-# set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
-# set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-# set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-# SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
-# SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
-# SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
-# set(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
-# set(CPACK_STRIP_FILES "")
-# set(CPACK_SOURCE_STRIP_FILES "")
-# set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-# set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-# if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-#   set(CPACK_RPM_PACKAGE_REQUIRES "")
-#   set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
-# else (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-#   set(CPACK_RPM_PACKAGE_REQUIRES "")
-#   set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
-# endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-#
-# include(CPack)
