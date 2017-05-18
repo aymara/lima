@@ -21,14 +21,17 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include "common/Data/strwstrtools.h"
 #include "common/LimaCommon.h"
+#include "common/MediaProcessors/MediaProcessUnit.h"
+#include "common/MediaticData/mediaticData.h"
+#include "common/time/timeUtilsController.h"
+#include "common/time/traceUtils.h"
 #include "common/tools/FileUtils.h"
 #include "common/tools/LimaMainTaskRunner.h"
-#include "common/MediaticData/mediaticData.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
-#include "common/Data/strwstrtools.h"
-#include "common/time/traceUtils.h"
-#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/bowToken.h"
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
@@ -40,31 +43,30 @@
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
-#include "common/MediaProcessors/MediaProcessUnit.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
-
-#include <string>
-#include <vector>
-#include <iostream>
-#include <fstream>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
 
-#include "common/time/timeUtilsController.h"
+#include <boost/shared_ptr.hpp>
+
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
+
 
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::BagOfWords;
 using namespace Lima;
-using namespace std;
 
 void usage(int argc, char* argv[]);
 void listunits();
 int dowork(int argc,char* argv[]);
-multimap<LimaString,string> extractNormalization(const LimaString& source,const BoWText& bowText,MediaId lang);
-pair<int,int> getStartEnd(const BoWToken* tok);
+std::multimap<LimaString, std::string> extractNormalization(const LimaString& source,const BoWText& bowText,MediaId lang);
+std::pair<int,int> getStartEnd(const BoWToken* tok);
 
 int run(int aargc,char** aargv);
 
@@ -124,17 +126,29 @@ int run(int argc,char** argv)
 
 int dowork(int argc,char* argv[])
 {
-  string resourcesPathParam=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
-  string configPathParam=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
-  string lpConfigFile=string("lima-analysis.xml");
-  string commonConfigFile=string("lima-common.xml");
-  string pipeline=string("normalization");
-  string clientId=string("lima-coreclient");
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+
+
+  std::string resourcesPathParam;
+  std::string configPathParam;
+  std::string lpConfigFile("lima-analysis.xml");
+  std::string commonConfigFile("lima-common.xml");
+  std::string pipeline("normalization");
+  std::string clientId("lima-coreclient");
 
   bool printCategs=false;
 
-  deque<string> langs;
-  deque<string> files;
+  std::deque<std::string> langs;
+  std::deque<std::string> files;
 
   if (argc>1)
   {
@@ -180,15 +194,11 @@ int dowork(int argc,char* argv[])
     return -1;
   }
 
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
-  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
   if (!configPathParam.empty())
   {
     configPath = QString::fromUtf8(configPathParam.c_str());
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
-  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
   if (!resourcesPathParam.empty())
   {
     resourcesPath = QString::fromUtf8(resourcesPathParam.c_str());
@@ -212,37 +222,40 @@ int dowork(int argc,char* argv[])
       langs);
 
     // initialize linguistic processing
-    deque<string> pipelines;
+    std::deque<std::string> pipelines;
     pipelines.push_back(pipeline);
 	
-    QString lpConfigFileFound = Common::Misc::findFileInPaths(configPath, lpConfigFile.c_str(), LIMA_PATH_SEPARATOR);
+    QString lpConfigFileFound = Common::Misc::findFileInPaths(configPath, 
+                                                              lpConfigFile.c_str(), 
+                                                              LIMA_PATH_SEPARATOR);
 
-    Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(lpConfigFileFound.toUtf8().constData());
+    Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+        lpConfigFileFound.toUtf8().constData());
     LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,
         langs,
         pipelines);
 
-    shared_ptr <AbstractLinguisticProcessingClient > client= std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
+    std::shared_ptr <AbstractLinguisticProcessingClient > client=   
+        std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
+          LinguisticProcessingClientFactory::single().createClient(clientId));
     
     // Set the handlers
     std::map<std::string, AbstractAnalysisHandler*> handlers;
     BowTextHandler bowTextHandler;
     handlers.insert(std::make_pair("bowTextHandler", &bowTextHandler));
     
-    map<string,string> metaData;
+    std::map<std::string, std::string> metaData;
     metaData["Lang"]=langs[0];
     MediaId lang=MediaticData::single().getMediaId(langs[0]);
 
-    for (deque<string>::iterator fileItr=files.begin();
-         fileItr!=files.end();
-         fileItr++)
+    for (auto fileItr = files.cbegin(); fileItr != files.cend(); fileItr++)
     {
       // open the output file
-      ostringstream os;
+      std::ostringstream os;
       os << *fileItr << ".norm";
-      ofstream fout(os.str().c_str());
+      std::ofstream fout(os.str().c_str());
 
       // loading of the input file
       TimeUtils::updateCurrentTime();
@@ -255,14 +268,13 @@ int dowork(int argc,char* argv[])
         if (line.size()==0)
         {
           file.getline(buf,256);
-          line=string(buf);
+          line = std::string(buf);
           continue;
         }
         //        cout << "normalize " << line << endl;
         LimaString contentText;
         // The input text MUST be UTF-8 encoded !!!
-        contentText = utf8stdstring2limastring(line);
-
+        contentText = utf8stdstring2limastring(line).trimmed();
         // analyze it
         metaData["FileName"]=*fileItr;
 
@@ -272,12 +284,14 @@ int dowork(int argc,char* argv[])
         
         
         // analyze resulting bowText to extract normalization
-        multimap<LimaString,string> norms=extractNormalization(contentText,bowTextHandler.getBowText(),lang);
+        std::multimap<LimaString, std::string> norms=extractNormalization(contentText,
+                                                               bowTextHandler.getBowText(),
+                                                               lang);
         if (norms.empty())
         {
-          norms.insert(make_pair(contentText,"NONE_1"));
+          norms.insert(std::make_pair(contentText,"NONE_1"));
         }
-        for (multimap<LimaString,string>::iterator it=norms.begin();it!=norms.end();it++)
+        for (auto it = norms.cbegin(); it != norms.cend(); it++)
         {
           fout << limastring2utf8stdstring(it->first);
           if (printCategs)
@@ -286,10 +300,10 @@ int dowork(int argc,char* argv[])
           }
           fout << ";";
         }
-        fout << endl;
+        fout << std::endl;
         // read next line
         file.getline(buf,256);
-        line=string(buf);
+        line=std::string(buf);
       }
     }
 #ifndef DEBUG_LP
@@ -303,45 +317,54 @@ int dowork(int argc,char* argv[])
 }
 
 
-multimap<LimaString,string> extractNormalization(const LimaString& source,const BoWText& bowText,MediaId lang)
+std::multimap<LimaString, std::string> extractNormalization(const LimaString& source,
+                                                 const BoWText& bowText,
+                                                 MediaId lang)
 {
-  const Common::PropertyCode::PropertyManager& macroManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(lang)).getPropertyCodeManager().getPropertyManager("MACRO");
-  multimap<LimaString,string> result;
+  const Common::PropertyCode::PropertyManager& macroManager = 
+      static_cast<const Common::MediaticData::LanguageData&>(
+        MediaticData::single().mediaData(lang))
+                    .getPropertyCodeManager().getPropertyManager("MACRO");
+  std::multimap<LimaString, std::string> result;
   // si un seul bowtoken on le prend
   //  if (bowText.size()==1)
   //  {
   //    cerr << "- found only one norm : " << bowText.front()->getLemma() << endl;
   //    result.push_back(bowText.front()->getLemma());
   //  }
-  // sinon on prend tous les bowtoken qui vont du d�ut �la fin
+  // sinon on prend tous les bowtoken qui vont du debut a la fin
   //  else
   //  {
-  //    cerr << "extractNormalisation : " << source << endl;
-  for (BoWText::const_iterator bowItr=bowText.begin();
-       bowItr!=bowText.end();
-       bowItr++)
+  std::cerr << "extractNormalisation : '" << source.toUtf8().constData() << "' "
+            << source.size() << std::endl;
+  for (auto bowItr = bowText.cbegin(); bowItr != bowText.cend(); bowItr++)
   {
     if ((*bowItr)->getType() != BoWType::BOW_PREDICATE)
     {
-      pair<int,int> posLen=getStartEnd(static_cast<const BoWToken*>(&**bowItr));
-      //      cerr << "  - " << (*bowItr)->getLemma() << " at " << posLen.first << "," << posLen.second;
-      if ((posLen.first==1) && (posLen.second==int(source.size()+1)))
+      std::pair<int,int> posLen = getStartEnd(static_cast<const BoWToken*>(&**bowItr));
+      std::cerr << "  - '" << boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma() << "' at " << posLen.first << "," << posLen.second;
+      if ((posLen.first==0) && (posLen.second==source.size()))
       {
-        result.insert(make_pair(
+        result.insert(std::make_pair(
                         boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma(),
-                        macroManager.getPropertySymbolicValue(boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getCategory())));
-        //        cerr << " keep it !";
+                        macroManager.getPropertySymbolicValue(
+                            boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getCategory())));
+        std::cerr << " keep it !";
       }
-      //      cerr << endl;
+      else
+      {
+        std::cerr << " IGNORE it !";
+      }
+      std::cerr << std::endl;
     }
   }
   //   }
   return result;
 }
 
-pair<int,int> getStartEnd(const BoWToken* tok)
+std::pair<int,int> getStartEnd(const BoWToken* tok)
 {
-  pair<int,int> res;
+  std::pair<int,int> res;
   if (tok->getType()==BoWType::BOW_TOKEN)
   {
     res.first=tok->getPosition();
@@ -352,23 +375,23 @@ pair<int,int> getStartEnd(const BoWToken* tok)
     const BoWComplexToken* complextok=dynamic_cast<const BoWComplexToken*>(tok);
     if (complextok==0)
     {
-      cerr << "ERROR ! complextok==0 ! should not happen !" << endl;
+      std::cerr << "ERROR ! complextok==0 ! should not happen !" << std::endl;
       exit(0);
     }
     const std::deque< BoWComplexToken::Part >& parts=complextok->getParts();
     if (parts.size()==0)
     {
-      cerr << "ERROR ! complex token should have at least one part ! " << endl;
+      std::cerr << "ERROR ! complex token should have at least one part ! " << std::endl;
       exit(0);
     }
-    std::deque< BoWComplexToken::Part >::const_iterator partItr=parts.begin();
+    auto partItr=parts.cbegin();
     res=getStartEnd(&*partItr->get<1>());
     partItr++;
-    for (;partItr!=parts.end();partItr++)
+    for (; partItr != parts.end(); partItr++)
     {
-      pair<int,int> tmp=getStartEnd(&*partItr->get<1>());
-      if (tmp.first<res.first) res.first=tmp.first;
-      if (tmp.second>res.second) res.second=tmp.second;
+      std::pair<int,int> tmp = getStartEnd(&*partItr->get<1>());
+      if (tmp.first<res.first) res.first = tmp.first;
+      if (tmp.second>res.second) res.second = tmp.second;
     }
   }
   return res;
@@ -388,17 +411,15 @@ void usage(int argc, char *argv[])
 //   std::cout << "\t--pipeline=<pipelineId>\tOptional. Default is 'main'" << std::endl;
   std::cout << "\t--availableUnits\tshow all available resources, processUnits and dumpers" << std::endl;
   std::cout << "\twhere files are files to analyze." << std::endl;
-  std::cout << endl;
+  std::cout << std::endl;
   std::cout << "Available client factories are : " << std::endl;
   {
-    deque<string> ids=LinguisticProcessingClientFactory::single().getRegisteredFactories();
-    for (deque<string>::iterator it=ids.begin();
-         it!=ids.end();
-         it++)
+    std::deque<std::string> ids=LinguisticProcessingClientFactory::single().getRegisteredFactories();
+    for (auto it = ids.cbegin(); it != ids.end(); it++)
     {
-      cout << "- " << *it << endl;
+      std::cout << "- " << *it << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
   }
   exit(0);
 }
@@ -407,37 +428,31 @@ void usage(int argc, char *argv[])
 void listunits()
 {
   {
-    cout << "Available resources factories : " << endl;
-    deque<string> ids=AbstractResource::Factory::getRegisteredFactories();
-    for (deque<string>::const_iterator it=ids.begin();
-         it!=ids.end();
-         it++)
+    std::cout << "Available resources factories : " << std::endl;
+    std::deque<std::string> ids = AbstractResource::Factory::getRegisteredFactories();
+    for (auto it = ids.cbegin(); it != ids.cend(); it++)
     {
-      cout << "- " << *it << endl;
+      std::cout << "- " << *it << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
   }
   {
-    cout << "Available process units factories : " << endl;
-    deque<string> ids=MediaProcessUnit::Factory::getRegisteredFactories();
-    for (deque<string>::const_iterator it=ids.begin();
-         it!=ids.end();
-         it++)
+    std::cout << "Available process units factories : " << std::endl;
+    std::deque<std::string> ids = MediaProcessUnit::Factory::getRegisteredFactories();
+    for (auto it = ids.cbegin(); it != ids.cend(); it++)
     {
-      cout << "- " << *it << endl;
+      std::cout << "- " << *it << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
   }
   std::cout << "Available client factories are : " << std::endl;
   {
-    deque<string> ids=LinguisticProcessingClientFactory::single().getRegisteredFactories();
-    for (deque<string>::iterator it=ids.begin();
-         it!=ids.end();
-         it++)
+    std::deque<std::string> ids = LinguisticProcessingClientFactory::single().getRegisteredFactories();
+    for (auto it = ids.cbegin(); it != ids.cend(); it++)
     {
-      cout << "- " << *it << endl;
+      std::cout << "- " << *it << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
   }
   exit(0);
 }
