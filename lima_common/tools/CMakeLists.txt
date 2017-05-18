@@ -27,6 +27,7 @@ add_executable(convertToUtf8 ${convertToUtf8_SRCS})
 
 target_link_libraries(convertToUtf8 lima-common)
 
-install(TARGETS convertToUtf8 DESTINATION bin)
+install(TARGETS convertToUtf8 DESTINATION bin
+    COMPONENT runtime)
 
 ########### install files ###############

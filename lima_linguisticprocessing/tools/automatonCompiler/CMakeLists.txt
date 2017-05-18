@@ -34,7 +34,8 @@ add_executable(compile-rules ${compile-rules_SRCS})
 target_link_libraries(compile-rules lima-lp-automatoncompiler
 )
 
-install(TARGETS compile-rules DESTINATION bin)
+install(TARGETS compile-rules DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

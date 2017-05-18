@@ -34,7 +34,8 @@ target_link_libraries(XmlParser
   ${QT_LIBRARIES} 
 )
 
-install(TARGETS XmlParser DESTINATION bin)
+install(TARGETS XmlParser DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -47,7 +48,8 @@ add_executable(evalCoref ${evalCoref_SRCS})
 
 target_link_libraries(evalCoref lima-linguisticprocessing)
 
-install(TARGETS evalCoref DESTINATION bin)
+install(TARGETS evalCoref DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

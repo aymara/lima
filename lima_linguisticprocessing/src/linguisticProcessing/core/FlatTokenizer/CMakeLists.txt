@@ -51,7 +51,8 @@ target_link_libraries(lima-lp-flattokenizer
 
 set_target_properties(lima-lp-flattokenizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-flattokenizer DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-flattokenizer DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -63,7 +64,8 @@ add_executable(limatokenizerparser ${limatokenizerparser_SRCS})
 
 target_link_libraries(limatokenizerparser ${Boost_LIBRARIES})
 
-install(TARGETS limatokenizerparser DESTINATION bin)
+install(TARGETS limatokenizerparser DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -76,7 +78,8 @@ add_executable(limacharchartparser ${limacharchartparser_SRCS})
 
 target_link_libraries(limacharchartparser ${Boost_LIBRARIES})
 
-install(TARGETS limacharchartparser DESTINATION bin)
+install(TARGETS limacharchartparser DESTINATION bin
+  COMPONENT runtime)
 
 ########### install files ###############
 install(FILES

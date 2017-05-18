@@ -17,4 +17,5 @@
 ########### install files ###############
 install(FILES
 # FindSOCI.cmake
-  DESTINATION share/apps/lima/cmake/Modules)
+  DESTINATION share/apps/lima/cmake/Modules
+  COMPONENT devel)

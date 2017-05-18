@@ -47,7 +47,8 @@ target_link_libraries(catBowFiles
   ${Boost_LIBRARIES} 
   ${optionalLibs})
 
-install(TARGETS catBowFiles DESTINATION bin)
+install(TARGETS catBowFiles DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -64,7 +65,8 @@ target_link_libraries(readBowFile
   ${Boost_LIBRARIES}
 )
 
-install(TARGETS readBowFile DESTINATION bin)
+install(TARGETS readBowFile DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -81,7 +83,8 @@ target_link_libraries(readLtrFile
   ${optionalLibs}
 )
 
-install(TARGETS readLtrFile DESTINATION bin)
+install(TARGETS readLtrFile DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -98,7 +101,8 @@ target_link_libraries(getLexiconFromBoW
   ${optionalLibs}
 )
 
-install(TARGETS getLexiconFromBoW DESTINATION bin)
+install(TARGETS getLexiconFromBoW DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -115,7 +119,8 @@ target_link_libraries(parseXMLPropertyFile
   ${optionalLibs}
 )
 
-install(TARGETS parseXMLPropertyFile DESTINATION bin)
+install(TARGETS parseXMLPropertyFile DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -132,7 +137,8 @@ target_link_libraries(convertSymbolicCodes
   ${optionalLibs}
 )
 
-install(TARGETS convertSymbolicCodes DESTINATION bin)
+install(TARGETS convertSymbolicCodes DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -149,7 +155,8 @@ target_link_libraries(readLinguisticData
   ${optionalLibs}
 )
 
-install(TARGETS readLinguisticData DESTINATION bin)
+install(TARGETS readLinguisticData DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -167,7 +174,8 @@ target_link_libraries(testContentDict16
   ${optionalLibs}
 )
 
-install(TARGETS testContentDict16 DESTINATION bin)
+install(TARGETS testContentDict16 DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -185,7 +193,8 @@ target_link_libraries(convertXmlToSBoW
   ${optionalLibs}
 )
 
-install(TARGETS convertXmlToSBoW DESTINATION bin)
+install(TARGETS convertXmlToSBoW DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -202,7 +211,8 @@ target_link_libraries(buildCompoundsDict
   ${optionalLibs}
 )
 
-install(TARGETS buildCompoundsDict DESTINATION bin)
+install(TARGETS buildCompoundsDict DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -219,7 +229,8 @@ target_link_libraries(testReadLexicon
   ${optionalLibs}
 )
 
-install(TARGETS testReadLexicon DESTINATION bin)
+install(TARGETS testReadLexicon DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -236,6 +247,7 @@ target_link_libraries(testPropManager
   ${optionalLibs}
 )
 
-install(TARGETS testPropManager DESTINATION bin)
+install(TARGETS testPropManager DESTINATION bin
+  COMPONENT runtime)
 
 ########### install files ###############

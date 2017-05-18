@@ -32,7 +32,8 @@ target_link_libraries(lima-lp-linguisticdata
 
 set_target_properties(lima-lp-linguisticdata PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticdata DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-linguisticdata DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

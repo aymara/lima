@@ -32,7 +32,8 @@ target_link_libraries(lima-lp-corefsolver lima-common-factory lima-common-misc l
 
 set_target_properties(lima-lp-corefsolver PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-corefsolver DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-corefsolver DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

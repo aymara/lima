@@ -44,7 +44,8 @@ target_link_libraries(lima-lp-specificentities
 
 set_target_properties(lima-lp-specificentities PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-specificentities DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-specificentities DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 ########### specific targets for normalization actions ###############
 
@@ -60,7 +61,8 @@ set_target_properties(lima-lp-se-datetime PROPERTIES
     VERSION ${LIMA_LP_LIB_VERSION} 
     SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-se-datetime DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-se-datetime DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 SET(lima-lp-se-number_LIB_SRCS
   NormalizeNumber.cpp
@@ -72,7 +74,8 @@ target_link_libraries(lima-lp-se-number lima-linguisticprocessing)
 
 set_target_properties(lima-lp-se-number PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-se-number DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-se-number DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 SET(lima-lp-se-person_LIB_SRCS
   NormalizePersonName.cpp
@@ -82,7 +85,8 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-person)
 target_link_libraries(lima-lp-se-person lima-linguisticprocessing)
 set_target_properties(lima-lp-se-person PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-se-person DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-se-person DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 ########### install files ###############
 install(FILES  

@@ -32,7 +32,8 @@ target_link_libraries(lima-common-datahandler
 )
 
 set_target_properties(lima-common-datahandler PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-datahandler DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-datahandler DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############

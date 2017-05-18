@@ -65,7 +65,8 @@ if(NOT ${SYSTEM_NAME} STREQUAL "Windows")
 endif()
 set_target_properties(lima-linguisticprocessing PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-linguisticprocessing DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-linguisticprocessing DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

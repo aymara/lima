@@ -56,7 +56,8 @@ target_link_libraries(lima-lp-postagger  ${lima-lp-postagger_LIB_LINK})
 
 set_target_properties(lima-lp-postagger PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-postagger DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-postagger DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

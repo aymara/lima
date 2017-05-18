@@ -26,7 +26,8 @@ add_executable(normalizeTerm ${normalizeTerm_SRCS})
 
 target_link_libraries(normalizeTerm lima-linguisticprocessing)
 
-install(TARGETS normalizeTerm DESTINATION bin)
+install(TARGETS normalizeTerm DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -39,7 +40,8 @@ add_executable(desaccent ${desaccent_SRCS})
 
 target_link_libraries(desaccent lima-linguisticprocessing)
 
-install(TARGETS desaccent DESTINATION bin)
+install(TARGETS desaccent DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############
