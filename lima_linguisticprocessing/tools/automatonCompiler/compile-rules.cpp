@@ -326,19 +326,24 @@ int run(int argc,char** argv)
     MediaId language = MediaticData::single().media(param.language);
     
     bool languageInitialized = false;
-    Q_FOREACH(QString configDir, configDirs)
+    QString lpConfigFile = findFileInPaths(configPath, param.lpConfigFile.c_str());
+    if (!lpConfigFile.isEmpty())
     {
-      if (QFileInfo(configDir + "/" + param.lpConfigFile.c_str()).exists())
+      if (QFileInfo(lpConfigFile).exists())
       {
-        XMLConfigurationFileParser lpconfig((configDir + "/" + param.lpConfigFile.c_str()).toUtf8().constData());
-        const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
-        XMLConfigurationFileParser langParser((configDir + "/" + langConfigFile.c_str()).toUtf8().constData());
-        ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
-        LinguisticResources::changeable().initLanguage(
-          language,
-          module,
-          false); // don't load mainkeys in stringpool, no use
-        languageInitialized = true;
+        XMLConfigurationFileParser lpconfig(lpConfigFile.toUtf8().constData());
+        const string& langConfigFileName=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
+        QString langConfigFile = findFileInPaths(configPath, langConfigFileName.c_str());
+        if (!langConfigFile.isEmpty())
+        {
+          XMLConfigurationFileParser langParser(langConfigFile.toUtf8().constData());
+          ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+          LinguisticResources::changeable().initLanguage(
+            language,
+            module,
+            false); // don't load mainkeys in stringpool, no use
+          languageInitialized = true;
+        }
       }
     }
     if(!languageInitialized)
@@ -362,15 +367,19 @@ int run(int argc,char** argv)
       {
         if (QFileInfo(configDir + "/" + param.modexConfigFile.c_str()).exists())
         {
-          XMLConfigurationFileParser modexconfig((configDir + "/" + param.modexConfigFile.c_str()).toUtf8().constData());
-          vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
-          for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+          QString modexConfigFile = findFileInPaths(configPath, param.modexConfigFile.c_str());
+          if (!modexConfigFile.isEmpty())
           {
-            LOGINIT("Automaton::Compiler");
-            LDEBUG << "load library " << *it;
-            Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+            XMLConfigurationFileParser modexconfig(modexConfigFile.toUtf8().constData());
+            vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
+            for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+            {
+              LOGINIT("Automaton::Compiler");
+              LDEBUG << "load library " << *it;
+              Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+            }
+            modexInitialized = true;
           }
-          modexInitialized = true;
         }
       }
       if(!modexInitialized)
