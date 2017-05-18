@@ -106,7 +106,7 @@ int run(int argc,char** argv)
   {
     try
     {
-      std::cerr << "Doing work in try block." << std::endl;
+//       std::cerr << "Doing work in try block." << std::endl;
       return dowork(argc, argv);
     }
     catch (const std::exception& e)
@@ -335,27 +335,27 @@ std::multimap<LimaString, std::string> extractNormalization(const LimaString& so
   // sinon on prend tous les bowtoken qui vont du debut a la fin
   //  else
   //  {
-  std::cerr << "extractNormalisation : '" << source.toUtf8().constData() << "' "
-            << source.size() << std::endl;
+//   std::cerr << "extractNormalisation : '" << source.toUtf8().constData() << "' "
+//             << source.size() << std::endl;
   for (auto bowItr = bowText.cbegin(); bowItr != bowText.cend(); bowItr++)
   {
     if ((*bowItr)->getType() != BoWType::BOW_PREDICATE)
     {
       std::pair<int,int> posLen = getStartEnd(static_cast<const BoWToken*>(&**bowItr));
-      std::cerr << "  - '" << boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma() << "' at " << posLen.first << "," << posLen.second;
+//       std::cerr << "  - '" << boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma() << "' at " << posLen.first << "," << posLen.second;
       if ((posLen.first==0) && (posLen.second==source.size()))
       {
         result.insert(std::make_pair(
                         boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma(),
                         macroManager.getPropertySymbolicValue(
                             boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getCategory())));
-        std::cerr << " keep it !";
+//         std::cerr << " keep it !";
       }
-      else
-      {
-        std::cerr << " IGNORE it !";
-      }
-      std::cerr << std::endl;
+//       else
+//       {
+//         std::cerr << " IGNORE it !";
+//       }
+//       std::cerr << std::endl;
     }
   }
   //   }
