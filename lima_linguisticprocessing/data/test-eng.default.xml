@@ -57,14 +57,19 @@
 </testcase>
 <testcase id="eng.default.4" type="bloquant">
   <call-parameters>
-      <param key="text" value="We paid 24.99 euros."/>
+      <param key="text" value="We paid 24,99 euros."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl> 24.99 reçoit la categorie num card</expl>
-  <test id="eng.default.4.1" trace=".default.xml"
+  <expl> 24,99 reçoit la categorie num card</expl>
+  <test id="fre.default.7.1" trace=".default.xml"
+    comment="The lemma of the token with a comma is the token itself"
+    left="XPATH#//data_structure/vertex[token/position=9]/data/unknown_word/form/@lemma"
+    operator="="
+    right="24,99"/>
+  <test id="eng.default.7.2" trace=".default.xml"
     comment="24,99 a la categorie num card"
     left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
     operator="contains"
@@ -109,7 +114,12 @@
       </list>
     </call-parameters>
   <expl> 24.99 reçoit la categorie num card</expl>
-  <test id="eng.default.7.1" trace=".default.xml"
+  <test id="fre.default.7.1" trace=".default.xml"
+    comment="The lemma of a dot number token is the token itself"
+    left="XPATH#//data_structure/vertex[token/position=9]/data/unknown_word/form/@lemma"
+    operator="="
+    right="24.99"/>
+  <test id="eng.default.7.2" trace=".default.xml"
     comment="24.99 a la categorie num card"
     left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
     operator="contains"
