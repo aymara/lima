@@ -197,6 +197,7 @@ COMMENT "Generating API documentation with Doxygen" VERBATIM
 endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
 INCLUDE(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
