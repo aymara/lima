@@ -34,7 +34,7 @@ std::vector<CONLL_Line*> getConllData(std::string filepath) {
     std::vector<std::string> data = into_lines(parse_conll(filepath));
     
     // create structures
-    for (int i=0; i<data.size(); i++) {
+    for (unsigned int i=0; i<data.size(); i++) {
         if (!data[i].empty())
         conll_lines.push_back(new CONLL_Line(data[i]));
     }
@@ -55,7 +55,7 @@ std::string parse_conll(std::string file) {
     std::string unit_path = "~/Lima/Dist/lima-gui/debug/bin/";
 //     chdir(unit_path.c_str());
     std::string cmd = unit + " -l fre " + file;
-    cmd = "cat " + file;
+    //cmd = "cat " + file;
     std::array<char, 128> buffer;
     std::string result;
     
@@ -102,6 +102,19 @@ std::vector<std::string> split(std::string line, char delimiter = '\t') {
     return elements;
 }
 
+/// parse a file and return its content
+std::vector<std::string> parseFile(std::string filepath) {
+  std::ifstream myfile;
+  myfile.open(filepath.c_str(), std::ifstream::in);
+  std::vector<std::string> content;
+  std::string line;
+  while (!myfile.eof() && std::getline(myfile,line)) {
+    content.push_back(line);
+  }
+  myfile.close();
+  return content;
+}
+
 /// displays the expected content : Dependance(mot source, mot cible)
 /// words with no dependency are not displayed by default
 void show_dependencies(CONLL_List& lines) {
@@ -114,7 +127,7 @@ void show_dependencies(CONLL_List& lines) {
     std::string src_token;
     std::string dependency;
     
-    for (int i=0; i<lines.size(); i++) {
+    for (unsigned int i=0; i<lines.size(); i++) {
         crt_token = na;
         src_token = na;
         dependency = na;
@@ -160,15 +173,15 @@ void displayAsColumns(CONLL_List& lines) {
     headers.push_back("relationship");
     
     int offset = 20;
-    for (int i=0;i<headers.size();i++) {
+    for (unsigned int i=0;i<headers.size();i++) {
         std::cout << std::setw(offset) << headers[i];
     }
     std::cout << std::endl;
-    for (int i=0;i<lines.size();i++) for (int j=0;j<offset;j++) std::cout << "-";
+    for (unsigned int i=0;i<lines.size();i++) for (int j=0;j<offset;j++) std::cout << "-";
     std::cout << std::endl;
-    for (int i=0;i<lines.size();i++) {
+    for (unsigned int i=0;i<lines.size();i++) {
         
-        for (int j=0;j<lines[i]->tokens.size();j++) {
+        for (unsigned int j=0;j<lines[i]->tokens.size();j++) {
             std::cout << std::setw(offset) << (lines[i]->tokens[j] != "_"?lines[i]->tokens[j]:" ");
         }
         
@@ -177,7 +190,7 @@ void displayAsColumns(CONLL_List& lines) {
 }
 
 void freeConllList(CONLL_List& cl) {
-  for (int i=0;i<cl.size();i++) {
+  for (unsigned int i=0;i<cl.size();i++) {
     delete(cl[i]);
   }
 }

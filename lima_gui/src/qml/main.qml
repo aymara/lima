@@ -115,7 +115,8 @@ ApplicationWindow
       
       onTriggered: {
         textAnalyzer.filepath = fileUrl
-        textAnalyzer.analyzeFile()
+        console.log("tr_analyze")
+        textAnalyzer.tr_analyzeFile()
       }
       text: "Analyser"
     }
