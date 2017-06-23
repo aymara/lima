@@ -1,0 +1,14 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+    <file>qml/main.qml</file>
+    <file>qml/CustomButton.qml</file>
+    <file>qml/TextEditor.qml</file>
+    <file>qml/Simplex.qml</file>
+    <file>qml/script.js</file>
+    <file>qml/FileMenu.qml</file>
+    <file>qml/EditMenu.qml</file>
+    <file>qml/CustomMenuBar.qml</file>
+    <file>qml/SelectFileMenu.qml</file>
+    <file>qml/FileBrowser.qml</file>
+ </qresource>
+</RCC>
