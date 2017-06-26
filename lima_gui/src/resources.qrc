@@ -10,5 +10,7 @@
     <file>qml/CustomMenuBar.qml</file>
     <file>qml/SelectFileMenu.qml</file>
     <file>qml/FileBrowser.qml</file>
+    <file>qml/AnalyzeTextWidget.qml</file>
+    <file>qml/TabFileTextEditor.qml</file>
  </qresource>
 </RCC>

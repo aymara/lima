@@ -6,16 +6,17 @@
 
 import QtQuick 2.0
 import QtQuick.Window 2.0
+import QtQuick.Controls 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 
 import integ_cpp 1.0
-import "script.js" as Script
+import "script.js" as Dom
 
 /**
- * Main QML File : Basic Text Editor
+ * Main QML File : lima_gui
  */
 
 ApplicationWindow
@@ -24,9 +25,22 @@ ApplicationWindow
 
   id:app_window
   visible: true
-  width: 800
-  height: 600
+  width: 1024
+  height: 768
+  //visibility: Window.Maximized
   property int pile: 0
+  
+  // ideally, one fonction per feature
+  function saveTextFile() {}
+  function analyzeConll() {}
+  function analyzeGraph() {}
+  function openFile() {
+    file_manager.chooseFile()
+  }
+  function saveResults() {}
+  function configLima() {}
+  function setLimaConfig() {}
+  // ...
 
   menuBar: MenuBar {
     style: MenuBarStyle {
@@ -43,7 +57,11 @@ ApplicationWindow
     Menu {
       title: "Fichier"
 
-      MenuItem { text: "Ouvrir un fichier"; }
+      MenuItem { text: "Ouvrir un fichier";
+        onTriggered: {
+          openFile()
+        }
+      }
       MenuItem { text: "Sauvegarder"; }
       MenuItem { text: "Sauvegarder en tant que ..."; }
 
@@ -69,6 +87,28 @@ ApplicationWindow
       MenuItem { text: "Graphe" }
       MenuItem { text: "Entités nommées" }
     }
+    
+    Menu {
+      title: "Lima"
+      
+      Menu {
+        title: "Configurations"
+        
+        // that's where i'd put my preset configs .. if i had one !
+        
+        MenuItem {
+          text: "default"
+        }
+      }
+      
+      MenuItem {
+        text: "Configurer LIMA"
+      }
+      
+      MenuItem {
+        text:"Options"
+      }
+    }
   }
 
   toolBar: ToolBar {
@@ -86,32 +126,163 @@ ApplicationWindow
     }
   }
   
+  // utilities
   
+  Item {
+    id: file_manager
+    
+//     Writer {
+//       id: writer_data
+//     }
+    
+    function chooseFile() {
+      fm_file_dialog.open()
+    }
+    
+    function saveFile() {
+      
+    }
+    
+    function loadFile(urls) {
+      for (var i=0;i<urls.length; i++) {
+        openFile(urls[i]);
+      }
+    }
+    
+    function openFile(url) {
+      Dom.createComponent("TabFileTextEditor.qml", main_tab_view)
+      Dom.obj.title = url
+    }
+    
+    
+    FileDialog {
+      id:fm_file_dialog
+      
+      onAccepted: {
+        file_manager.loadFile(fileUrls)
+      }
+    }
+  }
+  
+  
+  
+  TextAnalyzer {
+    id:textAnalyzer
+  }
   
   Rectangle {
     id: body
-    width: parent.width
-    height: parent.height
-    
+    anchors.fill: parent
+    anchors.margins: 5
+    color:"white"
     //////////////////////////////////////////////////
     // Do your bidding here
+    
+    SplitView {
       
-    TextAnalyzer {
-      id:textAnalyzer
+      anchors.fill: parent
+      orientation: Qt.Vertical
+      
+      SplitView {
+        
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        anchors.margins: 5
+        orientation: Qt.Horizontal
+         
+        Rectangle {
+          Layout.fillHeight: true
+          Layout.preferredWidth: 200
+          Layout.minimumWidth: 100
+    
+            Text {
+              text:"filebrowser"
+            }
+        }
+        
+        TabView {
+          id: main_tab_view
+          
+          
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.minimumWidth: 200
+          Layout.preferredHeight: 300
+          anchors.margins: 10
+          
+          Tab {
+            title: "analyze file"
+            
+            SelectFileMenu {
+              
+              onTriggered: {
+                textAnalyzer.filepath = fileUrl
+                console.log("tr_analyze")
+                textAnalyzer.tr_analyzeFile()
+              }
+              text: "Analyser"
+            }
+            
+          }
+          
+          Tab {
+            title: "analyze text"
+            
+            AnalyzeTextWidget {
+              
+            }
+            
+          }
+          
+          Tab {
+            title: "file1.txt"
+            
+            Rectangle {
+              
+              TextArea {
+                font.family: "Hack"
+                anchors.fill: parent
+                textFormat: TextEdit.RichText
+                wrapMode: TextEdit.WordWrap
+                
+                horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOn
+              }
+              
+            }
+          }
+        }
+        
+        Rectangle {
+          Layout.fillHeight: true
+          Layout.preferredWidth: 200
+          Layout.minimumWidth: 100
+          anchors.margins: 5
+          border.width: 1
+          border.color: "gray"
+          
+          Text {
+            text: "properties"
+          }
+        }
+        
+      }
+      
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 200
+        Layout.minimumHeight: 100
+        anchors.margins: 5
+        border.width: 1
+        border.color: "gray"
+        Text {
+          text:"output"
+        }
+        
+      }
+      
     }
     
-    ColumnLayout {
-      
-      spacing:2
-      anchors.fill: parent
-      anchors.margins: 20
-      id:layout
-    
-    SelectFileMenu {
-      Layout.fillWidth:true
-      Layout.fillHeight:true
-      
-      
+    /*SelectFileMenu {
       
       onTriggered: {
         textAnalyzer.filepath = fileUrl
@@ -123,43 +294,16 @@ ApplicationWindow
     
     ///////////////////////////////////////////////////
     
-    GroupBox {
-      id: analyzeTextWidget
-      
-      Layout.fillWidth:true
-      Layout.fillHeight:true
-      
-      width: 400
-      height: 100
-      
-      title: "Analyser du texte"
-      
-      TextArea {
-        id: text_bunch
-      
-        width: parent.width - 100
-        height: parent.height - 100
-        
-        anchors.margins: 5
-      }
-      
-      Button {
-        text:"Analyze Text"
-        onClicked: {
-          textAnalyzer.text = text_bunch.text
-          textAnalyzer.analyzeText()
-        }
-        
-        anchors.top: text_bunch.bottom
-      }
-      
-      
+    AnalyzeTextWidget {
       
     }
     
-    }
-    ///////////////////////////////////////////////////
+    }*/
+    
+    /////////////////////////////////////////////////// END OF BODY
+  
   }
+  
 }
 
 

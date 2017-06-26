@@ -18,7 +18,7 @@ using namespace Lima::LinguisticProcessing;
 
 TextAnalyzer::TextAnalyzer(QObject* p) : QObject(p)
 {
-  initializeAnalyzer();
+  //initializeAnalyzer();
 }
 
 void TextAnalyzer::initializeAnalyzer() {
@@ -27,7 +27,7 @@ void TextAnalyzer::initializeAnalyzer() {
   if (configDir == "") {
     configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
   }
-    
+  
   std::deque<std::string> langs = {"eng","fre"};
   std::deque<std::string> pipelines = {"main"};
   
@@ -118,7 +118,6 @@ void TextAnalyzer::tr_analyzeFile() {
   
   SimpleStreamHandler* simpleStreamHandler = 0;
   
-  
   if (dumpers.find("text") != dumpers.end())
   {
     simpleStreamHandler = new SimpleStreamHandler();
@@ -130,14 +129,8 @@ void TextAnalyzer::tr_analyzeFile() {
   
   m_analyzer->analyze(QString::fromUtf8(contentText[0].c_str()), metaData, pipeline, handlers, inactiveUnits);
   
-}
-
-std::map<std::string, AbstractAnalysisHandler*> TextAnalyzer::generateHandlers() {
-
-  
-  
-  
-  return handlers;
+  if (simpleStreamHandler)
+    delete simpleStreamHandler;
   
 }
 /*

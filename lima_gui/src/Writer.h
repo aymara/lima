@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QString>
 #include <iostream>
+#include <map>
 
 /**
  * \brief Contains the logic of the text editor, as in save and load files features.
@@ -31,7 +32,20 @@ public:
 private:
   QString m_file_path; ///< url of the file
   QString m_file_content; ///< text content loaded / to save
+  std::map<std::string, std::string> all_files; ///< name -> real url
   
 };
+
+/*
+ * FileTextEditor {
+ *   id:x
+ *   property string file: "fiche1.txt"
+ *   
+ * }
+ * 
+ * 
+ * 
+ */
+
 
 #endif // writer_h
