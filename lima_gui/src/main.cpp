@@ -12,8 +12,8 @@
  * \date 20-06-2017 
  */
 
+#include "LimaGuiApplication.h"
 #include "Writer.h"
-#include "TextAnalyzer.h"
 
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/time/traceUtils.h"
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     
     // https://stackoverflow.com/questions/9500280/access-c-function-from-qml
     qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
-    qmlRegisterType<TextAnalyzer>("integ_cpp", 1, 0, "TextAnalyzer");
+    qmlRegisterType<LimaGuiApplication>("integ_cpp", 1, 0, "LimaGuiApplication");
     
     QQmlApplicationEngine engine(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     return app.exec();

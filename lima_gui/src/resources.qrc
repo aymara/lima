@@ -1,16 +1,29 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
-    <file>qml/main.qml</file>
+   <file>qml/main.qml</file>
+   <file>qml/LimaGuiMenuBar.qml</file>
+   <file>qml/LimaGuiToolBar.qml</file>
+   
     <file>qml/CustomButton.qml</file>
     <file>qml/TextEditor.qml</file>
     <file>qml/Simplex.qml</file>
-    <file>qml/script.js</file>
     <file>qml/FileMenu.qml</file>
     <file>qml/EditMenu.qml</file>
     <file>qml/CustomMenuBar.qml</file>
     <file>qml/SelectFileMenu.qml</file>
     <file>qml/FileBrowser.qml</file>
     <file>qml/AnalyzeTextWidget.qml</file>
-    <file>qml/TabFileTextEditor.qml</file>
+    <file>qml/TabbedView.qml</file>
+    <file>qml/CustomTabButton.qml</file>
+    <file>qml/CustomTabBar.qml</file>
+    
+    <file>qml/basics/Tab.qml</file>
+    <file>qml/basics/CloseButton.qml</file> 
+    <file>qml/basics/BasicRectangle.qml</file>
+<!--     <file>qml/basics/Label.qml</file> -->
+    
+    <!--   Scripts   -->
+    <file>qml/scripts/DynamicObjectManager.js</file>
+    <file>qml/scripts/colors.js</file>
  </qresource>
 </RCC>

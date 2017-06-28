@@ -2,6 +2,7 @@ SET (qt-lima_MOC_HEADERS
   Writer.h
   ConllParser.h
   TextAnalyzer.h
+  LimaGuiApplication.h
 )
 
 qt5_wrap_cpp (qt-lima_MOC_OUTFILES ${qt-lima_MOC_HEADERS})
@@ -10,6 +11,7 @@ SET (qt-lima_LIB_SRCS
   Writer.cpp
   ConllParser.cpp
   TextAnalyzer.cpp
+  LimaGuiApplication.cpp
 )
 
 add_library(qt-lima SHARED 

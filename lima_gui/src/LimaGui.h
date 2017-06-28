@@ -3,4 +3,8 @@
 
 #define LTELL(sstr) std::cout << sstr << std::endl
 
+/// typedefs
+
+typedef unsigned int uint;
+
 #endif // LIMA_GUI_H

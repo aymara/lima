@@ -22,7 +22,7 @@ GroupBox {
     text:"Analyze Text"
     onClicked: {
       textAnalyzer.text = text_bunch.text
-      textAnalyzer.analyzeText()
+      textAnalyzer.analyzeText(text_bunch.text)
     }
     
     anchors.top: text_bunch.bottom

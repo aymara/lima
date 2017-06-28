@@ -13,8 +13,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 
 import integ_cpp 1.0
-import "scripts/DynamicObjectManager.js" as Dom
-import "scripts/colors.js" as Colors
+import "script.js" as Dom
 
 /**
  * Main QML File : lima_gui
@@ -28,7 +27,7 @@ Controls1.ApplicationWindow
   visible: true
   width: 1024
   height: 768
-//   visibility: Window.Maximized
+  //visibility: Window.Maximized
   property int pile: 0
   
   // ideally, one fonction per feature
@@ -169,64 +168,207 @@ Controls1.ApplicationWindow
   
   /// MENU BAR; TOOL BAR
   
-  menuBar: LimaGuiMenuBar {
+  menuBar: Controls1.MenuBar {
+    style: MenuBarStyle {
+      background: Rectangle {
+        color:"white"
+      }
+      menuStyle: MenuStyle {
+        frame : Rectangle {
+          color:"white"
+        }
+      }
+    }
     
+    Controls1.Menu {
+      title: "Fichier"
+      
+      Controls1.MenuItem { text: "Ouvrir un fichier";
+        onTriggered: {
+          openFile()
+        }
+      }
+      Controls1.MenuItem { text: "Sauvegarder"; }
+      Controls1.MenuItem { text: "Sauvegarder en tant que ..."; }
+      
+      Controls1.MenuItem {
+        text: "Exporter ..."
+        onTriggered: confirmCloseFile()
+      }
+      
+      Controls1.MenuItem {
+        text: "Quitter"
+        onTriggered:  Qt.quit()
+        
+      }
+    }
+    
+    Controls1.Menu {
+      title: "Edition"
+      
+      Controls1.MenuItem { text:"Couper" }
+      Controls1.MenuItem { text:"Copier" }
+      Controls1.MenuItem { text:"Coller" }
+    }
+    
+    Controls1.Menu {
+      title: "Analyse"
+      
+      Controls1.MenuItem { text: "Analyse CONLL" }
+      Controls1.MenuItem { text: "Graphe" }
+      Controls1.MenuItem { text: "Entités nommées" }
+    }
+    
+    Controls1.Menu {
+      title: "Lima"
+      
+      Controls1.Menu {
+        title: "Configurations"
+        
+        // that's where i'd put my preset configs .. if i had one !
+        
+        Controls1.MenuItem {
+          text: "default"
+        }
+      }
+      
+      Controls1.MenuItem {
+        text: "Configurer LIMA"
+      }
+      
+      Controls1.MenuItem {
+        text:"Options"
+      }
+    }
   }
   
-  toolBar: LimaGuiToolBar {
+  toolBar: Controls2.ToolBar {
     
+    background: Rectangle {
+      color: "#eeeeee"
+    }
+    
+    RowLayout {
+      Controls1.ToolButton {
+        iconSource: "new.png"
+      }
+      Controls1.ToolButton {
+        iconSource: "open.png"
+      }
+      Controls1.ToolButton {
+        iconSource: "save-as.png"
+      }
+      Item { Layout.fillWidth: true }
+      
+      Controls1.ToolButton {
+        text: "hello"
+      }
+      
+      Controls1.ToolButton {
+        text: "⋮"
+      }
+    }
   }
   
   /// BODY
   
-//   Rectangle {
-//     id: body
-//     anchors.fill: parent
-//     color:"white"
-//     //////////////////////////////////////////////////
-//     // Do your bidding here
-//     
-//     Controls1.SplitView {
-//       
-//       anchors.fill: parent
-//       orientation: Qt.Vertical
-//       
-//       Controls1.SplitView {
-//         
-//         Layout.fillHeight: true
-//         Layout.fillWidth: true
-//         anchors.margins: 5
-//         orientation: Qt.Horizontal
-//          
-//         Rectangle {
-//           Layout.fillHeight: true
-//           Layout.preferredWidth: 200
-//           Layout.minimumWidth: 100
-//     
-//             Text {
-//               text:"filebrowser"
-//             }
-//         }
+  Rectangle {
+    id: body
+    anchors.fill: parent
+    color:"white"
+    //////////////////////////////////////////////////
+    // Do your bidding here
+    
+    Controls1.SplitView {
+      
+      anchors.fill: parent
+      orientation: Qt.Vertical
+      
+      Controls1.SplitView {
         
-        CustomTabBar {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        anchors.margins: 5
+        orientation: Qt.Horizontal
+         
+        Rectangle {
+          Layout.fillHeight: true
+          Layout.preferredWidth: 200
+          Layout.minimumWidth: 100
+    
+            Text {
+              text:"filebrowser"
+            }
+        }
+        
+        Controls2.TabBar {
+          
+          Controls2.TabButton {
+            text:"analyze file"
+          }
+          
+          Controls2.TabButton {
+            text: "analyze text"
+          }
+          
+          Controls2.TabButton {
+            text: "file1.txt"
+          }
+        
+          Controls2.SwipeView {
+            id: main_tab_view
+            
+            
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.minimumWidth: 200
             Layout.preferredHeight: 300
+            anchors.margins: 10
             
-            Component.onCompleted: {
-              for (var i = 0; i < 5; i++) {
+            Item {
+              
+              SelectFileMenu {
                 
-                addTab("analyze file " + i, "basics/BasicRectangle.qml");
+                onTriggered: {
+                  
+                  textAnalyzer.analyzeFileFromUrl(fileUrl)
+                }
+                text: "Analyser"
+              }
+              
+            }
+            
+            Item {
+              
+              AnalyzeTextWidget {
+                
+              }
+              
+            }
+            
+            Item {
+              
+              Rectangle {
+                color: "transparent"
+                Controls1.TextArea {
+                  font.family: "Hack"
+                  anchors.fill: parent
+                  textFormat: TextEdit.RichText
+                  wrapMode: TextEdit.WordWrap
+                }
+                
               }
             }
             
-            
-            
-            
-            
+            Item {
+              
+              TabbedView {
+                
+              }
+            }
+          }
         }
-        /*
+        
         Rectangle {
           Layout.fillHeight: true
           Layout.preferredWidth: 200
@@ -255,7 +397,7 @@ Controls1.ApplicationWindow
         
       }
       
-    }*/
+    }
     
     /*SelectFileMenu {
       
@@ -277,14 +419,7 @@ Controls1.ApplicationWindow
     
     /////////////////////////////////////////////////// END OF BODY
   
-//   }
-  
-//   Controls1.Button {
-//     text:"Click me"
-//     onClicked: {
-//       Dom.createComponent("TabbedView.qml", app_window)
-//     }
-//   }
+  }
 }
 
 
@@ -297,7 +432,3 @@ http://pedromateo.github.io/openhmitester/
 www.catedrasaes.org/wiki/OHT
 
 */
-
-/* About console logs :
- * https://stackoverflow.com/questions/36338000/qml-console-log-and-console-debug-dont-write-to-console
- * */
