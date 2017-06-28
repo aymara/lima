@@ -241,20 +241,11 @@ int dowork(int argc,char* argv[])
       // open the output file
       ostringstream os;
       os << *fileItr << ".norm";
-#ifdef ANTINNO_BUGFIX
-      ofstream fout(os.str().c_str(), std::ofstream::binary);
-#else
       ofstream fout(os.str().c_str());
-#endif
 
       // loading of the input file
       TimeUtils::updateCurrentTime();
-#ifdef ANTINNO_BUGFIX
-      std::ifstream file(fileItr->c_str(), std::ifstream::binary);
-#else
       std::ifstream file(fileItr->c_str());
-#endif
-
       char buf[256];
       file.getline(buf,256);
       std::string line(buf);

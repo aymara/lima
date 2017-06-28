@@ -42,10 +42,6 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace Automaton {
 
-#ifdef ANTINNO_BUGFIX
-  class SearchGraph;
-#endif
-
 // TargetType will be Transition (in automaton) 
 // or TriggerRule (in recognizer) : both have 
 // access to matching TransitionUnit and to result

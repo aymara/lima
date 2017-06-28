@@ -301,10 +301,6 @@ LimaString CharChart::unmarkByString (const LimaChar& c) const
     result.push_back(m_chars[c.unicode()]->unmark()->code());
   if (m_chars[c.unicode()]->longUnmark() != 0 && m_chars[c.unicode()]->longUnmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->longUnmark()->code());
-#ifdef ANTINNO_BUGFIX
-  if (result.isEmpty())
-    result.push_back(c);
-#endif
 #ifdef DEBUG_LP
   LDEBUG << "CharChart::unmarkByString" << result;
 #endif
@@ -336,16 +332,8 @@ LimaString CharChart::unmark(const LimaString& str) const
 //           desaccented.push_back(str.at(i));
       }
     }
-#ifdef ANTINNO_BUGFIX
-    // pour accepter les caractères qui sont en dehors de m_chars
-    catch (InvalidCharException)
-    {
-      desaccented.push_back(str.at(i));
-    }
-#else
     // silently discard invalid character
     catch (InvalidCharException) {}
-#endif
   }
   return desaccented;
 }

@@ -70,13 +70,8 @@ private:
 
   // Each token of the specified path without dictionnary entry is
   // searched into the specified dictionary.
-#ifdef ANTINNO_SPECIFIC
-Lima::LimaStatusCode affectPropertiesOnePath(
-  Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& tokenList, Lima::StopAnalyze const& stopAnalyze) const;
-#else
   void affectPropertiesOnePath(
-  Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& tokenList) const;
-#endif
+    Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& tokenList) const;
 
 };
 

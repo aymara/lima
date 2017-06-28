@@ -28,9 +28,6 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
-#ifdef ANTINNO_SPECIFIC
-#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#endif
 
 #include <iostream>
 #include <iterator>
@@ -71,10 +68,6 @@ LimaStatusCode DummyPosTagger::process(
   // start postagging here !
   PTLOGINIT;
   LINFO << "Start of Dummy posTagging";
-
-#ifdef ANTINNO_SPECIFIC
-  auto const& stopAnalyze = analysis.stopAnalyze();
-#endif
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
@@ -123,32 +116,6 @@ LimaStatusCode DummyPosTagger::process(
           << Common::Misc::limastring2utf8stdstring(tok->stringForm()) << " is empty !";
       }
     }
-#ifdef ANTINNO_SPECIFIC
-    using namespace Lima::Common::AnnotationGraphs;
-    auto pAnnotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-    if (pAnnotationData == nullptr)
-      try
-      {
-        pAnnotationData = new AnnotationData();
-        auto p = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-        if (p)
-          p->populateAnnotationGraph(pAnnotationData, "AnalysisGraph");
-        analysis.setData("AnnotationData", pAnnotationData);
-      }
-      catch (...)
-      {
-        delete pAnnotationData;
-        throw;
-      }
-#endif
-
-#ifdef ANTINNO_SPECIFIC
-    if (stopAnalyze)
-	  {
-		  LERROR << "Analyze too long. Stopped in DummyPosTagger";
-		  return TIME_OVERFLOW;
-	  }
-#endif
   }
 
   // Affichage du graphe après le POSTagging
