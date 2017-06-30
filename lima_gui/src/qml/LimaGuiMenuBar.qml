@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 MenuBar {
+  
   style: MenuBarStyle {
     background: Rectangle {
       color:"white"
@@ -11,15 +12,26 @@ MenuBar {
       frame : Rectangle {
         color:"white"
       }
+      
     }
   }
   
   Menu {
     title: "Fichier"
     
-    MenuItem { text: "Ouvrir un fichier";
+    MenuItem {
+      text: "Nouveau "
+      shortcut: "Ctrl+N"
       onTriggered: {
-        openFile()
+        createNewElement()
+      }
+    }
+    
+    MenuItem { 
+      text: "Ouvrir un fichier";
+      shortcut: "Ctrl+O"
+      onTriggered: {
+        openSelectFileDialog()
       }
     }
     MenuItem { text: "Sauvegarder"; }
@@ -48,9 +60,23 @@ MenuBar {
   Menu {
     title: "Analyse"
     
+    MenuItem { text: "Analyser du texte"
+      onTriggered: openAnalyzeTextTab();
+    }
+    
+    MenuItem { text:"Analyser des fichiers"
+      onTriggered: openAnalyzeFileTab();
+    }
     MenuItem { text: "Analyse CONLL" }
     MenuItem { text: "Graphe" }
     MenuItem { text: "Entités nommées" }
+
+    MenuItem { text:"Debug Test"
+      onTriggered: {
+        textAnalyzer.test()
+      }
+      shortcut:"Ctrl+T"
+    }
   }
   
   Menu {

@@ -69,7 +69,7 @@ function deliverComponent() {
         fit = false;
       }
       success = true;
-      checkSum();
+      //checkSum();
     }
   }
   else {

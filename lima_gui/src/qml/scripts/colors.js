@@ -21,7 +21,7 @@ function randomColor() {
   for (var i = 0; i < 6; i++) {
     str = str + randomChar()
   }
-  str = str + "aa";
+  //str = str + "aa";
   //console.log(str);
   return str;
 }

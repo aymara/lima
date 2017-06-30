@@ -1,29 +1,52 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
+   <!-- Main files -->
    <file>qml/main.qml</file>
    <file>qml/LimaGuiMenuBar.qml</file>
    <file>qml/LimaGuiToolBar.qml</file>
    
-    <file>qml/CustomButton.qml</file>
-    <file>qml/TextEditor.qml</file>
-    <file>qml/Simplex.qml</file>
+   <!-- Widgets -->
+   <file>qml/AnalyzeTextWidget.qml</file>
+   <file>qml/AnalyzeFileWidget.qml</file>
+   <file>qml/TabbedView.qml</file>
+   <file>qml/CustomTabButton.qml</file>
+   <file>qml/CustomTabBar.qml</file>
+   <file>qml/NewElementPopup.qml</file>
+   
+   <!-- Models -->
+   <file>qml/models/NewElementModel.qml</file>
+   
+   
+   
+   <!---->
+   <!-- Test files -->
+   
+    <file>qml/main_2.qml</file>
     <file>qml/FileMenu.qml</file>
     <file>qml/EditMenu.qml</file>
     <file>qml/CustomMenuBar.qml</file>
-    <file>qml/SelectFileMenu.qml</file>
+    <file>qml/CustomTabbedView.qml</file>
     <file>qml/FileBrowser.qml</file>
-    <file>qml/AnalyzeTextWidget.qml</file>
-    <file>qml/TabbedView.qml</file>
-    <file>qml/CustomTabButton.qml</file>
-    <file>qml/CustomTabBar.qml</file>
+    <file>qml/CustomButton.qml</file>
+    <file>qml/TextEditor.qml</file>
     
+    <!---->
+    
+    
+    
+    
+    
+    <!-- Samples -->
     <file>qml/basics/Tab.qml</file>
     <file>qml/basics/CloseButton.qml</file> 
     <file>qml/basics/BasicRectangle.qml</file>
-<!--     <file>qml/basics/Label.qml</file> -->
+    <file>qml/Simplex.qml</file>
+    <file>qml/basics/ResultTab.qml</file>
     
     <!--   Scripts   -->
     <file>qml/scripts/DynamicObjectManager.js</file>
     <file>qml/scripts/colors.js</file>
+    
+    <file>qml/basics/loading2.gif</file>
  </qresource>
 </RCC>

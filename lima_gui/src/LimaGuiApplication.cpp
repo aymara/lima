@@ -1,6 +1,7 @@
 
 #include "LimaGuiApplication.h"
 #include "ConllParser.h"
+#include "Threads.h"
 
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
@@ -19,6 +20,8 @@ using namespace Lima::LinguisticProcessing;
 
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
   //initializeLimaAnalyzer();
+  auto ith = new InitializeThread(this);
+  ith->start();
 }
 
 /// PUBLIC METHODS
@@ -70,11 +73,13 @@ bool LimaGuiApplication::openMultipleFiles(QStringList urls) {
 }
 
 bool LimaGuiApplication::openFile(QString filepath) {
+  LTELL("OPENING FILE");
   /// FileDialog returns something like : "file:///C:/..."
   /// so we need to remove the unnecessary content
   std::vector<std::string> tmpStrList = split(filepath.toStdString(),':');
   if (!tmpStrList.size()) {
     LTELL("FILE DIALOG URL FORMAT ERROR : " << filepath.toStdString());
+    return false;
   }
   
   std::string path = tmpStrList[1];
@@ -82,6 +87,7 @@ bool LimaGuiApplication::openFile(QString filepath) {
   tmpStrList = split(path, '/');
   if (!tmpStrList.size()) {
     LTELL("FILE NAME FORMAT ERROR : " << path);
+    return false;
   }
   
   std::string filename = tmpStrList[tmpStrList.size() - 1];
@@ -98,7 +104,7 @@ bool LimaGuiApplication::openFile(QString filepath) {
   m_fileName = QString(filename.c_str());
   
   /// qml part : open a new tab {title= m_fileName; content=m_fileContent}
-  
+  return true;
 }
 
 bool LimaGuiApplication::saveFile(QString filename) {
@@ -119,7 +125,10 @@ bool LimaGuiApplication::saveFile(QString filename) {
   else {
     std::cout << "didn't open : " << lgfile->url << std::endl;
     std::cout << "Error opening file: " << strerror(errno) << std::endl;
+    return false;
   }
+  
+  return true;
 }
 
 bool LimaGuiApplication::saveFileAs(QString filename, QString newUrl) {
@@ -148,7 +157,10 @@ bool LimaGuiApplication::saveFileAs(QString filename, QString newUrl) {
   else {
     std::cout << "didn't open : " << newUrl << std::endl;
     std::cout << "Error opening file: " << strerror(errno) << std::endl;
+    return false;
   }
+  
+  return true;
 }
 
 void LimaGuiApplication::closeFile(QString filename, bool save) {
@@ -179,8 +191,20 @@ LimaGuiFile* LimaGuiApplication::getFile(std::string filename) {
 
 
 /// ANALYZER METHODS
+///
 
 void LimaGuiApplication::analyzeText(QString content) {
+  beginNewAnalysis(content);
+}
+
+void LimaGuiApplication::beginNewAnalysis(QString content) {
+  LTELL("ANALYYZING :");
+  LTELL(content.toStdString());
+  auto at = new AnalysisThread(this, content);
+  at->start();
+}
+
+void LimaGuiApplication::analyze(QString content) {
   
   // PARAMETERS :
   // Text
@@ -205,7 +229,7 @@ void LimaGuiApplication::analyzeText(QString content) {
   if (dumpers.find("text") != dumpers.end())
   {
     simpleStreamHandler = new SimpleStreamHandler();
-    simpleStreamHandler->setOut(&std::cout);
+    simpleStreamHandler->setOut(out);
     handlers.insert(std::make_pair("simpleStreamHandler", simpleStreamHandler));
   }
   
@@ -231,6 +255,9 @@ void LimaGuiApplication::analyzeFileFromUrl(QString url) {
     analyzeText(m_fileContent);
     closeFile(m_fileName);
   }
+  else {
+    LTELL("There was a problem somewhere");
+  }
 }
 
 bool LimaGuiApplication::selectFile(QString filename) {
@@ -253,7 +280,7 @@ bool LimaGuiApplication::selectFile(QString filename) {
 void LimaGuiApplication::initializeLimaAnalyzer() {
   
   std::string configDir = qgetenv("LIMA_CONF").constData();
-  LTELL("Config Dir is " << configDir);
+  LTELL("Config Dir is " << configDir << "|" << configDir << "|" << configDir);
   if (configDir == "") {
     configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
   }
@@ -305,3 +332,71 @@ void LimaGuiApplication::resetLimaAnalyzer() {
   // delete m_analzer;
   initializeLimaAnalyzer();
 }
+
+//LimaGuiThread* LimaGuiApplication::getThread(std::string name) {
+//  if (threads.find(name) != threads.end()) {
+//    return threads[name];
+//  }
+//  else {
+//    return nullptr;
+//  }
+//}
+
+//void LimaGuiApplication::newThread(std::string name, LimaGuiThread * lgt) {
+//  if (threads.find(name) != threads.end()) {
+//    // kill current thread
+//  }
+//  threads[name] = lgt;
+
+//  connect(lgt, SIGNAL(finished()), lgt, SLOT(deleteLater()));
+//}
+
+//void LimaGuiApplication::destroyThread(std::string name) {
+//  std::map<std::string, LimaGuiThread*>::const_iterator it = threads.find(name);
+//  if (it != threads.end()) {
+//    // kill thread
+
+//    delete threads[name];
+//    threads.erase(it);
+//  }
+//}
+
+//void LimaGuiApplication::destroyThread(LimaGuiThread * lgt) {
+//  for (auto& kv : threads) {
+//    if (kv.second == lgt) {
+//      destroyThread(kv.first);
+//      return;
+//    }
+//  }
+
+//  // kill thread
+//  delete lgt;
+//}
+
+void LimaGuiApplication::setTextBuffer(std::string str) {
+  m_text = QString::fromUtf8(str.c_str());
+  textChanged();
+}
+
+void LimaGuiApplication::writeInConsole(std::string str) {
+  m_consoleOutput += QString(str.c_str());
+}
+
+void LimaGuiApplication::test() {
+  LTELL("This is a warning");
+  std::cout << "All your bases are belong to us" << std::endl;
+}
+
+/// BUFFERS ACCESSERS
+
+QString LimaGuiApplication::fileContent() const { return m_fileContent; }
+QString LimaGuiApplication::fileName() const { return m_fileName; }
+QString LimaGuiApplication::fileUrl() const { return m_fileUrl; }
+QString LimaGuiApplication::text() const { return m_text; }
+QString LimaGuiApplication::consoleOutput() const { return m_consoleOutput; }
+
+void LimaGuiApplication::setFileContent(const QString& s) { m_fileContent = s; }
+void LimaGuiApplication::setFileName(const QString& s) { m_fileName = s; }
+void LimaGuiApplication::setFileUrl(const QString& s) { m_fileUrl = s; }
+void LimaGuiApplication::setText(const QString& s) {m_text = s; textChanged();}
+void LimaGuiApplication::setConsoleOuput(const QString& s) { m_consoleOutput = s;}

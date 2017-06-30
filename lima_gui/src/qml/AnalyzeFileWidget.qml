@@ -11,8 +11,9 @@ GroupBox {
   signal selected()
   signal triggered()
   
-  onTriggered: console.log("triggered!")
-  onSelected: console.log("selected!")
+  onTriggered: {
+    analyzeFileFromUrl(fileUrl)
+  }
   
   id: select_file_menu
   
@@ -49,8 +50,8 @@ GroupBox {
     
     Button {
       id: action_button 
+      text: "Analyser"
       onClicked:  { 
-        console.log("clicked") 
         triggered()
       }
     }

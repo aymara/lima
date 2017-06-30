@@ -10,7 +10,7 @@ import "scripts/colors.js" as Colors
 Rectangle {
   id: main_tab_bar
   
-  anchors.fill: parent
+  color: fgcolor;
   ////
   
   property alias currentIndex: bar.currentIndex
@@ -18,7 +18,7 @@ Rectangle {
   property color bgcolor: "#777777"
   
   /// if true, will impose foreground and background colors to buttons
-  property bool global_colors: false
+  property bool global_colors: true
   
   /// it is likely that we may need to hold the name and the contentItem in a specific class, rather than just the button
   property var buttons: []
@@ -43,16 +43,24 @@ Rectangle {
     
     items.push(Dom.obj);
     
-    if (buttons.length == 1) {
-      select(0);
-    }
-    
     if (buttons.length != bar.count) {
       console.log("now that's a problem");
     }
     
-    btn.idleColor = Dom.obj.color
-    btn.selectedColor = Colors.brighter(Dom.obj.color)
+    btn.selectedColor = Dom.obj.color
+    btn.idleColor = Colors.darker(Dom.obj.color)
+    
+    
+    
+    if (buttons.length == 1) {
+      select(0);
+    }
+    
+    Dom.createComponent("basics/BasicRectangle.qml", bar)
+    Dom.obj.parent = bar
+    Dom.obj.width = 3
+    Dom.obj.height = bar.height
+    
   }
   
   
@@ -102,6 +110,13 @@ Rectangle {
       anchors.fill: parent
     }
     
+    Rectangle {
+      color:"red"
+      width: 4
+      height: parent.height
+      x: 0
+      y: 0
+    }
     
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -113,8 +128,8 @@ Rectangle {
   StackLayout {
     id: container
     width: parent.width
-    height: parent.height - bar.height
-    y: bar.height
+    height: parent.height - bar.height 
+    y: bar.height + 5
     currentIndex: bar.currentIndex
     
     /////////////////////////////////////////////

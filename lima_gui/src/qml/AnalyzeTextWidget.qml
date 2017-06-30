@@ -4,8 +4,7 @@ import QtQuick.Controls 1.4
 GroupBox {
   id: analyzeTextWidget
   
-  width: 400
-  height: 100
+  anchors.fill: parent
   
   title: "Analyser du texte"
   
@@ -21,8 +20,7 @@ GroupBox {
   Button {
     text:"Analyze Text"
     onClicked: {
-      textAnalyzer.text = text_bunch.text
-      textAnalyzer.analyzeText(text_bunch.text)
+      analyzeText(text_bunch.text)
     }
     
     anchors.top: text_bunch.bottom
