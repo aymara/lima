@@ -6,6 +6,8 @@ import QtQuick.Layouts 1.3
 import "models"
 
 /// Popup prompt when you want to open a new 'something'
+/// 'New' in toolbar or 'new' in menu bar (ctrl+n)
+
 ApplicationWindow {
   id: createNewElementPopup
   
@@ -44,13 +46,15 @@ ApplicationWindow {
       border.width: 1
       border.color: "#aaaaaa"
       radius: 2
+
+      NewElementModel {id: lmodel }
       
       ListView {
         id: lview
         anchors.fill: parent
         anchors.margins: 2
         snapMode: ListView.SnapToItem
-        model: NewElementModel {id: lmodel }
+        model: lmodel
         delegate: Label {
           text: name
           width: parent.width

@@ -2,6 +2,9 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
+/// This is the menu bar of the main application window
+/// Always stays on
+
 MenuBar {
   
   style: MenuBarStyle {
@@ -59,6 +62,15 @@ MenuBar {
   
   Menu {
     title: "Analyse"
+
+    MenuItem {
+      text: "Analyser fichier courant"
+
+      enabled: textAnalyzer.ready && data_tab_view.count ? true : false
+      onTriggered: {
+        analyzeFile(data_tab_view.currentTab().title);
+      }
+    }
     
     MenuItem { text: "Analyser du texte"
       onTriggered: openAnalyzeTextTab();

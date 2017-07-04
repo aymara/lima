@@ -1,3 +1,5 @@
+/// Contains data global to lima_gui
+
 #ifndef LIMA_GUI_H
 #define LIMA_GUI_H
 

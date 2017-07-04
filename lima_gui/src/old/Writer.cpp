@@ -1,19 +1,21 @@
 #include "Writer.h"
 #include <fstream>
 #include <sstream>
+#include "TextAnalyzer.h"
+
 #include <iostream>
 #include <QTextStream>
 #include <QFile>
 
-std::vector<std::string> split(std::string text, char delimiter) {
-        std::vector<std::string> content;
-        std::stringstream tstream(text);
-        std::string word;
-        while(std::getline(tstream,word,delimiter)) {
-            content.push_back(word);
-        }
-        return content;
-}
+// std::vector<std::string> split(std::string text, char delimiter) {
+//         std::vector<std::string> content;
+//         std::stringstream tstream(text);
+//         std::string word;
+//         while(std::getline(tstream,word,delimiter)) {
+//             content.push_back(word);
+//         }
+//         return content;
+// }
 
 Writer::Writer(QObject* parent) : QObject(parent) {
   

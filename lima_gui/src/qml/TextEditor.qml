@@ -13,9 +13,7 @@ import QtQuick.Dialogs 1.2
 import integ_cpp 1.0
 import "script.js" as Script
 
-/**
- * Main QML File : Basic Text Editor
- */
+/// Deprecated QML implantation, kept for reference
 
 Window
 {

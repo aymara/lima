@@ -14,7 +14,7 @@ var obj;
 var fit = false;
 
 /// success in creating the object
-var success = true;
+var success = false;
 
 var verbose = true;
 
@@ -28,7 +28,10 @@ function createDialog() {
 /// argument :p: is the parent to attach the resulting object to
 /// path is relative to this file
 function createComponent(src, p, b) {
-    component = Qt.createComponent("../" + src);
+    success = false;
+    src = "../" + src;
+    if (verbose) console.log("src=", src);
+    component = Qt.createComponent(src);
     fit = b;
     parent = p;
     if (component.status == Component.Ready) {
@@ -41,7 +44,7 @@ function createComponent(src, p, b) {
       ///
       /// return;
       ///
-      if (verbose) console.log("Component is not yet ready");
+      if (verbose) console.log("Component<", component,">(",src,") is not yet ready");
       component.statusChanged.connect(deliverComponent);
     }
 }
@@ -54,7 +57,7 @@ function createObject(src, parent, filepath) {
 /// In case the component is not ready yet, we can delay the object creation
 function deliverComponent() {
   if (component.status === Component.Ready) {
-    if(verbose) console.log("Component is ready");
+    if(verbose) console.log("Component", component, " is ready");
     obj = component.createObject(parent, {"x": 50,"y": 50});
     app_window.pile++;
     if (obj === null) {
@@ -104,7 +107,6 @@ function pop() {
 }
 
 function popObject() {
-  obj.color = "red";
   if (objects.length > 0) {
     objects.pop();
     obj.destroy();

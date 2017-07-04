@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import "../scripts/colors.js" as Colors
 
+/// Simple random colored rect for tests
+
 Rectangle {
   
 //   function randomChar() {

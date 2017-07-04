@@ -3,6 +3,9 @@ import QtQuick.Controls 1.4
 import QtQml.Models 2.2
 import QtQuick.Controls 1.4 as QtControls
 
+/// Unused, kept for reference
+/// Figures the menu bar of the main window
+
 Item {
     width: parent.width
     height: parent.height

@@ -28,18 +28,61 @@ AnalysisThread::AnalysisThread(LimaGuiApplication* app) : LimaGuiThread(app) {
 }
 
 AnalysisThread::AnalysisThread(LimaGuiApplication *app, const QString& s) : LimaGuiThread(app) {
-  text = s;
+  m_text = s;
 }
 
 void AnalysisThread::run() {
-  m_application->setOut(&out);
-  m_application->analyze(text);
-  m_application->setTextBuffer(out.str());
-  m_application->setOut(&std::cout);
+  if (m_application->available()) {
+    m_application->setAnalyzerState(0);
+
+    m_application->setOut(&out);
+
+    m_application->analyze(m_text);
+
+    // reset app out
+    m_application->setOut(&std::cout);
+
+    m_application->setAnalyzerState(1);
+
+    // push results to app/gui
+    m_application->setTextBuffer(out.str());
+
+    // create model from out.str()
+    QObject* view;
+    if (m_resultView) {
+      view = m_resultView;
+    }
+    else {
+      view = m_application->getQmlObject("resultView"); // specific name
+    }
+    if (view) {
+//      related: https://stackoverflow.com/questions/27092756/call-qml-function-from-c-with-another-qml-object-as-parameter
+
+//      QObject * root = engine.rootObjects().at(0);
+//      QQmlComponent comp(&engine, QUrl("qrc:/Test.qml"));
+//      QMetaObject::invokeMethod(root, "addTab", Q_ARG(QVariant, QVariant::fromValue(&comp)));
+      QString qstr(out.str().c_str());
+      QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(qstr)));
+    }
+    else {
+      LTELL("No result view specified.");
+    }
+  }
+  else {
+    LTELL("Can't analyze : Analyzer is not available.");
+  }
 }
 
 void AnalysisThread::setText(const QString& s) {
-  text = s;
+  m_text = s;
+}
+
+void AnalysisThread::setName(std::string name) {
+  m_name = name;
+}
+
+void AnalysisThread::setResultView(QObject* o) {
+  m_resultView = o;
 }
 
 //////
@@ -67,7 +110,7 @@ void InitializeThread::doTheThing() {
 
   m_application->setTextBuffer(buffer.str());
 
-  m_application->m_AnalyzerReady = true;
+  m_application->setAnalyzerState(1);
 
   std::cout.rdbuf(old);
 }

@@ -20,8 +20,8 @@ using namespace Lima::LinguisticProcessing;
 
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
   //initializeLimaAnalyzer();
-  auto ith = new InitializeThread(this);
-  ith->start();
+   auto ith = new InitializeThread(this);
+   ith->start();
 }
 
 /// PUBLIC METHODS
@@ -84,6 +84,13 @@ bool LimaGuiApplication::openFile(QString filepath) {
   
   std::string path = tmpStrList[1];
   
+  for (auto& file : m_openFiles) {
+    if (file.url == path) {
+      LTELL("This file is already open.");
+      return false;
+    }
+  }
+
   tmpStrList = split(path, '/');
   if (!tmpStrList.size()) {
     LTELL("FILE NAME FORMAT ERROR : " << path);
@@ -91,6 +98,8 @@ bool LimaGuiApplication::openFile(QString filepath) {
   }
   
   std::string filename = tmpStrList[tmpStrList.size() - 1];
+
+
   
   m_fileContent = qstr_parseFile(path);
   
@@ -400,3 +409,32 @@ void LimaGuiApplication::setFileName(const QString& s) { m_fileName = s; }
 void LimaGuiApplication::setFileUrl(const QString& s) { m_fileUrl = s; }
 void LimaGuiApplication::setText(const QString& s) {m_text = s; textChanged();}
 void LimaGuiApplication::setConsoleOuput(const QString& s) { m_consoleOutput = s;}
+
+void LimaGuiApplication::toggleAnalyzerState() {
+  m_analyzerAvailable = !m_analyzerAvailable;
+  readyChanged();
+}
+
+void LimaGuiApplication::setAnalyzerState(bool bo) {
+  m_analyzerAvailable = bo;
+  readyChanged();
+}
+
+bool LimaGuiApplication::available() {
+  return m_analyzerAvailable;
+}
+
+void LimaGuiApplication::registerQmlObject(QString s, QObject* qo) {
+  if (qo) {
+    qml_objects[s] = qo;
+  }
+}
+
+QObject* LimaGuiApplication::getQmlObject(const QString& name) {
+  if (qml_objects.find(name) != qml_objects.end()) {
+    return qml_objects[name];
+  }
+  else {
+    return nullptr;
+  }
+}

@@ -12,9 +12,11 @@
    <file>qml/CustomTabButton.qml</file>
    <file>qml/CustomTabBar.qml</file>
    <file>qml/NewElementPopup.qml</file>
+   <file>qml/CONLLTableView.qml</file>
    
    <!-- Models -->
    <file>qml/models/NewElementModel.qml</file>
+   <file>qml/models/TestModel.qml</file>
    
    
    
@@ -42,6 +44,11 @@
     <file>qml/basics/BasicRectangle.qml</file>
     <file>qml/Simplex.qml</file>
     <file>qml/basics/ResultTab.qml</file>
+    <file>qml/basics/CONLLListElement.qml</file>
+    <file>qml/basics/TextView.qml</file>
+    <file>qml/basics/PdfView.qml</file>
+    <file>qml/basics/TextEditor.qml</file>
+    <file>qml/basics/LoadingView.qml</file>
     
     <!--   Scripts   -->
     <file>qml/scripts/DynamicObjectManager.js</file>

@@ -41,7 +41,8 @@
 //Import the declarative plugins
 import QtQuick 2.0
 
-//Implementation of the Button control.
+/// Implementation of the Button control.
+/// Unused, kept for possible future use
 Item {
     id: button
     width: 30

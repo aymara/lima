@@ -1,7 +1,7 @@
 /// This sould include LIMA at some point
 
 #include "TextAnalyzer.h"
-#include "ConllParser.h"
+#include "../ConllParser.h"
 
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"

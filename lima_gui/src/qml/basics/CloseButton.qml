@@ -1,5 +1,8 @@
 import QtQuick 2.0
 
+/// Close button
+/// Meant for tabs in tabbedview
+
 Rectangle {
   
   property color hoverColor: "#ff1111"

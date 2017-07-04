@@ -12,9 +12,10 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 
-import integ_cpp 1.0
 import "scripts/DynamicObjectManager.js" as Dom
 import "scripts/colors.js" as Colors
+
+import "basics"
 
 /**
  * Main QML File : lima_gui
@@ -26,46 +27,59 @@ Controls1.ApplicationWindow
 
   id:app_window
   visible: true
+  x: 500
   width: 1024
   height: 768
 //  visibility: Window.Maximized
   property int pile: 0
   
   // ideally, one fonction per feature
-  function saveTextFile() {}
+  function saveTextFile() {
+    //Dom.obj.addElement("aa","bb","cc","dd","ee","ff","gg","hh","ii")
+    //console.log(Dom.obj.objectName)
+  }
   function openSelectFileDialog() {
     file_manager.chooseFile()
+
+//    Dom.createComponent("basics/Tab.qml", data_tab_view)
+//    Dom.createComponent("CONLLTableView.qml", Dom.obj)
   }
   
   /// ANALYZING
   
   function analyzeText(text) {
-    if (textAnalyzer.ready) {
+    if (textAnalyzer) {
+      createResultTab("results")
       textAnalyzer.analyzeText(text);
-      results_tab_view.addTab("results", "basics/ResultTab.qml");
     }
     else {
-      data_tab_view.addTab("analyzer is not ready","FileMenu.qml");
+      console.log("Analyzer is not ready yet!");
     }
   }
   
   function analyzeFile(filename) {
     if (textAnalyzer.ready) {
+      createResultTab("results");
       textAnalyzer.analyzeFile(filename);
-      results_tab_view.addTab("results", "basics/ResultTab.qml");
     }
     else {
-      data_tab_view.addTab("analyzer is not ready","FileMenu.qml");
+      console.log("Analyzer is not ready yet!");
     }
+  }
+
+  function createResultTab(name) {
+    var obj = results_tab_view.addTab(name, "basics/ResultTab.qml");
+    console.log(obj);
+    textAnalyzer.registerQmlObject("resultView",obj);
   }
   
   function analyzeFileFromUrl(url) {
     if (textAnalyzer.ready) {
+      createResultTab("results");
       textAnalyzer.analyzeFileFromUrl(url);
-      results_tab_view.addTab("results", "basics/ResultTab.qml");
     }
     else {
-      data_tab_view.addTab("analyzer is not ready","FileMenu.qml");
+      console.log("Analyzer is not ready yet!");
     }
   }
   
@@ -191,8 +205,13 @@ Controls1.ApplicationWindow
     
     function openFile(url) {
       //https://stackoverflow.com/questions/17647905/adding-tabs-dynamically-in-qml
-      Dom.createComponent("basics/Tab.qml", data_tab_view)
-      Dom.obj.title = url
+      if (textAnalyzer.openFile(url)) {
+        Dom.createComponent("basics/Tab.qml", data_tab_view)
+        Dom.obj.title = textAnalyzer.fileName
+        Dom.createComponent("basics/TextEditor.qml", Dom.obj);
+        Dom.obj.text = textAnalyzer.fileContent
+      }
+
     }
     
     FileDialog {
@@ -211,16 +230,11 @@ Controls1.ApplicationWindow
   Controls2.Popup {
     id: confirmExitApplicationDialog
   }
-  
+
   /// MENU BAR; TOOL BAR
   
-  menuBar: LimaGuiMenuBar {
-    
-  }
-  
-  toolBar: LimaGuiToolBar {
-    
-  }
+  menuBar: LimaGuiMenuBar {}
+  toolBar: LimaGuiToolBar {}
   
   /// BODY
   
@@ -235,18 +249,6 @@ Controls1.ApplicationWindow
       
       anchors.fill: parent
       orientation: Qt.Horizontal
-      
-//       Rectangle {
-//         color: "lightgray"
-//         Layout.fillHeight: true
-//         Layout.minimumWidth:  30
-//       }
-//       
-//       Rectangle {
-//         color: "gray"
-//         Layout.fillHeight: true
-//         Layout.preferredWidth: 1
-//       }
       
       Rectangle {
         Layout.fillHeight: true
@@ -280,19 +282,36 @@ Controls1.ApplicationWindow
             Layout.minimumWidth: 100
             Layout.preferredWidth: 400
             Layout.preferredHeight: 300
-
-            
           } 
           
           TabbedView {
             id: results_tab_view
-            
-            
-            
-          } 
+          }
           
         }
         
+//        Rectangle {
+//          anchors.margins: 20
+//          Layout.fillWidth: true
+//          Layout.fillHeight: true
+//          Layout.preferredHeight: 300
+//          Layout.minimumHeight: 100
+
+//          Controls1.ScrollView {
+//            anchors.fill: parent
+
+////            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
+////            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+
+//            Text {
+//              height: implicitHeight;
+//              width: implicitWidth;
+//              text: textAnalyzer.text
+//              anchors.centerIn: parent
+//            }
+//          }
+//        }
+
         Rectangle {
           anchors.margins: 20
           Layout.fillWidth: true
@@ -300,64 +319,14 @@ Controls1.ApplicationWindow
           Layout.preferredHeight: 300
           Layout.minimumHeight: 100
 
-          Controls1.ScrollView {
-            anchors.fill: parent
-
-//            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
-//            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-
-            Text {
-              height: implicitHeight;
-              width: implicitWidth;
-              text: textAnalyzer.text
-              anchors.centerIn: parent
-            }
+          TextView {
+            text: textAnalyzer.text
           }
         }
       }
-      
-      
-    }    /*
-        Rectangle {
-          Layout.fillHeight: true
-          Layout.preferredWidth: 200
-          Layout.minimumWidth: 100
-          anchors.margins: 5
-          border.width: 1
-          border.color: "gray"
-          
-          Text {
-            text: "properties"
-          }
-        }
-        
-      }
-      
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 200
-        Layout.minimumHeight: 100
-        anchors.margins: 5
-        border.width: 1
-        border.color: "gray"
-        Text {
-          text:"output"
-        }
-        
-      }
-      
-    }*/
-        
+    }
     /////////////////////////////////////////////////// END OF BODY
-  
   }
-  
-//   Controls1.Button {
-//     text:"Click me"
-//     onClicked: {
-//       Dom.createComponent("TabbedView.qml", app_window)
-//     }
-//   }
 }
 
 

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import "scripts/colors.js" as Colors
 
+/// ToolBar of the main window
+
 ToolBar {
   
   background: Rectangle {
@@ -32,6 +34,9 @@ ToolBar {
     ToolButton {
       text:"Save"
       //iconSource: "save-as.png"
+      onClicked: {
+         saveTextFile();
+      }
     }
     Item { Layout.fillWidth: true }
     

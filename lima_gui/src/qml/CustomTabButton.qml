@@ -2,6 +2,9 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import "basics"
 
+/// Goes with CustomTabBar
+/// Unused
+
 TabButton {
   id: dis_custom_tab_btn
   

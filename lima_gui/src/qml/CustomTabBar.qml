@@ -6,6 +6,8 @@ import "scripts/colors.js" as Colors
 
 /// This is an attempt at an interactive tab bar with a specific design
 /// that QML won't allow. Trying to find some workarounds...
+/// Unused for now
+/// It is an attempt to make this work with Qt Quick Controls 2
 
 Rectangle {
   id: main_tab_bar

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.0
 
+/// Unused for now
+
 Window {
   
   visible: true

@@ -1,14 +1,7 @@
-#include <unistd.h>
-/*
-    Jocelyn VERNAY
-    Polytech Paris-Sud
-    ET4 Info 2016/2017
-    
-    Exercice pour le stage : 
-    Developpement d'une interface graphique en QT pour LIMA (CEA Tech)
-    Gael de Chalendar
-*/
 
+#include "ConllParser.h"
+
+#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -17,11 +10,44 @@
 #include <cstdio>
 #include <iomanip>
 
-#include "ConllParser.h"
+/// This need cleaning up
+///
+/// Contains all kinds of function to parse text and files
 
 CONLL_Line::CONLL_Line(std::string str) {
   raw = str;
   tokens = split(str, '\t');
+}
+
+void freeConllList(CONLL_List& cl) {
+  for (unsigned int i=0;i<cl.size();i++) {
+    delete(cl[i]);
+  }
+}
+
+/// splits a string according to the parameter delimiter
+/// \return the list of the resulting tokens
+std::vector<std::string> split(std::string line, char delimiter) {
+  std::vector<std::string> elements;
+  std::stringstream ss(line);
+  std::string word;
+  while (std::getline(ss,word,delimiter)) {
+    elements.push_back(word);
+  }
+  return elements;
+}
+
+/// parse a file and return its content
+std::vector<std::string> parseFile(std::string filepath) {
+  std::ifstream myfile;
+  myfile.open(filepath.c_str(), std::ifstream::in);
+  std::vector<std::string> content;
+  std::string line;
+  while (!myfile.eof() && std::getline(myfile,line)) {
+    content.push_back(line);
+  }
+  myfile.close();
+  return content;
 }
 
 namespace ConllParser {
@@ -90,31 +116,6 @@ std::vector<std::string> into_lines(std::string str) {
     return lines;    
 }
 
-/// splits a string according to the parameter delimiter
-/// \return the list of the resulting tokens
-std::vector<std::string> split(std::string line, char delimiter = '\t') {
-    std::vector<std::string> elements;
-    std::stringstream ss(line);
-    std::string word;
-    while (std::getline(ss,word,delimiter)) {
-        elements.push_back(word);
-    }
-    return elements;
-}
-
-/// parse a file and return its content
-std::vector<std::string> parseFile(std::string filepath) {
-  std::ifstream myfile;
-  myfile.open(filepath.c_str(), std::ifstream::in);
-  std::vector<std::string> content;
-  std::string line;
-  while (!myfile.eof() && std::getline(myfile,line)) {
-    content.push_back(line);
-  }
-  myfile.close();
-  return content;
-}
-
 /// displays the expected content : Dependance(mot source, mot cible)
 /// words with no dependency are not displayed by default
 void show_dependencies(CONLL_List& lines) {
@@ -141,8 +142,8 @@ void show_dependencies(CONLL_List& lines) {
             
         // get src word
         if (lines[i]->tokens[7] != "_") {
-            int src_ind = std::stoi(lines[i]->tokens[7])-1;
-            if (src_ind < 0 || src_ind >= lines.size()) {
+            unsigned int src_ind = std::stoi(lines[i]->tokens[7])-1;
+            if (src_ind >= lines.size()) {
                 std::cout << "Line " << src_ind << " doesn't exist." << std::endl;
                 break;
             }
@@ -187,12 +188,6 @@ void displayAsColumns(CONLL_List& lines) {
         
         std::cout << std::endl;
     }
-}
-
-void freeConllList(CONLL_List& cl) {
-  for (unsigned int i=0;i<cl.size();i++) {
-    delete(cl[i]);
-  }
 }
 
 } // namespace ConllParser

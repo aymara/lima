@@ -1,5 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import "basics"
+
+/// Widget allowing to input text and analyze it on the fly
 
 GroupBox {
   id: analyzeTextWidget
@@ -8,13 +11,18 @@ GroupBox {
   
   title: "Analyser du texte"
   
-  TextArea {
+  Rectangle {
     id: text_bunch
+    property alias text: textv.text
     
-    width: parent.width - 100
-    height: parent.height - 100
+    width: parent.width
+    height: parent.height - 50
     
     anchors.margins: 5
+
+    TextEditor {
+      id:textv
+    }
   }
   
   Button {
@@ -22,7 +30,7 @@ GroupBox {
     onClicked: {
       analyzeText(text_bunch.text)
     }
-    
+    enabled: textAnalyzer.ready ? true : false
     anchors.top: text_bunch.bottom
   }
   

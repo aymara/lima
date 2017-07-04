@@ -34,10 +34,21 @@ public:
   std::ostream& getOut() { return out; }
 
   void setText(const QString&);
+  void setResultView(QObject*);
+  void setName(std::string);
 
 private:
   std::stringstream out;
-  QString text;
+
+  // identify the analysis
+  // ideally the name of the file
+  // or a generated name
+  std::string m_name;
+
+  QObject* m_resultView = nullptr;
+
+  // content to analyze
+  QString m_text;
   // configuration;
   //
 };

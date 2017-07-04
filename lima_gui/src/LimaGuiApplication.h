@@ -27,7 +27,7 @@ class LimaGuiApplication : public QObject {
   Q_PROPERTY(QString text MEMBER m_text NOTIFY textChanged READ text WRITE setText)
   Q_PROPERTY(QString fileName MEMBER m_fileName READ fileName WRITE setFileName)
   Q_PROPERTY(QString fileUrl MEMBER m_fileUrl READ fileUrl WRITE setFileUrl)
-  Q_PROPERTY(bool ready MEMBER m_AnalyzerReady NOTIFY readyChanged)
+  Q_PROPERTY(bool ready MEMBER m_analyzerAvailable READ available WRITE setAnalyzerState NOTIFY readyChanged)
   Q_PROPERTY(QString console MEMBER m_consoleOutput NOTIFY consoleChanged READ consoleOutput WRITE setConsoleOuput)
   
 public:
@@ -122,6 +122,18 @@ public:
   void setText(const QString& s);
   void setConsoleOuput(const QString& s);
 
+  // ANALYZER STATE : to avoid simultaneous analysis
+
+  // is an analysis already underway ? if so, analyzer is unavailable (state = false)
+  void toggleAnalyzerState();
+  void setAnalyzerState(bool);
+  bool available();
+
+  /// QML OBJECTS REFERENCES
+
+  Q_INVOKABLE void registerQmlObject(QString, QObject*);
+  Q_INVOKABLE QObject* getQmlObject(const QString&);
+
 Q_SIGNALS:
   void textChanged();
   void consoleChanged();
@@ -134,14 +146,16 @@ private:
   QString m_fileContent;
   QString m_fileName;
   QString m_fileUrl;
-  
   QString m_text;
-
   QString m_consoleOutput;
   
-  bool m_AnalyzerReady = false;
+  bool m_analyzerAvailable = false;
   
   /// MEMBERS
+
+  /// not exactly a good idea, but we'll see
+  /// buffers to access QML objects
+  std::map<QString, QObject*> qml_objects;
 
   ///< list of open files;
   std::vector<LimaGuiFile> m_openFiles;

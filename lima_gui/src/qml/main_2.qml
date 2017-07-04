@@ -15,9 +15,7 @@ import QtQuick.Layouts 1.3
 import integ_cpp 1.0
 import "script.js" as Dom
 
-/**
- * Main QML File : lima_gui
- */
+/// Deprecated; kept for reference
 
 Controls1.ApplicationWindow
 {

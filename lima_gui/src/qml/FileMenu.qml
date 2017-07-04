@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 
+/// Test/Debug widget
+
 Row {
     anchors.centerIn: parent
     spacing: parent.width/6
