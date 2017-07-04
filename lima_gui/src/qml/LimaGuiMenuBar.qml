@@ -64,11 +64,50 @@ MenuBar {
     title: "Analyse"
 
     MenuItem {
+      text:"Analyser"
+      shortcut:"Ctrl+Shift+A"
+      enabled: textAnalyzer.ready ? true : false
+
+      onTriggered: {
+        console.log("ctrlshifta");
+        if (workspace.count()) {
+          var wv = workspace.getCurrentWorkView()
+          if (wv !== null) {
+            switch(wv.type) {
+            case "OpenFile":
+              analyzeFile(wv.title)
+              break;
+            case "SelectFile":
+              analyzeFileFromUrl(wv.getDataView().fileUrl)
+              break;
+            case "Text":
+              analyzeText(wv.getDataView().text)
+              break;
+            default:
+              console.log("oupsie! ", wv.type)
+              break;
+
+            }
+          }
+          else {
+
+          }
+        }
+      }
+
+    }
+
+    MenuItem {
       text: "Analyser fichier courant"
 
-      enabled: textAnalyzer.ready && data_tab_view.count ? true : false
+      enabled: textAnalyzer.ready ? true : false
       onTriggered: {
-        analyzeFile(data_tab_view.currentTab().title);
+        if (workspace.count()) {
+          var wv = workspace.getCurrentWorkView()
+          if (wv !== null) {
+            analyzeFile(wv.title)
+          }
+        }
       }
     }
     

@@ -12,8 +12,8 @@ Rectangle {
     id: scv
     anchors.fill: parent
     clip: true
-    contentWidth: ttext.width
-    contentHeight: ttext.height
+//     contentWidth: ttextarea.width
+//     contentHeight: ttextarea.height
 
     ScrollBar.vertical.policy: scv.contentHeight > scv.height ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
     ScrollBar.horizontal.policy: scv.contentWidth > scv.width ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded

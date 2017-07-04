@@ -5,9 +5,14 @@ import QtQuick 2.7
 Rectangle {
   width: animation.width; height: animation.height + 8
   anchors.fill: parent
-  color:"#222222";
+//  color:"#222222";
   
-  AnimatedImage { id: animation; source: "loading2.gif"; anchors.centerIn: parent}
+  AnimatedImage {
+    id: animation;
+    source: "hex-loading.gif";
+    anchors.centerIn: parent
+    scale: 0.5
+  }
   
   //     Rectangle {
   //       property int frames: animation.frameCount

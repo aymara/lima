@@ -4,6 +4,9 @@
    <file>qml/main.qml</file>
    <file>qml/LimaGuiMenuBar.qml</file>
    <file>qml/LimaGuiToolBar.qml</file>
+   <file>qml/WorkView.qml</file>
+   <file>qml/TabbedWorkspace.qml</file>
+   
    
    <!-- Widgets -->
    <file>qml/AnalyzeTextWidget.qml</file>
@@ -54,6 +57,6 @@
     <file>qml/scripts/DynamicObjectManager.js</file>
     <file>qml/scripts/colors.js</file>
     
-    <file>qml/basics/loading2.gif</file>
+    <file>qml/basics/hex-loading.gif</file>
  </qresource>
 </RCC>

@@ -6,15 +6,13 @@ import "basics"
 
 GroupBox {
   id: analyzeTextWidget
-  
+  property alias text: textv.text  
   anchors.fill: parent
   
   title: "Analyser du texte"
   
   Rectangle {
     id: text_bunch
-    property alias text: textv.text
-    
     width: parent.width
     height: parent.height - 50
     
@@ -28,7 +26,7 @@ GroupBox {
   Button {
     text:"Analyze Text"
     onClicked: {
-      analyzeText(text_bunch.text)
+      analyzeText(textv.text)
     }
     enabled: textAnalyzer.ready ? true : false
     anchors.top: text_bunch.bottom

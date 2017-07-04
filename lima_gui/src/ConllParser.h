@@ -1,6 +1,9 @@
 #ifndef conll_analyzer_h
 #define conll_analyzer_h
 
+#include <string>
+#include <vector>
+
 /// A line of the CONLL format.
 /// raw : is the raw text of the line.
 /// tokens : list obtained by splitting the text.

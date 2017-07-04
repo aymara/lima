@@ -48,9 +48,17 @@ Controls1.ApplicationWindow
   /// ANALYZING
   
   function analyzeText(text) {
-    if (textAnalyzer) {
-      createResultTab("results")
-      textAnalyzer.analyzeText(text);
+    if (textAnalyzer.ready) {
+      var wv = workspace.getCurrentWorkView();
+      if (wv !== null) {
+        wv.setResultView("basics/ResultTab.qml");
+        var rt = wv.getResultView();
+        textAnalyzer.registerQmlObject("resultView",rt);
+        textAnalyzer.analyzeText(text);
+      }
+      else {
+        console.log("There are no works around... How did you manage to call this function ?");
+      }
     }
     else {
       console.log("Analyzer is not ready yet!");
@@ -59,24 +67,34 @@ Controls1.ApplicationWindow
   
   function analyzeFile(filename) {
     if (textAnalyzer.ready) {
-      createResultTab("results");
-      textAnalyzer.analyzeFile(filename);
+      var wv = workspace.getCurrentWorkView();
+      if (wv !== null) {
+        wv.setResultView("basics/ResultTab.qml");
+        var rt = wv.getResultView();
+        textAnalyzer.registerQmlObject("resultView",rt);
+        textAnalyzer.analyzeFile(filename);
+      }
+      else {
+        console.log("There are no works around... How did you manage to call this function ?");
+      }
     }
     else {
       console.log("Analyzer is not ready yet!");
     }
   }
-
-  function createResultTab(name) {
-    var obj = results_tab_view.addTab(name, "basics/ResultTab.qml");
-    console.log(obj);
-    textAnalyzer.registerQmlObject("resultView",obj);
-  }
   
   function analyzeFileFromUrl(url) {
     if (textAnalyzer.ready) {
-      createResultTab("results");
-      textAnalyzer.analyzeFileFromUrl(url);
+      var wv = workspace.getCurrentWorkView();
+      if (wv !== null) {
+        wv.setResultView("basics/ResultTab.qml");
+        var rt = wv.getResultView();
+        textAnalyzer.registerQmlObject("resultView",rt);
+        textAnalyzer.analyzeFileFromUrl(url);
+      }
+      else {
+        console.log("There are no works around... How did you manage to call this function ?");
+      }
     }
     else {
       console.log("Analyzer is not ready yet!");
@@ -87,12 +105,13 @@ Controls1.ApplicationWindow
   
   /// open a tab to write and analyze text
   function openAnalyzeTextTab() {
-    data_tab_view.addTab("Analyze Text", "AnalyzeTextWidget.qml");
-  }
+    var wv = workspace.addWorkTab("Analyze text", "Text", "AnalyzeTextWidget.qml","");
+
+   }
   
   /// open a tab to select a file and analyze it
   function openAnalyzeFileTab() {
-    data_tab_view.addTab("Analyze File", "AnalyzeFileWidget.qml");
+    workspace.addWorkTab("Analyze File", "SelectFile", "AnalyzeFileWidget.qml","");
   }
   
   /// CLOSING TABS
@@ -206,10 +225,14 @@ Controls1.ApplicationWindow
     function openFile(url) {
       //https://stackoverflow.com/questions/17647905/adding-tabs-dynamically-in-qml
       if (textAnalyzer.openFile(url)) {
-        Dom.createComponent("basics/Tab.qml", data_tab_view)
-        Dom.obj.title = textAnalyzer.fileName
-        Dom.createComponent("basics/TextEditor.qml", Dom.obj);
-        Dom.obj.text = textAnalyzer.fileContent
+//        Dom.createComponent("basics/Tab.qml", data_tab_view)
+//        Dom.obj.title = textAnalyzer.fileName
+//        Dom.createComponent("basics/TextEditor.qml", Dom.obj);
+//        Dom.obj.text = textAnalyzer.fileContent
+        var wv = workspace.addWorkTab(textAnalyzer.fileName, "OpenFile", "basics/TextEditor.qml","");
+        if (wv !== null) {
+          wv.getDataView().text = textAnalyzer.fileContent;
+        }
       }
 
     }
@@ -274,18 +297,33 @@ Controls1.ApplicationWindow
           Layout.minimumHeight: 500
           Layout.preferredHeight: 700
           
-          TabbedView {
-            id: data_tab_view
+//          TabbedView {
+//            id: data_tab_view
             
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.minimumWidth: 100
-            Layout.preferredWidth: 400
-            Layout.preferredHeight: 300
-          } 
+//            Layout.fillHeight: true
+//            Layout.fillWidth: true
+//            Layout.minimumWidth: 100
+//            Layout.preferredWidth: 400
+//            Layout.preferredHeight: 300
+//          }
           
-          TabbedView {
-            id: results_tab_view
+//          TabbedView {
+//            id: results_tab_view
+//          }
+
+//          WorkView {
+//            Component.onCompleted: {
+//              setDataView("AnalyzeTextWidget.qml")
+//              setResultView("basics/ResultTab.qml")
+//            }
+//          }
+
+          TabbedWorkspace {
+            id: workspace
+
+//            Component.onCompleted: {
+//              addWorkTab("hello!","AnalyzeTextWidget.qml","basics/ResultTab.qml");
+//            }
           }
           
         }

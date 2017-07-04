@@ -9,8 +9,6 @@ import "scripts/DynamicObjectManager.js" as Dom
 
 C1.TabView {
   id: main_tab_view
-  
-  property var lastest: null
 
   function addTab(name, contentItemSrc) {
     
@@ -20,7 +18,12 @@ C1.TabView {
     Dom.createComponent(contentItemSrc, Dom.obj);
     
     // bad design, but returns a reference on the contentItem
-    return Dom.obj;
+    if (Dom.success) {
+      return Dom.obj;
+    }
+    else {
+      return null;
+    }
   }
 
   function currentTab() {

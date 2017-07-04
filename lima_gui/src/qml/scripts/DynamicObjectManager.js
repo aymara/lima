@@ -27,6 +27,7 @@ function createDialog() {
 /// This function creates a component from specified source
 /// argument :p: is the parent to attach the resulting object to
 /// path is relative to this file
+/// ... or is it ?
 function createComponent(src, p, b) {
     success = false;
     src = "../" + src;
