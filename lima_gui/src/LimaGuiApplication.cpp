@@ -202,14 +202,15 @@ LimaGuiFile* LimaGuiApplication::getFile(std::string filename) {
 /// ANALYZER METHODS
 ///
 
-void LimaGuiApplication::analyzeText(QString content) {
-  beginNewAnalysis(content);
+void LimaGuiApplication::analyzeText(QString content, QObject* target) {
+  beginNewAnalysis(content, target);
 }
 
-void LimaGuiApplication::beginNewAnalysis(QString content) {
+void LimaGuiApplication::beginNewAnalysis(QString content, QObject* target) {
   LTELL("ANALYYZING :");
   LTELL(content.toStdString());
   auto at = new AnalysisThread(this, content);
+  if (target) at->setResultView(target);
   at->start();
 }
 
@@ -250,18 +251,18 @@ void LimaGuiApplication::analyze(QString content) {
     delete simpleStreamHandler;
 }
 
-void LimaGuiApplication::analyzeFile(QString filename) {
+void LimaGuiApplication::analyzeFile(QString filename, QObject* target) {
   if (filename != m_fileName) {
     if (!selectFile(filename)) {
       return;
     }
   }
-  analyzeText(m_fileContent);
+  analyzeText(m_fileContent, target);
 }
 
-void LimaGuiApplication::analyzeFileFromUrl(QString url) {
+void LimaGuiApplication::analyzeFileFromUrl(QString url, QObject* target) {
   if (openFile(url)) {
-    analyzeText(m_fileContent);
+    analyzeText(m_fileContent, target);
     closeFile(m_fileName);
   }
   else {

@@ -118,7 +118,10 @@ MenuBar {
     MenuItem { text:"Analyser des fichiers"
       onTriggered: openAnalyzeFileTab();
     }
-    MenuItem { text: "Analyse CONLL" }
+    MenuItem { text: "Analyse CONLL"
+      onTriggered: {
+      }
+    }
     MenuItem { text: "Graphe" }
     MenuItem { text: "Entités nommées" }
 

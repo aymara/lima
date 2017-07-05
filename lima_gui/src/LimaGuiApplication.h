@@ -64,19 +64,21 @@ public:
   void analyze(QString);
 
   /// This creates the thread for the previous function
-  void beginNewAnalysis(QString);
+  void beginNewAnalysis(QString, QObject* target = 0);
 
   /// Those are all gui functions for ::analyze()
 
   /// analyze raw text
   /// An open file <that was edited but not saved> (it may not even be the case, all open files may be as well treated as text) will be passed to this function instead of analyzeFileFromUrl (then analyzeFile may as well call analyzeText)
-  Q_INVOKABLE void analyzeText(QString content);
+  Q_INVOKABLE void analyzeText(QString content, QObject* target = 0);
   
-  Q_INVOKABLE void analyzeFile(QString filename);
+  Q_INVOKABLE void analyzeFile(QString filename, QObject* target = 0);
   
   /// Analyze file directly from an url, without opening the file in the text editor ; (saved file content)
-  Q_INVOKABLE void analyzeFileFromUrl(QString url);
+  Q_INVOKABLE void analyzeFileFromUrl(QString url, QObject* target = 0);
   
+  Q_INVOKABLE void test();
+
   /// INITIALIZING
   
   /// initialize Lima::m_analyzer
@@ -107,8 +109,6 @@ public:
   /// or
   /// https://stackoverflow.com/questions/35204281/use-signals-or-q-property-to-update-qml-objects
   void writeInConsole(std::string str);
-
-  Q_INVOKABLE void test();
 
   QString fileContent() const;
   QString fileName() const;
@@ -164,6 +164,9 @@ private:
   
 //  std::map<std::string, LimaGuiThread*> threads;
   std::ostream* out = &std::cout;
+
+  ///  this map won't be thread safe though
+  std::map<QString, QObject*> m_analysisSlots;
   
   /// PRIVATE METHODS
 };

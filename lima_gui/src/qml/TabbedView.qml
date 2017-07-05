@@ -10,14 +10,16 @@ import "scripts/DynamicObjectManager.js" as Dom
 C1.TabView {
   id: main_tab_view
 
-  function addTab(name, contentItemSrc) {
-    
+  function addTabFromSource(name, contentItemSrc) {
+
+    console.log("before:count=", count,", currentIndex=",currentIndex)
     Dom.createComponent("basics/Tab.qml", main_tab_view);
     Dom.obj.title = name;
 //    currentIndex = Dom.obj.index;
     Dom.createComponent(contentItemSrc, Dom.obj);
-    
-    // bad design, but returns a reference on the contentItem
+    //addTab(name,Dom.obj)
+    console.log("after:count=", count,", currentIndex=",currentIndex)
+    currentIndex = count - 1
     if (Dom.success) {
       return Dom.obj;
     }

@@ -17,7 +17,7 @@ Rectangle {
 //      Dom.obj.setResultView(rsrc);
 //    }
 
-    var wv = tabview.addTab(name,"WorkView.qml")
+    var wv = tabview.addTabFromSource(name,"WorkView.qml")
     if (wv === null) {
       console.log("Couldn't create a new tab/workview");
     }

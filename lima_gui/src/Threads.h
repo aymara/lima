@@ -35,7 +35,9 @@ public:
 
   void setText(const QString&);
   void setResultView(QObject*);
-  void setName(std::string);
+  void setName(const std::string&);
+
+  void notifyView();
 
 private:
   std::stringstream out;

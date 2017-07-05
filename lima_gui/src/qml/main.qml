@@ -53,8 +53,8 @@ Controls1.ApplicationWindow
       if (wv !== null) {
         wv.setResultView("basics/ResultTab.qml");
         var rt = wv.getResultView();
-        textAnalyzer.registerQmlObject("resultView",rt);
-        textAnalyzer.analyzeText(text);
+        //textAnalyzer.registerQmlObject("resultView",rt);
+        textAnalyzer.analyzeText(text, rt);
       }
       else {
         console.log("There are no works around... How did you manage to call this function ?");
@@ -71,8 +71,8 @@ Controls1.ApplicationWindow
       if (wv !== null) {
         wv.setResultView("basics/ResultTab.qml");
         var rt = wv.getResultView();
-        textAnalyzer.registerQmlObject("resultView",rt);
-        textAnalyzer.analyzeFile(filename);
+        //textAnalyzer.registerQmlObject("resultView",rt);
+        textAnalyzer.analyzeFile(filename, rt);
       }
       else {
         console.log("There are no works around... How did you manage to call this function ?");
@@ -89,8 +89,8 @@ Controls1.ApplicationWindow
       if (wv !== null) {
         wv.setResultView("basics/ResultTab.qml");
         var rt = wv.getResultView();
-        textAnalyzer.registerQmlObject("resultView",rt);
-        textAnalyzer.analyzeFileFromUrl(url);
+        //textAnalyzer.registerQmlObject("resultView",rt);
+        textAnalyzer.analyzeFileFromUrl(url, rt);
       }
       else {
         console.log("There are no works around... How did you manage to call this function ?");
