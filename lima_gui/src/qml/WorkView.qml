@@ -6,10 +6,8 @@ import "scripts/DynamicObjectManager.js" as Dom
 
 Rectangle {
   id:workview
-  
+
   anchors.fill: parent
-  border.color: "red"
-  border.width: 1
   color:"transparent"
 
   /// properties
@@ -23,6 +21,7 @@ Rectangle {
 
   property string title: ""
   property string type: ""
+  property int status: resultsItem.length ? resultsItem[0].status : 0
 
   /// workaround as you can't easily store references to objects other than in a list
   property var dataItem: []
@@ -79,9 +78,19 @@ Rectangle {
     }
   }
 
+  function status() {
+    if (resultsItem.length) {
+      return resultsItem[0].status
+    }
+    else {
+      return 0
+    }
+  }
+
   /// content
 
   SplitView {
+    anchors.margins: 1
     orientation: Qt.Horizontal
     anchors.fill: parent
     handleDelegate: Rectangle {

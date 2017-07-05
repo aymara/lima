@@ -2,6 +2,7 @@
 
 #include "Threads.h"
 #include "LimaGuiApplication.h"
+#include "ConllListModel.h"
 
 LimaGuiThread::LimaGuiThread(LimaGuiApplication* app) : QThread() {
   m_application = app;
@@ -71,7 +72,9 @@ void AnalysisThread::notifyView() {
 //      QQmlComponent comp(&engine, QUrl("qrc:/Test.qml"));
 //      QMetaObject::invokeMethod(root, "addTab", Q_ARG(QVariant, QVariant::fromValue(&comp)));
     QString qstr(out.str().c_str());
+    ConllListModel clmodel(qstr);
     QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(qstr)));
+//    QMetaObject::invokeMethod(view, "tableUp", Q_ARG(QVariant, QVariant::fromValue(clmodel)));
   }
   else {
     LTELL("No result view specified.");
@@ -103,7 +106,9 @@ void InitializeThread::run() {
 
 void InitializeThread::doTheThing() {
   std::stringstream buffer;
-  std::streambuf * old = std::cout.rdbuf(buffer.rdbuf());
+  /// This won't work though
+  std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
+  std::streambuf* old_cerr = std::cerr.rdbuf(buffer.rdbuf());
 
 //  for (int i = 0; i < 200000000; i++) {
 //    m_application->setTextBuffer("Hello patient n°" + std::to_string(i) + "!");
@@ -115,5 +120,7 @@ void InitializeThread::doTheThing() {
 
   m_application->setAnalyzerState(1);
 
-  std::cout.rdbuf(old);
+  // restore previous streams
+  std::cout.rdbuf(old_cout);
+  std::cerr.rdbuf(old_cerr);
 }

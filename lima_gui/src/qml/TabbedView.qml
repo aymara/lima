@@ -34,34 +34,34 @@ C1.TabView {
   
   anchors.margins: 10
 
-//  style: TabViewStyle {
-//    frameOverlap: 1
-//    tab: Rectangle {
-//        anchors.margins: 3
-//        color: styleData.selected ? "white" : "#aaaaaa"
-//        border.color:  styleData.selected ? "steelblue" : "gray"
-//        radius: 3
-//        y: 2 // to hide bottom border
-//        implicitWidth: Math.max(text.width + 4, 80) + 40
-//        implicitHeight: 30
-//        Text {
-//            id: text
-//            anchors.centerIn: parent
-//            text: styleData.title
-//            color: styleData.selected ? "black" : "white"
+  style: TabViewStyle {
+    frameOverlap: 1
+    tab: Rectangle {
+        anchors.margins: 3
+        color: styleData.selected ? "white" : "#aaaaaa"
+        border.color:  styleData.selected ? "steelblue" : "gray"
+        radius: 3
+        y: 2 // to hide bottom border
+        implicitWidth: Math.max(text.width + 4, 80) + 40
+        implicitHeight: 30
+        Text {
+            id: text
+            anchors.centerIn: parent
+            text: styleData.title
+            color: styleData.selected ? "black" : "white"
+        }
+
+//        CloseButton {
+//          anchors.right: parent.right
+//          width: 20; height: 20
+
+//          onClicked: {
+//            parent.closed()
+//          }
 //        }
-
-////        CloseButton {
-////          anchors.right: parent.right
-////          width: 20; height: 20
-
-////          onClicked: {
-////            parent.closed()
-////          }
-////        }
-//      }
-//      frame: Rectangle { border.width: 1; border.color:"steelblue" }
-//  }
+      }
+      frame: Rectangle { border.width: 1; border.color:"steelblue" }
+  }
 
 //   C1.Tab {
 //     title: "analyze file"

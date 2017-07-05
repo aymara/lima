@@ -39,43 +39,43 @@ public:
   
   /// open file in application
   /// add a new entry to open_files
-  Q_INVOKABLE bool openFile(QString filepath);
+  Q_INVOKABLE bool openFile(const QString& filepath);
   
-  Q_INVOKABLE bool openMultipleFiles(QStringList urls);
+  Q_INVOKABLE bool openMultipleFiles(const QStringList& urls);
   
   /// save file registered in open_files
-  Q_INVOKABLE bool saveFile(QString filename);
+  Q_INVOKABLE bool saveFile(const QString& filename);
   
   /// save file registered in open_files, with a new url
-  Q_INVOKABLE bool saveFileAs(QString filename, QString newUrl);
+  Q_INVOKABLE bool saveFileAs(const QString& filename, const QString& newUrl);
   
   /// close file registered in open files, save if modified and requested
-  Q_INVOKABLE void closeFile(QString filename, bool save = false);
+  Q_INVOKABLE void closeFile(const QString& filename, bool save = false);
   
-  LimaGuiFile* getFile(std::string name);
+  LimaGuiFile* getFile(const std::string& name);
   
   /// if the file is open, set buffers file content, name and url to selected file's
   /// opening a file sets is as selected
-  Q_INVOKABLE bool selectFile(QString filename);
+  Q_INVOKABLE bool selectFile(const QString& filename);
   
   /// ANALYZER METHODS
   
   /// This is the main analysis method, ideally called in a thread
-  void analyze(QString);
+  void analyze(const QString&);
 
   /// This creates the thread for the previous function
-  void beginNewAnalysis(QString, QObject* target = 0);
+  void beginNewAnalysis(const QString&, QObject* target = 0);
 
   /// Those are all gui functions for ::analyze()
 
   /// analyze raw text
   /// An open file <that was edited but not saved> (it may not even be the case, all open files may be as well treated as text) will be passed to this function instead of analyzeFileFromUrl (then analyzeFile may as well call analyzeText)
-  Q_INVOKABLE void analyzeText(QString content, QObject* target = 0);
+  Q_INVOKABLE void analyzeText(const QString& content, QObject* target = 0);
   
-  Q_INVOKABLE void analyzeFile(QString filename, QObject* target = 0);
+  Q_INVOKABLE void analyzeFile(const QString& filename, QObject* target = 0);
   
   /// Analyze file directly from an url, without opening the file in the text editor ; (saved file content)
-  Q_INVOKABLE void analyzeFileFromUrl(QString url, QObject* target = 0);
+  Q_INVOKABLE void analyzeFileFromUrl(const QString& url, QObject* target = 0);
   
   Q_INVOKABLE void test();
 
@@ -100,7 +100,7 @@ public:
   
   friend class InitializeThread;
 
-  void setTextBuffer(std::string str);
+  void setTextBuffer(const std::string& str);
 
   /// actual qml console.
   /// we'll need to bind the qapplication with this class
@@ -108,7 +108,7 @@ public:
   /// https://stackoverflow.com/questions/9062189/how-to-modify-a-qml-text-from-c
   /// or
   /// https://stackoverflow.com/questions/35204281/use-signals-or-q-property-to-update-qml-objects
-  void writeInConsole(std::string str);
+  void writeInConsole(const std::string& str);
 
   QString fileContent() const;
   QString fileName() const;

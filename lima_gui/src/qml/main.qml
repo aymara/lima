@@ -11,6 +11,7 @@ import QtQuick.Controls 1.4 as Controls1
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
+import "basics"
 
 import "scripts/DynamicObjectManager.js" as Dom
 import "scripts/colors.js" as Colors
@@ -51,7 +52,13 @@ Controls1.ApplicationWindow
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
-        wv.setResultView("basics/ResultTab.qml");
+        if (wv.getResultView() === null) {
+          wv.setResultView("basics/ResultTab.qml");
+        }
+        else {
+          wv.getResultView().reset()
+        }
+
         var rt = wv.getResultView();
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
@@ -69,7 +76,12 @@ Controls1.ApplicationWindow
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
-        wv.setResultView("basics/ResultTab.qml");
+        if (wv.getResultView() === null) {
+          wv.setResultView("basics/ResultTab.qml");
+        }
+        else {
+          wv.getResultView().reset()
+        }
         var rt = wv.getResultView();
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeFile(filename, rt);
@@ -87,7 +99,12 @@ Controls1.ApplicationWindow
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
-        wv.setResultView("basics/ResultTab.qml");
+        if (wv.getResultView() === null) {
+          wv.setResultView("basics/ResultTab.qml");
+        }
+        else {
+          wv.getResultView().reset()
+        }
         var rt = wv.getResultView();
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeFileFromUrl(url, rt);
@@ -281,6 +298,8 @@ Controls1.ApplicationWindow
         Text {
           text:"filebrowser"
         }
+
+
       }
       
       Controls1.SplitView {

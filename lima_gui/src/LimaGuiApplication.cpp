@@ -26,7 +26,7 @@ LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
 
 /// PUBLIC METHODS
 
-QString qstr_parseFile(std::string path) {
+QString qstr_parseFile(const std::string& path) {
   QString tump;
   QFile file(QString(path.c_str()));
   if (file.open(QFile::ReadOnly)) {
@@ -42,7 +42,7 @@ QString qstr_parseFile(std::string path) {
 }
 
 /// expecting the format : "file:<actual_url>"
-std::string cleanUrl(std::string url) {
+std::string cleanUrl(const std::string& url) {
   std::string str;
   std::vector<std::string> tmpStrList = split(url,':');
   if (!tmpStrList.size()) {
@@ -55,7 +55,7 @@ std::string cleanUrl(std::string url) {
   return str;
 }
 
-QString cleanUrl(QString url) {
+QString cleanUrl(const QString& url) {
   return QString(cleanUrl(url.toStdString()).c_str());
 }
 
@@ -64,7 +64,7 @@ QString cleanUrl(QString url) {
 //////////////////////////////
 //////////////////////////////
 
-bool LimaGuiApplication::openMultipleFiles(QStringList urls) {
+bool LimaGuiApplication::openMultipleFiles(const QStringList& urls) {
   bool result = false;
   for (const auto& url : urls) {
     result |= openFile(url);
@@ -72,7 +72,7 @@ bool LimaGuiApplication::openMultipleFiles(QStringList urls) {
   return result;
 }
 
-bool LimaGuiApplication::openFile(QString filepath) {
+bool LimaGuiApplication::openFile(const QString& filepath) {
   LTELL("OPENING FILE");
   /// FileDialog returns something like : "file:///C:/..."
   /// so we need to remove the unnecessary content
@@ -116,7 +116,7 @@ bool LimaGuiApplication::openFile(QString filepath) {
   return true;
 }
 
-bool LimaGuiApplication::saveFile(QString filename) {
+bool LimaGuiApplication::saveFile(const QString& filename) {
   
   LimaGuiFile* lgfile = getFile(filename.toStdString());
   
@@ -140,7 +140,7 @@ bool LimaGuiApplication::saveFile(QString filename) {
   return true;
 }
 
-bool LimaGuiApplication::saveFileAs(QString filename, QString newUrl) {
+bool LimaGuiApplication::saveFileAs(const QString& filename, const QString& newUrl) {
   /// check if file is open
   LimaGuiFile* lgfile = getFile(filename.toStdString());
   
@@ -172,7 +172,7 @@ bool LimaGuiApplication::saveFileAs(QString filename, QString newUrl) {
   return true;
 }
 
-void LimaGuiApplication::closeFile(QString filename, bool save) {
+void LimaGuiApplication::closeFile(const QString& filename, bool save) {
   
   if (save) {
     saveFile(filename);
@@ -189,7 +189,7 @@ void LimaGuiApplication::closeFile(QString filename, bool save) {
   /// qml part : close tab
 }
 
-LimaGuiFile* LimaGuiApplication::getFile(std::string filename) {
+LimaGuiFile* LimaGuiApplication::getFile(const std::string& filename) {
   for (auto& file : m_openFiles) {
     if (file.name == filename) {
       return &file;
@@ -202,11 +202,11 @@ LimaGuiFile* LimaGuiApplication::getFile(std::string filename) {
 /// ANALYZER METHODS
 ///
 
-void LimaGuiApplication::analyzeText(QString content, QObject* target) {
+void LimaGuiApplication::analyzeText(const QString& content, QObject* target) {
   beginNewAnalysis(content, target);
 }
 
-void LimaGuiApplication::beginNewAnalysis(QString content, QObject* target) {
+void LimaGuiApplication::beginNewAnalysis(const QString& content, QObject* target) {
   LTELL("ANALYYZING :");
   LTELL(content.toStdString());
   auto at = new AnalysisThread(this, content);
@@ -214,7 +214,7 @@ void LimaGuiApplication::beginNewAnalysis(QString content, QObject* target) {
   at->start();
 }
 
-void LimaGuiApplication::analyze(QString content) {
+void LimaGuiApplication::analyze(const QString& content) {
   
   // PARAMETERS :
   // Text
@@ -251,7 +251,7 @@ void LimaGuiApplication::analyze(QString content) {
     delete simpleStreamHandler;
 }
 
-void LimaGuiApplication::analyzeFile(QString filename, QObject* target) {
+void LimaGuiApplication::analyzeFile(const QString& filename, QObject* target) {
   if (filename != m_fileName) {
     if (!selectFile(filename)) {
       return;
@@ -260,7 +260,7 @@ void LimaGuiApplication::analyzeFile(QString filename, QObject* target) {
   analyzeText(m_fileContent, target);
 }
 
-void LimaGuiApplication::analyzeFileFromUrl(QString url, QObject* target) {
+void LimaGuiApplication::analyzeFileFromUrl(const QString& url, QObject* target) {
   if (openFile(url)) {
     analyzeText(m_fileContent, target);
     closeFile(m_fileName);
@@ -270,7 +270,7 @@ void LimaGuiApplication::analyzeFileFromUrl(QString url, QObject* target) {
   }
 }
 
-bool LimaGuiApplication::selectFile(QString filename) {
+bool LimaGuiApplication::selectFile(const QString& filename) {
   LimaGuiFile* lgf = getFile(filename.toStdString());
   if (lgf) {
     m_fileContent = qstr_parseFile(lgf->url);
@@ -314,10 +314,10 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     langs);
   
   
-  std::cout << "Langs:" << std::endl;
-  for (unsigned int i = 0;i < langs.size(); i++) {
-    std::cout << langs[i] << std::endl;
-  }
+//  std::cout << "Langs:" << std::endl;
+//  for (unsigned int i = 0;i < langs.size(); i++) {
+//    std::cout << langs[i] << std::endl;
+//  }
   
   // initialize linguistic processing
   std::string clientId("lima-coreclient");
@@ -332,10 +332,10 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId)); 
   
-  std::cout << "Pipelines:" << std::endl;
-  for (unsigned int i=0; i < pipelines.size(); i++) {
-    std::cout << pipelines[i] << std::endl;
-  }
+//  std::cout << "Pipelines:" << std::endl;
+//  for (unsigned int i=0; i < pipelines.size(); i++) {
+//    std::cout << pipelines[i] << std::endl;
+//  }
 }
 
 void LimaGuiApplication::resetLimaAnalyzer() {
@@ -343,52 +343,12 @@ void LimaGuiApplication::resetLimaAnalyzer() {
   initializeLimaAnalyzer();
 }
 
-//LimaGuiThread* LimaGuiApplication::getThread(std::string name) {
-//  if (threads.find(name) != threads.end()) {
-//    return threads[name];
-//  }
-//  else {
-//    return nullptr;
-//  }
-//}
-
-//void LimaGuiApplication::newThread(std::string name, LimaGuiThread * lgt) {
-//  if (threads.find(name) != threads.end()) {
-//    // kill current thread
-//  }
-//  threads[name] = lgt;
-
-//  connect(lgt, SIGNAL(finished()), lgt, SLOT(deleteLater()));
-//}
-
-//void LimaGuiApplication::destroyThread(std::string name) {
-//  std::map<std::string, LimaGuiThread*>::const_iterator it = threads.find(name);
-//  if (it != threads.end()) {
-//    // kill thread
-
-//    delete threads[name];
-//    threads.erase(it);
-//  }
-//}
-
-//void LimaGuiApplication::destroyThread(LimaGuiThread * lgt) {
-//  for (auto& kv : threads) {
-//    if (kv.second == lgt) {
-//      destroyThread(kv.first);
-//      return;
-//    }
-//  }
-
-//  // kill thread
-//  delete lgt;
-//}
-
-void LimaGuiApplication::setTextBuffer(std::string str) {
+void LimaGuiApplication::setTextBuffer(const std::string& str) {
   m_text = QString::fromUtf8(str.c_str());
   textChanged();
 }
 
-void LimaGuiApplication::writeInConsole(std::string str) {
+void LimaGuiApplication::writeInConsole(const std::string& str) {
   m_consoleOutput += QString(str.c_str());
 }
 
