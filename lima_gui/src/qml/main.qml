@@ -4,7 +4,7 @@
  * \date June 2017
  */
 
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Window 2.0
 import QtQuick.Controls 2.2 as Controls2
 import QtQuick.Controls 1.4 as Controls1
@@ -45,10 +45,37 @@ Controls1.ApplicationWindow
 //    Dom.createComponent("basics/Tab.qml", data_tab_view)
 //    Dom.createComponent("CONLLTableView.qml", Dom.obj)
   }
+
+  function indiscriminateAnalyze() {
+    if (workspace.count()) {
+      var wv = workspace.getCurrentWorkView()
+      if (wv !== null) {
+        switch(wv.type) {
+        case "OpenFile":
+          analyzeFile(wv.title)
+          break;
+        case "SelectFile":
+          analyzeFileFromUrl(wv.getDataView().fileUrl)
+          break;
+        case "Text":
+          analyzeText(wv.getDataView().text)
+          break;
+        default:
+          console.log("oupsie! ", wv.type)
+          break;
+
+        }
+      }
+      else {
+
+      }
+    }
+  }
   
   /// ANALYZING
   
   function analyzeText(text) {
+    console.log("squalala!");
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
@@ -122,7 +149,7 @@ Controls1.ApplicationWindow
   
   /// open a tab to write and analyze text
   function openAnalyzeTextTab() {
-    var wv = workspace.addWorkTab("Analyze text", "Text", "AnalyzeTextWidget.qml","");
+    var wv = workspace.addWorkTab("Analyze text", "Text", "basics/TextEditor.qml","");
 
    }
   
@@ -145,6 +172,14 @@ Controls1.ApplicationWindow
   // if some files modifications have not been saved
   function confirmExitApplication() {
     // for every file, check if saved
+  }
+
+  function openConfigurationView() {
+    configurationView.open()
+  }
+
+  LimaConfigurationView  {
+    id: configurationView
   }
   
   Controls2.Popup {
@@ -273,7 +308,7 @@ Controls1.ApplicationWindow
 
   /// MENU BAR; TOOL BAR
   
-  menuBar: LimaGuiMenuBar {}
+//  menuBar: LimaGuiMenuBar {}
   toolBar: LimaGuiToolBar {}
   
   /// BODY
@@ -282,6 +317,8 @@ Controls1.ApplicationWindow
     id: body
     anchors.fill: parent
     color:"white"
+    anchors.margins: 2
+
     //////////////////////////////////////////////////
     // Do your bidding here
     
@@ -289,11 +326,20 @@ Controls1.ApplicationWindow
       
       anchors.fill: parent
       orientation: Qt.Horizontal
+
+      handleDelegate: Rectangle {
+        color : "transparent"
+        width: 3
+      }
       
       Rectangle {
         Layout.fillHeight: true
         Layout.preferredWidth: 300
         Layout.minimumWidth: 100
+        border.width: 1
+        border.color: "lightgray"
+        anchors.margins: 3
+        visible: false
         
         Text {
           text:"filebrowser"
@@ -308,13 +354,20 @@ Controls1.ApplicationWindow
         Layout.fillWidth: true
         anchors.margins: 5
         orientation: Qt.Vertical
-        
+        handleDelegate: Rectangle {
+          color : "transparent"
+          height: 3
+        }
         Controls1.SplitView {
           
           Layout.fillHeight: true
           Layout.fillWidth: true
           Layout.minimumHeight: 500
           Layout.preferredHeight: 700
+          handleDelegate: Rectangle {
+            color : "transparent"
+            width: 3
+          }
           
 //          TabbedView {
 //            id: data_tab_view
@@ -337,12 +390,86 @@ Controls1.ApplicationWindow
 //            }
 //          }
 
-          TabbedWorkspace {
-            id: workspace
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.centerIn: parent
 
-//            Component.onCompleted: {
-//              addWorkTab("hello!","AnalyzeTextWidget.qml","basics/ResultTab.qml");
-//            }
+            TabbedWorkspace {
+              anchors.fill: parent
+              id: workspace
+              Layout.fillHeight: true
+              Layout.preferredHeight: parent.height - nicebuttonview.height
+              Layout.minimumHeight: 500
+              Layout.fillWidth: true
+  //            Component.onCompleted: {
+  //              addWorkTab("hello!","AnalyzeTextWidget.qml","basics/ResultTab.qml");
+  //            }
+            }
+
+            Rectangle {
+              id: nicebuttonview
+              height: 60
+              Layout.minimumHeight: height
+              Layout.fillWidth: true
+              Layout.preferredHeight:height
+              color:"#aaeeeeee"
+
+              Rectangle {
+                anchors.fill: parent
+                anchors.centerIn: parent
+                color:"#aaeeeeee"
+
+                Row {
+                  width: implicitWidth > parent.width/2 ? implicitWidth : parent.width/2
+                  height: implicitHeight;
+                  anchors.centerIn: parent
+                  spacing: 5
+
+                  Controls2.ComboBox {
+                    textRole: "text"
+                    width: 200
+
+                    model: ListModel {
+                      id: cbmodel
+                      ListElement {
+                        name:"conll"
+                        format:"table"
+                        text:"Table CONLL"
+                      }
+
+                      ListElement {
+                        name :"conll"
+                        format: "text"
+                        text:"Texte CONLL"
+                      }
+
+                      ListElement {
+                        name: "named_entities"
+                        format: "named_entities"
+                        text: "Entitées nommées"
+                      }
+                    }
+                  }
+
+
+                  Shortcut {
+                    sequence:"Ctrl+Maj+A"
+                    onActivated: indiscriminateAnalyze()
+                  }
+
+                  Controls2.Button {
+                    id:universalAnalysisButton
+                    text:"Analyser"
+                    enabled: textAnalyzer.ready
+                    onClicked: {
+                      indiscriminateAnalyze()
+                    }
+                  }
+
+                }
+              }
+            }
+
           }
           
         }
@@ -370,11 +497,14 @@ Controls1.ApplicationWindow
 //        }
 
         Rectangle {
-          anchors.margins: 20
           Layout.fillWidth: true
           Layout.fillHeight: true
           Layout.preferredHeight: 300
           Layout.minimumHeight: 100
+          border.width: 1
+          border.color: "lightgray"
+          anchors.margins: 3
+          visible : false
 
           TextView {
             text: textAnalyzer.text

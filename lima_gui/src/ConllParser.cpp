@@ -19,6 +19,15 @@ CONLL_Line::CONLL_Line(std::string str) {
   tokens = split(str, '\t');
 }
 
+const std::string& CONLL_Line::operator[](unsigned int i) const {
+  if (i < tokens.size()) {
+    return tokens[i];
+  }
+  else {
+    return "";
+  }
+}
+
 void freeConllList(CONLL_List& cl) {
   for (unsigned int i=0;i<cl.size();i++) {
     delete(cl[i]);
@@ -53,19 +62,22 @@ std::vector<std::string> parseFile(std::string filepath) {
 namespace ConllParser {
 
 std::vector<CONLL_Line*> getConllData(std::string filepath) {
-    
-    std::vector<CONLL_Line*> conll_lines;
-    
-    // retrieve the file's content
-    std::vector<std::string> data = into_lines(parse_conll(filepath));
-    
-    // create structures
-    for (unsigned int i=0; i<data.size(); i++) {
-        if (!data[i].empty())
-        conll_lines.push_back(new CONLL_Line(data[i]));
-    }
-    
-    return conll_lines;
+  return textToConll(parse_conll(filepath));
+}
+
+std::vector<CONLL_Line*> textToConll(const std::string& text) {
+  std::vector<CONLL_Line*> conll_lines;
+
+  // retrieve the file's content
+  std::vector<std::string> data = into_lines(text);
+
+  // create structures
+  for (unsigned int i=0; i<data.size(); i++) {
+      if (!data[i].empty())
+      conll_lines.push_back(new CONLL_Line(data[i]));
+  }
+
+  return conll_lines;
 }
 
 /// removes the unneeded text at the start of the output
@@ -192,14 +204,74 @@ void displayAsColumns(CONLL_List& lines) {
 
 } // namespace ConllParser
 
-/*
- Sujet :
- 
- Transforme la sortie du format CONLL au format suivant :
- 1 ligne par relation de dépendance: dépendance(mot src, mot dest)
- 
- Par exemple : Il ne pense pas lui parler ce soir du cas Paul Durand.
- On aura entre autres :
- PronSujVerbe(penser,il)
- 
-*/
+#include <map>
+
+/// This will extract named entities from the conll output
+std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text) {
+  std::map<std::string, std::vector<std::string> > disa;
+  CONLL_List content = ConllParser::textToConll(text);
+  for (auto & cl : content) {
+    CONLL_Line& line = *cl;
+    if (cl && line[5] != "_") {
+      disa[line[5]].push_back(line[1]);
+    }
+  }
+
+  freeConllList(content);
+  return disa;
+}
+
+//void markup(const std::string& content, const std::string& markup, const std::string& style) {
+//  return "<" + markup  + (style != "" ? " style=\"" + style + "\"" : "") + ">" + content + "</" + markup + ">";
+//}
+
+//void filterContent(const std::string& str) {
+
+//}
+
+//#define end_register output += markup(buffer,buffer_container); buffer = "";
+//#define is_number(a) (a>=48 && a <= 57)
+
+//void mdToHtml(const std::string& text) {
+//  std::vector<std::string> lines = into_lines(text);
+//  std::string output;
+//  std::string buffer;
+//  std::string buffer_container;
+
+//  for (auto& line : lines) {
+//    if (line.length()) {
+//      if (line[0] == "#") {
+//        end_register;
+//        // Title
+//        int rank = 1;
+//        while(line[rank] == '#' && rank < line.length()) rank++;
+//        std::string content; // = substr(line - '###"...'')
+//        output += markup(content,"h"+std::to_string(rank));
+//      }
+//      else if (line[0] == '\t') {
+//        // Code
+//        if (line[1] == '*') {
+//          // Unordered list
+//          // to improve
+//        }
+//        else {
+//          buffer_container = "code";
+//          buffer += line;
+//        }
+//      }
+//      else if (line[0] == '-') {
+//        // Unordered list
+//      }
+
+//      else if (is_number(line[0]) && line[1] == '.') {
+//        // Ordered list
+//      }
+//    }
+//    else {
+//      // Empty line
+//      end_register;
+//    }
+//  }
+
+//  return markup(output,"html");
+//}

@@ -16,6 +16,7 @@
    <file>qml/CustomTabBar.qml</file>
    <file>qml/NewElementPopup.qml</file>
    <file>qml/ConllTableView.qml</file>
+   <file>qml/LimaConfigurationView.qml</file>
    
    <!-- Models -->
    <file>qml/models/NewElementModel.qml</file>
@@ -55,6 +56,7 @@
     <file>qml/basics/LoadingView.qml</file>
     <file>qml/basics/TableViewK.qml</file>
     <file>qml/basics/TableModel.qml</file>
+    <file>qml/basics/SwitchPanel.qml</file>
     
     <!--   Scripts   -->
     <file>qml/scripts/DynamicObjectManager.js</file>

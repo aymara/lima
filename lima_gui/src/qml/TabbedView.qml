@@ -12,13 +12,11 @@ C1.TabView {
 
   function addTabFromSource(name, contentItemSrc) {
 
-    console.log("before:count=", count,", currentIndex=",currentIndex)
     Dom.createComponent("basics/Tab.qml", main_tab_view);
     Dom.obj.title = name;
 //    currentIndex = Dom.obj.index;
     Dom.createComponent(contentItemSrc, Dom.obj);
     //addTab(name,Dom.obj)
-    console.log("after:count=", count,", currentIndex=",currentIndex)
     currentIndex = count - 1
     if (Dom.success) {
       return Dom.obj;
@@ -31,36 +29,57 @@ C1.TabView {
   function currentTab() {
     return getTab(currentIndex)
   }
-  
-  anchors.margins: 10
 
   style: TabViewStyle {
     frameOverlap: 1
+    tabsMovable: true
+    tabOverlap : -2
     tab: Rectangle {
         anchors.margins: 3
-        color: styleData.selected ? "white" : "#aaaaaa"
-        border.color:  styleData.selected ? "steelblue" : "gray"
-        radius: 3
-        y: 2 // to hide bottom border
-        implicitWidth: Math.max(text.width + 4, 80) + 40
+        color: styleData.selected ? "#eeeeee" : "#cccccc"
+//        border.color:  styleData.selected ? "lightblue" : "lightgray"
+        border.width: 1
+        border.color: "#bbbbbb"
+        radius: 0
+        y:2
+        implicitWidth: Math.max(text.width + 4, 80) + 40 + closebtn.width
         implicitHeight: 30
         Text {
             id: text
             anchors.centerIn: parent
             text: styleData.title
-            color: styleData.selected ? "black" : "white"
+            elide: Text.ElideMiddle
+            color: styleData.selected ? "black" : "black"
         }
 
-//        CloseButton {
-//          anchors.right: parent.right
-//          width: 20; height: 20
-
-//          onClicked: {
-//            parent.closed()
+//        MouseArea {
+//          onEntered: {
+//            parent.color = "red"
 //          }
+//          onExited: {
+//            parent.color = "blue"
+//          }
+//          anchors.fill:parent
 //        }
+
+        CloseButton {
+          id:closebtn
+          visible: false
+          anchors.right: parent.right
+          width: 20; height: 20
+
+          onClicked: {
+
+            parent.closed()
+          }
+        }
       }
-      frame: Rectangle { border.width: 1; border.color:"steelblue" }
+      frame: Rectangle {
+        border.width: 1;
+        border.color:"#bbbbbb";
+        color:"#eeeeee"
+
+      }
   }
 
 //   C1.Tab {

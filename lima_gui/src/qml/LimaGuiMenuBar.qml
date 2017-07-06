@@ -70,29 +70,7 @@ MenuBar {
 
       onTriggered: {
         console.log("ctrlshifta");
-        if (workspace.count()) {
-          var wv = workspace.getCurrentWorkView()
-          if (wv !== null) {
-            switch(wv.type) {
-            case "OpenFile":
-              analyzeFile(wv.title)
-              break;
-            case "SelectFile":
-              analyzeFileFromUrl(wv.getDataView().fileUrl)
-              break;
-            case "Text":
-              analyzeText(wv.getDataView().text)
-              break;
-            default:
-              console.log("oupsie! ", wv.type)
-              break;
-
-            }
-          }
-          else {
-
-          }
-        }
+        indiscriminateAnalyze();
       }
 
     }
@@ -148,6 +126,9 @@ MenuBar {
     
     MenuItem {
       text: "Configurer LIMA"
+      onTriggered: {
+        openConfigurationView()
+      }
     }
     
     MenuItem {

@@ -12,6 +12,7 @@ struct CONLL_Line {
     std::vector<std::string> tokens;
     
     CONLL_Line(std::string str);
+    const std::string& operator[](unsigned int) const;
 };
 
 typedef std::vector<CONLL_Line*> CONLL_List;
@@ -31,7 +32,7 @@ std::string parse_conll(std::string filepath);
 
 std::vector<std::string> into_lines(std::string str);
 
-
+std::vector<CONLL_Line*> textToConll(const std::string& text);
 
 
 /// Returns the whole CONLL data bunch

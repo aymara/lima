@@ -30,7 +30,7 @@ Rectangle {
   function displayResults(output) {
     raw = output
     color = "transparent"
-    setFormat("table")
+    setFormat(format !== "" ? format : "table")
 
 //    console.log("SUCCESS");
 //    Dom.createComponent("CONLLTableView.qml", result_tab);

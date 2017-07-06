@@ -37,6 +37,7 @@ Rectangle {
         dataItem = [];
       }
       dataItem.push(Dom.obj)
+      Dom.obj.focus = true
     }
   }
 

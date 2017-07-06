@@ -6,6 +6,9 @@ import "scripts/DynamicObjectManager.js" as Dom
 Rectangle {
   id: workspace
 
+
+  color:"#555555"
+
   property var works: []
 
   function addWorkTab(name, type, dsrc,  rsrc) {
@@ -16,6 +19,8 @@ Rectangle {
 //      Dom.obj.setDataView(dsrc);
 //      Dom.obj.setResultView(rsrc);
 //    }
+
+    tabview.visible = true
 
     var wv = tabview.addTabFromSource(name,"WorkView.qml")
     if (wv === null) {
@@ -54,9 +59,10 @@ Rectangle {
   }
 
   TabbedView {
+    visible: false
     id:tabview
-    width: parent.width
-    height: parent.height
+    anchors.fill: parent
+    anchors {topMargin: 5; leftMargin:1; rightMargin: 1}
   }
 
 }

@@ -13,7 +13,7 @@ ToolBar {
   
   RowLayout {
     ToolButton {
-      text: "New"
+      text: "Nouvelle analyse"
       Image {
         width: 30
         height: 30
@@ -24,24 +24,31 @@ ToolBar {
       }
       //iconSource: "new.png"
     }
+
     ToolButton {
-      text:"Open"
+      text:"Ouvrir un fichier"
       //iconSource: "open.png"
       onClicked: {
         openSelectFileDialog()
       }
     }
-    ToolButton {
-      text:"Save"
-      //iconSource: "save-as.png"
-      onClicked: {
-         saveTextFile();
-      }
-    }
+
+//    ToolButton {
+//      text:"Save"
+//      //iconSource: "save-as.png"
+//      onClicked: {
+//         saveTextFile();
+//      }
+//    }
+
     Item { Layout.fillWidth: true }
+    ToolSeparator {
+      height: parent.height
+      width: 1
+    }
     
     ToolButton {
-      text: "Analyse Texte"
+      text: "Analyser du texte"
       
       onClicked: {
         openAnalyzeTextTab()
@@ -49,10 +56,25 @@ ToolBar {
     }
     
     ToolButton {
-      text: "Analyse Fichier"
+      text: "Analyser un fichier"
       
       onClicked: {
         openAnalyzeFileTab()
+      }
+    }
+
+    ToolButton {
+      text: "Configuration"
+
+      onClicked: {
+        configurationView.open()
+      }
+    }
+
+    ToolButton {
+      text: "Exporter"
+      onClicked: {
+
       }
     }
     

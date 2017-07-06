@@ -207,8 +207,8 @@ void LimaGuiApplication::analyzeText(const QString& content, QObject* target) {
 }
 
 void LimaGuiApplication::beginNewAnalysis(const QString& content, QObject* target) {
-  LTELL("ANALYYZING :");
-  LTELL(content.toStdString());
+//  LTELL("ANALYYZING :");
+//  LTELL(content.toStdString());
   auto at = new AnalysisThread(this, content);
   if (target) at->setResultView(target);
   at->start();

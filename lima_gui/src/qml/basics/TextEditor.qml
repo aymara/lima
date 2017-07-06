@@ -5,6 +5,7 @@ import QtQuick.Controls 2.2
 
 Rectangle {
   property alias text: ttextarea.text
+  property alias textFormat: ttextarea.textFormat
   anchors.fill: parent
   color:"transparent"
 
@@ -22,6 +23,20 @@ Rectangle {
       id: ttextarea
       width: implicitWidth
       height: implicitHeight
+      selectByMouse: true
+//      wrapMode: Text.WordWrap
+//      textFormat: TextEdit.RichText
+
+//      property string placeholderText: "Enter text here..."
+
+//      onPressed: {
+//        placeholder.visible = false
+//      }
+
+//      Text {
+//        id:placeholder
+//        text: ttextarea.placeholderText
+//      }
     }
   }
 }
