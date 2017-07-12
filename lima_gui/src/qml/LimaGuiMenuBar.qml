@@ -8,75 +8,102 @@ import QtQuick.Controls.Styles 1.4
 MenuBar {
   
   style: MenuBarStyle {
+
     background: Rectangle {
       color:"white"
     }
+
     menuStyle: MenuStyle {
+
       frame : Rectangle {
         color:"white"
       }
       
     }
+
   }
   
   Menu {
-    title: "Fichier"
+
+    title: qsTr("Fichier")
     
     MenuItem {
-      text: "Nouveau "
+
+      text: qsTr("Nouveau ")
       shortcut: "Ctrl+N"
+
       onTriggered: {
         createNewElement()
       }
+
     }
     
     MenuItem { 
-      text: "Ouvrir un fichier";
+
+      text: qsTr("Ouvrir un fichier");
       shortcut: "Ctrl+O"
+
       onTriggered: {
         openSelectFileDialog()
       }
+
     }
-    MenuItem { text: "Sauvegarder"; }
-    MenuItem { text: "Sauvegarder en tant que ..."; }
+
+    MenuItem {
+      text: qsTr("Sauvegarder");
+    }
+
+    MenuItem {
+      text: qsTr("Sauvegarder en tant que ...");
+    }
     
     MenuItem {
-      text: "Exporter ..."
+      text: qsTr("Exporter ...")
       onTriggered: confirmCloseFile()
     }
     
     MenuItem {
-      text: "Quitter"
+      text: qsTr("Quitter")
       onTriggered:  Qt.quit()
-      
     }
   }
   
   Menu {
-    title: "Edition"
+
+    title: qsTr("Edition")
     
-    MenuItem { text:"Couper" }
-    MenuItem { text:"Copier" }
-    MenuItem { text:"Coller" }
+    MenuItem {
+      text:qsTr("Couper")
+    }
+
+    MenuItem {
+      text:qsTr("Copier")
+    }
+
+    MenuItem {
+      text:qsTr("Coller")
+    }
   }
   
   Menu {
-    title: "Analyse"
+
+    title: qsTr("Analyse")
 
     MenuItem {
-      text:"Analyser"
+
+      text:qsTr("Analyser")
       shortcut:"Ctrl+Shift+A"
       enabled: textAnalyzer.ready ? true : false
 
       onTriggered: {
-        console.log("ctrlshifta");
         indiscriminateAnalyze();
       }
 
     }
 
     MenuItem {
-      text: "Analyser fichier courant"
+
+      text: qsTr("Analyser fichier courant")
 
       enabled: textAnalyzer.ready ? true : false
       onTriggered: {
@@ -89,33 +116,49 @@ MenuBar {
       }
     }
     
-    MenuItem { text: "Analyser du texte"
+    MenuItem {
+      text: qsTr("Analyser du texte")
       onTriggered: openAnalyzeTextTab();
     }
     
-    MenuItem { text:"Analyser des fichiers"
+    MenuItem {
+      text: qsTr("Analyser des fichiers")
       onTriggered: openAnalyzeFileTab();
     }
-    MenuItem { text: "Analyse CONLL"
+
+    MenuItem {
+      text: qsTr("Analyse CONLL")
+
       onTriggered: {
+
       }
     }
-    MenuItem { text: "Graphe" }
-    MenuItem { text: "Entités nommées" }
 
-    MenuItem { text:"Debug Test"
+    MenuItem {
+      text: qsTr("Graphe")
+    }
+
+    MenuItem {
+      text: qsTr("Entités nommées")
+    }
+
+    MenuItem {
+      text:"Debug Test"
+      shortcut:"Ctrl+T"
+
       onTriggered: {
         textAnalyzer.test()
       }
-      shortcut:"Ctrl+T"
     }
   }
   
   Menu {
+
     title: "Lima"
     
     Menu {
-      title: "Configurations"
+
+      title: qsTr("Configurations")
       
       // that's where i'd put my preset configs .. if i had one !
       
@@ -125,14 +168,16 @@ MenuBar {
     }
     
     MenuItem {
-      text: "Configurer LIMA"
+
+      text: qsTr("Configurer LIMA")
+
       onTriggered: {
         openConfigurationView()
       }
     }
     
     MenuItem {
-      text:"Options"
+      text: qsTr("Options")
     }
   }
 }

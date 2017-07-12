@@ -222,7 +222,8 @@ void LimaGuiApplication::analyze(const QString& content) {
   // Metadata
   std::map<std::string, std::string> metaData;
   metaData["FileName"] = "";
-  metaData["Lang"] = "fre";
+  metaData["Lang"] = m_language.toStdString();
+  LTELL("lang=" << metaData["Lang"]);
   
   // Pipeline
   std::string pipeline = "main";
@@ -313,11 +314,10 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     commonConfigFile,
     langs);
   
-  
-//  std::cout << "Langs:" << std::endl;
-//  for (unsigned int i = 0;i < langs.size(); i++) {
-//    std::cout << langs[i] << std::endl;
-//  }
+  for (auto& l : langs) {
+    m_languages << QString(l.c_str());
+  }
+  m_language = "fre";
   
   // initialize linguistic processing
   std::string clientId("lima-coreclient");
@@ -364,12 +364,24 @@ QString LimaGuiApplication::fileName() const { return m_fileName; }
 QString LimaGuiApplication::fileUrl() const { return m_fileUrl; }
 QString LimaGuiApplication::text() const { return m_text; }
 QString LimaGuiApplication::consoleOutput() const { return m_consoleOutput; }
+QStringList LimaGuiApplication::languages() const { return m_languages; }
+QString LimaGuiApplication::language() const { return m_language; }
 
 void LimaGuiApplication::setFileContent(const QString& s) { m_fileContent = s; }
 void LimaGuiApplication::setFileName(const QString& s) { m_fileName = s; }
 void LimaGuiApplication::setFileUrl(const QString& s) { m_fileUrl = s; }
 void LimaGuiApplication::setText(const QString& s) {m_text = s; textChanged();}
 void LimaGuiApplication::setConsoleOuput(const QString& s) { m_consoleOutput = s;}
+
+void LimaGuiApplication::setLanguage(const QString& s) {
+  if (m_languages.contains(s)) {
+    m_language = s;
+    languageChanged();
+  }
+  else {
+    LTELL("'" << s.toStdString() << "' is not a supported language.");
+  }
+}
 
 void LimaGuiApplication::toggleAnalyzerState() {
   m_analyzerAvailable = !m_analyzerAvailable;

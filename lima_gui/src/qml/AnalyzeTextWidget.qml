@@ -1,18 +1,22 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
+
 import "basics"
 
 /// Widget allowing to input text and analyze it on the fly
 
 Rectangle {
   id: analyzeTextWidget
+
   property alias text: textv.text  
+
   anchors.fill: parent
   
 //  title: "Analyser du texte"
   
   Rectangle {
     id: text_bunch
+
     width: parent.width
     height: parent.height - 50
     
@@ -24,10 +28,13 @@ Rectangle {
   }
   
   Button {
-    text:"Analyze Text"
+
+    text: qsTr("Analyze Text")
+
     onClicked: {
       analyzeText(textv.text)
     }
+
     enabled: textAnalyzer.ready ? true : false
     anchors.top: text_bunch.bottom
 

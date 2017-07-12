@@ -10,11 +10,13 @@
 #include <cstdio>
 #include <iomanip>
 
+#include <boost/algorithm/string/replace.hpp>
+
 /// This need cleaning up
 ///
 /// Contains all kinds of function to parse text and files
 
-CONLL_Line::CONLL_Line(std::string str) {
+CONLL_Line::CONLL_Line(const std::string& str) {
   raw = str;
   tokens = split(str, '\t');
 }
@@ -36,7 +38,7 @@ void freeConllList(CONLL_List& cl) {
 
 /// splits a string according to the parameter delimiter
 /// \return the list of the resulting tokens
-std::vector<std::string> split(std::string line, char delimiter) {
+std::vector<std::string> split(const std::string& line, const char& delimiter) {
   std::vector<std::string> elements;
   std::stringstream ss(line);
   std::string word;
@@ -47,7 +49,7 @@ std::vector<std::string> split(std::string line, char delimiter) {
 }
 
 /// parse a file and return its content
-std::vector<std::string> parseFile(std::string filepath) {
+std::vector<std::string> parseFile(const std::string& filepath) {
   std::ifstream myfile;
   myfile.open(filepath.c_str(), std::ifstream::in);
   std::vector<std::string> content;
@@ -61,7 +63,7 @@ std::vector<std::string> parseFile(std::string filepath) {
 
 namespace ConllParser {
 
-std::vector<CONLL_Line*> getConllData(std::string filepath) {
+std::vector<CONLL_Line*> getConllData(const std::string& filepath) {
   return textToConll(parse_conll(filepath));
 }
 
@@ -88,7 +90,7 @@ void clean_up(std::string& str) {
 
 /// runs LIMA's analyzeText on parameter file and returns the output
 /// \return the raw text content of the file
-std::string parse_conll(std::string file) {
+std::string parse_conll(const std::string& file) {
     std::string unit = "analyzeText";
     std::string unit_path = "~/Lima/Dist/lima-gui/debug/bin/";
 //     chdir(unit_path.c_str());
@@ -116,7 +118,7 @@ std::string parse_conll(std::string file) {
 
 /// gets lines from raw text
 /// \return the list of the resulting lines
-std::vector<std::string> into_lines(std::string str) {
+std::vector<std::string> into_lines(const std::string& str) {
     std::stringstream ss(str);
     std::string line;
     std::vector<std::string> lines;
@@ -130,7 +132,7 @@ std::vector<std::string> into_lines(std::string str) {
 
 /// displays the expected content : Dependance(mot source, mot cible)
 /// words with no dependency are not displayed by default
-void show_dependencies(CONLL_List& lines) {
+void show_dependencies(const CONLL_List& lines) {
     
     // show if there's no dependency
     bool showna = false;
@@ -172,7 +174,7 @@ void show_dependencies(CONLL_List& lines) {
 }
 
 /// display the conll file content
-void displayAsColumns(CONLL_List& lines) {
+void displayAsColumns(const CONLL_List& lines) {
     
     std::vector<std::string> headers;
     headers.push_back("token_num");
@@ -205,25 +207,48 @@ void displayAsColumns(CONLL_List& lines) {
 } // namespace ConllParser
 
 #include <map>
+#include <vector>
 
 /// This will extract named entities from the conll output
-std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text) {
-  std::map<std::string, std::vector<std::string> > disa;
-  CONLL_List content = ConllParser::textToConll(text);
-  for (auto & cl : content) {
-    CONLL_Line& line = *cl;
-    if (cl && line[5] != "_") {
-      disa[line[5]].push_back(line[1]);
-    }
-  }
+//std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text) {
+//  std::map<std::string, std::vector<std::string> > disa;
+//  CONLL_List content = ConllParser::textToConll(text);
+//  for (auto & cl : content) {
+//    CONLL_Line& line = *cl;
+//    if (cl && line[5] != "_") {
+//      disa[line[5]].push_back(line[1]);
+//    }
+//  }
 
-  freeConllList(content);
-  return disa;
-}
+//  freeConllList(content);
+//  return disa;
+//}
 
-//void markup(const std::string& content, const std::string& markup, const std::string& style) {
+//std::string markup(const std::string& content, const std::string& markup, const std::string& style) {
 //  return "<" + markup  + (style != "" ? " style=\"" + style + "\"" : "") + ">" + content + "</" + markup + ">";
 //}
+
+///// \return the text with html highlighted named entities
+///// \param text : the raw text
+///// \param types is the map obtained by the above function
+///// \param is the colors : <named_entity_type_name>:<color>
+//std::string highlightNamedEntities(
+//    const std::string& raw,
+//    std::map<std::string, std::vector<std::string>>& types,
+//    std::map<std::string, std::string>& colors)
+//{
+//  std::string text = raw;
+//  for (auto& type : types) {
+//    for (auto& entity : type.second) {
+//      boost::replace_all(text, entity, markup(entity,"strong","color:"+colors[type.first]));
+//    }
+//  }
+
+//  return text;
+//}
+
+
+
 
 //void filterContent(const std::string& str) {
 

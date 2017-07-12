@@ -30,7 +30,7 @@ class ConllRow : public QObject, public CONLL_Line {
   Q_PROPERTY(QString type READ getType)
   
 public:
-  ConllRow(std::string s, QObject* p = 0);
+  ConllRow(const std::string& s, QObject* p = 0);
   
   QString at(unsigned int i) const { return tokens.size() && tokens.size() > i ? QString(tokens[i].c_str()) : QString("undefined"); }
   Q_INVOKABLE QString getId() const { return at(0); }

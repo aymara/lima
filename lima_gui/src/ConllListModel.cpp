@@ -2,7 +2,7 @@
 #include <iostream>
 #include <QtDebug>
 
-ConllRow::ConllRow(std::string s, QObject* p) : QObject(p), CONLL_Line(s) {
+ConllRow::ConllRow(const std::string& s, QObject* p) : QObject(p), CONLL_Line(s) {
 
 }
 

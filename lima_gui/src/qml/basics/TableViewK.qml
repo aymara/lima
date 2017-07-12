@@ -3,6 +3,8 @@ import QtQuick.Controls 1.4
 import QtQml.Models 2.2
 import "../models"
 
+/// TEST FILE. OBSOLETE.
+
 TableView {
   anchors.centerIn: parent
   anchors.fill: parent

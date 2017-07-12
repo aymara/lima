@@ -1,6 +1,8 @@
 #include <QtDebug>
 #include "tablemodel.h"
 
+/// SAMPLE FILE.
+
 TableModel::TableModel(QObject *parent) :
 QAbstractTableModel(parent)
 {

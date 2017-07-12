@@ -3,6 +3,8 @@
 
 #include <QAbstractTableModel>
 
+/// SAMPLE FILE.
+
 class TableModel : public QAbstractTableModel
 {
   Q_OBJECT

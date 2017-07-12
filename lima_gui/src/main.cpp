@@ -1,16 +1,18 @@
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include "../../lima_common/src/common/tools/FileUtils.h"
 /**
  * \author Jocelyn VERNAY
  * \file main.cpp
  * \project lima-qt-gui
- * \date 20-06-2017 
+ * \date 20-06-2017
  */
+
+#include "../../lima_common/src/common/tools/FileUtils.h"
+#include <../../../master/debug/include/common/tools/FileUtils.h>
+#include <../../../master/debug/include/common/tools/FileUtils.h>
+#include <../../../master/debug/include/common/tools/FileUtils.h>
+#include "../../lima_common/src/common/tools/FileUtils.h"
+#include "../../lima_common/src/common/tools/FileUtils.h"
+#include "../../lima_common/src/common/tools/FileUtils.h"
+
 
 #include "LimaGuiApplication.h"
 #include "ConllListModel.h"
@@ -30,7 +32,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    //// LIMA ////
+    //// INITIATING LIMA ////
     QStringList configDirs = Misc::buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
     QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
     
@@ -40,6 +42,9 @@ int main(int argc, char *argv[])
     std::cerr << "Amose plugins initialized" << std::endl;
     QsLogging::initQsLog();
     
+
+    /// REGISTERING From C++ QML Types
+    ///
     // https://stackoverflow.com/questions/9500280/access-c-function-from-qml
     // qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
     qmlRegisterType<LimaGuiApplication>("integ_cpp", 1, 0, "LimaGuiApplication");
@@ -54,6 +59,9 @@ int main(int argc, char *argv[])
     //new QQmlContext(engine.rootContext());
 
     LimaGuiApplication lga;
+
+    /// we add the app as a context property so that it can be accessed from anywhere,
+    /// without instantiating in QML
 
     engine.rootContext()->setContextProperty("textAnalyzer", &lga);
 

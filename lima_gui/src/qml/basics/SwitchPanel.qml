@@ -4,6 +4,7 @@ import QtQml.Models 2.2
 import "../scripts/DynamicObjectManager.js" as Dom
 
 /// A generic QML element with a list of switchs.
+/// TEST FILE. WIP
 
 Rectangle {
   id: switchPanel

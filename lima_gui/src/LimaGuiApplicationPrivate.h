@@ -4,7 +4,7 @@
 class LimaGuiApplicationPrivate;
 
 class LimaGuiApplication : public QObject {
-  Q_OBJECT:
+  Q_OBJECT
   
 public:
   LimaGuiApplication(QObject* p = 0);

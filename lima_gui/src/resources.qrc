@@ -7,7 +7,6 @@
    <file>qml/WorkView.qml</file>
    <file>qml/TabbedWorkspace.qml</file>
    
-   
    <!-- Widgets -->
    <file>qml/AnalyzeTextWidget.qml</file>
    <file>qml/AnalyzeFileWidget.qml</file>
@@ -17,17 +16,15 @@
    <file>qml/NewElementPopup.qml</file>
    <file>qml/ConllTableView.qml</file>
    <file>qml/LimaConfigurationView.qml</file>
+   <file>qml/ResultView.qml</file>
    
    <!-- Models -->
    <file>qml/models/NewElementModel.qml</file>
    <file>qml/models/TestModel.qml</file>
    <file>qml/models/ConllListModel.qml</file>
-   
-   
-   
    <!---->
-   <!-- Test files -->
    
+   <!-- Test files -->
     <file>qml/main_2.qml</file>
     <file>qml/FileMenu.qml</file>
     <file>qml/EditMenu.qml</file>
@@ -39,16 +36,11 @@
     
     <!---->
     
-    
-    
-    
-    
     <!-- Samples -->
     <file>qml/basics/Tab.qml</file>
     <file>qml/basics/CloseButton.qml</file> 
     <file>qml/basics/BasicRectangle.qml</file>
     <file>qml/Simplex.qml</file>
-    <file>qml/basics/ResultTab.qml</file>
     <file>qml/basics/CONLLListElement.qml</file>
     <file>qml/basics/TextView.qml</file>
     <file>qml/basics/PdfView.qml</file>
@@ -57,11 +49,22 @@
     <file>qml/basics/TableViewK.qml</file>
     <file>qml/basics/TableModel.qml</file>
     <file>qml/basics/SwitchPanel.qml</file>
+    <file>qml/basics/SelectOptionComboBox.qml</file>
+    <file>qml/basics/NamedEntitiesView.qml</file>
+    <file>qml/basics/WelcomeView.qml</file> 
     
     <!--   Scripts   -->
     <file>qml/scripts/DynamicObjectManager.js</file>
     <file>qml/scripts/colors.js</file>
     
-    <file>qml/basics/hex-loading.gif</file>
+    <!--  Styles -->
+    <file>qml/styles/TabbedViewStyle.qml</file>
+    
+    <!-- Resources -->
+    <file>qml/resources/hex-loading.gif</file>
+    <file>qml/resources/clock-loading.gif</file>
+    <file>qml/resources/loading2.gif</file>
+    <file>qml/resources/backup_btnclose_h.png</file>
+    <file>qml/resources/backup_btnclose_n.png</file>
  </qresource>
 </RCC>

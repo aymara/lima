@@ -6,9 +6,6 @@ import "scripts/DynamicObjectManager.js" as Dom
 Rectangle {
   id: workspace
 
-
-  color:"#555555"
-
   property var works: []
 
   function addWorkTab(name, type, dsrc,  rsrc) {
@@ -58,11 +55,38 @@ Rectangle {
     return works.length;
   }
 
+  function closeWorkView(index) {
+    if (index >= 0 && index < works.length) {
+      var wv = works[index]
+      if (wv.getResultView() !== null) {
+//        wv.getResultView().clear()
+//        wv.getResultView().destroy()
+        wv.getResultView().visible = false
+      }
+      if (wv.getDataView() !== null) {
+
+//        wv.getDataView().clear()
+//        wv.getDataView().destroy()
+        wv.getDataView().visible = false
+      }
+
+      works.splice(index, 1)
+      tabview.getTab(index).visible = false
+    }
+  }
+
+  function addTab(n,c) {
+    tabview.addTab(n,c)
+  }
+
+  color:"#555555"
+
   TabbedView {
-    visible: false
     id:tabview
+
+    visible: false
     anchors.fill: parent
-    anchors {topMargin: 5; leftMargin:1; rightMargin: 1}
+    anchors { topMargin: 5; leftMargin:0; rightMargin: 0 }
   }
 
 }

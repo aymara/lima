@@ -8,13 +8,13 @@ Rectangle {
   property color hoverColor: "#ff1111"
   property color regularColor: "#444444"
   property color clickColor: "#ee0000"
+
+  signal clicked()
   
   width: 10
   height: 10
   radius: width/2
   color: regularColor
-  
-  signal clicked()
   
   MouseArea {
     anchors.fill: parent

@@ -1,17 +1,20 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQml.Models 2.2
-import "scripts/DynamicObjectManager.js" as Dom
-import "basics"
 import QtQuick.Controls.Styles 1.4
+
 import integ_cpp 1.0
 
+import "basics"
+
+import "scripts/DynamicObjectManager.js" as Dom
 
 /// WIP
 /// The widget that will display the CONLL output of an analysis in a table
 
 Rectangle {
   id:conlltableview
+
   property alias model: table_view.model
   
   function loadModel(text) {
@@ -33,12 +36,11 @@ Rectangle {
   objectName: "booyah_tableviewconll"
 
   TableView {
+    id: table_view
 
     style : TableViewStyle {
 
     }
-
-    id: table_view
     anchors.fill: parent
 
     model: null

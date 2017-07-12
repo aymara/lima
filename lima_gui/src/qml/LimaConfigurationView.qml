@@ -7,6 +7,7 @@ import "basics"
 
 Popup {
   id: popup
+
   width: 800
   height: 600
   x:app_window.width/2 - width/2

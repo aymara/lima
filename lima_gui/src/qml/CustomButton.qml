@@ -45,8 +45,6 @@ import QtQuick 2.0
 /// Unused, kept for possible future use
 Item {
     id: button
-    width: 30
-    height: 30
     property alias text: innerText.text;
     property color color: "#eeeeee"
     property color hoverColor: "#ddddee"
@@ -54,9 +52,13 @@ Item {
     property int fontSize: 10
     property int borderWidth: 1
     property int borderRadius: 2
-    scale: state === "Pressed" ? 0.96 : 1.0
+
     onEnabledChanged: state = ""
     signal clicked
+
+    width: 30
+    height: 30
+    scale: state === "Pressed" ? 0.96 : 1.0
 
     //define a scale animation
     Behavior on scale {

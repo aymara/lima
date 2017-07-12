@@ -22,14 +22,17 @@ class LimaGuiThread;
 class LimaGuiApplication : public QObject {
   Q_OBJECT
   
-  /// BUFFER PROPERTIES
+  /// BUFFER PROPERTIES EXPOSED TO QML
+
   Q_PROPERTY(QString fileContent MEMBER m_fileContent READ fileContent WRITE setFileContent)
   Q_PROPERTY(QString text MEMBER m_text NOTIFY textChanged READ text WRITE setText)
   Q_PROPERTY(QString fileName MEMBER m_fileName READ fileName WRITE setFileName)
   Q_PROPERTY(QString fileUrl MEMBER m_fileUrl READ fileUrl WRITE setFileUrl)
   Q_PROPERTY(bool ready MEMBER m_analyzerAvailable READ available WRITE setAnalyzerState NOTIFY readyChanged)
   Q_PROPERTY(QString console MEMBER m_consoleOutput NOTIFY consoleChanged READ consoleOutput WRITE setConsoleOuput)
-  
+  Q_PROPERTY(QStringList languages MEMBER m_languages NOTIFY languagesChanged READ languages)
+  Q_PROPERTY(QString language MEMBER m_language NOTIFY languageChanged READ language WRITE setLanguage)
+
 public:
   ///
   /// \brief LimaGuiApplication
@@ -115,12 +118,15 @@ public:
   QString fileUrl() const;
   QString text() const;
   QString consoleOutput() const;
+  QStringList languages() const;
+  QString language() const;
 
   void setFileContent(const QString& s);
   void setFileName(const QString& s);
   void setFileUrl(const QString& s);
   void setText(const QString& s);
   void setConsoleOuput(const QString& s);
+  void setLanguage(const QString& s);
 
   // ANALYZER STATE : to avoid simultaneous analysis
 
@@ -138,6 +144,9 @@ Q_SIGNALS:
   void textChanged();
   void consoleChanged();
   void readyChanged();
+
+  void languagesChanged();
+  void languageChanged();
   
 private:
   
@@ -148,7 +157,9 @@ private:
   QString m_fileUrl;
   QString m_text;
   QString m_consoleOutput;
-  
+  QStringList m_languages;
+  QString m_language;
+  QStringList m_formats;
   bool m_analyzerAvailable = false;
   
   /// MEMBERS

@@ -23,6 +23,7 @@ LimaGuiThread::LimaGuiThread(LimaGuiApplication* app) : QThread() {
 ///
 ///
 ///
+///
 
 AnalysisThread::AnalysisThread(LimaGuiApplication* app) : LimaGuiThread(app) {
 
@@ -34,20 +35,21 @@ AnalysisThread::AnalysisThread(LimaGuiApplication *app, const QString& s) : Lima
 
 void AnalysisThread::run() {
   if (m_application->available()) {
+    std::stringstream buffer;
+    std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
+    std::streambuf* old_cerr = std::cerr.rdbuf(buffer.rdbuf());
     // thread_safe -> don't need it
     //m_application->setAnalyzerState(0);
-
     m_application->setOut(&out);
-
     m_application->analyze(m_text);
-
     // reset app out
     m_application->setOut(&std::cout);
-
 //    m_application->setAnalyzerState(1);
-
     // push results to app/gui
     // m_application->setTextBuffer(out.str());
+    m_application->setTextBuffer(buffer.str());
+    std::cout.rdbuf(old_cout);
+    std::cerr.rdbuf(old_cerr);
 
     notifyView();
   }

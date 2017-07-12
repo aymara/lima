@@ -6,6 +6,7 @@ import QtQuick.Controls 1.4
 /// No preview of the file content
 
 GroupBox {
+  id: select_file_menu
   
   property alias fileUrl: file_dialog.fileUrl
   property alias fileName: filename_lbl.text
@@ -17,10 +18,8 @@ GroupBox {
   onTriggered: {
     analyzeFileFromUrl(fileUrl)
   }
-  
-  id: select_file_menu
-  
-  title: "Analyser un fichier"
+
+  title: qsTr("Analyser un fichier")
   
   FileDialog {
     id: file_dialog
@@ -36,6 +35,7 @@ GroupBox {
     
     Button {
       id: browse_button
+
       text: "Parcourir"
       
       onClicked: {
@@ -45,6 +45,7 @@ GroupBox {
   
     Text {
       id: filename_lbl
+
       text: "..."
       width: 100
       elide: Text.ElideMiddle
@@ -53,10 +54,11 @@ GroupBox {
     
     Button {
       id: action_button 
-      text: "Analyser"
 
+      text: qsTr("Analyser")
       enabled: textAnalyzer.ready ? true : false
-      onClicked:  { 
+
+      onClicked:  {
         triggered()
       }
     }

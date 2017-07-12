@@ -7,11 +7,7 @@ import "scripts/DynamicObjectManager.js" as Dom
 Rectangle {
   id:workview
 
-  anchors.fill: parent
-  color:"transparent"
-
   /// properties
-
 
   /// types 'enum'
 //  property int Default: 0
@@ -22,6 +18,9 @@ Rectangle {
   property string title: ""
   property string type: ""
   property int status: resultsItem.length ? resultsItem[0].status : 0
+
+  property int languageIndex: 0
+  property int formatIndex: 0
 
   /// workaround as you can't easily store references to objects other than in a list
   property var dataItem: []
@@ -84,28 +83,35 @@ Rectangle {
       return resultsItem[0].status
     }
     else {
-      return 0
+      return 0;
     }
   }
+
+  anchors.fill: parent
+  color:"transparent"
 
   /// content
 
   SplitView {
+
     anchors.margins: 1
     orientation: Qt.Horizontal
     anchors.fill: parent
+
     handleDelegate: Rectangle {
       height: parent.height
-      width: 1
-      color: "#111111"
+      width: 3
+      color: "transparent"
     }
 
     /// ###
     Rectangle {
       id: data_view
+
       width: workview.width/2
       Layout.fillWidth: true
       color:"transparent"
+      radius: 3
 
 
     }
@@ -124,6 +130,7 @@ Rectangle {
 
       visible:false
       width: workview.width/2
+      radius: 3
     }
 
   }

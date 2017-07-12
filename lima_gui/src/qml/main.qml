@@ -11,27 +11,19 @@ import QtQuick.Controls 1.4 as Controls1
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
+
 import "basics"
 
 import "scripts/DynamicObjectManager.js" as Dom
 import "scripts/colors.js" as Colors
 
-import "basics"
-
 /**
  * Main QML File : lima_gui
  */
 
-Controls1.ApplicationWindow
-{
-  title:"test-lima-qt"
-
+Controls1.ApplicationWindow {
   id:app_window
-  visible: true
-  x: 500
-  width: 1024
-  height: 768
-//  visibility: Window.Maximized
+
   property int pile: 0
   
   // ideally, one fonction per feature
@@ -50,6 +42,9 @@ Controls1.ApplicationWindow
     if (workspace.count()) {
       var wv = workspace.getCurrentWorkView()
       if (wv !== null) {
+
+        textAnalyzer.language = language_selector.getCurrentItemKey()
+
         switch(wv.type) {
         case "OpenFile":
           analyzeFile(wv.title)
@@ -80,7 +75,7 @@ Controls1.ApplicationWindow
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
         if (wv.getResultView() === null) {
-          wv.setResultView("basics/ResultTab.qml");
+          wv.setResultView("ResultView.qml");
         }
         else {
           wv.getResultView().reset()
@@ -104,7 +99,7 @@ Controls1.ApplicationWindow
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
         if (wv.getResultView() === null) {
-          wv.setResultView("basics/ResultTab.qml");
+          wv.setResultView("ResultView.qml");
         }
         else {
           wv.getResultView().reset()
@@ -127,7 +122,7 @@ Controls1.ApplicationWindow
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
         if (wv.getResultView() === null) {
-          wv.setResultView("basics/ResultTab.qml");
+          wv.setResultView("ResultView.qml");
         }
         else {
           wv.getResultView().reset()
@@ -175,8 +170,28 @@ Controls1.ApplicationWindow
   }
 
   function openConfigurationView() {
-    configurationView.open()
+    return (configurationView.visible ? configurationView.close() : configurationView.open())
   }
+
+  function updateAnalysisOptions() {
+    if (workspace.count()) {
+      language_selector.currentIndex = workspace.getCurrentWorkView().languageIndex
+      format_selector.currentIndex = workspace.getCurrentWorkView().formatIndex
+    }
+  }
+
+  title:"test-lima-qt"
+  visible: true
+  x: 500
+  width: 1024
+  height: 768
+
+  /// MENU BAR; TOOL BAR
+
+//  menuBar: LimaGuiMenuBar {}
+  toolBar: LimaGuiToolBar { leftPadding: 15}
+
+//  visibility: Window.Maximized
 
   LimaConfigurationView  {
     id: configurationView
@@ -184,6 +199,7 @@ Controls1.ApplicationWindow
   
   Controls2.Popup {
     id: confirmCloseFileDialog
+
     implicitHeight: 100
     x: app_window.width/2 - this.width/2
     y: app_window.height/2 - this.height/2
@@ -196,31 +212,32 @@ Controls1.ApplicationWindow
     ColumnLayout {
       
       Text {
+
         Layout.fillHeight:true
-        
         text: qsTr("Les modifications apportées à ce fichier n'ont pas été enregistrées. Voulez-vous les sauvegarder ?")
         
       }
       
       RowLayout {
+
         Layout.fillHeight:true
         spacing:5
+
         Controls1.Button {
           
-          
           Layout.fillWidth:true
-          
           text: qsTr("Enregistrer")
+
           onClicked: {
             closeFile(true);
             confirmCloseFileDialog.close()
           }
+
         }
         
         Controls1.Button {
           
           Layout.fillWidth:true
-          
           text: qsTr("Ne pas enregistrer")
           onClicked: {
             closeFile(false);
@@ -231,7 +248,6 @@ Controls1.ApplicationWindow
         Controls1.Button {
           
           Layout.fillWidth:true
-          
           text: qsTr("Annuler")
           onClicked: {
             confirmCloseFileDialog.close()
@@ -249,6 +265,26 @@ Controls1.ApplicationWindow
   
   NewElementPopup {
     id: createNewElementPopup
+  }
+
+  Controls2.Menu {
+    id: additionalMenu
+    y: 2
+    background: Rectangle {
+
+      implicitWidth: 200
+      color: "#EEEEEE"
+      border.color: "#cccccc"
+      radius: 4
+    }
+
+
+    Controls2.MenuItem {
+      text:qsTr("Configure LIMA Gui")
+      onTriggered: {
+//          configureLimaGuiWindow.open()
+      }
+    }
   }
   
   // utilities
@@ -281,9 +317,31 @@ Controls1.ApplicationWindow
 //        Dom.obj.title = textAnalyzer.fileName
 //        Dom.createComponent("basics/TextEditor.qml", Dom.obj);
 //        Dom.obj.text = textAnalyzer.fileContent
-        var wv = workspace.addWorkTab(textAnalyzer.fileName, "OpenFile", "basics/TextEditor.qml","");
-        if (wv !== null) {
-          wv.getDataView().text = textAnalyzer.fileContent;
+        var l = url.split(':')
+        if (l.length > 1) {
+          url = l[1]
+        }
+        var extension = ""
+        l = url.split('.')
+        if (l.length) {
+          extension = l[l.length-1]
+          console.log("extension is: ", extension)
+        }
+
+
+        if (extension === "pdf") {
+          var wv = workspace.addWorkTab(textAnalyzer.fileName, "OpenFile", "basics/PdfView.qml","");
+
+          if (wv !== null) {
+            wv.getDataView().pathPdf = url
+          }
+        }
+        else {
+          var wv = workspace.addWorkTab(textAnalyzer.fileName, "OpenFile", "basics/TextEditor.qml","");
+
+          if (wv !== null) {
+            wv.getDataView().text = textAnalyzer.fileContent;
+          }
         }
       }
 
@@ -305,16 +363,12 @@ Controls1.ApplicationWindow
   Controls2.Popup {
     id: confirmExitApplicationDialog
   }
-
-  /// MENU BAR; TOOL BAR
-  
-//  menuBar: LimaGuiMenuBar {}
-  toolBar: LimaGuiToolBar {}
   
   /// BODY
   
   Rectangle {
     id: body
+
     anchors.fill: parent
     color:"white"
     anchors.margins: 2
@@ -333,6 +387,7 @@ Controls1.ApplicationWindow
       }
       
       Rectangle {
+
         Layout.fillHeight: true
         Layout.preferredWidth: 300
         Layout.minimumWidth: 100
@@ -354,16 +409,19 @@ Controls1.ApplicationWindow
         Layout.fillWidth: true
         anchors.margins: 5
         orientation: Qt.Vertical
+
         handleDelegate: Rectangle {
           color : "transparent"
           height: 3
         }
+
         Controls1.SplitView {
           
           Layout.fillHeight: true
           Layout.fillWidth: true
           Layout.minimumHeight: 500
           Layout.preferredHeight: 700
+
           handleDelegate: Rectangle {
             color : "transparent"
             width: 3
@@ -386,88 +444,142 @@ Controls1.ApplicationWindow
 //          WorkView {
 //            Component.onCompleted: {
 //              setDataView("AnalyzeTextWidget.qml")
-//              setResultView("basics/ResultTab.qml")
+//              setResultView("ResultView.qml")
 //            }
 //          }
 
-          ColumnLayout {
+          Column {
+
             anchors.fill: parent
             anchors.centerIn: parent
 
             TabbedWorkspace {
-              anchors.fill: parent
               id: workspace
-              Layout.fillHeight: true
-              Layout.preferredHeight: parent.height - nicebuttonview.height
-              Layout.minimumHeight: 500
-              Layout.fillWidth: true
+
+              height: parent.height - nicebuttonview.height
+              width: parent.width
+
+              TextView {
+                  id: textView
+                  x: 439
+                  y: 320
+              }
+//              Layout.fillHeight: true
+//              Layout.preferredHeight: parent.height - nicebuttonview.height
+//              Layout.minimumHeight: 500
+//              Layout.fillWidth: true
   //            Component.onCompleted: {
-  //              addWorkTab("hello!","AnalyzeTextWidget.qml","basics/ResultTab.qml");
+  //              addWorkTab("hello!","AnalyzeTextWidget.qml","ResultView.qml");
   //            }
             }
 
             Rectangle {
               id: nicebuttonview
+
               height: 60
-              Layout.minimumHeight: height
-              Layout.fillWidth: true
-              Layout.preferredHeight:height
+              width: parent.width
+//              Layout.minimumHeight: height
+//              Layout.fillWidth: true
+//              Layout.preferredHeight:height
               color:"#aaeeeeee"
 
-              Rectangle {
+              Controls1.SplitView {
+
                 anchors.fill: parent
-                anchors.centerIn: parent
-                color:"#aaeeeeee"
+                orientation: Qt.Horizontal
 
-                Row {
-                  width: implicitWidth > parent.width/2 ? implicitWidth : parent.width/2
-                  height: implicitHeight;
-                  anchors.centerIn: parent
-                  spacing: 5
-
-                  Controls2.ComboBox {
-                    textRole: "text"
-                    width: 200
-
-                    model: ListModel {
-                      id: cbmodel
-                      ListElement {
-                        name:"conll"
-                        format:"table"
-                        text:"Table CONLL"
-                      }
-
-                      ListElement {
-                        name :"conll"
-                        format: "text"
-                        text:"Texte CONLL"
-                      }
-
-                      ListElement {
-                        name: "named_entities"
-                        format: "named_entities"
-                        text: "Entitées nommées"
-                      }
-                    }
-                  }
-
-
-                  Shortcut {
-                    sequence:"Ctrl+Maj+A"
-                    onActivated: indiscriminateAnalyze()
-                  }
-
-                  Controls2.Button {
-                    id:universalAnalysisButton
-                    text:"Analyser"
-                    enabled: textAnalyzer.ready
-                    onClicked: {
-                      indiscriminateAnalyze()
-                    }
-                  }
-
+                handleDelegate: Rectangle {
+                  color:"black"
+                  height:3
                 }
-              }
+
+                Rectangle {
+
+                  height: parent.height
+                  width: parent.width/2
+                  color:"#00eeeeee"
+
+                  Row {
+                    id: row
+
+                    //width: implicitWidth > parent.width/2 ? implicitWidth : parent.width/2
+                    width: parent.width
+                    height: 40
+                    anchors.centerIn: parent
+                    spacing: 5
+
+                    SelectOptionComboBox {
+                      id: language_selector
+
+                      width: 200
+                      color: "lightblue"
+                      model: [qsTr("French"),qsTr("English"),qsTr("Spanish")]
+                      keys: ["fre","eng","esp"]
+
+                      currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
+
+                      Component.onCompleted:  {
+                        // load supported languages list from textAnalyzer
+                      }
+
+                      onSelected: {
+                        if (workspace.count()) {
+                          workspace.getCurrentWorkView().languageIndex = currentIndex
+                        }
+                      }
+                    }
+
+                    SelectOptionComboBox {
+                      id: format_selector
+
+                      width: 200
+                      model: [qsTr("CONLL Format"), qsTr("Named entities"), qsTr("Graph")]
+                      keys: ["conll","named_entities","graph"]
+
+                      currentIndex: workspace.count() ? workspace.getCurrentWorkView().formatIndex : 0
+
+                      onSelected: {
+
+                        if (workspace.count()) {
+                          workspace.getCurrentWorkView().formatIndex = currentIndex
+                        }
+                      }
+                    }
+
+
+                    Shortcut {
+
+                      sequence:"Ctrl+Shift+A"
+                      onActivated: indiscriminateAnalyze()
+                    }
+
+                    Controls2.Button {
+                      id:universalAnalysisButton
+
+                      text: qsTr("Analyze")
+                      enabled: textAnalyzer.ready
+                      onClicked: {
+                        indiscriminateAnalyze()
+                      }
+                    }
+
+                  }
+                }
+
+                BasicRectangle {
+                  width: parent.width/2
+                  height: parent.height
+                  visible: consoleview.text
+
+                  TextEditor {
+                    id: consoleview
+
+                    anchors.fill: parent
+                    text: textAnalyzer.text
+                  }
+                }
+
+              } // SplitView
             }
 
           }
@@ -497,6 +609,7 @@ Controls1.ApplicationWindow
 //        }
 
         Rectangle {
+
           Layout.fillWidth: true
           Layout.fillHeight: true
           Layout.preferredHeight: 300

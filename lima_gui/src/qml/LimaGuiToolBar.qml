@@ -3,30 +3,38 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import "scripts/colors.js" as Colors
 
+import "basics"
+
 /// ToolBar of the main window
 
 ToolBar {
+  id: toolBar
   
   background: Rectangle {
     color: "#eeeeee"
   }
   
   RowLayout {
-    ToolButton {
-      text: "Nouvelle analyse"
-      Image {
-        width: 30
-        height: 30
-        //source: "55.png"
-      }
-      onClicked: {
-        createNewElement()
-      }
-      //iconSource: "new.png"
-    }
+
+//    ToolButton {
+
+//      text: qsTr("Nouvelle analyse")
+
+//      Image {
+//        width: 30
+//        height: 30
+//        //source: "55.png"
+//      }
+
+//      onClicked: {
+//        createNewElement()
+//      }
+//      //iconSource: "new.png"
+//    }
 
     ToolButton {
-      text:"Ouvrir un fichier"
+
+      text: qsTr("Open")
       //iconSource: "open.png"
       onClicked: {
         openSelectFileDialog()
@@ -41,14 +49,19 @@ ToolBar {
 //      }
 //    }
 
-    Item { Layout.fillWidth: true }
+    Item {
+      Layout.fillWidth: true
+    }
+
     ToolSeparator {
+
       height: parent.height
       width: 1
     }
     
     ToolButton {
-      text: "Analyser du texte"
+
+      text: qsTr("Analyze some text")
       
       onClicked: {
         openAnalyzeTextTab()
@@ -56,7 +69,8 @@ ToolBar {
     }
     
     ToolButton {
-      text: "Analyser un fichier"
+
+      text: qsTr("Analyze a file")
       
       onClicked: {
         openAnalyzeFileTab()
@@ -64,7 +78,8 @@ ToolBar {
     }
 
     ToolButton {
-      text: "Configuration"
+
+      text: qsTr("Configuration")
 
       onClicked: {
         configurationView.open()
@@ -72,18 +87,26 @@ ToolBar {
     }
 
     ToolButton {
-      text: "Exporter"
-      onClicked: {
 
+      text: qsTr("Export")
+
+      onClicked: {
+        workspace.addTab("bonjour",Qt.createComponent("basics/TextView.qml"))
       }
     }
     
     ToolButton {
+      id: additionalButton
+
       text: "⋮"
 
       onClicked: {
         textAnalyzer.text = Colors.randomChar()
+        additionalMenu.x = x
+        additionalMenu.open()
       }
+
     }
+
   }
 }

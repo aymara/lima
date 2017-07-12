@@ -4,9 +4,6 @@
 #include "LimaGui.h"
 #include <sstream>
 
-// namespace Gui {
-// soon
-
 #include <QThread>
 
 class LimaGuiApplication;
