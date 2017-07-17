@@ -35,6 +35,11 @@ Rectangle {
   anchors.fill: parent
   objectName: "booyah_tableviewconll"
 
+  // https://github.com/aymara/lima/wiki/LIMA-User-Manual
+//  property alias headers: table_view_repeater.model
+  property var headers: ["ID", "FORM", "LEMMA", "CPOSTAG", "POSTAG", "NE", "FEATS", "HEAD", "DEPREL", "PHEAD", "PDEPREL"]
+
+
   TableView {
     id: table_view
 
@@ -45,67 +50,79 @@ Rectangle {
 
     model: null
 
-   TableViewColumn {
-     role:"id"
-     title:"id"
-     width: 40
-   }
+    TableViewColumn { role: "id"; title: "ID"; width: 100 }
+    TableViewColumn { role: "form"; title: "FORM"; width: 100 }
+    TableViewColumn { role: "lemma"; title: "LEMMA"; width: 100 }
+    TableViewColumn { role: "cpostag"; title: "CPOSTAG"; width: 100 }
+    TableViewColumn { role: "postag"; title: "POSTAG"; width: 100 }
+    TableViewColumn { role: "ne"; title: "NE"; width: 100 }
+    TableViewColumn { role: "feats"; title: "FEATS"; width: 100 }
+    TableViewColumn { role: "head"; title: "HEAD"; width: 100 }
+    TableViewColumn { role: "deprel"; title: "DEPREL"; width: 100 }
+    TableViewColumn { role: "phead"; title: "PHEAD"; width: 100 }
+    TableViewColumn { role: "pdeprel"; title: "PDEPREL"; width: 100 }
 
-   TableViewColumn {
-     role:"form"
-     title:"form"
-     width: 100
-   }
+//   TableViewColumn {
+//     role:"id"
+//     title:"id"
+//     width: 40
+//   }
 
-   TableViewColumn {
-     role: "lemma"
-     title: "lemma"
-   }
+//   TableViewColumn {
+//     role:"form"
+//     title:"form"
+//     width: 100
+//   }
 
-   TableViewColumn {
-     role:"plemma"
-     title:"plemma"
+//   TableViewColumn {
+//     role: "lemma"
+//     title: "lemma"
+//   }
 
-   }
+//   TableViewColumn {
+//     role:"plemma"
+//     title:"plemma"
 
-   TableViewColumn {
-     role:"pos"
-     title:"pos"
-   }
+//   }
 
-   TableViewColumn {
-     role:"ppos"
-     title:"ppos"
-   }
+//   TableViewColumn {
+//     role:"pos"
+//     title:"pos"
+//   }
 
-   TableViewColumn {
-     role:"feat"
-     title:"feat"
-   }
+//   TableViewColumn {
+//     role:"ppos"
+//     title:"ppos"
+//   }
 
-   TableViewColumn {
-     role:"pfeat"
-     title:"pfeat"
-   }
+//   TableViewColumn {
+//     role:"feat"
+//     title:"feat"
+//   }
 
-   TableViewColumn {
-     role:"head"
-     title:"head"
-   }
+//   TableViewColumn {
+//     role:"pfeat"
+//     title:"pfeat"
+//   }
 
-   TableViewColumn {
-     role:"phead"
-     title:"phead"
-   }
+//   TableViewColumn {
+//     role:"head"
+//     title:"head"
+//   }
 
-   TableViewColumn {
-     role:"deprel"
-     title:"deprel"
-   }
+//   TableViewColumn {
+//     role:"phead"
+//     title:"phead"
+//   }
 
-   TableViewColumn {
-     role:"pdeprel"
-     title:"pdeprel"
-   }
+//   TableViewColumn {
+//     role:"deprel"
+//     title:"deprel"
+//   }
+
+//   TableViewColumn {
+//     role:"pdeprel"
+//     title:"pdeprel"
+//   }
   }
 }

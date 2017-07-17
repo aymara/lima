@@ -53,11 +53,11 @@
     <file>qml/basics/NamedEntitiesView.qml</file>
     <file>qml/basics/WelcomeView.qml</file> 
     
-    <!--   Scripts   -->
+    <!-- Scripts -->
     <file>qml/scripts/DynamicObjectManager.js</file>
     <file>qml/scripts/colors.js</file>
     
-    <!--  Styles -->
+    <!-- Styles -->
     <file>qml/styles/TabbedViewStyle.qml</file>
     
     <!-- Resources -->

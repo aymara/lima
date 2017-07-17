@@ -89,14 +89,13 @@ private:
     ID = Qt::UserRole + 1,
     FORM,
     LEMMA,
-    PLEMMA,
-    POS,
-    PPOS,
-    FEAT,
-    PFEAT,
+    CPOSTAG,
+    POSTAG,
+    NE,
+    FEATS,
     HEAD,
-    PHEAD,
     DEPREL,
+    PHEAD,
     PDEPREL
   };
 };

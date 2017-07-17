@@ -53,14 +53,13 @@ QHash<int, QByteArray> ConllListModel::roleNames() const {
   rn[ID] = "id";
   rn[FORM] = "form";
   rn[LEMMA] = "lemma";
-  rn[PLEMMA] = "plemma";
-  rn[POS] = "pos";
-  rn[PPOS] = "ppos";
-  rn[FEAT] = "feat";
-  rn[PFEAT] = "pfeat";
+  rn[CPOSTAG] = "cpostag";
+  rn[POSTAG] = "postag";
+  rn[NE] = "ne";
+  rn[FEATS] = "feats";
   rn[HEAD] = "head";
-  rn[PHEAD] = "phead";
   rn[DEPREL] = "deprel";
+  rn[PHEAD] = "phead";
   rn[PDEPREL] = "pdeprel";
   return rn;
 }

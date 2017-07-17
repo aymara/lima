@@ -67,7 +67,7 @@ Rectangle {
         selectByMouse: true
 //        wrapMode: wrapswitch.checked ? TextEdit.NoWrap : TextEdit.WordWrap
         wrapMode: Text.WordWrap
-  //      textFormat: TextEdit.RichText
+//        textFormat: TextEdit.RichText
 
   //      property string placeholderText: "Enter text here..."
 
@@ -79,6 +79,10 @@ Rectangle {
   //        id:placeholder
   //        text: ttextarea.placeholderText
   //      }
+      
+      text: "<img src='~/Documents/cea_presentation_location.png'/>"
+      //      
+        
       }
     }
   }

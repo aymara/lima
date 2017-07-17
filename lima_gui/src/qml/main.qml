@@ -546,6 +546,14 @@ Controls1.ApplicationWindow {
                       }
                     }
 
+                    SelectOptionComboBox {
+                        id: pipeline_selector
+
+                        width: 200
+                        model: ["main", "easy"]
+                        keys: ["main", "easy"]
+                    }
+
 
                     Shortcut {
 
@@ -566,18 +574,18 @@ Controls1.ApplicationWindow {
                   }
                 }
 
-                BasicRectangle {
-                  width: parent.width/2
-                  height: parent.height
-                  visible: consoleview.text
+//                BasicRectangle {
+//                  width: parent.width/2
+//                  height: parent.height
+//                  visible: consoleview.text
 
-                  TextEditor {
-                    id: consoleview
+//                  TextEditor {
+//                    id: consoleview
 
-                    anchors.fill: parent
-                    text: textAnalyzer.text
-                  }
-                }
+//                    anchors.fill: parent
+//                    text: textAnalyzer.text
+//                  }
+//                }
 
               } // SplitView
             }
@@ -586,12 +594,12 @@ Controls1.ApplicationWindow {
           
         }
         
-//        Rectangle {
-//          anchors.margins: 20
-//          Layout.fillWidth: true
-//          Layout.fillHeight: true
-//          Layout.preferredHeight: 300
-//          Layout.minimumHeight: 100
+        Rectangle {
+          anchors.margins: 20
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          Layout.preferredHeight: 300
+          Layout.minimumHeight: 100
 
 //          Controls1.ScrollView {
 //            anchors.fill: parent
@@ -606,7 +614,7 @@ Controls1.ApplicationWindow {
 //              anchors.centerIn: parent
 //            }
 //          }
-//        }
+        }
 
         Rectangle {
 
