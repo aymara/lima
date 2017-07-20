@@ -75,6 +75,23 @@ namespace LinguisticProcessing
 
 namespace AnalysisDumpers
 {
+namespace 
+{
+  struct {
+    ::std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
+    {
+      std::ostringstream oss;
+      //std::set<uint32_t>::const_iterator asvit, asvit_end;
+      std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
+      asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+      for (; asvit != asvit_end; asvit++)
+      {
+        oss << *asvit << ", ";
+      }
+      return oss.str();
+    }
+  } _c;
+}
 
 SimpleFactory<MediaProcessUnit,BowDumper> bowDumperFactory(BOWDUMPER_CLASSID);
 
@@ -127,6 +144,8 @@ LimaStatusCode BowDumper::process(
 {
   TimeUtilsController timer("BowDumper");
   DUMPERLOGINIT;
+
+  auto const& stopAnalyze = analysis.stopAnalyze();
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
@@ -184,7 +203,9 @@ LimaStatusCode BowDumper::process(
   // build BoWText from the result of the analysis
   BoWText bowText;
   bowText.lang=metadata->getMetaData("Lang");
-  buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
+  auto r = buildBoWText(stopAnalyze, annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
+  if (r != SUCCESS_ID)
+    return r;
 
   // Exclude from the shift list XML entities preceding the offset and 
   // readjust positions regarding the beginning of the node being analyzed
@@ -234,17 +255,16 @@ LimaStatusCode BowDumper::process(
   LDEBUG << "BowDumper::process localShiftFrom:" << localShiftFrom;
 #endif
   BoWBinaryWriter writer(localShiftFrom);
-  DumperStream* dstream=initialize(analysis);
+  ::std::unique_ptr<DumperStream> dstream(initialize(analysis));
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
+  LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
 #endif
   writer.writeBoWText(dstream->out(),bowText);
-  delete dstream;
   return SUCCESS_ID;
 }
 
-void BowDumper::buildBoWText(
+    Lima::LimaStatusCode BowDumper::buildBoWText(StopAnalyze const& stopAnalyze,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const SyntacticData* syntacticData,
     BoWText& bowText,
@@ -270,7 +290,7 @@ void BowDumper::buildBoWText(
     // no sentence bounds : there can be specific entities,
     // but no compounds (syntactic analysis depend on sentence bounds)
     // dump whole text at once
-    addVerticesToBoWText(
+    auto const r = addVerticesToBoWText(stopAnalyze,
         annotationData,
         anagraph,
         posgraph,
@@ -280,6 +300,8 @@ void BowDumper::buildBoWText(
         metadata->getStartOffset(),
         bowText);
 
+   if (r != SUCCESS_ID)
+     return r;
   }
   else
   {
@@ -293,7 +315,7 @@ void BowDumper::buildBoWText(
 
       LDEBUG << "BowDumper::buildBoWText dump simple terms for this sentence";
 #endif
-      addVerticesToBoWText(annotationData,
+      auto const r = addVerticesToBoWText(stopAnalyze, annotationData,
                            anagraph,
                            posgraph,
                            syntacticData,
@@ -301,7 +323,15 @@ void BowDumper::buildBoWText(
                            sentenceEnd,
                            metadata->getStartOffset(),
                            bowText);
+      if (r != SUCCESS_ID)
+        return r;
 
+      if (stopAnalyze)
+	    {
+        MORPHOLOGINIT;
+		    LERROR << "Analyze too long. Stopped in BowDumper";
+		    return TIME_OVERFLOW;
+	    }
     }
   }
 
@@ -353,12 +383,17 @@ void BowDumper::buildBoWText(
         continue;
       }
     }
+    if (stopAnalyze)
+	  {
+      DUMPERLOGINIT;
+		  LERROR << "Analyze too long. Stopped in BowDumper";
+		  return TIME_OVERFLOW;
+	  }
   }
 
-
+return SUCCESS_ID;
 }
-
-void BowDumper::addVerticesToBoWText(
+Lima::LimaStatusCode BowDumper::addVerticesToBoWText(Lima::StopAnalyze const& stopAnalyze,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     AnalysisGraph* anagraph,
     AnalysisGraph* posgraph,
@@ -414,6 +449,12 @@ void BowDumper::addVerticesToBoWText(
         visited.insert(next);
         toVisit.push(next);
       }
+      if (stopAnalyze)
+	    {
+        DUMPERLOGINIT;
+		    LERROR << "Analyze too long. Stopped in BowDumper";
+		    return TIME_OVERFLOW;
+	    }
     }
 
     if (v != firstVx && v != lastVx)
@@ -449,19 +490,16 @@ void BowDumper::addVerticesToBoWText(
               //std::set<LinguisticGraphVertex> bowTokenVertices = (*bowItr)->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-              
 #ifdef DEBUG_LP
-              std::ostringstream oss;
-              //std::set<uint32_t>::const_iterator asvit, asvit_end;
-              std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-              asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-              for (; asvit != asvit_end; asvit++)
-              {
-                oss << *asvit << ", ";
-              }
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << oss.str();
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << _c.str(alreadyStoredVertices);
 #endif
             }
+            if (stopAnalyze)
+	          {
+              DUMPERLOGINIT;
+		          LERROR << "Analyze too long. Stopped in BowDumper";
+		          return TIME_OVERFLOW;
+	          }
           }
         }
       }
@@ -519,19 +557,16 @@ void BowDumper::addVerticesToBoWText(
               std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-            
 #ifdef DEBUG_LP
-              std::ostringstream oss;
-              //std::set<uint32_t>::const_iterator asvit, asvit_end;
-              std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-              asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-              for (; asvit != asvit_end; asvit++)
-              {
-                oss << *asvit << ", ";
-              }
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << oss.str();
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << _c.str(alreadyStoredVertices);
 #endif
             }
+            if (stopAnalyze)
+	          {
+              DUMPERLOGINIT;
+		          LERROR << "Analyze too long. Stopped in BowDumper";
+		          return TIME_OVERFLOW;
+	          }
           }
         }
       }
@@ -542,7 +577,14 @@ void BowDumper::addVerticesToBoWText(
 #endif
       }
     }
+    if (stopAnalyze)
+	  {
+      DUMPERLOGINIT;
+		  LERROR << "Analyze too long. Stopped in BowDumper";
+		  return TIME_OVERFLOW;
+	  }
   }
+  return SUCCESS_ID;
 }
 
 } // AnalysisDumper

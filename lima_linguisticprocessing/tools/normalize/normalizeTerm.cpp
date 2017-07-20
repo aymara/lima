@@ -241,11 +241,11 @@ int dowork(int argc,char* argv[])
       // open the output file
       ostringstream os;
       os << *fileItr << ".norm";
-      ofstream fout(os.str().c_str());
+      ofstream fout(os.str().c_str(), std::ofstream::binary);
 
       // loading of the input file
       TimeUtils::updateCurrentTime();
-      std::ifstream file(fileItr->c_str());
+      std::ifstream file(fileItr->c_str(), std::ifstream::binary);
       char buf[256];
       file.getline(buf,256);
       std::string line(buf);

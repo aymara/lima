@@ -83,16 +83,17 @@ static const string HELP("A compiler for the rules of the Named Entities recogni
 +"--output=file        : name of the output file for the compiled rules\n"
 // +"(or -ofile)\n"
 +"\n"
-+"--language=...       : specify the language of the recognizer\n"
-+"--modex=...          : specify the name of the modex config file\n"
-+"--pipeline=...       : specify the name of the pipeline for the modex\n"
-+"--configDir=...      : specify the directory to find the config files (default is $LIMA_CONF)\n"
-+"--resourcesDir=...   : specify the directory to find the resources (default is $LIMA_RESOURCES)\n"
-+"--common-config-file=...   : =<configuration/file/name>  Optional. Default is lima-common.xml\n"
-+"--lp-config-file=...       : =<configuration/file/name>  Optional. Default is lima-analysis.xml\n"
-+"--encoding=...       : specify the encoding of the rules file\n"
-+"--useDictionary      : uses a dictionary to reorganize rules\n"
-+"--debug              : compiles in debug mode\n"
++"--language=...           : specify the language of the recognizer\n"
++"--modex=...              : specify the name of the modex config file\n"
++"--pipeline=...           : specify the name of the pipeline for the modex\n"
++"--configDir=...          : specify the directory to find the config files (default is $LIMA_CONF)\n"
++"--log-config-file=...    : specify the name of the log properties file (default is log4cpp.properties)\n"
++"--resourcesDir=...       : specify the directory to find the resources (default is $LIMA_RESOURCES)\n"
++"--common-config-file=... : =<configuration/file/name>  Optional. Default is lima-common.xml\n"
++"--lp-config-file=...     : =<configuration/file/name>  Optional. Default is lima-analysis.xml\n"
++"--encoding=...           : specify the encoding of the rules file\n"
++"--useDictionary          : uses a dictionary to reorganize rules\n"
++"--debug                  : compiles in debug mode\n"
 +"\n"
 +"--listTriggers : list the triggers with the corresponding offest\n"
 +"--bin (or -r)  : read a binary file containing compiled rules : if \n"
@@ -104,7 +105,7 @@ static const string HELP("A compiler for the rules of the Named Entities recogni
 #define DEFAULT_COMMON_CONFIG "lima-common.xml"
 #define DEFAULT_LP_CONFIG "lima-analysis.xml"
 #define DEFAULT_ENCODING "utf8"
-
+static ::std::string const DEFAULT_LOGCONFIGFILE("log4cpp.properties");
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
 struct Param
@@ -113,6 +114,7 @@ struct Param
   string outputFile;     // name of the output file for the compiled rules
   string resourcesDir;   // directory for resources
   string configDir;      // directory for config files
+  string logConfigFile;
   string commonConfigFile; // config file for linguisticData
   string lpConfigFile;     // config file for linguistic processing
   string modexConfigFile;  // config file for modex
@@ -130,6 +132,7 @@ param={"",
        "",
        "",
        "",
+       DEFAULT_LOGCONFIGFILE,
        DEFAULT_COMMON_CONFIG,
        DEFAULT_LP_CONFIG,
        "",
@@ -173,6 +176,10 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     else if (s.find("--configDir=",0)==0)
     {
       param.configDir=string(s,12);
+    }
+    else if (s.find("--log-config-file=",0)==0)
+    {
+      param.logConfigFile=string(s,15);
     }
     else if (s.find("--common-config-file=")==0)
     {

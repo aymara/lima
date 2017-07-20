@@ -108,7 +108,9 @@ public:
 private:
    Logger(const QString& aZone = "");
    Logger(const Logger&);
+public:
    ~Logger();
+private:
 
    void write(const QString& message);
 
