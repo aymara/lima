@@ -6,10 +6,6 @@ ConllRow::ConllRow(const std::string& s, QObject* p) : QObject(p), CONLL_Line(s)
 
 }
 
-////////////////////////////////
-/// \brief ConllListModel::ConllListModel
-/// \param content
-/// \param p
 ConllListModel::ConllListModel(QObject *p) : QAbstractTableModel(p) {
 
 }
@@ -20,7 +16,7 @@ ConllListModel::ConllListModel(const QString& content, QObject* p) : QAbstractTa
 
 void ConllListModel::fromText(const QString& text) {
 
-  std::vector<std::string> data = ConllParser::into_lines(text.toStdString());
+  std::vector<std::string> data = into_lines(text.toStdString());
 
   for (unsigned int i=0; i<data.size(); i++) {
       if (!data[i].empty()) {
@@ -50,7 +46,7 @@ QVariant ConllListModel::data(const QModelIndex &index, int rol) const {
 
 QHash<int, QByteArray> ConllListModel::roleNames() const {
   QHash<int, QByteArray> rn = QAbstractItemModel::roleNames();
-  rn[ID] = "id";
+  rn[ID] = "id"; // Those strings are direclty related to the 'TableViewColumn' elements role property
   rn[FORM] = "form";
   rn[LEMMA] = "lemma";
   rn[CPOSTAG] = "cpostag";

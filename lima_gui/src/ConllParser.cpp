@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <iomanip>
 
+
 #include <boost/algorithm/string/replace.hpp>
 
 /// This need cleaning up
@@ -60,8 +61,6 @@ std::vector<std::string> parseFile(const std::string& filepath) {
   myfile.close();
   return content;
 }
-
-namespace ConllParser {
 
 std::vector<CONLL_Line*> getConllData(const std::string& filepath) {
   return textToConll(parse_conll(filepath));
@@ -204,99 +203,40 @@ void displayAsColumns(const CONLL_List& lines) {
     }
 }
 
-} // namespace ConllParser
-
-#include <map>
-#include <vector>
-
 /// This will extract named entities from the conll output
-//std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text) {
-//  std::map<std::string, std::vector<std::string> > disa;
-//  CONLL_List content = ConllParser::textToConll(text);
-//  for (auto & cl : content) {
-//    CONLL_Line& line = *cl;
-//    if (cl && line[5] != "_") {
-//      disa[line[5]].push_back(line[1]);
-//    }
-//  }
+std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text) {
+  std::map<std::string, std::vector<std::string> > disa;
+  CONLL_List content = textToConll(text);
+  for (auto & cl : content) {
+    CONLL_Line& line = *cl;
+    if (cl && line[5] != "_") {
+      disa[line[5]].push_back(line[1]);
+    }
+  }
 
-//  freeConllList(content);
-//  return disa;
-//}
+  freeConllList(content);
+  return disa;
+}
 
-//std::string markup(const std::string& content, const std::string& markup, const std::string& style) {
-//  return "<" + markup  + (style != "" ? " style=\"" + style + "\"" : "") + ">" + content + "</" + markup + ">";
-//}
+std::string markup(const std::string& content, const std::string& markup, const std::string& style) {
+  return "<" + markup  + (style.length() ? " style=\"" + style + "\"" : "") + ">" + content + "</" + markup + ">";
+}
 
-///// \return the text with html highlighted named entities
-///// \param text : the raw text
-///// \param types is the map obtained by the above function
-///// \param is the colors : <named_entity_type_name>:<color>
-//std::string highlightNamedEntities(
-//    const std::string& raw,
-//    std::map<std::string, std::vector<std::string>>& types,
-//    std::map<std::string, std::string>& colors)
-//{
-//  std::string text = raw;
-//  for (auto& type : types) {
-//    for (auto& entity : type.second) {
-//      boost::replace_all(text, entity, markup(entity,"strong","color:"+colors[type.first]));
-//    }
-//  }
+/// \return the text with html highlighted named entities
+/// \param text : the raw text
+/// \param types is the map obtained by the above function
+/// \param is the colors : <named_entity_type_name>:<color>
+std::string highlightNamedEntities(
+    const std::string& raw,
+    std::map<std::string, std::vector<std::string>>& types,
+    std::map<std::string, std::string>& colors)
+{
+  std::string text = raw;
+  for (auto& type : types) {
+    for (auto& entity : type.second) {
+      boost::replace_all(text, entity, markup(entity,"strong","color:"+colors[type.first]));
+    }
+  }
 
-//  return text;
-//}
-
-
-
-
-//void filterContent(const std::string& str) {
-
-//}
-
-//#define end_register output += markup(buffer,buffer_container); buffer = "";
-//#define is_number(a) (a>=48 && a <= 57)
-
-//void mdToHtml(const std::string& text) {
-//  std::vector<std::string> lines = into_lines(text);
-//  std::string output;
-//  std::string buffer;
-//  std::string buffer_container;
-
-//  for (auto& line : lines) {
-//    if (line.length()) {
-//      if (line[0] == "#") {
-//        end_register;
-//        // Title
-//        int rank = 1;
-//        while(line[rank] == '#' && rank < line.length()) rank++;
-//        std::string content; // = substr(line - '###"...'')
-//        output += markup(content,"h"+std::to_string(rank));
-//      }
-//      else if (line[0] == '\t') {
-//        // Code
-//        if (line[1] == '*') {
-//          // Unordered list
-//          // to improve
-//        }
-//        else {
-//          buffer_container = "code";
-//          buffer += line;
-//        }
-//      }
-//      else if (line[0] == '-') {
-//        // Unordered list
-//      }
-
-//      else if (is_number(line[0]) && line[1] == '.') {
-//        // Ordered list
-//      }
-//    }
-//    else {
-//      // Empty line
-//      end_register;
-//    }
-//  }
-
-//  return markup(output,"html");
-//}
+  return text;
+}

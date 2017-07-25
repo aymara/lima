@@ -4,6 +4,10 @@
 #include "LimaGuiApplication.h"
 #include "ConllListModel.h"
 
+namespace Lima {
+namespace Gui {
+
+
 LimaGuiThread::LimaGuiThread(LimaGuiApplication* app) : QThread() {
   m_application = app;
   connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
@@ -126,3 +130,6 @@ void InitializeThread::doTheThing() {
   std::cout.rdbuf(old_cout);
   std::cerr.rdbuf(old_cerr);
 }
+
+} // END namespace Gui
+} // END namespace Lima

@@ -27,6 +27,7 @@
  #include <QQmlContext>
 
 using namespace Lima::Common;
+using namespace Lima::Gui;
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
     QsLogging::initQsLog();
     
 
-    /// REGISTERING From C++ QML Types
+    /// REGISTERING QML Types from C++
     ///
     // https://stackoverflow.com/questions/9500280/access-c-function-from-qml
     // qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
@@ -65,8 +66,6 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("textAnalyzer", &lga);
 
-    /// look up 'property binding'
-    /// http://doc.qt.io/qt-5/qtqml-cppintegration-exposecppattributes.html
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     int result = app.exec();

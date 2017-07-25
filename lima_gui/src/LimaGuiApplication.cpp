@@ -18,8 +18,12 @@ using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing;
 
+namespace Lima {
+namespace Gui {
+
+
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
-  //initializeLimaAnalyzer();
+
    auto ith = new InitializeThread(this);
    ith->start();
 }
@@ -59,9 +63,6 @@ QString cleanUrl(const QString& url) {
   return QString(cleanUrl(url.toStdString()).c_str());
 }
 
-//////////////////////////////
-//////////////////////////////
-//////////////////////////////
 //////////////////////////////
 
 bool LimaGuiApplication::openMultipleFiles(const QStringList& urls) {
@@ -291,13 +292,14 @@ bool LimaGuiApplication::selectFile(const QString& filename) {
 void LimaGuiApplication::initializeLimaAnalyzer() {
   
   std::string configDir = qgetenv("LIMA_CONF").constData();
-  LTELL("Config Dir is " << configDir << "|" << configDir << "|" << configDir);
+  LTELL("Config Dir is " << configDir);
   if (configDir == "") {
     configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
   }
+//  configDir += "/../custom";
   
   std::deque<std::string> langs = {"eng","fre"};
-  std::deque<std::string> pipelines = {"main"};
+  std::deque<std::string> pipelines = {"main", "easy"};
   
   // initialize common
   std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
@@ -305,9 +307,9 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     resourcesPath = "/usr/share/apps/lima/resources/";
   std::string commonConfigFile("lima-common.xml");
   
-  std::ostringstream oss;
-  std::ostream_iterator<std::string> out_it (oss,", ");
-  std::copy ( langs.begin(), langs.end(), out_it );
+//  std::ostringstream oss;
+//  std::ostream_iterator<std::string> out_it (oss,", ");
+//  std::copy ( langs.begin(), langs.end(), out_it );
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath,
     configDir,
@@ -329,9 +331,18 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     lpconfig,
     langs,
     pipelines);
+
+  m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
+
+//  std::string anotherClientId("lima-sideclient");
+
+//  LinguisticProcessingClientFactory::changeable().configureClientFactory(
+//    anotherClientId,
+//    lpconfig,
+//    langs,
+//    pipelines);
   
-  m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId)); 
-  
+
 //  std::cout << "Pipelines:" << std::endl;
 //  for (unsigned int i=0; i < pipelines.size(); i++) {
 //    std::cout << pipelines[i] << std::endl;
@@ -411,3 +422,6 @@ QObject* LimaGuiApplication::getQmlObject(const QString& name) {
     return nullptr;
   }
 }
+
+} // END namespace Gui
+} // END namespace Lima
