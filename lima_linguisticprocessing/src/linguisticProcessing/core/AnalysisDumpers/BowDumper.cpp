@@ -77,20 +77,18 @@ namespace AnalysisDumpers
 {
 namespace 
 {
-  struct {
-    ::std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
-    {
-      std::ostringstream oss;
-      //std::set<uint32_t>::const_iterator asvit, asvit_end;
-      std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-      asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-      for (; asvit != asvit_end; asvit++)
-      {
-        oss << *asvit << ", ";
-      }
-      return oss.str();
-    }
-  } _c;
+std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
+{
+  std::ostringstream oss;
+  std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
+  asvit = alreadyStoredVertices.begin();
+  asvit_end = alreadyStoredVertices.end();
+  for (; asvit != asvit_end; asvit++)
+  {
+    oss << *asvit << ", ";
+  }
+  return oss.str();
+}
 }
 
 SimpleFactory<MediaProcessUnit,BowDumper> bowDumperFactory(BOWDUMPER_CLASSID);
@@ -467,7 +465,7 @@ void BowDumper::addVerticesToBoWText(
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
 #ifdef DEBUG_LP
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << _c.str(alreadyStoredVertices);
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << str(alreadyStoredVertices);
 #endif
             }
           }
@@ -528,7 +526,7 @@ void BowDumper::addVerticesToBoWText(
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
 #ifdef DEBUG_LP
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << _c.str(alreadyStoredVertices);
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << str(alreadyStoredVertices);
 #endif
             }
           }
