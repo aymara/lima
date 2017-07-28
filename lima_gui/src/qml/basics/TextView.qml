@@ -9,6 +9,7 @@ Rectangle {
   property alias textFormat: ttext.textFormat
   property alias wrapMode: ttext.wrapMode
   property alias showMenu: menu.visible
+  property int maxwidth: 500
 
   anchors.fill: parent
   color:"transparent"
@@ -35,7 +36,8 @@ Rectangle {
     ScrollView {
       id: scv
 
-      width: parent.width
+      anchors.centerIn: parent
+      width: Math.max(parent.width, maxwidth)
       height: parent.height - (menu.visible ? menu.height : 0)
       clip: true
       ScrollBar.vertical.policy: scv.contentHeight > scv.height ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded

@@ -5,15 +5,9 @@
 
 #include <QObject>
 #include <QAbstractTableModel>
-//#include <QVariant>
 
-//http://qiita.com/illness072/items/a6f2ce9f7a1bfff44049
-
-// CONLL Format :
-// http://universaldependencies.org/docs/format.html
-// https://stackoverflow.com/questions/27416164/what-is-conll-data-format
-
-// actually, there is an entry for it in the lima wiki
+namespace Lima {
+namespace Gui {
 
 /// \class ConllRow
 /// \brief This is an extension of the CONLL_Line structure to Qt
@@ -72,5 +66,8 @@ private:
     PDEPREL
   };
 };
+
+} // END namespace Gui
+} // END namespace Lima
 
 #endif // CONLL_LIST_MODEL_H

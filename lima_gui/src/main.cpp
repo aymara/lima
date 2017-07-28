@@ -16,8 +16,7 @@
 
 #include "LimaGuiApplication.h"
 #include "ConllListModel.h"
-#include "tablemodel.h"
-#include "namedentitiesparser.h"
+#include "NamedEntitiesParser.h"
 
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/time/traceUtils.h"
@@ -51,7 +50,6 @@ int main(int argc, char *argv[])
     // qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
     qmlRegisterType<LimaGuiApplication>("integ_cpp", 1, 0, "LimaGuiApplication");
     qmlRegisterType<ConllListModel>("integ_cpp", 1, 0, "ConllListModel");
-    qmlRegisterType<TableModel>("integ_cpp", 1, 0, "TableModel");
     qmlRegisterType<NamedEntitiesParser>("integ_cpp", 1, 0, "NamedEntitiesParser");
     ////
 

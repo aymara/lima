@@ -11,34 +11,34 @@
    <file>qml/AnalyzeTextWidget.qml</file>
    <file>qml/AnalyzeFileWidget.qml</file>
    <file>qml/TabbedView.qml</file>
-   <file>qml/CustomTabButton.qml</file>
-   <file>qml/CustomTabBar.qml</file>
-   <file>qml/NewElementPopup.qml</file>
+<!--   <file>qml/CustomTabButton.qml</file>-->
+<!--   <file>qml/CustomTabBar.qml</file>-->
+<!--   <file>qml/NewElementPopup.qml</file>-->
    <file>qml/ConllTableView.qml</file>
    <file>qml/LimaConfigurationView.qml</file>
    <file>qml/ResultView.qml</file>
    
    <!-- Models -->
-   <file>qml/models/NewElementModel.qml</file>
-   <file>qml/models/TestModel.qml</file>
+<!--   <file>qml/models/NewElementModel.qml</file>-->
+<!--   <file>qml/models/TestModel.qml</file>-->
    <file>qml/models/ConllListModel.qml</file>
    <!---->
    
    <!-- Test files -->
-    <file>qml/main_2.qml</file>
-    <file>qml/FileMenu.qml</file>
-    <file>qml/EditMenu.qml</file>
-    <file>qml/CustomMenuBar.qml</file>
-    <file>qml/CustomTabbedView.qml</file>
-    <file>qml/FileBrowser.qml</file>
-    <file>qml/CustomButton.qml</file>
-    <file>qml/TextEditor.qml</file>
+<!--    <file>qml/main_2.qml</file>-->
+<!--    <file>qml/FileMenu.qml</file>-->
+<!--    <file>qml/EditMenu.qml</file>-->
+<!--    <file>qml/CustomMenuBar.qml</file>-->
+<!--    <file>qml/CustomTabbedView.qml</file>-->
+<!--    <file>qml/FileBrowser.qml</file>-->
+<!--    <file>qml/CustomButton.qml</file>-->
+<!--    <file>qml/TextEditor.qml</file>-->
     
     <!---->
     
     <!-- Samples -->
     <file>qml/basics/Tab.qml</file>
-    <file>qml/basics/CloseButton.qml</file> 
+<!--    <file>qml/basics/CloseButton.qml</file> -->
     <file>qml/basics/BasicRectangle.qml</file>
     <file>qml/Simplex.qml</file>
     <file>qml/basics/CONLLListElement.qml</file>
@@ -46,8 +46,8 @@
     <file>qml/basics/PdfView.qml</file>
     <file>qml/basics/TextEditor.qml</file>
     <file>qml/basics/LoadingView.qml</file>
-    <file>qml/basics/TableViewK.qml</file>
-    <file>qml/basics/TableModel.qml</file>
+<!--    <file>qml/basics/TableViewK.qml</file>-->
+<!--    <file>qml/basics/TableModel.qml</file>-->
     <file>qml/basics/SwitchPanel.qml</file>
     <file>qml/basics/SelectOptionComboBox.qml</file>
     <file>qml/basics/NamedEntitiesView.qml</file>
@@ -62,8 +62,8 @@
     
     <!-- Resources -->
     <file>qml/resources/hex-loading.gif</file>
-    <file>qml/resources/clock-loading.gif</file>
-    <file>qml/resources/loading2.gif</file>
+    <!--<file>qml/resources/clock-loading.gif</file>-->
+<!--    <file>qml/resources/loading2.gif</file>-->
     <file>qml/resources/backup_btnclose_h.png</file>
     <file>qml/resources/backup_btnclose_n.png</file>
  </qresource>

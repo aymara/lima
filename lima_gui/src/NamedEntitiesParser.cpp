@@ -1,5 +1,8 @@
-#include "namedentitiesparser.h"
+#include "NamedEntitiesParser.h"
 #include "ConllParser.h"
+
+namespace Lima {
+namespace Gui {
 
 std::string markupa(const std::string& content, const std::string& markup, const std::string& style, const std::string& metadata) {
   return "<" + markup  + (style.length() ? " style=\"" + style + "\"" : "") + " " + metadata + ">" + content + "</" + markup + ">";
@@ -28,7 +31,7 @@ std::string highlightNamedEntities(
 
   for (auto& entity : entities) {
     for (auto& o : entity.occurences) {
-      replace_all(text, o, markupa(o, "mark", "background-color:"+entity.color + "; padding:2", "name=\"" + entity.name + "\""));
+      replace_all(text, o, markupa(o, "mark", "border-radius:10; background-color:"+entity.color + "; border: 1px solid #aaeeee", "name=\"" + entity.name + "\""));
     }
   }
 
@@ -109,3 +112,7 @@ QString NamedEntitiesParser::getHighlightedText() {
 
   return QString(highlightNamedEntities(rawText.toStdString(),entities).c_str());
 }
+
+
+} // Gui
+} // Lima

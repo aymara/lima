@@ -2,6 +2,9 @@
 #include <iostream>
 #include <QtDebug>
 
+namespace Lima {
+namespace Gui {
+
 ConllRow::ConllRow(const std::string& s, QObject* p) : QObject(p), CONLL_Line(s) {
 
 }
@@ -65,3 +68,6 @@ ConllListModel::~ConllListModel() {
     delete d;
   }
 }
+
+} // Gui
+} // Lima

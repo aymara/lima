@@ -5,6 +5,9 @@
 #include <vector>
 #include <map>
 
+namespace Lima {
+namespace Gui {
+
 /// \brief A line of the CONLL format.
 struct CONLL_Line {
 
@@ -47,7 +50,6 @@ void displayAsColumns(const CONLL_List& lines);
 
 std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text);
 
-
 std::string markup(const std::string& content, const std::string& markup, const std::string& style);
 
 ///// \return the text with html highlighted named entities
@@ -60,7 +62,8 @@ std::string highlightNamedEntities(
     std::map<std::string, std::string>& colors);
 
 
-
+} // END namespace Gui
+} // END namespace Lima
 
 
 #endif // conll_analyzer_h

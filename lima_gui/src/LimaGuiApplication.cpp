@@ -5,6 +5,7 @@
 
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
+//#include "XMLConfigurationFiles/configurationStructure.h"
 
 #include <deque>
 #include <iostream>
@@ -117,67 +118,11 @@ bool LimaGuiApplication::openFile(const QString& filepath) {
   return true;
 }
 
-bool LimaGuiApplication::saveFile(const QString& filename) {
-  
-  LimaGuiFile* lgfile = getFile(filename.toStdString());
-  
-  if (!lgfile) {
-    LTELL("This file doesn't exist : " << filename.toStdString());
-    return false;
-  }
-  
-  QFile file(QString(lgfile->url.c_str()));
-  if (file.open(QFile::WriteOnly | QFile::Text)) {
-    QTextStream qts(&file);
-    qts << m_fileContent;
-    file.close();
-  }
-  else {
-    std::cout << "didn't open : " << lgfile->url << std::endl;
-    std::cout << "Error opening file: " << strerror(errno) << std::endl;
-    return false;
-  }
-  
-  return true;
-}
-
-bool LimaGuiApplication::saveFileAs(const QString& filename, const QString& newUrl) {
-  /// check if file is open
-  LimaGuiFile* lgfile = getFile(filename.toStdString());
-  
-  if (!lgfile) {
-    LTELL("This file doesn't exist : " << filename.toStdString());
-    return false;
-  }
-  
-  /// check new url
-  std::vector<std::string> tmpStrList = split(newUrl.toStdString(),':');
-  if (!tmpStrList.size()) {
-    LTELL("FILE DIALOG URL FORMAT ERROR : " << newUrl.toStdString());
-  }
-  
-  std::string path = tmpStrList[1];
-  
-  QFile file(newUrl);
-  if (file.open(QFile::WriteOnly | QFile::Text)) {
-    QTextStream qts(&file);
-    qts << m_fileContent;
-    file.close();
-  }
-  else {
-    std::cout << "didn't open : " << newUrl << std::endl;
-    std::cout << "Error opening file: " << strerror(errno) << std::endl;
-    return false;
-  }
-  
-  return true;
-}
-
 void LimaGuiApplication::closeFile(const QString& filename, bool save) {
   
-  if (save) {
-    saveFile(filename);
-  }  
+//  if (save) {
+//    saveFile(filename);
+//  }
   
   for (std::vector<LimaGuiFile>::const_iterator it = m_openFiles.begin(); it != m_openFiles.end(); ++it) {
     if (it->name == filename.toStdString()) {
@@ -326,6 +271,25 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   std::string lpConfigFile("lima-analysis.xml");
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
   
+  /// HERE TO EXPLORE  //////////////////////////////////////////
+  ///
+
+//  ConfigurationStructure& cstruct = lpconfig.getConfiguration();
+
+//  for (auto& pair : cstruct) {
+
+//    std::cout << "[" << pair.first << "]" << std::endl;
+
+//    for (auto& mpair : pair.second) {
+//        std::cout << "\t(" << mpair.first << ")" << std::endl;
+
+
+//    }
+
+//  }
+
+  //////////////////////////////////////////////////////////////
+
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
     clientId,
     lpconfig,

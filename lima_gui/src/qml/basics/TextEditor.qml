@@ -12,7 +12,6 @@ Rectangle {
   property alias showMenu: menu.visible
 
   anchors.fill: parent
-  color:"transparent"
 
   Column {
 
@@ -79,8 +78,8 @@ Rectangle {
   //        id:placeholder
   //        text: ttextarea.placeholderText
   //      }
-      
-      text: "<img src='~/Documents/cea_presentation_location.png'/>"
+
+//      text: "<img src='~/Documents/cea_presentation_location.png'/>"
       //      
         
       }

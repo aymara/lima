@@ -12,10 +12,8 @@ Rectangle {
     parser.parse(text,conll)
     typesview.model = parser.getEntityTypes()
     contenttext.text = parser.getHighlightedText()
-//    console.log(contenttext.text)
   }
 
-  color: "lightblue"
 
   NamedEntitiesParser {
     id: parser
@@ -43,8 +41,6 @@ Rectangle {
 
       property alias model: repeater.model
 
-      border { width: 1; color: "black"}
-
       width: 150
       height: parent.height
 
@@ -57,17 +53,16 @@ Rectangle {
 
           Rectangle {
 
-            height: 30
+            height: 20
             width: parent.width
 //            y: height*index
 
 //            color: "lightgray"
-            border { width: 1; color:"#ddd"}
             radius: 2
             color: modelData.split(':')[1]
 
             Text {
-
+              anchors.centerIn: parent
               text: modelData.split(':')[0]
 //              text: modelData
 

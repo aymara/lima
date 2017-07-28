@@ -15,7 +15,6 @@ import QtQuick.Layouts 1.3
 import "basics"
 
 import "scripts/DynamicObjectManager.js" as Dom
-import "scripts/colors.js" as Colors
 
 /**
  * Main QML File : lima_gui
@@ -70,7 +69,6 @@ Controls1.ApplicationWindow {
   /// ANALYZING
   
   function analyzeText(text) {
-    console.log("squalala!");
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
@@ -82,6 +80,7 @@ Controls1.ApplicationWindow {
         }
 
         var rt = wv.getResultView();
+        rt.formatToShow = format_selector.getCurrentItemKey()
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
       }
@@ -105,6 +104,7 @@ Controls1.ApplicationWindow {
           wv.getResultView().reset()
         }
         var rt = wv.getResultView();
+        rt.formatToShow = format_selector.getCurrentItemKey()
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeFile(filename, rt);
       }
@@ -128,6 +128,7 @@ Controls1.ApplicationWindow {
           wv.getResultView().reset()
         }
         var rt = wv.getResultView();
+        rt.formatToShow = format_selector.getCurrentItemKey()
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeFileFromUrl(url, rt);
       }
@@ -259,13 +260,13 @@ Controls1.ApplicationWindow {
   
   /// NEW ELEMENTS
   
-  function createNewElement() {
-    createNewElementPopup.open()
-  }
+//  function createNewElement() {
+//    createNewElementPopup.open()
+//  }
   
-  NewElementPopup {
-    id: createNewElementPopup
-  }
+//  NewElementPopup {
+//    id: createNewElementPopup
+//  }
 
   Controls2.Menu {
     id: additionalMenu
@@ -534,7 +535,7 @@ Controls1.ApplicationWindow {
 
                       width: 200
                       model: [qsTr("CONLL Format"), qsTr("Named entities"), qsTr("Graph")]
-                      keys: ["conll","named_entities","graph"]
+                      keys: ["table","NE","graph"]
 
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().formatIndex : 0
 
@@ -614,6 +615,11 @@ Controls1.ApplicationWindow {
 //              anchors.centerIn: parent
 //            }
 //          }
+
+//          ResultView {
+
+//          }
+
         }
 
         Rectangle {

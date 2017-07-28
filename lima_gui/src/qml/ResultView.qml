@@ -15,6 +15,9 @@ Rectangle {
   property string text: "<notext>"
   property string raw: ""
   property string format:""
+  property string formatToShow: "table"
+  property var formats: ["text", "table", "NE", "graph"]
+  property var formatNames: [qsTr("Text"), qsTr("Table"), qsTr("Named entities"), qsTr("Graph")]
   // 0 = not active, 1 = analysis running, 2 = analysis over
   property int status: 0
 
@@ -22,12 +25,13 @@ Rectangle {
   property var views: [myconlltableview, mytextview, myloadingview, myNamedEntitiesView]
 
   function displayResults(input, output) {
+    visible = true
     text = input
     raw = output
     color = "transparent"
     status = 2
     console.log("ResultView::displayResults")
-    setFormat(format !== "" ? format : "table")
+    setFormat(format !== "" ? format : formatToShow)
 
 //    console.log("SUCCESS");
 //    Dom.createComponent("CONLLTableView.qml", result_tab);
@@ -40,6 +44,10 @@ Rectangle {
     format = ""
     console.log("ResultView::reset")
     hideAll()
+    for (var i = 0; i<views.length; i++) {
+      views[i].loaded = false
+    }
+
     myloadingview.visible = true
     status = 1
   }
@@ -61,7 +69,11 @@ Rectangle {
 //        Dom.createComponent("basics/TextView.qml", contentRect);
 //        Dom.obj.text = raw;
         mytextview.visible = true
-        mytextview.text = raw;
+        if (!mytextview.loaded) {
+          mytextview.text = raw;
+          mytextview.loaded = true
+        }
+
         break;
       case "table":
 //        Dom.createComponent("ConllTableView.qml", contentRect);
@@ -69,11 +81,18 @@ Rectangle {
 //          Dom.obj.loadModel(raw)
 //        }
         myconlltableview.visible = true
-        myconlltableview.loadModel(raw)
+        if (!myconlltableview.loaded) {
+          myconlltableview.loaded = true
+          myconlltableview.loadModel(raw)
+        }
+
         break;
       case "NE":
         myNamedEntitiesView.visible = true
-        myNamedEntitiesView.input(text, raw)
+        if (!myNamedEntitiesView.loaded) {
+          myNamedEntitiesView.loaded = true
+          myNamedEntitiesView.input(text, raw)
+        }
 
         break;
       default:
@@ -81,6 +100,10 @@ Rectangle {
         break;
       }
     }
+  }
+
+  onFormatChanged: {
+    formatbox.currentIndex= (format !== "" ? formats.indexOf(format) : 0)
   }
 
   Component.onCompleted: {
@@ -98,29 +121,38 @@ Rectangle {
   ToolBar {
     id: toolbar
 
-    height: 25
+    height: 30
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
     enabled: format != "" ? true : false
 
     ComboBox {
+      id: formatbox
 
-      width: 100
-      height: parent.height
+      width: 200
+      x: 5
+      y: 5
+      height: parent.height - 5
       anchors.margins: 5
 
-      textRole: "text"
+//      currentIndex: format != "" ? formats.indexOf(format) : 0
 
-      model: ListModel {
-        id:cbmodel
-        ListElement { name:"table"; text: qsTr("Table") }
-        ListElement { name:"text";  text:qsTr("Text") }
-        ListElement { name:"NE";    text:qsTr("Named entities"); }
-      }
+//      textRole: "text"
+
+//      model: ListModel {
+//        id:cbmodel
+//        ListElement { name: formats[0]; text: qsTr("Table") }
+//        ListElement { name: formats[1];  text:qsTr("Text") }
+//        ListElement { name: formats[2];    text:qsTr("Named entities"); }
+//        ListElement { name: formats[3]; text:qsTr("Graph"); }
+//      }
+
+      model: formatNames
 
       onCurrentIndexChanged: {
-        setFormat(model.get(currentIndex).name)
+//        setFormat(model.get(currentIndex).name)
+        setFormat(formats[currentIndex]);
       }
 
     }
@@ -138,6 +170,8 @@ Rectangle {
 
     LoadingView {
       id: myloadingview
+
+      property bool loaded: false
       visible: true
 
     }
@@ -145,6 +179,7 @@ Rectangle {
     TextEditor {
       id:mytextview
 
+      property bool loaded: false
       showMenu: false
       wrapMode: TextEdit.NoWrap
       visible: false
@@ -153,14 +188,22 @@ Rectangle {
 
     ConllTableView {
       id: myconlltableview
+
+      property bool loaded: false
       visible: false
 
     }
 
     NamedEntitiesView {
       id: myNamedEntitiesView
+
+      property bool loaded: false
       visible: false
     }
+
+    // GraphView {
+    //
+    // }
 
   }
 

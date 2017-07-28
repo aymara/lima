@@ -13,6 +13,9 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
+namespace Lima {
+namespace Gui {
+
 /// This need cleaning up
 ///
 /// Contains all kinds of function to parse text and files
@@ -254,3 +257,5 @@ CONLL_List conllRawToLines(const std::string& conll) {
   return list;
 }
 
+} // End namespace Gui
+} // End namespace Lima

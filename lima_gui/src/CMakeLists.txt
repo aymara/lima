@@ -3,8 +3,7 @@ SET (qt-lima_MOC_HEADERS
   LimaGuiApplication.h
   Threads.h
   ConllListModel.h
-  tablemodel.h
-  namedentitiesparser.h
+  NamedEntitiesParser.h
 )
 
 qt5_wrap_cpp (qt-lima_MOC_OUTFILES ${qt-lima_MOC_HEADERS})
@@ -14,8 +13,7 @@ SET (qt-lima_LIB_SRCS
   LimaGuiApplication.cpp
   Threads.cpp
   ConllListModel.cpp
-  tablemodel.cpp
-  namedentitiesparser.cpp
+  NamedEntitiesParser.cpp
 )
 
 add_library(qt-lima SHARED 
@@ -42,6 +40,7 @@ target_link_libraries(lima_gui
   lima-common-mediaticdata
   lima-common-factory
   lima-common-tools
+  lima-common-xmlconfigurationfiles
   lima-linguisticprocessing
   ${Qt5_LIBRARIES}
 )

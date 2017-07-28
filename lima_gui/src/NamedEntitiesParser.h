@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QString>
 
+namespace Lima {
+namespace Gui {
+
 struct EntityItem {
 
   EntityItem(std::string name, std::string color, const std::vector<std::string>& occ) :
@@ -34,5 +37,8 @@ private:
   QString rawText;
   QString conllText;
 };
+
+} // namespace Gui
+} // namespace Lima
 
 #endif // NAMEDENTITIESPARSER_H

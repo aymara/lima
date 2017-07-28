@@ -22,6 +22,8 @@ struct LimaGuiFile {
 
 class LimaGuiThread;
 
+class LimaGuiApplicationPrivate;
+
 ///
 /// \class LimaGuiApplication
 /// \brief Main class of Lima Gui.
@@ -54,14 +56,6 @@ public:
   ///
   /// \brief used when multiple files are selected in the file dialog
   Q_INVOKABLE bool openMultipleFiles(const QStringList& urls);
-  
-  ///
-  /// \brief save file registered in open_files
-  Q_INVOKABLE bool saveFile(const QString& filename);
-  
-  ///
-  /// \brief save file registered in open_files, with a new url
-  Q_INVOKABLE bool saveFileAs(const QString& filename, const QString& newUrl);
   
   ///
   /// \brief close file registered in open files, save if modified and requested
@@ -216,6 +210,18 @@ private:
   
   ///< application analysis output stream
   std::ostream* out = &std::cout;
+
+  /// GUI APPLICATION CONFIGURATION
+  ///
+  /// global, results, conll table, text, ... :
+  /// - font
+  /// - font size
+  ///
+  /// style, color themes ?
+  ///
+  /// workspace directory (where all files are created when running analysis)
+  ///
+  /// we could have a temp directory that would be wiped out when not needed
 
 };
 
