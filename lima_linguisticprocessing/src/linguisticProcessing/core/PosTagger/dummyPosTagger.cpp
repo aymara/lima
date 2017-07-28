@@ -69,6 +69,8 @@ LimaStatusCode DummyPosTagger::process(
   PTLOGINIT;
   LINFO << "Start of Dummy posTagging";
 
+  auto const& stopAnalyze = analysis.stopAnalyze();
+
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
   AnalysisGraph* posgraph=new AnalysisGraph("PosGraph",m_language,false,true,*anagraph);
@@ -116,6 +118,12 @@ LimaStatusCode DummyPosTagger::process(
           << Common::Misc::limastring2utf8stdstring(tok->stringForm()) << " is empty !";
       }
     }
+
+    if (stopAnalyze)
+	  {
+		  LERROR << "Analyze too long. Stopped in DummyPosTagger";
+		  return TIME_OVERFLOW;
+	  }
   }
 
   // Affichage du graphe après le POSTagging
