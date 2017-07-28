@@ -118,9 +118,9 @@ void Tokenizer::init(
     QString fileName=Common::Misc::findFileInPaths(path.c_str(), filePath.c_str());
     if (fileName.isEmpty())
     {
-      ::std::ostringstream oss;
-      oss << "Automation file not found." << " ResourcesPath=" << path.c_str() << " File=" << filePath.c_str();
-      throw ::std::exception(oss.str().data());
+      TOKENIZERLOGINIT;
+      LERROR << "Automation file not found." << " ResourcesPath=" << path.c_str() << " File=" << filePath.c_str();
+      throw InvalidConfiguration();
     }
     m_d->_automaton.setCharChart(m_d->_charChart);
     m_d->_automaton.loadFromFile(fileName.toUtf8().constData());
