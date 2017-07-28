@@ -18,6 +18,8 @@ struct CONLL_Line {
 
 typedef std::vector<CONLL_Line*> CONLL_List;
 
+CONLL_List conllRawToLines(const std::string& conll);
+
 /// Free all pointers in the list
 void freeConllList(CONLL_List&);
 

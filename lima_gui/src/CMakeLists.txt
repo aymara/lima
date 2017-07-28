@@ -4,6 +4,7 @@ SET (qt-lima_MOC_HEADERS
   Threads.h
   ConllListModel.h
   tablemodel.h
+  namedentitiesparser.h
 )
 
 qt5_wrap_cpp (qt-lima_MOC_OUTFILES ${qt-lima_MOC_HEADERS})
@@ -14,6 +15,7 @@ SET (qt-lima_LIB_SRCS
   Threads.cpp
   ConllListModel.cpp
   tablemodel.cpp
+  namedentitiesparser.cpp
 )
 
 add_library(qt-lima SHARED 

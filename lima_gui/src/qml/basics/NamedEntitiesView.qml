@@ -1,28 +1,41 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import integ_cpp 1.0
 
 Rectangle {
   id:ne_view
 
-  function setModel(model) {
-    typesview.model = model
+  anchors.fill: parent
+
+  function input(text,conll) {
+    parser.parse(text,conll)
+    typesview.model = parser.getEntityTypes()
+    contenttext.text = parser.getHighlightedText()
+//    console.log(contenttext.text)
   }
 
-  function setText(text) {
-    contenttext.text = text
+  color: "lightblue"
+
+  NamedEntitiesParser {
+    id: parser
   }
 
-  RowLayout {
+  Row {
 
     anchors.fill: parent
     spacing: 2
 
-    TextView {
-      id: contenttext
+    Rectangle {
 
       width: parent.width - typesview.width
       height: parent.height
+
+      TextEditor {
+        id: contenttext
+//        text: "hello! erg"
+        textFormat: Text.RichText
+      }
     }
 
     Rectangle {
@@ -30,27 +43,39 @@ Rectangle {
 
       property alias model: repeater.model
 
-      width: 50
+      border { width: 1; color: "black"}
+
+      width: 150
       height: parent.height
 
-      Repeater {
-        id: repeater
-        model: []
+      Column {
 
-        Rectangle {
+        anchors.fill: parent
 
-          anchors.margins: 10
-          color: split(metaData)[0]
+        Repeater {
+          id: repeater
 
-          Text {
+          Rectangle {
 
-            anchors.fill: parent
-            text: split(metaData)[1]
+            height: 30
+            width: parent.width
+//            y: height*index
+
+//            color: "lightgray"
+            border { width: 1; color:"#ddd"}
+            radius: 2
+            color: modelData.split(':')[1]
+
+            Text {
+
+              text: modelData.split(':')[0]
+//              text: modelData
+
+            }
 
           }
 
         }
-
       }
 
     }

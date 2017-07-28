@@ -240,3 +240,17 @@ std::string highlightNamedEntities(
 
   return text;
 }
+
+
+CONLL_List conllRawToLines(const std::string& conll) {
+  CONLL_List list;
+
+  std::vector<std::string> data = into_lines(conll);
+
+  for (auto& line : data) {
+    list.push_back(new CONLL_Line(line));
+  }
+
+  return list;
+}
+

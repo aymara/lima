@@ -21,7 +21,8 @@ Rectangle {
   // add your views references here
   property var views: [myconlltableview, mytextview, myloadingview, myNamedEntitiesView]
 
-  function displayResults(output) {
+  function displayResults(input, output) {
+    text = input
     raw = output
     color = "transparent"
     status = 2
@@ -70,8 +71,10 @@ Rectangle {
         myconlltableview.visible = true
         myconlltableview.loadModel(raw)
         break;
-      case "detailed_sentences":
-        myNamedEntitiesView.setText(raw)
+      case "NE":
+        myNamedEntitiesView.visible = true
+        myNamedEntitiesView.input(text, raw)
+
         break;
       default:
         console.log(format ," : this format is not supported.");
@@ -111,8 +114,9 @@ Rectangle {
 
       model: ListModel {
         id:cbmodel
-        ListElement { name:"table"; text:"Table"}
-        ListElement { name:"text"; text:"Texte" }
+        ListElement { name:"table"; text: qsTr("Table") }
+        ListElement { name:"text";  text:qsTr("Text") }
+        ListElement { name:"NE";    text:qsTr("Named entities"); }
       }
 
       onCurrentIndexChanged: {

@@ -79,7 +79,7 @@ void AnalysisThread::notifyView() {
 //      QMetaObject::invokeMethod(root, "addTab", Q_ARG(QVariant, QVariant::fromValue(&comp)));
     QString qstr(out.str().c_str());
     ConllListModel clmodel(qstr);
-    QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(qstr)));
+    QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(m_text)), Q_ARG(QVariant, QVariant::fromValue(qstr)));
 //    QMetaObject::invokeMethod(view, "tableUp", Q_ARG(QVariant, QVariant::fromValue(clmodel)));
   }
   else {

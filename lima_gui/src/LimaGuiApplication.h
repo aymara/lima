@@ -102,6 +102,12 @@ public:
   
   Q_INVOKABLE void test();
 
+  void configure();
+
+  Q_INVOKABLE QString highlightNamedEntities(const QString& text);
+
+  Q_INVOKABLE QStringList getNamedEntitiesList(const QString& text);
+
   /// INITIALIZING
   
   ///
