@@ -75,6 +75,23 @@ namespace LinguisticProcessing
 
 namespace AnalysisDumpers
 {
+namespace 
+{
+  struct {
+    ::std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
+    {
+      std::ostringstream oss;
+      //std::set<uint32_t>::const_iterator asvit, asvit_end;
+      std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
+      asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+      for (; asvit != asvit_end; asvit++)
+      {
+        oss << *asvit << ", ";
+      }
+      return oss.str();
+    }
+  } _c;
+}
 
 SimpleFactory<MediaProcessUnit,BowDumper> bowDumperFactory(BOWDUMPER_CLASSID);
 
@@ -449,17 +466,8 @@ void BowDumper::addVerticesToBoWText(
               //std::set<LinguisticGraphVertex> bowTokenVertices = (*bowItr)->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-              
 #ifdef DEBUG_LP
-              std::ostringstream oss;
-              //std::set<uint32_t>::const_iterator asvit, asvit_end;
-              std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-              asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-              for (; asvit != asvit_end; asvit++)
-              {
-                oss << *asvit << ", ";
-              }
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << oss.str();
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << _c.str(alreadyStoredVertices);
 #endif
             }
           }
@@ -519,17 +527,8 @@ void BowDumper::addVerticesToBoWText(
               std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-            
 #ifdef DEBUG_LP
-              std::ostringstream oss;
-              //std::set<uint32_t>::const_iterator asvit, asvit_end;
-              std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-              asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-              for (; asvit != asvit_end; asvit++)
-              {
-                oss << *asvit << ", ";
-              }
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << oss.str();
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << _c.str(alreadyStoredVertices);
 #endif
             }
           }
