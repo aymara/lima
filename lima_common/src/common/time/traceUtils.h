@@ -61,10 +61,6 @@ namespace Lima {
       uint64_t second;
       uint64_t count;
     };
-    typedef enum {
-      OUTPUTFORMAT_DEFAULT,
-      OUTPUTFORMAT_DETAILED1
-    } OutputFormat;
     TimeUtils();
     ~TimeUtils() {}
     
@@ -107,8 +103,7 @@ namespace Lima {
        * @note this class is deprecated to count the time passed in a specific class. Use @ref TimeUtilsController instead.
        */
       static void logCumulatedTime(const std::string& mess,
-                                   const std::string& taskCategory = std::string(""),
-                                   OutputFormat const& = OUTPUTFORMAT_DEFAULT);
+                                   const std::string& taskCategory = std::string(""));
       /**
        * log the number of microseconds cumulated for all categories
        * @note this class is deprecated to count the time passed in a specific class. Use @ref TimeUtilsController instead.

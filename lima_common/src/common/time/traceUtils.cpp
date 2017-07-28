@@ -34,7 +34,6 @@
 #else // linux
 #include <time.h>
 #endif
-#include <iomanip>
 
 namespace Lima {
 
@@ -120,35 +119,10 @@ void TimeUtils::logElapsedTime(const std::string& mess,
  * log the number of microseconds since last UpdateCurrentTime
  */
 void TimeUtils::logCumulatedTime(const std::string& mess,
-                               const std::string& taskCategory,
-                               OutputFormat const& format) {
+                               const std::string& taskCategory) {
   TIMELOGINIT;
-  switch (format)
-  {
-    case OUTPUTFORMAT_DETAILED1:
-    {
-      ::std::ostringstream oss;
-      auto const duration = m_cumulatedTime[taskCategory].second;
-      if (duration != 0)
-        oss << std::setfill(' ') << std::setw(9) << duration;
-      else
-        oss << "         ";
-      oss << " us ";
-      auto const count = m_cumulatedTime[taskCategory].count;
-      if (count != 0)
-        oss << std::setfill(' ') << std::setw(6) << count;
-      else
-        oss << "      ";
-      oss  << " occurences  " << mess;
-      LINFO << oss.str();
-      break;
-    }
-    default:
-    {
-      LINFO << m_cumulatedTime[taskCategory].second << " us"
-      << " count: " << m_cumulatedTime[taskCategory].count << ": " << mess;
-    }
-  }
+  LINFO << m_cumulatedTime[taskCategory].second << " us"
+    << " count: " << m_cumulatedTime[taskCategory].count << ": " << mess;
 }
 
 void TimeUtils::logAllCumulatedTime(const std::string& mess) {

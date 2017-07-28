@@ -102,11 +102,6 @@ public:
    {
 
    }
-   ~LoggerImpl()
-   {
-     for (auto it=destList.constBegin(); it!=destList.constEnd();++it)
-       delete (*it);
-   }
    QMutex logMutex;
    Level level;
    DestinationList destList;
@@ -125,12 +120,14 @@ Logger::~Logger()
 
 Logger& Logger::instance(const QString& zone)
 {
-  static QMap<QString, ::std::shared_ptr<Logger>> staticLog;
-  auto it = staticLog.find(zone);
+  static QMap<QString,Logger*> staticLog;
+  QMap<QString,Logger*>::iterator it = staticLog.find(zone);
   if (it == staticLog.end())
   {
-    ::std::shared_ptr<Logger> logger(new Logger(zone));
+    Logger* logger = new Logger(zone);
+#ifndef USE_LOG4CPP
     logger->addDestination(new DebugOutputDestination());
+#endif
     return **staticLog.insert(zone, logger);
   }
   return **it;

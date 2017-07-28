@@ -346,14 +346,13 @@ bool IndexElement::hasNearlySamePosition(const IndexElement& other) const
 std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
 {
   os << "[IndexElement" << elt.m_d->m_id << "," << elt.m_d->m_type ;
-  os << ":" << Common::Misc::limastring2utf8stdstring(elt.m_d->m_word);
   if (elt.isSimpleTerm()) {
-    os << "/" << elt.m_d->m_category;
+  os << ":" << Common::Misc::limastring2utf8stdstring(elt.m_d->m_word);
+  os << "/" << elt.m_d->m_category;
     os << "/" << elt.m_d->m_position;
     os << "," << elt.m_d->m_length;
   }
   else {
-    os << "/" << elt.m_d->m_category;
     if (elt.m_d->m_structure.empty()) {
       return os << ":";
     }
@@ -365,7 +364,6 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
         os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
         i++;
       }
-	  os << "]";
     }
     os << "/";
     os << elt.m_d->m_poslenlist;
@@ -378,16 +376,69 @@ std::ostream& operator<<(std::ostream& os, const IndexElement& elt)
 }
 
 QDebug& operator<<(QDebug& os, const IndexElement& elt) {
-  std::ostringstream x;
-  x << elt;
-  os << x.str();
+  os << "[IndexElement" << elt.m_d->m_id << "," << elt.m_d->m_type;
+  os << ":" << elt.m_d->m_word;
+  if (elt.m_d->m_category != 0)
+  {
+    os << "/" << elt.m_d->m_category;
+  }
+  os << "/" << elt.m_d->m_position;
+  os << "," << elt.m_d->m_length;
+  if (!elt.m_d->m_structure.empty())
+  {
+    uint64_t i=0;
+    os << ":" << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+    i++;
+    while (i<elt.m_d->m_structure.size()) {
+      os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+      i++;
+    }
+  }
+  os << "/" << elt.m_d->m_poslenlist;
+  if (elt.isNamedEntity())
+  {
+    os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
+  }
+  else if (elt.isPredicate())
+  {
+    os << "/P(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
+  }
+  os << "]";
   return os;
 }
 
 QTextStream& operator<<(QTextStream& os, const IndexElement& elt) {
-  std::ostringstream x;
-  x << elt;
-  os << x.str().c_str();
+  os << "[IndexElement"  << elt.m_d->m_id << "," << elt.m_d->m_type;
+  if (elt.isSimpleTerm())
+  {
+  os << ":" << elt.m_d->m_word;
+    if (elt.m_d->m_category != 0) {
+      os << "/" << elt.m_d->m_category;
+    }
+    os << "/" << elt.m_d->m_position;
+    os << "," << elt.m_d->m_length;
+  }
+  else
+  {
+    if (elt.m_d->m_structure.empty()) {
+      return os << ":";
+    }
+    if (!elt.m_d->m_structure.empty()) {
+      uint64_t i=0;
+      os << ":" << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+      i++;
+      while (i<elt.m_d->m_structure.size()) {
+        os << "," << elt.m_d->m_structure[i] << "  RE(" << elt.m_d->m_relations[i] << ")";
+        i++;
+      }
+    }
+    os << "/";
+    os << elt.m_d->m_poslenlist;
+  }
+  if (! elt.m_d->m_neType.isNull()) {
+    os << "/NE(" << Lima::Common::MediaticData::MediaticData::single().getEntityName(elt.m_d->m_neType) << ")";
+  }
+  os << "]";
   return os;
 }
 

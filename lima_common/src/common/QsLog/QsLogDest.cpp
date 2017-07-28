@@ -33,7 +33,7 @@
 #include <QTextStream>
 #include <QString>
 #ifdef WIN32
-#pragma warning(default: 4127)
+#pragma warning(enable: 4127)
 #endif
 
 namespace QsLogging

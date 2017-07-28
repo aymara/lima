@@ -84,7 +84,7 @@ protected:
   std::string m_handler;
 
   private:
-    Lima::LimaStatusCode buildBoWText(Lima::StopAnalyze const&,
+    void buildBoWText(
       const Common::AnnotationGraphs::AnnotationData* annotationData,
       const SyntacticAnalysis::SyntacticData* syntacticData,
       Common::BagOfWords::BoWText& bowText,
@@ -92,7 +92,7 @@ protected:
       LinguisticAnalysisStructure::AnalysisGraph* anagraph,
       LinguisticAnalysisStructure::AnalysisGraph* posgraph) const;
 
-  Lima::LimaStatusCode addVerticesToBoWText(Lima::StopAnalyze const&,
+  void addVerticesToBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     LinguisticAnalysisStructure::AnalysisGraph* anagraph,
     LinguisticAnalysisStructure::AnalysisGraph* posgraph,

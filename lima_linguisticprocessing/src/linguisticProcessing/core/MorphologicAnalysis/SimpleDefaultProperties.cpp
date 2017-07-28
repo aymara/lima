@@ -118,16 +118,12 @@ LimaStatusCode SimpleDefaultProperties::process(
 {
   TimeUtils::updateCurrentTime();
   MORPHOLOGINIT;
+  LINFO << "MorphologicalAnalysis: starting process DefaultProperties";
 
-  auto const& stopAnalyze = analysis.stopAnalyze();
-
-  LINFO << "MorphologicalAnalysis: starting process SimpleDefaultProperties";
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
   // Affectation des propriétés par défaut
-  auto const r = affectPropertiesOnePath(*tokenList, stopAnalyze);
-  if (r != SUCCESS_ID)
-    return r;
+  affectPropertiesOnePath(*tokenList);
 
   // Graphe après l'affectation des propriétés par défaut
   // std::cout << std::endl;
@@ -144,8 +140,8 @@ LimaStatusCode SimpleDefaultProperties::process(
 
 
 // directly use the list of vertices (do not need to go through the graph)
-Lima::LimaStatusCode SimpleDefaultProperties::affectPropertiesOnePath(
-  AnalysisGraph& anagraph, Lima::StopAnalyze const& stopAnalyze) const
+void SimpleDefaultProperties::affectPropertiesOnePath(
+  AnalysisGraph& anagraph) const
 {
   graph_traits<LinguisticGraph>::vertex_iterator vBegin, vEnd, v;
   boost::tie(vBegin, vEnd) = vertices(*(anagraph.getGraph()));
@@ -178,14 +174,7 @@ Lima::LimaStatusCode SimpleDefaultProperties::affectPropertiesOnePath(
         currentData->push_back(elem);
       }
     }
-    if (stopAnalyze)
-	  {
-      MORPHOLOGINIT;
-		  LERROR << "Analyze too long. Stopped in SimpleDefaultProperties";
-		  return TIME_OVERFLOW;
-	  }
   }
-  return SUCCESS_ID;
 }
 
 } // MorphologicAnalysis

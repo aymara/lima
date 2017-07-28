@@ -81,8 +81,7 @@ public:
     //! @brief copy constructor
     Node(const Node &n);
     Node &operator=(const Node &n);
-    Node(Node&&);
-    Node &operator=(Node&&);
+
     //! @brief main constructor
     //! @param docName
     //! @param structId
@@ -102,12 +101,12 @@ public:
     //! @param nodeLength
     //! @param nodeParent
     Node(const std::string &docName, STRUCT_ID structId, NODE_ID nodeId,
-      CONTENT_ID contentId, int indexid , std::string const& uri,
-      std::string const& nodeMedia, std::string const& nodeType, std::string const& descrId,
-      bool isRoot, bool isLeaf, bool isFile, bool isMultimedia,
-      TOPO_POS nodeStart, TOPO_POS nodeEnd,
-      TOPO_POS nodeLength, NODE_ID nodeParent);
-    std::string const& get_DocName() const;
+         CONTENT_ID contentId, int indexid , std::string uri,
+         std::string nodeMedia, std::string nodeType, std::string descrId,
+         bool isRoot, bool isLeaf, bool isFile, bool isMultimedia,
+         TOPO_POS nodeStart, TOPO_POS nodeEnd,
+         TOPO_POS nodeLength, NODE_ID nodeParent);
+    std::string get_DocName() const;
     void  set_DocName ( const std::string& docName );
     STRUCT_ID get_StructId() const;
     void  set_StructId ( STRUCT_ID structId );
@@ -156,14 +155,12 @@ public:
     Structure(const Structure& s);
     Structure ( STRUCT_ID structID );
     Structure& operator=( const Structure& s );
-    Structure(Structure&& s);
-    Structure& operator=(Structure&& s);
     
     //! @brief destructeur: delete des 'Nodes' de contenu
     ~Structure();
 
     void addNode (const Node& node );
-    void addNode (Node&& node);
+
     void addNode ( CONTENT_ID ContentId, const Node& node );
 
     //! @brief get a content node, given its odentifiers

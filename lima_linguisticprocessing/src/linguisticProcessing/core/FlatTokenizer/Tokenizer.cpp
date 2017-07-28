@@ -112,16 +112,7 @@ void Tokenizer::init(
 
   try
   {
-    // An exception is thrown if the file is not found
-    ::std::string const filePath = unitConfiguration.getParamsValueAtKey("automatonFile");
-    ::std::string const path = Common::MediaticData::MediaticData::single().getResourcesPath();
-    QString fileName=Common::Misc::findFileInPaths(path.c_str(), filePath.c_str());
-    if (fileName.isEmpty())
-    {
-      ::std::ostringstream oss;
-      oss << "Automation file not found." << " ResourcesPath=" << path.c_str() << " File=" << filePath.c_str();
-      throw ::std::exception(oss.str().data());
-    }
+    QString fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("automatonFile").c_str());
     m_d->_automaton.setCharChart(m_d->_charChart);
     m_d->_automaton.loadFromFile(fileName.toUtf8().constData());
   }
@@ -183,14 +174,12 @@ LimaStatusCode Tokenizer::process(
   Text* text=new Text(m_d->_language, m_d->_charChart);
   text->setText(*originalText);
   text->setGraph(anagraph->firstVertex(),graph);
-  // for too big texts
-  LINFO << "Running automaton on" << ((originalText->size() > 200) ? (originalText->left(200).append("...")) : *originalText);
+
+  LINFO << "Running automaton on" << *originalText;
   const State* newState = m_d->_automaton.run(*text);
   while (newState)
   {
-#ifdef DEBUG_LP
     LTRACE << "Running automaton";
-#endif
     newState = m_d->_automaton.run(*text, newState);
   }
   if (text->position() < text->size()-1)
