@@ -129,8 +129,10 @@ Logger& Logger::instance(const QString& zone)
   auto it = staticLog.find(zone);
   if (it == staticLog.end())
   {
-    ::std::shared_ptr<Logger> logger(new Logger(zone));
+    std::shared_ptr<Logger> logger(new Logger(zone));
+#ifndef USE_LOG4CPP
     logger->addDestination(new DebugOutputDestination());
+#endif
     return **staticLog.insert(zone, logger);
   }
   return **it;
