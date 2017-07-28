@@ -70,8 +70,8 @@ private:
 
   // Each token of the specified path without dictionnary entry is
   // searched into the specified dictionary.
-  void affectPropertiesOnePath(
-    Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& tokenList) const;
+Lima::LimaStatusCode affectPropertiesOnePath(
+  Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& tokenList, Lima::StopAnalyze const& stopAnalyze) const;
 
 };
 
