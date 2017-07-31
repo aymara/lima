@@ -251,7 +251,7 @@ CONLL_List conllRawToLines(const std::string& conll) {
   std::vector<std::string> data = into_lines(conll);
 
   for (auto& line : data) {
-    list.push_back(new CONLL_Line(line));
+    if (line.length()) list.push_back(new CONLL_Line(line));
   }
 
   return list;

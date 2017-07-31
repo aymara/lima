@@ -9,6 +9,14 @@ import "basics"
 
 /// Now, we need to take a static approach (as the dynamic one will eventually lead to memory leaks)
 
+/// There is a bug with the combo box : the idea is that changing the combo box index will change
+/// the format property of the result view (obviously), and changing the format via setFormat() will
+/// consequently update the combo box index. However, it does not work as intended.
+
+/// formatToShow allows the view to pick the choice of the format before displayResults is called by the
+/// model. It works fine for a first analysis, but if you try to start a new analysis over the previous one,
+/// the format property will get stuck to the combo box index value rather than use formatToShow
+
 Rectangle {
   id: result_tab
 
@@ -32,6 +40,7 @@ Rectangle {
     status = 2
     console.log("ResultView::displayResults")
     setFormat(format !== "" ? format : formatToShow)
+    toolbar.enabled = true
 
 //    console.log("SUCCESS");
 //    Dom.createComponent("CONLLTableView.qml", result_tab);
@@ -42,6 +51,7 @@ Rectangle {
 //    Dom.popObject();
 //    Dom.createComponent("basics/LoadingView.qml", result_tab);
     format = ""
+    formatToShow = "table"
     console.log("ResultView::reset")
     hideAll()
     for (var i = 0; i<views.length; i++) {
@@ -50,6 +60,7 @@ Rectangle {
 
     myloadingview.visible = true
     status = 1
+    toolbar.enabled = false
   }
 
   function hideAll() {
@@ -102,9 +113,10 @@ Rectangle {
     }
   }
 
-  onFormatChanged: {
-    formatbox.currentIndex= (format !== "" ? formats.indexOf(format) : 0)
-  }
+//  onFormatChanged: {
+//    console.log("parent::onFormatChanged::despondent")
+//    formatbox.currentIndex= (format !== "" ? formats.indexOf(format) : 0)
+//  }
 
   Component.onCompleted: {
    //if (format !== "") Qt.quit()
@@ -125,7 +137,7 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    enabled: format != "" ? true : false
+//    enabled: parent.format !== ""
 
     ComboBox {
       id: formatbox
@@ -150,8 +162,11 @@ Rectangle {
 
       model: formatNames
 
+      currentIndex: (format !== "" ? formats.indexOf(format) : 0)
+
       onCurrentIndexChanged: {
 //        setFormat(model.get(currentIndex).name)
+        console.log("formatBox::onCurrentindexChanged::despondent")
         setFormat(formats[currentIndex]);
       }
 

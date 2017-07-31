@@ -98,19 +98,51 @@ QStringList NamedEntitiesParser::getEntityTypes() {
   return qsl;
 }
 
+EntityItem* NamedEntitiesParser::findEntity(const std::string& name) {
+  for (auto& entity : entities) {
+    if (entity.name == name) {
+      return &entity;
+    }
+  }
+  return nullptr;
+}
+
 QString NamedEntitiesParser::getHighlightedText() {
 
-//  CONLL_List conllList = conllRawToLines(conllText);
-//  std::string rawtext = "";
+  CONLL_List conllList = conllRawToLines(conllText.toStdString());
 
-//  for (auto& line : conllList) {
-//    rawtext
-//  }
+  std::string result = "";
 
-  /// this only highlights all substrs that are occurences.
-  /// ^ Like this, you need to use the conll data to know what to highlight
+  int i = 0;
+  int j = 0;
 
-  return QString(highlightNamedEntities(rawText.toStdString(),entities).c_str());
+  for (auto& line : conllList) {
+    j = std::stoi(line->at(0));
+
+    if (j - i > 0) {
+
+      std::string hltext = line->at(1);
+      EntityItem* entity = nullptr;
+      if (line->at(5) != "_") entity = findEntity(line->at(5));
+
+      if (entity) {
+        hltext = markupa(hltext, "mark", "border-radius:10; background-color:"+entity->color + "; border: 1px solid #aaeeee", "name=\"" + entity->name + "\"");
+      }
+
+      result += hltext + " ";
+
+      i = j;
+    }
+    else {
+      result += "\n";
+
+      i = j = 0;
+    }
+  }
+
+  freeConllList(conllList);
+
+  return QString(result.c_str());
 }
 
 

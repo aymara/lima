@@ -75,12 +75,11 @@ Controls1.ApplicationWindow {
         if (wv.getResultView() === null) {
           wv.setResultView("ResultView.qml");
         }
-        else {
-          wv.getResultView().reset()
-        }
 
+        wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
+        console.log("formattoshow= ", rt.formatToShow)
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
       }
@@ -100,11 +99,10 @@ Controls1.ApplicationWindow {
         if (wv.getResultView() === null) {
           wv.setResultView("ResultView.qml");
         }
-        else {
-          wv.getResultView().reset()
-        }
+        wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
+        console.log("formattoshow= ", rt.formatToShow)
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeFile(filename, rt);
       }
@@ -124,11 +122,10 @@ Controls1.ApplicationWindow {
         if (wv.getResultView() === null) {
           wv.setResultView("ResultView.qml");
         }
-        else {
-          wv.getResultView().reset()
-        }
+        wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
+        console.log("formattoshow= ", rt.formatToShow)
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeFileFromUrl(url, rt);
       }
@@ -460,11 +457,6 @@ Controls1.ApplicationWindow {
               height: parent.height - nicebuttonview.height
               width: parent.width
 
-              TextView {
-                  id: textView
-                  x: 439
-                  y: 320
-              }
 //              Layout.fillHeight: true
 //              Layout.preferredHeight: parent.height - nicebuttonview.height
 //              Layout.minimumHeight: 500

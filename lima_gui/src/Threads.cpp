@@ -42,15 +42,12 @@ void AnalysisThread::run() {
     std::stringstream buffer;
     std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
     std::streambuf* old_cerr = std::cerr.rdbuf(buffer.rdbuf());
-    // thread_safe -> don't need it
-    //m_application->setAnalyzerState(0);
+
     m_application->setOut(&out);
     m_application->analyze(m_text);
+
     // reset app out
     m_application->setOut(&std::cout);
-//    m_application->setAnalyzerState(1);
-    // push results to app/gui
-    // m_application->setTextBuffer(out.str());
     m_application->setTextBuffer(buffer.str());
     std::cout.rdbuf(old_cout);
     std::cerr.rdbuf(old_cerr);
@@ -78,7 +75,6 @@ void AnalysisThread::notifyView() {
 //      QQmlComponent comp(&engine, QUrl("qrc:/Test.qml"));
 //      QMetaObject::invokeMethod(root, "addTab", Q_ARG(QVariant, QVariant::fromValue(&comp)));
     QString qstr(out.str().c_str());
-    ConllListModel clmodel(qstr);
     QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(m_text)), Q_ARG(QVariant, QVariant::fromValue(qstr)));
 //    QMetaObject::invokeMethod(view, "tableUp", Q_ARG(QVariant, QVariant::fromValue(clmodel)));
   }

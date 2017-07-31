@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 
 namespace Lima {
 namespace Gui {
@@ -17,6 +18,15 @@ struct CONLL_Line {
     CONLL_Line(const std::string& str);
 
     const std::string& operator[](unsigned int) const;
+
+    std::string at(int i) {
+      if (i < 0 || i >= tokens.size()) {
+        std::cout << "size=" << tokens.size() << ",i=" << i << std::endl;
+        return "";
+      }
+      else
+      return tokens[i];
+    }
 };
 
 typedef std::vector<CONLL_Line*> CONLL_List;

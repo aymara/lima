@@ -32,6 +32,8 @@ public:
   Q_INVOKABLE QStringList getEntityTypes();
   Q_INVOKABLE QString getHighlightedText();
 
+  EntityItem* findEntity(const std::string& name);
+
 private:
   std::vector<EntityItem> entities;
   QString rawText;
