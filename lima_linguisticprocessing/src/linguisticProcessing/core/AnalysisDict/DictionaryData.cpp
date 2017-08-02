@@ -62,7 +62,7 @@ void DictionaryData::loadBinaryFile(const std::string& file)
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "DictionaryData::loadBinaryFile" << file;
-  if( !QFileInfo(file.c_str()).exists())
+  if( !QFileInfo::exists(file.c_str()))
 //  if( !boost::filesystem3::exists(file))
   {
     std::string mess = "DictionaryData::loadBinaryFile file ";

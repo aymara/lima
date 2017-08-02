@@ -329,7 +329,7 @@ int run(int argc,char** argv)
     QString lpConfigFile = findFileInPaths(configPath, param.lpConfigFile.c_str());
     if (!lpConfigFile.isEmpty())
     {
-      if (QFileInfo(lpConfigFile).exists())
+      if (QFileInfo::exists(lpConfigFile))
       {
         XMLConfigurationFileParser lpconfig(lpConfigFile.toUtf8().constData());
         const string& langConfigFileName=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
@@ -365,7 +365,7 @@ int run(int argc,char** argv)
       bool modexInitialized = false;
       Q_FOREACH(QString configDir, configDirs)
       {
-        if (QFileInfo(configDir + "/" + param.modexConfigFile.c_str()).exists())
+        if (QFileInfo::exists(configDir + "/" + param.modexConfigFile.c_str()))
         {
           QString modexConfigFile = findFileInPaths(configPath, param.modexConfigFile.c_str());
           if (!modexConfigFile.isEmpty())

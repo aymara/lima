@@ -276,7 +276,7 @@ int run(int argc,char** argv)
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
   {
-    if (QFileInfo(configDir + "/" + lpConfigFile.c_str()).exists())
+    if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       // initialize linguistic processing
       Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
