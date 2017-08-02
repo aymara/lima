@@ -70,7 +70,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
     Q_FOREACH(QString file, files)
     {
       // file has been recreated: watch it again, remove it from list of deleted and signal the change
-      if (QFileInfo(file).exists())
+      if (QFileInfo::exists(file))
       {
         // Wait a few time to let the creator of the file to finish its work on it
         delay(1000);
@@ -96,7 +96,7 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
   std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged" << path.toUtf8().constData() << std::endl;
   delay(500);
   // File just disapeared
-  if (!QFileInfo(path).exists())
+  if (!QFileInfo::exists(path))
   {
     std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged removed" << path.toUtf8().constData() << std::endl;
     QMutexLocker locker(&m_pathToDeletedFileMapMutex);

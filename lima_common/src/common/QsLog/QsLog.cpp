@@ -52,7 +52,7 @@ static const char ErrorString[] = "ERROR";
 static const char FatalString[] = "FATAL";
 
 // not using Qt::ISODate because we need the milliseconds too
-static const QString fmtDateTime("yyyy-MM-ddThh:mm:ss.zzz");
+Q_GLOBAL_STATIC_WITH_ARGS(QString, fmtDateTime, ("yyyy-MM-ddThh:mm:ss.zzz"));
 
 static const char* LevelToText(Level theLevel)
 {
@@ -168,10 +168,9 @@ void Logger::Helper::writeToLog()
    QTextStream ts(&s);
    ts << QThread::currentThread();
    const QString completeMessage(QString(QLatin1String("%1 %2 %3 %4"))
-      .arg(QDateTime::currentDateTime().toString(fmtDateTime))
+      .arg(QDateTime::currentDateTime().toString(*fmtDateTime))
       .arg(levelName, 5)
-      .arg(s)
-      .arg(buffer)
+      .arg(s, buffer)
       );
 
    Logger& logger = Logger::instance(zone);

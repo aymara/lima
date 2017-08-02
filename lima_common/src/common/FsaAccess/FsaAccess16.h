@@ -184,6 +184,8 @@ template <typename dicoEdge> class dicoEdgeWriter16 {
   public:
     dicoEdgeWriter16() {}
     void operator()(std::ostream& out, const dicoEdge& edge ) const {
+      LIMA_UNUSED(out)
+      LIMA_UNUSED(edge)
     }
   private:
  };

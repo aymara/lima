@@ -69,9 +69,8 @@ void FileDestination::write(const QString& message, const QString& zone)
 
 void DebugOutputDestination::write(const QString& message, const QString& zone)
 {
-  QString out;
   if (!zone.isEmpty())
-    QsDebugOutput::output(QString(QLatin1String(" : %1 : %2")).arg(zone).arg(message));
+    QsDebugOutput::output(QString(QLatin1String(" : %1 : %2")).arg(zone, message));
   else
     QsDebugOutput::output(message);
 }

@@ -61,8 +61,6 @@ namespace FsaAccess {
     // For IO
     FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const;
 
-  private:
-    dict_packing_type m_packingStatus;
 };
 
 } // namespace compactDict

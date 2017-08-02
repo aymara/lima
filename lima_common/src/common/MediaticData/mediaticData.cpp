@@ -220,7 +220,7 @@ void MediaticData::init(
   {
     Q_FOREACH(QString confFile, configFiles)
     {
-      if (QFileInfo(confPath + "/" + confFile).exists())
+      if (QFileInfo::exists(confPath + "/" + confFile))
       {
         LDEBUG << "MediaticData::init parse configuration file: " << (confPath + "/" + confFile);
         configurationFileFound = true;
@@ -419,7 +419,7 @@ void MediaticDataPrivate::initMedias(
           bool mediaDefinitionFileFound = false;
           for(auto confPath = configPaths.begin(); confPath != configPaths.end(); ++confPath)
           {
-            if (QFileInfo(*confPath + "/" + deffile).exists())
+            if (QFileInfo::exists(*confPath + "/" + deffile))
             {
               m_mediaDefinitionFiles[id] = (*confPath+"/"+deffile);
 #ifdef DEBUG_CD
@@ -709,7 +709,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
           Q_FOREACH(QString confPath, configPaths)
           {
-            if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())
+            if  (QFileInfo::exists(confPath + "/" + string(includeList[k],0,i).c_str()))
             {
 
               std::string  fileName= (confPath + "/" + string(includeList[k],0,i).c_str()).toUtf8().constData();

@@ -104,7 +104,7 @@ private:
 
 
 inline const std::pair<uint64_t, uint64_t> AccessSubWordIterator::operator*() const {
-  return m_delegate->operator*();
+  return m_delegate->operator*(); // clazy:exclude=rule-of-two-soft
 }
 
 inline AbstractSubWordIterator& AccessSubWordIterator::operator++(int i)

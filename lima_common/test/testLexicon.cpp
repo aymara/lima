@@ -212,7 +212,7 @@ int MyInformer::operator() (
 void test_print() {
   MyInformer myInformer;
   LexiconIdGenerator<ByMapStringAccess> lexiconIdGenerator(&myInformer);
-  LimaString termIncr=Common::Misc::utf8stdstring2limastring("lemmeIncrEntry");
+//   LimaString termIncr=Common::Misc::utf8stdstring2limastring("lemmeIncrEntry");
   
 //   uint64_t idTIncr = lexiconIdGenerator.getId(termIncr);
   

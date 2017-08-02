@@ -72,7 +72,7 @@ void LexiconIdGenerator<SimpleStringAccess>::read(FsaAccessDataInputHandler& inp
   } while( size > 0 );
   
   closeTransfert();
-  delete buff;
+  delete[] buff;
 }
 
 template<typename SimpleStringAccess> 
@@ -398,7 +398,7 @@ void LexiconIdGenerator<SimpleStringAccess>::write(FsaAccessDataOutputHandler& o
     outputHandler.saveData(buff,size);
   } while( size > 0 );
   closeTransfert();
-  delete buff;
+  delete[] buff;
   
 }
 

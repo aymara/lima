@@ -60,8 +60,8 @@ class LIMA_FSAACCESS_EXPORT AbstractLexiconIdGenerator : public AbstractLexiconI
 
     // implementation of operation inherited from interface IndexElementIdGenerator
     // rely on abstract operation implemented by concrete IdGenerator (fromMap or from fromFsaAccess)
-    virtual uint64_t getId(const LimaString& word) = 0;
-    virtual uint64_t getId(const std::vector<uint64_t>& structure) = 0;
+    virtual uint64_t getId(const LimaString& word) const = 0;
+    virtual uint64_t getId(const std::vector<uint64_t>& structure) const = 0;
   protected:
      AbstractLexiconIdGeneratorInformer* m_informer;
 };
