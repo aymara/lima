@@ -5,13 +5,7 @@
  * \date 20-06-2017
  */
 
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include "../../lima_common/src/common/tools/FileUtils.h"
+#include "common/tools/FileUtils.h"
 
 
 #include "LimaGuiApplication.h"
