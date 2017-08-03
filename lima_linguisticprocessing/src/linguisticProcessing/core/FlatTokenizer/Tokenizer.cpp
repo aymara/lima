@@ -52,10 +52,7 @@ namespace LinguisticProcessing
 namespace FlatTokenizer
 {
 
-typedef SimpleFactory<MediaProcessUnit,Tokenizer> TokenizerFactory;
-Q_GLOBAL_STATIC_WITH_ARGS(TokenizerFactory,
-                          tokenizerFactory,
-                          (FLATTOKENIZER_CLASSID));
+static SimpleFactory<MediaProcessUnit,Tokenizer> tokenizerFactory(FLATTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
 class TokenizerPrivate
 {
@@ -71,7 +68,6 @@ public:
 
 TokenizerPrivate::TokenizerPrivate() : _automaton()
 {
-  LIMA_UNUSED(tokenizerFactory);
 }
 
 TokenizerPrivate::~TokenizerPrivate()

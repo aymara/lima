@@ -112,7 +112,7 @@ int main(int argc, char **argv)
   else {
     try
     {
-      port = QString::fromAscii(configLimaServer.getModuleGroupParamValue("http-server","address","port").c_str()).toInt();
+      port = QString::fromLatin1(configLimaServer.getModuleGroupParamValue("http-server","address","port").c_str()).toInt();
     }
     catch (NoSuchModule& e1)
     {

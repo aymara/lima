@@ -135,14 +135,14 @@ LimaString initRule(Rule& r,
   
   LimaString& stringType=s.getType();
   try {
-    if (stringType.indexOf(STRING_NEGATIVE_TYPE_RULE)==0) {
+    if (stringType.indexOf(*STRING_NEGATIVE_TYPE_RULE)==0) {
       setType(r,
               stringType.mid(
                           LENGTH_NEGATIVE_TYPE_RULE),
               activeEntityGroups);
       r.setNegative(true);
     }
-    else if (stringType.indexOf(STRING_ABSOLUTE_TYPE_RULE)==0) {
+    else if (stringType.indexOf(*STRING_ABSOLUTE_TYPE_RULE)==0) {
       setType(r,
               stringType.mid(
                           LENGTH_ABSOLUTE_TYPE_RULE),

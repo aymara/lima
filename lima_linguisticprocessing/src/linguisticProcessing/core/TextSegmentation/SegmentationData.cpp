@@ -172,7 +172,7 @@ void Segment::setVerticesFromPositions(uint64_t posBegin,
 
   bool first=true;
   while (!toVisit.empty()) {
-    pair<LinguisticGraphVertex,LinguisticGraphVertex> v=toVisit.front();
+    pair<LinguisticGraphVertex,LinguisticGraphVertex> v=toVisit.front(); // clazy:exclude=rule-of-two-soft
     toVisit.pop();
     if (v.first == anagraph->lastVertex()) {
       break;

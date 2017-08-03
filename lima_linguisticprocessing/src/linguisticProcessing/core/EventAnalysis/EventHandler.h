@@ -45,6 +45,7 @@ namespace EventAnalysis
 */
 class LIMA_EVENTANALISYS_EXPORT EventHandler : public Lima::AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   EventHandler(std::ostream* out);
 

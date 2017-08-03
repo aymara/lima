@@ -145,8 +145,6 @@ public:
 private:
   std::string m_featureName;
   Common::MediaticData::EntityType m_type;
-  FsaStringsPool* m_sp;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   QVariant::Type m_featureType;
 };
 
@@ -168,7 +166,6 @@ public:
 private:
   std::string m_featureName;
   Common::MediaticData::EntityType m_type;
-  QVariant::Type m_featureType;
 };
 
 /** 
@@ -197,8 +194,6 @@ public:
 private:
   std::string m_featureName;
   Common::MediaticData::EntityType m_type;
-  FsaStringsPool* m_sp;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   QVariant::Type m_featureType;
 };
 
@@ -226,8 +221,6 @@ public:
 private:
   std::string m_featureName;
   Common::MediaticData::EntityType m_type;
-  FsaStringsPool* m_sp;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   QVariant::Type m_featureType;
 };
 

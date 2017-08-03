@@ -115,8 +115,8 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     if (s[0] == CHAR_COMMENT) { continue; } // skip comments
 
     // check if it is a type definition
-    if (s.indexOf(STRING_DEFINE_ENCODING)==0) {
-      m_recognizerEncoding = Misc::limastring2utf8stdstring(s.mid(STRING_DEFINE_ENCODING.size()));
+    if (s.indexOf(*STRING_DEFINE_ENCODING)==0) {
+      m_recognizerEncoding = Misc::limastring2utf8stdstring(s.mid(STRING_DEFINE_ENCODING->size()));
 #ifdef DEBUG_LP
       LDEBUG << "Got encoding definition: '"
              << m_recognizerEncoding << "'";
@@ -124,14 +124,14 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       continue;
     }
     // check if it is a type definition
-    if (s.indexOf(STRING_DEFINE_TYPE)==0) {
+    if (s.indexOf(*STRING_DEFINE_TYPE)==0) {
       // ignore it : deprecated
       continue;
     }
     
-    if (s.indexOf(STRING_USING_LIBS)==0) {
+    if (s.indexOf(*STRING_USING_LIBS)==0) {
       int
-      begin=STRING_USING_ENTITYGROUPS.length(),
+      begin=STRING_USING_ENTITYGROUPS->length(),
       next=0;
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
@@ -146,9 +146,9 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     }
       
 
-    if (s.indexOf(STRING_USING_ENTITYGROUPS)==0) {
+    if (s.indexOf(*STRING_USING_ENTITYGROUPS)==0) {
       int
-        begin=STRING_USING_ENTITYGROUPS.length(),
+        begin=STRING_USING_ENTITYGROUPS->length(),
         next=0;
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
@@ -162,17 +162,17 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       continue;
     }
 
-    if (s.indexOf(STRING_DEFINE_ENTITYTYPES)==0) {
+    if (s.indexOf(*STRING_DEFINE_ENTITYTYPES)==0) {
       //default action to be associated to all rules
       LWARN << "this syntax (" 
-            << Common::Misc::limastring2utf8stdstring(STRING_DEFINE_ENTITYTYPES) 
+            << Common::Misc::limastring2utf8stdstring(*STRING_DEFINE_ENTITYTYPES) 
             << ") is deprecated: should be 'using modex XXX,YYY'";
       continue;
     }
 
-    if (s.indexOf(STRING_USING_MODEX)==0) {
+    if (s.indexOf(*STRING_USING_MODEX)==0) {
       int
-        begin=STRING_USING_MODEX.length(),
+        begin=STRING_USING_MODEX->length(),
         next=0;
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
@@ -187,19 +187,19 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       continue;
     }
 
-    if (s.indexOf(STRING_DEFINE_DEFAULTACTION)==0) {
+    if (s.indexOf(*STRING_DEFINE_DEFAULTACTION)==0) {
       //default action to be associated to all rules
       m_defaultAction+=
         CHAR_BEGIN_ACTION+
-        s.mid(STRING_DEFINE_DEFAULTACTION.length());
+        s.mid(STRING_DEFINE_DEFAULTACTION->length());
       continue;
     }
 
-    if (s.indexOf(STRING_UNSET_DEFAULTACTION)==0) {
+    if (s.indexOf(*STRING_UNSET_DEFAULTACTION)==0) {
       //remove a default action in current default actions 
       LimaString action=
         CHAR_BEGIN_ACTION+
-        s.mid(STRING_UNSET_DEFAULTACTION.size());
+        s.mid(STRING_UNSET_DEFAULTACTION->size());
       int i=m_defaultAction.indexOf(action);
       if (i==-1) {
         printWarning("cannot unset default action (not defined)",s);
@@ -210,13 +210,13 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     }
 
     // check if it is a sub-automaton definition
-    if (s.indexOf(STRING_DEFINE_SUBAUTOMATON)==0) {
-      readSubAutomaton(s.mid(STRING_DEFINE_SUBAUTOMATON.size()),gazeteers,subAutomatons);
+    if (s.indexOf(*STRING_DEFINE_SUBAUTOMATON)==0) {
+      readSubAutomaton(s.mid(STRING_DEFINE_SUBAUTOMATON->size()),gazeteers,subAutomatons);
       continue;
     }
 
     // check if must include external rules files
-    if (s.indexOf(STRING_INCLUDE_GAZ) == 0) {
+    if (s.indexOf(*STRING_INCLUDE_GAZ) == 0) {
       int
         beginFilename=LENGTH_INCLUDE_GAZ,
         nextFilename=0;
@@ -232,7 +232,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     }
 
     // check if must load gazeteers from external files
-    if (s.indexOf(STRING_USE_GAZ) == 0) {
+    if (s.indexOf(*STRING_USE_GAZ) == 0) {
       int
         beginFilename=LENGTH_USE_GAZ,
         nextFilename=0;
@@ -443,12 +443,12 @@ readSubAutomaton(const LimaString& line,
     }
     LimaString name = s.left(j);
     LimaString value = s.mid(j+1);
-    if (name==STRING_SUBAUTOMATON_PATTERN) {
+    if (name==*STRING_SUBAUTOMATON_PATTERN) {
       // add parenthesis around the value (safer)
       sub.setPattern(Common::Misc::utf8stdstring2limastring("(")+value+Common::Misc::utf8stdstring2limastring(")"));
     }
-    else if (name.indexOf(STRING_SUBAUTOMATON_INDEX)==0) {
-      name.remove(0,STRING_SUBAUTOMATON_INDEX.size());
+    else if (name.indexOf(*STRING_SUBAUTOMATON_INDEX)==0) {
+      name.remove(0,STRING_SUBAUTOMATON_INDEX->size());
       sub.addAttribute(name,value);
     }
     else {
@@ -458,7 +458,7 @@ readSubAutomaton(const LimaString& line,
   if (sub.getPattern().isEmpty()) {
     ostringstream oss;
     oss << "definition of sub-automaton must have at least an attribute "
-        << Common::Misc::limastring2utf8stdstring(STRING_SUBAUTOMATON_PATTERN);
+        << Common::Misc::limastring2utf8stdstring(*STRING_SUBAUTOMATON_PATTERN);
     throwError(oss.str(),line);
   }
 

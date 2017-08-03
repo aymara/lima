@@ -20,7 +20,7 @@
  *   Copyright (C) 2004-2012 by CEA LIST                               *
  *                                                                         *
  ***************************************************************************/
-#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICT_MULTILEVELNALYSISDICTIONARYITERATOR_H
+#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICT_MULTILEVELANALYSISDICTIONARYITERATOR_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICT_MULTILEVELANALYSISDICTIONARYITERATOR_H
 
 #include "AnalysisDictExport.h"

@@ -45,7 +45,7 @@ namespace BagOfWords {
 class LIMA_BOW_EXPORT DefaultIdGenerator : public AbstractLexiconIdGenerator
 {
  public:
-  DefaultIdGenerator(AbstractLexiconIdGeneratorInformer* informer, const uint64_t firstId=1);
+  DefaultIdGenerator(AbstractLexiconIdGeneratorInformer* informer, const uint64_t lastId=1);
   ~DefaultIdGenerator();
   
   uint64_t getId(const LimaString& /*unused word*/) const {
@@ -72,7 +72,6 @@ class LIMA_BOW_EXPORT DefaultIdGenerator : public AbstractLexiconIdGenerator
   }
 
  private:
-  uint64_t m_firstId;
   uint64_t m_lastId;
   uint64_t m_simpleTermCount;
   uint64_t m_compoundTermCount;

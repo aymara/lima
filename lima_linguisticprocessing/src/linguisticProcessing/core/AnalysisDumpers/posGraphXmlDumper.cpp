@@ -587,7 +587,7 @@ void posGraphXmlDumper::naturalCompoundTokenString(const Common::BagOfWords::BoW
     if (i < subresults.size())
     {
 //       qDebug() << "posGraphXmlDumper::naturalCompoundTokenString recurseResult i=" << i << " ; subresults size=" << subresults.size();
-      QSet<LimaString> E = subresults.values()[i];
+      QSet<LimaString> E = subresults.values()[i]; // clazy:exclude=container-anti-pattern
       QSet<LimaString> nextResult = recurseResult(subresults,i+1,head);
       Q_FOREACH(const LimaString& e, E)
       {

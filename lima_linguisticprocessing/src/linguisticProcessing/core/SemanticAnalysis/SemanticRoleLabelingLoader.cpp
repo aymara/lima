@@ -319,9 +319,8 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
         if(descriptors[NBCOLSINSRLBEFOREFRAME]!="_")
         {
             QString verbalClass=descriptors[NBCOLSINSRLBEFOREFRAME];
-            QString vClass=descriptors[NBCOLSINSRLBEFOREFRAME];
 #ifdef DEBUG_LP
-            LDEBUG << "ConllHandler::extractSemanticInformation verbalClass" << vClass;
+            LDEBUG << "ConllHandler::extractSemanticInformation verbalClass" << verbalClass;
 #endif
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
             if (classIndex >= m_verbalClasses.size())
@@ -329,7 +328,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
               LERROR << "ConllHandler::extractSemanticInformation classIndex error" <<  classIndex;
               break;
             }
-            m_verbalClasses[classIndex]=qMakePair(limaTokenId, vClass);
+            m_verbalClasses[classIndex]=qMakePair(limaTokenId, verbalClass);
             classIndex++;
         }
 

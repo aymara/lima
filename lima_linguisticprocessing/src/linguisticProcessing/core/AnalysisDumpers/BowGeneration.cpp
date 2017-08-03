@@ -1313,7 +1313,7 @@ boost::shared_ptr< BoWPredicate > BowGenerator::createPredicate(
   LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< annot.type().c_str() << " is/are ";
 #endif
   QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > roles;
-  const LimaString typeAnnot="SemanticRole";
+//   const LimaString typeAnnot="SemanticRole";
   for (auto verticesIt = vertices.begin(); verticesIt != vertices.end(); verticesIt++)
   {
     const AnnotationGraphVertex semRoleVx = *verticesIt;
@@ -1651,8 +1651,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
   {
     return boost::shared_ptr< BoWToken >();
   }
-  // construire un BoWTerm avec le pp pour tete et l'aux pour extension
-  LimaString lemma, infl;
+  // Build a BoWTerm with the preposition group as head and the aux as extension
   
   boost::shared_ptr< BoWToken > complex(
     new BoWToken( 

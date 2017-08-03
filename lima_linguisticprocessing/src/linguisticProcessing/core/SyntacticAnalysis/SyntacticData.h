@@ -146,7 +146,7 @@ typedef std::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Mediat
       }
         else
         {
-          Relation r = m_relations.front();
+          Relation r = m_relations.front(); // clazy:exclude=rule-of-two-soft
           m_relations.pop_front();
           return r;
         }
@@ -190,7 +190,7 @@ typedef std::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Mediat
 
     inline Relation relationStoredForSelectionalConstraint()
     {
-      return m_relationStoredForSelectionalConstraint;
+      return m_relationStoredForSelectionalConstraint; // clazy:exclude=rule-of-two-soft
     };
 
     bool removeDependency(const LinguisticGraphVertex& v1,

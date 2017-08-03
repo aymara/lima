@@ -42,6 +42,7 @@ namespace AnalysisDict {
 //class FsaRwAccessResource : public AbstractRwAccessResource
 class LIMA_ANALYSISDICT_EXPORT FsaRwAccessResource : public FsaAccessResource
 {
+  Q_OBJECT
 public:
     FsaRwAccessResource();
 

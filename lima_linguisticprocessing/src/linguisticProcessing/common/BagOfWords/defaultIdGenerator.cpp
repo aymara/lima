@@ -32,8 +32,8 @@ namespace Common {
 namespace BagOfWords {
 
 DefaultIdGenerator::
-DefaultIdGenerator(AbstractLexiconIdGeneratorInformer* informer, const uint64_t firstId)
- : AbstractLexiconIdGenerator(informer), m_firstId(firstId), m_lastId(firstId),
+DefaultIdGenerator(AbstractLexiconIdGeneratorInformer* informer, const uint64_t lastId)
+ : AbstractLexiconIdGenerator(informer), m_lastId(lastId),
    m_simpleTermCount(0), m_compoundTermCount(0)  
 {
 }

@@ -94,7 +94,6 @@ private:
 
   std::string m_outputSuffix;
   std::string m_graphId;
-  const Common::PropertyCode::PropertyCodeManager* m_propertyCodeManager;
   MediaId m_language;
   DependencyGraphEdge m_lastEdge;
   std::string m_memo;

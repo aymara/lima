@@ -60,16 +60,16 @@ using namespace Lima::Common::Misc;
 // declarations
 //****************************************************************************
 // help mode & usage
-static const string USAGE("usage : readBoWFile [options] fileIn fileOut\n");
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : readBoWFile [options] fileIn fileOut\n"));
 
-static const string HELP("read a binary file containing a bag-of-words representations of texts or documents (example program)\n"
-                         +USAGE
+Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("read a binary file containing a bag-of-words representations of texts or documents (example program)\n")
+                         +*USAGE
                          +"\n"
 +"--xml : use XML as output format\n"
 +"--output-format=(text|xml) : format of the output\n"
 +"--use-iterator use BoWToken iterator (include partial compounds)\n"
 +"--use-index-iterator use IndexElement iterator  (structured ids)\n"
-+"--help : this help page\n"
++"--help : this help page\n")
                         );
 
 typedef enum {
@@ -136,7 +136,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     {
       cerr << "unrecognized option " <<  s
       << endl;
-      cerr << USAGE << endl;
+      cerr << *USAGE << endl;
       exit(1);
     }
     else
@@ -219,29 +219,22 @@ public:
   SBoWStatWriter():BoWXMLWriter(std::cout), m_nbDocs(0) {}
   ~SBoWStatWriter() {}
 
-  void openSBoWNode(std::ostream& /*os*/, 
-                    const Misc::GenericDocumentProperties* /*properties*/,
-                    const std::string& /*elementName*/)
-  {}
-
-  void openSBoWIndexingNode(std::ostream& /*os*/, 
+  void openSBoWIndexingNode(
                             const Misc::GenericDocumentProperties* /*properties*/,
                             const std::string& /*elementName*/)
   {
     m_nbDocs++;
   }
 
-  void processSBoWText(std::ostream& /*os*/, 
-                       const BoWText* /*boWText*/, 
-                       bool /*useIterators*/) 
+  void processSBoWText(const BoWText* , bool ,
+                         bool ) 
   {}
 
-  void processProperties(std::ostream& /*os*/, 
-                         const Misc::GenericDocumentProperties* /*properties*/, 
-                         bool /*useIterators*/)
+  void processProperties(const Misc::GenericDocumentProperties* /*properties*/, bool /*useIterators*/,
+                         bool /*useIndexIterator*/)
   {}
 
-  void closeSBoWNode(std::ostream& /*os*/)
+  void closeSBoWNode()
   {}
 
   friend ostream& operator<<(ostream& os, const SBoWStatWriter& writer) {
@@ -339,9 +332,9 @@ int run(int argc,char** argv)
   
   std::string commonConfigFile = "lima-common.xml";
   std::deque<std::string> langs;
-  if (argc<1) {    cerr << USAGE; exit(1); }
+  if (argc<1) {    cerr << *USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
-  if (param.help) { cerr << HELP; exit(1); }
+  if (param.help) { cerr << *HELP; exit(1); }
 
   BOWLOGINIT;
 

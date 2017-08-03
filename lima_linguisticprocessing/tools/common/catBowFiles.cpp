@@ -42,11 +42,11 @@ using namespace Lima::Common::BagOfWords;
 // declarations
 //****************************************************************************
 // help mode & usage
-static const string USAGE("usage : catBowFiles files\n");
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : catBowFiles files\n"));
 
-static const string HELP("concatenates several BoW files into one, output on stdout\n"
-+USAGE
-+"\n"
+Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("concatenates several BoW files into one, output on stdout\n")
++*USAGE
++"\n")
 );
 
 //****************************************************************************

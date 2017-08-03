@@ -137,7 +137,7 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
 
 void SyntagmaticMatrix::deleteMatrix()
 {
-  std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::iterator it, it_end;
+  SyntagmaticMatrixFilter::iterator it, it_end;
 
   it = m_filters.begin(); it_end = m_filters.end();
   for (; it != it_end; it++)
@@ -149,7 +149,7 @@ void SyntagmaticMatrix::deleteMatrix()
 void SyntagmaticMatrix::display() const
 {
   std::cout << "Displaying a matrix" << std::endl;
-  for (std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator it(m_filters.begin()); it != m_filters.end(); it++)
+  for (SyntagmaticMatrixFilter::const_iterator it(m_filters.begin()); it != m_filters.end(); it++)
   {
     std::cout << ((*it).first) << " : ";
     for (std::set< TokenFilter, tfless >::const_iterator it2((*it).second.m_filters.begin()); it2 != (*it).second.m_filters.end(); it2++)
@@ -158,6 +158,28 @@ void SyntagmaticMatrix::display() const
     }
     std::cout << std::endl << std::endl;
   }
+}
+
+SyntagmaticMatrixFilter& SyntagmaticMatrix::filters()
+{
+  return m_filters;
+}
+
+const SyntagmaticMatrixFilter& SyntagmaticMatrix::filters() const
+{
+  return m_filters;
+}
+
+SyntagmaticMatrixFilter::const_iterator SyntagmaticMatrix::find(const TokenFilter& f) const
+{
+  SyntagmaticMatrixFilter::const_iterator it = m_filters.begin();
+  SyntagmaticMatrixFilter::const_iterator it_end = m_filters.end();
+  for (; it != it_end; it++)
+  {
+    if ( tf_dwless()( (*it).first, f))
+      return it;
+  }
+  return it_end;
 }
 
 void SyntagmDefStruct::display() const
@@ -228,7 +250,7 @@ bool SyntagmDefStruct::canVerbalChainEndBy(const MorphoSyntacticData* filter) co
 bool SyntagmDefStruct::belongsToNominalMatrix(const MorphoSyntacticData* src, const MorphoSyntacticData* dest) const
 {
   SALOGINIT;
-  std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator it, it_end;
+  SyntagmaticMatrixFilter::const_iterator it, it_end;
   it = m_nominalMatrix.begin();
   it_end = m_nominalMatrix.end(); 
   for (; it != it_end; it++)
@@ -254,8 +276,8 @@ bool SyntagmDefStruct::belongsToNominalMatrix(const MorphoSyntacticData* src, co
 {
   TokenFilter srcTf(src,m_microAccessor);
   TokenFilter destTf(dest,m_microAccessor);
-  std::pair<std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator,std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator> ends =
-      std::make_pair(m_nominalMatrix.m_filters.begin(),m_nominalMatrix.m_filters.end());
+  auto ends = std::make_pair(m_nominalMatrix.filters().begin(),
+                             m_nominalMatrix.filters().end());
   for (; ends.first != ends.second; (ends.first)++)
   {
     if ( tf_dwless()(ends.first->first,srcTf) )
@@ -271,7 +293,7 @@ bool SyntagmDefStruct::belongsToNominalMatrix(const MorphoSyntacticData* src, co
 bool SyntagmDefStruct::belongsToVerbalMatrix(const MorphoSyntacticData* src, const MorphoSyntacticData* dest) const
 {
 /*
-  std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator  it = m_verbalMatrix.find(src);
+  SyntagmaticMatrixFilter::const_iterator  it = m_verbalMatrix.find(src);
   if ( it == m_verbalMatrix.end() ) return false;
   const SyntagmaticMatrixRow& row = (*it).second;
   SyntagmaticMatrixRow::iterator itRow = row.find(dest);
@@ -279,8 +301,8 @@ bool SyntagmDefStruct::belongsToVerbalMatrix(const MorphoSyntacticData* src, con
 */
   TokenFilter srcTf(src,m_microAccessor);
   TokenFilter destTf(dest,m_microAccessor);
-  std::pair<std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator,std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator> ends =
-      std::make_pair(m_verbalMatrix.m_filters.begin(),m_verbalMatrix.m_filters.end());
+  auto ends = std::make_pair(m_verbalMatrix.filters().begin(),
+                             m_verbalMatrix.filters().end());
 // @todo this equal_range does not work. See why.
 //      std::equal_range(m_verbalMatrix.begin(),m_verbalMatrix.end(), 
 //          TokenFilter(src), tf_dwless());

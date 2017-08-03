@@ -59,7 +59,7 @@ m_subPartIndex(0)
 }
 
 SubPartIndex::SubPartIndex(const SubPartIndex& i):
-m_partIndex(i.m_partIndex),
+m_partIndex(i.m_partIndex), // clazy:exclude=rule-of-two-soft
 m_subPartIndex(0) {
   if (i.hasSubPart()) {
     m_subPartIndex=new SubPartIndex(*(i.getSubPartIndex()));

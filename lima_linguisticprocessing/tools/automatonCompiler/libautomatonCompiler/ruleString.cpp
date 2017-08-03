@@ -573,6 +573,7 @@ addUnaryConstraint(const std::string& constraintName,
                    const bool isAction,
                    const bool actionIfSuccess)
 {
+  LIMA_UNUSED(actionIfSuccess)
   if (isAction) {
     //unary actions are not supported yet
     AUCLOGINIT;
@@ -975,7 +976,7 @@ void RuleString::parseIndex(const LimaString& str,
 {
   int i=str.indexOf(CHAR_CONSTRAINT_INDEX);
   if (i != -1) { // group subindex indicated
-    index=str.left(i).toInt();
+    index=str.leftRef(i).toInt();
     subindex=str.mid(i+1);
   }
   else {

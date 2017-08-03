@@ -44,7 +44,7 @@ public:
   AutomatonCompilerException(const std::string& mes):
     LimaException(),m_msg(mes) {};
   ~AutomatonCompilerException() throw() {};
-  std::string what() { return m_msg; }
+  const char* what() const throw() { return m_msg.c_str(); } 
 protected:
   std::string m_msg;
 };

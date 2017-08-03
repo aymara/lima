@@ -78,7 +78,9 @@ TransitionUnit*
                  const bool keep,
                  const bool head)
 {
-  int gazeteerIndex;
+  LIMA_UNUSED(language)
+  LIMA_UNUSED(activeEntityGroups)
+  std::size_t gazeteerIndex;
   for (gazeteerIndex=0; gazeteerIndex<gazeteers.size(); gazeteerIndex++) {
     if (gazeteers[gazeteerIndex].alias() == gazeteerName) {
       break;
@@ -128,6 +130,7 @@ TransitionUnit* createTransition(const LimaString str,
                                  const std::vector<LimaString>& gazeteerAsVectorOfString
                                  ) 
 {
+  LIMA_UNUSED(gazeteerAsVectorOfString)
 #ifdef DEBUG_LP
   AUCLOGINIT;
 #endif
@@ -212,13 +215,13 @@ TransitionUnit* createTransition(const LimaString str,
   // numeric transition
   bool isNumeric(false);
   int transitionKeySize(0);
-  if (s.indexOf(STRING_NUM_NAME_TR) == 0 && s != STRING_NUM_NAME_TR) {
+  if (s.indexOf(*STRING_NUM_NAME_TR) == 0 && s != *STRING_NUM_NAME_TR) {
     isNumeric=true;
-    transitionKeySize=STRING_NUM_NAME_TR.size();
+    transitionKeySize=STRING_NUM_NAME_TR->size();
   }
-  else if (s.indexOf(STRING_NUM_NAME_TR2) == 0 && s != STRING_NUM_NAME_TR2) {
+  else if (s.indexOf(*STRING_NUM_NAME_TR2) == 0 && s != *STRING_NUM_NAME_TR2) {
     isNumeric=true;
-    transitionKeySize=STRING_NUM_NAME_TR2.size();
+    transitionKeySize=STRING_NUM_NAME_TR2->size();
   }
   if (isNumeric) {
     uint64_t val(NumericTransition::noValue);
@@ -226,18 +229,18 @@ TransitionUnit* createTransition(const LimaString str,
     uint64_t max(NumericTransition::noValue);
     if (s[transitionKeySize] == CHAR_NUM_EQUAL_TR)
     {
-      val=s.mid(transitionKeySize+1).toULong();
+      val=s.midRef(transitionKeySize+1).toULong();
     }
     else if (s[transitionKeySize] == CHAR_NUM_LE_TR)
     {
       //int i(s.find(CHAR_NUM_GE_TR,LENGTH_NUM_NAME_TR+1));
       int i(s.indexOf(CHAR_NUM_GE_TR,transitionKeySize+1));
       if (i==-1) {
-        max=s.mid(transitionKeySize+1).toULong();
+        max=s.midRef(transitionKeySize+1).toULong();
       }
       else {
-        max=s.mid(transitionKeySize+1, i-transitionKeySize-1).toULong();
-        min=s.mid(i+1).toULong();
+        max=s.midRef(transitionKeySize+1, i-transitionKeySize-1).toULong();
+        min=s.midRef(i+1).toULong();
       }
     }
     else if (s[transitionKeySize] == CHAR_NUM_GE_TR)
@@ -245,12 +248,12 @@ TransitionUnit* createTransition(const LimaString str,
       //int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,LENGTH_NUM_NAME_TR+1));
       int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,transitionKeySize+1));
       if (i==-1) {
-        min=s.mid(transitionKeySize+1).toULong();
+        min=s.midRef(transitionKeySize+1).toULong();
       }
       else {
-        min=s.mid(transitionKeySize+1,
+        min=s.midRef(transitionKeySize+1,
                   i-transitionKeySize-1).toULong();
-        max=s.mid(i+1).toULong();
+        max=s.midRef(i+1).toULong();
       }
     }
 
@@ -275,10 +278,10 @@ TransitionUnit* createTransition(const LimaString str,
   }
   // ----------------------------------------------------------------------
   // TStatus transition (status returned by the tokenizer)
-  else if (s.indexOf(STRING_TSTATUS_TR,0) == 0) {
+  else if (s.indexOf(*STRING_TSTATUS_TR,0) == 0) {
     t = createStructuredTStatusTransition(s,LENGTH_TSTATUS_TR);
   }
-  else if (s.indexOf(STRING_TSTATUS_TR_small,0) == 0) {
+  else if (s.indexOf(*STRING_TSTATUS_TR_small,0) == 0) {
     t = createDefaultTStatusTransition(s,LENGTH_TSTATUS_TR);
   }
   // ----------------------------------------------------------------------
@@ -291,7 +294,7 @@ TransitionUnit* createTransition(const LimaString str,
   */
   // ----------------------------------------------------------------------
   // * transition
-  else if (s == STRING_ANY_TR) {
+  else if (s == *STRING_ANY_TR) {
     t = new StarTransition();
   }
   // ----------------------------------------------------------------------
@@ -563,43 +566,43 @@ TStatusTransition* createStructuredTStatusTransition(const LimaString& s,
   int current=begin;
   t->setStatus(TStatus()); // initializes TStatus
 
-  if (s.indexOf(TSTATUS_ALPHANUM,current) == current) {
+  if (s.indexOf(*TSTATUS_ALPHANUM,current) == current) {
     t->status().setStatus(T_ALPHANUMERIC);
   }
-  else if (s.indexOf(TSTATUS_ALPHA,current) == current) {
+  else if (s.indexOf(*TSTATUS_ALPHA,current) == current) {
     t->status().setStatus(T_ALPHA);
     current+=LENGTH_TSTATUS_ELT;
     // capital status
-    if (s.indexOf(TSTATUS_ALPHACAP_CAPITAL,current) == current) {
+    if (s.indexOf(*TSTATUS_ALPHACAP_CAPITAL,current) == current) {
       t->status().setAlphaCapital(T_CAPITAL);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_ALPHACAP_SMALL,current) == current) {
+    else if (s.indexOf(*TSTATUS_ALPHACAP_SMALL,current) == current) {
       t->status().setAlphaCapital(T_SMALL);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_ALPHACAP_CAPITAL_1ST,current) == current) {
+    else if (s.indexOf(*TSTATUS_ALPHACAP_CAPITAL_1ST,current) == current) {
       t->status().setAlphaCapital(T_CAPITAL_1ST);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_ALPHACAP_ACRONYM,current) == current) {
+    else if (s.indexOf(*TSTATUS_ALPHACAP_ACRONYM,current) == current) {
       t->status().setAlphaCapital(T_ACRONYM);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_ALPHACAP_CAPITAL_SMALL,current) == current) {
+    else if (s.indexOf(*TSTATUS_ALPHACAP_CAPITAL_SMALL,current) == current) {
       t->status().setAlphaCapital(T_CAPITAL_SMALL);
       current+=LENGTH_TSTATUS_ELT;
     }
     // roman status
-    if (s.indexOf(TSTATUS_ALPHAROMAN_CARDINAL,current) == current) {
+    if (s.indexOf(*TSTATUS_ALPHAROMAN_CARDINAL,current) == current) {
       t->status().setAlphaRoman(T_CARDINAL_ROMAN);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_ALPHAROMAN_ORDINAL,current) == current) {
+    else if (s.indexOf(*TSTATUS_ALPHAROMAN_ORDINAL,current) == current) {
       t->status().setAlphaRoman(T_ORDINAL_ROMAN);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_ALPHAROMAN_NOT,current) == current) {
+    else if (s.indexOf(*TSTATUS_ALPHAROMAN_NOT,current) == current) {
       t->status().setAlphaRoman(T_NOT_ROMAN);
       current+=LENGTH_TSTATUS_ELT;
     }
@@ -608,47 +611,47 @@ TStatusTransition* createStructuredTStatusTransition(const LimaString& s,
     }
 
     // hyphen or possessive
-    if (s.indexOf(TSTATUS_ISHYPHEN,current) == current) {
+    if (s.indexOf(*TSTATUS_ISHYPHEN,current) == current) {
       t->status().setAlphaHyphen(true);
     }
-    if (s.indexOf(TSTATUS_ISPOSSESSIVE,current) == current) {
+    if (s.indexOf(*TSTATUS_ISPOSSESSIVE,current) == current) {
       t->status().setAlphaPossessive(true);
     }
   }
-  else if (s.indexOf(TSTATUS_NUMERIC,current) == current) {
+  else if (s.indexOf(*TSTATUS_NUMERIC,current) == current) {
     t->status().setStatus(T_NUMERIC);
     current+=LENGTH_TSTATUS_ELT;
     // numeric status
-    if (s.indexOf(TSTATUS_NUMERIC_INTEGER,current) == current) {
+    if (s.indexOf(*TSTATUS_NUMERIC_INTEGER,current) == current) {
       t->status().setNumeric(T_INTEGER);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_NUMERIC_COMMA_NUMBER,current) == current) {
+    else if (s.indexOf(*TSTATUS_NUMERIC_COMMA_NUMBER,current) == current) {
       t->status().setNumeric(T_COMMA_NUMBER);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_NUMERIC_DOT_NUMBER,current) == current) {
+    else if (s.indexOf(*TSTATUS_NUMERIC_DOT_NUMBER,current) == current) {
       t->status().setNumeric(T_DOT_NUMBER);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_NUMERIC_FRACTION,current) == current) {
+    else if (s.indexOf(*TSTATUS_NUMERIC_FRACTION,current) == current) {
       t->status().setNumeric(T_FRACTION);
       current+=LENGTH_TSTATUS_ELT;
     }
-    else if (s.indexOf(TSTATUS_NUMERIC_ORDINAL_INTEGER,current) == current) {
+    else if (s.indexOf(*TSTATUS_NUMERIC_ORDINAL_INTEGER,current) == current) {
       t->status().setNumeric(T_ORDINAL_INTEGER);
       current+=LENGTH_TSTATUS_ELT;
     }
   }
-  else if (s.indexOf(TSTATUS_PATTERN,current) == current) {
+  else if (s.indexOf(*TSTATUS_PATTERN,current) == current) {
     t->status().setStatus(T_PATTERN);
     current+=LENGTH_TSTATUS_ELT;
   }
-  else if (s.indexOf(TSTATUS_WRD_BRK,current) == current) {
+  else if (s.indexOf(*TSTATUS_WRD_BRK,current) == current) {
     t->status().setStatus(T_WORD_BRK);
     current+=LENGTH_TSTATUS_ELT;
   }
-  else if (s.indexOf(TSTATUS_SENTENCE_BRK,current) == current) {
+  else if (s.indexOf(*TSTATUS_SENTENCE_BRK,current) == current) {
     t->status().setStatus(T_SENTENCE_BRK);
     current+=LENGTH_TSTATUS_ELT;
   }

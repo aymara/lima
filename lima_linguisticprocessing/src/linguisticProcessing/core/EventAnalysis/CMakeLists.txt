@@ -23,6 +23,7 @@ add_definitions(-DLIMA_EVENTANALISYS_EXPORTING)
 
 LIMALP_WRAP_HEADERS(eventanalyzer
   EventTemplateDefinitionResource.h
+  EventHandler.h
 )
 
 SET(lima-lp-eventanalyzer_LIB_SRCS EventDataDumper.cpp

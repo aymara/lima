@@ -61,7 +61,11 @@ public:
   
   
   /** @brief The functions that dumps a ConceptModifier on an output stream */
-  void dump(std::ostream& os,const FsaStringsPool& sp) const {}
+  void dump(std::ostream& os,const FsaStringsPool& sp) const 
+  {
+    LIMA_UNUSED(os)
+    LIMA_UNUSED(sp)
+  }
 
   inline StringsPoolIndex getRealization() const;
 //   inline void setRealization(StringsPoolIndex realization);
@@ -120,14 +124,18 @@ public:
 class LIMA_COMPOUNDS_EXPORT DumpCompoundTokenAnnotation : public Common::AnnotationGraphs::AnnotationData::Dumper {
 public:
 
-  DumpCompoundTokenAnnotation(const FsaStringsPool& sp) : m_sp(sp) {};
+  DumpCompoundTokenAnnotation(const FsaStringsPool& sp)
+  {
+    LIMA_UNUSED(sp)
+  }
   
-  virtual int dump(
-      std::ostream& os, 
-      Common::AnnotationGraphs::GenericAnnotation& ga) const {}
-      
-private:
-  const FsaStringsPool& m_sp;
+  virtual int dump(std::ostream& os, 
+                   Common::AnnotationGraphs::GenericAnnotation& ga) const 
+  {
+    LIMA_UNUSED(os)
+    LIMA_UNUSED(ga)
+    return 0;
+  }
 };
 
 

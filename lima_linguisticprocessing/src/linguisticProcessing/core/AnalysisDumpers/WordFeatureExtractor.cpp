@@ -310,7 +310,7 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
          LinguisticGraphVertex v,
          AnalysisContent &analysis) const
 {
-  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  LIMA_UNUSED(analysis)
   Token* token=get(vertex_token,*(graph->getGraph()),v);
   if (token==0) {
     return "";

@@ -21,8 +21,11 @@ add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 ########### next target ###############
 LIMALP_WRAP_HEADERS(analysisdict
   AbstractAnalysisDictionary.h
+  AbstractRwAccessResource.h
   EnhancedAnalysisDictionary.h
   FsaAccessResource.h
+  FsaRwAccessResource.h
+  MultiLevelAnalysisDictionary.h
 )
 
 SET(lima-lp-analysisdict_LIB_SRCS

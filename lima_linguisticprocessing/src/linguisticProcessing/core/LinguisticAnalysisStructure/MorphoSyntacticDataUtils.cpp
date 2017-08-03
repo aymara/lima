@@ -92,6 +92,12 @@ ExcludePropertyPredicate::ExcludePropertyPredicate(const Common::PropertyCode::P
   m_values(values)
 {}
 
+ExcludePropertyPredicate::ExcludePropertyPredicate(const ExcludePropertyPredicate& epp) :
+  m_property(epp.m_property),
+  m_values(epp.m_values)
+{
+}
+
 bool ExcludePropertyPredicate::operator()(const LinguisticElement& elem) const
 {
   return (m_values.find(m_property->readValue(elem.properties)) == m_values.end());

@@ -100,8 +100,8 @@ Gazeteer& Gazeteer::add(const Gazeteer& g) {
 // check if word is simple word (no category, no Tstatus)
 /***********************************************************************/
 void Gazeteer::addWord(const LimaString& s) {
-  if( (s.startsWith(STRING_TSTATUS_TR))
-   || (s.startsWith(STRING_TSTATUS_TR_small))
+  if( (s.startsWith(*STRING_TSTATUS_TR))
+   || (s.startsWith(*STRING_TSTATUS_TR_small))
    || (s.contains(CHAR_POS_TR)) )
   {
     resetCategoryOrTstatusFlag();

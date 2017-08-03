@@ -364,8 +364,8 @@ operator()(RecognizerMatch& m,
       const TStatus& status=t->status();
       if (status.getNumeric()==T_FRACTION) {
         uint64_t pos(t->stringForm().indexOf(LimaChar('/')));
-        uint64_t val1=t->stringForm().left(pos).toUInt();
-        uint64_t val2=t->stringForm().mid(pos+1).toUInt();
+        uint64_t val1=t->stringForm().leftRef(pos).toUInt();
+        uint64_t val2=t->stringForm().midRef(pos+1).toUInt();
         if (val1 > 31) {
           //assume year
           if (year == 0) year=val1;

@@ -42,6 +42,7 @@ namespace AnalysisDict {
 */
 class LIMA_ANALYSISDICT_EXPORT MultiLevelAnalysisDictionary : public AbstractAnalysisDictionary
 {
+  Q_OBJECT
 public:
     MultiLevelAnalysisDictionary();
 
