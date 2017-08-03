@@ -83,6 +83,7 @@ include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 # Find required packages
+message("Searching for Qwt")
 find_package(Qwt)
 if(Qwt_FOUND)
     include_directories(QWT_INCLUDE_DIR)
