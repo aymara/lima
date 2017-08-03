@@ -26,10 +26,10 @@ void ResourceEditorTableWidget::init (ResourceEditorTableModel* retm)
 {
     ResourceReaderTableWidget::init(retm);
     editAction = new QAction(("Edit..."), this);
-    connect(editAction, SIGNAL(triggered()), this, SLOT(contextEdit()));
+    connect(editAction, SIGNAL(triggered()),this, SLOT(contextEdit()));
     deleteAction = new QAction(("Delete"), this);
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(contextDelete()));
-    connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(contextEdit()));
+    connect(this, SIGNAL(doubleClicked(QModelIndex&)), this, SLOT(contextEdit()));
 }
 
 void ResourceEditorTableWidget::confirmInstall ()
@@ -81,7 +81,8 @@ void ResourceEditorTableWidget::contextEdit ()
     ResourceEditorTableModel* retm = dynamic_cast<ResourceEditorTableModel*>(resourceModel);
     if(selectedIndexes().size() != retm->columnCountPerEntry)
         return;
-    editEntry(selectedIndexes().last());
+    auto indexes = selectedIndexes();
+    editEntry(indexes.last());
 }
 
 void ResourceEditorTableWidget::contextDelete ()

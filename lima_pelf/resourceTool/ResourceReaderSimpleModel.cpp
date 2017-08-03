@@ -110,8 +110,8 @@ void ResourceReaderSimpleModel::install ()
     // Only subclasses heriting also from QObject will be successively connected.
     if (thisQobject != 0)
     {
-      QObject::connect(m_installProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
-          thisQobject, SLOT(installFinished(int, QProcess::ExitStatus))
+      QObject::connect(m_installProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+          thisQobject, SLOT(installFinished(int,QProcess::ExitStatus))
       );
       QObject::connect(m_installProcess, SIGNAL(error(QProcess::ProcessError)),
           thisQobject, SLOT(installError(QProcess::ProcessError))

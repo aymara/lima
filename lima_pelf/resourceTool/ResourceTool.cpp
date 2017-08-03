@@ -35,7 +35,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QFile>
 #include <QtWidgets/QMainWindow>
-
+#include <QtGlobal>
 
 using namespace Lima::Pelf;
 
@@ -55,8 +55,9 @@ bool ResourceTool::init ()
     settings = new QSettings("CEA LIST LIMA", "Pelf Resource Tool");
     restoreGeometry(settings->value("geometry").toByteArray());
 
-    char* mmdist = getenv("LIMA_DIST");
-    if (mmdist == 0) mmdist = "/usr";
+    
+    QByteArray mmdist = qgetenv("LIMA_DIST");
+    if (mmdist.isEmpty()) mmdist = "/usr";
     if(!xmlFileInit(QString(mmdist)+"/share/config/pelf/pelf-rt-conf.xml"))
     {
       qDebug() << "Unable to load configuration from file "<<(QString(mmdist)+"/share/config/pelf/pelf-rt-conf.xml")<<", aborting";
@@ -288,7 +289,7 @@ void ResourceTool::nGramsInit (QStringList resourcePaths, QString installComand)
     connect(nGramsShiftLeftBtn, SIGNAL(clicked(bool)), this, SLOT(nGramsShiftSearchLeft()));
     connect(nGramsShiftRightBtn, SIGNAL(clicked(bool)), this, SLOT(nGramsShiftSearchRight()));
     connect(nGramsSearchBtn, SIGNAL(clicked(bool)), this, SLOT(nGramsSearch()));
-    connect(nGramsView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(nGramsShowCorpus()));
+    connect(nGramsView, SIGNAL(clicked(QModelIndex&)), this, SLOT(nGramsShowCorpus()));
     connect(nGramsEditCorpusBtn, SIGNAL(clicked(bool)), this, SLOT(nGramsEditCorpus()));
     connect(nGramsInstallBtn, SIGNAL(clicked(bool)), this, SLOT(nGramsConfirmInstall()));
     nGramsSearch();
@@ -837,6 +838,9 @@ void ResourceTool::logDebugMsg (QtMsgType type, const char* m)
     {
     case QtDebugMsg:
         msgHtml = "<font style=\"color: blue;\">"+msg+"</font>";
+        break;
+    case QtInfoMsg:
+        fprintf(stderr, "Info: %s\n", msg.toUtf8().constData());
         break;
     case QtWarningMsg:
         msgHtml = "<font style=\"color: orange;\">"+msg+"</font>";

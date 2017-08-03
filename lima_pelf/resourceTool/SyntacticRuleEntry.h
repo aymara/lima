@@ -50,7 +50,7 @@ public:
     bool decodeSourceString () { return true; };
     bool matches (QStringList args);
     QString encodeToString () { return ""; };
-    QString getColumnData(int column) { return ""; };
+    QString getColumnData(int ) { return ""; };
 
 };
 

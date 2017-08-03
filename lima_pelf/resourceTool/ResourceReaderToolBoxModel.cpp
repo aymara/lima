@@ -24,8 +24,8 @@ ResourceReaderToolBoxModel::ResourceReaderToolBoxModel (QObject * parent) :
     ResourceReaderSimpleModel()
 {
   qDebug() << "ResourceReaderToolBoxModel::ResourceReaderToolBoxModel";
-  connect(m_installProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
-      this, SLOT(installFinished(int, QProcess::ExitStatus)));
+  connect(m_installProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+      this, SLOT(installFinished(int,QProcess::ExitStatus)));
   connect(m_installProcess, SIGNAL(error(QProcess::ProcessError)),
       this, SLOT(installError(QProcess::ProcessError)));
   connect(&m_watcher, SIGNAL(fileChanged(QString)), this, SIGNAL(resourceFileModified(QString)));

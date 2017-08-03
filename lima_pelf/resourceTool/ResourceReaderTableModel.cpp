@@ -27,11 +27,18 @@ ResourceReaderTableModel::ResourceReaderTableModel (QObject * parent) :
     ResourceReaderSimpleModel()
 {
   qDebug() << "ResourceReaderTableModel::ResourceReaderTableModel ";
-  connect(m_installProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
-      this, SLOT(installFinished(int, QProcess::ExitStatus)));
-  connect(m_installProcess, SIGNAL(error(QProcess::ProcessError)),
-      this, SLOT(installError(QProcess::ProcessError)));
-  connect(&m_watcher, SIGNAL(fileChanged(QString)), this, SIGNAL(resourceFileModified(QString)));
+  connect(m_installProcess, 
+          SIGNAL(finished(int,QProcess::ExitStatus)),
+          this, 
+          SLOT(installFinished(int,QProcess::ExitStatus)));
+  connect(m_installProcess, 
+          SIGNAL(error(QProcess::ProcessError)),
+          this, 
+          SLOT(installError(QProcess::ProcessError)));
+  connect(&m_watcher, 
+          SIGNAL(fileChanged(QString)), 
+          this, 
+          SIGNAL(resourceFileModified(QString)));
 
 }
 
@@ -41,17 +48,18 @@ ResourceReaderTableModel::~ResourceReaderTableModel()
 
 int ResourceReaderTableModel::searchEntries (QStringList args)
 {
-    int entriesCount = ResourceReaderSimpleModel::searchEntries(args);
-    reset();
-    return entriesCount;
+  int entriesCount = ResourceReaderSimpleModel::searchEntries(args);
+  beginResetModel();
+  endResetModel();
+  return entriesCount;
 }
 
-int ResourceReaderTableModel::rowCount (const QModelIndex& parent) const
+int ResourceReaderTableModel::rowCount (const QModelIndex& ) const
 {
     return foundData.size();
 }
 
-int ResourceReaderTableModel::columnCount (const QModelIndex& parent) const
+int ResourceReaderTableModel::columnCount (const QModelIndex& ) const
 {
     return columnCountPerEntry;
 }
@@ -71,7 +79,7 @@ void ResourceReaderTableModel::sortByHeader (int column, Qt::SortOrder order)
 {
     sortedHeaderColumn = column;
     sortedHeaderOrder = order;
-    qSort(availableData.begin(), availableData.end(), headerLessThan);
+    std::sort(availableData.begin(), availableData.end(), headerLessThan);
     Q_EMIT dataChanged();
 }
 

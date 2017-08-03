@@ -45,7 +45,7 @@ bool EasySourceHandler::startDocument()
   return true;
 }
 
-bool EasySourceHandler::startElement(const QString & uri, const QString & localname, const QString & qname, const QXmlAttributes & attrs)
+bool EasySourceHandler::startElement(const QString & , const QString & localname, const QString & qname, const QXmlAttributes & attrs)
 {
   string name=getName(localname,qname);
   if (name=="E")
@@ -67,7 +67,7 @@ bool EasySourceHandler::characters(const QString& chars)
   return true;
 }
 
-bool EasySourceHandler::endElement(const QString & uri, const QString & localname, const QString & qname)
+bool EasySourceHandler::endElement(const QString &, const QString & localname, const QString & qname)
 {
   string name=getName(localname,qname);
   if (name=="E")

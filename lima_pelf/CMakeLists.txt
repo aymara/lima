@@ -133,7 +133,7 @@ if (DEFINED ENV{PELF_EVALUATOR} AND DEFINED ENV{PELF_ALIGNER} AND Qwt_FOUND)
   set(PELF_ALIGNER $ENV{PELF_ALIGNER})
   add_subdirectory(benchmarkingTool)
 else ()
-  message("Environment variable PELF_ALIGNER and PELF_EVALUATORshould be set to build the benchmarking tool")
+  message("Environment variable PELF_ALIGNER and PELF_EVALUATOR should be set to build the benchmarking tool")
 endif()
 
 

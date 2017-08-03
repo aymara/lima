@@ -47,7 +47,6 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
             factoryCurrentSyntacticRule->sourceFile = s2;
             factoryCurrentSyntacticRule->sourceLine = i;
             QStringList automatonParts = automatonRegExp.capturedTexts();
-            QStringList::iterator automatonPartsIt = automatonParts.begin();
             factoryCurrentSyntacticRule->left = automatonParts[1];
             factoryCurrentSyntacticRule->trigger = automatonParts[2];
             factoryCurrentSyntacticRule->right = automatonParts[3];
@@ -57,7 +56,8 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
             QRegExp automatonElementRegExp("(\\$|@)[a-zA-Z_-]+");
             while(automatonElementRegExp.indexIn(recongnizeElements, automatonElementMatchIndex) != -1)
             {
-                QString matchName = automatonElementRegExp.capturedTexts()[0];
+                QStringList elements = automatonElementRegExp.capturedTexts();
+                QString matchName = elements[0];
                 if(matchNames.indexOf(matchName) == -1)
                     matchNames << matchName;
                 automatonElementMatchIndex += automatonElementRegExp.matchedLength();
@@ -69,7 +69,8 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
             QRegExp creationRegExp("^\\+CreateRelationBetween\\([^,]*,[^,]*,\"([^,]*)\"\\)$");
             if(creationRegExp.indexIn(s1) != -1)
             {
-                QString relationName = creationRegExp.capturedTexts()[1];
+                QStringList elements = creationRegExp.capturedTexts();
+                QString relationName = elements[1];
                 factoryCurrentSyntacticRule->dependencyCreates << relationName;
                 if(relationNames.indexOf(relationName) == -1)
                     relationNames << relationName;
