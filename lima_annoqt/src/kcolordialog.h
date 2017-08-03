@@ -213,6 +213,7 @@ private:
 
 class KColorSpinBox : public QSpinBox
 {
+  Q_OBJECT
   public:
     KColorSpinBox(int minValue, int maxValue, int step, QWidget* parent)
     : QSpinBox(parent) {

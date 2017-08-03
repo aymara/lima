@@ -61,10 +61,10 @@ m_currentItem(0)
 
   readSettings();
 
-  connect( m_listWidget, SIGNAL( itemClicked ( QListWidgetItem* ) ),
-           this, SLOT( slotTypesListItemclicked( QListWidgetItem* ) ) );
+  connect( m_listWidget, SIGNAL(itemClicked(QListWidgetItem*)),
+           this, SLOT(slotTypesListItemclicked(QListWidgetItem*) ) );
 
-  connect( m_colorPicker, SIGNAL(colorSelected( const QColor & )), this, SLOT(slotColorSelected( const QColor& )) );
+  connect( m_colorPicker, SIGNAL(colorSelected(QColor&)), this, SLOT(slotColorSelected(QColor&)) );
 }
 
 AnnoqtConfEditor::~AnnoqtConfEditor()
@@ -285,8 +285,7 @@ void AnnoqtConfEditor::loadFile( const QString &fileName )
   {
     QMessageBox::warning( this, tr( "Application" ),
                           tr( "Cannot read file %1:\n%2." )
-                          .arg( fileName )
-                          .arg( file.errorString() ) );
+                          .arg( fileName, file.errorString() ) );
     return;
   }
 
@@ -311,8 +310,7 @@ bool AnnoqtConfEditor::saveFile( const QString &fileName )
   {
     QMessageBox::warning( this, tr( "Application" ),
                           tr( "Cannot write file %1:\n%2." )
-                          .arg( fileName )
-                          .arg( file.errorString() ) );
+                          .arg( fileName, file.errorString() ) );
     return false;
   }
 
@@ -359,7 +357,7 @@ void AnnoqtConfEditor::setCurrentFile( const QString &fileName )
   else
     shownName = strippedName( m_currentAnnotationConfigurationFile );
 
-  setWindowTitle( tr( "%1[*] - %2" ).arg( shownName ).arg( tr( "Application" ) ) );
+  setWindowTitle( tr( "%1[*] - %2" ).arg( shownName, tr( "Application" ) ) );
 }
 
 QString AnnoqtConfEditor::strippedName( const QString &fullFileName )
@@ -388,7 +386,6 @@ void AnnoqtConfEditor::slotTypesListItemclicked( QListWidgetItem* item )
     font.setItalic(item->checkState() == Qt::Checked);
     m_currentItem->setFont(font);
     m_currentColor = item->background().color();
-    QString colorName = m_currentColor.name().toLower();
   }
   m_listWidget->setCurrentItem(0);
 }
@@ -412,8 +409,7 @@ void AnnoqtConfEditor::loadAnnotationConfigurationFile(const QString& fileName)
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
       QMessageBox::warning(this, tr("Annotation Tool"),
                             tr("Cannot read file %1:\n%2.")
-                            .arg(fileName)
-                            .arg(file.errorString()));
+                            .arg(fileName, file.errorString()));
       return;
   }
 
@@ -433,7 +429,7 @@ void AnnoqtConfEditor::loadAnnotationConfigurationFile(const QString& fileName)
   if (reader.parse(xmlInputSource))
       statusBar()->showMessage(tr("Annotation Configuration File loaded"), 2000);
 
-  for (QMap<QString, QString>::const_iterator it=m_colorNames2EntityTypes.begin();
+  for (auto it = m_colorNames2EntityTypes.begin();
         it != m_colorNames2EntityTypes.end(); it++)
   {
     m_entityNames2Types.insert(it.value(),m_entityNames2Types.size());
