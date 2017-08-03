@@ -39,8 +39,16 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP -DDEBUG_CD" )
 file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "${_plugin}\n")
-  add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS})
-endmacro (DECLARE_LIMA_PLUGIN)
+  add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
+endmacro ()
+
+macro (LIMALP_WRAP_HEADERS _plugin)
+  foreach(HEADER ${ARGN})
+    set (lima-lp-${_plugin}_MOC_HEADERS ${lima-lp-${_plugin}_MOC_HEADERS} ${HEADER})
+  endforeach()
+
+  qt5_wrap_cpp (lima-lp-${_plugin}_MOC_OUTFILES ${lima-lp-${_plugin}_MOC_HEADERS})
+endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
 # -DCMAKE_INSTALL_PREFIX="e:mose" -DCMAKE_BUILD_TYPE=Release

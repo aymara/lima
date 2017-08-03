@@ -50,6 +50,7 @@ class State;
 
 class LIMA_FLATTOKENIZER_EXPORT Automaton : public AbstractResource
 {
+  Q_OBJECT
 
 public:
   Automaton();

@@ -26,6 +26,7 @@ namespace EventAnalysis {
 
 class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionResource : public AbstractResource
 {
+  Q_OBJECT
  public:
   EventTemplateDefinitionResource(); 
   ~EventTemplateDefinitionResource();

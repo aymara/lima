@@ -142,10 +142,10 @@ class LIMA_WORDSENSEANALYSIS_EXPORT LSHSignature
                             };
                         if ( precomputedCount >= 0 )
                                 return precomputedCount;
-                        register long l = bitLength / ( 8 * sizeof ( base ) );
-                        register int sum = 0;
-                        register unsigned char i;
-                        register base v;
+                        long l = bitLength / ( 8 * sizeof ( base ) );
+                        int sum = 0;
+                        unsigned char i;
+                        base v;
                         while ( l-- )
                         {
                                 v = data[l];
@@ -193,9 +193,9 @@ class LIMA_WORDSENSEANALYSIS_EXPORT LSHSignature
                   4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
                   };
                   
-                  register int sum = 0;
-                  register unsigned char i;
-                  register base v;
+                  int sum = 0;
+                  unsigned char i;
+                  base v;
                     v = data[where];
                     i = v & 0xff;
                     sum += byteCount[i];

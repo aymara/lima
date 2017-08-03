@@ -41,6 +41,7 @@ namespace LinguisticProcessing
 */
 class LIMA_ANALYSISHANDLERS_EXPORT SBowDocumentWriter : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   SBowDocumentWriter();
 

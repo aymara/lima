@@ -54,6 +54,7 @@ namespace PosTagger
 
 class LIMA_POSTAGGER_EXPORT TrigramMatrix : public AbstractResource
 {
+  Q_OBJECT
 
 public:
 
@@ -85,6 +86,7 @@ private:
 
 class LIMA_POSTAGGER_EXPORT BigramMatrix : public AbstractResource
 {
+  Q_OBJECT
 public:
 
   BigramMatrix() : 

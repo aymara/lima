@@ -19,13 +19,11 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 
 ########### next target ###############
-set (lima-lp-analysisdict_MOC_HEADERS
+LIMALP_WRAP_HEADERS(analysisdict
   AbstractAnalysisDictionary.h
   EnhancedAnalysisDictionary.h
   FsaAccessResource.h
 )
-
-qt5_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})
 
 SET(lima-lp-analysisdict_LIB_SRCS
    AnalysisDictionaryIterators.cpp 

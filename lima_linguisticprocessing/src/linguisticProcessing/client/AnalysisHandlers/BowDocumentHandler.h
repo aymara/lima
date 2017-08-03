@@ -40,6 +40,7 @@ namespace LinguisticProcessing
 */
 class LIMA_ANALYSISHANDLERS_EXPORT BowDocumentHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   BowDocumentHandler();
 

@@ -1466,14 +1466,14 @@ bool AutomatonString::existsConstraint(const LimaString& subindex,
 
   c=0;
 
-  if (subindex == STRING_CONSTRAINT_GROUP_FIRST) {
+  if (subindex == *STRING_CONSTRAINT_GROUP_FIRST) {
     if (isUnit() || m_parts.size() < 1) { 
       return false; 
     }
     return m_parts[0].existsConstraint(c);
   }
-  else if (subindex == STRING_CONSTRAINT_GROUP_CURRENT ||
-           subindex == STRING_CONSTRAINT_GROUP_NEXT) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_CURRENT ||
+           subindex == *STRING_CONSTRAINT_GROUP_NEXT) {
     if (isUnit() || m_parts.size() < 2) { 
       return false; 
     }
@@ -1481,7 +1481,7 @@ bool AutomatonString::existsConstraint(const LimaString& subindex,
             m_parts[1].existsConstraint(c) ||
             m_parts[2].existsConstraint(c));
   }                                                           
-  else if (subindex == STRING_CONSTRAINT_GROUP_LAST) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_LAST) {
     if (isUnit() || m_parts.size() < 3) { 
       return false; 
     }
@@ -1680,16 +1680,16 @@ void AutomatonString::insertConstraint(const LimaString& subindex,
     split();
   }
   
-  if (subindex == STRING_CONSTRAINT_GROUP_FIRST) {
+  if (subindex == *STRING_CONSTRAINT_GROUP_FIRST) {
     insertConstraintInPart(1,constraint);
   }
-  else if (subindex == STRING_CONSTRAINT_GROUP_CURRENT) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_CURRENT) {
     insertConstraintInPart(2,constraint);
   }                                                           
-  else if (subindex == STRING_CONSTRAINT_GROUP_NEXT) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_NEXT) {
     insertConstraintInPart(2,constraint);
   }
-  else if (subindex == STRING_CONSTRAINT_GROUP_LAST) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_LAST) {
     insertConstraintInPart(m_parts.size(),constraint);
   }                                                           
   else {

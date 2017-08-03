@@ -38,6 +38,7 @@ namespace LinguisticProcessing {
 */
 class LIMA_ANALYSISHANDLERS_EXPORT LTRTextHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
     LTRTextHandler();
 

@@ -44,6 +44,7 @@ class BowTextWriterPrivate;
 */
 class LIMA_ANALYSISHANDLERS_EXPORT BowTextWriter : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
     BowTextWriter();
 

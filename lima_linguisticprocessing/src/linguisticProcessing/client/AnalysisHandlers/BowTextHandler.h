@@ -42,6 +42,7 @@ namespace LinguisticProcessing {
 */
 class LIMA_ANALYSISHANDLERS_EXPORT BowTextHandler : public AbstractTextualAnalysisHandler,public StructureHandler, public ContentHandler< Common::BagOfWords::BoWText >
 {
+  Q_OBJECT
 public:
     BowTextHandler();
 

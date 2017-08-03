@@ -40,6 +40,7 @@ namespace LinguisticProcessing
 */
 class LIMA_ANALYSISHANDLERS_EXPORT CompactFullDocumentHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   CompactFullDocumentHandler(std::ostream* out);
 

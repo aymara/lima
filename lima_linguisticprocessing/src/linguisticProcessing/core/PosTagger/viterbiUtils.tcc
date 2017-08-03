@@ -230,7 +230,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
         std::istringstream sprobaStream(sproba);
         sprobaStream >> proba;      
       } 
-      else throw(std::runtime_error("invalid trigram line: " + linenum));
+      else throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
 
     
       GramsData& gd=m_data[trigram[2]][trigram[1]];

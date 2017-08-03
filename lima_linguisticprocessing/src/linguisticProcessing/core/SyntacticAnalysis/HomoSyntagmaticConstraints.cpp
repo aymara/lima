@@ -29,6 +29,7 @@
   *
   *
   */
+// clazy:exclude=rule-of-two-soft
 
 #include "HomoSyntagmaticConstraints.h"
 #include "DependencyGraph.h"
@@ -188,9 +189,9 @@ bool SecondUngovernedBy::operator()(
   // n'est pas ordonné.
   // Il faut donc parcourir tous les arcs sortant de dv1, et filtrer
   // ceux entrant dans dv2.
-  //  boost::tie(it, it_end) = edge_range(dv1, dv2, *(syntacticData-> dependencyGraph()));
+  //  std::tie(it, it_end) = edge_range(dv1, dv2, *(syntacticData-> dependencyGraph()));
   const DependencyGraph *g = syntacticData-> dependencyGraph();
-  boost::tie(it, it_end) = out_edges(dv1, *g);
+  std::tie(it, it_end) = out_edges(dv1, *g);
   for (; it != it_end; it++)
   {
     // Modif YJE 2007-07-13
@@ -235,7 +236,7 @@ bool GovernorOf::operator()(const AnalysisGraph& graph,
   CEdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
   DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
   DependencyGraphOutEdgeIt it, it_end;
-  boost::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
+  std::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
   for (; it != it_end; it++)
   {
     if ( (map[*it] == m_relation)
@@ -274,7 +275,7 @@ bool GovernedBy::operator()(const AnalysisGraph& graph,
   CEdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
   DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
   DependencyGraphInEdgeIt it, it_end;
-  boost::tie(it, it_end) = in_edges(dv1, *(syntacticData-> dependencyGraph()));
+  std::tie(it, it_end) = in_edges(dv1, *(syntacticData-> dependencyGraph()));
   for (; it != it_end; it++)
   {
     if ( (map[*it] == m_relation)
@@ -436,7 +437,7 @@ bool RemoveOutRelationFrom::operator()(const AnalysisGraph& graph,
   EdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
   DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
   DependencyGraphOutEdgeIt it, it_end;
-  boost::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
+  std::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
   for (; it != it_end; it++)
   {
     if ( map[*it] == m_relation )
@@ -485,7 +486,7 @@ bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
   EdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
   DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
   DependencyGraphOutEdgeIt it, it_end;
-  boost::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
+  std::tie(it, it_end) = out_edges(dv1, *(syntacticData-> dependencyGraph()));
   bool res = false;
   for (; it != it_end; it++)
   {
@@ -540,7 +541,7 @@ bool CopyIncomingRelationsTo::operator()(const AnalysisGraph& graph,
 
   DependencyGraphVertex dv1 = syntacticData-> depVertexForTokenVertex(v1);
   DependencyGraphInEdgeIt it, it_end;
-  boost::tie(it, it_end) = in_edges(dv1, *(syntacticData-> dependencyGraph()));
+  std::tie(it, it_end) = in_edges(dv1, *(syntacticData-> dependencyGraph()));
   bool res = false;
   for (; it != it_end; it++)
   {
@@ -594,7 +595,7 @@ bool FindRelationFrom::operator()(const AnalysisGraph&,
     toVisit.pop();
 //    LDEBUG << "visit dep vertex " << dv;
 
-    for (boost::tie(outItr,outItrEnd)=out_edges(dv,*depGraph);
+    for (std::tie(outItr,outItrEnd)=out_edges(dv,*depGraph);
          outItr!=outItrEnd;
          outItr++)
     {
@@ -907,7 +908,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 
   LinguisticGraphVertex newVertex;
   DependencyGraphVertex newDepVertex;
-  boost::tie (newVertex, newDepVertex) = syntacticData->addVertex();
+  std::tie (newVertex, newDepVertex) = syntacticData->addVertex();
 #ifdef DEBUG_LP
   LDEBUG << "New vertices are " << newVertex << " (pos) and " << newDepVertex << " (dep)";
 #endif
@@ -962,7 +963,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   LDEBUG << "The auxiliary has " << in_degree(auxVertex, *graph) << " in edges.";
 #endif
   LinguisticGraphInEdgeIt auxInEdgesIt, auxInEdgesIt_end;
-  boost::tie(auxInEdgesIt, auxInEdgesIt_end) = in_edges(auxVertex, *graph);
+  std::tie(auxInEdgesIt, auxInEdgesIt_end) = in_edges(auxVertex, *graph);
   for (; auxInEdgesIt != auxInEdgesIt_end; auxInEdgesIt++)
   {
 #ifdef DEBUG_LP
@@ -983,7 +984,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   //2. entre le nouveau noeud et les noeuds qui etaient entre l'auxiliaire et
   //   le verbe
   LinguisticGraphOutEdgeIt auxOutEdgesIt, auxOutEdgesIt_end;
-  boost::tie(auxOutEdgesIt, auxOutEdgesIt_end) = out_edges(auxVertex, *graph);
+  std::tie(auxOutEdgesIt, auxOutEdgesIt_end) = out_edges(auxVertex, *graph);
   for (; auxOutEdgesIt != auxOutEdgesIt_end; auxOutEdgesIt++)
   {
       LinguisticGraphVertex auxOutVertex = target(*auxOutEdgesIt, *graph);
@@ -996,7 +997,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
       }
 //       bool success;
 //       LinguisticGraphEdge e;
-//       boost::tie(e, success) = add_edge(newVertex, auxOutVertex, *graph);
+//       std::tie(e, success) = add_edge(newVertex, auxOutVertex, *graph);
 //       if (success)
 //       {
 #ifdef DEBUG_LP
@@ -1012,7 +1013,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   //   egalement, relie le nouveau noeud aux noeuds qui etaient apres
   //   l'auxiliaire au cas ou l'auxiliaire et le participe etaient contigus
   LinguisticGraphInEdgeIt pastPartInEdgesIt, pastPartInEdgesIt_end;
-  boost::tie(pastPartInEdgesIt, pastPartInEdgesIt_end) = in_edges(pastPartVertex, *graph);
+  std::tie(pastPartInEdgesIt, pastPartInEdgesIt_end) = in_edges(pastPartVertex, *graph);
   for (; pastPartInEdgesIt != pastPartInEdgesIt_end; pastPartInEdgesIt++)
   {
     LinguisticGraphVertex pastPartInVertex = source(*pastPartInEdgesIt, *graph);
@@ -1030,7 +1031,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     edgesToRemove.insert(std::make_pair(source(*pastPartInEdgesIt,*graph),target(*pastPartInEdgesIt,*graph)));
 
     LinguisticGraphOutEdgeIt pastPartOutEdgesIt, pastPartOutEdgesIt_end;
-    boost::tie(pastPartOutEdgesIt, pastPartOutEdgesIt_end) = out_edges(pastPartVertex, *graph);
+    std::tie(pastPartOutEdgesIt, pastPartOutEdgesIt_end) = out_edges(pastPartVertex, *graph);
     for (; pastPartOutEdgesIt != pastPartOutEdgesIt_end; pastPartOutEdgesIt++)
     {
       LinguisticGraphVertex pastPartOutVertex = target(*pastPartOutEdgesIt, *graph);
@@ -1046,7 +1047,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
       }
 //       bool success;
 //       LinguisticGraphEdge e;
-//       boost::tie(e, success) = add_edge(pastPartInVertex, pastPartOutVertex, *graph);
+//       std::tie(e, success) = add_edge(pastPartInVertex, pastPartOutVertex, *graph);
 //       if (success)
 //       {
 #ifdef DEBUG_LP
@@ -1076,7 +1077,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   {
     bool success;
     LinguisticGraphEdge e;
-    boost::tie(e, success) = add_edge(addedEdgesIt->first, addedEdgesIt->second, *graph);
+    std::tie(e, success) = add_edge(addedEdgesIt->first, addedEdgesIt->second, *graph);
     if (success)
     {
 #ifdef DEBUG_LP
@@ -1098,14 +1099,14 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   DependencyGraphVertex auxDepVertex =
       syntacticData-> depVertexForTokenVertex(auxVertex);
   DependencyGraphInEdgeIt auxDepVertexInEdgeIt, auxDepVertexInEdgeIt_end;
-  boost::tie(auxDepVertexInEdgeIt, auxDepVertexInEdgeIt_end) =
+  std::tie(auxDepVertexInEdgeIt, auxDepVertexInEdgeIt_end) =
       in_edges(auxDepVertex,depGraph);
   for (; auxDepVertexInEdgeIt != auxDepVertexInEdgeIt_end;
          auxDepVertexInEdgeIt++)
   {
     DependencyGraphEdge e;
     bool success;
-    boost::tie(e, success) = add_edge(source(*auxDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
+    std::tie(e, success) = add_edge(source(*auxDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
     if (success)
     {
 #ifdef DEBUG_LP
@@ -1115,14 +1116,14 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     }
   }
   DependencyGraphOutEdgeIt auxDepVertexOutEdgeIt, auxDepVertexOutEdgeIt_end;
-  boost::tie(auxDepVertexOutEdgeIt, auxDepVertexOutEdgeIt_end) =
+  std::tie(auxDepVertexOutEdgeIt, auxDepVertexOutEdgeIt_end) =
       out_edges(auxDepVertex,depGraph);
   for (; auxDepVertexOutEdgeIt != auxDepVertexOutEdgeIt_end;
          auxDepVertexOutEdgeIt++)
   {
     DependencyGraphEdge e;
     bool success;
-    boost::tie(e, success) = add_edge(newDepVertex, target(*auxDepVertexOutEdgeIt,depGraph),depGraph);
+    std::tie(e, success) = add_edge(newDepVertex, target(*auxDepVertexOutEdgeIt,depGraph),depGraph);
     if (success)
     {
 #ifdef DEBUG_LP
@@ -1136,14 +1137,14 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   DependencyGraphVertex pastPartDepVertex =
       syntacticData-> depVertexForTokenVertex(pastPartVertex);
   DependencyGraphInEdgeIt pastPartDepVertexInEdgeIt, pastPartDepVertexInEdgeIt_end;
-  boost::tie(pastPartDepVertexInEdgeIt, pastPartDepVertexInEdgeIt_end) =
+  std::tie(pastPartDepVertexInEdgeIt, pastPartDepVertexInEdgeIt_end) =
       in_edges(pastPartDepVertex,depGraph);
   for (; pastPartDepVertexInEdgeIt != pastPartDepVertexInEdgeIt_end;
          pastPartDepVertexInEdgeIt++)
   {
     DependencyGraphEdge e;
     bool success;
-    boost::tie(e, success) =
+    std::tie(e, success) =
         add_edge(source(*pastPartDepVertexInEdgeIt,depGraph),newDepVertex,depGraph);
     if (success)
     {
@@ -1154,14 +1155,14 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     }
   }
   DependencyGraphOutEdgeIt pastPartDepVertexOutEdgeIt, pastPartDepVertexOutEdgeIt_end;
-  boost::tie(pastPartDepVertexOutEdgeIt, pastPartDepVertexOutEdgeIt_end) =
+  std::tie(pastPartDepVertexOutEdgeIt, pastPartDepVertexOutEdgeIt_end) =
       out_edges(pastPartDepVertex,depGraph);
   for (; pastPartDepVertexInEdgeIt != pastPartDepVertexInEdgeIt_end;
          pastPartDepVertexInEdgeIt++)
   {
     DependencyGraphEdge e;
     bool success;
-    boost::tie(e, success) =
+    std::tie(e, success) =
         add_edge(newDepVertex, target(*pastPartDepVertexOutEdgeIt,depGraph),depGraph);
     if (success)
     {
@@ -1427,7 +1428,7 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
   LinguisticGraphVertex src, dest;
   Common::MediaticData::SyntacticRelationId relation;
 
-  boost::tie(src,dest,relation) = syntacticData->relation();
+  std::tie(src,dest,relation) = syntacticData->relation();
   uint64_t nbAdded(0);
 
   std::set<std::pair<LinguisticGraphVertex,Common::MediaticData::SyntacticRelationId> > relationsAdded;
@@ -1442,7 +1443,7 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
       SAPLOGINIT;
       LERROR << "no type specified for relation between " << src
       << " and " << dest << ": ignored";
-      boost::tie(src,dest,relation) = syntacticData->relation();
+      std::tie(src,dest,relation) = syntacticData->relation();
       continue;
     }
 
@@ -1458,7 +1459,7 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
       LERROR << "relation (" << relation << "," << src << ","
       << dest << ") not added";
     }
-    boost::tie(src,dest,relation) = syntacticData->relation();
+    std::tie(src,dest,relation) = syntacticData->relation();
   }
 
   // return true is some additions worked (even if some did not work)
@@ -1495,7 +1496,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
   LinguisticGraphVertex src, dest;
   Common::MediaticData::SyntacticRelationId relation;
 
-  boost::tie(src,dest,relation) = syntacticData->relation();
+  std::tie(src,dest,relation) = syntacticData->relation();
   uint64_t nbModified(0);
 
   while (!((src == anagraph->firstVertex()) &&
@@ -1508,7 +1509,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
       SAPLOGINIT;
       LERROR << "no type specified for relation between " << src
       << " and " << dest << ": ignored";
-      boost::tie(src,dest,relation) = syntacticData->relation();
+      std::tie(src,dest,relation) = syntacticData->relation();
       continue;
     }
 
@@ -1523,7 +1524,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
       LERROR << "relation (" << relation << "," << src << ","
       << dest << ") not modified";
     }
-    boost::tie(src,dest,relation) = syntacticData->relation();
+    std::tie(src,dest,relation) = syntacticData->relation();
   }
 
   // return true is some additions worked (even if some did not work)

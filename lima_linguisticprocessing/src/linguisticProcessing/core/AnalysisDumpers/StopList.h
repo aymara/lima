@@ -43,7 +43,8 @@ namespace AnalysisDumpers
 @author Benoit Mathieu
 */
 class LIMA_ANALYSISDUMPERS_EXPORT StopList : public AbstractResource, public std::set<LimaString>
-  {
+{
+  Q_OBJECT
 public:
     StopList();
 

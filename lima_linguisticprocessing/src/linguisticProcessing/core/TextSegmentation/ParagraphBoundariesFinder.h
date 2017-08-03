@@ -56,7 +56,7 @@ public:
 
 private:
   std::list<LinguisticCode> m_stopCategories;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+//   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   std::string m_graph;
   LimaString m_paragraphSeparator;
 };

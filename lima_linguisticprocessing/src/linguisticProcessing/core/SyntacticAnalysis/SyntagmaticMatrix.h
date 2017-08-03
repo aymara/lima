@@ -139,6 +139,7 @@ private:
 
 class LIMA_SYNTACTICANALYSIS_EXPORT SyntagmDefStruct : public AbstractResource
 {
+  Q_OBJECT
 public:
   SyntagmDefStruct();
 

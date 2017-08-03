@@ -73,7 +73,7 @@ class LIMA_BOW_EXPORT AbstractBoWDocumentHandler : public AbstractDocumentHandle
   void openSIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
       const std::string& elementName){openSBoWIndexingNode(properties,elementName);};
   void closeSNode(){closeSBoWNode();};  
-  void processSContent( bool /*useIterators*/){};
+  void processSContent( const Lima::Common::Misc::GenericDocumentProperties* /*properties*/){};
   
 };
 

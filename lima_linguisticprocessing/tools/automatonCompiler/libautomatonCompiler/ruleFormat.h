@@ -191,20 +191,21 @@ const LimaChar CHAR_CONSTRAINT_BEGIN_ARG('(');
 const LimaChar CHAR_CONSTRAINT_END_ARG(')');
 const LimaChar CHAR_CONSTRAINT_SEP_ARG(',');
 const LimaChar CHAR_CONSTRAINT_COMPLEMENT_ARG('"');
-const LimaString STRING_CONSTRAINT_LEFT=Common::Misc::utf8stdstring2limastring("left");
-const LimaString STRING_CONSTRAINT_RIGHT=Common::Misc::utf8stdstring2limastring("right");
-const LimaString STRING_CONSTRAINT_TRIGGER=Common::Misc::utf8stdstring2limastring("trigger");
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_LEFT, (Common::Misc::utf8stdstring2limastring("left")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_RIGHT, (Common::Misc::utf8stdstring2limastring("right")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_TRIGGER, (Common::Misc::utf8stdstring2limastring("trigger")));
+
 const LimaChar CHAR_CONSTRAINT_INDEX('.');
 // to define sub indices in groups
-const LimaString STRING_CONSTRAINT_GROUP_FIRST=Common::Misc::utf8stdstring2limastring("first");
-const LimaString STRING_CONSTRAINT_GROUP_CURRENT=Common::Misc::utf8stdstring2limastring("current");
-const LimaString STRING_CONSTRAINT_GROUP_NEXT=Common::Misc::utf8stdstring2limastring("next");
-const LimaString STRING_CONSTRAINT_GROUP_LAST=Common::Misc::utf8stdstring2limastring("last");
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_FIRST, (Common::Misc::utf8stdstring2limastring("first")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_CURRENT, (Common::Misc::utf8stdstring2limastring("current")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_NEXT, (Common::Misc::utf8stdstring2limastring("next")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_LAST, (Common::Misc::utf8stdstring2limastring("last")));
 
 // some lengths (to avoid recomputing them)
-const int LENGTH_CONSTRAINT_LEFT=STRING_CONSTRAINT_LEFT.size();
-const int LENGTH_CONSTRAINT_RIGHT=STRING_CONSTRAINT_RIGHT.size();
-const int LENGTH_CONSTRAINT_TRIGGER=STRING_CONSTRAINT_TRIGGER.size();
+const int LENGTH_CONSTRAINT_LEFT=STRING_CONSTRAINT_LEFT->size();
+const int LENGTH_CONSTRAINT_RIGHT=STRING_CONSTRAINT_RIGHT->size();
+const int LENGTH_CONSTRAINT_TRIGGER=STRING_CONSTRAINT_TRIGGER->size();
 
 } // end namespace
 } // end namespace

@@ -45,6 +45,7 @@ namespace FlatTokenizer
 
 class LIMA_FLATTOKENIZER_EXPORT TokenizerAutomaton : public AbstractResource
 {
+  Q_OBJECT
 
 public:
   TokenizerAutomaton();

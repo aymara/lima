@@ -49,6 +49,7 @@ namespace SyntacticAnalysis
 
 class LIMA_SYNTACTICANALYSIS_EXPORT SelectionalPreferences : public AbstractResource
 {
+  Q_OBJECT
 public:
   SelectionalPreferences();
 

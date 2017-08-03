@@ -37,8 +37,11 @@
 namespace Lima{
 
 //! @brief defines callback interface
-class AbstractTextualAnalysisHandler: public AbstractXmlAnalysisHandler,  public LinguisticProcessing::AbstractResource
+class AbstractTextualAnalysisHandler : 
+    public LinguisticProcessing::AbstractResource, 
+    public AbstractXmlAnalysisHandler
 {
+  Q_OBJECT
 public:
   virtual ~AbstractTextualAnalysisHandler() {};
   

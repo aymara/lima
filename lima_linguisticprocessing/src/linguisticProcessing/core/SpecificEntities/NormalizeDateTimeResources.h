@@ -46,6 +46,7 @@ namespace SpecificEntities {
 
 class LIMA_SPECIFICENTITIES_EXPORT NormalizeDateTimeResources : public AbstractResource
 {
+  Q_OBJECT
  public:
   NormalizeDateTimeResources(); 
   ~NormalizeDateTimeResources();

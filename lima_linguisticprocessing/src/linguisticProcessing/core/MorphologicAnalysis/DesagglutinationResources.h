@@ -62,6 +62,7 @@ typedef std::map<LinguisticCode,CompoundCategories> CategoriesMapping;
 
 class LIMA_MORPHOLOGICANALYSIS_EXPORT DesagglutinationResources : public AbstractResource
 {
+  Q_OBJECT
 
 public:
   void init(

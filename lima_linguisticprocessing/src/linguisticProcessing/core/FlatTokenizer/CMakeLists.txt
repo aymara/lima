@@ -21,6 +21,12 @@ add_definitions(-DLIMA_FLATTOKENIZER_EXPORTING)
 
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(flattokenizer
+  Automaton.h
+  CharChart.h
+  TokenizerAutomaton.h
+)
+
 SET(lima-lp-flattokenizer_LIB_SRCS
    Automaton.cpp
    Char.cpp

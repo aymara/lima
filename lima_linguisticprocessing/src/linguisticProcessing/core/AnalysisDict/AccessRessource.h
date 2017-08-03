@@ -34,6 +34,7 @@ namespace AnalysisDict {
 */
 class AccessRessource : public AbstractResource
 {
+  Q_OBJECT
 public:
     AccessRessource();
     virtual ~AccessRessource();

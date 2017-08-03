@@ -46,6 +46,7 @@ namespace SpecificEntities {
 
 class LIMA_SPECIFICENTITIES_EXPORT MicrosForNormalization : public AbstractResource
 {
+  Q_OBJECT
  public:
   MicrosForNormalization(); 
   ~MicrosForNormalization();

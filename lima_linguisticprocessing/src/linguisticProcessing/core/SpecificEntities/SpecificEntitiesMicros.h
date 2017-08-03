@@ -46,6 +46,7 @@ namespace SpecificEntities {
 
 class LIMA_SPECIFICENTITIES_EXPORT SpecificEntitiesMicros : public AbstractResource
 {
+  Q_OBJECT
  public:
   SpecificEntitiesMicros(); 
   ~SpecificEntitiesMicros();

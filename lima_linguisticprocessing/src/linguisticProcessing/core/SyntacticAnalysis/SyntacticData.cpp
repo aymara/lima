@@ -95,9 +95,9 @@ void SyntacticData::setupDependencyGraph()
     m_mapping.second.clear();
 
     LinguisticGraphVertexIt itg, itg_end;
-    boost::tie(itg, itg_end) = vertices(*m_graph);
+    std::tie(itg, itg_end) = vertices(*m_graph);
     DependencyGraphVertexIt itd, itd_end;
-    boost::tie(itd, itd_end) = vertices(*m_depGraph);
+    std::tie(itd, itd_end) = vertices(*m_depGraph);
 
     while (itg != itg_end)
     {
@@ -169,7 +169,7 @@ uint64_t SyntacticData::depsBetween(
     nb += out_degree(depVertex, *m_depGraph);
 
     DependencyGraphOutEdgeIt it, it_end;
-    for (boost::tie(it, it_end) = out_edges(depVertex, *m_depGraph); it != it_end; it++)
+    for (std::tie(it, it_end) = out_edges(depVertex, *m_depGraph); it != it_end; it++)
     {
       DependencyGraphVertex outDepVertex = target(*it, *m_depGraph);
       LinguisticGraphVertex outVertex = tokenVertexForDepVertex(outDepVertex);
@@ -192,7 +192,7 @@ SyntacticData::findRelated(const LinguisticGraphVertex v,
 
   //look at in_edges and out_edges
   DependencyGraphOutEdgeIt outIt, outIt_end;
-  boost::tie(outIt, outIt_end) = out_edges(v, *m_depGraph);
+  std::tie(outIt, outIt_end) = out_edges(v, *m_depGraph);
   for (; outIt != outIt_end; outIt++) {
     if (depRelMap[*outIt] == relation) {
       related.push_back(target(*outIt,*m_depGraph));
@@ -200,7 +200,7 @@ SyntacticData::findRelated(const LinguisticGraphVertex v,
   }
 
   DependencyGraphInEdgeIt inIt, inIt_end;
-  boost::tie(inIt, inIt_end) = in_edges(v, *m_depGraph);
+  std::tie(inIt, inIt_end) = in_edges(v, *m_depGraph);
   for (; inIt != inIt_end; inIt++) {
     if (depRelMap[*inIt] == relation) {
       related.push_back(source(*inIt,*m_depGraph));
@@ -220,7 +220,7 @@ SyntacticData::findRelated(const LinguisticGraphVertex v,
 
   //look at in_edges and out_edges
   DependencyGraphOutEdgeIt outIt, outIt_end;
-  boost::tie(outIt, outIt_end) = out_edges(v, *m_depGraph);
+  std::tie(outIt, outIt_end) = out_edges(v, *m_depGraph);
   for (; outIt != outIt_end; outIt++) {
     if (relations.find(depRelMap[*outIt]) != relations.end()) {
       related.push_back(target(*outIt,*m_depGraph));
@@ -228,7 +228,7 @@ SyntacticData::findRelated(const LinguisticGraphVertex v,
   }
 
   DependencyGraphInEdgeIt inIt, inIt_end;
-  boost::tie(inIt, inIt_end) = in_edges(v, *m_depGraph);
+  std::tie(inIt, inIt_end) = in_edges(v, *m_depGraph);
   for (; inIt != inIt_end; inIt++) {
     if (relations.find(depRelMap[*inIt]) != relations.end()) {
       related.push_back(source(*inIt,*m_depGraph));
@@ -256,7 +256,7 @@ void SyntacticData::addRelationNoChain(const Common::MediaticData::SyntacticRela
   DependencyGraphVertex v2 = depVertexForTokenVertex(dest);
   DependencyGraphEdge edge;
   bool success;
-  boost::tie(edge, success) = add_edge(v1, v2, *m_depGraph);
+  std::tie(edge, success) = add_edge(v1, v2, *m_depGraph);
   if (success)
   {
 //     put(edge_depchain_id, *m_depGraph, edge, noChain);
@@ -287,7 +287,7 @@ void SyntacticData::modifyRelationNoChain(const Common::MediaticData::SyntacticR
   DependencyGraphVertex v1 = depVertexForTokenVertex(src);
   DependencyGraphVertex v2 = depVertexForTokenVertex(dest);
   DependencyGraphOutEdgeIt outItr,outItrEnd;
-  boost::tie(outItr, outItrEnd) = out_edges(v1, *m_depGraph);
+  std::tie(outItr, outItrEnd) = out_edges(v1, *m_depGraph);
   for (; outItr != outItrEnd; outItrEnd++)
   {
     if(target(*outItr, *m_depGraph) != v2)
@@ -323,7 +323,7 @@ bool SyntacticData::removeDependency(const LinguisticGraphVertex& v1,
   LDEBUG << "SyntacticData::removeDependency dep vertices are " << dv1 << ", " << dv2;
 #endif
   DependencyGraphOutEdgeIt outIt, outIt_end;
-  boost::tie (outIt, outIt_end) = boost::out_edges(dv1, *m_depGraph);
+  std::tie (outIt, outIt_end) = boost::out_edges(dv1, *m_depGraph);
   for (; outIt != outIt_end; outIt++)
   {
     if (target(*outIt, *m_depGraph) == dv2 && relTypeMap[*outIt] == relationType)

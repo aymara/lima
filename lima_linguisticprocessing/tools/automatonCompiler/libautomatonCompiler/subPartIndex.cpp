@@ -89,16 +89,16 @@ void SubPartIndex::init(const LimaString& str,
     subIndex=str.mid(i+1);
   }
 
-  if (index==STRING_CONSTRAINT_GROUP_FIRST) {
+  if (index==*STRING_CONSTRAINT_GROUP_FIRST) {
     m_partIndex.first=SUB_FIRST;
   }
-  else if (index==STRING_CONSTRAINT_GROUP_CURRENT) {
+  else if (index==*STRING_CONSTRAINT_GROUP_CURRENT) {
     m_partIndex.first=SUB_CURRENT;
   }
-  else if (index==STRING_CONSTRAINT_GROUP_NEXT) {
+  else if (index==*STRING_CONSTRAINT_GROUP_NEXT) {
     m_partIndex.first=SUB_NEXT;
   }
-  else if (index==STRING_CONSTRAINT_GROUP_LAST) {
+  else if (index==*STRING_CONSTRAINT_GROUP_LAST) {
     m_partIndex.first=SUB_LAST;
   }
   else {

@@ -41,6 +41,7 @@ namespace LinguisticProcessing
 */
 class LIMA_ANALYSISHANDLERS_EXPORT BowDocumentWriter : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   BowDocumentWriter(std::ostream* out);
 

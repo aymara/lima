@@ -885,9 +885,9 @@ readActionArgument(const LimaString& arguments,
   else
     argument=arguments;
   // check if argument begin with "trigger", "left" or "right"
-  if ( (argument.indexOf(STRING_CONSTRAINT_TRIGGER) != 0)
-    && (argument.indexOf(STRING_CONSTRAINT_LEFT) != 0)
-    && (argument.indexOf(STRING_CONSTRAINT_RIGHT) != 0) )
+  if ( (argument.indexOf(*STRING_CONSTRAINT_TRIGGER) != 0)
+    && (argument.indexOf(*STRING_CONSTRAINT_LEFT) != 0)
+    && (argument.indexOf(*STRING_CONSTRAINT_RIGHT) != 0) )
   {
     AUCLOGINIT;
     LWARN << "Warning! readActionArgument: [" << argument
@@ -928,17 +928,17 @@ readConstraintArgument(const LimaString& arguments,
   LINFO << "readConstraintArgument: [" << argument
         << "/" << nextArgument << "]";
 
-  if (argument.indexOf(STRING_CONSTRAINT_TRIGGER) == 0) {
+  if (argument.indexOf(*STRING_CONSTRAINT_TRIGGER) == 0) {
     part=TRIGGER;
     index.init(Common::Misc::utf8stdstring2limastring("1"),
                subAutomatons); // always 1 for the trigger
   }
-  else if (argument.indexOf(STRING_CONSTRAINT_LEFT) == 0) {
+  else if (argument.indexOf(*STRING_CONSTRAINT_LEFT) == 0) {
     part=LEFT;
     index.init(argument.mid(LENGTH_CONSTRAINT_LEFT+1),
                subAutomatons);
   }
-  else if (argument.indexOf(STRING_CONSTRAINT_RIGHT) == 0) {
+  else if (argument.indexOf(*STRING_CONSTRAINT_RIGHT) == 0) {
     part=RIGHT;
     index.init(argument.mid(LENGTH_CONSTRAINT_RIGHT+1),
                subAutomatons);
@@ -949,9 +949,9 @@ readConstraintArgument(const LimaString& arguments,
 //         << ": cannot recognize part name in \""
 //         << Common::Misc::limastring2utf8stdstring(argument)
 //         << "\" (should be "
-//         << Common::Misc::limastring2utf8stdstring(STRING_CONSTRAINT_TRIGGER) << ","
-//         << Common::Misc::limastring2utf8stdstring(STRING_CONSTRAINT_LEFT) << " or "
-//         << Common::Misc::limastring2utf8stdstring(STRING_CONSTRAINT_RIGHT) << ")";
+//         << Common::Misc::limastring2utf8stdstring(*STRING_CONSTRAINT_TRIGGER) << ","
+//         << Common::Misc::limastring2utf8stdstring(*STRING_CONSTRAINT_LEFT) << " or "
+//         << Common::Misc::limastring2utf8stdstring(*STRING_CONSTRAINT_RIGHT) << ")";
 //     throw ConstraintSyntaxException(oss.str());
 //   }
 
@@ -990,12 +990,12 @@ bool RuleString::readConstrainedTerm(const LimaString& term,
                                      LimaString& subindex) {
   subindex=LimaString();
 
-  if (term.indexOf(STRING_CONSTRAINT_TRIGGER) == 0) {
+  if (term.indexOf(*STRING_CONSTRAINT_TRIGGER) == 0) {
     part=TRIGGER;
     index=1; // always 1 for the trigger
     return true;
   }
-  else if (term.indexOf(STRING_CONSTRAINT_LEFT) == 0) {
+  else if (term.indexOf(*STRING_CONSTRAINT_LEFT) == 0) {
     part=LEFT;
     if (term[LENGTH_CONSTRAINT_LEFT] != CHAR_CONSTRAINT_INDEX) {
       return false;
@@ -1006,7 +1006,7 @@ bool RuleString::readConstrainedTerm(const LimaString& term,
       return true;
     }
   }
-  else if (term.indexOf(STRING_CONSTRAINT_RIGHT) == 0) {
+  else if (term.indexOf(*STRING_CONSTRAINT_RIGHT) == 0) {
     part=RIGHT;
     if (term[LENGTH_CONSTRAINT_RIGHT] != CHAR_CONSTRAINT_INDEX) {
       return false;

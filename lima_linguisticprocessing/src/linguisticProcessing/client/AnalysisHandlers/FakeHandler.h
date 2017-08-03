@@ -39,6 +39,7 @@ namespace LinguisticProcessing
 */
 class LIMA_ANALYSISHANDLERS_EXPORT FakeHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   FakeHandler();
 

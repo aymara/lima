@@ -89,6 +89,8 @@ typedef std::vector<Rule*> SetOfRules;
  */
 class LIMA_AUTOMATON_EXPORT Recognizer : public AbstractResource
 {
+  Q_OBJECT
+
 friend class AutomatonReader;
 friend class AutomatonWriter;
 

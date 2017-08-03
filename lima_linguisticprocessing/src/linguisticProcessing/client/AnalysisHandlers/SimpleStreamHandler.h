@@ -45,6 +45,7 @@ class SimpleStreamHandlerPrivate;
 */
 class LIMA_ANALYSISHANDLERS_EXPORT SimpleStreamHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   SimpleStreamHandler();
 
