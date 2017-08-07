@@ -504,10 +504,10 @@ Controls1.ApplicationWindow {
                     SelectOptionComboBox {
                       id: language_selector
 
+                      name: "Language"
                       width: 200
-                      color: "lightblue"
-                      model: [qsTr("French"),qsTr("English"),qsTr("Spanish")]
-                      keys: ["fre","eng","esp"]
+                      model: [qsTr("French"),qsTr("English")]
+                      keys: ["fre","eng"]
 
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
@@ -525,6 +525,7 @@ Controls1.ApplicationWindow {
                     SelectOptionComboBox {
                       id: format_selector
 
+                      name: "Format"
                       width: 200
                       model: [qsTr("CONLL Format"), qsTr("Named entities"), qsTr("Graph")]
                       keys: ["table","NE","graph"]
@@ -540,11 +541,12 @@ Controls1.ApplicationWindow {
                     }
 
                     SelectOptionComboBox {
-                        id: pipeline_selector
+                        id: config_selector
 
+                        name: "Analyzer"
                         width: 200
-                        model: ["main", "easy"]
-                        keys: ["main", "easy"]
+                        model: ["Default"].concat(["easy"])
+                        keys: ["default", "easy"]
                     }
 
 
@@ -594,19 +596,19 @@ Controls1.ApplicationWindow {
           Layout.preferredHeight: 300
           Layout.minimumHeight: 100
 
-//          Controls1.ScrollView {
-//            anchors.fill: parent
+          Controls1.ScrollView {
+            anchors.fill: parent
 
-////            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
-////            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+//            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
+//            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
-//            Text {
-//              height: implicitHeight;
-//              width: implicitWidth;
-//              text: textAnalyzer.text
-//              anchors.centerIn: parent
-//            }
-//          }
+            Text {
+              height: implicitHeight;
+              width: implicitWidth;
+              text: textAnalyzer.text
+              anchors.centerIn: parent
+            }
+          }
 
 //          ResultView {
 

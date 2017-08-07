@@ -112,6 +112,9 @@ QString NamedEntitiesParser::getHighlightedText() {
   CONLL_List conllList = conllRawToLines(conllText.toStdString());
 
   std::string result = "";
+  std::string block = "";
+
+  bool foundEntity = false;
 
   int i = 0;
   int j = 0;
@@ -126,15 +129,28 @@ QString NamedEntitiesParser::getHighlightedText() {
       if (line->at(5) != "_") entity = findEntity(line->at(5));
 
       if (entity) {
-        hltext = markupa(hltext, "mark", "border-radius:10; background-color:"+entity->color + "; border: 1px solid #aaeeee", "name=\"" + entity->name + "\"");
+        std::string style = "";
+        style += "background-color: " + entity->color + "; ";
+        style += "border: 1px solid black; ";
+        style += "padding:5px; ";
+        style += "border-radius: 5px; ";
+        hltext = markupa(hltext, "mark",style , "name=\"" + entity->name + "\"");
+        foundEntity = true;
       }
 
-      result += hltext + " ";
+      if (line->at(3) != "PONCTU") {
+        block += " ";
+      }
+
+      block += hltext;
 
       i = j;
     }
     else {
-      result += "\n";
+      std::string style = "";
+      result += markupa(block,"p",style + "display:block;" /*+ (foundEntity ? "background-color: #ddd" : "")*/,"") + "";
+      block = "";
+      foundEntity = false;
 
       i = j = 0;
     }

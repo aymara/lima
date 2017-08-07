@@ -11,6 +11,9 @@
 namespace Lima {
 namespace Gui {
 
+typedef std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > LimaClient_ptr;
+
+
 /// \class LimaGuiFile
 /// \brief A simple structure to hold information relative to files
 ///
@@ -21,6 +24,9 @@ struct LimaGuiFile {
 };
 
 class LimaGuiThread;
+class LimaConfiguration;
+
+typedef std::shared_ptr<LimaConfiguration> LimaConfiguration_ptr;
 
 class LimaGuiApplicationPrivate;
 
@@ -206,7 +212,9 @@ private:
   std::vector<LimaGuiFile> m_openFiles;
   
   ///< LIMA analyzer
-  std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
+  LimaClient_ptr m_analyzer;
+
+  std::map<std::string, LimaClient_ptr> clients;
   
   ///< application analysis output stream
   std::ostream* out = &std::cout;
@@ -222,6 +230,17 @@ private:
   /// workspace directory (where all files are created when running analysis)
   ///
   /// we could have a temp directory that would be wiped out when not needed
+  ///
+
+  void loadConfigurations();
+
+  void createConfiguration(const LimaConfiguration& newconfig);
+
+  void setConfiguration(const std::string& name);
+
+  void setConfiguration(const LimaConfiguration& config);
+
+  std::map<std::string, LimaConfiguration_ptr> configurations;
 
 };
 

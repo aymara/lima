@@ -1,7 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import "scripts/colors.js" as Colors
 
 import "basics"
 
@@ -34,7 +33,7 @@ ToolBar {
 
     ToolButton {
 
-      text: qsTr("Open")
+      text: qsTr("Analyze File")
       //iconSource: "open.png"
       onClicked: {
         openSelectFileDialog()
@@ -68,14 +67,14 @@ ToolBar {
       }
     }
     
-    ToolButton {
+//    ToolButton {
 
-      text: qsTr("Analyze a file")
+//      text: qsTr("Analyze a file")
       
-      onClicked: {
-        openAnalyzeFileTab()
-      }
-    }
+//      onClicked: {
+//        openAnalyzeFileTab()
+//      }
+//    }
 
     ToolButton {
 
@@ -91,7 +90,7 @@ ToolBar {
       text: qsTr("Export")
 
       onClicked: {
-        workspace.addTab("bonjour",Qt.createComponent("basics/TextView.qml"))
+
       }
     }
     
@@ -101,7 +100,6 @@ ToolBar {
       text: "⋮"
 
       onClicked: {
-        textAnalyzer.text = Colors.randomChar()
         additionalMenu.x = x
         additionalMenu.open()
       }

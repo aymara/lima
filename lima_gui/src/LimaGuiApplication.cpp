@@ -2,10 +2,11 @@
 #include "LimaGuiApplication.h"
 #include "ConllParser.h"
 #include "Threads.h"
+#include "LimaConfiguration.h"
 
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
-//#include "XMLConfigurationFiles/configurationStructure.h"
+#include "common/XMLConfigurationFiles/configurationStructure.h"
 
 #include <deque>
 #include <iostream>
@@ -21,7 +22,6 @@ using namespace Lima::LinguisticProcessing;
 
 namespace Lima {
 namespace Gui {
-
 
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
 
@@ -175,6 +175,9 @@ void LimaGuiApplication::analyze(const QString& content) {
   std::string pipeline = "main";
   
   // Handlers 
+
+  // we need to figure out what handlers to instantiate from the analyzer
+
   std::set<std::string> dumpers;
   
   dumpers.insert("text");
@@ -236,12 +239,14 @@ bool LimaGuiApplication::selectFile(const QString& filename) {
 
 void LimaGuiApplication::initializeLimaAnalyzer() {
   
+  std::string currentCustomPipeline = "water";
+
   std::string configDir = qgetenv("LIMA_CONF").constData();
-  LTELL("Config Dir is " << configDir);
   if (configDir == "") {
     configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
   }
-//  configDir += "/../custom";
+//   configDir = configDir + "/../water" + ":" + configDir;
+  LTELL("Config Dir is " << configDir);
   
   std::deque<std::string> langs = {"eng","fre"};
   std::deque<std::string> pipelines = {"main", "easy"};
@@ -250,8 +255,11 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
   if( resourcesPath.empty() )
     resourcesPath = "/usr/share/apps/lima/resources/";
+  LTELL("Ressources path is " << resourcesPath);
   std::string commonConfigFile("lima-common.xml");
   
+  std::cout << "LOADING RESOURCES" << std::endl;
+
 //  std::ostringstream oss;
 //  std::ostream_iterator<std::string> out_it (oss,", ");
 //  std::copy ( langs.begin(), langs.end(), out_it );
@@ -280,15 +288,20 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
 
 //    std::cout << "[" << pair.first << "]" << std::endl;
 
+//    std::cout << pair.second << std::endl;
+
 //    for (auto& mpair : pair.second) {
 //        std::cout << "\t(" << mpair.first << ")" << std::endl;
 
+//        std::cout << mpair.second << std::endl;
 
 //    }
 
 //  }
 
   //////////////////////////////////////////////////////////////
+
+  std::cout << "LOADING CONFIGURATION FILES" << std::endl;
 
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
     clientId,
@@ -298,19 +311,8 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
 
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
-//  std::string anotherClientId("lima-sideclient");
+  clients["default"] = m_analyzer;
 
-//  LinguisticProcessingClientFactory::changeable().configureClientFactory(
-//    anotherClientId,
-//    lpconfig,
-//    langs,
-//    pipelines);
-  
-
-//  std::cout << "Pipelines:" << std::endl;
-//  for (unsigned int i=0; i < pipelines.size(); i++) {
-//    std::cout << pipelines[i] << std::endl;
-//  }
 }
 
 void LimaGuiApplication::resetLimaAnalyzer() {
@@ -427,6 +429,61 @@ QStringList LimaGuiApplication::getNamedEntitiesList(const QString& text) {
   return nEntities;
 }
 
+void LimaGuiApplication::loadConfigurations() {
+
+}
+
+void LimaGuiApplication::setConfiguration(const std::string& name) {
+  if (configurations.find(name) != configurations.end()) {
+    return setConfiguration(*configurations[name]);
+  }
+  else if (name == "default") {
+    m_analyzer = clients["default"];
+  }
+  else {
+    LTELL("There is no such configuration");
+  }
+}
+
+void LimaGuiApplication::setConfiguration(const LimaConfiguration& config) {
+  /// This will create a new analyzer
+  /// If an analyzer with the same name already exists, ask the user if it should reload it
+
+  if (clients.find(config.getName()) != clients.end()) {
+    LTELL("A client already exists for this configuration. Reload the configuration ? (y/n)");
+    char c;
+    std::cin >> c;
+    if (c == 'n' || c == 'N') {
+      return;
+    }
+  }
+
+  /// Create a new client
+  /// The thing is that we may need to create additional dumpers
+  /// Need to know how to handle paths
+  ///
+
+  LTELL("Creating " << config.getName() << " client ...");
+
+  LTELL("(WIP)");
+
+  // m_analyzer = clients[config.getName()];
+
+}
+
+void LimaGuiApplication::createConfiguration(const LimaConfiguration& newconfig) {
+
+  /// This will take in a limaconfiguration created by the user
+  /// and save it as files properly
+  ///
+  /// +
+  /// add it to current configurations
+  ///
+//  if (created == success) {
+//    configurations[newconfig.name] = newconfig;
+//  }
+
+}
 
 } // END namespace Gui
 } // END namespace Lima

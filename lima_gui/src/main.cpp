@@ -5,16 +5,11 @@
  * \date 20-06-2017
  */
 
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include <../../../master/debug/include/common/tools/FileUtils.h>
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include "../../lima_common/src/common/tools/FileUtils.h"
-#include "../../lima_common/src/common/tools/FileUtils.h"
+#include "common/tools/FileUtils.h"
 
 
 #include "LimaGuiApplication.h"
+#include "LimaConfiguration.h"
 #include "ConllListModel.h"
 #include "NamedEntitiesParser.h"
 
@@ -61,6 +56,8 @@ int main(int argc, char *argv[])
 
     LimaGuiApplication lga;
 
+
+
     /// we add the app as a context property so that it can be accessed from anywhere,
     /// without instantiating in QML
 
@@ -70,4 +67,7 @@ int main(int argc, char *argv[])
 
     int result = app.exec();
     return result;
+
+//  LimaConfiguration lc;
+//  return 0;
 }

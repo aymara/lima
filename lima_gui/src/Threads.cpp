@@ -1,4 +1,4 @@
-#include <thread>
+﻿#include <thread>
 
 #include "Threads.h"
 #include "LimaGuiApplication.h"
@@ -12,16 +12,6 @@ LimaGuiThread::LimaGuiThread(LimaGuiApplication* app) : QThread() {
   m_application = app;
   connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
 }
-
-//void LimaGuiThread::clear() {
-//  m_application->destroyThread(this);
-//}
-
-///
-///
-///
-
-
 
 ///
 ///
@@ -40,7 +30,7 @@ AnalysisThread::AnalysisThread(LimaGuiApplication *app, const QString& s) : Lima
 void AnalysisThread::run() {
   if (m_application->available()) {
     std::stringstream buffer;
-    std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
+//     std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
     std::streambuf* old_cerr = std::cerr.rdbuf(buffer.rdbuf());
 
     m_application->setOut(&out);
@@ -49,7 +39,7 @@ void AnalysisThread::run() {
     // reset app out
     m_application->setOut(&std::cout);
     m_application->setTextBuffer(buffer.str());
-    std::cout.rdbuf(old_cout);
+//     std::cout.rdbuf(old_cout);
     std::cerr.rdbuf(old_cerr);
 
     notifyView();
@@ -109,8 +99,8 @@ void InitializeThread::run() {
 void InitializeThread::doTheThing() {
   std::stringstream buffer;
   /// This won't work though
-  std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
-  std::streambuf* old_cerr = std::cerr.rdbuf(buffer.rdbuf());
+ std::streambuf* old_cout = std::cout.rdbuf(buffer.rdbuf());
+ std::streambuf* old_cerr = std::cerr.rdbuf(buffer.rdbuf());
 
 //  for (int i = 0; i < 200000000; i++) {
 //    m_application->setTextBuffer("Hello patient n°" + std::to_string(i) + "!");
@@ -118,13 +108,13 @@ void InitializeThread::doTheThing() {
 
   m_application->initializeLimaAnalyzer();
 
-  m_application->setTextBuffer(buffer.str());
+//  m_application->setTextBuffer(buffer.str());
 
   m_application->setAnalyzerState(1);
 
   // restore previous streams
-  std::cout.rdbuf(old_cout);
-  std::cerr.rdbuf(old_cerr);
+ std::cout.rdbuf(old_cout);
+ std::cerr.rdbuf(old_cerr);
 }
 
 } // END namespace Gui

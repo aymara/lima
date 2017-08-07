@@ -6,7 +6,7 @@ Rectangle {
 
 //  property alias name: label.text
   property alias currentIndex: cbbox.currentIndex
-
+  property string name: "Aleau"
   property var model: ['a','b']
   property var keys: []
 
@@ -28,15 +28,32 @@ Rectangle {
   }
 
   height: parent.height
+  color: "transparent"
 
-  ComboBox {
-    id: cbbox
+  Column {
 
     anchors.fill: parent
-    model: socb.model
+    spacing: 2
 
-    onCurrentIndexChanged: {
-      selected()
+    Text {
+      id: nameLabel
+      y: -5
+      visible: text
+      text: name
+      font.pointSize: 9
+      height: 15
+    }
+
+    ComboBox {
+      id: cbbox
+
+      model: socb.model
+      width: parent.width
+      height: parent.height - nameLabel.height
+
+      onCurrentIndexChanged: {
+        selected()
+      }
     }
   }
 

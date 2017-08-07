@@ -49,50 +49,6 @@ Popup {
 //            ScrollBar.vertical.policy: scv.contentHeight > scv.height ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
 //            ScrollBar.horizontal.policy: scv.contentWidth > scv.width ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
 
-
-            Grid {
-              id: gridgrid
-
-              anchors.fill: parent
-              anchors.margins: 2
-              spacing: 2
-              columns: 4
-
-
-              Repeater {
-                model: 50
-
-                BasicRectangle {
-                  width: (gridgrid.width - 10)/4
-                  height: 15
-                  border.width: 2
-                  border.color: "lightblue"
-                  Text {
-                    anchors.centerIn: parent
-                    anchors.margins: 10
-
-                    text: index
-                  }
-
-                  MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-
-                    onEntered: {
-                      var v = border.color
-                      border.color = parent.color
-                      parent.color = v
-                    }
-
-                    onExited: {
-                      var v = border.color
-                      border.color = parent.color
-                      parent.color = v
-                    }
-                  }
-                }
-              }
-            }
           }
 
         }
