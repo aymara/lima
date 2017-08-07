@@ -41,8 +41,8 @@ class LIMA_FSAACCESS_EXPORT AbstractLexiconIdAccessor
      
     // implementation of operation inherited from interface IndexElementIdGenerator
     // rely on abstract operation implemented by concrete IdGenerator (fromMap or from fromFsaAccess)
-    virtual uint64_t getId(const Lima::LimaString& word) const = 0;
-    virtual uint64_t getId(const std::vector<uint64_t>& structure) const = 0;
+    virtual uint64_t getId(const Lima::LimaString& word) = 0;
+    virtual uint64_t getId(const std::vector<uint64_t>& structure) = 0;
     virtual uint64_t getSize() const = 0;
     virtual uint64_t getSimpleTermSize() const = 0;
     static const uint64_t NOT_A_LEXICON_ID;

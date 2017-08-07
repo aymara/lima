@@ -42,39 +42,23 @@ namespace Lima {
 namespace Common {
 namespace BagOfWords {
 
+class DefaultIdGeneratorPrivate;
 class LIMA_BOW_EXPORT DefaultIdGenerator : public AbstractLexiconIdGenerator
 {
  public:
   DefaultIdGenerator(AbstractLexiconIdGeneratorInformer* informer, const uint64_t lastId=1);
   ~DefaultIdGenerator();
-  
-  uint64_t getId(const LimaString& /*unused word*/) const {
-    assert(false);
-    return m_lastId; 
-  }
-  uint64_t getId(const LimaString& /*unused word*/) {
-    m_simpleTermCount++;
-    return m_lastId++; 
-  }
-  uint64_t getId(const std::vector<uint64_t>& /*unused structure*/) const {
-    assert(false);
-    return m_lastId;
-  }
-  uint64_t getId(  const std::vector<uint64_t>& /*unused structure*/ ) {
-    m_compoundTermCount++;
-    return m_lastId++;
-  }
-  uint64_t getSize() const {
-    return m_simpleTermCount + m_compoundTermCount;
-  }
-  uint64_t getSimpleTermSize() const {
-    return m_simpleTermCount;
-  }
 
- private:
-  uint64_t m_lastId;
-  uint64_t m_simpleTermCount;
-  uint64_t m_compoundTermCount;
+  uint64_t getId(const LimaString& /*unused word*/);
+
+  uint64_t getId(  const std::vector<uint64_t>& /*unused structure*/ );
+
+  uint64_t getSize() const;
+
+  uint64_t getSimpleTermSize() const;
+
+private:
+  DefaultIdGeneratorPrivate* m_d;
 };
 
 } // end namespace

@@ -54,8 +54,8 @@ class LexiconIdAccessor : public AbstractLexiconIdAccessor
     virtual ~LexiconIdAccessor() {}
      
     // implementation of operation inherited from interface AbstractLexiconIdAccessor
-    uint64_t getId(const LimaString& word) const;
-    uint64_t getId(const std::vector<uint64_t>& structure) const;
+    uint64_t getId(const LimaString& word);
+    uint64_t getId(const std::vector<uint64_t>& structure);
 //    CompoundsDataIterator getDataIterator();
     void read(FsaAccessDataInputHandler& handler);
 //     void read(AbstractFsaAccessIStreamWrapper& handler);
