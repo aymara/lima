@@ -43,7 +43,7 @@ namespace SpecificEntities {
 // ids of actions defined in this file
 #define NormalizePersonId "NormalizePerson"
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizePerson : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_PERSON_EXPORT NormalizePerson : public Automaton::ConstraintFunction
 {
 public:
   NormalizePerson(MediaId language,

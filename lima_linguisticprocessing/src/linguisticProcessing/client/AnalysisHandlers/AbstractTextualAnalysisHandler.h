@@ -29,6 +29,7 @@
 #define ABSTRACTTEXTUALANALYSISHANDLER_H
 
 #include <sstream>
+#include "AnalysisHandlersExport.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
 #include "common/Handler/AbstractXmlAnalysisHandler.h"
 #include "common/Data/genericDocumentProperties.h"
@@ -37,7 +38,7 @@
 namespace Lima{
 
 //! @brief defines callback interface
-class AbstractTextualAnalysisHandler : 
+class LIMA_ANALYSISHANDLERS_EXPORT AbstractTextualAnalysisHandler : 
     public LinguisticProcessing::AbstractResource, 
     public AbstractXmlAnalysisHandler
 {

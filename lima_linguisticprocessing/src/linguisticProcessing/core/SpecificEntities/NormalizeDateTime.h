@@ -48,7 +48,7 @@ namespace SpecificEntities {
 #define NormalizeUTCTimeId "NormalizeUTCTime"
 
 // a class to store reference objects for relative normalization
-class LIMA_SPECIFICENTITIES_EXPORT ReferenceData {
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT ReferenceData {
  public:
   ReferenceData();
   ~ReferenceData();
@@ -76,7 +76,7 @@ class LIMA_SPECIFICENTITIES_EXPORT ReferenceData {
   std::string m_locRefName;
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeDate : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeDate : public Automaton::ConstraintFunction
 {
 public:
   NormalizeDate(MediaId language,
@@ -102,7 +102,7 @@ protected:
   unsigned short getDayFromString(const LimaString& numdayString) const;
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeRelativeDate : public NormalizeDate
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeRelativeDate : public NormalizeDate
 {
 public:
   NormalizeRelativeDate(MediaId language,
@@ -120,7 +120,7 @@ private:
 
 // abstract constraint that contains common functions for
 // time normalization
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeTime : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeTime : public Automaton::ConstraintFunction
 {
 public:
   NormalizeTime(MediaId language,
@@ -150,7 +150,7 @@ private:
   ReferenceData m_referenceData;
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeLocalTime : public NormalizeTime
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeLocalTime : public NormalizeTime
 {
 public:
   NormalizeLocalTime(MediaId language,
@@ -162,7 +162,7 @@ public:
 private:
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeUTCTime : public NormalizeTime
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeUTCTime : public NormalizeTime
 {
 public:
   NormalizeUTCTime(MediaId language,

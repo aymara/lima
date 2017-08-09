@@ -43,7 +43,7 @@ namespace SpecificEntities {
 // ids of actions defined in this file
 #define NormalizeNumberId "NormalizeNumber"
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeNumber : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_NUMBER_EXPORT NormalizeNumber : public Automaton::ConstraintFunction
 {
 public:
   NormalizeNumber(MediaId language,
