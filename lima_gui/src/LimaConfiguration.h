@@ -1,6 +1,11 @@
 #ifndef LIMACONFIGURATION_H
 #define LIMACONFIGURATION_H
 
+#include "LimaGuiExport.h"
+
+#include <QObject>
+#include <QString>
+
 #include <map>
 #include <vector>
 
@@ -13,9 +18,16 @@ namespace Lima {
   namespace Common {
     namespace XMLConfigurationFiles {
       class XMLConfigurationFileParser;
+      class GroupConfigurationStructure;
     }
   }
 namespace Gui {
+
+#define GConfigStruct Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure
+
+struct ConfigurationFile {
+
+};
 
 enum NODE_TYPE {
   NONE,
@@ -50,6 +62,49 @@ struct ConfigTree {
 
 };
 
+struct ProcessUnitConfiguration {
+
+  ProcessUnitConfiguration(GConfigStruct& group) {
+//    m_xmlGroup = &group;
+    m_name = group.getName();
+//    m_class = group.getAttribute("class");
+  }
+
+  std::string m_name;
+  std::string m_class;
+
+  GConfigStruct* m_xmlGroup;
+
+  GConfigStruct asGroupConfigurationStructure();
+};
+
+struct ProcessUnitPipelineConfiguration {
+
+  ProcessUnitPipelineConfiguration(const GConfigStruct& g);
+//  {
+   //m_name = g.getName();
+
+//    auto& processUnitList = g.getListsValueAtKey("processUnitSequence");
+
+//    for (auto& str : processUnitList) {
+//      m_processUnits.push_back(str);
+//    }
+
+//  }
+
+  void addProcessUnit(const std::string& str) {
+    m_processUnits.push_back(str);
+  }
+
+  std::string m_name;
+
+  std::vector<std::string> m_processUnits;
+
+  GConfigStruct asGroupConfigurationStructure();
+
+};
+
+
 
 /// How it could be done :
 ///
@@ -57,7 +112,8 @@ struct ConfigTree {
 ///
 /// This file contains references to language-specific
 
-class LimaConfiguration {
+class LIMA_GUI_EXPORT LimaConfiguration : public QObject {
+Q_OBJECT
 public:
   LimaConfiguration();
 
@@ -65,15 +121,26 @@ public:
 
   void process(const std::string& path);
 
-  std::string getName() const { return name; }
+  std::string getName() const { return m_name; }
 
   void writeFile(Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser& xmlcfgparser, const std::string& path);
 
-  std::map<std::string, std::string> langFiles;
+  std::map<std::string, std::string> m_langFiles;
+
+//  Q_INVOKABLE void loadFromDirectory(const QString& path);
+
+
 
 private:
 
-  std::string name;
+  /// main -> ...
+  /// easy -> ...
+  /// even if only main interests us
+  std::map<std::string, ProcessUnitPipelineConfiguration> m_processUnitPipelinesConfiguration;
+
+  std::map<std::string, ProcessUnitConfiguration> m_processUnitsConfigurations;
+
+  std::string m_name;
 
 //  std::map<std::string, ConfigTree> content;
 

@@ -2,6 +2,8 @@
 #define lima_gui_analysis_thread_h
 
 #include "LimaGui.h"
+#include "LimaGuiExport.h"
+
 #include <sstream>
 
 #include <QThread>
@@ -14,7 +16,7 @@ class LimaGuiApplication;
 /// \class LimaGuiThread
 ///
 /// \brief This class is meant to be related with a LimaGuiApplication object.
-class LimaGuiThread : public QThread {
+class LIMA_GUI_EXPORT LimaGuiThread : public QThread {
   Q_OBJECT
 public:
   LimaGuiThread(LimaGuiApplication* app);
@@ -30,7 +32,7 @@ protected:
 
 /// \class AnalysisThread
 /// \brief This thread starts the analysis with preferred parameters.
-class AnalysisThread : public LimaGuiThread {
+class LIMA_GUI_EXPORT AnalysisThread : public LimaGuiThread {
   
 public:
 
@@ -77,7 +79,7 @@ private:
 
 /// \class InitializeThread
 /// \brief Thread to initialize lima
-class InitializeThread : public LimaGuiThread {
+class LIMA_GUI_EXPORT InitializeThread : public LimaGuiThread {
   
 public:
   InitializeThread(LimaGuiApplication* a);
@@ -88,7 +90,7 @@ public:
   void doTheThing();
 };
 
-class TestThread : public LimaGuiThread {
+class LIMA_GUI_EXPORT TestThread : public LimaGuiThread {
 public:
   TestThread(LimaGuiApplication* application);
   void run();

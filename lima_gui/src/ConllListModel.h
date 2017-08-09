@@ -1,6 +1,8 @@
 #ifndef CONLL_LIST_MODEL_H
 #define CONLL_LIST_MODEL_H
 
+#include "LimaGuiExport.h"
+
 #include "ConllParser.h"
 
 #include <QObject>
@@ -11,7 +13,7 @@ namespace Gui {
 
 /// \class ConllRow
 /// \brief This is an extension of the CONLL_Line structure to Qt
-class ConllRow : public QObject, public CONLL_Line {
+class LIMA_GUI_EXPORT ConllRow : public QObject, public CONLL_Line {
   Q_OBJECT
   Q_PROPERTY(QString nid READ getId)
   Q_PROPERTY(QString token READ getToken)
@@ -32,7 +34,7 @@ public:
 
 /// \class ConllListModel
 /// \brief conll qt data model
-class ConllListModel : public QAbstractTableModel {
+class LIMA_GUI_EXPORT ConllListModel : public QAbstractTableModel {
   Q_OBJECT
 public:
   ConllListModel(QObject* p = 0);

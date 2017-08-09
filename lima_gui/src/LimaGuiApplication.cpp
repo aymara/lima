@@ -11,6 +11,7 @@
 #include <deque>
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 #include <QFile>
 
@@ -27,6 +28,8 @@ LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
 
    auto ith = new InitializeThread(this);
    ith->start();
+
+//  initializeLimaAnalyzer();
 }
 
 /// PUBLIC METHODS
@@ -238,7 +241,7 @@ bool LimaGuiApplication::selectFile(const QString& filename) {
 /// INITIALIZATION METHODS
 
 void LimaGuiApplication::initializeLimaAnalyzer() {
-  
+
   std::string currentCustomPipeline = "water";
 
   std::string configDir = qgetenv("LIMA_CONF").constData();
@@ -277,8 +280,10 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   // initialize linguistic processing
   std::string clientId("lima-coreclient");
   std::string lpConfigFile("lima-analysis.xml");
+//  lpConfigFile =("lima-lp-fre.xml");
+
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
-  
+
   /// HERE TO EXPLORE  //////////////////////////////////////////
   ///
 
@@ -484,6 +489,10 @@ void LimaGuiApplication::createConfiguration(const LimaConfiguration& newconfig)
 //  }
 
 }
+
+//void LimaGuiApplication::test() {
+//  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser fp()
+//}
 
 } // END namespace Gui
 } // END namespace Lima

@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     // https://stackoverflow.com/questions/9500280/access-c-function-from-qml
     // qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
     qmlRegisterType<LimaGuiApplication>("integ_cpp", 1, 0, "LimaGuiApplication");
+    qmlRegisterType<LimaConfiguration>("integ_cpp", 1, 0, "LimaConfiguration");
     qmlRegisterType<ConllListModel>("integ_cpp", 1, 0, "ConllListModel");
     qmlRegisterType<NamedEntitiesParser>("integ_cpp", 1, 0, "NamedEntitiesParser");
     ////

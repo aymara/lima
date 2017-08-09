@@ -2,6 +2,8 @@
 #define LIMA_GUI_APPLICATION_H
 
 #include "LimaGui.h"
+#include "LimaGuiExport.h"
+
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 
@@ -17,7 +19,7 @@ typedef std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessin
 /// \class LimaGuiFile
 /// \brief A simple structure to hold information relative to files
 ///
-struct LimaGuiFile {
+struct LIMA_GUI_EXPORT LimaGuiFile {
   std::string name; ///< name of the file. (<name>.<ext>, without the full path)
   std::string url; ///< path of the file (relative or absolute)
   bool modified = false; ///< This indicates whether the file has been modified inside the applicaiton. Obsolete.
@@ -34,7 +36,7 @@ class LimaGuiApplicationPrivate;
 /// \class LimaGuiApplication
 /// \brief Main class of Lima Gui.
 ///
-class LimaGuiApplication : public QObject {
+class LIMA_GUI_EXPORT LimaGuiApplication : public QObject {
   Q_OBJECT
   
   /// BUFFER PROPERTIES EXPOSED TO QML

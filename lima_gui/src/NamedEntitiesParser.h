@@ -1,13 +1,15 @@
 #ifndef NAMEDENTITIESPARSER_H
 #define NAMEDENTITIESPARSER_H
 
+#include "LimaGuiExport.h"
+
 #include <QObject>
 #include <QString>
 
 namespace Lima {
 namespace Gui {
 
-struct EntityItem {
+struct LIMA_GUI_EXPORT EntityItem {
 
   EntityItem(std::string name, std::string color, const std::vector<std::string>& occ) :
   name(name), color(color), occurences(occ)
@@ -18,7 +20,7 @@ struct EntityItem {
   std::vector<std::string> occurences;
 };
 
-class NamedEntitiesParser : public QObject
+class LIMA_GUI_EXPORT NamedEntitiesParser : public QObject
 {
   Q_OBJECT
 

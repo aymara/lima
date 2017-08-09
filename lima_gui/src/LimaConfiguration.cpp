@@ -36,7 +36,7 @@ LimaConfiguration::LimaConfiguration() {
 //    return;
 //  }
 
-  saveAsXml();
+  //saveAsXml();
 
 
 }
@@ -62,6 +62,7 @@ const char* neutralString(const char c[]) {
 #define ITEM ELEMENT("item");
 #define PARAM ELEMENT("param");
 #define MODULE ELEMENT("module");
+#define ENTRY ELEMENT("entry");
 
 #define ATTRIBUTE(name, value) xml.writeAttribute(neutralString(name),neutralString(value))
 
@@ -98,7 +99,6 @@ void LimaConfiguration::saveAsXml() {
   XML_DOCUMENT;
 
   ///
-
   ELEMENT("modulesConfig");
     MODULE NAME("entities")
       GROUP NAME("include")
@@ -185,20 +185,26 @@ void LimaConfiguration::process(const std::string& configPath) {
 }
 
 void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml) {
+  LTELL("\t\twriting list<" << name << ">:");
+
   LIST NAME(name)
       ///
       for (auto& str : list) {
-        LTELL(str);
+//        LTELL(str);
+        ITEM VALUE(str) END
       }
   END_LIST
 }
 
 void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml) {
+
+
+  LTELL("\t\twriting map<" << name << ">:");
+
   MAP NAME(name)
     ///
     for (auto& pair : map) {
-      LTELL(pair.first << " << " << pair.second);
-
+      ENTRY KEY(pair.first) VALUE(pair.second) END
     }
 
   END_MAP
@@ -208,27 +214,32 @@ void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xm
 
   GroupConfigurationStructure group(p_group);
 
+
+  LTELL("\twriting group<" << group.getName() << ">:");
+
   GROUP NAME(group.getName()) try { CLASS(group.getAttribute("class")) } catch(std::exception& nsa) { LTELL("No class for this group"); }
       /// Meh ... for the class attribute
       ///
 
       for (auto& pair : group.getParams()) {
-        PARAM KEY(pair.first) VALUE(pair.second)
+        PARAM KEY(pair.first) VALUE(pair.second) END
       }
 
       for (auto& pair : group.getLists()) {
         writeList(pair.first, pair.second, xml);
       }
 
-//      for (auto& pair : group.getMaps()) {
-//        writeMap(pair.first, pair.second, xml);
-//      }
+      for (auto& pair : group.getMaps()) {
+        writeMap(pair.first, pair.second, xml);
+      }
 
   END_GROUP
 }
 
 void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml) {
   ModuleConfigurationStructure module(p_module);
+
+  LTELL("writing module<" << module.getName() << ">:");
 
   MODULE NAME(module.getName())
 
@@ -239,16 +250,282 @@ void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter&
   END_MODULE
 }
 
+//void overrideList(const std::string& name, const std::deque<std::string>& p_list, QXmlStreamWriter& xml, GroupConfigurationStructure* sub) {
+
+//  std::deque<std::string>* target = nullptr;
+
+//  if (sub && sub->getLists().find(name) != sub->getLists().end()) {
+//    target = &sub->getLists()[name];
+//    std::cout << "(sub)";
+//  }
+
+//  std::deque<std::string>& list = (target ? *target : p_list);
+
+//  LTELL("\t\toverride writing list<" << name << ">:");
+
+//  LIST NAME(name)
+//      ///
+//      for (auto& str : list) {
+////        LTELL(str);
+//        ITEM VALUE(str) END
+//      }
+//  END_LIST
+//}
+
+//void overrideMap(const std::string& name, const std::map<std::string, std::string>& p_map, QXmlStreamWriter& xml, GroupConfigurationStructure* sub) {
+
+//  std::map<std::string, std::string>* target = nullptr;
+
+//  if (sub && sub->getMaps().find(name) != sub->getMaps().end()) {
+//    target = &sub->getMaps()[name];
+//    std::cout << "(sub)";
+//  }
+
+//  std::map<std::string, std::string>& map = (target ? *target : p_map);
+
+//  LTELL("\t\toverride writing map<" << name << ">:");
+
+//  MAP NAME(name)
+//    ///
+//    for (auto& pair : map) {
+//      ENTRY KEY(pair.first) VALUE(pair.second) END
+//    }
+
+//  END_MAP
+//}
+
+//void overrideGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xml, ModuleConfigurationStructure* sub) {
+
+//  GroupConfigurationStructure* target = nullptr;
+
+//  if (sub && sub->find(p_group.getName()) != sub->end()) {
+//    target = &(*sub)[p_group.getName()];
+//    std::cout << "(sub)";
+//  }
+
+//  GroupConfigurationStructure& group = (target ? *target : p_group);
+
+//  LTELL("\toverride writing group<" << group.getName() << ">:");
+
+//  GROUP NAME(group.getName()) try { CLASS(group.getAttribute("class")) } catch(std::exception& nsa) { LTELL("No class for this group"); }
+//      /// Meh ... for the class attribute
+//      ///
+
+//      for (auto& pair : group.getParams()) {
+//        PARAM KEY(pair.first) VALUE(pair.second) END
+//      }
+
+//      for (auto& pair : group.getLists()) {
+//        overrideList(pair.first, pair.second, xml, target);
+//      }
+
+//      for (auto& pair : group.getMaps()) {
+//        overrideMap(pair.first, pair.second, xml, target);
+//      }
+
+//  END_GROUP
+
+//}
+
+//void overrideModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml, const ConfigurationStructure& sub) {
+
+//  ModuleConfigurationStructure* target = nullptr;
+
+//  if (sub.find(p_module.getName()) != sub.end()) {
+////    overrideWriteModule(sub[p_module.getName()], xml, sub);
+//    target = &sub[p_module.getName()];
+//    std::cout << "(sub)";
+//  }
+
+//  ModuleConfigurationStructure& module = (target ? *target : p_module);
+
+//  LTELL("override writing module<" << module.getName() << ">:");
+
+//  MODULE NAME(module.getName())
+
+//      for (auto& pair : module) {
+//        overrideGroup(pair.second, xml, target);
+//      }
+
+//  END_MODULE
+
+//}
+
+//QString overrideWriteConfigurationStructure(const ConfigurationStructure& original, const ConfigurationStructure& substitute, const std::string& path) {
+//  QString output;
+
+//  QXmlStreamWriter xml(&output);
+
+//  xml.setCodec("UTF-8"); // oddly, qxmlstreamwriter does not write encoding information ...
+//  // even though the doc says it should
+
+//  xml.setAutoFormatting(true);
+
+////  auto& cstruct = xmlcfgparser.getConfiguration();
+
+//  XML_DOCUMENT;
+
+//  ELEMENT("modulesConfig");
+
+//  for (const auto& pair : original) {
+//    overrideModule(pair.second, xml, substitute);
+//  }
+
+//  END;
+
+//  END_XML_DOCUMENT;
+
+
+//  return output;
+//}
+
+
+///// override 'original' cs with the content of 'substitute'
+///// unfinished
+//ConfigurationStructure overrideConfigurationStructure(const ConfigurationStructure& original, const ConfigurationStructure& sub) {
+
+//  ConfigurationStructure result;
+
+//  for (auto& module : original) {
+
+//    result.insert(std::pair<std::string, ModuleConfigurationStructure>(module.getName(), ModuleConfigurationStructure()));
+
+//    if (substitute.find(module.getName()) != substitute.end()) {
+////      result[module.getName()] = module;
+//      ModuleConfigurationStructure& moduleSubstitute = substitute[model.getName()];
+//      ModuleConfigurationStructure& moduleTarget = result[model.getName()];
+
+//      for (auto& group : module) {
+
+//        if (modelSubstitute.find(group.getName()) != modelSubstitute.end()) {
+
+//        }
+//        else {
+
+//        }
+
+//      }
+
+//    }
+//    else {
+//      result[module.getName()] = substitute[module.getName()];
+//    }
+//  }
+
+//  /// add remaining content in substitute that does not exist in original
+
+//  for (auto& module : substitute) {
+//    if (result.find(module.getName()) != result.end()) {
+
+//      auto& resultModule = result[model.getName()];
+
+//      for (auto& group : module) {
+
+//        if (resultModule.find(group.getName()) != resultModule.end()) {
+
+//          auto& resultGroup = resultModule[group.getName()];
+
+//          for (auto& pair : group.getMaps()) {
+
+//            if (resultGroup.getMaps().find(pair.first) != resultGroup.getMaps().end()) {
+
+//              auto& resultMap = resultGroup.getMaps()[pair.first];
+
+//              for (auto& item : pair.second) {
+//                if (resultMap.find(item.first) == resultMap.end()) {
+//                  resultGroup.addEntryInMap(pair.first, item.first, item.second);
+//                }
+//              }
+//            }
+
+//            else {
+//              resultGroup.addMap(pair.first);
+//              for (auto& item : pair.second) {
+//                resultGroup.addEntryInMap(pair.first, item.first, item.second);
+//              }
+//            }
+
+//          }
+
+//          for (auto& pair : group.getLists()) {
+
+//            if (resultGroup.getLists().find(pair.first) != resultGroup.getLists().end()) {
+
+//              auto& resultList = resultGroup.getLists()[pair.first];
+
+//              resultGroup.addListNamed(pair.first);
+//              for (auto& item : pair.second) {
+//                if (std::find(resultList.begin(), resultList.end(), item) != resultList.end()) {
+//                  resultGroup.addItemInListNamed(item, pair.first);
+//                }
+//              }
+
+//            }
+
+//            else {
+//              resultGroup.addListNamed(pair.first);
+//              for (auto& item : pair.second) {
+//                resultGroup.addItemInListNamed(item, pair.first);
+//              }
+//            }
+
+//          }
+
+//          for (auto& pair : group.getParams()) {
+
+//            if () {
+//              /// can't get a list of attributes though ....
+//            }
+
+//            else {
+
+//            }
+
+//          }
+
+//        }
+
+//        else {
+//          resultModule[group.getName()] = group;
+//        }
+
+//      }
+
+//    }
+//    else {
+//      result[module.getName()] = module;
+//    }
+//  }
+
+//  return result;
+
+//}
+
 void LimaConfiguration::writeFile(XMLConfigurationFileParser& xmlcfgparser, const std::string& path) {
   QString output;
 
+  LTELL("writing file<" << path << ">:");
+
   QXmlStreamWriter xml(&output);
 
+  xml.setCodec("UTF-8"); // oddly, qxmlstreamwriter does not write encoding information ...
+  // even though the doc says it should
+
+  xml.setAutoFormatting(true);
+
   auto& cstruct = xmlcfgparser.getConfiguration();
+
+  XML_DOCUMENT;
+
+  ELEMENT("modulesConfig");
 
   for (const auto& pair : cstruct) {
     writeModule(pair.second, xml);
   }
+
+  END;
+
+  END_XML_DOCUMENT;
 
   LTELL(output.toStdString());
 }
