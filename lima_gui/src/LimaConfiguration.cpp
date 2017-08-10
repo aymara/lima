@@ -54,29 +54,29 @@ const char* neutralString(const char c[]) {
 #define XML_DOCUMENT xml.writeStartDocument();
 #define END_XML_DOCUMENT xml.writeEndDocument();
 
-#define ELEMENT(str) xml.writeStartElement(neutralString(str))
+#define WRITE_ELEMENT(str) xml.writeStartElement(neutralString(str))
 
-#define GROUP ELEMENT("group");
-#define LIST ELEMENT("list");
-#define MAP ELEMENT("map");
-#define ITEM ELEMENT("item");
-#define PARAM ELEMENT("param");
-#define MODULE ELEMENT("module");
-#define ENTRY ELEMENT("entry");
+#define WRITE_GROUP WRITE_ELEMENT("group");
+#define WRITE_LIST WRITE_ELEMENT("list");
+#define WRITE_MAP WRITE_ELEMENT("map");
+#define WRITE_ITEM WRITE_ELEMENT("item");
+#define WRITE_PARAM WRITE_ELEMENT("param");
+#define WRITE_MODULE WRITE_ELEMENT("module");
+#define WRITE_ENTRY WRITE_ELEMENT("entry");
 
-#define ATTRIBUTE(name, value) xml.writeAttribute(neutralString(name),neutralString(value))
+#define WRITE_ATTRIBUTE(name, value) xml.writeAttribute(neutralString(name),neutralString(value))
 
-#define NAME(str) ATTRIBUTE("name", str);
-#define VALUE(str) ATTRIBUTE("value", str);
-#define KEY(str) ATTRIBUTE("key", str);
-#define CLASS(str) ATTRIBUTE("class", str);
+#define WRITE_NAME(str) WRITE_ATTRIBUTE("name", str);
+#define WRITE_VALUE(str) WRITE_ATTRIBUTE("value", str);
+#define WRITE_KEY(str) WRITE_ATTRIBUTE("key", str);
+#define WRITE_CLASS(str) WRITE_ATTRIBUTE("class", str);
 
-#define END xml.writeEndElement();
+#define WRITE_END xml.writeEndElement();
 
-#define END_GROUP   END
-#define END_LIST    END
-#define END_MODULE  END
-#define END_MAP     END
+#define WRITE_END_GROUP   WRITE_END
+#define WRITE_END_LIST    WRITE_END
+#define WRITE_END_MODULE  WRITE_END
+#define WRITE_END_MAP     WRITE_END
 
 void LimaConfiguration::saveAsXml() {
 
@@ -99,53 +99,53 @@ void LimaConfiguration::saveAsXml() {
   XML_DOCUMENT;
 
   ///
-  ELEMENT("modulesConfig");
-    MODULE NAME("entities")
-      GROUP NAME("include")
-        LIST NAME("includeList")
-          ITEM VALUE("SpecificEntities-modex.xml/entities/") END
-        END_LIST
-      END_GROUP
-    END_MODULE
+//  ELEMENT("modulesConfig");
+//    MODULE NAME("entities")
+//      GROUP NAME("include")
+//        LIST NAME("includeList")
+//          ITEM VALUE("SpecificEntities-modex.xml/entities/") END
+//        END_LIST
+//      END_GROUP
+//    END_MODULE
 
-        /// So, entities are enableable ?
+//        /// So, entities are enableable ?
 
-    MODULE NAME("Processors")
-      GROUP NAME("include")
-        LIST NAME("includeList")
-          ITEM VALUE("SpecificEntities-modex.xml/Processors/")  END
-          ITEM VALUE("VerbNet-modex.xml/Processors/")           END
-          ITEM VALUE("FrameNet-modex.xml/Processors/")          END
-        END_LIST
-      END_GROUP
+//    MODULE NAME("Processors")
+//      GROUP NAME("include")
+//        LIST NAME("includeList")
+//          ITEM VALUE("SpecificEntities-modex.xml/Processors/")  END
+//          ITEM VALUE("VerbNet-modex.xml/Processors/")           END
+//          ITEM VALUE("FrameNet-modex.xml/Processors/")          END
+//        END_LIST
+//      END_GROUP
 
-      /// Pipelines
+//      /// Pipelines
 
-      GROUP NAME("main") CLASS("ProcessUnitPipeline")
-        LIST NAME("processUnitSequence")
+//      GROUP NAME("main") CLASS("ProcessUnitPipeline")
+//        LIST NAME("processUnitSequence")
 
-          /// call function to write config trees
+//          /// call function to write config trees
 
-        END_LIST
-      END_GROUP
+//        END_LIST
+//      END_GROUP
 
-      GROUP NAME("limaserver") CLASS("ProcessUnitPipeline")
-        LIST NAME("processUnitSequence")
-        /// There's nothing here obviously ?
-        /// Only main will be modified
-        END_LIST
-      END_GROUP
+//      GROUP NAME("limaserver") CLASS("ProcessUnitPipeline")
+//        LIST NAME("processUnitSequence")
+//        /// There's nothing here obviously ?
+//        /// Only main will be modified
+//        END_LIST
+//      END_GROUP
 
-      GROUP NAME("easy") CLASS("ProcessUnitPipeline")
-        LIST NAME("processUnitSequence")
+//      GROUP NAME("easy") CLASS("ProcessUnitPipeline")
+//        LIST NAME("processUnitSequence")
 
-        END_LIST
-      END_GROUP
+//        END_LIST
+//      END_GROUP
 
-      /// Process Units
+//      /// Process Units
 
 
-  ///
+//  ///
 
   END_XML_DOCUMENT;
 
@@ -187,13 +187,13 @@ void LimaConfiguration::process(const std::string& configPath) {
 void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml) {
   LTELL("\t\twriting list<" << name << ">:");
 
-  LIST NAME(name)
+  WRITE_LIST WRITE_NAME(name)
       ///
       for (auto& str : list) {
 //        LTELL(str);
-        ITEM VALUE(str) END
+        WRITE_ITEM WRITE_VALUE(str) WRITE_END
       }
-  END_LIST
+  WRITE_END_LIST
 }
 
 void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml) {
@@ -201,13 +201,13 @@ void writeMap(const std::string& name, const std::map<std::string, std::string>&
 
   LTELL("\t\twriting map<" << name << ">:");
 
-  MAP NAME(name)
+  WRITE_MAP WRITE_NAME(name)
     ///
     for (auto& pair : map) {
-      ENTRY KEY(pair.first) VALUE(pair.second) END
+      WRITE_ENTRY WRITE_KEY(pair.first) WRITE_VALUE(pair.second) WRITE_END
     }
 
-  END_MAP
+  WRITE_END_MAP
 }
 
 void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xml) {
@@ -217,12 +217,12 @@ void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xm
 
   LTELL("\twriting group<" << group.getName() << ">:");
 
-  GROUP NAME(group.getName()) try { CLASS(group.getAttribute("class")) } catch(std::exception& nsa) { LTELL("No class for this group"); }
+  WRITE_GROUP WRITE_NAME(group.getName()) try { WRITE_CLASS(group.getAttribute("class")) } catch(std::exception& nsa) { LTELL("No class for this group"); }
       /// Meh ... for the class attribute
       ///
 
       for (auto& pair : group.getParams()) {
-        PARAM KEY(pair.first) VALUE(pair.second) END
+        WRITE_PARAM WRITE_KEY(pair.first) WRITE_VALUE(pair.second) WRITE_END
       }
 
       for (auto& pair : group.getLists()) {
@@ -233,7 +233,7 @@ void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xm
         writeMap(pair.first, pair.second, xml);
       }
 
-  END_GROUP
+  WRITE_END_GROUP
 }
 
 void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml) {
@@ -241,13 +241,13 @@ void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter&
 
   LTELL("writing module<" << module.getName() << ">:");
 
-  MODULE NAME(module.getName())
+  WRITE_MODULE WRITE_NAME(module.getName())
 
       for (auto& pair : module) {
         writeGroup(pair.second, xml);
       }
 
-  END_MODULE
+  WRITE_END_MODULE
 }
 
 //void overrideList(const std::string& name, const std::deque<std::string>& p_list, QXmlStreamWriter& xml, GroupConfigurationStructure* sub) {
@@ -517,17 +517,369 @@ void LimaConfiguration::writeFile(XMLConfigurationFileParser& xmlcfgparser, cons
 
   XML_DOCUMENT;
 
-  ELEMENT("modulesConfig");
+  WRITE_ELEMENT("modulesConfig");
 
   for (const auto& pair : cstruct) {
     writeModule(pair.second, xml);
   }
 
-  END;
+  WRITE_END;
 
   END_XML_DOCUMENT;
 
-  LTELL(output.toStdString());
+  LTELL(output.toStdString().substr(0,300));
+}
+
+/////////////////
+
+//ConfigurationTree::ConfigurationTree(const ConfigurationStructure& cstruct) {
+
+//  root = ConfigurationNode(cstruct);
+
+//}
+
+//ConfigurationTree::ConfigurationTree(const ModuleConfigurationStructure& mstruct) {
+
+//  root = ConfigurationNode(mstruct);
+
+//}
+
+//ConfigurationTree::ConfigurationTree(const GroupConfigurationStructure& gstruct) {
+
+//  root = ConfigurationNode(gstruct);
+
+//}
+
+////////////////
+
+int ConfigurationNode::pid = 0;
+
+bool ConfigurationNode::toggleById(int tid) {
+  if (this->id == tid) {
+    if (checkable()) {
+      checked = !checked;
+      return true;
+    }
+  }
+  else {
+    for (auto& child : children) {
+      if (child->toggleById(tid)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+std::string ConfigurationNode::getName() {
+  if (hasAttribute("name")) {
+    return attributes["name"];
+  }
+  else if (hasAttribute("key")) {
+    return attributes["key"];
+  }
+  else {
+    return typeName(type);
+  }
+}
+
+void ConfigurationNode::addAttribute(const std::string& key, const std::string& value) {
+  attributes[key] = value;
+}
+
+bool ConfigurationNode::hasAttribute(const std::string& key) {
+  std::map<std::string, std::string>::const_iterator it = attributes.find(key);
+  return it != attributes.end();
+}
+
+std::string ConfigurationNode::getAttribute(const std::string& key) {
+  if (hasAttribute(key)) {
+    return attributes[key];
+  }
+  else {
+    return "'" + key + "' is no attribute";
+  }
+}
+
+void ConfigurationNode::addChild(ConfigurationNode *cn) {
+  children.push_back(std::shared_ptr<ConfigurationNode>(cn));
+}
+
+bool ConfigurationNode::checkable() {
+  std::vector<CONFIGURATION_NODE_TYPE> checkables = {
+    ITEM,
+    ENTRY
+  };
+
+  bool checkable;
+
+  checkable = std::find(checkables.begin(), checkables.end(), type) != checkables.end()
+      && getAttribute("name") == "processUnitSequence";
+
+  return visible() && checkable;
+}
+
+bool ConfigurationNode::visible() {
+  std::vector<CONFIGURATION_NODE_TYPE> visibles = {
+    MODULE, GROUP, LIST, ITEM
+  };
+
+  std::vector<std::string> authorizedNames = {
+    "main",
+    "processUnitSequence"
+  };
+
+  bool visible = std::find(visibles.begin(), visibles.end(), type) != visibles.end()
+      && std::find(authorizedNames.begin(), authorizedNames.end(), getAttribute("name")) != authorizedNames.end();
+
+  return visible;
+}
+
+ConfigurationNode::ConfigurationNode() {
+  id = pid;
+  pid = pid + 1;
+  type = CONFIGURATION_NODE_TYPE::NONE;
+}
+
+ConfigurationNode::ConfigurationNode(const ConfigurationStructure& p_cstruct) {
+LTELL("csnode");
+  ConfigurationStructure cstruct(p_cstruct);
+
+
+  id = pid;
+  pid = pid + 1;
+  type = CONFIGURATION_NODE_TYPE::FILE;
+
+  for (auto& pair : cstruct) {
+    addChild(new ConfigurationNode(pair.second));
+  }
+}
+
+ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstruct) {
+
+  ModuleConfigurationStructure mstruct(p_mstruct);
+
+  LTELL("modulenode");
+
+  id = pid;
+  pid = pid + 1;
+  type = CONFIGURATION_NODE_TYPE::MODULE;
+
+  addAttribute("name", mstruct.getName());
+
+  for (auto& pair : mstruct) {
+    addChild(new ConfigurationNode(pair.second));
+  }
+}
+
+ConfigurationNode::ConfigurationNode(const GroupConfigurationStructure& p_gstruct) {
+  LTELL("groupnode");
+
+  GroupConfigurationStructure gstruct(p_gstruct);
+
+
+  id = pid;
+  pid = pid + 1;
+  type = CONFIGURATION_NODE_TYPE::GROUP;
+
+  addAttribute("name", gstruct.getName());
+  try {
+    addAttribute("class", gstruct.getAttribute("class"));
+  }
+  catch (std::exception& e) {}
+
+  for (auto& pair : gstruct.getParams()) {
+    ConfigurationNode* cn = new ConfigurationNode();
+    cn->fromParam(pair.first, pair.second);
+    addChild(cn);
+  }
+
+  for (auto& pair : gstruct.getLists()) {
+    ConfigurationNode* cn = new ConfigurationNode();
+    cn->fromList(pair.first, pair.second);
+    addChild(cn);
+  }
+
+  for (auto& pair : gstruct.getMaps()) {
+    ConfigurationNode* cn = new ConfigurationNode();
+    cn->fromMap(pair.first, pair.second);
+    addChild(cn);
+  }
+}
+
+void ConfigurationNode::fromList(const std::string& name, const std::deque<std::string>& list) {
+  type = CONFIGURATION_NODE_TYPE::LIST;
+
+  addAttribute("name", name);
+
+  for (auto& item : list) {
+    ConfigurationNode* cn = new ConfigurationNode();
+    cn->fromItem(item);
+    addChild(cn);
+  }
+}
+
+void ConfigurationNode::fromMap(const std::string& name, const std::map<std::string, std::string>& map) {
+  type = CONFIGURATION_NODE_TYPE::MAP;
+
+  addAttribute("name", name);
+
+  for (auto& pair : map) {
+    ConfigurationNode* cn = new ConfigurationNode();
+    cn->fromEntry(pair.first, pair.second);
+    addChild(cn);
+  }
+}
+
+void ConfigurationNode::fromItem(const std::string& item) {
+  type = CONFIGURATION_NODE_TYPE::ITEM;
+
+  addAttribute("value", item);
+}
+
+void ConfigurationNode::fromEntry(const std::string& key, const std::string& value) {
+  type = CONFIGURATION_NODE_TYPE::ENTRY;
+
+  addAttribute("key", key);
+  addAttribute("value", value);
+}
+
+void ConfigurationNode::fromParam(const std::string& key, const std::string& value) {
+  type = CONFIGURATION_NODE_TYPE::PARAM;
+
+  addAttribute("key", key);
+  addAttribute("value", value);
+}
+
+void ConfigurationNode::mask(const ConfigurationStructure& cstruct) {
+
+}
+
+ConfigurationStructure ConfigurationNode::toConfigurationStructure() {
+  ConfigurationStructure cstruct;
+
+  ConfigurationNode* parent = this;
+  ConfigurationNode* subparent = nullptr;
+  std::string parentName = "root";
+
+//  while (parent != nullptr) {
+
+//    if (children.size()) {
+
+
+
+//    }
+//    else {
+//      parent = nullptr;
+//    }
+
+//  }
+
+  return cstruct;
+}
+
+LimaConfigurationNodeModel::LimaConfigurationNodeModel(QObject* p) : QAbstractListModel(p) {
+
+  std::string configDir = qgetenv("LIMA_CONF").constData();
+  std::string lpConfig = "lima-lp-fre.xml";
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfig);
+
+  ConfigurationNode* cn = new ConfigurationNode(lpconfig.getConfiguration());
+
+//  cn->addAttribute("name", "Mothership");
+
+//  ConfigurationNode* cm = new ConfigurationNode();
+
+//  cm->addAttribute("name", "Fighter");
+
+//  cn->addChild(cm);
+
+
+  fromConfigurationNode(cn);
+
+}
+
+LimaConfigurationNodeModel::LimaConfigurationNodeModel(ConfigurationNode* node, QObject* p) : QAbstractListModel(p) {
+  fromConfigurationNode(node);
+}
+
+void LimaConfigurationNodeModel::fromConfigurationNode(ConfigurationNode* cn) {
+  this->node = cn;
+
+  for (auto& child : cn->children) {
+    children.push_back(std::shared_ptr<LimaConfigurationNodeModel>(new LimaConfigurationNodeModel(child.get())));
+  }
+}
+
+int LimaConfigurationNodeModel::rowCount(const QModelIndex & parent) const {
+  return children.size();
+}
+
+QVariant LimaConfigurationNodeModel::data(const QModelIndex& index, int role) const {
+  if (role > Qt::UserRole) {
+    if (role == ID) { // id
+      return node->id;
+    }
+    if (role == NAME) { // name
+      return QString(node->getName().c_str());
+    }
+    else if (role == CHECKED) { // checked?bool
+      return node->checked;
+    }
+    else if (role == CONTENTS) { // contents
+//      return QVariant(children);
+      return 0;
+    }
+    else {
+      return QVariant();
+    }
+  }
+  else {
+    return QVariant();
+  }
+}
+
+QHash<int, QByteArray> LimaConfigurationNodeModel::roleNames() const {
+  QHash<int, QByteArray> rn = QAbstractItemModel::roleNames();
+  rn[ID] = "id"; // Those strings are direclty related to the 'TableViewColumn' elements role property
+  rn[NAME] = "name";
+  rn[CHECKED] = "nodeChecked";
+  rn[CONTENTS] = "contents";
+  return rn;
+
+}
+
+std::string typeName(CONFIGURATION_NODE_TYPE type) {
+  switch (type) {
+    case CONFIGURATION_NODE_TYPE::MAP:
+      return "MAP";
+    break;
+    case CONFIGURATION_NODE_TYPE::ITEM:
+      return "ITEM";
+    break;
+    case CONFIGURATION_NODE_TYPE::LIST:
+      return "LIST";
+    break;
+    case CONFIGURATION_NODE_TYPE::MODULE:
+      return "MODULE";
+    break;
+    case CONFIGURATION_NODE_TYPE::GROUP:
+      return "GROUP";
+    break;
+    case CONFIGURATION_NODE_TYPE::FILE:
+      return "FILE";
+    break;
+    case CONFIGURATION_NODE_TYPE::ENTRY:
+      return "ENTRY";
+    break;
+    case CONFIGURATION_NODE_TYPE::PARAM:
+      return "PARAM";
+    break;
+    case CONFIGURATION_NODE_TYPE::NONE:
+    default:
+      return "NONE";
+    break;
+  }
 }
 
 } // Gui

@@ -26,10 +26,10 @@ namespace Gui {
 
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
 
-   auto ith = new InitializeThread(this);
-   ith->start();
+//   auto ith = new InitializeThread(this);
+//   ith->start();
 
-//  initializeLimaAnalyzer();
+  initializeLimaAnalyzer();
 }
 
 /// PUBLIC METHODS

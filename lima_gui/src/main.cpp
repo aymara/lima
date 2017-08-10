@@ -21,6 +21,8 @@
 #include <QQmlApplicationEngine>
  #include <QQmlContext>
 
+#define qmlExpose
+
 using namespace Lima::Common;
 using namespace Lima::Gui;
 
@@ -45,6 +47,7 @@ int main(int argc, char *argv[])
     // qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
     qmlRegisterType<LimaGuiApplication>("integ_cpp", 1, 0, "LimaGuiApplication");
     qmlRegisterType<LimaConfiguration>("integ_cpp", 1, 0, "LimaConfiguration");
+    qmlRegisterType<LimaConfigurationNodeModel>("integ_cpp", 1, 0, "LimaConfigurationNodeModel");
     qmlRegisterType<ConllListModel>("integ_cpp", 1, 0, "ConllListModel");
     qmlRegisterType<NamedEntitiesParser>("integ_cpp", 1, 0, "NamedEntitiesParser");
     ////
