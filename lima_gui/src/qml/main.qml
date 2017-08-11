@@ -617,7 +617,6 @@ Controls1.ApplicationWindow {
         }
 
         Rectangle {
-
           Layout.fillWidth: true
           Layout.fillHeight: true
           Layout.preferredHeight: 300
@@ -627,7 +626,7 @@ Controls1.ApplicationWindow {
           anchors.margins: 3
           visible : false
 
-          TextView {
+          TextEditor {
             text: textAnalyzer.text
           }
         }

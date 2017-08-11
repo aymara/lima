@@ -642,7 +642,7 @@ ConfigurationNode::ConfigurationNode() {
 }
 
 ConfigurationNode::ConfigurationNode(const ConfigurationStructure& p_cstruct) {
-LTELL("csnode");
+//LTELL("csnode");
   ConfigurationStructure cstruct(p_cstruct);
 
 
@@ -659,7 +659,7 @@ ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstru
 
   ModuleConfigurationStructure mstruct(p_mstruct);
 
-  LTELL("modulenode");
+//  LTELL("modulenode");
 
   id = pid;
   pid = pid + 1;
@@ -673,7 +673,7 @@ ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstru
 }
 
 ConfigurationNode::ConfigurationNode(const GroupConfigurationStructure& p_gstruct) {
-  LTELL("groupnode");
+//  LTELL("groupnode");
 
   GroupConfigurationStructure gstruct(p_gstruct);
 
@@ -780,22 +780,22 @@ ConfigurationStructure ConfigurationNode::toConfigurationStructure() {
 
 LimaConfigurationNodeModel::LimaConfigurationNodeModel(QObject* p) : QAbstractListModel(p) {
 
-  std::string configDir = qgetenv("LIMA_CONF").constData();
-  std::string lpConfig = "lima-lp-fre.xml";
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfig);
+//  std::string configDir = qgetenv("LIMA_CONF").constData();
+//  std::string lpConfig = "lima-lp-fre.xml";
+//  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfig);
 
-  ConfigurationNode* cn = new ConfigurationNode(lpconfig.getConfiguration());
+//  ConfigurationNode* cn = new ConfigurationNode(lpconfig.getConfiguration());
 
-//  cn->addAttribute("name", "Mothership");
+////  cn->addAttribute("name", "Mothership");
 
-//  ConfigurationNode* cm = new ConfigurationNode();
+////  ConfigurationNode* cm = new ConfigurationNode();
 
-//  cm->addAttribute("name", "Fighter");
+////  cm->addAttribute("name", "Fighter");
 
-//  cn->addChild(cm);
+////  cn->addChild(cm);
 
 
-  fromConfigurationNode(cn);
+//  fromConfigurationNode(cn);
 
 }
 

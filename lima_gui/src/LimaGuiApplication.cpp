@@ -7,6 +7,7 @@
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "common/XMLConfigurationFiles/configurationStructure.h"
+#include "common/tools/FileUtils.h"
 
 #include <deque>
 #include <iostream>
@@ -26,10 +27,10 @@ namespace Gui {
 
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
 
-//   auto ith = new InitializeThread(this);
-//   ith->start();
+   auto ith = new InitializeThread(this);
+   ith->start();
 
-  initializeLimaAnalyzer();
+//  initializeLimaAnalyzer();
 }
 
 /// PUBLIC METHODS
@@ -250,6 +251,21 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   }
 //   configDir = configDir + "/../water" + ":" + configDir;
   LTELL("Config Dir is " << configDir);
+
+  QStringList projects;
+  projects << QString("lima");
+  QStringList paths;
+  paths << QString((configDir + "/../water").c_str());
+  paths << QString(configDir.c_str());
+//  paths = Lima::Common::Misc::buildConfigurationDirectoriesList(projects, paths);
+
+  QString concatenatedPaths;
+  for (auto& qstr : paths) {
+    if (concatenatedPaths.length()) concatenatedPaths += QString(":");
+    concatenatedPaths += qstr;
+  }
+
+  LTELL("TRUE FINAL PATH: " << concatenatedPaths.toStdString());
   
   std::deque<std::string> langs = {"eng","fre"};
   std::deque<std::string> pipelines = {"main", "easy"};
@@ -268,7 +284,8 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
 //  std::copy ( langs.begin(), langs.end(), out_it );
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath,
-    configDir,
+    concatenatedPaths.toStdString(),
+//    configDir,
     commonConfigFile,
     langs);
   
@@ -281,30 +298,10 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   std::string clientId("lima-coreclient");
   std::string lpConfigFile("lima-analysis.xml");
 //  lpConfigFile =("lima-lp-fre.xml");
+  QString configFilePath = (configDir + "/" + lpConfigFile).c_str();
+  configFilePath = Misc::findFileInPaths(concatenatedPaths, QString(lpConfigFile.c_str()), ':');
 
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
-
-  /// HERE TO EXPLORE  //////////////////////////////////////////
-  ///
-
-//  ConfigurationStructure& cstruct = lpconfig.getConfiguration();
-
-//  for (auto& pair : cstruct) {
-
-//    std::cout << "[" << pair.first << "]" << std::endl;
-
-//    std::cout << pair.second << std::endl;
-
-//    for (auto& mpair : pair.second) {
-//        std::cout << "\t(" << mpair.first << ")" << std::endl;
-
-//        std::cout << mpair.second << std::endl;
-
-//    }
-
-//  }
-
-  //////////////////////////////////////////////////////////////
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configFilePath.toStdString());
 
   std::cout << "LOADING CONFIGURATION FILES" << std::endl;
 
@@ -313,6 +310,7 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     lpconfig,
     langs,
     pipelines);
+  std::cout << "configureClientFactory DONE" << std::endl;
 
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
