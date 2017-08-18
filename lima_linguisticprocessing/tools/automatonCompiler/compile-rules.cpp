@@ -105,7 +105,6 @@ static const string HELP("A compiler for the rules of the Named Entities recogni
 #define DEFAULT_COMMON_CONFIG "lima-common.xml"
 #define DEFAULT_LP_CONFIG "lima-analysis.xml"
 #define DEFAULT_ENCODING "utf8"
-static ::std::string const DEFAULT_LOGCONFIGFILE("log4cpp.properties");
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
 struct Param
@@ -114,7 +113,6 @@ struct Param
   string outputFile;     // name of the output file for the compiled rules
   string resourcesDir;   // directory for resources
   string configDir;      // directory for config files
-  string logConfigFile;
   string commonConfigFile; // config file for linguisticData
   string lpConfigFile;     // config file for linguistic processing
   string modexConfigFile;  // config file for modex
@@ -132,7 +130,6 @@ param={"",
        "",
        "",
        "",
-       DEFAULT_LOGCONFIGFILE,
        DEFAULT_COMMON_CONFIG,
        DEFAULT_LP_CONFIG,
        "",
@@ -176,10 +173,6 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     else if (s.find("--configDir=",0)==0)
     {
       param.configDir=string(s,12);
-    }
-    else if (s.find("--log-config-file=",0)==0)
-    {
-      param.logConfigFile=string(s,15);
     }
     else if (s.find("--common-config-file=")==0)
     {
