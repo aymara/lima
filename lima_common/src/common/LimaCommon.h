@@ -248,6 +248,16 @@ enum LimaStatusCode {
 };
 
 BOOST_STRONG_TYPEDEF(unsigned int, ReformulationType)
+inline QDebug& operator << ( QDebug& os, const ReformulationType& p )
+{
+  os << static_cast<unsigned int>(p);
+  return os;
+}
+inline ::std::ostream& operator << ( ::std::ostream& os, const ReformulationType& p )
+{
+  os << static_cast<unsigned int>(p);
+  return os;
+}
 BOOST_STRONG_TYPEDEF(uint32_t, LinguisticCode);
 BOOST_STRONG_TYPEDEF(char, NoParameters);
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
