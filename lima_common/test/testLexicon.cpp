@@ -145,7 +145,7 @@ class TestDataOutputHandler : public Common::FsaAccess::FsaAccessDataOutputHandl
 public: 
   TestDataOutputHandler( std::string filename );
   ~TestDataOutputHandler();
-  void saveData( const char* m_buffer, uint64_t m_size );
+  void saveData( const char* m_buffer, uint64_t m_size ) override;
 private:
   std::ofstream m_os;
 };
@@ -167,7 +167,7 @@ public:
   TestDataInputHandler( std::string filename );
   ~TestDataInputHandler();
   TestDataInputHandler() {}
-  void restoreData( char* m_buffer, uint64_t m_size );
+  void restoreData( char* m_buffer, uint64_t m_size ) override;
 private:
   std::ifstream m_is;
 };
@@ -196,7 +196,7 @@ void TestDataInputHandler::restoreData( char* m_buffer, uint64_t m_size )
 class MyInformer : public Common::AbstractLexiconIdGeneratorInformer {
 public:
   virtual int operator() (
-    uint64_t cmp1, uint64_t cmp2, uint16_t type, uint64_t newId);
+    uint64_t cmp1, uint64_t cmp2, uint16_t type, uint64_t newId) override;
   static AbstractLexiconIdGeneratorInformer* getInstance();
 
 };

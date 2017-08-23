@@ -93,10 +93,10 @@ public:
   AccessSubWordIterator& operator=(const AccessSubWordIterator& original);
   virtual ~AccessSubWordIterator();
   
-  virtual const std::pair<uint64_t, uint64_t> operator*() const;
-  virtual AbstractSubWordIterator &operator++(int);
-  virtual bool operator==(const AbstractSubWordIterator& it) const;
-  virtual bool operator!=(const AbstractSubWordIterator& it) const;
+  virtual const std::pair<uint64_t, uint64_t> operator*() const override;
+  virtual AbstractSubWordIterator &operator++(int) override;
+  virtual bool operator==(const AbstractSubWordIterator& it) const override;
+  virtual bool operator!=(const AbstractSubWordIterator& it) const override;
   
 private:
   ClonableSubWordIterator* m_delegate;
@@ -132,10 +132,10 @@ public:
   AccessSuperWordIterator& operator=(const AccessSuperWordIterator& original);
   virtual ~AccessSuperWordIterator();
 
-  virtual const Lima::LimaString operator*() const;
-  virtual AbstractSuperWordIterator &operator++(int);
-  virtual bool operator==(const AbstractSuperWordIterator& it) const;
-  virtual bool operator!=(const AbstractSuperWordIterator& it) const;
+  virtual const Lima::LimaString operator*() const override;
+  virtual AbstractSuperWordIterator &operator++(int) override;
+  virtual bool operator==(const AbstractSuperWordIterator& it) const override;
+  virtual bool operator!=(const AbstractSuperWordIterator& it) const override;
     
 private:
   ClonableSuperWordIterator* m_delegate;

@@ -44,7 +44,7 @@ class FileDestination : public Destination
 {
 public:
    FileDestination(const QString& filePath);
-   virtual void write(const QString& message, const QString& zone = "");
+   virtual void write(const QString& message, const QString& zone = "") override;
 
 private:
    QFile mFile;

@@ -52,7 +52,8 @@ template <typename Content> Content* ContentHandler<Content>::getContent ( CONTE
 }
 
 //! @brief Récupérer tous les contenus du handler
-template <typename Content> std::map < CONTENT_ID , Content > ContentHandler<Content>::getContents() const
+template <typename Content> 
+const std::map < CONTENT_ID , Content >& ContentHandler<Content>::getContents() const
 {
     return m_contents;
 }

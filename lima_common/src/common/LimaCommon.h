@@ -250,7 +250,7 @@ public:
     LimaException() : std::exception(),m_reason() {}
     LimaException(const std::string& mess) : std::exception(), m_reason(mess) {}
     virtual ~LimaException() throw() {}
-    virtual const char * what () const throw() {
+    virtual const char * what () const throw() override {
         return m_reason.c_str();
     }
 protected:
@@ -272,7 +272,7 @@ public :
     MediaNotInitialized(MediaId medId) : LimaException(),m_medId(medId),m_med(),m_num(true) {};
     MediaNotInitialized(const std::string& med) : LimaException(),m_medId(0),m_med(med),m_num(false) {};
     virtual ~MediaNotInitialized() throw() {};
-    const char* what() const throw()
+    const char* what() const throw() override
     {
         if (m_num)
         {
@@ -297,7 +297,7 @@ public :
     LanguageNotInitialized(MediaId langId) : LimaException(),m_langId(langId),m_lang(),m_num(true) {};
     LanguageNotInitialized(const std::string& lang) : LimaException(),m_langId(0),m_lang(lang),m_num(false) {};
     virtual ~LanguageNotInitialized() throw() {};
-    const char* what() const throw() {
+    const char* what() const throw() override {
         if (m_num) {
             std::ostringstream oo;
             oo << "uninitialized language " << (int)m_langId;
@@ -317,7 +317,7 @@ class AccessByStringNotInitialized : public LimaException {
 public :
     AccessByStringNotInitialized(const std::string& reason) : LimaException(), m_reason(reason) {};
     virtual ~AccessByStringNotInitialized() throw() {};
-    const char* what() const throw() {
+    const char* what() const throw() override {
         std::ostringstream oo;
         oo << "Fsa not initialized because of " << m_reason;
         return oo.str().c_str();
@@ -331,7 +331,7 @@ class AccessByStringOutOfRange : public LimaException {
 public :
     AccessByStringOutOfRange(const std::string& reason) : LimaException(), m_reason(reason) {};
     virtual ~AccessByStringOutOfRange() throw() {};
-    const char* what() const throw() {
+    const char* what() const throw() override {
         std::ostringstream oo;
         oo << "parameter out of range " << m_reason;
         return oo.str().c_str();
@@ -345,7 +345,7 @@ class IncompleteResources : public LimaException {
 public :
     IncompleteResources(const std::string& reason) : LimaException(), m_reason(reason) {}
     virtual ~IncompleteResources() throw() {}
-    const char* what() const throw() {
+    const char* what() const throw() override {
         return (std::string("incomplete ressources:  ") + m_reason).c_str() ;
     }
 private:

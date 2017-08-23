@@ -59,7 +59,7 @@ public:
     */
   virtual Base* create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    typename Base::Manager* manager) const;
+    typename Base::Manager* manager) const override;
 
 };
 

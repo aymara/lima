@@ -67,19 +67,19 @@ protected:
 
 class LIMA_FSAACCESS_EXPORT ForwardPrefixIterator : public PrefixIterator {
 public:
-  int32_t getExternalWordPos() const;
+  int32_t getExternalWordPos() const override;
   ForwardPrefixIterator(const LimaString & word,
                         const uint64_t offset=0);
   ForwardPrefixIterator( const LimaChar*  word_content, const int32_t word_length, const int32_t wordPos);
-  PrefixIterator* clone( const PrefixIterator* const orig ) const;
-  char32_t getNextLetter(int32_t& wordOffset) const;
-  bool hasNextLetter() const;
-  void next(const int32_t wordOffset);
-  void terminate();
-  const LimaString getTotalPrefix() const;
-  const LimaString getPastPrefix() const;
-  const LimaString getCurrentPrefix() const;
-  const Lima::LimaChar* getCurrentContent() const;
+  PrefixIterator* clone( const PrefixIterator* const orig ) const override;
+  char32_t getNextLetter(int32_t& wordOffset) const override;
+  bool hasNextLetter() const override;
+  void next(const int32_t wordOffset) override;
+  void terminate() override;
+  const LimaString getTotalPrefix() const override;
+  const LimaString getPastPrefix() const override;
+  const LimaString getCurrentPrefix() const override;
+  const Lima::LimaChar* getCurrentContent() const override;
   int32_t findEdge( const char32_t searchChar, int32_t wordOffset, int32_t highCharTextPos ) const;
 private:
 	ForwardPrefixIterator& operator=(const ForwardPrefixIterator&) {return *this;}
@@ -87,19 +87,19 @@ private:
 
 class LIMA_FSAACCESS_EXPORT ReversePrefixIterator : public PrefixIterator{
 public:
-  int32_t getExternalWordPos() const;
+  int32_t getExternalWordPos() const override;
   ReversePrefixIterator(const LimaString & word,
                         const uint64_t offset=0);
   ReversePrefixIterator( const LimaChar*  word_content, const int32_t word_length, const int32_t wordPos);
-  PrefixIterator* clone( const PrefixIterator* const orig ) const;
-  char32_t getNextLetter(int32_t& wordOffset) const;
-  bool hasNextLetter() const;
-  void next(const int32_t wordOffset);
-  void terminate();
-  const LimaString getTotalPrefix() const;
-  const LimaString getPastPrefix() const;
-  const LimaString getCurrentPrefix() const;
-  const Lima::LimaChar* getCurrentContent() const;
+  PrefixIterator* clone( const PrefixIterator* const orig ) const override;
+  char32_t getNextLetter(int32_t& wordOffset) const override;
+  bool hasNextLetter() const override;
+  void next(const int32_t wordOffset) override;
+  void terminate() override;
+  const LimaString getTotalPrefix() const override;
+  const LimaString getPastPrefix() const override;
+  const LimaString getCurrentPrefix() const override;
+  const Lima::LimaChar* getCurrentContent() const override;
 private:
   ReversePrefixIterator& operator=(const ReversePrefixIterator&) {return *this;}
 

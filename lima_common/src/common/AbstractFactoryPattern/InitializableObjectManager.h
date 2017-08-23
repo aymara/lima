@@ -90,7 +90,7 @@ protected:
    * @param obj 
    * @param gconf 
    */
-  virtual Object* createObject(const std::string& id);
+  virtual Object* createObject(const std::string& id) override;
 
 private:
 

@@ -57,7 +57,7 @@ public:
   */
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    typename ProcessUnit::Manager* manager);
+    typename ProcessUnit::Manager* manager) override;
 
   /**
     * @brief Sequentially apply each processUnit on data in analysisContent.
@@ -65,7 +65,7 @@ public:
     * @param analysis AnalysisContent object on which to process
     */
   virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+    AnalysisContent& analysis) const override;
 
   /// @deprecated the inactive units must be sent as an AnalysisData in the AnalysisContent to allow various inactive units in various threads
   void setActiveProcessUnit(const std::string& processUnitId);

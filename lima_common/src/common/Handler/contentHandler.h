@@ -49,7 +49,7 @@ public:
     Content* getContent ( CONTENT_ID ContentId ) ;
 
     //! @brief Récupérer tous les contenus du handler
-    std::map < CONTENT_ID , Content > getContents() const ;
+    const std::map < CONTENT_ID , Content >& getContents() const ;
 
     //! @brief Effacer les contenus du handler
     void resetHandler();
