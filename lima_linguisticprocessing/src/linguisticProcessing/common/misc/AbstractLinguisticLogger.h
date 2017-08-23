@@ -50,12 +50,11 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-    ;
+    Manager* manager) override;
 
   bool openLogFile(std::ofstream& output,const std::string& sourceFile) const;
 
-  virtual LimaStatusCode process(AnalysisContent& analysis) const=0;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override = 0;
 
 private:
   std::string m_outputSuffix;

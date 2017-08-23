@@ -55,7 +55,7 @@ public:
     const std::string& id,
     Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
     std::deque<std::string> langs = std::deque<std::string>(),
-    std::deque<std::string> pipelines = std::deque<std::string>()) ;
+    std::deque<std::string> pipelines = std::deque<std::string>()) override ;
 
   /**
     * @brief create an Client using the appropriate registered factory.
@@ -67,7 +67,7 @@ public:
     * ClientFactory must have been configured before this method is called
     * Use configureClientFactory() method to configure.
     */
-  std::shared_ptr< AbstractProcessingClient > createClient(const std::string& id) const;
+  std::shared_ptr< AbstractProcessingClient > createClient(const std::string& id) const override;
 
   /**
     * @brief show registered clientId
@@ -86,7 +86,7 @@ class LIMA_LINGUISTICPROCESSIONGCLIENT_EXPORT LinguisticProcessingClientFactoryF
   public:
   ~LinguisticProcessingClientFactoryFactory(){};
   
-  std::shared_ptr< ProcessingClientFactory > createProcessingClientFactory() const
+  std::shared_ptr< ProcessingClientFactory > createProcessingClientFactory() const override
   {
       return std::shared_ptr< ProcessingClientFactory >(new LinguisticProcessingClientFactory());
   }
