@@ -22,13 +22,16 @@ typedef std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessin
 struct LIMA_GUI_EXPORT LimaGuiFile {
   std::string name; ///< name of the file. (<name>.<ext>, without the full path)
   std::string url; ///< path of the file (relative or absolute)
+  std::string text; ///< text content of the file (after extraction)
   bool modified = false; ///< This indicates whether the file has been modified inside the applicaiton. Obsolete.
 };
 
 class LimaGuiThread;
-class LimaConfiguration;
+namespace Config {
+  class LimaConfiguration;
+}
 
-typedef std::shared_ptr<LimaConfiguration> LimaConfiguration_ptr;
+typedef std::shared_ptr<Config::LimaConfiguration> LimaConfiguration_ptr;
 
 class LimaGuiApplicationPrivate;
 
@@ -208,7 +211,7 @@ private:
   /// MEMBERS
 
   ///< buffers to access QML objects
-  std::map<QString, QObject*> qml_objects;
+  std::map<QString, QObject*> m_qmlObjects;
 
   ///< list of open files;
   std::vector<LimaGuiFile> m_openFiles;
@@ -216,7 +219,7 @@ private:
   ///< LIMA analyzer
   LimaClient_ptr m_analyzer;
 
-  std::map<std::string, LimaClient_ptr> clients;
+  std::map<std::string, LimaClient_ptr> m_clients;
   
   ///< application analysis output stream
   std::ostream* out = &std::cout;
@@ -236,13 +239,13 @@ private:
 
   void loadConfigurations();
 
-  void createConfiguration(const LimaConfiguration& newconfig);
+  void createConfiguration(const Config::LimaConfiguration& newconfig);
 
   void setConfiguration(const std::string& name);
 
-  void setConfiguration(const LimaConfiguration& config);
+  void setConfiguration(const Config::LimaConfiguration& config);
 
-  std::map<std::string, LimaConfiguration_ptr> configurations;
+  std::map<std::string, LimaConfiguration_ptr> m_configurations;
 
 };
 

@@ -9,7 +9,8 @@
 
 
 #include "LimaGuiApplication.h"
-#include "LimaConfiguration.h"
+#include "config/LimaConfiguration.h"
+#include "config/ConfigurationTreeModel.h"
 #include "ConllListModel.h"
 #include "NamedEntitiesParser.h"
 
@@ -21,10 +22,12 @@
 #include <QQmlApplicationEngine>
  #include <QQmlContext>
 
-#define qmlExpose
-
 using namespace Lima::Common;
 using namespace Lima::Gui;
+using namespace Lima::Gui::Config;
+
+#define QML_EXPORT_PACKAGE "integ_cpp"
+#define QML_REGISTER(type) qmlRegisterType<type>(QML_EXPORT_PACKAGE, 1, 0, #type)
 
 int main(int argc, char *argv[])
 {
@@ -64,27 +67,14 @@ int main(int argc, char *argv[])
     std::cerr << "Amose plugins initialized" << std::endl;
     QsLogging::initQsLog();
     
-
-    /// REGISTERING QML Types from C++
-    ///
-    // https://stackoverflow.com/questions/9500280/access-c-function-from-qml
-    // qmlRegisterType<Writer>("integ_cpp", 1, 0, "Writer");
-    qmlRegisterType<LimaGuiApplication>("integ_cpp", 1, 0, "LimaGuiApplication");
-    qmlRegisterType<LimaConfiguration>("integ_cpp", 1, 0, "LimaConfiguration");
-    qmlRegisterType<LimaConfigurationNodeModel>("integ_cpp", 1, 0, "LimaConfigurationNodeModel");
-    qmlRegisterType<ConllListModel>("integ_cpp", 1, 0, "ConllListModel");
-    qmlRegisterType<NamedEntitiesParser>("integ_cpp", 1, 0, "NamedEntitiesParser");
-    ////
-
+    QML_REGISTER(LimaConfiguration);
+    QML_REGISTER(ConfigurationTreeModel);
+    QML_REGISTER(ConllListModel);
+    QML_REGISTER(NamedEntitiesParser);
 
     QQmlApplicationEngine engine;
 
-    // https://stackoverflow.com/questions/19516851/using-qqmlcontextsetcontextobject-to-make-a-c-object-visible-to-qml
-    //new QQmlContext(engine.rootContext());
-
     LimaGuiApplication lga;
-
-
 
     /// we add the app as a context property so that it can be accessed from anywhere,
     /// without instantiating in QML

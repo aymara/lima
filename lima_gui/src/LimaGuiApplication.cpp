@@ -2,7 +2,8 @@
 #include "LimaGuiApplication.h"
 #include "ConllParser.h"
 #include "Threads.h"
-#include "LimaConfiguration.h"
+#include "config/LimaConfiguration.h"
+#include "tools/extract/FileTextExtractor.h"
 
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
@@ -21,6 +22,8 @@ using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing;
+using namespace Lima::Gui::Config;
+using namespace Lima::Gui::Tools;
 
 namespace Lima {
 namespace Gui {
@@ -104,14 +107,38 @@ bool LimaGuiApplication::openFile(const QString& filepath) {
   }
   
   std::string filename = tmpStrList[tmpStrList.size() - 1];
-
-
   
-  m_fileContent = qstr_parseFile(path);
+  tmpStrList = split(filename, '.');
+
+  std::string extension = tmpStrList[tmpStrList.size() - 1];
+
+  m_fileContent = QString(extractTextFromFile(path, extension).c_str());
+
+//  if (tmpStrList.size()) {
+//    if (extension == "txt") {
+//    }
+//    else if (extension == "docx") {
+//      std::cout << extension << " : This type of file isn't handled by this application." << std::endl;
+//      return false;
+//    }
+//    else if (extension == "") {
+////      return PdfTextExtractor(path).text();
+//      std::cout << extension << " : This type of file isn't handled by this application." << std::endl;
+//      return false;
+//    }
+//    else
+//      m_fileContent = qstr_parseFile(path);
+//  }
+//  else {
+////     The file has no extension.
+//    m_fileContent = qstr_parseFile(path);
+//  }
+
   
   LimaGuiFile lgf;
   lgf.name = filename;
   lgf.url = path;
+  lgf.text = m_fileContent.toStdString();
   
   m_openFiles.push_back(lgf);
   
@@ -123,7 +150,7 @@ bool LimaGuiApplication::openFile(const QString& filepath) {
 }
 
 void LimaGuiApplication::closeFile(const QString& filename, bool save) {
-  
+  if (save) {}
 //  if (save) {
 //    saveFile(filename);
 //  }
@@ -227,7 +254,8 @@ void LimaGuiApplication::analyzeFileFromUrl(const QString& url, QObject* target)
 bool LimaGuiApplication::selectFile(const QString& filename) {
   LimaGuiFile* lgf = getFile(filename.toStdString());
   if (lgf) {
-    m_fileContent = qstr_parseFile(lgf->url);
+//    m_fileContent = qstr_parseFile(lgf->url);
+    m_fileContent = QString(lgf->text.c_str());
     m_fileName = QString(lgf->name.c_str());
     m_fileUrl = QString(lgf->url.c_str());
     return true;
@@ -314,7 +342,7 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
 
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
-  clients["default"] = m_analyzer;
+  m_clients["default"] = m_analyzer;
 
 }
 
@@ -379,13 +407,13 @@ bool LimaGuiApplication::available() {
 
 void LimaGuiApplication::registerQmlObject(QString s, QObject* qo) {
   if (qo) {
-    qml_objects[s] = qo;
+    m_qmlObjects[s] = qo;
   }
 }
 
 QObject* LimaGuiApplication::getQmlObject(const QString& name) {
-  if (qml_objects.find(name) != qml_objects.end()) {
-    return qml_objects[name];
+  if (m_qmlObjects.find(name) != m_qmlObjects.end()) {
+    return m_qmlObjects[name];
   }
   else {
     return nullptr;
@@ -437,11 +465,11 @@ void LimaGuiApplication::loadConfigurations() {
 }
 
 void LimaGuiApplication::setConfiguration(const std::string& name) {
-  if (configurations.find(name) != configurations.end()) {
-    return setConfiguration(*configurations[name]);
+  if (m_configurations.find(name) != m_configurations.end()) {
+    return setConfiguration(*m_configurations[name]);
   }
   else if (name == "default") {
-    m_analyzer = clients["default"];
+    m_analyzer = m_clients["default"];
   }
   else {
     LTELL("There is no such configuration");
@@ -452,7 +480,7 @@ void LimaGuiApplication::setConfiguration(const LimaConfiguration& config) {
   /// This will create a new analyzer
   /// If an analyzer with the same name already exists, ask the user if it should reload it
 
-  if (clients.find(config.getName()) != clients.end()) {
+  if (m_clients.find(config.name()) != m_clients.end()) {
     LTELL("A client already exists for this configuration. Reload the configuration ? (y/n)");
     char c;
     std::cin >> c;
@@ -466,16 +494,18 @@ void LimaGuiApplication::setConfiguration(const LimaConfiguration& config) {
   /// Need to know how to handle paths
   ///
 
-  LTELL("Creating " << config.getName() << " client ...");
+  LTELL("Creating " << config.name() << " client ...");
 
   LTELL("(WIP)");
 
-  // m_analyzer = clients[config.getName()];
+  // m_analyzer = m_clients[config.getName()];
 
 }
 
 void LimaGuiApplication::createConfiguration(const LimaConfiguration& newconfig) {
 
+  
+  
   /// This will take in a limaconfiguration created by the user
   /// and save it as files properly
   ///
@@ -483,7 +513,7 @@ void LimaGuiApplication::createConfiguration(const LimaConfiguration& newconfig)
   /// add it to current configurations
   ///
 //  if (created == success) {
-//    configurations[newconfig.name] = newconfig;
+//    m_configurations[newconfig.name()] = newconfig;
 //  }
 
 }

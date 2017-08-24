@@ -1,21 +1,34 @@
 SET (qt-lima_MOC_HEADERS
-  ConllParser.h
   LimaGuiApplication.h
   Threads.h
+  ConllParser.h
+  
+  config/LimaConfiguration.h
+  config/ConfigurationTree.h
+  config/ConfigurationTreeModel.h
+  
   ConllListModel.h
   NamedEntitiesParser.h
-  LimaConfiguration.h 
+  
+  tools/extract/FileTextExtractor.h
+  
 )
 
 qt5_wrap_cpp (qt-lima_MOC_OUTFILES ${qt-lima_MOC_HEADERS})
 
 SET (qt-lima_LIB_SRCS 
-  ConllParser.cpp
   LimaGuiApplication.cpp
   Threads.cpp
+  ConllParser.cpp
+  
+  config/LimaConfiguration.cpp
+  config/ConfigurationTree.cpp
+  config/ConfigurationTreeModel.cpp
+  
   ConllListModel.cpp
   NamedEntitiesParser.cpp
-  LimaConfiguration.cpp
+  
+  tools/extract/FileTextExtractor.cpp
 )
 
 add_library(qt-lima SHARED 

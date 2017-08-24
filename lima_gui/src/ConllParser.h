@@ -21,8 +21,8 @@ struct LIMA_GUI_EXPORT CONLL_Line {
 
     const std::string& operator[](unsigned int) const;
 
-    std::string at(int i) {
-      if (i < 0 || i >= tokens.size()) {
+    std::string at(unsigned int i) {
+      if (i >= tokens.size()) {
         std::cout << "size=" << tokens.size() << ",i=" << i << std::endl;
         return "";
       }
