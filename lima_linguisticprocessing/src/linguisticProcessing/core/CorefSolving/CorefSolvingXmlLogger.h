@@ -102,11 +102,11 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
 
   LimaStatusCode process(
-    AnalysisContent& analysis) const;
+    AnalysisContent& analysis) const override;
 
 protected:
 

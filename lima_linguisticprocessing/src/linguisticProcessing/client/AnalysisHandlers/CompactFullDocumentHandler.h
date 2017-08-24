@@ -47,23 +47,23 @@ public:
   virtual ~CompactFullDocumentHandler();
 
   /** notify the start of a new document */
-  void startDocument(const Common::Misc::GenericDocumentProperties& props);
+  void startDocument(const Common::Misc::GenericDocumentProperties& props) override;
 
   /** notify the end of the document */
-  void endDocument();
+  void endDocument() override;
   
-  void endAnalysis();
+  void endAnalysis() override;
   
-  void startAnalysis();
+  void startAnalysis() override;
 
   /** gives content. Content is a serialized form of the expected resultType */
-  void handle(const char* buf,int length);
+  void handle(const char* buf,int length) override;
     
   /** notify the start of a new hierarchyNode */
-  void startNode( const std::string& elementName, bool forIndexing ) {LIMA_UNUSED(elementName); LIMA_UNUSED(forIndexing);}
+  void startNode( const std::string& elementName, bool forIndexing ) override {LIMA_UNUSED(elementName); LIMA_UNUSED(forIndexing);}
   
   /** notify the end of a hierarchyNode */
-  void endNode( const Common::Misc::GenericDocumentProperties& props ) {LIMA_UNUSED(props);}
+  void endNode( const Common::Misc::GenericDocumentProperties& props ) override {LIMA_UNUSED(props);}
   
   
 private:

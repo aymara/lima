@@ -53,14 +53,14 @@ class LIMA_BOW_EXPORT TextWriterBoWDocumentHandler : public AbstractBoWDocumentH
   ~TextWriterBoWDocumentHandler();
   
   void openSBoWNode(const Misc::GenericDocumentProperties* properties,
-                    const std::string& elementName);
+                    const std::string& elementName) override;
   void openSBoWIndexingNode(const Misc::GenericDocumentProperties* properties,
-                            const std::string& elementName);
+                            const std::string& elementName) override;
   void processSBoWText(const BoWText* boWText, 
-                       bool useIterators, bool useIndexIterator);
+                       bool useIterators, bool useIndexIterator) override;
   void processProperties(const Misc::GenericDocumentProperties* properties, 
-                         bool useIterators, bool useIndexIterator);
-  void closeSBoWNode();
+                         bool useIterators, bool useIndexIterator) override;
+  void closeSBoWNode() override;
 
  private:
    TextWriterBoWDocumentHandler(const TextWriterBoWDocumentHandler&);

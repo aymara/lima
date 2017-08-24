@@ -50,10 +50,10 @@ class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public Me
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
 
-  virtual LimaStatusCode process(AnalysisContent& analysis) const=0;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override=0;
 
   // create the stream on which the data will be dump
   // the pointer must be deleted by caller

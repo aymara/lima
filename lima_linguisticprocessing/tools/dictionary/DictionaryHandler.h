@@ -46,9 +46,14 @@ public:
 
   virtual ~DictionaryCompiler();
 
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & atts);
+  bool startElement(const QString & namespaceURI, 
+                    const QString & name, 
+                    const QString & qName, 
+                    const QXmlAttributes & atts) override;
   
-  bool endElement(const QString& namespaceURI, const QString& name, const QString & qName);
+  bool endElement(const QString& namespaceURI, 
+                  const QString& name, 
+                  const QString & qName) override;
   
   void writeBinaryDictionary(std::ostream& out);
 

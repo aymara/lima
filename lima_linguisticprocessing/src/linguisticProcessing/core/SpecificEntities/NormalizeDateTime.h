@@ -84,9 +84,9 @@ public:
   ~NormalizeDate() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 protected:
   MediaId m_language;
@@ -110,9 +110,9 @@ public:
   ~NormalizeRelativeDate() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 private:
   bool m_getNext;
   int m_diff;
@@ -128,8 +128,8 @@ public:
   virtual ~NormalizeTime() {}
   
   virtual bool operator()(Automaton::RecognizerMatch& m,
-                          AnalysisContent& analysis) const=0;
-  virtual bool actionNeedsRecognizedExpression() { return true; }
+                          AnalysisContent& analysis) const override=0;
+  virtual bool actionNeedsRecognizedExpression() override { return true; }
 
   const ReferenceData& getReferenceData() const { return m_referenceData; }
   bool hasResources() const { return (m_resources!=0); }
@@ -158,7 +158,7 @@ public:
   ~NormalizeLocalTime() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
 };
 
@@ -170,7 +170,7 @@ public:
   ~NormalizeUTCTime() {}
   
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
 };
 

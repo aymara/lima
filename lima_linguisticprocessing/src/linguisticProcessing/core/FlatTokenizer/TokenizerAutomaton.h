@@ -53,7 +53,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
 
   inline const std::vector<State*>& states() const {return m_states;};

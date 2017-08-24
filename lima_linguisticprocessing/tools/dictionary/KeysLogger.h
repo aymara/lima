@@ -37,7 +37,7 @@ public:
   
   virtual ~KeysLogger();
 
-  bool  startElement ( const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts );
+  bool  startElement ( const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts ) override;
   
 private:
   std::ostream& m_out;

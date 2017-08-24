@@ -54,7 +54,7 @@ public:
   ~isAlphaPossessive() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 };
 
 class LIMA_SPECIFICENTITIES_EXPORT isASpecificEntity : public Automaton::ConstraintFunction
@@ -65,7 +65,7 @@ public:
   ~isASpecificEntity() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   Common::MediaticData::EntityType m_type;
@@ -89,9 +89,9 @@ public:
                        const LimaString& complement=LimaString());
   ~CreateSpecificEntity() {}
   bool operator()(Automaton::RecognizerMatch& match,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
   bool shouldRemoveInitial(
@@ -136,11 +136,11 @@ public:
   ~SetEntityFeature() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                           const LinguisticGraphVertex& vertex,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                           const LinguisticGraphVertex& v1,
                           const LinguisticGraphVertex& v2,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
 
 private:
   std::string m_featureName;
@@ -161,7 +161,7 @@ public:
   ~AddEntityFeatureAsEntity() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                           const LinguisticGraphVertex& vertex,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
 
 private:
   std::string m_featureName;
@@ -185,11 +185,11 @@ public:
   ~AddEntityFeature() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                           const LinguisticGraphVertex& vertex,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                           const LinguisticGraphVertex& v1,
                           const LinguisticGraphVertex& v2,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
 
 private:
   std::string m_featureName;
@@ -214,7 +214,7 @@ public:
   ~AppendEntityFeature() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                           const LinguisticGraphVertex& vertex,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
   uint64_t minPos( const uint64_t pos1, const uint64_t pos2 )const;
   uint64_t maxPos( const uint64_t pos1, const uint64_t pos2 )const;
 
@@ -236,7 +236,7 @@ public:
   ClearEntityFeatures(MediaId language,
                    const LimaString& complement=LimaString());
   ~ClearEntityFeatures() {}
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
 
 private:
 
@@ -255,9 +255,9 @@ public:
                    const LimaString& complement=LimaString());
   ~NormalizeEntity() {}
   bool operator()(Automaton::RecognizerMatch& match,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
 

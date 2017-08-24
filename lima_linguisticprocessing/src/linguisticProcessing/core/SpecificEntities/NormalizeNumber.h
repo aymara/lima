@@ -51,9 +51,9 @@ public:
   ~NormalizeNumber() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 private:
   MediaId m_language;
   const std::set<LinguisticCode>* m_microsForNumber;

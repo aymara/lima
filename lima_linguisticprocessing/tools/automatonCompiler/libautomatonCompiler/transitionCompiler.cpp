@@ -56,6 +56,37 @@ namespace AutomatonCompiler {
 
 #define AUCLOGINIT LOGINIT("Automaton::Compiler")
 
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHA, (QLatin1String("A")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_NUMERIC, (QLatin1String("N")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHANUM, (QLatin1String("U")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_PATTERN, (QLatin1String("P")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_WRD_BRK, (QLatin1String("W")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_SENTENCE_BRK, (QLatin1String("S")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHACAP_CAPITAL, (QLatin1String("c")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHACAP_SMALL, (QLatin1String("s")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHACAP_CAPITAL_1ST, (QLatin1String("1")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHACAP_ACRONYM, (QLatin1String("a")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHACAP_CAPITAL_SMALL, (QLatin1String("m")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHAROMAN_CARDINAL, (QLatin1String("c")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHAROMAN_ORDINAL, (QLatin1String("o")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ALPHAROMAN_NOT, (QLatin1String("n")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_NUMERIC_INTEGER, (QLatin1String("i")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_NUMERIC_COMMA_NUMBER, (QLatin1String("c")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_NUMERIC_DOT_NUMBER, (QLatin1String("d")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_NUMERIC_FRACTION, (QLatin1String("f")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_NUMERIC_ORDINAL_INTEGER, (QLatin1String("o")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ISHYPHEN, (QLatin1String("h")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ISPOSSESSIVE, (QLatin1String("p")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_TSTATUS_TR_small, (QLatin1String("t_")));
+
+//**********************************************************************
+// format of the transitions 
+//**********************************************************************
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_NUM_NAME_TR, (QLatin1String("T_Ni"))); // for compatibility with TSTATUS notation
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_NUM_NAME_TR2, (QLatin1String("t_integer"))); // for compatibility with TSTATUS notation
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_ANY_TR, (QLatin1String("*")));
+
+
 //************************************************************************
 // declaration of some private functions
 //************************************************************************

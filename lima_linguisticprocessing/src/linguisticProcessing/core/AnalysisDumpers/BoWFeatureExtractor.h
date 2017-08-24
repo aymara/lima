@@ -82,7 +82,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT BoWFeatureExtractorFactory :
 public:
   BoWFeatureExtractorFactory(const std::string& factoryId):
   AbstractBoWFeatureExtractorFactory(factoryId) {}
-  AbstractBoWFeatureExtractor* create(MediaId language, const std::string& complement="") {
+  AbstractBoWFeatureExtractor* create(MediaId language, const std::string& complement="") override {
     AbstractBoWFeatureExtractor* newFeature=new BoWFeatureExtractor(language,complement);
     return newFeature;
   }
@@ -113,7 +113,7 @@ public:
   BoWFeaturePosition(MediaId language,const std::string& complement="");
   ~BoWFeaturePosition() {}
 
-  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
 };
 
 //----------------------------------------------------------------------
@@ -123,7 +123,7 @@ public:
    BoWFeatureToken(MediaId language,const std::string& complement="");
   ~BoWFeatureToken() {}
 
-  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
 };
 
 //----------------------------------------------------------------------
@@ -133,7 +133,7 @@ public:
   BoWFeatureLemma(MediaId language,const std::string& complement="");
   ~BoWFeatureLemma() {}
 
-  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
 private:
 };
 
@@ -144,7 +144,7 @@ public:
   BoWFeatureProperty(MediaId language, const std::string& complement="");
   ~BoWFeatureProperty() {}
   
-  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
 
 private:
   std::string m_propertyName;
@@ -159,7 +159,7 @@ public:
   BoWFeatureTstatus(MediaId language,const std::string& complement="");
   ~BoWFeatureTstatus() {}
 
-  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const;
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
 };
 
 } // end namespace

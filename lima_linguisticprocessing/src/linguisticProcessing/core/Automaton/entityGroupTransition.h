@@ -46,19 +46,19 @@ class LIMA_AUTOMATON_EXPORT EntityGroupTransition : public TransitionUnit
   EntityGroupTransition(Common::MediaticData::EntityGroupId, bool keep=true); 
   virtual ~EntityGroupTransition();
   
-  EntityGroupTransition* clone() const;
-  EntityGroupTransition* create() const;
+  EntityGroupTransition* clone() const override;
+  EntityGroupTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
   
-  TypeTransition type() const;
+  TypeTransition type() const override;
   Common::MediaticData::EntityGroupId entityGroupId() const { return m_entityGroupId; }
   void setEntityGroupId(Common::MediaticData::EntityGroupId groupId) { m_entityGroupId=groupId; }
   

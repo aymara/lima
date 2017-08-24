@@ -54,9 +54,9 @@ public:
                     const LimaString& complement=LimaString());
   virtual ~CreateAlternative() {}
   virtual bool operator()(Automaton::RecognizerMatch& result,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
   
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
   const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
@@ -101,9 +101,9 @@ public:
               const LimaString& complement);
   ~StoreInData() {}
   bool operator()(Automaton::RecognizerMatch& result,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
   
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 private:
 };
 

@@ -142,8 +142,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
   inline SyntagmaticMatrix& nominal() {return m_nominalMatrix;}
   inline SyntagmaticMatrix& verbal() {return m_verbalMatrix;}

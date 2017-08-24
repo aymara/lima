@@ -63,17 +63,37 @@ public:
    * says if the BoWToken is also in the global list (the BoWText)
    * or not.
    */
-  class Part : public boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >
+  class Part : public boost::tuple< boost::shared_ptr< BoWRelation >, 
+                                    boost::shared_ptr< BoWToken > >
   {
   public:
-    Part():boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(), boost::shared_ptr< BoWToken >() ) {};
+    Part() : 
+        boost::tuple< boost::shared_ptr< BoWRelation >, 
+                      boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(), 
+                                                      boost::shared_ptr< BoWToken >() ) 
+    {
+    }
+
     Part(boost::shared_ptr< BoWToken > tok):
-      boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(boost::shared_ptr< BoWRelation >(),tok) {};
-    Part(boost::shared_ptr< BoWRelation > rel, boost::shared_ptr< BoWToken > tok):
-      boost::tuple< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken >>(rel,tok) {};
+      boost::tuple< boost::shared_ptr< BoWRelation >, 
+                    boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(),
+                                                    tok) 
+    {
+    }
+
+    Part(boost::shared_ptr< BoWRelation > rel, 
+         boost::shared_ptr< BoWToken > tok) :
+        boost::tuple< boost::shared_ptr< BoWRelation >, 
+                      boost::shared_ptr< BoWToken >>(rel,tok) 
+    {
+    }
+
     boost::shared_ptr< BoWRelation > getBoWRelation() const { return get<0>(); }
+
     boost::shared_ptr< BoWToken > getBoWToken() const { return get<1>(); }
+
     LimaString getLemma() const { return get<1>()->getLemma(); }
+
     uint64_t getCategory() const { return get<1>()->getCategory(); }
   };
 
@@ -116,23 +136,28 @@ public:
    *
    * @return
    */
-  BoWComplexToken(const Lima::LimaString& lemma, const uint64_t category, const uint64_t position, const uint64_t length, std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, const uint64_t head);
+  BoWComplexToken(const Lima::LimaString& lemma, 
+                  const uint64_t category, 
+                  const uint64_t position, 
+                  const uint64_t length, 
+                  std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, 
+                  const uint64_t head);
 
   virtual ~BoWComplexToken();
   
 //   virtual BoWComplexToken* clone() const;
 //   virtual BoWComplexToken* clone(const std::map<BoWToken*,BoWToken*>&) const;
 
-  virtual void clear();
+  virtual void clear() override;
 
-  virtual Lima::LimaString getLemma(void) const;
-  virtual Lima::LimaString getInflectedForm(void) const;
+  virtual Lima::LimaString getLemma(void) const override;
+  virtual Lima::LimaString getInflectedForm(void) const override;
 
   BoWComplexToken& operator= (const BoWComplexToken&);
   bool operator== (const BoWComplexToken&);
 
   /** size is the number of parts in the token */
-  uint64_t size(void) const;
+  uint64_t size(void) const override;
 
   std::deque< Part >& getParts(void);
   const std::deque< Part >& getParts(void) const;
@@ -153,7 +178,7 @@ public:
    * @param isHead a boolean indicating that the BoWToken a
    */
   boost::shared_ptr< BoWToken > addPart(boost::shared_ptr< BoWToken > tok,
-                    const bool isHead=false);
+                                        const bool isHead=false);
 
   /**
    * add a part in the list of parts of the complex token. Have to
@@ -170,8 +195,8 @@ public:
    * @param isHead a boolean indicating that the BoWToken a
    */
   boost::shared_ptr< BoWToken > addPart(boost::shared_ptr< BoWRelation > rel,
-                    boost::shared_ptr< BoWToken > tok,
-                    const bool isHead=false);
+                                        boost::shared_ptr< BoWToken > tok,
+                                        const bool isHead=false);
 
   /**
    * add a part in the list of parts of the complex token. A pointer on a copy of @ref tok
@@ -206,13 +231,13 @@ public:
   void setHead(const uint64_t);
 
   // this is an abstract class, has no type
-  virtual BoWType getType() const=0;
+  virtual BoWType getType() const override = 0;
 
   // common function for output of derived classes
   std::string getUTF8StringParts(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
   std::string getstdstringParts() const;
 
-  virtual Common::Misc::PositionLengthList getPositionLengthList() const;
+  virtual Common::Misc::PositionLengthList getPositionLengthList() const override;
 
   /**
    * add the offset to the positions of the token
@@ -220,7 +245,7 @@ public:
    *
    * @param offset the offset to add to all positions
    */
-  void addToPosition(const uint64_t offset);
+  void addToPosition(const uint64_t offset) override;
 
   
   /**
@@ -228,7 +253,7 @@ public:
    *
    * @return the vertices of all its parts
    */
-  virtual std::set< uint64_t > getVertices() const;
+  virtual std::set< uint64_t > getVertices() const override;
 
 protected:
     BoWComplexToken(BoWComplexTokenPrivate& d);

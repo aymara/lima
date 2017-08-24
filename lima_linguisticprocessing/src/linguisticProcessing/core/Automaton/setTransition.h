@@ -50,11 +50,11 @@ class LIMA_AUTOMATON_EXPORT SetTransition : public TransitionUnit
   virtual ~SetTransition();
   SetTransition& operator = (const SetTransition&);
 
-  SetTransition* clone() const;
-  SetTransition* create() const;
+  SetTransition* clone() const override;
+  SetTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
   
   const std::set<Tword>& getWords() const { return m_words; }
   std::set<Tword>& getWords() { return m_words; }
@@ -63,9 +63,9 @@ class LIMA_AUTOMATON_EXPORT SetTransition : public TransitionUnit
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
 
-  TypeTransition type() const;
+  TypeTransition type() const override;
 
 
  private:

@@ -76,7 +76,7 @@ class LIMA_TEXTSEGMENTATION_EXPORT SegmentFeatureExtractorFactory :
 public:
   SegmentFeatureExtractorFactory(const std::string& factoryId):
   AbstractSegmentFeatureExtractorFactory(factoryId) {}
-  AbstractSegmentFeatureExtractor* create(MediaId language, const std::string& complement) {
+  AbstractSegmentFeatureExtractor* create(MediaId language, const std::string& complement) override {
     AbstractSegmentFeatureExtractor* newFeature=new SegmentFeatureExtractor(language, complement);
     return newFeature;
   }
@@ -110,11 +110,11 @@ public:
   SegmentFeaturePosition(MediaId language, const std::string& complement="");
   ~SegmentFeaturePosition() {}
 
-  void update(const AnalysisContent& analysis);
+  void update(const AnalysisContent& analysis) override;
 
   std::string
   getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             const Segment& seg) const;
+             const Segment& seg) const override;
 private:
   uint64_t m_offset;
 };
@@ -125,11 +125,11 @@ public:
   SegmentFeatureLength(MediaId language, const std::string& complement="");
   ~SegmentFeatureLength() {}
 
-  void update(const AnalysisContent& analysis);
+  void update(const AnalysisContent& analysis) override;
 
   std::string
   getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             const Segment& seg) const;
+             const Segment& seg) const override;
 private:
 };
 
@@ -139,11 +139,11 @@ public:
   SegmentFeatureType(MediaId language, const std::string& complement="");
   ~SegmentFeatureType() {}
 
-  void update(const AnalysisContent& analysis);
+  void update(const AnalysisContent& analysis) override;
 
   std::string
   getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             const Segment& seg) const;
+             const Segment& seg) const override;
 private:
 };
 

@@ -57,10 +57,8 @@ public:
   virtual ~Automaton();
 
   // just define it for compatibility with AbstractResource
-  void init(
-            Common::XMLConfigurationFiles::GroupConfigurationStructure&,
-            Manager*)
-      ;
+  void init(Common::XMLConfigurationFiles::GroupConfigurationStructure&,
+            Manager*) override;
 
 
   // Run-time. Returns true if a Transition was found open

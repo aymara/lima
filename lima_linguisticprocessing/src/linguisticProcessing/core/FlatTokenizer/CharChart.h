@@ -49,10 +49,8 @@ public:
   explicit CharChart();
   virtual ~CharChart();
 
-  void init(
-    Common::XMLConfigurationFiles::GroupConfigurationStructure&,
-    Manager*)
-  ;
+  void init(Common::XMLConfigurationFiles::GroupConfigurationStructure&,
+            Manager*) override;
 
   const std::vector<CharClass*>& classes() const  {return m_classes;}
   const std::vector<Char*>& chars() const {return m_chars;}

@@ -66,8 +66,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    AbstractResource::Manager* manager)
-  ;
+    AbstractResource::Manager* manager) override;
 
   void readTrigramMatrixFile(const std::string& fileName);
 
@@ -97,8 +96,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    AbstractResource::Manager* manager)
-  ;
+    AbstractResource::Manager* manager) override;
   
   void readBigramMatrixFile(const std::string& fileName);
 

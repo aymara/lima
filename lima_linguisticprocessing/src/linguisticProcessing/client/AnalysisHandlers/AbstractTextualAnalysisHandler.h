@@ -56,7 +56,7 @@ public:
   */
   virtual void init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-                    Manager* manager)
+                    Manager* manager) override
   {
     LIMA_UNUSED(manager);
     try {

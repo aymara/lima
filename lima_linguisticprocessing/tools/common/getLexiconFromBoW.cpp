@@ -204,17 +204,17 @@ public:
     ~GetLexiconBoWDocumentHandler() {}
 
     void openSBoWNode(const Misc::GenericDocumentProperties* /*properties*/,
-                      const std::string& /*elementName*/)
+                      const std::string& /*elementName*/) override
     {}
     void openSBoWIndexingNode(const Misc::GenericDocumentProperties* /*properties*/,
-                              const std::string& /*elementName*/)
+                              const std::string& /*elementName*/) override
     {}
     void processSBoWText(const BoWText* boWText,
-                         bool useIterators, bool /*useIndexIterator*/);
+                         bool useIterators, bool /*useIndexIterator*/) override;
     void processProperties(const Misc::GenericDocumentProperties* /*properties*/,
-                           bool /*useIterators*/, bool /*useIndexIterator*/)
+                           bool /*useIterators*/, bool /*useIndexIterator*/) override
     {}
-    void closeSBoWNode()
+    void closeSBoWNode() override
     {}
 
 private:

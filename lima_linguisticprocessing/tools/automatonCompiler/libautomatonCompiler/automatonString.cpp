@@ -41,6 +41,17 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace Automaton {
 
+// to define sub indices in groups
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_FIRST, (QLatin1String("first")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_CURRENT, (QLatin1String("current")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_NEXT, (QLatin1String("next")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_LAST, (QLatin1String("last")));
+
+// representing infinite loop on same state (Kleene star)
+// by a special max value in optionality {0-n} or {0-N}
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_INFINITY_LC, (QLatin1String("n")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_INFINITY_UC, (QLatin1String("N")));
+
 // for debug only
 Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_OPEN_DUMMY_SEQUENCE, (Common::Misc::utf8stdstring2limastring("_(")));
 Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CLOSE_DUMMY_SEQUENCE, (Common::Misc::utf8stdstring2limastring(")_")));

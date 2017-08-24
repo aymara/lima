@@ -103,7 +103,7 @@ friend class AutomatonWriter;
   // initialization function
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
   
   // access functions

@@ -71,15 +71,15 @@ public:
     BackwardSearch();
     ~BackwardSearch() {}
     void findNextVertices(const LinguisticGraph* graph,
-                          const LinguisticGraphVertex& current);
+                          const LinguisticGraphVertex& current) override;
     bool getNextVertex(const LinguisticGraph* graph,
-                       LinguisticGraphVertex& next);
-    SearchGraph* createNew();
-    LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph);
-    void clear() {
+                       LinguisticGraphVertex& next) override;
+    SearchGraph* createNew() override;
+    LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph) override;
+    void clear()  override{
         m_current.pop_back();
     }
-    void reinit() {
+    void reinit()  override{
         m_current.clear();
     }
 private:
@@ -94,15 +94,15 @@ public:
     ForwardSearch();
     ~ForwardSearch() {}
     void findNextVertices(const LinguisticGraph* graph,
-                          const LinguisticGraphVertex& current);
+                          const LinguisticGraphVertex& current) override;
     bool getNextVertex(const LinguisticGraph* graph,
-                       LinguisticGraphVertex& next);
-    SearchGraph* createNew();
-    LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph);
-    void clear() {
+                       LinguisticGraphVertex& next) override;
+    SearchGraph* createNew() override;
+    LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph) override;
+    void clear() override {
         m_current.pop_back();
     }
-    void reinit() {
+    void reinit() override {
         m_current.clear();
     }
 private:

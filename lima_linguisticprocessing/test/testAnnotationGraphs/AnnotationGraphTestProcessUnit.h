@@ -56,11 +56,9 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
 
     MediaId language() const;
@@ -109,7 +107,7 @@ struct Point
 class DumpPoint : public Common::AnnotationGraphs::AnnotationData::Dumper
 {
   public:
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 } // closing namespace AnnotationGraphs

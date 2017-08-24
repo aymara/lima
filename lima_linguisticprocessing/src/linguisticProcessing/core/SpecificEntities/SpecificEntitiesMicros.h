@@ -52,8 +52,7 @@ class LIMA_SPECIFICENTITIES_EXPORT SpecificEntitiesMicros : public AbstractResou
   ~SpecificEntitiesMicros();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
   
   const std::set<LinguisticCode>* getMicros(const Common::MediaticData::EntityType& type);
 

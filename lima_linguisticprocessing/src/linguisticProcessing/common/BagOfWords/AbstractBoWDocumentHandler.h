@@ -56,24 +56,44 @@ class LIMA_BOW_EXPORT AbstractBoWDocumentHandler : public AbstractDocumentHandle
    virtual ~AbstractBoWDocumentHandler() {}
 
    virtual void openSBoWNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
-      const std::string& elementName) = 0;
+                             const std::string& elementName) = 0;
+
    virtual void openSBoWIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
-      const std::string& elementName) = 0;
-   virtual void processSBoWText(const BoWText* boWText, bool useIterators,
-                         bool useIndexIterator) = 0;
-   virtual void processProperties(const Misc::GenericDocumentProperties* properties, bool useIterators,
-                         bool useIndexIterator) = 0;
+                                     const std::string& elementName) = 0;
+
+   virtual void processSBoWText(const BoWText* boWText, 
+                                bool useIterators,
+                                bool useIndexIterator) = 0;
+
+   virtual void processProperties(const Misc::GenericDocumentProperties* properties, 
+                                  bool useIterators,
+                                  bool useIndexIterator) override = 0;
+
    virtual void closeSBoWNode() = 0;
    
 //   virtual void writeDocumentsHeader() = 0;
 //   virtual void writeDocumentsFooter() = 0;
   
   void openSNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
-      const std::string& elementName){openSBoWNode(properties,elementName);};
+                 const std::string& elementName) override 
+  {
+    openSBoWNode(properties,elementName);
+  }
+
   void openSIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties,
-      const std::string& elementName){openSBoWIndexingNode(properties,elementName);};
-  void closeSNode(){closeSBoWNode();};  
-  void processSContent( const Lima::Common::Misc::GenericDocumentProperties* /*properties*/){};
+                         const std::string& elementName) override 
+  {
+    openSBoWIndexingNode(properties,elementName);
+  }
+
+  void closeSNode() override 
+  {
+    closeSBoWNode();
+  }
+
+  void processSContent( const Lima::Common::Misc::GenericDocumentProperties* /*properties*/) override 
+  {
+  }
   
 };
 

@@ -55,6 +55,36 @@ namespace Automaton {
 // initialazation of static members
 std::string RecognizerCompiler::m_recognizerEncoding="latin1";
 
+//***********************************************************************
+// general formatting of the file
+//***********************************************************************
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_DEFINE_ENCODING, (QLatin1String("set encoding=")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_DEFINE_DEFAULTACTION, (QLatin1String("set defaultAction=")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_UNSET_DEFAULTACTION, (QLatin1String("unset defaultAction=")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_DEFINE_ENTITYTYPES, (QLatin1String("set entityTypes=")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_USING_MODEX, (QLatin1String("using modex ")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_USING_ENTITYGROUPS, (QLatin1String("using groups ")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_USING_LIBS, (QLatin1String("using libs ")));
+
+//***********************************************************************
+// syntax for the type definition
+//***********************************************************************
+// possible types are defined in the rules file by lines like
+// define type=LOCATION;ENAMEX TYPE="LOCATION";/ENAMEX;
+// define type=PERSON;ENAMEX TYPE="PERSON";/ENAMEX;prenom,nom
+
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_DEFINE_TYPE, (QLatin1String("define type=")));
+
+//***********************************************************************
+// syntax for subautomaton definition
+//***********************************************************************
+
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_DEFINE_SUBAUTOMATON, (QLatin1String("define subautomaton ")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_SUBAUTOMATON_PATTERN, (QLatin1String("pattern")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_SUBAUTOMATON_INDEX, (QLatin1String("index ")));
+
+
+
 //************************************************************
 // constructors and destructors
 RecognizerCompiler::RecognizerCompiler(const std::string& filename):

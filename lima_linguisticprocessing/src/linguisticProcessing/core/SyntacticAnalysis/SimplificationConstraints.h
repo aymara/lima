@@ -59,11 +59,11 @@ public:
   
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
   uint64_t m_language;
 };
@@ -78,9 +78,9 @@ public:
   ~Simplify() {}
   
   bool operator()(Automaton::RecognizerMatch& /*unused*/,
-                AnalysisContent& analysis) const;
+                AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
   uint64_t m_language;
@@ -93,7 +93,7 @@ public:
            const LimaString& complement=LimaString());
   ~ClearStoredSubsentences() {}
   
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
   
 };
 

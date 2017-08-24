@@ -92,8 +92,7 @@ public:
    */
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
   /**
    * @brief Process unit main processing function
@@ -102,8 +101,7 @@ public:
    * @return <b>LimaStatusCode</b> The status of the process unit processing 
    * (success or failing).
    */
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
   /** @brief First step of the syntactic analysis. Identify nominal and verbal
     *        chains in the subgraph defined by the given two vertices.

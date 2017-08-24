@@ -222,7 +222,7 @@ class MyAnalysisDico : public MyAnalysisBaseDico {
 public:
   MyAnalysisDico(const analysisDataElement& defaultValue)
     : MyAnalysisBaseDico(defaultValue) {}
-  analysisDataElement getEntry( const Lima::LimaString& word) const;
+  analysisDataElement getEntry( const Lima::LimaString& word) const override;
 };
 
 analysisDataElement MyAnalysisDico::getEntry(

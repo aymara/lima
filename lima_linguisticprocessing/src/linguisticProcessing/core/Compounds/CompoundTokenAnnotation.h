@@ -130,7 +130,7 @@ public:
   }
   
   virtual int dump(std::ostream& os, 
-                   Common::AnnotationGraphs::GenericAnnotation& ga) const 
+                   Common::AnnotationGraphs::GenericAnnotation& ga) const override 
   {
     LIMA_UNUSED(os)
     LIMA_UNUSED(ga)

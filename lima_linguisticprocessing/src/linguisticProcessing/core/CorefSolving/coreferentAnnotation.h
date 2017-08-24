@@ -535,7 +535,7 @@ class DumpCoreferent : public Common::AnnotationGraphs::AnnotationData::Dumper
 {
 public:
   DumpCoreferent(const Lima::Common::AnnotationGraphs::AnnotationData* ad);
-  virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+  virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 
 private:
   const Lima::Common::AnnotationGraphs::AnnotationData* m_ad;

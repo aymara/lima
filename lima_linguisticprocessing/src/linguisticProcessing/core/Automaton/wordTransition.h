@@ -48,19 +48,19 @@ class LIMA_AUTOMATON_EXPORT WordTransition : public TransitionUnit
   virtual ~WordTransition();
   WordTransition& operator = (const WordTransition&);
   
-  WordTransition* clone() const;
-  WordTransition* create() const;
+  WordTransition* clone() const override;
+  WordTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
   
-  TypeTransition type() const;
+  TypeTransition type() const override;
 
   Tword word() const;
   LimaString wordString(const FsaStringsPool& sp) const;

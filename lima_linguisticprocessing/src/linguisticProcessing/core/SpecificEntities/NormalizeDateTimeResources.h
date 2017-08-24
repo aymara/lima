@@ -52,8 +52,7 @@ class LIMA_SPECIFICENTITIES_EXPORT NormalizeDateTimeResources : public AbstractR
   ~NormalizeDateTimeResources();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
 
   bool hasTimezoneDatabase() const { return false;/*(m_timezoneDatabase!=0);*/ }
 

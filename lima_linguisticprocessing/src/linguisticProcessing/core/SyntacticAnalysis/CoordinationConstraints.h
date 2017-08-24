@@ -61,7 +61,7 @@ public:
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
   uint64_t m_language;
 };
@@ -78,9 +78,9 @@ public:
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
                   
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
   uint64_t m_language;
@@ -97,7 +97,7 @@ public:
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
                   
 };
 
@@ -112,7 +112,7 @@ public:
           const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
           const LinguisticGraphVertex& v1,
           const LinguisticGraphVertex& v2,
-          AnalysisContent& analysis) const;
+          AnalysisContent& analysis) const override;
 };
 
 

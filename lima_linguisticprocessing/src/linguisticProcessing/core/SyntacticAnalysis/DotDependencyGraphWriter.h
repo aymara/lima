@@ -81,10 +81,9 @@ class LIMA_SYNTACTICANALYSIS_EXPORT DotDependencyGraphWriter : public DotGraphWr
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
   
-  LimaStatusCode process(AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
  private:
    void write_graphviz(

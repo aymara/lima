@@ -64,7 +64,9 @@ public:
 
   const T_CUTTINGS& getCuttings() const;
 
-  virtual void outputXml(std::ostream& XmlStream,const Common::PropertyCode::PropertyCodeManager& pcm,const FsaStringsPool& sp) const;
+  virtual void outputXml(std::ostream& XmlStream,
+                         const Common::PropertyCode::PropertyCodeManager& pcm,
+                         const FsaStringsPool& sp) const override;
 
 private:
 

@@ -32,8 +32,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionResource : public Abstrac
   ~EventTemplateDefinitionResource();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
   
   // mapping is oriented, return 1 if mapping elt1 -> elt2, -1 if mapping elt2 -> elt1, 0 otherwise
   int existsMapping(const std::string& eltName1, const std::string& eltName2) const;

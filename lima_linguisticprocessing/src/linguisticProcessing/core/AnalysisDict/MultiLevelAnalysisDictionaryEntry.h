@@ -66,10 +66,10 @@ public:
 
   virtual ~MultiLevelAnalysisDictionaryEntry();
 
-  virtual AbstractDictionaryEntry* clone();
-  virtual void parseAccentedForms(AbstractDictionaryEntryHandler* handler) const;
-  virtual void parseConcatenated(AbstractDictionaryEntryHandler* handler) const;
-  virtual void parseLingInfos(AbstractDictionaryEntryHandler* handler) const;
+  virtual AbstractDictionaryEntry* clone() override;
+  virtual void parseAccentedForms(AbstractDictionaryEntryHandler* handler) const override;
+  virtual void parseConcatenated(AbstractDictionaryEntryHandler* handler) const override;
+  virtual void parseLingInfos(AbstractDictionaryEntryHandler* handler) const override;
 
 
 private:

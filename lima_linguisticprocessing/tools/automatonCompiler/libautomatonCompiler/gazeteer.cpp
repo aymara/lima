@@ -45,6 +45,8 @@ namespace Automaton {
 
 #define AUCLOGINIT LOGINIT("Automaton::Compiler")
 
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_TSTATUS_TR_small, (QLatin1String("t_")));
+
 /***********************************************************************/
 // constructors
 /***********************************************************************/

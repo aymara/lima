@@ -41,6 +41,12 @@ namespace Automaton {
 
 #define AUCLOGINIT LOGINIT("Automaton::Compiler")
 
+// to define sub indices in groups
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_FIRST, (QLatin1String("first")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_CURRENT, (QLatin1String("current")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_NEXT, (QLatin1String("next")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_LAST, (QLatin1String("last")));
+
 //***********************************************************************
 // constructors
 //***********************************************************************

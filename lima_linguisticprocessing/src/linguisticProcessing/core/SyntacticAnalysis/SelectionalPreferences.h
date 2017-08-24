@@ -57,8 +57,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
   void loadFromFile(const std::string& fileName);
 

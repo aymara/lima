@@ -79,7 +79,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureExtractorFactory :
 public:
   FeatureExtractorFactory(const std::string& factoryId):
   AbstractFeatureExtractorFactory(factoryId) {}
-  AbstractFeatureExtractor* create(MediaId language, const std::string& complement="") {
+  AbstractFeatureExtractor* create(MediaId language, const std::string& complement="") override {
     AbstractFeatureExtractor* newFeature=new FeatureExtractor(language,complement);
     return newFeature;
   }
@@ -113,7 +113,7 @@ public:
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v, 
-             AnalysisContent & ) const;
+             AnalysisContent & ) const override;
 };
 
 //----------------------------------------------------------------------
@@ -127,7 +127,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 };
 
 //----------------------------------------------------------------------
@@ -141,7 +141,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 private:
   const FsaStringsPool* m_sp;
 };
@@ -157,7 +157,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 private:
   std::string m_propertyName;
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
@@ -175,7 +175,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 };
 
 //--------------------------------------------------------
@@ -188,7 +188,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureSpecificEntity : public AbstractFeature
 
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
-             AnalysisContent &) const;
+             AnalysisContent &) const override;
 };
 
 //--------------------------------------------------------
@@ -201,7 +201,7 @@ public:
   
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,
-                       AnalysisContent &) const;
+                       AnalysisContent &) const override;
 };
 
 //--------------------------------------------------------
@@ -214,7 +214,7 @@ public:
   
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,
-                       AnalysisContent &) const;
+                       AnalysisContent &) const override;
 };
 
 } // end namespace

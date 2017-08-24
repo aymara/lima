@@ -53,20 +53,20 @@ class LIMA_AUTOMATON_EXPORT NumericTransition : public TransitionUnit
   virtual ~NumericTransition();
   NumericTransition& operator = (const NumericTransition&);
   
-  NumericTransition* clone() const;
-  NumericTransition* create() const;
+  NumericTransition* clone() const override;
+  NumericTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
   bool operator== (const uint64_t&) const;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
   
-  TypeTransition type() const;
+  TypeTransition type() const override;
 
   uint64_t value() const;
   uint64_t min() const;

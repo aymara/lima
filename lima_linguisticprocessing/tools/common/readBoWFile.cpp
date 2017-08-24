@@ -221,20 +221,20 @@ public:
 
   void openSBoWIndexingNode(
                             const Misc::GenericDocumentProperties* /*properties*/,
-                            const std::string& /*elementName*/)
+                            const std::string& /*elementName*/) override
   {
     m_nbDocs++;
   }
 
   void processSBoWText(const BoWText* , bool ,
-                         bool ) 
+                         bool )  override
   {}
 
   void processProperties(const Misc::GenericDocumentProperties* /*properties*/, bool /*useIterators*/,
-                         bool /*useIndexIterator*/)
+                         bool /*useIndexIterator*/) override
   {}
 
-  void closeSBoWNode()
+  void closeSBoWNode() override
   {}
 
   friend ostream& operator<<(ostream& os, const SBoWStatWriter& writer) {
