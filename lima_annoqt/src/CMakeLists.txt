@@ -39,7 +39,6 @@ SET(annoqtconfeditor_SRCS
 
 set (annoqtconfeditor_MOC_HEADERS 
            confeditor.h
-           annotationConfigurationHandler.h
            kxyselector.h
            kselector.h
            kcolorvalueselector.h

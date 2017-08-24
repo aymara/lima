@@ -90,17 +90,17 @@ Q_SIGNALS:
 protected:
   // the three methods below are used to ensure equal column widths and row heights
   // for all cells and to update the widths/heights when the widget is resized
-  virtual int sizeHintForColumn(int column) const;
-  virtual int sizeHintForRow(int column) const;
-  virtual void resizeEvent( QResizeEvent* event );
+  virtual int sizeHintForColumn(int column) const override;
+  virtual int sizeHintForRow(int column) const override;
+  virtual void resizeEvent( QResizeEvent* event ) override;
 
-  virtual void mouseReleaseEvent( QMouseEvent * );
-  virtual void mousePressEvent( QMouseEvent * );
-  virtual void mouseMoveEvent( QMouseEvent * );
-  virtual void dragEnterEvent( QDragEnterEvent * );
-  virtual void dragMoveEvent( QDragMoveEvent * );
-  virtual void dropEvent( QDropEvent *);
-  virtual void mouseDoubleClickEvent( QMouseEvent * );
+  virtual void mouseReleaseEvent( QMouseEvent * ) override;
+  virtual void mousePressEvent( QMouseEvent * ) override;
+  virtual void mouseMoveEvent( QMouseEvent * ) override;
+  virtual void dragEnterEvent( QDragEnterEvent * ) override;
+  virtual void dragMoveEvent( QDragMoveEvent * ) override;
+  virtual void dropEvent( QDropEvent *) override;
+  virtual void mouseDoubleClickEvent( QMouseEvent * ) override;
 
   int positionToCell(const QPoint &pos, bool ignoreBorders=false) const;
 
@@ -198,10 +198,10 @@ Q_SIGNALS:
   void colorChanged( const QColor&);
 
 protected:
-  virtual void paintEvent    ( QPaintEvent * pe );
-  virtual void mouseMoveEvent( QMouseEvent * );
-  virtual void dragEnterEvent( QDragEnterEvent *);
-  virtual void dropEvent( QDropEvent *);
+  virtual void paintEvent    ( QPaintEvent * pe ) override;
+  virtual void mouseMoveEvent( QMouseEvent * ) override;
+  virtual void dragEnterEvent( QDragEnterEvent *) override;
+  virtual void dropEvent( QDropEvent *) override;
 
 private:
   class KColorPatchPrivate;
@@ -380,10 +380,10 @@ class KColorDialog : public QWidget
     void readSettings();
 
   protected:
-    virtual void mouseMoveEvent( QMouseEvent * );
-    virtual void mouseReleaseEvent( QMouseEvent * );
-    virtual void keyPressEvent( QKeyEvent * );
-    virtual bool eventFilter( QObject *obj, QEvent *ev );
+    virtual void mouseMoveEvent( QMouseEvent * ) override;
+    virtual void mouseReleaseEvent( QMouseEvent * ) override;
+    virtual void keyPressEvent( QKeyEvent * ) override;
+    virtual bool eventFilter( QObject *obj, QEvent *ev ) override;
 
   private:
     class KColorDialogPrivate
