@@ -353,8 +353,16 @@ void BoWXMLWriterPrivate::writeIndexElement(
     return;
   }
   if (element.isSimpleTerm()) {
-    std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(element.getCategory()));
-
+    std::string cat;
+    try
+    {
+      cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(element.getCategory()));
+    }
+    catch (Lima::MediaNotInitialized& e)
+    {
+      BOWLOGINIT;
+      LERROR << "BoWXMLWriterPrivate::writeIndexElement Catched MediaNotInitialized:" << e.what();
+    }
     m_outputStream << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(element.getSimpleTerm()))
        << "\" category=\"" << cat
        << "\" position=\"" << element.getPosition()
@@ -559,7 +567,9 @@ void BoWXMLWriter::setLanguage(const std::string& lang)
 
 void BoWXMLWriterPrivate::setLanguage(const std::string& lang)
 {
-  m_language = Common::MediaticData::MediaticData::single().getMediaId (lang);
+  lang.empty() 
+    ? MediaId(0) 
+    : m_language = MediaticData::MediaticData::single().getMediaId (lang);
 }
 
 void BoWXMLWriter::writeIndexElement(const IndexElement& element)

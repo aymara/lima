@@ -89,7 +89,7 @@ m_parser()
   }
   catch (const XMLException& e) {
     BOWLOGINIT;
-    LERROR << "An XML exception occurred: " << e.getMessage() ;
+    LERROR << "An XML exception occurred: " << e.what() ;
     throw;
   }
 }

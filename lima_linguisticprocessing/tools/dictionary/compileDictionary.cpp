@@ -239,7 +239,7 @@ int run(int argc,char** argv)
     }
     catch (const XMLException& toCatch)
     {
-      std::cerr << "An error occurred  Error: " << toCatch.getMessage() << endl;
+      std::cerr << "An error occurred  Error: " << toCatch.what() << endl;
       throw;
     }
     fout.close();
@@ -299,7 +299,7 @@ int run(int argc,char** argv)
     }
     catch (const XMLException& toCatch)
     {
-      cerr << "An error occurred  Error: " << toCatch.getMessage() << endl;
+      cerr << "An error occurred  Error: " << toCatch.what() << endl;
       throw;
     }
     
