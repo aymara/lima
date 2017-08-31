@@ -78,20 +78,14 @@ void FsaAccessResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(LIMA_PATH_SEPARATOR);
-    Q_FOREACH(QString resPath, resourcesPaths)
+    QString keyFile = getResourceFileName(unitConfiguration.getParamsValueAtKey("keyFile").c_str());
+    if (! keyFile.isEmpty())
     {
-      if  (QFileInfo::exists(resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()))
-      {
-        string keyfile= (resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).toUtf8().constData();
-        FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
-        resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
-        QWriteLocker locker(&m_lock);
-        LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-        fsaAccess->read(keyfile);
-        m_fsaAccess=fsaAccess;
-        break;
-      }
+      FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+      QWriteLocker locker(&m_lock);
+      LINFO << "FsaAccessResource::init read keyFile" << keyFile;
+      fsaAccess->read(keyFile.toStdString());
+      m_fsaAccess=fsaAccess;
     }
     if (!m_fsaAccess) {
       // FIXME: In this case, the m_fsaAccess pointer is still NULL. Try to access to

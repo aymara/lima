@@ -63,11 +63,10 @@ void StopList::init(
 {
   LIMA_UNUSED(manager);
   DUMPERLOGINIT;
-  const string& resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
   QString stopListFileName;
   try
   {
-    stopListFileName = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("file").c_str());
+    stopListFileName = getResourceFileName(unitConfiguration.getParamsValueAtKey("file").c_str());
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2014 CEA LIST
+    Copyright 2017 CEA LIST
 
     This file is part of LIMA.
 
@@ -18,12 +18,11 @@
 */
 
 
-#ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCES_H
-#define LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCES_H
+#ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCEBASE_H
+#define LIMA_LINGUISTICPROCESSING_LINGUISTICRESOURCES_ABSTRACTRESOURCEBASE_H
 
 
 #include "LinguisticResourcesExport.h"
-#include "AbstractResourceBase.h"
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
@@ -36,10 +35,7 @@
 namespace Lima {
 namespace LinguisticProcessing {
 
-struct ResourceInitializationParameters {
-  MediaId language;
-};
-
+class  AbstractResourceBasePrivate;
 /** 
   * @brief resource abstraction. All resource should inherit from this class
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
@@ -51,27 +47,41 @@ struct ResourceInitializationParameters {
   * @ref resourceFileChanged signal to do whatever necessary with this changed resource, for 
   * example reloading it.
   */
-class LIMA_LINGUISTICRESOURCES_EXPORT AbstractResource : 
-    public AbstractResourceBase, 
-    public InitializableObject<AbstractResource,ResourceInitializationParameters>
+
+class LIMA_LINGUISTICRESOURCES_EXPORT AbstractResourceBase : 
+    public QObject
 {
   Q_OBJECT
 public:
-  explicit AbstractResource ( QObject* parent = 0 );
-  virtual ~AbstractResource();
-  AbstractResource(const AbstractResource&);
-    
+  explicit AbstractResourceBase ( QObject* parent = 0 );
+  virtual ~AbstractResourceBase();
+  AbstractResourceBase(const AbstractResourceBase&);
+
+  QString getResourceFileName(const QString& paramName);
+
+protected:
   /**
-  * @brief initialize with parameters from configuration file.
-  * @param unitConfiguration @IN : <group> tag in xml configuration file that
-  *        contains parameters to initialize the object.
-  * @param manager @IN : manager that asked for initialization and carries parameters.
-  * @throw InvalidConfiguration when parameters are invalids.
-  */
-  virtual void init(
-    Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager) override = 0;
-  
+   * @brief Accessor to the file watcher used to register resource files to be 
+   * watched for changes.
+   * @return The file watcher used to register resource files to be watched for 
+   * changes.
+   */
+  LimaFileSystemWatcher& resourceFileWatcher();
+
+Q_SIGNALS:
+  /**
+   * @brief Signal triggered whenever one of the registered files changes on
+   * disk.
+   * @param path The full path to the changed file
+   */
+  void resourceFileChanged ( const QString & path );
+
+
+protected:
+  AbstractResourceBasePrivate* m_d;
+
+private:
+  AbstractResourceBase& operator=(const AbstractResourceBase&);
 };
 
 } // LinguisticProcessing
