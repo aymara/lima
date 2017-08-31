@@ -124,7 +124,7 @@ GroupConfigurationStructure& ModuleConfigurationStructure::getGroupNamed(const s
   {
     XMLCFGLOGINIT;
     LWARN << "Error ("<<this<<"): no such group '" << name.c_str() << "' !";
-    throw NoSuchGroup(name);
+    throw NoSuchGroup(m_d->m_name+"["+name+"]");
   }
   return ((*it).second);
 }
@@ -139,13 +139,13 @@ string& ModuleConfigurationStructure::getParamValueAtKeyOfGroupNamed(const std::
   {
     XMLCFGLOGINIT;
     LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': "<< nsg.what();
-    throw;
+    throw NoSuchGroup(m_d->m_name+"["+groupName+"]["+key+"]");
   }
   catch (NoSuchParam& nsp)
   {
     XMLCFGLOGINIT;
     LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': " << nsp.what();
-    throw;
+    throw NoSuchParam(m_d->m_name+"["+groupName+"]["+key+"]");
   }
   catch (...)
   {

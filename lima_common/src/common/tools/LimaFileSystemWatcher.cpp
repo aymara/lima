@@ -111,7 +111,7 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
     m_watcher.addPath(dir);
   }
   // In all cases, transmit the signal
-  std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private" << path.toUtf8().constData() << std::endl;
+  std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged emiting fileChanged from private " << path.toUtf8().constData() << std::endl;
   Q_EMIT fileChanged(path);
 }
 
