@@ -14,6 +14,7 @@
 #include "ConllListModel.h"
 #include "NamedEntitiesParser.h"
 
+#include "common/LimaCommon.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/time/traceUtils.h"
 #include "common/tools/FileUtils.h"
@@ -32,13 +33,14 @@ using namespace Lima::Gui::Config;
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    LOGINIT("Lima::Gui");
 
     std::string configDir = qgetenv("LIMA_CONF").constData();
     if (configDir == "") {
       configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
     }
   //   configDir = configDir + "/../water" + ":" + configDir;
-    LTELL("Config Dir is " << configDir);
+    LDEBUG<< "Config Dir is " << configDir;
 
     QStringList projects;
     projects << QString("lima");
@@ -49,11 +51,13 @@ int main(int argc, char *argv[])
 
     QString concatenatedPaths;
     for (auto& qstr : paths) {
-      if (concatenatedPaths.length()) concatenatedPaths += QString(":");
+      if (concatenatedPaths.length()) {
+        concatenatedPaths += QString(":");
+      }
       concatenatedPaths += qstr;
     }
 
-    LTELL("TRUE FINAL PATH: " << concatenatedPaths.toStdString());
+    LDEBUG << "TRUE FINAL PATH: " << concatenatedPaths.toStdString();
     QString configPath = concatenatedPaths;
 
 

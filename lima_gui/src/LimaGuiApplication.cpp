@@ -4,6 +4,7 @@
 #include "Threads.h"
 #include "config/LimaConfiguration.h"
 #include "tools/extract/FileTextExtractor.h"
+#include "common/LimaCommon.h"
 
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
@@ -16,6 +17,10 @@
 #include <cstdlib>
 
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
+
+#define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui::LimaGuiApplication");
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -29,6 +34,8 @@ namespace Lima {
 namespace Gui {
 
 LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) {
+
+  loadLimaConfigurations();
 
    auto ith = new InitializeThread(this);
    ith->start();
@@ -47,8 +54,9 @@ QString qstr_parseFile(const std::string& path) {
     file.close();
   }
   else {
-    std::cout << "didn't open : " << path << std::endl;
-    std::cout << "Error opening file: " << strerror(errno) << std::endl;
+    LIMAGUIAPPLOGINIT;
+    LINFO << "didn't open : " << path;
+    LERROR << "Error opening file: " << strerror(errno);
   }
   return tump;
 }
@@ -58,7 +66,8 @@ std::string cleanUrl(const std::string& url) {
   std::string str;
   std::vector<std::string> tmpStrList = split(url,':');
   if (!tmpStrList.size()) {
-    LTELL("FILE DIALOG URL FORMAT ERROR : " << url);
+    LIMAGUIAPPLOGINIT;
+    LERROR << "FILE DIALOG URL FORMAT ERROR : " << url;
   }
   else {
     str = tmpStrList[1];
@@ -82,12 +91,13 @@ bool LimaGuiApplication::openMultipleFiles(const QStringList& urls) {
 }
 
 bool LimaGuiApplication::openFile(const QString& filepath) {
-  LTELL("OPENING FILE");
+  LIMAGUIAPPLOGINIT;
+  LINFO << ("OPENING FILE");
   /// FileDialog returns something like : "file:///C:/..."
   /// so we need to remove the unnecessary content
   std::vector<std::string> tmpStrList = split(filepath.toStdString(),':');
   if (!tmpStrList.size()) {
-    LTELL("FILE DIALOG URL FORMAT ERROR : " << filepath.toStdString());
+    LERROR << "FILE DIALOG URL FORMAT ERROR : " << filepath.toStdString();
     return false;
   }
   
@@ -95,14 +105,14 @@ bool LimaGuiApplication::openFile(const QString& filepath) {
   
   for (auto& file : m_openFiles) {
     if (file.url == path) {
-      LTELL("This file is already open.");
+      LINFO << ("This file is already open.");
       return false;
     }
   }
 
   tmpStrList = split(path, '/');
   if (!tmpStrList.size()) {
-    LTELL("FILE NAME FORMAT ERROR : " << path);
+    LERROR << "FILE NAME FORMAT ERROR : " << path;
     return false;
   }
   
@@ -161,8 +171,9 @@ void LimaGuiApplication::closeFile(const QString& filename, bool save) {
       return;
     }
   }
-  
-  LTELL("This file doesn't exist : " << filename.toStdString());
+
+  LIMAGUIAPPLOGINIT;
+  LERROR << "This file doesn't exist : " << filename.toStdString();
   /// qml part : close tab
 }
 
@@ -247,7 +258,8 @@ void LimaGuiApplication::analyzeFileFromUrl(const QString& url, QObject* target)
     closeFile(m_fileName);
   }
   else {
-    LTELL("There was a problem somewhere");
+    LIMAGUIAPPLOGINIT;
+    LERROR << ("Couldn't open file");
   }
 }
 
@@ -261,7 +273,8 @@ bool LimaGuiApplication::selectFile(const QString& filename) {
     return true;
   }
   else {
-    LTELL("This file doesn't exist : " << filename.toStdString());
+    LIMAGUIAPPLOGINIT;
+    LINFO << "This file doesn't exist : " << filename.toStdString();
   }
   return false;
 }
@@ -271,6 +284,8 @@ bool LimaGuiApplication::selectFile(const QString& filename) {
 
 void LimaGuiApplication::initializeLimaAnalyzer() {
 
+  LIMAGUIAPPLOGINIT;
+
   std::string currentCustomPipeline = "water";
 
   std::string configDir = qgetenv("LIMA_CONF").constData();
@@ -278,7 +293,7 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
   }
 //   configDir = configDir + "/../water" + ":" + configDir;
-  LTELL("Config Dir is " << configDir);
+  LINFO << "Config Dir is " << configDir;
 
   QStringList projects;
   projects << QString("lima");
@@ -293,7 +308,7 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
     concatenatedPaths += qstr;
   }
 
-  LTELL("TRUE FINAL PATH: " << concatenatedPaths.toStdString());
+  LINFO << "TRUE FINAL PATH: " << concatenatedPaths.toStdString();
   
   std::deque<std::string> langs = {"eng","fre"};
   std::deque<std::string> pipelines = {"main", "easy"};
@@ -302,10 +317,11 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
   std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
   if( resourcesPath.empty() )
     resourcesPath = "/usr/share/apps/lima/resources/";
-  LTELL("Ressources path is " << resourcesPath);
+
+  LINFO << "Ressources path is " << resourcesPath;
   std::string commonConfigFile("lima-common.xml");
   
-  std::cout << "LOADING RESOURCES" << std::endl;
+  LINFO << "LOADING RESOURCES";
 
 //  std::ostringstream oss;
 //  std::ostream_iterator<std::string> out_it (oss,", ");
@@ -331,14 +347,14 @@ void LimaGuiApplication::initializeLimaAnalyzer() {
 
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configFilePath.toStdString());
 
-  std::cout << "LOADING CONFIGURATION FILES" << std::endl;
+  LINFO << "LOADING CONFIGURATION FILES";
 
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
     clientId,
     lpconfig,
     langs,
     pipelines);
-  std::cout << "configureClientFactory DONE" << std::endl;
+  LINFO << "configureClientFactory DONE";
 
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
@@ -361,6 +377,7 @@ void LimaGuiApplication::writeInConsole(const std::string& str) {
 }
 
 void LimaGuiApplication::test() {
+  LIMAGUIAPPLOGINIT;
   LTELL("This is a warning");
   std::cout << "All your bases are belong to us" << std::endl;
 }
@@ -387,7 +404,8 @@ void LimaGuiApplication::setLanguage(const QString& s) {
     languageChanged();
   }
   else {
-    LTELL("'" << s.toStdString() << "' is not a supported language.");
+    LIMAGUIAPPLOGINIT;
+    LERROR << "'" << s.toStdString() << "' is not a supported language.";
   }
 }
 
@@ -460,25 +478,63 @@ QStringList LimaGuiApplication::getNamedEntitiesList(const QString& text) {
   return nEntities;
 }
 
-void LimaGuiApplication::loadConfigurations() {
+void LimaGuiApplication::loadLimaConfigurations() {
+  /// Let LIMA_USER_CONFIG be the directory where custom configs are stored
+  /// This could be retrieved by an environment variable
+  std::string LIMA_USER_CONFIG = "~/.config/LIMA/configs";
+
+  /// Let there be a config file listing all configs names
+  ///
+
+  QDir configDir(QString(LIMA_USER_CONFIG.c_str()));
+
+  if (configDir.exists()) {
+    std::string configFile = "config.ini";
+//    XMLConfigurationFileParser configFileParser(LIMA_USER_CONFIG + "/" + configFile);
+
+    // Ideally, we could list the existing config files in a global file like this ^
+    // But let's just make do with the directories we find inside LIMA_USER_CONFIG
+
+    QFileInfoList list = configDir.entryInfoList();
+
+    for (int i=0; i<list.size(); i++) {
+      QFileInfo fileInfo = list.at(i);
+
+      if (fileInfo.isDir()) {
+//        configNames.push_back(fileInfo.fileName());
+        LimaConfiguration* newconfig = new LimaConfiguration();
+        LTELL(fileInfo.fileName().toStdString());
+        newconfig->setName(fileInfo.fileName().toStdString());
+        newconfig->setPath(LIMA_USER_CONFIG + "/" + fileInfo.fileName().toStdString());
+      }
+    }
+
+  }
+  else {
+    configDir.mkpath(QString(LIMA_USER_CONFIG.c_str()));
+  }
 
 }
 
-void LimaGuiApplication::setConfiguration(const std::string& name) {
+void LimaGuiApplication::selectLimaConfiguration(const std::string& name) {
   if (m_configurations.find(name) != m_configurations.end()) {
-    return setConfiguration(*m_configurations[name]);
+    return setLimaConfiguration(*m_configurations[name]);
   }
   else if (name == "default") {
     m_analyzer = m_clients["default"];
   }
   else {
-    LTELL("There is no such configuration");
+    LIMAGUIAPPLOGINIT;
+    LERROR << ("There is no such configuration");
   }
 }
 
-void LimaGuiApplication::setConfiguration(const LimaConfiguration& config) {
+void LimaGuiApplication::setLimaConfiguration(const LimaConfiguration& config) {
   /// This will create a new analyzer
   /// If an analyzer with the same name already exists, ask the user if it should reload it
+  /// This kind of warning could toggled in a config file
+
+  LIMAGUIAPPLOGINIT;
 
   if (m_clients.find(config.name()) != m_clients.end()) {
     LTELL("A client already exists for this configuration. Reload the configuration ? (y/n)");
@@ -502,7 +558,7 @@ void LimaGuiApplication::setConfiguration(const LimaConfiguration& config) {
 
 }
 
-void LimaGuiApplication::createConfiguration(const LimaConfiguration& newconfig) {
+void LimaGuiApplication::createLimaConfiguration(const LimaConfiguration& newconfig) {
 
   
   

@@ -4,6 +4,11 @@ import QtQuick.Layouts 1.3
 
 import "scripts/DynamicObjectManager.js" as Dom
 
+/// This is the widget contained in a tab for the main view.
+/// It contains the text view and the result view.
+/// To make it more flexible, the views are created dynamically
+/// via the 'Dom' script.
+
 Rectangle {
   id:workview
 

@@ -1,8 +1,13 @@
 ﻿#include <thread>
 
+#include "common/LimaCommon.h"
+
 #include "Threads.h"
 #include "LimaGuiApplication.h"
 #include "ConllListModel.h"
+
+#define ATLOGINIT LOGINIT("Lima::Gui::AnalysisThread");
+#define ITLOGINIT LOGINIT("Lima::Gui::InitializeThread");
 
 namespace Lima {
 namespace Gui {
@@ -45,7 +50,8 @@ void AnalysisThread::run() {
     notifyView();
   }
   else {
-    LTELL("Can't analyze : Analyzer is not available.");
+    ATLOGINIT;
+    LINFO << ("Can't analyze : Analyzer is not available.");
   }
 }
 
@@ -61,15 +67,13 @@ void AnalysisThread::notifyView() {
   if (view) {
 //      related: https://stackoverflow.com/questions/27092756/call-qml-function-from-c-with-another-qml-object-as-parameter
 
-//      QObject * root = engine.rootObjects().at(0);
-//      QQmlComponent comp(&engine, QUrl("qrc:/Test.qml"));
-//      QMetaObject::invokeMethod(root, "addTab", Q_ARG(QVariant, QVariant::fromValue(&comp)));
     QString qstr(out.str().c_str());
     QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(m_text)), Q_ARG(QVariant, QVariant::fromValue(qstr)));
 //    QMetaObject::invokeMethod(view, "tableUp", Q_ARG(QVariant, QVariant::fromValue(clmodel)));
   }
   else {
-    LTELL("No result view specified.");
+    ATLOGINIT;
+    LERROR << "Error : No result view specified.";
   }
 }
 

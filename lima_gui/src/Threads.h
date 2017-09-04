@@ -15,7 +15,8 @@ class LimaGuiApplication;
 
 /// \class LimaGuiThread
 ///
-/// \brief This class is meant to be related with a LimaGuiApplication object.
+/// \brief A QThread implementation for LIMA Gui.
+/// This class is meant to be related with a LimaGuiApplication object.
 class LIMA_GUI_EXPORT LimaGuiThread : public QThread {
   Q_OBJECT
 public:

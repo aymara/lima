@@ -33,8 +33,6 @@ namespace Config {
 
 typedef std::shared_ptr<Config::LimaConfiguration> LimaConfiguration_ptr;
 
-class LimaGuiApplicationPrivate;
-
 ///
 /// \class LimaGuiApplication
 /// \brief Main class of Lima Gui.
@@ -52,6 +50,7 @@ class LIMA_GUI_EXPORT LimaGuiApplication : public QObject {
   Q_PROPERTY(QString console MEMBER m_consoleOutput NOTIFY consoleChanged READ consoleOutput WRITE setConsoleOuput)
   Q_PROPERTY(QStringList languages MEMBER m_languages NOTIFY languagesChanged READ languages)
   Q_PROPERTY(QString language MEMBER m_language NOTIFY languageChanged READ language WRITE setLanguage)
+  Q_PROPERTY(QStringList configs MEMBER m_configs NOTIFY configsChanged)
 
 public:
   ///
@@ -189,6 +188,8 @@ Q_SIGNALS:
 
   void languagesChanged();
   void languageChanged();
+
+  void configsChanged();
   
 private:
   
@@ -206,6 +207,7 @@ private:
   QStringList m_languages;
   QString m_language;
   QStringList m_formats;
+  QStringList m_configs;
   bool m_analyzerAvailable = false;
   
   /// MEMBERS
@@ -237,13 +239,19 @@ private:
   /// we could have a temp directory that would be wiped out when not needed
   ///
 
-  void loadConfigurations();
+  void loadLimaConfigurations();
 
-  void createConfiguration(const Config::LimaConfiguration& newconfig);
+  std::string selectedLimaConfiguration = "default";
 
-  void setConfiguration(const std::string& name);
+  void addLimaConfiguration(LimaConfiguration_ptr newconfig);
 
-  void setConfiguration(const Config::LimaConfiguration& config);
+  void createLimaConfiguration(const Config::LimaConfiguration& newconfig);
+
+  void selectLimaConfiguration(const std::string& name);
+
+  void selectLimaConfiguration(int it);
+
+  void setLimaConfiguration(const Config::LimaConfiguration& config);
 
   std::map<std::string, LimaConfiguration_ptr> m_configurations;
 

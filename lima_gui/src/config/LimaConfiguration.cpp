@@ -153,36 +153,36 @@ void LimaConfiguration::saveAsXml() {
 
 }
 
-void LimaConfiguration::process(const std::string& configPath) {
-  /// quelles entités sont activées par défaut ?
-  ///
-  /// quelles pipelines unit sont définies par défaut ?
-  /// liste des noms des pipelines -> choix disponibles
-  ///
-  /// dans l'idéal, on va lire lima-analysis.xml, et de là on saura quelles langues implémenter
-  ///
-  /// la configuration sera la même pour les deux languages
-  /// seul le pipeline main sera édité
-  ///
+//void LimaConfiguration::process(const std::string& configPath) {
+//  /// quelles entités sont activées par défaut ?
+//  ///
+//  /// quelles pipelines unit sont définies par défaut ?
+//  /// liste des noms des pipelines -> choix disponibles
+//  ///
+//  /// dans l'idéal, on va lire lima-analysis.xml, et de là on saura quelles langues implémenter
+//  ///
+//  /// la configuration sera la même pour les deux languages
+//  /// seul le pipeline main sera édité
+//  ///
 
-//  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser ma_a(configPath + "/" + "lima-analysis.xml");
+////  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser ma_a(configPath + "/" + "lima-analysis.xml");
 
-//  ConfigurationStructure& cstruct = ma_a.getConfiguration();
+////  ConfigurationStructure& cstruct = ma_a.getConfiguration();
 
-//  GroupConfigurationStructure& groupstruct = cstruct.getGroupConf("lima-coreclient", "mediaProcessingDefinitionFiles");
+////  GroupConfigurationStructure& groupstruct = cstruct.getGroupConf("lima-coreclient", "mediaProcessingDefinitionFiles");
 
-//  std::map<std::string, std::string>& params = groupstruct.getParams();
+////  std::map<std::string, std::string>& params = groupstruct.getParams();
 
-//  LTELL("params:");
-//  for (auto& pair : params) {
-//    LTELL(pair.first << " : " << pair.second);
+////  LTELL("params:");
+////  for (auto& pair : params) {
+////    LTELL(pair.first << " : " << pair.second);
 
-//    langFiles.insert(pair.first, XMLConfigurationFileParser(configPath + "/" + pair.second));
-//  }
+////    langFiles.insert(pair.first, XMLConfigurationFileParser(configPath + "/" + pair.second));
+////  }
 
 
 
-}
+//}
 
 void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml) {
   LTELL("\t\twriting list<" << name << ">:");

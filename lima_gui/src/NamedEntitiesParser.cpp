@@ -4,10 +4,13 @@
 namespace Lima {
 namespace Gui {
 
+
+/// \brief Creates a html tag with subsequent content, metadata and style
 std::string markupa(const std::string& content, const std::string& markup, const std::string& style, const std::string& metadata) {
   return "<" + markup  + (style.length() ? " style=\"" + style + "\"" : "") + " " + metadata + ">" + content + "</" + markup + ">";
 }
 
+/// \brief replace all occurences of X by Y in text
 void replace_all(std::string& text, const std::string& occurence, const std::string& sub) {
   std::size_t it = -1;
   while (it = text.find(occurence, it + 1), it != std::string::npos) {
@@ -30,18 +33,22 @@ std::string highlightNamedEntities(
 //  }
 
   for (auto& entity : entities) {
-    for (auto& o : entity.occurences) {
-      replace_all(text, o, markupa(o, "mark", "border-radius:10; background-color:"+entity.color + "; border: 1px solid #aaeeee", "name=\"" + entity.name + "\""));
+    for (auto& o : entity.m_occurences) {
+      replace_all(text, o, markupa(o, "mark", "border-radius:10; background-color:"+entity.m_color + "; border: 1px solid #aaeeee", "name=\"" + entity.m_name + "\""));
     }
   }
 
   return text;
 }
 
+/// \brief generates a random int between a and b
 int randint(int a, int b) {
   return rand()%(b-a)+a;
 }
 
+/// \brief Generates X distinct colors
+///
+/// The range is 8 - F, to have brighter colors
 std::vector<std::string> generateDistinctColors(int quantity) {
 
   srand(time(NULL));
@@ -76,31 +83,31 @@ NamedEntitiesParser::NamedEntitiesParser(QObject* p) : QObject(p)
 
 void NamedEntitiesParser::parse(const QString& rawtext, const QString& conllText) {
 
-  entities.clear();
+  m_entities.clear();
 
-  this->rawText = rawtext;
-  this->conllText = conllText;
+  this->m_rawText = rawtext;
+  this->m_conllText = conllText;
 
   std::map<std::string, std::vector<std::string> > data = getNamedEntitiesFromConll(conllText.toStdString());
   std::vector<std::string> colors = generateDistinctColors(data.size());
   int i = 0;
   for (auto& pair : data) {
-    entities.push_back(EntityItem(pair.first, colors[i++], pair.second));
+    m_entities.push_back(EntityItem(pair.first, colors[i++], pair.second));
   }
 }
 
 QStringList NamedEntitiesParser::getEntityTypes() {
   QStringList qsl;
-  for (auto& item : entities) {
-    std::string str = item.name + ":" + item.color;
+  for (auto& item : m_entities) {
+    std::string str = item.m_name + ":" + item.m_color;
     qsl << QString(str.c_str());
   }
   return qsl;
 }
 
 EntityItem* NamedEntitiesParser::findEntity(const std::string& name) {
-  for (auto& entity : entities) {
-    if (entity.name == name) {
+  for (auto& entity : m_entities) {
+    if (entity.m_name == name) {
       return &entity;
     }
   }
@@ -109,7 +116,7 @@ EntityItem* NamedEntitiesParser::findEntity(const std::string& name) {
 
 QString NamedEntitiesParser::getHighlightedText() {
 
-  CONLL_List conllList = conllRawToLines(conllText.toStdString());
+  CONLL_List conllList = conllRawToLines(m_conllText.toStdString());
 
   std::string result = "";
   std::string block = "";
@@ -130,11 +137,11 @@ QString NamedEntitiesParser::getHighlightedText() {
 
       if (entity) {
         std::string style = "";
-        style += "background-color: " + entity->color + "; ";
+        style += "background-color: " + entity->m_color + "; ";
         style += "border: 1px solid black; ";
         style += "padding:5px; ";
         style += "border-radius: 5px; ";
-        hltext = markupa(hltext, "mark",style , "name=\"" + entity->name + "\"");
+        hltext = markupa(hltext, "mark",style , "name=\"" + entity->m_name + "\"");
         foundEntity = true;
       }
 

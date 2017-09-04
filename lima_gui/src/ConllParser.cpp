@@ -1,4 +1,6 @@
 
+#include "common/LimaCommon.h"
+
 #include "ConllParser.h"
 
 #include <iostream>
@@ -9,13 +11,14 @@
 #include <cstdio>
 #include <iomanip>
 
-
 #include <boost/algorithm/string/replace.hpp>
+
+#define CONLLPARSERLOGINIT LOGINIT("Lima::Gui::ConllParser");
 
 namespace Lima {
 namespace Gui {
 
-/// This need cleaning up
+
 ///
 /// Contains all kinds of function to parse text and files
 
@@ -111,7 +114,10 @@ std::string parse_conll(const std::string& file) {
     }
     
     int return_value = pclose(pipe);
-    if (return_value) std::cout << "pipe returned " << return_value << std::endl;
+    if (return_value) {
+      CONLLPARSERLOGINIT;
+      LINFO << "pipe returned " << return_value;
+    }
     
     clean_up(result);
     return result;
@@ -131,50 +137,7 @@ std::vector<std::string> into_lines(const std::string& str) {
     return lines;    
 }
 
-/// displays the expected content : Dependance(mot source, mot cible)
-/// words with no dependency are not displayed by default
-void show_dependencies(const CONLL_List& lines) {
-    
-    // show if there's no dependency
-    bool showna = false;
-    std::string na = "{n/a}";
-    
-    std::string crt_token;
-    std::string src_token;
-    std::string dependency;
-    
-    for (unsigned int i=0; i<lines.size(); i++) {
-        crt_token = na;
-        src_token = na;
-        dependency = na;
-    
-        // get current line word
-        crt_token = lines[i]->tokens[1];
-        
-        // get dependency
-        if (lines[i]->tokens[8] != "_")
-            dependency = lines[i]->tokens[8];
-            
-        // get src word
-        if (lines[i]->tokens[7] != "_") {
-            unsigned int src_ind = std::stoi(lines[i]->tokens[7])-1;
-            if (src_ind >= lines.size()) {
-                std::cout << "Line " << src_ind << " doesn't exist." << std::endl;
-                break;
-            }
-            CONLL_Line* src_line = lines[src_ind];
-            if (src_line) src_token = (src_line->tokens[1]);
-        }
-        
-        // display
-        if (crt_token == na || src_token == na || dependency == na) {
-            if (showna) std::cout << na << ":" << crt_token << std::endl;}
-        else 
-            std::cout << dependency << "(" << src_token << ", " << crt_token << ")" << std::endl;   
-    }
-}
-
-/// display the conll file content
+/// \brief Displays the conll file content
 void displayAsColumns(const CONLL_List& lines) {
     
     std::vector<std::string> headers;
@@ -205,7 +168,7 @@ void displayAsColumns(const CONLL_List& lines) {
     }
 }
 
-/// This will extract named entities from the conll output
+/// \brief This will extract named entities from the conll output
 std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const std::string& text) {
   std::map<std::string, std::vector<std::string> > disa;
   CONLL_List content = textToConll(text);
@@ -220,6 +183,7 @@ std::map<std::string, std::vector<std::string> > getNamedEntitiesFromConll(const
   return disa;
 }
 
+/// \brief creates a html markup with content and style
 std::string markup(const std::string& content, const std::string& markup, const std::string& style) {
   return "<" + markup  + (style.length() ? " style=\"" + style + "\"" : "") + ">" + content + "</" + markup + ">";
 }
@@ -243,7 +207,7 @@ std::string highlightNamedEntities(
   return text;
 }
 
-
+/// \brief takes a raw conll formated text and splits it into CONLL_Line structures
 CONLL_List conllRawToLines(const std::string& conll) {
   CONLL_List list;
 

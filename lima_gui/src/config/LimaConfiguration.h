@@ -43,26 +43,27 @@ public:
 
   void saveAsXml();
 
-  void process(const std::string& path);
+  void loadFromFile(const std::string& path);
 
   std::string name() const { return m_name; }
+  std::string path() const { return m_path; }
+
+  void setName(const std::string& n) {m_name = n;}
+  void setPath(const std::string& p) {m_path = p;}
 
   void writeFile(Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser& xmlcfgparser, const std::string& path);
 
-  std::map<std::string, std::string> m_langFiles;
 
 //  Q_INVOKABLE void loadFromDirectory(const QString& path);
 
 private:
 
-  /// main -> ...
-  /// easy -> ...
-  /// even if only main interests us
 //  std::map<std::string, ProcessUnitPipelineConfiguration> m_processUnitPipelinesConfiguration;
 
 //  std::map<std::string, ProcessUnitConfiguration> m_processUnitsConfigurations;
 
   std::string m_name;
+  std::string m_path;
 
 //  std::map<std::string, ConfigTree> content;
 
