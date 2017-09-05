@@ -18,10 +18,6 @@ id: popup
     x:app_window.width/2 - width/2
     y:app_window.height/2 - height/2
 
-    //  SwitchPanel {
-    //    anchors.fill: parent
-
-    //  }
 
     ConfigurationTreeModel {
        id: limaconfig

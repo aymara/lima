@@ -5,6 +5,9 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import "basics"
 
+
+/// This is the previous lima configuration interface. It uses a ListView rather than a TreeView
+
 import integ_cpp 1.0
 
 Popup {

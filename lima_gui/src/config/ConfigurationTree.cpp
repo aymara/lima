@@ -1,3 +1,10 @@
+/**
+ * \file    ConfigurationTree.cpp
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #include "ConfigurationTree.h"
 
 #include "common/XMLConfigurationFiles/configurationStructure.h"
@@ -9,22 +16,31 @@ using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
 // using namespace Lima::LinguisticProcessing;
 
-namespace Lima {
-namespace Gui {
-namespace Config {
+namespace Lima 
+{
+namespace Gui 
+{
+namespace Config 
+{
 
 int ConfigurationNode::pid = 0;
 
-bool ConfigurationNode::toggleById(int tid) {
-  if (this->m_id == tid) {
-    if (checkable()) {
+bool ConfigurationNode::toggleById(int tid) 
+{
+  if (this->m_id == tid) 
+  {
+    if (checkable()) 
+    {
       m_checked = !m_checked;
       return true;
     }
   }
-  else {
-    for (auto& child : m_children) {
-      if (child->toggleById(tid)) {
+  else 
+  {
+    for (auto& child : m_children) 
+    {
+      if (child->toggleById(tid)) 
+      {
         return true;
       }
     }
@@ -32,7 +48,8 @@ bool ConfigurationNode::toggleById(int tid) {
   return false;
 }
 
-std::string ConfigurationNode::name() {
+std::string ConfigurationNode::name() 
+{
   if (hasAttribute("name")) {
     return m_attributes["name"];
   }
@@ -44,24 +61,29 @@ std::string ConfigurationNode::name() {
   }
 }
 
-bool ConfigurationNode::checked() {
+bool ConfigurationNode::checked() 
+{
   return m_checked;
 }
 
-void ConfigurationNode::setChecked(bool b) {
+void ConfigurationNode::setChecked(bool b) 
+{
   m_checked = b;
 }
 
-void ConfigurationNode::addAttribute(const std::string& key, const std::string& value) {
+void ConfigurationNode::addAttribute(const std::string& key, const std::string& value) 
+{
   m_attributes[key] = value;
 }
 
-bool ConfigurationNode::hasAttribute(const std::string& key) {
+bool ConfigurationNode::hasAttribute(const std::string& key) 
+{
   std::map<std::string, std::string>::const_iterator it = m_attributes.find(key);
   return it != m_attributes.end();
 }
 
-std::string ConfigurationNode::getAttribute(const std::string& key) {
+std::string ConfigurationNode::getAttribute(const std::string& key) 
+{
   if (hasAttribute(key)) {
     return m_attributes[key];
   }
@@ -70,12 +92,15 @@ std::string ConfigurationNode::getAttribute(const std::string& key) {
   }
 }
 
-void ConfigurationNode::addChild(ConfigurationNode *cn) {
+void ConfigurationNode::addChild(ConfigurationNode *cn) 
+{
   m_children.push_back(std::shared_ptr<ConfigurationNode>(cn));
 }
 
-bool ConfigurationNode::checkable() {
-  std::vector<CONFIGURATION_NODE_TYPE> checkables = {
+bool ConfigurationNode::checkable() 
+{
+  std::vector<CONFIGURATION_NODE_TYPE> checkables = 
+  {
     ITEM,
     ENTRY
   };
@@ -89,11 +114,13 @@ bool ConfigurationNode::checkable() {
 }
 
 bool ConfigurationNode::visible() {
-  std::vector<CONFIGURATION_NODE_TYPE> visibles = {
+  std::vector<CONFIGURATION_NODE_TYPE> visibles = 
+  {
     MODULE, GROUP, LIST, ITEM
   };
   
-  std::vector<std::string> authorizedNames = {
+  std::vector<std::string> authorizedNames = 
+  {
     "main",
     "processUnitSequence"
   };
@@ -104,14 +131,15 @@ bool ConfigurationNode::visible() {
   return visible;
 }
 
-ConfigurationNode::ConfigurationNode() {
+ConfigurationNode::ConfigurationNode() 
+{
   m_id = pid;
   pid = pid + 1;
   m_type = CONFIGURATION_NODE_TYPE::NONE;
 }
 
-ConfigurationNode::ConfigurationNode(const ConfigurationStructure& p_cstruct) {
-  //LTELL("csnode");
+ConfigurationNode::ConfigurationNode(const ConfigurationStructure& p_cstruct) 
+{
   ConfigurationStructure cstruct(p_cstruct);
   
   
@@ -124,11 +152,10 @@ ConfigurationNode::ConfigurationNode(const ConfigurationStructure& p_cstruct) {
   }
 }
 
-ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstruct) {
+ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstruct) 
+{
   
   ModuleConfigurationStructure mstruct(p_mstruct);
-  
-  //  LTELL("modulenode");
   
   m_id = pid;
   pid = pid + 1;
@@ -141,9 +168,8 @@ ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstru
   }
 }
 
-ConfigurationNode::ConfigurationNode(const GroupConfigurationStructure& p_gstruct) {
-  //  LTELL("groupnode");
-  
+ConfigurationNode::ConfigurationNode(const GroupConfigurationStructure& p_gstruct) 
+{
   GroupConfigurationStructure gstruct(p_gstruct);
   
   
@@ -157,26 +183,30 @@ ConfigurationNode::ConfigurationNode(const GroupConfigurationStructure& p_gstruc
   }
   catch (std::exception& e) {}
   
-  for (auto& pair : gstruct.getParams()) {
+  for (auto& pair : gstruct.getParams()) 
+  {
     ConfigurationNode* cn = new ConfigurationNode();
     cn->fromParam(pair.first, pair.second);
     addChild(cn);
   }
   
-  for (auto& pair : gstruct.getLists()) {
+  for (auto& pair : gstruct.getLists()) 
+  {
     ConfigurationNode* cn = new ConfigurationNode();
     cn->fromList(pair.first, pair.second);
     addChild(cn);
   }
   
-  for (auto& pair : gstruct.getMaps()) {
+  for (auto& pair : gstruct.getMaps()) 
+  {
     ConfigurationNode* cn = new ConfigurationNode();
     cn->fromMap(pair.first, pair.second);
     addChild(cn);
   }
 }
 
-void ConfigurationNode::fromList(const std::string& name, const std::deque<std::string>& list) {
+void ConfigurationNode::fromList(const std::string& name, const std::deque<std::string>& list) 
+{
   m_type = CONFIGURATION_NODE_TYPE::LIST;
   
   addAttribute("name", name);
@@ -188,7 +218,8 @@ void ConfigurationNode::fromList(const std::string& name, const std::deque<std::
   }
 }
 
-void ConfigurationNode::fromMap(const std::string& name, const std::map<std::string, std::string>& map) {
+void ConfigurationNode::fromMap(const std::string& name, const std::map<std::string, std::string>& map) 
+{
   m_type = CONFIGURATION_NODE_TYPE::MAP;
   
   addAttribute("name", name);
@@ -200,35 +231,41 @@ void ConfigurationNode::fromMap(const std::string& name, const std::map<std::str
   }
 }
 
-void ConfigurationNode::fromItem(const std::string& item) {
+void ConfigurationNode::fromItem(const std::string& item) 
+{
   m_type = CONFIGURATION_NODE_TYPE::ITEM;
   
   addAttribute("value", item);
 }
 
-void ConfigurationNode::fromEntry(const std::string& key, const std::string& value) {
+void ConfigurationNode::fromEntry(const std::string& key, const std::string& value) 
+{
   m_type = CONFIGURATION_NODE_TYPE::ENTRY;
   
   addAttribute("key", key);
   addAttribute("value", value);
 }
 
-void ConfigurationNode::fromParam(const std::string& key, const std::string& value) {
+void ConfigurationNode::fromParam(const std::string& key, const std::string& value) 
+{
   m_type = CONFIGURATION_NODE_TYPE::PARAM;
   
   addAttribute("key", key);
   addAttribute("value", value);
 }
 
-std::vector<std::shared_ptr<ConfigurationNode>>& ConfigurationNode::children() {
+std::vector<std::shared_ptr<ConfigurationNode>>& ConfigurationNode::children() 
+{
   return m_children;
 }
 
-// void ConfigurationNode::mask(const ConfigurationStructure& cstruct) {
+// void ConfigurationNode::mask(const ConfigurationStructure& cstruct) 
+//{
 //   
 // }
 
-// ConfigurationStructure ConfigurationNode::toConfigurationStructure() {
+// ConfigurationStructure ConfigurationNode::toConfigurationStructure() 
+//  {
 //   ConfigurationStructure cstruct;
 //   
 //   ConfigurationNode* parent = this;
@@ -251,23 +288,28 @@ std::vector<std::shared_ptr<ConfigurationNode>>& ConfigurationNode::children() {
 //   return cstruct;
 // }
 
-ConfigurationTree::ConfigurationTree() {
+ConfigurationTree::ConfigurationTree() 
+{
 
 }
 
-ConfigurationTree::ConfigurationTree(ConfigurationNode* root) : m_root(root) {
+ConfigurationTree::ConfigurationTree(ConfigurationNode* root) : m_root(root)
+{
 
 }
 
-ConfigurationNode* ConfigurationTree::root() const {
+ConfigurationNode* ConfigurationTree::root() const 
+{
   return m_root;
 }
 
-ConfigurationTree::~ConfigurationTree() {
+ConfigurationTree::~ConfigurationTree() 
+{
   delete m_root;
 }
 
-void ConfigurationTree::setRoot(ConfigurationNode *root) {
+void ConfigurationTree::setRoot(ConfigurationNode *root) 
+{
   m_root = root;
 }
 

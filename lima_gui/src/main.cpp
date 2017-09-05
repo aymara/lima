@@ -7,7 +7,6 @@
 
 #include "common/tools/FileUtils.h"
 
-
 #include "LimaGuiApplication.h"
 #include "config/LimaConfiguration.h"
 #include "config/ConfigurationTreeModel.h"
@@ -40,7 +39,7 @@ int main(int argc, char *argv[])
       configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
     }
   //   configDir = configDir + "/../water" + ":" + configDir;
-    LDEBUG<< "Config Dir is " << configDir;
+    LINFO << "Config Dir is " << configDir;
 
     QStringList projects;
     projects << QString("lima");
@@ -50,14 +49,16 @@ int main(int argc, char *argv[])
   //  paths = Lima::Common::Misc::buildConfigurationDirectoriesList(projects, paths);
 
     QString concatenatedPaths;
-    for (auto& qstr : paths) {
-      if (concatenatedPaths.length()) {
+    for (auto& qstr : paths) 
+    {
+      if (concatenatedPaths.length()) 
+      {
         concatenatedPaths += QString(":");
       }
       concatenatedPaths += qstr;
     }
 
-    LDEBUG << "TRUE FINAL PATH: " << concatenatedPaths.toStdString();
+    LINFO  << "TRUE FINAL PATH: " << concatenatedPaths.toStdString();
     QString configPath = concatenatedPaths;
 
 

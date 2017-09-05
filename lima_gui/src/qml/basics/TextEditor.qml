@@ -3,6 +3,8 @@ import QtQuick.Controls 2.2
 
 /// Simple scrollable widget to edit text
 
+/// There is a problem with the TextView widget, so this is used instead.
+
 Rectangle {
 
 
@@ -10,6 +12,7 @@ Rectangle {
   property alias textFormat: ttextarea.textFormat
   property alias wrapMode: ttextarea.wrapMode
   property alias showMenu: menu.visible
+  property alias readOnly: ttextarea.readOnly
 
   anchors.fill: parent
 
@@ -27,18 +30,6 @@ Rectangle {
       anchors.margins: 3
       color: "#eeeeee"
 
-//      Switch {
-//        anchors.fill: parent
-//        id:wrapswitch
-//        scale: 0.7
-//        text:"do not wrap"
-//        onCheckedChanged:  {
-//          console.log("checked=", checked)
-//          console.log(ttextarea.wrapMode)
-//          ttextarea.wrapMode = checked ? TextEdit.NoWrap : TextEdit.WordWrap
-//        }
-
-//      }
     }
 
     Rectangle {
@@ -60,27 +51,14 @@ Rectangle {
       TextArea {
         id: ttextarea
 
-        /// this creates a binding loop property error : to fix
+        /// this creates a binding loop property error : this might come from Qt itself though
         width: implicitWidth
         height: implicitHeight
         selectByMouse: true
-//        wrapMode: wrapswitch.checked ? TextEdit.NoWrap : TextEdit.WordWrap
+        
         wrapMode: Text.WordWrap
 //        textFormat: TextEdit.RichText
 
-  //      property string placeholderText: "Enter text here..."
-
-  //      onPressed: {
-  //        placeholder.visible = false
-  //      }
-
-  //      Text {
-  //        id:placeholder
-  //        text: ttextarea.placeholderText
-  //      }
-
-//      text: "<img src='~/Documents/cea_presentation_location.png'/>"
-      //      
         
       }
     }

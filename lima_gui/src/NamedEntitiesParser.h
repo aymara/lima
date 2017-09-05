@@ -1,3 +1,10 @@
+/**
+ * \file    NamedEntitiesParser.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef NAMEDENTITIESPARSER_H
 #define NAMEDENTITIESPARSER_H
 
@@ -6,13 +13,16 @@
 #include <QObject>
 #include <QString>
 
-namespace Lima {
-namespace Gui {
+namespace Lima 
+{
+namespace Gui 
+{
 
 ///
 /// \brief A simple struct to store the important stuff about a given entity
 ///
-struct LIMA_GUI_EXPORT EntityItem {
+struct LIMA_GUI_EXPORT EntityItem 
+{
 
   EntityItem(std::string name, std::string color, const std::vector<std::string>& occ) :
   m_name(name), m_color(color), m_occurences(occ)

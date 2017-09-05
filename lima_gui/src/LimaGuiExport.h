@@ -1,3 +1,10 @@
+/**
+ * \file    LimaGuiExport.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef LIMA_GUI_EXPORT_H
 #define LIMA_GUI_EXPORT_H
 

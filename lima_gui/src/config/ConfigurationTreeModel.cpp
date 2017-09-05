@@ -1,9 +1,19 @@
+/**
+ * \file    ConfigurationTreeModel.cpp
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #include "ConfigurationTreeModel.h"
 #include "ConfigurationTree.h"
 
-namespace Lima {
-namespace Gui {
-namespace Config {
+namespace Lima 
+{
+namespace Gui 
+{
+namespace Config 
+{
 
 // ConfigurationTreeModelNode::ConfigurationTreeModelNode(QObject* p) : QAbstractListModel(p) {
 //   
@@ -76,18 +86,22 @@ namespace Config {
 
 //}
 
-ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationTreeModelNode* p) {
+ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationTreeModelNode* p) 
+{
   m_parent = p;
 }
 
-ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationNode* node, ConfigurationTreeModelNode *p) : ConfigurationTreeModelNode(p) {
+ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationNode* node, ConfigurationTreeModelNode *p) : ConfigurationTreeModelNode(p) 
+{
   fromConfigurationNode(node);
 }
 
-void ConfigurationTreeModelNode::fromConfigurationNode(ConfigurationNode* cn) {
+void ConfigurationTreeModelNode::fromConfigurationNode(ConfigurationNode* cn) 
+{
   this->m_node = cn;
 
-  for (auto& child : cn->children()) {
+  for (auto& child : cn->children()) 
+  {
 //    m_children.push_back(std::shared_ptr<ConfigurationTreeModelNode>(new ConfigurationTreeModelNode(child.get())));
     m_children.push_back(new ConfigurationTreeModelNode(child.get(), this));
   }
@@ -95,44 +109,53 @@ void ConfigurationTreeModelNode::fromConfigurationNode(ConfigurationNode* cn) {
   m_data << QString(m_node->name().c_str()) << m_node->checked();
 }
 
-void ConfigurationTreeModelNode::addChild(ConfigurationTreeModelNode *node) {
+void ConfigurationTreeModelNode::addChild(ConfigurationTreeModelNode *node) 
+{
 //   m_children.push_back(std::shared_ptr<ConfigurationTreeModelNode>(node));
   m_children.push_back(node);
 }
 
-ConfigurationTreeModelNode* ConfigurationTreeModelNode::child(int ind) {
+ConfigurationTreeModelNode* ConfigurationTreeModelNode::child(int ind) 
+{
   return m_children.value(ind);
 }
 
-int ConfigurationTreeModelNode::childCount() const {
+int ConfigurationTreeModelNode::childCount() const 
+{
   return m_children.count();
 }
 
-int ConfigurationTreeModelNode::columnCount() const {
+int ConfigurationTreeModelNode::columnCount() const 
+{
   return m_data.count();
 }
 
-ConfigurationTreeModelNode* ConfigurationTreeModelNode::parent() {
+ConfigurationTreeModelNode* ConfigurationTreeModelNode::parent() 
+{
   return m_parent;
 }
 
-int ConfigurationTreeModelNode::row() const {
+int ConfigurationTreeModelNode::row() const 
+{
   if (m_parent)
     return m_parent->m_children.indexOf(const_cast<ConfigurationTreeModelNode*>(this));
   return 0;
 }
 
-QVariant ConfigurationTreeModelNode::data(int col) const {
+QVariant ConfigurationTreeModelNode::data(int col) const 
+{
   return m_data.value(col);
 }
 
-ConfigurationTreeModelNode::~ConfigurationTreeModelNode() {
+ConfigurationTreeModelNode::~ConfigurationTreeModelNode() 
+{
   for (auto& child : m_children) {
     delete child;
   }
 }
 
-std::string typeName(CONFIGURATION_NODE_TYPE type) {
+std::string typeName(CONFIGURATION_NODE_TYPE type) 
+{
   switch (type) {
     case CONFIGURATION_NODE_TYPE::MAP:    return "MAP";
     case CONFIGURATION_NODE_TYPE::ITEM:   return "ITEM";
@@ -149,35 +172,47 @@ std::string typeName(CONFIGURATION_NODE_TYPE type) {
 
 ////////////////////////////////////////////
 
- ConfigurationTreeModel::ConfigurationTreeModel(QObject* parent) : QAbstractItemModel(parent) {
+ ConfigurationTreeModel::ConfigurationTreeModel(QObject* parent) : QAbstractItemModel(parent) 
+ {
 
  }
 
- ConfigurationTreeModel::ConfigurationTreeModel(const ConfigurationTree &tree, QObject *parent) : QAbstractItemModel(parent) {
+ ConfigurationTreeModel::ConfigurationTreeModel(const ConfigurationTree &tree, QObject *parent) : QAbstractItemModel(parent) 
+ {
    m_rootNode = new ConfigurationTreeModelNode(tree.root());
  }
 
-QModelIndex ConfigurationTreeModel::index(int row, int column, const QModelIndex& parent) const {
-  if (!hasIndex(row, column, parent)) {
+QModelIndex ConfigurationTreeModel::index(int row, int column, const QModelIndex& parent) const 
+{
+  if (!hasIndex(row, column, parent)) 
+  {
     return QModelIndex();
   }
   
   ConfigurationTreeModelNode* parentNode;
   
-  if (!parent.isValid())
+  if (!parent.isValid()) 
+  {
     parentNode = m_rootNode;
-  else
+  }
+  else 
+  {
     parentNode = static_cast<ConfigurationTreeModelNode*>(parent.internalPointer());
+  }
   
   ConfigurationTreeModelNode* childNode = parentNode->child(row);
-  if (childNode) {
+  if (childNode) 
+  {
     return createIndex(row, column, childNode);
   }
   else
+  {
     return QModelIndex();
+  }
 }
 
-QModelIndex ConfigurationTreeModel::parent(const QModelIndex &index) const {
+QModelIndex ConfigurationTreeModel::parent(const QModelIndex &index) const 
+{
   if (!index.isValid()) {
     return QModelIndex();
   }
@@ -185,8 +220,10 @@ QModelIndex ConfigurationTreeModel::parent(const QModelIndex &index) const {
   ConfigurationTreeModelNode* childItem = static_cast<ConfigurationTreeModelNode*>(index.internalPointer());
   ConfigurationTreeModelNode *parentItem = childItem->parent();
 
-  if (parentItem == m_rootNode)
-      return QModelIndex();
+  if (parentItem == m_rootNode) 
+  {
+    return QModelIndex();
+  }
 
   return createIndex(parentItem->row(), 0, parentItem);
 }
@@ -228,8 +265,9 @@ QVariant ConfigurationTreeModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags ConfigurationTreeModel::flags(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return 0;
+    if (!index.isValid()) {
+      return 0;
+    }
 
     return QAbstractItemModel::flags(index);
 }
@@ -237,13 +275,15 @@ Qt::ItemFlags ConfigurationTreeModel::flags(const QModelIndex &index) const
 QVariant ConfigurationTreeModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return m_rootNode->data(section);
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      return m_rootNode->data(section);
+    }
 
     return QVariant();
 }
 
-ConfigurationTreeModel::~ConfigurationTreeModel() {
+ConfigurationTreeModel::~ConfigurationTreeModel() 
+{
   delete m_rootNode;
 }
 

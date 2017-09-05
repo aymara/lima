@@ -1,3 +1,10 @@
+/**
+ * \file    Threads.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef lima_gui_analysis_thread_h
 #define lima_gui_analysis_thread_h
 
@@ -8,8 +15,10 @@
 
 #include <QThread>
 
-namespace Lima {
-namespace Gui {
+namespace Lima 
+{
+namespace Gui 
+{
 
 class LimaGuiApplication;
 
@@ -17,7 +26,8 @@ class LimaGuiApplication;
 ///
 /// \brief A QThread implementation for LIMA Gui.
 /// This class is meant to be related with a LimaGuiApplication object.
-class LIMA_GUI_EXPORT LimaGuiThread : public QThread {
+class LIMA_GUI_EXPORT LimaGuiThread : public QThread 
+{
   Q_OBJECT
 public:
   LimaGuiThread(LimaGuiApplication* app);
@@ -33,7 +43,8 @@ protected:
 
 /// \class AnalysisThread
 /// \brief This thread starts the analysis with preferred parameters.
-class LIMA_GUI_EXPORT AnalysisThread : public LimaGuiThread {
+class LIMA_GUI_EXPORT AnalysisThread : public LimaGuiThread 
+{
   
 public:
 
@@ -79,16 +90,14 @@ private:
 };
 
 /// \class InitializeThread
-/// \brief Thread to initialize lima
+/// \brief Thread to initialize lima while the QML is being loaded.
 class LIMA_GUI_EXPORT InitializeThread : public LimaGuiThread {
   
 public:
   InitializeThread(LimaGuiApplication* a);
 
-  /// \brief This simply calls LimaGuiApplication::initializeLimaAnalyzer
+  /// \brief This simply calls LimaGuiApplication::initializeLimaAnalyzer.
   void run();
-
-  void doTheThing();
 };
 
 class LIMA_GUI_EXPORT TestThread : public LimaGuiThread {

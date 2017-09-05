@@ -1,26 +1,40 @@
+/**
+ * \file    ConfigurationTree.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef CONFIGURATIONTREE_H
 #define CONFIGURATIONTREE_H
+
+#include "LimaGuiExport.h"
 
 #include <vector>
 #include <deque>
 #include <map>
 #include <memory>
 
-namespace Lima {
-  
-  namespace Common {
-    namespace XMLConfigurationFiles {
+namespace Lima 
+{
+  namespace Common 
+  {
+    namespace XMLConfigurationFiles 
+    {
       class XMLConfigurationFileParser;
       class ConfigurationStructure;
       class ModuleConfigurationStructure;
       class GroupConfigurationStructure;
     }
   }
-  
-namespace Gui {
-namespace Config {
 
-enum CONFIGURATION_NODE_TYPE {
+namespace Gui
+{
+namespace Config
+{
+
+enum CONFIGURATION_NODE_TYPE
+{
   NONE,
   FILE,
   MODULE,
@@ -41,7 +55,8 @@ std::string typeName(CONFIGURATION_NODE_TYPE);
  * when converting into the new custom configuration structure. It will be modified
  * by the user inside a treeView.
  */
-class ConfigurationNode {
+class LIMA_GUI_EXPORT ConfigurationNode
+{
 public:
   static int pid;
   
@@ -51,6 +66,7 @@ public:
   ConfigurationNode(const Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure&);
   
   void addAttribute(const std::string& key, const std::string& value);
+  
   bool hasAttribute(const std::string& key);
   std::string name();
   std::string getAttribute(const std::string& key);
@@ -108,7 +124,8 @@ private:
 /// \brief Not sure if this is actually useful.
 /// For now, the root pointer is destroyed on
 /// ConfigurationTree object destructor call.
-class ConfigurationTree {
+class LIMA_GUI_EXPORT ConfigurationTree 
+{
 public:
   ConfigurationTree();
   ConfigurationTree(ConfigurationNode* root);
@@ -118,7 +135,6 @@ public:
 
   ~ConfigurationTree();
   
-  //  ConfigurationTree(const CS& cstruct);
 private:
   ConfigurationNode* m_root;
   

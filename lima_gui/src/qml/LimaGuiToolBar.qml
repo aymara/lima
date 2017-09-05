@@ -87,10 +87,10 @@ ToolBar {
 
     ToolButton {
 
-      text: qsTr("Export")
+      text: qsTr("About")
 
       onClicked: {
-
+        aboutMenu.open()
       }
     }
     

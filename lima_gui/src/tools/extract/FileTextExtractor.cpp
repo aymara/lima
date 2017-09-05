@@ -1,3 +1,10 @@
+/**
+ * \file    FileTextExtractor.cpp
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #include "FileTextExtractor.h"
 
 #include <algorithm>
@@ -8,15 +15,20 @@
 #include <QString>
 #include <QTextStream>
 
-namespace Lima {
-namespace Gui {
-namespace Tools {
+namespace Lima 
+{
+namespace Gui 
+{
+namespace Tools 
+{
 
-std::string extractTextFromFile(const std::string &path, const std::string &extension) {
+std::string extractTextFromFile(const std::string &path, const std::string &extension) 
+{
   std::vector<std::string> handledTypes = {"txt"};
 
   bool handled = (std::find(handledTypes.begin(), handledTypes.end(), extension) != handledTypes.end());
-  if (!extension.size() || extension == "txt" || handled) {
+  if (!extension.size() || extension == "txt" || handled) 
+  {
     QString tump;
     QFile file(QString(path.c_str()));
     if (file.open(QFile::ReadOnly)) {
@@ -24,13 +36,15 @@ std::string extractTextFromFile(const std::string &path, const std::string &exte
       tump = qts.readAll();
       file.close();
     }
-    else {
+    else 
+    {
       std::cout << "didn't open : " << path << std::endl;
       std::cout << "Error opening file: " << std::strerror(errno) << std::endl;
     }
     return tump.toStdString();
   }
-  else if(handled) {
+  else if(handled) 
+  {
     // put your formats here
     if (extension == "pdf") {
       std::cout << extension << ": can't handle this file extension" << std::endl;

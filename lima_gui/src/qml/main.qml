@@ -22,7 +22,7 @@ import "scripts/DynamicObjectManager.js" as Dom
 
 Controls1.ApplicationWindow {
   id:app_window
-
+  
   property int pile: 0
   
   // ideally, one fonction per feature
@@ -177,8 +177,8 @@ Controls1.ApplicationWindow {
       format_selector.currentIndex = workspace.getCurrentWorkView().formatIndex
     }
   }
-
-  title:"test-lima-qt"
+  
+  title: "Lima Gui"
   visible: true
   x: 500
   width: 1024

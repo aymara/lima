@@ -1,3 +1,10 @@
+/**
+ * \file    ConllParser.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef conll_analyzer_h
 #define conll_analyzer_h
 
@@ -12,7 +19,8 @@ namespace Lima {
 namespace Gui {
 
 /// \brief A line of the CONLL format.
-struct LIMA_GUI_EXPORT CONLL_Line {
+struct LIMA_GUI_EXPORT CONLL_Line 
+{
 
     std::string raw; ///< raw text of the line.
     std::vector<std::string> tokens; ///< list obtained by splitting the text.
@@ -33,7 +41,7 @@ struct LIMA_GUI_EXPORT CONLL_Line {
 
 typedef std::vector<CONLL_Line*> CONLL_List;
 
-LIMA_GUI_EXPORT
+LIMA_GUI_EXPORT 
 CONLL_List conllRawToLines(const std::string& conll);
 
 LIMA_GUI_EXPORT

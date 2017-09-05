@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.4
 import "basics"
 
 
-/// Now, we need to take a static approach (as the dynamic one will eventually lead to memory leaks)
+/// Now, we need to take a static approach (as the dynamic one will eventually lead to memory leaks, unless a parent destroys its children when it is itself destroyed)
 
 /// There is a bug with the combo box : the idea is that changing the combo box index will change
 /// the format property of the result view (obviously), and changing the format via setFormat() will
@@ -16,6 +16,9 @@ import "basics"
 /// formatToShow allows the view to pick the choice of the format before displayResults is called by the
 /// model. It works fine for a first analysis, but if you try to start a new analysis over the previous one,
 /// the format property will get stuck to the combo box index value rather than use formatToShow
+
+/// To add additional format views, you need to create a file for it, add the element to the 'contentRect' below,
+/// and edit the 'setFormat' method to add your format (also, add its codename and real name to the formats list) and the views list
 
 Rectangle {
   id: result_tab

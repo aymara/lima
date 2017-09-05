@@ -1,3 +1,10 @@
+/**
+ * \file    LimaGuiApplication.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef LIMA_GUI_APPLICATION_H
 #define LIMA_GUI_APPLICATION_H
 
@@ -19,7 +26,8 @@ typedef std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessin
 /// \class LimaGuiFile
 /// \brief A simple structure to hold information relative to files
 ///
-struct LIMA_GUI_EXPORT LimaGuiFile {
+struct LIMA_GUI_EXPORT LimaGuiFile 
+{
   std::string name; ///< name of the file. (<name>.<ext>, without the full path)
   std::string url; ///< path of the file (relative or absolute)
   std::string text; ///< text content of the file (after extraction)
@@ -27,7 +35,8 @@ struct LIMA_GUI_EXPORT LimaGuiFile {
 };
 
 class LimaGuiThread;
-namespace Config {
+namespace Config 
+{
   class LimaConfiguration;
 }
 
@@ -37,7 +46,8 @@ typedef std::shared_ptr<Config::LimaConfiguration> LimaConfiguration_ptr;
 /// \class LimaGuiApplication
 /// \brief Main class of Lima Gui.
 ///
-class LIMA_GUI_EXPORT LimaGuiApplication : public QObject {
+class LIMA_GUI_EXPORT LimaGuiApplication : public QObject 
+{
   Q_OBJECT
   
   /// BUFFER PROPERTIES EXPOSED TO QML

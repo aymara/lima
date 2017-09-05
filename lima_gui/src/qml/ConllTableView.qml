@@ -5,6 +5,8 @@ import QtQuick.Controls.Styles 1.4
 
 import integ_cpp 1.0
 
+/// This is the result view for the conll table format view.
+
 Rectangle {
   id:conlltableview
 
@@ -15,18 +17,7 @@ Rectangle {
   }
   
   function loadModel(text) {
-//    Dom.createComponent("models/ConllListModel.qml",conlltableview)
-//    if (Dom.success) {
-//      if (model !== null) {
-//        model.destroy()
-//      }
 
-//      Dom.obj.fromText(text)
-//      model = Dom.obj
-//    }
-//    else {
-//      console.log("fts");
-//    }
     clm.fromText(text)
     table_view.model = clm
   }
@@ -50,7 +41,7 @@ Rectangle {
 
 
 //    model: clm
-
+// Those roles are defined by the 'roleNames' method of the ConllListModel class
     TableViewColumn { role: "id"; title: "ID"; width: 100 }
     TableViewColumn { role: "form"; title: "FORM"; width: 100 }
     TableViewColumn { role: "lemma"; title: "LEMMA"; width: 100 }

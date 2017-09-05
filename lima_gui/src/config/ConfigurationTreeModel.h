@@ -1,5 +1,14 @@
+/**
+ * \file    ConfigurationTreeModel.h
+ * \author  Jocelyn Vernay
+ * \date    Wed, Sep 06 2017
+ * 
+ */
+
 #ifndef CONFIGURATIONTREEMODEL_H
 #define CONFIGURATIONTREEMODEL_H
+
+#include "LimaGuiExport.h"
 
 #include <QObject>
 #include <QAbstractItemModel>
@@ -12,14 +21,30 @@
 /// Editable tree view example :
 /// http://doc.qt.io/qt-5/qtwidgets-itemviews-editabletreemodel-example.html
 
-namespace Lima {
-namespace Gui {
-namespace Config {
+
+// Comments:
+/*
+ * This class is supposed to serve as a model for a (Q)TreeView.
+ * The example did not work with the roleNames method though.
+ * 
+ */
+
+namespace Lima 
+{
+namespace Gui 
+{
+namespace Config 
+{
   
 class ConfigurationNode;
 class ConfigurationTree;
 
-class ConfigurationTreeModelNode {
+/// \brief This class is the 'TreeItem' of the Treeview model.
+/// 
+/// For each Node in the 'ConfigurationTree', there is a twin node
+/// for the qt modeL.
+class LIMA_GUI_EXPORT ConfigurationTreeModelNode 
+{
   
 public:
   ConfigurationTreeModelNode(ConfigurationTreeModelNode* p = 0);
@@ -49,7 +74,8 @@ private:
   QList<QVariant>                                     m_data;
   ConfigurationTreeModelNode*                         m_parent = nullptr;
   
-  enum {
+  enum 
+  {
     ID = Qt::UserRole + 1,
     NAME,
     CHECKED,
@@ -58,7 +84,11 @@ private:
 };
 
 
-class ConfigurationTreeModel : public QAbstractItemModel {
+/// \brief This is the TreeModel for the Qt model pattern.
+/// 
+/// It relies on a regular configuration tree to generate its nodes.
+class LIMA_GUI_EXPORT ConfigurationTreeModel : public QAbstractItemModel 
+{
   Q_OBJECT
   
 public:
