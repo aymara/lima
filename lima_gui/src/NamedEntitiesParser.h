@@ -34,7 +34,9 @@ struct LIMA_GUI_EXPORT EntityItem
 };
 
 ///
-/// \brief Parse the CONLL output and extract the named entities
+/// \brief Parse the CONLL output and extract the named entities.
+/// The method getHighlightedText returns HTML formatted text. It is meant
+/// to be used by the RichText property of the TextArea Qml Element.
 ///
 class LIMA_GUI_EXPORT NamedEntitiesParser : public QObject
 {
@@ -46,7 +48,7 @@ public:
   NamedEntitiesParser(QObject* p = 0);
 
   /// \brief parse the conll content
-  Q_INVOKABLE void parse(const QString& rawText, const QString& conllText);
+  Q_INVOKABLE void parse(const QString& conllText);
 
   /// \brief returns the list of entity types that were extracted
   /// with the format <entityName>:<entityColor>;
@@ -63,7 +65,6 @@ public:
 
 private:
   std::vector<EntityItem> m_entities;
-  QString m_rawText;
   QString m_conllText;
 };
 

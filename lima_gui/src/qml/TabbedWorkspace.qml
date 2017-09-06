@@ -1,24 +1,24 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2 as C2
 import QtQuick.Controls 1.4 as C1
 import "scripts/DynamicObjectManager.js" as Dom
 
-/// Main view with tabs
-/// Possess methods to access the work views
+//! Main view with tabs; has methods to gain access the work views
 
 Rectangle {
   id: workspace
 
+  //! List of workviews
   property var works: []
 
+  //! Creates a new tab.
+  //! 'dsrc' and 'rsrc' are the paths of the widgets files that will be used as data and result views.
   function addWorkTab(name, type, dsrc,  rsrc) {
-//    Dom.createComponent("basics/Tab.qml", tabview);
-//    Dom.obj.title = name;
-//    Dom.createComponent("WorkView.qml",Dom.obj);
-//    if (Dom.success) {
-//      Dom.obj.setDataView(dsrc);
-//      Dom.obj.setResultView(rsrc);
-//    }
 
     tabview.visible = true
 
@@ -36,6 +36,7 @@ Rectangle {
     return wv;
   }
 
+  //! returns the workview currently in focus
   function getCurrentWorkView() {
     if (works.length) {
       return works[tabview.currentIndex];
@@ -45,6 +46,7 @@ Rectangle {
     }
   }
 
+  //! returns the workview from name
   function getWorkViewByTitle(title) {
     for (var i = 0; i < works.length; i++) {
       if (title === works[i].title) {
@@ -62,14 +64,9 @@ Rectangle {
     if (index >= 0 && index < works.length) {
       var wv = works[index]
       if (wv.getResultView() !== null) {
-//        wv.getResultView().clear()
-//        wv.getResultView().destroy()
         wv.getResultView().visible = false
       }
       if (wv.getDataView() !== null) {
-
-//        wv.getDataView().clear()
-//        wv.getDataView().destroy()
         wv.getDataView().visible = false
       }
 

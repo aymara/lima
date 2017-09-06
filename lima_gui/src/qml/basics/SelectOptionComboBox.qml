@@ -1,30 +1,45 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
+
+/*!
+  This widget allow a simple combo box to choose from multiple options.
+  An option is stored as a key->value : key E keys && value E model
+  - 'value' is meant to be the displayed text for option O. This string
+  would technically need to be translated with the qsTr flag.
+  - 'key' the code name for this option.
+
+  example : fr -> Francais(/French/etc.)
+  */
 
 Rectangle {
   id: socb
 
-//  property alias name: label.text
   property alias currentIndex: cbbox.currentIndex
   property string name: "Aleau"
+
+  //! The strings to be displayed in the comboBox widget
   property var model: ['a','b']
+
+  //! The corresponding keys
   property var keys: []
-
-  signal selected()
-
-  onSelected: {
-  }
 
   function getCurrentItem() {
     return model[currentIndex]
   }
 
   function getCurrentItemKey() {
-//    var i = model.indexOf(getCurrentItem())
-//    if (i >= 0) {
-//      return keys[i]
-//    }
     return keys[currentIndex]
+  }
+
+  signal selected()
+
+  onModelChanged: {
+      cbbox.model = model
   }
 
   height: parent.height
@@ -58,37 +73,3 @@ Rectangle {
   }
 
 }
-
-/// original, non-generic version:
-/// depending on how the translation is handled, (whether we can also flag list strings as
-/// to be translated), we can only use one or the other
-
-//Controls2.ComboBox {
-//  id: aOutputType
-
-//  textRole: "text"
-//  width: 200
-
-//  function getCurrentItem() {
-//    return model.getItem(currentIndex)
-//  }
-
-//  model: ListModel {
-//    id: cbmodel
-
-//    ListElement {
-//      name:"conll"
-//      text: "CONLL"
-//    }
-
-//    ListElement {
-//      name: "named_entities"
-//      text: qsTr("Entités nommées")
-//    }
-
-//    ListElement {
-//      name:"graph"
-//      text: ""
-//    }
-//  }
-//}

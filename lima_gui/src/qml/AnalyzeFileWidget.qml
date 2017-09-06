@@ -1,9 +1,13 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.0
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4
 
-/// Implements a widget that allows to select a file (browse-like) and analyze it
-/// No preview of the file content
+//! Implements a widget that allows to select a file (browse-like) and analyze it
 
 GroupBox {
   id: select_file_menu

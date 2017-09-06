@@ -1,10 +1,15 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-/// This is the menu bar of the main application window
-/// Always stays on
-
+/*! This is the menu bar of the main application window.
+    Unused for now (hidden)
+*/
 MenuBar {
   
   style: MenuBarStyle {

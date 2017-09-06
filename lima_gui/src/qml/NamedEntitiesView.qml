@@ -1,20 +1,33 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import integ_cpp 1.0
+
+import "basics"
+
+/*!
+  The result view for the Named Entities result format.
+
+  */
 
 Rectangle {
   id:ne_view
 
   anchors.fill: parent
 
+  //! Pass the output from the LIMA analysis to the ResultParser
   function input(text,conll) {
-    parser.parse(text,conll)
+    parser.parse(conll)
     typesview.model = parser.getEntityTypes()
     contenttext.text = parser.getHighlightedText()
   }
 
-
+  //! C++ class. Parse the results and convert it to HTML text.
   NamedEntitiesParser {
     id: parser
   }
@@ -29,13 +42,15 @@ Rectangle {
       width: parent.width - typesview.width
       height: parent.height
 
+      //! The HTML text is shown here.
       TextEditor {
         id: contenttext
-//        text: "hello! erg"
+
         textFormat: Text.RichText
       }
     }
 
+    //! The list of named entity types.
     Rectangle {
       id: typesview
 
@@ -55,16 +70,12 @@ Rectangle {
 
             height: 20
             width: parent.width
-//            y: height*index
-
-//            color: "lightgray"
             radius: 2
             color: modelData.split(':')[1]
 
             Text {
               anchors.centerIn: parent
               text: modelData.split(':')[0]
-//              text: modelData
 
             }
 

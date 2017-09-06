@@ -1,10 +1,14 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQml.Models 2.2
 import "../scripts/DynamicObjectManager.js" as Dom
 
-/// A generic QML element with a list of switchs.
-/// TEST FILE. WIP
+//! A generic QML element with a list of switchs. Test widget
 
 Rectangle {
   id: switchPanel
@@ -16,7 +20,7 @@ Rectangle {
     }
   }
 
-  /// get the boolean by switch name
+  //! get the boolean by switch name
   function getSwitch(name) {
 
   }

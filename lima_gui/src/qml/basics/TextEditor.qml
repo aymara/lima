@@ -1,9 +1,14 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 
-/// Simple scrollable widget to edit text
+//! Simple scrollable widget to edit text.
 
-/// There is a problem with the TextView widget, so this is used instead.
+// There is a problem with the TextView widget, so this is used instead.
 
 Rectangle {
 
@@ -51,7 +56,7 @@ Rectangle {
       TextArea {
         id: ttextarea
 
-        /// this creates a binding loop property error : this might come from Qt itself though
+        // this creates a binding loop property error : this might come from Qt itself though
         width: implicitWidth
         height: implicitHeight
         selectByMouse: true
@@ -59,6 +64,8 @@ Rectangle {
         wrapMode: Text.WordWrap
 //        textFormat: TextEdit.RichText
 
+        selectionColor: "blue"
+        selectedTextColor: "white"
         
       }
     }

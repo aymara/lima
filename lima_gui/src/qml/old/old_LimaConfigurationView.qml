@@ -1,3 +1,8 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Window 2.0
 import QtQuick.Controls 2.2
@@ -6,25 +11,17 @@ import QtQuick.Layouts 1.3
 import "basics"
 
 
-/// This is the previous lima configuration interface. It uses a ListView rather than a TreeView
+//! This is the previous lima configuration interface. It uses a ListView rather than a TreeView
 
 import integ_cpp 1.0
 
 Popup {
   id: popup
 
-//   width: parent.width
-//   height: parent.height
-
  width: 800
  height: 600
  x:app_window.width/2 - width/2
  y:app_window.height/2 - height/2
-
-//  SwitchPanel {
-//    anchors.fill: parent
-
-//  }
 
   LimaConfigurationNodeModel {
     id: limaconfig

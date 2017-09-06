@@ -1,11 +1,12 @@
-/**
- * \author Jocelyn VERNAY
- * \file main.qml
- * \date June 2017
- */
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
 
 import QtQuick 2.7
 import QtQuick.Window 2.0
+
+// Some widgets and functionnalities are not available from one package to the other
 import QtQuick.Controls 2.2 as Controls2
 import QtQuick.Controls 1.4 as Controls1
 import QtQuick.Dialogs 1.2
@@ -16,8 +17,9 @@ import "basics"
 
 import "scripts/DynamicObjectManager.js" as Dom
 
-/**
- * Main QML File : lima_gui
+/*!
+ * main QML file of lima_gui.
+ * Declares the main application window.
  */
 
 Controls1.ApplicationWindow {
@@ -25,18 +27,15 @@ Controls1.ApplicationWindow {
   
   property int pile: 0
   
-  // ideally, one fonction per feature
-  function saveTextFile() {
-    //Dom.obj.addElement("aa","bb","cc","dd","ee","ff","gg","hh","ii")
-    //console.log(Dom.obj.objectName)
-  }
+  //! Open the select file dialog
   function openSelectFileDialog() {
     file_manager.chooseFile()
-
-//    Dom.createComponent("basics/Tab.qml", data_tab_view)
-//    Dom.createComponent("CONLLTableView.qml", Dom.obj)
   }
 
+  /*!   This is the function called for the shortcut to start to analyze.
+        From the type of the current workview in focus, it select the right
+        analysis function.
+  */
   function indiscriminateAnalyze() {
     if (workspace.count()) {
       var wv = workspace.getCurrentWorkView()
@@ -66,8 +65,10 @@ Controls1.ApplicationWindow {
     }
   }
   
-  /// ANALYZING
+  // Analysis Functions
   
+  //! Launch an analysis of raw text for the current workview.
+  //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeText(text) {
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
@@ -92,6 +93,8 @@ Controls1.ApplicationWindow {
     }
   }
   
+  //! Launch an analysis for a file opened in the application.
+  //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeFile(filename) {
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
@@ -114,7 +117,9 @@ Controls1.ApplicationWindow {
       console.log("Analyzer is not ready yet!");
     }
   }
-  
+
+  //! Launch an analysis for a file at url.
+  //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeFileFromUrl(url) {
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
@@ -138,39 +143,38 @@ Controls1.ApplicationWindow {
     }
   }
   
-  /// OPENING NEW TABS
+  // OPENING NEW TABS
   
-  /// open a tab to write and analyze text
+  //! Open a tab to write and analyze text.
   function openAnalyzeTextTab() {
     var wv = workspace.addWorkTab("Analyze text", "Text", "basics/TextEditor.qml","");
+      console.log("WTF");
 
    }
   
-  /// open a tab to select a file and analyze it
+  //! Open a tab to select a file and analyze it.
   function openAnalyzeFileTab() {
     workspace.addWorkTab("Analyze File", "SelectFile", "AnalyzeFileWidget.qml","");
   }
   
-  /// CLOSING TABS
-  
+  //! This function was meant to be if there are write/save capabilities for files.
   function confirmCloseFile() {
     confirmCloseFileDialog.open()
   }
   
-  /// 
-  function closeFile(should_save) {
+  //! close the current file.
+  function closeFile() {
     textAnalyzer.closeFile()
   }
-  
-  // if some files modifications have not been saved
-  function confirmExitApplication() {
-    // for every file, check if saved
-  }
 
+  //! toggles the configuration view.
   function openConfigurationView() {
     return (configurationView.visible ? configurationView.close() : configurationView.open())
   }
 
+  //! When the comboBoxes of the analysis Bar change values, this is supposed to update
+  //! the languageIndex and formatIndex of the current workview in focus.
+  //! This isn't functional.
   function updateAnalysisOptions() {
     if (workspace.count()) {
       language_selector.currentIndex = workspace.getCurrentWorkView().languageIndex
@@ -184,87 +188,17 @@ Controls1.ApplicationWindow {
   width: 1024
   height: 768
 
-  /// MENU BAR; TOOL BAR
+  // MENU BAR; TOOL BAR
 
-//  menuBar: LimaGuiMenuBar {}
+  //! menuBar: LimaGuiMenuBar {}
   toolBar: LimaGuiToolBar { leftPadding: 15}
 
-//  visibility: Window.Maximized
-
+  //! The configuration view popup is declared directly here. It is invisible by default.
   LimaConfigurationView  {
     id: configurationView
   }
-  
-  Controls2.Popup {
-    id: confirmCloseFileDialog
 
-    implicitHeight: 100
-    x: app_window.width/2 - this.width/2
-    y: app_window.height/2 - this.height/2
-    
-    background: Rectangle {
-      radius: 3
-      color: "#eeeeee"
-    }
-
-    ColumnLayout {
-      
-      Text {
-
-        Layout.fillHeight:true
-        text: qsTr("Les modifications apportées à ce fichier n'ont pas été enregistrées. Voulez-vous les sauvegarder ?")
-        
-      }
-      
-      RowLayout {
-
-        Layout.fillHeight:true
-        spacing:5
-
-        Controls1.Button {
-          
-          Layout.fillWidth:true
-          text: qsTr("Enregistrer")
-
-          onClicked: {
-            closeFile(true);
-            confirmCloseFileDialog.close()
-          }
-
-        }
-        
-        Controls1.Button {
-          
-          Layout.fillWidth:true
-          text: qsTr("Ne pas enregistrer")
-          onClicked: {
-            closeFile(false);
-            confirmCloseFileDialog.close()
-          }
-        }
-        
-        Controls1.Button {
-          
-          Layout.fillWidth:true
-          text: qsTr("Annuler")
-          onClicked: {
-            confirmCloseFileDialog.close()
-          }
-        }
-      }
-    }
-  }
-  
-  /// NEW ELEMENTS
-  
-//  function createNewElement() {
-//    createNewElementPopup.open()
-//  }
-  
-//  NewElementPopup {
-//    id: createNewElementPopup
-//  }
-
+  //! A Controls2.Menu is a Popup. Menu containing additional features like 'Configure Lima Gui ... ', etc.
   Controls2.Menu {
     id: additionalMenu
     y: 2
@@ -280,41 +214,31 @@ Controls1.ApplicationWindow {
     Controls2.MenuItem {
       text:qsTr("Configure LIMA Gui")
       onTriggered: {
-//          configureLimaGuiWindow.open()
+        
       }
     }
   }
   
-  // utilities
-  
+
+  //! An utility Item to handle files inside the application.
   Item {
     id: file_manager
     
-//     Writer {
-//       id: writer_data
-//     }
-    
+    //! Make the select File dialog visible.
     function chooseFile() {
       fm_file_dialog.open()
     }
     
-    function saveFile() {
-      
-    }
-    
-    function loadFile(urls) {
+    //! Open multiple files
+    function loadFiles(urls) {
       for (var i=0;i<urls.length; i++) {
         openFile(urls[i]);
       }
     }
     
+    //! Open a file from url
     function openFile(url) {
-      //https://stackoverflow.com/questions/17647905/adding-tabs-dynamically-in-qml
       if (textAnalyzer.openFile(url)) {
-//        Dom.createComponent("basics/Tab.qml", data_tab_view)
-//        Dom.obj.title = textAnalyzer.fileName
-//        Dom.createComponent("basics/TextEditor.qml", Dom.obj);
-//        Dom.obj.text = textAnalyzer.fileContent
         var l = url.split(':')
         if (l.length > 1) {
           url = l[1]
@@ -335,7 +259,7 @@ Controls1.ApplicationWindow {
           }
         }
         else {
-          var wv = workspace.addWorkTab(textAnalyzer.fileName, "OpenFile", "basics/TextEditor.qml","");
+          var wv = workspace.addWorkTab(textAnalyzer.fileName, "OpenFile", "basics/TextView.qml","");
 
           if (wv !== null) {
             wv.getDataView().text = textAnalyzer.fileContent;
@@ -349,20 +273,12 @@ Controls1.ApplicationWindow {
       id:fm_file_dialog
       
       onAccepted: {
-        file_manager.loadFile(fileUrls)
+        file_manager.loadFiles(fileUrls)
       }
     }
   }
   
-//  LimaGuiApplication {
-//    id:textAnalyzer
-//  }
-  
-  Controls2.Popup {
-    id: confirmExitApplicationDialog
-  }
-  
-  /// BODY
+  // BODY
   
   Rectangle {
     id: body
@@ -370,9 +286,6 @@ Controls1.ApplicationWindow {
     anchors.fill: parent
     color:"white"
     anchors.margins: 2
-
-    //////////////////////////////////////////////////
-    // Do your bidding here
     
     Controls1.SplitView {
       
@@ -424,56 +337,27 @@ Controls1.ApplicationWindow {
             color : "transparent"
             width: 3
           }
-          
-//          TabbedView {
-//            id: data_tab_view
-            
-//            Layout.fillHeight: true
-//            Layout.fillWidth: true
-//            Layout.minimumWidth: 100
-//            Layout.preferredWidth: 400
-//            Layout.preferredHeight: 300
-//          }
-          
-//          TabbedView {
-//            id: results_tab_view
-//          }
-
-//          WorkView {
-//            Component.onCompleted: {
-//              setDataView("AnalyzeTextWidget.qml")
-//              setResultView("ResultView.qml")
-//            }
-//          }
 
           Column {
 
             anchors.fill: parent
             anchors.centerIn: parent
 
+            //! Main view for the user.
             TabbedWorkspace {
               id: workspace
 
-              height: parent.height - nicebuttonview.height
+              height: parent.height - analysisBar.height
               width: parent.width
 
-//              Layout.fillHeight: true
-//              Layout.preferredHeight: parent.height - nicebuttonview.height
-//              Layout.minimumHeight: 500
-//              Layout.fillWidth: true
-  //            Component.onCompleted: {
-  //              addWorkTab("hello!","AnalyzeTextWidget.qml","ResultView.qml");
-  //            }
             }
 
+            //! Analysis bar
             Rectangle {
-              id: nicebuttonview
+              id: analysisBar
 
               height: 60
               width: parent.width
-//              Layout.minimumHeight: height
-//              Layout.fillWidth: true
-//              Layout.preferredHeight:height
               color:"#aaeeeeee"
 
               Controls1.SplitView {
@@ -495,7 +379,6 @@ Controls1.ApplicationWindow {
                   Row {
                     id: row
 
-                    //width: implicitWidth > parent.width/2 ? implicitWidth : parent.width/2
                     width: parent.width
                     height: 40
                     anchors.centerIn: parent
@@ -504,15 +387,31 @@ Controls1.ApplicationWindow {
                     SelectOptionComboBox {
                       id: language_selector
 
+                      property var languageDictionnary: {
+                          "fre": qsTr("French"),
+                          "eng": qsTr("English"),
+                          "chi": qsTr("Chinese"),
+                          "ger": qsTr("German"),
+                          "ara": qsTr("Arabic")
+                           // add your languages here
+                           // you can list every language here, even if it's not loaded by LIMA
+                      }
+
                       name: "Language"
                       width: 200
-                      model: [qsTr("French"),qsTr("English")]
-                      keys: ["fre","eng"]
 
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
                       Component.onCompleted:  {
                         // load supported languages list from textAnalyzer
+
+                          keys = textAnalyzer.languages
+                          model = [];
+                          for (var i=0;i<keys.length;i++) {
+                              model.push(languageDictionnary[keys[i]]);
+                          }
+
+                          modelChanged()
                       }
 
                       onSelected: {
@@ -545,6 +444,8 @@ Controls1.ApplicationWindow {
 
                         name: "Analyzer"
                         width: 200
+                        
+                        // should be linked to textAnalyzer.configurations (Q_PROPERTY)
                         model: ["Default"].concat(["easy"])
                         keys: ["default", "easy"]
                     }
@@ -569,19 +470,6 @@ Controls1.ApplicationWindow {
                   }
                 }
 
-//                BasicRectangle {
-//                  width: parent.width/2
-//                  height: parent.height
-//                  visible: consoleview.text
-
-//                  TextEditor {
-//                    id: consoleview
-
-//                    anchors.fill: parent
-//                    text: textAnalyzer.text
-//                  }
-//                }
-
               } // SplitView
             }
 
@@ -590,6 +478,9 @@ Controls1.ApplicationWindow {
         }
         
         Rectangle {
+          
+          id: logView
+          
           anchors.margins: 20
           Layout.fillWidth: true
           Layout.fillHeight: true
@@ -610,10 +501,6 @@ Controls1.ApplicationWindow {
             }
           }
 
-//          ResultView {
-
-//          }
-
         }
 
         Rectangle {
@@ -625,6 +512,10 @@ Controls1.ApplicationWindow {
           border.color: "lightgray"
           anchors.margins: 3
           visible : false
+
+          ResultView {
+
+          }
 
           TextEditor {
             text: textAnalyzer.text

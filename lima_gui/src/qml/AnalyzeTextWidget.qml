@@ -1,3 +1,8 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 

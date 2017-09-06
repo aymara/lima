@@ -11,18 +11,18 @@ function randomColor2() {
   return str;
 }
 
+/// returns a random char for the randomColor (hex format) function
 function randomChar() {
   var i = Math.floor((Math.random() * 5) + 0);
   return String.fromCharCode(97 + i);
 }
 
+/// returns a random color in hex format
 function randomColor() {
   var str = "#"
   for (var i = 0; i < 6; i++) {
     str = str + randomChar()
   }
-  //str = str + "aa";
-  //console.log(str);
   return str;
 }
 

@@ -1,38 +1,54 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
 
 import "scripts/DynamicObjectManager.js" as Dom
 
-/// This is the widget contained in a tab for the main view.
-/// It contains the text view and the result view.
-/// To make it more flexible, the views are created dynamically
-/// via the 'Dom' script.
-
+/*! This is the widget contained in a tab for the main view.
+* It contains the text view and the result view.
+* To make it more flexible, the views are created dynamically
+* via the 'Dom' script.
+*/
 Rectangle {
   id:workview
 
-  /// properties
+  // properties
 
-  /// types 'enum'
+  // the idea here was to declare these as 'static' properties, like an enum.
+  // you can't do that this way in QML.
+  // types 'enum'
 //  property int Default: 0
 //  property int Text: 1
 //  property int SelectFile: 2
 //  property int OpenFile: 3
 
+  //! The name of the workview <-> the name of the tab
   property string title: ""
+
+  //! The type of the workview ({Default, Text, SelectFile, OpenFile})
+  //! This is used for the 'indiscriminateAnalyze' function, which
+  //! detect the type and call textAnalyzer.analyze accordingly (analyzeText if Text, etc.)
   property string type: ""
+
+  //! The idea here was to allow the tabs to show when they have completed their analysis
   property int status: resultsItem.length ? resultsItem[0].status : 0
 
+  //! The language selected for this workview
+  //!(the consensus now would be to have the analysis bar stored in this widget rather than in the main appWindow)
   property int languageIndex: 0
   property int formatIndex: 0
 
-  /// workaround as you can't easily store references to objects other than in a list
+  //! workarounds as you can't easily store references to objects other than in a list.
   property var dataItem: []
   property var resultsItem: []
 
-  /// functions
 
+  //! load dynamically the object from 'src' and make it a child of the data_view Rectangle.
   function setDataView(src) {
     Dom.createComponent(src,data_view)
     if (Dom.success) {
@@ -45,6 +61,7 @@ Rectangle {
     }
   }
 
+  //! load dynamically the object from 'src' and make it a child of the result_view Rectangle.
   function setResultView(src) {
     if (src !== "") {
       result_view.show()
@@ -63,6 +80,7 @@ Rectangle {
     }
   }
 
+  //! returns a reference to the data view.
   function getDataView() {
     if (dataItem.length) {
       return dataItem[0];
@@ -73,6 +91,7 @@ Rectangle {
     }
   }
 
+  //! returns a reference to the result view.
   function getResultView() {
     if (resultsItem.length) {
       return resultsItem[0];
@@ -95,7 +114,7 @@ Rectangle {
   anchors.fill: parent
   color:"transparent"
 
-  /// content
+  // content
 
   SplitView {
 
@@ -109,7 +128,7 @@ Rectangle {
       color: "transparent"
     }
 
-    /// ###
+    // data view canvas
     Rectangle {
       id: data_view
 
@@ -121,7 +140,7 @@ Rectangle {
 
     }
 
-    /// ###
+    // result view canvas
     Rectangle {
       id: result_view
 

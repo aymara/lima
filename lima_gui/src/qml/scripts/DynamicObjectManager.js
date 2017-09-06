@@ -1,3 +1,16 @@
+/*
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
+/// This script allows the dynamic creation of objects.
+///
+/// The particularity is that each .qml file that imports this file will have
+/// its own list of dynamically allocated objects (var objects)
+/// It is unclear whether the objects created are this way are destroyed when
+/// their direct parent is destroyed, otherwise they should be destroyed as they
+/// were created, dynamically.
+
 /// current component
 var component;
 
@@ -16,7 +29,8 @@ var fit = false;
 /// success in creating the object
 var success = false;
 
-var verbose = true;
+/// logs
+var verbose = false;
 
 /// example
 function createDialog() {
@@ -39,12 +53,6 @@ function createComponent(src, p, b) {
       deliverComponent();
     }
     else {
-      ///
-      /// while (component.status != Component.Ready);
-      /// deliverComponent();
-      ///
-      /// return;
-      ///
       if (verbose) console.log("Component<", component,">(",src,") is not yet ready");
       component.statusChanged.connect(deliverComponent);
     }
@@ -133,6 +141,7 @@ function indexOf(o) {
   return -1;
 }
 
+/// test function
 function checkSum() {
   if (parent != obj.parent) {
     console.log("parent(", parent, ") is not obj.parent(", obj.parent, ")");

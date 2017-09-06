@@ -11,12 +11,12 @@
    <file>qml/AnalyzeTextWidget.qml</file>
    <file>qml/AnalyzeFileWidget.qml</file>
    <file>qml/TabbedView.qml</file>
-   <file>qml/ConllTableView.qml</file>
    <file>qml/LimaConfigurationView.qml</file>
    <file>qml/ResultView.qml</file>
+   <file>qml/ConllTableView.qml</file>
+   <file>qml/NamedEntitiesView.qml</file>
    
    <!-- Models -->
-   <file>qml/models/ConllListModel.qml</file>
     
     <!-- Samples -->
     <file>qml/basics/Tab.qml</file>
@@ -27,7 +27,6 @@
     <file>qml/basics/LoadingView.qml</file>
     <file>qml/basics/SwitchPanel.qml</file>
     <file>qml/basics/SelectOptionComboBox.qml</file>
-    <file>qml/basics/NamedEntitiesView.qml</file>
     
     <!-- Scripts -->
     <file>qml/scripts/DynamicObjectManager.js</file>

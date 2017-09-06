@@ -1,5 +1,14 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls.Styles 1.4
+
+/*!
+  This is simply the style element for the TabbedView widget.
+  */
 
 TabViewStyle {
   property color frameColor: "#999"
@@ -80,6 +89,7 @@ TabViewStyle {
         }
         onClicked: {
 //          closeImg.source = "qrc:qml/resources/backup_btnclose_h.png";
+          // deleting the tab
           tabView.removeTab(styleData.index);
         }
       }

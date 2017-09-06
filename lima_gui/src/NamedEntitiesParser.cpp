@@ -31,7 +31,7 @@ void replace_all(std::string& text, const std::string& occurence, const std::str
 
 
 /// \brief  This is an outdated function that highlights all occurences of entities within the text. (even inside a word that is otherwise not a named entity, so
-//it is suboptimal). See NamedEntitiesParser::getHighlightedText() to get a concatenated output from the conll data.
+///it is suboptimal). See NamedEntitiesParser::getHighlightedText() to get a concatenated output from the conll data.
 std::string highlightNamedEntities(
     const std::string& raw,
     const std::vector<EntityItem>& entities)
@@ -72,11 +72,6 @@ std::vector<std::string> generateDistinctColors(int quantity)
 
   for (int i=0; i<quantity; i++) 
   {
-
-//    do {
-
-//    } while (std::find(colors.begin(), colors.end(), color) != colors.end());
-
       std::string str = "#";
 
       for (int i=0;i<6;i++) 
@@ -98,12 +93,11 @@ NamedEntitiesParser::NamedEntitiesParser(QObject* p) : QObject(p)
 
 }
 
-void NamedEntitiesParser::parse(const QString& rawtext, const QString& conllText) 
+void NamedEntitiesParser::parse(const QString& conllText)
 {
 
   m_entities.clear();
 
-  this->m_rawText = rawtext;
   this->m_conllText = conllText;
 
   std::map<std::string, std::vector<std::string> > data = getNamedEntitiesFromConll(conllText.toStdString());
@@ -144,8 +138,6 @@ QString NamedEntitiesParser::getHighlightedText()
   std::string result = "";
   std::string block = "";
 
-  bool foundEntity = false;
-
   int i = 0;
   int j = 0;
 
@@ -171,7 +163,6 @@ QString NamedEntitiesParser::getHighlightedText()
         style += "padding:5px; ";
         style += "border-radius: 5px; ";
         hltext = markupa(hltext, "mark",style , "name=\"" + entity->m_name + "\"");
-        foundEntity = true;
       }
 
       if (line->at(3) != "PONCTU") 
@@ -186,9 +177,8 @@ QString NamedEntitiesParser::getHighlightedText()
     else 
     {
       std::string style = "";
-      result += markupa(block,"p",style + "display:block;" /*+ (foundEntity ? "background-color: #ddd" : "")*/,"") + "";
+      result += markupa(block,"p",style + "display:block;","") + "";
       block = "";
-      foundEntity = false;
 
       i = j = 0;
     }

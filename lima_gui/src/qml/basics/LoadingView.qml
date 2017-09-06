@@ -1,13 +1,17 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 
-/// Simple widget with a loading gif to shows the loading
+//! Simple widget with a loading gif to shows the loading
 
 Rectangle {
 
   width: animation.width
   height: animation.height + 8
   anchors.fill: parent
-//  color:"#aa222222";
   
   AnimatedImage {
     id: animation;
@@ -17,12 +21,4 @@ Rectangle {
     scale: 0.5
   }
   
-  //     Rectangle {
-  //       property int frames: animation.frameCount
-  //       
-  //       width: 4; height: 8
-  //       x: (animation.width - width) * animation.currentFrame / frames
-  //       y: animation.height
-  //       color: "red"
-  //     }
 }

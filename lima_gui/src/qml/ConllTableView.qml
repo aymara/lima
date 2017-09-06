@@ -1,21 +1,29 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQml.Models 2.2
 import QtQuick.Controls.Styles 1.4
 
+// The custom package from C++
 import integ_cpp 1.0
 
-/// This is the result view for the conll table format view.
+//! This is the result view for the conll table format view.
 
 Rectangle {
   id:conlltableview
 
   property alias model: table_view.model
 
+  //! ConllListModel class imported from C++.
   ConllListModel {
     id: clm
   }
   
+  //! call the eponyme method of ConllList
   function loadModel(text) {
 
     clm.fromText(text)

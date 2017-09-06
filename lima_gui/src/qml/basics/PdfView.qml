@@ -1,4 +1,11 @@
+/*!
+  @author   Jocelyn Vernay
+  @date     Wed, September 06 2017
+  */
+
 import QtQuick 2.7
+
+//! A widget meant to display PDFs
 
 // pdf support :
 // - podofo
