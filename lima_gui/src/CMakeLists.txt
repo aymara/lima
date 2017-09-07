@@ -1,3 +1,7 @@
+add_subdirectory(treeview)
+
+########### next target ###############
+
 SET (qt-lima_MOC_HEADERS
   LimaGuiApplication.h
   Threads.h
@@ -39,6 +43,10 @@ target_link_libraries(qt-lima
   ${Qt5_LIBRARIES}
 )
 
+install(TARGETS qt-lima DESTINATION lib)
+
+########### next target ###############
+
 set (lima_gui_SRCS
   main.cpp
 )
@@ -60,5 +68,6 @@ target_link_libraries(lima_gui
   ${Qt5_LIBRARIES}
 )
 
-install(TARGETS qt-lima DESTINATION lib)
 install(TARGETS lima_gui DESTINATION bin)
+
+########### install files ###############

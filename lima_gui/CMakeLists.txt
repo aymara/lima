@@ -4,7 +4,7 @@ enable_testing()
 
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Test Qml Gui)
+addQt5Modules(Core Test Qml Quick QuickTest Gui )
 include_directories(${Qt5_INCLUDES})
 
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)

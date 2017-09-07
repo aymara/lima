@@ -421,8 +421,8 @@ void LimaGuiApplication::writeInConsole(const std::string& str)
 
 void LimaGuiApplication::test() {
   LIMAGUIAPPLOGINIT;
-  std::cout << "This is a warning" << std::endl;
-  std::cout << "All your bases are belong to us" << std::endl;
+  LDEBUG << "This is a warning";
+  LDEBUG << "All your bases are belong to us";
 }
 
 /// BUFFERS ACCESSERS
@@ -638,9 +638,9 @@ void LimaGuiApplication::setLimaConfiguration(const LimaConfiguration& config)
   /// Need to know how to handle paths
   ///
 
-  std::cout << "Creating " << config.name() << " client ...";
+  LDEBUG << "Creating " << config.name() << " client ...";
 
-  std::cout << "(WIP)" << std::endl;
+  LDEBUG << "(WIP)";
 
   // m_analyzer = m_clients[config.getName()];
 
@@ -648,7 +648,7 @@ void LimaGuiApplication::setLimaConfiguration(const LimaConfiguration& config)
 
 void LimaGuiApplication::createLimaConfiguration(const LimaConfiguration& newconfig) 
 {
-
+  LIMA_UNUSED(newconfig)
   /// This will take in a limaconfiguration created by the user
   /// and save it as files properly
   ///

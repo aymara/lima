@@ -53,6 +53,7 @@ std::string extractTextFromFile(const std::string &path, const std::string &exte
       std::cout << extension << ": can't handle this file extension" << std::endl;
     }
   }
+  return "";
 }
 
 } // Tools

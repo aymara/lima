@@ -44,7 +44,7 @@ const std::string& CONLL_Line::operator[](unsigned int i) const
   }
   else 
   {
-    return "";
+    throw std::runtime_error("CONLL_Line::operator[] out of bounds");
   }
 }
 
