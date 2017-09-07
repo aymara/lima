@@ -8,7 +8,6 @@
 #ifndef LIMA_GUI_APPLICATION_H
 #define LIMA_GUI_APPLICATION_H
 
-#include "LimaGui.h"
 #include "LimaGuiExport.h"
 
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
@@ -20,7 +19,9 @@
 namespace Lima {
 namespace Gui {
 
-typedef std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > LimaClient_ptr;
+typedef std::shared_ptr< 
+                        LinguisticProcessing::AbstractLinguisticProcessingClient
+                        > LimaClientSharedPtr;
 
 
 /// \class LimaGuiFile
@@ -40,7 +41,7 @@ namespace Config
   class LimaConfiguration;
 }
 
-typedef std::shared_ptr<Config::LimaConfiguration> LimaConfiguration_ptr;
+typedef std::shared_ptr<Config::LimaConfiguration> LimaConfigurationSharedPtr;
 
 ///
 /// \class LimaGuiApplication
@@ -152,6 +153,7 @@ public:
 
   /// GETTERS
   ///
+  LimaConfigurationSharedPtr configuration() const;
   QString fileContent() const;
   QString fileName() const;
   QString fileUrl() const;
@@ -191,6 +193,8 @@ public:
   Q_INVOKABLE void registerQmlObject(QString, QObject*);
   Q_INVOKABLE QObject* getQmlObject(const QString&);
 
+  void selectLimaConfiguration(const QString& name);
+
 Q_SIGNALS:
   void textChanged();
   void consoleChanged();
@@ -202,6 +206,16 @@ Q_SIGNALS:
   void configsChanged();
   
 private:
+  void loadLimaConfigurations();
+
+  void addLimaConfiguration(LimaConfigurationSharedPtr newconfig);
+
+  void createLimaConfiguration(const Config::LimaConfiguration& newconfig);
+
+  void selectLimaConfiguration(int it);
+
+  void setLimaConfiguration(const Config::LimaConfiguration& config);
+
   
   /// BUFFERS
   /// All those members are exposed to QML, as in they can be accessed from there.
@@ -229,9 +243,10 @@ private:
   std::vector<LimaGuiFile> m_openFiles;
   
   ///< LIMA analyzer
-  LimaClient_ptr m_analyzer;
+  LimaClientSharedPtr m_analyzer;
+  LimaConfigurationSharedPtr m_configuration;
 
-  std::map<std::string, LimaClient_ptr> m_clients;
+  std::map<QString, LimaClientSharedPtr> m_clients;
   
   ///< application analysis output stream
   std::ostream* out = &std::cout;
@@ -248,22 +263,7 @@ private:
   ///
   /// we could have a temp directory that would be wiped out when not needed
   ///
-
-  void loadLimaConfigurations();
-
-  std::string selectedLimaConfiguration = "default";
-
-  void addLimaConfiguration(LimaConfiguration_ptr newconfig);
-
-  void createLimaConfiguration(const Config::LimaConfiguration& newconfig);
-
-  void selectLimaConfiguration(const std::string& name);
-
-  void selectLimaConfiguration(int it);
-
-  void setLimaConfiguration(const Config::LimaConfiguration& config);
-
-  std::map<std::string, LimaConfiguration_ptr> m_configurations;
+  std::map<QString, LimaConfigurationSharedPtr> m_configurations;
 
 };
 

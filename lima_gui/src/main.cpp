@@ -9,6 +9,7 @@
 
 #include "LimaGuiApplication.h"
 #include "config/LimaConfiguration.h"
+#include "config/ConfigurationTree.h"
 #include "config/ConfigurationTreeModel.h"
 #include "ConllListModel.h"
 #include "NamedEntitiesParser.h"
@@ -80,10 +81,15 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     LimaGuiApplication lga;
+    lga.selectLimaConfiguration("lima-lp-eng.xml");
+    LimaConfigurationSharedPtr configuration = lga.configuration();
+    ConfigurationNode* root = new ConfigurationNode(configuration->configuration());
+    ConfigurationTree* tree = new ConfigurationTree(root);
+    ConfigurationTreeModel* treeModel = new ConfigurationTreeModel(*tree);
+    engine.rootContext()->setContextProperty("configurationModel", treeModel);
 
     /// we add the app as a context property so that it can be accessed from anywhere,
     /// without instantiating in QML
-
     engine.rootContext()->setContextProperty("textAnalyzer", &lga);
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));

@@ -69,4 +69,5 @@ std::ostream& operator<<(std::ostream& o, const TreeItem& ti) {
     std::cout << var.toString().toStdString() << ":";
   }
   std::cout << "](" << ti.m_childItems.size() << ")";
+  return o;
 }

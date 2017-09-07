@@ -8,7 +8,6 @@
 #ifndef lima_gui_analysis_thread_h
 #define lima_gui_analysis_thread_h
 
-#include "LimaGui.h"
 #include "LimaGuiExport.h"
 
 #include <sstream>

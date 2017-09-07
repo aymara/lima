@@ -6,7 +6,6 @@
  */
 
 #include "LimaConfiguration.h"
-#include "LimaGui.h"
 
 //#include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "common/LimaCommon.h"
@@ -33,13 +32,42 @@ namespace Gui
 {
 namespace Config 
 {
+const char* neutralString(const std::string& str);
+const char* neutralString(const char[]);
 
-LimaConfiguration::LimaConfiguration() 
+/// \brief writes a list element from a groupStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeGroup.
+void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml);
+
+/// \brief writes a map element from a groupStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeGroup.
+void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml);
+
+/// \brief writes a group element from a moduleStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeModule.
+void writeGroup(const Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& p_group, QXmlStreamWriter& xml);
+
+/// \brief writes a group element from a moduleStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeFile.
+void writeModule(const Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml);
+
+/// \brief with this function, you can write a ConfigurationStructure
+/// to a new xml configuration file.
+void writeFile(const Lima::Common::XMLConfigurationFiles::ConfigurationStructure& cstruct, const std::string& path);
+
+
+LimaConfiguration::LimaConfiguration(const QFileInfo& fileInfo, 
+                                     QObject* parent) :
+  QObject(parent),
+  m_name(fileInfo.fileName()),
+  m_path(fileInfo.absoluteFilePath())
 {
-
+  XMLConfigurationFileParser parser(m_path.toStdString());
+  m_configuration = parser.getConfiguration();
 }
 
-/// \brief This function was meant to bypass the QString constructor need for
+const Common::XMLConfigurationFiles::ConfigurationStructure& LimaConfiguration::configuration() const
+{
+  return m_configuration;
+}
+
+  /// \brief This function was meant to bypass the QString constructor need for
 /// a c_str, for the macro 'XMLWRITE_ATTRIBUTE' and 'XMLWRITE_ELEMENT'
 const char* neutralString(const std::string& str) 
 {
@@ -88,7 +116,7 @@ void writeList(const std::string& name, const std::deque<std::string>& list, QXm
   XMLWRITE_LIST XMLWRITE_NAME(name)
       ///
       for (auto& str : list) {
-//        LTELL(str);
+//        LDEBUG << str;
         XMLWRITE_ITEM XMLWRITE_VALUE(str) XMLWRITE_END
       }
   XMLWRITE_END_LIST

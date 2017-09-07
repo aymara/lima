@@ -29,6 +29,8 @@
 
 #define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui::LimaGuiApplication");
 
+Q_GLOBAL_STATIC_WITH_ARGS(QString, LIMA_USER_CONFIG, ("/home/gael/.config/LIMA/configs"))
+
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
@@ -42,7 +44,8 @@ namespace Lima
 namespace Gui 
 {
 
-LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent) 
+LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent),
+  m_configuration(nullptr)
 {
 
   loadLimaConfigurations();
@@ -325,21 +328,11 @@ void LimaGuiApplication::initializeLimaAnalyzer()
 
   LIMAGUIAPPLOGINIT;
 
-  std::string currentCustomPipeline = "water";
-
-  std::string configDir = qgetenv("LIMA_CONF").constData();
-  if (configDir == "") {
-    configDir = "/home/jocelyn/Lima/lima/../Dist/lima-gui/debug/share/config/lima";
-  }
-//   configDir = configDir + "/../water" + ":" + configDir;
-  LINFO << "Config Dir is " << configDir;
-
   QStringList projects;
   projects << QString("lima");
   QStringList paths;
-  paths << QString((configDir + "/../water").c_str());
-  paths << QString(configDir.c_str());
-//  paths = Lima::Common::Misc::buildConfigurationDirectoriesList(projects, paths);
+  paths << *LIMA_USER_CONFIG;
+  paths = Lima::Common::Misc::buildConfigurationDirectoriesList(projects, paths);
 
   QString concatenatedPaths;
   for (auto& qstr : paths) {
@@ -382,8 +375,7 @@ void LimaGuiApplication::initializeLimaAnalyzer()
   std::string clientId("lima-coreclient");
   std::string lpConfigFile("lima-analysis.xml");
 //  lpConfigFile =("lima-lp-fre.xml");
-  QString configFilePath = (configDir + "/" + lpConfigFile).c_str();
-  configFilePath = Misc::findFileInPaths(concatenatedPaths, QString(lpConfigFile.c_str()), ':');
+  auto configFilePath = Misc::findFileInPaths(concatenatedPaths, QString(lpConfigFile.c_str()), ':');
 
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configFilePath.toStdString());
 
@@ -426,6 +418,10 @@ void LimaGuiApplication::test() {
 }
 
 /// BUFFERS ACCESSERS
+LimaConfigurationSharedPtr LimaGuiApplication::configuration() const
+{
+  return m_configuration;
+}
 
 QString LimaGuiApplication::fileContent() const 
 { return m_fileContent; }
@@ -557,52 +553,60 @@ QStringList LimaGuiApplication::getNamedEntitiesList(const QString& text)
 
 void LimaGuiApplication::loadLimaConfigurations() 
 {
+  LIMAGUIAPPLOGINIT;
   // WIP
   // Let LIMA_USER_CONFIG be the directory where custom configs are stored
   // This could be retrieved by an environment variable
-  std::string LIMA_USER_CONFIG = "~/.config/LIMA/configs";
+  LDEBUG << "LimaGuiApplication::loadLimaConfigurations" << LIMA_USER_CONFIG;
 
   // Let there be a config file listing all configs names
   //
 
-  QDir configDir(QString(LIMA_USER_CONFIG.c_str()));
+  QDir configDir(*LIMA_USER_CONFIG);
 
-  if (configDir.exists()) 
+  if (!configDir.exists()) 
   {
-    std::string configFile = "config.ini";
+    LDEBUG << "LimaGuiApplication::loadLimaConfigurations create directory" << *LIMA_USER_CONFIG;
+    configDir.mkpath(QString(*LIMA_USER_CONFIG));
+  }
+  
+//   QString configFile = "config.ini";
 //    XMLConfigurationFileParser configFileParser(LIMA_USER_CONFIG + "/" + configFile);
 
-    // Ideally, we could list the existing config files in a global file like this ^
-    // But let's just make do with the directories we find inside LIMA_USER_CONFIG
+  // Ideally, we could list the existing config files in a global file like this ^
+  // But let's just make do with the directories we find inside LIMA_USER_CONFIG
 
-    QFileInfoList list = configDir.entryInfoList();
-
-    for (int i=0; i<list.size(); i++) 
-    {
-      QFileInfo fileInfo = list.at(i);
-
-      if (fileInfo.isDir()) 
-      {
-//        configNames.push_back(fileInfo.fileName());
-        LimaConfiguration* newconfig = new LimaConfiguration();
-//         LTELL(fileInfo.fileName().toStdString());
-        newconfig->setName(fileInfo.fileName().toStdString());
-        newconfig->setPath(LIMA_USER_CONFIG + "/" + fileInfo.fileName().toStdString());
-      }
-    }
-
-  }
-  else 
+  QFileInfoList list = configDir.entryInfoList();
+  if (list.isEmpty())
   {
-    configDir.mkpath(QString(LIMA_USER_CONFIG.c_str()));
+    LWARN << "LimaGuiApplication::loadLimaConfigurations No configuration file to load";
+  }
+  
+  for (int i=0; i<list.size(); i++) 
+  {
+    QFileInfo fileInfo = list.at(i);
+
+    if (!fileInfo.isDir()) 
+    {
+      LDEBUG << "LimaGuiApplication::loadLimaConfigurations loading" 
+              << fileInfo.fileName();
+      LimaConfigurationSharedPtr newconfig(new LimaConfiguration(fileInfo));
+      m_configurations[newconfig->name()] = newconfig;
+    }
+    else
+    {
+      LDEBUG << "LimaGuiApplication::loadLimaConfigurations" 
+              << fileInfo.fileName() << "is a directory";
+    }
   }
 
 }
 
-void LimaGuiApplication::selectLimaConfiguration(const std::string& name) 
+void LimaGuiApplication::selectLimaConfiguration(const QString& name) 
 {
   if (m_configurations.find(name) != m_configurations.end()) 
   {
+    m_configuration = m_configurations[name];
     return setLimaConfiguration(*m_configurations[name]);
   }
   else if (name == "default") 

@@ -8,6 +8,10 @@
 #include "ConfigurationTreeModel.h"
 #include "ConfigurationTree.h"
 
+#include <common/LimaCommon.h>
+
+#define LIMAGUICONFLOGINIT LOGINIT("Lima::Gui::Config")
+
 namespace Lima 
 {
 namespace Gui 
@@ -76,23 +80,17 @@ namespace Config
 //  }
 //}
 
-//QHash<int, QByteArray> ConfigurationTreeModelNode::roleNames() const {
-//  QHash<int, QByteArray> rn = QAbstractItemModel::roleNames();
-//  rn[ID] = "id"; // Those strings are direclty related to the 'TableViewColumn' elements role property
-//  rn[NAME] = "name";
-//  rn[CHECKED] = "nodeChecked";
-//  rn[CONTENTS] = "contents";
-//  return rn;
-
-//}
-
 ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationTreeModelNode* p) 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::ConfigurationTreeModelNode(p)";
   m_parent = p;
 }
 
 ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationNode* node, ConfigurationTreeModelNode *p) : ConfigurationTreeModelNode(p) 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::ConfigurationTreeModelNode(node,p)";
   fromConfigurationNode(node);
 }
 
@@ -117,16 +115,22 @@ void ConfigurationTreeModelNode::addChild(ConfigurationTreeModelNode *node)
 
 ConfigurationTreeModelNode* ConfigurationTreeModelNode::child(int ind) 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::child" << ind << m_children.value(ind);
   return m_children.value(ind);
 }
 
 int ConfigurationTreeModelNode::childCount() const 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::columnCount" <<  m_children.count();
   return m_children.count();
 }
 
 int ConfigurationTreeModelNode::columnCount() const 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::columnCount" <<  m_data.count();
   return m_data.count();
 }
 
@@ -137,13 +141,16 @@ ConfigurationTreeModelNode* ConfigurationTreeModelNode::parent()
 
 int ConfigurationTreeModelNode::row() const 
 {
-  if (m_parent)
-    return m_parent->m_children.indexOf(const_cast<ConfigurationTreeModelNode*>(this));
-  return 0;
+  int result = m_parent ? m_parent->m_children.indexOf(const_cast<ConfigurationTreeModelNode*>(this)) : 0;
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::row" <<  result;
+  return result;
 }
 
 QVariant ConfigurationTreeModelNode::data(int col) const 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModelNode::data" <<  col;
   return m_data.value(col);
 }
 
@@ -172,18 +179,25 @@ std::string typeName(CONFIGURATION_NODE_TYPE type)
 
 ////////////////////////////////////////////
 
- ConfigurationTreeModel::ConfigurationTreeModel(QObject* parent) : QAbstractItemModel(parent) 
- {
+ConfigurationTreeModel::ConfigurationTreeModel(QObject* parent) : QAbstractItemModel(parent) 
+{
 
- }
+}
 
- ConfigurationTreeModel::ConfigurationTreeModel(const ConfigurationTree &tree, QObject *parent) : QAbstractItemModel(parent) 
- {
-   m_rootNode = new ConfigurationTreeModelNode(tree.root());
- }
+ConfigurationTreeModel::ConfigurationTreeModel(const ConfigurationTree &tree, QObject *parent) : QAbstractItemModel(parent) 
+{
+  m_rootNode = new ConfigurationTreeModelNode(tree.root());
+}
+
+ConfigurationTreeModel::~ConfigurationTreeModel() 
+{
+  delete m_rootNode;
+}
 
 QModelIndex ConfigurationTreeModel::index(int row, int column, const QModelIndex& parent) const 
 {
+  LIMAGUICONFLOGINIT;
+  LDEBUG << "ConfigurationTreeModel::index" <<  row << column;
   if (!hasIndex(row, column, parent)) 
   {
     return QModelIndex();
@@ -239,7 +253,7 @@ int ConfigurationTreeModel::rowCount(const QModelIndex &parent) const
     else
         parentItem = static_cast<ConfigurationTreeModelNode*>(parent.internalPointer());
 
-    return parentItem->childCount();
+    return parentItem != nullptr ? parentItem->childCount() : 0;
 }
 
 int ConfigurationTreeModel::columnCount(const QModelIndex &parent) const
@@ -252,11 +266,14 @@ int ConfigurationTreeModel::columnCount(const QModelIndex &parent) const
 
 QVariant ConfigurationTreeModel::data(const QModelIndex &index, int role) const
 {
+    LIMAGUICONFLOGINIT;
+    LDEBUG << "ConfigurationTreeModel::data";
+
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
+//     if (role != Qt::DisplayRole)
+//         return QVariant();
 
     ConfigurationTreeModelNode *item = static_cast<ConfigurationTreeModelNode*>(index.internalPointer());
 
@@ -282,9 +299,15 @@ QVariant ConfigurationTreeModel::headerData(int section, Qt::Orientation orienta
     return QVariant();
 }
 
-ConfigurationTreeModel::~ConfigurationTreeModel() 
+QHash<int, QByteArray> ConfigurationTreeModel::roleNames() const 
 {
-  delete m_rootNode;
+ QHash<int, QByteArray> roles;// = QAbstractItemModel::roleNames();
+    roles[ID] = "id"; // Those strings are direclty related to the 'TableViewColumn' elements role property
+    roles[NAME] = "name";
+    roles[CHECKED] = "nodeChecked";
+    roles[CONTENTS] = "contents";
+ return roles;
+
 }
 
 } // end namespace Config

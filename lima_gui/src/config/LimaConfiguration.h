@@ -10,13 +10,14 @@
 
 #include "LimaGuiExport.h"
 
+#include <common/XMLConfigurationFiles/configurationStructure.h>
+
 #include <QObject>
 #include <QString>
-#include <QAbstractListModel>
+#include <QFileInfo>
 
-#include <map>
-#include <vector>
-#include <deque>
+// #include <map>
+// #include <deque>
 
 
 // https://github.com/aymara/lima/wiki/Process-Units#flattokenizer
@@ -25,16 +26,6 @@ class QXmlStreamWriter;
 
 namespace Lima 
 {
-namespace Common 
-{
-  namespace XMLConfigurationFiles 
-  {
-    class XMLConfigurationFileParser;
-    class ConfigurationStructure;
-    class ModuleConfigurationStructure;
-    class GroupConfigurationStructure;
-  }
-}
 
 namespace Gui 
 {
@@ -52,47 +43,31 @@ class LIMA_GUI_EXPORT LimaConfiguration : public QObject
 {
 Q_OBJECT
 public:
-  LimaConfiguration();
+  LimaConfiguration(const QFileInfo& fileInfo = QFileInfo(), 
+                    QObject* parent = nullptr);
 
-  void loadFromFile(const std::string& path);
+  void loadFromFile(const QString& path);
 
-  std::string name() const { return m_name; }
-  std::string path() const { return m_path; }
+  QString name() const { return m_name; }
+  QString path() const { return m_path; }
 
-  void setName(const std::string& n) {m_name = n;}
-  void setPath(const std::string& p) {m_path = p;}
+  void setName(const QString& n) {m_name = n;}
+  void setPath(const QString& p) {m_path = p;}
 
+  const Common::XMLConfigurationFiles::ConfigurationStructure& configuration() const;
+  
 private:
 
   // for a future more complete configuration with process units
   // and resources parameters
-//  std::map<std::string, ProcessUnitPipelineConfiguration> m_processUnitPipelinesConfiguration;
+//  std::map<QString, ProcessUnitPipelineConfiguration> m_processUnitPipelinesConfiguration;
 
-//  std::map<std::string, ProcessUnitConfiguration> m_processUnitsConfigurations;
+//  std::map<QString, ProcessUnitConfiguration> m_processUnitsConfigurations;
 
-  std::string m_name;
-  std::string m_path;
-
+  QString m_name;
+  QString m_path;
+  Common::XMLConfigurationFiles::ConfigurationStructure m_configuration;
 };
-
-const char* neutralString(const std::string& str);
-const char* neutralString(const char[]);
-
-/// \brief writes a list element from a groupStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeGroup.
-void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml);
-
-/// \brief writes a map element from a groupStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeGroup.
-void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml);
-
-/// \brief writes a group element from a moduleStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeModule.
-void writeGroup(const Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& p_group, QXmlStreamWriter& xml);
-
-/// \brief writes a group element from a moduleStructure in the referenced QXMLStreamWriter. Is supposed to be called within writeFile.
-void writeModule(const Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml);
-
-/// \brief with this function, you can write a ConfigurationStructure
-/// to a new xml configuration file.
-void writeFile(const Lima::Common::XMLConfigurationFiles::ConfigurationStructure& cstruct, const std::string& path);
 
 #endif // LIMACONFIGURATION_H
 

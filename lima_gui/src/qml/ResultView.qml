@@ -151,7 +151,7 @@ Rectangle {
 
       model: formatNames
 
-      currentIndex: (format !== "" ? formats.indexOf(format) : 0)
+//       currentIndex: (format !== "" ? formats.indexOf(format) : 0)
 
       onCurrentIndexChanged: {
         setFormat(formats[currentIndex]);

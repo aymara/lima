@@ -5,6 +5,7 @@
 
 import QtQuick 2.7
 import QtQuick.Window 2.0
+import QtQuick.Controls 1.4
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
@@ -26,23 +27,20 @@ id: popup
     y:app_window.height/2 - height/2
 
 
-    ConfigurationTreeModel {
-       id: limaconfig
-
-
-    }
+//     ConfigurationTreeModel {
+//        id: configurationModel
+//     }
 
     StackView {
         id: stack
 
-        initialItem: configListView
-
         anchors.fill: parent
+
+        initialItem: configListView
 
         Rectangle {
             id: configListView
 
-            anchors.fill: parent
             anchors.margins: 20
 
             border { width:1; color:"black"}
@@ -51,9 +49,9 @@ id: popup
 
               anchors.fill: parent
 
-              Text {
-                text: qsTr("Nouveau :")
-              }
+//               Text {
+//                 text: qsTr("New:")
+//               }
 
               Rectangle {
 
@@ -62,22 +60,19 @@ id: popup
                 Layout.preferredHeight:350
                 border.width: 1
                 border.color: "#aaaaaa"
+//                 color: "cyan"
                 radius: 2
 
-                ListModel {
-                  id: lmodel
-                }
 
-                ListView {
+                TreeView {
                   id: lview
-
                   anchors.fill: parent
+                  model: configurationModel
                   anchors.margins: 2
-                  snapMode: ListView.SnapToItem
-                  model: lmodel
+//                   snapMode: ListView.SnapToItem
 
-                  delegate: Label {
-                    text: name
+                  itemDelegate: Label {
+                    text: styleData.value
                     width: parent.width
 
 
@@ -91,24 +86,28 @@ id: popup
                       anchors.fill: parent
 
                       onEntered: {
-                        //bgrec.color = "#EEEEEEAA"
+                        bgrec.color = "#EEEEEEAA"
                       }
 
                       onExited: {
-                        //bgrec.color = "#AAAAEEAA"
+                        bgrec.color = "transparent"
                       }
 
                       onDoubleClicked: {
-                        lview.currentIndex = index
+//                         lview.currentIndex = index
                         finalizeBtn.clicked()
                       }
 
-                      onClicked: lview.currentIndex = index
+//                       onClicked: lview.currentIndex = index
                     }
 
                   }
 
-                  highlight: Rectangle { color: "lightblue";  }
+                  TableViewColumn {
+                      title: "name"
+                      role: "name"
+                  }
+//                   highlight: Rectangle { color: "lightblue";  }
                   focus: true
 
                 }
@@ -119,7 +118,7 @@ id: popup
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
-
+//                 color: "pink"
                 Row {
 
                   anchors.centerIn: parent
@@ -127,7 +126,7 @@ id: popup
                   Button {
                     id: finalizeBtn
 
-                    text: qsTr("Ok")
+                    text: qsTr("OK")
                     onClicked: {
                       console.log(lview.currentItem.text)
                       lmodel.handle(lview.currentIndex)
@@ -138,7 +137,7 @@ id: popup
                   Button {
                     id: cancelBtn
 
-                    text: qsTr("Annuler")
+                    text: qsTr("Cancel")
                     onClicked: {
                       close()
                     }
@@ -152,10 +151,11 @@ id: popup
 
         }
 
+
         Rectangle {
             id: editConfigView
-
-            anchors.fill: parent
+//             color:"yellow"
+            anchors.margins: 2
         }
 
     }

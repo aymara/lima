@@ -49,6 +49,8 @@ class LIMA_GUI_EXPORT ConfigurationTreeModelNode
 public:
   ConfigurationTreeModelNode(ConfigurationTreeModelNode* p = 0);
   ConfigurationTreeModelNode(ConfigurationNode*, ConfigurationTreeModelNode* p = 0);
+  ~ConfigurationTreeModelNode();
+  
   void fromConfigurationNode(ConfigurationNode*);
   
   /// REIMPLEMENTED METHODS
@@ -66,7 +68,6 @@ public:
   int row() const;
   ConfigurationTreeModelNode* parent();
 
-  ~ConfigurationTreeModelNode();
   
 private:
   ConfigurationNode*                                  m_node = nullptr;
@@ -74,13 +75,6 @@ private:
   QList<QVariant>                                     m_data;
   ConfigurationTreeModelNode*                         m_parent = nullptr;
   
-  enum 
-  {
-    ID = Qt::UserRole + 1,
-    NAME,
-    CHECKED,
-    CONTENTS
-  };
 };
 
 
@@ -90,6 +84,14 @@ private:
 class LIMA_GUI_EXPORT ConfigurationTreeModel : public QAbstractItemModel 
 {
   Q_OBJECT
+
+  enum 
+  {
+    ID = Qt::UserRole + 1,
+    NAME,
+    CHECKED,
+    CONTENTS
+  };
   
 public:
   
@@ -98,32 +100,23 @@ public:
 
   ~ConfigurationTreeModel();
   
-  QVariant      data
-                (const QModelIndex& index,
-                 int role)
-                const;
+  QHash<int, QByteArray> roleNames() const;
 
-  Qt::ItemFlags flags
-                (const QModelIndex &index)
-                const;
+  QVariant data(const QModelIndex& index, int role) const;
 
-  QVariant      headerData
-                (int section,
-                 Qt::Orientation orientation,
-                 int role = Qt::DisplayRole)
-                const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
 
-  QModelIndex   index
-                (int row,
-                 int column,
-                 const QModelIndex &parent = QModelIndex())
-                const;
+  QVariant headerData(int section, Qt::Orientation orientation,
+                      int role = Qt::DisplayRole) const;
 
-  QModelIndex   parent(const QModelIndex &index) const;
+  QModelIndex index(int row, int column, 
+                    const QModelIndex &parent = QModelIndex()) const;
 
-  int           rowCount(const QModelIndex &parent = QModelIndex()) const;
+  QModelIndex parent(const QModelIndex &index) const;
 
-  int           columnCount(const QModelIndex &parent = QModelIndex()) const;
+  int rowCount(const QModelIndex &parent = QModelIndex()) const;
+
+  int columnCount(const QModelIndex &parent = QModelIndex()) const;
   
 private:
   
