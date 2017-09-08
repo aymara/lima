@@ -11,12 +11,12 @@
 #include "Threads.h"
 #include "config/LimaConfiguration.h"
 #include "tools/extract/FileTextExtractor.h"
-#include "common/LimaCommon.h"
 
-#include "common/MediaticData/mediaticData.h"
-#include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
-#include "common/XMLConfigurationFiles/configurationStructure.h"
-#include "common/tools/FileUtils.h"
+#include <common/LimaCommon.h>
+#include <common/MediaticData/mediaticData.h>
+#include <common/tools/FileUtils.h>
+#include <common/XMLConfigurationFiles/configurationStructure.h>
+#include <linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h>
 
 #include <deque>
 #include <iostream>
@@ -27,7 +27,7 @@
 #include <QDir>
 #include <QFileInfo>
 
-#define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui::LimaGuiApplication");
+#define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui");
 
 Q_GLOBAL_STATIC_WITH_ARGS(QString, LIMA_USER_CONFIG, ("/home/gael/.config/LIMA/configs"))
 
@@ -576,7 +576,10 @@ void LimaGuiApplication::loadLimaConfigurations()
   // Ideally, we could list the existing config files in a global file like this ^
   // But let's just make do with the directories we find inside LIMA_USER_CONFIG
 
-  QFileInfoList list = configDir.entryInfoList();
+  QFileInfoList list = configDir.entryInfoList(QStringList() << "*.xml", 
+                                               QDir::Files 
+                                               | QDir::NoDotAndDotDot 
+                                               | QDir::Readable);
   if (list.isEmpty())
   {
     LWARN << "LimaGuiApplication::loadLimaConfigurations No configuration file to load";

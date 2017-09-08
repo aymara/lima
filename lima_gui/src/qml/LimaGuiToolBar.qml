@@ -6,6 +6,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.Controls.Styles 1.4
 
 import "basics"
 
@@ -48,24 +49,15 @@ ToolBar {
       }
     }
 
-    ToolButton {
+//     ToolButton {
+// 
+//       text: qsTr("Configuration")
+// 
+//       onClicked: {
+//         configurationView.open()
+//       }
+//     }
 
-      text: qsTr("Configuration")
-
-      onClicked: {
-        configurationView.open()
-      }
-    }
-
-    ToolButton {
-
-      text: qsTr("About")
-
-      onClicked: {
-        aboutMenu.open()
-      }
-    }
-    
     ToolButton {
       id: additionalButton
 

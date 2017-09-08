@@ -19,7 +19,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
-#define CONLLPARSERLOGINIT LOGINIT("Lima::Gui::ConllParser");
+#define CONLLLOGINIT LOGINIT("Lima::Gui::Conll");
 
 namespace Lima 
 {
@@ -142,7 +142,7 @@ std::string parse_conll(const std::string& file)
     int return_value = pclose(pipe);
     if (return_value) 
     {
-      CONLLPARSERLOGINIT;
+      CONLLLOGINIT;
       LINFO << "pipe returned " << return_value;
     }
     

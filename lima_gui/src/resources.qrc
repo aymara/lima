@@ -8,13 +8,17 @@
    <file>qml/TabbedWorkspace.qml</file>
    
    <!-- Widgets -->
-   <file>qml/AnalyzeTextWidget.qml</file>
    <file>qml/AnalyzeFileWidget.qml</file>
-   <file>qml/TabbedView.qml</file>
-   <file>qml/LimaConfigurationView.qml</file>
-   <file>qml/ResultView.qml</file>
+   <file>qml/AnalyzeTextWidget.qml</file>
    <file>qml/ConllTableView.qml</file>
+   <file>qml/LimaConfigurationView.qml</file>
    <file>qml/NamedEntitiesView.qml</file>
+   <file>qml/ResultView.qml</file>
+   <file>qml/TabbedView.qml</file>
+   
+   <!-- Dialogs -->
+   <file>qml/AboutDialog.qml</file>
+   <file>qml/SettingsDialog.qml</file>
    
    <!-- Models -->
     

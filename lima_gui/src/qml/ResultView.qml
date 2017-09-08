@@ -10,23 +10,29 @@ import QtQuick.Controls.Styles 1.4
 import "basics"
 
 /*!
-  The result view widget. The principle here is to include a copy of every specific result view,
-  and show only the one currently in focus atop of the others.
+  The result view widget. The principle here is to include a copy of every 
+  specific result view, and show only the one currently in focus atop of the 
+  others.
   */
 
 
-/*! There is a bug with the combo box : the idea is that changing the combo box index will change
-  * the format property of the result view (obviously), and changing the format via setFormat() will
-  * consequently update the combo box index. However, it does not work as intended.
+/*! There is a bug with the combo box : the idea is that changing the combo box 
+ * index will change the format property of the result view (obviously), and 
+ * changing the format via setFormat() will consequently update the combo box 
+ * index. However, it does not work as intended.
 */
 
-/*! formatToShow allows the view to pick the choice of the format before displayResults is called by the
-  * model. It works fine for a first analysis, but if you try to start a new analysis over the previous one,
-  * the format property will get stuck to the combo box index value rather than use formatToShow
+/*! formatToShow allows the view to pick the choice of the format before 
+ * displayResults is called by the model. It works fine for a first analysis, 
+ * but if you try to start a new analysis over the previous one, the format 
+ * property will get stuck to the combo box index value rather than use 
+ * formatToShow
 */
 
-/*!To add additional format views, you need to create a file for it, add the element to the 'contentRect' below,
- * and edit the 'setFormat' method to add your format (also, add its codename and real name to the formats list) and the views list
+/*!To add additional format views, you need to create a file for it, add the 
+ * element to the 'contentRect' below, and edit the 'setFormat' method to add 
+ * your format (also, add its codename and real name to the formats list) and 
+ * the views list
  */
 Rectangle {
   id: result_tab
@@ -37,27 +43,44 @@ Rectangle {
   //! the current format
   property string format:""
 
-  //! the format that will be shown once the analysis is completed. This is altered by
-  //! the corresponding comboBox in the analysis Bar.
+  //! the format that will be shown once the analysis is completed. This is 
+  //! altered by the corresponding comboBox in the analysis Bar.
   property string formatToShow: "table"
 
   //! All formats
-  property var formats: ["text", "table", "NE", "graph"]
+  property var formats: ["text", 
+                         "table", 
+                         "NE", 
+//                          "graph"
+                        ]
 
   //! The strings displayed in the combo box
-  property var formatNames: [qsTr("Text"), qsTr("Table"), qsTr("Named entities"), qsTr("Graph")]
+  property var formatNames: [qsTr("Text"), 
+                             qsTr("Table"), 
+                             qsTr("Named Entities"), 
+//                              qsTr("Graph"),
+                            ]
 
   // 0 = not active, 1 = analysis running, 2 = analysis over
   property int status: 0
 
   // add your views references here
   //! The references to all the different result views.
-  //! Every time a new analysis is started or a new format selected, those are all hidden.
-  property var views: [myconlltableview, mytextview, myloadingview, myNamedEntitiesView]
+  //! Every time a new analysis is started or a new format selected, those are 
+  //! all hidden.
+  property var views: [mytextview,
+                       myconlltableview, 
+                       myNamedEntitiesView,
+                       myloadingview]
 
-  //! This function is called from the C++ in AnalysisThread::notifyView function.
+  //! This function is called from the C++ in AnalysisThread::notifyView 
+  //! function.
   //! The use of the 'input' param may be subject to debate.
   function displayResults(input, output) {
+    console.debug("result_tab.displayResults input=" + input 
+                  + " ; output=" + output
+                  + " ; format=" + (format !== "" ? format : formatToShow))
+    
     visible = true
     text = input
     raw = output
@@ -89,11 +112,11 @@ Rectangle {
 
   //! set the format
   function setFormat(f) {
+    console.debug("result_tab.setFormat "+f)
     hideAll()
-    if (f !== format) {
-      format = f
+    format = f
 
-      switch(format) {
+    switch(format) {
       case "text":
         mytextview.visible = true
         if (!mytextview.loaded) {
@@ -104,10 +127,10 @@ Rectangle {
         break;
       case "table":
         myconlltableview.visible = true
-        if (!myconlltableview.loaded) {
+//         if (!myconlltableview.loaded) {
           myconlltableview.loaded = true
           myconlltableview.loadModel(raw)
-        }
+//         }
 
         break;
       case "NE":
@@ -120,7 +143,6 @@ Rectangle {
         break;
       default:
         break;
-      }
     }
   }
 
@@ -151,7 +173,7 @@ Rectangle {
 
       model: formatNames
 
-//       currentIndex: (format !== "" ? formats.indexOf(format) : 0)
+      currentIndex: (format !== "" ? formats.indexOf(format) : 0)
 
       onCurrentIndexChanged: {
         setFormat(formats[currentIndex]);

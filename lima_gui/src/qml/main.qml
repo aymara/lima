@@ -17,6 +17,7 @@ import "basics"
 
 import "scripts/DynamicObjectManager.js" as Dom
 
+
 /*!
  * main QML file of lima_gui.
  * Declares the main application window.
@@ -25,6 +26,8 @@ import "scripts/DynamicObjectManager.js" as Dom
 Controls1.ApplicationWindow {
   id:app_window
   
+property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qml")
+
   property int pile: 0
   
   //! Open the select file dialog
@@ -37,6 +40,7 @@ Controls1.ApplicationWindow {
         analysis function.
   */
   function indiscriminateAnalyze() {
+    console.debug("indiscriminateAnalyze")
     if (workspace.count()) {
       var wv = workspace.getCurrentWorkView()
       if (wv !== null) {
@@ -70,6 +74,8 @@ Controls1.ApplicationWindow {
   //! Launch an analysis of raw text for the current workview.
   //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeText(text) {
+    console.debug("analyzeText "+text)
+
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
       if (wv !== null) {
@@ -80,7 +86,7 @@ Controls1.ApplicationWindow {
         wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
-        console.log("formattoshow= ", rt.formatToShow)
+        console.debug("formattoshow= ", rt.formatToShow)
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
       }
@@ -210,11 +216,33 @@ Controls1.ApplicationWindow {
       radius: 4
     }
 
+    SettingsDialog {
+      id: settingsDialog
+      parent: app_window.contentItem
+    }
 
     Controls2.MenuItem {
-      text:qsTr("Configure LIMA Gui")
+      text:qsTr("Configure Lima GUI...")
       onTriggered: {
-        
+        settingsDialog.open()
+      }
+    }
+
+    Controls2.MenuItem {
+      text:qsTr("Help")
+      onTriggered: {
+        Qt.openUrlExternally("https://github.com/aymara/lima/wiki")
+      }
+    }
+
+    AboutDialog {
+      id: aboutDialog
+    }
+
+    Controls2.MenuItem {
+      text:qsTr("About")
+      onTriggered: {
+        aboutDialog.open()
       }
     }
   }
@@ -426,8 +454,13 @@ Controls1.ApplicationWindow {
 
                       name: "Format"
                       width: 200
-                      model: [qsTr("CONLL Format"), qsTr("Named entities"), qsTr("Graph")]
-                      keys: ["table","NE","graph"]
+                      model: [
+                                qsTr("Text"),
+                                qsTr("CONLL Format"), 
+                                qsTr("Named entities"), 
+//                                 qsTr("Graph"),
+                             ]
+                      keys: ["text","table","NE","graph"]
 
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().formatIndex : 0
 
@@ -439,16 +472,15 @@ Controls1.ApplicationWindow {
                       }
                     }
 
-                    SelectOptionComboBox {
-                        id: config_selector
-
-                        name: "Analyzer"
-                        width: 200
-                        
-                        // should be linked to textAnalyzer.configurations (Q_PROPERTY)
-                        model: ["Default"].concat(["easy"])
-                        keys: ["default", "easy"]
-                    }
+//                     SelectOptionComboBox {
+//                         id: config_selector
+//                         name: qsTr("Pipeline")
+//                         enabled: false
+//                         width: 200
+//                         // should be linked to textAnalyzer.configurations (Q_PROPERTY)
+//                         model: [ qsTr("Main")] // , qsTr("Easy")
+//                         keys: ["main"] // , "easy"
+//                     }
 
 
                     Shortcut {
@@ -478,29 +510,24 @@ Controls1.ApplicationWindow {
         }
         
         Rectangle {
-          
           id: logView
-          
-          anchors.margins: 20
           Layout.fillWidth: true
           Layout.fillHeight: true
-          Layout.preferredHeight: 300
-          Layout.minimumHeight: 100
+          Layout.preferredHeight: 100
+          Layout.minimumHeight: 50
 
           Controls1.ScrollView {
             anchors.fill: parent
 
-//            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
-//            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-
             Text {
               height: implicitHeight;
               width: implicitWidth;
-              text: textAnalyzer.text
+              text: qsTr("This space will in the future display LIMA logs.")
+              font.italic: true
+              font.pointSize: font.pointSize-2
               anchors.centerIn: parent
             }
           }
-
         }
 
         Rectangle {

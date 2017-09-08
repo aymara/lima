@@ -6,8 +6,13 @@
  */
 
 #include "ConllListModel.h"
+
+#include <common/LimaCommon.h>
+
 #include <iostream>
 #include <QtDebug>
+
+#define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui::Conll");
 
 namespace Lima 
 {
@@ -29,9 +34,24 @@ ConllListModel::ConllListModel(const QString& content, QObject* p) : QAbstractTa
   fromText(content);
 }
 
+ConllListModel::~ConllListModel() 
+{
+  for (auto& d : m_data) {
+    delete d;
+  }
+}
+
 void ConllListModel::fromText(const QString& text) 
 {
-
+  LIMAGUIAPPLOGINIT;
+  LDEBUG << "ConllListModel::fromText" << text;
+  
+  beginResetModel();
+  for (auto& d : m_data) 
+  {
+    delete d;
+  }
+  m_data.clear();
   std::vector<std::string> data = into_lines(text.toStdString());
 
   for (unsigned int i=0; i<data.size(); i++) 
@@ -40,6 +60,7 @@ void ConllListModel::fromText(const QString& text)
       m_data.push_back(new ConllRow(data[i]));
     }
   }
+  endResetModel();
 }
 
 int ConllListModel::rowCount(const QModelIndex &parent) const 
@@ -81,13 +102,6 @@ QHash<int, QByteArray> ConllListModel::roleNames() const
   rn[PHEAD] = "phead";
   rn[PDEPREL] = "pdeprel";
   return rn;
-}
-
-ConllListModel::~ConllListModel() 
-{
-  for (auto& d : m_data) {
-    delete d;
-  }
 }
 
 } // Gui

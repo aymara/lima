@@ -174,7 +174,7 @@ MenuBar {
     
     MenuItem {
 
-      text: qsTr("Configurer LIMA")
+      text: qsTr("Configure LIMA")
 
       onTriggered: {
         openConfigurationView()

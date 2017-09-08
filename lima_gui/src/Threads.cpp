@@ -70,6 +70,8 @@ void AnalysisThread::run()
 
 void AnalysisThread::notifyView()
 {
+  ANALYSISTHREADLOGINIT;
+  LDEBUG << "AnalysisThread::notifyView";
   // create model from out.str()
   QObject* view;
   if (m_resultView)
@@ -85,7 +87,12 @@ void AnalysisThread::notifyView()
 //      related: https://stackoverflow.com/questions/27092756/call-qml-function-from-c-with-another-qml-object-as-parameter
 
     QString qstr(out.str().c_str());
-    QMetaObject::invokeMethod(view, "displayResults", Q_ARG(QVariant, QVariant::fromValue(m_text)), Q_ARG(QVariant, QVariant::fromValue(qstr)));
+    LDEBUG << "AnalysisThread::notifyView invoke displayResults with" 
+            << m_text << "and" << qstr;
+    QMetaObject::invokeMethod(view, 
+                              "displayResults", 
+                              Q_ARG(QVariant, QVariant::fromValue(m_text)), 
+                              Q_ARG(QVariant, QVariant::fromValue(qstr)));
 //    QMetaObject::invokeMethod(view, "tableUp", Q_ARG(QVariant, QVariant::fromValue(clmodel)));
   }
   else 
