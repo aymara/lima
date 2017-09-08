@@ -6,14 +6,12 @@
  */
 
 #include "Threads.h"
+#include "LimaGuiCommon.h"
 #include "LimaGuiApplication.h"
 #include "ConllListModel.h"
 
 #include "common/LimaCommon.h"
 
-
-#define ANALYSISTHREADLOGINIT LOGINIT("Lima::Gui::AnalysisThread");
-#define INITTHREADLOGINIT LOGINIT("Lima::Gui::InitializeThread");
 
 namespace Lima 
 {

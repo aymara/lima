@@ -7,10 +7,9 @@
 
 #include "ConfigurationTreeModel.h"
 #include "ConfigurationTree.h"
+#include "LimaGuiCommon.h"
 
 #include <common/LimaCommon.h>
-
-#define LIMAGUICONFLOGINIT LOGINIT("Lima::Gui::Config")
 
 namespace Lima 
 {
@@ -82,14 +81,14 @@ namespace Config
 
 ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationTreeModelNode* p) 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::ConfigurationTreeModelNode(p)";
   m_parent = p;
 }
 
 ConfigurationTreeModelNode::ConfigurationTreeModelNode(ConfigurationNode* node, ConfigurationTreeModelNode *p) : ConfigurationTreeModelNode(p) 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::ConfigurationTreeModelNode(node,p)";
   fromConfigurationNode(node);
 }
@@ -115,21 +114,21 @@ void ConfigurationTreeModelNode::addChild(ConfigurationTreeModelNode *node)
 
 ConfigurationTreeModelNode* ConfigurationTreeModelNode::child(int ind) 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::child" << ind << m_children.value(ind);
   return m_children.value(ind);
 }
 
 int ConfigurationTreeModelNode::childCount() const 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::columnCount" <<  m_children.count();
   return m_children.count();
 }
 
 int ConfigurationTreeModelNode::columnCount() const 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::columnCount" <<  m_data.count();
   return m_data.count();
 }
@@ -142,14 +141,14 @@ ConfigurationTreeModelNode* ConfigurationTreeModelNode::parent()
 int ConfigurationTreeModelNode::row() const 
 {
   int result = m_parent ? m_parent->m_children.indexOf(const_cast<ConfigurationTreeModelNode*>(this)) : 0;
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::row" <<  result;
   return result;
 }
 
 QVariant ConfigurationTreeModelNode::data(int col) const 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModelNode::data" <<  col;
   return m_data.value(col);
 }
@@ -196,7 +195,7 @@ ConfigurationTreeModel::~ConfigurationTreeModel()
 
 QModelIndex ConfigurationTreeModel::index(int row, int column, const QModelIndex& parent) const 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LDEBUG << "ConfigurationTreeModel::index" <<  row << column;
   if (!hasIndex(row, column, parent)) 
   {
@@ -266,7 +265,7 @@ int ConfigurationTreeModel::columnCount(const QModelIndex &parent) const
 
 QVariant ConfigurationTreeModel::data(const QModelIndex &index, int role) const
 {
-    LIMAGUICONFLOGINIT;
+    CONFLOGINIT;
     LDEBUG << "ConfigurationTreeModel::data";
 
     if (!index.isValid())

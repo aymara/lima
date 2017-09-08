@@ -119,10 +119,10 @@ Rectangle {
     switch(format) {
       case "text":
         mytextview.visible = true
-        if (!mytextview.loaded) {
+//         if (!mytextview.loaded) {
           mytextview.text = raw;
           mytextview.loaded = true
-        }
+//         }
 
         break;
       case "table":
@@ -135,10 +135,10 @@ Rectangle {
         break;
       case "NE":
         myNamedEntitiesView.visible = true
-        if (!myNamedEntitiesView.loaded) {
+//         if (!myNamedEntitiesView.loaded) {
           myNamedEntitiesView.loaded = true
           myNamedEntitiesView.input(text, raw)
-        }
+//         }
 
         break;
       default:

@@ -7,12 +7,11 @@
 
 #include "ConllListModel.h"
 
-#include <common/LimaCommon.h>
+#include "LimaGuiCommon.h"
 
 #include <iostream>
 #include <QtDebug>
 
-#define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui::Conll");
 
 namespace Lima 
 {
@@ -43,7 +42,7 @@ ConllListModel::~ConllListModel()
 
 void ConllListModel::fromText(const QString& text) 
 {
-  LIMAGUIAPPLOGINIT;
+  CONLLLOGINIT;
   LDEBUG << "ConllListModel::fromText" << text;
   
   beginResetModel();

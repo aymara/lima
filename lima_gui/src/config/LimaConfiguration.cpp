@@ -6,6 +6,7 @@
  */
 
 #include "LimaConfiguration.h"
+#include "LimaGuiCommon.h"
 
 //#include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "common/LimaCommon.h"
@@ -18,8 +19,6 @@
 
 #include <QXmlStreamWriter>
 #include <QFile>
-
-#define LIMAGUICONFLOGINIT LOGINIT("Lima::Gui::Config")
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -110,7 +109,7 @@ const char* neutralString(const char c[])
 
 void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml) 
 {
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LINFO << "\t\twriting list<" << name << ">:";
 
   XMLWRITE_LIST XMLWRITE_NAME(name)
@@ -125,7 +124,7 @@ void writeList(const std::string& name, const std::deque<std::string>& list, QXm
 void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml) 
 {
 
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LINFO << "\t\twriting map<" << name << ">:";
 
   XMLWRITE_MAP XMLWRITE_NAME(name)
@@ -141,7 +140,7 @@ void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xm
 {
   GroupConfigurationStructure group(p_group);
 
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LINFO << "\twriting group<" << group.getName() << ">:";
 
   XMLWRITE_GROUP XMLWRITE_NAME(group.getName()) 
@@ -176,7 +175,7 @@ void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter&
 {
   ModuleConfigurationStructure module(p_module);
 
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LINFO << "writing module<" << module.getName() << ">:";
 
   XMLWRITE_MODULE XMLWRITE_NAME(module.getName())
@@ -192,7 +191,7 @@ void writeFile(const ConfigurationStructure& cstruct, const std::string& path)
 {
   QString output;
 
-  LIMAGUICONFLOGINIT;
+  CONFLOGINIT;
   LINFO << "writing file<" << path << ">:";
 
   QXmlStreamWriter xml(&output);

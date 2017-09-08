@@ -22,9 +22,11 @@ Rectangle {
 
   //! Pass the output from the LIMA analysis to the ResultParser
   function input(text,conll) {
+    console.debug("ne_view.input "+text+" ; " + conll)
     parser.parse(conll)
     typesview.model = parser.getEntityTypes()
     contenttext.text = parser.getHighlightedText()
+    console.debug("ne_view.input contenttext:"+contenttext.text)
   }
 
   //! C++ class. Parse the results and convert it to HTML text.

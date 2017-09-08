@@ -6,13 +6,13 @@
  */
 
 #include "LimaGuiApplication.h"
+#include "LimaGuiCommon.h"
 
 #include "ConllParser.h"
 #include "Threads.h"
 #include "config/LimaConfiguration.h"
 #include "tools/extract/FileTextExtractor.h"
 
-#include <common/LimaCommon.h>
 #include <common/MediaticData/mediaticData.h>
 #include <common/tools/FileUtils.h>
 #include <common/XMLConfigurationFiles/configurationStructure.h>
@@ -26,8 +26,6 @@
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
-
-#define LIMAGUIAPPLOGINIT LOGINIT("Lima::Gui");
 
 Q_GLOBAL_STATIC_WITH_ARGS(QString, LIMA_USER_CONFIG, ("/home/gael/.config/LIMA/configs"))
 
@@ -70,7 +68,7 @@ QString qstr_parseFile(const std::string& path)
   }
   else 
   {
-    LIMAGUIAPPLOGINIT;
+    LIMAGUILOGINIT;
     LINFO << "didn't open : " << path;
     LERROR << "Error opening file: " << strerror(errno);
   }
@@ -83,7 +81,7 @@ std::string cleanUrl(const std::string& url)
   std::string str;
   std::vector<std::string> tmpStrList = split(url,':');
   if (!tmpStrList.size()) {
-    LIMAGUIAPPLOGINIT;
+    LIMAGUILOGINIT;
     LERROR << "FILE DIALOG URL FORMAT ERROR : " << url;
   }
   else {
@@ -111,7 +109,7 @@ bool LimaGuiApplication::openMultipleFiles(const QStringList& urls)
 
 bool LimaGuiApplication::openFile(const QString& filepath) 
 {
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
   LINFO << ("OPENING FILE");
   /// FileDialog returns something like : "file:///C:/..."
   /// so we need to remove the unnecessary content
@@ -198,7 +196,7 @@ void LimaGuiApplication::closeFile(const QString& filename, bool save) {
     }
   }
 
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
   LERROR << "This file doesn't exist : " << filename.toStdString();
   /// qml part : close tab
 }
@@ -233,7 +231,7 @@ void LimaGuiApplication::beginNewAnalysis(const QString& content, QObject* targe
 
 void LimaGuiApplication::analyze(const QString& content) 
 {
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
   
   // PARAMETERS :
   // Text
@@ -296,7 +294,7 @@ void LimaGuiApplication::analyzeFileFromUrl(const QString& url, QObject* target)
   }
   else 
   {
-    LIMAGUIAPPLOGINIT;
+    LIMAGUILOGINIT;
     LERROR << ("Couldn't open file");
   }
 }
@@ -314,7 +312,7 @@ bool LimaGuiApplication::selectFile(const QString& filename)
   }
   else 
   {
-    LIMAGUIAPPLOGINIT;
+    LIMAGUILOGINIT;
     LINFO << "This file doesn't exist : " << filename.toStdString();
   }
   return false;
@@ -326,7 +324,7 @@ bool LimaGuiApplication::selectFile(const QString& filename)
 void LimaGuiApplication::initializeLimaAnalyzer()
 {
 
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
 
   QStringList projects;
   projects << QString("lima");
@@ -412,7 +410,7 @@ void LimaGuiApplication::writeInConsole(const std::string& str)
 }
 
 void LimaGuiApplication::test() {
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
   LDEBUG << "This is a warning";
   LDEBUG << "All your bases are belong to us";
 }
@@ -468,7 +466,7 @@ void LimaGuiApplication::setLanguage(const QString& s)
   }
   else 
   {
-    LIMAGUIAPPLOGINIT;
+    LIMAGUILOGINIT;
     LERROR << "'" << s.toStdString() << "' is not a supported language.";
   }
 }
@@ -553,7 +551,7 @@ QStringList LimaGuiApplication::getNamedEntitiesList(const QString& text)
 
 void LimaGuiApplication::loadLimaConfigurations() 
 {
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
   // WIP
   // Let LIMA_USER_CONFIG be the directory where custom configs are stored
   // This could be retrieved by an environment variable
@@ -617,7 +615,7 @@ void LimaGuiApplication::selectLimaConfiguration(const QString& name)
     m_analyzer = m_clients["default"];
   }
   else {
-    LIMAGUIAPPLOGINIT;
+    LIMAGUILOGINIT;
     LERROR << ("There is no such configuration");
   }
 }
@@ -628,7 +626,7 @@ void LimaGuiApplication::setLimaConfiguration(const LimaConfiguration& config)
   /// If an analyzer with the same name already exists, ask the user if it should reload it
   /// This kind of warning could toggled in a config file
 
-  LIMAGUIAPPLOGINIT;
+  LIMAGUILOGINIT;
 
   if (m_clients.find(config.name()) != m_clients.end()) 
   {

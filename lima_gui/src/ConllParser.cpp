@@ -6,6 +6,7 @@
  */
 
 #include "ConllParser.h"
+#include "LimaGuiCommon.h"
 
 #include "common/LimaCommon.h"
 
@@ -18,8 +19,6 @@
 #include <iomanip>
 
 #include <boost/algorithm/string/replace.hpp>
-
-#define CONLLLOGINIT LOGINIT("Lima::Gui::Conll");
 
 namespace Lima 
 {
@@ -246,6 +245,9 @@ std::string highlightNamedEntities(
 /// \brief takes a raw conll formated text and splits it into CONLL_Line structures
 CONLL_List conllRawToLines(const std::string& conll)
 {
+  LIMAGUILOGINIT;
+  LDEBUG << "NamedEntitiesParser::conllRawToLines" << conll;
+
   CONLL_List list;
 
   std::vector<std::string> data = into_lines(conll);
@@ -255,6 +257,8 @@ CONLL_List conllRawToLines(const std::string& conll)
     if (line.length()) list.push_back(new CONLL_Line(line));
   }
 
+  LDEBUG << "NamedEntitiesParser::conllRawToLines return nb lines:" 
+          << list.size();
   return list;
 }
 

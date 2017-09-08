@@ -7,6 +7,8 @@
 
 #include "NamedEntitiesParser.h"
 #include "ConllParser.h"
+#include "LimaGuiCommon.h"
+#include <common/LimaCommon.h>
 
 namespace Lima 
 {
@@ -15,43 +17,25 @@ namespace Gui
 
 
 /// \brief Creates a html tag with subsequent content, metadata and style
-std::string markupa(const std::string& content, const std::string& markup, const std::string& style, const std::string& metadata) {
-  return "<" + markup  + (style.length() ? " style=\"" + style + "\"" : "") + " " + metadata + ">" + content + "</" + markup + ">";
+std::string markupa(const std::string& content, 
+                    const std::string& markup, 
+                    const std::string& style, 
+                    const std::string& metadata) 
+{
+  return "<" + markup  + (style.length() ? " style=\"" + style + "\"" : "") 
+          + " " + metadata + ">" + content + "</" + markup + ">";
 }
 
 /// \brief replace all occurences of X by Y in text
-void replace_all(std::string& text, const std::string& occurence, const std::string& sub) {
+void replace_all(std::string& text, 
+                 const std::string& occurence, 
+                 const std::string& sub) {
   std::size_t it = -1;
   while (it = text.find(occurence, it + 1), it != std::string::npos) {
 
     text.replace(it, occurence.length(), sub);
     it += sub.length();
   }
-}
-
-
-/// \brief  This is an outdated function that highlights all occurences of entities within the text. (even inside a word that is otherwise not a named entity, so
-///it is suboptimal). See NamedEntitiesParser::getHighlightedText() to get a concatenated output from the conll data.
-std::string highlightNamedEntities(
-    const std::string& raw,
-    const std::vector<EntityItem>& entities)
-{
-  std::string text = raw;
-//  for (auto& type : types) {
-//    for (auto& entity : type.second) {
-//      boost::replace_all(text, entity, markup(entity,"strong","color:"+colors[type.first]));
-//    }
-//  }
-
-  for (auto& entity : entities) 
-  {
-    for (auto& o : entity.m_occurences) 
-    {
-      replace_all(text, o, markupa(o, "mark", "border-radius:10; background-color:"+entity.m_color + "; border: 1px solid #aaeeee", "name=\"" + entity.m_name + "\""));
-    }
-  }
-
-  return text;
 }
 
 /// \brief generates a random integer between a and b
@@ -95,12 +79,11 @@ NamedEntitiesParser::NamedEntitiesParser(QObject* p) : QObject(p)
 
 void NamedEntitiesParser::parse(const QString& conllText)
 {
-
   m_entities.clear();
 
   this->m_conllText = conllText;
 
-  std::map<std::string, std::vector<std::string> > data = getNamedEntitiesFromConll(conllText.toStdString());
+  auto data = getNamedEntitiesFromConll(conllText.toStdString());
   std::vector<std::string> colors = generateDistinctColors(data.size());
   int i = 0;
   for (auto& pair : data) 
@@ -122,8 +105,10 @@ QStringList NamedEntitiesParser::getEntityTypes()
 
 EntityItem* NamedEntitiesParser::findEntity(const std::string& name) 
 {
-  for (auto& entity : m_entities) {
-    if (entity.m_name == name) {
+  for (auto& entity : m_entities) 
+  {
+    if (entity.m_name == name) 
+    {
       return &entity;
     }
   }
@@ -132,7 +117,6 @@ EntityItem* NamedEntitiesParser::findEntity(const std::string& name)
 
 QString NamedEntitiesParser::getHighlightedText() 
 {
-
   CONLL_List conllList = conllRawToLines(m_conllText.toStdString());
 
   std::string result = "";
@@ -162,7 +146,8 @@ QString NamedEntitiesParser::getHighlightedText()
         style += "border: 1px solid black; ";
         style += "padding:5px; ";
         style += "border-radius: 5px; ";
-        hltext = markupa(hltext, "mark",style , "name=\"" + entity->m_name + "\"");
+        hltext = markupa(hltext, "mark",style , 
+                         "name=\"" + entity->m_name + "\"");
       }
 
       if (line->at(3) != "PONCTU") 
@@ -183,10 +168,14 @@ QString NamedEntitiesParser::getHighlightedText()
       i = j = 0;
     }
   }
-
+  if (!block.empty())
+  {
+    std::string style = "";
+    result += markupa(block,"p",style + "display:block;","") + "";
+  }
   freeConllList(conllList);
 
-  return QString(result.c_str());
+  return QString::fromUtf8(result.c_str());
 }
 
 
