@@ -33,7 +33,7 @@ Dialog {
             spacing: 20
 
             Label {
-                text: "There is currently nothing to set."
+                text: qsTr("There is currently nothing to set.")
                 color: "#e41e25"
             }
             

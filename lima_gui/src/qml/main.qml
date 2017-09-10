@@ -153,14 +153,14 @@ Controls1.ApplicationWindow {
   
   //! Open a tab to write and analyze text.
   function openAnalyzeTextTab() {
-    var wv = workspace.addWorkTab("Analyze text", "Text", "basics/TextEditor.qml","");
+    var wv = workspace.addWorkTab(qsTr("Analyze text"), "Text", "basics/TextEditor.qml","");
 //       console.log("WTF");
 
    }
   
   //! Open a tab to select a file and analyze it.
   function openAnalyzeFileTab() {
-    workspace.addWorkTab("Analyze File", "SelectFile", "AnalyzeFileWidget.qml","");
+    workspace.addWorkTab(qsTr("Analyze File"), "SelectFile", "AnalyzeFileWidget.qml","");
   }
   
   //! This function was meant to be if there are write/save capabilities for files.
@@ -188,7 +188,7 @@ Controls1.ApplicationWindow {
     }
   }
   
-  title: "Lima Gui"
+  title: qsTr("Lima Gui")
   visible: true
   x: 500
   width: 1024
@@ -425,7 +425,7 @@ Controls1.ApplicationWindow {
                            // you can list every language here, even if it's not loaded by LIMA
                       }
 
-                      name: "Language"
+                      name: qsTr("Language:")
                       width: 200
 
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
@@ -452,7 +452,7 @@ Controls1.ApplicationWindow {
                     SelectOptionComboBox {
                       id: format_selector
 
-                      name: "Format"
+                      name: qsTr("Initial display format:")
                       width: 200
                       model: [
                                 qsTr("Text"),
