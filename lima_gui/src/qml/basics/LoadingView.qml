@@ -16,7 +16,7 @@ Rectangle {
   AnimatedImage {
     id: animation;
 
-    source: "qrc:qml/resources/hex-loading.gif";
+    source: "qrc:qml/resources/Spinner.gif";
     anchors.centerIn: parent
     scale: 0.5
   }

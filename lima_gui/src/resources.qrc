@@ -41,8 +41,8 @@
     
     <!-- Resources -->
     <file>qml/resources/lima_gui.png</file>
-    <file>qml/resources/hex-loading.gif</file>
-    <file>qml/resources/backup_btnclose_h.png</file>
-    <file>qml/resources/backup_btnclose_n.png</file>
+    <file>qml/resources/Spinner.gif</file>
+    <file>qml/resources/cross-symbol-n.png</file>
+    <file>qml/resources/cross-symbol-h.png</file>
  </qresource>
 </RCC>

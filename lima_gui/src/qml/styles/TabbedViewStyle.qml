@@ -74,7 +74,7 @@ TabViewStyle {
         id:closeImg;
 
         anchors.centerIn: parent ;
-        source: "qrc:qml/resources/backup_btnclose_n.png";
+        source: "qrc:qml/resources/cross-symbol-n.png";
         scale: 1.05
       }
 
@@ -82,13 +82,13 @@ TabViewStyle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
-          closeImg.source = "qrc:qml/resources/backup_btnclose_h.png"
+          closeImg.source = "qrc:qml/resources/cross-symbol-h.png"
         }
         onExited: {
-          closeImg.source = "qrc:qml/resources/backup_btnclose_n.png";
+          closeImg.source = "qrc:qml/resources/cross-symbol-n.png";
         }
         onClicked: {
-//          closeImg.source = "qrc:qml/resources/backup_btnclose_h.png";
+//          closeImg.source = "qrc:qml/resources/cross-symbol-h.png";
           // deleting the tab
           tabView.removeTab(styleData.index);
         }
