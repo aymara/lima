@@ -40,6 +40,7 @@
     <file>qml/styles/TabbedViewStyle.qml</file>
     
     <!-- Resources -->
+    <file>qml/resources/lima_gui.png</file>
     <file>qml/resources/hex-loading.gif</file>
     <file>qml/resources/backup_btnclose_h.png</file>
     <file>qml/resources/backup_btnclose_n.png</file>

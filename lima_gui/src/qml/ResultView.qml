@@ -77,9 +77,9 @@ Rectangle {
   //! function.
   //! The use of the 'input' param may be subject to debate.
   function displayResults(input, output) {
-    console.debug("result_tab.displayResults input=" + input 
-                  + " ; output=" + output
-                  + " ; format=" + (format !== "" ? format : formatToShow))
+//     console.debug("result_tab.displayResults input=" + input 
+//                   + " ; output=" + output
+//                   + " ; format=" + (format !== "" ? format : formatToShow))
     
     visible = true
     text = input
@@ -112,7 +112,7 @@ Rectangle {
 
   //! set the format
   function setFormat(f) {
-    console.debug("result_tab.setFormat "+f)
+//     console.debug("result_tab.setFormat "+f)
     hideAll()
     format = f
 
@@ -173,7 +173,8 @@ Rectangle {
 
       model: formatNames
 
-      currentIndex: (format !== "" ? formats.indexOf(format) : 0)
+      Component.onCompleted: 
+        currentIndex = (format !== "" ? formats.indexOf(format) : 0)
 
       onCurrentIndexChanged: {
         setFormat(formats[currentIndex]);

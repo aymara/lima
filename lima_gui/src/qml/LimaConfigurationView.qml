@@ -67,7 +67,7 @@ id: popup
                 TreeView {
                   id: lview
                   anchors.fill: parent
-                  model: configurationModel
+//                   model: configurationModel
                   anchors.margins: 2
 //                   snapMode: ListView.SnapToItem
 

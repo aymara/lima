@@ -40,10 +40,48 @@ add_library(qt-lima SHARED
   ${qt-lima_MOC_OUTFILES}
 )
 target_link_libraries(qt-lima 
+  lima-common-mediaticdata
+  lima-common-xmlconfigurationfiles
+  lima-common-tools
+  lima-common-data 
+  lima-common-misc
+  lima-common
+  lima-lp-annotationgraph
+  lima-lp-lineartextrepresentation
+  lima-lp-misc
+  lima-lp-tgv
+  lima-lp-linguisticdata
+  lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-regexmatcher
+  lima-lp-wordsensetagger
+  lima-lp-linguisticprocessing-core
+  lima-lp-analysisdict
+  lima-lp-eventanalyzer
+  lima-lp-corefsolver
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-morphologicanalysis
+  lima-lp-dictionary
+  lima-lp-easyxmldumper
+  lima-lp-analysisdumpers
+  lima-lp-textsegmentation
+  lima-lp-linguisticanalysisstructure
+  lima-lp-semanticanalysis
+  lima-lp-linguisticresources
+  lima-lp-entitytracker
+  lima-lp-flattokenizer
+  lima-lp-applyrecognizer
+  lima-lp-linguisticprocessors
+  lima-lp-postagger
+  lima-lp-automaton
+  lima-lp-analysishandlers
+  lima-lp-client
   ${Qt5_LIBRARIES}
 )
 
-install(TARGETS qt-lima DESTINATION lib)
+install(TARGETS qt-lima DESTINATION lib
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -68,6 +106,9 @@ target_link_libraries(lima_gui
   ${Qt5_LIBRARIES}
 )
 
-install(TARGETS lima_gui DESTINATION bin)
+install(TARGETS lima_gui DESTINATION bin
+  COMPONENT runtime)
 
 ########### install files ###############
+install(PROGRAMS lima_gui.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(PROGRAMS qml/resources/lima_gui.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)

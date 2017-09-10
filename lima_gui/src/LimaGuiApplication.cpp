@@ -616,7 +616,7 @@ void LimaGuiApplication::selectLimaConfiguration(const QString& name)
   }
   else {
     LIMAGUILOGINIT;
-    LERROR << ("There is no such configuration");
+    LERROR << "There is no such configuration" << name;
   }
 }
 

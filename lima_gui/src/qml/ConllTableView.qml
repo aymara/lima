@@ -25,7 +25,7 @@ Rectangle {
   
   //! call the eponyme method of ConllList
   function loadModel(text) {
-    console.debug("conlltableview.loadModel "+text)
+//     console.debug("conlltableview.loadModel "+text)
     clm.fromText(text)
     model = clm
   }

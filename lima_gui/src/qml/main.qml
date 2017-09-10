@@ -25,8 +25,8 @@ import "scripts/DynamicObjectManager.js" as Dom
 
 Controls1.ApplicationWindow {
   id:app_window
-  
-property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qml")
+
+  property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qml")
 
   property int pile: 0
   
@@ -40,7 +40,7 @@ property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qm
         analysis function.
   */
   function indiscriminateAnalyze() {
-    console.debug("indiscriminateAnalyze")
+//     console.debug("indiscriminateAnalyze")
     if (workspace.count()) {
       var wv = workspace.getCurrentWorkView()
       if (wv !== null) {
@@ -74,7 +74,7 @@ property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qm
   //! Launch an analysis of raw text for the current workview.
   //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeText(text) {
-    console.debug("analyzeText "+text)
+//     console.debug("analyzeText "+text)
 
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
@@ -86,7 +86,7 @@ property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qm
         wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
-        console.debug("formattoshow= ", rt.formatToShow)
+//         console.debug("formattoshow= ", rt.formatToShow)
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
       }
@@ -154,7 +154,7 @@ property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qm
   //! Open a tab to write and analyze text.
   function openAnalyzeTextTab() {
     var wv = workspace.addWorkTab("Analyze text", "Text", "basics/TextEditor.qml","");
-      console.log("WTF");
+//       console.log("WTF");
 
    }
   
@@ -524,8 +524,9 @@ property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qm
               width: implicitWidth;
               text: qsTr("This space will in the future display LIMA logs.")
               font.italic: true
-              font.pointSize: font.pointSize-2
               anchors.centerIn: parent
+              Component.onCompleted: 
+                font.pointSize = font.pointSize-2
             }
           }
         }
