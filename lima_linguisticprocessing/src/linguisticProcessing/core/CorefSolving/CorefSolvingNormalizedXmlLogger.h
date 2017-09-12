@@ -25,7 +25,7 @@
 
 #include "CorefSolvingExport.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
@@ -52,11 +52,9 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   //bool m_compactFormat; // compact format is the same as the RecognizerResultLogger

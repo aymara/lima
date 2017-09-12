@@ -47,7 +47,7 @@ void check(const PropertyCodeManager& propcodemanager,LinguisticCode p1, Linguis
 
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
-struct
+typedef struct
 {
   string codeFile; // file to parse
   string language;
@@ -58,8 +58,8 @@ struct
   bool help;       // help mode
   string input;
   std::vector<std::string> args;
-}
-param={"",
+} Param;
+Q_GLOBAL_STATIC_WITH_ARGS(Param, param, ({"",
        "",
        "",
        false,
@@ -67,7 +67,7 @@ param={"",
        false,
        false,
        "",
-       vector<string>()};
+       vector<string>()}));
 
 void readCommandLineArguments(uint64_t argc, char *argv[])
 {
@@ -76,34 +76,34 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     string arg(argv[i]);
     std::string::size_type pos;
     if (arg=="-h" || arg=="--help")
-      param.help=true;
+      param->help=true;
     else if ( (pos = arg.find("--code=")) != std::string::npos )
     {
-      param.codeFile = arg.substr(pos+7);
+      param->codeFile = arg.substr(pos+7);
     }
     else if ( (pos = arg.find("--language=")) != std::string::npos )
     {
-      param.language = arg.substr(pos+11);
+      param->language = arg.substr(pos+11);
     }
     else if ( (pos = arg.find("--output=")) != std::string::npos )
     {
-      param.outputFile=arg.substr(pos+9);
+      param->outputFile=arg.substr(pos+9);
     }
     else if ( (pos = arg.find("--decode")) != std::string::npos )
     {
-      param.decode=true;
+      param->decode=true;
     }
     else if ( (pos = arg.find("--encode")) != std::string::npos )
     {
-      param.encode=true;
+      param->encode=true;
     }
     else if ( (pos = arg.find("--check")) != std::string::npos )
     {
-      param.check=true;
+      param->check=true;
     }
     else if ( (pos = arg.find("--input=")) != std::string::npos )
     {
-      param.input = arg.substr(pos+8);
+      param->input = arg.substr(pos+8);
     }
     else if (arg[0]=='-')
     {
@@ -113,7 +113,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     }
     else
     {
-      param.args.push_back(arg);
+      param->args.push_back(arg);
     }
   }
 
@@ -153,7 +153,7 @@ int run(int argc,char** argv)
   Lima::AmosePluginsManager::single();
   
   readCommandLineArguments(argc,argv);
-  if (param.help)
+  if (param->help)
   {
     usage(argc,argv);
     exit(0);
@@ -162,27 +162,27 @@ int run(int argc,char** argv)
   std::string resourcesPath=(getenv("LIMA_RESOURCES")!=0)?string(getenv("LIMA_RESOURCES")):string("/usr/share/apps/lima/resources");
   std::string configDir=(getenv("LIMA_CONF")!=0)?string(getenv("LIMA_CONF")):string("/usr/share/config/lima");
 
-  if (param.codeFile == "")
+  if (param->codeFile == "")
   {
-    if (param.language == "")
+    if (param->language == "")
     {
       cerr << "no codefile nor language specified !" << endl;
       exit(1);
     }
-    param.codeFile=resourcesPath+"/LinguisticProcessings/"+param.language+"/code-"+param.language+".xml";
+    param->codeFile=resourcesPath+"/LinguisticProcessings/"+param->language+"/code-"+param->language+".xml";
   }
 
   PropertyCodeManager propcodemanager;
-  propcodemanager.readFromXmlFile(param.codeFile);
+  propcodemanager.readFromXmlFile(param->codeFile);
 
-  if (param.outputFile != "")
+  if (param->outputFile != "")
   {
     // print debug file
 
-    ofstream fout(param.outputFile.c_str(), std::ofstream::binary);
+    ofstream fout(param->outputFile.c_str(), std::ofstream::binary);
 
     fout << "#" << endl;
-    fout << "# Automatically generated from " << param.codeFile << endl;
+    fout << "# Automatically generated from " << param->codeFile << endl;
     fout << "#" << endl << endl;
     const std::map<std::string,PropertyManager>& managers=propcodemanager.getPropertyManagers();
     for (std::map<std::string,PropertyManager>::const_iterator propItr=managers.begin();
@@ -200,13 +200,13 @@ int run(int argc,char** argv)
     }
   }
 
-  if (param.decode)
+  if (param->decode)
   {
     // decode numeric properties
-    if (param.input == "")
+    if (param->input == "")
     {
-      for (vector<string>::const_iterator argItr=param.args.begin();
-           argItr!=param.args.end();
+      for (vector<string>::const_iterator argItr=param->args.begin();
+           argItr!=param->args.end();
            argItr++)
       {
         LinguisticCode prop(atoi(argItr->c_str()));
@@ -215,7 +215,7 @@ int run(int argc,char** argv)
     }
     else
     {
-      ifstream fin(param.input.c_str(), std::ifstream::binary);
+      ifstream fin(param->input.c_str(), std::ifstream::binary);
       string line;
       while (fin.good() && !fin.eof())
       {
@@ -227,22 +227,22 @@ int run(int argc,char** argv)
       }
     }
   }
-  else if (param.encode)
+  else if (param->encode)
   {
-    encode(propcodemanager,param.args);
+    encode(propcodemanager,param->args);
   }
-  else if (param.check)
+  else if (param->check)
   {
     // check numeric properties
 
-    if (param.args.size() < 2)
+    if (param->args.size() < 2)
     {
       cout << "Needs two args to check equality !!" << endl;
       exit(0);
     }
 
-    LinguisticCode p1(atoi(param.args[0].c_str()));
-    LinguisticCode p2(atoi(param.args[1].c_str()));
+    LinguisticCode p1(atoi(param->args[0].c_str()));
+    LinguisticCode p2(atoi(param->args[1].c_str()));
 
     check(propcodemanager,p1,p2);
 

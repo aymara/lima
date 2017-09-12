@@ -29,7 +29,7 @@
 
 #include "CorefSolvingExport.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
@@ -102,11 +102,11 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
 
   LimaStatusCode process(
-    AnalysisContent& analysis) const;
+    AnalysisContent& analysis) const override;
 
 protected:
 
@@ -114,7 +114,6 @@ private:
 
   std::string m_outputSuffix;
   std::string m_graphId;
-  const Common::PropertyCode::PropertyCodeManager* m_propertyCodeManager;
   MediaId m_language;
 //   std::set<DependencyGraphVertex> m_alreadyProcessedVertexs;
 //   std::set<DependencyGraphVertex> m_alreadyProcessedTargets;

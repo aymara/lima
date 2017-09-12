@@ -98,10 +98,13 @@ private:
   *         displayed in the case where the given annotation is not a specific entity
   *         annotation and UNKNOWN_ERROR is returned .
   */
-class LIMA_AUTOMATON_EXPORT DumpSpecificEntityAnnotation : public Common::AnnotationGraphs::AnnotationData::Dumper {
-  public:
-    virtual ~DumpSpecificEntityAnnotation() {}
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+class LIMA_AUTOMATON_EXPORT DumpSpecificEntityAnnotation : 
+    public Common::AnnotationGraphs::AnnotationData::Dumper 
+{
+public:
+  virtual ~DumpSpecificEntityAnnotation() {}
+  virtual int dump(std::ostream& os, 
+                    Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 

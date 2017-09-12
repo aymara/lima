@@ -97,7 +97,7 @@ void SetTransition::copy(const SetTransition& t)
 std::string SetTransition::printValue() const
 {
   ostringstream oss;
-  oss << "SET:";
+  oss << "setT:";
   if (m_words.empty())
   {
     return oss.str();
@@ -105,9 +105,14 @@ std::string SetTransition::printValue() const
   set<Tword>::const_iterator w=m_words.begin();
   oss << *w;
   w++;
+  int printMaxV=8;
   for (; w!=m_words.end(); w++)
   {
     oss << ";" << *w;
+    if(--printMaxV==0) {
+      oss << "..." << *w;
+      break;
+    }
   }
   return oss.str();
 }

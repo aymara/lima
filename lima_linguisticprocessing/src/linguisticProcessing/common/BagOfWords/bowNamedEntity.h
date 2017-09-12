@@ -63,7 +63,7 @@ public:
 
   virtual ~BoWNamedEntity();
 
-  virtual BoWNamedEntity* clone() const;
+  virtual BoWNamedEntity* clone() const override;
 //   virtual BoWNamedEntity* clone(const std::map<BoWToken*,BoWToken*>&) const;
 
   BoWNamedEntity& operator=(const BoWNamedEntity&);
@@ -76,7 +76,7 @@ public:
   void setFeature(const std::string& attribute,
                   const LimaString& value); 
   
-  virtual BoWType getType() const { return BoWType::BOW_NAMEDENTITY; }
+  virtual BoWType getType() const override { return BoWType::BOW_NAMEDENTITY; }
 
   /**
    * get a string of the features, of the kind :
@@ -84,8 +84,8 @@ public:
    */
   std::string getFeaturesUTF8String(void) const;
   /** get a string of the BoWToken for output function */
-  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
-  virtual std::string getIdUTF8String(void) const;
+  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const override;
+  virtual std::string getIdUTF8String(void) const override;
   
   /**
    * returns a singleton made of the value of the @ref getVertex function.
@@ -97,7 +97,7 @@ public:
    *
    * @return a singleton made of the value of the @ref getVertex function
    */
-  virtual std::set< uint64_t > getVertices() const
+  virtual std::set< uint64_t > getVertices() const override
   {
     return BoWToken::getVertices();
   }

@@ -22,24 +22,38 @@ add_definitions(-DLIMA_LPMISC_EXPORTING)
 
 SET(lima-lp-misc_LIB_SRCS
 #   textFormater.cpp
+  AbstractLinguisticLogger.cpp
   positionLengthList.cpp
 )
 
 add_library(lima-lp-misc SHARED ${lima-lp-misc_LIB_SRCS})
 
-target_link_libraries(lima-lp-misc lima-common-data ${QT_LIBRARIES} lima-common-qslog)
+target_link_libraries(lima-lp-misc 
+  lima-common-mediaprocessors 
+  lima-common-mediaticdata 
+  lima-common-processunitframework
+  lima-common-fsaaccess 
+  lima-common-factory 
+  lima-common-xmlconfigurationfiles 
+  lima-common-misc
+  lima-common-time 
+  lima-common-datahandler
+  lima-common-data 
+  lima-common-tools
+  ${QT_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
 
 set_target_properties(lima-lp-misc PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-misc DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-misc DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
 install(FILES
-#   AbstractEnhancedAccess.h
-#   PortableGetTimeOfDay.h
-#   S2ByteString.h
-#   textFormater.h
-#   lic2mLogger.h
+    AbstractLinguisticLogger.h 
     positionLengthList.h
-  DESTINATION include/linguisticProcessing/common/misc)
+  DESTINATION include/linguisticProcessing/common/misc
+  COMPONENT devel
+)

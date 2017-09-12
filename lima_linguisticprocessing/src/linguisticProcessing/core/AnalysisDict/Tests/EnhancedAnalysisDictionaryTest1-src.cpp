@@ -16,6 +16,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
+// clazy:skip
+
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE EnhancedAnalysisDictionaryTest
 #include <boost/test/unit_test.hpp>
@@ -25,11 +27,11 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "linguisticProcessing/core/AnalysisDict/EnhancedAnalysisDictionary.h"
-#include "linguisticProcessing/core/AnalysisDict/AbstractAccessResource.h"
 #include "linguisticProcessing/core/AnalysisDict/FsaAccessResource.h"
 #include "linguisticProcessing/core/AnalysisDict/AbstractDictionaryEntry.h"
 #include "linguisticProcessing/core/MorphologicAnalysis/MorphoSyntacticDataHandler.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 #include "common/misc/fsaStringsPool.h"
 
 using namespace Lima;

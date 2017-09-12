@@ -478,7 +478,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         // 10  PHEAD   Projective head of current token, which is either a value of ID or zero ('0'), or an underscore if not available. Note that depending on the original treebank annotation, there may be multiple tokens an with ID of zero. The dependency structure resulting from the PHEAD column is guaranteed to be projective (but is not available for all languages), whereas the structures resulting from the HEAD column will be non-projective for some sentences of some languages (but is always available).
         // 11  PDEPREL   Dependency relation to the PHEAD, or an underscore if not available. The set of dependency relations depends on the particular language. Note that depending on the original treebank annotation, the dependency relation may be meaningfull or simply 'ROOT'.
 
-        QString targetConllIdString = targetConllId > 0 ? QString("%1").arg(targetConllId) : "_";
+        QString targetConllIdString = targetConllId > 0 ? QString(QLatin1String("%1")).arg(targetConllId) : "_";
         dstream->out()  << tokenId 
                         << "\t" << inflectedToken 
                         << "\t" << lemmatizedToken 

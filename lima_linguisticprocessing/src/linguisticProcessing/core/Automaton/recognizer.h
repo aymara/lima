@@ -89,6 +89,8 @@ typedef std::vector<Rule*> SetOfRules;
  */
 class LIMA_AUTOMATON_EXPORT Recognizer : public AbstractResource
 {
+  Q_OBJECT
+
 friend class AutomatonReader;
 friend class AutomatonWriter;
 
@@ -101,7 +103,7 @@ friend class AutomatonWriter;
   // initialization function
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
   
   // access functions

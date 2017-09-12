@@ -35,7 +35,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 // #include "common/linguisticData/linguisticData.h"
 #include "common/MediaProcessors/MediaProcessors.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 //#include "linguisticProcessing/core/PosTagger/greedyPosTagger.h"

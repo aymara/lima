@@ -27,7 +27,7 @@
  ***************************************************************************/
 #include "StatusLogger.h"
 #include "LinguisticMetaData.h"
-#include "LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 
 #include "common/Data/strwstrtools.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"

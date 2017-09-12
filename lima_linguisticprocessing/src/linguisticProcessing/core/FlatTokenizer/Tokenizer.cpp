@@ -32,7 +32,7 @@
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/tools/FileUtils.h"
@@ -52,8 +52,7 @@ namespace LinguisticProcessing
 namespace FlatTokenizer
 {
 
-static SimpleFactory<MediaProcessUnit,Tokenizer> tokenizerFactory(FLATTOKENIZER_CLASSID);
-
+static SimpleFactory<MediaProcessUnit,Tokenizer> tokenizerFactory(FLATTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
 class TokenizerPrivate
 {
@@ -68,7 +67,8 @@ public:
 };
 
 TokenizerPrivate::TokenizerPrivate() : _automaton()
-{}
+{
+}
 
 TokenizerPrivate::~TokenizerPrivate()
 {

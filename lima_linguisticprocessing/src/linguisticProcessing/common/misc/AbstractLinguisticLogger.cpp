@@ -79,6 +79,11 @@ openLogFile(std::ofstream& output,
   else {
     output.open(outputFile.c_str(), std::ofstream::binary);
   }
+  if (!output.good())
+  {
+    CORECLIENTLOGINIT;
+    LERROR << "Can't open log file" << outputFile.c_str();
+  }
   return output.good();
 }
 

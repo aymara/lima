@@ -25,11 +25,14 @@
 #include "common/LimaCommon.h"
 
 #include "dummyProcessUnits.h"
-#include "common/ProcessUnitFramework/AnalysisContent.h"
+#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/ProcessUnitFramework/AnalysisContent.h"
+#include "common/tools/LimaMainTaskRunner.h"
 #include "common/XMLConfigurationFiles/moduleConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 
+#include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
 
 using namespace std;
@@ -44,9 +47,6 @@ template<> MainFactory< RegistrableFactory< InitializableObjectFactory< DummyPro
 
 
 //****************************************************************************
-#include "common/tools/LimaMainTaskRunner.h"
-#include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-#include <QtCore/QTimer>
 
 int run(int aargc,char** aargv);
 
@@ -72,6 +72,8 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
+  LIMA_UNUSED(argc);
+  LIMA_UNUSED(argv);
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();

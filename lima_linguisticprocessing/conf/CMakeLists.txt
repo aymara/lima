@@ -27,4 +27,5 @@ install(FILES
   lima-lp-tva-por.xml
   lima-server.xml
   lima-dbusserver.xml 
-  DESTINATION share/config/lima)
+  DESTINATION share/config/lima
+  COMPONENT runtime)

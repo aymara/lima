@@ -28,18 +28,18 @@ add_library(lima-lp-linguisticdata SHARED ${lima-lp-linguisticdata_LIB_SRCS})
 
 target_link_libraries(lima-lp-linguisticdata 
   lima-lp-propertycode 
-  lima-common-data
-  lima-common-factory 
-  lima-common-mediaticdata 
-  lima-common-xmlconfigurationfiles
 )
 
 set_target_properties(lima-lp-linguisticdata PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticdata DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-linguisticdata DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
 install(FILES
     languageData.h
-  DESTINATION include/linguisticProcessing/common/linguisticData)
+    LimaStringText.h 
+  DESTINATION include/linguisticProcessing/common/linguisticData
+  COMPONENT devel
+)

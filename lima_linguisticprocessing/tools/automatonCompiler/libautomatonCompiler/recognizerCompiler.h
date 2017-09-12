@@ -139,10 +139,10 @@ class LIMA_AUTOMATONCOMPILER_EXPORT RecognizerCompiler
                                   const bool headTrigger=false);
   double currentRuleWeight();
 
-  bool checkRule(const Rule& rule,
-                 const TransitionUnit* trigger,
-                 MediaId language,
-                 std::ostringstream& message) const;
+//   bool checkRule(const Rule& rule,
+//                  const TransitionUnit* trigger,
+//                  MediaId language,
+//                  std::ostringstream& message) const;
   
 };
 

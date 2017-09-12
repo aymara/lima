@@ -19,6 +19,11 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_SYNTACTICANALYSIS_EXPORTING)
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(syntacticanalysis
+  SyntagmaticMatrix.h
+  SelectionalPreferences.h
+)
+
 SET(lima-lp-syntacticanalysis_LIB_SRCS
    SyntacticRelationsLogger.cpp
    SyntacticAnalysisXmlLogger.cpp
@@ -69,7 +74,8 @@ target_link_libraries(lima-lp-syntacticanalysis
 
 set_target_properties(lima-lp-syntacticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-syntacticanalysis DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-syntacticanalysis DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
@@ -96,4 +102,6 @@ install(FILES  SyntacticRelationsLogger.h
     TokenFilter.h    
     XmlSyntagmaticMatrixFileExceptions.h    
     XmlSyntagmaticMatrixFileHandler.h 
-  DESTINATION include/linguisticProcessing/core/SyntacticAnalysis)
+  DESTINATION include/linguisticProcessing/core/SyntacticAnalysis
+  COMPONENT devel
+)

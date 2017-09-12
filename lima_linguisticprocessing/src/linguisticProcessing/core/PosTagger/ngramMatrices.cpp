@@ -139,7 +139,7 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
       {
           PTLOGINIT;
           LERROR << "Invalid trigram line " << linenum << " in: " << fileName;
-          throw(std::runtime_error("invalid trigram line: " + linenum));
+          throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
       }
 
       //      LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"]";
@@ -251,12 +251,16 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
       std::istringstream sprobaStream(sproba);
       sprobaStream >> proba;
     }
+<<<<<<< HEAD
     else 
     {
         PTLOGINIT;
         LERROR << "Invalid bigram line " << linenum << " in: " << fileName;
         throw(std::runtime_error("invalid bigram line: " + linenum));
     }
+=======
+    else throw(std::runtime_error(QString::fromUtf8("invalid bigram line: %1").arg(linenum).toUtf8().constData()));
+>>>>>>> origin/master
 
     //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]";
     m_bigrams[bigram[0]][bigram[1]] = proba;

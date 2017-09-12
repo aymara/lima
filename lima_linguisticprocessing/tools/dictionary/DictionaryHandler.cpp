@@ -76,10 +76,19 @@ DictionaryCompiler::DictionaryCompiler(
   m_strCache.resize(5,make_pair(LimaString(),0));
 }
 
-DictionaryCompiler::~DictionaryCompiler() {}
-
-bool DictionaryCompiler::startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes)
+DictionaryCompiler::~DictionaryCompiler() 
 {
+  delete[] m_codedintbuf;
+  delete[] m_charbuf;
+}
+
+bool DictionaryCompiler::startElement(const QString & namespaceURI, 
+                                      const QString & name, 
+                                      const QString & qName, 
+                                      const QXmlAttributes & attributes)
+{
+  LIMA_UNUSED(namespaceURI)
+  LIMA_UNUSED(qName)
   ANALYSISDICTLOGINIT;
 //   LDEBUG << "startElement : " << name;
   if (name==S_ENTRY)
@@ -341,8 +350,12 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI, const QStrin
   
 }
 
-bool DictionaryCompiler::endElement(const QString& namespaceURI, const QString& name, const QString & qName)
+bool DictionaryCompiler::endElement(const QString& namespaceURI, 
+                                    const QString& name, 
+                                    const QString & qName)
 {
+  LIMA_UNUSED(namespaceURI)
+  LIMA_UNUSED(qName)
   //  cerr << "endElement " << name << endl;
   if (name==S_ENTRY)
   {

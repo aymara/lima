@@ -263,21 +263,29 @@ updateCurrentDate(AnalysisContent& analysis,
 
 unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) const
 {
+#ifdef DEBUG_LP
   SELOGINIT;
+#endif
   // try to extract number as int from string <number><ordinalSuffix> like 4th, 22nd, 1st or <number> like 17
   unsigned short day =  m_resources->getValueFromNumberOrdinal(numdayString);
+#ifdef DEBUG_LP
   LDEBUG << "NormalizeDate::getDayFromString: testConversion 1 of " << numdayString << "1 day=" << day;
+#endif
   // try first conversion of type "premier" -> 1
   // then try conversion of type "10th" -> 10
   if( day == NormalizeDateTimeResources::no_day ) {
     day =  m_resources->getValueFromWordCardinalOrOrdinal(numdayString);
+#ifdef DEBUG_LP
     LDEBUG << "NormalizeDate::getDayFromString: testConversion 2 of " << numdayString << "1 day=" << day;
+#endif
   }
   // then try conversion of type "10" -> 10
   if( day == NormalizeDateTimeResources::no_day ) {
     bool ok;
     day = numdayString.toUShort(&ok);
+#ifdef DEBUG_LP
     LDEBUG << "NormalizeDate::getDayFromString: testConversion 3 of " << numdayString << "1 day=" << day;
+#endif
     if( !ok )
       day = NormalizeDateTimeResources::no_day;
   }
@@ -356,8 +364,8 @@ operator()(RecognizerMatch& m,
       const TStatus& status=t->status();
       if (status.getNumeric()==T_FRACTION) {
         uint64_t pos(t->stringForm().indexOf(LimaChar('/')));
-        uint64_t val1=t->stringForm().left(pos).toUInt();
-        uint64_t val2=t->stringForm().mid(pos+1).toUInt();
+        uint64_t val1=t->stringForm().leftRef(pos).toUInt();
+        uint64_t val2=t->stringForm().midRef(pos+1).toUInt();
         if (val1 > 31) {
           //assume year
           if (year == 0) year=val1;
@@ -549,7 +557,7 @@ operator()(RecognizerMatch& m,
   }
   else {
     // dateSpan.append(QString::number(month));
-    QString monthString = QString("%1").arg(month, 2, 10, QLatin1Char('0'));
+    QString monthString = QString(QLatin1String("%1")).arg(month, 2, 10, QLatin1Char('0'));
     dateSpan.append(monthString);
 #ifdef DEBUG_LP
     LDEBUG << "NormalizeDate operator(): year + month dateSpan=" << dateSpan;
@@ -563,7 +571,7 @@ operator()(RecognizerMatch& m,
     }
     else {
       // QString QString::arg(int integerVar, int fieldWidth = 0, int base = 10, const QChar & fillChar = QLatin1Char( ' ' )) const
-      QString dayString = QString("%1").arg(day, 2, 10, QLatin1Char('0'));
+      QString dayString = QString(QLatin1String("%1")).arg(day, 2, 10, QLatin1Char('0'));
       dateSpan.append(dayString);
 #ifdef DEBUG_LP
       LDEBUG << "NormalizeDate operator(): year + month + day dateSpan=" << dateSpan;
@@ -770,6 +778,10 @@ m_referenceData()
 QTime NormalizeTime::
 getTimeDuration(const RecognizerMatch& m) const
 {
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "NormalizeTime::getTimeDuration...";
+#endif
   QTime timeDuration;
   
   unsigned short hou(0),min(0),sec(0);
@@ -797,6 +809,10 @@ getTimeDuration(const RecognizerMatch& m) const
       sec = (*m.features().find("second")).getValueLimaString().toUShort();
     }
   }
+
+#ifdef DEBUG_LP
+  LDEBUG << "NormalizeTime::getTimeDuration h=" << hou << ",m=" << min << ",s" << sec;
+#endif
 
   if (m.features().find("time") != m.features().end()) {
     std::string timeString=(*m.features().find("time")).getValueLimaString().toUtf8().constData();
@@ -893,6 +909,7 @@ operator()(RecognizerMatch& m,
       if (!utc.isValid()) {
         SELOGINIT;
         LWARN << "failed to normalize time: ";
+        LDEBUG << "NormalizeLocalTime::operator(): m.getString()=" << m.getString();
         m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
       }
       else {
@@ -923,11 +940,18 @@ operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const 
 {
   // do not use a reference location, time is supposed to be UTC already
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "NormalizeUTCTime::operator()...";
+#endif
 
   // get reference date
   QDate referenceDate;
   if (! getReferenceData().getReferenceDate(analysis,referenceDate)) {
     m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
+#ifdef DEBUG_LP
+    LDEBUG << "NormalizeUTCTime::operator: setFeature(TIMESTRING_FEATURE_NAME=" << m.getString();
+#endif
     return true;
   }
   

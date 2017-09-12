@@ -33,13 +33,12 @@ SET(lima-common-data_LIB_SRCS
 add_library(lima-common-data SHARED ${lima-common-data_LIB_SRCS})
 
 target_link_libraries(lima-common-data 
-  lima-common-qslog
-  ${BOOST_LIBRARIES} 
-  ${QT_LIBRARIES}
+  lima-common-tools
 )
 
 set_target_properties(lima-common-data PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-data DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-data DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
@@ -50,4 +49,6 @@ install(FILES
     LimaString.h
     readwritetools.h
     strwstrtools.h
-  DESTINATION include/common/Data)
+  DESTINATION include/common/Data
+  COMPONENT devel
+)

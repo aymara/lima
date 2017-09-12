@@ -22,4 +22,6 @@ install(FILES
     IndirectDataDico.h IndirectDataDico.tcc
     SimpleDataDico.h  SimpleDataDico.tcc
     StringMap.h  StringMap.tcc
-  DESTINATION include/common/StringMap)
+  DESTINATION include/common/StringMap
+  COMPONENT devel
+)

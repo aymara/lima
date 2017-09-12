@@ -36,6 +36,8 @@
 #include <boost/regex.hpp>
 #include <math.h>
 
+#include <QtGlobal>
+
 using namespace std;
 using namespace boost;
 // using namespace Lima;
@@ -48,11 +50,11 @@ typedef map<string,string> TextMap;
 typedef map<string,bool> DefinitesMap;
 
 //help mode & usage
-static const string USAGE("usage: evalCoref [-p] [-r] [-d] [-v] limaCSV corpusCSV outputFile\n"
+Q_GLOBAL_STATIC_WITH_ARGS(std::string, USAGE, ( "usage: evalCoref [-p] [-r] [-d] [-v] limaCSV corpusCSV outputFile\n"
 " -p precision\n"
 " -r recall\n"
 " -d processDefinites\n"
-" -v verbose\n"); 
+" -v verbose\n" ) ); 
 double prec = 0;
 double rec = 0;
 
@@ -146,7 +148,7 @@ int dowork(int argc,char* argv[])
       if ( arg[0] == '-' )
       {
         if (arg == "--help" || arg == "-h")
-          cout << USAGE << endl;
+          cout << *USAGE << endl;
         else if (arg == "-p")
           precision=true;
         else if (arg == "-r")
@@ -155,7 +157,7 @@ int dowork(int argc,char* argv[])
           processDefinites=true;
         else if (arg == "-v")
           verbose=true;
-        else cout << USAGE << endl;
+        else cout << *USAGE << endl;
       }
       else
       {

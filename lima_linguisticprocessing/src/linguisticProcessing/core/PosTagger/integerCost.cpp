@@ -69,14 +69,18 @@ IntegerCost& IntegerCost::operator+=(const IntegerCost& fc)
 IntegerCostFunction::IntegerCostFunction()
 {}
 
-IntegerCostFunction::IntegerCostFunction(
-  const IntegerCostFunction& cf)
-{}
+IntegerCostFunction::IntegerCostFunction(const IntegerCostFunction& cf)
+{
+  LIMA_UNUSED(cf)
+}
 
 IntegerCostFunction::~IntegerCostFunction() {}
 
 IntegerCost IntegerCostFunction::operator()(Lima::LinguisticCode cat1, Lima::LinguisticCode cat2, Lima::LinguisticCode cat3) const
 {
+  LIMA_UNUSED(cat1)
+  LIMA_UNUSED(cat2)
+  LIMA_UNUSED(cat3)
   return IntegerCost(0);
 }
 

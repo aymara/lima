@@ -223,12 +223,14 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   QStringList pathsList = paths.split(separator);
   Q_FOREACH(QString path, pathsList)
   {
-    if (QFileInfo(path+ "/" + fileName).exists())
+    if (QFileInfo::exists(path+ "/" + fileName))
     {
+#ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
       {
-        LOGINIT("FilesReporting");
-        LDEBUG << "File found:" << path+ "/" + fileName;
+      LOGINIT("FilesReporting");
+      LDEBUG << "File found:" << path+ "/" + fileName;
       }
+#endif
       return path+ "/" + fileName;
     }
   }

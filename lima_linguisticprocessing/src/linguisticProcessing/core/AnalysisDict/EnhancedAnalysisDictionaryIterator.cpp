@@ -44,7 +44,7 @@ EnhancedAnalysisDictionarySubWordIterator::~EnhancedAnalysisDictionarySubWordIte
 const std::pair<uint64_t,DictionaryEntry>
 EnhancedAnalysisDictionarySubWordIterator::operator*() const
 {
-  const std::pair<uint64_t,uint64_t> pos = *m_accessItr;
+  const std::pair<uint64_t,uint64_t> pos = *m_accessItr; // clazy:exclude=rule-of-two-soft
   return std::make_pair(pos.first,m_dico.getEntryData(static_cast<StringsPoolIndex>(pos.second)));
 }
 

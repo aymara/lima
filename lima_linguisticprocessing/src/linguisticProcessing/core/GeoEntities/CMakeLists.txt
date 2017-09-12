@@ -67,7 +67,8 @@ target_link_libraries(lima-lp-geoentitiestagger ${optionalLibs})
 
 set_target_properties(lima-lp-geoentitiestagger PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-geoentitiestagger DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-geoentitiestagger DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 SET(optionalLibs ${optionalLibs} lima-lp-geoentitiestagger)
 

@@ -28,7 +28,7 @@
 #define LIMA_POSTAGGER_DISAMBIGUATIONLOGGER_H
 
 #include "PosTaggerExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
 
@@ -50,11 +50,10 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
 
-  virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override;
 
 protected:
 

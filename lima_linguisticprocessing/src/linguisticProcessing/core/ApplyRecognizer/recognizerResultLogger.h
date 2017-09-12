@@ -34,7 +34,7 @@
 #define RECOGNIZERRESULTLOGGER_H
 
 #include "ApplyRecognizerExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -49,10 +49,9 @@ class LIMA_APPLYRECOGNIZER_EXPORT RecognizerResultLogger : public AbstractLingui
   ~RecognizerResultLogger();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
 
-  LimaStatusCode process(AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
  private:
   MediaId m_language;

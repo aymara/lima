@@ -64,7 +64,7 @@ EntityGroupTransition::~EntityGroupTransition() {}
 
 std::string EntityGroupTransition::printValue() const {
   ostringstream oss;
-  oss << "ENTITY_GROUP_" << m_entityGroupId;
+  oss << "entityGroupT_" << m_entityGroupId;
   return oss.str();
 }
 

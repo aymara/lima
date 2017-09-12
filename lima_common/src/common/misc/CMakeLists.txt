@@ -41,12 +41,11 @@ add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS} ${lima-common-m
 
 target_link_libraries(lima-common-misc 
   lima-common-data 
-  lima-common-qslog 
-  ${BOOST_LIBRARIES} 
-  ${QT_LIBRARIES})
+)
 
 set_target_properties(lima-common-misc PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-misc DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-misc DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 add_subdirectory(tests)
@@ -64,4 +63,6 @@ install(FILES
     depth_first_searchnowarn.hpp
     NodeRefListnowarn.hpp
     linenoise.h
-  DESTINATION include/common/misc)
+  DESTINATION include/common/misc
+  COMPONENT devel
+)

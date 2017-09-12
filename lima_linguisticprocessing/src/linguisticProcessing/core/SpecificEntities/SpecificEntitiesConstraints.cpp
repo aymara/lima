@@ -885,6 +885,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       recoData->setEntityFeature(m_featureName,featureValue);  
       break;
     case QVariant::Int:
+#ifdef DEBUG_LP
+      LDEBUG << "SetEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue.toInt() << ")";
+#endif
       recoData->setEntityFeature(m_featureName,featureValue.toInt());  
       break;
       
@@ -1011,8 +1014,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 AddEntityFeatureAsEntity::AddEntityFeatureAsEntity(MediaId language,
                                    const LimaString& complement):
 ConstraintFunction(language,complement),
-m_featureName(""),
-m_featureType(QVariant::UserType)
+m_featureName(),
+m_type()
 {
   if (complement.size()) {
     QStringList complementElements = complement.split(":");

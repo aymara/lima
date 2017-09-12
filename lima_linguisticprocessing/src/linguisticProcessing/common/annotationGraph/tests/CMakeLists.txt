@@ -26,7 +26,7 @@ add_executable(AnnotationGraphTest0 ${AnnotationGraphTest0_SRCS})
 
 target_link_libraries(AnnotationGraphTest0
   lima-common-data
-  lima-common-qslog
+  lima-common-tools
   lima-lp-annotationgraph
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}

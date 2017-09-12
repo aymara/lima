@@ -36,10 +36,13 @@ SET(lima-common-fsaaccess_LIB_SRCS
 
 add_library(lima-common-fsaaccess SHARED ${lima-common-fsaaccess_LIB_SRCS})
 
-target_link_libraries(lima-common-fsaaccess lima-common-data lima-common-misc)
+target_link_libraries(lima-common-fsaaccess 
+  lima-common-misc
+)
 
 set_target_properties(lima-common-fsaaccess PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-fsaaccess DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-fsaaccess DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
@@ -60,4 +63,6 @@ install(FILES
     FsaAccessBuilder16.h
     FsaExceptions.h
     AbstractLexiconIdGenerator.h
- DESTINATION include/common/FsaAccess)
+  DESTINATION include/common/FsaAccess
+  COMPONENT devel
+)

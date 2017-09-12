@@ -52,15 +52,15 @@ public:
     XMLConfigurationFileHandler(    ConfigurationStructure& theConfiguration);
     virtual ~XMLConfigurationFileHandler();
 
-    bool error(const QXmlParseException& e);
-    bool fatalError(const QXmlParseException& e);
-    bool warning(const QXmlParseException& e);
+    bool error(const QXmlParseException& e) override;
+    bool fatalError(const QXmlParseException& e) override;
+    bool warning(const QXmlParseException& e) override;
     
     // -----------------------------------------------------------------------
     //  Implementations of the SAX DocumentHandler interface
     // -----------------------------------------------------------------------
-    bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
-    bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
+    bool endElement(const QString & namespaceURI, const QString & name, const QString & qName) override;
+    bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes) override;
 
 private:
     /*

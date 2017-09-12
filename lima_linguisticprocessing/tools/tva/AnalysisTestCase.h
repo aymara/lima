@@ -50,7 +50,7 @@ public:
   
   ~AnalysisTestCaseProcessor() {}
 
-  Lima::Common::TGV::TestCaseError processTestCase(const Lima::Common::TGV::TestCase& testCase);
+  Lima::Common::TGV::TestCaseError processTestCase(const Lima::Common::TGV::TestCase& testCase) override;
 
 private:
   

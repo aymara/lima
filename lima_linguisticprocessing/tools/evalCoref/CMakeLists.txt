@@ -25,8 +25,8 @@ SET(XmlParser_SRCS
 add_executable(XmlParser ${XmlParser_SRCS})
 
 target_link_libraries(XmlParser 
-  lima-common-misc lima-common-tools
-  lima-common-qslog 
+  lima-common-misc
+  lima-common-tools 
   lima-common-time 
   lima-common-data 
   ${optionalLibs}
@@ -34,7 +34,8 @@ target_link_libraries(XmlParser
   ${QT_LIBRARIES} 
 )
 
-install(TARGETS XmlParser DESTINATION bin)
+install(TARGETS XmlParser DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -45,9 +46,10 @@ SET(evalCoref_SRCS
 
 add_executable(evalCoref ${evalCoref_SRCS})
 
-target_link_libraries(evalCoref lima-lp-analysisdict lima-lp-linguisticanalysisstructure lima-lp-annotationgraph lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-specificentities lima-lp-syntacticanalysis lima-lp-flattokenizer lima-common-fsaaccess lima-common-factory lima-common-time lima-common-misc lima-common-tools ${Boost_LIBRARIES} lima-common-data  ${QT_LIBRARIES} lima-common-qslog lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework lima-lp-textsegmentation lima-common-factory lima-common-xmlconfigurationfiles ${optionalLibs})
+target_link_libraries(evalCoref lima-linguisticprocessing)
 
-install(TARGETS evalCoref DESTINATION bin)
+install(TARGETS evalCoref DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

@@ -59,10 +59,8 @@ namespace FsaAccess {
    FsaAccessSpare16(bool trie_direction_fwd=true);
    ~FsaAccessSpare16();
     // For IO
-    FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const;
+    FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const override;
 
-  private:
-    dict_packing_type m_packingStatus;
 };
 
 } // namespace compactDict

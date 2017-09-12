@@ -73,15 +73,18 @@ endif()
 
 set_target_properties(lima-lp-semanticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-semanticanalysis DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-semanticanalysis DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
 
 install(FILES  
-SemanticAnnotation.h 
-SemanticRelationAnnotation.h 
-SemanticRelationData.h 
-SemanticRelationsXmlLogger.h 
-SemanticAnalysisExport.h
-DESTINATION include/linguisticProcessing/core/SemanticAnalysis)
+    SemanticAnnotation.h 
+    SemanticRelationAnnotation.h 
+    SemanticRelationData.h 
+    SemanticRelationsXmlLogger.h 
+    SemanticAnalysisExport.h
+  DESTINATION include/linguisticProcessing/core/SemanticAnalysis
+  COMPONENT devel
+)

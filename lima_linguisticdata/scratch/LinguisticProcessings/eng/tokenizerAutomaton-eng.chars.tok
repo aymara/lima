@@ -69,8 +69,8 @@ chars {
 0029, RIGHT PARENTHESIS, c_del1 ;
 002A, ASTERISK, c_del1 ;
 002B, PLUS SIGN, c_plus ;
-002C, COMMA, c_comma ;
-002D, HYPHEN-MINUS, m_pattern ;
+002C, COMMA, c_comma, u002C ;
+002D, HYPHEN-MINUS, m_pattern, u002D ;
 002E, FULL STOP, c_dot ;
 002F, SOLIDUS, c_slash ;
 0030, DIGIT ZERO, c_5, m0030 ;

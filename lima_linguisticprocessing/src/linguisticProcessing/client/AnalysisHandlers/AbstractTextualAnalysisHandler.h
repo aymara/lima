@@ -29,6 +29,7 @@
 #define ABSTRACTTEXTUALANALYSISHANDLER_H
 
 #include <sstream>
+#include "AnalysisHandlersExport.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
 #include "common/Handler/AbstractXmlAnalysisHandler.h"
 #include "common/Data/genericDocumentProperties.h"
@@ -37,8 +38,11 @@
 namespace Lima{
 
 //! @brief defines callback interface
-class AbstractTextualAnalysisHandler: public AbstractXmlAnalysisHandler,  public LinguisticProcessing::AbstractResource
+class LIMA_ANALYSISHANDLERS_EXPORT AbstractTextualAnalysisHandler : 
+    public LinguisticProcessing::AbstractResource, 
+    public AbstractXmlAnalysisHandler
 {
+  Q_OBJECT
 public:
   virtual ~AbstractTextualAnalysisHandler() {};
   
@@ -52,7 +56,7 @@ public:
   */
   virtual void init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-                    Manager* manager)
+                    Manager* manager) override
   {
     LIMA_UNUSED(manager);
     try {

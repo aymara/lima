@@ -24,7 +24,7 @@
 #define COMPOUNDSXMLLOGGERSPECIFICENTITIESXMLLOGGER_H
 
 #include "AnalysisDumpersExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
@@ -63,11 +63,9 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   void dumpLimaData(

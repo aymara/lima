@@ -37,7 +37,7 @@
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "common/MediaProcessors/MediaProcessors.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "common/MediaProcessors/MediaProcessUnitPipeline.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
@@ -281,7 +281,7 @@ void CoreLinguisticProcessingClientFactory::configure(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
              *langItr).c_str());
-        if  (QFileInfo(confPath + "/" + mediaProcessingDefinitionFile).exists())
+        if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
         {
           file= (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
           break;

@@ -26,47 +26,21 @@
 namespace Lima {
 namespace LinguisticProcessing {
 
-class AbstractResourcePrivate
-{
-friend  class AbstractResource;
-
-  AbstractResourcePrivate() {}
-  ~AbstractResourcePrivate() {}
-  AbstractResourcePrivate(const AbstractResourcePrivate&) {}
-    
-  LimaFileSystemWatcher m_resourceFileWatcher;
-};
-
 AbstractResource::AbstractResource( QObject* parent ) : 
-    QObject( parent ), 
-    InitializableObject<AbstractResource,ResourceInitializationParameters>(), 
-    m_d(new AbstractResourcePrivate())
+    AbstractResourceBase( parent ), 
+    InitializableObject<AbstractResource,ResourceInitializationParameters>()
 {
-  connect(&m_d->m_resourceFileWatcher,SIGNAL(fileChanged(QString)),this,SIGNAL(resourceFileChanged(QString)));
 }
 
 AbstractResource::~AbstractResource()
 {
-  delete m_d;
 }
 
 AbstractResource::AbstractResource(const AbstractResource& r) : 
-    QObject(r.parent()), 
-    InitializableObject<AbstractResource,ResourceInitializationParameters>(), 
-    m_d(new AbstractResourcePrivate(*r.m_d))
+    AbstractResourceBase(r.parent()), 
+    InitializableObject<AbstractResource,ResourceInitializationParameters>()
 {
-  connect(&m_d->m_resourceFileWatcher,SIGNAL(fileChanged(QString)),this,SIGNAL(resourceFileChanged(QString)));
 }
-
-LimaFileSystemWatcher& AbstractResource::resourceFileWatcher()
-{
-  return m_d->m_resourceFileWatcher;
-}
-// void AbstractResource::resourceFileChanged ( const QString & path )
-// {
-//   std::cerr << "AbstractResource::resourceFileChanged" << path.toUtf8().constData();
-// //   configure(path);
-// }
 
 
 } // LinguisticProcessing

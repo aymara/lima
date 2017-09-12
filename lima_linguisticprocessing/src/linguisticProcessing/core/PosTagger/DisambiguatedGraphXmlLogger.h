@@ -24,7 +24,7 @@
 #define LIMA_LINGUISTICPROCESSING_POSTAGGERDISAMBIGUATEDGRAPHXMLLOGGER_H
 
 #include "PosTaggerExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
 
 namespace Lima
@@ -48,11 +48,9 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   MediaId m_language;

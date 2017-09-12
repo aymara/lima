@@ -39,195 +39,47 @@
 #include <stdlib.h>
 
 /**
-        @author Claire Mouton, Guillaume Pitel <claire.mouton@cea.fr, guillaume.pitel@gmail.com>
+  @author Claire Mouton <claire.mouton@cea.fr>
+  @author Guillaume Pitel <guillaume.pitel@gmail.com>
+  @author Gael de Chalendar <gael.de-chalendar@cea.fr>
 */
 class LIMA_WORDSENSEANALYSIS_EXPORT LSHSignature
 {
-        public:
-                typedef uint64_t base;
-        private:
-                int precomputedCount;
-                base *data;
-                int bitLength;
-        public:
-                LSHSignature ( int bitLength );
-                LSHSignature ( const LSHSignature & s);
+public:
+  typedef uint64_t base;
 
-                ~LSHSignature();
+  LSHSignature ( int bitLength );
+  LSHSignature ( const LSHSignature & s);
+  LSHSignature& operator=( const LSHSignature & s);
 
-                base *getData() { return data; }
-    
-    int getBitLength() {return bitLength;}
+  ~LSHSignature();
 
-                inline void  setBit(uint b) {
-                  (data[b/(sizeof(base)*8)] = data[b/(sizeof(base)*8)] | ((base)1 << (b & ((sizeof(base)*8)-1)))) ;
-                }
+  base* getData();
 
-                inline void unsetBit(uint b) {
-                  (data[b/(sizeof(base)*8)] = data[b/(sizeof(base)*8)] & (~((base)1 << (b & ((sizeof(base)*8)-1))))) ;
-                }
+  int getBitLength();
 
-                inline bool getBit(uint b) {
-                  return  (data[b/(sizeof(base)*8)] & ((base)1 << (b & ((sizeof(base)*8)-1)))); 
-                }
+  void setBit(uint b);
+
+  void unsetBit(uint b);
+  bool getBit(uint b);
 
 
-    void merge(std::vector<LSHSignature>& sigs) {
-      for(int i = 0; i<bitLength; i++) {
-        int cnt0 = 0;
-        int cnt1 = 1;
-        for (std::vector<LSHSignature>::iterator it = sigs.begin(); it!=sigs.end(); it++) {
-          if(it->getBit(i)==1) {
-      cnt1++;
-          } else {
-      cnt0++;
-          }
-        }
-        if (cnt1>cnt0) {
-          setBit(i);
-        } else if (cnt0>cnt1) {
-          unsetBit(i);
-        } else {
-          // on garde le bit du noyau
-        }
-      }
-    }
+  void merge(std::vector<LSHSignature>& sigs);
 
-    void print(double rank, int limit)
-    {
-      std::ostringstream os;
-      os << rank << ":sig: ";
-      if (data!=NULL) {
-        for (int i = 0; i < limit; i++) {
-          os << getBit(i) ;
-        }
-      }
-      os << std::endl;
-      std::cerr << os.str();
-    }
-                
-                void xorX ( LSHSignature & signature )
-                {
-      if (bitLength > 0 ) {
-        if ( signature.bitLength != bitLength )
-          throw 0;
-        long l = bitLength / ( 8 * sizeof ( base ) );
-        base *xdata = signature.getData();
-        while ( l-- ) 
-          data[l] ^= xdata[l];
-        precomputedCount = -1;
-      }
-                }
+  void print(double rank, int limit);
 
-                int bitCount()
-                {
-      if (bitLength > 0) {
-                        unsigned char byteCount[256] =
-                            { 0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,
-                              1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                              1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                              2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                              1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                              2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                              2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                              3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                              1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                              2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                              2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                              3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                              2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                              3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                              3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                              4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
-                            };
-                        if ( precomputedCount >= 0 )
-                                return precomputedCount;
-                        register long l = bitLength / ( 8 * sizeof ( base ) );
-                        register int sum = 0;
-                        register unsigned char i;
-                        register base v;
-                        while ( l-- )
-                        {
-                                v = data[l];
-                                i = v & 0xff;
-                                sum += byteCount[i];
-                                i = ( v >> 8 ) & 0xff;
-                                sum += byteCount[i];
-                                i = ( v >> 16 ) & 0xff;
-                                sum += byteCount[i];
-                                i = ( v >> 24 ) & 0xff;
-                                sum += byteCount[i];
-        i = ( v >> 32 ) & 0xff;
-                                sum += byteCount[i];
-                                i = ( v >> 40 ) & 0xff;
-                                sum += byteCount[i];
-                                i = ( v >> 48 ) & 0xff;
-                                sum += byteCount[i];
-                                i = ( v >> 56 ) & 0xff;
-                                sum += byteCount[i];
-                        }
-                        precomputedCount = sum;
-                        return sum;
-      } else return 0;
-                }
-                
-                int bitCount64(int where)
-                {
-      if (bitLength > 0) {
-                  unsigned char byteCount[256] =
-                  { 0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,
-                  1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                  1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                  2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                  1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                  2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                  2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                  3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                  1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
-                  2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                  2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                  3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                  2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
-                  3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                  3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
-                  4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
-                  };
-                  
-                  register int sum = 0;
-                  register unsigned char i;
-                  register base v;
-                    v = data[where];
-                    i = v & 0xff;
-                    sum += byteCount[i];
-                    i = ( v >> 8 ) & 0xff;
-                    sum += byteCount[i];
-                    i = ( v >> 16 ) & 0xff;
-                    sum += byteCount[i];
-                    i = ( v >> 24 ) & 0xff;
-                    sum += byteCount[i];
-        i = ( v >> 32 ) & 0xff;
-                    sum += byteCount[i];
-                    i = ( v >> 40 ) & 0xff;
-                    sum += byteCount[i];
-                    i = ( v >> 48 ) & 0xff;
-                    sum += byteCount[i];
-                    i = ( v >> 56 ) & 0xff;
-                    sum += byteCount[i];
-                  return sum;
-      } else return 0;
-                }
+  void xorX ( LSHSignature & signature );
 
-                bool comparePermutedBits(LSHSignature & s, std::vector<int>& permutations) {
-                  int bca, bcb;
-  
-                  for (uint p = 0; p < bitLength / ( 8 * sizeof ( base ) ); p++) {
-                    bca = bitCount64(permutations[p]);
-                    bcb = s.bitCount64(permutations[p]);
-                    if (bca != bcb)
-                      return bca < bcb;
-                  }
-                  return false;
-                }
+  int bitCount();
+
+  int bitCount64(int where);
+
+  bool comparePermutedBits(LSHSignature & s, std::vector<int>& permutations);
+
+private:
+  int precomputedCount;
+  base *data;
+  int bitLength;
 };
 
 #endif

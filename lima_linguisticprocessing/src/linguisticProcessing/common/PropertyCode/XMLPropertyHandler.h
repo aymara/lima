@@ -52,11 +52,11 @@ public:
   // -----------------------------------------------------------------------
   //  Implementations of the SAX DocumentHandler interface
   // -----------------------------------------------------------------------
-  bool endDocument();
+  bool endDocument() override;
   
-  bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName);
+  bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName) override;
   
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
+  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes) override;
   
   
   struct PropertyDescription

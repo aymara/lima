@@ -21,6 +21,11 @@ add_definitions(-DLIMA_EVENTANALISYS_EXPORTING)
 
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(eventanalyzer
+  EventTemplateDefinitionResource.h
+  EventHandler.h
+)
+
 SET(lima-lp-eventanalyzer_LIB_SRCS EventDataDumper.cpp
   Entity.cpp 
   Event.cpp 
@@ -71,26 +76,29 @@ target_link_libraries(lima-lp-eventanalyzer
 
 set_target_properties(lima-lp-eventanalyzer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-eventanalyzer DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-eventanalyzer DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 ########### install files ###############
 install(FILES
-EventAnalysisExport.h
-EventAnalyzer.h
-Events.h
-EventDumper.h
-EventParagraph.h
-Paragraph.h
-EventHandler.h
-Event.h
-Entity.h
-EventXmlLogger.h
-EventSegmentation.h
-SimpleEventBuilder.h
-EventTemplateData.h
-EventTemplate.h
-EventTemplateElement.h
-EventTemplateDefinitionResource.h
-EventTemplateStructure.h
-EventData.h
-DESTINATION include/linguisticProcessing/core/EventAnalysis)
+    EventAnalysisExport.h
+    EventAnalyzer.h
+    Events.h
+    EventDumper.h
+    EventParagraph.h
+    Paragraph.h
+    EventHandler.h
+    Event.h
+    Entity.h
+    EventXmlLogger.h
+    EventSegmentation.h
+    SimpleEventBuilder.h
+    EventTemplateData.h
+    EventTemplate.h
+    EventTemplateElement.h
+    EventTemplateDefinitionResource.h
+    EventTemplateStructure.h
+    EventData.h
+  DESTINATION include/linguisticProcessing/core/EventAnalysis
+  COMPONENT devel
+)

@@ -39,7 +39,7 @@ namespace AnalysisDict
 /**
 @author Benoit Mathieu
 */
-class AbstractAccessResource : public AbstractResource
+class LIMA_LINGUISTICRESOURCES_EXPORT AbstractAccessResource : public AbstractResource
 {
   Q_OBJECT
 public:
@@ -53,7 +53,7 @@ public:
   
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager) = 0;
+    Manager* manager) override = 0;
 
   virtual Common::AbstractAccessByString* getAccessByString() const = 0;
 

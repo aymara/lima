@@ -60,20 +60,20 @@ class LIMA_AUTOMATON_EXPORT DeaccentuatedTransition : public TransitionUnit
   DeaccentuatedTransition& operator = (const DeaccentuatedTransition&);
   
   // functions inherited from TransitionUnit
-  DeaccentuatedTransition* clone() const;
-  DeaccentuatedTransition* create() const;
+  DeaccentuatedTransition* clone() const override;
+  DeaccentuatedTransition* create() const override;
 
-  TypeTransition type() const;
+  TypeTransition type() const override;
   
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
   
   // comparison with elements of texts (tokens)
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
 
   // specific member functions
   const LimaString& getDeaccentuatedForm() const 

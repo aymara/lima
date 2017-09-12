@@ -133,8 +133,6 @@ void KSelector::paintEvent( QPaintEvent * )
 
   drawContents( &painter );
 
-  QBrush brush;
-
   QPoint pos = calcArrowPos( value() );
   drawArrow( &painter, pos );
 

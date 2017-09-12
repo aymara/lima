@@ -33,13 +33,16 @@ target_link_libraries(lima-lp-applyrecognizer lima-common-factory lima-common-mi
 
 set_target_properties(lima-lp-applyrecognizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-applyrecognizer DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-applyrecognizer DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
 
 install(FILES
-  applyRecognizer.h
-  applyRecognizerActions.h
-  recognizerResultLogger.h
-DESTINATION include/linguisticProcessing/core/ApplyRecognizer)
+    applyRecognizer.h
+    applyRecognizerActions.h
+    recognizerResultLogger.h
+  DESTINATION include/linguisticProcessing/core/ApplyRecognizer
+  COMPONENT devel
+)

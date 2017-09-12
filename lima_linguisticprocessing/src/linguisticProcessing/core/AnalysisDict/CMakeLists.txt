@@ -19,13 +19,14 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 
 ########### next target ###############
-set (lima-lp-analysisdict_MOC_HEADERS
+LIMALP_WRAP_HEADERS(analysisdict
+  AbstractAnalysisDictionary.h
+  AbstractRwAccessResource.h
   EnhancedAnalysisDictionary.h
-  AbstractAccessResource.h
   FsaAccessResource.h
+  FsaRwAccessResource.h
+  MultiLevelAnalysisDictionary.h
 )
-
-qt5_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})
 
 SET(lima-lp-analysisdict_LIB_SRCS
    AnalysisDictionaryIterators.cpp 
@@ -38,39 +39,42 @@ SET(lima-lp-analysisdict_LIB_SRCS
 add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS} ${lima-lp-analysisdict_MOC_OUTFILES})
 
 target_link_libraries(lima-lp-analysisdict
-  lima-common-factory
-  lima-common-misc
-  lima-common-data
-  lima-common-fsaaccess
-  lima-common-mediaticdata
-  lima-common-time
-  lima-common-xmlconfigurationfiles
-  lima-common-processunitframework
-  lima-common-mediaprocessors
-  lima-lp-linguisticprocessors
+  lima-lp-flattokenizer
   lima-lp-linguisticresources
+  lima-common
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
 
 set_target_properties(lima-lp-analysisdict PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
-install(FILES  AbstractAccessResource.h FsaAccessResource.h
-  AbstractDictionaryEntry.h AbstractDictionaryEntryHandler.h AbstractDictionaryEntry.tcc
-  DictionaryData.h EnhancedAnalysisDictionary.h EnhancedAnalysisDictionaryEntry.h
-  EnhancedAnalysisDictionaryIterator.h MultiLevelAnalysisDictionary.h MultiLevelAnalysisDictionaryEntry.h
-  MultiLevelAnalysisDictionaryIterators.h
-  AbstractAnalysisDictionary.h AnalysisDictionaryIterators.h
-  AnalysisDictExport.h
-DESTINATION include/linguisticProcessing/core/AnalysisDict)
+install(FILES
+    FsaAccessResource.h
+    AbstractDictionaryEntry.h 
+    AbstractDictionaryEntryHandler.h 
+    AbstractDictionaryEntry.tcc
+    DictionaryData.h 
+    EnhancedAnalysisDictionary.h 
+    EnhancedAnalysisDictionaryEntry.h
+    EnhancedAnalysisDictionaryIterator.h 
+    MultiLevelAnalysisDictionary.h 
+    MultiLevelAnalysisDictionaryEntry.h
+    MultiLevelAnalysisDictionaryIterators.h
+    AbstractAnalysisDictionary.h 
+    AnalysisDictionaryIterators.h
+    AnalysisDictExport.h
+  DESTINATION include/linguisticProcessing/core/AnalysisDict
+  COMPONENT devel
+)
 
-FIND_PACKAGE(LIMALDATA PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
-IF(LIMALDATA_FOUND)
+# FIND_PACKAGE(LIMALDATA PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
+# IF(LIMALDATA_FOUND)
 #  add_subdirectory(Tests)
-ELSE (LIMALDATA_FOUND)
-  MESSAGE(STATUS "Could not find lingustic ressources to run test")
-ENDIF(LIMALDATA_FOUND)
+# ELSE (LIMALDATA_FOUND)
+#   MESSAGE(STATUS "Could not find lingustic ressources to run test")
+# ENDIF(LIMALDATA_FOUND)

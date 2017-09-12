@@ -300,7 +300,7 @@ LimaString transcodeToXmlEntities(const LimaString& str)
   it = str.begin(); it_end = str.end();
   for (; it != it_end; it++)
   {
-    switch (it->toAscii())
+    switch (it->toLatin1())
     {
     case '<' : xml += Common::Misc::utf8stdstring2limastring("&lt;"); break;
     case '&' : xml += Common::Misc::utf8stdstring2limastring("&amp;"); break;

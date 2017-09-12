@@ -12,7 +12,6 @@ SET(annoqt_SRCS
            specificEntity.cpp)
 
 set (annoqt_MOC_HEADERS annoqt.h
-           annotationConfigurationHandler.h
            annotationEditWidget.h
            specificEntity.h)
 qt5_wrap_cpp (annoqt_MOC_OUTFILES ${annoqt_MOC_HEADERS})
@@ -40,7 +39,6 @@ SET(annoqtconfeditor_SRCS
 
 set (annoqtconfeditor_MOC_HEADERS 
            confeditor.h
-           annotationConfigurationHandler.h
            kxyselector.h
            kselector.h
            kcolorvalueselector.h

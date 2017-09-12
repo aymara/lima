@@ -18,7 +18,7 @@
 */
 #include "EnhancedAnalysisDictionary.h"
 #include "EnhancedAnalysisDictionaryIterator.h"
-#include "AbstractAccessResource.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
@@ -196,7 +196,7 @@ void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
   // Check if the file exists as, when a file is replaced, dictionaryFileChanged can be triggered 
   // two times, when it is first suppressed and when the new version is available. One should not 
   // try to load the missing file
-  if (QFileInfo(path).exists())
+  if (QFileInfo::exists(path))
   {
     LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged reload" << path;
     QWriteLocker locker(&m_d->m_lock);

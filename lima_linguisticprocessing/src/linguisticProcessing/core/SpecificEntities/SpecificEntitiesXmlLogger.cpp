@@ -392,6 +392,17 @@ outputEntity( AnnotationData* annotationData,
       out << "  <type>" 
       << Common::MediaticData::MediaticData::single().getEntityName(annot->getType())
       << "</type>" << endl;
+      out << "  <normalization>" << std::endl;
+      const Automaton::EntityFeatures& features=annot->getFeatures();
+      for (auto featureItr=features.begin(),features_end=features.end();
+            featureItr!=features_end; featureItr++) {
+        if( featureItr->getPosition() == UNDEFPOSITION ) {
+          out << "    <" << featureItr->getName() << ">";
+          out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())));
+          out << "</" << featureItr->getName() << ">" << std::endl;
+        }
+      }
+      out << "  </normalization>" << std::endl;
       out << "</specific_entity>" << endl;
     }
   }

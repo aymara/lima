@@ -23,12 +23,12 @@
 
 #include "LinguisticResources.h"
 
+#include "AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/moduleConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/AbstractFactoryPattern/Singleton.h"
 #include "common/tools/FileUtils.h"
-#include "linguisticProcessing/core/AnalysisDict/AbstractAccessResource.h"
 
 #include <QFileInfo>
 
@@ -91,6 +91,10 @@ LinguisticResources::~LinguisticResources()
 
 AbstractResource* LinguisticResources::getResource(MediaId lang,const std::string& id) const
 {
+#ifdef DEBUG_LP
+  RESOURCESLOGINIT;
+  LDEBUG << "LinguisticResources::getResource" << this << lang << id.c_str();
+#endif
   std::map<MediaId,AbstractResource::Manager*>::const_iterator it=m_d->m_resourcesManagers.find(lang);
   if (it==m_d->m_resourcesManagers.end())
   {
@@ -107,6 +111,9 @@ void LinguisticResources::initLanguage(
   bool registerMainKeysInStringPool)
 {
   RESOURCESLOGINIT;
+#ifdef DEBUG_LP
+  LDEBUG << "LinguisticResources::initLanguage" << this << confModule.getName();
+#endif
   ResourceInitializationParameters params;
   params.language=lang;
   m_d->m_resourcesManagers[lang]=new AbstractResource::Manager(confModule,params);
@@ -139,7 +146,11 @@ void LinguisticResources::initLanguage(
 void LinguisticResourcesPrivate::
 includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
                  Common::XMLConfigurationFiles::ModuleConfigurationStructure& includeModule) 
-{RESOURCESLOGINIT;
+{
+  RESOURCESLOGINIT;
+#ifdef DEBUG_LP
+        LDEBUG << "LinguisticResourcesPrivate::includeResources" << this << &module << module.getName() << &includeModule << includeModule.getName();
+#endif
   try {
     deque<string> includeList=includeModule.getListValuesAtKeyOfGroupNamed("includeList","include");
     for (deque<string>::const_iterator it=includeList.begin(),
@@ -159,7 +170,7 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
         QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
         Q_FOREACH(QString confPath, configPaths)
         {
-          if  (QFileInfo(confPath + "/" + string((*it),0,i).c_str()).exists())
+          if  (QFileInfo::exists(confPath + "/" + string((*it),0,i).c_str()))
           {
 
             fileName = (confPath + "/" + string((*it),0,i).c_str()).toUtf8().constData();
@@ -172,17 +183,17 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
           continue;
         }
         moduleName=string((*it),i+1);
-        LINFO << "includeResources filename="<< fileName << "moduleName="<< moduleName;
+        LINFO << "LinguisticResourcesPrivate::includeResources filename="<< fileName << "moduleName="<< moduleName;
         XMLConfigurationFileParser parser(fileName);
         ModuleConfigurationStructure& newMod=parser.getModuleConfiguration(moduleName);
         module.addModule(newMod);
 #ifdef DEBUG_LP
         ostringstream oss;
-        for (ModuleConfigurationStructure::const_iterator it=module.begin(),it_end=module.end();
-             it!=it_end; it++) {
+        for (auto it=module.cbegin(),it_end=module.cend(); it!=it_end; it++) 
+        {
           oss << (*it).first << ";";
         }
-       LDEBUG << "added module with the following groups: " << oss.str();
+       LDEBUG << "LinguisticResourcesPrivate::includeResources added module with the following groups: " << oss.str();
 #endif
         // recursive inclusions
         includeResources(module,newMod);
@@ -207,6 +218,10 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
 Common::XMLConfigurationFiles::ModuleConfigurationStructure&
 LinguisticResources::getModuleConfiguration(MediaId lang)
 {
+#ifdef DEBUG_LP
+  RESOURCESLOGINIT;
+  LDEBUG << "LinguisticResources::getModuleConfiguration" << this << lang;
+#endif
   std::map<MediaId,AbstractResource::Manager*>::iterator it=
     m_d->m_resourcesManagers.find(lang);
   if (it == m_d->m_resourcesManagers.end()) {

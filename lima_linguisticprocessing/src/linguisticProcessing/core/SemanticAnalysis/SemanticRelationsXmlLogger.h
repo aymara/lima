@@ -36,11 +36,9 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   MediaId m_language;

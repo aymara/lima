@@ -63,10 +63,10 @@ public:
   EnhancedAnalysisDictionaryEntry(const EnhancedAnalysisDictionaryEntry& eade);
   virtual ~EnhancedAnalysisDictionaryEntry();
 
-  virtual AbstractDictionaryEntry* clone();
-  virtual void parseLingInfos(AbstractDictionaryEntryHandler* handler) const;
-  virtual void parseConcatenated(AbstractDictionaryEntryHandler* handler) const;
-  virtual void parseAccentedForms(AbstractDictionaryEntryHandler* handler) const;
+  virtual AbstractDictionaryEntry* clone() override;
+  virtual void parseLingInfos(AbstractDictionaryEntryHandler* handler) const override;
+  virtual void parseConcatenated(AbstractDictionaryEntryHandler* handler) const override;
+  virtual void parseAccentedForms(AbstractDictionaryEntryHandler* handler) const override;
 
 private:
   static void parseLingInfos(unsigned char* startEntry,unsigned char* endEntry,const DictionaryData* dicoData,AbstractDictionaryEntryHandler* handler);
@@ -102,24 +102,24 @@ public:
   
   void setDelegate(AbstractDictionaryEntryHandler* delegate);
     
-  void startEntry(StringsPoolIndex form);
-  void endEntry();
+  void startEntry(StringsPoolIndex form) override;
+  void endEntry() override;
 
-  void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm);
-  void deleteLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm);
-  void endLingInfos();
+  void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm) override;
+  void deleteLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm) override;
+  void endLingInfos() override;
   
-  void foundConcatenated();
-  void deleteConcatenated();
-  void foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form);
-  void endComponent();
-  void endConcatenated();
+  void foundConcatenated() override;
+  void deleteConcatenated() override;
+  void foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form) override;
+  void endComponent() override;
+  void endConcatenated() override;
 
-  void foundAccentedForm(StringsPoolIndex form);
-  void deleteAccentedForm(StringsPoolIndex form);
-  void endAccentedForm();
+  void foundAccentedForm(StringsPoolIndex form) override;
+  void deleteAccentedForm(StringsPoolIndex form) override;
+  void endAccentedForm() override;
   
-  void foundProperties(LinguisticCode lings);
+  void foundProperties(LinguisticCode lings) override;
   
 private:
   Lima::Common::AbstractAccessByString* m_access;

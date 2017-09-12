@@ -127,8 +127,8 @@ LimaServer::LimaServer( const std::string& configDir,
   LDEBUG << "LimaServer::LimaServer: create QHttpServer...";
   m_server = new QHttpServer(this);
   LDEBUG << "LimaServer::LimaServer: connect...";
-  connect(m_server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
-          this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
+  connect(m_server, SIGNAL(newRequest(QHttpRequest*,QHttpResponse*)),
+          this, SLOT(handleRequest(QHttpRequest*,QHttpResponse*)));
 
   LINFO << "LimaServer::LimaServer: server listen...";
   m_server->listen(QHostAddress::Any, port);
@@ -157,7 +157,7 @@ void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
   LDEBUG << "LimaServer::handleRequest: create AnalysisThread...";
   AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
   connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
-  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
   thread->start();
  }
 

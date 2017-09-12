@@ -440,64 +440,67 @@ ostream& operator << (ostream& os, const Constraint& c) {
                     functionName,
                     complement)) {
     AULOGINIT;
-  LERROR << "constraint function "
-  << c.m_functionAddr << " not availale";
-                    }
-                    switch (c.action()) {
-                      case EXECUTE_IF_SUCCESS:
-                      case EXECUTE_IF_SUCCESS_REVERSE: os << "=>"; break;
-                      case EXECUTE_IF_FAILURE:
-                      case EXECUTE_IF_FAILURE_REVERSE: os << "=<"; break;
-                      default: os << "+"; break;
-                    }
-                    if (c.index() == Constraint::noindex) {
-                      os << "[";
-                    }
-                    else {
-                      os << "[" << c.index()<< ",";
-                    }
-                    if (c.m_negative) { os << "!"; }
-                    os << functionName << ","
-                    << c.actionString();
-                    if (! complement.isEmpty()) {
-                      os << "," << Common::Misc::limastring2utf8stdstring(complement);
-                    }
-                    os << "]";
-                    return os;
+    LERROR << "constraint function "
+           << c.m_functionAddr << " not availale";
+  }
+  switch (c.action()) {
+    case EXECUTE_IF_SUCCESS:
+    case EXECUTE_IF_SUCCESS_REVERSE: os << "=>"; break;
+    case EXECUTE_IF_FAILURE:
+    case EXECUTE_IF_FAILURE_REVERSE: os << "=<"; break;
+    default: os << "+"; break;
+  }
+  if (c.index() == Constraint::noindex) {
+    os << "[";
+  }
+  else {
+    os << "[" << c.index()<< ",";
+  }
+  if (c.m_negative) {
+    os << "!";
+  }
+  os << functionName << ","  << c.actionString();
+  if (! complement.isEmpty()) {
+    os << "," << Common::Misc::limastring2utf8stdstring(complement);
+  }
+  os << "]";
+  return os;
 }
 
 QDebug& operator << (QDebug& os, const Constraint& c) {
   string functionName;
   LimaString complement;
-  if (! ConstraintFunctionManager::single().
-    getFunctionName(c.m_functionAddr,
-                    functionName,
-                    complement)) {
+  if (! ConstraintFunctionManager::single().getFunctionName(c.m_functionAddr,
+                                                            functionName,
+                                                            complement))
+  {
     AULOGINIT;
-  LERROR << "constraint function "
-  << c.m_functionAddr << " not availale";
-                    }
-                    switch (c.action()) {
-                      case EXECUTE_IF_SUCCESS:
-                      case EXECUTE_IF_SUCCESS_REVERSE: os << "=>"; break;
-                      case EXECUTE_IF_FAILURE:
-                      case EXECUTE_IF_FAILURE_REVERSE: os << "=<"; break;
-                      default: os << "+"; break;
-                    }
-                    if (c.index() == Constraint::noindex) {
-                      os << "[";
-                    }
-                    else {
-                      os << "[" << c.index()<< ",";
-                    }
-                    if (c.m_negative) { os << "!"; }
-                    os << functionName << ","
-                    << c.actionString();
-                    if (! complement.isEmpty()) {
-                      os << "," << Common::Misc::limastring2utf8stdstring(complement);
-                    }
-                    os << "]";
-                    return os;
+    LERROR << "constraint function "
+           << c.m_functionAddr << " not availale";
+  }
+  switch (c.action()) {
+    case EXECUTE_IF_SUCCESS:
+    case EXECUTE_IF_SUCCESS_REVERSE: os << "=>"; break;
+    case EXECUTE_IF_FAILURE:
+    case EXECUTE_IF_FAILURE_REVERSE: os << "=<"; break;
+    default: os << "+"; break;
+  }
+  if (c.index() == Constraint::noindex) {
+    os << "[";
+  }
+  else {
+    os << "[" << c.index()<< ",";
+  }
+  if (c.m_negative)
+  {
+    os << "!";
+  }
+  os << functionName << "," << c.actionString();
+  if (! complement.isEmpty()) {
+    os << "," << Common::Misc::limastring2utf8stdstring(complement);
+  }
+  os << "]";
+  return os;
 }
 
 } // end namespace

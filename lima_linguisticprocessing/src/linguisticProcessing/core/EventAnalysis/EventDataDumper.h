@@ -50,11 +50,9 @@ class LIMA_EVENTANALISYS_EXPORT EventDataDumper : public AbstractTextualAnalysis
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
  private:
    // key to access annotationData about events in AnalysisContent

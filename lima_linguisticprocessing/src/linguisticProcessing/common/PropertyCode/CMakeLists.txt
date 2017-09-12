@@ -30,11 +30,27 @@ SET(lima-lp-propertycode_LIB_SRCS
 
 add_library(lima-lp-propertycode SHARED ${lima-lp-propertycode_LIB_SRCS})
 
-target_link_libraries(lima-lp-propertycode lima-lp-misc ${QT_LIBRARIES} lima-common-qslog)
+target_link_libraries(lima-lp-propertycode 
+  lima-lp-misc 
+  lima-common-mediaprocessors 
+  lima-common-mediaticdata 
+  lima-common-processunitframework
+  lima-common-fsaaccess 
+  lima-common-factory 
+  lima-common-xmlconfigurationfiles 
+  lima-common-misc
+  lima-common-time 
+  lima-common-datahandler
+  lima-common-data 
+  lima-common-tools
+  ${QT_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
 
 set_target_properties(lima-lp-propertycode PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-propertycode DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-propertycode DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
@@ -44,4 +60,6 @@ install(FILES
     PropertyAccessor.h
     SymbolicCodeXMLHandler.h
     XMLPropertyHandler.h
-  DESTINATION include/linguisticProcessing/common/PropertyCode)
+  DESTINATION include/linguisticProcessing/common/PropertyCode
+  COMPONENT devel
+)

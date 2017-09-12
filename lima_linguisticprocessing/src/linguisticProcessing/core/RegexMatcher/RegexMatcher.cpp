@@ -37,7 +37,7 @@
 #include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticProcessors/LimaStringText.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 
 #include <QtCore/QRegExp>
@@ -187,9 +187,6 @@ LimaStatusCode RegexMatcher::process(
 
   LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
   std::string text = Common::Misc::limastring2utf8stdstring(*originalText);
-  QMap< QString, QString >::const_iterator reit, reit_end;
-  reit = m_d->m_regexes.begin(); reit_end = m_d->m_regexes.end();
-  std::string::const_iterator start = text.begin();
   for (auto reit = m_d->m_regexes.begin(); reit != m_d->m_regexes.end(); reit++)
   {
     QRegExp re(reit.key());

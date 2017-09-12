@@ -60,7 +60,7 @@ class SemanticAnnotation
 class DumpSemanticAnnotation : public Common::AnnotationGraphs::AnnotationData::Dumper
 {
   public:
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 } // end namespace

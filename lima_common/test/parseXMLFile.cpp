@@ -40,19 +40,16 @@ void usage(int argc, char* argv[]);
 
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
-struct
+typedef struct
 {
   string inputFile; // file to parse
   string module;   // module to find
   string group;    // group to find
   string param;    // param to find
   bool help;       // help mode
-}
-param={"",
-       "",
-       "",
-       "",
-       false};
+} Param;
+
+Q_GLOBAL_STATIC_WITH_ARGS(Param, param,({"", "", "", "", false}));
 
 void readCommandLineArguments(uint64_t argc, char *argv[])
 {
@@ -60,13 +57,13 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
   {
     string s(argv[i]);
     if (s=="-h" || s=="--help")
-      param.help=true;
+      param->help=true;
     else if (s.find("--module=")==0)
-      param.module=string(s,9);
+      param->module=string(s,9);
     else if (s.find("--group=")==0)
-      param.group=string(s,8);
+      param->group=string(s,8);
     else if (s.find("--param=")==0)
-      param.param=string(s,8);
+      param->param=string(s,8);
     else if (s[0]=='-')
     {
       cerr << "unrecognized option " <<  s << endl;
@@ -75,17 +72,17 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     }
     else
     {
-      param.inputFile=s;
+      param->inputFile=s;
     }
   }
   
   // some consistency checks in arguments
-  if (! param.param.empty()) {
-      if (param.group.empty()) { cerr << "need group name to get param" << endl; exit(1); }
-      if (param.module.empty()) { cerr << "need module name to get param" << endl; exit(1); }
+  if (! param->param.empty()) {
+      if (param->group.empty()) { cerr << "need group name to get param" << endl; exit(1); }
+      if (param->module.empty()) { cerr << "need module name to get param" << endl; exit(1); }
   }
-  else if (! param.group.empty()) {
-      if (param.module.empty()) { cerr << "need module name to get param" << endl; exit(1); }
+  else if (! param->group.empty()) {
+      if (param->module.empty()) { cerr << "need module name to get param" << endl; exit(1); }
   }
 }
 
@@ -123,36 +120,36 @@ int run(int argc,char** argv)
   Lima::AmosePluginsManager::single();
   
   readCommandLineArguments(argc,argv);
-  if (param.help) {
+  if (param->help) {
       usage(argc,argv);
       exit(0);
   }
   
-  string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+  string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
   string commonConfigFile=string("lima-common.xml");
-  string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
+  string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
 
-  XMLConfigurationFileParser parser(param.inputFile);
+  XMLConfigurationFileParser parser(param->inputFile);
   
-  if (! param.param.empty()) {
+  if (! param->param.empty()) {
       try {
-        cout << parser.getModuleGroupParamValue(param.module,param.group,param.param) << endl;
+        cout << parser.getModuleGroupParamValue(param->module,param->group,param->param) << endl;
       }  
       catch (NoSuchParam& e) {
         cout << e.what() << endl;
       }
   }
-  else if (! param.group.empty()) {
+  else if (! param->group.empty()) {
       try {
-//     cout << parser.getModuleGroupConfiguration(param.module,param.group) << endl;
+//     cout << parser.getModuleGroupConfiguration(param->module,param->group) << endl;
       }
       catch (NoSuchGroup& e) {
         cout << e.what() << endl;
       }
   }
-  else if (! param.module.empty()) {
+  else if (! param->module.empty()) {
       try {
-//     cout << parser.getModuleConfiguration(param.module) << endl;
+//     cout << parser.getModuleConfiguration(param->module) << endl;
       }
       catch (NoSuchModule & e) {
         cout << e.what() << endl;

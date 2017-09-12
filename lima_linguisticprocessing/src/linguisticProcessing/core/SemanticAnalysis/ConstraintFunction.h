@@ -51,7 +51,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
   std::string m_semanticRelationType;
 };
@@ -62,7 +62,7 @@ class LIMA_SEMANTICANALYSIS_EXPORT ClearSemanticRelation : public Automaton::Con
     ClearSemanticRelation(MediaId language,
                            const LimaString& complement=LimaString());
     ~ClearSemanticRelation() {}
-    bool operator()( AnalysisContent& analysis) const;
+    bool operator()( AnalysisContent& analysis) const override;
 };
 
 class LIMA_SEMANTICANALYSIS_EXPORT SaveSemanticRelation : public Automaton::ConstraintFunction
@@ -71,7 +71,7 @@ class LIMA_SEMANTICANALYSIS_EXPORT SaveSemanticRelation : public Automaton::Cons
     SaveSemanticRelation(MediaId language,
                            const LimaString& complement=LimaString());
     ~SaveSemanticRelation() {}
-    bool operator()( AnalysisContent& analysis) const;
+    bool operator()( AnalysisContent& analysis) const override;
 };
 
 

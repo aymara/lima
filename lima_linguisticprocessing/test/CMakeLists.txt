@@ -34,17 +34,6 @@ FIND_LIBRARY(SVMTOOL_LIBRARIES NAMES svmtool PATHS $ENV{MM_EXTERNALS}/lib)
 # 
 ########### next target ###############
 
-SET(showinttypessizes_SRCS
-   showinttypessizes.cpp
-)
-
-add_executable(showinttypessizes ${showinttypessizes_SRCS})
-target_link_libraries(showinttypessizes)
-
-install(TARGETS showinttypessizes DESTINATION bin)
-
-########### next target ###############
-
 SET(analyzeText_SRCS
    analyzeText.cpp
 )
@@ -52,15 +41,10 @@ SET(analyzeText_SRCS
 add_executable(analyzeText ${analyzeText_SRCS})
 MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-target_link_libraries(analyzeText
-    lima-common
-    lima-linguisticprocessing
-    ${optionalLibs}
-    ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
-)
+target_link_libraries(analyzeText lima-linguisticprocessing)
 
-install(TARGETS analyzeText DESTINATION bin)
+install(TARGETS analyzeText DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 if (${PYTHONLIBS_FOUND})
@@ -103,16 +87,10 @@ SET(analyzetextservercore_SRCS
 
 add_executable(analyzetextservercore ${analyzetextservercore_SRCS})
 
-target_link_libraries(analyzetextservercore
-  lima-common
-  lima-linguisticprocessing
+target_link_libraries(analyzetextservercore lima-linguisticprocessing)
 
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
-  ${optionalLibs}
-)
-
-install(TARGETS analyzetextservercore DESTINATION bin)
+install(TARGETS analyzetextservercore DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

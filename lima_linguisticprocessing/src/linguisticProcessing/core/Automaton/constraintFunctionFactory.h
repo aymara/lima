@@ -59,7 +59,7 @@ class ConstraintFunctionFactory :
   ConstraintFunctionFactory(const std::string& factoryId):
     AbstractConstraintFunctionFactory(factoryId) {}
   ConstraintFunction* create(MediaId language,
-                             const LimaString& param) {
+                             const LimaString& param) override {
     ConstraintFunction* newFunction=static_cast<ConstraintFunction*>(new Constraint(language,param));
     return newFunction;
   }

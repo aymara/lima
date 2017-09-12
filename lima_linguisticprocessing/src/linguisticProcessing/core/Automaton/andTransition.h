@@ -61,11 +61,11 @@ class LIMA_AUTOMATON_EXPORT AndTransition : public TransitionUnit
   virtual ~AndTransition();
   AndTransition& operator = (const AndTransition&);
 
-  AndTransition* clone() const;
-  AndTransition* create() const;
+  AndTransition* clone() const override;
+  AndTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   std::vector<TransitionUnit*>& getTransitions();
 
@@ -73,9 +73,9 @@ class LIMA_AUTOMATON_EXPORT AndTransition : public TransitionUnit
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
   
-  TypeTransition type() const;
+  TypeTransition type() const override;
 
   const std::vector<TransitionUnit*>& getTransitions() const
     { return m_transitions; }

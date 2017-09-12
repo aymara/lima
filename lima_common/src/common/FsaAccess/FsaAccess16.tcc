@@ -172,6 +172,11 @@ void FsaAccess16<graphType>::readBody(
     Lima::LimaString epropVal;
     iOHandler->readEdge( iw, source, target );
     std::pair<dicoEdgeType, bool> res = add_edge( source, target, m_graph );
+    if (!res.second)
+    {
+      FSAAIOLOGINIT;
+      LERROR << "FsaAccess16<graphType>::readBody failed to add an edge to the graph";
+    }
   #ifdef DEBUG_CD
     assert( res.second );
 #endif
@@ -357,7 +362,7 @@ Lima::LimaString &prefix ) const{
     U16_NEXT(content, textPos, textLength, label);
     int32_t delta = textPos - textPos0;
     if( FsaAccessHeader::getTrieDirectionForward() )
-      prefix.append( LimaString(content).mid(textPos0).left(delta) );
+      prefix.append( LimaString(content).mid(textPos0).leftRef(delta) );
     else
       prefix.insert( 0, content+textPos0, delta );
     print( os, target(*ei,m_graph), prefix);
@@ -654,12 +659,20 @@ void FsaAccess16<graphType>::addSuffix(
   for( ; prefixIt->hasNextLetter() ; prefixIt->next(prefixOffset) ) {
 
     to = add_vertex(m_graph);
-    char32_t letter = prefixIt->getNextLetter(prefixOffset);
-    #ifdef DEBUG_CD
+#ifdef DEBUG_CD
+    char32_t letter = 
+#endif
+    prefixIt->getNextLetter(prefixOffset);
+#ifdef DEBUG_CD
     LTRACE << "FsaAccess16::addSuffix added vertex="<<to<<", letter=" << (LimaChar)letter << ", suffixPos="<<prefixIt->getExternalWordPos();
-    #endif
+#endif
 
     std::pair<typename boost::graph_traits<graphType>::edge_descriptor , bool> res = add_edge(from, to, m_graph);
+    if (!res.second)
+    {
+      FSAALOGINIT;
+      LERROR << "FsaAccess16<graphType>::addSuffix failed to add an edge to the graph";
+    }
     #ifdef DEBUG_CD
     LTRACE <<  "FsaAccess16::addSuffix: add_edge(" << from << ", " << to << ") : " << res.second;
     assert(res.second);

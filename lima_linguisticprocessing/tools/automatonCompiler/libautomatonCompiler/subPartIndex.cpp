@@ -41,6 +41,12 @@ namespace Automaton {
 
 #define AUCLOGINIT LOGINIT("Automaton::Compiler")
 
+// to define sub indices in groups
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_FIRST, (QLatin1String("first")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_CURRENT, (QLatin1String("current")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_NEXT, (QLatin1String("next")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_LAST, (QLatin1String("last")));
+
 //***********************************************************************
 // constructors
 //***********************************************************************
@@ -59,7 +65,7 @@ m_subPartIndex(0)
 }
 
 SubPartIndex::SubPartIndex(const SubPartIndex& i):
-m_partIndex(i.m_partIndex),
+m_partIndex(i.m_partIndex), // clazy:exclude=rule-of-two-soft
 m_subPartIndex(0) {
   if (i.hasSubPart()) {
     m_subPartIndex=new SubPartIndex(*(i.getSubPartIndex()));
@@ -89,16 +95,16 @@ void SubPartIndex::init(const LimaString& str,
     subIndex=str.mid(i+1);
   }
 
-  if (index==STRING_CONSTRAINT_GROUP_FIRST) {
+  if (index==*STRING_CONSTRAINT_GROUP_FIRST) {
     m_partIndex.first=SUB_FIRST;
   }
-  else if (index==STRING_CONSTRAINT_GROUP_CURRENT) {
+  else if (index==*STRING_CONSTRAINT_GROUP_CURRENT) {
     m_partIndex.first=SUB_CURRENT;
   }
-  else if (index==STRING_CONSTRAINT_GROUP_NEXT) {
+  else if (index==*STRING_CONSTRAINT_GROUP_NEXT) {
     m_partIndex.first=SUB_NEXT;
   }
-  else if (index==STRING_CONSTRAINT_GROUP_LAST) {
+  else if (index==*STRING_CONSTRAINT_GROUP_LAST) {
     m_partIndex.first=SUB_LAST;
   }
   else {

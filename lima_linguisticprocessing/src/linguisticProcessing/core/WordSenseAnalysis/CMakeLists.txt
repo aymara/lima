@@ -53,4 +53,5 @@ set_target_properties(lima-lp-wordsensetagger PROPERTIES VERSION ${LIMA_LP_LIB_V
 
 ########### install files ###############
 
-install(TARGETS lima-lp-wordsensetagger DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-wordsensetagger DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)

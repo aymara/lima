@@ -29,11 +29,11 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND cat ${dicoFiles} > freeling-ext-lima.txt.tmp
     COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
+    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
@@ -42,14 +42,14 @@ else()
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
     COMMAND echo ^<dictionary^> > dico.xml.tmp
-    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt
-    COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt
+    COMMAND cat ${dicoFiles} > freeling-ext-lima.txt.tmp
+    COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
+    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
     COMMENT "produce eng XML dico under Windows"
   )
 endif()

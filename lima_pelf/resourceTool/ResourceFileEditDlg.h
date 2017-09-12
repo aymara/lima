@@ -40,8 +40,8 @@ public:
 
     ResourceFileEditDlg (QWidget* parent = 0);
     void init (QString rfp, bool showDialog = true);
-    void accept ();
-    void reject ();
+    void accept () override;
+    void reject () override;
     void loadFile ();
     void setAsTabbedWidget ();
 

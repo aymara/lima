@@ -50,7 +50,7 @@ public:
   * @param conf configuration module
   */
   InitializableObjectManager(
-    Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf,
+    const Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf,
     const InitializationParameters& params);
 
   /**
@@ -58,7 +58,7 @@ public:
   * @param conf configuration module
   */
   InitializableObjectManager(
-    Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf);
+    const Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf);
 
   /**
    * @brief virtual destructor
@@ -78,6 +78,8 @@ public:
   /**
   * @brief get ModuleConfigurationStructure
   */
+  const Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
+    getModuleConfigurationStructure() const;
   Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
     getModuleConfigurationStructure();
 
@@ -88,7 +90,7 @@ protected:
    * @param obj 
    * @param gconf 
    */
-  virtual Object* createObject(const std::string& id);
+  virtual Object* createObject(const std::string& id) override;
 
 private:
 
@@ -99,12 +101,14 @@ private:
 
 template <typename Object,typename InitializationParameters>
 InitializableObjectManager<Object,InitializationParameters>::InitializableObjectManager(
-  Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf,
+  const Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf,
   const InitializationParameters& params) :
     ObjectManager<Object>(),
     m_conf(conf),
     m_params(params)
-{}
+{
+//     std::cerr << this << "InitializableObjectManager::InitializableObjectManager " << m_conf.getName() << "'" << std::endl;
+}
 
 template <typename Object,typename InitializationParameters>
 const InitializationParameters& InitializableObjectManager<Object,InitializationParameters>::getInitializationParameters() const
@@ -119,6 +123,12 @@ InitializationParameters& InitializableObjectManager<Object,InitializationParame
 }
 
 template <typename Object,typename InitializationParameters>
+const Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
+InitializableObjectManager<Object,InitializationParameters>::getModuleConfigurationStructure() const {
+  return m_conf;
+}
+
+template <typename Object,typename InitializationParameters>
 Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
 InitializableObjectManager<Object,InitializationParameters>::getModuleConfigurationStructure() {
   return m_conf;
@@ -126,7 +136,7 @@ InitializableObjectManager<Object,InitializationParameters>::getModuleConfigurat
 
 template <typename Object,typename InitializationParameters>
 InitializableObjectManager<Object,InitializationParameters>::InitializableObjectManager(
-  Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf) :
+  const Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf) :
     ObjectManager<Object>(),
     m_conf(conf)
 {}
@@ -135,10 +145,14 @@ template <typename Object,typename InitializationParameters>
 Object* InitializableObjectManager<Object,InitializationParameters>::createObject(
   const std::string& id)
 {
-  Object* obj(0);
+#ifdef DEBUG_CD
+  ABSTRACTFACTORYPATTERNLOGINIT;
+  LDEBUG << "InitializableObjectManager::createObject" << this << id 
+         << "from module" << &m_conf << m_conf.getName().c_str();
+#endif
+  Object* obj = nullptr;
   try
   {
-//     std::cerr << "create Object '" << id.c_str() << "' from module '" << m_conf.getName().c_str() << "'" << std::endl;
     Common::XMLConfigurationFiles::GroupConfigurationStructure& gconf=m_conf.getGroupNamed(id);
 
     std::string classId;
@@ -152,7 +166,11 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
       std::cerr << "no class attribute in unitConfiguration !" << std::endl;
       throw InvalidConfiguration("no class attribute in unitConfiguration !");
     }
-
+    if (classId.empty())
+    {
+      std::cerr << "Empty class attribute in unitConfiguration " << id << "/class"  << std::endl;
+      throw InvalidConfiguration("Empty class attribute in unitConfiguration!");
+    }
     try
     {
       std::string libs=gconf.getAttribute("lib");

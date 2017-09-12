@@ -31,7 +31,7 @@ enable_testing()
 
 include(Languages.cmake)
 include(cmake/LinguisticData.cmake)
-include(SystemSpecificInformations.cmake)
+include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 # for add_component macro (require 2.8.5)
 include(CPackComponent)
 
@@ -91,6 +91,7 @@ SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
+SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
 SET(CPACK_PROJECT_CONFIG_FILE ${${CMAKE_SOURCE_DIR}}/cmake/CPackOptions.cmake)
 SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
@@ -99,7 +100,8 @@ SET(CPACK_NSIS_MODIFY_PATH "ON")
 SET(CPACK_STRIP_FILES "")
 SET(CPACK_SOURCE_STRIP_FILES ${CPACK_STRIP_FILES})
 SET(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-# SET(CPACK_PACKAGE_FILE_NAME "limadata")
+
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 
 # set of commands to define component based packaging
 # The idea is to define one component with files common to all languages (common)
@@ -111,15 +113,14 @@ SET(CPACK_COMPONENTS_ALL common fre eng por)
 # by default create one package for each component
 # SET(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
 
-SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon, limalinguisticprocessing")
+SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon-runtime, limalinguisticprocessing-runtime")
 # by default behaviour of rpm packager is to disable components
 SET(CPACK_RPM_COMPONENT_INSTALL ON)
 # mangle CPACK_PACKAGE_FILE_NAME and component name
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon, limalinguisticprocessing")
-SET(CPACK_DEBIAN_COMPONENT_INSTALL ON)
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon-runtime, limalinguisticprocessing-runtime")
+SET(CPACK_DEB_COMPONENT_INSTALL ON)
 SET(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME ON)
-
 
 INCLUDE(CPack)

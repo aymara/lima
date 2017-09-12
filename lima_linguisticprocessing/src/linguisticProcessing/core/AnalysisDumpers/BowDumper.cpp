@@ -237,7 +237,7 @@ LimaStatusCode BowDumper::process(
   DumperStream* dstream=initialize(analysis);
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on" << dstream->out();
+  LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
 #endif
   writer.writeBoWText(dstream->out(),bowText);
   delete dstream;
@@ -394,12 +394,15 @@ void BowDumper::addVerticesToBoWText(
   while (!toVisit.empty())
   {
     LinguisticGraphVertex v=toVisit.front();
-#ifdef DEBUG_LP
-    LDEBUG << "BowDumper::addVerticesToBoWText visiting" << v;
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowDumper::addVerticesToBoWText visiting" << v;
+// #endif
 
     toVisit.pop();
     if (v == end) {
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowDumper::addVerticesToBoWText on end";
+// #endif
       continue;
     }
 
@@ -427,20 +430,28 @@ void BowDumper::addVerticesToBoWText(
       std::set< AnnotationGraphVertex > cpdsExts = annotationData->matches("PosGraph", v, "cpdExt");
       if (!cpdsHeads.empty())
       {
-#ifdef DEBUG_LP
-        LDEBUG << "BowDumper::addVerticesToBoWText" << v << "is a compound head";
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowDumper::addVerticesToBoWText" << v << "is a compound head";
+// #endif
         auto cpdsHeadsIt = cpdsHeads.begin(), cpdsHeadsIt_end = cpdsHeads.end();
         for (; cpdsHeadsIt != cpdsHeadsIt_end; cpdsHeadsIt++)
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
+// #ifdef DEBUG_LP
+//           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "calling buildTermFor on" << agv;
+// #endif
           std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens = m_bowGenerator->buildTermFor(agv, agv, beforePoSGraph, graph, offset, syntacticData, annotationData, visited);
+// #ifdef DEBUG_LP
+//           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "buildTermFor on" << agv << "got nb tokens:" << bowTokens.size();
+// #endif
           for (auto bowItr=bowTokens.begin(); bowItr!=bowTokens.end(); bowItr++)
           {
             std::string elem = (*bowItr).second->getIdUTF8String();
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
-              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
+// #ifdef DEBUG_LP
+//               LDEBUG << "BowDumper::addVerticesToBoWText" << elem << "already stored. Skipping it.";
+// #endif
             }
             else
             {             
@@ -450,17 +461,17 @@ void BowDumper::addVerticesToBoWText(
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
               
-              std::ostringstream oss;
-              //std::set<uint32_t>::const_iterator asvit, asvit_end;
-              std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-              asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-              for (; asvit != asvit_end; asvit++)
-              {
-                oss << *asvit << ", ";
-              }
-#ifdef DEBUG_LP
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << oss.str();
-#endif
+// #ifdef DEBUG_LP
+//               std::ostringstream oss;
+//               //std::set<uint32_t>::const_iterator asvit, asvit_end;
+//               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
+//               asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+//               for (; asvit != asvit_end; asvit++)
+//               {
+//                 oss << *asvit << ", ";
+//               }
+//               LDEBUG << "BowDumper::addVerticesToBoWText" << v << "added" << elem << "to bowText; alreadyStoredVertices are: " << oss.str();
+// #endif
             }
           }
         }
@@ -468,6 +479,9 @@ void BowDumper::addVerticesToBoWText(
       else if (!cpdsExts.empty())
       {
         // Do nothing for compound extensions. Will be  handled by the head
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowDumper::addVerticesToBoWText Do nothing for compound extensions. Will be  handled by the head";
+// #endif
       }
       else if (alreadyStoredVertices.find(v) == alreadyStoredVertices.end())
       {
@@ -498,49 +512,61 @@ void BowDumper::addVerticesToBoWText(
 //         
 //         if   (!isInCompound)
         {
-#ifdef DEBUG_LP
-          LDEBUG << "BowDumper::addVerticesToBoWText" << v << "isn't a compound head";
-#endif
+// #ifdef DEBUG_LP
+//           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "isn't a compound head";
+// #endif
           std::vector<std::pair<boost::shared_ptr< BoWRelation>, boost::shared_ptr< AbstractBoWElement>> > bowTokens=
             m_bowGenerator->createAbstractBoWElement(v, beforePoSGraph, graph, offset, annotationData, visited);
+// #ifdef DEBUG_LP
+//           LDEBUG << "BowDumper::addVerticesToBoWText"<<v<<" createAbstractBoWElement returned a vector of size" << bowTokens.size();
+// #endif
 
           for (auto bowItr=bowTokens.begin();
               bowItr!=bowTokens.end();
               bowItr++)
           {
             std::string elem = (*bowItr).second->getIdUTF8String();
+// #ifdef DEBUG_LP
+//             LDEBUG << "BowDumper::addVerticesToBoWText"<<v<<"created BoWToken" << elem;
+// #endif
             if (alreadyStored.find(elem) != alreadyStored.end())
             { // already stored
-              //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
+// #ifdef DEBUG_LP
+//               LDEBUG << "BowDumper::addVerticesToBoWText BoWToken already stored. Skipping it.";
+// #endif
             }
             else
             {
+// #ifdef DEBUG_LP
+//               LDEBUG << "BowDumper::addVerticesToBoWText pushing" << elem << "to bowText";
+// #endif
               bowText.push_back((*bowItr).second); // copy pointer
               std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
             
-              std::ostringstream oss;
-              //std::set<uint32_t>::const_iterator asvit, asvit_end;
-              std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-              asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-              for (; asvit != asvit_end; asvit++)
-              {
-                oss << *asvit << ", ";
-              }
-#ifdef DEBUG_LP
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << oss.str();
-#endif
+// #ifdef DEBUG_LP
+//               std::ostringstream oss;
+//               //std::set<uint32_t>::const_iterator asvit, asvit_end;
+//               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
+//               asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+//               for (; asvit != asvit_end; asvit++)
+//               {
+//                 oss << *asvit << ", ";
+//               }
+//               std::string elem = (*bowItr).second->getIdUTF8String();
+//               LDEBUG << "BowDumper::addVerticesToBoWText for" << v << elem << "; alreadyStoredVertices are:" << oss.str();
+// #endif
             }
           }
         }
       }
-      else
-      {
-#ifdef DEBUG_LP
-        LDEBUG << "BowDumper::addVerticesToBoWText" << v << "is already stored.";
-#endif
-      }
+// #ifdef DEBUG_LP
+//       else
+//       {
+//         LDEBUG << "BowDumper::addVerticesToBoWText" << v << "is already stored.";
+//       }
+// #endif
     }
   }
 }

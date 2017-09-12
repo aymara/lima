@@ -14,7 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-include_directories(${CMAKE_SOURCE_DIR}/src )
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 
 add_definitions( -DLIMA_PROCESSUNITFRAMEWORK_EXPORTING )
@@ -27,10 +27,16 @@ SET(lima-common-processunitframework_LIB_SRCS
 
 add_library(lima-common-processunitframework SHARED ${lima-common-processunitframework_LIB_SRCS})
 
-target_link_libraries(lima-common-processunitframework lima-common-qslog lima-common-data ${QT_LIBRARIES})
+target_link_libraries(lima-common-processunitframework 
+  lima-common-data 
+)
 
-set_target_properties(lima-common-processunitframework PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-processunitframework DESTINATION ${LIB_INSTALL_DIR})
+set_target_properties(lima-common-processunitframework PROPERTIES 
+  VERSION ${LIMA_COMMON_LIB_VERSION} 
+  SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+  
+install(TARGETS lima-common-processunitframework DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
@@ -39,4 +45,6 @@ install(FILES
     AnalysisContent.h
     ProcessUnitPipeline.h
     ProcessUnitPipeline.tcc
-  DESTINATION include/common/ProcessUnitFramework)
+  DESTINATION include/common/ProcessUnitFramework
+  COMPONENT devel
+)

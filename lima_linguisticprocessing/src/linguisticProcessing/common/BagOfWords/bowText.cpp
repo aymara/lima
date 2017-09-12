@@ -45,23 +45,29 @@ namespace BagOfWords {
 BoWText::BoWText():
 std::vector< boost::shared_ptr< AbstractBoWElement > >()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWText::BoWText()" << this;
+#endif
 }
 
 
 BoWText::BoWText(const BoWText& t):
 std::vector< boost::shared_ptr< AbstractBoWElement > >()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWText::BoWText(BoWText)" << this;
+#endif
   (*this) = t;
 }
 
 BoWText& BoWText::operator = (const BoWText& t)
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWText::operator=" << this;
+#endif
   if (this != &t)
   {
     clear();
@@ -90,11 +96,15 @@ void BoWText::writeBoWText(ostream& stream)
 
 
 void BoWText::clear() {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "BoWText::clear()" << this;
+#endif
   for (auto it = begin(); it != end(); it++)
   {
+#ifdef DEBUG_LP
     LDEBUG << "BoWText::clear clearing" << &(**it);
+#endif
     (*it)->clear();
   }
   std::vector< boost::shared_ptr<  AbstractBoWElement > >::clear();

@@ -54,11 +54,11 @@ public:
   ~AddTemplateElement() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
   std::string m_role;
   Common::MediaticData::EntityType m_type;
@@ -70,7 +70,7 @@ public:
   CreateEventTemplate(MediaId language,
                       const LimaString& complement);
   ~CreateEventTemplate() {}
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
   
 private:
   std::string m_eventType;
@@ -82,7 +82,7 @@ public:
   ClearEventTemplate(MediaId language,
                       const LimaString& complement);
   ~ClearEventTemplate() {}
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
   
   //bool actionNeedsRecognizedExpression() { return true; }
 private:

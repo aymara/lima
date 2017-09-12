@@ -24,7 +24,7 @@
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICTFSAACCESSRESOURCE_H
 
 #include "AnalysisDictExport.h"
-#include "AbstractAccessResource.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 
 #include <QReadWriteLock>
 
@@ -47,9 +47,9 @@ public:
 
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager);
+      Manager* manager) override;
     
-    virtual Common::AbstractAccessByString* getAccessByString() const;
+    virtual Common::AbstractAccessByString* getAccessByString() const override;
     
 private Q_SLOTS:
   void accessFileChanged ( const QString & path );

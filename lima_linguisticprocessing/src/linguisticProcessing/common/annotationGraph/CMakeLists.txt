@@ -32,7 +32,8 @@ target_link_libraries(lima-lp-annotationgraph lima-common-data lima-common-facto
 
 set_target_properties(lima-lp-annotationgraph PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-annotationgraph DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-annotationgraph DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
@@ -41,7 +42,9 @@ install(FILES
     AnnotationData.h
     AnnotationGraph.h
     AnnotationGraphWriter.h
-  DESTINATION include/linguisticProcessing/common/annotationGraph/)
+  DESTINATION include/linguisticProcessing/common/annotationGraph/
+  COMPONENT devel
+)
 
 
 

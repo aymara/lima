@@ -43,21 +43,28 @@ namespace Lima {
 namespace Common {
 namespace BagOfWords {
 
-class LIMA_BOW_EXPORT BinaryWriterBoWDocumentHandler : public AbstractBoWDocumentHandler
+class LIMA_BOW_EXPORT BinaryWriterBoWDocumentHandler : 
+    public AbstractBoWDocumentHandler
 {
  public:
   BinaryWriterBoWDocumentHandler(std::ostream& os);
   ~BinaryWriterBoWDocumentHandler();
   
   void openSBoWNode(const Misc::GenericDocumentProperties* properties,
-                    const std::string& elementName);
+                    const std::string& elementName) override;
+
   void openSBoWIndexingNode(const Misc::GenericDocumentProperties* properties,
-                            const std::string& elementName);
+                            const std::string& elementName) override;
+
   void processSBoWText(const BoWText* boWText, 
-                       bool useIterators, bool useIndexIterator);
+                       bool useIterators, 
+                       bool useIndexIterator) override;
+
   void processProperties(const Misc::GenericDocumentProperties* properties, 
-                         bool useIterators, bool useIndexIterator);
-  void closeSBoWNode();
+                         bool useIterators, 
+                         bool useIndexIterator) override;
+
+  void closeSBoWNode() override;
 
  private:
   BoWBinaryWriter m_writer;

@@ -46,6 +46,7 @@ TransitionUnit::TransitionUnit():
   m_keep(true),
   m_negative(false),
   m_head(false),
+  m_actionHash(""),
   m_constraints(vector<Constraint>(0))
 {
 }
@@ -54,6 +55,7 @@ TransitionUnit::TransitionUnit(bool keep, bool negative):
   m_keep(keep),
   m_negative(negative),
   m_head(false),
+  m_actionHash(""),
   m_constraints(vector<Constraint>(0)) { 
 }
 
@@ -62,6 +64,7 @@ TransitionUnit::TransitionUnit(const TransitionUnit& t):
   m_negative(t.m_negative),
   m_head(t.m_head),
   m_id(t.m_id),
+  m_actionHash(t.m_actionHash),
   m_constraints(t.m_constraints) {
 }
 
@@ -89,6 +92,8 @@ void TransitionUnit::copyProperties(const TransitionUnit& t) {
   setKeep(t.keep());
   setNegative(t.negative());
   setHead(t.head());
+  setId(t.getId()),
+  setActionHash(t.getActionHash()),
   m_constraints.clear();
   for (uint64_t i(0); i<t.numberOfConstraints(); i++) {
     addConstraint(t.constraint(i));
@@ -100,6 +105,7 @@ bool TransitionUnit::compareProperties(const TransitionUnit& t) const {
   if (m_negative != t.negative()) { return false; }
   if (m_head != t.head()) { return false; }
   if (numberOfConstraints() != t.numberOfConstraints()) { return false; }
+  if( getActionHash() != t.getActionHash()) { return false; }
   for (uint64_t i(0); i<numberOfConstraints(); i++) {
     if (!(constraint(i) == t.constraint(i)) ) { 
       return false; 
@@ -149,7 +155,7 @@ ostream& operator << (ostream& os, const TransitionUnit& t)
   
   if (t.negative()) { os << '^'; }
   if (t.head()) { os << 'H'; }
-  os << "'" << t.getId() << "'";
+  os << "'" << t.getId() << "'#" << t.getActionHash();
   if (! t.keep()) {
     os << '_' << t.printValue() << '_';
   }
@@ -172,6 +178,7 @@ QDebug& operator << (QDebug& os, const TransitionUnit& t)
   
   if (t.negative()) { os << '^'; }
   if (t.head()) { os << 'H'; }
+  os << "'" << t.getId() << "'#" << t.getActionHash();
   if (! t.keep()) {
     os << '_' << t.printValue() << '_';
   }
@@ -179,6 +186,7 @@ QDebug& operator << (QDebug& os, const TransitionUnit& t)
     os << t.printValue();
   }
   if (t.numberOfConstraints()) {
+    os << "withConstraints:";
     for (uint64_t i(0); i<t.numberOfConstraints(); i++) {
       os << t.constraint(i);
     }

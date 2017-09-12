@@ -23,16 +23,17 @@ add_definitions(-DLIMA_LINGUISTICPROCESSIONGCLIENT_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-client_LIB_SRCS
-   LinguisticProcessingClientFactory.cpp
+    LinguisticProcessingClientFactory.cpp
 )
 
 add_library(lima-lp-client SHARED ${lima-lp-client_LIB_SRCS})
 
-target_link_libraries(lima-lp-client lima-common-factory lima-common-qslog ${QT_LIBRARIES})
+target_link_libraries(lima-lp-client  lima-common-factory lima-common-tools ${QT_LIBRARIES})
 
 set_target_properties(lima-lp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-client DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-client DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
@@ -41,4 +42,6 @@ install(FILES
     AbstractLinguisticProcessingClient.h 
     LinguisticProcessingException.h
     LinguisticProcessingClientFactory.h
-  DESTINATION include/linguisticProcessing/client)
+  DESTINATION include/linguisticProcessing/client
+  COMPONENT devel
+)

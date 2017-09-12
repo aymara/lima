@@ -46,19 +46,19 @@ class LIMA_AUTOMATON_EXPORT EntityTransition : public TransitionUnit
   EntityTransition(Common::MediaticData::EntityType, bool keep=true); 
   virtual ~EntityTransition();
   
-  EntityTransition* clone() const;
-  EntityTransition* create() const;
+  EntityTransition* clone() const override;
+  EntityTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
   
-  TypeTransition type() const;
+  TypeTransition type() const override;
   Common::MediaticData::EntityType entityType() const { return m_entityType; }
   void setEntityType(Common::MediaticData::EntityType type) { m_entityType=type; }
   

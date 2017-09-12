@@ -307,13 +307,16 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
           LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
 #endif
           bool ok=(*functionAddr)(graph,matchElmt->m_elem.first,analysis);
-          // TODO: what to do with value of ok??
+          if (!ok) {
+            AULOGINIT;
+            LERROR << "Rule::executeActions: execution of function" << actionItr->second.functionName() << "failed";
+          }
         }
       }
     }
     else {
 #ifdef DEBUG_LP
-      LDEBUG << "Rule::executeActions: execution of function " << actionItr->second.functionName() << " not required";
+      LDEBUG << "Rule::executeActions: execution of function" << actionItr->second.functionName() << "not required";
 #endif
     }
   }
@@ -338,10 +341,10 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
 // output
 ostream& operator << (ostream& os, const Rule& r) {
   os << r.getRuleId() << ":" << endl;
-  os << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
+  os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
   os << "left=" << endl << r.leftAutomaton();
   os << "right=" << endl << r.rightAutomaton();
-  os << r.getType()<< ";" << r.getLinguisticProperties() << endl;
+  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << endl;
@@ -354,10 +357,10 @@ ostream& operator << (ostream& os, const Rule& r) {
 }
 QDebug& operator << (QDebug& os, const Rule& r) {
   os << r.getRuleId() << ":" << endl;
-  os << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
+  os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
   os << "left=" << endl << r.leftAutomaton();
   os << "right=" << endl << r.rightAutomaton();
-  os << r.getType()<< ";" << r.getLinguisticProperties() << endl;
+  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << endl;

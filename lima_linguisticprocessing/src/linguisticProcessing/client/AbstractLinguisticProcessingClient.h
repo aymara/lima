@@ -99,7 +99,7 @@ public:
                        const std::map<std::string,std::string>& metaData,
                        const std::string& pipeline,
                        const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-                       const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
+                       const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override = 0;
 };
 
 /**
@@ -136,12 +136,12 @@ public:
   virtual void configure(
     Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
     std::deque<std::string> langs,
-    std::deque<std::string> pipelines) = 0;
+    std::deque<std::string> pipelines) override = 0;
 
   /**
    * This function create a LinguisticProcessing client 
    */
-  virtual std::shared_ptr< AbstractProcessingClient > createClient() const = 0;
+  virtual std::shared_ptr< AbstractProcessingClient > createClient() const override = 0;
 
   /**
    * virtual destructor of the LinguisticProcessing client factory

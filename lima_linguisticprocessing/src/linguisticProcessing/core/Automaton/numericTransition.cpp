@@ -137,7 +137,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
 std::string NumericTransition::printValue() const {
   ostringstream oss;
   if (isInterval()) {
-    oss << "[";
+    oss << "numericT[";
     if (m_min == noValue) { oss << "-"; }
     else { oss << m_min; }
     oss << "," ;
@@ -146,7 +146,7 @@ std::string NumericTransition::printValue() const {
     oss << "]";
   }
   else {
-    oss << m_value;
+    oss << "numericT(" << m_value << ")";
   }
   return oss.str();
 }

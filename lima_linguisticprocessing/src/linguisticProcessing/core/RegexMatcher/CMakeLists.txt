@@ -30,6 +30,7 @@ target_link_libraries(lima-lp-regexmatcher lima-common-factory lima-common-misc 
 
 set_target_properties(lima-lp-regexmatcher PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-regexmatcher DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-regexmatcher DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 ########### install files ###############

@@ -46,24 +46,24 @@ public:
 
   inline void addHandler(AbstractDictionaryEntryHandler* h);
 
-  virtual void startEntry(StringsPoolIndex form);
-  virtual void endEntry();
+  virtual void startEntry(StringsPoolIndex form) override;
+  virtual void endEntry() override;
 
-  virtual void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm);
-  virtual void deleteLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm);
-  virtual void endLingInfos();
+  virtual void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm) override;
+  virtual void deleteLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm) override;
+  virtual void endLingInfos() override;
 
-  virtual void foundConcatenated();
-  virtual void deleteConcatenated();
-  virtual void foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form);
-  virtual void endComponent();
-  virtual void endConcatenated();
+  virtual void foundConcatenated() override;
+  virtual void deleteConcatenated() override;
+  virtual void foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form) override;
+  virtual void endComponent() override;
+  virtual void endConcatenated() override;
 
-  virtual void foundAccentedForm(StringsPoolIndex form);
-  virtual void deleteAccentedForm(StringsPoolIndex form);
-  virtual void endAccentedForm();
+  virtual void foundAccentedForm(StringsPoolIndex form) override;
+  virtual void deleteAccentedForm(StringsPoolIndex form) override;
+  virtual void endAccentedForm() override;
 
-  virtual void foundProperties(LinguisticCode lings);
+  virtual void foundProperties(LinguisticCode lings) override;
 
 private:
 

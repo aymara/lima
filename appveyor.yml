@@ -8,7 +8,7 @@ environment:
   QTDIR: 'C:\Qt\5.5\msvc2013_64'
   BOOST_ROOT: 'C:\Libraries\boost'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
-  PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;%PATH%'
+  PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
@@ -48,9 +48,9 @@ on_success:
   - ps: $headers = @{ Authorization = $basicAuthValue }
   - ps: $commit = $Env:APPVEYOR_REPO_COMMIT
   - ps: $commit  = $commit.substring(0,7)
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1.-win64.exe
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.-win64.exe
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit-win64.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.-win32.exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1..exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1..exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1..exe
 
 
 #on_failure:

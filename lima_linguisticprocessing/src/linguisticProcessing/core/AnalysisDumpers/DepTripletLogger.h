@@ -25,7 +25,7 @@
 #define LIMA_LINGUISTICPROCESSING_SYNTACTICANALYSISDEPTRIPLELOGGER_H
 
 #include "AnalysisDumpersExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 #include "common/MediaticData/mediaticData.h"
@@ -81,10 +81,9 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager);
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   void dumpDepWithCompounds(

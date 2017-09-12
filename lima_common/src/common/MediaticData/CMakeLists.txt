@@ -29,10 +29,15 @@ SET(lima-common-mediaticdata_LIB_SRCS
 
 add_library(lima-common-mediaticdata SHARED ${lima-common-mediaticdata_LIB_SRCS})
 
-target_link_libraries(lima-common-mediaticdata lima-common-factory lima-common-xmlconfigurationfiles lima-common-misc lima-common-data)
+target_link_libraries(lima-common-mediaticdata 
+  lima-common-fsaaccess 
+  lima-common-factory 
+  lima-common-xmlconfigurationfiles 
+)
 
 set_target_properties(lima-common-mediaticdata PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-mediaticdata DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-mediaticdata DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
@@ -40,4 +45,6 @@ install(FILES
     EntityType.h
     mediaData.h
     mediaticData.h
-  DESTINATION include/common/MediaticData)
+  DESTINATION include/common/MediaticData
+  COMPONENT devel
+)

@@ -46,13 +46,13 @@ namespace SpecificEntities {
 
 class LIMA_SPECIFICENTITIES_EXPORT MicrosForNormalization : public AbstractResource
 {
+  Q_OBJECT
  public:
   MicrosForNormalization(); 
   ~MicrosForNormalization();
   
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
   
   const std::set<LinguisticCode>* getMicros(const std::string& group);
 

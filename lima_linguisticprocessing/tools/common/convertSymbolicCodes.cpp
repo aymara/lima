@@ -38,17 +38,17 @@ using namespace Lima::Common::PropertyCode;
 
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
-struct
+typedef struct
 {
   string codeFile; // code file to parse
   string outputFile;
   vector<string> inputFiles; // symbolic code file to parse
   bool help;       // help mode
-}
-param={"",
+} Param;
+Q_GLOBAL_STATIC_WITH_ARGS(Param, param, ({"",
        "",
        vector<string>(),
-       false};
+       false}));
 
 void readCommandLineArguments(uint64_t argc, char *argv[])
 {
@@ -57,14 +57,14 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     string arg(argv[i]);
     std::string::size_type pos;
     if (arg=="-h" || arg=="--help")
-      param.help=true;
+      param->help=true;
     else if ( (pos = arg.find("--code=")) != std::string::npos )
     {
-      param.codeFile = arg.substr(pos+7);
+      param->codeFile = arg.substr(pos+7);
     }
     else if ( (pos = arg.find("--output=")) != std::string::npos )
     {
-      param.outputFile = arg.substr(pos+9);
+      param->outputFile = arg.substr(pos+9);
     }
     else if (arg[0]=='-')
     {
@@ -74,7 +74,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     }
     else
     {
-      param.inputFiles.push_back(arg);
+      param->inputFiles.push_back(arg);
     }
   }
 }
@@ -114,7 +114,7 @@ int run(int argc,char** argv)
   Lima::AmosePluginsManager::single();
   
   readCommandLineArguments(argc,argv);
-  if (param.help)
+  if (param->help)
   {
 //     usage(argc,argv);
     exit(0);
@@ -125,12 +125,12 @@ int run(int argc,char** argv)
 
   // parse code file
   PropertyCodeManager propcodemanager;
-  propcodemanager.readFromXmlFile(param.codeFile);
+  propcodemanager.readFromXmlFile(param->codeFile);
   
   // Convert symbolic codes
   map<string,LinguisticCode> conversionMap;
-  for (vector<string>::const_iterator fileItr=param.inputFiles.begin();
-       fileItr!=param.inputFiles.end();
+  for (vector<string>::const_iterator fileItr=param->inputFiles.begin();
+       fileItr!=param->inputFiles.end();
        fileItr++)
   {
     propcodemanager.convertSymbolicCodes(fileItr->c_str(),conversionMap);
@@ -138,19 +138,22 @@ int run(int argc,char** argv)
   
   // output results
   std::ostream* out(0);
-  if (param.outputFile == "")
+  if (param->outputFile == "")
   {
     out = &std::cout;
   }
   else
   {
-    out = new ofstream(param.outputFile.c_str());
+    out = new ofstream(param->outputFile.c_str());
   }
   for (map<string,LinguisticCode>::const_iterator it=conversionMap.begin();
        it!=conversionMap.end();
        it++)
   {
     *out << it->first << ";" << it->second << ";" << endl;
+  }
+  if ((param->outputFile != "") && (out != 0)) {
+    delete out;
   }
   return 0;
 }

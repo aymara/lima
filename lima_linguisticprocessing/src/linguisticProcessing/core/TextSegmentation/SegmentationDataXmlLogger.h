@@ -32,7 +32,7 @@
 #define SEGMENTATIONDATAXMLLOGGER_H
 
 #include "TextSegmentationExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -47,11 +47,9 @@ class LIMA_TEXTSEGMENTATION_EXPORT SegmentationDataXmlLogger : public AbstractLi
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   std::string m_data;

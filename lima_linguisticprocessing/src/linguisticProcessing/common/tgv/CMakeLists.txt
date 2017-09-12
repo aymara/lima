@@ -29,18 +29,35 @@ SET(lima-lp-tgv_LIB_SRCS
 
 add_library(lima-lp-tgv SHARED ${lima-lp-tgv_LIB_SRCS})
 
-target_link_libraries(lima-lp-tgv lima-lp-misc  ${QT_LIBRARIES} lima-common-qslog ${LIBXML2_LIBRARIES})
+target_link_libraries(lima-lp-tgv 
+  lima-lp-misc  
+  lima-common-mediaprocessors 
+  lima-common-mediaticdata 
+  lima-common-processunitframework
+  lima-common-fsaaccess 
+  lima-common-factory 
+  lima-common-xmlconfigurationfiles 
+  lima-common-misc
+  lima-common-time 
+  lima-common-datahandler
+  lima-common-data 
+  lima-common-tools
+  ${QT_LIBRARIES} 
+)
 
 set_target_properties(lima-lp-tgv PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-tgv DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-tgv DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
 
 install(FILES
-  TestCase.h
-  TestCaseProcessor.hpp
-  TestCaseError.hpp
-  TestCasesHandler.h
-  DESTINATION include/linguisticProcessing/common/tgv)
+    TestCase.h
+    TestCaseProcessor.hpp
+    TestCaseError.hpp
+    TestCasesHandler.h
+  DESTINATION include/linguisticProcessing/common/tgv
+  COMPONENT devel
+)

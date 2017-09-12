@@ -31,7 +31,7 @@
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSORS_ABSTRACTLINGUISTICLOGGER_H
 #define LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSORS_ABSTRACTLINGUISTICLOGGER_H
 
-#include "LinguisticProcessorsExport.h"
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 
 namespace Lima {
@@ -42,7 +42,7 @@ namespace LinguisticProcessing {
  * contains some common informations such as : output suffix, 
  * files in append mode etc...
  */
-class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractLinguisticLogger : public MediaProcessUnit
+class LIMA_LPMISC_EXPORT AbstractLinguisticLogger : public MediaProcessUnit
 {
 public:
   AbstractLinguisticLogger(const std::string& defaultSuffix=".log");
@@ -50,12 +50,11 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-    ;
+    Manager* manager) override;
 
   bool openLogFile(std::ofstream& output,const std::string& sourceFile) const;
 
-  virtual LimaStatusCode process(AnalysisContent& analysis) const=0;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override = 0;
 
 private:
   std::string m_outputSuffix;

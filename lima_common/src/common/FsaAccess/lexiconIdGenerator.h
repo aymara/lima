@@ -60,16 +60,16 @@ class LexiconIdGenerator : public AbstractLexiconIdGenerator
     LexiconIdGenerator(AbstractLexiconIdGeneratorInformer* informer);
     virtual ~LexiconIdGenerator() {}
 
-    uint64_t getSize() const;
-    uint64_t getSimpleTermSize() const;
+    uint64_t getSize() const override;
+    uint64_t getSimpleTermSize() const override;
     void print(std::ostream& os) const;
     // implementation of operation inherited from interface IndexElementIdAccessor
     uint64_t getId(const Lima::LimaString& word) const;
     uint64_t getId(const std::vector<uint64_t>& structure) const;
     // implementation of operation inherited from interface IndexElementIdGenerator
 //    uint64_t getId(const LimaString& word);
-    uint64_t getId(const Lima::LimaString &word );
-    uint64_t getId( const std::vector<uint64_t>& structure );
+    uint64_t getId(const Lima::LimaString & word) override;
+    uint64_t getId( const std::vector<uint64_t>& structure ) override;
     void write(Lima::Common::FsaAccess::FsaAccessDataOutputHandler& outputHandler);
     // output of compound words data
     void initTransfert();

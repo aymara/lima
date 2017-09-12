@@ -52,7 +52,7 @@ class LIMA_FSAACCESS_EXPORT FsaAccessIStreamWrapper : public AbstractFsaAccessIS
 public:
   FsaAccessIStreamWrapper(std::istream &is);
   ~FsaAccessIStreamWrapper();
-  void readData( char *ptr, size_t n ) ;
+  void readData( char *ptr, size_t n ) override ;
 private:
 	FsaAccessIStreamWrapper& operator=(const FsaAccessIStreamWrapper& ) {return *this;}
   std::istream &m_is;
@@ -65,7 +65,7 @@ class LIMA_FSAACCESS_EXPORT FsaAccessOStreamWrapper : public AbstractFsaAccessOS
 public:
   FsaAccessOStreamWrapper(std::ostream &os);
   ~FsaAccessOStreamWrapper();
-  void writeData(const char *ptr, size_t n );
+  void writeData(const char *ptr, size_t n ) override;
 private:
 	FsaAccessOStreamWrapper& operator=(const FsaAccessOStreamWrapper& ) {return *this;}
   std::ostream &m_os;
@@ -86,7 +86,7 @@ class LIMA_FSAACCESS_EXPORT FsaAccessInputHandlerWrapper : public AbstractFsaAcc
 public:
   FsaAccessInputHandlerWrapper(FsaAccessDataInputHandler &ih);
   ~FsaAccessInputHandlerWrapper();
-  void readData( char *ptr, size_t n );
+  void readData( char *ptr, size_t n ) override;
 private:
   FsaAccessInputHandlerWrapper& operator=(const FsaAccessInputHandlerWrapper& ) {return *this;}
   FsaAccessDataInputHandler& m_ih;
@@ -107,7 +107,7 @@ class LIMA_FSAACCESS_EXPORT FsaAccessOutputHandlerWrapper : public AbstractFsaAc
 public:
   FsaAccessOutputHandlerWrapper(FsaAccessDataOutputHandler &oh);
   ~FsaAccessOutputHandlerWrapper();
-  void writeData(const char *ptr, size_t n );
+  void writeData(const char *ptr, size_t n ) override;
 private:
   FsaAccessOutputHandlerWrapper& operator=(const FsaAccessOutputHandlerWrapper& ) {return *this;}
   FsaAccessDataOutputHandler& m_oh;

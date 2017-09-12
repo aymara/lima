@@ -60,13 +60,13 @@ class LIMA_FSAACCESS_EXPORT FsaAccessBuilderRandom16: public AbstractModifierOnA
   public:
     FsaAccessBuilderRandom16( bool trie_direction_fwd = true );
     virtual ~FsaAccessBuilderRandom16();
-    void addRandomWord( const Lima::LimaString & newWord );
+    void addRandomWord( const Lima::LimaString & newWord ) override;
     
     // For IO
     void write( const std::string & filename  );
     void write( std::ostream &os );
     void write( FsaAccessDataOutputHandler &oh );
-    FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const;
+    FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const override;
    
   protected:
     void write ( AbstractFsaAccessOStreamWrapper &ow );
@@ -107,7 +107,7 @@ class LIMA_FSAACCESS_EXPORT FsaAccessBuilderRandom16: public AbstractModifierOnA
       const Lima::LimaChar* const word_content,
       const int32_t wordOffset );
       void initConversion( const boost::graph_traits<graphType>::vertex_descriptor from ) const;
-    void addSuffix( dicoVertex from, PrefixIterator* prefixIt );
+    void addSuffix( dicoVertex from, PrefixIterator* prefixIt ) override;
   private:
     dict_packing_type m_packingStatus;
 };

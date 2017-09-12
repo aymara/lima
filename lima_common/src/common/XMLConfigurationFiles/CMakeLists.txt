@@ -30,10 +30,13 @@ SET(lima-common-xmlconfigurationfiles_LIB_SRCS
 
 add_library(lima-common-xmlconfigurationfiles SHARED ${lima-common-xmlconfigurationfiles_LIB_SRCS})
 
-target_link_libraries(lima-common-xmlconfigurationfiles lima-common-qslog lima-common-data ${QT_LIBRARIES})
+target_link_libraries(lima-common-xmlconfigurationfiles 
+  lima-common-data 
+)
 
 set_target_properties(lima-common-xmlconfigurationfiles PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
@@ -45,7 +48,9 @@ install(FILES
     xmlConfigurationFileExceptions.h
     moduleConfigurationStructure.h
     itemWithAttributes.h
-  DESTINATION include/common/XMLConfigurationFiles)
+  DESTINATION include/common/XMLConfigurationFiles
+  COMPONENT devel
+)
 
 
 

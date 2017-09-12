@@ -220,7 +220,7 @@ void MediaticData::init(
   {
     Q_FOREACH(QString confFile, configFiles)
     {
-      if (QFileInfo(confPath + "/" + confFile).exists())
+      if (QFileInfo::exists(confPath + "/" + confFile))
       {
         LDEBUG << "MediaticData::init parse configuration file: " << (confPath + "/" + confFile);
         configurationFileFound = true;
@@ -419,7 +419,7 @@ void MediaticDataPrivate::initMedias(
           bool mediaDefinitionFileFound = false;
           for(auto confPath = configPaths.begin(); confPath != configPaths.end(); ++confPath)
           {
-            if (QFileInfo(*confPath + "/" + deffile).exists())
+            if (QFileInfo::exists(*confPath + "/" + deffile))
             {
               m_mediaDefinitionFiles[id] = (*confPath+"/"+deffile);
 #ifdef DEBUG_CD
@@ -437,11 +437,21 @@ void MediaticDataPrivate::initMedias(
             throw InvalidConfiguration();
           }
         }
-        catch (NoSuchList& )
+        catch (NoSuchList& e)
         {
           MDATALOGINIT;
-          LERROR << "missing id or definition file for media " << (*it).c_str();
-          throw InvalidConfiguration();
+          LERROR << "missing id or definition file for media " 
+                  << (*it).c_str()
+                  << ":" << e.what();
+          throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
+        }
+        catch (NoSuchParam& e)
+        {
+          MDATALOGINIT;
+          LERROR << "missing id or definition file for media " 
+                  << (*it).c_str()
+                  << ":" << e.what();
+          throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
         }
       }
     }
@@ -459,7 +469,9 @@ void MediaticData::initMediaData(MediaId med)
   {
     MDATALOGINIT;
     LERROR << "No media definition file for med id " << med;
-    throw InvalidConfiguration();
+    std::ostringstream oss;
+    oss << "No media definition file for med id " << med;
+    throw InvalidConfiguration(oss.str());
   }
 #ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Parse MediaConfigurationFile " << (it->second);
@@ -469,11 +481,23 @@ void MediaticData::initMediaData(MediaId med)
 #ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Class: " << parser.getModuleGroupParamValue("MediaData","Class","class").c_str();
 #endif
-  MediaData* ldata = MediaData::Factory::getFactory(parser.getModuleGroupParamValue("MediaData","Class","class"))->create(parser.getModuleGroupConfiguration("MediaData","Class"),0);
+  std::string& param = parser.getModuleGroupParamValue("MediaData","Class","class");
+  if (!param.empty())
+  {
+    MediaData* ldata = MediaData::Factory::getFactory(param)->create(parser.getModuleGroupConfiguration("MediaData","Class"),0);
 
-//   MediaData* ldata=new MediaData();
-  m_d->m_mediasData[med]=ldata;
-  ldata->initialize(med,m_d->m_resourcesPath,parser);
+    //   MediaData* ldata=new MediaData();
+    m_d->m_mediasData[med]=ldata;
+    ldata->initialize(med,m_d->m_resourcesPath,parser);
+  }
+  else
+  {
+    MDATALOGINIT;
+    LERROR << "Empty class name for MediaData/Class/class for media" << med;
+    std::ostringstream oss;
+    oss << "Empty class name for MediaData/Class/class for media " << med;
+    throw InvalidConfiguration(oss.str());
+  }
 }
 
 
@@ -536,14 +560,14 @@ void MediaticDataPrivate::initRelations(
       m_relTypesNum[relId]=it->first;
     }
   
-  } catch (NoSuchGroup& ) {
+  } catch (NoSuchGroup& e) {
     MDATALOGINIT;
     LERROR << "No group 'semanticRelations' in 'common' module of lima-common configuration file";
-    throw InvalidConfiguration();
-  } catch (NoSuchMap& ) {
+    throw InvalidConfiguration(std::string("No group 'semanticRelations' in 'common' module of lima-common configuration file:")+e.what());
+  } catch (NoSuchMap& e) {
     MDATALOGINIT;
     LERROR << "No map 'declaration' in 'semanticRelations' group of lima-common configuration file";
-    throw InvalidConfiguration();
+    throw InvalidConfiguration(std::string("No map 'declaration' in 'semanticRelations' group of lima-common configuration file:")+e.what());
   }
 }
 
@@ -569,14 +593,14 @@ void MediaticDataPrivate::initConceptTypes(
       m_conceptNames[type] = it->first;
     }
   
-  } catch (NoSuchGroup& ) {
+  } catch (NoSuchGroup& e) {
     MDATALOGINIT;
     LERROR << "No group 'SemanticData' in 'common' module of lima-common configuration file";
-    throw InvalidConfiguration();
-  } catch (NoSuchMap& ) {
+    throw InvalidConfiguration(e.what());
+  } catch (NoSuchMap& e) {
     MDATALOGINIT;
     LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file";
-    throw InvalidConfiguration();
+    throw InvalidConfiguration(e.what());
   }
 }
 
@@ -699,7 +723,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
           Q_FOREACH(QString confPath, configPaths)
           {
-            if  (QFileInfo(confPath + "/" + string(includeList[k],0,i).c_str()).exists())
+            if  (QFileInfo::exists(confPath + "/" + string(includeList[k],0,i).c_str()))
             {
 
               std::string  fileName= (confPath + "/" + string(includeList[k],0,i).c_str()).toUtf8().constData();
@@ -738,19 +762,23 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
       }
     }
   }
-  catch(NoSuchModule& ) {
+  catch(NoSuchModule& e) {
     MDATALOGINIT;
-    LWARN << "no module 'entities' in entity types configuration";
+    LWARN << "no module 'entities' in entity types configuration" << e.what();
   }
-  catch(NoSuchGroup& ) {
+  catch(NoSuchGroup& e) {
     MDATALOGINIT;
     LERROR << "missing group in entity types configuration";
-    throw InvalidConfiguration();
+    std::ostringstream oss;
+    oss  << "missing group in entity types configuration: " << e.what();
+    throw InvalidConfiguration(oss.str());
   }
-  catch(NoSuchList& ) {
+  catch(NoSuchList& e) {
     MDATALOGINIT;
     LERROR << "missing list 'entityList' in entity types configuration";
-    throw InvalidConfiguration();
+    std::ostringstream oss;
+    oss  << "missing list 'entityList' in entity types configuration: " << e.what();
+    throw InvalidConfiguration(oss.str());
   }
 #ifdef DEBUG_CD
   if (logger.loggingLevel()<=QsLogging::DebugLevel) {
@@ -775,7 +803,10 @@ EntityType MediaticData::addEntity(EntityGroupId groupId, const LimaString& enti
     MDATALOGINIT;
     LERROR << "MediaticData::addEntity unknown entity group id " << groupId
             << "adding" << entityName;
-    throw LimaException();
+    std::ostringstream oss;
+    oss  << "MediaticData::addEntity unknown entity group id " << groupId
+            << " adding " << entityName.toStdString() ;
+    throw LimaException(oss.str());
   }
   EntityTypeId typeId= m_d->m_entityTypes[groupId]->insert(entityName);
   return EntityType(typeId,groupId);
@@ -872,10 +903,10 @@ const LimaString& MediaticData::getEntityGroupName(EntityGroupId id) const
   try {
     return m_d->m_entityGroups.get(id);
   }
-  catch(LimaException& ) {
+  catch(LimaException& e) {
     MDATALOGINIT;
     LERROR << "Cannot find name of entity group "
-           << id;
+           << id << ":" << e.what();
     throw;
   }
 }

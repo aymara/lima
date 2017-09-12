@@ -143,11 +143,11 @@ int run(int argc,char** argv)
 
   // skip zero space non breaking space (from BOM)
   char *newWord_cstr = newWordBuff;
-  if( (newWordBuff[0] == 'ï')
-    &&(newWordBuff[1] == '»')
-    &&(newWordBuff[2] == '¿') )
+  if( (newWordBuff[0] == char(0xEF))
+    &&(newWordBuff[1] == char(0xBB))
+    &&(newWordBuff[2] == char(0xBF)) )
   newWord_cstr += 3;
-
+  
         // build string from array of bytes
   std::string newWord_UTF8 = std::string(newWord_cstr);
 

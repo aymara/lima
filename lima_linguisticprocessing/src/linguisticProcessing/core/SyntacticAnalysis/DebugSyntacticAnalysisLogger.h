@@ -28,7 +28,7 @@
 #define LIMA_LINGUISTICPROCESSING_SYNTACTICANALYSIS_DEBUGSYNTACTICANALYSISLOGGER_H
 
 #include "SyntacticAnalysisExport.h"
-#include "linguisticProcessing/core/LinguisticProcessors/AbstractLinguisticLogger.h"
+#include "linguisticProcessing/common/misc/AbstractLinguisticLogger.h"
 
 namespace Lima
 {
@@ -50,11 +50,9 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
 protected:
 

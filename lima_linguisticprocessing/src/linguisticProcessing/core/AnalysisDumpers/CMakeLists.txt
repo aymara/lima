@@ -23,6 +23,10 @@ include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/ling
 
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(analysisdumpers
+  StopList.h
+)
+
 SET(lima-lp-analysisdumpers_LIB_SRCS
    AnnotationGraphXmlDumper.cpp
    BowDumper.cpp
@@ -48,7 +52,6 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-analysisdumpers)
 
 target_link_libraries(lima-lp-analysisdumpers
-  lima-common
   lima-lp-linguisticprocessors
   lima-lp-linguisticresources
   lima-lp-annotationgraph
@@ -58,11 +61,13 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-lineartextrepresentation
   lima-lp-textsegmentation
   lima-lp-semanticanalysis
+  lima-common
 )
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysisdumpers DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-analysisdumpers DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
@@ -83,4 +88,6 @@ install(FILES
     DepTripletLogger.h
     BowGeneration.h
     CompoundsXmlLogger.h
-DESTINATION include/linguisticProcessing/core/AnalysisDumpers)
+  DESTINATION include/linguisticProcessing/core/AnalysisDumpers
+  COMPONENT devel
+)

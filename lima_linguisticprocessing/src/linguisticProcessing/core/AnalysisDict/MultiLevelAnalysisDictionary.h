@@ -42,6 +42,7 @@ namespace AnalysisDict {
 */
 class LIMA_ANALYSISDICT_EXPORT MultiLevelAnalysisDictionary : public AbstractAnalysisDictionary
 {
+  Q_OBJECT
 public:
     MultiLevelAnalysisDictionary();
 
@@ -49,17 +50,23 @@ public:
     
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager);
+      Manager* manager) override;
 
-    virtual DictionaryEntry getEntry(const Lima::LimaString& word) const;
-    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId) const;
-    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId, const Lima::LimaString& word) const;
+    virtual DictionaryEntry getEntry(const Lima::LimaString& word) const override;
+    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId) const override;
+    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId, 
+                                     const Lima::LimaString& word) const override;
     DictionaryEntry getEntry(const std::vector<uint64_t>& indexes) const;
-    DictionaryEntry getEntry(const StringsPoolIndex wordId,const std::vector<uint64_t>& indexes) const;
+    DictionaryEntry getEntry(const StringsPoolIndex wordId,
+                             const std::vector<uint64_t>& indexes) const;
     
-    virtual std::pair< DictionarySubWordIterator, DictionarySubWordIterator > getSubWordEntries(const int offset, const LimaString& key) const;
-    virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > getSuperWordEntries(const LimaString& key) const;
-    virtual uint64_t getSize() const;
+    virtual std::pair< DictionarySubWordIterator, DictionarySubWordIterator > 
+    getSubWordEntries(const int offset, const LimaString& key) const override;
+
+    virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > 
+    getSuperWordEntries(const LimaString& key) const override;
+
+    virtual uint64_t getSize() const override;
     
     inline uint64_t getDictionaryCount() const;
 

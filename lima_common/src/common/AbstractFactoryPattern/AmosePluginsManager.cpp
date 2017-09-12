@@ -31,15 +31,13 @@ using namespace Lima::Common::Misc;
 
 AmosePluginsManager::AmosePluginsManager()
 {
-  loadPlugins();
+//   loadPlugins();
 }
 
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
-#ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "AmosePluginsManager::loadPlugins";
-#endif
+  LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
@@ -55,23 +53,21 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
-#ifdef DEBUG_CD
     ABSTRACTFACTORYPATTERNLOGINIT;
     LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
-#endif
     
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-#ifdef DEBUG_CD
-     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " << pluginsFile.toUtf8().data();
-#endif
+     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " 
+            << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly)) {
         ABSTRACTFACTORYPATTERNLOGINIT;
-        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " << pluginsFile.toUtf8().data();
+        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " 
+                << pluginsFile.toUtf8().data();
         return false;
       }
       

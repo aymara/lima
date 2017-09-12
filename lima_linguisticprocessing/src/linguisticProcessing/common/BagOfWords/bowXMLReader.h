@@ -76,22 +76,27 @@ class LIMA_BOW_EXPORT BoWXMLHandler : public QXmlDefaultHandler
   // -----------------------------------------------------------------------
   //  Implementations of the SAX DocumentHandler interface
   // -----------------------------------------------------------------------
-  bool endDocument();
+  bool endDocument() override;
   
-  bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
+  bool endElement(const QString & namespaceURI, 
+                  const QString & name, 
+                  const QString & qName) override;
   
-  bool startDocument();
+  bool startDocument() override;
   
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes& attributes);
+  bool startElement(const QString & namespaceURI, 
+                    const QString & name, 
+                    const QString & qName, 
+                    const QXmlAttributes& attributes) override;
   
   
   
   // -----------------------------------------------------------------------
   //  Implementations of the SAX ErrorHandler interface
   // -----------------------------------------------------------------------
-  bool warning(const QXmlParseException & exception);
-  bool error(const QXmlParseException & exception);
-  bool fatalError(const QXmlParseException & exception);
+  bool warning(const QXmlParseException & exception) override;
+  bool error(const QXmlParseException & exception) override;
+  bool fatalError(const QXmlParseException & exception) override;
   
   
   

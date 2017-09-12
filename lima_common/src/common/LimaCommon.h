@@ -247,119 +247,170 @@ BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
 class LimaException : public std::exception
 {
 public:
-    LimaException() : std::exception(),m_reason() {}
-    LimaException(const std::string& mess) : std::exception(), m_reason(mess) {}
+    LimaException(const std::string& message = "") : 
+        std::exception(), m_reason(message) 
+    {
+    }
     virtual ~LimaException() throw() {}
-    virtual const char * what () const throw() {
+    virtual const char * what () const throw() override 
+    {
         return m_reason.c_str();
     }
 protected:
   LimaException& operator=(const LimaException&) {return  *this;}
-  const std::string m_reason;
+  std::string m_reason;
 };
 
 class InvalidConfiguration : public LimaException
 {
-  public:
-    InvalidConfiguration() : LimaException() {};
-    InvalidConfiguration(const std::string& mess) : LimaException(mess) {}
+public:
+    InvalidConfiguration(const std::string& message = "") : 
+        LimaException(message) 
+    {
+    }
+
 private:
   InvalidConfiguration& operator=(const InvalidConfiguration&) {return  *this;}
 };
+
 class MediaNotInitialized : public LimaException
 {
 public :
-    MediaNotInitialized(MediaId medId) : LimaException(),m_medId(medId),m_med(),m_num(true) {};
-    MediaNotInitialized(const std::string& med) : LimaException(),m_medId(0),m_med(med),m_num(false) {};
-    virtual ~MediaNotInitialized() throw() {};
-    const char* what() const throw()
+    MediaNotInitialized(MediaId medId) : 
+        LimaException(),
+        m_medId(medId),
+        m_med(),
+        m_num(true) 
     {
-        if (m_num)
-        {
-            std::ostringstream oo;
-            oo << "uninitialized media " << (int)m_medId;
-            return oo.str().c_str();
-        }
-        else
-        {
-            return (std::string("uninitialized media ")+m_med).c_str();
-        }
+      if (m_num)
+      {
+          std::ostringstream oo(m_reason);
+          oo << "uninitialized media " << (int)m_medId;
+      }
+      else
+      {
+        m_reason = std::string("uninitialized media ")+m_med;
+      }
+    }
+    
+    MediaNotInitialized(const std::string& media) : 
+        LimaException(media),
+        m_medId(0),
+        m_med(media),
+        m_num(false) 
+    {
+      if (m_num)
+      {
+          std::ostringstream oo(m_reason);
+          oo << "uninitialized media " << (int)m_medId;
+      }
+      else
+      {
+        m_reason = std::string("uninitialized media ")+m_med;
+      }
+      
     };
+    virtual ~MediaNotInitialized() throw() {};
+
 private:
   MediaNotInitialized& operator=(const MediaNotInitialized&) {return  *this;}
   MediaId m_medId;
-    std::string  m_med;
-    bool m_num;
+  std::string  m_med;
+  bool m_num;
 };
 
-class LanguageNotInitialized : public LimaException {
+class LanguageNotInitialized : public LimaException 
+{
 public :
-    LanguageNotInitialized(MediaId langId) : LimaException(),m_langId(langId),m_lang(),m_num(true) {};
-    LanguageNotInitialized(const std::string& lang) : LimaException(),m_langId(0),m_lang(lang),m_num(false) {};
-    virtual ~LanguageNotInitialized() throw() {};
-    const char* what() const throw() {
+    LanguageNotInitialized(MediaId langId) : 
+        LimaException(),
+        m_langId(langId),
+        m_lang(),
+        m_num(true) 
+    {
         if (m_num) {
-            std::ostringstream oo;
+            std::ostringstream oo(m_reason);
             oo << "uninitialized language " << (int)m_langId;
-            return oo.str().c_str();
         } else {
-            return (std::string("uninitialized language ")+m_lang).c_str();
+            m_reason = (std::string("uninitialized language ")+m_lang).c_str();
         }
-    };
-private:
-  LanguageNotInitialized& operator=(const LanguageNotInitialized&) {return  *this;}
-  MediaId m_langId;
-    std::string  m_lang;
-    bool m_num;
-};
 
-class AccessByStringNotInitialized : public LimaException {
-public :
-    AccessByStringNotInitialized(const std::string& reason) : LimaException(), m_reason(reason) {};
-    virtual ~AccessByStringNotInitialized() throw() {};
-    const char* what() const throw() {
-        std::ostringstream oo;
-        oo << "Fsa not initialized because of " << m_reason;
-        return oo.str().c_str();
-    };
-private:
-  AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) {return  *this;}
-  std::string  m_reason;
-};
-
-class AccessByStringOutOfRange : public LimaException {
-public :
-    AccessByStringOutOfRange(const std::string& reason) : LimaException(), m_reason(reason) {};
-    virtual ~AccessByStringOutOfRange() throw() {};
-    const char* what() const throw() {
-        std::ostringstream oo;
-        oo << "parameter out of range " << m_reason;
-        return oo.str().c_str();
-    };
-private:
-  AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) {return  *this;}
-  std::string  m_reason;
-};
-
-class IncompleteResources : public LimaException {
-public :
-    IncompleteResources(const std::string& reason) : LimaException(), m_reason(reason) {}
-    virtual ~IncompleteResources() throw() {}
-    const char* what() const throw() {
-        return (std::string("incomplete ressources:  ") + m_reason).c_str() ;
     }
+    LanguageNotInitialized(const std::string& language) : 
+        LimaException(),
+        m_langId(0),
+        m_lang(language),
+        m_num(false) 
+    {
+        if (m_num) {
+            std::ostringstream oo(m_reason);
+            oo << "uninitialized language " << (int)m_langId;
+        } else {
+            m_reason = (std::string("uninitialized language ")+m_lang).c_str();
+        }
+
+    }
+    virtual ~LanguageNotInitialized() throw() {};
+
 private:
-  IncompleteResources& operator=(const IncompleteResources&) {return  *this;}
-  std::string  m_reason;
+  LanguageNotInitialized& operator=(const LanguageNotInitialized&);
+
+  MediaId m_langId;
+  std::string  m_lang;
+  bool m_num;
 };
 
-class XMLException : public std::runtime_error
+class AccessByStringNotInitialized : public LimaException 
+{
+public :
+    AccessByStringNotInitialized(const std::string& reason) : 
+        LimaException(reason)
+    {
+        m_reason = std::string("Fsa not initialized because of ") + reason;
+    }
+    virtual ~AccessByStringNotInitialized() throw() {};
+
+private:
+  AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&);
+};
+
+class AccessByStringOutOfRange : public LimaException 
+{
+public :
+    AccessByStringOutOfRange(const std::string& reason) : LimaException()
+    {
+      m_reason = std::string("parameter out of range ") + reason;
+    }
+    virtual ~AccessByStringOutOfRange() throw() {};
+
+private:
+  AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&);
+};
+
+class IncompleteResources : public LimaException 
+{
+public :
+    IncompleteResources(const std::string& reason) : LimaException()
+    {
+      m_reason = std::string("incomplete ressources:  ") + reason;
+    }
+    virtual ~IncompleteResources() throw() {}
+
+private:
+  IncompleteResources& operator=(const IncompleteResources&);
+};
+
+class XMLException : public Lima::LimaException
 {
 public:
-  explicit XMLException(const std::string& msg = "") : std::runtime_error(msg) {}
-  const char* getMessage() const {return this->what();}
+  explicit XMLException(const std::string& message = "") : 
+      Lima::LimaException() 
+  {
+    m_reason = std::string("XMLException: ") + message;
+  }
+
 private:
-  XMLException& operator=(const XMLException&) {return  *this;}
+  XMLException& operator=(const XMLException&);
 };
 
 

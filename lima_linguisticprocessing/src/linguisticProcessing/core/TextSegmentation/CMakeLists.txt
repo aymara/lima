@@ -35,23 +35,33 @@ SET(lima-lp-textsegmentation_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-textsegmentation)
 
-target_link_libraries(lima-lp-textsegmentation lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-linguisticanalysisstructure ${QT_LIBRARIES} lima-common-qslog)
+target_link_libraries(lima-lp-textsegmentation 
+  lima-lp-linguisticprocessors 
+  lima-lp-linguisticresources 
+  lima-lp-annotationgraph 
+  lima-lp-linguisticanalysisstructure 
+  lima-common
+  ${QT_LIBRARIES}
+)
 
 set_target_properties(lima-lp-textsegmentation PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-textsegmentation DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-textsegmentation DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 ########### install files ###############
 
 install(FILES 
-  SegmentationData.h 
-  SegmentationDataXmlLogger.h 
-  SegmentationResultsLoader.h 
-  SegmentFeatureExtractor.h
-  SegmentFeaturesDumper.h
-  SentenceBoundariesFinder.h
-  ParagraphBoundariesFinder.h
-  SentenceBoundariesXmlLogger.h
-  TemporalSegmentationFeatures.h
-  TextSegmentationExport.h
-  DESTINATION include/linguisticProcessing/core/TextSegmentation)
+    SegmentationData.h 
+    SegmentationDataXmlLogger.h 
+    SegmentationResultsLoader.h 
+    SegmentFeatureExtractor.h
+    SegmentFeaturesDumper.h
+    SentenceBoundariesFinder.h
+    ParagraphBoundariesFinder.h
+    SentenceBoundariesXmlLogger.h
+    TemporalSegmentationFeatures.h
+    TextSegmentationExport.h
+  DESTINATION include/linguisticProcessing/core/TextSegmentation
+  COMPONENT devel
+)

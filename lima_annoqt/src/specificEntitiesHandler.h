@@ -47,22 +47,21 @@ public:
                      QString &localName,
                      const
                      QString &qName, const
-                     QXmlAttributes &attributes );
+                     QXmlAttributes &attributes ) override;
 
   bool endElement( const
                    QString &namespaceURI, const
                    QString &localName,
                    const
-                   QString &qName );
+                   QString &qName ) override;
 
   bool characters( const
-                   QString &str );
+                   QString &str ) override;
 
   bool fatalError( const
-                   QXmlParseException &exception );
+                   QXmlParseException &exception ) override;
 
-  QString errorString() const
-  ;
+  QString errorString() const override;
 
 private:
   // Will later have to change to QTreeWidget to handle multiple groups of

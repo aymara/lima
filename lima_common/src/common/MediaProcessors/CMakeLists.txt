@@ -31,10 +31,14 @@ SET(lima-common-mediaprocessors_LIB_SRCS
 
 add_library(lima-common-mediaprocessors SHARED ${lima-common-mediaprocessors_LIB_SRCS})
 
-target_link_libraries(lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework)
+target_link_libraries(lima-common-mediaprocessors 
+  lima-common-mediaticdata 
+  lima-common-processunitframework
+)
 
 set_target_properties(lima-common-mediaprocessors PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-mediaprocessors DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-mediaprocessors DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
@@ -46,4 +50,6 @@ install(FILES
     HandlerStreamBuf.h
     DumperStream.h
 #     AbstractAnalysisDumper.h
-  DESTINATION include/common/MediaProcessors)
+  DESTINATION include/common/MediaProcessors
+  COMPONENT devel
+)

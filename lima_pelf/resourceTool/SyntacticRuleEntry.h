@@ -47,10 +47,10 @@ public:
     QStringList dependencyCreates;
 
     SyntacticRuleEntry (QString s = "");
-    bool decodeSourceString () { return true; };
-    bool matches (QStringList args);
-    QString encodeToString () { return ""; };
-    QString getColumnData(int column) { return ""; };
+    bool decodeSourceString () override { return true; };
+    bool matches (QStringList args) override;
+    QString encodeToString () override { return ""; };
+    QString getColumnData(int ) override { return ""; };
 
 };
 

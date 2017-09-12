@@ -83,6 +83,11 @@ RegistrableFactory<Factory>::~RegistrableFactory() {}
 template<typename Factory>
 std::shared_ptr<Factory> RegistrableFactory<Factory>::getFactory(const std::string& id)
 {
+  if (id.empty())
+  {
+    std::cerr << "Trying to access to factory with empty name!" << std::endl;
+    throw InvalidConfiguration();
+  }
   return std::dynamic_pointer_cast<Factory>(MainFactory< RegistrableFactory<Factory> >::changeable().getFactory(id));
 }
 
