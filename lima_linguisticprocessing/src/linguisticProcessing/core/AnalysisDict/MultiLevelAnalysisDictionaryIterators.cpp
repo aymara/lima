@@ -63,7 +63,7 @@ MultiLevelAnalysisDictionarySubWordIterator::operator*() const
   {
     if (it->first != it->second)
     {
-      std::pair<uint64_t, uint64_t> data=*(it->first);
+      std::pair<uint64_t, uint64_t> data=*(it->first); // clazy:exclude=rule-of-two-soft
       if (data.first < offset)
       {
         offset=data.first;

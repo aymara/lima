@@ -35,12 +35,14 @@ namespace LinguisticProcessing {
 
 namespace LinguisticAnalysisStructure {
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltString {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltString 
+{
   public:
   bool operator()(const LinguisticElement& elem1,const LinguisticElement& elem2) const;
 };
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltProperty {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltProperty 
+{
   public:
   ltProperty(const Common::PropertyCode::PropertyAccessor* prop);
   bool operator()(const LinguisticElement& elem1,const LinguisticElement& elem2) const;
@@ -48,7 +50,8 @@ class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltProperty {
   const Common::PropertyCode::PropertyAccessor* m_prop;
 };
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltNormProperty {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltNormProperty 
+{
   public:
   ltNormProperty(const Common::PropertyCode::PropertyAccessor* prop);
   bool operator()(const LinguisticElement& elem1,const LinguisticElement& elem2) const;
@@ -56,7 +59,8 @@ class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ltNormProperty {
   const Common::PropertyCode::PropertyAccessor* m_prop;
 };
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT CheckEqualPropertyPredicate {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT CheckEqualPropertyPredicate 
+{
   public:
   CheckEqualPropertyPredicate(const Common::PropertyCode::PropertyAccessor* prop,LinguisticCode value);
   bool operator()(const LinguisticElement& elem) const;
@@ -65,7 +69,8 @@ class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT CheckEqualPropertyPredicate {
   LinguisticCode m_value;
 };
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT CheckDifferentPropertyPredicate {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT CheckDifferentPropertyPredicate 
+{
   public:
   CheckDifferentPropertyPredicate(const Common::PropertyCode::PropertyAccessor* prop,LinguisticCode value);
   bool operator()(const LinguisticElement& elem) const;
@@ -74,7 +79,8 @@ class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT CheckDifferentPropertyPredicate {
   LinguisticCode m_value;
 };
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT IncludePropertyPredicate {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT IncludePropertyPredicate 
+{
   public:
   IncludePropertyPredicate(const Common::PropertyCode::PropertyAccessor* prop,const std::set<LinguisticCode>& value);
   bool operator()(const LinguisticElement& elem) const;
@@ -84,11 +90,16 @@ private:
   const std::set<LinguisticCode>& m_values;
 };
 
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ExcludePropertyPredicate {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT ExcludePropertyPredicate 
+{
   public:
-  ExcludePropertyPredicate(const Common::PropertyCode::PropertyAccessor* prop,const std::set<LinguisticCode>& value);
+  ExcludePropertyPredicate(const Common::PropertyCode::PropertyAccessor* prop,
+                           const std::set<LinguisticCode>& value);
+  ExcludePropertyPredicate(const ExcludePropertyPredicate& epp);
+  
   bool operator()(const LinguisticElement& elem) const;
-  private:
+  
+private:
   ExcludePropertyPredicate& operator=(const ExcludePropertyPredicate&) {return *this;}
   const Common::PropertyCode::PropertyAccessor* m_property;
   const std::set<LinguisticCode>& m_values;

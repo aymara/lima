@@ -39,7 +39,7 @@ public:
   ResourceReaderToolBoxModel (QObject * parent = 0);
   virtual ~ResourceReaderToolBoxModel();
 
-  void emitDataInstalled (bool success) { Q_EMIT dataInstalled(success); }; // ResourceReaderSimpleModel needed Q_EMIT function
+  void emitDataInstalled (bool success) override { Q_EMIT dataInstalled(success); }; 
 
 Q_SIGNALS:
   void dataInstalled (bool success); // ResourceReaderSimpleModel needed signal
@@ -47,8 +47,8 @@ Q_SIGNALS:
   
 public Q_SLOTS:
   // ResourceReaderSimpleModel needed slots
-  virtual void installFinished (int ec, QProcess::ExitStatus es) { ResourceReaderSimpleModel::installFinished(ec, es); };
-  virtual void installError (QProcess::ProcessError e) { ResourceReaderSimpleModel::installError(e); };
+  virtual void installFinished (int ec, QProcess::ExitStatus es) override { ResourceReaderSimpleModel::installFinished(ec, es); };
+  virtual void installError (QProcess::ProcessError e) override { ResourceReaderSimpleModel::installError(e); };
 
 };
 

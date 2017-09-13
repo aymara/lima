@@ -82,11 +82,10 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
   LimaStatusCode process(
-    AnalysisContent& analysis) const;
+    AnalysisContent& analysis) const override;
 
 protected:
 
@@ -94,7 +93,6 @@ private:
 
   std::string m_outputSuffix;
   std::string m_graphId;
-  const Common::PropertyCode::PropertyCodeManager* m_propertyCodeManager;
   MediaId m_language;
   DependencyGraphEdge m_lastEdge;
   std::string m_memo;

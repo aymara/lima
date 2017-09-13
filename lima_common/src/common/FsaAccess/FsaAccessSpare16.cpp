@@ -45,9 +45,8 @@ namespace FsaAccess {
 template class LIMA_FSAACCESS_EXPORT FsaAccessReader16<class boost::adjacency_list<struct boost::vecS,struct boost::vecS,struct boost::bidirectionalS,struct boost::property<enum vertex_count_t,class std::vector<int,class std::allocator<int> >,struct boost::property<enum boost::vertex_name_t,uint64_t,struct boost::property<enum vertex_text_t,class QString,struct boost::no_property> > >,struct boost::no_property,struct boost::no_property,struct boost::listS> >;
 
 FsaAccessSpare16::FsaAccessSpare16(bool trie_direction_fwd)
-: FsaAccessReader16<selected_graph_types16::spareGraphType>(trie_direction_fwd),
-  m_packingStatus(SPARE)
-  {
+: FsaAccessReader16<selected_graph_types16::spareGraphType>(trie_direction_fwd)
+{
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessSpare16::FsaAccessSpare16()";

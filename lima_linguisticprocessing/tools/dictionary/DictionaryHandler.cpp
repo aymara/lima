@@ -82,8 +82,13 @@ DictionaryCompiler::~DictionaryCompiler()
   delete[] m_charbuf;
 }
 
-bool DictionaryCompiler::startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes)
+bool DictionaryCompiler::startElement(const QString & namespaceURI, 
+                                      const QString & name, 
+                                      const QString & qName, 
+                                      const QXmlAttributes & attributes)
 {
+  LIMA_UNUSED(namespaceURI)
+  LIMA_UNUSED(qName)
   ANALYSISDICTLOGINIT;
 //   LDEBUG << "startElement : " << name;
   if (name==S_ENTRY)
@@ -345,8 +350,12 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI, const QStrin
   
 }
 
-bool DictionaryCompiler::endElement(const QString& namespaceURI, const QString& name, const QString & qName)
+bool DictionaryCompiler::endElement(const QString& namespaceURI, 
+                                    const QString& name, 
+                                    const QString & qName)
 {
+  LIMA_UNUSED(namespaceURI)
+  LIMA_UNUSED(qName)
   //  cerr << "endElement " << name << endl;
   if (name==S_ENTRY)
   {

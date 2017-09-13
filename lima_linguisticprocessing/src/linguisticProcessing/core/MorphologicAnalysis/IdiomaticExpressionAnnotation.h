@@ -66,10 +66,12 @@ public:
   *         displayed in the case where the given annotation is not a specific entity
   *         annotation and UNKNOWN_ERROR is returned .
   */
-class DumpIdiomaticExpressionAnnotation : public Common::AnnotationGraphs::AnnotationData::Dumper
+class DumpIdiomaticExpressionAnnotation : 
+    public Common::AnnotationGraphs::AnnotationData::Dumper
 {
   public:
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+    virtual int dump(std::ostream& os, 
+                     Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 

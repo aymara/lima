@@ -29,7 +29,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplate
 {
  public:
   EventTemplate();
-  EventTemplate(const std::string); 
+  EventTemplate(const std::string&); 
   ~EventTemplate();
 
   void addElement(const std::string& role, const EventTemplateElement& elt);

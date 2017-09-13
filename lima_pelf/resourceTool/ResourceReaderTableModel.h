@@ -29,7 +29,9 @@
 namespace Lima {
 namespace Pelf {
 
-class ResourceReaderTableModel : public QAbstractTableModel, public ResourceReaderSimpleModel
+class ResourceReaderTableModel : 
+    public QAbstractTableModel, 
+    public ResourceReaderSimpleModel
 {
 
 Q_OBJECT
@@ -46,13 +48,13 @@ public:
     virtual ~ResourceReaderTableModel();
     
     int searchEntries (QStringList args);
-    int rowCount (const QModelIndex& parent = QModelIndex()) const;
-    int columnCount (const QModelIndex& parent = QModelIndex()) const;
-    QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    int rowCount (const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount (const QModelIndex& parent = QModelIndex()) const override;
+    QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     void sortByHeader (int column, Qt::SortOrder order);
     static bool headerLessThan (AbstractResourceEntry* entry1, AbstractResourceEntry* entry2);
-    QVariant data (const QModelIndex& index, int role) const;
-    void emitDataInstalled (bool success) { Q_EMIT dataInstalled(success); }; // ResourceReaderSimpleModel needed Q_EMIT function
+    QVariant data (const QModelIndex& index, int role) const override;
+    void emitDataInstalled (bool success) override { Q_EMIT dataInstalled(success); }; // ResourceReaderSimpleModel needed Q_EMIT function
 
 Q_SIGNALS:
 
@@ -63,8 +65,8 @@ Q_SIGNALS:
 public Q_SLOTS:
 
     // ResourceReaderSimpleModel needed slots
-    virtual void installFinished (int ec, QProcess::ExitStatus es) { ResourceReaderSimpleModel::installFinished(ec, es); };
-    virtual void installError (QProcess::ProcessError e) { ResourceReaderSimpleModel::installError(e); };
+    virtual void installFinished (int ec, QProcess::ExitStatus es) override { ResourceReaderSimpleModel::installFinished(ec, es); };
+    virtual void installError (QProcess::ProcessError e) override { ResourceReaderSimpleModel::installError(e); };
 
 };
 

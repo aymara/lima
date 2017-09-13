@@ -42,6 +42,7 @@ namespace AnalysisDict {
 //class FsaRwAccessResource : public AbstractRwAccessResource
 class LIMA_ANALYSISDICT_EXPORT FsaRwAccessResource : public FsaAccessResource
 {
+  Q_OBJECT
 public:
     FsaRwAccessResource();
 
@@ -49,10 +50,10 @@ public:
     
     void init(
      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-     Manager* manager);
+     Manager* manager) override;
 
     virtual Common::AbstractModifierOnAccessByString* getRwAccessByString() const;
-    virtual Common::AbstractAccessByString* getAccessByString() const;
+    virtual Common::AbstractAccessByString* getAccessByString() const override;
 
 private:
   Common::AbstractModifierOnAccessByString* m_fsaRwAccess;

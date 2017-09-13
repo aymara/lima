@@ -17,6 +17,9 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 #include "ResourceEditorTableModel.h"
+
+#include <algorithm>
+
 using namespace Lima::Pelf;
 
 ResourceEditorTableModel::ResourceEditorTableModel () :
@@ -33,7 +36,7 @@ void ResourceEditorTableModel::saveData ()
 {
     int oldSortedHeaderColumn = ResourceReaderTableModel::sortedHeaderColumn;
     ResourceReaderTableModel::sortedHeaderColumn = -1;
-    qSort(availableData.begin(), availableData.end(), ResourceReaderTableModel::headerLessThan);
+    std::sort(availableData.begin(), availableData.end(), ResourceReaderTableModel::headerLessThan);
     qDebug() << "Saving resource data into " << editedResourcePath;
     QFile resourceFile(editedResourcePath);
     if(!resourceFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -50,7 +53,7 @@ void ResourceEditorTableModel::saveData ()
     resourceFile.write(encodedEntriesUtf8, encodedEntriesUtf8Size);
     resourceFile.close();
     ResourceReaderTableModel::sortedHeaderColumn = oldSortedHeaderColumn;
-    qSort(availableData.begin(), availableData.end(), ResourceReaderTableModel::headerLessThan);
+    std::sort(availableData.begin(), availableData.end(), ResourceReaderTableModel::headerLessThan);
 }
 
 void ResourceEditorTableModel::install ()
@@ -70,7 +73,7 @@ void ResourceEditorTableModel::addEntry (AbstractResourceEntry* de)
 void ResourceEditorTableModel::deleteEntries (QModelIndexList indexList)
 {
     dataModified = true;
-    qSort(indexList);
+    std::sort(indexList.begin(),indexList.end());
     QList<AbstractResourceEntry*> entriesList;
     for(int i = 0; i < indexList.size(); i++)
         if(AbstractResourceEntry* entry = getFoundEntry(indexList.at(i).row()))

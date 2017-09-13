@@ -25,7 +25,7 @@
 #error "Python version must be 3 or more"
 #endif
 
-int main(int argc, char **argv)
+int main(int , char **)
 {
 std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
 "2	Convention	Convention	NP	NNP	_	_	4	SUB	_	_\n"
@@ -71,7 +71,6 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     std::cerr << "Failed to import the sys module" << std::endl;
     PyErr_Print();
   }
-  PyObject* sys_dict = PyModule_GetDict(sys_module);
   PyDict_SetItemString(main_dict, "sys", sys_module);  
 
   // Add the path to the knowledgesrl pachkage to putho path

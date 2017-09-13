@@ -40,7 +40,7 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   {
     LIMA_UNUSED(unitConfiguration);
     LIMA_UNUSED(manager);
@@ -54,7 +54,7 @@ class VeryDummyInitializableObject : public DummyInitializableObject
 public:
   virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager)
+      Manager* manager) override
   {
     LIMA_UNUSED(unitConfiguration);
     LIMA_UNUSED(manager);
@@ -67,7 +67,7 @@ class NotSoDummyInitializableObject : public DummyInitializableObject
 public:
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   {
     LIMA_UNUSED(unitConfiguration);
     LIMA_UNUSED(manager);

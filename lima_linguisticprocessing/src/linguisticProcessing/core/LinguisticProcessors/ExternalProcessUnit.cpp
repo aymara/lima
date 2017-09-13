@@ -159,7 +159,7 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
   {
     outputFilename = fileName + m_outputSuffix;
   }
-  commandLine = commandLine.arg(inputFilename).arg(outputFilename);
+  commandLine = commandLine.arg(inputFilename, outputFilename);
   LDEBUG << "Launching " << commandLine;
   int processResult = QProcess::execute(commandLine);
   switch (processResult) {

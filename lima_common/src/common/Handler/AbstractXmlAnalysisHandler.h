@@ -49,7 +49,7 @@ public:
   virtual void endDocument() = 0;
 
   /** gives content. Content is a serialized form of the expected resultType */
-  virtual void handle(const char* buf,int length) = 0;
+  virtual void handle(const char* buf,int length) override = 0;
   
   /** notify the start of a new hierarchyNode */
   virtual void startNode( const std::string& elementName, bool forIndexing ) = 0;

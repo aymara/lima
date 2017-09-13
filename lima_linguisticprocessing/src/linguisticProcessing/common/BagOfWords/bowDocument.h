@@ -66,13 +66,14 @@ class LIMA_BOW_EXPORT BoWDocument :
     public BoWText
 {
 public:
-  virtual void clear();
   BoWDocument();
   BoWDocument(const BoWDocument&);
   virtual ~BoWDocument();
   BoWDocument& operator = (const BoWDocument&);
 
-  virtual void reinit();
+  virtual void clear() override;
+  
+  virtual void reinit() override;
 
   virtual void setProperties(const Misc::GenericDocumentProperties& properties);
 

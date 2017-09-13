@@ -79,8 +79,6 @@ public:
   inline std::map< std::string, std::vector< std::vector< LinguisticGraphVertex > > >& coordStrings() {return  m_coordStrings;}
 
 private:
-  /** @brief  */
-  LinguisticAnalysisStructure::AnalysisGraph* m_anagraph;
 
   std::list< boost::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::MediaticData::SyntacticRelationId > > m_subSentBounds;
 

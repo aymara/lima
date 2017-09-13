@@ -38,23 +38,24 @@ namespace LinguisticProcessing {
 */
 class LIMA_ANALYSISHANDLERS_EXPORT LTRTextHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
     LTRTextHandler();
 
     virtual ~LTRTextHandler();
 
-    virtual void endAnalysis();
-    virtual void handle(const char* buf, int length) ;
-    virtual void startAnalysis();
+    virtual void endAnalysis() override;
+    virtual void handle(const char* buf, int length) override ;
+    virtual void startAnalysis() override;
 
-    void startDocument(const Common::Misc::GenericDocumentProperties&);
-    void endDocument();
-    void startNode( const std::string& elementName, bool forIndexing );
-    void endNode(const Common::Misc::GenericDocumentProperties& props);
+    void startDocument(const Common::Misc::GenericDocumentProperties&) override;
+    void endDocument() override;
+    void startNode( const std::string& elementName, bool forIndexing ) override;
+    void endNode(const Common::Misc::GenericDocumentProperties& props) override;
     
     Common::BagOfWords::LTR_Text& getLTRText();
 
-    virtual void setOut( std::ostream* /*out*/ ) {}
+    virtual void setOut( std::ostream* /*out*/ ) override {}
     
 private:
   std::stringstream m_ltrstream;

@@ -49,19 +49,19 @@ public:
 
   virtual ~MorphoSyntacticDataHandler();
 
-  virtual void startEntry(StringsPoolIndex form);
-  virtual void endEntry();
+  virtual void startEntry(StringsPoolIndex form) override;
+  virtual void endEntry() override;
   
-  virtual void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm);
-  virtual void endLingInfos();
+  virtual void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm) override;
+  virtual void endLingInfos() override;
 
-  virtual void foundAccentedForm(StringsPoolIndex form);
-  virtual void endAccentedForm();
+  virtual void foundAccentedForm(StringsPoolIndex form) override;
+  virtual void endAccentedForm() override;
 
-  virtual void foundProperties(LinguisticCode lings);
+  virtual void foundProperties(LinguisticCode lings) override;
   
-  virtual void foundConcatenated();
-  virtual void endConcatenated();
+  virtual void foundConcatenated() override;
+  virtual void endConcatenated() override;
 
 private:
   LinguisticAnalysisStructure::MorphoSyntacticData& m_output;

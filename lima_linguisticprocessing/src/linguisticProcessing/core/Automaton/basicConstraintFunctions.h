@@ -64,7 +64,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
   const Common::PropertyCode::PropertyAccessor* m_categoryForAgreementAccessor;
 };
@@ -101,7 +101,7 @@ public:
   ~LinguisticPropertyIs() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
@@ -119,7 +119,7 @@ public:
   ~LengthInInterval() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   uint64_t m_min;
@@ -137,7 +137,7 @@ public:
   ~NumericValueInInterval() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   MediaId m_language;

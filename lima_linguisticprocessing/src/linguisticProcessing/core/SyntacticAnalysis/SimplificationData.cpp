@@ -37,9 +37,10 @@ namespace SyntacticAnalysis {
   * @param graph @b IN/OUT <I>LinguisticGraph*</I> the graph containing
   *        morphological data
   */
-SimplificationData::SimplificationData(LinguisticAnalysisStructure::AnalysisGraph* pit) :
-    m_anagraph(pit), m_simplificationDone(false) 
+SimplificationData::SimplificationData(LinguisticAnalysisStructure::AnalysisGraph* ag) :
+    m_simplificationDone(false) 
 {
+  LIMA_UNUSED(ag)
 }
 
 SimplificationData::~SimplificationData() 

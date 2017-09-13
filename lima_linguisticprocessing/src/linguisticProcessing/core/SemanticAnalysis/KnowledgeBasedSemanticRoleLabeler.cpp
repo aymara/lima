@@ -58,7 +58,7 @@ namespace LinguisticProcessing
 namespace SemanticAnalysis
 {
 
-static SimpleFactory<MediaProcessUnit,KnowledgeBasedSemanticRoleLabeler> knowledgeBasedSemanticRoleLabelerFactory(KNOWLEDGEBASEDSEMANTICROLELABELER_CLASSID);
+static SimpleFactory<MediaProcessUnit,KnowledgeBasedSemanticRoleLabeler> knowledgeBasedSemanticRoleLabelerFactory(KNOWLEDGEBASEDSEMANTICROLELABELER_CLASSID); // clazy:exclude=non-pod-global-static
 
 
 class KnowledgeBasedSemanticRoleLabelerPrivate

@@ -431,7 +431,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
     QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
     Q_FOREACH(QString resPath, resourcesPaths)
     {
-      if  (QFileInfo(resPath + "/" + compoundTensesDefinitionsFile.c_str()).exists())
+      if  (QFileInfo::exists(resPath + "/" + compoundTensesDefinitionsFile.c_str()))
       {
         compoundTensesDefinitionsFile = (resPath + "/" + compoundTensesDefinitionsFile.c_str()).toUtf8().constData();
         break;

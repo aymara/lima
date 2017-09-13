@@ -68,11 +68,11 @@ m_currentEntity(0)
 
   readSettings();
 
-  connect( m_textEdit->document(), SIGNAL( contentsChanged() ),
-           this, SLOT( documentWasModified() ) );
+  connect( m_textEdit->document(), SIGNAL(contentsChanged()),
+           this, SLOT(documentWasModified()) );
 
-  connect( m_listWidget, SIGNAL( clicked( const QModelIndex & ) ),
-          this, SLOT( slotTypesListItemclicked( const QModelIndex & ) ) );
+  connect( m_listWidget, SIGNAL(clicked(QModelIndex&)),
+          this, SLOT(slotTypesListItemclicked(QModelIndex&)) );
 }
 
 void Annoqt::closeEvent( QCloseEvent *event )
@@ -223,18 +223,18 @@ void Annoqt::createActions()
   copyAct->setEnabled( false );
 //   connect( m_textEdit, SIGNAL( copyAvailable( bool ) ),
 //            cutAct, SLOT( setEnabled( bool ) ) );
-  connect( m_textEdit, SIGNAL( copyAvailable( bool ) ),
-           copyAct, SLOT( setEnabled( bool ) ) );
+  connect( m_textEdit, SIGNAL(copyAvailable(bool)),
+           copyAct, SLOT(setEnabled(bool)) );
 
   searchAction = new QAction( tr( "Search" ), this );
   searchAction->setShortcut( tr( "Ctrl+F" ) );
   searchAction->setStatusTip( tr( "Search a string of text" ) );
-  connect( searchAction, SIGNAL( triggered() ), this, SLOT( slotSearch() ) );
+  connect( searchAction, SIGNAL(triggered()), this, SLOT(slotSearch()) );
 
   searchNextAction = new QAction( tr( "Search Next" ), this );
   searchNextAction->setShortcut( tr( "F3" ) );
   searchNextAction->setStatusTip( tr( "Search the next occurrence of the last searched text" ) );
-  connect( searchNextAction, SIGNAL( triggered() ), this, SLOT( slotSearchNext() ) );
+  connect( searchNextAction, SIGNAL(triggered()), this, SLOT(slotSearchNext()) );
   
 }
 
@@ -353,8 +353,7 @@ void Annoqt::loadFile( const QString &fileName )
   {
     QMessageBox::warning( this, tr( "Application" ),
                           tr( "Cannot read file %1:\n%2." )
-                          .arg( fileName )
-                          .arg( file.errorString() ) );
+                          .arg( fileName ), file.errorString() );
     return;
   }
 
@@ -390,8 +389,7 @@ bool Annoqt::saveFile( const QString &fileName )
   {
     QMessageBox::warning( this, tr( "Application" ),
                           tr( "Cannot write file %1:\n%2." )
-                          .arg( fileName )
-                          .arg( file.errorString() ) );
+                          .arg( fileName, file.errorString() ) );
     return false;
   }
 
@@ -450,7 +448,7 @@ void Annoqt::setCurrentFile( const QString &fileName )
   else
     shownName = strippedName( m_curFile );
 
-  setWindowTitle( tr( "%1[*] - %2" ).arg( shownName ).arg( tr( "Application" ) ) );
+  setWindowTitle( tr( "%1[*] - %2" ).arg( shownName, tr( "Application" ) ) );
 }
 
 QString Annoqt::strippedName( const QString &fullFileName )
@@ -549,8 +547,7 @@ void Annoqt::loadAnnotationConfigurationFile(const QString& fileName)
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
       QMessageBox::warning(this, tr("Annotation Tool"),
                             tr("Cannot read file %1:\n%2.")
-                            .arg(fileName)
-                            .arg(file.errorString()));
+                            .arg(fileName, file.errorString()));
       return;
   }
 
@@ -575,7 +572,7 @@ void Annoqt::loadAnnotationConfigurationFile(const QString& fileName)
   if (reader.parse(xmlInputSource))
       statusBar()->showMessage(tr("Annotation Configuration File loaded"), 2000);
   qDebug() << "Annoqt::loadAnnotationConfigurationFile recursive entities are" << recursiveEntityTypes;
-  for (QMap<QString, QString>::const_iterator it=m_colorNames2EntityTypes.begin();
+  for (auto it=m_colorNames2EntityTypes.begin();
         it != m_colorNames2EntityTypes.end(); it++)
   {
     int newEntityType = m_entityNames2Types.size();
@@ -764,9 +761,6 @@ void Annoqt::searchTextAndAnnotate(const QString &text)
 
   while (!cursor.isNull())
   {
-    int middlePos = (cursor.position()+cursor.anchor())/2;
-    QTextBlock middleBlock = doc->findBlock(middlePos);
-    
     // two different blocks would mean not in the same entity
     if (doc->findBlock(cursor.position()) == doc->findBlock(cursor.anchor())
         // automatic changes only on untagged text (thus white)

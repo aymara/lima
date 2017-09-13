@@ -248,7 +248,6 @@ QStringList TestCaseProcessor::evaluateExpression(
     QString xpath = QString::fromUtf8(expr.substr(6).c_str())+"/string()";
     LDEBUG << "TestCaseProcessor::evaluateExpression setQuery("<<xpath<<");";
     document.setQuery(xpath);
-    QString sresults;
     if(!document.evaluateTo(&results)) {
       LERROR << "TestCaseProcessor::evaluateExpression unable to evaluate xpath expression \""<<xpath;
       return results;

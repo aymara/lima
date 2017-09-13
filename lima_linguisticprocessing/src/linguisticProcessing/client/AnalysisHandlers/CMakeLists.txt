@@ -20,6 +20,20 @@ add_definitions(-DLIMA_ANALYSISHANDLERS_EXPORTING)
 
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(analysishandlers
+  AbstractTextualAnalysisHandler.h
+  BowDocumentHandler.h
+  BowDocumentWriter.h
+  BowTextHandler.h
+  CompactFullDocumentHandler.h
+  LTRTextHandler.h
+  BowTextWriter.h
+  FakeHandler.h
+  SBowDocumentWriter.h
+  SimpleStreamHandler.h
+)
+
+
 SET(lima-lp-analysishandlers_LIB_SRCS
    BowDocumentHandler.cpp
    BowDocumentWriter.cpp
@@ -33,7 +47,10 @@ SET(lima-lp-analysishandlers_LIB_SRCS
    StructuredBoWToBoWDocument.cpp
 )
 
-add_library(lima-lp-analysishandlers SHARED ${lima-lp-analysishandlers_LIB_SRCS})
+add_library(lima-lp-analysishandlers SHARED 
+  ${lima-lp-analysishandlers_LIB_SRCS} 
+  ${lima-lp-analysishandlers_MOC_OUTFILES}
+)
 
 target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources

@@ -40,6 +40,8 @@ public:
     : std::pair<uint64_t, uint64_t> (0,0) {}
   DepCompound(uint64_t head , uint64_t ext)
     : std::pair<uint64_t, uint64_t> (head, ext) {}
+  DepCompound(const DepCompound& dc);
+  DepCompound& operator=(const DepCompound& dc);
   uint64_t getHead() const { return first; }
   uint64_t getExt() const { return second ;}
   void print (std::ostream& os) const;
@@ -66,6 +68,8 @@ public:
    : std::pair<uint64_t, uint64_t> (0, 0) {}
   ExtCompound(uint64_t first , uint64_t next)
    : std::pair<uint64_t, uint64_t> (first, next) {}
+  ExtCompound(const ExtCompound& dc);
+  ExtCompound& operator=(const ExtCompound& dc);
   uint64_t getFirst() const { return first; }
   uint64_t getNext() const { return second; }
   void print ( std::ostream& os) const;

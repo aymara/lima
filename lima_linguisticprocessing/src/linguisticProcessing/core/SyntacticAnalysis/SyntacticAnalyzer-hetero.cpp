@@ -241,9 +241,8 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
       *     allowed to search up to the full sentence bounds in order
       *     to link the subsentence to the full sentence
       */
-    std::list< boost::tuple< LinguisticGraphEdge, LinguisticGraphEdge, Common::MediaticData::SyntacticRelationId > >::reverse_iterator subSentRIt, subSentRIt_end;
-    subSentRIt = simplificationData->simplifications(beginSentence).rbegin();
-    subSentRIt_end = simplificationData->simplifications(beginSentence).rend();
+    auto subSentRIt = simplificationData->simplifications(beginSentence).rbegin();
+    auto subSentRIt_end = simplificationData->simplifications(beginSentence).rend();
     for (; subSentRIt != subSentRIt_end; subSentRIt++)
     {
       LinguisticGraphEdge first;

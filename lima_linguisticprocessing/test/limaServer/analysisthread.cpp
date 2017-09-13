@@ -42,6 +42,9 @@
 #include <sstream>      // std::stringstream
 #include <QtCore/QString>
 #include <QtCore/QTemporaryFile>
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#   include <QUrlQuery>
+#endif
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -116,7 +119,11 @@ void AnalysisThread::startAnalysis()
     std::ostringstream* oss = new std::ostringstream();
     seLogWriter->setOut(oss);
    
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     Q_FOREACH( item, m_d->m_request->url().queryItems())
+#else
+    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems())
+#endif
     {
       QTemporaryFile tempFile;
       metaData["FileName"]=tempFile.fileName().toUtf8().constData();
@@ -183,7 +190,11 @@ void AnalysisThread::startAnalysis()
     std::string text_s;
     QPair<QString, QString> item;
     std::map<std::string,std::string> metaData;
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     Q_FOREACH( item, m_d->m_request->url().queryItems())
+#else
+    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems())
+#endif
     {
       if (item.first == "lang")
       {

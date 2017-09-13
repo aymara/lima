@@ -49,15 +49,17 @@ public:
   BoWPredicate();
   BoWPredicate(const BoWPredicate&);
   BoWPredicate(const Common::MediaticData::EntityType theType);
-  BoWPredicate(const Common::MediaticData::EntityType theType, QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > pRoles);
+  BoWPredicate(const Common::MediaticData::EntityType theType, 
+               QMultiMap<Common::MediaticData::EntityType, 
+               boost::shared_ptr< AbstractBoWElement > > pRoles);
 
   virtual ~BoWPredicate();
 
   /** size of the AbstractBoWElement is the number of parts in the token, 0 for 
    *a predicate */
-  virtual uint64_t size(void) const {return 0;};
+  virtual uint64_t size(void) const override {return 0;};
 
-  virtual BoWPredicate* clone() const;
+  virtual BoWPredicate* clone() const override;
 
   BoWPredicate& operator=(const BoWPredicate&);
   bool operator==(const BoWPredicate&);
@@ -65,18 +67,18 @@ public:
   MediaticData::EntityType getPredicateType(void) const;
   void setPredicateType(const MediaticData::EntityType&);
 
-  virtual BoWType getType() const { return BoWType::BOW_PREDICATE; }
+  virtual BoWType getType() const override { return BoWType::BOW_PREDICATE; }
 
-  virtual Lima::LimaString getString(void) const;
+  virtual Lima::LimaString getString(void) const override;
 
-  virtual uint64_t getPosition(void) const;
-  virtual uint64_t getLength(void) const;
-  virtual void setPosition(const uint64_t pos);
-  virtual void setLength(const uint64_t len);
+  virtual uint64_t getPosition(void) const override;
+  virtual uint64_t getLength(void) const override;
+  virtual void setPosition(const uint64_t pos) override;
+  virtual void setLength(const uint64_t len) override;
 
   /** get a string of the predicate for output function */
-  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
-  virtual std::string getIdUTF8String(void) const;
+  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const override;
+  virtual std::string getIdUTF8String(void) const override;
 
   const QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& roles() const;
   QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > >& roles();
@@ -88,7 +90,7 @@ public:
    *
    * @return the vertices of the predicate and the roles
    */
-  virtual std::set< uint64_t > getVertices() const;
+  virtual std::set< uint64_t > getVertices() const override;
 
 
 protected:

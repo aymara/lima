@@ -1014,8 +1014,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 AddEntityFeatureAsEntity::AddEntityFeatureAsEntity(MediaId language,
                                    const LimaString& complement):
 ConstraintFunction(language,complement),
-m_featureName(""),
-m_featureType(QVariant::UserType)
+m_featureName(),
+m_type()
 {
   if (complement.size()) {
     QStringList complementElements = complement.split(":");

@@ -47,9 +47,9 @@ public:
 
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager);
+      Manager* manager) override;
     
-    virtual Common::AbstractAccessByString* getAccessByString() const;
+    virtual Common::AbstractAccessByString* getAccessByString() const override;
     
 private Q_SLOTS:
   void accessFileChanged ( const QString & path );

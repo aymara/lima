@@ -51,9 +51,11 @@ namespace AnnotationGraphs
   * @return <I>int</I> The dummy dumping is considered as succesful, so
   *         SUCCESS_ID is returned.
   */
-class LIMA_ANNOTATIONGRAPH_EXPORT DummyDumpFunction : public AnnotationData::Dumper {
-  public:
-    virtual int dump(std::ostream&, GenericAnnotation&) const;
+class LIMA_ANNOTATIONGRAPH_EXPORT DummyDumpFunction : 
+    public AnnotationData::Dumper 
+{
+public:
+  virtual int dump(std::ostream&, GenericAnnotation&) const override;
 };
 
 

@@ -78,20 +78,14 @@ void FsaAccessResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(LIMA_PATH_SEPARATOR);
-    Q_FOREACH(QString resPath, resourcesPaths)
+    QString keyFile = getResourceFileName(unitConfiguration.getParamsValueAtKey("keyFile").c_str());
+    if (! keyFile.isEmpty())
     {
-      if  (QFileInfo(resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).exists())
-      {
-        string keyfile= (resPath + "/" + unitConfiguration.getParamsValueAtKey("keyFile").c_str()).toUtf8().constData();
-        FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
-        resourceFileWatcher().addPath(QString::fromUtf8(keyfile.c_str()));
-        QWriteLocker locker(&m_lock);
-        LINFO << "FsaAccessResource::init read keyFile" << QString::fromUtf8(keyfile.c_str());
-        fsaAccess->read(keyfile);
-        m_fsaAccess=fsaAccess;
-        break;
-      }
+      FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+      QWriteLocker locker(&m_lock);
+      LINFO << "FsaAccessResource::init read keyFile" << keyFile;
+      fsaAccess->read(keyFile.toStdString());
+      m_fsaAccess=fsaAccess;
     }
     if (!m_fsaAccess) {
       // FIXME: In this case, the m_fsaAccess pointer is still NULL. Try to access to
@@ -126,7 +120,7 @@ void FsaAccessResource::accessFileChanged ( const QString & path )
   // Check if the file exists as, when a file is replaced, accessFileChanged can be triggered 
   // two times, when it is first suppressed and when the new version is available. One should not 
   // try to load the missing file
-  if (QFileInfo(path).exists())
+  if (QFileInfo::exists(path))
   {
     LINFO << "FsaAccessResource::accessFileChanged reload" << path;
     FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();

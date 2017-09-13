@@ -222,7 +222,7 @@ class MyAnalysisDico : public MyAnalysisBaseDico {
 public:
   MyAnalysisDico(const analysisDataElement& defaultValue)
     : MyAnalysisBaseDico(defaultValue) {}
-  analysisDataElement getEntry( const Lima::LimaString& word) const;
+  analysisDataElement getEntry( const Lima::LimaString& word) const override;
 };
 
 analysisDataElement MyAnalysisDico::getEntry(
@@ -257,9 +257,13 @@ const Lima::LimaString& word) const{
 
 
 void testAnalysisDico(const Param& param ) {
-  string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
+  string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
+      ?"/usr/share/apps/lima/resources"
+      :string(qgetenv("LIMA_RESOURCES").constData());
   string commonConfigFile=string("lima-common.xml");
-  string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
+  string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")
+      ?"/usr/share/config/lima"
+      :string(qgetenv("LIMA_CONF").constData());
 
   MyAnalysisDico* dico = new MyAnalysisDico(analysisDataElement(0));
   dico->parseAccessMethod(param.keyFileName);

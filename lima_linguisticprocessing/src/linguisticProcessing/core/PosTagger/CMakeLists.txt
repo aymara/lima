@@ -19,6 +19,10 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_POSTAGGER_EXPORTING)
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(postagger
+  ngramMatrices.h
+)
+
 SET(lima-lp-postagger_LIB_SRCS
    disambiguationLogger.cpp
    dotGraphWriter.cpp

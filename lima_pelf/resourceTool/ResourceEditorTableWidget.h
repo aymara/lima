@@ -40,8 +40,8 @@ public:
     ResourceEditorTableWidget (QWidget* parent);
     void init (ResourceEditorTableModel* retm);
     void confirmInstall ();
-    void keyPressEvent (QKeyEvent* event);
-    void contextMenuEvent (QContextMenuEvent* event);
+    void keyPressEvent (QKeyEvent* event)  override;
+    void contextMenuEvent (QContextMenuEvent* event) override;
 
 public Q_SLOTS:
 

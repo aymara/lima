@@ -40,10 +40,10 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager) = 0;
+    Manager* manager) override = 0;
 
   virtual LimaStatusCode process(
-    AnalysisContent& analysis) const = 0;
+    AnalysisContent& analysis) const override = 0;
 };
 
 class DreamingProcessUnit : public DummyProcessUnit
@@ -52,14 +52,14 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
    {
      LIMA_UNUSED(unitConfiguration);
      LIMA_UNUSED(manager);
   };
 
   virtual LimaStatusCode process(
-    AnalysisContent& analysis) const {
+    AnalysisContent& analysis) const override {
       LIMA_UNUSED(analysis);
       std::cout << "DreamingProcessUnit is dreaming that it chases the mouse ..." << std::endl;
       return SUCCESS_ID;
@@ -72,14 +72,14 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
    {
      LIMA_UNUSED(unitConfiguration);
      LIMA_UNUSED(manager);
   };
 
   virtual LimaStatusCode process(
-    AnalysisContent& analysis) const {
+    AnalysisContent& analysis) const override {
       LIMA_UNUSED(analysis);
       std::cout << "ZenProcessUnit is wondering what is the sound of one hand clapping ..." << std::endl;
       return SUCCESS_ID;

@@ -60,7 +60,7 @@ class LIMA_FSAACCESS_EXPORT FsaAccessBuilder16: public FsaAccess16<selected_grap
     virtual ~FsaAccessBuilder16();
 
     // For IO
-    FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const;
+    FsaAccessIOHandler<graphType>* getFsaAccessIOHandler() const override;
    
     virtual void addWord( const Lima::LimaString & newWord );
     void write( const std::string & filename  );

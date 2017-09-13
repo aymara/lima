@@ -64,6 +64,9 @@ public:
      std::deque< std::string >& getModuleGroupListValues(const std::string& moduleName,const std::string& groupName,const std::string& key);
 
      friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream& os, XMLConfigurationFileParser& parser);
+
+     const std::string& getConfigurationFileName() const;
+
 private:
   XMLConfigurationFileParser();
   XMLConfigurationFileParser& operator=(const XMLConfigurationFileParser& p);// TODO ? a implémenter!!! En public...

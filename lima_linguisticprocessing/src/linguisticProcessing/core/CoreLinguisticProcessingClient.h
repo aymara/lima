@@ -50,13 +50,13 @@ public:
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
-  ;
+   override;
 
   void analyze(const std::string& texte,
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-               const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
+               const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override
   ;
 };
 
@@ -68,9 +68,9 @@ public:
   void configure(
     Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
     std::deque<std::string> langs,
-    std::deque<std::string> pipelines);
+    std::deque<std::string> pipelines) override;
 
-  std::shared_ptr< AbstractProcessingClient > createClient() const;
+  std::shared_ptr< AbstractProcessingClient > createClient() const override;
 
   virtual ~CoreLinguisticProcessingClientFactory();
 

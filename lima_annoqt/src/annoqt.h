@@ -57,7 +57,7 @@ public Q_SLOTS:
   void slotTextCursorPositionChanged();
 
 protected:
-  void closeEvent( QCloseEvent *event );
+  void closeEvent( QCloseEvent *event ) override;
 
 private Q_SLOTS:
   void newConfiguration();

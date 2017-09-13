@@ -202,9 +202,9 @@ bool XMLSyntagmaticMatrixFileHandler::startElement(const QString & namespaceURI,
         TokenFilter filter = m_tokenFilters[m_currentMatrixType][m_currentMatrixLineId];
 //        std::cerr << "Filter is " << filter << std::endl;
         if (m_currentMatrixType == NOMINAL)
-          m_matrices.nominal().m_filters.insert(std::make_pair(filter, row));
+          m_matrices.nominal().filters().insert(std::make_pair(filter, row));
         else if (m_currentMatrixType == VERBAL)
-          m_matrices.verbal().m_filters.insert(std::make_pair(filter, row));
+          m_matrices.verbal().filters().insert(std::make_pair(filter, row));
     }
     else if (stringName == ("debuts"))
 //      <!ELEMENT debuts EMPTY>

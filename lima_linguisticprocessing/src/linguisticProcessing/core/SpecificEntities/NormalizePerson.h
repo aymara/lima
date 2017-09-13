@@ -43,7 +43,7 @@ namespace SpecificEntities {
 // ids of actions defined in this file
 #define NormalizePersonId "NormalizePerson"
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizePerson : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_PERSON_EXPORT NormalizePerson : public Automaton::ConstraintFunction
 {
 public:
   NormalizePerson(MediaId language,
@@ -59,9 +59,10 @@ public:
   // function to normalize person names using a simple heuristic on result
   // to separate firstname from lastname
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
+
 private:
   MediaId m_language;
   LimaString m_firstname; // values of firstname and lastname

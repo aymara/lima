@@ -49,20 +49,25 @@ public:
 
   virtual ~EasySourceHandler();
 
-  bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
+  bool endElement(const QString & namespaceURI, 
+                  const QString & name, 
+                  const QString & qName) override;
   
-  bool characters(const QString& chars);
+  bool characters(const QString& chars) override;
   
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
+  bool startElement(const QString & namespaceURI, 
+                    const QString & name, 
+                    const QString & qName, 
+                    const QXmlAttributes & attributes) override;
   
-  bool startDocument();
+  bool startDocument() override;
   
   const std::vector<Enonce>& getEnonces() const;
 
 private:
 
   std::vector<Enonce> m_enonces;
-  
+
   Enonce m_currentEnonce;
   bool m_inEnonce;
 
@@ -71,7 +76,10 @@ private:
 
 };
 
-inline const std::vector<Enonce>& EasySourceHandler::getEnonces() const { return m_enonces;};
+inline const std::vector<Enonce>& EasySourceHandler::getEnonces() const 
+{ 
+  return m_enonces;
+};
 
 
 }

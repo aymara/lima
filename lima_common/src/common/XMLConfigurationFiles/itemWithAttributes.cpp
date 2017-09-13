@@ -117,7 +117,7 @@ getAttribute(const std::string& attributeName) const
   std::map<std::string,std::string>::const_iterator 
     it=m_d->m_attributes.find(attributeName);
   if (it == m_d->m_attributes.end()) {
-    throw NoSuchAttribute(attributeName);
+    throw NoSuchAttribute(m_d->m_name+"["+attributeName+"]");
   }
   return (*it).second;
 }

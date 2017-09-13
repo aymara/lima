@@ -48,7 +48,7 @@ public Q_SLOTS:
   void slotTypesListItemclicked(QListWidgetItem* item );
 
 protected:
-  void closeEvent( QCloseEvent *event );
+  void closeEvent( QCloseEvent *event ) override;
 
 private Q_SLOTS:
   void slotNewConfiguration();

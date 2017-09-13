@@ -56,20 +56,25 @@ class LIMA_BOW_EXPORT BoWTerm : public BoWComplexToken
           const uint64_t position,
           const uint64_t length);
 
-  BoWTerm(const Lima::LimaString& lemma, const uint64_t category, const uint64_t position, const uint64_t length, std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, const uint64_t head);
+  BoWTerm(const Lima::LimaString& lemma, 
+          const uint64_t category, 
+          const uint64_t position, 
+          const uint64_t length, 
+          std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, 
+          const uint64_t head);
 
   virtual ~BoWTerm();
 
-  virtual BoWTerm* clone() const;
+  virtual BoWTerm* clone() const override;
 //   virtual BoWTerm* clone(const std::map<BoWToken*,BoWToken*>&) const;
 
   BoWTerm& operator=(const BoWTerm&);
 
-  virtual BoWType getType() const { return BoWType::BOW_TERM; }
+  virtual BoWType getType() const override { return BoWType::BOW_TERM; }
 
   /** get a string of the BoWToken for output function */
-  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
-  virtual std::string getIdUTF8String(void) const;
+  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const override;
+  virtual std::string getIdUTF8String(void) const override;
 
 protected:
   BoWTerm(BoWTermPrivate&);

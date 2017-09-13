@@ -43,7 +43,7 @@ namespace SpecificEntities {
 // ids of actions defined in this file
 #define NormalizeNumberId "NormalizeNumber"
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeNumber : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_NUMBER_EXPORT NormalizeNumber : public Automaton::ConstraintFunction
 {
 public:
   NormalizeNumber(MediaId language,
@@ -51,9 +51,9 @@ public:
   ~NormalizeNumber() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 private:
   MediaId m_language;
   const std::set<LinguisticCode>* m_microsForNumber;

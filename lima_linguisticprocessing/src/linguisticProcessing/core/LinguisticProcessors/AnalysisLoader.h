@@ -57,10 +57,9 @@ public:
   virtual ~AnalysisLoader();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
 
-  LimaStatusCode process(AnalysisContent& /*analysis*/) const { return SUCCESS_ID; }
+  LimaStatusCode process(AnalysisContent& /*analysis*/) const override { return SUCCESS_ID; }
 
   QString getInputFile(AnalysisContent& analysis) const;
 

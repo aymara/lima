@@ -65,7 +65,7 @@ void ConfigurationStructure::addParamValuePairForModuleAndGroup(const string &pa
   if (itC == end())
   {
     LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ group+"]");
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
   moduleGroups.addParamValuePairForGroup(param, value, group);
@@ -82,7 +82,7 @@ void ConfigurationStructure::addListNamedForModuleAndGroup(const string &listNam
   if (itC == end())
   {
     LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ groupName+"]");
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
   moduleGroups.addListNamedForGroup(listName, groupName);
@@ -98,7 +98,7 @@ void ConfigurationStructure::addItemInListNamedForModuleAndGroup(const string& i
   if (itC == end())
   {
     LERROR << "Error adding param '" << moduleName.c_str() << "': no such module !" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ groupName+"]["+listName+"]");
   }
   ModuleConfigurationStructure& moduleGroups = (*itC).second;
   moduleGroups.addItemInListNamedForGroup(item, listName, groupName);
@@ -129,7 +129,7 @@ void ConfigurationStructure::addMapNamedForModuleAndGroup(const std::string &map
   if (itC == end())
   {
     LERROR << "Error adding map '" << mapName.c_str() << "' in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ groupName+"]");
   }
   itC->second.addMapInGroup(mapName,groupName);
 }
@@ -141,7 +141,7 @@ void ConfigurationStructure::addEntryInMapNamedForModuleAndGroup(const std::stri
   if (itC == end())
   {
     LERROR << "Error adding mapEntry in '" << mapName.c_str() << "' in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ groupName+"]["+mapName+"]");
   }
   itC->second.addEntryInMapInGroup(entryKey,entryValue,mapName,groupName);
 }
@@ -153,7 +153,7 @@ void ConfigurationStructure::addAttributeForGroupInModule(const std::string& att
   if (itC == end())
   {
     LERROR << "Error adding mapattribute in group '" << groupName.c_str() << "': no such module '" << moduleName.c_str() << "' !" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ groupName+"]");
   }
 #ifdef DEBUG_CD
   LDEBUG << "add attribute: module='"<<moduleName.c_str()<<"' group='"<<groupName.c_str()<<"' attribute='"<<attKey.c_str()<<"' value='"<<attValue.c_str()<<"'" ;
@@ -170,7 +170,7 @@ getGroupConf(const std::string& moduleName,
   {
     XMLCFGLOGINIT;
     LERROR << "'No such module '" << moduleName.c_str() << "'" ;
-    throw NoSuchModule(moduleName);
+    throw NoSuchModule(moduleName+"["+ group +"]");
   }
   return (*itC).second.getGroupNamed(group) ;
 }

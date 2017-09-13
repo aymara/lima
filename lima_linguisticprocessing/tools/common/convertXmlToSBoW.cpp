@@ -47,15 +47,15 @@ using namespace Lima::Common::BagOfWords;
 // declarations
 //****************************************************************************
 // help mode & usage
-static const string USAGE0("(Use readBowFile --xml to convert sBoW bin file to XML)\n");
-static const string USAGE("usage : convertXmlToSBoW [options] fileIn fileOut\n");
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE0, ("(Use readBowFile --xml to convert sBoW bin file to XML)\n"));
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : convertXmlToSBoW [options] fileIn fileOut\n"));
 
-static const string HELP("convert structured-bag-of-words representations of texts from XML to bin (SBoW)\n"
-+USAGE0
-+USAGE
+Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("convert structured-bag-of-words representations of texts from XML to bin (SBoW)\n")
++*USAGE0
++*USAGE
 +"\n"
 +"--help : this help page\n"
-);
+));
 
 //****************************************************************************
 // GLOBAL variable -> the command line arguments 
@@ -82,7 +82,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     else if (s[0]=='-') {
       cerr << "unrecognized option " <<  s 
         << endl;
-      cerr << USAGE << endl;
+      cerr << *USAGE << endl;
       exit(1);
     }
     else if (param.inputFile.empty()) {
@@ -131,9 +131,9 @@ int run(int argc,char** argv)
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   
-  if (argc<2) {    cerr << USAGE; exit(1); }
+  if (argc<2) {    cerr << *USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
-  if (param.help) { cerr << HELP; exit(1); }
+  if (param.help) { cerr << *HELP; exit(1); }
   
   ofstream fileOut(param.outputFile.c_str(), std::ofstream::binary);
   if (! fileOut.good()) {

@@ -56,21 +56,18 @@ namespace AnalysisDumpers {
             their position
   */
 
-class LIMA_ANALYSISDUMPERS_EXPORT LinearTextRepresentationDumper : public MediaProcessUnit
+class LIMA_ANALYSISDUMPERS_EXPORT LinearTextRepresentationDumper : 
+    public MediaProcessUnit
 {
-// methods
-// -------
 public:
   /// **** @name  process unit management
   //@{
-    virtual void init(
-    Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-                      Manager* manager);
-                      virtual LimaStatusCode process(AnalysisContent& analysis) const;
-                      //}@
+    virtual void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+                      Manager* manager) override;
 
-// data
-// ----
+    virtual LimaStatusCode process(AnalysisContent& analysis) const override;
+  //}@
+
 private:
   MediaId m_language;
   StopList* m_stopList;

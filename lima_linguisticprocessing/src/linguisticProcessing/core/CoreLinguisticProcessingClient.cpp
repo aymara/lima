@@ -281,7 +281,7 @@ void CoreLinguisticProcessingClientFactory::configure(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
              *langItr).c_str());
-        if  (QFileInfo(confPath + "/" + mediaProcessingDefinitionFile).exists())
+        if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
         {
           file= (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
           break;

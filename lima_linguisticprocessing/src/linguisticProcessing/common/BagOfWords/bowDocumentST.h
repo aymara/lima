@@ -51,7 +51,7 @@ class LIMA_BOW_EXPORT BoWDocumentST : public BoWDocument
   const std::vector<BoWText::const_iterator>& getSentenceBreaks() const;
   const std::vector<BoWText::const_iterator>& getTopicShifts() const;
 
-  void reinit();
+  void reinit() override;
 
   void addSentenceBreak(const BoWText::const_iterator);
   void addTopicShift(const BoWText::const_iterator);
@@ -71,7 +71,7 @@ class LIMA_BOW_EXPORT BoWDocumentST : public BoWDocument
       *          sentence breaks and topic shifts
       * @author  Olivier Ferret
       */
-    void read(std::istream& file);
+    void read(std::istream& file) override;
     void write(std::ostream& file) const;
     void writeSTData(std::ostream& file) const;
 

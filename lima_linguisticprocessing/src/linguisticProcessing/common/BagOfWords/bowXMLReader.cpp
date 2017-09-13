@@ -83,13 +83,13 @@ m_parser()
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
       throw XMLException(QString(QLatin1String("Error parsing %1: %2"))
-                .arg(filename.c_str())
-                .arg(m_parser->errorHandler()->errorString()).toUtf8().constData());
+              .arg(filename.c_str(), 
+                    m_parser->errorHandler()->errorString()).toUtf8().constData());
     }
   }
   catch (const XMLException& e) {
     BOWLOGINIT;
-    LERROR << "An XML exception occurred: " << e.getMessage() ;
+    LERROR << "An XML exception occurred: " << e.what() ;
     throw;
   }
 }

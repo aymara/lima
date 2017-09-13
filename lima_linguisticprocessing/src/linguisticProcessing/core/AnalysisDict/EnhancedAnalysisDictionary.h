@@ -52,11 +52,12 @@ public:
 
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager);
+      Manager* manager) override;
     
-    virtual DictionaryEntry getEntry(const Lima::LimaString& word) const;
-    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId) const;
-    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId, const Lima::LimaString& word) const;
+    virtual DictionaryEntry getEntry(const Lima::LimaString& word) const override;
+    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId) const override;
+    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId, 
+                                     const Lima::LimaString& word) const override;
     /**
      * Returns subwords entries. Warning : Since all strings are stored as keys in dictionary, the subword
      * entries function may returns substrings which have empty dictionary entry. Program which use
@@ -65,9 +66,14 @@ public:
      * @param key 
      * @return subword iterators
      */
-    virtual std::pair< DictionarySubWordIterator, DictionarySubWordIterator > getSubWordEntries(const int offset, const LimaString& key) const;
-    virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > getSuperWordEntries(const LimaString& key) const;
-    virtual uint64_t getSize() const;
+    virtual std::pair< DictionarySubWordIterator, DictionarySubWordIterator > 
+    getSubWordEntries(const int offset, 
+                      const LimaString& key) const override;
+
+    virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > 
+    getSuperWordEntries(const LimaString& key) const override;
+
+    virtual uint64_t getSize() const override;
     
     DictionaryEntry getEntryData(const StringsPoolIndex entryId) const;
 

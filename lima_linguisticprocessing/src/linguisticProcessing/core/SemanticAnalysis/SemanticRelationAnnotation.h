@@ -75,7 +75,7 @@ inline void SemanticRelationAnnotation::dump(std::ostream& os)
 class LIMA_SEMANTICANALYSIS_EXPORT DumpSemanticRelation : public Common::AnnotationGraphs::AnnotationData::Dumper
 {
   public:
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 

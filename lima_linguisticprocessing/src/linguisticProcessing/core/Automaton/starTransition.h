@@ -49,19 +49,19 @@ class LIMA_AUTOMATON_EXPORT StarTransition : public TransitionUnit
   virtual ~StarTransition();
   StarTransition& operator = (const StarTransition&);
   
-  StarTransition* clone() const;
-  StarTransition* create() const;
+  StarTransition* clone() const override;
+  StarTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
 
-  TypeTransition type() const;
+  TypeTransition type() const override;
 
  private:
   

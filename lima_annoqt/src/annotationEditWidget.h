@@ -38,7 +38,7 @@ public:
   virtual ~AnnotationEditWidget() {}
 
 protected:
-  void mousePressEvent ( QMouseEvent * event );
+  void mousePressEvent ( QMouseEvent * event ) override;
   Annoqt* m_parent;
 };
 

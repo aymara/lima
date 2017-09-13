@@ -20,7 +20,7 @@
  *   Copyright (C) 2004-2012 by CEA LIST                               *
  *                                                                         *
  ***************************************************************************/
-#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICT_MULTILEVELNALYSISDICTIONARYITERATOR_H
+#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICT_MULTILEVELANALYSISDICTIONARYITERATOR_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICT_MULTILEVELANALYSISDICTIONARYITERATOR_H
 
 #include "AnalysisDictExport.h"
@@ -51,12 +51,12 @@ public:
 
   virtual ~MultiLevelAnalysisDictionarySubWordIterator();
 
-  virtual const std::pair<uint64_t,DictionaryEntry> operator*() const;
-  MultiLevelAnalysisDictionarySubWordIterator& operator++(int i);
-  bool operator==(const AbstractDictionarySubWordIterator& it) const;
-  bool operator!=(const AbstractDictionarySubWordIterator& it) const;
+  virtual const std::pair<uint64_t,DictionaryEntry> operator*() const override;
+  MultiLevelAnalysisDictionarySubWordIterator& operator++(int i) override;
+  bool operator==(const AbstractDictionarySubWordIterator& it) const override;
+  bool operator!=(const AbstractDictionarySubWordIterator& it) const override;
 
-  virtual AbstractDictionarySubWordIterator* clone() const;
+  virtual AbstractDictionarySubWordIterator* clone() const override;
 
 private:
 
@@ -74,12 +74,12 @@ public:
   MultiLevelAnalysisDictionarySuperWordIterator(const MultiLevelAnalysisDictionarySuperWordIterator& source);
   virtual ~MultiLevelAnalysisDictionarySuperWordIterator();
 
-  virtual const LimaString operator*() const;
-  MultiLevelAnalysisDictionarySuperWordIterator& operator++(int i);
-  bool operator==(const AbstractDictionarySuperWordIterator& it) const;
-  bool operator!=(const AbstractDictionarySuperWordIterator& it) const;
+  virtual const LimaString operator*() const override;
+  MultiLevelAnalysisDictionarySuperWordIterator& operator++(int i) override;
+  bool operator==(const AbstractDictionarySuperWordIterator& it) const override;
+  bool operator!=(const AbstractDictionarySuperWordIterator& it) const override;
   
-  virtual AbstractDictionarySuperWordIterator* clone() const;
+  virtual AbstractDictionarySuperWordIterator* clone() const override;
 
 private:
 

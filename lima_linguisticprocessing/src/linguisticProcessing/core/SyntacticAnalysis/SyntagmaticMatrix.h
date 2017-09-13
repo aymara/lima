@@ -89,17 +89,19 @@ public:
     bool operator()(const std::pair<TokenFilter,SyntagmaticMatrixRow>& p, const TokenFilter& y) const;
 };
 
+typedef std::map< TokenFilter, SyntagmaticMatrixRow, tfless > SyntagmaticMatrixFilter;
+
 class LIMA_SYNTACTICANALYSIS_EXPORT SyntagmaticMatrix
 {
 public:
 
   SyntagmaticMatrix() :
-      m_filters(std::map< TokenFilter, SyntagmaticMatrixRow, tfless >()),
+      m_filters(SyntagmaticMatrixFilter()),
       m_language()
   {}
 
   SyntagmaticMatrix(const SyntagmaticMatrix& matrix) :
-      m_filters(std::map< TokenFilter, SyntagmaticMatrixRow, tfless >(matrix.m_filters)),
+      m_filters(SyntagmaticMatrixFilter(matrix.m_filters)),
       m_language(matrix.m_language)
   {}
 
@@ -107,17 +109,11 @@ public:
 
   void deleteMatrix();
 
-  std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator find(const TokenFilter& f) const
-  {
-    std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator it = m_filters.begin();
-    std::map< TokenFilter, SyntagmaticMatrixRow, tfless >::const_iterator it_end = m_filters.end();
-    for (; it != it_end; it++)
-    {
-      if ( tf_dwless()( (*it).first, f))
-        return it;
-    }
-    return it_end;
-  }
+  SyntagmaticMatrixFilter& filters();
+  
+  const SyntagmaticMatrixFilter& filters() const;
+  
+  SyntagmaticMatrixFilter::const_iterator find(const TokenFilter& f) const;
 
   void display() const;
 
@@ -131,14 +127,14 @@ public:
     m_language=lang;
   }
 
-  std::map< TokenFilter, SyntagmaticMatrixRow, tfless > m_filters;
 private:
+  SyntagmaticMatrixFilter m_filters;
   MediaId m_language;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
 };
 
 class LIMA_SYNTACTICANALYSIS_EXPORT SyntagmDefStruct : public AbstractResource
 {
+  Q_OBJECT
 public:
   SyntagmDefStruct();
 
@@ -146,8 +142,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
   inline SyntagmaticMatrix& nominal() {return m_nominalMatrix;}
   inline SyntagmaticMatrix& verbal() {return m_verbalMatrix;}

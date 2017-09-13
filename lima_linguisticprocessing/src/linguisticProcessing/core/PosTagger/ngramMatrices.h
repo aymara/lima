@@ -54,6 +54,7 @@ namespace PosTagger
 
 class LIMA_POSTAGGER_EXPORT TrigramMatrix : public AbstractResource
 {
+  Q_OBJECT
 
 public:
 
@@ -65,8 +66,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    AbstractResource::Manager* manager)
-  ;
+    AbstractResource::Manager* manager) override;
 
   void readTrigramMatrixFile(const std::string& fileName);
 
@@ -85,6 +85,7 @@ private:
 
 class LIMA_POSTAGGER_EXPORT BigramMatrix : public AbstractResource
 {
+  Q_OBJECT
 public:
 
   BigramMatrix() : 
@@ -95,8 +96,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    AbstractResource::Manager* manager)
-  ;
+    AbstractResource::Manager* manager) override;
   
   void readBigramMatrixFile(const std::string& fileName);
 

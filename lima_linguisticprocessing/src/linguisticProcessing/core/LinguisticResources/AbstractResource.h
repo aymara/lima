@@ -23,6 +23,7 @@
 
 
 #include "LinguisticResourcesExport.h"
+#include "AbstractResourceBase.h"
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
@@ -39,7 +40,6 @@ struct ResourceInitializationParameters {
   MediaId language;
 };
 
-class  AbstractResourcePrivate;
 /** 
   * @brief resource abstraction. All resource should inherit from this class
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
@@ -51,7 +51,9 @@ class  AbstractResourcePrivate;
   * @ref resourceFileChanged signal to do whatever necessary with this changed resource, for 
   * example reloading it.
   */
-class LIMA_LINGUISTICRESOURCES_EXPORT AbstractResource : public QObject, public InitializableObject<AbstractResource,ResourceInitializationParameters>
+class LIMA_LINGUISTICRESOURCES_EXPORT AbstractResource : 
+    public AbstractResourceBase, 
+    public InitializableObject<AbstractResource,ResourceInitializationParameters>
 {
   Q_OBJECT
 public:
@@ -68,26 +70,8 @@ public:
   */
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager) = 0;
+    Manager* manager) override = 0;
   
-protected:
-  /**
-   * @brief Accessor to the file watcher used to register resource files to be watched for changes.
-   * @return The file watcher used to register resource files to be watched for changes.
-   */
-  LimaFileSystemWatcher& resourceFileWatcher();
-
-Q_SIGNALS:
-  /**
-   * @brief Signal triggered whenever one of the registered files changes on disk.
-   * @param path The full path to the changed file
-   */
-  void resourceFileChanged ( const QString & path );
-
-
-protected:
-  AbstractResourcePrivate* m_d;
-
 };
 
 } // LinguisticProcessing

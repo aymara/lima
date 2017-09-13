@@ -52,19 +52,19 @@ class LIMA_AUTOMATON_EXPORT PosTransition : public TransitionUnit
   virtual ~PosTransition();
   PosTransition& operator = (const PosTransition&);
 
-  PosTransition* clone() const;
-  PosTransition* create() const;
+  PosTransition* clone() const override;
+  PosTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
 
-  TypeTransition type() const;
+  TypeTransition type() const override;
 
   Tpos pos() const;
   void setPos(Tpos);

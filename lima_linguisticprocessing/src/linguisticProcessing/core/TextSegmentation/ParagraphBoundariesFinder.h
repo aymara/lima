@@ -48,15 +48,13 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   std::list<LinguisticCode> m_stopCategories;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+//   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   std::string m_graph;
   LimaString m_paragraphSeparator;
 };
