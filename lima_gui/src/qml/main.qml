@@ -1,3 +1,21 @@
+/*
+    Copyright 2017 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 /*!
   @author   Jocelyn Vernay
   @date     Wed, September 06 2017
@@ -40,7 +58,7 @@ Controls1.ApplicationWindow {
         analysis function.
   */
   function indiscriminateAnalyze() {
-//     console.debug("indiscriminateAnalyze")
+    console.debug("indiscriminateAnalyze")
     if (workspace.count()) {
       var wv = workspace.getCurrentWorkView()
       if (wv !== null) {
@@ -74,7 +92,7 @@ Controls1.ApplicationWindow {
   //! Launch an analysis of raw text for the current workview.
   //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeText(text) {
-//     console.debug("analyzeText "+text)
+    console.debug("analyzeText "+text)
 
     if (textAnalyzer.ready) {
       var wv = workspace.getCurrentWorkView();
@@ -86,7 +104,7 @@ Controls1.ApplicationWindow {
         wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
-//         console.debug("formattoshow= ", rt.formatToShow)
+        console.debug("formattoshow= ", rt.formatToShow)
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
       }
@@ -188,7 +206,7 @@ Controls1.ApplicationWindow {
     }
   }
   
-  title: qsTr("Lima Gui")
+  title: qsTr("Lima")
   visible: true
   x: 500
   width: 1024

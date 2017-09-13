@@ -1,3 +1,21 @@
+/*
+    Copyright 2017 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 /**
  * \author Jocelyn VERNAY
  * \file main.cpp
@@ -38,6 +56,9 @@ using namespace Lima::LinguisticProcessing;
 
 int main(int argc, char *argv[])
 {
+#ifndef DEBUG_LIMA_GUI
+    qputenv("QT_LOGGING_RULES", "*=false");
+#endif
     QGuiApplication app(argc, argv);
 //     view.setWindowIcon(QIcon("qrc:qml/resources/backup_btnclose_h.png")‌​); 
     QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
@@ -80,7 +101,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
-    app.setWindowIcon(QIcon(":qml/resources/lima_gui.png"));
+    app.setWindowIcon(QIcon(":qml/resources/lima.png"));
     int result = app.exec();
     return result;
 

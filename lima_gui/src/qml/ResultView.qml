@@ -1,3 +1,21 @@
+/*
+    Copyright 2017 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 /*!
   @author   Jocelyn Vernay
   @date     Wed, September 06 2017
@@ -77,9 +95,9 @@ Rectangle {
   //! function.
   //! The use of the 'input' param may be subject to debate.
   function displayResults(input, output) {
-//     console.debug("result_tab.displayResults input=" + input 
-//                   + " ; output=" + output
-//                   + " ; format=" + (format !== "" ? format : formatToShow))
+    console.debug("result_tab.displayResults input=" + input 
+                  + " ; output=" + output
+                  + " ; format=" + (format !== "" ? format : formatToShow))
     
     visible = true
     text = input
@@ -112,7 +130,7 @@ Rectangle {
 
   //! set the format
   function setFormat(f) {
-//     console.debug("result_tab.setFormat "+f)
+    console.debug("result_tab.setFormat "+f)
     hideAll()
     format = f
 

@@ -1,26 +1,39 @@
+#   Copyright 2017 CEA LIST
+#    
+#   This file is part of LIMA.
+#
+#   LIMA is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   LIMA is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
 add_subdirectory(treeview)
 
 ########### next target ###############
 
-SET (qt-lima_MOC_HEADERS
+SET (lima_MOC_HEADERS
   LimaGuiApplication.h
   Threads.h
-  ConllParser.h
   
   config/LimaConfiguration.h
-  config/ConfigurationTree.h
   config/ConfigurationTreeModel.h
   
   ConllListModel.h
   NamedEntitiesParser.h
-  
-  tools/extract/FileTextExtractor.h
-  
 )
 
-qt5_wrap_cpp (qt-lima_MOC_OUTFILES ${qt-lima_MOC_HEADERS})
+qt5_wrap_cpp (lima_MOC_OUTFILES ${lima_MOC_HEADERS})
 
-SET (qt-lima_LIB_SRCS 
+SET (lima_SRCS 
+  main.cpp
   LimaGuiApplication.cpp
   Threads.cpp
   ConllParser.cpp
@@ -35,15 +48,19 @@ SET (qt-lima_LIB_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
-add_library(qt-lima SHARED 
-  ${qt-lima_LIB_SRCS} 
-  ${qt-lima_MOC_OUTFILES}
+qt5_add_resources(lima_SRCS resources.qrc)
+
+
+add_executable(lima 
+  ${lima_SRCS} 
+  ${lima_MOC_OUTFILES}
 )
-target_link_libraries(qt-lima 
+target_link_libraries(lima 
   lima-common-mediaticdata
   lima-common-xmlconfigurationfiles
   lima-common-tools
   lima-common-data 
+  lima-common-factory
   lima-common-misc
   lima-common
   lima-lp-annotationgraph
@@ -79,36 +96,12 @@ target_link_libraries(qt-lima
   lima-lp-client
   ${Qt5_LIBRARIES}
 )
+#   lima-common
+#   lima-linguisticprocessing
 
-install(TARGETS qt-lima DESTINATION lib
-  COMPONENT runtime)
-
-########### next target ###############
-
-set (lima_gui_SRCS
-  main.cpp
-)
-qt5_add_resources(lima_gui_SRCS resources.qrc)
-
-add_executable(lima_gui 
-  ${lima_gui_SRCS}
-)
-target_link_libraries(lima_gui 
-  qt-lima 
-  lima-common
-  lima-lp-client
-  lima-lp-analysishandlers
-  lima-common-mediaticdata
-  lima-common-factory
-  lima-common-tools
-  lima-common-xmlconfigurationfiles
-  lima-linguisticprocessing
-  ${Qt5_LIBRARIES}
-)
-
-install(TARGETS lima_gui DESTINATION bin
+install(TARGETS lima DESTINATION bin
   COMPONENT runtime)
 
 ########### install files ###############
-install(PROGRAMS lima_gui.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-install(PROGRAMS qml/resources/lima_gui.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)
+install(PROGRAMS lima.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(PROGRAMS qml/resources/lima.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)

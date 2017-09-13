@@ -1,3 +1,21 @@
+/*
+    Copyright 2017 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 /*!
   @author   Jocelyn Vernay
   @date     Wed, September 06 2017
@@ -22,11 +40,11 @@ Rectangle {
 
   //! Pass the output from the LIMA analysis to the ResultParser
   function input(text,conll) {
-//     console.debug("ne_view.input "+text+" ; " + conll)
+    console.debug("ne_view.input "+text+" ; " + conll)
     parser.parse(conll)
     typesview.model = parser.getEntityTypes()
     contenttext.text = parser.getHighlightedText()
-    /*console.debug*/("ne_view.input contenttext:"+contenttext.text)
+    console.debug("ne_view.input contenttext:"+contenttext.text)
   }
 
   //! C++ class. Parse the results and convert it to HTML text.
