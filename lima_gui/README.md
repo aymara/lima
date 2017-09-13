@@ -1,103 +1,142 @@
-# Récapitulatif Lima Gui
+# Recap Lima Gui
 
-## C++
+## C ++
 
-Classes principales :
+Main Classes:
 
 * `LimaGuiApplication`
 * `Threads`
 
-Configuration de LIMA :
+Configuring LIMA:
 
 * `LimaConfiguration`
 * `ConfigurationTree`
 * `ConfigurationTreeModel`
 
-Gestion des résultats :
+Results management:
 
 * `ConllParser`
 * `ConllListModel`
 * `NamedEntitiesParser`
 
-Autres outils :
+Other tools:
 
 * `FileTextExtractor`
 
 ## QML
 
-Au sein du code QML, l'objet de la classe `LimaGuiApplication` est déclaré en tant que propriété contextuelle dans le fichier `main.cpp`, sous le nom `textAnalyzer`. Cela le rend accessible dans tout code QML utilisé dans le contexte de l'application.
+Within the QML code, the object of the `LimaGuiApplication` class is declared 
+as a contextual property in the` main.cpp` file, under the name `textAnalyzer`. 
+This makes it accessible in any QML code used in the context of the application.
 
-Tous les fichiers QML et les ressources utilisées sont référencés dans le fichier `src/ressources.qrc`.
+All QML files and resources are referenced in the `src/resources.qrc` file.
 
-### Fenêtre principale
+### Main Window
 
-L'objet principal de l'application est l'objet `ApplicationWindow`déclaré dans le fichier main.qml. Comme dit précédemment, elle contient principalement les éléments suivants :
+The main object of the application is the `ApplicationWindow` object that is 
+declared in the `main.qml` file. As stated above, it mainly contains the 
+following elements:
 
-* Barre menu (`LimaGuiMenuBar.qml`) // inutilisée pour le moment
-* Barre d'outils (`LimaGuiToolBar.qml`)
-* Vue principale (`TabbedWorkspace.qml`)
-* Barre d'analyse (`id:analysisBar`)
-* Zone de messages logs (`id:logView`)
+* Menu bar (`LimaGuiMenuBar.qml`) // not currently used
+* Toolbar (`LimaGuiToolBar.qml`)
+* Main view (`TabbedWorkspace.qml`)
+* Analysis bar (`id: analysisBar`)
+* Logs message area (`id: logView`)
 
-Les popups tels que l'interface de configuration de Lima (`LimaConfigurationView.qml`) sont déclarés au sein de la fenêtre principale. Ils sont simplement invisibles tant qu'ils ne sont pas ouverts par le click d'un bouton.
+Popups such as the Lima configuration interface (`LimaConfigurationView.qml`) 
+are declared within the main window. They are simply invisible as long as they 
+are not opened by the click of a button.
 
-### Vue principale
+### Main view
 
-La vue principale est composé de l'élément `TabbedWorkspace`, lequel utilise une `TabbedView` pour son système d'onglets.
-Chaque onglet contient une `WorkView`. On utilise de l'allocation dynamique pour pouvoir créer des onglets au contenu dynamique. Une `WorkView` est divisée en deux parties : la vue des données (`id: data_view`) et la vue des résultats (`id: result_view`).
+The main view consists of the `TabbedWorkspace` element, which uses a 
+`TabbedView` for its tab system. Each tab contains a `WorkView`. Dynamic 
+allocation is used to create tabs with dynamic content. A WorkView is divided 
+into two parts: the data view (`id: data_view`) and the result view 
+(`id: result_view`).
 
-Par exemple, ouvrir un onglet pour un fichier ou ouvrir un onglet pour saisir du texte.
-Ces deux fonctionnalités sont représentées par les widgets`AnalyzeFileWidget`et `AnalyzeTextWidget` respectivement. Quand on veut par exemple créer un nouvel onglet pour analyser du texte, on ajoute une nouvelle `WorkView` à la `TabbedView`, et on alloue dynamiquement ses deux vues via les fonctions `setDataView` et `setResultView` qui prennent le chemin du fichier décrivant le widget à insérer dans la vue concernée.
+For example, open a tab for a file or open a tab to enter text.
+These two features are represented by the `AnalyzeFileWidget` and 
+`AnalyzeTextWidget` widgets respectively. For example, if you want to create a 
+new tab to analyze text, you add a new WorkView to the `TabbedView`, and you 
+dynamically allocate its two views via the `setDataView` and `setResultView` 
+functions that take the path of the file describing the widget to be inserted 
+in the relevant view.
 
-À l'ouverture d'un onglet, la vue des résultats est cachée par défaut tant qu'aucune analyse n'a été lancée.
+When a tab is opened, the results view is hidden by default until an analysis 
+has been initiated.
 
-#### Fermer un onglet
+#### Close a tab
 
-On se contente de fermer l'onglet via la fonction éponyme de l'objet `TabView`, mais cela semble avoir un comportement inattendu quant au fonctionnement de l'application.
-See related issue
+We just close the tab via the eponymous function of the `TabView` object.
 
-### Analyse
+### Analysis
 
-La barre d'analyse est liée à la fenêtre. Ses paramètres ne sont donc pas liés au `WorkView` actuel. Si on change d'onglet, les choix dans les menus déroulants ne changeront pas. Or, on pourrait vouloir  garder pour chaque onglet une configuration spécifique de ces choix 
+The analysis bar is linked to the window. Its parameters are therefore not 
+linked to the current WorkView. If you change the tab, the choices in the 
+drop-down menus will not change. However, one might want to keep for each tab 
+a specific configuration of these choices
 
-    onglet 1 -> langue=fr,  config=config1; 
-    onglet 2 -> langue=eng, config=config4 
+    tab 1 -> language = fr, config = config1;
+    tab 2 -> language = eng, config = config4
     
-sans avoir à rechanger à chaque fois. La manière la plus simple de faire cela serait d'inclure le widget correspondant dans le widget `WorkView`, ou d'essayer de mettre à jour des paramètres spécifiques pour l'objet `WorkView` concernant la langue et la configuration qui le concerne. (Il y a des ébauches de cela dans le code.)
+without having to replace each time. The easiest way to do this would be to 
+include the corresponding widget in the `WorkView` widget, or to try to update 
+specific settings for the` WorkView` object regarding the language and 
+configuration for it. (There are sketches of this in the code.)
 
-L'utilisateur peut utiliser le raccourci ` Ctrl+Maj+A` pour lancer l'analyse de l'onglet courant (Ce raccourci est défini par l'objet `Shortcut` dans le fichier `main.qml`). 
-Le contenu est récupéré depuis l'objet `WorkView` via `getDataView`. La fonction `indiscriminateAnalyze` du fichier `main.qml` regarde alors le type du `WorkView` actuel (Text, OpenFile, etc.) et appelle la fonction de `LimaGuiApplication`, aka `textAnalyzer`qui correspond.
+The user can use the shortcut `Ctrl+Shift+A` to start the analysis of the 
+current tab (This shortcut is defined by the `Shortcut` object in the 
+`main.qml` file).
+The content is retrieved from the `WorkView` object via `getDataView`. The 
+`indiscriminateAnalyze` function of the `main.qml` file then looks at the type 
+of the current `WorkView` (Text, OpenFile, etc.) and calls the 
+`LimaGuiApplication` function, aka `textAnalyzer` which matches.
 
-Une référence vers la vue des résultats du `WorkView`est envoyé en paramètre. Cette vue  est notifiée une fois l'analyse terminée et en reçoit les résultats via la fonction `displayResults`. Selon le format sélectionné, la vue correspondante reçoit les données à sont tour et utilise l'interpéteur qui lui est associé (exemple : `NamedEntitiesView`  -> `NamedEntitiesParser`).
+A reference to the results view of the `WorkView` is sent as a parameter. This 
+view is notified when the analysis is complete and receives the results via 
+the `displayResults` function. Depending on the format selected, the 
+corresponding view receives the data in turn and uses the associated 
+interpreter (example: `NamedEntitiesView` ->` NamedEntitiesParser`).
 
-Pour les menus déroulants :
+For drop-down menus:
 
-Les langues sont liées à celles déclarées à l'initialisation de LIMA
-(fonction `LimaGuiApplication::initializeLimaAnalyzer`). 
+The languages ​​are related to those declared at the initialization of LIMA
+(function `LimaGuiApplication::initializeLimaAnalyzer`).
 
-Le choix de configuration n'a pour le moment aucun effet, mais il devrait ensuite faire référence aux configurations enregistrées dans l'application par leur nom (default, etc.). 
+The configuration choice has no effect for the moment, but it should then refer 
+to the configurations saved in the application by their name (default, etc.).
 
-Les formats sont propres à l'application graphique et sont déclarés en dur dans l'objet `SelectOptionComboBox; id: format_selector` et le fichier `ResultView.qml`.
+The formats are specific to the graphics application and are hard-coded in the 
+object `SelectOptionComboBox; id: format_selector` and the file 
+`ResultView.qml`.
 
-### Interface de configuration
+### Configuration interface
 
-Cf. `src\treeview` pour les exemples de TreeModel / TreeView.
+See `src/treeview` for examples of TreeModel/TreeView.
 
-### qml/basics
+### qml / basics
 
-Ce répertoire contient des widgets plus génériques, comme `TextEditor`, `TextView` et `SelectOptionComboBox`.
+This directory contains more generic widgets, such as `TextEditor`,` TextView` 
+and `SelectOptionComboBox`.
 
-### qml/scripts
+### qml / scripts
 
-Les fonctions javascript globales sont stockés ici. Il est intéressant de noter que variables globales des scripts javascript ont une portée limitée au fichier QML qui a inclus ce script.
+The global javascript functions are stored here. It is interesting to note that 
+global variables of javascript scripts have a limited scope to the QML file 
+that included this script.
 
-* `DynamicObjectManager.js` contient des fonctions permettant l'allocation dynamique d'objets.
-* `colors.js`contient quelques fonctions pour gérer des couleurs.
+* `DynamicObjectManager.js` contains functions for dynamic allocation of 
+objects.
+* `colors.js` contains some functions to manage colors.
 
-### qml/resources
+### qml / resources
 
-Ce répertoire contient les ressources du projet, et notamment les images utilisées dans l'interface. Ces images devraient être remplacées par des images libres de droit ou avec une licence compatible avec celle de l'application par le futur.
+This directory contains the resources of the project, and in particular the 
+images used in the interface.
 
-### qml/styles
+### qml / styles
 
-Ce répertoire contient les objets de style, plutôt que de les stocker directement dans l'objet concerné.
+This directory contains style objects, rather than storing them directly in the 
+object.
+
