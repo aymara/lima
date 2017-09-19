@@ -30,27 +30,6 @@
         <entry key="eng" value="limaserver"/>
         <entry key="fre" value="limaserver"/>
       </map>
-      <!-- The indexer pipeline is used in order to add media content into the dedicated indexes.
-      The text ones use a bowDumperXml to handle XML input. -->
-      <map name="indexer">
-        <entry key="eng" value="indexer"/>
-        <entry key="fre" value="indexer"/>
-      </map>
-      <!-- The query pipeline is used in order to analyze search engine multimedia queries. -->
-          <map name="query">
-        <entry key="eng" value="query"/>
-        <entry key="fre" value="query"/>
-      </map>
-      <!-- The normalization pipeline is used in order to obtain a normalized representation of the inpu medias. -->
-      <map name="normalization">
-        <entry key="eng" value="normalization"/>
-        <entry key="fre" value="normalization"/>
-      </map>
-      <!-- The limaserver pipeline is used from the http limaserver -->
-      <map name="limaserver">
-        <entry key="eng" value="limaserver"/>
-        <entry key="fre" value="limaserver"/>
-      </map>
       <!-- The easy pipeline is used in order to produce a result in the Easy campaign format. -->
       <map name="easy">
         <entry key="eng" value="easy"/>
