@@ -36,6 +36,7 @@
    
    <!-- Dialogs -->
    <file>qml/AboutDialog.qml</file>
+   <file>qml/ErrorDialog.qml</file>
    <file>qml/SettingsDialog.qml</file>
    
    <!-- Models -->

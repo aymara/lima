@@ -283,6 +283,7 @@ int ConfigurationTreeModel::columnCount(const QModelIndex &parent) const
 
 QVariant ConfigurationTreeModel::data(const QModelIndex &index, int role) const
 {
+  LIMA_UNUSED(role)
     CONFLOGINIT;
     LDEBUG << "ConfigurationTreeModel::data";
 

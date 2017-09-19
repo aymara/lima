@@ -51,7 +51,7 @@ public:
 
   ///
   /// \brief method inherited from QThread
-  virtual void run() = 0;
+  virtual void run() override = 0;
 
 
 protected:
@@ -74,7 +74,7 @@ public:
   AnalysisThread(LimaGuiApplication* app, const QString& text);
 
   ///
-  void run();
+  void run() override;
   
   std::ostream& getOut() { return out; }
 
@@ -114,13 +114,13 @@ public:
   InitializeThread(LimaGuiApplication* a);
 
   /// \brief This simply calls LimaGuiApplication::initializeLimaAnalyzer.
-  void run();
+  void run() override;
 };
 
 class LIMA_GUI_EXPORT TestThread : public LimaGuiThread {
 public:
   TestThread(LimaGuiApplication* application);
-  void run();
+  void run() override;
 };
 
 } // END namespace Gui

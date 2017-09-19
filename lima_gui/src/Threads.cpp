@@ -150,12 +150,13 @@ void InitializeThread::run()
   //    m_application->setTextBuffer("Hello patient n°" + std::to_string(i) + "!");
   //  }
   
-  m_application->initializeLimaAnalyzer();
-  
-  //  m_application->setTextBuffer(buffer.str());
-  
-  m_application->setAnalyzerState(1);
-  
+  if (m_application->initializeLimaAnalyzer())
+  {
+    
+    //  m_application->setTextBuffer(buffer.str());
+    
+    m_application->setAnalyzerState(true);
+  }
   // restore previous streams
   // std::cout.rdbuf(old_cout);
   // std::cerr.rdbuf(old_cerr);

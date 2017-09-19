@@ -34,6 +34,8 @@
 #include <QObject> 
 #include <QString>
 
+class QCommandLineParser;
+
 namespace Lima {
 namespace Gui {
 
@@ -79,13 +81,15 @@ class LIMA_GUI_EXPORT LimaGuiApplication : public QObject
   Q_PROPERTY(QStringList languages MEMBER m_languages NOTIFY languagesChanged READ languages)
   Q_PROPERTY(QString language MEMBER m_language NOTIFY languageChanged READ language WRITE setLanguage)
   Q_PROPERTY(QStringList configs MEMBER m_configs NOTIFY configsChanged)
+  Q_PROPERTY(QStringList pipelines MEMBER m_pipelines NOTIFY pipelinesChanged READ pipelines)
+  Q_PROPERTY(QString pipeline MEMBER m_pipeline NOTIFY pipelineChanged READ pipeline WRITE setPipeline)
 
 public:
   ///
   /// \brief LimaGuiApplication
   /// \param parent
   ///
-  LimaGuiApplication(QObject* parent = 0);
+  LimaGuiApplication(const QCommandLineParser& options, QObject* parent = 0);
   
   /// \brief open file in application and add a new entry to open_files
   /// \param filepath is the path of the file
@@ -144,11 +148,11 @@ public:
   
   ///
   /// \brief initialize Lima::m_analyzer
-  void initializeLimaAnalyzer();
+  bool initializeLimaAnalyzer();
   
   ///
   /// \brief for the moment, to reset Lima configuration, we can only reinstantiate m_analyzer
-  void resetLimaAnalyzer();
+  bool resetLimaAnalyzer();
   
   /// THREADS MANAGEMENT
   
@@ -178,6 +182,8 @@ public:
   QString consoleOutput() const;
   QStringList languages() const;
   QString language() const;
+  QStringList pipelines() const;
+  QString pipeline() const;
 
   /// SETTERS
   ///
@@ -187,6 +193,7 @@ public:
   void setText(const QString& s);
   void setConsoleOuput(const QString& s);
   void setLanguage(const QString& s);
+  void setPipeline(const QString& s);
 
   /// ANALYZER STATE : to avoid simultaneous analysis
 
@@ -220,7 +227,12 @@ Q_SIGNALS:
   void languagesChanged();
   void languageChanged();
 
+  void pipelinesChanged();
+  void pipelineChanged();
+
   void configsChanged();
+  
+  void error(const QString& err);
   
 private:
   void loadLimaConfigurations();
@@ -247,6 +259,8 @@ private:
   QString m_consoleOutput;
   QStringList m_languages;
   QString m_language;
+  QStringList m_pipelines;
+  QString m_pipeline;
   QStringList m_formats;
   QStringList m_configs;
   bool m_analyzerAvailable = false;
@@ -282,6 +296,7 @@ private:
   ///
   std::map<QString, LimaConfigurationSharedPtr> m_configurations;
 
+  const QCommandLineParser& m_options;
 };
 
 } // END namespace Gui

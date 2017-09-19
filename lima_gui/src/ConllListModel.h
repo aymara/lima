@@ -69,10 +69,10 @@ public:
   ConllListModel(const QString&, QObject* p = 0);
   ~ConllListModel();
 
-  int rowCount(const QModelIndex& parent = QModelIndex()) const;
-  int columnCount(const QModelIndex& parent = QModelIndex()) const;
-  QVariant data(const QModelIndex& index, int rol = Qt::DisplayRole) const;
-  QHash<int, QByteArray> roleNames() const;
+  int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+  int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+  QVariant data(const QModelIndex& index, int rol = Qt::DisplayRole) const override;
+  QHash<int, QByteArray> roleNames() const override;
 
   ///
   /// \brief convert the raw conll output into a data model suitable for Qt use

@@ -35,7 +35,6 @@
 #include "common/LimaVersion.h"
 #include "common/LimaCommon.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-#include "common/time/traceUtils.h"
 #include "common/tools/FileUtils.h"
 
 #include <QGuiApplication>
@@ -57,19 +56,107 @@ using namespace Lima::LinguisticProcessing;
 int main(int argc, char *argv[])
 {
 #ifndef DEBUG_LIMA_GUI
-    qputenv("QT_LOGGING_RULES", "*=false");
+  qputenv("QT_LOGGING_RULES", "*=false");
 #endif
-    QGuiApplication app(argc, argv);
-//     view.setWindowIcon(QIcon("qrc:qml/resources/backup_btnclose_h.png")‌​); 
-    QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
-                                                                  << "lima", 
-                                                               QStringList());
-    QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  QGuiApplication app(argc, argv);
+  QCoreApplication::setOrganizationName("LIMA");
+  QCoreApplication::setOrganizationDomain("lima.org");
+  QCoreApplication::setApplicationName("LIMA GUI");
+    
+  QSettings settings;
+  QFileInfo settingsFile(settings.fileName());
+  QString LIMA_USER_CONFIG(settingsFile.absoluteDir().absolutePath()+"/configs");
+  QDir configDir(LIMA_USER_CONFIG);
+  if (!configDir.exists()) 
+  {
+    configDir.mkpath(LIMA_USER_CONFIG);
+  }
 
-    QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
-                                                                << "lima",
-                                                              QStringList());
-    QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
+                                                              << "lima", 
+                                                              QStringList()
+                                                              << LIMA_USER_CONFIG);
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
+                                                              << "lima",
+                                                            QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QCommandLineParser parser;
+  parser.setApplicationDescription("LIMA Graphical User Interface");
+  parser.addHelpOption();
+  parser.addVersionOption();
+  QCommandLineOption lpConfigFileOption(
+      QStringList() << "lp-config-file", 
+      QCoreApplication::translate("main", "The main media analysis configuration file"), 
+      "lpConfigFile", "lima-analysis.xml");
+  if (!parser.addOption(lpConfigFileOption))
+  {
+    std::cerr << "Error adding lpConfigFile option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption commonConfigFileOption(
+      QStringList() << "common-config-file", 
+      QCoreApplication::translate("main", "The main common configuration file"), 
+      "commonConfigFile", "lima-common.xml");
+  if (!parser.addOption(commonConfigFileOption))
+  {
+    std::cerr << "Error adding commonConfigFileOption option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption configPathOption(
+      QStringList() << "config-dir" << "config-path", 
+      QCoreApplication::translate("main", "The colon-separated paths to configuration files"), 
+      "configPath", configPath);
+  if (!parser.addOption(configPathOption))
+  {
+    std::cerr << "Error adding configPathOption option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption resourcesPathOption(
+      QStringList() << "resources-dir" << "resources-path", 
+      QCoreApplication::translate("main", "The colon-separated paths to media resources"), 
+      "resourcesPath", resourcesPath);
+  if (!parser.addOption(resourcesPathOption))
+  {
+    std::cerr << "Error adding resourcesPathOption option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption mediasOption(
+      QStringList() << "l" << "language" << "m" << "media", 
+      QCoreApplication::translate("main", 
+          "A media (or language) to activate. Must be repeated for each of them. The\n"
+          "first encountered value of this option will be the default one when a tag\n"
+          "in an analyzed file is not associated to any media in the configuration."), 
+          "media");
+  if (!parser.addOption(mediasOption))
+  {
+    std::cerr << "Error adding mediasOption option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption pipelineOption(
+      QStringList() << "p" << "pipeline", 
+      QCoreApplication::translate("main", "The analysis pipeline to use."), 
+      "pipeline", "main");
+  if (!parser.addOption(pipelineOption))
+  {
+    std::cerr << "Error adding pipelineOption option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption clientOption(
+      QStringList() << "c" << "client", 
+      QCoreApplication::translate("main", "The analysis client to use."), 
+      "client", "lima-coreclient");
+  if (!parser.addOption(clientOption))
+  {
+    std::cerr << "Error adding clientOption option" << std::endl;
+    return 1;
+  }
+  parser.process(QCoreApplication::arguments());
+
+  if (parser.isSet(configPathOption))
+    configPath = parser.value(configPathOption);
 
     QsLogging::initQsLog(configPath);
     // Necessary to initialize factories
@@ -78,7 +165,7 @@ int main(int argc, char *argv[])
 
     LOGINIT("Lima::Gui");
     LINFO << "Config path is " << configPath;
-
+    LERROR << "Options set are" << parser.optionNames();
     
     QML_REGISTER(LimaConfiguration);
     QML_REGISTER(ConfigurationTreeModel);
@@ -87,7 +174,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    LimaGuiApplication lga;
+
+    LimaGuiApplication lga(parser);
 //     lga.selectLimaConfiguration("lima-lp-eng.xml");
 //     LimaConfigurationSharedPtr configuration = lga.configuration();
 //     ConfigurationNode* root = new ConfigurationNode(configuration->configuration());

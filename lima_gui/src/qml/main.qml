@@ -53,6 +53,7 @@ Controls1.ApplicationWindow {
     file_manager.chooseFile()
   }
 
+  
   /*!   This is the function called for the shortcut to start to analyze.
         From the type of the current workview in focus, it select the right
         analysis function.
@@ -64,6 +65,7 @@ Controls1.ApplicationWindow {
       if (wv !== null) {
 
         textAnalyzer.language = language_selector.getCurrentItemKey()
+        textAnalyzer.pipeline = pipeline_selector.getCurrentItemKey()
 
         switch(wv.type) {
         case "OpenFile":
@@ -104,7 +106,9 @@ Controls1.ApplicationWindow {
         wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
+        
         console.debug("formattoshow= ", rt.formatToShow)
+        console.debug("pipeline= ", pipeline_selector.getCurrentItemKey())
         //textAnalyzer.registerQmlObject("resultView",rt);
         textAnalyzer.analyzeText(text, rt);
       }
@@ -203,7 +207,8 @@ Controls1.ApplicationWindow {
     if (workspace.count()) {
       language_selector.currentIndex = workspace.getCurrentWorkView().languageIndex
       format_selector.currentIndex = workspace.getCurrentWorkView().formatIndex
-    }
+      pipeline_selector.currentIndex = workspace.getCurrentWorkView().pipelineIndex
+  }
   }
   
   title: qsTr("Lima")
@@ -255,6 +260,18 @@ Controls1.ApplicationWindow {
 
     AboutDialog {
       id: aboutDialog
+    }
+
+    ErrorDialog {
+      id: errorDialog
+    }
+    
+    Connections {
+        target: textAnalyzer
+        onError: {
+          errorDialog.text = err
+          errorDialog.open()
+        }
     }
 
     Controls2.MenuItem {
@@ -432,6 +449,10 @@ Controls1.ApplicationWindow {
 
                     SelectOptionComboBox {
                       id: language_selector
+                      name: qsTr("Language:")
+                      width: 200
+
+                      currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
                       property var languageDictionnary: {
                           "fre": qsTr("French"),
@@ -442,11 +463,6 @@ Controls1.ApplicationWindow {
                            // add your languages here
                            // you can list every language here, even if it's not loaded by LIMA
                       }
-
-                      name: qsTr("Language:")
-                      width: 200
-
-                      currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
                       Component.onCompleted:  {
                         // load supported languages list from textAnalyzer
@@ -490,15 +506,28 @@ Controls1.ApplicationWindow {
                       }
                     }
 
-//                     SelectOptionComboBox {
-//                         id: config_selector
-//                         name: qsTr("Pipeline")
-//                         enabled: false
-//                         width: 200
-//                         // should be linked to textAnalyzer.configurations (Q_PROPERTY)
-//                         model: [ qsTr("Main")] // , qsTr("Easy")
-//                         keys: ["main"] // , "easy"
-//                     }
+                    SelectOptionComboBox {
+                      id: pipeline_selector
+                      name: qsTr("Pipeline:")
+                      width: 200
+
+                      currentIndex: workspace.count() ? workspace.getCurrentWorkView().pipelineIndex : 0
+
+                      Component.onCompleted:  {
+                        // load supported pipelines list from textAnalyzer
+
+                          model = textAnalyzer.pipelines;
+                          keys = textAnalyzer.pipelines;
+                          modelChanged()
+                      }
+
+                      onSelected: {
+                        if (workspace.count()) {
+                          workspace.getCurrentWorkView().pipelineIndex = currentIndex
+                        }
+                      }
+                    }
+
 
 
                     Shortcut {

@@ -57,9 +57,11 @@ Rectangle {
   property int status: resultsItem.length ? resultsItem[0].status : 0
 
   //! The language selected for this workview
-  //!(the consensus now would be to have the analysis bar stored in this widget rather than in the main appWindow)
+  //!(the consensus now would be to have the analysis bar stored in this widget 
+  //!rather than in the main appWindow)
   property int languageIndex: 0
   property int formatIndex: 0
+  property int pipelineIndex: 0
 
   //! workarounds as you can't easily store references to objects other than in a list.
   property var dataItem: []

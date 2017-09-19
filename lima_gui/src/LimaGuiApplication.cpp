@@ -41,11 +41,13 @@
 #include <string>
 #include <cstdlib>
 
-#include <QFile>
+#include <QApplication>
+#include <QCommandLineParser>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
+#include <QSettings>
 
-Q_GLOBAL_STATIC_WITH_ARGS(QString, LIMA_USER_CONFIG, ("/home/gael/.config/LIMA/configs"))
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -60,8 +62,11 @@ namespace Lima
 namespace Gui 
 {
 
-LimaGuiApplication::LimaGuiApplication(QObject* parent) : QObject(parent),
-  m_configuration(nullptr)
+LimaGuiApplication::LimaGuiApplication(const QCommandLineParser& options, 
+                                       QObject* parent) : 
+    QObject(parent),
+    m_configuration(nullptr),
+    m_options(options)
 {
 
   loadLimaConfigurations();
@@ -260,9 +265,6 @@ void LimaGuiApplication::analyze(const QString& content)
   metaData["Lang"] = m_language.toStdString();
   LINFO << "lang=" << metaData["Lang"];
   
-  // Pipeline
-  std::string pipeline = "main";
-  
   // Handlers 
 
   // we need to figure out what handlers to instantiate from the analyzer
@@ -284,7 +286,8 @@ void LimaGuiApplication::analyze(const QString& content)
   
   std::set<std::string> inactiveUnits;
   // QString::fromUtf8(contentText.c_str())
-  m_analyzer->analyze(content, metaData, pipeline, handlers, inactiveUnits);
+  LDEBUG << "LimaGuiApplication::analyze" << m_pipeline << content;
+  m_analyzer->analyze(content, metaData, m_pipeline.toStdString(), handlers, inactiveUnits);
   
   if (simpleStreamHandler) 
   {
@@ -339,81 +342,125 @@ bool LimaGuiApplication::selectFile(const QString& filename)
 
 /// INITIALIZATION METHODS
 
-void LimaGuiApplication::initializeLimaAnalyzer()
+bool LimaGuiApplication::initializeLimaAnalyzer()
 {
 
   LIMAGUILOGINIT;
 
   QStringList projects;
   projects << QString("lima");
-  QStringList paths;
-  paths << *LIMA_USER_CONFIG;
-  paths = Lima::Common::Misc::buildConfigurationDirectoriesList(projects, paths);
 
-  QString concatenatedPaths;
-  for (auto& qstr : paths) {
-    if (concatenatedPaths.length()) concatenatedPaths += QString(":");
-    concatenatedPaths += qstr;
+  QString lpConfigFile = m_options.value("lp-config-file");
+  QString commonConfigFile = m_options.value("common-config-file");
+  QString resourcesPath = m_options.value("resources-path");
+  QString configPath = m_options.value("config-path");
+  QString clientId = m_options.value("client");
+
+  auto configFilePath = Misc::findFileInPaths(configPath, lpConfigFile, ':');
+
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+    configFilePath.toStdString());
+
+  std::deque<std::string> languages = lpconfig.getModuleGroupListValues(
+                                              clientId.toStdString(), 
+                                              "mediaProcessingDefinitionFiles", 
+                                              "available");
+  if (m_options.isSet("language"))
+  {
+    for(const auto& media: m_options.values("language"))
+            languages.push_back(media.toUtf8().constData());
   }
+  else
+  {
+        languages = {"eng","fre"};  
+  }
+  for (auto& l : languages) 
+  {
+    m_languages << QString(l.c_str());
+  }
+  if (!m_languages.isEmpty())
+    m_language = m_languages[0];
 
-  LINFO << "TRUE FINAL PATH: " << concatenatedPaths.toStdString();
-  
-  std::deque<std::string> langs = {"eng","fre"};
-  std::deque<std::string> pipelines = {"main", "easy"};
-  
+  std::deque<std::string> pipelines;
+  if (m_options.isSet("pipeline"))
+  {
+    for(const auto& pipeline: m_options.values("pipeline"))
+      pipelines.push_back(pipeline.toUtf8().constData());
+  }
+  else
+  {
+    auto& pipelinesGroup = lpconfig.getModuleGroupConfiguration(
+                                        clientId.toStdString(), 
+                                        "pipelines");
+    auto& pipelinesMaps = pipelinesGroup.getMaps();
+    for (auto it = pipelinesMaps.cbegin() ; it != pipelinesMaps.cend(); it++)
+    {
+      pipelines.push_back((*it).first);
+    }
+  }
+  for (auto& p : pipelines) 
+  {
+    m_pipelines << QString(p.c_str());
+  }
+  if (!m_pipelines.isEmpty())
+    m_pipeline = m_pipelines[0];
+
+
   // initialize common
-  std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
-  if( resourcesPath.empty() )
-    resourcesPath = "/usr/share/apps/lima/resources/";
-
   LINFO << "Ressources path is " << resourcesPath;
-  std::string commonConfigFile("lima-common.xml");
-  
+
   LINFO << "LOADING RESOURCES";
 
 //  std::ostringstream oss;
 //  std::ostream_iterator<std::string> out_it (oss,", ");
 //  std::copy ( langs.begin(), langs.end(), out_it );
   Common::MediaticData::MediaticData::changeable().init(
-    resourcesPath,
-    concatenatedPaths.toStdString(),
+    resourcesPath.toStdString(),
+    configPath.toStdString(),
 //    configDir,
-    commonConfigFile,
-    langs);
+    commonConfigFile.toStdString(),
+        languages);
   
-  for (auto& l : langs) 
-  {
-    m_languages << QString(l.c_str());
-  }
-  m_language = "fre";
   
   // initialize linguistic processing
-  std::string clientId("lima-coreclient");
-  std::string lpConfigFile("lima-analysis.xml");
-//  lpConfigFile =("lima-lp-fre.xml");
-  auto configFilePath = Misc::findFileInPaths(concatenatedPaths, QString(lpConfigFile.c_str()), ':');
-
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configFilePath.toStdString());
 
   LINFO << "LOADING CONFIGURATION FILES";
-
-  LinguisticProcessingClientFactory::changeable().configureClientFactory(
-    clientId,
-    lpconfig,
-    langs,
-    pipelines);
-  LINFO << "configureClientFactory DONE";
-
-  m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  try
+  {
+    LinguisticProcessingClientFactory::changeable().configureClientFactory(
+        clientId.toStdString(),
+        lpconfig,
+        languages,
+        pipelines);
+  } 
+  catch (const Lima::InvalidConfiguration& e) 
+  {
+    LIMAGUILOGINIT;
+    QString errorMessage;
+    QTextStream qts(&errorMessage);
+    qts << "Invalid configuration:" << e.what() << endl
+            << "\tconfig file:" << lpConfigFile << endl
+            << "\tcommon config file:" << commonConfigFile  << endl
+            << "\tconfig path:" << configPath << endl
+            << "\tclient id  :" << clientId;
+    LERROR << errorMessage;
+    Q_EMIT(error(errorMessage));
+    return false;
+  }
+  m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
+    LinguisticProcessingClientFactory::single().createClient(
+      clientId.toStdString()));
 
   m_clients["default"] = m_analyzer;
+  LINFO << "configureClientFactory DONE";
 
+  return true;
 }
 
-void LimaGuiApplication::resetLimaAnalyzer() 
+bool LimaGuiApplication::resetLimaAnalyzer() 
 {
   // delete m_analzer;
-  initializeLimaAnalyzer();
+  return initializeLimaAnalyzer();
 }
 
 void LimaGuiApplication::setTextBuffer(const std::string& str) 
@@ -460,6 +507,12 @@ QStringList LimaGuiApplication::languages() const
 QString LimaGuiApplication::language() const 
 { return m_language; }
 
+QStringList LimaGuiApplication::pipelines() const 
+{ return m_pipelines; }
+
+QString LimaGuiApplication::pipeline() const 
+{ return m_pipeline; }
+
 void LimaGuiApplication::setFileContent(const QString& s) 
 { m_fileContent = s; }
 
@@ -486,6 +539,20 @@ void LimaGuiApplication::setLanguage(const QString& s)
   {
     LIMAGUILOGINIT;
     LERROR << "'" << s.toStdString() << "' is not a supported language.";
+  }
+}
+
+void LimaGuiApplication::setPipeline(const QString& s) 
+{
+  if (m_pipelines.contains(s)) 
+  {
+    m_pipeline = s;
+    pipelineChanged();
+  }
+  else 
+  {
+    LIMAGUILOGINIT;
+    LERROR << "'" << s.toStdString() << "' is not a supported pipeline.";
   }
 }
 
@@ -570,55 +637,38 @@ QStringList LimaGuiApplication::getNamedEntitiesList(const QString& text)
 void LimaGuiApplication::loadLimaConfigurations() 
 {
   LIMAGUILOGINIT;
-  // WIP
-  // Let LIMA_USER_CONFIG be the directory where custom configs are stored
-  // This could be retrieved by an environment variable
-  LDEBUG << "LimaGuiApplication::loadLimaConfigurations" << LIMA_USER_CONFIG;
+  LDEBUG << "LimaGuiApplication::loadLimaConfigurations";
 
-  // Let there be a config file listing all configs names
-  //
-
-  QDir configDir(*LIMA_USER_CONFIG);
-
-  if (!configDir.exists()) 
+  QStringList configDirs = m_options.value("config-path").split(":");
+  for (const auto& configDir: configDirs)
   {
-    LDEBUG << "LimaGuiApplication::loadLimaConfigurations create directory" << *LIMA_USER_CONFIG;
-    configDir.mkpath(QString(*LIMA_USER_CONFIG));
-  }
-  
-//   QString configFile = "config.ini";
-//    XMLConfigurationFileParser configFileParser(LIMA_USER_CONFIG + "/" + configFile);
-
-  // Ideally, we could list the existing config files in a global file like this ^
-  // But let's just make do with the directories we find inside LIMA_USER_CONFIG
-
-  QFileInfoList list = configDir.entryInfoList(QStringList() << "*.xml", 
-                                               QDir::Files 
-                                               | QDir::NoDotAndDotDot 
-                                               | QDir::Readable);
-  if (list.isEmpty())
-  {
-    LWARN << "LimaGuiApplication::loadLimaConfigurations No configuration file to load";
-  }
-  
-  for (int i=0; i<list.size(); i++) 
-  {
-    QFileInfo fileInfo = list.at(i);
-
-    if (!fileInfo.isDir()) 
+    QFileInfoList list = QDir(configDir).entryInfoList(QStringList() << "*.xml", 
+                                                QDir::Files 
+                                                | QDir::NoDotAndDotDot 
+                                                | QDir::Readable);
+    if (list.isEmpty())
     {
-      LDEBUG << "LimaGuiApplication::loadLimaConfigurations loading" 
-              << fileInfo.fileName();
-      LimaConfigurationSharedPtr newconfig(new LimaConfiguration(fileInfo));
-      m_configurations[newconfig->name()] = newconfig;
+      LWARN << "LimaGuiApplication::loadLimaConfigurations No configuration file to load";
     }
-    else
+    
+    for (int i=0; i<list.size(); i++) 
     {
-      LDEBUG << "LimaGuiApplication::loadLimaConfigurations" 
-              << fileInfo.fileName() << "is a directory";
+      QFileInfo fileInfo = list.at(i);
+
+      if (!fileInfo.isDir()) 
+      {
+        LDEBUG << "LimaGuiApplication::loadLimaConfigurations loading" 
+                << fileInfo.fileName();
+        LimaConfigurationSharedPtr newconfig(new LimaConfiguration(fileInfo));
+        m_configurations[newconfig->name()] = newconfig;
+      }
+      else
+      {
+        LDEBUG << "LimaGuiApplication::loadLimaConfigurations" 
+                << fileInfo.fileName() << "is a directory";
+      }
     }
   }
-
 }
 
 void LimaGuiApplication::selectLimaConfiguration(const QString& name) 
