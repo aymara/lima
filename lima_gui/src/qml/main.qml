@@ -269,7 +269,8 @@ Controls1.ApplicationWindow {
     Connections {
         target: textAnalyzer
         onError: {
-          errorDialog.text = err
+          errorDialog.text = error
+          errorDialog.informativeText = details
           errorDialog.open()
         }
     }

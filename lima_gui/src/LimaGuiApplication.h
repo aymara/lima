@@ -232,7 +232,7 @@ Q_SIGNALS:
 
   void configsChanged();
   
-  void error(const QString& err);
+  void error(const QString& error, const QString& details);
   
 private:
   void loadLimaConfigurations();

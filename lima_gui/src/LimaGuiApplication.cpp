@@ -438,13 +438,13 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     LIMAGUILOGINIT;
     QString errorMessage;
     QTextStream qts(&errorMessage);
-    qts << "Invalid configuration:" << e.what() << endl
+    qts << e.what() << endl
             << "\tconfig file:" << lpConfigFile << endl
             << "\tcommon config file:" << commonConfigFile  << endl
             << "\tconfig path:" << configPath << endl
             << "\tclient id  :" << clientId;
     LERROR << errorMessage;
-    Q_EMIT(error(errorMessage));
+    Q_EMIT(error(tr("Invalid configuration"), errorMessage));
     return false;
   }
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
