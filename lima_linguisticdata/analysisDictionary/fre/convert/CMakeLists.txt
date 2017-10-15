@@ -29,8 +29,9 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   # Continuation of [1] above
   #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
     COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre lefff-ext-lima.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt ${PROJECT_SOURCE_DIR} > lefff-ext-lima.dic.2
 
-    COMMAND LC_ALL="C" sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
+    COMMAND LC_ALL="C" sort -u -o lefff-ext-lima.dic.2 lefff-ext-lima.dic
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
@@ -38,6 +39,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${dicoFiles}
+      ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt
     COMMENT "produce XML dico"
     VERBATIM
   )

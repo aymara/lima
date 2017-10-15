@@ -28,7 +28,8 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND echo "<dictionary>" > dico.xml.tmp
     COMMAND cat ${dicoFiles} > freeling-ext-lima.txt.tmp
     COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng ${CMAKE_CURRENT_BINARY_DIR}/freeling-ext-lima.txt ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt | LC_ALL="C" sort -u > freeling-ext-lima.txt.merged
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt.merged dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat

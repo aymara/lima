@@ -19,7 +19,7 @@
 #   listesfermees_prenoms_en.txt
 # )
 #
-# CONVERT(por ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt)
+# CONVERT(por ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt)+
 
 set(ENV{LC_ALL} "C")
 
@@ -30,7 +30,8 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     OUTPUT dico.xml  DelafPB.txt default-por.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
     COMMAND cat ${dicoFiles} > DelafPB.txt
-    COMMAND LC_ALL="C" sort -u -o DelafPB.txt DelafPB.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py por DelafPB.txt ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt > DelafPB.txt.2
+    COMMAND LC_ALL="C" sort -u -o DelafPB.txt DelafPB.txt.2
 
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
 
@@ -38,7 +39,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
+    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
     COMMENT "produce por XML dico under Linux"
     VERBATIM
   )
