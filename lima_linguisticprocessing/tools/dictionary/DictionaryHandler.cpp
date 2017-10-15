@@ -174,7 +174,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     m_count++;
     if ((m_count % 10000)==0)
     {
-      std::cout << "\nbuild data : " << m_count << " entries ...";
+      std::cout << "\rbuild data : " << m_count << " entries ...";
     }
   }
   else if (name==S_I)

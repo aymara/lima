@@ -79,7 +79,8 @@ bool  KeysLogger::startElement ( const QString & , const QString & name, const Q
     if ((m_count % 10000)==0)
     {
       DICTIONARYLOGINIT;
-      std::cerr << "\nextract keys :  " << m_count << " entries ...";
+      std::cout << "\rextract keys :  " << m_count << " entries ..." 
+                << std::flush;
     }
   }
   else if (name == S_I)
