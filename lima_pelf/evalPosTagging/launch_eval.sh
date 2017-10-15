@@ -7,9 +7,22 @@ set -o pipefail
 command -v SVMTlearn >/dev/null 2>&1 || { echo >&2 "I require SVMTlearn but it's not in the path  Aborting."; exit 1; }
 command -v svm_learn >/dev/null 2>&1 || { echo >&2 "I require svm_learn but it's not in the path  Aborting."; exit 1; }
 
-if (($#==0)); then 
-    echo usage: launch_eval.sh lang1 lang2 ...
-fi
+usage()
+{
+  program=`basename $0`
+  cat<<EOF
+
+Usage: $program [OPTION] language1 language2 ...
+Evaluate LIMA PoS tagging on several languages.
+
+  Options:
+  -n, --notrain              Skip the PoT tagger training step. It must have been done previously
+  -h, --help                 Shows this help.
+
+EOF
+  exit 1
+}
+
 
 source $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/lima-pelf-functions.sh
 
@@ -31,7 +44,46 @@ svm_learn="SVMTlearn"
 mkdir -p training-sets
 
 notrain=false
+
+# Execute getopt on the arguments passed to this program, identified by the special character $@
+PARSED_OPTIONS=$(getopt -n "$0"  -o nh --long "notrain,help"  -- "$@")
+
+#Bad arguments, something has gone wrong with the getopt command.
+if [ $? -ne 0 ];
+then
+  exit 1
+fi
+
+# A little magic, necessary when using getopt.
+eval set -- "$PARSED_OPTIONS"
+
+# Now goes through all the options with a case and using shift to analyse 1 argument at a time.
+#$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
+while true;
+do
+  case "$1" in
+
+#     -1|--one)
+#       echo "One"
+#       shift;;
+
+    -n|--notrain)
+      notrain=true
+      shift;;
+
+    -h|--help)
+      usage
+     shift;;
+
+    --)
+      shift
+      break;;
+  esac
+done
+
+
 for lang in $*; do
+echo "lang is $lang"
     addOption=""
     case $lang in
         eng) 
@@ -47,7 +99,6 @@ for lang in $*; do
             addOption="-s PU+FORTE -n $nbParts"
             corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
             conf=config-minimale-por.SVMT ;;
-        notrain) notrain=true ;;
     esac
     method=$(readMethod $lang)
     echo "treating $lang.$method... (see ${lang}.${method}.log)"
