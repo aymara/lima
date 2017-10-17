@@ -593,7 +593,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--msd">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -601,7 +601,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -609,7 +609,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--fsd">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -617,7 +617,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -625,7 +625,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--mpd">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -633,7 +633,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -641,7 +641,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--fpd">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -649,7 +649,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -657,7 +657,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--msi">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -665,7 +665,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -673,7 +673,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--fsi">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -681,7 +681,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -689,7 +689,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--mpi">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -697,7 +697,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -753,7 +753,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--fpi">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -761,25 +761,9 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Du--msc">
-  <field key="MICRO" value="DETDU"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Du--msc">
-  <field key="MICRO" value="DETDU"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
@@ -849,7 +833,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--msp">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -857,7 +841,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -865,7 +849,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--fsp">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -873,7 +857,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
@@ -881,7 +865,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--mpp">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -889,7 +873,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -897,7 +881,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:--fpp">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -905,7 +889,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
   <field key="PERSON" value=""/>
@@ -19793,7 +19777,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:i">
-	<field key="MICRO" value="DET"/>
+	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
@@ -19801,7 +19785,7 @@
 	<field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-	<field key="MICRO" value="DET"/>
+	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
@@ -19809,7 +19793,7 @@
 	<field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:c">
-	<field key="MICRO" value="DET"/>
+	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
@@ -19817,7 +19801,7 @@
 	<field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-	<field key="MICRO" value="DET"/>
+	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
@@ -19825,7 +19809,7 @@
 	<field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:p">
-	<field key="MICRO" value="DET"/>
+	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
@@ -19833,7 +19817,7 @@
 	<field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-	<field key="MICRO" value="DET"/>
+	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
@@ -20225,7 +20209,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D:----d">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
@@ -20233,7 +20217,7 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="P+D">
-  <field key="MICRO" value="DET"/>
+  <field key="MICRO" value="P+D"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>

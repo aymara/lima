@@ -5,8 +5,8 @@
   <chaine type="nominale">
     <filtre ID="FN1">
       <nom>DET-ART-CON</nom>
-      <categorie>DETDU</categorie>
       <categorie>DETDES</categorie>
+      <categorie>P+D</categorie>
     </filtre>
     <filtre ID="DETINT">
       <nom>DET-INTERROGATIF</nom>
@@ -17,9 +17,9 @@
       <categorie>DET</categorie>
       <categorie>DETDE</categorie>
       <categorie>DETDES</categorie>
-      <categorie>DETDU</categorie>
       <categorie>DETWH</categorie>
       <categorie>DETWHNUM</categorie>
+      <categorie>P+D</categorie>
     </filtre>
     <filtre ID="FN3">
       <nom>PRON-POS</nom>
