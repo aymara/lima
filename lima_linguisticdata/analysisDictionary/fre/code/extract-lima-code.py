@@ -31,22 +31,24 @@ codes = etree.fromstring(sys.stdin.read())
 extract = Element("codes")
 
 for code in codes.findall("code"):
-  k = code.attrib["key"]
-  f = {}
-  for field in code.findall("field"):
-    f[field.attrib["key"]]=field.attrib["value"]
-  #MICRO,GENDER,NUMBER,PERSON,TIME,SYNTAX;code
-  if "ICRO" in f:
-    resultkey = "{},{},{},{},{},{}".format(f["MICRO"],f["SYNTAX"],f["TIME"],f["PERSON"],f["GENDER"],f["NUMBER"])
+    k = code.attrib["key"]
+    f = {}
+    for field in code.findall("field"):
+        f[field.attrib["key"]] = field.attrib["value"]
+    #MICRO,GENDER,NUMBER,PERSON,TIME,SYNTAX;code
+    if "ICRO" in f:
+        resultkey = "{},{},{},{},{},{}".format(f["MICRO"], f["SYNTAX"],
+                                               f["TIME"], f["PERSON"],
+                                               f["GENDER"], f["NUMBER"])
 
-    if resultkey in result:
-      result[resultkey].append(k)
-    else:
-      result[resultkey] = [k]
-      extract.append(code)
-      
+        if resultkey in result:
+            result[resultkey].append(k)
+        else:
+            result[resultkey] = [k]
+        extract.append(code)
+
 for resultkey in result:
-  print "{};{}".format(resultkey,str.join(",",result[resultkey]));
+    print("{};{}".format(resultkey, str.join(",", result[resultkey])))
 
 #print(etree.tostring(extract,encoding="UTF-8",
   #xml_declaration=True,

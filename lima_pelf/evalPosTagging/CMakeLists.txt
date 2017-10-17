@@ -23,6 +23,7 @@ install(FILES
     aligner.pl
     eval.pl
     launch_eval.sh
+    build-dico.sh
     lima-pelf-functions.sh
     MFT.pl
     micro2macro.sh

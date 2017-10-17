@@ -27,29 +27,31 @@ file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../delaf/*.txt)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
-    OUTPUT dico.xml  DelafPB.txt default-por.dat
+    OUTPUT dico.xml forms.dic default-por.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND cat ${dicoFiles} > DelafPB.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py por DelafPB.txt ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt > DelafPB.txt.2
-    COMMAND LC_ALL="C" sort -u -o DelafPB.txt DelafPB.txt.2
-
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
-
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl DelafPB.txt dico.xml.tmp
+    COMMAND cat ${dicoFiles} > forms.dic
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py por forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt > forms.dic.2
+    COMMAND LC_ALL="C" sort -u -o forms.dic forms.dic.2
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
+    DEPENDS
+      ${dicoFiles} 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt 
+      ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
     COMMENT "produce por XML dico under Linux"
     VERBATIM
   )
 else()
   add_custom_command(
-    OUTPUT dico.xml  DelafPB.txt default-por.dat
+    OUTPUT dico.xml  forms.dic default-por.dat
     COMMAND c:\\msys64\\usr\\bin\\echo "<dictionary>" > dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\cat ${dicoFiles} > DelafPB.txt
-    COMMAND c:\\msys64\\usr\\bin\\sort -u -o DelafPB.txt DelafPB.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl DelafPB.txt dico.xml.tmp
+    COMMAND c:\\msys64\\usr\\bin\\cat ${dicoFiles} > forms.dic
+    COMMAND c:\\msys64\\usr\\bin\\sort -u -o forms.dic forms.dic
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
   # COMMAND c:\\msys64\\usr\\bin\\cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat

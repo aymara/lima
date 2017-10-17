@@ -2,7 +2,7 @@
 #    
 #   This file is part of LIMA.
 #
-#   LIMA is free software: you can redistribute it and/or modify
+#   LIMA is pore software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
 #   the Free Software Foundation, either version 3 of the License, or
 #   (at your option) any later version.
@@ -14,16 +14,68 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-install(FILES 
-    lima.A0.UNK  lima.A2      lima.A3.UNK  lima.AMBP  lima.M0.LR.MRG      lima.WIN
-    config-minimale.SVMT  lima.A1      lima.A2.UNK  lima.A4      lima.DICT  lima.UNK.M0.LR.MRG
-    lima.A0              lima.A1.UNK  lima.A3      lima.A4.UNK  lima.EXP   lima.UNKP
-  COMPONENT por DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-por)
 
-# To learn a new model
-# copy corpus file to work dir
-# call  "sed -i -e's/ /_/g' -e's/   / /g' " on copied file
-# copy config.svmt to work dir
-# replace in config.svmt the value of TRAINSET by the full path of the copied corpus file and the value of SVMDIR by the path of svm_light
-# call SVMTlearn config.svmt
-# install generated lima.* files
+find_program (SVMT_LEARN SVMTlearn)
+find_program (SVM_LIGHT_PROGRAM svm_learn)
+
+if ( ${SVMT_LEARN} STREQUAL "SVMT_LEARN-NOTFOUND" )
+
+  message("SVMTlearn not found. por SVMTool model will not build.")
+  
+elseif ( ${SVM_LIGHT_PROGRAM} STREQUAL "SVM_LIGHT_PROGRAM-NOTFOUND" )
+
+  message("svm_light not found. por SVMTool model will not build.")
+  
+else ()
+  message("SVMTlearn is ${SVMT_LEARN}.")
+  message("svm_light is ${SVM_LIGHT_PROGRAM}.")
+  
+  get_filename_component(SVM_LIGHT ${SVM_LIGHT_PROGRAM} DIRECTORY)
+  
+  configure_file(config-minimale.SVMT config-minimale.SVMT @ONLY)
+
+  # Create a file allowing LIMA to find the resource dir
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/lima "")
+
+  add_custom_command(
+      OUTPUT lima.A0.UNK
+      COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt > corpus_por.txt
+      COMMAND ${SVMT_LEARN} config-minimale.SVMT
+      DEPENDS 
+        config-minimale.SVMT
+        ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt
+      COMMENT "Compiles por SVMTool model"
+      VERBATIM
+    )
+
+    add_custom_target(
+      svmtoolmodelpor
+      ALL
+      DEPENDS lima.A0.UNK
+    )
+
+  install(
+    FILES 
+      ${CMAKE_CURRENT_BINARY_DIR}/config-minimale.SVMT  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0              
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1     
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4.UNK  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.AMBP  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.DICT  
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.EXP   
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.M0.LR.MRG      
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNKP
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.WIN
+    COMPONENT por 
+    DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-por)
+
+endif()

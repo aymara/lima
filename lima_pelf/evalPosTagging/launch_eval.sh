@@ -113,10 +113,6 @@ echo "lang is $lang"
         rm -Rf results.$lang.$method
         $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $confFile $svm_light $svm_learn
     fi
-    if  [[ $? -ne 0 ]]; then
-      echo "tfcv error, exiting"
-      exit 1
-    fi
 
     echo results.$lang.$method
     for f in results.$lang.$method/*/aligned; do 
