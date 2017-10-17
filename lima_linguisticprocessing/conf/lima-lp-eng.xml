@@ -79,61 +79,6 @@
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
       </list>
     </group>
-    <group name="query" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="idiomaticAlternatives"/>
-        <!--item value="hyphenWordAlternatives"/-->
-        <!--item value="abbreviationSplitAlternatives"/-->
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
-        <item value="bowTextHandler"/>
-      </list>
-    </group>
-    <group name="indexer" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="beginStatusLogger"/>
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="abbreviationSplitAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-freq"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
-        <item value="bowDumper"/>
-      </list>
-    </group>
-    <group name="normalization" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="abbreviationSplitAlternatives"/>
-        <item value="defaultProperties"/>
-        <!--item value="SpecificEntitiesModex"/-->
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
-        <item value="bowTextHandler"/>
-      </list>
-    </group>
     <group name="easy" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>

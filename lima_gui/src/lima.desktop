@@ -1,0 +1,12 @@
+# 
+[Desktop Entry]
+Type=Application
+Exec=lima_gui %u
+MimeType=application/x-your-mime-type;
+Icon=lima_gui
+X-DocPath=lima_gui/index.html
+Terminal=false
+Name=lima_gui
+GenericName=LIMA GUI
+Comment=A user interface for the LIMA multilingual analyzer
+Categories=Qt;
