@@ -14,29 +14,26 @@ before_install:
   #- docker pull ubuntu:16.04 
 
 script:
-- docker build --build-arg BINTRAYKEY=$BINTRAYKEY  \
-    --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER \
-    --build-arg NLTK_PTB_DP_FILE= $NLTK_PTB_DP_FILE \
-    --build-arg LIMA_DIST=$LIMA_DIST  \
-    --build-arg LIMA_CONF=$LIMA_CONF  \
-    --build-arg LIMA_RESOURCES=$LIMA_RESOURCES \
-    --build-arg PATH=$PATH \
-    --build-arg LD_LIBRARY_PATH=$LD_LIBRARY_PATH \
-    --build-arg LIMA_DISABLE_FSW_TESTING=$LIMA_DISABLE_FSW_TESTING \
-    --build-arg LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=$LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS \
-    --build-arg release=$release \
+- docker build --build-arg BINTRAYKEY=$BINTRAYKEY  --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg NLTK_PTB_DP_FILE= $NLTK_PTB_DP_FILE --build-arg LIMA_DIST=$LIMA_DIST  
+    --build-arg LIMA_CONF=$LIMA_CONF  
+    --build-arg LIMA_RESOURCES=$LIMA_RESOURCES 
+    --build-arg PATH=$PATH 
+    --build-arg LD_LIBRARY_PATH=$LD_LIBRARY_PATH 
+    --build-arg LIMA_DISABLE_FSW_TESTING=$LIMA_DISABLE_FSW_TESTING 
+    --build-arg LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=$LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS 
+    --build-arg release=$release 
     -f ./Dockerfile-ubuntu16.04 .
-- docker build \
-    --build-arg BINTRAYKEY=$BINTRAYKEY  \
-    --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER \
-    --build-arg NLTK_PTB_DP_FILE= $NLTK_PTB_DP_FILE \
-    --build-arg LIMA_DIST=$LIMA_DIST  \
-    --build-arg LIMA_CONF=$LIMA_CONF  \
-    --build-arg LIMA_RESOURCES=$LIMA_RESOURCES \
-    --build-arg PATH=$PATH \
-    --build-arg LD_LIBRARY_PATH=$LD_LIBRARY_PATH \
-    --build-arg LIMA_DISABLE_FSW_TESTING=$LIMA_DISABLE_FSW_TESTING \
-    --build-arg LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=$LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS \
-    --build-arg release=$release \
+- docker build 
+    --build-arg BINTRAYKEY=$BINTRAYKEY  
+    --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER 
+    --build-arg NLTK_PTB_DP_FILE= $NLTK_PTB_DP_FILE 
+    --build-arg LIMA_DIST=$LIMA_DIST  
+    --build-arg LIMA_CONF=$LIMA_CONF  
+    --build-arg LIMA_RESOURCES=$LIMA_RESOURCES 
+    --build-arg PATH=$PATH 
+    --build-arg LD_LIBRARY_PATH=$LD_LIBRARY_PATH 
+    --build-arg LIMA_DISABLE_FSW_TESTING=$LIMA_DISABLE_FSW_TESTING 
+    --build-arg LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=$LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS 
+    --build-arg release=$release 
     -f ./Dockerfile-ubuntu14.04 .
 
