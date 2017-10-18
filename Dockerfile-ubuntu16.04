@@ -13,17 +13,22 @@ ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG release
 
 # Setup
+RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils -qq
 RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
-RUN apt-get install -y qt5-default qtbase5-dev-tools qt5xmlpatterns5-dev qtquick5-dev qtdeclarative5-dev libboost-all-dev libenchant-dev -qq
 RUN apt-get update -y -qq
+RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libenchant-dev -qq
+RUN apt-get update -y -qq
+RUN apt-get install -y libboost-all-dev -qq
+
+#RUN curl -sL https://deb.nodesource.com/setup | bash -
+RUN apt-get install -y nodejs npm
+RUN npm install -g json
+
 RUN mkdir -p /src/
 RUN git clone https://github.com/aymara/lima /src/lima
 
-RUN curl -sL https://deb.nodesource.com/setup | bash -
-RUN apt-get install -y nodejs 
-RUN npm install -g json
 RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
 RUN python -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
