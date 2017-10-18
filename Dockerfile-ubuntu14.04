@@ -15,7 +15,7 @@ ARG release
 # Setup
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils -qq
-RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk -qq
+RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
 RUN apt-get install -y qt5-default qtbase5-dev-tools qtdeclarative5-dev libboost-all-dev libenchant-dev -qq
 RUN apt-get update -y -qq
 RUN mkdir -p /src/
