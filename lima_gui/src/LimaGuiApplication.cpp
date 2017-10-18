@@ -370,14 +370,11 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     for(const auto& media: m_options.values("language"))
             languages.push_back(media.toUtf8().constData());
   }
-  else
-  {
-        languages = {"eng","fre"};  
-  }
   for (auto& l : languages) 
   {
     m_languages << QString(l.c_str());
   }
+  m_languages.removeDuplicates();
   if (!m_languages.isEmpty())
     m_language = m_languages[0];
 

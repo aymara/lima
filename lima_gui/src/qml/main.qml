@@ -456,11 +456,15 @@ Controls1.ApplicationWindow {
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
                       property var languageDictionnary: {
-                          "fre": qsTr("French"),
-                          "eng": qsTr("English"),
+                          "ara": qsTr("Arabic"),
                           "chi": qsTr("Chinese"),
+                          "eng": qsTr("English"),
+                          "fre": qsTr("French"),
                           "ger": qsTr("German"),
-                          "ara": qsTr("Arabic")
+                          "ita": qsTr("Italian"),
+                          "por": qsTr("Portuguese"),
+                          "rus": qsTr("Russian"),
+                          "spa": qsTr("Spanish"),
                            // add your languages here
                            // you can list every language here, even if it's not loaded by LIMA
                       }
