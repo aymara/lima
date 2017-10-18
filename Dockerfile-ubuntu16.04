@@ -25,9 +25,7 @@ RUN apt-get install -y libboost-all-dev -qq
 #RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs npm
 RUN npm install -g json
-
-RUN mkdir -p /src/
-RUN git clone https://github.com/aymara/lima /src/lima
+RUN ln -s /usr/bin/nodejs /usr/bin/node
 
 RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python2.7/*/nltk/downloader.py
 RUN python -m nltk.downloader -d nltk_data dependency_treebank
@@ -37,6 +35,9 @@ RUN wget https://bintray.com/artifact/download/kleag/ubuntu-16.04/$(curl https:/
 RUN dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver | json -a latest_version)/files | json 0.name)
 RUN wget https://bintray.com/artifact/download/kleag/ubuntu-16.04/$(echo $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp | json -a latest_version)/files | json 0.path)  | sed -e 's/\+/%2B/g')
 RUN dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp | json -a latest_version)/files | json 0.name)
+
+RUN mkdir -p /src/
+RUN git clone https://github.com/aymara/lima /src/lima
 
 
 RUN mkdir -p /src/lima/build
