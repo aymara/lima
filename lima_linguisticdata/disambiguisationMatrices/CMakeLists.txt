@@ -20,10 +20,7 @@ option(BUILD_SVMTOOL_MODELS "Set to true to build and install the SVMTool PoS \
                              training times."
                              OFF)
 else()
-option(BUILD_SVMTOOL_MODELS "Set to true to build and install the SVMTool PoS \
-                             tagging models. Default is FALSE to avoid \
-                             training times."
-                             ON)
+option(BUILD_SVMTOOL_MODELS "Set to true to build and install the SVMTool PoS tagging models. Default is FALSE to avoid  training times." ON)
 endif()
 
 foreach(LANG ${LIMA_LANGUAGES})
