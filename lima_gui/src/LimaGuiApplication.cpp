@@ -203,14 +203,15 @@ bool LimaGuiApplication::openFile(const QString& filepath)
   return true;
 }
 
-void LimaGuiApplication::closeFile(const QString& filename, bool save) {
+void LimaGuiApplication::closeFile(const QString& filename, bool save) 
+{
   if (save) 
   {}
 //  if (save) {
 //    saveFile(filename);
 //  }
   
-  for (std::vector<LimaGuiFile>::const_iterator it = m_openFiles.begin(); it != m_openFiles.end(); ++it) 
+  for (auto it = m_openFiles.begin(); it != m_openFiles.end(); ++it) 
   {
     if (it->name == filename.toStdString()) 
     {

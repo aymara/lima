@@ -42,6 +42,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QtQml>
+#include <QtGlobal>
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -190,7 +191,9 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
     app.setWindowIcon(QIcon(":qml/resources/lima.png"));
+#endif
     int result = app.exec();
     return result;
 
