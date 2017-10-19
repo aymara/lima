@@ -54,27 +54,29 @@ if (Qt5Core_VERSION VERSION_LESS 5.6.0)
     message("Minimum supported Qt5 version for LIMA GUI is 5.6! LIMA GUI will not be built.")
 else()
 
-FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
-  include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
-  link_directories( ${LIMACOMMON_LIBRARY_DIRS})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_common")
-ENDIF(LIMACOMMON_FOUND)
+  FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
+  IF(LIMACOMMON_FOUND)
+    include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
+    link_directories( ${LIMACOMMON_LIBRARY_DIRS})
+  ELSE (LIMACOMMON_FOUND)
+    MESSAGE(FATAL_ERROR "Could not find lima_common")
+  ENDIF(LIMACOMMON_FOUND)
 
 
-FIND_PACKAGE(LIMALP PATHS PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-IF(LIMALP_FOUND)
-  include_directories( AFTER ${LIMALP_INCLUDE_DIR})
-  link_directories( ${LIMALP_LIBRARY_DIRS})
-ELSE (LIMALP_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_linguisticprocessing")
-ENDIF(LIMALP_FOUND)
+  FIND_PACKAGE(LIMALP PATHS PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
+  IF(LIMALP_FOUND)
+    include_directories( AFTER ${LIMALP_INCLUDE_DIR})
+    link_directories( ${LIMALP_LIBRARY_DIRS})
+  ELSE (LIMALP_FOUND)
+    MESSAGE(FATAL_ERROR "Could not find lima_linguisticprocessing")
+  ENDIF(LIMALP_FOUND)
+
+  add_subdirectory(src)
+  add_subdirectory(test)
+
+endif()
 
 add_subdirectory(conf)
-add_subdirectory(src)
-add_subdirectory(test)
-
 ########### packaging ###############
 include(InstallRequiredSystemLibraries)
 
@@ -111,5 +113,4 @@ set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
 
 INCLUDE(CPack)
 
-endif()
 
