@@ -64,6 +64,12 @@ WORKDIR /src/lima/build
 
 ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
 ENV PATH /usr/bin:/usr/share/apps/lima/scripts:/SVMTool-1.3.1/bin:$PATH
+ENV NLTK_PTB_DP_FILE /nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+ENV LIMA_DISABLE_FSW_TESTING true
+ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
+ENV LIMA_DIST /usr
+ENV LIMA_CONF /usr/share/config/lima
+ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
 RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" ..

@@ -15,8 +15,5 @@ script:
 - docker build 
     --build-arg BINTRAYKEY=$BINTRAYKEY  
     --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER 
-    --build-arg NLTK_PTB_DP_FILE=/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
-    --build-arg LIMA_DISABLE_FSW_TESTING=true
-    --build-arg LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=true
     -f ./Dockerfile-ubuntu14.04 .
 
