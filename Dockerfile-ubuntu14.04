@@ -21,7 +21,7 @@ ARG release
 
 # Setup
 RUN apt-get update -y -qq
-RUN apt-get install -y apt-utils python3-software-properties -qq
+RUN apt-get install -y apt-utils software-properties-common python-software-properties python3-software-properties -qq
 RUN add-apt-repository ppa:kubuntu-ppa/backports 
 RUN apt-get update -y -qq
 RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
