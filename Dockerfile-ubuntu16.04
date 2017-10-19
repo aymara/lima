@@ -50,6 +50,8 @@ RUN git clone https://github.com/aymara/lima /src/lima
 RUN mkdir -p /src/lima/build
 
 ENV PATH /usr/bin:/usr/share/apps/lima/scripts:$PATH
+RUN echo "PATH: ${PATH}"
+RUN echo "print('hello')" | python3
 
 # Build
 WORKDIR /src/lima/build
