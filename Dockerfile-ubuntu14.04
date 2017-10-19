@@ -9,14 +9,6 @@ RUN locale
 
 ARG BINTRAYKEY
 ARG TRAVIS_JOB_NUMBER 
-ARG NLTK_PTB_DP_FILE
-ARG LIMA_DIST
-ARG LIMA_CONF
-ARG LIMA_RESOURCES
-ARG PATH
-ARG LD_LIBRARY_PATH
-ARG LIMA_DISABLE_FSW_TESTING
-ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 
 # Setup
 RUN apt-get update -y -qq
@@ -56,10 +48,10 @@ WORKDIR /src/lima/build
 ENV PATH /usr/bin:/usr/share/apps/lima/scripts:$PATH
 
 # Build
-RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" ..
+RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" ..
 RUN make -j4
 
-WORKDIR $LIMA_DIST/share/apps/lima/tests
+WORKDIR /usr/share/apps/lima/tests
 RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
 RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
 
