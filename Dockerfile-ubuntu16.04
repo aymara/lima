@@ -47,7 +47,9 @@ RUN git clone https://github.com/aymara/lima /src/lima
 
 
 RUN mkdir -p /src/lima/build
- 
+
+ENV PATH /usr/bin:/usr/share/apps/lima/scripts:$PATH
+
 # Build
 WORKDIR /src/lima/build
 RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(git show -s --format=%ct HEAD)-$(git rev-parse --short HEAD)" ..
