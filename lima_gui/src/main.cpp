@@ -41,6 +41,7 @@
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QtQml>
 
 using namespace Lima;
 using namespace Lima::Common;
