@@ -37,6 +37,16 @@ RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/ind
 RUN python -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
+RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
+WORKDIR /svm_light
+RUN tar xzf ../svm_light.tar.gz
+RUN make
+RUN cp svm_classify svm_learn /usr/bin
+
+WORKDIR /
+RUN wget https://dl.bintray.com/kleag/SVMTool-1.3.1/SVMTool-1.3.1.tgz
+RUN tar xzf SVMTool-1.3.1.tgz
+
 RUN wget https://bintray.com/artifact/download/kleag/ubuntu-16.04/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver | json -a latest_version)/files | json 0.path)
 RUN dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver | json -a latest_version)/files | json 0.name)
 RUN wget https://bintray.com/artifact/download/kleag/ubuntu-16.04/$(echo $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp | json -a latest_version)/files | json 0.path)  | sed -e 's/\+/%2B/g')
@@ -52,9 +62,8 @@ RUN echo "$(git show -s --format=%ct HEAD)-$(git rev-parse --short HEAD)" > rele
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
 
-ENV PATH /usr/bin:/usr/share/apps/lima/scripts:$PATH
-RUN echo "PATH: ${PATH}"
-RUN echo "print('hello')" | python3
+ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
+ENV PATH /usr/bin:/usr/share/apps/lima/scripts:/SVMTool-1.3.1/bin:$PATH
 
 # Build
 RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" ..
