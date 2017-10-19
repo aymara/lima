@@ -23,6 +23,9 @@ ARG release
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils -qq
+RUN add-apt-repository ppa:kubuntu-ppa/backports 
+RUN apt-get update -y -qq
+
 RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget python3 -qq
 RUN apt-get update -y -qq
 RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libenchant-dev -qq
