@@ -50,9 +50,9 @@ include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Test Qml Quick QuickTest Gui )
 include_directories(${Qt5_INCLUDES})
 
-if (Qt5Core_VERSION VERSION_LESS 5.6.0)
-    message("Minimum supported Qt5 version for LIMA GUI is 5.6! LIMA GUI will not be built.")
-else()
+# if (Qt5Core_VERSION VERSION_LESS 5.6.0)
+#     message("Minimum supported Qt5 version for LIMA GUI is 5.6! LIMA GUI will not be built.")
+# else()
 
   FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
   IF(LIMACOMMON_FOUND)
@@ -74,7 +74,7 @@ else()
   add_subdirectory(src)
   add_subdirectory(test)
 
-endif()
+# endif()
 
 add_subdirectory(conf)
 ########### packaging ###############
