@@ -9,14 +9,17 @@ RUN locale
 
 ARG BINTRAYKEY
 ARG SEMAPHORE_BUILD_NUMBER 
+ARG LIMA_DISABLE_FSW_TESTING
+ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
+ARG NLTK_PTB_DP_FILE
 
 # Setup
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils software-properties-common python-software-properties python3-software-properties -qq
-RUN add-apt-repository ppa:kubuntu-ppa/backports 
-RUN apt-get update -y -qq
-RUN apt-get dist-upgrade -y -qq
+#RUN add-apt-repository ppa:kubuntu-ppa/backports 
+#RUN apt-get update -y -qq
+#RUN apt-get dist-upgrade -y -qq
 
 
 RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget python3 -qq
