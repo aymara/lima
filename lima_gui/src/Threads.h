@@ -43,7 +43,7 @@ class LimaGuiApplication;
 ///
 /// \brief A QThread implementation for LIMA Gui.
 /// This class is meant to be related with a LimaGuiApplication object.
-class LIMA_GUI_EXPORT LimaGuiThread : public QThread 
+class LimaGuiThread : public QThread 
 {
   Q_OBJECT
 public:
@@ -60,7 +60,7 @@ protected:
 
 /// \class AnalysisThread
 /// \brief This thread starts the analysis with preferred parameters.
-class LIMA_GUI_EXPORT AnalysisThread : public LimaGuiThread 
+class AnalysisThread : public LimaGuiThread 
 {
   
 public:
@@ -108,7 +108,7 @@ private:
 
 /// \class InitializeThread
 /// \brief Thread to initialize lima while the QML is being loaded.
-class LIMA_GUI_EXPORT InitializeThread : public LimaGuiThread {
+class InitializeThread : public LimaGuiThread {
   
 public:
   InitializeThread(LimaGuiApplication* a);
@@ -117,7 +117,7 @@ public:
   void run() override;
 };
 
-class LIMA_GUI_EXPORT TestThread : public LimaGuiThread {
+class TestThread : public LimaGuiThread {
 public:
   TestThread(LimaGuiApplication* application);
   void run() override;

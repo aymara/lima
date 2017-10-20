@@ -46,7 +46,7 @@ typedef std::shared_ptr<
 /// \class LimaGuiFile
 /// \brief A simple structure to hold information relative to files
 ///
-struct LIMA_GUI_EXPORT LimaGuiFile 
+struct LimaGuiFile 
 {
   std::string name; ///< name of the file. (<name>.<ext>, without the full path)
   std::string url; ///< path of the file (relative or absolute)
@@ -66,7 +66,7 @@ typedef std::shared_ptr<Config::LimaConfiguration> LimaConfigurationSharedPtr;
 /// \class LimaGuiApplication
 /// \brief Main class of Lima Gui.
 ///
-class LIMA_GUI_EXPORT LimaGuiApplication : public QObject 
+class LimaGuiApplication : public QObject 
 {
   Q_OBJECT
   

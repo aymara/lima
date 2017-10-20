@@ -39,7 +39,7 @@ namespace Gui
 
 /// \class ConllRow
 /// \brief This is an extension of the CONLL_Line structure to Qt
-class LIMA_GUI_EXPORT ConllRow : public QObject, public CONLL_Line 
+class ConllRow : public QObject, public CONLL_Line 
 {
   Q_OBJECT
   Q_PROPERTY(QString nid READ getId)
@@ -61,7 +61,7 @@ public:
 
 /// \class ConllListModel
 /// \brief conll qt data model
-class LIMA_GUI_EXPORT ConllListModel : public QAbstractTableModel 
+class ConllListModel : public QAbstractTableModel 
 {
   Q_OBJECT
 public:
