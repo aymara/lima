@@ -37,22 +37,41 @@ else ()
   # Create a file allowing LIMA to find the resource dir
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/lima "")
 
-  add_custom_command(
-      OUTPUT lima.A0.UNK
-      COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt > corpus_por.txt
-      COMMAND ${SVMT_LEARN} config-minimale.SVMT
-      DEPENDS 
-        config-minimale.SVMT
-        ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt
-      COMMENT "Compiles por SVMTool model"
-      VERBATIM
-    )
+  if (SHORTEN_POR_CORPUS_FOR_SVMLEARN)
+    add_custom_command(
+        OUTPUT lima.A0.UNK
+        COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt | head -n 200000 > corpus_por.txt
+        COMMAND ${SVMT_LEARN} config-minimale.SVMT
+        DEPENDS 
+          config-minimale.SVMT
+          ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt
+        COMMENT "Compiles por SVMTool model"
+        VERBATIM
+      )
 
     add_custom_target(
       svmtoolmodelpor
       ALL
       DEPENDS lima.A0.UNK
     )
+  else()
+    add_custom_command(
+        OUTPUT lima.A0.UNK
+        COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt > corpus_por.txt
+        COMMAND ${SVMT_LEARN} config-minimale.SVMT
+        DEPENDS 
+          config-minimale.SVMT
+          ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt
+        COMMENT "Compiles por SVMTool model"
+        VERBATIM
+      )
+
+      add_custom_target(
+        svmtoolmodelpor
+        ALL
+        DEPENDS lima.A0.UNK
+      )
+  endif()
 
   install(
     FILES 

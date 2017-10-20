@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
+option(SHORTEN_POR_CORPUS_FOR_SVMLEARN "Use a shortened corpus for SVMTlearn to reduce learning time" OFF)
+message("SHORTEN_POR_CORPUS_FOR_SVMLEARN=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}")
 option(WITH_ASAN "Enable address sanitizer" OFF)
 message("WITH_ASAN=${WITH_ASAN}")
 option(WITH_ARCH "Enable architecture optimizations" OFF)

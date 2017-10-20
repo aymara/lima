@@ -8,7 +8,7 @@ ENV LC_ALL en_US.UTF-8
 RUN locale
 
 ARG BINTRAYKEY
-ARG TRAVIS_JOB_NUMBER 
+ARG SEMAPHORE_BUILD_NUMBER 
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
@@ -70,21 +70,21 @@ ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
-RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" ..
-RUN make -j4
+RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON ..
+RUN make -j2
 
 WORKDIR /usr/share/apps/lima/tests
 RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
 RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
 
-RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_common/src/lima_common-build/limacommon-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_common/src/lima_common-build/limacommon-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl  -ukleag:$BINTRAYKEY -T/src/lima/build/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb
-RUN curl  -ukleag:$BINTRAYKEY -T/src/lima/build/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb
-RUN curl  -ukleag:$BINTRAYKEY -T/src/lima/build/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb
-RUN curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/publish
-RUN curl -XGET https://bintray.com/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER
+RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_common/src/lima_common-build/limacommon-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limacommon-2.1.$(cat /src/lima/release)-runtime.deb
+RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_common/src/lima_common-build/limacommon-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limacommon-2.1.$(cat /src/lima/release)-devel.deb
+RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb
+RUN curl -ukleag:$BINTRAYKEY -T /src/lima/build/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb
+RUN curl  -ukleag:$BINTRAYKEY -T/src/lima/build/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb
+RUN curl  -ukleag:$BINTRAYKEY -T/src/lima/build/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb
+RUN curl  -ukleag:$BINTRAYKEY -T/src/lima/build/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb
+RUN curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER/publish
+RUN curl -XGET https://bintray.com/kleag/ubuntu-14.04/lima/$SEMAPHORE_BUILD_NUMBER
 
 
