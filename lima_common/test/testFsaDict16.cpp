@@ -79,7 +79,7 @@ int logFileSize( const std::string& filename ) {
 int logMemsize() {  
   int vmSize = 0;
 #ifdef WIN32
-  LIMA_UNUSED(legend);
+  return vmSize;
 #else
   pid_t pid = getpid();
   ostringstream ostr;
