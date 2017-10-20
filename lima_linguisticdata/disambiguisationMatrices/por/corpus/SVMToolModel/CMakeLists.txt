@@ -40,7 +40,7 @@ else ()
   if (SHORTEN_POR_CORPUS_FOR_SVMLEARN)
     add_custom_command(
         OUTPUT lima.A0.UNK
-        COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt | head -n 200000 > corpus_por.txt
+        COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt | head -n 100000 > corpus_por.txt
         COMMAND ${SVMT_LEARN} config-minimale.SVMT
         DEPENDS 
           config-minimale.SVMT
