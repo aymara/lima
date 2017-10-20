@@ -26,6 +26,8 @@
 #include "ConllParser.h"
 #include "LimaGuiCommon.h"
 
+#include <QProcess>
+
 #include "common/LimaCommon.h"
 
 #include <iostream>
@@ -141,27 +143,38 @@ std::string parse_conll(const std::string& file)
     std::array<char, 128> buffer;
     std::string result;
     
-    // open pipe to run another process
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe)
-    {
-      throw std::runtime_error("Couldn't open a pipe.");
-    }
+      QString program = "./path/to/Qt/examples/widgets/analogclock";
+    QStringList arguments;
+    arguments << "-style" << "fusion";
+
+    QProcess myProcess;
+    myProcess.start(program, arguments);
     
-    while (!feof(pipe)) 
+    if (myProcess.waitForFinished())
     {
-        if (fgets(buffer.data(), 128, pipe) != NULL) 
-        {
-            result += buffer.data();
-        }
+       result = myProcess.readAllStandardOutput().toStdString();
     }
-    
-    int return_value = pclose(pipe);
-    if (return_value) 
-    {
-      CONLLLOGINIT;
-      LINFO << "pipe returned " << return_value;
-    }
+//     // open pipe to run another process
+//     FILE* pipe = popen(cmd.c_str(), "r");
+//     if (!pipe)
+//     {
+//       throw std::runtime_error("Couldn't open a pipe.");
+//     }
+//     
+//     while (!feof(pipe)) 
+//     {
+//         if (fgets(buffer.data(), 128, pipe) != NULL) 
+//         {
+//             result += buffer.data();
+//         }
+//     }
+//     
+//     int return_value = pclose(pipe);
+//     if (return_value) 
+//     {
+//       CONLLLOGINIT;
+//       LINFO << "pipe returned " << return_value;
+//     }
     
     clean_up(result);
     return result;

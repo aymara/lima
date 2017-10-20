@@ -76,8 +76,6 @@ std::string typeName(CONFIGURATION_NODE_TYPE);
 class LIMA_GUI_EXPORT ConfigurationNode
 {
 public:
-  static int pid;
-  
   ConfigurationNode();
   ConfigurationNode(const Lima::Common::XMLConfigurationFiles::ConfigurationStructure&);
   ConfigurationNode(const Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure&);

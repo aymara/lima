@@ -41,7 +41,7 @@ namespace Gui
 namespace Config 
 {
 
-int ConfigurationNode::pid = 0;
+Q_GLOBAL_STATIC_WITH_ARGS(int, pid, (0));
 
 bool ConfigurationNode::toggleById(int tid) 
 {
@@ -151,8 +151,8 @@ bool ConfigurationNode::visible() {
 
 ConfigurationNode::ConfigurationNode() 
 {
-  m_id = pid;
-  pid = pid + 1;
+  m_id = *pid;
+  *pid = *pid + 1;
   m_type = CONFIGURATION_NODE_TYPE::NONE;
 }
 
@@ -161,8 +161,8 @@ ConfigurationNode::ConfigurationNode(const ConfigurationStructure& p_cstruct)
   ConfigurationStructure cstruct(p_cstruct);
   
   
-  m_id = pid;
-  pid = pid + 1;
+  m_id = *pid;
+  *pid = *pid + 1;
   m_type = CONFIGURATION_NODE_TYPE::FILE;
   
   for (auto& pair : cstruct) {
@@ -175,8 +175,8 @@ ConfigurationNode::ConfigurationNode(const ModuleConfigurationStructure& p_mstru
   
   ModuleConfigurationStructure mstruct(p_mstruct);
   
-  m_id = pid;
-  pid = pid + 1;
+  m_id = *pid;
+  *pid = *pid + 1;
   m_type = CONFIGURATION_NODE_TYPE::MODULE;
   
   addAttribute("name", mstruct.getName());
@@ -191,8 +191,8 @@ ConfigurationNode::ConfigurationNode(const GroupConfigurationStructure& p_gstruc
   GroupConfigurationStructure gstruct(p_gstruct);
   
   
-  m_id = pid;
-  pid = pid + 1;
+  m_id = *pid;
+  *pid = *pid + 1;
   m_type = CONFIGURATION_NODE_TYPE::GROUP;
   
   addAttribute("name", gstruct.getName());

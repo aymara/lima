@@ -602,7 +602,7 @@ void LimaGuiApplication::configure()
 
   std::string commonConfigFile = "lima-common.xml";
 
-  MediaticData::MediaticData::changeable().init(resources, configdir, commonConfigFile, languages);
+  Lima::Common::MediaticData::MediaticData::changeable().init(resources, configdir, commonConfigFile, languages);
 
   std::string client = "lima-coreclient";
   std::string lpConfigFile("lima-analysis.xml");
