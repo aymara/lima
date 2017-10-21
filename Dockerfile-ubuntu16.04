@@ -72,6 +72,7 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 # Build
 RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON ..
 RUN make -j2
+RUN install /src/lima/build/*/src/*-build/*.deb /usr/share/apps/lima/packages
 RUN rm -Rf /src/lima
 
 WORKDIR /usr/share/apps/lima/tests
@@ -85,6 +86,8 @@ RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticproc
 RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb
 RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb
 RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limagui-2.1.$(cat /src/lima/release)-runtime.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER/$SEMAPHORE_BUILD_NUMBER/limagui-2.1.$(cat /src/lima/release)-devel.deb
 RUN curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER/publish
 RUN curl -XGET https://bintray.com/kleag/ubuntu-16.04/lima/$SEMAPHORE_BUILD_NUMBER
 

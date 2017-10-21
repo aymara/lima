@@ -85,5 +85,4 @@ CompileLimaSubproject(lima_annoqt lima_common)
 
 CompileLimaSubproject(lima_gui lima_linguisticdata)
 
-install(FILES)
 
