@@ -7,7 +7,10 @@ include(ExternalProject)
 
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
 
-macro (CompileLimaSubproject _project _dependsOn )
+option(CLEAN_AFTER_BUILD "Clean build dir after installing" OFF)
+message("CLEAN_AFTER_BUILD=${CLEAN_AFTER_BUILD}")
+
+macro (CompileLimaSubproject _project _dependsOn _clean)
 
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -29,7 +32,7 @@ macro (CompileLimaSubproject _project _dependsOn )
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} 
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
         -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 
-        -DBoost_DEBUG=ON -DWITH_ASAN:BOOL=${WITH_ASAN} 
+        -DBoost_DEBUG=ON 
         -DWITH_ASAN:BOOL=${WITH_ASAN} 
         -DWITH_ARCH:BOOL=${WITH_ARCH} 
         -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}
@@ -61,6 +64,15 @@ macro (CompileLimaSubproject _project _dependsOn )
     )
   endif()
 
+  if (${_clean} STREQUAL "ON")
+    ExternalProject_Add_Step(${_project} clean
+    COMMAND rm -Rf <BINARY_DIR>
+    COMMENT "Removing build dir <BINARY_DIR>"
+    WORKING_DIRECTORY <BINARY_DIR>
+    DEPENDEES install
+    )
+  endif()
+
   ## Force rebuilding of the main subproject every time building from super structure
   ExternalProject_Add_Step(${_project} forcebuild
     COMMAND ${CMAKE_COMMAND} -E remove
@@ -72,17 +84,21 @@ macro (CompileLimaSubproject _project _dependsOn )
   
 endmacro ()
 
-CompileLimaSubproject(lima_common "")
-CompileLimaSubproject(lima_linguisticprocessing lima_common)
-
-if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
-  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
+set(CLEAN "OFF")
+if (CLEAN_AFTER_BUILD)
+  set(CLEAN "ON")
 endif()
 
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+CompileLimaSubproject(lima_common "" ${CLEAN})
+CompileLimaSubproject(lima_linguisticprocessing lima_common ${CLEAN})
 
-CompileLimaSubproject(lima_annoqt lima_common)
+if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
+  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing ${CLEAN})
+endif()
 
-CompileLimaSubproject(lima_gui lima_linguisticdata)
+CompileLimaSubproject(lima_pelf lima_linguisticprocessing ${CLEAN})
 
+CompileLimaSubproject(lima_annoqt lima_common ${CLEAN})
+
+CompileLimaSubproject(lima_gui lima_linguisticdata ${CLEAN})
 
