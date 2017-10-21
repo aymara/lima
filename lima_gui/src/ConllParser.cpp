@@ -151,7 +151,7 @@ std::string parse_conll(const std::string& file)
 
     if (myProcess.waitForFinished())
     {
-       result = myProcess.readAllStandardOutput().toStdString();
+       result = myProcess.readAllStandardOutput().data();
     }
 
     clean_up(result);
