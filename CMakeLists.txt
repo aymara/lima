@@ -10,7 +10,7 @@ include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
 option(CLEAN_AFTER_BUILD "Clean build dir after installing" OFF)
 message("CLEAN_AFTER_BUILD=${CLEAN_AFTER_BUILD}")
 
-macro (CompileLimaSubproject _project _dependsOn _clean)
+macro (CompileLimaSubproject _project _dependsOn)
 
   ## Define test command.
   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -64,14 +64,6 @@ macro (CompileLimaSubproject _project _dependsOn _clean)
     )
   endif()
 
-  if (${_clean} STREQUAL "ON")
-    ExternalProject_Add_Step(${_project} clean
-    COMMAND rm -Rf <BINARY_DIR>
-    COMMENT "Removing build dir <BINARY_DIR>"
-    WORKING_DIRECTORY <BINARY_DIR>
-    DEPENDEES install
-    )
-  endif()
 
   ## Force rebuilding of the main subproject every time building from super structure
   ExternalProject_Add_Step(${_project} forcebuild
@@ -84,21 +76,29 @@ macro (CompileLimaSubproject _project _dependsOn _clean)
   
 endmacro ()
 
-set(CLEAN "OFF")
-if (CLEAN_AFTER_BUILD)
-  set(CLEAN "ON")
-endif()
+macro (RemoveBuildDir _project)
+  if (CLEAN_AFTER_BUILD)
+    file(REMOVE_RECURSE ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build)
+  endif()
+endmacro()
 
-CompileLimaSubproject(lima_common "" ${CLEAN})
-CompileLimaSubproject(lima_linguisticprocessing lima_common ${CLEAN})
+CompileLimaSubproject(lima_common "")
+RemoveBuildDir(lima_common)
+
+CompileLimaSubproject(lima_linguisticprocessing lima_common)
+RemoveBuildDir(lima_linguisticprocessing)
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
-  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing ${CLEAN})
+  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
+  RemoveBuildDir(lima_linguisticdata)
 endif()
 
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing ${CLEAN})
+CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+RemoveBuildDir(lima_pelf)
 
-CompileLimaSubproject(lima_annoqt lima_common ${CLEAN})
+CompileLimaSubproject(lima_annoqt lima_common)
+RemoveBuildDir(lima_annoqt)
 
-CompileLimaSubproject(lima_gui lima_linguisticdata ${CLEAN})
+CompileLimaSubproject(lima_gui lima_linguisticdata)
+RemoveBuildDir(lima_gui)
 
