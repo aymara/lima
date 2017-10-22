@@ -74,13 +74,39 @@ macro (CompileLimaSubproject _project _dependsOn)
     ALWAYS 1
   )
   
+if (CLEAN_AFTER_BUILD)
+  ExternalProject_Add_Step(${_project} distclean
+    COMMAND ${CMAKE_COMMAND} -E remove
+    ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
+    DEPENDEES packaging
+    ALWAYS 1
+    LOG 1
+  )
+endif()
+
 endmacro ()
 
-macro (RemoveBuildDir _project)
-  if (CLEAN_AFTER_BUILD)
-    file(REMOVE_RECURSE ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build)
-  endif()
-endmacro()
+# macro (RemoveBuildDir _project)
+#   if (CLEAN_AFTER_BUILD)
+# 
+#   add_custom_target(
+#     distclean${_project}
+#     COMMAND rm -Rf ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
+#     DEPENDS 
+#                   [BYPRODUCTS [files...]]
+#                   [WORKING_DIRECTORY dir]
+#                   [COMMENT comment]
+#                   [VERBATIM] [USES_TERMINAL]
+#                   [COMMAND_EXPAND_LISTS]
+#                   [SOURCES src1 [src2...]])
+#     ALL
+#     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt code-${_lang}.xml ${ARGN}
+#   )
+# 
+# 
+#   file(REMOVE_RECURSE ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build)
+#   endif()
+# endmacro()
 
 CompileLimaSubproject(lima_common "")
 RemoveBuildDir(lima_common)
