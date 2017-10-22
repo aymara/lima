@@ -15,5 +15,5 @@ script:
 - docker build 
     --build-arg BINTRAYKEY=$BINTRAYKEY  
     --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER 
-    -f ./Dockerfile-ubuntu14.04 .
+    -f ./Dockerfile-travis-ubuntu16.04 .
 
