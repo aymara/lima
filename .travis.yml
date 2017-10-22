@@ -14,6 +14,6 @@ before_install:
 script:
 - docker build 
     --build-arg BINTRAYKEY=$BINTRAYKEY  
-    --build-arg TRAVIS_JOB_NUMBER=$TRAVIS_JOB_NUMBER 
+    --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER 
     -f ./Dockerfile-travis-ubuntu16.04 .
 
