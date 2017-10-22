@@ -57,7 +57,7 @@ macro (CompileLimaSubproject _project _dependsOn)
       )
 
     ExternalProject_Add_Step(${_project} packageinstall
-      COMMAND install -D  ${CMAKE_BINARY_DIR}/*.deb ${CMAKE_INSTALL_PREFIX}/share/apps/lima/packages
+      COMMAND install -D  ${CMAKE_BINARY_DIR}/*/src/*-build/*.deb ${CMAKE_INSTALL_PREFIX}/share/apps/lima/packages
       COMMENT "Installing package for ${_project}"
       WORKING_DIRECTORY <BINARY_DIR>
       DEPENDEES packaging
