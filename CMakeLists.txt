@@ -55,6 +55,13 @@ macro (CompileLimaSubproject _project _dependsOn)
       WORKING_DIRECTORY <BINARY_DIR>
       DEPENDEES install
       )
+
+    ExternalProject_Add_Step(${_project} packageinstall
+      COMMAND install -D  ${CMAKE_BINARY_DIR}/*.deb ${CMAKE_INSTALL_PREFIX}/share/apps/lima/packages
+      COMMENT "Installing package for ${_project}"
+      WORKING_DIRECTORY <BINARY_DIR>
+      DEPENDEES packaging
+    )
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ExternalProject_Add_Step(${_project} packaging
     COMMAND cmake --build . --target PACKAGE --config ${CMAKE_BUILD_TYPE}
@@ -78,7 +85,7 @@ if (CLEAN_AFTER_BUILD)
   ExternalProject_Add_Step(${_project} distclean
     COMMAND ${CMAKE_COMMAND} -E remove
     ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
-    DEPENDEES packaging
+    DEPENDEES packageinstall
     ALWAYS 1
     LOG 1
   )
