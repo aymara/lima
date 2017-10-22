@@ -71,10 +71,9 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
 # 
-RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCLEAN_AFTER_BUILD:BOOL=ON ..
+RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON  ..
 RUN make -j2
-#RUN install -D /src/lima/build/*/src/*-build/*.deb /usr/share/apps/lima/packages
-#RUN rm -Rf /src/lima
+RUN install -D /src/lima/build/*/src/*-build/*.deb /usr/share/apps/lima/packages
 
 WORKDIR /usr/share/apps/lima/tests
 RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log

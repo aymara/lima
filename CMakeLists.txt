@@ -7,9 +7,6 @@ include(ExternalProject)
 
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
 
-option(CLEAN_AFTER_BUILD "Clean build dir after installing" OFF)
-message("CLEAN_AFTER_BUILD=${CLEAN_AFTER_BUILD}")
-
 macro (CompileLimaSubproject _project _dependsOn)
 
   ## Define test command.
@@ -56,12 +53,6 @@ macro (CompileLimaSubproject _project _dependsOn)
       DEPENDEES install
       )
 
-#     ExternalProject_Add_Step(${_project} packageinstall
-#       COMMAND install -D  ${CMAKE_BINARY_DIR}/${_project}/src/${_project}-build/*.deb ${CMAKE_INSTALL_PREFIX}/share/apps/lima/packages
-#       COMMENT "Installing package for ${_project}"
-#       WORKING_DIRECTORY <BINARY_DIR>
-#       DEPENDEES packaging
-#     )
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ExternalProject_Add_Step(${_project} packaging
     COMMAND cmake --build . --target PACKAGE --config ${CMAKE_BUILD_TYPE}
@@ -81,57 +72,19 @@ macro (CompileLimaSubproject _project _dependsOn)
     ALWAYS 1
   )
   
-if (CLEAN_AFTER_BUILD)
-  ExternalProject_Add_Step(${_project} distclean
-    COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
-    DEPENDEES packaging
-    ALWAYS 1
-    LOG 1
-  )
-endif()
-
 endmacro ()
 
-# macro (RemoveBuildDir _project)
-#   if (CLEAN_AFTER_BUILD)
-# 
-#   add_custom_target(
-#     distclean${_project}
-#     COMMAND rm -Rf ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
-#     DEPENDS 
-#                   [BYPRODUCTS [files...]]
-#                   [WORKING_DIRECTORY dir]
-#                   [COMMENT comment]
-#                   [VERBATIM] [USES_TERMINAL]
-#                   [COMMAND_EXPAND_LISTS]
-#                   [SOURCES src1 [src2...]])
-#     ALL
-#     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt code-${_lang}.xml ${ARGN}
-#   )
-# 
-# 
-#   file(REMOVE_RECURSE ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build)
-#   endif()
-# endmacro()
-
 CompileLimaSubproject(lima_common "")
-# RemoveBuildDir(lima_common)
 
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
-# RemoveBuildDir(lima_linguisticprocessing)
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
-#   RemoveBuildDir(lima_linguisticdata)
 endif()
 
 CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
-# RemoveBuildDir(lima_pelf)
 
 CompileLimaSubproject(lima_annoqt lima_common)
-# RemoveBuildDir(lima_annoqt)
 
 CompileLimaSubproject(lima_gui lima_linguisticdata)
-# RemoveBuildDir(lima_gui)
 
