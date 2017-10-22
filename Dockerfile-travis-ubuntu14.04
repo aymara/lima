@@ -8,7 +8,7 @@ ENV LC_ALL en_US.UTF-8
 RUN locale
 
 ARG BINTRAYKEY
-ARG TRAVIS_JOB_NUMBER 
+ARG JOB_NUMBER 
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
@@ -73,16 +73,16 @@ WORKDIR /usr/share/apps/lima/tests
 RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
 RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
 
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb
-RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb
-RUN curl  -ukleag:$BINTRAYKEY -T/usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limagui-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/$TRAVIS_JOB_NUMBER/limagui-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER/publish
-RUN curl -XGET https://bintray.com/kleag/ubuntu-14.04/lima/$TRAVIS_JOB_NUMBER
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-runtime.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-devel.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb
+RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb
+RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb
+RUN curl  -ukleag:$BINTRAYKEY -T/usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limagui-2.1.$(cat /src/lima/release)-runtime.deb
+RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limagui-2.1.$(cat /src/lima/release)-devel.deb
+RUN curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/publish
+RUN curl -XGET https://bintray.com/kleag/ubuntu-14.04/lima/$JOB_NUMBER
 
 
