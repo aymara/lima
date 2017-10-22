@@ -109,22 +109,22 @@ endmacro ()
 # endmacro()
 
 CompileLimaSubproject(lima_common "")
-RemoveBuildDir(lima_common)
+# RemoveBuildDir(lima_common)
 
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
-RemoveBuildDir(lima_linguisticprocessing)
+# RemoveBuildDir(lima_linguisticprocessing)
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
-  RemoveBuildDir(lima_linguisticdata)
+#   RemoveBuildDir(lima_linguisticdata)
 endif()
 
 CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
-RemoveBuildDir(lima_pelf)
+# RemoveBuildDir(lima_pelf)
 
 CompileLimaSubproject(lima_annoqt lima_common)
-RemoveBuildDir(lima_annoqt)
+# RemoveBuildDir(lima_annoqt)
 
 CompileLimaSubproject(lima_gui lima_linguisticdata)
-RemoveBuildDir(lima_gui)
+# RemoveBuildDir(lima_gui)
 
