@@ -189,8 +189,12 @@ int main(int argc, char *argv[])
     /// without instantiating in QML
     engine.rootContext()->setContextProperty("textAnalyzer", &lga);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-
+#else
+    engine.load(QUrl(QStringLiteral("qrc:/qml-old/main.qml")));
+#endif
+    
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
     app.setWindowIcon(QIcon(":qml/resources/lima.png"));
 #endif

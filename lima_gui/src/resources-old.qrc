@@ -1,0 +1,68 @@
+<!--
+    Copyright 2017 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+-->
+<!DOCTYPE RCC>
+<RCC version="1.0">
+ <qresource>
+   <!-- Main files -->
+   <file>qml-old/main.qml</file>
+   <file>qml-old/LimaGuiMenuBar.qml</file>
+   <file>qml-old/LimaGuiToolBar.qml</file>
+   <file>qml-old/WorkView.qml</file>
+   <file>qml-old/TabbedWorkspace.qml</file>
+   
+   <!-- Widgets -->
+   <file>qml-old/AnalyzeFileWidget.qml</file>
+   <file>qml-old/AnalyzeTextWidget.qml</file>
+   <file>qml-old/ConllTableView.qml</file>
+   <file>qml-old/LimaConfigurationView.qml</file>
+   <file>qml-old/NamedEntitiesView.qml</file>
+   <file>qml-old/ResultView.qml</file>
+   <file>qml-old/TabbedView.qml</file>
+   
+   <!-- Dialogs -->
+   <file>qml-old/AboutDialog.qml</file>
+   <file>qml-old/ErrorDialog.qml</file>
+   <file>qml-old/SettingsDialog.qml</file>
+   
+   <!-- Models -->
+    
+    <!-- Samples -->
+    <file>qml-old/basics/Tab.qml</file>
+    <file>qml-old/basics/BasicRectangle.qml</file>
+    <file>qml-old/basics/TextView.qml</file>
+    <file>qml-old/basics/PdfView.qml</file>
+    <file>qml-old/basics/TextEditor.qml</file>
+    <file>qml-old/basics/LoadingView.qml</file>
+    <file>qml-old/basics/SwitchPanel.qml</file>
+    <file>qml-old/basics/SelectOptionComboBox.qml</file>
+    
+    <!-- Scripts -->
+    <file>qml-old/scripts/DynamicObjectManager.js</file>
+    <file>qml-old/scripts/colors.js</file>
+    
+    <!-- Styles -->
+    <file>qml-old/styles/TabbedViewStyle.qml</file>
+    
+    <!-- Resources -->
+    <file>qml-old/resources/lima.png</file>
+    <file>qml-old/resources/Spinner.gif</file>
+    <file>qml-old/resources/cross-symbol-n.png</file>
+    <file>qml-old/resources/cross-symbol-h.png</file>
+ </qresource>
+</RCC>

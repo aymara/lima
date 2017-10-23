@@ -48,7 +48,13 @@ SET (lima_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
-qt5_add_resources(lima_SRCS resources.qrc)
+if (Qt5Core_FOUND)
+  if (Qt5Core_VERSION VERSION_GREATER 5.7.0)
+    qt5_add_resources(lima_SRCS resources.qrc)
+  else()
+    qt5_add_resources(lima_SRCS resources-old.qrc)
+  endif()
+endif()
 
 
 add_executable(lima 
