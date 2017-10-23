@@ -42,14 +42,17 @@ namespace Tools
 
 std::string extractTextFromFile(const std::string &path, const std::string &extension) 
 {
-  std::vector<std::string> handledTypes = {"txt"};
+  std::vector<std::string> textHandledTypes = {"txt", "md"};
+  std::vector<std::string> handledTypes = {"pdf", "docx"};
 
+  bool textHandled = (extension.size()==0 || (std::find(textHandledTypes.begin(), textHandledTypes.end(), extension) != textHandledTypes.end()));
   bool handled = (std::find(handledTypes.begin(), handledTypes.end(), extension) != handledTypes.end());
-  if (!extension.size() || extension == "txt" || handled) 
+  if (textHandled) 
   {
     QString tump;
     QFile file(QString(path.c_str()));
-    if (file.open(QFile::ReadOnly)) {
+    if (file.open(QFile::ReadOnly)) 
+    {
       QTextStream qts(&file);
       tump = qts.readAll();
       file.close();
@@ -64,12 +67,21 @@ std::string extractTextFromFile(const std::string &path, const std::string &exte
   else if(handled) 
   {
     // put your formats here
-    if (extension == "pdf") {
-      std::cout << extension << ": can't handle this file extension" << std::endl;
+    if (extension == "pdf") 
+    {
+      std::cout << extension << ": can't handle this file extension" 
+                << std::endl;
     }
-    else if (extension == "docx") {
-      std::cout << extension << ": can't handle this file extension" << std::endl;
+    else if (extension == "docx") 
+    {
+      std::cout << extension << ": can't handle this file extension" 
+                << std::endl;
     }
+  }
+  else
+  {
+    std::cout << extension << ": can't handle this file extension" 
+              << std::endl;
   }
   return "";
 }
