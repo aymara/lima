@@ -86,5 +86,11 @@ CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
 CompileLimaSubproject(lima_annoqt lima_common)
 
-CompileLimaSubproject(lima_gui lima_linguisticdata)
+if (Qt5Core_FOUND)
+  if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
+    CompileLimaSubproject(lima_gui lima_linguisticdata)
+  else()
+    message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
+  endif()
+endif()
 

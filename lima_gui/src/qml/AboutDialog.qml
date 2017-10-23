@@ -21,7 +21,7 @@
   @date     Fri, September 08 2017
   */
 
-import QtQuick 2.2
+import QtQuick 2.5
 import QtQuick.Dialogs 1.1
 
 MessageDialog {

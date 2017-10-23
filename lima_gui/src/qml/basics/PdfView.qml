@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 
 //! A widget meant to display PDFs
 
@@ -31,7 +31,7 @@ import QtQuick 2.7
 // http://www.glyphandcog.com/
 // https://www.codeproject.com/Articles/7056/Code-to-extract-plain-text-from-a-PDF-file
 
-import QtQuick 2.7
+import QtQuick 2.5
 import QtWebEngine 1.0 
 
 WebEngineView { 

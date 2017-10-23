@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 import QtQuick.Window 2.0
 
 // Some widgets and functionnalities are not available from one package to the other

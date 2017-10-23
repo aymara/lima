@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQml.Models 2.2
 import QtQuick.Controls.Styles 1.4
