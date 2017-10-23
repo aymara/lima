@@ -86,6 +86,9 @@ CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
 CompileLimaSubproject(lima_annoqt lima_common)
 
+add_definitions(-D QT_NO_KEYWORDS)
+include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
+addQt5Modules(Core)
 if (Qt5Core_FOUND)
   if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
     CompileLimaSubproject(lima_gui lima_linguisticdata)
