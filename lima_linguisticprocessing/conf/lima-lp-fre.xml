@@ -33,8 +33,8 @@
         <!--item value="dotGraphWriter-beforepos"/-->
         <item value="SpecificEntitiesModex"/>
         <!--item value="specificEntitiesXmlLogger"/-->
-        <item value="viterbiPostagger-freq"/>
-        <!--item value="SvmToolPosTagger"/-->
+<!--         <item value="viterbiPostagger-freq"/> -->
+        <item value="SvmToolPosTagger"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
         <!--item value="geoEntities"/-->
