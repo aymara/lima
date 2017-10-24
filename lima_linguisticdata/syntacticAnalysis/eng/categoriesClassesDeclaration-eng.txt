@@ -9,15 +9,15 @@ set entityTypes=SyntacticRelations
 
 @NotNoun=($V,$PRON,$DET,$ADJ,$ADV,$PREP,$PONCTU,$INTERJ,$CONJ,$DIVERS)
 
-@NomPropre=($NP-NNP,$NP-NNPS)
+@NomPropre=($NP-PROPN)
 
 @Adj=($ADJ)
 
 @Pron=($PRON)
 
 @Adverb=($ADV)
-@AdvTempComp=($ADV-RB)
-@Neg=($ADV-NOT)
+@AdvTempComp=($ADV-ADV)
+@Neg=(not)
 
 @Substantif=($NC,$NP)
 
@@ -25,10 +25,10 @@ set entityTypes=SyntacticRelations
 @DetDef=(the)
 @DetIndef=(a,an)
 @DetInt=($DET)
-@DetNum=($NOMBRE-CD)
+@DetNum=($NOMBRE)
 
 @Prep=($PREP)
-@PrepComp=($PREP-IN)
+@PrepComp=($PREP)
 
 @PronPers=($PRON)
 
@@ -36,24 +36,24 @@ set entityTypes=SyntacticRelations
 
 @Aux=(am,is,are,was,were,have,has,had,will,have_been,has_been)
 
-@AuxModal=($V-MD)
+@AuxModal=(can,could,may,might,shall,should,will,would,must)
 
 @Is=(is)
 
 @Was=(was)
 
-@Ing=($V-VBG)
+@Ing=($V)
 
 
-@BaseFormVerb=($V-VB)
-@PastTense=($V-VBD)
-@PastParticiple=($V-VBN)
+@BaseFormVerb=($V-VERB)
+@PastTense=($V)
+@PastParticiple=($V)
 @Copule=(am,is,are,was,were,become,get,feel,seem)
 # liste des verbes copule pouvant être suivi d'un infinitif
 # (sous-liste des verbes copule du dictionnaire)
 @CopulePlusInfinitif=(seem$V,appear$V,become$V)
-@Participe=($V-VBN,$V-VBG)
-@TensedVerb=($V-VB,$V-VBD,$V-VBP,$V-VBZ)
+@Participe=($V)
+@TensedVerb=($V)
 
 
 # A verifier (copie du francais)
@@ -61,20 +61,20 @@ set entityTypes=SyntacticRelations
 $ADJ,$ADV,
 $PREP,$PONCTU,
 $INTERJ,
-$CONJ-CC)
+$CONJ-CONJ)
 
 # A verifier (copie du francais)
 @NotVerbPrincipal=($NC,$NP,$PRON,$DET,
 $ADJ,$ADV,$PREP,$PONCTU,
-$INTERJ,$CONJ,$V-MD)
+$INTERJ,$CONJ)
 
 
 # Possessive pronoun
 @PronPoss=($PRON)
 
-@Neg=($ADV-NOT)
+@Neg=($ADV-PART)
 
-@ConjCoord=($CONJ-CC)
+@ConjCoord=($CONJ-CONJ)
 @SubordConj=($CONJ-SCONJ)
 
 @Sent=($PONCTU-SENT)

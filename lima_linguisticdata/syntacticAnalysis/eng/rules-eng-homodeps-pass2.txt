@@ -433,14 +433,14 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Conditional  at the beginning of a sentence
 #----------------------------------------------------------------------
 
-if$PREP-IN::%NounGroup @Aux @Pron? (@AdvTempComp){0-2} been? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
+if$PREP::%NounGroup @Aux @Pron? (@AdvTempComp){0-2} been? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +!GovernedBy(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,right.7,"mark")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
+if$PREP::%NounGroup @Verbe:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +!GovernedBy(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"mark")

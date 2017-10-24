@@ -135,7 +135,7 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,left.1,"ANY")
 #-+CreateRelationBetween(trigger.1,left.1)
 
-@Prep:@Sent:@Substantif $V-VBD @Comma:SYNTACTIC_RELATION:
+@Prep:@Sent:@Substantif $V-VERB @Comma:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.2,right.1,"ANY")
 +CreateRelationBetween(right.2,right.1,"SUBADJPOST")
 =>AddRelationInGraph()
