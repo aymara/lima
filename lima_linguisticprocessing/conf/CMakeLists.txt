@@ -17,13 +17,23 @@
 
 ########### install files ###############
 
+set (PosTagger "viterbiPostagger-freq")
+if (SVMTOOL++_FOUND)
+  set (PosTagger "SvmToolPosTagger")
+endif ()
+
+configure_file(lima-lp-eng.xml lima-lp-eng.xml @ONLY)
+configure_file(lima-lp-fre.xml lima-lp-fre.xml @ONLY)
+configure_file(lima-lp-por.xml lima-lp-por.xml @ONLY)
+
+
 install(FILES
-  lima-lp-fre.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.xml 
   lima-lp-tva-fre.xml 
-  lima-lp-eng.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.xml 
   lima-lp-tva.xml 
   lima-lp-tva-eng.xml
-  lima-lp-por.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml 
   lima-lp-tva-por.xml
   lima-server.xml
   lima-dbusserver.xml 

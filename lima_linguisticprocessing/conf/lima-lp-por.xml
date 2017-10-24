@@ -25,7 +25,8 @@
         <!--item value="SpecificEntitiesModex"/-->
         <!--item value="specificEntitiesXmlLogger"/-->
 <!--         <item value="viterbiPostagger-freq"/> -->
-        <item value="SvmToolPosTagger"/>
+<!--         <item value="SvmToolPosTagger"/> -->
+        <item value="@PosTagger@"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
         <!--item value="geoEntities"/-->

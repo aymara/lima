@@ -38,7 +38,8 @@
         <!--item value="specificEntitiesXmlLogger"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
 <!--         <item value="viterbiPostagger-freq"/> -->
-        <item value="SvmToolPosTagger"/>
+<!--         <item value="SvmToolPosTagger"/> -->
+        <item value="@PosTagger@"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
