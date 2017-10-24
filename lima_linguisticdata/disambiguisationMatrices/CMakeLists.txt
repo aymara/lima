@@ -14,14 +14,9 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-if (CMAKE_BUILD_TYPE MATCHES Debug)
 option(BUILD_SVMTOOL_MODELS "Set to true to build and install the SVMTool PoS \
-                             tagging models. Default is FALSE to avoid \
-                             training times."
-                             OFF)
-else()
-option(BUILD_SVMTOOL_MODELS "Set to true to build and install the SVMTool PoS tagging models. Default is FALSE to avoid  training times." ON)
-endif()
+                             tagging models."
+                             ON)
 
 foreach(LANG ${LIMA_LANGUAGES})
   if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${LANG})
