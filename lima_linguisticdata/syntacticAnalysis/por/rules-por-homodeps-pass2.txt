@@ -593,9 +593,9 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.1,"AdvSub")
 
 
-$PONCTU-QUOT:@Substantif $PONCTU-QUOT (^$PONCTU-QUOT){0-n} @Substantif::SYNTACTIC_RELATION:
-+!GovernorOf(left.4,"ANY")
-+SecondUngovernedBy(left.4,left.1,"ANY")
-+CreateRelationBetween(left.4,left.1,"COMPDUNOM")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#$PONCTU-QUOT:@Substantif $PONCTU-QUOT (^$PONCTU-QUOT){0-n} @Substantif::SYNTACTIC_RELATION:
+#+!GovernorOf(left.4,"ANY")
+#+SecondUngovernedBy(left.4,left.1,"ANY")
+#+CreateRelationBetween(left.4,left.1,"COMPDUNOM")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()

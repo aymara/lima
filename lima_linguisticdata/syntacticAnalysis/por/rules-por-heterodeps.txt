@@ -263,17 +263,17 @@ $ADJ:The (@Adverb){0-2}:of @Determinant? ($ADV{0-2} (@Adjectif|@Substantif)){0-n
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Copule:@OpenQuot (^$PONCTU-QUOT){0-n} ^$PONCTU-QUOT (^$PONCTU-QUOT){0-n} @ClosQuot:(@Adverb){0-n} @PastParticiple:SYNTACTIC_RELATION:
-+!GovernorOf(left.3,"ANY")
-+CreateRelationBetween(left.3,right.2,"SUJ_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@Copule:@OpenQuot (^$PONCTU-QUOT){0-n} ^$PONCTU-QUOT (^$PONCTU-QUOT){0-n} @ClosQuot:(@Adverb){0-n} #@PastParticiple:SYNTACTIC_RELATION:
+#+!GovernorOf(left.3,"ANY")
+#+CreateRelationBetween(left.3,right.2,"SUJ_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
 
-@TensedVerb:@OpenQuot (^$PONCTU-QUOT){0-n} ^$PONCTU-QUOT (^$PONCTU-QUOT){0-n} @ClosQuot::SYNTACTIC_RELATION:
-+!GovernorOf(left.3,"ANY")
-+CreateRelationBetween(left.3,trigger.1,"SUJ_V")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
+#@TensedVerb:@OpenQuot (^$PONCTU-QUOT){0-n} ^$PONCTU-QUOT (^$PONCTU-QUOT){0-n} @ClosQuot::SYNTACTIC_RELATION:
+#+!GovernorOf(left.3,"ANY")
+#+CreateRelationBetween(left.3,trigger.1,"SUJ_V")
+  =>AddRelationInGraph()
+=#<ClearStoredRelations()
 
 
 ######################################################
