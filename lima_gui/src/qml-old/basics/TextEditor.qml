@@ -42,7 +42,7 @@ Rectangle {
   Column {
 
     anchors.topMargin: 10
-    anchors.fill: parent
+//     anchors.fill: parent
 
     Rectangle {
       id: menu

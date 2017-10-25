@@ -29,9 +29,6 @@ import QtQuick.Controls 1.4
 
 Dialog {
         id: settingsDialog
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round(parent.height / 6)
-        width: Math.round(Math.min(parent.width, parent.height) / 3 * 2)
 //         modal: true
 //         focus: true
         title: qsTr("Settings")
