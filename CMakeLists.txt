@@ -46,7 +46,7 @@ macro (CompileLimaSubproject _project _dependsOn)
 
     ## Add packaging command
 #   if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  if (NOT "x${CMAKE_BUILD_TYPE}" STREQUAL "xDebug" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ExternalProject_Add_Step(${_project} packaging
       COMMAND make package
       COMMENT "Packaging ${_project}"
