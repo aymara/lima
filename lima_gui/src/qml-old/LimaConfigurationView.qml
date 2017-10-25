@@ -26,7 +26,7 @@ import QtQuick.Window 2.0
 import QtQuick.Controls 1.4
 // import QtQuick.Controls 2.2
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.2
 import "basics"
 
 import integ_cpp 1.0
