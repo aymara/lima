@@ -44,7 +44,7 @@ import "scripts/DynamicObjectManager.js" as Dom
 Controls1.ApplicationWindow {
   id:app_window
 
-  property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qml")
+  property var settingsDialogComponent: Qt.createComponent("qrc:///qml-old/SettingsDialog.qml")
 
   property int pile: 0
   

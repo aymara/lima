@@ -190,9 +190,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("textAnalyzer", &lga);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:///qml/main.qml")));
 #else
-    engine.load(QUrl(QStringLiteral("qrc:/qml-old/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:///qml-old/main.qml")));
 #endif
     
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
