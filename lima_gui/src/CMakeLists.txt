@@ -62,6 +62,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   if(Qt5Core_VERSION VERSION_LESS 5.3)
     message(WARNING "Cannot use windeployqt in Qt 5.2 and earlier")
   else()
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
     include(WinDeployQt)
     WinDeployQt(
       TARGET lima 
