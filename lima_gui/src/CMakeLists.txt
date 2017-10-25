@@ -56,6 +56,24 @@ if (Qt5Core_FOUND)
   endif()
 endif()
 
+set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::QuickTest Qt5::Gui)
+
+if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+  if(Qt5Core_VERSION VERSION_LESS 5.3)
+    message(WARNING "Cannot use windeployqt in Qt 5.2 and earlier")
+  else()
+    include(WinDeployQt)
+    WinDeployQt(
+      TARGET lima 
+      COMPILER_RUNTIME 
+      QMLDIR qml-old
+      INCLUDE_MODULES ${QTLIBS} 
+    )
+    install(
+      DIRECTORY ${PROJECT_BINARY_DIR}/windeployqt/
+      DESTINATION ${CMAKE_INSTALL_BINDIR})
+  endif()
+endif()
 
 add_executable(lima 
   ${lima_SRCS} 
