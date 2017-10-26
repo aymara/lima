@@ -96,8 +96,13 @@ LimaStatusCode ApproxStringMatcher::process(
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
   LinguisticGraph* g=tokenList->getGraph();
-  matchExactTokenAndFollowers(*g, result);
-
+  LinguisticGraphVertexIt it,itEnd;
+  boost::tie(it,itEnd)=vertices(*g);
+  for (;it!=itEnd;it++)
+  {
+    matchExactTokenAndFollowers(*g, it, itEnd, result);
+  }
+  
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
@@ -113,36 +118,76 @@ LimaStatusCode ApproxStringMatcher::process(
   return SUCCESS_ID;
 }
 
-LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(LinguisticGraph& g, std::multimap<int,Suggestion>& result) const
+LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
+    LinguisticGraph& g, 
+    LinguisticGraphVertexIt vStartIt,
+    LinguisticGraphVertexIt vEndIt,
+    std::multimap<int,Suggestion>& result) const
 {
   MORPHOLOGINIT;
+  typedef Lima::Common::AccessSuperWordIterator WIt;
   VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   // VertexDataPropertyMap dataMap=get(vertex_data,g);
-  LinguisticGraphVertexIt it,itEnd;
-  boost::tie(it,itEnd)=vertices(g);
-  for (;it!=itEnd;it++)
-  {
-    Token* currentToken=tokenMap[*it];
+    Token* currentToken=tokenMap[*vStartIt];
+    LimaString form;
     if (currentToken!=0)
     {
-      Lima:LimaString form = currentToken->stringForm();
-#ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() for token" << Lima::Common::Misc::limastring2utf8stdstring(form);
-#endif
       int position = currentToken->position();
       // currentToken->status()?
-      typedef Lima::Common::AccessSuperWordIterator WIt;
-      std::pair<WIt,WIt>  wordsIt = m_lexicon->getSuperWords(form);
-      for( ; wordsIt.first != wordsIt.second ; wordsIt.first++ )
-      {
 #ifdef DEBUG_LP
-      Lima::LimaString word = *(wordsIt.first);
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() from lexicon:" <<
-      Lima::Common::Misc::limastring2utf8stdstring(word);
+      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() from token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
 #endif
+      // get words in Lexicon with form as prefix
+      for( ; ; ) {
+        form.append(currentToken->stringForm());
+#ifdef DEBUG_LP
+        LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() form= "
+               << Lima::Common::Misc::limastring2utf8stdstring(form);
+#endif
+        std::pair<WIt,WIt>  wordsIt = m_lexicon->getSuperWords(form);
+        //if( (wordsIt.first == wordsIt.second )
+        //  &&((*(wordsIt.first)).length() == 0 ) )
+        if( wordsIt.first == wordsIt.second )
+        {
+#ifdef DEBUG_LP
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() empty list of superWords: break ";
+#endif
+          // No word in lexion with form as prefix
+            break;
+        }
+        Lima::LimaString word = *(wordsIt.first);
+#ifdef DEBUG_LP
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() first superWords = "
+                 << Lima::Common::Misc::limastring2utf8stdstring(word);
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers(): compare to "
+                 << Lima::Common::Misc::limastring2utf8stdstring(form) << "=" << word.compare(form);
+#endif
+        if( word.compare(form) == 0 ) {
+          Suggestion suggestion={
+            position,                     // position
+            form.length(),                // length
+            0,                            // nb_error
+            m_lexicon->getIndex(form)};   // id of term in Lexicon
+#ifdef DEBUG_LP
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() success: suggestion= \n"
+                 << "{ position=" << suggestion.position
+                 << ", length=" << suggestion.length
+                 << ", nb_error=" << suggestion.nb_error
+                 << ", match_id=" << suggestion.match_id;
+#endif
+          result.insert(std::pair<int,Suggestion>(suggestion.nb_error,suggestion));
+          break;
+        }
+        if( word.length() > form.length() ) {
+        // get next token
+          vStartIt++;
+          if( vStartIt == vEndIt )
+            break;
+          currentToken=tokenMap[*vStartIt];
+        }
       }
     }
-  }
+  return SUCCESS_ID;
 }
 
 

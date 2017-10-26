@@ -54,7 +54,7 @@ typedef struct _Suggestion {
   // number of errors (delete/add) to match
   int nb_error;
   // id of target in lexicon
-  int match_id;
+  long unsigned int match_id;
 } Suggestion;
 
 
@@ -74,7 +74,13 @@ public:
 
 
 private:
-  LimaStatusCode matchExactTokenAndFollowers(LinguisticGraph& g, std::multimap<int,Suggestion>& result) const;
+  LimaStatusCode matchExactTokenAndFollowers(
+    LinguisticGraph& g, 
+    LinguisticGraphVertexIt vStartIt,
+    LinguisticGraphVertexIt vEndIt,
+    std::multimap<int,Suggestion>& result) const;
+
+  //LimaStatusCode matchExactTokenAndFollowers(LinguisticGraph& g, std::multimap<int,Suggestion>& result) const;
   int m_nbMaxError;
   // FsaStringsPool* m_sp;namespace LinguisticProcessing
   Common::AbstractAccessByString *m_lexicon;
