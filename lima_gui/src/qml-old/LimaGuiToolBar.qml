@@ -78,7 +78,8 @@ ToolBar {
       text: qsTr("Configuration")
 
       onClicked: {
-        configurationView.open()
+        configurationView.state = "visible"
+//         configurationView.open()
       }
     }
 
@@ -89,7 +90,7 @@ ToolBar {
 
       onClicked: {
 //         additionalMenu.x = x
-        additionalMenu.open()
+        additionalMenu.popup()
       }
 
     }

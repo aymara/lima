@@ -223,9 +223,9 @@ Controls1.ApplicationWindow {
   toolBar: LimaGuiToolBar {}//{ leftPadding: 15}
 
   //! The configuration view popup is declared directly here. It is invisible by default.
-//   LimaConfigurationView  {
-//     id: configurationView
-//   }
+  LimaConfigurationView  {
+    id: configurationView
+  }
 
   //! A Controls2.Menu is a Popup. Menu containing additional features like 'Configure Lima Gui ... ', etc.
   Controls1.Menu {

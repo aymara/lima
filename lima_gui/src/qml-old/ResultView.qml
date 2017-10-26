@@ -223,7 +223,7 @@ Rectangle {
       id:mytextview
 
       property bool loaded: false
-      showMenu: false
+//       showMenu: false
       wrapMode: TextEdit.NoWrap
       visible: false
 

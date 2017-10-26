@@ -85,7 +85,7 @@ id: popup
                 TreeView {
                   id: lview
                   anchors.fill: parent
-//                   model: configurationModel
+                  model: configurationModel
                   anchors.margins: 2
 //                   snapMode: ListView.SnapToItem
 
@@ -94,21 +94,21 @@ id: popup
                     width: parent.width
 
 
-                    background : Rectangle {
-                      id: bgrec
-
-                      color:"transparent"
-                    }
+//                     background : Rectangle {
+//                       id: bgrec
+// 
+//                       color:"transparent"
+//                     }
 
                     MouseArea {
                       anchors.fill: parent
 
                       onEntered: {
-                        bgrec.color = "#EEEEEEAA"
+//                         bgrec.color = "#EEEEEEAA"
                       }
 
                       onExited: {
-                        bgrec.color = "transparent"
+//                         bgrec.color = "transparent"
                       }
 
                       onDoubleClicked: {
@@ -146,9 +146,9 @@ id: popup
 
                     text: qsTr("OK")
                     onClicked: {
-                      console.log(lview.currentItem.text)
-                      lmodel.handle(lview.currentIndex)
-                      close()
+//                       console.log(lview.currentItem.text)
+//                       lmodel.handle(lview.currentIndex)
+                      popup.state = "invisible"
                     }
                   }
 
@@ -157,7 +157,7 @@ id: popup
 
                     text: qsTr("Cancel")
                     onClicked: {
-                      close()
+                      popup.state = "invisible"
                     }
                   }
 

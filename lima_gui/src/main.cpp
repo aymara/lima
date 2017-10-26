@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
 
     LOGINIT("Lima::Gui");
     LINFO << "Config path is " << configPath;
-    LERROR << "Options set are" << parser.optionNames();
+    LDEBUG << "Options set are" << parser.optionNames();
     
     QML_REGISTER(LimaConfiguration);
     QML_REGISTER(ConfigurationTreeModel);
@@ -178,12 +178,12 @@ int main(int argc, char *argv[])
 
 
     LimaGuiApplication lga(parser);
-//     lga.selectLimaConfiguration("lima-lp-eng.xml");
-//     LimaConfigurationSharedPtr configuration = lga.configuration();
-//     ConfigurationNode* root = new ConfigurationNode(configuration->configuration());
-//     ConfigurationTree* tree = new ConfigurationTree(root);
-//     ConfigurationTreeModel* treeModel = new ConfigurationTreeModel(*tree);
-//     engine.rootContext()->setContextProperty("configurationModel", treeModel);
+    lga.selectLimaConfiguration("lima-lp-eng.xml");
+    LimaConfigurationSharedPtr configuration = lga.configuration();
+    ConfigurationNode* root = new ConfigurationNode(configuration->configuration());
+    ConfigurationTree* tree = new ConfigurationTree(root);
+    ConfigurationTreeModel* treeModel = new ConfigurationTreeModel(*tree);
+    engine.rootContext()->setContextProperty("configurationModel", treeModel);
 
     /// we add the app as a context property so that it can be accessed from anywhere,
     /// without instantiating in QML

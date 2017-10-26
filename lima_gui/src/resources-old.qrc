@@ -27,6 +27,7 @@
    <file>qml-old/TabbedWorkspace.qml</file>
    
    <!-- Widgets -->
+   <file>qml-old/Popup.qml</file>
    <file>qml-old/AnalyzeFileWidget.qml</file>
    <file>qml-old/AnalyzeTextWidget.qml</file>
    <file>qml-old/ConllTableView.qml</file>
