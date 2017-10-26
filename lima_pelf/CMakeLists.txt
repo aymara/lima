@@ -146,7 +146,7 @@ add_subdirectory(commands)
 
 
 ########### install files ###############
-# install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
+# install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
 ########### documentation ###############
 

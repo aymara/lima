@@ -188,8 +188,8 @@ add_subdirectory(cmake)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
-install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
+install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins COMPONENT runtime)
 
 ########### documentation ###############
 
