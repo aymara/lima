@@ -48,11 +48,11 @@ MenuBar {
   
   Menu {
 
-    title: qsTr("Fichier")
+    title: qsTr("File")
     
     MenuItem {
 
-      text: qsTr("Nouveau ")
+      text: qsTr("New")
       shortcut: "Ctrl+N"
 
       onTriggered: {
@@ -63,7 +63,7 @@ MenuBar {
     
     MenuItem { 
 
-      text: qsTr("Ouvrir un fichier");
+      text: qsTr("Open a file...");
       shortcut: "Ctrl+O"
 
       onTriggered: {
@@ -73,48 +73,48 @@ MenuBar {
     }
 
     MenuItem {
-      text: qsTr("Sauvegarder");
+      text: qsTr("Save");
     }
 
     MenuItem {
-      text: qsTr("Sauvegarder en tant que ...");
+      text: qsTr("Save as...");
     }
     
     MenuItem {
-      text: qsTr("Exporter ...")
+      text: qsTr("Export...")
       onTriggered: confirmCloseFile()
     }
     
     MenuItem {
-      text: qsTr("Quitter")
+      text: qsTr("Quit")
       onTriggered:  Qt.quit()
     }
   }
   
   Menu {
 
-    title: qsTr("Edition")
+    title: qsTr("Edit")
     
     MenuItem {
-      text:qsTr("Couper")
+      text:qsTr("Cut")
     }
 
     MenuItem {
-      text:qsTr("Copier")
+      text:qsTr("Copy")
     }
 
     MenuItem {
-      text:qsTr("Coller")
+      text:qsTr("Paste")
     }
   }
   
   Menu {
 
-    title: qsTr("Analyse")
+    title: qsTr("Analyze")
 
     MenuItem {
 
-      text:qsTr("Analyser")
+      text:qsTr("Analyze")
       shortcut:"Ctrl+Shift+A"
       enabled: textAnalyzer.ready ? true : false
 
@@ -126,7 +126,7 @@ MenuBar {
 
     MenuItem {
 
-      text: qsTr("Analyser fichier courant")
+      text: qsTr("Analyze current file")
 
       enabled: textAnalyzer.ready ? true : false
       onTriggered: {
@@ -140,17 +140,17 @@ MenuBar {
     }
     
     MenuItem {
-      text: qsTr("Analyser du texte")
+      text: qsTr("Analyze some text")
       onTriggered: openAnalyzeTextTab();
     }
     
     MenuItem {
-      text: qsTr("Analyser des fichiers")
+      text: qsTr("Analyze files")
       onTriggered: openAnalyzeFileTab();
     }
 
     MenuItem {
-      text: qsTr("Analyse CONLL")
+      text: qsTr("Analyze CONLL")
 
       onTriggered: {
 
@@ -158,11 +158,11 @@ MenuBar {
     }
 
     MenuItem {
-      text: qsTr("Graphe")
+      text: qsTr("Graph")
     }
 
     MenuItem {
-      text: qsTr("Entités nommées")
+      text: qsTr("Named entities")
     }
 
     MenuItem {
