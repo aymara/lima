@@ -76,7 +76,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   endif()
 endif()
 
-add_executable(lima 
+add_executable(lima WIN32
   ${lima_SRCS} 
   ${lima_MOC_OUTFILES}
 )
