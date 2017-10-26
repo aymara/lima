@@ -56,7 +56,7 @@ if (Qt5Core_FOUND)
   endif()
 endif()
 
-set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::QuickTest Qt5::Gui)
+set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::Gui)
 
 if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   if(Qt5Core_VERSION VERSION_LESS 5.3)
@@ -65,8 +65,8 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
     include(WinDeployQt)
     WinDeployQt(
-      TARGET lima 
       COMPILER_RUNTIME 
+      TARGET lima 
       QMLDIR qml-old
       INCLUDE_MODULES ${QTLIBS} 
     )

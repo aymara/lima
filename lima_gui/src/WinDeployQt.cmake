@@ -49,7 +49,7 @@ function(WinDeployQt)
 	endif()
 
 	if(_deploy_QMLDIR)
-		list(APPEND _ARGS "--qmldir ${_deploy_QMLDIR}")
+		list(APPEND _ARGS --qmldir ${_deploy_QMLDIR})
 	endif()
 
 	if(COMPILER_RUNTIME AND NOT $ENV{VVVV})
