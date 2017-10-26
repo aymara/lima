@@ -37,7 +37,7 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/tools/FileUtils.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 #ifndef DEBUG_LIMA_GUI
   qputenv("QT_LOGGING_RULES", "*=false");
 #endif
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
   QCoreApplication::setOrganizationName("LIMA");
   QCoreApplication::setOrganizationDomain("lima.org");
   QCoreApplication::setApplicationName("LIMA GUI");
