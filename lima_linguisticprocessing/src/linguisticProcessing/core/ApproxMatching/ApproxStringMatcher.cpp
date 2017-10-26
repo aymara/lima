@@ -101,6 +101,7 @@ LimaStatusCode ApproxStringMatcher::process(
   for (;it!=itEnd;it++)
   {
     matchExactTokenAndFollowers(*g, it, itEnd, result);
+    // matchApproxTokenAndFollowers(*g, it, itEnd, result);
   }
   
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -130,32 +131,105 @@ LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
   // VertexDataPropertyMap dataMap=get(vertex_data,g);
     Token* currentToken=tokenMap[*vStartIt];
     LimaString form;
-    if (currentToken!=0)
-    {
-      int position = currentToken->position();
-      // currentToken->status()?
+    int nb_max_error=1;
+    int max_length_element_in_lexicon = 49;
+    // TODO: check if it is the case of start or end node in graph...
+    if (currentToken==0)
+      return SUCCESS_ID;
+    int position = currentToken->position();
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() from token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
+    LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() from token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
 #endif
-      // get words in Lexicon with form as prefix
-      for( ; ; ) {
+    // TODO: vérifier que vEndIt est le noeud 1 (sans token)
+    for( ; vStartIt != vEndIt ; vStartIt++ ) {
+      currentToken=tokenMap[*vStartIt];
+      if (currentToken!=0)
+      {
+        // currentToken->status()?
+#ifdef DEBUG_LP
+        LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() append token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
+#endif
         form.append(currentToken->stringForm());
 #ifdef DEBUG_LP
         LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() form= "
                << Lima::Common::Misc::limastring2utf8stdstring(form);
 #endif
+      // get words in Lexicon with form as prefix
         std::pair<WIt,WIt>  wordsIt = m_lexicon->getSuperWords(form);
-        //if( (wordsIt.first == wordsIt.second )
-        //  &&((*(wordsIt.first)).length() == 0 ) )
+        for( ; wordsIt.first != wordsIt.second ; (wordsIt.first)++ ) 
+        {
+          Lima::LimaString word = *(wordsIt.first);
+#ifdef DEBUG_LP
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() first superWords = "
+                 << Lima::Common::Misc::limastring2utf8stdstring(word);
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers(): compare to "
+                 << Lima::Common::Misc::limastring2utf8stdstring(form) << "=" << word.compare(form);
+#endif
+          if( word.compare(form) == 0 ) {
+            Suggestion suggestion={
+              position,                     // position
+              form.length(),                // length
+              0,                            // nb_error
+              m_lexicon->getIndex(form)};   // id of term in Lexicon
+#ifdef DEBUG_LP
+            LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() success: suggestion= \n"
+                  << "{ position=" << suggestion.position
+                  << ", length=" << suggestion.length
+                  << ", nb_error=" << suggestion.nb_error
+                  << ", match_id=" << suggestion.match_id << "}";
+#endif
+            result.insert(std::pair<int,Suggestion>(suggestion.nb_error,suggestion));
+            break;
+          }
+        }
+        if( form.length() > max_length_element_in_lexicon + nb_max_error ) {
+          break;
+        }
+      }
+    }
+  return SUCCESS_ID;
+}
+
+/*
+LimaStatusCode ApproxStringMatcher::matchApproxTokenAndFollowers(
+    LinguisticGraph& g, 
+    LinguisticGraphVertexIt vStartIt,
+    LinguisticGraphVertexIt vEndIt,
+    std::multimap<int,Suggestion>& result) const
+{
+  MORPHOLOGINIT;
+  typedef Lima::Common::AccessApproxWordIterator WIt;
+  VertexTokenPropertyMap tokenMap=get(vertex_token,g);
+  // VertexDataPropertyMap dataMap=get(vertex_data,g);
+    LimaString form;
+    int nb_max_error=1;
+    in max_length_element_in_lexicon = 49;
+#ifdef DEBUG_LP
+      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() from token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
+#endif
+    Token* currentToken=tokenMap[*vStartIt];
+    int position = currentToken->position();
+    // TODO: vérifier que vEndIt est le noeud 1 (sans token)
+    for( ; vStartIt != vEndIt ; vStartIt++ ) {
+      currentToken=tokenMap[*vStartIt];
+      if (currentToken!=0)
+      {
+        form.append(currentToken->stringForm());
+#ifdef DEBUG_LP
+        LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() form= "
+               << Lima::Common::Misc::limastring2utf8stdstring(form);
+#endif
+      // get words in Lexicon with form as prefix
+        std::pair<WIt,WIt>  wordsIt = m_lexicon->getAproxSuperWords(form, nb_max_error);
         if( wordsIt.first == wordsIt.second )
         {
 #ifdef DEBUG_LP
-          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() empty list of superWords: break ";
+          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() empty list of approxSuperWords: break ";
 #endif
           // No word in lexion with form as prefix
             break;
         }
-        Lima::LimaString word = *(wordsIt.first);
+        Lima::LimaString word = (*(wordsIt.first)).word;
 #ifdef DEBUG_LP
           LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() first superWords = "
                  << Lima::Common::Misc::limastring2utf8stdstring(word);
@@ -166,8 +240,8 @@ LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
           Suggestion suggestion={
             position,                     // position
             form.length(),                // length
-            0,                            // nb_error
-            m_lexicon->getIndex(form)};   // id of term in Lexicon
+            (*(wordsIt.first)).nbError,   // nb_error
+            m_lexicon->getIndex(word)};   // form or id of term in Lexicon ??
 #ifdef DEBUG_LP
           LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() success: suggestion= \n"
                  << "{ position=" << suggestion.position
@@ -178,17 +252,14 @@ LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
           result.insert(std::pair<int,Suggestion>(suggestion.nb_error,suggestion));
           break;
         }
-        if( word.length() > form.length() ) {
-        // get next token
-          vStartIt++;
-          if( vStartIt == vEndIt )
-            break;
-          currentToken=tokenMap[*vStartIt];
+        if( form.length() > max_length_element_in_lexicon + nb_max_error ) {
+          break;
         }
       }
     }
   return SUCCESS_ID;
 }
+*/
 
 
 } // MorphologicAnalysis

@@ -65,6 +65,25 @@ public:
   virtual ~AbstractSuperWordIterator() {};
 };
 
+
+typedef struct _approxSuggestion {
+  LimaString word;
+  int nbError;
+} ApproxSuggestion;
+
+/**
+* @brief defines abstract interface for iterators on superwords
+*/
+class AbstractApproxWordIterator
+{
+public:
+  virtual const Lima::Common::ApproxSuggestion operator*() const = 0;
+  virtual AbstractApproxWordIterator &operator++(int) = 0;
+  virtual bool operator==(const AbstractApproxWordIterator& it) const = 0;
+  virtual bool operator!=(const AbstractApproxWordIterator& it) const = 0;
+  virtual ~AbstractApproxWordIterator() {};
+};
+
 /**
 * @brief clonable subworditerator
 * specific subworditerator for a specific access method should inherits from this class
@@ -80,6 +99,16 @@ public:
 * specific superworditerator for a specific access method should inherits from this class
 */
 class ClonableSuperWordIterator : public AbstractSuperWordIterator 
+{
+public:
+  virtual ClonableSuperWordIterator* clone() const = 0;
+};
+
+/**
+* @brief clonable approxworditerator
+* specificapproxworditerator for a specific access method should inherits from this class
+*/
+class ClonableApproxWordIterator : public AbstractApproxWordIterator 
 {
 public:
   virtual ClonableSuperWordIterator* clone() const = 0;
@@ -162,6 +191,46 @@ inline bool AccessSuperWordIterator::operator!=(const AbstractSuperWordIterator&
   const AccessSuperWordIterator& asi=static_cast<const AccessSuperWordIterator&>(it);
   return m_delegate->operator!=(*(asi.m_delegate));
 }
+
+class LIMA_COMMONMISC_EXPORT AccessApproxWordIterator : public AbstractApproxWordIterator
+{
+public:
+  AccessApproxWordIterator(ClonableApproxWordIterator* delegate);
+  AccessApproxWordIterator(const AccessApproxWordIterator& original);
+  AccessApproxWordIterator& operator=(const AccessApproxWordIterator& original);
+  virtual ~AccessApproxWordIterator();
+
+  virtual const Lima::Common::ApproxSuggestion operator*() const override;
+  virtual AbstractApproxWordIterator &operator++(int) override;
+  virtual bool operator==(const AbstractApproxWordIterator& it) const override;
+  virtual bool operator!=(const AbstractApproxWordIterator& it) const override;
+    
+private:
+  ClonableApproxWordIterator* m_delegate;
+};
+
+inline const Lima::Common::ApproxSuggestion AccessApproxWordIterator::operator*() const
+{
+  return m_delegate->operator*();
+}
+
+inline AbstractApproxWordIterator& AccessApproxWordIterator::operator++(int i)
+{
+  return m_delegate->operator++(i);
+}
+
+inline bool AccessApproxWordIterator::operator==(const AbstractApproxWordIterator& it) const
+{
+  const AccessApproxWordIterator& asi=static_cast<const AccessApproxWordIterator&>(it);
+  return m_delegate->operator==(*(asi.m_delegate));
+}
+
+inline bool AccessApproxWordIterator::operator!=(const AbstractApproxWordIterator& it) const
+{
+  const AccessApproxWordIterator& asi=static_cast<const AccessApproxWordIterator&>(it);
+  return m_delegate->operator!=(*(asi.m_delegate));
+}
+
 
 } // Common
 } // Lima

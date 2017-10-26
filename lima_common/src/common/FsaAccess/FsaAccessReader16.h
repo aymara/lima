@@ -77,6 +77,22 @@ public:
   int32_t wordOffset;
 };
 
+template <typename graphType>
+class approx_iterator_context {
+//  friend std::ostream& operator<<(std::ostream& os, const iterator_context<graphType>& t);
+public:  
+  void print(std::ostream& os) const;
+  typename boost::graph_traits<graphType>::out_edge_iterator out_edge;
+  typename boost::graph_traits<graphType>::out_edge_iterator out_edge_end;
+  const LimaChar* word_content;
+  int32_t wordPos;
+  int32_t word_length;
+  int32_t wordOffset;
+  unsigned int nbError;
+  unsigned int nbSuccess;
+  Lima::LimaChar* cinputPos;
+};
+
 // class iterator for FsaAccessReader::superWords() output
 template <typename graphType>
 class fsaReader_superword_iterator16 : public ClonableSuperWordIterator {
@@ -128,6 +144,32 @@ class fsaReader_subword_iterator16 : public ClonableSubWordIterator {
     PrefixIterator* m_prefixIt;
     typename boost::graph_traits<graphType>::vertex_descriptor m_curr;
     uint64_t m_index;
+};
+
+// class iterator for FsaAccessReader::superWords() output
+template <typename graphType>
+class fsaReader_approx_iterator16 : public ClonableApproxWordIterator { 
+//  typedef selected_graph_types16::spareGraphType graphType;
+  public:
+   fsaReader_approx_iterator16(const FsaAccessReader16<graphType> & dico,
+      typename boost::graph_traits<graphType>::vertex_descriptor nbMaxError,
+      const LimaString &word );
+   fsaReader_approx_iterator16(const FsaAccessReader16<graphType> & dico);
+   const ApproxSuggestion operator*() const override;
+   fsaReader_approx_iterator16 &operator++(int) override;
+   bool operator==(const AbstractApproxWordIterator& it) const override;
+   bool operator!=(const AbstractApproxWordIterator& it) const override;
+   virtual ClonableApproxWordIterator* clone() const override;
+  private:
+  fsaReader_approx_iterator16<graphType>& operator=(const fsaReader_approx_iterator16<graphType>&) {return *this;}
+    typename boost::graph_traits<graphType>::vertex_descriptor m_curr;
+    std::deque<iterator_context<graphType> > m_context_stack;
+    const FsaAccessReader16<graphType> & m_dico;
+    const graphType & m_graph;
+    const LimaString m_prefix;
+    LimaString m_suffix;
+    std::multimap<unsigned int,ApproxSuggestion> suggestions;
+    std::multimap<std::pair<unsigned int,unsigned int>,approx_iterator_context<graphType> > contextes;
 };
 
 
