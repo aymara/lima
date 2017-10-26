@@ -30,8 +30,8 @@ install:
 build_script:
   - mkdir c:\b
   - cd c:\b
-  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Debug" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
-  - cmake --build . --config Debug
+  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
+  - cmake --build . --config RelWithDebInfo
 
 on_success:
   - ps: ls c:/d/share/apps/lima/tests
