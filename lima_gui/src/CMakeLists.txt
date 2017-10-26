@@ -76,7 +76,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   endif()
 endif()
 
-if (WIN32)
+if (WIN32 and CMAKE_BUILD_TYPE MATCHES Release)
   add_executable(lima WIN32
     ${lima_SRCS} 
     ${lima_MOC_OUTFILES}
