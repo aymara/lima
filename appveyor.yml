@@ -12,6 +12,7 @@ environment:
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
+  VCINSTALLDIR: 'c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\'
   BINTRAYKEY:
     secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
 
@@ -29,7 +30,7 @@ install:
 build_script:
   - mkdir c:\b
   - cd c:\b
-  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
+  - cmake -G "Visual Studio 12 2013 Win64" "-DVCINSTALLDIR=%VCINSTALLDIR%" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
   - cmake --build . --config Release
 
 on_success:
