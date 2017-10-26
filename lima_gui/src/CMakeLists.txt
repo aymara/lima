@@ -76,10 +76,59 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   endif()
 endif()
 
-add_executable(lima WIN32
-  ${lima_SRCS} 
-  ${lima_MOC_OUTFILES}
+if (WIN32)
+  add_executable(lima WIN32
+    ${lima_SRCS} 
+    ${lima_MOC_OUTFILES}
+  )
+  
+target_link_libraries(lima 
+  lima-common-mediaticdata
+  lima-common-xmlconfigurationfiles
+  lima-common-tools
+  lima-common-data 
+  lima-common-factory
+  lima-common-misc
+  lima-common
+  lima-lp-annotationgraph
+  lima-lp-lineartextrepresentation
+  lima-lp-misc
+  lima-lp-tgv
+  lima-lp-linguisticdata
+  lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-regexmatcher
+  lima-lp-wordsensetagger
+  lima-lp-linguisticprocessing-core
+  lima-lp-analysisdict
+  lima-lp-eventanalyzer
+  lima-lp-corefsolver
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-morphologicanalysis
+  lima-lp-dictionary
+  lima-lp-easyxmldumper
+  lima-lp-analysisdumpers
+  lima-lp-textsegmentation
+  lima-lp-linguisticanalysisstructure
+  lima-lp-semanticanalysis
+  lima-lp-linguisticresources
+  lima-lp-entitytracker
+  lima-lp-flattokenizer
+  lima-lp-applyrecognizer
+  lima-lp-linguisticprocessors
+  lima-lp-postagger
+  lima-lp-automaton
+  lima-lp-analysishandlers
+  lima-lp-client
+  ${Qt5_LIBRARIES}
+  Qt5::WinMain
 )
+else()
+  add_executable(lima
+    ${lima_SRCS} 
+    ${lima_MOC_OUTFILES}
+  )
 target_link_libraries(lima 
   lima-common-mediaticdata
   lima-common-xmlconfigurationfiles
@@ -121,6 +170,8 @@ target_link_libraries(lima
   lima-lp-client
   ${Qt5_LIBRARIES}
 )
+endif()
+
 #   lima-common
 #   lima-linguisticprocessing
 
