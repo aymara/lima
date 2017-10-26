@@ -302,6 +302,7 @@ Controls1.ApplicationWindow {
     
     //! Open a file from url
     function openFile(url) {
+      console.log("openFile: ", url)
       if (textAnalyzer.openFile(url)) {
         var l = url.split(':')
         if (l.length > 1) {

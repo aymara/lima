@@ -37,6 +37,8 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/tools/FileUtils.h"
 
+#define QT_QML_DEBUG
+#include <QtQuick>
 #include <QApplication>
 #include <QIcon>
 #include <QQmlApplicationEngine>
