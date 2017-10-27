@@ -8,8 +8,8 @@ environment:
   LIMA_CONF: 'c:\d\share\config\lima'
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
   QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
-  BOOST_ROOT: 'C:\Libraries\boost_1_58_0'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_58_0\lib64-msvc-12.0'
+  BOOST_ROOT: 'C:\Libraries\boost_1_59_0'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_59_0\lib64-msvc-14.0'
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
