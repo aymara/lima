@@ -18,19 +18,6 @@ project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 2.8.3)
 
 #cmake_policy
-if(POLICY CMP0017)
-cmake_policy(SET CMP0017 NEW)
-
-endif()
-
-if(POLICY CMP0020)
-cmake_policy(SET CMP0020 OLD)
-endif()
-
-if(POLICY CMP0038)
-cmake_policy(SET CMP0038 NEW)
-endif()
-
 
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
@@ -121,7 +108,7 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
+FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
