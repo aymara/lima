@@ -1,15 +1,17 @@
 init:
  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
-  #QTDIR: 'C:\Qt\5.5\msvc2013_64'
+#  QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
+#  BOOST_ROOT: 'C:\Libraries\boost_1_59_0'
+#  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_59_0\lib64-msvc-14.0'
   #VCINSTALLDIR: 'c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\'
 environment:
   LIMA_DIST: c:\d
   LIMA_CONF: 'c:\d\share\config\lima'
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
-  QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
-  BOOST_ROOT: 'C:\Libraries\boost_1_59_0'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_59_0\lib64-msvc-14.0'
+  QTDIR: 'C:\Qt\5.5\msvc2013_64'
+  BOOST_ROOT: 'C:\Libraries\boost_1_58_0'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_58_0\lib64-msvc-12.0'
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
@@ -17,9 +19,10 @@ environment:
   BINTRAYKEY:
     secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
 
-configuration: Debug
+configuration: Release
 
-os: Visual Studio 2015
+#os: Visual Studio 2015
+os: Visual Studio 2013
 
 install:
   - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
@@ -33,8 +36,8 @@ build_script:
   - cd c:\b
   - echo %BOOST_ROOT%
   - echo %BOOST_LIBRARYDIR%
-  - cmake -G "Visual Studio 14 2015 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Debug" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
-  - cmake --build . --config Debug
+  - cmake -G "Visual Studio 14 2015 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
+  - cmake --build . --config Release
 
 on_success:
   - ps: ls c:/d/share/apps/lima/tests
