@@ -1,11 +1,12 @@
 #init:
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
+  #QTDIR: 'C:\Qt\5.5\msvc2013_64'
 environment:
   LIMA_DIST: c:\d
   LIMA_CONF: 'c:\d\share\config\lima'
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
-  QTDIR: 'C:\Qt\5.5\msvc2013_64'
+  QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
   BOOST_ROOT: 'C:\Libraries\boost'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
