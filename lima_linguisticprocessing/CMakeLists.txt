@@ -18,6 +18,9 @@ project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 2.8.3)
 
 #cmake_policy
+if(POLICY CMP0020)
+cmake_policy(SET CMP0020 OLD)
+endif()
 
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output

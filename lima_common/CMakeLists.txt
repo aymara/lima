@@ -17,6 +17,11 @@
 project(limacommon)
 cmake_minimum_required(VERSION 2.8.3)
 
+#cmake_policy
+if(POLICY CMP0020)
+cmake_policy(SET CMP0020 OLD)
+endif()
+
 # Use these cmake parameters (adapt to your setup) to compile under Windows
 # -DCMAKE_INSTALL_PREFIX="c:/amose" -DCMAKE_BUILD_TYPE=Release
 # -DCMAKE_INSTALL_PREFIX="c:/amose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
