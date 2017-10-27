@@ -31,7 +31,7 @@ install:
 build_script:
   - mkdir c:\b
   - cd c:\b
-  - cmake -G "Visual Studio 14 2015 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
+  - cmake -G "Visual Studio 14 2015 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
   - cmake --build . --config RelWithDebInfo
 
 on_success:
