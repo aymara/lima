@@ -1,5 +1,5 @@
-#init:
-#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+init:
+ - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   #QTDIR: 'C:\Qt\5.5\msvc2013_64'
   #VCINSTALLDIR: 'c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\'
@@ -9,7 +9,7 @@ environment:
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
   QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
   BOOST_ROOT: 'C:\Libraries\boost_1_58_0'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_58_0\lib64-msvc-15.0'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_58_0\lib64-msvc-14.0'
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
