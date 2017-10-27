@@ -92,7 +92,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     set(LIB_INSTALL_DIR "lib")
 else ()
   message("Windows flags")
-  add_definitions(-D WIN32)
+  add_definitions(-D WIN32 -D QT_DEBUG)
   
   # By default, do not warn when built on machines using only VS Express:
   if(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
