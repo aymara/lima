@@ -36,7 +36,7 @@ build_script:
   - cd c:\b
   - echo %BOOST_ROOT%
   - echo %BOOST_LIBRARYDIR%
-  - cmake -G "Visual Studio 14 2015 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
+  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
   - cmake --build . --config Release
 
 on_success:
