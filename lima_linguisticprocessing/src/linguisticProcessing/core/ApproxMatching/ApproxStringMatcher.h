@@ -53,9 +53,18 @@ typedef struct _Suggestion {
   int endPosition;
   // number of errors (delete/add) to match
   int nb_error;
-  // id of target in lexicon
-  long unsigned int match_id;
+  // id of target in lexicon ??
+  // long unsigned int match_id;
 } Suggestion;
+
+// TODO  : à mettre dans le .cpp avec une implémentation private
+typedef struct _Solution {
+  Suggestion suggestion;
+  // list of vertex in graph
+  std::deque<LinguisticGraphVertex> vertices;
+  // id of target in lexicon ??
+  // long unsigned int match_id;
+} Solution;
 
 
 class LIMA_MORPHOLOGICANALYSIS_EXPORT ApproxStringMatcher : public MediaProcessUnit
@@ -76,15 +85,15 @@ public:
 private:
   LimaStatusCode matchExactTokenAndFollowers(
     LinguisticGraph& g, 
-    LinguisticGraphVertexIt vStartIt,
-    LinguisticGraphVertexIt vEndIt,
+    LinguisticGraphVertex vStart,
+    LinguisticGraphVertex vEnd,
     std::multimap<int,Suggestion>& result) const;
 
-  LimaStatusCode matchApproxTokenAndFollowers(
+  void matchApproxTokenAndFollowers(
     LinguisticGraph& g, 
-    LinguisticGraphVertexIt vStartIt,
-    LinguisticGraphVertexIt vEndIt,
-    Suggestion& result) const;
+    LinguisticGraphVertex vStart,
+    LinguisticGraphVertex vEnd,
+    Solution& result) const;
 
   int findApproxPattern(
     LimaString pattern, LimaString text,
