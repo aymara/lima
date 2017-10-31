@@ -39,6 +39,7 @@ target_link_libraries(lima-lp-approxstringmatching
     lima-lp-linguisticresources
     lima-lp-annotationgraph
     lima-lp-linguisticanalysisstructure
+    tre
     ${optionalLibs}
     ${Boost_LIBRARIES}
     ${QT_LIBRARIES}

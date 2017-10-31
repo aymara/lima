@@ -48,9 +48,9 @@ namespace MorphologicAnalysis
 // TODO  : à mettre dans le .cpp avec une implémentation private
 typedef struct _Suggestion {
   // Position of candidate (number of unicode character)
-  int position;
+  int startPosition;
   // length of candidate (number of unicode character)
-  int length;
+  int endPosition;
   // number of errors (delete/add) to match
   int nb_error;
   // id of target in lexicon
@@ -80,7 +80,16 @@ private:
     LinguisticGraphVertexIt vEndIt,
     std::multimap<int,Suggestion>& result) const;
 
-  //LimaStatusCode matchExactTokenAndFollowers(LinguisticGraph& g, std::multimap<int,Suggestion>& result) const;
+  LimaStatusCode matchApproxTokenAndFollowers(
+    LinguisticGraph& g, 
+    LinguisticGraphVertexIt vStartIt,
+    LinguisticGraphVertexIt vEndIt,
+    Suggestion& result) const;
+
+  int findApproxPattern(
+    LimaString pattern, LimaString text,
+    Suggestion& suggestion) const;
+
   int m_nbMaxError;
   // FsaStringsPool* m_sp;namespace LinguisticProcessing
   Common::AbstractAccessByString *m_lexicon;
