@@ -50,6 +50,13 @@ public:
 
   SpecificEntityAnnotation(const Automaton::RecognizerMatch& entity,
                            FsaStringsPool& sp);
+  SpecificEntityAnnotation( const std::deque<LinguisticGraphVertex>& vertices,
+                            Common::MediaticData::EntityType entityType,
+                            const LimaString& form,
+                            const LimaString& normalizedForm,
+                            uint64_t startPos,
+                            uint64_t length,
+                            FsaStringsPool& sp);
   virtual ~SpecificEntityAnnotation();
 
   inline LinguisticGraphVertex getHead() const;

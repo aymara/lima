@@ -35,6 +35,28 @@ namespace LinguisticProcessing
 namespace SpecificEntities
 {
 
+SpecificEntityAnnotation::SpecificEntityAnnotation(
+  const std::deque<LinguisticGraphVertex>& vertices,
+  Common::MediaticData::EntityType entityType,
+  const LimaString& form,
+  const LimaString& normalizedForm,
+  uint64_t startPos,
+  uint64_t length,
+  FsaStringsPool& sp) :
+// front, head or any hint for another vertex?
+m_head(vertices.front()),
+m_type(entityType),
+// no features!
+m_features(),
+m_string(sp[form]),
+m_normalizedString(sp[normalizedForm]),
+m_normalizedForm(0),
+m_position(startPos),
+m_length(length),
+m_vertices(vertices.begin(),vertices.end())
+{
+}
+
 SpecificEntityAnnotation::
 SpecificEntityAnnotation(const RecognizerMatch& entity,
                          FsaStringsPool& sp) :

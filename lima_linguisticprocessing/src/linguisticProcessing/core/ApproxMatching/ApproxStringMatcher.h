@@ -34,6 +34,8 @@
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
+#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
+//#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 
 
 namespace Lima
@@ -47,7 +49,7 @@ namespace MorphologicAnalysis
 
 // TODO  : à mettre dans le .cpp avec une implémentation private
 typedef struct _Suggestion {
-  // Position of candidate (number of unicode character)
+  // Position of candidate (number of unicode character) in search string
   int startPosition;
   // length of candidate (number of unicode character)
   int endPosition;
@@ -64,6 +66,13 @@ typedef struct _Solution {
   std::deque<LinguisticGraphVertex> vertices;
   // id of target in lexicon ??
   // long unsigned int match_id;
+  // matched string
+  LimaString form;
+  // normalized string = matched element in lexicon
+  LimaString normalizedForm;
+  // position of matched string in text
+  uint64_t startPos;
+  uint64_t length;
 } Solution;
 
 
@@ -99,11 +108,19 @@ private:
     LimaString pattern, LimaString text,
     Suggestion& suggestion) const;
 
-  int m_nbMaxError;
-  // FsaStringsPool* m_sp;namespace LinguisticProcessing
-  Common::AbstractAccessByString *m_lexicon;
-};
+  void createVertex(
+    LinguisticGraph& g, 
+    LinguisticGraphVertex vStart,
+    LinguisticGraphVertex vEnd,
+    Solution& solution,
+    Lima::Common::AnnotationGraphs::AnnotationData* annotationData ) const;
 
+  Common::AbstractAccessByString *m_lexicon;
+  FsaStringsPool* m_sp;
+  int m_nbMaxError;
+  Common::MediaticData::EntityType m_entityType;
+  Common::MediaticData::EntityGroupId m_entityGroupId;
+};
 } // MorphologicAnalysis
 } // LinguisticProcessing
 } // Lima
