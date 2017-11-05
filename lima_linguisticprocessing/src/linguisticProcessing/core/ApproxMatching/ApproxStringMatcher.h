@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2017 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,13 +17,6 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-// NAUTITIA
-//
-// jys 8-OCT-2002
-//
-// SimpleWord is the implementation of the 1st module of
-// Morphological Analysis. Each token from the main tokens
-// path is searched into the specified dictionary.
 
 #ifndef LIMA_MORPHOLOGICANALYSIS_APPROXSTRINGMATCHER_H
 #define LIMA_MORPHOLOGICANALYSIS_APPROXSTRINGMATCHER_H
@@ -59,6 +52,9 @@ typedef struct _Suggestion {
   // long unsigned int match_id;
 } Suggestion;
 
+LIMA_DATA_EXPORT  std::ostream& operator<<(std::ostream &os, const Suggestion& node);
+LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Suggestion& node);
+
 // TODO  : à mettre dans le .cpp avec une implémentation private
 typedef struct _Solution {
   Suggestion suggestion;
@@ -75,6 +71,8 @@ typedef struct _Solution {
   uint64_t length;
 } Solution;
 
+LIMA_DATA_EXPORT  std::ostream& operator<<(std::ostream &os, const Solution& solution);
+LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Solution& solution);
 
 class LIMA_MORPHOLOGICANALYSIS_EXPORT ApproxStringMatcher : public MediaProcessUnit
 {

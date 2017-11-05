@@ -25,6 +25,7 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
+#include "linguisticProcessing/core/LinguisticAnalysisStructure/TStatus.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/AnalysisDict/AbstractDictionaryEntry.h"
@@ -52,6 +53,57 @@ namespace MorphologicAnalysis
 {
 
 SimpleFactory<MediaProcessUnit,ApproxStringMatcher> ApproxStringMatcherFactory(APPROX_STRING_MATCHER_CLASSID);
+
+
+std::ostream& operator<<(ostream& os, const Suggestion& suggestion)
+{
+  os << "Suggestion pos=(" << suggestion.startPosition << ","<< suggestion.endPosition<< ")"
+     << " nbErr=" << suggestion.nb_error << std::endl;
+  return os;
+}
+
+QDebug& operator<<(QDebug& os, const Suggestion& suggestion)
+{
+  os << "Suggestion pos=(" << suggestion.startPosition << ","<< suggestion.endPosition<< ")"
+     << " nbErr=" << suggestion.nb_error;
+  return os;
+}
+
+std::ostream& operator<<(ostream& os, const Solution& solution)
+{
+  os << "Solution: " << solution.suggestion
+     << " vertices=";
+  std::deque<LinguisticGraphVertex>::const_iterator it = solution.vertices.begin();
+  if( it != solution.vertices.end() ) {
+       os << *(it++);
+  }
+  for( ; it != solution.vertices.end() ; it++ ) {
+       os << "," << *it;
+  }
+  os << Lima::Common::Misc::limastring2utf8stdstring(solution.form)
+     << "(" << Lima::Common::Misc::limastring2utf8stdstring(solution.normalizedForm) << ")"
+     << "start=" << solution.startPos << "length=" << solution.length
+     << std::endl;
+  return os;
+}
+
+QDebug& operator<<(QDebug& os, const Solution& solution)
+{
+  os << "Solution: " << solution.suggestion
+     << " vertices=";
+  std::deque<LinguisticGraphVertex>::const_iterator it = solution.vertices.begin();
+  if( it != solution.vertices.end() ) {
+       os << *it;
+  }
+  for( ; it != solution.vertices.end() ; it++ ) {
+       os << "," << *it;
+  }
+  os << Lima::Common::Misc::limastring2utf8stdstring(solution.form)
+     << "(" << Lima::Common::Misc::limastring2utf8stdstring(solution.normalizedForm) << ")"
+     << "start=" << solution.startPos << "length=" << solution.length;
+  return os;
+}
+
 
 ApproxStringMatcher::ApproxStringMatcher() :
     m_lexicon(0),
@@ -192,12 +244,7 @@ LimaStatusCode ApproxStringMatcher::process(
     while (itr != result.end() && itr->first == curr->first) {
       Solution& solution = (*itr).second;
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::process() suggestion= \n"
-             << "{ position=" << solution.suggestion.startPosition
-             << ", length=" << solution.suggestion.endPosition
-             << ", nb_error=" << solution.suggestion.nb_error
-             // << ", match_id=" << solution.suggestion.match_id
-             << ", vertices= (" << solution.vertices.front() << "..." << solution.vertices.back() << ") }";
+      LDEBUG << "ApproxStringMatcher::process() suggestion= " << solution;
 #endif
        ++itr;
     }
@@ -217,12 +264,16 @@ void ApproxStringMatcher::createVertex(
     AnnotationData* annotationData 
 ) const 
 {
+  MORPHOLOGINIT;
+#ifdef DEBUG_LP
+  LDEBUG << "ApproxStringMatcher::createVertex( solution=" << solution << ")";
+#endif
   VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   VertexDataPropertyMap dataMap = get(vertex_data, g);
   
   // create new vertex in analysis graph
   LinguisticGraphVertex newVertex = add_vertex(g);
-    
+
   LinguisticGraphOutEdgeIt outEdge,outEdge_end;
   // Find previous vertex
   LinguisticGraphVertex previousVertex = vStart;
@@ -240,7 +291,7 @@ void ApproxStringMatcher::createVertex(
   boost::tie (outEdge,outEdge_end)=out_edges(solution.vertices.back(),g);
   LinguisticGraphVertex nextVertex = target(*outEdge,g);
   
-  // remove edges
+  // remove edges 
   boost::remove_edge(previousVertex,solution.vertices.front(), g);
   boost::remove_edge(solution.vertices.back(),nextVertex, g);
 
@@ -258,8 +309,6 @@ void ApproxStringMatcher::createVertex(
   // ??? annot.dump(oss);
 
   // Create token for this vertex
-  // specify status fortoken???
-  // TStatus status(T_ALPHANUMERIC);
   StringsPoolIndex form = annot.getString();
   StringsPoolIndex lemma = annot.getNormalizedString();
   StringsPoolIndex normalisation = annot.getNormalizedForm();
@@ -269,7 +318,28 @@ void ApproxStringMatcher::createVertex(
       (*m_sp)[form],
       solution.startPos,
       solution.length);
-  // create MorphoSyntacticData ?
+  
+  // specify status for token
+  // TODO: duplicate status of head in fre and tail in eng?
+  TStatus tStatus;
+  tStatus.reset();
+  tStatus.setStatus(T_ALPHA);
+  tStatus.setAlphaCapital(T_CAPITAL);
+
+  newToken->setStatus(tStatus);
+  
+  put(vertex_token,g,newVertex,newToken);
+  put(vertex_data,g,newVertex,new MorphoSyntacticData());
+
+  /*
+  // TODO: create MorphoSyntacticData ?
+  // all linguisticElements of this morphosyntacticData share common SE information
+  LinguisticElement elem;
+  elem.inflectedForm = newToken->form();            // (StringsPoolIndex)
+  elem.lemma = newToken->form();                    // (StringsPoolIndex)
+  elem.normalizedForm = annot.getNormalizedForm();  // StringsPoolIndex
+  elem.type = SPECIFIC_ENTITY; // MorphoSyntacticType
+  */
   
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
   //"AnalysisGraph"??? (replace graphId...)
@@ -340,10 +410,7 @@ LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
               //m_lexicon->getIndex(form)
             };   // id of term in Lexicon
 #ifdef DEBUG_LP
-            LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() success: suggestion= \n"
-                  << "{ position=" << suggestion.startPosition
-                  << ", length=" << suggestion.endPosition
-                  << ", nb_error=" << suggestion.nb_error << "}";
+            LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() success: " << suggestion;
                   // << ", match_id=" << suggestion.match_id
 //                  << ", vertices= (" << suggestion.vertices.front() << "..." << suggestion.vertices.front() << ") }";
 #endif
@@ -447,10 +514,8 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     // keep suggestion if best
     if( (ret == 0) && (suggestion.nb_error < result.suggestion.nb_error) ) {
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() suggestion={"
-            << "start:" << suggestion.startPosition << ","
-            << "end:" << suggestion.endPosition << ","
-            << "error:" << suggestion.nb_error << "}";
+      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers(): findApproxPattern()="
+             << ret << "," << suggestion;
 #endif
       result.suggestion.nb_error = suggestion.nb_error;
       result.form = form.mid(suggestion.startPosition,suggestion.endPosition-suggestion.startPosition);
@@ -501,11 +566,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
         currentVertex =target(*outEdge,g);
       }
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() result={"
-            << "start:" << result.suggestion.startPosition << ","
-            << "end:" << result.suggestion.endPosition
-            << "error:" << result.suggestion.nb_error
-            << "vertices:" << result.vertices.front() << "..." << result.vertices.back()<< "}";
+      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() " << result;
 #endif
 
     }
