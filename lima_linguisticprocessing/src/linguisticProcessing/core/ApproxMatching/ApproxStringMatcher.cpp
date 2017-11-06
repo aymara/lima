@@ -108,7 +108,8 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
 ApproxStringMatcher::ApproxStringMatcher() :
     m_lexicon(0),
     m_sp(0),
-    m_nbMaxError(0),
+    m_nbMaxNumError(0),
+    m_nbMaxDenError(1),
     m_entityType(),
     m_entityGroupId()
 {}
@@ -164,13 +165,24 @@ void ApproxStringMatcher::init(
   }
   try
   {
-    std::string nbMaxErrorStr=unitConfiguration.getParamsValueAtKey("nbMaxError");
+    std::string nbMaxErrorStr=unitConfiguration.getParamsValueAtKey("nbMaxNumError");
     std::istringstream iss(nbMaxErrorStr);
-    iss >> m_nbMaxError;
+    iss >> m_nbMaxNumError;
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'nbMaxError' in ApproxStringMatcher group for language " << (int) language;
+    LERROR << "no param 'nbMaxNumError' in ApproxStringMatcher group for language " << (int) language;
+    throw InvalidConfiguration();
+  }
+  try
+  {
+    std::string nbMaxErrorStr=unitConfiguration.getParamsValueAtKey("nbMaxDenError");
+    std::istringstream iss(nbMaxErrorStr);
+    iss >> m_nbMaxDenError;
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'nbMaxDenError' in ApproxStringMatcher group for language " << (int) language;
     throw InvalidConfiguration();
   }
 
@@ -219,10 +231,9 @@ LimaStatusCode ApproxStringMatcher::process(
   LinguisticGraph* g=anagraph->getGraph();
   for( ; currentVertex != anagraph->lastVertex() ; ) {
     Solution solution;
-    solution.suggestion.nb_error=1000;
-    solution.vertices=std::deque<LinguisticGraphVertex>();
     matchApproxTokenAndFollowers(*g, currentVertex, anagraph->lastVertex(), solution);
-    if( solution.suggestion.nb_error != 1000 ) {
+    int len = solution.normalizedForm.length();
+    if( solution.suggestion.nb_error <= (len*m_nbMaxNumError)/m_nbMaxDenError ) {
       createVertex(*g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData );
 
       result.insert(std::pair<int,Solution>(solution.suggestion.nb_error,solution));
@@ -418,7 +429,7 @@ LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
             break;
           }
         }
-        if( form.length() > max_length_element_in_lexicon + m_nbMaxError ) {
+        if( form.length() > max_length_element_in_lexicon + (max_length_element_in_lexicon*m_nbMaxNumError)/m_nbMaxDenError ) {
           break;
         }
       }
@@ -459,7 +470,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
   for( ; currentVertex != vEnd ; ) {
     currentToken=tokenMap[currentVertex];
 #ifdef DEBUG_LP
-    LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() from " << currentVertex;
+    LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() from " << currentVertex;
 #endif
     if (currentToken!=0)
     {
@@ -482,17 +493,17 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
         textEnd = currentToken->position() + currentToken->length();
       }
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() posInform= "
+      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() posInform= "
             << tokenStartPos.back() << "," << tokenEndPos.back();
 #endif
       assert( currentToken->length() == (uint64_t)(currentToken->stringForm().length()));
       form.append(currentToken->stringForm());
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() form= "
+      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() form= "
             << Lima::Common::Misc::limastring2utf8stdstring(form);
 #endif
     }
-    if( form.length() > max_length_element_in_lexicon + m_nbMaxError ) {
+    if( form.length() > max_length_element_in_lexicon + (max_length_element_in_lexicon*m_nbMaxNumError)/m_nbMaxDenError  ) {
       break;
     }
     // following nodes
@@ -506,76 +517,103 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
   for( ; wordsIt.first != wordsIt.second ; (wordsIt.first)++ ) {
     // get normalized form from lexicon
     LimaString normalizedForm = *(wordsIt.first);
+    int nbMaxError = (normalizedForm.length()*m_nbMaxNumError)/m_nbMaxDenError;
     // TODO: create pattern form normalized form
     LimaString pattern = normalizedForm;
     // Search for pattern in form
     Suggestion suggestion;
-    int ret = findApproxPattern( pattern, form, suggestion);
+    int ret = findApproxPattern( pattern, form, suggestion, nbMaxError);
     // keep suggestion if best
     if( (ret == 0) && (suggestion.nb_error < result.suggestion.nb_error) ) {
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers(): findApproxPattern()="
+      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers(): findApproxPattern()="
              << ret << "," << suggestion;
 #endif
-      result.suggestion.nb_error = suggestion.nb_error;
-      result.form = form.mid(suggestion.startPosition,suggestion.endPosition-suggestion.startPosition);
-      result.length = suggestion.endPosition-suggestion.startPosition;
-      result.startPos = tokenStartPos.front();
-      result.normalizedForm = normalizedForm;
+      Solution tempResult;
 
+      tempResult.suggestion.nb_error = suggestion.nb_error;
+      tempResult.vertices=std::deque<LinguisticGraphVertex>();
+      tempResult.startPos = tokenStartPos.front();
+      tempResult.normalizedForm = normalizedForm;
       // exact position in text
-      result.suggestion.startPosition = -1;
-      result.suggestion.endPosition = -1;
+      tempResult.suggestion.startPosition = -1;
+      tempResult.suggestion.endPosition = -1;
       int startInForm(0);
       int endInForm(0);
+      std::deque<int>::const_iterator startPosIt= tokenStartPos.begin();
+      std::deque<int>::const_iterator endPosIt= tokenEndPos.begin();
       for( currentVertex = vStart ; currentVertex != vEnd ; ) {
-      //for( vIt = vStartIt ; vIt != vEndIt ; vIt++ ) {
         currentToken=tokenMap[currentVertex];
-        startInForm = tokenStartPos.front();
-        endInForm = tokenEndPos.front();
+        startInForm = *startPosIt;
+        endInForm = *endPosIt;
         if (currentToken!=0)
         {
 #ifdef DEBUG_LP
-          LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() compare with (start,end)="
+          LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() compare with (start,end)="
                  << "(" << startInForm
                  << "," << endInForm << "}";
 #endif
-          if( result.suggestion.startPosition == -1 ) {
+          if( tempResult.suggestion.startPosition == -1 ) {
+            // If begin of matched segment is bounded by current token
             if( ( suggestion.startPosition >= startInForm ) && ( suggestion.startPosition < endInForm ) ){
-              result.suggestion.startPosition = currentToken->position();
-              result.vertices.push_back(currentVertex);
+              tempResult.suggestion.startPosition = currentToken->position();
+              tempResult.startPos = *startPosIt;
+              LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() begin ="
+                       << currentToken->position();
+              if( suggestion.startPosition > startInForm ) {
+                LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() correction error begin +"
+                       << suggestion.startPosition - startInForm;
+                tempResult.suggestion.startPosition += (suggestion.startPosition - startInForm);
+                tempResult.suggestion.nb_error += (suggestion.startPosition - startInForm);
+                tempResult.startPos += (suggestion.startPosition - startInForm);
+              }
+              tempResult.vertices.push_back(currentVertex);
             }
           }
-          if( result.suggestion.endPosition == -1 ) {
+          if( tempResult.suggestion.endPosition == -1 ) {
+            // If end of matched segment is bounded by current token
             if( ( suggestion.endPosition >= startInForm ) && ( suggestion.endPosition <= endInForm ) ){
-              result.suggestion.endPosition = currentToken->position()+currentToken->length();
+              tempResult.suggestion.endPosition = currentToken->position()+currentToken->length();
+              LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() end ="
+                       << currentToken->position()+currentToken->length();
+              if( suggestion.endPosition < endInForm ) {
+                LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() correction error end +"
+                       << endInForm - suggestion.endPosition;
+                tempResult.suggestion.endPosition -= (endInForm - suggestion.endPosition);
+                tempResult.suggestion.nb_error += (endInForm - suggestion.endPosition);
+              }
             }
           }
-          if( ! result.vertices.empty() ) {
-            result.vertices.push_back(currentVertex);
+          if( tempResult.suggestion.startPosition != -1 ) {
+            tempResult.vertices.push_back(currentVertex);
           }
-          if( (result.suggestion.startPosition != -1) && (result.suggestion.endPosition != -1) ) {
+          if( (tempResult.suggestion.startPosition != -1) && (tempResult.suggestion.endPosition != -1) ) {
             break;
           }
-          tokenStartPos.pop_front();
-          tokenEndPos.pop_front();
+          startPosIt++;
+          endPosIt++;
         }
         // following nodes
         LinguisticGraphOutEdgeIt outEdge,outEdge_end;
         boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
         currentVertex =target(*outEdge,g);
       }
+      tempResult.form = form.mid(suggestion.startPosition,
+                             suggestion.endPosition-suggestion.startPosition);
+      tempResult.length = suggestion.endPosition-suggestion.startPosition;
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchTokenAndFollowers() " << result;
+      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() " << tempResult;
 #endif
-
+      if( (tempResult.suggestion.nb_error < result.suggestion.nb_error) ) {
+        result = tempResult;
+      }
     }
   }
 }
 
 int ApproxStringMatcher::findApproxPattern(
     LimaString pattern, LimaString text,
-    Suggestion& suggestion) const {
+    Suggestion& suggestion, int nbMaxError) const {
   MORPHOLOGINIT;
 #ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::findApproxPattern("
@@ -609,11 +647,11 @@ int ApproxStringMatcher::findApproxPattern(
       1,    // int cost_ins;
       1,    // int cost_del;
       1,    // int cost_subst;
-      m_nbMaxError,    // int max_cost;
-      m_nbMaxError,    // int max_ins;
-      m_nbMaxError,    // int max_del;
-      m_nbMaxError,    // int max_subst;
-      m_nbMaxError,    // int max_err;
+      nbMaxError,    // int max_cost;
+      nbMaxError,    // int max_ins;
+      nbMaxError,    // int max_del;
+      nbMaxError,    // int max_subst;
+      nbMaxError,    // int max_err;
     };
     int eflags = REG_NOTBOL;
     // eflags |= REGNOTEOL;

@@ -104,7 +104,7 @@ private:
 
   int findApproxPattern(
     LimaString pattern, LimaString text,
-    Suggestion& suggestion) const;
+    Suggestion& suggestion, int nbMaxError) const;
 
   void createVertex(
     LinguisticGraph& g, 
@@ -115,7 +115,8 @@ private:
 
   Common::AbstractAccessByString *m_lexicon;
   FsaStringsPool* m_sp;
-  int m_nbMaxError;
+  int m_nbMaxNumError;
+  int m_nbMaxDenError;
   Common::MediaticData::EntityType m_entityType;
   Common::MediaticData::EntityGroupId m_entityGroupId;
 };
