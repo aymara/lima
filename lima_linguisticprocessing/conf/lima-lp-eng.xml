@@ -6,7 +6,13 @@
         <item value="SpecificEntities-modex.xml/entities"/>
       </list>
     </group>
-</module>
+    <!-- to be moved in approxModex configuration file???-->
+    <group name="Total">
+      <list name="entityList">
+        <item value="WELL"/>
+      </list>
+    </group>
+  </module>
   <module name="Processors">
     <group name="include">
       <list name="includeList">
@@ -66,6 +72,32 @@
         <!--item value="NullDumper"/-->
         <!--item value="temporalXmlDumper"/-->
         <!--item value="afterFusionXmlDumper"/-->
+      </list>
+    </group>
+    <group name="totalcruncher" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="fullTokenXmlLoggerTokenizer"/>
+        <item value="approxStringMatcher"/>
+        <item value="fullTokenXmlLoggerApprox"/>
+        <!--item value="specificEntitiesApproxXmlLogger"/-->
+        <!--item value="regexmatcher"/-->
+        <item value="simpleWord"/>
+        <!--item value="dotGraphWriter-forCorefEval"/-->
+        <item value="fullTokenXmlLoggerSimpleWord"/>
+        <!--item value="idiomaticAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerIdiomatic"/-->
+        <!--item value="hyphenWordAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerHyphen"/-->
+        <!--item value="abbreviationSplitAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerAbbreviations"/-->
+        <!--item value="defaultProperties"/-->
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="SpecificEntitiesModex"/-->
+        <item value="specificEntitiesXmlLogger"/>
+        <!--item value="dotGraphWriter-beforepos"/-->
+        <!--item value="viterbiPostagger-freq"/-->
+        <!--item value="SvmToolPosTagger"/-->
       </list>
     </group>
     <group name="limaserver" class="ProcessUnitPipeline" >
@@ -215,6 +247,13 @@
         <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
         <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
       </map>
+    </group>
+    <group name="approxStringMatcher" class="ApproxStringMatcher">
+        <param key="dictionary" value="totalWellForms"/>
+        <param key="nbMaxNumError" value="20"/>
+        <param key="nbMaxDenError" value="100"/>
+        <param key="entityGoup" value="Total"/>
+        <param key="entityName" value="Total.WELL"/>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
@@ -504,8 +543,18 @@
       <param key="outputSuffix" value=".se.xml"/>
       <param key="graph" value="AnalysisGraph"/>
     </group>
+    <group name="specificEntitiesApproxXmlLogger" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.approx.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+    </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".toks.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerApprox" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".approx.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerSimpleWord" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".words.xml"/>
     </group>
     <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".se.xml"/>
@@ -897,6 +946,10 @@
     </group>
     <group name="globalFsaAccess" class="FsaAccess">
       <param key="keyFile" value="LinguisticProcessings/eng/dicoKey-eng.dat"/>
+    </group>
+    <group name="totalWellForms" class="FsaAccess">
+      <param key="keyFile" value="LinguisticProcessings/eng/totalWell-eng.dat"/>
+      <!--param key="keyFile" value="LinguisticProcessings/eng/totalWell-eng.toy.dat"/-->
     </group>
     <group name="dictionaryCode" class="DictionaryCode">
       <param key="codeFile" value="LinguisticProcessings/eng/code-eng.dat"/>

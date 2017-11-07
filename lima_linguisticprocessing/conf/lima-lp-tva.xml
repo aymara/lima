@@ -35,6 +35,9 @@
       <entry key="fre" value="fakeMultiLevel"/>
       <entry key="eng" value="fakeMultiLevel"/>
     </map>
+    <map name="totalcruncher">
+      <entry key="eng" value="totalcruncher"/>
+    </map>
   </group>
   <group name="analysisDumpers">
     <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->
