@@ -103,7 +103,7 @@ private:
     Solution& result) const;
 
   int findApproxPattern(
-    LimaString pattern, LimaString text,
+    const std::basic_string<wchar_t>& pattern, LimaString text,
     Suggestion& suggestion, int nbMaxError) const;
 
   void createVertex(
@@ -113,12 +113,18 @@ private:
     Solution& solution,
     Lima::Common::AnnotationGraphs::AnnotationData* annotationData ) const;
 
+  QString wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const;
+  std::basic_string<wchar_t> LimaStr2wcharStr(const QString& limastr) const;
+  std::basic_string<wchar_t> buildPattern(const QString& normalizedForm) const;
+
   Common::AbstractAccessByString *m_lexicon;
   FsaStringsPool* m_sp;
   int m_nbMaxNumError;
   int m_nbMaxDenError;
   Common::MediaticData::EntityType m_entityType;
   Common::MediaticData::EntityGroupId m_entityGroupId;
+  typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
+  RegexMap m_regexes;
 };
 } // MorphologicAnalysis
 } // LinguisticProcessing

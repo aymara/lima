@@ -35,6 +35,7 @@
 #include "common/Data/strwstrtools.h"
 #include <iostream>
 #include <tre/regex.h>
+#include <boost/regex.hpp>
 //#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 
@@ -51,6 +52,7 @@ namespace LinguisticProcessing
 {
 namespace MorphologicAnalysis
 {
+typedef boost::basic_regex<wchar_t> wide_regex;
 
 SimpleFactory<MediaProcessUnit,ApproxStringMatcher> ApproxStringMatcherFactory(APPROX_STRING_MATCHER_CLASSID);
 
@@ -128,7 +130,7 @@ void ApproxStringMatcher::init(
   MediaId language = manager->getInitializationParameters().media;
   m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
 
-  // equivalent to "using groups Total in Total-eng.rules"
+  // Get groupId and Entity type in group
   Common::MediaticData::EntityGroupId foundGroup;
   try
   {
@@ -153,6 +155,7 @@ void ApproxStringMatcher::init(
     throw InvalidConfiguration();
   }
   
+  // get dictionary of normalized forms
   string dico;
   try
   {
@@ -163,6 +166,8 @@ void ApproxStringMatcher::init(
     LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) language;
     throw InvalidConfiguration();
   }
+
+  // get max edit distance 
   try
   {
     std::string nbMaxErrorStr=unitConfiguration.getParamsValueAtKey("nbMaxNumError");
@@ -190,6 +195,26 @@ void ApproxStringMatcher::init(
   AbstractAccessResource* lexicon = lexicon=static_cast<AbstractAccessResource*>(res);
   m_lexicon = lexicon->getAccessByString();
 
+  // get generalization pattern 
+  try
+  {
+    std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("generalization");
+    for (std::map <std::string, std::string >::const_iterator it = regexes.begin(); it != regexes.end(); it++)
+    {
+      QString patternQ = QString::fromUtf8 ((*it).first.c_str());
+      std::basic_string<wchar_t> patternWS = LimaStr2wcharStr(patternQ);
+      QString substitutionQ = QString::fromUtf8 ((*it).second.c_str());
+      std::basic_string<wchar_t> substitutionWS = LimaStr2wcharStr(substitutionQ);
+      m_regexes.insert( std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(patternWS,
+                                    substitutionWS) );
+    }
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no map 'generalization' in RegexReplacer group configuration fot language "
+    << (int) language;
+    throw InvalidConfiguration();
+  }
 }
 
 
@@ -441,6 +466,42 @@ LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
   return SUCCESS_ID;
 }
 
+QString ApproxStringMatcher::wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const {
+  // convert std::basic_string<wchar_t> to QString
+      return QString::fromWCharArray(wstring.c_str(),wstring.length());
+}
+
+std::basic_string<wchar_t> ApproxStringMatcher::LimaStr2wcharStr( const QString& limastr ) const {
+  // convert QString to std::basic_string<wchar_t>
+      wchar_t warray[limastr.length()+1];
+      int warray_len = limastr.toWCharArray(warray);
+      warray[warray_len]=0;
+      return std::basic_string<wchar_t>(warray, warray_len);
+}
+
+std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const QString& normalizedForm) const {
+  MORPHOLOGINIT;
+    // convert normalizedForm into std::basic_string<wchar_t>
+    std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
+    for(RegexMap::const_iterator regexIt = m_regexes.begin() ;
+        regexIt != m_regexes.end() ; regexIt++ )
+    {
+      // get regex as wstring
+      std::pair< std::basic_string<wchar_t>, std::basic_string<wchar_t> > a_regex = *regexIt;
+      wide_regex matching_rule(a_regex.first);
+      std::basic_string<wchar_t> substitution = a_regex.second;
+      wpattern = boost::regex_replace(wpattern, matching_rule,
+                                      substitution, boost::match_default | boost::format_sed);
+#ifdef DEBUG_LP
+      QString pattern = wcharStr2LimaStr(wpattern);
+      LDEBUG << "ApproxStringMatcher::buildPattern: pattern changed to  "
+             << Lima::Common::Misc::limastring2utf8stdstring(pattern);
+#endif
+      break;
+    }
+    return wpattern;
+}
+
 void ApproxStringMatcher::matchApproxTokenAndFollowers(
     LinguisticGraph& g, 
     LinguisticGraphVertex vStart,
@@ -517,12 +578,11 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
   for( ; wordsIt.first != wordsIt.second ; (wordsIt.first)++ ) {
     // get normalized form from lexicon
     LimaString normalizedForm = *(wordsIt.first);
+    std::basic_string<wchar_t> wpattern = buildPattern(normalizedForm);
     int nbMaxError = (normalizedForm.length()*m_nbMaxNumError)/m_nbMaxDenError;
-    // TODO: create pattern form normalized form
-    LimaString pattern = normalizedForm;
     // Search for pattern in form
     Suggestion suggestion;
-    int ret = findApproxPattern( pattern, form, suggestion, nbMaxError);
+    int ret = findApproxPattern( wpattern, form, suggestion, nbMaxError);
     // keep suggestion if best
     if( (ret == 0) && (suggestion.nb_error < result.suggestion.nb_error) ) {
 #ifdef DEBUG_LP
@@ -612,12 +672,13 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
 }
 
 int ApproxStringMatcher::findApproxPattern(
-    LimaString pattern, LimaString text,
+    const std::basic_string<wchar_t>& pattern, LimaString text,
     Suggestion& suggestion, int nbMaxError) const {
   MORPHOLOGINIT;
 #ifdef DEBUG_LP
+      QString patternQ = wcharStr2LimaStr(pattern);
       LDEBUG << "ApproxStringMatcher::findApproxPattern("
-             << Lima::Common::Misc::limastring2utf8stdstring(pattern) << ","
+             << Lima::Common::Misc::limastring2utf8stdstring(patternQ) << ","
              << Lima::Common::Misc::limastring2utf8stdstring(text) << ")";
       #endif
 
@@ -630,14 +691,12 @@ int ApproxStringMatcher::findApproxPattern(
     // cflags |= REG_UNGREEDY;
     
     // Compile pattern
-    wchar_t parray[pattern.length()];
-    int plength = pattern.toWCharArray(parray);
     /*
 #ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::findApproxPattern: compilation...";
 #endif
       */
-    int agrepStatus = regwncomp(&preg, parray, plength, cflags);
+    int agrepStatus = regwncomp(&preg, pattern.c_str(), pattern.length(), cflags);
     // TODO: agrepStatus???
 #ifdef DEBUG_LP
     LDEBUG << "ApproxStringMatcher::findApproxPattern: agrepStatus=" << agrepStatus;
