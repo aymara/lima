@@ -54,6 +54,7 @@ public:
                             Common::MediaticData::EntityType entityType,
                             const LimaString& form,
                             const LimaString& normalizedForm,
+                            int nbError,
                             uint64_t startPos,
                             uint64_t length,
                             FsaStringsPool& sp);

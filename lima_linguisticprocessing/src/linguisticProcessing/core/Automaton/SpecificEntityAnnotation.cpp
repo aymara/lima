@@ -40,6 +40,7 @@ SpecificEntityAnnotation::SpecificEntityAnnotation(
   Common::MediaticData::EntityType entityType,
   const LimaString& form,
   const LimaString& normalizedForm,
+  int nbError,
   uint64_t startPos,
   uint64_t length,
   FsaStringsPool& sp) :
@@ -55,6 +56,8 @@ m_length(length)
 {
   // no features??
   m_features.addFeature("value", normalizedForm);
+  // no features??
+  m_features.addFeature("nbError", nbError);
 }
 
 SpecificEntityAnnotation::

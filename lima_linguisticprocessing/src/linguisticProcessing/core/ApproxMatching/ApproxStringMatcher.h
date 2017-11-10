@@ -113,6 +113,8 @@ private:
     Solution& solution,
     Lima::Common::AnnotationGraphs::AnnotationData* annotationData ) const;
 
+  void readNames( const std::string& filepath );
+
   QString wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const;
   std::basic_string<wchar_t> LimaStr2wcharStr(const QString& limastr) const;
   std::basic_string<wchar_t> buildPattern(const QString& normalizedForm) const;
@@ -128,6 +130,8 @@ private:
   Common::MediaticData::EntityGroupId m_entityGroupId;
   typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
   RegexMap m_regexes;
+  typedef std::multimap< std::basic_string<wchar_t>, std::basic_string<wchar_t> > NameIndex;
+  NameIndex m_nameIndex;
 };
 } // MorphologicAnalysis
 } // LinguisticProcessing
