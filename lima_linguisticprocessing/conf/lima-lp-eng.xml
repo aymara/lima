@@ -254,6 +254,8 @@
         <param key="nbMaxDenError" value="100"/>
         <param key="entityGoup" value="Total"/>
         <param key="entityName" value="Total.WELL"/>
+        <param key="NPCategory" value="NP"/>
+        <param key="NPMicroCategory" value="NNP"/>
         <map name="generalization">
             <!-- Delete unbalanced parenthesis -->       
             <!--entry key="^[^\(]*\)|\([^\)]*$" value=""/-->

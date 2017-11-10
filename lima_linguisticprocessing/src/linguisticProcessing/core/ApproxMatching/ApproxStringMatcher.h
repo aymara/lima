@@ -117,6 +117,9 @@ private:
   std::basic_string<wchar_t> LimaStr2wcharStr(const QString& limastr) const;
   std::basic_string<wchar_t> buildPattern(const QString& normalizedForm) const;
 
+  MediaId m_language;
+  LinguisticCode m_neCode;
+  LinguisticCode m_neMicroCode;
   Common::AbstractAccessByString *m_lexicon;
   FsaStringsPool* m_sp;
   int m_nbMaxNumError;

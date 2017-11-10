@@ -127,8 +127,8 @@ void ApproxStringMatcher::init(
 {
   MORPHOLOGINIT;
   
-  MediaId language = manager->getInitializationParameters().media;
-  m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
+  m_language = manager->getInitializationParameters().media;
+  m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
 
   // Get groupId and Entity type in group
   Common::MediaticData::EntityGroupId foundGroup;
@@ -140,7 +140,7 @@ void ApproxStringMatcher::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'entityGoup' in ApproxStringMatcher group for language " << (int) language;
+    LERROR << "no param 'entityGoup' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -151,7 +151,29 @@ void ApproxStringMatcher::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'entityGoup' in ApproxStringMatcher group for language " << (int) language;
+    LERROR << "no param 'entityGoup' in ApproxStringMatcher group for language " << (int) m_language;
+    throw InvalidConfiguration();
+  }
+
+  try
+  {
+    std::string np = unitConfiguration.getParamsValueAtKey("NPCategory");
+    m_neCode=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue(np);
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'NPCategory' in ApproxStringMatcher group for language " << (int) m_language;
+    throw InvalidConfiguration();
+  }
+
+  try
+  {
+    std::string microCategory=unitConfiguration.getParamsValueAtKey("NPMicroCategory");
+    m_neMicroCode=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(microCategory);
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'NPMicroCategory' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   
@@ -163,7 +185,7 @@ void ApproxStringMatcher::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) language;
+    LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
 
@@ -176,7 +198,7 @@ void ApproxStringMatcher::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'nbMaxNumError' in ApproxStringMatcher group for language " << (int) language;
+    LERROR << "no param 'nbMaxNumError' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   try
@@ -187,11 +209,11 @@ void ApproxStringMatcher::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'nbMaxDenError' in ApproxStringMatcher group for language " << (int) language;
+    LERROR << "no param 'nbMaxDenError' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
 
-  AbstractResource* res=LinguisticResources::single().getResource(language,dico);
+  AbstractResource* res=LinguisticResources::single().getResource(m_language,dico);
   AbstractAccessResource* lexicon = lexicon=static_cast<AbstractAccessResource*>(res);
   m_lexicon = lexicon->getAccessByString();
 
@@ -212,7 +234,7 @@ void ApproxStringMatcher::init(
   catch (NoSuchParam& )
   {
     LERROR << "no map 'generalization' in RegexReplacer group configuration fot language "
-    << (int) language;
+    << (int) m_language;
     throw InvalidConfiguration();
   }
 }
@@ -336,13 +358,13 @@ void ApproxStringMatcher::createVertex(
   LinguisticGraphEdge e;
   boost::tie(e, success) = add_edge(previousVertex, newVertex, g);
   boost::tie(e, success) = add_edge(newVertex, nextVertex, g);
-
  
   // Create specific entity annotation
   Lima::LinguisticProcessing::SpecificEntities::SpecificEntityAnnotation annot(solution.vertices, m_entityType,
-                                 solution.form, solution.normalizedForm, solution.startPos, solution.length, *m_sp);
+        solution.form, solution.normalizedForm,
+        solution.startPos, solution.length, *m_sp);
   // std::ostringstream oss;
-  // ??? annot.dump(oss);
+  // annot.dump(oss);
 
   // Create token for this vertex
   StringsPoolIndex form = annot.getString();
@@ -359,23 +381,25 @@ void ApproxStringMatcher::createVertex(
   // TODO: duplicate status of head in fre and tail in eng?
   TStatus tStatus;
   tStatus.reset();
-  tStatus.setStatus(T_ALPHA);
-  tStatus.setAlphaCapital(T_CAPITAL);
+  tStatus.setStatus(T_PATTERN);
+  tStatus.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_pattern"));
 
   newToken->setStatus(tStatus);
   
   put(vertex_token,g,newVertex,newToken);
   put(vertex_data,g,newVertex,new MorphoSyntacticData());
 
-  /*
-  // TODO: create MorphoSyntacticData ?
-  // all linguisticElements of this morphosyntacticData share common SE information
+  newToken->stringForm();
+  // create MorphoSyntacticData
+  MorphoSyntacticData* newMorphoSyntacticData = new MorphoSyntacticData ();
   LinguisticElement elem;
   elem.inflectedForm = newToken->form();            // (StringsPoolIndex)
   elem.lemma = newToken->form();                    // (StringsPoolIndex)
-  elem.normalizedForm = annot.getNormalizedForm();  // StringsPoolIndex
+  elem.normalizedForm = (*m_sp)[solution.normalizedForm];
   elem.type = SPECIFIC_ENTITY; // MorphoSyntacticType
-  */
+  elem.properties = m_neCode;      //   LinguisticCode
+  elem.properties = m_neMicroCode;      //   LinguisticCode
+  newMorphoSyntacticData->push_back(elem);
   
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
   //"AnalysisGraph"??? (replace graphId...)
@@ -384,7 +408,7 @@ void ApproxStringMatcher::createVertex(
   annotationData->addMatching("AnalysisGraph", newVertex, "annot", agv);
   annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("AnalysisGraph"), newVertex);
   tokenMap[newVertex] = newToken;
-  // dataMap[newVertex] = newMorphData;
+  dataMap[newVertex] = newMorphoSyntacticData;
   GenericAnnotation ga(annot);
   annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("SpecificEntity"), ga);
 }
