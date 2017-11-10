@@ -329,14 +329,13 @@ void ApproxStringMatcher::createVertex(
 #ifdef DEBUG_LP
   LDEBUG << "ApproxStringMatcher::createVertex( solution=" << solution << ")";
 #endif
-  VertexTokenPropertyMap tokenMap=get(vertex_token,g);
-  VertexDataPropertyMap dataMap = get(vertex_data, g);
+  // VertexTokenPropertyMap tokenMap=get(vertex_token,g);
+  // VertexDataPropertyMap dataMap = get(vertex_data, g);
   
   // create new vertex in analysis graph
   LinguisticGraphVertex newVertex = add_vertex(g);
-
-  LinguisticGraphOutEdgeIt outEdge,outEdge_end;
   // Find previous vertex
+  LinguisticGraphOutEdgeIt outEdge,outEdge_end;
   LinguisticGraphVertex previousVertex = vStart;
   for( ; previousVertex != vEnd ; ) {
     boost::tie (outEdge,outEdge_end)=out_edges(previousVertex,g);
@@ -351,47 +350,32 @@ void ApproxStringMatcher::createVertex(
   // Find next vertex
   boost::tie (outEdge,outEdge_end)=out_edges(solution.vertices.back(),g);
   LinguisticGraphVertex nextVertex = target(*outEdge,g);
-  
   // remove edges 
   boost::remove_edge(previousVertex,solution.vertices.front(), g);
   boost::remove_edge(solution.vertices.back(),nextVertex, g);
-
   // replace edges
   bool success;
   LinguisticGraphEdge e;
   boost::tie(e, success) = add_edge(previousVertex, newVertex, g);
   boost::tie(e, success) = add_edge(newVertex, nextVertex, g);
  
-  // Create specific entity annotation
-  Lima::LinguisticProcessing::SpecificEntities::SpecificEntityAnnotation annot(solution.vertices, m_entityType,
-        solution.form, solution.normalizedForm,
-        solution.startPos, solution.length, *m_sp);
-  // std::ostringstream oss;
-  // annot.dump(oss);
-
   // Create token for this vertex
-  StringsPoolIndex form = annot.getString();
-
+  StringsPoolIndex form = (*m_sp)[solution.form];
   Token* newToken = new Token(
       form,
       (*m_sp)[form],
       solution.startPos,
       solution.length);
-  
   // specify status for token
-  // TODO: duplicate status of head in fre and tail in eng?
   TStatus tStatus;
   tStatus.reset();
   tStatus.setStatus(T_PATTERN);
   tStatus.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_pattern"));
-
   newToken->setStatus(tStatus);
-  
+  // tokenMap[newVertex] = newToken;
   put(vertex_token,g,newVertex,newToken);
-  put(vertex_data,g,newVertex,new MorphoSyntacticData());
 
-  newToken->stringForm();
-  // create MorphoSyntacticData
+  // Create MorphoSyntacticData for this vertex
   MorphoSyntacticData* newMorphoSyntacticData = new MorphoSyntacticData ();
   LinguisticElement elem;
   elem.inflectedForm = newToken->form();            // (StringsPoolIndex)
@@ -401,17 +385,27 @@ void ApproxStringMatcher::createVertex(
   elem.properties = m_neCode;      //   LinguisticCode
   elem.properties = m_neMicroCode;      //   LinguisticCode
   newMorphoSyntacticData->push_back(elem);
+  // dataMap[newVertex] = newMorphoSyntacticData;
+  put(vertex_data,g,newVertex,newMorphoSyntacticData);
   
+  // Create vertex fot annotation graph
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
-  //"AnalysisGraph"??? (replace graphId...)
-  //annotationData->addMatching(graphId, newVertex, "annot", agv);
-  //annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring(graphId), newVertex);
+  // make access to this annotation vertex from newVertex
   annotationData->addMatching("AnalysisGraph", newVertex, "annot", agv);
-  annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("AnalysisGraph"), newVertex);
-  tokenMap[newVertex] = newToken;
-  dataMap[newVertex] = newMorphoSyntacticData;
-  GenericAnnotation ga(annot);
-  annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("SpecificEntity"), ga);
+  // make access back to newVertex from this annotation
+  annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("AnalysisGraph"),
+                           newVertex);
+  // Create annotation data of type 'SpecificEntity'
+  Lima::LinguisticProcessing::SpecificEntities::SpecificEntityAnnotation spAnnot(
+        solution.vertices,
+        m_entityType,
+        solution.form, solution.normalizedForm,
+        solution.startPos, solution.length, *m_sp);
+  GenericAnnotation spGa(spAnnot);
+  // make access to annotation data from annotation vertex
+  annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("SpecificEntity"), spGa);
+  // Créer une 'feature' 'value' sans information de localisation
+  // pour qu'elle soit produite comme 'normalization' dans le logger
 }
 
 LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(

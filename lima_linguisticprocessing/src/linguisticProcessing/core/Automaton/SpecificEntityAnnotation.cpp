@@ -44,17 +44,17 @@ SpecificEntityAnnotation::SpecificEntityAnnotation(
   uint64_t length,
   FsaStringsPool& sp) :
 // front, head or any hint for another vertex?
+m_vertices(vertices.begin(),vertices.end()),
 m_head(vertices.front()),
 m_type(entityType),
-// no features!
-m_features(),
 m_string(sp[form]),
 m_normalizedString(sp[normalizedForm]),
-m_normalizedForm(0),
+m_normalizedForm(sp[normalizedForm]),
 m_position(startPos),
-m_length(length),
-m_vertices(vertices.begin(),vertices.end())
+m_length(length)
 {
+  // no features??
+  m_features.addFeature("value", normalizedForm);
 }
 
 SpecificEntityAnnotation::
