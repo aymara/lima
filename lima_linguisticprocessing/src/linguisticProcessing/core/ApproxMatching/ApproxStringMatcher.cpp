@@ -34,10 +34,12 @@
 #include "common/misc/AbstractAccessIterators.h"
 #include "common/Data/strwstrtools.h"
 #include <iostream>
+#include <fstream>
 #include <tre/regex.h>
 #include <boost/regex.hpp>
 //#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 
 using namespace std;
 using namespace Lima::Common::AnnotationGraphs;
@@ -124,6 +126,35 @@ ApproxStringMatcher::~ApproxStringMatcher()
   // delete m_reader;
 }
 
+void ApproxStringMatcher::readNames( const std::string& filepath ) {
+  MORPHOLOGINIT;
+  std::ifstream names(filepath.data());
+  char strbuff[200];
+
+  for( int counter = 0 ; ; counter++ ) {
+    // lecture d'une ligne du fichier
+    names.getline(strbuff, 200, '\n' );
+    string line(strbuff);
+    if( line.size() == 0 ) {
+      LDEBUG << "end of list of words. counter= " << counter;
+      break;
+    }
+    else {
+      // 
+      Lima::LimaString namels = Lima::Common::Misc::utf8stdstring2limastring(line);
+      int i=namels.indexOf('\t');
+      if (i==-1) {
+        m_nameIndex.insert(std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(
+          L"",LimaStr2wcharStr( namels )));
+      }
+      else {
+        m_nameIndex.insert(std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(
+          LimaStr2wcharStr(namels.mid(i+1)),LimaStr2wcharStr(namels.left(i))));
+      }
+    }
+  }
+}
+
 void ApproxStringMatcher::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
@@ -181,6 +212,18 @@ void ApproxStringMatcher::init(
   }
   
   // get dictionary of normalized forms
+  try
+  {
+    std::string nameindexFilename =unitConfiguration.getParamsValueAtKey("nameindex");
+    readNames( nameindexFilename );
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) m_language;
+    throw InvalidConfiguration();
+  }
+  
+  // get mapping country, names of normalized forms
   string dico;
   try
   {
@@ -249,6 +292,15 @@ LimaStatusCode ApproxStringMatcher::process(
   Lima::TimeUtilsController timer("ApproxStringMatcher");
   MORPHOLOGINIT;
   LINFO << "starting process ApproxStringMatcher";
+
+  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  std::string value;
+  if (metadata != 0) {
+    value = metadata->getMetaData("pays");
+  }
+#ifdef DEBUG_LP
+  LDEBUG << "ApproxStringMatcher::process: country from metadata= " << value;
+#endif
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   // initialize annotation data
@@ -399,7 +451,7 @@ void ApproxStringMatcher::createVertex(
   Lima::LinguisticProcessing::SpecificEntities::SpecificEntityAnnotation spAnnot(
         solution.vertices,
         m_entityType,
-        solution.form, solution.normalizedForm,
+        solution.form, solution.normalizedForm, solution.suggestion.nb_error,
         solution.startPos, solution.length, *m_sp);
   GenericAnnotation spGa(spAnnot);
   // make access to annotation data from annotation vertex
