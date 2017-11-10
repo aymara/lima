@@ -108,6 +108,9 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
 
 
 ApproxStringMatcher::ApproxStringMatcher() :
+    m_language(0),
+    m_neCode(0),
+    m_neMicroCode(0),
     m_lexicon(0),
     m_sp(0),
     m_nbMaxNumError(0),
@@ -368,8 +371,6 @@ void ApproxStringMatcher::createVertex(
 
   // Create token for this vertex
   StringsPoolIndex form = annot.getString();
-  StringsPoolIndex lemma = annot.getNormalizedString();
-  StringsPoolIndex normalisation = annot.getNormalizedForm();
 
   Token* newToken = new Token(
       form,
@@ -549,7 +550,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
   int max_length_element_in_lexicon = 49;
   Token* currentToken=tokenMap[vStart];
   // position of form in original text
-  uint64_t textStart, textEnd;
+  uint64_t textEnd;
   // TODO: vérifier que vEndIt est le noeud 1 (sans token)
   LinguisticGraphVertex currentVertex = vStart;
   for( ; currentVertex != vEnd ; ) {
@@ -562,8 +563,6 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       if( tokenStartPos.empty() ) {
         tokenStartPos.push_back(0);
         tokenEndPos.push_back(currentToken->length());
-        textStart = currentToken->position();
-        // textEnd = textStart+currentToken->stringForm().length(); ???
         textEnd = currentToken->position() + currentToken->length();
       }
       else {
