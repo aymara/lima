@@ -250,6 +250,7 @@
     </group>
     <group name="approxStringMatcher" class="ApproxStringMatcher">
         <param key="dictionary" value="totalWellForms"/>
+>       <param key="nameindex" value="well-countrNames.sorted.lst"/>
         <param key="nbMaxNumError" value="20"/>
         <param key="nbMaxDenError" value="100"/>
         <param key="entityGoup" value="Total"/>

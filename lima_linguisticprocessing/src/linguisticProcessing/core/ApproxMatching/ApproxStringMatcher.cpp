@@ -294,12 +294,21 @@ LimaStatusCode ApproxStringMatcher::process(
   LINFO << "starting process ApproxStringMatcher";
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  std::string value;
-  if (metadata != 0) {
-    value = metadata->getMetaData("pays");
+  std::basic_string<wchar_t> countryName;
+  try {
+    if (metadata != 0) {
+      std::string countryNamestds = metadata->getMetaData("countryName");
+      QString countryNamels = QString::fromUtf8 (countryNamestds.c_str());
+      countryName = LimaStr2wcharStr(countryNamels);
+    }
+  }
+  catch (LinguisticProcessingException& ) {
+    // do nothing: try full set of names
   }
 #ifdef DEBUG_LP
-  LDEBUG << "ApproxStringMatcher::process: country from metadata= " << value;
+  QString name = wcharStr2LimaStr(countryName);
+  LDEBUG << "ApproxStringMatcher::buildPattern: process: country from metadata= "
+         << Lima::Common::Misc::limastring2utf8stdstring(name);
 #endif
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -331,9 +340,20 @@ LimaStatusCode ApproxStringMatcher::process(
   LinguisticGraphVertex currentVertex;
   currentVertex = anagraph->firstVertex();
   LinguisticGraph* g=anagraph->getGraph();
+  // Initalize set of names to search for
+  std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
+  if( countryName.length() == 0 ) {
+    nameRange.first = m_nameIndex.begin();
+    nameRange.second = m_nameIndex.end();
+  }
+  else {
+    nameRange = m_nameIndex.equal_range(countryName);
+    // nameRange.first = m_nameIndex.lower_bound(countryName);
+    // nameRange.second = m_nameIndex.upper_bound(countryName);
+  }
   for( ; currentVertex != anagraph->lastVertex() ; ) {
     Solution solution;
-    matchApproxTokenAndFollowers(*g, currentVertex, anagraph->lastVertex(), solution);
+    matchApproxTokenAndFollowers(*g, currentVertex, anagraph->lastVertex(), nameRange, solution);
     int len = solution.normalizedForm.length();
     if( solution.suggestion.nb_error <= (len*m_nbMaxNumError)/m_nbMaxDenError ) {
       createVertex(*g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData );
@@ -550,10 +570,11 @@ std::basic_string<wchar_t> ApproxStringMatcher::LimaStr2wcharStr( const QString&
       return std::basic_string<wchar_t>(warray, warray_len);
 }
 
-std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const QString& normalizedForm) const {
+std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_string<wchar_t>& normalizedForm) const {
   MORPHOLOGINIT;
     // convert normalizedForm into std::basic_string<wchar_t>
-    std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
+    // std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
+    std::basic_string<wchar_t> wpattern = normalizedForm;
     for(RegexMap::const_iterator regexIt = m_regexes.begin() ;
         regexIt != m_regexes.end() ; regexIt++ )
     {
@@ -577,9 +598,9 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     LinguisticGraph& g, 
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
+    std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     Solution& result) const
 {
-  typedef Lima::Common::AccessSuperWordIterator WIt;
   MORPHOLOGINIT;
   VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   result.suggestion.nb_error = 1000;
@@ -643,10 +664,9 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
   }
   
   // build pattern from word in lexicon
-  std::pair<WIt,WIt>  wordsIt = m_lexicon->getSuperWords("");
-  for( ; wordsIt.first != wordsIt.second ; (wordsIt.first)++ ) {
+  for( NameIndex::const_iterator wordIt = nameRange.first ; wordIt != nameRange.second ; wordIt++ ) {
     // get normalized form from lexicon
-    LimaString normalizedForm = *(wordsIt.first);
+    std::basic_string<wchar_t> normalizedForm = (*wordIt).second;
     std::basic_string<wchar_t> wpattern = buildPattern(normalizedForm);
     int nbMaxError = (normalizedForm.length()*m_nbMaxNumError)/m_nbMaxDenError;
     // Search for pattern in form
@@ -663,7 +683,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       tempResult.suggestion.nb_error = suggestion.nb_error;
       tempResult.vertices=std::deque<LinguisticGraphVertex>();
       tempResult.startPos = tokenStartPos.front();
-      tempResult.normalizedForm = normalizedForm;
+      tempResult.normalizedForm = wcharStr2LimaStr(normalizedForm);
       // exact position in text
       tempResult.suggestion.startPosition = -1;
       tempResult.suggestion.endPosition = -1;

@@ -76,6 +76,8 @@ LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Solution& solution);
 
 class LIMA_MORPHOLOGICANALYSIS_EXPORT ApproxStringMatcher : public MediaProcessUnit
 {
+  typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
+  typedef std::multimap< std::basic_string<wchar_t>, std::basic_string<wchar_t> > NameIndex;
 
 public:
   ApproxStringMatcher();
@@ -100,6 +102,7 @@ private:
     LinguisticGraph& g, 
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
+    std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     Solution& result) const;
 
   int findApproxPattern(
@@ -117,7 +120,7 @@ private:
 
   QString wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const;
   std::basic_string<wchar_t> LimaStr2wcharStr(const QString& limastr) const;
-  std::basic_string<wchar_t> buildPattern(const QString& normalizedForm) const;
+  std::basic_string<wchar_t> buildPattern(const std::basic_string<wchar_t>& normalizedForm) const;
 
   MediaId m_language;
   LinguisticCode m_neCode;
@@ -128,9 +131,7 @@ private:
   int m_nbMaxDenError;
   Common::MediaticData::EntityType m_entityType;
   Common::MediaticData::EntityGroupId m_entityGroupId;
-  typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
   RegexMap m_regexes;
-  typedef std::multimap< std::basic_string<wchar_t>, std::basic_string<wchar_t> > NameIndex;
   NameIndex m_nameIndex;
 };
 } // MorphologicAnalysis
