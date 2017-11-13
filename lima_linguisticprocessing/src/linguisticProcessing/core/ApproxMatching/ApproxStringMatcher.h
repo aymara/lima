@@ -71,6 +71,10 @@ typedef struct _Solution {
   uint64_t length;
 } Solution;
 
+typedef struct _SolutionCompare {
+  bool operator() (const Solution& s1, const Solution& s2);
+} SolutionCompare;
+
 LIMA_DATA_EXPORT  std::ostream& operator<<(std::ostream &os, const Solution& solution);
 LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Solution& solution);
 
@@ -78,6 +82,7 @@ class LIMA_MORPHOLOGICANALYSIS_EXPORT ApproxStringMatcher : public MediaProcessU
 {
   typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
   typedef std::multimap< std::basic_string<wchar_t>, std::basic_string<wchar_t> > NameIndex;
+  typedef std::set<Solution,SolutionCompare> OrderedSolution;
 
 public:
   ApproxStringMatcher();
@@ -92,18 +97,12 @@ public:
 
 
 private:
-  LimaStatusCode matchExactTokenAndFollowers(
-    LinguisticGraph& g, 
-    LinguisticGraphVertex vStart,
-    LinguisticGraphVertex vEnd,
-    std::multimap<int,Suggestion>& result) const;
-
   void matchApproxTokenAndFollowers(
     LinguisticGraph& g, 
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
-    Solution& result) const;
+    OrderedSolution& result) const;
 
   int findApproxPattern(
     const std::basic_string<wchar_t>& pattern, LimaString text,
@@ -113,7 +112,7 @@ private:
     LinguisticGraph& g, 
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
-    Solution& solution,
+    const Solution& solution,
     Lima::Common::AnnotationGraphs::AnnotationData* annotationData ) const;
 
   void readNames( const std::string& filepath );

@@ -108,7 +108,18 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
   return os;
 }
 
-
+bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
+  if( s1.suggestion.nb_error < s2.suggestion.nb_error ) {
+    return true;
+  }
+  if( s1.suggestion.nb_error > s2.suggestion.nb_error ) {
+    return false;
+  }
+  if( s1.startPos < s2.startPos ) {
+    return true;
+  }
+}
+  
 ApproxStringMatcher::ApproxStringMatcher() :
     m_language(0),
     m_neCode(0),
@@ -334,12 +345,10 @@ LimaStatusCode ApproxStringMatcher::process(
     annotationData->dumpFunction("SpecificEntity", new Lima::LinguisticProcessing::SpecificEntities::DumpSpecificEntityAnnotation());
   }
 
-  // Initalize list of suggestions, ordered by number of errors
-  std::multimap<int,Solution> result;
+  // Initalize list of suggestions, ordered by number of errors and position in text
+  OrderedSolution solutions;
+  // std::vector<Solution> result;
   
-  LinguisticGraphVertex currentVertex;
-  currentVertex = anagraph->firstVertex();
-  LinguisticGraph* g=anagraph->getGraph();
   // Initalize set of names to search for
   std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
   if( countryName.length() == 0 ) {
@@ -351,38 +360,37 @@ LimaStatusCode ApproxStringMatcher::process(
     // nameRange.first = m_nameIndex.lower_bound(countryName);
     // nameRange.second = m_nameIndex.upper_bound(countryName);
   }
-  for( ; currentVertex != anagraph->lastVertex() ; ) {
-    Solution solution;
-    matchApproxTokenAndFollowers(*g, currentVertex, anagraph->lastVertex(), nameRange, solution);
-    int len = solution.normalizedForm.length();
-    if( solution.suggestion.nb_error <= (len*m_nbMaxNumError)/m_nbMaxDenError ) {
-      createVertex(*g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData );
-
-      result.insert(std::pair<int,Solution>(solution.suggestion.nb_error,solution));
-      // skip vertices part of recognized pattern
-      currentVertex =solution.vertices.back();
+  LinguisticGraph & g = *(anagraph->getGraph());
+  matchApproxTokenAndFollowers(g, anagraph->firstVertex(), anagraph->lastVertex(), nameRange, solutions);
+#ifdef DEBUG_LP
+  LDEBUG << "ApproxStringMatcher::process: solution.size()=" << solutions.size();
+#endif
+  for( OrderedSolution::const_iterator sIt = solutions.begin() ; sIt != solutions.end() ; sIt++ ) {
+    // check that vertices of solution are still in graph
+#ifdef DEBUG_LP
+    LDEBUG << "ApproxStringMatcher::process: check " << *sIt;
+#endif
+    const Solution& solution= *sIt;
+    for( std::deque<LinguisticGraphVertex>::const_iterator vIt = solution.vertices.begin();
+        vIt != solution.vertices.end() ; vIt++ )
+    {
+#ifdef DEBUG_LP
+      LDEBUG << "ApproxStringMatcher::process: check vertex " << *vIt;
+#endif
+      LinguisticGraphOutEdgeIt outEdge,outEdge_end;
+      boost::tie (outEdge,outEdge_end)=out_edges(*vIt,g);
+      if( outEdge == outEdge_end )
+          break;
+      LinguisticGraphInEdgeIt inEdge,inEdge_end;
+      boost::tie (inEdge,inEdge_end)=in_edges(*vIt,g);
+      if( inEdge == inEdge_end )
+          break;
+      // TODO: check if( solution.suggestion.nb_error <= (len*m_nbMaxNumError)/m_nbMaxDenError ) ??
+      createVertex(g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData );
+      // result.push_back(solution);
     }
-    // following nodes
-    LinguisticGraphOutEdgeIt outEdge,outEdge_end;
-    boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,*g);
-    currentVertex =target(*outEdge,*g);
   }
   
-  // remove double ?
-  for (std::multimap<int, Solution>::iterator itr = result.begin(); itr != result.end(); ) {
-    /* ... process *itr ... */
-
-    /* Now, go skip to the first entry with a new key. */
-    multimap<int, Solution>::iterator curr = itr;
-    while (itr != result.end() && itr->first == curr->first) {
-      Solution& solution = (*itr).second;
-#ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::process() suggestion= " << solution;
-#endif
-       ++itr;
-    }
-  }  
-
 #ifdef DEBUG_LP
   LDEBUG << "ending process ApproxStringMatcher";
 #endif
@@ -393,7 +401,7 @@ void ApproxStringMatcher::createVertex(
     LinguisticGraph& g, 
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
-    Solution& solution,
+    const Solution& solution,
     AnnotationData* annotationData 
 ) const 
 {
@@ -480,83 +488,6 @@ void ApproxStringMatcher::createVertex(
   // pour qu'elle soit produite comme 'normalization' dans le logger
 }
 
-LimaStatusCode ApproxStringMatcher::matchExactTokenAndFollowers(
-    LinguisticGraph& g, 
-    LinguisticGraphVertex vStart,
-    LinguisticGraphVertex vEnd,
-    std::multimap<int,Suggestion>& result) const
-{
-  MORPHOLOGINIT;
-  typedef Lima::Common::AccessSuperWordIterator WIt;
-  VertexTokenPropertyMap tokenMap=get(vertex_token,g);
-
-  // VertexDataPropertyMap dataMap=get(vertex_data,g);
-    Token* currentToken=tokenMap[vStart];
-    LimaString form;
-    int max_length_element_in_lexicon = 49;
-    // TODO: check if it is the case of start or end node in graph...
-    if (currentToken==0)
-      return SUCCESS_ID;
-    int position = currentToken->position();
-#ifdef DEBUG_LP
-    LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() from token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
-#endif
-    // TODO: vérifier que vEndIt est le noeud 1 (sans token)
-    LinguisticGraphVertex currentVertex = vStart;
-    for( ; currentVertex != vEnd ; ) {
-    //for( ; vStartIt != vEndIt ; vStartIt++ ) {
-      currentToken=tokenMap[vStart];
-      if (currentToken!=0)
-      {
-        // currentToken->status()?
-#ifdef DEBUG_LP
-        LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() append token" << Lima::Common::Misc::limastring2utf8stdstring(currentToken->stringForm());
-#endif
-        form.append(currentToken->stringForm());
-#ifdef DEBUG_LP
-        LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() form= "
-               << Lima::Common::Misc::limastring2utf8stdstring(form);
-#endif
-      // get words in Lexicon with form as prefix
-        std::pair<WIt,WIt>  wordsIt = m_lexicon->getSuperWords(form);
-        for( ; wordsIt.first != wordsIt.second ; (wordsIt.first)++ ) 
-        {
-          Lima::LimaString word = *(wordsIt.first);
-#ifdef DEBUG_LP
-          LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() first superWords = "
-                 << Lima::Common::Misc::limastring2utf8stdstring(word);
-          LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers(): compare to "
-                 << Lima::Common::Misc::limastring2utf8stdstring(form) << "=" << word.compare(form);
-#endif
-          if( word.compare(form) == 0 ) {
-            Suggestion suggestion={
-              position,                     // startPsition
-              position+form.length(),       // endPosition
-              0                            // nb_error
-              // std::deque<LinguisticGraphVertex>(1,currentVertex),                            // nb_error
-              //m_lexicon->getIndex(form)
-            };   // id of term in Lexicon
-#ifdef DEBUG_LP
-            LDEBUG << "ApproxStringMatcher::matchExactTokenAndFollowers() success: " << suggestion;
-                  // << ", match_id=" << suggestion.match_id
-//                  << ", vertices= (" << suggestion.vertices.front() << "..." << suggestion.vertices.front() << ") }";
-#endif
-            result.insert(std::pair<int,Suggestion>(suggestion.nb_error,suggestion));
-            break;
-          }
-        }
-        if( form.length() > max_length_element_in_lexicon + (max_length_element_in_lexicon*m_nbMaxNumError)/m_nbMaxDenError ) {
-          break;
-        }
-      }
-      // following nodes
-      LinguisticGraphOutEdgeIt outEdge,outEdge_end;
-      boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
-      currentVertex =target(*outEdge,g);
-    }
-  return SUCCESS_ID;
-}
-
 QString ApproxStringMatcher::wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const {
   // convert std::basic_string<wchar_t> to QString
       return QString::fromWCharArray(wstring.c_str(),wstring.length());
@@ -599,28 +530,25 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
-    Solution& result) const
+    OrderedSolution& result) const
 {
   MORPHOLOGINIT;
   VertexTokenPropertyMap tokenMap=get(vertex_token,g);
-  result.suggestion.nb_error = 1000;
   // VertexDataPropertyMap dataMap=get(vertex_data,g);
 
-  // Build string where search will be done
-  // Build also a map of position of token in this string
+  // Build string (text) where search will be done
+  // Build also a queue of positions of tokens in this string
   // Because the string formed is neither identical to the original text
   // nor identical to concatenation of tokens
-  LimaString form;
-  // Position of tokens in form
+  LimaString text;
+  // Position of tokens in text
   std::deque<int> tokenStartPos;
   std::deque<int> tokenEndPos;
-  int max_length_element_in_lexicon = 49;
   Token* currentToken=tokenMap[vStart];
-  // position of form in original text
+  // position of text in original text
   uint64_t textEnd;
   // TODO: vérifier que vEndIt est le noeud 1 (sans token)
-  LinguisticGraphVertex currentVertex = vStart;
-  for( ; currentVertex != vEnd ; ) {
+  for( LinguisticGraphVertex currentVertex = vStart ; currentVertex != vEnd ; ) {
     currentToken=tokenMap[currentVertex];
 #ifdef DEBUG_LP
     LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() from " << currentVertex;
@@ -637,7 +565,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
         // TODO: add space when previous and current tokens are not contiguous
         if( currentToken->position() > textEnd) {
           currentStartPos++;
-          form.append(" ");
+          text.append(" ");
         }
         tokenStartPos.push_back(currentStartPos);
         tokenEndPos.push_back(currentStartPos+currentToken->length());
@@ -648,14 +576,11 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
             << tokenStartPos.back() << "," << tokenEndPos.back();
 #endif
       assert( currentToken->length() == (uint64_t)(currentToken->stringForm().length()));
-      form.append(currentToken->stringForm());
+      text.append(currentToken->stringForm());
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() form= "
-            << Lima::Common::Misc::limastring2utf8stdstring(form);
+      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() text= "
+            << Lima::Common::Misc::limastring2utf8stdstring(text);
 #endif
-    }
-    if( form.length() > max_length_element_in_lexicon + (max_length_element_in_lexicon*m_nbMaxNumError)/m_nbMaxDenError  ) {
-      break;
     }
     // following nodes
     LinguisticGraphOutEdgeIt outEdge,outEdge_end;
@@ -663,17 +588,19 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     currentVertex =target(*outEdge,g);
   }
   
-  // build pattern from word in lexicon
+  // search for names in text
   for( NameIndex::const_iterator wordIt = nameRange.first ; wordIt != nameRange.second ; wordIt++ ) {
-    // get normalized form from lexicon
+  // get normalized form of name from lexicon
     std::basic_string<wchar_t> normalizedForm = (*wordIt).second;
+    // build pattern from name
     std::basic_string<wchar_t> wpattern = buildPattern(normalizedForm);
+    // compute nb max error for name
     int nbMaxError = (normalizedForm.length()*m_nbMaxNumError)/m_nbMaxDenError;
-    // Search for pattern in form
+    // Search for pattern in text
     Suggestion suggestion;
-    int ret = findApproxPattern( wpattern, form, suggestion, nbMaxError);
-    // keep suggestion if best
-    if( (ret == 0) && (suggestion.nb_error < result.suggestion.nb_error) ) {
+    int ret = findApproxPattern( wpattern, text, suggestion, nbMaxError);
+    // keep all suggestions
+    if(ret == 0) {
 #ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers(): findApproxPattern()="
              << ret << "," << suggestion;
@@ -691,7 +618,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       int endInForm(0);
       std::deque<int>::const_iterator startPosIt= tokenStartPos.begin();
       std::deque<int>::const_iterator endPosIt= tokenEndPos.begin();
-      for( currentVertex = vStart ; currentVertex != vEnd ; ) {
+      for( LinguisticGraphVertex currentVertex = vStart ; currentVertex != vEnd ; ) {
         currentToken=tokenMap[currentVertex];
         startInForm = *startPosIt;
         endInForm = *endPosIt;
@@ -747,14 +674,14 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
         boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
         currentVertex =target(*outEdge,g);
       }
-      tempResult.form = form.mid(suggestion.startPosition,
+      tempResult.form = text.mid(suggestion.startPosition,
                              suggestion.endPosition-suggestion.startPosition);
       tempResult.length = suggestion.endPosition-suggestion.startPosition;
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() " << tempResult;
+      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers: tempResult= " << tempResult;
 #endif
-      if( (tempResult.suggestion.nb_error < result.suggestion.nb_error) ) {
-        result = tempResult;
+      if( (tempResult.suggestion.nb_error <= nbMaxError) ) {
+        result.insert(tempResult);
       }
     }
   }
