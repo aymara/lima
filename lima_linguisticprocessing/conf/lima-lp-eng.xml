@@ -4,12 +4,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/entities"/>
-      </list>
-    </group>
-    <!-- to be moved in approxModex configuration file???-->
-    <group name="Total">
-      <list name="entityList">
-        <item value="WELL"/>
+        <item value="ApproxNames-modex.xml/entities"/>
       </list>
     </group>
   </module>
@@ -18,6 +13,7 @@
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
         <item value="VerbNet-modex.xml/Processors"/>
+        <item value="ApproxNames-modex.xml/Processors"/>
       </list>
     </group>
 
@@ -79,7 +75,7 @@
         <item value="flattokenizer"/>
         <item value="fullTokenXmlLoggerTokenizer"/>
         <item value="approxStringMatcher"/>
-        <item value="fullTokenXmlLoggerApprox"/>
+        <item value="ApproxNamesModex"/>
         <!--item value="specificEntitiesApproxXmlLogger"/-->
         <!--item value="regexmatcher"/-->
         <item value="simpleWord"/>
@@ -247,28 +243,6 @@
         <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+\.[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
         <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-_]+)+\.(com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
       </map>
-    </group>
-    <group name="approxStringMatcher" class="ApproxStringMatcher">
-        <param key="dictionary" value="totalWellForms"/>
->       <param key="nameindex" value="well-countrNames.sorted.lst"/>
-        <param key="nbMaxNumError" value="20"/>
-        <param key="nbMaxDenError" value="100"/>
-        <param key="entityGoup" value="Total"/>
-        <param key="entityName" value="Total.WELL"/>
-        <param key="NPCategory" value="NP"/>
-        <param key="NPMicroCategory" value="NNP"/>
-        <map name="generalization">
-            <!-- Delete unbalanced parenthesis -->       
-            <!--entry key="^[^\(]*\)|\([^\)]*$" value=""/-->
-            <!-- Delete parentheses and content -->       
-            <!--entry key="\(.*\)" value=""/-->
-            <!-- Delete tailing star (company alias) -->       
-            <!--entry key="\\\*$" value=""/-->
-            <!-- Group blanks & dashes : A-6 => A( |-)?6 ~= A 6 -->
-            <!--entry key="[ |-|#]" value="( |-)?"/-->
-            <!-- Add 0 prefix to numerals : A-6 => A-0*6 ~= A-006 -->
-            <entry key="([0-9]+)" value="0*\1"/>
-        </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
@@ -946,6 +920,7 @@
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-eng"/>
         <item value="VerbNet-modex.xml/resources-eng"/>
+        <item value="ApproxNames-modex.xml/resources-eng"/>
       </list>
     </group>
 
@@ -961,10 +936,6 @@
     </group>
     <group name="globalFsaAccess" class="FsaAccess">
       <param key="keyFile" value="LinguisticProcessings/eng/dicoKey-eng.dat"/>
-    </group>
-    <group name="totalWellForms" class="FsaAccess">
-      <param key="keyFile" value="LinguisticProcessings/eng/totalWell-eng.dat"/>
-      <!--param key="keyFile" value="LinguisticProcessings/eng/totalWell-eng.toy.dat"/-->
     </group>
     <group name="dictionaryCode" class="DictionaryCode">
       <param key="codeFile" value="LinguisticProcessings/eng/code-eng.dat"/>
