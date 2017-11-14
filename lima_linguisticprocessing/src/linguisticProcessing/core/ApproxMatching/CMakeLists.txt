@@ -22,6 +22,7 @@ add_definitions(-DLIMA_APPROXSTRINGMATCHING_EXPORTING)
 
 SET(lima-lp-approxstringmatching_LIB_SRCS
    ApproxStringMatcher.cpp
+   NameIndexResource.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-approxstringmatching)

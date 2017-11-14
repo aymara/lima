@@ -33,8 +33,6 @@
 #include "common/misc/fsaStringsPool.h"
 #include "common/misc/AbstractAccessIterators.h"
 #include "common/Data/strwstrtools.h"
-#include <iostream>
-#include <fstream>
 #include <tre/regex.h>
 #include <boost/regex.hpp>
 //#include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
@@ -137,35 +135,6 @@ ApproxStringMatcher::~ApproxStringMatcher()
   // delete m_reader;
 }
 
-void ApproxStringMatcher::readNames( const std::string& filepath ) {
-  MORPHOLOGINIT;
-  std::ifstream names(filepath.data());
-  char strbuff[200];
-
-  for( int counter = 0 ; ; counter++ ) {
-    // lecture d'une ligne du fichier
-    names.getline(strbuff, 200, '\n' );
-    string line(strbuff);
-    if( line.size() == 0 ) {
-      LDEBUG << "end of list of words. counter= " << counter;
-      break;
-    }
-    else {
-      // 
-      Lima::LimaString namels = Lima::Common::Misc::utf8stdstring2limastring(line);
-      int i=namels.indexOf('\t');
-      if (i==-1) {
-        m_nameIndex.insert(std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(
-          L"",LimaStr2wcharStr( namels )));
-      }
-      else {
-        m_nameIndex.insert(std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(
-          LimaStr2wcharStr(namels.mid(i+1)),LimaStr2wcharStr(namels.left(i))));
-      }
-    }
-  }
-}
-
 void ApproxStringMatcher::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
@@ -222,19 +191,21 @@ void ApproxStringMatcher::init(
     throw InvalidConfiguration();
   }
   
-  // get dictionary of normalized forms
+  // get mapping country, names of normalized forms
   try
   {
-    std::string nameindexFilename =unitConfiguration.getParamsValueAtKey("nameindex");
-    readNames( nameindexFilename );
+    std::string nameindexId =unitConfiguration.getParamsValueAtKey("nameindex");
+    const AbstractResource* res=LinguisticResources::single().getResource(m_language,nameindexId);
+    m_nameIndex=static_cast<const NameIndexResource*>(res);
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) m_language;
+    LERROR << "no param 'nameindex' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
   
-  // get mapping country, names of normalized forms
+  /*
+  // get dictionary of normalized forms
   string dico;
   try
   {
@@ -245,6 +216,10 @@ void ApproxStringMatcher::init(
     LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
+  AbstractResource* res=LinguisticResources::single().getResource(m_language,dico);
+  AbstractAccessResource* lexicon = lexicon=static_cast<AbstractAccessResource*>(res);
+  m_lexicon = lexicon->getAccessByString();
+  */
 
   // get max edit distance 
   try
@@ -270,10 +245,6 @@ void ApproxStringMatcher::init(
     throw InvalidConfiguration();
   }
 
-  AbstractResource* res=LinguisticResources::single().getResource(m_language,dico);
-  AbstractAccessResource* lexicon = lexicon=static_cast<AbstractAccessResource*>(res);
-  m_lexicon = lexicon->getAccessByString();
-
   // get generalization pattern 
   try
   {
@@ -281,9 +252,9 @@ void ApproxStringMatcher::init(
     for (std::map <std::string, std::string >::const_iterator it = regexes.begin(); it != regexes.end(); it++)
     {
       QString patternQ = QString::fromUtf8 ((*it).first.c_str());
-      std::basic_string<wchar_t> patternWS = LimaStr2wcharStr(patternQ);
+      std::basic_string<wchar_t> patternWS = NameIndexResource::LimaStr2wcharStr(patternQ);
       QString substitutionQ = QString::fromUtf8 ((*it).second.c_str());
-      std::basic_string<wchar_t> substitutionWS = LimaStr2wcharStr(substitutionQ);
+      std::basic_string<wchar_t> substitutionWS = NameIndexResource::LimaStr2wcharStr(substitutionQ);
       m_regexes.insert( std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(patternWS,
                                     substitutionWS) );
     }
@@ -310,7 +281,7 @@ LimaStatusCode ApproxStringMatcher::process(
     if (metadata != 0) {
       std::string countryNamestds = metadata->getMetaData("countryName");
       QString countryNamels = QString::fromUtf8 (countryNamestds.c_str());
-      countryName = LimaStr2wcharStr(countryNamels);
+      countryName = NameIndexResource::LimaStr2wcharStr(countryNamels);
     }
   }
   catch (LinguisticProcessingException& ) {
@@ -352,13 +323,13 @@ LimaStatusCode ApproxStringMatcher::process(
   // Initalize set of names to search for
   std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
   if( countryName.length() == 0 ) {
-    nameRange.first = m_nameIndex.begin();
-    nameRange.second = m_nameIndex.end();
+    nameRange.first = m_nameIndex->begin();
+    nameRange.second = m_nameIndex->end();
   }
   else {
-    nameRange = m_nameIndex.equal_range(countryName);
-    // nameRange.first = m_nameIndex.lower_bound(countryName);
-    // nameRange.second = m_nameIndex.upper_bound(countryName);
+    nameRange = m_nameIndex->equal_range(countryName);
+    // nameRange.first = m_nameIndex->lower_bound(countryName);
+    // nameRange.second = m_nameIndex->upper_bound(countryName);
   }
   LinguisticGraph & g = *(anagraph->getGraph());
   matchApproxTokenAndFollowers(g, anagraph->firstVertex(), anagraph->lastVertex(), nameRange, solutions);
@@ -491,14 +462,6 @@ void ApproxStringMatcher::createVertex(
 QString ApproxStringMatcher::wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const {
   // convert std::basic_string<wchar_t> to QString
       return QString::fromWCharArray(wstring.c_str(),wstring.length());
-}
-
-std::basic_string<wchar_t> ApproxStringMatcher::LimaStr2wcharStr( const QString& limastr ) const {
-  // convert QString to std::basic_string<wchar_t>
-      wchar_t warray[limastr.length()+1];
-      int warray_len = limastr.toWCharArray(warray);
-      warray[warray_len]=0;
-      return std::basic_string<wchar_t>(warray, warray_len);
 }
 
 std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_string<wchar_t>& normalizedForm) const {

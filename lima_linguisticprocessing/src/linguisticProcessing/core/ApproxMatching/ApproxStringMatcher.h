@@ -30,6 +30,7 @@
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 //#include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 
+#include "NameIndexResource.h"
 
 namespace Lima
 {
@@ -81,7 +82,6 @@ LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Solution& solution);
 class LIMA_MORPHOLOGICANALYSIS_EXPORT ApproxStringMatcher : public MediaProcessUnit
 {
   typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
-  typedef std::multimap< std::basic_string<wchar_t>, std::basic_string<wchar_t> > NameIndex;
   typedef std::set<Solution,SolutionCompare> OrderedSolution;
 
 public:
@@ -115,8 +115,6 @@ private:
     const Solution& solution,
     Lima::Common::AnnotationGraphs::AnnotationData* annotationData ) const;
 
-  void readNames( const std::string& filepath );
-
   QString wcharStr2LimaStr(const std::basic_string<wchar_t>& wstring) const;
   std::basic_string<wchar_t> LimaStr2wcharStr(const QString& limastr) const;
   std::basic_string<wchar_t> buildPattern(const std::basic_string<wchar_t>& normalizedForm) const;
@@ -131,7 +129,7 @@ private:
   Common::MediaticData::EntityType m_entityType;
   Common::MediaticData::EntityGroupId m_entityGroupId;
   RegexMap m_regexes;
-  NameIndex m_nameIndex;
+  const NameIndexResource * m_nameIndex;
 };
 } // MorphologicAnalysis
 } // LinguisticProcessing
