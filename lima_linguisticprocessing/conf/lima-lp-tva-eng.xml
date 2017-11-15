@@ -4,12 +4,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/entities"/>
-      </list>
-    </group>
-    <!-- to be moved in approxModex configuration file???-->
-    <group name="Total">
-      <list name="entityList">
-        <item value="WELL"/>
+        <item value="ApproxNames-modex.xml/entities"/>
       </list>
     </group>
   </module>
@@ -17,6 +12,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="ApproxNames-modex.xml/Processors"/>
       </list>
     </group>
     <group name="query" class="ProcessUnitPipeline">
@@ -47,6 +43,9 @@
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
         <item value="fullTokenXmlLoggerTokenizer"/>
+        <item value="ApproxNamesModex"/>
+        <item value="fullTokenXmlLoggerApprox"/>
+        <item value="specificEntitiesApproxXmlLogger"/>
         <item value="simpleWord"/>
         <item value="fullTokenXmlLoggerSimpleWord"/>
         <item value="abbreviationSplitAlternatives"/>
@@ -113,7 +112,7 @@
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
         <item value="fullTokenXmlLoggerTokenizer"/>
-        <item value="approxStringMatcher"/>
+        <item value="ApproxNamesModex"/>
         <item value="fullTokenXmlLoggerApprox"/>
         <item value="specificEntitiesApproxXmlLogger"/>
         <!--item value="regexmatcher"/-->
@@ -141,13 +140,6 @@
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
       <param key="charChart" value="flatcharchart"/>
-    </group>
-    <group name="approxStringMatcher" class="ApproxStringMatcher">
-        <param key="dictionary" value="totalWellForms"/>
-        <param key="nbMaxNumError" value="20"/>
-        <param key="nbMaxDenError" value="100"/>
-        <param key="entityGoup" value="Total"/>
-        <param key="entityName" value="Total.WELL"/>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
@@ -351,6 +343,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-eng"/>
+        <item value="ApproxNames-modex.xml/resources-eng"/>
       </list>
     </group>
 
@@ -372,10 +365,6 @@
     </group>
     <group name="globalFsaAccess" class="FsaAccess">
       <param key="keyFile" value="LinguisticProcessings/eng/dicoKey-eng.dat"/>
-    </group>
-    <group name="totalWellForms" class="FsaAccess">
-      <param key="keyFile" value="LinguisticProcessings/eng/totalWell-eng.dat"/>
-      <!--param key="keyFile" value="LinguisticProcessings/eng/totalWell-eng.toy.dat"/-->
     </group>
     <group name="trigramMatrix" class="TrigramMatrix">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
