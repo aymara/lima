@@ -191,7 +191,7 @@ void ApproxStringMatcher::init(
     throw InvalidConfiguration();
   }
   
-  // get mapping country, names of normalized forms
+  // get index of names
   try
   {
     std::string nameindexId =unitConfiguration.getParamsValueAtKey("nameindex");
@@ -276,19 +276,19 @@ LimaStatusCode ApproxStringMatcher::process(
   LINFO << "starting process ApproxStringMatcher";
 
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  std::basic_string<wchar_t> countryName;
+  std::basic_string<wchar_t> indexName;
   try {
     if (metadata != 0) {
-      std::string countryNamestds = metadata->getMetaData("countryName");
-      QString countryNamels = QString::fromUtf8 (countryNamestds.c_str());
-      countryName = NameIndexResource::LimaStr2wcharStr(countryNamels);
+      std::string indexNametds = metadata->getMetaData("index");
+      QString indexNamels = QString::fromUtf8 (indexNametds.c_str());
+      indexName = NameIndexResource::LimaStr2wcharStr(indexNamels);
     }
   }
   catch (LinguisticProcessingException& ) {
     // do nothing: try full set of names
   }
 #ifdef DEBUG_LP
-  QString name = wcharStr2LimaStr(countryName);
+  QString name = wcharStr2LimaStr(indexName);
   LDEBUG << "ApproxStringMatcher::buildPattern: process: country from metadata= "
          << Lima::Common::Misc::limastring2utf8stdstring(name);
 #endif
@@ -322,14 +322,14 @@ LimaStatusCode ApproxStringMatcher::process(
   
   // Initalize set of names to search for
   std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
-  if( countryName.length() == 0 ) {
+  if( indexName.length() == 0 ) {
     nameRange.first = m_nameIndex->begin();
     nameRange.second = m_nameIndex->end();
   }
   else {
-    nameRange = m_nameIndex->equal_range(countryName);
-    // nameRange.first = m_nameIndex->lower_bound(countryName);
-    // nameRange.second = m_nameIndex->upper_bound(countryName);
+    nameRange = m_nameIndex->equal_range(indexName);
+    // nameRange.first = m_nameIndex->lower_bound(indexName);
+    // nameRange.second = m_nameIndex->upper_bound(indexName);
   }
   LinguisticGraph & g = *(anagraph->getGraph());
   matchApproxTokenAndFollowers(g, anagraph->firstVertex(), anagraph->lastVertex(), nameRange, solutions);
