@@ -500,7 +500,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
           default: ;
         }
       }
-      if (newChar->code() > 0xD800)
+      if (newChar->code().isHighSurrogate())
       {
         if (surrogates().find(newChar->code()) == surrogates().end())
         {
