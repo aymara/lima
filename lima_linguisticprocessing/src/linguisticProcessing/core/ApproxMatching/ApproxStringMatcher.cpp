@@ -95,7 +95,7 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
      << " vertices=";
   std::deque<LinguisticGraphVertex>::const_iterator it = solution.vertices.begin();
   if( it != solution.vertices.end() ) {
-       os << *it;
+       os << *(it++);
   }
   for( ; it != solution.vertices.end() ; it++ ) {
        os << "," << *it;
@@ -289,7 +289,7 @@ LimaStatusCode ApproxStringMatcher::process(
   }
 #ifdef DEBUG_LP
   QString name = wcharStr2LimaStr(indexName);
-  LDEBUG << "ApproxStringMatcher::buildPattern: process: country from metadata= "
+  LDEBUG << "ApproxStringMatcher::process: index from metadata= "
          << Lima::Common::Misc::limastring2utf8stdstring(name);
 #endif
 
@@ -469,6 +469,12 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
     // convert normalizedForm into std::basic_string<wchar_t>
     // std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
     std::basic_string<wchar_t> wpattern = normalizedForm;
+    // escape 'regex special character':
+    // '.', '^', '$', '|', '(', ')', '[', ']', '{', '}', '*', '+', '?', '\'
+    wide_regex esc(L"[.^$|()\\[\\]{}*+?\\\\]");
+    const std::basic_string<wchar_t> rep(L"\\\\&");
+    wpattern = boost::regex_replace(wpattern, esc, rep, boost::match_default | boost::format_sed);
+    // apply user supplied regex (generalization)
     for(RegexMap::const_iterator regexIt = m_regexes.begin() ;
         regexIt != m_regexes.end() ; regexIt++ )
     {
@@ -480,7 +486,9 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
                                       substitution, boost::match_default | boost::format_sed);
 #ifdef DEBUG_LP
       QString pattern = wcharStr2LimaStr(wpattern);
-      LDEBUG << "ApproxStringMatcher::buildPattern: pattern changed to  "
+      QString name = wcharStr2LimaStr(normalizedForm);
+      LDEBUG << "ApproxStringMatcher::buildPattern: name "
+             << Lima::Common::Misc::limastring2utf8stdstring(name) << " changed to "
              << Lima::Common::Misc::limastring2utf8stdstring(pattern);
 #endif
       break;
@@ -581,6 +589,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       int endInForm(0);
       std::deque<int>::const_iterator startPosIt= tokenStartPos.begin();
       std::deque<int>::const_iterator endPosIt= tokenEndPos.begin();
+      bool pushVertex=false;
       for( LinguisticGraphVertex currentVertex = vStart ; currentVertex != vEnd ; ) {
         currentToken=tokenMap[currentVertex];
         startInForm = *startPosIt;
@@ -595,6 +604,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
           if( tempResult.suggestion.startPosition == -1 ) {
             // If begin of matched segment is bounded by current token
             if( ( suggestion.startPosition >= startInForm ) && ( suggestion.startPosition < endInForm ) ){
+              pushVertex=true;
               tempResult.suggestion.startPosition = currentToken->position();
               tempResult.startPos = *startPosIt;
               LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() begin ="
@@ -606,7 +616,6 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
                 tempResult.suggestion.nb_error += (suggestion.startPosition - startInForm);
                 tempResult.startPos += (suggestion.startPosition - startInForm);
               }
-              tempResult.vertices.push_back(currentVertex);
             }
           }
           if( tempResult.suggestion.endPosition == -1 ) {
@@ -623,7 +632,8 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
               }
             }
           }
-          if( tempResult.suggestion.startPosition != -1 ) {
+          if( pushVertex ) {
+            LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers: push " << currentVertex;
             tempResult.vertices.push_back(currentVertex);
           }
           if( (tempResult.suggestion.startPosition != -1) && (tempResult.suggestion.endPosition != -1) ) {
@@ -658,7 +668,7 @@ int ApproxStringMatcher::findApproxPattern(
       QString patternQ = wcharStr2LimaStr(pattern);
       LDEBUG << "ApproxStringMatcher::findApproxPattern("
              << Lima::Common::Misc::limastring2utf8stdstring(patternQ) << ","
-             << Lima::Common::Misc::limastring2utf8stdstring(text) << ")";
+             << Lima::Common::Misc::limastring2utf8stdstring(text) << "), nbErr=" << nbMaxError;
       #endif
 
     // pattern buffer structure (result of compilation)
