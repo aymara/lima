@@ -125,7 +125,6 @@ bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
   if( s1.length < s2.length) {
     return false;
   }
-  assert( false);
   return true;
 }
   
@@ -440,11 +439,12 @@ void ApproxStringMatcher::createVertex(
  
   // Create token for this vertex
   StringsPoolIndex form = (*m_sp)[solution.form];
+  // Qu'est ce qu'on affecte comme chaîne et comme position à ce nouveau token ???
   Token* newToken = new Token(
       form,
       (*m_sp)[form],
-      solution.startPos,
-      solution.length);
+      solution.suggestion.startPosition,
+      solution.suggestion.endPosition - solution.suggestion.startPosition);
   // specify status for token
   TStatus tStatus;
   tStatus.reset();
@@ -612,7 +612,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
           sIt != suggestions.end() ; sIt++ ) {
         Solution tempResult;
         computeVertexMatches( g, vStart, vEnd, tokenStartPos, tokenEndPos, *sIt, tempResult);
-        // TODO: à revoir, peut petre qu'il faut recalculer la chaîne...)
+        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moement du calcul de suggestion.startPosition et suggestion.endPosition 
         tempResult.form = text.mid(sIt->startPosition,
                              sIt->endPosition-sIt->startPosition);
         tempResult.length = sIt->endPosition-sIt->startPosition;
