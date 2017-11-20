@@ -59,6 +59,26 @@
           operator="="
           right="Trombon 1"/>
   </testcase>
+  <testcase id="eng.approx.well.4" type="bloquant">
+    <call-parameters>
+      <param key="text" value="from ENAP Sipetrol for USD 33 MM."/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Indonesia"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.well.4.1" trace=".se.approx.xml"
+          comment="2 suggestions with same position and length, do not lead to crash..."
+          left="XPATH#//specific_entities/specific_entity[position=4][length=9]/type"
+          operator="contains"
+          right="Total.WELL"/>
+    <test id="eng.approx.well.4.2" trace=".se.approx.xml"
+          comment="value of well name is 'B' ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=9]/string"
+          operator="="
+          right="Trombon 1"/>
+  </testcase>
   <!--==================== tests Total.BLOCK ====================-->
   <testcase id="eng.approx.block.1" type="bloquant">
     <call-parameters>
