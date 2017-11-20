@@ -116,6 +116,17 @@ bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
   if( s1.startPos < s2.startPos ) {
     return true;
   }
+  if( s1.startPos > s2.startPos ) {
+    return false;
+  }
+  if( s1.length > s2.length) {
+    return true;
+  }
+  if( s1.length < s2.length) {
+    return false;
+  }
+  assert( false);
+  return true;
 }
   
 ApproxStringMatcher::ApproxStringMatcher() :
@@ -341,21 +352,38 @@ LimaStatusCode ApproxStringMatcher::process(
 #ifdef DEBUG_LP
     LDEBUG << "ApproxStringMatcher::process: check " << *sIt;
 #endif
-    const Solution& solution= *sIt;
+    const Solution solution= *sIt;
+    bool outOfGraph=false;
+#ifdef DEBUG_LP
+    std::deque<LinguisticGraphVertex>::const_iterator vIt2 = solution.vertices.begin();
+    if( vIt2 != solution.vertices.end() )
+      LDEBUG << *(vIt2++);
+    for( ; vIt2 != solution.vertices.end() ; vIt2++ )
+    {
+      LDEBUG << "," << *vIt2;
+    }
+#endif
     for( std::deque<LinguisticGraphVertex>::const_iterator vIt = solution.vertices.begin();
         vIt != solution.vertices.end() ; vIt++ )
     {
 #ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::process: check vertex " << *vIt;
+      LDEBUG << "ApproxStringMatcher::process: outOfGraph = " << outOfGraph << ", check vertex " << *vIt;
 #endif
+      // If one of vertices has no successor or no predecessor, it means is belongs no more to the graph
       LinguisticGraphOutEdgeIt outEdge,outEdge_end;
       boost::tie (outEdge,outEdge_end)=out_edges(*vIt,g);
-      if( outEdge == outEdge_end )
-          break;
+      if( outEdge == outEdge_end ) {
+        outOfGraph=true;
+      }
       LinguisticGraphInEdgeIt inEdge,inEdge_end;
       boost::tie (inEdge,inEdge_end)=in_edges(*vIt,g);
-      if( inEdge == inEdge_end )
-          break;
+      if( inEdge == inEdge_end ) {
+        outOfGraph=true;
+      }
+      if( outOfGraph )
+        break;
+    }
+    if( !outOfGraph ) {
       // TODO: check if( solution.suggestion.nb_error <= (len*m_nbMaxNumError)/m_nbMaxDenError ) ??
       createVertex(g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData );
       // result.push_back(solution);
@@ -568,20 +596,55 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     // compute nb max error for name
     int nbMaxError = (normalizedForm.length()*m_nbMaxNumError)/m_nbMaxDenError;
     // Search for pattern in text
-    Suggestion suggestion;
-    int ret = findApproxPattern( wpattern, text, suggestion, nbMaxError);
+    std::vector<Suggestion> suggestions;
+    int ret = findApproxPattern( wpattern, text, suggestions, nbMaxError);
     // keep all suggestions
     if(ret == 0) {
 #ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers(): findApproxPattern()="
-             << ret << "," << suggestion;
+             << ret;
+      for( std::vector<Suggestion>::const_iterator sIt = suggestions.begin() ; sIt != suggestions.end() ; sIt++ ) {
+        LDEBUG << *sIt;
+      }
 #endif
-      Solution tempResult;
+      // compute which vertices contribute to the match and compute (position,length) in original text
+      for( std::vector<Suggestion>::const_iterator sIt = suggestions.begin() ;
+          sIt != suggestions.end() ; sIt++ ) {
+        Solution tempResult;
+        computeVertexMatches( g, vStart, vEnd, tokenStartPos, tokenEndPos, *sIt, tempResult);
+        // TODO: à revoir, peut petre qu'il faut recalculer la chaîne...)
+        tempResult.form = text.mid(sIt->startPosition,
+                             sIt->endPosition-sIt->startPosition);
+        tempResult.length = sIt->endPosition-sIt->startPosition;
+        if( (tempResult.suggestion.nb_error <= nbMaxError) ) {
+          tempResult.normalizedForm = wcharStr2LimaStr(normalizedForm);
+          result.insert(tempResult);
+        }
+#ifdef DEBUG_LP
+        LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers: tempResult= " << tempResult;
+#endif
+      }
+    }
+  }
+}
 
+
+int ApproxStringMatcher::computeVertexMatches(
+    const LinguisticGraph& g, 
+    const LinguisticGraphVertex vStart,
+    const LinguisticGraphVertex vEnd,
+    const std::deque<int>& tokenStartPos,
+    const std::deque<int>& tokenEndPos,
+    const Suggestion& suggestion, Solution& tempResult) const
+{
+  MORPHOLOGINIT;
+//  VertexTokenPropertyMap tokenMap=get(vertex_token,g);
+//  Token* currentToken=tokenMap[vStart];
+  Token* currentToken=get(vertex_token,g,vStart);
+  
       tempResult.suggestion.nb_error = suggestion.nb_error;
       tempResult.vertices=std::deque<LinguisticGraphVertex>();
       tempResult.startPos = tokenStartPos.front();
-      tempResult.normalizedForm = wcharStr2LimaStr(normalizedForm);
       // exact position in text
       tempResult.suggestion.startPosition = -1;
       tempResult.suggestion.endPosition = -1;
@@ -591,7 +654,8 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       std::deque<int>::const_iterator endPosIt= tokenEndPos.begin();
       bool pushVertex=false;
       for( LinguisticGraphVertex currentVertex = vStart ; currentVertex != vEnd ; ) {
-        currentToken=tokenMap[currentVertex];
+        currentToken=get(vertex_token,g,currentVertex);
+        // currentToken=tokenMap[currentVertex];
         startInForm = *startPosIt;
         endInForm = *endPosIt;
         if (currentToken!=0)
@@ -647,22 +711,11 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
         boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
         currentVertex =target(*outEdge,g);
       }
-      tempResult.form = text.mid(suggestion.startPosition,
-                             suggestion.endPosition-suggestion.startPosition);
-      tempResult.length = suggestion.endPosition-suggestion.startPosition;
-#ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers: tempResult= " << tempResult;
-#endif
-      if( (tempResult.suggestion.nb_error <= nbMaxError) ) {
-        result.insert(tempResult);
-      }
-    }
-  }
 }
 
 int ApproxStringMatcher::findApproxPattern(
     const std::basic_string<wchar_t>& pattern, LimaString text,
-    Suggestion& suggestion, int nbMaxError) const {
+    std::vector<Suggestion>& suggestions, int nbMaxError) const {
   MORPHOLOGINIT;
 #ifdef DEBUG_LP
       QString patternQ = wcharStr2LimaStr(pattern);
@@ -721,19 +774,26 @@ int ApproxStringMatcher::findApproxPattern(
     LDEBUG << "ApproxStringMatcher::findApproxPattern: execution...";
 #endif
     */
-    int execStatus = regawnexec(&preg, tarray, tlength,
-                &amatch, params, eflags);
+    int offset=0;
+    int returnStatus=1;
+    int execStatus;
+    do {
+      execStatus = regawnexec(&preg, tarray+offset, tlength-offset, &amatch, params, eflags);
 #ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::findApproxPattern: execStatus=" << execStatus;
 #endif
-    if( execStatus == 0 ) {
-      regmatch_t* current_match=&(pmatch[0]);
-      suggestion.startPosition = current_match->rm_so;
-      suggestion.endPosition = current_match->rm_eo;
-      suggestion.nb_error = amatch.num_del+amatch.num_ins;
-      // suggestion.???
-    }
-    return execStatus;
+      if( execStatus == 0 ) {
+        returnStatus=0;
+        regmatch_t* current_match=&(pmatch[0]);
+        Suggestion suggestion;
+        suggestion.startPosition = current_match->rm_so+offset;
+        suggestion.endPosition = current_match->rm_eo+offset;
+        suggestion.nb_error = amatch.num_del+amatch.num_ins;
+        suggestions.push_back(suggestion);
+        offset += current_match->rm_eo;
+      }
+    } while ( (tlength-offset > 0) && (execStatus == 0) );
+    return returnStatus;
 }
 
 

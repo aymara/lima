@@ -104,9 +104,17 @@ private:
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     OrderedSolution& result) const;
 
+  int computeVertexMatches(
+    const LinguisticGraph& g, 
+    const LinguisticGraphVertex vStart,
+    const LinguisticGraphVertex vEnd,
+    const std::deque<int>& tokenStartPos,
+    const std::deque<int>& tokenEndPos,
+    const Suggestion& suggestion, Solution& tempResult) const;
+
   int findApproxPattern(
     const std::basic_string<wchar_t>& pattern, LimaString text,
-    Suggestion& suggestion, int nbMaxError) const;
+    std::vector<Suggestion>& suggestions, int nbMaxError) const;
 
   void createVertex(
     LinguisticGraph& g, 
