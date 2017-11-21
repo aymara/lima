@@ -61,7 +61,7 @@ class ConfigurationTree;
 /// 
 /// For each Node in the 'ConfigurationTree', there is a twin node
 /// for the qt modeL.
-class LIMA_GUI_EXPORT ConfigurationTreeModelNode 
+class ConfigurationTreeModelNode 
 {
   
 public:
@@ -99,7 +99,7 @@ private:
 /// \brief This is the TreeModel for the Qt model pattern.
 /// 
 /// It relies on a regular configuration tree to generate its nodes.
-class LIMA_GUI_EXPORT ConfigurationTreeModel : public QAbstractItemModel 
+class ConfigurationTreeModel : public QAbstractItemModel 
 {
   Q_OBJECT
 

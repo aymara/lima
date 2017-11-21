@@ -37,10 +37,14 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/tools/FileUtils.h"
 
-#include <QGuiApplication>
+#define QT_QML_DEBUG
+#include <QtQuick>
+#include <QApplication>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QtQml>
+#include <QtGlobal>
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -58,7 +62,7 @@ int main(int argc, char *argv[])
 #ifndef DEBUG_LIMA_GUI
   qputenv("QT_LOGGING_RULES", "*=false");
 #endif
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
   QCoreApplication::setOrganizationName("LIMA");
   QCoreApplication::setOrganizationDomain("lima.org");
   QCoreApplication::setApplicationName("LIMA GUI");
@@ -165,7 +169,7 @@ int main(int argc, char *argv[])
 
     LOGINIT("Lima::Gui");
     LINFO << "Config path is " << configPath;
-    LERROR << "Options set are" << parser.optionNames();
+    LDEBUG << "Options set are" << parser.optionNames();
     
     QML_REGISTER(LimaConfiguration);
     QML_REGISTER(ConfigurationTreeModel);
@@ -176,20 +180,26 @@ int main(int argc, char *argv[])
 
 
     LimaGuiApplication lga(parser);
-//     lga.selectLimaConfiguration("lima-lp-eng.xml");
-//     LimaConfigurationSharedPtr configuration = lga.configuration();
-//     ConfigurationNode* root = new ConfigurationNode(configuration->configuration());
-//     ConfigurationTree* tree = new ConfigurationTree(root);
-//     ConfigurationTreeModel* treeModel = new ConfigurationTreeModel(*tree);
-//     engine.rootContext()->setContextProperty("configurationModel", treeModel);
+    lga.selectLimaConfiguration("lima-lp-eng.xml");
+    LimaConfigurationSharedPtr configuration = lga.configuration();
+    ConfigurationNode* root = new ConfigurationNode(configuration->configuration());
+    ConfigurationTree* tree = new ConfigurationTree(root);
+    ConfigurationTreeModel* treeModel = new ConfigurationTreeModel(*tree);
+    engine.rootContext()->setContextProperty("configurationModel", treeModel);
 
     /// we add the app as a context property so that it can be accessed from anywhere,
     /// without instantiating in QML
     engine.rootContext()->setContextProperty("textAnalyzer", &lga);
 
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+    engine.load(QUrl(QStringLiteral("qrc:///qml/main.qml")));
+#else
+    engine.load(QUrl(QStringLiteral("qrc:///qml-old/main.qml")));
+#endif
+    
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
     app.setWindowIcon(QIcon(":qml/resources/lima.png"));
+#endif
     int result = app.exec();
     return result;
 

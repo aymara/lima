@@ -129,7 +129,7 @@ Lima::LimaChar Text::advance()
     _curPtr++;
     return 0;
   }
-  if (m_text[_curPtr] >= 0xD800)
+  if (m_text.at(_curPtr).isHighSurrogate())
   {
     _curPtr++;
   }
@@ -157,7 +157,7 @@ const CharClass* Text::currentClass() const
   {
     return m_charChart->charClass(0);
   }
-  if (m_text[_curPtr] >= 0xD800)
+  if (m_text[_curPtr].isHighSurrogate())
   {
     if (_curPtr+1 >= m_text.size())
     {
@@ -187,7 +187,7 @@ LimaString Text::token()
 #endif
   // Creates a new token
   uint64_t delta = _curPtr;
-  if (m_text[_curPtr] >= 0xD800 || _curPtr == _debPtr)
+  if (_curPtr < m_text.size() && (m_text.at(_curPtr).isHighSurrogate() || _curPtr == _debPtr))
   {
     delta++;
   }

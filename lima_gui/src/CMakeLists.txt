@@ -48,13 +48,87 @@ SET (lima_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
-qt5_add_resources(lima_SRCS resources.qrc)
+if (Qt5Core_FOUND)
+  if (Qt5Core_VERSION VERSION_GREATER 5.7.0)
+    qt5_add_resources(lima_SRCS resources.qrc)
+  else()
+    qt5_add_resources(lima_SRCS resources-old.qrc)
+  endif()
+endif()
 
+set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::Gui)
 
-add_executable(lima 
-  ${lima_SRCS} 
-  ${lima_MOC_OUTFILES}
+if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+  if(Qt5Core_VERSION VERSION_LESS 5.3)
+    message(WARNING "Cannot use windeployqt in Qt 5.2 and earlier")
+  else()
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+    include(WinDeployQt)
+    WinDeployQt(
+      COMPILER_RUNTIME 
+      TARGET lima 
+      QMLDIR qml-old
+      INCLUDE_MODULES ${QTLIBS} 
+    )
+    install(
+      DIRECTORY ${PROJECT_BINARY_DIR}/windeployqt/
+      DESTINATION ${CMAKE_INSTALL_BINDIR})
+  endif()
+endif()
+
+if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Release)
+  add_executable(lima WIN32
+    ${lima_SRCS} 
+    ${lima_MOC_OUTFILES}
+  )
+  
+target_link_libraries(lima 
+  lima-common-mediaticdata
+  lima-common-xmlconfigurationfiles
+  lima-common-tools
+  lima-common-data 
+  lima-common-factory
+  lima-common-misc
+  lima-common
+  lima-lp-annotationgraph
+  lima-lp-lineartextrepresentation
+  lima-lp-misc
+  lima-lp-tgv
+  lima-lp-linguisticdata
+  lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-regexmatcher
+  lima-lp-wordsensetagger
+  lima-lp-linguisticprocessing-core
+  lima-lp-analysisdict
+  lima-lp-eventanalyzer
+  lima-lp-corefsolver
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-morphologicanalysis
+  lima-lp-dictionary
+  lima-lp-easyxmldumper
+  lima-lp-analysisdumpers
+  lima-lp-textsegmentation
+  lima-lp-linguisticanalysisstructure
+  lima-lp-semanticanalysis
+  lima-lp-linguisticresources
+  lima-lp-entitytracker
+  lima-lp-flattokenizer
+  lima-lp-applyrecognizer
+  lima-lp-linguisticprocessors
+  lima-lp-postagger
+  lima-lp-automaton
+  lima-lp-analysishandlers
+  lima-lp-client
+  ${Qt5_LIBRARIES}
+  Qt5::WinMain
 )
+else()
+  add_executable(lima
+    ${lima_SRCS} 
+    ${lima_MOC_OUTFILES}
+  )
 target_link_libraries(lima 
   lima-common-mediaticdata
   lima-common-xmlconfigurationfiles
@@ -96,6 +170,8 @@ target_link_libraries(lima
   lima-lp-client
   ${Qt5_LIBRARIES}
 )
+endif()
+
 #   lima-common
 #   lima-linguisticprocessing
 

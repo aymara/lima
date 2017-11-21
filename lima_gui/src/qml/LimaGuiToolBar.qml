@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
@@ -67,14 +67,20 @@ ToolBar {
       }
     }
 
-//     ToolButton {
-// 
-//       text: qsTr("Configuration")
-// 
-//       onClicked: {
-//         configurationView.open()
-//       }
-//     }
+    ToolSeparator {
+
+      height: parent.height
+      width: 1
+    }
+    
+    ToolButton {
+
+      text: qsTr("Configuration")
+
+      onClicked: {
+        configurationView.open()
+      }
+    }
 
     ToolButton {
       id: additionalButton

@@ -18,6 +18,7 @@
 */
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QtQml>
 
 #include "treemodel.h"
 
@@ -25,17 +26,16 @@
 
 #define QML_EXPORT_PACKAGE "hello"
 #define QML_REGISTER(type) qmlRegisterType<type>(QML_EXPORT_PACKAGE, 1, 0, #type)
-
 int main(int argc, char *argv[])
 {
-  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+//   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QGuiApplication app(argc, argv);
 
   QQmlApplicationEngine engine;
 
   QML_REGISTER(TreeModel);
 
-  engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+  engine.load(QUrl(QLatin1String("qrc:///main.qml")));
   if (engine.rootObjects().isEmpty())
     return -1;
 

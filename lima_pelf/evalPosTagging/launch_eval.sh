@@ -4,9 +4,27 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-if (($#==0)); then 
-    echo usage: launch_eval.sh lang1 lang2 ...
-fi
+command -v SVMTlearn >/dev/null 2>&1 || { echo >&2 "I require SVMTlearn but it's not in the path  Aborting."; exit 1; }
+command -v svm_learn >/dev/null 2>&1 || { echo >&2 "I require svm_learn but it's not in the path  Aborting."; exit 1; }
+
+usage()
+{
+  program=`basename $0`
+  cat<<EOF
+
+Usage: $program [OPTION] language1 language2 ...
+Evaluate LIMA PoS tagging on several languages.
+
+  Options:
+  -n, --notrain              Skip the PoT tagger training step. It must have been done previously
+  -h, --help                 Shows this help.
+
+EOF
+  exit 1
+}
+
+
+source $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/lima-pelf-functions.sh
 
 nbParts=10
 
@@ -14,47 +32,86 @@ nbParts=10
 EVAL_PATH=`dirname $0`
 
 # svm_light location:
-svm_light="/usr/local/bin";
+svm_light=$(dirname $(command -v svm_learn ))
 # svm_learn location (perl version):
 svm_learn="SVMTlearn"
 # svm_learn parameters:
 # sed -i "s/use lib \".*\/lib/\";/use lib \"$EVAL_PATH\/SVM\/SVMTool-1.3.1\/lib\/\";/g" SVM/SVMTool-1.3.1/bin/SVMTlearn
+
+
 # make sure training-sets exists
-rm -Rf training-sets
+# rm -Rf training-sets
 mkdir -p training-sets
 
-function readMethod() {
-  dynsvmtool=`head -n 70 $LIMA_CONF/lima-lp-$1.xml | grep '"DynamicSvmToolPosTagger"/>'`
-  svmtool=`head -n 70 $LIMA_CONF/lima-lp-$1.xml | grep '"SvmToolPosTagger"/>'`
-  viterbi=`head -n 70 $LIMA_CONF/lima-lp-$1.xml | grep '"viterbiPostagger-freq"/>'`
+notrain=false
 
-  if [ -n "$svmtool" ]; then
-    echo "svmtool"
-  elif [ -n "$viterbi" ]; then
-    echo "viterbi"
-  elif [ -n "$dynsvmtool" ]; then
-    echo "dynsvmtool"
-  else
-    echo "none"
-  fi
-}
+# Execute getopt on the arguments passed to this program, identified by the special character $@
+PARSED_OPTIONS=$(getopt -n "$0"  -o nh --long "notrain,help"  -- "$@")
+
+#Bad arguments, something has gone wrong with the getopt command.
+if [ $? -ne 0 ];
+then
+  exit 1
+fi
+
+# A little magic, necessary when using getopt.
+eval set -- "$PARSED_OPTIONS"
+
+# Now goes through all the options with a case and using shift to analyse 1 argument at a time.
+#$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
+while true;
+do
+  case "$1" in
+
+#     -1|--one)
+#       echo "One"
+#       shift;;
+
+    -n|--notrain)
+      notrain=true
+      shift;;
+
+    -h|--help)
+      usage
+     shift;;
+
+    --)
+      shift
+      break;;
+  esac
+done
+
 
 for lang in $*; do
+echo "lang is $lang"
     addOption=""
     case $lang in
-        fre) corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/fre/corpus/corpus_fre.txt; conf=config-minimale-fre.SVMT ;;
-        eng) addOption="-s . -n $nbParts"; corpus=$LIMA_RESOURCES/Disambiguation/corpus_eng_merge.txt conf=config-minimale-eng.SVMT;;
+        eng) 
+            addOption="-s . -n $nbParts"
+            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":") 
+            corpus=$corpusFile  
+            conf=config-minimale-eng.SVMT;;
+        fre)             
+            addOption="-n $nbParts"
+            corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")  
+            conf=config-minimale-fre.SVMT ;;
+        por) 
+            addOption="-s PU+FORTE -n $nbParts"
+            corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
+            conf=config-minimale-por.SVMT ;;
     esac
     method=$(readMethod $lang)
     echo "treating $lang.$method... (see ${lang}.${method}.log)"
 
-    rm -Rf results.$lang.$method
 
-
-    $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $LIMA_CONF/$conf $svm_light $svm_learn
-    if  [[ $? -ne 0 ]]; then
-      echo "tfcv error, exiting"
-      exit 1
+    confFile=$(findFileInPaths $LIMA_CONF $conf ":")
+    
+    if [ $notrain = true ]
+    then
+        $EVAL_PATH/tfcv.py -l $lang $addOption $corpus $confFile $svm_light $svm_learn
+    else
+        rm -Rf results.$lang.$method
+        $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $confFile $svm_light $svm_learn
     fi
 
     echo results.$lang.$method
@@ -65,8 +122,8 @@ for lang in $*; do
     echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"` 
 
     mkdir -p results.$lang.$method/data
-#     echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
+    echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
     $EVAL_PATH/problemesAlignement.sh $lang $method
-#     echo "$EVAL_PATH/detailed-res.sh $nbParts $lang"
+    echo "$EVAL_PATH/detailed-res.sh $nbParts $lang"
     $EVAL_PATH/detailed-res.sh $nbParts $lang 
 done

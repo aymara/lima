@@ -16,7 +16,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-import QtQuick 2.7
+import QtQuick 2.5
 
 Page1Form {
     button1.onClicked: {

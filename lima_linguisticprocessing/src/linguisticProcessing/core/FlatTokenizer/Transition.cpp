@@ -191,9 +191,8 @@ void Transition::applySettings(Text& text) const
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
 #endif
-  std::vector<Setting>::const_iterator it, it_end;
-  it = m_settings.begin(); it_end = m_settings.end();
-  for (; it != it_end; it++)
+  for (auto it = m_settings.cbegin(), it_end = m_settings.end(); 
+       it != it_end; it++)
   {
 #ifdef DEBUG_LP
     LDEBUG << "Putting status setting to text: " << Transition::SettingNames[*it];

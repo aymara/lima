@@ -4,284 +4,266 @@
   <chaine type="nominale">
     <filtre ID="FN1">
       <nom>PRON-SUJET</nom>
-      <categorie>PRP</categorie>
+      <categorie>PRON</categorie>
     </filtre>
     <filtre ID="FN2">
       <nom>PRON-OBJET</nom>
-      <categorie>PRP</categorie>
+      <categorie>PRON</categorie>
     </filtre>
     <filtre ID="FN3">
       <nom>NC-ANNNP-PRE</nom>
-      <categorie>NN</categorie>
-      <categorie>NNS</categorie>
+      <categorie>NOUN</categorie>
     </filtre>
     <filtre ID="FN4">
       <nom>NC-ANNNP-POST</nom>
-      <categorie>NN</categorie>
-      <categorie>NNS</categorie>
+      <categorie>NOUN</categorie>
     </filtre>
     <filtre ID="FN5">
       <nom>NC</nom>
-      <categorie>NN</categorie>
-      <categorie>NNS</categorie>
-      <categorie>CD</categorie>
+      <categorie>NOUN</categorie>
+      <categorie>NUM</categorie>
       <categorie>UNK</categorie>
       <categorie>SYM</categorie>
     </filtre>
     <filtre ID="FN6">
       <nom>NC-UNITE-MESURE</nom>
-      <categorie>NN</categorie>
-      <categorie>NNS</categorie>
+      <categorie>NOUN</categorie>
     </filtre>
     <filtre ID="FN7">
       <nom>NP</nom>
-      <categorie>NNP</categorie>
-      <categorie>NNPS</categorie>
+      <categorie>PROPN</categorie>
     </filtre>
     <filtre ID="FN8">
       <nom>NOM-JOUR</nom>
-      <categorie>NN</categorie>
+      <categorie>NOUN</categorie>
     </filtre>
     <filtre ID="FN9">
       <nom>NOM-MOIS</nom>
-      <categorie>NN</categorie>
+      <categorie>NOUN</categorie>
     </filtre>
     <filtre ID="FN10">
       <nom>VERBE-LEXICAL-PART-PASS</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FN30">
       <nom>VERBE-LEXICAL-GERONDIF</nom>
-      <categorie>VBG</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FN11">
       <nom>DETERMINANTS</nom>
-      <categorie>DT</categorie>
+      <categorie>DET</categorie>
     </filtre>
     <filtre ID="FN12">
       <nom>PREDETERMINANTS</nom>
-      <categorie>DT</categorie>
+      <categorie>DET</categorie>
     </filtre>
     <filtre ID="FN13">
       <nom>POSTDETERMINANTS</nom>
-      <categorie>DT</categorie>
+      <categorie>DET</categorie>
     </filtre>
     <filtre ID="FN14">
       <nom>DETERMINANTS-INTERRO-REL</nom>
-      <categorie>DT</categorie>
+      <categorie>DET</categorie>
     </filtre>
     <filtre ID="FN15">
       <nom>ADV-MODIF-ADV-ADJ</nom>
-      <categorie>RBR</categorie>
-      <categorie>RBS</categorie>
-      <categorie>NOT</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN16">
       <nom>ADV-CONSTRUCT-APPOS</nom>
-      <categorie>RB</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN17">
       <nom>ADV-FIN-CN</nom>
-      <categorie>RB</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN18">
       <nom>ADV-NEG</nom>
-      <categorie>NOT</categorie>
+      <categorie>PART</categorie>
     </filtre>
     <filtre ID="FN19">
       <nom>ADV-GENERAL</nom>
-      <categorie>RB</categorie>
-      <categorie>RBS</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN20">
       <nom>ADV-EXIST</nom>
-      <categorie>EX</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN21">
       <nom>ADV-COMPAR</nom>
-      <categorie>RBR</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN22">
       <nom>PRON-ADV-INTERRO-REL</nom>
-      <categorie>WRB</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN23">
       <nom>PRON-ADV-REL</nom>
-      <categorie>IN</categorie>
-      <categorie>WRB</categorie>
+      <categorie>ADP</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN24">
       <nom>PREP</nom>
-      <categorie>IN</categorie>
+      <categorie>ADP</categorie>
     </filtre>
     <filtre ID="FN25">
       <nom>PREP-COMPAR</nom>
-      <categorie>RBR</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FN26">
       <nom>ADJ-GEN</nom>
-      <categorie>JJ</categorie>
+      <categorie>ADJ</categorie>
       <categorie>JJS</categorie>
     </filtre>
     <filtre ID="FN27">
       <nom>ADJ-COMPAR</nom>
-      <categorie>JJR</categorie>
+      <categorie>ADJ</categorie>
     </filtre>
     <filtre ID="FN29">
       <nom>INTERJ</nom>
-      <categorie>UH</categorie>
+      <categorie>INTJ</categorie>
     </filtre>
     <filtre ID="FN31">
       <nom>CONJONCTION-DE-COORDINATION</nom>
-      <categorie>CC</categorie>
+      <categorie>CONJ</categorie>
     </filtre>
    </chaine>
    <chaine type="verbale">
     <filtre ID="FV1">
       <nom>PRON-OBJ</nom>
-      <categorie>PRP</categorie>
+      <categorie>PRON</categorie>
     </filtre>
     <filtre ID="FV2">
       <nom>PRON-REFL</nom>
-      <categorie>PRP</categorie>
+      <categorie>PRON</categorie>
     </filtre>
     <filtre ID="FV3">
       <nom>VERBE-LEX-INDIC</nom>
-      <categorie>VB</categorie>
-      <categorie>VBD</categorie>
-      <categorie>VBZ</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV4">
       <nom>VERBE-BE-INDIC</nom>
-      <categorie>VBP</categorie>
-      <categorie>VBZ</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV5">
       <nom>VERBE-DO-INDIC</nom>
-      <categorie>VBP</categorie>
-      <categorie>VBZ</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV6">
       <nom>VERBE-HAVE-INDIC</nom>
-      <categorie>VBP</categorie>
-      <categorie>VBZ</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV7">
       <nom>VERBE-AUX-MOD</nom>
-      <categorie>MD</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV8">
       <nom>VERBE-LEX-PROG</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV9">
       <nom>VERBE-LEX-PART-PRES</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV10">
       <nom>VERBE-LEX-PART-PASS</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV11">
       <nom>VERBE-LEX-GER</nom>
-      <categorie>VBG</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV12">
       <nom>VERBE-BE-PROG</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV13">
       <nom>VERBE-BE-PART-PRES</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV14">
       <nom>VERBE-BE-PART-PASS</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV15">
       <nom>VERBE-BE-GER</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV16">
       <nom>VERBE-DO-PROG</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV17">
       <nom>VERBE-DO-PART-PRES</nom>
-      <categorie>VBG</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV18">
       <nom>VERBE-DO-PART-PASSE</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV19">
       <nom>VERBE-DO-GER</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV20">
       <nom>VERBE-LEX-INF</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV21">
       <nom>VERBE-BE-INF</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV22">
       <nom>VERBE-DO-INF</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV23">
       <nom>VERBE-HAVE-INF</nom>
-      <categorie>VB</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV24">
       <nom>VERBE-HAVE-PROG</nom>
-      <categorie>300</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV25">
       <nom>VERBE-HAVE-PART-PRES</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV26">
       <nom>VERBE-HAVE-PART-PASS</nom>
-      <categorie>VBN</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV27">
       <nom>VERBE-HAVE-GER</nom>
-      <categorie>VBG</categorie>
+      <categorie>VERB</categorie>
     </filtre>
     <filtre ID="FV28">
       <nom>ADV-MODIF-ADV-ADJ</nom>
-      <categorie>RB</categorie>
-      <categorie>RBR</categorie>
-      <categorie>RBS</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FV29">
       <nom>ADV-NEG</nom>
-      <categorie>NOT</categorie>
+      <categorie>PART</categorie>
     </filtre>
     <filtre ID="FV30">
       <nom>ADV-GEN</nom>
-      <categorie>RB</categorie>
-      <categorie>RBS</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FV31">
       <nom>ADV-COMPAR</nom>
-      <categorie>RBR</categorie>
+      <categorie>ADV</categorie>
     </filtre>
     <filtre ID="FV32">
       <nom>PREP</nom>
-      <categorie>IN</categorie>
-      <categorie>TO</categorie>
-      <categorie>RP</categorie>
+      <categorie>ADP</categorie>
     </filtre>
     <filtre ID="FV33">
       <nom>PREP-INF</nom>
-      <categorie>TO</categorie>
+      <categorie>ADP</categorie>
     </filtre>
     <filtre ID="FV34">
       <nom>PARTICULE</nom>
-      <categorie>RP</categorie>
+      <categorie>ADP</categorie>
     </filtre>
    </chaine>
    <matrice type="nominale">

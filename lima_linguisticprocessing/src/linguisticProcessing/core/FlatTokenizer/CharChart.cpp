@@ -107,10 +107,10 @@ CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(),
   m_unicodeCategories2LimaClasses.insert("Separator_Space","c_b");
   m_unicodeCategories2LimaClasses.insert("Separator_Line","c_par");
   m_unicodeCategories2LimaClasses.insert("Separator_Paragraph","c_par");
-//   m_unicodeCategories2LimaClasses.insert("Other_Control","");
+  m_unicodeCategories2LimaClasses.insert("Other_Control","c_b");
 //   m_unicodeCategories2LimaClasses.insert("Other_Format","");
 //   m_unicodeCategories2LimaClasses.insert("Other_Surrogate","");
-//   m_unicodeCategories2LimaClasses.insert("Other_PrivateUse","");
+  m_unicodeCategories2LimaClasses.insert("Other_PrivateUse","c_hyphen");
   m_unicodeCategories2LimaClasses.insert("Other_NotAssigned","unknwn");
   m_unicodeCategories2LimaClasses.insert("Letter_Uppercase","c_M");
   m_unicodeCategories2LimaClasses.insert("Letter_Lowercase","c_m");
@@ -500,7 +500,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
           default: ;
         }
       }
-      if (newChar->code() > 0xD800)
+      if (newChar->code().isHighSurrogate())
       {
         if (surrogates().find(newChar->code()) == surrogates().end())
         {

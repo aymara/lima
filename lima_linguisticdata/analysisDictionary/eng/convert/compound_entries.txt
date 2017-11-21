@@ -2,12 +2,12 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'m">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -16,15 +16,15 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -33,12 +33,12 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -47,15 +47,15 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -64,15 +64,15 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -81,15 +81,15 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -98,12 +98,12 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -112,12 +112,12 @@
   <concat>
     <c form="is">
       <i l="be">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -126,12 +126,12 @@
   <concat>
     <c form="was">
       <i l="was" n="be">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -140,12 +140,12 @@
   <concat>
     <c form="were">
       <i l="were" n="be">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -154,12 +154,12 @@
   <concat>
     <c form="are">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -168,12 +168,12 @@
   <concat>
     <c form="I">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -182,12 +182,12 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -196,12 +196,12 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -210,12 +210,12 @@
   <concat>
     <c form="they">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -224,12 +224,12 @@
   <concat>
     <c form="have">
       <i>
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -238,12 +238,12 @@
   <concat>
     <c form="has">
       <i l="have">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -252,12 +252,12 @@
   <concat>
     <c form="had">
       <i l="had" n="have">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -266,12 +266,12 @@
   <concat>
     <c form="do">
       <i>
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -280,12 +280,12 @@
   <concat>
     <c form="does">
       <i l="does" n="do">
-        <p v="VBZ"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -294,12 +294,12 @@
   <concat>
     <c form="did">
       <i l="did" n="do">
-        <p v="VBD"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -308,12 +308,12 @@
   <concat>
     <c form="ca">
       <i l="can">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -322,12 +322,12 @@
   <concat>
     <c form="can">
       <i l="can">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="not">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -336,12 +336,12 @@
   <concat>
     <c form="could">
       <i l="could">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -350,12 +350,12 @@
   <concat>
     <c form="might">
       <i>
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -364,12 +364,12 @@
   <concat>
     <c form="must">
       <i>
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -378,12 +378,12 @@
   <concat>
     <c form="need">
       <i>
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -392,12 +392,12 @@
   <concat>
     <c form="ought">
       <i>
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -406,12 +406,12 @@
   <concat>
     <c form="sha">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -420,12 +420,12 @@
   <concat>
     <c form="should">
       <i>
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -434,12 +434,12 @@
   <concat>
     <c form="wo">
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -448,12 +448,12 @@
   <concat>
     <c form="would">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="NOT"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -462,15 +462,15 @@
   <concat>
     <c form="i">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -479,15 +479,15 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -496,15 +496,15 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -513,15 +513,15 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -530,15 +530,15 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -547,15 +547,15 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -564,15 +564,15 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="will">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -581,12 +581,12 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'re">
       <i l="be">
-        <p v="VBP"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -595,12 +595,12 @@
   <concat>
     <c form="I">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -609,15 +609,15 @@
   <concat>
     <c form="you">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -626,15 +626,15 @@
   <concat>
     <c form="he">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -643,15 +643,15 @@
   <concat>
     <c form="she">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -660,12 +660,12 @@
   <concat>
     <c form="it">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -674,15 +674,15 @@
   <concat>
     <c form="we">
       <i>
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -691,15 +691,15 @@
   <concat>
     <c form="they">
       <i l="they">
-        <p v="PRP"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
       <i l="have">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -708,13 +708,13 @@
   <concat>
     <c form="that">
       <i l="that">
-        <p v="THATWDT"/>
-        <p v="THATPRP"/>
+        <p v="DET"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>
@@ -723,12 +723,12 @@
   <concat>
     <c form="there">
       <i>
-        <p v="EX"/>
+        <p v="PRON"/>
       </i>
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VB"/>
+        <p v="VERB"/>
       </i>
     </c>
   </concat>

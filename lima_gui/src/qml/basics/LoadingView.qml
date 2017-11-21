@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 
 //! Simple widget with a loading gif to shows the loading
 
@@ -34,7 +34,7 @@ Rectangle {
   AnimatedImage {
     id: animation;
 
-    source: "qrc:qml/resources/Spinner.gif";
+    source: "qrc:///qml/resources/Spinner.gif";
     anchors.centerIn: parent
     scale: 0.5
   }

@@ -28,6 +28,10 @@
 #include "LimaGuiCommon.h"
 #include <common/LimaCommon.h>
 
+#include <stdlib.h>  
+#include <stdio.h>  
+#include <time.h>  
+
 namespace Lima 
 {
 namespace Gui 
@@ -67,7 +71,6 @@ int randint(int a, int b)
 /// The range is 8 - F, to have brighter colors
 std::vector<std::string> generateDistinctColors(int quantity) 
 {
-
   srand(time(NULL));
 
   std::vector<std::string> colors;

@@ -42,6 +42,7 @@ else ()
       COMMAND ${SVMT_LEARN} config-minimale.SVMT
       DEPENDS 
         config-minimale.SVMT
+        ${CMAKE_CURRENT_SOURCE_DIR}/../corpus_fre.txt
       COMMENT "Compiles fre SVMTool model"
       VERBATIM
     )

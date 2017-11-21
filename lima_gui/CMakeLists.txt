@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(lima_gui)
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LIMA_GUI" )
 
@@ -50,6 +50,18 @@ include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Test Qml Quick QuickTest Gui )
 include_directories(${Qt5_INCLUDES})
 
+add_definitions( -DBOOST_ALL_NO_LIB )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+set( Boost_USE_STATIC_LIBS OFF )
+set( Boost_USE_MULTITHREADED ON )
+set( Boost_USE_STATIC_RUNTIME OFF )
+set( BOOST_LIB_DIAGNOSTIC )
+FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
+message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
+include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+
+
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
 IF(LIMACOMMON_FOUND)
   include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
@@ -67,10 +79,10 @@ ELSE (LIMALP_FOUND)
   MESSAGE(FATAL_ERROR "Could not find lima_linguisticprocessing")
 ENDIF(LIMALP_FOUND)
 
-add_subdirectory(conf)
 add_subdirectory(src)
 add_subdirectory(test)
 
+add_subdirectory(conf)
 ########### packaging ###############
 include(InstallRequiredSystemLibraries)
 
@@ -106,4 +118,5 @@ endif()
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
 
 INCLUDE(CPack)
+
 

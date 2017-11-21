@@ -1,13 +1,17 @@
-#init:
-#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+init:
+ - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
+#  QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
+#  BOOST_ROOT: 'C:\Libraries\boost_1_59_0'
+#  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_59_0\lib64-msvc-14.0'
+  #VCINSTALLDIR: 'c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\'
 environment:
   LIMA_DIST: c:\d
   LIMA_CONF: 'c:\d\share\config\lima'
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
   QTDIR: 'C:\Qt\5.5\msvc2013_64'
-  BOOST_ROOT: 'C:\Libraries\boost'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost\lib64-msvc-12.0'
+  BOOST_ROOT: 'C:\Libraries\boost_1_58_0'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_58_0\lib64-msvc-12.0'
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
@@ -17,6 +21,7 @@ environment:
 
 configuration: Release
 
+#os: Visual Studio 2015
 os: Visual Studio 2013
 
 install:
@@ -29,7 +34,9 @@ install:
 build_script:
   - mkdir c:\b
   - cd c:\b
-  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" c:/projects/lima
+  - echo %BOOST_ROOT%
+  - echo %BOOST_LIBRARYDIR%
+  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
   - cmake --build . --config Release
 
 on_success:
@@ -51,7 +58,8 @@ on_success:
   - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1..exe
   - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1..exe
   - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1..exe
+  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limagui-2.1.$commit.exe?publish=1 -Infile C:/b/lima_gui/src/lima_gui-build/limagui-2.1..exe
 
 
-#on_failure:
-        #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_failure:
+         - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

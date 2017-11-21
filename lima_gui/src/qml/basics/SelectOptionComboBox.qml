@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 import QtQuick.Controls 2.2
 
 /*!

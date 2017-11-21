@@ -22,6 +22,7 @@ install(FILES
     lima-analysis.xml
     lima-common-eng.xml
     lima-common-fre.xml
+    lima-common-por.xml
     lima-common.xml
   DESTINATION share/config/lima
   COMPONENT runtime)

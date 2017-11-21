@@ -76,9 +76,10 @@ int logFileSize( const std::string& filename ) {
   return sts.st_size;
 }
 
-void logMemsize( const string& legend ) {  
+int logMemsize() {  
+  int vmSize = 0;
 #ifdef WIN32
-  LIMA_UNUSED(legend);
+  return vmSize;
 #else
   pid_t pid = getpid();
   ostringstream ostr;
@@ -94,11 +95,11 @@ void logMemsize( const string& legend ) {
     string::size_type composed1_pos = line.find("VmSize:");
     if( composed1_pos != string::npos ) {
       string vmSizeStr(line, composed1_pos+7);
-      int vmSize = atoi(vmSizeStr.c_str());
-      std::cerr << legend << " VmSize:" << vmSize;
+      vmSize = atoi(vmSizeStr.c_str());
     }
   }
 #endif
+  return vmSize;
 }
 
 int getProcStat( const std::string& toLog ) {
@@ -235,17 +236,17 @@ void DictTester<dictType>::addListOfWords() {
 
   for( int counter = 0 ; ; counter++ ) {
     if( (counter%10000) == 0 ) {
-      ostringstream ostr;
-      ostr << "\naddListOfWords counter = " << counter;
+      std::cerr << "\raddListOfWords counter = " << counter 
+                << " VmSize: " << logMemsize() << std::flush;
 //      std::cerr << "addListOfWords counter = " << counter << std::endl;
-      logMemsize( ostr.str() );
     }
     // lecture d'une ligne du fichier
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( wList.eof() )
     {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl;
+      std::cerr <<  "end of list of words. counter=" << counter << std::endl 
+                << std::flush;
       break;
     }
     else if (!line.empty())
@@ -256,7 +257,7 @@ void DictTester<dictType>::addListOfWords() {
       m_dico.addWord( word );
     }
   }
-  std::cerr << std::endl;
+  std::cerr << std::endl << std::endl;
   m_dico.pack();
 }
 
@@ -306,10 +307,8 @@ void DictTester<dictType>::testIndex(
     int index = m_dico.getIndex(*lemma);
     // traces
     if( index%10000 == 0 ) {
-      ostringstream ostr;
-      ostr << "testIndex index = " << index;
-//      std::cerr << "addListOfWords counter = " << counter << std::endl;
-      logMemsize( ostr.str() );
+      std::cout << "\rtestIndex index = " << index 
+                << " VmSize: " << logMemsize() << std::flush;
     }
     if( m_param.withDebug ) {
       Lima::LimaString newWord = *lemma;
@@ -338,7 +337,7 @@ void DictTester<dictType>::testIndex(
       }
     }
   }
-    
+  std::cout << std::endl;
   // test sur chaine n'existant pas
   for( typename std::vector<Lima::LimaString >::const_iterator lemma = begin ;
         lemma != end ; lemma++ ) {
@@ -350,11 +349,10 @@ void DictTester<dictType>::testIndex(
     int invertedIndex = m_dico.getIndex(invertedLemma);
     // traces
     if( index%10000 == 0 ) {
-      ostringstream ostr;
-      ostr << "testIndex inverted ("
+      std::cout << "testIndex inverted ("
            << Lima::Common::Misc::limastring2utf8stdstring(invertedLemma)
-           << ")  index = " << invertedIndex;
-      logMemsize( ostr.str() );
+           << ")  index = " << invertedIndex << " VmSize: " << logMemsize()
+           << std::flush;
     }
   }
 }

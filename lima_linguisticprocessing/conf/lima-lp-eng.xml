@@ -37,8 +37,9 @@
         <item value="SpecificEntitiesModex"/>
         <!--item value="specificEntitiesXmlLogger"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
-        <item value="viterbiPostagger-freq"/>
-        <!--item value="SvmToolPosTagger"/-->
+<!--         <item value="viterbiPostagger-freq"/> -->
+<!--         <item value="SvmToolPosTagger"/> -->
+        <item value="@PosTagger@"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
@@ -453,31 +454,9 @@
       <param key="unfold" value="true"/>
       <param key="linkSubSentences" value="true"/>
       <map name="subSentencesRules">
-        <entry key="SubSent" value="heteroSyntagmaticRelationRules"/>
-        <entry key="SubordRel" value="heteroSyntagmaticRelationRules"/>
         <entry key="Parent" value="heteroSyntagmaticRelationRules"/>
         <entry key="Quotes" value="heteroSyntagmaticRelationRules"/>
-        <entry key="VirguleSeule" value="heteroSyntagmaticRelationRules"/>
-        <entry key="Appos" value="heteroSyntagmaticRelationRules"/>
-        <entry key="AdvSeul" value="heteroSyntagmaticRelationRules"/>
-        <entry key="AdvInit" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompAdv" value="heteroSyntagmaticRelationRules"/>
-        <entry key="Adverbe" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ConjInfSecond" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CCInit" value="heteroSyntagmaticRelationRules"/>
-        <entry key="Infinitive" value="heteroSyntagmaticRelationRules"/>
         <entry key="SUBSUBJUX" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompDuNom1" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompDuNom2" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompAdj1" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompAdj2" value="heteroSyntagmaticRelationRules"/>
-        <entry key="SubordParticipiale" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ElemListe" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ConjSecond" value="heteroSyntagmaticRelationRules"/>
-        <entry key="InciseNom" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompCirc" value="heteroSyntagmaticRelationRules"/>
-        <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ConjNominale" value="heteroSyntagmaticRelationRules"/>
       </map>
     </group>
     <group name="tagFusion" class="ExternalProcessUnit">

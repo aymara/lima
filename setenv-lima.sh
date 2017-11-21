@@ -64,7 +64,7 @@ popd > /dev/null
 export NLTK_PTB_DP_FILE=$HOME/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
 # Path to the LIMA linguistic data sources
-export LINGUISTIC_DATA_ROOT=$LIMA_SOURCES/lima_linguisticData
+export LINGUISTIC_DATA_ROOT=$LIMA_SOURCES/lima_linguisticdata
 
 # Path to where the build will be done, where temporary binary files are written
 export LIMA_BUILD_DIR=$LIMA_ROOT/Builds

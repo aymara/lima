@@ -29,7 +29,7 @@ use categoriesClassesDeclaration-eng.txt
 # noun group size=3
 # head is at position 3
 define subautomaton NounGroup {
- pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Participe|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
+ pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Ing|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
 }
 
 # prep group size=2
@@ -65,7 +65,7 @@ define subautomaton PrepGroup {
 =<ClearStoredRelations()
 
 # "is indicated fully extended"
-@TensedVerb::@Adverb @Adj:SYNTACTIC_RELATION:
+@Verb::@Adverb @Adj:SYNTACTIC_RELATION:
 +!GovernorOf(right.1,"ANY")
 +SecondUngovernedBy(right.1,right.2,"ANY")
 +CreateRelationBetween(right.1,right.2,"ADVADJ")
@@ -73,7 +73,7 @@ define subautomaton PrepGroup {
 =<ClearStoredRelations()
 
 # "is indicated fully extended"
-@TensedVerb::@Adj @Adverb:SYNTACTIC_RELATION:
+@Verb::@Adj @Adverb:SYNTACTIC_RELATION:
 +!GovernorOf(right.2,"ANY")
 +SecondUngovernedBy(right.2,right.1,"ANY")
 +CreateRelationBetween(right.2,right.1,"ADVADJ")
@@ -85,7 +85,7 @@ define subautomaton PrepGroup {
 # The alarm is not triggered
 # Neg :        not -> triggered
 #----------------------------------------------------------------------
-@Copule::@Neg (@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
+@Copule::@Neg (@Adverb){0-2} @Verb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.1,right.3,"ANY")
 +CreateRelationBetween(right.1,right.3,"Neg")
 =>AddRelationInGraph()
@@ -96,7 +96,7 @@ define subautomaton PrepGroup {
 # The swan has not swum today
 # Neg :        not -> swum
 #----------------------------------------------------------------------
-@Neg:@Verbe (@Adverb){0-3}:(@Adverb){0-3} TensedVerb:SYNTACTIC_RELATION:
+@Neg:@Verb (@Adverb){0-3}:(@Adverb){0-3} TensedVerb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"Neg")
 =>AddRelationInGraph()
@@ -106,7 +106,7 @@ define subautomaton PrepGroup {
 
 # Compound tense with passive marker
 # ex: he/John/the cat will really be catched by/when …
-@AuxModal::(@Adverb){0-2} @BaseFormVerb (@TensedVerb|@PastParticiple):SYNTACTIC_RELATION:
+@AuxModal::(@Adverb){0-2} @BaseFormVerb @Verb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"CPL_V")
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
 +CreateRelationBetween(trigger.1,right.3,"aux")
@@ -116,7 +116,7 @@ define subautomaton PrepGroup {
 
 # Simple tense with passive marker
 # ex: he/John/the cat is really catched by/when …
-@Copule::(@Adverb){0-2} @PastParticiple:SYNTACTIC_RELATION:
+@Copule::(@Adverb){0-2} @Verb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"CPL_V")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"auxpass")
@@ -139,7 +139,7 @@ define subautomaton PrepGroup {
 # "the X is well done."
 #----------------------------------------------------------------------
 
-@Copule::@Adverb @PastParticiple:SYNTACTIC_RELATION:
+@Copule::@Adverb @Verb:SYNTACTIC_RELATION:
 +!GovernorOf(right.1,"ANY")
 +SecondUngovernedBy(right.1,right.2,"ANY")
 +CreateRelationBetween(right.1,right.2,"MOD_V")
@@ -151,7 +151,7 @@ define subautomaton PrepGroup {
 # "the X performs well."
 #----------------------------------------------------------------------
 
-@TensedVerb::@Adverb:SYNTACTIC_RELATION:
+@Verb::@Adverb:SYNTACTIC_RELATION:
 +!GovernorOf(right.1,"ANY")
 +SecondUngovernedBy(right.1,trigger.1,"ANY")
 +CreateRelationBetween(right.1,trigger.1,"MOD_V")
@@ -170,14 +170,14 @@ define subautomaton PrepGroup {
 
 # Ne cree pas la relation det ici car le determinant ayant ete rencontre
 # avant, elle existe deja
-@Participe:@Determinant (@Adj|@Substantif){0-n} @Substantif:(@Verbe|@Sent):SYNTACTIC_RELATION:
+@PastParticiple:@Determinant (@Adj|@Substantif){0-n} @Substantif:(@Verb|@Sent):SYNTACTIC_RELATION:
 +!GovernorOf(left.3,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,left.3,"ANY")
 +CreateRelationBetween(trigger.1,left.3,"SUBADJPOST")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@Participe:@Determinant:(@Adj|@Substantif){0-n} @Substantif (@Adverb){0-3} (@Verbe|@Sent):SYNTACTIC_RELATION:
+@PastParticiple:@Determinant:(@Adj|@Substantif){0-n} @Substantif (@Adverb){0-3} (@Verb|@Sent):SYNTACTIC_RELATION:
 +!GovernorOf(right.2,"ADJPRENSUB")
 +SecondUngovernedBy(trigger.1,right.2,"ANY")
 +CreateRelationBetween(left.1,right.2,"det")
@@ -239,7 +239,6 @@ $ADJ::@ConjCoord $ADV{0-2} $ADJ:SYNTACTIC_RELATION:
 +CreateRelationBetween(trigger.1,right.3,"ADJPRENSUB")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
-
 
 
 #----------------------------------------------------------------------
@@ -383,7 +382,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-#@Participe:@Is (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
+#@PastParticiple:@Is (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
 #+CreateCompoundTense(trigger.1,left.1,"V;VERBE_GENERAPARTICIPE_PASSE;PRES")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
@@ -399,7 +398,7 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-#@Participe:@Was (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
+#@PastParticiple:@Was (@AdvTempComp|@Neg){0-2}::SYNTACTIC_RELATION:
 #+CreateCompoundTense(trigger.1,left.1,"V;VERBE_GENERAPARTICIPE_PASSE;PASS")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
@@ -433,14 +432,14 @@ from:@Substantif:@Substantif to @Substantif:SYNTACTIC_RELATION:
 # Conditional  at the beginning of a sentence
 #----------------------------------------------------------------------
 
-if$PREP-IN::%NounGroup @Aux @Pron? (@AdvTempComp){0-2} been? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
+if$PREP::%NounGroup @Aux @Pron? (@AdvTempComp){0-2} been? (@AdvTempComp){0-2} @Verb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +!GovernedBy(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,right.7,"mark")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
+if$PREP::%NounGroup @Verb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +!GovernedBy(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,right.2,"mark")
@@ -522,7 +521,7 @@ if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
 # ???? Quickly on the road ????
 # 
 #----------------------------------------------------------------------
-# @PrepComp:$ADV-RB:@Determinant (@Adverb|@Adj){0-n} @Substantif:SYNTACTIC_RELATION:
+# @PrepComp:$ADV:@Determinant (@Adverb|@Adj){0-n} @Substantif:SYNTACTIC_RELATION:
 # +SecondUngovernedBy(right.3,left.1,"ANY")
 # +CreateRelationBetween(right.3,left.1)
 
@@ -569,7 +568,7 @@ if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
 
 # introduced same rule triggered by general adverb
 # (for EASY evaluation)
-# i$ADV-RB::@Adverb:SYNTACTIC_RELATION:
+# i$ADV::@Adverb:SYNTACTIC_RELATION:
 # i+!GovernorOf(trigger.1,"ANY")
 # i+SecondUngovernedBy(trigger.1,right.1,"ANY")
 # i+CreateRelationBetween(trigger.1,right.1,"ADVADV")
@@ -580,19 +579,19 @@ if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 # Relation between auxiliary and past participle
 #----------------------------------------------------------------------
-@Aux::@Pron? (@AdvTempComp){0-2} been? (@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
+@Aux::@Pron? (@AdvTempComp){0-2} been? (@AdvTempComp){0-2} @Verb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +CreateRelationBetween(trigger.1,right.3,"aux")
 +CreateRelationBetween(trigger.1,right.5,"aux")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-#been:@Aux @Pron? (@AdvTempComp){0-2}:(@AdvTempComp){0-2} @PastParticiple:SYNTACTIC_RELATION:
+#been:@Aux @Pron? (@AdvTempComp){0-2}:(@AdvTempComp){0-2} @Verb:SYNTACTIC_RELATION:
 #+CreateCompoundTense(trigger.1,left.1,"V;VB;")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
 
-#@PastParticiple:@Aux @Pron? (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
+#@Verb:@Aux @Pron? (@AdvTempComp){0-2}::SYNTACTIC_RELATION:
 #+CreateCompoundTense(trigger.1,left.1,"V;VB;")
 #=>AddRelationInGraph()
 #=<ClearStoredRelations()
@@ -617,7 +616,7 @@ if$PREP-IN::%NounGroup @Verbe:SYNTACTIC_RELATION:
 # Has he been good?
 #  SujInv :       he[5|5]{26/54}  -> Has[6|6]{28/98}
 #----------------------------------------------------------------------
-@PronPers:(^$PRON)? @Verbe::SYNTACTIC_RELATION:
+@PronPers:(^$PRON)? @Verb::SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,left.2,"ANY")
 +CreateRelationBetween(trigger.1,left.2,"SujInv")
 =>AddRelationInGraph()
@@ -652,7 +651,7 @@ to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
 # The Convention also established eleven Working Groups
 # AdvVerbe :      also-> established
 #----------------------------------------------------------------------
-@Adverb::@TensedVerb:SYNTACTIC_RELATION:
+@Adverb::@Verb:SYNTACTIC_RELATION:
 +!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"AdvVerbe")
@@ -665,7 +664,7 @@ to::(@Neg)? (@Adverb){0-3} (@Neg)? (@Pron)? @BaseFormVerb:SYNTACTIC_RELATION:
 # He was sure that she would be there
 # PronSujVerbe : He[15|15]{26/54}        -> was[14|14]{28/76}
 #----------------------------------------------------------------------
-@PronPers::(@Neg)? ($PRON)? @Verbe:SYNTACTIC_RELATION:
+@PronPers::(@Neg)? ($PRON)? @Verb:SYNTACTIC_RELATION:
 +SecondUngovernedBy(trigger.1,right.3,"ANY")
 +CreateRelationBetween(trigger.1,right.3,"SUJ_V")
 =>AddRelationInGraph()

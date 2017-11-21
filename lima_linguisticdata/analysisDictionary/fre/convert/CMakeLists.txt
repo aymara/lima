@@ -23,22 +23,20 @@ file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../lefff/*.dic)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
-    OUTPUT dico.xml
+    OUTPUT dico.xml forms.dic forms.dic.2 forms.dic.3 default-fre.dat error.txt
     COMMAND echo "<dictionary>" > dico.xml.tmp
-
-  # Continuation of [1] above
-  #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
-    COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
-
-    COMMAND LC_ALL="C" sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
+    COMMAND cat ${dicoFiles} > forms.dic
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt ${PROJECT_SOURCE_DIR} > forms.dic.2
+    COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${dicoFiles}
-    COMMENT "produce XML dico"
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
+      ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt
+    COMMENT "fre specific produce XML dico"
     VERBATIM
   )
 else()
@@ -48,11 +46,11 @@ else()
     COMMAND echo ^<dictionary^> > dico.xml.tmp
 
   # Continuation of [1] above
-  #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > lefff-ext-lima.dic
-    COMMAND cat ${dicoFiles} > lefff-ext-lima.dic
+  #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > forms.dic
+    COMMAND cat ${dicoFiles} > forms.dic
 
-    COMMAND sort -u -o lefff-ext-lima.dic lefff-ext-lima.dic
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl lefff-ext-lima.dic dico.xml.tmp
+    COMMAND sort -u -o forms.dic forms.dic
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml

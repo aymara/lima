@@ -42,10 +42,9 @@ std::ostream& operator << (std::ostream& os,
   return os;
 }
 
-DepCompound::DepCompound(const DepCompound& dc)
+DepCompound::DepCompound(const DepCompound& dc) :
+  std::pair<uint64_t, uint64_t>(dc)
 {
-  first=dc.first;
-  second=dc.second;
 }
 
 DepCompound& DepCompound::operator=(const DepCompound& dc)
@@ -59,10 +58,9 @@ void DepCompound::print ( std::ostream& os) const {
   os << "(" << getHead() << "," << getExt() << ")";
 }
 
-ExtCompound::ExtCompound(const ExtCompound& dc)
+ExtCompound::ExtCompound(const ExtCompound& dc) :
+  std::pair<uint64_t, uint64_t>(dc)
 {
-  first=dc.first;
-  second=dc.second;
 }
 
 ExtCompound& ExtCompound::operator=(const ExtCompound& dc)

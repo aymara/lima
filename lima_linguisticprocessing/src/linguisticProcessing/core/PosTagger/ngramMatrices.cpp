@@ -135,7 +135,12 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
         std::istringstream sprobaStream(sproba);
         sprobaStream >> proba;
       }
-      else throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
+      else 
+      {
+          PTLOGINIT;
+          LERROR << "Invalid trigram line " << linenum << " in: " << fileName;
+          throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
+      }
 
       //      LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"]";
       m_trigrams[trigram[0]][trigram[1]][trigram[2]] = proba;
@@ -246,7 +251,12 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
       std::istringstream sprobaStream(sproba);
       sprobaStream >> proba;
     }
-    else throw(std::runtime_error(QString::fromUtf8("invalid bigram line: %1").arg(linenum).toUtf8().constData()));
+    else 
+    {
+        PTLOGINIT;
+        LERROR << "Invalid bigram line " << linenum << " in: " << fileName;
+        throw(std::runtime_error(QString::fromUtf8("invalid bigram line: %1").arg(linenum).toUtf8().constData()));
+    }
 
     //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]";
     m_bigrams[bigram[0]][bigram[1]] = proba;

@@ -73,11 +73,9 @@ std::string typeName(CONFIGURATION_NODE_TYPE);
  * when converting into the new custom configuration structure. It will be modified
  * by the user inside a treeView.
  */
-class LIMA_GUI_EXPORT ConfigurationNode
+class ConfigurationNode
 {
 public:
-  static int pid;
-  
   ConfigurationNode();
   ConfigurationNode(const Lima::Common::XMLConfigurationFiles::ConfigurationStructure&);
   ConfigurationNode(const Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure&);
@@ -142,7 +140,7 @@ private:
 /// \brief Not sure if this is actually useful.
 /// For now, the root pointer is destroyed on
 /// ConfigurationTree object destructor call.
-class LIMA_GUI_EXPORT ConfigurationTree 
+class ConfigurationTree 
 {
 public:
   ConfigurationTree();

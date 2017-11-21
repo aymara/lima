@@ -57,7 +57,7 @@ namespace Config
 /// The idea was to have a class the configuration gui would instantiate to
 /// create a new configuration. For each language, write the corresponding
 /// config file with the writeFile function.
-class LIMA_GUI_EXPORT LimaConfiguration : public QObject 
+class LimaConfiguration : public QObject 
 {
 Q_OBJECT
 public:

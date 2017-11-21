@@ -18,6 +18,10 @@ add_subdirectory(corpus)
 
 # file(GLOB DP_FILES $ENV{NLTK_PTB_DP_DIR}/*.dp)
 
+if (NOT DEFINED ENV{NLTK_PTB_DP_FILE})
+  message( FATAL_ERROR "Envirorment variable NLTK_PTB_DP_FILE must be defined.")
+endif()
+
 add_custom_command(
   OUTPUT succession_categs_retag.txt
   COMMAND gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt
@@ -40,7 +44,7 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt
 )
 
-DISAMBMATRICES(eng succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl DIVERS_*,NOM_PROPRE*,CONJ_*,NOMBRE*)
+DISAMBMATRICES(eng succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl X,SYM,UNK,PROPN,CONJ,NUM)
 
 add_dependencies(trigrammatrix-eng categs-eng)
 

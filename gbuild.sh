@@ -52,6 +52,7 @@ parallel="true"
 CMAKE_GENERATOR="Unix"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
+SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
 
 while getopts ":m:n:p:r:v:G:a:" o; do
     case "${o}" in
@@ -132,8 +133,10 @@ fi
 # export VERBOSE=1
 if [[ $mode == "release" ]]; then
   cmake_mode="Release"
+  SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
 else
   cmake_mode="Debug"
+  SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 fi
 
 if [[ $arch == "native" ]]; then
@@ -184,7 +187,7 @@ fi
 
 
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
 
 echo "Running command:"
 echo "$make_cmd"

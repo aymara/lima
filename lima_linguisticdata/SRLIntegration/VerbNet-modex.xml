@@ -542,4 +542,9 @@
       <param key="rules" value="SRLIntegration/VerbNet-fre.bin"/>
     </group>
   </module>
+  <module name="resources-por">
+    <group name="VerbNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/VerbNet-por.bin"/>
+    </group>
+  </module>
 </modulesConfig>

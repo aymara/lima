@@ -21,11 +21,11 @@ use categoriesClassesDeclaration-eng.txt
 
 @AdjModal=(necessary,unnecessary,possible,impossible,certain,uncertain,likely,unlikely,important,good,bad,useful,unuseful,useless,advisable,unadvisable,convenient,unconvenient,inconvenient,sufficient,unsufficient,insufficient,economical,easy,desirable,undesirable,difficult,legal,illegal,true,false,right,wrong,expensive,cheap,common,rare,hard)
 
-@VerbeCognitif=(recommended,thought,believed,known,anticipated,assumed,expected,said)
+@VerbCognitif=(recommended,thought,believed,known,anticipated,assumed,expected,said)
 
-@VerbeLogique=(seems,appears,means,follows)
+@VerbLogique=(seems,appears,means,follows)
 
-@PleoPron=($PRON-PRP)
+@PleoPron=($PRON)
 
 @Is=(is,'s,is not,isn't,be,been)
 
@@ -60,19 +60,19 @@ use categoriesClassesDeclaration-eng.txt
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@VerbeCognitif:@PleoPron @Is:that:SYNTACTIC_RELATION:
+@VerbCognitif:@PleoPron @Is:that:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@VerbeCognitif:@PleoPron @Is:to:SYNTACTIC_RELATION:
+@VerbCognitif:@PleoPron @Is:to:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,left.2,"Pleon")
 +CreateRelationBetween(left.1,left.2,"Pleon")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-@VerbeLogique:@PleoPron:that{0-1}:SYNTACTIC_RELATION:
+@VerbLogique:@PleoPron:that{0-1}:SYNTACTIC_RELATION:
 +SecondUngovernedBy(left.1,trigger.1,"Pleon")
 +CreateRelationBetween(left.1,trigger.1,"Pleon")
 =>AddRelationInGraph()

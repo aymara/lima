@@ -21,7 +21,7 @@
   @date     Wed, September 06 2017
   */
 
-import QtQuick 2.7
+import QtQuick 2.5
 import QtQuick.Window 2.0
 
 // Some widgets and functionnalities are not available from one package to the other
@@ -44,7 +44,7 @@ import "scripts/DynamicObjectManager.js" as Dom
 Controls1.ApplicationWindow {
   id:app_window
 
-  property var settingsDialogComponent: Qt.createComponent("qrc:/SettingsDialog.qml")
+  property var settingsDialogComponent: Qt.createComponent("qrc:///qml/SettingsDialog.qml")
 
   property int pile: 0
   
@@ -456,11 +456,15 @@ Controls1.ApplicationWindow {
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
                       property var languageDictionnary: {
-                          "fre": qsTr("French"),
-                          "eng": qsTr("English"),
+                          "ara": qsTr("Arabic"),
                           "chi": qsTr("Chinese"),
+                          "eng": qsTr("English"),
+                          "fre": qsTr("French"),
                           "ger": qsTr("German"),
-                          "ara": qsTr("Arabic")
+                          "ita": qsTr("Italian"),
+                          "por": qsTr("Portuguese"),
+                          "rus": qsTr("Russian"),
+                          "spa": qsTr("Spanish"),
                            // add your languages here
                            // you can list every language here, even if it's not loaded by LIMA
                       }

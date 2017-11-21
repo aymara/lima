@@ -174,7 +174,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     m_count++;
     if ((m_count % 10000)==0)
     {
-      std::cout << "\nbuild data : " << m_count << " entries ...";
+      std::cout << "\rbuild data : " << m_count << " entries ...";
     }
   }
   else if (name==S_I)
@@ -246,20 +246,22 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     {
       LERROR << "ERROR : found property in delete lingInfo for entry " << m_currentKey << " ! data can be inconsistant";
     }
-    QString v=attributes.value(S_V);
-    if (v==0)
+    QString v = attributes.value(S_V);
+    if (v == 0)
     {
-      LERROR << "ERROR : tag <p> has no attribute 'v' !";
+      LERROR << "ERROR : tag <p> has no attribute 'v' for '" 
+              << m_currentKey << "'!";
       return false;
     }
-    map<string,LinguisticCode>::const_iterator it=m_conv.find(Common::Misc::limastring2utf8stdstring(v));
-    if (it!=m_conv.end())
+    const auto & it = m_conv.find(Common::Misc::limastring2utf8stdstring(v));
+    if (it != m_conv.end())
     {
       m_currentLingProps.push_back(it->second);
     }
     else
     {
-      LERROR << "ERROR : invalid property '" << v << "', ignore it !";
+      LERROR << "Invalid property '" << v << "' for '"
+              << m_currentKey << "', ignore it !";
     }
   }
   else if (name==S_CONCAT)

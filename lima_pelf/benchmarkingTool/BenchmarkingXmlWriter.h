@@ -19,9 +19,9 @@
 #ifndef LIMA_PELF_BENCHMARKINGXMLWRITER_H
 #define LIMA_PELF_BENCHMARKINGXMLWRITER_H
 
-#include <QtCore/QString>
-#include <QtCore/QMap>
-#include <QtXml/QXmlStreamWriter>
+#include <QString>
+#include <QMap>
+#include <QXmlStreamWriter>
 
 namespace Lima {
 namespace Pelf {

@@ -31,7 +31,7 @@ use categoriesClassesDeclaration-eng.txt
 # noun group size=3
 # head is at position 3
 define subautomaton NounGroup {
- pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Participe|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
+ pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Ing|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
 }
 
 # prep group size=2
@@ -135,7 +135,7 @@ $NC::$NP $NP:SYNTACTIC_RELATION:
 #-+SecondUngovernedBy(trigger.1,left.1,"ANY")
 #-+CreateRelationBetween(trigger.1,left.1)
 
-@Prep:@Sent:@Substantif $V-VBD @Comma:SYNTACTIC_RELATION:
+@Prep:@Sent:@Substantif $V-VERB @Comma:SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.2,right.1,"ANY")
 +CreateRelationBetween(right.2,right.1,"SUBADJPOST")
 =>AddRelationInGraph()

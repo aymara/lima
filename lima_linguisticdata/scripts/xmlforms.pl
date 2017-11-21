@@ -79,7 +79,7 @@ while (<SOURCE>)
     $icount = 0;
     $count++;
     if (($count % 10000) == 0) {
-      print "\n$count";
+      print "\r$count";
     }
   }
   if (($icount==0) || ($data[1] ne $lemma) || ($data[2] ne $norm)) {

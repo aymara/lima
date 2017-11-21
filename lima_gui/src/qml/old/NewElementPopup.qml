@@ -19,7 +19,7 @@
 // this can be of use as an example of a popup
 
 
-// import QtQuick 2.7
+// import QtQuick 2.5
 // import QtQuick.Window 2.0
 // import QtQuick.Controls 2.2
 // import QtQuick.Controls.Styles 1.4

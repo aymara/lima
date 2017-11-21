@@ -30,6 +30,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 
 namespace Lima 
 {
@@ -39,7 +40,7 @@ namespace Gui
 ///
 /// \brief A simple struct to store the important stuff about a given entity
 ///
-struct LIMA_GUI_EXPORT EntityItem 
+struct EntityItem 
 {
 
   EntityItem(std::string name, std::string color, const std::vector<std::string>& occ) :
@@ -56,7 +57,7 @@ struct LIMA_GUI_EXPORT EntityItem
 /// The method getHighlightedText returns HTML formatted text. It is meant
 /// to be used by the RichText property of the TextArea Qml Element.
 ///
-class LIMA_GUI_EXPORT NamedEntitiesParser : public QObject
+class NamedEntitiesParser : public QObject
 {
   Q_OBJECT
 

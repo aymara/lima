@@ -212,7 +212,8 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
       resourcesDirs << *path;
   }
   
-//   qDebug() << "buildResourcesDirectoriesList result:" << resourcesDirs;
+  LOGINIT("FilesReporting");
+  LINFO << "Resources directories are:" << resourcesDirs;
   return resourcesDirs;
 }
 
@@ -224,8 +225,10 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
     if (QFileInfo::exists(path+ "/" + fileName))
     {
 #ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+      {
       LOGINIT("FilesReporting");
       LDEBUG << "File found:" << path+ "/" + fileName;
+      }
 #endif
       return path+ "/" + fileName;
     }

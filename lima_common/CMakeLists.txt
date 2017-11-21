@@ -77,7 +77,7 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-find_package(Boost 1.46 REQUIRED COMPONENTS unit_test_framework system)
+find_package(Boost 1.54 REQUIRED COMPONENTS unit_test_framework system)
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -109,7 +109,7 @@ add_subdirectory(tools)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
 ########### documentation ###############
 

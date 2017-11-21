@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="MediaData">
+        <group name="Class">
+            <param key="class" value="LanguageData"/>
+        </group>
+  </module>
+  <module name="LinguisticData">
+    <group name="Categories">
+        <list name="sentenceBreakMicros">
+          <item value="PONCTU_FORTE"/>
+          <!--item value="PONCTU_MISE_EN_EVIDENCE"/-->
+          <!-- certains mots au milieu de phrases sont entre guillemets... -->
+        </list>
+      <param key = "PropertyCodeFile" value = "LinguisticProcessings/por/code-por.xml" />
+      <list name="emptyMacro">
+        <item value="NONE_1" />
+        <item value="DET" />
+        <item value="PRON" />
+        <item value="ADV" />
+        <item value="PREP" />
+        <item value="CONJ" />
+        <item value="PONCTU" />
+        <item value="INTERJ" />
+      </list>
+      <list name="emptyMicro">
+        <item value="ART"/>
+        <item value="PROADJ"/>
+        <item value="PRO-KS"/>
+        <item value="PROPESS"/>
+        <item value="PROSUB"/>
+        <item value="ADV"/>
+        <item value="ADV-KS"/>
+        <item value="PDEN"/>
+        <item value="PREP"/>
+        <item value="PREP+ADV"/>
+        <item value="PREP+ART"/>
+        <item value="PREP+PROADJ"/>
+        <item value="PREP+PRO-KS"/>
+        <item value="PREP+PROPESS"/>
+        <item value="PREP+PROSUB"/>
+        <item value="UNK"/>
+        <item value="KC"/>
+        <item value="KS"/>
+        <item value="PU"/>
+        <item value="IN"/>
+	<item value="CUR"/>
+      </list>
+        <list name="conjugatedVerbs" >
+          <item value="V"/>
+          <item value="PCP"/>
+        </list>
+        
+      <list name="propositionIntroductors" >
+	<item value="KC"/>
+        <item value="KS"/>
+        <item value="PROADJ"/>
+        <item value="PRO-KS"/>
+        <item value="PROPESS"/>
+        <item value="PROSUB"/>
+      </list>
+        
+    </group>
+    <group name="SyntacticRelations">
+      <list name="relationList">
+        <item value="DETSUB"/>
+        <item value="ADJPRENSUB"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+        <item value="TEMPCOMP"/>
+        <item value="COMP_N-N"/>
+        <item value="COMP_AJ-N"/>
+        <item value="COMP_V-N"/>
+        <item value="COMP_AV-N"/>
+        <item value="COMP_N-ADJ"/>
+        <item value="COMP_AJ-ADJ"/>
+        <item value="COMP_V-ADJ"/>
+        <item value="COMP_AV-ADJ"/>
+        <item value="COMP_N-V"/>
+        <item value="COMP_AJ-V"/>
+        <item value="COMP_V-V"/>
+        <item value="COMP_AV-V"/>
+        <item value="ADJSUB"/>
+        <item value="SUBADJPOST2"/>
+        <item value="DETADJ"/>
+        <item value="DetAdv"/><!-- for things like "les plus utilisés"-->
+        <item value="PREPSUB"/>
+        <item value="ADJPRENSUB_INC"/>
+        <item value="DETSUB_INC"/>
+        <item value="COMPADJ_INC"/>
+        <item value="COMPADV_INC"/>
+        <item value="SUBADJPOST_INC"/>
+        <item value="COMPDUNOM_INC"/>
+        <item value="SUBSUBJUX_INC"/>
+        <item value="DetPron"/>
+        <item value="DetIntSub"/>
+        <item value="PrepDetInt"/>
+        <item value="SujInv"/>
+        <item value="Neg"/>
+        <item value="NePas"/>
+        <item value="CodPrev"/>
+        <item value="DetAdj"/>
+        <item value="SUJ_V"/>
+        <item value="COD_V"/>
+        <item value="CPL_V"/>
+        <item value="MOD_V"/>
+        <item value="ADVADV2"/>
+        <item value="PrepInf"/>
+        <item value="PronSujVerbe"/>
+        <item value="COMPL"/>
+        <item value="MOD_N"/>
+        <item value="MOD_A"/>
+        <item value="ATB_S"/>
+        <item value="ATB_O"/>
+        <item value="COORD1"/>
+        <item value="COORD2"/>
+        <item value="PrepPronRelCa"/>
+        <item value="PronReflVerbe"/>
+        <item value="AdvVerbe"/>
+        <item value="CoiPrev"/>
+        <item value="PrepPron"/>
+        <item value="PrepPronRel"/>
+        <item value="CodAnaph"/>
+        <item value="DETSUB2"/>
+        <item value="SUBADJPOST2"/>
+        <item value="PrepPronCliv"/>
+        <item value="PrepAdv"/>
+        <item value="PrepPartPres"/>
+        <item value="AdvSub"/>
+        <item value="AdvSub2"/>
+        <item value="Neg2"/>
+        <item value="NePas2"/>
+        <item value="AdvSub2"/>
+        <item value="COMPADV2"/>
+        <item value="TIl"/>
+        <item value="APPOS"/>
+        <item value="JUXT"/>
+        <item value="DetSubNum"/>
+        <item value="CPLV_V"/>
+        <item value="CC_TEMPS"/>
+        <item value="CC_LIEU"/>
+        <item value="CC_BUT"/>
+        <item value="CC_MOYEN"/>
+        <item value="CC_MANIERE"/>
+        <item value="Pleon"/>
+        <item value="Prefixe"/>
+        <item value="Dummy"/>
+        <item value="SUJ_V_REL"/>
+        <!--for simplication rules-->
+        <item value="SubSent"/>
+        <item value="SubordRel"/>
+        <item value="Parent"/>
+        <item value="Quotes"/>
+        <item value="VirguleSeule"/>
+        <item value="Appos"/>
+        <item value="AdvSeul"/>
+        <item value="AdvInit"/>
+        <item value="CompAdv"/>
+        <item value="Adverbe"/>
+        <item value="ConjInfSecond"/>
+        <item value="CCInit"/>
+        <item value="Infinitive"/>
+        <item value="SUBSUBJUX"/>
+        <item value="CompDuNom1"/>
+        <item value="CompDuNom2"/>
+        <item value="CompAdj1"/>
+        <item value="CompAdj2"/>
+        <item value="SubordParticipiale"/>
+        <item value="ElemListe"/>
+        <item value="ConjSecond"/>
+        <item value="InciseNom"/>
+        <item value="CompCirc"/>
+        <item value="SubordInit"/>
+        <item value="ConjNominale"/>
+        <item value="PonctuationBounds"/>
+        <item value="Interjonction"/>
+        <item value="AdjNom"/>
+        <item value="DetAdv"/><!-- for things like "les plus utilisés"-->
+        <item value="PrepDetNum"/><!-- for things like "une femme active sur cinq est..."-->
+        <item value="IncInc"/><!-- to link unknown works, typically from a foreign language-->
+        <!-- Start to integrate Universal Dependencies -->
+        <item value="aux"/>
+        <item value="auxpass"/>
+        <item value="det"/>
+        <item value="acl"/>
+      </list>
+    </group>
+    
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-por.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+	<item value="COMPDUNOM"/>
+        <item value="ADJPRENSUB"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPADV"/>
+        <item value="COMPADJ"/>
+        <item value="SUBSUBJUX"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="Prefixe"/>
+      </list>
+      
+      <list name="VerbalHomoSyntagmaticRelations">
+        <item value="PrepInf"/>
+      </list>
+      
+      <list name="NounPhraseHeadCategs">
+	<item value="N"/>
+        <item value="NPROP"/>
+        <item value="PROADJ"/>
+        <item value="PRO-KS"/>
+        <item value="PROPESS"/>
+        <item value="PROSUB"/>
+      </list>
+      
+      <list name="DefiniteCategs">
+	<item value="ART"/>
+      </list>
+      
+    </group>
+  </module>
+</modulesConfig>

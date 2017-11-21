@@ -43,14 +43,6 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::Misc;
 
-
-#define HANDLE_ERROR(Y,Z) if ( Y ) Z ;
-#define HANDLE_ERROR_EQUAL(X,Y,Z) if ( X == Y ) Z ;
-#define HANDLE_ERROR_RETURN(X,Y,Z) if ( X ) { Y ; return Z; }
-#define HANDLE_ERROR_EQUAL_RETURN(X,Y,Z,R) if ( X == Y ) { Z ; return R ; }
-#define HANDLE_ERROR_DIFFERENT(X,Y,Z) if ( X != Y ) Z ;
-#define HANDLE_ERROR_DIFFERENT_RETURN(X,Y,Z,R) if ( X != Y ) { Z ; return R ; }
-
 namespace Lima
 {
 namespace LinguisticProcessing
@@ -243,7 +235,11 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   PyObject* main_module = PyImport_ImportModule("__main__");
   PyObject* main_dict = PyModule_GetDict(main_module);
   PyObject* sys_module = PyImport_ImportModule("sys");
-  HANDLE_ERROR_EQUAL (sys_module, NULL, failed_to_import_the_sys_module() );
+  if (sys_module == nullptr)
+  {
+    failed_to_import_the_sys_module();
+    Py_Exit(1);
+  }
 
   PyDict_SetItemString(main_dict, "sys", sys_module);  
 
@@ -268,11 +264,15 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   }
   
   // Create the semantic role labeller instance
-  m_d->m_instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]", 
-                                        QString(QLatin1String("--log=%1")).arg(kbsrlLogLevel).toUtf8().constData(), 
-                                        QString(QLatin1String("--frame-lexicon=%1")).arg(mode).toUtf8().constData(), 
-                                        QString(QLatin1String("--language=%1")).arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
-  HANDLE_ERROR_EQUAL(m_d->m_instance,NULL,cannot_instantiate_the_semanticrolelabeler_python_class())
+  m_d->m_instance = PyObject_CallMethod(
+    semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]", 
+    QString(QLatin1String("--loglevel=%1")).arg(kbsrlLogLevel).toUtf8().constData(),
+    QString(QLatin1String("--frame-lexicon=%1")).arg(mode).toUtf8().constData(),
+    QString(QLatin1String("--language=%1")).arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
+  if (m_d->m_instance == nullptr)
+  {
+    cannot_instantiate_the_semanticrolelabeler_python_class();
+  }
 }
 
 auto metadata_equal_zero = []()
@@ -321,14 +321,22 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
 #endif
   
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  HANDLE_ERROR_EQUAL_RETURN(metadata,0,metadata_equal_zero(),MISSING_DATA)
-  
+  if (metadata == nullptr)
+  {
+    metadata_equal_zero();
+    return MISSING_DATA;
+  }
+
   QScopedPointer<QTemporaryFile> temporaryFile;
   if (!m_d->m_temporaryFileMetadata.isEmpty())
   {
     QScopedPointer<QTemporaryFile> otherTemp(new QTemporaryFile());
     temporaryFile.swap(otherTemp);
-    HANDLE_ERROR_RETURN(!temporaryFile->open(),temporary_file_not_open(),CANNOT_OPEN_FILE_ERROR);
+    if (!temporaryFile->open())
+    {
+      temporary_file_not_open();
+      return CANNOT_OPEN_FILE_ERROR;
+    }
     metadata->setMetaData(m_d->m_temporaryFileMetadata.toUtf8().constData(), 
                           temporaryFile->fileName().toUtf8().constData());
   }
@@ -381,7 +389,10 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
                                              conllInput.toUtf8().constData(),
                                              metadata->getMetaData("Lang").c_str()
                                             );
-  HANDLE_ERROR_EQUAL(callResult, NULL, failure_during_call_of_the_annotate_method_on(conllInput));
+  if (callResult == nullptr)
+  {
+    failure_during_call_of_the_annotate_method_on(conllInput);
+  }
   
   // Display the SRL result
   char* result = PyUnicode_AsUTF8(callResult);
@@ -410,8 +421,11 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   }
   else
   {
-    HANDLE_ERROR_RETURN( !temporaryFile->open(), 
-                         temporary_file_srl_not_open(temporaryFile), CANNOT_OPEN_FILE_ERROR);
+    if ( !temporaryFile->open() )
+    {
+      temporary_file_srl_not_open(temporaryFile);
+      return CANNOT_OPEN_FILE_ERROR;
+    }
     if (!temporaryFile->seek(0))
     {
       SEMANTICANALYSISLOGINIT;
@@ -433,7 +447,11 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   Py_DECREF(callResult);
   // Import the CoNLL result
   returnCode=m_d->m_loader->process(analysis);
-  HANDLE_ERROR_DIFFERENT_RETURN(returnCode,SUCCESS_ID,failed_to_load_data_from_temporary_file(temporaryFile),returnCode)
+  if (returnCode != SUCCESS_ID)
+  {
+    failed_to_load_data_from_temporary_file(temporaryFile); 
+    return returnCode;
+  }
 
   return returnCode;
 }

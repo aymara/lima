@@ -56,6 +56,7 @@ configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
 LIMA_GENERIC_CONFIGENV(eng)
 LIMA_GENERIC_CONFIGENV(fre)
+LIMA_GENERIC_CONFIGENV(por)
 SPECIFICENTITIES_GENERIC_CONFIGENV()
 
 add_subdirectory(cmake)
@@ -69,7 +70,7 @@ add_subdirectory(SRLIntegration)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
 
 ########### packaging ###############
@@ -106,7 +107,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 # The idea is to define one component with files common to all languages (common)
 # and one component for files specific to any languages (fre, eng...)
 # notify cpack of component all names
-SET(CPACK_COMPONENTS_ALL common fre eng)
+SET(CPACK_COMPONENTS_ALL common fre eng por)
 # we do not define groups
 # SET(CPACK_COMPONENTS_IGNORE_GROUPS 1)
 # by default create one package for each component

@@ -37,7 +37,7 @@ namespace Lima {
 namespace Gui {
 
 /// \brief A line of the CONLL format.
-struct LIMA_GUI_EXPORT CONLL_Line 
+struct CONLL_Line 
 {
 
     std::string raw; ///< raw text of the line.
@@ -59,10 +59,8 @@ struct LIMA_GUI_EXPORT CONLL_Line
 
 typedef std::vector<CONLL_Line*> CONLL_List;
 
-LIMA_GUI_EXPORT 
 CONLL_List conllRawToLines(const std::string& conll);
 
-LIMA_GUI_EXPORT
 /// Free all pointers in the list
 void freeConllList(CONLL_List&);
 

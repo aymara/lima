@@ -203,14 +203,15 @@ bool LimaGuiApplication::openFile(const QString& filepath)
   return true;
 }
 
-void LimaGuiApplication::closeFile(const QString& filename, bool save) {
+void LimaGuiApplication::closeFile(const QString& filename, bool save) 
+{
   if (save) 
   {}
 //  if (save) {
 //    saveFile(filename);
 //  }
   
-  for (std::vector<LimaGuiFile>::const_iterator it = m_openFiles.begin(); it != m_openFiles.end(); ++it) 
+  for (auto it = m_openFiles.begin(); it != m_openFiles.end(); ++it) 
   {
     if (it->name == filename.toStdString()) 
     {
@@ -370,14 +371,11 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     for(const auto& media: m_options.values("language"))
             languages.push_back(media.toUtf8().constData());
   }
-  else
-  {
-        languages = {"eng","fre"};  
-  }
   for (auto& l : languages) 
   {
     m_languages << QString(l.c_str());
   }
+  m_languages.removeDuplicates();
   if (!m_languages.isEmpty())
     m_language = m_languages[0];
 
@@ -604,7 +602,7 @@ void LimaGuiApplication::configure()
 
   std::string commonConfigFile = "lima-common.xml";
 
-  MediaticData::MediaticData::changeable().init(resources, configdir, commonConfigFile, languages);
+  Lima::Common::MediaticData::MediaticData::changeable().init(resources, configdir, commonConfigFile, languages);
 
   std::string client = "lima-coreclient";
   std::string lpConfigFile("lima-analysis.xml");
