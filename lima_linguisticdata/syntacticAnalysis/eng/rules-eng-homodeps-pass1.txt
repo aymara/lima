@@ -31,7 +31,7 @@ use categoriesClassesDeclaration-eng.txt
 # noun group size=3
 # head is at position 3
 define subautomaton NounGroup {
- pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Participe|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
+ pattern=$DET? (@Adverb{0-2} @Adj|@Substantif|@ConjCoord|@Ing|@DetNum|@PrepComp){0-n} @Substantif (@DetNum (@ConjCoord @DetNum)?)?
 }
 
 # prep group size=2
