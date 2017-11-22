@@ -202,17 +202,18 @@ void ApproxStringMatcher::init(
   }
   
   // get index of names
+  std::string nameindexId;
   try
   {
-    std::string nameindexId =unitConfiguration.getParamsValueAtKey("nameindex");
-    const AbstractResource* res=LinguisticResources::single().getResource(m_language,nameindexId);
-    m_nameIndex=static_cast<const NameIndexResource*>(res);
+    nameindexId =unitConfiguration.getParamsValueAtKey("nameindex");
   }
   catch (NoSuchParam& )
   {
     LERROR << "no param 'nameindex' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
+  const AbstractResource* res=LinguisticResources::single().getResource(m_language,nameindexId);
+  m_nameIndex=static_cast<const NameIndexResource*>(res);
   
   /*
   // get dictionary of normalized forms
@@ -332,7 +333,7 @@ LimaStatusCode ApproxStringMatcher::process(
   
   // Initalize set of names to search for
   std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
-  if( indexName.length() == 0 ) {
+  if( (indexName.length() == 0) || !(m_nameIndex->withIndex()) ) {
     nameRange.first = m_nameIndex->begin();
     nameRange.second = m_nameIndex->end();
   }
