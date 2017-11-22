@@ -47,6 +47,8 @@
 #include <QStringList>
 
 #include <fstream>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
@@ -94,8 +96,110 @@ class ConllDumperPrivate
   std::string m_sepPOS;
   std::string m_verbTenseFlag; //Ajout
   QMap<QString, QString> m_conllLimaDepMapping;
+  std::string m_outputFormat;
 };
 
+class OutputFormatter
+{
+public:
+  virtual std::string getHeader()=0;
+  virtual void pushAttr(const char* name,const std::string& value, bool first = false )=0;
+  virtual std::string getTokenOutput()=0;
+  virtual std::string getTokenSeparator()=0;
+  virtual std::string getTokenTerminator()=0;
+  virtual std::string getfooter()=0;
+};
+
+class OutputCsvFormatter: public OutputFormatter
+{
+public:
+  std::string getHeader() override;
+  void pushAttr(const char* name,const std::string& value, bool first ) override;
+  std::string getTokenOutput() override;
+  std::string getTokenSeparator() override;
+  std::string getTokenTerminator() override;
+  virtual std::string getfooter() override;
+private:
+  std::stringstream m_out;
+};
+
+class OutputJsonFormatter: public OutputFormatter
+{
+public:
+  std::string getHeader() override;
+  void pushAttr(const char* name,const std::string& value, bool first ) override;
+  std::string getTokenOutput() override;
+  std::string getTokenSeparator() override;
+  std::string getTokenTerminator() override;
+  virtual std::string getfooter() override;
+private:
+  QJsonObject m_jsonToken;
+  std::string m_id;
+};
+
+std::string OutputCsvFormatter::getHeader() {
+  return std::string("");
+}
+
+void OutputCsvFormatter::pushAttr(const char* ,const std::string& value, bool first ){
+  if( first ) {
+    m_out.str("");
+  }
+  else {
+    m_out << "\t";
+  }
+  m_out << value;
+}
+
+std::string OutputCsvFormatter::getTokenOutput() {
+  return m_out.str();
+}
+
+std::string OutputCsvFormatter::getTokenSeparator() {
+  return std::string("");
+}
+
+std::string  OutputCsvFormatter::getTokenTerminator() {
+  return std::string("\n");
+}
+
+std::string OutputCsvFormatter::getfooter() {
+  return std::string("");
+}
+
+std::string OutputJsonFormatter::getHeader() {
+  return std::string("{ \"tokens\": [\n");
+}
+
+void OutputJsonFormatter::pushAttr(const char* name,const std::string& value, bool first) {
+  if( first ) {
+    m_jsonToken = QJsonObject();
+    m_id = value;
+  }
+  m_jsonToken[QString(name)]=QString(value.c_str());
+}
+
+std::string  OutputJsonFormatter::getTokenOutput() {
+  QJsonDocument doc(m_jsonToken);
+  std::string result("\"Token");
+  result.append(m_id);
+  result.append("\"");
+  result.append(" : ");
+  result.append(std::string(doc.toJson().data()));
+  return result;
+}
+
+std::string OutputJsonFormatter::getTokenSeparator() {
+  return std::string(",");
+}
+
+std::string OutputJsonFormatter::getTokenTerminator() {
+  return std::string("");
+}
+
+std::string OutputJsonFormatter::getfooter() {
+  return std::string("]\n}");
+}
 
 ConllDumperPrivate::ConllDumperPrivate():
 m_language(0),
@@ -105,7 +209,8 @@ m_propertyManager(0),
 m_graph("PosGraph"),
 m_sep(" "),
 m_sepPOS("#"),
-m_conllLimaDepMapping()
+m_conllLimaDepMapping(),
+m_outputFormat("csv")
 {
 }
 
@@ -129,13 +234,18 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
   m_d->m_language=manager->getInitializationParameters().media;
+  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
+  m_d->m_propertyAccessor=&codeManager.getPropertyAccessor("MICRO");
   try
   {
     m_d->m_graph=unitConfiguration.getParamsValueAtKey("graph");
   }
   catch (NoSuchParam& ) {} // keep default value
-  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
-  m_d->m_propertyAccessor=&codeManager.getPropertyAccessor("MICRO");
+  try
+  {
+    m_d->m_outputFormat=unitConfiguration.getParamsValueAtKey("outputFormat");
+  }
+  catch (NoSuchParam& ) {} // keep default value = "csv"
 
   try
   {
@@ -241,7 +351,15 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   const DependencyGraph* depGraph = syntacticData-> dependencyGraph();
 
   QScopedPointer<DumperStream> dstream(initialize(analysis));
+  // stringstream where output string is built for each vertex before being output to dstream->out
+  std::stringstream dstreamOutBuff;
+  OutputFormatter* outputFormatter=0;
+  if( m_d->m_outputFormat.compare("csv") == 0 )
+    outputFormatter = new OutputCsvFormatter();
+  else
+    outputFormatter = new OutputJsonFormatter();
 
+  
   std::map< LinguisticGraphVertex, std::pair<LinguisticGraphVertex, std::string> > vertexDependencyInformations;
 
   uint64_t nbSentences((sd->getSegments()).size());
@@ -383,6 +501,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     toVisit.enqueue(sentenceBegin);
     tokenId=0;
     v=0;
+    bool firstToken = true;
+    dstream->out() << outputFormatter->getHeader();
+
     while (!toVisit.empty() && v!=sentenceEnd)
     { //as long as there are vertices in the sentence
       v = toVisit.dequeue();
@@ -479,31 +600,33 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         // 11  PDEPREL   Dependency relation to the PHEAD, or an underscore if not available. The set of dependency relations depends on the particular language. Note that depending on the original treebank annotation, the dependency relation may be meaningfull or simply 'ROOT'.
 
         QString targetConllIdString = targetConllId > 0 ? QString(QLatin1String("%1")).arg(targetConllId) : "_";
-        dstream->out()  << tokenId 
-                        << "\t" << inflectedToken 
-                        << "\t" << lemmatizedToken 
-                        << "\t" << macro.toUtf8().constData()
-                        << "\t" << micro.toUtf8().constData() 
-                        << "\t" << neType.toUtf8().constData()
-                        << "\t" << "_" 
-                        << "\t" << targetConllIdString.toUtf8().constData() 
-                        << "\t" << conllRelName.toUtf8().constData() 
-                        << "\t" << "_"
-                        << "\t" << "_";
+        if (!firstToken) {
+          dstream->out() << outputFormatter->getTokenSeparator();
+        }
+        firstToken=false;
+        outputFormatter->pushAttr("ID",std::to_string(tokenId), true );
+        outputFormatter->pushAttr("FORM",inflectedToken);
+        outputFormatter->pushAttr("LEMMA",lemmatizedToken);
+        outputFormatter->pushAttr("UPOSTAG",macro.toUtf8().constData());
+        outputFormatter->pushAttr("XPOSTAG",micro.toUtf8().constData());
+        outputFormatter->pushAttr("FEATS","_");
+        outputFormatter->pushAttr("HEAD",targetConllIdString.toUtf8().constData());
+        outputFormatter->pushAttr("DEPREL",conllRelName.toUtf8().constData());
+        outputFormatter->pushAttr("DEPS","_");
+        outputFormatter->pushAttr("MISC","_");
         if (!predicates.isEmpty())
         {
-          dstream->out() << "\t";
 //           LDEBUG << "ConllDumper::process output the predicate if any";
           if (!predicates.contains(v))
           {
             // No predicate for this token
-            dstream->out() << "_";
+            outputFormatter->pushAttr("PRED","_");
           }
           else
           {
             // This token is a predicate, output it
             QString predicateAnnotation = annotationData->stringAnnotation(predicates.value(v),"Predicate");
-            dstream->out() << predicateAnnotation;
+            outputFormatter->pushAttr("PRED",predicateAnnotation.toStdString());
           }
 
           // Now output the roles supported by the current PoS graph token
@@ -512,9 +635,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #endif
           for (int i = 0; i < keys.size(); i++)
           {
-            // There will be one column for each predicate. Output the
-            // separator right now
-            dstream->out() << "\t";
+            // There will be one column for each predicate.
             AnnotationGraphVertex predicateVertex = predicates.value(keys[keys.size()-1-i]);
 
             std::set< AnnotationGraphVertex > vMatches = annotationData->matches("PosGraph", v, "annot");
@@ -523,7 +644,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
               LDEBUG << "ConllDumper::process no node matching PoS graph vertex" << v << "in the annotation graph. Output '_'.";
 #endif
-              dstream->out() << "_";
+              outputFormatter->pushAttr("ROLE","_");
             }
             else
             {
@@ -554,11 +675,12 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                 }
                 if (roleAnnotation != "_") break;
               }
-              dstream->out() << roleAnnotation.toUtf8().constData();
+              outputFormatter->pushAttr("ROLE",roleAnnotation.toUtf8().constData());
             }
           }
         }
-        dstream->out() << std::endl;
+        dstream->out() << outputFormatter->getTokenOutput().c_str();
+        dstream->out() << outputFormatter->getTokenTerminator().c_str();
       }
 
       if (v == sentenceEnd)
@@ -586,10 +708,12 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       }
       tokenId++;
     }
-    dstream->out() << std::endl;
+    dstream->out() << outputFormatter->getfooter();
+
     limaConllTokenIdMapping->insert(std::make_pair(sentenceNb, segmentationMappingReverse));
     sbItr++;
   }
+  delete outputFormatter;
 
   return SUCCESS_ID;
 

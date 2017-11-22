@@ -32,6 +32,7 @@ namespace AnalysisDumpers
 #define CONLLDUMPER_CLASSID "ConllDumper"
 
 class ConllDumperPrivate;
+class OutputFormatter;
 
 /**
 @author Gael de Chalendar
@@ -51,6 +52,7 @@ public:
 
 private:
   ConllDumperPrivate* m_d;
+
 };
 
 } // AnalysisDumpers
