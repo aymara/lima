@@ -51,6 +51,7 @@ public:
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
       Manager* manager) override;
+    bool withIndex() const { return m_withIndex; }
       
     static std::basic_string<wchar_t> LimaStr2wcharStr( const QString& limastr );
 
@@ -63,6 +64,7 @@ protected:
 
 private:
   void readNames( const std::string& filepath );
+  bool m_withIndex;
   // A read/write locker to prevent accessing m_dicoData during its loading
 /*
   QReadWriteLock m_lock;

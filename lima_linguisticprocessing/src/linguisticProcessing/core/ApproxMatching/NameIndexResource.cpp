@@ -54,7 +54,7 @@ NameIndexResource::NameIndexResource(QObject* parent)
     : AbstractResource(parent),m_fsaAccess(0)
 */
 NameIndexResource::NameIndexResource()
-    : AbstractResource(0)
+    : AbstractResource(0), m_withIndex(false)
 {
 /*
   connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(accessFileChanged(QString)));
@@ -138,10 +138,19 @@ void NameIndexResource::init(
     LERROR << "filename "
            << Common::MediaticData::MediaticData::single().getResourcesPath()
            << "/"
-           << unitConfiguration.getParamsValueAtKey("keyFile")
+           << unitConfiguration.getParamsValueAtKey("filename")
            << " no found for language " 
            << (int)  manager->getInitializationParameters().language;
     throw InvalidConfiguration();
+  }
+  try
+  {
+    std::string withIndex = (unitConfiguration.getParamsValueAtKey("withIndex"));
+    m_withIndex = (withIndex.compare("true") == 0);
+  }
+  catch (NoSuchParam& )
+  {
+    // parameter 'withIndex' is optional, default is false
   }
 }
 
