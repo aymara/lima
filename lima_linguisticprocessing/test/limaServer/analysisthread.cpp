@@ -64,6 +64,7 @@ public:
   QHttpRequest* m_request;
   QHttpResponse* m_response;
   const std::set<std::string>& m_langs;
+  std::string m_mediaType;
 };
 
 AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 
@@ -71,7 +72,8 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::Abstrac
                     const std::set<std::string>& langs) :
     m_analyzer(analyzer),
     m_request(req), m_response(resp),
-    m_langs(langs)
+    m_langs(langs),
+    m_mediaType((req->header("content-type")).toStdString())
 {
 }
 
@@ -102,13 +104,14 @@ void AnalysisThread::startAnalysis()
 {
   CORECLIENTLOGINIT;
   LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
+  LDEBUG << "AnalysisThread::startAnalysis mediaType=" << m_d->m_mediaType;
   if (m_d->m_request->methodString() == "HTTP_GET" && m_d->m_request->url().path() == "/extractEN")
   {
     QString language, pipeline, text;
     QPair<QString, QString> item;
     std::map<std::string,std::string> metaData;
     std::set<std::string> inactiveUnits;
-    
+
     LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_GET)";
     
     std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -120,9 +123,9 @@ void AnalysisThread::startAnalysis()
     seLogWriter->setOut(oss);
    
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    Q_FOREACH( item, m_d->m_request->url().queryItems())
+    Q_FOREACH( item, m_d->m_request->url().queryItems(QUrl::FullyDecoded))
 #else
-    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems())
+    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems(QUrl::FullyDecoded))
 #endif
     {
       QTemporaryFile tempFile;
@@ -137,6 +140,30 @@ void AnalysisThread::startAnalysis()
       {
         pipeline = item.second;
         LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+      }
+      if (item.first == "meta")
+      {
+        QString metadataValues= item.second;
+        LDEBUG << "AnalysisThread::startAnalysis: " << "meta=" << metadataValues;
+        std::string metaString = metadataValues.toStdString();
+        std::string::size_type k=0;
+        do {
+          k=metaString.find(",");
+          //if (k==std::string::npos) continue;
+          std::string str(metaString,0,k);
+          std::string::size_type i=str.find(":");
+          if (i==std::string::npos) {
+            std::cerr << "meta argument '"<< str <<"' is not of the form XXX:YYY: ignored" << std::endl;
+          }
+          else {
+            //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
+            metaData.insert(std::make_pair(std::string(str,0,i),std::string(str,i+1)));
+          }
+          if (k!=std::string::npos) {
+            metaString=std::string(metaString,k+1);
+          }
+        }  while (k!=std::string::npos);
+        
       }
       if (item.first == "text")
       {
@@ -158,11 +185,19 @@ void AnalysisThread::startAnalysis()
       pipe = "limaserver";
       m_d->m_analyzer->analyze(text,metaData, pipe, handlers, inactiveUnits);
 
-      std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
+      std::string resultString;
+      if( m_d->m_mediaType.compare("text/xml") == 0) {
+        resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
+      }
       resultString.append(oss->str());
       LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
 
-      m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
+      if( m_d->m_mediaType.compare("text/xml") == 0) {
+        m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
+      }
+      if( m_d->m_mediaType.compare("application/json") == 0) {
+        m_d->m_response->setHeader("Content-Type", "application/json; charset=utf-8");
+      }
       m_d->m_response->writeHead(200);
 
 //      QString body = QString::fromUtf8(resultString.c_str());
@@ -191,9 +226,9 @@ void AnalysisThread::startAnalysis()
     QPair<QString, QString> item;
     std::map<std::string,std::string> metaData;
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    Q_FOREACH( item, m_d->m_request->url().queryItems())
+    Q_FOREACH( item, m_d->m_request->url().queryItems(QUrl::FullyDecoded))
 #else
-    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems())
+    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems(QUrl::FullyDecoded))
 #endif
     {
       if (item.first == "lang")
@@ -206,6 +241,30 @@ void AnalysisThread::startAnalysis()
       {
         pipeline = item.second;
         LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+      }
+      if (item.first == "meta")
+      {
+        QString metadataValues= item.second;
+        LDEBUG << "AnalysisThread::startAnalysis: " << "meta=" << metadataValues;
+        std::string metaString = metadataValues.toStdString();
+        std::string::size_type k=0;
+        do {
+          k=metaString.find(",");
+          //if (k==std::string::npos) continue;
+          std::string str(metaString,0,k);
+          std::string::size_type i=str.find(":");
+          if (i==std::string::npos) {
+            std::cerr << "meta argument '"<< str <<"' is not of the form XXX:YYY: ignored" << std::endl;
+          }
+          else {
+            //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
+            metaData.insert(std::make_pair(std::string(str,0,i),std::string(str,i+1)));
+          }
+          if (k!=std::string::npos) {
+            metaString=std::string(metaString,k+1);
+          }
+        }  while (k!=std::string::npos);
+        
       }
     }
 
@@ -235,18 +294,26 @@ void AnalysisThread::startAnalysis()
     else if( !language.isEmpty() && !text_s.empty() )
     {
       metaData["Lang"]=language.toUtf8().data();
+      metaData["Lang"]=language.toUtf8().data();
       QTemporaryFile tempFile;
       metaData["FileName"]=tempFile.fileName().toUtf8().constData();
       std::string pipe = pipeline.toUtf8().data();
       text_QS = Misc::utf8stdstring2limastring(text_s);
 
       m_d->m_analyzer->analyze(text_QS,metaData, pipe, handlers, inactiveUnits);
-
-      std::string resultString("<?xml version='1.0' encoding='UTF-8'?>");
+      std::string resultString;
+      if( m_d->m_mediaType.compare("text/xml") == 0) {
+        resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
+      }
       resultString.append(oss->str());
       LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
 
-      m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
+      if( m_d->m_mediaType.compare("text/xml") == 0) {
+        m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
+      }
+      else if( m_d->m_mediaType.compare("application/json") == 0) {
+        m_d->m_response->setHeader("Content-Type", "text/json; charset=utf-8");
+      }
       m_d->m_response->writeHead(200);
 //      QString body = QString::fromUtf8(resultString.c_str());
 //      m_d->m_response->end(body.toUtf8());
