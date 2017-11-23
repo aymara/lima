@@ -80,56 +80,6 @@
           right="Trombon 1"/>
   </testcase>
   <!--==================== tests Total.BLOCK ====================-->
-  <testcase id="eng.approx.block.1" type="bloquant">
-    <call-parameters>
-      <param key="text" value="xx A yy A v"/>
-      <param key="language" value="eng"/>
-      <param key="meta" value="index:ForTest"/>
-      <list key="pipelines">
-        <item value="totalcruncher"/>
-      </list>
-    </call-parameters>
-    <test id="eng.approx.block.1.1" trace=".se.approx.xml"
-          comment="2 instances of name 'A' in the text. 'A' is in the dictionary block-countryNames.sorted.toy.lst for index ForTest)"
-          left="XPATH#//specific_entities/specific_entity[position=8][length=1]/type"
-          operator="contains"
-          right="Total.BLOCK"/>
-    <test id="eng.approx.block.1.2" trace=".se.approx.xml"
-          comment="value of block name is 'A'"
-          left="XPATH#//specific_entities/specific_entity[position=8][length=1]/string"
-          operator="="
-          right="A"/>
-    <test id="eng.approx.block.1.3" trace=".se.approx.xml"
-          comment="2 instances of name 'A' in the text. 'A' is in the dictionary block-countryNames.sorted.toy.lst for index ForTest)"
-          left="XPATH#//specific_entities/specific_entity[position=3][length=1]/type"
-          operator="contains"
-          right="Total.BLOCK"/>
-    <test id="eng.approx.block.1.4" trace=".se.approx.xml"
-          comment="value of block name is 'A'"
-          left="XPATH#//specific_entities/specific_entity[position=3][length=1]/string"
-          operator="="
-          right="A"/>
-  </testcase>
-  <testcase id="eng.approx.block.2" type="bloquant">
-    <call-parameters>
-      <param key="text" value="xx B C D v"/>
-      <param key="language" value="eng"/>
-      <param key="meta" value="index:ForTest"/>
-      <list key="pipelines">
-        <item value="totalcruncher"/>
-      </list>
-    </call-parameters>
-    <test id="eng.approx.block.2.1" trace=".se.approx.xml"
-          comment="2 instances with overlapping: 'B C' and 'C D' in the text. Only one ('B C') must be retained"
-          left="XPATH#//specific_entities/specific_entity[position=3][length=3]/type"
-          operator="contains"
-          right="Total.BLOCK"/>
-    <test id="eng.approx.block.2.2" trace=".se.approx.xml"
-          comment="value of block name is 'B C'"
-          left="XPATH#//specific_entities/specific_entity[position=3][length=3]/string"
-          operator="="
-          right="B C"/>
-  </testcase>
   <testcase id="eng.approx.block.3" type="bloquant">
     <call-parameters>
       <param key="text" value="bloc SG9/05"/>
