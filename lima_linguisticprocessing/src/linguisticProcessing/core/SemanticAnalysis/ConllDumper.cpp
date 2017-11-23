@@ -181,11 +181,7 @@ void OutputJsonFormatter::pushAttr(const char* name,const std::string& value, bo
 
 std::string  OutputJsonFormatter::getTokenOutput() {
   QJsonDocument doc(m_jsonToken);
-  std::string result("\"Token");
-  result.append(m_id);
-  result.append("\"");
-  result.append(" : ");
-  result.append(std::string(doc.toJson().data()));
+  std::string result(doc.toJson().data());
   return result;
 }
 
@@ -607,13 +603,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         outputFormatter->pushAttr("ID",std::to_string(tokenId), true );
         outputFormatter->pushAttr("FORM",inflectedToken);
         outputFormatter->pushAttr("LEMMA",lemmatizedToken);
-        outputFormatter->pushAttr("UPOSTAG",macro.toUtf8().constData());
-        outputFormatter->pushAttr("XPOSTAG",micro.toUtf8().constData());
+        outputFormatter->pushAttr("CPOSTAG",macro.toUtf8().constData());
+        outputFormatter->pushAttr("POSTAG",micro.toUtf8().constData());
+        outputFormatter->pushAttr("NE",neType.toUtf8().constData());
         outputFormatter->pushAttr("FEATS","_");
         outputFormatter->pushAttr("HEAD",targetConllIdString.toUtf8().constData());
         outputFormatter->pushAttr("DEPREL",conllRelName.toUtf8().constData());
-        outputFormatter->pushAttr("DEPS","_");
-        outputFormatter->pushAttr("MISC","_");
+        outputFormatter->pushAttr("PHEAD","_");
+        outputFormatter->pushAttr("PDEPREL","_");
         if (!predicates.isEmpty())
         {
 //           LDEBUG << "ConllDumper::process output the predicate if any";
