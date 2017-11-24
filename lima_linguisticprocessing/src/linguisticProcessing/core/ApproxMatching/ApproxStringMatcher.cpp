@@ -520,7 +520,6 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
              << Lima::Common::Misc::limastring2utf8stdstring(name) << " changed to "
              << Lima::Common::Misc::limastring2utf8stdstring(pattern);
 #endif
-      break;
     }
     return wpattern;
 }
@@ -789,7 +788,7 @@ int ApproxStringMatcher::findApproxPattern(
         Suggestion suggestion;
         suggestion.startPosition = current_match->rm_so+offset;
         suggestion.endPosition = current_match->rm_eo+offset;
-        suggestion.nb_error = amatch.num_del+amatch.num_ins;
+        suggestion.nb_error = amatch.num_del+amatch.num_ins+amatch.num_subst;
         suggestions.push_back(suggestion);
         offset += current_match->rm_eo;
       }
