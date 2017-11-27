@@ -59,6 +59,8 @@ public Q_SLOTS:
 
 private:
   AnalysisThreadPrivate* m_d;
+  std::string ConllToJson( const std::string & str );
+
 };
 
 #endif // ANALYSISTHREAD_H

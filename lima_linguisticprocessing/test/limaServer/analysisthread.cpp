@@ -45,6 +45,10 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #   include <QUrlQuery>
 #endif
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 using namespace Lima;
 using namespace Lima::Common;
@@ -188,9 +192,15 @@ void AnalysisThread::startAnalysis()
       std::string resultString;
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
+        resultString.append(oss->str());
       }
-      resultString.append(oss->str());
-      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
+      else if( m_d->m_mediaType.compare("application/json") == 0) {
+        resultString.append(ConllToJson( oss->str()));
+      }
+      else
+        resultString.append(ConllToJson( oss->str()));
+
+      LDEBUG << "AnalysisThread::startAnalysis (GET): seLogger output is " << QString::fromUtf8(resultString.c_str());
 
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
@@ -304,9 +314,14 @@ void AnalysisThread::startAnalysis()
       std::string resultString;
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
+        resultString.append(oss->str());
       }
-      resultString.append(oss->str());
-      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8(resultString.c_str());
+      else if( m_d->m_mediaType.compare("application/json") == 0) {
+        resultString.append(ConllToJson(oss->str()));
+      }
+      else
+        resultString.append(ConllToJson( oss->str()));
+      LDEBUG << "AnalysisThread::startAnalysis (POST): seLogger output is " << QString::fromUtf8(resultString.c_str());
 
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
@@ -336,4 +351,42 @@ void AnalysisThread::startAnalysis()
   }
 }
 
-// #include "searchthread.moc"
+std::string  AnalysisThread::ConllToJson( const std::string & str )
+{
+  CORECLIENTLOGINIT;
+  LDEBUG << "AnalysisThread::ConllToJson str=" <<str;
+  
+  // Array of tokens
+  QJsonArray array;
+  std::string::size_type pos = 0;
+  std::string::size_type i=0;
+  for(; i != std::string::npos ;) {
+    // search for EOL: each line represents a token (or end of sentence for an empty line)
+    i = str.find('\n', pos);
+    LDEBUG << "AnalysisThread::ConllToJson: pos:" << pos << ", i:"<< i;
+    QJsonValue qval;
+    if( pos == i ) {
+      // empty line = end of sentence
+      qval = QJsonValue("");
+    }
+    else {
+      std::string line;
+      if( i == std::string::npos ) {
+        line = std::string(str,pos);
+      }
+      else {
+        line = std::string(str,pos,i-pos);
+      }
+      qval = QJsonValue(line.c_str());
+    }
+    array.append(qval);
+    pos = i+1;
+  }
+  QJsonObject object;
+  object["tokens"]=array;
+  QJsonDocument doc(object);
+  std::string result(doc.toJson().data());
+
+  LDEBUG << "AnalysisThread::ConllToJson: result=" << result;
+  return result;
+}
