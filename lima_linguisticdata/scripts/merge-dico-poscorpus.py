@@ -5,8 +5,8 @@ import re
 import os
 
 if len(sys.argv) < 4 or len(sys.argv) > 5:
-    print('Three or four arguments are expected: language, dictionary file, '
-          'corpus file and optionally project source dir')
+    sys.stderr.write('Three or four arguments are expected: language, dictionary file, '
+                     'corpus file and optionally project source dir\n')
     exit(1)
 
 language = sys.argv[1]  # 'por'
@@ -49,8 +49,8 @@ def loadDicoEntries(codes):
             # print(dico_line_array)
             # dico_line_array[3] for por
             tagpos = 3
-            if language == 'eng':
-                tagpos = 2
+            #if language == 'eng':
+            #    tagpos = 2
             #elif language == 'fre':
                 #lefff_code = dico_line_array[3]
                 #i = 0
@@ -67,12 +67,12 @@ def loadDicoEntries(codes):
 
             if len(dico_line_array) >= (tagpos+1):
                 entry = '{}_{}'.format(dico_line_array[0],
-                                        dico_line_array[tagpos])
+                                       dico_line_array[tagpos])
                 if entry not in dico_entries:
                     dico_entries[entry] = set()
                 dico_entries[entry].add(dico_line)
             else:
-                print('ERROR on line {}'.format(dico_line_array))
+                sys.stderr.write('ERROR on line {}\n'.format(dico_line_array))
     return dico_entries
 
 
