@@ -23,7 +23,7 @@ if (NOT DEFINED ENV{NLTK_PTB_DP_FILE})
 endif()
 
 add_custom_command(
-  OUTPUT succession_categs_retag.txt
+  OUTPUT succession_categs_retag.txt corpus_eng_merge.txt
   COMMAND gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt
   COMMAND patch -p 0 corpus_eng_merge.txt ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch | cat
 #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos corpus_eng_merge.txt
