@@ -38,7 +38,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ${dicoFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
-      ${CMAKE_BINARY_DIR}/disambiguisationMatrices/eng/corpus_eng_merge.txt
+      ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
@@ -72,4 +72,8 @@ add_custom_target(
 )
 add_dependencies(converteng dicoxmleng )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat COMPONENT eng DESTINATION share/apps/lima/resources/LinguisticProcessings/eng)
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat 
+  COMPONENT eng 
+  DESTINATION share/apps/lima/resources/LinguisticProcessings/eng
+)
