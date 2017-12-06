@@ -20,11 +20,36 @@ def loadLefff2LimaCodesDict(project_source_dir):
             codes[symb] = lima
     return codes
 
+class DicEntries:
+    def __init__(self):
+        # dic form => POS => set(dico line)
+        self.entries={}
 
+    def add(self,form,pos,entry):
+        if form not in self.entries:
+            self.entries[form]={}
+        if pos not in self.entries[form]:
+            self.entries[form][pos]=set()
+        self.entries[form][pos].add(entry)
+        
+    def get(self,form,pos):
+        return self.entries[form][pos]
+        
+    def exists(self,form,pos):
+        if form not in self.entries:
+            return False
+        if pos not in self.entries[form]:
+            return False
+        return True
+        
+    def formExists(self,form):
+        if form not in self.entries:
+            return False
+        return True
 
 def loadDicoEntries(dicofile,language,codes):
-    # dic form_POS => set(dico line)
-    dico_entries = {}
+    # dic form => POS => set(dico line)
+    dico_entries = DicEntries()
 
     for dico_line in dicofile.readlines():
         # beaucoup<tab>beaucoup<tab><tab>Rg
@@ -54,15 +79,24 @@ def loadDicoEntries(dicofile,language,codes):
                 #i = i + 1
 
         if len(dico_line_array) >= (tagpos+1):
-            entry = '{}_{}'.format(dico_line_array[0],
-                                   dico_line_array[tagpos])
-            if entry not in dico_entries:
-                dico_entries[entry] = set()
-            dico_entries[entry].add(dico_line)
+            dico_entries.add(dico_line_array[0],dico_line_array[tagpos],dico_line)
         else:
             sys.stderr.write('ERROR on line {}\n'.format(dico_line_array))
     return dico_entries
 
+def loadCorpusEntries(corpus):
+    # dic form => POS => set(MacMorpho line)
+    corpus_entries = DicEntries()
+    
+    for corpus_line in corpus:
+        corpus_line = corpus_line.rstrip()
+        if not corpus_line:
+            continue
+        corpus_line_array = corpus_line.split('\t')
+        # print(corpus_line_array)
+        (form,pos)=(corpus_line_array[0],corpus_line_array[1])
+        corpus_entries.add(form,pos,"%s\t%s\t\t%s"%(form,form,pos))
+    return corpus_entries
 
 def mergeEntries(language,dicofile,corpus,project_source_dir):
     codes = {}
@@ -76,56 +110,25 @@ def mergeEntries(language,dicofile,corpus,project_source_dir):
         #print(codes)
     
     dico_entries = loadDicoEntries(dicofile,language,codes)
+    corpus_entries = loadCorpusEntries(corpus)
     
-    # dic form => set(MacMorpho line)
-    corpus_forms = {}
-    
-    # dic form_POS => set(MacMorpho line)
-    corpus_entries = {}
-    
-    for corpus_line in corpus:
-        corpus_line = corpus_line.rstrip()
-        if not corpus_line:
-            continue
-        corpus_line_array = corpus_line.split('\t')
-        # print(corpus_line_array)
-        if not corpus_line_array[0] in corpus_forms:
-            corpus_forms[corpus_line_array[0]] = set()
-        corpus_forms[corpus_line_array[0]].add(corpus_line)
-
-        entry = '{}_{}'.format(corpus_line_array[0],
-                                corpus_line_array[1])
-        if entry not in corpus_entries:
-            corpus_entries[entry] = set()
-        corpus_entries[entry].add(corpus_line)
-    
-    # dico forms with form+pos in corpus
-    for entry in dico_entries.keys():
-        if entry in corpus_entries.keys():
-            for line in dico_entries[entry]:
-                print(line)
-    
-    # dico forms not in corpus minus those with same form but with other pos
-    # in corpus
-    for entry in dico_entries.keys():
-        if entry not in corpus_entries.keys():
-            # print(entry)
-            form, pos = entry.rsplit('_', 1)
-            if form not in corpus_forms:
-                for line in dico_entries[entry]:
-                    print(line)
+    for form,posentries in dico_entries.entries.items():
+        for (pos,entries) in posentries.items():
+            # dico forms with form+pos in corpus
+            if corpus_entries.exists(form,pos):
+                print("\n".join(list(entries)))
+            else:
+                # dico forms not in corpus minus those with same form but with other pos
+                # in corpus
+                if not corpus_entries.formExists(form):
+                    print("\n".join(list(entries)))
     
     # corpus forms not in dico
-    for entry in corpus_entries.keys():
-        if entry not in dico_entries.keys():
-            for line in corpus_entries[entry]:
-                try:
-                    form, pos = line.split('\t')
-                    print('{}\t{}\t\t{}'.format(form, form, pos))
-                except ValueError as err:
-                    print('Error "{}" while handling line "{}"'.format(
-                        err, line))
-                    raise
+    for form,posentries in corpus_entries.entries.items():
+        for (pos,entries) in posentries.items():
+            if not dico_entries.exists(form,pos):
+                print("\n".join(list(entries)))
+                
 #----------------------------------------------------------------------
 # main function
 def main(argv):
