@@ -242,16 +242,15 @@ $ADJ::@ConjCoord $ADV{0-2} $ADJ:SYNTACTIC_RELATION:
 
 
 #----------------------------------------------------------------------
-# Relation entre determinant interrogatif et nom: DetIntSub
-# "En quelle->annee"
+# Relation entre determinant interrogatif et nom: det
 # Which man is coming?
 # (GG 17/1/05 changing value of Which from JJ to DDQ in dictionary)
 #----------------------------------------------------------------------
 @DetInt::(@Adj){0-1} @Substantif:SYNTACTIC_RELATION:
-+SecondUngovernedBy(trigger.1,right.2,"DetIntSub")
++SecondUngovernedBy(trigger.1,right.2,"det")
 +GenderAgreement(trigger.1,right.2)
 +NumberAgreement(trigger.1,right.2)
-+CreateRelationBetween(trigger.1,right.2,"DetIntSub")
++CreateRelationBetween(trigger.1,right.2,"det")
 +EnforcePropertiesConstraints(trigger.1,right.2,"GENDER,NUMBER")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
