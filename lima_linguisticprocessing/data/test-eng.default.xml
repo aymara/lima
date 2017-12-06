@@ -73,7 +73,7 @@
     comment="24,99 a la categorie num card"
     left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="CD"/>
+    right="NUM"/>
 </testcase>
 <testcase id="eng.default.5" type="bloquant">
   <call-parameters>
@@ -123,7 +123,7 @@
     comment="24.99 a la categorie num card"
     left="XPATH#//data_structure/vertex[token[position=9][length=5]]/data/unknown_word//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="CD"/>
+    right="NUM"/>
 </testcase>
 <testcase id="eng.default.8" type="bloquant">
   <call-parameters>
@@ -138,7 +138,7 @@
     comment="2/3 a la categorie nc num card"
     left="XPATH#//data_structure/vertex[token[position=16][length=3]]/data//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="CD"/>
+    right="NUM"/>
 </testcase>
 <testcase id="eng.default.9" type="informatif">
   <call-parameters>
@@ -168,7 +168,7 @@
     comment="le token XVème doit être de type t_ordinal_roman"
     left="XPATH#//data_structure/vertex[token/position=5]/data//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="CD"/>
+    right="NUM"/>
 </testcase>
 <testcase id="eng.default.11" type="bloquant">
   <call-parameters>
@@ -183,7 +183,7 @@
     comment="le token XIII doit être de type t_cardinal_roman"
     left="XPATH#//data_structure/vertex[token/position=9]/data//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="CD"/>
+    right="NUM"/>
 </testcase>
 <testcase id="eng.default.12" type="bloquant">
   <call-parameters>
