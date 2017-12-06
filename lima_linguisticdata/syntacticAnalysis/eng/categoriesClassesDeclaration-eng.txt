@@ -24,7 +24,7 @@ set entityTypes=SyntacticRelations
 @Determinant=($DET)
 @DetDef=(the)
 @DetIndef=(a,an)
-@DetInt=(which$DET,what$DET)
+@DetInt=(who,whom,what,which,whose)
 @DetNum=($NOMBRE)
 
 @Prep=($PREP)
