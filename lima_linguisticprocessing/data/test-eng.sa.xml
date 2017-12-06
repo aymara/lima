@@ -424,7 +424,7 @@
 </testcase>
 <testcase id="eng.sa.30" type="bloquant">
   <call-parameters>
-      <param key="text" value="The cat of the neighbor is fat and ugly."/>
+      <param key="text" value="The cat of the neighbour is fat and ugly."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -433,7 +433,7 @@
     </call-parameters>
   <expl>PREPSUB</expl>
 <test id="eng.sa.30.1" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB doit exister entre 'cat' et 'neighbor' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB doit exister entre 'cat' et 'neighbour' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='of']/dependents/dep[@t='PREPSUB']" 
     operator="exists"
     right="" />
