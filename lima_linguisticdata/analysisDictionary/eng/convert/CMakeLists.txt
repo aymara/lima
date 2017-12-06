@@ -64,7 +64,7 @@ add_custom_target(
   ALL
   DEPENDS dico.xml
 )
-add_dependencies(dicoxmleng codeeng )
+add_dependencies(dicoxmleng codeeng categs-eng )
 
 add_custom_target(
   converteng
