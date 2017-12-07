@@ -19312,47 +19312,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Rs">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rs">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rn">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rn">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rm">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rm">
+<code key="Ra">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19368,39 +19328,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Rc">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Ra">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Ra">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rp">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rp">
+<code key="Rd">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19416,7 +19344,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Re">
+<code key="Rg">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19424,7 +19352,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Rt">
+<code key="Rm">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19432,7 +19360,15 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Rt">
+<code key="Rn">
+  <field key="MICRO" value="ADV"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Rp">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19448,7 +19384,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Rr">
+<code key="Rs">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19456,15 +19392,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Rd">
-  <field key="MICRO" value="ADV"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Rd">
+<code key="Rt">
   <field key="MICRO" value="ADV"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19504,7 +19432,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Sn">
+<code key="Sg">
   <field key="MICRO" value="P"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value=""/>
@@ -19520,22 +19448,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Sr">
-  <field key="MICRO" value="P"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Sr">
-  <field key="MICRO" value="P"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="Sp">
 	<field key="MICRO" value="P"/>
 	<field key="GENDER" value=""/>
@@ -19544,29 +19456,21 @@
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
 </code>
-<code key="Sp">
-	<field key="MICRO" value="P"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
+<code key="Sr">
+  <field key="MICRO" value="P"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
 </code>
 <code key="Ss">
-	<field key="MICRO" value="P"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Ss">
-	<field key="MICRO" value="P"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
+  <field key="MICRO" value="P"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
 </code>
 <code key="CC:">
   <field key="MICRO" value="CC"/>
