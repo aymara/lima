@@ -12,7 +12,9 @@ def isProperNoun(pos,language):
         return pos=="PROPN"
     if language=="fre":
         return pos=="PROPN" or pos.startswith("NP")
-    
+    if language=="pos":
+        return pos.startswith("NPROP")
+
 def loadLefff2LimaCodesDict(project_source_dir):
     codes = {}
     # associate Lefff code prefix to pos tag
