@@ -6,6 +6,13 @@ import re
 import os
 
 #----------------------------------------------------------------------
+# generic function to get the POS for proper nouns wrt language
+def isProperNoun(pos,language):
+    if language=="eng" or language=="pos":
+        return pos=="PROPN"
+    if language=="fre":
+        return pos=="PROPN" or pos.startswith("NP")
+    
 def loadLefff2LimaCodesDict(project_source_dir):
     codes = {}
     # associate Lefff code prefix to pos tag
@@ -98,7 +105,7 @@ def loadCorpusEntries(corpus):
         corpus_entries.add(form,pos,"%s\t%s\t\t%s"%(form,form,pos))
     return corpus_entries
 
-def mergeEntries(language,dicofile,corpus,project_source_dir):
+def mergeEntries(language,dicofile,corpus,project_source_dir,corpusPriority=False):
     codes = {}
     
     #if language == 'fre':
@@ -118,15 +125,21 @@ def mergeEntries(language,dicofile,corpus,project_source_dir):
             if corpus_entries.exists(form,pos):
                 print("\n".join(list(entries)))
             else:
-                # dico forms not in corpus minus those with same form but with other pos
-                # in corpus
-                if not corpus_entries.formExists(form):
-                    print("\n".join(list(entries)))
+                # if corpusPriority, do not keep dico forms that exist in a corpus with a different POS 
+                if corpusPriority and corpus_entries.formExists(form):
+                    continue
+                print("\n".join(list(entries)))
     
     # corpus forms not in dico
     for form,posentries in corpus_entries.entries.items():
+        if " " in form or "'" in form: # no compound words in dictionary
+            continue
         for (pos,entries) in posentries.items():
-            if not dico_entries.exists(form,pos):
+            # keep only entries from the corpus if there is no other entry with the same form in the dictionary
+            # (e.g. in the English corpus, "The" is a proper noun)
+            if isProperNoun(pos,language) and (dico_entries.formExists(form) or dico_entries.formExists(form.lower())):
+                pass
+            elif not dico_entries.exists(form,pos) and not dico_entries.exists(form.lower(),pos):
                 print("\n".join(list(entries)))
                 
 #----------------------------------------------------------------------
@@ -135,16 +148,16 @@ def main(argv):
     # parse command-line arguments
     parser=argparse.ArgumentParser(description="Merge the dictionary entries with entries created from an POS-annotated corpus")
     # optional arguments
-    #parser.add_argument("--arg",type=int,default=42,help="description")
+    parser.add_argument("--corpus-priority",dest="corpusPriority",action="store_true",help="if set, do not keep a dictionary entry with a given POS tag is the same word exist in the corpus with a different POS tag (otherwise, keep all dico entries)")
     # positional arguments
     parser.add_argument("language",help="language")
-    parser.add_argument("dicofile",type=argparse.FileType('r',encoding='UTF-8'),help="input file")
+    parser.add_argument("dicofile",type=argparse.FileType('r',encoding='UTF-8'),help="input file: dictionary entries")
     parser.add_argument("corpus",type=argparse.FileType('r',encoding='UTF-8'),help="corpus file")
     parser.add_argument("project_source_dir",default="",nargs="?",help="project source dir")
     
     param=parser.parse_args()
     
     # do main
-    mergeEntries(param.language,param.dicofile,param.corpus,param.project_source_dir)
+    mergeEntries(param.language,param.dicofile,param.corpus,param.project_source_dir,param.corpusPriority)
     
 main(sys.argv[1:])
