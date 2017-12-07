@@ -4954,7 +4954,7 @@ contre	P
 les	DET
 «	PONCT
 ratonnades	ADJ
-anti-	PREF
+anti	PREF
 Blancs	NPP
 »	PONCT
 est	V
@@ -5222,7 +5222,7 @@ appeler	VINF
 des	DET
 «	PONCT
 ratonnades	ADJ
-anti-	PREF
+anti	PREF
 blancs	NC
 »	PONCT
 .	PONCTU_FORTE
@@ -6615,7 +6615,7 @@ divers	DET
 groupes	NC
 de	P
 manifestants	NC
-pro-	PREF
+pro	PREF
 Guttiérez	NPP
 convergeaient	V
 vers	P
@@ -6629,7 +6629,7 @@ les	DET
 moyens	NC
 aux	P+D
 manifestants	NC
-anti-	PREF
+anti	PREF
 Guttiérez	NPP
 et	CC
 ,	PONCT
@@ -7663,7 +7663,7 @@ prinicpalement	ADV
 par	P
 les	DET
 manifestations	NC
-anti-	PREF
+anti	PREF
 japonaises	ADJ
 de	P
 la	DET
@@ -18779,7 +18779,7 @@ propos	NC
 font état	V
 d'	P
 exactions	NC
-anti-	PREF
+anti	PREF
 africaines	ADJ
 commises	VPP
 par	P
@@ -19103,7 +19103,7 @@ sa	DET
 mère	NC
 ,	PONCT
 l'	DET
-ex-	PREF
+ex	PREF
 reine	NC
 Juliana	NPP
 ,	PONCT
@@ -24605,7 +24605,7 @@ Allemagne	NPP
 et	CC
 des	DET
 tensions	NC
-euro-	PREF
+euro	PREF
 iraniennes	ADJ
 .	PONCTU_FORTE
 M.	NC
@@ -25839,7 +25839,7 @@ est	V
 le	DET
 deuxième	ADJ
 attentat	NC
-anti-	PREF
+anti	PREF
 kurde	V
 en	P
 quatre jours	NC
@@ -37274,7 +37274,7 @@ Union	NC
 du	P+D
 Myanmar	NPP
 (	PONCT
-ex-	PREF
+ex	PREF
 Birmanie	NPP
 )	PONCT
 .	PONCTU_FORTE
@@ -45338,7 +45338,7 @@ la	DET
 culture	NC
 de	P
 semences	NC
-anti-	PREF
+anti	PREF
 OGM	NPP
 sur	P
 le	DET
@@ -45470,7 +45470,7 @@ annulation	NC
 des	DET
 sept	ADJ
 arrêtés	VPP
-anti-	PREF
+anti	PREF
 OGM	NPP
 ,	PONCT
 qui	PROREL
@@ -45629,7 +45629,7 @@ file	NC
 de	P
 la	DET
 contestation	NC
-anti-	PREF
+anti	PREF
 OGM	NPP
 ,	PONCT
 José Bové	NPP
@@ -50269,7 +50269,7 @@ Siméon de Saxe-Cobourg	NPP
 -	PONCT
 Gotha	NPP
 (	PONCT
-ex-	PREF
+ex	PREF
 tsar	NC
 des	DET
 Bulgares	NC
@@ -50299,7 +50299,7 @@ bulgare	ADJ
 (	PONCT
 PSB	NPP
 ,	PONCT
-ex-	PREF
+ex	PREF
 communiste	ADJ
 )	PONCT
 ,	PONCT
@@ -50367,7 +50367,7 @@ Géorgie	NPP
 ,	PONCT
 petite	ADJ
 république	NC
-ex-	PREF
+ex	PREF
 soviétique	ADJ
 située	VPP
 dans	P
@@ -50837,7 +50837,7 @@ OTAN	NPP
 Dans	P
 le	DET
 processus	NC
-anti-	PREF
+anti	PREF
 sessioniste	ADJ
 et	CC
 de	P
@@ -51402,7 +51402,7 @@ foi	NC
 Membre	NC
 de	P
 l'	DET
-ex-	PREF
+ex	PREF
 Saint-Office	NPP
 depuis	P
 cinq ans	NC
@@ -56464,7 +56464,7 @@ attentat	NC
 de	P
 Luis Posada Carriles	NPP
 ,	PONCT
-ex-	PREF
+ex	PREF
 agent	NC
 de	P
 la	DET
@@ -57903,7 +57903,7 @@ mongol	NC
 Хувьсгалт	NPP
 Нам	NPP
 ,	PONCT
-ex-	PREF
+ex	PREF
 communiste	ADJ
 )	PONCT
 .	PONCTU_FORTE
@@ -58004,7 +58004,7 @@ l'	DET
 image	NC
 de	P
 l'	DET
-ex-	PREF
+ex	PREF
 parti	NC
 communiste	ADJ
 ,	PONCT
@@ -59494,7 +59494,7 @@ américaine	ADJ
 a	V
 arrêté	VPP
 l'	DET
-anti-	PREF
+anti	PREF
 castriste	NC
 pour	P
 entrée	NC
@@ -66568,7 +66568,7 @@ a	V
 indiqué	VPP
 que	CS
 l'	DET
-ex-	PREF
+ex	PREF
 otage	NC
 était	V
 en	P
@@ -66588,7 +66588,7 @@ aux	P+D
 proches	NC
 de	P
 l'	DET
-ex-	PREF
+ex	PREF
 otage	NC
 samedi après-midi	NC
 vers	P
@@ -70246,7 +70246,7 @@ république	NC
 (	PONCT
 Ahmet Necdet Sezer	NPP
 ,	PONCT
-pro-	PREF
+pro	PREF
 laïque	ADJ
 )	PONCT
 et	CC
@@ -70968,7 +70968,7 @@ démocratie	NC
 ou	CC
 DEP	NPP
 ,	PONCT
-pro-	PREF
+pro	PREF
 kurde	NC
 )	PONCT
 Selim Sadak	NPP
@@ -74019,7 +74019,7 @@ Français	ADJ
 de	P
 Cadarache	NPP
 (	PONCT
-Bouches-du-Rhone	NPP
+Bouches-du-Rhône	NPP
 ,	PONCT
 à	P
 70 km	NC
@@ -76046,7 +76046,7 @@ en	P
 Iran	NPP
 .	PONCTU_FORTE
 Quatre	DET
-ex-	PREF
+ex	PREF
 otages	NC
 ,	PONCT
 dont	PROREL
@@ -76172,7 +76172,7 @@ le	DET
 témoignage	NC
 de	P
 certains	DET
-ex-	PREF
+ex	PREF
 otages	NC
 ,	PONCT
 le	DET
@@ -76201,7 +76201,7 @@ l'	DET
 De	DET
 nombreux	ADJ
 autres	ADJ
-ex-	PREF
+ex	PREF
 otages	NC
 ont	V
 ansi	VPP
@@ -78630,7 +78630,7 @@ Logiciels	NC
 tout comme	P
 des	DET
 amendements	NC
-anti-	PREF
+anti	PREF
 brevets	NC
 .	PONCTU_FORTE
 La	DET
@@ -78761,7 +78761,7 @@ amendements	NC
 très	ADV
 restrictifs	ADJ
 et	CC
-anti-	PREF
+anti	PREF
 brevets	NC
 proposés	VPP
 notamment	ADV
@@ -78784,7 +78784,7 @@ plaisir	NC
 de	P
 certains	DET
 lobbyistes	NC
-pro-	PREF
+pro	PREF
 brevets	NC
 qui	PROREL
 pourront	V
@@ -78815,7 +78815,7 @@ géants	NC
 de	P
 l'	DET
 informatique	NC
-pro-	PREF
+pro	PREF
 brevets	NC
 (	PONCT
 Alcatel	NPP
@@ -78977,7 +78977,7 @@ il	CLS
 provoquait	V
 .	PONCTU_FORTE
 L'	DET
-ex-	PREF
+ex	PREF
 dictateur	NC
 chilien	ADJ
 Augusto Pinochet	NPP
@@ -79586,7 +79586,7 @@ la	DET
 tête	NC
 et	CC
 problèmes	NC
-cardio-	PREF
+cardio	PREF
 respiratoires	ADJ
 .	PONCTU_FORTE
 À	P
@@ -88120,7 +88120,7 @@ juge	V
 avoir	VINF
 un	DET
 ton	NC
-pro-	PREF
+pro	PREF
 opposition	NC
 et	CC
 d'	P
@@ -90304,7 +90304,7 @@ membres	NC
 de	P
 la	DET
 brigade	NC
-anti-	PREF
+anti	PREF
 criminalité	NC
 (	PONCT
 BAC	NC
