@@ -239,7 +239,7 @@
   </call-parameters>
   <test id="fre.default.14.1" trace=".default.xml"
       comment="27 must be normalized in itself."
-      left="XPATH#//data_structure/vertex[token/position=1]/data/simple_word/form/@norm"
+      left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@norm"
       operator="="
       right="27"/>
 </testcase>
@@ -254,7 +254,7 @@
   </call-parameters>
   <test id="fre.default.15.1" trace=".default.xml"
       comment="-27 must be normalized in itself."
-      left="XPATH#//data_structure/vertex[token/position=1]/data/simple_word/form/@norm"
+      left="XPATH#//data_structure/vertex[token/position=1]/data/unknown_word/form/@norm"
       operator="="
       right="-27"/>
   <test id="fre.default.15.2" trace=".default.xml"

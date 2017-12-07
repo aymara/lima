@@ -88,7 +88,9 @@ def loadDicoEntries(dicofile,language,codes):
                 #i = i + 1
 
         if len(dico_line_array) >= (tagpos+1):
-            dico_entries.add(dico_line_array[0],dico_line_array[tagpos],dico_line)
+            dico_entries.add(dico_line_array[0],
+                             dico_line_array[tagpos],
+                             dico_line)
         else:
             sys.stderr.write('ERROR on line {}\n'.format(dico_line_array))
     return dico_entries
@@ -107,7 +109,9 @@ def loadCorpusEntries(corpus):
         corpus_entries.add(form,pos,"%s\t%s\t\t%s"%(form,form,pos))
     return corpus_entries
 
-def mergeEntries(language,dicofile,corpus,project_source_dir,corpusPriority=False):
+def mergeEntries(language,dicofile,
+                 corpus,project_source_dir,
+                 corpusPriority=False):
     codes = {}
     
     #if language == 'fre':
@@ -127,39 +131,64 @@ def mergeEntries(language,dicofile,corpus,project_source_dir,corpusPriority=Fals
             if corpus_entries.exists(form,pos):
                 print("\n".join(list(entries)))
             else:
-                # if corpusPriority, do not keep dico forms that exist in a corpus with a different POS 
+                # if corpusPriority, do not keep dico forms that exist in a
+                # corpus with a different POS 
                 if corpusPriority and corpus_entries.formExists(form):
                     continue
                 print("\n".join(list(entries)))
-    
+
     # corpus forms not in dico
     for form,posentries in corpus_entries.entries.items():
         if " " in form or "'" in form: # no compound words in dictionary
             continue
         for (pos,entries) in posentries.items():
-            # keep only entries from the corpus if there is no other entry with the same form in the dictionary
+            # keep only entries from the corpus if there is no other entry
+            # with the same form in the dictionary
             # (e.g. in the English corpus, "The" is a proper noun)
-            if isProperNoun(pos,language) and (dico_entries.formExists(form) or dico_entries.formExists(form.lower())):
+            if (isProperNoun(pos,language)
+                and (dico_entries.formExists(form)
+                     or dico_entries.formExists(form.lower()))):
                 pass
-            elif not dico_entries.exists(form,pos) and not dico_entries.exists(form.lower(),pos):
+            elif (not dico_entries.exists(form,pos)
+                  and not dico_entries.exists(form.lower(),pos)
+                  and not form[0].isdigit()):
                 print("\n".join(list(entries)))
-                
+
 #----------------------------------------------------------------------
 # main function
 def main(argv):
     # parse command-line arguments
-    parser=argparse.ArgumentParser(description="Merge the dictionary entries with entries created from an POS-annotated corpus")
+    parser=argparse.ArgumentParser(description="Merge the dictionary entries"
+                                   " with entries created from an"
+                                   " POS-annotated corpus")
     # optional arguments
-    parser.add_argument("--corpus-priority",dest="corpusPriority",action="store_true",help="if set, do not keep a dictionary entry with a given POS tag is the same word exist in the corpus with a different POS tag (otherwise, keep all dico entries)")
+    parser.add_argument("--corpus-priority",
+                        dest="corpusPriority",
+                        action="store_true",
+                        help="if set, do not keep a dictionary entry with a"
+                        " given POS tag is the same word exist in the corpus"
+                        " with a different POS tag (otherwise, keep all dico"
+                        " entries)")
     # positional arguments
-    parser.add_argument("language",help="language")
-    parser.add_argument("dicofile",type=argparse.FileType('r',encoding='UTF-8'),help="input file: dictionary entries")
-    parser.add_argument("corpus",type=argparse.FileType('r',encoding='UTF-8'),help="corpus file")
-    parser.add_argument("project_source_dir",default="",nargs="?",help="project source dir")
-    
+    parser.add_argument("language", help="language")
+    parser.add_argument("dicofile",
+                        type=argparse.FileType('r',encoding='UTF-8'),
+                        help="input file: dictionary entries")
+    parser.add_argument("corpus",
+                        type=argparse.FileType('r',encoding='UTF-8'),
+                        help="corpus file")
+    parser.add_argument("project_source_dir",
+                        default="",
+                        nargs="?",
+                        help="project source dir")
+
     param=parser.parse_args()
-    
+
     # do main
-    mergeEntries(param.language,param.dicofile,param.corpus,param.project_source_dir,param.corpusPriority)
-    
+    mergeEntries(param.language,
+                 param.dicofile,
+                 param.corpus,
+                 param.project_source_dir,
+                 param.corpusPriority)
+
 main(sys.argv[1:])
