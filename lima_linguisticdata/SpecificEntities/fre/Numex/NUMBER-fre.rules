@@ -189,7 +189,7 @@ le:::NOT_NUMBER:
 Le:::NOT_NUMBER:
 LE:::NOT_NUMBER:
 
-@ChiffreAines=(dizaine,centaine,millier,million,milliard,quelque$DET,quelques$DET,plusieurs$DET)
+@ChiffreAines=(dizaine,centaine,millier,million,milliard,dizaines,centaines,milliers,millions,milliards,quelque$DET,quelques$DET,plusieurs$DET)
 
 # without units: numbers
 @ChiffreAines:(un|1|une):((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
