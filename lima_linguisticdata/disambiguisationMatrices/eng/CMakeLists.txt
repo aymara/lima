@@ -23,7 +23,7 @@ if (NOT DEFINED ENV{NLTK_PTB_DP_FILE})
 endif()
 
 add_custom_command(
-  OUTPUT succession_categs_retag.txt
+  OUTPUT succession_categs_retag.txt corpus_eng_merge.txt
   COMMAND gawk -F "\\t" "BEGIN {OFS = FS} {print $1\"\\t\"$2}" $ENV{NLTK_PTB_DP_FILE} > corpus_eng_merge.txt
   COMMAND patch -p 0 corpus_eng_merge.txt ${CMAKE_CURRENT_SOURCE_DIR}/corpus/PennTreeBankExtractForLima.patch | cat
 #  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/oanc.pos corpus_eng_merge.txt
@@ -41,7 +41,7 @@ add_custom_command(
 add_custom_target(
   categs-eng
   ALL
-  DEPENDS succession_categs_retag.txt
+  DEPENDS succession_categs_retag.txt corpus_eng_merge.txt
 )
 
 DISAMBMATRICES(eng succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl X,SYM,UNK,PROPN,CONJ,NUM)

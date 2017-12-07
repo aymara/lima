@@ -27,7 +27,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     OUTPUT dico.xml forms.dic default-eng.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt > forms.dic.2
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_BINARY_DIR}/disambiguisationMatrices/eng/corpus_eng_merge.txt > forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic forms.dic.2
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
@@ -64,7 +64,7 @@ add_custom_target(
   ALL
   DEPENDS dico.xml
 )
-add_dependencies(dicoxmleng codeeng )
+add_dependencies(dicoxmleng codeeng categs-eng )
 
 add_custom_target(
   converteng
@@ -72,4 +72,8 @@ add_custom_target(
 )
 add_dependencies(converteng dicoxmleng )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat COMPONENT eng DESTINATION share/apps/lima/resources/LinguisticProcessings/eng)
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat 
+  COMPONENT eng 
+  DESTINATION share/apps/lima/resources/LinguisticProcessings/eng
+)

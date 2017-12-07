@@ -103684,7 +103684,7 @@
 > what	PRON
 > else	ADV
 > --	COLON
-> a	ADJ
+> a	DET
 > sheepskin	NOUN
 > .	SENT
 > The	DET
@@ -110731,7 +110731,7 @@
 > over	ADP
 > two years	NOUN
 > --	COLON
-> a	ADJ
+> a	DET
 > meaningful	ADJ
 > addition	NOUN
 > to	ADP
@@ -140655,9 +140655,9 @@
 > Oct. 6	PROPN
 > editorial	NOUN
 > ``	OQU
-> The	PROPN
-> Ill	PROPN
-> Homeless	PROPN
+> The	DET
+> Ill	ADJ
+> Homeless	NOUN
 > "	QUOT
 > referred	VERB
 > to	ADP

@@ -45,6 +45,7 @@ else ()
       DEPENDS 
         config-minimale.SVMT
         ${CMAKE_CURRENT_SOURCE_DIR}/../PennTreeBankExtractForLima.patch
+        ${CMAKE_CURRENT_BINARY_DIR}/../../corpus_eng_merge.txt
       COMMENT "Compiles eng SVMTool model"
       VERBATIM
     )
@@ -55,7 +56,9 @@ else ()
       DEPENDS lima.A0.UNK
     )
 
-  install(
+    add_dependencies(svmtoolmodeleng categs-eng)
+
+    install(
     FILES 
       ${CMAKE_CURRENT_BINARY_DIR}/config-minimale.SVMT  
       ${CMAKE_CURRENT_BINARY_DIR}/lima
