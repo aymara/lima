@@ -31,11 +31,7 @@
       </list>
       <!-- tokens with these micro categories will be considered as empty words-->
       <list name="emptyMicro">
-        <item value="DETDE"/>
-        <item value="DETDES"/>
-        <item value="DETDU"/>
-        <item value="DETWH"/>
-        <item value="DETNUM"/>
+        <item value="DET"/>
         <item value="P"/>
         <item value="P+D"/>
         <item value="PRO"/>
