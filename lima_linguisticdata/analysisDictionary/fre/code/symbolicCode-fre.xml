@@ -592,7 +592,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D:--msd">
+<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
@@ -600,7 +600,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
+<code key="P+D:--msd">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
@@ -616,23 +616,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--mpd">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
@@ -648,23 +632,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--msi">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
@@ -680,14 +648,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--mpi">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
@@ -696,22 +656,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dv--fpi">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="Dv--fpi">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="FEM"/>
@@ -721,22 +665,6 @@
   <field key="SYNTAX" value=""/>
 </code>
 <code key="Dv--mpi">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dv--mpi">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="De--mpi">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
@@ -760,23 +688,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--msc">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
@@ -792,23 +704,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--mpc">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
@@ -824,23 +720,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--msp">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
@@ -856,23 +736,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:--mpp">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
@@ -888,14 +752,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="Ds1sms-">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
@@ -1280,14 +1136,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="DET:--ms-">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="DET">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
@@ -1296,7 +1144,15 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="DET:--fs-">
+<code key="DET:ms">
+  <field key="MICRO" value="DET"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="DET:fs">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
@@ -1304,15 +1160,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="DET">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="DET:--mp-">
+<code key="DET:mp">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="PLUR"/>
@@ -1320,23 +1168,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="DET">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="DET:--fp-">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="DET">
+<code key="DET:fp">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
@@ -1536,89 +1368,9 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="Dt--ms-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--ms-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--fs-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--fs-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--mp-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--mp-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--fp-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="Dt--fp-">
-  <field key="MICRO" value="DETWH"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="De--ms-">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="De--ms-">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="De--fs-">
-  <field key="MICRO" value="DET"/>
-  <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="SING"/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
@@ -6272,15 +6024,15 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="ADJ:-ms">
+<code key="ADJ">
   <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
+  <field key="GENDER" value=""/>
+  <field key="NUMBER" value=""/>
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="ADJ">
+<code key="ADJ:-ms">
   <field key="MICRO" value="ADJ"/>
   <field key="GENDER" value="MASC"/>
   <field key="NUMBER" value="SING"/>
@@ -6296,14 +6048,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="ADJ:-mp">
   <field key="MICRO" value="ADJ"/>
   <field key="GENDER" value="MASC"/>
@@ -6312,87 +6056,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="ADJ:-fp">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ:-ms">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ:-fs">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="SING"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ:-mp">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="MASC"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ:-fp">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value="FEM"/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
   <field key="MICRO" value="ADJ"/>
   <field key="GENDER" value="FEM"/>
   <field key="NUMBER" value="PLUR"/>
@@ -19688,23 +19352,7 @@
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-	<field key="MICRO" value="P+D"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:c">
-	<field key="MICRO" value="P+D"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
 	<field key="MICRO" value="P+D"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
@@ -19720,14 +19368,6 @@
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-	<field key="MICRO" value="P+D"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
 <code key="Ds">
 	<field key="MICRO" value="DET"/>
 	<field key="GENDER" value=""/>
@@ -19737,22 +19377,6 @@
 	<field key="SYNTAX" value=""/>
 </code>
 <code key="Ds">
-	<field key="MICRO" value="DET"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="DET:">
-	<field key="MICRO" value="DET"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="DET">
 	<field key="MICRO" value="DET"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
@@ -19804,70 +19428,6 @@
 	<field key="MICRO" value="DET"/>
 	<field key="GENDER" value=""/>
 	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtms">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="MASC"/>
-	<field key="NUMBER" value="SING"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtms">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="MASC"/>
-	<field key="NUMBER" value="SING"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtfs">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="FEM"/>
-	<field key="NUMBER" value="SING"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtfs">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="FEM"/>
-	<field key="NUMBER" value="SING"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtmp">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="MASC"/>
-	<field key="NUMBER" value="PLUR"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtmp">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="MASC"/>
-	<field key="NUMBER" value="PLUR"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtfp">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="FEM"/>
-	<field key="NUMBER" value="PLUR"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="Dtfp">
-	<field key="MICRO" value="DETWH"/>
-	<field key="GENDER" value="FEM"/>
-	<field key="NUMBER" value="PLUR"/>
 	<field key="PERSON" value=""/>
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
@@ -19996,38 +19556,6 @@
 	<field key="MICRO" value="DET"/>
 	<field key="GENDER" value="FEM"/>
 	<field key="NUMBER" value="PLUR"/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ:---">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
-  <field key="MICRO" value="ADJ"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ:---">
-	<field key="MICRO" value="ADJ"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
-	<field key="PERSON" value=""/>
-	<field key="TIME" value=""/>
-	<field key="SYNTAX" value=""/>
-</code>
-<code key="ADJ">
-	<field key="MICRO" value="ADJ"/>
-	<field key="GENDER" value=""/>
-	<field key="NUMBER" value=""/>
 	<field key="PERSON" value=""/>
 	<field key="TIME" value=""/>
 	<field key="SYNTAX" value=""/>
@@ -20120,14 +19648,6 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:----c">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value=""/>
@@ -20136,23 +19656,7 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
-<code key="P+D">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value=""/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
 <code key="P+D:---pc">
-  <field key="MICRO" value="P+D"/>
-  <field key="GENDER" value=""/>
-  <field key="NUMBER" value="PLUR"/>
-  <field key="PERSON" value=""/>
-  <field key="TIME" value=""/>
-  <field key="SYNTAX" value=""/>
-</code>
-<code key="P+D">
   <field key="MICRO" value="P+D"/>
   <field key="GENDER" value=""/>
   <field key="NUMBER" value="PLUR"/>

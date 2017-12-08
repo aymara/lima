@@ -44,7 +44,7 @@ set entityTypes=SyntacticRelations
 
 @Determinant=($DET)
 
-@DetInt=($DET-DETWH)
+@DetInt=(quel$DET)
 
 @DetDemons=($DET-DET)
 
@@ -74,7 +74,7 @@ set entityTypes=SyntacticRelations
 #pour peut servir pour complement du nom ou pour complément circonstanciel...
 
 
-@PrepComp=($PREP,$DET-DET)
+@PrepComp=($PREP,de$DET)
 
 @PrepGVInf=($PREP-P)
 

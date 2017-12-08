@@ -3024,7 +3024,7 @@ ID;i;A;quant;quant aux;préposition article pluriel;quant à
 ID;i;A;Quant;Quant à;préposition;quant à
 ID;i;A;Quant;Quant au;préposition article;quant à
 ID;i;A;Quant;Quant aux;préposition article pluriel;quant à
-ID;i;A;[D]aujourd';[D]aujourd' hui;adverbe;aujourd'hui
+ID;i;A;[D]aujourd;[D]aujourd hui;adverbe;aujourd'hui
 ID;i;A;extenso;in extenso;adverbe;
 ID;i;A;extremis;in extremis;adverbe;
 ID;i;A;facto;de facto;adverbe;

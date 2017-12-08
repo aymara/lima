@@ -231,7 +231,6 @@ $PREP-P+D:@Adjectif:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} ($PRON-CLO|@Subs
 # (A6.7 - 4.2.1.8)
 #----------------------------------------------------------------------
 @AdvModifieurAdj::@Adjectif:SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"ADVADJ")
 =>AddRelationInGraph()
