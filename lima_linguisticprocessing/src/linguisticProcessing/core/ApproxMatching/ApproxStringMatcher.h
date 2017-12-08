@@ -109,7 +109,7 @@ private:
     const LinguisticGraphVertex vStart,
     const LinguisticGraphVertex vEnd,
     const std::deque<int>& tokenStartPos,
-    const std::deque<int>& tokenEndPos,
+    const std::deque<int>& tokenEndPos, const LimaString& text,
     const Suggestion& suggestion, Solution& tempResult) const;
 
   int findApproxPattern(
