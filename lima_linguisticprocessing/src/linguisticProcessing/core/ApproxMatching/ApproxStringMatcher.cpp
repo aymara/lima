@@ -56,6 +56,7 @@ typedef boost::basic_regex<wchar_t> wide_regex;
 
 SimpleFactory<MediaProcessUnit,ApproxStringMatcher> ApproxStringMatcherFactory(APPROX_STRING_MATCHER_CLASSID);
 
+QChar BLANK_SEPARATOR= ' ';
 
 std::ostream& operator<<(ostream& os, const Suggestion& suggestion)
 {
@@ -564,7 +565,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
         // TODO: add space when previous and current tokens are not contiguous
         if( currentToken->position() > textEnd) {
           currentStartPos++;
-          text.append(" ");
+          text.append(BLANK_SEPARATOR);
         }
         tokenStartPos.push_back(currentStartPos);
         tokenEndPos.push_back(currentStartPos+currentToken->length());
@@ -611,11 +612,13 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       for( std::vector<Suggestion>::const_iterator sIt = suggestions.begin() ;
           sIt != suggestions.end() ; sIt++ ) {
         Solution tempResult;
-        computeVertexMatches( g, vStart, vEnd, tokenStartPos, tokenEndPos, *sIt, tempResult);
-        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moement du calcul de suggestion.startPosition et suggestion.endPosition 
-        tempResult.form = text.mid(sIt->startPosition,
-                             sIt->endPosition-sIt->startPosition);
-        tempResult.length = sIt->endPosition-sIt->startPosition;
+        computeVertexMatches( g, vStart, vEnd, tokenStartPos, tokenEndPos, text, *sIt, tempResult);
+        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moment du calcul de suggestion.startPosition et suggestion.endPosition 
+        //tempResult.form = text.mid(sIt->startPosition, sIt->endPosition-sIt->startPosition);
+        // tempResult.length = sIt->endPosition-sIt->startPosition;
+        tempResult.form = text.mid(tempResult.suggestion.startPosition-1,
+                                   tempResult.suggestion.endPosition-tempResult.suggestion.startPosition);
+        tempResult.length = tempResult.suggestion.endPosition-tempResult.suggestion.startPosition;
         if( (tempResult.suggestion.nb_error <= nbMaxError) ) {
           tempResult.normalizedForm = wcharStr2LimaStr(normalizedForm);
           result.insert(tempResult);
@@ -634,7 +637,7 @@ int ApproxStringMatcher::computeVertexMatches(
     const LinguisticGraphVertex vStart,
     const LinguisticGraphVertex vEnd,
     const std::deque<int>& tokenStartPos,
-    const std::deque<int>& tokenEndPos,
+    const std::deque<int>& tokenEndPos, const LimaString& text,
     const Suggestion& suggestion, Solution& tempResult) const
 {
   MORPHOLOGINIT;
@@ -661,7 +664,7 @@ int ApproxStringMatcher::computeVertexMatches(
         if (currentToken!=0)
         {
 #ifdef DEBUG_LP
-          LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() compare with (start,end)="
+          LDEBUG << "ApproxStringMatcher::computeVertexMatches() compare with (start,end)="
                  << "(" << startInForm
                  << "," << endInForm << "}";
 #endif
@@ -671,25 +674,36 @@ int ApproxStringMatcher::computeVertexMatches(
               pushVertex=true;
               tempResult.suggestion.startPosition = currentToken->position();
               tempResult.startPos = *startPosIt;
-              LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() begin ="
+              LDEBUG << "ApproxStringMatcher::computeVertexMatches() begin ="
                        << currentToken->position();
               if( suggestion.startPosition > startInForm ) {
-                LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() correction error begin +"
+                LDEBUG << "ApproxStringMatcher::computeVertexMatches() correction error begin +"
                        << suggestion.startPosition - startInForm;
                 tempResult.suggestion.startPosition += (suggestion.startPosition - startInForm);
                 tempResult.suggestion.nb_error += (suggestion.startPosition - startInForm);
                 tempResult.startPos += (suggestion.startPosition - startInForm);
               }
             }
+            // Trick if character before match is a blank, reduce error???
+            else if( (suggestion.startPosition+1 == startInForm)
+                 && (tempResult.suggestion.nb_error >= 1)
+                 && (text.at(suggestion.startPosition) == BLANK_SEPARATOR)  ){
+              pushVertex=true;
+              tempResult.suggestion.startPosition = currentToken->position();
+              tempResult.startPos = *startPosIt;
+              LDEBUG << "ApproxStringMatcher::computeVertexMatches() (2) begin ="
+                       << currentToken->position();
+              tempResult.suggestion.nb_error -= 1;
+            }
           }
           if( tempResult.suggestion.endPosition == -1 ) {
             // If end of matched segment is bounded by current token
             if( ( suggestion.endPosition >= startInForm ) && ( suggestion.endPosition <= endInForm ) ){
               tempResult.suggestion.endPosition = currentToken->position()+currentToken->length();
-              LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() end ="
+              LDEBUG << "ApproxStringMatcher::computeVertexMatches() end ="
                        << currentToken->position()+currentToken->length();
               if( suggestion.endPosition < endInForm ) {
-                LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() correction error end +"
+                LDEBUG << "ApproxStringMatcher::computeVertexMatches() correction error end +"
                        << endInForm - suggestion.endPosition;
                 tempResult.suggestion.endPosition -= (endInForm - suggestion.endPosition);
                 tempResult.suggestion.nb_error += (endInForm - suggestion.endPosition);
@@ -697,7 +711,7 @@ int ApproxStringMatcher::computeVertexMatches(
             }
           }
           if( pushVertex ) {
-            LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers: push " << currentVertex;
+            LDEBUG << "ApproxStringMatcher::computeVertexMatches: push " << currentVertex;
             tempResult.vertices.push_back(currentVertex);
           }
           if( (tempResult.suggestion.startPosition != -1) && (tempResult.suggestion.endPosition != -1) ) {
@@ -793,6 +807,7 @@ int ApproxStringMatcher::findApproxPattern(
         offset += current_match->rm_eo;
       }
     } while ( (tlength-offset > 0) && (execStatus == 0) );
+    regfree(&preg);
     return returnStatus;
 }
 
