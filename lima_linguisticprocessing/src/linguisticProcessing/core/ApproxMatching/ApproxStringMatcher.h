@@ -58,17 +58,15 @@ LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Suggestion& node);
 
 // TODO  : à mettre dans le .cpp avec une implémentation private
 typedef struct _Solution {
+  // position of matched string in text
   Suggestion suggestion;
   // list of vertex in graph
   std::deque<LinguisticGraphVertex> vertices;
-  // id of target in lexicon ??
-  // long unsigned int match_id;
   // matched string
   LimaString form;
   // normalized string = matched element in lexicon
   LimaString normalizedForm;
-  // position of matched string in text
-  uint64_t startPos;
+  // length of matched string in text
   uint64_t length;
 } Solution;
 
@@ -104,12 +102,10 @@ private:
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     OrderedSolution& result) const;
 
-  int computeVertexMatches(
+  void computeVertexMatches(
     const LinguisticGraph& g, 
     const LinguisticGraphVertex vStart,
     const LinguisticGraphVertex vEnd,
-    const std::deque<int>& tokenStartPos,
-    const std::deque<int>& tokenEndPos, const LimaString& text,
     const Suggestion& suggestion, Solution& tempResult) const;
 
   int findApproxPattern(
