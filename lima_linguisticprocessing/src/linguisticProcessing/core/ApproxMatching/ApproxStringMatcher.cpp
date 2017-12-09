@@ -85,7 +85,6 @@ std::ostream& operator<<(ostream& os, const Solution& solution)
   }
   os << Lima::Common::Misc::limastring2utf8stdstring(solution.form)
      << "(" << Lima::Common::Misc::limastring2utf8stdstring(solution.normalizedForm) << ")"
-//     << "start=" << solution.startPos << "length=" << solution.length
      << "length=" << solution.length
      << std::endl;
   return os;
@@ -104,7 +103,6 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
   }
   os << Lima::Common::Misc::limastring2utf8stdstring(solution.form)
      << "(" << Lima::Common::Misc::limastring2utf8stdstring(solution.normalizedForm) << ")"
-//     << "start=" << solution.startPos << "length=" << solution.length;
      << "length=" << solution.length;
   return os;
 }
