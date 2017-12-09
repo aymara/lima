@@ -36,11 +36,17 @@ namespace Lima
   }
 }
 
+#define MULTITHREAD 1
+
 class AnalysisThreadPrivate;
 /**
  * @brief Analyser thread
  */
+#ifdef MULTITHREAD
 class AnalysisThread : public QThread
+#else
+class AnalysisThread : public QObject
+#endif
 {
   Q_OBJECT
 public:
