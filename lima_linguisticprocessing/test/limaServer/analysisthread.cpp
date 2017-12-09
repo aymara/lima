@@ -84,16 +84,27 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::Abstrac
 AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 
                   QHttpRequest *req, QHttpResponse *resp, 
                   const std::set<std::string>& langs, QObject* parent ):
+#ifdef MULTITHREAD
     QThread(parent),
+#else
+    QObject(parent),
+#endif
     m_d(new AnalysisThreadPrivate(analyzer,req,resp,langs))
 {
   CORECLIENTLOGINIT;
   LDEBUG << "AnalysisThread::AnalysisThread()...";
+#ifdef MULTITHREAD
   connect(this,SIGNAL(started()),this,SLOT(slotStarted()),Qt::QueuedConnection);
+#else
+  connect(req,SIGNAL(end()),this,SLOT(startAnalysis()));
+  connect(resp,SIGNAL(done()),this,SLOT(deleteLater()));
+#endif
 }
 
 AnalysisThread::~AnalysisThread()
 {
+  CORECLIENTLOGINIT;
+  LDEBUG << "AnalysisThread::~AnalysisThread...";
   delete m_d;
 }
 
@@ -213,9 +224,12 @@ void AnalysisThread::startAnalysis()
 //      QString body = QString::fromUtf8(resultString.c_str());
 //      m_d->m_response->end(body.toUtf8());
       m_d->m_response->end(QByteArray(resultString.c_str()));
+#ifdef MULTITHREAD
       m_d->m_request->deleteLater();
-      deleteLater();
-      quit();
+      //OME deleteLater();
+      quit(); // exit the eventLoop
+#else
+#endif
     }
     else
     {
@@ -333,13 +347,21 @@ void AnalysisThread::startAnalysis()
 //      QString body = QString::fromUtf8(resultString.c_str());
 //      m_d->m_response->end(body.toUtf8());
       m_d->m_response->end(QByteArray(resultString.c_str()));
+#ifdef MULTITHREAD
+      m_d->m_request->deleteLater();
+      //OME deleteLater();
+      quit(); // exit the eventLoop
+#else
+#endif
     }
     else
     {
       m_d->m_response->writeHead(400);
       m_d->m_response->end(QByteArray("Empty language or text"));
-      return;
+      // OME return;
     }
+    // OME
+    LDEBUG << "AnalysisThread::startAnalysis: delete oss... ";
     delete seLogWriter;
     delete oss; oss = 0;
   }
