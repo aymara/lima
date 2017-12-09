@@ -85,7 +85,8 @@ std::ostream& operator<<(ostream& os, const Solution& solution)
   }
   os << Lima::Common::Misc::limastring2utf8stdstring(solution.form)
      << "(" << Lima::Common::Misc::limastring2utf8stdstring(solution.normalizedForm) << ")"
-     << "start=" << solution.startPos << "length=" << solution.length
+//     << "start=" << solution.startPos << "length=" << solution.length
+     << "length=" << solution.length
      << std::endl;
   return os;
 }
@@ -103,7 +104,8 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
   }
   os << Lima::Common::Misc::limastring2utf8stdstring(solution.form)
      << "(" << Lima::Common::Misc::limastring2utf8stdstring(solution.normalizedForm) << ")"
-     << "start=" << solution.startPos << "length=" << solution.length;
+//     << "start=" << solution.startPos << "length=" << solution.length;
+     << "length=" << solution.length;
   return os;
 }
 
@@ -114,10 +116,10 @@ bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
   if( s1.suggestion.nb_error > s2.suggestion.nb_error ) {
     return false;
   }
-  if( s1.startPos < s2.startPos ) {
+  if( s1.suggestion.startPosition < s2.suggestion.startPosition ) {
     return true;
   }
-  if( s1.startPos > s2.startPos ) {
+  if( s1.suggestion.startPosition > s2.suggestion.startPosition ) {
     return false;
   }
   if( s1.length > s2.length) {
@@ -481,7 +483,7 @@ void ApproxStringMatcher::createVertex(
         solution.vertices,
         m_entityType,
         solution.form, solution.normalizedForm, solution.suggestion.nb_error,
-        solution.startPos, solution.length, *m_sp);
+        solution.suggestion.startPosition, solution.length, *m_sp);
   GenericAnnotation spGa(spAnnot);
   // make access to annotation data from annotation vertex
   annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("SpecificEntity"), spGa);
@@ -537,16 +539,8 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
   // VertexDataPropertyMap dataMap=get(vertex_data,g);
 
   // Build string (text) where search will be done
-  // Build also a queue of positions of tokens in this string
-  // Because the string formed is neither identical to the original text
-  // nor identical to concatenation of tokens
   LimaString text;
-  // Position of tokens in text
-  std::deque<int> tokenStartPos;
-  std::deque<int> tokenEndPos;
   Token* currentToken=tokenMap[vStart];
-  // position of text in original text
-  uint64_t textEnd;
   // TODO: vérifier que vEndIt est le noeud 1 (sans token)
   for( LinguisticGraphVertex currentVertex = vStart ; currentVertex != vEnd ; ) {
     currentToken=tokenMap[currentVertex];
@@ -555,26 +549,11 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
 #endif
     if (currentToken!=0)
     {
-      if( tokenStartPos.empty() ) {
-        tokenStartPos.push_back(0);
-        tokenEndPos.push_back(currentToken->length());
-        textEnd = currentToken->position() + currentToken->length();
-      }
-      else {
-        int currentStartPos = tokenEndPos.back();
-        // TODO: add space when previous and current tokens are not contiguous
-        if( currentToken->position() > textEnd) {
-          currentStartPos++;
+      // Add enough space characters to adjust text to beginning of token
+      if (currentToken->position() > text.length()) {
+        for( int i = currentToken->position() - text.length() ; i > 0 ; i-- ) 
           text.append(BLANK_SEPARATOR);
-        }
-        tokenStartPos.push_back(currentStartPos);
-        tokenEndPos.push_back(currentStartPos+currentToken->length());
-        textEnd = currentToken->position() + currentToken->length();
       }
-#ifdef DEBUG_LP
-      LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() posInform= "
-            << tokenStartPos.back() << "," << tokenEndPos.back();
-#endif
       assert( currentToken->length() == (uint64_t)(currentToken->stringForm().length()));
       text.append(currentToken->stringForm());
 #ifdef DEBUG_LP
@@ -612,13 +591,13 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
       for( std::vector<Suggestion>::const_iterator sIt = suggestions.begin() ;
           sIt != suggestions.end() ; sIt++ ) {
         Solution tempResult;
-        computeVertexMatches( g, vStart, vEnd, tokenStartPos, tokenEndPos, text, *sIt, tempResult);
+        computeVertexMatches( g, vStart, vEnd, *sIt, tempResult);
         // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moment du calcul de suggestion.startPosition et suggestion.endPosition 
         //tempResult.form = text.mid(sIt->startPosition, sIt->endPosition-sIt->startPosition);
         // tempResult.length = sIt->endPosition-sIt->startPosition;
-        tempResult.form = text.mid(tempResult.suggestion.startPosition-1,
-                                   tempResult.suggestion.endPosition-tempResult.suggestion.startPosition);
         tempResult.length = tempResult.suggestion.endPosition-tempResult.suggestion.startPosition;
+        tempResult.form = text.mid(tempResult.suggestion.startPosition,
+                                   tempResult.length);
         if( (tempResult.suggestion.nb_error <= nbMaxError) ) {
           tempResult.normalizedForm = wcharStr2LimaStr(normalizedForm);
           result.insert(tempResult);
@@ -632,99 +611,70 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
 }
 
 
-int ApproxStringMatcher::computeVertexMatches(
-    const LinguisticGraph& g, 
+void ApproxStringMatcher::computeVertexMatches(
+    const LinguisticGraph& g,
     const LinguisticGraphVertex vStart,
     const LinguisticGraphVertex vEnd,
-    const std::deque<int>& tokenStartPos,
-    const std::deque<int>& tokenEndPos, const LimaString& text,
     const Suggestion& suggestion, Solution& tempResult) const
 {
   MORPHOLOGINIT;
-//  VertexTokenPropertyMap tokenMap=get(vertex_token,g);
-//  Token* currentToken=tokenMap[vStart];
   Token* currentToken=get(vertex_token,g,vStart);
   
       tempResult.suggestion.nb_error = suggestion.nb_error;
       tempResult.vertices=std::deque<LinguisticGraphVertex>();
-      tempResult.startPos = tokenStartPos.front();
-      // exact position in text
-      tempResult.suggestion.startPosition = -1;
-      tempResult.suggestion.endPosition = -1;
-      int startInForm(0);
-      int endInForm(0);
-      std::deque<int>::const_iterator startPosIt= tokenStartPos.begin();
-      std::deque<int>::const_iterator endPosIt= tokenEndPos.begin();
       bool pushVertex=false;
       for( LinguisticGraphVertex currentVertex = vStart ; currentVertex != vEnd ; ) {
         currentToken=get(vertex_token,g,currentVertex);
-        // currentToken=tokenMap[currentVertex];
-        startInForm = *startPosIt;
-        endInForm = *endPosIt;
         if (currentToken!=0)
         {
+          int startTok = currentToken->position();
+          int endTok = currentToken->position() + currentToken->length();
 #ifdef DEBUG_LP
           LDEBUG << "ApproxStringMatcher::computeVertexMatches() compare with (start,end)="
-                 << "(" << startInForm
-                 << "," << endInForm << "}";
+                 << "(" << startTok
+                 << "," << endTok << "}";
 #endif
-          if( tempResult.suggestion.startPosition == -1 ) {
-            // If begin of matched segment is bounded by current token
-            if( ( suggestion.startPosition >= startInForm ) && ( suggestion.startPosition < endInForm ) ){
+          // Search for token where matches begins
+          if( tempResult.vertices.size() == 0 ) {
+            if(  (suggestion.startPosition <= startTok )
+              || ( (suggestion.startPosition >= startTok) && ( suggestion.startPosition < endTok) ) ) {
               pushVertex=true;
-              tempResult.suggestion.startPosition = currentToken->position();
-              tempResult.startPos = *startPosIt;
-              LDEBUG << "ApproxStringMatcher::computeVertexMatches() begin ="
-                       << currentToken->position();
-              if( suggestion.startPosition > startInForm ) {
-                LDEBUG << "ApproxStringMatcher::computeVertexMatches() correction error begin +"
-                       << suggestion.startPosition - startInForm;
-                tempResult.suggestion.startPosition += (suggestion.startPosition - startInForm);
-                tempResult.suggestion.nb_error += (suggestion.startPosition - startInForm);
-                tempResult.startPos += (suggestion.startPosition - startInForm);
-              }
-            }
-            // Trick if character before match is a blank, reduce error???
-            else if( (suggestion.startPosition+1 == startInForm)
-                 && (tempResult.suggestion.nb_error >= 1)
-                 && (text.at(suggestion.startPosition) == BLANK_SEPARATOR)  ){
-              pushVertex=true;
-              tempResult.suggestion.startPosition = currentToken->position();
-              tempResult.startPos = *startPosIt;
-              LDEBUG << "ApproxStringMatcher::computeVertexMatches() (2) begin ="
-                       << currentToken->position();
-              tempResult.suggestion.nb_error -= 1;
-            }
-          }
-          if( tempResult.suggestion.endPosition == -1 ) {
-            // If end of matched segment is bounded by current token
-            if( ( suggestion.endPosition >= startInForm ) && ( suggestion.endPosition <= endInForm ) ){
-              tempResult.suggestion.endPosition = currentToken->position()+currentToken->length();
-              LDEBUG << "ApproxStringMatcher::computeVertexMatches() end ="
-                       << currentToken->position()+currentToken->length();
-              if( suggestion.endPosition < endInForm ) {
-                LDEBUG << "ApproxStringMatcher::computeVertexMatches() correction error end +"
-                       << endInForm - suggestion.endPosition;
-                tempResult.suggestion.endPosition -= (endInForm - suggestion.endPosition);
-                tempResult.suggestion.nb_error += (endInForm - suggestion.endPosition);
+              if(suggestion.startPosition > startTok) {
+                tempResult.suggestion.nb_error += (suggestion.startPosition - startTok);
+#ifdef DEBUG_LP
+                LDEBUG << "ApproxStringMatcher::computeVertexMatches: error +="
+                       << suggestion.startPosition - startTok;
+#endif
               }
             }
           }
           if( pushVertex ) {
-            LDEBUG << "ApproxStringMatcher::computeVertexMatches: push " << currentVertex;
+#ifdef DEBUG_LP
+            LDEBUG << "ApproxStringMatcher::computeVertexMatches: push "
+                   << currentVertex;
+#endif
             tempResult.vertices.push_back(currentVertex);
+            if( ( suggestion.endPosition >= startTok ) && ( suggestion.endPosition <= endTok) ) {
+              if(suggestion.endPosition < endTok) {
+                tempResult.suggestion.nb_error += (endTok-suggestion.endPosition);
+#ifdef DEBUG_LP
+                LDEBUG << "ApproxStringMatcher::computeVertexMatches: error +="
+                       << endTok-suggestion.endPosition;
+#endif
+              }
+              break;
+            }
           }
-          if( (tempResult.suggestion.startPosition != -1) && (tempResult.suggestion.endPosition != -1) ) {
-            break;
-          }
-          startPosIt++;
-          endPosIt++;
         }
         // following nodes
         LinguisticGraphOutEdgeIt outEdge,outEdge_end;
         boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
         currentVertex =target(*outEdge,g);
       }
+      Token* firstToken=get(vertex_token,g,tempResult.vertices.front());
+      tempResult.suggestion.startPosition = firstToken->position();
+      Token* lastToken=get(vertex_token,g,tempResult.vertices.back());
+      tempResult.suggestion.endPosition = lastToken->position()+lastToken->length();
 }
 
 int ApproxStringMatcher::findApproxPattern(
