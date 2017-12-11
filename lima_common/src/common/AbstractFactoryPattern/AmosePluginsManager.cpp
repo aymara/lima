@@ -53,7 +53,6 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
-    ABSTRACTFACTORYPATTERNLOGINIT;
     LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
     
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
@@ -80,9 +79,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         // Allow empty and comment lines.
         if ( !line.isEmpty() && !line.startsWith('#') )
         {
-#ifdef DEBUG_CD
-           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
-#endif
+          LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str());
         }
       }
