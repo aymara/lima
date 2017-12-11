@@ -199,7 +199,7 @@ namespace Lima
     const std::string& classId,
     Factory* fact)
   {
-//     std::cerr << "register factory for classId '" << classId << "'" << std::endl;
+    std::cerr << "register factory for classId '" << classId << "'" << std::endl;
     if (m_factories.find(classId)!=m_factories.end())
     {
       std::cerr << "Factory for classId '" << classId << "' already exists do not replace it." << std::endl;

@@ -73,7 +73,7 @@ protected:
 template<typename Factory>
 RegistrableFactory<Factory>::RegistrableFactory(const std::string& id)
 {
-  //std::cerr << "RegistrableFactory<Factory>::RegistrableFactory("<< id << ")" << std::endl;
+  std::cerr << "RegistrableFactory<Factory>::RegistrableFactory("<< id << ")" << std::endl;
   MainFactory< RegistrableFactory<Factory> >::changeable().registerFactory(id,this);
 }
 
