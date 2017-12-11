@@ -86,20 +86,16 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   for (auto it = m_d->m_supplementarySearchPath.begin(); 
        it != m_d->m_supplementarySearchPath.end(); it++)
   {
-#ifdef DEBUG_FACTORIES
     LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
-#endif
     libhandle = std::shared_ptr<QLibrary>(new QLibrary( ((*it)+"/"+libName).c_str() ));
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-#ifdef DEBUG_CD
       LDEBUG << "the library " << libName.c_str() 
               << " was loaded from supplementary search path";
       LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
-#endif
       return true;
     }
     else
@@ -112,20 +108,16 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   // now try system default search path
   if (libhandle == 0)
   {
-#ifdef DEBUG_FACTORIES
     LINFO << "Trying " << libName.c_str();
-#endif
     libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-#ifdef DEBUG_CD
       LDEBUG << "the library " << libName 
               << " was loaded from system default search path";
       LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
-#endif
       return true;
     }
     else
