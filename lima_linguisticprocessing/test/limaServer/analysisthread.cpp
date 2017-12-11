@@ -183,7 +183,8 @@ void AnalysisThread::startAnalysis()
       if (item.first == "text")
       {
         text = item.second;
-        LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << text << "'";
+        QString truncated = text.mid(0,20);
+        LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << truncated << "...'";
       }
     }
     if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
@@ -211,7 +212,7 @@ void AnalysisThread::startAnalysis()
       else
         resultString.append(ConllToJson( oss->str()));
 
-      LDEBUG << "AnalysisThread::startAnalysis (GET): seLogger output is " << QString::fromUtf8(resultString.c_str());
+      LDEBUG << "AnalysisThread::startAnalysis (GET): seLogger output is " << QString::fromUtf8((std::string(resultString,30)).c_str());
 
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
@@ -335,7 +336,8 @@ void AnalysisThread::startAnalysis()
       }
       else
         resultString.append(ConllToJson( oss->str()));
-      LDEBUG << "AnalysisThread::startAnalysis (POST): seLogger output is " << QString::fromUtf8(resultString.c_str());
+      
+      LDEBUG << "AnalysisThread::startAnalysis (POST): seLogger output is " << QString::fromUtf8(std::string(resultString,0, 30).c_str());
 
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
@@ -376,7 +378,7 @@ void AnalysisThread::startAnalysis()
 std::string  AnalysisThread::ConllToJson( const std::string & str )
 {
   CORECLIENTLOGINIT;
-  LDEBUG << "AnalysisThread::ConllToJson str=" <<str;
+  LDEBUG << "AnalysisThread::ConllToJson str=" << std::string(str,0, 30) << "...";
   
   // Array of tokens
   QJsonArray array;
@@ -385,7 +387,7 @@ std::string  AnalysisThread::ConllToJson( const std::string & str )
   for(; i != std::string::npos ;) {
     // search for EOL: each line represents a token (or end of sentence for an empty line)
     i = str.find('\n', pos);
-    LDEBUG << "AnalysisThread::ConllToJson: pos:" << pos << ", i:"<< i;
+    // LDEBUG << "AnalysisThread::ConllToJson: pos:" << pos << ", i:"<< i;
     QJsonValue qval;
     if( pos == i ) {
       // empty line = end of sentence
@@ -408,7 +410,8 @@ std::string  AnalysisThread::ConllToJson( const std::string & str )
   object["tokens"]=array;
   QJsonDocument doc(object);
   std::string result(doc.toJson().data());
-
-  LDEBUG << "AnalysisThread::ConllToJson: result=" << result;
+  
+  std::string truncated = std::string(result,0, 30);
+  LDEBUG << "AnalysisThread::ConllToJson: result=" << truncated << "...";
   return result;
 }
