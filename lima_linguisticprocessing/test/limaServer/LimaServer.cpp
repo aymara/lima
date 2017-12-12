@@ -158,7 +158,7 @@ void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
   AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
 #ifdef MULTITHREAD
   connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
-  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
+  // connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
   thread->start();
 #else
 #endif
