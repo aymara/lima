@@ -27,7 +27,6 @@
 # ------------------------------------------------------------------------
 
 use strict;
-use lib "/home/anoka/Logiciels/SVMTool-1.3.1/lib";
 use SVMTool::SVMTAGGER;
 
 # constant values
