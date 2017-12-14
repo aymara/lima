@@ -41,7 +41,8 @@ macro (CompileLimaSubproject _project _dependsOn)
         -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
         -DBOOST_ROOT:STRING=${BOOST_ROOT}
         -DBOOST_LIBRARYDIR:STRING=${BOOST_LIBRARYDIR}
-
+        -DENVPATH:STRING=$ENV{PATH}
+        -DENVPERL5LIB:STRING=$ENV{PERL5LIB}
   )
 
   ## Add specified dependencies

@@ -18,6 +18,15 @@ project(LimaLinguisticData NONE)
 
 cmake_minimum_required(VERSION 2.8.3)
 
+if (ENVPATH)
+  set(ENV{PATH} "${ENVPATH}:$ENV{PATH}")
+endif()
+if (ENVPERL5LIB)
+  set(ENV{PERL5LIB} "${ENVPERL5LIB}:$ENV{PERL5LIB}")
+endif()
+message("lima_linguisticdata PERL5LIB=$ENV{PERL5LIB}")
+message("lima_linguisticdata PATH=$ENV{PATH}")
+
 # message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 # set(CMAKE_VERBOSE_MAKEFILE on)
 
