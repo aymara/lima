@@ -145,11 +145,9 @@ template <typename Object,typename InitializationParameters>
 Object* InitializableObjectManager<Object,InitializationParameters>::createObject(
   const std::string& id)
 {
-#ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
   LDEBUG << "InitializableObjectManager::createObject" << this << id 
          << "from module" << &m_conf << m_conf.getName().c_str();
-#endif
   Object* obj = nullptr;
   try
   {

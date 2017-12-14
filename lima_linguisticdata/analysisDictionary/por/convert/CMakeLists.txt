@@ -38,9 +38,9 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
-      ${dicoFiles} 
-      ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt 
-      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt 
+      ${dicoFiles}
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
       ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
     COMMENT "produce por XML dico under Linux"
     VERBATIM
@@ -56,7 +56,10 @@ else()
     COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
+    DEPENDS
+      ${dicoFiles}
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
     COMMENT "produce por XML dico under Windows"
     VERBATIM
   )

@@ -12,8 +12,6 @@
         <!-- micro categories marking sentence breaks       -->
         <list name="sentenceBreakMicros">
           <item value="PONCTU_FORTE"/>
-          <!--item value="L_PONCTU_MISE_EN_EVIDENCE"/-->
-          <!-- certains mots au milieu de phrases sont entre guillemets... -->
         </list>
         <!-- File containing the definition of all linguistic codes for this language        -->
       <param key = "PropertyCodeFile" value = "LinguisticProcessings/fre/code-fre.xml" />
@@ -31,28 +29,31 @@
       </list>
       <!-- tokens with these micro categories will be considered as empty words-->
       <list name="emptyMicro">
-        <item value="DET"/>
-        <item value="P"/>
-        <item value="P+D"/>
-        <item value="PRO"/>
-        <item value="PROREL"/>
-        <item value="PROWH"/>
+        <item value="ADV" />
+        <item value="ADVWH" />
+        <item value="CC" />
         <item value="CL"/>
         <item value="CLO"/>
         <item value="CLR"/>
         <item value="CLS"/>
-        <item value="ADV" />
-        <item value="ADVWH" />
-        <item value="CC" />
         <item value="CS" />
+        <item value="DET"/>
+        <item value="I"/>
+        <item value="P"/>
+        <item value="P+D"/>
         <item value="PONCT" />
         <item value="PONCTU_FORTE" />
+        <item value="PRO"/>
+        <item value="PROREL"/>
+        <item value="PROWH"/>
       </list>
       <!-- tokens with these micro categories will be considered as conjugated verbs during syntactic analysis (i.e. not infinitive) -->
       <list name="conjugatedVerbs" >
         <item value="V" />
-        <item value="VS" />
         <item value="VIMP" />
+        <item value="VPP" />
+        <item value="VPR" />
+        <item value="VS" />
       </list>
       <!-- tokens with these micro categories will be considered as able to introduce proposition during syntactic analysis -->
       <list name="propositionIntroductors" >

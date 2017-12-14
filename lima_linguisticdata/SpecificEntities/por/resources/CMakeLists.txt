@@ -15,4 +15,4 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 file(GLOB DAT_FILES *.dat)
-install(FILES ${DAT_FILES} COMPONENT eng DESTINATION share/apps/lima/resources/SpecificEntities)
+#install(FILES ${DAT_FILES} COMPONENT por DESTINATION share/apps/lima/resources/SpecificEntities)

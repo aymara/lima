@@ -71,18 +71,14 @@ isLoaded(const std::string& libName)
 
 bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 {
-#ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LDEBUG <<"DynamicLibrariesManager::loadLibrary() -- "<<"libName="<<libName ;
-#endif
+  LDEBUG <<"DynamicLibrariesManager::loadLibrary() -- libName=" << libName ;
   auto it=m_d->m_handles.find(libName);
   if (it != m_d->m_handles.end()) 
   {
-#ifdef DEBUG_CD
     LDEBUG << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library" 
-            << libName.c_str();
+            << libName;
     return false;
-#endif
   }
 
   std::shared_ptr< QLibrary > libhandle;
@@ -90,20 +86,16 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   for (auto it = m_d->m_supplementarySearchPath.begin(); 
        it != m_d->m_supplementarySearchPath.end(); it++)
   {
-#ifdef DEBUG_FACTORIES
     LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
-#endif
     libhandle = std::shared_ptr<QLibrary>(new QLibrary( ((*it)+"/"+libName).c_str() ));
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-#ifdef DEBUG_CD
       LDEBUG << "the library " << libName.c_str() 
               << " was loaded from supplementary search path";
       LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
-#endif
       return true;
     }
     else
@@ -116,35 +108,30 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   // now try system default search path
   if (libhandle == 0)
   {
-#ifdef DEBUG_FACTORIES
     LINFO << "Trying " << libName.c_str();
-#endif
     libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-#ifdef DEBUG_CD
-      LDEBUG << "the library " << libName.c_str() 
+      LDEBUG << "the library " << libName 
               << " was loaded from system default search path";
       LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
-#endif
       return true;
     }
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "<< "Failed to open lib " << libhandle->errorString();
+      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "
+              << "Failed to open lib " << libhandle->errorString();
       return false;
     }
   }
   else 
   {
     m_d->m_handles[libName]=libhandle;
-#ifdef DEBUG_CD
-    LDEBUG << "the library " << libName.c_str() << " was loaded";
-#endif
+    LDEBUG << "the library " << libName << " was loaded";
     return true;
   }
 }
