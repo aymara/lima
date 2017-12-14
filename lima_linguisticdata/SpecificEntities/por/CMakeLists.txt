@@ -36,7 +36,7 @@ add_custom_target(
   rules-por-Product-configEnv-main
 )
 
-add_subdirectory(Resources)
+add_subdirectory(resources)
 add_subdirectory(Numex)
 add_subdirectory(DateTime)
 add_subdirectory(Organization)
