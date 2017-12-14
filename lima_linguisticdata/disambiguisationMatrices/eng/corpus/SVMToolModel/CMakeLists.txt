@@ -41,6 +41,7 @@ else ()
   add_custom_command(
       OUTPUT lima.A0.UNK
       COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_BINARY_DIR}/../../corpus_eng_merge.txt > corpus_eng.txt
+      COMMAND echo "Before calling ${SVMT_LEARN}, PERL5LIB is $ENV{PERL5LIB}"
       COMMAND ${SVMT_LEARN} config-minimale.SVMT
       DEPENDS 
         config-minimale.SVMT
