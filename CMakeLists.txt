@@ -6,7 +6,10 @@ enable_testing()
 include(ExternalProject)
 
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
-
+set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
+set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
+message("PERL5LIB=$ENV{PERL5LIB}")
+message("PATH=$ENV{PATH}")
 macro (CompileLimaSubproject _project _dependsOn)
 
   ## Define test command.
