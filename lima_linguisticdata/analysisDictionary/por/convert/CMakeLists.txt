@@ -46,14 +46,14 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     VERBATIM
   )
 else()
+  # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
     OUTPUT dico.xml  forms.dic default-por.dat
-    COMMAND c:\\msys64\\usr\\bin\\echo "<dictionary>" > dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\cat ${dicoFiles} > forms.dic
-    COMMAND c:\\msys64\\usr\\bin\\sort -u -o forms.dic forms.dic
+    COMMAND echo ^<dictionary^> > dico.xml.tmp
+    COMMAND cat ${dicoFiles} > forms.dic
+    COMMAND sort -u -o forms.dic forms.dic
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
-  # COMMAND c:\\msys64\\usr\\bin\\cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
-    COMMAND c:\\msys64\\usr\\bin\\echo "</dictionary>" >> dico.xml.tmp
+    COMMAND echo ^</dictionary>^ >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
@@ -61,7 +61,6 @@ else()
       ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
     COMMENT "produce por XML dico under Windows"
-    VERBATIM
   )
 endif()
 

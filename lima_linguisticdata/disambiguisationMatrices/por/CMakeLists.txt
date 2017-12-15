@@ -17,27 +17,16 @@
 
 add_subdirectory(corpus)
 
-if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  add_custom_command(
-    OUTPUT succession_categs_retag.txt
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
-    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt 
+add_custom_command(
+  OUTPUT succession_categs_retag.txt
+  COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt 
 
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt
-    COMMENT "produce por categs succession"
-    VERBATIM
-  )
-else ()
-  add_custom_command(
-    OUTPUT succession_categs_retag.txt
-    COMMAND C:\\MinGW\\msys\\1.0\\bin\\dos2unix -n ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt
-    COMMAND c:\\msys64\\usr\\bin\\cat corpus_por_merge.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt
+  COMMENT "produce por categs succession"
+  VERBATIM
+)
 
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt
-    COMMENT "produce por categs succession"
-    VERBATIM
-  )
-endif ()
 add_custom_target(
   categs-por
   ALL
