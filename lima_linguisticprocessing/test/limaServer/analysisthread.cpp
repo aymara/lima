@@ -91,7 +91,7 @@ AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticPr
 #endif
     m_d(new AnalysisThreadPrivate(analyzer,req,resp,langs))
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::AnalysisThread()...";
 #ifdef MULTITHREAD
   connect(this,SIGNAL(started()),this,SLOT(slotStarted()),Qt::QueuedConnection);
@@ -103,21 +103,21 @@ AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticPr
 
 AnalysisThread::~AnalysisThread()
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::~AnalysisThread...";
   delete m_d;
 }
 
 void AnalysisThread::slotStarted()
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::slotStarted";
 
 }
 
 void AnalysisThread::startAnalysis()
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
   LDEBUG << "AnalysisThread::startAnalysis mediaType=" << m_d->m_mediaType;
   int exitStatus=0;
@@ -235,7 +235,7 @@ void AnalysisThread::startAnalysis()
       std::ostringstream* oss = new std::ostringstream();
       seLogWriter->setOut(oss);
 
-      LDEBUG << "Analyzing" << language << textQS;
+      LDEBUG << "Analyzing" << language << textQS.mid(0,20) << "...";
       // std::ostringstream ots;
       
       QTemporaryFile tempFile;
@@ -255,7 +255,7 @@ void AnalysisThread::startAnalysis()
       else
         resultString.append(ConllToJson( oss->str()));
 
-      LDEBUG << "AnalysisThread::startAnalysis (GET): seLogger output is " << QString::fromUtf8((std::string(resultString,30)).c_str());
+      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8((std::string(resultString,0, 30)).c_str());
 
       if( m_d->m_mediaType.compare("text/xml") == 0) {
         m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
@@ -272,7 +272,7 @@ void AnalysisThread::startAnalysis()
     }
 #ifdef MULTITHREAD
     m_d->m_request->deleteLater();
-    deleteLater();
+    // deleteLater();
     quit(); // exit the eventLoop
 #else
 #endif
@@ -280,7 +280,7 @@ void AnalysisThread::startAnalysis()
 
 std::string  AnalysisThread::ConllToJson( const std::string & str )
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::ConllToJson str=" << std::string(str,0, 30) << "...";
   
   // Array of tokens
@@ -314,7 +314,7 @@ std::string  AnalysisThread::ConllToJson( const std::string & str )
   QJsonDocument doc(object);
   std::string result(doc.toJson().data());
   
-  std::string truncated = std::string(result,0, 30);
+  std::string truncated = std::string(result,0, 80);
   LDEBUG << "AnalysisThread::ConllToJson: result=" << truncated << "...";
   return result;
 }

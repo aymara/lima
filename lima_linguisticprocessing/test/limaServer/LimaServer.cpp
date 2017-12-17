@@ -86,7 +86,7 @@ LimaServer::LimaServer( const std::string& configDir,
 		   QTimer* t)
      : QObject(parent), m_langs(langs.begin(),langs.end()), m_timer(t)
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "::LimaServer::LimaServer()...";
   
   // initialize common
@@ -141,7 +141,7 @@ LimaServer::~LimaServer()
 
 void LimaServer::quit() {
   // free httpserver ?
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LINFO << "LimaServer::quit()...";
   m_timer->stop();
   m_server->close();
@@ -152,15 +152,15 @@ void LimaServer::quit() {
 
 void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   req->storeBody();
   LDEBUG << "LimaServer::handleRequest: create AnalysisThread...";
   AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
 #ifdef MULTITHREAD
   connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
-  // connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
+  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
   thread->start();
+  LDEBUG << "LimaServer::handleRequest: my job is done...";
 #else
 #endif
- }
-
+}
