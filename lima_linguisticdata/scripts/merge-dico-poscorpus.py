@@ -172,10 +172,10 @@ def main(argv):
     # positional arguments
     parser.add_argument("language", help="language")
     parser.add_argument("dicofile",
-                        type=argparse.FileType('r',encoding='UTF-8'),
+                        type=argparse.FileType('r'),
                         help="input file: dictionary entries")
     parser.add_argument("corpus",
-                        type=argparse.FileType('r',encoding='UTF-8'),
+                        type=argparse.FileType('r'),
                         help="corpus file")
     parser.add_argument("project_source_dir",
                         default="",
