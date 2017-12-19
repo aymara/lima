@@ -46,6 +46,17 @@ target_link_libraries(analyzeText lima-linguisticprocessing)
 install(TARGETS analyzeText DESTINATION bin
   COMPONENT runtime)
 
+ ########### next target ###############
+
+
+add_executable(limasimple-analyze limasimple-analyze.cpp)
+MESSAGE(STATUS "Optional libs: ${optionalLibs}")
+MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
+target_link_libraries(limasimple-analyze lima-linguisticprocessing)
+
+install(TARGETS limasimple-analyze DESTINATION bin
+  COMPONENT runtime)
+  
 ########### next target ###############
 if (${PYTHONLIBS_FOUND})
   SET(srl_SRCS

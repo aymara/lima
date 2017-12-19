@@ -22,7 +22,12 @@ include_directories(${CMAKE_SOURCE_DIR}/src )
 
 add_definitions( -DLIMA_LP_EXPORTING )
 
-add_library(lima-linguisticprocessing SHARED LinguisticProcessingCommon.cpp)
+set (lima-linguisticprocessing_MOC_HEADERS
+    limaSimpleClientDelegate.h)
+
+qt5_wrap_cpp (lima-linguisticprocessing_MOC_OUTFILES ${lima-linguisticprocessing_MOC_HEADERS})
+
+add_library(lima-linguisticprocessing SHARED limaSimpleClient.cpp ${lima-linguisticprocessing_MOC_OUTFILES})
 target_link_libraries(lima-linguisticprocessing
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation
@@ -72,6 +77,7 @@ install(TARGETS lima-linguisticprocessing DESTINATION ${LIB_INSTALL_DIR}
 ########### install files ###############
 install(FILES 
     LinguisticProcessingCommon.h 
+    limaSimpleClient.h
   DESTINATION include/linguisticProcessing
   COMPONENT devel
 )
