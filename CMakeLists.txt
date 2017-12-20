@@ -25,11 +25,11 @@ endif()
 macro (CompileLimaSubproject _project _dependsOn )
 
   ## Define test command.
-  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    set(_TEST_COMMAND make test)
-  else()
+#   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+#     set(_TEST_COMMAND make test)
+#   else()
     set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
-  endif()
+#   endif()
   
   ## Add external project
   ExternalProject_Add(
@@ -55,21 +55,23 @@ macro (CompileLimaSubproject _project _dependsOn )
   endif()
 
     ## Add packaging command
-  if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-      ExternalProject_Add_Step(${_project} packaging
-      COMMAND make package
-      COMMENT "Packaging ${_project}"
-      WORKING_DIRECTORY <BINARY_DIR>
-      DEPENDEES install
-      )
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+#   if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+#   if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+#       ExternalProject_Add_Step(${_project} packaging
+#       COMMAND make package
+#       COMMENT "Packaging ${_project}"
+#       WORKING_DIRECTORY <BINARY_DIR>
+#       DEPENDEES install
+#       )
+# 
+#   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ExternalProject_Add_Step(${_project} packaging
     COMMAND cmake --build . --target PACKAGE --config ${CMAKE_BUILD_TYPE}
     COMMENT "Packaging ${_project}"
     WORKING_DIRECTORY <BINARY_DIR>
     DEPENDEES INSTALL
     )
-  endif()
+#   endif()
 
   ## Force rebuilding of the main subproject every time building from super structure
   ExternalProject_Add_Step(${_project} forcebuild
