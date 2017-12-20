@@ -150,17 +150,77 @@ void LimaServer::quit() {
   app->quit();
 }
 
+
 void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
   LIMASERVERLOGINIT;
   req->storeBody();
-  LDEBUG << "LimaServer::handleRequest: create AnalysisThread...";
-  AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
+  LDEBUG << "LimaServer::handleRequest:insert" << resp << " at " << req << "...";
+  // Need to get response from request in slotHandleEndedRequest
+  m_responses.insert(std::pair<QHttpRequest*, QHttpResponse *>(req,resp));
+
 #ifdef MULTITHREAD
-  connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
-  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
-  thread->start();
-  LDEBUG << "LimaServer::handleRequest: my job is done...";
+  connect(req,SIGNAL(end()),this,SLOT(slotHandleEndedRequest()));
+  connect(resp,SIGNAL(done()),this,SLOT(slotResponseDone()));
 #else
 #endif
+}
+
+void LimaServer::slotHandleEndedRequest()
+{
+  LIMASERVERLOGINIT;
+  LDEBUG << "LimaServer::slotHandleEndedRequest";
+  QHttpRequest *req = static_cast<QHttpRequest*>(sender());
+  QHttpResponse *resp = m_responses[req];
+  
+  LDEBUG << "LimaServer::slotHandleEndedRequest: create AnalysisThread...";
+  AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
+  // Need to get request from thread in sendResults
+  m_requests.insert(std::pair<QThread*,QHttpRequest*>(thread,req));
+  m_threads.insert(std::pair<QHttpResponse*,QThread*>(resp,thread));
+  
+#ifdef MULTITHREAD
+  connect(thread, SIGNAL(finished()), this, SLOT(sendResults()));
+//  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
+  thread->start();
+  LDEBUG << "LimaServer::slotHandleEndedRequest: my job is done...";
+#else
+#endif
+}
+
+
+void LimaServer::slotResponseDone()
+{
+  QHttpResponse* response = static_cast<QHttpResponse*>(sender());
+  LIMASERVERLOGINIT;
+  LDEBUG << "LimaServer::slotResponseDone";
+  QThread* thread = m_threads[response];
+  if (thread->isRunning())
+    thread->quit();
+  LDEBUG << "LimaServer::slotResponseDone done";
+}
+
+void LimaServer::sendResults()
+{
+  LIMASERVERLOGINIT;
+  QThread* thread = static_cast<QThread*>(sender());
+  LDEBUG << "LimaServer::sendResults for thread" << thread;
+  QHttpRequest *req = m_requests[thread];
+  QHttpResponse *resp = m_responses[req];
+  AnalysisThread* analysisthread = static_cast<AnalysisThread*>(sender());
+  
+  resp->writeHead(analysisthread->response_code());
+  const std::map<QString,QString>& headers = analysisthread->response_header();
+  for( std::map<QString,QString>::const_iterator headerIt = headers.begin() ; headerIt != headers.end() ; headerIt++ ) {
+    resp->setHeader(headerIt->first, headerIt->second);
+  }
+
+  resp->end(analysisthread->response_body());
+  
+  // req->deleteLater();
+  // thread->deleteLater();
+  
+  // TODO: clean: remove element from m_requests and m_responses
+  LDEBUG << "LimaServer::sendResults done";
+
 }

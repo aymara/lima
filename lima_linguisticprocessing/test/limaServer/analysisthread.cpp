@@ -66,16 +66,20 @@ public:
   
   Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
   QHttpRequest* m_request;
-  QHttpResponse* m_response;
+  // QHttpResponse* m_response;
   const std::set<std::string>& m_langs;
   std::string m_mediaType;
+  int m_response_code;
+  std::map<QString,QString> m_response_header;
+  QByteArray m_response_body;
 };
 
 AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 
                     QHttpRequest *req, QHttpResponse *resp,
                     const std::set<std::string>& langs) :
     m_analyzer(analyzer),
-    m_request(req), m_response(resp),
+    m_request(req),
+    // m_response(resp),
     m_langs(langs),
     m_mediaType((req->header("content-type")).toStdString())
 {
@@ -93,12 +97,6 @@ AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticPr
 {
   LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::AnalysisThread()...";
-#ifdef MULTITHREAD
-  connect(this,SIGNAL(started()),this,SLOT(slotStarted()),Qt::QueuedConnection);
-#else
-  connect(req,SIGNAL(end()),this,SLOT(startAnalysis()));
-  connect(resp,SIGNAL(done()),this,SLOT(deleteLater()));
-#endif
 }
 
 AnalysisThread::~AnalysisThread()
@@ -108,12 +106,35 @@ AnalysisThread::~AnalysisThread()
   delete m_d;
 }
 
+const QByteArray& AnalysisThread::response_body() const {
+  return m_d->m_response_body;
+}
+
+int AnalysisThread::response_code() const {
+  return m_d->m_response_code;
+}
+
+const std::map<QString,QString>& AnalysisThread::response_header() const {
+  return m_d->m_response_header;
+}
+
+/*
 void AnalysisThread::slotStarted()
 {
   LIMASERVERLOGINIT;
   LDEBUG << "AnalysisThread::slotStarted";
 
 }
+*/
+
+void AnalysisThread::run ()
+{
+  startAnalysis();
+    // m_d->m_request->deleteLater();
+    // deleteLater();
+    exit(0); // exit the eventLoop
+}
+
 
 void AnalysisThread::startAnalysis()
 {
@@ -124,16 +145,16 @@ void AnalysisThread::startAnalysis()
   if( m_d->m_request->url().path() != "/extractEN")
   {
     LWARN << "AnalysisThread::startAnalysis: entry point " << m_d->m_request->url().path() << " not recognized";
-    m_d->m_response->writeHead(400);
-    m_d->m_response->setHeader("Allow","extractEN");
-    m_d->m_response->end(QByteArray("Only extractEN entry point accepted."));
+    m_d->m_response_code = 400;
+    m_d->m_response_header.insert(std::pair<QString,QString>("Allow","extractEN"));
+    m_d->m_response_body=QByteArray("Only extractEN entry point accepted.");
     exitStatus=1;
   }
   if( (m_d->m_request->methodString() != "HTTP_GET") && (m_d->m_request->methodString() != "HTTP_POST") ) {
     LWARN << "AnalysisThread::startAnalysis: methodString " << m_d->m_request->methodString() << " not recognized";
-    m_d->m_response->writeHead(405);
-    m_d->m_response->setHeader("Allow","GET,POST");
-    m_d->m_response->end(QByteArray("Only GET and POST methods currently allowed."));
+    m_d->m_response_code = 405;
+    m_d->m_response_header.insert(std::pair<QString,QString>("Allow","GET,POST"));
+    m_d->m_response_body=QByteArray("Only GET and POST methods currently allowed.");
     exitStatus=1;
   }
 
@@ -210,25 +231,29 @@ void AnalysisThread::startAnalysis()
     
     if( language.isEmpty() )
     {
-      m_d->m_response->writeHead(400);
-      m_d->m_response->end(QByteArray("Empty language"));
+      m_d->m_response_code = 400;
+      m_d->m_response_body=QByteArray("Empty language");
       exitStatus=1;
     }
     if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
     {
-        m_d->m_response->writeHead(400);
-        QString errorMessage = QString(tr("Language %1 is no initialized")).arg(language);
-        m_d->m_response->end(errorMessage.toUtf8());
-        exitStatus=1;
+      m_d->m_response_code = 400;
+      QString errorMessage = QString(tr("Language %1 is no initialized")).arg(language);
+      m_d->m_response_body=errorMessage.toUtf8();
+      exitStatus=1;
     }
     if( textQS.isEmpty() )
     {
-      m_d->m_response->writeHead(400);
-      m_d->m_response->end(QByteArray("Empty text"));
+      m_d->m_response_code = 400;
+      m_d->m_response_body=QByteArray("Empty text");
       exitStatus=1;
     }
     
-    if( exitStatus == 0 ) {
+    if( exitStatus != 0 ) {
+      exit(exitStatus); // exit the eventLoop
+      return;
+    }
+    else {
       std::map<std::string, AbstractAnalysisHandler*> handlers;
       LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
       handlers.insert(std::make_pair("se", seLogWriter));
@@ -258,22 +283,23 @@ void AnalysisThread::startAnalysis()
       LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8((std::string(resultString,0, 30)).c_str());
 
       if( m_d->m_mediaType.compare("text/xml") == 0) {
-        m_d->m_response->setHeader("Content-Type", "text/xml; charset=utf-8");
+        m_d->m_response_header.insert(std::pair<QString,QString>("Content-Type","text/xml; charset=utf-8"));
       }
       if( m_d->m_mediaType.compare("application/json") == 0) {
-        m_d->m_response->setHeader("Content-Type", "application/json; charset=utf-8");
+        m_d->m_response_header.insert(std::pair<QString,QString>("Content-Type","application/json; charset=utf-8"));
       }
-      m_d->m_response->writeHead(200);
+      m_d->m_response_code=200;
 
-      m_d->m_response->end(QByteArray(resultString.c_str()));
+      m_d->m_response_body=(QByteArray(resultString.c_str()));
       LDEBUG << "AnalysisThread::startAnalysis: delete oss... ";
       delete seLogWriter;
       delete oss; oss = 0;
     }
 #ifdef MULTITHREAD
-    m_d->m_request->deleteLater();
+    // m_d->m_request->deleteLater();
     // deleteLater();
-    quit(); // exit the eventLoop
+    // quit(); // exit the eventLoop
+    exit(exitStatus); // exit the eventLoop
 #else
 #endif
 }
