@@ -16,7 +16,7 @@ macro (CompileLimaSubproject _project _dependsOn)
 #   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 #     set(_TEST_COMMAND make test)
 #   else()
-    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
+    set(_TEST_COMMAND cmake --build . --target test --config ${CMAKE_BUILD_TYPE})
 #   endif()
   
   ## Add external project
@@ -29,6 +29,12 @@ macro (CompileLimaSubproject _project _dependsOn)
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
+    USES_TERMINAL_DOWNLOAD 1
+    USES_TERMINAL_UPDATE 1
+    USES_TERMINAL_CONFIGURE 1
+    USES_TERMINAL_BUILD 1
+    USES_TERMINAL_TEST 1
+    USES_TERMINAL_INSTALL 1
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} 
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
         -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 
@@ -62,10 +68,11 @@ macro (CompileLimaSubproject _project _dependsOn)
 # 
 #   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ExternalProject_Add_Step(${_project} packaging
-    COMMAND cmake --build . --target PACKAGE --config ${CMAKE_BUILD_TYPE}
+    COMMAND cmake --build . --target package --config ${CMAKE_BUILD_TYPE}
     COMMENT "Packaging ${_project}"
     WORKING_DIRECTORY <BINARY_DIR>
-    DEPENDEES INSTALL
+    DEPENDEES install
+    USES_TERMINAL 1
     )
 #   endif()
 
@@ -77,6 +84,7 @@ macro (CompileLimaSubproject _project _dependsOn)
     DEPENDEES configure
     DEPENDERS build
     ALWAYS 1
+    USES_TERMINAL 1
   )
   
 endmacro ()
@@ -104,3 +112,4 @@ if (Qt5Core_FOUND)
   endif()
 endif()
 
+INCLUDE(CPack)
