@@ -28,7 +28,7 @@ macro (CompileLimaSubproject _project _dependsOn )
 #   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 #     set(_TEST_COMMAND make test)
 #   else()
-    set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
+    set(_TEST_COMMAND cmake --build . --target test --config ${CMAKE_BUILD_TYPE})
 #   endif()
   
   ## Add external project
@@ -41,6 +41,12 @@ macro (CompileLimaSubproject _project _dependsOn )
     TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
+    USES_TERMINAL_DOWNLOAD 1
+    USES_TERMINAL_UPDATE 1
+    USES_TERMINAL_CONFIGURE 1
+    USES_TERMINAL_BUILD 1
+    USES_TERMINAL_TEST 1
+    USES_TERMINAL_INSTALL 1
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} 
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
         -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 
@@ -66,10 +72,11 @@ macro (CompileLimaSubproject _project _dependsOn )
 # 
 #   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ExternalProject_Add_Step(${_project} packaging
-    COMMAND cmake --build . --target PACKAGE --config ${CMAKE_BUILD_TYPE}
+    COMMAND cmake --build . --target package --config ${CMAKE_BUILD_TYPE}
     COMMENT "Packaging ${_project}"
     WORKING_DIRECTORY <BINARY_DIR>
-    DEPENDEES INSTALL
+    DEPENDEES install
+    USES_TERMINAL 1
     )
 #   endif()
 
@@ -80,6 +87,7 @@ macro (CompileLimaSubproject _project _dependsOn )
     DEPENDEES configure
     DEPENDERS build
     ALWAYS 1
+    USES_TERMINAL 1
   )
   
 endmacro ()
@@ -100,31 +108,4 @@ endif (Qt5_FOUND)
 
 install(FILES)
 
-# ########### packaging ###############
-# include(SystemSpecificInformations.cmake)
-# include(InstallRequiredSystemLibraries)
-#
-# set(CPACK_MONOLITHIC_INSTALL 1)
-# set(CPACK_PACKAGE_NAME "lima")
-# set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lima root package")
-# set(CPACK_PACKAGE_VENDOR "CEA LIST")
-# set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
-# set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-# set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-# SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
-# SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
-# SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
-# set(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
-# set(CPACK_STRIP_FILES "")
-# set(CPACK_SOURCE_STRIP_FILES "")
-# set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-# set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-# if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-#   set(CPACK_RPM_PACKAGE_REQUIRES "")
-#   set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
-# else (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-#   set(CPACK_RPM_PACKAGE_REQUIRES "")
-#   set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
-# endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-#
-# include(CPack)
+INCLUDE(CPack)
