@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(LimaLinguisticData NONE)
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.4.0)
 
 # message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 # set(CMAKE_VERBOSE_MAKEFILE on)

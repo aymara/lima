@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(limacommon)
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.4.0)
 
 #cmake_policy
 if(POLICY CMP0020)
