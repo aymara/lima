@@ -18,10 +18,7 @@ RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libq
 
 # Install cmake 3.4 needed by LIMA for ExternalProject_Add_Step options to be 
 # used with Ninja
-RUN wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
-RUN tar -xvzf cmake-3.4.1.tar.gz
-RUN cd cmake-3.4.1/
-RUN ./configure && make && make install && update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
+RUN wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz && tar xzf cmake-3.4.1.tar.gz && cd cmake-3.4.1/ && ./configure && make && make install && update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs 
