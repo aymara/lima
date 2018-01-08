@@ -13,8 +13,15 @@ ARG JOB_NUMBER
 # Setup
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils software-properties-common python-software-properties python3-software-properties -qq
-RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
+RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf curl python-nltk gawk wget -qq
 RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libboost-all-dev libenchant-dev -qq
+
+# Install cmake 3.4 needed by LIMA for ExternalProject_Add_Step options to be 
+# used with Ninja
+RUN wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
+RUN tar -xvzf cmake-3.4.1.tar.gz
+RUN cd cmake-3.4.1/
+RUN ./configure && make && make install && update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs 
