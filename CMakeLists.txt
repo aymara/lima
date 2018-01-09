@@ -28,8 +28,9 @@ macro (CompileLimaSubproject _project _dependsOn )
 #   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 #     set(_TEST_COMMAND make test)
 #   else()
-    set(_TEST_COMMAND cmake --build . --target test --config ${CMAKE_BUILD_TYPE})
+#     set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
 #   endif()
+#     TEST_COMMAND "${_TEST_COMMAND}"
   
   ## Add external project
   ExternalProject_Add(
@@ -38,7 +39,6 @@ macro (CompileLimaSubproject _project _dependsOn )
     DOWNLOAD_COMMAND ""
     PATCH_COMMAND ""
     UPDATE_COMMAND ""
-    TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
     USES_TERMINAL_DOWNLOAD 1
