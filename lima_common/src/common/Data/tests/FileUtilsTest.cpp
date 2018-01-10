@@ -32,26 +32,6 @@ using namespace Lima::Common::Misc;
 
 QTEST_MAIN ( FileUtilsTest );
 
-void FileUtilsTest::initTestCase()
-{
-  // Called before the first testfunction is executed
-}
-
-void FileUtilsTest::cleanupTestCase()
-{
-  // Called after the last testfunction was executed
-}
-
-void FileUtilsTest::init()
-{
-  // Called before each testfunction is executed
-}
-
-void FileUtilsTest::cleanup()
-{
-  // Called after every testfunction
-}
-
 // Testing uint64_t countLines(QFile& file)
 void FileUtilsTest::FileUtilsTest0()
 {
