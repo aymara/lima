@@ -55,26 +55,32 @@ void FileUtilsTest::cleanup()
 // Testing uint64_t countLines(QFile& file)
 void FileUtilsTest::FileUtilsTest0()
 {
-  QTemporaryFile file;
-  
-  QVERIFY2( file.open(), "Opens a temporary file" );
-  QVERIFY2( countLines(file) == 0, "Initial temp file is empty" );
-  QTextStream stream(&file);
-  stream << "auie";
-  stream.flush();
-  stream.seek(0);
-  QVERIFY2( countLines(file) == 1, "file is not empty but has no \\n: 1 line" );
-  stream.seek(file.size());
-  stream << endl;
-  stream.flush();
-  stream.seek(0);
-  QVERIFY2( countLines(file) == 1, "file has now one \\n and nothing after it: still one line" );
-  stream.seek(file.size());
-  stream << QString::fromUtf8("bépo");
-  stream.flush();
-  stream.seek(0);
-  QVERIFY2( countLines(file) == 2, "file has now two \\n and chars on second line: two lines" );
- 
+  try
+  {
+    QTemporaryFile file;
+    
+    QVERIFY2( file.open(), "Opens a temporary file" );
+    QVERIFY2( countLines(file) == 0, "Initial temp file is empty" );
+    QTextStream stream(&file);
+    stream << "auie";
+    stream.flush();
+    stream.seek(0);
+    QVERIFY2( countLines(file) == 1, "file is not empty but has no \\n: 1 line" );
+    stream.seek(file.size());
+    stream << endl;
+    stream.flush();
+    stream.seek(0);
+    QVERIFY2( countLines(file) == 1, "file has now one \\n and nothing after it: still one line" );
+    stream.seek(file.size());
+    stream << QString::fromUtf8("bépo");
+    stream.flush();
+    stream.seek(0);
+    QVERIFY2( countLines(file) == 2, "file has now two \\n and chars on second line: two lines" );
+  }
+  catch (...)
+  {
+     QFAIL("An non identified exception was thrown during the test.");
+  }
 }
 
 // Testing uint64_t countLines(QFile& file)
