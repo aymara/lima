@@ -22,7 +22,8 @@ if (NOT ("x${CMAKE_SYSTEM_NAME}" STREQUAL "xWindows"))
     endif()
 endif()
 
-macro (CompileLimaSubproject _project _dependsOn )
+set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
+macro (CompileLimaSubproject _project _dependsOn)
 
   ## Define test command.
 #   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
