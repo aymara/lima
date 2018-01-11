@@ -72,8 +72,13 @@ void readCommandLineArguments(unsigned int argc, char *argv[])
 int main(int argc, char **argv)
 {
   readCommandLineArguments(argc,argv);
+  
   Lima::LimaSimpleClient lima;
+
+  // initialize LIMA client with the language and pipeline passed as arguments
   lima.initialize(param.language,param.pipeline);
+  
+  // analyze each input file with LIMA client
   for (const auto& filename: param.inputFiles) {
     std::ifstream f(filename.c_str());
     std::string content;

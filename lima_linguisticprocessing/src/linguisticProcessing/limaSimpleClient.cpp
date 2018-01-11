@@ -31,6 +31,8 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <boost/algorithm/string/regex.hpp>
+#include <QtCore/QTimer>
+#include <QMetaType>
 
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
@@ -43,7 +45,23 @@ namespace Lima {
 int LimaSimpleClientDelegate::argc = 1;
 char* LimaSimpleClientDelegate::argv[2] = {(char*)("LimaSimpleClientDelegate"), NULL};
 QCoreApplication* LimaSimpleClientDelegate::app=nullptr;
-QThread* LimaSimpleClientDelegate::thread=nullptr;
+//QThread* LimaSimpleClientDelegate::thread=nullptr;
+std::thread* LimaSimpleClientDelegate::thread=nullptr;
+LimaWorker* LimaSimpleClientDelegate::m_worker=nullptr;
+LimaController* LimaSimpleClientDelegate::m_controller=nullptr;
+
+// needed to pass string in signals/slots
+int metatype_string_id=qRegisterMetaType<std::string>("std::string");
+
+// utility function for debug
+std::string getThreadId()
+{
+  //boost::thread::id id=boost::this_thread::get_id();
+  std::thread::id id = std::this_thread::get_id();
+  ostringstream tid;
+  tid << id; 
+  return tid.str();
+}
 
 //***********************************************************************
 LimaSimpleClient::LimaSimpleClient():
@@ -75,7 +93,8 @@ std::string LimaSimpleClient::analyze(const std::string& text)
 }
 
 //***********************************************************************
-LimaSimpleClientDelegate::LimaSimpleClientDelegate():
+LimaWorker::LimaWorker(QObject* parent):
+QObject(parent),
 m_language(),
 m_pipeline(),
 m_client(nullptr),
@@ -83,34 +102,141 @@ m_handler(nullptr),
 m_handlers(),
 m_firstInitialization(true)
 {
-  // initialize the internal thread
-  if (thread == NULL)
-  {
-    thread = new QThread();
-    connect(thread, SIGNAL(started()), this, SLOT(onStarted()), Qt::DirectConnection);
-    thread->start();
-  }
 }
 
-LimaSimpleClientDelegate::~LimaSimpleClientDelegate()
+LimaWorker::~LimaWorker()
 {
+  //cout << getThreadId() << " LimaWorker destructor" << endl;
   if (m_handler!=nullptr) {
     delete m_handler;
   }
 }
 
+void LimaWorker::quit()
+{
+  // clear the linguistic resources: must be done inside the worker thread because they use QObjects
+  // (otherwise, warning: QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread)
+  Lima::LinguisticProcessing::LinguisticResources::changeable().clearResources();
+}
+
+LimaController::LimaController(QObject* parent):
+QObject(parent),
+m_finishedInit(false),
+m_finishedAnalyze(false)
+{
+}
+
+LimaController::~LimaController()
+{
+}
+
+void LimaController::stop()
+{
+  //cout << getThreadId() << " LimaController::stop()" << endl;
+  Q_EMIT(closeWorker());
+  Q_EMIT(closeApp());
+}
+
+LimaSimpleClientDelegate::LimaSimpleClientDelegate()
+{
+  // initialize the internal thread
+  if (thread == NULL)
+  {
+    thread = new std::thread(LimaSimpleClientDelegate::onStarted);
+    //cout << "thread created: "<< thread << endl;
+    while (! m_worker) {
+      sleep(0.1);
+    }
+    if (m_worker) {
+      //cout << "create connections" << endl;
+    }
+  }
+}
+
+LimaSimpleClientDelegate::~LimaSimpleClientDelegate()
+{
+  //cout << getThreadId() << " LimaSimpleClientDelegate destructor" << endl;
+  // do not join lightly: app.exec() does not finish
+  // first stop the app and delete the linguistic resources associated to the worker
+  m_controller->stop();
+  // then wait for the thread to finish (so that everything is properly stopped before deleting the worker and controller
+  thread->join();
+  if (m_worker) {
+    delete m_worker;
+  }
+  if (m_controller) {
+    delete m_controller;
+  }
+}
+
 void LimaSimpleClientDelegate::onStarted()
 {
+  //cout << "LimaSimpleClientDelegate::onStarted begin" << endl;
    if (QCoreApplication::instance() == NULL)
    {
      app = new QCoreApplication(argc, argv);
+     
+     // Task parented to the application so that it
+     // will be deleted by the application.
+     m_worker=new LimaWorker();
+     m_controller=new LimaController();
+    
+     // connectors to call the functions of the worker
+     QObject::connect(m_controller, SIGNAL(doInitialize(std::string,std::string)), m_worker, SLOT(initialize(std::string,std::string)));
+     QObject::connect(m_controller, SIGNAL(doAnalyze(std::string)), m_worker, SLOT(analyze(std::string)));
+     QObject::connect(m_worker,  SIGNAL(finishedInit()), m_controller, SLOT(endInit()));
+     QObject::connect(m_worker,  SIGNAL(finishedAnalyze()), m_controller, SLOT(endAnalyze()));
+     QObject::connect(m_controller,  SIGNAL(closeApp()), app, SLOT(quit()));
+     QObject::connect(m_controller,  SIGNAL(closeWorker()), m_worker, SLOT(quit()));
+     
      app->exec();
-   }
+  }
+  //cout << "LimaSimpleClientDelegate::onStarted end" << endl;
+}
+
+void LimaController::initialize(const std::string& language,
+                                  const std::string& pipeline)
+{
+  //cout << "LimaController::initialize" << endl;
+  // pass the command to the worker in the thread, through a signal
+  m_finishedInit=false;
+  Q_EMIT(doInitialize(language,pipeline));
 }
 
 void LimaSimpleClientDelegate::initialize(const std::string& language,
-                                           const std::string& pipeline)
+                                          const std::string& pipeline)
 {
+  //cout << "LimaSimpleClientDelegate::initialize" << endl;
+  m_controller->initialize(language,pipeline);
+  // wait until initialization is finished
+  while (! m_controller->hasFinishedInit()) {
+    boost::this_thread::sleep( boost::posix_time::milliseconds(10) );
+  }
+}
+
+void LimaController::analyze(const std::string& text)
+{
+  //cout << getThreadId() << " LimaController::analyze" << endl;
+  // pass the command to the worker in the thread, through a signal
+  m_finishedAnalyze=false;
+  Q_EMIT(doAnalyze(text));
+}
+
+std::string LimaSimpleClientDelegate::analyze(const std::string& text)
+{
+  //cout << getThreadId() << " LimaSimpleClientDelegate::analyze" << endl;
+  // pass the command to the worker in the thread, through a signal
+  m_controller->analyze(text);
+  while (! m_controller->hasFinishedAnalyze()) {
+    boost::this_thread::sleep( boost::posix_time::milliseconds(10) );
+  }
+  return m_worker->getResult();
+}
+
+void LimaWorker::initialize(const std::string& language,
+                            const std::string& pipeline)
+{
+  //cout << "LimaWorker::initialize" << endl;
   m_language=language;
   m_pipeline=pipeline;
   string clientId("lima-coreclient");
@@ -173,11 +299,13 @@ void LimaSimpleClientDelegate::initialize(const std::string& language,
   }*/
 
   m_client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
-
+  
+  Q_EMIT(finishedInit());
 }
 
-std::string LimaSimpleClientDelegate::analyze(const std::string& text)
+void LimaWorker::analyze(const std::string& text)
 {
+  //cout << getThreadId() << " LimaWorker::analyze start" << endl;
   std::map<std::string,std::string> metaData;
   metaData["Lang"]=m_language;
   string pseudofilename=text.substr(0,10);
@@ -187,7 +315,11 @@ std::string LimaSimpleClientDelegate::analyze(const std::string& text)
   ostringstream oss;
   m_handler->setOut(&oss);
   m_client->analyze(text, metaData, m_pipeline, m_handlers);
-  return oss.str();
+  //cout << getThreadId() << " LimaWorker::analyze end" << endl;
+  //cout << oss.str();
+  //cout << getThreadId() << " LimaWorker::analyze emit setResult" << endl;
+  m_result=oss.str();
+  Q_EMIT(finishedAnalyze());
 }
 
   
