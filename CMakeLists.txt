@@ -1,10 +1,11 @@
 project(Lima)
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.4.0)
 
 enable_testing()
 
 include(ExternalProject)
 
+set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
 set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
@@ -16,8 +17,9 @@ macro (CompileLimaSubproject _project _dependsOn)
 #   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 #     set(_TEST_COMMAND make test)
 #   else()
-    set(_TEST_COMMAND cmake --build . --target test --config ${CMAKE_BUILD_TYPE})
+#     set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
 #   endif()
+#     TEST_COMMAND "${_TEST_COMMAND}"
   
   ## Add external project
   ExternalProject_Add(
@@ -26,7 +28,6 @@ macro (CompileLimaSubproject _project _dependsOn)
     DOWNLOAD_COMMAND ""
     PATCH_COMMAND ""
     UPDATE_COMMAND ""
-    TEST_COMMAND "${_TEST_COMMAND}"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
     INSTALL_DIR $ENV{LIMA_DIST}
     USES_TERMINAL_DOWNLOAD 1
@@ -35,6 +36,7 @@ macro (CompileLimaSubproject _project _dependsOn)
     USES_TERMINAL_BUILD 1
     USES_TERMINAL_TEST 1
     USES_TERMINAL_INSTALL 1
+    TEST_AFTER_INSTALL 1
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} 
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
         -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 

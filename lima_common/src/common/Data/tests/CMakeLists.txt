@@ -26,7 +26,7 @@ add_executable(LimaStringTest0 ${LimaStringTest0_SRCS})
 
 target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(NAME LimaStringTest0 COMMAND LimaStringTest0)
+add_test(NAME LimaStringTest0 COMMAND LimaStringTest0 -v2)
 
 ########### next test ###############
 
@@ -103,7 +103,7 @@ add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFIL
 
 target_link_libraries(FileUtilsTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(NAME FileUtilsTest0 COMMAND FileUtilsTest0)
+add_test(NAME FileUtilsTest0 COMMAND FileUtilsTest0 -v2 -nocrashhandler)
 set_tests_properties(FileUtilsTest0 PROPERTIES ENVIRONMENT LIMA_CONF=${CMAKE_SOURCE_DIR}/conf)
 
 

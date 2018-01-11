@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(lima_gui)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.4.0)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LIMA_GUI" )
 
