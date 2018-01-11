@@ -53,6 +53,8 @@ public:
   LinguisticResourcesPrivate();
   virtual ~LinguisticResourcesPrivate();
   
+  void clear();
+  
   std::map<MediaId,AbstractResource::Manager*> m_resourcesManagers;
 
   // private member functions
@@ -65,6 +67,11 @@ LinguisticResourcesPrivate::LinguisticResourcesPrivate() {}
 
 LinguisticResourcesPrivate::~LinguisticResourcesPrivate()
 {
+  clear();
+}
+
+void LinguisticResourcesPrivate::clear() 
+{
   for (std::map<MediaId,AbstractResource::Manager*>::iterator it=m_resourcesManagers.begin();
        it!=m_resourcesManagers.end();
        it++)
@@ -72,6 +79,7 @@ LinguisticResourcesPrivate::~LinguisticResourcesPrivate()
     delete it->second;
     it->second=0;
   }
+  m_resourcesManagers.clear();
 }
 
 LinguisticResources::LinguisticResources() :
@@ -87,6 +95,11 @@ LinguisticResources::LinguisticResources() :
 LinguisticResources::~LinguisticResources()
 {
   delete m_d;
+}
+
+void LinguisticResources::clearResources()
+{
+  m_d->clear();
 }
 
 AbstractResource* LinguisticResources::getResource(MediaId lang,const std::string& id) const
