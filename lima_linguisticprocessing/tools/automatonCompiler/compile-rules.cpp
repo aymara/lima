@@ -496,7 +496,7 @@ int run(int argc,char** argv)
 //   {
 //     std::cerr << e.what() << std::endl;
 //   }
-  TIMELOGINIT;
+  //TIMELOGINIT;
   TimeUtils::logAllCumulatedTime("And at last");
 
 
