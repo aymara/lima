@@ -109,11 +109,14 @@ public:
   std::string analyze(const std::string& text);
   
 private:
-  static void onStarted();
-  
-  static LimaWorker* m_worker;
-  static LimaController* m_controller;
-  
+  // static function called in the thread initialization
+  static void onStarted(); 
+
+  // LimaController is static: shared by all lima client
+  static std::shared_ptr<LimaController> m_controller;
+  // LimaWorker is static
+  static std::shared_ptr<LimaWorker> m_worker;
+
   // internal thread to run QCoreApplication
   static int argc;
   static char* argv[2];

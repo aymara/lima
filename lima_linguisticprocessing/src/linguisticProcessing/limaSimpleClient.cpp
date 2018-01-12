@@ -47,8 +47,8 @@ char* LimaSimpleClientDelegate::argv[2] = {(char*)("LimaSimpleClientDelegate"), 
 QCoreApplication* LimaSimpleClientDelegate::app=nullptr;
 //QThread* LimaSimpleClientDelegate::thread=nullptr;
 boost::thread* LimaSimpleClientDelegate::thread=nullptr;
-LimaWorker* LimaSimpleClientDelegate::m_worker=nullptr;
-LimaController* LimaSimpleClientDelegate::m_controller=nullptr;
+std::shared_ptr<LimaWorker> LimaSimpleClientDelegate::m_worker(nullptr);
+std::shared_ptr<LimaController> LimaSimpleClientDelegate::m_controller(nullptr);
 
 // needed to pass string in signals/slots
 int metatype_string_id=qRegisterMetaType<std::string>("std::string");
@@ -112,7 +112,7 @@ m_firstInitialization(true)
 
 LimaWorker::~LimaWorker()
 {
-  //cout << getThreadId() << " LimaWorker destructor" << endl;
+  //cout << "thread=" << getThreadId() << " LimaWorker destructor " << this << endl;
   if (m_handler!=nullptr) {
     delete m_handler;
   }
@@ -134,7 +134,7 @@ m_finishedAnalyze(false)
 
 LimaController::~LimaController()
 {
-  //cout << getThreadId() << " LimaController destructor" << endl;
+  //cout << "thread=" << getThreadId() << " LimaController destructor " << this;
 }
 
 void LimaController::stop()
@@ -152,7 +152,7 @@ LimaSimpleClientDelegate::LimaSimpleClientDelegate()
     thread = new boost::thread(LimaSimpleClientDelegate::onStarted);
     //cout << "thread created: "<< thread << endl;
     while (! m_worker) {
-      sleep(0.1);
+      boost::this_thread::sleep(boost::posix_time::milliseconds(100));
     }
     if (m_worker) {
       //cout << "create connections" << endl;
@@ -168,12 +168,7 @@ LimaSimpleClientDelegate::~LimaSimpleClientDelegate()
   m_controller->stop();
   // then wait for the thread to finish (so that everything is properly stopped before deleting the worker and controller
   thread->join();
-  if (m_worker) {
-    delete m_worker;
-  }
-  if (m_controller) {
-    delete m_controller;
-  }
+  // do not delete worker or controller: shared pointers
 }
 
 void LimaSimpleClientDelegate::onStarted()
@@ -183,18 +178,16 @@ void LimaSimpleClientDelegate::onStarted()
    {
      app = new QCoreApplication(argc, argv);
      
-     // Task parented to the application so that it
-     // will be deleted by the application.
-     m_worker=new LimaWorker();
-     m_controller=new LimaController();
+     m_worker=std::shared_ptr<LimaWorker>(new LimaWorker());
+     m_controller=std::shared_ptr<LimaController>(new LimaController());
     
      // connectors to call the functions of the worker
-     QObject::connect(m_controller, SIGNAL(doInitialize(std::string,std::string)), m_worker, SLOT(initialize(std::string,std::string)));
-     QObject::connect(m_controller, SIGNAL(doAnalyze(std::string)), m_worker, SLOT(analyze(std::string)));
-     QObject::connect(m_worker,  SIGNAL(finishedInit()), m_controller, SLOT(endInit()));
-     QObject::connect(m_worker,  SIGNAL(finishedAnalyze()), m_controller, SLOT(endAnalyze()));
-     QObject::connect(m_controller,  SIGNAL(closeApp()), app, SLOT(quit()));
-     QObject::connect(m_controller,  SIGNAL(closeWorker()), m_worker, SLOT(quit()));
+     QObject::connect(m_controller.get(), SIGNAL(doInitialize(std::string,std::string)), m_worker.get(), SLOT(initialize(std::string,std::string)));
+     QObject::connect(m_controller.get(), SIGNAL(doAnalyze(std::string)), m_worker.get(), SLOT(analyze(std::string)));
+     QObject::connect(m_worker.get(),  SIGNAL(finishedInit()), m_controller.get(), SLOT(endInit()));
+     QObject::connect(m_worker.get(),  SIGNAL(finishedAnalyze()), m_controller.get(), SLOT(endAnalyze()));
+     QObject::connect(m_controller.get(),  SIGNAL(closeApp()), app, SLOT(quit()));
+     QObject::connect(m_controller.get(),  SIGNAL(closeWorker()), m_worker.get(), SLOT(quit()));
      
      app->exec();
   }
@@ -204,7 +197,7 @@ void LimaSimpleClientDelegate::onStarted()
 void LimaController::initialize(const std::string& language,
                                   const std::string& pipeline)
 {
-  //cout << getThreadId() << " LimaController::initialize" << endl;
+  //cout << "thread=" << getThreadId() << " LimaController::initialize " << this << endl;
   // pass the command to the worker in the thread, through a signal
   m_finishedInit=false;
   Q_EMIT(doInitialize(language,pipeline));
@@ -213,19 +206,19 @@ void LimaController::initialize(const std::string& language,
 void LimaSimpleClientDelegate::initialize(const std::string& language,
                                           const std::string& pipeline)
 {
-  //cout << "LimaSimpleClientDelegate::initialize" << endl;
+  //cout << "LimaSimpleClientDelegate::initialize " << this << endl;
   //cout << ",controller=" << m_controller << ",worker=" << m_worker << endl;
   m_controller->initialize(language,pipeline);
   // wait until initialization is finished
   while (! m_controller->hasFinishedInit()) {
     //cerr << "waiting for initialization to finish" << endl;
-    boost::this_thread::sleep( boost::posix_time::milliseconds(1000) );
+    boost::this_thread::sleep( boost::posix_time::milliseconds(10) );
   }
 }
 
 void LimaController::analyze(const std::string& text)
 {
-  //cout << getThreadId() << " LimaController::analyze" << endl;
+  ///cout << getThreadId() << " LimaController::analyze" << endl;
   // pass the command to the worker in the thread, through a signal
   m_finishedAnalyze=false;
   Q_EMIT(doAnalyze(text));
