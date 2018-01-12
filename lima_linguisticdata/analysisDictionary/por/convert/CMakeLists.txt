@@ -28,13 +28,13 @@ file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../delaf/*.txt)
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml forms.dic default-por.dat
-    COMMAND echo "<dictionary>" > dico.xml.tmp
+    COMMAND cat ../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py por forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt > forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic forms.dic.2
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
-    COMMAND echo "</dictionary>" >> dico.xml.tmp
+    COMMAND cat ../../closing_tag.txt >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
@@ -49,11 +49,11 @@ else()
   # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
     OUTPUT dico.xml  forms.dic default-por.dat
-    COMMAND echo ^<dictionary^> > dico.xml.tmp
+    COMMAND cat ../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND sort -u -o forms.dic forms.dic
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
-    COMMAND echo ^</dictionary>^ >> dico.xml.tmp
+    COMMAND cat ../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS

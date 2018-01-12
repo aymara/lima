@@ -24,12 +24,12 @@ file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../lefff/*.dic)
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml forms.dic forms.dic.2 forms.dic.3 default-fre.dat error.txt
-    COMMAND echo "<dictionary>" > dico.xml.tmp
+    COMMAND cat ../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt ${PROJECT_SOURCE_DIR} > forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
-    COMMAND echo "</dictionary>" >> dico.xml.tmp
+    COMMAND cat ../../closing_tag.txt >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
@@ -43,15 +43,17 @@ else()
   # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
     OUTPUT dico.xml
-    COMMAND echo ^<dictionary^> > dico.xml.tmp
+    COMMAND cat ../../opening_tag.txt > dico.xml.tmp
 
   # Continuation of [1] above
   #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > forms.dic
     COMMAND cat ${dicoFiles} > forms.dic
-
+    # WARNING: the sort command here must be a POSIX one. If you get failures 
+    # here without clear error messages, verify that the sort command used is
+    # not the Windows one.
     COMMAND sort -u -o forms.dic forms.dic
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
-    COMMAND echo ^</dictionary^> >> dico.xml.tmp
+    COMMAND cat ../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
