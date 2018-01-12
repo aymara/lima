@@ -140,12 +140,13 @@ void LimaController::stop()
 LimaSimpleClientDelegate::LimaSimpleClientDelegate()
 {
   // initialize the internal thread
-  if (thread == NULL)
+  if (thread == nullptr)
   {
     thread = new boost::thread(LimaSimpleClientDelegate::onStarted);
     //cout << "thread created: "<< thread << endl;
     while (! m_worker) {
-      sleep(0.1);
+      boost::this_thread::sleep( boost::posix_time::milliseconds(100) );
+
     }
     if (m_worker) {
       //cout << "create connections" << endl;
