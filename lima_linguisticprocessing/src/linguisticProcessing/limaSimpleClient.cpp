@@ -80,11 +80,17 @@ void LimaSimpleClient::initialize(const std::string& language,
                                    const std::string& pipeline)
 {
   // remove existing one if exist, to ensure proper initialization
-  if (m_delegate!=nullptr) {
-    delete m_delegate;
+  // -> do not remove existing delegate: contains the thread and the objects that communicate inside the thread
+  // (QCoreApplication, LimaController and LimaWorker)
+  //if (m_delegate!=nullptr) {
+  //  delete m_delegate;
+  //}
+  if (m_delegate==nullptr) {
+    m_delegate=new LimaSimpleClientDelegate();
   }
-  m_delegate=new LimaSimpleClientDelegate();
+  // just relaunch initialize
   m_delegate->initialize(language,pipeline);
+  
 }
 
 std::string LimaSimpleClient::analyze(const std::string& text)
@@ -128,6 +134,7 @@ m_finishedAnalyze(false)
 
 LimaController::~LimaController()
 {
+  //cout << getThreadId() << " LimaController destructor" << endl;
 }
 
 void LimaController::stop()
