@@ -120,7 +120,7 @@ private:
   static QCoreApplication* app;
   // must use a std::thread (or boost), not a QThread, to run the QApplication (otherwise, have a 
   // warning: QApplication was not created in the main() thread.)
-  static std::thread* thread;
+  static boost::thread* thread;
 };
 
 } // end namespace

@@ -46,7 +46,7 @@ int LimaSimpleClientDelegate::argc = 1;
 char* LimaSimpleClientDelegate::argv[2] = {(char*)("LimaSimpleClientDelegate"), NULL};
 QCoreApplication* LimaSimpleClientDelegate::app=nullptr;
 //QThread* LimaSimpleClientDelegate::thread=nullptr;
-std::thread* LimaSimpleClientDelegate::thread=nullptr;
+boost::thread* LimaSimpleClientDelegate::thread=nullptr;
 LimaWorker* LimaSimpleClientDelegate::m_worker=nullptr;
 LimaController* LimaSimpleClientDelegate::m_controller=nullptr;
 
@@ -56,8 +56,8 @@ int metatype_string_id=qRegisterMetaType<std::string>("std::string");
 // utility function for debug
 std::string getThreadId()
 {
-  //boost::thread::id id=boost::this_thread::get_id();
-  std::thread::id id = std::this_thread::get_id();
+  boost::thread::id id=boost::this_thread::get_id();
+  //std::thread::id id = std::this_thread::get_id();
   ostringstream tid;
   tid << id; 
   return tid.str();
@@ -142,7 +142,7 @@ LimaSimpleClientDelegate::LimaSimpleClientDelegate()
   // initialize the internal thread
   if (thread == NULL)
   {
-    thread = new std::thread(LimaSimpleClientDelegate::onStarted);
+    thread = new boost::thread(LimaSimpleClientDelegate::onStarted);
     //cout << "thread created: "<< thread << endl;
     while (! m_worker) {
       sleep(0.1);
@@ -197,7 +197,7 @@ void LimaSimpleClientDelegate::onStarted()
 void LimaController::initialize(const std::string& language,
                                   const std::string& pipeline)
 {
-  //cout << "LimaController::initialize" << endl;
+  //cout << getThreadId() << " LimaController::initialize" << endl;
   // pass the command to the worker in the thread, through a signal
   m_finishedInit=false;
   Q_EMIT(doInitialize(language,pipeline));
@@ -207,10 +207,12 @@ void LimaSimpleClientDelegate::initialize(const std::string& language,
                                           const std::string& pipeline)
 {
   //cout << "LimaSimpleClientDelegate::initialize" << endl;
+  //cout << ",controller=" << m_controller << ",worker=" << m_worker << endl;
   m_controller->initialize(language,pipeline);
   // wait until initialization is finished
   while (! m_controller->hasFinishedInit()) {
-    boost::this_thread::sleep( boost::posix_time::milliseconds(10) );
+    //cerr << "waiting for initialization to finish" << endl;
+    boost::this_thread::sleep( boost::posix_time::milliseconds(1000) );
   }
 }
 
@@ -236,7 +238,7 @@ std::string LimaSimpleClientDelegate::analyze(const std::string& text)
 void LimaWorker::initialize(const std::string& language,
                             const std::string& pipeline)
 {
-  //cout << "LimaWorker::initialize" << endl;
+  //cout << getThreadId() << " LimaWorker::initialize " << m_firstInitialization << endl;
   m_language=language;
   m_pipeline=pipeline;
   string clientId("lima-coreclient");
@@ -294,9 +296,9 @@ void LimaWorker::initialize(const std::string& language,
 
     m_firstInitialization=false;
   }
-  /*else {
+  else {
     cerr << "Factory already initialized" << endl;
-  }*/
+  }
 
   m_client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
   
