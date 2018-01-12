@@ -78,11 +78,11 @@ if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
 endif()
 
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+# CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
-CompileLimaSubproject(lima_annoqt lima_common)
+# CompileLimaSubproject(lima_annoqt lima_common)
 
-CompileLimaSubproject(lima_gui lima_linguisticdata)
+# CompileLimaSubproject(lima_gui lima_linguisticdata)
 
 install(FILES)
 
