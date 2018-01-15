@@ -20,7 +20,7 @@ def loadLefff2LimaCodesDict(project_source_dir):
     # associate Lefff code prefix to pos tag
     with open('{}/disambiguisationMatrices/fre/code_symbolic2lima.txt'
               .format(project_source_dir),
-              'r') as f:
+              'r', encoding='utf-8', errors='ignore') as f:
         for code_line in f:
             code_line = code_line.rstrip()
             if not code_line:
@@ -172,10 +172,14 @@ def main(argv):
     # positional arguments
     parser.add_argument("language", help="language")
     parser.add_argument("dicofile",
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('r',
+                                               encoding='utf-8',
+                                               errors='ignore'),
                         help="input file: dictionary entries")
     parser.add_argument("corpus",
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('r', 
+                                               encoding='utf-8', 
+                                               errors='ignore'),
                         help="corpus file")
     parser.add_argument("project_source_dir",
                         default="",
