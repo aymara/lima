@@ -19,6 +19,10 @@ set(ENV{LC_ALL} "C")
 # [1] Use a dictionary already in LIMA format to avoid the long conversion of
 # the source extensional Lefff. This will have to be changed in the future
 # because it will make difficult to transmit changes and corrections upstream
+# Continuation of [1] above
+#   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl \
+#           ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt \
+#           ../lefff/lefff-ext-simplified.txt > forms.dic
 file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../lefff/*.dic)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -30,35 +34,34 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
-      ${dicoFiles}
-    COMMENT "produce XML dico"
+      ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt
+    COMMENT "produce fre XML dico under Linux"
     VERBATIM
   )
 else()
   # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
-    OUTPUT dico.xml
+    OUTPUT dico.xml forms.dic forms.dic.2 forms.dic.3 default-fre.dat error.txt
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
-
-  # Continuation of [1] above
-  #   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt ../lefff/lefff-ext-simplified.txt > forms.dic
     COMMAND cat ${dicoFiles} > forms.dic
+    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt ${PROJECT_SOURCE_DIR} > forms.dic.2
     # WARNING: the sort command here must be a POSIX one. If you get failures 
     # here without clear error messages, verify that the sort command used is
     # not the Windows one.
-    COMMAND sort -u -o forms.dic forms.dic
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
+    COMMAND sort -u -o forms.dic.3 forms.dic.2
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${dicoFiles}
-    COMMENT "produce XML dico"
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
+      ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt
+    COMMENT "produce fre XML dico under Windows"
   )
 endif()
 
