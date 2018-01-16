@@ -15,19 +15,19 @@ def isProperNoun(pos,language):
     if language=="pos":
         return pos.startswith("NPROP")
 
-def loadLefff2LimaCodesDict(project_source_dir):
-    codes = {}
-    # associate Lefff code prefix to pos tag
-    with open('{}/disambiguisationMatrices/fre/code_symbolic2lima.txt'
-              .format(project_source_dir),
-              'r', encoding='utf-8', errors='ignore') as f:
-        for code_line in f:
-            code_line = code_line.rstrip()
-            if not code_line:
-                continue
-            symb, lima = code_line.split('\t')
-            codes[symb] = lima
-    return codes
+#def loadLefff2LimaCodesDict(project_source_dir):
+    #codes = {}
+    ## associate Lefff code prefix to pos tag
+    #with open('{}/disambiguisationMatrices/fre/code_symbolic2lima.txt'
+              #.format(project_source_dir),
+              #'r', encoding='utf-8', errors='ignore') as f:
+        #for code_line in f:
+            #code_line = code_line.rstrip()
+            #if not code_line:
+                #continue
+            #symb, lima = code_line.split('\t')
+            #codes[symb] = lima
+    #return codes
 
 class DicEntries:
     def __init__(self):
@@ -110,7 +110,8 @@ def loadCorpusEntries(corpus):
     return corpus_entries
 
 def mergeEntries(language,dicofile,
-                 corpus,project_source_dir,
+                 corpus,
+                 #project_source_dir,
                  output_file,
                  corpusPriority=False):
     codes = {}
@@ -184,14 +185,12 @@ def main(argv):
                                                encoding='utf-8', 
                                                errors='ignore'),
                         help="corpus file")
-    parser.add_argument("project_source_dir",
-                        default="",
-                        nargs="?",
-                        help="project source dir")
     parser.add_argument("output_file",
-                        default="",
-                        nargs="?",
                         help="output file name")
+    #parser.add_argument("project_source_dir",
+                        #default="",
+                        #nargs="?",
+                        #help="project source dir")
 
     param=parser.parse_args()
 
@@ -199,7 +198,7 @@ def main(argv):
     mergeEntries(param.language,
                  param.dicofile,
                  param.corpus,
-                 param.project_source_dir,
+                 #param.project_source_dir,
                  param.output_file,
                  param.corpusPriority)
 

@@ -34,7 +34,12 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
+    DEPENDS  
+      ${dicoFiles}
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
+      ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
@@ -51,7 +56,12 @@ else()
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
+    DEPENDS  
+      ${dicoFiles} 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
+      ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce eng XML dico under Windows"
   )
 endif()

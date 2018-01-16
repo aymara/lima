@@ -30,7 +30,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     OUTPUT dico.xml forms.dic forms.dic.2 forms.dic.3 default-fre.dat error.txt
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt ${PROJECT_SOURCE_DIR} forms.dic.2
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
@@ -39,6 +39,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce fre XML dico under Linux"
     VERBATIM
   )
@@ -48,7 +49,7 @@ else()
     OUTPUT dico.xml forms.dic forms.dic.2 forms.dic.3 default-fre.dat error.txt
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt ${PROJECT_SOURCE_DIR} forms.dic.2
+    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt forms.dic.2
     # WARNING: the sort command here must be a POSIX one. If you get failures 
     # here without clear error messages, verify that the sort command used is
     # not the Windows one.
@@ -61,6 +62,7 @@ else()
       ${dicoFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt
       ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce fre XML dico under Windows"
   )
 endif()
