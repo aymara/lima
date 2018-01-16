@@ -105,8 +105,9 @@ def loadCorpusEntries(corpus):
             continue
         corpus_line_array = corpus_line.split('\t')
         # print(corpus_line_array)
-        (form,pos)=(corpus_line_array[0],corpus_line_array[1])
-        corpus_entries.add(form,pos,"%s\t%s\t\t%s"%(form,form,pos))
+        if len(corpus_line_array) >= 2:
+            (form,pos)=(corpus_line_array[0],corpus_line_array[1])
+            corpus_entries.add(form,pos,"%s\t%s\t\t%s"%(form,form,pos))
     return corpus_entries
 
 def mergeEntries(language,dicofile,
