@@ -42,6 +42,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
       ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce por XML dico under Linux"
     VERBATIM
   )
@@ -62,6 +63,8 @@ else()
       ${dicoFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt
+      ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce por XML dico under Windows"
   )
 endif()
