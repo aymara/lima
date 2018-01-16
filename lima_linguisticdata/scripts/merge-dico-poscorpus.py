@@ -111,6 +111,7 @@ def loadCorpusEntries(corpus):
 
 def mergeEntries(language,dicofile,
                  corpus,project_source_dir,
+                 output_file,
                  corpusPriority=False):
     codes = {}
     
@@ -121,38 +122,40 @@ def mergeEntries(language,dicofile,
         ## codes contain a dico lefff code -> lima code
         #codes = loadLefff2LimaCodesDict(project_source_dir)
         #print(codes)
-    
-    dico_entries = loadDicoEntries(dicofile,language,codes)
-    corpus_entries = loadCorpusEntries(corpus)
-    
-    for form,posentries in dico_entries.entries.items():
-        for (pos,entries) in posentries.items():
-            # dico forms with form+pos in corpus
-            if corpus_entries.exists(form,pos):
-                print("\n".join(list(entries)))
-            else:
-                # if corpusPriority, do not keep dico forms that exist in a
-                # corpus with a different POS 
-                if corpusPriority and corpus_entries.formExists(form):
-                    continue
-                print("\n".join(list(entries)))
+    with open(output_file,
+          'w', encoding='utf-8') as f:
 
-    # corpus forms not in dico
-    for form,posentries in corpus_entries.entries.items():
-        if " " in form or "'" in form: # no compound words in dictionary
-            continue
-        for (pos,entries) in posentries.items():
-            # keep only entries from the corpus if there is no other entry
-            # with the same form in the dictionary
-            # (e.g. in the English corpus, "The" is a proper noun)
-            if (isProperNoun(pos,language)
-                and (dico_entries.formExists(form)
-                     or dico_entries.formExists(form.lower()))):
-                pass
-            elif (not dico_entries.exists(form,pos)
-                  and not dico_entries.exists(form.lower(),pos)
-                  and not form[0].isdigit()):
-                print("\n".join(list(entries)))
+        dico_entries = loadDicoEntries(dicofile,language,codes)
+        corpus_entries = loadCorpusEntries(corpus)
+        
+        for form,posentries in dico_entries.entries.items():
+            for (pos,entries) in posentries.items():
+                # dico forms with form+pos in corpus
+                if corpus_entries.exists(form,pos):
+                    f.write("\n".join(list(entries)))
+                else:
+                    # if corpusPriority, do not keep dico forms that exist in a
+                    # corpus with a different POS 
+                    if corpusPriority and corpus_entries.formExists(form):
+                        continue
+                    f.write("\n".join(list(entries)))
+
+        # corpus forms not in dico
+        for form,posentries in corpus_entries.entries.items():
+            if " " in form or "'" in form: # no compound words in dictionary
+                continue
+            for (pos,entries) in posentries.items():
+                # keep only entries from the corpus if there is no other entry
+                # with the same form in the dictionary
+                # (e.g. in the English corpus, "The" is a proper noun)
+                if (isProperNoun(pos,language)
+                    and (dico_entries.formExists(form)
+                        or dico_entries.formExists(form.lower()))):
+                    pass
+                elif (not dico_entries.exists(form,pos)
+                      and not dico_entries.exists(form.lower(),pos)
+                      and not form[0].isdigit()):
+                    f.write("\n".join(list(entries)))
 
 #----------------------------------------------------------------------
 # main function
@@ -185,6 +188,10 @@ def main(argv):
                         default="",
                         nargs="?",
                         help="project source dir")
+    parser.add_argument("output_file",
+                        default="",
+                        nargs="?",
+                        help="output file name")
 
     param=parser.parse_args()
 
@@ -193,6 +200,7 @@ def main(argv):
                  param.dicofile,
                  param.corpus,
                  param.project_source_dir,
+                 param.output_file,
                  param.corpusPriority)
 
 main(sys.argv[1:])
