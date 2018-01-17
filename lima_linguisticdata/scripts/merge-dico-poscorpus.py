@@ -135,12 +135,14 @@ def mergeEntries(language,dicofile,
                 # dico forms with form+pos in corpus
                 if corpus_entries.exists(form,pos):
                     f.write("\n".join(list(entries)))
+                    f.write("\n")
                 else:
                     # if corpusPriority, do not keep dico forms that exist in a
                     # corpus with a different POS 
                     if corpusPriority and corpus_entries.formExists(form):
                         continue
                     f.write("\n".join(list(entries)))
+                    f.write("\n")
 
         # corpus forms not in dico
         for form,posentries in corpus_entries.entries.items():
@@ -158,6 +160,7 @@ def mergeEntries(language,dicofile,
                       and not dico_entries.exists(form.lower(),pos)
                       and not form[0].isdigit()):
                     f.write("\n".join(list(entries)))
+                    f.write("\n")
 
 #----------------------------------------------------------------------
 # main function
