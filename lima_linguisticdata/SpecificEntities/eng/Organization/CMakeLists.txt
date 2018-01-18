@@ -16,4 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst)
 
-SPECIFICENTITIES(main eng Organization ORGANIZATION-eng.rules ORGANIZATION_COMP-eng.rules)
+SPECIFICENTITIES(main eng Organization 
+  ORGANIZATION-eng.rules 
+  ORGANIZATION_COMP-eng.rules)

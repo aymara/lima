@@ -24,6 +24,39 @@ endif()
 set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
 set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
 
+function(CustomCopyFileAndAddExecEnvDependency _orig _dest)
+  SET(__RESULT "")
+  CustomCopyFileAndAppendDestToList(${_orig} ${_dest} "__RESULT")
+  SET(_LIMA_EXECENV_FILES ${_LIMA_EXECENV_FILES} ${__RESULT} PARENT_SCOPE)
+endfunction()
+
+function(CustomCopyFileAndAppendDestToList _orig _dest _list)
+  CustomCopyFile(${_orig} ${_dest})
+  SET(${_list} ${${_list}} ${_dest} PARENT_SCOPE)
+endfunction()
+
+function(CustomCopyFile _orig _dest)
+  #Get Filename
+  GET_FILENAME_COMPONENT(_filename ${_dest} NAME)
+  GET_FILENAME_COMPONENT(_destdir ${_dest} PATH)
+  ## ## ##MESSAGE("Filename: ${_filename}")
+  ## ## ##MESSAGE("Destination: ${_destdir}")
+  ## ## ##MESSAGE("Creating directory: ${_destdir}")
+  ## ## ##MESSAGE("Copying ${_orig} \nto : ${C_Yellow}${_dest}${C_Norm}")
+  add_custom_command(
+    OUTPUT ${_dest}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${_destdir}
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${_orig}
+     ${_dest}
+    DEPENDS
+      ${_orig}
+    COMMENT "created config exec env for (${_filename})"
+    VERBATIM
+    )
+endfunction()
+
+
 ############
 # Dictionary
 
@@ -48,17 +81,13 @@ macro (CODES _lang)
   add_custom_target(
     code${_lang}
     ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt code-${_lang}.xml ${ARGN}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
   )
 
-#   add_custom_target(
-#     pre_install_code${_lang}
-#     ALL
-#     "${CMAKE_COMMAND}"
-#     -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
-#   )
-
-  install(FILES code-${_lang}.xml COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
+  install(
+    FILES code-${_lang}.xml 
+    COMPONENT ${_lang} 
+    DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
 
 endmacro (CODES _lang)
 
@@ -340,10 +369,16 @@ macro (IDIOMATICENTITIES _lang)
     rules-idiom-${_lang}
     ALL
     DEPENDS idiomaticExpressions-${_lang}.bin )
-  add_dependencies(rules-idiom-${_lang} rules-${_lang}-execEnv)
+    
+  add_dependencies(rules-idiom-${_lang} 
+    rules-${_lang}-execEnv)
   # add the link between the current target and its execution environment dependencies
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.bin COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.bin 
+    COMPONENT ${_lang} 
+    DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
+    
 endmacro (IDIOMATICENTITIES _lang)
 
 ###############
@@ -351,79 +386,33 @@ endmacro (IDIOMATICENTITIES _lang)
 # LIMA_GENERIC_CONFIGENV
 #
 #
-macro (LIMA_GENERIC_CONFIGENV _lang)
-  MESSAGE( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
-  # This macro could be used to group execEnv configuration and dependecies
-  # This macro adds a custom target 'lima-execEnv-...' that depends
-  # on execEnv's files. Other top level targets could depend on this target
-  # to be sure execEnv is set.
-  # Maybe a unique 'lima-execEnv' target could be created.
-
-  # Create a variable to store dependencies list
-  set(_LIMA_EXECENV_FILES "")
-
-  # Add custom command to copy files to execEnv (rules to produce them)
-  # and Add destitation files to lima-execEnv target's dependencies list
-  CustomCopyFileAndAddExecEnvDependency(
-    ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
-    ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
-  )
-  CustomCopyFileAndAddExecEnvDependency(
-    ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
-    ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
-  )
-  CustomCopyFileAndAddExecEnvDependency(
-    ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
-    ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
-  )
-  ## ## ##MESSAGE("${C_Magenta}EXECENV_FILES: ${_LIMA_EXECENV_FILES}${C_Norm}")
-
-  # Create lima-execEnv target
-  # A a custom target with ALL option
-  # to ensure execEnv is set before any build that needs it.
-  SET(target_name "lima-execEnv-${_lang}")
-  add_custom_target( ${target_name}  ALL
-  DEPENDS ${_LIMA_EXECENV_FILES}
-  )
-endmacro (LIMA_GENERIC_CONFIGENV)
-
-function(CustomCopyFileAndAddExecEnvDependency _orig _dest)
-  SET(__RESULT "")
-  CustomCopyFileAndAppendDestToList(${_orig} ${_dest} "__RESULT")
-  SET(_LIMA_EXECENV_FILES ${_LIMA_EXECENV_FILES} ${__RESULT} PARENT_SCOPE)
-endfunction()
-
-function(CustomCopyFileAndAppendDestToList _orig _dest _list)
-  CustomCopyFile(${_orig} ${_dest})
-  SET(${_list} ${${_list}} ${_dest} PARENT_SCOPE)
-endfunction()
-
-function(CustomCopyFile _orig _dest)
-  #Get Filename
-  GET_FILENAME_COMPONENT(_filename ${_dest} NAME)
-  GET_FILENAME_COMPONENT(_destdir ${_dest} PATH)
-  ## ## ##MESSAGE("Filename: ${_filename}")
-  ## ## ##MESSAGE("Destination: ${_destdir}")
-  ## ## ##MESSAGE("Creating directory: ${_destdir}")
-  ## ## ##MESSAGE("Copying ${_orig} \nto : ${C_Yellow}${_dest}${C_Norm}")
-  add_custom_command(
-    OUTPUT ${_dest}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${_destdir}
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${_orig}
-     ${_dest}
-    DEPENDS
-      ${_orig}
-    COMMENT "created config exec env for (${_filename})"
-    VERBATIM
-    )
-endfunction()
-
-
 ####################
 # Specific Entities Exec Environment
 
 macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
+    COMMENT "create config env for specific entities rules (FrameNet-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
+    COMMENT "create config env for specific entities rules (VerbNet-modex.xml)"
+    VERBATIM
+  )
+
 
   # Permet de créer un lien build/execEnv/config/<group>-modex.xml
   # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/<group>-modex.xml
@@ -526,102 +515,6 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     COMMENT "create config env for specific entities rules (Product-modex.xml)"
     VERBATIM
   )
-
-  # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
-  # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
-  add_custom_target(
-    rules-configEnv
-    ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
-  )
-endmacro (SPECIFICENTITIES_GENERIC_CONFIGENV)
-
-macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
-  # TODO: some tools like compile-rule need access to a set of very
-  # complete configuration files (lima-lp-<lang>.xml, <group>-modex.xml...)
-  # Many macro could be simplified if the dependencies of these tools
-  # could be reduced to really usefull ones.
-  #
-  # Permet de créer un lien build/execEnv/config/_group-modex.xml
-  # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/_group-modex.xml
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/${_group}-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/${_group}-modex.xml
-    COMMENT "create config env for specific entities rules (${_group}-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/SRLIntegration/FrameNet-modex.xml
-    COMMENT "create config env for specific entities rules (FrameNet-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/SRLIntegration/VerbNet-modex.xml
-    COMMENT "create config env for specific entities rules (VerbNet-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/analysisDictionary/${_lang}/code/code-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/SpecificEntities-modex.xml
-    COMMENT "create config env for specific entities rules (SpecificEntities-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
-    COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
-    COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
-    VERBATIM
-  )
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
@@ -648,20 +541,72 @@ macro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
   # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
   # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
   add_custom_target(
-    rules-${_lang}-${_group}-configEnv-${_subtarget}
+    rules-configEnv
     ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
   )
+endmacro (SPECIFICENTITIES_GENERIC_CONFIGENV)
+
+macro (SPECIFICENTITIESCONFIGENV _lang)
+  # TODO: some tools like compile-rule need access to a set of very
+  # complete configuration files (lima-lp-<lang>.xml, <group>-modex.xml...)
+  # Many macro could be simplified if the dependencies of these tools
+  # could be reduced to really usefull ones.
+
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+    COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS
+      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+    COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
+    VERBATIM
+  )
+
+  # definit l'ensemble des dépendances (ce qui doit exister dans la partie 
+  # configuration de l'environnement d'execution de la cible 
+  # rules-${_lang}
+  add_custom_target(
+    rules-${_lang}-configEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+  )
+
+  add_dependencies(
+    rules-${_lang}-configEnv 
+    rules-${_lang}-execEnv
+    rules-configEnv)
+
 endmacro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
 
-macro (SPECIFICENTITIESEXECENV _lang)
+macro (LIMA_GENERIC_CONFIGENV _lang)
+  MESSAGE( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
 
   # Permet de créer un lien build/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
   # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
@@ -708,8 +653,7 @@ macro (SPECIFICENTITIESEXECENV _lang)
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
   )
-endmacro (SPECIFICENTITIESEXECENV _lang)
-
+endmacro (LIMA_GENERIC_CONFIGENV _lang)
 
 ####################
 # Specific Entities
@@ -748,68 +692,6 @@ endmacro (SPECIFICENTITIES _lang _group)
 
 ####################
 # Syntactic analysis
-macro (COMPILE_SA_RULES_CONFIGENV _subtarget _lang _group)
-
-  # Permet de créer un lien build/execEnv/config/_group-modex.xml
-  # vers ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/_group-modex.xml
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
-    COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
-    COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
-    DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
-    COMMENT "create config env for specific entities rules (lima-analysis.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
-    DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
-    COMMENT "create config env for specific entities rules (lima-common.xml)"
-    VERBATIM
-  )
-
-  # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
-  # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
-  add_custom_target(
-    rules-${_lang}-${_group}-configEnv
-    ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/${_group}-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
-  )
-endmacro (COMPILE_SA_RULES_CONFIGENV _subtarget _lang _group)
 
 macro (COMPILE_SA_RULES_WRAPPER _lang)
   set(${_lang}_BIN_RULES_FILES)

@@ -35,7 +35,7 @@ Options default values are in parentheses.
                 precompiled ones
   -v version    <(val)|rev> version number is set either to the value set by  
                 config files or to the short git sha1
-  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.  
+  -G Generator <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.  
 EOF
 exit 1
 }
@@ -48,7 +48,7 @@ arch="generic"
 version="val"
 resources="build"
 parallel="true"
-CMAKE_GENERATOR="Unix"
+CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 
@@ -68,7 +68,8 @@ while getopts ":m:n:p:r:v:G:a:" o; do
         G)
           CMAKE_GENERATOR=${OPTARG}
           echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
-          [[     "$CMAKE_GENERATOR" == "Unix"  || 
+          [[     "$CMAKE_GENERATOR" == "Unix"  ||
+                 "$CMAKE_GENERATOR" == "Ninja" ||
                  "$CMAKE_GENERATOR" == "MSYS"  ||
                  "$CMAKE_GENERATOR" == "NMake" ||
                  "$CMAKE_GENERATOR" == "VS"
@@ -161,7 +162,7 @@ elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   cmake --build . --config $cmake_mode
   """
   make_test=""
-  make_install=""""
+  make_install=""
   generator="Visual Studio 14 2015 Win64"
 else
   make_cmd="make -j$j"

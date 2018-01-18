@@ -14,4 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-SPECIFICENTITIES(main fre Numex NUMBER-fre.rules UNIT-fre.rules NUMEX-fre.rules)
+SPECIFICENTITIES(main fre Numex 
+  NUMBER-fre.rules 
+  UNIT-fre.rules 
+  NUMEX-fre.rules)

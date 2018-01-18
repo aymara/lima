@@ -15,5 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES hours.lst timezone.lst)
-SPECIFICENTITIES(main fre DateTime DATE-fre.rules DATE_COMP-fre.rules TIME-fre.rules TIME_COMP-fre.rules)
-add_dependencies(rules-DateTime-fre-main rules-fre-DateTime-configEnv-main)
+SPECIFICENTITIES(main fre DateTime 
+  DATE-fre.rules 
+  DATE_COMP-fre.rules 
+  TIME-fre.rules 
+  TIME_COMP-fre.rules)

@@ -14,29 +14,9 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-SPECIFICENTITIESEXECENV(fre)
+# SPECIFICENTITIESEXECENV(fre)
 
-SPECIFICENTITIESCONFIGENV(main fre DateTime)
-SPECIFICENTITIESCONFIGENV(main fre Event)
-SPECIFICENTITIESCONFIGENV(main fre Location)
-SPECIFICENTITIESCONFIGENV(main fre Numex)
-SPECIFICENTITIESCONFIGENV(main2 fre Location)
-SPECIFICENTITIESCONFIGENV(main fre Organization)
-SPECIFICENTITIESCONFIGENV(main fre Person)
-SPECIFICENTITIESCONFIGENV(main fre Product)
-
-add_custom_target(
-  specificentitiesconfigenv-fre-all
-  ALL
-  DEPENDS rules-fre-DateTime-configEnv-main
-  rules-fre-Event-configEnv-main
-  rules-fre-Location-configEnv-main
-  rules-fre-Location-configEnv-main2
-  rules-fre-Numex-configEnv-main
-  rules-fre-Organization-configEnv-main
-  rules-fre-Person-configEnv-main
-  rules-fre-Product-configEnv-main
-)
+SPECIFICENTITIESCONFIGENV(fre)
 
 add_subdirectory(resources)
 add_subdirectory(Numex)

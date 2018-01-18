@@ -16,4 +16,8 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES days.lst monthAbbrev.lst months.lst timekey.lst timezone.lst)
 
-SPECIFICENTITIES(main eng DateTime DATE-eng.rules DATE_COMP-eng.rules TIME-eng.rules TIME_COMP-eng.rules)
+SPECIFICENTITIES(main eng DateTime 
+  DATE-eng.rules 
+  DATE_COMP-eng.rules 
+  TIME-eng.rules 
+  TIME_COMP-eng.rules)
