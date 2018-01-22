@@ -21,7 +21,7 @@ target_link_libraries(XMLConfigurationFilesTest0
 
 add_test(
   NAME XMLConfigurationFilesTest0 
-  COMMAND XMLConfigurationFilesTest0 -v2 -nocrashhandler
+  COMMAND XMLConfigurationFilesTest0
 )
 
 

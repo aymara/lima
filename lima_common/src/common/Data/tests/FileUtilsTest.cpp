@@ -24,7 +24,6 @@
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QTextStream>
 #include <QtTest/QtTest>
-#include <boost/concept_check.hpp>
 
 #include <fstream>
 

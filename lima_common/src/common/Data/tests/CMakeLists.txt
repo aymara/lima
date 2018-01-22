@@ -26,7 +26,7 @@ add_executable(LimaStringTest0 ${LimaStringTest0_SRCS})
 
 target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
 
-add_test(NAME LimaStringTest0 COMMAND LimaStringTest0 -v2)
+add_test(NAME LimaStringTest0 COMMAND LimaStringTest0)
 
 ########### next test ###############
 

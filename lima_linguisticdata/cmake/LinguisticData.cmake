@@ -24,39 +24,6 @@ endif()
 set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
 set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
 
-function(CustomCopyFileAndAddExecEnvDependency _orig _dest)
-  SET(__RESULT "")
-  CustomCopyFileAndAppendDestToList(${_orig} ${_dest} "__RESULT")
-  SET(_LIMA_EXECENV_FILES ${_LIMA_EXECENV_FILES} ${__RESULT} PARENT_SCOPE)
-endfunction()
-
-function(CustomCopyFileAndAppendDestToList _orig _dest _list)
-  CustomCopyFile(${_orig} ${_dest})
-  SET(${_list} ${${_list}} ${_dest} PARENT_SCOPE)
-endfunction()
-
-function(CustomCopyFile _orig _dest)
-  #Get Filename
-  GET_FILENAME_COMPONENT(_filename ${_dest} NAME)
-  GET_FILENAME_COMPONENT(_destdir ${_dest} PATH)
-  ## ## ##MESSAGE("Filename: ${_filename}")
-  ## ## ##MESSAGE("Destination: ${_destdir}")
-  ## ## ##MESSAGE("Creating directory: ${_destdir}")
-  ## ## ##MESSAGE("Copying ${_orig} \nto : ${C_Yellow}${_dest}${C_Norm}")
-  add_custom_command(
-    OUTPUT ${_dest}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${_destdir}
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${_orig}
-     ${_dest}
-    DEPENDS
-      ${_orig}
-    COMMENT "created config exec env for (${_filename})"
-    VERBATIM
-    )
-endfunction()
-
-
 ############
 # Dictionary
 
@@ -66,7 +33,6 @@ macro (CODES _lang)
   foreach(CODE_FILE ${ARGN})
     set(CODES_FILES ${CODES_FILES} ${CODE_FILE})
   endforeach(CODE_FILE ${ARGN})
-
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
