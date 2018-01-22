@@ -131,6 +131,24 @@ public:
 };
 
 //----------------------------------------------------------------------
+// inflectedForm is different from word: word is the token in the text, inflectedForm is the inflected form in the dictionary
+// (e.g. possible corrections on accents)
+#define FeatureInflectedForm_ID "inflectedForm"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureInflectedForm : public AbstractFeatureExtractor {
+public:
+   FeatureInflectedForm(MediaId language,const std::string& complement="");
+  ~FeatureInflectedForm() {}
+
+  std::string
+    getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+             LinguisticGraphVertex v,
+             AnalysisContent &
+            ) const override;
+private:
+  const FsaStringsPool* m_sp;
+};
+
+//----------------------------------------------------------------------
 #define FeatureLemma_ID "lemma"
 class LIMA_ANALYSISDUMPERS_EXPORT FeatureLemma : public AbstractFeatureExtractor {
 public:

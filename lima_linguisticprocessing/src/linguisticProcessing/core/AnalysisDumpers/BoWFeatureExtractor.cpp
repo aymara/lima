@@ -56,6 +56,7 @@ RegistrableFactory<AbstractBoWFeatureExtractorFactory>(factoryId)
 
 BoWFeatureExtractorFactory<BoWFeaturePosition> BoWFeaturePositionFactory(BoWFeaturePosition_ID);
 BoWFeatureExtractorFactory<BoWFeatureToken> BoWFeatureTokenFactory(BoWFeatureToken_ID);
+BoWFeatureExtractorFactory<BoWFeatureInflectedForm> BoWFeatureInflectedormFactory(BoWFeatureInflectedForm_ID);
 BoWFeatureExtractorFactory<BoWFeatureLemma> BoWFeatureLemmaFactory(BoWFeatureLemma_ID);
 BoWFeatureExtractorFactory<BoWFeatureProperty> BoWFeaturePropertyFactory(BoWFeatureProperty_ID);
 BoWFeatureExtractorFactory<BoWFeatureTstatus> BoWFeatureTstatusFactory(BoWFeatureTstatus_ID);
@@ -85,6 +86,7 @@ BoWFeatures::~BoWFeatures()
 
 void BoWFeatures::initialize(const deque<std::string>& featureNames)
 {
+  DUMPERLOGINIT;
   for (deque<std::string>::const_iterator it=featureNames.begin(),
          it_end=featureNames.end();it!=it_end;it++) 
   {
@@ -95,10 +97,14 @@ void BoWFeatures::initialize(const deque<std::string>& featureNames)
       complement=string(featureName,i+1);
       featureName=string(featureName,0,i);
     }
-    DUMPERLOGINIT;
-    LDEBUG << "BoWFeatures: initialize feature" << featureName;
-    push_back(BoWFeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
-    back()->setName(featureName);
+    try {
+      LDEBUG << "BoWFeatures: initialize feature" << featureName;
+      push_back(BoWFeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
+      back()->setName(featureName);
+    }
+    catch (LimaException& e) {
+      LERROR << "BoWFeatures: feature" << featureName << "is not defined";
+    }
   }
 }
 
@@ -130,6 +136,24 @@ getValue(const AbstractBoWElement* token) const
     return Common::Misc::limastring2utf8stdstring(dynamic_cast<const BoWToken*>(token)->getInflectedForm());
   else
     return token->getIdUTF8String();
+}
+
+//***********************************************************************
+BoWFeatureInflectedForm::BoWFeatureInflectedForm(MediaId language, const std::string& complement):
+AbstractBoWFeatureExtractor(language,complement)
+{}
+
+std::string BoWFeatureInflectedForm::
+getValue(const AbstractBoWElement* token) const
+{
+  // return the same as word (in WordFeatureExtractor, return the inflected form 
+  // from the dictionary, as opposed to the form in the text, but this difference is not stored
+  // in the BoWToken)
+  if  (dynamic_cast<const BoWToken*>(token) != 0)
+    return Common::Misc::limastring2utf8stdstring(dynamic_cast<const BoWToken*>(token)->getInflectedForm());
+  else
+    return token->getIdUTF8String();
+  
 }
 
 //***********************************************************************

@@ -59,6 +59,7 @@ RegistrableFactory<AbstractFeatureExtractorFactory>(factoryId)
 
 FeatureExtractorFactory<FeaturePosition> FeaturePositionFactory(FeaturePosition_ID);
 FeatureExtractorFactory<FeatureToken> FeatureTokenFactory(FeatureToken_ID);
+FeatureExtractorFactory<FeatureInflectedForm> FeatureInflectedFormFactory(FeatureInflectedForm_ID);
 FeatureExtractorFactory<FeatureLemma> FeatureLemmaFactory(FeatureLemma_ID);
 FeatureExtractorFactory<FeatureProperty> FeaturePropertyFactory(FeatureProperty_ID);
 FeatureExtractorFactory<FeatureTstatus> FeatureTstatusFactory(FeatureTstatus_ID);
@@ -91,6 +92,7 @@ WordFeatures::~WordFeatures()
 
 void WordFeatures::initialize(const deque<std::string>& featureNames)
 {
+  DUMPERLOGINIT;
   for (deque<std::string>::const_iterator it=featureNames.begin(),
          it_end=featureNames.end();it!=it_end;it++) 
   {
@@ -101,10 +103,15 @@ void WordFeatures::initialize(const deque<std::string>& featureNames)
       complement=string(featureName,i+1);
       featureName=string(featureName,0,i);
     }
-    DUMPERLOGINIT;
-    LDEBUG << "WordFeatures: initialize feature" << featureName;
-    push_back(FeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
-    back()->setName(featureName);
+    try {
+      LDEBUG << "WordFeatures: initialize feature" << featureName;
+      push_back(FeatureLemmaFactory.getFactory(featureName)->create(m_language,complement));
+      back()->setName(featureName);
+    }
+    catch (LimaException& e) {
+      LERROR << "WordFeatures: feature" << featureName << "is not defined";
+    }
+
   }
 }
 
@@ -145,6 +152,31 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
     return "";
   }
   return Common::Misc::limastring2utf8stdstring(token->stringForm());
+}
+
+//***********************************************************************
+FeatureInflectedForm::FeatureInflectedForm(MediaId language, const std::string& complement):
+AbstractFeatureExtractor(language,complement),
+m_sp()
+{
+    m_sp=&(Common::MediaticData::MediaticData::single().stringsPool(m_language));
+}
+
+std::string FeatureInflectedForm::
+getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+         LinguisticGraphVertex v,
+         AnalysisContent & /*unused*/
+        ) const
+{
+  MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
+  if (data==0) {
+    return "";
+  }
+  // take first
+  for (MorphoSyntacticData::const_iterator it=data->begin(),it_end=data->end();it!=it_end;it++) {
+    return Common::Misc::limastring2utf8stdstring((*m_sp)[(*it).inflectedForm]);
+  }
+  return "";
 }
 
 //***********************************************************************

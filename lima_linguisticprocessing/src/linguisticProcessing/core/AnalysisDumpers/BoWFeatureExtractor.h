@@ -127,6 +127,16 @@ public:
 };
 
 //----------------------------------------------------------------------
+#define BoWFeatureInflectedForm_ID "inflectedForm"
+class LIMA_ANALYSISDUMPERS_EXPORT BoWFeatureInflectedForm : public AbstractBoWFeatureExtractor {
+public:
+   BoWFeatureInflectedForm(MediaId language,const std::string& complement="");
+  ~BoWFeatureInflectedForm() {}
+
+  std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
+};
+
+//----------------------------------------------------------------------
 #define BoWFeatureLemma_ID "lemma"
 class LIMA_ANALYSISDUMPERS_EXPORT BoWFeatureLemma : public AbstractBoWFeatureExtractor {
 public:
