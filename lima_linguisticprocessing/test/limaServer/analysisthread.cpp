@@ -307,7 +307,8 @@ void AnalysisThread::startAnalysis()
 std::string  AnalysisThread::ConllToJson( const std::string & str )
 {
   LIMASERVERLOGINIT;
-  LDEBUG << "AnalysisThread::ConllToJson str=" << std::string(str,0, 30) << "...";
+  // LDEBUG << "AnalysisThread::ConllToJson str=" << std::string(str,0, 30) << "...";
+  LDEBUG << "AnalysisThread::ConllToJson str=" << str;
   
   // Array of tokens
   QJsonArray array;
