@@ -423,6 +423,7 @@ void MediaticDataPrivate::initMedias(
 
       if (qmeds.find(*it) != qmeds.end())
       {
+        MDATALOGINIT;
         LERROR << "media" << (*it).c_str() << "already initialized: reinit";
         // clear initialization
         delete m_stringsPool[id];
