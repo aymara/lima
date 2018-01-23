@@ -243,61 +243,61 @@ void LimaWorker::initialize(const std::string& language,
   m_pipeline=pipeline;
   string clientId("lima-coreclient");
 
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+    
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  // default values for lima configuration
+  string commonConfigFile("lima-common.xml");
+  string lpConfigFile("lima-analysis.xml");
+
+  std::deque<std::string> langs(1,language);
+  std::deque<std::string> pipelines(1,pipeline);
+
   if (m_firstInitialization) {
-
-    QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
-    QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
-    
-    QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
-    QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
-
-    // default values for lima configuration
-    string commonConfigFile("lima-common.xml");
-    string lpConfigFile("lima-analysis.xml");
-    
     QsLogging::initQsLog(configPath);
     // Necessary to initialize factories
     Lima::AmosePluginsManager::single();
     Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-    
-    std::deque<std::string> langs(1,language);
-    std::deque<std::string> pipelines(1,pipeline);
-    
-    // initialize common
-    Common::MediaticData::MediaticData::changeable().init(
-      resourcesPath.toUtf8().constData(),
-      configPath.toUtf8().constData(),
-      commonConfigFile,
-    langs);
-    
-    bool clientFactoryConfigured = false;
-    Q_FOREACH(QString configDir, configDirs)
-    {
-      if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
-      {
-        // initialize linguistic processing
-        Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
-        LinguisticProcessingClientFactory::changeable().configureClientFactory(
-          clientId,
-          lpconfig,
-          langs,
-          pipelines);
-        clientFactoryConfigured = true;
-        break;
-      }
-    }
-    if(!clientFactoryConfigured)
-    {
-      std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
-    }
+    m_firstInitialization=false;
+
 
     m_handler = new SimpleStreamHandler();
     m_handlers.insert(std::make_pair("simpleStreamHandler", m_handler));
-
-    m_firstInitialization=false;
   }
   else {
     cerr << "Factory already initialized" << endl;
+  }
+
+  // initialize common
+  Common::MediaticData::MediaticData::changeable().
+  init(resourcesPath.toUtf8().constData(),
+       configPath.toUtf8().constData(),
+       commonConfigFile,
+       langs);
+  
+  bool clientFactoryConfigured = false;
+  Q_FOREACH(QString configDir, configDirs)
+  {
+    if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
+    {
+      // initialize linguistic processing
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      LinguisticProcessingClientFactory::changeable().configureClientFactory(
+        clientId,
+        lpconfig,
+        langs,
+        pipelines);
+      clientFactoryConfigured = true;
+      break;
+    }
+  }
+  
+  if(!clientFactoryConfigured)
+  {
+    std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
   }
 
   m_client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
