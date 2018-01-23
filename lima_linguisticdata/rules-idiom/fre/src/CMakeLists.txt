@@ -17,11 +17,11 @@
 file (GLOB SYMBOLICCODESFRE ${PROJECT_SOURCE_DIR}/analysisDictionary/fre/code/symbolicCode*-fre.xml)
 
 add_custom_command(
-  OUTPUT idiomaticExpressions-fre.rules
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/buildSeparableVerbList.pl -list=separableVerbs.lst -rules=separableVerbsSecond.rules ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt > idioms-fre.withoutVerbs.txt
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt > idioms-fre.grace
-  COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/separableVerbs.rules separableVerbsSecond.rules >> idioms-fre.grace
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${PROJECT_SOURCE_DIR}/analysisDictionary/fre/code/code-fre.xml ${SYMBOLICCODESFRE} idioms-fre.grace > idiomaticExpressions-fre.rules
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-fre.rules
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/buildSeparableVerbList.pl -list=${CMAKE_CURRENT_BINARY_DIR}/separableVerbs.lst -rules=${CMAKE_CURRENT_BINARY_DIR}/separableVerbsSecond.rules ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt > ${CMAKE_CURRENT_BINARY_DIR}/idioms-fre.withoutVerbs.txt
+  COMMAND ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt > ${CMAKE_CURRENT_BINARY_DIR}/idioms-fre.grace
+  COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/separableVerbs.rules ${CMAKE_CURRENT_BINARY_DIR}/separableVerbsSecond.rules >> ${CMAKE_CURRENT_BINARY_DIR}/idioms-fre.grace
+  COMMAND ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${PROJECT_SOURCE_DIR}/analysisDictionary/fre/code/code-fre.xml ${SYMBOLICCODESFRE} ${CMAKE_CURRENT_BINARY_DIR}/idioms-fre.grace > ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-fre.rules
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/buildSeparableVerbList.pl
     ${CMAKE_CURRENT_SOURCE_DIR}/categories_convert
