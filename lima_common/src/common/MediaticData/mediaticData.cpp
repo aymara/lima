@@ -399,16 +399,42 @@ void MediaticDataPrivate::initMedias(
     }
     for (auto it = meds.begin(); it != meds.end(); it++)
     {
-      if (qmeds.find(*it) == qmeds.end())
+      MediaId id(0);
+      try
+      {
+        id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",*it).c_str()));
+#ifdef DEBUG_CD
+        LDEBUG << "media '" << (*it).c_str() << "' has id " << id;
+        LDEBUG << (void*)this << " initialize string pool";
+#endif
+      }
+      catch (NoSuchList& e)
+      {
+        MDATALOGINIT;
+        LERROR << "missing id for media " << (*it).c_str() << ":" << e.what();
+        throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
+      }
+      catch (NoSuchParam& e)
+      {
+        MDATALOGINIT;
+        LERROR << "missing id for media " << (*it).c_str() << ":" << e.what();
+        throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
+      }
+
+      if (qmeds.find(*it) != qmeds.end())
+      {
+        LERROR << "media" << (*it).c_str() << "already initialized: reinit";
+        // clear initialization
+        delete m_stringsPool[id];
+      }
+      //else 
+      // always perform initialization, even if language already initialized 
+      // (allows dynamic reinitialization of lima client)
       {
         m_medias.push_back(*it);
         try
         {
-          MediaId id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",*it).c_str()));
-#ifdef DEBUG_CD
-          LDEBUG << "media '" << (*it).c_str() << "' has id " << id;
-          LDEBUG << (void*)this << " initialize string pool";
-#endif
+          // initialize strings pool
           m_stringsPool.insert(std::make_pair(id, new FsaStringsPool()));
 
           m_mediasIds[*it]=id;
@@ -440,18 +466,14 @@ void MediaticDataPrivate::initMedias(
         catch (NoSuchList& e)
         {
           MDATALOGINIT;
-          LERROR << "missing id or definition file for media " 
-                  << (*it).c_str()
-                  << ":" << e.what();
+          LERROR << "missing definition file for media " << (*it).c_str() << ":" << e.what();
           throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
         }
         catch (NoSuchParam& e)
         {
           MDATALOGINIT;
-          LERROR << "missing id or definition file for media " 
-                  << (*it).c_str()
-                  << ":" << e.what();
-          throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
+          LERROR << "missing definition file for media " << (*it).c_str() << ":" << e.what();
+        throw InvalidConfiguration(std::string("Failed to init media ")+(*it)+": "+e.what());
         }
       }
     }
@@ -781,9 +803,9 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
     throw InvalidConfiguration(oss.str());
   }
 #ifdef DEBUG_CD
-  if (logger.loggingLevel()<=QsLogging::DebugLevel) {
+  /*if (logger.loggingLevel()<=QsLogging::DebugLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
-  }
+  }*/
 #endif
 }
 
@@ -869,9 +891,9 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
 #ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticData::getEntityName("  << type << ")";
-  if (logger.loggingLevel()<=QsLogging::TraceLevel) {
+  /*if (logger.loggingLevel()<=QsLogging::TraceLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
-  }
+  }*/
 #endif
   if (type.getGroupId()==0) {
     MDATALOGINIT;
@@ -958,9 +980,9 @@ void MediaticData::writeEntityTypes(std::ostream& file) const
     }
   }
 #ifdef DEBUG_CD
-  if (logger.loggingLevel()<=QsLogging::TraceLevel) {
+  /*if (logger.loggingLevel()<=QsLogging::TraceLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
-  }
+  }*/
 #endif
 }
 
@@ -1002,9 +1024,9 @@ void MediaticData::readEntityTypes(std::istream& file,
       Misc::readUTF8StringField(file,entityName);
 #ifdef DEBUG_CD
       LDEBUG << "readEntityTypes: read entity name " << entityName;
-      if (logger.loggingLevel()<=QsLogging::TraceLevel) {
+      /*if (logger.loggingLevel()<=QsLogging::TraceLevel) {
         printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
-      }
+      }*/
 #endif
       EntityType oldTypeId(typeId,groupId);
       EntityType newTypeId=addEntity(newGroupId,entityName);
@@ -1029,9 +1051,9 @@ void MediaticData::readEntityTypes(std::istream& file,
     }
   }
 #ifdef DEBUG_CD
-  if (logger.loggingLevel()<=QsLogging::TraceLevel) {
+  /*if (logger.loggingLevel()<=QsLogging::TraceLevel) {
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
-  }
+  }*/
 #endif
 }
 
@@ -1057,10 +1079,7 @@ FsaStringsPool& MediaticData::stringsPool(MediaId med)
     throw MediaNotInitialized(med);
   }
   return *(it->second);
-
-  
 }
-
 
 MediaticDataPrivate::MediaticDataPrivate() :
     m_mediasIds(),
