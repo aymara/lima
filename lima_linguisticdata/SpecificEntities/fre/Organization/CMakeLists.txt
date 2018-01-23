@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES annonceurOrg.lst carMakers.lst computers.lst organization.lst ../../common/organizationCommon.lst carMakers.rules journaux_fr.rules newspapersAndMedia.rules organizations.rules partis_politiques.rules)
 
-SPECIFICENTITIES(main fre Organization ORGANIZATION-fre.rules ORGANIZATION_COMP-fre.rules)
+SPECIFICENTITIES(main fre Organization 
+  ORGANIZATION-fre.rules 
+  ORGANIZATION_COMP-fre.rules)
 
-add_dependencies(rules-Organization-fre-main rules-fre-Location-configEnv-main2)
-add_dependencies(rules-Organization-fre-main rules-fre-Organization-configEnv-main)

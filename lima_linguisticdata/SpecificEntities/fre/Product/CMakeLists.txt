@@ -18,4 +18,3 @@ set (DEPENDENCIES carBrands.rules product.lst)
 
 SPECIFICENTITIES(main fre Product PRODUCT-fre.rules)
 
-add_dependencies(rules-Product-fre-main rules-fre-Product-configEnv-main)

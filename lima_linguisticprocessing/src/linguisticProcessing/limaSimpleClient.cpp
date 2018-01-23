@@ -147,7 +147,7 @@ void LimaController::stop()
 LimaSimpleClientDelegate::LimaSimpleClientDelegate()
 {
   // initialize the internal thread
-  if (thread == NULL)
+  if (thread == nullptr)
   {
     thread = new boost::thread(LimaSimpleClientDelegate::onStarted);
     //cout << "thread created: "<< thread << endl;

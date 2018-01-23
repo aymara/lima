@@ -17,16 +17,6 @@
 file (GLOB SYMBOLICCODESFRE ${PROJECT_SOURCE_DIR}/analysisDictionary/fre/code/symbolicCode*-fre.xml)
 
 add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/fre/code-fre.xml
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/fre
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/analysisDictionary/fre/code/code-fre.xml ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/fre/code-fre.xml
-  DEPENDS
-    ${CMAKE_SOURCE_DIR}/analysisDictionary/fre/code/code-fre.xml
-  COMMENT "create exec env for fre idiomatic expressions rules"
-  VERBATIM
-)
-
-add_custom_command(
   OUTPUT idiomaticExpressions-fre.rules
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/buildSeparableVerbList.pl -list=separableVerbs.lst -rules=separableVerbsSecond.rules ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt > idioms-fre.withoutVerbs.txt
   COMMAND ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt > idioms-fre.grace
@@ -39,18 +29,9 @@ add_custom_command(
     ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl
     ${CMAKE_CURRENT_SOURCE_DIR}/idioms-fre.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/separableVerbs.rules
-    ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/fre/code-fre.xml
     ${SYMBOLICCODESFRE}
   COMMENT "create fre idiomatic expressions rules"
   VERBATIM
 )
-# add_custom_target(
-#   rules-fre
-#   ALL
-#   DEPENDS idiomaticExpressions-fre.rules
-# )
-
-# file (MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/fre/")
-# file (COPY ${CMAKE_SOURCE_DIR}/analysisDictionary/fre/code/code-fre.xml DESTINATION "${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/fre/")
 
 IDIOMATICENTITIES(fre)

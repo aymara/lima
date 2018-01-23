@@ -25,13 +25,13 @@ file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic)
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml forms.dic default-eng.dat
-    COMMAND echo "<dictionary>" > dico.xml.tmp
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_BINARY_DIR}/disambiguisationMatrices/eng/corpus_eng_merge.txt > forms.dic.2
-    COMMAND LC_ALL="C" sort -u -o forms.dic forms.dic.2
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic dico.xml.tmp
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_BINARY_DIR}/disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
+    COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
-    COMMAND echo "</dictionary>" >> dico.xml.tmp
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS  
@@ -39,22 +39,29 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
       ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
 else()
   # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
-    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
-    COMMAND echo ^<dictionary^> > dico.xml.tmp
+    OUTPUT dico.xml forms.dic default-eng.dat
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND sort -u -o freeling-ext-lima.txt forms.dic
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
+    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_BINARY_DIR}/disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
+    COMMAND sort -u -o forms.dic.3 forms.dic.2
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
-    COMMAND echo ^</dictionary^> >> dico.xml.tmp
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
+    DEPENDS  
+      ${dicoFiles} 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
+      ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
+      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
     COMMENT "produce eng XML dico under Windows"
   )
 endif()

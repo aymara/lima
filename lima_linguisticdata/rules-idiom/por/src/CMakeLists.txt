@@ -18,33 +18,14 @@
 file (GLOB SYMBOLICCODESPOR ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/symbolicCode*-por.xml)
 
 add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por
-  COMMAND ${CMAKE_COMMAND} -E copy 
-    ${CMAKE_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml
-    ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
-  DEPENDS
-    ${CMAKE_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml
-  COMMENT "create exec env for por idiomatic expressions rules"
-  VERBATIM
-)
-
-add_custom_command(
  OUTPUT idiomaticExpressions-por.rules
  COMMAND ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-por.txt > idioms-por.grace
  COMMAND ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${PROJECT_SOURCE_DIR}/analysisDictionary/por/code/code-por.xml ${SYMBOLICCODESPOR} idioms-por.grace > idiomaticExpressions-por.rules
  DEPENDS
    ${CMAKE_CURRENT_SOURCE_DIR}/idioms-por.txt
-   ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/por/code-por.xml
    ${SYMBOLICCODESPOR}
  COMMENT "create por idiomatic expressions rules"
  VERBATIM
-)
-
-add_custom_target(
-  rules-por
-  ALL
-  DEPENDS idiomaticExpressions-por.rules
 )
 
 IDIOMATICENTITIES(por)

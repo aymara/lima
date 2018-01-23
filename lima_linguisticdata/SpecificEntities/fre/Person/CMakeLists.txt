@@ -16,6 +16,8 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES firstname.lst function_title.lst person.lst persons.rules prefirstname.lst title.lst)
 
-SPECIFICENTITIES(main fre Person PERSON_COMP-fre.rules PERSON-fre.rules EMBEDED-fre.rules)
+SPECIFICENTITIES(main fre Person 
+  PERSON_COMP-fre.rules 
+  PERSON-fre.rules 
+  EMBEDED-fre.rules)
 
-add_dependencies(rules-Person-fre-main rules-fre-Person-configEnv-main)
