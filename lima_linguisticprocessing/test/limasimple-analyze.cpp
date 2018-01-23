@@ -127,7 +127,7 @@ void runInteractive()
     getline(cin,line);
     string::size_type s=line.find(" ");
     string command(line,0,s);
-    if (command=="quit" or command.empty()) {
+    if (command=="quit" || command.empty()) {
       cout << endl;
       quit=true;
     }
