@@ -102,7 +102,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -123,7 +123,7 @@ public:
   ~GovernorOf() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -143,7 +143,7 @@ public:
   ~GovernedBy() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -161,7 +161,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -180,7 +180,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -202,7 +202,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -229,7 +229,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 protected:
   std::set<Common::MediaticData::SyntacticRelationId> m_relationsToFollow;
@@ -266,7 +266,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -286,7 +286,7 @@ public:
   ~RemoveOutRelationFrom() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
 };
@@ -303,7 +303,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   QStringList m_relations;
@@ -327,7 +327,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   QStringList m_relations;
@@ -350,7 +350,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   LinguisticCode m_macro;
@@ -379,7 +379,7 @@ class LIMA_SYNTACTICANALYSIS_EXPORT CreateEasyCompoundTense : public Automaton::
     bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
   private:
     LinguisticCode m_macro;
@@ -413,7 +413,7 @@ public:
   ~FindRelationFrom() {}
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
 };
 
@@ -434,7 +434,7 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
 private:
   /** @brief Categories on which agreement must hold */
@@ -454,9 +454,9 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
   // if no arguments, add relations stored in syntactic data
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
 
 private:
 };
@@ -476,9 +476,9 @@ public:
   bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
   // if no arguments, add relations stored in syntactic data
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
 
 private:
 };
@@ -492,7 +492,7 @@ public:
   explicit ClearStoredRelations(MediaId language,
                        const LimaString& complement=LimaString());
   ~ClearStoredRelations() {}
-  bool operator()(AnalysisContent& analysis) const;
+  bool operator()(AnalysisContent& analysis) const override;
 
 private:
 };

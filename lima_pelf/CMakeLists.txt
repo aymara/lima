@@ -83,6 +83,7 @@ include_directories(${Qt5_INCLUDES})
 set(QT_LIBRARIES "${Qt5_LIBRARIES}")
 
 # Find required packages
+message("Searching for Qwt")
 find_package(Qwt)
 if(Qwt_FOUND)
     include_directories(QWT_INCLUDE_DIR)
@@ -94,7 +95,7 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
+FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -132,7 +133,7 @@ if (DEFINED ENV{PELF_EVALUATOR} AND DEFINED ENV{PELF_ALIGNER} AND Qwt_FOUND)
   set(PELF_ALIGNER $ENV{PELF_ALIGNER})
   add_subdirectory(benchmarkingTool)
 else ()
-  message("Environment variable PELF_ALIGNER and PELF_EVALUATORshould be set to build the benchmarking tool")
+  message("Environment variable PELF_ALIGNER and PELF_EVALUATOR should be set to build the benchmarking tool")
 endif()
 
 
@@ -145,7 +146,7 @@ add_subdirectory(commands)
 
 
 ########### install files ###############
-# install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
+# install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
 ########### documentation ###############
 

@@ -83,13 +83,13 @@ void addListOfSimpleWords( const std::string& listOfWords,
 
   for( int counter = 0 ; ; counter++ ) {
     if( (counter%10000) == 0 ) {
-      std::cerr << "\naddListOfWords counter = " << counter;
+      std::cout << "\raddListOfWords counter = " << counter << std::flush;
     }
     // lecture d'une ligne du fichier
     wList.getline(strbuff, 400, '\n' );
     string line(strbuff);
     if( line.size() == 0 ) {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl;
+      std::cout <<  "end of list of words. counter=" << counter << std::endl;
       break;
     }
     else {
@@ -106,7 +106,7 @@ void addListOfSimpleWords( const std::string& listOfWords,
 //      std::cerr <<  "NO" << std::endl;
     }
   }
-  std::cerr << std::endl;
+  std::cout << std::endl << std::flush;
   dico.pack();
 }
 
@@ -126,13 +126,14 @@ void addListOfCompoundsWords( const std::string& listOfWords,
 
   for( int counter = 0 ; ; counter++ ) {
     if( (counter%10000) == 0 ) {
-      std::cerr << "\naddListOfWords counter = " << counter;
+      std::cout << "\raddListOfWords counter = " << counter << std::flush;
     }
     // lecture d'une ligne du fichier
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( line.size() == 0 ) {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl;
+      std::cout <<  "end of list of words. counter=" << counter << std::endl 
+                << std::flush;
       break;
     }
     else {
@@ -162,7 +163,7 @@ void addListOfCompoundsWords( const std::string& listOfWords,
       }
     }
   }
-  std::cerr << std::endl;
+  std::cout << std::endl << std::flush;
 }
 
 void testListOfWords( const std::string& listOfWords,
@@ -183,13 +184,14 @@ void testListOfWords( const std::string& listOfWords,
 //  int64_t tId0 = -1;
   for( int counter = 0 ; ; counter++ ) {
     if( (counter%10000) == 0 ) {
-      std::cerr << "\naddListOfWords counter = " << counter;
+      std::cout << "\raddListOfWords counter = " << counter << std::flush;
     }
     // lecture d'une ligne du fichier
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( line.size() == 0 ) {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl;
+      std::cout <<  "end of list of words. counter=" << counter << std::endl 
+                << std::flush;
       break;
     }
     else {
@@ -222,10 +224,10 @@ void testListOfWords( const std::string& listOfWords,
           compoundsIt++;
         }
         for( ; compoundsIt != compoundSpelling.end() ; compoundsIt++ ) {
-          string spelling = Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt);
-          cout << ";" << spelling;
+          std::string spelling = Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt);
+          std::cout << ";" << spelling;
         }
-        cout << endl;
+        std::cout << std::endl << std::flush;
       }
 //      assert(tId==tId0+1);
 //      tId0 = tId;

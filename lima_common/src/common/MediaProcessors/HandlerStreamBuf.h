@@ -40,8 +40,8 @@ public:
   virtual ~HandlerStreamBuf();
 
 protected:
-  int overflow(int c);
-  int sync();
+  int overflow(int c) override;
+  int sync() override;
   
   void flushBuffer();
   

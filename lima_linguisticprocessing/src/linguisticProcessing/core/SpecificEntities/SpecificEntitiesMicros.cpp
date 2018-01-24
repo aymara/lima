@@ -107,8 +107,7 @@ getMicros(const EntityType& type)
     LERROR << "no microcategories defined for type " << type << " (" 
            << Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(type)) 
            << ")";
-    throw LimaException( (QString("no microcategories defined for type ")
-           + Common::MediaticData::MediaticData::single().getEntityName(type)).toUtf8().constData() );
+    throw LimaException( (QString(QLatin1String("no microcategories defined for type %1"))).arg(Common::MediaticData::MediaticData::single().getEntityName(type)).toUtf8().constData() );
   }
   return &((*it).second);
 }

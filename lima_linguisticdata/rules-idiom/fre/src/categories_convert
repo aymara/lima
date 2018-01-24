@@ -1,6 +1,6 @@
-adjectif	Afha---
+adjectif	ADJ
 adjectif qualificatif	Afha---
-adverbe	Rg
+adverbe	ADV
 adverbe postv	Rp
 adverbe de négation	Rn
 adverbe élément de négation	Rd
@@ -17,7 +17,7 @@ article général masculin singulier	Da--msi
 conjonction de coordination	Cc
 conjonction de subordination	Cs
 début de liste	Sg
-déterminant	Da----d
+déterminant	DET
 déterminant quantité	Dk-----
 interjection	I
 nom féminin	Ncgf--
@@ -30,8 +30,8 @@ nom propre masculin	Npgm--
 nom propre masculin pluriel	Npgmp-
 ponctuation faible	Fp
 ponctuation forte	Ff
-préposition	Sg
-préposition partitive	Sg
+préposition	P
+préposition partitive	P
 préposition verbale	Sn
 préposition subs	Ss
 préposition article	Da--msc

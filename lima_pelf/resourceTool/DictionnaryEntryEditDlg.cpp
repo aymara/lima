@@ -45,12 +45,12 @@ void DictionnaryEntryEditDlg::init (ResourceEditorTableModel* rem, AbstractResou
         dictionnaryEntry = (DictionnaryEntry*)are;
     }
     lemmaInp->setText(dictionnaryEntry->lemma);
-    connect(lemmaInp, SIGNAL(textChanged(const QString&)), this, SLOT(checkValidity()));
+    connect(lemmaInp, SIGNAL(textChanged(QString&)), this, SLOT(checkValidity()));
     normalizationInp->setText(dictionnaryEntry->normalization);
     for(int i = 0; i < rem->categoryList.size(); i++)
         categoryCb->addItem(rem->categoryList.at(i));
     categoryCb->setCurrentIndex(categoryCb->findText(dictionnaryEntry->category));
-    connect(categoryCb, SIGNAL(currentIndexChanged(const int)), this, SLOT(checkValidity()));
+    connect(categoryCb, SIGNAL(currentIndexChanged(int)), this, SLOT(checkValidity()));
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
     checkValidity();
     show();

@@ -86,7 +86,7 @@ public:
   virtual void initialize(
     MediaId lang,
     const std::string& resourcesPath,
-    XMLConfigurationFiles::XMLConfigurationFileParser& conf);
+    XMLConfigurationFiles::XMLConfigurationFileParser& conf) override;
 
   const PropertyCode::PropertyCodeManager& getPropertyCodeManager() const;
   

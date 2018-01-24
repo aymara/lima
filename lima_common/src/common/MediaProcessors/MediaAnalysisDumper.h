@@ -53,7 +53,7 @@ public:
     */
     virtual void init (
         Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-        Manager* manager ) = 0;
+        Manager* manager ) override = 0;
 
     /**
       * @brief Process on data in analysisContent.
@@ -62,7 +62,7 @@ public:
       * @throw UndefinedMethod if this method hasn't been specialized
       */
     virtual LimaStatusCode process (
-        AnalysisContent& analysis ) const = 0;
+        AnalysisContent& analysis ) const override = 0;
 
 
 };

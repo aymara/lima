@@ -47,7 +47,8 @@ target_link_libraries(lima-lp-tgv
 
 set_target_properties(lima-lp-tgv PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-tgv DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-tgv DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

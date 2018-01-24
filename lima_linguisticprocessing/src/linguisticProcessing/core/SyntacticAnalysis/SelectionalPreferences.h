@@ -49,6 +49,7 @@ namespace SyntacticAnalysis
 
 class LIMA_SYNTACTICANALYSIS_EXPORT SelectionalPreferences : public AbstractResource
 {
+  Q_OBJECT
 public:
   SelectionalPreferences();
 
@@ -56,8 +57,7 @@ public:
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
   void loadFromFile(const std::string& fileName);
 

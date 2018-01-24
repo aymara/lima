@@ -43,15 +43,14 @@ class CharClass;
 
 class LIMA_FLATTOKENIZER_EXPORT CharChart : public AbstractResource
 {
+  Q_OBJECT
 
 public:
   explicit CharChart();
   virtual ~CharChart();
 
-  void init(
-    Common::XMLConfigurationFiles::GroupConfigurationStructure&,
-    Manager*)
-  ;
+  void init(Common::XMLConfigurationFiles::GroupConfigurationStructure&,
+            Manager*) override;
 
   const std::vector<CharClass*>& classes() const  {return m_classes;}
   const std::vector<Char*>& chars() const {return m_chars;}

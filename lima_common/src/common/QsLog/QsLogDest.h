@@ -41,7 +41,7 @@ public:
    virtual ~Destination(){}
    virtual void write(const QString& message, const QString& zone) = 0;
 };
-typedef std::auto_ptr<Destination> DestinationPtr;
+typedef std::unique_ptr<Destination> DestinationPtr;
 
 //! Creates logging destinations/sinks. The caller will have ownership of 
 //! the newly created destinations.
@@ -56,7 +56,7 @@ public:
 class LIMA_COMMONQSLOG_EXPORT DebugOutputDestination : public Destination
 {
 public:
-  virtual void write(const QString& message, const QString& zone = "");
+  virtual void write(const QString& message, const QString& zone = "") override;
 };
 
 

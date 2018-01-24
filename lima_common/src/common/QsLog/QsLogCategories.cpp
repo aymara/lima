@@ -129,7 +129,7 @@ bool Categories::configure(const QString& fileName)
       QStringList elts = line.split("=");
       if (elts.size()==2 && elts.at(0).trimmed().startsWith("log4j.category."))
       {
-        QString category = elts.at(0).trimmed().remove(0,QString("log4j.category.").size());
+        QString category = elts.at(0).trimmed().remove(0,QLatin1String("log4j.category.").size());
         QString value = elts.at(1).trimmed();
         if (value == "TRACE")
           d->categories.insert(category,QsLogging::TraceLevel);

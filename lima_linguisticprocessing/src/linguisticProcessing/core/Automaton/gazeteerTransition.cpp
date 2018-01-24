@@ -286,8 +286,10 @@ checkMultiTerms( const AnalysisGraph& graph,
                  Lima::LinguisticProcessing::Automaton::SearchGraph* searchGraph,
                  Lima::AnalysisContent& analysis, const vector< vector< Lima::LimaString > >& additionalMultiTermList,
                  stack< deque< LinguisticGraphVertex >, vector< deque< LinguisticGraphVertex > > >& matches
-    ) const {
-  
+    ) const 
+{
+  LIMA_UNUSED(limit)
+  LIMA_UNUSED(analysis)
                
 #ifdef DEBUG_LP
   AULOGINIT;

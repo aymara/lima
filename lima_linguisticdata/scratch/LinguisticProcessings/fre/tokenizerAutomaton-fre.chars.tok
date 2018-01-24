@@ -46,6 +46,8 @@ chars {
 0000, NULL, m_eof ;
 0009, CHARACTER TABULATION, c_b ;
 000A, LINE FEED (LF), c_par ;
+000B, VERTICAL TABULATION, c_b ;
+000C, FORM FEED (FF), c_par ;
 000D, CARRIAGE RETURN (CR), c_par ;
 0020, SPACE, c_b ;
 0021, EXCLAMATION MARK, c_del2 ;
@@ -59,7 +61,7 @@ chars {
 0029, RIGHT PARENTHESIS, c_del1 ;
 002A, ASTERISK, c_del1 ;
 002B, PLUS SIGN, c_plus ;
-002C, COMMA, c_comma ;
+002C, COMMA, c_comma, u002C ;
 002D, HYPHEN-MINUS, m_pattern ;
 002E, FULL STOP, c_dot ;
 002F, SOLIDUS, c_slash ;

@@ -156,7 +156,7 @@ SemanticRoleLabelingLoader::~SemanticRoleLabelingLoader()
 void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration, Manager* manager)
 {
 
-  SEMANTICANALYSISLOGINIT;
+//   SEMANTICANALYSISLOGINIT;
   m_d->m_language=manager->getInitializationParameters().media;
   AnalysisLoader::init(unitConfiguration,manager);
   try
@@ -174,10 +174,13 @@ void SemanticRoleLabelingLoader::init(Common::XMLConfigurationFiles::GroupConfig
 
 LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) const
 {
+#ifdef DEBUG_LP
   SEMANTICANALYSISLOGINIT;
+#endif
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));
   if (tokenList==0)
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "graph " << m_d->m_graph << " has not been produced: check pipeline" ;
     return MISSING_DATA;
   }
@@ -191,6 +194,7 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
 
   if (!file.open(QIODevice::ReadOnly))
   {
+    SEMANTICANALYSISLOGINIT;
     LERROR << "SemanticRoleLabelingLoader::process: cannot open file" << fileName;
     return CANNOT_OPEN_FILE_ERROR;
   }
@@ -319,9 +323,8 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
         if(descriptors[NBCOLSINSRLBEFOREFRAME]!="_")
         {
             QString verbalClass=descriptors[NBCOLSINSRLBEFOREFRAME];
-            QString vClass=descriptors[NBCOLSINSRLBEFOREFRAME];
 #ifdef DEBUG_LP
-            LDEBUG << "ConllHandler::extractSemanticInformation verbalClass" << vClass;
+            LDEBUG << "ConllHandler::extractSemanticInformation verbalClass" << verbalClass;
 #endif
             LinguisticGraphVertex limaTokenId=cHandler.getLimaTokenId(conllTokenId, sentenceI, limaConllMapping);
             if (classIndex >= m_verbalClasses.size())
@@ -329,7 +332,7 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
               LERROR << "ConllHandler::extractSemanticInformation classIndex error" <<  classIndex;
               break;
             }
-            m_verbalClasses[classIndex]=qMakePair(limaTokenId, vClass);
+            m_verbalClasses[classIndex]=qMakePair(limaTokenId, verbalClass);
             classIndex++;
         }
 

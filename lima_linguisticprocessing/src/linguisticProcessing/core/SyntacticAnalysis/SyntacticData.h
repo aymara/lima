@@ -26,6 +26,8 @@
   * @version     $Id$
   *
   */
+// clazy:exclude=rule-of-two-soft
+
 
 #ifndef LIMA_SYNTACTICANALYSIS_SYNTACTICDATA_H
 #define LIMA_SYNTACTICANALYSIS_SYNTACTICDATA_H
@@ -37,12 +39,7 @@
 #include "linguisticProcessing/common/linguisticData/languageData.h" // for SyntacticRelationId
 #include "common/ProcessUnitFramework/AnalysisContent.h"
 
-// To use tuples
-#include "boost/tuple/tuple.hpp"
- //Comparison operators can be included with:
-#include "boost/tuple/tuple_comparison.hpp"
-// To use tuple input and output operators,
-#include "boost/tuple/tuple_io.hpp"
+#include <tuple>
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -66,7 +63,7 @@ class SyntagmDefStruct;
 class LIMA_SYNTACTICANALYSIS_EXPORT SyntacticData : public AnalysisData
 {
 public:
-typedef boost::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::MediaticData::SyntacticRelationId > Relation;
+typedef std::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::MediaticData::SyntacticRelationId > Relation;
 
     /** @brief This constructor uses the given graph to construct a dependency
       *        graph with the same number of vertices and it fills the mapping
@@ -145,11 +142,11 @@ typedef boost::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Medi
     inline Relation relation()
     {
       if (m_relations.empty()) {
-          return boost::make_tuple(m_anagraph->firstVertex(), m_anagraph->lastVertex(), 0);
+          return std::make_tuple(m_anagraph->firstVertex(), m_anagraph->lastVertex(), 0);
       }
         else
         {
-          Relation r = m_relations.front();
+          Relation r = m_relations.front(); // clazy:exclude=rule-of-two-soft
           m_relations.pop_front();
           return r;
         }
@@ -160,7 +157,7 @@ typedef boost::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Medi
                          const Common::MediaticData::SyntacticRelationId relationType=0)
     {
 //        SALOGINIT;
-        Relation r = boost::make_tuple(v1,v2,relationType);
+        Relation r = std::make_tuple(v1,v2,relationType);
       if (m_relations.empty() || !(m_relations.front() == r))
         {
           m_relations.push_back(r);
@@ -187,13 +184,13 @@ typedef boost::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Medi
                           const LinguisticGraphVertex& v2,
                           const Common::MediaticData::SyntacticRelationId relationType=0)
     {
-      m_relationStoredForSelectionalConstraint = boost::make_tuple(v1,v2,relationType);
+      m_relationStoredForSelectionalConstraint = std::make_tuple(v1,v2,relationType);
       return true;
     };
 
     inline Relation relationStoredForSelectionalConstraint()
     {
-      return m_relationStoredForSelectionalConstraint;
+      return m_relationStoredForSelectionalConstraint; // clazy:exclude=rule-of-two-soft
     };
 
     bool removeDependency(const LinguisticGraphVertex& v1,

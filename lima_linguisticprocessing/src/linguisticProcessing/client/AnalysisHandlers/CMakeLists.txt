@@ -20,6 +20,20 @@ add_definitions(-DLIMA_ANALYSISHANDLERS_EXPORTING)
 
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(analysishandlers
+  AbstractTextualAnalysisHandler.h
+  BowDocumentHandler.h
+  BowDocumentWriter.h
+  BowTextHandler.h
+  CompactFullDocumentHandler.h
+  LTRTextHandler.h
+  BowTextWriter.h
+  FakeHandler.h
+  SBowDocumentWriter.h
+  SimpleStreamHandler.h
+)
+
+
 SET(lima-lp-analysishandlers_LIB_SRCS
    BowDocumentHandler.cpp
    BowDocumentWriter.cpp
@@ -33,7 +47,10 @@ SET(lima-lp-analysishandlers_LIB_SRCS
    StructuredBoWToBoWDocument.cpp
 )
 
-add_library(lima-lp-analysishandlers SHARED ${lima-lp-analysishandlers_LIB_SRCS})
+add_library(lima-lp-analysishandlers SHARED 
+  ${lima-lp-analysishandlers_LIB_SRCS} 
+  ${lima-lp-analysishandlers_MOC_OUTFILES}
+)
 
 target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources
@@ -44,7 +61,8 @@ target_link_libraries(lima-lp-analysishandlers
 
 set_target_properties(lima-lp-analysishandlers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysishandlers DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-analysishandlers DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

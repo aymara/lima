@@ -40,7 +40,7 @@ void LimaFileSystemWatcherTest::initTestCase()
 void LimaFileSystemWatcherTest::cleanupTestCase()
 {
     // Called after the last testfunction was executed
-}
+} 
 
 void LimaFileSystemWatcherTest::init()
 {
@@ -56,7 +56,7 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
 {
   LimaFileSystemWatcher watcher;
 
-  QSignalSpy stateSpy( &watcher, SIGNAL( fileChanged ( QString) ) );
+  QSignalSpy stateSpy( &watcher, &LimaFileSystemWatcher::fileChanged );
 
   QVERIFY( stateSpy.isValid() );
 
@@ -73,26 +73,20 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
   out << "yo";
   tmpFile.close();
   QVERIFY2( QFile(tmpFileName).exists(),  "The tmpFile does not exist while it should");
-  QTest::qWait(500);
-  // we changed the file. The fileChanged signal should have been triggered
-  QCOMPARE( stateSpy.count(), 1 );
+  QVERIFY2( stateSpy.wait(5000),  "We changed the file. The fileChanged signal should have been triggered");
 
   // remove the tmp file. This should trigger the signal
   QFile::remove(tmpFileName);
   
   QVERIFY2( !QFile(tmpFileName).exists(),  "The tmpFile still exists while it has  been removed");
-  QTest::qWait(500);
-  // we removed the file. The fileChanged signal should have been triggered
-  QCOMPARE( stateSpy.count(), 2 );
+  QVERIFY2( stateSpy.wait(5000),  "We removed the file. The fileChanged signal should have been triggered");
 
   // recreate the file. This should also trigger the signal
   QFile recreatedFile(tmpFileName);
   QVERIFY2( recreatedFile.open(QIODevice::ReadWrite), "Was not able to recreate the file");
   std::cerr << "";
   recreatedFile.close();
-  QTest::qWait(500);
-  // we recreated the file. The fileChanged signal should have been triggered
-  QCOMPARE( stateSpy.count(), 3 );
+  QVERIFY2( stateSpy.wait(5000), "We recreated the file. The fileChanged signal should have been triggered");
 
 }
 

@@ -27,7 +27,8 @@ add_executable(sortutf16 ${sortutf16_SRCS})
 
 target_link_libraries(sortutf16 lima-linguisticprocessing)
 
-install(TARGETS sortutf16 DESTINATION bin)
+install(TARGETS sortutf16 DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -41,7 +42,8 @@ add_executable(composedDict ${composedDict_SRCS})
 
 target_link_libraries(composedDict lima-linguisticprocessing)
 
-install(TARGETS composedDict DESTINATION bin)
+install(TARGETS composedDict DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -56,7 +58,8 @@ add_executable(compile-dictionary ${compile-dictionary_SRCS})
 
 target_link_libraries(compile-dictionary lima-linguisticprocessing)
 
-install(TARGETS compile-dictionary DESTINATION bin)
+install(TARGETS compile-dictionary DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -69,4 +72,5 @@ add_executable(check-dictionary ${check-dictionary_SRCS})
 
 target_link_libraries(check-dictionary lima-linguisticprocessing)
 
-install(TARGETS check-dictionary DESTINATION bin)
+install(TARGETS check-dictionary DESTINATION bin
+  COMPONENT runtime)

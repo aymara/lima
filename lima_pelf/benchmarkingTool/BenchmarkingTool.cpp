@@ -970,7 +970,7 @@ void BenchmarkingTool::slotCompareWithPrevious()
 
   BenchmarkingResult* previousBenchmarkingResult = resultsVector[row-1];
   QString selectedUnitTextPath = pipelineUnitDisplayCb->currentText();
-  QString previousFilename = QString("output/") + QString::number(previousBenchmarkingResult->time.toTime_t()) + "/" + selectedUnitTextPath + ".aligned.easy.xml";
+  QString previousFilename = QString(QLatin1String("output/")) + QString::number(previousBenchmarkingResult->time.toTime_t()) + "/" + selectedUnitTextPath + ".aligned.easy.xml";
   compareWith(previousFilename);
   updateErrorsWidget(benchmarkingResult, previousBenchmarkingResult);
 }
@@ -980,7 +980,7 @@ void BenchmarkingTool::compareWith(const QString& otherFilename)
   qDebug() << "BenchmarkingTool::compareWith" << otherFilename;
   QString selectedUnitTextPath = pipelineUnitDisplayCb->currentText();
 
-  QString outputFilename = QString("output/") + QString::number(pipeline->startTime.toTime_t()) + "/" + selectedUnitTextPath + ".aligned.easy.xml";
+  QString outputFilename = QString(QLatin1String("output/%1/%2.aligned.easy.xml")).arg(pipeline->startTime.toTime_t()).arg(selectedUnitTextPath);
 
   qDebug() << "BenchmarkingTool::compareWith";
   QMultiMap<QString,QString> utterancesSet = utterancesWithErrors(selectedUnitTextPath);

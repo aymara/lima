@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Linguistic_codes>
+  <property name="GENDER">
+    <value name="MASC"/>
+    <value name="FEM"/>
+    <value name="NEUTRE"/>
+  </property>
+  <property name="NUMBER">
+    <value name="SING"/>
+    <value name="PLUR"/>
+  </property>
+  <property name="PERSON">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="SYNTAX">
+    <value name="AUGMENT"/>
+    <value name="DIMINUT"/>
+    <value name="SUPERL"/>
+    <value name="CARDIN"/>
+    <value name="ORDIN"/>
+    <value name="MULTIPL"/>
+    <value name="FRACTIO"/>
+    <value name="ACCUSAT"/>
+    <value name="DATIF"/>
+    <value name="NOMINAT"/>
+    <value name="OBLIQ"/>
+    <value name="REFLEX"/>
+  </property>
+  <property name="TIME">
+    <value name="INFIN"/>
+    <value name="GEROND"/>
+    <value name="PARTIC"/>
+    <value name="PRES_INDIC"/>
+    <value name="PRET_IMPERF_INDIC"/>
+    <value name="PRET_PERF_INDIC"/>
+    <value name="FUT_PRES_INDIC"/>
+    <value name="PRET_M_PERF_INDIC"/>
+    <value name="PRES_SUBJ"/>
+    <value name="IMP_SUBJ"/>
+    <value name="FUT_SUBJ"/>
+    <value name="IMPER"/>
+    <value name="FUT_PRET"/>
+  </property>
+  <property name="MACRO">
+    <value name="NC"/>
+    <value name="NP"/>
+    <value name="DET"/>
+    <value name="PRON"/>
+    <value name="ADJ"/>
+    <value name="V"/>
+    <value name="ADV"/>
+    <value name="PREP"/>
+    <value name="CONJ"/>
+    <value name="PONCTU"/>
+    <value name="INTERJ"/>
+    <value name="NOMBRE"/>
+    <value name="DIVERS"/>
+  </property>
+  <!--
+  Mac-Morpho Corpus Tagset
+  
+ADJ             Adjetivo
+ADV             Adverbio
+ADV-KS          Adverbio Conectivo Subordinativo
+ART             Artigo
+CUR             Simbolo de Moeda Corrente
+IN              Interjeiçao
+KC              Conjunçao Coordenativa
+KS              Conjunçao Subordinativa
+N               Nome
+NPROP           Nome Proprio
+NUM             Numeral
+PCP             Participio
+PDEN            Palavra Denotativa
+PREP            Preposiçao
+PREP+ADV        Preposiçao + Adverbio
+PREP+ART        Preposiçao + Artigo
+PREP+PROADJ     Preposiçao + Pronome Adjetivo
+PREP+PRO-KS     Preposiçao + Pronome Conectivo Subordinativo
+PREP+PROPESS    Preposiçao + Pronome Pessoal
+PREP+PROSUB     Preposiçao + Pronome Substantivo
+PROADJ          Pronome Adjetivo
+PRO-KS          Pronome Conectivo Subordinativo
+PROPESS         Pronome Pessoal
+PROSUB          Pronome Substantivo
+PU              Pontuaçao
+V               Verbo
+    -->
+  <subproperty name="MICRO" parent="MACRO">
+    <subvalues value="ADJ">
+      <value name="ADJ"/>
+      <value name="PCP"/>
+    </subvalues>
+    <subvalues value="ADV">
+      <value name="ADV"/>
+      <value name="ADV-KS"/>
+      <value name="PDEN"/>
+    </subvalues>
+    <subvalues value="CONJ">
+      <value name="KC"/>
+      <value name="KS"/>
+    </subvalues>
+    <subvalues value="DET">
+      <value name="ART"/>
+    </subvalues>
+    <subvalues value="DIVERS">
+      <!--value name="POS"/-->
+      <value name="CUR"/>
+      <value name="UNK"/>
+    </subvalues>
+    <subvalues value="INTERJ">
+      <value name="IN"/>
+    </subvalues>
+    <subvalues value="NC">
+      <value name="N"/>
+    </subvalues>
+    <subvalues value="NOMBRE">
+      <value name="NUM"/>
+    </subvalues>
+    <subvalues value="NP">
+      <value name="NPROP"/>
+    </subvalues>
+    <subvalues value="PONCTU">
+      <value name="PU"/>
+      <value name="PU+FORTE"/>
+    </subvalues>
+    <subvalues value="PREP">
+      <value name="PREP"/>
+      <value name="PREP+ADV"/>
+      <value name="PREP+ART"/>
+      <value name="PREP+PROADJ"/>
+      <value name="PREP+PRO-KS"/>
+      <value name="PREP+PROPESS"/>
+      <value name="PREP+PROSUB"/>
+      <!--value name="RP"/-->
+    </subvalues>
+    <subvalues value="PRON">
+      <value name="PROADJ"/>
+      <value name="PRO-KS"/>
+      <value name="PROPESS"/>
+      <value name="PROSUB"/>
+    </subvalues>
+    <subvalues value="V">
+      <value name="V"/>
+      <value name="PCP"/>
+    </subvalues>
+  </subproperty>
+</Linguistic_codes>

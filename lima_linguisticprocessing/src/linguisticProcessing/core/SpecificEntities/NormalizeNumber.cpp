@@ -152,8 +152,6 @@ operator()(RecognizerMatch& m,
 
   vector<NumberPart> values;
   
-  RecognizerMatch::iterator i(m.begin());
-  
   // a first pass on the match to eliminate what isn't a number
   for (RecognizerMatch::iterator it=m.begin(),it_end=m.end();
        it!=it_end; it++) {

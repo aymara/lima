@@ -65,7 +65,9 @@ void AlternativesReader::readAlternatives(
 #endif
   const LimaString& str=token.stringForm();
 #ifdef DEBUG_LP
-  LDEBUG << "AlternativesReader::readAlternatives (direct: "<<m_tryDirect<<" ; uncap: "<<m_tryUncapitalized<<" ; desac: "<<m_tryDesaccentedForm<<")" << str;
+  LDEBUG << "AlternativesReader::readAlternatives (direct: " << m_tryDirect
+          << " ; uncap: " << m_tryUncapitalized << " ; desac: "
+          << m_tryDesaccentedForm << ")" << str;
 #endif
   if (m_tryDirect)
   {
@@ -126,16 +128,25 @@ void AlternativesReader::readAlternatives(
           entry.parseLingInfos(lingInfosHandler);
           // if hasLingInfos, assume that infos has been read, then,
           // in confident mode, we can return
+#ifdef DEBUG_LP
+          LDEBUG << "lower word" << lowerWord << "found";
+#endif
           if (m_confidentMode) return;
         }
         if (concatHandler && entry.hasConcatenated())
         {
           entry.parseConcatenated(concatHandler);
+#ifdef DEBUG_LP
+          LDEBUG << "lower word" << lowerWord << "concatenated found";
+#endif
           if (m_confidentMode) return;
         }
         if (accentedHandler && entry.hasAccentedForms())
         {
           entry.parseAccentedForms(accentedHandler);
+#ifdef DEBUG_LP
+          LDEBUG << "lower word" << lowerWord << "accented found";
+#endif
           if (m_confidentMode) return;
         }
       }
@@ -145,7 +156,7 @@ void AlternativesReader::readAlternatives(
   {
     LimaString unmarked=m_charChart->unmark(str);
 #ifdef DEBUG_LP
-    LDEBUG << "AlternativesReader::readAlternatives trying desac:" << unmarked;
+    LDEBUG << "AlternativesReader::readAlternatives trying unmarked:" << unmarked;
 #endif
     if ((unmarked!=LimaString()) && (unmarked!=str))
     {

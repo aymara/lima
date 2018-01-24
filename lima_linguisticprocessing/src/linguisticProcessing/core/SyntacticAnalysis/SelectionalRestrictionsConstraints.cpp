@@ -51,10 +51,12 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
-#include <string>
+#include <boost/regex.hpp>
+
 #include <map>
 #include <queue>
-#include <boost/regex.hpp>
+#include <string>
+#include <tuple>
 
 using namespace boost;
 using namespace Lima::Common::MediaticData;
@@ -181,10 +183,10 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   MorphoSyntacticData* v2Data = dataMap[v2];
   std::string rel = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(m_relation);
 //   Token* ov1Token = tokenMap[oldRelation.get<0>()];
-  MorphoSyntacticData* ov1Data = dataMap[oldRelation.get<0>()];
+  MorphoSyntacticData* ov1Data = dataMap[std::get<0>(oldRelation)];
 //   Token* ov2Token = tokenMap[oldRelation.get<1>()];
-  MorphoSyntacticData* ov2Data = dataMap[oldRelation.get<1>()];
-  std::string orel = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(oldRelation.get<2>());
+  MorphoSyntacticData* ov2Data = dataMap[std::get<1>(oldRelation)];
+  std::string orel = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(std::get<2>(oldRelation));
   
   // compute the preferred attachment
   // (if no clear preference, choose the closest left attachment)
@@ -200,7 +202,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
       << ", " << Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())])
       << ", " << Common::Misc::limastring2utf8stdstring(sp[*(v1Data->allLemma().begin())]);
 #endif
-  std::string oldRelationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(oldRelation.get<2>());
+  std::string oldRelationName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(std::get<2>(oldRelation));
   double oldProba = m_preferences->dependencyProbability(Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())]),
                                                          *(ov2Data->allValues(macroAccessor).begin()),
                                                          oldRelationName,
@@ -225,7 +227,9 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   // else if new one, remove the old dependency, return true
   if (preference > 0) /// @TODO implement the test
   {
-    return syntacticData->removeDependency(oldRelation.get<0>(), oldRelation.get<1>(), oldRelation.get<2>());
+    return syntacticData->removeDependency(std::get<0>(oldRelation), 
+                                           std::get<1>(oldRelation), 
+                                           std::get<2>(oldRelation));
   }
   
   return false;

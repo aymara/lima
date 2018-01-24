@@ -50,14 +50,16 @@ public:
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-               Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const;
+               Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const
+   override;
 
   void analyze(const std::string& texte,
                const std::map<std::string,std::string>& metaData,
                const std::string& pipeline,
                const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-               Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const;
+               Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const override
+  ;
 };
 
 class CoreLinguisticProcessingClientFactory : public AbstractLinguisticProcessingClientFactory
@@ -68,9 +70,9 @@ public:
   void configure(
     Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
     std::deque<std::string> langs,
-    std::deque<std::string> pipelines);
+    std::deque<std::string> pipelines) override;
 
-  std::shared_ptr< AbstractProcessingClient > createClient() const;
+  std::shared_ptr< AbstractProcessingClient > createClient() const override;
 
   virtual ~CoreLinguisticProcessingClientFactory();
 

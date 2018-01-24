@@ -37,10 +37,30 @@
    #define LIMA_SPECIFICENTITIES_EXPORT    __declspec(dllimport)
 #endif
 
+#ifdef LIMA_SPECIFICENTITIES_DATETIME_EXPORTING
+   #define LIMA_SPECIFICENTITIES_DATETIME_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_SPECIFICENTITIES_DATETIME_EXPORT    __declspec(dllimport)
+#endif
+
+#ifdef LIMA_SPECIFICENTITIES_NUMBER_EXPORTING
+   #define LIMA_SPECIFICENTITIES_NUMBER_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_SPECIFICENTITIES_NUMBER_EXPORT    __declspec(dllimport)
+#endif
+
+#ifdef LIMA_SPECIFICENTITIES_PERSON_EXPORTING
+   #define LIMA_SPECIFICENTITIES_PERSON_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_SPECIFICENTITIES_PERSON_EXPORT    __declspec(dllimport)
+#endif
 
 #else // Not WIN32
 
 #define LIMA_SPECIFICENTITIES_EXPORT
+#define LIMA_SPECIFICENTITIES_DATETIME_EXPORT
+#define LIMA_SPECIFICENTITIES_NUMBER_EXPORT
+#define LIMA_SPECIFICENTITIES_PERSON_EXPORT
 
 #endif
 

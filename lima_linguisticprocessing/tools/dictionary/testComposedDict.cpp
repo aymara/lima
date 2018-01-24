@@ -190,8 +190,12 @@ int run(int argc,char** argv)
   }
 
 
-  std::string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
-  std::string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
+  std::string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES") 
+      ?"/usr/share/apps/lima/resources"
+      :string(qgetenv("LIMA_RESOURCES").constData());
+  std::string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")
+      ?"/usr/share/config/lima"
+      :string(qgetenv("LIMA_CONF").constData());
   std::string commonConfigFile="/lima-common.xml";
   deque<string> langs;
   langs.push_back(param.language);
@@ -349,8 +353,6 @@ int run(int argc,char** argv)
       for( ; res.first != res.second ; res.first++ )
       {
         std::cout << "** Display Entry from offset " << param.offset << " to " << (*(res.first)).first << std::endl;
-        int offset = (*(res.first)).first;
-        LimaString term = (*termItr).mid(param.offset, offset - param.offset );
         const Lima::LinguisticProcessing::AnalysisDict::DictionaryEntry& entry=(*(res.first)).second;
         displayEntry(entry,sp,del);
       }

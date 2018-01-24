@@ -307,13 +307,16 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
           LDEBUG << "Rule::executeActions: found " << matchElmt->m_elem.first;
 #endif
           bool ok=(*functionAddr)(graph,matchElmt->m_elem.first,analysis);
-          // TODO: what to do with value of ok??
+          if (!ok) {
+            AULOGINIT;
+            LERROR << "Rule::executeActions: execution of function" << actionItr->second.functionName() << "failed";
+          }
         }
       }
     }
     else {
 #ifdef DEBUG_LP
-      LDEBUG << "Rule::executeActions: execution of function " << actionItr->second.functionName() << " not required";
+      LDEBUG << "Rule::executeActions: execution of function" << actionItr->second.functionName() << "not required";
 #endif
     }
   }

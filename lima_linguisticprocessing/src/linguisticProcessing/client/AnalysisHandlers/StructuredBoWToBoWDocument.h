@@ -49,17 +49,17 @@ class LIMA_ANALYSISHANDLERS_EXPORT StructuredBoWToBoWDocument :
   virtual ~StructuredBoWToBoWDocument();
   
   void openSBoWNode(const Common::Misc::GenericDocumentProperties* properties,
-                    const std::string& elementName);
+                    const std::string& elementName) override;
   
   void openSBoWIndexingNode(const Common::Misc::GenericDocumentProperties* properties,
-                            const std::string& elementName);
+                            const std::string& elementName) override;
 
   void processSBoWText(const Common::BagOfWords::BoWText* boWText, 
-                       bool useIterators, bool useIndexIterator);
+                       bool useIterators, bool useIndexIterator) override;
 
   void processProperties(const Common::Misc::GenericDocumentProperties* properties, 
-                         bool useIterators, bool useIndexIterator);
-  void closeSBoWNode();
+                         bool useIterators, bool useIndexIterator) override;
+  void closeSBoWNode() override;
 
  private:
   std::vector<Common::BagOfWords::BoWDocument>* m_bowDocs;

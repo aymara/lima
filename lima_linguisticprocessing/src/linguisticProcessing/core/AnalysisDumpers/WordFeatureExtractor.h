@@ -79,7 +79,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureExtractorFactory :
 public:
   FeatureExtractorFactory(const std::string& factoryId):
   AbstractFeatureExtractorFactory(factoryId) {}
-  AbstractFeatureExtractor* create(MediaId language, const std::string& complement="") {
+  AbstractFeatureExtractor* create(MediaId language, const std::string& complement="") override {
     AbstractFeatureExtractor* newFeature=new FeatureExtractor(language,complement);
     return newFeature;
   }
@@ -113,7 +113,7 @@ public:
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v, 
-             AnalysisContent & ) const;
+             AnalysisContent & ) const override;
 };
 
 //----------------------------------------------------------------------
@@ -127,7 +127,25 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
+};
+
+//----------------------------------------------------------------------
+// inflectedForm is different from word: word is the token in the text, inflectedForm is the inflected form in the dictionary
+// (e.g. possible corrections on accents)
+#define FeatureInflectedForm_ID "inflectedForm"
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureInflectedForm : public AbstractFeatureExtractor {
+public:
+   FeatureInflectedForm(MediaId language,const std::string& complement="");
+  ~FeatureInflectedForm() {}
+
+  std::string
+    getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
+             LinguisticGraphVertex v,
+             AnalysisContent &
+            ) const override;
+private:
+  const FsaStringsPool* m_sp;
 };
 
 //----------------------------------------------------------------------
@@ -141,7 +159,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 private:
   const FsaStringsPool* m_sp;
 };
@@ -157,7 +175,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 private:
   std::string m_propertyName;
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
@@ -175,7 +193,7 @@ public:
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
              AnalysisContent &
-            ) const;
+            ) const override;
 };
 
 //--------------------------------------------------------
@@ -188,7 +206,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureSpecificEntity : public AbstractFeature
 
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
-             AnalysisContent &) const;
+             AnalysisContent &) const override;
 };
 
 //--------------------------------------------------------
@@ -201,7 +219,7 @@ public:
   
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,
-                       AnalysisContent &) const;
+                       AnalysisContent &) const override;
 };
 
 //--------------------------------------------------------
@@ -214,7 +232,7 @@ public:
   
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,
-                       AnalysisContent &) const;
+                       AnalysisContent &) const override;
 };
 
 } // end namespace

@@ -47,7 +47,8 @@ class ModuleConfigurationStructurePrivate
   
   ModuleConfigurationStructurePrivate(const std::string& name);
   ModuleConfigurationStructurePrivate(const ModuleConfigurationStructurePrivate& mod);
-  virtual ~ModuleConfigurationStructurePrivate();
+  ModuleConfigurationStructurePrivate& operator=(const ModuleConfigurationStructurePrivate& mod);
+  ~ModuleConfigurationStructurePrivate();
 
   std::string m_name;
 };
@@ -60,6 +61,12 @@ ModuleConfigurationStructurePrivate::ModuleConfigurationStructurePrivate(const M
     m_name(mod.m_name)
 {}
 
+ModuleConfigurationStructurePrivate& ModuleConfigurationStructurePrivate::operator=(const ModuleConfigurationStructurePrivate& mod)
+{
+  m_name = mod.m_name;
+  return *this;
+}
+  
 ModuleConfigurationStructurePrivate::~ModuleConfigurationStructurePrivate()
 {
 }
@@ -77,7 +84,28 @@ ModuleConfigurationStructure::ModuleConfigurationStructure(const std::string& na
 ModuleConfigurationStructure::ModuleConfigurationStructure(const ModuleConfigurationStructure& mod) :
     std::map< std::string, GroupConfigurationStructure >(mod),
     m_d(new ModuleConfigurationStructurePrivate(*mod.m_d))
-{}
+{
+#ifdef DEBUG_CD
+  XMLCFGLOGINIT;
+  LDEBUG << "ModuleConfigurationStructure::ModuleConfigurationStructure" << this << m_d->m_name;
+#endif
+  
+}
+
+ModuleConfigurationStructure& ModuleConfigurationStructure::operator=(const ModuleConfigurationStructure& mod)
+{
+  clear();
+  for (auto it = mod.cbegin(); it != mod.cend(); it++)
+  {
+    insert(std::make_pair((*it).first, (*it).second));
+  }
+  *m_d = *mod.m_d;
+#ifdef DEBUG_CD
+  XMLCFGLOGINIT;
+  LDEBUG << "ModuleConfigurationStructure::operator=" << this << m_d->m_name;
+#endif
+  return *this;
+}
 
 ModuleConfigurationStructure::~ModuleConfigurationStructure()
 {
@@ -91,32 +119,33 @@ const std::string& ModuleConfigurationStructure::getName() const
 
 GroupConfigurationStructure& ModuleConfigurationStructure::getGroupNamed(const std::string& name)
 {
-  XMLCFGLOGINIT;
   ModuleConfigurationStructure::iterator it = find(name);
   if (it == end())
   {
+    XMLCFGLOGINIT;
     LWARN << "Error ("<<this<<"): no such group '" << name.c_str() << "' !";
-    throw NoSuchGroup(name);
+    throw NoSuchGroup(m_d->m_name+"["+name+"]");
   }
   return ((*it).second);
 }
 
 string& ModuleConfigurationStructure::getParamValueAtKeyOfGroupNamed(const std::string& key, const std::string& groupName)
 {
-  XMLCFGLOGINIT;
   try
   {
     return (getGroupNamed(groupName).getParamsValueAtKey(key));
   }
   catch (NoSuchGroup& nsg)
   {
+    XMLCFGLOGINIT;
     LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': "<< nsg.what();
-    throw;
+    throw NoSuchGroup(m_d->m_name+"["+groupName+"]["+key+"]");
   }
   catch (NoSuchParam& nsp)
   {
+    XMLCFGLOGINIT;
     LWARN << "Getting param '"<<key.c_str()<<"' value for group '"<<groupName.c_str()<<"': " << nsp.what();
-    throw;
+    throw NoSuchParam(m_d->m_name+"["+groupName+"]["+key+"]");
   }
   catch (...)
   {
@@ -157,9 +186,9 @@ void ModuleConfigurationStructure::addItemInListNamedForGroup(const std::string&
 
 void ModuleConfigurationStructure::addGroupNamed(const string& groupName)
 {
-  XMLCFGLOGINIT;
 #ifdef DEBUG_CD
-  LDEBUG << "ModuleConfigurationStructure::addGroupNamed " << this << " " << groupName.c_str();
+  XMLCFGLOGINIT;
+  LDEBUG << "ModuleConfigurationStructure::addGroupNamed" << this << groupName;
 #endif
   if (find(groupName) == end())
   {
@@ -191,12 +220,14 @@ void ModuleConfigurationStructure::addAttributeInGroup(
 
 void ModuleConfigurationStructure::addModule(const ModuleConfigurationStructure& mod)
 {
-  for (ModuleConfigurationStructure::const_iterator it=mod.begin(),
-         it_end=mod.end(); it!=it_end; it++) {
-    if (find((*it).first) == end()) {
-      (*this)[(*it).first]=(*it).second;
+  for (auto it = mod.cbegin(), it_end = mod.cend(); it!=it_end; it++) 
+  {
+    if (find((*it).first) == end()) 
+    {
+      insert(*it);
     }
-    else {
+    else 
+    {
       XMLCFGLOGINIT;
       LWARN << "group " << (*it).first.c_str() << " not added: already exists";
     }

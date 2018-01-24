@@ -47,29 +47,28 @@ using namespace Lima;
 
 typedef map<string,string> CorefsMap;
 //help mode & usage
-static const string USAGE("usage: preprocessCorpus --xml=corpusFormat (wh|cl) inputFile outputFile\n"
+Q_GLOBAL_STATIC_WITH_ARGS(std::string, USAGE, ("usage: preprocessCorpus --xml=corpusFormat (wh|cl) inputFile outputFile\n"
 "Supported formats are:\n"
 "wh: LIMA coref logger format\n"
 "cl: 'Clouzot' format (from reference data by Catherine Clouzot from her DEA (Cf. doc_clouzot.rtf for more details))\n"
-); 
+)); 
 
-static const boost::regex eWhStart("<TEXT>");
-static const boost::regex eWhBeginTag("<COREFID=\"([[:alnum:]]+)\"([^>]*REF=\"([[:alnum:]]+)\")?([^>]*CATEG=\"([[:alnum:]]+)\")?>");
-static const boost::regex eWhEndTag("</COREF>");
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eWhStart, ("<TEXT>"));
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eWhBeginTag, ("<COREFID=\"([[:alnum:]]+)\"([^>]*REF=\"([[:alnum:]]+)\")?([^>]*CATEG=\"([[:alnum:]]+)\")?>"));
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eWhEndTag, ("</COREF>"));
 /*
 static const string eBeginString("[.[.<COREF ID=\".]([[:alnum:]]+)[.\"([^>]*REF=\".]([[:alnum:]]+)[.\")?>.].]");
 static const string eEndString("[.</COREF>.]");
 static const regex eTag("["+eBeginString+"[^"+eEndString+"]*]*"+ eBeginString + "[^"+eEndString+"]*"+eEndString+eEndString+"*");*/
 
-static const boost::regex eClStart("<PID=\"[[:digit:]]+\">");
-static const boost::regex eClStop("</P>");
-static const boost::regex eClBeginTag("<RSID=\"([[:digit:]]+[.][[:digit:]]+)\"[^>]*>");
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClStart, ("<PID=\"[[:digit:]]+\">"));
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClStop, ("</P>"));
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClBeginTag, ("<RSID=\"([[:digit:]]+[.][[:digit:]]+)\"[^>]*>"));
 // <LINKARGS='"1.1""1.2"'TYPE="COREF"TYPANA="AG"/>
-static const boost::regex eClEndTag("</RS>");
-static const boost::regex eClLinkBeginTag("<LINKARGS=\'(\"[?]*[[:digit:]]+[.][[:digit:]]+\")+\'TYPE=\"([[:alnum:]]+)\"TYPANA=\"([[:alnum:]]+)\"/>");
-static const boost::regex eClLinkEndTag("</LINK>");
-static const boost::regex
-eClLinkExtract("[?]*([[:digit:]]+[.][[:digit:]]+)");
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClEndTag, ("</RS>"));
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClLinkBeginTag, ("<LINKARGS=\'(\"[?]*[[:digit:]]+[.][[:digit:]]+\")+\'TYPE=\"([[:alnum:]]+)\"TYPANA=\"([[:alnum:]]+)\"/>"));
+// Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClLinkEndTag, ("</LINK>"));
+Q_GLOBAL_STATIC_WITH_ARGS(boost::regex, eClLinkExtract, ("[?]*([[:digit:]]+[.][[:digit:]]+)"));
 
 int cpt = 0;
 
@@ -155,12 +154,12 @@ int dowork(int argc,char* argv[])
       if ( arg[0] == '-' )
       {
         if (arg == "--help" || arg == "-h")
-          cout << USAGE << endl;
+          cout << *USAGE << endl;
 //         else if ( (pos = arg.find("--inputT=")) != -1 )
 //           input_t = arg.substr(pos+9);
         else if ( (pos = arg.find("--xml=")) != -1 )
           corpusFormat = arg.substr(pos+6);
-        else cout << USAGE << endl;
+        else cout << *USAGE << endl;
       }
       else
       {
@@ -262,11 +261,11 @@ void whProcess(
 {
   string s;
   int offset;
-  boost::regex expression(eWhStart);
+  boost::regex expression(*eWhStart);
 
   while( getline(fin,s) ) 
   {
-    if (expression==eWhBeginTag)
+    if (expression==*eWhBeginTag)
     {
       s = preprocessLine(s);
     }
@@ -278,12 +277,12 @@ void whProcess(
     boost::match_flag_type flags = boost::match_default; 
     while (regex_search(start, end, what, expression, flags))   
     {
-      if (expression == eWhStart)
+      if (expression == *eWhStart)
       {
         offset = start - what[0].second ;
-        expression = eWhBeginTag;
+        expression = *eWhBeginTag;
       }
-      else if (expression == eWhBeginTag)
+      else if (expression == *eWhBeginTag)
       {
         string np("");
         doWhActionOnOpeningString(what, start, end, flags, offset,  fout, np);
@@ -323,8 +322,8 @@ void doWhActionOnOpeningString(
   string::const_iterator begin = what[0].second;
   start = what[0].second;
   // if next is opening tag
-  while (regex_search(start, end, what1, eWhBeginTag, flags)&&
-      regex_search(start, end, what2, eWhEndTag, flags) &&
+  while (regex_search(start, end, what1, *eWhBeginTag, flags)&&
+      regex_search(start, end, what2, *eWhEndTag, flags) &&
       what1[0].first<what2[0].first)
   {
     np += string(start,what1[0].first);
@@ -334,7 +333,7 @@ void doWhActionOnOpeningString(
     np += internNp;
   }
 
-  if (!regex_search(start, end, what, eWhEndTag, flags))
+  if (!regex_search(start, end, what, *eWhEndTag, flags))
   {
     cerr << "error: miss a closing tag </COREF>" << endl;
     return;
@@ -368,7 +367,7 @@ void clProcess(ifstream& fin, ofstream& fout/*,ofstream& ftmp*/)
     std::string::const_iterator end(s.end()); 
     boost::match_results<std::string::const_iterator> what; 
     boost::match_flag_type flags = boost::match_default; 
-    while (regex_search(start, end, what, eClStart, flags))   
+    while (regex_search(start, end, what, *eClStart, flags))   
     {
       cpt++;
       string np("");
@@ -402,9 +401,9 @@ void doClActionOnOpeningString(
     boost::match_results<std::string::const_iterator> what2;
     boost::match_results<std::string::const_iterator> what3;
 
-    regex_search(start, end, what1, eClBeginTag, flags);
-    regex_search(start, end, what2, eClLinkBeginTag, flags);
-    regex_search(start, end, what3, eClStop, flags);
+    regex_search(start, end, what1, *eClBeginTag, flags);
+    regex_search(start, end, what2, *eClLinkBeginTag, flags);
+    regex_search(start, end, what3, *eClStop, flags);
 
     // if next is <RS ...>
     if (what1[0]!="" && what3[0] != "" && what1[0].first<what3[0].first)
@@ -418,7 +417,7 @@ void doClActionOnOpeningString(
       if (string(what2[2].first,what2[2].second)=="COREF"||string(what2[2].first,what2[2].second)=="IDSEM") 
       {
         // extraction de la reference la plus à gauche
-        regex_search(what2[0].first,what2[0].second,what,eClLinkExtract, flags);
+        regex_search(what2[0].first,what2[0].second,what,*eClLinkExtract, flags);
         stringstream sstream;
         std::string ref = string(what[1].first,what[1].second);
         boost::match_results<std::string::const_iterator> whatCompAnte;
@@ -429,7 +428,7 @@ void doClActionOnOpeningString(
 //         cerr<<string(what[0].second, what2[0].second)<<endl;;
         sstream << cpt;
         
-        while(regex_search(what[0].second, what2[0].second,what, eClLinkExtract, flags))        
+        while(regex_search(what[0].second, what2[0].second,what, *eClLinkExtract, flags))        
         {
           what1 = what;
         }
@@ -520,8 +519,8 @@ void doRsTag(
 //   string::const_iterator begin = what[0].second;
   start = what[0].second;
   // if next is opening tag
-  while (regex_search(start, end, what, eClBeginTag, flags)&&
-         regex_search(start, end, what2, eClEndTag, flags) &&
+  while (regex_search(start, end, what, *eClBeginTag, flags)&&
+         regex_search(start, end, what2, *eClEndTag, flags) &&
          what[0].first<what2[0].first)
   {
     string internNp("");
@@ -530,7 +529,7 @@ void doRsTag(
     np += internNp;
 
   }
-  if (!regex_search(start, end, what, eClEndTag, flags))
+  if (!regex_search(start, end, what, *eClEndTag, flags))
   {
     cerr << "error: miss a closing tag </COREF>" << endl;
     return;

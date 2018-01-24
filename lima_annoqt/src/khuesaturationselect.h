@@ -108,14 +108,14 @@ protected:
      * which is used for buffering.
      */
     virtual void drawPalette( QPixmap *pixmap );
-    virtual void resizeEvent( QResizeEvent * );
+    virtual void resizeEvent( QResizeEvent * ) override;
 
     /**
      * Reimplemented from KXYSelector. This drawing is
      * buffered in a pixmap here. As real drawing
      * routine, drawPalette() is used.
      */
-    virtual void drawContents( QPainter *painter );
+    virtual void drawContents( QPainter *painter ) override;
 
 private:
 

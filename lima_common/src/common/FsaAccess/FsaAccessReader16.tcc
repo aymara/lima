@@ -326,7 +326,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
   delete prefixIt;
 #ifdef DEBUG_CD
   LTRACE <<  "FsaAccessReader::getIndex: get(vname_map,currentVertex) = "
-        << std::hex << get(vname_map,currentVertex) << std::dec;
+         << get(vname_map,currentVertex) ;
 #endif
   if( (get(vname_map,currentVertex)&FINAL_16) == FINAL_16)
     return result+1;
@@ -837,7 +837,7 @@ fsaReader_superword_iterator16<graphType> &
         for( int i = wordPos0 ; i < context.wordPos ; i++) {
 #ifdef DEBUG_CD
           LTRACE << "superword_iterator::operator++(): m_suffix.append( 1,"
-                 << std::hex << (*(context.word_content+i)).unicode() << std::dec << ")"
+                  << (*(context.word_content+i)).unicode()  << ")"
                  << " = context.word_content + " << i;
 #endif
           m_suffix.append( *(context.word_content+i) );

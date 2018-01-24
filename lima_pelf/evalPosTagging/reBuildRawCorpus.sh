@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Usage : ./reBuildRawCorpus.sh tagged_corpus
 #
@@ -23,8 +23,8 @@ case $lang in
     eng)
         cut -f1 $file | tr '\n' ' ' | \
             sed -e "s/ \([\.\,)]\)/\\1/g" -e "s/\(['(]\) /\\1/g" -e "s/ '\(m\|re\|ll\|d\|ve\) /'\\1 /g";;
-    fre | spa | ger)
+    fre | spa | ger | por)
         cut -f1 $file | tr '\n' ' ' | \
-            sed -e "s/ \([\.\,)]\)/\\1/g" -e "s/\(['(]\) /\\1/g";;
+            sed -e "s/ \([\.\,)]\)/\\1/g" -e "s/\(['(]\) /\\1/g" -e "s/\([a-zA-Z]\-\) /\\1/g";;
 esac
 

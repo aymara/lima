@@ -193,7 +193,7 @@ $PREP-P::@DetArt (@NegSecond)? @PronIndef:SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # same with DET_ARTICLE_CONTRACTE
-$DET-DETDU:@Adjectif:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} ($PRON-CLO|@Substantif):SYNTACTIC_RELATION:
+$PREP-P+D:@Adjectif:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} ($PRON-CLO|@Substantif):SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.2,left.1,"ANY")
 +GenderAgreement(trigger.1,right.2)
 +NumberAgreement(trigger.1,right.2)
@@ -231,7 +231,6 @@ $DET-DETDU:@Adjectif:(@AdvPos|@AdjPren|@PronSujNonConjoint){0-n} ($PRON-CLO|@Sub
 # (A6.7 - 4.2.1.8)
 #----------------------------------------------------------------------
 @AdvModifieurAdj::@Adjectif:SYNTACTIC_RELATION:
-+!GovernorOf(trigger.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.1,"ANY")
 +CreateRelationBetween(trigger.1,right.1,"ADVADJ")
 =>AddRelationInGraph()

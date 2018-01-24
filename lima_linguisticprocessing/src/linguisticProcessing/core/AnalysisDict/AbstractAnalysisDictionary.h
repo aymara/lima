@@ -45,6 +45,7 @@ namespace AnalysisDict
 */
 class LIMA_ANALYSISDICT_EXPORT AbstractAnalysisDictionary : public AbstractResource
 {
+  Q_OBJECT
 public:
 
   /**

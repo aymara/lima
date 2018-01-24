@@ -82,7 +82,7 @@ public:
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager);
+    Manager* manager) override;
 
   /** @return the numerical id of the language */
   MediaId getMedia() const;

@@ -48,7 +48,7 @@ namespace SpecificEntities {
 #define NormalizeUTCTimeId "NormalizeUTCTime"
 
 // a class to store reference objects for relative normalization
-class LIMA_SPECIFICENTITIES_EXPORT ReferenceData {
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT ReferenceData {
  public:
   ReferenceData();
   ~ReferenceData();
@@ -76,7 +76,7 @@ class LIMA_SPECIFICENTITIES_EXPORT ReferenceData {
   std::string m_locRefName;
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeDate : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeDate : public Automaton::ConstraintFunction
 {
 public:
   NormalizeDate(MediaId language,
@@ -84,9 +84,9 @@ public:
   ~NormalizeDate() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 
 protected:
   MediaId m_language;
@@ -102,7 +102,7 @@ protected:
   unsigned short getDayFromString(const LimaString& numdayString) const;
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeRelativeDate : public NormalizeDate
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeRelativeDate : public NormalizeDate
 {
 public:
   NormalizeRelativeDate(MediaId language,
@@ -110,9 +110,9 @@ public:
   ~NormalizeRelativeDate() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 
-  bool actionNeedsRecognizedExpression() { return true; }
+  bool actionNeedsRecognizedExpression() override { return true; }
 private:
   bool m_getNext;
   int m_diff;
@@ -120,7 +120,7 @@ private:
 
 // abstract constraint that contains common functions for
 // time normalization
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeTime : public Automaton::ConstraintFunction
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeTime : public Automaton::ConstraintFunction
 {
 public:
   NormalizeTime(MediaId language,
@@ -128,8 +128,8 @@ public:
   virtual ~NormalizeTime() {}
   
   virtual bool operator()(Automaton::RecognizerMatch& m,
-                          AnalysisContent& analysis) const=0;
-  virtual bool actionNeedsRecognizedExpression() { return true; }
+                          AnalysisContent& analysis) const override=0;
+  virtual bool actionNeedsRecognizedExpression() override { return true; }
 
   const ReferenceData& getReferenceData() const { return m_referenceData; }
   bool hasResources() const { return (m_resources!=0); }
@@ -150,7 +150,7 @@ private:
   ReferenceData m_referenceData;
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeLocalTime : public NormalizeTime
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeLocalTime : public NormalizeTime
 {
 public:
   NormalizeLocalTime(MediaId language,
@@ -158,11 +158,11 @@ public:
   ~NormalizeLocalTime() {}
 
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
 };
 
-class LIMA_SPECIFICENTITIES_EXPORT NormalizeUTCTime : public NormalizeTime
+class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeUTCTime : public NormalizeTime
 {
 public:
   NormalizeUTCTime(MediaId language,
@@ -170,7 +170,7 @@ public:
   ~NormalizeUTCTime() {}
   
   bool operator()(Automaton::RecognizerMatch& m,
-                  AnalysisContent& analysis) const;
+                  AnalysisContent& analysis) const override;
 private:
 };
 

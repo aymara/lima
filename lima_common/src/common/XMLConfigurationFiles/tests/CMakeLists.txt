@@ -19,6 +19,9 @@ target_link_libraries(XMLConfigurationFilesTest0
   ${QT_LIBRARIES}
 )
 
-add_test(NAME XMLConfigurationFilesTest0 COMMAND XMLConfigurationFilesTest0)
+add_test(
+  NAME XMLConfigurationFilesTest0 
+  COMMAND XMLConfigurationFilesTest0
+)
 
 

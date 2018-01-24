@@ -1,0 +1,67 @@
+<!--
+    Copyright 2017 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+-->
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+   <!-- Main files -->
+   <file>qml/main.qml</file>
+   <file>qml/LimaGuiMenuBar.qml</file>
+   <file>qml/LimaGuiToolBar.qml</file>
+   <file>qml/WorkView.qml</file>
+   <file>qml/TabbedWorkspace.qml</file>
+   
+   <!-- Widgets -->
+   <file>qml/AnalyzeFileWidget.qml</file>
+   <file>qml/AnalyzeTextWidget.qml</file>
+   <file>qml/ConllTableView.qml</file>
+   <file>qml/LimaConfigurationView.qml</file>
+   <file>qml/NamedEntitiesView.qml</file>
+   <file>qml/ResultView.qml</file>
+   <file>qml/TabbedView.qml</file>
+   
+   <!-- Dialogs -->
+   <file>qml/AboutDialog.qml</file>
+   <file>qml/ErrorDialog.qml</file>
+   <file>qml/SettingsDialog.qml</file>
+   
+   <!-- Models -->
+    
+    <!-- Samples -->
+    <file>qml/basics/Tab.qml</file>
+    <file>qml/basics/BasicRectangle.qml</file>
+    <file>qml/basics/TextView.qml</file>
+    <file>qml/basics/PdfView.qml</file>
+    <file>qml/basics/TextEditor.qml</file>
+    <file>qml/basics/LoadingView.qml</file>
+    <file>qml/basics/SwitchPanel.qml</file>
+    <file>qml/basics/SelectOptionComboBox.qml</file>
+    
+    <!-- Scripts -->
+    <file>qml/scripts/DynamicObjectManager.js</file>
+    <file>qml/scripts/colors.js</file>
+    
+    <!-- Styles -->
+    <file>qml/styles/TabbedViewStyle.qml</file>
+    
+    <!-- Resources -->
+    <file>qml/resources/lima.png</file>
+    <file>qml/resources/Spinner.gif</file>
+    <file>qml/resources/cross-symbol-n.png</file>
+    <file>qml/resources/cross-symbol-h.png</file>
+ </qresource>
+</RCC>

@@ -50,15 +50,15 @@ public:
 
   virtual ~ConcatenatedDataHandler();
 
-  virtual void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm);
-  virtual void endLingInfos();
+  virtual void foundLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm) override;
+  virtual void endLingInfos() override;
 
-  virtual void foundConcatenated();
-  virtual void foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form);
-  virtual void endComponent();
-  virtual void endConcatenated();
+  virtual void foundConcatenated() override;
+  virtual void foundComponent(uint64_t position, uint64_t length,StringsPoolIndex form) override;
+  virtual void endComponent() override;
+  virtual void endConcatenated() override;
 
-  virtual void foundProperties(LinguisticCode lings);
+  virtual void foundProperties(LinguisticCode lings) override;
   
   const std::vector<std::vector<LinguisticGraphVertex> >& getConcatVertices() const;
   

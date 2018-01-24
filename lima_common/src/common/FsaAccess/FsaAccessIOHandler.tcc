@@ -112,6 +112,8 @@ void FsaAccessIOHandler<graphType>::readVerticeAsInt( AbstractFsaAccessIStreamWr
   FSAAIOLOGINIT;
   LTRACE <<  "FsaAccessIOHandler::readVerticeAsInt( " << current
             << ") ";
+#else
+  LIMA_UNUSED(current)
 #endif
   iw.readData((char *)(&propVal), sizeof(VERTEX_PROPERTY_16) );
   int16_t strlenShort;
@@ -198,6 +200,8 @@ void FsaAccessIOHandler<graphType>::writeVerticeAsInt( AbstractFsaAccessOStreamW
   FSAAIOLOGINIT;
   LTRACE <<  "FsaAccessIOHandler::writeVertice: " << current
                 << "] = " << propVal;
+#else
+  LIMA_UNUSED(current)
 #endif
 
   ow.writeData( (const char *)(&propVal), sizeof(VERTEX_PROPERTY_16) );

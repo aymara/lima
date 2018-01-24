@@ -72,7 +72,8 @@ if (LOG4CPP_FOUND)
 endif()
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-tools DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-tools DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 add_subdirectory(tests)
 

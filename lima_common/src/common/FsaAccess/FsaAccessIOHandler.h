@@ -76,17 +76,17 @@ class FsaAccessIOHandlerWithMapping : public FsaAccessIOHandler<graphType> {
     FsaAccessIOHandlerWithMapping() {}
     void readEdge( AbstractFsaAccessIStreamWrapper& iw,
       typename boost::graph_traits<graphType>::vertex_descriptor& source,
-      typename boost::graph_traits<graphType>::vertex_descriptor& target );
+      typename boost::graph_traits<graphType>::vertex_descriptor& target ) override;
     void readVertice( AbstractFsaAccessIStreamWrapper& iw,
       typename boost::graph_traits<graphType>::vertex_descriptor& current,
-      VERTEX_PROPERTY_16& propVal, Lima::LimaString& text );
+      VERTEX_PROPERTY_16& propVal, Lima::LimaString& text ) override;
     void writeEdge( AbstractFsaAccessOStreamWrapper& ow,
       typename boost::graph_traits<graphType>::vertex_descriptor source,
-      typename boost::graph_traits<graphType>::vertex_descriptor target );
+      typename boost::graph_traits<graphType>::vertex_descriptor target ) override;
     void writeVertice( AbstractFsaAccessOStreamWrapper& ow,
       typename boost::graph_traits<graphType>::vertex_descriptor current,
       VERTEX_PROPERTY_16 propVal,
-      const Lima::LimaString& text );
+      const Lima::LimaString& text ) override;
   
   private:
 };
@@ -97,17 +97,17 @@ class FsaAccessIOHandlerWithoutMapping : public FsaAccessIOHandler<graphType> {
     FsaAccessIOHandlerWithoutMapping() {}
     void readEdge( AbstractFsaAccessIStreamWrapper& iw,
       typename boost::graph_traits<graphType>::vertex_descriptor& source,
-      typename boost::graph_traits<graphType>::vertex_descriptor& target );
+      typename boost::graph_traits<graphType>::vertex_descriptor& target ) override;
     void readVertice( AbstractFsaAccessIStreamWrapper& iw,
       typename boost::graph_traits<graphType>::vertex_descriptor& current,
-      VERTEX_PROPERTY_16& propVal, Lima::LimaString& text );
+      VERTEX_PROPERTY_16& propVal, Lima::LimaString& text ) override;
     void writeEdge( AbstractFsaAccessOStreamWrapper& ow,
       typename boost::graph_traits<graphType>::vertex_descriptor source,
-      typename boost::graph_traits<graphType>::vertex_descriptor target );
+      typename boost::graph_traits<graphType>::vertex_descriptor target ) override;
     void writeVertice( AbstractFsaAccessOStreamWrapper& ow,
       typename boost::graph_traits<graphType>::vertex_descriptor current,
       VERTEX_PROPERTY_16 propVal,
-      const Lima::LimaString& text );
+      const Lima::LimaString& text ) override;
   
   private:
 };

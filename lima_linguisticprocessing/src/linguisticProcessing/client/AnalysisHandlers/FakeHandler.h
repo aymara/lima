@@ -39,16 +39,17 @@ namespace LinguisticProcessing
 */
 class LIMA_ANALYSISHANDLERS_EXPORT FakeHandler : public AbstractTextualAnalysisHandler
 {
+  Q_OBJECT
 public:
   FakeHandler();
 
   virtual ~FakeHandler();
 
-  virtual void endAnalysis();
-  virtual void endDocument();
-  virtual void handle(const char* buf, int length) ;
-  virtual void startAnalysis();
-  virtual void startDocument(const Common::Misc::GenericDocumentProperties& props);
+  virtual void endAnalysis() override;
+  virtual void endDocument() override;
+  virtual void handle(const char* buf, int length) override ;
+  virtual void startAnalysis() override;
+  virtual void startDocument(const Common::Misc::GenericDocumentProperties& props) override;
 
 };
 

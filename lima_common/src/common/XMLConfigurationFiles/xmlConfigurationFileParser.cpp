@@ -162,7 +162,7 @@ ModuleConfigurationStructure& XMLConfigurationFileParser::getModuleConfiguration
     {
       XMLCFGLOGINIT;
       LDEBUG << "XMLConfigurationFileParser::getModuleConfiguration no such module" << moduleName << "in" << m_d->m_configurationFileName.c_str();
-      throw NoSuchModule(moduleName);
+      throw NoSuchModule(m_d->m_configurationFileName+":["+moduleName+"]");
     }
     return (*it).second;
 }
@@ -184,19 +184,19 @@ string& XMLConfigurationFileParser::getModuleGroupParamValue(const string& modul
       std::cerr << nsm.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
       LWARN << nsm.what() << " " << m_d->m_configurationFileName.c_str();
         //not LERROR because user may want the module to be optional -> no error
-        throw;
+        throw NoSuchModule(m_d->m_configurationFileName+":["+moduleName+"]["+groupName+"]["+key+"]");
     }
     catch(NoSuchGroup& nsg)
     {
       std::cerr << nsg.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
       LWARN << nsg.what() << " " << m_d->m_configurationFileName.c_str();
-        throw;
+        throw NoSuchGroup(m_d->m_configurationFileName+":["+moduleName+"]["+groupName+"]["+key+"]");
     }
     catch(NoSuchParam& nsp)
     {
       std::cerr << nsp.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
       LWARN << nsp.what() << " " << m_d->m_configurationFileName.c_str();
-        throw;
+        throw NoSuchParam(m_d->m_configurationFileName+":["+moduleName+"]["+groupName+"]["+key+"]");
     }
     catch(...)
     {
@@ -204,14 +204,24 @@ string& XMLConfigurationFileParser::getModuleGroupParamValue(const string& modul
     }
 }
 
-deque< string >& XMLConfigurationFileParser::getModuleGroupListValues(const string& moduleName,const string& groupName,const string& key)
+deque< string >& XMLConfigurationFileParser::getModuleGroupListValues(
+    const string& moduleName,
+    const string& groupName,
+    const string& key)
 {
-    return (getModuleConfiguration(moduleName).getListValuesAtKeyOfGroupNamed(key, groupName));
+  return (getModuleConfiguration(moduleName).getListValuesAtKeyOfGroupNamed(
+            key, groupName));
+}
+
+const std::string& XMLConfigurationFileParser::getConfigurationFileName() const
+{
+  return m_d->m_configurationFileName;
 }
 
 std::ostream& operator<<(std::ostream& os, XMLConfigurationFileParser& parser)
 {
-    return (os << parser.m_d->m_configuration);
+    return (os << parser.m_d->m_configurationFileName << ":" 
+                << parser.m_d->m_configuration);
 }
 
 } // closing namespace XMLConfigurationFiles

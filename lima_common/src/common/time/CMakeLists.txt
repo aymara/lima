@@ -33,7 +33,8 @@ target_link_libraries(lima-common-time
 )
 
 set_target_properties(lima-common-time PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-time DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-time DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############

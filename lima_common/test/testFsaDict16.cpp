@@ -76,9 +76,10 @@ int logFileSize( const std::string& filename ) {
   return sts.st_size;
 }
 
-void logMemsize( const string& legend ) {  
+int logMemsize() {  
+  int vmSize = 0;
 #ifdef WIN32
-  LIMA_UNUSED(legend);
+  return vmSize;
 #else
   pid_t pid = getpid();
   ostringstream ostr;
@@ -94,11 +95,11 @@ void logMemsize( const string& legend ) {
     string::size_type composed1_pos = line.find("VmSize:");
     if( composed1_pos != string::npos ) {
       string vmSizeStr(line, composed1_pos+7);
-      int vmSize = atoi(vmSizeStr.c_str());
-      std::cerr << legend << " VmSize:" << vmSize;
+      vmSize = atoi(vmSizeStr.c_str());
     }
   }
 #endif
+  return vmSize;
 }
 
 int getProcStat( const std::string& toLog ) {
@@ -114,7 +115,7 @@ int getProcStat( const std::string& toLog ) {
 
   ifstream statusIn(statusFile.c_str(),ios::in | std::ifstream::binary);
   string line;
-  int val;
+  int val = 0;
   while (!statusIn.eof())
   {
     getline(statusIn,line);
@@ -235,17 +236,17 @@ void DictTester<dictType>::addListOfWords() {
 
   for( int counter = 0 ; ; counter++ ) {
     if( (counter%10000) == 0 ) {
-      ostringstream ostr;
-      ostr << "\naddListOfWords counter = " << counter;
+      std::cerr << "\raddListOfWords counter = " << counter 
+                << " VmSize: " << logMemsize() << std::flush;
 //      std::cerr << "addListOfWords counter = " << counter << std::endl;
-      logMemsize( ostr.str() );
     }
     // lecture d'une ligne du fichier
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( wList.eof() )
     {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl;
+      std::cerr <<  "end of list of words. counter=" << counter << std::endl 
+                << std::flush;
       break;
     }
     else if (!line.empty())
@@ -256,7 +257,7 @@ void DictTester<dictType>::addListOfWords() {
       m_dico.addWord( word );
     }
   }
-  std::cerr << std::endl;
+  std::cerr << std::endl << std::endl;
   m_dico.pack();
 }
 
@@ -306,10 +307,8 @@ void DictTester<dictType>::testIndex(
     int index = m_dico.getIndex(*lemma);
     // traces
     if( index%10000 == 0 ) {
-      ostringstream ostr;
-      ostr << "testIndex index = " << index;
-//      std::cerr << "addListOfWords counter = " << counter << std::endl;
-      logMemsize( ostr.str() );
+      std::cout << "\rtestIndex index = " << index 
+                << " VmSize: " << logMemsize() << std::flush;
     }
     if( m_param.withDebug ) {
       Lima::LimaString newWord = *lemma;
@@ -333,12 +332,12 @@ void DictTester<dictType>::testIndex(
       }
       else {
 //        std::cerr << "check " << index << "!=" << index0+1 << std::endl;
-        assert( index == index0+1 );
+        Q_ASSERT( index == index0+1 );
         index0 = index;
       }
     }
   }
-    
+  std::cout << std::endl;
   // test sur chaine n'existant pas
   for( typename std::vector<Lima::LimaString >::const_iterator lemma = begin ;
         lemma != end ; lemma++ ) {
@@ -350,11 +349,10 @@ void DictTester<dictType>::testIndex(
     int invertedIndex = m_dico.getIndex(invertedLemma);
     // traces
     if( index%10000 == 0 ) {
-      ostringstream ostr;
-      ostr << "testIndex inverted ("
+      std::cout << "testIndex inverted ("
            << Lima::Common::Misc::limastring2utf8stdstring(invertedLemma)
-           << ")  index = " << invertedIndex;
-      logMemsize( ostr.str() );
+           << ")  index = " << invertedIndex << " VmSize: " << logMemsize()
+           << std::flush;
     }
   }
 }
@@ -592,7 +590,7 @@ int main(int argc, char *argv[])
       param.withoutTemplate = true;
     }
     else if ( (pos = arg.indexOf("--charSize=")) != -1 ){
-      int charSize = (arg.mid(pos+11)).toInt();
+      int charSize = (arg.midRef(pos+11)).toInt();
       switch(charSize) {
         case 1:
           param.charSize = one_byte;
@@ -618,7 +616,7 @@ int main(int argc, char *argv[])
       param.runSpelling = true;
     }
     else if ( (pos = arg.indexOf("--termId=")) != -1 ){
-      param.termId = (arg.mid(pos+9)).toInt();
+      param.termId = (arg.midRef(pos+9)).toInt();
     }
     else if ( arg == "--reverse" ){
       param.trieDirectionForward = false;
@@ -671,27 +669,16 @@ int main(int argc, char *argv[])
   }
   cerr << endl;
 
-  DictTester<Lima::Common::FsaAccess::FsaAccessSpare16> *wspareTester16=0;
-  DictTester<Lima::Common::FsaAccess::FsaAccessBuilder16> *wbuilderTester16=0;
-  DictTester<Lima::Common::FsaAccess::FsaAccessBuilderRandom16> *wbuilderRandomTester16=0;
-
   if( (!param.spareMem) && (param.addWord) ) {
     // Si Builder avec option addWord: BuilderRandom
     std::cerr <<  "Create BuilderRandom dictionary...." << std::endl;
-    Lima::Common::FsaAccess::FsaAccessBuilderRandom16 *dico=0;
-    if(param.trieDirectionForward) {
-      dico = new Lima::Common::FsaAccess::FsaAccessBuilderRandom16();
-    }
-    else {
-      dico = new Lima::Common::FsaAccess::FsaAccessBuilderRandom16(false);
-    }
+    Lima::Common::FsaAccess::FsaAccessBuilderRandom16 dico(param.trieDirectionForward);
     if( param.inputDico.size() > 0) {
       std::cerr <<  "Read dictionary from file... "
                 << param.inputDico << "..." << std::endl;
-      dico->read(param.inputDico);
+      dico.read(param.inputDico);
     }
-    wbuilderRandomTester16 = new
-      DictTester<Lima::Common::FsaAccess::FsaAccessBuilderRandom16>( param, *dico );
+    DictTester<Lima::Common::FsaAccess::FsaAccessBuilderRandom16> *wbuilderRandomTester16 = new DictTester<Lima::Common::FsaAccess::FsaAccessBuilderRandom16>( param, dico );
     if( param.listOfWords.size() > 0 ) {
       std::cerr <<  "addListOfRandomWords "
                 << param.listOfWords << "..." << std::endl;
@@ -699,26 +686,20 @@ int main(int argc, char *argv[])
     }
     wbuilderRandomTester16->exec();
     wbuilderRandomTester16->write();
+    delete wbuilderRandomTester16;
   }
   
   else if ( !param.spareMem) {
     // Si Builder sans option addWord: Builder
     std::cerr <<  "Create dictionary...." << std::endl;
-    Lima::Common::FsaAccess::FsaAccessBuilder16 *dico=0;
-    if(param.trieDirectionForward) {
-      dico = new Lima::Common::FsaAccess::FsaAccessBuilder16();
-    }
-    else {
-      dico = new Lima::Common::FsaAccess::FsaAccessBuilder16(false);
-    }
+    Lima::Common::FsaAccess::FsaAccessBuilder16 dico(param.trieDirectionForward);
     if( param.inputDico.size() > 0) {
       std::cerr <<  "no read operation allowed for FsaAccessBuilder "
                 << std::endl;
       return EXIT_FAILURE;
     }
     
-    wbuilderTester16 = new
-      DictTester<Lima::Common::FsaAccess::FsaAccessBuilder16>( param, *dico );
+    DictTester<Lima::Common::FsaAccess::FsaAccessBuilder16> *wbuilderTester16 = new DictTester<Lima::Common::FsaAccess::FsaAccessBuilder16>( param, dico );
     if( param.listOfWords.size() > 0 ) {
       std::cerr <<  "addListOfWords "
                 << param.listOfWords << "..." << std::endl;
@@ -726,6 +707,7 @@ int main(int argc, char *argv[])
     }
     wbuilderTester16->exec();
     wbuilderTester16->write();
+    delete wbuilderTester16;
   }
   else {
     int refSize = 1;
@@ -738,9 +720,8 @@ int main(int argc, char *argv[])
       std::cout << "procSize before load dico = " << memSize0 << std::endl;
       TimeUtils::updateCurrentTime();
     }
-    Lima::Common::FsaAccess::FsaAccessSpare16 *dico =
-      new Lima::Common::FsaAccess::FsaAccessSpare16();
-    dico->read(param.inputDico);
+    Lima::Common::FsaAccess::FsaAccessSpare16 dico;
+    dico.read(param.inputDico);
     if( param.runPerfo ) {
       TimeUtils::logElapsedTime("load dico");
       memSize = getProcStat( std::string("VmSize") );
@@ -750,11 +731,10 @@ int main(int argc, char *argv[])
     }
     if( param.printGraph ) {
       std::cerr <<  "Print graph...." << std::endl;
-      dico->printGraph(std::cerr);
+      dico.printGraph(std::cerr);
     }
-    wspareTester16 = new
-      DictTester<Lima::Common::FsaAccess::FsaAccessSpare16>(
-      param, *dico );
+    DictTester<Lima::Common::FsaAccess::FsaAccessSpare16> *wspareTester16 = new DictTester<Lima::Common::FsaAccess::FsaAccessSpare16>(
+      param, dico );
 
 
 /*
@@ -806,8 +786,8 @@ int main(int argc, char *argv[])
        wspareTester16->testIndex(listOfWords.begin(), listOfWords.end(), indexes );
        uint64_t elapsed = TimeUtils::elapsedTime();
        TimeUtils::logElapsedTime("testIndex");
-       std::cout << "key average size = " << (refSize*1.0)/dico->getSize() << " byte" << std::endl;
-       std::cout << "testIndex: average time = " << (elapsed*1000.0)/dico->getSize() << std::endl;
+       std::cout << "key average size = " << (refSize*1.0)/dico.getSize() << " byte" << std::endl;
+       std::cout << "testIndex: average time = " << (elapsed*1000.0)/dico.getSize() << std::endl;
     }
 
     if( param.runSpelling ) {
@@ -917,6 +897,7 @@ int main(int argc, char *argv[])
       }
       wspareTester16->testSub(hyperwords, offsets, subwords, param.withAssert);
     }
+    delete wspareTester16;
 //    wspareTester16->write();
   }
 

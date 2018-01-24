@@ -42,7 +42,7 @@ public:
                        const LimaString& complement=LimaString());
   virtual ~CreateIdiomaticAlternative() {}
   virtual bool operator()(Automaton::RecognizerMatch& match,
-                          AnalysisContent& analysis) const;
+                          AnalysisContent& analysis) const override;
 
 private:
 

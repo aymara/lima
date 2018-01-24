@@ -181,21 +181,21 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
     getPrefix( root, prefixItWord );
 #ifdef DEBUG_CD
     LWARN <<  "FsaAccessBuilderRandom16::addRandomWord: put(vname_map,"
-           << root << "," << std::hex << get(vname_map, root)
+           << root << "," << get(vname_map, root)
            << " -> ";
 #endif
     put(vname_map, root, get(vname_map, root)|FINAL_16);
 #ifdef DEBUG_CD
-    LWARN << std::hex << get(vname_map, root) << ")" << std::dec;
+    LWARN << get(vname_map, root) << ")";
 #endif
 #ifdef DEBUG_CD
     LWARN <<  "FsaAccessBuilderRandom16::addRandomWord: put(vname_map,"
-           << prefix_leaf << "," << std::hex << get(vname_map, prefix_leaf)
+           << prefix_leaf << "," << get(vname_map, prefix_leaf)
            << " -> ";
 #endif
     put(vname_map, prefix_leaf, get(vname_map, prefix_leaf)|FINAL_16);
 #ifdef DEBUG_CD
-    LWARN << std::hex << get(vname_map, prefix_leaf) << ")" << std::dec;
+    LWARN << get(vname_map, prefix_leaf) << ")";
 #endif
 
     prefixItSuperWord = getPrefixIterator(superword);
@@ -246,7 +246,7 @@ void FsaAccessBuilderRandom16::addRandomWord( const LimaString & newWord ) {
 
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::addRandomWord: add first letter of suffix "
-           << std::hex << currentChar << std::dec;
+           << currentChar;
 #endif
 //    checkIntegrity( prefix_leaf );
     addEdge( prefix_leaf, newState, currentChar, prefixIt->getCurrentContent(), wordOffset );
@@ -315,7 +315,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
     char32_t currentChar = prefixIt->getNextLetter(wordOffset);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: currentChar="
-                 << std::hex << currentChar << std::dec << ")";
+                 << currentChar << ")";
 #endif
 /* TODO: replace FsaAccess16<graphType>::findEdge() by ForwardPrefixIterator::findEdge()
 
@@ -363,7 +363,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 #ifdef DEBUG_CD
         std::ostringstream oss;
         oss << "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: supressEdge("
-               << edge << "," << std::hex << currentChar << std::dec << ")";
+               << edge << "," << currentChar << ")";
         LDEBUG <<  oss.str().c_str();
 #endif
         // remove element from vector counts
@@ -371,12 +371,12 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
         graphType::degree_size_type outd0 = boost::out_degree(from, m_graph);
         std::vector<int>& counts = get(vcount_map,from);
         if( outd0 > 1 ) {
-          assert( (counts.size() + 1) == outd0 );
+          Q_ASSERT( (counts.size() + 1) == outd0 );
           counts.pop_back();
-          assert( (counts.size() + 2) == outd0 );
+          Q_ASSERT( (counts.size() + 2) == outd0 );
         }
         else {
-          assert( counts.size() == 0 );
+          Q_ASSERT( counts.size() == 0 );
         }
 
 #ifdef DEBUG_CD
@@ -384,7 +384,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
                << from << "," << to << "), outd=" << outd0;
         std::ostringstream oss2;
         oss2 << "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: remove_edge("
-               << edge << "," << std::hex << currentChar << std::dec << ")";
+               << edge << "," << currentChar << ")";
         LDEBUG <<  oss2.str().c_str();
 #endif
         remove_edge(edge, m_graph);
@@ -393,18 +393,18 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: after remove_edge, outd="
                << outd;
 #endif
-        assert( (outd+1) == outd0);
+        Q_ASSERT( (outd+1) == outd0);
         if( outd > 1 )
-          assert( (counts.size() +1) == outd);
+          Q_ASSERT( (counts.size() +1) == outd);
         else 
-          assert( counts.size() == 0 );
+          Q_ASSERT( counts.size() == 0 );
 
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: before erase text[to] ="
         << LimaString(text.data());
 #endif
         text.remove(textOffset, wordOffset);
-        assert( static_cast<graphType::degree_size_type>(text.size()) == outd);
+        Q_ASSERT( static_cast<graphType::degree_size_type>(text.size()) == outd);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: after erase text[to] ="
         << LimaString(text.data());
@@ -412,16 +412,16 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
         VERTEX_PROPERTY_16 vval = get(vname_map, from);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: read val[to] ="
-               << std::hex << vval << std::dec;
+               << vval;
 #endif
         VERTEX_PROPERTY_16 qualif = vval & QUALITY_16;
         VERTEX_PROPERTY_16 hicharOff = vval & TEXT_POS_16;
         if( wordOffset == 1 )
           hicharOff--;
-        assert( hicharOff == outd);
+        Q_ASSERT( hicharOff == outd);
 #ifdef DEBUG_CD
         LDEBUG <<  "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: set val[to] :="
-               << std::hex << ( (qualif&(~HEAD_OF_CLASS_16)) | hicharOff) << std::dec;
+               << ( (qualif&(~HEAD_OF_CLASS_16)) | hicharOff);
 #endif
         put(vname_map, from,  (qualif&(~HEAD_OF_CLASS_16)) | hicharOff);
 
@@ -576,7 +576,7 @@ void FsaAccessBuilderRandom16::cloneVertex(
   boost::tie(ei,edge_end) = boost::out_edges(oldTo, m_graph);
   graphType::degree_size_type outd0 = boost::out_degree(newTo, m_graph);
   graphType::degree_size_type outdRef = boost::out_degree(oldTo, m_graph);
-  assert(outd0 == 0);
+  Q_ASSERT(outd0 == 0);
   for( ; ei != edge_end ; ei++ ) {
     dicoVertex currentTarget = target(*ei,m_graph);
 #ifdef DEBUG_CD
@@ -586,7 +586,7 @@ void FsaAccessBuilderRandom16::cloneVertex(
     add_edge(newTo, currentTarget, m_graph );
   }
   graphType::degree_size_type outd = boost::out_degree(newTo, m_graph);
-  assert( outd == outdRef );
+  Q_ASSERT( outd == outdRef );
   // std::vector<int>& counts = get(vcount_map,oldTo);
   std::vector<int>& counts = get(vcount_map,oldTo);
   put(vcount_map,newTo,counts);
@@ -594,18 +594,18 @@ void FsaAccessBuilderRandom16::cloneVertex(
   
   std::vector<int>& newCounts = get(vcount_map,newTo);
   if( outd > 1  )
-    assert( (newCounts.size()+1) == outd );
+    Q_ASSERT( (newCounts.size()+1) == outd );
   else
-    assert( newCounts.size() == 0 );
+    Q_ASSERT( newCounts.size() == 0 );
 
   Lima::LimaString& text = get(vtext_map,newTo);
-  assert( static_cast<graphType::degree_size_type>(text.size()) == outd );
+  Q_ASSERT( static_cast<graphType::degree_size_type>(text.size()) == outd );
   
   // mise a jour du nombre de caracteres avec remise a zero des caracteres HEAD_OF_CLASS_16 et SET_16
   VERTEX_PROPERTY_16 vval = get(vname_map, oldTo);
   vval &= (~(HEAD_OF_CLASS_16 | SET_16));
   put(vname_map,newTo,vval);
-  assert( (get(vname_map, newTo)&TEXT_POS_16) == outd );
+  Q_ASSERT( (get(vname_map, newTo)&TEXT_POS_16) == outd );
 }
 
 // Insertion d'une transition supplementaire a partir du noeud from.
@@ -624,7 +624,7 @@ void FsaAccessBuilderRandom16::addEdge(
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge("
          << from << ", " << to << ", " << currentChar << ","
-         << std::hex << LimaString(*word_content) << std::dec << ", " << wordOffset << ")";
+         << LimaString(*word_content) << ", " << wordOffset << ")";
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -639,8 +639,8 @@ void FsaAccessBuilderRandom16::addEdge(
   VERTEX_PROPERTY_16 highCharTextPos = vval & TEXT_POS_16;
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: vval="
-         << std::hex << vval
-         << ", highCharTextPos=" << highCharTextPos << std::dec;
+         << vval
+         << ", highCharTextPos=" << highCharTextPos ;
 #endif
 
   // tableau des coefficients
@@ -690,7 +690,7 @@ void FsaAccessBuilderRandom16::addEdge(
          << from << ")" << "(" << newOrderedTargetList.size() << ")";
 #endif
     clear_out_edges(from, m_graph);
-    assert(boost::out_degree(from, m_graph) == 0);
+    Q_ASSERT(boost::out_degree(from, m_graph) == 0);
     // add new list of out_edges
     for( std::list<dicoVertex>::const_iterator vIt = newOrderedTargetList.begin() ;
       vIt != newOrderedTargetList.end() ; vIt++ ) {
@@ -701,8 +701,8 @@ void FsaAccessBuilderRandom16::addEdge(
         add_edge(from, *vIt, m_graph );
     }
     graphType::degree_size_type outd = boost::out_degree(from, m_graph);
-    assert(outd == newOrderedTargetList.size() );
-    assert(outd == (outd0+1) );
+    Q_ASSERT(outd == newOrderedTargetList.size() );
+    Q_ASSERT(outd == (outd0+1) );
     // insert an additional element with value 0 for vector counts
     // value will be set later within updateHash() function
     if (outd > 1 ) {
@@ -717,14 +717,14 @@ void FsaAccessBuilderRandom16::addEdge(
     LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: outd=" << outd
            << ", highCharTextPos = " << highCharTextPos;
 #endif
-    assert(outd == highCharTextPos );
+    Q_ASSERT(outd == highCharTextPos );
     // from has been modified
     // set vertex "from" as possibly no more "head of class"
     qualif = qualif & (~HEAD_OF_CLASS_16);
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::addEdge: put(vname_map,"
-         << from << "," << std::hex << qualif
-         << " | " << highCharTextPos << "" << std::dec;
+         << from << ","  << qualif
+         << " | " << highCharTextPos << "" ;
 #endif
     put(vname_map, from, qualif | highCharTextPos);
 #ifdef DEBUG_CD
@@ -758,18 +758,18 @@ void FsaAccessBuilderRandom16::addEdge(
            << ")";
 #endif
     textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
-    assert(false);
+    Q_ASSERT(false);
     // TODO:
   }
 
   graphType::degree_size_type outdCheck = boost::out_degree(from, m_graph);
   if( outdCheck > 1 )
-    assert( (counts.size()+1) == outdCheck );
+    Q_ASSERT( (counts.size()+1) == outdCheck );
   else
-    assert( counts.size() == 0 );
-  assert( (get(vname_map, from)&TEXT_POS_16) == outdCheck );
+    Q_ASSERT( counts.size() == 0 );
+  Q_ASSERT( (get(vname_map, from)&TEXT_POS_16) == outdCheck );
   Lima::LimaString& textCheck = get(vtext_map,from);
-  assert( static_cast<graphType::degree_size_type>(textCheck.size()) == outdCheck );
+  Q_ASSERT( static_cast<graphType::degree_size_type>(textCheck.size()) == outdCheck );
 }
 
 // Remplacement d'une transition a partir du noeud from. Utile pour la fonction merge
@@ -839,7 +839,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
       textOffset++;
     }
     newOrderedTargetList.push_back(to);
-    assert(newOrderedTargetList.size() == textOffset+1);
+    Q_ASSERT(newOrderedTargetList.size() == textOffset+1);
 
     // fill the end of the list
     for( ; ei != edge_end ; ei++ ) {
@@ -849,14 +849,14 @@ void FsaAccessBuilderRandom16::replaceEdge(
 #endif
       newOrderedTargetList.push_back(target(*ei,m_graph));
     }
-    assert(newOrderedTargetList.size() == outd0);
+    Q_ASSERT(newOrderedTargetList.size() == outd0);
     // remove all out_edges
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: clear_edge("
          << from << ")";
 #endif
     clear_out_edges(from, m_graph);
-    assert(boost::out_degree(from, m_graph) == 0);
+    Q_ASSERT(boost::out_degree(from, m_graph) == 0);
     // add new list of out_edges
     for( std::list<dicoVertex>::iterator vIt = newOrderedTargetList.begin() ;
       vIt != newOrderedTargetList.end() ; vIt++ ) {
@@ -866,13 +866,13 @@ void FsaAccessBuilderRandom16::replaceEdge(
 #endif
         add_edge(from, *vIt, m_graph );
     }
-    assert(boost::out_degree(from, m_graph) == outd0);
+    Q_ASSERT(boost::out_degree(from, m_graph) == outd0);
     // from has been modified
     // set vertex "from" as possibly no more "head of class"
     qualif = qualif & (~HEAD_OF_CLASS_16);
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceEdge: put(vname_map,"
-         << from << "," << std::hex << qualif << " | " << highCharTextPos << std::dec << "";
+         << from << ","  << qualif << " | " << highCharTextPos  << "";
 #endif
     put(vname_map, from, qualif | highCharTextPos);
   }
@@ -884,18 +884,18 @@ void FsaAccessBuilderRandom16::replaceEdge(
 #endif
     textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
     // TODO:
-    assert(false);
+    Q_ASSERT(false);
   }
   
   // check
-  assert( (get(vname_map, from)&TEXT_POS_16) == outd0 );
+  Q_ASSERT( (get(vname_map, from)&TEXT_POS_16) == outd0 );
   std::vector<int>& counts = get(vcount_map,from);
   if( outd0 > 1 )
-    assert( (counts.size()+1) == outd0 );
+    Q_ASSERT( (counts.size()+1) == outd0 );
   else
-    assert( counts.size() == 0 );  
+    Q_ASSERT( counts.size() == 0 );  
   Lima::LimaString& textCheck = get(vtext_map,from);
-  assert( static_cast<graphType::degree_size_type>(textCheck.size()) == outd0 );
+  Q_ASSERT( static_cast<graphType::degree_size_type>(textCheck.size()) == outd0 );
 
 }
 
@@ -911,7 +911,10 @@ void FsaAccessBuilderRandom16::suppressEdge(
   FSAALOGINIT;
   LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge("
          << from << ", " << to << ", " << currentChar << ","
-         << std::hex << LimaString(*word_content) << std::dec << ", " << wordOffset << ")";
+          << LimaString(*word_content)  << ", " << wordOffset << ")";
+#else
+  LIMA_UNUSED(to)
+  LIMA_UNUSED(word_content)
 #endif
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
     boost::get(vertex_text,m_graph);
@@ -928,11 +931,11 @@ void FsaAccessBuilderRandom16::suppressEdge(
   // tableau des coefficients
   std::vector<int>& counts = get(vcount_map,from);
   graphType::degree_size_type outd0 = boost::out_degree(from, m_graph);
-  assert( outd0 > 0 );
+  Q_ASSERT( outd0 > 0 );
   if( outd0 > 1 )
-    assert( (counts.size()+1) == outd0 );
+    Q_ASSERT( (counts.size()+1) == outd0 );
   else
-    assert( counts.size() == 0 );
+    Q_ASSERT( counts.size() == 0 );
 
   int32_t textOffset0;
   if( wordOffset == 1 ) {
@@ -984,7 +987,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
          << from << ")";
 #endif
     clear_out_edges(from, m_graph);
-    assert(boost::out_degree(from, m_graph) == 0);
+    Q_ASSERT(boost::out_degree(from, m_graph) == 0);
     // add new list of out_edges
     for( std::list<dicoVertex>::iterator vIt = newOrderedTargetList.begin() ;
       vIt != newOrderedTargetList.end() ; vIt++ ) {
@@ -999,7 +1002,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
     qualif = qualif & (~HEAD_OF_CLASS_16);
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: put(vname_map,"
-         << from << "," << std::hex << qualif << " | " << highCharTextPos << std::dec << "";
+         << from << ","  << qualif << " | " << highCharTextPos  << "";
 #endif
     put(vname_map, from, qualif | highCharTextPos);
 #ifdef DEBUG_CD
@@ -1009,7 +1012,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text="
 //           << text;
           ;
-    Lima::LimaString textpart = LimaString(word_content).left(wordOffset);
+//     Lima::LimaString textpart = LimaString(word_content).left(wordOffset);
     LDEBUG <<  "FsaAccessBuilderRandom16::suppressEdge: text.erase("
 //           << textOffset0 << "," << textpart << ")";
            << textOffset0 << "," << ")";
@@ -1032,19 +1035,19 @@ void FsaAccessBuilderRandom16::suppressEdge(
 #endif
     textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
     // TODO:
-    assert(false);
+    Q_ASSERT(false);
   }
 
   // check
   graphType::degree_size_type outd = boost::out_degree(from, m_graph);
-  assert((outd+1) == outd0);
-  assert( (get(vname_map, from)&TEXT_POS_16) == outd );
+  Q_ASSERT((outd+1) == outd0);
+  Q_ASSERT( (get(vname_map, from)&TEXT_POS_16) == outd );
   if( outd > 0 )
-    assert( (counts.size()+1) == outd );
+    Q_ASSERT( (counts.size()+1) == outd );
   else
-   assert( counts.size() == 0 );  
+   Q_ASSERT( counts.size() == 0 );  
   Lima::LimaString& textCheck = get(vtext_map,from);
-  assert( static_cast<graphType::degree_size_type>(textCheck.size()) == outd );
+  Q_ASSERT( static_cast<graphType::degree_size_type>(textCheck.size()) == outd );
 }
 
 
@@ -1069,12 +1072,12 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
 
   // get first char (or last one if reverse) of word to search for in graph
   int32_t wordOffset;
-  assert( prefixIt->hasNextLetter() );
+  Q_ASSERT( prefixIt->hasNextLetter() );
   char32_t currentChar = prefixIt->getNextLetter(wordOffset);
 
 #ifdef DEBUG_CD
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: currentChar="
-         << std::hex << currentChar << std::dec << ")";
+          << currentChar  << ")";
 #endif
 
   dicoGraph_traits16<graphType>::nconst_vtext_map_type vtext_map =
@@ -1145,7 +1148,7 @@ void FsaAccessBuilderRandom16::merge( dicoVertex inRegister,
 #endif
   // find in transition parentState -> tempstate
   std::pair<dicoEdgeType, bool> trans = edge(parentState, tempState, m_graph);
-  assert( trans.second );
+  Q_ASSERT( trans.second );
   // forward this transition to inRegister
   if( trans.second ) {
 #ifdef DEBUG_CD
@@ -1159,7 +1162,7 @@ void FsaAccessBuilderRandom16::merge( dicoVertex inRegister,
     replaceEdge( parentState, inRegister, currentChar, wordOffset );
 
 //    std::pair<dicoEdgeType, bool> res = add_edge(parentState, inRegister, m_graph);
-//    assert( res.second );
+//    Q_ASSERT( res.second );
   }
 
   // delete tempstate
@@ -1212,9 +1215,9 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
   }
 #ifdef DEBUG_CD
   if( nbChild > 1 )
-    assert(nbChild == (counts.size()+1) );
+    Q_ASSERT(nbChild == (counts.size()+1) );
   else
-    assert( counts.size() == 0 );
+    Q_ASSERT( counts.size() == 0 );
 #endif
 
   // get first char (or last one if reverse) of word to search for in graph
@@ -1226,7 +1229,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
     char32_t currentChar = prefixIt->getNextLetter((int32_t&)wordOffset);
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: currentChar="
-           << std::hex << currentChar << std::dec << ")";
+            << currentChar  << ")";
 #endif
 
     Lima::LimaString& text = get(vtext_map,from);
@@ -1268,7 +1271,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
 #endif
     int32_t i = 0;
     for( ; (i+1 < static_cast<int32_t>(outd)) && (i<edgeOffset) ; ei++ , i++, cIt++ ) {
-      assert(ei != edge_end);
+      Q_ASSERT(ei != edge_end);
       total = total + *cIt;
     }
     // On calcul la mise a jour a faire sur le tableau de coefficients
@@ -1290,7 +1293,7 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
       LDEBUG <<  "FsaAccessBuilderRandom16::updateHash: i="
              << i << ",*cIt=" << *cIt << ", delta=" << delta;
 #endif
-      assert(ei != edge_end);
+      Q_ASSERT(ei != edge_end);
       total = *cIt + delta;
       *cIt = total;
     }

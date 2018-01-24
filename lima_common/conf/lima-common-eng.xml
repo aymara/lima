@@ -1,20 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
   <module name="MediaData">
-        <group name="Class">
-            <param key="class" value="LanguageData"/>
-        </group>
+    <group name="Class">
+        <param key="class" value="LanguageData"/>
+    </group>
   </module>
   <module name="LinguisticData">
     <group name="Categories">
-        <list name="sentenceBreakMicros">
-          <item value="PONCTU_FORTE"/>
-          <!--item value="PONCTU_MISE_EN_EVIDENCE"/-->
-          <!-- certains mots au milieu de phrases sont entre guillemets... -->
-        </list>
+      <list name="sentenceBreakMicros">
+        <item value="SENT"/>
+      </list>
       <param key = "PropertyCodeFile" value = "LinguisticProcessings/eng/code-eng.xml" />
       <list name="emptyMacro">
-        <item value="NONE_1" />
         <item value="DET" />
         <item value="PRON" />
         <item value="ADV" />
@@ -24,22 +21,13 @@
         <item value="INTERJ" />
       </list>
       <list name="emptyMicro">
-        <item value="RB"/>
-        <item value="ABOUTRB"/>
-        <item value="THATRB"/>
-        <item value="THERERB"/>
-        <item value="RBR"/>
-        <item value="RBS"/>
-        <item value="WRB"/>
-        <item value="NOT"/>
-        <item value="CC"/>
-        <item value="DT"/>
-        <item value="THATDT"/>
-        <item value="PDT"/>
-        <item value="THATWDT"/>
-        <item value="WDT"/>
-        <item value="SYM"/>
-        <item value="UNK"/>
+        <item value="ADJ"/>
+        <item value="ADV"/>
+        <item value="PART"/>
+        <item value="CONJ"/>
+        <item value="SCONJ"/>
+        <item value="DET"/>
+        <item value="INTJ"/>
         <item value="OQU"/>
         <item value="COMMA"/>
         <item value="COLON"/>
@@ -47,33 +35,19 @@
         <item value="QUOT"/>
         <item value="OPAR"/>
         <item value="CPAR"/>
-        <item value="IN"/>
-        <item value="SCONJ"/>
-        <item value="ABOUTIN"/>
-        <item value="TO"/>
-        <item value="EX"/>
-        <item value="PRP"/>
-        <item value="THATPRP"/>
-        <item value="PRP$"/>
-        <item value="WP"/>
-        <item value="WP$"/>
-        <item value="MD"/>
+        <item value="CUR"/>
+        <item value="ADP"/>
+        <item value="PRON"/>
       </list>
-        <list name="conjugatedVerbs" >
-          <item value="MD"/>
-          <item value="VB"/>
-          <item value="VBD"/>
-          <item value="VBG"/>
-          <item value="VBN"/>
-          <item value="VBP"/>
-          <item value="VBZ"/>
-        </list>
-        <list name="propositionIntroductors" >
-            <item value="CC" />
-            <item value="IN" />
-            <item value="THATDT" />
-            <item value="SCONJ" />
-        </list>
+      <list name="conjugatedVerbs" >
+        <item value="AUX"/>
+        <item value="VERB"/>
+      </list>
+      <list name="propositionIntroductors" >
+          <item value="CONJ" />
+          <item value="SCONJ" />
+          <item value="ADP" />
+      </list>
     </group>
     <group name="SyntacticRelations">
       <list name="relationList">
@@ -142,42 +116,18 @@
         <item value="COMPDUNOM"/>
         <item value="COMPDUNOM2"/>
         <item value="SUBSUBJUX"/>
+        <item value="Prefixe"/>
       </list>
       <list name="VerbalHomoSyntagmaticRelations">
         <item value="PrepInf"/>
       </list>
       <list name="NounPhraseHeadCategs">	      
-        <item value="NOM_COMMUN" />
-        <item value="NOM_PROPRE" />
-        <item value="PRONOM_PERSONNEL_I" />
-        <item value="PRONOM_PERSONNEL_I" />
-        <item value="PRONOM_PERSONNEL_YOU" />
-        <item value="PRONOM_PERSONNEL_HE_SHE" />
-        <item value="PRONOM_PERSONNEL_IT" />
-        <item value="PRONOM_PERSONNEL_WE" />
-        <item value="PRONOM_PERSONNEL_THEY" />
-        <item value="PRONOM_PERSONNEL_ME" />
-        <item value="PRONOM_PERSONNEL_US" />
-        <item value="PRONOM_PERSONNEL_HIM_HER" />
-        <item value="PRONOM_PERSONNEL_THEM" />
-        <item value="PRONOM_PERSONNEL_REFLECHI" />
-        <item value="PRONOM_POSSESSIF" />
-        <item value="PRON_POSS_PREN" />
-        <item value="PRONOM_WHOM" />
-        <item value="PRONOM_WHO" />
-        <item value="PRONOM_WHOEVER" />
-        <item value="PRONOM_INDEFINI" />
-        <item value="PRONOM_REFLEXIF_INDEFINI" />
+        <item value="NOUN" />
+        <item value="PROPN" />
+        <item value="PRON" />
       </list>
       <list name="DefiniteCategs">	      
-        <item value="DETERMINEUR_GENERAL" />
-        <item value="DETERMINEUR_POSTN" />
-        <item value="DETERMINEUR_PREN" />
-        <item value="DETERMINEUR_COMPARATIF" />
-        <item value="DETERMINEUR_SUPERLATIF" />
-        <item value="DETERMINEUR_WH" />
-        <item value="DETERMINEUR_WH_GENITIF" />
-        <item value="DETERMINEUR_WH_EVER" />
+        <item value="DET" />
       </list>
     </group>
   </module>

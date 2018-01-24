@@ -48,10 +48,10 @@ public:
     QString contextual;
 
     IdiomaticExpressionEntry (QString s = "");
-    bool decodeSourceString ();
-    bool matches (QStringList args);
-    QString encodeToString ();
-    QString getColumnData(int column);
+    bool decodeSourceString () override;
+    bool matches (QStringList args) override;
+    QString encodeToString () override;
+    QString getColumnData(int column) override;
 
 };
 

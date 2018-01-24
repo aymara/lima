@@ -18,19 +18,9 @@ project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 3.4.0)
 
 #cmake_policy
-if(POLICY CMP0017)
-cmake_policy(SET CMP0017 NEW)
-
-endif()
-
 if(POLICY CMP0020)
 cmake_policy(SET CMP0020 OLD)
 endif()
-
-if(POLICY CMP0038)
-cmake_policy(SET CMP0038 NEW)
-endif()
-
 
 # In debug mode, adds the -DDEBUG_LP to the compiler command line.
 # Allows to build with conditionally built debug output
@@ -39,8 +29,16 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LP -DDEBUG_CD" )
 file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "${_plugin}\n")
-  add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS})
-endmacro (DECLARE_LIMA_PLUGIN)
+  add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
+endmacro ()
+
+macro (LIMALP_WRAP_HEADERS _plugin)
+  foreach(HEADER ${ARGN})
+    set (lima-lp-${_plugin}_MOC_HEADERS ${lima-lp-${_plugin}_MOC_HEADERS} ${HEADER})
+  endforeach()
+
+  qt5_wrap_cpp (lima-lp-${_plugin}_MOC_OUTFILES ${lima-lp-${_plugin}_MOC_HEADERS})
+endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
 # -DCMAKE_INSTALL_PREFIX="e:mose" -DCMAKE_BUILD_TYPE=Release
@@ -49,69 +47,9 @@ endmacro (DECLARE_LIMA_PLUGIN)
 enable_testing()
 
 include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
-
 message("System name is ${CMAKE_SYSTEM_NAME}")
 
-option(WITH_ASAN "Enable address sanitizer" OFF)
-
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    message("Linux flags")
-
-    # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
-    # factories, thus their symbols must be known even if not used by the binary
-    set(CMAKE_EXE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
-    CHECK_CXX_COMPILER_FLAG(-std=c++11 HAVE_STDCPP11)
-    CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_SANITIZE_UNDEFINED)
-    CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer HAVE_NO_OMIT_FRAME_POINTER)
-
-    if (HAVE_STDCPP11)
-      message("C++11 supported")
-      set(CMAKE_CXX_FLAGS "-std=c++11 -DBOOST_NO_HASH")
-    elseif (HAVE_STDCPP0X)
-      message("C++0x supported")
-      set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH")
-    else ()
-      message("Neither C++11 nor C++0x supported")
-      set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X")
-    endif ()
-    set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
-    
-    if (WITH_ASAN)
-      # NOTE: check -fsanitize=address flag failed if this flag is not set also
-      # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
-      # CHECK_CXX_COMPILER_FLAG macro).
-      set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-      set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
-      CHECK_CXX_COMPILER_FLAG(-fsanitize=address HAVE_SANITIZE_ADDRESS)
-      set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
-      # Options for runtime memory leaks checking
-      if (HAVE_SANITIZE_UNDEFINED AND HAVE_SANITIZE_ADDRESS AND HAVE_NO_OMIT_FRAME_POINTER)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer")
-      endif()
-    endif ()
-    
-    set(LIB_INSTALL_DIR "lib")
-else ()
-  message("Windows flags")
-  add_definitions(-D WIN32)
-
-  # By default, do not warn when built on machines using only VS Express:
-  if (NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
-  endif ()
-
-  set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
-
-  set(LIB_INSTALL_DIR "bin")
-endif ()
-
-
+include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
 
 SET(optionalLibs)
 message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
@@ -170,7 +108,7 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
+FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -237,8 +175,8 @@ add_subdirectory(cmake)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
-install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
+install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins COMPONENT runtime)
 
 ########### documentation ###############
 
@@ -254,6 +192,7 @@ COMMENT "Generating API documentation with Doxygen" VERBATIM
 endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
 INCLUDE(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
@@ -287,7 +226,7 @@ if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
   set(CPACK_DEBIAN_runtime_PACKAGE_SHLIBDEPS ON)
 endif()
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-set(CPACK_RPM_PACKAGE_REQUIRES "limacommon")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon")
+set(CPACK_RPM_PACKAGE_REQUIRES "limacommon-runtime")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon-runtime")
 
 INCLUDE(CPack)

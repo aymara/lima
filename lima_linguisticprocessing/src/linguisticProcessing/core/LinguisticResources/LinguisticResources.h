@@ -50,6 +50,8 @@ public:
 
   virtual ~LinguisticResources();
 
+  void clearResources();
+
   AbstractResource* getResource(
     MediaId lang,
     const std::string& id) const;

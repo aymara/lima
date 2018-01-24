@@ -1,0 +1,378 @@
+(START) {
+  - c_Mm c_hyphen c_a_t c_hyphen > ALPHA (T_ALPHA)
+  - c_Mm c_dot c_Mm c_dot > ACRONYM_2 (T_ACRONYM)
+  - c_M c_dot > ABBREV_1 (T_ALPHA,T_ABBREV)
+  - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
+  - c_M > SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
+  - c_m > ALL_LOWER (T_ALPHA,T_SMALL)
+  - c_5 > INTEGER (T_NUMERIC,T_INTEGER)
+  - c_hyphen|c_plus c_5 > INTEGER (T_NUMERIC,T_INTEGER)
+  - m_pattern m_pattern > PATTERN (T_PATTERN)
+  - c_b / IGNORE
+  - c_lowline > START
+  - c_other / START
+  - c_hyphen c_a_t c_hyphen > TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote > TEUPHOT (T_ALPHA)
+  - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
+  - unknwn > START
+  - c_lowline > ALPHA
+  - [c_N|c_l_n] c_degree = ALPHA
+  - c_hyphen c_Mm|m_line = ALPHA (T_WORD_BRK)
+  - c_quote c_S|c_s c_del|m_line > ALPHA
+  - [c_O|c_l_o|c_N] c_quote c_M > ALPHA
+  - c_quote c_b c_del1 > ALPHA
+  - c_quote c_del1 > ALPHA
+  - unknwn > ALPHA
+  - c_quote c_del = START (T_WORD_BRK)
+  - c_quote = START
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line > DELIMITER (T_WORD_BRK)
+  - c_dot c_b c_m = START
+  - m_eof = END
+  - c_all = START
+}
+(ALPHA) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_b = IGNORE (T_ALPHA)
+  - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
+  - c_M > SINGLE_UPPER (T_CAPITAL,T_ALPHA)
+  - c_m > ALL_LOWER (T_ALPHA,T_SMALL)
+  - c_hyphen|c_plus c_5 > INTEGER (T_NUMERIC,T_INTEGER)
+  - m_pattern > PATTERN (T_PATTERN)
+  - c_lowline > START
+  - c_other / START
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
+  - c_del2|c_dot = START (T_SENTENCE_BRK)
+  - c_lowline > ALPHA
+  - [c_N|c_l_n] c_degree = ALPHA
+  - c_hyphen c_Mm|m_line > ALPHA (T_HYPHEN_WORD)
+  - c_quote c_S|c_s c_del|m_line > ALPHA
+  - [c_O|c_l_o|c_N] c_quote c_M > ALPHA
+  - c_quote c_b c_del1 > ALPHA
+  - c_quote c_del1 > ALPHA
+  - unknwn > ALPHA
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_quote c_del = START (T_WORD_BRK)
+  - c_quote = START
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_dot c_b c_m = START
+  - c_all = START
+  - m_eof = END
+}
+(TEUPHOT) {
+  - c_a_t c_hyphen > TEUPHOH
+  - c_a_t c_quote > TEUPHOH
+}
+(TEUPHOH) {
+  - c_hyphen > ALPHA
+  - c_quote > ALPHA
+}
+(IGNORE) {
+  - m_eof / END
+  - c_b / IGNORE
+  - c_Mm c_dot c_Mm c_dot / ACRONYM_2 (T_ACRONYM)
+  - c_M c_dot / ABBREV_1 (T_ALPHA,T_ABBREV)
+  - c_V / CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
+  - c_M / SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
+  - c_m / ALL_LOWER (T_ALPHA,T_SMALL)
+  - c_5 / INTEGER (T_NUMERIC,T_INTEGER)
+  - c_hyphen|c_plus c_5 / INTEGER (T_NUMERIC,T_INTEGER)
+  - m_pattern m_pattern / PATTERN (T_PATTERN)
+  - c_lowline / START
+  - c_other / START
+  - c_hyphen c_a_t c_hyphen / ALPHA (T_ALPHA)
+  - c_del2|c_dot c_par c_par / DELIMITER (T_PARAGRAPH_BRK)
+  - c_dot c_dot c_dot / SUSP1 (T_SENTENCE_BRK)
+  - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
+  - c_lowline / ALPHA
+  - [c_N|c_l_n] c_degree / ALPHA
+  - c_hyphen c_Mm|m_line / ALPHA (T_HYPHEN_WORD)
+  - c_quote c_S|c_s c_del|m_line / ALPHA
+  - [c_O|c_l_o|c_N] c_quote c_M / ALPHA
+  - c_quote c_b c_del1 / ALPHA
+  - c_quote c_del1 / ALPHA
+  - unknwn / ALPHA
+  - c_quote c_del / START (T_WORD_BRK)
+  - c_quote / APOS
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line / DELIMITER (T_WORD_BRK)
+  - c_dot c_b c_m / START
+  - c_all / START
+}
+(DELIMITER) {
+  - m_eof = END
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|m_line = DELIMITER (T_WORD_BRK)
+  - c_5 = INTEGER (T_NUMERIC,T_INTEGER)
+  - c_par = IGNORE (T_SENTENCE_BRK)
+  - c_b = IGNORE
+  - c_V = CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
+  - c_M = SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
+  - c_m = ALL_LOWER (T_ALPHA,T_SMALL)
+  - c_hyphen|c_plus c_5 = INTEGER (T_NUMERIC,T_INTEGER)
+  - m_pattern m_pattern = PATTERN (T_PATTERN)
+  - c_lowline = START
+  - c_other = START
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - unknwn = START
+  - c_lowline = ALPHA
+  - [c_N|c_l_n] c_degree = ALPHA
+  - c_hyphen c_Mm|m_line = ALPHA (T_HYPHEN_WORD)
+  - c_quote c_S|c_s c_del|m_line = ALPHA
+  - [c_O|c_l_o|c_N] c_quote c_M = ALPHA
+  - c_quote c_b c_del1 = ALPHA
+  - c_quote c_del1 = ALPHA
+  - unknwn = ALPHA
+  - c_quote c_del = START (T_WORD_BRK)
+  - c_quote = START
+  - c_all = START
+}
+(SINGLE_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_M > ALL_UPPER (T_CAPITAL)
+  - c_m > LOWER_1ST_UPPER
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_dot c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
+  - c_dot c_b > ABBREV (T_ABBREV)
+  - c_b = IGNORE
+  - c_hyphen c_M > ALL_UPPER (T_HYPHEN_WORD)
+  - c_hyphen c_m > LOWER_1ST_UPPER (T_HYPHEN_WORD)
+  - c_quote c_Mm > APOS
+  - c_del1|c_comma|c_slash|c_hyphen|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(ALL_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_M > ALL_UPPER
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_m > LOWER_UPPER (T_CAPITAL_SMALL)
+  - c_b = IGNORE
+  - c_hyphen c_M > ALL_UPPER (T_HYPHEN_WORD)
+  - c_hyphen c_m > LOWER_UPPER (T_HYPHEN_WORD)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+} 
+(ALL_LOWER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_dot c_b c_m > ALL_LOWER
+  - c_quote c_Mm > APOS
+  - c_m > ALL_LOWER
+  - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_b = IGNORE
+  - c_hyphen c_M > LOWER_UPPER (T_HYPHEN_WORD)
+  - c_hyphen c_m > ALL_LOWER (T_HYPHEN_WORD)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(APOS) {
+  - c_Mm = ALPHA (T_ALPHA)
+  - m_eof = END
+}
+(LOWER_1ST_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_m|c_currency > LOWER_1ST_UPPER
+  - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_quote c_Mm > APOS
+  - c_hyphen c_M > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
+  - c_hyphen c_m > LOWER_1ST_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
+  - c_hyphen m_line c_Mm > LOWER_UPPER(T_HYPHEN_WORD,T_CAPITAL_SMALL)
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(LOWER_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_Mm > LOWER_UPPER
+  - c_b = IGNORE
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_hyphen c_Mm > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(ABBREV_1) {
+  - c_all > ABBREV_2
+}
+(ABBREV_2) {
+  - c_b = IGNORE (T_ALPHA)
+  - c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
+}
+(ACRONYM_1) {
+  - c_all > ACRONYM_2
+}
+(ACRONYM_2) {
+  - c_dot c_Mm > ACRONYM_1
+  - c_dot > ACRONYM_CLOSE
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(ACRONYM_CLOSE) {
+  - c_b = IGNORE
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(CARDINAL_ROMAN) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_V > CARDINAL_ROMAN (T_CARDINAL_ROMAN)
+  - c_l_eg c_l_m c_l_e > ORDINAL_ROMAN2 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_e c_l_m c_l_e > ORDINAL_ROMAN2 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_e c_l_r > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_l_eg > ORDINAL_ROMAN (T_NUMERIC,T_ORDINAL_ROMAN)
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_dot c_b|c_M > SINGLE_UPPER (T_NOT_ROMAN,T_ALPHA,T_CAPITAL_1ST)
+  - [c_del|m_line|m_eof] [c_M] c_m > LOWER_1ST_UPPER (T_NOT_ROMAN,T_ALPHA,T_CAPITAL_1ST)
+  - [c_del|m_line|m_eof] [c_M] c_M > ALL_UPPER (T_NOT_ROMAN,T_ALPHA,T_CAPITAL)
+  - c_b = IGNORE
+  - c_quote c_Mm > APOS
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START (T_NOT_ROMAN)
+  - m_eof = END
+}
+(ORDINAL_ROMAN2) {
+  - c_all > ORDINAL_ROMAN1
+}
+(ORDINAL_ROMAN1) {
+  - c_all > ORDINAL_ROMAN
+}
+(ORDINAL_ROMAN) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_Mm > LOWER_UPPER (T_ALPHA,T_NOT_ROMAN)
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START (T_NOT_ROMAN)
+  - m_eof = END
+}
+(INTEGER) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_5 > INTEGER
+  - c_comma c_5 > COMMA_NUMBER (T_COMMA_NUMBER)
+  - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
+  - c_slash c_5 > FRACTION (T_FRACTION)
+  - c_l_eg c_l_m c_l_e > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_e c_l_m c_l_e  > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_n c_l_d > ORDINAL_INTEGER1 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_e c_l_r > ORDINAL_INTEGER1 (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_l_eg > ORDINAL_INTEGER (T_NUMERIC,T_ORDINAL_INTEGER)
+  - c_Mm > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(COMMA_NUMBER) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_5 > COMMA_NUMBER
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(DOT_NUMBER) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_5 > DOT_NUMBER
+  - c_dot c_5 > DOT_NUMBER
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(FRACTION) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_5 > FRACTION
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_b = IGNORE
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(ORDINAL_INTEGER2) {
+  - c_all > ORDINAL_INTEGER1
+}
+(ORDINAL_INTEGER1) {
+  - c_all > ORDINAL_INTEGER
+}
+(ORDINAL_INTEGER) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_o > ORDINAL_INTEGER
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all > START
+  - m_eof = END
+}
+(PATTERN) {
+  - m_pattern > PATTERN
+  - m_end_pattern = START
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - unknwn > PATTERN
+  - m_eof = END
+  - c_all > START
+}
+(ALPHANUMERIC) {
+  - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
+  - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
+  - c_Mm|c_5 > ALPHANUMERIC
+  - c_lowline > ALPHANUMERIC
+  - unknwn > ALPHANUMERIC
+  - c_dot c_b c_m = START
+  - c_b = IGNORE
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_all = START
+  - m_eof = END
+}
+(SUSP1) {
+  - c_dot c_dot > SUSP2
+}
+(SUSP2) {
+  - c_dot > ALPHA
+}
+(END) {
+}

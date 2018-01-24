@@ -37,8 +37,9 @@
         <item value="SpecificEntitiesModex"/>
         <!--item value="specificEntitiesXmlLogger"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
-        <item value="viterbiPostagger-freq"/>
-        <!--item value="SvmToolPosTagger"/-->
+<!--         <item value="viterbiPostagger-freq"/> -->
+<!--         <item value="SvmToolPosTagger"/> -->
+        <item value="@PosTagger@"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
@@ -77,61 +78,6 @@
         <item value="defaultProperties"/>
         <item value="SpecificEntitiesModexForLimaserver"/>
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
-      </list>
-    </group>
-    <group name="query" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="idiomaticAlternatives"/>
-        <!--item value="hyphenWordAlternatives"/-->
-        <!--item value="abbreviationSplitAlternatives"/-->
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
-        <item value="bowTextHandler"/>
-      </list>
-    </group>
-    <group name="indexer" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="beginStatusLogger"/>
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="abbreviationSplitAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
-        <item value="viterbiPostagger-freq"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
-        <item value="bowDumper"/>
-      </list>
-    </group>
-    <group name="normalization" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="abbreviationSplitAlternatives"/>
-        <item value="defaultProperties"/>
-        <!--item value="SpecificEntitiesModex"/-->
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <item value="VerbNetRecognition"/>
-        <item value="bowTextHandler"/>
       </list>
     </group>
     <group name="easy" class="ProcessUnitPipeline" >
@@ -289,96 +235,96 @@
       <param key="updateGraph" value="yes"/>
     </group>
     <group name="coreferencesSolving" class="CoreferencesSolving">
-  <param key="scope" value="SENT" />
-  <param key="threshold" value="130" />
-  <param key="Resolve Definites" value="SENT" />
-  <param key="Resolve non third person pronouns" value="SENT" />  
-  <map name="MacroCategories">
-    <entry key="PronMacroCategory" value="PRON"/>
-    <entry key="VerbMacroCategory" value="SENT" />
-    <entry key="PrepMacroCategory" value="PREP" />
-    <entry key="NomCommunMacroCategory" value="NC" />
-    <entry key="NomPropreMacroCategory" value="NP" />
-  </map>
-  <list name="LexicalAnaphora">
-        <item value="PRP$"/>
-  </list>
-  <list name="UndefinitePronouns"> 
-  </list>
-  <list name="PrepRelation">
-    <item value="PREPSUB"/>
-    <item value="PrepDetInt"/>
-    <item value="PrepInf"/>
-    <item value="PrepPronRelCa"/>
-    <item value="PrepPron"/>
-    <item value="PrepPronRel"/>
-    <item value="PrepPronCliv"/>
-    <item value="PrepAdv"/>
-  </list>
-  <list name="PleonasticRelation">
-    <item value="Pleon"/>
-  </list>
-  <list name="DefiniteRelation">
-    <item value="DETSUB"/>
-  </list>
-  <list name="SubjectRelation">
-    <item value="SUJ_V" />
-    <item value="SUJ_V_REL" />
-    <item value="PronSujVerbe" />
-    <item value="PronReflVerbe" />
-    <item value="SujInv" />
-  </list>
-  <list name="AttributeRelation">
-          <item value="ATB_S"/>  
-  </list>
-  <list name="CODRelation">
-    <item value="COD_V" />
-    <item value="CodPrev" />
-  </list>
-  <list name="COIRelation">
-    <item value="CoiPrev" />  
-    <item value="CPL_V" />  
-  </list>
-  <list name="AdjunctRelation">
-    <item value="CPLV_V" />
-    <item value="CC_TEMPS" />
-    <item value="CC_LIEU" />
-    <item value="CC_BUT" />
-    <item value="CC_MOYEN" />
-    <item value="CC_MANIERE" />
-    <item value="MOD_V" />
-  </list>
-  <list name="AgentRelation">
-    <item value="CAgent_V" />
-  </list>
-  <list name="NPDeterminerRelation">
-    <item value="COMPDUNOM" />
-    <item value="COMPDUNOM2" />
-    <item value="SUBSUBJUX" />
-    <item value="COMP_N-N" />
-    <item value="COMPDUNOM_INC" />
-  </list>
-  <!-- Lappin & Leass salience factors -->
-  <map name="SalienceFactors">
-    <entry key="SentenceRecency" value="100"/>
-    <entry key="SubjEmph" value="80"/>
-    <entry key="ExistEmph" value="70"/>
-    <entry key="CodEmph" value="50"/>
-    <entry key="CoiCoblEmph" value="40"/>
-    <entry key="HeadEmph" value="80"/>
-    <entry key="NonAdvEmph" value="50"/>
-    <entry key="IsInSubordinate" value="-70"/>
-    <entry key="Cataphora" value="-60"/>
-    <entry key="SameSlot" value="10"/>
-    <entry key="Itself" value="-60"/>
-        </map>
-  <map name="SlotValues">
-    <entry key="SubjectRelation" value="SENT"/>
-    <entry key="AgentRelation" value="SENT"/>
-    <entry key="CODRelation" value="SENT"/>
-    <entry key="COIRelation" value="SENT"/>
-    <entry key="AdjunctRelation" value="SENT"/>
-        </map>
+      <param key="scope" value="SENT" />
+      <param key="threshold" value="130" />
+      <param key="Resolve Definites" value="SENT" />
+      <param key="Resolve non third person pronouns" value="SENT" />  
+      <map name="MacroCategories">
+        <entry key="PronMacroCategory" value="PRON"/>
+        <entry key="VerbMacroCategory" value="SENT" />
+        <entry key="PrepMacroCategory" value="PREP" />
+        <entry key="NomCommunMacroCategory" value="NC" />
+        <entry key="NomPropreMacroCategory" value="NP" />
+      </map>
+      <list name="LexicalAnaphora">
+            <item value="PRP$"/>
+      </list>
+      <list name="UndefinitePronouns"> 
+      </list>
+      <list name="PrepRelation">
+        <item value="PREPSUB"/>
+        <item value="PrepDetInt"/>
+        <item value="PrepInf"/>
+        <item value="PrepPronRelCa"/>
+        <item value="PrepPron"/>
+        <item value="PrepPronRel"/>
+        <item value="PrepPronCliv"/>
+        <item value="PrepAdv"/>
+      </list>
+      <list name="PleonasticRelation">
+        <item value="Pleon"/>
+      </list>
+      <list name="DefiniteRelation">
+        <item value="DETSUB"/>
+      </list>
+      <list name="SubjectRelation">
+        <item value="SUJ_V" />
+        <item value="SUJ_V_REL" />
+        <item value="PronSujVerbe" />
+        <item value="PronReflVerbe" />
+        <item value="SujInv" />
+      </list>
+      <list name="AttributeRelation">
+              <item value="ATB_S"/>  
+      </list>
+      <list name="CODRelation">
+        <item value="COD_V" />
+        <item value="CodPrev" />
+      </list>
+      <list name="COIRelation">
+        <item value="CoiPrev" />  
+        <item value="CPL_V" />  
+      </list>
+      <list name="AdjunctRelation">
+        <item value="CPLV_V" />
+        <item value="CC_TEMPS" />
+        <item value="CC_LIEU" />
+        <item value="CC_BUT" />
+        <item value="CC_MOYEN" />
+        <item value="CC_MANIERE" />
+        <item value="MOD_V" />
+      </list>
+      <list name="AgentRelation">
+        <item value="CAgent_V" />
+      </list>
+      <list name="NPDeterminerRelation">
+        <item value="COMPDUNOM" />
+        <item value="COMPDUNOM2" />
+        <item value="SUBSUBJUX" />
+        <item value="COMP_N-N" />
+        <item value="COMPDUNOM_INC" />
+      </list>
+      <!-- Lappin & Leass salience factors -->
+      <map name="SalienceFactors">
+        <entry key="SentenceRecency" value="100"/>
+        <entry key="SubjEmph" value="80"/>
+        <entry key="ExistEmph" value="70"/>
+        <entry key="CodEmph" value="50"/>
+        <entry key="CoiCoblEmph" value="40"/>
+        <entry key="HeadEmph" value="80"/>
+        <entry key="NonAdvEmph" value="50"/>
+        <entry key="IsInSubordinate" value="-70"/>
+        <entry key="Cataphora" value="-60"/>
+        <entry key="SameSlot" value="10"/>
+        <entry key="Itself" value="-60"/>
+            </map>
+      <map name="SlotValues">
+        <entry key="SubjectRelation" value="SENT"/>
+        <entry key="AgentRelation" value="SENT"/>
+        <entry key="CODRelation" value="SENT"/>
+        <entry key="COIRelation" value="SENT"/>
+        <entry key="AdjunctRelation" value="SENT"/>
+      </map>
     </group>
     <group name="hyphenWordAlternatives" class="HyphenWordAlternatives">
       <param key="dictionary" value="mainDictionary"/>
@@ -413,7 +359,7 @@
     </group>
     <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
       <list name="defaultCategories">
-        <item value="NP NNP"/>
+        <item value="NOUN PROPN"/>
       </list>
     </group>
     <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
@@ -508,31 +454,9 @@
       <param key="unfold" value="true"/>
       <param key="linkSubSentences" value="true"/>
       <map name="subSentencesRules">
-        <entry key="SubSent" value="heteroSyntagmaticRelationRules"/>
-        <entry key="SubordRel" value="heteroSyntagmaticRelationRules"/>
         <entry key="Parent" value="heteroSyntagmaticRelationRules"/>
         <entry key="Quotes" value="heteroSyntagmaticRelationRules"/>
-        <entry key="VirguleSeule" value="heteroSyntagmaticRelationRules"/>
-        <entry key="Appos" value="heteroSyntagmaticRelationRules"/>
-        <entry key="AdvSeul" value="heteroSyntagmaticRelationRules"/>
-        <entry key="AdvInit" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompAdv" value="heteroSyntagmaticRelationRules"/>
-        <entry key="Adverbe" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ConjInfSecond" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CCInit" value="heteroSyntagmaticRelationRules"/>
-        <entry key="Infinitive" value="heteroSyntagmaticRelationRules"/>
         <entry key="SUBSUBJUX" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompDuNom1" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompDuNom2" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompAdj1" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompAdj2" value="heteroSyntagmaticRelationRules"/>
-        <entry key="SubordParticipiale" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ElemListe" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ConjSecond" value="heteroSyntagmaticRelationRules"/>
-        <entry key="InciseNom" value="heteroSyntagmaticRelationRules"/>
-        <entry key="CompCirc" value="heteroSyntagmaticRelationRules"/>
-        <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
-        <entry key="ConjNominale" value="heteroSyntagmaticRelationRules"/>
       </map>
     </group>
     <group name="tagFusion" class="ExternalProcessUnit">

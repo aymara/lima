@@ -124,6 +124,7 @@ closeSBoWNode()
 
 void TextWriterBoWDocumentHandlerPrivate::writeIndexElement(
                   const IndexElement& element) {
+  LIMA_UNUSED(element)
 //   m_outputStream << "<term "
 //      << "id=\"" << element.getId() << "\"";
 //   if (element.empty()) {

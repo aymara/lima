@@ -174,10 +174,15 @@ LimaStatusCode TextFeaturesDumper::process(
 }
 
 
-void TextFeaturesDumper::
-outputVertex(ostream& out, const AnalysisGraph* graph, LinguisticGraphVertex v, AnalysisContent& analysis, uint64_t offset /*offset*/) const
+void TextFeaturesDumper::outputVertex(ostream& out, 
+                                      const AnalysisGraph* graph, 
+                                      LinguisticGraphVertex v, 
+                                      AnalysisContent& analysis, 
+                                      uint64_t offset) const
 {
   //TODO : use offset
+  LIMA_UNUSED(offset)
+  
   bool first=true;
   for (WordFeatures::const_iterator it=m_features.begin(),it_end=m_features.end();
        it!=it_end; it++) 

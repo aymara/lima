@@ -87,11 +87,9 @@ public:
    */
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
-  ;
+    Manager* manager) override;
 
-  LimaStatusCode process(
-    AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
   
 private:
 
@@ -195,7 +193,7 @@ public:
 
   virtual MediaProcessUnit* create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    MediaProcessUnit::Manager* manager) const ;
+    MediaProcessUnit::Manager* manager) const override ;
 
 private:
   ViterbiPosTaggerFactory(const std::string& id);

@@ -76,10 +76,19 @@ DictionaryCompiler::DictionaryCompiler(
   m_strCache.resize(5,make_pair(LimaString(),0));
 }
 
-DictionaryCompiler::~DictionaryCompiler() {}
-
-bool DictionaryCompiler::startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes)
+DictionaryCompiler::~DictionaryCompiler() 
 {
+  delete[] m_codedintbuf;
+  delete[] m_charbuf;
+}
+
+bool DictionaryCompiler::startElement(const QString & namespaceURI, 
+                                      const QString & name, 
+                                      const QString & qName, 
+                                      const QXmlAttributes & attributes)
+{
+  LIMA_UNUSED(namespaceURI)
+  LIMA_UNUSED(qName)
   ANALYSISDICTLOGINIT;
 //   LDEBUG << "startElement : " << name;
   if (name==S_ENTRY)
@@ -165,7 +174,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI, const QStrin
     m_count++;
     if ((m_count % 10000)==0)
     {
-      std::cout << "\nbuild data : " << m_count << " entries ...";
+      std::cout << "\rbuild data : " << m_count << " entries ...";
     }
   }
   else if (name==S_I)
@@ -237,20 +246,22 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI, const QStrin
     {
       LERROR << "ERROR : found property in delete lingInfo for entry " << m_currentKey << " ! data can be inconsistant";
     }
-    QString v=attributes.value(S_V);
-    if (v==0)
+    QString v = attributes.value(S_V);
+    if (v == 0)
     {
-      LERROR << "ERROR : tag <p> has no attribute 'v' !";
+      LERROR << "ERROR : tag <p> has no attribute 'v' for '" 
+              << m_currentKey << "'!";
       return false;
     }
-    map<string,LinguisticCode>::const_iterator it=m_conv.find(Common::Misc::limastring2utf8stdstring(v));
-    if (it!=m_conv.end())
+    const auto & it = m_conv.find(Common::Misc::limastring2utf8stdstring(v));
+    if (it != m_conv.end())
     {
       m_currentLingProps.push_back(it->second);
     }
     else
     {
-      LERROR << "ERROR : invalid property '" << v << "', ignore it !";
+      LERROR << "Invalid property '" << v << "' for '"
+              << m_currentKey << "', ignore it !";
     }
   }
   else if (name==S_CONCAT)
@@ -341,8 +352,12 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI, const QStrin
   
 }
 
-bool DictionaryCompiler::endElement(const QString& namespaceURI, const QString& name, const QString & qName)
+bool DictionaryCompiler::endElement(const QString& namespaceURI, 
+                                    const QString& name, 
+                                    const QString & qName)
 {
+  LIMA_UNUSED(namespaceURI)
+  LIMA_UNUSED(qName)
   //  cerr << "endElement " << name << endl;
   if (name==S_ENTRY)
   {

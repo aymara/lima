@@ -33,14 +33,20 @@ add_definitions( -DLIMA_COMMON_EXPORTING )
 
 add_library(lima-common SHARED LimaCommon.cpp)
 target_link_libraries(lima-common 
-    lima-common-datahandler 
-    lima-common-mediaprocessors 
-    lima-common-time 
+  lima-common-xmlconfigurationfiles
+  lima-common-tools
+  lima-common-datahandler 
+  lima-common-mediaprocessors 
+  lima-common-time 
+  lima-common-misc
+  lima-common-data 
+  lima-common-mediaticdata
 )
 
 set_target_properties(lima-common PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 
-install(TARGETS lima-common DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 

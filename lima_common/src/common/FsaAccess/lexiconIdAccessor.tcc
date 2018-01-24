@@ -83,7 +83,7 @@ void LexiconIdAccessor<SimpleStringAccess>::print(std::ostream& os) const {
 }
 
 template<typename SimpleStringAccess> 
-uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(const LimaString & word ) const {
+uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(const LimaString & word ) {
 #ifdef DEBUG_CD
   FSAALOGINIT;
   LTRACE << "LexiconIdAccessor::getId("
@@ -94,7 +94,7 @@ uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(const LimaString & word ) 
 
 template<typename SimpleStringAccess> 
 uint64_t LexiconIdAccessor<SimpleStringAccess>::getId(
-  const std::vector<uint64_t>& structure) const {
+  const std::vector<uint64_t>& structure) {
   assert(structure.size()>1);
 #ifdef DEBUG_CD
   FSAALOGINIT;

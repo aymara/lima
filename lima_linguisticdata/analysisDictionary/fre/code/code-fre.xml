@@ -51,7 +51,6 @@
     <subvalues value="ADJ">
       <value name="ADJ"/>
       <value name="ADJWH"/>
-      <value name="ADJNUM"/>
     </subvalues>
     <subvalues value="ADV">
       <value name="ADV"/>
@@ -63,11 +62,6 @@
     </subvalues>
     <subvalues value="DET">
       <value name="DET"/>
-      <value name="DETDE"/>
-      <value name="DETDES"/>
-      <value name="DETDU"/>
-      <value name="DETWH"/>
-      <value name="DETNUM"/>
     </subvalues>
     <subvalues value="DIVERS">
       <value name="U"/>

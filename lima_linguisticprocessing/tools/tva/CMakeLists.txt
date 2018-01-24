@@ -27,7 +27,8 @@ add_executable(tva ${tva_SRCS})
 
 target_link_libraries(tva lima-linguisticprocessing)
 
-install(TARGETS tva DESTINATION bin)
+install(TARGETS tva DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

@@ -73,8 +73,8 @@ public:
     //@{
     virtual void init(
         Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-        Manager* manager);
-    virtual LimaStatusCode process(AnalysisContent& analysis) const;
+        Manager* manager) override;
+    virtual LimaStatusCode process(AnalysisContent& analysis) const override;
     //}@
 
 };

@@ -16,6 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 add_subdirectory(eng)
 add_subdirectory(fre)
+add_subdirectory(por)
 add_subdirectory(StopLists)
 
 ########### install files ###############

@@ -29,7 +29,6 @@
 use strict;
 use IO;
 use Benchmark;
-use lib "/home/gael/Logiciels/SVMTool-1.3.1/lib/";
 use Data::Dumper;
 use SVMTool::DICTIONARY;
 use SVMTool::SVMTAGGER;

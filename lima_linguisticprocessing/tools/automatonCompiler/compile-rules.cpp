@@ -31,7 +31,7 @@
 #include <config.h>
 #endif
 
-#include "compilerExceptions.h"
+#include "libautomatonCompiler/compilerExceptions.h"
 #include "libautomatonCompiler/recognizerCompiler.h"
 
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
@@ -74,10 +74,10 @@ using namespace Lima::Common::Misc;
 // declarations
 //****************************************************************************
 // help mode & usage
-static const string USAGE("usage : compile-rules [-h] -ooutputfile rulesfile\n");
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : compile-rules [-h] -ooutputfile rulesfile\n"));
 
-static const string HELP("A compiler for the rules of the Named Entities recognizer\n"
-                         +USAGE
+Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, ((std::string("A compiler for the rules of the Named Entities recognizer\n"
+                         +*USAGE
                          +"\n"
 +"-h : this help page\n"
 +"--output=file        : name of the output file for the compiled rules\n"
@@ -99,7 +99,7 @@ static const string HELP("A compiler for the rules of the Named Entities recogni
 +"--bin (or -r)  : read a binary file containing compiled rules : if \n"
 +"                 the --listTriggers is not set, print the rules on stdout\n"
 +"\n"
-+"rulesfile is the name of the file containing the rules in plain text\n");
++"rulesfile is the name of the file containing the rules in plain text\n"))));
 
 //****************************************************************************
 #define DEFAULT_COMMON_CONFIG "lima-common.xml"
@@ -155,7 +155,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     if (s=="-h" || s=="--help")
     {
       param.help=true;
-      cerr << HELP; exit(1);
+      cerr << *HELP; exit(1);
     }
     else if (s=="-r" || s=="--decompile" || s=="--bin")
       param.decompile=true;
@@ -203,7 +203,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
         if (i >= argc)
         {
           std::cerr << "no output filename given" << endl;
-          cerr << USAGE << endl;
+          cerr << *USAGE << endl;
           exit(1);
         }
         else
@@ -231,7 +231,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     else if (s[0]=='-')
     {
       std::cerr << "unrecognized option " <<  s << endl;
-      cerr << USAGE << endl;
+      cerr << *USAGE << endl;
       exit(1);
     }
     else
@@ -333,19 +333,24 @@ int run(int argc,char** argv)
     MediaId language = MediaticData::single().media(param.language);
     
     bool languageInitialized = false;
-    Q_FOREACH(QString configDir, configDirs)
+    QString lpConfigFile = findFileInPaths(configPath, param.lpConfigFile.c_str());
+    if (!lpConfigFile.isEmpty())
     {
-      if (QFileInfo(configDir + "/" + param.lpConfigFile.c_str()).exists())
+      if (QFileInfo::exists(lpConfigFile))
       {
-        XMLConfigurationFileParser lpconfig((configDir + "/" + param.lpConfigFile.c_str()).toUtf8().constData());
-        const string& langConfigFile=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
-        XMLConfigurationFileParser langParser((configDir + "/" + langConfigFile.c_str()).toUtf8().constData());
-        ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
-        LinguisticResources::changeable().initLanguage(
-          language,
-          module,
-          false); // don't load mainkeys in stringpool, no use
-        languageInitialized = true;
+        XMLConfigurationFileParser lpconfig(lpConfigFile.toUtf8().constData());
+        const string& langConfigFileName=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
+        QString langConfigFile = findFileInPaths(configPath, langConfigFileName.c_str());
+        if (!langConfigFile.isEmpty())
+        {
+          XMLConfigurationFileParser langParser(langConfigFile.toUtf8().constData());
+          ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+          LinguisticResources::changeable().initLanguage(
+            language,
+            module,
+            false); // don't load mainkeys in stringpool, no use
+          languageInitialized = true;
+        }
       }
     }
     if(!languageInitialized)
@@ -367,17 +372,21 @@ int run(int argc,char** argv)
       bool modexInitialized = false;
       Q_FOREACH(QString configDir, configDirs)
       {
-        if (QFileInfo(configDir + "/" + param.modexConfigFile.c_str()).exists())
+        if (QFileInfo::exists(configDir + "/" + param.modexConfigFile.c_str()))
         {
-          XMLConfigurationFileParser modexconfig((configDir + "/" + param.modexConfigFile.c_str()).toUtf8().constData());
-          vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
-          for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+          QString modexConfigFile = findFileInPaths(configPath, param.modexConfigFile.c_str());
+          if (!modexConfigFile.isEmpty())
           {
-            LOGINIT("Automaton::Compiler");
-            LDEBUG << "load library " << *it;
-            Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+            XMLConfigurationFileParser modexconfig(modexConfigFile.toUtf8().constData());
+            vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
+            for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+            {
+              LOGINIT("Automaton::Compiler");
+              LDEBUG << "load library " << *it;
+              Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+            }
+            modexInitialized = true;
           }
-          modexInitialized = true;
         }
       }
       if(!modexInitialized)
@@ -494,7 +503,7 @@ int run(int argc,char** argv)
 //   {
 //     std::cerr << e.what() << std::endl;
 //   }
-  TIMELOGINIT;
+  //TIMELOGINIT;
   TimeUtils::logAllCumulatedTime("And at last");
 
 

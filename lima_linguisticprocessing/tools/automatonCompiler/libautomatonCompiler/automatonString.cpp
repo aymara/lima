@@ -41,15 +41,26 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace Automaton {
 
+// to define sub indices in groups
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_FIRST, (QLatin1String("first")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_CURRENT, (QLatin1String("current")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_NEXT, (QLatin1String("next")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CONSTRAINT_GROUP_LAST, (QLatin1String("last")));
+
+// representing infinite loop on same state (Kleene star)
+// by a special max value in optionality {0-n} or {0-N}
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_INFINITY_LC, (QLatin1String("n")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_INFINITY_UC, (QLatin1String("N")));
+
 // for debug only
-const LimaString STRING_OPEN_DUMMY_SEQUENCE=Common::Misc::utf8stdstring2limastring("_(");
-const LimaString STRING_CLOSE_DUMMY_SEQUENCE=Common::Misc::utf8stdstring2limastring(")_");
-const LimaString OUTPUT_NOKEEP_BEGIN=Common::Misc::utf8stdstring2limastring("[");
-const LimaString OUTPUT_NOKEEP_END=Common::Misc::utf8stdstring2limastring("]");
-const LimaString OUTPUT_NEGATIVE=Common::Misc::utf8stdstring2limastring("^");
-const LimaString OUTPUT_QUOTE=Common::Misc::utf8stdstring2limastring("\"");
-const LimaString OUTPUT_OR=Common::Misc::utf8stdstring2limastring(" OR ");
-const LimaString OUTPUT_NONE=Common::Misc::utf8stdstring2limastring("none");
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_OPEN_DUMMY_SEQUENCE, (Common::Misc::utf8stdstring2limastring("_(")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_CLOSE_DUMMY_SEQUENCE, (Common::Misc::utf8stdstring2limastring(")_")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, OUTPUT_NOKEEP_BEGIN, (Common::Misc::utf8stdstring2limastring("[")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, OUTPUT_NOKEEP_END, (Common::Misc::utf8stdstring2limastring("]")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, OUTPUT_NEGATIVE, (Common::Misc::utf8stdstring2limastring("^")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, OUTPUT_QUOTE, (Common::Misc::utf8stdstring2limastring("\"")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, OUTPUT_OR, (Common::Misc::utf8stdstring2limastring(" OR ")));
+Q_GLOBAL_STATIC_WITH_ARGS(LimaString, OUTPUT_NONE, (Common::Misc::utf8stdstring2limastring("none")));
 
 //***********************************************************************
 // constructors
@@ -728,6 +739,7 @@ void AutomatonString::removeArtificialSequences(const bool inSubPart) {
 //       }
     }
   }
+  default: return;
   }
 }
 
@@ -791,6 +803,7 @@ void AutomatonString::removeUnitSequences() {
       }
     }
   }
+  default: return;
   }
 }
 
@@ -844,14 +857,14 @@ int AutomatonString::parseModifiersPost(const LimaString& s,
 #ifdef DEBUG_LP
     LDEBUG << "AutomatonString::parseModifiersPost offsets" << offsetOpen << offsetMinus << offsetClose << s.mid(offsetOpen+1,offsetMinus-offsetOpen-1);
 #endif
-    m_minOccurrences=s.mid(offsetOpen+1,offsetMinus-offsetOpen-1).toInt();
+    m_minOccurrences=s.midRef(offsetOpen+1,offsetMinus-offsetOpen-1).toInt();
     
     // max occurrences can be infinite
     LimaString maxString=s.mid(offsetMinus+1,
                               offsetClose-offsetMinus-1);
     
-    if (maxString == STRING_INFINITY_LC || 
-        maxString == STRING_INFINITY_UC) {
+    if (maxString == *STRING_INFINITY_LC || 
+        maxString == *STRING_INFINITY_UC) {
       m_maxOccurrences=INFINITE_OCC;
     }
     else {
@@ -916,14 +929,14 @@ bool AutomatonString::parseModifiers(const LimaString& s,
     int offsetClose=last;
     int offsetMinus=rfindSpecialCharacter(s,CHAR_CARDINALITY_UNTIL_RE,
                                                    last);
-    m_minOccurrences=s.mid(offsetOpen+1, offsetMinus-offsetOpen).toInt();
+    m_minOccurrences=s.midRef(offsetOpen+1, offsetMinus-offsetOpen).toInt();
     
     // max occurrences can be infinite
     LimaString maxString=s.mid(offsetMinus+1,
                                       offsetClose-offsetMinus-1);
     
-    if (maxString == STRING_INFINITY_LC || 
-        maxString == STRING_INFINITY_UC) {
+    if (maxString == *STRING_INFINITY_LC || 
+        maxString == *STRING_INFINITY_UC) {
       m_maxOccurrences=INFINITE_OCC;
     }
     else {
@@ -1028,8 +1041,8 @@ void AutomatonString::parseUnit(const LimaString& str,
 //***********************************************************************
 LimaString AutomatonString::applyModifiers(const LimaString& s) const {
   LimaString result;
-  if (! m_keep)   { result+=OUTPUT_NOKEEP_BEGIN; }
-  if (m_negative) { result+=OUTPUT_NEGATIVE; }
+  if (! m_keep)   { result+=*OUTPUT_NOKEEP_BEGIN; }
+  if (m_negative) { result+=*OUTPUT_NEGATIVE; }
   result+=s;
 
   // also constraints
@@ -1050,7 +1063,7 @@ LimaString AutomatonString::applyModifiers(const LimaString& s) const {
     oss << CHAR_CARDINALITY_CLOSE_RE;
     result+=oss.readAll();
   }
-  if (! m_keep)   { result+=OUTPUT_NOKEEP_END; }
+  if (! m_keep)   { result+=*OUTPUT_NOKEEP_END; }
 
   return result;
 }
@@ -1140,7 +1153,7 @@ LimaString AutomatonString::getModifier() const {
 LimaString AutomatonString::getStringDebug() const {
   switch(m_type) {
   case UNIT: {
-    return OUTPUT_QUOTE+m_unit+OUTPUT_QUOTE+getModifier();
+    return *OUTPUT_QUOTE+m_unit+*OUTPUT_QUOTE+getModifier();
   }
   case SEQUENCE: {
     LimaString str;
@@ -1151,7 +1164,7 @@ LimaString AutomatonString::getStringDebug() const {
       }
     }
     if (isArtificialSequence()) {
-      return STRING_OPEN_DUMMY_SEQUENCE+str+STRING_CLOSE_DUMMY_SEQUENCE+getModifier();
+      return *STRING_OPEN_DUMMY_SEQUENCE+str+*STRING_CLOSE_DUMMY_SEQUENCE+getModifier();
     }
     else {
       return CHAR_GROUP_OPEN_RE+str+CHAR_GROUP_CLOSE_RE+getModifier();
@@ -1162,13 +1175,16 @@ LimaString AutomatonString::getStringDebug() const {
     if (m_parts.size()) {
       str=m_parts[0].getStringDebug();
       for (std::size_t i(1); i<m_parts.size(); i++) {
-        str+=OUTPUT_OR+m_parts[i].getStringDebug();
+        str+=*OUTPUT_OR+m_parts[i].getStringDebug();
       }
     }
     return CHAR_GROUP_OPEN_RE+str+CHAR_GROUP_CLOSE_RE+getModifier();
   }
   case UNKNOWN_TYPE: {
-    return OUTPUT_NONE;
+    return *OUTPUT_NONE;
+  }
+  default: {
+    return LimaString();
   }
   }
   return LimaString();
@@ -1466,14 +1482,14 @@ bool AutomatonString::existsConstraint(const LimaString& subindex,
 
   c=0;
 
-  if (subindex == STRING_CONSTRAINT_GROUP_FIRST) {
+  if (subindex == *STRING_CONSTRAINT_GROUP_FIRST) {
     if (isUnit() || m_parts.size() < 1) { 
       return false; 
     }
     return m_parts[0].existsConstraint(c);
   }
-  else if (subindex == STRING_CONSTRAINT_GROUP_CURRENT ||
-           subindex == STRING_CONSTRAINT_GROUP_NEXT) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_CURRENT ||
+           subindex == *STRING_CONSTRAINT_GROUP_NEXT) {
     if (isUnit() || m_parts.size() < 2) { 
       return false; 
     }
@@ -1481,7 +1497,7 @@ bool AutomatonString::existsConstraint(const LimaString& subindex,
             m_parts[1].existsConstraint(c) ||
             m_parts[2].existsConstraint(c));
   }                                                           
-  else if (subindex == STRING_CONSTRAINT_GROUP_LAST) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_LAST) {
     if (isUnit() || m_parts.size() < 3) { 
       return false; 
     }
@@ -1680,16 +1696,16 @@ void AutomatonString::insertConstraint(const LimaString& subindex,
     split();
   }
   
-  if (subindex == STRING_CONSTRAINT_GROUP_FIRST) {
+  if (subindex == *STRING_CONSTRAINT_GROUP_FIRST) {
     insertConstraintInPart(1,constraint);
   }
-  else if (subindex == STRING_CONSTRAINT_GROUP_CURRENT) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_CURRENT) {
     insertConstraintInPart(2,constraint);
   }                                                           
-  else if (subindex == STRING_CONSTRAINT_GROUP_NEXT) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_NEXT) {
     insertConstraintInPart(2,constraint);
   }
-  else if (subindex == STRING_CONSTRAINT_GROUP_LAST) {
+  else if (subindex == *STRING_CONSTRAINT_GROUP_LAST) {
     insertConstraintInPart(m_parts.size(),constraint);
   }                                                           
   else {

@@ -139,10 +139,14 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   {
     m_groupName = toString(attributes.value("name"));
     LTRACE << "group name is " << m_groupName;
-  
+    int32_t indName=attributes.index("name"); // index for the attribute 'name' (not always the first)
+    
     m_configuration.addGroupNamedForModuleNamed(m_groupName, m_moduleName);
-    for (int32_t i=1;i<attributes.length();i++)
+    for (int32_t i=0;i<attributes.length();i++)
     {
+      if (i==indName) { // if attribute 'name', ignored (already treated)
+        continue;
+      }
       string key=toString(attributes.localName(i));
       string value=toString(attributes.value(i));
       m_configuration.addAttributeForGroupInModule(key,value,m_groupName,m_moduleName);

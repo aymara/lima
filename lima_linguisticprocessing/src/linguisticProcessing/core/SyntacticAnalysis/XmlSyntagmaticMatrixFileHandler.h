@@ -62,21 +62,24 @@ public:
     // -----------------------------------------------------------------------
     //  Implementations of the SAX DocumentHandler interface
     // -----------------------------------------------------------------------
-    bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
-    
-    bool characters(const QString& chars);
-    
-    bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
-    
-    
-    
+    bool endElement(const QString & namespaceURI, 
+                    const QString & name, 
+                    const QString & qName) override;
+
+    bool characters(const QString& chars) override;
+
+    bool startElement(const QString & namespaceURI, 
+                      const QString & name, 
+                      const QString & qName, 
+                      const QXmlAttributes & attributes) override;
+
     // -----------------------------------------------------------------------
     //  Implementations of the SAX ErrorHandler interface
     // -----------------------------------------------------------------------
-    bool warning(const QXmlParseException & exception);
-    bool error(const QXmlParseException & exception);
-    bool fatalError(const QXmlParseException & exception);
-    
+    bool warning(const QXmlParseException & exception) override;
+    bool error(const QXmlParseException & exception) override;
+    bool fatalError(const QXmlParseException & exception) override;
+
 private:
     /**
     * The structure where data will be stored

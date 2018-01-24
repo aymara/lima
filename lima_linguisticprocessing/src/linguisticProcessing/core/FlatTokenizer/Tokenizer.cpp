@@ -52,8 +52,7 @@ namespace LinguisticProcessing
 namespace FlatTokenizer
 {
 
-static SimpleFactory<MediaProcessUnit,Tokenizer> tokenizerFactory(FLATTOKENIZER_CLASSID);
-
+static SimpleFactory<MediaProcessUnit,Tokenizer> tokenizerFactory(FLATTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
 class TokenizerPrivate
 {
@@ -68,7 +67,8 @@ public:
 };
 
 TokenizerPrivate::TokenizerPrivate() : _automaton()
-{}
+{
+}
 
 TokenizerPrivate::~TokenizerPrivate()
 {

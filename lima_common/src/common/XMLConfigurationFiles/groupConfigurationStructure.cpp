@@ -72,7 +72,7 @@ class GroupConfigurationStructurePrivate
   GroupConfigurationStructurePrivate(const std::string& name);
   GroupConfigurationStructurePrivate(const GroupConfigurationStructurePrivate& group);
   GroupConfigurationStructurePrivate& operator=(const GroupConfigurationStructurePrivate& group);
-  virtual ~GroupConfigurationStructurePrivate();
+  ~GroupConfigurationStructurePrivate();
 
   MSS m_params;
   MSDS m_lists;
@@ -156,14 +156,16 @@ std::string& GroupConfigurationStructure::getName()
 std::string& GroupConfigurationStructure::getAttribute(const std::string& key)
 {
   MSS::iterator it=m_d->m_attributes.find(key);
-  if (it == m_d->m_attributes.end()) throw NoSuchAttribute(key);
+  if (it == m_d->m_attributes.end()) 
+    throw NoSuchAttribute(m_d->m_groupName+"["+key+"]");
   return (it->second);
 }
 
 string& GroupConfigurationStructure::getParamsValueAtKey(const string& key)
 {
   MSS::iterator it = m_d->m_params.find(key);
-  if (it == m_d->m_params.end()) throw NoSuchParam(key);
+  if (it == m_d->m_params.end()) 
+    throw NoSuchParam(m_d->m_groupName+"["+key+"]");
   //    cerr << "Found param value " << ((*it).second) << endl;
   return ((*it).second);
 }
@@ -192,14 +194,16 @@ getStringParameter(const std::string& key) {
 deque<string>& GroupConfigurationStructure::getListsValueAtKey(const string& key)
 {
   MSDS::iterator it = m_d->m_lists.find(key);
-  if (it == m_d->m_lists.end()) throw NoSuchList(key);
+  if (it == m_d->m_lists.end()) 
+    throw NoSuchList(m_d->m_groupName+"["+key+"]");
   return (*it).second;
 }
 
 std::map<std::string,std::string>& GroupConfigurationStructure::getMapAtKey(const std::string& key)
 {
   MSMSS::iterator it = m_d->m_maps.find(key);
-  if (it == m_d->m_maps.end()) throw NoSuchMap(key);
+  if (it == m_d->m_maps.end()) 
+    throw NoSuchMap(m_d->m_groupName+"["+key+"]");
   return it->second;
 }
 
@@ -230,7 +234,8 @@ void GroupConfigurationStructure::addListNamed(const string& listName)
 void GroupConfigurationStructure::addItemInListNamed(const string& item, const string& listName)
 {
   MSDS::iterator it = m_d->m_lists.find(listName);
-  if (it == m_d->m_lists.end()) throw NoSuchList(listName);
+  if (it == m_d->m_lists.end()) 
+    throw NoSuchList(m_d->m_groupName+"["+listName+"]");
   /*
   deque<string> list((*it).second);
   list.push_back(item);
@@ -248,7 +253,8 @@ void GroupConfigurationStructure::addMap(const std::string& mapName)
 void GroupConfigurationStructure::addEntryInMap(const std::string& mapName,const std::string& key,const std::string& value)
 {
   MSMSS::iterator it=m_d->m_maps.find(mapName);
-  if (it == m_d->m_maps.end()) throw NoSuchMap(mapName);
+  if (it == m_d->m_maps.end()) 
+    throw NoSuchMap(m_d->m_groupName+"["+mapName+"]");
   (it->second)[key]=value;
 }
 
@@ -256,7 +262,8 @@ std::deque<ItemWithAttributes>& GroupConfigurationStructure::
 getListOfItems(const std::string& key)
 {
   MSDI::iterator it = m_d->m_listsOfItems.find(key);
-  if (it == m_d->m_listsOfItems.end()) throw NoSuchList(key);
+  if (it == m_d->m_listsOfItems.end()) 
+    throw NoSuchList(m_d->m_groupName+"["+key+"]");
   return (*it).second;
 }
 
@@ -264,7 +271,8 @@ std::map<std::string,ItemWithAttributes>& GroupConfigurationStructure::
 getMapOfItems(const std::string& key)
 {
   MSMSI::iterator it = m_d->m_mapsOfItems.find(key);
-  if (it == m_d->m_mapsOfItems.end()) throw NoSuchMap(key);
+  if (it == m_d->m_mapsOfItems.end()) 
+    throw NoSuchMap(m_d->m_groupName+"["+key+"]");
   return it->second;
 }
 
@@ -279,7 +287,8 @@ addItemInListOfItems(const std::string& key,
                      const ItemWithAttributes& item)
 {
   MSDI::iterator it = m_d->m_listsOfItems.find(key);
-  if (it == m_d->m_listsOfItems.end()) throw NoSuchList(key);
+  if (it == m_d->m_listsOfItems.end()) 
+    throw NoSuchList(m_d->m_groupName+"["+key+"]");
   (*it).second.push_back(item);
 }
 
@@ -295,7 +304,8 @@ addEntryInMapOfItems(const std::string& mapName,
                      const ItemWithAttributes& item)
 {
   MSMSI::iterator it = m_d->m_mapsOfItems.find(mapName);
-  if (it == m_d->m_mapsOfItems.end()) throw NoSuchMap(mapName);
+  if (it == m_d->m_mapsOfItems.end()) 
+    throw NoSuchMap(m_d->m_groupName+"["+mapName+"]");
   ((*it).second)[key]=item;
 }
 
@@ -303,7 +313,8 @@ void GroupConfigurationStructure::
 changeListToListOfItems(const std::string &listName)
 {
   MSDS::iterator it = m_d->m_lists.find(listName);
-  if (it == m_d->m_lists.end()) throw NoSuchList(listName);
+  if (it == m_d->m_lists.end()) 
+    throw NoSuchList(m_d->m_groupName+"["+listName+"]");
 
   // create new list of items
   m_d->m_listsOfItems[listName]=deque<ItemWithAttributes>(0);
@@ -322,7 +333,8 @@ void GroupConfigurationStructure::
 changeMapToMapOfItems(const std::string &mapName)
 {
   MSMSS::iterator it = m_d->m_maps.find(mapName);
-  if (it == m_d->m_maps.end()) throw NoSuchMap(mapName);
+  if (it == m_d->m_maps.end()) 
+    throw NoSuchMap(m_d->m_groupName+"["+mapName+"]");
 
   // create new map of items
   m_d->m_mapsOfItems[mapName]=map<string,ItemWithAttributes>();

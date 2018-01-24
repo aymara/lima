@@ -101,7 +101,7 @@ public:
                        const std::string& pipeline,
                        const std::map<std::string, AbstractAnalysisHandler*>& handlers,
                        const std::set<std::string>& inactiveUnits = std::set<std::string>(),
-                       Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const = 0;
+                       Lima::StopAnalyze const& stopAnalyze = STOP_ANALYZE_DEFAULT) const override = 0;
 };
 
 /**
@@ -138,12 +138,12 @@ public:
   virtual void configure(
     Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
     std::deque<std::string> langs,
-    std::deque<std::string> pipelines) = 0;
+    std::deque<std::string> pipelines) override = 0;
 
   /**
    * This function create a LinguisticProcessing client 
    */
-  virtual std::shared_ptr< AbstractProcessingClient > createClient() const = 0;
+  virtual std::shared_ptr< AbstractProcessingClient > createClient() const override = 0;
 
   /**
    * virtual destructor of the LinguisticProcessing client factory

@@ -28,13 +28,14 @@ SET(lima-lp-easyxmldumper_LIB_SRCS
    forme.cpp
 )
 
-add_library(lima-lp-easyxmldumper SHARED ${lima-lp-easyxmldumper_LIB_SRCS})
+DECLARE_LIMA_PLUGIN(lima-lp-easyxmldumper)
 
 target_link_libraries(lima-lp-easyxmldumper lima-lp-lineartextrepresentation lima-lp-textsegmentation lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-syntacticanalysis lima-lp-bagofwords lima-lp-linguisticanalysisstructure lima-lp-morphologicanalysis)
 
 set_target_properties(lima-lp-easyxmldumper PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-easyxmldumper DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-easyxmldumper DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

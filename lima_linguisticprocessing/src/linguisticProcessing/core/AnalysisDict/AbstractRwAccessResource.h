@@ -23,7 +23,7 @@
 #ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICTABSTRACTRWACCESSRESOURCE_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICTABSTRACTRWACCESSRESOURCE_H
 
-#include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
+#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 #include "common/misc/AbstractRwAccessByString.h"
 #include "common/misc/AbstractAccessByString.h"
 
@@ -36,13 +36,14 @@ namespace AnalysisDict {
 */
 class AbstractRwAccessResource : public AbstractAccessResource
 {
+  Q_OBJECT
 public:
 
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager) = 0;
+      Manager* manager) override = 0;
     
-    virtual Common::AbstractAccessByString* getAccessByString() const = 0;
+    virtual Common::AbstractAccessByString* getAccessByString() const override = 0;
  
     virtual Common::AbstractModifierOnAccessByString* getRwAccessByString() const = 0;
 

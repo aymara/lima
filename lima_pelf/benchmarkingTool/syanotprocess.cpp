@@ -33,7 +33,7 @@ const QString& otherFilename, const QString& outputFilename) : QProcess()
       setWorkingDirectory(workingDir);
   else
       setWorkingDirectory("/tmp");
-  QString commandLine = QString("syanot --comparewith=%1 --utterances=%2 %3").arg(otherFilename).arg(utterances).arg(outputFilename);
+  QString commandLine = QString(QLatin1String("syanot --comparewith=%1 --utterances=%2 %3")).arg(otherFilename).arg(utterances).arg(outputFilename);
   qDebug() << "SyanotProcess::SyanotProcess Issuing command " << commandLine;
   start(commandLine);
 }

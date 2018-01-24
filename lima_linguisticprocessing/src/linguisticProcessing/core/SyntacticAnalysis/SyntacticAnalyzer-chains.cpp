@@ -806,8 +806,7 @@ LinguisticGraphVertex SyntacticAnalyzerChains::unstackUptoChainEnd(
 //  LDEBUG << "unstackUptoChainEnd " << (type==NOMINAL?"nominal":(type==VERBAL?"verbal":"none"));
   CVertexDataPropertyMap dataMap = get( vertex_data, (*data->iterator()->getGraph()) );
 
-  std::vector< ChainStackTuple >::const_reverse_iterator rit, rit_end;
-  rit = pile.rbegin(); rit_end = pile.rend();
+  auto rit = pile.rbegin(), rit_end = pile.rend();
   for (; rit != rit_end; rit++)
   {
     if ( data->matrices()->canChainEndBy(dataMap[(*rit).get<0>()], type))

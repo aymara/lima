@@ -73,6 +73,11 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
 {
 //   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
+  for (auto path = paths.begin(); path != paths.end(); ++path)
+  {
+    if (!path->isEmpty() && QDir(*path).exists())
+      configDirs << *path;
+  }
   for (auto it = projects.begin(); it != projects.end(); ++it)
   {
     QString project = *it;
@@ -136,11 +141,6 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
         }
       }
     }
-  }
-  for (auto path = paths.begin(); path != paths.end(); ++path)
-  {
-    if (!path->isEmpty() && QDir(*path).exists())
-      configDirs << *path;
   }
 
 //   qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
@@ -212,7 +212,8 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
       resourcesDirs << *path;
   }
   
-//   qDebug() << "buildResourcesDirectoriesList result:" << resourcesDirs;
+  LOGINIT("FilesReporting");
+  LINFO << "Resources directories are:" << resourcesDirs;
   return resourcesDirs;
 }
 
@@ -221,11 +222,13 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   QStringList pathsList = paths.split(separator);
   Q_FOREACH(QString path, pathsList)
   {
-    if (QFileInfo(path+ "/" + fileName).exists())
+    if (QFileInfo::exists(path+ "/" + fileName))
     {
 #ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+      {
       LOGINIT("FilesReporting");
       LDEBUG << "File found:" << path+ "/" + fileName;
+      }
 #endif
       return path+ "/" + fileName;
     }

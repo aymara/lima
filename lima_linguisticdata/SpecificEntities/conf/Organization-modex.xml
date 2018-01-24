@@ -43,7 +43,7 @@
     </group>
     <group name="OrganizationMicros" class="SpecificEntitiesMicros">
       <list name="Organization.ORGANIZATION">
-        <item value="NNP"/>
+        <item value="PROPN"/>
       </list>
     </group>
   </module>
@@ -62,6 +62,24 @@
     <group name="OrganizationMicros" class="SpecificEntitiesMicros">
       <list name="Organization.ORGANIZATION">
         <item value="NPP"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-por.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-por.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="NPROP"/>
       </list>
     </group>
   </module>

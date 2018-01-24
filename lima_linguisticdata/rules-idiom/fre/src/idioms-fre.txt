@@ -545,8 +545,8 @@ D;;A;[S]mère;[S]&maison [S]mère;nom féminin;
 D;;A;[S]mère;[S]&maison [S]mère;nom féminin;maison mère
 D;;A;[S]&métrage;[J]long [S]&métrage;nom masculin;
 D;;A;[S]&métrage;[J]long [S]&métrage;nom masculin;long métrage
-D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;
-D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;Premier Ministre
+D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;premier ministre
+D;;A;[S]&Ministre;[J]Premier [S]&Ministre;nom masculin;premier ministre
 D;;A;[S]mouche;[S]&poids [S]mouche;nom masculin;
 D;;A;[S]mouche;[S]&poids [S]mouche;nom masculin;poids mouche
 D;;A;soit-il;ainsi soit-il;interjection;
@@ -642,6 +642,7 @@ D;;D;ça;ça va;interjection;
 D;;D;c'est;c'est vrai;interjection;
 D;;D;chance;bonne chance;interjection;
 D;;D;coeur;par coeur;adverbe;
+GC;;D;comme;tout comme;conjonction de coordination;
 D;;D;comme;tout comme;préposition;
 D;;D;côté;de côté;adverbe;
 D;;D;d'autre;de côté et d'autre;adverbe;
@@ -1253,6 +1254,7 @@ D;i;D;attendant;en attendant;adverbe;
 D;i;D;autre;autre que;préposition;autre que
 D;i;D;autre;autre qu';préposition;autre que
 D;i;D;avance;d' avance;adverbe;d'avance
+GC;i;D;avant;bien avant de;préposition verbale;bien avant de
 D;i;D;avant;avant de;préposition verbale;avant de
 D;i;D;avant;avant d';préposition verbale;avant de
 D;i;D;avant;avant qu';conjonction de subordination;avant que
@@ -1364,12 +1366,11 @@ D;i;D;point;sur le point de;préposition verbale;sur le point de
 D;i;D;point;sur le point d';préposition verbale;sur le point de
 D;i;D;préférence;de préférence;adverbe;
 D;i;D;premier;au premier abord;adverbe;
+GC;;D;près;près de;adverbe;
 D;i;D;près;près de;préposition;près de
 D;i;D;près;près des;préposition article pluriel;près de
-D;i;D;près;près des;préposition;près de
 D;i;D;près;près d';préposition;près de
 D;i;D;près;près du;préposition article;près de
-D;i;D;près;près du;préposition;près de
 D;i;D;propos;à propos;adverbe;
 D;i;D;quantité;une quantité d';déterminant quantité;une quantité de
 D;i;D;quantité;une quantité de;déterminant quantité;une quantité de
@@ -1405,7 +1406,6 @@ D;;;mouvant;sable mouvant;nom masculin;
 D;;;nez;se (pp) [V]&bouffer le nez;verbe pronominal;se bouffer le nez
 ;;D;plus;plus de;adverbe;D;;A;Amérique;Amérique du Nord;nom propre féminin;
 D;;;[V]&pourlécher;s' (pp) en [V]&pourlécher;verbe pronominal;s'en pourlécher
-;;D;près;près de;préposition;
 D;;;retape;[V]&faire (D) la retape;verbe transitif;faire la retape
 D;;;[V]&revenir;s' (pp) en [V]&revenir;verbe pronominal;s'en revenir
 D;;;rouge;se (pp) [V]&fâcher tout rouge;verbe pronominal;se fâcher tout rouge
@@ -2550,9 +2550,9 @@ F;;D;cause;[S]&mise en cause;nom féminin;mise en cause
 F;;D;cause;[S]&remise en cause;nom féminin;remise en cause
 F;;D;contraire;au contraire;adverbe;
 F;;D;cours;au cours de;préposition;au cours de
-F;;D;cours;au cours des;préposition;au cours de
+F;;D;cours;au cours des;préposition article pluriel;au cours de
 F;;D;cours;au cours d';préposition;au cours de
-F;;D;cours;au cours du;préposition;au cours de
+F;;D;cours;au cours du;préposition article;au cours de
 F;;D;délai;sans délai;adverbe;
 F;;D;face;face à;préposition;
 F;;D;face;face à;préposition;face à
@@ -2561,9 +2561,9 @@ F;;D;face;face aux;préposition article;face à
 F;;D;faute;faute de;préposition subs;faute de
 F;;D;faute;faute d';préposition subs;faute de
 F;;D;fil;au fil de;préposition;au fil de
-F;;D;fil;au fil des;préposition;au fil de
+F;;D;fil;au fil des;préposition article pluriel;au fil de
 F;;D;fil;au fil d';préposition;au fil de
-F;;D;fil;au fil du;préposition;au fil de
+F;;D;fil;au fil du;préposition article;au fil de
 F;;D;futur;dans le futur;adverbe;
 F;;D;instant;pour l' instant;adverbe;pour l'instant
 F;;D;même;même si;conjonction de subordination;
@@ -2873,6 +2873,7 @@ I;;A;entremise;par l' entremise du;préposition;par l'entremise de
 I;;A;évêque;pont l' évêque;nom masculin;pont-l'évêque
 I;;A;évêque;pont-l' évêque;nom masculin;pont-l'évêque
 I;;A;facto;ipso facto;adverbe;
+GC;;A;consort;[S]&prince consort;nom masculin;
 I;;A;Galles;[S]&prince de Galles;nom masculin;
 I;;A;Galles;[S]&prince de Galles;nom masculin;prince de Galles
 I;;A;homo;ecce homo;nom masculin;
@@ -3023,7 +3024,8 @@ ID;i;A;quant;quant aux;préposition article pluriel;quant à
 ID;i;A;Quant;Quant à;préposition;quant à
 ID;i;A;Quant;Quant au;préposition article;quant à
 ID;i;A;Quant;Quant aux;préposition article pluriel;quant à
-ID;i;A;[D]aujourd';[D]aujourd' hui;adverbe;aujourd'hui
+ID;i;A;[D]aujourd;[D]aujourd hui;adverbe;aujourd'hui
+DI;i;A;[D]aujourd';[D]aujourd' hui;adverbe;aujourd'hui
 ID;i;A;extenso;in extenso;adverbe;
 ID;i;A;extremis;in extremis;adverbe;
 ID;i;A;facto;de facto;adverbe;
@@ -3776,3 +3778,12 @@ GC;;;qualité;en qualité d';adverbe;
 GC;;A;clé;[S]&mot clé;nom masculin;mot-clé
 GC;;;suite;[V]&faire suite;verbe intransitif;faire suite
 GC;;A;bord;au bord;adverbe;
+GC;;Sérénissime;Son Altesse Sérénissime;nom masculin;
+GC;;endéans;dans endéans;préposition;
+GC;;entre;entre autres;adverbe;
+GC;;quelle;quelle que soit;préposition;quel que soit
+GC;;quel;quelle que soit;préposition;quel que soit
+GC;;entre;d' entre;préposition;d'entre
+GC;;contre;par contre;adverbe;
+GC;;certain;un certain nombre;pronom général;
+GC;;chez;de chez;préposition;

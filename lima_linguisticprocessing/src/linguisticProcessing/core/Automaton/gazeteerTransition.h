@@ -50,19 +50,19 @@ class LIMA_AUTOMATON_EXPORT GazeteerTransition : public TransitionUnit
   virtual ~GazeteerTransition();
   GazeteerTransition& operator = (const GazeteerTransition&);
   
-  GazeteerTransition* clone() const;
-  GazeteerTransition* create() const;
+  GazeteerTransition* clone() const override;
+  GazeteerTransition* create() const override;
 
-  std::string printValue() const;
-  bool operator== (const TransitionUnit&) const;
+  std::string printValue() const override;
+  bool operator== (const TransitionUnit&) const override;
 
   bool compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                const LinguisticGraphVertex& vertex,
                AnalysisContent& analysis,
                const LinguisticAnalysisStructure::Token* token,
-               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const;
+               const LinguisticAnalysisStructure::MorphoSyntacticData* data) const override;
   
-  TypeTransition type() const;
+  TypeTransition type() const override;
   LimaString alias() const;
   const std::set<LimaString>& wordSet() const;
 

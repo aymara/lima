@@ -35,12 +35,13 @@ endif()
 # and sets Qt5_INCLUDES and Qt5_LIBRARIES variables.
 # Those variables can then be used with include_directories and target_link_libraries commands.
 macro(addQt5Modules )
-  set(_MODULES ${ARGV})
+  set(_MODULES Core ${ARGV})
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "" )
     #Use find_package to get includes and libraries directories
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     #set(CMAKE_AUTOMOC ON)
+<<<<<<< HEAD
     find_package(Qt5 COMPONENTS ${_MODULES})
     if (Qt5_FOUND)
       #Add Qt5 include and libraries paths to the sets
@@ -79,6 +80,17 @@ macro(addQt5Modules )
       endif (Qt4_FOUND)
 
     endif (Qt5_FOUND)
+=======
+    find_package(Qt5 REQUIRED ${_MODULES})
+    message("Found Qt5 ${Qt5Core_VERSION}")
+    #Add Qt5 include and libraries paths to the sets
+    foreach( _module ${_MODULES})
+      message("Adding module ${_module}")
+      set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5${_module}_INCLUDE_DIRS} )
+      set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5${_module}_LIBRARIES} )
+      #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5${_module}_EXECUTABLE_COMPILE_FLAGS}")
+    endforeach()
+>>>>>>> master
   endif()
  endmacro()
 

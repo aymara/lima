@@ -132,7 +132,7 @@ BoWTokenPrivate::BoWTokenPrivate(const LimaString& str,
   else
   {
     m_lemma=str.mid(0,i);
-    m_category= str.mid(i+1).toInt();
+    m_category= str.midRef(i+1).toInt();
   }
 
 //   BOWLOGINIT;
@@ -259,7 +259,7 @@ BoWToken::BoWToken(const LimaString& str,
   else
   {
     m_d->m_lemma=str.left(i);
-    m_d->m_category=str.mid(i+1).toInt();
+    m_d->m_category=str.midRef(i+1).toInt();
   }
 
 //   BOWLOGINIT;

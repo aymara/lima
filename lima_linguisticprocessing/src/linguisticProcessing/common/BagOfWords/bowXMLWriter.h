@@ -68,17 +68,21 @@ class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
   // root tags for valid XML if several documents
   void writeBoWDocumentsHeader();
   void writeBoWDocumentsFooter();
-  void writeDocumentsHeader(){writeBoWDocumentsHeader();};
-  void writeDocumentsFooter(){writeBoWDocumentsFooter();};
+  void writeDocumentsHeader() override {writeBoWDocumentsHeader();};
+  void writeDocumentsFooter() override {writeBoWDocumentsFooter();};
    
   // Implementation of AbstractBoWXMLWriter functions
-  void openSBoWNode(const Lima::Common::Misc::GenericDocumentProperties* properties, const std::string& elementName);
-  void openSBoWIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties, const std::string& elementName);
-  void processSBoWText(const BoWText* boWText, bool useIterators,
-                         bool useIndexIterator);
-  void processProperties(const Misc::GenericDocumentProperties* properties, bool useIterators,
-                         bool useIndexIterator);
-  void closeSBoWNode();
+  void openSBoWNode(const Lima::Common::Misc::GenericDocumentProperties* properties, 
+                    const std::string& elementName) override;
+  void openSBoWIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* properties, 
+                            const std::string& elementName) override;
+  void processSBoWText(const BoWText* boWText, 
+                       bool useIterators,
+                       bool useIndexIterator) override;
+  void processProperties(const Misc::GenericDocumentProperties* properties, 
+                         bool useIterators,
+                         bool useIndexIterator) override;
+  void closeSBoWNode() override;
   void writeIndexElement(const IndexElement& element);
   void setSpaces(const std::string& s);
   void incIndent();

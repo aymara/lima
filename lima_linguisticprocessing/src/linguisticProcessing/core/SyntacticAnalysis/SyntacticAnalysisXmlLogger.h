@@ -70,7 +70,7 @@ public:
    */
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    Manager* manager)
+    Manager* manager) override
   ;
 
   /**
@@ -81,7 +81,7 @@ public:
    * @return <I>LimaStatusCode</I> The error status of the logging.
    */
   virtual LimaStatusCode process(
-    AnalysisContent& analysis) const;
+    AnalysisContent& analysis) const override;
 
 private:
   

@@ -27,12 +27,6 @@ class FileUtilsTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-
-    void init();
-    void cleanup();
-
     void FileUtilsTest0();
     void FileUtilsTest1();
     void FileUtilsTest2();

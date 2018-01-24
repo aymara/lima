@@ -33,7 +33,11 @@ set_target_properties(lima-common-factory PROPERTIES
   VERSION ${LIMA_COMMON_LIB_VERSION} 
   SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 
-  install(TARGETS lima-common-factory DESTINATION ${LIB_INSTALL_DIR})
+  install(
+    TARGETS lima-common-factory 
+    DESTINATION ${LIB_INSTALL_DIR} 
+    COMPONENT runtime
+)
 
 
 ########### install files ###############

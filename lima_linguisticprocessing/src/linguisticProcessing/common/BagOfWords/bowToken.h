@@ -72,27 +72,27 @@ public:
 
   virtual ~BoWToken();
 
-  virtual void clear() {}
+  virtual void clear() override {}
 
-  virtual BoWToken* clone() const;
+  virtual BoWToken* clone() const override;
 //   virtual BoWToken* clone(const std::map<BoWToken*,BoWToken*>&) const;
 
   virtual Lima::LimaString getLemma(void) const;
   virtual Lima::LimaString getInflectedForm(void) const;
   LinguisticCode getCategory(void) const;
-  uint64_t getPosition(void) const;
-  uint64_t getLength(void) const;
+  uint64_t getPosition(void) const override;
+  uint64_t getLength(void) const override;
 
   /** size of the BoWToken is the number of parts in the token */
-  virtual uint64_t size(void) const;
+  virtual uint64_t size(void) const override;
 
   void setLemma(const Lima::LimaString& lemma);
   void setInflectedForm(const Lima::LimaString& inflectedForm);
   void setCategory(LinguisticCode c);
-  void setPosition(const uint64_t pos);
-  void setLength(const uint64_t len);
+  void setPosition(const uint64_t pos) override;
+  void setLength(const uint64_t len) override;
 
-  virtual Lima::LimaString getString(void) const;
+  virtual Lima::LimaString getString(void) const override;
 
   static void setInternalSeparator(const LimaChar c);
   static void setCompoundSeparator(const LimaChar c);
@@ -100,7 +100,7 @@ public:
   static LimaChar getInternalSeparator();
   static LimaChar getCompoundSeparator();
 
-  virtual BoWType getType() const;
+  virtual BoWType getType() const override;
 
   uint64_t getVertex() const;
   void setVertex(uint64_t vertex);
@@ -113,16 +113,16 @@ public:
    *
    * @return a singleton made of the value of the @ref getVertex function
    */
-  virtual std::set< uint64_t > getVertices() const;
+  virtual std::set< uint64_t > getVertices() const override;
 
   /** get a string of the BoWToken for output function
     * @param macroAccessor if not null, will output the human readable form of the macrocategory.
     * otherwise output the integer code
     */
-  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const;
+  virtual std::string getOutputUTF8String(const Common::PropertyCode::PropertyManager* macroManager = 0) const override;
 
   /** function used to identify a bowtoken in a text (used in BowDumper) */
-  virtual std::string getIdUTF8String() const;
+  virtual std::string getIdUTF8String() const override;
 
   friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWToken&);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWToken&);

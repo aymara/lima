@@ -46,13 +46,13 @@ public:
   // -----------------------------------------------------------------------
   //  Implementations of the SAX DocumentHandler interface
   // -----------------------------------------------------------------------
-  bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
+  bool endElement(const QString & namespaceURI, const QString & name, const QString & qName) override;
   
-  bool characters(const QString& chars);
+  bool characters(const QString& chars) override;
   
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
+  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes) override;
   
-  bool startDocument();
+  bool startDocument() override;
   
   inline bool hasFatalError() const { return m_hasFatalError; }
   

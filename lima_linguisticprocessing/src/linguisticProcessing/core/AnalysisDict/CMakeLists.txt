@@ -19,13 +19,14 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 
 ########### next target ###############
-set (lima-lp-analysisdict_MOC_HEADERS
+LIMALP_WRAP_HEADERS(analysisdict
   AbstractAnalysisDictionary.h
+  AbstractRwAccessResource.h
   EnhancedAnalysisDictionary.h
   FsaAccessResource.h
+  FsaRwAccessResource.h
+  MultiLevelAnalysisDictionary.h
 )
-
-qt5_wrap_cpp (lima-lp-analysisdict_MOC_OUTFILES ${lima-lp-analysisdict_MOC_HEADERS})
 
 SET(lima-lp-analysisdict_LIB_SRCS
    AnalysisDictionaryIterators.cpp 
@@ -47,7 +48,8 @@ target_link_libraries(lima-lp-analysisdict
 
 set_target_properties(lima-lp-analysisdict PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

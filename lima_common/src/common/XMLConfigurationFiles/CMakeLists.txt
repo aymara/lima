@@ -35,13 +35,14 @@ target_link_libraries(lima-common-xmlconfigurationfiles
 )
 
 set_target_properties(lima-common-xmlconfigurationfiles PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime)
 
 
 ########### install files ###############
 install(FILES
 #     xmlConfigurationFileHandler.h
-#     configurationStructure.h
+    configurationStructure.h
     xmlConfigurationFileParser.h
     groupConfigurationStructure.h
     xmlConfigurationFileExceptions.h

@@ -5,24 +5,12 @@ enable_testing()
 
 include(ExternalProject)
 
-option(WITH_ASAN "Enable address sanitizer" OFF)
-message("WITH_ASAN=${WITH_ASAN}")
-option(WITH_ARCH "Enable architecture optimizations" OFF)
-message("WITH_ARCH=${WITH_ARCH}")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
-
-if (NOT ("x${CMAKE_SYSTEM_NAME}" STREQUAL "xWindows"))
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-      if (WITH_ARCH)
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -O2")
-      else()
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=generic -march=x86-64")
-      endif()
-    endif()
-endif()
-
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
+include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
+set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
+set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
+message("PERL5LIB=$ENV{PERL5LIB}")
+message("PATH=$ENV{PATH}")
 macro (CompileLimaSubproject _project _dependsOn)
 
   ## Define test command.
@@ -52,9 +40,17 @@ macro (CompileLimaSubproject _project _dependsOn)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST} 
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} 
         -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}" 
-        -DBoost_DEBUG=ON -DWITH_ASAN:BOOL=${WITH_ASAN} 
+        -DBoost_DEBUG=ON 
+        -DWITH_ASAN:BOOL=${WITH_ASAN} 
+        -DWITH_ARCH:BOOL=${WITH_ARCH} 
+        -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
         -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
-
+        -DBOOST_ROOT:STRING=${BOOST_ROOT}
+        -DBOOST_LIBRARYDIR:STRING=${BOOST_LIBRARYDIR}
+        -DENVPATH:STRING=$ENV{PATH}
+        -DENVPERL5LIB:STRING=$ENV{PERL5LIB}
   )
 
   ## Add specified dependencies
@@ -95,19 +91,26 @@ macro (CompileLimaSubproject _project _dependsOn)
 endmacro ()
 
 CompileLimaSubproject(lima_common "")
+
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
 
 if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
 endif()
 
-# FIXME: Qt5 supported only (Qt4 not supported)
-find_package(Qt5 COMPONENTS Core)
-if (Qt5_FOUND)
-  CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
-  CompileLimaSubproject(lima_annoqt lima_common)
-endif (Qt5_FOUND)
+#CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
-install(FILES)
+CompileLimaSubproject(lima_annoqt lima_common)
+
+add_definitions(-D QT_NO_KEYWORDS)
+include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
+addQt5Modules(Core)
+if (Qt5Core_FOUND)
+  if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
+    CompileLimaSubproject(lima_gui lima_linguisticdata)
+  else()
+    message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
+  endif()
+endif()
 
 INCLUDE(CPack)

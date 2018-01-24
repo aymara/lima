@@ -34,7 +34,7 @@
 </testcase>
 <testcase id="eng.sa.5" type="bloquant">
   <call-parameters>
-      <param key="text" value="The house is beautiful. "/>
+      <param key="text" value="The car is beautiful. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -43,14 +43,14 @@
     </call-parameters>
   <expl>det</expl>
 <test id="eng.sa.5.1" trace=".sa.xml"
-    comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre 'The' et 'house' "
+    comment=" rules-eng-homodeps-pass1.txt. The det relation must be present between 'The' and 'car'."
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='The']/dependents/dep[@t='det']" 
     operator="exists"
     right="" />
 </testcase>
 <testcase id="eng.sa.6" type="bloquant">
   <call-parameters>
-      <param key="text" value="The very beautiful tall house. "/>
+      <param key="text" value="The very beautiful tall location. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -67,7 +67,7 @@
 <testcase id="eng.sa.7" type="bloquant">
   <comment> - contenu test modifié : l'ambiguite NC/Adj de little fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
   <call-parameters>
-      <param key="text" value="The very beautiful dark house. "/>
+      <param key="text" value="The very beautiful dark location. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -180,10 +180,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>DetIntSub</expl>
+  <expl>det</expl>
 <test id="eng.sa.14.1" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass1.txt. La relation DetIntSub doit exister entre 'what' et 'year' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='what']/dependents/dep[@t='DetIntSub']" 
+     comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre 'what' et 'year' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='what']/dependents/dep[@t='det']" 
     operator="exists"
     right="" />
 </testcase>
@@ -196,10 +196,10 @@
         <item value="query"/>
       </list>
     </call-parameters>
-  <expl>DetIntSub</expl>
+  <expl>det</expl>
 <test id="eng.sa.14.2" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass1.txt. La relation DetIntSub doit exister entre 'what' et 'year' "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='what']/dependents/dep[@t='DetIntSub']" 
+     comment=" rules-eng-homodeps-pass1.txt. La relation det doit exister entre 'what' et 'year' "
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='what']/dependents/dep[@t='det']" 
     operator="exists"
     right="" />
 </testcase>
@@ -424,7 +424,7 @@
 </testcase>
 <testcase id="eng.sa.30" type="bloquant">
   <call-parameters>
-      <param key="text" value="The cat of the neighbor is fat and ugly."/>
+      <param key="text" value="The cat of the neighbourood is fat and ugly."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -433,7 +433,7 @@
     </call-parameters>
   <expl>PREPSUB</expl>
 <test id="eng.sa.30.1" trace=".sa.xml"
-     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB doit exister entre 'cat' et 'neighbor' "
+     comment=" rules-eng-homodeps-pass2.txt. La relation PREPSUB doit exister entre 'cat' et 'neighbourood' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='of']/dependents/dep[@t='PREPSUB']" 
     operator="exists"
     right="" />
@@ -441,7 +441,7 @@
 <testcase id="eng.sa.35.a" type="bloquant">
   <comment> - contenu test modifié : l'ambiguite NC/Adj de little fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
   <call-parameters>
-      <param key="text" value="The dreary house is still for sale."/>
+      <param key="text" value="The dreary location is still for sale."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -457,7 +457,7 @@
 </testcase>
 <testcase id="eng.sa.35.b" type="bloquant">
   <call-parameters>
-      <param key="text" value="The very beautiful tall house is for sale."/>
+      <param key="text" value="The very beautiful tall location is for sale."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -494,7 +494,7 @@
 </testcase>
 <testcase id="eng.sa.39" type="bloquant">
   <call-parameters>
-      <param key="text" value="The engine covers are green."/>
+      <param key="text" value="The engine protections are green."/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -511,11 +511,11 @@
     comment="La relation COMPDUNOM doit exister entre 'covers' et 'engine' "
     left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='engine']/dependents/dep[@t='ADJPRENSUB']/@v"
     operator="="
-    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='covers']/@id" />
+    right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='protections']/@id" />
 </testcase>
 <testcase id="eng.sa.40" type="bloquant">
   <call-parameters>
-      <param key="text" value="The birds on the sandy beach are very small. "/>
+      <param key="text" value="The birds on the sandy location are very small. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
@@ -525,18 +525,18 @@
   <expl>Une relation de complementation doit exister entre birds et beach.</expl>
   <test id="eng.sa.40.1" trace=".sa.xml"
     comment="La relation type -COMPDUNOM-> 'birds' doit exister "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='beach']/dependents/dep[@t='COMPDUNOM']"
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='location']/dependents/dep[@t='COMPDUNOM']"
     operator="exists"
     right="" />
   <test id="eng.sa.40.2" trace=".sa.xml"
     comment="La relation 'type' -COMPDUNOM-> 'birds' doit exister "
-    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='beach']/dependents/dep[@t='COMPDUNOM']/@v"
+    left="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='location']/dependents/dep[@t='COMPDUNOM']/@v"
     operator="="
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='birds']/@id" />
 </testcase>
 <testcase id="eng.sa.41" type="bloquant">
   <call-parameters>
-      <param key="text" value="The birds on the sandy beach are very small. "/>
+      <param key="text" value="The birds on the sandy location are very small. "/>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>

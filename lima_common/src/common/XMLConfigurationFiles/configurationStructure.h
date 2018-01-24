@@ -51,7 +51,9 @@ class LIMA_XMLCONFIGURATIONFILES_EXPORT ConfigurationStructure : public std::map
 {
 public: 
     ConfigurationStructure();
-    virtual ~ConfigurationStructure();
+    ~ConfigurationStructure();
+   ConfigurationStructure(const ConfigurationStructure& config);
+   ConfigurationStructure& operator=(const ConfigurationStructure& config);
 
     void addParamValuePairForModuleAndGroup(const std::string &param,const std::string &value, const std::string &module, const std::string & group);
     void addGroupNamedForModuleNamed(const std::string& groupName, const std::string& moduleName);
@@ -87,6 +89,7 @@ public:
 
 
  private:
+   
     GroupConfigurationStructure& 
       getGroupConf(const std::string& moduleName, 
                    const std::string& group);

@@ -25,7 +25,8 @@ SET(showinttypessizes_SRCS
 add_executable(showinttypessizes ${showinttypessizes_SRCS})
 target_link_libraries(showinttypessizes)
 
-install(TARGETS showinttypessizes DESTINATION bin)
+install(TARGETS showinttypessizes DESTINATION bin
+    COMPONENT runtime)
 
 ########### next target ###############
 
@@ -59,7 +60,8 @@ target_link_libraries(testLexicon
   ${QT_LIBRARIES}
 )
 
-install(TARGETS testLexicon DESTINATION bin)
+install(TARGETS testLexicon DESTINATION bin
+    COMPONENT runtime)
 
 
 ########### next target ###############
@@ -77,7 +79,8 @@ target_link_libraries(testAccessMethod
   ${optionalLibs}
 )
 
-install(TARGETS testAccessMethod DESTINATION bin)
+install(TARGETS testAccessMethod DESTINATION bin
+    COMPONENT runtime)
 
 ########### next target ###############
 
@@ -94,7 +97,8 @@ target_link_libraries(parseXMLFile
   ${optionalLibs}
 )
 
-install(TARGETS parseXMLFile DESTINATION bin)
+install(TARGETS parseXMLFile DESTINATION bin
+    COMPONENT runtime)
 
 ########### next target ###############
 
@@ -111,7 +115,8 @@ target_link_libraries(testAbstractFactoryPattern
   ${optionalLibs}
   )
 
-install(TARGETS testAbstractFactoryPattern DESTINATION bin)
+install(TARGETS testAbstractFactoryPattern DESTINATION bin
+    COMPONENT runtime)
 
 ########### next target ###############
 
@@ -128,6 +133,7 @@ target_link_libraries(testProcessUnitFramework
   ${optionalLibs}
 )
 
-install(TARGETS testProcessUnitFramework DESTINATION bin)
+install(TARGETS testProcessUnitFramework DESTINATION bin
+    COMPONENT runtime)
 
 ########### install files ###############

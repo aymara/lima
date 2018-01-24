@@ -58,10 +58,9 @@ public:
   virtual ~SegmentationResultsLoader();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
 
-  LimaStatusCode process(AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
   std::string m_graph;
@@ -72,26 +71,32 @@ private:
   class LIMA_TEXTSEGMENTATION_EXPORT XMLHandler : public QXmlDefaultHandler
   {
   public:
-    XMLHandler(SegmentationData* s, LinguisticAnalysisStructure::AnalysisGraph* graph);
+    XMLHandler(SegmentationData* s, 
+               LinguisticAnalysisStructure::AnalysisGraph* graph);
     virtual ~XMLHandler();
     
     // -----------------------------------------------------------------------
     //  Implementations of the SAX DocumentHandler interface
     // -----------------------------------------------------------------------
-    bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
+    bool endElement(const QString & namespaceURI, 
+                    const QString & name, 
+                    const QString & qName) override;
     
-    bool characters(const QString& chars);
+    bool characters(const QString& chars) override;
     
-    bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
+    bool startElement(const QString & namespaceURI, 
+                      const QString & name, 
+                      const QString & qName, 
+                      const QXmlAttributes & attributes) override;
     
     
     
     // -----------------------------------------------------------------------
     //  Implementations of the SAX ErrorHandler interface
     // -----------------------------------------------------------------------
-    bool warning(const QXmlParseException & exception);
-    bool error(const QXmlParseException & exception);
-    bool fatalError(const QXmlParseException & exception);
+    bool warning(const QXmlParseException & exception) override;
+    bool error(const QXmlParseException & exception) override;
+    bool fatalError(const QXmlParseException & exception) override;
     
   private:
     LinguisticAnalysisStructure::AnalysisGraph* m_graph;

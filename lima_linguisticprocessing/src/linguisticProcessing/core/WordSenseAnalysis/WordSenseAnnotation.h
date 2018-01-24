@@ -368,7 +368,7 @@ inline void WordSenseAnnotation::dump(std::ostream& os)
 class DumpWordSense : public Common::AnnotationGraphs::AnnotationData::Dumper
 {
   public:
-    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const;
+    virtual int dump(std::ostream& os, Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 

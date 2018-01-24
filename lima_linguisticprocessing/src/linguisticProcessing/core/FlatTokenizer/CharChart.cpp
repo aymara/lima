@@ -107,10 +107,10 @@ CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(),
   m_unicodeCategories2LimaClasses.insert("Separator_Space","c_b");
   m_unicodeCategories2LimaClasses.insert("Separator_Line","c_par");
   m_unicodeCategories2LimaClasses.insert("Separator_Paragraph","c_par");
-//   m_unicodeCategories2LimaClasses.insert("Other_Control","");
+  m_unicodeCategories2LimaClasses.insert("Other_Control","c_b");
 //   m_unicodeCategories2LimaClasses.insert("Other_Format","");
 //   m_unicodeCategories2LimaClasses.insert("Other_Surrogate","");
-//   m_unicodeCategories2LimaClasses.insert("Other_PrivateUse","");
+  m_unicodeCategories2LimaClasses.insert("Other_PrivateUse","c_hyphen");
   m_unicodeCategories2LimaClasses.insert("Other_NotAssigned","unknwn");
   m_unicodeCategories2LimaClasses.insert("Letter_Uppercase","c_M");
   m_unicodeCategories2LimaClasses.insert("Letter_Lowercase","c_m");
@@ -222,32 +222,17 @@ const CharClass* CharChart::charClass (const LimaChar& c1, const LimaChar& c2) c
 }
 
 // Gets the upper case corresponding of the specified
-// character. If specified character was not defined,
-// InvalidCharException is raised.
-
+// character.
 LimaChar CharChart::maj(const LimaChar& c) const
 {
-    if (c.unicode() >= m_chars.size())
-        throw InvalidCharException();
-    if (m_chars[c.unicode()] == 0)
-      return c;
-    if (!m_chars[c.unicode()]->charClass())
-        throw InvalidCharException();
-    return m_chars[c.unicode()]->maj() == 0 ? LimaChar() : (*(m_chars[c.unicode()]->maj()))();
+  return c.toUpper();
 }
 
 // Gets the lower case corresponding of the specified
-// character. If specified character was not defined,
-// InvalidCharException is raised.
+// character. 
 LimaChar CharChart::min (const LimaChar& c) const
 {
-  if (c.unicode() >= m_chars.size())
-        throw InvalidCharException();
-  if (m_chars[c.unicode()] == 0)
-      return c;
-  if (!m_chars[c.unicode()]->charClass())
-        throw InvalidCharException();
-  return m_chars[c.unicode()]->min() == 0 ? LimaChar() : (*(m_chars[c.unicode()]->min()))();
+  return c.toLower();
 }
 
 // Gets the unmark character corresponding to the specified
@@ -265,7 +250,8 @@ LimaChar CharChart::unmark (const LimaChar& c) const {
       throw InvalidCharException();
   if (m_chars[c.unicode()]->longUnmark() != 0)
       return LimaChar();
-  if (m_chars[c.unicode()]->min() != 0 && m_chars[c.unicode()]->min()->unmark() != 0)
+  if (m_chars[c.unicode()]->min() != 0 
+      && m_chars[c.unicode()]->min()->unmark() != 0)
     return (*(m_chars[c.unicode()]->min()->unmark()))();
   if (m_chars[c.unicode()]->unmark() != 0)
     return (*(m_chars[c.unicode()]->unmark()))();
@@ -296,7 +282,7 @@ LimaString CharChart::unmarkByString (const LimaChar& c) const
   if (!m_chars[c.unicode()]->charClass())
       throw InvalidCharException();
 
-    LimaString result;
+  LimaString result;
   if (m_chars[c.unicode()]->unmark() != 0 && m_chars[c.unicode()]->unmark() != m_chars[c.unicode()])
     result.push_back(m_chars[c.unicode()]->unmark()->code());
   if (m_chars[c.unicode()]->longUnmark() != 0 && m_chars[c.unicode()]->longUnmark() != m_chars[c.unicode()])
@@ -379,24 +365,6 @@ LimaString CharChart::toLower(const LimaString& src) const
   LDEBUG << "toLower("<<src<<") = " << src.toLower();
 #endif
   return src.toLower();
-//   LimaString newString;
-//   newString.reserve(src.size());
-//   for (size_t i = 0; i < src.size(); i++)
-//   {
-//       LimaChar currentChar = src.at(i);
-// //        std::wcerr << currentChar;
-//       LimaChar minCurrent;
-//       try {minCurrent = min(currentChar);}
-//       catch (const InvalidCharException& )
-//       {
-//         LERROR << "toLower encountered an invalide character";
-//         return LimaString();
-//       }
-// //        std::wcerr << " " << minCurrent << std::endl;
-//       newString.push_back(minCurrent.isNull()?currentChar:minCurrent);
-//   }
-//   LDEBUG << "toLower("<<src<<") = " << newString;
-//   return newString;
 }
 
 const CharClass* CharChart::classNamed(const LimaString& name) const
@@ -532,7 +500,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
           default: ;
         }
       }
-      if (newChar->code() > 0xD800)
+      if (newChar->code().isHighSurrogate())
       {
         if (surrogates().find(newChar->code()) == surrogates().end())
         {

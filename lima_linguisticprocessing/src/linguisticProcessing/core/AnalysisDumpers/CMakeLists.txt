@@ -23,6 +23,10 @@ include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/ling
 
 ########### next target ###############
 
+LIMALP_WRAP_HEADERS(analysisdumpers
+  StopList.h
+)
+
 SET(lima-lp-analysisdumpers_LIB_SRCS
    AnnotationGraphXmlDumper.cpp
    BowDumper.cpp
@@ -62,7 +66,8 @@ target_link_libraries(lima-lp-analysisdumpers
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysisdumpers DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-analysisdumpers DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

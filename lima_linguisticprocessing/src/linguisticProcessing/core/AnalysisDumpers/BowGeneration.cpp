@@ -253,16 +253,16 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
 
   std::vector< std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > vxBoWTokens = createAbstractBoWElement(vxTokVertex, anagraph, posgraph, offset, annotationData,visited);
 
-#ifdef DEBUG_LP
-  LDEBUG << "BowGenerator: There is " << vxBoWTokens.size() << " bow tokens";
-#endif
+// #ifdef DEBUG_LP
+//   LDEBUG << "BowGenerator::buildTermFor, line"<<__LINE__<<","<<vx<<vxTokVertex<<" There is " << vxBoWTokens.size() << " bow tokens";
+// #endif
   if (vxGovernors.empty())
   {
 
     std::vector< std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > vxBoWTk;
-#ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):empty governors ";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor empty governors ";
+// #endif
     boost::shared_ptr< BoWRelation > relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
 
     if (relation)
@@ -286,6 +286,10 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
         LERROR << "BowGenerator::buildTermFor vxBoWTokensIt is not a BoWToken";
       }
     }
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):empty governors ";
+//     LDEBUG << "BowGenerator::buildTermFor return result of size" << vxBoWTk.size();
+// #endif
     return vxBoWTk;
   }
 
@@ -298,9 +302,9 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
 
     auto pairs = buildTermFor(*govsIt, vx, anagraph, posgraph, offset, syntacticData, annotationData,visited);
     termsForVxGovernors.push_back(pairs);
-#ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: For governor " << i << ", there is " << pairs.size() << " terms.";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor"<<vx<<vxTokVertex<<" For governor " << i <<*govsIt<< ", there is " << pairs.size() << " terms.";
+// #endif
   }
 
 
@@ -321,10 +325,10 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
 
   if (stack.empty())
   {
-#ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: Stack is empty ! Returning bow tokens of " << vxTokVertex;
-    LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):stack governors ";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor Stack is empty ! Returning bow tokens of " << vxTokVertex;
+//     LDEBUG << "BowGenerator::buildTermFor == DONE buildTermFor " << vx << " (pointing on "<<tgt<<"):stack governors ";
+// #endif
     boost::shared_ptr< BoWRelation> relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
     if (relation)
     {
@@ -348,14 +352,17 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
         LERROR << "BowGenerator::buildTermFor vxBoWTokensIt is not a BoWToken";
       }
     }
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor return result of size" << vxBoWTk.size();
+// #endif
     return vxBoWTk;
   }
   std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > >::iterator t;
   while (!stack.empty())
   {
-#ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: There is " << vxBoWTokens.size() << " heads, " << vxGovernors.size() << " governors and stack size is " << stack.size();
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor There is " << vxBoWTokens.size() << " heads, " << vxGovernors.size() << " governors and stack size is " << stack.size();
+// #endif
     for (auto vxBoWToken=vxBoWTokens.begin();
          vxBoWToken!=vxBoWTokens.end();
          vxBoWToken++)
@@ -367,22 +374,22 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
         LERROR << "BowGenerator::buildTermFor head" << &*(*vxBoWToken).second << "is not a BoWToken";
         continue;
       }
-#ifdef DEBUG_LP
-      LDEBUG << "BowGenerator: Working on head " << *head << "(" << *head << ")";
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowGenerator::buildTermFor Working on head " << *head << "(" << *head << ")";
+// #endif
 
       std::set< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > >, A > extensions;
       auto govsIt = stack.begin(), govsIt_end = stack.end();
       for (; govsIt != govsIt_end; govsIt++)
       {
-#ifdef DEBUG_LP
-        LDEBUG << "BowGenerator: Entering loop body";
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowGenerator::buildTermFor Entering loop body";
+// #endif
         boost::shared_ptr< BoWRelation > relation( (**govsIt).first);
         boost::shared_ptr< BoWToken > bt = (**govsIt).second;
-#ifdef DEBUG_LP
-        LDEBUG << "BowGenerator:     ... done.";
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowGenerator::buildTermFor     ... done.";
+// #endif
 //         LDEBUG << "BowGenerator: Inserting extension...";
         extensions.insert(std::make_pair(relation,bt));
 //         LDEBUG << "BowGenerator:     ... done.";
@@ -396,41 +403,41 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
       bowTokenPositions(headPositions, head);
       TokenPositions extensionPositions;
 
-#ifdef DEBUG_LP
-      LDEBUG << "BowGenerator: Working on extensions";
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowGenerator::buildTermFor Working on extensions";
+// #endif
       auto extensionsIt = extensions.begin(),
       extensionsIt_end = extensions.end();
       for (; extensionsIt != extensionsIt_end; extensionsIt++)
       {
         boost::shared_ptr< BoWToken > extension = (*extensionsIt).second;
-#ifdef DEBUG_LP
-        LDEBUG << "BowGenerator:     extension: " << *extension;
-        LDEBUG << "BowGenerator:     extension: " << ((boost::dynamic_pointer_cast< BoWTerm >(extension)==0)?(*extension):(*(boost::dynamic_pointer_cast< BoWTerm >(extension))));
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowGenerator::buildTermFor     extension: " << *extension;
+//         LDEBUG << "BowGenerator::buildTermFor     extension: " << ((boost::dynamic_pointer_cast< BoWTerm >(extension)==0)?(*extension):(*(boost::dynamic_pointer_cast< BoWTerm >(extension))));
+// #endif
 
         bowTokenPositions(extensionPositions, extension);
 
       }
 
-#ifdef DEBUG_LP
-      LDEBUG << "BowGenerator: Building term";
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowGenerator::buildTermFor Building term";
+// #endif
       // position is the min of head min position and extension min position
       position=headPositions.begin()->first;
       if (position > extensionPositions.begin()->first)
       {
         position = extensionPositions.begin()->first;
       }
-#ifdef DEBUG_LP
-      LDEBUG << "BowGenerator:     position: " << position;
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowGenerator::buildTermFor     position: " << position;
+// #endif
 
         // length is the length in original text: take end of term
       length=computeCompoundLength(headPositions,extensionPositions);
-#ifdef DEBUG_LP
-      LDEBUG << "BowGenerator:     length  : " << length;
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowGenerator::buildTermFor     length  : " << length;
+// #endif
 
       boost::shared_ptr< BoWTerm > complex( new BoWTerm( lemma, head->getCategory(), position, length) );
       complex->setVertex(head->getVertex());
@@ -444,31 +451,31 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
       for (; extensionsIt != extensionsIt_end; extensionsIt++)
       {
         boost::shared_ptr< BoWToken > extension = (*extensionsIt).second;
-#ifdef DEBUG_LP
-        LDEBUG << "BowGenerator:     extension: " << ((boost::dynamic_pointer_cast< BoWTerm >(extension)==0)?(*extension):(*(boost::dynamic_pointer_cast< BoWTerm >(extension))));
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowGenerator::buildTermFor     extension: " << ((boost::dynamic_pointer_cast< BoWTerm >(extension)==0)?(*extension):(*(boost::dynamic_pointer_cast< BoWTerm >(extension))));
+// #endif
         if ((*extensionsIt).first == 0)
           complex->addPart(extension);
         else
           complex->addPart((*extensionsIt).first,extension);
 //         LDEBUG << "Built complex: " << ((dynamic_cast< BoWTerm* >(complex)==0)?(*complex):(*(dynamic_cast< BoWTerm* >(complex))));
-#ifdef DEBUG_LP
-        LDEBUG << "BowGenerator: Built complex: " << *complex;
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowGenerator::buildTermFor Built complex: " << *complex;
+// #endif
       }
 
       boost::shared_ptr< BoWRelation > relation = createBoWRelationFor(vx, tgt, annotationData, posgraph,syntacticData);
 
-#ifdef DEBUG_LP
-      LDEBUG << "BowGenerator: Filling result with: " << *complex;
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "BowGenerator::buildTermFor Filling result with: " << *complex;
+// #endif
       result.push_back(std::make_pair(relation,complex));
     }
 
     // Mise a joueur de la pile d'iterateurs pour produire une nouvelle serie d'extensions
-#ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: Stack updating...";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "BowGenerator::buildTermFor Stack updating...";
+// #endif
     {
       t = *stack.rbegin();
       t++;
@@ -486,9 +493,9 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
       {
         stack.pop_back();
         stack.push_back(t);
-#ifdef DEBUG_LP
-        LDEBUG << "BowGenerator: Stack filling...";
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "BowGenerator::buildTermFor Stack filling...";
+// #endif
         for (uint64_t i = stack.size(); i < begins.size();i++)
         {
           stack.push_back(begins[i]);
@@ -497,9 +504,10 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
     }
   }
 
-#ifdef DEBUG_LP
-  LDEBUG << "BowGenerator: == DONE buildTermFor " << vx << " (pointing on "<<tgt<<")";
-#endif
+// #ifdef DEBUG_LP
+//   LDEBUG << "BowGenerator::buildTermFor == DONE" << vx << "(pointing on" << tgt << ")";
+//   LDEBUG << "BowGenerator::buildTermFor, line"<<__LINE__<<", return result of size" << result.size();
+// #endif
   return result;
 }
 
@@ -783,7 +791,7 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
   if (m_useEmptyMacro && ldata.isAnEmptyMacroCategory(m_macroAccessor->readValue(elem.properties)))
   {
 #ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: token ("
+    LDEBUG << "BowGenerator::shouldBeKept token ("
       << sp[elem.lemma] << "|"
       << elem.properties << ") not kept : macro category is empty ";
 #endif
@@ -794,7 +802,7 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
   if (m_useEmptyMicro && ldata.isAnEmptyMicroCategory(m_microAccessor->readValue(elem.properties)))
   {
 #ifdef DEBUG_LP
-    LDEBUG << "BowGenerator: token ("
+    LDEBUG << "BowGenerator::shouldBeKept token ("
       << sp[elem.lemma] << "|"
       << elem.properties << ") not kept : micro category is empty ";
 #endif
@@ -802,12 +810,12 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
   }
 
 #ifdef DEBUG_LP
-   LDEBUG << "BowGenerator: check token (" << sp[elem.normalizedForm] << ")";
+   LDEBUG << "BowGenerator::shouldBeKept check token (" << sp[elem.normalizedForm] << ")";
 #endif
    if (m_useStopList && m_stopList!=0 && (m_stopList->find(sp[elem.normalizedForm]) != m_stopList->end()))
    {
 #ifdef DEBUG_LP
-     LDEBUG << "BowGenerator: token (" 
+     LDEBUG << "BowGenerator::shouldBeKept token (" 
        << sp[elem.lemma] << "|" 
        << elem.properties << ") not kept : normalization " 
        << sp[elem.normalizedForm] 
@@ -817,7 +825,7 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
    }
 
 #ifdef DEBUG_LP
-   LDEBUG << "BowGenerator: token (" 
+   LDEBUG << "BowGenerator::shouldBeKept token (" 
      << sp[elem.lemma] << "|" 
      << elem.properties << "), normalization " 
      << sp[elem.normalizedForm] << " kept";
@@ -1305,7 +1313,7 @@ boost::shared_ptr< BoWPredicate > BowGenerator::createPredicate(
   LDEBUG << "BowGenerator::createPredicate  The role(s) related to "<< annot.type().c_str() << " is/are ";
 #endif
   QMultiMap<Common::MediaticData::EntityType, boost::shared_ptr< AbstractBoWElement > > roles;
-  const LimaString typeAnnot="SemanticRole";
+//   const LimaString typeAnnot="SemanticRole";
   for (auto verticesIt = vertices.begin(); verticesIt != vertices.end(); verticesIt++)
   {
     const AnnotationGraphVertex semRoleVx = *verticesIt;
@@ -1657,8 +1665,7 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
   {
     return boost::shared_ptr< BoWToken >();
   }
-  // construire un BoWTerm avec le pp pour tete et l'aux pour extension
-  LimaString lemma, infl;
+  // Build a BoWTerm with the preposition group as head and the aux as extension
   
   boost::shared_ptr< BoWToken > complex(
     new BoWToken( 

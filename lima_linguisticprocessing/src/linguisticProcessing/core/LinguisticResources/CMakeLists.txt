@@ -20,6 +20,7 @@ add_definitions(-DLIMA_LINGUISTICRESOURCES_EXPORTING)
 ########### next target ###############
 set (lima-lp-linguisticresources_MOC_HEADERS
   AbstractResource.h
+  AbstractResourceBase.h
   AbstractAccessResource.h
 )
 
@@ -28,6 +29,7 @@ qt5_wrap_cpp (lima-lp-linguisticresources_MOC_OUTFILES ${lima-lp-linguisticresou
 
 SET(lima-lp-linguisticresources_LIB_SRCS
   AbstractResource.cpp
+  AbstractResourceBase.cpp
   LinguisticResources.cpp
 )
 
@@ -51,12 +53,14 @@ target_link_libraries(lima-lp-linguisticresources
 
 set_target_properties(lima-lp-linguisticresources PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticresources DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-linguisticresources DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
 install(FILES 
     AbstractResource.h  
+    AbstractResourceBase.h  
     LinguisticResources.h 
     LinguisticResourcesExport.h 
   DESTINATION include/linguisticProcessing/core/LinguisticResources

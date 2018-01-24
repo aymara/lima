@@ -67,7 +67,6 @@ macro (CODES _lang)
     set(CODES_FILES ${CODES_FILES} ${CODE_FILE})
   endforeach(CODE_FILE ${ARGN})
 
-
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
     COMMAND convertSymbolicCodes  --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
@@ -147,7 +146,7 @@ macro(CONVERT _lang)
       OUTPUT ${ADDED_LIST_FILE}.add
       COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
       DEPENDS dicostd.txt ${ADDED_LIST_FILE}
-      COMMENT "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
+      COMMENT perl "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
     )
     set (ADDED_LIST_FILES_RESULT ${ADDED_LIST_FILES_RESULT} ${ADDED_LIST_FILE}.add)
   endforeach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
@@ -160,61 +159,61 @@ macro(CONVERT _lang)
 
   set(ENV{LC_ALL} "C")
 
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  add_custom_command(
-    OUTPUT dicocompletstd.txt
-    COMMAND LC_ALL="C" sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
-    DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
-    COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
-    VERBATIM
-  )
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  add_custom_command(
-    OUTPUT dicocompletstd.txt
-    COMMAND sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
-    DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
-    COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
-    VERBATIM
-  )
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  add_custom_target(
-    dicocomplet${_lang}
-    ALL
-    DEPENDS dicocompletstd.txt
-  )
-  add_dependencies(dicocomplet${_lang} dicoadd${_lang})
+  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    add_custom_command(
+      OUTPUT dicocompletstd.txt
+      COMMAND LC_ALL="C" sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
+      DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
+      COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
+      VERBATIM
+    )
+  else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    add_custom_command(
+      OUTPUT dicocompletstd.txt
+      COMMAND sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
+      DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
+      COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
+      VERBATIM
+    )
+  endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    add_custom_target(
+      dicocomplet${_lang}
+      ALL
+      DEPENDS dicocompletstd.txt
+    )
+    add_dependencies(dicocomplet${_lang} dicoadd${_lang})
 
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  add_custom_command(
-    OUTPUT dico.xml
-    COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
-    COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
-    COMMAND echo "</dictionary>" >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
-    COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
-    COMMENT "produce XML dico"
-    VERBATIM
-  )
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
-  add_custom_command(
-    OUTPUT dico.xml
-    COMMAND echo ^<dictionary^> > dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
-    COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
-    COMMAND echo ^</dictionary^> >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
-    COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
-    COMMENT "produce XML dico"
-  )
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    add_custom_command(
+      OUTPUT dico.xml
+      COMMAND echo "<dictionary>" > dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+      COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+      COMMAND echo "</dictionary>" >> dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+      COMMAND mv dico.xml.tmp dico.xml
+      DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
+      COMMENT "CONVERT ${_lang} produce XML dico"
+      VERBATIM
+    )
+  else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
+    # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
+    add_custom_command(
+      OUTPUT dico.xml
+      COMMAND echo ^<dictionary^> > dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+      COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+      COMMAND echo ^</dictionary^> >> dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+      COMMAND mv dico.xml.tmp dico.xml
+      DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
+      COMMENT "produce XML dico"
+    )
+  endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
   add_custom_target(
     dicoxml${_lang}
@@ -230,7 +229,6 @@ endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_dependencies(convert${_lang} dicoxml${_lang} ${ARGN} )
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-${_lang}.dat COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
-
 
 endmacro(CONVERT _lang)
 
@@ -287,20 +285,6 @@ endmacro(COMPILEXMLDIC _lang)
 
 macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tableconvert)
 
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  add_custom_command(
-    OUTPUT trigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
-    COMMAND cat ${_succession_categs} | sort | uniq -c | awk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
-    COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
-
-    DEPENDS ${_codesymbol} ${_succession_categs}
-    COMMENT "compile ${_lang} trigram matrix"
-    VERBATIM
-  )
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
@@ -313,7 +297,6 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     COMMENT "compile ${_lang} trigram matrix"
     VERBATIM
   )
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
   add_custom_target(
     trigrammatrix-${_lang}

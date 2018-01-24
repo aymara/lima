@@ -44,7 +44,7 @@ class FileDestination : public Destination
 {
 public:
    FileDestination(const QString& filePath);
-   virtual void write(const QString& message, const QString& zone = "");
+   virtual void write(const QString& message, const QString& zone = "") override;
 
 private:
    QFile mFile;
@@ -69,10 +69,10 @@ void FileDestination::write(const QString& message, const QString& zone)
 
 void DebugOutputDestination::write(const QString& message, const QString& zone)
 {
-  QString out;
   if (!zone.isEmpty())
-    out = QString(" : ") + zone + " : ";
-  QsDebugOutput::output(out + message);
+    QsDebugOutput::output(QString(QLatin1String(" : %1 : %2")).arg(zone, message));
+  else
+    QsDebugOutput::output(message);
 }
 
 DestinationPtr DestinationFactory::MakeFileDestination(const QString& filePath)

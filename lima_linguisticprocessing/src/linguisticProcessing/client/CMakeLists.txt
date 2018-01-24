@@ -32,7 +32,8 @@ target_link_libraries(lima-lp-client  lima-common-factory lima-common-tools ${QT
 
 set_target_properties(lima-lp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-client DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-lp-client DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############

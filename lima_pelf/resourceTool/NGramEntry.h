@@ -48,10 +48,10 @@ public:
     QString proba;
 
     NGramEntry (QString s = "");
-    bool decodeSourceString ();
-    bool matches (QStringList args);
-    QString encodeToString () { return ""; };
-    QString getColumnData(int column);
+    bool decodeSourceString () override;
+    bool matches (QStringList args) override;
+    QString encodeToString () override { return ""; };
+    QString getColumnData(int column) override;
 
 };
 

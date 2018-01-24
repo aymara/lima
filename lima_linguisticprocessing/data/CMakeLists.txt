@@ -45,4 +45,5 @@ install(FILES
     test-fre.tokenizer.xml 
     #test-fre.se-beforepos.xml 
     test-fre.multilevel.xml 
-  DESTINATION share/apps/lima/tests)
+  DESTINATION share/apps/lima/tests
+  COMPONENT runtime)

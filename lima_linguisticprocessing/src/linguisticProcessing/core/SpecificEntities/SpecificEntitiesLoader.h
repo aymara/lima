@@ -53,10 +53,9 @@ class LIMA_SPECIFICENTITIES_EXPORT SpecificEntitiesLoader : public AnalysisLoade
   virtual ~SpecificEntitiesLoader();
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-            Manager* manager)
-    ;
+            Manager* manager) override;
 
-  LimaStatusCode process(AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis) const override;
   
  private:
   MediaId m_language;
@@ -67,22 +66,28 @@ class LIMA_SPECIFICENTITIES_EXPORT SpecificEntitiesLoader : public AnalysisLoade
   class XMLHandler : public QXmlDefaultHandler
   {
   public:
-    XMLHandler(MediaId language, AnalysisContent& analysis, LinguisticAnalysisStructure::AnalysisGraph* graph);
+    XMLHandler(MediaId language, AnalysisContent& analysis, 
+               LinguisticAnalysisStructure::AnalysisGraph* graph);
     virtual ~XMLHandler();
     
     // -----------------------------------------------------------------------
     //  Implementations of the SAX DocumentHandler interface
     // -----------------------------------------------------------------------
-    bool endElement(const QString & namespaceURI, const QString & name, const QString & qName);
-    bool characters(const QString& chars);
-    bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes);
+    bool endElement(const QString & namespaceURI, 
+                    const QString & name, 
+                    const QString & qName) override;
+    bool characters(const QString& chars) override;
+    bool startElement(const QString & namespaceURI, 
+                      const QString & name, 
+                      const QString & qName, 
+                      const QXmlAttributes & attributes) override;
     
     // -----------------------------------------------------------------------
     //  Implementations of the SAX ErrorHandler interface
     // -----------------------------------------------------------------------
-    bool warning(const QXmlParseException & exception);
-    bool error(const QXmlParseException & exception);
-    bool fatalError(const QXmlParseException & exception);
+    bool warning(const QXmlParseException & exception) override;
+    bool error(const QXmlParseException & exception) override;
+    bool fatalError(const QXmlParseException & exception) override;
     
     
   private:

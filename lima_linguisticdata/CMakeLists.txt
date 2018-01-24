@@ -18,6 +18,15 @@ project(LimaLinguisticData NONE)
 
 cmake_minimum_required(VERSION 3.4.0)
 
+if (ENVPATH)
+  set(ENV{PATH} "${ENVPATH}:$ENV{PATH}")
+endif()
+if (ENVPERL5LIB)
+  set(ENV{PERL5LIB} "${ENVPERL5LIB}:$ENV{PERL5LIB}")
+endif()
+message("lima_linguisticdata PERL5LIB=$ENV{PERL5LIB}")
+message("lima_linguisticdata PATH=$ENV{PATH}")
+
 # message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 # set(CMAKE_VERBOSE_MAKEFILE on)
 
@@ -56,6 +65,7 @@ configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
 LIMA_GENERIC_CONFIGENV(eng)
 LIMA_GENERIC_CONFIGENV(fre)
+LIMA_GENERIC_CONFIGENV(por)
 SPECIFICENTITIES_GENERIC_CONFIGENV()
 
 add_subdirectory(cmake)
@@ -69,7 +79,7 @@ add_subdirectory(SRLIntegration)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
 
 ########### packaging ###############
@@ -106,19 +116,19 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 # The idea is to define one component with files common to all languages (common)
 # and one component for files specific to any languages (fre, eng...)
 # notify cpack of component all names
-SET(CPACK_COMPONENTS_ALL common fre eng)
+SET(CPACK_COMPONENTS_ALL common fre eng por)
 # we do not define groups
 # SET(CPACK_COMPONENTS_IGNORE_GROUPS 1)
 # by default create one package for each component
 # SET(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
 
-SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon, limalinguisticprocessing")
+SET(CPACK_RPM_PACKAGE_REQUIRES "limacommon-runtime, limalinguisticprocessing-runtime")
 # by default behaviour of rpm packager is to disable components
 SET(CPACK_RPM_COMPONENT_INSTALL ON)
 # mangle CPACK_PACKAGE_FILE_NAME and component name
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon, limalinguisticprocessing")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon-runtime, limalinguisticprocessing-runtime")
 SET(CPACK_DEB_COMPONENT_INSTALL ON)
 SET(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME ON)
 

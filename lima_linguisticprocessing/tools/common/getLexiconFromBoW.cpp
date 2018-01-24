@@ -53,10 +53,10 @@ using namespace Lima::Common;
 // declarations
 //****************************************************************************
 // help mode & usage
-static const string USAGE("USAGE : getLexiconFromBoW [--onlyLemma] fileIn\ntype getLexiconFromBoW -h for help\n");
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("USAGE : getLexiconFromBoW [--onlyLemma] fileIn\ntype getLexiconFromBoW -h for help\n"));
 
-static const string HELP("Count words in BoW files\n"
-                         +USAGE
+Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("Count words in BoW files\n")
+                         +*USAGE
                          +"INPUT:\n"
 +"\tfileIn                text BoW files\n"
 +"\t                      (obsolete: BoW documents; TODO XmlBoW)\n"
@@ -68,7 +68,7 @@ static const string HELP("Count words in BoW files\n"
 +"\t--output=FILENAME     file name to save the created lexicon\n"
 +"\t                      (default: display on screen)\n"
 +"\n"
-                        );
+                        ));
 
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
@@ -125,7 +125,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
         {
             cerr << "unrecognized option " <<  s
                  << endl;
-            cerr << USAGE << endl;
+            cerr << *USAGE << endl;
             exit(1);
         }
         else
@@ -196,31 +196,29 @@ public:
                                  set<LinguisticCode>& referenceProperties,
                                  bool filterCategory):
             m_lex(lex),
-            m_macroManager(macroManager),
             m_propertyAccessor(propertyAccessor),
             m_referenceProperties(referenceProperties),
             m_filterCategory(filterCategory)
-    {}
+    {LIMA_UNUSED(macroManager)}
 
     ~GetLexiconBoWDocumentHandler() {}
 
     void openSBoWNode(const Misc::GenericDocumentProperties* /*properties*/,
-                      const std::string& /*elementName*/)
+                      const std::string& /*elementName*/) override
     {}
     void openSBoWIndexingNode(const Misc::GenericDocumentProperties* /*properties*/,
-                              const std::string& /*elementName*/)
+                              const std::string& /*elementName*/) override
     {}
     void processSBoWText(const BoWText* boWText,
-                         bool useIterators, bool /*useIndexIterator*/);
+                         bool useIterators, bool /*useIndexIterator*/) override;
     void processProperties(const Misc::GenericDocumentProperties* /*properties*/,
-                           bool /*useIterators*/, bool /*useIndexIterator*/)
+                           bool /*useIterators*/, bool /*useIndexIterator*/) override
     {}
-    void closeSBoWNode()
+    void closeSBoWNode() override
     {}
 
 private:
     Lexicon& m_lex;
-    const PropertyManager& m_macroManager;
     const PropertyAccessor& m_propertyAccessor;
     set<LinguisticCode>& m_referenceProperties;
     bool m_filterCategory;
@@ -348,18 +346,22 @@ int run(int argc,char** argv)
   Lima::AmosePluginsManager::single();
   
   if (argc<1) {
-        cerr << USAGE;
+        cerr << *USAGE;
         return EXIT_FAILURE;
     }
     readCommandLineArguments(argc,argv);
     if (param.help) {
-        cerr << HELP;
+        cerr << *HELP;
         return EXIT_FAILURE;
     }
 
 
-    string resourcesPath=qgetenv("LIMA_RESOURCES").isEmpty()?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
-    string configDir=qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
+    string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
+        ?"/usr/share/apps/lima/resources"
+        :string(qgetenv("LIMA_RESOURCES").constData());
+    string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")
+        ?"/usr/share/config/lima"
+        :string(qgetenv("LIMA_CONF").constData());
 
     if ( (!param.language.size()) && (!param.codeFile.size()) ) {
         cerr << "no codefile nor language specified !" << endl;

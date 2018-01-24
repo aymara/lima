@@ -42,23 +42,24 @@ namespace LinguisticProcessing {
 */
 class LIMA_ANALYSISHANDLERS_EXPORT BowTextHandler : public AbstractTextualAnalysisHandler,public StructureHandler, public ContentHandler< Common::BagOfWords::BoWText >
 {
+  Q_OBJECT
 public:
     BowTextHandler();
 
     virtual ~BowTextHandler();
 
-    virtual void endAnalysis();
-    virtual void endDocument();
-    virtual void handle(const char* buf, int length) ;
-    virtual void startAnalysis();
-    virtual void startDocument(const Common::Misc::GenericDocumentProperties& props);
-    virtual void startNode( const std::string& elementName, bool forIndexing );
-    virtual void endNode( const Common::Misc::GenericDocumentProperties& props );
+    virtual void endAnalysis() override;
+    virtual void endDocument() override;
+    virtual void handle(const char* buf, int length) override ;
+    virtual void startAnalysis() override;
+    virtual void startDocument(const Common::Misc::GenericDocumentProperties& props) override;
+    virtual void startNode( const std::string& elementName, bool forIndexing ) override;
+    virtual void endNode( const Common::Misc::GenericDocumentProperties& props ) override;
     
     Common::BagOfWords::BoWText& getBowText();
 
     void set_filePath(std::string path){m_filePath=path;};
-    virtual void setOut( std::ostream* out ) {LIMA_UNUSED(out);}
+    virtual void setOut( std::ostream* out ) override {LIMA_UNUSED(out);}
     
 private:
 

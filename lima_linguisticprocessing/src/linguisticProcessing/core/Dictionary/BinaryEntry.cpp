@@ -135,7 +135,6 @@ LimaString BinaryEntry::getStringNoMove(unsigned char* ptr) const
 // gets the pointed dictionary string presented in UTF8 as a LimaString
 // advances pointer to point after the string
 LimaString BinaryEntry::getUtf8String(unsigned char*& ptr) const {
-    LimaString foundString;
     uint64_t maxSize = getEncodedNumber(ptr);
     unsigned char *ptrEnd = ptr + maxSize;
     LimaString utf16String; utf16String.resize(maxSize);
@@ -147,7 +146,11 @@ LimaString BinaryEntry::getUtf8String(unsigned char*& ptr) const {
         else if (first < 0xDF)                // 11 bits available
             utf16String[j++] = LimaChar(((first.unicode()<<6)+(*ptr++&0x3F))&0x000007FF);
         else if (first < 0xEF)                // 16 bits available
-            utf16String[j++] = LimaChar(((first.unicode()<<12)+((*ptr++&0x3F)<<6)+(*ptr++&0x3F))&0x0000FFFF);
+        {
+            auto firstOffset = (*ptr++&0x3F)<<6;
+            auto secondOffset = (*ptr++&0x3F);
+            utf16String[j++] = LimaChar(((first.unicode()<<12)+firstOffset+secondOffset)&0x0000FFFF);
+        }
         else
             throw BoundsErrorException();
     }

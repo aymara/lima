@@ -61,7 +61,8 @@ target_link_libraries(apply-rules
  ${optionalLibs}
   )
 
-install(TARGETS apply-rules DESTINATION bin)
+install(TARGETS apply-rules DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############
