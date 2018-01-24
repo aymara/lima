@@ -256,7 +256,7 @@ LimaStatusCode BowDumper::process(
   ::std::unique_ptr<DumperStream> dstream(initialize(analysis));
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
+  LDEBUG << "BowDumper::process writing BoW text on";
 #endif
   writer.writeBoWText(dstream->out(),bowText);
   return SUCCESS_ID;

@@ -69,19 +69,19 @@ public:
     ::std::size_t ptrb = 0;
     for (::std::size_t i=0; i<valuesNb; i++) {
 		if (ptrb == ::std::string::npos) {
-			resultoss<<"INVALIDFILE A"<<endl;
+			resultoss<<"INVALIDFILE A"<<std::endl;
 			break;   //plus de valeurs que de noms
 		}
     const ::std::size_t value = _readInt4LE(currentPtr);
     ::std::size_t ptre = names.find(",", ptrb);
     ::std::string oneName = names.substr(ptrb, ptre-ptrb);
 		oneName.resize(20, ' ');
-		resultoss<<oneName<<_asciiDate(value)<<"  ("<<value<<")"<<endl;
+		resultoss<<oneName<<_asciiDate(value)<<"  ("<<value<<")"<<std::endl;
         ptrb = ptre;
         if (ptrb != ::std::string::npos) ptrb++;       //saute la virgule
     }
-    if (ptrb != ::std::string::npos) resultoss<<"INVALIDFILE B"<<endl;   //plus de noms que de valeurs
-	  if ((char*)currentPtr != _pHeader + _pHeaderSize) resultoss<<"INVALIDFILE C"<<endl;
+    if (ptrb != ::std::string::npos) resultoss<<"INVALIDFILE B"<<std::endl;   //plus de noms que de valeurs
+	  if ((char*)currentPtr != _pHeader + _pHeaderSize) resultoss<<"INVALIDFILE C"<<std::endl;
 	  return resultoss.str();
   }
   //------------------------------------------------------------------------------------------------------------------------------
