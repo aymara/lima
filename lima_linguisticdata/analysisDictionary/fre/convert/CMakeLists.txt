@@ -32,7 +32,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-fre.txt ../code/convjys.txt default-fre.dat
     COMMAND mv dico.xml.tmp dico.xml

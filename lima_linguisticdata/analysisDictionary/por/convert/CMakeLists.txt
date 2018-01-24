@@ -32,10 +32,10 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py por forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
       ${dicoFiles}
@@ -54,8 +54,8 @@ else()
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py por forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/por/corpus/macmorpho.conll.txt forms.dic.2
     COMMAND sort -u -o forms.dic.3 forms.dic.2
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-por.txt ../code/convjys.txt default-por.dat
     COMMAND mv dico.xml.tmp dico.xml

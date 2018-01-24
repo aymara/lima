@@ -113,7 +113,7 @@ macro(CONVERT _lang)
       OUTPUT ${ADDED_LIST_FILE}.add
       COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
       DEPENDS dicostd.txt ${ADDED_LIST_FILE}
-      COMMENT "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
+      COMMENT perl "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
     )
     set (ADDED_LIST_FILES_RESULT ${ADDED_LIST_FILES_RESULT} ${ADDED_LIST_FILE}.add)
   endforeach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
@@ -252,20 +252,6 @@ endmacro(COMPILEXMLDIC _lang)
 
 macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tableconvert)
 
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-  add_custom_command(
-    OUTPUT trigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
-    COMMAND cat ${_succession_categs} | sort | uniq -c | awk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
-    COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
-
-    DEPENDS ${_codesymbol} ${_succession_categs}
-    COMMENT "compile ${_lang} trigram matrix"
-    VERBATIM
-  )
-else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
@@ -278,7 +264,6 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     COMMENT "compile ${_lang} trigram matrix"
     VERBATIM
   )
-endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
   add_custom_target(
     trigrammatrix-${_lang}
