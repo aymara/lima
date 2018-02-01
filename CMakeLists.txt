@@ -21,6 +21,9 @@ macro (CompileLimaSubproject _project _dependsOn)
 #   endif()
 #     TEST_COMMAND "${_TEST_COMMAND}"
   
+#         -DMSVC_VERSION=${MSVC_VERSION}
+#         -DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
+#         -DCMAKE_LINKER:PATH=${CMAKE_LINKER}
   ## Add external project
   ExternalProject_Add(
     ${_project}
@@ -45,9 +48,6 @@ macro (CompileLimaSubproject _project _dependsOn)
         -DWITH_ARCH:BOOL=${WITH_ARCH} 
         -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}
         -DCMAKE_IGNORE_PATH=${CMAKE_IGNORE_PATH}
-        -DMSVC_VERSION=${MSVC_VERSION}
-        -DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
-        -DCMAKE_LINKER:PATH=${CMAKE_LINKER}
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
         -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
