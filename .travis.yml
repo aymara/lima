@@ -12,8 +12,28 @@ before_install:
   - docker pull ubuntu:16.04 
 
 script:
-- docker build 
+  - docker build
+    --tag lima
     --build-arg BINTRAYKEY=$BINTRAYKEY  
     --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER 
     -f ./Dockerfile-travis-ubuntu16.04 .
 
+after_success:
+  - docker run -t -d lima
+  - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/* /
+
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "Gael de Chalendar"
+  - git config --local user.email "kleag@free.fr"
+  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: 7Foj3lZkf/dPni4jgHBbSH7LQjOGd8f+XP+lBt32JCHzsyDQmXSLWPJhfpr2OsKBqs99S/IB0Ghtg87ix3xd96gppBm8v+vIuGYrmu+UV3CbxZWgLOx4cZni5Kwg+NYqphYnRKO7xBmER278krdpVfVu1jHDPqGUGHBpw7idmj8=
+  file_glob: true
+  file: /*.deb
+  skip_cleanup: true
+  on:
+    tags: true
