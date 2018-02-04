@@ -12,7 +12,7 @@ script:
   -f ./Dockerfile-travis-ubuntu16.04 .
 after_success:
 - docker run -t -d lima
-- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/* $HOME
+- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME
 before_deploy:
 - git config --local user.name "Gael de Chalendar"
 - git config --local user.email "kleag@free.fr"
