@@ -13,6 +13,23 @@ message("PERL5LIB=$ENV{PERL5LIB}")
 message("PATH=$ENV{PATH}")
 macro (CompileLimaSubproject _project _dependsOn)
 
+if(UNIX)
+	# Try to find architecture
+	execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_PACKAGE_ARCHITECTURE)
+	string(STRIP "${CPACK_PACKAGE_ARCHITECTURE}" CPACK_PACKAGE_ARCHITECTURE)
+	# Try to find distro name and distro-specific arch
+	execute_process(COMMAND lsb_release -is OUTPUT_VARIABLE LSB_ID)
+	execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE LSB_RELEASE)
+	string(STRIP "${LSB_ID}" LSB_ID)
+	string(STRIP "${LSB_RELEASE}" LSB_RELEASE)
+	set(LSB_DISTRIB "${LSB_ID}${LSB_RELEASE}")
+	if(NOT LSB_DISTRIB)
+		set(LSB_DISTRIB "unix")
+	endif(NOT LSB_DISTRIB)
+	set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
+endif(UNIX)
+
+
   ## Define test command.
 #   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 #     set(_TEST_COMMAND make test)
@@ -51,6 +68,8 @@ macro (CompileLimaSubproject _project _dependsOn)
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
         -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
+        -DCPACK_SYSTEM_NAME:STRING=${CPACK_SYSTEM_NAME}
+        -DCPACK_PACKAGE_ARCHITECTURE=${CPACK_PACKAGE_ARCHITECTURE}
         -DBOOST_ROOT:STRING=${BOOST_ROOT}
         -DBOOST_LIBRARYDIR:STRING=${BOOST_LIBRARYDIR}
         -DENVPATH:STRING=$ENV{PATH}

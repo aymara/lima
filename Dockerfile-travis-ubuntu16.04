@@ -68,7 +68,7 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 # Build
 # 
 RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON  ..
-RUN ninja package
+RUN ninja
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*/src/*-build/*.deb
 
 WORKDIR /usr/share/apps/lima/tests
