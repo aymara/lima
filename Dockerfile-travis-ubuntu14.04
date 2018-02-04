@@ -7,7 +7,6 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
-ARG BINTRAYKEY
 ARG JOB_NUMBER 
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
@@ -16,7 +15,7 @@ ARG NLTK_PTB_DP_FILE
 # Setup
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils software-properties-common python-software-properties python3-software-properties -qq
-RUN apt-get install -y git gcc g++ autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
+RUN apt-get install -y git gcc g++ ninja-build autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
 RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libboost-all-dev libenchant-dev -qq
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
@@ -35,16 +34,13 @@ RUN make
 RUN cp svm_classify svm_learn /usr/bin
 
 WORKDIR /
-RUN wget https://dl.bintray.com/kleag/SVMTool-1.3.1/SVMTool-1.3.1.tgz
-RUN tar xzf SVMTool-1.3.1.tgz
+RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com/repos/aymara/SVMTool/releases/latest | grep browser_download_url | cut -d '"' -f 4) && tar xzf "$TEMP_DEB"
 WORKDIR /SVMTool-1.3.1
 RUN perl Makefile.PL && make && make install
 
-WORKDIR /
-RUN wget https://bintray.com/artifact/download/kleag/ubuntu-14.04/$(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/qhttpserver | json -a latest_version)/files | json 0.path)
-RUN dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/qhttpserver | json -a latest_version)/files | json 0.name)
-RUN wget https://bintray.com/artifact/download/kleag/ubuntu-14.04/$(echo $(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/svmtool-cpp | json -a latest_version)/files | json 0.path)  | sed -e 's/\+/%2B/g')
-RUN dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-14.04/svmtool-cpp | json -a latest_version)/files | json 0.name)
+RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com/repos/aymara/qhttpserver/releases/latest | grep browser_download_url | grep ubuntu14 | cut -d '"' -f 4) && dpkg -i "$TEMP_DEB"
+
+RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest | grep browser_download_url | grep ubuntu14 | cut -d '"' -f 4) && dpkg -i "$TEMP_DEB"
 
 RUN mkdir -p /src/
 RUN git clone https://github.com/aymara/lima /src/lima
@@ -66,22 +62,11 @@ ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
-RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON ..
-RUN make -j2
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release  -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON ..
+RUN ninja package
+RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*/src/*-build/*.deb
 
 WORKDIR /usr/share/apps/lima/tests
 RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
 RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
-
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb
-RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb
-RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb
-RUN curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb
-RUN curl  -ukleag:$BINTRAYKEY -T/usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb
-RUN curl  -ukleag:$BINTRAYKEY -T/usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-por.deb  https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-por.deb
-RUN curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-14.04/lima/$JOB_NUMBER/publish
-RUN curl -XGET https://bintray.com/kleag/ubuntu-14.04/lima/$JOB_NUMBER
-
 
