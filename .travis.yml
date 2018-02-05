@@ -10,14 +10,14 @@ before_install:
 script:
 - docker build --tag lima-ubuntu16 --build-arg BINTRAYKEY=$BINTRAYKEY --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
   -f ./Dockerfile-travis-ubuntu16.04 .
-- docker build --tag lima-ubuntu14 --build-arg BINTRAYKEY=$BINTRAYKEY --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
-  -f ./Dockerfile-travis-ubuntu14.04 .
+#- docker build --tag lima-ubuntu14 --build-arg BINTRAYKEY=$BINTRAYKEY --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
+  #-f ./Dockerfile-travis-ubuntu14.04 .
 after_success:
 - docker run -t -d lima-ubuntu16
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME/ubuntu16
-- docker stop lima-ubuntu16
-- docker run -t -d lima-ubuntu14
-- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME/ubuntu14
+#- docker stop lima-ubuntu16
+#- docker run -t -d lima-ubuntu14
+#- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME/ubuntu14
 before_deploy:
 - git config --local user.name "Gael de Chalendar"
 - git config --local user.email "kleag@free.fr"
