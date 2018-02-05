@@ -27,6 +27,7 @@ if(UNIX)
   endif(NOT LSB_DISTRIB)
   set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
 endif(UNIX)
+message("CPACK_SYSTEM_NAME is ${CPACK_SYSTEM_NAME}")
 
 set(CPACK_PACKAGE_VENDOR "CEA LIST")
 set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")

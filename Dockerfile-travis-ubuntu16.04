@@ -15,7 +15,7 @@ ARG NLTK_PTB_DP_FILE
 # Setup
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils -qq
-RUN apt-get install -y git gcc g++ make cmake cmake-data curl python-nltk gawk wget python3 ninja-build -qq
+RUN apt-get install -y lsb-release git gcc g++ make cmake cmake-data curl python-nltk gawk wget python3 ninja-build -qq
 RUN apt-get update -y -qq
 RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev -qq
 RUN apt-get update -y -qq
