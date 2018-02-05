@@ -34,8 +34,10 @@ RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/ind
 RUN python -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
+WORKDIR /src
 RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
-WORKDIR /svm_light
+RUN mkdir -p /src/svm_light
+WORKDIR /src/svm_light
 RUN tar xzf ../svm_light.tar.gz
 RUN make
 RUN cp svm_classify svm_learn /usr/bin
