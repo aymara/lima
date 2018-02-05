@@ -11,22 +11,21 @@ set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bi
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
 message("PERL5LIB=$ENV{PERL5LIB}")
 message("PATH=$ENV{PATH}")
-macro (CompileLimaSubproject _project _dependsOn)
 
 if(UNIX)
-	# Try to find architecture
-	execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_PACKAGE_ARCHITECTURE)
-	string(STRIP "${CPACK_PACKAGE_ARCHITECTURE}" CPACK_PACKAGE_ARCHITECTURE)
-	# Try to find distro name and distro-specific arch
-	execute_process(COMMAND lsb_release -is OUTPUT_VARIABLE LSB_ID)
-	execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE LSB_RELEASE)
-	string(STRIP "${LSB_ID}" LSB_ID)
-	string(STRIP "${LSB_RELEASE}" LSB_RELEASE)
-	set(LSB_DISTRIB "${LSB_ID}${LSB_RELEASE}")
-	if(NOT LSB_DISTRIB)
-		set(LSB_DISTRIB "unix")
-	endif(NOT LSB_DISTRIB)
-	set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
+  # Try to find architecture
+  execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_PACKAGE_ARCHITECTURE)
+  string(STRIP "${CPACK_PACKAGE_ARCHITECTURE}" CPACK_PACKAGE_ARCHITECTURE)
+  # Try to find distro name and distro-specific arch
+  execute_process(COMMAND lsb_release -is OUTPUT_VARIABLE LSB_ID)
+  execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE LSB_RELEASE)
+  string(STRIP "${LSB_ID}" LSB_ID)
+  string(STRIP "${LSB_RELEASE}" LSB_RELEASE)
+  set(LSB_DISTRIB "${LSB_ID}${LSB_RELEASE}")
+  if(NOT LSB_DISTRIB)
+    set(LSB_DISTRIB "unix")
+  endif(NOT LSB_DISTRIB)
+  set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
 endif(UNIX)
 
 set(CPACK_PACKAGE_VENDOR "CEA LIST")
@@ -37,17 +36,8 @@ SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
 
-  ## Define test command.
-#   if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-#     set(_TEST_COMMAND make test)
-#   else()
-#     set(_TEST_COMMAND cmake --build . --target RUN_TESTS --config ${CMAKE_BUILD_TYPE})
-#   endif()
-#     TEST_COMMAND "${_TEST_COMMAND}"
-  
-#         -DMSVC_VERSION=${MSVC_VERSION}
-#         -DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
-#         -DCMAKE_LINKER:PATH=${CMAKE_LINKER}
+macro (CompileLimaSubproject _project _dependsOn)
+
   ## Add external project
   ExternalProject_Add(
     ${_project}
@@ -95,25 +85,14 @@ SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_M
     add_dependencies(${_project} ${_dependsOn})
   endif()
 
-    ## Add packaging command
-#   if ("x${CMAKE_BUILD_TYPE}" STREQUAL "xRelease" AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-#   if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-#       ExternalProject_Add_Step(${_project} packaging
-#       COMMAND make package
-#       COMMENT "Packaging ${_project}"
-#       WORKING_DIRECTORY <BINARY_DIR>
-#       DEPENDEES install
-#       )
-# 
-#   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    ExternalProject_Add_Step(${_project} packaging
+  ## Add packaging step
+  ExternalProject_Add_Step(${_project} packaging
     COMMAND cmake --build . --target package --config ${CMAKE_BUILD_TYPE}
     COMMENT "Packaging ${_project}"
     WORKING_DIRECTORY <BINARY_DIR>
     DEPENDEES install
     USES_TERMINAL 1
-    )
-#   endif()
+  )
 
 
   ## Force rebuilding of the main subproject every time building from super structure
