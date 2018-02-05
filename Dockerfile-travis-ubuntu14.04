@@ -15,8 +15,15 @@ ARG NLTK_PTB_DP_FILE
 # Setup
 RUN apt-get update -y -qq
 RUN apt-get install -y apt-utils software-properties-common python-software-properties python3-software-properties -qq
-RUN apt-get install -y git gcc g++ ninja-build autotools-dev dh-autoreconf cmake cmake-data curl python-nltk gawk wget -qq
+RUN apt-get install -y git gcc g++ ninja-build autotools-dev dh-autoreconf curl python-nltk gawk wget -qq
 RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libboost-all-dev libenchant-dev -qq
+
+RUN mkdir -p /src
+WORKDIR /src
+RUN wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
+RUN tar -xzf cmake-3.4.1.tar.gz
+WORKDIR /src/cmake-3.4.1/
+RUN ./configure && make install && update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs 
@@ -42,7 +49,6 @@ RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com
 
 RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest | grep browser_download_url | grep ubuntu14 | cut -d '"' -f 4) && dpkg -i "$TEMP_DEB"
 
-RUN mkdir -p /src/
 RUN git clone https://github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
