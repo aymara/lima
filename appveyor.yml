@@ -16,7 +16,6 @@ environment:
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
-  VSINSTALL: '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"'
   BINTRAYKEY:
     secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
 
@@ -56,8 +55,8 @@ build_script:
   - cd c:\b
   - echo %BOOST_ROOT%
   - echo %BOOST_LIBRARYDIR%
-  - call %VSINSTALL% amd64
-  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="c:\msys64\usr\bin" c:/projects/lima
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
+  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
   - cmake --build . --config Release
 
 on_success:
