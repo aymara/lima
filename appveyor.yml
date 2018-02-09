@@ -39,8 +39,7 @@ install:
   ############################################################################
   # Install Ninja
   ############################################################################
-  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/tag/v1.8.2/ninja-win.zip"
-  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip -FileName ninja.zip
   - 7z x ninja.zip -oC:\externals\ninja > nul
   - set PATH=C:\externals\ninja;%PATH%
   - ninja --version
