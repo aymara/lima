@@ -30,6 +30,21 @@ configuration: Release
 os: Visual Studio 2013
 
 install:
+  ############################################################################
+  # All external dependencies are installed in C:\externals
+  ############################################################################
+  - mkdir C:\externals
+  - cd C:\externals
+
+  ############################################################################
+  # Install Ninja
+  ############################################################################
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/tag/v1.8.2/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\externals\ninja > nul
+  - set PATH=C:\externals\ninja;%PATH%
+  - ninja --version
+
   - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
   - ps: mkdir c:\dependency_treebank
   - ps: unzip c:\dependency_treebank.zip -d c:\
@@ -41,7 +56,7 @@ build_script:
   - cd c:\b
   - echo %BOOST_ROOT%
   - echo %BOOST_LIBRARYDIR%
-  - cmake -G "Visual Studio 12 2013 Win64" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
+  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" c:/projects/lima
   - cmake --build . --config Release
 
 on_success:
