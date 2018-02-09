@@ -181,13 +181,13 @@ def main(argv):
     parser.add_argument("language", help="language")
     parser.add_argument("dicofile",
                         type=argparse.FileType('r',
-                                               encoding='utf-8',
-                                               errors='ignore'),
+                                               encoding='utf-8'),
+                                               #errors='ignore'),
                         help="input file: dictionary entries")
     parser.add_argument("corpus",
                         type=argparse.FileType('r', 
-                                               encoding='utf-8', 
-                                               errors='ignore'),
+                                               encoding='utf-8'), 
+                                               #errors='ignore'),
                         help="corpus file")
     parser.add_argument("output_file",
                         help="output file name")
