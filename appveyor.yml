@@ -16,7 +16,7 @@ environment:
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
-  VSINSTALL: 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat'
+  VSINSTALL: '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"'
   BINTRAYKEY:
     secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
 
