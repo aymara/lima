@@ -185,7 +185,7 @@ def main(argv):
                         help="input file: dictionary entries")
     parser.add_argument("corpus",
                         type=argparse.FileType('r', 
-                                               encoding='utf-8'), 
+                                               encoding='utf-8', 
                                                errors='ignore'),
                         help="corpus file")
     parser.add_argument("output_file",
