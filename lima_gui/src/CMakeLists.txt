@@ -67,7 +67,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
     WinDeployQt(
       COMPILER_RUNTIME 
       TARGET lima 
-      QMLDIR qml-old
+      QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml-old
       INCLUDE_MODULES ${QTLIBS} 
     )
     install(
