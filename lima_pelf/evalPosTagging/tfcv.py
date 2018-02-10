@@ -77,7 +77,8 @@ def TenPcSample(path, sep):
     num = range(1, numfold+1)
     with open(path, 'r') as corpus:
         cnt = 1
-        s = open(results + "/%d/10pc.tfcv" % num[0], 'w')
+        s = open(results + "/%d/10pc.tfcv" % num[0], 'w',
+                 encoding='utf-8', newline='\n')
         for line in corpus:
             cnt += 1
             s.write(line)
@@ -85,7 +86,8 @@ def TenPcSample(path, sep):
                 s.close()
                 num = num[1:]
                 if num:
-                    s = open(results + "/%d/10pc.tfcv" % num[0], 'w')
+                    s = open(results + "/%d/10pc.tfcv" % num[0], 'w',
+                             encoding='utf-8', newline='\n')
 
 
 def SVMFormat():
@@ -124,7 +126,8 @@ def Tagged2raw():
     max_processes = MAX_PROCESSES
     print("*** Producing raw equivalent of test partitions ...")
     for i in range(1, numfold+1):
-        with open('{}/{}/10pc.brut'.format(results, i), "w") as outfile:
+        with open('{}/{}/10pc.brut'.format(results, i), 'w',
+                  encoding='utf-8', newline='\n') as outfile:
             processes.add(subprocess.Popen(
                 ['{}/reBuildRawCorpus.sh'.format(PELF_BIN_PATH), lang,
                  '{}/{}/10pc.tfcv'.format(results, i)],

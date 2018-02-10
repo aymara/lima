@@ -25,7 +25,8 @@ def convertSymbolicCodesFromLefffToLima(codes):
     stored2 = []
     store = False
     with open('symbolicCode-fre.xml', 'r') as f:
-        with open('symbolicCode-fre-new.xml', 'w') as of:
+        with open('symbolicCode-fre-new.xml', 'w',
+                  encoding='utf-8', newline='\n') as of:
             for code_line in f:
                 code_line = code_line.rstrip()
                 if not code_line:
