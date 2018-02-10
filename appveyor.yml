@@ -9,9 +9,9 @@ environment:
   LIMA_DIST: c:\d
   LIMA_CONF: 'c:\d\share\config\lima'
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
-  QTDIR: 'C:\Qt\5.5\msvc2013_64'
-  BOOST_ROOT: 'C:\Libraries\boost_1_58_0'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_58_0\lib64-msvc-12.0'
+  QTDIR: 'C:\Qt\5.8\msvc2015_64'
+  BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
   PATH: '%QTDIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
@@ -26,8 +26,8 @@ environment:
 
 configuration: Release
 
-#os: Visual Studio 2015
-os: Visual Studio 2013
+os: Visual Studio 2015
+#os: Visual Studio 2013
 
 install:
   # Prepend chosen Python to the PATH of this build
@@ -72,19 +72,19 @@ on_success:
   - ps: ( tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log ) -or $true
   - ps: popd
 
-  - ps: $user = "kleag"
-  - ps: $pass = $Env:BINTRAYKEY
-  - ps: $pair = "${user}:${pass}"
-  - ps: $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
-  - ps: $base64 = [System.Convert]::ToBase64String($bytes)
-  - ps: $basicAuthValue = "Basic $base64"
-  - ps: $headers = @{ Authorization = $basicAuthValue }
-  - ps: $commit = $Env:APPVEYOR_REPO_COMMIT
-  - ps: $commit  = $commit.substring(0,7)
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1..exe
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1..exe
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1..exe
-  - ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limagui-2.1.$commit.exe?publish=1 -Infile C:/b/lima_gui/src/lima_gui-build/limagui-2.1..exe
+  #- ps: $user = "kleag"
+  #- ps: $pass = $Env:BINTRAYKEY
+  #- ps: $pair = "${user}:${pass}"
+  #- ps: $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
+  #- ps: $base64 = [System.Convert]::ToBase64String($bytes)
+  #- ps: $basicAuthValue = "Basic $base64"
+  #- ps: $headers = @{ Authorization = $basicAuthValue }
+  #- ps: $commit = $Env:APPVEYOR_REPO_COMMIT
+  #- ps: $commit  = $commit.substring(0,7)
+  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1..exe
+  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1..exe
+  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1..exe
+  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limagui-2.1.$commit.exe?publish=1 -Infile C:/b/lima_gui/src/lima_gui-build/limagui-2.1..exe
 
 
 on_failure:
