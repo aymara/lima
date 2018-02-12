@@ -594,8 +594,6 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
     VERBATIM
   )
 
-  # defini l'ensemble des dépendances (ce qui doit exister dans l'environnement d'execution)
-  # de la cible rules-DateTime-${_lang}main
   add_custom_target(
     rules-${_lang}-execEnv
     ALL
