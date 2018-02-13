@@ -17,8 +17,6 @@
 project(lima_gui)
 cmake_minimum_required(VERSION 3.4.0)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LIMA_GUI" )
-
 enable_testing()
 
 include(GNUInstallDirs)

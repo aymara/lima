@@ -26,9 +26,6 @@ endif()
 # -DCMAKE_INSTALL_PREFIX="c:/amose" -DCMAKE_BUILD_TYPE=Release
 # -DCMAKE_INSTALL_PREFIX="c:/amose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-# In debug mode, adds the -DDEBUG_CD to the compiler command line.
-# Allows to build with conditionally built debug output
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES" )
 set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
