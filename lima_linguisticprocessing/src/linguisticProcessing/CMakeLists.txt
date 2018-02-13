@@ -25,9 +25,13 @@ add_definitions( -DLIMA_LP_EXPORTING )
 set (lima-linguisticprocessing_MOC_HEADERS
     limaSimpleClientDelegate.h)
 
-qt5_wrap_cpp (lima-linguisticprocessing_MOC_OUTFILES ${lima-linguisticprocessing_MOC_HEADERS})
+qt5_wrap_cpp (lima-linguisticprocessing_MOC_OUTFILES 
+  ${lima-linguisticprocessing_MOC_HEADERS}
+)
 
-add_library(lima-linguisticprocessing SHARED limaSimpleClient.cpp ${lima-linguisticprocessing_MOC_OUTFILES})
+add_library(lima-linguisticprocessing 
+  SHARED limaSimpleClient.cpp ${lima-linguisticprocessing_MOC_OUTFILES}
+)
 target_link_libraries(lima-linguisticprocessing
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation
@@ -68,9 +72,13 @@ if(NOT ${SYSTEM_NAME} STREQUAL "Windows")
   lima-lp-specificentitiesCrf
   )
 endif()
-set_target_properties(lima-linguisticprocessing PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-linguisticprocessing DESTINATION ${LIB_INSTALL_DIR}
+set_target_properties(lima-linguisticprocessing PROPERTIES 
+  VERSION ${LIMA_LP_LIB_VERSION} 
+  SOVERSION ${LIMA_LP_LIB_SOVERSION})
+
+install(TARGETS lima-linguisticprocessing 
+  DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
 
