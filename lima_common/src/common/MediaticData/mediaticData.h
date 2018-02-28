@@ -125,6 +125,10 @@ public:
     EntityType addEntity(const LimaString& groupName, const LimaString& entityName);
     EntityType addEntity(EntityGroupId groupId, const LimaString& entityName);
 
+    // simple implementation of entity taxonomy: child-parent links
+    void addEntityParentLink(const EntityType& child, const EntityType& parent);
+    bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
+    
     // read/write function necessary because entity types
     // are saved in temporary files
     void writeEntityTypes(std::ostream& os) const;

@@ -144,6 +144,57 @@ QDebug& operator << (QDebug& os, const EntityType& type) {
   return os << type.m_d->m_groupId << "." << type.m_d->m_id;
 }
 
+//***********************************************************************
+// Hierarchy
+// simple child->parent map (does not handle multiple inheritance)
+// structure allows entities from different groups to be in the same hierarchy, but this will
+// not occur with the current parsing of entity declaration in config file
+
+// inherit from map in case we need specific member functions for the interface
+class EntityTypeHierarchyPrivate : public std::map<EntityType, EntityType> {
+public:
+  EntityTypeHierarchyPrivate():std::map<EntityType, EntityType>() {}
+  ~EntityTypeHierarchyPrivate() {}
+};
+
+EntityTypeHierarchy::EntityTypeHierarchy():
+m_d(nullptr)
+{
+  m_d=new EntityTypeHierarchyPrivate();
+}
+
+EntityTypeHierarchy::~EntityTypeHierarchy()
+{
+  delete m_d;
+}
+
+void EntityTypeHierarchy::addParentLink(const EntityType& child, const EntityType& parent)
+{
+  (*m_d)[child]=parent;
+}
+
+bool EntityTypeHierarchy::isParent(const EntityType& child, const EntityType& parent) const
+{
+  const auto& it=m_d->find(child);
+  if (it==m_d->end()) {
+    return false;
+  }
+  return ((*it).second==parent);
+}
+
+bool EntityTypeHierarchy::isAncestor(const EntityType& child, const EntityType& parent) const
+{
+  const auto& it=m_d->find(child);
+  if (it==m_d->end()) {
+    return false;
+  }
+  if ((*it).second==parent) {
+    return true;
+  }
+  return isAncestor((*it).second,parent);
+}
+
+
 } // end namespace
 } // end namespace
 } // end namespace
