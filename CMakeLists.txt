@@ -36,6 +36,10 @@ if(UNIX)
 endif(UNIX)
 message("CPACK_SYSTEM_NAME is ${CPACK_SYSTEM_NAME}")
 
+# Allow to set LIMA_VERSION variables necessary to setup packages names
+configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
+find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR} REQUIRED)
+
 set(CPACK_PACKAGE_VENDOR "CEA LIST")
 set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
