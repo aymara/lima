@@ -27,6 +27,7 @@
 
 
 #include "entityTransition.h"
+#include "common/MediaticData/mediaticData.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
@@ -116,7 +117,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     annotationData->annotation(annotVertex, m_entityAnnotation).
     pointerValue<SpecificEntityAnnotation>();
 
-  return (m_entityType == se->getType());
+  return (m_entityType == se->getType() || Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType));
 }
 
 } // namespace end

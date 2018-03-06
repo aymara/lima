@@ -120,7 +120,6 @@ j="1"
 if [[ $CMAKE_GENERATOR == "VS" ]]; then
   j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
 elif [[ $CMAKE_GENERATOR == "Unix" ]]; then
-  j=`WMIC CPU Get NumberOfCores | head -n 2 | t`
   j=`grep -c ^processor /proc/cpuinfo`
 fi
 echo "Parallel build on $j processors"

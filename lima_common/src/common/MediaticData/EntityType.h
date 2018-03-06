@@ -75,6 +75,22 @@ private:
   EntityTypePrivate* m_d;
 };
 
+// hierachy of entity types 
+class EntityTypeHierarchyPrivate;
+class LIMA_MEDIATICDATA_EXPORT EntityTypeHierarchy
+{
+public:
+  EntityTypeHierarchy();
+  ~EntityTypeHierarchy();
+  
+  void addParentLink(const EntityType& child, const EntityType& parent);
+  bool isParent(const EntityType& child, const EntityType& parent) const; 
+  bool isAncestor(const EntityType& child, const EntityType& parent) const;
+  
+private:
+  EntityTypeHierarchyPrivate* m_d;
+};
+
 } // end namespace
 } // end namespace
 } // end namespace
