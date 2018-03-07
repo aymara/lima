@@ -96,9 +96,9 @@ done
 shift $((OPTIND-1))
 
 if type git && git rev-parse --git-dir; then
-    current_branch=`git rev-parse --abbrev-ref HEAD`
-    current_revision=`git rev-parse --short HEAD`
-    current_timestamp=`git show -s --format=%ct HEAD`
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    current_revision=$(git rev-parse --short HEAD)
+    current_timestamp=$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')
 else
     # use default values
     current_branch="default"

@@ -48,7 +48,7 @@ RUN git clone https://github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
-RUN echo "$(git show -s --format=%ct HEAD)-$(git rev-parse --short HEAD)" > release
+RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
@@ -70,3 +70,6 @@ RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*/src/*-build/*.
 WORKDIR /usr/share/apps/lima/tests
 RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
 RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
+
+# install github-release to be able to deploy packages
+RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin

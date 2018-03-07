@@ -38,7 +38,7 @@ RUN git clone https://github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
-RUN echo "$(git show -s --format=%ct HEAD)-$(git rev-parse --short HEAD)" > release
+RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
