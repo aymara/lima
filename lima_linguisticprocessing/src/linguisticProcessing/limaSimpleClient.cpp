@@ -311,7 +311,7 @@ void LimaWorker::analyze(const std::string& text)
   std::map<std::string,std::string> metaData;
   metaData["Lang"]=m_language;
   string pseudofilename=text.substr(0,10);
-  boost::regex_replace(pseudofilename,boost::regex("[.,-;:!?\",& <>]"),"_",boost::format_all);
+  boost::regex_replace(pseudofilename,boost::regex("[.,-;:!?\",& <>\n\t ]"),"_",boost::format_all);
   metaData["FileName"]=pseudofilename;
   
   ostringstream oss;
