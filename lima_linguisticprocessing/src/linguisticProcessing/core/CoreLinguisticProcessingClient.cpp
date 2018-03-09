@@ -93,11 +93,13 @@ void CoreLinguisticProcessingClient::analyze(
   Lima::TimeUtilsController timer("CoreLinguisticProcessingClient::analyze");
   CORECLIENTLOGINIT;
   
-  if (text.isEmpty())
-  {
-    LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
-    return;
-  }
+ //if (text.isEmpty())
+ static const QRegExp whitespaceOnly("\\s*");
+ if (whitespaceOnly.exactMatch(text))
+ {
+   LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
+   return;
+ }
   
   // create analysis content
   AnalysisContent analysis;
