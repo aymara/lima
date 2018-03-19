@@ -352,7 +352,7 @@ int run(int argc,char** argv)
   fileItr++, i++)
   {
     // display the progress of the analysis
-    std::cout << "\rAnalyzing "<< i << "/" << files.size()
+    std::cerr << "\rAnalyzing "<< i << "/" << files.size()
     << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
     << *fileItr << "'" << std::flush;
     
