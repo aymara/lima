@@ -72,7 +72,7 @@ int logFileSize( const std::string& filename ) {
   struct stat sts;
   if( stat( filename.c_str(), &sts) != 0)
     std::cerr << "logFileSize: error getting info for file " << filename << std::endl;
-  std::cout << "taille fichier: " << filename << "= " << sts.st_size << std::endl;
+  std::cerr << "taille fichier: " << filename << "= " << sts.st_size << std::endl;
   return sts.st_size;
 }
 
@@ -119,14 +119,14 @@ int getProcStat( const std::string& toLog ) {
   while (!statusIn.eof())
   {
     getline(statusIn,line);
-//    std::cout << "line = " << line << std::endl;
+//    std::cerr << "line = " << line << std::endl;
     size_t index=line.find(toLog);
     if( index != std::string::npos ) {
-//      std::cout << "index = " << index << std::endl;
+//      std::cerr << "index = " << index << std::endl;
       string valstr=line.substr(index+toLog.size()+1);
-//      std::cout << "valstr = " << valstr << std::endl;
+//      std::cerr << "valstr = " << valstr << std::endl;
       val = atoi(valstr.c_str());
-      std::cout << toLog << "=" << val <<std::endl;
+      std::cerr << toLog << "=" << val <<std::endl;
     }
   }
   return val;
@@ -296,7 +296,7 @@ void DictTester<dictType>::testIndex(
   typename std::vector<Lima::LimaString >::const_iterator begin,
   typename std::vector<Lima::LimaString >::const_iterator end,
   const std::vector<int>& indexes ) {
-  std::cout << "testIndex: getSize() = " << m_dico.getSize() << std::endl;
+  std::cerr << "testIndex: getSize() = " << m_dico.getSize() << std::endl;
 
   std::vector<int>::const_iterator indexItr = indexes.begin();
   int index0 = 0;
@@ -312,14 +312,14 @@ void DictTester<dictType>::testIndex(
     }
     if( m_param.withDebug ) {
       Lima::LimaString newWord = *lemma;
-      std::cout <<  "testIndex: getIndex("
+      std::cerr <<  "testIndex: getIndex("
                 << Lima::Common::Misc::limastring2utf8stdstring(newWord)
                 <<  ")=" << index << std::endl;
     }
     else {
       if( index%10000 == 1 ) {
         Lima::LimaString newWord = *lemma;
-        std::cout <<  "testIndex: getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(newWord)
+        std::cerr <<  "testIndex: getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(newWord)
                   <<  ")=" << index << std::endl;
       }
     }
@@ -367,11 +367,11 @@ template <typename dictType>
   typename std::vector<Lima::LimaString >::const_iterator lemma = begin;
   
   // if size of indexes = 1, we just display the string return by getSpelling()
-  std::cout <<  "testSpelling: getSpelling: indexes.size()=" << indexes.size() << std::endl;
+  std::cerr <<  "testSpelling: getSpelling: indexes.size()=" << indexes.size() << std::endl;
   if( indexes.size() == 1 ) {
     Lima::LimaString spelling;
     spelling = m_dico.getSpelling(indexes[0]);
-    std::cout <<  "testSpelling: getSpelling(" << indexes[0]
+    std::cerr <<  "testSpelling: getSpelling(" << indexes[0]
                 << ")=" << Lima::Common::Misc::limastring2utf8stdstring(spelling) << std::endl;
   }
   // for each id, compare result of getSpelling with element in vector of string [begin,end]
@@ -380,7 +380,7 @@ template <typename dictType>
     try{
       spelling = m_dico.getSpelling(indexes[i]);
       if( i%10000 == 1 ) {
-        std::cout <<  "testSpelling: getSpelling(" << indexes[i]
+        std::cerr <<  "testSpelling: getSpelling(" << indexes[i]
                 << ")=" << Lima::Common::Misc::limastring2utf8stdstring(spelling) << std::endl;
       }
       if( m_param.withAssert ) {
@@ -388,7 +388,7 @@ template <typename dictType>
       }
     }
     catch(std::logic_error e ) {
-      std::cout << "testSpelling exception: " << e.what() << std::endl;
+      std::cerr << "testSpelling exception: " << e.what() << std::endl;
     }
     lemma++;
   }
@@ -405,18 +405,17 @@ void DictTester<dictType>::testSuper(
       Lima::LimaString prefix = *it;
       std::pair<AccessSuperWordIterator, AccessSuperWordIterator> entries =
         m_dico.getSuperWords(prefix);
-      std::cout <<  "testSuper: getSuperWords("
+      std::cerr <<  "testSuper: getSuperWords("
                 << Lima::Common::Misc::limastring2utf8stdstring(prefix)
                 << ")" << std::endl;
       for( ; entries.first != entries.second ; entries.first++ ) {
         Lima::LimaString superWord = *(entries.first);
         std::cout << Lima::Common::Misc::limastring2utf8stdstring(superWord)
-                  << ", " << std::endl;
+                  << std::endl;
       }
-      std::cout << std::endl;
     }
     catch(std::logic_error e ) {
-      std::cout << "testSuper: getSuperWords exception: " << e.what() << std::endl;
+      std::cerr << "testSuper: getSuperWords exception: " << e.what() << std::endl;
     }
   }
 }
@@ -460,7 +459,7 @@ template <typename dictType>
       }
     }
     catch(std::logic_error e ) {
-      std::cout << "testSub: getSubWords exception: " << e.what() << std::endl;
+      std::cerr << "testSub: getSubWords exception: " << e.what() << std::endl;
     }
     offsetIt++;
   }

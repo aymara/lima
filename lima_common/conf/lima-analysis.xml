@@ -34,6 +34,10 @@
         <entry key="fre" value="limaserver"/>
         <entry key="por" value="limaserver"/>
       </map>
+      <!-- The limaserver pipeline is used from the http limaserver -->
+      <map name="totalcruncher">
+        <entry key="eng" value="totalcruncher"/>
+      </map>
       <!-- The easy pipeline is used in order to produce a result in the Easy campaign format. -->
       <map name="easy">
         <entry key="eng" value="easy"/>

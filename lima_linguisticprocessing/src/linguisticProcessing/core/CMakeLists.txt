@@ -34,6 +34,7 @@ add_subdirectory(EntityTracking)
 add_subdirectory(TextSegmentation)
 add_subdirectory(WordSenseAnalysis)
 add_subdirectory(RegexMatcher)
+add_subdirectory(ApproxMatching)
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORTING)
 ########### next target ###############

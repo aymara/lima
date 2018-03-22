@@ -1,0 +1,477 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+  <!--==================== tests mechanism exact ====================-->
+  <testcase id="eng.approx.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx A yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.1.1" trace=".se.approx.xml"
+          comment="1 instance of name 'A'. 'A' is in the dictionary gene-specyNames.sorted.toy.lst"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.1.2" trace=".se.approx.xml"
+          comment="value of gene name is 'A'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/string"
+          operator="="
+          right="A"/>
+  </testcase>
+  <testcase id="eng.approx.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx A yy"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:ForTest"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.2.1" trace=".se.approx.xml"
+          comment="1 instance of name 'A'. 'A' is in the dictionary gene-specyNames.sorted.toy.lst with index 'ForTest'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.2.2" trace=".se.approx.xml"
+          comment="value of gene name is 'A'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/string"
+          operator="="
+          right="A"/>
+  </testcase>
+  <testcase id="eng.approx.3" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx A yy"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Human"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.3.1" trace=".se.approx.xml"
+          comment="'A' is in the dictionary gene-specyNames.sorted.toy.lst but with index 'ForTest' and not 'Human'"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.4" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx Ayy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.4.1" trace=".se.approx.xml"
+          comment="entity 'A' embedded in a token at right, no detection because of 2 errors"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.5" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xxA yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.5.1" trace=".se.approx.xml"
+          comment="entity 'A' embedded in a token, no detection because 2 errors"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.6" type="bloquant">
+    <call-parameters>
+      <param key="text" value="x xAy y"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.6.1" trace=".se.approx.xml"
+          comment="entity 'A' embedded in a token, no detection because 2 errors"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.7" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx A yy A v"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:ForTest"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.7.1" trace=".se.approx.xml"
+          comment="2 instances of name 'A' in the text. 'A' is in the dictionary block-countryNames.sorted.toy.lst for index ForTest)"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.7.2" trace=".se.approx.xml"
+          comment="value of gene name is 'A'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/string"
+          operator="="
+          right="A"/>
+    <test id="eng.approx.7.3" trace=".se.approx.xml"
+          comment="2 instances of name 'A' in the text. 'A' is in the dictionary block-countryNames.sorted.toy.lst for index ForTest)"
+          left="XPATH#//specific_entities/specific_entity[position=9][length=1]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.7.4" trace=".se.approx.xml"
+          comment="value of gene name is 'A'"
+          left="XPATH#//specific_entities/specific_entity[position=9][length=1]/string"
+          operator="="
+          right="A"/>
+  </testcase>
+  <testcase id="eng.approx.8" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx B C D v"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:ForTest"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.8.1" trace=".se.approx.xml"
+          comment="2 instances with overlapping: 'B C' and 'C D' in the text. Only one ('B C') must be retained"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.8.2" trace=".se.approx.xml"
+          comment="value of gene name is 'B C'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/string"
+          operator="="
+          right="B C"/>
+  </testcase>
+  <testcase id="eng.approx.9" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx C D E v"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:ForTest"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.9.1" trace=".se.approx.xml"
+          comment="2 candidates 'C D' and 'C D E' exists in the lexicon. The longuest (greedy) be selected"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=5]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.9.2" trace=".se.approx.xml"
+          comment="value of gene name is 'C D E'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=5]/string"
+          operator="="
+          right="C D E"/>
+  </testcase>
+  <testcase id="eng.approx.91" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx JéK v"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:ForTest"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.91.1" trace=".se.approx.xml"
+          comment="name with character out of ASCII range"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.91.2" trace=".se.approx.xml"
+          comment="value of gene name is 'JéK'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/string"
+          operator="="
+          right="JéK"/>
+  </testcase>
+  <!--==================== tests mechanism approx  ====================-->
+  <testcase id="eng.approx.10" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC eDD EE yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.10.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 1 insertion inside. maxError = 10%, i.e. edit distance of 1 accepted"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=12]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.11.2" trace=".se.approx.xml"
+          comment="value of gene name is 'BB CC DD EE' but it has been mispelled in 'BB CC eDD EE', which is accepted "
+          left="XPATH#//specific_entities/specific_entity[position=4][length=12]/string"
+          operator="="
+          right="BB CC eDD EE"/>
+  </testcase>
+  <testcase id="eng.approx.11" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC D EE yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.11.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' with 1 deletion inside. maxError = 10%, i.e. edit distance of 1 accepted"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=10]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.11.2" trace=".se.approx.xml"
+          comment="value of gene name is 'BB CC DD EE' but it has been mispelled in 'BB CC eDD EE', which is accepted "
+          left="XPATH#//specific_entities/specific_entity[position=4][length=10]/string"
+          operator="="
+          right="BB CC D EE"/>
+  </testcase>
+  <testcase id="eng.approx.12" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC FD EE yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.12.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' with 1 substitution inside. maxError = 10%, i.e. edit distance of 1 accepted"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=11]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.11.2" trace=".se.approx.xml"
+          comment="value of gene name is 'BB CC DD EE' but it has been mispelled in 'BB CC eDD EE', which is accepted "
+          left="XPATH#//specific_entities/specific_entity[position=4][length=11]/string"
+          operator="="
+          right="BB CC FD EE"/>
+  </testcase>
+  <testcase id="eng.approx.13" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC eDD EEe yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.13.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 1 insertion inside + 1 extra character at end. maxError = 10%, i.e. edit distance of 2 rejected"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.14" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC D EEe yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.14.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 1 deletion inside + 1 extra character at end. maxError = 10%, i.e. edit distance of 2 rejected"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.15" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC FD EEe yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.15.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 1 substitution inside + 1 extra character at end. maxError = 10%, i.e. edit distance of 2 rejected"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.16" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC eDDe EE yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.16.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 2 insertions inside. maxError = 10%, i.e. edit distance of 2 rejected"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.17" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx B CC D EE yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.17.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 2 deletions inside. maxError = 10%, i.e. edit distance of 2 rejected"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>
+  <testcase id="eng.approx.18" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx BB CC FF EE yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.18.1" trace=".se.approx.xml"
+          comment="1 instance of 'BB CC DD EE' 2 substitutions inside. maxError = 10%, i.e. edit distance of 2 rejected"
+          left="XPATH#//specific_entities/specific_entity"
+          operator="notexists"
+          right=""/>
+  </testcase>  
+  <!--==================== tests mechanism generalization  ====================-->
+  <testcase id="eng.approx.19" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx F02 yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.19.1" trace=".se.approx.xml"
+          comment="1 instance of name 'F2' with a non significative 0. 'F2' is in the dictionary gene-specyNames.sorted.toy.lst, F02 is accepted"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.19.2" trace=".se.approx.xml"
+          comment="value of gene name is 'F2'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/string"
+          operator="="
+          right="F02"/>
+  </testcase>
+  <testcase id="eng.approx.20" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx C-D-E yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.20.1" trace=".se.approx.xml"
+          comment="1 instance of name 'C D E' with substitution of space (' ') character with minus ('-') caracter"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=5]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.20.2" trace=".se.approx.xml"
+          comment="value of gene name is 'F2'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=5]/string"
+          operator="="
+          right="C-D-E"/>
+  </testcase>
+  <testcase id="eng.approx.21" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx H 1 yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.21.1" trace=".se.approx.xml"
+          comment="1 instance of name 'H-1' with substitution of minus ('-') character with space (' ') caracter"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.21.2" trace=".se.approx.xml"
+          comment="value of gene name is 'H-1'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/string"
+          operator="="
+          right="H 1"/>
+  </testcase>
+  <!--==================== tests mechanism generalization: check control character in names ====================-->
+ <testcase id="eng.approx.31" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx $II yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.31.1" trace=".se.approx.xml"
+          comment="1 instance of name '$II' $ is a control character for regex grammar which must be protected"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.31.2" trace=".se.approx.xml"
+          comment="value of gene name is 'H-1'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=3]/string"
+          operator="="
+          right="$II"/>
+  </testcase>
+ <testcase id="eng.approx.32" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xx I.^$|()[]{}*?\II yy"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.32.1" trace=".se.approx.xml"
+          comment="1 instance of name 'I.^$|()[]{}*?\II' most of characters are control character for regex grammar which must be protected"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=16]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.32.2" trace=".se.approx.xml"
+          comment="value of gene name is 'H-1'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=16]/string"
+          operator="="
+          right="I.^$|()[]{}*?\II"/>
+  </testcase>
+
+  <!--==================== tests mechanism generalization + approx ====================-->
+ <testcase id="eng.approx.33" type="bloquant">
+    <call-parameters>
+      <param key="text" value="campaign after 11-2/11-CT "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.33.1" trace=".se.approx.xml"
+          comment="1 instance of name '11-2/11-CT' "
+          left="XPATH#//specific_entities/specific_entity[position=16][length=10]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.33.2" trace=".se.approx.xml"
+          comment="value of gene name is '11-2/11-CT'"
+          left="XPATH#//specific_entities/specific_entity[position=16][length=10]/string"
+          operator="="
+          right="11-2/11-CT"/>
+  </testcase>
+  <!--==================== tests Medical.GENE====================-->
+  <!--testcase id="eng.approx.gene.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Insulin-Like Growth Factor 1 (IGF-1) is a hormone that is similar in structure to insulin and works with Growth Hormone to reproduce and regenerate cells."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="approxmatcher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.gene.1.1" trace=".se.approx.xml"
+          comment="2 forms of 1 gene name: 1"
+          left="XPATH#//specific_entities/specific_entity[position=0][length=26]/type"
+          operator="contains"
+          right="Medical.GENE"/>
+    <test id="eng.approx.gene.1.2" trace=".se.approx.xml"
+          left="XPATH#//specific_entities/specific_entity[position=0][length=26]/string"
+          operator="="
+          right="Insulin-Like Growth Factor"/>
+    <test id="eng.approx.gene.1.2" trace=".se.approx.xml"
+          left="XPATH#//specific_entities/specific_entity[position=30][length=5]/type"
+          operator="="
+          right="Medical.GENE"/>
+    <test id="eng.approx.gene.1.2" trace=".se.approx.xml"
+          left="XPATH#//specific_entities/specific_entity[position=30][length=5]/string"
+          operator="="
+          right="IGF-1"/>
+  </testcase-->
+</testcases>

@@ -65,6 +65,30 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
   }
   LimaString contentText = Common::Misc::utf8stdstring2limastring(text);
   const std::string& language = testCase.getParam("language");
+  std::string metaValuesStr = testCase.getParam("meta");
+  std::map<std::string,std::string> userMetaData;
+  if(!metaValuesStr.empty())
+  {
+    std::string::size_type k=0;
+    do {
+      k=metaValuesStr.find(",");
+      //if (k==std::string::npos) continue;
+      std::string str(metaValuesStr,0,k);
+      std::string::size_type i=str.find(":");
+      if (i==std::string::npos) {
+        std::cerr << "in test Case " << testCase.id
+                  << " meta argument '"<< str <<"' is not of the form XXX:YYY: ignored" << std::endl;
+      }
+      else {
+        //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
+        userMetaData.insert(std::make_pair(std::string(str,0,i),std::string(str,i+1)));
+      }
+      if (k!=std::string::npos) {
+        metaValuesStr=std::string(metaValuesStr,k+1);
+      }
+    }  while (k!=std::string::npos);
+  }
+  
   // For each pipeline process test
   MultiValCallParams::const_iterator pos = testCase.multiValCallParams.find("pipelines");
   if( pos != testCase.multiValCallParams.end() ) {
@@ -80,6 +104,7 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
       metaData["Lang"]=language;
       metaData["FileName"]=filenameWithPipeLine;
       metaData["DocumentName"]=testCase.id;
+      metaData.insert(userMetaData.begin(),userMetaData.end());
       m_lpclient->analyze(contentText,metaData, *pipItr, m_handlers);
       BowTextHandler* bowHandler = static_cast<BowTextHandler*>(m_handlers["bowTextHandler"]);
       // dump results

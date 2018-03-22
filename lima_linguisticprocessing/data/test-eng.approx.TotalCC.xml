@@ -1,0 +1,247 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+  <!--==================== tests Total.WELL ====================-->
+  <testcase id="eng.approx.well.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="B"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Brazil"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.well.1.1" trace=".se.approx.xml"
+          comment="well name of length 1 at start of text ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=0][length=1]/type"
+          operator="contains"
+          right="Total.WELL"/>
+    <test id="eng.approx.well.1.2" trace=".se.approx.xml"
+          comment="value of well name is 'B' ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=0][length=1]/string"
+          operator="="
+          right="B"/>
+  </testcase>
+  <testcase id="eng.approx.well.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xy yuyu B"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.well.2.1" trace=".se.approx.xml"
+          comment="name of length 1 somewhere in the text ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=8][length=1]/type"
+          operator="contains"
+          right="Total.WELL"/>
+    <test id="eng.approx.well.2.2" trace=".se.approx.xml"
+          comment="value of well name is 'B' ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=8][length=1]/string"
+          operator="="
+          right="B"/>
+  </testcase>
+  <testcase id="eng.approx.well.3" type="bloquant">
+    <call-parameters>
+      <param key="text" value="xy yTrombon 1 hop"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.well.3.1" trace=".se.approx.xml"
+          comment="name of length 6 with 1 error = 1 inserted character ('Trombon 1' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=9]/type"
+          operator="contains"
+          right="Total.WELL"/>
+    <test id="eng.approx.well.3.2" trace=".se.approx.xml"
+          comment="value of well name is 'B' ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=9]/string"
+          operator="="
+          right="Trombon 1"/>
+  </testcase>
+  <testcase id="eng.approx.well.4" type="bloquant">
+    <call-parameters>
+      <param key="text" value="from ENAP Sipetrol for USD 33 MM."/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Indonesia"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.well.4.1" trace=".se.approx.xml"
+          comment="2 suggestions with same position and length, do not lead to crash..."
+          left="XPATH#//specific_entities/specific_entity[position=4][length=9]/type"
+          operator="contains"
+          right="Total.WELL"/>
+    <test id="eng.approx.well.4.2" trace=".se.approx.xml"
+          comment="value of well name is 'B' ('B' is in the dictionary totalWell-eng.dat)"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=9]/string"
+          operator="="
+          right="Trombon 1"/>
+  </testcase>
+  <!--==================== tests Total.BLOCK ====================-->
+  <testcase id="eng.approx.block.3" type="bloquant">
+    <call-parameters>
+      <param key="text" value="bloc SG9/05"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Zimbabwe"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.block.3.1" trace=".se.approx.xml"
+          comment="name with '/' char in the text ('SG9/05' is in the dictionary block-countryNames.sorted.toy.lst for country Zimbabwe)"
+          left="XPATH#//specific_entities/specific_entity[position=5][length=6]/type"
+          operator="contains"
+          right="Total.BLOCK"/>
+    <test id="eng.approx.block.3.2" trace=".se.approx.xml"
+          comment="value of block name is 'SG9/05'"
+          left="XPATH#//specific_entities/specific_entity[position=5][length=6]/string"
+          operator="="
+          right="SG9/05"/>
+  </testcase>
+  <testcase id="eng.approx.block.4" type="bloquant">
+    <call-parameters>
+      <param key="text" value="bloc Ahnet A (Dev)"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Algeria"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.block.4.1" trace=".se.approx.xml"
+          comment="name of length 1 somewhere in the text ('Ahnet A (Dev)' is in the dictionary block-countryNames.sorted.toy.lst for country Algeria)"
+          left="XPATH#//specific_entities/specific_entity[position=5][length=13]/type"
+          operator="contains"
+          right="Total.BLOCK"/>
+    <test id="eng.approx.block.4.2" trace=".se.approx.xml"
+          comment="value of block name is 'SG9/05'"
+          left="XPATH#//specific_entities/specific_entity[position=5][length=13]/string"
+          operator="="
+          right="Ahnet A (Dev)"/>
+  </testcase>
+  <testcase id="eng.approx.block.3" type="bloquant">
+    <call-parameters>
+      <param key="text" value="+.+.A+.+."/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:ForTest"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.block.3.1" trace=".se.approx.xml"
+          comment="name of length 1 in a text made of a sequence of contiguous 1 character length words"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/type"
+          operator="contains"
+          right="Total.BLOCK"/>
+    <test id="eng.approx.block.3.2" trace=".se.approx.xml"
+          comment="value of block name is 'A'"
+          left="XPATH#//specific_entities/specific_entity[position=4][length=1]/string"
+          operator="="
+          right="A"/>
+  </testcase>
+  <!--==================== tests Total.FIELD ====================-->
+  <testcase id="eng.approx.field.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="field Tan Emellel Sud Ouest 2"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Algeria"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.field.1.1" trace=".se.approx.xml"
+          comment="name with '/' char in the text ('Tan Emellel Sud Ouest 2' is in the dictionary field-countryNames.sorted.toy.lst for country Algeria)"
+          left="XPATH#//specific_entities/specific_entity[position=6][length=23]/type"
+          operator="contains"
+          right="Total.FIELD"/>
+    <test id="eng.approx.field.1.2" trace=".se.approx.xml"
+          comment="value of field name is 'SG9/05'"
+          left="XPATH#//specific_entities/specific_entity[position=6][length=23]/string"
+          operator="="
+          right="Tan Emellel Sud Ouest 2"/>
+  </testcase>
+  <!--==================== tests Total.CONTRACT ====================-->
+  <testcase id="eng.approx.contract.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="contract 81"/>
+      <param key="text" value="contract Benguecha / 108, 128b"/>
+      <param key="language" value="eng"/>
+      <param key="meta" value="index:Algeria"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.contract.1.1" trace=".se.approx.xml"
+          comment="name with '/' char in the text ('Benguecha / 108, 128b' is in the dictionary contract-countryNames.sorted.toy.lst for country Algeria)"
+          left="XPATH#//specific_entities/specific_entity[position=9][length=21]/type"
+          operator="contains"
+          right="Total.CONTRACT"/>
+    <test id="eng.approx.contract.1.2" trace=".se.approx.xml"
+          comment="value of contract name is 'Benguecha / 108, 128b'"
+          left="XPATH#//specific_entities/specific_entity[position=9][length=21]/string"
+          operator="="
+          right="Benguecha / 108, 128b"/>
+  </testcase>
+  <!--==================== tests Total.COMPANY ====================-->
+AOG (SA) Pty Ltd
+  <testcase id="eng.approx.company.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="company AOG (SA) Pty Ltd"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.company.1.1" trace=".se.approx.xml"
+          comment="name 'AOG (SA) Pty Ltd' is in the dictionary companyNames.sorted.toy.lst"
+          left="XPATH#//specific_entities/specific_entity[position=8][length=16]/type"
+          operator="contains"
+          right="Total.COMPANY"/>
+    <test id="eng.approx.company.1.2" trace=".se.approx.xml"
+          comment="value of contract name is 'AOG (SA) Pty Ltd'"
+          left="XPATH#//specific_entities/specific_entity[position=8][length=16]/string"
+          operator="="
+          right="AOG (SA) Pty Ltd"/>
+  </testcase>
+  <testcase id="eng.approx.company.2" type="bloquant">
+    <call-parameters>
+      <param key="text" value="company KOM9 &amp; KG *"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.company.2.1" trace=".se.approx.xml"
+          comment="name 'KOM9 &amp; KG *' is in the dictionary companyNames.sorted.toy.lst"
+          left="XPATH#//specific_entities/specific_entity[position=9][length=12]/type"
+          operator="contains"
+          right="Total.COMPANY"/>
+    <test id="eng.approx.company.2.2" trace=".se.approx.xml"
+          comment="value of contract name is 'KOM9 &amp;  KG *'"
+          left="XPATH#//specific_entities/specific_entity[position=9][length=12]/string"
+          operator="="
+          right="KOM9 &amp; KG *"/>
+  </testcase>
+  <!--==================== tests Total.COUNTRY ====================-->
+  <testcase id="eng.approx.country.1" type="bloquant">
+    <call-parameters>
+      <param key="text" value="in Angola/Congo Unitized Area"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="totalcruncher"/>
+      </list>
+    </call-parameters>
+    <test id="eng.approx.country.1.1" trace=".se.approx.xml"
+          comment="name 'Angola/Congo Unitized Area' is in the dictionary countryNames.sorted.toy.lst"
+          left="XPATH#//specific_entities/specific_entity[position=3][length=26]/type"
+          operator="contains"
+          right="Total.COUNTRY"/>
+    <test id="eng.approx.country.1.2" trace=".se.approx.xml"
+          comment="value of country name is 'Angola/Congo Unitized Area'"
+          left="XPATH#//specific_entities/specific_entity[position=3][length=26]/string"
+          operator="="
+          right="Angola/Congo Unitized Area"/>
+  </testcase>
+</testcases>
+

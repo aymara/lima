@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+<module name="entities">
+    <group name="Medical">
+      <list name="entityList">
+        <item value="GENE"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="ApproxNamesModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="geneApproxNamesMatcher"/>
+      </list>
+    </group>
+    <group name="geneApproxNamesMatcher" class="ApproxStringMatcher">
+        <!--param key="dictionary" value="totalWellForms"/-->
+        <param key="nameindex" value="gene-SpecyNames"/>
+        <param key="nbMaxNumError" value="20"/>
+        <param key="nbMaxDenError" value="100"/>
+        <param key="entityGoup" value="Medical"/>
+        <param key="entityName" value="Medical.GENE"/>
+        <param key="NPCategory" value="NP"/>
+        <param key="NPMicroCategory" value="NNP"/>
+        <map name="generalization">
+            <!-- Delete unbalanced parenthesis -->       
+            <!--entry key="^[^\(]*\)|\([^\)]*$" value=""/-->
+            <!-- Delete parentheses and content -->       
+            <!--entry key="\(.*\)" value=""/-->
+            <!-- Delete tailing star (company alias) -->       
+            <!--entry key="\\\*$" value=""/-->
+            <!-- Group blanks & dashes : A-6 => A( |-)?6 ~= A 6 -->
+            <!--entry key="[ |-|#]" value="( |-)?"/-->
+            <!-- Add 0 prefix to numerals : A-6 => A-0*6 ~= A-006 -->
+            <entry key="([0-9]+)" value="0*\1"/>
+        </map>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="gene-SpecyNames" class="NameIndex">
+      <param key="filename" value="LinguisticProcessings/eng/gene-specyNames.sorted.toy.lst"/>
+    </group>
+  </module>
+</modulesConfig>
