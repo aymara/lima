@@ -150,6 +150,15 @@ else (ENCHANT_FOUND)
   message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
 endif (ENCHANT_FOUND)
 
+find_package (Tre) 
+if (TRE_FOUND)
+  set(optionalLibs ${optionalLibs} ${TRECPP_LIBRARIES})
+  include_directories(${TRECPP_INCLUDE_DIRS})
+  message(STATUS "Found tre library. Module ApproxStringMatcher will be built")
+else (TRECPP_FOUND)
+  message(STATUS "Could not find tre ${TRECPP_INCLUDE_DIRS}. ApproxStringMatcher module will not be built.")
+endif (TRE_FOUND)
+
 # QHttpServer is necessary for limaserver HTTP server
 find_package(QHttpServer QUIET)
 if (NOT QHTTPSERVER_FOUND)
