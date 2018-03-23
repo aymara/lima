@@ -103,7 +103,7 @@
       <param key="language" value="eng"/>
       <param key="meta" value="index:ForTest"/>
       <list key="pipelines">
-        <item value="totalcruncher"/>
+        <item value="approxmatcher"/>
       </list>
     </call-parameters>
     <test id="eng.approx.7.1" trace=".se.approx.xml"
@@ -133,7 +133,7 @@
       <param key="language" value="eng"/>
       <param key="meta" value="index:ForTest"/>
       <list key="pipelines">
-        <item value="totalcruncher"/>
+        <item value="approxmatcher"/>
       </list>
     </call-parameters>
     <test id="eng.approx.8.1" trace=".se.approx.xml"
@@ -153,7 +153,7 @@
       <param key="language" value="eng"/>
       <param key="meta" value="index:ForTest"/>
       <list key="pipelines">
-        <item value="totalcruncher"/>
+        <item value="approxmatcher"/>
       </list>
     </call-parameters>
     <test id="eng.approx.9.1" trace=".se.approx.xml"
@@ -173,7 +173,7 @@
       <param key="language" value="eng"/>
       <param key="meta" value="index:ForTest"/>
       <list key="pipelines">
-        <item value="totalcruncher"/>
+        <item value="approxmatcher"/>
       </list>
     </call-parameters>
     <test id="eng.approx.91.1" trace=".se.approx.xml"

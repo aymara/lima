@@ -42,8 +42,9 @@
       <entry key="eng" value="fakeMultiLevel"/>
       <entry key="por" value="fakeMultiLevel"/>
     </map>
-    <map name="totalcruncher">
-      <entry key="eng" value="totalcruncher"/>
+    <map name="approxmatcher">
+      <entry key="eng" value="approxmatcher"/>
+      <entry key="fre" value="approxmatcher"/>
     </map>
   </group>
   <group name="analysisDumpers">

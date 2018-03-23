@@ -52,5 +52,7 @@ set_target_properties(lima-lp-approxstringmatching PROPERTIES VERSION ${LIMA_LP_
 install(TARGETS lima-lp-approxstringmatching DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
-
+install(FILES gene-specyNames.sorted.toy.lst 
+  DESTINATION share/apps/lima/resources/LinguisticProcessings/eng
+  COMPONENT runtime)
 ########### install files ###############

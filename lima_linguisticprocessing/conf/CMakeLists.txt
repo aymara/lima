@@ -36,6 +36,7 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml 
   lima-lp-tva-por.xml
   lima-server.xml
+  ApproxNames-modex.xml
   lima-dbusserver.xml 
   DESTINATION share/config/lima
   COMPONENT runtime)

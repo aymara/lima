@@ -105,7 +105,7 @@
         <item value="syntacticAnalysisXmlLogger"/>
       </list>
     </group>
-    <group name="totalcruncher" class="ProcessUnitPipeline" >
+    <group name="approxmatcher" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
         <item value="fullTokenXmlLoggerTokenizer"/>
