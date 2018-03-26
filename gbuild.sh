@@ -27,6 +27,7 @@ Synopsis: $0 [OPTIONS]
 Options default values are in parentheses.
 
   -a asan       <(OFF)|ON> compile with adress sanitizer
+  -d debug_msg  <(OFF)|ON>
   -m mode       <(debug)|release> compile mode
   -n arch       <(generic)|native> target architecture mode
   -p boolean    <(true)|false> will build in parallel (make -jn) if true. 
@@ -54,15 +55,17 @@ WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
 
-while getopts ":m:n:p:r:v:G:a:" o; do
+while getopts ":a:d:m:n:p:r:v:G:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
             [[ "$WITH_ASAN" == "ON" || "$WITH_ASAN" == "OFF" ]] || usage
             ;;
+        d)
+            ;;
         m)
             mode=${OPTARG}
-            [[ "$mode" == "debug" || "$mode" == "release" ]] || usage
+            [[ "$mode" == "Debug" || "$mode" == "Release"  || "$mode" == "RelWithDebInfo" ]] || usage
             ;;
         n)
             arch=${OPTARG}
@@ -132,11 +135,12 @@ else
 fi
 
 # export VERBOSE=1
-if [[ $mode == "release" ]]; then
-  cmake_mode="Release"
+cmake_mode=$mode
+if [[ $mode == "Release" ]]; then
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+elif [[ $mode == "RelWithDebInfo" ]]; then
+  SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 else
-  cmake_mode="Debug"
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 fi
 
