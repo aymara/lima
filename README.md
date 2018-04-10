@@ -13,7 +13,5 @@ Drone.io Build Status: [![Drone.io Build Status](https://drone.io/github.com/aym
 
 Ubuntu 16.04 , Travis-ci Build Status: [![Travis-ci Build Status](https://travis-ci.org/aymara/lima.svg?branch=master)](https://travis-ci.org/aymara/lima)
 
-Ubuntu 14.04 , Semaphore-ci Build Status: [![Semaphore-ci Build Status](https://semaphoreci.com/api/v1/kleag/lima-2/branches/master/badge.svg)](https://semaphoreci.com/kleag/lima-2)
-
 MS Windows 64, Appveyor Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/tyj7jgks2cxx94w9?svg=true)](https://ci.appveyor.com/project/kleag/lima)
 
