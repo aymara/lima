@@ -71,11 +71,10 @@
         <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
-    <group name="totalcruncher" class="ProcessUnitPipeline" >
+    <group name="approxmatcher" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
         <item value="fullTokenXmlLoggerTokenizer"/>
-        <item value="approxStringMatcher"/>
         <item value="ApproxNamesModex"/>
         <!--item value="specificEntitiesApproxXmlLogger"/-->
         <!--item value="regexmatcher"/-->
