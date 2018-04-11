@@ -14,7 +14,6 @@
       </list>
     </group>
     <group name="geneApproxNamesMatcher" class="ApproxStringMatcher">
-        <!--param key="dictionary" value="totalWellForms"/-->
         <param key="nameindex" value="gene-SpecyNames"/>
         <param key="nbMaxNumError" value="20"/>
         <param key="nbMaxDenError" value="100"/>
