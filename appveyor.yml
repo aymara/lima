@@ -86,7 +86,7 @@ after_build:
 
 before_deploy:
   - ps: pushd c:/projects/lima
-  - ps: $env:DEPLOY_TAG="$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+  - ps: $env:DEPLOY_TAG="$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h -1)"
   - echo %DEPLOY_TAG%
 
 artifacts: 
