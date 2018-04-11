@@ -73,6 +73,7 @@ on_success:
   - ps: popd
 
 before_deploy:
+- ps: pushd c:/projects/lima
 - ps: $env:DEPLOY_TAG="$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 
 deploy:
