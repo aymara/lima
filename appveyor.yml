@@ -95,7 +95,7 @@ deploy:
   tag: $(DEPLOY_TAG)
   auth_token:
     secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
-  artifact: /lima*.exe/
+  artifact: 'lima*.exe'
   force_update: true
 
 
