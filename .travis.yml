@@ -32,4 +32,6 @@ deploy:
   on:
     repo: aymara/lima
     tags: false
-    all_branches: true
+    branches:
+      except:
+      - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
