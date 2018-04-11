@@ -99,7 +99,7 @@ else ()
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
   endif()
   set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /utf-8 ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /MP /utf-8 ${CMAKE_CXX_FLAGS}")
 
   set(LIB_INSTALL_DIR "bin")
 endif ()
