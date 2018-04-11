@@ -8,9 +8,9 @@ env:
 before_install:
 - docker pull ubuntu:16.04
 script:
-- docker build --tag lima-ubuntu16 --build-arg BINTRAYKEY=$BINTRAYKEY --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
+- docker build --tag lima-ubuntu16 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
   -f ./Dockerfile-travis-ubuntu16.04 .
-#- docker build --tag lima-ubuntu14 --build-arg BINTRAYKEY=$BINTRAYKEY --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
+#- docker build --tag lima-ubuntu14 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
   #-f ./Dockerfile-travis-ubuntu14.04 .
 after_success:
 - docker run -t -d lima-ubuntu16
