@@ -85,9 +85,12 @@ after_build:
   - ps: popd
 
 before_deploy:
-  - ps: pushd c:/projects/lima
   - ps: $env:DEPLOY_TAG="$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
   - echo %DEPLOY_TAG%
+
+artifacts: 
+  - path: lima*.exe
+    name: packages
 
 deploy:
   description: '$(DEPLOY_TAG)'
@@ -95,7 +98,7 @@ deploy:
   tag: $(DEPLOY_TAG)
   auth_token:
     secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
-  artifact: 'lima*.exe'
+  artifact: packages
   force_update: true
 
 
