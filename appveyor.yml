@@ -65,11 +65,23 @@ build_script:
   - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
   - cmake --build . --config Release
 
-on_success:
+after_build:
   - ps: ls c:/d/share/apps/lima/tests
   - ps: pushd c:/d/share/apps/lima/tests
   - ps: ( tva --language=eng test-eng.tokenizer.xml test-eng.simpleword.xml test-eng.idiom.xml test-eng.abbrev.xml test-eng.hyphen.xml test-eng.default.xml test-eng.se-PERSON.xml test-eng.se-DATE.xml test-eng.se-EMBEDED.xml test-eng.se-ORGANISATION.xml test-eng.se.xml test-eng.se-LOCATION.xml test-eng.disambiguated.xml test-eng.sa.xml 2>&1 | tee tva-eng.log ) -or $true
   - ps: ( tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log ) -or $true
+  - ps: popd
+  - ps: pushd C:\b\lima_common\src\lima_common-build
+  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
+  - ps: popd
+  - ps: pushd C:\b\lima_linguisticprocessing\src\lima_linguisticprocessing-build
+  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
+  - ps: popd
+  - ps: pushd C:\b\lima_linguisticdata\src\lima_linguisticdata-build
+  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
+  - ps: popd
+  - ps: pushd C:\b\lima_gui\src\lima_gui-build
+  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
   - ps: popd
 
 before_deploy:
@@ -83,7 +95,7 @@ deploy:
   tag: $(DEPLOY_TAG)
   auth_token:
     secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
-  artifact: C:/b/lima_*/src/lima_*-build/*.exe
+  artifact: /lima*.exe/
   force_update: true
 
 
