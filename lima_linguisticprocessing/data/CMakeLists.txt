@@ -20,6 +20,9 @@
 install(FILES
     test-eng.abbrev.xml 
     test-eng.default.xml 
+IF(TRE_FOUND)
+    test-eng.approx.xml
+ENDIF(TRE_FOUND)
     test-eng.disambiguated.xml 
     test-eng.hyphen.xml 
     test-eng.idiom.xml
