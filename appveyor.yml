@@ -16,8 +16,8 @@ environment:
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
-  BINTRAYKEY:
-    secure: SF9KK/1ShDAudlHJFsZro1MQOaYqjJ0Hb2mbJEvFyxPCLHtevjyxuLT1IrsSmE1o
+  GITHUB_OAUTH_TOKEN:
+    secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
 
   matrix:
     - PYTHON: "C:\\Python36-x64"
@@ -72,19 +72,17 @@ on_success:
   - ps: ( tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log ) -or $true
   - ps: popd
 
-  #- ps: $user = "kleag"
-  #- ps: $pass = $Env:BINTRAYKEY
-  #- ps: $pair = "${user}:${pass}"
-  #- ps: $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
-  #- ps: $base64 = [System.Convert]::ToBase64String($bytes)
-  #- ps: $basicAuthValue = "Basic $base64"
-  #- ps: $headers = @{ Authorization = $basicAuthValue }
-  #- ps: $commit = $Env:APPVEYOR_REPO_COMMIT
-  #- ps: $commit  = $commit.substring(0,7)
-  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limacommon-2.1.$commit.exe?publish=1 -Infile C:/b/lima_common/src/lima_common-build/limacommon-2.1..exe
-  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticprocessing-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticprocessing/src/lima_linguisticprocessing-build/limalinguisticprocessing-2.1..exe
-  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limalinguisticdata-2.1.$commit.exe?publish=1 -Infile C:/b/lima_linguisticdata/src/lima_linguisticdata-build/limalinguisticdata-2.1..exe
-  #- ps: Invoke-RestMethod  -Method PUT -Headers $headers -uri https://api.bintray.com/content/kleag/windows64/lima/$Env:APPVEYOR_BUILD_NUMBER/$Env:APPVEYOR_BUILD_NUMBER/limagui-2.1.$commit.exe?publish=1 -Infile C:/b/lima_gui/src/lima_gui-build/limagui-2.1..exe
+before_deploy:
+- ps: $env:DEPLOY_TAG="$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+
+deploy:
+  description: '$env:DEPLOY_TAG'
+  provider: GitHub
+  tag: $env:DEPLOY_TAG
+  auth_token:
+    secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
+  artifact: C:/b/lima_*/src/lima_*-build/*.exe
+  force_update: true
 
 
 on_failure:
