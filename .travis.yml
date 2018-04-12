@@ -25,8 +25,7 @@ before_deploy:
 - test $TRAVIS_TEST_RESULT = 0 \
   && git config --local user.name "Gael de Chalendar"\
   && git config --local user.email "kleag@free.fr"\
-  && git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h -1)"\
-  && export PRODBUILDCOMPLETE=true
+  && git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h -1)"
 deploy:
   provider: releases
   api_key:
@@ -35,7 +34,6 @@ deploy:
   file: $HOME/ubuntu*/*.deb
   skip_cleanup: true
   on:
-    condition: $PRODBUILDCOMPLETE = true
     repo: aymara/lima
     tags: false
     branches:
