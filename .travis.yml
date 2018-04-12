@@ -24,7 +24,7 @@ after_success:
 before_deploy:
 - git config --local user.name "Gael de Chalendar"
 - git config --local user.email "kleag@free.fr"
-- git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h -1)"
+- git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
 
 deploy:
   provider: releases
