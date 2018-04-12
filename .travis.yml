@@ -1,5 +1,8 @@
 sudo: required
 language: cpp
+branches:
+  except:
+  - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
 services:
 - docker
 env:
@@ -19,9 +22,11 @@ after_success:
 #- docker run -t -d lima-ubuntu14
 #- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME/ubuntu14
 before_deploy:
-- git config --local user.name "Gael de Chalendar"
-- git config --local user.email "kleag@free.fr"
-- git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h -1)"
+- test $TRAVIS_TEST_RESULT = 0 \
+  && git config --local user.name "Gael de Chalendar"\
+  && git config --local user.email "kleag@free.fr"\
+  && git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h -1)"\
+  && export PRODBUILDCOMPLETE=true
 deploy:
   provider: releases
   api_key:
@@ -30,6 +35,7 @@ deploy:
   file: $HOME/ubuntu*/*.deb
   skip_cleanup: true
   on:
+    condition: $PRODBUILDCOMPLETE = true
     repo: aymara/lima
     tags: false
     branches:

@@ -1,10 +1,6 @@
-init:
- - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#init:
+ #- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
-#  QTDIR: 'C:\Qt\5.9.1\msvc2015_64'
-#  BOOST_ROOT: 'C:\Libraries\boost_1_59_0'
-#  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_59_0\lib64-msvc-14.0'
-  #VCINSTALLDIR: 'c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\'
 environment:
   LIMA_DIST: c:\d
   LIMA_CONF: 'c:\d\share\config\lima'
@@ -103,5 +99,5 @@ deploy:
   force_update: true
 
 
-on_failure:
-         - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#on_failure:
+         #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
