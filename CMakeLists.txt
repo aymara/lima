@@ -33,7 +33,16 @@ if(UNIX)
     set(LSB_DISTRIB "unix")
   endif(NOT LSB_DISTRIB)
   set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
-endif(UNIX)
+endif()
+
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES Windows)
+  if(CMAKE_CL_64)
+    set(CPACK_SYSTEM_NAME win64-${CMAKE_SYSTEM_PROCESSOR})
+  else(CMAKE_CL_64)
+    set(CPACK_SYSTEM_NAME win32-${CMAKE_SYSTEM_PROCESSOR})
+  endif(CMAKE_CL_64)
+endif()
+
 message("CPACK_SYSTEM_NAME is ${CPACK_SYSTEM_NAME}")
 
 # Allow to set LIMA_VERSION variables necessary to setup packages names
