@@ -37,9 +37,9 @@ endif()
 
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES Windows)
   if(CMAKE_CL_64)
-    set(CPACK_SYSTEM_NAME win64-${CMAKE_SYSTEM_PROCESSOR})
+    set(CPACK_SYSTEM_NAME win64)
   else(CMAKE_CL_64)
-    set(CPACK_SYSTEM_NAME win32-${CMAKE_SYSTEM_PROCESSOR})
+    set(CPACK_SYSTEM_NAME win32)
   endif(CMAKE_CL_64)
 endif()
 
