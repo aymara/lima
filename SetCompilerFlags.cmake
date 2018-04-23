@@ -102,6 +102,11 @@ else ()
   set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /MP /utf-8 ${CMAKE_CXX_FLAGS}")
 
   set(LIB_INSTALL_DIR "bin")
+
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    DESTINATION bin
+    COMPONENT Libraries)
+
 endif ()
 
 
