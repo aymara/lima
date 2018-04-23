@@ -137,9 +137,9 @@ if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
 endif()
 
-#CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
-# CompileLimaSubproject(lima_annoqt lima_common)
+CompileLimaSubproject(lima_annoqt lima_common)
 
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
