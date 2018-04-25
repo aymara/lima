@@ -3,24 +3,26 @@ language: cpp
 branches:
   except:
   - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
+
 services:
 - docker
+
 env:
   global:
   - secure: FlsmywHiGR6VKejCGcEd59rhvk5YI1f+FUAWfBLVxzqG4haLGT0MQwyxDr2EPS3Iu+v16nsMxHT2dwMCotC8zTPSmHUr6evE4jpNcqs+vIOAz7VLjdqwD0jweeguOR4JxL1XcgFZMAPTnoQFBFZlEOFu8OxaDjOoG7Oj0iGH+Fo=
-before_install:
-- docker pull ubuntu:16.04
-script:
-- docker build --tag lima-ubuntu16 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
-  -f ./Dockerfile-travis-ubuntu16.04 .
-- docker build --tag lima-debian9 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
-  -f ./Dockerfile-debian9.4 .
+  - DISTRIB=ubuntu16.04
+  - DISTRIB=debian9.4
+
+script: docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
+  -f ./Dockerfile-travis-$DISTRIB .
+
 after_success:
 - docker run -t -d lima-ubuntu16
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
 - docker stop lima-ubuntu16
 - docker run -t -d lima-debian9
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME
+
 before_deploy:
 - git config --local user.name "Gael de Chalendar"
 - git config --local user.email "kleag@free.fr"
