@@ -13,14 +13,14 @@ before_install:
 script:
 - docker build --tag lima-ubuntu16 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
   -f ./Dockerfile-travis-ubuntu16.04 .
-#- docker build --tag lima-ubuntu14 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
-  #-f ./Dockerfile-travis-ubuntu14.04 .
+- docker build --tag lima-debian9 --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
+  -f ./Dockerfile-debian9.4 .
 after_success:
 - docker run -t -d lima-ubuntu16
-- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME/ubuntu16
-#- docker stop lima-ubuntu16
-#- docker run -t -d lima-ubuntu14
-#- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME/ubuntu14
+- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
+- docker stop lima-ubuntu16
+- docker run -t -d lima-debian9
+- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME
 before_deploy:
 - git config --local user.name "Gael de Chalendar"
 - git config --local user.email "kleag@free.fr"
@@ -31,7 +31,7 @@ deploy:
   api_key:
     secure: u0jcRYK9fsJ9ymnpU8ET5dd/DZ/rwah2WhOrfQGUkBM+VB2ASol1KCz8EMMwNQM44echMHz6LwxWM9np9vBUZZCgt/riU/vEVW7Dkmjyiwbscov7qbDmsLDdQy7LxFpEh+dA8m6U9thyWxBdtoDzDX8+3G0Oxfjf4cIa3eyAFv0=
   file_glob: true
-  file: $HOME/ubuntu*/*.deb
+  file: $HOME/packages/*.deb
   skip_cleanup: true
   on:
     repo: aymara/lima
