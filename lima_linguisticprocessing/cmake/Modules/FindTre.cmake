@@ -32,14 +32,14 @@ find_path(TREECPP_INCLUDE_DIR tre/tre.h
 )
 
 set(TRECPP_NAMES ${TRECPP_NAMES} tre)
-find_library(TRECPP_LIBRARY_DIRS NAMES ${TRECPP_NAMES}
+find_library(TRECPP_LIBRARIES NAMES ${TRECPP_NAMES}
   PATHS $ENV{LIMA_EXTERNALS}/lib 
 )
 
 # handle the QUIETLY and REQUIRED arguments and set QHTTPSERVER_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Tre  DEFAULT_MSG  TRECPP_LIBRARY_DIRS TREECPP_INCLUDE_DIR)
+find_package_handle_standard_args(Tre  DEFAULT_MSG  TRECPP_LIBRARIES TREECPP_INCLUDE_DIR)
 
-mark_as_advanced(TREECPP_INCLUDE_DIR TRECPP_LIBRARY_DIRS )
+mark_as_advanced(TREECPP_INCLUDE_DIR TRECPP_LIBRARIES)
 
