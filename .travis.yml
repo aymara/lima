@@ -22,10 +22,10 @@ script: docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER
   -f ./Dockerfile-$DISTRIB .
 
 after_success:
-- docker run -t -d lima-ubuntu16
+- docker run -t -d travis-ubuntu16.04
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
-- docker stop lima-ubuntu16
-- docker run -t -d lima-debian9
+- docker stop travis-ubuntu16.04
+- docker run -t -d debian9.4
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME
 
 before_deploy:
