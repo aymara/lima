@@ -75,7 +75,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLCo
     {
       XMLCFGLOGINIT;
       LERROR << "XMLConfigurationFileParser unable to open" << QString::fromUtf8(m_configurationFileName.c_str());
-      throw XMLException(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.c_str());
+      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.c_str());
     }
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
@@ -106,7 +106,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     {
       XMLCFGLOGINIT;
       LERROR << "Error opening " << m_configurationFileName.c_str();
-      throw XMLException(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName);
+      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName);
     }
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
