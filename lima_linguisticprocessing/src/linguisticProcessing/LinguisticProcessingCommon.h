@@ -106,6 +106,7 @@
 #define EVENTANALYZERLOGINIT LOGINIT("LP::EventAnalyzer")
 #define COMPACTDICTLOGINIT  LOGINIT("LP::CompactDict")
 #define MORPHOLOGINIT  LOGINIT("LP::MorphologicAnalysis")
+#define TFSELOGINIT  LOGINIT("LP::TensorflowSpecificEntities")
 #define AULOGINIT  LOGINIT("LP::Automaton")
 #define PTLOGINIT  LOGINIT("LP::PosTagger")
 #define SELOGINIT  LOGINIT("LP::SpecificEntities")
