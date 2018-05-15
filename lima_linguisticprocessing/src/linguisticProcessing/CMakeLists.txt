@@ -67,9 +67,15 @@ target_link_libraries(lima-linguisticprocessing
   lima-common
 )
 
+if (TensorFlow_FOUND)
+  target_link_libraries(lima-linguisticprocessing
+    lima-lp-tensorflowspecificentities
+  )
+endif()
+
 if(NOT ${SYSTEM_NAME} STREQUAL "Windows")
   target_link_libraries(lima-linguisticprocessing
-  lima-lp-specificentitiesCrf
+    lima-lp-specificentitiesCrf
   )
 endif()
 

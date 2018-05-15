@@ -116,7 +116,7 @@ bool Categories::configure(const QString& fileName)
   {
     if (!line.startsWith("#"))
     {
-      QStringList elts = line.split("=");
+      QStringList elts =line.split("=");
       if (elts.size()==2 && elts.at(0).trimmed().startsWith("log4j.category."))
       {
         QString category = elts.at(0).trimmed().remove(0,QLatin1String("log4j.category.").size());
@@ -207,6 +207,20 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       }
       
       QString initFileName = configDir + "/log4cpp.properties";
+      if (QFileInfo::exists(initFileName))
+      {
+        if (QsLogging::Categories::instance().configure(initFileName))
+        {
+          atLeastOneSuccessfulLoad = true;
+        }
+        else
+        {
+          std::cerr << "Configure Problem " << initFileName.toUtf8().constData() << std::endl;
+          return -1;
+        }
+      }
+      
+      initFileName = configDir + "/logTensorflowSpecificEntitiescpp.properties";
       if (QFileInfo::exists(initFileName))
       {
         if (QsLogging::Categories::instance().configure(initFileName))

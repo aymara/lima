@@ -96,7 +96,9 @@ void SimpleWord::init(
   try
   {
     string confident=unitConfiguration.getParamsValueAtKey("confidentMode");
+#ifdef DEBUG_LP
     LDEBUG << "SimpleWord set confident mode to:" << confident;
+#endif
     m_confidentMode=(confident=="true");
   }
   catch (NoSuchParam& )

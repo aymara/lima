@@ -10,6 +10,7 @@
         <item value="Person-modex.xml/entities"/>
         <item value="Event-modex.xml/entities"/>
         <item value="Product-modex.xml/entities"/>
+        <item value="Miscellaneous-modex.xml/entities"/>
       </list>
     </group>
   </module>
@@ -23,6 +24,7 @@
         <item value="Person-modex.xml/Processors"/>
         <item value="Event-modex.xml/Processors"/>
         <item value="Product-modex.xml/Processors"/>
+        <item value="Miscellaneous-modex.xml/Processors"/>
       </list>
     </group>
     <group name="SpecificEntitiesModex" class="ProcessUnitPipeline" >
@@ -63,6 +65,7 @@
         <item value="Person-modex.xml/resources-fre"/>
         <item value="Event-modex.xml/resources-fre"/>
         <item value="Product-modex.xml/resources-fre"/>
+        <item value="Miscellaneous-modex.xml/resources-fre"/>
       </list>
     </group>
   </module>
@@ -76,6 +79,7 @@
         <item value="Person-modex.xml/resources-eng"/>
         <item value="Event-modex.xml/resources-eng"/>
         <item value="Product-modex.xml/resources-eng"/>
+        <item value="Miscellaneous-modex.xml/resources-eng"/>
       </list>
     </group>
   </module>

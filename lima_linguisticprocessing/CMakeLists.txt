@@ -168,6 +168,16 @@ else(NOT QHTTPSERVER_FOUND)
   link_directories($ENV{LIMA_EXTERNALS}/lib)
 endif (NOT QHTTPSERVER_FOUND)
 
+find_package(TensorFlow)
+find_package(Eigen)
+# find_package(Protobuf REQUIRED)
+if (TensorFlow_FOUND AND Eigen_FOUND)
+  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
+
+  include_directories(${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
+else()
+  message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
+endif()
 
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
 IF(LIMACOMMON_FOUND)
