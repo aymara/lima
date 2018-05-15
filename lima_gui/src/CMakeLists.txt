@@ -129,47 +129,22 @@ else()
     ${lima_SRCS} 
     ${lima_MOC_OUTFILES}
   )
-target_link_libraries(lima 
-  lima-common-mediaticdata
-  lima-common-xmlconfigurationfiles
-  lima-common-tools
-  lima-common-data 
-  lima-common-factory
-  lima-common-misc
-  lima-common
-  lima-lp-annotationgraph
-  lima-lp-lineartextrepresentation
-  lima-lp-misc
-  lima-lp-tgv
-  lima-lp-linguisticdata
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-regexmatcher
-  lima-lp-wordsensetagger
-  lima-lp-linguisticprocessing-core
-  lima-lp-analysisdict
-  lima-lp-eventanalyzer
-  lima-lp-corefsolver
-  lima-lp-specificentities
-  lima-lp-syntacticanalysis
-  lima-lp-morphologicanalysis
-  lima-lp-dictionary
-  lima-lp-easyxmldumper
-  lima-lp-analysisdumpers
-  lima-lp-textsegmentation
-  lima-lp-linguisticanalysisstructure
-  lima-lp-semanticanalysis
-  lima-lp-linguisticresources
-  lima-lp-entitytracker
-  lima-lp-flattokenizer
-  lima-lp-applyrecognizer
-  lima-lp-linguisticprocessors
-  lima-lp-postagger
-  lima-lp-automaton
-  lima-lp-analysishandlers
-  lima-lp-client
-  ${Qt5_LIBRARIES}
-)
+  target_link_libraries(lima
+    lima-common-factory
+    lima-common-mediaticdata
+    lima-common-xmlconfigurationfiles
+    lima-common-tools
+    lima-common-datahandler 
+    lima-common-mediaprocessors 
+    lima-common-time 
+    lima-common-misc
+    lima-common-data 
+    lima-common
+    lima-lp-client
+    lima-lp-analysishandlers
+    lima-lp-linguisticprocessing-core
+    ${Qt5_LIBRARIES}
+  )
 endif()
 
 #   lima-common
