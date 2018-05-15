@@ -272,32 +272,36 @@ void CoreLinguisticProcessingClientFactory::configure(
        langItr++)
   {
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
-    MediaId langid=MediaticData::single().getMediaId(*langItr);
+    MediaId langid = MediaticData::single().getMediaId(*langItr);
     string file;
+    QString mediaProcessingDefinitionFile;
     try
     {
-      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
-      Q_FOREACH(QString confPath, configPaths)
-      {
-        QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
-             "lima-coreclient",
-             "mediaProcessingDefinitionFiles",
-             *langItr).c_str());
-        if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
-        {
-          file= (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
-          break;
-        }
-      }
+      mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
+            "lima-coreclient",
+            "mediaProcessingDefinitionFiles",
+            *langItr).c_str());
     }
     catch (NoSuchParam& )
     {
-      LERROR << "no language definition file for language " << *langItr;
+      LERROR << "No such param lima-coreclient/mediaProcessingDefinitionFiles/" << *langItr;
       throw InvalidConfiguration("no language definition file for language ");
+    }
+    QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+    QStringList tried;
+    Q_FOREACH(QString confPath, configPaths)
+    {
+      tried << QString(file.c_str());
+      if (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
+      {
+        file = (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
+        break;
+      }
     }
     if (file.empty())
     {
-      LERROR << "no language definition file for language " << *langItr;
+      LERROR << "no language definition file for language" << *langItr;
+      LERROR << "tried:" << tried;
       throw InvalidConfiguration("no language definition file for language ");
     }
     XMLConfigurationFileParser langParser(file);

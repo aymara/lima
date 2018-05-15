@@ -24,6 +24,7 @@
 
 #include "common/LimaCommon.h"
 #include "common/Data/strwstrtools.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
 #include <string>
@@ -34,8 +35,9 @@
 #include <QtCore/QCoreApplication>
 
 using namespace std;
-using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common;
+using namespace Lima::Common::Misc;
+using namespace Lima::Common::PropertyCode;
 using namespace Lima;
 
 
@@ -148,19 +150,24 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QsLogging::initQsLog();
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+    
+
   readCommandLineArguments(argc,argv);
   if (param->help)
   {
     usage(argc,argv);
     exit(0);
   }
-
-  std::string resourcesPath=(getenv("LIMA_RESOURCES")!=0)?string(getenv("LIMA_RESOURCES")):string("/usr/share/apps/lima/resources");
-  std::string configDir=(getenv("LIMA_CONF")!=0)?string(getenv("LIMA_CONF")):string("/usr/share/config/lima");
 
   if (param->codeFile == "")
   {
@@ -169,7 +176,10 @@ int run(int argc,char** argv)
       cerr << "no codefile nor language specified !" << endl;
       exit(1);
     }
-    param->codeFile=resourcesPath+"/LinguisticProcessings/"+param->language+"/code-"+param->language+".xml";
+
+    param->codeFile= Common::Misc::findFileInPaths(resourcesPath,
+                                                   (std::string("/LinguisticProcessings/")+param->language+"/code-"+param->language+".xml").c_str(), 
+                                                              LIMA_PATH_SEPARATOR).toUtf8().toStdString();
   }
 
   PropertyCodeManager propcodemanager;
@@ -321,8 +331,8 @@ void usage(int argc, char *argv[])
   LIMA_UNUSED(argc);
   cout << "usage: " << argv[0] << " [config] [commands]" << endl;
   cout << "where [config] can be either :" << endl;
-  cout << "  --code=<xmlPropertyFile>" << endl;
-  cout << "  --language=<lang> : use file $LIMA_RESOURCES/LinguisticProcessings/<lang>/code-<lang>.xml" << endl;
+  cout << "  --code=<xmlPropertyFile> Full or relative path to a property file" << endl;
+  cout << "  --language=<lang> : use file <One of $LIMA_RESOURCES paths>/LinguisticProcessings/<lang>/code-<lang>.xml" << endl;
   cout << "and [commands] are : " << endl;
   cout << "***** To print debug file *****" << endl;
   cout << "--output=<file> : print debug to <file>" << endl;

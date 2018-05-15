@@ -408,10 +408,8 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 {
   LDATALOGINIT;
   LINFO << "initializes the compound tenses definitions";
+  
   std::string resourcesPath=MediaticData::single().getResourcesPath();
-
-  const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
-  const PropertyManager& tenseManager=m_propCodeManager.getPropertyManager("TIME");
 
   std::string compoundTensesDefinitionsFile;
   try
@@ -423,8 +421,8 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   catch (const NoSuchParam& )
   {
-    LERROR << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
-    throw InvalidConfiguration();
+    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
+    return;
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {
@@ -447,6 +445,9 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
     LWARN << "Compound tenses definition file not found: " << compoundTensesDefinitionsFile;
     return;
   }
+
+  const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
+  const PropertyManager& tenseManager=m_propCodeManager.getPropertyManager("TIME");
 
   std::string line = Lima::Common::Misc::readLine(ifl);
   Misc::chomp(line);

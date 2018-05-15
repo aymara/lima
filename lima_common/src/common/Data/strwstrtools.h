@@ -77,9 +77,6 @@ if(U16_IS_TRAIL(c)) { \
 } \
 }
 
-#define U_MASK(x) ((uint32_t)1<<(x))
-    
-    
 namespace Lima {
 namespace Common {
 namespace Misc {

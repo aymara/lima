@@ -65,7 +65,9 @@ MorphoSyntacticData::MorphoSyntacticData()
 MorphoSyntacticData::~MorphoSyntacticData()
 {}
 
-bool MorphoSyntacticData::hasUniqueMicro(const Common::PropertyCode::PropertyAccessor& microAccessor,const std::list<LinguisticCode>& microFilter)
+bool MorphoSyntacticData::hasUniqueMicro(
+    const Common::PropertyCode::PropertyAccessor& microAccessor,
+    const std::list<LinguisticCode>& microFilter)
 {
   LinguisticCode micro(0);
   for (const_iterator it=begin();
@@ -126,11 +128,14 @@ void MorphoSyntacticData::allValues(const Common::PropertyCode::PropertyAccessor
 
 void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::PropertyCode::PropertyCodeManager& pcm,const FsaStringsPool& sp) const
 {
+#ifdef DEBUG_LP
+  LASLOGINIT;
+#endif
   xmlStream << "    <data>" << std::endl;
 
   if (!empty())
   {
-    // trie pour avoir les donn�s group�s par strings
+    // sort to obtain data grouped by strings
     MorphoSyntacticData tmp(*this);
     sort(tmp.begin(),tmp.end(),ltString());
     MorphoSyntacticType type(NO_MORPHOSYNTACTICTYPE);
@@ -143,6 +148,9 @@ void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::Proper
          it!=tmp.end();
          it++)
     {
+#ifdef DEBUG_LP
+        LDEBUG << "MorphoSyntacticData::outputXml" << sp[(*it).inflectedForm] << (*it).properties;
+#endif
       if (it->type != type)
       {
         // Changement type
@@ -218,9 +226,16 @@ void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::Proper
            propItr!=managers.end();
            propItr++)
       {
+#ifdef DEBUG_LP
+        LDEBUG << "MorphoSyntacticData::outputXml search properties" 
+                << (*it).properties 
+                << propItr->second.getPropertyAccessor().empty(it->properties);
+#endif
         if (!propItr->second.getPropertyAccessor().empty(it->properties))
         {
-          xmlStream << "          <p prop=\"" << propItr->first << "\" val=\"" << propItr->second.getPropertySymbolicValue(it->properties) << "\"/>" << std::endl;
+          xmlStream << "          <p prop=\"" << propItr->first << "\" val=\"" 
+                    << propItr->second.getPropertySymbolicValue(it->properties) 
+                    << "\"/>" << std::endl;
         }
       }
       xmlStream << "        </property>" << std::endl;

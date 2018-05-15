@@ -94,7 +94,7 @@ public:
    * @param propValues mapping (property name -> property value) to encode
    * @return coded LinguisticCode
    */
-  LinguisticCode encode(const std::map<std::string,std::string>& propValues) const;
+  LinguisticCode encode(const std::map<std::string, std::string>& propValues) const;
   
   /**
    * Compute conversion of symbolic codes into linguisticCode and append them into
@@ -113,7 +113,8 @@ public:
    * @param symbolicCodeFile Name of the file to convert
    * @param conversionTable Map to which append the results
    */
-  void convertSymbolicCodes(const std::string& symbolicCodeFile,std::map<std::string,LinguisticCode>& conversionTable) const;
+  void convertSymbolicCodes(const std::string& symbolicCodeFile,
+                            std::map<std::string,LinguisticCode>& conversionTable) const;
 
 private:
 
@@ -133,9 +134,9 @@ private:
    * @brief Compute a mask
    * @param startBit first bit used
    * @param nbBits nb bits to use
-   * @return uint64_t
+   * @return LinguisticCode
    */
-  uint64_t computeMask(uint64_t startBit,uint64_t nbBits) const;
+  LinguisticCode computeMask(uint64_t startBit,uint64_t nbBits) const;
 
 };
 

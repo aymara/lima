@@ -70,7 +70,9 @@ struct LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT LinguisticElement {
   * Holds morphosyntactic informations
   * @author Benoit Mathieu
   */
-class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT MorphoSyntacticData : public std::vector<LinguisticElement> {
+class LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT MorphoSyntacticData : 
+    public std::vector<LinguisticElement> 
+{
 public:
     MorphoSyntacticData();
 
@@ -82,7 +84,8 @@ public:
      * @param microFilter 
      * @return 
      */
-    bool hasUniqueMicro(const Lima::Common::PropertyCode::PropertyAccessor& microAccessor, const std::list< Lima::LinguisticCode >& microFilter);
+    bool hasUniqueMicro(const Common::PropertyCode::PropertyAccessor& microAccessor, 
+                        const std::list< LinguisticCode >& microFilter);
 
     uint64_t countValues(const Common::PropertyCode::PropertyAccessor& propertyAccessor);
 
@@ -96,7 +99,8 @@ public:
     
     std::set<LinguisticCode> allValues(const Common::PropertyCode::PropertyAccessor& propertyAccessor) const;
 
-    void allValues(const Common::PropertyCode::PropertyAccessor& propertyAccessor,std::set<LinguisticCode>& result) const;
+    void allValues(const Common::PropertyCode::PropertyAccessor& propertyAccessor,
+                   std::set<LinguisticCode>& result) const;
     
     std::set<StringsPoolIndex> allInflectedForms() const;
     
@@ -104,7 +108,9 @@ public:
     
     std::set<StringsPoolIndex> allNormalizedForms() const;
     
-    void outputXml(std::ostream& xmlStream,const Common::PropertyCode::PropertyCodeManager& pcm,const FsaStringsPool& sp) const;
+    void outputXml(std::ostream& xmlStream,
+                   const Common::PropertyCode::PropertyCodeManager& pcm,
+                   const FsaStringsPool& sp) const;
 
 };
 

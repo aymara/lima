@@ -34,7 +34,9 @@ namespace PropertyCode
 {
 
 PropertyAccessor::PropertyAccessor(
-  const std::string& name,const LinguisticCode& mask,const LinguisticCode& emptyNessMask) :
+  const std::string& name,
+  const LinguisticCode& mask,
+  const LinguisticCode& emptyNessMask) :
     m_mask(mask),
     m_emptyNessMask(emptyNessMask),
     m_name(name)

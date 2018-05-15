@@ -254,12 +254,12 @@ int run(int argc,char** argv)
     map<string,LinguisticCode> conversionMap;
     propcodemanager.convertSymbolicCodes(param.symbolicCodes,conversionMap);
     cerr << conversionMap.size() << " code read from symbolicCode file" << endl;
-/*    for (map<string,LinguisticCode>::const_iterator it=conversionMap.begin();
+    for (map<string,LinguisticCode>::const_iterator it=conversionMap.begin();
          it!=conversionMap.end();
          it++)
     {
       cerr << it->first << " -> " << it->second << endl;
-    }*/
+    }
     
     AbstractAccessByString* access(0);
     if (param.fsaKey!="") {

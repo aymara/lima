@@ -591,8 +591,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > abstractBowEl;
   // Create bow tokens for specific entities created on the before PoS tagging 
   // analysis graph
-  //std::set< uint64_t > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph"); portage 32 64
-  std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
+  auto anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
 #ifdef DEBUG_LP
   LDEBUG << "BowGenerator::createAbstractBoWElement " << v << " has " << anaVertices.size() << " matching vertices in analysis graph";
 #endif

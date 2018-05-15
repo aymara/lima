@@ -21,27 +21,29 @@ set (PosTagger "viterbiPostagger-freq")
 if (SVMTOOL++_FOUND)
   set (PosTagger "SvmToolPosTagger")
 endif ()
-IF(TRE_FOUND)
-configure_file(ApproxNames-modex.xml ApproxNames-modex.xml @ONLY)
-ELSE(TRE_FOUND)
-configure_file(ApproxNames-modex.empty.xml ApproxNames-modex.xml @ONLY)
-ENDIF(TRE_FOUND)
+if(TRE_FOUND)
+  configure_file(ApproxNames-modex.xml ApproxNames-modex.xml @ONLY)
+else(TRE_FOUND)
+  configure_file(ApproxNames-modex.empty.xml ApproxNames-modex.xml @ONLY)
+endif()
 
 configure_file(lima-lp-eng.xml lima-lp-eng.xml @ONLY)
+configure_file(lima-lp-eng.ud.xml lima-lp-eng.ud.xml @ONLY)
 configure_file(lima-lp-fre.xml lima-lp-fre.xml @ONLY)
 configure_file(lima-lp-por.xml lima-lp-por.xml @ONLY)
 
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.xml 
-  lima-lp-tva-fre.xml 
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.ud.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml 
   lima-lp-tva.xml 
   lima-lp-tva-eng.xml
-  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml 
+  lima-lp-tva-fre.xml 
   lima-lp-tva-por.xml
   lima-server.xml
-  ${CMAKE_CURRENT_BINARY_DIR}/ApproxNames-modex.xml
   lima-dbusserver.xml 
+  ${CMAKE_CURRENT_BINARY_DIR}/ApproxNames-modex.xml
   DESTINATION share/config/lima
   COMPONENT runtime)

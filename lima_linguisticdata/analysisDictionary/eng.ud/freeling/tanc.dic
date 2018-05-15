@@ -1,0 +1,307 @@
+y'all	y'all		PRP
+'cause	because		IN
+t'	t'		IN
+'em	them		PRP
+'n'	and		CC
+#'s	's		POS
+'til	until		IN
+a	a		DT
+aboard	aboard		IN
+about	about		ABOUTIN
+# about	about		RP
+above	above		IN
+# across	across		RP
+across	across		IN
+after	after		IN
+against	against		IN
+# ahead	ahead		RP
+albeit	albeit		IN
+all	all		RB
+all	all		PDT
+all	all		DT
+along	along		IN
+# along	along		RP
+alongside	alongside		IN
+although	although		IN
+amid	amid		IN
+amidst	amidst		IN
+among	among		IN
+amongst	amongst		IN
+an	a		DT
+&	and		CC
+and	and		CC
+and\/or	and\/or		CC
+another	another		DT
+another	another		PRP
+any	any		DT
+any	any		PRP
+anybody	anybody		PRP
+anyone	anyone		PRP
+anything	anything		PRP
+# apart	apart		RP
+# around	around		RP
+around	around		IN
+as	as		CC
+as	as		IN
+# aside	aside		RP
+astride	astride		IN
+# at	at		RP
+at	at		IN
+atop	atop		IN
+atop	atop		RB
+# away	away		RP
+# back	back		RP
+because	because		IN
+before	before		IN
+behind	behind		IN
+# behind	behind		RP
+below	below		IN
+beneath	beneath		IN
+beside	beside		IN
+besides	besides		IN
+besides	besides		RB
+between	between		IN
+betwixt	betwixt		IN
+beyond	beyond		IN
+both	both		DT
+both	both		PRP
+both	both		CC
+both	both		PDT
+both	both		RB
+# removed as very noisy but	but		IN
+but	but		CC
+# by	by		RP
+by	by		IN
+circa	circa		IN
+de	de		IN
+despite	despite		IN
+down	down		IN
+# down	down		RP
+during	during		IN
+each	each		RB
+each	each		PRP
+each	each		DT
+either	either		DT
+either	either		PRP
+either	either		CC
+every	every		DT
+everybody	everybody		PRP
+everything	everything		PRP
+except	except		IN
+except	except		CC
+#few	few		DT
+few	few		PRP
+fewer	few		PRP
+fewest	few		PRP
+# #for	for		RP
+for	for		IN
+former	former		PRP
+# forward	forward		RP
+from	from		IN
+good	good		RB
+half	half		PDT
+half	half		DT
+he	he		PRP
+her	her		PRP$
+her	her		PRP
+hers	hers		PRP$
+herself	herself		PRP
+him	him		PRP
+himself	himself		PRP
+his	his		PRP$
+#his	his		PRP
+how	how		WRB
+however	however		WRB
+i	i		PRP
+if	if		IN
+# #in	in		RP
+in	in		IN
+#including	including		IN
+inside	inside		IN
+inside	inside		RB
+into	into		IN
+it	it		PRP
+its	its		PRP$
+#its	its		PRP
+itself	itself		PRP
+latter	latter		PRP
+least	little		PRP
+#less	little		PRP
+#less	less		CC
+#less	less		IN
+lest	lest		IN
+like	like		IN
+little	little		PRP
+little	little		DT
+#many	many		DT
+many	many		PRP
+me	me		PRP
+mine	mine		PRP$
+minus	minus		IN
+minus	minus		CC
+ #more	many		DT
+# more	many		PRP
+# most	many		DT
+# most	many		PRP
+# my	my		PRP
+my	my		PRP$
+myself	myself		PRP
+na	na		TO
+nary	nary		PDT
+near	near		IN
+nearer	near		IN
+nearer	near		RBR
+nearest	near		IN
+nearest	near		RBS
+neath	neath		IN
+neither	neither		CC
+neither	neither		PRP
+neither	neither		DT
+next	next		PRP
+next	next		IN
+no	no		DT
+nobody	nobody		PRP
+none	none		PRP
+nor	nor		CC
+nothing	nothing		RB
+nothing	nothing		PRP
+notwithstanding	notwithstanding		IN
+# # of	of		RP
+of	of		IN
+off	off		IN
+# # off	off		RP
+# # on	on		RP
+on	on		IN
+once	once		IN
+oneself	oneself		PRP
+only	only		RB
+onto	onto		IN
+onto	onto		RB
+or	or		CC
+our	our		PRP$
+#our	our		PRP
+ours	ours		PRP$
+ours	ours		PRP
+ourselves	ourselves		PRP
+# out	out		RP
+out	out		IN
+outside	outside		IN
+outwith	outwith		IN
+over	over		IN
+# over	over		RP
+past	past		IN
+pending	pending		IN
+per	per		IN
+plenty	plenty		PRP
+plus	plus		IN
+plus	plus		CC
+qua	qua		IN
+quite	quite		PDT
+#s'	's		POS
+save	save		IN
+several	several		DT
+several	several		PRP
+she	she		PRP
+since	since		IN
+so	so		IN
+so	so		CC
+some	some		PRP
+some	some		DT
+somebody	somebody		PRP
+something	something		PRP
+such	such		PDT
+than	than		IN
+#that    that            WDT
+that	that		THATWDT
+#that    that            PRP
+that	that		THATPRP
+that	that		SCONJ
+#that	that		IN
+#that	that		DT
+that	that		THATDT
+# that	that		WP
+the	the		DT
+their	their		PRP$
+#their	their		PRP
+theirs	theirs		PRP$
+theirs	theirs		PRP
+them	them		PRP
+themselves	themselves		PRP
+there	there		EX
+these	these		PRP
+these	these		DT
+they	they		PRP
+this	this		PRP
+this	this		DT
+those	those		DT
+those	those		PRP
+though	though		IN
+through	through		IN
+# through	through		RP
+throughout	throughout		IN
+thru	thru		IN
+till	till		IN
+times	times		IN
+to	to		TO
+#to	to		IN
+# together	together		RP
+toward	toward		IN
+towards	towards		IN
+under	under		IN
+underneath	underneath		IN
+unless	unless		IN
+unlike	unlike		IN
+until	until		IN
+# unto	unto		RP
+unto	unto		IN
+# up	up		RP
+up	up		IN
+upon	upon		IN
+# upon	upon		RP
+us	us		PRP
+v.	v.		IN
+versus	versus		CC
+versus	versus		IN
+via	via		IN
+vis-a-vis	vis-a-vis		IN
+we	we		PRP
+well	good		RBR
+what	what		WP
+what	what		WDT
+whatever	whatever		WDT
+whatever	whatever		WP
+# removed as very noisy when	when		IN
+when	when		CC
+when	when		WRB
+whence	whence		WRB
+whenever	whenever		WRB
+where	where		WRB
+whereas	whereas		IN
+whereby	whereby		WRB
+wherein	wherein		WRB
+whereupon	whereupon		IN
+wherever	wherever		WRB
+whether	whether		CC
+whether	whether		IN
+which	which		WDT
+#which	which		WP
+whichever	whichever		WDT
+while	while		IN
+whilst	whilst		IN
+who	who		WP
+whoever	whoever		WP
+whom	whom		WP
+whose	whose		WP$
+why	why		WRB
+with	with		IN
+# #with	with		RP
+within	within		IN
+without	without		IN
+ya	you		PRP
+yet	yet		CC
+you	you		PRP
+your	your		PRP$
+#your	your		PRP
+yours	yours		PRP$
+yourself	yourself		PRP
+yourselves	yourselves		PRP

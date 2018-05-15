@@ -1,0 +1,12 @@
+# -------------------------------------------------------------
+# SVMT configuration file
+#
+# ------------- location of the training set-------------------
+TRAINSET =  @CMAKE_CURRENT_BINARY_DIR@/corpus_eng.ud.txt
+# ------------- location of the Joachims svmlight software ----
+SVMDIR = @SVM_LIGHT@
+# ------------- name of the model to create -------------------
+NAME = lima
+# ------- action items ----------------------------------------
+do M0 LR
+# -------------------------------------------------------------

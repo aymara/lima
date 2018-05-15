@@ -270,14 +270,12 @@ double getValueHeuristic(const LimaString& str, LimaChar sep) {
   // -> should be language dependent !... (in TODO list)
 
   // if there is at least two separators -> 20.000.000 20,000,000
-  //uint64_t firstSep(str.find(sep,0)); portage 32 64
-  int firstSep(str.indexOf(sep));
+  auto firstSep(str.indexOf(sep));
   if (firstSep == -1) { // error
     return LimaStringToInt(str);
   }
 
-  //uint64_t nextSep(str.find(sep,firstSep+1)); portage 32 64
-  int nextSep(str.indexOf(sep,firstSep+1));
+  auto nextSep(str.indexOf(sep,firstSep+1));
 
   if (nextSep == -1) {
     // no second separator

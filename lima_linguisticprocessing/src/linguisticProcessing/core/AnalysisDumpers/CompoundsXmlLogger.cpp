@@ -229,8 +229,7 @@ void CompoundsXmlLogger::dumpLimaData(
       /// @todo replace v in LDEBUGs below by matching annotation vertices
 //     LDEBUG << "hasAnnotation("<<v<<", CompoundTokenAnnotation): "
 //         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation"));
-      //std::set< uint64_t > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead"); portage 32 64
-      std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
+      auto cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       if (!cpdsHeads.empty())
       {
         std::set< AnnotationGraphVertex >::const_iterator cpdsHeadsIt, cpdsHeadsIt_end;

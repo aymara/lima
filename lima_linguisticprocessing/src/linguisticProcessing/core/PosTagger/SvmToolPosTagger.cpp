@@ -253,7 +253,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
       if (posData->empty() || morphoData->empty())
       {
-        LWARN << "No matching category found for tagger result " << elements[0] << " " << elements[1];
+        LWARN << "No matching category found for tagger result" << elements[0] << elements[1];
         if (!morphoData->empty())
         {
           LWARN << "Taking any one";

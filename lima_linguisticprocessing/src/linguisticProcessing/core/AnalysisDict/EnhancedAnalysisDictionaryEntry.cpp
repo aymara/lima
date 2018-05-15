@@ -230,7 +230,11 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
       unsigned char* propsEnd = props + read;
       while (props!=propsEnd)
       {
-        handler->foundProperties(static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
+        LinguisticCode code = static_cast<LinguisticCode>(DictionaryData::readCodedInt(props));
+#ifdef DEBUG_LP
+        LDEBUG << "read code = " << code << " (p=" << (uint64_t)p << ")";
+#endif
+        handler->foundProperties(code);
       }
       handler->endLingInfos();
     }

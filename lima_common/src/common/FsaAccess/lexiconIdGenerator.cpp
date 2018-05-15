@@ -31,8 +31,6 @@ namespace Lima {
 namespace Common {
 namespace FsaAccess {
 
-//const uint64_t LexiconIdGenerator::BUFFER_SIZE=1024*32;
-
 } // namespace FsaAccess
 } // namespace Common
 } // namespace Lima

@@ -82,9 +82,7 @@ if(U16_IS_LEAD(c)) { \
     } \
     } \
     }
-    
-#define U_MASK(x) ((uint32_t)1<<(x))
-    
+
 enum vertex_text_t { vertex_text = 4000 };
 namespace boost {BOOST_INSTALL_PROPERTY(vertex, text);}
 enum vertex_count_t { vertex_count = 4001 };

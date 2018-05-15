@@ -163,9 +163,8 @@ LinguisticPropertyIs(MediaId language,
   std::string str=Common::Misc::limastring2utf8stdstring(complement);
   //LDEBUG << "init constraint LinguisticPropertyIs with complement " << str;
 
-  //uint64_t i(0),j(0),k(0); portage 32 64
-  std::string::size_type i(0),j(0),k(0);
-  i=str.find(",");
+  auto j(string::npos),k(string::npos);
+  auto i=str.find(",");
   if (i!=string::npos)
   {
     j=str.find(",",i+1);
@@ -269,8 +268,7 @@ LengthInInterval(MediaId language,
   //complement contains min and max values for length of the token
   //(max value is optional)
   std::string str=Common::Misc::limastring2utf8stdstring(complement);
-  //uint64_t i=str.find(","); portage 32 64
-  std::string::size_type i=str.find(",");
+  auto i=str.find(",");
   if (i==string::npos)
   {
     m_min=atoi(str.c_str());
