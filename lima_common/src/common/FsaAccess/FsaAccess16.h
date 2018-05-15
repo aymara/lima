@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -82,6 +82,7 @@ if(U16_IS_LEAD(c)) { \
     } \
     } \
     }
+
 enum vertex_text_t { vertex_text = 4000 };
 namespace boost {BOOST_INSTALL_PROPERTY(vertex, text);}
 enum vertex_count_t { vertex_count = 4001 };
@@ -113,7 +114,7 @@ struct dicoGraph_traits16 {
   typedef typename boost::property_map<graphType,boost::vertex_name_t>::type
    nconst_vname_map_type;
 
-  // type of the 'vertex_text' property used to store 
+  // type of the 'vertex_text' property used to store
   // character (ordered according to codepoint) in relation with transition
   typedef typename boost::property_map<graphType,vertex_text_t>::const_type
    vtext_map_type;
@@ -151,7 +152,7 @@ struct selected_graph_types16
                                 boost::bidirectionalS,
                                 dicoVertexCountProperty
   > spareGraphType;
-  
+
   /** Graph used for FsaDictBuilder
    container types are chosen for their efficiency in insertion
    bidirectional capabilities are used in FsaDictBuilder::replaceOrRegister operation*/
@@ -188,7 +189,7 @@ template <typename dicoEdge> class dicoEdgeWriter16 {
  };
 
 #define dicoVertexType typename boost::graph_traits<graphType>::vertex_descriptor
- 
+
 template <typename graphType>
 class FsaAccess16 : public FsaAccessHeader {
 
@@ -208,10 +209,10 @@ public:
   virtual void print( std::ostream &os ) const;
   virtual void printGraph( std::ostream &os ) const;
   void pack();
-    
+
   /** check integrity of subgraph */
   void checkIntegrity( dicoVertexType from ) const;
-  
+
 protected:
     // For Builder and BuilderRandom
   /**
@@ -228,7 +229,7 @@ protected:
     *
     **/
   std::pair<const dicoVertexType,bool> findEquivalentInRegister( dicoVertexType tempState );
-  
+
   /** are both state equivalent?
    * We assume that edges are ordered */
   bool equivalent( dicoVertexType referenceState, dicoVertexType candidateState ) const;
@@ -272,7 +273,7 @@ protected:
 private:
   void print( std::ostream &os, dicoVertexType from,
     LimaString &prefix ) const;
-    
+
   /** Finds the uniq vertex with 0 out edges. Called once after graph loading */
   dicoVertexType find0degreeVertex(dicoVertexType from ) const;
 protected:

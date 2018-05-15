@@ -21,6 +21,7 @@ install(FILES
     log4cpp.properties
     lima-analysis.xml
     lima-common-eng.xml
+    lima-common-eng.ud.xml
     lima-common-fre.xml
     lima-common-por.xml
     lima-common.xml

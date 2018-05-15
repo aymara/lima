@@ -50,7 +50,9 @@ public:
    * @param mask mask use to test emptyNess of property. Different from mask \
    * only for subproperties.
    */
-  PropertyAccessor(const std::string& name,const LinguisticCode& mask,const LinguisticCode& emptyNessMask);
+  PropertyAccessor(const std::string& name,
+                   const LinguisticCode& mask,
+                   const LinguisticCode& emptyNessMask);
 
   /**
    * @brief Get the property name
@@ -74,7 +76,7 @@ public:
    * @param value coded property value to write. This value can hold several property data.
    * @param code coded int to write to.
    */
-  void writeValue(const LinguisticCode& value,LinguisticCode& code) const;
+  void writeValue(const LinguisticCode& value, LinguisticCode& code) const;
   
   /**
    * @brief check property equality for two linguisticCode
@@ -82,7 +84,7 @@ public:
    * @param l2 
    * @return true if l1 and l2 have same property value
    */
-  bool equal(const LinguisticCode& l1,const LinguisticCode& l2) const;
+  bool equal(const LinguisticCode& l1, const LinguisticCode& l2) const;
 
   /**
    * Test if the given code has property data. In the case of a simple property,
@@ -114,7 +116,8 @@ inline void PropertyAccessor::writeValue(
   code = static_cast<LinguisticCode>(( code & ( ~ m_mask )) | (value & m_mask));
 }
 
-inline bool PropertyAccessor::equal(const LinguisticCode& l1,const LinguisticCode& l2) const {
+inline bool PropertyAccessor::equal(const LinguisticCode& l1,
+                                    const LinguisticCode& l2) const {
   return !(m_mask & (l1 ^ l2));
 }
 

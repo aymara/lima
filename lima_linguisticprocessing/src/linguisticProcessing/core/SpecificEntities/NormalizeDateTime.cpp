@@ -99,7 +99,6 @@ ReferenceData::~ReferenceData() {}
 void ReferenceData::parseComplement(const LimaString& complement)
 {
   if (! complement.isEmpty()) {
-    //uint64_t i(0),prev(0); portage 32 64
     int i(0),prev(0);
     do {
       i=complement.indexOf(LimaChar(','),prev);
@@ -762,8 +761,7 @@ m_diff(0)
   static const LimaString days=Common::Misc::utf8stdstring2limastring("d");
   //static const LimaString months=Common::Misc::utf8stdstring2limastring("m");
   //static const LimaString years=Common::Misc::utf8stdstring2limastring("y");
-  //uint64_t i=complement.find(diffString); portage 32 64
-  int i=complement.indexOf(diffString);
+  auto i=complement.indexOf(diffString);
   if (i!=-1) {
     i+=5; // at end of diff_
     uint64_t end=complement.indexOf(days,i);
@@ -975,8 +973,7 @@ getTimeDuration(const RecognizerMatch& m) const
 
   if (m.features().find("time") != m.features().end()) {
     std::string timeString=(*m.features().find("time")).getValueLimaString().toUtf8().constData();
-    //uint64_t i=timeString.find(':'); portage 32 64
-    string::size_type i=timeString.find(':');
+    string::size_type i = timeString.find(':');
     if (i!=string::npos) {
       try {
         // has at least one ":" sep -> guess it has form hh:mm or hh:mm:ss,

@@ -76,8 +76,7 @@ m_microAccessor(0)
   }
   
   if (!complement.isEmpty()) {
-    //uint64_t i=complement.find(LimaChar(',')); portage 32 64
-    int i=complement.indexOf(LimaChar(','));
+    auto i=complement.indexOf(LimaChar(','));
     if (i==-1) {
       m_lastname=complement;
     }

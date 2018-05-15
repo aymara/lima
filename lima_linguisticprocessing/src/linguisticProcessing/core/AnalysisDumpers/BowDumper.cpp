@@ -388,7 +388,6 @@ void BowDumper::addVerticesToBoWText(
 
   std::set< std::string > alreadyStored;
   std::set<LinguisticGraphVertex> visited;
-  //std::set<uint32_t> alreadyStoredVertices; compatibilite 32 64 bits
   std::set<LinguisticGraphVertex> alreadyStoredVertices;
 
   std::queue<LinguisticGraphVertex> toVisit;

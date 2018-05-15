@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
 #endif
 
 /***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST                                   *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #ifndef WIN32
@@ -340,7 +340,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
     catch (NoSuchParam& )
     {
-      LERROR << "no language definition file for language " << *langItr;
+      LERROR << "No such param lima-coreclient/mediaProcessingDefinitionFiles/" << *langItr;
       throw InvalidConfiguration("no language definition file for language ");
     }
     XMLConfigurationFileParser langParser(file);

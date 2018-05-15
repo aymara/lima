@@ -622,7 +622,6 @@ CreateRelationWithRelated::CreateRelationWithRelated(
   std::string str=limastring2utf8stdstring(complement);
 
   //parse complement: contains two relation names separated by a comma
-  // uint64_t i=str.find(","); portage 32 64
   std::string::size_type i=str.find(",");
   if (i == std::string::npos)
   {
@@ -634,7 +633,6 @@ CreateRelationWithRelated::CreateRelationWithRelated(
 
   //relations to follow : may be several separated by a "|"
   std::string rel(str,0,i);
-  //uint64_t j=rel.find("|"); portage 32 64
   std::string::size_type j=rel.find("|");
   while (j!=std::string::npos)
   {

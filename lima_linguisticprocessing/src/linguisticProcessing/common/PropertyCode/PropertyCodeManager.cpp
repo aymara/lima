@@ -26,7 +26,8 @@
 #include "SymbolicCodeXMLHandler.h"
 
 
-#include <math.h>
+#include <bitset>
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -45,7 +46,15 @@ namespace PropertyCode
 //utility functions for debug
 string hexString(const uint64_t x) {
   ostringstream oss;
-  oss << hex << x;
+  oss << std::hex << x;
+  return oss.str();
+}
+
+//utility functions for debug
+string binString(const uint64_t x) {
+  std::bitset<64> bx(x);
+  ostringstream oss;
+  oss << bx; 
   return oss.str();
 }
 
@@ -111,9 +120,9 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #ifdef DEBUG_LP
     LDEBUG << nbvalues << " values so use " << nbBits << " bits";
 #endif
-    uint64_t mask=computeMask(usedBits,nbBits);
+    auto mask=computeMask(usedBits,nbBits);
 #ifdef DEBUG_LP
-    LDEBUG << "mask is " << hexString(mask);
+    LDEBUG << "mask is " << hexString(mask) << binString(mask);
 #endif
 
     // compute values
@@ -126,12 +135,16 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     {
       symbol2code.insert(std::make_pair(*valItr, LinguisticCode(i << usedBits)));
 #ifdef DEBUG_LP
-      LDEBUG << *valItr << " => " << hexString(i << usedBits);
+      LDEBUG << *valItr << " => " << hexString(i << usedBits) << binString(i << usedBits);
 #endif
       i++;
     }
     usedBits+=nbBits;
-    m_propertyManagers.insert(std::make_pair(desc->name,PropertyManager(desc->name,static_cast<LinguisticCode>(mask),static_cast<LinguisticCode>(mask),symbol2code)));
+    m_propertyManagers.insert(std::make_pair(desc->name,
+                                             PropertyManager(desc->name,
+                                                             mask,
+                                                             mask,
+                                                             symbol2code)));
   }
 
   const std::vector<XMLPropertyHandler::SubPropertyDescription>& subproperties=handler.getSubProperties();
@@ -146,7 +159,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     LDEBUG << "compute data for subproperty " << desc->name;
 #endif
     const PropertyManager& parentProp=getPropertyManager(desc->parentName);
-    uint64_t parentmask=parentProp.getMask();
+    LinguisticCode parentmask=parentProp.getMask();
 
     const std::vector<std::pair<std::string,std::vector<std::string> > >& subvalues=desc->values;
 
@@ -163,11 +176,11 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #ifdef DEBUG_LP
     LDEBUG << "maximum subvalues is " << maxsubvalues << " so use " << nbBits << " bits";
 #endif
-    uint64_t emptynessmask=computeMask(usedBits,nbBits);
-    uint64_t mask=emptynessmask + parentmask;
+    LinguisticCode emptynessmask=computeMask(usedBits,nbBits);
+    LinguisticCode mask=static_cast<LinguisticCode>(emptynessmask + parentmask);
 #ifdef DEBUG_LP
-    LDEBUG << "mask = " << hexString(mask);
-    LDEBUG << "emptyness mask = " << hexString(emptynessmask);
+    LDEBUG << "mask = " << hexString(mask) << binString(mask);
+    LDEBUG << "emptyness mask = " << hexString(emptynessmask) << binString(emptynessmask);
 #endif
 
     // compute values
@@ -177,13 +190,13 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
          subItr!=subvalues.end();
          subItr++)
     {
-      uint64_t parentValue=parentProp.getPropertyValue(subItr->first);
+      auto parentValue=parentProp.getPropertyValue(subItr->first);
       if (parentValue == 0)
       {
         LERROR << "parent value " << subItr->first << " of subproperty " << desc->name << " is unknown !";
       }
 #ifdef DEBUG_LP
-      LDEBUG << "compute subvalues of " << subItr->first << " (" << hexString(parentValue) << ")";
+      LDEBUG << "compute subvalues of " << subItr->first << " (" << hexString(parentValue) << binString(parentValue) << ")";
 #endif
       symbol2code.insert(std::make_pair(string(subItr->first)+"-NONE",LinguisticCode(parentValue)));
       uint64_t i=1;
@@ -193,22 +206,28 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
       {
         symbol2code.insert(std::make_pair(*valItr,LinguisticCode((i << usedBits) + parentValue)));
 #ifdef DEBUG_LP
-        LDEBUG << *valItr << " => " << hexString(symbol2code[*valItr]);
+        LDEBUG << *valItr << " => " << hexString(symbol2code[*valItr]) << binString(symbol2code[*valItr]);
 #endif
         i++;
       }
     }
-    m_propertyManagers.insert(std::make_pair(desc->name,PropertyManager(desc->name,static_cast<LinguisticCode>(mask),static_cast<LinguisticCode>(emptynessmask),symbol2code)));
+    m_propertyManagers.insert(std::make_pair(desc->name,
+                                             PropertyManager(desc->name,
+                                                             mask,
+                                                             emptynessmask,
+                                                             symbol2code)));
     usedBits+=nbBits;
 
   }
 
 #ifdef DEBUG_LP
-  LDEBUG << "have used " << usedBits << " bits to code all properties";
+  LDEBUG << "have used" << usedBits << "bits to code all properties";
 #endif
-  if (usedBits > 32)
+  if (usedBits > 64)
   {
-    LERROR << "needs " << usedBits << " bits to code all properties !! Encoding may be Invalid !!";
+    LERROR << "needs" << usedBits 
+           << "bits to code all properties !! Encoding may be Invalid !!";
+    throw InvalidConfiguration(std::string("needs ")+QString::number(usedBits).toUtf8().toStdString()+" bits to code all properties !! Encoding may be Invalid !!");
   }
 
 }
@@ -244,8 +263,8 @@ const PropertyAccessor* PropertyCodeManager::getPropertySetAccessor(const std::s
     propertySetEmptyNessMask |= man.getEmptyNessMask();
   }
 #ifdef DEBUG_LP
-  LDEBUG << "propertysetMask is " << hexString(propertySetMask);
-  LDEBUG << "propertysetEmptyNessMask is " << hexString(propertySetEmptyNessMask);
+  LDEBUG << "propertysetMask is " << hexString(propertySetMask) << binString(propertySetMask);
+  LDEBUG << "propertysetEmptyNessMask is " << hexString(propertySetEmptyNessMask) << binString(propertySetEmptyNessMask);
 #endif
   return new PropertyAccessor(os.str(),propertySetMask,propertySetEmptyNessMask);
 }
@@ -262,14 +281,14 @@ uint64_t PropertyCodeManager::computeNbBitsNeeded(uint64_t nbvalues) const
   return nbBits;
 }
 
-uint64_t PropertyCodeManager::computeMask(uint64_t startBit,uint64_t nbBits) const
+LinguisticCode PropertyCodeManager::computeMask(uint64_t startBit,uint64_t nbBits) const
 {
-  uint64_t mask(0);
+  LinguisticCode mask(0);
   for (uint64_t currentBit=startBit;
        currentBit < startBit+nbBits;
        currentBit++)
   {
-    mask += (uint64_t) pow(2.0,(int)currentBit);
+    mask += static_cast<LinguisticCode>(std::pow(2.0,(uint64_t)currentBit));
   }
   return mask;
 }
@@ -290,7 +309,7 @@ LinguisticCode PropertyCodeManager::encode(const std::map<std::string,std::strin
     const PropertyManager& man=getPropertyManager(it->first);
     man.getPropertyAccessor().writeValue(man.getPropertyValue(it->second),coded);
  #ifdef DEBUG_LP
-   LDEBUG << it->first << " : " << it->second << " coded = " << hexString(coded);
+   LDEBUG << it->first << " : " << it->second << " coded = " << hexString(coded) << binString(coded);
  #endif
  }
   return coded;

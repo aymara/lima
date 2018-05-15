@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -19,7 +19,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_POSTAGGER_EXPORTING)
 ########### next target ###############
 
-SET(lima-lp-postagger_LIB_SRCS
+set(lima-lp-postagger_LIB_SRCS
    disambiguationLogger.cpp
    dotGraphWriter.cpp
    frequencyCost.cpp

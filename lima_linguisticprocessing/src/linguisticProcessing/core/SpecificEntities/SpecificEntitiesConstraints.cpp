@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST                                   *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "common/MediaticData/mediaticData.h"
@@ -124,11 +124,8 @@ bool isASpecificEntity::operator()(const LinguisticAnalysisStructure::AnalysisGr
     return false;
   }
   bool annotFound = false;
-  //std::set< uint64_t > matches = annotationData->matches(recoData->getGraphId(),v,"annot"); portage 32 64
-  //for (std::set< uint64_t >::const_iterator it = matches.begin(); portage 32 64
-  std::set< AnnotationGraphVertex > matches = annotationData->matches(recoData->getGraphId(),v,"annot");
-  for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
-       it != matches.end(); it++)
+  auto matches = annotationData->matches(recoData->getGraphId(),v,"annot");
+  for (auto it = matches.begin(); it != matches.end(); it++)
   {
     if (annotationData->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
@@ -148,9 +145,7 @@ bool isASpecificEntity::operator()(const LinguisticAnalysisStructure::AnalysisGr
   }
   else
   {
-    //for (std::set< uint64_t >::const_iterator it = matches.begin(); portage 32 64
-    for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
-         it != matches.end(); it++)
+    for (auto it = matches.begin(); it != matches.end(); it++)
     {
       if (annotationData->annotation(*it,
                                      Common::Misc::utf8stdstring2limastring("SpecificEntity"))
@@ -203,7 +198,6 @@ getPropertyManager("MICRO");
 
   if (!str.isEmpty())
   {
-    //uint64_t currentPos = 0; portage 32 64
     int currentPos = 0;
     while (currentPos != str.size()+1)
     {
@@ -291,7 +285,6 @@ getPropertyManager("MICRO");
 //   }
 // }
 
-
 /** @todo Verifier la Completude du mapping entre graphes morpho, synt et d'annotation */
 bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
                                       AnalysisContent& analysis) const
@@ -317,12 +310,8 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
   // do not create annotation if annotation of same type exists
   if (match.size() == 1)
   {
-    //&& (isASpecificEntity(0,LimaString())(graph,v1,analysis)))
-    //std::set< uint64_t > matches = annotationData->matches(graph.getGraphId(),v1,"annot"); portage 32 64
-    //for (std::set< uint64_t >::const_iterator it = matches.begin(); portage 32 64
-    std::set< AnnotationGraphVertex > matches = annotationData->matches(graph.getGraphId(),v1,"annot");
-    for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
-         it != matches.end(); it++) {
+    auto matches = annotationData->matches(graph.getGraphId(),v1,"annot");
+    for (auto it = matches.begin(); it != matches.end(); it++) {
       if (annotationData->hasAnnotation(*it, Common::Misc::utf8stdstring2limastring("SpecificEntity"))
           && annotationData->annotation(*it,
                                         Common::Misc::utf8stdstring2limastring("SpecificEntity"))

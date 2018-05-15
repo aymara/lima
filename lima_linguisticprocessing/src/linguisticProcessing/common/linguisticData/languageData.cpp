@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -420,6 +420,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 {
   LDATALOGINIT;
   LINFO << "initializes the compound tenses definitions";
+
   std::string resourcesPath=MediaticData::single().getResourcesPath();
 
   std::string compoundTensesDefinitionsFile;
@@ -432,8 +433,8 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   catch (const NoSuchParam& )
   {
-    LERROR << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
-    throw InvalidConfiguration();
+    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
+    return;
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {

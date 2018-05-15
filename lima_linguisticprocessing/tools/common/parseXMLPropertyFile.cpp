@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -24,6 +24,7 @@
 
 #include "common/LimaCommon.h"
 #include "common/Data/strwstrtools.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
 #include <string>
@@ -34,8 +35,9 @@
 #include <QtCore/QCoreApplication>
 
 using namespace std;
-using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common;
+using namespace Lima::Common::Misc;
+using namespace Lima::Common::PropertyCode;
 using namespace Lima;
 
 
@@ -183,7 +185,8 @@ int run(int argc, char** argv)
       cerr << "no codefile nor language specified !" << endl;
       exit(1);
     }
-    param->codeFile=resourcesPath+"/LinguisticProcessings/"+param->language+"/code-"+param->language+".xml";
+
+    param->codeFile = resourcesPath+"/LinguisticProcessings/"+param->language+"/code-"+param->language+".xml";
   }
 
   // Necessary to initialize factories
@@ -339,8 +342,8 @@ void usage(int argc, char *argv[])
   LIMA_UNUSED(argc);
   cout << "usage: " << argv[0] << " [config] [commands]" << endl;
   cout << "where [config] can be either :" << endl;
-  cout << "  --code=<xmlPropertyFile>" << endl;
-  cout << "  --language=<lang> : use file $LIMA_RESOURCES/LinguisticProcessings/<lang>/code-<lang>.xml" << endl;
+  cout << "  --code=<xmlPropertyFile> Full or relative path to a property file" << endl;
+  cout << "  --language=<lang> : use file <One of $LIMA_RESOURCES paths>/LinguisticProcessings/<lang>/code-<lang>.xml" << endl;
   cout << "and [commands] are : " << endl;
   cout << "***** To print debug file *****" << endl;
   cout << "--output=<file> : print debug to <file>" << endl;
