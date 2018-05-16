@@ -40,17 +40,17 @@ SET(lima-lp-postagger_LIB_LINK
    lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-linguisticanalysisstructure  ${Boost_LIBRARIES}
 )
 
-# IF(SVMTOOL++_FOUND)
-# SET(lima-lp-postagger_LIB_SRCS
-#   ${lima-lp-postagger_LIB_SRCS}
-#   SvmToolPosTagger.cpp
-#   DynamicSvmToolPosTagger.cpp
-# )
-# SET(lima-lp-postagger_LIB_LINK
-#   ${lima-lp-postagger_LIB_LINK}
-#   svmtool
-# )
-# ENDIF(SVMTOOL++_FOUND)
+IF(SVMTOOL++_FOUND)
+SET(lima-lp-postagger_LIB_SRCS
+  ${lima-lp-postagger_LIB_SRCS}
+  SvmToolPosTagger.cpp
+  DynamicSvmToolPosTagger.cpp
+)
+SET(lima-lp-postagger_LIB_LINK
+  ${lima-lp-postagger_LIB_LINK}
+  svmtool
+)
+ENDIF(SVMTOOL++_FOUND)
 
 
 DECLARE_LIMA_PLUGIN(lima-lp-postagger)
