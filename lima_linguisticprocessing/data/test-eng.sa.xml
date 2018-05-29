@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testcases>
-<testcase id="eng.sa.1" type="bloquant">
+<testcase id="eng.sa.1" type="blocking">
   <call-parameters>
       <param key="text" value="The little cat is black."/>
       <param key="language" value="eng"/>
@@ -16,7 +16,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.3" type="bloquant">
+<testcase id="eng.sa.3" type="blocking">
   <call-parameters>
       <param key="text" value=" The actor John was the friend and companion of the director. "/>
       <param key="language" value="eng"/>
@@ -32,7 +32,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.5" type="bloquant">
+<testcase id="eng.sa.5" type="blocking">
   <call-parameters>
       <param key="text" value="The car is beautiful. "/>
       <param key="language" value="eng"/>
@@ -48,7 +48,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.6" type="bloquant">
+<testcase id="eng.sa.6" type="blocking">
   <call-parameters>
       <param key="text" value="The very beautiful tall location. "/>
       <param key="language" value="eng"/>
@@ -64,7 +64,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.7" type="bloquant">
+<testcase id="eng.sa.7" type="blocking">
   <comment> - contenu test modifié : l'ambiguite NC/Adj de little fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
   <call-parameters>
       <param key="text" value="The very beautiful dark location. "/>
@@ -91,7 +91,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.8" type="bloquant">
+<testcase id="eng.sa.8" type="blocking">
   <call-parameters>
       <param key="text" value="This house is the prettiest in the neighborhood. "/>
       <param key="language" value="eng"/>
@@ -107,7 +107,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.9" type="bloquant">
+<testcase id="eng.sa.9" type="blocking">
   <call-parameters>
       <param key="text" value="This house is the prettiest in the street. "/>
       <param key="language" value="eng"/>
@@ -123,7 +123,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.11" type="bloquant">
+<testcase id="eng.sa.11" type="blocking">
   <call-parameters>
       <param key="text" value="This house is the one of the more unpleasant in the street. "/>
       <param key="language" value="eng"/>
@@ -139,7 +139,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.12" type="bloquant">
+<testcase id="eng.sa.12" type="blocking">
   <call-parameters>
       <param key="text" value="This house is really very beautiful. "/>
       <param key="language" value="eng"/>
@@ -155,7 +155,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.13" type="bloquant">
+<testcase id="eng.sa.13" type="blocking">
   <call-parameters>
       <param key="text" value="his house is really very beautiful. "/>
       <param key="language" value="eng"/>
@@ -171,7 +171,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.14.a" type="bloquant">
+<testcase id="eng.sa.14.a" type="blocking">
   <call-parameters>
       <param key="text" value="In what year did John Hancock die ? "/>
       <param key="language" value="eng"/>
@@ -187,7 +187,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.14.b" type="bloquant">
+<testcase id="eng.sa.14.b" type="blocking">
   <call-parameters>
       <param key="text" value="In what year did John Hancock die ? "/>
       <param key="language" value="eng"/>
@@ -203,7 +203,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.15.a" type="bloquant">
+<testcase id="eng.sa.15.a" type="blocking">
   <call-parameters>
       <param key="text" value="In what year did John Hancock die ? "/>
       <param key="language" value="eng"/>
@@ -219,7 +219,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.15.b" type="bloquant">
+<testcase id="eng.sa.15.b" type="blocking">
   <call-parameters>
       <param key="text" value="At what date did the accident happen? "/>
       <param key="language" value="eng"/>
@@ -235,7 +235,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.16" type="bloquant">
+<testcase id="eng.sa.16" type="blocking">
   <call-parameters>
       <param key="text" value="This is not the first time that he has visited Lisbon."/>
       <param key="language" value="eng"/>
@@ -256,7 +256,7 @@
       operator="="
       right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='visited']/@id" />
 </testcase>
-<testcase id="eng.sa.17" type="bloquant">
+<testcase id="eng.sa.17" type="blocking">
   <call-parameters>
       <param key="text" value="This is not the first time that he has perfunctorily visited Lisbon."/>
       <param key="language" value="eng"/>
@@ -277,7 +277,7 @@
       operator="="
       right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='visited']/@id" />
 </testcase>
-<testcase id="eng.sa.18" type="bloquant">
+<testcase id="eng.sa.18" type="blocking">
   <!-- Warning: "has accepted" should be handled as a compound tense -->
   <call-parameters>
       <param key="text" value="Has he accepted this decision??"/>
@@ -294,7 +294,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.22" type="bloquant">
+<testcase id="eng.sa.22" type="blocking">
   <call-parameters>
       <param key="text" value="He asked me to meet him at the corner."/>
       <param key="language" value="eng"/>
@@ -310,7 +310,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.23" type="bloquant">
+<testcase id="eng.sa.23" type="blocking">
   <call-parameters>
       <param key="text" value="He asked me to never meet him at the corner."/>
       <param key="language" value="eng"/>
@@ -326,7 +326,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.24" type="bloquant">
+<testcase id="eng.sa.24" type="blocking">
   <call-parameters>
       <param key="text" value="She suggests that we all go to eat."/>
       <param key="language" value="eng"/>
@@ -342,7 +342,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.25" type="bloquant">
+<testcase id="eng.sa.25" type="blocking">
   <call-parameters>
       <param key="text" value="I suggest that we all go to eat.."/>
       <param key="language" value="eng"/>
@@ -358,7 +358,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.26" type="bloquant">
+<testcase id="eng.sa.26" type="blocking">
   <call-parameters>
       <param key="text" value="He got the men noisy. "/>
       <param key="language" value="eng"/>
@@ -374,7 +374,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.27" type="bloquant">
+<testcase id="eng.sa.27" type="blocking">
   <call-parameters>
       <param key="text" value="The talk made the crowd wary."/>
       <param key="language" value="eng"/>
@@ -390,7 +390,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.28" type="bloquant">
+<testcase id="eng.sa.28" type="blocking">
   <call-parameters>
       <param key="text" value="He chased the deer through the leafy woods. "/>
       <param key="language" value="eng"/>
@@ -406,7 +406,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.29" type="bloquant">
+<testcase id="eng.sa.29" type="blocking">
   <call-parameters>
       <param key="text" value="We have a photograph of John Hancock at our house."/>
       <param key="language" value="eng"/>
@@ -422,7 +422,7 @@
     operator="notexists"
     right="" />
 </testcase>
-<testcase id="eng.sa.30" type="bloquant">
+<testcase id="eng.sa.30" type="blocking">
   <call-parameters>
       <param key="text" value="The cat of the neighbourood is fat and ugly."/>
       <param key="language" value="eng"/>
@@ -438,7 +438,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.35.a" type="bloquant">
+<testcase id="eng.sa.35.a" type="blocking">
   <comment> - contenu test modifié : l'ambiguite NC/Adj de little fait choisir une mauvaise interprétation en Freq ; remplacé par sombre</comment>
   <call-parameters>
       <param key="text" value="The dreary location is still for sale."/>
@@ -455,7 +455,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.35.b" type="bloquant">
+<testcase id="eng.sa.35.b" type="blocking">
   <call-parameters>
       <param key="text" value="The very beautiful tall location is for sale."/>
       <param key="language" value="eng"/>
@@ -471,7 +471,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="eng.sa.38" type="bloquant">
+<testcase id="eng.sa.38" type="blocking">
   <call-parameters>
       <param key="text" value="The birds on the beach are colorful."/>
       <param key="language" value="eng"/>
@@ -492,7 +492,7 @@
     operator="="
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='birds']/@id" />
 </testcase>
-<testcase id="eng.sa.39" type="bloquant">
+<testcase id="eng.sa.39" type="blocking">
   <call-parameters>
       <param key="text" value="The engine protections are green."/>
       <param key="language" value="eng"/>
@@ -513,7 +513,7 @@
     operator="="
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='protections']/@id" />
 </testcase>
-<testcase id="eng.sa.40" type="bloquant">
+<testcase id="eng.sa.40" type="blocking">
   <call-parameters>
       <param key="text" value="The birds on the sandy location are very small. "/>
       <param key="language" value="eng"/>
@@ -534,7 +534,7 @@
     operator="="
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='birds']/@id" />
 </testcase>
-<testcase id="eng.sa.41" type="bloquant">
+<testcase id="eng.sa.41" type="blocking">
   <call-parameters>
       <param key="text" value="The birds on the sandy location are very small. "/>
       <param key="language" value="eng"/>

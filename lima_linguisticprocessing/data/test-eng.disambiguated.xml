@@ -90,7 +90,7 @@
     operator="="
     right="NNP"/>
 </testcase>
-<testcase id="eng.disamb.5" type="informatif">
+<testcase id="eng.disamb.5" type="informative">
   <call-parameters>
       <param key="text" value="I gave the gun to the teller. "/>
       <param key="language" value="eng"/>
@@ -200,7 +200,7 @@
     operator="contains"
     right="JJ" />
 </testcase>
-<testcase id="eng.disamb.11.a" type="informatif">
+<testcase id="eng.disamb.11.a" type="informative">
   <call-parameters>
       <param key="text" value="The second round was still undecided in the streets."/>
       <param key="language" value="eng"/>
@@ -221,7 +221,7 @@
     operator="="
     right="NOMBRE" />
 </testcase>
-<testcase id="eng.disamb.11.b" type="informatif">
+<testcase id="eng.disamb.11.b" type="informative">
   <call-parameters>
       <param key="text" value="The second round was still undecided in the streets."/>
       <param key="language" value="eng"/>
@@ -258,7 +258,7 @@
     operator="contains"
     right="NN" />
 </testcase>
-<testcase id="eng.disamb.12.b" type="informatif">
+<testcase id="eng.disamb.12.b" type="informative">
   <call-parameters>
       <param key="text" value="As of Sunday morning, the elections was still undecided."/>
       <param key="language" value="eng"/>
@@ -353,7 +353,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="eng.disamb.15.b" type="informatif">
+<testcase id="eng.disamb.15.b" type="informative">
   <call-parameters>
       <param key="text" value="The victory has been close at hand."/>
       <param key="language" value="eng"/>
@@ -469,7 +469,7 @@
     operator="="
     right="Prime Minister" />
 </testcase>
-<testcase id="eng.disamb.20.b" type="informatif">
+<testcase id="eng.disamb.20.b" type="informative">
   <call-parameters>
       <param key="text" value="The prime minister arrived late."/>
       <param key="language" value="eng"/>
@@ -527,7 +527,7 @@
     operator="="
     right="NN" />
 </testcase>
-<testcase id="eng.disamb.22.b" type="informatif">
+<testcase id="eng.disamb.22.b" type="informative">
   <call-parameters>
       <param key="text" value="He said last Thursday that he would not represent himself. "/>
       <param key="language" value="eng"/>
@@ -564,7 +564,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="eng.disamb.23.b" type="informatif">
+<testcase id="eng.disamb.23.b" type="informative">
   <call-parameters>
       <param key="text" value="He was not sure what to do."/>
       <param key="language" value="eng"/>
@@ -601,7 +601,7 @@
     operator="="
     right="ADV" />
 </testcase>
-<testcase id="eng.disamb.24.b" type="informatif">
+<testcase id="eng.disamb.24.b" type="informative">
   <call-parameters>
       <param key="text" value="I do not think he should come. "/>
       <param key="language" value="eng"/>
@@ -638,7 +638,7 @@
     operator="="
     right="NN" />
 </testcase>
-<testcase id="eng.disamb.25.b" type="informatif">
+<testcase id="eng.disamb.25.b" type="informative">
   <call-parameters>
       <param key="text" value="He thought that their inpendance should be an irrefutable demand. "/>
       <param key="language" value="eng"/>
@@ -675,7 +675,7 @@
     operator="contains"
     right="V" />
 </testcase>
-<testcase id="eng.disamb.26.b" type="informatif">
+<testcase id="eng.disamb.26.b" type="informative">
   <call-parameters>
       <param key="text" value="The opposition already thought that it had won the day. "/>
       <param key="language" value="eng"/>
@@ -691,7 +691,7 @@
     operator="contains"
     right="VBD" />
 </testcase>
-<testcase id="eng.disamb.26.c" type="informatif">
+<testcase id="eng.disamb.26.c" type="informative">
   <call-parameters>
       <param key="text" value="The opposition had already thought that it had won the day. "/>
       <param key="language" value="eng"/>
@@ -786,7 +786,7 @@
     operator="contains"
     right="NN" />
 </testcase>
-<testcase id="eng.disamb.34.b" type="informatif">
+<testcase id="eng.disamb.34.b" type="informative">
   <call-parameters>
       <param key="text" value="We will not abandon the square before victory is achieved. "/>
       <param key="language" value="eng"/>
@@ -823,7 +823,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="eng.disamb.35.b" type="informatif">
+<testcase id="eng.disamb.35.b" type="informative">
   <call-parameters>
       <param key="text" value="&quot;We will not abandon the square before victory is achieved,&quot; he was heard to have said."/>
       <param key="language" value="eng"/>
@@ -860,7 +860,7 @@
     operator="="
     right="DET" />
 </testcase>
-<testcase id="eng.disamb.36.b" type="informatif">
+<testcase id="eng.disamb.36.b" type="informative">
   <call-parameters>
       <param key="text" value="The speech was well-received. "/>
       <param key="language" value="eng"/>
@@ -897,7 +897,7 @@
     operator="="
     right="NN" />
 </testcase>
-<testcase id="eng.disamb.37.b" type="informatif">
+<testcase id="eng.disamb.37.b" type="informative">
   <call-parameters>
       <param key="text" value="The sign was clear to everyone present. "/>
       <param key="language" value="eng"/>
@@ -934,7 +934,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="eng.disamb.38.b" type="informatif">
+<testcase id="eng.disamb.38.b" type="informative">
   <call-parameters>
       <param key="text" value="The sign was clear to everyone present. "/>
       <param key="language" value="eng"/>
@@ -1223,7 +1223,7 @@
     operator="contains"
     right="ADJ" />
  </testcase>
-<testcase id="eng.disamb.56" type="bloquant">
+<testcase id="eng.disamb.56" type="blocking">
   <call-parameters>
       <param key="text" value="The Airbus A380 is the largest airplane in the world."/>
       <param key="language" value="eng"/>

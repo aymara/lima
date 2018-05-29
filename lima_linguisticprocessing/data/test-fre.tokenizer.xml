@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-<testcase id="fre.tok.1" type="bloquant">
+<testcase id="fre.tok.1" type="blocking">
   <call-parameters>
     <param key="text" value="Le marsupilami est un animal mythique. "/>
     <param key="language" value="fre"/>
@@ -16,7 +16,7 @@
     operator="="
     right="t_small"/>
 </testcase>
-<testcase id="fre.tok.2" type="bloquant">
+<testcase id="fre.tok.2" type="blocking">
   <call-parameters>
     <param key="text" value="Les 200 morts de l'accident d'avion ont été identifiés. "/>
     <param key="language" value="fre"/>
@@ -31,7 +31,7 @@
     operator="="
     right="t_integer" />
 </testcase>
-<testcase id="fre.tok.3" type="bloquant">
+<testcase id="fre.tok.3" type="blocking">
   <call-parameters>
     <param key="text" value="La Bourse a baissé de 1,5 points. "/>
     <param key="language" value="fre"/>
@@ -46,7 +46,7 @@
     operator="="
     right="t_comma_number"/>
 </testcase>
-<testcase id="fre.tok.4" type="bloquant">
+<testcase id="fre.tok.4" type="blocking">
   <call-parameters>
     <param key="text" value="La société Systex a fait faillite cette année. "/>
     <param key="language" value="fre"/>
@@ -61,7 +61,7 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
-<testcase id="fre.tok.5" type="bloquant">
+<testcase id="fre.tok.5" type="blocking">
   <call-parameters>
     <param key="text" value="Les NMPP distribuent les journaux. "/>
     <param key="language" value="fre"/>
@@ -76,7 +76,7 @@
     operator="="
     right="t_capital"/>
 </testcase>
-<testcase id="fre.tok.6" type="bloquant">
+<testcase id="fre.tok.6" type="blocking">
   <call-parameters>
     <param key="text" value="Les N.M.P.P. distribuent les journaux. "/>
     <param key="language" value="fre"/>
@@ -91,7 +91,7 @@
     operator="="
     right="t_acronym"/>
 </testcase>
-<testcase id="fre.tok.7" type="bloquant">
+<testcase id="fre.tok.7" type="blocking">
   <call-parameters>
     <param key="text" value="Le XVème arrondissement est un quartier sympathique. "/>
     <param key="language" value="fre"/>
@@ -106,7 +106,7 @@
     operator="="
     right="t_ordinal_roman"/>
 </testcase>
-<testcase id="fre.tok.8" type="bloquant">
+<testcase id="fre.tok.8" type="blocking">
   <call-parameters>
     <param key="text" value="Le chapitre III est très intéressant. "/>
     <param key="language" value="fre"/>
@@ -121,7 +121,7 @@
     operator="="
     right="t_cardinal_roman"/>
 </testcase>
-<testcase id="fre.tok.80" type="bloquant">
+<testcase id="fre.tok.80" type="blocking">
   <call-parameters>
     <param key="text" value="Monge"/>
     <param key="language" value="fre"/>
@@ -136,7 +136,7 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
-<testcase id="fre.tok.9" type="bloquant">
+<testcase id="fre.tok.9" type="blocking">
   <call-parameters>
     <param key="text" value="Le 1/3 des habitants est pauvre. "/>
     <param key="language" value="fre"/>
@@ -151,7 +151,7 @@
     operator="="
     right="t_fraction"/>
 </testcase>
-<testcase id="fre.tok.10" type="bloquant">
+<testcase id="fre.tok.10" type="blocking">
   <call-parameters>
     <param key="text" value="On ne trouve pas de traces de vie ni d'activité sur Mars. "/>
     <param key="language" value="fre"/>
@@ -206,7 +206,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.13" type="bloquant">
+<testcase id="fre.tok.13" type="blocking">
   <call-parameters>
     <param key="text" value="L'auteur de ce livre est C. Fluhr."/>
     <param key="language" value="fre"/>
@@ -226,7 +226,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.14" type="bloquant">
+<testcase id="fre.tok.14" type="blocking">
   <call-parameters>
     <param key="text" value="Le match France-Angleterre a eu lieu. "/>
     <param key="language" value="fre"/>
@@ -241,7 +241,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.15" type="bloquant">
+<testcase id="fre.tok.15" type="blocking">
   <call-parameters>
     <param key="text" value="Robert D. Pierson"/>
     <param key="language" value="fre"/>
@@ -261,7 +261,7 @@
     operator="="
     right="t_abbrev"/>
 </testcase>
-<testcase id="fre.tok.16" type="bloquant">
+<testcase id="fre.tok.16" type="blocking">
   <call-parameters>
     <param key="text" value="Robert A. Pierson"/>
     <param key="language" value="fre"/>
@@ -301,7 +301,7 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
-<testcase id="fre.tok.18" type="bloquant">
+<testcase id="fre.tok.18" type="blocking">
   <call-parameters>
     <param key="text" value="Margouillat : c'est un lézard présent en Nouvelle-Calédonie."/>
     <param key="language" value="fre"/>
@@ -346,7 +346,7 @@
     operator="="
     right="t_sentence_brk"/>
 </testcase>
-<testcase id="fre.tok.21" type="bloquant">
+<testcase id="fre.tok.21" type="blocking">
   <call-parameters>
     <param key="text" value="Le margouillat est un lézard… Et oui !"/>
     <param key="language" value="fre"/>
@@ -406,7 +406,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.25" type="informatif">
+<testcase id="fre.tok.25" type="informative">
   <call-parameters>
     <param key="text" value="L'architecte du centre J.M. Tjibaou est R.Piano."/>
     <param key="language" value="fre"/>
@@ -421,7 +421,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.26" type="informatif">
+<testcase id="fre.tok.26" type="informative">
   <call-parameters>
     <param key="text" value="L'architecte du centre JM. Tjibaou est R.Piano."/>
     <param key="language" value="fre"/>
@@ -436,7 +436,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.27" type="bloquant">
+<testcase id="fre.tok.27" type="blocking">
   <call-parameters>
     <param key="text" value="Quelques temps ap. le drame d’Ouvéa, signature des accords de Matignon..."/>
     <param key="language" value="fre"/>
@@ -451,7 +451,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.28" type="informatif">
+<testcase id="fre.tok.28" type="informative">
   <call-parameters>
     <param key="text" value="Tjibaou a été assassiné en l'an 1989 ap. J.C."/>
     <param key="language" value="fre"/>
@@ -466,7 +466,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.29" type="bloquant">
+<testcase id="fre.tok.29" type="blocking">
   <call-parameters>
     <param key="text" value="Temps de traitement : 1.5 plus rapide que la référence"/>
     <param key="language" value="fre"/>
@@ -511,7 +511,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.32" type="informatif">
+<testcase id="fre.tok.32" type="informative">
   <call-parameters>
     <param key="text" value="A+ est une écriture SMS."/>
     <param key="language" value="fre"/>
@@ -546,7 +546,7 @@
     operator="="
     right="t_alphanumeric"/>
 </testcase>
-<testcase id="fre.tok.34" type="bloquant">
+<testcase id="fre.tok.34" type="blocking">
   <call-parameters>
     <param key="text" value="Durée de l'exécution : 2h34m45"/>
     <param key="language" value="fre"/>
@@ -561,7 +561,7 @@
     operator="="
     right="t_alphanumeric"/>
 </testcase>
-<testcase id="fre.tok.35" type="bloquant">
+<testcase id="fre.tok.35" type="blocking">
   <call-parameters>
     <param key="text" value="L'acronyme de 'Système Probabiliste d’Indexation et de Recherche d’Informations Textuelles' est SPIRIT ."/>
     <param key="language" value="fre"/>
@@ -581,7 +581,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.36" type="bloquant">
+<testcase id="fre.tok.36" type="blocking">
   <call-parameters>
     <param key="text" value="-Difficile de considérer que ce tiret fait parti d'un mot composé !"/>
     <param key="language" value="fre"/>
@@ -616,7 +616,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.38" type="informatif">
+<testcase id="fre.tok.38" type="informative">
   <call-parameters>
     <param key="text" value="ƒ ‘¤’   ‘¨’  ‘ª’   ‘¬’   ‘-’   ‘¯’   km² ‘²’   ‘³’   ‘´’   ‘¶’   ‘·’   ‘¸’   ‘¹’   ‘º’ "/>
     <param key="language" value="fre"/>
@@ -636,7 +636,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.39" type="bloquant">
+<testcase id="fre.tok.39" type="blocking">
   <call-parameters>
     <param key="text" value="Que mange-t-il?"/>
     <param key="language" value="fre"/>
@@ -651,7 +651,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.40" type="informatif">
+<testcase id="fre.tok.40" type="informative">
   <call-parameters>
     <param key="text" value="Que mange-t'il?"/>
     <param key="language" value="fre"/>
@@ -666,7 +666,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.41" type="informatif">
+<testcase id="fre.tok.41" type="informative">
   <call-parameters>
     <param key="text" value="Marathon : record du monde 2h04'55'', Paul Tergat."/>
     <param key="language" value="fre"/>
@@ -681,7 +681,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.42" type="bloquant">
+<testcase id="fre.tok.42" type="blocking">
   <call-parameters>
     <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème élève."/>
     <param key="language" value="fre"/>
@@ -741,7 +741,7 @@
     operator="="
     right="t_ordinal_integer"/>
 </testcase>
-<testcase id="fre.tok.46" type="bloquant">
+<testcase id="fre.tok.46" type="blocking">
   <call-parameters>
     <param key="text" value="D'habitude, je ne suis pas d'accord. D'accord ?"/>
     <param key="language" value="fre"/>
@@ -766,7 +766,7 @@
   operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.tok.47" type="informatif">
+<testcase id="fre.tok.47" type="informative">
   <call-parameters>
     <param key="text" value="Le groupe Brasil '66 ..."/>
     <param key="language" value="fre"/>

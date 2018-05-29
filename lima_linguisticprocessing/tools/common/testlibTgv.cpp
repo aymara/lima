@@ -155,13 +155,10 @@ int run(int argc,char** argv)
 
   TestCasesHandler tch(*tvgTestCaseProcessor);
 
-  parser.setContentHandler(&tch);
-  parser.setErrorHandler(&tch);
-
   try
   {
-    for( std::vector<std::string>::const_iterator fit = param.files.begin() ;
-      fit != param.files.end() ; fit++ ) {
+    for(auto fit = param.files.cbegin() ;
+      fit != param.files.cend() ; fit++ ) {
       string sfile(param.workingDir);
       sfile.append("/").append(*fit);
       cout << "parse " << sfile << endl;

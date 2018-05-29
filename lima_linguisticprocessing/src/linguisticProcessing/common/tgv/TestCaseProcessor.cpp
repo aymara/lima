@@ -227,7 +227,11 @@ TestCaseError TestCaseProcessor::evalTestCase(
       }
       else if ((tuItr->op!="exists") && (tuItr->op!="notexists"))
       {
-        return TestCaseError(testCase, TestCaseError::InvalidOperator,(*tuItr).id, pipeName, *tuItr);
+        return TestCaseError(testCase, 
+                             TestCaseError::InvalidOperator,
+                             (*tuItr).id.toUtf8().constData(), 
+                             pipeName, 
+                             *tuItr);
       }
     }
   }

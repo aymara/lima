@@ -262,7 +262,6 @@ vertexStringForSemanticAnnotation(const std::string& vertexRole,
   // otherwise, its type is "token"
   //EntityT type("token");
 
- //std::set< uint32_t > matches = annotationData->matches(m_graph,v,"annot");
  std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)

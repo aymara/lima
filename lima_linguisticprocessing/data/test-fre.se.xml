@@ -21,7 +21,7 @@
   </testcase>
   <!-- même règle: 
   @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: -->
-  <testcase id="fre.se.37" type="bloquant">
+  <testcase id="fre.se.37" type="blocking">
     <call-parameters>
       <param key="text" value="le tunnel du Mont-Blanc"/>
       <param key="language" value="fre"/>
@@ -56,7 +56,7 @@
           right="Location.LOCATION"/>
   </testcase>
   <!-- pas de règle déclnchée, OK! -->
-  <testcase id="fre.se.39" type="bloquant">
+  <testcase id="fre.se.39" type="blocking">
     <call-parameters>
       <param key="text" value="au cours d'un entretien"/>
       <param key="language" value="fre"/>
@@ -124,7 +124,7 @@
           right=""/>
   </testcase>
   <!-- [ville$NC]::[($ADJ)?] [(de|du|d'|de $DET)] (@Regions|@Countries|@Cities|$NP):LOCATION: -->
-  <testcase id="fre.se.63" type="bloquant">
+  <testcase id="fre.se.63" type="blocking">
     <call-parameters>
       <param key="text" value="la ville de Paris"/>
       <param key="language" value="fre"/>
@@ -266,7 +266,7 @@
   <!-- @Cities:::LOCATION: -->
   <!-- @PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):LOCATION: -->
   <!-- @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: -->
-    <testcase id="fre.se.49" type="bloquant">
+    <testcase id="fre.se.49" type="blocking">
     <call-parameters>
       <param key="text" value="Paris se trouve au nord de Marseille."/>
       <param key="language" value="fre"/>
@@ -287,7 +287,7 @@
           operator="="
           right="Location.LOCATION"/>
   </testcase>
-     <testcase id="fre.se.50" type="bloquant">
+     <testcase id="fre.se.50" type="blocking">
     <call-parameters>
       <param key="text" value="&quot;Shirley et Dino&quot; jouent actuellement au théâtre Marigny."/>
       <param key="language" value="fre"/>
@@ -304,7 +304,7 @@
           right="Location.LOCATION"/>
   </testcase>
   <!--  @AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION:  -->
-  <testcase id="fre.se.51" type="informatif">
+  <testcase id="fre.se.51" type="informative">
     <call-parameters>
       <param key="text" value="Le théâtre Marigny accueille en ce moment &quot;Shirley et Dino&quot;."/>
       <param key="language" value="fre"/>
@@ -322,7 +322,7 @@
   </testcase>
   <!-- bourse::de @SECities:ORGANIZATION: -->
   <!-- @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName() -->
-  <testcase id="fre.se.52" type="bloquant">
+  <testcase id="fre.se.52" type="blocking">
     <call-parameters>
       <param key="text" value="Jean Pierre Gaillard à la Bourse de Paris."/>
       <param key="language" value="fre"/>
@@ -338,7 +338,7 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
-  <testcase id="fre.se.53" type="informatif">
+  <testcase id="fre.se.53" type="informative">
     <call-parameters>
       <param key="text" value="Alexandre Théodore Brongniart se verra confier la construction de la future Bourse de Paris par Napoléon en 1807."/>
       <param key="language" value="fre"/>
@@ -354,7 +354,7 @@
           operator="="
           right="Location.LOCATION"/>
   </testcase>
-   <testcase id="fre.se.54" type="bloquant">
+   <testcase id="fre.se.54" type="blocking">
     <call-parameters>
       <param key="text" value="Le système d'exploitation actuellement le plus vendu est WINDOWS XP."/>
       <param key="language" value="fre"/>
@@ -370,7 +370,7 @@
           operator="="
           right="Product.PRODUCT"/>
   </testcase>
-   <testcase id="fre.se.55" type="bloquant">
+   <testcase id="fre.se.55" type="blocking">
     <call-parameters>
       <param key="text" value="A l'attention du Dr Watson"/>
       <param key="language" value="fre"/>
@@ -386,7 +386,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase>
-  <testcase id="fre.se.56" type="bloquant">
+  <testcase id="fre.se.56" type="blocking">
     <call-parameters>
       <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme Bernadette Chirac."/>
       <param key="language" value="fre"/>
@@ -418,7 +418,7 @@
           operator="="
           right="Event.EVENT"/>
   </testcase>  
-  <testcase id="fre.se.58" type="bloquant">
+  <testcase id="fre.se.58" type="blocking">
     <call-parameters>
       <param key="text" value="Histoire de la seconde guerre mondiale."/>
       <param key="language" value="fre"/>
@@ -434,7 +434,7 @@
           operator="="
           right="Event.EVENT"/>
   </testcase>  
- <testcase id="fre.se.61" type="bloquant">
+ <testcase id="fre.se.61" type="blocking">
     <call-parameters>
       <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme B. Youza."/>
       <param key="language" value="fre"/>
@@ -547,7 +547,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=19]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.6" type="bloquant">
+<testcase id="fre.sebp.6" type="blocking">
 <call-parameters>
 <param key="text" value="on est le 14 septembre 2001"/>
 <param key="language" value="fre"/>
@@ -563,7 +563,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=17]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.7" type="bloquant">
+<testcase id="fre.sebp.7" type="blocking">
 <call-parameters>
 <param key="text" value="on est le mardi 18 juin 2002"/>
 <param key="language" value="fre"/>
@@ -579,7 +579,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=18]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.8" type="informatif">
+<testcase id="fre.sebp.8" type="informative">
 <call-parameters>
 <param key="text" value="en ce quatrième jour de septembre de l'an de grâce deux mille deux"/>
 <param key="language" value="fre"/>
@@ -595,7 +595,7 @@ left="XPATH#//specific_entities/specific_entity[position=7][length=60]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.9" type="informatif">
+<testcase id="fre.sebp.9" type="informative">
 <call-parameters>
 <param key="text" value="on est le dernier jour de septembre"/>
 <param key="language" value="fre"/>
@@ -611,7 +611,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=25]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.10" type="informatif">
+<testcase id="fre.sebp.10" type="informative">
 <call-parameters>
 <param key="text" value="on est le dernier jour de l'année"/>
 <param key="language" value="fre"/>
@@ -627,7 +627,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=23]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.11" type="bloquant">
+<testcase id="fre.sebp.11" type="blocking">
 <call-parameters>
 <param key="text" value="on est le vendredi 14 septembre"/>
 <param key="language" value="fre"/>
@@ -643,7 +643,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=21]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.12" type="informatif">
+<testcase id="fre.sebp.12" type="informative">
 <call-parameters>
 <param key="text" value="on est vers le 7 décembre"/>
 <param key="language" value="fre"/>
@@ -659,7 +659,7 @@ left="XPATH#//specific_entities/specific_entity[position=8][length=18]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.13" type="bloquant">
+<testcase id="fre.sebp.13" type="blocking">
 <call-parameters>
 <param key="text" value="on est le 11 septembre"/>
 <param key="language" value="fre"/>
@@ -675,7 +675,7 @@ left="XPATH#//specific_entities/specific_entity[position=11][length=12]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.14" type="informatif">
+<testcase id="fre.sebp.14" type="informative">
 <call-parameters>
 <param key="text" value="on avait rendez-vous le 11 septembre dernier"/>
 <param key="language" value="fre"/>
@@ -691,7 +691,7 @@ left="XPATH#//specific_entities/specific_entity[position=25][length=20]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.15" type="bloquant">
+<testcase id="fre.sebp.15" type="blocking">
 <call-parameters>
 <param key="text" value="c'était en novembre 1959"/>
 <param key="language" value="fre"/>
@@ -707,7 +707,7 @@ left="XPATH#//specific_entities/specific_entity[position=12][length=13]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.16" type="bloquant">
+<testcase id="fre.sebp.16" type="blocking">
 <call-parameters>
 <param key="text" value="c'était pendant le mois de février 1954"/>
 <param key="language" value="fre"/>
@@ -723,7 +723,7 @@ left="XPATH#//specific_entities/specific_entity[position=28][length=12]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>
-<!--<testcase id="fre.sebp.17" type="informatif">
+<!--<testcase id="fre.sebp.17" type="informative">
 <call-parameters>
 <param key="text" value="on est le 25"/>
 <param key="language" value="fre"/>
@@ -739,7 +739,7 @@ left="XPATH#//specific_entities/specific_entity[position=11]/type"
 operator="="
 right="DateTime.DATE"/>
 </testcase>-->
-<testcase id="fre.sebp.18" type="bloquant">
+<testcase id="fre.sebp.18" type="blocking">
 <call-parameters>
 <param key="text" value="on est le mercredi 26"/>
 <param key="language" value="fre"/>
@@ -1053,7 +1053,7 @@ right="Numex.NUMEX"/>
 <!--==================== tests EVENT ====================-->
 
 <!--==================== tests de règles ====================-->
-<testcase id="fre.sebp.59" type="bloquant">
+<testcase id="fre.sebp.59" type="blocking">
 <call-parameters>
   <param key="text" value="Le week end commence le vendredi soir."/>
   <param key="language" value="fre"/>
@@ -1069,7 +1069,7 @@ left="XPATH#//specific_entities/specific_entity[position=25][length=13]/type"
 operator="="
   right="DateTime.DATE"/>
 </testcase>
-<testcase id="fre.sebp.60" type="bloquant">
+<testcase id="fre.sebp.60" type="blocking">
   <call-parameters>
     <param key="text" value="Le prochain tirage d'Euro-Millions est de 26 millions d'euros."/>
     <param key="language" value="fre"/>

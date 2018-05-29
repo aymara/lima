@@ -29,7 +29,7 @@
   */
 
 #ifndef WIN32
-#include <cstdint> //uint32_t
+#include <cstdint> //uint*_t
 #endif
 #include "AnnotationData.h"
 #include "common/Data/strwstrtools.h"

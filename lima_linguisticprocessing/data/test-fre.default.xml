@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-<testcase id="fre.default.1" type="bloquant">
+<testcase id="fre.default.1" type="blocking">
   <call-parameters>
       <param key="text" value="Le marsupilami est un animal mythique. "/>
       <param key="language" value="fre"/>
@@ -31,7 +31,7 @@
     operator="="
     right="marsupilami"/>
 </testcase>
-<testcase id="fre.default.2" type="bloquant">
+<testcase id="fre.default.2" type="blocking">
   <call-parameters>
       <param key="text" value="Mopti est une très belle ville. "/>
       <param key="language" value="fre"/>
@@ -53,7 +53,7 @@
     operator="="
     right="Mopti"/>    
 </testcase>
-<testcase id="fre.default.3" type="informatif">
+<testcase id="fre.default.3" type="informative">
   <call-parameters>
       <param key="text" value="Nous irons cette année visiter mopti. "/>
       <param key="language" value="fre"/>
@@ -68,7 +68,7 @@
     operator="contains"
     right="NC"/>
 </testcase>
-<testcase id="fre.default.4" type="bloquant">
+<testcase id="fre.default.4" type="blocking">
   <call-parameters>
       <param key="text" value="Nous avons payé 24,99 euros."/>
       <param key="language" value="fre"/>
@@ -88,7 +88,7 @@
     operator="contains"
     right="DET"/>
 </testcase>
-<testcase id="fre.default.5" type="bloquant">
+<testcase id="fre.default.5" type="blocking">
   <call-parameters>
       <param key="text" value="Le projet EURITRACK."/>
       <param key="language" value="fre"/>
@@ -103,7 +103,7 @@
     operator="="
     right="euritrack"/>
 </testcase>
-<testcase id="fre.default.6" type="bloquant">
+<testcase id="fre.default.6" type="blocking">
   <expl> E.U.R.I.T.R.A.C.K. est un mot inconnu, doit être normalisé 'euritrack'</expl>
   <call-parameters>
       <param key="text" value="Le projet E.U.R.I.T.R.A.C.K."/>
@@ -118,7 +118,7 @@
     operator="="
     right="euritrack"/>
 </testcase>
-<testcase id="fre.default.7" type="bloquant">
+<testcase id="fre.default.7" type="blocking">
   <call-parameters>
       <param key="text" value="Nous avons payé 24.99 euros."/>
       <param key="language" value="fre"/>
@@ -138,7 +138,7 @@
     operator="contains"
     right="DET"/>
 </testcase>
-<testcase id="fre.default.8" type="bloquant">
+<testcase id="fre.default.8" type="blocking">
   <call-parameters>
       <param key="text" value="J'en ai mangé les 2/3."/>
       <param key="language" value="fre"/>
@@ -153,7 +153,7 @@
     operator="contains"
     right="NC"/>
 </testcase>
-<testcase id="fre.default.9" type="informatif">
+<testcase id="fre.default.9" type="informative">
   <call-parameters>
       <param key="text" value="Durée de l'exécution : 2h34m45"/>
       <param key="language" value="fre"/>
@@ -168,7 +168,7 @@
     operator="contains"
     right="NP"/>
 </testcase>
-<testcase id="fre.default.10" type="bloquant">
+<testcase id="fre.default.10" type="blocking">
   <call-parameters>
       <param key="text" value="Le XVème arrondissement est un quartier sympathique. "/>
       <param key="language" value="fre"/>
@@ -183,7 +183,7 @@
     operator="contains"
     right="ADJ"/>
 </testcase>
-<testcase id="fre.default.11" type="bloquant">
+<testcase id="fre.default.11" type="blocking">
   <call-parameters>
       <param key="text" value="Le chapitre III est très intéressant. "/>
       <param key="language" value="fre"/>
@@ -198,7 +198,7 @@
     operator="contains"
     right="ADJ"/>
 </testcase>
-<testcase id="fre.default.12" type="bloquant">
+<testcase id="fre.default.12" type="blocking">
   <call-parameters>
       <param key="text" value="Le projet euritrack."/>
       <param key="language" value="fre"/>
@@ -213,7 +213,7 @@
     operator="="
     right="euritrack"/>
 </testcase>
-<testcase id="fre.default.13" type="bloquant">
+<testcase id="fre.default.13" type="blocking">
   <expl>'euri100' is an unknown word starting by lowercase letters and ending by digits ; it must be normalized in itself 'euri100'.</expl>
   <call-parameters>
       <param key="text" value="Le projet euri100."/>
@@ -228,7 +228,7 @@
     operator="="
     right="euri100"/>
 </testcase>
-<testcase id="fre.default.14" type="bloquant">
+<testcase id="fre.default.14" type="blocking">
   <expl>The number in digits 27 must be normalized into itself.</expl>
   <call-parameters>
     <param key="text" value="27 millions de dollars"/>
@@ -243,7 +243,7 @@
       operator="="
       right="27"/>
 </testcase>
-<testcase id="fre.default.15" type="bloquant">
+<testcase id="fre.default.15" type="blocking">
   <expl>The negative numbers in digits -27 and -25 must be normalized into themselves.</expl>
   <call-parameters>
     <param key="text" value="-27 millions de dollars ou -25 millions d'euros."/>

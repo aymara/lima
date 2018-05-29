@@ -4,7 +4,7 @@
   <!-- check that Barack is in the list of firstname -->
   <!-- check generic rules triggered by firstname -->
   <!-- check that initial between firstname  and lastname is interpreted as 2nd firstname -->
-  <testcase id="eng.se.pers.comp.1" type="bloquant">
+  <testcase id="eng.se.pers.comp.1" type="blocking">
     <call-parameters>
       <param key="text" value="Barack H Obama"/>
       <param key="language" value="eng"/>
@@ -34,7 +34,7 @@
           right="Obama"/>
   </testcase>
   <!-- idem with abbrev between firstname  and lastname is interpreted as 2nd firstname -->
-  <testcase id="eng.se.pers.comp.2" type="bloquant">
+  <testcase id="eng.se.pers.comp.2" type="blocking">
     <call-parameters>
       <param key="text" value="Barack H. Obama"/>
       <param key="language" value="eng"/>
@@ -65,7 +65,7 @@
   </testcase>
   <!-- check generic rules triggered by firstname -->
   <!-- check Title is recognized  -->
-  <testcase id="eng.se.pers.comp.3" type="bloquant">
+  <testcase id="eng.se.pers.comp.3" type="blocking">
     <call-parameters>
       <param key="text" value="president George Bush"/>
       <param key="language" value="eng"/>
@@ -100,7 +100,7 @@
           right="Bush"/>
   </testcase>
   <!-- check generic rules triggered by PersonamePart -->
-  <testcase id="eng.se.pers.comp.4" type="bloquant">
+  <testcase id="eng.se.pers.comp.4" type="blocking">
     <call-parameters>
       <param key="text" value="president Bush"/>
       <param key="language" value="eng"/>
@@ -125,7 +125,7 @@
           right="Bush"/>
   </testcase>
   <!-- check generic rules triggered by PersonamePart -->
-  <testcase id="eng.se.pers.comp.5" type="bloquant">
+  <testcase id="eng.se.pers.comp.5" type="blocking">
     <call-parameters>
       <param key="text" value="president Bush"/>
       <param key="language" value="eng"/>
@@ -173,7 +173,7 @@
           operator="="
           right="Samad Ismail"/>
   </testcase>
-  <!--testcase id="eng.se.pers.2" type="bloquant">
+  <!--testcase id="eng.se.pers.2" type="blocking">
     <call-parameters>
       <param key="text" value="James Dulley is a residential energy conservation expert."/>
       <param key="language" value="eng"/>
@@ -187,7 +187,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase-->
-  <!--testcase id="eng.se.pers.3" type="bloquant">
+  <!--testcase id="eng.se.pers.3" type="blocking">
     <call-parameters>
       <param key="text" value="But that means students must carry heavy packs all day, said Assemblyman Dario Frommer."/>
       <param key="language" value="eng"/>
@@ -201,7 +201,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase-->
-  <!--testcase id="eng.se.pers.4" type="bloquant">
+  <!--testcase id="eng.se.pers.4" type="blocking">
     <call-parameters>
       <param key="text" value="Cally Weise, an eighth-grader at Westborough Middle School in South San Francisco, said she almost fell down stairs at her school because her backpack weighs so much."/>
       <param key="language" value="eng"/>
@@ -215,7 +215,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase-->
-  <!--testcase id="eng.se.pers.5" type="bloquant">
+  <!--testcase id="eng.se.pers.5" type="blocking">
     <call-parameters>
       <param key="text" value="Last year, Gov. Gray Davis vetoed a bill."/>
       <param key="language" value="eng"/>
@@ -229,7 +229,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase-->
-  <!--testcase id="eng.se.pers.6" type="bloquant">
+  <!--testcase id="eng.se.pers.6" type="blocking">
     <call-parameters>
       <param key="text" value="``Does the state have to start regulating ?'' Russ Lopez said."/>
       <param key="language" value="eng"/>
@@ -245,7 +245,7 @@
   </testcase-->
   <!-- 20120716, GC : change length from 11 to 10 as such an apostrophe cannot be
   seen as a posessive (see testcase eng.tok.35)-->
-  <!--testcase id="eng.se.pers.7" type="bloquant">
+  <!--testcase id="eng.se.pers.7" type="blocking">
     <call-parameters>
       <param key="text" value="The two little boys in Yaffa Ganz' story prove that."/>
       <param key="language" value="eng"/>
@@ -259,7 +259,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase-->
-  <!--testcase id="eng.se.pers.8" type="bloquant">
+  <!--testcase id="eng.se.pers.8" type="blocking">
     <call-parameters>
       <param key="text" value="Lou Alice Philbeck died April 17 of a heart-lung ailment."/>
       <param key="language" value="eng"/>

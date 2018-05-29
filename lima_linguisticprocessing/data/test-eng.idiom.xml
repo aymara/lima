@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-<testcase id="eng.idiom.1" type="bloquant">
+<testcase id="eng.idiom.1" type="blocking">
   <call-parameters>
       <param key="text" value="He left as soon as she arrived."/>
       <param key="language" value="eng"/>
@@ -41,7 +41,7 @@
     operator="notexists"
     right=""/>
 </testcase>
-<testcase id="eng.idiom.2" type="bloquant">
+<testcase id="eng.idiom.2" type="blocking">
   <call-parameters>
       <param key="text" value="He wonder whether or not he's dreaming."/>
       <param key="language" value="eng"/>
@@ -81,7 +81,7 @@
     operator="notexists"
     right=""/-->
 </testcase>
-<testcase id="eng.idiom.3" type="bloquant">
+<testcase id="eng.idiom.3" type="blocking">
   <call-parameters>
       <param key="text" value="The child ask for money."/>
       <param key="language" value="eng"/>
@@ -106,7 +106,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.idiom.4" type="bloquant">
+<testcase id="eng.idiom.4" type="blocking">
   <call-parameters>
       <param key="text" value="The child asked for money."/>
       <param key="language" value="eng"/>
@@ -131,7 +131,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.idiom.5" type="bloquant">
+<testcase id="eng.idiom.5" type="blocking">
   <call-parameters>
       <param key="text" value="The child is asking for money."/>
       <param key="language" value="eng"/>
@@ -156,7 +156,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.idiom.6" type="bloquant">
+<testcase id="eng.idiom.6" type="blocking">
   <call-parameters>
       <param key="text" value="As soon as she arrived, he left."/>
       <param key="language" value="eng"/>
@@ -196,7 +196,7 @@
     operator="notexists"
     right=""/>
 </testcase>
-<testcase id="eng.idiom.7" type="bloquant">
+<testcase id="eng.idiom.7" type="blocking">
   <call-parameters>
       <param key="text" value="Whether or not he comes, we'll go."/>
       <param key="language" value="eng"/>
@@ -236,7 +236,7 @@
     operator="notexists"
     right=""/-->
 </testcase>
-<testcase id="eng.idiom.8" type="bloquant">
+<testcase id="eng.idiom.8" type="blocking">
   <call-parameters>
       <param key="text" value="He switched the light on."/>
       <param key="language" value="eng"/>

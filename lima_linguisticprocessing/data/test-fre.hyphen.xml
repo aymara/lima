@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-<testcase id="fre.hyphen.1.1" type="bloquant">
+<testcase id="fre.hyphen.1.1" type="blocking">
   <call-parameters>
       <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -16,7 +16,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.1.2" type="bloquant">
+<testcase id="fre.hyphen.1.2" type="blocking">
   <call-parameters>
       <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -31,7 +31,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.1.3"  type="bloquant">
+<testcase id="fre.hyphen.1.3"  type="blocking">
   <call-parameters>
       <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -46,7 +46,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.1.4" type="informatif">
+<testcase id="fre.hyphen.1.4" type="informative">
   <call-parameters>
       <param key="text" value="Le match France-Angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -61,7 +61,7 @@
     operator="="
     right="-"/>
 </testcase>
-<testcase id="fre.hyphen.2.1" type="bloquant">
+<testcase id="fre.hyphen.2.1" type="blocking">
   <call-parameters>
       <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -76,7 +76,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.2.2" type="informatif">
+<testcase id="fre.hyphen.2.2" type="informative">
   <call-parameters>
       <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -97,7 +97,7 @@
     operator="="
     right="NP"/>
 </testcase>
-<testcase id="fre.hyphen.2.3" type="informatif">
+<testcase id="fre.hyphen.2.3" type="informative">
   <call-parameters>
       <param key="text" value="Le match france-angleterre a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -106,7 +106,7 @@
       </list>
     </call-parameters>
   <expl>tiret séparateur entre deux noms propres : angleterre transformé en Angleterre avec une macro categorie NP.</expl>
-  <expl>Les noms propres comme France et Angleterre n'existent plus dans le dictionnaire (Lefff): le test eszt passé de bloquant à informatif</expl>
+  <expl>Les noms propres comme France et Angleterre n'existent plus dans le dictionnaire (Lefff): le test eszt passé de blocking à informative</expl>
   <test id="2.3.a" trace=".hyphen.xml"
     comment="angleterre transformé en Angleterre"
     left="XPATH#//data_structure/vertex[token[position=17][length=10]]//form/@lemma"
@@ -118,7 +118,7 @@
     operator="="
     right="NP"/>
 </testcase>
-<testcase id="fre.hyphen.3.1" type="bloquant">
+<testcase id="fre.hyphen.3.1" type="blocking">
   <call-parameters>
       <param key="text" value="Le match franco-anglais a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -133,7 +133,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.3.2" type="bloquant">
+<testcase id="fre.hyphen.3.2" type="blocking">
   <call-parameters>
       <param key="text" value="Le match franco-espagnol a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -148,7 +148,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.3.3" type="bloquant">
+<testcase id="fre.hyphen.3.3" type="blocking">
   <call-parameters>
       <param key="text" value="Le match franco-espagnol a été marqué par de nombreux incidents. "/>
       <param key="language" value="fre"/>
@@ -163,7 +163,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.hyphen.4" type="bloquant">
+<testcase id="fre.hyphen.4" type="blocking">
   <call-parameters>
       <param key="text" value="Un gouvernement pro-américain a été mis en place. "/>
       <param key="language" value="fre"/>

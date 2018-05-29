@@ -90,7 +90,7 @@
     operator="="
     right="NP"/>
 </testcase>
-<testcase id="fre.disamb.5" type="informatif">
+<testcase id="fre.disamb.5" type="informative">
   <call-parameters>
       <param key="text" value="Les hommes de l'ombre sont très discrets. "/>
       <param key="language" value="fre"/>
@@ -111,7 +111,7 @@
     operator="="
     right="P"/>
 </testcase>
-<testcase id="fre.disamb.6" type="informatif">
+<testcase id="fre.disamb.6" type="informative">
   <call-parameters>
       <param key="text" value="L'état de droit est garanti en France. "/>
       <param key="language" value="fre"/>
@@ -132,7 +132,7 @@
     operator="contains"
     right="P"/>
 </testcase>
-<testcase id="fre.disamb.7" type="informatif">
+<testcase id="fre.disamb.7" type="informative">
   <call-parameters>
       <param key="text" value="Les fraises des bois sont plus agréables. "/>
       <param key="language" value="fre"/>
@@ -216,7 +216,7 @@
     operator="="
     right="ukrainien" />
 </testcase>
-<testcase id="disamb.10.b" type="informatif">
+<testcase id="disamb.10.b" type="informative">
   <call-parameters>
       <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
       <param key="language" value="fre"/>
@@ -253,7 +253,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.11.b" type="informatif">
+<testcase id="disamb.11.b" type="informative">
   <call-parameters>
       <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
       <param key="language" value="fre"/>
@@ -290,7 +290,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.12.b" type="informatif">
+<testcase id="disamb.12.b" type="informative">
   <call-parameters>
       <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
       <param key="language" value="fre"/>
@@ -385,7 +385,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="disamb.15.b" type="informatif">
+<testcase id="disamb.15.b" type="informative">
   <call-parameters>
       <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
       <param key="language" value="fre"/>
@@ -501,7 +501,7 @@
     operator="="
     right="premier ministre" />
 </testcase>
-<testcase id="disamb.20.b" type="informatif">
+<testcase id="disamb.20.b" type="informative">
   <call-parameters>
       <param key="text" value="Candidat de l'opposition ukrainienne au second tour de l'élection présidentielle du dimanche 21 novembre, M. Iouchtchenko, qui estime que la victoire lui a été volée, accuse le pouvoir de placer l'Ukraine &quot;au bord d'un conflit civil&quot; en donnant la victoire au premier ministre, Viktor Ianoukovitch."/>
       <param key="language" value="fre"/>
@@ -538,7 +538,7 @@
     operator="="
     right="ADJ" />
 </testcase>
-<testcase id="disamb.21.b" type="informatif">
+<testcase id="disamb.21.b" type="informative">
   <call-parameters>
       <param key="text" value=" Le président ukrainien sortant Leonid Koutchma a appelé ses homologues polonais et lituanien Aleksander Kwasniewski et Valdas Adamkus à servir de médiateurs dans le conflit qui a éclaté en Ukraine après l'élection présidentielle, a annoncé jeudi la présidence lituanienne."/>
       <param key="language" value="fre"/>
@@ -575,7 +575,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.22.b" type="informatif">
+<testcase id="disamb.22.b" type="informative">
   <call-parameters>
       <param key="text" value=" Le président ukrainien sortant Leonid Koutchma a appelé ses homologues polonais et lituanien Aleksander Kwasniewski et Valdas Adamkus à servir de médiateurs dans le conflit qui a éclaté en Ukraine après l'élection présidentielle, a annoncé jeudi la présidence lituanienne."/>
       <param key="language" value="fre"/>
@@ -612,7 +612,7 @@
     operator="contains"
     right="V" />
 </testcase>
-<testcase id="disamb.23.b" type="informatif">
+<testcase id="disamb.23.b" type="informative">
   <call-parameters>
       <param key="text" value=" Pour que le conflit en Ukraine soit réglé par des moyens politiques, il nous faut un médiateur international important."/>
       <param key="language" value="fre"/>
@@ -649,7 +649,7 @@
     operator="="
     right="ADV" />
 </testcase>
-<testcase id="disamb.24.b" type="informatif">
+<testcase id="disamb.24.b" type="informative">
   <call-parameters>
       <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
       <param key="language" value="fre"/>
@@ -686,7 +686,7 @@
     operator="="
     right="ADV" />
 </testcase>
-<testcase id="disamb.24.d" type="informatif">
+<testcase id="disamb.24.d" type="informative">
   <call-parameters>
       <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
       <param key="language" value="fre"/>
@@ -723,7 +723,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.25.b" type="informatif">
+<testcase id="disamb.25.b" type="informative">
   <call-parameters>
       <param key="text" value="Je ne veux pas que ces négociations soient menées en coulisses, a déclaré M. Iouchtchenko devant les manifestants sur la Place de l'inpéndance à Kiev."/>
       <param key="language" value="fre"/>
@@ -760,7 +760,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="disamb.26.b" type="informatif">
+<testcase id="disamb.26.b" type="informative">
   <call-parameters>
       <param key="text" value="L'opposition ukrainienne a par ailleurs saisi jeudi la Cour suprême pour contester le résultat de l'élection présidentielle de dimanche, remportée par le candidat pro-russe du pouvoir, Viktor Ianoukovitch, et affichait toujours une détermination intacte après quatre jours de protestations."/>
       <param key="language" value="fre"/>
@@ -797,7 +797,7 @@
     operator="="
     right="ADJ" />
 </testcase>
-<testcase id="disamb.27.b" type="informatif">
+<testcase id="disamb.27.b" type="informative">
   <call-parameters>
       <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
       <param key="language" value="fre"/>
@@ -834,7 +834,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.28.b" type="informatif">
+<testcase id="disamb.28.b" type="informative">
   <call-parameters>
       <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
       <param key="language" value="fre"/>
@@ -871,7 +871,7 @@
     operator="="
     right="ADJ" />
 </testcase>
-<testcase id="disamb.29.a" type="informatif">
+<testcase id="disamb.29.a" type="informative">
   <call-parameters>
       <param key="text" value="C'est sans surprise à Lviv, ville de l'ouest ukrainien - région nationaliste acquise à l'opposition - que les premiers signes concrets d'action contre le régime se sont matérialisés dès jeudi matin, où des représentants de l'administration de l'éducation ont annoncé que leurs enseignants entamaient une grève illimitée."/>
       <param key="language" value="fre"/>
@@ -908,7 +908,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.30.b" type="informatif">
+<testcase id="disamb.30.b" type="informative">
   <call-parameters>
       <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
       <param key="language" value="fre"/>
@@ -945,7 +945,7 @@
     operator="distinct"
     right="ADJ" />
 </testcase>
-<testcase id="disamb.31.b" type="informatif">
+<testcase id="disamb.31.b" type="informative">
   <call-parameters>
       <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
       <param key="language" value="fre"/>
@@ -982,7 +982,7 @@
     operator="contains"
     right="ADJ" />
 </testcase-->
-<!--testcase id="disamb.32.b" type="informatif">
+<!--testcase id="disamb.32.b" type="informative">
   <call-parameters>
       <param key="text" value=" L'Assemblée régionale de Lviv a réaffirmé de son côté qu'elle n'&quot;obéirait qu'aux ordres&quot; de l'opposant pro-occidental Viktor Iouchtchenko et son président, Mikailo Sendak, a appelé jeudi &quot;les autres régions à prendre la même décision&quot;."/>
       <param key="language" value="fre"/>
@@ -1040,7 +1040,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.34.b" type="informatif">
+<testcase id="disamb.34.b" type="informative">
   <call-parameters>
       <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
       <param key="language" value="fre"/>
@@ -1077,7 +1077,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="disamb.35.b" type="informatif">
+<testcase id="disamb.35.b" type="informative">
   <call-parameters>
       <param key="text" value="&quot;Nous ne quitterons pas la place avant la victoire&quot;, a-t-il aussi lancé."/>
       <param key="language" value="fre"/>
@@ -1114,7 +1114,7 @@
     operator="="
     right="DET" />
 </testcase>
-<testcase id="disamb.36.b" type="informatif">
+<testcase id="disamb.36.b" type="informative">
   <call-parameters>
       <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
       <param key="language" value="fre"/>
@@ -1151,7 +1151,7 @@
     operator="="
     right="NC" />
 </testcase>
-<testcase id="disamb.37.b" type="informatif">
+<testcase id="disamb.37.b" type="informative">
   <call-parameters>
       <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
       <param key="language" value="fre"/>
@@ -1188,7 +1188,7 @@
     operator="="
     right="V" />
 </testcase>
-<testcase id="disamb.38.b" type="informatif">
+<testcase id="disamb.38.b" type="informative">
   <call-parameters>
       <param key="text" value="Le pouvoir est sur la voie d'une escalade du conflit. "/>
       <param key="language" value="fre"/>
@@ -1267,7 +1267,7 @@
     operator="="
     right="ADV" />
 </testcase>
-<testcase id="disamb.41.b" type="informatif">
+<testcase id="disamb.41.b" type="informative">
   <call-parameters>
       <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
       <param key="language" value="fre"/>
@@ -1304,7 +1304,7 @@
     operator="="
     right="ADV" />
  </testcase>
- <testcase id="disamb.42.b" type="informatif">
+ <testcase id="disamb.42.b" type="informative">
   <call-parameters>
       <param key="text" value="Réaffirmant que le déroulement de cette élection &quot;ne répond pas aux critères internationaux d'une élection démocratique&quot; et que l'UE &quot;ne pense pas que ces résultats reflètent la volonté du peuple ukrainien&quot;, la présidence néerlandaise demande à Kiev &quot;d'enquêter sur toutes les plaintes (...) et de corriger les irrégularités rapportées par l'OSCE&quot;."/>
       <param key="language" value="fre"/>

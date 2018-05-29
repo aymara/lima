@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -41,6 +41,8 @@ install(
     test-eng.se-ORGANISATION.xml
     test-eng.simpleword.xml
     test-eng.tokenizer.xml
+    test-eng-ud.default.xml
+    test-eng-ud.simpleword.xml
     test-fre.default.xml
     test-fre.disambiguated.xml
     test-fre.hyphen.xml

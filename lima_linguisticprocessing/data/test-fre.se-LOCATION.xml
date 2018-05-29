@@ -275,7 +275,7 @@
           operator="="
           right="ouest"/>
   </testcase>
-<testcase id="fre.se.location.comp.12" type="bloquant">
+<testcase id="fre.se.location.comp.12" type="blocking">
     <call-parameters>
       <param key="text" value="la manisfestation a lieu place de la République."/>
       <param key="language" value="fre"/>
@@ -329,7 +329,7 @@
           operator="="
           right="république"/>
 </testcase>
-<testcase id="fre.se.location.comp.13" type="bloquant">
+<testcase id="fre.se.location.comp.13" type="blocking">
     <call-parameters>
       <param key="text" value="Il habite 3 rue Abbé Grégoire."/>
       <param key="language" value="fre"/>
@@ -359,7 +359,7 @@
           operator="="
           right="Abbé Grégoire"/-->
   </testcase>
-<!--testcase id="fre.se.location.comp.14" type="bloquant">
+<!--testcase id="fre.se.location.comp.14" type="blocking">
     <call-parameters>
       <param key="text" value="Le rendez-vous est 3 place de la république."/>
       <param key="language" value="fre"/>
@@ -389,7 +389,7 @@
           operator="="
           right="république"/>
   </testcase-->
-<testcase id="fre.se.location.comp.14" type="bloquant">
+<testcase id="fre.se.location.comp.14" type="blocking">
     <call-parameters>
       <param key="text" value="On vit bien en France"/>
       <param key="language" value="fre"/>
@@ -409,7 +409,7 @@
           operator="="
           right="France"/>
   </testcase>
-<!--testcase id="fre.se.location.comp.14" type="bloquant">
+<!--testcase id="fre.se.location.comp.14" type="blocking">
     <call-parameters>
       <param key="text" value="Le rendez-vous est 3 place de la république."/>
       <param key="language" value="fre"/>
@@ -439,7 +439,7 @@
           operator="="
           right="république"/>
   </testcase-->
-<testcase id="fre.se.location.comp.15" type="bloquant">
+<testcase id="fre.se.location.comp.15" type="blocking">
     <call-parameters>
       <param key="text" value="Il vit à La Bolline"/>
       <param key="language" value="fre"/>
@@ -459,7 +459,7 @@
           operator="="
           right="La Bolline"/>
   </testcase>
-<testcase id="fre.se.location.comp.16" type="bloquant">
+<testcase id="fre.se.location.comp.16" type="blocking">
     <call-parameters>
       <param key="text" value="C'est ici la Maison Blanche."/>
       <param key="language" value="fre"/>
@@ -479,7 +479,7 @@
           operator="="
           right="Maison Blanche"/>
   </testcase>
-<testcase id="fre.se.location.comp.17" type="bloquant">
+<testcase id="fre.se.location.comp.17" type="blocking">
     <call-parameters>
       <param key="text" value="Connais-tu la ville rose ?"/>
       <param key="language" value="fre"/>
@@ -499,7 +499,7 @@
           operator="="
           right="ville rose"/>
   </testcase>
-<!--testcase id="fre.se.location.comp.18" type="bloquant">
+<!--testcase id="fre.se.location.comp.18" type="blocking">
     <call-parameters>
       <param key="text" value="Que de beaux souvenirs au Pays Basque espagnol !"/>
       <param key="language" value="fre"/>
@@ -519,7 +519,7 @@
           operator="="
           right="Pays Basque espagnol"/>
   </testcase-->
-<testcase id="fre.se.location.comp.19" type="bloquant">
+<testcase id="fre.se.location.comp.19" type="blocking">
     <call-parameters>
       <param key="text" value="C'est au sud d'Israël."/>
       <param key="language" value="fre"/>
@@ -544,7 +544,7 @@
           operator="="
           right="Israël"/-->
   </testcase>
-<!--testcase id="fre.se.location.comp.20" type="bloquant">
+<!--testcase id="fre.se.location.comp.20" type="blocking">
     <call-parameters>
       <param key="text" value="Tu connais pas la CAPS ?"/>
       <param key="language" value="fre"/>
@@ -564,7 +564,7 @@
           operator="="
           right="CAPS"/>
   </testcase-->
-<testcase id="fre.se.location.comp.21" type="bloquant">
+<testcase id="fre.se.location.comp.21" type="blocking">
     <call-parameters>
       <param key="text" value="Tu connais pas les Etats-Unis ?"/>
       <param key="language" value="fre"/>
@@ -584,7 +584,7 @@
           operator="="
           right="Etats-Unis"/>
   </testcase>
-<testcase id="fre.se.location.comp.22" type="bloquant">
+<testcase id="fre.se.location.comp.22" type="blocking">
     <call-parameters>
       <param key="text" value="Tu connais pas l'Afrique subsaharienne ?"/>
       <param key="language" value="fre"/>
@@ -634,7 +634,7 @@
           operator="="
           right="Atlas"/>
   </testcase>
-<testcase id="fre.se.location.comp.24" type="bloquant">
+<testcase id="fre.se.location.comp.24" type="blocking">
     <call-parameters>
       <param key="text" value="Tu connais le désert de Gobi ?"/>
       <param key="language" value="fre"/>
@@ -729,7 +729,7 @@
           operator="="
           right="Pays de la Loire"/>
   </testcase>
-<testcase id="fre.se.location.comp.28" type="bloquant">
+<testcase id="fre.se.location.comp.28" type="blocking">
     <call-parameters>
       <param key="text" value="Tu connais la mer de la tranquilité ?"/>
       <param key="language" value="fre"/>
@@ -754,7 +754,7 @@
           operator="="
           right="tranquilité"/>
   </testcase>
-<testcase id="fre.se.location.comp.28-b" type="bloquant">
+<testcase id="fre.se.location.comp.28-b" type="blocking">
     <call-parameters>
       <param key="text" value="Tu connais la Mer d'Iroise ?"/>
       <param key="language" value="fre"/>
@@ -779,7 +779,7 @@
           operator="="
           right="Iroise"/>
   </testcase>
-<testcase id="fre.se.location.comp.29" type="bloquant">
+<testcase id="fre.se.location.comp.29" type="blocking">
     <call-parameters>
       <param key="text" value="Je prends régulièrement l' autoroute A6 ?"/>
       <param key="language" value="fre"/>
@@ -804,7 +804,7 @@
           operator="="
           right="A6"/>
   </testcase>
-<testcase id="fre.se.location.comp.30" type="bloquant">
+<testcase id="fre.se.location.comp.30" type="blocking">
     <call-parameters>
       <param key="text" value="Passe par le triangle de Rocquencourt"/>
       <param key="language" value="fre"/>
@@ -829,7 +829,7 @@
           operator="="
           right="Rocquencourt"/>
   </testcase>
-<testcase id="fre.se.location.comp.31" type="bloquant">
+<testcase id="fre.se.location.comp.31" type="blocking">
     <call-parameters>
       <param key="text" value="Passons devant l'Elysée"/>
       <param key="language" value="fre"/>
@@ -849,7 +849,7 @@
           operator="="
           right="Elysée"/>
   </testcase>
-<testcase id="fre.se.location.comp.32" type="bloquant">
+<testcase id="fre.se.location.comp.32" type="blocking">
     <call-parameters>
       <param key="text" value="J'habite 15 rue de Vaugirad escalier 2"/>
       <param key="language" value="fre"/>
@@ -874,7 +874,7 @@
           operator="="
           right="escalier 2"/>
   </testcase>
-<testcase id="fre.se.location.comp.32-b" type="bloquant">
+<testcase id="fre.se.location.comp.32-b" type="blocking">
     <call-parameters>
       <param key="text" value="J'habite 15 rue de Vaugirad escalier 2 batiment A"/>
       <param key="language" value="fre"/>
@@ -899,7 +899,7 @@
           operator="="
           right="escalier 2 batiment A"/>
   </testcase>
-<!--testcase id="fre.se.location.comp.33" type="bloquant">
+<!--testcase id="fre.se.location.comp.33" type="blocking">
     <call-parameters>
       <param key="text" value="Mon téléphone est 01 69 85 80 02."/>
       <param key="language" value="fre"/>
@@ -919,7 +919,7 @@
           operator="="
           right="01 69 85 80 02"/>
   </testcase-->
-<testcase id="fre.se.location.comp.34" type="bloquant">
+<testcase id="fre.se.location.comp.34" type="blocking">
     <call-parameters>
       <param key="text" value="Radio Bleue sur 98.8 MHz."/>
       <param key="language" value="fre"/>
@@ -939,7 +939,7 @@
           operator="="
           right="98.8 MHz"/>
 </testcase>
-<testcase id="fre.se.location.comp.35" type="bloquant">
+<testcase id="fre.se.location.comp.35" type="blocking">
     <call-parameters>
       <param key="text" value="suivez-moi sur Twitter à @leguidedannotation."/>
       <param key="language" value="fre"/>
@@ -959,7 +959,7 @@
           operator="="
           right="@ leguidedannotation"/>
   </testcase>
-<!--testcase id="fre.se.location.comp.36" type="bloquant">
+<!--testcase id="fre.se.location.comp.36" type="blocking">
     <call-parameters>
       <param key="text" value="mon identifiant skype est jean.dupont."/>
       <param key="language" value="fre"/>
@@ -979,7 +979,7 @@
           operator="="
           right="jean.dupon"/>
   </testcase!-->
-    <testcase id="fre.se.location.comp.37" type="bloquant">
+    <testcase id="fre.se.location.comp.37" type="blocking">
     <call-parameters>
       <param key="text" value="voir aussi http://www.globalpost.com"/>
       <param key="language" value="fre"/>

@@ -72,7 +72,7 @@ void writeLimaString(std::ofstream& file,const LimaString& s)
 // wordSet = set of multi-term
 void readWordVector(std::ifstream& file, std::vector<LimaString>& wordVector)
 {
-  int i = Misc::readCodedInt(file);
+  auto i = Misc::readCodedInt(file);
   for( ; i > 0 ; i-- ) {
     LimaString s;
     Misc::readUTF8StringField(file,s);

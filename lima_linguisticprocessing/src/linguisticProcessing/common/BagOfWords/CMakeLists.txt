@@ -16,6 +16,8 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
+add_subdirectory(tests)
+
 add_definitions(-DLIMA_BOW_EXPORTING)
 
 ########### next target ###############
@@ -81,6 +83,3 @@ install(FILES
   COMPONENT devel
 )
 
-
-
-add_subdirectory(tests)

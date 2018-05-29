@@ -62,7 +62,7 @@ struct LIMA_TGV_EXPORT TestCase
     TestUnit() : id(),trace(),comment(),left(),op(),right(),conditional(false) {};
     friend LIMA_TGV_EXPORT std::ostream & operator << (std::ostream &os, const TestUnit& tcu);
     void print(std::ostream &os) const;
-    std::string id;
+    QString id;
     std::string trace;
     std::string comment;
     std::string left;
@@ -75,7 +75,7 @@ struct LIMA_TGV_EXPORT TestCase
   MultiValCallParams multiValCallParams;
   MapValCallParams mapValCallParams;
   
-  std::string id;
+  QString id;
   std::string type;
   std::string explanation;
   std::list<TestUnit> tests;

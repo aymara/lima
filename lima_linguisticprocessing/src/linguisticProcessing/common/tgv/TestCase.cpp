@@ -44,7 +44,7 @@ std::ostream & operator << (std::ostream &os, const Lima::Common::TGV::TestCase&
 }
 
 void TestCase::print(std::ostream &os) const {
-  os << "<testcase id='" << id  << "' type='" << type  << "'>\n";
+  os << "<testcase id='" << id.toUtf8().constData()  << "' type='" << type  << "'>\n";
   os << "<expl>"  << explanation  << "</expl>\n";
   os << "<call-parameters>\n";
   for( SimpleValCallParams::const_iterator paramIt = simpleValCallParams.begin() ;
@@ -130,7 +130,7 @@ std::ostream & operator << (std::ostream &os, const Lima::Common::TGV::TestCase:
 }
 
 void TestCase::TestUnit::print(std::ostream &os) const {
-  os << "<test id='" << id  << "' trace='" << trace << "'\n"
+  os << "<test id='" << id.toUtf8().constData()  << "' trace='" << trace << "'\n"
      << "comment='" << comment  << "'\n"
      << "left='" << left << "'\n"
      << "operator='" << op << "'\n"

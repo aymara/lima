@@ -321,13 +321,6 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
   }
 
-/*  {
-    std::set< uint32_t > annots = annotationData->matches(recoData.getGraphId(), v1, "annot");
-    for ( std::set< uint32_t >::iterator it = annots.begin(); it != annots.end(); it++)
-    {
-      if (annotationData->hasAnnotation( *it, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
-    }
-  }*/
   if (annotationData->dumpFunction("SpecificEntity") == 0)
   {
     annotationData->dumpFunction("SpecificEntity", new DumpSpecificEntityAnnotation());
