@@ -170,7 +170,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   }
   else if (stringName == "item")
   {
-    uint32_t nbAtt=attributes.length();
+    auto nbAtt=attributes.length();
     if (m_firstItem) {
       // decide if list is simple list or list of items with attributes
       if (nbAtt==1) {
@@ -193,7 +193,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     if (m_itemWithAttributes) {
       string itemName=toString(attributes.value("value"));
       ItemWithAttributes item(itemName);
-      for (uint32_t i=1; i<nbAtt; i++) {
+      for (decltype(nbAtt) i=1; i<nbAtt; i++) {
         item.addAttribute(toString(attributes.localName(i)),
                           toString(attributes.value(i)));
       }
@@ -215,7 +215,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   {
     LTRACE << "entry in map";
 
-    uint32_t nbAtt=attributes.length();
+    auto nbAtt=attributes.length();
     if (m_firstItem) {
       // decide if map is simple map or map of entries with attributes
       if (nbAtt==2) { // name+value => simple map
@@ -239,7 +239,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
       string key=toString(attributes.value("key"));
       string value=toString(attributes.value("value"));
       ItemWithAttributes item(value);
-      for (uint32_t i=1; i<nbAtt; i++) {
+      for (decltype(nbAtt) i=1; i<nbAtt; i++) {
         string attName=toString(attributes.localName(i));
         if (attName != "key" && attName != "value") {
           item.addAttribute(attName,

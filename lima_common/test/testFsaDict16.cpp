@@ -375,7 +375,7 @@ template <typename dictType>
                 << ")=" << Lima::Common::Misc::limastring2utf8stdstring(spelling) << std::endl;
   }
   // for each id, compare result of getSpelling with element in vector of string [begin,end]
-  for( uint32_t i = 0 ; i < indexes.size() ; i++ ) {
+  for( uint64_t i = 0 ; i < indexes.size() ; i++ ) {
     Lima::LimaString spelling;
     try{
       spelling = m_dico.getSpelling(indexes[i]);

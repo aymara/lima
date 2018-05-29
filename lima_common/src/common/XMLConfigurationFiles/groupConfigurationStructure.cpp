@@ -178,7 +178,7 @@ getBooleanParameter(const std::string& key) {
   }
   return false;
 }
-uint32_t GroupConfigurationStructure::
+uint64_t GroupConfigurationStructure::
 getIntParameter(const std::string& key) {
   return atoi(getParamsValueAtKey(key).c_str());
 }

@@ -61,13 +61,13 @@ class StringsPoolPrivate
      }
      size_t operator()(const Lima::LimaString* s) const {
         const int shift[] = {0,8,16,24};    // 4 shifts to "occupy" 32 bits
-        uint32_t key = 0x55555555;        //0101...
-        uint32_t oneChar;
+        uint64_t key = 0x55555555;        //0101...
+        uint64_t oneChar;
         int depth = s->length();
         if (depth > MAX_DEPTH)
             depth = MAX_DEPTH;
         for (int i=0; i<depth; i++) {
-            oneChar = ((uint32_t) ((*s)[i].unicode()) )<<shift[i%4];
+            oneChar = ((uint64_t) ((*s)[i].unicode()) )<<shift[i%4];
             key^=oneChar;                    // exclusive or
         }
         return key;
@@ -292,13 +292,13 @@ void StringsPoolPrivate::clear(const uint64_t pos)
 size_t StringsPoolPrivate::HashLimaStringPtr::operator()(const Lima::LimaString* s) const
 {
     const int shift[] = {0,8,16,24};    // 4 shifts to "occupy" 32 bits
-    uint32_t key = 0x55555555;        //0101...
-    uint32_t oneChar;
+    uint64_t key = 0x55555555;        //0101...
+    uint64_t oneChar;
     int depth = s->length();
     if (depth > MAX_DEPTH)
         depth = MAX_DEPTH;
     for (int i=0; i<depth; i++) {
-        oneChar = ((uint32_t) ((*s)[i].unicode()) )<<shift[i%4];
+        oneChar = ((uint64_t) ((*s)[i].unicode()) )<<shift[i%4];
         key^=oneChar;                    // exclusive or
     }
     return key;
