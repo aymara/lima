@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE( ReadWriteTools1_2 )
 /// Read and write the higher 32 bits integer
 BOOST_AUTO_TEST_CASE( ReadWriteTools1_3 )
 {
-  uint64_t written_number = std::numeric_limits<uint32_t>::max();
+  auto written_number = std::numeric_limits<uint64_t>::max();
   std::string buffer;
   std::ostringstream oss(buffer);
   Lima::Common::Misc::writeCodedInt(oss, written_number);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,7 +20,7 @@
   * @file       xmlConfigurationFileHandler.cpp
   * @brief      originally in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -140,7 +140,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     m_groupName = toString(attributes.value("name"));
     LTRACE << "group name is " << m_groupName;
     int32_t indName=attributes.index("name"); // index for the attribute 'name' (not always the first)
-    
+
     m_configuration.addGroupNamedForModuleNamed(m_groupName, m_moduleName);
     for (int32_t i=0;i<attributes.length();i++)
     {
@@ -170,7 +170,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   }
   else if (stringName == "item")
   {
-    uint32_t nbAtt=attributes.length();
+    auto nbAtt=attributes.length();
     if (m_firstItem) {
       // decide if list is simple list or list of items with attributes
       if (nbAtt==1) {
@@ -189,11 +189,11 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
       m_configuration.changeListToListOfItems(m_listName,m_moduleName,m_groupName);
       m_itemWithAttributes=true;
     }
-    
+
     if (m_itemWithAttributes) {
       string itemName=toString(attributes.value("value"));
       ItemWithAttributes item(itemName);
-      for (uint32_t i=0; i<nbAtt; i++) {
+      for (decltype(nbAtt) i=0; i<nbAtt; i++) {
         item.addAttribute(toString(attributes.localName(i)),
                           toString(attributes.value(i)));
       }
@@ -215,7 +215,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   {
     LTRACE << "entry in map";
 
-    uint32_t nbAtt=attributes.length();
+    auto nbAtt=attributes.length();
     if (m_firstItem) {
       // decide if map is simple map or map of entries with attributes
       if (nbAtt==2) { // name+value => simple map
@@ -230,16 +230,16 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
       m_firstItem=false;
     }
     else if (nbAtt>2 && !m_itemWithAttributes) {
-      // was indeed in list of item with attributes => has to change     
+      // was indeed in list of item with attributes => has to change
       m_configuration.changeMapToMapOfItems(m_mapName,m_moduleName,m_groupName);
       m_itemWithAttributes=true;
     }
-    
+
     if (m_itemWithAttributes) {
       string key=toString(attributes.value("key"));
       string value=toString(attributes.value("value"));
       ItemWithAttributes item(value);
-      for (uint32_t i=1; i<nbAtt; i++) {
+      for (decltype(nbAtt) i=1; i<nbAtt; i++) {
         string attName=toString(attributes.localName(i));
         if (attName != "key" && attName != "value") {
           item.addAttribute(attName,
@@ -251,7 +251,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     else {
       string key = toString(attributes.value("key"));
       string value = toString(attributes.value("value"));
-      m_configuration.addEntryInMapNamedForModuleAndGroup(key,value,m_mapName,m_moduleName,m_groupName);      
+      m_configuration.addEntryInMapNamedForModuleAndGroup(key,value,m_mapName,m_moduleName,m_groupName);
     }
   }
   return true;

@@ -82,7 +82,7 @@ public:
 
     // functions to access typed values
     bool getBooleanParameter(const std::string& key);
-    uint32_t getIntParameter(const std::string& key);
+    uint64_t getIntParameter(const std::string& key);
     double getDoubleParameter(const std::string& key);
     std::string getStringParameter(const std::string& key);
 

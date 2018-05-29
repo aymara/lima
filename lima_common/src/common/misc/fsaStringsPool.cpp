@@ -46,7 +46,7 @@ class FsaStringsPoolPrivate
   virtual ~FsaStringsPoolPrivate();
 
   void clear();
-  void clear(const uint32_t pos);
+  void clear(const uint64_t pos);
 
   Common::AbstractAccessByString* m_mainKeys;
   StringsPoolIndex m_mainKeySize;

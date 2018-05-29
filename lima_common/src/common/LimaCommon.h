@@ -237,7 +237,7 @@ enum LimaStatusCode {
     UNKNOWN_FORMAT
 };
 
-BOOST_STRONG_TYPEDEF(uint64_t, LinguisticCode);
+BOOST_STRONG_TYPEDEF(uint64_t, LinguisticCode); 
 BOOST_STRONG_TYPEDEF(char, NoParameters);
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()

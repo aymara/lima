@@ -129,7 +129,7 @@ void ByMapStringAccess::read(
   inputHandler.restoreData((char *)(&m_size), sizeof(m_size) ) ;
 //   String2IdMap::const_iterator it = begin();
   char buff[200];
-  for( uint32_t i = 0 ; i < m_size ; i++ ) {
+  for( uint64_t i = 0 ; i < m_size ; i++ ) {
     uint64_t length;
     inputHandler.restoreData((char*)&length, sizeof(length) );
     inputHandler.restoreData((char*)buff, length );
