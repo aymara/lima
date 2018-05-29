@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-<testcase id="fre.sa.1" type="bloquant">
+<testcase id="fre.sa.1" type="blocking">
   <call-parameters>
       <param key="text" value="Le petit chat est noir."/>
       <param key="language" value="fre"/>
@@ -17,7 +17,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.2" type="bloquant">
+<testcase id="fre.sa.2" type="blocking">
   <call-parameters>
       <param key="text" value="Le petit absolument petit chat est noir."/>
       <param key="language" value="fre"/>
@@ -33,7 +33,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.3" type="bloquant">
+<testcase id="fre.sa.3" type="blocking">
   <call-parameters>
       <param key="text" value=" L'acteur Jean  fut le compagnon du poète et metteur en scène Jean Cocteau qui le dirigea dans plusieurs films. "/>
       <param key="language" value="fre"/>
@@ -49,7 +49,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.4" type="bloquant">
+<testcase id="fre.sa.4" type="blocking">
   <call-parameters>
       <param key="text" value=" L'acteur Jean Nompropre fut le compagnon du poète et metteur en scène Jean Cocteau qui le dirigea dans plusieurs films. "/>
       <param key="language" value="fre"/>
@@ -65,7 +65,7 @@
     operator="notexists"
     right="" />
 </testcase>
-<testcase id="fre.sa.5" type="bloquant">
+<testcase id="fre.sa.5" type="blocking">
   <call-parameters>
       <param key="text" value="La maison est jolie. "/>
       <param key="language" value="fre"/>
@@ -81,7 +81,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.6" type="bloquant">
+<testcase id="fre.sa.6" type="blocking">
   <call-parameters>
       <param key="text" value="La très jolie petite maison. "/>
       <param key="language" value="fre"/>
@@ -98,7 +98,7 @@
     right="" />
 </testcase>
 
-<testcase id="fre.sa.8" type="bloquant">
+<testcase id="fre.sa.8" type="blocking">
   <call-parameters>
       <param key="text" value="Cette maison est la plus belle du quartier. "/>
       <param key="language" value="fre"/>
@@ -114,7 +114,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.9" type="bloquant">
+<testcase id="fre.sa.9" type="blocking">
   <call-parameters>
       <param key="text" value="Cette maison est la plus belle de la rue. "/>
       <param key="language" value="fre"/>
@@ -130,7 +130,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.10" type="bloquant">
+<testcase id="fre.sa.10" type="blocking">
   <call-parameters>
       <param key="text" value="L'analyse linguistique automatique, ce n'est pas vraiment de la rigolade. "/>
       <param key="language" value="fre"/>
@@ -146,7 +146,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.11" type="bloquant">
+<testcase id="fre.sa.11" type="blocking">
   <call-parameters>
       <param key="text" value="Cette maison est la plus belle de la rue. "/>
       <param key="language" value="fre"/>
@@ -162,7 +162,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.12" type="bloquant">
+<testcase id="fre.sa.12" type="blocking">
   <call-parameters>
       <param key="text" value="Cette maison est vraiment très belle. "/>
       <param key="language" value="fre"/>
@@ -178,7 +178,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.13" type="bloquant">
+<testcase id="fre.sa.13" type="blocking">
   <call-parameters>
       <param key="text" value="Cette maison est vraiment très belle. "/>
       <param key="language" value="fre"/>
@@ -194,7 +194,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.14.a" type="bloquant">
+<testcase id="fre.sa.14.a" type="blocking">
   <call-parameters>
       <param key="text" value="En quelle année Jean Nompropre est-il décédé ? "/>
       <param key="language" value="fre"/>
@@ -210,7 +210,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.14.b" type="bloquant">
+<testcase id="fre.sa.14.b" type="blocking">
   <call-parameters>
       <param key="text" value="A quelle date Jean Nompropre est-il décédé ? "/>
       <param key="language" value="fre"/>
@@ -226,7 +226,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.15.a" type="bloquant">
+<testcase id="fre.sa.15.a" type="blocking">
   <call-parameters>
       <param key="text" value="En quelle année Jean Nompropre est-il décédé ? "/>
       <param key="language" value="fre"/>
@@ -243,7 +243,7 @@
     right="" />
 </testcase>
 <!-- 15.b n'est plus valide car 'A quelle' est desormais reconnu comme Expr Idiom -->
-<!--testcase id="fre.sa.15.b" type="bloquant">
+<!--testcase id="fre.sa.15.b" type="blocking">
   <call-parameters>
       <param key="text" value="A quelle date Jean Nompropre est-il décédé ? "/>
       <param key="language" value="fre"/>
@@ -258,7 +258,7 @@
     operator="exists"
     right="" />
 </testcase-->
-<testcase id="fre.sa.16" type="bloquant">
+<testcase id="fre.sa.16" type="blocking">
   <call-parameters>
       <param key="text" value="Cet été il a visité Lisbonne."/>
       <param key="language" value="fre"/>
@@ -275,7 +275,7 @@
     right="" />
 <!--/data/dictionary/property/p  -->
 </testcase>
-<testcase id="fre.sa.17" type="bloquant">
+<testcase id="fre.sa.17" type="blocking">
   <call-parameters>
       <param key="text" value="Cet été il a longuement visité Lisbonne."/>
       <param key="language" value="fre"/>
@@ -291,7 +291,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.18" type="bloquant">
+<testcase id="fre.sa.18" type="blocking">
   <call-parameters>
       <param key="text" value="Accepte-t-il cette décision ?"/>
       <param key="language" value="fre"/>
@@ -307,7 +307,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.19" type="bloquant">
+<testcase id="fre.sa.19" type="blocking">
   <call-parameters>
       <param key="text" value="Il les voit."/>
       <param key="language" value="fre"/>
@@ -323,7 +323,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.20" type="bloquant">
+<testcase id="fre.sa.20" type="blocking">
   <call-parameters>
       <param key="text" value="Il les a vus."/>
       <param key="language" value="fre"/>
@@ -339,7 +339,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.21" type="bloquant">
+<testcase id="fre.sa.21" type="blocking">
   <call-parameters>
       <param key="text" value="Un ordre : ne pas appeler."/>
       <param key="language" value="fre"/>
@@ -355,7 +355,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.22" type="bloquant">
+<testcase id="fre.sa.22" type="blocking">
   <call-parameters>
       <param key="text" value="Il m'a proposé de passer manger à la Tour d'Argent."/>
       <param key="language" value="fre"/>
@@ -371,7 +371,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.23" type="bloquant">
+<testcase id="fre.sa.23" type="blocking">
   <call-parameters>
       <param key="text" value="Il m'a proposé de s'arrêter manger à la Tour d'Argent."/>
       <param key="language" value="fre"/>
@@ -387,7 +387,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.24" type="bloquant">
+<testcase id="fre.sa.24" type="blocking">
   <call-parameters>
       <param key="text" value="Je propose de nous arrêter manger à la Tour d'Argent."/>
       <param key="language" value="fre"/>
@@ -403,7 +403,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.25" type="bloquant">
+<testcase id="fre.sa.25" type="blocking">
   <call-parameters>
       <param key="text" value="Il propose de s'arrêter manger à la Tour d'Argent."/>
       <param key="language" value="fre"/>
@@ -419,7 +419,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.26" type="bloquant">
+<testcase id="fre.sa.26" type="blocking">
   <call-parameters>
       <param key="text" value="L'analyse linguistique automatique, ce n'est pas vraiment de la rigolade."/>
       <param key="language" value="fre"/>
@@ -435,7 +435,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.27" type="bloquant">
+<testcase id="fre.sa.27" type="blocking">
   <call-parameters>
       <param key="text" value="L'analyse linguistique automatique, ce n'est pas vraiment de la rigolade."/>
       <param key="language" value="fre"/>
@@ -451,7 +451,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.28" type="bloquant">
+<testcase id="fre.sa.28" type="blocking">
   <call-parameters>
       <param key="text" value="Les champs à travers lesquels les chasseurs poursuivent la proie, sont d'une étendue incroyable."/>
       <param key="language" value="fre"/>
@@ -467,7 +467,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.29" type="bloquant">
+<testcase id="fre.sa.29" type="blocking">
   <call-parameters>
       <param key="text" value="Nous possédons une photographie de Jean Nompropre à la maison."/>
       <param key="language" value="fre"/>
@@ -498,7 +498,7 @@
         operator="intersect"
         right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='photographie']/@id" />
 </testcase>
-<testcase id="fre.sa.30" type="bloquant">
+<testcase id="fre.sa.30" type="blocking">
   <call-parameters>
       <param key="text" value="Le chat de la voisine est gourmand."/>
       <param key="language" value="fre"/>
@@ -514,7 +514,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.35.b" type="bloquant">
+<testcase id="fre.sa.35.b" type="blocking">
   <call-parameters>
       <param key="text" value="La très jolie petite maison est à vendre."/>
       <param key="language" value="fre"/>
@@ -530,7 +530,7 @@
     operator="exists"
     right="" />
 </testcase>
-<testcase id="fre.sa.38" type="bloquant">
+<testcase id="fre.sa.38" type="blocking">
   <call-parameters>
       <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
       <param key="language" value="fre"/>
@@ -551,7 +551,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='oiseaux']/@id" />
 </testcase>
-<testcase id="fre.sa.39" type="bloquant">
+<testcase id="fre.sa.39" type="blocking">
   <call-parameters>
       <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
       <param key="language" value="fre"/>
@@ -572,7 +572,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='type']/@id" />
 </testcase>
-<testcase id="fre.sa.40" type="bloquant">
+<testcase id="fre.sa.40" type="blocking">
   <call-parameters>
       <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
       <param key="language" value="fre"/>
@@ -593,7 +593,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='oiseaux']/@id" />
 </testcase>
-<testcase id="fre.sa.41" type="bloquant">
+<testcase id="fre.sa.41" type="blocking">
   <call-parameters>
       <param key="text" value="Les oiseaux de type passereaux sont très petits."/>
       <param key="language" value="fre"/>
@@ -614,7 +614,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='petits']/@id" />
 </testcase>
-<testcase id="fre.sa.42" type="bloquant">
+<testcase id="fre.sa.42" type="blocking">
   <call-parameters>
       <param key="text" value="La création du parti démocratique"/>
       <param key="language" value="fre"/>
@@ -635,7 +635,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='parti']/@id" />
 </testcase>
-<testcase id="fre.sa.43" type="bloquant">
+<testcase id="fre.sa.43" type="blocking">
   <call-parameters>
       <param key="text" value="Les chefs d'état moustachus"/>
       <param key="language" value="fre"/>
@@ -656,7 +656,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chefs']/@id" />
 </testcase>
-<testcase id="fre.sa.44" type="bloquant">
+<testcase id="fre.sa.44" type="blocking">
   <call-parameters>
       <param key="text" value="Le chef d'état français."/>
       <param key="language" value="fre"/>
@@ -677,7 +677,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='état']/@id" />
 </testcase>
-<testcase id="fre.sa.45" type="bloquant">
+<testcase id="fre.sa.45" type="blocking">
   <call-parameters>
       <param key="text" value="le chien de race de mon frère"/>
       <param key="language" value="fre"/>
@@ -698,7 +698,7 @@
     operator="intersect"
     right="XPATH#//syntactic_analysis_dump/sentence/vertex[@form='chien']/@id" />
 </testcase>
-<testcase id="fre.sa.46" type="bloquant">
+<testcase id="fre.sa.46" type="blocking">
   <call-parameters>
       <param key="text" value="La conclusion d'un accord de paix"/>
       <param key="language" value="fre"/>

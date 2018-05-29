@@ -356,10 +356,12 @@ LimaStatusCode ApproxStringMatcher::process(
     const Solution solution= *sIt;
     bool outOfGraph=false;
 #ifdef DEBUG_LP
-    std::deque<LinguisticGraphVertex>::const_iterator vIt2 = solution.vertices.begin();
-    if( vIt2 != solution.vertices.end() )
+    auto vIt2 = solution.vertices.cbegin();
+    if ( vIt2 != solution.vertices.cend() )
+    {
       LDEBUG << *(vIt2++);
-    for( ; vIt2 != solution.vertices.end() ; vIt2++ )
+    }
+    for( ; vIt2 != solution.vertices.cend() ; vIt2++ )
     {
       LDEBUG << "," << *vIt2;
     }
@@ -548,11 +550,11 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     if (currentToken!=0)
     {
       // Add enough space characters to adjust text to beginning of token
-      if (currentToken->position() > text.length()) {
-        for( int i = currentToken->position() - text.length() ; i > 0 ; i-- ) 
+      if (static_cast<int>(currentToken->position()) > text.length()) {
+        for( int i = static_cast<int>(currentToken->position()) - text.length() ; i > 0 ; i-- ) 
           text.append(BLANK_SEPARATOR);
       }
-      assert( currentToken->length() == (uint64_t)(currentToken->stringForm().length()));
+      assert( currentToken->length() == static_cast<uint64_t>(currentToken->stringForm().length()));
       text.append(currentToken->stringForm());
 #ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::matchApproxTokenAndFollowers() text= "

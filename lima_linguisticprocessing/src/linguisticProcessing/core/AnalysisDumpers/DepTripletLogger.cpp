@@ -391,12 +391,6 @@ VxToTermsMap DepTripletLogger::getCompoundsHeads(
 
     if (v != firstVx && v != lastVx)
     {
-      /// @todo replace v in LDEBUGs below by matching annotation vertices
-//     LDEBUG << "hasAnnotation("<<v<<", CompoundTokenAnnotation): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation"));
-//       LDEBUG << "hasAnnotation("<<v<<", SpecificEntity): "
-//         << annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity"));
-      //std::set< uint32_t > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
       if (!cpdsHeads.empty())
       {

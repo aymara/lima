@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-<testcase id="fre.idiom.1" type="bloquant">
+<testcase id="fre.idiom.1" type="blocking">
   <call-parameters>
       <param key="text" value="Il fait beau aujourd'hui. "/>
       <param key="language" value="fre"/>
@@ -37,7 +37,7 @@
     operator="notexists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.2" type="bloquant">
+<testcase id="fre.idiom.2" type="blocking">
   <call-parameters>
       <param key="text" value="Nous discutions ferme."/>
       <param key="language" value="fre"/>
@@ -58,7 +58,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.3" type="bloquant">
+<testcase id="fre.idiom.3" type="blocking">
   <call-parameters>
       <param key="text" value="Il fera l'affaire. "/>
       <param key="language" value="fre"/>
@@ -79,7 +79,7 @@
     operator="="
     right="V"/>
 </testcase>
-<testcase id="fre.idiom.4.a" type="bloquant">
+<testcase id="fre.idiom.4.a" type="blocking">
   <call-parameters>
       <param key="text" value="L'Afrique du Sud a une superficie de 1.233.404 km2."/>
       <param key="language" value="fre"/>
@@ -101,7 +101,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.4.b" type="bloquant">
+<testcase id="fre.idiom.4.b" type="blocking">
   <call-parameters>
       <param key="text" value="L'Afrique du sud a une superficie de 1.233.404 km2."/>
       <param key="language" value="fre"/>
@@ -145,7 +145,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.6.a" type="bloquant">
+<testcase id="fre.idiom.6.a" type="blocking">
   <call-parameters>
       <param key="text" value="Il a beau faire, il n'y arrivera pas."/>
       <param key="language" value="fre"/>
@@ -166,7 +166,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.6.b" type="bloquant">
+<testcase id="fre.idiom.6.b" type="blocking">
   <call-parameters>
       <param key="text" value="Il a beau faire, il n'y arrivera pas."/>
       <param key="language" value="fre"/>
@@ -188,7 +188,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.6.c" type="bloquant">
+<testcase id="fre.idiom.6.c" type="blocking">
   <call-parameters>
       <param key="text" value="avoir beau faire"/>
       <param key="language" value="fre"/>
@@ -220,7 +220,7 @@
     operator="notexists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.7" type="bloquant">
+<testcase id="fre.idiom.7" type="blocking">
   <call-parameters>
       <param key="text" value="Le Berger allemand est un chien."/>
       <param key="language" value="fre"/>
@@ -241,7 +241,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.8.a" type="bloquant">
+<testcase id="fre.idiom.8.a" type="blocking">
   <call-parameters>
       <param key="text" value="C'est vraiment pas marrant une chaise électrique."/>
       <param key="language" value="fre"/>
@@ -262,7 +262,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.8.b" type="bloquant">
+<testcase id="fre.idiom.8.b" type="blocking">
   <call-parameters>
       <param key="text" value="C'est vraiment pas marrant une chaise électrique."/>
       <param key="language" value="fre"/>
@@ -284,7 +284,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.9.a" type="bloquant">
+<testcase id="fre.idiom.9.a" type="blocking">
   <call-parameters>
       <param key="text" value="Il s'absente toute la semaine."/>
       <param key="language" value="fre"/>
@@ -300,7 +300,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.9.b" type="bloquant">
+<testcase id="fre.idiom.9.b" type="blocking">
   <call-parameters>
       <param key="text" value="Il s'absente toute la semaine."/>
       <param key="language" value="fre"/>
@@ -322,7 +322,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.10" type="bloquant">
+<testcase id="fre.idiom.10" type="blocking">
   <call-parameters>
       <param key="text" value="Il s'est absenté toute la semaine."/>
       <param key="language" value="fre"/>
@@ -343,7 +343,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.11.a" type="bloquant">
+<testcase id="fre.idiom.11.a" type="blocking">
   <call-parameters>
       <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au fur et à mesure de leurs voyages."/>
       <param key="language" value="fre"/>
@@ -359,7 +359,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.11.b" type="bloquant">
+<testcase id="fre.idiom.11.b" type="blocking">
   <call-parameters>
       <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au fur et à mesure de leurs voyages."/>
       <param key="language" value="fre"/>
@@ -381,7 +381,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.12.a" type="bloquant">
+<testcase id="fre.idiom.12.a" type="blocking">
   <call-parameters>
       <param key="text" value="Cet arbitre est au dessus de tout soupçon."/>
       <param key="language" value="fre"/>
@@ -397,7 +397,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.12.b" type="bloquant">
+<testcase id="fre.idiom.12.b" type="blocking">
   <call-parameters>
       <param key="text" value="Cet arbitre est au dessus de tout soupçon."/>
       <param key="language" value="fre"/>
@@ -419,7 +419,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.13.a" type="bloquant">
+<testcase id="fre.idiom.13.a" type="blocking">
   <call-parameters>
       <param key="text" value="Les chaises longues sont sous le palmier."/>
       <param key="language" value="fre"/>
@@ -440,7 +440,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="fre.idiom.14" type="bloquant">
+<testcase id="fre.idiom.14" type="blocking">
   <call-parameters>
       <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au fur et à Mesure de leurs voyages."/>
       <param key="language" value="fre"/>
@@ -456,7 +456,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.15" type="bloquant">
+<testcase id="fre.idiom.15" type="blocking">
   <call-parameters>
       <param key="text" value="Des collectionneurs parisiens exposent leurs trésors accumulés au Fur et à mesure de leurs voyages."/>
       <param key="language" value="fre"/>
@@ -535,7 +535,7 @@
     operator="="
     right="tord-boyaux"/> 
 </testcase>
-<testcase id="fre.idiom.19" type="bloquant">
+<testcase id="fre.idiom.19" type="blocking">
   <call-parameters>
       <param key="text" value="chemin de fer"/>
       <param key="language" value="fre"/>
@@ -550,7 +550,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.20" type="bloquant">
+<testcase id="fre.idiom.20" type="blocking">
   <call-parameters>
       <param key="text" value="les chemins de fer"/>
       <param key="language" value="fre"/>
@@ -565,7 +565,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.21" type="bloquant">
+<testcase id="fre.idiom.21" type="blocking">
   <call-parameters>
       <param key="text" value="Il est venu grâce à Tom."/>
       <param key="language" value="fre"/>
@@ -580,7 +580,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.22" type="bloquant">
+<testcase id="fre.idiom.22" type="blocking">
   <call-parameters>
       <param key="text" value="Il est arrivé très tôt, si bien qu'il a pu choisir
 > la meilleure place pour admirer Vanessa Paradis"/>
@@ -597,7 +597,7 @@
     right=""/>
 </testcase>
 
-<testcase id="fre.idiom.23" type="bloquant">
+<testcase id="fre.idiom.23" type="blocking">
   <call-parameters>
       <param key="text" value="Il prends naturellement part à la fête"/>
       <param key="language" value="fre"/>
@@ -617,7 +617,7 @@
     operator="="
     right="prends part"/> 
 </testcase>
-<testcase id="fre.idiom.24" type="bloquant">
+<testcase id="fre.idiom.24" type="blocking">
   <call-parameters>
       <param key="text" value="On mettra tout en oeuvre pour y arriver."/>
       <param key="language" value="fre"/>
@@ -859,7 +859,7 @@
     right=""/> 
 </testcase>
 
-<testcase id="fre.idiom.34" type="bloquant">
+<testcase id="fre.idiom.34" type="blocking">
   <call-parameters>
       <param key="text" value="le maître d'œuvre est kurde."/>
       <param key="language" value="fre"/>
@@ -874,7 +874,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.35" type="bloquant">
+<testcase id="fre.idiom.35" type="blocking">
   <call-parameters>
       <param key="text" value="le maître d'oeuvre est kurde."/>
       <param key="language" value="fre"/>
@@ -889,7 +889,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.36" type="bloquant">
+<testcase id="fre.idiom.36" type="blocking">
   <call-parameters>
       <param key="text" value="Il a tout mis en œuvre pour y parvenir."/>
       <param key="language" value="fre"/>
@@ -904,7 +904,7 @@
     operator="exists"
     right=""/> 
 </testcase>
-<testcase id="fre.idiom.37" type="bloquant">
+<testcase id="fre.idiom.37" type="blocking">
   <call-parameters>
     <param key="text" value="Il a tout mis en oeuvre pour y parvenir."/>
     <param key="language" value="fre"/>
@@ -919,7 +919,7 @@
         operator="exists"
         right=""/> 
 </testcase>
-<testcase id="fre.idiom.38" type="bloquant">
+<testcase id="fre.idiom.38" type="blocking">
   <call-parameters>
     <param key="text" value="La loi fait de plus en plus place à l'arbitraire."/>
     <param key="language" value="fre"/>

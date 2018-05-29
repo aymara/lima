@@ -42,9 +42,12 @@ TestCaseError::TestCaseError(const TestCase& tc,
   if (type == TestCaseFailed)
   {
     out << "  reason : " << reason << std::endl;
-    out << "  type : " << tc.type <<   ", id : " << tc.id << std::endl;
-    for( SimpleValCallParams::const_iterator paramIt = tc.simpleValCallParams.begin() ;
-    paramIt != tc.simpleValCallParams.end() ; paramIt++ ) {
+    out << "  type : " << tc.type <<   ", id : " 
+        << tc.id.toUtf8().constData() << std::endl;
+    for(auto paramIt = tc.simpleValCallParams.cbegin() ;
+        paramIt != tc.simpleValCallParams.cend() ; 
+        paramIt++ ) 
+    {
       out << " " << (*paramIt).first << " = " << (*paramIt).second<< std::endl;
     }
     for( MultiValCallParams::const_iterator paramIt = tc.multiValCallParams.begin() ;
@@ -70,10 +73,12 @@ TestCaseError::TestCaseError(const TestCase& tc,
   }
   else if (type == InvalidOperator)
   {
-    out << "TestCase " << tc.id << " is invalid ! " << std::endl;
+    out << "TestCase " << tc.id.toUtf8().constData() 
+        << " is invalid ! " << std::endl;
     out << reason;
     out << "  explanation : " << tc.explanation << std::endl;
-    out << "in TestUnit " << tu.id << " on trace " << tu.trace << std::endl;
+    out << "in TestUnit " << tu.id.toUtf8().constData() 
+        << " on trace " << tu.trace << std::endl;
     out << "  comment : " << tu.comment << std::endl;
     out << "  left : " << tu.left << std::endl;
     out << "  operator : " << tu.op << std::endl;
@@ -83,11 +88,13 @@ TestCaseError::TestCaseError(const TestCase& tc,
   }
   else if (type == InvalidKey)
   {
-    out << "TestCase " << tc.id << " failed ! " << std::endl;
+    out << "TestCase " << tc.id.toUtf8().constData()
+        << " failed ! " << std::endl;
     out << reason;
     out << "  explanation : " << tc.explanation << std::endl;
     out << "in pipeline : " << pipeline << std::endl;
-    out << "in TestUnit " << tu.id << " on trace " << tu.trace << std::endl;
+    out << "in TestUnit " << tu.id.toUtf8().constData()
+        << " on trace " << tu.trace << std::endl;
     out << "  comment : " << tu.comment << std::endl;
     out << "  left : " << tu.left << std::endl;
     out << "  operator : " << tu.op << std::endl;

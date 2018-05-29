@@ -706,7 +706,7 @@
   </testcase-->
   <!--==================== tests LOCATION (URL) ====================-->
 
-  <testcase id="en.se.location.comp.27" type="bloquant">
+  <testcase id="en.se.location.comp.27" type="blocking">
     <call-parameters>
       <param key="text" value="more info in http://www.globalpost.com"/>
       <param key="language" value="eng"/>

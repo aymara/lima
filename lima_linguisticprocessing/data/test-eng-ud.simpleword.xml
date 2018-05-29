@@ -1,246 +1,257 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<testcases>
-<testcase id="eng.sw.1" type="blocking">
+<testcases id="eng-ud.simpleword"
+           trace=".simpleword.xml">
+<testcase type="blocking">
+  <expl>Test searching a word in dictionary.</expl>
   <call-parameters>
       <param key="text" value="The blue-ribbon campaign ended in disgrace. "/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>test recherche de mot dans le dico.</expl>
-  <test id="eng.sw.1.1" trace=".simpleword.xml"
-    comment="on vérifie la présence du mot blue-ribbon"
+  <test
+    comment="checking presence of the word blue-ribbon"
     left="XPATH#//data_structure/vertex[token[position=5][length=11]]/data/simple_word"
     operator="exists"
     right=""/>
-  <test id="eng.sw.1.2" trace=".simpleword.xml"
-    comment="on vérifie la présence du mot campaign"
+  <test
+    comment="checking presence of the word 'blue-ribbon' with the tag"
+    left="XPATH#//data_structure/vertex[token[position=5][length=11]]/data/simple_word//property/p[@prop='MICRO']/@val"
+    operator="="
+    right="NOUN"/>
+  <test
+    comment="checking presence of the word campaign"
     left="XPATH#//data_structure/vertex[token[position=17][length=8]]/data/simple_word"
     operator="exists"
     right=""/>
-  <test id="eng.sw.1.3" trace=".simpleword.xml"
-    comment="on vérifie la présence du mot ended"
+  <test
+    comment="checking presence of the word ended"
     left="XPATH#//data_structure/vertex[token[position=26][length=5]]/data/simple_word"
     operator="exists"
     right=""/>
-  <test id="eng.sw.1.4" trace=".simpleword.xml"
-    comment="on vérifie la présence du mot in"
+  <test
+    comment="checking presence of the word in"
     left="XPATH#//data_structure/vertex[token[position=32][length=2]]/data/simple_word"
     operator="exists"
     right=""/>
-  <test id="eng.sw.1.5" trace=".simpleword.xml"
-    comment="on vérifie la présence du mot disgrace"
+  <test
+    comment="checking presence of the word disgrace"
     left="XPATH#//data_structure/vertex[token[position=35][length=8]]/data/simple_word"
     operator="exists"
     right=""/>
-  <test id="eng.sw.1.6" trace=".simpleword.xml"
-    comment="on vérifie la présence du mot '.' avec la categ ponctu forte"
+  <test
+    comment="checking presence of the word '.' with the tag PUNCT"
     left="XPATH#//data_structure/vertex[token[position=43][length=1]]/data/simple_word//property/p[@prop='MICRO']/@val"
     operator="="
-    right="SENT"/>
+    right="PUNCT"/>
 </testcase>
-<testcase id="eng.sw.2" type="blocking">
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="Our minds were open."/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>test recherche de mot dans le dico : vérification présence minds : mind.</expl>
-  <test id="eng.sw.2.1" trace=".simpleword.xml"
-    comment="Vérification présence minds --> mind"
+  <expl>test search word in dictionary : check presence minds : mind.</expl>
+  <test
+    comment="Check presence minds --> mind"
     left="XPATH#//data_structure/vertex[token[position=5][length=5]]/data/simple_word/form/@norm"
     operator="contains"
     right="mind"/>
- </testcase>
-<testcase id="eng.sw.3" type="blocking">
+  <test
+    comment="checking the tag of the word minds"
+    left="XPATH#//data_structure/vertex[token[position=5][length=5]]/data/simple_word//property/p[@prop='MICRO']/@val"
+    operator="="
+    right="NOUN"/>
+</testcase>
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="The thought never occurred to us. "/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>test recherche de mot dans le dico :vérification présence thought: think.</expl>
-  <test id="eng.sw.3.1" trace=".simpleword.xml"
-    comment="Vérification présence thought --> thought"
+  <expl>test search word in dictionary :check presence thought: think.</expl>
+  <test
+    comment="Check presence thought --> thought"
     left="XPATH#//data_structure/vertex[token[position=5][length=7]]/data/simple_word/form/@norm"
     operator="contains"
     right="thought"/>
-  <test id="eng.sw.3.2" trace=".simpleword.xml"
-    comment="Vérification présence thought --> think"
+  <test
+    comment="Check presence thought --> think"
     left="XPATH#//data_structure/vertex[token[position=5][length=7]]/data/simple_word/form/@norm"
     operator="contains"
     right="think"/>
 </testcase>
-<testcase id="eng.sw.4" type="blocking">
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="The Lome Palace houses all the president's services."/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>Lome</expl>
-  <test id="eng.sw.4.1" trace=".simpleword.xml"
-    comment="forme initiale : Lome, aucun accent"
+  <test
+    comment="initial form : Lome, no accent"
     left="XPATH#//data_structure/vertex[token/position=5]/data//form/@infl"
     operator="contains"
     right="Lomé"/>
 </testcase>
-<testcase id="eng.sw.5" type="blocking">
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="Are you sleeping Brother John?"/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>Brother</expl>
-  <test id="eng.sw.5.1" trace=".simpleword.xml"
-    comment="forme initiale : Brother, mot inconnu, mot connu : brother"
+  <test
+    comment="initial form : Brother, unknown word, known word : brother"
     left="XPATH#//data_structure/vertex[token/position=18]/data//form/@infl"
     operator="contains"
     right="brother"/>
  </testcase>
- <testcase id="eng.sw.6" type="blocking">
+ <testcase type="blocking">
   <call-parameters>
       <param key="text" value="The aclu : defending liberties."/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>aclu</expl>
-  <test id="eng.sw.6.1" trace=".simpleword.xml"
-    comment="forme initiale : aclu, mot connu : A.C.L.U."
+  <test
+    comment="initial form : aclu, known word : A.C.L.U."
     left="XPATH#//data_structure/vertex[token/position=5]/data//form/@infl"
     operator="contains"
     right="A.C.L.U."/>
   </testcase>
-  <testcase id="eng.sw.7" type="blocking">
+  <testcase type="blocking">
   <call-parameters>
       <param key="text" value="The ACLU : defending liberties."/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>ACLU</expl>
-  <test id="eng.sw.7.1" trace=".simpleword.xml"
-    comment="forme initiale : ACLU, mot connu :  A.C.L.U."
+  <test
+    comment="initial form : ACLU, known word :  A.C.L.U."
     left="XPATH#//data_structure/vertex[token/position=5]/data//form/@infl"
     operator="contains"
     right="A.C.L.U."/>
   </testcase>
- <testcase id="eng.sw.8" type="blocking">
+ <testcase type="blocking">
   <call-parameters>
       <param key="text" value="The a-bomb exploded underground."/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>a-bomb</expl>
-  <test id="eng.sw.8.1" trace=".simpleword.xml"
-    comment="forme initiale : a-bomb, mot connu : A-bomb"
+  <test
+    comment="initial form : a-bomb, known word : A-bomb"
     left="XPATH#//data_structure/vertex[token/position=5]/data//form/@infl"
     operator="contains"
     right="A-bomb"/>
   </testcase>
- <testcase id="eng.sw.9" type="blocking">
+ <testcase type="blocking">
   <call-parameters>
       <param key="text" value="The bric-a-brac finally got to her; she had to leave."/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>Bric a brac</expl>
-  <test id="eng.sw.9.1" trace=".simpleword.xml"
-    comment="forme initiale : Ã  propos"
+  <test
+    comment="initial form : Ã  propos"
     left="XPATH#//data_structure/vertex[token/position=5]/data//form/@infl"
     operator="contains"
     right="bric-à-brac"/>
   </testcase>
-<testcase id="eng.sw.10" type="blocking">
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="they'll be late. "/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
   <expl>they'll est une entrée concaténée (They will)</expl>
-  <test id="eng.sw.10.1" trace=".tokenizer.xml"
-    comment="Il existe un token they'll"
+  <test trace=".tokenizer.xml"
+    comment="There is a token they'll"
     left="XPATH#//data_structure/vertex/token[position=1][length=7]"
     operator="exists"
     right=""/>
-    <test id="eng.sw.10.2" trace=".simpleword.xml"
-    comment="Le token they'll existe avec un lemme they"
+    <test
+    comment="The token they'll exists with the lemma they"
     left="XPATH#//data_structure/vertex[token[position=1][length=4]]//form/@lemma"
     operator="contains"
     right="they"/>
-    <test id="eng.sw.10.3" trace=".simpleword.xml"
-    comment="Le token they'll existe avec un lemme will"
+    <test
+    comment="The token they'll exists with the lemma will"
     left="XPATH#//data_structure/vertex[token[position=5][length=3]]//form/@lemma"
     operator="contains"
     right="will"/>
 </testcase>
-<testcase id="eng.sw.11" type="blocking">
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="They'll be late. "/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>They'll a pour alternative orthographique une entrée concaténée (They will)</expl>
-  <test id="eng.sw.11.1" trace=".tokenizer.xml"
-    comment="Il existe un token They'll"
+  <expl>They'll has a concatanated entry as an orthographic alternative (They will)</expl>
+  <test trace=".tokenizer.xml"
+    comment="There is a token They'll"
     left="XPATH#//data_structure/vertex/token[position=1][length=7]"
     operator="exists"
     right=""/>
-    <test id="eng.sw.11.2" trace=".simpleword.xml"
-    comment="Le token They'll n'existe plus"
+    <test
+    comment="The token They'll does not exist anymore"
     left="XPATH#//data_structure/vertex/token[position=1][length=7]"
     operator="notexists"
     right=""/>
-    <test id="eng.sw.11.3" trace=".simpleword.xml"
-    comment="Le token they'll existe avec un lemme they"
+    <test
+    comment="The token they'll exists with the lemma they"
     left="XPATH#//data_structure/vertex[token[position=1][length=4]]//form/@lemma"
     operator="contains"
     right="they"/>
-    <test id="eng.sw.11.4" trace=".simpleword.xml"
-    comment="Le token they'll existe avec un lemme will"
+    <test
+    comment="The token they'll exists with the lemma will"
     left="XPATH#//data_structure/vertex[token[position=5][length=3]]//form/@lemma"
     operator="contains"
     right="will"/>
 </testcase>
-<testcase id="eng.sw.12" type="blocking">
+<testcase type="blocking">
   <call-parameters>
       <param key="text" value="He hasn't found it. "/>
-      <param key="language" value="eng"/>
+      <param key="language" value="eng.ud"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>hasn't est une entrée concaténée (have not)</expl>
-  <test id="eng.sw.12.1" trace=".tokenizer.xml"
-    comment="Il existe un token hasn't"
+  <expl>hasn't is a concatanated entry (have not)</expl>
+  <test trace=".tokenizer.xml"
+    comment="There is a token hasn't"
     left="XPATH#//data_structure/vertex/token[position=4][length=6]"
     operator="exists"
     right=""/>
-    <test id="eng.sw.12.2" trace=".simpleword.xml"
-    comment="Le token has existe avec un lemme have"
+    <test
+    comment="The token has exists with the lemma have"
     left="XPATH#//data_structure/vertex[token[position=4][length=3]]//form/@lemma"
     operator="contains"
     right="have"/>
-    <test id="eng.sw.12.3" trace=".simpleword.xml"
-    comment="Le token n't existe avec un lemme not"
+    <test
+    comment="The token n't exists with the lemma not"
     left="XPATH#//data_structure/vertex[token[position=7][length=3]]//form/@lemma"
     operator="contains"
     right="not"/>

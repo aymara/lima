@@ -51,13 +51,15 @@ public:
   };
   TestCaseError() : m_type(NoError), m_reason(""), m_conditional(false) {}
   
-  TestCaseError(const TestCase& tc, ErrorTypes type,
+  TestCaseError(const TestCase& tc, 
+                ErrorTypes type,
                 const std::string& reason,
                 const std::string& pipeline,
                 const TestCase::TestUnit& tu);
                 
   TestCaseError(const TestCaseError& error) :
-      m_type(error.m_type) ,m_reason(error.m_reason), m_conditional(error.m_conditional) {}
+      m_type(error.m_type) ,m_reason(error.m_reason), 
+      m_conditional(error.m_conditional) {}
   
   virtual ~TestCaseError() {}
   const std::string& what() const {return m_reason;}

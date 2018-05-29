@@ -35,14 +35,34 @@ namespace Common
 namespace TGV
 {
 
-char const * const FATAL_ERROR_TYPE = "bloquant";
+char const * const FATAL_ERROR_TYPE = "blocking";
 int const EXIT_FATAL_ERROR = 64;
 
-TestCasesHandler::TestCasesHandler( TestCaseProcessor& processor)
-  : m_reportByType(), m_processor(processor), m_hasFatalError(false) {
+class TestCasesHandlerPrivate
+{
+  friend class TestCasesHandler;
+  TestCasesHandlerPrivate() : 
+    m_testcasesId(""), 
+    m_traceName("") 
+  {
+  }
+  ~TestCasesHandlerPrivate() {}
+
+  QString m_testcasesId;
+  QString m_traceName;
+};
+
+TestCasesHandler::TestCasesHandler( TestCaseProcessor& processor) : 
+  m_reportByType(), 
+  m_processor(processor), 
+  m_hasFatalError(false),
+  m_d(new TestCasesHandlerPrivate())
+{
 }
 
-TestCasesHandler::~TestCasesHandler() {
+TestCasesHandler::~TestCasesHandler() 
+{
+  delete m_d;
 }
 
 // -----------------------------------------------------------------------
@@ -51,7 +71,11 @@ TestCasesHandler::~TestCasesHandler() {
 
 bool TestCasesHandler::startDocument()
 {
+  TGVLOGINIT;
+  LDEBUG << "TestCasesHandler::startDocument";
   currentTestCase=TestCase();
+  m_d->m_testcasesId = "";
+  m_d->m_traceName = "";
   m_inExpl=false;
   m_inText=false;
   m_inParam=false;
@@ -60,36 +84,66 @@ bool TestCasesHandler::startDocument()
 }
 
 bool TestCasesHandler::startElement (
-  const QString & namespaceURI, const QString & localname, const QString & qname, const QXmlAttributes & attrs)
+  const QStringRef & namespaceURI, 
+  const QStringRef & localname, 
+  const QStringRef & qname, 
+  const QXmlStreamAttributes & attrs,
+  int lineNumber, 
+  int columnNumber )
 {
   LIMA_UNUSED(namespaceURI);
   TGVLOGINIT;
-  std::string name=getName(localname,qname);
+  LDEBUG << "TestCasesHandler::startElement" << namespaceURI << localname 
+          << qname << lineNumber;
+  QStringRef name = getName(localname,qname);
   
-  if (name=="testcase")
+  if (name == "testcases")
+  {
+    m_d->m_testcasesId = attributeValue("id", attrs).toUtf8().constData();
+    m_d->m_traceName = attributeValue("trace", attrs).toUtf8().constData();
+  } 
+  if (name == "testcase")
   {
     LDEBUG << "TestCasesHandler::startElement: new testcase ";
     currentTestCase=TestCase();
-    currentTestCase.id=attributeValue("id", attrs);
-    std::string typech=attributeValue("type", attrs);
-    currentTestCase.type=(typech.empty()?"undefined":typech);
+    currentTestCase.id = attributeValue("id", attrs).toUtf8().constData();
+    if (currentTestCase.id.isEmpty())
+    {
+      currentTestCase.id = QString("testcase_%1")
+          .arg(lineNumber).toUtf8().constData();
+    }
+    if (!m_d->m_testcasesId.isEmpty())
+    {
+      currentTestCase.id = m_d->m_testcasesId + "-" + currentTestCase.id;
+    }
+    auto typech = attributeValue("type", attrs);
+    currentTestCase.type=(typech.isEmpty()?"undefined":typech.toUtf8().constData());
     LDEBUG << "TestCasesHandler::startElement: id=" << currentTestCase.id
            << ", type=" << currentTestCase.type;
-  } else if (name=="text") {
+  } 
+  else if (name=="text") 
+  {
     // For compatibility with old testTva format
     LDEBUG << "TestCasesHandler::startElement: start text ";
     m_inText=true;
-  } else if (name=="expl") {
+  } 
+  else if (name=="expl") 
+  {
     LDEBUG << "TestCasesHandler::startElement: start expl ";
     m_inExpl=true;
-  } else if (name=="call-parameters") {
+  } 
+  else if (name=="call-parameters") 
+  {
     m_inParam=true;
     LDEBUG << "TestCasesHandler::startElement: start call-parameters ";
-  } else if (name=="list") {
+  } 
+  else if (name=="list") 
+  {
     LDEBUG << "TestCasesHandler::startElement: start list ";
-    m_listKey = attributeValue("key", attrs);
+    m_listKey = attributeValue("key", attrs).toUtf8().constData();
     MultiValCallParams::iterator pos = currentTestCase.multiValCallParams.find(m_listKey);
-    if( pos == currentTestCase.multiValCallParams.end() ) {
+    if( pos == currentTestCase.multiValCallParams.end() ) 
+    {
       // typedef std::map<std::string,std::list<std::string> > MultiValCallParams;
       std::pair<std::string,std::list<std::string> > newElem(m_listKey,std::list<std::string>() );
 //      std::pair<MultiValCallParams::iterator,bool> ret = 
@@ -98,11 +152,14 @@ bool TestCasesHandler::startElement (
       /*std::pair<MultiValCallParams::iterator,bool> ret =*/ currentTestCase.multiValCallParams.insert(newElem);
     }
     m_inList=true;
-  } else if (name=="map") {
+  } 
+  else if (name=="map") 
+  {
     LDEBUG << "TestCasesHandler::startElement: start map ";
-    m_mapKey = attributeValue("key",attrs);
+    m_mapKey = attributeValue("key",attrs).toUtf8().constData();
     MapValCallParams::iterator pos = currentTestCase.mapValCallParams.find(m_mapKey);
-    if( pos == currentTestCase.mapValCallParams.end() ) {
+    if( pos == currentTestCase.mapValCallParams.end() ) 
+    {
       // typedef std::map<std::string,std::list<std::string> > MultiValCallParams;
       std::pair<std::string,std::map<std::string,std::string> > newElem(m_mapKey,std::map<std::string,std::string>() );
 //      std::pair<MultiValCallParams::iterator,bool> ret = 
@@ -111,47 +168,92 @@ bool TestCasesHandler::startElement (
       /*std::pair<MapValCallParams::iterator,bool> ret =*/ currentTestCase.mapValCallParams.insert(newElem);
     }
     m_inMap=true;
-  } else if (name=="item") {
+  } 
+  else if (name=="item") 
+  {
     LDEBUG << "TestCasesHandler::startElement: start item ";
-    if( m_inList == true ) {
+    if( m_inList == true ) 
+    {
       MultiValCallParams::iterator pos = currentTestCase.multiValCallParams.find(m_listKey);
-      if( pos != currentTestCase.multiValCallParams.end() ) {
-        std::string val = attributeValue("value", attrs);
+      if( pos != currentTestCase.multiValCallParams.end() ) 
+      {
+        std::string val = attributeValue("value", attrs).toUtf8().constData();
         (*pos).second.push_back(val);
       }
-      else {
+      else 
+      {
         LERROR << "!! TestCasesHandler::startElement: no list for param " << m_listKey;
       }
     }
-    else if (m_inMap == true) {
+    else if (m_inMap == true)
+    {
       MapValCallParams::iterator pos = currentTestCase.mapValCallParams.find(m_mapKey);
-      if( pos != currentTestCase.mapValCallParams.end() ) {
-        std::string attr = attributeValue("key", attrs);
-        std::string val = attributeValue("value",attrs);
+      if( pos != currentTestCase.mapValCallParams.end() ) 
+      {
+        std::string attr = attributeValue("key", attrs).toUtf8().constData();
+        std::string val = attributeValue("value",attrs).toUtf8().constData();
         (*pos).second.insert(make_pair(attr,val));
       }
-      else {
+      else 
+      {
         LERROR << "!! TestCasesHandler::startElement: no list for param " << m_listKey;
       }
     }
 //    currentTestCase.multiValCallParams.insert(std::pair<std::string, std::string>(key,val) );
-  } else if (name=="param") {
+  } 
+  else if (name=="param") 
+  {
     LDEBUG << "TestCasesHandler::startElement: start param ";
-    std::string key = attributeValue("key",attrs);
-    std::string val = attributeValue("value", attrs);
+    std::string key = attributeValue("key",attrs).toUtf8().constData();
+    std::string val = attributeValue("value", attrs).toUtf8().constData();
     currentTestCase.simpleValCallParams.insert(std::pair<std::string, std::string>(key,val) );
     // TODO: read multiValCallParams "pipelines"
     // std::string pipch=attributeValue("pipelines");
-  } else if (name=="test") {
+  } 
+  else if (name=="test") 
+  {
     // build a testUnit
     //cout << "add test" << std::endl;
     TestCase::TestUnit tu;
-    tu.id=attributeValue("id", attrs);
-    tu.trace=attributeValue("trace", attrs);
-    tu.comment=attributeValue("comment", attrs);
-    tu.left=attributeValue("left", attrs);
-    tu.op=attributeValue("operator", attrs);
-    tu.right=attributeValue("right",attrs);
+    tu.id=attributeValue("id", attrs).toString();
+    if (tu.id.isEmpty())
+    {
+      tu.id = QString("test_%1_%2")
+          .arg(lineNumber).arg(columnNumber).toUtf8().constData();
+    }
+    tu.trace=attributeValue("trace", attrs).toUtf8().constData();
+    if (tu.trace.empty())
+    {
+      if (m_d->m_traceName.isEmpty())
+      {
+        TGVLOGINIT;
+        LERROR << "Missing attribute trace for test at line" << lineNumber;
+        return false;
+      }
+      tu.trace = m_d->m_traceName.toUtf8().constData();
+    }
+    tu.comment=attributeValue("comment", attrs).toUtf8().constData();
+    tu.left=attributeValue("left", attrs).toUtf8().constData();
+    if (tu.left.empty())
+    {
+      TGVLOGINIT;
+      LERROR << "Missing attribute left for test at line" << lineNumber;
+      return false;
+    }
+    tu.op=attributeValue("operator", attrs).toUtf8().constData();
+    if (tu.op.empty())
+    {
+      TGVLOGINIT;
+      LERROR << "Missing attribute op for test at line" << lineNumber;
+      return false;
+    }
+    tu.right=attributeValue("right",attrs).toUtf8().constData();
+    if (tu.right.empty())
+    {
+      TGVLOGINIT;
+      LERROR << "Missing attribute right for test at line" << lineNumber;
+      return false;
+    }
     tu.conditional=(attributeValue("conditional",attrs)=="yes");
     currentTestCase.tests.push_back(tu);
     LDEBUG << "TestCasesHandler::startElement: push testUnit"
@@ -167,7 +269,7 @@ bool TestCasesHandler::startElement (
   return true;
 }
 
-bool TestCasesHandler::characters(const QString& chars)
+bool TestCasesHandler::characters(const QStringRef& chars)
 {
   if (m_inExpl) {
     currentTestCase.explanation.append(chars.toUtf8().data());
@@ -189,11 +291,13 @@ bool TestCasesHandler::characters(const QString& chars)
   
 }
 
-bool TestCasesHandler::endElement (const QString & namespaceURI, const QString & localname, const QString & qname)
+bool TestCasesHandler::endElement (const QStringRef & namespaceURI, 
+                                   const QStringRef & localname, 
+                                   const QStringRef & qname)
 {
   LIMA_UNUSED(namespaceURI);
   TGVLOGINIT;
-  std::string name=getName(localname,qname);
+  QStringRef name = getName(localname,qname);
   if (name=="testcase")
   {
     m_reportByType[currentTestCase.type].nbtests++;
@@ -202,7 +306,9 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
       TestCaseError e = m_processor.processTestCase(currentTestCase);
       if (e())
       {
-        std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): " << std::endl << e.what() << std::endl;
+        std::cout << currentTestCase.id.toUtf8().constData() 
+                  << " (" << currentTestCase.type << ") got error (type: '"
+                  << e() << "'): " << std::endl << e.what() << std::endl;
          if (currentTestCase.type == FATAL_ERROR_TYPE) {
           m_hasFatalError = true;
         }
@@ -225,7 +331,9 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
       }
       else
       {
-        std::cout << currentTestCase.id << " (" << currentTestCase.type << ") passed successfully." << std::endl;;
+        std::cout << currentTestCase.id.toUtf8().constData() 
+                  << " (" << currentTestCase.type << ") passed successfully." 
+                  << std::endl;;
         m_reportByType[currentTestCase.type].success++;
       }
   } else if (name=="text") {
@@ -243,15 +351,17 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
   return true;
 }
 
-std::string TestCasesHandler::getName(const QString& localName,
-                                       const QString& qName) {
+QStringRef TestCasesHandler::getName(const QStringRef& localName,
+                                       const QStringRef& qName) {
   
-  return Common::Misc::limastring2utf8stdstring( (localName.isEmpty())?qName:localName );
+  return (localName.isEmpty())?qName:localName;
 }
 
-std::string TestCasesHandler::attributeValue(const QString& attr, const QXmlAttributes& attrs) const
+QStringRef TestCasesHandler::attributeValue(
+    const QString& attr, 
+    const QXmlStreamAttributes& attrs) const
 {
-  return Common::Misc::limastring2utf8stdstring( attrs.value(attr) );
+  return attrs.value(attr);
 }
 
 int exitCode(TestCasesHandler const & tch)

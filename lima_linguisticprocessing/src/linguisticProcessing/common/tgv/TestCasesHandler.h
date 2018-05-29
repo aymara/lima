@@ -28,7 +28,7 @@
 #include "TestCase.h"
 #include "TestCaseProcessor.hpp"
 
-#include <QtXml/QXmlDefaultHandler>
+#include <QXmlStreamAttributes>
 
 namespace Lima
 {
@@ -36,9 +36,11 @@ namespace Common
 {
 namespace TGV
 {
-class LIMA_TGV_EXPORT TestCasesHandler : public QXmlDefaultHandler
+class TestCasesHandlerPrivate;
+class LIMA_TGV_EXPORT TestCasesHandler 
 {
-
+  friend class TestCasesHandlerPrivate;
+  
 public:
   TestCasesHandler(TestCaseProcessor& processor);
   virtual ~ TestCasesHandler();
@@ -46,16 +48,22 @@ public:
   // -----------------------------------------------------------------------
   //  Implementations of the SAX DocumentHandler interface
   // -----------------------------------------------------------------------
-  bool endElement(const QString & namespaceURI, const QString & name, const QString & qName) override;
+  bool endElement(const QStringRef& namespaceURI,
+                  const QStringRef & name,
+                  const QStringRef & qName) ;
   
-  bool characters(const QString& chars) override;
+  bool characters(const QStringRef& chars) ;
   
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes) override;
+  bool startElement(const QStringRef & namespaceURI,
+                    const QStringRef & name,
+                    const QStringRef & qName,
+                    const QXmlStreamAttributes & attributes,
+                    int lineNumber,
+                    int columnNumber ) ;
   
-  bool startDocument() override;
+  bool startDocument() ;
   
   inline bool hasFatalError() const { return m_hasFatalError; }
-  
   
   struct TestReport {
     uint64_t success;
@@ -68,7 +76,8 @@ public:
   std::map<std::string,TestReport> m_reportByType;
   
 private:
-  std::string attributeValue(const QString& attr, const QXmlAttributes& attrs) const;
+  QStringRef attributeValue(const QString& attr,
+                            const QXmlStreamAttributes& attrs) const;
   
   // Liste des parametres possibles et obligatoires dans un TestCase
   // pour lp: (text, language, pipeline?...)
@@ -78,8 +87,8 @@ private:
   TestCaseProcessor& m_processor;
   TestCase currentTestCase;
 
-  std::string getName(const QString& localName,
-                      const QString& qName);
+  QStringRef getName(const QStringRef& localName,
+                      const QStringRef& qName);
   
   bool m_inText;
   bool m_inExpl;
@@ -90,9 +99,10 @@ private:
   std::string m_mapKey;
   
   bool m_hasFatalError;
+  TestCasesHandlerPrivate* m_d;
 };
 
-// This utility function return a user-defined exit code (64) if a "bloquant"
+// This utility function return a user-defined exit code (64) if a "blocking"
 // test failed.
 LIMA_TGV_EXPORT int exitCode(TestCasesHandler const & tch);
 

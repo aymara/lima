@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testcases>
-<testcase id="eng.abbrev.1" type="bloquant">
+<testcase id="eng.abbrev.1" type="blocking">
   <call-parameters>
       <param key="text" value="My sister's house is nice."/>
       <param key="language" value="eng"/>
@@ -25,7 +25,7 @@
     operator="notexists"
     right=""/>
 </testcase>
-<testcase id="eng.abbrev.2" type="bloquant">
+<testcase id="eng.abbrev.2" type="blocking">
   <call-parameters>
       <param key="text" value="The citizens' theatre was transformed into supermarket."/>
       <param key="language" value="eng"/>
@@ -50,7 +50,7 @@
     operator="notexists"
     right=""/>
 </testcase>
-<testcase id="eng.abbrev.3" type="bloquant">
+<testcase id="eng.abbrev.3" type="blocking">
   <call-parameters>
       <param key="text" value="we've"/>
       <param key="language" value="eng"/>
@@ -66,7 +66,7 @@
     right=""/>
 </testcase>
 
- <testcase id="eng.abbrev.4" type="bloquant">
+ <testcase id="eng.abbrev.4" type="blocking">
    <call-parameters>
      <param key="text" value="The author's name is C.Fluhr. "/>
      <param key="language" value="eng"/>
@@ -86,7 +86,7 @@
      operator="exists"
        right=""/>
      </testcase>
-     <testcase id="eng.abbrev.5" type="bloquant">
+     <testcase id="eng.abbrev.5" type="blocking">
        <call-parameters>
          <param key="text" value="He's cute. Yes, he's cute. "/>
          <param key="language" value="eng"/>

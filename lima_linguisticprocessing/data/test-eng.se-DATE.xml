@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--==================== tests DATE ====================-->
 <testcases>
-  <testcase id="eng.se.DATE.1" type="bloquant">
+  <testcase id="eng.se.DATE.1" type="blocking">
     <call-parameters>
       <param key="text" value="he was born on 10 April 1950."/>
       <param key="language" value="eng"/>
@@ -41,7 +41,7 @@
           operator="="
           right="1950-04-10"/>
   </testcase>
-  <testcase id="eng.se.DATE.2" type="bloquant">
+  <testcase id="eng.se.DATE.2" type="blocking">
     <call-parameters>
       <param key="text" value="he was born on 10th April 1950."/>
       <param key="language" value="eng"/>
@@ -81,7 +81,7 @@
           operator="="
           right="1950-04-10"/>
   </testcase>
-  <testcase id="eng.se.DATE.3" type="bloquant">
+  <testcase id="eng.se.DATE.3" type="blocking">
     <call-parameters>
       <param key="text" value="He died on 1st July 2015."/>
       <param key="language" value="eng"/>
@@ -121,7 +121,7 @@
           operator="="
           right="2015-07-01"/>
   </testcase>
-  <testcase id="eng.se.DATE.4" type="bloquant">
+  <testcase id="eng.se.DATE.4" type="blocking">
     <call-parameters>
       <param key="text" value="He died on fourth March, 2015"/>
       <param key="language" value="eng"/>
@@ -161,7 +161,7 @@
           operator="="
           right="2015-03-04"/>
   </testcase>
-  <testcase id="eng.se.DATE.5" type="bloquant">
+  <testcase id="eng.se.DATE.5" type="blocking">
     <call-parameters>
       <param key="text" value="He died on twenty-second March, 2015"/>
       <param key="language" value="eng"/>
@@ -201,7 +201,7 @@
           operator="="
           right="2015-03-22"/>
   </testcase>
-  <testcase id="eng.se.DATE.6" type="bloquant">
+  <testcase id="eng.se.DATE.6" type="blocking">
     <call-parameters>
       <param key="text" value="He died on twenty second of March, 2015"/>
       <param key="language" value="eng"/>
@@ -241,7 +241,7 @@
           operator="="
           right="2015-03-22"/>
   </testcase>
-  <testcase id="eng.se.DATE.7" type="bloquant">
+  <testcase id="eng.se.DATE.7" type="blocking">
     <call-parameters>
       <param key="text" value="He died on March, 2015"/>
       <param key="language" value="eng"/>
@@ -276,7 +276,7 @@
           operator="="
           right="2015-03-XX"/>
   </testcase>
-  <testcase id="eng.se.DATE.8" type="bloquant">
+  <testcase id="eng.se.DATE.8" type="blocking">
     <call-parameters>
       <param key="text" value="He died on 1st July."/>
       <param key="language" value="eng"/>
@@ -311,7 +311,7 @@
           operator="="
           right="XXXX-07-01"/>
   </testcase>
-  <!--testcase id="eng.se.timex.1" type="bloquant">
+  <!--testcase id="eng.se.timex.1" type="blocking">
     <call-parameters>
       <param key="text" value="the year 2004 is a great year"/>
       <param key="language" value="eng"/>
@@ -325,7 +325,7 @@
           operator="contains"
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.2" type="bloquant">
+  <!--testcase id="eng.se.timex.2" type="blocking">
     <call-parameters>
       <param key="text" value="06/09/2004"/>
       <param key="language" value="eng"/>
@@ -339,7 +339,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.3" type="bloquant">
+  <!--testcase id="eng.se.timex.3" type="blocking">
     <call-parameters>
       <param key="text" value="Lou Alice Philbeck died April 17 of a heart-lung ailment."/>
       <param key="language" value="eng"/>
@@ -353,7 +353,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.4" type="bloquant">
+  <!--testcase id="eng.se.timex.4" type="blocking">
     <call-parameters>
       <param key="text" value="Her funeral was Saturday at Greene Funeral Service's South Chapel."/>
       <param key="language" value="eng"/>
@@ -367,7 +367,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.6" type="bloquant">
+  <!--testcase id="eng.se.timex.6" type="blocking">
     <call-parameters>
       <param key="text" value="The 75th annual Academy Awards ceremony is scheduled for March 23, 2003."/>
       <param key="language" value="eng"/>
@@ -381,7 +381,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.7" type="bloquant">
+  <!--testcase id="eng.se.timex.7" type="blocking">
     <call-parameters>
       <param key="text" value="09 Jul 2002"/>
       <param key="language" value="eng"/>
@@ -395,7 +395,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.8" type="bloquant">
+  <!--testcase id="eng.se.timex.8" type="blocking">
     <call-parameters>
       <param key="text" value="The three blasts took place in March, August and November of last year."/>
       <param key="language" value="eng"/>
@@ -419,7 +419,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.9" type="bloquant">
+  <!--testcase id="eng.se.timex.9" type="blocking">
     <call-parameters>
       <param key="text" value="It began in September 2000"/>
       <param key="language" value="eng"/>
@@ -433,7 +433,7 @@
           operator="="
           right="DateTime.DATE"/>
   </testcase-->
-  <!--testcase id="eng.se.timex.10" type="bloquant">
+  <!--testcase id="eng.se.timex.10" type="blocking">
     <call-parameters>
       <param key="text" value="September 20th"/>
       <param key="language" value="eng"/>
@@ -477,7 +477,7 @@
   </testcase-->
   <!--==================== tests TIME ====================-->
   <!-- règle 08:43:08 -->
-    <testcase id="eng.se.TIME.1" type="bloquant">
+    <testcase id="eng.se.TIME.1" type="blocking">
     <call-parameters>
       <param key="text" value="a significant explosion had happened just after 09:01:12 (14:00 GMT)"/>
       <param key="language" value="eng"/>
@@ -512,7 +512,7 @@
           right="12"/>
   </testcase>
   <!-- règle <NUMBER>::o'clock:TIME -->
-    <testcase id="eng.se.TIME.2" type="bloquant">
+    <testcase id="eng.se.TIME.2" type="blocking">
     <call-parameters>
       <param key="text" value="I seat myself by the stand at 7 o'clock this evening"/>
       <param key="language" value="eng"/>
@@ -532,7 +532,7 @@
           right="7"/>
   </testcase>
   <!--==================== tests NUMEX ====================-->
-  <!--testcase id="eng.se.timex.5" type="bloquant">
+  <!--testcase id="eng.se.timex.5" type="blocking">
     <call-parameters>
       <param key="text" value="The results also show that there was a deterioration after 6 months."/>
       <param key="language" value="eng"/>
@@ -546,7 +546,7 @@
           operator="="
           right="Numex.NUMEX"/>
   </testcase-->
-  <!--testcase id="eng.se.numex.1" type="bloquant">
+  <!--testcase id="eng.se.numex.1" type="blocking">
     <call-parameters>
       <param key="text" value="he won 8000 dollars"/>
       <param key="language" value="eng"/>
@@ -560,7 +560,7 @@
           operator="="
           right="Numex.NUMEX"/>
   </testcase-->
-  <!--testcase id="eng.se.numex.2" type="bloquant">
+  <!--testcase id="eng.se.numex.2" type="blocking">
     <call-parameters>
       <param key="text" value="the other won twenty euros"/>
       <param key="language" value="eng"/>
@@ -574,7 +574,7 @@
           operator="="
           right="Numex.NUMEX"/>
   </testcase-->
-  <!--testcase id="eng.se.numex.3" type="bloquant">
+  <!--testcase id="eng.se.numex.3" type="blocking">
     <call-parameters>
       <param key="text" value="Keep humidity levels in your home between 30 and 60 percent."/>
       <param key="language" value="eng"/>
@@ -588,7 +588,7 @@
           operator="="
           right="Numex.NUMEX"/>
   </testcase-->
-  <!--testcase id="eng.se.numex.4" type="bloquant">
+  <!--testcase id="eng.se.numex.4" type="blocking">
     <call-parameters>
       <param key="text" value="They are typically about five watts."/>
       <param key="language" value="eng"/>
@@ -602,7 +602,7 @@
           operator="="
           right="Numex.NUMEX"/>
   </testcase-->
-  <!--testcase id="eng.se.numex.5" type="bloquant">
+  <!--testcase id="eng.se.numex.5" type="blocking">
     <call-parameters>
       <param key="text" value="These are visible from 500 feet and can help guests locate your home quickly."/>
       <param key="language" value="eng"/>
@@ -616,7 +616,7 @@
           operator="="
           right="Numex.NUMEX"/>
   </testcase-->
-  <!--testcase id="eng.se.numex.6" type="bloquant">
+  <!--testcase id="eng.se.numex.6" type="blocking">
     <call-parameters>
       <param key="text" value="A child picks up a 12-pound backpack."/>
       <param key="language" value="eng"/>

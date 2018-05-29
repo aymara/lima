@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testcases>
-<testcase id="eng.tok.1" type="bloquant">
+<testcase id="eng.tok.1" type="blocking">
   <call-parameters>
       <param key="text" value="The marsupilami is a mythical animal.  "/>
       <param key="language" value="eng"/>
@@ -15,7 +15,7 @@
     operator="="
     right="t_small"/>
 </testcase>
-<testcase id="eng.tok.2" type="bloquant">
+<testcase id="eng.tok.2" type="blocking">
   <call-parameters>
       <param key="text" value="The 200 deaths resulting from the accident were mourned by all. "/>
       <param key="language" value="eng"/>
@@ -30,7 +30,7 @@
     operator="="
     right="t_integer" />
 </testcase>
-<testcase id="eng.tok.3" type="bloquant">
+<testcase id="eng.tok.3" type="blocking">
   <call-parameters>
       <param key="text" value="The share price was off 1.5 points. "/>
       <param key="language" value="eng"/>
@@ -45,7 +45,7 @@
     operator="="
     right="t_dot_number"/>
 </testcase>
-<testcase id="eng.tok.4" type="bloquant">
+<testcase id="eng.tok.4" type="blocking">
   <call-parameters>
       <param key="text" value="The Systex company went bankrupt this year."/>
       <param key="language" value="eng"/>
@@ -60,7 +60,7 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
-<testcase id="eng.tok.4.1" type="bloquant">
+<testcase id="eng.tok.4.1" type="blocking">
   <call-parameters>
       <param key="text" value="Mopti is a lovely city."/>
       <param key="language" value="eng"/>
@@ -75,7 +75,7 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
-<testcase id="eng.tok.5" type="bloquant">
+<testcase id="eng.tok.5" type="blocking">
   <call-parameters>
       <param key="text" value="The NMPP distributes newsprint. "/>
       <param key="language" value="eng"/>
@@ -90,7 +90,7 @@
     operator="="
     right="t_capital"/>
 </testcase>
-<testcase id="eng.tok.6" type="bloquant">
+<testcase id="eng.tok.6" type="blocking">
   <call-parameters>
       <param key="text" value="The N.M.P.P. distributes newsprint. "/>
       <param key="language" value="eng"/>
@@ -105,7 +105,7 @@
     operator="="
     right="t_acronym"/>
 </testcase>
-<testcase id="eng.tok.7" type="bloquant">
+<testcase id="eng.tok.7" type="blocking">
   <call-parameters>
       <param key="text" value="The XVth arrondissement is a great area of Paris to visit. "/>
       <param key="language" value="eng"/>
@@ -120,7 +120,7 @@
     operator="="
     right="t_ordinal_roman"/>
 </testcase>
-<testcase id="eng.tok.8" type="bloquant">
+<testcase id="eng.tok.8" type="blocking">
   <call-parameters>
       <param key="text" value="Chapter III is very interesting. "/>
       <param key="language" value="eng"/>
@@ -135,7 +135,7 @@
     operator="="
     right="t_cardinal_roman"/>
 </testcase>
-<testcase id="eng.tok.9" type="bloquant">
+<testcase id="eng.tok.9" type="blocking">
   <call-parameters>
       <param key="text" value="About 1/3 of the inhabitants are poor. "/>
       <param key="language" value="eng"/>
@@ -186,7 +186,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.13" type="bloquant">
+<testcase id="eng.tok.13" type="blocking">
   <call-parameters>
       <param key="text" value="And the author's name is C. Fluhr."/>
       <param key="language" value="eng"/>
@@ -206,7 +206,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.14" type="bloquant">
+<testcase id="eng.tok.14" type="blocking">
   <call-parameters>
       <param key="text" value="He saw a France-England match last night. "/>
       <param key="language" value="eng"/>
@@ -221,7 +221,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.15" type="bloquant">
+<testcase id="eng.tok.15" type="blocking">
   <call-parameters>
       <param key="text" value="Robert D. Pierson"/>
       <param key="language" value="eng"/>
@@ -241,7 +241,7 @@
     operator="="
     right="t_abbrev"/>
 </testcase>
-<testcase id="eng.tok.16" type="bloquant">
+<testcase id="eng.tok.16" type="blocking">
   <call-parameters>
       <param key="text" value="Robert A. Pierson"/>
       <param key="language" value="eng"/>
@@ -341,7 +341,7 @@
     operator="="
     right="t_capital_1st"/>
 </testcase>
-<testcase id="eng.tok.18" type="bloquant">
+<testcase id="eng.tok.18" type="blocking">
   <call-parameters>
       <param key="text" value="He said that she should have been reading Zend-Avesta."/>
       <param key="language" value="eng"/>
@@ -386,7 +386,7 @@
     operator="="
     right="t_sentence_brk"/>
 </testcase>
-<testcase id="eng.tok.21" type="bloquant">
+<testcase id="eng.tok.21" type="blocking">
   <call-parameters>
       <param key="text" value="The spring robin is very pretty… Of course !"/>
       <param key="language" value="eng"/>
@@ -401,7 +401,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.22" type="bloquant">
+<testcase id="eng.tok.22" type="blocking">
   <call-parameters>
       <param key="text" value="The XVIIIth century was full of discoveries."/>
       <param key="language" value="eng"/>
@@ -431,7 +431,7 @@
     operator="="
     right="t_cardinal_roman"/>
 </testcase>
-<testcase id="eng.tok.24" type="informatif">
+<testcase id="eng.tok.24" type="informative">
   <call-parameters>
       <param key="text" value="The architect of the J.M.Tjibaou center is R.Piano."/>
       <param key="language" value="eng"/>
@@ -446,7 +446,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.25" type="informatif">
+<testcase id="eng.tok.25" type="informative">
   <call-parameters>
       <param key="text" value="The architect of the J.M. Tjibaou center is R.Piano."/>
       <param key="language" value="eng"/>
@@ -461,7 +461,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.26" type="informatif">
+<testcase id="eng.tok.26" type="informative">
   <call-parameters>
       <param key="text" value="The architect of the JM. Tjibaou center is R.Piano."/>
       <param key="language" value="eng"/>
@@ -476,7 +476,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.27" type="bloquant">
+<testcase id="eng.tok.27" type="blocking">
   <call-parameters>
       <param key="text" value="After three min. he left the building..."/>
       <param key="language" value="eng"/>
@@ -491,7 +491,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.28" type="informatif">
+<testcase id="eng.tok.28" type="informative">
   <call-parameters>
       <param key="text" value="After three min. John left the building..."/>
       <param key="language" value="eng"/>
@@ -506,7 +506,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.29" type="bloquant">
+<testcase id="eng.tok.29" type="blocking">
   <call-parameters>
       <param key="text" value="Overall performance : 1.5 times quicker than baseline"/>
       <param key="language" value="eng"/>
@@ -551,7 +551,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.32" type="informatif">
+<testcase id="eng.tok.32" type="informative">
   <call-parameters>
       <param key="text" value="A+ is part of the SMS vocabulary."/>
       <param key="language" value="eng"/>
@@ -641,7 +641,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.36" type="bloquant">
+<testcase id="eng.tok.36" type="blocking">
  <call-parameters>
       <param key="text" value="-Hard to see this dash as part of a compound word!"/>
       <param key="language" value="eng"/>
@@ -676,7 +676,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.38" type="informatif">
+<testcase id="eng.tok.38" type="informative">
   <call-parameters>
       <param key="text" value="ƒ ‘¤’   ‘¨’  ‘ª’   ‘¬’   ‘-’   ‘¯’   km² ‘²’   ‘³’   ‘´’   ‘¶’   ‘·’   ‘¸’   ‘¹’   ‘º’ "/>
       <param key="language" value="eng"/>
@@ -697,7 +697,7 @@
     right=""/>
 </testcase>
 
-<testcase id="eng.tok.41" type="informatif">
+<testcase id="eng.tok.41" type="informative">
   <call-parameters>
       <param key="text" value="Marathon : world record at 2:04'55'', Paul Tergat."/>
       <param key="language" value="eng"/>
@@ -712,7 +712,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.42" type="bloquant">
+<testcase id="eng.tok.42" type="blocking">
   <call-parameters>
       <param key="text" value="The 300th round was shot at 9 o'clock."/>
       <param key="language" value="eng"/>
@@ -762,7 +762,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.45" type="informatif">
+<testcase id="eng.tok.45" type="informative">
   <call-parameters>
     <param key="text" value="Vivendi cancels the O.P.A. "/>
     <param key="language" value="eng"/>
@@ -782,7 +782,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.46" type="bloquant">
+<testcase id="eng.tok.46" type="blocking">
   <call-parameters>
     <param key="text" value="&quot;Because of the rumors, we can't sell anything,&quot; said Yamauchi. &quot;I'm happy people are buying this stuff.&quot;"/>
     <param key="language" value="eng"/>
@@ -802,7 +802,7 @@
     operator="exists"
     right=""/>
 </testcase>
-<testcase id="eng.tok.47" type="bloquant">
+<testcase id="eng.tok.47" type="blocking">
   <call-parameters>
     <param key="text" value="The author's name is C.Fluhr. "/>
     <param key="language" value="eng"/>
@@ -817,7 +817,7 @@
     operator="exists"
     right=""/>
   </testcase>
-  <testcase id="eng.tok.48" type="bloquant">
+  <testcase id="eng.tok.48" type="blocking">
     <call-parameters>
       <param key="text" value="He's cute. Yes, he's cute. "/>
       <param key="language" value="eng"/>
@@ -837,7 +837,7 @@
     operator="exists"
     right=""/>
   </testcase>
-  <testcase id="eng.tok.49" type="bloquant">
+  <testcase id="eng.tok.49" type="blocking">
     <call-parameters>
       <param key="text" value="The blue-ribbon campaign ended in disgrace. "/>
       <param key="language" value="eng"/>
@@ -852,7 +852,7 @@
       operator="="
       right="blue-ribbon"/>
   </testcase>
-<testcase id="eng.tok.50" type="bloquant">
+<testcase id="eng.tok.50" type="blocking">
   <call-parameters>
       <param key="text" value="The Airbus A380 is the largest airplane in the world."/>
       <param key="language" value="eng"/>

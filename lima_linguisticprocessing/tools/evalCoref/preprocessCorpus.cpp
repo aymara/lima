@@ -35,7 +35,7 @@
 #include <fstream>
 #include <deque>
 #ifndef WIN32
-#include <cstdint> //uint32_t
+#include <cstdint> //uint*_t
 #endif
 #include <boost/regex.hpp>
 

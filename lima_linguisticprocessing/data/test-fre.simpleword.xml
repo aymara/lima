@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
 <testcases>
-  <testcase id="fre.sw.1" type="bloquant">
+  <testcase id="fre.sw.1" type="blocking">
     <call-parameters>
       <param key="text" value="La plate-forme de recherche pétrolière va à la dérive. "/>
       <param key="language" value="fre"/>
@@ -17,7 +17,7 @@
     <test id="fre.sw.1.5" trace=".simpleword.xml" comment="on vérifie la présence du mot à" left="XPATH#//data_structure/vertex[token[position=43][length=1]]/data/simple_word" operator="exists" right=""/>
     <test id="fre.sw.1.6" trace=".simpleword.xml" comment="on vérifie la présence du mot '.' avec la categ ponctu forte" left="XPATH#//data_structure/vertex[token[position=54][length=1]]/data/simple_word//property/p[@prop='MICRO']/@val" operator="=" right="PONCTU_FORTE"/>
   </testcase>
-  <testcase id="fre.sw.2" type="bloquant">
+  <testcase id="fre.sw.2" type="blocking">
     <call-parameters>
       <param key="text" value="Les images satellites montrent l'existence de nappes irisées qui prouvent que certains 'profitent de la pollution liée au Prestige pour dégazer', selon l'état-major."/>
       <param key="language" value="fre"/>
@@ -32,7 +32,7 @@
       operator="contains" 
       right="nappe"/>
   </testcase>
-  <testcase id="fre.sw.3" type="bloquant">
+  <testcase id="fre.sw.3" type="blocking">
     <call-parameters>
       <param key="text" value="Les images satellites montrent l'existence de nappes irisées qui prouvent que certains 'profitent de la pollution liée au Prestige pour dégazer', selon l'état-major."/>
       <param key="language" value="fre"/>
@@ -47,7 +47,7 @@
       operator="contains" 
       right="napper"/>
   </testcase>
-  <testcase id="fre.sw.4" type="bloquant">
+  <testcase id="fre.sw.4" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème eleve."/>
         <param key="language" value="fre"/>
@@ -67,7 +67,7 @@
       operator="contains"
       right="élevé"/>
   </testcase>
-  <testcase id="fre.sw.5" type="bloquant">
+  <testcase id="fre.sw.5" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème éleve."/>
         <param key="language" value="fre"/>
@@ -87,7 +87,7 @@
       operator="contains"
       right="élevé"/>
   </testcase>
-  <testcase id="fre.sw.6" type="bloquant">
+  <testcase id="fre.sw.6" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème elève."/>
         <param key="language" value="fre"/>
@@ -107,7 +107,7 @@
       operator="contains"
       right="élevé"/>
   </testcase>
-  <testcase id="fre.sw.7" type="bloquant">
+  <testcase id="fre.sw.7" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème éléve."/>
         <param key="language" value="fre"/>
@@ -127,7 +127,7 @@
       operator="contains"
       right="élevé"/>
   </testcase>
-  <testcase id="fre.sw.8" type="bloquant">
+  <testcase id="fre.sw.8" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frère Amédée, directeur, inscrivit le 300ème élève."/>
         <param key="language" value="fre"/>
@@ -142,7 +142,7 @@
       operator="contains"
       right="frère"/>
   </testcase>
-  <testcase id="fre.sw.9" type="bloquant">
+  <testcase id="fre.sw.9" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frere Amédée, directeur, inscrivit le 300ème élève."/>
         <param key="language" value="fre"/>
@@ -157,7 +157,7 @@
       operator="contains"
       right="frère"/>
   </testcase>
-  <testcase id="fre.sw.10" type="bloquant">
+  <testcase id="fre.sw.10" type="blocking">
     <call-parameters>
         <param key="text" value="En 1941, le Frère Amedée, directeur, inscrivit le 300ème élève."/>
         <param key="language" value="fre"/>
@@ -172,7 +172,7 @@
       operator="contains"
       right="Amédée"/>
   </testcase>
-  <testcase id="fre.sw.11" type="informatif">
+  <testcase id="fre.sw.11" type="informative">
     <call-parameters>
         <param key="text" value="Ils ont marche jusqu'au marche de cannes pour acheter des cannes de marches."/>
         <param key="language" value="fre"/>
@@ -202,7 +202,7 @@
       operator="contains"
       right="évènement"/>
   </testcase>
-  <testcase id="fre.sw.13" type="bloquant">
+  <testcase id="fre.sw.13" type="blocking">
     <call-parameters>
         <param key="text" value="L'evenement : le createur de cette oeuvre est anonyme."/>
         <param key="language" value="fre"/>
@@ -222,7 +222,7 @@
       operator="contains"
       right="Créateur"/-->
   </testcase>
-  <testcase id="fre.sw.14" type="informatif">
+  <testcase id="fre.sw.14" type="informative">
   <call-parameters>
       <param key="text" value="L'evenement : le Createur de cette oeuvre est anonyme."/>
       <param key="language" value="fre"/>
@@ -262,7 +262,7 @@
     operator="distinct"
     right="œuvre"/>
   </testcase>
-  <testcase id="fre.sw.16" type="informatif">
+  <testcase id="fre.sw.16" type="informative">
   <call-parameters>
       <param key="text" value="La cogema et spirit : toute une histoire."/>
       <param key="language" value="fre"/>
@@ -277,7 +277,7 @@
     operator="contains"
     right="C.O.G.E.M.A."/>
   </testcase>
-  <testcase id="fre.sw.17" type="informatif">
+  <testcase id="fre.sw.17" type="informative">
   <call-parameters>
       <param key="text" value="La COGEMA et spirit : toute une histoire."/>
       <param key="language" value="fre"/>
@@ -292,7 +292,7 @@
     operator="contains"
     right="C.O.G.E.M.A."/>
   </testcase>
- <testcase id="fre.sw.18" type="bloquant">
+ <testcase id="fre.sw.18" type="blocking">
   <call-parameters>
       <param key="text" value="Le département de Bouches-du-Rhone est situé dans le sud de la France."/>
       <param key="language" value="fre"/>
@@ -307,7 +307,7 @@
     operator="="
     right="Bouches-du-Rhône"/>
   </testcase>
-<testcase id="fre.sw.19" type="informatif">
+<testcase id="fre.sw.19" type="informative">
   <call-parameters>
       <param key="text" value="Dans un livre, l'a-propos est généralement intéressant."/>
       <param key="language" value="fre"/>
@@ -322,7 +322,7 @@
     operator="="
     right="à-propos"/>
   </testcase>
-    <testcase id="fre.sw.20" type="informatif">
+    <testcase id="fre.sw.20" type="informative">
   <call-parameters>
       <param key="text" value="Dans un livre, l'à propos est généralement intéressant."/>
       <param key="language" value="fre"/>
@@ -337,7 +337,7 @@
     operator="="
     right="à-propos"/>
   </testcase>
-  <testcase id="fre.sw.21" type="bloquant">
+  <testcase id="fre.sw.21" type="blocking">
     <call-parameters>
       <param key="text" value="Après"/>
       <param key="language" value="fre"/>

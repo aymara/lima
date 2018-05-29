@@ -56,7 +56,7 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
 {
   // write text in file
   const std::string& text = testCase.getParam( "text" );
-  std::string filename(m_workingDirectory+"/test"+testCase.id+".txt");
+  std::string filename(m_workingDirectory+"/test"+testCase.id.toUtf8().constData()+".txt");
   {
     ofstream fout(filename.c_str(), std::ofstream::binary);
     fout << text;
@@ -103,7 +103,7 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
       map<string,string> metaData;
       metaData["Lang"]=language;
       metaData["FileName"]=filenameWithPipeLine;
-      metaData["DocumentName"]=testCase.id;
+      metaData["DocumentName"]=testCase.id.toUtf8().constData();
       metaData.insert(userMetaData.begin(),userMetaData.end());
       m_lpclient->analyze(contentText,metaData, *pipItr, m_handlers);
       BowTextHandler* bowHandler = static_cast<BowTextHandler*>(m_handlers["bowTextHandler"]);

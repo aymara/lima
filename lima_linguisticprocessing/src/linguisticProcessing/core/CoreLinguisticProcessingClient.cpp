@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 #ifndef WIN32
-#include <cstdint> //uint32_t
+#include <cstdint> //uint*_t
 #endif
 #include "CoreLinguisticProcessingClient.h"
 
@@ -260,9 +260,9 @@ void CoreLinguisticProcessingClientFactory::configure(
                    "mediaProcessingDefinitionFiles",
                    "available");
     }
-    catch (NoSuchList& )
+    catch (NoSuchList& e)
     {
-      LERROR << "no parameter lima-coreclient/mediaProcessingDefinitionFiles/available !";
+      LERROR << "no parameter lima-coreclient/mediaProcessingDefinitionFiles/available !" << e.what();
       throw InvalidConfiguration("no parameter lima-coreclient/mediaProcessingDefinitionFiles/available !");
     }
   }
@@ -273,7 +273,6 @@ void CoreLinguisticProcessingClientFactory::configure(
   {
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
     MediaId langid = MediaticData::single().getMediaId(*langItr);
-    string file;
     QString mediaProcessingDefinitionFile;
     try
     {
@@ -282,29 +281,22 @@ void CoreLinguisticProcessingClientFactory::configure(
             "mediaProcessingDefinitionFiles",
             *langItr).c_str());
     }
-    catch (NoSuchParam& )
+    catch (NoSuchParam& e)
     {
-      LERROR << "No such param lima-coreclient/mediaProcessingDefinitionFiles/" << *langItr;
-      throw InvalidConfiguration("no language definition file for language ");
+      LERROR << "CoreLinguisticProcessingClientFactory::configure NoSuchParam" << e.what();
+      throw InvalidConfiguration("no language definition file defined in configuration") ;
     }
-    QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
-    QStringList tried;
-    Q_FOREACH(QString confPath, configPaths)
+    QString file = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),
+                                                 mediaProcessingDefinitionFile);
+
+    if (file.isEmpty())
     {
-      tried << QString(file.c_str());
-      if (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
-      {
-        file = (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
-        break;
-      }
+      LERROR << "Language definition file" << mediaProcessingDefinitionFile 
+              << "for language" << *langItr <<"not found in paths:" 
+              << Common::MediaticData::MediaticData::single().getConfigPath();
+      throw InvalidConfiguration("Language definition file not found in paths");
     }
-    if (file.empty())
-    {
-      LERROR << "no language definition file for language" << *langItr;
-      LERROR << "tried:" << tried;
-      throw InvalidConfiguration("no language definition file for language ");
-    }
-    XMLConfigurationFileParser langParser(file);
+    XMLConfigurationFileParser langParser(file.toUtf8().constData());
 
     //initialize SpecificEntities 
     Common::MediaticData::MediaticData::changeable().initEntityTypes(langParser);
@@ -319,9 +311,10 @@ void CoreLinguisticProcessingClientFactory::configure(
         module,
         true); // load main keys
     }
-    catch (NoSuchModule& )
+    catch (NoSuchModule& e)
     {
-      LERROR << "no module 'Resources' in configuration file " << file;
+      LERROR << "no module 'Resources' in configuration file " 
+              << file << e.what();
       throw InvalidConfiguration("no module 'Resources' in configuration file ");
     }
 
@@ -335,9 +328,10 @@ void CoreLinguisticProcessingClientFactory::configure(
         procmodule/*,
         dumpmodule*/);
     }
-    catch (NoSuchModule& )
+    catch (NoSuchModule& e)
     {
-      LERROR << "missing module 'Processors' in language configuration file " << file;
+      LERROR << "missing module 'Processors' in language configuration file " 
+              << file << e.what();
       throw InvalidConfiguration("missing module 'Processors' in language configuration file ");
     }
 
@@ -349,9 +343,9 @@ void CoreLinguisticProcessingClientFactory::configure(
     GroupConfigurationStructure& group=configuration.getModuleGroupConfiguration("lima-coreclient","pipelines");
     MediaProcessors::changeable().initPipelines(group,pipelines);
   }
-  catch (NoSuchModule& )
+  catch (NoSuchModule& e)
   {
-    LERROR << "no module 'pipelines' in lima-analysis.xml (configuration file)";
+    LERROR << "no module 'pipelines' in lima-analysis.xml (configuration file)" << e.what();
     throw InvalidConfiguration("no module 'pipelines' in mm-LP.xml (configuration file)");
   }
 }

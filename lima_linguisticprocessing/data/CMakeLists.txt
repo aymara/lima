@@ -34,6 +34,8 @@ install(FILES
     test-eng.se-ORGANISATION.xml 
     test-eng.simpleword.xml 
     test-eng.tokenizer.xml
+    test-eng-ud.default.xml 
+    test-eng-ud.simpleword.xml 
     test-fre.default.xml 
     test-fre.disambiguated.xml 
     test-fre.hyphen.xml   

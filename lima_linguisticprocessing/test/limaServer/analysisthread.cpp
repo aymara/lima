@@ -83,6 +83,7 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::Abstrac
     m_langs(langs),
     m_mediaType((req->header("content-type")).toStdString())
 {
+  LIMA_UNUSED(resp);
 }
 
 AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 

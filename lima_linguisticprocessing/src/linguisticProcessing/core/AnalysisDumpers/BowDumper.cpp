@@ -462,9 +462,7 @@ void BowDumper::addVerticesToBoWText(
               
 // #ifdef DEBUG_LP
 //               std::ostringstream oss;
-//               //std::set<uint32_t>::const_iterator asvit, asvit_end;
-//               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-//               asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+//               auto asvit = alreadyStoredVertices.cbegin(); asvit_end = alreadyStoredVertices.cend();
 //               for (; asvit != asvit_end; asvit++)
 //               {
 //                 oss << *asvit << ", ";
@@ -546,9 +544,7 @@ void BowDumper::addVerticesToBoWText(
             
 // #ifdef DEBUG_LP
 //               std::ostringstream oss;
-//               //std::set<uint32_t>::const_iterator asvit, asvit_end;
-//               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-//               asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+//               auto asvit = alreadyStoredVertices.cbegin(); asvit_end = alreadyStoredVertices.cend();
 //               for (; asvit != asvit_end; asvit++)
 //               {
 //                 oss << *asvit << ", ";

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testcases>
   <!--==================== tests ORGANISATION  ====================-->
-  <testcase id="eng.se.org.comp.01" type="bloquant">
+  <testcase id="eng.se.org.comp.01" type="blocking">
     <call-parameters>
       <param key="text" value="Bill Gates founded Microsoft at Redmond on 2nd July 1975."/>
       <param key="language" value="eng"/>
@@ -20,7 +20,7 @@
           operator="="
           right="Microsoft"/>
   </testcase>
-  <testcase id="eng.se.org.comp.02" type="bloquant">
+  <testcase id="eng.se.org.comp.02" type="blocking">
     <call-parameters>
       <param key="text" value="One year later Steve Jobs founded Apple Inc. at California on 4th July 1976."/>
       <param key="language" value="eng"/>
@@ -138,7 +138,7 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase-->
-  <testcase id="eng.se.org.8" type="bloquant">
+  <testcase id="eng.se.org.8" type="blocking">
     <call-parameters>
       <param key="text" value="Dr. Chris J. McCarthy, research physiotherapist at Manchester University is the lead author of the report."/>
       <param key="language" value="eng"/>
@@ -152,7 +152,7 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
-  <testcase id="eng.se.org.9" type="bloquant">
+  <testcase id="eng.se.org.9" type="blocking">
     <call-parameters>
       <param key="text" value="He had the official seal of approval of the Miami Police Department."/>
       <param key="language" value="eng"/>
@@ -166,7 +166,7 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
-  <testcase id="eng.se.org.10" type="bloquant">
+  <testcase id="eng.se.org.10" type="blocking">
     <call-parameters>
       <param key="text" value="Informed Families is delighted with the Supreme Court's decision."/>
       <param key="language" value="eng"/>
@@ -180,7 +180,7 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
-  <testcase id="eng.se.org.11" type="bloquant">
+  <testcase id="eng.se.org.11" type="blocking">
     <call-parameters>
       <param key="text" value="They want the Catholic Church to be a part of their recovery."/>
       <param key="language" value="eng"/>
@@ -194,7 +194,7 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
-  <testcase id="eng.se.org.12" type="bloquant">
+  <testcase id="eng.se.org.12" type="blocking">
     <call-parameters>
       <param key="text" value="The Federal Bureau of Investigation has begun investigating the shredding allegations."/>
       <param key="language" value="eng"/>

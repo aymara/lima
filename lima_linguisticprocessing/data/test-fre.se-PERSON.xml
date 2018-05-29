@@ -353,7 +353,7 @@
           operator="="
           right="Person.PERSON"/>
   </testcase-->
-  <testcase id="fre.se.55" type="bloquant">
+  <testcase id="fre.se.55" type="blocking">
     <call-parameters>
       <param key="text" value="A l'attention du Dr Watson"/>
       <param key="language" value="fre"/>
@@ -378,7 +378,7 @@
           operator="="
           right="Watson"/>
   </testcase>
-  <testcase id="fre.se.56" type="bloquant">
+  <testcase id="fre.se.56" type="blocking">
     <call-parameters>
       <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme Bernadette Chirac."/>
       <param key="language" value="fre"/>
@@ -413,7 +413,7 @@
           operator="="
           right="Chirac"/>
   </testcase>  
- <testcase id="fre.se.61" type="bloquant">
+ <testcase id="fre.se.61" type="blocking">
     <call-parameters>
       <param key="text" value="Une des responsables de l'opération &quot;Pièces Jaunes&quot; est Mme B. Youza."/>
       <param key="language" value="fre"/>
