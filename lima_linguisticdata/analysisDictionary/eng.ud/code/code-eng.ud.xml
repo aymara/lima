@@ -152,7 +152,8 @@
     <value name="Qot"/>
     <value name="Sub"/>
   </property>
-  <property name="Tense">
+<!--   <property name="Tense"> -->
+  <property name="TIME">
     <value name="Fut"/>
     <value name="Imp"/>
     <value name="Past"/>
