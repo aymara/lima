@@ -1,0 +1,1246 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="eng.disamb.1" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Birds of a feather flee together to escape."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>prep infinitif = configuration interdite dans la matrice.</expl>
+  <test id="eng.disamb.1.1" trace=".default.xml"
+    comment="Apres analyse morphologique, verifier que le mot Birds a la propriete NC "
+    left="XPATH#//data_structure/vertex[token/position=1]/data//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="NOUN" />
+  <test id="eng.disamb.1.2" trace=".default.xml"
+    comment="Apres analyse morphologique, verifier que le mot feather a la propriete NC "
+    left="XPATH#//data_structure/vertex[token/position=12]/data//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="NOUN" />
+  <test id="eng.disamb.1.3" trace=".disambiguated.xml"
+    comment="Apres le PosTagger, verifier qu'il n'y a aucune succession prep verbe"
+    left="XPATH#//vertices/vertex[macro='v']/pred/@id"
+    operator="distinct"
+    right="XPATH#//vertices/vertex[macro='prep']/@id" />
+</testcase>
+<testcase id="eng.disamb.2" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Very shortly after our arrival we looked back toward our anchorage and noticed an advancing fog bank.  "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>nom commun ambigu avec nom propre connu</expl>
+  <test id="eng.disamb.2.1" trace=".default.xml"
+    comment="anchorage a une possibilite nom commun"
+    left="XPATH#//data_structure/vertex[token/position=58]/data//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="NOUN"/>
+  <test id="eng.disamb.2.2" trace=".disambiguated.xml"
+    comment="anchorage est etiquetté nom commun"
+    left="XPATH#//vertices/vertex[@position=58]/macro"
+    operator="="
+    right="NOUN"/>
+</testcase>
+<testcase id="eng.disamb.3" type="pertinent">
+  <call-parameters>
+      <param key="text" value="We looked towards Anchorage and saw an advancing fog bank."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre connu commun avec nom commun</expl>
+  <test id="eng.disamb.3.1" trace=".default.xml"
+    comment="anchorage a une possibilite nom propre"
+    left="XPATH#//data_structure/vertex[token/position=19]/data//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="PROPN"/>
+  <test id="eng.disamb.3.2" trace=".disambiguated.xml"
+    comment="anchorage est etiquetté nom propre"
+    left="XPATH#//vertices/vertex[@position=19]/macro"
+    operator="="
+    right="PROPN"/>
+</testcase>
+<testcase id="eng.disamb.4" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Anchorage is a foggy city. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>nom propre connu en tête de phrase</expl>
+  <test id="eng.disamb.4.1" trace=".default.xml"
+    comment="anchorage a une possibilite nom propre"
+    left="XPATH#//data_structure/vertex[token/position=1]/data//property/p[@prop='MACRO']/@val"
+    operator="contains"
+    right="PROPN"/>
+  <test id="eng.disamb.4.2" trace=".disambiguated.xml"
+    comment="anchorage est etiquetté nom propre"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="PROPN"/>
+</testcase>
+<testcase id="eng.disamb.5" type="informative">
+  <call-parameters>
+      <param key="text" value="I gave the gun to the teller. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>to en tant que préposition</expl>
+  <test id="eng.disamb.5.1" trace=".simpleword.xml"
+    comment="to a la categorie prep general dans le dictionaire"
+    left="XPATH#//data_structure/vertex[token/position=16]/data//property/p[@prop='MICRO']/@val"
+    operator="contains"
+    right="ADP"/>
+  <test id="eng.disamb.5.2" trace=".disambiguated.xml"
+    comment="to ne possede que la micro categorie prep generale  après desambiguisation"
+    left="XPATH#//vertices/vertex[@position=16]/micro"
+    operator="="
+    right="ADP"/>
+</testcase>
+<testcase id="eng.disamb.8" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Candidates were everywhere."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Candidates</expl>
+  <test id="eng.disamb.8.1" trace=".disambiguated.xml"
+    comment="Candidat : lemme candidate"
+    left="XPATH#//vertices/vertex[@position=1]/lemma"
+    operator="="
+    right="candidate" />
+  <test id="eng.disamb.8.2" trace=".disambiguated.xml"
+    comment="Candidates : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.9" type="pertinent">
+  <call-parameters>
+      <param key="text" value="I don't care."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>don't</expl>
+  <test id="eng.disamb.9.1" trace=".disambiguated.xml"
+    comment="' : n'existe pas"
+    left="XPATH#//vertices/vertex[@position=6]/lemme"
+    operator="!="
+    right="'" />
+  <test id="eng.disamb.9.2" trace=".disambiguated.xml"
+    comment="don't : lemme do not"
+    left="XPATH#//vertices/vertex[@position=3]/lemma"
+    operator="contains"
+    right="do" />
+  <test id="eng.disamb.9.3" trace=".disambiguated.xml"
+    comment="do : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=3]/macro"
+    operator="contains"
+    right="VERB" />
+  <test id="eng.disamb.9.2" trace=".disambiguated.xml"
+    comment="don't : lemme do not"
+    left="XPATH#//vertices/vertex[@position=3]/lemma"
+    operator="contains"
+    right="not" />
+  <test id="eng.disamb.9.3" trace=".disambiguated.xml"
+    comment="do : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=3]/macro"
+    operator="contains"
+    right="ADV" />
+</testcase>
+<testcase id="eng.disamb.10.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The Ukrainians cheered in the streets."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>ukrainians</expl>
+  <test id="eng.disamb.10.1" trace=".disambiguated.xml"
+    comment="Ukrainians : lemme Ukrainian"
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="Ukrainian" />
+</testcase>
+<testcase id="eng.disamb.10.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The Ukrainian crowds were dense. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>ukrainian adjectif</expl>
+  <test id="eng.disamb.10.2" trace=".disambiguated.xml"
+    comment="Ukrainian : micro-vg : adj gen"
+    left="XPATH#//vertices/vertex[@position=5]/micro"
+    operator="contains"
+    right="ADJ" />
+</testcase>
+<testcase id="eng.disamb.11.a" type="informative">
+  <call-parameters>
+      <param key="text" value="The second round was still undecided in the streets."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>second</expl>
+  <test id="eng.disamb.11.1" trace=".disambiguated.xml"
+    comment="second : lemme second"
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="2nd" />
+  <test id="eng.disamb.11.2" trace=".disambiguated.xml"
+    comment="second : macro-vg : nombre"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="="
+    right="NUM" />
+</testcase>
+<testcase id="eng.disamb.11.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The second round was still undecided in the streets."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>second</expl>
+  <test id="eng.disamb.11.3" trace=".disambiguated.xml"
+    comment="second : micro-vg : nombre ordinal"
+    left="XPATH#//vertices/vertex[@position=5]/micro"
+    operator="="
+    right="NUM" />
+</testcase>
+<testcase id="eng.disamb.12.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="As of Sunday morning, the elections was still undecided."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Sunday</expl>
+  <test id="eng.disamb.12.1" trace=".disambiguated.xml"
+    comment="Sunday : lemme Sunday"
+    left="XPATH#//vertices/vertex[@position=7]/lemma"
+    operator="="
+    right="Sunday morning" />
+  <test id="eng.disamb.12.2" trace=".disambiguated.xml"
+    comment="Sunday : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=7]/macro"
+    operator="contains"
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.12.b" type="informative">
+  <call-parameters>
+      <param key="text" value="As of Sunday morning, the elections was still undecided."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Sunday</expl>
+  <test id="eng.disamb.12.3" trace=".disambiguated.xml"
+    comment="Sunday : micro-vg : nom jour"
+    left="XPATH#//vertices/vertex[@position=7]/micro"
+    operator="contains"
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.13" type="pertinent">
+  <call-parameters>
+      <param key="text" value="On Sunday November 21, 2004, Mr. Yuchtchenko accused the prime minister."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>21</expl>
+  <test id="eng.disamb.13.1" trace=".disambiguated.xml"
+        comment="Sunday November 21, 2004 : date"
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="Sunday November 21, 2004" />
+  <test id="eng.disamb.13.2" trace=".disambiguated.xml"
+        comment="Sunday November 21, 2004 : macro-vg : temporel"
+    left="XPATH#//vertices/vertex[@position=4]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.14.a" type="obsolete">
+  <call-parameters>
+      <param key="text" value="On Sunday November 21, 2004, Mr. Yuchtchenko accused the prime minister."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>November</expl>
+  <test id="eng.disamb.14.1" trace=".disambiguated.xml"
+    comment="November : lemme November "
+    left="XPATH#//vertices/vertex[@position=11]/lemma"
+    operator="="
+    right="November" />
+  <test id="eng.disamb.14.2" trace=".disambiguated.xml"
+    comment="November : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=11]/macro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.14.b" type="obsolete">
+  <call-parameters>
+      <param key="text" value="On Sunday November 21, 2004, Mr. Yuchtchenko accused the prime minister."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>November</expl>
+  <test id="eng.disamb.14.3" trace=".disambiguated.xml"
+    comment="November : micro-vg : nom mois"
+    left="XPATH#//vertices/vertex[@position=11]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.15.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The victory has been close at hand."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>been</expl>
+  <test id="eng.disamb.15.1" trace=".disambiguated.xml"
+    comment="been : lemme be ..."
+    left="XPATH#//vertices/vertex[@position=17]/lemma"
+    operator="="
+    right="be" />
+  <test id="eng.disamb.15.2" trace=".disambiguated.xml"
+    comment="been : macro-vg : verbe"
+    left="XPATH#//vertices/vertex[@position=17]/macro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.15.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The victory has been close at hand."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>been</expl>
+  <test id="eng.disamb.15.3" trace=".disambiguated.xml"
+    comment="been : micro-vg : copulative verb participe passé"
+    left="XPATH#//vertices/vertex[@position=17]/micro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.16" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The election was stolen according to the candidate's spokesperson."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>stolen</expl>
+  <test id="eng.disamb.16.1" trace=".disambiguated.xml"
+    comment="stolen : lemme steal..."
+    left="XPATH#//vertices/vertex[@position=18]/lemma"
+    operator="contains"
+    right="steal" />
+  <test id="eng.disamb.16.2" trace=".disambiguated.xml"
+    comment="volée : macro-vg : verbe"
+    left="XPATH#//vertices/vertex[@position=18]/macro"
+    operator="contains"
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.17" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The warning lights were broken. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>'warning' comme adjectif</expl>
+  <test id="eng.disamb.17.1" trace=".disambiguated.xml"
+    comment="warning : lemme warning..."
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="contains"
+    right="warning" />
+  <test id="eng.disamb.17.2" trace=".disambiguated.xml"
+    comment="warning : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="contains"
+    right="ADJ" />
+</testcase>
+<testcase id="eng.disamb.18" type="pertinent">
+  <call-parameters>
+      <param key="text" value="He left as soon as she arrived."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>as soon as</expl>
+  <test id="eng.disamb.18.1" trace=".disambiguated.xml"
+    comment="as soon as : lemme as soon as..."
+    left="XPATH#//vertices/vertex[@position=9]/lemma"
+    operator="="
+    right="as soon as" />
+  <test id="eng.disamb.18.2" trace=".disambiguated.xml"
+    comment="au bord de : macro-vg : conj"
+    left="XPATH#//vertices/vertex[@position=9]/macro"
+    operator="="
+    right="CONJ" />
+</testcase>
+<testcase id="eng.disamb.19" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The local press was already giving the victory to the incumbent."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>giving</expl>
+  <test id="eng.disamb.19.1" trace=".disambiguated.xml"
+    comment="giving : lemme give..."
+    left="XPATH#//vertices/vertex[@position=29]/lemma"
+    operator="="
+    right="give" />
+  <test id="eng.disamb.19.2" trace=".disambiguated.xml"
+    comment="giving : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=29]/macro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.20.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The prime minister arrived late."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>prime</expl>
+  <test id="eng.disamb.20.1" trace=".disambiguated.xml"
+    comment="prime minister : lemme Prime Minister (SE)..."
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="Prime Minister" />
+</testcase>
+<testcase id="eng.disamb.20.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The prime minister arrived late."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>prime</expl>
+  <test id="eng.disamb.20.b" trace=".disambiguated.xml"
+    comment="prime : micro-vg : adj num ord epithete prenn"
+    left="XPATH#//vertices/vertex[@position=5]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.21.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The former president fell ill. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>former</expl>
+  <test id="eng.disamb.21.1" trace=".disambiguated.xml"
+    comment="former : lemme former..."
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="former" />
+  <test id="eng.disamb.21.2" trace=".disambiguated.xml"
+    comment="sortant : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="contains"
+    right="ADJ" />
+</testcase>
+<testcase id="eng.disamb.22.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="He said last Thursday that he would not represent himself. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Thursday</expl>
+  <test id="eng.disamb.22.1" trace=".disambiguated.xml"
+    comment="ES last Thursday : lemme last Thursday..."
+    left="XPATH#//vertices/vertex[@position=9]/lemma"
+    operator="="
+    right="last Thursday" />
+  <test id="eng.disamb.22.2" trace=".disambiguated.xml"
+    comment="ES lastThursday : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=9]/macro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.22.b" type="informative">
+  <call-parameters>
+      <param key="text" value="He said last Thursday that he would not represent himself. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Thursday</expl>
+  <test id="eng.disamb.22.3" trace=".disambiguated.xml"
+    comment="ES last Thursday : micro-vg : nom temporel"
+    left="XPATH#//vertices/vertex[@position=9]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.23.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="He was not sure what to do."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>was</expl>
+  <test id="eng.disamb.23.1" trace=".disambiguated.xml"
+    comment="was : lemme be..."
+    left="XPATH#//vertices/vertex[@position=4]/lemma"
+    operator="="
+    right="be" />
+  <test id="eng.disamb.23.2" trace=".disambiguated.xml"
+    comment="soit : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=4]/macro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.23.b" type="informative">
+  <call-parameters>
+      <param key="text" value="He was not sure what to do."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>was</expl>
+  <test id="eng.disamb.23.3" trace=".disambiguated.xml"
+    comment="was : micro-vg : verbe copule subjonctif"
+    left="XPATH#//vertices/vertex[@position=4]/micro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.24.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="I do not think he should come. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>not</expl>
+  <test id="eng.disamb.24.1" trace=".disambiguated.xml"
+    comment="not : lemme not ..."
+    left="XPATH#//vertices/vertex[@position=6]/lemma"
+    operator="="
+    right="not" />
+  <test id="eng.disamb.24.2" trace=".disambiguated.xml"
+    comment="not : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=6]/macro"
+    operator="="
+    right="ADV" />
+</testcase>
+<testcase id="eng.disamb.24.b" type="informative">
+  <call-parameters>
+      <param key="text" value="I do not think he should come. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>not</expl>
+  <test id="eng.disamb.24.3" trace=".disambiguated.xml"
+    comment="not : micro-vg : adverbe negatif"
+    left="XPATH#//vertices/vertex[@position=6]/micro"
+    operator="="
+    right="PART" />
+</testcase>
+<testcase id="eng.disamb.25.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="He thought that their inpendance should be an irrefutable demand. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>inpendance</expl>
+  <test id="eng.disamb.25.1" trace=".disambiguated.xml"
+    comment="inpendance : lemme inpendanc..."
+    left="XPATH#//vertices/vertex[@position=23]/lemma"
+    operator="="
+    right="inpendance" />
+  <test id="eng.disamb.25.2" trace=".disambiguated.xml"
+    comment="inpendance : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=23]/macro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.25.b" type="informative">
+  <call-parameters>
+      <param key="text" value="He thought that their inpendance should be an irrefutable demand. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>inpendance</expl>
+  <test id="eng.disamb.25.3" trace=".disambiguated.xml"
+    comment="inpendance: micro-vg : Mot inconnu"
+    left="XPATH#//vertices/vertex[@position=23]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.26.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The opposition already thought that it had won the day. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>thought</expl>
+  <test id="eng.disamb.26.1" trace=".disambiguated.xml"
+    comment="thought : lemme think..."
+    left="XPATH#//vertices/vertex[@position=24]/lemma"
+    operator="contains"
+    right="think" />
+  <test id="eng.disamb.26.2" trace=".disambiguated.xml"
+    comment="thought : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=24]/macro"
+    operator="contains"
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.26.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The opposition already thought that it had won the day. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>thought</expl>
+  <test id="eng.disamb.26.3" trace=".disambiguated.xml"
+    comment="thought: micro-vg : verbe general passe"
+    left="XPATH#//vertices/vertex[@position=24]/micro"
+    operator="contains"
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.26.c" type="informative">
+  <call-parameters>
+      <param key="text" value="The opposition had already thought that it had won the day. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>had already thought</expl>
+  <test id="eng.disamb.26.3" trace=".disambiguated.xml"
+    comment="thought: micro-vg : verbe general passe"
+    left="XPATH#//vertices/vertex[@position=28]/micro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.28.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="He saw signs of destruction at every turn."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>signs</expl>
+  <test id="eng.disamb.28.1" trace=".disambiguated.xml"
+    comment="signs : lemme sign..."
+    left="XPATH#//vertices/vertex[@position=8]/lemma"
+    operator="="
+    right="sign" />
+  <test id="eng.disamb.28.2" trace=".disambiguated.xml"
+    comment="signs : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=8]/macro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.28.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value="He saw signs of destruction at every turn."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>signs</expl>
+  <test id="eng.disamb.28.3" trace=".disambiguated.xml"
+    comment="signs: micro-vg :nom commun"
+    left="XPATH#//vertices/vertex[@position=8]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.32" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The pro-Democratic faction disbanded. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>eastern</expl>
+  <test id="eng.disamb.32" trace=".disambiguated.xml"
+    comment="Democratic : lemme democratic..."
+    left="XPATH#//vertices/vertex[@position=9]/lemma"
+    operator="="
+    right="democratic" />
+  <test id="eng.disamb.32.2" trace=".disambiguated.xml"
+    comment="democratic : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=9]/macro"
+    operator="="
+    right="ADJ" />
+</testcase>
+<testcase id="eng.disamb.34.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="We will not abandon the square before victory is achieved. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>square</expl>
+  <test id="eng.disamb.34.1" trace=".disambiguated.xml"
+    comment="square : lemme square..."
+    left="XPATH#//vertices/vertex[@position=25]/lemma"
+    operator="="
+    right="square" />
+  <test id="eng.disamb.34.2" trace=".disambiguated.xml"
+    comment="square : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=25]/macro"
+    operator="contains"
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.34.b" type="informative">
+  <call-parameters>
+      <param key="text" value="We will not abandon the square before victory is achieved. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>square</expl>
+  <test id="eng.disamb.34.3" trace=".disambiguated.xml"
+    comment="square: micro-vg : Nc gen"
+    left="XPATH#//vertices/vertex[@position=25]/micro"
+    operator="contains"
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.35.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="&quot;We will not abandon the square before victory is achieved,&quot; he was heard to have said."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>said</expl>
+  <test id="eng.disamb.35.1" trace=".disambiguated.xml"
+    comment="said : lemme say..."
+    left="XPATH#//vertices/vertex[@position=83]/lemma"
+    operator="="
+    right="say" />
+  <test id="eng.disamb.35.2" trace=".disambiguated.xml"
+    comment="lancé : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=83]/macro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.35.b" type="informative">
+  <call-parameters>
+      <param key="text" value="&quot;We will not abandon the square before victory is achieved,&quot; he was heard to have said."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>said</expl>
+  <test id="eng.disamb.35.3" trace=".disambiguated.xml"
+    comment="said: micro-vg : verbe principal participe"
+    left="XPATH#//vertices/vertex[@position=83]/micro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.36.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The speech was well-received. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>The</expl>
+  <test id="eng.disamb.36.1" trace=".disambiguated.xml"
+    comment="The : lemme the..."
+    left="XPATH#//vertices/vertex[@position=1]/lemma"
+    operator="="
+    right="the" />
+  <test id="eng.disamb.36.2" trace=".disambiguated.xml"
+    comment="Le : macro-vg : DET"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="="
+    right="DET" />
+</testcase>
+<testcase id="eng.disamb.36.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The speech was well-received. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>The</expl>
+  <test id="eng.disamb.36.3" trace=".disambiguated.xml"
+    comment="The: micro-vg : det general"
+    left="XPATH#//vertices/vertex[@position=1]/micro"
+    operator="="
+    right="DET" />
+</testcase>
+<testcase id="eng.disamb.37.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The sign was clear to everyone present. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>sign</expl>
+  <test id="eng.disamb.37.1" trace=".disambiguated.xml"
+    comment="sign : lemme sign..."
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="sign" />
+  <test id="eng.disamb.37.2" trace=".disambiguated.xml"
+    comment="sign : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.37.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The sign was clear to everyone present. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>sign</expl>
+  <test id="eng.disamb.37.3" trace=".disambiguated.xml"
+    comment="sign: micro-vg : nom commun"
+    left="XPATH#//vertices/vertex[@position=5]/micro"
+    operator="="
+    right="NOUN" />
+</testcase>
+<testcase id="eng.disamb.38.a" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The sign was clear to everyone present. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>was</expl>
+  <test id="eng.disamb.38.1" trace=".disambiguated.xml"
+    comment="was : lemme be..."
+    left="XPATH#//vertices/vertex[@position=10]/lemma"
+    operator="="
+    right="be" />
+  <test id="eng.disamb.38.2" trace=".disambiguated.xml"
+    comment="est : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=10]/macro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.38.b" type="informative">
+  <call-parameters>
+      <param key="text" value="The sign was clear to everyone present. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>was</expl>
+  <test id="eng.disamb.38.3" trace=".disambiguated.xml"
+    comment="lancé: micro-vg : verbe copule indicatif"
+    left="XPATH#//vertices/vertex[@position=10]/micro"
+    operator="="
+    right="VERB" />
+</testcase>
+<testcase id="eng.disamb.39" type="pertinent">
+  <call-parameters>
+      <param key="text" value="LECH WALESA IN THE UKRAINE"/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>LECH</expl>
+  <test id="eng.disamb.39.1" trace=".disambiguated.xml"
+    comment="LECH : lemme LECH..."
+    left="XPATH#//vertices/vertex[@position=1]/lemma"
+    operator="="
+    right="Lech" />
+  <test id="eng.disamb.39.2" trace=".disambiguated.xml"
+    comment="est : macro-vg : np"
+    left="XPATH#//vertices/vertex[@position=1]/macro"
+    operator="contains"
+    right="PROPN" />
+</testcase>
+<testcase id="eng.disamb.40" type="pertinent">
+  <call-parameters>
+      <param key="text" value="LECH WALESA EN UKRAINE"/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>WALESA</expl>
+  <test id="eng.disamb.40.1" trace=".disambiguated.xml"
+    comment="WALESA : lemme WALESA..."
+    left="XPATH#//vertices/vertex[@position=6]/lemma"
+    operator="="
+    right="walesa" />
+  <test id="eng.disamb.40.2" trace=".disambiguated.xml"
+    comment="WALESA : macro-vg : np"
+    left="XPATH#//vertices/vertex[@position=6]/macro"
+    operator="contains"
+    right="PROPN" />
+</testcase>
+ <testcase id="eng.disamb.43" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The Dutch president asks Kiev to investigate all these complaints."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>asks</expl>
+  <test id="eng.disamb.43.1" trace=".disambiguated.xml"
+    comment="asks : lemme ask..."
+    left="XPATH#//vertices/vertex[@position=21]/lemma"
+    operator="="
+    right="ask" />
+  <test id="eng.disamb.43.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=21]/macro"
+    operator="contains"
+    right="VERB" />
+ </testcase> 
+ <testcase id="eng.disamb.44" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Lech Walesa, on the side of the opposants, spoke before more than 100,000 partisans."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>more</expl>
+  <test id="eng.disamb.44.1" trace=".disambiguated.xml"
+    comment="more : lemme more..."
+    left="XPATH#//vertices/vertex[@position=57]/lemma"
+    operator="="
+    right="more" />
+  <test id="eng.disamb.44.2" trace=".disambiguated.xml"
+    comment="more : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=57]/macro"
+    operator="="
+    right="ADV" />
+ </testcase>
+ <testcase id="eng.disamb.47" type="pertinent">
+  <call-parameters>
+      <param key="text" value="We cannot accept these results as legitimate, because it does not correspond to international normes."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>legitimate</expl>
+  <test id="eng.disamb.47.1" trace=".disambiguated.xml"
+    comment="legitimate : lemme legitimate..."
+    left="XPATH#//vertices/vertex[@position=35]/lemma"
+    operator="="
+    right="legitimate" />
+  <test id="eng.disamb.47.2" trace=".disambiguated.xml"
+    comment="pas : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=35]/macro"
+    operator="="
+    right="ADJ" />
+ </testcase>
+  <testcase id="eng.disamb.48" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Warning Ukranian leaders, Colin Powell said, &quot;We cannot accept these results as legitimate, because it does not correspond to international normes."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>leaders</expl>
+  <test id="eng.disamb.48.1" trace=".disambiguated.xml"
+    comment="leaders : lemme leaders..."
+    left="XPATH#//vertices/vertex[@position=18]/lemma"
+    operator="="
+    right="leader" />
+  <test id="eng.disamb.48.2" trace=".disambiguated.xml"
+    comment="leaders : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=18]/macro"
+    operator="="
+    right="NOUN" />
+ </testcase>
+ <testcase id="eng.disamb.49" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Warning Ukrainian leaders, Colin Powell said, &quot;We cannot accept these results as legitimate, because it does not correspond to international normes."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>Ukrainians</expl>
+  <test id="eng.disamb.49.1" trace=".disambiguated.xml"
+    comment="Ukrainians : lemme Ukrainian..."
+    left="XPATH#//vertices/vertex[@position=9]/lemma"
+    operator="="
+    right="Ukrainian" />
+  <test id="eng.disamb.49.2" trace=".disambiguated.xml"
+    comment="dirigeants : macro-vg : adj"
+    left="XPATH#//vertices/vertex[@position=9]/macro"
+    operator="contains"
+    right="NOUN" />
+ </testcase>
+ <testcase id="eng.disamb.50" type="pertinent">
+  <call-parameters>
+      <param key="text" value="&quot;every is behind us&quot;, said the speaker. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>said</expl>
+  <test id="eng.disamb.50.1" trace=".disambiguated.xml"
+    comment="said : lemme say..."
+    left="XPATH#//vertices/vertex[@position=23]/lemma"
+    operator="="
+    right="say" />
+  <test id="eng.disamb.50.2" trace=".disambiguated.xml"
+    comment="dit : macro-vg : v"
+    left="XPATH#//vertices/vertex[@position=23]/macro"
+    operator="contains"
+    right="VERB" />
+ </testcase>
+  <testcase id="eng.disamb.51" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Estimates ran to around 3 million people."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>around</expl>
+  <test id="eng.disamb.51.1" trace=".disambiguated.xml"
+    comment="around : lemme around..."
+    left="XPATH#//vertices/vertex[@position=18]/lemma"
+    operator="="
+    right="around" />
+  <test id="eng.disamb.51.2" trace=".disambiguated.xml"
+    comment="environ : macro-vg : adv"
+    left="XPATH#//vertices/vertex[@position=18]/macro"
+    operator="contains"
+    right="ADV" />
+ </testcase>
+  <testcase id="eng.disamb.52" type="pertinent">
+  <call-parameters>
+      <param key="text" value="A miner from Donetsk, in the east, began to speak. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>miner</expl>
+  <test id="eng.disamb.52.1" trace=".disambiguated.xml"
+    comment="miner : lemme miner..."
+    left="XPATH#//vertices/vertex[@position=3]/lemma"
+    operator="="
+    right="miner" />
+  <test id="eng.disamb.52.2" trace=".disambiguated.xml"
+    comment="mineur : macro-vg : nc"
+    left="XPATH#//vertices/vertex[@position=3]/macro"
+    operator="="
+    right="NOUN" />
+ </testcase>
+  <testcase id="eng.disamb.53" type="pertinent">
+  <call-parameters>
+      <param key="text" value="A miner recently arrived from the east, began to speak. "/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>arrived</expl>
+  <!--<test id="eng.disamb.53.1" trace=".disambiguated.xml"
+    comment="arrived : lemme arrive..."
+    left="XPATH#//vertices/vertex[@position=18]/lemma"
+    operator="="
+    right="" /> -->
+  <test id="eng.disamb.53.2" trace=".disambiguated.xml"
+    comment="venu : macro-vg : !=nc"
+    left="XPATH#//vertices/vertex[@position=18]/micro"
+    operator="contains"
+    right="VERB" />
+ </testcase>
+<testcase id="eng.disamb.54" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The small tiny cat is a devil."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>small</expl>
+  <test id="eng.disamb.54.1" trace=".disambiguated.xml"
+    comment="small : lemme small..."
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="small" />
+  <test id="eng.disamb.54.2" trace=".disambiguated.xml"
+    comment="small : macro-vg : !=nc"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="contains"
+    right="ADJ" />
+ </testcase>
+  <testcase id="eng.disamb.55" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The small, really, tiny cat is a devil."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+        <item value="query"/>
+      </list>
+    </call-parameters>
+  <expl>small</expl>
+  <test id="eng.disamb.55.1" trace=".disambiguated.xml"
+    comment="small : lemme petit..."
+    left="XPATH#//vertices/vertex[@position=5]/lemma"
+    operator="="
+    right="small" />
+  <test id="eng.disamb.55.2" trace=".disambiguated.xml"
+    comment="small : macro-vg : !=nc"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="contains"
+    right="ADJ" />
+ </testcase>
+<testcase id="eng.disamb.56" type="blocking">
+  <call-parameters>
+      <param key="text" value="The Airbus A380 is the largest airplane in the world."/>
+      <param key="language" value="eng.ud"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>A380 is a symbol</expl>
+  <test id="eng.disamb.56.1" trace=".disambiguated.xml"
+    comment="A380 : lemma a380"
+    left="XPATH#//vertices/vertex[@position=12]/lemma"
+    operator="="
+    right="a380" />
+  <test id="eng.disamb.14.2" trace=".disambiguated.xml"
+    comment="A380 : micro : SYM"
+    left="XPATH#//vertices/vertex[@position=12]/micro"
+    operator="="
+    right="SYM" />
+</testcase>
+ </testcases>
