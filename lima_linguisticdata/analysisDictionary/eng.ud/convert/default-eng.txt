@@ -28,5 +28,5 @@ t_small	NOUN-Number=Plur
 t_small	X-Foreign=Yes
 t_url	NOUN-Number=Sing
 t_word_brk	PUNCT
-t_date		NUM-NumType=Card
-t_hour		NUM-NumType=Card
+t_date	NUM-NumType=Card
+t_hour	NUM-NumType=Card
