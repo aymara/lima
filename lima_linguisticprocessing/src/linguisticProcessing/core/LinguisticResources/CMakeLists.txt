@@ -59,6 +59,7 @@ install(TARGETS lima-lp-linguisticresources DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 install(FILES 
+    AbstractAccessResource.h
     AbstractResource.h  
     AbstractResourceBase.h  
     LinguisticResources.h 

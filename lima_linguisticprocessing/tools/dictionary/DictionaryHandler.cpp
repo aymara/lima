@@ -107,7 +107,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
 //     LDEBUG << "DictionaryCompiler::startElement read entry " << m_currentKey;
     m_currentIndex=getStringIndex(m_currentKey);
 //     LDEBUG << "index = " << m_currentIndex;
-    if (m_currentIndex == 0)
+    if (m_currentIndex == 0 || m_currentIndex >= m_entries.size())
     {
       LERROR << "ERROR : key '" << m_currentKey << "' is not in accessKeys ! ignore it" ;
       m_currentEntry = &m_invalidEntry;
@@ -151,7 +151,11 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
         LDEBUG << "DictionaryCompiler::startElement read desacc " << m_currentKey << " => " << desaccstr;
 #endif
         uint64_t desaccIndex=getStringIndex(desaccstr);
-        if (desaccIndex!=0)
+        if (desaccIndex == 0 || desaccIndex >= m_entries.size())
+        {
+          LERROR << "ERROR : desacc key '" << desaccIndex << "' is not in accessKeys ! ignore it" ;
+        }
+        else
         {
           Accented acc;
           acc.id=m_currentIndex;
@@ -457,10 +461,10 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
 
   // write dictionary entries data
 
-  uint64_t nbEntries=m_entries.size();
+  auto nbEntries = m_entries.size();
   writeCodedInt(out,nbEntries);
-  for (vector<Entry>::iterator entryItr=m_entries.begin();
-       entryItr!=m_entries.end();
+  for (auto entryItr = m_entries.begin();
+       entryItr != m_entries.end();
        entryItr++)
   {
     if (entryItr->del)
@@ -469,7 +473,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
     }
 
     // write accented data to allow computing entry length
-    streampos accPos=m_entryData.tellp();
+    std::streampos accPos=m_entryData.tellp();
     uint64_t accLen=0;
     entryItr->accented.sort();
     for (list<Accented>::const_iterator accItr=entryItr->accented.begin();
@@ -526,7 +530,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
       out.write(m_charbuf,entryItr->concatLength);
     }
   }
-  cerr << "wrote " << m_entries.size() << " entries" << endl;
+  cerr << "wrote " << nbEntries << " entries" << endl;
   m_entries.clear();
   m_entryData.clear();
 
@@ -547,7 +551,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
     writeCodedInt(out,l);
     out.write(m_charbuf,l);
   }
-  cerr << "wrote " << lingPropVec.size() << " linguistic property set" << endl;
+  std::cerr << "wrote " << lingPropVec.size() << " linguistic property set" << std::endl;
   lingPropVec.clear();
 }
 
@@ -645,9 +649,7 @@ uint64_t DictionaryCompiler::placeLingPropsIntoCharBuf(const std::vector<Linguis
 uint64_t DictionaryCompiler::getStringIndex(const LimaString& str)
 {
   // look at cache
-  for (list<pair<LimaString, uint64_t> >::iterator it=m_strCache.begin();
-       it!=m_strCache.end();
-       it++)
+  for (auto it = m_strCache.begin(); it != m_strCache.end(); it++)
   {
     if (str == it->first)
     {

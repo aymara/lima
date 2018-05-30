@@ -40,6 +40,15 @@ namespace AnalysisDict
 // forward declaration
 class NotMainKeysDictionaryEntryHandler;
 
+// enum class IsFinal { NotFinal, Final };
+// enum class IsEmpty { NotEmpty, Empty };
+// enum class HasLingInfos { DoesNotHaveLingInfos, HaveLingInfos };
+// enum class HasConcatenatedForm { DoesNotHaveConcatenatedForm, 
+//   HaveConcatenatedForm };
+// enum class HasAccentedForm { DoesNotHaveAccentedForm, 
+//   HaveAccentedForm };
+// enum class IsMainKeys { NotMainKeys, MainKeys };
+
 /**
 @author Benoit Mathieu
 */
