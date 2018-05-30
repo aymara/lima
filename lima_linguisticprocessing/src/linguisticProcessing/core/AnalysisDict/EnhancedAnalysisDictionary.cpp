@@ -18,11 +18,13 @@
 */
 #include "EnhancedAnalysisDictionary.h"
 #include "EnhancedAnalysisDictionaryIterator.h"
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/misc/stringspool.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <iostream>
@@ -32,6 +34,7 @@
 #include <QFileInfo>
 
 using namespace Lima;
+using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::MediaticData;
@@ -141,19 +144,23 @@ EnhancedAnalysisDictionary::~EnhancedAnalysisDictionary()
 }
 
 void EnhancedAnalysisDictionary::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+  XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 {
   ANALYSISDICTLOGINIT;
   LDEBUG  << "EnhancedAnalysisDictionary::init";
-  MediaId language=manager->getInitializationParameters().language;
-  m_d->m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
+  MediaId language = manager->getInitializationParameters().language;
+  m_d->m_sp = &MediaticData::MediaticData::changeable().stringsPool(language);
   try
   {
-    string accessId=unitConfiguration.getParamsValueAtKey("accessKeys");
-    const AbstractResource* res=LinguisticResources::single().getResource(language,accessId);
-    const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
-    if (!connect(aar,SIGNAL(accessFileReloaded(Common::AbstractAccessByString*)),this,SLOT(slotAccessFileReloaded(Common::AbstractAccessByString*))))
+    string accessId = unitConfiguration.getParamsValueAtKey("accessKeys");
+    const AbstractResource* res= LinguisticResources::single().getResource(language,accessId);
+    const AbstractAccessResource* aar =static_cast<const AbstractAccessResource*>(res);
+    if (!connect( 
+      aar,
+      &AbstractAccessResource::accessFileReloaded, 
+      this,
+      &EnhancedAnalysisDictionary::slotAccessFileReloaded))
     {
       LERROR << "Unable to connect accessFileReloaded";
       throw LimaException("Unable to connect accessFileReloaded");
@@ -163,27 +170,38 @@ void EnhancedAnalysisDictionary::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'accessKeys' in EnhancedAnalysisDictionary group for language " << (int) language;
+    LERROR << "no param 'accessKeys' in EnhancedAnalysisDictionary group for language " 
+            << (int) language;
     throw InvalidConfiguration();
   }
   try
   {
-    QString binaryFilePath = Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
-                                                   unitConfiguration.getParamsValueAtKey("dictionaryValuesFile").c_str());
+    QString binaryFilePath = Misc::findFileInPaths(
+      MediaticData::MediaticData::single().getResourcesPath().c_str(),
+      unitConfiguration.getParamsValueAtKey("dictionaryValuesFile").c_str());
     resourceFileWatcher().addPath(binaryFilePath);
     QWriteLocker locker(&m_d->m_lock);
     m_d->m_dicoData->loadBinaryFile(binaryFilePath.toUtf8().constData());
   }
   catch (NoSuchList& )
   {
-    LERROR << "no list 'dictionaryValues' in EnhancedAnalysisDictionary group for language " << (int) language;
+    LERROR << "no list 'dictionaryValues' in EnhancedAnalysisDictionary group for language " 
+            << (int) language;
     throw InvalidConfiguration();
   }
-
-
+  if (m_d->m_access->getSize() != m_d->m_dicoData->getSize())
+  {
+    LERROR << "EnhancedAnalysisDictionary::init keys and data sizes differ while they should not for language"
+            << (int) language;
+    LERROR << "Keys size =" << m_d->m_access->getSize();
+    LERROR << "Data size =" << m_d->m_dicoData->getSize();
+    Q_ASSERT(m_d->m_access->getSize() == m_d->m_dicoData->getSize());
+    throw LinguisticProcessingException("EnhancedAnalysisDictionary::init keys and data sizes differ while they should not");
+  }
 }
 
-void EnhancedAnalysisDictionary::slotAccessFileReloaded(Common::AbstractAccessByString* access)
+void EnhancedAnalysisDictionary::slotAccessFileReloaded(
+    Common::AbstractAccessByString* access)
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "EnhancedAnalysisDictionary::slotAccessFileReloaded";
@@ -193,21 +211,24 @@ void EnhancedAnalysisDictionary::slotAccessFileReloaded(Common::AbstractAccessBy
 void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 {
   ANALYSISDICTLOGINIT;
-  // Check if the file exists as, when a file is replaced, dictionaryFileChanged can be triggered 
-  // two times, when it is first suppressed and when the new version is available. One should not 
-  // try to load the missing file
+  // Check if the file exists as, when a file is replaced, dictionaryFileChanged
+  // can be triggered two times, when it is first suppressed and when the new 
+  // version is available. One should not try to load the missing file
   if (QFileInfo::exists(path))
   {
     LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged reload" << path;
     QWriteLocker locker(&m_d->m_lock);
     if (m_d->m_dicoData != 0)
+    {
       delete m_d->m_dicoData;
+    }
     m_d->m_dicoData = new DictionaryData();
     m_d->m_dicoData->loadBinaryFile(path.toUtf8().constData());
   }
   else
   {
-    LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged deleted, ignoring" << path;
+    LINFO << "EnhancedAnalysisDictionary::dictionaryFileChanged deleted, ignoring" 
+          << path;
   }
 }
 
@@ -217,42 +238,59 @@ uint64_t EnhancedAnalysisDictionary::getSize() const
   return m_d->m_dicoData->getSize();
 }
 
-DictionaryEntry EnhancedAnalysisDictionary::getEntry(const StringsPoolIndex wordId, const Lima::LimaString& word) const
+DictionaryEntry EnhancedAnalysisDictionary::getEntry(
+    const StringsPoolIndex wordId, 
+    const Lima::LimaString& word) const
 {
   if (m_d->m_isMainKeys) return getEntryData(wordId);
   return getEntryData(static_cast<StringsPoolIndex>(m_d->m_access->getIndex(word)));
 }
 
-DictionaryEntry EnhancedAnalysisDictionary::getEntry(const Lima::LimaString& word) const
+DictionaryEntry EnhancedAnalysisDictionary::getEntry(
+    const Lima::LimaString& word) const
 {
   return getEntryData( static_cast<StringsPoolIndex>(m_d->m_access->getIndex(word)) );
 }
 
-DictionaryEntry EnhancedAnalysisDictionary::getEntry(const StringsPoolIndex wordId) const
+DictionaryEntry EnhancedAnalysisDictionary::getEntry(
+    const StringsPoolIndex wordId) const
 {
   if (m_d->m_isMainKeys) return getEntryData(wordId);
   return getEntryData( static_cast<StringsPoolIndex>(m_d->m_access->getIndex((*m_d->m_sp)[wordId])) );
 }
 
 
-DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex wordId) const
+DictionaryEntry EnhancedAnalysisDictionary::getEntryData(
+    const StringsPoolIndex wordId) const
 {
 //  ANALYSISDICTLOGINIT;
 //  LDEBUG << "getEntry " << wordId;
 //   QReadLocker locker(&m_d->m_lock);
   if (wordId >= m_d->m_dicoData->getSize())
   {
+//     ANALYSISDICTLOGINIT;
+//     LERROR << "EnhancedAnalysisDictionary::getEntryData tried to access id"
+//             << wordId << "while id max is" << m_d->m_dicoData->getSize();
+//     throw LinguisticProcessingException("EnhancedAnalysisDictionary::getEntryData tried to access out of bound id");
 //    LDEBUG << "return empty : index out of range";
-    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
+    auto delegateEntry = new EnhancedAnalysisDictionaryEntry(
+      static_cast<StringsPoolIndex>(0),
+      false,true,false,false,false,
+      0,0,
+      m_d->m_dicoData,
+      m_d->m_isMainKeys,
+      m_d->m_access,
+      m_d->m_sp);
+    return DictionaryEntry(delegateEntry);
   }
   
-  StringsPoolIndex strId=wordId;
+  StringsPoolIndex strId = wordId;
   if (!m_d->m_isMainKeys) {
     strId = (*m_d->m_sp)[m_d->m_access->getSpelling(wordId)];
   }
  
   unsigned char* p=m_d->m_dicoData->getEntryAddr(wordId);
-  uint64_t read=DictionaryData::readCodedInt(p);
+  uint64_t read = DictionaryData::readCodedInt(p);
   bool final=false;
   if (read == 1)
   {
@@ -262,51 +300,75 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   if (read == 0)
   {
 //    LDEBUG << "return empty entry";
-    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,true,false,false,false,p,p,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
+    auto entry = new EnhancedAnalysisDictionaryEntry(strId,
+                                                     final,
+                                                     true,
+                                                     false,
+                                                     false,
+                                                     false,
+                                                     p,p,
+                                                     m_d->m_dicoData,
+                                                     m_d->m_isMainKeys,
+                                                     m_d->m_access,
+                                                     m_d->m_sp);
+    return DictionaryEntry(entry);
   }
-  unsigned char* start=p;
-  unsigned char* end=p+read;
-  bool hasLing=false;
-  bool hasAccented=false;
-  bool hasConcat=false;
-  read=DictionaryData::readCodedInt(p);
+  unsigned char* start = p;
+  unsigned char* end = p+read;
+  bool hasLing = false;
+  bool hasAccented = false;
+  bool hasConcat = false;
+  read = DictionaryData::readCodedInt(p);
   hasLing=(read != 0);
 //  LDEBUG << "info length = " << read;
-  p+=read;
-  if (p!=end)
+  p += read;
+  if (p != end)
   {
-    read=DictionaryData::readCodedInt(p);
+    read = DictionaryData::readCodedInt(p);
 //    LDEBUG << "accented length = " << read;
-    hasAccented=(read != 0);
-    p+=read;
+    hasAccented = (read != 0);
+    p += read;
     if (p!=end)
     {
-      read=DictionaryData::readCodedInt(p);
+      read = DictionaryData::readCodedInt(p);
 //      LDEBUG << "concat length = " << read;
-      hasConcat=(read != 0);
-      p+=read;
+      hasConcat = (read != 0);
+      p += read;
     }
   }
   Q_ASSERT(p==end);
 //  LDEBUG << "return entry " << (uint64_t)start << " , " << (uint64_t)end;
-  return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,false,hasLing,hasConcat,hasAccented,start,end,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
+  auto entry = new EnhancedAnalysisDictionaryEntry(strId,
+                                                   final,
+                                                   false,
+                                                   hasLing,
+                                                   hasConcat,
+                                                   hasAccented,
+                                                   start,
+                                                   end,
+                                                   m_d->m_dicoData,
+                                                   m_d->m_isMainKeys,
+                                                   m_d->m_access,
+                                                   m_d->m_sp);
+  return DictionaryEntry(entry);
 }
 
-std::pair< DictionarySubWordIterator, DictionarySubWordIterator > EnhancedAnalysisDictionary::getSubWordEntries(const int offset, const LimaString& key) const
+std::pair< DictionarySubWordIterator, DictionarySubWordIterator > 
+EnhancedAnalysisDictionary::getSubWordEntries(const int offset, 
+                                              const LimaString& key) const
 {
-  std::pair<AccessSubWordIterator,AccessSubWordIterator> accessItrs=
-    m_d->m_access->getSubWords(offset,key);
-  return std::pair< DictionarySubWordIterator, DictionarySubWordIterator >(
+  auto accessItrs = m_d->m_access->getSubWords(offset,key);
+  return std::make_pair(
            DictionarySubWordIterator(new EnhancedAnalysisDictionarySubWordIterator(accessItrs.first,*this)),
            DictionarySubWordIterator(new EnhancedAnalysisDictionarySubWordIterator(accessItrs.second,*this)));
 
 }
 
-std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > EnhancedAnalysisDictionary::getSuperWordEntries(const LimaString& key) const
+std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > 
+EnhancedAnalysisDictionary::getSuperWordEntries(const LimaString& key) const
 {
-  std::pair<AccessSuperWordIterator,AccessSuperWordIterator> accessItrs=
-    m_d->m_access->getSuperWords(key);
-  return std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator >(
+  auto accessItrs = m_d->m_access->getSuperWords(key);
+  return std::make_pair(
            DictionarySuperWordIterator(new EnhancedAnalysisDictionarySuperWordIterator(accessItrs.first)),
            DictionarySuperWordIterator(new EnhancedAnalysisDictionarySuperWordIterator(accessItrs.second)));
 }

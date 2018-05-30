@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -252,7 +252,7 @@ bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
 //     LDEBUG << "DictionaryCompiler::startElement read entry " << m_currentKey;
     m_currentIndex=getStringIndex(m_currentKey);
 //     LDEBUG << "index = " << m_currentIndex;
-    if (m_currentIndex == 0)
+    if (m_currentIndex == 0 || m_currentIndex >= m_entries.size())
     {
       LERROR << "ERROR : key '" << m_currentKey
               << "' is not in accessKeys ! ignore it" ;
@@ -298,8 +298,12 @@ bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
         LDEBUG << "DictionaryCompiler::startElement read desacc "
                 << m_currentKey << " => " << desaccstr;
 #endif
-        auto desaccIndex = getStringIndex(desaccstr);
-        if (desaccIndex != 0)
+        uint64_t desaccIndex=getStringIndex(desaccstr);
+        if (desaccIndex == 0 || desaccIndex >= m_entries.size())
+        {
+          LERROR << "ERROR : desacc key '" << desaccIndex << "' is not in accessKeys ! ignore it" ;
+        }
+        else
         {
           Accented acc;
           acc.id = m_currentIndex;

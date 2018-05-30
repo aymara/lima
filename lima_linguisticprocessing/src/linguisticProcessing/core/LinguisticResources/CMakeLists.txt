@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -46,6 +46,7 @@ install(TARGETS lima-lp-linguisticresources
 
 ########### install files ###############
 install(FILES
+    AbstractAccessResource.h
     AbstractResource.h
     AbstractResourceBase.h
     LinguisticResources.h

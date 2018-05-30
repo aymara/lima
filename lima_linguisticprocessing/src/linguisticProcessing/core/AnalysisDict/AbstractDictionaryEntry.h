@@ -32,6 +32,16 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace AnalysisDict {
 
+// Should use definitions below to reduce the risk of errors
+// enum class IsFinal { NotFinal, Final };
+// enum class IsEmpty { NotEmpty, Empty };
+// enum class HasLingInfos { DoesNotHaveLingInfos, HaveLingInfos };
+// enum class HasConcatenatedForm { DoesNotHaveConcatenatedForm, 
+//   HaveConcatenatedForm };
+// enum class HasAccentedForm { DoesNotHaveAccentedForm, 
+//   HaveAccentedForm };
+// enum class IsMainKeys { NotMainKeys, MainKeys };
+
 class LIMA_ANALYSISDICT_EXPORT AbstractDictionaryEntry
 {
   public:
@@ -70,6 +80,10 @@ class LIMA_ANALYSISDICT_EXPORT AbstractDictionaryEntry
 
 };
 
+/**
+ * The delegate in this class should be a shared pointer. Currently the object
+ * owns the pointer.
+ */
 class LIMA_ANALYSISDICT_EXPORT DictionaryEntry
 {
   public:
