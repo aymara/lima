@@ -257,7 +257,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
               << m_currentKey << "'!";
       return false;
     }
-    const auto & it = m_conv.find(Common::Misc::limastring2utf8stdstring(v));
+    const auto & it = m_conv.find(v.toUtf8().constData());
     if (it != m_conv.end())
     {
       m_currentLingProps.push_back(it->second);

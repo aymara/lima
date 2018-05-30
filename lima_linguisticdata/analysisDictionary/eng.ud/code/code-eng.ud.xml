@@ -39,7 +39,10 @@
     <value name="Yes"/>
     <value name="No"/>
   </property>
-
+  <property name="Typo">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
   <!-- Inflectional features -->
   <!-- Inflectional features: Nominal -->
   <property name="Gender">
@@ -152,8 +155,8 @@
     <value name="Qot"/>
     <value name="Sub"/>
   </property>
-<!--   <property name="Tense"> -->
-  <property name="TIME">
+  <property name="Tense">
+<!--   <property name="TIME"> -->
     <value name="Fut"/>
     <value name="Imp"/>
     <value name="Past"/>
@@ -168,7 +171,7 @@
     <value name="Prog"/>
     <value name="Prosp"/>
   </property>-->
-<!--  <property name="Voice">
+  <property name="Voice">
     <value name="Act"/>
     <value name="Antip"/>
     <value name="Cau"/>
@@ -177,7 +180,7 @@
     <value name="Mid"/>
     <value name="Pass"/>
     <value name="Rcp"/>
-  </property>-->
+  </property>
 <!--  <property name="Evident">
     <value name="Fh"/>
     <value name="Nfh"/>
@@ -213,223 +216,63 @@
     <value name="NOUN"/> <!--Was NC-->
     <value name="PROPN"/> <!--Was NP-->
     <value name="VERB"/> <!--Was V-->
-
     <value name="ADP"/> <!--Was PREP-->
     <value name="CONJ"/> <!--Kept. Two UD values are CCONJ and SCONJ-->
     <value name="DET"/>
     <value name="NUM"/>
     <value name="PART"/>
     <value name="PRON"/>
-
     <value name="PUNCT"/>
     <value name="DIVERS"/> <!--Kept. Two UD values are SYM and X-->
   </property>
 
   <subproperty name="MICRO" parent="MACRO">
-
     <subvalues value="ADJ">
       <value name="ADJ"/>
-      <value name="ADJ-Degree=Cmp"/>
-      <value name="ADJ-Degree=Pos"/>
-      <value name="ADJ-Degree=Pos|NumType=Ord"/>
-      <value name="ADJ-Degree=Pos|Typo=Yes"/>
-      <value name="ADJ-Degree=Sup"/>
-      <value name="ADJ-Number=Sing"/>
     </subvalues>
-
     <subvalues value="ADV">
       <value name="ADV"/>
-      <value name="ADV-Abbr=Yes"/>
-      <value name="ADV-Degree=Cmp"/>
-      <value name="ADV-Degree=Pos"/>
-      <value name="ADV-Degree=Pos|NumType=Ord"/>
-      <value name="ADV-Degree=Sup"/>
-      <value name="ADV-Number=Sing"/>
-      <value name="ADV-NumType=Mult"/>
-      <value name="ADV-PronType=Dem"/>
-      <value name="ADV-PronType=Int"/>
-      <value name="ADV-PronType=Rel"/>
-      <value name="ADV-Typo=Yes"/>
     </subvalues>
-
     <subvalues value="AUX">
-      <value name="AUX-Abbr=Yes|VerbForm=Fin"/>
-      <value name="AUX-Abbr=Yes|VerbForm=Inf"/>
-      <value name="AUX-Mood=Imp|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Number=Sing|Person=1|Tense=Past|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Number=Sing|Tense=Past|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Tense=Past|Typo=Yes|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Tense=Pres|Typo=Yes|VerbForm=Fin"/>
-      <value name="AUX-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
-      <value name="AUX-Tense=Past|VerbForm=Part"/>
-      <value name="AUX-Typo=Yes|VerbForm=Fin"/>
-      <value name="AUX-VerbForm=Fin"/>
-      <value name="AUX-VerbForm=Ger"/>
-      <value name="AUX-VerbForm=Inf"/>
+      <value name="AUX"/>
     </subvalues>
-
     <subvalues value="INTJ">
       <value name="INTJ"/>
-      <value name="INTJ-Abbr=Yes"/>
-      <value name="INTJ-Degree=Pos"/>
-      <value name="INTJ-Number=Sing"/>
     </subvalues>
-
     <subvalues value="NOUN">
       <value name="NOUN"/>
-      <value name="NOUN-Abbr=Yes|Number=Plur"/>
-      <value name="NOUN-Abbr=Yes|Number=Sing"/>
-      <value name="NOUN-Degree=Pos"/>
-      <value name="NOUN-Number=Plur"/>
-      <value name="NOUN-Number=Sing"/>
-      <value name="NOUN-Number=Sing|Typo=Yes"/>
     </subvalues>
-
     <subvalues value="PROPN">
-      <value name="PROPN-Degree=Pos"/>
-      <value name="PROPN-Number=Plur"/>
-      <value name="PROPN-Number=Sing"/>
-      <value name="PROPN-Number=Sing|Typo=Yes"/>
+      <value name="PROPN"/>
     </subvalues>
-
     <subvalues value="VERB">
       <value name="VERB"/>
-      <value name="VERB-Abbr=Yes|Mood=Ind|Tense=Pres|VerbForm=Fin"/>
-      <value name="VERB-Abbr=Yes|Tense=Pres|VerbForm=Part"/>
-      <value name="VERB-Abbr=Yes|VerbForm=Ger"/>
-      <value name="VERB-Abbr=Yes|VerbForm=Inf"/>
-      <value name="VERB-Mood=Imp|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Number=Sing|Person=1|Tense=Past|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Number=Sing|Tense=Past|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Tense=Past|Typo=Yes|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
-      <value name="VERB-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
-      <value name="VERB-Number=Plur"/>
-      <value name="VERB-Number=Sing"/>
-      <value name="VERB-Tense=Past|Typo=Yes|VerbForm=Part|Voice=Pass"/>
-      <value name="VERB-Tense=Past|VerbForm=Part"/>
-      <value name="VERB-Tense=Past|VerbForm=Part|Voice=Pass"/>
-      <value name="VERB-Tense=Pres|VerbForm=Part"/>
-      <value name="VERB-Typo=Yes|VerbForm=Ger"/>
-      <value name="VERB-Typo=Yes|VerbForm=Inf"/>
-      <value name="VERB-VerbForm=Ger"/>
-      <value name="VERB-VerbForm=Inf"/>
     </subvalues>
-
     <subvalues value="ADP">
       <value name="ADP"/>
-      <value name="ADP-Abbr=Yes"/>
-      <value name="ADP-Typo=Yes"/>
     </subvalues>
-
     <subvalues value="CONJ">
       <value name="CCONJ"/>
-      <value name="CCONJ-Abbr=Yes"/>
-      <value name="CCONJ-Typo=Yes"/>
       <value name="SCONJ"/>
-      <value name="SCONJ-Abbr=Yes"/>
-      <value name="SCONJ-Typo=Yes"/>
     </subvalues>
-
     <subvalues value="DET">
       <value name="DET"/>
-      <value name="DET-Abbr=Yes"/>
-      <value name="DET-Definite=Def|PronType=Art"/>
-      <value name="DET-Definite=Ind|PronType=Art"/>
-      <value name="DET-Number=Plur|PronType=Dem"/>
-      <value name="DET-Number=Sing|PronType=Dem"/>
-      <value name="DET-PronType=Dem"/>
-      <value name="DET-PronType=Int"/>
-      <value name="DET-PronType=Rel"/>
-      <value name="DET-PronType=Rel|Typo=Yes"/>
-      <value name="DET-Typo=Yes"/>
     </subvalues>
-
     <subvalues value="NUM">
-      <value name="NUM-Number=Sing"/>
-      <value name="NUM-NumType=Card"/>
+      <value name="NUM"/>
     </subvalues>
-
     <subvalues value="PART"> 
       <value name="PART"/>
-      <value name="PART-Abbr=Yes"/>
-      <value name="PART-Typo=Yes"/>
     </subvalues>
-
     <subvalues value="PRON">
       <value name="PRON"/>
-      <value name="PRON-Abbr=Yes|Number=Sing"/>
-      <value name="PRON-Abbr=Yes|Person=2|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Abbr=Yes|PronType=Int"/>
-      <value name="PRON-Case=Acc|Gender=Fem|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Acc|Gender=Fem|Number=Sing|Person=3|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Gender=Masc|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Acc|Gender=Masc|Number=Sing|Person=3|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Gender=Neut|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Acc|Gender=Neut|Number=Sing|Person=3|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Number=Plur|Person=1|PronType=Prs"/>
-      <value name="PRON-Case=Acc|Number=Plur|Person=1|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Number=Plur|Person=2|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Number=Plur|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Acc|Number=Plur|Person=3|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Number=Sing|Person=1|PronType=Prs"/>
-      <value name="PRON-Case=Acc|Number=Sing|Person=1|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Number=Sing|Person=2|PronType=Prs|Reflex=Yes"/>
-      <value name="PRON-Case=Acc|Person=2|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Gender=Fem|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Gender=Masc|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Gender=Neut|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Number=Plur|Person=1|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Number=Plur|Person=3|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Number=Sing|Person=1|PronType=Prs"/>
-      <value name="PRON-Case=Nom|Person=2|PronType=Prs"/>
-      <value name="PRON-Definite=Def|PronType=Art"/>
-      <value name="PRON-Gender=Fem|Number=Sing|Person=3|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Gender=Fem|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Gender=Masc|Number=Sing|Person=3|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Gender=Masc|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Gender=Neut|Number=Sing|Person=3|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Gender=Neut|Number=Sing|Person=3|PronType=Prs"/>
-      <value name="PRON-Number=Plur|Person=1|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Number=Plur|Person=1|Poss=Yes|PronType=Prs|Typo=Yes"/>
-      <value name="PRON-Number=Plur|Person=1|PronType=Prs"/>
-      <value name="PRON-Number=Plur|Person=3|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Number=Plur|Person=3|PronType=Prs"/>
-      <value name="PRON-Number=Plur|PronType=Dem"/>
-      <value name="PRON-Number=Sing"/>
-      <value name="PRON-Number=Sing|Person=1|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Number=Sing|Person=1|PronType=Prs"/>
-      <value name="PRON-Number=Sing|Person=2|PronType=Prs"/>
-      <value name="PRON-Number=Sing|PronType=Dem"/>
-      <value name="PRON-Person=2|Poss=Yes|PronType=Prs"/>
-      <value name="PRON-Person=2|Poss=Yes|PronType=Prs|Typo=Yes"/>
-      <value name="PRON-Poss=Yes|PronType=Int"/>
-      <value name="PRON-Poss=Yes|PronType=Rel"/>
-      <value name="PRON-Poss=Yes|PronType=Prs"/>
-      <value name="PRON-PronType=Dem"/>
-      <value name="PRON-PronType=Int"/>
-      <value name="PRON-PronType=Prs"/>
-      <value name="PRON-PronType=Rel"/>
     </subvalues>
-
     <subvalues value="PUNCT">
       <value name="PUNCT"/>
     </subvalues>
-
     <subvalues value="DIVERS">
       <value name="SYM"/>
-      <value name="SYM-Number=Sing"/>
       <value name="X"/>
-      <value name="X-Foreign=Yes"/>
-      <value name="X-Number=Sing"/>
     </subvalues>
-
   </subproperty>
 </Linguistic_codes>

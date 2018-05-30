@@ -96,7 +96,7 @@ void EnhancedAnalysisDictionaryTest1::testEngUD()
                QStringList() << "door",
                QStringList() << "door",
                QStringList() << "door",
-               "NOUN-Number=Sing");
+               "NOUN");
 }
 
 void EnhancedAnalysisDictionaryTest1::testFre()
