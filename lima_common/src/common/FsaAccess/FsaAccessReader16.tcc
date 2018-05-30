@@ -64,7 +64,7 @@ void FsaAccessReader16<graphType>::read ( const std::string & filename )
   LDEBUG <<  "FsaAccessReader16::read(" << filename.c_str() << ")";
 #endif
   std::ifstream is(filename.data(), std::ios::binary );
-  if( is.bad() ) {
+  if( is.fail() ) {
     std::string mess = "FsaAccess16::read: Can't open file " + filename;
     LERROR << mess.c_str();
     throw( AccessByStringNotInitialized( mess ) );
@@ -110,6 +110,9 @@ void FsaAccessReader16<graphType>::read ( AbstractFsaAccessIStreamWrapper& iw )
 
   FsaAccess16<graphType>::readBody( iw );
   m_size = buildHash();
+#ifdef DEBUG_CD
+  LDEBUG <<  "FsaAccessReader16::read computed size" << m_size;
+#endif
 }
 
 template <typename graphType >
@@ -143,20 +146,18 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
   LDEBUG << "FsaAccessReader16::computeHash(" << from << ")" ;
 #endif
 
-  typename dicoGraph_traits16<graphType>::nconst_vname_map_type vname_map =
-    boost::get(boost::vertex_name,FsaAccess16<graphType>::m_graph);
-  typename  dicoGraph_traits16<graphType>::nconst_vcount_map_type vcount_map =
-    boost::get(vertex_count,FsaAccess16<graphType>::m_graph);
+  auto vname_map = boost::get(boost::vertex_name,FsaAccess16<graphType>::m_graph);
+  auto vcount_map = boost::get(vertex_count,FsaAccess16<graphType>::m_graph);
   
   // vocabulaire du sous_graphe
   int total(0);
   // tableau des coefficients
-  std::vector<int>& counts = get(vcount_map,from);
+  auto& counts = get(vcount_map,from);
   // nombre de sous automates
-  typename graphType::degree_size_type outd = boost::out_degree(from, FsaAccess16<graphType>::m_graph);
+  auto outd = boost::out_degree(from, FsaAccess16<graphType>::m_graph);
     
   VERTEX_PROPERTY_16 val = get(vname_map, from);
-  if( (val&SET_16) == 0 ) {
+  if( (val & SET_16) == 0 ) {
   //if( counts.size() == 0 ) {
     // On parcours les sous-arbre
     typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
@@ -165,10 +166,11 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
     for( unsigned  int i = 0 ; ei != edge_end  ; ei++ , i++ ) {
       int subtotal = computeHash( target(*ei,FsaAccess16<graphType>::m_graph) );
       total = total + subtotal;
-      // On m�orise les outd-1 premier pour le calcul de hash
+      // memorizing outd-1 first to compute the hash
       if( i+1 < outd ) {
 #ifdef DEBUG_CD
-        LDEBUG << "FsaAccessReader16::computeHash(" << from << "): counts.push_back(" << total << ")" ;
+        LDEBUG << "FsaAccessReader16::computeHash(" << from 
+                << "): counts.push_back(" << total << ")" ;
 #endif
         counts.push_back(total);
       }
@@ -177,7 +179,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
   }
   else {
     // On totalise les tailles des sous-arbres 
-typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
+    typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
     boost::tie(ei,edge_end) = boost::out_edges(from,FsaAccess16<graphType>::m_graph);
     if( outd > 1 ) {
       assert( counts.size() == outd-1 );
@@ -343,10 +345,9 @@ Lima::LimaString FsaAccessReader16<graphType>::getExtent(
   LDEBUG <<  "FsaDictionary::getExtent(" << prefix << ")";
 #endif
 
-  typename boost::graph_traits<graphType>::vertex_descriptor prefixPos = getStartNode(prefix);
+  auto prefixPos = getStartNode(prefix);
   
-  typename dicoGraph_traits16<graphType>::vtext_map_type vtext_map =
-    boost::get(vertex_text,FsaAccess16<graphType>::m_graph);
+  auto vtext_map = boost::get(vertex_text, FsaAccess16<graphType>::m_graph);
     // find the character letter in text property
   const Lima::LimaString& text = get(vtext_map,prefixPos);
   return text;
@@ -368,7 +369,7 @@ template <typename graphType >
 #endif
 
   // return prefix_iterator starting at this node
-  return std::pair<AccessSubWordIterator,AccessSubWordIterator > (
+  return std::make_pair (
     AccessSubWordIterator(new fsaReader_subword_iterator16<graphType>(*this, word, FsaAccess16<graphType>::m_rootVertex, offset)),
     AccessSubWordIterator(new fsaReader_subword_iterator16<graphType>(*this, word)));
 }
