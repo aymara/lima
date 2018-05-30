@@ -74,8 +74,12 @@ void EnhancedAnalysisDictionaryTest0::initTestCase()
 // conversion functions
 void EnhancedAnalysisDictionaryTest0::test()
 {
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
   // initialize minimal resources to test EnhancedDict = globalFsaAccess + mainDictionary
-  std::string lpFreConfFile("lima-lp-res-Enhanced.xml");
+  QString lpConfFile = findFileInPaths(configPath, "lima-lp-fre.xml");
+
  /* content of file is:
   <modulesConfig>
   <module name="Resources">
@@ -92,7 +96,7 @@ void EnhancedAnalysisDictionaryTest0::test()
    </module>
 </modulesConfig>
 */
-  XMLConfigurationFileParser langParser(lpFreConfFile);
+  XMLConfigurationFileParser langParser(lpConfFile.toUtf8().constData());
   std::cout << "configure resources for language fre" << std::endl;
   auto keyFileName = findFileInPaths(
     MediaticData::MediaticData::single().getResourcesPath().c_str(), 
@@ -121,7 +125,7 @@ void EnhancedAnalysisDictionaryTest0::test()
   
   std::cout << "EnhancedAnalysisDictionary end" << std::endl;
   auto entry = dictionary.getEntry(QString::fromUtf8("le"));
-  auto id = entry.getEntryId();
+//   auto id = entry.getEntryId();
   QVERIFY( true );
 }
 

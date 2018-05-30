@@ -19,7 +19,7 @@
     comment="checking presence of the word 'blue-ribbon' with the tag"
     left="XPATH#//data_structure/vertex[token[position=5][length=11]]/data/simple_word//property/p[@prop='MICRO']/@val"
     operator="="
-    right="NOUN-Number=Sing"/>
+    right="NOUN"/>
   <test
     comment="checking presence of the word campaign"
     left="XPATH#//data_structure/vertex[token[position=17][length=8]]/data/simple_word"
@@ -64,7 +64,7 @@
     comment="checking the tag of the word minds"
     left="XPATH#//data_structure/vertex[token[position=5][length=5]]/data/simple_word//property/p[@prop='MICRO']/@val"
     operator="contains"
-    right="NOUN-Number=Plur"/>
+    right="NOUN"/>
 </testcase>
 <testcase type="blocking">
   <call-parameters>

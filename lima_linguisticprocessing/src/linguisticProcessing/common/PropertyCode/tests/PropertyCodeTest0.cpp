@@ -83,9 +83,9 @@ void PropertyCodeTest0::test_load()
   
   LinguisticCode encoded = pcm.encode({ 
     {"MACRO", "NOUN"},
-    {"MICRO", "NOUN-Number=Plur"},
+    {"MICRO", "NOUN"},
   });
-  QVERIFY( pmMicro.getPropertySymbolicValue(encoded) == "NOUN-Number=Plur" );
+  QVERIFY( pmMicro.getPropertySymbolicValue(encoded) == "NOUN" );
 
 }
 

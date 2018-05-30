@@ -88,8 +88,8 @@ void DictionaryDataTest1::test()
   // test unsigned char* getEntryAddr(uint64_t index) const;
   uint64_t index(0);
   unsigned char*entryAddr = dicoData.getEntryAddr(index);
-  std::cout << "dicoData.getEntryAddr[0]=" << hex << static_cast<void*>(entryAddr) << std::endl;
-  std::cout << "dicoData..m_data=" << hex << static_cast<void*>(dicoData.m_data) << std::endl;
+  std::cout << "dicoData.getEntryAddr[0]=" << std::hex << static_cast<void*>(entryAddr) << std::endl;
+  std::cout << "dicoData..m_data=" << std::hex << static_cast<void*>(dicoData.m_data) << std::endl;
 //  QVERIFY();
   // Que tester???
   // Il faudrait un petit dictionnaire bien contrôlé pour effectuer un jeu de test efficace

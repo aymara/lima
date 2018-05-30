@@ -25,12 +25,12 @@ file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic)
 # generate symbolic code file from code file
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/convertCodeToSymbolicCode.py ../code/code-eng.ud.xml > ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
+  COMMAND ${PROJECT_SOURCE_DIR}/scripts/convertCodeToSymbolicCode.py ../code/coded.txt > ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND convertSymbolicCodes  --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND parseXMLPropertyFile --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
-  DEPENDS ../code/code-eng.ud.xml
+  DEPENDS ../code/code-eng.ud.xml ../code/coded.txt
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  COMMENT "Generate convjys.txt"
+  COMMENT "Generate convjys.txt and symbolicCode-eng.ud.xml"
   VERBATIM
 )
 add_custom_target(
