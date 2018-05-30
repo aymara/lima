@@ -30,10 +30,10 @@
         <item value="defaultProperties"/>
         <item value="fullTokenXmlLoggerDefaultProperties"/>
 <!--        <item value="SpecificEntitiesModex"/>
-        <item value="specificEntitiesXmlLogger"/>
+        <item value="specificEntitiesXmlLogger"/>-->
         <item value="viterbiPostagger-int-none"/>
         <item value="disambiguatedGraphXmlLogger"/>
-        <item value="sentenceBoundariesFinder"/>
+<!--        <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>-->
@@ -54,10 +54,10 @@
         <item value="defaultProperties"/>
         <item value="fullTokenXmlLoggerDefaultProperties"/>
 <!--        <item value="SpecificEntitiesModex"/>
-        <item value="specificEntitiesXmlLogger"/>
+        <item value="specificEntitiesXmlLogger"/>-->
         <item value="viterbiPostagger-freq"/>
         <item value="disambiguatedGraphXmlLogger"/>
-        <item value="sentenceBoundariesFinder"/>
+<!--        <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>-->
