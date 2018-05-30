@@ -41,14 +41,14 @@ add_custom_target(
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
-    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
+    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.ud.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
     COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.dat
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
     COMMENT "produce eng XML dico under Linux"
@@ -57,14 +57,14 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else()
   # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
   add_custom_command(
-    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.dat
+    OUTPUT dico.xml  freeling-ext-lima.txt default-eng.ud.dat
     COMMAND echo ^<dictionary^> > dico.xml.tmp
     COMMAND python ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
     COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
     COMMENT "produce eng XML dico under Windows"
@@ -84,4 +84,4 @@ add_custom_target(
 )
 add_dependencies(converteng.ud dicoxmleng.ud )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat COMPONENT eng DESTINATION share/apps/lima/resources/LinguisticProcessings/eng.ud)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.ud.dat COMPONENT eng DESTINATION share/apps/lima/resources/LinguisticProcessings/eng.ud)
