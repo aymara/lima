@@ -377,7 +377,7 @@
     <group name="defaultProperties" class="DefaultProperties">
       <param key="dictionary" value="mainDictionary"/>
       <param key="charChart" value="flatcharchart"/>
-      <param key="defaultPropertyFile" value="LinguisticProcessings/eng/default-eng.dat"/>
+      <param key="defaultPropertyFile" value="LinguisticProcessings/eng.ud/default-eng.ud.dat"/>
       <list name="skipUnmarkStatus">
         <item value="t_capital_1st"/>
         <item value="t_dot_number"/>
@@ -417,14 +417,14 @@
       </list>
     </group>
     <group name="DynamicSvmToolPosTagger" class="SvmToolPosTagger">
-      <param key="model" value="Disambiguation/SVMToolModel-eng/lima"/>
+      <param key="model" value="Disambiguation/SVMToolModel-eng.ud/lima"/>
       <param key="defaultCategory" value="SENT"/>
       <list name="stopCategories">
         <item value="SENT" />
       </list>
     </group>
     <group name="SvmToolPosTagger" class="SvmToolPosTagger">
-      <param key="model" value="Disambiguation/SVMToolModel-eng/lima"/>
+      <param key="model" value="Disambiguation/SVMToolModel-eng.ud/lima"/>
     </group>
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
@@ -913,7 +913,7 @@
       <param key="dictionaryValuesFile" value="LinguisticProcessings/eng.ud/dicoDat-eng.ud.dat"/>
     </group>
     <group name="globalFsaAccess" class="FsaAccess">
-      <param key="keyFile" value="LinguisticProcessings/eng/dicoKey-eng.dat"/>
+      <param key="keyFile" value="LinguisticProcessings/eng.ud/dicoKey-eng.ud.dat"/>
     </group>
     <group name="dictionaryCode" class="DictionaryCode">
       <param key="codeFile" value="LinguisticProcessings/eng.ud/code-eng.ud.dat"/>
@@ -930,7 +930,7 @@
       <param key="file" value="LinguisticProcessings/StopLists/stopList-eng.dat"/>
     </group>
     <group name="idiomaticExpressionsRecognizer" class="AutomatonRecognizer">
-      <param key="rules" value="LinguisticProcessings/eng/idiomaticExpressions-eng.bin"/>
+      <param key="rules" value="LinguisticProcessings/eng.ud/idiomaticExpressions-eng.ud.bin"/>
     </group>
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.bin"/>
