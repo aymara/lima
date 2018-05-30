@@ -43,11 +43,11 @@ else ()
   if (SHORTEN_POR_CORPUS_FOR_SVMLEARN)
     add_custom_command(
         OUTPUT lima.A0.UNK
-        COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../corpus_eng.ud_merge.txt | head -n 100000 > corpus_eng.ud.txt
+        COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt | head -n 100000 > corpus_eng.ud.txt
         COMMAND PERL5LIB=$ENV{PERL5LIB} ${SVMT_LEARN} config-minimale.SVMT
         DEPENDS 
           config-minimale.SVMT
-        ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt
+          ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt
         COMMENT "Compiles eng.ud SVMTool model"
         VERBATIM
       )
