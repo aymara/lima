@@ -179,7 +179,7 @@
     <group name="defaultProperties" class="DefaultProperties">
       <param key="dictionary" value="mainDictionary"/>
       <param key="charChart" value="flatcharchart"/>
-      <param key="defaultPropertyFile" value="LinguisticProcessings/eng/default-eng.dat"/>
+      <param key="defaultPropertyFile" value="LinguisticProcessings/eng.ud/default-eng.ud.dat"/>
       <list name="skipUnmarkStatus">
         <item value="t_capital_1st"/>
         <item value="t_dot_number"/>
@@ -352,7 +352,7 @@
     </group>
     <group name="mainDictionary" class="EnhancedAnalysisDictionary">
       <param key="accessKeys" value="globalFsaAccess"/>
-      <param key="dictionaryValuesFile" value="LinguisticProcessings/eng/dicoDat-eng.dat"/>
+      <param key="dictionaryValuesFile" value="LinguisticProcessings/eng.ud/dicoDat-eng.ud.dat"/>
     </group>
     <group name="fakeCorporateAccess" class="FsaAccess">
       <param key="keyFile" value="LinguisticProcessings/fre/fake/corporateKey-fre.dat"/>
@@ -361,7 +361,7 @@
       <param key="keyFile" value="LinguisticProcessings/fre/fake/userKey-fre.dat"/>
     </group>
     <group name="globalFsaAccess" class="FsaAccess">
-      <param key="keyFile" value="LinguisticProcessings/eng/dicoKey-eng.dat"/>
+      <param key="keyFile" value="LinguisticProcessings/eng.ud/dicoKey-eng.ud.dat"/>
     </group>
     <group name="trigramMatrix" class="TrigramMatrix">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
@@ -373,7 +373,7 @@
       <param key="file" value="LinguisticProcessings/StopLists/stopList-eng.dat"/>
     </group>
     <group name="idiomaticExpressionsRecognizer" class="AutomatonRecognizer">
-      <param key="rules" value="LinguisticProcessings/eng/idiomaticExpressions-eng.bin"/>
+      <param key="rules" value="LinguisticProcessings/eng.ud/idiomaticExpressions-eng.ud.bin"/>
     </group>
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.bin"/>
