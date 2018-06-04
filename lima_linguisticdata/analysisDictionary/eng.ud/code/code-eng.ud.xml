@@ -46,23 +46,17 @@
   <!-- Inflectional features -->
   <!-- Inflectional features: Nominal -->
   <property name="Gender">
-<!--     <value name="Com"/> -->
+    <value name="Com"/>
     <value name="Fem"/>
     <value name="Masc"/>
     <value name="Neut"/>
   </property>
-<!--  <property name="GENDER">
-    <value name="MASC"/>
-    <value name="FEM"/>
-    <value name="NEUTRE"/>
-  </property>-->
-
-<!--  <property name="Animacy">
+  <property name="Animacy">
     <value name="Anim"/>
     <value name="Hum"/>
     <value name="Inan"/>
     <value name="Nhum"/>
-  </property>-->
+  </property>
   <property name="Number">
     <value name="Coll"/>
     <value name="Count"/>
@@ -83,7 +77,7 @@
     <value name="Erg"/>
     <value name="Nom"/>
     <!--Non-core-->
-<!--    <value name="Abe"/>
+    <value name="Abe"/>
     <value name="Ben"/>
     <value name="Cau"/>
     <value name="Cmp"/>
@@ -97,9 +91,9 @@
     <value name="Par"/>
     <value name="Tem"/>
     <value name="Tra"/>
-    <value name="Voc"/>-->
+    <value name="Voc"/>
     <!--Local-->
-<!--    <value name="Abl"/>
+    <value name="Abl"/>
     <value name="Add"/>
     <value name="Ade"/>
     <value name="All"/>
@@ -113,7 +107,7 @@
     <value name="Per"/>
     <value name="Sub"/>
     <value name="Sup"/>
-    <value name="Ter"/>-->
+    <value name="Ter"/>
   </property>
   <property name="Definite">
     <value name="Com"/>
@@ -156,7 +150,6 @@
     <value name="Sub"/>
   </property>
   <property name="Tense">
-<!--   <property name="TIME"> -->
     <value name="Fut"/>
     <value name="Imp"/>
     <value name="Past"/>
