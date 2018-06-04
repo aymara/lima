@@ -1251,13 +1251,28 @@ CreateEasyCompoundTense::CreateEasyCompoundTense(MediaId language,
 
   m_tempCompType=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
 
-  m_macroAccessor=&(codeManager.getPropertyAccessor("MACRO"));
-  m_microAccessor=&(codeManager.getPropertyAccessor("MICRO"));
-  m_genderAccessor=&(codeManager.getPropertyAccessor("GENDER"));
-  m_numberAccessor=&(codeManager.getPropertyAccessor("NUMBER"));
-  m_timeAccessor=&(codeManager.getPropertyAccessor("TIME"));
-  m_syntaxAccessor=&(codeManager.getPropertyAccessor("SYNTAX"));
-  m_personAccessor=&(codeManager.getPropertyAccessor("PERSON"));
+  QString macroCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("MACRO");
+  m_macroAccessor=&codeManager.getPropertyAccessor(macroCode.toUtf8().constData());
+  QString microCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("MICRO");
+  m_microAccessor=&codeManager.getPropertyAccessor(microCode.toUtf8().constData());
+  QString genderCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER");
+  m_genderAccessor=&codeManager.getPropertyAccessor(genderCode.toUtf8().constData());
+  QString numberCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER");
+  m_numberAccessor=&codeManager.getPropertyAccessor(numberCode.toUtf8().constData());
+  QString timeCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("TIME");
+  m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
+
+  QString syntaxCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("SYNTAX");
+  m_syntaxAccessor=&codeManager.getPropertyAccessor(syntaxCode.toUtf8().constData());
+  QString personCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("PERSON");
+  m_personAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 }
 
 bool CreateEasyCompoundTense::operator()(const AnalysisGraph& /*anagraph*/,

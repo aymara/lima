@@ -40,4 +40,9 @@
       <param key="filename" value="LinguisticProcessings/eng/gene-specyNames.sorted.toy.lst"/>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="gene-SpecyNames" class="NameIndex">
+      <param key="filename" value="LinguisticProcessings/eng.ud/gene-specyNames.sorted.toy.lst"/>
+    </group>
+  </module>
 </modulesConfig>

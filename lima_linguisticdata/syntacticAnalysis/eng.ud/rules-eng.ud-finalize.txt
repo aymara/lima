@@ -1,0 +1,47 @@
+###########################################################
+#
+# rules to recopy dependencies pointing to coordinated 
+# tokens onto the other member of the coordination
+#
+# Created on Wed May 11 2016
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)
+#
+###########################################################
+
+set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-eng.ud.txt
+
+#----------------------------------------------------------------------
+# 
+#----------------------------------------------------------------------
+@ConjCoord:@Tout (@Tout){0-n}:(@Tout){0-n} @Tout:SYNTACTIC_RELATION:
++!SecondUngovernedBy(trigger.1,left.1,"COORD1")
++!SecondUngovernedBy(trigger.1,right.2,"COORD2")
++CopyIncomingRelationsTo(left.1,right.2,"SUJ_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+@ConjCoord:@Tout (@Tout){0-n}:(@Tout){0-n} @Tout:SYNTACTIC_RELATION:
++!SecondUngovernedBy(trigger.1,left.1,"COORD1")
++!SecondUngovernedBy(trigger.1,right.2,"COORD2")
++!GovernedBy(left.1,"COD_V")
++CopyRelationsOutOfTo(right.2,left.1,"COD_V,CPL_V")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+#@ConjCoord:@Tout (@Tout){0-n}:(@Tout){0-n} @Tout:SYNTACTIC_RELATION:
+#+!SecondUngovernedBy(trigger.1,left.1,"COORD1")
+#+!SecondUngovernedBy(trigger.1,right.2,"COORD2")
+#+CopyIncomingRelationsTo(right.2,left.1,"SUJ_V,COD_V,CPL_V")
+#+CopyRelationsOutOfTo(left.1,right.2,"SUJ_V,COD_V,CPL_V")
+#=>AddRelationInGraph()
+#=<ClearStoredRelations()
+
+
+

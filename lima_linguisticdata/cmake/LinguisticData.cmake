@@ -620,6 +620,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
 	  COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
       DEPENDS ${_current} ${DEPENDENCIES}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      COMMENT "Compiling ${_current} into ${BINFILENAME}"
       VERBATIM
     )
   endforeach(_current ${ARGN})

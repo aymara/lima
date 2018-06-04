@@ -34,6 +34,7 @@
 #include <algorithm>
 
 using namespace std;
+using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
@@ -81,20 +82,26 @@ AgreementConstraint(MediaId language,
     ConstraintFunction(language,complement),
     m_categoryForAgreementAccessor(0)
 {
-  if (complement == Common::Misc::utf8stdstring2limastring("PERSON"))
+  QString genderCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER");
+  QString numberCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER");
+  QString personCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("PERSON");
+  if (complement == Common::Misc::utf8stdstring2limastring(personCode.toUtf8().constData()))
   {
     m_categoryForAgreementAccessor=
-      &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("PERSON"));
+      &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor(personCode.toUtf8().constData()));
   }
-  else if (complement == Common::Misc::utf8stdstring2limastring("GENDER"))
+  else if (complement == Common::Misc::utf8stdstring2limastring(genderCode.toUtf8().constData()))
   {
     m_categoryForAgreementAccessor=
-      &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("GENDER"));
+      &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor(genderCode.toUtf8().constData()));
   }
-  else if (complement == Common::Misc::utf8stdstring2limastring("NUMBER"))
+  else if (complement == Common::Misc::utf8stdstring2limastring(numberCode.toUtf8().constData()))
   {
     m_categoryForAgreementAccessor=
-      &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("NUMBER"));
+      &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor(numberCode.toUtf8().constData()));
   }
 }
 
@@ -142,12 +149,14 @@ operator()(const AnalysisGraph& anagraph,
 GenderAgreement::
 GenderAgreement(MediaId language,
                 const LimaString& /* unused complement*/ ):
-AgreementConstraint(language,Common::Misc::utf8stdstring2limastring("GENDER")) {}
+AgreementConstraint(language,static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER")) {}
 
 NumberAgreement::
 NumberAgreement(MediaId language,
                 const LimaString& /* unused complement */):
-AgreementConstraint(language,Common::Misc::utf8stdstring2limastring("NUMBER")) {}
+AgreementConstraint(language,static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER")) {}
 
 //**********************************************************************
 LinguisticPropertyIs::

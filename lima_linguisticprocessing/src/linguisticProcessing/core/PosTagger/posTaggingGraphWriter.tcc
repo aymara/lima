@@ -32,6 +32,12 @@ public:
 
   void operator()(std::ostream& out, const Vertex& v) const
   {
+    QString genderCode = static_cast<const Lima::Common::MediaticData::LanguageData&>(
+      Lima::Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("GENDER");
+    QString numberCode = static_cast<const Lima::Common::MediaticData::LanguageData&>(
+      Lima::Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("NUMBER");
+    QString syntaxCode = static_cast<const Lima::Common::MediaticData::LanguageData&>(
+      Lima::Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("SYNTAX");
 
     const Common::PropertyCode::PropertyManager& macroManager = m_propertyCodeManager->getPropertyManager("MACRO");
     const Common::PropertyCode::PropertyManager& microManager = m_propertyCodeManager->getPropertyManager("MICRO");
@@ -181,7 +187,7 @@ public:
             } 
             else if (*it == "genders" )
             {
-              const Common::PropertyCode::PropertyManager& genderManager = m_propertyCodeManager->getPropertyManager("GENDER");
+              const Common::PropertyCode::PropertyManager& genderManager = m_propertyCodeManager->getPropertyManager(genderCode.toUtf8().constData());
               std::set< LinguisticCode > genders;
               data->allValues(genderManager.getPropertyAccessor(),genders);
               std::set< LinguisticCode >::const_iterator itgenders, itgenders_end;
@@ -201,7 +207,7 @@ public:
             } 
             else if (*it == "numbers" )
             {
-              const Common::PropertyCode::PropertyManager& numberManager = m_propertyCodeManager->getPropertyManager("NUMBER");
+              const Common::PropertyCode::PropertyManager& numberManager = m_propertyCodeManager->getPropertyManager(numberCode.toUtf8().constData());
               std::set< LinguisticCode > numbers;
               data->allValues(numberManager.getPropertyAccessor(),numbers);
               std::set< LinguisticCode >::const_iterator itnumbers, itnumbers_end;
@@ -217,7 +223,7 @@ public:
             } 
             else if (*it == "syntax" )
             {
-              const Common::PropertyCode::PropertyManager& syntaxManager = m_propertyCodeManager->getPropertyManager("SYNTAX");
+              const Common::PropertyCode::PropertyManager& syntaxManager = m_propertyCodeManager->getPropertyManager(syntaxCode.toUtf8().constData());
               std::set< LinguisticCode > syntax;
               data->allValues(syntaxManager.getPropertyAccessor(),syntax);
               std::set< LinguisticCode >::const_iterator itn, itn_end;

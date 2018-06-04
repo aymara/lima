@@ -28,7 +28,7 @@
         <item value="simpleWord"/>
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
-<!--         <item value="idiomaticAlternatives"/> -->
+        <item value="idiomaticAlternatives"/>
         <!--item value="fullTokenXmlLoggerIdiomatic"/-->
         <item value="hyphenWordAlternatives"/>
         <!--item value="fullTokenXmlLoggerHyphen"/-->
@@ -36,7 +36,7 @@
         <!--item value="fullTokenXmlLoggerAbbreviations"/-->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
-<!--         <item value="SpecificEntitiesModex"/> -->
+        <item value="SpecificEntitiesModex"/>
         <!--item value="specificEntitiesXmlLogger"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
 <!--         <item value="viterbiPostagger-freq"/> -->
@@ -46,13 +46,13 @@
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
-<!--        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerSimplify"/>
         <item value="syntacticAnalyzerSimplifyQuotes"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerFinalize"/>
-        <item value="syntacticAnalyzerDummy"/>-->
+        <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
         <!--item value="coreferencesSolving"/--> 
         <!--item value="annotDotGraphWriter"/-->
@@ -183,7 +183,7 @@
     
      <group name="tag" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
-	<item value="flattokenizer"/>
+        <item value="flattokenizer"/>
         <!--item value="regexmatcher"/-->
         <!--item value="tokenizer"/-->
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
@@ -199,7 +199,7 @@
         <item value="defaultProperties"/>
         <item value="fullTokenXmlLoggerDefaultProperties"/>
         <item value="specificEntitiesXmlLogger"/>
-	<item value="SpecificEntitiesCRFTag"/>
+        <item value="SpecificEntitiesCRFTag"/>
         <!--item value="dotGraphWriter-beforepos"/-->
         <item value="viterbiPostagger-freq"/>
         <!--item value="SvmToolPosTagger"/-->
@@ -390,8 +390,8 @@
       </list>
     </group>
     <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
-      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
-      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.dat"/>
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.ud.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.ud.dat"/>
       <param key="costFunction" value="FrequencyCost" />
       <param key="defaultCategory" value="SENT"/>
       <list name="stopCategories">
@@ -399,8 +399,8 @@
       </list>
     </group>
     <group name="viterbiPostagger-int" class="ViterbiPosTagger">
-      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
-      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.dat"/>
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.ud.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.ud.dat"/>
       <param key="costFunction" value="IntegerCost" />
       <param key="defaultCategory" value="SENT"/>
       <list name="stopCategories">
@@ -408,8 +408,8 @@
       </list>
     </group>
     <group name="viterbiPostagger-int-none" class="ViterbiPosTagger">
-      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
-      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.dat"/>
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.ud.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.ud.dat"/>
       <param key="costFunction" value="IntegerCost" />
       <param key="defaultCategory" value="NONE_1"/>
       <list name="stopCategories">
@@ -507,7 +507,7 @@
   Definition of loggers
 *********************************************** -->
     <group name="beginStatusLogger" class="StatusLogger">
-      <param key="outputFile" value="beginStatus-eng.log"/>
+      <param key="outputFile" value="beginStatus-eng.ud.log"/>
       <list name="toLog">
         <item value="VmSize"/>
         <item value="VmData"/>
@@ -903,9 +903,9 @@
   <module name="Resources">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex.xml/resources-eng"/>
-        <item value="VerbNet-modex.xml/resources-eng"/>
-        <item value="ApproxNames-modex.xml/resources-eng"/>
+        <item value="SpecificEntities-modex.xml/resources-eng.ud"/>
+        <item value="VerbNet-modex.xml/resources-eng.ud"/>
+        <item value="ApproxNames-modex.xml/resources-eng.ud"/>
       </list>
     </group>
 
@@ -940,31 +940,31 @@
       <param key="rules" value="LinguisticProcessings/eng.ud/idiomaticExpressions-eng.ud.bin"/>
     </group>
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
-      <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.bin"/>
+      <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.ud.bin"/>
     </group>
     <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass1.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-homodeps-pass1.txt.bin"/>
     </group>
     <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass2.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-homodeps-pass2.txt.bin"/>
     </group>
     <group name="pleonasticPronouns" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-pleonasticPronouns.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-pleonasticPronouns.txt.bin"/>
     </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-heterodeps.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-heterodeps.txt.bin"/>
     </group>
     <group name="dummyRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-dummy.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-dummy.txt.bin"/>
     </group>
     <group name="finalizeRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-finalize.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-finalize.txt.bin"/>
     </group>
     <group name="simplifyAutomaton" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-rules-eng.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-rules-eng.ud.txt.bin"/>
     </group>
     <group name="simplifyAutomatonQuotes" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-quotes-rules-eng.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-quotes-rules-eng.ud.txt.bin"/>
     </group>
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>

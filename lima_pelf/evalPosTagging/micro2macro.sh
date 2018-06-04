@@ -12,5 +12,5 @@ lang=$1;
 
 case $lang in
     ger) sed -e 's/L_GE_\([^_>]*\)[^>]*>/L_GE_\1>/g' $2 ;;
-    fre | eng | spa | ara) sed -e 's/L_\([^_>]*\)[^>]*>/L_\1>/g' $2;;
+    fre | eng | eng.ud | spa | ara) sed -e 's/L_\([^_>]*\)[^>]*>/L_\1>/g' $2;;
 esac

@@ -1,0 +1,17 @@
+adjective	ADJ
+adverb	ADV
+DET	DET
+IN	ADP
+inseperable transitive verb	VERB
+interrogative adverb	ADV
+intransitive verb	VERB
+locative adverb	ADV
+noun	NOUN
+preposition	ADP
+pronoun	PRON
+proper noun	PROPN
+separable transitive verb	VERB
+subordinating conjunction	SCONJ
+temporal adverb	ADV
+TO	PART
+UH	INTJ

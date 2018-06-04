@@ -1,0 +1,444 @@
+<?xml version="1.0"?>
+<!DOCTYPE matrice_precedence SYSTEM "recochaines.dtd">
+<matrice_precedence>
+  <chaine type="nominale">
+    <filtre ID="FN1">
+      <nom>PRON-SUJET</nom>
+      <categorie>PRON</categorie>
+    </filtre>
+    <filtre ID="FN2">
+      <nom>PRON-OBJET</nom>
+      <categorie>PRON</categorie>
+    </filtre>
+    <filtre ID="FN3">
+      <nom>NC-ANNNP-PRE</nom>
+      <categorie>NOUN</categorie>
+    </filtre>
+    <filtre ID="FN4">
+      <nom>NC-ANNNP-POST</nom>
+      <categorie>NOUN</categorie>
+    </filtre>
+    <filtre ID="FN5">
+      <nom>NC</nom>
+      <categorie>NOUN</categorie>
+      <categorie>NUM</categorie>
+      <categorie>UNK</categorie>
+      <categorie>SYM</categorie>
+    </filtre>
+    <filtre ID="FN6">
+      <nom>NC-UNITE-MESURE</nom>
+      <categorie>NOUN</categorie>
+    </filtre>
+    <filtre ID="FN7">
+      <nom>NP</nom>
+      <categorie>PROPN</categorie>
+    </filtre>
+    <filtre ID="FN8">
+      <nom>NOM-JOUR</nom>
+      <categorie>NOUN</categorie>
+    </filtre>
+    <filtre ID="FN9">
+      <nom>NOM-MOIS</nom>
+      <categorie>NOUN</categorie>
+    </filtre>
+    <filtre ID="FN10">
+      <nom>VERBE-LEXICAL-PART-PASS</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FN30">
+      <nom>VERBE-LEXICAL-GERONDIF</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FN11">
+      <nom>DETERMINANTS</nom>
+      <categorie>DET</categorie>
+    </filtre>
+    <filtre ID="FN12">
+      <nom>PREDETERMINANTS</nom>
+      <categorie>DET</categorie>
+    </filtre>
+    <filtre ID="FN13">
+      <nom>POSTDETERMINANTS</nom>
+      <categorie>DET</categorie>
+    </filtre>
+    <filtre ID="FN14">
+      <nom>DETERMINANTS-INTERRO-REL</nom>
+      <categorie>DET</categorie>
+    </filtre>
+    <filtre ID="FN15">
+      <nom>ADV-MODIF-ADV-ADJ</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN16">
+      <nom>ADV-CONSTRUCT-APPOS</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN17">
+      <nom>ADV-FIN-CN</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN18">
+      <nom>ADV-NEG</nom>
+      <categorie>PART</categorie>
+    </filtre>
+    <filtre ID="FN19">
+      <nom>ADV-GENERAL</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN20">
+      <nom>ADV-EXIST</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN21">
+      <nom>ADV-COMPAR</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN22">
+      <nom>PRON-ADV-INTERRO-REL</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN23">
+      <nom>PRON-ADV-REL</nom>
+      <categorie>ADP</categorie>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN24">
+      <nom>PREP</nom>
+      <categorie>ADP</categorie>
+    </filtre>
+    <filtre ID="FN25">
+      <nom>PREP-COMPAR</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FN26">
+      <nom>ADJ-GEN</nom>
+      <categorie>ADJ</categorie>
+    </filtre>
+    <filtre ID="FN27">
+      <nom>ADJ-COMPAR</nom>
+      <categorie>ADJ</categorie>
+    </filtre>
+    <filtre ID="FN29">
+      <nom>INTERJ</nom>
+      <categorie>INTJ</categorie>
+    </filtre>
+    <filtre ID="FN31">
+      <nom>CONJONCTION-DE-COORDINATION</nom>
+      <categorie>CONJ</categorie>
+    </filtre>
+   </chaine>
+   <chaine type="verbale">
+    <filtre ID="FV1">
+      <nom>PRON-OBJ</nom>
+      <categorie>PRON</categorie>
+    </filtre>
+    <filtre ID="FV2">
+      <nom>PRON-REFL</nom>
+      <categorie>PRON</categorie>
+    </filtre>
+    <filtre ID="FV3">
+      <nom>VERBE-LEX-INDIC</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV4">
+      <nom>VERBE-BE-INDIC</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV5">
+      <nom>VERBE-DO-INDIC</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV6">
+      <nom>VERBE-HAVE-INDIC</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV7">
+      <nom>VERBE-AUX-MOD</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV8">
+      <nom>VERBE-LEX-PROG</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV9">
+      <nom>VERBE-LEX-PART-PRES</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV10">
+      <nom>VERBE-LEX-PART-PASS</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV11">
+      <nom>VERBE-LEX-GER</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV12">
+      <nom>VERBE-BE-PROG</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV13">
+      <nom>VERBE-BE-PART-PRES</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV14">
+      <nom>VERBE-BE-PART-PASS</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV15">
+      <nom>VERBE-BE-GER</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV16">
+      <nom>VERBE-DO-PROG</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV17">
+      <nom>VERBE-DO-PART-PRES</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV18">
+      <nom>VERBE-DO-PART-PASSE</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV19">
+      <nom>VERBE-DO-GER</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV20">
+      <nom>VERBE-LEX-INF</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV21">
+      <nom>VERBE-BE-INF</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV22">
+      <nom>VERBE-DO-INF</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV23">
+      <nom>VERBE-HAVE-INF</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV24">
+      <nom>VERBE-HAVE-PROG</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV25">
+      <nom>VERBE-HAVE-PART-PRES</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV26">
+      <nom>VERBE-HAVE-PART-PASS</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV27">
+      <nom>VERBE-HAVE-GER</nom>
+      <categorie>VERB</categorie>
+    </filtre>
+    <filtre ID="FV28">
+      <nom>ADV-MODIF-ADV-ADJ</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FV29">
+      <nom>ADV-NEG</nom>
+      <categorie>PART</categorie>
+    </filtre>
+    <filtre ID="FV30">
+      <nom>ADV-GEN</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FV31">
+      <nom>ADV-COMPAR</nom>
+      <categorie>ADV</categorie>
+    </filtre>
+    <filtre ID="FV32">
+      <nom>PREP</nom>
+      <categorie>ADP</categorie>
+    </filtre>
+    <filtre ID="FV33">
+      <nom>PREP-INF</nom>
+      <categorie>ADP</categorie>
+    </filtre>
+    <filtre ID="FV34">
+      <nom>PARTICULE</nom>
+      <categorie>ADP</categorie>
+    </filtre>
+   </chaine>
+   <matrice type="nominale">
+    <ligne REF="FN1">
+      <succ REF="FN2 FN3 FN7 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN2">
+      <succ REF="FN1 FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN3">
+      <succ REF="FN7 FN24"/>
+    </ligne>
+    <ligne REF="FN4">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN5">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN6">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN7">
+      <succ REF="FN3 FN4 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN8">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN9">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN10">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30 FN31"/>
+    </ligne>
+    <ligne REF="FN11">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN13 FN15 FN18 FN19 FN21 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN12">
+      <succ REF="FN11"/>
+    </ligne>
+    <ligne REF="FN13">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN15 FN18 FN21 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN14">
+      <succ REF="FN5 FN7 FN8 FN9 FN10 FN15 FN18 FN19 FN21 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN15">
+      <succ REF="FN19 FN26"/>
+    </ligne>
+    <ligne REF="FN16">
+      <succ REF="FN1 FN2 FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN29 FN30"/>
+    </ligne>
+    <ligne REF="FN18">
+      <succ REF="FN1 FN2 FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN15 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN19">
+      <succ REF="FN1 FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN21">
+      <succ REF="FN1 FN2 FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN19 FN24 FN25 FN26 FN30"/>
+    </ligne>
+    <ligne REF="FN24">
+      <succ REF="FN1 FN2 FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN18 FN19 FN21 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN25">
+      <succ REF="FN1 FN2 FN3 FN5 FN7 FN8 FN9 FN10 FN11 FN12 FN15 FN18 FN19 FN21 FN24 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN26">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30 FN31"/>
+    </ligne>
+    <ligne REF="FN27">
+      <succ REF="FN5 FN6 FN8 FN9 FN10 FN15 FN18 FN19 FN24 FN25 FN26 FN27 FN30"/>
+    </ligne>
+    <ligne REF="FN30">
+      <succ REF="FN3 FN5 FN6 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN17 FN18 FN19 FN21 FN24 FN25 FN26 FN27 FN30 FN31"/>
+    </ligne>
+    <ligne REF="FN31">
+      <succ REF="FN10 FN26 FN30"/>
+    </ligne>
+    <!-- FN5 enleve des debuts tant que anal synt genere trop de chaines -->
+    <debuts REF="FN1 FN3 FN5 FN7 FN8 FN9 FN10 FN11 FN12 FN14 FN15 FN16 FN18 FN19 FN20 FN21 FN24 FN26 FN27 FN29 FN30"/>
+    <fins REF="FN1 FN2 FN4 FN5 FN6 FN7 FN8 FN9 FN10 FN17 FN20 FN21 FN26 FN29 FN30"/>
+   </matrice>
+   <matrice type="verbale">
+    <ligne REF="FV1">
+      <succ REF="FV20 FV21 FV22 FV23 FV28 FV30"/>
+    </ligne>
+    <ligne REF="FV2">
+      <succ REF="FV28 FV30"/>
+    </ligne>
+    <ligne REF="FV3">
+      <succ REF="FV1 FV2 FV28 FV29 FV30 FV31 FV32 FV33 FV34"/>
+    </ligne>
+    <ligne REF="FV4">
+      <succ REF="FV1 FV2 FV8 FV9 FV10 FV18 FV24 FV26 FV28 FV29 FV30 FV31 FV32 FV33"/>
+    </ligne>
+    <ligne REF="FV5">
+      <succ REF="FV1 FV2 FV20 FV21 FV22 FV23 FV28 FV29 FV30 FV31"/>
+    </ligne>
+    <ligne REF="FV6">
+      <succ REF="FV1 FV10 FV14 FV28 FV29 FV30 FV31 FV33"/>
+    </ligne>
+    <ligne REF="FV7">
+      <succ REF="FV20 FV31 FV22 FV23 FV28 FV29 FV30 FV31"/>
+    </ligne>
+    <ligne REF="FV8">
+      <succ REF="FV1 FV32"/>
+    </ligne>
+    <ligne REF="FV9">
+      <succ REF="FV1 FV32"/>
+    </ligne>
+    <ligne REF="FV10">
+      <succ REF="FV1 FV32 FV33"/>
+    </ligne>
+    <ligne REF="FV11">
+      <succ REF="FV32"/>
+    </ligne>
+    <ligne REF="FV12">
+      <succ REF="FV1 FV2 "/>
+    </ligne>
+    <ligne REF="FV13">
+      <succ REF="FV1"/>
+    </ligne>
+    <ligne REF="FV14">
+      <succ REF="FV1 FV8 FV10 FV18 FV20 FV21 FV22 FV23 FV28 FV29 FV30 FV31 FV33"/>
+    </ligne>
+    <ligne REF="FV15">
+      <succ REF="FV1"/>
+    </ligne>
+    <ligne REF="FV16">
+      <succ REF="FV1 FV2"/>
+    </ligne>
+    <ligne REF="FV17">
+      <succ REF="FV1"/>
+    </ligne>
+    <ligne REF="FV20">
+      <succ REF="FV1 FV28 FV29 FV30 FV31"/>
+    </ligne>
+    <ligne REF="FV21">
+      <succ REF="FV8 FV10 FV18 FV24 FV26 FV28 FV29 FV30 FV31 FV33"/>
+    </ligne>
+    <ligne REF="FV22">
+      <succ REF="FV1 FV28 FV29 FV30"/>
+    </ligne>
+    <ligne REF="FV23">
+      <succ REF="FV1 FV28 FV29 FV30"/>
+    </ligne>
+    <ligne REF="FV24">
+      <succ REF="FV1 FV28 FV30"/>
+    </ligne>
+    <ligne REF="FV25">
+      <succ REF="FV1 "/>
+    </ligne>
+    <ligne REF="FV26">
+      <succ REF="FV1 FV33"/>
+    </ligne>
+    <ligne REF="FV28">
+      <succ REF="FV28 FV31"/>
+    </ligne>
+    <ligne REF="FV29">
+      <succ REF="FV3 FV6 FV8 FV10 FV12 FV14 FV16 FV18 FV20 FV21 FV22 FV23 FV24 FV26"/>
+    </ligne>
+    <ligne REF="FV30">
+      <succ REF="FV4 FV5 FV6 FV7 FV8 FV10 FV12 FV14 FV16 FV18 FV24 FV26"/>
+    </ligne>
+    <ligne REF="FV32">
+      <succ REF="FV1"/>
+    </ligne>
+    <ligne REF="FV33">
+      <succ REF="FV20 FV21 FV22 FV23"/>
+    </ligne>
+    <!--FV10 retire des debuts de chaine verbale possibles car un part pass n'est pas tout seul une chaine verbale/-->
+    <debuts REF="FV3 FV4 FV5 FV6 FV7 FV8 FV9 FV11 FV12 FV13 FV14 FV15 FV16 FV17 FV18 FV19 FV20 FV21 FV22 FV23 FV24 FV25 FV26 FV27 FV28 FV29 FV30"/>
+    <fins REF="FV1 FV2 FV3 FV4 FV5 FV6 FV7 FV8 FV9 FV10 FV11 FV12 FV13 FV14 FV15 FV16 FV17 FV18 FV19 FV20 FV21 FV22 FV23 FV24 FV25 FV26 FV27 FV29 FV30 FV31 FV34"/>
+   </matrice>
+</matrice_precedence>
+
+
+
+
