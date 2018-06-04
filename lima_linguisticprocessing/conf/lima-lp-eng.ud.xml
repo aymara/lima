@@ -425,6 +425,13 @@
     </group>
     <group name="SvmToolPosTagger" class="SvmToolPosTagger">
       <param key="model" value="Disambiguation/SVMToolModel-eng.ud/lima"/>
+      <param key="allFeatures" value="true"/>
+      <!-- Either allFeatures is there and true or the features list contains
+            a list of  features to use or neither and then no feature will be 
+      used -->
+<!--      <list name="features">
+        <item value="Tense" />
+      </list>-->
     </group>
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
