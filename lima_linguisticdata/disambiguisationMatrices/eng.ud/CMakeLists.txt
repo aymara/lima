@@ -20,8 +20,8 @@ endif()
 
 add_custom_command(
   OUTPUT succession_categs_retag.txt corpus_eng.ud_merge.txt
-  COMMAND grep -E "^[0-9]+" ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu | gawk -F "\\t" "BEGIN {OFS = FS} {print $2\"\\t\"$4\"-\"$6}" > corpus_eng.ud_merge.txt
-  COMMAND cat corpus_eng.ud_merge.txt | gawk -F "\\t" "{print $2}" > succession_categs_retag.txt
+  COMMAND grep -E "^[0-9]+" ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu | gawk -F "\\t" "BEGIN {OFS = FS} {$2 = substr($2,0,100); print $2\"\\t\"$4\"-\"$6}" | sed -e "s@-_$@@" > corpus_eng.ud_merge.txt
+  COMMAND cat corpus_eng.ud_merge.txt | gawk -F "\\t" "{print $2}" | sed -e "s@-.*@@" > succession_categs_retag.txt
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu
   COMMENT "produce eng categs succession"
   VERBATIM
@@ -33,7 +33,11 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt corpus_eng.ud_merge.txt
 )
 
-DISAMBMATRICES(eng.ud succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl X,SYM,UNK,PROPN,CONJ,NUM)
+DISAMBMATRICES(eng.ud succession_categs_retag.txt 
+  ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt 
+  ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl 
+  X,SYM,UNK,PROPN,CONJ,NUM
+)
 
 add_dependencies(trigrammatrix-eng.ud categs-eng.ud)
 

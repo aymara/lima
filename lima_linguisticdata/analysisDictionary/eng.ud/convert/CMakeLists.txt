@@ -50,7 +50,11 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
+    DEPENDS  
+      ${dicoFiles} 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
+      ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
@@ -66,7 +70,11 @@ else()
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  ${dicoFiles} ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
+    DEPENDS
+      ${dicoFiles} 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
+      ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
     COMMENT "produce eng XML dico under Windows"
   )
 endif()
