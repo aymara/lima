@@ -1,0 +1,58 @@
+##############################################################################
+#                                                                            #
+# rules for the recognition of french left to right homosyntagmatic relations#
+# this file uses the syntax for the declarations of automatons by Romaric    #
+# Besancon (Cf. his 2003/03/11 document)
+#                                                                            #
+# Created on Thu nov 13 2003                                                 #
+# by Gael de Chalendar (Gael.de-Chalendar@cea.fr)                            #
+#                                                                            #
+# $Id$                  #
+#                                                                            #
+##############################################################################
+# expression des positions dans les contraintes: first current next last
+
+#set encoding=utf8
+using modex lima-analysis.xml
+using groups LinguisticProcessing
+
+
+#----------------------------------------------------------------------
+# microcategories classes
+#----------------------------------------------------------------------
+use categoriesClassesDeclaration-eng.ud.txt
+
+@Tout:(@Tout){0-n} @Tout:@Tout:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.2,"ANY")
++SecondUngovernedBy(left.2,trigger.1,"ANY")
++CreateRelationBetween(left.2,trigger.1,"Dummy")
++CreateRelationBetween(trigger.1,right.1,"Dummy")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+@Tout:(@Tout){0-n} @Tout:@Tout:SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++GovernedBy(trigger.1,"Dummy")
++CreateRelationBetween(left.2,trigger.1,"Dummy")
++CreateRelationBetween(trigger.1,right.1,"Dummy")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+
+
+
+@Tout:(@Tout){0-n} @Tout::SYNTACTIC_RELATION:
++!GovernorOf(trigger.1,"ANY")
++!GovernedBy(trigger.1,"ANY")
++SecondUngovernedBy(trigger.1,left.2,"ANY")
++SecondUngovernedBy(left.2,trigger.1,"ANY")
++CreateRelationBetween(left.2,trigger.1,"Dummy")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
+

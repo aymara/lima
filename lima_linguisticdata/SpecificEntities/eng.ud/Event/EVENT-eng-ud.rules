@@ -1,0 +1,60 @@
+set encoding=utf8
+using modex Event-modex.xml
+using groups Event
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of event names
+#----------------------------------------------------------------------
+
+# wars
+War:First World::EVENT:World War One
+
+War:World:I:EVENT:World War One
+
+World\ War\ One:::EVENT:World War One
+
+War:(Second|2nd) World::EVENT:World War Two
+
+War:Second\ World::EVENT:World War Two
+
+War:World:II:EVENT:World War Two
+
+World\ War\ Two:::EVENT:World War Two
+
+WWI:::EVENT:World War One
+
+WWII:::EVENT:World War Two
+
+WWIII:::EVENT:World War Three
+
+War:Cold::EVENT:
+
+War:Gulf::EVENT:
+
+War:Civil::EVENT:
+
+Vietnam::War:EVENT:
+
+Holocaust:::EVENT:
+
+
+# weather
+Niño:el::EVENT:
+
+# festival
+festival:$NP?::EVENT:
+
+Golden::Globes:EVENT:Golden Globes
+
+Academy::Awards:EVENT:Academy Awards
+
+Grammy::Awards:EVENT:Grammy Awards
+
+# sports
+World::Cup:EVENT:
+
+Open:(U.S.|U.S .|French|British)::EVENT:
+
+olympic$ADJ::game$NC:EVENT:Olympic Games
+

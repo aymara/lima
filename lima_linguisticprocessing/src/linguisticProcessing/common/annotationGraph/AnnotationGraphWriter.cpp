@@ -104,14 +104,6 @@ AnnotationGraphVertexWriter::AnnotationGraphVertexWriter(const AnnotationGraphVe
 
 void AnnotationGraphVertexWriter::operator()(std::ostream& out, const AnnotationGraphVertex& v) const
 {
-  //     AGLOGINIT;
-  //     const Common::PropertyCode::PropertyManager& numberManager = m_propertyCodeManager->getPropertyManager("NUMBER");
-  //     const Common::PropertyCode::PropertyManager& genderManager = m_propertyCodeManager->getPropertyManager("GENDER");
-  //     const Common::PropertyCode::PropertyManager& syntaxManager = m_propertyCodeManager->getPropertyManager("SYNTAX");
-  //     const Common::PropertyCode::PropertyManager& macroManager = m_propertyCodeManager->getPropertyManager("MACRO");
-  //     const Common::PropertyCode::PropertyManager& microManager = m_propertyCodeManager->getPropertyManager("MICRO");
-  //     const FsaStringsPool& stringspool= Common::MediaticData::MediaticData::single().stringsPool(m_language);
-  
   out << "[label=\"" << v << ": ";
   CVertexAGIannotPropertyMap vimap = boost::get(vertex_iannot, m_data.getGraph());
   AGIannotProp::const_iterator iit, iit_end;

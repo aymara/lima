@@ -79,6 +79,52 @@
       </list>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-eng-ud.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-eng-ud.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-eng-ud.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="NumberRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/NUMBER-fre.bin"/>

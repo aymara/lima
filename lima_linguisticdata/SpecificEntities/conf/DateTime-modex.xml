@@ -87,6 +87,50 @@
       </list>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-eng-ud.bin"/>
+    </group>
+    <group name="DateCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE_COMP-eng-ud.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-eng-ud.bin"/>
+    </group>
+    <group name="TimeCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME_COMP-eng-ud.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="PROPN"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-eng.ud.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-eng.ud.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="PROPN"/>
+      </list>
+      <list name="DayMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="DateRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/DATE-fre.bin"/>

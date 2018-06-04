@@ -68,6 +68,35 @@
       </list>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-eng-ud.bin"/>
+    </group>
+    <group name="PersonCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON_COMP-eng-ud.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-eng-ud.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-fre.bin"/>

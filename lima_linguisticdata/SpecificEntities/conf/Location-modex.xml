@@ -120,6 +120,63 @@
       </list>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-eng-ud.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-eng-ud.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-eng-ud.bin"/>
+    </group>
+    <group name="PreLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION-eng-ud.bin"/>
+    </group>
+    <group name="PreLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION_COMP-eng-ud.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-eng-ud.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.URL">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="LocationRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/LOCATION-fre.bin"/>

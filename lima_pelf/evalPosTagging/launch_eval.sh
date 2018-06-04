@@ -91,7 +91,12 @@ echo "lang is $lang"
             corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":")
             corpus=$corpusFile
             conf=config-minimale-eng.SVMT;;
-        fre)
+        eng.ud) 
+            addOption="-s . -n $nbParts"
+            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng.ud_merge.txt  ":") 
+            corpus=$corpusFile  
+            conf=config-minimale-eng.ud.SVMT;;
+        fre)             
             addOption="-n $nbParts"
             corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")
             conf=config-minimale-fre.SVMT ;;

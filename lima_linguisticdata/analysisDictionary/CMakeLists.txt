@@ -16,7 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
 
-add_subdirectory(eng.ud)
 foreach(LANG ${LIMA_LANGUAGES})
   if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${LANG})
     add_subdirectory(${LANG})

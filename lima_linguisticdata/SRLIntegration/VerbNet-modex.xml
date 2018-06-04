@@ -537,6 +537,11 @@
       <param key="rules" value="SRLIntegration/VerbNet-eng.bin"/>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="VerbNetRules" class="AutomatonRecognizer">
+      <param key="rules" value="SRLIntegration/VerbNet-eng.ud.bin"/>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="VerbNetRules" class="AutomatonRecognizer">
       <param key="rules" value="SRLIntegration/VerbNet-fre.bin"/>

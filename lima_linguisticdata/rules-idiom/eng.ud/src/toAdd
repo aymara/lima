@@ -1,0 +1,202 @@
+1950 's	MC2	L_NOMBRE_CARDINAL
+according to	II	L_PREP_GENERAL
+According to	II	L_PREP_GENERAL
+ad hoc	JJ	L_ADJ_GEN
+Ad hoc	JJ	L_ADJ_GEN
+Ad Hoc	JJ	L_ADJ_GEN
+a good deal	RR	L_ADV_GENERAL
+a great deal	RR	L_ADV_GENERAL
+along with	II	L_PREP_GENERAL
+apart from	II	L_PREP_GENERAL
+Apart from	II	L_PREP_GENERAL
+a priori	RR	L_ADV_GENERAL
+as between	II	L_PREP_GENERAL
+as far as	CS	L_CONJ_SUBORD
+As far as	CS	L_CONJ_SUBORD
+As for	II	L_PREP_GENERAL
+as from	II	L_PREP_GENERAL
+As from	II	L_PREP_GENERAL
+as long as	CS	L_CONJ_SUBORD
+As long as	CS	L_CONJ_SUBORD
+as of	II	L_PREP_GENERAL
+as regard	II	L_PREP_GENERAL
+as regards	II	L_PREP_GENERAL
+As regards	II	L_PREP_GENERAL
+as soon as	CS	L_CONJ_SUBORD
+As soon as	CS	L_CONJ_SUBORD
+as such	RR	L_ADV_GENERAL
+as to	II	L_PREP_GENERAL
+As to	II	L_PREP_GENERAL
+as well as	II	L_PREP_GENERAL
+as well	RR	L_ADV_GENERAL
+as yet	RR	L_ADV_GENERAL
+at least	RR	L_ADV_GENERAL
+at present	RR	L_ADV_GENERAL
+At present	RR	L_ADV_GENERAL
+at present	RT	L_ADVERBE_TEMPS
+at random	RR	L_ADV_GENERAL
+away from	II	L_PREP_GENERAL
+because of	II	L_PREP_GENERAL
+Because of	II	L_PREP_GENERAL
+bona fide	JJ	L_ADJ_GEN
+but for	II	L_PREP_GENERAL
+by and large	RR	L_ADV_GENERAL
+by far	RR	L_ADV_GENERAL
+by means of	II	L_PREP_GENERAL
+By means of	II	L_PREP_GENERAL
+by no means	RR	L_ADV_GENERAL
+by reason of	II	L_PREP_GENERAL
+by way of	II	L_PREP_GENERAL
+By way of	II	L_PREP_GENERAL
+Considering that	CS	L_CONJ_SUBORD
+contrary to	II	L_PREP_GENERAL
+Contrary to	II	L_PREP_GENERAL
+cost effective	JJ	L_ADJ_GEN
+cross border	JJ	L_ADJ_GEN
+depending on	II	L_PREP_GENERAL
+Depending on	II	L_PREP_GENERAL
+due to	II	L_PREP_GENERAL
+each other	PPX2	L_PRONOM_PERSONNEL_REFLECHI
+en masse	RR	L_ADV_GENERAL
+even if	CS	L_CONJ_SUBORD
+Even if	CS	L_CONJ_SUBORD
+even though	CS	L_CONJ_SUBORD
+even when	CS	L_CONJ_SUBORD
+except for	II	L_PREP_GENERAL
+Except for	II	L_PREP_GENERAL
+far from	RG	L_ADVERBE_DE_DEGRE
+first hand	RR	L_ADV_GENERAL
+follow up	NN1	L_NOM_COMMUN
+for example	REX	L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE
+For example	REX	L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE
+for instance	REX	L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE
+For instance	REX	L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE
+for the most part	RR	L_ADV_GENERAL
+for the time being	RT	L_ADVERBE_TEMPS
+from before	II	L_PREP_GENERAL
+from time to time	RR	L_ADV_GENERAL
+given that	CS	L_CONJ_SUBORD
+Given that	CS	L_CONJ_SUBORD
+in accordance with	II	L_PREP_GENERAL
+In accordance with	II	L_PREP_GENERAL
+in accord with	II	L_PREP_GENERAL
+in addition	RR	L_ADV_GENERAL
+In addition	RR	L_ADV_GENERAL
+in addition to	II	L_PREP_GENERAL
+In addition to	II	L_PREP_GENERAL
+In answer to	II	L_PREP_GENERAL
+in association with	II	L_PREP_GENERAL
+in charge of	II	L_PREP_GENERAL
+in conjunction with	II	L_PREP_GENERAL
+in connection with	II	L_PREP_GENERAL
+In connection with	II	L_PREP_GENERAL
+in consultation with	II	L_PREP_GENERAL
+in cooperation with	II	L_PREP_GENERAL
+in defence of	II	L_PREP_GENERAL
+in excess of	II	L_PREP_GENERAL
+in favour of	II	L_PREP_GENERAL
+in full	RR	L_ADV_GENERAL
+in general	RR	L_ADV_GENERAL
+In general	RR	L_ADV_GENERAL
+in keeping with	II	L_PREP_GENERAL
+in line with	II	L_PREP_GENERAL
+In line with	II	L_PREP_GENERAL
+in order	BCL	L_CONJ_BEFORE_CLAUSE_MARKER
+In order	BCL	L_CONJ_BEFORE_CLAUSE_MARKER
+in particular	RR	L_ADV_GENERAL
+In particular	RR	L_ADV_GENERAL
+in part	RR	L_ADV_GENERAL
+in public	RR	L_ADV_GENERAL
+in receipt of	II	L_PREP_GENERAL
+in regard to	II	L_PREP_GENERAL
+In regard to	II	L_PREP_GENERAL
+in relation to	II	L_PREP_GENERAL
+In relation to	II	L_PREP_GENERAL
+in reply to	II	L_PREP_GENERAL
+In reply to	II	L_PREP_GENERAL
+in respect of	II	L_PREP_GENERAL
+In respect of	II	L_PREP_GENERAL
+in response to	II	L_PREP_GENERAL
+In response to	II	L_PREP_GENERAL
+in return for	II	L_PREP_GENERAL
+in so far as	CS	L_CONJ_SUBORD
+insofar as	CS	L_CONJ_SUBORD
+In so far as	CS	L_CONJ_SUBORD
+in spite of	II	L_PREP_GENERAL
+In spite of	II	L_PREP_GENERAL
+instead of	II	L_PREP_GENERAL
+in support of	II	L_PREP_GENERAL
+inter alia	RR	L_ADV_GENERAL
+in terms of	II	L_PREP_GENERAL
+In terms of	II	L_PREP_GENERAL
+in that	CS	L_CONJ_SUBORD
+in the light of	II	L_PREP_GENERAL
+In the light of	II	L_PREP_GENERAL
+in the order of	RG	L_ADVERBE_DE_DEGRE
+into line with	II	L_PREP_GENERAL
+in view of	II	L_PREP_GENERAL
+In view of	II	L_PREP_GENERAL
+irrespective of	II	L_PREP_GENERAL
+Irrespective of	II	L_PREP_GENERAL
+know how	NN1	L_NOM_COMMUN
+near to	II	L_PREP_GENERAL
+next to	II	L_PREP_GENERAL
+no doubt	RR	L_ADV_GENERAL
+no longer	RR	L_ADV_GENERAL
+None the less	RR	L_ADV_GENERAL
+now that	CS	L_CONJ_SUBORD
+of course	RR	L_ADV_GENERAL
+Of course	RR	L_ADV_GENERAL
+on account of	II	L_PREP_GENERAL
+on behalf of	II	L_PREP_GENERAL
+on board	II	L_PREP_GENERAL
+on board	RL	L_ADVERBE_LOCATIF
+once again	RR	L_ADV_GENERAL
+once and for all	RR	L_ADV_GENERAL
+once more	RR	L_ADV_GENERAL
+on the part of	II	L_PREP_GENERAL
+on top of	II	L_PREP_GENERAL
+other than	II	L_PREP_GENERAL
+out of	II	L_PREP_GENERAL
+Out of	II	L_PREP_GENERAL
+out of line with	II	L_PREP_GENERAL
+owing to	II	L_PREP_GENERAL
+Owing to	II	L_PREP_GENERAL
+per annum	RA	L_ADVERBE_SUIVANT_LA_TETE_NOMINALE
+per cent	NNU	L_NOM_COMMUN_UNITE_DE_MESURE
+per se	RR	L_ADV_GENERAL
+persona non grata	NN1	L_NOM_COMMUN
+pertaining to	II	L_PREP_GENERAL
+prior to	II	L_PREP_GENERAL
+provided that	CS	L_CONJ_SUBORD
+Provided that	CS	L_CONJ_SUBORD
+providing that	CS	L_CONJ_SUBORD
+pursuant to	II	L_PREP_GENERAL
+Pursuant to	II	L_PREP_GENERAL
+rather than	CS	L_CONJ_SUBORD
+rather than	II	L_PREP_GENERAL
+sine qua non	NN1	L_NOM_COMMUN
+so as	BCL	L_CONJ_BEFORE_CLAUSE_MARKER
+so that	CS	L_CONJ_SUBORD
+status quo	NN1	L_NOM_COMMUN
+subject to	II	L_PREP_GENERAL
+Subject to	II	L_PREP_GENERAL
+subsequent to	II	L_PREP_GENERAL
+Subsequent to	II	L_PREP_GENERAL
+such as	II	L_PREP_GENERAL
+such that	CS	L_CONJ_SUBORD
+that is	REX	L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE
+that is to say	REX	L_ADVERBE_INTRODUISANT_UNE_CONSTRUCTION_APPOSITIONNELLE
+under way	RR	L_ADV_GENERAL
+up to	II	L_PREP_GENERAL
+Up to	II	L_PREP_GENERAL
+up to	RG	L_ADVERBE_DE_DEGRE
+vice versa	RR	L_ADV_GENERAL
+whether or not	CSW	L_CONJ_WHETHER
+with a view to	II	L_PREP_GENERAL
+with reference to	II	L_PREP_GENERAL
+With reference to	II	L_PREP_GENERAL
+with regard to	II	L_PREP_GENERAL
+With regard to	II	L_PREP_GENERAL
+with respect to	II	L_PREP_GENERAL
+With respect to	II	L_PREP_GENERAL
