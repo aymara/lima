@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -98,7 +98,7 @@ void SimpleXmlDumper::init(
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  const auto& codeManager=static_cast<const LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& codeManager=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
 
@@ -116,10 +116,9 @@ void SimpleXmlDumper::init(
     if (str=="yes" || str=="1") {
       m_outputVerbTense=true;
       QString timeCode = static_cast<const LanguageData&>(
-        Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
+        MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
       m_tenseManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
       m_tenseAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
-      LINFO << "activate outputVerbTense";
     }
   }
  catch (NoSuchParam& ) {} // keep default value
@@ -521,11 +520,10 @@ bool SimpleXmlDumper::outputSpecificEntity(
     return false;
   }
 
-  std::string typeName;
-  std::string norm;
-  try
-  {
-    auto str = Common::MediaticData::MediaticData::single().getEntityName(se->getType());
+  std::string typeName("");
+  std::string norm("");
+  try {
+    LimaString str = MediaticData::MediaticData::single().getEntityName(se->getType());
     typeName = str.toStdString();
   }
   catch (std::exception& ) {

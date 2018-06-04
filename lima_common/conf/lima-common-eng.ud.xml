@@ -7,6 +7,14 @@
   </module>
   <module name="LinguisticData">
     <group name="Categories">
+      <map name="limaToLanguageCodeMapping">
+        <entry key="GENDER" value="Gender"/>
+        <entry key="NUBER" value="Number"/>
+        <entry key="TIME" value="Tense"/>
+<!--     TODO Find correspondance to LIMA SYNTAX in UD -->
+<!--         <entry key="SYNTAX" value="SYNTAX"/> -->
+        <entry key="PERSON" value="Person"/>
+      </map>
       <list name="sentenceBreakMicros">
 <!--         <item value="SENT"/> -->
       </list>

@@ -53,7 +53,6 @@ namespace MediaticData
 class LanguageDataPrivate
 {
   friend class LanguageData;
-
   LanguageDataPrivate(LanguageData* ld);
 
   virtual ~LanguageDataPrivate();
@@ -123,6 +122,8 @@ class LanguageDataPrivate
   std::map< LinguisticCode, ConceptType > m_macro2ConceptMapping;
 
   std::map< std::string, SyntacticRelationId > m_syntacticRelations;
+
+  std::map<QString, QString> m_limaToLanguageCodeMapping;
 
   std::map<QString, QString> m_limaToLanguageCodeMapping;
 
@@ -433,7 +434,8 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   catch (const NoSuchParam& )
   {
-    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
+    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language "
+          << MediaticData::single().media(m_language) << ".";
     return;
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)

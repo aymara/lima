@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                              *
  *                                                                         *
  ***************************************************************************/
 #include "TextDumper.h"
@@ -130,12 +130,12 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  const auto& codeManager=static_cast<const LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& codeManager=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
 
   QString timeCode = static_cast<const LanguageData&>(
-    Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
+    MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
   m_timeManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
   m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 }
