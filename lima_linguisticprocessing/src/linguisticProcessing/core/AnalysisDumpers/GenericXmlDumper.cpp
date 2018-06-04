@@ -220,29 +220,6 @@ void GenericXmlDumper::init(
   }
   catch (NoSuchParam& ) { }// optional : do not output entities if param not specified
 
-  
-/*  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-  m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
-  m_propertyManager=&codeManager.getPropertyManager(m_property);
-
-  try { 
-    std::string str=unitConfiguration.getParamsValueAtKey("outputTStatus"); 
-    if (str=="yes" || str=="1") {
-      m_outputTStatus=true;
-    }
-  }
-  catch (NoSuchParam& ) {} // keep default value
- 
- try { 
-   std::string str=unitConfiguration.getParamsValueAtKey("outputVerbTense"); 
-   if (str=="yes" || str=="1") {
-     m_outputVerbTense=true;
-     m_tenseAccessor=&codeManager.getPropertyAccessor("TIME");
-     m_tenseManager=&codeManager.getPropertyManager("TIME");
-   }
- }
- catch (NoSuchParam& ) {} // keep default value
-*/ 
 }
 
 void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap, 
