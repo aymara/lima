@@ -46,7 +46,9 @@ using namespace std;
 //using namespace boost;
 using namespace boost::tuples;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
+using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common::XMLConfigurationFiles;
 
 namespace Lima
@@ -128,13 +130,14 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& codeManager=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
-   /*ajout*/
-  m_timeManager=&codeManager.getPropertyManager("TIME");
-  m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
-  /*fin ajout*/
+
+  QString timeCode = static_cast<const LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
+  m_timeManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
+  m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 }
 
 LimaStatusCode TextDumper::process(

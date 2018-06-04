@@ -63,6 +63,29 @@ MediaProcessUnit* SvmToolPosTaggerFactory::create(
   return posTagger;
 }
 
+class SvmToolPosTaggerPrivate
+{
+  friend class SvmToolPosTagger;
+
+  SvmToolPosTaggerPrivate() {}
+  ~SvmToolPosTaggerPrivate() {}
+
+  bool m_allFeatures;
+  QStringList m_features;
+};
+
+SvmToolPosTagger::SvmToolPosTagger() :
+  m_d(new SvmToolPosTaggerPrivate()),
+  m_microAccessor()
+{
+}
+
+SvmToolPosTagger::~SvmToolPosTagger()
+{
+  delete m_d;
+}
+
+
 void SvmToolPosTagger::init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager)
@@ -96,6 +119,31 @@ void SvmToolPosTagger::init(
   {
     LWARN << "No SVMTool model defined in configuration file !";
     throw InvalidConfiguration();
+  }
+  try
+  {
+    m_d->m_allFeatures = unitConfiguration.getBooleanParameter("allFeatures");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    // Ignored parameters allFeatures and features are optional. Then use only
+    // main tag (micro category)
+  }
+  if (!m_d->m_allFeatures)
+  {
+    try
+    {
+      auto features = unitConfiguration.getListsValueAtKey("features");
+      for (const auto& feature: features)
+      {
+        m_d->m_features << QString::fromUtf8(feature.c_str());
+      }
+    }
+    catch (Common::XMLConfigurationFiles::NoSuchParam& )
+    {
+      // Ignored parameters allFeatures and features are optional. Then use only
+      // main tag (micro category)
+    }
   }
   LDEBUG << "Creating SVM Tagger with model: " << m_model;
   erCompRegExp();
@@ -162,9 +210,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   LinguisticGraph* resultgraph=posgraph->getGraph();
   remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
 
-  const Common::PropertyCode::PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO");
+  const auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
   // to add tokens possible tags to the tagger dictionary
-
+  const auto& propertyManagers=propertyCodeManager.getPropertyManagers();
 
   // TODO create a wrapper on the analysis graph to read tokens in a stream
   std::ostringstream oss("");
@@ -179,18 +228,50 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       boost::replace_all(token, " ", "_");
       std::ostringstream lineoss("");
       lineoss << token << " (";
-      auto morphoData = get(vertex_data,*srcgraph,currentVx);
       for (auto morphDataIt = morphoData->begin();
            morphDataIt != morphoData->end(); morphDataIt++)
       {
-        std::string tag = microManager.getPropertySymbolicValue((*morphDataIt).properties);
-        lineoss << tag;
-        morphDataIt++;
-      }
-      for (;morphDataIt != morphoData->end(); morphDataIt++)
-      {
-        std::string tag = microManager.getPropertySymbolicValue((*morphDataIt).properties);
-        lineoss << "," << tag;
+        if (morphDataIt != morphoData->begin())
+        {
+          lineoss << ",";
+        }
+        QString fullTag;
+        QTextStream tagStream(&fullTag);
+        std::string tag = microManager.getPropertySymbolicValue(
+            (*morphDataIt).properties);
+        tagStream << QString::fromUtf8(tag.c_str());
+        if (m_d->m_allFeatures ||!m_d->m_features.isEmpty())
+        {
+          QStringList features;
+          for (auto propItr = propertyManagers.cbegin();
+              propItr != propertyManagers.cend(); propItr++)
+          {
+            if (!propItr->second.getPropertyAccessor().empty((*morphDataIt).properties))
+            {
+              QString property = QString::fromUtf8(propItr->first.c_str());
+              QString value = QString::fromUtf8(propItr->second.getPropertySymbolicValue((*morphDataIt).properties).c_str());
+              if (property != "MACRO" && property != "MICRO"
+                  && (m_d->m_allFeatures || m_d->m_features.contains(property)))
+              {
+                features << QString("%1=%2").arg(property).arg(value);
+              }
+            }
+          }
+          features.sort();
+          if (!features.isEmpty())
+          {
+            tagStream << "-";
+            for (auto it = features.cbegin(); it != features.cend(); it++)
+            {
+              if (it != features.cbegin())
+              {
+                tagStream << "|";
+              }
+              tagStream << *it;
+            }
+          }
+        }
+        lineoss << fullTag.toUtf8().constData();;
       }
       lineoss << ")";
       lineoss << std::endl;
