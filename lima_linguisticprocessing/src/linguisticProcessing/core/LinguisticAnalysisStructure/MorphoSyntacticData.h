@@ -91,8 +91,7 @@ public:
 
     /**
      * Return the first non empty value for the given accessor.
-     * @param pro
-            cout << "hello" << endl;pertyAccessor 
+     * @param propertyAccessor 
      * @return 
      */
     LinguisticCode firstValue(const Common::PropertyCode::PropertyAccessor& propertyAccessor) const;
