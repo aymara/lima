@@ -136,6 +136,21 @@ public:
   
   const std::string& getSyntacticRelationName(SyntacticRelationId id) const;
   SyntacticRelationId getSyntacticRelationId(const std::string& name) const;
+  
+  /** \name Codes mapping
+   *  Mapping between internal LIMA codes and Language code. */
+  /**@{*/
+  /**
+   * The return map contains a mapping between current LIMA internal codes and 
+   * language codes. For example for Universal Dependencies, LIMA TIME is 
+   * associated to Tense. */
+  const std::map<QString, QString>& getLimaToLanguageCodeMapping() const;
+  /** 
+   * Access to an element of the code mapping. Return the parameter itself if 
+   * the mapping does not contain it.
+   */
+  QString getLimaToLanguageCodeMappingValue(const QString& code) const;
+  /**@} */
 
 private:
   LanguageData(const LanguageData& ld);

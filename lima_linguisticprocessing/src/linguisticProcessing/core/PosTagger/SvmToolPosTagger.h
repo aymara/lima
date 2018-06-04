@@ -55,6 +55,7 @@ namespace PosTagger
 
 #define SVMTOOLPOSTAGGER_CLASSID "SvmToolPosTagger"
 
+class SvmToolPosTaggerPrivate;
 /**
 @brief A PoS tagger using SVMTool as a backend
 @note This is a basic implementation that should be improved in several ways:
@@ -65,12 +66,12 @@ namespace PosTagger
 */
 class SvmToolPosTagger : public MediaProcessUnit
 {
+  friend class SvmToolPosTaggerPrivate;
 public:
-  SvmToolPosTagger() :
-      m_microAccessor() {}
+  SvmToolPosTagger();
 
   // TODO delete m_tagger!
-  virtual ~SvmToolPosTagger() { }
+  virtual ~SvmToolPosTagger();
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -120,11 +121,6 @@ private:
     }
   };
 
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
-  MediaId m_language;
-  tagger* m_tagger;
-  std::string m_model;
-
   LinguisticGraphVertex reportPathsInGraph(
     LinguisticGraph* srcgraph,
     LinguisticGraph* resultgraph,
@@ -132,6 +128,11 @@ private:
     StepDataVector& stepData,
     Common::AnnotationGraphs::AnnotationData* annotationData) const;
 
+  SvmToolPosTaggerPrivate* m_d;
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  MediaId m_language;
+  tagger* m_tagger;
+  std::string m_model;
 };
 
 class SvmToolPosTaggerFactory : public InitializableObjectFactory<MediaProcessUnit>

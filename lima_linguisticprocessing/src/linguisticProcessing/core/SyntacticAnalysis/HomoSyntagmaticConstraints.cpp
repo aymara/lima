@@ -55,10 +55,13 @@
 #include <QtCore/QStringList>
 
 //using namespace boost;
-using namespace Lima::Common::MediaticData;
+using namespace Lima::Common;
 using namespace Lima::Common::AnnotationGraphs;
-using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+using namespace Lima::Common::MediaticData;
+using namespace Lima::Common::Misc;
+using namespace Lima::Common::PropertyCode;
 using namespace Lima::LinguisticProcessing::ApplyRecognizer;
+using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima
 {
@@ -133,14 +136,14 @@ ConstraintWithRelationComplement::ConstraintWithRelationComplement(
 //   SAPLOGINIT;
   if (! complement.isEmpty())
   {
-    std::string str=Common::Misc::limastring2utf8stdstring(complement);
+    std::string str=limastring2utf8stdstring(complement);
     if (str == "ANY")
     {
       m_relation=0; // default value=0
     }
     else
     {
-      m_relation=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(str);
+      m_relation=static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(str);
       if (m_relation == 0)
       {
         SALOGINIT;
@@ -398,7 +401,7 @@ bool CreateRelationBetween::operator()(const AnalysisGraph&,
 #ifdef DEBUG_LP
  SAPLOGINIT;
  LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
- << v2  << " with relation: " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
+ << v2  << " with relation: " << static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
 #endif
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   bool res = syntacticData->relation(v1, v2, m_relation);
@@ -490,7 +493,7 @@ bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
   bool res = false;
   for (; it != it_end; it++)
   {
-    QString relation = QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(map[*it]).c_str());
+    QString relation = QString::fromUtf8(static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(map[*it]).c_str());
     LDEBUG << "CopyRelationsOutOfTo" << relation << m_relations;
     if (m_relations.contains(relation))
     {
@@ -546,7 +549,7 @@ bool CopyIncomingRelationsTo::operator()(const AnalysisGraph& graph,
   for (; it != it_end; it++)
   {
     LinguisticGraphVertex source = syntacticData->tokenVertexForDepVertex(boost::source(*it,*(syntacticData-> dependencyGraph())));
-    QString relation = QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(map[*it]).c_str());
+    QString relation = QString::fromUtf8(static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(map[*it]).c_str());
     LDEBUG << "CopyIncomingRelationsTo" << relation << m_relations;
     if (m_relations.contains(relation))
     {
@@ -625,7 +628,7 @@ CreateRelationWithRelated::CreateRelationWithRelated(
     m_relationsToFollow(),
     m_relationToCreate(0)
 {
-  std::string str=Common::Misc::limastring2utf8stdstring(complement);
+  std::string str=limastring2utf8stdstring(complement);
 
   //parse complement: contains two relation names separated by a comma
   std::string::size_type i=str.find(",");
@@ -635,7 +638,7 @@ CreateRelationWithRelated::CreateRelationWithRelated(
     LERROR << "Error: CreateRelationWithRelated complement must have two types";
     throw LimaException();
   }
-  m_relationToCreate=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(str,i+1));
+  m_relationToCreate=static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(str,i+1));
 
   //relations to follow : may be several separated by a "|"
   std::string rel(str,0,i);
@@ -643,14 +646,14 @@ CreateRelationWithRelated::CreateRelationWithRelated(
   while (j!=std::string::npos)
   {
     m_relationsToFollow.
-    insert(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(rel,0,j)));
+    insert(static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(rel,0,j)));
     rel.erase(0,j+1);
     j=rel.find("|");
   }
   if (! rel.empty())
   {
     m_relationsToFollow.
-    insert(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(rel));
+    insert(static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(rel));
   }
 }
 
@@ -669,7 +672,7 @@ findRelatedVertices(const LinguisticGraphVertex& v2,
 //     if (logger.isDebugEnabled())
 //     {
 //       std::ostringstream oss;
-//       std::set<Common::MediaticData::SyntacticRelationId>::const_iterator
+//       std::set<MediaticData::SyntacticRelationId>::const_iterator
 //         it=m_relationsToFollow.begin(),
 //            it_end=m_relationsToFollow.end();
 //       for (; it!=it_end; it++)
@@ -776,26 +779,43 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   LDEBUG << "CreateCompoundTense::CreateCompoundTense()" << language << complement;
 #endif
   const std::string str=
-    Common::Misc::limastring2utf8stdstring(complement);
+    limastring2utf8stdstring(complement);
+
+  const PropertyCodeManager& codeManager=static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager();
 
   size_t firstSepPos = str.find_first_of(';');
-  m_macro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue(str.substr(0, firstSepPos));
+  m_macro=codeManager.getPropertyManager("MACRO").getPropertyValue(str.substr(0, firstSepPos));
 
   size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
-  m_micro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
+  m_micro=codeManager.getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
 
-  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
+  m_tempCompType=static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
 #ifdef DEBUG_LP
   LDEBUG << "CreateCompoundTense::CreateCompoundTense() m_tempCompType" << m_tempCompType;
 #endif
 
-  m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
-  m_genderAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("GENDER"));
-  m_numberAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("NUMBER"));
-  m_timeAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("TIME"));
-  m_syntaxAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("SYNTAX"));
-  m_personAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("PERSON"));
+  QString macroCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("MACRO");
+  m_macroAccessor=&codeManager.getPropertyAccessor(macroCode.toUtf8().constData());
+  QString microCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("MICRO");
+  m_microAccessor=&codeManager.getPropertyAccessor(microCode.toUtf8().constData());
+  QString genderCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER");
+  m_genderAccessor=&codeManager.getPropertyAccessor(genderCode.toUtf8().constData());
+  QString numberCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER");
+  m_numberAccessor=&codeManager.getPropertyAccessor(numberCode.toUtf8().constData());
+  QString timeCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("TIME");
+  m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
+
+  QString syntaxCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("SYNTAX");
+  m_syntaxAccessor=&codeManager.getPropertyAccessor(syntaxCode.toUtf8().constData());
+  QString personCode = static_cast<const MediaticData::LanguageData&>(
+    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("PERSON");
+  m_personAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 }
 
 bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
@@ -823,7 +843,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   VertexDataPropertyMap dataMap = get(vertex_data, *graph);
   VertexChainIdPropertyMap chainsIdsMap = get(vertex_chain_id, *graph);
 
-  MediaId language = Common::MediaticData::MediaticData::single().media(metadata->getMetaData("Lang"));
+  MediaId language = MediaticData::MediaticData::single().media(metadata->getMetaData("Lang"));
 
   Token* tokenAux = tokenMap[auxVertex];
   Token* tokenPastPart = tokenMap[pastPartVertex];
@@ -843,7 +863,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   }
   LinguisticCode dataAuxMicro = dataAux->firstValue(*m_microAccessor);
 
-  LinguisticCode tense = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAux->firstValue(*m_timeAccessor));
+  LinguisticCode tense = static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAux->firstValue(*m_timeAccessor));
 #ifdef DEBUG_LP
   LDEBUG << "Tense = '" << tense << "' ";
 #endif
@@ -859,7 +879,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 
   // creer un full token
   // this version changes the head verb of the sentence to be the past participle verb
-  LimaString verbFlex = tokenAux->stringForm() + Common::Misc::utf8stdstring2limastring("_") + tokenPastPart->stringForm();
+  LimaString verbFlex = tokenAux->stringForm() + utf8stdstring2limastring("_") + tokenPastPart->stringForm();
   StringsPoolIndex verbLemma = *((dataPastPart->allLemma()).begin());
 
   // this version keeps the auxiliary verb
@@ -867,7 +887,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   LinguisticElement elem(*(dataPastPart->begin()));
 //   StringsPoolIndex verbLemma = elem.normalizedForm;
 
-  Token* tokenNewVerb = new Token(Common::MediaticData::MediaticData::changeable().stringsPool(language)[verbFlex],
+  Token* tokenNewVerb = new Token(MediaticData::MediaticData::changeable().stringsPool(language)[verbFlex],
                                   verbFlex,
                                   tokenAux->position(),
                                   verbFlex.size());
@@ -889,7 +909,7 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   {
     syntacticData->ownedMorphosyntacticData().push_back(dataNewVerb);
   }
-  elem.inflectedForm = Common::MediaticData::MediaticData::changeable().stringsPool(language)[verbFlex];
+  elem.inflectedForm = MediaticData::MediaticData::changeable().stringsPool(language)[verbFlex];
   elem.lemma = verbLemma;
   elem.normalizedForm = *((dataPastPart->allNormalizedForms()).begin());
   m_macroAccessor->writeValue( m_macro, elem.properties);
@@ -1176,13 +1196,13 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   /// @todo Creer les annotation idoines, recopier les annotations des anciens
   /// noeuds vers les nouveaux
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
-  annotationData->annotate(agv,Common::Misc::utf8stdstring2limastring("PosGraph"),newVertex);
+  annotationData->annotate(agv,utf8stdstring2limastring("PosGraph"),newVertex);
   annotationData->addMatching("PosGraph",newVertex,"annot",agv);
-  annotationData->annotate(agv,Common::Misc::utf8stdstring2limastring("CpdTense"),1);
+  annotationData->annotate(agv,utf8stdstring2limastring("CpdTense"),1);
   AnnotationGraphVertex annotAuxVertex = *(annotationData->matches("PosGraph",auxVertex,"annot").begin());
   AnnotationGraphVertex annotPastPartVertex = *(annotationData->matches("PosGraph",pastPartVertex,"annot").begin());
-  annotationData->annotate(agv, annotAuxVertex, Common::Misc::utf8stdstring2limastring("Aux"), 1);
-  annotationData->annotate(agv, annotPastPartVertex, Common::Misc::utf8stdstring2limastring("PastPart"), 1);
+  annotationData->annotate(agv, annotAuxVertex, utf8stdstring2limastring("Aux"), 1);
+  annotationData->annotate(agv, annotPastPartVertex, utf8stdstring2limastring("PastPart"), 1);
 
 
   bool res = syntacticData->relation(auxVertex,
@@ -1220,23 +1240,24 @@ CreateEasyCompoundTense::CreateEasyCompoundTense(MediaId language,
     m_tempCompType(0)
 {
   const std::string str=
-      Common::Misc::limastring2utf8stdstring(complement);
+      limastring2utf8stdstring(complement);
 
   size_t firstSepPos = str.find_first_of(';');
-  m_macro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue(str.substr(0, firstSepPos));
+  const PropertyCodeManager& codeManager=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager();
+  m_macro=codeManager.getPropertyManager("MACRO").getPropertyValue(str.substr(0, firstSepPos));
 
   size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
-  m_micro=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
+  m_micro=codeManager.getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
 
-  m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
+  m_tempCompType=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
 
-  m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
-  m_genderAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("GENDER"));
-  m_numberAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("NUMBER"));
-  m_timeAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("TIME"));
-  m_syntaxAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("SYNTAX"));
-  m_personAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("PERSON"));
+  m_macroAccessor=&(codeManager.getPropertyAccessor("MACRO"));
+  m_microAccessor=&(codeManager.getPropertyAccessor("MICRO"));
+  m_genderAccessor=&(codeManager.getPropertyAccessor("GENDER"));
+  m_numberAccessor=&(codeManager.getPropertyAccessor("NUMBER"));
+  m_timeAccessor=&(codeManager.getPropertyAccessor("TIME"));
+  m_syntaxAccessor=&(codeManager.getPropertyAccessor("SYNTAX"));
+  m_personAccessor=&(codeManager.getPropertyAccessor("PERSON"));
 }
 
 bool CreateEasyCompoundTense::operator()(const AnalysisGraph& /*anagraph*/,
@@ -1264,7 +1285,7 @@ EnforcePropertiesConstraints::EnforcePropertiesConstraints(
   LDEBUG << "Initializing EnforcePropertiesConstraints";
 #endif
     boost::regex linere("[^,]+");
-  std::string str=Common::Misc::limastring2utf8stdstring(complement);
+  std::string str=limastring2utf8stdstring(complement);
   std::string::const_iterator start, end;
   start = str.begin();
   end = str.end();
@@ -1275,7 +1296,8 @@ EnforcePropertiesConstraints::EnforcePropertiesConstraints(
 #ifdef DEBUG_LP
     LDEBUG << "   adding category: " << category;
 #endif
-    const Common::PropertyCode::PropertyAccessor* categ = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor(category));
+    const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+    const PropertyCode::PropertyAccessor* categ = &(codeManager.getPropertyAccessor(category));
     if (categ!=0)
     {
       m_categories.push_back(categ);
@@ -1310,7 +1332,7 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   MorphoSyntacticData* data1 = map[v1];
   MorphoSyntacticData* data2 = map[v2];
 
-  std::vector<const Common::PropertyCode::PropertyAccessor*>::const_iterator
+  std::vector<const PropertyCode::PropertyAccessor*>::const_iterator
       categ = m_categories.begin(), categ_end = m_categories.end();
   for (; categ != categ_end; categ++)
   {
@@ -1324,12 +1346,12 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
 #ifdef DEBUG_LP
       for (std::set< LinguisticCode >::iterator it=categ1.begin();it!=categ1.end();it++)
       {
-        std::string str1 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
+        std::string str1 = static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
        LDEBUG << "    categ1 " << str1;
       }
       for (std::set< LinguisticCode >::iterator it=categ2.begin();it!=categ2.end();it++)
       {
-        std::string str2 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
+        std::string str2 = static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
        LDEBUG << "    categ2 " << str2;
       }
 #endif
@@ -1424,12 +1446,12 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
     static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
 
   LinguisticGraphVertex src, dest;
-  Common::MediaticData::SyntacticRelationId relation;
+  MediaticData::SyntacticRelationId relation;
 
   std::tie(src,dest,relation) = syntacticData->relation();
   uint64_t nbAdded(0);
 
-  std::set<std::pair<LinguisticGraphVertex,Common::MediaticData::SyntacticRelationId> > relationsAdded;
+  std::set<std::pair<LinguisticGraphVertex,MediaticData::SyntacticRelationId> > relationsAdded;
 
   while (!((src == anagraph->firstVertex()) &&
            (dest == anagraph->lastVertex()) &&
@@ -1492,7 +1514,7 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
     static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
 
   LinguisticGraphVertex src, dest;
-  Common::MediaticData::SyntacticRelationId relation;
+  MediaticData::SyntacticRelationId relation;
 
   std::tie(src,dest,relation) = syntacticData->relation();
   uint64_t nbModified(0);

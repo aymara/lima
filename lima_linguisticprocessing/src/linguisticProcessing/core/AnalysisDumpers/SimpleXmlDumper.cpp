@@ -47,9 +47,10 @@
 using namespace std;
 //using namespace boost;
 using namespace boost::tuples;
-using namespace Lima::Common::XMLConfigurationFiles;
-using namespace Lima::Common::MediaticData;
+using namespace Lima::Common;
 using namespace Lima::Common::AnnotationGraphs;
+using namespace Lima::Common::MediaticData;
+using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
@@ -95,7 +96,7 @@ void SimpleXmlDumper::init(
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& codeManager=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
 
@@ -107,14 +108,16 @@ void SimpleXmlDumper::init(
   }
   catch (NoSuchParam& ) {} // keep default value
  
- try { 
-   std::string str=unitConfiguration.getParamsValueAtKey("outputVerbTense"); 
-   if (str=="yes" || str=="1") {
-     m_outputVerbTense=true;
-     m_tenseAccessor=&codeManager.getPropertyAccessor("TIME");
-     m_tenseManager=&codeManager.getPropertyManager("TIME");
-   }
- }
+  try { 
+    std::string str=unitConfiguration.getParamsValueAtKey("outputVerbTense"); 
+    if (str=="yes" || str=="1") {
+      m_outputVerbTense=true;
+      QString timeCode = static_cast<const LanguageData&>(
+        MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
+      m_tenseManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
+      m_tenseAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
+    }
+  }
  catch (NoSuchParam& ) {} // keep default value
  
 }
@@ -469,7 +472,7 @@ outputSpecificEntity(std::ostream& out,
   std::string typeName("");
   std::string norm("");
   try {
-    LimaString str= MediaticData::single().getEntityName(se->getType());
+    LimaString str= MediaticData::MediaticData::single().getEntityName(se->getType());
     typeName=Common::Misc::limastring2utf8stdstring(str);
   }
   catch (std::exception& ) {

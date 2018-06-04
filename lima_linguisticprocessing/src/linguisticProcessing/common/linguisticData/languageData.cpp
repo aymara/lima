@@ -54,25 +54,27 @@ class LanguageDataPrivate
 {
   friend class LanguageData;
   
-  LanguageDataPrivate();
+  LanguageDataPrivate(LanguageData* ld);
 
   virtual ~LanguageDataPrivate();
 
   void initPropertyCode(
     const std::string& resourcesPath,
-    XMLConfigurationFiles::XMLConfigurationFileParser& conf);
+    XMLConfigurationFileParser& conf);
 
-  //void initSentenceBreakMicros(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initEmptyMicroCategories(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initEmptyMacroCategories(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initHomoSyntagmaticChainsAndRelationsTypes(XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
-  void initCompoundTensesDefinitions(XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
-  void initConjugatedVerbs(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initPropositionIntroductors(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initNounPhraseHeadMicroCategories(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initDefiniteMicroCategories(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
-  void initSyntacticRelations(XMLConfigurationFiles::XMLConfigurationFileParser& conf);
+  //void initSentenceBreakMicros(XMLConfigurationFileParser& conf);
+  void initEmptyMicroCategories(XMLConfigurationFileParser& conf);
+  void initEmptyMacroCategories(XMLConfigurationFileParser& conf);
+  void initHomoSyntagmaticChainsAndRelationsTypes(XMLConfigurationFileParser& configParser);
+  void initCompoundTensesDefinitions(XMLConfigurationFileParser& configParser);
+  void initConjugatedVerbs(XMLConfigurationFileParser& conf);
+  void initPropositionIntroductors(XMLConfigurationFileParser& conf);
+  void initNounPhraseHeadMicroCategories(XMLConfigurationFileParser& conf);
+  void initDefiniteMicroCategories(XMLConfigurationFileParser& conf);
+  void initSyntacticRelations(XMLConfigurationFileParser& conf);
+  void initLimaToLanguageCodeMapping(XMLConfigurationFileParser& conf);
 
+  LanguageData* m_p;
   MediaId m_language;
 
   PropertyCode::PropertyCodeManager m_propCodeManager;
@@ -121,18 +123,25 @@ class LanguageDataPrivate
   std::map< LinguisticCode, ConceptType > m_macro2ConceptMapping;
 
   std::map< std::string, SyntacticRelationId > m_syntacticRelations;
+  
+  std::map<QString, QString> m_limaToLanguageCodeMapping;
 
 public:
     QDebug single(MediaId m_language);
 }
 ; // end class
 
-LanguageDataPrivate::LanguageDataPrivate() {}
+LanguageDataPrivate::LanguageDataPrivate(LanguageData* ld) :
+  m_p(ld)
+{
+}
 
-LanguageDataPrivate::~LanguageDataPrivate() {}
+LanguageDataPrivate::~LanguageDataPrivate() 
+{
+}
 
 
-const std::string LanguageDataPrivate::s_emptycateg=SYMBOLIC_NONE_1;
+const std::string LanguageDataPrivate::s_emptycateg = SYMBOLIC_NONE_1;
 
 
 const PropertyCode::PropertyCodeManager& LanguageData::getPropertyCodeManager() const
@@ -162,7 +171,7 @@ const std::set< LinguisticCode >&  LanguageData::getDefiniteMicroCategories() co
 const std::set< LinguisticCode >&  LanguageData::getConjugatedVerbs() const
   { return m_d->m_conjugatedVerbs; }
 
-LanguageData::LanguageData() : MediaData(), m_d(new LanguageDataPrivate())
+LanguageData::LanguageData() : MediaData(), m_d(new LanguageDataPrivate(this))
 {
 }
 
@@ -196,6 +205,8 @@ void  LanguageData::initialize(
   m_d->initNounPhraseHeadMicroCategories(conf);
   m_d->initDefiniteMicroCategories(conf);
   m_d->initSyntacticRelations(conf);
+  m_d->initLimaToLanguageCodeMapping(conf);
+
 }
 
 void LanguageDataPrivate::initPropertyCode(
@@ -333,11 +344,12 @@ void LanguageDataPrivate::initEmptyMacroCategories(XMLConfigurationFileParser& c
   // initializes the lists of empty macro categories
   LINFO << "initializes the lists of empty macro categories:";
   m_emptyMacroCategories.clear();
-  std::deque< std::string >& emptyMacroCategoriesList =
-    conf.getModuleGroupListValues("LinguisticData","Categories","emptyMacro");
-  const PropertyManager& macroManager=m_propCodeManager.getPropertyManager("MACRO");
-  for (std::deque< std::string >::iterator it = emptyMacroCategoriesList.begin();
-       it != emptyMacroCategoriesList.end(); it++)
+  auto& emptyMacroCategoriesList = 
+      conf.getModuleGroupListValues("LinguisticData","Categories","emptyMacro");
+  const PropertyManager& macroManager = m_propCodeManager.getPropertyManager(
+      "MACRO");
+  for (auto it = emptyMacroCategoriesList.cbegin();
+       it != emptyMacroCategoriesList.cend(); it++)
   {
     m_emptyMacroCategories.insert(macroManager.getPropertyValue(*it));
   }
@@ -421,17 +433,21 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   catch (const NoSuchParam& )
   {
-    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " << MediaticData::single().media(m_language) << ".";
+    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language " 
+          << MediaticData::single().media(m_language) << ".";
     return;
   }
   if (compoundTensesDefinitionsFile.find_first_of("/")!=0)
   {
-    QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
+    QStringList resourcesPaths = 
+        QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
     Q_FOREACH(QString resPath, resourcesPaths)
     {
       if  (QFileInfo::exists(resPath + "/" + compoundTensesDefinitionsFile.c_str()))
       {
-        compoundTensesDefinitionsFile = (resPath + "/" + compoundTensesDefinitionsFile.c_str()).toUtf8().constData();
+        compoundTensesDefinitionsFile = 
+            (resPath + "/" 
+              + compoundTensesDefinitionsFile.c_str()).toUtf8().constData();
         break;
       }
     }
@@ -442,12 +458,16 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 
   if (!ifl)
   {
-    LWARN << "Compound tenses definition file not found: " << compoundTensesDefinitionsFile;
+    LWARN << "Compound tenses definition file not found: " 
+          << compoundTensesDefinitionsFile;
     return;
   }
 
-  const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
-  const PropertyManager& tenseManager=m_propCodeManager.getPropertyManager("TIME");
+  const PropertyManager& microManager = m_propCodeManager.getPropertyManager(
+      "MICRO");
+  QString timeCode = m_p->getLimaToLanguageCodeMappingValue("TIME");
+  const PropertyManager& tenseManager = m_propCodeManager.getPropertyManager(
+      timeCode.toUtf8().constData());
 
   std::string line = Lima::Common::Misc::readLine(ifl);
   Misc::chomp(line);
@@ -600,6 +620,40 @@ void LanguageDataPrivate::initSyntacticRelations(XMLConfigurationFileParser& con
   }
 }
 
+void LanguageDataPrivate::initLimaToLanguageCodeMapping(XMLConfigurationFileParser& conf)
+{
+  LDATALOGINIT;
+  LINFO << "init LimaToLanguageCodeMapping";
+
+  m_limaToLanguageCodeMapping.clear();
+
+  try
+  {
+    GroupConfigurationStructure& group = conf.getModuleGroupConfiguration("LinguisticData",
+                                                                          "Categories");
+    std::map<std::string,std::string>& smapping = group.getMapAtKey("limaToLanguageCodeMapping");
+
+    // init syntactic relations
+    for (auto it = smapping.cbegin(); it != smapping.cend(); it++) 
+    {
+      m_limaToLanguageCodeMapping[QString::fromUtf8((*it).first.c_str())] =
+          QString::fromUtf8((*it).second.c_str());
+    }
+  }
+  catch (NoSuchMap& )
+  {
+    LDEBUG << "No map 'LinguisticData/Categories/llimaToLanguageCodeMapping' in common language configuration file for language "
+    << (int)m_language;
+  }
+  catch (NoSuchGroup& )
+  {
+    LERROR << "No group 'LinguisticData/Categories' in common language configuration file for language "
+    << (int)m_language;
+    throw InvalidConfiguration();
+  }
+}
+
+
 LinguisticCode LanguageData::compoundTense(LinguisticCode mode, LinguisticCode auxTense) const
 {
   std::pair<LinguisticCode, LinguisticCode> def = std::make_pair(mode, auxTense);
@@ -661,6 +715,24 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
   LDATALOGINIT;
   LERROR << "LanguageData::getSyntacticRelationId NOT found" << name << "!" ;
   return 0;
+}
+
+const std::map<QString, QString>& LanguageData::getLimaToLanguageCodeMapping() const
+{
+  return m_d->m_limaToLanguageCodeMapping;
+}
+
+QString LanguageData::getLimaToLanguageCodeMappingValue(const QString& code) const
+{
+  auto it = m_d->m_limaToLanguageCodeMapping.find(code);
+  if (it == m_d->m_limaToLanguageCodeMapping.cend())
+  {
+    return code;
+  }
+  else
+  {
+    return (*it).second;
+  }
 }
 
 SimpleFactory<MediaData,LanguageData> languageDataFactory(LANGUAGEDATA_CLASSID);
