@@ -192,9 +192,10 @@ def BuildDictionary(language):
         wd = results + "/" + str(sample)
         print('\n***  Build dictionary for sample n° {} ***'.format(sample))
         # with pushd('{}/{}'.format(results, sample)):
+        print('running {}/build-dico.sh {}'.format(PELF_BIN_PATH, language))
         processes.add(
             subprocess.Popen(
-                ['build-dico.sh', language],
+                ['{}/build-dico.sh'.format(PELF_BIN_PATH), language],
                 cwd=wd))
         if len(processes) >= max_processes:
             os.wait()
