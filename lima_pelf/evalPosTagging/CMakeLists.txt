@@ -38,8 +38,12 @@ install(FILES
     ExploitResults/src/MyImagePlot.r
     ExploitResults/src/synthese.tex
     ExploitResults/src/toPDF.sh
-  PERMISSIONS OWNER_READ  OWNER_WRITE   OWNER_EXECUTE   GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-  DESTINATION share/apps/lima/scripts)
+  PERMISSIONS 
+    OWNER_READ OWNER_WRITE OWNER_EXECUTE 
+    GROUP_READ GROUP_EXECUTE 
+    WORLD_READ WORLD_EXECUTE
+  DESTINATION share/apps/lima/scripts
+)
 
 install(FILES
     conf/config-minimale-eng.SVMT

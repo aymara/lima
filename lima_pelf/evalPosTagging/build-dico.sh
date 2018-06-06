@@ -6,7 +6,9 @@ set -o pipefail
 
 lang=$1
 
+cp $LIMA_SOURCES/SetCompilerFlags.cmake .
 cp $LIMA_SOURCES/SystemSpecificInformations.cmake .
+cp $LIMA_SOURCES/manageQt5.cmake .
 cp -R $LIMA_SOURCES/lima_linguisticdata .
 mkdir -p lima_linguisticdata/build/disambiguisationMatrices/${lang}
 cp 90pc.tfcv lima_linguisticdata/build/disambiguisationMatrices/${lang}/corpus_${lang}_merge.txt
