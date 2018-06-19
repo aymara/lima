@@ -172,6 +172,7 @@ Level Categories::levelFor(const QString& category) const
 
 LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) 
 {
+  QsLogging::Categories::instance();
   bool atLeastOneSuccessfulLoad = false;
   QStringList configDirsList;
   if (configString.isEmpty())
