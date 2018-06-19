@@ -46,11 +46,12 @@
 // #endif
 
 #include "common/Data/strwstrtools.h"
+#include "common/MediaProcessors/MediaAnalysisDumper.h"
+#include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/traceUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
-#include "common/MediaProcessors/MediaProcessUnit.h"
-#include "common/MediaProcessors/MediaAnalysisDumper.h"
 
 // definition of logger
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
@@ -78,41 +79,39 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::Misc;
 using namespace Lima::LinguisticProcessing;
 
-LimaServer::LimaServer( const std::string& configDir,
-		   const std::deque<std::string>& langs,
-		   const std::deque<std::string>& pipelines,
-		   int port,
-		   QObject *parent,
-		   QTimer* t)
+LimaServer::LimaServer( const QString& configPath,
+                        const QString& commonConfigFile,
+                        const QString& lpConfigFile,
+                        const QString& resourcesPath,
+                        const std::deque<std::string>& langs,
+                        const std::deque<std::string>& pipelines,
+                        int port,
+                        QObject *parent,
+                        QTimer* t)
      : QObject(parent), m_langs(langs.begin(),langs.end()), m_timer(t)
 {
   LIMASERVERLOGINIT;
   LDEBUG << "::LimaServer::LimaServer()...";
   
-  // initialize common
-  std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
-  if( resourcesPath.empty() )
-    resourcesPath = "/usr/share/apps/lima/resources/";
-  std::string commonConfigFile("lima-common.xml");
-
   std::ostringstream oss;
   std::ostream_iterator<std::string> out_it (oss,", ");
   std::copy ( langs.begin(), langs.end(), out_it );
   LDEBUG << "LimaServer::LimaServer: init MediaticData("
            << "resourcesPath=" << resourcesPath
-           << "configDir=" << configDir
+           << "configPath=" << configPath
            << "commonConfigFile=" << commonConfigFile
+           << "lpConfigFile=" << lpConfigFile
            << "langs=" << oss.str();
   Common::MediaticData::MediaticData::changeable().init(
-    resourcesPath,
-    configDir,
-    commonConfigFile,
+    resourcesPath.toUtf8().constData(),
+    configPath.toUtf8().constData(),
+    commonConfigFile.toUtf8().constData(),
     langs);
   
   // initialize linguistic processing
+  QString fullLpConfigFile = findFileInPaths(configPath, lpConfigFile);
   std::string clientId("lima-coreclient");
-  std::string lpConfigFile("lima-analysis.xml");
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(fullLpConfigFile.toUtf8().constData());
 
   LDEBUG << "LimaServer::LimaServer: configureClientFactory...";
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
