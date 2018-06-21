@@ -19,19 +19,6 @@ add_subdirectory(treeview)
 
 ########### next target ###############
 
-SET (lima_MOC_HEADERS
-  LimaGuiApplication.h
-  Threads.h
-  
-  config/LimaConfiguration.h
-  config/ConfigurationTreeModel.h
-  
-  ConllListModel.h
-  NamedEntitiesParser.h
-)
-
-qt5_wrap_cpp (lima_MOC_OUTFILES ${lima_MOC_HEADERS})
-
 SET (lima_SRCS 
   main.cpp
   LimaGuiApplication.cpp
@@ -79,7 +66,6 @@ endif()
 if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Release)
   add_executable(lima WIN32
     ${lima_SRCS} 
-    ${lima_MOC_OUTFILES}
   )
   
 target_link_libraries(lima 
@@ -127,7 +113,6 @@ target_link_libraries(lima
 else()
   add_executable(lima
     ${lima_SRCS} 
-    ${lima_MOC_OUTFILES}
   )
   target_link_libraries(lima
     lima-common-factory

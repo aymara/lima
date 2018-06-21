@@ -66,7 +66,7 @@ if (${PYTHONLIBS_FOUND})
   add_executable(srl ${srl_SRCS})
   target_link_libraries(srl
       ${PYTHON_LIBRARY}
-      ${QT_LIBRARIES}
+      ${Qt5_LIBRARIES}
   )
 
   install(TARGETS srl DESTINATION bin)
@@ -83,7 +83,7 @@ endif()
 #     lima-common
 #     lima-linguisticprocessing
 #   ${optionalLibs}
-#   ${QT_LIBRARIES}
+#   ${Qt5_LIBRARIES}
 #   ${Boost_LIBRARIES}
 # )
 # 

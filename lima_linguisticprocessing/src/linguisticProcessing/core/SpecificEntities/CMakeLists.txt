@@ -18,12 +18,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### main target ###############
 
-LIMALP_WRAP_HEADERS(specificentities
-  NormalizeDateTimeResources.h
-  MicrosForNormalization.h
-  SpecificEntitiesMicros.h
-)
-
 SET(lima-lp-specificentities_LIB_SRCS
    SpecificEntitiesXmlLogger.cpp
    SpecificEntitiesConstraints.cpp

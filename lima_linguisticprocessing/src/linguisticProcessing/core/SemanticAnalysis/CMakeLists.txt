@@ -62,7 +62,7 @@ target_link_libraries(lima-lp-semanticanalysis
     lima-lp-applyrecognizer
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 
 if (${PYTHONLIBS_FOUND})

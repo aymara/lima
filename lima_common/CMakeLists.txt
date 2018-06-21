@@ -54,12 +54,12 @@ set(CMAKE_PREFIX_PATH
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml Test)
-include_directories(${Qt5_INCLUDES})
+# include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
 get_target_property(QtCore_location Qt5::Core LOCATION)
 get_target_property(QtXml_location Qt5::Xml LOCATION)
 get_target_property(QtTest_location Qt5::Test LOCATION)
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
+# set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   install(FILES ${QtCore_location}

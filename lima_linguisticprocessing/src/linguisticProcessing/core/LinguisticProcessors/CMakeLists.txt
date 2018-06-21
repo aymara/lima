@@ -42,7 +42,7 @@ target_link_libraries(lima-lp-linguisticprocessors
   lima-lp-linguisticanalysisstructure
   lima-common
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES})
+  ${Qt5_LIBRARIES})
 
 set_target_properties(lima-lp-linguisticprocessors PROPERTIES 
   VERSION ${LIMA_LP_LIB_VERSION} 

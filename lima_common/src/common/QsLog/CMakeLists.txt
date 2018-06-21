@@ -44,7 +44,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 # add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
 # target_link_libraries(lima-common-qslog 
 #   lima-common-qslog
-#   ${QT_LIBRARIES}
+#   ${Qt5_LIBRARIES}
 # )
 # set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 # install(TARGETS lima-common-qslog DESTINATION ${LIB_INSTALL_DIR})
@@ -57,7 +57,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 
 #add_executable(qslogger ${qslogger_SRCS})
 
-#target_link_libraries(qslogger lima-common-qslog ${QT_LIBRARIES} )
+#target_link_libraries(qslogger lima-common-qslog ${Qt5_LIBRARIES} )
 
 #install(TARGETS qslogger DESTINATION bin)
 
