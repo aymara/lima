@@ -16,7 +16,7 @@ ARG NLTK_PTB_DP_FILE
 RUN apt-get update -y -qq
 RUN apt-get install -y lsb-release apt-utils software-properties-common python-software-properties python3-software-properties -qq
 RUN apt-get install -y git gcc g++ ninja-build autotools-dev dh-autoreconf curl python-nltk gawk wget -qq
-RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libboost-all-dev libenchant-dev -qq
+RUN apt-get install -y qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libboost-all-dev libenchant-dev  libtre-dev -qq
 
 RUN mkdir -p /src
 WORKDIR /src
