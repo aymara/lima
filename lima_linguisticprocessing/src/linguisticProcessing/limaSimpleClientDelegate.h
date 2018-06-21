@@ -40,8 +40,8 @@ class LimaWorker: public QObject
 {
 Q_OBJECT
 public:
-  LimaWorker(QObject* parent=Q_NULLPTR);
-  ~LimaWorker();
+  LimaWorker(QObject* parent = nullptr);
+  virtual ~LimaWorker();
 
   const std::string& getResult() const { return m_result; }
   
@@ -73,8 +73,8 @@ class LimaController: public QObject
 {
 Q_OBJECT
 public:
-   LimaController(QObject* parent=Q_NULLPTR);
-  ~LimaController();
+  LimaController(QObject* parent=nullptr);
+  virtual ~LimaController();
 
   bool hasFinishedInit() { return m_finishedInit; }
   bool hasFinishedAnalyze() { return m_finishedAnalyze; }
@@ -103,7 +103,7 @@ class LimaSimpleClientDelegate
 {
 public:
   LimaSimpleClientDelegate();
-  ~LimaSimpleClientDelegate();
+  virtual ~LimaSimpleClientDelegate();
 
   void initialize(const std::string& language, const std::string& pipeline);
   std::string analyze(const std::string& text);

@@ -1,5 +1,6 @@
 project(Lima)
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 
@@ -133,9 +134,9 @@ CompileLimaSubproject(lima_common "")
 
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
 
-if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
+# if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
-endif()
+# endif()
 
 CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 

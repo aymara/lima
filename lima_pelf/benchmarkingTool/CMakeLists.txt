@@ -42,6 +42,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/PelfBenchmarkingTool)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(pelf-bench ${pelf-bench_SRCS} ${pelf-bench_UIS_H} ${pelf-bt_RCC_SRCS})
-target_link_libraries(pelf-bench ${QT_LIBRARIES} ${QWT_LIBRARY})
+target_link_libraries(pelf-bench ${Qt5_LIBRARIES} ${QWT_LIBRARY})
 install(TARGETS pelf-bench DESTINATION bin)
 

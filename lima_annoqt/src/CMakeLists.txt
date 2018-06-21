@@ -11,16 +11,11 @@ SET(annoqt_SRCS
            specificEntitiesHandler.cpp
            specificEntity.cpp)
 
-set (annoqt_MOC_HEADERS annoqt.h
-           annotationEditWidget.h
-           specificEntity.h)
-qt5_wrap_cpp (annoqt_MOC_OUTFILES ${annoqt_MOC_HEADERS})
-
 qt5_add_resources(annoqt_QRCS annoqt.qrc)
 
-add_executable(annoqt ${annoqt_SRCS} ${annoqt_QRCS} ${annoqt_MOC_OUTFILES})
+add_executable(annoqt ${annoqt_SRCS} ${annoqt_QRCS})
 
-target_link_libraries(annoqt ${QT_LIBRARIES})
+target_link_libraries(annoqt ${Qt5_LIBRARIES})
 
 
 ########### next target ###############
@@ -37,20 +32,11 @@ SET(annoqtconfeditor_SRCS
            khuesaturationselect.cpp
            kcolordialog.cpp)
 
-set (annoqtconfeditor_MOC_HEADERS 
-           confeditor.h
-           kxyselector.h
-           kselector.h
-           kcolorvalueselector.h
-           khuesaturationselect.h
-           kcolordialog.h)
-qt5_wrap_cpp (annoqtconfeditor_MOC_OUTFILES ${annoqtconfeditor_MOC_HEADERS})
-
 qt5_add_resources(annoqtconfeditor_QRCS annoqtconfeditor.qrc)
 
-add_executable(annoqtconfeditor ${annoqtconfeditor_SRCS} ${annoqtconfeditor_QRCS} ${annoqtconfeditor_MOC_OUTFILES})
+add_executable(annoqtconfeditor ${annoqtconfeditor_SRCS} ${annoqtconfeditor_QRCS})
 
-target_link_libraries(annoqtconfeditor ${QT_LIBRARIES})
+target_link_libraries(annoqtconfeditor ${Qt5_LIBRARIES})
 
 
 

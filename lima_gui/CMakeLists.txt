@@ -16,6 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(lima_gui)
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 

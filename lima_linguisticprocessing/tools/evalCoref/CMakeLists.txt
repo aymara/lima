@@ -31,7 +31,7 @@ target_link_libraries(XmlParser
   lima-common-data 
   ${optionalLibs}
   ${Boost_LIBRARIES}  
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
 )
 
 install(TARGETS XmlParser DESTINATION bin

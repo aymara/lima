@@ -16,7 +16,7 @@ target_link_libraries(XMLConfigurationFilesTest0
   lima-common
   lima-common-xmlconfigurationfiles 
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
 add_test(

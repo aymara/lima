@@ -1,6 +1,7 @@
 # Define project
 project(pelf)
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 
@@ -79,8 +80,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 addQt5Modules(Core Xml XmlPatterns Gui Widgets)
 
-include_directories(${Qt5_INCLUDES})
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
+# include_directories(${Qt5_INCLUDES})
+# set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
 
 # Find required packages
 message("Searching for Qwt")

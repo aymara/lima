@@ -17,45 +17,28 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2003 by  CEA                                            *
+ *   author Olivier MESNARD olivier.mesnard@cea.fr                         *
  *                                                                         *
+ *  composed dictionnary                                                   *
  ***************************************************************************/
-#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICTABSTRACTRWACCESSRESOURCE_H
-#define LIMA_LINGUISTICPROCESSING_ANALYSISDICTABSTRACTRWACCESSRESOURCE_H
 
-#include "linguisticProcessing/core/LinguisticResources/AbstractAccessResource.h"
-#include "common/misc/AbstractRwAccessByString.h"
-#include "common/misc/AbstractAccessByString.h"
+#include "AbstractAnalysisDictionary.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
 namespace AnalysisDict {
 
-/**
-@author Olivier Mesnard
-*/
-class AbstractRwAccessResource : public AbstractAccessResource
+AbstractAnalysisDictionary::AbstractAnalysisDictionary(QObject* parent) :
+    AbstractResource(parent)
 {
-  Q_OBJECT
-public:
-
-    AbstractRwAccessResource(QObject* parent = 0);
-    virtual ~AbstractRwAccessResource();
-
-    virtual void init(
-      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager) override = 0;
-
-    virtual Common::AbstractAccessByString* getAccessByString() const override = 0;
- 
-    virtual Common::AbstractModifierOnAccessByString* getRwAccessByString() const = 0;
-
-};
-
 }
 
+AbstractAnalysisDictionary::~AbstractAnalysisDictionary()
+{
 }
 
-}
+} // namespace AnalysisDict
+} // namespace LinguisticProcessing
+} // namespace Lima
 
-#endif

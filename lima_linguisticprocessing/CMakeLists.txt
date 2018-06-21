@@ -16,6 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #cmake_policy
 if(POLICY CMP0020)
@@ -26,14 +27,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "${_plugin}\n")
   add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
-endmacro ()
-
-macro (LIMALP_WRAP_HEADERS _plugin)
-  foreach(HEADER ${ARGN})
-    set (lima-lp-${_plugin}_MOC_HEADERS ${lima-lp-${_plugin}_MOC_HEADERS} ${HEADER})
-  endforeach()
-
-  qt5_wrap_cpp (lima-lp-${_plugin}_MOC_OUTFILES ${lima-lp-${_plugin}_MOC_HEADERS})
 endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
@@ -71,13 +64,13 @@ addQt5Modules(Core Xml XmlPatterns Network Test)
 # Search Qt5 optional components
 find_package(Qt5 COMPONENTS DBus)
 if (Qt5DBus_FOUND)
-  set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
+#   set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
   set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
 endif()
-
-include_directories(${Qt5_INCLUDES})
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
-message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
+# 
+# include_directories(${Qt5_INCLUDES})
+# set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
+# message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
 get_target_property(QtNetwork_location Qt5::Network LOCATION)
 get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")

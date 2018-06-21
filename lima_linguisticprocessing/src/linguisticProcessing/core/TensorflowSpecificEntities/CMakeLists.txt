@@ -49,7 +49,7 @@ target_link_libraries(lima-lp-tensorflowspecificentities
 #     ${Protobuf_LIBRARIES}
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 
 set_target_properties(lima-lp-tensorflowspecificentities 

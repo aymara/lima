@@ -59,7 +59,7 @@ target_link_libraries(lima-lp-linguisticprocessing-core
   lima-lp-linguisticresources
   lima-lp-client
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
  )
 set_target_properties(lima-lp-linguisticprocessing-core PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 install(TARGETS lima-lp-linguisticprocessing-core DESTINATION ${LIB_INSTALL_DIR}

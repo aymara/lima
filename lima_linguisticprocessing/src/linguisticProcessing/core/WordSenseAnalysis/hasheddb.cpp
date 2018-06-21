@@ -157,6 +157,20 @@ void HashedDB::xorX(LSHSignature & s)
     }
 }
 
+void HashedDB::printStats() 
+{
+  for (int sig = 0; sig < nSignatures; sig++)
+    for (int s = 0; s < signatureLength; s++)
+      if (!signatures[sig].getBit(s))
+        nbZero[s]++;
+  std::ostringstream oss;
+  oss << "Sigs zeroes/ones count : " << std::endl;
+  for (int s = 0; s < signatureLength; s++)
+    oss << nbZero[s] << "/" << nSignatures - nbZero[s] << ",";
+  oss << std::endl;
+  std::cerr << oss.str();
+}
+
 }
 }
 }

@@ -18,12 +18,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### next target ###############
 
-LIMALP_WRAP_HEADERS(flattokenizer
-  Automaton.h
-  CharChart.h
-  TokenizerAutomaton.h
-)
-
 SET(lima-lp-flattokenizer_LIB_SRCS
    Automaton.cpp
    Char.cpp
@@ -51,7 +45,7 @@ target_link_libraries(lima-lp-flattokenizer
     lima-lp-linguisticanalysisstructure 
     lima-common
     ${Boost_LIBRARIES} 
-    ${QT_LIBRARIES} 
+    ${Qt5_LIBRARIES} 
 )
 
 set_target_properties(lima-lp-flattokenizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

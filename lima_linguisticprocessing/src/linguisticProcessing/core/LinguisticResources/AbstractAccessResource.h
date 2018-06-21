@@ -44,12 +44,9 @@ class LIMA_LINGUISTICRESOURCES_EXPORT AbstractAccessResource : public AbstractRe
   Q_OBJECT
 public:
 
-  AbstractAccessResource(QObject* parent = 0) :
-    AbstractResource(parent),
-    m_isMainKeys(false)
-  {};
+  explicit AbstractAccessResource(QObject* parent = 0);
 
-  virtual ~AbstractAccessResource() {};
+  virtual ~AbstractAccessResource();
   
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
