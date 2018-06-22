@@ -129,9 +129,7 @@ install(
   COMPONENT runtime)
   
 
-# Comment out TF-based NER tests while a solution to store models has not been
-# found
-# add_subdirectory(tests)
+add_subdirectory(tests)
 
 ########### install files ###############
 
