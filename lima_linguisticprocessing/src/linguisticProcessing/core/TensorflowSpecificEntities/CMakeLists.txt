@@ -90,12 +90,36 @@ install(FILES
      results/eng_IOB2/output_graph.pb
   COMPONENT eng 
   DESTINATION "share/apps/lima/resources/TensorFlowSpecificEntities/eng/IOB2/")    
-    
+
+function(cat IN_FILE OUT_FILE)
+  file(READ ${IN_FILE} CONTENTS)
+  file(APPEND ${OUT_FILE} "${CONTENTS}")
+endfunction()
+function(append IN_FILE OUT_FILE)
+  file(READ ${IN_FILE} CONTENTS)
+  file(APPEND ${OUT_FILE} "${CONTENTS}")
+endfunction()
+
+cat(
+  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa 
+  ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
+set(FR_OUTPUTGRAPH_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbab
+  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbac
+  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbad
+  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbae
+  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaf
+)
+
+foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
+  append(${FR_OUTPUTGRAPH_FILE} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
+endforeach()
+
 install(FILES
      data/IOB1/fr/words.txt
      data/lima/fr/IOB1/tags.txt 
      data/IOB1/fr/chars.txt
-     results/fr/output_graph.pb
+     ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb
   COMPONENT fr 
   DESTINATION "share/apps/lima/resources/TensorFlowSpecificEntities/fr/")
     
