@@ -78,7 +78,8 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
   get_target_property(QtDBus_location Qt5::DBus LOCATION)
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     install(FILES ${QtDBus_location}
-            DESTINATION ${LIB_INSTALL_DIR})
+            DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
   endif ()
 else ()
 endif()
@@ -86,7 +87,8 @@ endif()
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   install(FILES ${QtNetwork_location}
                 ${QtXmlPatterns_location}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
 endif ()
 
 find_package(PythonLibs 3.4)
@@ -121,7 +123,8 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
                 ${Boost_FILESYSTEM_LIBRARY_dll}
                 ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
                 ${Boost_THREAD_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
 endif ()
 
 find_package(SVMTOOL++)

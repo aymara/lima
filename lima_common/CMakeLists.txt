@@ -65,7 +65,8 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   install(FILES ${QtCore_location}
                 ${QtXml_location}
                 ${QtTest_location}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
 endif ()
 
 add_definitions( -DBOOST_ALL_NO_LIB )
@@ -91,7 +92,8 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   endif()
   install(FILES ${Boost_SYSTEM_LIBRARY_dll}
                 ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
 endif ()
 
 configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
@@ -128,7 +130,17 @@ COMMENT "Generating API documentation with Doxygen" VERBATIM
 endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
+# Specify additional runtime libraries that may not be detected. After 
+# inclusion any detected libraries will be appended to this.
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+  ${Qt5_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY_dll}
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll})
+
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
+set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+set(MAKE_INSTALL_UCRT_LIBRARIES TRUE)
+
 include(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
