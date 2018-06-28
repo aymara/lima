@@ -49,6 +49,21 @@ include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Test Qml Quick QuickTest Gui )
 include_directories(${Qt5_INCLUDES})
 
+get_target_property(QtQml_location Qt5::Qml LOCATION)
+get_target_property(QtQuick_location Qt5::Quick LOCATION)
+get_target_property(QtQuickTest_location Qt5::QuickTest LOCATION)
+get_target_property(QtGui_location Qt5::Gui LOCATION)
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtQml_location}
+                ${QtQuick_location}
+                ${QtQuickTest_location}
+                ${QtGui_location}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+endif ()
+
+
 add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
