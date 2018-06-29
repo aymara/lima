@@ -114,7 +114,9 @@ add_subdirectory(tools)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake 
+  DESTINATION share/apps/lima/cmake/Modules 
+  COMPONENT devel)
 
 ########### documentation ###############
 
@@ -133,7 +135,9 @@ endif(DOXYGEN_FOUND)
 # Specify additional runtime libraries that may not be detected. After 
 # inclusion any detected libraries will be appended to this.
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
-  ${Qt5_LIBRARIES}
+  ${QtCore_location}
+  ${QtXml_location}
+  ${QtTest_location}
   ${Boost_SYSTEM_LIBRARY_dll}
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll})
 
