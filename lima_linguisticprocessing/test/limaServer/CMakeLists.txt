@@ -34,7 +34,7 @@ add_executable(limaserver ${limaserver_SRCS})
 target_link_libraries(limaserver
     lima-common
     lima-linguisticprocessing
-    ${QHTTPSERVER_NAMES}
+    ${QHTTPSERVERCPP_LIBRARY}
     ${Qt5_LIBRARIES}
     ${Boost_LIBRARIES})
 
