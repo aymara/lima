@@ -7,11 +7,11 @@
 #
 # This module defines
 #  QHTTPSERVERCPP_INCLUDE_DIR, where to find soci.h, etc.
-#  QHTTPSERVERCPP_LIBRARY_DIRS, the libraries to link against to use QHttpServer.
+#  QHTTPSERVERCPP_LIBRARY, the libraries to link against to use QHttpServer.
 #  QHTTPSERVER_DEFINITIONS - You should add_definitons(${QHTTPSERVER_DEFINITIONS}) before compiling code that includes png library files.
 #  QHTTPSERVER_FOUND, If false, do not try to use QHttpServer.
 # also defined, but not for general use are
-#  QHTTPSERVERCPP_LIBRARY_DIRS, where to find the QHttpServer library.
+#  QHTTPSERVERCPP_LIBRARY, where to find the QHttpServer library.
 
 #=============================================================================
 # Copyright 2002-2009 Kitware, Inc.
@@ -32,14 +32,14 @@ find_path(QHTTPSERVERCPP_INCLUDE_DIR qhttpserver.h
 )
 
 set(QHTTPSERVER_NAMES ${QHTTPSERVER_NAMES} qhttpserver)
-find_library(QHTTPSERVERCPP_LIBRARY_DIRS NAMES ${QHTTPSERVER_NAMES}
+find_library(QHTTPSERVERCPP_LIBRARY NAMES ${QHTTPSERVER_NAMES}
   PATHS $ENV{LIMA_EXTERNALS}/lib 
 )
 
 # handle the QUIETLY and REQUIRED arguments and set QHTTPSERVER_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(QHTTPSERVER  DEFAULT_MSG  QHTTPSERVERCPP_LIBRARY_DIRS QHTTPSERVERCPP_INCLUDE_DIR)
+find_package_handle_standard_args(QHTTPSERVER  DEFAULT_MSG  QHTTPSERVERCPP_LIBRARY QHTTPSERVERCPP_INCLUDE_DIR)
 
-mark_as_advanced(QHTTPSERVERCPP_INCLUDE_DIR QHTTPSERVERCPP_LIBRARY_DIRS )
+mark_as_advanced(QHTTPSERVERCPP_INCLUDE_DIR QHTTPSERVERCPP_LIBRARY )
 
