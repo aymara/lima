@@ -73,6 +73,16 @@ endif()
 # message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
 get_target_property(QtNetwork_location Qt5::Network LOCATION)
 get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtNetwork_location}
+                ${QtXmlPatterns_location}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    ${QtNetwork_location}
+    ${QtXmlPatterns_location})
+endif ()
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
   message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
   get_target_property(QtDBus_location Qt5::DBus LOCATION)
@@ -80,16 +90,13 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
     install(FILES ${QtDBus_location}
             DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${QtDBus_location})
   endif ()
 else ()
 endif()
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES ${QtNetwork_location}
-                ${QtXmlPatterns_location}
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
-endif ()
 
 find_package(PythonLibs 3.4)
 if (${PYTHONLIBS_FOUND})
@@ -125,6 +132,13 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
                 ${Boost_THREAD_LIBRARY_dll}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+      ${Boost_REGEX_LIBRARY_dll}
+      ${Boost_FILESYSTEM_LIBRARY_dll}
+      ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
+      ${Boost_THREAD_LIBRARY_dll})
+
 endif ()
 
 find_package(SVMTOOL++)
@@ -197,8 +211,12 @@ add_subdirectory(cmake)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
-install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins COMPONENT runtime)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake 
+  DESTINATION share/apps/lima/cmake/Modules 
+  COMPONENT devel)
+install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins 
+  DESTINATION share/config/lima/plugins 
+  COMPONENT runtime)
 
 ########### documentation ###############
 
@@ -215,7 +233,8 @@ endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
-INCLUDE(InstallRequiredSystemLibraries)
+
+include(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
 SET(CPACK_PACKAGE_NAME "limalinguisticprocessing")
