@@ -59,7 +59,7 @@ build_script:
   - ps: pushd c:/projects/lima
   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://github.com/aymara/qhttpserver/releases/download/20180627155441-b3d49ea3/qhttpserver-0.0.20180627155441-b3d49ea3-win64.exe","c:/projects/lima/qhttpserver.exe")
-  - "qhttpserver.exe /S /NCRC /D=c:\d"
+  - qhttpserver.exe /S /NCRC /D="c:\d"
   - ps: $env:LIMA_VERSION_RELEASE="$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
   - echo %LIMA_VERSION_RELEASE%
   - ps: popd
