@@ -93,7 +93,7 @@ target_link_libraries(limadbusserver
     lima-linguisticprocessing
     ${Boost_LIBRARIES}
     ${Qt5_LIBRARIES}
-    ${QHTTPSERVER_NAMES})
+    ${QHTTPSERVERCPP_LIBRARY})
 
 install(TARGETS limadbusserver DESTINATION bin
   COMPONENT runtime)
