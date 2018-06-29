@@ -6,6 +6,7 @@ branches:
 
 environment:
   LIMA_DIST: c:\d
+  LIMA_EXTERNALS: c:\d
   LIMA_CONF: 'c:\d\share\config\lima'
   LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
   QTDIR: 'C:\Qt\5.11.0\msvc2015_64'
