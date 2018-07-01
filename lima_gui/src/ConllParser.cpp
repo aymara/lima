@@ -244,7 +244,11 @@ std::string highlightNamedEntities(
   {
     for (auto& entity : type.second) 
     {
-      boost::replace_all(text, entity, markup(entity,"strong","color:"+colors[type.first]));
+      boost::replace_all(text, 
+                         entity, 
+                         markup(entity, 
+                                "strong", 
+                                "color:"+colors[type.first]));
     }
   }
 

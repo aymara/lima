@@ -46,21 +46,31 @@ set(CMAKE_PREFIX_PATH
 
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Test Qml Quick QuickTest Gui )
+addQt5Modules(Core Test Qml Quick QuickTest Gui Widgets)
 include_directories(${Qt5_INCLUDES})
 
 get_target_property(QtQml_location Qt5::Qml LOCATION)
 get_target_property(QtQuick_location Qt5::Quick LOCATION)
 get_target_property(QtQuickTest_location Qt5::QuickTest LOCATION)
 get_target_property(QtGui_location Qt5::Gui LOCATION)
+get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   install(FILES ${QtQml_location}
                 ${QtQuick_location}
                 ${QtQuickTest_location}
                 ${QtGui_location}
+                ${QtWidgets_location}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    ${QtQml_location}
+    ${QtQuick_location}
+    ${QtQuickTest_location}
+    ${QtGui_location}
+    ${QtWidgets_location}
+)
 endif ()
 
 
