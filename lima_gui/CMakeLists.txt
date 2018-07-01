@@ -108,6 +108,7 @@ add_subdirectory(test)
 
 add_subdirectory(conf)
 ########### packaging ###############
+set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 include(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)

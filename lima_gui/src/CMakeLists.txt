@@ -43,7 +43,7 @@ if (Qt5Core_FOUND)
   endif()
 endif()
 
-set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::Gui)
+set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::QuickTest Qt5::Gui Qt5::Widgets)
 
 if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   if(Qt5Core_VERSION VERSION_LESS 5.3)
