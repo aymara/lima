@@ -56,6 +56,7 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-linguisticanalysisstructure
   lima-lp-lineartextrepresentation
   lima-lp-textsegmentation
+  lima-lp-semanticanalysis
   lima-common
 )
 
