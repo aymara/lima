@@ -63,6 +63,7 @@ target_link_libraries(easyprocessor
     lima-lp-se-datetime
     lima-lp-se-number
     lima-lp-se-person
+    lima-lp-semanticanalysis
     lima-lp-specificentities
     lima-lp-syntacticanalysis
     lima-lp-textsegmentation

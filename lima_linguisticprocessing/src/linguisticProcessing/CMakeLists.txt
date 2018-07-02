@@ -48,6 +48,7 @@ target_link_libraries(lima-linguisticprocessing
   lima-lp-analysisdumpers
   lima-lp-textsegmentation
   lima-lp-linguisticanalysisstructure
+  lima-lp-semanticanalysis
   lima-lp-linguisticresources
   lima-lp-entitytracker
   lima-lp-flattokenizer
