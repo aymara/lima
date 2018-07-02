@@ -1,17 +1,17 @@
-# - Find the native QHttpServer includes and library
+# - Find the native tre includes and library
 
 # created from FindPNG.cmake (Copyright 2002-2009 Kitware, Inc.)
-# by Gael de Chalendar (CEA LIST)
+# by Olivier Mesnard (CEA LIST)
 
-# - Find the native QHttpServer includes and library
+# - Find the native tre includes and library
 #
 # This module defines
 #  TREECPP_INCLUDE_DIR, where to find soci.h, etc.
-#  TRECPP_LIBRARY_DIRS, the libraries to link against to use QHttpServer.
+#  TRECPP_LIBRARY_DIRS, the libraries to link against to use tre.
 #  QHTTPSERVER_DEFINITIONS - You should add_definitons(${QHTTPSERVER_DEFINITIONS}) before compiling code that includes png library files.
-#  QHTTPSERVER_FOUND, If false, do not try to use QHttpServer.
+#  QHTTPSERVER_FOUND, If false, do not try to use tre.
 # also defined, but not for general use are
-#  TRECPP_LIBRARY_DIRS, where to find the QHttpServer library.
+#  TRECPP_LIBRARY_DIRS, where to find the tre library.
 
 #=============================================================================
 # Copyright 2002-2009 Kitware, Inc.
