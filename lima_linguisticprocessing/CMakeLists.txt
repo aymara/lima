@@ -102,6 +102,14 @@ find_package(PythonLibs 3.4)
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
   link_directories(${PYTHON_LIBRARIES})
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${PYTHON_LIBRARY}
+            DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+          ${PYTHON_LIBRARY}
+)
+  endif ()
 endif()
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
