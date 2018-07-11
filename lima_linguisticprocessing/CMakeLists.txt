@@ -97,20 +97,19 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
 else ()
 endif()
 
-
-find_package(PythonLibs 3.4)
+set(Python_ADDITIONAL_VERSIONS 3.4 3.5 3.6 3.7)
+find_package(PythonLibs)
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
-  link_directories(${PYTHON_LIBRARIES})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${PYTHON_LIBRARY}
+    install(FILES ${PYTHON_LIBRARIES}
             DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
-          ${PYTHON_LIBRARY}
-)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+        ${PYTHON_LIBRARIES})
   endif ()
-endif()
+endif ()
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
