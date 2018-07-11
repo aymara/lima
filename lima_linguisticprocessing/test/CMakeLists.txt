@@ -43,7 +43,8 @@ MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 target_link_libraries(analyzeText lima-linguisticprocessing)
 
-install(TARGETS analyzeText DESTINATION bin
+install(TARGETS analyzeText 
+  DESTINATION bin
   COMPONENT runtime)
 
  ########### next target ###############
@@ -65,7 +66,7 @@ if (${PYTHONLIBS_FOUND})
 
   add_executable(srl ${srl_SRCS})
   target_link_libraries(srl
-      ${PYTHON_LIBRARY}
+      ${PYTHON_LIBRARIES}
       ${Qt5_LIBRARIES}
   )
 
@@ -100,7 +101,8 @@ add_executable(analyzetextservercore ${analyzetextservercore_SRCS})
 
 target_link_libraries(analyzetextservercore lima-linguisticprocessing)
 
-install(TARGETS analyzetextservercore DESTINATION bin
+install(TARGETS analyzetextservercore 
+  DESTINATION bin
   COMPONENT runtime)
 
 

@@ -69,7 +69,7 @@ target_link_libraries(lima-lp-semanticanalysis
 
 if (${PYTHONLIBS_FOUND})
   target_link_libraries(lima-lp-semanticanalysis 
-    ${PYTHON_LIBRARY}
+    ${PYTHON_LIBRARIES}
   )
 endif()
 

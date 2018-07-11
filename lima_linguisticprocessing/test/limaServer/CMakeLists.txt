@@ -38,7 +38,8 @@ target_link_libraries(limaserver
     ${Qt5_LIBRARIES}
     ${Boost_LIBRARIES})
 
-install(TARGETS limaserver DESTINATION bin
+install(TARGETS limaserver 
+  DESTINATION bin
   COMPONENT runtime)
 
 ########### next target ###############
@@ -95,6 +96,7 @@ target_link_libraries(limadbusserver
     ${Qt5_LIBRARIES}
     ${QHTTPSERVERCPP_LIBRARY})
 
-install(TARGETS limadbusserver DESTINATION bin
+install(TARGETS limadbusserver 
+  DESTINATION bin
   COMPONENT runtime)
 endif()
