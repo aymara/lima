@@ -36,6 +36,13 @@ namespace LinguisticProcessing
 namespace SemanticAnalysis
 {
 
+/**
+ * An annotation between two annotation graph vertices denoting the semantic
+ * relation(s) holding between the two tokens. 
+ * 
+ * If there is more than one relation between the two vertices, the value of 
+ * the type should be the list of the relation types concatenated with a '-'.
+ */
 class LIMA_SEMANTICANALYSIS_EXPORT SemanticRelationAnnotation
 {
 public:
