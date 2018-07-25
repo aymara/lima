@@ -42,7 +42,7 @@ const std::string& EventTemplateDefinitionResource::getMention (const std::strin
   LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
   {
-    LDEBUG << "Cuurent Mention " << it->getMention()<< LENDL;
+    LDEBUG << "Cuurent Mention " << it->getMention();
     if (name.compare(it->getName())==0) return it->getMention();
   }
   return mention;
@@ -55,7 +55,7 @@ const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefin
   LDEBUG << "getMention m_templates.size() " << m_templates.size();
   for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
   {
-    //LDEBUG << "Cuurent Mention " << it->getMention()<< LENDL;
+    //LDEBUG << "Cuurent Mention " << it->getMention();
     if (name.compare(it->getName())==0) return it->getStructure();
   }
   return structure;
@@ -100,7 +100,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   {
     map<string,string> elts  = unitConfiguration.getMapAtKey("templateElements");
     LDEBUG << "templateElements .size " << elts.size();
-    for(map<string,string>::const_iterator it=elts.begin(),it_end=elts.end();it!=it_end;it++) {
+    for(auto it=elts.begin(),it_end=elts.end();it!=it_end;it++) {
       LDEBUG << "templateElement =" << (*it).first;
       structure.addTemplateElement((*it).first,(*it).second);
     }
@@ -116,19 +116,21 @@ init(GroupConfigurationStructure& unitConfiguration,
   {
     map<string,string> mapping  = unitConfiguration.getMapAtKey("elementMapping");
     LDEBUG << "after Getting map ";
-    for(map<string,string>::const_iterator it=mapping.begin(),it_end=mapping.end();it!=it_end;it++) {
+    for(auto it=mapping.cbegin(),it_end=mapping.cend();it!=it_end;it++) {
       const std::string& elements=(*it).second;
       // comma-separated list of elements
       boost::char_separator<char> sep(",; ");
       boost::tokenizer<boost::char_separator<char> > tok(elements,sep);
-      for(boost::tokenizer<boost::char_separator<char> >::iterator e=tok.begin(),e_end=tok.end(); e!=e_end;e++) {
-        LDEBUG << "EventTemplateDefinitionResource: add mapping " << (*it).first << ":" << *e;
+      for(auto e=tok.begin(),e_end=tok.end(); e!=e_end;e++) {
+        LDEBUG << "EventTemplateDefinitionResource: add mapping " 
+                << (*it).first << ":" << *e;
         m_elementMapping[(*it).first].insert(*e);
       }
     }
   }
   catch (NoSuchMap& ) {
-    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " << (int)m_language;
+    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " 
+            << (int)m_language;
   }
   LDEBUG << "Adding Structure ";
   m_templates.push_back(structure);

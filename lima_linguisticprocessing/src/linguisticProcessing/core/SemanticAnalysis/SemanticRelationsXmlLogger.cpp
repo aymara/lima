@@ -90,7 +90,7 @@ void SemanticRelationsXmlLogger::init(
   {
     SEMANTICANALYSISLOGINIT;
     LWARN << "No 'graph' parameter in unit configuration '"
-        << unitConfiguration.getName() << "' ; using PosGraph" << LENDL;
+        << unitConfiguration.getName() << "' ; using PosGraph";
     m_graph=string("PosGraph");
   }
 }
@@ -101,7 +101,7 @@ process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
   
   SEMANTICANALYSISLOGINIT;
-  LDEBUG << "SemanticRelationsXmlLogger" << LENDL;
+  LDEBUG << "SemanticRelationsXmlLogger";
     
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   
@@ -113,7 +113,7 @@ process(AnalysisContent& analysis) const
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SEMANTICANALYSISLOGINIT;
-      LERROR << "no LinguisticMetaData ! abort" << LENDL;
+      LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
 
@@ -123,7 +123,7 @@ process(AnalysisContent& analysis) const
   ofstream out;
   /*if (!openLogFile(out,metadata->getMetaData("FileName"))) {
     SEMANTICANALYSISLOGINIT;
-    LERROR << "Can't open log file " << LENDL;
+    LERROR << "Can't open log file ";
     return UNKNOWN_ERROR;
   }*/
 
@@ -158,17 +158,17 @@ process(AnalysisContent& analysis) const
       << "\" offsetNode=\"" << offsetIndexingNode 
       << "\">" << endl;
 
-//   LDEBUG << "SemanticRelationsXmlLogger on graph " << m_graph << LENDL;
+//   LDEBUG << "SemanticRelationsXmlLogger on graph " << m_graph;
   
   //look at all vertices for annotations
   AnnotationGraphVertexIt itv, itv_end;
   boost::tie(itv, itv_end) = vertices(annotationData->getGraph());
   for (; itv != itv_end; itv++)
   {
-    LDEBUG << "SemanticRelationsXmlLogger on annotation vertex " << *itv << LENDL;
+    LDEBUG << "SemanticRelationsXmlLogger on annotation vertex " << *itv;
     if (annotationData->hasAnnotation(*itv,Common::Misc::utf8stdstring2limastring("SemanticAnnotation")))
     {
-//       LDEBUG << "    it has SemanticRelationAnnotation" << LENDL;
+//       LDEBUG << "    it has SemanticRelationAnnotation";
       const SemanticAnnotation* annot = 0;
       try
       {
@@ -178,7 +178,7 @@ process(AnalysisContent& analysis) const
       catch (const boost::bad_any_cast& e)
       {
         SEMANTICANALYSISLOGINIT;
-        LERROR << "This annotation is not a SemanticRelation" << LENDL;
+        LERROR << "This annotation is not a SemanticRelation";
         continue;
       }
 
@@ -195,11 +195,11 @@ process(AnalysisContent& analysis) const
   boost::tie(it, it_end) = edges(annotGraph);
   for (; it != it_end; it++) {
     LDEBUG << "SemanticRelationsXmlLogger on annotation edge " 
-           << source(*it,annotGraph) << "->" << target(*it,annotationData->getGraph()) << LENDL;
+           << source(*it,annotGraph) << "->" << target(*it,annotationData->getGraph());
     if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation")))
     {
       SEMANTICANALYSISLOGINIT;
-      LDEBUG << "found semantic relation" << LENDL;
+      LDEBUG << "found semantic relation";
       const SemanticRelationAnnotation* annot = 0;
       try
       {
@@ -209,7 +209,7 @@ process(AnalysisContent& analysis) const
       catch (const boost::bad_any_cast& e)
       {
         SEMANTICANALYSISLOGINIT;
-        LERROR << "This annotation is not a SemanticAnnotation" << LENDL;
+        LERROR << "This annotation is not a SemanticAnnotation";
         continue;
       }
 
@@ -222,7 +222,7 @@ process(AnalysisContent& analysis) const
     }
   }
 
-//   LDEBUG << "    all vertices done" << LENDL;
+//   LDEBUG << "    all vertices done";
   outputStream << "</relations>" << endl;
   //out.close();
   outputStream << "</semantic_relation_dump>" << std::endl;
@@ -245,16 +245,16 @@ vertexStringForSemanticAnnotation(const std::string& vertexRole,
   if (!annotationData->hasIntAnnotation(vertex,Common::Misc::utf8stdstring2limastring(m_graph)))
   {
     // SEMANTICANALYSISLOGINIT;
-    // LDEBUG << *itv << " has no " << m_graph << " annotation. Skeeping it." << LENDL;
+    // LDEBUG << *itv << " has no " << m_graph << " annotation. Skeeping it.";
     return "";
   }
   v = annotationData->intAnnotation(vertex,Common::Misc::utf8stdstring2limastring(m_graph));
   LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
-  //       LDEBUG << "SemanticRelationsXmlLogger tokenMap[" << v << "] = " << vToken << LENDL;
+  //       LDEBUG << "SemanticRelationsXmlLogger tokenMap[" << v << "] = " << vToken;
   if (vToken == 0)
   {
     SEMANTICANALYSISLOGINIT;
-    LERROR << "Vertex " << v << " has no entry in the analysis graph token map. This should not happen !!" << LENDL;
+    LERROR << "Vertex " << v << " has no entry in the analysis graph token map. This should not happen !!";
     return "";
   }
 
@@ -275,7 +275,7 @@ vertexStringForSemanticAnnotation(const std::string& vertexRole,
       }
       catch (const boost::bad_any_cast& e) {
         SEMANTICANALYSISLOGINIT;
-        LERROR << "This annotation is not a SemanticAnnotation" << LENDL;
+        LERROR << "This annotation is not a SemanticAnnotation";
         continue;
       }
         LimaString typeStr=Common::MediaticData::MediaticData::single().getEntityName(annot->getType());

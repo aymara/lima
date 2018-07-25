@@ -1441,8 +1441,8 @@ return false;
 auto features = recoData->getEntityFeatures();
 for (auto it = features.begin(); it != features.end(); ++it) {
   match.features().addFeature(it->getName(),it->getValue());
-  EntityFeatures::iterator featureIt = match.features().findLast(it->getName());
   if( it->getPosition() != UNDEFPOSITION ) {
+    EntityFeatures::iterator featureIt = match.features().findLast(it->getName());
     (*featureIt).setPosition(it->getPosition());
     (*featureIt).setLength(it->getLength());
   }
