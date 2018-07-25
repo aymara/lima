@@ -47,6 +47,7 @@ m_out(0),
 m_handlerName(),
 m_outputFile(),
 m_outputSuffix(),
+m_stripInputSuffix(false),
 m_append(false),
 m_temporaryFileMetadata()
 {
@@ -79,6 +80,12 @@ void AbstractTextualAnalysisDumper::init(
   try
   {
     m_outputSuffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
+  }
+  catch (NoSuchParam& ) {} // do nothing, optional
+
+  try
+  {
+    m_stripInputSuffix=unitConfiguration.getBooleanParameter("stripInputSuffix");
   }
   catch (NoSuchParam& ) {} // do nothing, optional
 
@@ -155,6 +162,14 @@ initialize(AnalysisContent& analysis) const
     }
     else {
       std::string sourceFile(metadata->getMetaData("FileName"));
+      // remove suffix if necessary
+      if (m_stripInputSuffix) {
+        size_t lastIndex = sourceFile.find_last_of(".");
+        if (lastIndex != std::string::npos) {
+          sourceFile = sourceFile.substr(0, lastIndex);
+        }
+      }
+
 // #ifdef DEBUG_LP
       LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output suffix "
              << m_outputSuffix << " on file " << sourceFile;
