@@ -28,6 +28,7 @@
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
+<!--         <item value="enchantSpellingAlternatives"/> -->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
@@ -190,6 +191,9 @@
         <param key="charChart" value="flatcharchart"/>
         <param key="parseConcatenated" value="false"/>
     </group>
+<!--    <group name="enchantSpellingAlternatives" class="EnchantSpellingAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+    </group>-->
     <group name="tensorflowSpecificEntities" class="TensorflowSpecificEntities">
       <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
       <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
