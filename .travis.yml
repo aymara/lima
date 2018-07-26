@@ -46,3 +46,9 @@ deploy:
     branches:
       except:
       - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
+
+deploy:
+  provider: script
+  script: bash docker_push
+  on:
+    branch: master
