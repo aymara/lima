@@ -98,7 +98,7 @@ else ()
 endif()
 
 set(Python_ADDITIONAL_VERSIONS 3.4 3.5 3.6 3.7)
-find_package(PythonLibs)
+find_package(PythonLibs 3)
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
