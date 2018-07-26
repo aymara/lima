@@ -38,7 +38,7 @@ RUN cp svm_classify svm_learn /usr/bin
 RUN rm -Rf /svm_light
 
 WORKDIR /
-RUN curl  -vLJ -H 'Accept: application/octet-stream' $(curl -s https://api.github.com/repos/aymara/SVMTool/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url |grep '.tgz"' | head -n 1 | cut -d '"' -f 4)?access_token=$GITHUB_TOKEN | tar xvz
+RUN URL=$(curl -s https://api.github.com/repos/aymara/SVMTool/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url |grep '.tgz"' | head -n 1 | cut -d '"' -f 4) && echo "URL=$URL" && curl  -vLJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN | tar xvz
 WORKDIR /SVMTool-1.3.1
 RUN perl Makefile.PL && make && make install
 
