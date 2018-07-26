@@ -36,20 +36,20 @@ before_deploy:
 - git tag "$(git log --date=iso  -1 | grep Date | sed -e 's/Date:\ *//' -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)" || true
 
 deploy:
-  provider: releases
-  api_key:
-    secure: u0jcRYK9fsJ9ymnpU8ET5dd/DZ/rwah2WhOrfQGUkBM+VB2ASol1KCz8EMMwNQM44echMHz6LwxWM9np9vBUZZCgt/riU/vEVW7Dkmjyiwbscov7qbDmsLDdQy7LxFpEh+dA8m6U9thyWxBdtoDzDX8+3G0Oxfjf4cIa3eyAFv0=
-  file_glob: true
-  file: $HOME/packages/*.deb
-  skip_cleanup: true
-  on:
-    repo: aymara/lima
-    tags: false
-    branches:
-      except:
-      - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
-  provider: script
-  script: bash docker_push.sh
-  on:
-    branch: master
-    condition: $DISTRIB = travis-ubuntu16.04
+  - provider: releases
+    api_key:
+      secure: u0jcRYK9fsJ9ymnpU8ET5dd/DZ/rwah2WhOrfQGUkBM+VB2ASol1KCz8EMMwNQM44echMHz6LwxWM9np9vBUZZCgt/riU/vEVW7Dkmjyiwbscov7qbDmsLDdQy7LxFpEh+dA8m6U9thyWxBdtoDzDX8+3G0Oxfjf4cIa3eyAFv0=
+    file_glob: true
+    file: $HOME/packages/*.deb
+    skip_cleanup: true
+    on:
+      repo: aymara/lima
+      tags: false
+      branches:
+        except:
+        - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
+  - provider: script
+    script: bash docker_push.sh
+    on:
+      branch: master
+      condition: $DISTRIB = travis-ubuntu16.04
