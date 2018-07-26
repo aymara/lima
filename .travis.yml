@@ -48,9 +48,8 @@ deploy:
     branches:
       except:
       - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
-
-deploy:
   provider: script
   script: bash docker_push.sh
   on:
     branch: master
+    condition: $DISTRIB = travis-ubuntu16.04
