@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -o errexit
+set -o pipefail
+set -o nounset
 
 GITHUB_TOKEN=$1
 

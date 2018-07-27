@@ -32,14 +32,11 @@ RUN cp svm_classify svm_learn /usr/bin
 RUN rm -Rf /svm_light
 
 WORKDIR /
-COPY svmtool.sh /
-RUN /svmtool.sh
+COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
+RUN /svmtool.sh $GITHUB_TOKEN
+RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /qhttpserver.sh $GITHUB_TOKEN
 
-WORKDIR /
-RUN TEMP_DEB="$(mktemp)" && URL=$(curl -s https://api.github.com/repos/aymara/qhttpserver/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url | grep debian9 | grep '.deb"' | head -n 1 | cut -d '"' -f 4) && echo "URL=$URL" && curl  -vLJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o "$TEMP_DEB" && dpkg -i "$TEMP_DEB"
-
-
-RUN TEMP_DEB="$(mktemp)" && URL=$(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url | grep debian9 | grep '.deb"' | head -n 1 | cut -d '"' -f 4) && echo "URL=$URL" && curl  -vLJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o "$TEMP_DEB" && dpkg -i "$TEMP_DEB"
 
 RUN mkdir -p /src/
 RUN git clone -v https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
