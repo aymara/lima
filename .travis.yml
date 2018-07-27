@@ -20,8 +20,7 @@ matrix:
       - os: linux
         env: DISTRIB=debian9.4
 
-script: docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg GITHUB_TOKEN="$GITHUB_TOKEN"
-  -f ./Dockerfile-$DISTRIB .
+script: docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg GITHUB_TOKEN="$GITHUB_TOKEN" -f ./continuous_integration/Dockerfile-$DISTRIB .
 
 after_success:
 - docker run -t -d travis-ubuntu16.04
@@ -49,7 +48,7 @@ deploy:
         except:
         - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
   - provider: script
-    script: bash docker_push.sh
+    script: bash continuous_integration/docker_push.sh
     on:
       branch: master
       condition: $DISTRIB = travis-ubuntu16.04
