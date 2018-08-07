@@ -54,7 +54,7 @@ Gazeteer::Gazeteer():
 std::vector<LimaString>(0),
 m_alias(),
 m_hasMultiTermWord(false),
-m_hasNoCategoryNorTstatus(true),
+m_hasNotOnlyWords(true),
 m_automatonString()
 {
 }
@@ -63,7 +63,7 @@ Gazeteer::Gazeteer(const Gazeteer& g):
 std::vector<LimaString>(g),
 m_alias(g.m_alias),
 m_hasMultiTermWord(g.m_hasMultiTermWord),
-m_hasNoCategoryNorTstatus(g.m_hasNoCategoryNorTstatus),
+m_hasNotOnlyWords(g.m_hasNotOnlyWords),
 m_automatonString(g.m_automatonString)
 {
 }
@@ -83,7 +83,7 @@ Gazeteer& Gazeteer::operator = (const Gazeteer& g) {
     m_alias = g.alias();
     m_automatonString=g.m_automatonString;
     m_hasMultiTermWord=g.m_hasMultiTermWord;
-    m_hasNoCategoryNorTstatus=g.m_hasNoCategoryNorTstatus;
+    m_hasNotOnlyWords=g.m_hasNotOnlyWords;
   }
   return (*this);
 }
@@ -104,9 +104,11 @@ Gazeteer& Gazeteer::add(const Gazeteer& g) {
 void Gazeteer::addWord(const LimaString& s) {
   if( (s.startsWith(*STRING_TSTATUS_TR))
    || (s.startsWith(*STRING_TSTATUS_TR_small))
-   || (s.contains(CHAR_POS_TR)) )
+   || (s.contains(CHAR_POS_TR))
+   || (s.startsWith(CHAR_BEGIN_ENTITY))
+  )
   {
-    resetCategoryOrTstatusFlag();
+    m_hasNotOnlyWords=false;
   }
   if( s.contains(CHAR_SEP_RE) )  {
     setHasMultiTermWordFlag();
