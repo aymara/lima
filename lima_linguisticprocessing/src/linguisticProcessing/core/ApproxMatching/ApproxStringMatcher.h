@@ -79,7 +79,8 @@ LIMA_DATA_EXPORT  QDebug& operator<<(QDebug& os, const Solution& solution);
 
 class LIMA_MORPHOLOGICANALYSIS_EXPORT ApproxStringMatcher : public MediaProcessUnit
 {
-  typedef std::map< std::basic_string<wchar_t>, std::basic_string<wchar_t> > RegexMap;
+  typedef std::pair< std::basic_string<wchar_t>, std::basic_string<wchar_t> > Regex;
+  typedef std::vector<Regex> RegexMap;
   typedef std::set<Solution,SolutionCompare> OrderedSolution;
 
 public:

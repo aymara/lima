@@ -46,6 +46,8 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::AnalysisDict;
 
+#define DEBUG_LP
+
 namespace Lima
 {
 namespace LinguisticProcessing
@@ -260,20 +262,29 @@ void ApproxStringMatcher::init(
   // get generalization pattern 
   try
   {
-    std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("generalization");
-    for (std::map <std::string, std::string >::const_iterator it = regexes.begin(); it != regexes.end(); it++)
+    std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("generalizationRules");
+    std::deque <std::string >& regexesOrder = unitConfiguration.getListsValueAtKey("generalizationRulesOrder");
+    for (std::deque <std::string >::const_iterator it = regexesOrder.begin(); it != regexesOrder.end(); it++)
     {
-      QString patternQ = QString::fromUtf8 ((*it).first.c_str());
+      const std::string& key = *it;
+      QString patternQ = QString::fromUtf8 (key.c_str());
       std::basic_string<wchar_t> patternWS = NameIndexResource::LimaStr2wcharStr(patternQ);
-      QString substitutionQ = QString::fromUtf8 ((*it).second.c_str());
+      const std::string& value=regexes.at(key);
+      QString substitutionQ = QString::fromUtf8 (value.c_str());
       std::basic_string<wchar_t> substitutionWS = NameIndexResource::LimaStr2wcharStr(substitutionQ);
-      m_regexes.insert( std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(patternWS,
+      m_regexes.push_back( std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(patternWS,
                                     substitutionWS) );
     }
   }
   catch (NoSuchParam& )
   {
     LERROR << "no map 'generalization' in RegexReplacer group configuration fot language "
+    << (int) m_language;
+    throw InvalidConfiguration();
+  }
+  catch (std::out_of_range& )
+  {
+    LERROR << "no value for some key in 'generalizationRules' in RegexReplacer group configuration fot language "
     << (int) m_language;
     throw InvalidConfiguration();
   }
@@ -504,12 +515,19 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
     wide_regex esc(L"[.^$|()\\[\\]{}*+?\\\\]");
     const std::basic_string<wchar_t> rep(L"\\\\&");
     wpattern = boost::regex_replace(wpattern, esc, rep, boost::match_default | boost::format_sed);
+#ifdef DEBUG_LP
+      QString pattern = wcharStr2LimaStr(wpattern);
+      QString name = wcharStr2LimaStr(normalizedForm);
+      LDEBUG << "ApproxStringMatcher::buildPattern: (escaping) name "
+             << Lima::Common::Misc::limastring2utf8stdstring(name) << " changed to "
+             << Lima::Common::Misc::limastring2utf8stdstring(pattern);
+#endif
     // apply user supplied regex (generalization)
     for(RegexMap::const_iterator regexIt = m_regexes.begin() ;
         regexIt != m_regexes.end() ; regexIt++ )
     {
       // get regex as wstring
-      std::pair< std::basic_string<wchar_t>, std::basic_string<wchar_t> > a_regex = *regexIt;
+      Regex a_regex = *regexIt;
       wide_regex matching_rule(a_regex.first);
       std::basic_string<wchar_t> substitution = a_regex.second;
       wpattern = boost::regex_replace(wpattern, matching_rule,
@@ -678,13 +696,14 @@ void ApproxStringMatcher::computeVertexMatches(
 int ApproxStringMatcher::findApproxPattern(
     const std::basic_string<wchar_t>& pattern, LimaString text,
     std::vector<Suggestion>& suggestions, int nbMaxError) const {
-  MORPHOLOGINIT;
+    int returnStatus=1;
+    MORPHOLOGINIT;
 #ifdef DEBUG_LP
       QString patternQ = wcharStr2LimaStr(pattern);
       LDEBUG << "ApproxStringMatcher::findApproxPattern("
              << Lima::Common::Misc::limastring2utf8stdstring(patternQ) << ","
              << Lima::Common::Misc::limastring2utf8stdstring(text) << "), nbErr=" << nbMaxError;
-      #endif
+#endif
 
     // pattern buffer structure (result of compilation)
     regex_t preg;
@@ -705,6 +724,11 @@ int ApproxStringMatcher::findApproxPattern(
 #ifdef DEBUG_LP
     LDEBUG << "ApproxStringMatcher::findApproxPattern: agrepStatus=" << agrepStatus;
 #endif
+    if(agrepStatus!= 0) {
+      LWARN << "ApproxStringMatcher::findApproxPattern: error when compiling ="
+	    << Lima::Common::Misc::limastring2utf8stdstring(patternQ);
+      return returnStatus;
+    }
 
     regaparams_t params = {
       1,    // int cost_ins;
@@ -737,7 +761,6 @@ int ApproxStringMatcher::findApproxPattern(
 #endif
     */
     int offset=0;
-    int returnStatus=1;
     int execStatus;
     do {
       execStatus = regawnexec(&preg, tarray+offset, tlength-offset, &amatch, params, eflags);
