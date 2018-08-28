@@ -43,7 +43,7 @@ target_link_libraries(lima-lp-propertycode
   lima-common-datahandler
   lima-common-data 
   lima-common-tools
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
   ${Boost_LIBRARIES}
 )
 

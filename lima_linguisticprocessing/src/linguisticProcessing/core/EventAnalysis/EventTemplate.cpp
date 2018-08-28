@@ -51,7 +51,7 @@ const EventTemplateElement& EventTemplate::getElement(const std::string& role) c
     it=m_template.find(role);
   if (it==m_template.end()) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "No element '" << role << "' in EventTemplate" << LENDL;
+    LERROR << "No element '" << role << "' in EventTemplate";
     return emptyElement;
   }
   return (*it).second;

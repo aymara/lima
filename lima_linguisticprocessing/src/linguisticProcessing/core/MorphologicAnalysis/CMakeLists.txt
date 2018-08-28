@@ -64,7 +64,7 @@ target_link_libraries(lima-lp-morphologicanalysis
     lima-lp-automaton
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 
 set_target_properties(lima-lp-morphologicanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

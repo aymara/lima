@@ -62,7 +62,10 @@ class LimaServer : public QObject
     Q_OBJECT
 
 public:
-    LimaServer( const std::string& limaServerConfigFile,
+    LimaServer( const QString& configPath,
+                const QString& commonConfigFile,
+                const QString& lpConfigFile,
+                const QString& resourcesPath,
                 const std::deque<std::string>& langs,
                 const std::deque<std::string>& pipelines,
                 int port,

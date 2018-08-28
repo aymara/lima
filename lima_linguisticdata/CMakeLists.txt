@@ -15,8 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(LimaLinguisticData NONE)
-
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (ENVPATH)
   set(ENV{PATH} "${ENVPATH}:$ENV{PATH}")

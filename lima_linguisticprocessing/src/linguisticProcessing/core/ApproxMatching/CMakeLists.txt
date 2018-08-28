@@ -41,10 +41,9 @@ target_link_libraries(lima-lp-approxstringmatching
     lima-lp-annotationgraph
     lima-lp-linguisticanalysisstructure
     lima-lp-specificentities
-    tre
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 
 set_target_properties(lima-lp-approxstringmatching PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

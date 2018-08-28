@@ -984,7 +984,7 @@ void AutomatonString::parseUnit(const LimaString& str,
     }
     const Gazeteer& gazeteer = *it;
     //if( !gazeteer.hasMultiTermWord() && gazeteer.hasNoCategoryNorTstatus() ) {
-    if( gazeteer.hasNoCategoryNorTstatus() ) {
+    if( gazeteer.hasNotOnlyWords() ) {
 #ifdef DEBUG_LP
       LDEBUG << "AutomatonString: set type(SIMPLE_GAZETEER)";
 #endif

@@ -19,34 +19,36 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_ANALYSISDICT_EXPORTING)
 
 ########### next target ###############
-LIMALP_WRAP_HEADERS(analysisdict
-  AbstractAnalysisDictionary.h
-  AbstractRwAccessResource.h
-  EnhancedAnalysisDictionary.h
-  FsaAccessResource.h
-  FsaRwAccessResource.h
-  MultiLevelAnalysisDictionary.h
-)
-
 SET(lima-lp-analysisdict_LIB_SRCS
-   AnalysisDictionaryIterators.cpp 
-  FsaAccessResource.cpp FsaRwAccessResource.cpp AbstractDictionaryEntry.cpp
-  AbstractDictionaryEntryHandler.cpp DictionaryData.cpp EnhancedAnalysisDictionary.cpp
-  EnhancedAnalysisDictionaryEntry.cpp EnhancedAnalysisDictionaryIterator.cpp MultiLevelAnalysisDictionary.cpp
-  MultiLevelAnalysisDictionaryEntry.cpp MultiLevelAnalysisDictionaryIterators.cpp
+    AbstractAnalysisDictionary.cpp
+    AbstractRwAccessResource.cpp
+    AnalysisDictionaryIterators.cpp 
+    FsaAccessResource.cpp 
+    FsaRwAccessResource.cpp 
+    AbstractDictionaryEntry.cpp
+    AbstractDictionaryEntryHandler.cpp 
+    DictionaryData.cpp 
+    EnhancedAnalysisDictionary.cpp
+    EnhancedAnalysisDictionaryEntry.cpp 
+    EnhancedAnalysisDictionaryIterator.cpp 
+    MultiLevelAnalysisDictionary.cpp
+    MultiLevelAnalysisDictionaryEntry.cpp 
+    MultiLevelAnalysisDictionaryIterators.cpp
 )
 
-add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS} ${lima-lp-analysisdict_MOC_OUTFILES})
+add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS})
 
 target_link_libraries(lima-lp-analysisdict
   lima-lp-flattokenizer
   lima-lp-linguisticresources
   lima-common
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
-set_target_properties(lima-lp-analysisdict PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
+set_target_properties(lima-lp-analysisdict PROPERTIES 
+                      VERSION ${LIMA_LP_LIB_VERSION} 
+                      SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-lp-analysisdict DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)

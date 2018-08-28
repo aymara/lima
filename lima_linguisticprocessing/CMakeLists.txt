@@ -16,6 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #cmake_policy
 if(POLICY CMP0020)
@@ -26,14 +27,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "${_plugin}\n")
   add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
-endmacro ()
-
-macro (LIMALP_WRAP_HEADERS _plugin)
-  foreach(HEADER ${ARGN})
-    set (lima-lp-${_plugin}_MOC_HEADERS ${lima-lp-${_plugin}_MOC_HEADERS} ${HEADER})
-  endforeach()
-
-  qt5_wrap_cpp (lima-lp-${_plugin}_MOC_OUTFILES ${lima-lp-${_plugin}_MOC_HEADERS})
 endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
@@ -71,36 +64,52 @@ addQt5Modules(Core Xml XmlPatterns Network Test)
 # Search Qt5 optional components
 find_package(Qt5 COMPONENTS DBus)
 if (Qt5DBus_FOUND)
-  set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
+#   set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
   set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
 endif()
-
-include_directories(${Qt5_INCLUDES})
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
-message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
+# 
+# include_directories(${Qt5_INCLUDES})
+# set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
+# message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
 get_target_property(QtNetwork_location Qt5::Network LOCATION)
 get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtNetwork_location}
+                ${QtXmlPatterns_location}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    ${QtNetwork_location}
+    ${QtXmlPatterns_location})
+endif ()
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
   message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
   get_target_property(QtDBus_location Qt5::DBus LOCATION)
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     install(FILES ${QtDBus_location}
-            DESTINATION ${LIB_INSTALL_DIR})
+            DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${QtDBus_location})
   endif ()
 else ()
 endif()
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES ${QtNetwork_location}
-                ${QtXmlPatterns_location}
-          DESTINATION ${LIB_INSTALL_DIR})
-endif ()
-
-find_package(PythonLibs 3.4)
+set(Python_ADDITIONAL_VERSIONS 3.4 3.5 3.6 3.7)
+find_package(PythonLibs 3)
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
-  link_directories(${PYTHON_LIBRARIES})
-endif()
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${PYTHON_LIBRARIES}
+            DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+        ${PYTHON_LIBRARIES})
+  endif ()
+endif ()
 
 #add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -128,33 +137,65 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
                 ${Boost_FILESYSTEM_LIBRARY_dll}
                 ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
                 ${Boost_THREAD_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+      ${Boost_REGEX_LIBRARY_dll}
+      ${Boost_FILESYSTEM_LIBRARY_dll}
+      ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
+      ${Boost_THREAD_LIBRARY_dll})
+
 endif ()
 
-# Because repository to get package of SVMTools is not available (to be fixed by Gaël)
-# find_package(SVMTOOL++)
-# if(SVMTOOL++_FOUND)
-#   set(optionalLibs ${optionalLibs} ${SVMTOOL++_NAMES})
-#   include_directories(${SVMTOOL++CPP_INCLUDE_DIR})
-#   link_directories(${SVMTOOL++CPP_LIBRARY_DIRS})
-#   message(STATUS "Hi, Found SVMTool++ ${SVMTOOL++CPP_INCLUDE_DIR}.")
-# else ()
-#   message(STATUS "Hi, Could not find SVMTool++. SVM-base PoS tagger will not be available.")
-# endif()
+find_package(SVMTOOL++)
+if(SVMTOOL++_FOUND)
+  set(optionalLibs ${optionalLibs} ${SVMTOOL++_NAMES})
+  include_directories(${SVMTOOL++CPP_INCLUDE_DIR})
+  link_directories(${SVMTOOL++CPP_LIBRARY_DIRS})
+  message(STATUS "Hi, Found SVMTool++ ${SVMTOOL++CPP_INCLUDE_DIR}.")
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${SVMTOOL++_NAMES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${SVMTOOL++_NAMES})
+  endif()
+else ()
+  message(STATUS "Hi, Could not find SVMTool++. SVM-base PoS tagger will not be available.")
+endif()
 
 find_package (Enchant) 
 if (ENCHANT_FOUND)
   set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
   include_directories(${ENCHANT_INCLUDE_DIRS})
-else (ENCHANT_FOUND)
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${ENCHANT_LIBRARIES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${ENCHANT_LIBRARIES})
+  endif ()
+
+else ()
   message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
-endif (ENCHANT_FOUND)
+endif ()
 
 find_package (Tre) 
 if (TRE_FOUND)
   set(optionalLibs ${optionalLibs} ${TRECPP_LIBRARIES})
   include_directories(${TRECPP_INCLUDE_DIRS})
   message(STATUS "Found tre library. Module ApproxStringMatcher will be built")
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${TRECPP_LIBRARIES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${TRECPP_LIBRARIES})
+  endif ()
 else (TRECPP_FOUND)
   message(STATUS "Could not find tre ${TRECPP_INCLUDE_DIRS}. ApproxStringMatcher module will not be built.")
 endif (TRE_FOUND)
@@ -163,22 +204,50 @@ endif (TRE_FOUND)
 find_package(QHttpServer QUIET)
 if (NOT QHTTPSERVER_FOUND)
   message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
-else(NOT QHTTPSERVER_FOUND)
-  message(STATUS "Found QHttpServer. lima HTTP server will be built")
-  include_directories($ENV{LIMA_EXTERNALS}/include)
-  link_directories($ENV{LIMA_EXTERNALS}/lib)
-endif (NOT QHTTPSERVER_FOUND)
+else ()
+  message(STATUS "Found QHttpServer. lima HTTP server will be built with ${QHTTPSERVERCPP_INCLUDE_DIR} and ${QHTTPSERVERCPP_LIBRARY}")
+  include_directories(QHTTPSERVERCPP_INCLUDE_DIR)
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${QHTTPSERVERCPP_LIBRARY}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${QHTTPSERVERCPP_LIBRARY})
+  endif ()
+endif ()
 
+find_package(TensorFlow)
+find_package(Eigen)
+# find_package(Protobuf REQUIRED)
+if (TensorFlow_FOUND AND Eigen_FOUND)
+  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
 
-FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
+  include_directories(${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${TensorFlow_LIBRARIES}
+      ${Eigen_LIBRARIES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${Eigen_LIBRARIES}
+      ${TensorFlow_LIBRARIES})
+  endif ()
+
+else()
+  message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
+endif()
+
+find_package(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
+if(LIMACOMMON_FOUND)
   include_directories( ${LIMACOMMON_INCLUDE_DIR})
   link_directories( ${LIMACOMMON_LIBRARY_DIRS})
   set(LIMA_LP_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
   set(LIMA_LP_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_common")
-ENDIF(LIMACOMMON_FOUND)
+else ()
+  message(FATAL_ERROR "Could not find lima_common")
+endif ()
 
 configure_file(LIMALPConfig-src.cmake LIMALPConfig.cmake @ONLY)
 find_package(LIMALP PATHS ${CMAKE_CURRENT_BINARY_DIR})
@@ -192,8 +261,12 @@ add_subdirectory(cmake)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
-install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins DESTINATION share/config/lima/plugins COMPONENT runtime)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake 
+  DESTINATION share/apps/lima/cmake/Modules 
+  COMPONENT devel)
+install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins 
+  DESTINATION share/config/lima/plugins 
+  COMPONENT runtime)
 
 ########### documentation ###############
 
@@ -210,7 +283,8 @@ endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
-INCLUDE(InstallRequiredSystemLibraries)
+
+include(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
 SET(CPACK_PACKAGE_NAME "limalinguisticprocessing")

@@ -25,6 +25,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/Data/strwstrtools.h"
+#include "common/tools/FileUtils.h"
 #include <iostream>
 #include <fstream>
 #include <sys/types.h>
@@ -115,12 +116,12 @@ void NameIndexResource::init(
   ANALYSISDICTLOGINIT;
   try
   {
-    std::string filepath = Common::MediaticData::MediaticData::single().getResourcesPath();
-    filepath.append("/").append(unitConfiguration.getParamsValueAtKey("filename"));
+    QString filepath = Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+                                                   unitConfiguration.getParamsValueAtKey("filename").c_str());
     struct stat sb;
-    if( stat(filepath.c_str(),&sb) == 0)
+    if( stat(filepath.toUtf8().constData(),&sb) == 0)
     {
-      readNames(filepath);
+      readNames(filepath.toUtf8().constData());
     }
     else {
       // FIXME: In this case, the m_fsaAccess pointer is still NULL. Try to access to

@@ -28,7 +28,11 @@ SET(lima-lp-client_LIB_SRCS
 
 add_library(lima-lp-client SHARED ${lima-lp-client_LIB_SRCS})
 
-target_link_libraries(lima-lp-client  lima-common-factory lima-common-tools ${QT_LIBRARIES})
+target_link_libraries(lima-lp-client
+  lima-common-factory 
+  lima-common-tools 
+  ${Qt5_LIBRARIES}
+)
 
 set_target_properties(lima-lp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
