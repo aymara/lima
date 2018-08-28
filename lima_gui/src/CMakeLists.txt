@@ -19,19 +19,6 @@ add_subdirectory(treeview)
 
 ########### next target ###############
 
-SET (lima_MOC_HEADERS
-  LimaGuiApplication.h
-  Threads.h
-  
-  config/LimaConfiguration.h
-  config/ConfigurationTreeModel.h
-  
-  ConllListModel.h
-  NamedEntitiesParser.h
-)
-
-qt5_wrap_cpp (lima_MOC_OUTFILES ${lima_MOC_HEADERS})
-
 SET (lima_SRCS 
   main.cpp
   LimaGuiApplication.cpp
@@ -56,7 +43,7 @@ if (Qt5Core_FOUND)
   endif()
 endif()
 
-set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::Gui)
+set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::Gui Qt5::Widgets)
 
 if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   if(Qt5Core_VERSION VERSION_LESS 5.3)
@@ -79,7 +66,6 @@ endif()
 if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Release)
   add_executable(lima WIN32
     ${lima_SRCS} 
-    ${lima_MOC_OUTFILES}
   )
   
 target_link_libraries(lima 
@@ -127,49 +113,23 @@ target_link_libraries(lima
 else()
   add_executable(lima
     ${lima_SRCS} 
-    ${lima_MOC_OUTFILES}
   )
-target_link_libraries(lima 
-  lima-common-mediaticdata
-  lima-common-xmlconfigurationfiles
-  lima-common-tools
-  lima-common-data 
-  lima-common-factory
-  lima-common-misc
-  lima-common
-  lima-lp-annotationgraph
-  lima-lp-lineartextrepresentation
-  lima-lp-misc
-  lima-lp-tgv
-  lima-lp-linguisticdata
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-regexmatcher
-  lima-lp-wordsensetagger
-  lima-lp-linguisticprocessing-core
-  lima-lp-analysisdict
-  lima-lp-eventanalyzer
-  lima-lp-corefsolver
-  lima-lp-specificentities
-  lima-lp-syntacticanalysis
-  lima-lp-morphologicanalysis
-  lima-lp-dictionary
-  lima-lp-easyxmldumper
-  lima-lp-analysisdumpers
-  lima-lp-textsegmentation
-  lima-lp-linguisticanalysisstructure
-  lima-lp-semanticanalysis
-  lima-lp-linguisticresources
-  lima-lp-entitytracker
-  lima-lp-flattokenizer
-  lima-lp-applyrecognizer
-  lima-lp-linguisticprocessors
-  lima-lp-postagger
-  lima-lp-automaton
-  lima-lp-analysishandlers
-  lima-lp-client
-  ${Qt5_LIBRARIES}
-)
+  target_link_libraries(lima
+    lima-common-factory
+    lima-common-mediaticdata
+    lima-common-xmlconfigurationfiles
+    lima-common-tools
+    lima-common-datahandler 
+    lima-common-mediaprocessors 
+    lima-common-time 
+    lima-common-misc
+    lima-common-data 
+    lima-common
+    lima-lp-client
+    lima-lp-analysishandlers
+    lima-lp-linguisticprocessing-core
+    ${Qt5_LIBRARIES}
+  )
 endif()
 
 #   lima-common

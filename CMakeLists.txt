@@ -1,5 +1,6 @@
 project(Lima)
 cmake_minimum_required(VERSION 3.4.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 
@@ -33,7 +34,16 @@ if(UNIX)
     set(LSB_DISTRIB "unix")
   endif(NOT LSB_DISTRIB)
   set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
-endif(UNIX)
+endif()
+
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES Windows)
+  if(CMAKE_CL_64)
+    set(CPACK_SYSTEM_NAME win64)
+  else(CMAKE_CL_64)
+    set(CPACK_SYSTEM_NAME win32)
+  endif(CMAKE_CL_64)
+endif()
+
 message("CPACK_SYSTEM_NAME is ${CPACK_SYSTEM_NAME}")
 
 # Allow to set LIMA_VERSION variables necessary to setup packages names
@@ -124,13 +134,13 @@ CompileLimaSubproject(lima_common "")
 
 CompileLimaSubproject(lima_linguisticprocessing lima_common)
 
-if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
+# if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
-endif()
+# endif()
 
-#CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
+CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
 
-# CompileLimaSubproject(lima_annoqt lima_common)
+CompileLimaSubproject(lima_annoqt lima_common)
 
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)

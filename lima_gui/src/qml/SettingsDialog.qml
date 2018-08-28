@@ -23,7 +23,7 @@
 import QtQuick 2.9
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.2 as C2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Controls.Universal 2.1
 
@@ -32,8 +32,8 @@ Dialog {
         x: Math.round((parent.width - width) / 2)
         y: Math.round(parent.height / 6)
         width: Math.round(Math.min(parent.width, parent.height) / 3 * 2)
-        modal: true
-        focus: true
+//         modal: true
+//         focus: true
         title: qsTr("Settings")
 
         standardButtons: Dialog.Ok | Dialog.Cancel
@@ -50,7 +50,7 @@ Dialog {
             id: settingsColumn
             spacing: 20
 
-            Label {
+            C2.Label {
                 text: qsTr("There is currently nothing to set.")
                 color: "#e41e25"
             }

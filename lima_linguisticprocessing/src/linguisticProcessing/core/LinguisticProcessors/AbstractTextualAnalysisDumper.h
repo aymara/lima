@@ -68,6 +68,8 @@ class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public Me
   // members for file management
   std::string m_outputFile;   /* < the file name for local file logging */
   std::string m_outputSuffix; /* < the suffix for local file logging */
+  bool m_stripInputSuffix; /* < whether to remove the input file suffix before 
+                                adding (or not) its suffix to the local file */
   bool m_append;
   QString m_temporaryFileMetadata;
   

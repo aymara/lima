@@ -71,8 +71,8 @@ m_currentEntity(0)
   connect( m_textEdit->document(), SIGNAL(contentsChanged()),
            this, SLOT(documentWasModified()) );
 
-  connect( m_listWidget, SIGNAL(clicked(QModelIndex&)),
-          this, SLOT(slotTypesListItemclicked(QModelIndex&)) );
+  connect( m_listWidget, &QListWidget::itemClicked,
+          this, &Annoqt::slotTypesListItemclicked);
 }
 
 void Annoqt::closeEvent( QCloseEvent *event )
@@ -469,12 +469,13 @@ Annoqt::~Annoqt()
   m_entitiesMap.clear();
 }
 
-void Annoqt::slotTypesListItemclicked( const QModelIndex & index )
+void Annoqt::slotTypesListItemclicked(QListWidgetItem *item)
 {
   qDebug() << "Annoqt::slotTypesListItemclicked";
-  if ( index.isValid() )
+//   auto index = m_listWidget->indexFromItem(item);
+  if ( item )
   {
-    m_currentColor = m_colors[index.row()];
+    m_currentColor = m_colors[m_listWidget->row(item)];
     if (!m_lastSearchResult.isNull())
     {
       m_textEdit->undo();

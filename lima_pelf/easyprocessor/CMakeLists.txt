@@ -72,7 +72,7 @@ target_link_libraries(easyprocessor
 
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 
 install(TARGETS easyprocessor DESTINATION bin)

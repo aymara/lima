@@ -27,7 +27,7 @@ add_executable(testTgv ${testTgv_SRCS})
 target_link_libraries(testTgv 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs} 
 )
 
@@ -43,7 +43,7 @@ add_executable(catBowFiles ${catBowFiles_SRCS})
 
 target_link_libraries(catBowFiles 
   lima-linguisticprocessing
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${Boost_LIBRARIES} 
   ${optionalLibs})
 
@@ -61,7 +61,7 @@ add_executable(readBowFile ${readBowFile_SRCS})
 target_link_libraries(readBowFile 
   lima-linguisticprocessing
   ${optionalLibs} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${Boost_LIBRARIES}
 )
 
@@ -79,7 +79,7 @@ add_executable(readLtrFile ${readLtrFile_SRCS})
 target_link_libraries(readLtrFile 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -97,7 +97,7 @@ add_executable(getLexiconFromBoW ${getLexiconFromBoW_SRCS})
 target_link_libraries(getLexiconFromBoW 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -115,7 +115,7 @@ add_executable(parseXMLPropertyFile ${parseXMLPropertyFile_SRCS})
 target_link_libraries(parseXMLPropertyFile 
   lima-linguisticprocessing
   ${Boost_LIBRARIES}  
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -133,7 +133,7 @@ add_executable(convertSymbolicCodes ${convertSymbolicCodes_SRCS})
 target_link_libraries(convertSymbolicCodes 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -151,7 +151,7 @@ add_executable(readLinguisticData ${readLinguisticData_SRCS})
 target_link_libraries(readLinguisticData 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -170,7 +170,7 @@ add_executable(testContentDict16 ${testContentDict16_SRCS})
 target_link_libraries(testContentDict16 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -189,7 +189,7 @@ add_executable(convertXmlToSBoW ${convertXmlToSBoW_SRCS})
 target_link_libraries(convertXmlToSBoW 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -207,7 +207,7 @@ add_executable(buildCompoundsDict ${buildCompoundsDict_SRCS})
 target_link_libraries(buildCompoundsDict 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -225,7 +225,7 @@ add_executable(testReadLexicon ${testReadLexicon_SRCS})
 target_link_libraries(testReadLexicon 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -243,7 +243,7 @@ add_executable(testPropManager ${testPropManager_SRCS})
 target_link_libraries(testPropManager 
   lima-linguisticprocessing
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 

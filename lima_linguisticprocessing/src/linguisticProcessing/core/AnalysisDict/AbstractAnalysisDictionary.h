@@ -48,7 +48,11 @@ class LIMA_ANALYSISDICT_EXPORT AbstractAnalysisDictionary : public AbstractResou
   Q_OBJECT
 public:
 
-  /**
+  AbstractAnalysisDictionary(QObject* parent = nullptr);
+
+  virtual ~AbstractAnalysisDictionary();
+
+/**
   * @brief get dictionary entry for a word
   * @param word word to search
   * @return AbstractDictionaryEntry* corresponding to word

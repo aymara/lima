@@ -21,13 +21,13 @@ add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
 
 ########### next target ###############
 
-set (lima-common-tools_MOC_HEADERS
-    ../QsLog/QsLogCategories.h
-    LimaFileSystemWatcher.h
-    LimaFileSystemWatcher_p.h
-    LimaMainTaskRunner.h)
-
-qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
+# set (lima-common-tools_MOC_HEADERS
+#     ../QsLog/QsLogCategories.h
+#     LimaFileSystemWatcher.h
+#     LimaFileSystemWatcher_p.h
+#     LimaMainTaskRunner.h)
+# 
+# qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
 
 SET(lima-common-tools_LIB_SRCS 
     ../QsLog/QsLog.cpp
@@ -48,7 +48,7 @@ endif()
 add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common-tools_MOC_OUTFILES})
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
 set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})

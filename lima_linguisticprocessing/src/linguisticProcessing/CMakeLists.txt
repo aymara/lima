@@ -22,15 +22,9 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 add_definitions( -DLIMA_LP_EXPORTING )
 
-set (lima-linguisticprocessing_MOC_HEADERS
-    limaSimpleClientDelegate.h)
-
-qt5_wrap_cpp (lima-linguisticprocessing_MOC_OUTFILES 
-  ${lima-linguisticprocessing_MOC_HEADERS}
-)
-
-add_library(lima-linguisticprocessing 
-  SHARED limaSimpleClient.cpp ${lima-linguisticprocessing_MOC_OUTFILES}
+add_library(lima-linguisticprocessing SHARED 
+  limaSimpleClient.cpp
+  limaSimpleClientDelegate.cpp
 )
 target_link_libraries(lima-linguisticprocessing
   lima-lp-annotationgraph
@@ -65,11 +59,19 @@ target_link_libraries(lima-linguisticprocessing
   lima-lp-analysishandlers
   lima-lp-client
   lima-common
+  ${Qt5_LIBRARIES}
+  ${Boost_LIBRARIES}
 )
+
+# if (TensorFlow_FOUND)
+#   target_link_libraries(lima-linguisticprocessing
+#     lima-lp-tensorflowspecificentities
+#   )
+# endif()
 
 if(NOT ${SYSTEM_NAME} STREQUAL "Windows")
   target_link_libraries(lima-linguisticprocessing
-  lima-lp-specificentitiesCrf
+    lima-lp-specificentitiesCrf
   )
 endif()
 

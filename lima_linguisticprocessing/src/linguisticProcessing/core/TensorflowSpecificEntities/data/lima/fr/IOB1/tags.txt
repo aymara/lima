@@ -1,0 +1,9 @@
+I-Organization.ORGANIZATION
+I-Location.LOCATION
+I-Miscellaneous.MISCELLANEOUS
+B-Location.LOCATION
+B-Person.PERSON
+B-Miscellaneous.MISCELLANEOUS
+O
+I-Person.PERSON
+B-Organization.ORGANIZATION

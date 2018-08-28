@@ -30,25 +30,27 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_COMPILING_QSTRING_COMPAT_CPP -D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS")
 endif()
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
-# This macro does the find_package with the required Qt5 modules listed as parameters
-# and sets Qt5_INCLUDES and Qt5_LIBRARIES variables.
-# Those variables can then be used with include_directories and target_link_libraries commands.
+# This macro does the find_package with the required Qt5 modules listed as 
+# parameters. Note that the Qt5_INCLUDES variable is not necessary anymore as 
+# the inclusion of variables Qt5::Component in the target_link_libraries call
+# now automatically add the necessary include path, compiler settings and 
+# several other things. In the same way, the Qt5_LIBRARIES variable now is just
+# a string with the Qt5::Component elements. It can be use in 
+# target_link_libraries calls to simplify its writing.
 macro(addQt5Modules )
   set(_MODULES Core ${ARGV})
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "" )
-    #Use find_package to get includes and libraries directories
-    set(CMAKE_INCLUDE_CURRENT_DIR ON)
-    #set(CMAKE_AUTOMOC ON)
+    # Use find_package to get includes and libraries directories
     find_package(Qt5 REQUIRED ${_MODULES})
     message("Found Qt5 ${Qt5Core_VERSION}")
     #Add Qt5 include and libraries paths to the sets
     foreach( _module ${_MODULES})
       message("Adding module ${_module}")
-      set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5${_module}_INCLUDE_DIRS} )
-      set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5${_module}_LIBRARIES} )
-      #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5${_module}_EXECUTABLE_COMPILE_FLAGS}")
+      set(Qt5_LIBRARIES ${Qt5_LIBRARIES} Qt5::${_module} )
     endforeach()
   endif()
 endmacro()

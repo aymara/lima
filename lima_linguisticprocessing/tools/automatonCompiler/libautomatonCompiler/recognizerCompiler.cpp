@@ -573,10 +573,10 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
         << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteer[0])<<")";
   int indexRule=reco.addRuleInStorage(r);
   
-  if( (!gazeteer.hasNoCategoryNorTstatus()) && gazeteer.hasMultiTermWord() ) {
+  if( (!gazeteer.hasNotOnlyWords()) && gazeteer.hasMultiTermWord() ) {
     throwError("use of gazetteer with multi-term words and with category or t_status forbidden in trigger: ",m_currentLine);
   }
-  if( gazeteer.hasNoCategoryNorTstatus() )
+  if( gazeteer.hasNotOnlyWords() )
   {
     // const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
     // TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger); */

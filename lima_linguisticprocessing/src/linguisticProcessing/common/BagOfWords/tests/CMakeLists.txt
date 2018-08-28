@@ -44,10 +44,7 @@ add_test(NAME BagOfWordsTest1 COMMAND BagOfWordsTest1)
 
 SET(BagOfWordsTest2_SRCS BagOfWordsTest2.cpp)
 
-set (BagOfWordsTest2_MOC_HEADERS BagOfWordsTest2.h)
-qt5_wrap_cpp (BagOfWordsTest2_MOC_OUTFILES ${BagOfWordsTest2_MOC_HEADERS})
-
-add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS} ${BagOfWordsTest2_MOC_OUTFILES})
+add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS})
 target_link_libraries(BagOfWordsTest2 lima-linguisticprocessing)
 
 add_test(NAME BagOfWordsTest2 COMMAND BagOfWordsTest2)
@@ -56,10 +53,7 @@ add_test(NAME BagOfWordsTest2 COMMAND BagOfWordsTest2)
 
 SET(BagOfWordsTest3_SRCS BagOfWordsTest3.cpp)
 
-set (BagOfWordsTest3_MOC_HEADERS BagOfWordsTest3.h)
-qt5_wrap_cpp (BagOfWordsTest3_MOC_OUTFILES ${BagOfWordsTest3_MOC_HEADERS})
-
-add_executable(BagOfWordsTest3 ${BagOfWordsTest3_SRCS} ${BagOfWordsTest3_MOC_OUTFILES})
+add_executable(BagOfWordsTest3 ${BagOfWordsTest3_SRCS})
 target_link_libraries(BagOfWordsTest3 lima-linguisticprocessing)
 
 add_test(NAME BagOfWordsTest3 COMMAND BagOfWordsTest3)

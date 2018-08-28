@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(SHORTEN_POR_CORPUS_FOR_SVMLEARN "Use a shortened corpus for SVMTlearn to reduce learning time" OFF)
 message("SHORTEN_POR_CORPUS_FOR_SVMLEARN=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}")
@@ -98,10 +99,15 @@ else ()
   if(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
   endif()
-  set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /MP /utf-8 ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "/EHsc /GR ${CMAKE_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "/EHsc /GR /MP /utf-8 ${CMAKE_CXX_FLAGS}")
 
   set(LIB_INSTALL_DIR "bin")
+
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    DESTINATION bin
+    COMPONENT Libraries)
+
 endif ()
 
 

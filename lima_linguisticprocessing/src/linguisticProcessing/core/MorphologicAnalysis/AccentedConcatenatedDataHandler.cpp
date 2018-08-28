@@ -87,9 +87,11 @@ AccentedConcatenatedDataHandler::~AccentedConcatenatedDataHandler()
 
 void AccentedConcatenatedDataHandler::foundAccentedForm(StringsPoolIndex form)
 {
-  MORPHOLOGINIT;
   const LimaString& accentedForm=(*m_stringsPool)[form];
+#ifdef DEBUG_LP
+  MORPHOLOGINIT;
   LDEBUG << "AccentedConcatenatedDataHandler::foundAccentedForm" << accentedForm;
+#endif
   m_charChart->unmarkWithMapping(accentedForm,m_positionMapping);
   for (std::vector<unsigned char>::iterator it=m_positionMapping.begin();
        it!=m_positionMapping.end();

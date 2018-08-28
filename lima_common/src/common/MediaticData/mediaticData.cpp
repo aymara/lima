@@ -741,7 +741,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           i=includeList[k].find("/");
           if (i==string::npos) {
             LERROR << "Cannot include resources " << includeList[k] 
-                << ": must specify file and module name" << LENDL;
+                << ": must specify file and module name";
           continue;
           }
           QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);

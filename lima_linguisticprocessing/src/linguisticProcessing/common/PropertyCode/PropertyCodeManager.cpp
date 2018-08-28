@@ -83,12 +83,12 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   if (!file.open(QIODevice::ReadOnly))
   {
     LERROR << "An error occurred  Error: Cannot open " << filename ;
-    return;
+    throw std::runtime_error(std::string("PropertyCodeManager::readFromXmlFile Unable to open ") + filename);
   }
   if (!parser->parse( QXmlInputSource(&file)))
   {
-    LERROR << "An error occurred  Error: " << parser->errorHandler()->errorString() ;
-    return;
+    LERROR << "PropertyCodeManager::readFromXmlFile An error occurred  Error: " << parser->errorHandler()->errorString() ;
+    throw XMLException(std::string("Error while parsing " + filename + " : " + parser->errorHandler()->errorString().toUtf8().constData()));
   }
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser";
@@ -325,13 +325,13 @@ void PropertyCodeManager::convertSymbolicCodes(const std::string& symbolicCodeFi
   {
     PROPERTYCODELOGINIT;
     LERROR << "An error occurred  Error: Cannot open " << symbolicCodeFile ;
-    return;
+    throw std::runtime_error(std::string("PropertyCodeManager::convertSymbolicCodes Unable to open ") + symbolicCodeFile);
   }
   if (!parser->parse( QXmlInputSource(&file)))
   {
     PROPERTYCODELOGINIT;
-    LERROR << "An error occurred parsing" << symbolicCodeFile << ". Error: " << parser->errorHandler()->errorString() ;
-    throw std::runtime_error(parser->errorHandler()->errorString().toUtf8().constData());
+    LERROR << "PropertyCodeManager::convertSymbolicCodes An error occurred parsing" << symbolicCodeFile << ". Error: " << parser->errorHandler()->errorString() ;
+    throw XMLException(std::string("Error while parsing " + symbolicCodeFile + " : " + parser->errorHandler()->errorString().toUtf8().constData()));
   }
 }
 

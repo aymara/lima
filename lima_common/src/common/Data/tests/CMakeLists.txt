@@ -24,7 +24,7 @@ SET(LimaStringTest0_SRCS
 
 add_executable(LimaStringTest0 ${LimaStringTest0_SRCS})
 
-target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME LimaStringTest0 COMMAND LimaStringTest0)
 
@@ -36,7 +36,7 @@ SET(LimaStringTest1_SRCS
 
 add_executable(LimaStringTest1 ${LimaStringTest1_SRCS})
 
-target_link_libraries(LimaStringTest1 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest1 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME LimaStringTest1 COMMAND LimaStringTest1)
 
@@ -48,7 +48,7 @@ SET(LimaStringTest2_SRCS
 
 add_executable(LimaStringTest2 ${LimaStringTest2_SRCS})
 
-target_link_libraries(LimaStringTest2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest2 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME LimaStringTest2 COMMAND LimaStringTest2)
 
@@ -61,7 +61,7 @@ SET(LimaStringTest3_SRCS
 
 add_executable(LimaStringTest3 ${LimaStringTest3_SRCS})
 
-target_link_libraries(LimaStringTest3 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(LimaStringTest3 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME LimaStringTest3 COMMAND LimaStringTest3)
 
@@ -74,7 +74,7 @@ SET(ReadWriteTools1_SRCS
 
 add_executable(ReadWriteTools1 ${ReadWriteTools1_SRCS})
 
-target_link_libraries(ReadWriteTools1 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(ReadWriteTools1 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME ReadWriteTools1 COMMAND ReadWriteTools1)
 
@@ -86,13 +86,13 @@ SET(ReadWriteTools2_SRCS
 
 add_executable(ReadWriteTools2 ${ReadWriteTools2_SRCS})
 
-target_link_libraries(ReadWriteTools2 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(ReadWriteTools2 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME ReadWriteTools2 COMMAND ReadWriteTools2)
 
 ########### next test ###############
-set (FileUtilsTest0_MOC_HEADERS FileUtilsTest.h)
-qt5_wrap_cpp (FileUtilsTest0_MOC_OUTFILES ${FileUtilsTest0_MOC_HEADERS})
+# set (FileUtilsTest0_MOC_HEADERS FileUtilsTest.h)
+# qt5_wrap_cpp (FileUtilsTest0_MOC_OUTFILES ${FileUtilsTest0_MOC_HEADERS})
 
 
 SET(FileUtilsTest0_SRCS 
@@ -101,7 +101,7 @@ SET(FileUtilsTest0_SRCS
 
 add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFILES})
 
-target_link_libraries(FileUtilsTest0 lima-common ${Boost_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(FileUtilsTest0 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
 
 add_test(NAME FileUtilsTest0 COMMAND FileUtilsTest0 -v2 -nocrashhandler)
 set_tests_properties(FileUtilsTest0 PROPERTIES ENVIRONMENT LIMA_CONF=${CMAKE_SOURCE_DIR}/conf)

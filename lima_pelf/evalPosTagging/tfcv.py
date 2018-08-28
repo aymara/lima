@@ -232,8 +232,8 @@ def AnalyzeTextAll(matrix_path):
         processes.add(
             subprocess.Popen(
                 ['analyzeText', '-l', lang, '10pc.brut', '-o', 'text:.out'],
-                cwd=wd),
-            env=my_env)
+                cwd=wd,
+                env=my_env))
         if len(processes) >= max_processes:
             os.wait()
             for p in processes:

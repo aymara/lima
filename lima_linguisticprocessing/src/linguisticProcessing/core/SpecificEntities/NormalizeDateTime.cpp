@@ -296,6 +296,11 @@ bool NormalizeDate::
 operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const 
 {
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "NormalizeDate::operator()"<<m;
+#endif
+
   // assume all information for normalization is in recognized 
   // expression: do not use external information
 
@@ -337,9 +342,110 @@ operator()(RecognizerMatch& m,
     }
     Token* t = m.getToken(i);
     MorphoSyntacticData* data = m.getData(i);
-    if (testMicroCategory(m_microsForMonth,m_microAccessor,data)) {
+      const TStatus& status=t->status();
+#ifdef DEBUG_LP
+      LDEBUG << "Token"<<t->stringForm()<<"status is:" << status.toString();
+#endif
+      if (status.getStatus()==T_NUMERIC) {
+//     else {
+      if (status.getNumeric()==T_FRACTION) {
+        uint64_t pos(t->stringForm().indexOf(LimaChar('/')));
+        uint64_t val1=t->stringForm().leftRef(pos).toUInt();
+        uint64_t val2=t->stringForm().midRef(pos+1).toUInt();
+        if (val1 > 31) {
+          //assume year
+          if (year == 0) {
+            year=val1;
+            m.features().setFeature(YEAR_FEATURE_NAME, year);
+          }
+          //assume next is month
+          if (month == 0 && val2 <= 12) {
+            month=val2;
+            m.features().setFeature(MONTH_FEATURE_NAME, month);
+          }
+          else { // should not happen => it may not be a date
+          }
+        }
+        // otherwhise, suppose day before month, but test it
+        else if (val2 > 12) {
+          if (day == 0) {
+            day=val2;
+            m.features().setFeature(DAY_FEATURE_NAME, day);
+          }
+          if (month == 0) {
+            month=val1;
+            m.features().setFeature(MONTH_FEATURE_NAME, month);
+          }
+        }
+        else {
+          if (day == 0) {
+            day=val1;
+            m.features().setFeature(DAY_FEATURE_NAME, day);
+          }
+          if (month == 0) {
+            month=val2;
+            m.features().setFeature(MONTH_FEATURE_NAME, month);
+          }
+        }
+      }
+      else if (isInteger(t)) {
+        uint64_t value=LimaStringToInt(t->stringForm());
+        if (value < 31) {
+          if (day==0) { // suppose day before month
+            day = value;
+            m.features().setFeature(DAY_FEATURE_NAME, day);
+          }
+          else if (m_isInterval && day_end==0) {
+            day_end=value;
+          }
+          else if (month==0) {
+            if (value > 12) { // swap : month cant be > 12
+              month = day;
+              m.features().setFeature(MONTH_FEATURE_NAME, month);
+              if (day == 0) {
+                day = value;
+                m.features().setFeature(DAY_FEATURE_NAME, day);
+              }
+            }
+            else { // assume month
+              if (month == 0) {
+                month = value;
+                m.features().setFeature(MONTH_FEATURE_NAME, month);
+              }
+            }
+          }
+          else { // month and day are assigned -> assume year
+            if (year == 0) {
+              year = value;
+              m.features().setFeature(YEAR_FEATURE_NAME, year);
+            }
+          }
+        }
+        else {
+          if (value > 1000 && value < 3000) {
+            if (year == 0) {
+              year = value;
+              m.features().setFeature(YEAR_FEATURE_NAME, year);
+            }
+          }
+          else if (month!=0) {
+            // can be a year on two digits -> year assumed if
+            // day and month are already assigned
+            if (year == 0) {
+              year = value;
+              m.features().setFeature(YEAR_FEATURE_NAME, year);
+            }
+          }
+        }
+      }
+    }
+    else {
+//     if (testMicroCategory(m_microsForMonth,m_microAccessor,data)) {
       if (isInteger(t)) {
-        if (month == 0) month=LimaStringToInt(t->stringForm());
+        if (month == 0) {
+          month=LimaStringToInt(t->stringForm());
+          m.features().setFeature(MONTH_FEATURE_NAME, month);
+        }
       }
       else if (m_resources) {
         LimaString monthString = m.features().find("month")==m.features().end() ? t->stringForm() : (*m.features().find("month")).getValueLimaString();
@@ -352,70 +458,15 @@ operator()(RecognizerMatch& m,
         }
         else {
           if (month!=0 && m_isInterval) {
-            if (month_end == 0) month_end=monthNum;
+            if (month_end == 0) {
+              month_end=monthNum;
+            }
           }
           else {
-            if (month == 0) month=monthNum;
-          }
-        }
-      }
-    }
-    else {
-      const TStatus& status=t->status();
-      if (status.getNumeric()==T_FRACTION) {
-        uint64_t pos(t->stringForm().indexOf(LimaChar('/')));
-        uint64_t val1=t->stringForm().leftRef(pos).toUInt();
-        uint64_t val2=t->stringForm().midRef(pos+1).toUInt();
-        if (val1 > 31) {
-          //assume year
-          if (year == 0) year=val1;
-          //assume next is month
-          if (month == 0 && val2 <= 12) {
-            month=val2;
-          }
-          else { // should not happen => it may not be a date
-          }
-        }
-        // otherwhise, suppose day before month, but test it
-        else if (val2 > 12) {
-          if (day == 0) day=val2;
-          if (month == 0) month=val1;
-        }
-        else {
-          if (day == 0) day=val1;
-          if (month == 0) month=val2;
-        }
-      }
-      else if (isInteger(t)) {
-        uint64_t value=LimaStringToInt(t->stringForm());
-        if (value < 31) {
-          if (day==0) { // suppose day before month
-            day = value;
-          }
-          else if (m_isInterval && day_end==0) {
-            day_end=value;
-          }
-          else if (month==0) {
-            if (value > 12) { // swap : month cant be > 12
-              month = day;
-              if (day == 0) day = value;
+            if (month == 0) {
+              month=monthNum;
+              m.features().setFeature(MONTH_FEATURE_NAME, month);
             }
-            else { // assume month
-              if (month == 0) month = value;
-            }
-          }
-          else { // month and day are assigned -> assume year
-            if (year == 0) year = value;
-          }
-        }
-        else {
-          if (value > 1000 && value < 3000) {
-            if (year == 0) year = value;
-          }
-          else if (month!=0) {
-            // can be a year on two digits -> year assumed if
-            // day and month are already assigned
-            if (year == 0) year = value;
           }
         }
       }
@@ -423,7 +474,6 @@ operator()(RecognizerMatch& m,
   }
 
 #ifdef DEBUG_LP
-  SELOGINIT;
   LDEBUG << "NormalizeDate operator(): day=" << day << ", day_end=" << day_end;
   LDEBUG << "NormalizeDate operator(): month=" << month << ", month_end=" << month_end;
   LDEBUG << "NormalizeDate operator(): year=" << year;
@@ -432,9 +482,11 @@ operator()(RecognizerMatch& m,
   if (year!=0 && year<99) {
     if (year < 10) {
       year+=2000;
+      m.features().setFeature(YEAR_FEATURE_NAME, year);
     }
     else {
       year+=1900;
+      m.features().setFeature(YEAR_FEATURE_NAME, year);
     }
   }
   
@@ -444,8 +496,7 @@ operator()(RecognizerMatch& m,
       //const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
       SELOGINIT;
       LWARN << "NormalizeDate: no day, month or year identified in " 
-             << Common::Misc::limastring2utf8stdstring(m.getString())
-            ;
+             << Common::Misc::limastring2utf8stdstring(m.getString());
       m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     }
     else {

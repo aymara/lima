@@ -59,6 +59,7 @@ public:
 
 private:
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  std::string m_data;
   std::string m_graph;
   std::set<LimaString> m_boundaryValues;
   std::list<LinguisticCode> m_boundaryMicros;
