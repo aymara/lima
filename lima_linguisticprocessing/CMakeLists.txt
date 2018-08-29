@@ -206,7 +206,7 @@ if (NOT QHTTPSERVER_FOUND)
   message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
 else ()
   message(STATUS "Found QHttpServer. lima HTTP server will be built with ${QHTTPSERVERCPP_INCLUDE_DIR} and ${QHTTPSERVERCPP_LIBRARY}")
-  include_directories(QHTTPSERVERCPP_INCLUDE_DIR)
+  include_directories(${QHTTPSERVERCPP_INCLUDE_DIR})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     install(FILES ${QHTTPSERVERCPP_LIBRARY}
           DESTINATION ${LIB_INSTALL_DIR}
