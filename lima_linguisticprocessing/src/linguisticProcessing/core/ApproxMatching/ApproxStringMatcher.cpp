@@ -46,8 +46,6 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::AnalysisDict;
 
-#define DEBUG_LP
-
 namespace Lima
 {
 namespace LinguisticProcessing
@@ -354,6 +352,15 @@ LimaStatusCode ApproxStringMatcher::process(
     // nameRange.first = m_nameIndex->lower_bound(indexName);
     // nameRange.second = m_nameIndex->upper_bound(indexName);
   }
+#ifdef DEBUG_LP
+  const std::basic_string<wchar_t> firstNameW = (*(nameRange.first)).second;
+  std::basic_string<wchar_t> lastNameW;
+  for( NameIndex::const_iterator it= nameRange.first ; it != nameRange.second ; it++ )
+    lastNameW = (*it).second;
+  const QString firstNameQ =  wcharStr2LimaStr(firstNameW);
+  const QString lastNameQ =  wcharStr2LimaStr(lastNameW);
+  LDEBUG << "ApproxStringMatcher::process: nameRange= from " << firstNameQ << " to " << lastNameQ;
+#endif
   LinguisticGraph & g = *(anagraph->getGraph());
   matchApproxTokenAndFollowers(g, anagraph->firstVertex(), anagraph->lastVertex(), nameRange, solutions);
 #ifdef DEBUG_LP
@@ -510,7 +517,7 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
     // convert normalizedForm into std::basic_string<wchar_t>
     // std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
     std::basic_string<wchar_t> wpattern = normalizedForm;
-    // escape 'regex special character':
+    // escape 'regex special character', to avoid to interpret a character in a name as regex special character:
     // '.', '^', '$', '|', '(', ')', '[', ']', '{', '}', '*', '+', '?', '\'
     wide_regex esc(L"[.^$|()\\[\\]{}*+?\\\\]");
     const std::basic_string<wchar_t> rep(L"\\\\&");
