@@ -21,3 +21,10 @@ release/
 *.kate-swp
 *-build/
 CMakeLists.txt.user
+
+# QtCreator
+*.creator
+*.creator.user
+
+# vim
+*.sw?
