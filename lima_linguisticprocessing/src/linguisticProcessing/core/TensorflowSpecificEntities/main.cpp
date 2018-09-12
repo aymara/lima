@@ -259,10 +259,13 @@ int main(int argc, char* argv[]) {
   
   //6. Free any resources used by the session
   *status=session->Close();
+
   if (!status->ok()) {
     std::cerr << status->ToString() << "\n";
     return 1;
   }
+
+  delete session;
   
   //Calculate executated time for applying the model
   std::chrono::high_resolution_clock::time_point t4 = std::chrono::high_resolution_clock::now();
