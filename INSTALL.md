@@ -22,9 +22,10 @@ orthographic correction), qhttpserver (optional, for lima http/json API).
 
 Under Ubuntu 14.04, most of these dependencies are installed with the following packages:
 ```
-$ sudo apt-get install python-nltk gawk cmake ninja-build qt5-default libqt5xmlpatterns5 libqt5xmlpatterns5-dev \
-qttools5-dev build-essential libboost-all-dev libenchant-dev mesa-common-dev libgl1-mesa-dev\
-libglu1-mesa-dev libasan0
+$ sudo apt-get install python-nltk gawk cmake ninja-build qt5-default libqt5xmlpatterns5 \
+libqt5xmlpatterns5-dev qttools5-dev build-essential libboost-all-dev libenchant-dev \
+mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libasan0 qml-module-qt-labs-folderlistmodel \
+qml-module-qt-labs-settings qtdeclarative5-dev
 ```
 Under Mageia, most of these dependencies are installed with the following 
 packages:
