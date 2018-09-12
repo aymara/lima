@@ -239,6 +239,7 @@ void Test::testPredictBatch1(){
                        charIds, wordIds, result)==NERStatusCode::SUCCESS);
   QVERIFY(vocabTags[result[0](0)]=="O");
   session->Close();
+  delete session;
 }
 
 void Test::testPredictBatch2(){
@@ -304,6 +305,7 @@ void Test::testPredictBatch2(){
   QVERIFY(vocabTags[result[0](1)]=="O");
   QVERIFY(vocabTags[result[0](2)]=="I-LOC");
   session->Close();
+  delete session;
 }
 
 void Test::testPredictBatch3(){
