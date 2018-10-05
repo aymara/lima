@@ -34,9 +34,11 @@ void msgHandler (QtMsgType type, const QMessageLogContext &, const QString &msg)
     case QtDebugMsg:
         fprintf(stderr, "Debug: %s\n", msg.toUtf8().constData());
         break;
+#if  QT_VERSION >= 0x050500
     case QtInfoMsg:
         fprintf(stderr, "Info: %s\n", msg.toUtf8().constData());
         break;
+#endif
     case QtWarningMsg:
         fprintf(stderr, "Warning: %s\n", msg.toUtf8().constData());
         break;
