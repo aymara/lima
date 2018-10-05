@@ -705,8 +705,8 @@ int ApproxStringMatcher::findApproxPattern(
     std::vector<Suggestion>& suggestions, int nbMaxError) const {
     int returnStatus=1;
     MORPHOLOGINIT;
-#ifdef DEBUG_LP
       QString patternQ = wcharStr2LimaStr(pattern);
+#ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::findApproxPattern("
              << Lima::Common::Misc::limastring2utf8stdstring(patternQ) << ","
              << Lima::Common::Misc::limastring2utf8stdstring(text) << "), nbErr=" << nbMaxError;
