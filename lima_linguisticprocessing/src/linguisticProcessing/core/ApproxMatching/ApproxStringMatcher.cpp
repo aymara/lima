@@ -732,8 +732,9 @@ int ApproxStringMatcher::findApproxPattern(
     LDEBUG << "ApproxStringMatcher::findApproxPattern: agrepStatus=" << agrepStatus;
 #endif
     if(agrepStatus!= 0) {
+      QString patternQ = wcharStr2LimaStr(pattern);
       LWARN << "ApproxStringMatcher::findApproxPattern: error when compiling ="
-	    << Lima::Common::Misc::limastring2utf8stdstring(patternQ);
+            << Lima::Common::Misc::limastring2utf8stdstring(patternQ);
       return returnStatus;
     }
 
