@@ -466,6 +466,17 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     VERBATIM
   )
   add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Miscellaneous-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Miscellaneous-modex.xml
+    COMMENT "create config env for specific entities rules (Miscellaneous-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -504,6 +515,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
   )
@@ -652,7 +664,7 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
   add_custom_target(
     syntanalrules-${_lang}
     ALL
-    DEPENDS ${${_lang}_BIN_RULES_FILES} ${${_lang}_SA_DEPENDS_FILES}
+    DEPENDS ${${_lang}_BIN_RULES_FILES} ${${_lang}_SA_DEPENDS_FILES} rules-${_lang}-execEnv rules-configEnv
   )
 
   foreach (file ${${_lang}_BIN_RULES_FILES})
