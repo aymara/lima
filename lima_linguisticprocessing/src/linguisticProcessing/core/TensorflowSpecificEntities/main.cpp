@@ -8,7 +8,7 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <memory>
-#include <qt5/QtCore/QTextStream>
+#include <QTextStream>
 
 namespace po = boost::program_options;
 
