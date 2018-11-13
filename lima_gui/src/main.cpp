@@ -37,7 +37,9 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/tools/FileUtils.h"
 
+#ifdef DEBUG_LIMA_GUI
 #define QT_QML_DEBUG
+#endif
 #include <QtQuick>
 #include <QApplication>
 #include <QIcon>
