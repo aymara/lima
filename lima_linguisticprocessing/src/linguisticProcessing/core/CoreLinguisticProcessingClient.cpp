@@ -107,7 +107,7 @@ void CoreLinguisticProcessingClient::analyze(
   analysis.setData("LinguisticMetaData",metadataholder);
 
   metadataholder->setMetaData(metaData);
-  LimaStringText* lstexte=new LimaStringText(text);
+  LimaStringText* lstexte=new LimaStringText(text); // will be destroyed in AnalysisContent destructor
   analysis.setData("Text",lstexte);
   
   LINFO << "CoreLinguisticProcessingClient::analyze(";
@@ -117,9 +117,6 @@ void CoreLinguisticProcessingClient::analyze(
   }
   LINFO;
   
-  std::map<std::string,std::string>* metaDataPtr = const_cast<std::map<std::string,std::string>*>(&metaData);
-  LINFO << "CoreLinguisticProcessingClient::analyze(" << (*metaDataPtr)["docid"] << "...)";
-
   // add date/time/location metadata in LinguisticMetaData
 #ifdef DEBUG_LP
   if (metaData.empty()) {
@@ -177,8 +174,20 @@ void CoreLinguisticProcessingClient::analyze(
       metadataholder->setMetaData("DocId",(*it).second);
     }
   }
+
+  std::string docId;
+  try
+  {
+    docId = metadataholder->getMetaData("DocId");
+  }
+  catch (LinguisticProcessingException& )
+  {
+    metadataholder->setMetaData("DocId", docId);
+  }
+  LINFO << "CoreLinguisticProcessingClient::analyze(" << docId << "...)";
+
  
-  // try to retreive offset
+  // try to retrieve offset
   try
   {
     const std::string& offsetStr=metadataholder->getMetaData("StartOffset");
