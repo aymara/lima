@@ -1,5 +1,9 @@
 *.dot
 
+# Compiled QML/JS files
+*.qmlc
+*.jsc
+
 # Compiled Object files
 *.slo
 *.lo
