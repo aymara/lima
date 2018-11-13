@@ -30,8 +30,8 @@ macro (DECLARE_LIMA_PLUGIN _plugin)
 endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
-# -DCMAKE_INSTALL_PREFIX="e:mose" -DCMAKE_BUILD_TYPE=Release
-# -DCMAKE_INSTALL_PREFIX="c:mose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
+# -DCMAKE_INSTALL_PREFIX="e:\mose" -DCMAKE_BUILD_TYPE=Release
+# -DCMAKE_INSTALL_PREFIX="c:\mose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 enable_testing()
 
@@ -90,7 +90,7 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
     install(FILES ${QtDBus_location}
             DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${QtDBus_location})
   endif ()
@@ -102,11 +102,25 @@ find_package(PythonLibs 3)
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    set(PYTHON_DLLS "")
+    foreach(PYTHON_LIB ${PYTHON_LIBRARIES})
+      string(REPLACE ".lib" ".dll" PYTHON_DLL ${PYTHON_LIB})
+      string(REPLACE "libs/" "" PYTHON_DLL ${PYTHON_DLL})
+      list(APPEND PYTHON_DLLS ${PYTHON_DLL})
+    endforeach()
+
+    install(FILES ${PYTHON_DLLS}
+            DESTINATION ${LIB_INSTALL_DIR}
+            COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+        ${PYTHON_DLLS})
+
     install(FILES ${PYTHON_LIBRARIES}
             DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
+            COMPONENT runtime)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
         ${PYTHON_LIBRARIES})
   endif ()
 endif ()
