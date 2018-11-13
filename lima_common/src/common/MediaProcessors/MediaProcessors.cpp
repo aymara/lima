@@ -163,23 +163,28 @@ void MediaProcessors::initPipelines (
             std::cout << "no pipeline '" << *pipItr << "' defined in pipeline declaration module ! " << std::endl;
             //         continue;
         }
-        for ( std::map<MediaId,MediaProcessUnit::Manager*>::const_iterator mapItr=m_d->m_pipelineManagers.begin();
-                mapItr!=m_d->m_pipelineManagers.end();
+        for (auto mapItr=m_d->m_pipelineManagers.cbegin();
+                mapItr!=m_d->m_pipelineManagers.cend();
                 mapItr++ )
         {
             const std::string& mediaStr=MediaticData::single().getMediaId ( mapItr->first );
             map<string,string>::const_iterator entryItr=pipelineMapping.find ( mediaStr );
             if ( entryItr==pipelineMapping.end() )
             {
-                std::cout << "no pipeline '" << *pipItr << "' for media " << mediaStr << std::endl;
-                //         continue;
+                std::cerr << "no pipeline '" << *pipItr << "' for media " << mediaStr << std::endl;
+                continue;
             }
             const MediaProcessUnit* pu=mapItr->second->getObject ( entryItr->second );
+            if (pu == nullptr)
+            {
+                std::cerr << "no process unit '" << *pipItr << "' for media " << mediaStr << " !" << std::endl;
+                throw InvalidConfiguration("no process unit for media");
+            }
             const MediaProcessUnitPipeline* pipeline=static_cast<const MediaProcessUnitPipeline*> ( pu );
             if ( pipeline==0 )
             {
-                std::cout << "pipeline '" << *pipItr << "' for media " << mediaStr << " is not of type ProcessUnitPipeline !" << std::endl;
-                //         throw InvalidConfiguration();
+                std::cerr << "pipeline '" << *pipItr << "' for media " << mediaStr << " is not of type ProcessUnitPipeline !" << std::endl;
+                throw InvalidConfiguration("pipeline for media is not of type ProcessUnitPipeline !");
             }
             m_d->m_pipelines[*pipItr][mapItr->first]=pipeline;
         }
