@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ if (Qt5DBus_FOUND)
 #   set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
   set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
 endif()
-# 
+#
 # include_directories(${Qt5_INCLUDES})
 # set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
 # message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
@@ -78,7 +78,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
                 ${QtXmlPatterns_location}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
     ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
     ${QtNetwork_location}
     ${QtXmlPatterns_location})
@@ -159,8 +159,8 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
                 ${Boost_THREAD_LIBRARY_dll}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${Boost_REGEX_LIBRARY_dll}
       ${Boost_FILESYSTEM_LIBRARY_dll}
       ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
@@ -178,7 +178,7 @@ if(SVMTOOL++_FOUND)
     install(FILES ${SVMTOOL++_NAMES}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${SVMTOOL++_NAMES})
   endif()
@@ -186,7 +186,7 @@ else ()
   message(STATUS "Hi, Could not find SVMTool++. SVM-base PoS tagger will not be available.")
 endif()
 
-find_package (Enchant) 
+find_package (Enchant)
 if (ENCHANT_FOUND)
   set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
   include_directories(${ENCHANT_INCLUDE_DIRS})
@@ -194,7 +194,7 @@ if (ENCHANT_FOUND)
     install(FILES ${ENCHANT_LIBRARIES}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${ENCHANT_LIBRARIES})
   endif ()
@@ -203,7 +203,7 @@ else ()
   message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
 endif ()
 
-find_package (Tre) 
+find_package (Tre)
 if (TRE_FOUND)
   set(optionalLibs ${optionalLibs} ${TRECPP_LIBRARIES})
   include_directories(${TRECPP_INCLUDE_DIRS})
@@ -212,7 +212,7 @@ if (TRE_FOUND)
     install(FILES ${TRECPP_LIBRARIES}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${TRECPP_LIBRARIES})
   endif ()
@@ -231,25 +231,40 @@ else ()
     install(FILES ${QHTTPSERVERCPP_LIBRARY}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${QHTTPSERVERCPP_LIBRARY})
   endif ()
 endif ()
 
+message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
+
 find_package(TensorFlow)
 find_package(Eigen)
-# find_package(Protobuf REQUIRED)
+find_package(Protobuf)
+
+if (TensorFlow_FOUND)
+  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
+else ()
+  message(STATUS "TensorFlow not found.")
+endif ()
+
+if (Eigen_FOUND)
+  message(STATUS "Found Eigen. ${Eigen_INCLUDE_DIRS} ${Eigen_LIBRARIES} ")
+else ()
+  message(STATUS "Eigen not found.")
+endif ()
+
 if (TensorFlow_FOUND AND Eigen_FOUND)
   message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
 
-  include_directories(${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
+  include_directories(${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     install(FILES ${TensorFlow_LIBRARIES}
       ${Eigen_LIBRARIES}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${Eigen_LIBRARIES}
       ${TensorFlow_LIBRARIES})
@@ -281,11 +296,11 @@ add_subdirectory(cmake)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake 
-  DESTINATION share/apps/lima/cmake/Modules 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake
+  DESTINATION share/apps/lima/cmake/Modules
   COMPONENT devel)
-install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins 
-  DESTINATION share/config/lima/plugins 
+install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins
+  DESTINATION share/config/lima/plugins
   COMPONENT runtime)
 
 ########### documentation ###############
