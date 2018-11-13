@@ -32,7 +32,6 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOSTATICPLUGINS ON)
 
 # This macro does the find_package with the required Qt5 modules listed as 
 # parameters. Note that the Qt5_INCLUDES variable is not necessary anymore as 
