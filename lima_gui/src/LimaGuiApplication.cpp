@@ -287,9 +287,18 @@ void LimaGuiApplication::analyze(const QString& content)
   }
 
   std::set<std::string> inactiveUnits;
-  // QString::fromUtf8(contentText.c_str())
-  LDEBUG << "LimaGuiApplication::analyze" << m_pipeline << content;
-  m_analyzer->analyze(content, metaData, m_pipeline.toStdString(), handlers, inactiveUnits);
+  try 
+  {
+    LDEBUG << "LimaGuiApplication::analyze" << m_pipeline << content;
+    m_analyzer->analyze(content, metaData, m_pipeline.toStdString(), handlers, inactiveUnits);
+  }
+  catch (const LinguisticProcessingException& e)
+  {
+    LIMAGUILOGINIT;
+    LERROR << "LimaGuiApplication::analyze catched LinguisticProcessingException:"
+            << e.what();
+    *out << "Analyzer error:" << e.what() << std::endl;
+  }
 
   if (simpleStreamHandler)
   {
