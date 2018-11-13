@@ -35,11 +35,14 @@ SET (lima_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
+
 if (Qt5Core_FOUND)
   if (Qt5Core_VERSION VERSION_GREATER 5.7.0)
     qt5_add_resources(lima_SRCS resources.qrc)
+    set(QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml)
   else()
     qt5_add_resources(lima_SRCS resources-old.qrc)
+    set(QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml-old)
   endif()
 endif()
 
@@ -54,7 +57,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
     WinDeployQt(
       COMPILER_RUNTIME 
       TARGET lima 
-      QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml-old
+      QMLDIR ${QMLDIR}
       INCLUDE_MODULES ${QTLIBS} 
     )
     install(
