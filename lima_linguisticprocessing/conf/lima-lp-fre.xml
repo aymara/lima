@@ -85,7 +85,8 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="sentenceBoundariesFinderForSE"/>
-        <item value="tensorflowSpecificEntities"/>
+        @tensorflowSpecificEntities@
+<!--         <item value="tensorflowSpecificEntities"/> -->
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
