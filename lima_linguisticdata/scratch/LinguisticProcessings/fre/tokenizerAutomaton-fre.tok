@@ -284,6 +284,8 @@
   - c_5 > INTEGER
   - c_comma c_5 > COMMA_NUMBER (T_COMMA_NUMBER)
   - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
+  - c_slash c_5 c_5 c_slash = DELIMITER (T_WORD_BRK)
+  - c_slash c_5 c_slash = DELIMITER (T_WORD_BRK)
   - c_slash c_5 > FRACTION (T_FRACTION)
   - c_l_eg c_l_m c_l_e > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
   - c_l_e c_l_m c_l_e  > ORDINAL_INTEGER2 (T_NUMERIC,T_ORDINAL_INTEGER)
