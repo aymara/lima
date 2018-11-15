@@ -11,8 +11,8 @@ find_path(Eigen_INCLUDE_DIR
         ${Eigen_DIR}
         ${Eigen_DIR}/unsupported
         ${Eigen_DIR}/Eigen
-	HINTS
-	${Eigen_INSTALL_DIR})
+        HINTS
+        ${Eigen_INSTALL_DIR})
 
 # set Eigen_FOUND
 find_package_handle_standard_args(Eigen DEFAULT_MSG Eigen_INCLUDE_DIR)
