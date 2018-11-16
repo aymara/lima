@@ -160,8 +160,8 @@ void MediaProcessors::initPipelines (
         const map<string,string>& pipelineMapping=allpipelines[*pipItr];
         if ( pipelineMapping.empty() )
         {
-            std::cout << "no pipeline '" << *pipItr << "' defined in pipeline declaration module ! " << std::endl;
-            //         continue;
+            std::cerr << "no pipeline '" << *pipItr << "' defined in pipeline declaration module!" << std::endl;
+            continue;
         }
         for (auto mapItr=m_d->m_pipelineManagers.cbegin();
                 mapItr!=m_d->m_pipelineManagers.cend();
@@ -183,8 +183,8 @@ void MediaProcessors::initPipelines (
             const MediaProcessUnitPipeline* pipeline=static_cast<const MediaProcessUnitPipeline*> ( pu );
             if ( pipeline==0 )
             {
-                std::cerr << "pipeline '" << *pipItr << "' for media " << mediaStr << " is not of type ProcessUnitPipeline !" << std::endl;
-                throw InvalidConfiguration("pipeline for media is not of type ProcessUnitPipeline !");
+                std::cerr << "pipeline '" << *pipItr << "' for media " << mediaStr << " is not of type ProcessUnitPipeline!" << std::endl;
+                continue;
             }
             m_d->m_pipelines[*pipItr][mapItr->first]=pipeline;
         }
@@ -205,7 +205,7 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId ( MediaId med,
     map<MediaId,const MediaProcessUnitPipeline*>::const_iterator medItr=pipItr->second.find ( med );
     if ( medItr==pipItr->second.end() )
     {
-      LWARN << "no media [" << med << ":" << MediaticData::single().getMediaId(med).c_str() << "] defined for pipeline '" << id.c_str() << "' in the configuration file !";
+      LWARN << "no media [" << med << ":" << MediaticData::single().getMediaId(med).c_str() << "] defined for pipeline '" << id.c_str() << "' in the configuration file!";
         return 0;
     }
     return medItr->second;

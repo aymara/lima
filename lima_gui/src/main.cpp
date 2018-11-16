@@ -61,7 +61,9 @@ using namespace Lima::LinguisticProcessing;
 
 int main(int argc, char *argv[])
 {
-#ifndef DEBUG_LIMA_GUI
+#ifdef DEBUG_LIMA_GUI
+  qputenv("QT_LOGGING_RULES", "*=true");
+#else
   qputenv("QT_LOGGING_RULES", "*=false");
 #endif
   QApplication app(argc, argv);

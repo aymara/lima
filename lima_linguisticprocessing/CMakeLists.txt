@@ -105,10 +105,18 @@ if (${PYTHONLIBS_FOUND})
     set(PYTHON_DLLS "")
     foreach(PYTHON_LIB ${PYTHON_LIBRARIES})
       string(REPLACE ".lib" ".dll" PYTHON_DLL ${PYTHON_LIB})
+# <<<<<<< HEAD
       string(REPLACE "libs" "" PYTHON_DLL ${PYTHON_DLL})
       message("Python dll: ${PYTHON_DLL}")
       if(EXISTS ${PYTHON_DLL})
         string(REPLACE "\\" "\\\\" ESCAPED_PATH_TO_PYTHON_DLL ${PYTHON_DLL})
+# =======
+#       string(REGEX MATCH "python[0-9]+\.dll" PURE_PYTHON_DLL_NAME ${PYTHON_DLL})
+#       execute_process(COMMAND cmd "/C" "where ${PURE_PYTHON_DLL_NAME}" OUTPUT_VARIABLE PYTHON_DLL_LOCATIONS_STR)
+#       string(REPLACE "\n" ";" PYTHON_DLL_LOCATIONS "${PYTHON_DLL_LOCATIONS_STR}")
+#       foreach(ONE_LOCATION ${PYTHON_DLL_LOCATIONS})
+#         string(REPLACE "\\" "\\\\" ESCAPED_PATH_TO_PYTHON_DLL ${ONE_LOCATION})
+# >>>>>>> Correct lima gui windows deployment
         list(APPEND PYTHON_DLLS ${ESCAPED_PATH_TO_PYTHON_DLL})
         break()
       else()
