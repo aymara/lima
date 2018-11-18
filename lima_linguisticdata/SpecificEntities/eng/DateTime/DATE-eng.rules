@@ -38,6 +38,12 @@ use days.lst,months.lst,monthAbbrev.lst
 
 @month::the? (@numday|t_ordinal_integer) (,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
 
+# June-July 2000
+@month::-? @month ,? (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
+# Jun-Jul 2000
+@monthAbbrev::-? @monthAbbrev ,? (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
 # July, 2000
 @month::,? t_integer>1000<3000:DATE:=>NormalizeDate()
 
