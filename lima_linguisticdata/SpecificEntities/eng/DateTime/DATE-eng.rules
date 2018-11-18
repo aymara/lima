@@ -7,6 +7,11 @@ set defaultAction=>CreateSpecificEntity()
 # recognition of dates and times
 #----------------------------------------------------------------------
 
+#-----------------------------------------------
+# Don't treat long sequences of numbers as dates
+
+t_integer::(- t_integer){3-5}:NOT_DATE:
+
 #------------------------------ DATES ----------
 use days.lst,months.lst,monthAbbrev.lst
 
