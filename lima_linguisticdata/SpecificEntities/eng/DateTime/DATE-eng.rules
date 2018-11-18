@@ -68,7 +68,6 @@ use days.lst,months.lst,monthAbbrev.lst
 
 @Decade:@modifierDate?::DATE:
 
-
 # from 1980 to 1981
 # between 1980 and 1981
 #from::t_integer>1200<2100 to t_integer>1200<2100:DATE:=>NormalizeDate()
@@ -92,6 +91,12 @@ t_integer>1200<2100:[@in]::DATE:=>NormalizeDate()
 # 22-05-68
 # integer - integer - integer
 @numday::- @numday - (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
+# YYYY-MM-DD
+t_integer>1000<3000::- @numday - @numday:DATE:=>NormalizeDate()
+
+# YY-MM-DD
+t_integer<99::- @numday - @numday:DATE:=>NormalizeDate()
 
 # 22/05/68
 # fraction / integer or integer / integer / integer
