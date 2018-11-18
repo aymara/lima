@@ -305,7 +305,7 @@ Ruth::[and] Ruff:LOCATION:
 
 T_Ni<999:\(:\) T_Ni<999 - T_Ni<9999:LOCATION:
 
-T_Ni<999::- T_Ni<999 - T_Ni<9999:LOCATION:
+T_Ni<999::- T_Ni<999 (- T_Ni<9999){1-3}:LOCATION:
 
 1::- T_Ni<999 - T_Ni<999 - T_Ni<9999:LOCATION:
 
