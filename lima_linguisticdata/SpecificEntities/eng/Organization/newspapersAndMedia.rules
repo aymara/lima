@@ -81,7 +81,7 @@ Le::Monde:ORGANIZATION:
 
 use ../Location/cities.lst,../Location/states.lst
 
-@City::(@newspaperPrincipalKey|@newspaperSecondaryKey):ORGANIZATION:
+@City::(@newspaperPrincipalKey|@newspaperSecondaryKey){1-2}:ORGANIZATION:
 @State::(@newspaperPrincipalKey|@newspaperSecondaryKey):ORGANIZATION:
 
 @newspaperPrincipalKey:[(the|The)]::ORGANIZATION:
