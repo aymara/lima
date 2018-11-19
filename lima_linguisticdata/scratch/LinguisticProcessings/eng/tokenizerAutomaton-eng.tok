@@ -107,7 +107,7 @@
   - c_grave = GRAVE (T_WORD_BRK)
   - c_b c_dot > DELIMITER
   - c_dot c_b > DELIMITER
-  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|m_line = DELIMITER (T_WORD_BRK)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|c_colon|m_line = DELIMITER (T_WORD_BRK)
   - c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - c_par = IGNORE (T_SENTENCE_BRK)
   - c_b = IGNORE
