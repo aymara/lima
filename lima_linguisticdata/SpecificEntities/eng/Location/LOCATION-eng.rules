@@ -244,7 +244,7 @@ district)
 #loc adm
 #bug
 
-[@CityIndPlur]::[of] t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
+[@CityIndPlur]::[of] t_capital_1st{1-3} and t_capital_1st{1-3}:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
