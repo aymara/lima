@@ -43,7 +43,7 @@ use organizationkey.lst
 @organizationKey:(t_capital_1st|t_capital|t_capital_small|\&){1-5}:(.)?:ORGANIZATION:
 @organizationKey:(t_capital_1st|t_capital){1-3} @conjunctions{0-2} (t_capital_1st|t_capital){0-3}:(.)?:ORGANIZATION:
 
-t_capital::[\(] t_capital_1st{1-3} @conjunctions{1-2} t_capital_1st{1-3} [\)]:ORGANIZATION:
+t_capital::\( t_capital_1st{1-3} @conjunctions{1-2} t_capital_1st{1-3} \):ORGANIZATION:
 
 # [GC 20130906] commented out because this rule matches wrong things and remove tokens...
 #t_capital_1st::[\(] t_capital_1st{1-3} @conjunctions{1-2} t_capital_1st{1-3} [\)]:ORGANIZATION:
