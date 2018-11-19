@@ -396,6 +396,7 @@
   - c_b = IGNORE
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_dot|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_comma = DELIMITER (T_WORD_BRK)
   - c_del2 = DELIMITER (T_SENTENCE_BRK)
   - c_all > START
 }
