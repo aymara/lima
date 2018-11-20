@@ -88,6 +88,7 @@
   - c_del2|c_dot c_par c_par / DELIMITER (T_PARAGRAPH_BRK)
   - c_dot c_b c_dot / DELIMITER (T_WORD_BRK)
   - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
   - c_lowline / ALPHA
   - [c_N|c_n] c_degree / ALPHA
