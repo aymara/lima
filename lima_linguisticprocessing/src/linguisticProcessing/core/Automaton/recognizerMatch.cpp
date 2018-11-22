@@ -22,7 +22,7 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Wed Oct 13 2004
  * copyright   Copyright (C) 2004 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "recognizerMatch.h"
@@ -43,8 +43,8 @@ EntityProperties(),
 m_graph(graph)
 {
 }
- 
-RecognizerMatch::RecognizerMatch(const LinguisticAnalysisStructure::AnalysisGraph* graph, 
+
+RecognizerMatch::RecognizerMatch(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                                  const LinguisticGraphVertex& vertex,
                                  const bool isKept):
 std::vector<MatchElement>(),
@@ -61,7 +61,7 @@ RecognizerMatch::~RecognizerMatch() {
 bool RecognizerMatch::operator == (const RecognizerMatch& m) {
   if (m_graph != m.m_graph) {
     return false;
-  }    
+  }
   if (size() != m.size()) {
     return false;
   }
@@ -96,8 +96,8 @@ void RecognizerMatch::reinit() {
 
 // position of first element of the match
 uint64_t RecognizerMatch::positionBegin() const {
-  if (empty()) { 
-    return 0; 
+  if (empty()) {
+    return 0;
   }
   return get(vertex_token,*(m_graph->getGraph()),
              front().getVertex())->position();
@@ -105,8 +105,8 @@ uint64_t RecognizerMatch::positionBegin() const {
 
 // position after the last element of the match
 uint64_t RecognizerMatch::positionEnd() const {
-  if (empty()) { 
-    return 0; 
+  if (empty()) {
+    return 0;
   }
   Token *t=get(vertex_token,*(m_graph->getGraph()),
                back().getVertex());
@@ -144,7 +144,7 @@ bool RecognizerMatch::isContiguous() const {
 LimaString RecognizerMatch::getString() const {
   LimaString str;
   uint64_t currentPosition(0);
-  if (empty()) { 
+  if (empty()) {
     return str;
   }
   RecognizerMatch::const_iterator i(begin());
@@ -181,7 +181,7 @@ LimaString RecognizerMatch::getString() const {
               str += LimaChar(' ');
               firstHyphenPassed = true;
             }
-          } 
+          }
           else {
             str += LimaChar(' ');
             if (firstHyphenPassed) {
@@ -201,7 +201,7 @@ LimaString RecognizerMatch::getString() const {
 LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const {
   LimaString str;
   uint64_t currentPosition(0);
-  if (empty()) { 
+  if (empty()) {
     return str;
   }
   bool firstHyphenPassed = false;
@@ -216,7 +216,7 @@ LimaString RecognizerMatch::getNormalizedString(const FsaStringsPool& sp) const 
         firstHyphenPassed = true;
       }
       MorphoSyntacticData* data = get(vertex_data,*(m_graph->getGraph()),v);
-      
+
       if (data==0 || data->empty()) {
         str += t->stringForm();
       }
@@ -297,7 +297,7 @@ void RecognizerMatch::addBackVertex(const LinguisticGraphVertex& v,
 #endif
   push_back(MatchElement(v,isKept, ruleElementId));
 }
-  
+
 void RecognizerMatch::popBackVertex() {
   if (empty()) {
     return;
@@ -327,7 +327,7 @@ void RecognizerMatch::addBack(const RecognizerMatch& l) {
   }
   insert(end(),l.begin(),l.end());
 }
-  
+
 void RecognizerMatch::addFront(const RecognizerMatch& l) {
   if( l.getHead() != 0 ){
     setHead(l.getHead());
@@ -364,13 +364,13 @@ void RecognizerMatch::removeUnkeptAtExtremity() {
 // output
 //***********************************************************************
 LIMA_AUTOMATON_EXPORT std::ostream& operator << (std::ostream& os, const RecognizerMatch& m) {
-  os << "/[-";
+  os << " /[-";
   for (RecognizerMatch::const_iterator i(m.begin()); i != m.end(); i++) {
     if ((*i).isKept()) {
-      os << (*i).getVertex() << "-";
+      os << (*i).getRuleElemtId().toUtf8().constData() << "." << (*i).getVertex() << "-";
     }
     else {
-      os << "(" << (*i).getVertex() << ")" << "-";
+      os << "(" << (*i).getRuleElemtId().toUtf8().constData() << "." << (*i).getVertex() << ")" << "-";
     }
   }
   os << "]";
