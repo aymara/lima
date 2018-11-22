@@ -61,11 +61,11 @@ AutomatonControlParams::AutomatonControlParams():
 m_maxDepthStack(DEFAULT_MAXDEPTHSTACK),
 m_maxTransitionsExplored(DEFAULT_MAXTRANSITIONSEXPLORED),
 m_maxNbResults(DEFAULT_MAXNBRESULTS),
-m_maxResultSize(DEFAULT_MAXRESULTSIZE) 
+m_maxResultSize(DEFAULT_MAXRESULTSIZE)
 {
 }
 
-AutomatonControlParams::~AutomatonControlParams() 
+AutomatonControlParams::~AutomatonControlParams()
 {
 }
 
@@ -85,7 +85,7 @@ Automaton::Automaton( const std::string& automId ):
 Automaton::Automaton(const Tstate nbStates):
   m_numberStates(nbStates),
   m_finalStates(nbStates,false),
-  m_transitions(nbStates), 
+  m_transitions(nbStates),
   m_searchStructures(nbStates,0),
   m_deterministic(false),
   m_id("")
@@ -118,7 +118,7 @@ Automaton& Automaton::operator= (const Automaton& a) {
 
 //**********************************************************************
 // helper functions for constructors and destructors
-void Automaton::init() 
+void Automaton::init()
 {
   m_numberStates=0;
   m_finalStates.clear();
@@ -127,7 +127,7 @@ void Automaton::init()
   m_deterministic=false;
 }
 
-void Automaton::copy(const Automaton& a) 
+void Automaton::copy(const Automaton& a)
 {
   m_numberStates=a.numberOfStates();
   m_finalStates=a.m_finalStates;
@@ -150,7 +150,7 @@ void Automaton::copy(const Automaton& a)
   }
 }
 
-void Automaton::freeMem() 
+void Automaton::freeMem()
 {
   m_finalStates.clear();
   m_transitions.clear();
@@ -187,7 +187,7 @@ vector<Tstate> Automaton::finalStates() const {
   vector<Tstate> finals(0);
   for (uint64_t i(0); i<m_numberStates; i++) {
     if (m_finalStates[i]) {
-      finals.push_back(i); 
+      finals.push_back(i);
     }
   }
   return finals;
@@ -209,7 +209,7 @@ bool Automaton::hasTransitionsState(const Tstate state) const {
 /***********************************************************************/
 
 //***************************************************************************
-// indicates if it exists at least one path leading to a final state 
+// indicates if it exists at least one path leading to a final state
 // that contains only epsilon transitions
 bool Automaton::existsEpsilonPathToFinal(const Tstate state) const {
   Tstate currentState(state);
@@ -308,16 +308,16 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 //***********************************************************************
 // comparison operator for elements of AutomatonMatchSet
 bool Automaton::CompareAutomatonMatch::
-operator()(const AutomatonMatch& r1, 
+operator()(const AutomatonMatch& r1,
            const AutomatonMatch& r2) const {
   // operator > : first result is result with more coverage
   const RecognizerMatch& m1=r1.first;
   const RecognizerMatch& m2=r2.first;
-  
+
   // number of kept elements
   uint64_t nbElt1=m1.numberOfElements();
   uint64_t nbElt2=m2.numberOfElements();
-  
+
   if (nbElt1 > nbElt2) {
     return true;
   }
@@ -344,11 +344,30 @@ operator()(const AutomatonMatch& r1,
   return false;
 }
 
-// internal definition of a utility class: 
-// stack for DFS test function 
+// internal definition of a utility class:
+// stack for DFS test function
+
+std::ostream& operator<< (std::ostream& os, const DFFSPos& x) {
+  os << "[first:";
+  for (auto i = x.first.begin(); i != x.first.end(); i++) {
+    if (i != x.first.begin())
+      os << ",";
+    os << *i;
+  }
+  os << " second: ";
+  if (x.second == NULL)
+    os << "NULL";
+  else
+    os << *(x.second);
+  os << "]";
+
+  return os;
+}
 
 class Automaton::DFSStack {
 public:
+  friend LIMA_AUTOMATON_EXPORT std::ostream& operator<< (std::ostream& os, const Automaton::DFSStack& x);
+
   DFSStack(const Automaton& a,
            const LinguisticAnalysisStructure::AnalysisGraph& graph,
            SearchGraph* searchGraph,
@@ -360,13 +379,13 @@ public:
     m_limit(limit) {}
 
   ~DFSStack() {}
-  
+
   uint64_t size() const { return m_stack.size(); }
   bool empty() const { return m_stack.empty(); }
-  bool isLimitVertex(const LinguisticGraphVertex& v) const 
+  bool isLimitVertex(const LinguisticGraphVertex& v) const
   { return (v==m_limit);}
 
-  bool isEndVertex(const LinguisticGraphVertex& v) const 
+  bool isEndVertex(const LinguisticGraphVertex& v) const
   { return (v==m_searchGraph->endOfGraph(m_graph)); }
 
   // std::pair<LinguisticGraphVertex,const Transition*> top();
@@ -383,17 +402,25 @@ private:
   struct DFSStackElement {
     DFSStackElement( std::vector<DFFSPos>& matchingTransitions):
       m_transitions(matchingTransitions),
-      m_transition(matchingTransitions.begin()) 
+      m_transition(matchingTransitions.begin())
     {
     }
 
     DFSStackElement(const DFSStackElement& elt):
       m_transitions(elt.m_transitions),
-      m_transition(m_transitions.begin()) 
+      m_transition(m_transitions.begin())
     {
     }
 
     ~DFSStackElement() {}
+
+    void debug_output(std::ostream& os) const {
+      for (auto i = m_transitions.begin(); i != m_transitions.end(); i++) {
+        if (i != m_transitions.begin())
+          os << " ";
+        os << *i;
+      }
+    }
 
     std::vector<DFFSPos > m_transitions;
     //std::vector<std::pair<LinguisticGraphVertex, const Transition*> > m_transitions;
@@ -407,12 +434,34 @@ private:
   LinguisticGraphVertex m_limit;
 };
 
+
+std::ostream& operator<< (std::ostream& os, const Automaton::DFSStack& x) {
+  os << "m_stack = {\n";
+
+  for (auto i = x.m_stack.begin(); i != x.m_stack.end(); i++) {
+    if (i != x.m_stack.begin())
+      os << "\n";
+    i->debug_output(os);
+  }
+
+  os << "}\n";
+
+  return os;
+}
+
+QDebug& operator<< (QDebug& os, const Automaton::DFSStack& x) {
+  std::stringstream ss;
+  ss << x;
+  os << ss.str().c_str();
+  return os;
+}
+
 //std::pair<LinguisticGraphVertex,const Transition*>
 DFFSPos Automaton::DFSStack::top() {
 //   AULOGINIT;
 //   LDEBUG << "Automaton:DFSSTack: top "
 //          << "transition=" << *(m_stack.back().m_transition)
-//          << ";transitionUnit=" 
+//          << ";transitionUnit="
 //          << (*(m_stack.back().m_transition))->transitionUnit()
 //         ;
   return *(m_stack.back().m_transition);
@@ -450,7 +499,7 @@ bool Automaton::DFSStack::pop() {
  * En fait, c'est simplement pour limiter la taille de la structure de données qui gère le contexte de parcours.
  * Le parcours se fait en profondeur d'abord (DFS Deep First Search)
  * conforme au nom de la pile DFSStack.
- * 
+ *
  * Le parcours se fait en profondeur d'abord sur le graphe d'analyse, limité sur plusieurs aspects:
  *  - les limites du graphe (begin, end), c'est à dire les noeuds 0 et 1 qui terminent le treillis.
  *    (si le parcours se fait en avant, limit = end, si le parcours se fait en arière, limit = begin)
@@ -483,11 +532,11 @@ bool Automaton::DFSStack::pop() {
  * DFSStackElement contient maintenant une collection (vector) de paires (séquence de noeud parcourus pendant la transition, transition possible)
  *   (stack<noeud>, transition), ainsi qu'un itérateur sur cette liste.
  * stack<noeud> est le chemin dans le graphe (commençant par nextVertex) correspondant à l'exécution de la transition.
- *  
+ *
  * Attention aux paramètres begin,end de la fonction checkMultiTerms
  * La fonction checkMultiTerms a été écrite pour avec les limitations suivantes: sens forward seulement, pas de
  * prise en compte de multiples arêtes à partir d'un noeud.
- * 
+ *
  */
 bool Automaton::DFSStack::
 push(const LinguisticGraphVertex& vertex,
@@ -498,8 +547,8 @@ push(const LinguisticGraphVertex& vertex,
 /*  AULOGINIT;
   LDEBUG << "Automaton:DFSSTack: pushing " << vertex
           << ";" << state;*/
-  
-  if (isLimitVertex(vertex)) { 
+
+  if (isLimitVertex(vertex)) {
     return false;
   }
 
@@ -525,7 +574,7 @@ push(const LinguisticGraphVertex& vertex,
 
 /*        if (logger.isDebugEnabled()) {
           ostringstream oss;
-          std::vector<const Transition*>::const_iterator 
+          std::vector<const Transition*>::const_iterator
             it=matchingTransitions.begin(),
             it_end=matchingTransitions.end();
           oss << "Automaton:DFSSTack: matching transitions = ";
@@ -537,7 +586,7 @@ push(const LinguisticGraphVertex& vertex,
         tmpStack.push_back(DFSStackElement(matchingTransitions));
       }
 /*      else {
-        LDEBUG << "Automaton:DFSSTack: => no matching transitions" 
+        LDEBUG << "Automaton:DFSSTack: => no matching transitions"
               ;
       }*/
     }
@@ -562,17 +611,17 @@ push(const LinguisticGraphVertex& vertex,
 
 bool Automaton::
 getBestMatch(const LinguisticAnalysisStructure::AnalysisGraph& graph,
-             const LinguisticGraphVertex& begin, 
+             const LinguisticGraphVertex& begin,
              const LinguisticGraphVertex& limit,
              AnalysisContent& analysis,
-             RecognizerMatch& longestMatch, 
+             RecognizerMatch& longestMatch,
              ConstraintCheckList& checkList,
              const SearchGraphSense sense,
              const AutomatonControlParams& controlParams) const {
 //   AULOGINIT;
 //   LDEBUG << "testing automaton from " << begin << " to " << limit;
-  
- 
+
+
   AutomatonMatchSet results;
   ForwardSearch forward;
   BackwardSearch backward;
@@ -589,18 +638,18 @@ getBestMatch(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     }
   }
 
-//   LDEBUG << "return success=" << success 
+//   LDEBUG << "return success=" << success
 //          << ",match=" << longestMatch;
-  
+
   return success;
 }
 
 bool Automaton::
 getAllMatches(const LinguisticAnalysisStructure::AnalysisGraph& graph,
-              const LinguisticGraphVertex& begin, 
+              const LinguisticGraphVertex& begin,
               const LinguisticGraphVertex& limit,
               AnalysisContent& analysis,
-              AutomatonMatchSet& results, 
+              AutomatonMatchSet& results,
               ConstraintCheckList& checkList,
               ForwardSearch& forward,
               BackwardSearch& backward,
@@ -617,13 +666,13 @@ getAllMatches(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     DFSStack forwardSearchStack(*this,graph,
                                 &forward,
                                 limit);
-    success = testFromState(initialState, graph, 
+    success = testFromState(initialState, graph,
                             begin, limit, analysis,
-                            results, 
-                            checkList, 
+                            results,
+                            checkList,
                             forwardSearchStack,
                             controlParams);
-    //delete searchGraph; 
+    //delete searchGraph;
     break;
   }
   case BACKWARDSEARCH: {
@@ -632,17 +681,17 @@ getAllMatches(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     DFSStack backwardSearchStack(*this,graph,
                                  &backward,
                                  limit);
-    success = testFromState(initialState, graph, 
+    success = testFromState(initialState, graph,
                             begin, limit, analysis,
-                            results, 
-                            checkList, 
+                            results,
+                            checkList,
                             backwardSearchStack,
                             controlParams);
-    //delete searchGraph; 
+    //delete searchGraph;
     break;
   }
   }
-  
+
   return success;
 }
 
@@ -655,19 +704,20 @@ bool Automaton::testFromState(const Tstate firstState,
                               ConstraintCheckList& checkList,
                               DFSStack& S,
                               const AutomatonControlParams& controlParams) const {
-
-//    AULOGINIT;
-//    LDEBUG << "Automaton: testing from state " << firstState;
+//#ifdef DEBUG_LP
+//  AULOGINIT;
+//  LDEBUG << "Automaton: testing from state " << firstState;
+//#endif
 
   // store in stack pairs of (automaton transition/graph vertex)
   // (store combinatory of all possible pairs, but if store only
   // matching pairs, problems with ConstraintCheckList
-                                
+
   RecognizerMatch currentMatch(&graph);
 
   // check initial state
-  if (isFinalState(firstState)) { 
-    results.insert(make_pair(currentMatch,checkList)); 
+  if (isFinalState(firstState)) {
+    results.insert(make_pair(currentMatch,checkList));
   }
 
   if (S.isEndVertex(beginVertex)) {
@@ -680,19 +730,22 @@ bool Automaton::testFromState(const Tstate firstState,
   // nextV is one of the successor nodes in the graph and matchingTransition(nextV) succeeds
 //   LDEBUG << "pushing";
   S.push(beginVertex,firstState,analysis,limitVertex);
-  
+
   LinguisticGraphVertex vertex;
   const Transition* transition(nullptr);
   uint64_t nbIter(0);
   bool backtrack(false);
 
-  // contexte de backtrack 
+  // contexte de backtrack
   vector<uint64_t> backtrackDepth;
   backtrackDepth.push_back(0);
 
-//                               LDEBUG << "before while (S size: " << S.size() << ")";
+//#ifdef DEBUG_LP
+//   LDEBUG << "before while (S size: " << S.size() << ")";
+//   LDEBUG << "S: " << S;
+//#endif
   while (! S.empty()) {
-    
+
     nbIter++;
 //     LDEBUG << "in iteration " << nbIter;
     if (S.size() > controlParams.getMaxDepthStack()) {
@@ -705,17 +758,17 @@ bool Automaton::testFromState(const Tstate firstState,
       LWARN << "MaxTransitionsExplored exceeded in automaton search: ignore rest of search";
       return (!results.empty());
     }
-    
+
     // boost::tie(vertex,transition)=S.top();
     DFFSPos const & dffsPos = S.top();
     vertex = dffsPos.first.front();
     transition = dffsPos.second;
     if (backtrack) {
-      // in backtrack : pop_back current match until the vertex 
+      // in backtrack : pop_back current match until the vertex
       // for which we are testing a new matching transition
 
 //       LDEBUG << "Automaton: backtrack: currentMatch="
-//              << currentMatch << ", next matching for vertex " 
+//              << currentMatch << ", next matching for vertex "
 //              << vertex;
 
       if (backtrackDepth.empty()) {
@@ -743,11 +796,11 @@ bool Automaton::testFromState(const Tstate firstState,
     }
 
     bool lastTransitionWithThisVertex=S.pop();
-    
+
     // compare transition with vertex
     TransitionUnit* trans=transition->transitionUnit();
 
-/*    LDEBUG << "Automaton: testing vertex " << vertex 
+/*    LDEBUG << "Automaton: testing vertex " << vertex
            << " with transition " << *trans;*/
 //     if (lastTransitionWithThisVertex) {
 //       LDEBUG << "=> is last transition for vertex " << vertex;
@@ -756,7 +809,7 @@ bool Automaton::testFromState(const Tstate firstState,
     //if (trans->match(graph,vertex,analysis,checkList)) {
     // TODO: call checkConstraints for every vertex in the deque?
     if (trans->checkConstraints(graph,vertex,analysis,checkList)) {
-      
+
 //       LDEBUG << "Automaton: -> match found";
       // update current match
       LimaString transId = LimaString::fromUtf8( trans->getId().c_str() );
@@ -765,8 +818,8 @@ bool Automaton::testFromState(const Tstate firstState,
       for( ; vIt != dffsPos.first.end() ; vIt++ ) {
         currentMatch.addBackVertex(*vIt,trans->keep(), transId);
       }
-/*      LDEBUG << "Automaton: -> vertex (" << vertex 
-             << ",keep=" << trans->keep() 
+/*      LDEBUG << "Automaton: -> vertex (" << vertex
+             << ",keep=" << trans->keep()
              << ") added in result, currentMatch="
              << currentMatch;*/
       // test if it is the head
@@ -789,14 +842,14 @@ bool Automaton::testFromState(const Tstate firstState,
 //         LDEBUG << "Automaton: saving result of size "<< currentMatch.size();
         if (currentMatch.size() > controlParams.getMaxResultSize()) {
           AULOGINIT;
-          LWARN << "maxResultSize exceeded in automaton search: ignore result" 
+          LWARN << "maxResultSize exceeded in automaton search: ignore result"
                ;
         }
         else {
-          results.insert(make_pair(currentMatch,checkList)); 
+          results.insert(make_pair(currentMatch,checkList));
           if (results.size() > controlParams.getMaxNbResults()) {
             AULOGINIT;
-            LWARN << "maxNbResults exceeded in automaton search: ignore rest of search" 
+            LWARN << "maxNbResults exceeded in automaton search: ignore rest of search"
                  ;
           return (!results.empty());
           }
@@ -804,7 +857,7 @@ bool Automaton::testFromState(const Tstate firstState,
 
 /*        if (logger.isDebugEnabled()) {
           ostringstream oss;
-          AutomatonMatchSet::const_iterator 
+          AutomatonMatchSet::const_iterator
             it=results.begin(),
             it_end=results.end();
           for (;it!=it_end;it++) {
@@ -843,24 +896,24 @@ Tstate Automaton::addState(bool is_final) {
   return m_numberStates-1; // first state is 0
 }
 
-// copy the content of the pointer (insert function of the 
-bool Automaton::addTransition(Tstate initialState, 
+// copy the content of the pointer (insert function of the
+bool Automaton::addTransition(Tstate initialState,
                   Tstate finalState,
                   TransitionUnit* transition) {
 
   vector<Transition>& transitions=m_transitions[initialState];
 
   // put negative transition at the end, so that positive transitions
-  // are tested before : if not(a) and (b) are possible transitions, 
+  // are tested before : if not(a) and (b) are possible transitions,
   // token "b" matches both, so transition (b) has to be checked before
   // this way, we can advance in the automaton
-  // being sure that we do not need to go back eventually 
-  if (transition->negative()) { 
+  // being sure that we do not need to go back eventually
+  if (transition->negative()) {
     transitions.push_back(Transition(transition,finalState));
   }
   else { // put int front
     // putting epsilon transitions at first helps minimizing automaton
-    vector<Transition>::iterator 
+    vector<Transition>::iterator
       it=transitions.begin(),
       it_end=transitions.end();
     for (; it!=it_end; it++) {
@@ -880,13 +933,13 @@ bool Automaton::addTransition(Tstate initialState,
     }
    LDEBUG << "Automaton::addTransition( " << (*it).transitionUnit() << ")";
 #endif
-    
-    
+
+
 //     transitions.insert(transitions.begin(),Transition(transition,finalState));
   }
-  
-//   std::cerr << Common::Misc::utf8stdstring2limastring("add transition ") 
-//         << *transition << Common::Misc::utf8stdstring2limastring(" from ") << initialState 
+
+//   std::cerr << Common::Misc::utf8stdstring2limastring("add transition ")
+//         << *transition << Common::Misc::utf8stdstring2limastring(" from ") << initialState
 //         << Common::Misc::utf8stdstring2limastring(" to ") << finalState << endl;
   return true;
 }
@@ -896,7 +949,7 @@ void Automaton::removeState(const Tstate) {
   std::cerr << "Warning: removeState not yet implemented..." << endl;
 }
 
-void Automaton::removeTransition(const Tstate initialState, 
+void Automaton::removeTransition(const Tstate initialState,
                  const TransitionUnit& transition) {
   vector<Transition>::iterator i;
   for (i=m_transitions[initialState].begin(); i<m_transitions[initialState].end(); i++) {
@@ -928,7 +981,7 @@ std::string Automaton::subsetString(const Automaton::SubSet& subset) const {
   ostringstream oss;
   oss << "[";
   if (!subset.empty()) {
-    SubSet::const_iterator 
+    SubSet::const_iterator
       state=subset.begin(),
       state_end=subset.end();
     oss << *state;
@@ -951,12 +1004,12 @@ std::string Automaton::subsetString(const Automaton::SubSet& subset) const {
 
 // test if a set of states contains at least one final state
 bool Automaton::isFinalSubset (const SubSet& v) const {
-  SubSet::const_iterator 
+  SubSet::const_iterator
     state=v.begin(),
     state_end=v.end();
   for (; state!=state_end; state++) {
     if (isFinalState(*state)) {
-      return true; 
+      return true;
     }
   }
   return false;
@@ -982,21 +1035,21 @@ Automaton Automaton::subsets() const {
 
   detFA.addState();
   //initial state is possibly final
-  if ((! isDeterministic()) && 
-      (existsEpsilonPathToFinal(0))) { 
-    detFA.makeFinal(0); 
+  if ((! isDeterministic()) &&
+      (existsEpsilonPathToFinal(0))) {
+    detFA.makeFinal(0);
   }
 
   SubSet firstSubSet;
   firstSubSet.insert(0);
   subsets.push_back(firstSubSet);
-  
+
   for (uint64_t i(0); i<detFA.numberOfStates(); i++) {
     for (uint64_t j(0); j<alphabet.size(); j++) {
       currentSubset.clear();
       reachableStates(subsets[i],*(alphabet[j]),currentSubset);
-//       LDEBUG << "reachables from " << subsetString(subsets[i]) 
-//              << " with " << *(alphabet[j]) << ":" 
+//       LDEBUG << "reachables from " << subsetString(subsets[i])
+//              << " with " << *(alphabet[j]) << ":"
 //              << subsetString(currentSubset);
 
       if (currentSubset.size()) {
@@ -1009,7 +1062,7 @@ Automaton Automaton::subsets() const {
             //TransitionUnit *t =alphabet[j];
             detFA.addTransition(i,k,t);
             existingSubset=true;
-//             LDEBUG << "adding transition [" << i << "+" 
+//             LDEBUG << "adding transition [" << i << "+"
 //                    << *(alphabet[j]) << "->" << k << "]";
             break;
           }
@@ -1021,8 +1074,8 @@ Automaton Automaton::subsets() const {
           TransitionUnit *t =(*(alphabet[j])).clone();
           //TransitionUnit *t =alphabet[j];
           detFA.addTransition(i,lastState,t);
-//           LDEBUG << "adding new state " << lastState 
-//                  << " and transition [" << i << "+" 
+//           LDEBUG << "adding new state " << lastState
+//                  << " and transition [" << i << "+"
 //                  << *(alphabet[j]) << "->" << lastState << "]";
         }
       }
@@ -1035,7 +1088,7 @@ Automaton Automaton::subsets() const {
     alphabet[i]=0;
   }
   alphabet.clear();
-  
+
   detFA.setDeterministic(true);
   return detFA;
 }
@@ -1064,7 +1117,7 @@ Automaton Automaton::subsets() const {
          {
            // build a hash with the name of the constraint and complement (second argument)
            // like SetEntityFeature(hour::int)
-           // TODO: do not know how to get the name of the constraint 
+           // TODO: do not know how to get the name of the constraint
            ConstraintFunction* constraintFunc = (constraintIt->second).functionAddr();
            const LimaString complement =  constraintFunc->getComplementString();
            LimaString signature = complement;
@@ -1086,21 +1139,21 @@ Automaton Automaton::subsets() const {
 vector<TransitionUnit*> Automaton::collectTransitions() const {
   vector<TransitionUnit*> alphabet(0);
   bool alreadyCollected;
-  
+
   for (uint64_t i(0); i<m_numberStates; i++) {
     for (uint64_t j(0); j<m_transitions[i].size(); j++) {
       if (m_transitions[i][j].transitionUnit()->isEpsilonTransition()) { continue; }
       // tests if it is already collected
       alreadyCollected=false;
       for (uint64_t k(0); k<alphabet.size(); k++) {
-        if (*(m_transitions[i][j].transitionUnit()) == *(alphabet[k])) { 
-          alreadyCollected=true; 
-          break; 
+        if (*(m_transitions[i][j].transitionUnit()) == *(alphabet[k])) {
+          alreadyCollected=true;
+          break;
         }
       }
       if (! alreadyCollected) {
         TransitionUnit *t=(*(m_transitions[i][j].transitionUnit())).clone();
-        alphabet.push_back(t); 
+        alphabet.push_back(t);
       }
     }
   }
@@ -1109,26 +1162,26 @@ vector<TransitionUnit*> Automaton::collectTransitions() const {
 
 // get all the states that can be reached from a set of states with one
 // particular transition
-void Automaton::reachableStates(const SubSet& states, 
+void Automaton::reachableStates(const SubSet& states,
                                 const TransitionUnit& t,
                                 SubSet& reachable) const {
-  SubSet::const_iterator 
+  SubSet::const_iterator
     state=states.begin(),
     state_end=states.end();
-  
+
   for (; state!=state_end; state++) {
     reachableStates(*state,t,reachable);
   }
 }
 
-void Automaton::reachableStates(const Tstate& state, 
+void Automaton::reachableStates(const Tstate& state,
                                 const TransitionUnit& t,
                                 SubSet& reachable) const {
 
   std::vector<Transition>::const_iterator
     transition=m_transitions[state].begin(),
     transition_end=m_transitions[state].end();
-  
+
   //for (uint64_t l(0); l<m_transitions[*state].size(); l++) {
   for (; transition!=transition_end; transition++) {
     Tstate nextState=transition->nextState();
@@ -1148,13 +1201,13 @@ void Automaton::reachableStates(const Tstate& state,
 Automaton Automaton::reverse() const {
   Automaton reverseAutomaton(numberOfStates()+1); // one more state (see below)
   Tstate newValueInitialState;
-  
-  // the reverse automaton will not be deterministic (because in the 
-  // first deterministic automaton, several identical transitions can 
+
+  // the reverse automaton will not be deterministic (because in the
+  // first deterministic automaton, several identical transitions can
   // lead to one state), hence we do not try to be subtle and always
-  // add epsilon transitions for the new initial state (even if there 
+  // add epsilon transitions for the new initial state (even if there
   // is only one final state in the original automaton)
-  
+
   // the initial state becomes the last state of the reverse automaton
   newValueInitialState=numberOfStates();
   reverseAutomaton.makeFinal(newValueInitialState);
@@ -1164,33 +1217,33 @@ Automaton Automaton::reverse() const {
   for (uint64_t i(0); i<finals.size(); i++) {
     if (finals[i]==0) { // the initial state was also final
       reverseAutomaton.addTransition(0,newValueInitialState,new EpsilonTransition());
-    } 
+    }
     else {
       reverseAutomaton.addTransition(0,finals[i],new EpsilonTransition());
     }
   }
-  
+
   for (uint64_t i(0); i<m_transitions.size(); i++) {
     for (uint64_t j(0); j<m_transitions[i].size(); j++) {
       Tstate initial = m_transitions[i][j].nextState();
       Tstate final = i;
       if (initial == 0) { initial = newValueInitialState; }
       if (final   == 0) { final   = newValueInitialState; }
-      reverseAutomaton.addTransition(initial, final, 
+      reverseAutomaton.addTransition(initial, final,
                      //m_transitions[i][j].transitionUnit());
                            m_transitions[i][j].transitionUnit()->clone());
     }
   }
-  
+
   if (isDeterministic()) { // make the new one deterministic also
     reverseAutomaton = reverseAutomaton.subsets();
   }
-  
+
   return reverseAutomaton;
 }
 
 /***********************************************************************/
-// simple Brzozowski's algorithm for minimization : just reverse 
+// simple Brzozowski's algorithm for minimization : just reverse
 // and determinize twice
 /***********************************************************************/
 Automaton Automaton::brzozowskiMinimize() const {
@@ -1201,7 +1254,7 @@ Automaton Automaton::brzozowskiMinimize() const {
   else {
     a=*this;
   }
-  a=a.reverse(); // determinization is done in function reverse if 
+  a=a.reverse(); // determinization is done in function reverse if
   a=a.reverse(); // the automaton was already deterministic
   return a;
 }
@@ -1212,9 +1265,9 @@ Automaton Automaton::brzozowskiMinimize() const {
 
 
 ostream& operator << (ostream& os, const Automaton& a) {
-  
+
   //   os << "deterministic=" << a.isDeterministic() << endl;
-  
+
   for (uint64_t i(0); i<a.numberOfStates(); i++) {
     if (a.isFinalState(i)) { os << i << " [final]" << endl; }
     for (uint64_t j(0); j<a.m_transitions[i].size(); j++) {
@@ -1224,16 +1277,16 @@ ostream& operator << (ostream& os, const Automaton& a) {
       << "]" << endl;
     }
   }
-  
+
   //os << "}" << endl;
-  
+
   return os;
 }
 
 QDebug& operator << (QDebug& os, const Automaton& a) {
-  
+
   //   os << "deterministic=" << a.isDeterministic() << endl;
-  
+
   for (uint64_t i(0); i<a.numberOfStates(); i++) {
     if (a.isFinalState(i)) { os << i << " [final]" << endl; }
     for (uint64_t j(0); j<a.m_transitions[i].size(); j++) {
@@ -1243,9 +1296,9 @@ QDebug& operator << (QDebug& os, const Automaton& a) {
       << "]" << endl;
     }
   }
-  
+
   //os << "}" << endl;
-  
+
   return os;
 }
 
