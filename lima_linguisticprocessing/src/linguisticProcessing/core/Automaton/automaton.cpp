@@ -819,6 +819,8 @@ bool Automaton::testFromState(const Tstate firstState,
 
       // push next vertices
       if (!S.push(vertex,nextState,analysis,limitVertex)) {
+        if (lastTransitionWithThisVertex)
+            return !results.empty();
         backtrack=true;
       }
     }
