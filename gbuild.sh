@@ -35,8 +35,8 @@ Options default values are in parentheses.
   -v version        <(val)|rev> version number is set either to the value set by  
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
-  -T                Use Tensorflow
-  -P tfsrcpath      <> Path to Tensorflow sources
+  -T                Use TensorFlow
+  -P tfsrcpath      <> Path to TensorFlow sources
 EOF
 exit 1
 }
