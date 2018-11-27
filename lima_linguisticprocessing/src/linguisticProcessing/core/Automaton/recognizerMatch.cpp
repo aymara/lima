@@ -150,6 +150,7 @@ LimaString RecognizerMatch::getString() const {
   RecognizerMatch::const_iterator i(begin());
   const LinguisticGraphVertex& v=(*i).getVertex();
   bool firstHyphenPassed = false;
+  bool prevTokenIsSynthetic = false;
   if (v != m_graph->firstVertex() &&
       v != m_graph->lastVertex()) {
     if ((*i).isKept()) {
@@ -160,6 +161,10 @@ LimaString RecognizerMatch::getString() const {
       if (t!=0) {
         str += t->stringForm();
       }
+
+      if (t->length() != t->stringForm().size())
+        prevTokenIsSynthetic = true;
+
       currentPosition=t->position()+t->length();
     }
   }
@@ -188,8 +193,14 @@ LimaString RecognizerMatch::getString() const {
               firstHyphenPassed = false;
             }
           }
-        }
+        } else if (prevTokenIsSynthetic)
+          str += LimaChar(' ');
+
         str += t->stringForm();
+
+        if (t->length() != t->stringForm().size())
+          prevTokenIsSynthetic = true;
+
         currentPosition=t->position()+t->length();
       }
     }
