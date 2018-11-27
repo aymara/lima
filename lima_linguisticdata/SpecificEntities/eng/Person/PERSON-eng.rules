@@ -85,8 +85,8 @@ T_A1:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=
 $NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 # "bla bla", Machin said.
-T_A1::(T_A1|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
-T_A1:[said]:(T_A1|T_Amh|$NP|@Initial){0-2}:PERSON:
+t_capital_1st::(t_capital_1st|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
+t_capital_1st:[said]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
 
 @Pronouns=(
 I,
