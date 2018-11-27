@@ -239,6 +239,7 @@
 }
 (ABBREV_0) {
   - c_b = IGNORE (T_ALPHA)
+  - c_M = SINGLE_UPPER(T_ALPHA,T_CAPITAL_1ST)
   - c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
   - m_eof = END
 }
