@@ -60,15 +60,15 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
 @Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la|von|van|van de|van der|van den)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la|von|van|van de|van der|van den)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
 @Firstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la|von|van|van de|van der|van den)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la|von|van|van de|van der|van den)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
 # @Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh)){1-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
