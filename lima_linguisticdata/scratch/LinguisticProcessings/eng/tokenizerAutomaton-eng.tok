@@ -440,10 +440,11 @@
   - c_all > START
 }
 (PATTERN) {
-  - c_all = START
   - m_pattern > PATTERN
-  - m_end_pattern = START
   - c_b = IGNORE
+  - c_M = SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
+  - c_all = START
+  - m_end_pattern = START
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
