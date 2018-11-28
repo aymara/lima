@@ -70,6 +70,8 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
 @Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la|von|van|van de|van der|van den)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
+t_capital_1st:[(@Title|@FunctionTitle)]:@Initial? (de|da|le|la|de la|von|van|van de|van der|van den) (T_A1|T_Amh|$NP){1-2}:PERSON:=>NormalizePersonName()
+
 # @Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh)){1-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
 #[@FunctionTitle]:t_capital_1st::PERSON:N_PERSON
