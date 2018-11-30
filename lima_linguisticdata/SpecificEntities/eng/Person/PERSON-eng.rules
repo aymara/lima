@@ -45,10 +45,7 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 # recognition of person names
 #----------------------------------------------------------------------
 
-use firstname.lst,title.lst,function_title.lst,person_ending.lst
-use tussenvoegsel.lst
-
-#@Tussenvoegsel=(auf der,van der,de,$weewfwefew)
+use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst
 
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
