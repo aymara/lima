@@ -34,6 +34,8 @@ Police Department
 )
 
 @conjunctions=(
+de,
+del,
 of,
 the,
 and,
