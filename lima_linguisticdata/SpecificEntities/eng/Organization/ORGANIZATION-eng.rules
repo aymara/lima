@@ -72,9 +72,11 @@ Association:(National)?:of (t_capital_1st|t_capital|t_capital_small|\&){1-5}:ORG
 @State::state? (@locationOrg):ORGANIZATION:
 @locationOrg:::ORGANIZATION:
 
+use organizationType.lst
+
 university::of (@City|@State):ORGANIZATION:
 #university::of (@City|@State) (@City|@State)?:ORGANIZATION:
-Bank::of (t_capital|t_capital_1st){1-3}:ORGANIZATION:
+@organizationType::(of|de) (t_capital|t_capital_1st){1-3}:ORGANIZATION:
 F.C.::(t_capital|t_capital_1st){1-2}:ORGANIZATION:
 #------------------------------
 # a list of known organizations

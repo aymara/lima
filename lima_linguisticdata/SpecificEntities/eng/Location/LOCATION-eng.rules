@@ -356,3 +356,9 @@ had been
 Cap::(de|d\') @Capitalized:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
+
+
+use airports.lst
+
+@Airports::[airport]:LOCATION:
+@Airports:::LOCATION:
