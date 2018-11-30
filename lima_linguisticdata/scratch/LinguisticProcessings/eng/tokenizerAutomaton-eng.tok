@@ -194,7 +194,7 @@
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > LOWER_1ST_UPPER (T_POSSESSIVE)
   - c_m > LOWER_1ST_UPPER
-  - c_hyphen c_m > LOWER_1ST_UPPER
+  - c_hyphen c_m > LOWER_1ST_UPPER (T_HYPHEN_WORD)
   - c_hyphen c_m > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_hyphen m_line c_m > LOWER_UPPER(T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_M > LOWER_UPPER (T_CAPITAL_SMALL)

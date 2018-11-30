@@ -143,6 +143,9 @@ void HyphenWordAlternatives::init(
   }
   FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
   m_reader=new AlternativesReader(m_confidentMode,true,true,true,m_charChart,sp);
+
+  const auto &theMediaticData = static_cast<const Common::MediaticData::MediaticData&>(Common::MediaticData::MediaticData::single());
+  m_engLanguageId = theMediaticData.getMediaId("eng");
 }
 
 LimaStatusCode HyphenWordAlternatives::process(
@@ -163,7 +166,7 @@ LimaStatusCode HyphenWordAlternatives::process(
     }
     analysis.setData("AnnotationData",annotationData);
   }
-  
+
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
 
@@ -183,7 +186,7 @@ LimaStatusCode HyphenWordAlternatives::process(
       // it is not decomposed>
       if (currentToken->size() == 0)
       {
-        if (tok->status().isAlphaHyphen())
+        if (tok->status().isAlphaHyphen() && isWorthSplitting(*it, graph))
         {
           makeHyphenSplitAlternativeFor(*it, graph, annotationData);
         }
@@ -201,6 +204,76 @@ LimaStatusCode HyphenWordAlternatives::process(
   return SUCCESS_ID;
 }
 
+/*
+ * Hyphenated words are often absent in the dictionary. This leads to inability to treat them properly
+ * on the level of rules. It's worth to split hyphenated words if their parts would bring more information
+ * in the later stages of the analysis.
+ *
+ * Verification is implemented for English only. Always true for other languages.
+ *
+ * It's considered that it makes sense to split English hypthenated words in following cases:
+ * - its right part is capitalized
+ * - its right part exists in the dictionary.
+ *
+ * Examples:
+ *
+ * April-June         (right part capitalized)
+ * Ben-Elissar        (right part capitalized)
+ * Singapore-listed   ("listed" exists in the dictionary)
+ * record-breaking    ("breaking" exists in the dictionary)
+ * EU-wide            ("wide" exists in the dictionary)
+ */
+bool HyphenWordAlternatives::isWorthSplitting(
+  LinguisticGraphVertex splitted,
+  LinguisticGraph* graph) const
+{
+  if (m_engLanguageId != m_language)
+      return true;
+
+  VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
+  Token* currentToken = tokenMap[splitted];
+
+  LimaString hyphenWord(currentToken->stringForm());
+
+#ifdef DEBUG_LP
+  MORPHOLOGINIT;
+  LDEBUG << "isWorthSplitting for " << hyphenWord;
+#endif
+
+  // find last hyphen
+  int pos = hyphenWord.lastIndexOf(LimaChar(L'-'));
+  if (pos < 0 || (hyphenWord.length() - pos < 3)) {
+#ifdef DEBUG_LP
+    LDEBUG << "isWorthSplitting: pos = " << pos;
+#endif
+    return false;
+  }
+
+  LimaString rightPart = hyphenWord.right(hyphenWord.length() - pos - 1);
+
+#ifdef DEBUG_LP
+  LDEBUG << "isWorthSplitting: rightPart = " << rightPart;
+#endif
+
+  QChar firstChar = rightPart[0];
+  if (firstChar.isLetter() && firstChar.isUpper()) {
+#ifdef DEBUG_LP
+    LDEBUG << "isWorthSplitting: first char is upper letter";
+#endif
+    return true;
+  }
+
+  DictionaryEntry dicoEntry(m_dictionary->getEntry(rightPart));
+  if (! dicoEntry.hasLingInfos()) {
+#ifdef DEBUG_LP
+    LDEBUG << "isWorthSplitting: has no LingInfos";
+#endif
+    return false;
+  }
+
+  return true;
+}
+
 void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
   LinguisticGraphVertex splitted,
   LinguisticGraph* graph,
@@ -212,6 +285,7 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
 
   // first, get a copy of token string
   LimaString hyphenWord(currentToken->stringForm());
+
   // first replace hyphens by spaces
   int pos = hyphenWord.indexOf(LimaChar(L'-'), 0);
   while (pos != -1)
@@ -261,8 +335,8 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
     AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
     annotationData->addMatching("AnalysisGraph", newVertex, "annot", agv);
     annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("AnalysisGraph"), newVertex);
-    
-    
+
+
     tokenMap[newVertex]=newFT;
     dataMap[newVertex]=newData;
     newFT-> setPosition(newFT->position() + beginPos);
@@ -282,8 +356,8 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
         delete newFT;
         newFT = newFT2;
         dicoEntry.parseLingInfos(&handler);
-      } 
-      else 
+      }
+      else
       {
         m_reader->readAlternatives(
           *newFT,
