@@ -393,10 +393,10 @@ LIMA_AUTOMATON_EXPORT QDebug& operator << (QDebug& os, const RecognizerMatch& m)
   os << "/[-";
   for (RecognizerMatch::const_iterator i(m.begin()); i != m.end(); i++) {
     if ((*i).isKept()) {
-      os << (*i).getVertex() << "-";
+      os << (*i).getRuleElemtId().toUtf8().constData() << "." << (*i).getVertex() << "-";
     }
     else {
-      os << "(" << (*i).getVertex() << ")" << "-";
+      os << "(" << (*i).getRuleElemtId().toUtf8().constData() << "." << (*i).getVertex() << ")" << "-";
     }
   }
   os << "]";
