@@ -282,16 +282,6 @@ $NC::@PrepComp $DET? $ADV{0-3} $ADJ? ($NC|$NP) @TensedVerbSuj:SYNTACTIC_RELATION
 =>AddRelationInGraph()
 =<ClearStoredRelations()
 
-# Duplication of rule above without the determiners in left context due to 
-# a bug making above rule failing to match.
-@PrepCompDuNom:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n} @PrepCompDuNom ((@DetIndef)? @Determinant)? @Substantif:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@Substantif|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
-+GovernorOf(trigger.1,"PREPSUB")
-+GovernorOf(right.5,"COMPDUNOM")
-+SecondUngovernedBy(right.5,left.1,"ANY")
-+CreateRelationBetween(right.5,left.1,"COMPDUNOM")
-=>AddRelationInGraph()
-=<ClearStoredRelations()
-
 ########################################
 # Regles adaptees pour les mots inconnus
 ########################################
