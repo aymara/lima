@@ -704,10 +704,10 @@ bool Automaton::testFromState(const Tstate firstState,
                               ConstraintCheckList& checkList,
                               DFSStack& S,
                               const AutomatonControlParams& controlParams) const {
-//#ifdef DEBUG_LP
-//  AULOGINIT;
-//  LDEBUG << "Automaton: testing from state " << firstState;
-//#endif
+// #ifdef DEBUG_LP
+//   AULOGINIT;
+//   LDEBUG << "Automaton: testing from state " << firstState;
+// #endif
 
   // store in stack pairs of (automaton transition/graph vertex)
   // (store combinatory of all possible pairs, but if store only
@@ -721,14 +721,19 @@ bool Automaton::testFromState(const Tstate firstState,
   }
 
   if (S.isEndVertex(beginVertex)) {
+// #ifdef DEBUG_LP
 //     LDEBUG << beginVertex << "is end vertex. testing returns " << !results.empty();
+// #endif
     return (!results.empty());
   }
 
   // beginVertex is the vertex that matched the trigger
   // initialize the stack with pairs (stack of vertex with nextV as first element,matchingTransition)
   // nextV is one of the successor nodes in the graph and matchingTransition(nextV) succeeds
+
+// #ifdef DEBUG_LP
 //   LDEBUG << "pushing";
+// #endif
   S.push(beginVertex,firstState,analysis,limitVertex);
 
   LinguisticGraphVertex vertex;
@@ -740,14 +745,19 @@ bool Automaton::testFromState(const Tstate firstState,
   vector<uint64_t> backtrackDepth;
   backtrackDepth.push_back(0);
 
-//#ifdef DEBUG_LP
+// #ifdef DEBUG_LP
 //   LDEBUG << "before while (S size: " << S.size() << ")";
 //   LDEBUG << "S: " << S;
-//#endif
-  while (! S.empty()) {
+// #endif
 
+  while (! S.empty()) {
     nbIter++;
+
+// #ifdef DEBUG_LP
 //     LDEBUG << "in iteration " << nbIter;
+//     LDEBUG << "currentMatch = " << currentMatch;
+// #endif
+
     if (S.size() > controlParams.getMaxDepthStack()) {
       AULOGINIT;
       LWARN << "MaxDepthStack exceeded in automaton search: ignore rest of search";
@@ -767,9 +777,11 @@ bool Automaton::testFromState(const Tstate firstState,
       // in backtrack : pop_back current match until the vertex
       // for which we are testing a new matching transition
 
+// #ifdef DEBUG_LP
 //       LDEBUG << "Automaton: backtrack: currentMatch="
 //              << currentMatch << ", next matching for vertex "
 //              << vertex;
+// #endif
 
       if (backtrackDepth.empty()) {
         AULOGINIT;
@@ -793,6 +805,10 @@ bool Automaton::testFromState(const Tstate firstState,
         backtrackDepth.push_back(0);
       }
       backtrack=false;
+
+// #ifdef DEBUG_LP
+//       LDEBUG << "currentMatch after backtrack = " << currentMatch;
+// #endif
     }
 
     bool lastTransitionWithThisVertex=S.pop();
@@ -800,17 +816,19 @@ bool Automaton::testFromState(const Tstate firstState,
     // compare transition with vertex
     TransitionUnit* trans=transition->transitionUnit();
 
-/*    LDEBUG << "Automaton: testing vertex " << vertex
-           << " with transition " << *trans;*/
-//     if (lastTransitionWithThisVertex) {
-//       LDEBUG << "=> is last transition for vertex " << vertex;
-//     }
+// #ifdef DEBUG_LP
+//     LDEBUG << "Automaton: testing vertex " << vertex << " with transition " << *trans;
+//     if (lastTransitionWithThisVertex)
+//       LDEBUG << "=> is last transition for vertex " << vertex << " depth == " << backtrackDepth.back();
+// #endif
 
     //if (trans->match(graph,vertex,analysis,checkList)) {
     // TODO: call checkConstraints for every vertex in the deque?
     if (trans->checkConstraints(graph,vertex,analysis,checkList)) {
 
+// #ifdef DEBUG_LP
 //       LDEBUG << "Automaton: -> match found";
+// #endif
       // update current match
       LimaString transId = LimaString::fromUtf8( trans->getId().c_str() );
       // OME: call for the complete stack  currentMatch.addBackVertex(vertex,trans->keep(), transId);
@@ -818,10 +836,12 @@ bool Automaton::testFromState(const Tstate firstState,
       for( ; vIt != dffsPos.first.end() ; vIt++ ) {
         currentMatch.addBackVertex(*vIt,trans->keep(), transId);
       }
-/*      LDEBUG << "Automaton: -> vertex (" << vertex
-             << ",keep=" << trans->keep()
-             << ") added in result, currentMatch="
-             << currentMatch;*/
+
+// #ifdef DEBUG_LP
+//       LDEBUG << "Automaton: -> vertex (" << vertex << ",keep=" << trans->keep()
+//              << ") added in result, currentMatch=" << currentMatch;
+// #endif
+
       // test if it is the head
       if (trans->head()) {
         // get token associated to next vertex
@@ -839,19 +859,21 @@ bool Automaton::testFromState(const Tstate firstState,
 
       Tstate nextState=transition->nextState();
       if (isFinalState(nextState)) {
+
+// #ifdef DEBUG_LP
 //         LDEBUG << "Automaton: saving result of size "<< currentMatch.size();
+// #endif
+
         if (currentMatch.size() > controlParams.getMaxResultSize()) {
           AULOGINIT;
-          LWARN << "maxResultSize exceeded in automaton search: ignore result"
-               ;
+          LWARN << "maxResultSize exceeded in automaton search: ignore result";
         }
         else {
           results.insert(make_pair(currentMatch,checkList));
           if (results.size() > controlParams.getMaxNbResults()) {
             AULOGINIT;
-            LWARN << "maxNbResults exceeded in automaton search: ignore rest of search"
-                 ;
-          return (!results.empty());
+            LWARN << "maxNbResults exceeded in automaton search: ignore rest of search";
+            return (!results.empty());
           }
         }
 
@@ -872,8 +894,13 @@ bool Automaton::testFromState(const Tstate firstState,
 
       // push next vertices
       if (!S.push(vertex,nextState,analysis,limitVertex)) {
-        if (lastTransitionWithThisVertex)
+        if (lastTransitionWithThisVertex) {
+// #ifdef DEBUG_LP
+//           LDEBUG << "backtrackDepth sum =" << accumulate(backtrackDepth.begin(), backtrackDepth.end(), 0);
+// #endif
+          if (accumulate(backtrackDepth.begin(), backtrackDepth.end(), 0) <= 1)
             return !results.empty();
+        }
         backtrack=true;
       }
     }

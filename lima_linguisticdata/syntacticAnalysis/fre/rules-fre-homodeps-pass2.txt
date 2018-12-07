@@ -273,7 +273,7 @@ $NC::@PrepComp $DET? $ADV{0-3} $ADJ? ($NC|$NP) @TensedVerbSuj:SYNTACTIC_RELATION
 # in case of already found ambiguous COMPDUNOM thus with PREPSUB
 # "conclusion d'un accord de paix" with paix -COMPDUNOM-> accord already found
 # trigger is the second preposition
-@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){0-n} @PrepCompDuNom ((@DetIndef)? @Determinant)? @Substantif:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@Substantif|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepCompDuNom:@NomCommun (@PrepCompDuNom (((@DetIndef)? @Determinant)? @Substantif){0-n}){1-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@Substantif|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +GovernorOf(trigger.1,"PREPSUB")
 +GovernorOf(right.5,"COMPDUNOM")
