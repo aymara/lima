@@ -41,6 +41,8 @@ TestCaseError::TestCaseError(const TestCase& tc,
   std::ostringstream out;
   if (type == TestCaseFailed)
   {
+    out << "  test unit : " << tu.id << std::endl;
+    out << "  pipeline : " << pipeline << std::endl;
     out << "  reason : " << reason << std::endl;
     out << "  type : " << tc.type <<   ", id : " << tc.id << std::endl;
     for( SimpleValCallParams::const_iterator paramIt = tc.simpleValCallParams.begin() ;

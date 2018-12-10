@@ -141,7 +141,7 @@ chars {
 0079, LATIN SMALL LETTER Y, c_a, M0059 ;
 007A, LATIN SMALL LETTER Z, c_a, M005A ;
 007B, LEFT CURLY BRACKET, c_del1 ;
-007C, VERTICAL LINE, c_del1 ;
+007C, VERTICAL LINE, c_del2 ;
 007D, RIGHT CURLY BRACKET, c_del1 ;
 007E, TILDE, c_del1 ;
 0080, stand here for c_all UNKNOWN CHAR (NOT UNICODE standard), unknwn ;
