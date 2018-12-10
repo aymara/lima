@@ -891,10 +891,12 @@ nextFieldTypeDefinition(const LimaString& str, int& offset) {
 }
 
 void RecognizerCompiler::
-parseTypeDefinition(const LimaString& str, int& offset,
-                    string& typeName,
-                    string& openingTag,string& closingTag,
-                    vector<string>& attributes) {
+parseTypeDefinition(const LimaString& str, 
+                    int& offset,
+                    std::string& typeName,
+                    std::string& openingTag,
+                    std::string& closingTag,
+                    vector<std::string>& attributes) {
 
   // first field is name
   typeName=nextFieldTypeDefinition(str,offset);
@@ -925,7 +927,7 @@ throwError(const std::string& error,
          << ", line " << m_lineNumber
          << ": " << error;
   if (! ruleString.isEmpty()) {
-    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString);
+    LERROR << "in rule: " << ruleString;
   }
   throw AutomatonCompilerException(error);
 }
@@ -939,7 +941,7 @@ printWarning(const std::string& error,
         << ", line " << m_lineNumber
         << ": " << error;
   if (! ruleString.isEmpty()) {
-    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString);
+    LERROR << "in rule: " << ruleString;
   }
 }
 
