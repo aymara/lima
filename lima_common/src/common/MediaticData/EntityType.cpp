@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,8 +21,6 @@
  * @file       EntityType.cpp
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Mon Jan 22 2007
- * copyright   Copyright (C) 2007-2012 by CEA LIST
- * 
  ***********************************************************************/
 
 #include "EntityType.h"
@@ -120,29 +118,109 @@ bool EntityType::operator<(const EntityType& other) const
 {
   if (m_d->m_groupId < other.m_d->m_groupId) return true;
   if (m_d->m_groupId == other.m_d->m_groupId)
-    if (m_d->m_id < other.m_d->m_id) return true;
+  {
+    if (m_d->m_id < other.m_d->m_id)
+      return true;
+  }
+  return false;
+}
+
+bool EntityType::isNull() const
+{
+  return (m_d->m_id==0 && m_d->m_groupId==0);
+}
+
+EntityTypeId EntityType::getTypeId() const
+{
+  return m_d->m_id;
+}
+
+EntityGroupId EntityType::getGroupId() const
+{
+  return m_d->m_groupId;
+}
+
+void EntityType::setTypeId(EntityTypeId id)
+{
+  m_d->m_id=id;
+}
+void EntityType::setGroupId(EntityGroupId groupId)
+{
+  m_d->m_groupId=groupId;
+}
+
+QTextStream& operator << (QTextStream& os, const EntityType& type)
+{
+  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
+}
+
+std::ostream& operator << (std::ostream& os, const EntityType& type)
+{
+  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
+}
+
+QDebug& operator << (QDebug& os, const EntityType& type)
+{
+  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
+}
+
+//***********************************************************************
+// Hierarchy
+// simple child->parent map (does not handle multiple inheritance)
+// structure allows entities from different groups to be in the same hierarchy, but this will
+// not occur with the current parsing of entity declaration in config file
+
+// inherit from map in case we need specific member functions for the interface
+class EntityTypeHierarchyPrivate : public std::map<EntityType, EntityType>
+{
+public:
+  EntityTypeHierarchyPrivate():std::map<EntityType, EntityType>() {}
+  ~EntityTypeHierarchyPrivate() {}
+};
+
+EntityTypeHierarchy::EntityTypeHierarchy():
+m_d(nullptr)
+{
+  m_d=new EntityTypeHierarchyPrivate();
+}
+
+EntityTypeHierarchy::~EntityTypeHierarchy()
+{
+  delete m_d;
+}
+
+void EntityTypeHierarchy::addParentLink(const EntityType& child,
+                                        const EntityType& parent)
+{
+  (*m_d)[child]=parent;
+}
+
+bool EntityTypeHierarchy::isParent(const EntityType& child,
+                                   const EntityType& parent) const
+{
+  const auto& it=m_d->find(child);
+  if (it==m_d->end())
+  {
     return false;
+  }
+  return ((*it).second==parent);
 }
 
-bool EntityType::isNull() const { return (m_d->m_id==0 && m_d->m_groupId==0); }
-
-EntityTypeId EntityType::getTypeId() const { return m_d->m_id; }
-EntityGroupId EntityType::getGroupId() const { return m_d->m_groupId; }
-
-void EntityType::setTypeId(EntityTypeId id) { m_d->m_id=id; }
-void EntityType::setGroupId(EntityGroupId groupId) { m_d->m_groupId=groupId; }
-
-QTextStream& operator << (QTextStream& os, const EntityType& type) {
-  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
+bool EntityTypeHierarchy::isAncestor(const EntityType& child,
+                                     const EntityType& parent) const
+{
+  const auto& it=m_d->find(child);
+  if (it==m_d->end())
+  {
+    return false;
+  }
+  if ((*it).second==parent)
+  {
+    return true;
+  }
+  return isAncestor((*it).second,parent);
 }
 
-std::ostream& operator << (std::ostream& os, const EntityType& type) {
-  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
-}
-
-QDebug& operator << (QDebug& os, const EntityType& type) {
-  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
-}
 
 } // end namespace
 } // end namespace

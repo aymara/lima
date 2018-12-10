@@ -16,17 +16,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-//
-// C++ Interface: hasheddb
-//
-// Description: 
-//
-//
-// Author: Claire Mouton, Guillaume Pitel <claire.mouton@cea.fr, guillaume.pitel@gmail.com>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/**
+  @author Claire Mouton <claire.mouton@cea.fr>, 
+  @author Guillaume Pitel <guillaume.pitel@cea.fr>
+*/
+
 #ifndef HASHEDDB_H
 #define HASHEDDB_H
 
@@ -45,9 +39,6 @@ namespace LinguisticProcessing
 namespace WordSenseDisambiguation
 {
 
-/**
-  @author Claire Mouton, Guillaume Pitel <claire.mouton@cea.fr>, <guillaume.pitel@gmail.com>
-*/
 
 typedef struct
 {
@@ -55,7 +46,8 @@ typedef struct
         int count;
 } vectorCount;
 
-LIMA_WORDSENSEANALYSIS_EXPORT bool vectorCountCompare ( vectorCount i,vectorCount j );
+LIMA_WORDSENSEANALYSIS_EXPORT bool vectorCountCompare ( vectorCount i,
+                                                        vectorCount j );
 
 class LIMA_WORDSENSEANALYSIS_EXPORT HashedDB{
   private:
@@ -68,22 +60,27 @@ class LIMA_WORDSENSEANALYSIS_EXPORT HashedDB{
       std::vector<int>  *myPermutations;
       HashedDB * hashedDb;
       public:
-        comparePermutedSignatures ( std::vector <int> &permutations, HashedDB & _hashedDb ) 
-        { myPermutations = &permutations ;
-        hashedDb = &_hashedDb;}
+        comparePermutedSignatures ( std::vector <int> &permutations, 
+                                    HashedDB & _hashedDb ) 
+        {
+          myPermutations = &permutations ;
+          hashedDb = &_hashedDb;
+        }
         bool operator () ( int i, int j )
         {
-          return ( hashedDb->signatures[i].comparePermutedBits ( hashedDb->signatures[j],*myPermutations ) );
+          return ( hashedDb->signatures[i].comparePermutedBits ( 
+                                hashedDb->signatures[j],*myPermutations ) );
         }
     };
-    
+
 public:
     HashedDB();
     HashedDB(int _signatureLength, int _nSignatures);
     HashedDB(std::string dbFileName);
 
     ~HashedDB();
-    std::vector<int> & fastKNNSearch1 (std::vector<int>&  permutations, int beam);
+    std::vector<int> & fastKNNSearch1 (std::vector<int>&  permutations, 
+                                       int beam);
     void append(LSHSignature & s);
     void removeLast();
     void insert(int ind, LSHSignature & s);
@@ -95,23 +92,11 @@ public:
     void incrNSignatures() { nSignatures++; }
     void decrNSignatures() { nSignatures--; }
     int getSignatureLength() { return signatureLength; }
-    void printStats() {
-      for (int sig = 0; sig < nSignatures; sig++)
-  for (int s = 0; s < signatureLength; s++)
-    if (!signatures[sig].getBit(s))
-      nbZero[s]++;
-      std::ostringstream oss;
-      oss << "Sigs zeroes/ones count : " << std::endl;
-      for (int s = 0; s < signatureLength; s++)
-        oss << nbZero[s] << "/" << nSignatures - nbZero[s] << ",";
-      oss << std::endl;
-      std::cerr << oss.str();
-    }
+    void printStats();
 };
 
 }
 }
 }
-  
 
 #endif

@@ -42,6 +42,10 @@
       <entry key="eng" value="fakeMultiLevel"/>
       <entry key="por" value="fakeMultiLevel"/>
     </map>
+    <map name="approxmatcher">
+      <entry key="eng" value="approxmatcher"/>
+      <entry key="fre" value="approxmatcher"/>
+    </map>
   </group>
   <group name="analysisDumpers">
     <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->

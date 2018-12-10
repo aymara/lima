@@ -39,7 +39,7 @@ The main (C++) classes are:
 Overview of compilation process
 ------------------------------
 
-The input of compilation process of a Recognizer is a file of rules specification, written in human readable way, and optionally, one or more gazetteers and a modex file. A modex fil contains the definition of the types to be recognized. A gazetteer is a list of strings which defines the closed (exhaustive) set of values for a specific type (for example a set of values of first name in english).
+The input of compilation process of a Recognizer is a file of rules specification, written in human readable way, and optionally, one or more gazetteers and a modex file. A modex file contains the definition of the types to be recognized. A gazetteer is a list of strings which defines the closed (exhaustive) set of values for a specific type (for example a set of values of first name in english).
 
 The source file of a Recognizer includes optionally the definition of  gazetteers, and is mainly composed of  a list of  rules.  A rule is composed of parts, each part is made of a regular expression.
 Each regular expression is the specification of an automaton (a transducer). A regular expression is made of "elements" which describe the transition of the automaton. Additionaly, some functions may be associated to one or more elements of the rule.

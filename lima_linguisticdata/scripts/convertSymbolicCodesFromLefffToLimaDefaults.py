@@ -23,7 +23,8 @@ def loadLefff2LimaCodesDict():
 
 def convertDefaultsFromLefffToLima(codes):
     with open('default-fre.txt', 'r') as f:
-        with open('default-fre-new.txt', 'w') as of:
+        with open('default-fre-new.txt', 'w',
+                  encoding='utf-8', newline='\n') as of:
             for line in f:
                 line = line.rstrip()
                 if not line:

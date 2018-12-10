@@ -86,10 +86,12 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                      QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                     QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   std::string strConfigPath;

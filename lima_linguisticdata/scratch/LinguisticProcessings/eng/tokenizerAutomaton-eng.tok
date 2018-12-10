@@ -88,6 +88,7 @@
   - c_del2|c_dot c_par c_par / DELIMITER (T_PARAGRAPH_BRK)
   - c_dot c_b c_dot / DELIMITER (T_WORD_BRK)
   - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
   - c_lowline / ALPHA
   - [c_N|c_n] c_degree / ALPHA
@@ -107,7 +108,7 @@
   - c_grave = GRAVE (T_WORD_BRK)
   - c_b c_dot > DELIMITER
   - c_dot c_b > DELIMITER
-  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|m_line = DELIMITER (T_WORD_BRK)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|c_colon|m_line = DELIMITER (T_WORD_BRK)
   - c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - c_par = IGNORE (T_SENTENCE_BRK)
   - c_b = IGNORE
@@ -193,7 +194,7 @@
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > LOWER_1ST_UPPER (T_POSSESSIVE)
   - c_m > LOWER_1ST_UPPER
-  - c_hyphen c_m > LOWER_1ST_UPPER
+  - c_hyphen c_m > LOWER_1ST_UPPER (T_HYPHEN_WORD)
   - c_hyphen c_m > LOWER_UPPER (T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_hyphen m_line c_m > LOWER_UPPER(T_HYPHEN_WORD,T_CAPITAL_SMALL)
   - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
@@ -238,6 +239,7 @@
 }
 (ABBREV_0) {
   - c_b = IGNORE (T_ALPHA)
+  - c_M = SINGLE_UPPER(T_ALPHA,T_CAPITAL_1ST)
   - c_Mm c_dot > ACRONYM_1 (T_ACRONYM)
   - m_eof = END
 }
@@ -396,7 +398,9 @@
   - c_b = IGNORE
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_dot|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_comma = DELIMITER (T_WORD_BRK)
   - c_del2 = DELIMITER (T_SENTENCE_BRK)
+  - c_Mm > ALPHANUMERIC
   - c_all > START
 }
 (DOT_NUMBER) {
@@ -407,6 +411,7 @@
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_Mm > ALPHANUMERIC
   - c_all > START
 }
 (FRACTION) {
@@ -418,6 +423,7 @@
   - c_b = IGNORE
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_Mm > ALPHANUMERIC
   - c_all > START
 }
 (ORDINAL_INTEGER1) {
@@ -434,10 +440,11 @@
   - c_all > START
 }
 (PATTERN) {
-  - c_all = START
   - m_pattern > PATTERN
-  - m_end_pattern = START
   - c_b = IGNORE
+  - c_M = SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
+  - c_all = START
+  - m_end_pattern = START
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)

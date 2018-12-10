@@ -244,11 +244,11 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
     COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
-    COMMAND LC_ALL="C" sort -T . -u keys > keys.sorted
-    COMMAND testDict16 --charSize=2 --listOfWords=keys.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output
-#    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output
+    COMMAND LC_ALL="C" sort -T . -u keys > keys_${_dicostr}.sorted
+    COMMAND testDict16 --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+#    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
     COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
-    DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART}
+    DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
     COMMENT "compile-dictionary"
     VERBATIM
   )
@@ -256,11 +256,11 @@ else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
     COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
-    COMMAND sort -T . -u keys > keys.sorted
-    COMMAND testDict16 --charSize=2 --listOfWords=keys.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output
-#    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output
+    COMMAND sort -T . -u keys > keys_${_dicostr}.sorted
+    COMMAND testDict16 --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+#    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
     COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
-    DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART}
+    DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
     COMMENT "compile-dictionary"
     VERBATIM
   )
@@ -499,6 +499,17 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     VERBATIM
   )
   add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Miscellaneous-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/SpecificEntities/conf/Miscellaneous-modex.xml
+    COMMENT "create config env for specific entities rules (Miscellaneous-modex.xml)"
+    VERBATIM
+  )
+  add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -537,6 +548,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
   )
@@ -627,8 +639,6 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
     VERBATIM
   )
 
-  # defini l'ensemble des dépendances (ce qui doit exister dans l'environnement d'execution)
-  # de la cible rules-DateTime-${_lang}main
   add_custom_target(
     rules-${_lang}-execEnv
     ALL
@@ -687,7 +697,7 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
   add_custom_target(
     syntanalrules-${_lang}
     ALL
-    DEPENDS ${${_lang}_BIN_RULES_FILES} ${${_lang}_SA_DEPENDS_FILES}
+    DEPENDS ${${_lang}_BIN_RULES_FILES} ${${_lang}_SA_DEPENDS_FILES} rules-${_lang}-execEnv rules-configEnv
   )
 
   foreach (file ${${_lang}_BIN_RULES_FILES})

@@ -34,6 +34,12 @@ add_subdirectory(EntityTracking)
 add_subdirectory(TextSegmentation)
 add_subdirectory(WordSenseAnalysis)
 add_subdirectory(RegexMatcher)
+IF(TRE_FOUND)
+  add_subdirectory(ApproxMatching)
+ENDIF(TRE_FOUND)
+if (TensorFlow_FOUND AND Eigen_FOUND)
+  add_subdirectory(TensorflowSpecificEntities)
+endif()
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORTING)
 ########### next target ###############
@@ -53,10 +59,11 @@ target_link_libraries(lima-lp-linguisticprocessing-core
   lima-lp-linguisticresources
   lima-lp-client
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
  )
 set_target_properties(lima-lp-linguisticprocessing-core PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
-install(TARGETS lima-lp-linguisticprocessing-core DESTINATION ${LIB_INSTALL_DIR}
+install(TARGETS lima-lp-linguisticprocessing-core 
+  DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
 ########### install files ###############

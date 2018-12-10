@@ -33,6 +33,8 @@ add_definitions( -DLIMA_COMMON_EXPORTING )
 
 add_library(lima-common SHARED LimaCommon.cpp)
 target_link_libraries(lima-common 
+  lima-common-factory
+  lima-common-mediaticdata
   lima-common-xmlconfigurationfiles
   lima-common-tools
   lima-common-datahandler 
@@ -40,7 +42,6 @@ target_link_libraries(lima-common
   lima-common-time 
   lima-common-misc
   lima-common-data 
-  lima-common-mediaticdata
 )
 
 set_target_properties(lima-common PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})

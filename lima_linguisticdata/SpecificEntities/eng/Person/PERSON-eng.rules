@@ -45,7 +45,7 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 # recognition of person names
 #----------------------------------------------------------------------
 
-use firstname.lst,title.lst,function_title.lst,person_ending.lst
+use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst
 
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -60,15 +60,21 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
 @Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
 @Firstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+
+t_capital_1st:[(@Title|@FunctionTitle)]:@Initial? @Tussenvoegsel (T_A1|T_Amh|$NP){1-2}:PERSON:=>NormalizePersonName()
+
+t_capital_1st::(@Tussenvoegsel|ben|Ben|bin|Bin) (T_A1|T_Amh|$NP){1-2}:PERSON:
++LinguisticPropertyIs(trigger.1,"MACRO,NP,eng")
+=>NormalizePersonName()
 
 # @Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh)){1-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -85,8 +91,8 @@ T_A1:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=
 $NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 # "bla bla", Machin said.
-T_A1::(T_A1|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
-T_A1:[said]:(T_A1|T_Amh|$NP|@Initial){0-2}:PERSON:
+t_capital_1st::(t_capital_1st|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
+t_capital_1st:[said]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
 
 @Pronouns=(
 I,

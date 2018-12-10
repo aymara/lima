@@ -1,12 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <modulesConfig>
+  <module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/entities"/>
+        <item value="ApproxNames-modex.xml/entities"/>
+      </list>
+    </group>
+  </module>
   <module name="Processors">
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="ApproxNames-modex.xml/Processors"/>
       </list>
     </group>
-
     <group name="query" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -95,6 +103,31 @@
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
+      </list>
+    </group>
+    <group name="approxmatcher" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="fullTokenXmlLoggerTokenizer"/>
+        <item value="ApproxNamesModex"/>
+        <item value="fullTokenXmlLoggerApprox"/>
+        <item value="specificEntitiesApproxXmlLogger"/>
+        <!--item value="regexmatcher"/-->
+        <item value="simpleWord"/>
+        <item value="fullTokenXmlLoggerSimpleWord"/>
+        <!--item value="idiomaticAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerIdiomatic"/-->
+        <!--item value="hyphenWordAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerHyphen"/-->
+        <!--item value="abbreviationSplitAlternatives"/-->
+        <!--item value="fullTokenXmlLoggerAbbreviations"/-->
+        <!--item value="defaultProperties"/-->
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="SpecificEntitiesModex"/-->
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <!--item value="dotGraphWriter-beforepos"/-->
+        <!--item value="viterbiPostagger-freq"/-->
+        <!--item value="SvmToolPosTagger"/-->
       </list>
     </group>
     <group name="fakeMultiLevel" class="ProcessUnitPipeline">
@@ -210,6 +243,9 @@
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".tokenizer.xml"/>
     </group>
+    <group name="fullTokenXmlLoggerApprox" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".approx.xml"/>
+    </group>
     <group name="fullTokenXmlLoggerSimpleWord" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".simpleword.xml"/>
     </group>
@@ -267,6 +303,10 @@
       <param key="graph" value="AnalysisGraph"/>
       <param key="followGraph" value="true"/>
     </group>
+    <group name="specificEntitiesApproxXmlLogger" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.approx.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+    </group>
     <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
       <param key="outputSuffix" value=".se.xml"/>
       <param key="graph" value="AnalysisGraph"/>
@@ -300,6 +340,7 @@
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex.xml/resources-eng"/>
+        <item value="ApproxNames-modex.xml/resources-eng"/>
       </list>
     </group>
 

@@ -19,11 +19,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_SYNTACTICANALYSIS_EXPORTING)
 ########### next target ###############
 
-LIMALP_WRAP_HEADERS(syntacticanalysis
-  SyntagmaticMatrix.h
-  SelectionalPreferences.h
-)
-
 SET(lima-lp-syntacticanalysis_LIB_SRCS
    SyntacticRelationsLogger.cpp
    SyntacticAnalysisXmlLogger.cpp

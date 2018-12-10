@@ -44,7 +44,7 @@ class LIMA_ANALYSISHANDLERS_EXPORT AbstractTextualAnalysisHandler :
 {
   Q_OBJECT
 public:
-  virtual ~AbstractTextualAnalysisHandler() {};
+  virtual ~AbstractTextualAnalysisHandler();
   
   /**
   * @brief initialize with parameters from configuration file.
@@ -56,16 +56,7 @@ public:
   */
   virtual void init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-                    Manager* manager) override
-  {
-    LIMA_UNUSED(manager);
-    try {
-      m_suffix = unitConfiguration.getParamsValueAtKey("suffix");
-    }
-    catch (Common::XMLConfigurationFiles::NoSuchParam& e) {
-      throw InvalidConfiguration(std::string("No such param 'suffix': ") + e.what());
-    }
-  }
+                    Manager* manager) override;
 
   inline virtual const std::string& suffix() const {return m_suffix;}
   inline virtual void setSuffix(const std::string& suffix) {m_suffix = suffix;}

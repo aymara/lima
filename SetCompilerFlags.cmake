@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(SHORTEN_POR_CORPUS_FOR_SVMLEARN "Use a shortened corpus for SVMTlearn to reduce learning time" OFF)
 message("SHORTEN_POR_CORPUS_FOR_SVMLEARN=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}")
@@ -27,7 +28,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     message("Linux flags")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer")
 
     if (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
@@ -89,6 +90,13 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
     endif ()
 
+  set(DEBUG_FLAGS "-DDEBUG_LP -DDEBUG_CD -DDEBUG_FACTORIES -DDEBUG_LIMA_GUI -DQT_QML_DEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}" )
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${DEBUG_FLAGS}" )
+  if (WITH_DEBUG_MESSAGES)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${DEBUG_FLAGS}" )
+  endif()
+
     set(LIB_INSTALL_DIR "lib")
 else ()
   message("Windows flags")
@@ -98,10 +106,21 @@ else ()
   if(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
   endif()
-  set(CMAKE_C_FLAGS "/Zc:wchar_t- /EHsc /GR ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "/Zc:wchar_t- /EHsc /GR /W4 /MP /FAu ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "/EHsc /GR ${CMAKE_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "/EHsc /GR /MP /utf-8 ${CMAKE_CXX_FLAGS}")
 
+  set(DEBUG_FLAGS "/DDEBUG_LP /DDEBUG_CD /DDEBUG_FACTORIES /DDEBUG_LIMA_GUI /DQT_QML_DEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}" )
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${DEBUG_FLAGS}" )
+  if (WITH_DEBUG_MESSAGES)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${DEBUG_FLAGS}" )
+  endif()
   set(LIB_INSTALL_DIR "bin")
+
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    DESTINATION bin
+    COMPONENT Libraries)
+
 endif ()
 
 

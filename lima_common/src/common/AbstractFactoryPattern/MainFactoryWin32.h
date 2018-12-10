@@ -131,6 +131,7 @@ T *set_the_global(T *candidate)
 {
   try {
 #ifdef DEBUG_FACTORIES
+    std::cerr << "set_the_global: " << (void*)candidate << std::endl;
     std::cerr << "set_the_global: " << typeid(*candidate).name() << std::endl;
 #endif
     FactoryMap::iterator r = MainFactoriesMap::mainFactoriesMap().find(std::string(typeid(*candidate).name()));

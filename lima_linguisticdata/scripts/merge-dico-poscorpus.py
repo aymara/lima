@@ -124,8 +124,7 @@ def mergeEntries(language,dicofile,
         ## codes contain a dico lefff code -> lima code
         #codes = loadLefff2LimaCodesDict(project_source_dir)
         #print(codes)
-    with open(output_file,
-          'w', encoding='utf-8') as f:
+    with open(output_file, 'w', encoding='utf-8', newline='\n') as f:
 
         dico_entries = loadDicoEntries(dicofile,language,codes)
         corpus_entries = loadCorpusEntries(corpus)

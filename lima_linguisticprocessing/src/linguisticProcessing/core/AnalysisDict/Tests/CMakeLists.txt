@@ -25,7 +25,7 @@ add_executable(EnhancedAnalysisDictionaryTest0 ${EnhancedAnalysisDictionaryTest0
 target_link_libraries(EnhancedAnalysisDictionaryTest0
   lima-common
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
 add_test(NAME EnhancedAnalysisDictionaryTest0 COMMAND EnhancedAnalysisDictionaryTest0)

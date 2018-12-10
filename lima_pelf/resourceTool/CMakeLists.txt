@@ -42,6 +42,6 @@ target_link_libraries(pelf-resedit
     lima-linguisticprocessing
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 install(TARGETS pelf-resedit DESTINATION bin)

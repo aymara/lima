@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+<module name="entities">
+    <group name="Medical">
+      <list name="entityList">
+        <item value="GENE"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="ApproxNamesModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="geneApproxNamesMatcher"/>
+      </list>
+    </group>
+    <group name="geneApproxNamesMatcher" class="ApproxStringMatcher">
+        <param key="nameindex" value="gene-SpecyNames"/>
+        <param key="nbMaxNumError" value="10"/>
+        <param key="nbMaxDenError" value="100"/>
+        <param key="entityGoup" value="Medical"/>
+        <param key="entityName" value="Medical.GENE"/>
+        <param key="NPCategory" value="NP"/>
+        <param key="NPMicroCategory" value="NNP"/>
+        <map name="generalizationRules">
+            <!-- Group blanks & dashes : A-6 => A( |-)?6 ~= A 6 -->
+            <entry key="[ -]" value="( |-)?"/>
+            <!-- Add 0 prefix to numerals : A-6 => A-0*6 ~= A-006 -->
+            <entry key="([0-9]+)" value="0*\1"/>
+        </map>
+        <list name="generalizationRulesOrder">
+            <!-- Group blanks & dashes : A-6 => A( |-)?6 ~= A 6 -->
+            <item value="[ -]"/>
+            <!-- Add 0 prefix to numerals : A-6 => A-0*6 ~= A-006 -->
+            <item value="([0-9]+)"/>
+        </list>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="gene-SpecyNames" class="NameIndex">
+      <param key="withIndex" value="true"/>
+      <param key="filename" value="LinguisticProcessings/eng/gene-specyNames.sorted.toy.lst"/>
+    </group>
+  </module>
+</modulesConfig>

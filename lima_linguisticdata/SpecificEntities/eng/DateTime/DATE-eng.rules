@@ -7,6 +7,11 @@ set defaultAction=>CreateSpecificEntity()
 # recognition of dates and times
 #----------------------------------------------------------------------
 
+#-----------------------------------------------
+# Don't treat long sequences of numbers as dates
+
+t_integer::(- t_integer){3-5}:NOT_DATE:
+
 #------------------------------ DATES ----------
 use days.lst,months.lst,monthAbbrev.lst
 
@@ -38,6 +43,12 @@ use days.lst,months.lst,monthAbbrev.lst
 
 @month::the? (@numday|t_ordinal_integer) (,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
 
+# June-July 2000
+@month::-? @month ,? (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
+# Jun-Jul 2000
+@monthAbbrev::-? @monthAbbrev ,? (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
 # July, 2000
 @month::,? t_integer>1000<3000:DATE:=>NormalizeDate()
 
@@ -68,7 +79,6 @@ use days.lst,months.lst,monthAbbrev.lst
 
 @Decade:@modifierDate?::DATE:
 
-
 # from 1980 to 1981
 # between 1980 and 1981
 #from::t_integer>1200<2100 to t_integer>1200<2100:DATE:=>NormalizeDate()
@@ -92,6 +102,12 @@ t_integer>1200<2100:[@in]::DATE:=>NormalizeDate()
 # 22-05-68
 # integer - integer - integer
 @numday::- @numday - (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
+# YYYY-MM-DD
+t_integer>1000<3000::- @numday - @numday:DATE:=>NormalizeDate()
+
+# YY-MM-DD
+t_integer<99::- @numday - @numday:DATE:=>NormalizeDate()
 
 # 22/05/68
 # fraction / integer or integer / integer / integer

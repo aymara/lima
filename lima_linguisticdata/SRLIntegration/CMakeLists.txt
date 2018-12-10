@@ -88,3 +88,5 @@ foreach(LANG ${LIMA_LANGUAGES})
   endif ()
 
 endforeach(LANG ${LIMA_LANGUAGES})
+
+install(FILES FrameNet-modex.xml VerbNet-modex.xml COMPONENT common DESTINATION share/config/lima)

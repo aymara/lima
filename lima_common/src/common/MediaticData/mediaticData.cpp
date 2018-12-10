@@ -108,6 +108,7 @@ private:
     typedef Common::Misc::DoubleAccessObjectToIdMap<LimaString,EntityTypeId> EntityTypeMap;
     EntityGroupMap m_entityGroups;
     std::vector<EntityTypeMap*> m_entityTypes;
+    EntityTypeHierarchy m_entityHierarchy;
 
     std::map< std::string, uint8_t > m_relTypes;
     std::map< uint8_t, std::string > m_relTypesNum;
@@ -740,7 +741,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           i=includeList[k].find("/");
           if (i==string::npos) {
             LERROR << "Cannot include resources " << includeList[k] 
-                << ": must specify file and module name" << LENDL;
+                << ": must specify file and module name";
           continue;
           }
           QStringList configPaths = QString::fromUtf8(m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
@@ -767,20 +768,42 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
 #endif
         
         GroupConfigurationStructure& groupConf=(*it).second;
-        
-        deque<string>& entityList=groupConf.getListsValueAtKey("entityList");
-        for (deque<string>::const_iterator ent=entityList.begin(),
-              ent_end=entityList.end(); ent!=ent_end; ent++) {
-          
-          LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
+        try {
+          deque<string>& entityList=groupConf.getListsValueAtKey("entityList");
+          for (deque<string>::const_iterator ent=entityList.begin(),
+            ent_end=entityList.end(); ent!=ent_end; ent++) {
+            
+            LimaString entityName=Common::Misc::utf8stdstring2limastring(*ent);
 #ifdef DEBUG_CD
-          LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group "
-          << groupName;
+            LDEBUG << "initEntityTypes: add entityType " << (*ent).c_str() << " in group " << groupName;
 #endif
-          EntityType type=addEntity(groupId,entityName);
+            EntityType type=addEntity(groupId,entityName);
 #ifdef DEBUG_CD
-          LDEBUG << "initEntityTypes: type is " << type;
+            LDEBUG << "initEntityTypes: type is " << type;
 #endif
+          }
+        }
+        catch(NoSuchList& e) {
+          // no simple list: may be list of items with attributes (to deal with is-a relations of entities)
+          std::deque<ItemWithAttributes>& items=groupConf.getListOfItems("entityList");
+          for (const auto& i: items) {
+            LimaString entityName=Common::Misc::utf8stdstring2limastring(i.getName());
+#ifdef DEBUG_CD
+            LDEBUG << "initEntityTypes: add entityType " << i.getName() << " in group " << groupName;
+#endif
+            EntityType ent=addEntity(groupId,entityName);
+#ifdef DEBUG_CD
+            LDEBUG << "initEntityTypes: type is " << ent;
+#endif
+            if (i.hasAttribute("is-a")) {
+              LimaString parentName=Common::Misc::utf8stdstring2limastring(i.getAttribute("is-a"));
+              EntityType parent=getEntityType(groupId,parentName);
+#ifdef DEBUG_CD
+              LDEBUG << "initEntityTypes: add parent link:" << ent << "->" << parent;
+#endif
+              addEntityParentLink(ent,parent);
+            }
+          }
         }
       }
     }
@@ -841,6 +864,17 @@ EntityType MediaticData::addEntity(const LimaString& groupName,
   EntityGroupId groupId=getEntityGroupId(groupName);
   return addEntity(groupId,entityName);
 }
+
+void MediaticData::addEntityParentLink(const EntityType& child, const EntityType& parent)
+{
+    m_d->m_entityHierarchy.addParentLink(child,parent);
+}
+
+bool MediaticData::isEntityAncestor(const EntityType& child, const EntityType& parent) const
+{
+  return m_d->m_entityHierarchy.isAncestor(child,parent);
+}
+
 
 // entity types accessors
 EntityType MediaticData::getEntityType(const LimaString& entityName) const
@@ -1089,6 +1123,7 @@ MediaticDataPrivate::MediaticDataPrivate() :
     m_mediasData(),
     m_entityGroups(),
     m_entityTypes(),
+    m_entityHierarchy(),
     m_relTypes(),
     m_relTypesNum(),
     m_stringsPool(),

@@ -75,24 +75,29 @@ public:
   ;
 
   LimaStatusCode process(
-    AnalysisContent& analysis) const override; 
-        
+    AnalysisContent& analysis) const override;
+
 protected:
 
 private:
-    
+
     const FlatTokenizer::Tokenizer* m_tokenizer;
     AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
     FlatTokenizer::CharChart* m_charChart;
     bool m_deleteHyphenWord;
     bool m_confidentMode;
     MediaId m_language;
+    MediaId m_engLanguageId;
     AlternativesReader* m_reader;
-    
+
     void makeHyphenSplitAlternativeFor(
         LinguisticGraphVertex splitted,
         LinguisticGraph* graph,
         Common::AnnotationGraphs::AnnotationData* annotationData) const;
+
+    bool isWorthSplitting(
+        LinguisticGraphVertex splitted,
+        LinguisticGraph* graph) const;
 
 };
 

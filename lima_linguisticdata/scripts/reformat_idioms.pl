@@ -173,8 +173,9 @@ sub reformat_pos
 sub reformat_parenth 
 {
     local ($_)=@_;
-    s/\(\<([0-9]*)\)/[*{0-$1}]/g; # (<4) => [*{0-4}]
-    s/\(([^\)]*)\)/[$Pos{$1}?]/g; # (D)  => [$ADV]
+    s/\(\<([0-9]*)\)/[^t_sentence_brk{0-$1}]/g; # (<4) => [*{0-4}]
+    s/\(([^\)]*)\)/[$Pos{$1}?]/g; # (D) => [$ADV]
+    s/(\^t_sentence_brk)/($1)/g; # [^t_sentence_brk{0-4}] => [(^t_sentence_brk){0-4}]
     return $_;
 }
 

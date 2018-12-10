@@ -36,11 +36,17 @@ namespace Lima
   }
 }
 
+#define MULTITHREAD 1
+
 class AnalysisThreadPrivate;
 /**
  * @brief Analyser thread
  */
+#ifdef MULTITHREAD
 class AnalysisThread : public QThread
+#else
+class AnalysisThread : public QObject
+#endif
 {
   Q_OBJECT
 public:
@@ -48,6 +54,12 @@ public:
                   QHttpRequest *req, QHttpResponse *resp, 
                   const std::set<std::string>& langs, QObject* parent = 0 );
     virtual ~AnalysisThread();
+
+    virtual void  run () override;
+
+    const QByteArray& response_body() const;
+    int response_code() const;
+    const std::map<QString,QString>& response_header() const;
     
 Q_SIGNALS:
   void anlysisFinished();
@@ -55,10 +67,12 @@ Q_SIGNALS:
   
 public Q_SLOTS:
     void startAnalysis();
-    void slotStarted();
+    // void slotStarted();
 
 private:
   AnalysisThreadPrivate* m_d;
+  std::string ConllToJson( const std::string & str );
+
 };
 
 #endif // ANALYSISTHREAD_H

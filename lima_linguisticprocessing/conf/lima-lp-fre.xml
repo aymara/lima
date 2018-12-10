@@ -28,6 +28,7 @@
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
+<!--         <item value="enchantSpellingAlternatives"/> -->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
@@ -36,6 +37,65 @@
 <!--         <item value="viterbiPostagger-freq"/> -->
 <!--         <item value="SvmToolPosTagger"/> -->
         <item value="@PosTagger@"/>
+        <!--item value="DynamicSvmToolPosTagger"/-->
+        <item value="sentenceBoundariesFinder"/>
+        <!--item value="geoEntities"/-->
+        <!--item value="dotGraphWriter"/-->
+        <!--item value="linearTextRepresentationLogger"/-->
+        <!--item value="sentenceBoundsXmlLogger"/-->
+        <item value="syntacticAnalyzerNoChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <!--item value="syntacticAnalyzerDisamb"/-->
+        <!--item value="syntacticAnalyzerSimplifyFirst"/-->
+        <!--item value="syntacticAnalyzerSimplify"/-->
+        <!--item value="syntacticAnalyzerSimplifyCoord"/-->
+        <!--item value="syntacticAnalyzerSimplifyLast"/-->
+        <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
+        <item value="syntacticAnalyzerDepsHetero"/>
+        <!--item value="syntacticAnalyzerDummy"/-->
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <!--item value="dotDepGraphWriter"/-->
+        <!--item value="dotGraphWriterAfterSA"/-->
+        <!--item value="coreferencesSolving"/-->
+        <!--item value="wordSenseDisambiguation"/-->
+        <!--item value="wordSenseXmlLogger"/-->
+        <!--item value="annotDotGraphWriter"/-->
+        <!--item value="depTripletLogger"/-->
+        <!--item value="corefLogger"/-->
+        <!--item value="geoDumper"/-->
+        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
+        <!--item value="VerbNetRecognition"/-->
+        <!--item value="FrameNetRecognition"/-->
+        <!--item value="kbsrl"/-->
+        <item value="conllDumper"/>
+        <!--item value="bowDumper"/-->
+        <!--item value="posGraphXmlDumper"/-->
+        <!--item value="fullXmlDumper"/-->
+        <!--item value="simpleXmlDumper"/-->
+        <!--item value="textDumper"/-->
+        <!--item value="NullDumper"/-->
+      </list>
+    </group>
+    <group name="deep" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <!--item value="beginStatusLogger"/-->
+        <item value="flattokenizer"/>
+        <item value="regexmatcher"/>
+        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <item value="simpleWord"/>
+        <item value="sentenceBoundariesFinderForSE"/>
+        @tensorflowSpecificEntities@
+<!--         <item value="tensorflowSpecificEntities"/> -->
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="defaultProperties"/>
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <!--item value="dotGraphWriter-beforepos"/-->
+        <!--item value="SpecificEntitiesModex"/-->
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <item value="viterbiPostagger-freq"/>
+        <!--item value="SvmToolPosTagger"/-->
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
         <!--item value="geoEntities"/-->
@@ -131,6 +191,16 @@
         <param key="confidentMode" value="true"/>
         <param key="charChart" value="flatcharchart"/>
         <param key="parseConcatenated" value="false"/>
+    </group>
+<!--    <group name="enchantSpellingAlternatives" class="EnchantSpellingAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+    </group>-->
+    <group name="tensorflowSpecificEntities" class="TensorflowSpecificEntities">
+      <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
+      <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
+      <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
+      <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
+      <param key="batchSizeMax" value="20"/>
     </group>
     <group name="coreferencesSolving" class="CoreferencesSolving">
       <param key="scope" value="3" />
@@ -348,6 +418,13 @@
       <param key="graph" value="PosGraph"/>
       <list name="micros">
         <item value="PONCTU_FORTE" />  
+      </list>
+    </group>
+    <group name="sentenceBoundariesFinderForSE" class="SentenceBoundariesFinder">
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="data" value="SentenceBoundariesForSE"/>
+      <list name="micros">
+        <item value="SENT"/>
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">

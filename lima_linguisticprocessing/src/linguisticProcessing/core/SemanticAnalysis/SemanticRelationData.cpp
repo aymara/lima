@@ -64,33 +64,87 @@ SemanticRelationData::~SemanticRelationData()
 }
 
 
+bool SemanticRelationData::relation(const LinguisticGraphVertex& v1,
+                                    const LinguisticGraphVertex& v2,
+                                    const std::string semanticRelationType)
+{
+#ifdef DEBUG_LP
+  SEMANTICANALYSISLOGINIT;
+#endif
+  SemanticRelation r = SemanticRelation(v1,v2,semanticRelationType);
+  if (m_relations.find(r)==m_relations.end()) 
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "SemanticRelationData::relation(" << v1 << "," << v2 << "," 
+            << semanticRelationType << ") adding";
+#endif
+    m_relations.insert(r);
+  }
+  else
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "SemanticRelationData::relation(" << v1 << "," << v2 << "," 
+            << semanticRelationType << ") already found. Do not add it";
+#endif
+  }
+  return true;
+}
+
 bool SemanticRelationData::addRelations(AnalysisContent& analysis)
 {
-//   PROCESSORSLOGINIT;
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+#ifdef DEBUG_LP
+  SEMANTICANALYSISLOGINIT;
+#endif
+  auto annotationData = static_cast< AnnotationData* >(
+    analysis.getData("AnnotationData"));
 
   if (annotationData->dumpFunction("SemanticRelation") == 0)
   {
-    annotationData->dumpFunction("SemanticRelation", new DumpSemanticRelation());
+    annotationData->dumpFunction("SemanticRelation", 
+                                 new DumpSemanticRelation());
   }
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData=static_cast<RecognizerData*>(
+    analysis.getData("RecognizerData"));
 
-  for (std::set<SemanticRelation>::iterator i=m_relations.begin();
-       i != m_relations.end(); i++) 
+  for (auto i = m_relations.begin(); i != m_relations.end(); i++) 
   {
     LinguisticGraphVertex vertex1 = i->get<0>();
     LinguisticGraphVertex vertex2 = i->get<1>();
 
-    std::set< AnnotationGraphVertex > matchesVtx1 = annotationData->matches(recoData->getGraphId(),vertex1,"annot");
-    std::set< AnnotationGraphVertex > matchesVtx2 = annotationData->matches(recoData->getGraphId(),vertex2,"annot");
+    auto matchesVtx1 = annotationData->matches(recoData->getGraphId(),
+                                               vertex1,
+                                               "annot");
+    auto matchesVtx2 = annotationData->matches(recoData->getGraphId(),
+                                               vertex2,
+                                               "annot");
 
-    if (!annotationData->hasAnnotation(*(matchesVtx1.begin()), *(matchesVtx2.begin()),
-         Common::Misc::utf8stdstring2limastring("SemanticRelation")))
+    if (!annotationData->hasAnnotation(*(matchesVtx1.begin()), 
+                                       *(matchesVtx2.begin()),
+                                       "SemanticRelation"))
     {
       SemanticRelationAnnotation annot(i->get<2>());
       GenericAnnotation ga(annot);
-      annotationData->annotate(*(matchesVtx1.begin()), *(matchesVtx2.begin()),
-      Common::Misc::utf8stdstring2limastring("SemanticRelation"), ga);
+      annotationData->annotate(*(matchesVtx1.begin()), 
+                               *(matchesVtx2.begin()),
+                               "SemanticRelation", 
+                               ga);
+    }
+    else
+    {
+      auto annot = annotationData->annotation(*(matchesVtx1.begin()), 
+                               *(matchesVtx2.begin()),
+                               "SemanticRelation").pointerValue<SemanticRelationAnnotation>();
+      SEMANTICANALYSISLOGINIT;
+      LWARN << "SemanticRelationData::addRelations There is already a SemanticRelation between" 
+            << *(matchesVtx1.begin()) << "and" << *(matchesVtx2.begin()) << annot->type();
+      LWARN << "Adding new type" << i->get<2>();
+      QString type = QString::fromUtf8(annot->type().c_str());
+      QStringList typeList = type.split(',');
+      typeList << i->get<2>().c_str();
+      typeList.sort();
+      typeList.removeDuplicates();
+      annot->type(typeList.join(',').toUtf8().constData());
+      LWARN << "Adding type is now" << annot->type();
     }
   }
   m_relations.clear();

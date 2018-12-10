@@ -233,4 +233,6 @@ LE:::NOT_NUMBER:
 
 @NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
 @Number:(+|-)?:@Number{0-5} @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
-@OrdNumber:(+|-)?:\%?:NUMBER:=>NormalizeNumber()
+
+# @OrdNumber adds noise
+#@OrdNumber:(+|-)?:\%?:NUMBER:=>NormalizeNumber()

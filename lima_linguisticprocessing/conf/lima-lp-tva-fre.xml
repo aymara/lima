@@ -104,6 +104,10 @@
         <!--item value="bowDumper"/-->
       </list>
     </group>
+    <group name="approxmatcher" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+      </list>
+    </group>
     <group name="fakeMultiLevel" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>

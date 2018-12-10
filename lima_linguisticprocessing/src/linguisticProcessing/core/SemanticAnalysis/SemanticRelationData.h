@@ -76,14 +76,9 @@ public:
   }
     
   /// Stores SemanticRelation
-  inline bool relation(const LinguisticGraphVertex& v1,
+  bool relation(const LinguisticGraphVertex& v1,
                          const LinguisticGraphVertex& v2,
-                         const std::string semanticRelationType)
-  {
-      SemanticRelation r = SemanticRelation(v1,v2,semanticRelationType);
-      if (m_relations.find(r)==m_relations.end()) m_relations.insert(r);
-      return true;
-  };
+                         const std::string semanticRelationType);
 
 
   ///add SemanticRelation instance in the annotationGraph
