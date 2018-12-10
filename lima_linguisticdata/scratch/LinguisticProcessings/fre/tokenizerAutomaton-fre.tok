@@ -167,7 +167,7 @@
   - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_hyphen c_a_t c_hyphen = TEUPHOT (T_ALPHA)
   - c_hyphen c_a_t c_quote = TEUPHOT (T_ALPHA)
-  - c_dot c_b c_m > ALL_LOWER
+#  - c_dot c_b c_m > ALL_LOWER
   - c_quote c_Mm > APOS
   - c_m > ALL_LOWER
   - c_M > LOWER_UPPER (T_CAPITAL_SMALL)
@@ -181,7 +181,8 @@
   - m_eof = END
 }
 (APOS) {
-  - c_Mm = ALPHA (T_ALPHA)
+  - c_M = SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
+  - c_m = ALL_LOWER (T_ALPHA,T_SMALL)
   - m_eof = END
 }
 (LOWER_1ST_UPPER) {
