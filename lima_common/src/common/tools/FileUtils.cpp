@@ -87,6 +87,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
     for (auto configDir = confDirs.begin(); configDir != confDirs.end(); ++configDir)
     {
+//       qDebug() << "buildConfigurationDirectoriesList testing given" << *configDir;
       if (!configDir->isEmpty() && QDir(*configDir).exists())
       {
         if (!configDirs.contains(*configDir))
@@ -98,6 +99,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     if (confDirs.isEmpty())
     {
       QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/" + project;
+//       qDebug() << "buildConfigurationDirectoriesList testing project dist" << configDir;
       if (!configDir.isEmpty() && QDir( configDir ).exists() )
       {
         if (!configDirs.contains(configDir))
@@ -108,6 +110,8 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       else
       {
         configDir = QString::fromUtf8("/usr/share/config/") + project;
+//         qDebug() << "buildConfigurationDirectoriesList testing usr" << configDir 
+//                   << configDir.isEmpty() << QDir( configDir ).exists();
         if (!configDir.isEmpty() && QDir( configDir ).exists() )
         {
           if (!configDirs.contains(configDir))
