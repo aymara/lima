@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -243,7 +243,7 @@ bool Automaton::
 getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                        const LinguisticGraphVertex& vertex,
                        AnalysisContent& analysis,
-                       SearchGraph* searchGraph,
+                       const SearchGraph* searchGraph,
                        const Tstate& state,
                        std::vector<DFFSPos>& matchingTransitions,
                        const LinguisticGraphVertex& limit
@@ -252,26 +252,38 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), vertex);
 
 #ifdef DEBUG_LP
-   AULOGINIT;
-   LDEBUG << "Automaton::getMatchingTransitions(vertex: " << vertex << ")";
+  AULOGINIT;
+  LDEBUG << "Automaton::getMatchingTransitions(vertex: " << vertex << ")";
 //    LDEBUG << "search structure not initialized: linear search";
 #endif
+
   if (m_searchStructures[state]==0) {
     //linear search on the transitions
+
 #ifdef DEBUG_LP
-    LDEBUG << "Automaton::getMatchingTransitions: search structure not initialized: linear search";
+   LDEBUG << "Automaton::getMatchingTransitions: search structure not initialized: linear search";
 #endif
+
     matchingTransitions.clear();
     vector<Transition>::const_iterator
       trans=m_transitions[state].begin(),
       trans_end=m_transitions[state].end();
 
     for (; trans!=trans_end; trans++) {
-//       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex;
+
+// #ifdef DEBUG_LP
+//       LDEBUG << "Automaton::getMatchingTransitions vertex: " << vertex << " transition " << *trans;
+// #endif
+
       deque<LinguisticGraphVertex> noVertices;
       DFFSPos  newPair(noVertices,nullptr);
 
       bool match=(*trans).transitionUnit()->compare(graph,vertex,analysis,token,data);
+
+// #ifdef DEBUG_LP
+//       LDEBUG << "Automaton::getMatchingTransitions compare result: " << (match ? "TRUE" : "FALSE");
+// #endif
+
       const GazeteerTransition* gtrans = dynamic_cast<const GazeteerTransition*>((*trans).transitionUnit());
       // TODO:  generalize buildNextTermsList and checkMultiTerms to be able to manage backtrack and backward
       if( gtrans != 0 ) {
@@ -295,9 +307,11 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     return (!matchingTransitions.empty());
   }
   else {
+
 #ifdef DEBUG_LP
-    LDEBUG << "Automaton::getMatchingTransitions: search structure initialized find";
+  LDEBUG << "Automaton::getMatchingTransitions: search structure initialized find";
 #endif
+
     return m_searchStructures[state]->
       findMatchingTransitions2(graph,vertex,limit,searchGraph,analysis,token,data,matchingTransitions);
   }
@@ -544,9 +558,10 @@ push(const LinguisticGraphVertex& vertex,
      AnalysisContent& analysis,
      const LinguisticGraphVertex& limit) {
 
-/*  AULOGINIT;
-  LDEBUG << "Automaton:DFSSTack: pushing " << vertex
-          << ";" << state;*/
+#ifdef DEBUG_LP
+  AULOGINIT;
+  LDEBUG << "Automaton:DFSSTack: pushing " << vertex << ";" << state;
+#endif
 
   if (isLimitVertex(vertex)) {
     return false;
@@ -563,33 +578,52 @@ push(const LinguisticGraphVertex& vertex,
   // look at next vertices (defined by the searchGraph strategy)
   m_searchGraph->findNextVertices(m_graph.getGraph(),vertex);
   LinguisticGraphVertex nextVertex;
+
   while (m_searchGraph->getNextVertex(m_graph.getGraph(),nextVertex)) {
+
+#ifdef DEBUG_LP
+    LDEBUG << "SearchGraph (inside while):";
+    ostringstream oss;
+    output(oss, m_searchGraph, m_graph.getGraph());
+    LDEBUG << oss.str();
+#endif
+
     if (! isEndVertex(nextVertex)) {
+
       std::vector<DFFSPos> matchingTransitions(0);
-//       LDEBUG << "Automaton:get matching transitions from state "
-//              << state << " for vertex " << nextVertex;
+
+#ifdef DEBUG_LP
+      LDEBUG << "Automaton:get matching transitions from state "
+             << state << " for vertex " << nextVertex;
+#endif
+
       if (m_automaton.
           getMatchingTransitions(m_graph,nextVertex,analysis,
                                  m_searchGraph,state,matchingTransitions,limit)) {
 
-/*        if (logger.isDebugEnabled()) {
-          ostringstream oss;
-          std::vector<const Transition*>::const_iterator
-            it=matchingTransitions.begin(),
-            it_end=matchingTransitions.end();
-          oss << "Automaton:DFSSTack: matching transitions = ";
-          for (;it!=it_end;it++) {
-            oss << **it << ";";
-          }
-          LDEBUG << oss.str();
-        }*/
+// #ifdef DEBUG_LP
+//         if (logger.isDebugEnabled()) {
+//           ostringstream oss;
+//           std::vector<DFFSPos>::const_iterator
+//             it=matchingTransitions.begin(),
+//             it_end=matchingTransitions.end();
+//           oss << "Automaton:DFSSTack: matching transitions = ";
+//           for (;it!=it_end;it++) {
+//             oss << *it << ";";
+//           }
+//           LDEBUG << oss.str();
+//         }
+// #endif
+
         tmpStack.push_back(DFSStackElement(matchingTransitions));
       }
-/*      else {
-        LDEBUG << "Automaton:DFSSTack: => no matching transitions"
-              ;
-      }*/
+// #ifdef DEBUG_LP
+//       else {
+//          LDEBUG << "Automaton:DFSSTack: => no matching transitions";
+//       }
+// #endif
     }
+
   }
   // clear search structure for this vertex
   m_searchGraph->clear();
@@ -704,10 +738,10 @@ bool Automaton::testFromState(const Tstate firstState,
                               ConstraintCheckList& checkList,
                               DFSStack& S,
                               const AutomatonControlParams& controlParams) const {
-// #ifdef DEBUG_LP
-//   AULOGINIT;
-//   LDEBUG << "Automaton: testing from state " << firstState;
-// #endif
+#ifdef DEBUG_LP
+  AULOGINIT;
+  LDEBUG << "Automaton: testing from state " << firstState;
+#endif
 
   // store in stack pairs of (automaton transition/graph vertex)
   // (store combinatory of all possible pairs, but if store only
@@ -894,13 +928,13 @@ bool Automaton::testFromState(const Tstate firstState,
 
       // push next vertices
       if (!S.push(vertex,nextState,analysis,limitVertex)) {
-        if (lastTransitionWithThisVertex) {
 // #ifdef DEBUG_LP
-//           LDEBUG << "backtrackDepth sum =" << accumulate(backtrackDepth.begin(), backtrackDepth.end(), 0);
+//           stringstream ss;
+//           for (auto it = backtrackDepth.begin(); it != backtrackDepth.end(); it++)
+//               ss << *it << " ";
+//           LDEBUG << "backtrackDepth = [" << ss.str() << "]";
 // #endif
-          if (accumulate(backtrackDepth.begin(), backtrackDepth.end(), 0) <= 1)
-            return !results.empty();
-        }
+
         backtrack=true;
       }
     }

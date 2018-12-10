@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
 * File        : gazeteerTransition.cpp
 * Author      : Olivier Mesnard (olivier.mesnard@cea.fr)
 * @date       Thu August 04 2015
-* copyright   Copyright (C) 2002-2015 by CEA LIST
+* copyright   Copyright (C) 2002-2018 by CEA LIST
 * Version     : $Id$
 *
 *************************************************************************/
@@ -156,7 +156,7 @@ bool GazeteerTransition::
 matchPath(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         const LinguisticGraphVertex& vertex,
         const LinguisticGraphVertex& limit,
-        SearchGraph* searchGraph,
+        const SearchGraph* searchGraph,
         AnalysisContent& analysis,
         const LinguisticAnalysisStructure::Token* token,
         deque<LinguisticGraphVertex>& vertices,
@@ -185,7 +185,7 @@ matchPath(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         }
         return false;
 }
-  
+
   /* Gazeteer may contains multi-term elements like  */
 /* "managing director","Managing Director","managing editor","managing comitee secretary"... */
 /* From wordSet, we build a list of multiple terms, each with parameter firstSimpleTerm as first simple term */
@@ -198,7 +198,7 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
   AULOGINIT;
   LDEBUG << "GazeteerTransition::buildNextTermsList(" << firstSimpleTerm << ")";
 #endif
-  
+
   // Fill list of list of additional simple terms from list of elements
   std::set<LimaString>::const_iterator it = m_wordSet.lower_bound(firstSimpleTerm);
   if( it == m_wordSet.end() ) {
@@ -213,7 +213,7 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
 #ifdef DEBUG_LP
     LDEBUG << "GazeteerTransition::buildNextTermsList: Examining " << element.toStdString();
 #endif
-    // if element does not start with firstSimpleTerm, there no more possible match 
+    // if element does not start with firstSimpleTerm, there no more possible match
     if( !element.startsWith(firstSimpleTerm) ) {
 #ifdef DEBUG_LP
       LDEBUG << "GazeteerTransition::buildNextTermsList: stop it!: first term not found";
@@ -278,19 +278,19 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
   }
   return( multiTermList.size() > 0 );
 }
-  
+
 bool GazeteerTransition::
 checkMultiTerms( const AnalysisGraph& graph,
                  const LinguisticGraphVertex& position,
                  const LinguisticGraphVertex& limit,
-                 Lima::LinguisticProcessing::Automaton::SearchGraph* searchGraph,
+                 const Lima::LinguisticProcessing::Automaton::SearchGraph* searchGraph,
                  Lima::AnalysisContent& analysis, const vector< vector< Lima::LimaString > >& additionalMultiTermList,
                  stack< deque< LinguisticGraphVertex >, vector< deque< LinguisticGraphVertex > > >& matches
-    ) const 
+    ) const
 {
   LIMA_UNUSED(limit)
   LIMA_UNUSED(analysis)
-               
+
 #ifdef DEBUG_LP
   AULOGINIT;
   LDEBUG << "GazeteerTransition::checkMultiTerms( from " << position << ")";
@@ -313,14 +313,15 @@ checkMultiTerms( const AnalysisGraph& graph,
     triggerMatch.push_back(position);
     termsIt++;
     // init search from position
-    searchGraph->findNextVertices(lGraph, position);
+    std::unique_ptr<SearchGraph> tempSearchGraph(searchGraph->createNew());
+    tempSearchGraph->findNextVertices(lGraph, position);
     // init current position
     LinguisticGraphVertex nextVertex = position;
     // if list is not exhausted
-    
+
     // case of empty list of simple term
     if(termsIt == termsIt_end ) {
-      // Error! 
+      // Error!
 #ifdef DEBUG_LP
       LDEBUG << "GazeteerTransition::checkMultiTerms: list of simple terms is a singleton!";
 #endif
@@ -329,8 +330,8 @@ checkMultiTerms( const AnalysisGraph& graph,
     }
     else {
       // go one step ahead from curentPosition if possible
-      while ( searchGraph->getNextVertex(lGraph, nextVertex )) {
-        const LinguisticGraphVertex& firstVertex = graph.firstVertex(), 
+      while ( tempSearchGraph->getNextVertex(lGraph, nextVertex )) {
+        const LinguisticGraphVertex& firstVertex = graph.firstVertex(),
                 lastVertex = graph.lastVertex();
         if (nextVertex == lastVertex || nextVertex == firstVertex)
 //          return false;
@@ -350,7 +351,7 @@ checkMultiTerms( const AnalysisGraph& graph,
           // Push out_edge is a better if we have to follow the path from the begining ???
           triggerMatch.push_back(nextVertex);
           // stack next step to continue the search
-          searchGraph->findNextVertices(lGraph, nextVertex);
+          tempSearchGraph->findNextVertices(lGraph, nextVertex);
           termsIt++;
           if(termsIt == termsIt_end ) {
 #ifdef DEBUG_LP
@@ -373,11 +374,12 @@ checkMultiTerms( const AnalysisGraph& graph,
       }
     }
   }
+
   if( matches.empty() )
     return false;
   return true;
 }
-     
+
 } // namespace end
 } // namespace end
 } // namespace end
