@@ -77,24 +77,56 @@ int run(int aargc,char** aargv);
 
 int main(int argc, char **argv)
 {
-  QCoreApplication a(argc, argv);
-  QCoreApplication::setApplicationName("analyzeText");
-  QCoreApplication::setApplicationVersion(LIMA_VERSION);
+  try
+  {
+    QCoreApplication a(argc, argv);
+    QCoreApplication::setApplicationName("analyzeText");
+    QCoreApplication::setApplicationVersion(LIMA_VERSION);
 
-  // Task parented to the application so that it
-  // will be deleted by the application.
-  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+    // Task parented to the application so that it
+    // will be deleted by the application.
+    LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
 
-  // This will cause the application to exit when
-  // the task signals finished.
-  QObject::connect(task, &LimaMainTaskRunner::finished, 
-                   &a, &QCoreApplication::exit);
+    // This will cause the application to exit when
+    // the task signals finished.
+    QObject::connect(task, &LimaMainTaskRunner::finished, 
+                    &a, &QCoreApplication::exit);
 
-  // This will run the task from the application event loop.
-  QTimer::singleShot(0, task, SLOT(run()));
+    // This will run the task from the application event loop.
+    QTimer::singleShot(0, task, SLOT(run()));
 
-  return a.exec();
-
+    return a.exec();
+  }
+  catch (const Lima::LimaException& e)
+  {
+#ifdef DEBUG_CD
+    std::cerr << "Catched LimaException:" << e.what() << std::endl;
+    throw;
+#else
+    std::cerr << "analyzeText failed" << std::endl;
+    exit(1);
+#endif
+  }
+  catch (const std::exception& e)
+  {
+#ifdef DEBUG_CD
+    std::cerr << "Catched std::exception:" << e.what() << std::endl;
+    throw;
+#else
+    std::cerr << "analyzeText failed" << std::endl;
+    exit(1);
+#endif
+  }
+  catch (...)
+  {
+#ifdef DEBUG_CD
+    std::cerr << "Catched unknown exception" << std::endl;
+    throw;
+#else
+    std::cerr << "analyzeText failed" << std::endl;
+    exit(1);
+#endif
+  }
 }
 
 
