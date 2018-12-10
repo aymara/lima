@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -23,9 +23,9 @@
  * @date       Mon Oct 11 2004
  * copyright   Copyright (C) 2004 by CEA LIST
  * Project     Automaton
- * 
+ *
  * @brief      definition of functions for template class
- * 
+ *
  ***********************************************************************/
 
 // transitions
@@ -65,7 +65,7 @@ m_otherTransitions(){
 //************************************************************************
 template<typename MapType>
 void clearTransitionSearchStructureMap(MapType& theMap) {
-  typename MapType::iterator 
+  typename MapType::iterator
     it=theMap.begin(),
     it_end=theMap.end();
   for (; it!=it_end; it++) {
@@ -87,7 +87,7 @@ clearMaps() {
   clearTransitionSearchStructureMap(m_posMap);
   clearTransitionSearchStructureMap(m_lemmaMap);
   clearTransitionSearchStructureMap(m_tstatusMap);
-  typename TransitionList::iterator 
+  typename TransitionList::iterator
     oit=m_otherTransitions.begin(),
     oit_end=m_otherTransitions.end();
   for (; oit!=oit_end; oit++) {
@@ -133,12 +133,12 @@ init(const std::vector<TargetType>& l,
     TransitionUnit* transition=(*it).transitionUnit();
 
     TargetType* newTarget=new TargetType(*it);
-    // transition type is not used in target (use only transition properties, 
+    // transition type is not used in target (use only transition properties,
     // suchas constraints, keep, negative etc): to optimize space, it
     // can be replaced by empty star transition (no info)
     // => transition type can be used for debug
     //newTarget->setTransitionUnit(new StarTransition(*transition));
-    
+
     // negative transitions must be in linear search
     if (transition->negative()) {
       m_otherTransitions.push_back(std::make_pair(transition->clone(),newTarget));
@@ -148,55 +148,55 @@ init(const std::vector<TargetType>& l,
     switch(transition->type()) {
     case T_WORD: {
       WordTransition* t=static_cast<WordTransition*>(transition);
-//       LDEBUG << "TransitionSearchStructure: insert WordTransition " 
+//       LDEBUG << "TransitionSearchStructure: insert WordTransition "
 //              << t->printValue();
       m_wordMap.insert(std::make_pair(t->word(),newTarget));
       break;
     }
     case T_POS: {
       PosTransition* t=static_cast<PosTransition*>(transition);
-//       LDEBUG << "TransitionSearchStructure: insert PosTransition " 
+//       LDEBUG << "TransitionSearchStructure: insert PosTransition "
 //              << t->printValue();
       m_posMap.insert(std::make_pair(t->pos(),newTarget));
       break;
     }
     case T_LEMMA: {
       LemmaTransition* t=static_cast<LemmaTransition*>(transition);
-//       LDEBUG << "TransitionSearchStructure: insert LemmaTransition " 
+//       LDEBUG << "TransitionSearchStructure: insert LemmaTransition "
 //              << t->printValue();
       m_lemmaMap.insert(std::make_pair(std::make_pair(t->lemma(),t->partOfSpeech()),newTarget));
       break;
     }
     case T_TSTATUS: {
       TStatusTransition* t=static_cast<TStatusTransition*>(transition);
-//       LDEBUG << "TransitionSearchStructure: insert TstatusTransition " 
+//       LDEBUG << "TransitionSearchStructure: insert TstatusTransition "
 //              << t->printValue();
       m_tstatusMap.insert(std::make_pair(t->status(),newTarget));
       break;
     }
     case T_GAZETEER:
-    case T_STAR: 
-    case T_NUM: 
+    case T_STAR:
+    case T_NUM:
     case T_AND:
     case T_SET:
     case T_ENTITY:
     case T_ENTITY_GROUP:
     case T_DEACCENTUATED: {
-//       LDEBUG << "TransitionSearchStructure: insert other Transition " 
+//       LDEBUG << "TransitionSearchStructure: insert other Transition "
 //              << transition->printValue();
       m_otherTransitions.push_back(std::make_pair(transition->clone(),newTarget));
       break;
     }
     default: {
       AULOGINIT;
-      LERROR << "transition type " << transition->type() 
+      LERROR << "transition type " << transition->type()
              << " not handled in transitionSearchStructure";
     }
     }
   }
 
 //   LDEBUG << m_posMap.size() << " pos stored in posMap";
-  
+
   // initialization of helper members (to avoid doing it for each comparison)
   m_macroAccessor=macroAccessor;
   m_microAccessor=microAccessor;
@@ -211,7 +211,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                         const LinguisticGraphVertex& vertex,
                         AnalysisContent& analysis,
                         const LinguisticAnalysisStructure::Token* token,
-                        const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
+                        const LinguisticAnalysisStructure::MorphoSyntacticData* data,
                         std::vector<const TargetType*>& matchingTransitions) const
 {
 #ifdef DEBUG_LP
@@ -243,14 +243,14 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
   if (! m_posMap.empty()) {
     // get pos in data
-    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator  
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator
       it=data->begin(),
       it_end=data->end();
     for (; it!=it_end; it++) {
 
       // match on macro+micro
       Tpos pos(m_microAccessor->readValue((*it).properties));
-      
+
       std::pair<typename PosMap::const_iterator,typename PosMap::const_iterator>
         posRange=m_posMap.equal_range(pos);
       for (; posRange.first!=posRange.second; posRange.first++) {
@@ -267,7 +267,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
 
   if (! m_lemmaMap.empty()) {
-    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator  
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator
       it=data->begin(),
       it_end=data->end();
     for (; it!=it_end; it++) {
@@ -294,7 +294,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     const LinguisticAnalysisStructure::TStatus& tstatus=token->status();
 /*    if (tstatus==0) {
       AULOGINIT;
-      LWARN << "no tstatus found for fulltoken " 
+      LWARN << "no tstatus found for fulltoken "
         << token->stringForm();
     }
     else {*/
@@ -330,10 +330,10 @@ uint64_t TransitionSearchStructure<TargetType>::
     findMatchingTransitions2(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                             const LinguisticGraphVertex& vertex,
                             const LinguisticGraphVertex& limit,
-                            SearchGraph* searchGraph,
+                            const SearchGraph* searchGraph,
                             AnalysisContent& analysis,
                             const LinguisticAnalysisStructure::Token* token,
-                            const LinguisticAnalysisStructure::MorphoSyntacticData* data, 
+                            const LinguisticAnalysisStructure::MorphoSyntacticData* data,
                             std::vector<std::pair<std::deque<LinguisticGraphVertex>,const TargetType*> >& matchingTransitions) const
 {
 #ifdef DEBUG_LP
@@ -365,10 +365,10 @@ uint64_t TransitionSearchStructure<TargetType>::
       }
     }
   }
-    
+
   if (! m_posMap.empty()) {
     // get pos in data
-    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator  
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator
       it=data->begin(),
       it_end=data->end();
     std::deque<LinguisticGraphVertex> singleton(1,vertex);
@@ -376,7 +376,7 @@ uint64_t TransitionSearchStructure<TargetType>::
 
       // match on macro+micro
       Tpos pos(m_microAccessor->readValue((*it).properties));
-      
+
       std::pair<typename PosMap::const_iterator,typename PosMap::const_iterator>
         posRange=m_posMap.equal_range(pos);
       for (; posRange.first!=posRange.second; posRange.first++) {
@@ -393,7 +393,7 @@ uint64_t TransitionSearchStructure<TargetType>::
   }
 
   if (! m_lemmaMap.empty()) {
-    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator  
+    LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator
       it=data->begin(),
       it_end=data->end();
     std::deque<LinguisticGraphVertex> singleton(1,vertex);
@@ -459,7 +459,7 @@ uint64_t TransitionSearchStructure<TargetType>::
 
   return matchingTransitions.size();
 }
- 
+
 //**********************************************************************
 // output function (for debug puposes)
 //**********************************************************************
@@ -492,7 +492,7 @@ printStructure(std::ostream& os) const
   }
   os << ")" << std::endl;
   os << "Other=" << std::endl;
-  for (typename TransitionList::const_iterator 
+  for (typename TransitionList::const_iterator
          elt=m_otherTransitions.begin();
        elt!=m_otherTransitions.end(); elt++) {
     os << (*elt).first << "=>" << (*elt).second << std::endl;
