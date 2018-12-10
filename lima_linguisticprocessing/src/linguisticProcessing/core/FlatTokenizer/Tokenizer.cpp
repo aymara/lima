@@ -120,7 +120,9 @@ void Tokenizer::init(
     {
       TOKENIZERLOGINIT;
       LERROR << "Automation file not found." << " ResourcesPath=" << path.c_str() << " File=" << filePath.c_str();
-      throw InvalidConfiguration();
+      ::std::ostringstream oss;
+      oss << "Automation file not found." << " ResourcesPath=" << path.c_str() << " File=" << filePath.c_str();
+      throw InvalidConfiguration(oss.str().data());
     }
     m_d->_automaton.setCharChart(m_d->_charChart);
     m_d->_automaton.loadFromFile(fileName.toUtf8().constData());

@@ -77,18 +77,21 @@ namespace AnalysisDumpers
 {
 namespace 
 {
-std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
+struct _c
 {
-  std::ostringstream oss;
-  std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-  asvit = alreadyStoredVertices.begin();
-  asvit_end = alreadyStoredVertices.end();
-  for (; asvit != asvit_end; asvit++)
+  ::std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
   {
-    oss << *asvit << ", ";
+    std::ostringstream oss;
+    //std::set<uint32_t>::const_iterator asvit, asvit_end;
+    std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
+    asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
+    for (; asvit != asvit_end; asvit++)
+    {
+      oss << *asvit << ", ";
+    }
+    return oss.str();
   }
-  return oss.str();
-}
+};
 }
 
 SimpleFactory<MediaProcessUnit,BowDumper> bowDumperFactory(BOWDUMPER_CLASSID);
@@ -256,7 +259,7 @@ LimaStatusCode BowDumper::process(
   ::std::unique_ptr<DumperStream> dstream(initialize(analysis));
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on";
+  LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
 #endif
   writer.writeBoWText(dstream->out(),bowText);
   return SUCCESS_ID;
@@ -499,25 +502,16 @@ Lima::LimaStatusCode BowDumper::addVerticesToBoWText(Lima::StopAnalyze const& st
               //std::set<LinguisticGraphVertex> bowTokenVertices = (*bowItr)->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-              
-// #ifdef DEBUG_LP
-//               std::ostringstream oss;
-//               //std::set<uint32_t>::const_iterator asvit, asvit_end;
-//               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-//               asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-//               for (; asvit != asvit_end; asvit++)
-//               {
-//                 oss << *asvit << ", ";
-//               }
-//               LDEBUG << "BowDumper::addVerticesToBoWText" << v << "added" << elem << "to bowText; alreadyStoredVertices are: " << oss.str();
-// #endif
+#ifdef DEBUG_LP
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << _c.str(alreadyStoredVertices);
+#endif
             }
             if (stopAnalyze)
-	          {
+            {
               DUMPERLOGINIT;
-		          LERROR << "Analyze too long. Stopped in BowDumper";
-		          return TIME_OVERFLOW;
-	          }
+              LERROR << "Analyze too long. Stopped in BowDumper";
+              return TIME_OVERFLOW;
+            }
           }
         }
       }
@@ -589,26 +583,16 @@ Lima::LimaStatusCode BowDumper::addVerticesToBoWText(Lima::StopAnalyze const& st
               std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-            
-// #ifdef DEBUG_LP
-//               std::ostringstream oss;
-//               //std::set<uint32_t>::const_iterator asvit, asvit_end;
-//               std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-//               asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-//               for (; asvit != asvit_end; asvit++)
-//               {
-//                 oss << *asvit << ", ";
-//               }
-//               std::string elem = (*bowItr).second->getIdUTF8String();
-//               LDEBUG << "BowDumper::addVerticesToBoWText for" << v << elem << "; alreadyStoredVertices are:" << oss.str();
-// #endif
+#ifdef DEBUG_LP
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << _c.str(alreadyStoredVertices);
+#endif
             }
             if (stopAnalyze)
-	          {
+            {
               DUMPERLOGINIT;
-		          LERROR << "Analyze too long. Stopped in BowDumper";
-		          return TIME_OVERFLOW;
-	          }
+              LERROR << "Analyze too long. Stopped in BowDumper";
+              return TIME_OVERFLOW;
+            }
           }
         }
       }
@@ -620,11 +604,11 @@ Lima::LimaStatusCode BowDumper::addVerticesToBoWText(Lima::StopAnalyze const& st
 // #endif
     }
     if (stopAnalyze)
-	  {
+    {
       DUMPERLOGINIT;
-		  LERROR << "Analyze too long. Stopped in BowDumper";
-		  return TIME_OVERFLOW;
-	  }
+      LERROR << "Analyze too long. Stopped in BowDumper";
+      return TIME_OVERFLOW;
+    }
   }
   return SUCCESS_ID;
 }
