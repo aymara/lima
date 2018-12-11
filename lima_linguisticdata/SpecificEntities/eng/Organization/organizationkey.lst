@@ -14,5 +14,11 @@ Corp,
 Ltd,
 Pty,
 PLC,
-Industries
+Industries,
+Group,
+Group Inc,
+Group Inc.,
+Group Plc,
+Radio,
+Agency
 )
