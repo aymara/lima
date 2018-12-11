@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -264,9 +264,9 @@ bool HyphenWordAlternatives::isWorthSplitting(
   }
 
   DictionaryEntry dicoEntry(m_dictionary->getEntry(rightPart));
-  if (! dicoEntry.hasLingInfos()) {
+  if (dicoEntry.isEmpty()) {
 #ifdef DEBUG_LP
-    LDEBUG << "isWorthSplitting: has no LingInfos";
+    LDEBUG << "isWorthSplitting: dicoEntry is empty. Don't split.";
 #endif
     return false;
   }
