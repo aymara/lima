@@ -92,6 +92,7 @@ $NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>
 
 # "bla bla", Machin said.
 t_capital_1st::(t_capital_1st|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
+[@FunctionTitle]:[said]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
 t_capital_1st:[said]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
 
 @Pronouns=(
