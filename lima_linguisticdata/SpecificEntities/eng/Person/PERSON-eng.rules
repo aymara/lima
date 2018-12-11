@@ -45,7 +45,7 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 # recognition of person names
 #----------------------------------------------------------------------
 
-use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst
+use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst,speech_verb.lst
 
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -91,9 +91,9 @@ T_A1:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=
 $NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 # "bla bla", Machin said.
-t_capital_1st::(t_capital_1st|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
-[@FunctionTitle]:[said]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
-t_capital_1st:[said]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
+t_capital_1st::(t_capital_1st|T_Amh|$NP|@Initial){0-2} [(@speechVerb .)]:PERSON:
+[@FunctionTitle]:[@speechVerb]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
+t_capital_1st:[@speechVerb]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
 
 @Pronouns=(
 I,
@@ -115,9 +115,10 @@ All,
 t_capital_1st:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
 
 [who]:[<Location.LOCATION>] [,]::NOT_PERSON:
-[said]:[<Location.LOCATION>]::NOT_PERSON:
+[@speechVerb]:[<Location.LOCATION>]::NOT_PERSON:
 [who]:[<Organization.ORGANIZATION>] [,]::NOT_PERSON:
-[said]:[<Organization.ORGANIZATION>]::NOT_PERSON:
+[@speechVerb]:[<Organization.ORGANIZATION>]::NOT_PERSON:
+[@speechVerb]::[<Organization.ORGANIZATION>]:NOT_PERSON:
 [who]:(@Pronouns|@Conjunctions) [,]::NOT_PERSON:
 [who]:t_capital_1st{1-3} [,]::PERSON:
 # [said]:[@Conjunctions?] t_capital_1st{1-2}::PERSON:
