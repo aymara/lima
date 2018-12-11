@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -41,14 +41,14 @@ namespace Automaton {
 /***********************************************************************/
 Transition::Transition():
   m_unit(0),
-  m_nextState(0) 
+  m_nextState(0)
 {}
-  
+
 Transition::Transition(TransitionUnit* unit, Tstate state):
-  m_unit(unit), 
-  m_nextState(state) 
+  m_unit(unit),
+  m_nextState(state)
 {}
-  
+
 Transition::Transition(const Transition& t)
 {
   copy(t);
@@ -60,7 +60,7 @@ Transition::Transition(const Transition& t)
 Transition::~Transition() {
   freeMem();
 }
-  
+
 /***********************************************************************/
 // assignment operator
 /***********************************************************************/
@@ -92,6 +92,10 @@ void Transition::copy(const Transition& t) {
 /***********************************************************************/
 
 ostream& operator << (ostream& os, const Transition& t) {
+  return os << "[" << *(t.transitionUnit()) << "] -> " << t.nextState();
+}
+
+QDebug& operator << (QDebug& os, const Transition& t) {
   return os << "[" << *(t.transitionUnit()) << "] -> " << t.nextState();
 }
 
