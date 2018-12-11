@@ -75,6 +75,6 @@ RUN ninja
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*/src/*-build/*.deb
 
 WORKDIR /usr/share/apps/lima/tests
-RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
-RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
+RUN set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
+RUN set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
 
