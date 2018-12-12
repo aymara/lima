@@ -19,10 +19,10 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions( -DLIMA_COMMONMISC_EXPORTING )
 ########### next target ###############
 
-set (lima-common-misc_MOC_HEADERS
-  )
-
-qt5_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
+# set (lima-common-misc_MOC_HEADERS
+#   )
+# 
+# qt5_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
 
 SET(lima-common-misc_LIB_SRCS 
     AbstractAccessIterators.cpp

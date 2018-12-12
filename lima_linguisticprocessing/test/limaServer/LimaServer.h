@@ -62,7 +62,10 @@ class LimaServer : public QObject
     Q_OBJECT
 
 public:
-    LimaServer( const std::string& limaServerConfigFile,
+    LimaServer( const QString& configPath,
+                const QString& commonConfigFile,
+                const QString& lpConfigFile,
+                const QString& resourcesPath,
                 const std::deque<std::string>& langs,
                 const std::deque<std::string>& pipelines,
                 int port,
@@ -72,14 +75,19 @@ public:
 
 private Q_SLOTS:
     void quit();
-private Q_SLOTS:
     void handleRequest(QHttpRequest* req, QHttpResponse* resp);
+    void slotHandleEndedRequest();
+    void sendResults();
+    void slotResponseDone();
 
 private:
   const std::set<std::string> m_langs;
   QHttpServer *m_server;
   QTimer* m_timer;
-  
+  std::map<QHttpRequest*,QHttpResponse*> m_responses;
+  std::map<QThread*,QHttpRequest*> m_requests;
+  std::map<QHttpResponse*,QThread*>m_threads;
+
 
   std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
 };

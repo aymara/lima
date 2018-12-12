@@ -136,7 +136,7 @@ void clean_up(std::string& str)
 std::string parse_conll(const std::string& file) 
 {
     std::string unit = "analyzeText";
-    std::string unit_path = "~/Lima/Dist/lima-gui/debug/bin/";
+//     std::string unit_path = "~/Lima/Dist/lima-gui/debug/bin/";
 //     chdir(unit_path.c_str());
     std::string cmd = unit + " -l fre " + file;
     //cmd = "cat " + file;
@@ -244,7 +244,11 @@ std::string highlightNamedEntities(
   {
     for (auto& entity : type.second) 
     {
-      boost::replace_all(text, entity, markup(entity,"strong","color:"+colors[type.first]));
+      boost::replace_all(text, 
+                         entity, 
+                         markup(entity, 
+                                "strong", 
+                                "color:"+colors[type.first]));
     }
   }
 

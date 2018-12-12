@@ -30,13 +30,13 @@ endif()
 
 ########### next target ###############
 
-set (lima-common-tools_MOC_HEADERS
-    ../QsLog/QsLogCategories.h
-    LimaFileSystemWatcher.h
-    LimaFileSystemWatcher_p.h
-    LimaMainTaskRunner.h)
-
-qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
+# set (lima-common-tools_MOC_HEADERS
+#     ../QsLog/QsLogCategories.h
+#     LimaFileSystemWatcher.h
+#     LimaFileSystemWatcher_p.h
+#     LimaMainTaskRunner.h)
+# 
+# qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
 
 SET(lima-common-tools_LIB_SRCS 
     ../QsLog/QsLog.cpp
@@ -58,7 +58,7 @@ add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common
 if (LOG4CPP_FOUND)
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 else()
 target_link_libraries(lima-common-tools 

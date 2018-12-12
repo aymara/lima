@@ -42,7 +42,7 @@ target_link_libraries(lima-lp-tgv
   lima-common-datahandler
   lima-common-data 
   lima-common-tools
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
 )
 
 set_target_properties(lima-lp-tgv PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

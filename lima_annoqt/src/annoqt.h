@@ -35,6 +35,7 @@ class QAction;
 class QMenu;
 class AnnotationEditWidget;
 class QListWidget;
+class QListWidgetItem;
 
 class Annoqt:public QMainWindow
 {
@@ -49,8 +50,7 @@ public:
 
 public Q_SLOTS:
 
-  void slotTypesListItemclicked( const
-                             QModelIndex & index );
+  void slotTypesListItemclicked(QListWidgetItem *item);
 
   void removeEntity();
 

@@ -1409,12 +1409,12 @@ ConstraintFunction(language,complement)
 bool ClearEntityFeatures::
 operator()(AnalysisContent& analysis) const
 {
-// get RecognizerData: the data in which the features are stored
-RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-if (recoData!=0) {
-recoData->clearEntityFeatures();
-}
-return true;
+  // get RecognizerData: the data in which the features are stored
+  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData!=0) {
+    recoData->clearEntityFeatures();
+  }
+  return true;
 }
 
 
@@ -1426,30 +1426,29 @@ ConstraintFunction(language,complement)
 {
 }
 bool NormalizeEntity::
-operator()(Automaton::RecognizerMatch& match,
-AnalysisContent& analysis) const
+operator()(Automaton::RecognizerMatch& match, AnalysisContent& analysis) const
 {
-// get stored features in recognizerData
-RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-if (recoData==0) {
-SELOGINIT;
-LERROR << "NormalizeEntity:: Error: missing RecognizerData";
-return false;
-}
-// assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
-//match.features()=recoData->getEntityFeatures();
-auto features = recoData->getEntityFeatures();
-for (auto it = features.begin(); it != features.end(); ++it) {
-  match.features().addFeature(it->getName(),it->getValue());
-  EntityFeatures::iterator featureIt = match.features().findLast(it->getName());
-  if( it->getPosition() != UNDEFPOSITION ) {
-    (*featureIt).setPosition(it->getPosition());
-    (*featureIt).setLength(it->getLength());
+  // get stored features in recognizerData
+  auto recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  if (recoData == nullptr) {
+    SELOGINIT;
+    LERROR << "NormalizeEntity:: Error: missing RecognizerData";
+    return false;
   }
-}
-// must clear the stored features, once they are used (otherwise, will be kept for next entity)
-recoData->clearEntityFeatures();
-return true;
+  // assign stored features to RecognizerMatch features (preserving DEFAULT_ATTIBUTE)
+  //match.features()=recoData->getEntityFeatures();
+  const auto& features = recoData->getEntityFeatures();
+  for (auto it = features.cbegin(); it != features.cend(); ++it) {
+    match.features().addFeature(it->getName(),it->getValue());
+    if( it->getPosition() != UNDEFPOSITION ) {
+      auto featureIt = match.features().findLast(it->getName());
+      (*featureIt).setPosition(it->getPosition());
+      (*featureIt).setLength(it->getLength());
+    }
+  }
+  // must clear the stored features, once they are used (otherwise, will be kept for next entity)
+  recoData->clearEntityFeatures();
+  return true;
 }
 
 } // SpecificEntities

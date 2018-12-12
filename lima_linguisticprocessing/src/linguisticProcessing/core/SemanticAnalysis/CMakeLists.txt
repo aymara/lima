@@ -28,6 +28,7 @@ SET(lima-lp-semanticanalysis_LIB_SRCS
    LimaConllTokenIdMapping.cpp 
    SemanticRelationsXmlLogger.cpp
    ConllDumper.cpp
+#    BowGeneration.cpp
 )
 
 if (${PYTHONLIBS_FOUND})
@@ -60,14 +61,15 @@ target_link_libraries(lima-lp-semanticanalysis
     lima-lp-syntacticanalysis 
     lima-lp-automaton 
     lima-lp-applyrecognizer
+#     lima-lp-analysisdumpers
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
+    ${Qt5_LIBRARIES}
 )
 
 if (${PYTHONLIBS_FOUND})
   target_link_libraries(lima-lp-semanticanalysis 
-    ${PYTHON_LIBRARY}
+    ${PYTHON_LIBRARIES}
   )
 endif()
 

@@ -12,6 +12,7 @@
 #include <common/Data/strwstrtools.h>
 
 namespace Lima {
+  using namespace Common;
 namespace LinguisticProcessing {
 namespace EventAnalysis {
 
@@ -29,11 +30,12 @@ void EventTemplateStructure::addTemplateElement(const std::string& role,
 {
   if (m_structure.find(role)!=m_structure.end()) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "In event " << m_name << ", element '"<< role <<"' is defined twice"  << LENDL;
+    LERROR << "In event " << m_name << ", element '"<< role 
+            <<"' is defined twice";
   }
   else {
-    Common::MediaticData::EntityType type=
-    Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(entityType));
+    auto type = MediaticData::MediaticData::single().getEntityType(
+      QString::fromUtf8(entityType.c_str()));
     m_structure[role]=type;
   }
 }

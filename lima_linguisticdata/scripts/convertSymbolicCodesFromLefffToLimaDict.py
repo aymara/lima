@@ -24,7 +24,8 @@ def loadLefff2LimaCodesDict():
 def convertDictFromLefffToLima(codes):
     p = re.compile(r'^.*\t.*\t\t.*$')
     with open('lefff-ext-lima.dic', 'r') as f:
-        with open('lefff-ext-lima-new.dic', 'w') as of:
+        with open('lefff-ext-lima-new.dic', 'w',
+                  encoding='utf-8', newline='\n') as of:
             for line in f:
                 line = line.rstrip()
                 if not line:

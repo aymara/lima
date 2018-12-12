@@ -16,8 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(lima_gui)
 cmake_minimum_required(VERSION 3.4.0)
-
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_LIMA_GUI" )
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 
@@ -47,8 +46,33 @@ set(CMAKE_PREFIX_PATH
 
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Test Qml Quick QuickTest Gui )
+addQt5Modules(Core Test Qml Quick QuickTest Gui Widgets)
 include_directories(${Qt5_INCLUDES})
+
+get_target_property(QtQml_location Qt5::Qml LOCATION)
+get_target_property(QtQuick_location Qt5::Quick LOCATION)
+get_target_property(QtQuickTest_location Qt5::QuickTest LOCATION)
+get_target_property(QtGui_location Qt5::Gui LOCATION)
+get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtQml_location}
+                ${QtQuick_location}
+                ${QtQuickTest_location}
+                ${QtGui_location}
+                ${QtWidgets_location}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+    ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    ${QtQml_location}
+    ${QtQuick_location}
+    ${QtQuickTest_location}
+    ${QtGui_location}
+    ${QtWidgets_location}
+)
+endif ()
+
 
 add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -84,22 +108,15 @@ add_subdirectory(test)
 
 add_subdirectory(conf)
 ########### packaging ###############
+set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 include(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
 set(CPACK_PACKAGE_NAME "limagui")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Graphical User Interface")
-set(CPACK_PACKAGE_VENDOR "CEA LIST")
-set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
-SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
-
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
 
 # set of commands to define component based packaging
 # notify cpack of component all names

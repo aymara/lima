@@ -26,9 +26,6 @@ endif()
 # -DCMAKE_INSTALL_PREFIX="c:/amose" -DCMAKE_BUILD_TYPE=Release
 # -DCMAKE_INSTALL_PREFIX="c:/amose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-# In debug mode, adds the -DDEBUG_CD to the compiler command line.
-# Allows to build with conditionally built debug output
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_CD -DDEBUG_FACTORIES" )
 set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
@@ -57,15 +54,19 @@ set(CMAKE_PREFIX_PATH
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml Test)
-include_directories(${Qt5_INCLUDES})
+# include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
+get_target_property(QtCore_location Qt5::Core LOCATION)
+get_target_property(QtXml_location Qt5::Xml LOCATION)
+get_target_property(QtTest_location Qt5::Test LOCATION)
+# set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   install(FILES ${QtCore_location}
                 ${QtXml_location}
                 ${QtTest_location}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
 endif ()
 
 add_definitions( -DBOOST_ALL_NO_LIB )
@@ -80,12 +81,19 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
-  string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_RELEASE})
-  string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE})
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG})
+  else()
+    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE})
+  endif()
   install(FILES ${Boost_SYSTEM_LIBRARY_dll}
                 ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR})
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
 endif ()
 
 configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
@@ -106,7 +114,9 @@ add_subdirectory(tools)
 
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake 
+  DESTINATION share/apps/lima/cmake/Modules 
+  COMPONENT devel)
 
 ########### documentation ###############
 
@@ -122,23 +132,30 @@ COMMENT "Generating API documentation with Doxygen" VERBATIM
 endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
+# Specify additional runtime libraries that may not be detected. After 
+# inclusion any detected libraries will be appended to this.
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+  ${QtCore_location}
+  ${QtXml_location}
+  ${QtTest_location}
+  ${Boost_SYSTEM_LIBRARY_dll}
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll})
+
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
+set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+set(MAKE_INSTALL_UCRT_LIBRARIES TRUE)
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+endif()
 include(InstallRequiredSystemLibraries)
 
 # set(CPACK_MONOLITHIC_INSTALL 1)
 set(CPACK_PACKAGE_NAME "limacommon")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Common libraries")
-set(CPACK_PACKAGE_VENDOR "CEA LIST")
-set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_VERSION_MAJOR "${LIMA_VERSION_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
-SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
-
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
 
 # set of commands to define component based packaging
 # notify cpack of component all names
@@ -169,3 +186,4 @@ list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "SendMessage \\\${HWND_BROADCAST
 string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}")
 
 INCLUDE(CPack)
+

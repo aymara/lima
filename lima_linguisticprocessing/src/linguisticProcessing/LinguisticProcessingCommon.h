@@ -106,6 +106,7 @@
 #define EVENTANALYZERLOGINIT LOGINIT("LP::EventAnalyzer")
 #define COMPACTDICTLOGINIT  LOGINIT("LP::CompactDict")
 #define MORPHOLOGINIT  LOGINIT("LP::MorphologicAnalysis")
+#define TFSELOGINIT  LOGINIT("LP::TensorflowSpecificEntities")
 #define AULOGINIT  LOGINIT("LP::Automaton")
 #define PTLOGINIT  LOGINIT("LP::PosTagger")
 #define SELOGINIT  LOGINIT("LP::SpecificEntities")
@@ -119,6 +120,7 @@
 #define SEGMENTATIONLOGINIT LOGINIT("LP::Segmentation");
 #define GEOENTITIESTAGGERLOGINIT LOGINIT("LP::GeoEntities");
 #define SEMANTICANALYSISLOGINIT LOGINIT("LP::SemanticAnalysis");
+#define LIMASERVERLOGINIT LOGINIT("LP::LimaServer");
 
 
 #define L_NONE static_cast<LinguisticCode>(0)

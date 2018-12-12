@@ -73,6 +73,15 @@ void SentenceBoundariesFinder::init(
     m_graph=string("PosGraph");
   }
 
+ try
+  {
+    m_data=unitConfiguration.getParamsValueAtKey("data");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    m_data=string("SentenceBoundaries");
+  }
+
   try
   {
     deque<string> boundariesRestrictions=unitConfiguration.getListsValueAtKey("values");
@@ -137,7 +146,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
 #endif
 
   SegmentationData* sb=new SegmentationData(m_graph);
-  analysis.setData("SentenceBoundaries",sb);
+  analysis.setData(m_data,sb);
   
   if (m_boundaryValues.empty()) {
     while (beginSentence!=lastVx)

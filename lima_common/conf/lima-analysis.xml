@@ -28,11 +28,19 @@
         <entry key="fre" value="main"/>
         <entry key="por" value="main"/>
       </map>
+      <map name="deep">
+        <entry key="eng" value="deep"/>
+        <entry key="fre" value="deep"/>
+      </map>
       <!-- The limaserver pipeline is used from the http limaserver -->
       <map name="limaserver">
         <entry key="eng" value="limaserver"/>
         <entry key="fre" value="limaserver"/>
         <entry key="por" value="limaserver"/>
+      </map>
+      <!-- The limaserver pipeline is used from the http limaserver -->
+      <map name="approxmatcher">
+        <entry key="eng" value="approxmatcher"/>
       </map>
       <!-- The easy pipeline is used in order to produce a result in the Easy campaign format. -->
       <map name="easy">

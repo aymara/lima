@@ -223,17 +223,15 @@ void Logger::Helper::writeToLog()
 
 Logger::Helper::~Helper()
 {
-   try
-   {
-      writeToLog();
-   }
-   catch(std::exception& e)
-   {
-      // you shouldn't throw exceptions from a sink
-      Q_UNUSED(e);
-      assert(!"exception in logger helper destructor");
-      throw;
-   }
+  // writeToLog can throw. Catch its exceptions to avoid throwing from 
+  //destructor
+  try
+  {
+    writeToLog();
+  }
+  catch(...)
+  {
+  }
 }
 
 //! sends the message to all the destinations

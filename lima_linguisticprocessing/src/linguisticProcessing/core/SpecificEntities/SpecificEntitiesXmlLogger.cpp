@@ -372,11 +372,11 @@ outputEntity( AnnotationData* annotationData,
       featureItr!=features_end; featureItr++)
       {
         if( featureItr->getPosition() == UNDEFPOSITION ) {
-	  out << "<" << featureItr->getName();
-	  out << ">";
-	  out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())));
-	  out << "</" << featureItr->getName() << ">";
-	}
+          out << "<" << featureItr->getName();
+          out << ">";
+          out << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())));
+          out << "</" << featureItr->getName() << ">";
+        }
       }
       out << "</normalization>"
       << "</entity>"

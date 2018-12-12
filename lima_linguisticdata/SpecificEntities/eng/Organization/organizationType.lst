@@ -1,0 +1,8 @@
+@organizationType=(
+Organization,
+Bank,
+Banco,
+Caja,
+University,
+Ministry
+)

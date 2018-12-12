@@ -273,6 +273,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   }
   int sentenceNb=0;
+  LinguisticGraphVertex vEndDone = 0;
 
   while (sbItr != sd->getSegments().end() ) //for each sentence
   {
@@ -386,13 +387,16 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     while (!toVisit.empty() && v!=sentenceEnd)
     { //as long as there are vertices in the sentence
       v = toVisit.dequeue();
+      bool notDone(true);
+      if( v == vEndDone )
+        notDone = false;
 
       Token* ft=get(vertex_token,*graph,v);
       MorphoSyntacticData* morphoData=get(vertex_data,*graph, v);
 #ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process PosGraph token" << v;
 #endif
-      if( morphoData!=0 && !morphoData->empty() && ft != 0)
+      if( morphoData!=0 && !morphoData->empty() && ft != 0 && notDone)
       {
         const QString macro=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
         const QString micro=QString::fromUtf8(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyManager("MICRO").getPropertySymbolicValue(morphoData->firstValue(*m_d->m_propertyAccessor)).c_str());
@@ -563,6 +567,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
       if (v == sentenceEnd)
       {
+        vEndDone = v;
         continue;
       }
 #ifdef DEBUG_LP
@@ -638,7 +643,7 @@ QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> ConllDumperPrivate::coll
         result.insert(v, vMatch);
       }
     }
-    LinguisticGraphOutEdgeIt outItr,outItrEnd;bool newSentence(const QString & line);
+    LinguisticGraphOutEdgeIt outItr,outItrEnd;
     for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr!=outItrEnd; outItr++)
     {
       LinguisticGraphVertex next=boost::target(*outItr,*graph);

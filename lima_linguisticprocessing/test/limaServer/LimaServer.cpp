@@ -46,11 +46,12 @@
 // #endif
 
 #include "common/Data/strwstrtools.h"
+#include "common/MediaProcessors/MediaAnalysisDumper.h"
+#include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/traceUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
-#include "common/MediaProcessors/MediaProcessUnit.h"
-#include "common/MediaProcessors/MediaAnalysisDumper.h"
 
 // definition of logger
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
@@ -78,41 +79,39 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::Misc;
 using namespace Lima::LinguisticProcessing;
 
-LimaServer::LimaServer( const std::string& configDir,
-		   const std::deque<std::string>& langs,
-		   const std::deque<std::string>& pipelines,
-		   int port,
-		   QObject *parent,
-		   QTimer* t)
+LimaServer::LimaServer( const QString& configPath,
+                        const QString& commonConfigFile,
+                        const QString& lpConfigFile,
+                        const QString& resourcesPath,
+                        const std::deque<std::string>& langs,
+                        const std::deque<std::string>& pipelines,
+                        int port,
+                        QObject *parent,
+                        QTimer* t)
      : QObject(parent), m_langs(langs.begin(),langs.end()), m_timer(t)
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LDEBUG << "::LimaServer::LimaServer()...";
   
-  // initialize common
-  std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
-  if( resourcesPath.empty() )
-    resourcesPath = "/usr/share/apps/lima/resources/";
-  std::string commonConfigFile("lima-common.xml");
-
   std::ostringstream oss;
   std::ostream_iterator<std::string> out_it (oss,", ");
   std::copy ( langs.begin(), langs.end(), out_it );
   LDEBUG << "LimaServer::LimaServer: init MediaticData("
            << "resourcesPath=" << resourcesPath
-           << "configDir=" << configDir
+           << "configPath=" << configPath
            << "commonConfigFile=" << commonConfigFile
+           << "lpConfigFile=" << lpConfigFile
            << "langs=" << oss.str();
   Common::MediaticData::MediaticData::changeable().init(
-    resourcesPath,
-    configDir,
-    commonConfigFile,
+    resourcesPath.toUtf8().constData(),
+    configPath.toUtf8().constData(),
+    commonConfigFile.toUtf8().constData(),
     langs);
   
   // initialize linguistic processing
+  QString fullLpConfigFile = findFileInPaths(configPath, lpConfigFile);
   std::string clientId("lima-coreclient");
-  std::string lpConfigFile("lima-analysis.xml");
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(fullLpConfigFile.toUtf8().constData());
 
   LDEBUG << "LimaServer::LimaServer: configureClientFactory...";
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
@@ -141,7 +140,7 @@ LimaServer::~LimaServer()
 
 void LimaServer::quit() {
   // free httpserver ?
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   LINFO << "LimaServer::quit()...";
   m_timer->stop();
   m_server->close();
@@ -150,14 +149,77 @@ void LimaServer::quit() {
   app->quit();
 }
 
+
 void LimaServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
-  CORECLIENTLOGINIT;
+  LIMASERVERLOGINIT;
   req->storeBody();
-  LDEBUG << "LimaServer::handleRequest: create AnalysisThread...";
-  AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
-  connect(req,SIGNAL(end()),thread,SLOT(startAnalysis()));
-  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
-  thread->start();
- }
+  LDEBUG << "LimaServer::handleRequest:insert" << resp << " at " << req << "...";
+  // Need to get response from request in slotHandleEndedRequest
+  m_responses.insert(std::pair<QHttpRequest*, QHttpResponse *>(req,resp));
 
+#ifdef MULTITHREAD
+  connect(req,SIGNAL(end()),this,SLOT(slotHandleEndedRequest()));
+  connect(resp,SIGNAL(done()),this,SLOT(slotResponseDone()));
+#else
+#endif
+}
+
+void LimaServer::slotHandleEndedRequest()
+{
+  LIMASERVERLOGINIT;
+  LDEBUG << "LimaServer::slotHandleEndedRequest";
+  QHttpRequest *req = static_cast<QHttpRequest*>(sender());
+  QHttpResponse *resp = m_responses[req];
+  
+  LDEBUG << "LimaServer::slotHandleEndedRequest: create AnalysisThread...";
+  AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
+  // Need to get request from thread in sendResults
+  m_requests.insert(std::pair<QThread*,QHttpRequest*>(thread,req));
+  m_threads.insert(std::pair<QHttpResponse*,QThread*>(resp,thread));
+  
+#ifdef MULTITHREAD
+  connect(thread, SIGNAL(finished()), this, SLOT(sendResults()));
+//  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
+  thread->start();
+  LDEBUG << "LimaServer::slotHandleEndedRequest: my job is done...";
+#else
+#endif
+}
+
+
+void LimaServer::slotResponseDone()
+{
+  QHttpResponse* response = static_cast<QHttpResponse*>(sender());
+  LIMASERVERLOGINIT;
+  LDEBUG << "LimaServer::slotResponseDone";
+  QThread* thread = m_threads[response];
+  if (thread->isRunning())
+    thread->quit();
+  LDEBUG << "LimaServer::slotResponseDone done";
+}
+
+void LimaServer::sendResults()
+{
+  LIMASERVERLOGINIT;
+  QThread* thread = static_cast<QThread*>(sender());
+  LDEBUG << "LimaServer::sendResults for thread" << thread;
+  QHttpRequest *req = m_requests[thread];
+  QHttpResponse *resp = m_responses[req];
+  AnalysisThread* analysisthread = static_cast<AnalysisThread*>(sender());
+  
+  resp->writeHead(analysisthread->response_code());
+  const std::map<QString,QString>& headers = analysisthread->response_header();
+  for( std::map<QString,QString>::const_iterator headerIt = headers.begin() ; headerIt != headers.end() ; headerIt++ ) {
+    resp->setHeader(headerIt->first, headerIt->second);
+  }
+
+  resp->end(analysisthread->response_body());
+  
+  // req->deleteLater();
+  // thread->deleteLater();
+  
+  // TODO: clean: remove element from m_requests and m_responses
+  LDEBUG << "LimaServer::sendResults done";
+
+}

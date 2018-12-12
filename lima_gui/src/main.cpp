@@ -37,7 +37,9 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/tools/FileUtils.h"
 
+#ifdef DEBUG_LIMA_GUI
 #define QT_QML_DEBUG
+#endif
 #include <QtQuick>
 #include <QApplication>
 #include <QIcon>
@@ -59,7 +61,9 @@ using namespace Lima::LinguisticProcessing;
 
 int main(int argc, char *argv[])
 {
-#ifndef DEBUG_LIMA_GUI
+#ifdef DEBUG_LIMA_GUI
+  qputenv("QT_LOGGING_RULES", "*=true");
+#else
   qputenv("QT_LOGGING_RULES", "*=false");
 #endif
   QApplication app(argc, argv);

@@ -139,9 +139,9 @@ Automaton::ConstraintFunction(language,complement),
 m_eventType()
 {
   LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Complement " << complement << LENDL;
+  LDEBUG << "Complement " << complement;
   m_eventType=Common::Misc::limastring2utf8stdstring(complement);
-  LDEBUG << "m_event_type " << m_eventType << LENDL;
+  LDEBUG << "m_event_type " << m_eventType;
 }
 
 bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
@@ -156,7 +156,7 @@ bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
   LDEBUG << "CreateEventTemplate";
   
   // validate current template by creating a new empty template which will be new current template
-  LDEBUG << "setTypeInCurrentTemplate" << m_eventType<<LENDL;
+  LDEBUG << "setTypeInCurrentTemplate" << m_eventType;
   eventData->setTypeInCurrentTemplate(m_eventType);
 
   eventData->addTemplate();

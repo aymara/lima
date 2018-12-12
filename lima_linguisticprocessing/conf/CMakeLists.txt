@@ -21,6 +21,16 @@ set (PosTagger "viterbiPostagger-freq")
 if (SVMTOOL++_FOUND)
   set (PosTagger "SvmToolPosTagger")
 endif ()
+if(TRE_FOUND)
+  configure_file(ApproxNames-modex.xml ApproxNames-modex.xml @ONLY)
+else(TRE_FOUND)
+  configure_file(ApproxNames-modex.empty.xml ApproxNames-modex.xml @ONLY)
+endif(TRE_FOUND)
+
+set (tensorflowSpecificEntities "")
+if (TensorFlow_FOUND AND Eigen_FOUND)
+  set (tensorflowSpecificEntities "         <item value=\"tensorflowSpecificEntities\"/>")
+endif()
 
 configure_file(lima-lp-eng.xml lima-lp-eng.xml @ONLY)
 configure_file(lima-lp-fre.xml lima-lp-fre.xml @ONLY)
@@ -36,6 +46,7 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml 
   lima-lp-tva-por.xml
   lima-server.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/ApproxNames-modex.xml
   lima-dbusserver.xml 
   DESTINATION share/config/lima
   COMPONENT runtime)

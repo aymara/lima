@@ -68,7 +68,10 @@ using namespace Lima::Common::Misc;
 using namespace Lima;
 
 void listunits();
-std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set< std::string >& dumpers, const std::string& dumperId);
+std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, 
+                                    const std::string& fileName, 
+                                    const std::set< std::string >& dumpers, 
+                                    const std::string& dumperId);
 void closeHandlerOutputFile(std::ostream* ofs);
 int run(int aargc,char** aargv);
 
@@ -84,7 +87,8 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &LimaMainTaskRunner::finished, 
+                   &a, &QCoreApplication::exit);
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
@@ -96,10 +100,12 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                      QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                     QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
@@ -126,32 +132,46 @@ int run(int argc,char** argv)
   po::options_description desc("Usage");
   desc.add_options()
   ("help,h", "Display this help message")
-  ("version,v", QString::fromUtf8("Shows LIMA version: %1.").arg(LIMA_VERSION).toUtf8().constData())
+  ("version,v", 
+   QString::fromUtf8("Shows LIMA version: %1.").arg(LIMA_VERSION).toUtf8().constData())
   ("language,l", po::value< std::vector<std::string> >(&languages),
    "supported languages trigrams")
-  ("dumper,d", po::value< std::vector<std::string> >(&dumpersv),
+  ("dumper,d", 
+   po::value< std::vector<std::string> >(&dumpersv),
    "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter),bowh (BowTextHandler),fullxml (SimpleStreamHandler),text (SimpleStreamHandler), event (EventHandler)]. To use any of them, the corresponding dumper must be available in the pipeline configuration. Default is bow but must be set if any other is set")
-  ("output,o", po::value< std::vector<std::string> >(&outputsv),
+  ("output,o", 
+   po::value< std::vector<std::string> >(&outputsv),
    "where to write dumpers output. By default, each dumper writes its results on a file whose name is the input file with a predefined suffix  appended. This option allows to chose another suffix or to write on standard output. Its syntax  is the following: <dumper>:<destination> with <dumper> a  dumper name and destination, either the value 'stdout' or a suffix.")
-  ("mm-core-client", po::value<std::string>(&clientId)->default_value("lima-coreclient"),
-                                                                      "Set the linguistic processing client to use")
+  ("mm-core-client", 
+   po::value<std::string>(&clientId)->default_value("lima-coreclient"),
+   "Set the linguistic processing client to use")
   ("resources-dir", po::value<std::string>(&strResourcesPath),
-                                                                                                                              "Set the directory containing the LIMA linguistic resources")
+   "Set the directory containing the LIMA linguistic resources")
   ("config-dir", po::value<std::string>(&strConfigPath),
-                                                                                                                  "Set the directory containing the (LIMA) configuration files")
-  ("common-config-file", po::value<std::string>(&commonConfigFile)->default_value("lima-common.xml"),
-                                                                                  "Set the LIMA common libraries configuration file to use")
-  ("lp-config-file", po::value<std::string>(&lpConfigFile)->default_value("lima-analysis.xml"),
-                                                                          "Set the linguistic processing configuration file to use")
-  ("pipeline,p", po::value< std::string >(&pipeline)->default_value("main"),
-                                                                    "Set the linguistic analysis pipeline to use")
-  ("input-file", po::value< std::vector<std::string> >(&files),
+   "Set the directory containing the (LIMA) configuration files")
+  ("common-config-file", 
+   po::value<std::string>(&commonConfigFile)->default_value("lima-common.xml"),
+   "Set the LIMA common libraries configuration file to use")
+  ("lp-config-file", 
+   po::value<std::string>(&lpConfigFile)->default_value("lima-analysis.xml"),
+   "Set the linguistic processing configuration file to use")
+  ("pipeline,p", 
+   po::value< std::string >(&pipeline)->default_value("main"),
+   "Set the linguistic analysis pipeline to use")
+  ("input-file", 
+   po::value< std::vector<std::string> >(&files),
    "Set a text file to analyze")
-  ("inactive-units", po::value< std::vector<std::string> >(&vinactiveUnits),
+  ("inactive-units", 
+   po::value< std::vector<std::string> >(&vinactiveUnits),
    "Inactive some process units of the used pipeline")
-  ("availableUnits", "Ask the program to list its known processing units")
-  ("meta", po::value< std::string >(&meta), "Sets metadata values, in the format data1:value1,data2:value2,...")
-  ("split-mode,s", po::value< std::string >(&splitMode)->default_value("none"), "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
+  ("availableUnits", 
+   "Ask the program to list its known processing units")
+  ("meta", 
+   po::value< std::string >(&meta), 
+   "Sets metadata values, in the format data1:value1,data2:value2,...")
+  ("split-mode,s", 
+   po::value< std::string >(&splitMode)->default_value("none"), 
+   "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
   ;
   
   po::positional_options_description p;
@@ -234,31 +254,39 @@ int run(int argc,char** argv)
   }
   std::vector<std::pair<std::string,std::string> > userMetaData;
   // parse 'meta' argument to add metadata
-  if(!meta.empty()) {
+  if(!meta.empty()) 
+  {
     std::string metaString(meta);
     std::string::size_type k=0;
-    do {
+    do 
+    {
       k=metaString.find(",");
       //if (k==std::string::npos) continue;
       std::string str(metaString,0,k);
       std::string::size_type i=str.find(":");
-      if (i==std::string::npos) {
-        std::cerr << "meta argument '"<< str <<"' is not of the form XXX:YYY: ignored" << std::endl;
+      if (i==std::string::npos) 
+      {
+        std::cerr << "meta argument '"<< str 
+                  << "' is not of the form XXX:YYY: ignored" << std::endl;
       }
-      else {
+      else 
+      {
         //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-        userMetaData.push_back(std::make_pair(std::string(str,0,i),std::string(str,i+1)));
+        userMetaData.push_back(std::make_pair(std::string(str,0,i),
+                                              std::string(str,i+1)));
       }
-      if (k!=std::string::npos) {
+      if (k!=std::string::npos) 
+      {
         metaString=std::string(metaString,k+1);
       }
-    }  while (k!=std::string::npos);
+    } 
+    while (k!=std::string::npos);
   }
   
   std::set<std::string> inactiveUnits;
-  for (std::vector<std::string>::const_iterator it = vinactiveUnits.begin(); it != vinactiveUnits.end();it++)
+  for (const auto & inactiveUnit : vinactiveUnits)
   {
-    inactiveUnits.insert(*it);
+    inactiveUnits.insert(inactiveUnit);
   }
   std::deque<std::string> pipelines;
 
@@ -279,7 +307,8 @@ int run(int argc,char** argv)
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+          (configDir + "/" + lpConfigFile.c_str()).toStdString());
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,
@@ -295,7 +324,9 @@ int run(int argc,char** argv)
     return EXIT_FAILURE;
   }
   
-  std::shared_ptr< AbstractLinguisticProcessingClient > client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  std::shared_ptr< AbstractLinguisticProcessingClient > client = 
+      std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
+          LinguisticProcessingClientFactory::single().createClient(clientId));
   
   // Set the handlers
   std::map<std::string, AbstractAnalysisHandler*> handlers;
@@ -309,41 +340,46 @@ int run(int argc,char** argv)
   if (dumpers.find("event") != dumpers.end())
   {
     eventHandler = new EventAnalysis::EventHandler();
-    handlers.insert(std::make_pair("eventHandler", eventHandler));
+    handlers.insert(std::make_pair("eventHandler", 
+                                   eventHandler));
   }
   if (dumpers.find("bow") != dumpers.end())
   {
     bowTextWriter = new BowTextWriter();
-    handlers.insert(std::make_pair("bowTextWriter", bowTextWriter));
+    handlers.insert(std::make_pair("bowTextWriter", 
+                                   bowTextWriter));
   }
   if (dumpers.find("bowh") != dumpers.end())
   {
     bowTextHandler = new BowTextHandler();
-    handlers.insert(std::make_pair("bowTextHandler", bowTextHandler));
+    handlers.insert(std::make_pair("bowTextHandler", 
+                                   bowTextHandler));
   }
   if (dumpers.find("text") != dumpers.end())
   {
     simpleStreamHandler = new SimpleStreamHandler();
-    handlers.insert(std::make_pair("simpleStreamHandler", simpleStreamHandler));
+    handlers.insert(std::make_pair("simpleStreamHandler", 
+                                   simpleStreamHandler));
   }
   if (dumpers.find("fullxml") != dumpers.end())
   {
     fullXmlSimpleStreamHandler = new SimpleStreamHandler();
-    handlers.insert(std::make_pair("fullXmlSimpleStreamHandler", fullXmlSimpleStreamHandler));
+    handlers.insert(std::make_pair("fullXmlSimpleStreamHandler", 
+                                   fullXmlSimpleStreamHandler));
   }
   if (dumpers.find("ltr") != dumpers.end())
   {
     ltrTextHandler= new LTRTextHandler();
-    handlers.insert(std::make_pair("ltrTextHandler", ltrTextHandler));
+    handlers.insert(std::make_pair("ltrTextHandler", 
+                                   ltrTextHandler));
   }
   
   std::map<std::string,std::string> metaData;
   
   metaData["Lang"]=langs[0];
-  for (std::vector<std::pair<std::string,std::string> >::const_iterator
-    it=userMetaData.begin(),it_end=userMetaData.end();
-  it!=it_end; it++) {
-    metaData[(*it).first]=(*it).second;
+  for (const auto& meta : userMetaData) 
+  {
+    metaData[meta.first] = meta.second;
   }
   
   uint64_t i=1;
@@ -352,24 +388,40 @@ int run(int argc,char** argv)
   fileItr++, i++)
   {
     // display the progress of the analysis
-    std::cout << "\rAnalyzing "<< i << "/" << files.size()
-    << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
-    << *fileItr << "'" << std::flush;
+    std::cerr << "\rAnalyzing "<< i << "/" << files.size()
+              << " ("  << std::setiosflags(std::ios::fixed) 
+              << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
+              << *fileItr << "'" << std::flush;
     
     // set the output files (to 0 if not in list)
     // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile
     QString bowOut = outputs.contains("bow")
-        ? (outputs["bow"] == "stdout"? "stdout" : QString::fromUtf8((*fileItr).c_str())+outputs["bow"])
+        ? (outputs["bow"] == "stdout" 
+            ? "stdout" 
+            : QString::fromUtf8((*fileItr).c_str())+outputs["bow"])
         : QString::fromUtf8((*fileItr).c_str())+".bin";
-    std::ostream* bowofs  = openHandlerOutputFile(bowTextWriter, std::string(bowOut.toUtf8().constData()), dumpers, "bow");
+    std::ostream* bowofs  = openHandlerOutputFile(bowTextWriter, 
+                                                  std::string(bowOut.toUtf8().constData()), 
+                                                  dumpers, 
+                                                  "bow");
     QString textOut = outputs.contains("text")
-        ? (outputs["text"] == "stdout"? "stdout" : QString::fromUtf8((*fileItr).c_str())+outputs["text"])
+        ? (outputs["text"] == "stdout"
+            ? "stdout" 
+            : QString::fromUtf8((*fileItr).c_str())+outputs["text"])
         : "stdout";
-    std::ostream* txtofs  = openHandlerOutputFile(simpleStreamHandler, std::string(textOut.toUtf8().constData()), dumpers, "text");
+    std::ostream* txtofs  = openHandlerOutputFile(simpleStreamHandler,
+                                                  std::string(textOut.toUtf8().constData()), 
+                                                  dumpers, 
+                                                  "text");
     QString fullxmlOut = outputs.contains("fullxml")
-        ? (outputs["fullxml"] == "stdout"? "stdout" : QString::fromUtf8((*fileItr).c_str())+outputs["fullxml"])
+        ? (outputs["fullxml"] == "stdout"
+            ? "stdout" 
+            : QString::fromUtf8((*fileItr).c_str())+outputs["fullxml"])
         : "stdout";
-    std::ostream* fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler, std::string(fullxmlOut.toUtf8().constData()), dumpers, "fullxml");
+    std::ostream* fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler,
+                                                      std::string(fullxmlOut.toUtf8().constData()),
+                                                      dumpers, 
+                                                      "fullxml");
     
     // loading of the input file
     TimeUtils::updateCurrentTime();
@@ -400,9 +452,17 @@ int run(int argc,char** argv)
         QString percent = QString::number((lineNum*1.0/nbLines*100),'f',2);
         QString contentText = in.readLine();
         if ( (lineNum % 100) == 0)
-          std::cerr << "\rAnalyzed "<< lineNum << "/" << nbLines << " (" << percent.toUtf8().constData() << "%) lines. At " << file.pos();
+        {
+          std::cerr << "\rAnalyzed "<< lineNum << "/" << nbLines 
+                    << " (" << percent.toUtf8().constData() 
+                    << "%) lines. At " << file.pos();
+        }
         // analyze it
-        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+        client->analyze(contentText, 
+                        metaData, 
+                        pipeline, 
+                        handlers, 
+                        inactiveUnits);
       }
       file.close();
     }
@@ -450,13 +510,18 @@ int run(int argc,char** argv)
     delete ltrTextHandler;
   }
   TIMELOGINIT;
-  LINFO << "Total: " << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) << " ms";
+  LINFO << "Total: " 
+        << TimeUtils::diffTime(beginTime,TimeUtils::getCurrentTime()) 
+        << " ms";
   TimeUtils::logAllCumulatedTime("Cumulated time.");
   
   return SUCCESS_ID;
 }
 
-std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, const std::string& fileName, const std::set<std::string>&dumpers, const std::string& dumperId)
+std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, 
+                                    const std::string& fileName, 
+                                    const std::set<std::string>&dumpers, 
+                                    const std::string& dumperId)
 {
   std::ostream* ofs = 0;
   if (dumpers.find(dumperId)!=dumpers.end())
@@ -467,12 +532,17 @@ std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler, con
     }
     else
     {
-    ofs = new std::ofstream(fileName.c_str(), std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+      ofs = new std::ofstream(fileName.c_str(), 
+                              std::ios_base::out 
+                                | std::ios_base::binary   
+                                | std::ios_base::trunc);
     }
-    if (ofs->good()) {
+    if (ofs->good()) 
+    {
       handler->setOut(ofs);
     }
-    else {
+    else 
+    {
       std::cerr << "failed to open file " << fileName << std::endl;
       delete ofs; ofs = 0;
     }
@@ -494,34 +564,28 @@ void listunits()
 {
     {
       std::cout << "Available resources factories : " << std::endl;
-      std::deque<std::string> ids=AbstractResource::Factory::getRegisteredFactories();
-      for (std::deque<std::string>::const_iterator it=ids.begin();
-                it!=ids.end();
-                it++)
-        {
-          std::cout << "- " << *it << std::endl;
-        }
-        std::cout << std::endl;
+      auto ids = AbstractResource::Factory::getRegisteredFactories();
+      for (const auto& id : ids)
+      {
+        std::cout << "- " << id << std::endl;
+      }
+      std::cout << std::endl;
     }
     {
       std::cout << "Available process units factories : " << std::endl;
-      std::deque<std::string> ids=MediaProcessUnit::Factory::getRegisteredFactories();
-      for (std::deque<std::string>::const_iterator it=ids.begin();
-                it!=ids.end();
-                it++)
-        {
-          std::cout << "- " << *it << std::endl;
-        }
-        std::cout << std::endl;
+      auto ids = MediaProcessUnit::Factory::getRegisteredFactories();
+      for (const auto& id: ids)
+      {
+        std::cout << "- " << id << std::endl;
+      }
+      std::cout << std::endl;
     }
     std::cout << "Available client factories are : " << std::endl;
     {
-      std::deque<std::string> ids=LinguisticProcessingClientFactory::single().getRegisteredFactories();
-      for (std::deque<std::string>::iterator it=ids.begin();
-                it!=ids.end();
-                it++)
+      auto ids = LinguisticProcessingClientFactory::single().getRegisteredFactories();
+      for (const auto& id : ids)
         {
-          std::cout << "- " << *it << std::endl;
+          std::cout << "- " << id << std::endl;
         }
         std::cout << std::endl;
     }

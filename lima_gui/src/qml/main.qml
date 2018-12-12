@@ -241,7 +241,6 @@ Controls1.ApplicationWindow {
 
     SettingsDialog {
       id: settingsDialog
-      parent: app_window.contentItem
     }
 
     Controls2.MenuItem {

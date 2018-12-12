@@ -26,18 +26,17 @@ Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
 
-  -a asan       <(OFF)|ON> compile with adress sanitizer
-  -d debug_msg  <(OFF)|ON>
-  -m mode       <(debug)|release> compile mode
-  -n arch       <(generic)|native> target architecture mode
-  -p boolean    <(true)|false> will build in parallel (make -jn) if true. 
-                Necessary to be able to build with no parallelism as  it currently fail on 
-                some machines.
-  -r resources  <precompiled|(build)> build the linguistic resources or use the
-                precompiled ones
-  -v version    <(val)|rev> version number is set either to the value set by  
-                config files or to the short git sha1
-  -G Generator <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.  
+  -a asan           <(OFF)|ON> compile with adress sanitizer
+  -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
+  -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
+  -n arch           <(generic)|native> target architecture mode
+  -r resources      <precompiled|(build)> build the linguistic resources or use the
+                    precompiled ones
+  -v version        <(val)|rev> version number is set either to the value set by  
+                    config files or to the short git sha1
+  -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
+  -T                Use TensorFlow
+  -P tfsrcpath      <> Path to TensorFlow sources
 EOF
 exit 1
 }
@@ -45,23 +44,27 @@ exit 1
 [ -z "$LIMA_BUILD_DIR" ] && echo "Need to set LIMA_BUILD_DIR" && exit 1;
 [ -z "$LIMA_DIST" ] && echo "Need to set LIMA_DIST" && exit 1;
 
-mode="debug"
 arch="generic"
+WITH_DEBUG_MESSAGES="OFF"
+mode="Debug"
 version="val"
 resources="build"
-parallel="true"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+USE_TF=false
+TF_SOURCES_PATH=""
 
-while getopts ":a:d:m:n:p:r:v:G:" o; do
+while getopts ":d:m:n:r:v:G:a:P:T" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
             [[ "$WITH_ASAN" == "ON" || "$WITH_ASAN" == "OFF" ]] || usage
             ;;
         d)
+            WITH_DEBUG_MESSAGES=${OPTARG}
+            [[ "x$WITH_DEBUG_MESSAGES" == "xON" || "x$WITH_DEBUG_MESSAGES" == "xOFF" ]] || usage
             ;;
         m)
             mode=${OPTARG}
@@ -72,18 +75,14 @@ while getopts ":a:d:m:n:p:r:v:G:" o; do
             [[ "x$arch" == "xnative" || "x$arch" == "xgeneric" ]] || usage
             ;;
         G)
-          CMAKE_GENERATOR=${OPTARG}
-          echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
-          [[     "$CMAKE_GENERATOR" == "Unix"  ||
-                 "$CMAKE_GENERATOR" == "Ninja" ||
-                 "$CMAKE_GENERATOR" == "MSYS"  ||
-                 "$CMAKE_GENERATOR" == "NMake" ||
-                 "$CMAKE_GENERATOR" == "VS"
-          ]] || usage
-          ;;
-        p)
-            parallel=${OPTARG}
-            [[ "$parallel" == "true" || "$parallel" == "false" ]] || usage
+            CMAKE_GENERATOR=${OPTARG}
+            echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
+            [[     "$CMAKE_GENERATOR" == "Unix"  ||
+                   "$CMAKE_GENERATOR" == "Ninja" ||
+                   "$CMAKE_GENERATOR" == "MSYS"  ||
+                   "$CMAKE_GENERATOR" == "NMake" ||
+                   "$CMAKE_GENERATOR" == "VS"
+            ]] || usage
             ;;
         r)
             resources=${OPTARG}
@@ -93,6 +92,12 @@ while getopts ":a:d:m:n:p:r:v:G:" o; do
             version=$OPTARG
             [[ "$version" == "val" ||  "$version" == "rev" ]] || usage
             ;;
+        T)
+            USE_TF=true
+            ;;
+        P)
+            TF_SOURCES_PATH=$OPTARG
+            ;;
         *)
             usage
             ;;
@@ -101,9 +106,9 @@ done
 shift $((OPTIND-1))
 
 if type git && git rev-parse --git-dir; then
-    current_branch=`git rev-parse --abbrev-ref HEAD`
-    current_revision=`git rev-parse --short HEAD`
-    current_timestamp=`git show -s --format=%ct HEAD`
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    current_revision=$(git rev-parse --short HEAD)
+    current_timestamp=$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')
 else
     # use default values
     current_branch="default"
@@ -121,24 +126,20 @@ else
   release="0"
 fi
 
-if [[ $parallel = "true" ]]; then
-  j=
-  if [[ $CMAKE_GENERATOR == "VS" ]]; then
-    j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
-  else
+j="1"
+if [[ $CMAKE_GENERATOR == "VS" ]]; then
+  j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
+elif [[ $CMAKE_GENERATOR == "Unix" ]]; then
   j=`grep -c ^processor /proc/cpuinfo`
-  fi
-  echo "Parallel build on $j processors"
-else
-  echo "Linear build"
-  j="1"
 fi
+echo "Parallel build on $j processors"
 
 # export VERBOSE=1
-cmake_mode=$mode
 if [[ $mode == "Release" ]]; then
+  cmake_mode="Release"
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
 elif [[ $mode == "RelWithDebInfo" ]]; then
+  cmake_mode="RelWithDebInfo"
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 else
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
@@ -195,9 +196,27 @@ else
   pushd $build_prefix/$mode/$current_project
 fi
 
+if [ "$USE_TF" = false ] ; then
+  TF_SOURCES_PATH=""
+else
+  if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
+    TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
+  fi
+
+  echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
+  echo "Copying TensorFlow binaries from /usr/lib/ to $LIMA_DIST/lib"
+
+  mkdir -p $LIMA_DIST/lib
+  if [ -f /usr/lib/libtensorflow-for-lima.so ]; then
+    cp /usr/lib/libtensorflow-for-lima.so $LIMA_DIST/lib/
+  elif [ -f /usr/lib/libtensorflow_cc.so ] && [ -f /usr/lib/libtensorflow_framework.so ]; then
+    cp /usr/lib/libtensorflow_cc.so $LIMA_DIST/lib/
+    cp /usr/lib/libtensorflow_framework.so $LIMA_DIST/lib/
+  fi
+fi
 
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
 
 echo "Running command:"
 echo "$make_cmd"

@@ -29,7 +29,7 @@ target_link_libraries(AnnotationGraphTest0
   lima-common-tools
   lima-lp-annotationgraph
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
 add_test(NAME AnnotationGraphTest0 COMMAND AnnotationGraphTest0)

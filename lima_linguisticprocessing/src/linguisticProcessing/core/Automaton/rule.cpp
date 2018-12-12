@@ -273,12 +273,17 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
 
 #ifdef DEBUG_LP
   AULOGINIT;
+  LDEBUG << "Rule::executeActions: start";
+  if (NULL != result)
+    LDEBUG << "result = " << *result;
+  else
+    LDEBUG << "result = NULL";
 #endif
 /*
- *  for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
+ *  for( std::vector<MatchElement>::iterator matchElmt = result->begin() ;
       matchElmt != result->end() ; matchElmt++ ) {
   }
-*/  
+*/
   // execute actions with 1 argument associated to the rule
   for (std::vector<std::pair<LimaString,Constraint> >::const_iterator actionItr=m_actionsWithOneArgument.begin();
        actionItr!=m_actionsWithOneArgument.end(); actionItr++) {
@@ -296,7 +301,7 @@ bool Rule::executeActions(const LinguisticAnalysisStructure::AnalysisGraph& grap
 #endif
       const ConstraintFunction* functionAddr = actionItr->second.functionAddr();
       //  search for vertex which match same ruleElemntId as actionItr
-      for( std::vector<MatchElement>::iterator matchElmt = result->begin() ; 
+      for( std::vector<MatchElement>::iterator matchElmt = result->begin() ;
           matchElmt != result->end() ; matchElmt++ ) {
 #ifdef DEBUG_LP
         LDEBUG << "Rule::executeActions: check vertex "
