@@ -55,17 +55,10 @@ SET(lima-common-tools_LIB_SRCS
 
 endif()
 add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common-tools_MOC_OUTFILES})
-if (LOG4CPP_FOUND)
 target_link_libraries(lima-common-tools 
   ${BOOST_LIBRARIES} 
   ${Qt5_LIBRARIES}
 )
-else()
-target_link_libraries(lima-common-tools 
-  ${BOOST_LIBRARIES} 
-  ${QT_LIBRARIES}
-)
-endif()
 
 if (LOG4CPP_FOUND)
   target_link_libraries(lima-common-tools  ${LOG4CPP_LIBRARIES})

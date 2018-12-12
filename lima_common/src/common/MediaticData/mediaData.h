@@ -103,11 +103,4 @@ private:
 } // Common
 } // Lima
 
-// Specialize BOOST_STRONG_TYPE limits
-namespace std {
-  template <> inline Lima::Common::MediaticData::ConceptType numeric_limits<Lima::Common::MediaticData::ConceptType>::max() {
-    return Lima::Common::MediaticData::ConceptType(::std::numeric_limits<boost::uint32_t>::max());
-  }
-}
-
 #endif

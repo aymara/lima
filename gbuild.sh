@@ -142,6 +142,7 @@ elif [[ $mode == "RelWithDebInfo" ]]; then
   cmake_mode="RelWithDebInfo"
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 else
+  cmake_mode="Debug"
   SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 fi
 

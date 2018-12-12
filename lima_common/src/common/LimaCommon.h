@@ -435,11 +435,4 @@ private:
 
 } // closing namespace Lima
 
-// Specialize BOOST_STRONG_TYPE limits
-namespace std {
-  template <> inline Lima::LinguisticCode numeric_limits<Lima::LinguisticCode>::max() { return Lima::LinguisticCode(::std::numeric_limits<uint32_t>::max()); }
-  template <> inline Lima::NoParameters numeric_limits<Lima::NoParameters>::max() { return Lima::NoParameters(::std::numeric_limits<char>::max()); }
-  template <> inline Lima::MediaId numeric_limits<Lima::MediaId>::max() { return Lima::MediaId(::std::numeric_limits<uint8_t>::max()); }
-}
-
 #endif // LIMA_MMCOMMONS_H
