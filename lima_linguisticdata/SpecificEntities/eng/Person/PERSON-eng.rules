@@ -45,7 +45,9 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 # recognition of person names
 #----------------------------------------------------------------------
 
-use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst,speech_verb.lst
+use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst,speech_verb.lst,wd_firstname.lst
+
+@AnyFirstname=(@Firstname,@WikidataFirstname)
 
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -56,7 +58,7 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 
 @Initial=(A.,B.,C.,D.,E.,F.,G.,H.,I.,J.,K.,L.,M.,N.,O.,P.,Q.,R.,S.,T.,U.,V.,W.,X.,Y.,Z.)
 
-@Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
+@AnyFirstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 
 @Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
@@ -64,11 +66,11 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 
 @Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@AnyFirstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
 t_capital_1st:[(@Title|@FunctionTitle)]:@Initial? @Tussenvoegsel (T_A1|T_Amh|$NP){1-2}:PERSON:=>NormalizePersonName()
 
