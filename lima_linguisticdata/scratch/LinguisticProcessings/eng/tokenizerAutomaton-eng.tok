@@ -67,6 +67,7 @@
 }
 (IGNORE) {
   - m_eof / END
+  - c_par c_par / DELIMITER (T_PARAGRAPH_BRK)
   - c_b / IGNORE
   - c_Mm c_dot c_Mm c_dot / ACRONYM_2 (T_ACRONYM)
   - c_I c_n c_l_c c_dot / ABBREV_3 (T_ABBREV)
@@ -203,6 +204,7 @@
   - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_quote c_S|c_s c_del|m_line > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV,T_POSSESSIVE)
   - c_quote c_Mm > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV)
+  - c_par c_par = DELIMITER (T_PARAGRAPH_BRK)
   - c_b = IGNORE
   - m_pattern m_pattern = PATTERN (T_PATTERN)
   - c_grave = GRAVE (T_WORD_BRK)
