@@ -45,9 +45,10 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 # recognition of person names
 #----------------------------------------------------------------------
 
-use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst,speech_verb.lst,wd_firstname.lst
+use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst,speech_verb.lst,wd_firstname.lst,wd_lastname.lst
 
 @AnyFirstname=(@Firstname,@WikidataFirstname)
+@AnyLastname=(@WikidataLastname)
 
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -58,6 +59,25 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 
 @Initial=(A.,B.,C.,D.,E.,F.,G.,H.,I.,J.,K.,L.,M.,N.,O.,P.,Q.,R.,S.,T.,U.,V.,W.,X.,Y.,Z.)
 
+# Unk LastName and FirstName Unk
+@WikidataLastname:t_capital_1st:[(and|,)] [@AnyFirstname] [t_capital_1st]:PERSON:
++LinguisticPropertyIs(right.3,"MACRO,NP,eng")
+=>NormalizePersonName()
+
+@WikidataLastname:t_capital_1st:[and|,] [t_capital_1st] [@WikidataLastname]:PERSON:
++LinguisticPropertyIs(right.2,"MACRO,NP,eng")
+=>NormalizePersonName()
+
+@AnyFirstname::t_capital_1st [and|,] [@AnyFirstname] [t_capital_1st]:PERSON:
++LinguisticPropertyIs(right.4,"MACRO,NP,eng")
+=>NormalizePersonName()
+
+@AnyFirstname::t_capital_1st [and|,] [t_capital_1st] [@AnyFirstname]:PERSON:
++LinguisticPropertyIs(right.3,"MACRO,NP,eng")
+=>NormalizePersonName()
+
+
+
 @AnyFirstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 
 @Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
@@ -66,11 +86,17 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 
 @Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
-@AnyFirstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@AnyFirstname:[(@Title|@FunctionTitle)]:t_capital_1st{0-1} [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
 @AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
 @AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+
+@WikidataLastname:(@AnyFirstname|@Initial{1-2})::PERSON:=>NormalizePersonName()
+@WikidataLastname:[(@Title|@FunctionTitle)]::PERSON:=>NormalizePersonName()
+@WikidataLastname:[^t_capital_1st] t_capital_1st:[^t_capital_1st]:PERSON:=>NormalizePersonName()
+
+#@AnyLastname:(@AnyFirstname|@Title|FunctionTitle|@Initial{1-2})::PERSON:=>NormalizePersonName()
 
 t_capital_1st:[(@Title|@FunctionTitle)]:@Initial? @Tussenvoegsel (T_A1|T_Amh|$NP){1-2}:PERSON:=>NormalizePersonName()
 
@@ -82,9 +108,9 @@ t_capital_1st::(@Tussenvoegsel|ben|Ben|bin|Bin) (T_A1|T_Amh|$NP){1-2}:PERSON:
 
 #[@FunctionTitle]:t_capital_1st::PERSON:N_PERSON
 
-t_capital_1st:[@FunctionTitle]:t_capital_1st:PERSON:
+#t_capital_1st:[@FunctionTitle]:(t_capital_1st){1-2}:PERSON:
 
-t_capital_1st:[(@Title|@FunctionTitle)]:(t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
+t_capital_1st:[((@Title|@FunctionTitle)? $ADJ?)?] [(@Title|@FunctionTitle)]:(t_capital_1st):PERSON:=>NormalizePersonName()
 
 # T_A1:[(@Title|@FunctionTitle)]:(T_A1|T_Amh|@Initial){0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -114,7 +140,10 @@ For,
 All,
 )
 
-t_capital_1st:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
+t_capital_1st:[(@FunctionTitle|@Title)]:(t_capital_1st){1-2}:PERSON:
+@AnyFirstname:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
+@WikidataLastname:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
+
 
 [who]:[<Location.LOCATION>] [,]::NOT_PERSON:
 [@speechVerb]:[<Location.LOCATION>]::NOT_PERSON:
@@ -122,9 +151,14 @@ t_capital_1st:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
 [@speechVerb]:[<Organization.ORGANIZATION>]::NOT_PERSON:
 [@speechVerb]::[<Organization.ORGANIZATION>]:NOT_PERSON:
 [who]:(@Pronouns|@Conjunctions) [,]::NOT_PERSON:
-[who]:t_capital_1st{1-3} [,]::PERSON:
-# [said]:[@Conjunctions?] t_capital_1st{1-2}::PERSON:
 
+[who]:t_capital_1st [,]::PERSON:
++LinguisticPropertyIs(left.1,"MACRO,NP,eng")
+
+[who]:t_capital_1st t_capital_1st{1-2} [,]::PERSON:
++LinguisticPropertyIs(left.1,"MACRO,NP,eng")
+
+# [said]:[@Conjunctions?] t_capital_1st{1-2}::PERSON:
 
 [<Location.LOCATION>]:[<Person.PERSON>] [,]::NOT_LOCATION:
 [<Location.LOCATION>]:(t_capital|t_capital_1st) [,]::LOCATION:N_LOCATION
