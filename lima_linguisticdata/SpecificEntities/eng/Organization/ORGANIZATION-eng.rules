@@ -62,6 +62,7 @@ t_capital::[\(] [t_capital_1st{1-3}] [\)]:ORGANIZATION:
 [<Organization.ORGANIZATION>]::[\(] t_capital_1st{1-3} [\)]:ORGANIZATION:
 t_capital_1st:[\(] [<Organization.ORGANIZATION>] [\)]:t_capital_1st{1-3}:ORGANIZATION:
 t_capital_1st:[(The|the)]:t_capital_1st{0-2} [said]:ORGANIZATION:
+International:[(The|the)]:t_capital_1st{1-2}:ORGANIZATION:
 # ORGANIZATION:::ORGANIZATION:
 
 University:(State)?:of <LOCATION> School of (t_capital_1st|t_capital|t_capital_small):ORGANIZATION:
@@ -80,6 +81,8 @@ university::of (@City|@State):ORGANIZATION:
 #university::of (@City|@State) (@City|@State)?:ORGANIZATION:
 @organizationType::(of|de) (t_capital|t_capital_1st){1-3}:ORGANIZATION:
 F.C.::(t_capital|t_capital_1st){1-2}:ORGANIZATION:
+@organizationType:[(The|the)?] t_capital_1st{1-2}::ORGANIZATION:
+@organizationType:[(The|the)?] <LOCATION> <LOCATION>::ORGANIZATION:
 #------------------------------
 # a list of known organizations
 use newspaperKey.lst,organization.lst,../../common/organizationCommon.lst
