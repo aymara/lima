@@ -2,9 +2,11 @@ set encoding=utf8
 using modex Person-modex.xml
 using modex Location-modex.xml
 using modex Organization-modex.xml
+using modex DateTime-modex.xml
 using groups Person
 using groups Location
 using groups Organization
+using groups DateTime
 set defaultAction=>CreateSpecificEntity()
 
 #----------------------------------------------------------------------
@@ -110,15 +112,22 @@ t_capital_1st::(@Tussenvoegsel|ben|Ben|bin|Bin) (T_A1|T_Amh|$NP){1-2}:PERSON:
 
 #t_capital_1st:[@FunctionTitle]:(t_capital_1st){1-2}:PERSON:
 
-t_capital_1st:[((@Title|@FunctionTitle)? $ADJ?)?] [(@Title|@FunctionTitle)]:(t_capital_1st):PERSON:=>NormalizePersonName()
+t_capital_1st:[((@Title|@FunctionTitle)? $ADJ?)?] [(@Title|@FunctionTitle)]:(t_capital_1st):PERSON:
++LinguisticPropertyIs(right.1,"MACRO,NP,eng")
+=>NormalizePersonName()
 
 # T_A1:[(@Title|@FunctionTitle)]:(T_A1|T_Amh|@Initial){0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
 T_A1:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
+[<DateTime.DATE>]::[,]:NOT_PERSON:
+
 $NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
+[<DateTime.DATE>]:[@speechVerb]::NOT_PERSON:
+
 # "bla bla", Machin said.
+[<Organization.ORGANIZATION>]::[@speechVerb]:NOT_PERSON:
 t_capital_1st::(t_capital_1st|T_Amh|$NP|@Initial){0-2} [(@speechVerb .)]:PERSON:
 [@FunctionTitle]:[@speechVerb]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
 t_capital_1st:[@speechVerb]:(t_capital_1st|T_Amh|$NP|@Initial){0-2}:PERSON:
@@ -141,6 +150,8 @@ All,
 )
 
 t_capital_1st:[(@FunctionTitle|@Title)]:(t_capital_1st){1-2}:PERSON:
++LinguisticPropertyIs(right.1,"MACRO,NP,eng")
+
 @AnyFirstname:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
 @WikidataLastname:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
 
