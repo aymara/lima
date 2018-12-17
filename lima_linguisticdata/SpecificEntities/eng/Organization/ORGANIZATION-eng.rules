@@ -19,6 +19,11 @@ include organizationkey.lst
 # newspapers and television
 include newspapersAndMedia.rules
 
+# organization names from Wikidata
+include wd_organization.rules
+
+use wd_organization.lst
+@WikidataOrganization:::ORGANIZATION:
 
 use ../Location/cities.lst,../Location/states.lst,../Location/countriesAndRegions.lst
 
@@ -26,8 +31,12 @@ use ../Location/cities.lst,../Location/states.lst,../Location/countriesAndRegion
 @locationOrg=(
 University,
 International University,
+College,
+Campus,
+School,
 Supreme Court,
 Circuit Court,
+Tribunal,
 Prison,
 Police,
 Police Department
@@ -40,6 +49,8 @@ of,
 the,
 and,
 \&)
+
+@orgPrefix=(National,International,United)
 
 use organizationkey.lst
 @organizationKey:(t_capital_1st|t_capital|t_capital_small|\&){1-5}:(.)?:ORGANIZATION:
@@ -62,7 +73,7 @@ t_capital::[\(] [t_capital_1st{1-3}] [\)]:ORGANIZATION:
 [<Organization.ORGANIZATION>]::[\(] t_capital_1st{1-3} [\)]:ORGANIZATION:
 t_capital_1st:[\(] [<Organization.ORGANIZATION>] [\)]:t_capital_1st{1-3}:ORGANIZATION:
 t_capital_1st:[(The|the)]:t_capital_1st{0-2} [said]:ORGANIZATION:
-International:[(The|the)]:t_capital_1st{1-2}:ORGANIZATION:
+@orgPrefix:[(The|the)]:t_capital_1st{1-2}:ORGANIZATION:
 # ORGANIZATION:::ORGANIZATION:
 
 University:(State)?:of <LOCATION> School of (t_capital_1st|t_capital|t_capital_small):ORGANIZATION:
@@ -71,18 +82,25 @@ University:(State)?:of <LOCATION>:ORGANIZATION:
 Association:(National)?:of (t_capital_1st|t_capital|t_capital_small|\&){1-5}:ORGANIZATION:
 
 @City::(@locationOrg):ORGANIZATION:
-@locationOrg::of? (@City|@State):ORGANIZATION:
-@State::state? (@locationOrg):ORGANIZATION:
-@locationOrg:::ORGANIZATION:
+@locationOrg:@orgPrefix?:of? (@City|@State):ORGANIZATION:
+@State::@orgPrefix? state? @orgPrefix? (@locationOrg):ORGANIZATION:
+@locationOrg:@orgPrefix?::ORGANIZATION:
 
 use organizationType.lst
 
-university::of (@City|@State):ORGANIZATION:
+university:@orgPrefix?:of (@City|@State):ORGANIZATION:
 #university::of (@City|@State) (@City|@State)?:ORGANIZATION:
-@organizationType::(of|de) (t_capital|t_capital_1st){1-3}:ORGANIZATION:
-F.C.::(t_capital|t_capital_1st){1-2}:ORGANIZATION:
-@organizationType:[(The|the)?] t_capital_1st{1-2}::ORGANIZATION:
+@organizationType:@orgPrefix? <Location.LOCATION>::ORGANIZATION:
+@organizationType:@orgPrefix?:(of|de)? <Location.LOCATION>:ORGANIZATION:
+@organizationType:@orgPrefix?:(of|de)? (t_capital|t_capital_1st){1-3}:ORGANIZATION:
+#@organizationType:@orgPrefix?:(t_capital|t_capital_1st){1-2}:ORGANIZATION:
+
+@organizationType:[(The|the)?] @orgPrefix? t_capital_1st{1-2}::ORGANIZATION:
 @organizationType:[(The|the)?] <LOCATION> <LOCATION>::ORGANIZATION:
+
+UN:::ORGANIZATION:
+un:::ORGANIZATION:
+
 #------------------------------
 # a list of known organizations
 use newspaperKey.lst,organization.lst,../../common/organizationCommon.lst
@@ -98,3 +116,6 @@ use AutomobileManu.lst
 
 @organization:::ORGANIZATION:
 @organizationCommon:::ORGANIZATION:
+
+use wd_organization.lst
+@WikidataOrganization:::ORGANIZATION:
