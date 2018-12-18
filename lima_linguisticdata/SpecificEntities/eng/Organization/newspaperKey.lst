@@ -2,7 +2,7 @@
 Times,Herald,Tribune,Journal,Sun,Press,
 Sentinel,Gazette,Record,Star,Register,Courier,
 Reporter,Independent,Inquirer,Telegraph,Telegram,Post,
-Observer,radio,Radio,Television,Daily,Newsroom
+Observer,Radio,Television,Daily,Newsroom
 )
 
 @newspaperTrigger=(
