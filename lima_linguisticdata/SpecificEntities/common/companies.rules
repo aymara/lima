@@ -1845,7 +1845,7 @@ Discount::Bank \& Trust (Co.)?:ORGANIZATION:Discount Bank \& Trust Co.
 Discount-Broker:ConSors:(AG)?:ORGANIZATION:ConSors Discount-Broker AG
 Discount:Israel:Bank (Ltd.)?:ORGANIZATION:Israel Discount Bank Ltd.
 Discount:Union:Co (Ltd.)?:ORGANIZATION:Union Discount Co Ltd.
-Disney:::ORGANIZATION:Walt
+Disney:Walt::ORGANIZATION:Walt Disney
 Disposal:Lo-Cost Waste::ORGANIZATION:Lo-Cost Waste Disposal
 Distillerie::d' Aiguebelle:ORGANIZATION:Distillerie d' Aiguebelle
 Distillers:Highland:(plc)?:ORGANIZATION:Highland Distillers plc
