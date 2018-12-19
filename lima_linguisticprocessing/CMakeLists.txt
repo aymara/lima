@@ -35,10 +35,10 @@ endmacro ()
 
 enable_testing()
 
-include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
+# include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 message("System name is ${CMAKE_SYSTEM_NAME}")
 
-include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
+# include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
 
 SET(optionalLibs)
 message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
@@ -58,19 +58,15 @@ set(CMAKE_PREFIX_PATH
     "$ENV{LIMA_EXTERNALS}"
 )
 
-include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+# include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml XmlPatterns Network Test)
 
 # Search Qt5 optional components
 find_package(Qt5 COMPONENTS DBus)
 if (Qt5DBus_FOUND)
-#   set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
-  set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
+  addQt5Modules(DBus)
 endif()
-#
-# include_directories(${Qt5_INCLUDES})
-# set(Qt5_LIBRARIES "${Qt5_LIBRARIES}")
-# message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
+
 get_target_property(QtNetwork_location Qt5::Network LOCATION)
 get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -313,49 +309,16 @@ install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins
   DESTINATION share/config/lima/plugins
   COMPONENT runtime)
 
-########### documentation ###############
-
-# add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(doc
-${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
-endif(DOXYGEN_FOUND)
-
-########### packaging ###############
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
-
-include(InstallRequiredSystemLibraries)
-
-# set(CPACK_MONOLITHIC_INSTALL 1)
-SET(CPACK_PACKAGE_NAME "limalinguisticprocessing")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA linguistic processing libraries and programs")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
-
-# set of commands to define component based packaging
-# notify cpack of component all names
-set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
-SET(CPACK_COMPONENTS_ALL devel runtime)
-set(CPACK_RPM_COMPONENT_INSTALL ON)
-set(CPACK_DEB_COMPONENT_INSTALL ON)
-
-
-SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
-SET(CPACK_NSIS_MODIFY_PATH "ON")
-SET(CPACK_STRIP_FILES "bin/analyzeText;bin/readBowFile")
-SET(CPACK_SOURCE_STRIP_FILES "")
-if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
-  set(CPACK_DEBIAN_runtime_PACKAGE_SHLIBDEPS ON)
-endif()
-set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-set(CPACK_RPM_PACKAGE_REQUIRES "limacommon-runtime")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "limacommon-runtime")
-
-INCLUDE(CPack)
+# ########### documentation ###############
+# 
+# # add a target to generate API documentation with Doxygen
+# find_package(Doxygen)
+# if(DOXYGEN_FOUND)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+# add_custom_target(doc
+# ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+# WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+# COMMENT "Generating API documentation with Doxygen" VERBATIM
+# )
+# endif(DOXYGEN_FOUND)
+# 

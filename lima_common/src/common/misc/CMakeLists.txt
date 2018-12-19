@@ -19,11 +19,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions( -DLIMA_COMMONMISC_EXPORTING )
 ########### next target ###############
 
-# set (lima-common-misc_MOC_HEADERS
-#   )
-# 
-# qt5_wrap_cpp (lima-common-misc_MOC_OUTFILES ${lima-common-misc_MOC_HEADERS})
-
 SET(lima-common-misc_LIB_SRCS 
     AbstractAccessIterators.cpp
     fsaStringsPool.cpp
@@ -31,19 +26,20 @@ SET(lima-common-misc_LIB_SRCS
   )
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-SET(lima-common-misc_LIB_SRCS
-    ${lima-common-misc_LIB_SRCS}
-    linenoise.c
-  )
-
+  SET(lima-common-misc_LIB_SRCS
+      ${lima-common-misc_LIB_SRCS}
+      linenoise.c
+    )
 endif()
-add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS} ${lima-common-misc_MOC_OUTFILES})
+add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS})
 
 target_link_libraries(lima-common-misc 
   lima-common-data 
 )
 
-set_target_properties(lima-common-misc PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+set_target_properties(lima-common-misc PROPERTIES 
+  VERSION ${LIMA_COMMON_LIB_VERSION} 
+  SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-misc DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime)
 

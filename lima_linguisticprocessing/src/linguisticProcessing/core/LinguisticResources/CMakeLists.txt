@@ -45,9 +45,12 @@ target_link_libraries(lima-lp-linguisticresources
   ${Boost_LIBRARIES}
 )
 
-set_target_properties(lima-lp-linguisticresources PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
+set_target_properties(lima-lp-linguisticresources PROPERTIES 
+  VERSION ${LIMA_LP_LIB_VERSION} 
+  SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticresources DESTINATION ${LIB_INSTALL_DIR}
+install(TARGETS lima-lp-linguisticresources 
+  DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
 
