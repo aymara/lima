@@ -20,7 +20,7 @@ matrix:
       - os: linux
         env: DISTRIB=debian9.4
 
-script: docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg GITHUB_TOKEN="$GITHUB_TOKEN" -f ./continuous_integration/Dockerfile-$DISTRIB .
+script: docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg TRAVIS_BRANCH=$TRAVIS_BRANCH --build-arg GITHUB_TOKEN="$GITHUB_TOKEN" -f ./continuous_integration/Dockerfile-$DISTRIB .
 
 after_success:
 - docker run -t -d travis-ubuntu16.04
