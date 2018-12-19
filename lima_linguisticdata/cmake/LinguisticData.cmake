@@ -480,10 +480,10 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
+     ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-analysis.xml
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
     COMMENT "create config env for specific entities rules (lima-analysis.xml)"
     VERBATIM
   )
@@ -491,10 +491,10 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
+     ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
     DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common.xml
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
     COMMENT "create config env for specific entities rules (lima-common.xml)"
     VERBATIM
   )
@@ -531,10 +531,10 @@ macro (SPECIFICENTITIESCONFIGENV _lang)
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-common-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
     COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
     VERBATIM
   )
@@ -542,10 +542,10 @@ macro (SPECIFICENTITIESCONFIGENV _lang)
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
     DEPENDS
-      ${CMAKE_INSTALL_PREFIX}/share/config/lima/lima-lp-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
     COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
     VERBATIM
   )
