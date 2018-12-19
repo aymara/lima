@@ -156,16 +156,19 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
   make_install="make install"
+  make_package="make package"
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja"
   make_test=""
   make_install="ninja install"
+  make_package="ninja package"
   generator="Ninja"
 elif [[ $CMAKE_GENERATOR == "MSYS" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
   make_install="make install"
+  make_package="make package"
   generator="MSYS Makefiles"
 elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
@@ -219,9 +222,9 @@ fi
 echo "Launching cmake from $PWD"
 cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
 
-echo "Running command:"
+echo "Running make command:"
 echo "$make_cmd"
-eval $make_cmd
+eval $make_cmd && eval $make_test && eval $make_install && $make_package
 result=$?
 
 #exit $result

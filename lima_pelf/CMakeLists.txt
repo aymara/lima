@@ -5,7 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 
-include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
+# include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 
 
 cmake_policy(SET CMP0017 NEW)
@@ -75,7 +75,7 @@ IF(SVMTOOL++_FOUND)
   link_directories($ENV{LIMA_EXTERNALS}/lib)
 ENDIF(SVMTOOL++_FOUND)
 
-include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+# include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 addQt5Modules(Core Xml XmlPatterns Gui Widgets)
@@ -149,29 +149,16 @@ add_subdirectory(commands)
 ########### install files ###############
 # install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
-########### documentation ###############
-
-# add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(doc
-${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
-endif(DOXYGEN_FOUND)
-
-########### packaging ###############
-INCLUDE(InstallRequiredSystemLibraries)
-
-set(CPACK_MONOLITHIC_INSTALL 1)
-SET(CPACK_PACKAGE_NAME "limapelf")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA performance evaluation framework")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
-SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
-SET(CPACK_SOURCE_STRIP_FILES "")
-set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-INCLUDE(CPack)
+# ########### documentation ###############
+# 
+# # add a target to generate API documentation with Doxygen
+# find_package(Doxygen)
+# if(DOXYGEN_FOUND)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+# add_custom_target(doc
+# ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+# WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+# COMMENT "Generating API documentation with Doxygen" VERBATIM
+# )
+# endif(DOXYGEN_FOUND)
+# 

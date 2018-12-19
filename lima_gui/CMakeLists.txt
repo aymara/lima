@@ -21,10 +21,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 
 include(GNUInstallDirs)
-include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
+# include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 message("System name is ${CMAKE_SYSTEM_NAME}")
 
-include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
+# include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
 
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
@@ -45,7 +45,7 @@ set(CMAKE_PREFIX_PATH
 
 
 add_definitions(-D QT_NO_KEYWORDS)
-include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+# include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Test Qml Quick QuickTest Gui Widgets)
 include_directories(${Qt5_INCLUDES})
 
@@ -107,33 +107,4 @@ add_subdirectory(src)
 add_subdirectory(test)
 
 add_subdirectory(conf)
-########### packaging ###############
-set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
-include(InstallRequiredSystemLibraries)
-
-# set(CPACK_MONOLITHIC_INSTALL 1)
-set(CPACK_PACKAGE_NAME "limagui")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Graphical User Interface")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
-
-# set of commands to define component based packaging
-# notify cpack of component all names
-set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
-SET(CPACK_COMPONENTS_ALL devel runtime)
-set(CPACK_RPM_COMPONENT_INSTALL ON)
-set(CPACK_DEB_COMPONENT_INSTALL ON)
-
-SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
-SET(CPACK_NSIS_MODIFY_PATH "ON")
-SET(CPACK_STRIP_FILES "")
-SET(CPACK_SOURCE_STRIP_FILES "")
-if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
-  set(CPACK_DEBIAN_runtime_PACKAGE_SHLIBDEPS ON)
-endif()
-set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-
-INCLUDE(CPack)
-
 
