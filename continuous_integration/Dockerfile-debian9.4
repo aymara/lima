@@ -7,6 +7,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
+ARG BRANCH
 ARG GITHUB_TOKEN
 ARG JOB_NUMBER 
 ARG LIMA_DISABLE_FSW_TESTING
@@ -39,7 +40,7 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 
 
 RUN mkdir -p /src/
-RUN git clone -v https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+RUN git clone -v --branch=$BRANCH https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
