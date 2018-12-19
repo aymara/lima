@@ -23,16 +23,17 @@
 if ($main::h || $main::help) {
     print <<EOF;
 transcode symbolic codes to numeric
-usage transcode.pl code-xxx.xml symbolicCode-xxx.xml rules
+usage transcode.pl /path/to/convertSymbolicCodes code-xxx.xml symbolicCode-xxx.xml rules
 EOF
     exit;
 }
 
 use strict;
 
-die "need two files (see -help)" unless @ARGV>1;
+die "need convertSymbolicCodes path and two files (see -help)" unless @ARGV>2;
 
 my %conv;
+my $convertSymbolicCodes=shift @ARGV
 my $codeFile=shift @ARGV;
 my $rulesFile=pop @ARGV;
 
@@ -51,7 +52,7 @@ close(FIN);
 
 sub getCodeConversion {
     my ($codeFile,@symbCodeFiles)=@_;
-    if (!open(FCONV,"convertSymbolicCodes --code=$codeFile ".
+    if (!open(FCONV,"$convertSymbolicCodes --code=$codeFile ".
 	      join(" ",@symbCodeFiles)." |")) {
 	print STDERR "cannot get code conversion: $!\n";
 	exit(1);
