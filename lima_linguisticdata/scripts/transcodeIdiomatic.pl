@@ -33,7 +33,7 @@ use strict;
 die "need convertSymbolicCodes path and two files (see -help)" unless @ARGV>2;
 
 my %conv;
-my $convertSymbolicCodes=shift @ARGV
+my $convertSymbolicCodes=shift @ARGV;
 my $codeFile=shift @ARGV;
 my $rulesFile=pop @ARGV;
 
