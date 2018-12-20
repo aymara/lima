@@ -19,7 +19,7 @@ file (GLOB SYMBOLICCODESENG ${PROJECT_SOURCE_DIR}/analysisDictionary/eng/code/sy
 add_custom_command(
   OUTPUT idiomaticExpressions-eng.rules
   COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.txt > idioms-eng.grace
-  COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${CMAKE_BINARY_DIR}/lima_linguistiprocessing/tools/common/convertSymbolicCodes ${PROJECT_SOURCE_DIR}/analysisDictionary/eng/code/code-eng.xml ${SYMBOLICCODESENG} idioms-eng.grace > idiomaticExpressions-eng.rules
+  COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/tools/common/convertSymbolicCodes ${PROJECT_SOURCE_DIR}/analysisDictionary/eng/code/code-eng.xml ${SYMBOLICCODESENG} idioms-eng.grace > idiomaticExpressions-eng.rules
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.txt
     ${SYMBOLICCODESENG}

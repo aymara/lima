@@ -21,7 +21,7 @@ else()
   set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
 endif()
 
-set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing/core/SpecificEntities")
 set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
 
 ############
@@ -477,14 +477,18 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     VERBATIM
   )
   add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
+     ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
-    COMMENT "create config env for specific entities rules (lima-analysis.xml)"
+    COMMENT "create config env for specific entities rules (log4cpp.properties and lima-analysis.xml)"
     VERBATIM
   )
   add_custom_command(
@@ -498,14 +502,40 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     COMMENT "create config env for specific entities rules (lima-common.xml)"
     VERBATIM
   )
+  add_custom_command(
+    OUTPUT 
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-eng.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-fre.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-por.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-eng.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-eng.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-fre.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-fre.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-por.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-por.xml
+    DEPENDS
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-eng.xml
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-fre.xml
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-por.xml
+    COMMENT "create config env for specific entities rules (lima-lp-*.xml)"
+    VERBATIM
+  )
 
   # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
   # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
   add_custom_target(
     rules-configEnv
     ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-eng.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-fre.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-por.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
