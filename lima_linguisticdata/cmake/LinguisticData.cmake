@@ -340,6 +340,7 @@ endmacro (IDIOMATICENTITIES _lang)
 # Specific Entities Exec Environment
 
 macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
+  message("In macro SPECIFICENTITIES_GENERIC_CONFIGENV")
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
