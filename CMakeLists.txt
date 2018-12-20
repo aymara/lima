@@ -56,6 +56,10 @@ add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
 addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns Network)
 
+include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
+
+SPECIFICENTITIES_GENERIC_CONFIGENV()
+
 macro (ADD_DLL_TO_PATH _lib)
     message("ADD_DLL_TO_PATH ${_lib}")
     if(WIN32)
