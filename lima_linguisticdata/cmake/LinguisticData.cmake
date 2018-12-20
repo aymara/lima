@@ -322,7 +322,8 @@ macro (IDIOMATICENTITIES _lang)
     DEPENDS idiomaticExpressions-${_lang}.bin )
     
   add_dependencies(rules-idiom-${_lang} 
-    rules-${_lang}-execEnv)
+    rules-${_lang}-execEnv
+    rules-${_lang}-configEnv)
   # add the link between the current target and its execution environment dependencies
 
   install(
@@ -529,7 +530,7 @@ macro (SPECIFICENTITIESCONFIGENV _lang)
   # complete configuration files (lima-lp-<lang>.xml, <group>-modex.xml...)
   # Many macro could be simplified if the dependencies of these tools
   # could be reduced to really usefull ones.
-
+  message("SPECIFICENTITIESCONFIGENV ${_lang}")
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
