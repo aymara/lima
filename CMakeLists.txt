@@ -62,16 +62,17 @@ SPECIFICENTITIES_GENERIC_CONFIGENV()
 
 macro (ADD_DLL_TO_PATH _lib)
     message("ADD_DLL_TO_PATH ${_lib}")
+    message("Will copy ${CMAKE_CURRENT_BINARY_DIR}/${_lib}.dll to ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll")
     if(WIN32)
       add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
         COMMAND ${CMAKE_COMMAND} -E copy 
-          ${_lib}.dll
+          ${CMAKE_CURRENT_BINARY_DIR}/${_lib}.dll
           ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
         DEPENDS
           ${_lib}
-        COMMENT "Add ${_lib} DLL to execEnv"
+        COMMENT "Copy ${CMAKE_CURRENT_BINARY_DIR}/${_lib}.dll to ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll"
         VERBATIM
       )
       add_custom_target(
