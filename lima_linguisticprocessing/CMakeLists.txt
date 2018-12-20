@@ -27,6 +27,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "${_plugin}\n")
   add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
+  ADD_DLL_TO_PATH(${_plugin})
+
 endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows

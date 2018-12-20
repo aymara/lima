@@ -44,6 +44,8 @@ target_link_libraries(lima-common
   lima-common-data 
 )
 
+ADD_DLL_TO_PATH(lima-common)
+
 set_target_properties(lima-common PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 
 install(TARGETS lima-common DESTINATION ${LIB_INSTALL_DIR}

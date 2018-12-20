@@ -30,6 +30,8 @@ SET(lima-common-xmlconfigurationfiles_LIB_SRCS
 
 add_library(lima-common-xmlconfigurationfiles SHARED ${lima-common-xmlconfigurationfiles_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-xmlconfigurationfiles)
+
 target_link_libraries(lima-common-xmlconfigurationfiles 
   lima-common-data 
 )

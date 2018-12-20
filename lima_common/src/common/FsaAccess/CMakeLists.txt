@@ -36,6 +36,8 @@ SET(lima-common-fsaaccess_LIB_SRCS
 
 add_library(lima-common-fsaaccess SHARED ${lima-common-fsaaccess_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-fsaaccess)
+
 target_link_libraries(lima-common-fsaaccess 
   lima-common-misc
 )

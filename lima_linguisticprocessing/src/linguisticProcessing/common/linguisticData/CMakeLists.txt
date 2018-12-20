@@ -25,6 +25,8 @@ SET(lima-lp-linguisticdata_LIB_SRCS
 )
 
 add_library(lima-lp-linguisticdata SHARED ${lima-lp-linguisticdata_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-linguisticdata)
+
 
 target_link_libraries(lima-lp-linguisticdata 
   lima-lp-propertycode 

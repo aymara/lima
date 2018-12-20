@@ -25,6 +25,8 @@ set(lima-lp-lineartextrepresentation_LIB_SRCS
 )
 
 add_library(lima-lp-lineartextrepresentation SHARED ${lima-lp-lineartextrepresentation_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-lineartextrepresentation)
+
 
 target_link_libraries(lima-lp-lineartextrepresentation lima-lp-bagofwords)
 

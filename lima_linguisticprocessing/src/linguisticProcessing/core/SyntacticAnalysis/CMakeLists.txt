@@ -46,6 +46,7 @@ SET(lima-lp-syntacticanalysis_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-syntacticanalysis)
+ADD_DLL_TO_PATH(lima-lp-syntacticanalysis)
 
 target_link_libraries(lima-lp-syntacticanalysis 
     lima-common-data 

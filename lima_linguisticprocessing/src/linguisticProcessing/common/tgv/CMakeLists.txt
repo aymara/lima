@@ -28,6 +28,8 @@ SET(lima-lp-tgv_LIB_SRCS
 )
 
 add_library(lima-lp-tgv SHARED ${lima-lp-tgv_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-tgv)
+
 
 target_link_libraries(lima-lp-tgv 
   lima-lp-misc  

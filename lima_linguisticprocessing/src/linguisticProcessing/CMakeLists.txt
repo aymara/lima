@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
 add_subdirectory(common)
 add_subdirectory(client)
 add_subdirectory(core)
@@ -26,6 +27,8 @@ add_library(lima-linguisticprocessing SHARED
   limaSimpleClient.cpp
   limaSimpleClientDelegate.cpp
 )
+ADD_DLL_TO_PATH(lima-linguisticprocessing)
+
 target_link_libraries(lima-linguisticprocessing
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation

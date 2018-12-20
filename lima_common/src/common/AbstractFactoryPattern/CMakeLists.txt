@@ -29,6 +29,8 @@ add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
 
 target_link_libraries(lima-common-factory lima-common-tools)
 
+ADD_DLL_TO_PATH(lima-common-factory)
+
 set_target_properties(lima-common-factory PROPERTIES 
   VERSION ${LIMA_COMMON_LIB_VERSION} 
   SOVERSION ${LIMA_COMMON_LIB_SOVERSION})

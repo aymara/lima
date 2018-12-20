@@ -56,6 +56,32 @@ add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
 addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns Network)
 
+macro (ADD_DLL_TO_PATH _lib)
+    message("ADD_DLL_TO_PATH ${_lib}")
+    if(WIN32)
+      add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
+        COMMAND ${CMAKE_COMMAND} -E copy 
+          ${_lib}.dll
+          ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
+        DEPENDS
+          ${_lib}
+        COMMENT "Add ${_lib} DLL to execEnv"
+        VERBATIM
+      )
+      add_custom_target(
+        ${_lib}_dll
+        ALL
+        DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
+      )
+      add_dependencies(rules-configEnv ${_lib}_dll)
+
+      set(ENV{PATH} "$ENV{PATH};${CMAKE_BINARY_DIR}/execEnv/lib")
+
+    endif()
+endmacro()
+
 include_directories(
   ${CMAKE_BINARY_DIR}/lima_common 
   ${CMAKE_BINARY_DIR}/lima_common/src

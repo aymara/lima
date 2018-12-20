@@ -26,6 +26,7 @@ SET(lima-common-datahandler_LIB_SRCS
 )
 
 add_library(lima-common-datahandler SHARED ${lima-common-datahandler_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-common-datahandler)
 
 target_link_libraries(lima-common-datahandler
   lima-common-data

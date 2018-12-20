@@ -31,6 +31,8 @@ SET(lima-lp-dictionary_LIB_SRCS
 )
 
 add_library(lima-lp-dictionary SHARED ${lima-lp-dictionary_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-dictionary)
+
 
 target_link_libraries(lima-lp-dictionary lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph
 )

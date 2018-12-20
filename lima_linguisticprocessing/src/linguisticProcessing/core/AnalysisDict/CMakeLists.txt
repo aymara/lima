@@ -46,6 +46,8 @@ target_link_libraries(lima-lp-analysisdict
   ${Qt5_LIBRARIES}
 )
 
+ADD_DLL_TO_PATH(lima-lp-analysisdict)
+
 set_target_properties(lima-lp-analysisdict PROPERTIES 
                       VERSION ${LIMA_LP_LIB_VERSION} 
                       SOVERSION ${LIMA_LP_LIB_SOVERSION})

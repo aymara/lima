@@ -27,6 +27,8 @@ SET(lima-lp-client_LIB_SRCS
 )
 
 add_library(lima-lp-client SHARED ${lima-lp-client_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-client)
+
 
 target_link_libraries(lima-lp-client
   lima-common-factory 

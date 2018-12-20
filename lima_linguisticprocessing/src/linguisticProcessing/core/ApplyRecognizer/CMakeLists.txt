@@ -27,6 +27,7 @@ SET(lima-lp-applyrecognizer_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-applyrecognizer)
+ADD_DLL_TO_PATH(lima-lp-applyrecognizer)
 
 target_link_libraries(lima-lp-applyrecognizer lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-automaton lima-lp-textsegmentation lima-lp-linguisticanalysisstructure
 )
