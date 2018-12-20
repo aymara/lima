@@ -159,7 +159,7 @@ void DynamicLibrariesManager::addSearchPathes(QString searchPathes)
   ABSTRACTFACTORYPATTERNLOGINIT;
 #endif
   QStringList list = searchPathes.replace("\\","/")
-                                    .split(QRegularExpression("[;]"), 
+                                    .split(QRegularExpression("[:;]"), 
                                           QString::SkipEmptyParts);
   for(auto it = list.begin(); it!=list.end();++it) 
   {

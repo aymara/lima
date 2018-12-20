@@ -38,6 +38,8 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
   LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
+  Common::DynamicLibrariesManager::changeable().addSearchPathes(configDirs);
+
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
   
