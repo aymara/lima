@@ -34,7 +34,6 @@ SET(lima-lp-textsegmentation_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-textsegmentation)
-ADD_DLL_TO_PATH(lima-lp-textsegmentation)
 
 target_link_libraries(lima-lp-textsegmentation 
   lima-lp-linguisticprocessors 

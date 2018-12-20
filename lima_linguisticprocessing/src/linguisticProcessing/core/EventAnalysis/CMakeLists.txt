@@ -47,7 +47,6 @@ SET(lima-lp-eventanalyzer_LIB_SRCS EventDataDumper.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-eventanalyzer)
-ADD_DLL_TO_PATH(lima-lp-eventanalyzer)
 
 target_link_libraries(lima-lp-eventanalyzer
   lima-common-factory

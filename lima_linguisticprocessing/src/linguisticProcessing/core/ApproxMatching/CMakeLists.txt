@@ -26,7 +26,6 @@ SET(lima-lp-approxstringmatching_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-approxstringmatching)
-ADD_DLL_TO_PATH(lima-lp-approxstringmatching)
 
 target_link_libraries(lima-lp-approxstringmatching
     lima-common-factory

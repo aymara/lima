@@ -29,7 +29,6 @@ SET(lima-lp-specificentities_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-specificentities)
-ADD_DLL_TO_PATH(lima-lp-specificentities)
 
 target_compile_definitions(lima-lp-specificentities PRIVATE "-DLIMA_SPECIFICENTITIES_EXPORTING")
 
@@ -55,7 +54,6 @@ SET(lima-lp-se-datetime_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-se-datetime)
-ADD_DLL_TO_PATH(lima-lp-se-datetime)
 
 target_compile_definitions(lima-lp-se-datetime PRIVATE "-DLIMA_SPECIFICENTITIES_DATETIME_EXPORTING")
 
@@ -73,7 +71,6 @@ SET(lima-lp-se-number_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-se-number)
-ADD_DLL_TO_PATH(lima-lp-se-number)
 
 target_compile_definitions(lima-lp-se-number PRIVATE "-DLIMA_SPECIFICENTITIES_NUMBER_EXPORTING")
 
@@ -90,7 +87,6 @@ SET(lima-lp-se-person_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-se-person)
-ADD_DLL_TO_PATH(lima-lp-se-person)
 
 target_compile_definitions(lima-lp-se-person PRIVATE "-DLIMA_SPECIFICENTITIES_PERSON_EXPORTING")
 
