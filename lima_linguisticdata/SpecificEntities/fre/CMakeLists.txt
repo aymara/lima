@@ -16,8 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 # SPECIFICENTITIESEXECENV(fre)
 
-SPECIFICENTITIESCONFIGENV(fre)
-
 add_subdirectory(resources)
 add_subdirectory(Numex)
 add_subdirectory(DateTime)

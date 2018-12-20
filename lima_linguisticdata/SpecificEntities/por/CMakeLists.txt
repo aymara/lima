@@ -16,8 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 # SPECIFICENTITIESEXECENV(por)
 
-SPECIFICENTITIESCONFIGENV(por)
-
 add_subdirectory(resources)
 add_subdirectory(Numex)
 add_subdirectory(DateTime)

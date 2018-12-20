@@ -323,7 +323,7 @@ macro (IDIOMATICENTITIES _lang)
     
   add_dependencies(rules-idiom-${_lang} 
     rules-${_lang}-execEnv
-    rules-${_lang}-configEnv)
+  )
   # add the link between the current target and its execution environment dependencies
 
   install(
@@ -333,12 +333,6 @@ macro (IDIOMATICENTITIES _lang)
     
 endmacro (IDIOMATICENTITIES _lang)
 
-###############
-#
-# LIMA_GENERIC_CONFIGENV
-#
-#
-####################
 # Specific Entities Exec Environment
 
 macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
@@ -525,12 +519,15 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   )
 endmacro (SPECIFICENTITIES_GENERIC_CONFIGENV)
 
-macro (SPECIFICENTITIESCONFIGENV _lang)
-  # TODO: some tools like compile-rule need access to a set of very
-  # complete configuration files (lima-lp-<lang>.xml, <group>-modex.xml...)
-  # Many macro could be simplified if the dependencies of these tools
-  # could be reduced to really usefull ones.
-  message("SPECIFICENTITIESCONFIGENV ${_lang}")
+###############
+#
+# LIMA_GENERIC_CONFIGENV
+#
+#
+####################
+macro (LIMA_GENERIC_CONFIGENV _lang)
+  message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
+
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
@@ -553,29 +550,6 @@ macro (SPECIFICENTITIESCONFIGENV _lang)
     COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
     VERBATIM
   )
-
-  # definit l'ensemble des dépendances (ce qui doit exister dans la partie 
-  # configuration de l'environnement d'execution de la cible 
-  # rules-${_lang}
-  add_custom_target(
-    rules-${_lang}-configEnv
-    ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-  )
-
-  add_dependencies(
-    rules-${_lang}-configEnv 
-    rules-${_lang}-execEnv
-    rules-configEnv)
-
-endmacro (SPECIFICENTITIESCONFIGENV _subtarget _lang _group)
-
-macro (LIMA_GENERIC_CONFIGENV _lang)
-  MESSAGE( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
-
-  # Permet de créer un lien build/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
-  # vers ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
@@ -613,6 +587,8 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   add_custom_target(
     rules-${_lang}-execEnv
     ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
@@ -649,7 +625,10 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
   install(FILES ${BINFILENAMES} COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SpecificEntities)
 
   # add the link between the current target and its execution environment dependencies
-  add_dependencies(rules-${_group}-${_lang}-${_subtarget} specificentitiesconfigenv-${_lang}-all rules-${_lang}-${_group}-configEnv-${_subtarget} rules-${_lang}-execEnv)
+  add_dependencies(rules-${_group}-${_lang}-${_subtarget} 
+    specificentitiesconfigenv-${_lang}-all 
+    rules-${_lang}-${_group}-configEnv-${_subtarget} 
+    rules-${_lang}-execEnv)
 
 endmacro (SPECIFICENTITIES _lang _group)
 
