@@ -477,8 +477,14 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     VERBATIM
   )
   add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
+    OUTPUT 
+      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
@@ -487,41 +493,9 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
-    COMMENT "create config env for specific entities rules (log4cpp.properties and lima-analysis.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
-    DEPENDS
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
-    COMMENT "create config env for specific entities rules (lima-common.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT 
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-eng.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-fre.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-por.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-eng.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-eng.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-fre.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-fre.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-por.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-por.xml
-    DEPENDS
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-eng.xml
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-fre.xml
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-por.xml
-    COMMENT "create config env for specific entities rules (lima-lp-*.xml)"
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
+    COMMENT "create config env for specific entities rules (log4cpp.properties, lima-common.xml and lima-analysis.xml)"
     VERBATIM
   )
 
@@ -533,9 +507,6 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-eng.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-fre.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-por.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
