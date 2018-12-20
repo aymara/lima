@@ -62,7 +62,6 @@ SET(lima-lp-geoentitiestagger_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-geoentitiestagger)
-ADD_DLL_TO_PATH(lima-lp-geoentitiestagger)
 
 target_link_libraries(lima-lp-geoentitiestagger ${optionalLibs})
 

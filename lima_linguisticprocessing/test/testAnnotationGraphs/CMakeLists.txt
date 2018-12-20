@@ -24,7 +24,6 @@ SET(lima-lp-test-annotationgraphs_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-test-annotationgraphs)
-ADD_DLL_TO_PATH(lima-lp-test-annotationgraphs)
 
 target_link_libraries(lima-lp-test-annotationgraphs  lima-lp-linguisticprocessing-core lima-lp-analysishandlers lima-lp-bagofwords lima-lp-propertycode lima-lp-linguisticdata lima-lp-misc lima-lp-easyxmldumper lima-lp-analysisdumpers lima-lp-applyrecognizer lima-lp-automaton lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-morphologicanalysis lima-lp-postagger lima-lp-eventanalyzer lima-lp-specificentities lima-lp-syntacticanalysis lima-common-datahandler lima-common-fsaaccess ${Boost_LIBRARIES} lima-common-data lima-common-factory lima-common-misc lima-common-datahandler ${Qt5_LIBRARIES} lima-common-tools lima-common-mediaprocessors lima-common-mediaticdata lima-common-processunitframework lima-common-factory lima-common-xmlconfigurationfiles lima-lp-client lima-lp-linguisticanalysisstructure lima-lp-analysisdict lima-lp-textsegmentation lima-lp-annotationgraph lima-lp-flattokenizer lima-lp-regexmatcher ${optionalLibs})
 

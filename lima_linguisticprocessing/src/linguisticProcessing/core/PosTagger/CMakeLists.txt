@@ -50,7 +50,6 @@ ENDIF(SVMTOOL++_FOUND)
 
 
 DECLARE_LIMA_PLUGIN(lima-lp-postagger)
-ADD_DLL_TO_PATH(lima-lp-postagger)
 
 target_link_libraries(lima-lp-postagger  ${lima-lp-postagger_LIB_LINK})
 

@@ -26,7 +26,6 @@ SET(lima-lp-tensorflowspecificentities_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-tensorflowspecificentities)
-ADD_DLL_TO_PATH(lima-lp-tensorflowspecificentities)
 
 target_link_libraries(lima-lp-tensorflowspecificentities
     lima-common-factory

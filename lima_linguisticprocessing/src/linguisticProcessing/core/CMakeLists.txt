@@ -47,7 +47,6 @@ SET(lima-lp-linguisticprocessing-core_LIB_SRCS
   CoreLinguisticProcessingClient.cpp
 )
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticprocessing-core)
-ADD_DLL_TO_PATH(lima-lp-linguisticprocessing-core)
 target_link_libraries(lima-lp-linguisticprocessing-core
   lima-common-factory
   lima-common-misc

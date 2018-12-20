@@ -35,7 +35,6 @@ SET(lima-lp-wordsensetagger_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-wordsensetagger)
-ADD_DLL_TO_PATH(lima-lp-wordsensetagger)
 
 target_link_libraries(lima-lp-wordsensetagger
   lima-common

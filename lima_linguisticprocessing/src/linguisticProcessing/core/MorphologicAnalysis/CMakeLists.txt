@@ -44,7 +44,6 @@ SET(lima-lp-morphologicanalysis_LIB_SRCS
 endif (ENCHANT_FOUND)
 
 DECLARE_LIMA_PLUGIN(lima-lp-morphologicanalysis)
-ADD_DLL_TO_PATH(lima-lp-morphologicanalysis)
 
 target_link_libraries(lima-lp-morphologicanalysis
     lima-common-factory
