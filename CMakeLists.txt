@@ -58,10 +58,12 @@ addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns Network)
 
 include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
 
+set(ENV{PATH} "$ENV{PATH};${CMAKE_BINARY_DIR}/execEnv/lib")
 SPECIFICENTITIES_GENERIC_CONFIGENV()
 
 macro (ADD_DLL_TO_PATH _lib)
     message("ADD_DLL_TO_PATH ${_lib}")
+    message("PATH is $ENV{PATH}")
     message("Will copy $<TARGET_FILE_DIR:${_lib}>/${_lib}.dll to ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll")
     if(WIN32)
       add_custom_command(
@@ -81,8 +83,6 @@ macro (ADD_DLL_TO_PATH _lib)
         DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
       )
       add_dependencies(rules-configEnv ${_lib}_dll)
-
-      set(ENV{PATH} "$ENV{PATH};${CMAKE_BINARY_DIR}/execEnv/lib")
 
     endif()
 endmacro()

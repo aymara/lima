@@ -12,7 +12,7 @@ environment:
   Qt5_INSTALL_DIR: 'C:\Qt\5.11.2\msvc2015_64'
   BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
-  PATH: '%Qt5_INSTALL_DIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
+  PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
@@ -80,17 +80,8 @@ after_build:
   - ps: ( tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log ) -or $true
   - ps: cat tva-fre.log
   - ps: popd
-  - ps: pushd C:\b\lima_common\src\lima_common-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
-  - ps: popd
-  - ps: pushd C:\b\lima_linguisticprocessing\src\lima_linguisticprocessing-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
-  - ps: popd
-  - ps: pushd C:\b\lima_linguisticdata\src\lima_linguisticdata-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
-  - ps: popd
-  - ps: pushd C:\b\lima_gui\src\lima_gui-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
+  - ps: pushd C:\b
+  - copy lima*.exe %APPVEYOR_BUILD_FOLDER%
   - ps: popd
 
 

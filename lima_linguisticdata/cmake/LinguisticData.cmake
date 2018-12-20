@@ -40,6 +40,7 @@ macro (CODES _lang)
     COMMAND parseXMLPropertyFile --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
     DEPENDS code-${_lang}.xml ${ARGN}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "PATH is $ENV{PATH}"
     COMMENT "COMMAND convertSymbolicCodes  --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
     VERBATIM
   )
