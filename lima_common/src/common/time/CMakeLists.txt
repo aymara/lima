@@ -28,6 +28,8 @@ SET(lima-common-time_LIB_SRCS
 
 add_library(lima-common-time SHARED ${lima-common-time_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-time)
+
 target_link_libraries(lima-common-time 
   lima-common-data 
 )

@@ -35,6 +35,7 @@ SET(lima-lp-flattokenizer_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-flattokenizer)
+ADD_DLL_TO_PATH(lima-lp-flattokenizer)
 
 target_compile_definitions(lima-lp-flattokenizer PRIVATE "-DLIMA_FLATTOKENIZER_EXPORTING")
 

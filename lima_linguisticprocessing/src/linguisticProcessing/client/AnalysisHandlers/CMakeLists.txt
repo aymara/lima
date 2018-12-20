@@ -37,6 +37,8 @@ SET(lima-lp-analysishandlers_LIB_SRCS
 add_library(lima-lp-analysishandlers SHARED 
   ${lima-lp-analysishandlers_LIB_SRCS} 
 )
+ADD_DLL_TO_PATH(lima-lp-analysishandlers)
+
 
 target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources

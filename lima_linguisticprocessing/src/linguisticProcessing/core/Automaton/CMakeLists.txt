@@ -57,6 +57,8 @@ SET(lima-lp-automaton_LIB_SRCS
 add_library(lima-lp-automaton SHARED 
   ${lima-lp-automaton_LIB_SRCS}
 )
+ADD_DLL_TO_PATH(lima-lp-automaton)
+
 
 target_link_libraries(lima-lp-automaton lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-linguisticanalysisstructure lima-lp-flattokenizer
  ${Boost_LIBRARIES})

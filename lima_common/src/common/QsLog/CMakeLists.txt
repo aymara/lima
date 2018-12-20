@@ -46,6 +46,8 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 #   lima-common-qslog
 #   ${Qt5_LIBRARIES}
 # )
+# ADD_DLL_TO_PATH(lima-common-qslog)
+#
 # set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 # install(TARGETS lima-common-qslog DESTINATION ${LIB_INSTALL_DIR})
 

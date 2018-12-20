@@ -38,6 +38,8 @@ if (${PYTHONLIBS_FOUND})
   )
 endif()
 DECLARE_LIMA_PLUGIN(lima-lp-semanticanalysis)
+ADD_DLL_TO_PATH(lima-lp-semanticanalysis)
+
 
 #add_library(lima-lp-semanticanalysis SHARED ${lima-lp-semanticanalysis_LIB_SRCS})
 

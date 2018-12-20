@@ -35,6 +35,8 @@ SET(lima-lp-automatoncompiler_LIB_SRCS
 )
 
 add_library(lima-lp-automatoncompiler SHARED ${lima-lp-automatoncompiler_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-automatoncompiler)
+
 
 target_link_libraries(lima-lp-automatoncompiler lima-linguisticprocessing)
 

@@ -33,6 +33,8 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 endif()
 add_library(lima-common-misc SHARED ${lima-common-misc_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-misc)
+
 target_link_libraries(lima-common-misc 
   lima-common-data 
 )

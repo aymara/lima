@@ -28,6 +28,8 @@ SET(lima-lp-linguisticresources_LIB_SRCS
 
 add_library(lima-lp-linguisticresources SHARED 
             ${lima-lp-linguisticresources_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-linguisticresource)
+
 
 target_link_libraries(lima-lp-linguisticresources 
   lima-common-mediaprocessors 

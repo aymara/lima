@@ -27,6 +27,8 @@ SET(lima-lp-misc_LIB_SRCS
 )
 
 add_library(lima-lp-misc SHARED ${lima-lp-misc_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-misc)
+
 
 target_link_libraries(lima-lp-misc 
   lima-common-mediaprocessors 

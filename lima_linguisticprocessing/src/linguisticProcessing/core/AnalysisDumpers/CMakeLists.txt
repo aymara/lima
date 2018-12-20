@@ -46,6 +46,8 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-analysisdumpers)
+ADD_DLL_TO_PATH(lima-lp-analysisdumpers)
+
 
 target_link_libraries(lima-lp-analysisdumpers
   lima-lp-linguisticprocessors

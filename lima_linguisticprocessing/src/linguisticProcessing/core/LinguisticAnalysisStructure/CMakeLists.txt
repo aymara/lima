@@ -32,6 +32,7 @@ SET(lima-lp-linguisticanalysisstructure_LIB_SRCS
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticanalysisstructure)
+ADD_DLL_TO_PATH(lima-lp-linguisticanalysisstructure)
 
 target_link_libraries(lima-lp-linguisticanalysisstructure 
   lima-lp-annotationgraph

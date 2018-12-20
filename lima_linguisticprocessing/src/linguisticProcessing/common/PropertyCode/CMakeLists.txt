@@ -29,6 +29,8 @@ SET(lima-lp-propertycode_LIB_SRCS
 )
 
 add_library(lima-lp-propertycode SHARED ${lima-lp-propertycode_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-propertycode)
+
 
 target_link_libraries(lima-lp-propertycode 
   lima-lp-misc 
