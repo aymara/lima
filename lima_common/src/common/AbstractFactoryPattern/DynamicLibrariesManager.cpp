@@ -101,12 +101,13 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "
-              <<"Failed to open lib " << libhandle->errorString();
+      LINFO <<"DynamicLibrariesManager::loadLibrary() -- "
+              <<"Failed to open supplementary lib " << libhandle->errorString();
+      libhandle.reset();
     }
   }
   // now try system default search path
-  if (libhandle == 0)
+  if (!libhandle)
   {
     LINFO << "Trying " << libName.c_str();
     libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
@@ -124,7 +125,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
       LERROR <<"DynamicLibrariesManager::loadLibrary() -- "
-              << "Failed to open lib " << libhandle->errorString();
+              << "Failed to open system lib " << libhandle->errorString();
       return false;
     }
   }
