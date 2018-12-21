@@ -208,15 +208,6 @@ else
   fi
 
   echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
-  echo "Copying TensorFlow binaries from /usr/lib/ to $LIMA_DIST/lib"
-
-  mkdir -p $LIMA_DIST/lib
-  if [ -f /usr/lib/libtensorflow-for-lima.so ]; then
-    cp /usr/lib/libtensorflow-for-lima.so $LIMA_DIST/lib/
-  elif [ -f /usr/lib/libtensorflow_cc.so ] && [ -f /usr/lib/libtensorflow_framework.so ]; then
-    cp /usr/lib/libtensorflow_cc.so $LIMA_DIST/lib/
-    cp /usr/lib/libtensorflow_framework.so $LIMA_DIST/lib/
-  fi
 fi
 
 echo "Launching cmake from $PWD"
