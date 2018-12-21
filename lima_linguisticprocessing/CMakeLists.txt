@@ -23,9 +23,10 @@ if(POLICY CMP0020)
 cmake_policy(SET CMP0020 OLD)
 endif()
 
-file(WRITE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "")
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
+file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
 macro (DECLARE_LIMA_PLUGIN _plugin)
-  file (APPEND ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins "${_plugin}\n")
+  file (APPEND ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "${_plugin}\n")
   add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
   ADD_DLL_TO_PATH(${_plugin})
 
@@ -307,7 +308,7 @@ add_subdirectory(cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALPConfig.cmake
   DESTINATION share/apps/lima/cmake/Modules
   COMPONENT devel)
-install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-plugins
+install(FILES ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME}
   DESTINATION share/config/lima/plugins
   COMPONENT runtime)
 
