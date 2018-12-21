@@ -159,7 +159,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 endif()
 include(InstallRequiredSystemLibraries)
 
-set(CPACK_MONOLITHIC_INSTALL 1)
+# set(CPACK_MONOLITHIC_INSTALL 1)
 set(CPACK_PACKAGE_NAME "lima")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Linguistic Analyzer")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
@@ -169,7 +169,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CP
 # set of commands to define component based packaging
 # notify cpack of component all names
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
-# SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
+SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
