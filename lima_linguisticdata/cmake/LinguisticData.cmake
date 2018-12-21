@@ -450,61 +450,39 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
 
   add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    OUTPUT 
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
     COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
-    COMMENT "create config env for specific entities rules (lima-common-${_lang}.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
-    COMMENT "create config env for specific entities rules (lima-lp-${_lang}.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
-    COMMENT "create exec env for ${_lang} specific entities rules (tz-db-${_lang}.dat)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
-    COMMENT "create exec env for ${_lang} specific entities rules (monthsdays-${_lang}.dat)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
     COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
     DEPENDS
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
-    COMMENT "create exec env for ${_lang} specific entities rules (code)"
+    COMMENT "create language specific config env"
     VERBATIM
   )
-
   add_custom_target(
     rules-${_lang}-execEnv
     ALL
@@ -514,7 +492,7 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
   )
-endmacro (LIMA_GENERIC_CONFIGENV _lang)
+endmacro ()
 
 ####################
 # Specific Entities
