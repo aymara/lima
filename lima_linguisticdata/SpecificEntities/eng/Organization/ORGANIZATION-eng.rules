@@ -49,7 +49,7 @@ the,
 and,
 \&)
 
-@orgPrefix=(National,International,United)
+@orgPrefix=(National,International,United,State)
 
 use organizationkey.lst
 
@@ -101,14 +101,14 @@ t_capital_1st:[(The|the)]:t_capital_1st{0-2} [said]:ORGANIZATION:
 University:(State)?:of <LOCATION> School of (t_capital_1st|t_capital|t_capital_small):ORGANIZATION:
 University:(State)?:of <LOCATION>:ORGANIZATION:
 
-Association:(National)?:of (t_capital_1st|t_capital|t_capital_small|\&){1-5}:ORGANIZATION:
-
 @City::(@locationOrg):ORGANIZATION:
 @locationOrg:@orgPrefix?:of? (@City|@State):ORGANIZATION:
 @State::@orgPrefix? state? @orgPrefix? (@locationOrg):ORGANIZATION:
 @locationOrg:@orgPrefix?::ORGANIZATION:
 
 use organizationType.lst
+
+@organizationType:@orgPrefix?:(of|de) (t_capital_1st|t_capital|t_capital_small|\&){1-5}:ORGANIZATION:
 
 university:@orgPrefix?:of (@City|@State):ORGANIZATION:
 #university::of (@City|@State) (@City|@State)?:ORGANIZATION:
@@ -121,6 +121,7 @@ university:@orgPrefix?:of (@City|@State):ORGANIZATION:
 @organizationType:[(The|the)] <LOCATION> <LOCATION>::ORGANIZATION:
 @organizationType:            @orgPrefix? t_capital_1st{1-2}::ORGANIZATION:
 @organizationType:            <LOCATION> <LOCATION>::ORGANIZATION:
+
 
 UN:::ORGANIZATION:
 un:::ORGANIZATION:
