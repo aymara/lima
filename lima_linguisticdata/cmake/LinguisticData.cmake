@@ -338,147 +338,59 @@ endmacro (IDIOMATICENTITIES _lang)
 macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   message("In macro SPECIFICENTITIES_GENERIC_CONFIGENV")
   add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/FrameNet-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/FrameNet-modex.xml
-    COMMENT "create config env for specific entities rules (FrameNet-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/VerbNet-modex.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/VerbNet-modex.xml
-    COMMENT "create config env for specific entities rules (VerbNet-modex.xml)"
-    VERBATIM
-  )
-
-
-  # Permet de créer un lien build/execEnv/config/<group>-modex.xml
-  # vers ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/<group>-modex.xml
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex.xml
-    COMMENT "create config env for specific entities rules (SpecificEntities-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/AuthorPosition-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/AuthorPosition-modex.xml
-    COMMENT "create config env for specific entities rules (AuthorPosition-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/DateTime-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/DateTime-modex.xml
-    COMMENT "create config env for specific entities rules (DateTime-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Event-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Event-modex.xml
-    COMMENT "create config env for specific entities rules (Event-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Location-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Location-modex.xml
-    COMMENT "create config env for specific entities rules (Location-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Numex-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Numex-modex.xml
-    COMMENT "create config env for specific entities rules (Numex-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Organization-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Organization-modex.xml
-    COMMENT "create config env for specific entities rules (Organization-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex.xml
-    COMMENT "create config env for specific entities rules (Person-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
-    COMMENT "create config env for specific entities rules (Product-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
-    COMMENT "create config env for specific entities rules (Miscellaneous-modex.xml)"
-    VERBATIM
-  )
-  add_custom_command(
     OUTPUT 
+      ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/FrameNet-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/VerbNet-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/AuthorPosition-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/DateTime-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Event-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Location-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Numex-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Organization-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
@@ -489,15 +401,24 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/FrameNet-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/VerbNet-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/AuthorPosition-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/DateTime-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Event-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Location-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Numex-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Organization-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
-    COMMENT "create config env for specific entities rules (log4cpp.properties, lima-common.xml and lima-analysis.xml)"
+    COMMENT "Create config environment common to all languages"
     VERBATIM
   )
-
-  # defini l'ensemble des dépendances (ce qui doit exister dans la partie configuration de l'environnement
-  # d'execution de la cible rules-${_group}-${_lang}-${_subtarget}
   add_custom_target(
     rules-configEnv
     ALL
