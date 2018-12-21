@@ -88,7 +88,7 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 
 @Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
-@AnyFirstname:[(@Title|@FunctionTitle)]:t_capital_1st{0-1} [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@AnyFirstname:[(@Title|@FunctionTitle)]:t_capital_1st{0-1} [($DET|$PRON|$ADJ|$V|,|\.)]:PERSON:=>NormalizePersonName()
 
 @AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
@@ -112,17 +112,35 @@ t_capital_1st::(@Tussenvoegsel|ben|Ben|bin|Bin) (T_A1|T_Amh|$NP){1-2}:PERSON:
 
 #t_capital_1st:[@FunctionTitle]:(t_capital_1st){1-2}:PERSON:
 
-t_capital_1st:[((@Title|@FunctionTitle)? $ADJ?)?] [(@Title|@FunctionTitle)]:(t_capital_1st):PERSON:
+[@FunctionTitle]:[@FunctionTitle]:t_capital_1st t_capital_1st{0-2}:PERSON:
++LinguisticPropertyIs(right.1,"MACRO,NP,eng")
+=>NormalizePersonName()
+
+t_capital_1st:[((@Title|@FunctionTitle)? $ADJ?)?] [(@Title|@FunctionTitle)]:t_capital_1st:PERSON:
 +LinguisticPropertyIs(right.1,"MACRO,NP,eng")
 =>NormalizePersonName()
 
 # T_A1:[(@Title|@FunctionTitle)]:(T_A1|T_Amh|@Initial){0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
+@AnyFirstname:[(@FunctionTitle (of t_capital_1st)?)]:t_capital_1st{0-2} [($DET|$PRON|$ADJ|$V|,|\.)]:PERSON:
+=>NormalizePersonName()
+
+@WikidataLastname:[(@FunctionTitle (of t_capital_1st)?)]:t_capital_1st{0-2} [($DET|$PRON|$ADJ|$V|,|\.)]:PERSON:
+=>NormalizePersonName()
+
+t_capital_1st:[(@FunctionTitle (of t_capital_1st)?)]:t_capital_1st{0-2} [($DET|$PRON|$ADJ|$V|,|\.)]:PERSON:
++LinguisticPropertyIs(trigger.1,"MACRO,NP,eng")
++LinguisticPropertyIs(right.1,"MACRO,NP,eng")
+=>NormalizePersonName()
+
 T_A1:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 [<DateTime.DATE>]::[,]:NOT_PERSON:
 
-$NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+t_capital_1st:(T_A1|T_Amh|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:
++LinguisticPropertyIs(trigger.1,"MACRO,NP,eng")
++LinguisticPropertyIs(left.1,"MACRO,NP,eng")
+=>NormalizePersonName()
 
 [<DateTime.DATE>]:[@speechVerb]::NOT_PERSON:
 
