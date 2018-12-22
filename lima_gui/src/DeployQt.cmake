@@ -86,7 +86,7 @@ function(mywindeployqt)
                     --compiler-runtime
                     --angle
                     --list mapping
-                    -core -test -qml -quick -gui -widgets -quickcontrols2
+                    -core -test -qml -quick -gui -widgets
                     \${_file}
             OUTPUT_VARIABLE _output
             OUTPUT_STRIP_TRAILING_WHITESPACE
