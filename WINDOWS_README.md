@@ -42,7 +42,7 @@ How to build lima under Windows (Windows 10):
 
 15. Install "TensorFlow for lima" release from github.com/aymara/tensorflow/releases
 
-16. Update build_lima_with_ninja.bat according to your paths. Following variables are to be verified and/or updated:
+16. Update build_with_ninja.bat according to your paths. Following variables are to be verified and/or updated:
     - MSYSDIR
     - QTDIR
     - TFDIR
@@ -52,7 +52,7 @@ How to build lima under Windows (Windows 10):
     - NLTK_PTB_DP_DIR
     - LIMA_SRC
 
-17. (Optionally) update LIMA_VERSION_RELEASE variable in build_lima_with_ninja.bat
+17. (Optionally) update LIMA_VERSION_RELEASE variable in build_with_ninja.bat
 
 17. compile lima
-    [from vs2017 x64 native console inside LIMA_SRC directory] build_lima_with_ninja.bat
+    [from vs2017 x64 native console inside LIMA_SRC directory] build_with_ninja.bat
