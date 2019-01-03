@@ -3,7 +3,7 @@ LIMA - Libre Multilingual Analyzer
 
 **PLEASE DON'T USE THE 'Download ZIP' BUTTON ON THE GITHUB LIMA HOME PAGE (this page when viewed from GitHub) TO DOWNLOAD SOURCE CODE. Use git clone in command line instead. Otherwise build instructions won't work.**
 
-LIMA is a multilingual linguistic analyzer developed by the [CEA LIST](http://www-list.cea.fr/en), [LVIC laboratory](http://www.kalisteo.fr/en/index.htm) (Vision and Content Engineering Laboratory). LIMA is available under a dual licensing model, AGPL and commercial. 
+LIMA is a multilingual linguistic analyzer developed by the [CEA LIST](http://www-list.cea.fr/en), [LASTI laboratory](http://www.kalisteo.fr/en/index.htm) (French acronym for Text and Image Semantic Analysis Laboratory). LIMA is available under a dual licensing model, AGPL and commercial. 
 
 For more information, installation instructions and documentation, please refer to [the LIMA Wiki](https://github.com/aymara/lima/wiki).
 

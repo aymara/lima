@@ -17,17 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       externalProcessUnit.h
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Mon Jan 17 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- * Project     MM
- * 
  * @brief this class contains a generic process unit that use a system call
  * to let an external process do the job. 
- * 
- * 
  ***********************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_EXTERNALPROCESSUNIT_H
 #define LIMA_LINGUISTICPROCESSING_EXTERNALPROCESSUNIT_H

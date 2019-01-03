@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 <article>
-  <title>Squelette de composant LIC2M</title>
+  <title>Squelette de composant LIMA</title>
 
   <articleinfo>
     <date>08/06/2004</date>
@@ -15,9 +15,9 @@
   <sect1>
     <title>Introduction et objectifs</title>
 
-    <para>Ce document a pour but de décrire le squelette de composant LIC2M,
+    <para>Ce document a pour but de décrire le squelette de composant LIMA,
     et de proposer des règles d'organisation d'un composant afin d'avoir une
-    homogénéité des composants LIC2M. Les composant prévus sont :</para>
+    homogénéité des composants LIMA. Les composant prévus sont :</para>
 
     <itemizedlist>
       <listitem>
@@ -111,12 +111,12 @@
   </sect1>
 
   <sect1>
-    <title>Squelette de composant LIC2M</title>
+    <title>Squelette de composant LIMA</title>
 
     <sect2>
       <title>Organisation des sous-projets</title>
 
-      <para>Dans cette partie : 'component' designe le nom du composant LIC2M
+      <para>Dans cette partie : 'component' designe le nom du composant LIMA
       (par exemple : linguisticProcessing ou reformulation).</para>
 
       <programlisting>src/component : un sous projet portant le nom du composant

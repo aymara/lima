@@ -17,16 +17,9 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       SegmentationResultsLoader.h
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Mon Jan 17 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- * Project     MM
- * 
  * @brief a class to load results from text segmentation
- * 
- * 
  ***********************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_SEGMENTATIONRESULTSLOADER_H
 #define LIMA_LINGUISTICPROCESSING_SEGMENTATIONRESULTSLOADER_H

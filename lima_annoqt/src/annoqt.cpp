@@ -17,7 +17,6 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 /***************************************************************************
- *   Copyright (C) 2007 by CEA LIST / LVIC   *
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
@@ -149,7 +148,7 @@ void Annoqt::about()
   QMessageBox::about( this, tr( "Annotation Tool" ),
                       tr( "The <b>Annotation Tool</b> allows to annotate texts with "
                           "specific entities.<br>Version %1<br>"
-                          "Copyright 2007-2009 CEA LIST/LVIC" ).arg(VERSION) );
+                          "Copyright 2007-2019 CEA LIST" ).arg(VERSION) );
 }
 
 void Annoqt::documentWasModified()

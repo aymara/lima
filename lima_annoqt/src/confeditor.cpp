@@ -17,7 +17,6 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 /***************************************************************************
- *   Copyright (C) 2007 by CEA LIST / LVIC   *
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
@@ -133,7 +132,7 @@ void AnnoqtConfEditor::slotAbout()
 {
   QMessageBox::about( this, tr( "Annotation Configuration Tool" ),
                       tr( "The <b>Annotation Configure Tool</b> allows to configure the annotation tool.<br>"
-                          "Copyright 2008 CEA LIST/LVIC" ) );
+                          "Copyright 2008-2019 CEA LIST" ) );
 }
 
 void AnnoqtConfEditor::slotDocumentWasModified()

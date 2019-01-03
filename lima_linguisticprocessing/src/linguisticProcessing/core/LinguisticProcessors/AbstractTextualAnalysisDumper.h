@@ -17,17 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       AbstractTextualAnalysisDumper.h
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Jan 21 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- * Project     MM
- * 
  * @brief a abstract class the dumpers, containing the common
  * mechanisms for communication with handler or local file
- * 
- * 
  ***********************************************************************/
 
 #ifndef ABSTRACTTEXTUALANALYSISDUMPER_H

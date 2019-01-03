@@ -17,7 +17,6 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 /***************************************************************************
- *   Copyright (C) 2007 by CEA LIST / LVIC   *
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 

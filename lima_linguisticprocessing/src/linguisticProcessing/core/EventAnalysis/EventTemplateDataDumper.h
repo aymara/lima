@@ -17,17 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       EventTemplateDataDumper.h
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Mon Sep 19 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- * Project     MM
- * 
  * @brief a dumper for EventTemplateData that outputs an object of type Events (for compatibility
  * with existing event extraction webservice)
- * 
- * 
  ***********************************************************************/
 
 #ifndef EVENTTEMPLATEDATADUMPER_H
