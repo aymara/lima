@@ -33,7 +33,8 @@ script:
 after_success:
 - docker run -t -d travis-ubuntu18.04
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
-- docker run -t -d travis-ubuntu18.04
+- docker stop travis-ubuntu18.04
+- docker run -t -d travis-ubuntu16.04
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
 - docker stop travis-ubuntu16.04
 - docker run -t -d debian9.4
