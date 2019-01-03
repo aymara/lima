@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2011 by CEA - LIST - LVIC                               *
- *                                                                         *
- ***************************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_POSTAGGER_SVMTOOLPOSTAGGER_H
 #define LIMA_LINGUISTICPROCESSING_POSTAGGER_SVMTOOLPOSTAGGER_H
 

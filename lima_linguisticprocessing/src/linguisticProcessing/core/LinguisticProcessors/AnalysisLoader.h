@@ -17,16 +17,9 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       AnalysisLoader.h
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Mon Jan 17 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- * Project     MM
- * 
  * @brief abstract class for analysis loaders
- * 
- * 
  ***********************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_ANALYSISLOADER_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISLOADER_H

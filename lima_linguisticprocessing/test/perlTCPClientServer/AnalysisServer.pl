@@ -127,7 +127,7 @@ sub process_request
     # du client
     my $ok = 0;
     $client->autoflush(1);
-    print $client "This is the LIST/LIC2M Lima analyzer server version $VERSION$EOL";
+    print $client "This is the CEA LIST/LASTI Lima analyzer server version $VERSION$EOL";
     print $client "OK$EOL";
     $self->log(2, "[Connect from $self->{server}->{peerhost} ($self->{server}->{peeraddr})]\n") ;
 
