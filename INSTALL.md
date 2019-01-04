@@ -1,41 +1,44 @@
 # LIMA - Libre Multilingual Analyzer
 
-LIMA is mutliplatform. It has been developed under GNU/Linux and recently
-compiled and run under MS Windows. Its installation procedure under Linux
-is described bellow. Installation instructions under Windows are still to be
-written.
-
-The various modules (lima_*) have different purposes:
-
- * lima_common
-    contains tools shared by all modules (eg. factories)
- * lima_linguisticprocessing
-    LIMA linguistic analyser
- * lima_linguisticdata
-    linguistic ressources used in LIMA
+LIMA is mutliplatform. It has been developed under GNU/Linux and ported MS 
+Windows. Its build procedure under Linux is described bellow. 
+Build instructions under Windows are still to be written but can be inferred 
+from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml).
 
 ## Install
 
-Build dependencies: cmake, c++ (tested with gcc), gawk, NLTK, libraries and
-development packages for : boost , Qt5, Qwt, enchant (optional, for
-orthographic correction), qhttpserver (optional, for lima http/json API).
+Build dependencies: 
+- Tools: cmake, ninja, C++ (tested with gcc and clang), gawk, NLTK, 
+- Libraries and development packages for : boost , Qt5 and Qwt.
 
-Under Ubuntu 14.04, most of these dependencies are installed with the following packages:
+Optional dependencies:
+- python3: 
+- enchant: for orthographic correction;
+- qhttpserver: lima http/json API);
+- svmtool++: for SVM-based PoS tagger;
+- TensorFlow, Eigen and Protobuf): for neural network-based modules (currently Named Entity Recognition and soon parsing  too);
+- tre: for approximate string matcher module;
+
+
+Under Ubuntu, most of these dependencies are installed with the following packages:
 ```
 $ sudo apt-get install python-nltk gawk cmake ninja-build qt5-default libqt5xmlpatterns5 \
 libqt5xmlpatterns5-dev qttools5-dev build-essential libboost-all-dev libenchant-dev \
 mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libasan0 qml-module-qt-labs-folderlistmodel \
-qml-module-qt-labs-settings qtdeclarative5-dev
+libqwt-qt5-dev qtscript5-dev qtxmlpatterns5-dev-tools \
+qml-module-qt-labs-settings qtdeclarative5-dev python3-dev libenchant-dev libtre-dev \
 ```
-Under Mageia, most of these dependencies are installed with the following
-packages:
-$ sudo urpmi cmake, lib64qwt-devel, libasan1 (to be completed)
 
 qhttpserver can be downloaded and installed from
-https://github.com/aymara/qhttpserver
+https://github.com/aymara/qhttpserver/releases
+
+svmtool++ can be downloaded and installed from https://github.com/aymara/svmtool-cpp/releases
+
+For TensorFlow, we use a specially designed dynamic library. Installation 
+instructions are currently missing.
 
 As we were not able to find a Free part of speech tagged English corpus, LIMA
-depends for analyzing English on freely available but not free data that you
+depends for analyzing English on freely available but not Free data that you
 will have to download and prepare yourself. This data is an extract of the Peen
 treebank corpus available for fair use in the NLTK data. To install, please
 refer to http://nltk.org/data.html. Under Ubuntu this can be  done like that:
@@ -46,9 +49,6 @@ $ python
 >>> nltk.download()
 d dependency_treebank
 ```
-
-:warning: **Note:** Under Ubuntu 14.04, you can get an HTTP 404 error while downloading nltk data. Please refer to [this StackExchange question](http://askubuntu.com/questions/527388/python-nltk-on-ubuntu-12-04-lts-nltk-downloadbrown-results-in-html-error-40) for a solution.
-
 
 Then prepare the data for use with LIMA by running the following commands:
 
@@ -76,7 +76,9 @@ Finally, from the LIMA repository root, run:
 $ ./gbuild.sh -m Release
 ```
 
-This builds LIMA in release mode, assuring the best performance. To report bugs for example, you should build LIMA in debug mode. To do so, just omit the `-m Release` option when invoking `setenv-lima.sh` and `gbuild.sh`.
+This builds LIMA in release mode, assuring the best performance. To report bugs 
+for example, you should build LIMA in debug mode. To do so, just omit the 
+`-m Release` option when invoking `setenv-lima.sh` and `gbuild.sh`.
 
 Alternatively, you can
 
