@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "EnhancedAnalysisDictionaryEntry.h"
@@ -59,7 +59,7 @@ EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry(
     m_stringsPool(sp)
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry" 
+  LDEBUG << "EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry"
           << m_stringsPool;
   if (!isMainKeys) {
     m_notMainKeysHandler=new NotMainKeysDictionaryEntryHandler(access,sp);
@@ -91,7 +91,7 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(
     AbstractDictionaryEntryHandler* targetHandler) const
 {
   auto handler = targetHandler;
-  if (m_notMainKeysHandler) 
+  if (m_notMainKeysHandler)
   {
     m_notMainKeysHandler->setDelegate(targetHandler);
     handler = m_notMainKeysHandler;
@@ -181,15 +181,16 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(
     const DictionaryData* dicoData,
     AbstractDictionaryEntryHandler* handler)
 {
+  LIMA_UNUSED(endEntry);
 
 // "Le lotus croit dans le feu, et demeure invulnerable" ???
 
 #ifdef DEBUG_LP
  ANALYSISDICTLOGINIT;
- LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , " 
+ LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , "
         << (uint64_t)endEntry;
 #endif
-  
+
   unsigned char* p=startEntry;
   assert(p != endEntry);
   uint64_t read=DictionaryData::readCodedInt(p);
@@ -259,9 +260,9 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(
     AbstractDictionaryEntryHandler* handler)
 {
 //  ANALYSISDICTLOGINIT;
-//  LDEBUG << "parse concatenated " << (uint64_t)startEntry << " , " 
+//  LDEBUG << "parse concatenated " << (uint64_t)startEntry << " , "
 //          << (uint64_t)endEntry;
-  
+
   unsigned char* p=startEntry;
   assert(p != endEntry);
   // skip linginfos
@@ -384,7 +385,7 @@ void NotMainKeysDictionaryEntryHandler::deleteLingInfos(StringsPoolIndex lemma,
 {
   auto splemma=(*m_sp)[m_access->getSpelling(lemma)];
   auto spnorm=splemma;
-  if (norm != lemma) 
+  if (norm != lemma)
   {
     spnorm=(*m_sp)[m_access->getSpelling(norm)];
   }

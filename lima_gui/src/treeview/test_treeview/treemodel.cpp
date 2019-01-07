@@ -42,6 +42,7 @@ TreeModel::TreeModel(QObject* p) : TreeModel(QString(),p)
 TreeModel::TreeModel(const QString &data, QObject *parent)
     : QAbstractItemModel(parent)
 {
+  Q_UNUSED(data);
 //  load(data);
   rootItem = new TreeItem(QList<QVariant>() << QString("Title") << QString("Summary"));
 
