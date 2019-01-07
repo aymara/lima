@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -78,8 +78,8 @@ bool  KeysLogger::startElement ( const QString & , const QString & name, const Q
     m_count++;
     if ((m_count % 10000)==0)
     {
-      DICTIONARYLOGINIT;
-      std::cout << "\rextract keys :  " << m_count << " entries ..." 
+      //DICTIONARYLOGINIT;
+      std::cout << "\rextract keys :  " << m_count << " entries ..."
                 << std::flush;
     }
   }
