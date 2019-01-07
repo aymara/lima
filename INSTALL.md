@@ -14,9 +14,9 @@ Build dependencies:
 Optional dependencies:
 - python3: 
 - enchant: for orthographic correction;
-- qhttpserver: lima http/json API);
+- qhttpserver: lima http/json API;
 - svmtool++: for SVM-based PoS tagger;
-- TensorFlow, Eigen and Protobuf): for neural network-based modules (currently Named Entity Recognition and soon parsing  too);
+- TensorFlow, Eigen and Protobuf: for neural network-based modules (currently Named Entity Recognition and soon parsing too);
 - tre: for approximate string matcher module;
 
 
@@ -34,14 +34,22 @@ https://github.com/aymara/qhttpserver/releases
 
 svmtool++ can be downloaded and installed from https://github.com/aymara/svmtool-cpp/releases
 
-For TensorFlow, we use a specially designed dynamic library. Installation 
-instructions are currently missing.
+For TensorFlow, we use a specially compiled version. It can be installed with our ppa in Ubuntu versions starting from 18.04:
+
+```bash
+$ sudo add-apt-repository ppa:limapublisher/ppa
+$ sudo apt-get update
+$ sudo apt install libtensorflow-for-lima-dev
+```
+
+Modified sources of TensorFlow are [here](https://github.com/aymara/tensorflow/tree/r1.9).
 
 As we were not able to find a Free part of speech tagged English corpus, LIMA
 depends for analyzing English on freely available but not Free data that you
 will have to download and prepare yourself. This data is an extract of the Peen
 treebank corpus available for fair use in the NLTK data. To install, please
 refer to http://nltk.org/data.html. Under Ubuntu this can be  done like that:
+
 ```bash
 $ sudo apt-get  install python-nltk
 $ python
@@ -74,6 +82,12 @@ $ source ./setenv-lima.sh -m release
 Finally, from the LIMA repository root, run:
 ```bash
 $ ./gbuild.sh -m Release
+```
+
+By default LIMA is built without neural network-based modules (i.e. without TensorFlow). To build LIMA with neural network-based modules use -T option:
+
+```bash
+$ ./gbuild.sh -m Release -T
 ```
 
 This builds LIMA in release mode, assuring the best performance. To report bugs 
