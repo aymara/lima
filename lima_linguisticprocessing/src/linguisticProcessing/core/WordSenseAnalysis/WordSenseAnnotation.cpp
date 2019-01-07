@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -81,27 +81,27 @@ bool WordSenseAnnotation::isDisambiguated() const
   /** main functions of the global algorithm (called by WordSenseDisambiguator) */
 
 bool WordSenseAnnotation::disambiguate( const WordUnit& wu)
-{  
+{
   LOGINIT("WordSenseDisambiguator");
   if (wu.nbSenses()==0 || wu.wordSensesUnits().size()==0)
   {
     return false;
   }
-  switch(m_mode) 
+  switch(m_mode)
   {
     case B_MOST_FREQUENT:
     case B_JAWS_MOST_FREQUENT:
     case B_ROMANSEVAL_MOST_FREQUENT:
-      for (set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin(); 
+      for (set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin();
           itSenses != wu.wordSensesUnits().end();
           itSenses++)
-      {  
-  if (itSenses->senseId()==0 && m_mode == itSenses->mode())
-  {
-    m_confidence = 0;
-    retrieveSense(itSenses);    
-    break;
-  }
+      {
+        if (itSenses->senseId()==0 && m_mode == itSenses->mode())
+        {
+          m_confidence = 0;
+          retrieveSense(itSenses);
+          break;
+        }
       }
       break;
     case S_WSI_MRD:
@@ -110,8 +110,8 @@ bool WordSenseAnnotation::disambiguate( const WordUnit& wu)
       LWARN << "No Disambiguation processing. Bad configuration";
       return false;
   }
-  
-  if (m_confidence == -1) 
+
+  if (m_confidence == -1)
   {
     return false;
   }
@@ -122,20 +122,20 @@ bool WordSenseAnnotation::disambiguate( const WordUnit& wu)
 bool WordSenseAnnotation::disambiguate( KnnSearcher* searcher,
           const WordUnit& wu,
           const SemanticContext& context,
-          double thres, 
+          double thres,
           char method)
-{  
+{
   LOGINIT("WordSenseDisambiguator");
   LDEBUG << "Begin disambiguation of "<< wu.lemma();
   if (wu.nbSenses()==0 || wu.wordSensesUnits().size()==0)
   {
     return false;
   }
-  switch(m_mode) 
-  {    
+  switch(m_mode)
+  {
     case S_WSI_MRD:
       classifKnnMRD(searcher, wu, context, thres, method);
-      break;      
+      break;
     case B_MOST_FREQUENT:
     case B_JAWS_MOST_FREQUENT:
     case B_ROMANSEVAL_MOST_FREQUENT:
@@ -144,8 +144,8 @@ bool WordSenseAnnotation::disambiguate( KnnSearcher* searcher,
       LWARN << "No Disambiguation processing. Bad configuration";
       return false;
   }
-  
-  if (m_confidence == -1) 
+
+  if (m_confidence == -1)
   {
     return false;
   }
@@ -159,42 +159,42 @@ float WordSenseAnnotation::classifKnnMRD(KnnSearcher* searcher,
            char method)
 {
   LOGINIT("WordSenseDisambiguator");
-  float confidence = -1;  
+  float confidence = -1;
   map<int, map<string, double> > cvListRep;
   // Compute needed knn dists
   for (SemanticContext::const_iterator itContext = context.begin();
          itContext!= context.end();
-         itContext++) {    
-    
+         itContext++) {
+
     LDEBUG << " Computing knn dists for " << itContext->first ;
     NNList knns;
     searcher->getKNN(wu.lemmaId(), itContext, knns)  ;
-    
-    for (NNList::iterator itNN = knns.begin(); 
-          itNN!= knns.end(); 
+
+    for (NNList::iterator itNN = knns.begin();
+          itNN!= knns.end();
           itNN++)
     {
       LDEBUG << itNN->first << ":" << itNN->second;
     }
     if (knns.size()==0 || knns.rbegin()->second==0) {
-      
+
       LWARN <<  wu.lemmaId() << " : " << wu.lemma() << " has a corrupted sphere. Process may return biased results ";
-      
-      for (NNList::iterator itNN = knns.begin(); 
-          itNN!= knns.end(); 
+
+      for (NNList::iterator itNN = knns.begin();
+          itNN!= knns.end();
           itNN++) {
   LDEBUG << itNN->first << ":" << itNN->second;
       }
-      
+
       continue;
     }
      computeConfidenceVector(wu, knns, itContext, cvListRep);
   }
 
   // Classsify
-  
-  std::set<WordSenseUnit>::iterator bestSense = classify(wu, context, cvListRep, thres, method);  
-  retrieveSense(bestSense);    
+
+  std::set<WordSenseUnit>::iterator bestSense = classify(wu, context, cvListRep, thres, method);
+  retrieveSense(bestSense);
   return confidence;
 }
 
@@ -203,9 +203,9 @@ float WordSenseAnnotation::classifKnnMRD(KnnSearcher* searcher,
 
 std::set<WordSenseUnit>::iterator WordSenseAnnotation::classify(const WordUnit& wu,
                  const SemanticContext& context,
-                 const map<int, map<string, double> >& cvListRep,  
+                 const map<int, map<string, double> >& cvListRep,
                  const double thres,
-                 const char method  ) 
+                 const char method  )
 {
   LOGINIT("WordSenseDisambiguator");
   LDEBUG << "Classifying : " << wu.lemma() << " nbSenses : " << wu.wordSensesUnits().size();
@@ -215,8 +215,8 @@ std::set<WordSenseUnit>::iterator WordSenseAnnotation::classify(const WordUnit& 
   double max = 0;
   set<WordSenseUnit>::iterator bestSense;
 #ifndef WIN32
-  for(set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin(); 
-           itSenses!= wu.wordSensesUnits().end(); 
+  for(set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin();
+           itSenses!= wu.wordSensesUnits().end();
            itSenses++ ) {
     LDEBUG << "cluster : " << itSenses->senseId();
     double checkSum = 0;
@@ -224,7 +224,7 @@ std::set<WordSenseUnit>::iterator WordSenseAnnotation::classify(const WordUnit& 
         val_cluster = 0.;
     double entropySum=sumLogCvList(cvListRep);
 
-  
+
     /* print debug */
     for (map<int, map<string, double> >::const_iterator itdeb = cvListRep.begin();
               itdeb!= cvListRep.end();
@@ -283,18 +283,18 @@ std::set<WordSenseUnit>::iterator WordSenseAnnotation::classify(const WordUnit& 
         && max!=0) {
       assignedClasses[itSenses->first]=scoresByClass[itSenses->first];
     }
-  }  
+  }
 #endif
   return bestSense;
 }
 
 
 int WordSenseAnnotation::computeConfidenceVector(const WordUnit& wu,
-               const NNList& knns, 
+               const NNList& knns,
                const SemanticContext::const_iterator itContext,
-             
+
                map<int, map<string, double> >& cvListRep)
-{   
+{
 #ifndef WIN32
     LOGINIT("WordSenseDisambiguator");
     map<int, double> simByCluster;
@@ -303,18 +303,18 @@ int WordSenseAnnotation::computeConfidenceVector(const WordUnit& wu,
     {
       maxDist = knns.rbegin()->second;
     }
-    //  somme des distances des ppv du mot dans 'id_relation' qui ont été attribués au cluster 'id_cluster'    
+    //  somme des distances des ppv du mot dans 'id_relation' qui ont été attribués au cluster 'id_cluster'
     for(set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin();
              itSenses!= wu.wordSensesUnits().end();
-             itSenses++ ) 
+             itSenses++ )
     {
       double dist;
       double sim_cluster=0;
       LDEBUG << itSenses->senseTag() << " : " << itSenses->senseMembersIds().size() ;
-      for(set<uint64_t>::iterator itMembers =itSenses->senseMembersIds().begin() ; 
+      for(set<uint64_t>::iterator itMembers =itSenses->senseMembersIds().begin() ;
              itMembers!=itSenses->senseMembersIds().end() ;
              itMembers++ ) {
-  LDEBUG << "itMembers "<< *itMembers; 
+  LDEBUG << "itMembers "<< *itMembers;
         if (knns.find(*itMembers)!=knns.end()) {
     LDEBUG << "Dist "<< knns.find(*itMembers)->second;
           dist = knns.find(*itMembers)->second;
@@ -322,11 +322,11 @@ int WordSenseAnnotation::computeConfidenceVector(const WordUnit& wu,
           if (distCos!=0.) {
           //sim_cluster += (1 / (dist*dist));
             sim_cluster += (1 / (distCos*distCos));
-          }  
+          }
         }
       }
-      
-      
+
+
       simByCluster[itSenses->senseId()]=sim_cluster*maxDist*maxDist;
       LDEBUG << sim_cluster << "*" << maxDist <<" = "  <<sim_cluster*maxDist*maxDist;
       LDEBUG << wu.lemmaId()  << " : "<< wu.lemma() << " : similarities : " << itContext->first << " " << itSenses->senseId() << ":" << itSenses->senseTag() << " -> " << simByCluster[itSenses->senseId()];
@@ -360,8 +360,8 @@ int WordSenseAnnotation::computeConfidenceVector(const WordUnit& wu,
     } else {
       // if no intersection between knn of relation and verbes in classes
       LWARN << "No intersection between " << itContext->first
-            << " and elements in classes for " << wu.lemmaId();      
-    }    
+            << " and elements in classes for " << wu.lemmaId();
+    }
     return simByCluster.size();
 #else
     return 0;
@@ -375,13 +375,13 @@ int WordSenseAnnotation::computeConfidenceVector(const WordUnit& wu,
 
 
 
-double WordSenseAnnotation::cvCluster(const map<int, map<string, double> >& cvListRep, 
+double WordSenseAnnotation::cvCluster(const map<int, map<string, double> >& cvListRep,
               const string& relation,
               int id_cluster)
 {
   if (cvListRep.find(id_cluster) != cvListRep.end()
     && cvListRep.find(id_cluster)->second.find(relation)
-      !=cvListRep.find(id_cluster)->second.end()) 
+      !=cvListRep.find(id_cluster)->second.end())
   {
     return cvListRep.find(id_cluster)->second.find(relation)->second;
   }
@@ -391,9 +391,9 @@ double WordSenseAnnotation::cvCluster(const map<int, map<string, double> >& cvLi
 double WordSenseAnnotation::sumCvCluster(map<int, map<string, double> >& cvListRep, string relation)
 {
   double sum_cv_rep = 0.;
-  for(map<int, map<string, double> >::iterator itcv = cvListRep.begin(); itcv !=cvListRep.end(); itcv++) 
+  for(map<int, map<string, double> >::iterator itcv = cvListRep.begin(); itcv !=cvListRep.end(); itcv++)
   {
-    if (itcv->second.find(relation)!=itcv->second.end()) 
+    if (itcv->second.find(relation)!=itcv->second.end())
     {
       sum_cv_rep += itcv->second[relation];
     }
@@ -408,12 +408,12 @@ double WordSenseAnnotation::sumLogCv(const map<int, map<string, double> >& cvLis
   double sum = 0.;
   for(map<int, map<string, double> >::const_iterator itcv = cvListRep.begin();
                  itcv !=cvListRep.end();
-                 itcv++) 
+                 itcv++)
   {
     if (itcv->second.find(relation)!=itcv->second.end()
-      && itcv->second.find(relation)->second!= 0 ) 
+      && itcv->second.find(relation)->second!= 0 )
     {
-      //stringstream ssquicksum;      
+      //stringstream ssquicksum;
       sum += itcv->second.find(relation)->second * log( itcv->second.find(relation)->second );
       /*
       ssquicksum << "QuickSum : " << itcv->second.find(relation)->second <<"*"<< log( itcv->second.find(relation)->second )
@@ -431,7 +431,7 @@ double WordSenseAnnotation::sumLogCv(const map<int, map<string, double> >& cvLis
 double WordSenseAnnotation::sumLogCvList(const map<int, map<string, double> >& cvListRep)
 {
   double sum_log = 0.;
-  if (cvListRep.size()==0)    
+  if (cvListRep.size()==0)
   {
     return sum_log;
   }
@@ -464,32 +464,32 @@ AnnotationGraphVertex WordSenseAnnotation::writeAnnotation(
 
   // can have multiple annotations in case of mapping
   /** Creation of an annotation for the object WordSenseAnnotation */
-  GenericAnnotation ga(*this); 
+  GenericAnnotation ga(*this);
 
   /** Creation of a new vertex (a new annotation anchor) in the annotation graph. */
   ad->annotate(morphVertex(), utf8stdstring2limastring("WordSense"), ga);
-  
+
   return AnnotationGraphVertex(); //unused;
 }
 
 
 void WordSenseAnnotation::outputXml(std::ostream& xmlStream,const LinguisticGraph& g) const
 {
-//   LOGINIT("WordSenseDisambiguator");  
+//   LOGINIT("WordSenseDisambiguator");
 
   xmlStream << "<WORDSENSE SENSEID=\"" << senseId() << "\" SENSETAG=\"" << senseTag() << "\" MODE=\"" << mode() << "\" CONFIDENCE=\"" << confidence() << "\">";
-    
-  
+
+
   Token* token = get(vertex_token, g, morphVertex());
   if (token != 0)
   {
-    xmlStream << limastring2utf8stdstring(token->stringForm());   
+    xmlStream << limastring2utf8stdstring(token->stringForm());
   }
-  xmlStream << "</WORDSENSE>"; 
+  xmlStream << "</WORDSENSE>";
 }
 
 std::ostream& operator << (std::ostream& os, const WordSenseAnnotation& wsa)
-{ 
+{
   os << wsa.senseId() << "(" << wsa.mode() << "):" << wsa.senseTag() << " - " << wsa.morphVertex();
   return os;
 }
