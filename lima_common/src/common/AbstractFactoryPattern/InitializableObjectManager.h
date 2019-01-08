@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                      *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -64,7 +64,7 @@ public:
    * @brief virtual destructor
    */
   virtual ~InitializableObjectManager() {}
-  
+
   /**
   * @brief get Initialization Parameters
   */
@@ -78,17 +78,17 @@ public:
   /**
   * @brief get ModuleConfigurationStructure
   */
-  const Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
+  const Common::XMLConfigurationFiles::ModuleConfigurationStructure&
     getModuleConfigurationStructure() const;
-  Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
+  Common::XMLConfigurationFiles::ModuleConfigurationStructure&
     getModuleConfigurationStructure();
 
 protected:
 
   /**
-   * @brief create Object. 
-   * @param obj 
-   * @param gconf 
+   * @brief create Object.
+   * @param obj
+   * @param gconf
    */
   virtual Object* createObject(const std::string& id) override;
 
@@ -123,13 +123,13 @@ InitializationParameters& InitializableObjectManager<Object,InitializationParame
 }
 
 template <typename Object,typename InitializationParameters>
-const Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
+const Common::XMLConfigurationFiles::ModuleConfigurationStructure&
 InitializableObjectManager<Object,InitializationParameters>::getModuleConfigurationStructure() const {
   return m_conf;
 }
 
 template <typename Object,typename InitializationParameters>
-Common::XMLConfigurationFiles::ModuleConfigurationStructure& 
+Common::XMLConfigurationFiles::ModuleConfigurationStructure&
 InitializableObjectManager<Object,InitializationParameters>::getModuleConfigurationStructure() {
   return m_conf;
 }
@@ -146,7 +146,7 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
   const std::string& id)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LDEBUG << "InitializableObjectManager::createObject" << this << id 
+  LDEBUG << "InitializableObjectManager::createObject" << this << id
          << "from module" << &m_conf << m_conf.getName().c_str();
   Object* obj = nullptr;
   try
@@ -172,19 +172,27 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
     try
     {
       std::string libs=gconf.getAttribute("lib");
-      // parse string in case several libs are 
+      // parse string in case several libs are
       std::string::size_type begin=0;
       std::string::size_type i=libs.find(",",begin);
       while (i!=std::string::npos) {
         std::string libName(libs,begin,i-begin);
 //         std::cerr << "import library '" << libName.c_str() << "'" << std::endl;
-        Common::DynamicLibrariesManager::changeable().loadLibrary(libName);
+        if (!Common::DynamicLibrariesManager::changeable().loadLibrary(libName))
+        {
+          std::cerr << "loadLibrary(\"" << libName << "\") method failed."  << std::endl;
+          throw InvalidConfiguration("loadLibrary method failed.");
+        }
         begin=i+1;
         i=libs.find(",",begin);
       }
       std::string libName(libs,begin);
 //       std::cerr << "import library '" << libName.c_str() << "'" << std::endl;
-      Common::DynamicLibrariesManager::changeable().loadLibrary(libName);
+      if (!Common::DynamicLibrariesManager::changeable().loadLibrary(libName))
+      {
+        std::cerr << "loadLibrary(\"" << libName << "\") method failed."  << std::endl;
+        throw InvalidConfiguration("loadLibrary method failed.");
+      }
     }
     catch (Common::XMLConfigurationFiles::NoSuchAttribute& )
     {

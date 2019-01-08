@@ -5,10 +5,10 @@
  * @date       Tue Dec 19 2017
  * copyright   Copyright (C) 2017 by CEA - LIST
  * Project     Lima
- * 
+ *
  * @brief      Internal implementation of the lima simple client (in separate header because needed by Q_OBJECT)
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #include "limaSimpleClientDelegate.h"
@@ -136,10 +136,10 @@ void LimaSimpleClientDelegate::onStarted()
    if (QCoreApplication::instance() == NULL)
    {
      app = new QCoreApplication(argc, argv);
-     
+
      m_worker=std::shared_ptr<LimaWorker>(new LimaWorker());
      m_controller=std::shared_ptr<LimaController>(new LimaController());
-    
+
      // connectors to call the functions of the worker
      QObject::connect(m_controller.get(), SIGNAL(doInitialize(std::string,std::string)), m_worker.get(), SLOT(initialize(std::string,std::string)));
      QObject::connect(m_controller.get(), SIGNAL(doAnalyze(std::string)), m_worker.get(), SLOT(analyze(std::string)));
@@ -147,7 +147,7 @@ void LimaSimpleClientDelegate::onStarted()
      QObject::connect(m_worker.get(),  SIGNAL(finishedAnalyze()), m_controller.get(), SLOT(endAnalyze()));
      QObject::connect(m_controller.get(),  SIGNAL(closeApp()), app, SLOT(quit()));
      QObject::connect(m_controller.get(),  SIGNAL(closeWorker()), m_worker.get(), SLOT(quit()));
-     
+
      app->exec();
   }
   //cout << "LimaSimpleClientDelegate::onStarted end" << endl;
@@ -204,7 +204,7 @@ void LimaWorker::initialize(const std::string& language,
 
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
-    
+
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
@@ -219,7 +219,9 @@ void LimaWorker::initialize(const std::string& language,
     QsLogging::initQsLog(configPath);
     // Necessary to initialize factories
     Lima::AmosePluginsManager::single();
-    Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+    if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+      throw InvalidConfiguration("loadPlugins method failed.");
+
     m_firstInitialization=false;
 
 
@@ -236,7 +238,7 @@ void LimaWorker::initialize(const std::string& language,
        configPath.toUtf8().constData(),
        commonConfigFile,
        langs);
-  
+
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
   {
@@ -253,14 +255,14 @@ void LimaWorker::initialize(const std::string& language,
       break;
     }
   }
-  
+
   if(!clientFactoryConfigured)
   {
     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
   }
 
   m_client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
-  
+
   Q_EMIT(finishedInit());
 }
 
@@ -272,7 +274,7 @@ void LimaWorker::analyze(const std::string& text)
   string pseudofilename=text.substr(0,10);
   boost::regex_replace(pseudofilename,boost::regex("[.,-;:!?\",& <>\n\t ]"),"_",boost::format_all);
   metaData["FileName"]=pseudofilename;
-  
+
   ostringstream oss;
   m_handler->setOut(&oss);
   m_client->analyze(text, metaData, m_pipeline, m_handlers);

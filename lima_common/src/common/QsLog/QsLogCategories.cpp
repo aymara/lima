@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -41,7 +41,7 @@ namespace QsLogging
 {
 
 // static const int init =  initQsLog();
-  
+
 class CategoriesImpl
 {
 public:
@@ -170,7 +170,7 @@ Level Categories::levelFor(const QString& category) const
   return d->categories.value(category, QsLogging::TraceLevel);
 }
 
-LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString) 
+LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
 {
   QsLogging::Categories::instance();
   bool atLeastOneSuccessfulLoad = false;
@@ -183,7 +183,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
   {
     configDirsList = configString.split(LIMA_PATH_SEPARATOR);
   }
-  try 
+  try
   {
     while (! configDirsList.isEmpty() )
     {
@@ -199,14 +199,14 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
           {
             atLeastOneSuccessfulLoad = true;
           }
-          else 
+          else
           {
             std::cerr << "Configure Problem " << entry.toUtf8().constData() << std::endl;
             return -1;
           }
         }
       }
-      
+
       QString initFileName = configDir + "/log4cpp.properties";
       if (QFileInfo::exists(initFileName))
       {
@@ -220,7 +220,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
           return -1;
         }
       }
-      
+
       initFileName = configDir + "/logTensorflowSpecificEntitiescpp.properties";
       if (QFileInfo::exists(initFileName))
       {
@@ -235,8 +235,8 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
         }
       }
     }
-  } 
-  catch(...) 
+  }
+  catch(...)
   {
     std::cerr << "Exception during logging system configuration" << std::endl;
     return -1;

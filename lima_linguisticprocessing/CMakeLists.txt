@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2019 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -25,11 +25,11 @@ endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
 file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
+
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "${_plugin}\n")
   add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
   ADD_DLL_TO_PATH(${_plugin})
-
 endmacro ()
 
 # Use these cmake parameters (adapt to your setup) to compile under Windows
@@ -306,7 +306,7 @@ install(FILES ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME}
   COMPONENT runtime)
 
 # ########### documentation ###############
-# 
+#
 # # add a target to generate API documentation with Doxygen
 # find_package(Doxygen)
 # if(DOXYGEN_FOUND)
@@ -317,4 +317,4 @@ install(FILES ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME}
 # COMMENT "Generating API documentation with Doxygen" VERBATIM
 # )
 # endif(DOXYGEN_FOUND)
-# 
+#
