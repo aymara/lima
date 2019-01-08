@@ -296,7 +296,7 @@ inline const std::string WordSenseAnnotation::mode() const
 }
 inline std::string WordSenseAnnotation::mapping()
 {  
-  switch (m_mode) {
+  switch (m_mapping) {
     case M_ROMANSEVAL_SENSES :
       return "m_Romanseval_Senses";
     case M_JAWS_SENSES :
@@ -310,7 +310,7 @@ inline std::string WordSenseAnnotation::mapping()
 }
 inline const std::string WordSenseAnnotation::mapping() const
 {
-  switch (m_mode) {
+  switch (m_mapping) {
     case M_ROMANSEVAL_SENSES :
       return "m_Romanseval_Senses";
     case M_JAWS_SENSES :
