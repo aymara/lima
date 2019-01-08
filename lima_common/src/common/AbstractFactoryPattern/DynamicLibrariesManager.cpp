@@ -76,9 +76,10 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   auto it=m_d->m_handles.find(libName);
   if (it != m_d->m_handles.end()) 
   {
-    LDEBUG << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library" 
+    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." 
             << libName;
-    return false;
+    LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
+    return true;
   }
 
   std::shared_ptr< QLibrary > libhandle;
