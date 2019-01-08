@@ -338,7 +338,8 @@ endmacro (IDIOMATICENTITIES _lang)
 macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
   message("In macro SPECIFICENTITIES_GENERIC_CONFIGENV")
   add_custom_command(
-    OUTPUT 
+    OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/config/ApproxNames-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex.xml
@@ -355,9 +356,13 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/ApproxNames-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/ApproxNames-modex.xml
     COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/FrameNet-modex.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
     COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/VerbNet-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
@@ -401,6 +406,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
+      ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/ApproxNames-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/FrameNet-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SRLIntegration/VerbNet-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex.xml
