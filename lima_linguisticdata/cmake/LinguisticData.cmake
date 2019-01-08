@@ -534,9 +534,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     specificentitiesconfigenv-${_lang}-all 
     rules-${_lang}-${_group}-configEnv-${_subtarget} 
     rules-${_lang}-execEnv
-    lima-lp-se-datetime
-    lima-lp-se-number
-    lima-lp-se-person
+    rules-configEnv
     )
 
 endmacro (SPECIFICENTITIES _lang _group)
