@@ -15,4 +15,3 @@ Ubuntu 16.04 and 18.04 and Debian 9.4, Travis-ci Build Status: [![Travis-ci Buil
 
 MS Windows 64, Appveyor Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/tyj7jgks2cxx94w9?svg=true)](https://ci.appveyor.com/project/kleag/lima)
 
-
