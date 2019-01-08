@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -232,10 +232,10 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
       param.inputRulesFile=s;
     }
   }
-  
+
   //ensure all needed parameters are set
   if (param.language.empty()) {
-    cerr << "Error: missing --language=.. argument " << endl; 
+    cerr << "Error: missing --language=.. argument " << endl;
     exit(1);
   }
 
@@ -250,7 +250,7 @@ std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& pars
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
@@ -262,20 +262,19 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &Lima::LimaMainTaskRunner::finished, [](int returnCode){ QCoreApplication::exit(returnCode); } );
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
   return a.exec();
-
 }
 
 
-int run(int argc,char** argv)
+int run(int argc, char** argv)
 {
   readCommandLineArguments(argc,argv);
-  
+
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
   if (!param.configDir.empty())
@@ -296,12 +295,16 @@ int run(int argc,char** argv)
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-  
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    LOGINIT("Automaton::Compiler");
+    LERROR << "Call to loadPlugins failed.";
+    return EXIT_FAILURE;
+  }
 
   deque<string> langs;
   langs.push_back(param.language);
-  
+
   // initialize linguisticData
 //   try
   {
@@ -314,7 +317,7 @@ int run(int argc,char** argv)
       param.commonConfigFile,
       langs);
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
-      
+
     /*
     * @TODO eviter l'initialisation des ressources dans compiles rules
     * On est oblige d'initialiser les ressources, juste pour recuperer un
@@ -324,7 +327,7 @@ int run(int argc,char** argv)
 
     // initialize linguistic processing resources
     MediaId language = MediaticData::single().media(param.language);
-    
+
     bool languageInitialized = false;
     QString lpConfigFile = findFileInPaths(configPath, param.lpConfigFile.c_str());
     if (!lpConfigFile.isEmpty())
@@ -349,7 +352,7 @@ int run(int argc,char** argv)
     if(!languageInitialized)
     {
       LOGINIT("Automaton::Compiler");
-      LERROR << "No language was configured configured with" << configDirs 
+      LERROR << "No language was configured configured with" << configDirs
               << "and" << param.lpConfigFile.c_str();
       return EXIT_FAILURE;
     }
@@ -357,7 +360,7 @@ int run(int argc,char** argv)
     AbstractResource* resReco = LinguisticResources::single().getResource(language,"automatonCompiler");
 
     Recognizer& reco = *(static_cast< Recognizer* >(resReco));
-    
+
     // look at the modex config file to find the dynamic libraries that must be loaded
     if (! param.modexConfigFile.empty()) {
       LOGINIT("Automaton::Compiler");
@@ -376,7 +379,11 @@ int run(int argc,char** argv)
             {
               LOGINIT("Automaton::Compiler");
               LDEBUG << "load library " << *it;
-              Common::DynamicLibrariesManager::changeable().loadLibrary(*it);
+              if (!Common::DynamicLibrariesManager::changeable().loadLibrary(*it))
+              {
+                LERROR << "Call to loadLibrary(\"" << *it << "\") failed.";
+                return EXIT_FAILURE;
+              }
             }
             modexInitialized = true;
           }
@@ -385,7 +392,7 @@ int run(int argc,char** argv)
       if(!modexInitialized)
       {
         LOGINIT("Automaton::Compiler");
-        LERROR << "No modex plugin was loaded with" << configDirs 
+        LERROR << "No modex plugin was loaded with" << configDirs
                 << "and" << param.modexConfigFile.c_str();
         return EXIT_FAILURE;
       }
@@ -451,7 +458,7 @@ int run(int argc,char** argv)
         }
         // when character is searched out of text buffer
         catch (std::exception& e) {
-          std::cerr << "Error: " << e.what() << endl; 
+          std::cerr << "Error: " << e.what() << endl;
         }
       }
 
@@ -499,14 +506,13 @@ int run(int argc,char** argv)
   //TIMELOGINIT;
   TimeUtils::logAllCumulatedTime("And at last");
 
-
   return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
 void addLibs(GroupConfigurationStructure& group,
-            std::vector<std::string>& libNames) 
+            std::vector<std::string>& libNames)
 {
   try {
     std::string libs=group.getAttribute("lib");
@@ -522,13 +528,13 @@ void addLibs(GroupConfigurationStructure& group,
   catch (NoSuchAttribute& ) {} // do nothing: optional
 }
 
-std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& parser, 
+std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& parser,
                                                 const std::string& pipeline)
 {
   vector<string> libNames;
   try {
     ModuleConfigurationStructure& module=parser.getModuleConfiguration("Processors");
-    
+
     if (! pipeline.empty()) {
       // search libs for given pipeline
       try {
@@ -552,10 +558,10 @@ std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& pars
       }
       catch (NoSuchList) {} // no processUnitSequence list : ignored
     }
-    
+
     // if no pipeline specified, go through all groups
     for (ModuleConfigurationStructure::iterator it=module.begin(),
-      it_end=module.end(); it!=it_end; it++) 
+      it_end=module.end(); it!=it_end; it++)
     {
       // ModuleConfigurationStructure is a map<string,GroupConfigurationStructure>
       addLibs((*it).second,libNames);
