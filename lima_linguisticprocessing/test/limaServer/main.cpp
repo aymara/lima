@@ -67,7 +67,7 @@ int main(int argc, char **argv)
   int optional_port;
   // time before service stop
   int service_life = 0;
-  
+
   // Declare the supported options.
   po::options_description desc("Usage");
   desc.add_options()
@@ -88,10 +88,10 @@ int main(int argc, char **argv)
    "set the listening port")
   ("service-life,t", po::value< int >(&service_life),
    "set the service life (nb seconds)");
-  
+
   po::positional_options_description p;
   p.add("input-file", -1);
-  
+
   // store value of options
   po::variables_map varMap;
   // parse args and set values in store
@@ -117,10 +117,13 @@ int main(int argc, char **argv)
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    throw InvalidConfiguration("loadPlugins method failed.");
+  }
   //   std::cerr << "Amose plugins initialized" << std::endl;
 
-  
+
   // Parse configuration file of lima server
   // options in command line supercede options in configuration file
   // port
@@ -140,15 +143,15 @@ int main(int argc, char **argv)
     }
     catch (NoSuchModule& e1)
     {
-      qDebug() << "http-server module not defined in config file. Using default port" 
+      qDebug() << "http-server module not defined in config file. Using default port"
                 << DEFAULT_PORT;
     } catch (NoSuchGroup& e2)
     {
-      qDebug() << "http-server/address group not defined in config file. Using default port" 
+      qDebug() << "http-server/address group not defined in config file. Using default port"
                 << DEFAULT_PORT;
     } catch (NoSuchParam& e3)
     {
-      qDebug() << "http-server/address/port parameter not defined in config file. Using default port" 
+      qDebug() << "http-server/address/port parameter not defined in config file. Using default port"
                 << DEFAULT_PORT;
     }
   }
@@ -171,8 +174,8 @@ int main(int argc, char **argv)
   else {
     try
     {
-      langs = configLimaServer.getModuleGroupListValues("http-server", 
-                                                        "analyzer", 
+      langs = configLimaServer.getModuleGroupListValues("http-server",
+                                                        "analyzer",
                                                         "languages") ;
     }
     catch (NoSuchModule& e1)
@@ -229,14 +232,14 @@ int main(int argc, char **argv)
 
   QTimer t;
   // Create instance of server
-  LimaServer server(configPath, 
+  LimaServer server(configPath,
                     QString::fromUtf8(strCommonConfigFile.c_str()),
                     QString::fromUtf8(strLpConfigFile.c_str()),
-                    resourcesPath, 
-                    langs, 
-                    pipes, 
-                    port, 
-                    &app, 
+                    resourcesPath,
+                    langs,
+                    pipes,
+                    port,
+                    &app,
                     &t);
 
   if (varMap.count("service-life")) {
