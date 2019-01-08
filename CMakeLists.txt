@@ -64,27 +64,29 @@ SPECIFICENTITIES_GENERIC_CONFIGENV()
 
 macro (ADD_DLL_TO_PATH _lib)
     message("ADD_DLL_TO_PATH ${_lib}")
-    message("Will copy $<TARGET_FILE_DIR:${_lib}>/${_lib}.dll to ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll")
-    if(WIN32)
-      add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
-        COMMAND ${CMAKE_COMMAND} -E copy 
-          $<TARGET_FILE_DIR:${_lib}>/${_lib}.dll
-          ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
-        DEPENDS
-          ${_lib}
-        COMMENT "Copy $<TARGET_FILE_DIR:${_lib}>/${_lib}.dll to ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll"
-        VERBATIM
-      )
-      add_custom_target(
-        ${_lib}_dll
-        ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${_lib}.dll
-      )
-      add_dependencies(rules-configEnv ${_lib}_dll)
+    set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.so)
 
+    if(WIN32)
+      set(ADD_DLL_TO_PATH_LIB_NAME ${_lib}.dll)
     endif()
+    message("Will copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/")
+    add_custom_command(
+      OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
+      COMMAND ${CMAKE_COMMAND} -E copy 
+        $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME}
+        ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+      DEPENDS
+        ${_lib}
+      COMMENT "Copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}"
+      VERBATIM
+    )
+    add_custom_target(
+      ${_lib}_dll
+      ALL
+      DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+    )
+    add_dependencies(rules-configEnv ${_lib}_dll)
 endmacro()
 
 include_directories(
