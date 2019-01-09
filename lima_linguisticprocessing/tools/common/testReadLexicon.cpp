@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,14 +17,14 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                                   *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
 #include "common/LimaCommon.h"
 #include "common/Data/LimaString.h"
 
-#include "common/Data/strwstrtools.h" 
+#include "common/Data/strwstrtools.h"
 #include "common/misc/AbstractAccessByString.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 
@@ -45,14 +45,14 @@ typedef struct ParamStruct
 }
 Param;
 
-void testAccessMethod(const Param& param )
+void testAccessMethod(const Param& param)
 {
-  string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")?"/usr/share/apps/lima/resources":string(qgetenv("LIMA_RESOURCES").constData());
-  string commonConfigFile=string("lima-common.xml");
-  string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
+  string resourcesPath = qEnvironmentVariableIsEmpty("LIMA_RESOURCES") ? "/usr/share/apps/lima/resources" : string(qgetenv("LIMA_RESOURCES").constData());
+  string commonConfigFile = string("lima-common.xml");
+  string configDir = qEnvironmentVariableIsEmpty("LIMA_CONF") ? "/usr/share/config/lima" : string(qgetenv("LIMA_CONF").constData());
 
   // Load lexicon
-  Lima::Common::FsaAccess::FsaAccessSpare16* fsaAccess=new Lima::Common::FsaAccess::FsaAccessSpare16();
+  Lima::Common::FsaAccess::FsaAccessSpare16* fsaAccess = new Lima::Common::FsaAccess::FsaAccessSpare16();
   fsaAccess->read(param.keyFileName);
   uint64_t size = fsaAccess->getSize();
   cerr <<  "FSA Access : " << size << " keys read from main keyfile" << endl;
@@ -63,13 +63,15 @@ void testAccessMethod(const Param& param )
     Lima::LimaString extent = fsaAccess->getExtent(limaKey);
     std::cout << param.prefix << " => " << Misc::limastring2utf8stdstring(extent) << std::endl;
   }
+
+  delete fsaAccess;
 }
 
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
@@ -81,22 +83,21 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &Lima::LimaMainTaskRunner::finished, [](int returnCode){ QCoreApplication::exit(returnCode); } );
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
   return a.exec();
-
 }
 
 
-int run(int argc,char** argv)
+int run(int argc, char** argv)
 {
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   setlocale(LC_ALL, "");
 
   // options reading
@@ -106,7 +107,7 @@ int run(int argc,char** argv)
                   -1,              // offset
                 };
 
-  for (int i = 1 ; i < argc; i++)
+  for (int i = 1; i < argc; i++)
   {
     std::string arg(argv[i]);
     std::string::size_type pos = std::string::npos;
@@ -146,7 +147,7 @@ int run(int argc,char** argv)
   }
   cerr << "--offset="<< param.offset << " ";
   cerr << endl;
-  
+
   testAccessMethod( param );
   return EXIT_SUCCESS;
 }

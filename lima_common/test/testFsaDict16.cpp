@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -76,7 +76,7 @@ int logFileSize( const std::string& filename ) {
   return sts.st_size;
 }
 
-int logMemsize() {  
+int logMemsize() {
   int vmSize = 0;
 #ifdef WIN32
   return vmSize;
@@ -162,6 +162,7 @@ typedef struct ParamStruct {
   bool composed;
   bool withAssert;
   std::string inputDicoComp;
+  std::string configDir;
 } Param;
 
 int readListOfWords(
@@ -225,7 +226,7 @@ void DictTester<dictType>::addListOfWords() {
 
   if( !m_param.listOfWords.size() )
     return;
-  
+
   std::ifstream wList(m_param.listOfWords.c_str(), std::ios::in | std::ios::binary );
   if ( !wList.is_open() ) {
     std::cerr <<  "Cannot open list of words " << m_param.listOfWords << std::endl;
@@ -236,7 +237,7 @@ void DictTester<dictType>::addListOfWords() {
 
   for( int counter = 0 ; ; counter++ ) {
     if( (counter%10000) == 0 ) {
-      std::cerr << "\raddListOfWords counter = " << counter 
+      std::cerr << "\raddListOfWords counter = " << counter
                 << " VmSize: " << logMemsize() << std::flush;
 //      std::cerr << "addListOfWords counter = " << counter << std::endl;
     }
@@ -245,7 +246,7 @@ void DictTester<dictType>::addListOfWords() {
     string line(strbuff);
     if( wList.eof() )
     {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl 
+      std::cerr <<  "end of list of words. counter=" << counter << std::endl
                 << std::flush;
       break;
     }
@@ -283,7 +284,7 @@ void DictTester<dictType>::addListOfUnorderedWords() {
 //    }
     m_dico.addRandomWord( *itWord );
   }
-  
+
   if( m_param.printGraph ) {
    std::cerr <<  "Print graph...." << std::endl;
    m_dico.printGraph(std::cerr);
@@ -307,7 +308,7 @@ void DictTester<dictType>::testIndex(
     int index = m_dico.getIndex(*lemma);
     // traces
     if( index%10000 == 0 ) {
-      std::cout << "\rtestIndex index = " << index 
+      std::cout << "\rtestIndex index = " << index
                 << " VmSize: " << logMemsize() << std::flush;
     }
     if( m_param.withDebug ) {
@@ -365,7 +366,7 @@ template <typename dictType>
 {
   LIMA_UNUSED(end);
   typename std::vector<Lima::LimaString >::const_iterator lemma = begin;
-  
+
   // if size of indexes = 1, we just display the string return by getSpelling()
   std::cerr <<  "testSpelling: getSpelling: indexes.size()=" << indexes.size() << std::endl;
   if( indexes.size() == 1 ) {
@@ -489,43 +490,39 @@ void DictTester<dictType>::write( void ) {
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
-  QsLogging::initQsLog();
-  
+
   cerr << argv[0] << " begin..." << endl << "  command line: ";
   for (int i = 0; i < argc; i++)
   {
     std::cerr << argv[i] << " ";
   }
   std::cerr << std::endl;
-  
+
   setlocale(LC_ALL, "");
-#ifdef DEBUG_CD
-  FSAALOGINIT;
-  LDEBUG << argv[0] <<  " begin..." ;
-#endif
 
   // options reading
   Param param = {
     std::string(),  // listOfWords
     std::string(),  // outputDico
     std::string(),  // inputDico
-    false,    // subWord
+    false,          // subWord
     std::string(),  // listOfHyperwords
-    false,    // superWord
-    false,    // printGraph
-    false,    // spareMem
-    one_byte,    // charSize
-    false,    // withoutTemplate
-    true,    // trieDirectionForward
-    false,    // withDebug
-    false,    // runPerfo
-    false,    // runIndex
-    false,    // addWord
-    false,    // runSpelling
-    -1,       // termId (-1 means no termId specified by user)
-    false,    // composed
-    false,    // withAssert
-    std::string()    // inputDico
+    false,          // superWord
+    false,          // printGraph
+    false,          // spareMem
+    one_byte,       // charSize
+    false,          // withoutTemplate
+    true,           // trieDirectionForward
+    false,          // withDebug
+    false,          // runPerfo
+    false,          // runIndex
+    false,          // addWord
+    false,          // runSpelling
+    -1,             // termId (-1 means no termId specified by user)
+    false,          // composed
+    false,          // withAssert
+    std::string(),  // inputDico
+    std::string()   // configDir
   };
 
   for (int i = 1 ; i < argc; i++) {
@@ -593,13 +590,13 @@ int main(int argc, char *argv[])
       switch(charSize) {
         case 1:
           param.charSize = one_byte;
-    break;
+          break;
         case 2:
           param.charSize = two_bytes;
-    break;
+          break;
         case 4:
           param.charSize = four_bytes;
-    break;
+          break;
       }
     }
     else if ( arg == "--spare" ){
@@ -626,6 +623,9 @@ int main(int argc, char *argv[])
     }
     else if ( arg == "--withAssert" ){
       param.withAssert = true;
+    }
+    else if ( (pos = arg.indexOf("--configDir=")) != -1 ){
+      param.configDir = arg.mid(pos+12).toUtf8().data();
     }
   }
 
@@ -668,18 +668,36 @@ int main(int argc, char *argv[])
   }
   cerr << endl;
 
+  std::string configPath = (param.configDir.size()>0) ? param.configDir : string("");
+  if (configPath.size() == 0)
+    configPath = string(getenv("LIMA_CONF"));
+  if (configPath.size() == 0)
+    configPath = string("/usr/share/config/lima");
+
+  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  {
+    FSAALOGINIT;
+    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
+    return EXIT_FAILURE;
+  }
+
+#ifdef DEBUG_CD
+  FSAALOGINIT;
+  LDEBUG << argv[0] <<  " begin..." ;
+#endif
+
   if( (!param.spareMem) && (param.addWord) ) {
     // Si Builder avec option addWord: BuilderRandom
     std::cerr <<  "Create BuilderRandom dictionary...." << std::endl;
     Lima::Common::FsaAccess::FsaAccessBuilderRandom16 dico(param.trieDirectionForward);
     if( param.inputDico.size() > 0) {
-      std::cerr <<  "Read dictionary from file... "
+      std::cerr << "Read dictionary from file... "
                 << param.inputDico << "..." << std::endl;
       dico.read(param.inputDico);
     }
     DictTester<Lima::Common::FsaAccess::FsaAccessBuilderRandom16> *wbuilderRandomTester16 = new DictTester<Lima::Common::FsaAccess::FsaAccessBuilderRandom16>( param, dico );
     if( param.listOfWords.size() > 0 ) {
-      std::cerr <<  "addListOfRandomWords "
+      std::cerr << "addListOfRandomWords "
                 << param.listOfWords << "..." << std::endl;
       wbuilderRandomTester16->addListOfUnorderedWords();
     }
@@ -687,20 +705,20 @@ int main(int argc, char *argv[])
     wbuilderRandomTester16->write();
     delete wbuilderRandomTester16;
   }
-  
-  else if ( !param.spareMem) {
+
+  else if (!param.spareMem) {
     // Si Builder sans option addWord: Builder
-    std::cerr <<  "Create dictionary...." << std::endl;
+    std::cerr << "Create dictionary...." << std::endl;
     Lima::Common::FsaAccess::FsaAccessBuilder16 dico(param.trieDirectionForward);
     if( param.inputDico.size() > 0) {
-      std::cerr <<  "no read operation allowed for FsaAccessBuilder "
+      std::cerr << "no read operation allowed for FsaAccessBuilder "
                 << std::endl;
       return EXIT_FAILURE;
     }
-    
+
     DictTester<Lima::Common::FsaAccess::FsaAccessBuilder16> *wbuilderTester16 = new DictTester<Lima::Common::FsaAccess::FsaAccessBuilder16>( param, dico );
-    if( param.listOfWords.size() > 0 ) {
-      std::cerr <<  "addListOfWords "
+    if (param.listOfWords.size() > 0) {
+      std::cerr << "addListOfWords "
                 << param.listOfWords << "..." << std::endl;
       wbuilderTester16->addListOfWords();
     }
@@ -734,7 +752,6 @@ int main(int argc, char *argv[])
     }
     DictTester<Lima::Common::FsaAccess::FsaAccessSpare16> *wspareTester16 = new DictTester<Lima::Common::FsaAccess::FsaAccessSpare16>(
       param, dico );
-
 
 /*
     Lima::LimaString lcwlem0(Misc::utf8stdstring2limastring("b"));
@@ -798,7 +815,7 @@ int main(int argc, char *argv[])
         indexes.push_back(param.termId);
 	std::cerr << "testSpelling with unique termId " << indexes[0] << std::endl;
       }
-      // case 2: check if getSpelling is ok for every id 
+      // case 2: check if getSpelling is ok for every id
       // (listOfWords is supposed to contain the complete ordered list of terms
       else if( param.listOfWords.size() > 0 ) {
         readListOfWords(param.listOfWords, listOfWords );

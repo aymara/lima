@@ -21,7 +21,7 @@ else()
   set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
 endif()
 
-set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing/core/SpecificEntities")
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/execEnv/lib${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing/core/SpecificEntities")
 set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
 
 ############
@@ -36,12 +36,12 @@ macro (CODES _lang)
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
-    COMMAND convertSymbolicCodes  --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
-    COMMAND parseXMLPropertyFile --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
-    DEPENDS code-${_lang}.xml ${ARGN}
+    COMMAND convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
+    COMMAND parseXMLPropertyFile --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
+    DEPENDS code-${_lang}.xml ${ARGN} convertSymbolicCodes
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "PATH is $ENV{PATH}"
-    COMMENT "COMMAND convertSymbolicCodes  --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
+    COMMENT "COMMAND convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
     VERBATIM
   )
 
@@ -52,8 +52,8 @@ macro (CODES _lang)
   )
 
   install(
-    FILES code-${_lang}.xml 
-    COMPONENT ${_lang} 
+    FILES code-${_lang}.xml
+    COMPONENT ${_lang}
     DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
 
 endmacro (CODES _lang)
@@ -211,13 +211,13 @@ macro(COMPILEXMLDIC _lang _dico _subdir)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND LC_ALL="C" sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary"
+    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 else ()
@@ -320,17 +320,17 @@ macro (IDIOMATICENTITIES _lang)
     rules-idiom-${_lang}
     ALL
     DEPENDS idiomaticExpressions-${_lang}.bin )
-    
-  add_dependencies(rules-idiom-${_lang} 
+
+  add_dependencies(rules-idiom-${_lang}
     rules-${_lang}-execEnv
   )
   # add the link between the current target and its execution environment dependencies
 
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.bin 
-    COMPONENT ${_lang} 
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.bin
+    COMPONENT ${_lang}
     DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
-    
+
 endmacro (IDIOMATICENTITIES _lang)
 
 # Specific Entities Exec Environment
@@ -354,7 +354,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml 
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
 
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -456,7 +456,7 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV(${_lang})${C_Norm}" )
 
   add_custom_command(
-    OUTPUT 
+    OUTPUT
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
@@ -530,9 +530,9 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
   install(FILES ${BINFILENAMES} COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SpecificEntities)
 
   # add the link between the current target and its execution environment dependencies
-  add_dependencies(rules-${_group}-${_lang}-${_subtarget} 
-    specificentitiesconfigenv-${_lang}-all 
-    rules-${_lang}-${_group}-configEnv-${_subtarget} 
+  add_dependencies(rules-${_group}-${_lang}-${_subtarget}
+    specificentitiesconfigenv-${_lang}-all
+    rules-${_lang}-${_group}-configEnv-${_subtarget}
     rules-${_lang}-execEnv
     rules-configEnv
     )
