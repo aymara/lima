@@ -77,8 +77,10 @@ int run(int aargc,char** aargv);
 
 int main(int argc, char **argv)
 {
+#ifndef DEBUG_CD
   try
   {
+#endif
     QCoreApplication a(argc, argv);
     QCoreApplication::setApplicationName("analyzeText");
     QCoreApplication::setApplicationVersion(LIMA_VERSION);
@@ -96,37 +98,24 @@ int main(int argc, char **argv)
     QTimer::singleShot(0, task, SLOT(run()));
 
     return a.exec();
+#ifndef DEBUG_CD
   }
   catch (const Lima::LimaException& e)
   {
-#ifdef DEBUG_CD
     std::cerr << "Catched LimaException:" << e.what() << std::endl;
     throw;
-#else
-    std::cerr << "analyzeText failed" << std::endl;
-    exit(1);
-#endif
   }
   catch (const std::exception& e)
   {
-#ifdef DEBUG_CD
     std::cerr << "Catched std::exception:" << e.what() << std::endl;
     throw;
-#else
-    std::cerr << "analyzeText failed" << std::endl;
-    exit(1);
-#endif
   }
   catch (...)
   {
-#ifdef DEBUG_CD
     std::cerr << "Catched unknown exception" << std::endl;
     throw;
-#else
-    std::cerr << "analyzeText failed" << std::endl;
-    exit(1);
-#endif
   }
+#endif
 }
 
 
