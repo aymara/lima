@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
 *              selectional restrictions
 *
 * @file        SelectionalRestrictionsConstraints.h
-* @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+* @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
 *              Copyright (c) 2010 by CEA
 * @date        Created on  Sun May, 16 2010
@@ -80,7 +80,7 @@ StoreForDisambiguationFactory(StoreForDisambiguationId);
 Automaton::ConstraintFunctionFactory<DisambiguateWith>
 DisambiguateWithFactory(DisambiguateWithId);
 
- 
+
 //**********************************************************************
 StoreForDisambiguation::StoreForDisambiguation(
   MediaId language,
@@ -136,7 +136,7 @@ DisambiguateWith::DisambiguateWith(MediaId language,
     SELOGINIT;
     LWARN << "Exception caught: " << e.what();
   }
-  
+
 }
 
 bool DisambiguateWith::operator()(const AnalysisGraph& graph,
@@ -154,8 +154,8 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   SyntacticData::Relation oldRelation = syntacticData->relationStoredForSelectionalConstraint();
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
-  
-  
+
+
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
     v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
@@ -171,7 +171,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   {
     SAPLOGINIT;
     LERROR << "no graph 'PosGraph' available !";
-    return MISSING_DATA;
+    return false;
   }
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(posgraph->getGraph());
   //   LDEBUG << "There is " << out_degree(v2, *lingGraph) << " edges out of " << v2;
@@ -187,7 +187,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
 //   Token* ov2Token = tokenMap[oldRelation.get<1>()];
   MorphoSyntacticData* ov2Data = dataMap[std::get<1>(oldRelation)];
   std::string orel = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(std::get<2>(oldRelation));
-  
+
   // compute the preferred attachment
   // (if no clear preference, choose the closest left attachment)
   // dummy implementation
@@ -196,7 +196,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   //   else (at least if current is location) choose new one
   double preference = 0;
   const PropertyAccessor& macroAccessor = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO");
-  
+
 #ifdef DEBUG_LP
   LDEBUG << "DisambiguateWith " << Common::Misc::limastring2utf8stdstring(sp[*(v2Data->allLemma().begin())])
       << ", " << Common::Misc::limastring2utf8stdstring(sp[*(ov2Data->allLemma().begin())])
@@ -222,16 +222,16 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   LDEBUG << "Old proba=" << oldProba << "; new proba=" << newProba;
 #endif
   preference = newProba - oldProba;
-  
+
   // if old one: don't do anything
   // else if new one, remove the old dependency, return true
   if (preference > 0) /// @TODO implement the test
   {
-    return syntacticData->removeDependency(std::get<0>(oldRelation), 
-                                           std::get<1>(oldRelation), 
+    return syntacticData->removeDependency(std::get<0>(oldRelation),
+                                           std::get<1>(oldRelation),
                                            std::get<2>(oldRelation));
   }
-  
+
   return false;
 }
 
