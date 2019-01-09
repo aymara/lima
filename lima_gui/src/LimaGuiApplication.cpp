@@ -68,6 +68,8 @@ LimaGuiApplication::LimaGuiApplication(const QCommandLineParser& options,
     m_configuration(nullptr),
     m_options(options)
 {
+  LIMAGUILOGINIT;
+  LDEBUG << "LimaGuiApplication::LimaGuiApplication";
 
   loadLimaConfigurations();
 
@@ -357,7 +359,7 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
 {
 
   LIMAGUILOGINIT;
-
+  LDEBUG << "LimaGuiApplication::initializeLimaAnalyzer";
   QStringList projects;
   projects << QString("lima");
 
