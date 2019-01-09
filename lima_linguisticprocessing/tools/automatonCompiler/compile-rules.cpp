@@ -292,7 +292,13 @@ int run(int argc, char** argv)
     resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  QsLogging::initQsLog(configPath);
+  if (QsLogging::initQsLog(configPath) != 0)
+  {
+    LOGINIT("Automaton::Compiler");
+    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
+    return EXIT_FAILURE;
+  }
+
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
@@ -311,11 +317,11 @@ int run(int argc, char** argv)
     // initialize common
       LOGINIT("Automaton::Compiler");
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")...";
-    MediaticData::changeable().init(
-      resourcesPath.toUtf8().constData(),
-      configPath.toUtf8().constData(),
-      param.commonConfigFile,
-      langs);
+      MediaticData::changeable().init(
+        resourcesPath.toUtf8().constData(),
+        configPath.toUtf8().constData(),
+        param.commonConfigFile,
+        langs);
       LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
 
     /*

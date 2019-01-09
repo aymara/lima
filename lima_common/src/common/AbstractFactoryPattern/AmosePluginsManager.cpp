@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -42,7 +42,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
-  
+
   QStringList configDirsList = configDirs.split(LIMA_PATH_SEPARATOR);
   if (configDirsList.isEmpty())
   {
@@ -56,33 +56,37 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
     LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
-    
+
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file " 
+     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file "
             << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly)) {
         ABSTRACTFACTORYPATTERNLOGINIT;
-        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file " 
+        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file "
                 << pluginsFile.toUtf8().data();
         return false;
       }
-      
+
       // For each entry, call load library
-      while (!file.atEnd()) 
+      while (!file.atEnd())
       {
         // Remove whitespace characters from the start and the end.
         QString line = QString(file.readLine()).trimmed();
-        
+
         // Allow empty and comment lines.
         if ( !line.isEmpty() && !line.startsWith('#') )
         {
           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
-          DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str());
+          if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
+          {
+            LERROR << "AmosePluginsManager::loadLibrary(\"" << line.toStdString() << "\") failed.";
+            return false;
+          }
         }
       }
     }
