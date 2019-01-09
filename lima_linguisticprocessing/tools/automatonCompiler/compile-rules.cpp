@@ -301,12 +301,13 @@ int run(int argc, char** argv)
 
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    LOGINIT("Automaton::Compiler");
-    LERROR << "Call to loadPlugins failed.";
-    return EXIT_FAILURE;
-  }
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+//   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+//   {
+//     LOGINIT("Automaton::Compiler");
+//     LERROR << "Call to loadPlugins failed.";
+//     return EXIT_FAILURE;
+//   }
 
   deque<string> langs;
   langs.push_back(param.language);
