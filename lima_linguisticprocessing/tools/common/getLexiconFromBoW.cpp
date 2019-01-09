@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -344,7 +344,7 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   if (argc<1) {
         cerr << *USAGE;
         return EXIT_FAILURE;
@@ -459,16 +459,16 @@ int run(int argc,char** argv)
     }
 
     // output stream (default is 'cout')
-    std::ostream *s_out;
+    std::ostream *s_out = NULL;
 
     // Manage output
-    if ( param.outputFilename.length() == 0) s_out=&std::cout;
-    else s_out = new std::ofstream(param.outputFilename.c_str(), std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+    if (param.outputFilename.length() == 0)
+        s_out = &std::cout;
+    else
+        s_out = new std::ofstream(param.outputFilename.c_str(), std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 
     // output lexicon
-    Lexicon::const_iterator
-    w=lex.begin(),
-      w_end=lex.end();
+    Lexicon::const_iterator w=lex.begin(), w_end=lex.end();
     for (;w!=w_end; w++) {
         (*s_out) << Common::Misc::limastring2utf8stdstring((*w).second.second) << "|"
         << Common::Misc::limastring2utf8stdstring((*w).first) << "|"
@@ -476,8 +476,10 @@ int run(int argc,char** argv)
     }
 
     // Close output file (if any)
-    if (  param.outputFilename.length() != 0)
+    if (param.outputFilename.length() != 0 && s_out != NULL) {
         dynamic_cast<std::ofstream*>(s_out)->close();
+        delete s_out;
+    }
 
     return EXIT_SUCCESS;
 }
