@@ -33,9 +33,9 @@
 #include <iostream>
 void QsDebugOutput::output( const QString& message )
 {
-   std::cerr << qPrintable(message) << std::endl;
-//   OutputDebugStringW(reinterpret_cast<const WCHAR*>(message.utf16()));
-//   OutputDebugStringW(L"");
+//    std::cerr << qPrintable(message) << std::endl;
+  OutputDebugStringW(reinterpret_cast<const WCHAR*>(message.utf16()));
+  OutputDebugStringW(L"");
 }
 #elif defined(Q_OS_SYMBIAN)
 #include <e32debug.h>
