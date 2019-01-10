@@ -61,8 +61,6 @@
 #include <QtCore/QCoreApplication>
 
 
-using namespace std;
-
 using namespace Lima;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing::Automaton;
@@ -74,9 +72,11 @@ using namespace Lima::Common::Misc;
 // declarations
 //****************************************************************************
 // help mode & usage
-Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : compile-rules [-h] -ooutputfile rulesfile\n"));
+Q_GLOBAL_STATIC_WITH_ARGS(std::string, USAGE,
+                          ("usage : compile-rules [-h] -ooutputfile rulesfile\n"));
 
-Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, ((std::string("A compiler for the rules of the Named Entities recognizer\n"
+Q_GLOBAL_STATIC_WITH_ARGS(std::string, HELP,
+                          ((std::string("A compiler for the rules of the Named Entities recognizer\n"
                          +*USAGE
                          +"\n"
 +"-h : this help page\n"
@@ -109,16 +109,16 @@ Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, ((std::string("A compiler for the rules 
 // GLOBAL variable -> the command line arguments
 struct Param
 {
-  string inputRulesFile; // name of the rules file
-  string outputFile;     // name of the output file for the compiled rules
-  string resourcesDir;   // directory for resources
-  string configDir;      // directory for config files
-  string commonConfigFile; // config file for linguisticData
-  string lpConfigFile;     // config file for linguistic processing
-  string modexConfigFile;  // config file for modex
-  string pipeline;         // pipeline for modex (defined in config file)
-  string language;       // language of the files
-  string encoding;       // default encoding of rules files
+  std::string inputRulesFile; // name of the rules file
+  std::string outputFile;     // name of the output file for the compiled rules
+  std::string resourcesDir;   // directory for resources
+  std::string configDir;      // directory for config files
+  std::string commonConfigFile; // config file for linguisticData
+  std::string lpConfigFile;     // config file for linguistic processing
+  std::string modexConfigFile;  // config file for modex
+  std::string pipeline;         // pipeline for modex (defined in config file)
+  std::string language;       // language of the files
+  std::string encoding;       // default encoding of rules files
   bool decompile;        // reads compiled rules
   bool listTriggers;     // list the triggers with their associated index
   bool useDictionary;    // use a dictionary to reorganize rules
@@ -148,39 +148,40 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 //   bool languageSpecified(false);
   for(uint64_t i(1); i<argc; i++)
   {
-    string s(argv[i]);
+    std::string s(argv[i]);
     if (s=="-h" || s=="--help")
     {
       param.help=true;
-      cerr << *HELP; exit(1);
+      std::cerr << *HELP;
+      exit(1);
     }
     else if (s=="-r" || s=="--decompile" || s=="--bin")
-      param.decompile=true;
+      param.decompile = true;
     else if (s=="-l" || s=="--listTriggers")
-      param.listTriggers=true;
+      param.listTriggers = true;
     else if (s=="-d" || s=="--useDictionary")
-      param.useDictionary=true;
+      param.useDictionary = true;
     else if (s=="--loadPossibleTypes")
-      param.loadPossibleTypes=true;
+      param.loadPossibleTypes = true;
     else if (s.find("--encoding=",0)==0)
     {
       param.encoding=s.substr(11,s.length()-11);
     }
     else if (s.find("--resourcesDir=",0)==0)
     {
-      param.resourcesDir=string(s,15);
+      param.resourcesDir = std::string(s,15);
     }
     else if (s.find("--configDir=",0)==0)
     {
-      param.configDir=string(s,12);
+      param.configDir = std::string(s,12);
     }
     else if (s.find("--common-config-file=")==0)
     {
-      param.commonConfigFile=string(s,21);
+      param.commonConfigFile = std::string(s,21);
     }
     else if (s.find("--lp-config-file=")==0)
     {
-      param.lpConfigFile=string(s,17);
+      param.lpConfigFile = std::string(s,17);
     }
     else if (s.find("--language=",0)==0)
     {
@@ -195,8 +196,8 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
         i++;
         if (i >= argc)
         {
-          std::cerr << "no output filename given" << endl;
-          cerr << *USAGE << endl;
+          std::cerr << "no output filename given" << std::endl;
+          std::cerr << *USAGE << std::endl;
           exit(1);
         }
         else
@@ -207,24 +208,24 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     }
     else if (s.find("--output=",0)==0)
     {
-      param.outputFile=s.substr(9,s.length()-9);
+      param.outputFile = s.substr(9, s.length()-9);
     }
     else if (s.find("--modex=",0)==0)
     {
-      param.modexConfigFile=string(s,8);
+      param.modexConfigFile = std::string(s,8);
     }
     else if (s.find("--pipeline=",0)==0)
     {
-      param.pipeline=string(s,11);
+      param.pipeline = std::string(s,11);
     }
     else if (s.find("--debug",0)==0)
     {
-      param.debug=true;
+      param.debug = true;
     }
     else if (s[0]=='-')
     {
-      std::cerr << "unrecognized option " <<  s << endl;
-      cerr << *USAGE << endl;
+      std::cerr << "unrecognized option " <<  s << std::endl;
+      std::cerr << *USAGE << std::endl;
       exit(1);
     }
     else
@@ -234,14 +235,17 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
   }
 
   //ensure all needed parameters are set
-  if (param.language.empty()) {
-    cerr << "Error: missing --language=.. argument " << endl;
+  if (param.language.empty())
+  {
+    std::cerr << "Error: missing --language=.. argument " << std::endl;
     exit(1);
   }
 
 }
 
-std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& parser, const std::string& pipeline);
+std::vector<std::string> getDynamicLibraryNames(
+  XMLConfigurationFileParser& parser, 
+  const std::string& pipeline);
 
 //****************************************************************************
 //  M A I N
@@ -258,14 +262,15 @@ int main(int argc, char **argv)
 
   // Task parented to the application so that it
   // will be deleted by the application.
-  Lima::LimaMainTaskRunner* task = new Lima::LimaMainTaskRunner(argc, argv, run, &a);
+  auto task = std::unique_ptr<Lima::LimaMainTaskRunner>(new Lima::LimaMainTaskRunner(argc, argv, run, &a));
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, &Lima::LimaMainTaskRunner::finished, [](int returnCode){ QCoreApplication::exit(returnCode); } );
+  QObject::connect(task.get(), &Lima::LimaMainTaskRunner::finished, 
+                   [](int returnCode){ QCoreApplication::exit(returnCode); } );
 
   // This will run the task from the application event loop.
-  QTimer::singleShot(0, task, SLOT(run()));
+  QTimer::singleShot(0, task.get(), SLOT(run()));
 
   return a.exec();
 }
@@ -275,7 +280,8 @@ int run(int argc, char** argv)
 {
   readCommandLineArguments(argc,argv);
 
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList configDirs = buildConfigurationDirectoriesList(
+    QStringList() << "lima",QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
   if (!param.configDir.empty())
   {
@@ -283,7 +289,8 @@ int run(int argc, char** argv)
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList resourcesDirs = buildResourcesDirectoriesList(
+    QStringList() << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   if (!param.resourcesDir.empty())
@@ -310,21 +317,23 @@ int run(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  deque<string> langs;
+  std::deque<std::string> langs;
   langs.push_back(param.language);
 
   // initialize linguisticData
 //   try
   {
     // initialize common
-      LOGINIT("Automaton::Compiler");
-      LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ")...";
-      MediaticData::changeable().init(
-        resourcesPath.toUtf8().constData(),
-        configPath.toUtf8().constData(),
-        param.commonConfigFile,
-        langs);
-      LDEBUG << "main: MediaticData::changeable().init( " << param.resourcesDir << ") done!";
+    LOGINIT("Automaton::Compiler");
+    LDEBUG << "main: MediaticData::changeable().init( " 
+            << param.resourcesDir << ")...";
+    MediaticData::changeable().init(
+      resourcesPath.toUtf8().constData(),
+      configPath.toUtf8().constData(),
+      param.commonConfigFile,
+      langs);
+    LDEBUG << "main: MediaticData::changeable().init( " 
+            << param.resourcesDir << ") done!";
 
     /*
     * @TODO eviter l'initialisation des ressources dans compiles rules
@@ -337,18 +346,23 @@ int run(int argc, char** argv)
     MediaId language = MediaticData::single().media(param.language);
 
     bool languageInitialized = false;
-    QString lpConfigFile = findFileInPaths(configPath, param.lpConfigFile.c_str());
+    QString lpConfigFile = findFileInPaths(configPath,
+                                           param.lpConfigFile.c_str());
     if (!lpConfigFile.isEmpty())
     {
       if (QFileInfo::exists(lpConfigFile))
       {
         XMLConfigurationFileParser lpconfig(lpConfigFile.toUtf8().constData());
-        const string& langConfigFileName=lpconfig.getModuleGroupParamValue("lima-coreclient","mediaProcessingDefinitionFiles",param.language);
-        QString langConfigFile = findFileInPaths(configPath, langConfigFileName.c_str());
+        const auto& langConfigFileName = lpconfig.getModuleGroupParamValue(
+          "lima-coreclient",
+          "mediaProcessingDefinitionFiles",
+          param.language);
+        QString langConfigFile = findFileInPaths(configPath,
+                                                 langConfigFileName.c_str());
         if (!langConfigFile.isEmpty())
         {
           XMLConfigurationFileParser langParser(langConfigFile.toUtf8().constData());
-          ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+          auto& module = langParser.getModuleConfiguration("Resources");
           LinguisticResources::changeable().initLanguage(
             language,
             module,
@@ -365,12 +379,14 @@ int run(int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-    AbstractResource* resReco = LinguisticResources::single().getResource(language,"automatonCompiler");
+    auto resReco = LinguisticResources::single().getResource(language,
+                                                             "automatonCompiler");
 
     Recognizer& reco = *(static_cast< Recognizer* >(resReco));
 
     // look at the modex config file to find the dynamic libraries that must be loaded
-    if (! param.modexConfigFile.empty()) {
+    if (! param.modexConfigFile.empty())
+    {
       LOGINIT("Automaton::Compiler");
       LDEBUG << "use modex file " << param.modexConfigFile;
       bool modexInitialized = false;
@@ -383,14 +399,15 @@ int run(int argc, char** argv)
           if (!modexConfigFile.isEmpty())
           {
             XMLConfigurationFileParser modexconfig(modexConfigFile.toUtf8().constData());
-            auto libraries = getDynamicLibraryNames(modexconfig,param.pipeline);
-            for (auto it = libraries.cbegin(); it != libraries.cend(); it++)
+            auto libraries = getDynamicLibraryNames(modexconfig,
+                                                    param.pipeline);
+            for (const auto& library: libraries)
             {
               LOGINIT("Automaton::Compiler");
-              LDEBUG << "load library " << *it;
-              if (!Common::DynamicLibrariesManager::changeable().loadLibrary(*it))
+              LDEBUG << "load library " << library;
+              if (!Common::DynamicLibrariesManager::changeable().loadLibrary(library))
               {
-                LERROR << "Call to loadLibrary(\"" << *it << "\") failed.";
+                LERROR << "Call to loadLibrary(\"" << library << "\") failed.";
                 return EXIT_FAILURE;
               }
             }
@@ -418,12 +435,12 @@ int run(int argc, char** argv)
 
         if (! param.listTriggers)
         {
-          cout << reco;
+          std::cout << reco;
         }
       }
-      catch (exception& e)
+      catch (std::exception& e)
       {
-        std::cerr << "Error while reading rules file: "  << e.what() << endl;
+        std::cerr << "Error while reading rules file: "  << e.what() << std::endl;
         exit(1);
       }
     }
@@ -432,7 +449,8 @@ int run(int argc, char** argv)
       // read the rules file in text format
       //try
       {
-        // Lima::TimeUtilsController *ctrl2 = new Lima::TimeUtilsController("read file and build recognizer", true);
+        // auto ctrl2 = new TimeUtilsController("read file and build recognizer", 
+        //                                      true);
 	// Lima::TimeUtilsController("read file and build recognizer", true);
         //std::cerr << "\rBuilding recognizer…";
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
@@ -453,21 +471,23 @@ int run(int argc, char** argv)
         try
         {
 
-          string dicostr = "mainDictionary";
-          AbstractResource* res= LinguisticResources::single().getResource(language,dicostr);
+          std::string dicostr = "mainDictionary";
+          auto res = LinguisticResources::single().getResource(language,
+                                                               dicostr);
 
-          AnalysisDict::AbstractAnalysisDictionary* dico = static_cast< AnalysisDict::AbstractAnalysisDictionary* >(res);
-          if (dico==0)
+          auto dico = static_cast< AnalysisDict::AbstractAnalysisDictionary* >(res);
+          if (dico == nullptr)
           {
-            throw runtime_error("dictionary not available for language "+
+            throw std::runtime_error("dictionary not available for language "+
                                 param.language);
           }
           // Reorganization not available
           // reco.reorganizeRules(*dico);
         }
         // when character is searched out of text buffer
-        catch (std::exception& e) {
-          std::cerr << "Error: " << e.what() << endl;
+        catch (std::exception& e) 
+        {
+          std::cerr << "Error: " << e.what() << std::endl;
         }
       }
 
@@ -478,14 +498,16 @@ int run(int argc, char** argv)
         {
           //std::cerr << "\rWriting recognizer…";
           AutomatonWriter writer;
-          LINFO << "writer.WritingRecognizer(language:" << language << "debug:" << param.debug << ")";
-          writer.writeRecognizer(reco,param.outputFile,language,param.debug);
+          LINFO << "writer.WritingRecognizer(language:" << language 
+                << "debug:" << param.debug << ")";
+          writer.writeRecognizer(reco, param.outputFile, language, param.debug);
           //reco.writeToFile(param.outputFile);
         }
       }
       catch (Lima::LinguisticProcessing::Automaton::OpenFileException& e)
       {
-        std::cerr << "OpenFileException: " << e.what() << endl; exit(1);
+        std::cerr << "OpenFileException: " << e.what() << std::endl;
+        exit(1);
       }
     }
 
@@ -518,66 +540,76 @@ int run(int argc, char** argv)
   return EXIT_SUCCESS;
 }
 
-//-----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void addLibs(GroupConfigurationStructure& group,
             std::vector<std::string>& libNames)
 {
-  try {
-    std::string libs=group.getAttribute("lib");
-    std::string::size_type begin=0;
-    std::string::size_type i=libs.find(",",begin);
+  try 
+  {
+    std::string libs = group.getAttribute("lib");
+    std::string::size_type begin = 0;
+    std::string::size_type i = libs.find(",",begin);
     while (i!=std::string::npos) {
-      libNames.push_back(string(libs,begin,i-begin));
+      libNames.push_back(std::string(libs,begin,i-begin));
       begin=i+1;
       i=libs.find(",",begin);
     }
-    libNames.push_back(string(libs,begin));
+    libNames.push_back(std::string(libs,begin));
   }
   catch (NoSuchAttribute& ) {} // do nothing: optional
 }
 
-std::vector<std::string> getDynamicLibraryNames(XMLConfigurationFileParser& parser,
-                                                const std::string& pipeline)
+std::vector<std::string> getDynamicLibraryNames(
+    XMLConfigurationFileParser& parser,
+    const std::string& pipeline)
 {
-  vector<string> libNames;
-  try {
-    ModuleConfigurationStructure& module=parser.getModuleConfiguration("Processors");
+  std::vector<std::string> libNames;
+  try
+  {
+    auto& module = parser.getModuleConfiguration("Processors");
 
-    if (! pipeline.empty()) {
+    if (! pipeline.empty()) 
+    {
       // search libs for given pipeline
-      try {
-        GroupConfigurationStructure group=module.getGroupNamed(pipeline);
-        addLibs(group,libNames);
+      try 
+      {
+        auto& group = module.getGroupNamed(pipeline);
+        addLibs(group, libNames);
         // do it for all groups included in pipeline
-        deque<string>& processUnits=group.getListsValueAtKey("processUnitSequence");
-        for (deque<string>::const_iterator it=processUnits.begin(),it_end=processUnits.end(); it!=it_end; it++)
+        const auto& processUnits = group.getListsValueAtKey("processUnitSequence");
+        for (const auto& processUnit: processUnits)
         {
-          try {
-            GroupConfigurationStructure pu=module.getGroupNamed(*it);
-            addLibs(pu,libNames);
+          try 
+          {
+            auto& pu = module.getGroupNamed(processUnit);
+            addLibs(pu, libNames);
             // @todo: should be recursive
           }
-          catch (NoSuchGroup) {} // missing group for processUnit in pipeline : ignored
+          catch (NoSuchGroup) {} // missing group for processUnit in pipeline: ignored
         }
         return libNames;
       }
-      catch (NoSuchGroup) {
-        cerr << "Warning: config file for modex has no group '" << pipeline << "' in 'Processors' : ignored" << endl;
+      catch (NoSuchGroup) 
+      {
+        std::cerr << "Warning: config file for modex has no group '" << pipeline 
+                  << "' in 'Processors' : ignored" << std::endl;
       }
       catch (NoSuchList) {} // no processUnitSequence list : ignored
     }
 
     // if no pipeline specified, go through all groups
-    for (ModuleConfigurationStructure::iterator it=module.begin(),
-      it_end=module.end(); it!=it_end; it++)
+    for (auto& mod: module)
     {
-      // ModuleConfigurationStructure is a map<string,GroupConfigurationStructure>
-      addLibs((*it).second,libNames);
+      // ModuleConfigurationStructure is a 
+      // map<string,GroupConfigurationStructure>
+      addLibs(mod.second,libNames);
     }
   }
-  catch (NoSuchModule &) {
-    cerr << "Error: config file for modex has no module 'Processors'" << endl;
+  catch (NoSuchModule &) 
+  {
+    std::cerr << "Error: config file for modex has no module 'Processors'" 
+              << std::endl;
   }
 
   return libNames;
