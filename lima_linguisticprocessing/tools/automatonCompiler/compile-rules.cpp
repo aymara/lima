@@ -296,18 +296,19 @@ int run(int argc, char** argv)
   {
     LOGINIT("Automaton::Compiler");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
-//     return EXIT_FAILURE;
+    return EXIT_FAILURE;
   }
 
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-//   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-//   {
-//     LOGINIT("Automaton::Compiler");
-//     LERROR << "Call to loadPlugins failed.";
-//     return EXIT_FAILURE;
-//   }
+//   Lima::AmosePluginsManiager::changeable().loadPlugins(configPath);
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    LOGINIT("Automaton::Compiler");
+    LERROR << "compile-rules: Call to loadPlugins(\"" 
+            << configPath << "\") failed.";
+    return EXIT_FAILURE;
+  }
 
   deque<string> langs;
   langs.push_back(param.language);
@@ -377,12 +378,13 @@ int run(int argc, char** argv)
       {
         if (QFileInfo::exists(configDir + "/" + param.modexConfigFile.c_str()))
         {
-          QString modexConfigFile = findFileInPaths(configPath, param.modexConfigFile.c_str());
+          QString modexConfigFile = findFileInPaths(configPath,
+                                                    param.modexConfigFile.c_str());
           if (!modexConfigFile.isEmpty())
           {
             XMLConfigurationFileParser modexconfig(modexConfigFile.toUtf8().constData());
-            vector<string> libraries=getDynamicLibraryNames(modexconfig,param.pipeline);
-            for (vector<string>::const_iterator it=libraries.begin(),it_end=libraries.end();it!=it_end; it++)
+            auto libraries = getDynamicLibraryNames(modexconfig,param.pipeline);
+            for (auto it = libraries.cbegin(); it != libraries.cend(); it++)
             {
               LOGINIT("Automaton::Compiler");
               LDEBUG << "load library " << *it;
