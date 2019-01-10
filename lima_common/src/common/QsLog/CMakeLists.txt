@@ -53,15 +53,18 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 
 ########### next target ###############
 
-#SET(qslogger_SRCS
-#   main.cpp
-#)
+SET(qslogger_SRCS
+  main.cpp
+)
 
-#add_executable(qslogger ${qslogger_SRCS})
+add_executable(qslogger ${qslogger_SRCS})
 
-#target_link_libraries(qslogger lima-common-qslog ${Qt5_LIBRARIES} )
+target_link_libraries(qslogger
+  lima-common
+  ${Qt5_LIBRARIES} 
+)
 
-#install(TARGETS qslogger DESTINATION bin)
+install(TARGETS qslogger DESTINATION bin)
 
 
 ########### install files ###############
