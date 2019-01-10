@@ -323,6 +323,7 @@ macro (IDIOMATICENTITIES _lang)
 
   add_dependencies(rules-idiom-${_lang}
     rules-${_lang}-execEnv
+    compile-rules
   )
   # add the link between the current target and its execution environment dependencies
 
@@ -535,7 +536,8 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     rules-${_lang}-${_group}-configEnv-${_subtarget}
     rules-${_lang}-execEnv
     rules-configEnv
-    )
+    compile-rules
+  )
 
 endmacro (SPECIFICENTITIES _lang _group)
 
