@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -26,42 +26,40 @@ SET(lima-lp-linguisticresources_LIB_SRCS
   LinguisticResources.cpp
 )
 
-add_library(lima-lp-linguisticresources SHARED 
+add_library(lima-lp-linguisticresources SHARED
             ${lima-lp-linguisticresources_LIB_SRCS})
 ADD_DLL_TO_PATH(lima-lp-linguisticresources)
 
 
-target_link_libraries(lima-lp-linguisticresources 
-  lima-common-mediaprocessors 
-  lima-common-mediaticdata 
+target_link_libraries(lima-lp-linguisticresources
+  lima-common-mediaprocessors
+  lima-common-mediaticdata
   lima-common-processunitframework
-  lima-common-fsaaccess 
-  lima-common-factory 
-  lima-common-xmlconfigurationfiles 
+  lima-common-fsaaccess
+  lima-common-factory
+  lima-common-xmlconfigurationfiles
   lima-common-misc
-  lima-common-time 
+  lima-common-time
   lima-common-datahandler
-  lima-common-data 
+  lima-common-data
   lima-common-tools
-  ${Qt5_LIBRARIES}
-  ${Boost_LIBRARIES}
 )
 
-set_target_properties(lima-lp-linguisticresources PROPERTIES 
-  VERSION ${LIMA_LP_LIB_VERSION} 
+set_target_properties(lima-lp-linguisticresources PROPERTIES
+  VERSION ${LIMA_LP_LIB_VERSION}
   SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-linguisticresources 
+install(TARGETS lima-lp-linguisticresources
   DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
 
 ########### install files ###############
-install(FILES 
-    AbstractResource.h  
-    AbstractResourceBase.h  
-    LinguisticResources.h 
-    LinguisticResourcesExport.h 
+install(FILES
+    AbstractResource.h
+    AbstractResourceBase.h
+    LinguisticResources.h
+    LinguisticResourcesExport.h
   DESTINATION include/linguisticProcessing/core/LinguisticResources
   COMPONENT devel
 )

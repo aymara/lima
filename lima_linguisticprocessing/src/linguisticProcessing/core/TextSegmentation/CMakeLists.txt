@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -35,13 +35,12 @@ SET(lima-lp-textsegmentation_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-textsegmentation)
 
-target_link_libraries(lima-lp-textsegmentation 
-  lima-lp-linguisticprocessors 
-  lima-lp-linguisticresources 
-  lima-lp-annotationgraph 
-  lima-lp-linguisticanalysisstructure 
+target_link_libraries(lima-lp-textsegmentation
+  lima-lp-linguisticprocessors
+  lima-lp-linguisticresources
+  lima-lp-annotationgraph
+  lima-lp-linguisticanalysisstructure
   lima-common
-  ${Qt5_LIBRARIES}
 )
 
 set_target_properties(lima-lp-textsegmentation PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -51,10 +50,10 @@ install(TARGETS lima-lp-textsegmentation DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 
-install(FILES 
-    SegmentationData.h 
-    SegmentationDataXmlLogger.h 
-    SegmentationResultsLoader.h 
+install(FILES
+    SegmentationData.h
+    SegmentationDataXmlLogger.h
+    SegmentationResultsLoader.h
     SegmentFeatureExtractor.h
     SegmentFeaturesDumper.h
     SentenceBoundariesFinder.h

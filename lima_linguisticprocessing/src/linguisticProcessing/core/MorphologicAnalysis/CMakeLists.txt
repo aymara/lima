@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -62,9 +62,8 @@ target_link_libraries(lima-lp-morphologicanalysis
     lima-lp-linguisticanalysisstructure
     lima-lp-applyrecognizer
     lima-lp-automaton
+    Boost::regex
     ${optionalLibs}
-    ${Boost_LIBRARIES}
-    ${Qt5_LIBRARIES}
 )
 
 set_target_properties(lima-lp-morphologicanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

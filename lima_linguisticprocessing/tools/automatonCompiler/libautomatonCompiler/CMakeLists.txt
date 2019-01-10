@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -37,8 +37,7 @@ SET(lima-lp-automatoncompiler_LIB_SRCS
 add_library(lima-lp-automatoncompiler SHARED ${lima-lp-automatoncompiler_LIB_SRCS})
 ADD_DLL_TO_PATH(lima-lp-automatoncompiler)
 
-
-target_link_libraries(lima-lp-automatoncompiler lima-linguisticprocessing)
+target_link_libraries(lima-lp-automatoncompiler lima-lp-automaton)
 
 set_target_properties(lima-lp-automatoncompiler PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 

@@ -14,7 +14,7 @@ SET(optionalLibs)
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   message("Linux flags")
-  
+
   # Flags needed for the plugins mechanism to work: our libs are dynamically loaded by
   # factories, thus their symbols must be known even if not used by the binary
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
@@ -49,7 +49,7 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   set(LIB_INSTALL_DIR "bin")
 endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
-    
+
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
   "${CMAKE_SOURCE_DIR}"
@@ -89,7 +89,7 @@ find_package(Qwt)
 if(Qwt_FOUND)
     include_directories(QWT_INCLUDE_DIR)
 else()
-message(FATAL "Could not find Qwt")
+    message(FATAL "Could not find Qwt")
 endif()
 
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -105,7 +105,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 # include_directories(${LIMACOMMON_INCLUDE_DIR})
 # link_directories(${LIMACOMMON_LIBRARY_DIRS})
 # include(LimaMacros)
-# 
+#
 FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
 IF(LIMACOMMON_FOUND)
   include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
@@ -150,7 +150,7 @@ add_subdirectory(commands)
 # install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
 # ########### documentation ###############
-# 
+#
 # # add a target to generate API documentation with Doxygen
 # find_package(Doxygen)
 # if(DOXYGEN_FOUND)
@@ -161,4 +161,4 @@ add_subdirectory(commands)
 # COMMENT "Generating API documentation with Doxygen" VERBATIM
 # )
 # endif(DOXYGEN_FOUND)
-# 
+#
