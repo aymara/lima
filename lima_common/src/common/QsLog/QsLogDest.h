@@ -28,6 +28,8 @@
 
 #include <memory>
 #include <QString>
+#include <QObject>
+
 
 #include "QsLog_export.h"
 
@@ -38,10 +40,39 @@ namespace QsLogging
 class LIMA_COMMONQSLOG_EXPORT Destination
 {
 public:
-   virtual ~Destination(){}
-   virtual void write(const QString& message, const QString& zone) = 0;
+  virtual ~Destination(){}
+  virtual void write(const QString& message, const QString& zone) = 0;
 };
-typedef std::unique_ptr<Destination> DestinationPtr;
+
+typedef std::shared_ptr<Destination> DestinationPtr;
+
+class DestinationsImpl; // d pointer
+class LIMA_COMMONQSLOG_EXPORT Destinations : public QObject
+{
+Q_OBJECT
+  friend class DestinationsImpl;
+public:
+  static Destinations& instance()
+  {
+    static Destinations staticDestinations;
+    return staticDestinations;
+  }
+
+  bool configure(const QString& fileName);
+
+  const QMap< QString, std::shared_ptr<Destination> >& destinations() const;
+
+private Q_SLOTS:
+  void configureFileChanged ( const QString & path );
+
+private:
+  Destinations(QObject* parent = 0);
+  Destinations(const Destinations&);
+  virtual ~Destinations();
+  Destinations& operator=(const Destinations&);
+
+  DestinationsImpl* d;
+};
 
 //! Creates logging destinations/sinks. The caller will have ownership of 
 //! the newly created destinations.

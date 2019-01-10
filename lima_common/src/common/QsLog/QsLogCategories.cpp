@@ -174,6 +174,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
 {
   QsLogging::Categories::instance();
   bool atLeastOneSuccessfulLoad = false;
+  bool atLeastOneDestinationSuccessfulLoad = false;
   QStringList configDirsList;
   if (configString.isEmpty())
   {
@@ -204,6 +205,15 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
             std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\"" << std::endl;
             return -1;
           }
+          if (QsLogging::Destinations::instance().configure(configDir + "/log4cpp/" + entry))
+          {
+            atLeastOneDestinationSuccessfulLoad = true;
+          }
+          else
+          {
+            std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\"" << std::endl;
+            return -1;
+          }
         }
       }
 
@@ -213,6 +223,15 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
         if (QsLogging::Categories::instance().configure(initFileName))
         {
           atLeastOneSuccessfulLoad = true;
+        }
+        else
+        {
+          std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
+          return -1;
+        }
+        if (QsLogging::Destinations::instance().configure(initFileName))
+        {
+          atLeastOneDestinationSuccessfulLoad= true;
         }
         else
         {
@@ -233,6 +252,15 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
           return -1;
         }
+        if (QsLogging::Destinations::instance().configure(initFileName))
+        {
+          atLeastOneDestinationSuccessfulLoad = true;
+        }
+        else
+        {
+          std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
+          return -1;
+        }
       }
     }
   }
@@ -242,6 +270,11 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
     return -1;
   }
   if (!atLeastOneSuccessfulLoad)
+  {
+    std::cerr << "Configure Problem no configure file has been found in \"" << configString.toStdString() << "\"" << std::endl;
+    return -1;
+  }
+  if (!atLeastOneDestinationSuccessfulLoad)
   {
     std::cerr << "Configure Problem no configure file has been found in \"" << configString.toStdString() << "\"" << std::endl;
     return -1;

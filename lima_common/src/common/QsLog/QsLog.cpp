@@ -42,7 +42,7 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 
 namespace QsLogging
 {
-typedef QList<Destination*> DestinationList;
+typedef QList<std::shared_ptr<Destination>> DestinationList;
 
 static const char TraceString[] = "TRACE";
 static const char DebugString[] = "DEBUG";
@@ -102,7 +102,7 @@ Logger::~Logger()
    delete d;
 }
 
-void Logger::addDestination(Destination* destination)
+void Logger::addDestination(std::shared_ptr<Destination> destination)
 {
    assert(destination);
    d->destList.push_back(destination);

@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
         QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
     QsLogging::DestinationPtr debugDestination(
         QsLogging::DestinationFactory::MakeDebugOutputDestination() );
-    logger.addDestination(debugDestination.get());
-    logger.addDestination(fileDestination.get());
+    logger.addDestination(debugDestination);
+    logger.addDestination(fileDestination);
     //logger.setLoggingLevel(QsLogging::InfoLevel);
 
     QLOG_INFO() << "Program started";
