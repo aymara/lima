@@ -131,7 +131,7 @@ int run(int argc, char** argv)
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
-//     return EXIT_FAILURE;
+    return EXIT_FAILURE;
   }
 
   // Necessary to initialize factories
