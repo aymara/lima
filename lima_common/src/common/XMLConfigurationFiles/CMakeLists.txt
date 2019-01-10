@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -32,14 +32,10 @@ add_library(lima-common-xmlconfigurationfiles SHARED ${lima-common-xmlconfigurat
 
 ADD_DLL_TO_PATH(lima-common-xmlconfigurationfiles)
 
-target_link_libraries(lima-common-xmlconfigurationfiles 
-  lima-common-data 
-)
+target_link_libraries(lima-common-xmlconfigurationfiles lima-common-data Qt5::Xml)
 
 set_target_properties(lima-common-xmlconfigurationfiles PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR}
-    COMPONENT runtime)
-
+install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR} COMPONENT runtime)
 
 ########### install files ###############
 install(FILES
@@ -53,7 +49,5 @@ install(FILES
   DESTINATION include/common/XMLConfigurationFiles
   COMPONENT devel
 )
-
-
 
 add_subdirectory(tests)

@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -47,19 +47,17 @@ target_link_libraries(apply-rules
   lima-lp-analysishandlers
   lima-lp-client
   lima-lp-applyrecognizer
-  lima-lp-analysisdict 
-  lima-lp-propertycode 
+  lima-lp-analysisdict
+  lima-lp-propertycode
   lima-lp-linguisticdata
-  lima-lp-bagofwords 
-  lima-common-data 
-  lima-common-fsaaccess 
+  lima-lp-bagofwords
+  lima-common-data
+  lima-common-fsaaccess
   lima-common-processunitframework
   lima-common-xmlconfigurationfiles
- ${Qt5_LIBRARIES} lima-common-tools
- ${Boost_REGEX}
-  ${Boost_LIBRARIES} #wsock32
- ${optionalLibs}
-  )
+  lima-common-tools
+  ${optionalLibs}
+)
 
 install(TARGETS apply-rules DESTINATION bin
   COMPONENT runtime)

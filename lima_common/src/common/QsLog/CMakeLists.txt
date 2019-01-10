@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -23,26 +23,26 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 
 
 # add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
-# 
+#
 # ########### next target ###############
-# 
+#
 # set (lima-common-qslog_MOC_HEADERS
 #     QsLogCategories.h
 # )
-# 
-# 
+#
+#
 # qt5_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
-# 
-# 
+#
+#
 # SET(lima-common-qslog_LIB_SRCS
 #     QsLog.cpp
 #     QsDebugOutput.cpp
 #     QsLogDest.cpp
 #     QsLogCategories.cpp
 #    )
-# 
+#
 # add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
-# target_link_libraries(lima-common-qslog 
+# target_link_libraries(lima-common-qslog
 #   lima-common-qslog
 #   ${Qt5_LIBRARIES}
 # )
@@ -59,10 +59,7 @@ SET(qslogger_SRCS
 
 add_executable(qslogger ${qslogger_SRCS})
 
-target_link_libraries(qslogger
-  lima-common
-  ${Qt5_LIBRARIES} 
-)
+target_link_libraries(qslogger lima-common)
 
 install(TARGETS qslogger DESTINATION bin)
 

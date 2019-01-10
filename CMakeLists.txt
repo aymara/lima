@@ -73,7 +73,7 @@ macro (ADD_DLL_TO_PATH _lib)
     add_custom_command(
       OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
-      COMMAND ${CMAKE_COMMAND} -E copy 
+      COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME}
         ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
       DEPENDS
@@ -90,9 +90,9 @@ macro (ADD_DLL_TO_PATH _lib)
 endmacro()
 
 include_directories(
-  ${CMAKE_BINARY_DIR}/lima_common 
+  ${CMAKE_BINARY_DIR}/lima_common
   ${CMAKE_BINARY_DIR}/lima_common/src
-  lima_common 
+  lima_common
   lima_common/src
 )
 add_subdirectory(lima_common)
@@ -143,9 +143,9 @@ endif(DOXYGEN_FOUND)
 
 message("CPACK_INSTALL_CMAKE_PROJECTS=${CPACK_INSTALL_CMAKE_PROJECTS}")
 
-# Specify additional runtime libraries that may not be detected. After 
+# Specify additional runtime libraries that may not be detected. After
 # inclusion any detected libraries will be appended to this.
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
   ${QtCore_location}
   ${QtXml_location}
   ${QtTest_location}

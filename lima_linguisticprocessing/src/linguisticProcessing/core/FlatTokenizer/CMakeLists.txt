@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -38,14 +38,12 @@ DECLARE_LIMA_PLUGIN(lima-lp-flattokenizer)
 
 target_compile_definitions(lima-lp-flattokenizer PRIVATE "-DLIMA_FLATTOKENIZER_EXPORTING")
 
-target_link_libraries(lima-lp-flattokenizer 
+target_link_libraries(lima-lp-flattokenizer
     lima-lp-linguisticdata
-    lima-lp-linguisticresources 
-    lima-lp-annotationgraph 
-    lima-lp-linguisticanalysisstructure 
+    lima-lp-linguisticresources
+    lima-lp-annotationgraph
+    lima-lp-linguisticanalysisstructure
     lima-common
-    ${Boost_LIBRARIES} 
-    ${Qt5_LIBRARIES} 
 )
 
 set_target_properties(lima-lp-flattokenizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -82,7 +80,7 @@ install(TARGETS limacharchartparser DESTINATION bin
 
 ########### install files ###############
 install(FILES
-    CharChart.h 
+    CharChart.h
     FlatTokenizerExport.h
   DESTINATION include/linguisticProcessing/core/FlatTokenizer
   COMPONENT devel
