@@ -45,7 +45,7 @@ typedef std::unique_ptr<Destination> DestinationPtr;
 
 //! Creates logging destinations/sinks. The caller will have ownership of 
 //! the newly created destinations.
-class DestinationFactory
+class LIMA_COMMONQSLOG_EXPORT DestinationFactory
 {
 public:
    static DestinationPtr MakeFileDestination(const QString& filePath);
