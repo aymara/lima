@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     // init the logging mechanism
     QsLogging::Logger& logger = QsLogging::Logger::instance("Zone");
     logger.setLoggingLevel(QsLogging::TraceLevel);
-    const QString sLogPath(QDir(a.applicationDirPath()).filePath("log.txt"));
+    const QString sLogPath(QDir(".").filePath("log.txt"));
     QsLogging::DestinationPtr fileDestination(
         QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
     QsLogging::DestinationPtr debugDestination(
