@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -25,10 +25,15 @@
 #include "DynamicLibrariesManager.h"
 #include "common/LimaCommon.h"
 
+#ifndef WIN32
+#include <boost/filesystem.hpp>
+#include <link.h>
+#endif
+
 #include <iostream>
-#include<QString>
-#include<QStringList>
-#include<QRegularExpression>
+#include <QString>
+#include <QStringList>
+#include <QRegularExpression>
 
 using namespace std;
 
@@ -40,8 +45,10 @@ class DynamicLibrariesManagerPrivate
 friend class DynamicLibrariesManager;
   DynamicLibrariesManagerPrivate();
 
+  bool isSomethingSimilarLoaded(const std::string& libName) const;
+
   std::map<std::string, std::shared_ptr< QLibrary > > m_handles;
-  // at load time, will try to load the libraries 
+  // at load time, will try to load the libraries
   // from these paths before the default ones
   std::vector<std::string> m_supplementarySearchPath;
 };
@@ -52,19 +59,56 @@ DynamicLibrariesManagerPrivate::DynamicLibrariesManagerPrivate() :
 {
 }
 
-  
-DynamicLibrariesManager::DynamicLibrariesManager() : 
+bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string& libName) const
+{
+    bool alreadyLoaded = false;
+
+#ifndef WIN32
+    std::pair<bool&, const std::string&> data(alreadyLoaded, libName);
+
+    dl_iterate_phdr([](dl_phdr_info *info, size_t size, void* data) -> int {
+        if (data == NULL)
+            throw LimaException("Callback passed to dl_iterate_phdr unexpectedly got NULL in \"data\" argument.");
+
+        auto& d = *((std::pair<bool&, const std::string&>*)data);
+
+        //std::cerr << info->dlpi_name << std::endl;
+
+        if (info == NULL || info->dlpi_name == NULL)
+            throw LimaException("Callback passed to dl_iterate_phdr unexpectedly got NULL in \"info\" argument.");
+
+        std::string s(info->dlpi_name);
+        if (s.size() == 0)
+            return 0;
+
+        boost::filesystem::path p(info->dlpi_name);
+        std::string fn = p.filename().string();
+        if (fn.find(d.second, 0) == 3) // lib[plugin-name]
+        {
+            d.first = true;
+            return 1;
+        }
+
+        return 0;
+    }, &data);
+#endif
+
+    return alreadyLoaded;
+}
+
+DynamicLibrariesManager::DynamicLibrariesManager() :
     m_d(new DynamicLibrariesManagerPrivate())
 {
 }
 
-DynamicLibrariesManager::~DynamicLibrariesManager() 
+DynamicLibrariesManager::~DynamicLibrariesManager()
 {
 }
 
 bool DynamicLibrariesManager::
 isLoaded(const std::string& libName)
 {
+  m_d->isSomethingSimilarLoaded(libName);
   auto it=m_d->m_handles.find(libName);
   return (it!=m_d->m_handles.end());
 }
@@ -72,30 +116,37 @@ isLoaded(const std::string& libName)
 bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LDEBUG <<"DynamicLibrariesManager::loadLibrary() -- libName=" << libName ;
-  auto it=m_d->m_handles.find(libName);
-  if (it != m_d->m_handles.end()) 
+  LDEBUG << "DynamicLibrariesManager::loadLibrary() -- libName=" << libName;
+
+  if (m_d->isSomethingSimilarLoaded(libName))
   {
-    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." 
-            << libName;
+    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library " << libName;
+    LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
+    return true;
+  }
+
+  auto it=m_d->m_handles.find(libName);
+  if (it != m_d->m_handles.end())
+  {
+    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." << libName;
     LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
     return true;
   }
 
   std::shared_ptr< QLibrary > libhandle;
   // try supplementary search path
-  for (auto it = m_d->m_supplementarySearchPath.begin(); 
+  for (auto it = m_d->m_supplementarySearchPath.begin();
        it != m_d->m_supplementarySearchPath.end(); it++)
   {
     LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
     libhandle = std::shared_ptr<QLibrary>(new QLibrary( ((*it)+"/"+libName).c_str() ));
-    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
+    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-      LDEBUG << "the library " << libName.c_str() 
-              << " was loaded from supplementary search path";
+      LDEBUG << "the library " << libName.c_str()
+             << " was loaded from supplementary search path";
       LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
       return true;
     }
@@ -103,7 +154,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
       LINFO <<"DynamicLibrariesManager::loadLibrary() -- "
-              <<"Failed to open supplementary lib " << libhandle->errorString();
+            <<"Failed to open supplementary lib " << libhandle->errorString();
       libhandle.reset();
     }
   }
@@ -112,13 +163,13 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   {
     LINFO << "Trying " << libName.c_str();
     libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
-    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint 
+    libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
     {
       m_d->m_handles.insert(std::make_pair(libName,libhandle));
-      LDEBUG << "the library " << libName 
-              << " was loaded from system default search path";
+      LDEBUG << "the library " << libName
+             << " was loaded from system default search path";
       LDEBUG << "the library fully-qualified name: " << libhandle->fileName();
       return true;
     }
@@ -126,11 +177,11 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
       LERROR <<"DynamicLibrariesManager::loadLibrary() -- "
-              << "Failed to open system lib " << libhandle->errorString();
+             << "Failed to open system lib " << libhandle->errorString();
       return false;
     }
   }
-  else 
+  else
   {
     m_d->m_handles[libName]=libhandle;
     LDEBUG << "the library " << libName << " was loaded";
@@ -141,8 +192,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 void DynamicLibrariesManager::addSearchPath(const std::string& searchPath)
 {
   if( std::find(
-                m_d->m_supplementarySearchPath.begin(), 
-                m_d->m_supplementarySearchPath.end(), searchPath) 
+                m_d->m_supplementarySearchPath.begin(),
+                m_d->m_supplementarySearchPath.end(), searchPath)
       != m_d->m_supplementarySearchPath.end())
   {
     return;
@@ -161,13 +212,13 @@ void DynamicLibrariesManager::addSearchPathes(QString searchPathes)
   ABSTRACTFACTORYPATTERNLOGINIT;
 #endif
   QStringList list = searchPathes.replace("\\","/")
-                                    .split(QRegularExpression("[:;]"), 
+                                    .split(QRegularExpression("[:;]"),
                                           QString::SkipEmptyParts);
-  for(auto it = list.begin(); it!=list.end();++it) 
+  for(auto it = list.begin(); it!=list.end();++it)
   {
     QString searchPath = *it;
 #ifdef DEBUG_CD
-    LINFO << "DynamicLibrariesManager::addSearchPathes() -- " 
+    LINFO << "DynamicLibrariesManager::addSearchPathes() -- "
           << "adding:" << searchPath.toUtf8().data();
 #endif
     this->addSearchPath(searchPath.toUtf8().data());
